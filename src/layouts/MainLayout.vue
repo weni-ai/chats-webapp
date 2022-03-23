@@ -1,6 +1,6 @@
 <template>
   <section id="container">
-    <header class="topbar">header</header>
+    <main-header class="topbar" />
 
     <nav>
       <unnnic-sidebar-primary
@@ -24,11 +24,14 @@
 <script>
 import { unnnicSidebarPrimary } from '@weni/unnnic-system';
 
+import MainHeader from '@/components/layouts/MainHeader';
+
 export default {
   name: 'MainLayout',
 
   components: {
     unnnicSidebarPrimary,
+    MainHeader,
   },
 
   data: () => ({
