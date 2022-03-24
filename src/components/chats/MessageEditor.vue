@@ -25,6 +25,7 @@ export default {
 .message-editor {
   display: flex;
   flex-direction: column;
+  gap: 2rem;
 
   padding: 1rem;
   border: solid 1px $unnnic-color-neutral-clean;

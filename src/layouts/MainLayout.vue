@@ -27,14 +27,17 @@ export default {
 
 <style lang="scss" scoped>
 .container {
+  $max-height: calc(100vh - 5.5rem - 1rem);
   display: flex;
 
+  max-height: $max-height;
+
   .queue {
-    max-height: calc(100vh - 5.5rem - 1rem);
     overflow-y: auto;
   }
 
   main {
+    height: $max-height;
     flex: 1;
   }
 

@@ -7,15 +7,15 @@
         <unnnicIcon class="close-icon" icon="close-1" size="sm" />
       </header>
 
-      <div class="chat-begin">Início da conversa</div>
-
-      <div class="divisor">
-        <hr />
-        <span class="date"> 20 de dezembro </span>
-        <hr />
-      </div>
-
       <section class="chat">
+        <div class="chat-begin">Início da conversa</div>
+
+        <div class="divisor">
+          <hr />
+          <span class="date"> 20 de dezembro </span>
+          <hr />
+        </div>
+
         <div class="message">
           <div class="user-info avatar-col">
             <span class="avatar">{{ activeChat.username.charAt(0) }}</span>
@@ -71,6 +71,8 @@
           </div>
         </div>
       </section>
+
+      <message-editor class="message-editor" />
     </section>
   </main-layout>
 </template>
@@ -82,11 +84,14 @@ import chats from '@/data/chats.json';
 
 import MainLayout from '@/layouts/MainLayout';
 
+import MessageEditor from '@/components/chats/MessageEditor';
+
 export default {
   name: 'ActiveChat',
 
   components: {
     MainLayout,
+    MessageEditor,
     unnnicIcon,
   },
 
@@ -98,6 +103,11 @@ export default {
 
 <style lang="scss" scoped>
 .active-chat {
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+
   margin-left: 1.5rem;
   padding-right: 1.5rem;
 
@@ -113,8 +123,8 @@ export default {
 
       width: 2rem;
       height: 2rem;
-      border-radius: 0.125rem;
 
+      border-radius: 0.125rem;
       border: solid 1px $unnnic-color-aux-pink;
 
       background: $unnnic-color-aux-pink;
@@ -130,7 +140,6 @@ export default {
   }
 
   .chat-begin {
-    padding: 1.5rem 0 0.5rem;
     text-align: center;
     color: $unnnic-color-neutral-dark;
     line-height: 1.375rem;
@@ -142,7 +151,7 @@ export default {
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    margin-bottom: 1rem;
+    margin: 0.5rem 0 1rem;
 
     .date {
       font-weight: 700;
@@ -159,6 +168,10 @@ export default {
   }
 
   .chat {
+    overflow-y: auto;
+    padding-right: 1.5rem;
+    margin: 1.5rem 0 1rem;
+
     .message {
       display: flex;
       gap: 1rem;
@@ -202,6 +215,11 @@ export default {
         }
       }
     }
+  }
+
+  .message-editor {
+    margin-top: auto;
+    margin-bottom: 1rem;
   }
 }
 </style>
