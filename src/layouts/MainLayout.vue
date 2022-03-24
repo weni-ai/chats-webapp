@@ -1,89 +1,45 @@
 <template>
-  <section id="container">
-    <main-header class="topbar" />
+  <section class="container">
+    <chat-queue class="queue" />
 
-    <nav>
-      <unnnic-sidebar-primary
-        :expanded="false"
-        :items="sidebarItems"
-        class="primary-sidebar"
-        language="pt-br"
-        hideText="Encolher"
-      >
-        <template #header>
-          <img src="../assets/weni-logo.svg" alt="Weni's Logo" />
-        </template>
-      </unnnic-sidebar-primary>
-    </nav>
-    <div class="view">
+    <main>
       <slot />
-    </div>
+    </main>
+
+    <aside>
+      <slot name="aside" />
+      aside
+    </aside>
   </section>
 </template>
 
 <script>
-import { unnnicSidebarPrimary } from '@weni/unnnic-system';
-
-import MainHeader from '@/components/layouts/MainHeader';
+import ChatQueue from '@/components/layouts/ChatQueue';
 
 export default {
   name: 'MainLayout',
 
   components: {
-    unnnicSidebarPrimary,
-    MainHeader,
+    ChatQueue,
   },
-
-  data: () => ({
-    sidebarItems: [
-      {
-        label: 'Menu principal',
-        items: [{ label: 'Início', active: true, icon: 'house-1-1' }],
-      },
-      {
-        label: 'Sistemas',
-        items: [
-          { label: 'Fluxos', active: false, icon: 'hierarchy-3-2' },
-          { label: 'Inteligência Artificial', active: false, icon: 'science-fiction-robot-2' },
-          {
-            label: 'Agentes',
-            active: false,
-            icon: 'messaging-we-chat-3',
-            notify: true,
-          },
-        ],
-      },
-      {
-        label: 'Perfil',
-        items: [{ label: 'Conta', active: false, icon: 'single-neutral-actions-1' }],
-      },
-    ],
-  }),
 };
 </script>
 
 <style lang="scss" scoped>
-#container {
-  height: 100vh;
+.container {
+  display: flex;
 
-  display: grid;
-  grid-template-rows: 5.5rem 1fr;
-  grid-template-columns: auto 1fr;
-  grid-template-areas:
-    'primary-sidebar topbar'
-    'primary-sidebar view';
-
-  .topbar {
-    grid-area: topbar;
+  .queue {
+    max-height: calc(100vh - 5.5rem - 1rem);
+    overflow-y: auto;
   }
 
-  .primary-sidebar {
-    height: 100vh;
-    grid-area: primary-sidebar;
+  main {
+    flex: 1;
   }
 
-  .view {
-    grid-area: view;
+  aside {
+    flex-basis: 30%;
   }
 }
 </style>

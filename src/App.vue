@@ -1,19 +1,19 @@
 <template>
   <div id="app">
-    <MainLayout>
+    <connect-layout>
       <router-view />
-    </MainLayout>
+    </connect-layout>
   </div>
 </template>
 
 <script>
-import MainLayout from './layouts/MainLayout';
+import ConnectLayout from './layouts/ConnectLayout';
 
 export default {
   name: 'App',
 
   components: {
-    MainLayout,
+    ConnectLayout,
   },
 };
 </script>
