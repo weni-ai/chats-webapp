@@ -60,7 +60,8 @@ export default {
     border: solid 1px $unnnic-color-aux-orange;
 
     &.active {
-      background: $unnnic-color-aux-orange;
+      border: solid 1px $unnnic-color-aux-pink;
+      background: $unnnic-color-aux-pink;
       color: $unnnic-color-neutral-snow;
     }
   }
