@@ -2,7 +2,9 @@
   box-sizing: border-box;
 }
 
-html {
+html,
+input,
+textarea {
   font-family: $unnnic-font-family-secondary, sans-serif;
 }
 
