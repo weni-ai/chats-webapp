@@ -23,24 +23,45 @@
       text="Adicionar mensagem instantânea"
       type="secondary"
       size="small"
+      @click="newMacroModalOpen = true"
     />
+
+    <new-macro-message-modal :open="newMacroModalOpen" @close="newMacroModalOpen = false" />
+
+    <unnnic-modal
+      text="Deletar macro"
+      description="Você tem certeza que deseja deletar a resposta instantânea?"
+      scheme="feedback-yellow"
+      modal-icon="alert-circle-1"
+      :show-modal="false"
+    >
+      <template #options>
+        <unnnic-button text="Confirmar" type="terciary" />
+        <unnnic-button text="Cancelar" />
+      </template>
+    </unnnic-modal>
   </aside>
 </template>
 
 <script>
-import { unnnicIconSvg, unnnicButton } from '@weni/unnnic-system';
+import { unnnicIconSvg, unnnicButton, unnnicModal } from '@weni/unnnic-system';
+
 import MacroMessageCard from './MacroMessageCard';
+import NewMacroMessageModal from './NewMacroMessageModal';
 
 export default {
   name: 'MacroMessagesController',
 
   components: {
     MacroMessageCard,
+    NewMacroMessageModal,
     unnnicButton,
     unnnicIconSvg,
+    unnnicModal,
   },
 
   data: () => ({
+    newMacroModalOpen: false,
     macroMessages: [
       {
         id: 1,

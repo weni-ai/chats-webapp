@@ -42,6 +42,7 @@ export default {
     span {
       font-size: 0.875rem;
       line-height: 1.375rem;
+      font-weight: $unnnic-font-weight-bold;
       color: $unnnic-color-neutral-dark;
     }
   }
