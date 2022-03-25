@@ -2,7 +2,9 @@
   <aside class="macro-messages-controller">
     <header>
       <span>Mensagens instantâneas</span>
-      <unnnic-icon-svg icon="close-1" size="sm" class="close-icon" />
+      <span @click="$emit('close')" aria-label="close icon" @keypress.enter="$emit('close')">
+        <unnnic-icon-svg icon="close-1" size="sm" class="close-icon" />
+      </span>
     </header>
 
     <div class="messages-list">
@@ -11,6 +13,7 @@
         :key="macroMessage.id"
         :title="macroMessage.title"
         :message="macroMessage.message"
+        @select="$emit('select-macro-message', macroMessage)"
       />
     </div>
 

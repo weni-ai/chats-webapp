@@ -72,11 +72,16 @@
         </div>
       </section>
 
-      <message-editor class="message-editor" />
+      <message-editor
+        v-model="editorMessage"
+        class="message-editor"
+        :showing-sidebar="showSidebar"
+        @showMacroMessages="componentInSidebar = 'macroMessages'"
+      />
     </section>
 
     <template #aside>
-      <macro-messages-controller />
+      <component :is="sidebarComponent.name" v-on="sidebarComponent.listeners" />
     </template>
   </main-layout>
 </template>
@@ -103,7 +108,33 @@ export default {
 
   data: () => ({
     activeChat: chats[1].chats[1],
+    componentInSidebar: '',
+    editorMessage: '',
   }),
+
+  computed: {
+    showSidebar() {
+      return !!this.sidebarComponent.name;
+    },
+    sidebarComponent() {
+      return this.sidebarComponents[this.componentInSidebar] || {};
+    },
+    sidebarComponents() {
+      return {
+        macroMessages: {
+          name: MacroMessagesController.name,
+          listeners: {
+            close: () => {
+              this.componentInSidebar = '';
+            },
+            'select-macro-message': (macroMessage) => {
+              this.editorMessage = macroMessage.message;
+            },
+          },
+        },
+      };
+    },
+  },
 };
 </script>
 

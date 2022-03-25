@@ -1,5 +1,5 @@
 <template>
-  <section class="macro-message">
+  <section class="macro-message" @click="$emit('select')" @keypress.enter="$emit('select')">
     <header>
       <span>{{ title }}</span>
       <unnnic-icon-svg icon="navigation-menu-vertical-1" size="sm" class="close-icon" />
