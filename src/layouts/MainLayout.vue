@@ -6,10 +6,9 @@
       <slot />
     </main>
 
-    <aside>
+    <section v-if="areUsingAsideSlot" class="aside">
       <slot name="aside" />
-      aside
-    </aside>
+    </section>
   </section>
 </template>
 
@@ -22,26 +21,38 @@ export default {
   components: {
     ChatQueue,
   },
+
+  computed: {
+    areUsingAsideSlot() {
+      return !!this.$slots.aside;
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 .container {
-  $max-height: calc(100vh - 5.5rem - 1rem);
+  $max-height: calc(100vh - 5.5rem);
   display: flex;
 
   max-height: $max-height;
 
   .queue {
     overflow-y: auto;
+    padding-right: 0.5rem;
+    margin: 1.5rem 0 0 1.5rem;
   }
 
   main {
+    padding: 1.5rem 0 1rem 1.5rem;
     height: $max-height;
     flex: 1;
   }
 
-  aside {
+  .aside {
+    padding: 1.5rem;
+    height: $max-height;
+    background: $unnnic-color-neutral-lightest;
     flex-basis: 30%;
   }
 }

@@ -74,6 +74,10 @@
 
       <message-editor class="message-editor" />
     </section>
+
+    <template #aside>
+      <macro-messages-controller />
+    </template>
   </main-layout>
 </template>
 
@@ -84,12 +88,14 @@ import chats from '@/data/chats.json';
 
 import MainLayout from '@/layouts/MainLayout';
 
+import MacroMessagesController from '@/components/chats/MacroMessagesController';
 import MessageEditor from '@/components/chats/MessageEditor';
 
 export default {
   name: 'ActiveChat',
 
   components: {
+    MacroMessagesController,
     MainLayout,
     MessageEditor,
     unnnicIcon,
@@ -108,7 +114,6 @@ export default {
 
   height: 100%;
 
-  margin-left: 1.5rem;
   padding-right: 1.5rem;
 
   .user-info {
@@ -219,7 +224,6 @@ export default {
 
   .message-editor {
     margin-top: auto;
-    margin-bottom: 1rem;
   }
 }
 </style>
