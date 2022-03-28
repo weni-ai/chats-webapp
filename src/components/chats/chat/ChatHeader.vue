@@ -2,7 +2,9 @@
   <header class="active-chat-header">
     <user-avatar size="lg" />
     <span class="username">{{ chat.username }}</span>
-    <unnnic-icon class="close-icon" icon="close-1" size="sm" />
+    <span @click="$emit('close')" @keypress.enter="$emit('close')">
+      <unnnic-icon-svg class="close-button" icon="close-1" size="sm" />
+    </span>
   </header>
 </template>
 
@@ -51,6 +53,10 @@ export default {
     font-weight: 400;
     line-height: 1.5rem;
     color: $unnnic-color-neutral-dark;
+  }
+
+  .close-button {
+    cursor: pointer;
   }
 }
 </style>

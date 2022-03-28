@@ -1,18 +1,32 @@
 <template>
   <main-layout>
     <section class="active-chat">
-      <chat-header :chat="activeChat" />
+      <chat-header :chat="activeChat" @close="isCloseChatModalOpen = true" />
       <chat-messages :chat="activeChat" class="messages" />
 
       <message-editor
         v-model="editorMessage"
         class="message-editor"
         :showing-sidebar="showSidebar"
-        @showMacroMessages="
+        @show-macro-messages="
           componentInSidebar = componentInSidebar === 'macroMessages' ? '' : 'macroMessages'
         "
       />
     </section>
+
+    <unnnic-modal
+      :showModal="isCloseChatModalOpen"
+      @close="isCloseChatModalOpen = false"
+      title="Encerrar conversa"
+      description="Você tem certeza que deseja encerrar a conversa?"
+      modal-icon="alert-circle-1"
+      scheme="feedback-yellow"
+    >
+      <template #options>
+        <unnnic-button text="Confirmar" type="terciary" @click="closeChat" />
+        <unnnic-button text="Cancelar" @click="isCloseChatModalOpen = false" />
+      </template>
+    </unnnic-modal>
 
     <template #aside>
       <component :is="sidebarComponent.name" v-on="sidebarComponent.listeners" />
@@ -21,8 +35,6 @@
 </template>
 
 <script>
-import { unnnicIcon } from '@weni/unnnic-system';
-
 import chats from '@/data/chats.json';
 
 import MainLayout from '@/layouts/MainLayout';
@@ -41,13 +53,13 @@ export default {
     MacroMessagesController,
     MainLayout,
     MessageEditor,
-    unnnicIcon,
   },
 
   data: () => ({
     activeChat: chats[1].chats[1],
     componentInSidebar: '',
     editorMessage: '',
+    isCloseChatModalOpen: false,
   }),
 
   computed: {
@@ -71,6 +83,13 @@ export default {
           },
         },
       };
+    },
+  },
+
+  methods: {
+    closeChat() {
+      this.activeChat.closed = true;
+      this.isCloseChatModalOpen = false;
     },
   },
 };
