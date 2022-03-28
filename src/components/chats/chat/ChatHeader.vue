@@ -1,7 +1,9 @@
 <template>
   <header class="active-chat-header">
-    <user-avatar size="lg" />
-    <span class="username">{{ chat.username }}</span>
+    <user-avatar size="lg" class="avatar" @click="showContactInfo" />
+    <span class="username" @click="showContactInfo" @keypress.enter="showContactInfo">
+      {{ chat.username }}
+    </span>
     <span @click="$emit('close')" @keypress.enter="$emit('close')">
       <unnnic-icon-svg class="close-button" icon="close-1" size="sm" />
     </span>
@@ -24,6 +26,14 @@ export default {
       required: true,
     },
   },
+
+  methods: {
+    showContactInfo() {
+      if (this.chat.username === 'Atendente') return;
+
+      this.$emit('show-contact-info');
+    },
+  },
 };
 </script>
 
@@ -33,19 +43,10 @@ export default {
   align-items: center;
   gap: 1rem;
 
-  .avatar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 2rem;
-    height: 2rem;
-
-    border-radius: 0.125rem;
-    border: solid 1px $unnnic-color-aux-pink;
-
-    background: $unnnic-color-aux-pink;
-    color: $unnnic-color-neutral-snow;
+  .avatar,
+  .username,
+  .close-button {
+    cursor: pointer;
   }
 
   .username {
@@ -53,10 +54,6 @@ export default {
     font-weight: 400;
     line-height: 1.5rem;
     color: $unnnic-color-neutral-dark;
-  }
-
-  .close-button {
-    cursor: pointer;
   }
 }
 </style>

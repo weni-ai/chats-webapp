@@ -12,7 +12,7 @@
         type="secondary"
         text="Mensagens prontas"
         size="small"
-        @click="$emit('showMacroMessages')"
+        @click="$emit('show-macro-messages')"
       />
       <unnnic-button text="Enviar" iconLeft="send-mail-3-1" size="small" class="send-button" />
     </div>

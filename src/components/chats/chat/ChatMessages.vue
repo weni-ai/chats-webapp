@@ -10,12 +10,23 @@
 
     <div v-for="message in chat.messages" :key="message.id" class="message">
       <span>
-        <user-avatar size="xs" />
+        <user-avatar
+          size="xs"
+          :class="{ clickable: message.username !== 'Atendente' }"
+          @click="showContactInfo(message.username)"
+        />
       </span>
 
       <div>
         <div class="info">
-          <span class="username">{{ message.username }}</span>
+          <span
+            class="username"
+            :class="{ clickable: message.username !== 'Atendente' }"
+            @click="showContactInfo(message.username)"
+            @keypress.enter="showContactInfo(message.username)"
+          >
+            {{ message.username }}
+          </span>
           <span class="time">{{ message.time }}</span>
         </div>
 
@@ -41,6 +52,14 @@ export default {
     chat: {
       type: Object,
       required: true,
+    },
+  },
+
+  methods: {
+    showContactInfo(username) {
+      if (username === 'Atendente') return;
+
+      this.$emit('show-contact-info');
     },
   },
 };
@@ -113,6 +132,10 @@ export default {
         }
       }
     }
+  }
+
+  .clickable {
+    cursor: pointer;
   }
 }
 </style>

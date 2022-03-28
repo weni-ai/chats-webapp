@@ -1,8 +1,16 @@
 <template>
   <main-layout>
     <section v-if="!!activeChat" class="active-chat">
-      <chat-header :chat="activeChat" @close="isCloseChatModalOpen = true" />
-      <chat-messages :chat="activeChat" class="messages" />
+      <chat-header
+        :chat="activeChat"
+        @close="isCloseChatModalOpen = true"
+        @show-contact-info="componentInSidebar = 'contactInfo'"
+      />
+      <chat-messages
+        :chat="activeChat"
+        class="messages"
+        @show-contact-info="componentInSidebar = 'contactInfo'"
+      />
 
       <message-editor
         v-model="editorMessage"
@@ -29,7 +37,11 @@
     </unnnic-modal>
 
     <template #aside>
-      <component :is="sidebarComponent.name" v-on="sidebarComponent.listeners" />
+      <component
+        :is="sidebarComponent.name"
+        v-on="sidebarComponent.listeners"
+        v-bind="sidebarComponent.attrs"
+      />
     </template>
   </main-layout>
 </template>
@@ -39,10 +51,11 @@ import { mapState } from 'vuex';
 
 import MainLayout from '@/layouts/MainLayout';
 
-import MacroMessagesController from '@/components/chats/MacroMessagesController';
-import MessageEditor from '@/components/chats/MessageEditor';
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
+import ContactInfo from '@/components/ContactInfo';
+import MacroMessagesController from '@/components/chats/MacroMessagesController';
+import MessageEditor from '@/components/chats/MessageEditor';
 
 export default {
   name: 'ActiveChat',
@@ -50,6 +63,7 @@ export default {
   components: {
     ChatHeader,
     ChatMessages,
+    ContactInfo,
     MacroMessagesController,
     MainLayout,
     MessageEditor,
@@ -85,6 +99,17 @@ export default {
             },
           },
         },
+        contactInfo: {
+          name: ContactInfo.name,
+          listeners: {
+            close: () => {
+              this.componentInSidebar = '';
+            },
+          },
+          attrs: {
+            class: 'contact-info',
+          },
+        },
       };
     },
   },
@@ -114,5 +139,9 @@ export default {
   .message-editor {
     margin-top: auto;
   }
+}
+
+.contact-info {
+  overflow-y: auto;
 }
 </style>

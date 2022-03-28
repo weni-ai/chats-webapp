@@ -50,10 +50,10 @@ export default {
   }
 
   .aside {
-    padding: 1.5rem;
+    padding: 1.5rem 0 1.5rem 1.5rem;
     height: $max-height;
     background: $unnnic-color-neutral-lightest;
-    flex-basis: 30%;
+    width: 20.625rem;
   }
 }
 </style>
