@@ -6,19 +6,22 @@
         "id": "1",
         "username": "João Cláudio",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 8
+        "unreadedMessages": 8,
+        "messages": []
       },
       {
         "id": "2",
         "username": "Marcela Barros",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 5
+        "unreadedMessages": 5,
+        "messages": []
       },
       {
         "id": "3",
         "username": "Roberto Barcelos",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 10
+        "unreadedMessages": 10,
+        "messages": []
       }
     ]
   },
@@ -29,56 +32,148 @@
         "id": "4",
         "username": "Pedro Pontes",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 8
+        "unreadedMessages": 8,
+        "messages": [
+          {
+            "id": "1",
+            "username": "Pedro Pontes",
+            "time": "10h15",
+            "content": [
+              "Oi",
+              "Gostaria de saber se consigo pagar meu boleto depois do vencimento",
+              "O boleto venceu ontem e eu não queria pagar juros",
+              "Como faço?"
+            ]
+          },
+          {
+            "id": "2",
+            "username": "Atendente",
+            "time": "10h20",
+            "content": [
+              "Olá, Pedro",
+              "Preciso confirmar com o financeiro, você me dá um minuto?"
+            ]
+          }
+        ]
       },
       {
         "id": "5",
         "username": "Ilanna Lins",
         "lastMessage": "Acho que podemos conversar ama...",
         "active": true,
-        "unreadedMessages": 5
+        "unreadedMessages": 5,
+        "messages": [
+          {
+            "id": "1",
+            "username": "Ilanna Lins",
+            "time": "10h15",
+            "content": [
+              "Oi",
+              "Gostaria de saber se consigo pagar meu boleto depois do vencimento",
+              "O boleto venceu ontem e eu não queria pagar juros",
+              "Como faço?"
+            ]
+          },
+          {
+            "id": "2",
+            "username": "Atendente",
+            "time": "10h20",
+            "content": [
+              "Olá, Ilanna",
+              "Preciso confirmar com o financeiro, você me dá um minuto?"
+            ]
+          },
+          {
+            "id": "3",
+            "username": "Ilanna Lins",
+            "time": "10h15",
+            "content": [
+              "Oi",
+              "Gostaria de saber se consigo pagar meu boleto depois do vencimento",
+              "O boleto venceu ontem e eu não queria pagar juros",
+              "Como faço?"
+            ]
+          },
+          {
+            "id": "4",
+            "username": "Atendente",
+            "time": "10h20",
+            "content": [
+              "Olá, Ilanna",
+              "Preciso confirmar com o financeiro, você me dá um minuto?"
+            ]
+          }
+        ]
       },
       {
         "id": "6",
         "username": "Rafael Felipe",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 10
+        "unreadedMessages": 10,
+        "messages": [
+          {
+            "id": "1",
+            "username": "Rafael Felipe",
+            "time": "10h15",
+            "content": [
+              "Oi",
+              "Gostaria de saber se consigo pagar meu boleto depois do vencimento",
+              "O boleto venceu ontem e eu não queria pagar juros",
+              "Como faço?"
+            ]
+          },
+          {
+            "id": "2",
+            "username": "Atendente",
+            "time": "10h20",
+            "content": [
+              "Olá, Rafael",
+              "Preciso confirmar com o financeiro, você me dá um minuto?"
+            ]
+          }
+        ]
       },
       {
         "id": "7",
         "username": "Milton Neves",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 8
+        "unreadedMessages": 8,
+        "messages": []
       },
       {
         "id": "8",
         "username": "Thiago Paiva",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 5
+        "unreadedMessages": 5,
+        "messages": []
       },
       {
         "id": "9",
         "username": "Agnaldo França",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 10
+        "unreadedMessages": 10,
+        "messages": []
       },
       {
         "id": "10",
         "username": "Tânia Almeida",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 8
+        "unreadedMessages": 8,
+        "messages": []
       },
       {
         "id": "11",
         "username": "Thiago Paiva",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 5
+        "unreadedMessages": 5,
+        "messages": []
       },
       {
         "id": "12",
         "username": "Cíntia Silva",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 10
+        "unreadedMessages": 10,
+        "messages": []
       }
     ]
   }

@@ -1,6 +1,6 @@
 <template>
   <div class="container" :class="{ active: !!chat.active }">
-    <span class="avatar" :class="{ active: !!chat.active }">{{ chat.username.charAt(0) }}</span>
+    <user-avatar :active="!!chat.active" />
 
     <div class="content">
       <h3 class="username">{{ chat.username }}</h3>
@@ -16,8 +16,14 @@
 </template>
 
 <script>
+import UserAvatar from '@/components/UserAvatar';
+
 export default {
   name: 'UserChat',
+
+  components: {
+    UserAvatar,
+  },
 
   props: {
     chat: {
@@ -37,33 +43,12 @@ export default {
   padding: 0.5rem;
   cursor: pointer;
 
-  min-width: 255px;
-  max-width: 255px;
+  width: 16rem;
 
   &.active {
-    padding: 0.75rem 0.5rem;
-    border: solid 0.5px $unnnic-color-brand-weni;
+    padding: 0.25rem 0.5rem;
     border-radius: $unnnic-border-radius-sm;
-    background: rgba($unnnic-color-brand-weni, 0.04);
-  }
-
-  .avatar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 2rem;
-    height: 2rem;
-    border-radius: $unnnic-border-radius-sm;
-
-    color: $unnnic-color-aux-orange;
-    border: solid 1px $unnnic-color-aux-orange;
-
-    &.active {
-      border: solid 1px $unnnic-color-aux-pink;
-      background: $unnnic-color-aux-pink;
-      color: $unnnic-color-neutral-snow;
-    }
+    background: rgba($unnnic-color-brand-weni, $unnnic-opacity-level-extra-light);
   }
 
   .content {
@@ -86,7 +71,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: $unnnic-color-background-snow;
+    background: $unnnic-color-background-grass;
 
     width: 1.25rem;
     height: 1.25rem;
