@@ -1,12 +1,15 @@
 <template>
-  <unnnic-avatar-icon
-    icon="single-neutral-actions-1"
-    :schema="'aux-blue'"
-    :enabled="false"
-    :size="size"
-    class="user-avatar"
-    :class="{ active }"
-  />
+  <span @click="$emit('click')" @keypress.enter="$emit('click')">
+    <unnnic-avatar-icon
+      icon="single-neutral-actions-1"
+      :schema="'aux-blue'"
+      :enabled="false"
+      :size="size"
+      class="user-avatar"
+      :class="{ active }"
+      v-bind="$attrs"
+    />
+  </span>
 </template>
 
 <script>
