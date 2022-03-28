@@ -7,7 +7,7 @@
 
     <ul class="chats" :class="{ 'background-darkest': backgroundDarkest }">
       <li v-for="chat in chatGroup.chats" :key="chat.id">
-        <user-chat :chat="chat" />
+        <user-chat :chat="chat" @click="selectChat(chat)" />
       </li>
     </ul>
   </div>
@@ -34,6 +34,12 @@ export default {
     chatGroup: {
       type: Object,
       required: true,
+    },
+  },
+
+  methods: {
+    selectChat(chat) {
+      this.$store.commit('chats/setActiveChat', chat);
     },
   },
 };

@@ -1,6 +1,6 @@
 <template>
   <main-layout>
-    <section class="active-chat">
+    <section v-if="!!activeChat" class="active-chat">
       <chat-header :chat="activeChat" @close="isCloseChatModalOpen = true" />
       <chat-messages :chat="activeChat" class="messages" />
 
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import chats from '@/data/chats.json';
+import { mapState } from 'vuex';
 
 import MainLayout from '@/layouts/MainLayout';
 
@@ -56,13 +56,16 @@ export default {
   },
 
   data: () => ({
-    activeChat: chats[1].chats[1],
     componentInSidebar: '',
     editorMessage: '',
     isCloseChatModalOpen: false,
   }),
 
   computed: {
+    ...mapState({
+      activeChat: (store) => store.chats.activeChat,
+    }),
+
     showSidebar() {
       return !!this.sidebarComponent.name;
     },

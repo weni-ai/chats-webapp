@@ -1,5 +1,10 @@
 <template>
-  <div class="container" :class="{ active: !!chat.active }">
+  <div
+    class="container"
+    :class="{ active: chat.id === activeChat.id }"
+    @click="$emit('click')"
+    @keypress.enter="$emit('click')"
+  >
     <user-avatar :active="!!chat.active" />
 
     <div class="content">
@@ -16,6 +21,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import UserAvatar from '@/components/UserAvatar';
 
 export default {
@@ -30,6 +37,12 @@ export default {
       type: Object,
       required: true,
     },
+  },
+
+  computed: {
+    ...mapState({
+      activeChat: (state) => state.chats.activeChat || {},
+    }),
   },
 };
 </script>
