@@ -2,7 +2,27 @@
   <section class="macro-message" @click="$emit('select')" @keypress.enter="$emit('select')">
     <header>
       <span>{{ title }}</span>
-      <unnnic-icon-svg icon="navigation-menu-vertical-1" size="sm" class="close-icon" />
+      <span>
+        <unnnic-dropdown>
+          <template #trigger>
+            <unnnic-icon-svg icon="navigation-menu-vertical-1" size="sm" />
+          </template>
+
+          <unnnic-dropdown-item @click="$emit('edit')">
+            <div class="dropdown-item-content">
+              <unnnic-icon-svg class="icon" icon="app-window-edit-1" />
+              <span> Editar </span>
+            </div>
+          </unnnic-dropdown-item>
+
+          <unnnic-dropdown-item @click="$emit('delete')">
+            <div class="dropdown-item-content">
+              <unnnic-icon-svg class="icon" icon="delete-1-1" />
+              <span> Excluir </span>
+            </div>
+          </unnnic-dropdown-item>
+        </unnnic-dropdown>
+      </span>
     </header>
 
     <p>{{ message }}</p>
@@ -23,6 +43,10 @@ export default {
       required: true,
     },
   },
+
+  data: () => ({
+    isOpenOptionsMenu: false,
+  }),
 };
 </script>
 
@@ -44,6 +68,12 @@ export default {
       line-height: 1.375rem;
       font-weight: $unnnic-font-weight-bold;
       color: $unnnic-color-neutral-dark;
+    }
+
+    .dropdown-item-content {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
   }
 
