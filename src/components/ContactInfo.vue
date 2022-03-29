@@ -23,13 +23,26 @@
       size="sm"
       class="channel-select"
     >
-      <option value="suporte">Suporte</option>
-      <option value="finance">Financeiro</option>
-      <option value="customer_success">Customer success</option>
-      <option value="management">Gerência</option>
+      <option v-for="option in transferSelectOptions" :key="option.value" :value="option.text">
+        {{ option.text }}
+      </option>
     </unnnic-select>
 
-    <unnnic-button text="Transferir" size="small" class="transfer-button" />
+    <unnnic-button
+      text="Transferir"
+      size="small"
+      class="transfer-button"
+      @click="transferContact"
+    />
+
+    <unnnic-modal
+      text="Conversa transferida com sucesso!"
+      :description="`O contato foi encaminhado para a fila do ${transferContactTo}`"
+      modalIcon="check-circle-1-1"
+      scheme="feedback-green"
+      :showModal="showSuccessfulTransferModal"
+      @close="$store.commit('chats/setActiveChat', null), (showSuccessfulTransferModal = false)"
+    />
   </aside>
 </template>
 
@@ -40,13 +53,26 @@ export default {
   name: 'ContactInfo',
 
   data: () => ({
+    transferSelectOptions: [
+      { text: 'Suporte', value: 'suporte' },
+      { text: 'Financeiro', value: 'finance' },
+      { text: 'Customer success', value: 'customer_success' },
+      { text: 'Gerência', value: 'management' },
+    ],
     transferContactTo: '',
+    showSuccessfulTransferModal: false,
   }),
 
   computed: {
     ...mapState({
       chat: (state) => state.chats.activeChat,
     }),
+  },
+
+  methods: {
+    transferContact() {
+      this.showSuccessfulTransferModal = true;
+    },
   },
 };
 </script>

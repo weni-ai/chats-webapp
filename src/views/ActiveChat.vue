@@ -120,6 +120,12 @@ export default {
       this.isCloseChatModalOpen = false;
     },
   },
+
+  watch: {
+    activeChat(newValue) {
+      if (!newValue) this.componentInSidebar = '';
+    },
+  },
 };
 </script>
 
