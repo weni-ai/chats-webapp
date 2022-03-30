@@ -6,21 +6,21 @@
         "id": "1",
         "username": "João Cláudio",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 8,
+        "unreadMessages": 8,
         "messages": []
       },
       {
         "id": "2",
         "username": "Marcela Barros",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 5,
+        "unreadMessages": 5,
         "messages": []
       },
       {
         "id": "3",
         "username": "Roberto Barcelos",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 10,
+        "unreadMessages": 10,
         "messages": []
       }
     ]
@@ -32,7 +32,7 @@
         "id": "4",
         "username": "Pedro Pontes",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 8,
+        "unreadMessages": 8,
         "messages": [
           {
             "id": "1",
@@ -53,6 +53,46 @@
               "Olá, Pedro",
               "Preciso confirmar com o financeiro, você me dá um minuto?"
             ]
+          },
+          {
+            "id": "3",
+            "username": "Pedro Pontes",
+            "time": "10h15",
+            "content": [
+              "Oi",
+              "Gostaria de saber se consigo pagar meu boleto depois do vencimento",
+              "O boleto venceu ontem e eu não queria pagar juros",
+              "Como faço?"
+            ]
+          },
+          {
+            "id": "4",
+            "username": "Atendente",
+            "time": "10h20",
+            "content": [
+              "Olá, Pedro",
+              "Preciso confirmar com o financeiro, você me dá um minuto?"
+            ]
+          },
+          {
+            "id": "5",
+            "username": "Pedro Pontes",
+            "time": "10h15",
+            "content": [
+              "Oi",
+              "Gostaria de saber se consigo pagar meu boleto depois do vencimento",
+              "O boleto venceu ontem e eu não queria pagar juros",
+              "Como faço?"
+            ]
+          },
+          {
+            "id": "6",
+            "username": "Atendente",
+            "time": "10h20",
+            "content": [
+              "Olá, Pedro",
+              "Preciso confirmar com o financeiro, você me dá um minuto?"
+            ]
           }
         ]
       },
@@ -60,7 +100,7 @@
         "id": "5",
         "username": "Ilanna Lins",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 5,
+        "unreadMessages": 5,
         "messages": [
           {
             "id": "1",
@@ -108,7 +148,7 @@
         "id": "6",
         "username": "Rafael Felipe",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 10,
+        "unreadMessages": 10,
         "messages": [
           {
             "id": "1",
@@ -136,42 +176,42 @@
         "id": "7",
         "username": "Milton Neves",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 8,
+        "unreadMessages": 8,
         "messages": []
       },
       {
         "id": "8",
         "username": "Thiago Paiva",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 5,
+        "unreadMessages": 5,
         "messages": []
       },
       {
         "id": "9",
         "username": "Agnaldo França",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 10,
+        "unreadMessages": 10,
         "messages": []
       },
       {
         "id": "10",
         "username": "Tânia Almeida",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 8,
+        "unreadMessages": 8,
         "messages": []
       },
       {
         "id": "11",
         "username": "Thiago Paiva",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 5,
+        "unreadMessages": 5,
         "messages": []
       },
       {
         "id": "12",
         "username": "Cíntia Silva",
         "lastMessage": "Acho que podemos conversar ama...",
-        "unreadedMessages": 10,
+        "unreadMessages": 10,
         "messages": []
       }
     ]

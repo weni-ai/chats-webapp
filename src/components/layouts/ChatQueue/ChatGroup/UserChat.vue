@@ -15,7 +15,7 @@
     </div>
 
     <span class="unread-messages">
-      {{ chat.unreadedMessages }}
+      {{ chat.unreadMessages }}
     </span>
   </div>
 </template>

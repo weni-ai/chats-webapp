@@ -13,6 +13,7 @@
       />
 
       <message-editor
+        v-if="!activeChat.closed"
         v-model="editorMessage"
         class="message-editor"
         :showing-sidebar="showSidebar"

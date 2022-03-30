@@ -2,12 +2,10 @@
   <span @click="$emit('click')" @keypress.enter="$emit('click')">
     <unnnic-avatar-icon
       icon="single-neutral-actions-1"
-      :schema="'aux-blue'"
       :enabled="false"
       :size="size"
       class="user-avatar"
-      :class="{ active }"
-      v-bind="$attrs"
+      :class="{ active, 'neutral-background': disabled }"
     />
   </span>
 </template>
@@ -20,6 +18,10 @@ export default {
 
   props: {
     active: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },
@@ -41,6 +43,10 @@ export default {
 
   &.active {
     background: rgba($unnnic-color-brand-weni, $unnnic-opacity-level-light) !important;
+  }
+
+  &.neutral-background {
+    background: $unnnic-color-neutral-clean !important;
   }
 }
 </style>

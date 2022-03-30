@@ -1,20 +1,27 @@
 <template>
-  <header class="active-chat-header">
-    <user-avatar size="lg" class="avatar" @click="showContactInfo" />
-    <span class="username" @click="showContactInfo" @keypress.enter="showContactInfo">
-      {{ chat.username }}
-    </span>
-    <span @click="$emit('close')" @keypress.enter="$emit('close')">
-      <unnnic-icon-svg class="close-button" icon="close-1" size="sm" />
-    </span>
-  </header>
+  <div>
+    <header class="active-chat-header">
+      <user-avatar size="lg" class="avatar" @click="showContactInfo" :disabled="chat.closed" />
+      <span class="username" @click="showContactInfo" @keypress.enter="showContactInfo">
+        {{ chat.username }}
+      </span>
+      <span @click="$emit('close')" @keypress.enter="$emit('close')">
+        <unnnic-icon-svg class="close-button" icon="close-1" size="sm" />
+      </span>
+    </header>
+
+    <section class="closed-message" v-if="chat.closed">
+      <span class="message">Atendimento encerrado em 20/12/2021</span>
+      <unnnic-icon-svg icon="alert-circle-1-1" size="sm" scheme="neutral-darkest" />
+    </section>
+  </div>
 </template>
 
 <script>
 import UserAvatar from '@/components/UserAvatar';
 
 export default {
-  name: 'ActiveChatHeader',
+  name: 'ChatHeader',
 
   components: {
     UserAvatar,
@@ -54,6 +61,25 @@ export default {
     font-weight: 400;
     line-height: 1.5rem;
     color: $unnnic-color-neutral-dark;
+  }
+}
+
+.closed-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: $unnnic-color-feedback-grey;
+  height: 2rem;
+
+  margin-top: 1rem;
+
+  .message {
+    margin-right: 0.5rem;
+
+    color: $unnnic-color-neutral-dark;
+    font-size: 0.875rem;
+    font-weight: $unnnic-font-weight-regular;
+    line-height: 1.375rem;
   }
 }
 </style>

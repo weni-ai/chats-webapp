@@ -14,6 +14,7 @@
           size="xs"
           :class="{ clickable: message.username !== 'Atendente' }"
           @click="showContactInfo(message.username)"
+          :disabled="chat.closed"
         />
       </span>
 
