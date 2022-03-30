@@ -10,6 +10,7 @@
         :chat="activeChat"
         class="messages"
         @show-contact-info="componentInSidebar = 'contactInfo'"
+        ref="chatMessages"
       />
 
       <message-editor
@@ -121,6 +122,9 @@ export default {
       this.activeChat.closed = true;
       this.isCloseChatModalOpen = false;
     },
+    scrollMessagesToBottom() {
+      this.$refs.chatMessages.$el.scrollTop = this.$refs.chatMessages.$el.scrollHeight;
+    },
     sendMessage() {
       const message = { text: this.editorMessage.trim(), sent: Math.random() < 0.1 };
 
@@ -143,7 +147,11 @@ export default {
         });
       }
 
-      this.$store.commit('chats/setActiveChat', activeChat);
+      this.$store.commit('chats/setActiveChat', { ...activeChat, messages });
+
+      setTimeout(() => {
+        this.scrollMessagesToBottom();
+      }, 100);
     },
   },
 
