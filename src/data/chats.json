@@ -39,10 +39,12 @@
             "username": "Pedro Pontes",
             "time": "10h15",
             "content": [
-              "Oi",
-              "Gostaria de saber se consigo pagar meu boleto depois do vencimento",
-              "O boleto venceu ontem e eu não queria pagar juros",
-              "Como faço?"
+              { "text": "Oi" },
+              {
+                "text": "Gostaria de saber se consigo pagar meu boleto depois do vencimento"
+              },
+              { "text": "O boleto venceu ontem e eu não queria pagar juros" },
+              { "text": "Como faço?" }
             ]
           },
           {
@@ -50,8 +52,10 @@
             "username": "Atendente",
             "time": "10h20",
             "content": [
-              "Olá, Pedro",
-              "Preciso confirmar com o financeiro, você me dá um minuto?"
+              { "text": "Olá, Pedro" },
+              {
+                "text": "Preciso confirmar com o financeiro, você me dá um minuto?"
+              }
             ]
           },
           {
@@ -59,10 +63,12 @@
             "username": "Pedro Pontes",
             "time": "10h15",
             "content": [
-              "Oi",
-              "Gostaria de saber se consigo pagar meu boleto depois do vencimento",
-              "O boleto venceu ontem e eu não queria pagar juros",
-              "Como faço?"
+              { "text": "Oi" },
+              {
+                "text": "Gostaria de saber se consigo pagar meu boleto depois do vencimento"
+              },
+              { "text": "O boleto venceu ontem e eu não queria pagar juros" },
+              { "text": "Como faço?" }
             ]
           },
           {
@@ -70,8 +76,10 @@
             "username": "Atendente",
             "time": "10h20",
             "content": [
-              "Olá, Pedro",
-              "Preciso confirmar com o financeiro, você me dá um minuto?"
+              { "text": "Olá, Pedro" },
+              {
+                "text": "Preciso confirmar com o financeiro, você me dá um minuto?"
+              }
             ]
           },
           {
@@ -79,10 +87,12 @@
             "username": "Pedro Pontes",
             "time": "10h15",
             "content": [
-              "Oi",
-              "Gostaria de saber se consigo pagar meu boleto depois do vencimento",
-              "O boleto venceu ontem e eu não queria pagar juros",
-              "Como faço?"
+              { "text": "Oi" },
+              {
+                "text": "Gostaria de saber se consigo pagar meu boleto depois do vencimento"
+              },
+              { "text": "O boleto venceu ontem e eu não queria pagar juros" },
+              { "text": "Como faço?" }
             ]
           },
           {
@@ -90,8 +100,10 @@
             "username": "Atendente",
             "time": "10h20",
             "content": [
-              "Olá, Pedro",
-              "Preciso confirmar com o financeiro, você me dá um minuto?"
+              { "text": "Olá, Pedro" },
+              {
+                "text": "Preciso confirmar com o financeiro, você me dá um minuto?"
+              }
             ]
           }
         ]
@@ -107,10 +119,12 @@
             "username": "Ilanna Lins",
             "time": "10h15",
             "content": [
-              "Oi",
-              "Gostaria de saber se consigo pagar meu boleto depois do vencimento",
-              "O boleto venceu ontem e eu não queria pagar juros",
-              "Como faço?"
+              { "text": "Oi" },
+              {
+                "text": "Gostaria de saber se consigo pagar meu boleto depois do vencimento"
+              },
+              { "text": "O boleto venceu ontem e eu não queria pagar juros" },
+              { "text": "Como faço?" }
             ]
           },
           {
@@ -118,8 +132,10 @@
             "username": "Atendente",
             "time": "10h20",
             "content": [
-              "Olá, Ilanna",
-              "Preciso confirmar com o financeiro, você me dá um minuto?"
+              { "text": "Olá, Ilanna" },
+              {
+                "text": "Preciso confirmar com o financeiro, você me dá um minuto?"
+              }
             ]
           },
           {
@@ -127,10 +143,12 @@
             "username": "Ilanna Lins",
             "time": "10h15",
             "content": [
-              "Oi",
-              "Gostaria de saber se consigo pagar meu boleto depois do vencimento",
-              "O boleto venceu ontem e eu não queria pagar juros",
-              "Como faço?"
+              { "text": "Oi" },
+              {
+                "text": "Gostaria de saber se consigo pagar meu boleto depois do vencimento"
+              },
+              { "text": "O boleto venceu ontem e eu não queria pagar juros" },
+              { "text": "Como faço?" }
             ]
           },
           {
@@ -138,8 +156,10 @@
             "username": "Atendente",
             "time": "10h20",
             "content": [
-              "Olá, Ilanna",
-              "Preciso confirmar com o financeiro, você me dá um minuto?"
+              { "text": "Olá, Ilanna" },
+              {
+                "text": "Preciso confirmar com o financeiro, você me dá um minuto?"
+              }
             ]
           }
         ]
@@ -155,10 +175,12 @@
             "username": "Rafael Felipe",
             "time": "10h15",
             "content": [
-              "Oi",
-              "Gostaria de saber se consigo pagar meu boleto depois do vencimento",
-              "O boleto venceu ontem e eu não queria pagar juros",
-              "Como faço?"
+              { "text": "Oi" },
+              {
+                "text": "Gostaria de saber se consigo pagar meu boleto depois do vencimento"
+              },
+              { "text": "O boleto venceu ontem e eu não queria pagar juros" },
+              { "text": "Como faço?" }
             ]
           },
           {
@@ -166,8 +188,10 @@
             "username": "Atendente",
             "time": "10h20",
             "content": [
-              "Olá, Rafael",
-              "Preciso confirmar com o financeiro, você me dá um minuto?"
+              { "text": "Olá, Rafael" },
+              {
+                "text": "Preciso confirmar com o financeiro, você me dá um minuto?"
+              }
             ]
           }
         ]

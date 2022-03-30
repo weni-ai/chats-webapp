@@ -20,6 +20,7 @@
         @show-macro-messages="
           componentInSidebar = componentInSidebar === 'macroMessages' ? '' : 'macroMessages'
         "
+        @send="sendMessage"
       />
     </section>
 
@@ -119,6 +120,30 @@ export default {
     closeChat() {
       this.activeChat.closed = true;
       this.isCloseChatModalOpen = false;
+    },
+    sendMessage() {
+      const message = { text: this.editorMessage.trim(), sent: Math.random() < 0.1 };
+
+      if (!message.text) return;
+
+      const activeChat = { ...this.activeChat };
+      const { messages } = activeChat;
+
+      if (messages.at(-1)?.username === 'Atendente' && message.sent) {
+        messages.at(-1).content.push(message);
+      } else {
+        messages.push({
+          id: Math.ceil(Math.random() * 100 + 1),
+          username: 'Atendente',
+          time: `${new Date().getHours().toString().padStart(2, '0')}h${new Date()
+            .getMinutes()
+            .toString()
+            .padStart(2, '0')}`,
+          content: [message],
+        });
+      }
+
+      this.$store.commit('chats/setActiveChat', activeChat);
     },
   },
 

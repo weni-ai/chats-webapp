@@ -1,10 +1,12 @@
 <template>
-  <div class="message-editor" :class="{ 'col-2': showingSidebar }">
-    <textarea
+  <div class="message-editor" :class="{ row: showingSidebar }">
+    <input
       v-model="message"
       class="editor"
       aria-label="message-editor"
       placeholder="Digite sua mensagem"
+      type="text"
+      @keypress.enter="sendMessage"
     />
 
     <div class="actions" :class="{ stacked: showingSidebar }">
@@ -14,7 +16,13 @@
         size="small"
         @click="$emit('show-macro-messages')"
       />
-      <unnnic-button text="Enviar" iconLeft="send-mail-3-1" size="small" class="send-button" />
+      <unnnic-button
+        text="Enviar"
+        iconLeft="send-mail-3-1"
+        size="small"
+        class="send-button"
+        @click="sendMessage"
+      />
     </div>
   </div>
 </template>
@@ -50,6 +58,14 @@ export default {
       },
     },
   },
+
+  methods: {
+    sendMessage() {
+      this.$emit('send');
+
+      this.message = '';
+    },
+  },
 };
 </script>
 
@@ -63,7 +79,7 @@ export default {
   border: solid 1px $unnnic-color-neutral-clean;
   border-radius: $unnnic-border-radius-sm;
 
-  &.col-2 {
+  &.row {
     flex-direction: row;
   }
 

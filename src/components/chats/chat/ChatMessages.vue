@@ -29,13 +29,40 @@
             {{ message.username }}
           </span>
           <span class="time">{{ message.time }}</span>
+          <span
+            v-if="message.content.some((el) => el.sent === false)"
+            @click="messageToResend = message.content.find((el) => el.sent === false)"
+            @keypress.space="messageToResend = message.content.find((el) => el.sent === false)"
+          >
+            <unnnic-icon
+              icon="synchronize-arrow-clock-5"
+              scheme="feedback-red"
+              size="sm"
+              clickable
+            />
+          </span>
         </div>
 
-        <div v-for="element in message.content" :key="element" class="messages">
-          <p>{{ element }}</p>
+        <div v-for="element in message.content" :key="element.text" class="messages">
+          <p :class="{ 'unsent-message': element.sent === false }">{{ element.text }}</p>
         </div>
       </div>
     </div>
+    <unnnic-modal
+      :showModal="!!messageToResend"
+      modalIcon="alert-circle-1"
+      text="Mensagem não enviada"
+      description="Sua mensagem não foi enviada. Deseja reenviar?"
+      @close="messageToResend = null"
+    >
+      <template #options>
+        <unnnic-button type="terciary" @click="messageToResend = null" text="Cancelar envio" />
+        <unnnic-button
+          @click="(messageToResend.sent = true), (messageToResend = null)"
+          text="Reenviar"
+        />
+      </template>
+    </unnnic-modal>
   </section>
 </template>
 
@@ -55,6 +82,10 @@ export default {
       required: true,
     },
   },
+
+  data: () => ({
+    messageToResend: null,
+  }),
 
   methods: {
     showContactInfo(username) {
@@ -123,6 +154,10 @@ export default {
     }
 
     .messages {
+      & .unsent-message {
+        color: $unnnic-color-neutral-clean;
+      }
+
       & > * {
         font-size: 0.875rem;
         line-height: 1.375rem;
