@@ -10,6 +10,11 @@ const routes = [
     name: 'home',
     component: ActiveChat,
   },
+  {
+    path: '/closed-chats',
+    name: 'closed-chats',
+    component: () => import(/* webpackChunkName: closed-chats */ '@/views/ClosedChats'),
+  },
 ];
 
 const router = new VueRouter({

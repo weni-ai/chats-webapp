@@ -23,6 +23,12 @@
         "
         @send="sendMessage"
       />
+
+      <template v-if="activeChat.closed && !activeChat.tags">
+        <div class="chat-closed-message">Atendimento encerrado pelo agente</div>
+
+        <tag-selector label="Por favor, classifique o atendimento:" />
+      </template>
     </section>
 
     <unnnic-modal
@@ -59,6 +65,7 @@ import ChatMessages from '@/components/chats/chat/ChatMessages';
 import ContactInfo from '@/components/ContactInfo';
 import MacroMessagesController from '@/components/chats/MacroMessagesController';
 import MessageEditor from '@/components/chats/MessageEditor';
+import TagSelector from '@/components/chats/TagSelector';
 
 export default {
   name: 'ActiveChat',
@@ -70,6 +77,7 @@ export default {
     MacroMessagesController,
     MainLayout,
     MessageEditor,
+    TagSelector,
   },
 
   data: () => ({
@@ -119,7 +127,7 @@ export default {
 
   methods: {
     closeChat() {
-      this.activeChat.closed = true;
+      this.$store.commit('chats/setActiveChat', { ...this.activeChat, closed: true });
       this.isCloseChatModalOpen = false;
     },
     scrollMessagesToBottom() {
@@ -178,6 +186,14 @@ export default {
 
   .message-editor {
     margin-top: auto;
+  }
+
+  .chat-closed-message {
+    width: 100%;
+    text-align: center;
+    font-size: 0.875rem;
+    line-height: 1.375rem;
+    color: $unnnic-color-feedback-yellow;
   }
 }
 

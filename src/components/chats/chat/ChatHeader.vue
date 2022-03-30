@@ -11,7 +11,7 @@
     </header>
 
     <section class="closed-message" v-if="chat.closed">
-      <span class="message">Atendimento encerrado em 20/12/2021</span>
+      <span class="message">Atendimento encerrado em {{ getTodayDate() }}</span>
       <unnnic-icon-svg icon="alert-circle-1-1" size="sm" scheme="neutral-darkest" />
     </section>
   </div>
@@ -35,6 +35,11 @@ export default {
   },
 
   methods: {
+    getTodayDate() {
+      return new Intl.DateTimeFormat('pt-BR', {
+        dateStyle: 'short',
+      }).format(new Date());
+    },
     showContactInfo() {
       if (this.chat.username === 'Atendente') return;
 
