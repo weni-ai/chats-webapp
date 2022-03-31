@@ -1,8 +1,8 @@
 <template>
   <main-layout>
     <section v-if="!!chat" class="active-chat">
-      <chat-header :chat="{ ...chat, closed: true }" @close="chat = null" />
-      <chat-messages :chat="{ ...chat, closed: true }" class="messages" />
+      <chat-header :chat="{ ...chat }" @close="chat = null" />
+      <chat-messages :chat="{ ...chat }" class="messages" />
     </section>
 
     <section class="closed-chats" v-else>
@@ -10,7 +10,7 @@
 
       <tag-selector v-model="tags" label="Filtrar" />
 
-      <unnnic-table :items="chats" class="closed-chats-table">
+      <unnnic-table :items="filteredClosedChats" class="closed-chats-table">
         <template #header>
           <unnnic-table-row :headers="tableHeaders" />
         </template>
@@ -24,9 +24,9 @@
               </div>
             </template>
 
-            <template #agentName>{{ item.agent || 'Márcia' }}</template>
+            <template #agentName>{{ item.agent }}</template>
 
-            <template #date>{{ item.date || '25/03/2022' }}</template>
+            <template #date>{{ item.date }}</template>
 
             <template #visualize>
               <unnnic-button
@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import chats from '@/data/chats.json';
+import { mapState } from 'vuex';
 
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
@@ -79,12 +79,6 @@ export default {
   data: () => ({
     chat: null,
 
-    chats: chats.reduce((acc, chat) => {
-      acc.push(...chat.chats);
-
-      return acc;
-    }, []),
-
     tags: [],
 
     tableHeaders: [
@@ -110,6 +104,29 @@ export default {
       },
     ],
   }),
+
+  computed: {
+    ...mapState({
+      closedChats: (state) => state.data.closedChats,
+    }),
+
+    filteredClosedChats() {
+      return this.closedChats.filter(this.chatHasAllActiveFilterTags);
+    },
+  },
+
+  methods: {
+    chatHasAllActiveFilterTags(chat) {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const tag of this.tags) {
+        if (chat.tags.indexOf(tag) === -1) {
+          return false;
+        }
+      }
+
+      return true;
+    },
+  },
 };
 </script>
 

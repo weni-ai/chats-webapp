@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import chats from '@/data/chats.json';
+import { mapState } from 'vuex';
 
 import ChatGroup from './ChatGroup';
 
@@ -43,11 +43,13 @@ export default {
   },
 
   data: () => ({
-    chatGroups: chats,
     tag: '',
   }),
 
   computed: {
+    ...mapState({
+      chatGroups: (state) => state.data.chats,
+    }),
     isActiveChatsView() {
       return this.$route.name === 'home';
     },

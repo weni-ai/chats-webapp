@@ -166,9 +166,26 @@ export default {
         this.scrollMessagesToBottom();
       }, 100);
     },
-    setChatTags() {
+
+    getTodayDate() {
+      return new Intl.DateTimeFormat('pt-BR', {
+        dateStyle: 'short',
+      }).format(new Date());
+    },
+
+    async setChatTags() {
       const { activeChat, tags } = this;
-      this.$store.commit('chats/setActiveChat', { ...activeChat, tags });
+
+      await this.$store.dispatch('data/closeChat', {
+        id: activeChat.id,
+        username: activeChat.username,
+        agent: 'Ana',
+        date: this.getTodayDate(),
+        closed: true,
+        tags,
+        messages: activeChat.messages,
+      });
+
       this.$store.commit('chats/setActiveChat', null);
     },
   },

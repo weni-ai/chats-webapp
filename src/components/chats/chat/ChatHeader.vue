@@ -11,7 +11,7 @@
     </header>
 
     <section class="closed-message" v-if="chat.closed">
-      <span class="message">Atendimento encerrado em {{ getTodayDate() }}</span>
+      <span class="message">Atendimento encerrado em {{ chat.date || getTodayDate() }}</span>
       <unnnic-icon-svg icon="alert-circle-1-1" size="sm" scheme="neutral-darkest" />
     </section>
   </div>
