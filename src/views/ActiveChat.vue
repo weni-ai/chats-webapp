@@ -27,7 +27,11 @@
       <template v-if="activeChat.closed && !activeChat.tags">
         <div class="chat-closed-message">Atendimento encerrado pelo agente</div>
 
-        <tag-selector label="Por favor, classifique o atendimento:" />
+        <tag-selector v-model="tags" label="Por favor, classifique o atendimento:">
+          <template #actions>
+            <unnnic-button text="Confirmar" type="secondary" size="small" @click="setChatTags" />
+          </template>
+        </tag-selector>
       </template>
     </section>
 
@@ -84,6 +88,7 @@ export default {
     componentInSidebar: '',
     editorMessage: '',
     isCloseChatModalOpen: false,
+    tags: [],
   }),
 
   computed: {
@@ -160,6 +165,11 @@ export default {
       setTimeout(() => {
         this.scrollMessagesToBottom();
       }, 100);
+    },
+    setChatTags() {
+      const { activeChat, tags } = this;
+      this.$store.commit('chats/setActiveChat', { ...activeChat, tags });
+      this.$store.commit('chats/setActiveChat', null);
     },
   },
 

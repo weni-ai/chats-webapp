@@ -2,16 +2,21 @@
   <section>
     <p v-if="!!label" class="label">{{ label }}</p>
 
-    <section class="tags">
-      <unnnic-tag
-        v-for="tag in orderedTags"
-        :key="tag.text"
-        clickable
-        :text="tag.text"
-        :hasCloseIcon="selected.includes(tag.value)"
-        :class="{ selected: selected.includes(tag.value) }"
-        @click="handleSelectedTags(tag.value)"
-      />
+    <section class="container">
+      <section class="tags">
+        <unnnic-tag
+          v-for="tag in orderedTags"
+          :key="tag.text"
+          clickable
+          :text="tag.text"
+          :hasCloseIcon="selected.includes(tag.value)"
+          :class="{ selected: selected.includes(tag.value) }"
+          @click="handleSelectedTags(tag.value)"
+        />
+      </section>
+      <section class="actions">
+        <slot name="actions" />
+      </section>
     </section>
   </section>
 </template>
@@ -79,16 +84,26 @@ export default {
   margin-bottom: 0.5rem;
 }
 
-.tags {
+.container {
   display: flex;
-  gap: 1.5rem;
-  padding: 1.5rem 1rem 1rem 1.5rem;
+  align-items: flex-start;
+  justify-content: space-between;
 
+  padding: 1.5rem 1rem 1.5rem 1.5rem;
   border: solid 1px $unnnic-color-neutral-soft;
   border-radius: 0.25rem;
 
-  .selected {
-    border: solid 1px $unnnic-color-neutral-dark;
+  .tags {
+    display: flex;
+    gap: 1.5rem;
+
+    .selected {
+      border: solid 1px $unnnic-color-neutral-dark;
+    }
+  }
+
+  .actions {
+    align-self: center;
   }
 }
 </style>
