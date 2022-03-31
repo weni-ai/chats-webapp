@@ -65,6 +65,17 @@ export default {
     UserAvatar,
   },
 
+  props: {
+    tag: {
+      type: String,
+      default: '',
+    },
+  },
+
+  beforeMount() {
+    if (this.tag) this.tags.push(this.tag);
+  },
+
   data: () => ({
     chat: null,
 

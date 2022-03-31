@@ -4,7 +4,7 @@
       <unnnic-input
         class="input"
         icon-left="search-1"
-        placeholder="Busque por Fluxos criados no projeto ou por quaisquer Inteligências..."
+        placeholder="Busque por chats ativos e encerrados..."
         size="sm"
       />
       <unnnic-select v-model="select" class="select" size="sm">
