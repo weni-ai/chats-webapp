@@ -70,7 +70,8 @@ export default {
   },
 
   methods: {
-    transferContact() {
+    async transferContact() {
+      await this.$store.dispatch('data/closeChat', this.chat);
       this.showSuccessfulTransferModal = true;
     },
   },
