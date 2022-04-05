@@ -58,7 +58,7 @@ import MacroMessageCard from './MacroMessageCard';
 import NewMacroMessageModal from './NewMacroMessageModal';
 
 export default {
-  name: 'MacroMessagesController',
+  name: 'MacroMessages',
 
   components: {
     MacroMessageCard,

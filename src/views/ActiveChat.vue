@@ -66,9 +66,9 @@ import MainLayout from '@/layouts/MainLayout';
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
 import ContactInfo from '@/components/ContactInfo';
-import MacroMessagesController from '@/components/chats/MacroMessagesController';
 import MessageEditor from '@/components/chats/MessageEditor';
 import TagSelector from '@/components/chats/TagSelector';
+import MacroMessages from '@/components/chats/MacroMessages';
 
 export default {
   name: 'ActiveChat',
@@ -77,7 +77,7 @@ export default {
     ChatHeader,
     ChatMessages,
     ContactInfo,
-    MacroMessagesController,
+    MacroMessages,
     MainLayout,
     MessageEditor,
     TagSelector,
@@ -100,7 +100,7 @@ export default {
     sidebarComponents() {
       return {
         macroMessages: {
-          name: MacroMessagesController.name,
+          name: MacroMessages.name,
           listeners: {
             close: () => {
               this.componentInSidebar = '';
