@@ -517,6 +517,9 @@ const module = {
     },
     setActiveChat(state, chat) {
       state.activeChat = chat;
+
+      if (!chat) return;
+
       state.chats = state.chats.map((group) => ({
         ...group,
         chats: group.chats.map((c) => (c.id === chat.id ? { ...c, unreadMessages: 0 } : c)),
