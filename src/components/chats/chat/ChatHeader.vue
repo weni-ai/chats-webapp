@@ -12,7 +12,9 @@
         {{ chat.username }}
       </span>
       <span @click="$emit('close')" @keypress.enter="$emit('close')">
-        <unnnic-icon-svg class="close-button" icon="close-1" size="sm" />
+        <unnnic-tool-tip enabled text="Encerrar conversa" side="left">
+          <unnnic-icon-svg class="close-button" icon="close-1" size="sm" />
+        </unnnic-tool-tip>
       </span>
     </header>
 
