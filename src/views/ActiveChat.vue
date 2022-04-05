@@ -141,7 +141,7 @@ export default {
       const activeChat = { ...this.activeChat };
       const { messages } = activeChat;
 
-      if (messages.at(-1)?.username === 'Atendente' && message.sent) {
+      if (messages.at(-1)?.username === 'Atendente') {
         messages.at(-1).content.push(message);
       } else {
         messages.push({

@@ -29,22 +29,25 @@
             {{ message.username }}
           </span>
           <span class="time">{{ message.time }}</span>
-          <span
-            v-if="message.content.some((el) => el.sent === false)"
-            @click="messageToResend = message.content.find((el) => el.sent === false)"
-            @keypress.space="messageToResend = message.content.find((el) => el.sent === false)"
-          >
-            <unnnic-icon
-              icon="synchronize-arrow-clock-5"
-              scheme="feedback-red"
-              size="sm"
-              clickable
-            />
-          </span>
         </div>
 
-        <div v-for="element in message.content" :key="element.text" class="messages">
-          <p :class="{ 'unsent-message': element.sent === false }">{{ element.text }}</p>
+        <div v-for="content in message.content" :key="content.text" class="messages">
+          <p :class="{ 'unsent-message': content.sent === false }">
+            {{ content.text }}
+            <span
+              v-if="content.sent === false"
+              @click="messageToResend = content"
+              @keypress.enter="messageToResend = content"
+              class="resend-button"
+            >
+              <unnnic-icon
+                icon="synchronize-arrow-clock-5"
+                scheme="feedback-red"
+                size="sm"
+                clickable
+              />
+            </span>
+          </p>
         </div>
       </div>
     </div>
@@ -156,6 +159,12 @@ export default {
     .messages {
       & .unsent-message {
         color: $unnnic-color-neutral-clean;
+
+        & .resend-button {
+          display: inline-flex;
+          align-items: center;
+          margin-left: 0.5rem;
+        }
       }
 
       & > * {
