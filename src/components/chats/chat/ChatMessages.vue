@@ -11,8 +11,8 @@
     <div v-for="message in chat.messages" :key="message.id" class="message">
       <span>
         <user-avatar
-          size="xs"
-          :class="{ clickable: message.username !== 'Atendente' }"
+          :username="message.username"
+          :clickable="message.username !== 'Atendente'"
           @click="showContactInfo(message.username)"
           :disabled="chat.closed"
         />

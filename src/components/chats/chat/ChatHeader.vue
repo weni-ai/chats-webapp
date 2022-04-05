@@ -1,7 +1,13 @@
 <template>
   <div>
     <header class="active-chat-header">
-      <user-avatar size="lg" class="avatar" @click="showContactInfo" :disabled="chat.closed" />
+      <user-avatar
+        :username="chat.username"
+        size="2xl"
+        clickable
+        @click="showContactInfo"
+        :disabled="chat.closed"
+      />
       <span class="username" @click="showContactInfo" @keypress.enter="showContactInfo">
         {{ chat.username }}
       </span>
@@ -55,7 +61,6 @@ export default {
   align-items: center;
   gap: 1rem;
 
-  .avatar,
   .username,
   .close-button {
     cursor: pointer;

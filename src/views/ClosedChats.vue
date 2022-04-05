@@ -19,7 +19,7 @@
           <unnnic-table-row :headers="tableHeaders">
             <template #contactName>
               <div class="contact-name">
-                <user-avatar />
+                <user-avatar :username="item.username" />
                 {{ item.username }}
               </div>
             </template>

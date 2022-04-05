@@ -39,7 +39,7 @@ export default {
 
   methods: {
     selectChat(chat) {
-      this.$store.commit('chats/setActiveChat', chat);
+      this.$store.commit('chats/setActiveChat', { ...chat, active: true });
     },
   },
 };

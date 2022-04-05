@@ -5,7 +5,7 @@
     @click="$emit('click')"
     @keypress.enter="$emit('click')"
   >
-    <user-avatar :active="!!chat.active" />
+    <user-avatar :username="chat.username" :active="chat.id === activeChat.id" size="xl" />
 
     <div class="content">
       <h3 class="username">{{ chat.username }}</h3>
@@ -59,7 +59,6 @@ export default {
   width: 16rem;
 
   &.active {
-    padding: 0.25rem 0.5rem;
     border-radius: $unnnic-border-radius-sm;
     background: rgba($unnnic-color-brand-weni, $unnnic-opacity-level-extra-light);
   }
