@@ -176,7 +176,7 @@ export default {
     async setChatTags() {
       const { activeChat, tags } = this;
 
-      await this.$store.dispatch('data/closeChat', {
+      await this.$store.dispatch('chats/closeChat', {
         id: activeChat.id,
         username: activeChat.username,
         agent: 'Ana',

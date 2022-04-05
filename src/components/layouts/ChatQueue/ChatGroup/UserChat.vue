@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <span class="unread-messages" :class="{ filled }">
+    <span v-if="chat.unreadMessages !== 0" class="unread-messages" :class="{ filled }">
       {{ chat.unreadMessages }}
     </span>
   </div>

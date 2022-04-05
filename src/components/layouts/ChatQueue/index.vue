@@ -48,7 +48,7 @@ export default {
 
   computed: {
     ...mapState({
-      chatGroups: (state) => state.data.chats,
+      chatGroups: (state) => state.chats.chats,
     }),
     isActiveChatsView() {
       return this.$route.name === 'home';

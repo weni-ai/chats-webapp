@@ -71,7 +71,7 @@ export default {
 
   methods: {
     transferContact() {
-      this.$store.commit('data/removeChat', this.chat);
+      this.$store.commit('chats/removeChat', this.chat);
       this.showSuccessfulTransferModal = true;
     },
   },

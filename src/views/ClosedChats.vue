@@ -107,7 +107,7 @@ export default {
 
   computed: {
     ...mapState({
-      closedChats: (state) => state.data.closedChats,
+      closedChats: (state) => state.chats.closedChats,
     }),
 
     filteredClosedChats() {
