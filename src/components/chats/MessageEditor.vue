@@ -1,5 +1,5 @@
 <template>
-  <div class="message-editor" :class="{ row: showingSidebar }">
+  <div class="message-editor">
     <input
       v-model="message"
       class="editor"
@@ -9,7 +9,7 @@
       @keypress.enter="sendMessage"
     />
 
-    <div class="actions" :class="{ stacked: showingSidebar }">
+    <div class="actions">
       <unnnic-button
         type="secondary"
         text="Mensagens prontas"
@@ -38,10 +38,6 @@ export default {
   },
 
   props: {
-    showingSidebar: {
-      type: Boolean,
-      default: false,
-    },
     value: {
       type: String,
       default: '',
@@ -72,19 +68,15 @@ export default {
 <style lang="scss" scoped>
 .message-editor {
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
   gap: 2rem;
 
   padding: 1rem;
   border: solid 1px $unnnic-color-neutral-clean;
   border-radius: $unnnic-border-radius-sm;
 
-  &.row {
-    flex-direction: row;
-  }
-
   .editor {
-    flex: 1;
+    flex: 1 1;
     resize: none;
     border: none;
     outline: none;
@@ -92,16 +84,13 @@ export default {
 
   .actions {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: flex-end;
     gap: 0.5rem;
 
-    &.stacked {
-      flex-direction: column;
-
-      .send-button {
-        width: 100%;
-      }
+    .send-button {
+      width: 100%;
     }
   }
 }

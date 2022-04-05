@@ -17,7 +17,6 @@
         v-if="!activeChat.closed"
         v-model="editorMessage"
         class="message-editor"
-        :showing-sidebar="showSidebar"
         @show-macro-messages="
           componentInSidebar = componentInSidebar === 'macroMessages' ? '' : 'macroMessages'
         "
@@ -95,10 +94,6 @@ export default {
     ...mapState({
       activeChat: (store) => store.chats.activeChat,
     }),
-
-    showSidebar() {
-      return !!this.sidebarComponent.name;
-    },
     sidebarComponent() {
       return this.sidebarComponents[this.componentInSidebar] || {};
     },
