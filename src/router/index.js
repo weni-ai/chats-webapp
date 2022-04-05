@@ -14,9 +14,6 @@ const routes = [
     path: '/closed-chats',
     name: 'closed-chats',
     component: () => import(/* webpackChunkName: "closed-chats" */ '@/views/ClosedChats'),
-    props: ({ query }) => ({
-      tag: query.tag,
-    }),
   },
 ];
 

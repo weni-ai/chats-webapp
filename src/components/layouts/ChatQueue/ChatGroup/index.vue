@@ -1,5 +1,5 @@
 <template>
-  <div class="chat-group">
+  <div class="chat-group" :class="{ disabled }">
     <header>
       <h2>{{ chatGroup.name }}</h2>
       <unnnic-icon icon="add-1" size="xs" />
@@ -7,7 +7,7 @@
 
     <ul class="chats" :class="{ filled }">
       <li v-for="chat in chatGroup.chats" :key="chat.id">
-        <user-chat :chat="chat" @click="selectChat(chat)" :filled="filled" />
+        <user-chat :chat="chat" @click="selectChat(chat)" :filled="filled" :disabled="disabled" />
       </li>
     </ul>
   </div>
@@ -31,6 +31,10 @@ export default {
       type: Object,
       required: true,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     filled: {
       type: Boolean,
       default: false,
@@ -47,6 +51,14 @@ export default {
 
 <style lang="scss" scoped>
 .chat-group {
+  &.disabled {
+    header {
+      h2 {
+        color: $unnnic-color-neutral-lightest;
+      }
+    }
+  }
+
   header {
     display: flex;
     align-items: center;
@@ -60,6 +72,7 @@ export default {
       color: $unnnic-color-neutral-cloudy;
     }
   }
+
   ul.chats {
     list-style-type: none;
     margin: 0;

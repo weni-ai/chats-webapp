@@ -1,31 +1,21 @@
 <template>
   <div class="container">
-    <unnnic-select
-      v-if="isActiveChatsView"
-      v-model="tag"
-      placeholder="Pesquisar por tags"
-      size="sm"
-      @input="goToClosedChatsView"
-    >
-      <option value="doubts">Dúvidas</option>
-      <option value="finance">Financeiro</option>
-      <option value="help">Ajuda</option>
-    </unnnic-select>
-    <unnnic-button
-      v-else
-      text="Voltar para conversas"
-      iconRight="keyboard-return-1"
-      size="small"
-      type="secondary"
-      class="return-button"
-      @click="$router.push('/')"
-    />
+    <section class="chat-groups">
+      <chat-group
+        v-for="chatGroup in chatGroups"
+        :key="chatGroup.name"
+        :chat-group="chatGroup"
+        :filled="chatGroup.name === 'Fila'"
+        :disabled="disabled"
+      />
+    </section>
 
-    <chat-group
-      v-for="chatGroup in chatGroups"
-      :key="chatGroup.name"
-      :chat-group="chatGroup"
-      :filled="chatGroup.name === 'Fila'"
+    <unnnic-button
+      :text="isActiveChatsView ? 'Visualizar conversas encerradas' : 'Voltar para conversas'"
+      iconRight="task-list-clock-1"
+      type="secondary"
+      size="small"
+      @click="$router.push(isActiveChatsView ? '/closed-chats' : '/')"
     />
   </div>
 </template>
@@ -42,6 +32,13 @@ export default {
     ChatGroup,
   },
 
+  props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   data: () => ({
     tag: '',
   }),
@@ -54,18 +51,6 @@ export default {
       return this.$route.name === 'home';
     },
   },
-
-  methods: {
-    goToClosedChatsView() {
-      const { tag } = this;
-      const query = tag ? { tag } : null;
-
-      this.$router.push({
-        path: '/closed-chats',
-        query,
-      });
-    },
-  },
 };
 </script>
 
@@ -75,9 +60,17 @@ export default {
   flex-direction: column;
   gap: 1rem;
   padding-right: 1rem;
+  padding-bottom: 0.5rem;
 
-  .return-button {
-    flex: none;
+  .chat-groups {
+    flex: 1 1;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    padding-right: 1rem;
+    overflow-y: auto;
   }
 }
 </style>

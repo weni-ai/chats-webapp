@@ -1,7 +1,13 @@
 <template>
   <span
     class="user-avatar"
-    :class="{ active, clickable, 'neutral-background': disabled, [`user-avatar--${size}`]: true }"
+    :class="{
+      active,
+      off,
+      clickable,
+      'neutral-background': disabled,
+      [`user-avatar--${size}`]: true,
+    }"
     @click="$emit('click')"
     @keypress.enter="$emit('click')"
   >
@@ -26,6 +32,10 @@ export default {
       default: false,
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    off: {
       type: Boolean,
       default: false,
     },
@@ -61,6 +71,7 @@ $avatar-sizes: '2xl' 3rem, 'xl' $unnnic-icon-size-xl, 'lg' $unnnic-icon-size-lg,
   border-radius: $unnnic-border-radius-sm;
 
   background: rgba($unnnic-color-brand-weni, $unnnic-opacity-level-extra-light);
+  color: $unnnic-color-brand-weni-dark;
 
   &.clickable {
     cursor: pointer;
@@ -74,12 +85,14 @@ $avatar-sizes: '2xl' 3rem, 'xl' $unnnic-icon-size-xl, 'lg' $unnnic-icon-size-lg,
     background: $unnnic-color-neutral-clean;
   }
 
+  &.off {
+    color: $unnnic-color-neutral-clean;
+  }
+
   @each $name, $size in $avatar-sizes {
     &--#{$name} {
       width: $size;
       height: $size;
-      color: $unnnic-color-brand-weni-dark;
-
       font-size: min(calc($size / 2), 1rem);
     }
   }

@@ -1,11 +1,16 @@
 <template>
   <div
     class="container"
-    :class="{ active: chat.id === activeChat.id }"
+    :class="{ active: chat.id === activeChat.id, disabled }"
     @click="$emit('click')"
     @keypress.enter="$emit('click')"
   >
-    <user-avatar :username="chat.username" :active="chat.id === activeChat.id" size="xl" />
+    <user-avatar
+      :username="chat.username"
+      :active="chat.id === activeChat.id"
+      size="xl"
+      :off="disabled"
+    />
 
     <div class="content">
       <h3 class="username">{{ chat.username }}</h3>
@@ -37,6 +42,10 @@ export default {
       type: Object,
       required: true,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     filled: {
       type: Boolean,
       default: false,
@@ -66,6 +75,22 @@ export default {
   &.active {
     border-radius: $unnnic-border-radius-sm;
     background: rgba($unnnic-color-brand-weni, $unnnic-opacity-level-extra-light);
+  }
+
+  &.disabled {
+    .content {
+      .username {
+        color: $unnnic-color-neutral-clean;
+      }
+
+      .last-message {
+        color: $unnnic-color-neutral-lightest;
+      }
+    }
+
+    .unread-messages {
+      color: $unnnic-color-neutral-clean;
+    }
   }
 
   .content {

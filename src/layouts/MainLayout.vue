@@ -1,6 +1,6 @@
 <template>
   <section class="container">
-    <chat-queue class="queue" />
+    <chat-queue class="queue" :disabled="$route.name !== 'home'" />
 
     <main>
       <slot />
