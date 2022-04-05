@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <span class="unread-messages">
+    <span class="unread-messages" :class="{ filled }">
       {{ chat.unreadMessages }}
     </span>
   </div>
@@ -37,6 +37,10 @@ export default {
       type: Object,
       required: true,
     },
+    filled: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   computed: {
@@ -54,6 +58,7 @@ export default {
   justify-content: space-between;
   gap: 0.5rem;
   padding: 0.5rem;
+
   cursor: pointer;
 
   width: 16rem;
@@ -83,14 +88,18 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: $unnnic-color-background-grass;
 
     width: 1.25rem;
     height: 1.25rem;
     border-radius: 50%;
-
     font-size: $unnnic-font-size-body-sm;
-    color: $unnnic-color-brand-weni;
+
+    background: $unnnic-color-background-grass;
+    color: $unnnic-color-aux-purple;
+
+    &.filled {
+      background: $unnnic-color-neutral-snow;
+    }
   }
 }
 </style>

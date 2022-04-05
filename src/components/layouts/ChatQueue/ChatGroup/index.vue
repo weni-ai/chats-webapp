@@ -5,9 +5,9 @@
       <unnnic-icon icon="add-1" size="xs" />
     </header>
 
-    <ul class="chats" :class="{ 'background-darkest': backgroundDarkest }">
+    <ul class="chats" :class="{ filled }">
       <li v-for="chat in chatGroup.chats" :key="chat.id">
-        <user-chat :chat="chat" @click="selectChat(chat)" />
+        <user-chat :chat="chat" @click="selectChat(chat)" :filled="filled" />
       </li>
     </ul>
   </div>
@@ -27,13 +27,13 @@ export default {
   },
 
   props: {
-    backgroundDarkest: {
-      type: Boolean,
-      default: false,
-    },
     chatGroup: {
       type: Object,
       required: true,
+    },
+    filled: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -65,7 +65,7 @@ export default {
     margin: 0;
     padding: 0;
 
-    &.background-darkest {
+    &.filled {
       background: $unnnic-color-background-carpet;
     }
 

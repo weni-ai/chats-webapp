@@ -25,7 +25,7 @@
       v-for="chatGroup in chatGroups"
       :key="chatGroup.name"
       :chat-group="chatGroup"
-      :background-darkest="chatGroup.name === 'Fila'"
+      :filled="chatGroup.name === 'Fila'"
     />
   </div>
 </template>
