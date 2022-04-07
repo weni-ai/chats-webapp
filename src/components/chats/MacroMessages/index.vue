@@ -1,39 +1,50 @@
 <template>
-  <aside class="macro-messages-controller">
-    <header>
-      <span>Mensagens instantâneas</span>
-      <span @click="$emit('close')" aria-label="close icon" @keypress.enter="$emit('close')">
-        <unnnic-icon-svg icon="close-1" size="sm" class="close-icon" />
-      </span>
-    </header>
+  <aside class="macro-messages">
+    <section v-show="!areEditingOrCreating">
+      <header>
+        <span>Mensagens instantâneas</span>
+        <span @click="$emit('close')" aria-label="close icon" @keypress.enter="$emit('close')">
+          <unnnic-icon-svg icon="close-1" size="sm" class="header-button" />
+        </span>
+      </header>
 
-    <div class="messages-list">
-      <macro-message-card
-        v-for="macroMessage in macroMessages"
-        :key="macroMessage.id"
-        :title="macroMessage.title"
-        :message="macroMessage.message"
-        @select="$emit('select-macro-message', macroMessage)"
-        @edit="macroMessageToEdit = macroMessage"
-        @delete="macroMessageToDelete = macroMessage"
+      <div class="messages-list">
+        <macro-message-card
+          v-for="macroMessage in macroMessages"
+          :key="macroMessage.id"
+          :title="macroMessage.title"
+          :message="macroMessage.message"
+          @select="$emit('select-macro-message', macroMessage)"
+          @edit="macroMessageToEdit = macroMessage"
+          @delete="macroMessageToDelete = macroMessage"
+        />
+      </div>
+
+      <unnnic-button
+        class="new-message-button"
+        icon-left="add-circle-1"
+        text="Adicionar mensagem instantânea"
+        type="secondary"
+        size="small"
+        @click="macroMessageToEdit = createEmptyMacroMessage()"
       />
-    </div>
+    </section>
 
-    <unnnic-button
-      class="new-message-button"
-      icon-left="add-circle-1"
-      text="Adicionar mensagem instantânea"
-      type="secondary"
-      size="small"
-      @click="newMacroModalOpen = true"
-    />
+    <section v-if="areEditingOrCreating" class="create-section">
+      <header>
+        <span>Adicionar modelo de mensagem</span>
+        <span @click="macroMessageToEdit = null" @keypress.enter="macroMessageToEdit = null">
+          <unnnic-icon icon="keyboard-return-1" size="sm" class="header-button" />
+        </span>
+      </header>
 
-    <new-macro-message-modal
-      :open="newMacroModalOpen || !!macroMessageToEdit"
-      :macro-message="macroMessageToEdit"
-      @close="(newMacroModalOpen = false), (macroMessageToEdit = null)"
-      @confirm="(macroMessage) => addMacroMessage(macroMessage)"
-    />
+      <macro-message-form
+        v-model="macroMessageToEdit"
+        class="macro-message-form"
+        @submit="addMacroMessage(macroMessageToEdit)"
+        @cancel="macroMessageToEdit = null"
+      />
+    </section>
 
     <unnnic-modal
       text="Deletar macro"
@@ -52,24 +63,18 @@
 </template>
 
 <script>
-import { unnnicIconSvg, unnnicButton, unnnicModal } from '@weni/unnnic-system';
-
 import MacroMessageCard from './MacroMessageCard';
-import NewMacroMessageModal from './NewMacroMessageModal';
+import MacroMessageForm from './MacroMessageForm';
 
 export default {
   name: 'MacroMessages',
 
   components: {
     MacroMessageCard,
-    NewMacroMessageModal,
-    unnnicButton,
-    unnnicIconSvg,
-    unnnicModal,
+    MacroMessageForm,
   },
 
   data: () => ({
-    newMacroModalOpen: false,
     macroMessages: [
       {
         id: 1,
@@ -85,6 +90,12 @@ export default {
     macroMessageToDelete: null,
     macroMessageToEdit: null,
   }),
+
+  computed: {
+    areEditingOrCreating() {
+      return !!this.macroMessageToEdit;
+    },
+  },
 
   methods: {
     addMacroMessage(newMacroMessage) {
@@ -104,7 +115,10 @@ export default {
         id: Math.random() * 100 + 1,
       });
 
-      this.newMacroModalOpen = false;
+      this.macroMessageToEdit = null;
+    },
+    createEmptyMacroMessage() {
+      return { title: '', message: '', shortcut: null };
     },
     deleteMacroMessage() {
       this.macroMessages = this.macroMessages.filter(
@@ -118,39 +132,47 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.macro-messages-controller {
-  display: flex;
-  flex-direction: column;
+.macro-messages {
   height: 100%;
-  overflow-y: auto;
   padding-right: 1.5rem;
 
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-
-    span {
-      color: $unnnic-color-neutral-dark;
-      line-height: 1.5rem;
-    }
-
-    .close-icon {
-      cursor: pointer;
-    }
-  }
-
-  .messages-list {
+  section {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    padding-bottom: 1rem;
-  }
+    height: 100%;
 
-  .new-message-button {
-    margin-top: auto;
-    flex: none;
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+
+      span {
+        color: $unnnic-color-neutral-dark;
+        line-height: 1.5rem;
+      }
+
+      .header-button {
+        cursor: pointer;
+      }
+    }
+
+    .macro-message-form {
+      flex: 1 1;
+    }
+
+    .messages-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .new-message-button {
+      width: 100%;
+      margin-top: auto;
+      flex: none;
+    }
   }
 }
 </style>
