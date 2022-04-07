@@ -26,11 +26,11 @@
       <template v-if="activeChat.closed && !activeChat.tags">
         <div class="chat-closed-message">Atendimento encerrado pelo agente</div>
 
-        <tag-selector v-model="tags" label="Por favor, classifique o atendimento:">
+        <chat-classifier v-model="tags" label="Por favor, classifique o atendimento:">
           <template #actions>
             <unnnic-button text="Confirmar" type="secondary" size="small" @click="setChatTags" />
           </template>
-        </tag-selector>
+        </chat-classifier>
       </template>
     </section>
 
@@ -67,7 +67,7 @@ import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
 import ContactInfo from '@/components/ContactInfo';
 import MessageEditor from '@/components/chats/MessageEditor';
-import TagSelector from '@/components/chats/TagSelector';
+import ChatClassifier from '@/components/chats/ChatClassifier';
 import MacroMessages from '@/components/chats/MacroMessages';
 
 export default {
@@ -80,7 +80,7 @@ export default {
     MacroMessages,
     MainLayout,
     MessageEditor,
-    TagSelector,
+    ChatClassifier,
   },
 
   data: () => ({

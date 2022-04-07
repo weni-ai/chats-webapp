@@ -23,7 +23,7 @@
 
 <script>
 export default {
-  name: 'TagSelector',
+  name: 'ChatClassifier',
 
   props: {
     label: {

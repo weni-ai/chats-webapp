@@ -8,7 +8,7 @@
     <section class="closed-chats" v-else>
       <h1>Histórico de conversas</h1>
 
-      <tag-selector v-model="tags" label="Filtrar" />
+      <tag-filter v-model="tags" label="Classificar conversas por tags" />
 
       <unnnic-table :items="filteredClosedChats" class="closed-chats-table">
         <template #header>
@@ -51,7 +51,7 @@ import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
 
 import MainLayout from '@/layouts/MainLayout';
-import TagSelector from '@/components/chats/TagSelector.vue';
+import TagFilter from '@/components/TagFilter';
 import UserAvatar from '@/components/UserAvatar';
 
 export default {
@@ -61,7 +61,7 @@ export default {
     ChatHeader,
     ChatMessages,
     MainLayout,
-    TagSelector,
+    TagFilter,
     UserAvatar,
   },
 
@@ -161,7 +161,7 @@ export default {
   .closed-chats-table {
     max-height: 100%;
     overflow-y: auto;
-    margin-top: 1rem;
+    margin-top: 2rem;
   }
 
   .visualize-button {
