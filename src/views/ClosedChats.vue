@@ -8,7 +8,23 @@
     <section class="closed-chats" v-else>
       <h1>Histórico de conversas</h1>
 
-      <tag-filter v-model="tags" label="Classificar conversas por tags" />
+      <section class="filters">
+        <tag-filter v-model="tags" label="Classificar conversas por tags" />
+
+        <unnnic-select
+          v-model="filteredDateRange"
+          size="sm"
+          label="Selecionar período"
+          class="date-range-select"
+        >
+          <option value="">Desde o início</option>
+          <option value="last-7-days">Últimos 7 dias</option>
+          <option value="last-14-days">Últimos 14 dias</option>
+          <option value="last-30-days">Últimos 30 dias</option>
+          <option value="last-12-months">Últimos 12 meses</option>
+          <option value="current-month">Mês Atual</option>
+        </unnnic-select>
+      </section>
 
       <unnnic-table :items="filteredClosedChats" class="closed-chats-table">
         <template #header>
@@ -96,11 +112,9 @@ export default {
 
   data: () => ({
     chat: null,
-
+    filteredDateRange: '',
     tags: [],
-
     TAGS,
-
     tableHeaders: [
       {
         id: 'contactName',
@@ -136,12 +150,16 @@ export default {
     }),
 
     filteredClosedChats() {
-      return this.closedChats.filter(this.chatHasAllActiveFilterTags);
+      return this.closedChats
+        .filter(this.chatHasAllActiveFilterTags)
+        .filter(this.isChatDateInFilteredRange);
     },
   },
 
   methods: {
     chatHasAllActiveFilterTags(chat) {
+      if (this.tags.length === 0) return true;
+
       // eslint-disable-next-line no-restricted-syntax
       for (const tag of this.tags) {
         if (chat.tags.indexOf(tag) === -1) {
@@ -150,6 +168,33 @@ export default {
       }
 
       return true;
+    },
+
+    stringToDate(date) {
+      const [day, month, year] = date.split('/');
+
+      return new Date(year, Number(month) - 1, day);
+    },
+
+    isChatDateInFilteredRange(chat) {
+      if (!this.filteredDateRange) return true;
+
+      const chatDate = this.stringToDate(chat.date);
+
+      const today = new Date();
+      const day = today.getDate();
+      const month = today.getMonth();
+      const year = today.getFullYear();
+
+      const dateRanges = {
+        'last-7-days': () => new Date(year, month, day - 7) <= chatDate,
+        'last-14-days': () => new Date(year, month, day - 14) <= chatDate,
+        'last-30-days': () => new Date(year, month, day - 30) <= chatDate,
+        'last-12-months': () => new Date(year, month - 12, day) <= chatDate,
+        'current-month': () => month === chatDate.getMonth(),
+      };
+
+      return dateRanges[this.filteredDateRange]();
     },
   },
 };
@@ -181,6 +226,16 @@ export default {
     line-height: 1.75rem;
     color: $unnnic-color-neutral-dark;
     margin-bottom: 1.5rem;
+  }
+
+  .filters {
+    display: flex;
+    align-items: center;
+
+    .date-range-select {
+      width: 19.75rem;
+      margin: 0 auto;
+    }
   }
 
   .closed-chats-table {
