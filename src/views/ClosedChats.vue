@@ -19,12 +19,24 @@
           <unnnic-table-row :headers="tableHeaders">
             <template #contactName>
               <div class="contact-name">
-                <user-avatar :username="item.username" />
+                <user-avatar :username="item.username" size="xl" />
                 {{ item.username }}
               </div>
             </template>
 
             <template #agentName>{{ item.agent }}</template>
+
+            <template #tags>
+              <div class="tags">
+                <unnnic-tag
+                  v-for="tag in item.tags"
+                  :key="tag"
+                  :text="TAGS[tag].text"
+                  :disabled="!tags.includes(tag)"
+                  :scheme="TAGS[tag].scheme"
+                />
+              </div>
+            </template>
 
             <template #date>{{ item.date }}</template>
 
@@ -54,6 +66,12 @@ import MainLayout from '@/layouts/MainLayout';
 import TagFilter from '@/components/TagFilter';
 import UserAvatar from '@/components/UserAvatar';
 
+const TAGS = {
+  doubts: { text: 'Dúvidas', scheme: 'feedback-yellow' },
+  finance: { text: 'Financeiro', scheme: 'feedback-red' },
+  help: { text: 'Ajuda', scheme: 'feedback-green' },
+};
+
 export default {
   name: 'ClosedChatsView',
 
@@ -81,26 +99,33 @@ export default {
 
     tags: [],
 
+    TAGS,
+
     tableHeaders: [
       {
         id: 'contactName',
         text: 'Contato',
-        width: '25%',
+        flex: 3,
       },
       {
         id: 'agentName',
         text: 'Agente',
-        width: '25%',
+        flex: 2,
+      },
+      {
+        id: 'tags',
+        text: 'Tags',
+        flex: 5,
       },
       {
         id: 'date',
         text: 'Data',
-        width: '25%',
+        flex: 2,
       },
       {
         id: 'visualize',
         text: 'Visualizar',
-        width: '25%',
+        flex: 3,
       },
     ],
   }),
@@ -162,6 +187,13 @@ export default {
     max-height: 100%;
     overflow-y: auto;
     margin-top: 2rem;
+
+    .tags {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 1.5rem;
+    }
   }
 
   .visualize-button {
