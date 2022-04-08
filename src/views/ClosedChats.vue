@@ -231,10 +231,10 @@ export default {
   .filters {
     display: flex;
     align-items: center;
+    justify-content: space-between;
 
     .date-range-select {
-      width: 19.75rem;
-      margin: 0 auto;
+      flex-basis: 33.33%;
     }
   }
 
