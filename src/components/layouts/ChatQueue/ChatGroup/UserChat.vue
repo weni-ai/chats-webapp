@@ -14,7 +14,11 @@
 
     <div class="content">
       <h3 class="username">{{ chat.username }}</h3>
-      <div class="last-message">
+      <div v-if="waitingTime !== 0" class="additional-information">
+        Aguardando há {{ waitingTime }} minutos
+      </div>
+
+      <div v-else class="additional-information">
         {{ chat.lastMessage }}
       </div>
     </div>
@@ -29,6 +33,8 @@
 import { mapState } from 'vuex';
 
 import UserAvatar from '@/components/UserAvatar';
+
+const ONE_MINUTE_IN_MILLISECONDS = 60000;
 
 export default {
   name: 'UserChat',
@@ -51,6 +57,27 @@ export default {
       default: false,
     },
   },
+
+  mounted() {
+    const randomPeriodInMilliseconds = Math.ceil(Math.random() * 30 + 1) * 1000;
+
+    if (this.chat.waitingTime) {
+      this.waitingTime = this.chat.waitingTime;
+      this.timer = setInterval(() => {
+        this.waitingTime += 1;
+        // ensures that all chats waiting times don't update at same time
+      }, ONE_MINUTE_IN_MILLISECONDS + randomPeriodInMilliseconds);
+    }
+  },
+
+  destroyed() {
+    setInterval(this.timer);
+  },
+
+  data: () => ({
+    waitingTime: 0,
+    timer: null,
+  }),
 
   computed: {
     ...mapState({
@@ -83,7 +110,7 @@ export default {
         color: $unnnic-color-neutral-clean;
       }
 
-      .last-message {
+      .additional-information {
         color: $unnnic-color-neutral-lightest;
       }
     }
@@ -99,11 +126,13 @@ export default {
     margin-right: auto;
 
     .username {
+      color: $unnnic-color-neutral-black;
       font-size: $unnnic-font-size-body-md;
       font-weight: $unnnic-font-weight-regular;
     }
 
-    .last-message {
+    .additional-information {
+      color: $unnnic-color-neutral-cloudy;
       font-size: $unnnic-font-size-body-sm;
       font-weight: $unnnic-font-weight-regular;
     }
