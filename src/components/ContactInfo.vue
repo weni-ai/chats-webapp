@@ -31,6 +31,8 @@
       size="small"
       class="transfer-button"
       @click="transferContact"
+      :type="!!transferContactTo ? 'primary' : 'terciary'"
+      :disabled="!transferContactTo"
     />
 
     <unnnic-modal
@@ -84,6 +86,7 @@ export default {
   flex-direction: column;
   gap: 1rem;
   padding-right: 1.5rem;
+  height: 100%;
   max-height: 100%;
 
   header {
@@ -124,6 +127,7 @@ export default {
   }
 
   .transfer-button {
+    margin-top: auto;
     flex: none;
   }
 }
