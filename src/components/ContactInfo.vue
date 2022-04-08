@@ -17,16 +17,14 @@
 
     <span class="channel"> Canal: WhatsApp </span>
 
-    <unnnic-select
+    <unnnic-autocomplete
       v-model="transferContactTo"
       label="Transferir atendimento"
+      :data="transferOptions"
       size="sm"
+      highlight
       class="channel-select"
-    >
-      <option v-for="option in transferSelectOptions" :key="option.value" :value="option.text">
-        {{ option.text }}
-      </option>
-    </unnnic-select>
+    />
 
     <unnnic-button
       text="Transferir"
@@ -53,11 +51,13 @@ export default {
   name: 'ContactInfo',
 
   data: () => ({
-    transferSelectOptions: [
-      { text: 'Suporte', value: 'suporte' },
-      { text: 'Financeiro', value: 'finance' },
-      { text: 'Customer success', value: 'customer_success' },
-      { text: 'Gerência', value: 'management' },
+    transferOptions: [
+      'Customer success',
+      'Finanças',
+      'Gerência',
+      'Suporte Financeiro',
+      { type: 'category', text: 'Financeiro' },
+      'Juliano',
     ],
     transferContactTo: '',
     showSuccessfulTransferModal: false,
