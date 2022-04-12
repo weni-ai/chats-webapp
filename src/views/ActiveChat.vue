@@ -198,12 +198,12 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding-right: 1.5rem;
+  padding-right: 1rem;
 
   .messages {
     overflow-y: auto;
     padding-right: 1.5rem;
-    margin: 1.5rem 0 1rem;
+    margin: 1rem 0 1rem;
   }
 
   .message-editor {

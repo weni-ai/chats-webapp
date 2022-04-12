@@ -85,7 +85,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding-right: 1.5rem;
+  padding-right: 1rem;
   height: 100%;
   max-height: 100%;
 

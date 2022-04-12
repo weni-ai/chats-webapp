@@ -134,7 +134,7 @@ export default {
 <style lang="scss" scoped>
 .macro-messages {
   height: 100%;
-  padding-right: 1.5rem;
+  padding-right: 1rem;
 
   section {
     display: flex;

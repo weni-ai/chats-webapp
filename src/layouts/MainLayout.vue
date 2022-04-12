@@ -39,8 +39,7 @@ export default {
 
   .queue {
     overflow-y: auto;
-    padding-right: 0.5rem;
-    margin: 1.5rem 0 0 1.5rem;
+    margin: 1rem 0 0 1rem;
   }
 
   main {

@@ -58,8 +58,7 @@ export default {
 .container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding-right: 1rem;
+  gap: 0.5rem;
   padding-bottom: 0.5rem;
 
   .chat-groups {
