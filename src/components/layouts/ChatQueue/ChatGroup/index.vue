@@ -2,7 +2,6 @@
   <div class="chat-group" :class="{ disabled }">
     <header>
       <h2>{{ chatGroup.name }}</h2>
-      <unnnic-icon icon="add-1" size="xs" />
     </header>
 
     <ul class="chats" :class="{ filled }">
@@ -14,15 +13,12 @@
 </template>
 
 <script>
-import { unnnicIcon } from '@weni/unnnic-system';
-
 import UserChat from './UserChat';
 
 export default {
   name: 'ChatGroup',
 
   components: {
-    unnnicIcon,
     UserChat,
   },
 
