@@ -104,7 +104,7 @@ export default {
 .chat-messages {
   .chat-begin {
     text-align: center;
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-neutral-clean;
     line-height: 1.375rem;
     font-weight: 400;
     font-size: 0.875rem;
