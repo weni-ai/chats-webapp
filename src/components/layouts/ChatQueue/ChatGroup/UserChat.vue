@@ -128,7 +128,7 @@ export default {
     margin-right: auto;
 
     .username {
-      color: $unnnic-color-neutral-black;
+      color: $unnnic-color-neutral-darkest;
       font-size: $unnnic-font-size-body-md;
       font-weight: $unnnic-font-weight-regular;
 
