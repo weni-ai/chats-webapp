@@ -13,7 +13,9 @@
     />
 
     <div class="content">
-      <h3 class="username">{{ chat.username }}</h3>
+      <h3 class="username" :class="{ 'username--bold': chat.unreadMessages > 0 }">
+        {{ chat.username }}
+      </h3>
       <div v-if="waitingTime !== 0" class="additional-information">
         Aguardando há {{ waitingTime }} minutos
       </div>
@@ -129,6 +131,10 @@ export default {
       color: $unnnic-color-neutral-black;
       font-size: $unnnic-font-size-body-md;
       font-weight: $unnnic-font-weight-regular;
+
+      &--bold {
+        font-weight: $unnnic-font-weight-bold;
+      }
     }
 
     .additional-information {
