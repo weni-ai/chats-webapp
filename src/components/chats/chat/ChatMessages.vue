@@ -3,9 +3,9 @@
     <div class="chat-begin">Início da conversa</div>
 
     <div class="divisor">
-      <hr />
+      <div class="line" />
       <span class="date"> 20 de dezembro </span>
-      <hr />
+      <div class="line" />
     </div>
 
     <div v-for="message in chat.messages" :key="message.id" class="message">
@@ -104,7 +104,7 @@ export default {
 .chat-messages {
   .chat-begin {
     text-align: center;
-    color: $unnnic-color-neutral-clean;
+    color: $unnnic-color-neutral-dark;
     line-height: 1.375rem;
     font-weight: 400;
     font-size: 0.875rem;
@@ -123,10 +123,10 @@ export default {
       color: $unnnic-color-neutral-dark;
     }
 
-    hr {
+    .line {
       flex: 1;
       height: 0.125rem;
-      border-color: $unnnic-color-neutral-lightest;
+      background: $unnnic-color-neutral-lightest;
     }
   }
 
@@ -141,7 +141,7 @@ export default {
     .info {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.5rem;
       margin-bottom: 0.5rem;
 
       .username {
