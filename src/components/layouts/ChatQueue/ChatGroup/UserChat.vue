@@ -13,15 +13,14 @@
     />
 
     <div class="content">
-      <h3 class="username" :class="{ 'username--bold': chat.unreadMessages > 0 }">
+      <h3 class="username" :class="{ bold: hasUnreadMessages }">
         {{ chat.username }}
       </h3>
-      <div v-if="waitingTime !== 0" class="additional-information">
-        Aguardando há {{ waitingTime }} minutos
-      </div>
-
-      <div v-else class="additional-information">
-        {{ chat.lastMessage }}
+      <div class="additional-information" :class="{ bold: hasUnreadMessages }">
+        <span v-if="waitingTime !== 0"> Aguardando há {{ waitingTime }} minutos </span>
+        <span v-else>
+          {{ chat.lastMessage }}
+        </span>
       </div>
     </div>
 
@@ -85,6 +84,20 @@ export default {
     ...mapState({
       activeChat: (state) => state.chats.activeChat || {},
     }),
+    // getLastMessage() {
+    //   const { messages } = this.chat;
+
+    //   if (messages.length === 0) return '';
+
+    //   const lastMessage = messages.at(-1);
+    //   const username =
+    //     lastMessage.username === 'Atendente' ? 'Você' : lastMessage.username.split(' ')[0];
+
+    //   return `${username}: ${lastMessage.content.at(-1).text}`;
+    // },
+    hasUnreadMessages() {
+      return this.chat.unreadMessages > 0;
+    },
   },
 };
 </script>
@@ -127,20 +140,18 @@ export default {
     flex-flow: column wrap;
     margin-right: auto;
 
+    & .bold {
+      font-weight: $unnnic-font-weight-bold;
+    }
+
     .username {
       color: $unnnic-color-neutral-darkest;
       font-size: $unnnic-font-size-body-md;
-      font-weight: $unnnic-font-weight-regular;
-
-      &--bold {
-        font-weight: $unnnic-font-weight-bold;
-      }
     }
 
     .additional-information {
       color: $unnnic-color-neutral-cloudy;
       font-size: $unnnic-font-size-body-sm;
-      font-weight: $unnnic-font-weight-regular;
     }
   }
 
