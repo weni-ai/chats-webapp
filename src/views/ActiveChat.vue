@@ -133,33 +133,14 @@ export default {
     scrollMessagesToBottom() {
       this.$refs.chatMessages.$el.scrollTop = this.$refs.chatMessages.$el.scrollHeight;
     },
-    sendMessage() {
-      const message = { text: this.editorMessage.trim(), sent: Math.random() < 0.1 };
+    async sendMessage() {
+      const message = this.editorMessage.trim();
 
-      if (!message.text) return;
+      if (!message) return;
 
-      const activeChat = { ...this.activeChat };
-      const { messages } = activeChat;
+      await this.$store.dispatch('chats/sendMessage', message);
 
-      if (messages.at(-1)?.username === 'Atendente') {
-        messages.at(-1).content.push(message);
-      } else {
-        messages.push({
-          id: Math.ceil(Math.random() * 100 + 1),
-          username: 'Atendente',
-          time: `${new Date().getHours().toString().padStart(2, '0')}h${new Date()
-            .getMinutes()
-            .toString()
-            .padStart(2, '0')}`,
-          content: [message],
-        });
-      }
-
-      this.$store.commit('chats/setActiveChat', { ...activeChat, messages });
-
-      setTimeout(() => {
-        this.scrollMessagesToBottom();
-      }, 100);
+      this.scrollMessagesToBottom();
     },
 
     getTodayDate() {

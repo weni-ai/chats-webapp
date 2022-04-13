@@ -518,8 +518,16 @@ const module = {
         chats: group.chats.filter((c) => c.id !== chatToRemove.id),
       }));
     },
+    reorderChats(state, activeChat) {
+      const activeChatGroup = state.chats.find(
+        (group) => !!group.chats.find((chat) => chat.id === activeChat.id),
+      );
+
+      activeChatGroup.chats = activeChatGroup.chats.filter((chat) => chat.id !== activeChat.id);
+      activeChatGroup.chats.unshift(activeChat);
+    },
     setActiveChat(state, chat) {
-      state.activeChat = chat;
+      state.activeChat = { ...chat, unreadMessages: 0 };
 
       if (!chat) return;
 
@@ -528,12 +536,39 @@ const module = {
         chats: group.chats.map((c) => (c.id === chat.id ? { ...c, unreadMessages: 0 } : c)),
       }));
     },
+    sendMessage(state, message) {
+      if (!state.activeChat) return;
+
+      const { messages } = state.activeChat;
+
+      if (messages.at(-1)?.username === 'Atendente') {
+        messages.at(-1).content.push(message);
+      } else {
+        messages.push({
+          id: Math.ceil(Math.random() * 100 + 1),
+          username: 'Atendente',
+          time: `${new Date().getHours().toString().padStart(2, '0')}h${new Date()
+            .getMinutes()
+            .toString()
+            .padStart(2, '0')}`,
+          content: [message],
+        });
+      }
+    },
   },
 
   actions: {
     closeChat({ commit }, chat) {
       commit('removeChat', chat);
       commit('addClosedChat', chat);
+    },
+    sendMessage({ commit, state }, text) {
+      if (!state.activeChat) return;
+
+      const message = { text, sent: Math.random() < 0.1 };
+
+      commit('sendMessage', message);
+      commit('reorderChats', state.activeChat);
     },
   },
 };
