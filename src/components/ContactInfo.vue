@@ -18,9 +18,12 @@
     <span class="channel"> Canal: WhatsApp </span>
 
     <unnnic-autocomplete
-      v-model="transferContactTo"
+      v-model="transferContactSearch"
+      :data="filteredTransferOptions"
+      @choose="transferContactTo = $event"
       label="Transferir atendimento"
-      :data="transferOptions"
+      placeholder="Selecione agente, fila ou setor"
+      open-with-focus
       size="sm"
       highlight
       class="channel-select"
@@ -61,6 +64,7 @@ export default {
       { type: 'category', text: 'Financeiro' },
       'Juliano',
     ],
+    transferContactSearch: '',
     transferContactTo: '',
     showSuccessfulTransferModal: false,
   }),
@@ -69,9 +73,34 @@ export default {
     ...mapState({
       chat: (state) => state.chats.activeChat,
     }),
+
+    filteredTransferOptions() {
+      const search = this.lowercase(this.transferContactSearch);
+
+      if (!search) return this.transferOptions;
+
+      const filteredOptions = this.transferOptions.filter(
+        (option) =>
+          option.type === 'category' || this.lowercase(option.text || option).includes(search),
+      );
+
+      // remove categories without options
+      return filteredOptions.filter((option, index) => {
+        if (option.type !== 'category') return true;
+
+        const nextOption = filteredOptions[index + 1];
+
+        if (!nextOption || nextOption.type === 'category') return false;
+
+        return true;
+      });
+    },
   },
 
   methods: {
+    lowercase(value) {
+      return value.toString().toLowerCase();
+    },
     transferContact() {
       this.$store.commit('chats/removeChat', this.chat);
       this.showSuccessfulTransferModal = true;
