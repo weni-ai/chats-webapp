@@ -1998,12 +1998,13 @@
     "@webassemblyjs/ast" "1.11.1"
     "@xtuc/long" "4.2.2"
 
-"@weni/unnnic-system@^1.1.100":
-  version "1.1.100"
-  resolved "https://registry.yarnpkg.com/@weni/unnnic-system/-/unnnic-system-1.1.100.tgz#6cc611c8eaf0da372753c263ab69f4f31f9a513f"
-  integrity sha512-hjVnkrAxMhPSxJ4lCXgyMknz13vTsZXpgGU6J+5AgTLnf7YL/xnRMzh3d216UF/JhWMqDWKo9ofu2niyKMz74w==
+"@weni/unnnic-system@1.1.112":
+  version "1.1.112"
+  resolved "https://registry.yarnpkg.com/@weni/unnnic-system/-/unnnic-system-1.1.112.tgz#e5f1f07ac4b1255f2485f611f29813268ebf545a"
+  integrity sha512-wAd3UTQuicNpWHcFpUFG/rHXeoUqAKtPjOS1MQM5b0ZqrVGqQISRxCXz3Nq1EkkgJTXCzOoTuhfzF3AadN5Alw==
   dependencies:
     core-js "^3.6.5"
+    moment "^2.29.1"
     v-click-outside "^3.1.2"
     vue "^2.6.11"
     vue-i18n "8"
@@ -3560,6 +3561,11 @@ eslint-config-airbnb-base@^15.0.0:
     object.assign "^4.1.2"
     object.entries "^1.1.5"
     semver "^6.3.0"
+
+eslint-config-prettier@^8.5.0:
+  version "8.5.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-8.5.0.tgz#5a81680ec934beca02c7b1a61cf8ca34b66feab1"
+  integrity sha512-obmWKLUNCnhtQRKc+tmnYuQl0pFU1ibYJQ5BGhTVB08bHe9wC8qUeG7c08dj9XX+AuPj1YSGSQIHl1pnDHZR0Q==
 
 eslint-import-resolver-node@^0.3.6:
   version "0.3.6"
@@ -5727,6 +5733,11 @@ module-alias@^2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/module-alias/-/module-alias-2.2.2.tgz#151cdcecc24e25739ff0aa6e51e1c5716974c0e0"
   integrity sha512-A/78XjoX2EmNvppVWEhM2oGk3x4lLxnkEA4jTbaK97QKSDjkIoOsKQlfylt/d3kKKi596Qy3NP5XrXJ6fZIC9Q==
+
+moment@^2.29.1:
+  version "2.29.2"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.2.tgz#00910c60b20843bcba52d37d58c628b47b1f20e4"
+  integrity sha512-UgzG4rvxYpN15jgCmVJwac49h9ly9NurikMWGPdVxm8GZD6XjkKPxDTjQQ43gtGgnV3X0cAyWDdP2Wexoquifg==
 
 mrmime@^1.0.0:
   version "1.0.0"
