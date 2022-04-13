@@ -6,10 +6,10 @@
     </section>
 
     <section class="closed-chats" v-else>
-      <h1>Histórico de conversas</h1>
+      <h1>Histórico</h1>
 
       <section class="filters">
-        <tag-filter v-model="tags" label="Classificar conversas por tags" />
+        <tag-filter v-model="tags" label="Classificar chats por tags e período" />
 
         <unnnic-select
           v-model="filteredDateRange"

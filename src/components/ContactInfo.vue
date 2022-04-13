@@ -21,7 +21,7 @@
       v-model="transferContactSearch"
       :data="filteredTransferOptions"
       @choose="transferContactTo = $event"
-      label="Transferir atendimento"
+      label="Transferir chat "
       placeholder="Selecione agente, fila ou setor"
       open-with-focus
       size="sm"

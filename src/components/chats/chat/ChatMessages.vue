@@ -34,19 +34,25 @@
         <div v-for="content in message.content" :key="content.text" class="messages">
           <p :class="{ 'unsent-message': content.sent === false }">
             {{ content.text }}
-            <span
+            <unnnic-tool-tip
               v-if="content.sent === false"
-              @click="messageToResend = content"
-              @keypress.enter="messageToResend = content"
-              class="resend-button"
+              enabled
+              text="Clique para reenviar"
+              side="right"
             >
-              <unnnic-icon
-                icon="synchronize-arrow-clock-5"
-                scheme="feedback-red"
-                size="sm"
-                clickable
-              />
-            </span>
+              <span
+                @click="messageToResend = content"
+                @keypress.enter="messageToResend = content"
+                class="resend-button"
+              >
+                <unnnic-icon
+                  icon="synchronize-arrow-clock-5"
+                  scheme="feedback-red"
+                  size="sm"
+                  clickable
+                />
+              </span>
+            </unnnic-tool-tip>
           </p>
         </div>
       </div>

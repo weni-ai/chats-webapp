@@ -11,7 +11,7 @@
     </section>
 
     <unnnic-button
-      :text="isActiveChatsView ? 'Visualizar conversas encerradas' : 'Voltar para conversas'"
+      :text="isActiveChatsView ? 'Visualizar histórico' : 'Voltar para chats '"
       iconRight="task-list-clock-1"
       type="secondary"
       size="small"

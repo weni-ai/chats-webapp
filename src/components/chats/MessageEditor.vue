@@ -12,7 +12,7 @@
     <div class="actions">
       <unnnic-button
         type="secondary"
-        text="Mensagens prontas"
+        text="Mensagens rápidas"
         size="small"
         @click="$emit('show-macro-messages')"
       />

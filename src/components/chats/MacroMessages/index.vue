@@ -2,7 +2,7 @@
   <aside class="macro-messages">
     <section v-show="!areEditingOrCreating">
       <header>
-        <span>Mensagens instantâneas</span>
+        <span>Mensagens rápidas</span>
         <span @click="$emit('close')" aria-label="close icon" @keypress.enter="$emit('close')">
           <unnnic-icon-svg icon="close-1" size="sm" class="header-button" />
         </span>
@@ -23,7 +23,7 @@
       <unnnic-button
         class="new-message-button"
         icon-left="add-circle-1"
-        text="Adicionar mensagem instantânea"
+        text="Adicionar nova mensagem rápida"
         type="secondary"
         size="small"
         @click="macroMessageToEdit = createEmptyMacroMessage()"
@@ -32,7 +32,11 @@
 
     <section v-if="areEditingOrCreating" class="create-section">
       <header>
-        <span>Adicionar modelo de mensagem</span>
+        <span>
+          {{
+            macroMessageToEdit.id ? 'Editar modelo de mensagem' : 'Adicionar nova mensagem rápida'
+          }}
+        </span>
         <span @click="macroMessageToEdit = null" @keypress.enter="macroMessageToEdit = null">
           <unnnic-icon icon="keyboard-return-1" size="sm" class="header-button" />
         </span>

@@ -3,6 +3,11 @@
     <header>
       <span>{{ title }}</span>
       <span>
+        <unnnic-tool-tip enabled :text="`Digite #${title.toLowerCase()} para usar`" side="right">
+          <unnnic-icon-svg icon="information-circle-4" size="sm" scheme="neutral-clean" />
+        </unnnic-tool-tip>
+      </span>
+      <span class="options-menu">
         <unnnic-dropdown>
           <template #trigger>
             <unnnic-icon-svg icon="navigation-menu-vertical-1" size="sm" />
@@ -61,13 +66,17 @@ export default {
     margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 0.5rem;
 
     span {
       font-size: 0.875rem;
       line-height: 1.375rem;
       font-weight: $unnnic-font-weight-bold;
       color: $unnnic-color-neutral-dark;
+    }
+
+    .options-menu {
+      margin-left: auto;
     }
 
     .dropdown-item-content {
