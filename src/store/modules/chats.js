@@ -527,7 +527,7 @@ const module = {
       activeChatGroup.chats.unshift(activeChat);
     },
     setActiveChat(state, chat) {
-      state.activeChat = { ...chat, unreadMessages: 0 };
+      state.activeChat = chat ? { ...chat, unreadMessages: 0 } : null;
 
       if (!chat) return;
 
