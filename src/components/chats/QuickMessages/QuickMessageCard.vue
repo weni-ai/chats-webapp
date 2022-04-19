@@ -1,5 +1,5 @@
 <template>
-  <section class="macro-message" @click="$emit('select')" @keypress.enter="$emit('select')">
+  <section class="quick-message" @click="$emit('select')" @keypress.enter="$emit('select')">
     <header>
       <span>{{ title }}</span>
       <span>
@@ -36,7 +36,7 @@
 
 <script>
 export default {
-  name: 'MacroMessageCard',
+  name: 'QuickMessageCard',
 
   props: {
     title: {
@@ -56,7 +56,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.macro-message {
+.quick-message {
   padding: 0.5rem 1rem;
   border: solid 1px $unnnic-color-neutral-dark;
   border-radius: $unnnic-border-radius-md;

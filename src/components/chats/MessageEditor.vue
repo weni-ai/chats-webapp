@@ -14,7 +14,7 @@
         type="secondary"
         text="Mensagens rápidas"
         size="small"
-        @click="$emit('show-macro-messages')"
+        @click="$emit('show-quick-messages')"
       />
       <unnnic-button
         text="Enviar"

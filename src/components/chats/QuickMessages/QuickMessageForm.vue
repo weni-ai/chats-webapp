@@ -1,8 +1,8 @@
 <template>
-  <section class="macro-message-form">
+  <section class="quick-message-form">
     <unnnic-input
-      :value="macroMessage.title"
-      @input="macroMessage = { ...macroMessage, title: $event }"
+      :value="quickMessage.title"
+      @input="quickMessage = { ...quickMessage, title: $event }"
       size="sm"
       placeholder="Defina um título para sua resposta pronta"
     >
@@ -12,8 +12,8 @@
     </unnnic-input>
 
     <unnnic-input
-      :value="macroMessage.shortcut"
-      @input="macroMessage = { ...macroMessage, shortcut: $event }"
+      :value="quickMessage.shortcut"
+      @input="quickMessage = { ...quickMessage, shortcut: $event }"
       size="sm"
       placeholder="Adicione uma palavra de atalho"
     >
@@ -26,8 +26,8 @@
     </unnnic-input>
 
     <unnnic-input
-      :value="macroMessage.message"
-      @input="macroMessage = { ...macroMessage, message: $event }"
+      :value="quickMessage.message"
+      @input="quickMessage = { ...quickMessage, message: $event }"
       size="sm"
       placeholder="Insira o conteúdo da mensagem que deseja cadastrar"
     >
@@ -51,7 +51,7 @@
 
 <script>
 export default {
-  name: 'MacroMessageForm',
+  name: 'QuickMessageForm',
 
   props: {
     value: {
@@ -61,12 +61,12 @@ export default {
   },
 
   computed: {
-    macroMessage: {
+    quickMessage: {
       get() {
         return this.value || {};
       },
-      set(macroMessage) {
-        this.$emit('input', macroMessage);
+      set(quickMessage) {
+        this.$emit('input', quickMessage);
       },
     },
   },
@@ -76,14 +76,14 @@ export default {
       this.$emit('cancel');
     },
     submit() {
-      this.$emit('submit', this.macroMessage);
+      this.$emit('submit', this.quickMessage);
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.macro-message-form {
+.quick-message-form {
   display: flex;
   flex-direction: column;
   gap: 1rem;

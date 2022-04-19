@@ -17,8 +17,8 @@
         v-if="!activeChat.closed"
         v-model="editorMessage"
         class="message-editor"
-        @show-macro-messages="
-          componentInSidebar = componentInSidebar === 'macroMessages' ? '' : 'macroMessages'
+        @show-quick-messages="
+          componentInSidebar = componentInSidebar === 'quickMessages' ? '' : 'quickMessages'
         "
         @send="sendMessage"
       />
@@ -68,7 +68,7 @@ import ChatMessages from '@/components/chats/chat/ChatMessages';
 import ContactInfo from '@/components/ContactInfo';
 import MessageEditor from '@/components/chats/MessageEditor';
 import ChatClassifier from '@/components/chats/ChatClassifier';
-import MacroMessages from '@/components/chats/MacroMessages';
+import QuickMessages from '@/components/chats/QuickMessages';
 
 export default {
   name: 'ActiveChat',
@@ -77,7 +77,7 @@ export default {
     ChatHeader,
     ChatMessages,
     ContactInfo,
-    MacroMessages,
+    QuickMessages,
     MainLayout,
     MessageEditor,
     ChatClassifier,
@@ -99,14 +99,14 @@ export default {
     },
     sidebarComponents() {
       return {
-        macroMessages: {
-          name: MacroMessages.name,
+        quickMessages: {
+          name: QuickMessages.name,
           listeners: {
             close: () => {
               this.componentInSidebar = '';
             },
-            'select-macro-message': (macroMessage) => {
-              this.editorMessage = macroMessage.message;
+            'select-quick-message': (quickMessage) => {
+              this.editorMessage = quickMessage.message;
             },
           },
         },

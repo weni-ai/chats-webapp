@@ -12,14 +12,14 @@
         {{ chat.username }}
       </span>
       <span @click="$emit('close')" @keypress.enter="$emit('close')">
-        <unnnic-tool-tip enabled text="Encerrar conversa" side="left">
+        <unnnic-tool-tip enabled text="Encerrar chat" side="left">
           <unnnic-icon-svg class="close-button" icon="close-1" size="sm" />
         </unnnic-tool-tip>
       </span>
     </header>
 
     <section class="closed-message" v-if="chat.closed">
-      <span class="message">Atendimento encerrado em {{ chat.date || getTodayDate() }}</span>
+      <span class="message">Chat encerrado em {{ chat.date || getTodayDate() }}</span>
       <unnnic-icon-svg icon="alert-circle-1-1" size="sm" scheme="neutral-darkest" />
     </section>
   </div>

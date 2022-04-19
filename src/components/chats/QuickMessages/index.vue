@@ -1,5 +1,5 @@
 <template>
-  <aside class="macro-messages">
+  <aside class="quick-messages">
     <section v-show="!areEditingOrCreating">
       <header>
         <span>Mensagens rápidas</span>
@@ -9,14 +9,14 @@
       </header>
 
       <div class="messages-list">
-        <macro-message-card
-          v-for="macroMessage in macroMessages"
-          :key="macroMessage.id"
-          :title="macroMessage.title"
-          :message="macroMessage.message"
-          @select="$emit('select-macro-message', macroMessage)"
-          @edit="macroMessageToEdit = macroMessage"
-          @delete="macroMessageToDelete = macroMessage"
+        <quick-message-card
+          v-for="quickMessage in quickMessages"
+          :key="quickMessage.id"
+          :title="quickMessage.title"
+          :message="quickMessage.message"
+          @select="$emit('select-quick-message', quickMessage)"
+          @edit="quickMessageToEdit = quickMessage"
+          @delete="quickMessageToDelete = quickMessage"
         />
       </div>
 
@@ -26,7 +26,7 @@
         text="Adicionar nova mensagem rápida"
         type="secondary"
         size="small"
-        @click="macroMessageToEdit = createEmptyMacroMessage()"
+        @click="quickMessageToEdit = createEmptyQuickMessage()"
       />
     </section>
 
@@ -34,52 +34,52 @@
       <header>
         <span>
           {{
-            macroMessageToEdit.id ? 'Editar modelo de mensagem' : 'Adicionar nova mensagem rápida'
+            quickMessageToEdit.id ? 'Editar modelo de mensagem' : 'Adicionar nova mensagem rápida'
           }}
         </span>
-        <span @click="macroMessageToEdit = null" @keypress.enter="macroMessageToEdit = null">
+        <span @click="quickMessageToEdit = null" @keypress.enter="quickMessageToEdit = null">
           <unnnic-icon icon="keyboard-return-1" size="sm" class="header-button" />
         </span>
       </header>
 
-      <macro-message-form
-        v-model="macroMessageToEdit"
-        class="macro-message-form"
-        @submit="addMacroMessage(macroMessageToEdit)"
-        @cancel="macroMessageToEdit = null"
+      <quick-message-form
+        v-model="quickMessageToEdit"
+        class="quick-message-form"
+        @submit="addQuickMessage(quickMessageToEdit)"
+        @cancel="quickMessageToEdit = null"
       />
     </section>
 
     <unnnic-modal
-      text="Deletar macro"
-      description="Você tem certeza que deseja deletar a resposta instantânea?"
+      text="Deletar mensagem rápida"
+      description="Você tem certeza que deseja deletar a mensagem rápida?"
       scheme="feedback-yellow"
       modal-icon="alert-circle-1"
-      @close="macroMessageToDelete = null"
-      :show-modal="!!macroMessageToDelete"
+      @close="quickMessageToDelete = null"
+      :show-modal="!!quickMessageToDelete"
     >
       <template #options>
-        <unnnic-button text="Confirmar" type="terciary" @click="deleteMacroMessage" />
-        <unnnic-button text="Cancelar" @click="macroMessageToDelete = null" />
+        <unnnic-button text="Confirmar" type="terciary" @click="deleteQuickMessage" />
+        <unnnic-button text="Cancelar" @click="quickMessageToDelete = null" />
       </template>
     </unnnic-modal>
   </aside>
 </template>
 
 <script>
-import MacroMessageCard from './MacroMessageCard';
-import MacroMessageForm from './MacroMessageForm';
+import QuickMessageCard from './QuickMessageCard';
+import QuickMessageForm from './QuickMessageForm';
 
 export default {
-  name: 'MacroMessages',
+  name: 'QuickMessages',
 
   components: {
-    MacroMessageCard,
-    MacroMessageForm,
+    QuickMessageCard,
+    QuickMessageForm,
   },
 
   data: () => ({
-    macroMessages: [
+    quickMessages: [
       {
         id: 1,
         title: 'Boas-vindas',
@@ -91,52 +91,52 @@ export default {
         message: 'Agradeço sua paciência, te transferirei para outro departamento.',
       },
     ],
-    macroMessageToDelete: null,
-    macroMessageToEdit: null,
+    quickMessageToDelete: null,
+    quickMessageToEdit: null,
   }),
 
   computed: {
     areEditingOrCreating() {
-      return !!this.macroMessageToEdit;
+      return !!this.quickMessageToEdit;
     },
   },
 
   methods: {
-    addMacroMessage(newMacroMessage) {
-      if (newMacroMessage.id) {
-        this.macroMessages = this.macroMessages.map((macroMessage) => {
-          if (macroMessage.id === newMacroMessage.id) return { ...newMacroMessage };
+    addQuickMessage(newQuickMessage) {
+      if (newQuickMessage.id) {
+        this.quickMessages = this.quickMessages.map((quickMessage) => {
+          if (quickMessage.id === newQuickMessage.id) return { ...newQuickMessage };
 
-          return macroMessage;
+          return quickMessage;
         });
 
-        this.macroMessageToEdit = null;
+        this.quickMessageToEdit = null;
         return;
       }
 
-      this.macroMessages.push({
-        ...newMacroMessage,
+      this.quickMessages.push({
+        ...newQuickMessage,
         id: Math.random() * 100 + 1,
       });
 
-      this.macroMessageToEdit = null;
+      this.quickMessageToEdit = null;
     },
-    createEmptyMacroMessage() {
+    createEmptyQuickMessage() {
       return { title: '', message: '', shortcut: null };
     },
-    deleteMacroMessage() {
-      this.macroMessages = this.macroMessages.filter(
-        (macroMessage) => macroMessage.id !== this.macroMessageToDelete.id,
+    deleteQuickMessage() {
+      this.quickMessages = this.quickMessages.filter(
+        (quickMessage) => quickMessage.id !== this.quickMessageToDelete.id,
       );
 
-      this.macroMessageToDelete = null;
+      this.quickMessageToDelete = null;
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.macro-messages {
+.quick-messages {
   height: 100%;
   padding-right: 1rem;
 
@@ -161,7 +161,7 @@ export default {
       }
     }
 
-    .macro-message-form {
+    .quick-message-form {
       flex: 1 1;
     }
 
