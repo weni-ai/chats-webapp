@@ -1998,10 +1998,10 @@
     "@webassemblyjs/ast" "1.11.1"
     "@xtuc/long" "4.2.2"
 
-"@weni/unnnic-system@1.1.114":
-  version "1.1.114"
-  resolved "https://registry.yarnpkg.com/@weni/unnnic-system/-/unnnic-system-1.1.114.tgz#2d6587ac03c29ccebf2f1e75901352ba868714f6"
-  integrity sha512-730G47P9dwkE8PBx7IRMcsJag6chOonG9247aRHx4ZON5LB8iun4pf2ZgEh90L3cX4qKTZch9w6D+K+sPGb59w==
+"@weni/unnnic-system@1.1.116":
+  version "1.1.116"
+  resolved "https://registry.yarnpkg.com/@weni/unnnic-system/-/unnnic-system-1.1.116.tgz#70ccb7f679dae39f52c8eec82736b79d627d350a"
+  integrity sha512-qzjxatBb6z8lc3bgULNjpANceJgAGLzIYIzDa88GgGAZqnAN6h5huWlv3Rna229zNmrbn6Pxz37v2wqZJx40Bg==
   dependencies:
     core-js "^3.6.5"
     moment "^2.29.1"
