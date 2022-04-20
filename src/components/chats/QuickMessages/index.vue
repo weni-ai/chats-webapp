@@ -12,8 +12,8 @@
         <quick-message-card
           v-for="quickMessage in quickMessages"
           :key="quickMessage.id"
-          :title="quickMessage.title"
-          :message="quickMessage.message"
+          :quickMessage="quickMessage"
+          clickable
           @select="$emit('select-quick-message', quickMessage)"
           @edit="quickMessageToEdit = quickMessage"
           @delete="quickMessageToDelete = quickMessage"

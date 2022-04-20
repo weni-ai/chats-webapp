@@ -1,16 +1,27 @@
 <template>
-  <section class="quick-message" @click="$emit('select')" @keypress.enter="$emit('select')">
-    <header>
-      <span>{{ title }}</span>
-      <span>
-        <unnnic-tool-tip enabled :text="`Digite #${title.toLowerCase()} para usar`" side="right">
-          <unnnic-icon-svg icon="information-circle-4" size="sm" scheme="neutral-clean" />
-        </unnnic-tool-tip>
-      </span>
-      <span class="options-menu">
+  <section
+    @click="$emit('select', quickMessage)"
+    @keypress.enter="$emit('select', quickMessage)"
+    class="quick-message-card"
+    :class="{ clickable }"
+  >
+    <unnnic-chat-text
+      :title="quickMessage.title"
+      :info="`Digite #${quickMessage.shortcut || quickMessage.title.toLowerCase()} para usar`"
+      size="small"
+    >
+      <template slot="actions">
         <unnnic-dropdown>
           <template #trigger>
-            <unnnic-icon-svg icon="navigation-menu-vertical-1" size="sm" />
+            <unnnic-tool-tip enabled text="Remover ou editar" side="left">
+              <div class="quick-message-actions">
+                <unnnic-icon-svg
+                  icon="navigation-menu-vertical-1"
+                  size="sm"
+                  scheme="brand-weni-soft"
+                />
+              </div>
+            </unnnic-tool-tip>
           </template>
 
           <unnnic-dropdown-item @click="$emit('edit')">
@@ -27,10 +38,12 @@
             </div>
           </unnnic-dropdown-item>
         </unnnic-dropdown>
-      </span>
-    </header>
+      </template>
 
-    <p>{{ message }}</p>
+      <template slot="description">
+        {{ quickMessage.message }}
+      </template>
+    </unnnic-chat-text>
   </section>
 </template>
 
@@ -39,57 +52,32 @@ export default {
   name: 'QuickMessageCard',
 
   props: {
-    title: {
-      type: String,
-      default: '',
+    clickable: {
+      type: Boolean,
+      default: false,
     },
-    message: {
-      type: String,
+    quickMessage: {
+      type: Object,
       required: true,
     },
   },
-
-  data: () => ({
-    isOpenOptionsMenu: false,
-  }),
 };
 </script>
 
 <style lang="scss" scoped>
-.quick-message {
-  padding: 0.5rem 1rem;
-  border: solid 1px $unnnic-color-neutral-dark;
-  border-radius: $unnnic-border-radius-md;
-  cursor: pointer;
+.quick-message-card {
+  .quick-message-actions {
+    display: flex;
+    align-items: center;
+  }
 
-  header {
-    margin-bottom: 0.5rem;
+  .dropdown-item-content {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-
-    span {
-      font-size: 0.875rem;
-      line-height: 1.375rem;
-      font-weight: $unnnic-font-weight-bold;
-      color: $unnnic-color-neutral-dark;
-    }
-
-    .options-menu {
-      margin-left: auto;
-    }
-
-    .dropdown-item-content {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
   }
-
-  p {
-    font-size: 0.75rem;
-    line-height: 1.25rem;
-    color: $unnnic-color-neutral-dark;
-  }
+}
+.clickable {
+  cursor: pointer;
 }
 </style>
