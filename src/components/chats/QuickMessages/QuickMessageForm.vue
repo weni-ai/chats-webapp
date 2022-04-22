@@ -92,6 +92,7 @@ export default {
     display: flex;
     align-items: center;
     gap: 0.25rem;
+    color: $unnnic-color-neutral-dark;
     font-weight: $unnnic-font-weight-black;
   }
 
