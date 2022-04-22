@@ -84,17 +84,6 @@ export default {
     ...mapState({
       activeChat: (state) => state.chats.activeChat || {},
     }),
-    // getLastMessage() {
-    //   const { messages } = this.chat;
-
-    //   if (messages.length === 0) return '';
-
-    //   const lastMessage = messages.at(-1);
-    //   const username =
-    //     lastMessage.username === 'Atendente' ? 'Você' : lastMessage.username.split(' ')[0];
-
-    //   return `${username}: ${lastMessage.content.at(-1).text}`;
-    // },
     hasUnreadMessages() {
       return this.chat.unreadMessages > 0;
     },

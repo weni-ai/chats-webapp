@@ -11,7 +11,7 @@
     @click="$emit('click')"
     @keypress.enter="$emit('click')"
   >
-    <unnnic-icon-svg v-if="username === 'Atendente'" icon="single-neutral-actions-1" size="sm" />
+    <unnnic-icon-svg v-if="username === 'Agente'" icon="single-neutral-actions-1" size="sm" />
     <span v-else>
       {{ getUsernameFirstCharacter }}
     </span>

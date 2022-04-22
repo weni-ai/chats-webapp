@@ -49,7 +49,7 @@ export default {
       }).format(new Date());
     },
     showContactInfo() {
-      if (this.chat.username === 'Atendente') return;
+      if (this.chat.username === 'Agente') return;
 
       this.$emit('show-contact-info');
     },

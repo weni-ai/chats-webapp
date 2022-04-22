@@ -52,7 +52,7 @@ const chats = [
           },
           {
             id: '2',
-            username: 'Atendente',
+            username: 'Agente',
             time: '10h20',
             content: [
               { text: 'Olá, Pedro' },
@@ -76,7 +76,7 @@ const chats = [
           },
           {
             id: '4',
-            username: 'Atendente',
+            username: 'Agente',
             time: '10h20',
             content: [
               { text: 'Olá, Pedro' },
@@ -100,7 +100,7 @@ const chats = [
           },
           {
             id: '6',
-            username: 'Atendente',
+            username: 'Agente',
             time: '10h20',
             content: [
               { text: 'Olá, Pedro' },
@@ -188,7 +188,7 @@ const chats = [
           },
           {
             id: '2',
-            username: 'Atendente',
+            username: 'Agente',
             time: '10h20',
             content: [
               { text: 'Olá, Rafael' },
@@ -220,7 +220,7 @@ const chats = [
           },
           {
             id: '2',
-            username: 'Atendente',
+            username: 'Agente',
             time: '10h20',
             content: [
               { text: 'Olá, Milton' },
@@ -252,7 +252,7 @@ const chats = [
           },
           {
             id: '2',
-            username: 'Atendente',
+            username: 'Agente',
             time: '10h20',
             content: [
               { text: 'Olá, Thiago' },
@@ -284,7 +284,7 @@ const chats = [
           },
           {
             id: '2',
-            username: 'Atendente',
+            username: 'Agente',
             time: '10h20',
             content: [
               { text: 'Olá, Agnaldo' },
@@ -316,7 +316,7 @@ const chats = [
           },
           {
             id: '2',
-            username: 'Atendente',
+            username: 'Agente',
             time: '10h20',
             content: [
               { text: 'Olá, Tânia' },
@@ -348,7 +348,7 @@ const chats = [
           },
           {
             id: '2',
-            username: 'Atendente',
+            username: 'Agente',
             time: '10h20',
             content: [
               { text: 'Olá, Thiago' },
@@ -380,7 +380,7 @@ const chats = [
           },
           {
             id: '2',
-            username: 'Atendente',
+            username: 'Agente',
             time: '10h20',
             content: [
               { text: 'Olá, Cíntia' },
@@ -419,7 +419,7 @@ const closedChats = [
       },
       {
         id: '2',
-        username: 'Atendente',
+        username: 'Agente',
         time: '10h20',
         content: [
           { text: 'Olá, Milton' },
@@ -453,7 +453,7 @@ const closedChats = [
       },
       {
         id: '2',
-        username: 'Atendente',
+        username: 'Agente',
         time: '10h20',
         content: [
           { text: 'Olá, João' },
@@ -487,7 +487,7 @@ const closedChats = [
       },
       {
         id: '2',
-        username: 'Atendente',
+        username: 'Agente',
         time: '10h20',
         content: [
           { text: 'Olá, Dulce' },
@@ -541,12 +541,12 @@ const module = {
 
       const { messages } = state.activeChat;
 
-      if (messages.at(-1)?.username === 'Atendente') {
+      if (messages.at(-1)?.username === 'Agente') {
         messages.at(-1).content.push(message);
       } else {
         messages.push({
           id: Math.ceil(Math.random() * 100 + 1),
-          username: 'Atendente',
+          username: 'Agente',
           time: `${new Date().getHours().toString().padStart(2, '0')}h${new Date()
             .getMinutes()
             .toString()
