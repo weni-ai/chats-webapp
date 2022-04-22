@@ -15,19 +15,9 @@ export default {
   name: 'MediaMessageControls',
 
   props: {
-    fileExtension: {
+    fullFilename: {
       type: String,
       default: '',
-    },
-    filename: {
-      type: String,
-      default: '',
-    },
-  },
-
-  computed: {
-    fullFilename() {
-      return this.filename ? `${this.filename}.${this.fileExtension}` : '';
     },
   },
 };

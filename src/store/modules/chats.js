@@ -173,10 +173,8 @@ const chats = [
             content: [
               { text: 'Oi' },
               {
-                text: 'Gostaria de saber se consigo pagar meu boleto depois do vencimento',
+                text: 'Gostaria de saber como faço para alterar as configurações do meu perfil',
               },
-              { text: 'O boleto venceu ontem e eu não queria pagar juros' },
-              { text: 'Como faço?' },
             ],
           },
           {
@@ -186,7 +184,26 @@ const chats = [
             content: [
               { text: 'Olá, Rafael' },
               {
-                text: 'Preciso confirmar com o financeiro, você me dá um minuto?',
+                text: 'Vou te mostrar como fazer, é só acessar seu perfil e seguir os passos contidos que o vídeo mostra:',
+              },
+              {
+                // example video
+                src: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_1MB.mp4',
+                type: 'video',
+                isMedia: true,
+                fileExtension: 'mp4',
+                filename: 'Tutorial de cadastro',
+              },
+            ],
+          },
+          {
+            id: '3',
+            username: 'Rafael Felipe',
+            time: '10h15',
+            content: [
+              { text: 'Muito obrigada!' },
+              {
+                text: 'Me ajudou muito :)',
               },
             ],
           },

@@ -1,17 +1,32 @@
 <template>
-  <section class="media-message">
-    <image-preview :src="media.src" :alt="media.alt" :height="media.height" :width="media.width" />
-    <media-controls
-      :filename="media.filename"
-      :fileExtension="media.fileExtension"
-      @download="download"
+  <section v-if="isDocument">
+    <!-- document preview not yet implemented -->
+    <span>document</span>
+  </section>
+
+  <section v-else class="media-message">
+    <image-preview
+      v-if="media.type === 'image'"
+      :src="media.src"
+      :alt="media.alt"
+      :height="media.height"
+      :width="media.width"
     />
+    <video-preview
+      v-else-if="media.type === 'video'"
+      :src="media.src"
+      :height="media.height"
+      :width="media.width"
+    />
+
+    <media-controls :fullFilename="fullFilename" @download="download" />
   </section>
 </template>
 
 <script>
 import MediaControls from './Controls';
 import ImagePreview from './Previews/Image';
+import VideoPreview from './Previews/Video';
 
 export default {
   name: 'MediaMessage',
@@ -19,6 +34,7 @@ export default {
   components: {
     ImagePreview,
     MediaControls,
+    VideoPreview,
   },
 
   props: {
@@ -28,9 +44,36 @@ export default {
     },
   },
 
+  data: () => ({
+    mediaTypes: ['image', 'document', 'video'],
+  }),
+
+  computed: {
+    fullFilename() {
+      return this.media.filename ? `${this.media.filename}.${this.media.fileExtension}` : '';
+    },
+    isDocument() {
+      return this.media.type === 'document';
+    },
+  },
+
   methods: {
-    download() {
-      console.log('download');
+    async download() {
+      const { src, fileExtension, type } = this.media;
+      const response = await fetch(src).catch(() =>
+        console.error('Não foi possível realizar o download no momento'),
+      );
+
+      if (!response) return;
+
+      const responseBlob = await response.blob();
+
+      const blob = new Blob([responseBlob], { type: `${type}/${fileExtension}` });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = this.fullFilename;
+      link.click();
+      URL.revokeObjectURL(link.href);
     },
   },
 };
