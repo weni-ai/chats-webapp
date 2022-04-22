@@ -8,21 +8,21 @@
       <div class="line" />
     </div>
 
-    <div v-for="message in chat.messages" :key="message.id" class="message">
+    <div v-for="message in chat.messages" :key="message.id" class="message-group">
       <span>
         <user-avatar
           :username="message.username"
-          :clickable="message.username !== 'Atendente'"
+          :clickable="message.username !== 'Agente'"
           @click="showContactInfo(message.username)"
           :disabled="chat.closed"
         />
       </span>
 
-      <div>
+      <div class="messages">
         <div class="info">
           <span
             class="username"
-            :class="{ clickable: message.username !== 'Atendente' }"
+            :class="{ clickable: message.username !== 'Agente' }"
             @click="showContactInfo(message.username)"
             @keypress.enter="showContactInfo(message.username)"
           >
@@ -31,8 +31,10 @@
           <span class="time">{{ message.time }}</span>
         </div>
 
-        <div v-for="content in message.content" :key="content.text" class="messages">
-          <p :class="{ 'unsent-message': content.sent === false }">
+        <div v-for="content in message.content" :key="content.text" class="message">
+          <media-message v-if="content.isMedia" :media="content" />
+
+          <p v-else :class="{ 'unsent-message': content.sent === false }">
             {{ content.text }}
             <unnnic-tool-tip
               v-if="content.sent === false"
@@ -57,6 +59,7 @@
         </div>
       </div>
     </div>
+
     <unnnic-modal
       :showModal="!!messageToResend"
       modalIcon="alert-circle-1"
@@ -77,11 +80,13 @@
 
 <script>
 import UserAvatar from '@/components/UserAvatar';
+import MediaMessage from '@/components/chats/MediaMessage';
 
 export default {
   name: 'ChatMessages',
 
   components: {
+    MediaMessage,
     UserAvatar,
   },
 
@@ -98,7 +103,7 @@ export default {
 
   methods: {
     showContactInfo(username) {
-      if (username === 'Atendente') return;
+      if (username === 'Agente') return;
 
       this.$emit('show-contact-info');
     },
@@ -136,50 +141,51 @@ export default {
     }
   }
 
-  .message {
+  .message-group {
     display: flex;
     gap: 1rem;
 
-    & + .message {
+    & + .message-group {
       padding-top: 1.5rem;
     }
 
-    .info {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.5rem;
-
-      .username {
-        font-weight: 400;
-        line-height: 1.5rem;
-        color: $unnnic-color-neutral-dark;
-      }
-
-      .time {
-        font-size: 0.875rem;
-        color: $unnnic-color-brand-sec;
-      }
-    }
-
     .messages {
-      & .unsent-message {
-        color: $unnnic-color-neutral-clean;
+      .info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
 
-        & .resend-button {
-          display: inline-flex;
-          align-items: center;
-          margin-left: 0.5rem;
+        .username {
+          font-weight: 400;
+          line-height: 1.5rem;
+          color: $unnnic-color-neutral-dark;
+        }
+
+        .time {
+          font-size: 0.875rem;
+          color: $unnnic-color-brand-sec;
         }
       }
 
-      & > * {
-        font-size: 0.875rem;
-        line-height: 1.375rem;
-        color: $unnnic-color-neutral-dark;
-
-        & + * {
+      .message {
+        & + .message {
           padding-top: 0.5rem;
+        }
+
+        & .unsent-message {
+          color: $unnnic-color-neutral-clean;
+
+          & .resend-button {
+            display: inline-flex;
+            align-items: center;
+            margin-left: 0.5rem;
+          }
+        }
+
+        & p {
+          font-size: 0.875rem;
+          color: $unnnic-color-neutral-dark;
         }
       }
     }

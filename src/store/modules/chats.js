@@ -124,20 +124,26 @@ const chats = [
             content: [
               { text: 'Oi' },
               {
-                text: 'Gostaria de saber se consigo pagar meu boleto depois do vencimento',
+                text: 'Gostaria de saber como faço para alterar as configurações do meu perfil',
               },
-              { text: 'O boleto venceu ontem e eu não queria pagar juros' },
-              { text: 'Como faço?' },
             ],
           },
           {
             id: '2',
-            username: 'Atendente',
+            username: 'Agente',
             time: '10h20',
             content: [
               { text: 'Olá, Ilanna' },
               {
-                text: 'Preciso confirmar com o financeiro, você me dá um minuto?',
+                text: 'Vou te mostrar como fazer, é só acessar seu perfil e seguir os passos contidos na imagem',
+              },
+              {
+                // Get a random image with 224x126 pixels (16:9 proportion)
+                src: 'https://picsum.photos/224/126',
+                type: 'image',
+                isMedia: true,
+                fileExtension: 'png',
+                filename: 'Captura de tela',
               },
             ],
           },
@@ -146,22 +152,9 @@ const chats = [
             username: 'Ilanna Lins',
             time: '10h15',
             content: [
-              { text: 'Oi' },
+              { text: 'Muito obrigada!' },
               {
-                text: 'Gostaria de saber se consigo pagar meu boleto depois do vencimento',
-              },
-              { text: 'O boleto venceu ontem e eu não queria pagar juros' },
-              { text: 'Como faço?' },
-            ],
-          },
-          {
-            id: '4',
-            username: 'Atendente',
-            time: '10h20',
-            content: [
-              { text: 'Olá, Ilanna' },
-              {
-                text: 'Preciso confirmar com o financeiro, você me dá um minuto?',
+                text: 'Me ajudou muito :)',
               },
             ],
           },
