@@ -11,6 +11,8 @@
       :alt="media.alt"
       :height="media.height"
       :width="media.width"
+      fullscreen-on-click
+      @download="download"
     />
     <video-preview
       v-else-if="media.type === 'video'"

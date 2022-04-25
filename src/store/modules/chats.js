@@ -138,8 +138,8 @@ const chats = [
                 text: 'Vou te mostrar como fazer, é só acessar seu perfil e seguir os passos contidos na imagem',
               },
               {
-                // Get a random image with 224x126 pixels (16:9 proportion)
-                src: 'https://picsum.photos/224/126',
+                // Get a random image with 1920x1080 pixels (16:9 proportion)
+                src: 'https://picsum.photos/1920/1080',
                 type: 'image',
                 isMedia: true,
                 fileExtension: 'png',
