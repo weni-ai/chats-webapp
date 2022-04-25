@@ -213,19 +213,17 @@ const chats = [
         id: '7',
         username: 'Milton Neves',
         lastMessage: 'Acho que podemos conversar ama...',
-        unreadMessages: 8,
+        unreadMessages: 3,
         messages: [
           {
             id: '1',
             username: 'Milton Neves',
             time: '10h15',
             content: [
-              { text: 'Oi' },
+              { text: 'Olá' },
               {
-                text: 'Gostaria de saber se consigo pagar meu boleto depois do vencimento',
+                text: 'Gostaria de uma segunda via da minha fatura com prazo atualizado',
               },
-              { text: 'O boleto venceu ontem e eu não queria pagar juros' },
-              { text: 'Como faço?' },
             ],
           },
           {
@@ -235,7 +233,29 @@ const chats = [
             content: [
               { text: 'Olá, Milton' },
               {
-                text: 'Preciso confirmar com o financeiro, você me dá um minuto?',
+                text: 'Segue o boleto atualizado!',
+              },
+              {
+                // image with A4 proportion to simulate a PDF document
+                src: 'https://picsum.photos/2480/3508',
+                type: 'document',
+                isMedia: true,
+                fileExtension: 'pdf',
+                filename: 'Boleto atualizado',
+              },
+            ],
+          },
+          {
+            id: '3',
+            username: 'Milton Neves',
+            time: '10h22',
+            content: [
+              { text: 'Muito obrigado!' },
+              {
+                text: 'Me ajudou muito :)',
+              },
+              {
+                text: 'Tenha um bom dia!',
               },
             ],
           },

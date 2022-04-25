@@ -1,7 +1,7 @@
 <template>
   <section v-if="isDocument">
     <!-- document preview not yet implemented -->
-    <span>document</span>
+    <document-preview :fullFilename="fullFilename" @download="download" />
   </section>
 
   <section v-else class="media-message">
@@ -25,6 +25,7 @@
 
 <script>
 import MediaControls from './Controls';
+import DocumentPreview from './Previews/Document';
 import ImagePreview from './Previews/Image';
 import VideoPreview from './Previews/Video';
 
@@ -32,6 +33,7 @@ export default {
   name: 'MediaMessage',
 
   components: {
+    DocumentPreview,
     ImagePreview,
     MediaControls,
     VideoPreview,
