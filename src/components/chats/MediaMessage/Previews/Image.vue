@@ -1,23 +1,24 @@
 <template>
-  <fullscreen-preview
-    v-if="isFullscreen"
-    @download="$emit('download')"
-    @close="isFullscreenByUserClick = false"
-    @next="nextMedia"
-    @previous="previousMedia"
-  >
-    <img :src="src" :alt="alt" @keypress.enter="() => {}" @click.stop="() => {}" />
-  </fullscreen-preview>
+  <div>
+    <img
+      :src="src"
+      :alt="alt"
+      :style="{ width: widthInRem, height: heightInRem }"
+      class="clickable"
+      @click="handleImageClick"
+      @keypress.enter="handleImageClick"
+    />
 
-  <img
-    v-else
-    :src="src"
-    :alt="alt"
-    :style="{ width: widthInRem, height: heightInRem }"
-    class="clickable"
-    @click="handleImageClick"
-    @keypress.enter="handleImageClick"
-  />
+    <fullscreen-preview
+      v-if="isFullscreen"
+      @download="$emit('download')"
+      @close="isFullscreenByUserClick = false"
+      @next="nextMedia"
+      @previous="previousMedia"
+    >
+      <img :src="src" :alt="alt" @keypress.enter="() => {}" @click.stop="() => {}" />
+    </fullscreen-preview>
+  </div>
 </template>
 
 <script>
