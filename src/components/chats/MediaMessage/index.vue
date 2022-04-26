@@ -1,6 +1,6 @@
 <template>
   <section v-if="isDocument">
-    <document-preview :fullFilename="fullFilename" @download="download" />
+    <document-preview :fullFilename="fullFilename" @download="download" highlight />
   </section>
 
   <section v-else class="media-message">
