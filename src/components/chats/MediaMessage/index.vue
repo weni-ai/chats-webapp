@@ -1,6 +1,5 @@
 <template>
   <section v-if="isDocument">
-    <!-- document preview not yet implemented -->
     <document-preview :fullFilename="fullFilename" @download="download" />
   </section>
 
@@ -19,6 +18,7 @@
       :src="media.src"
       :height="media.height"
       :width="media.width"
+      fullscreen-on-click
     />
 
     <media-controls :fullFilename="fullFilename" @download="download" />

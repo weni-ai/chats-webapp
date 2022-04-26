@@ -6,13 +6,7 @@
     @next="nextMedia"
     @previous="previousMedia"
   >
-    <img
-      :src="src"
-      :alt="alt"
-      @click="handleImageClick"
-      @keypress.enter="handleImageClick"
-      @click.stop="() => {}"
-    />
+    <img :src="src" :alt="alt" @keypress.enter="() => {}" @click.stop="() => {}" />
   </fullscreen-preview>
 
   <img

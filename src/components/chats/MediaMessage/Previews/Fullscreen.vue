@@ -94,7 +94,8 @@ export default {
     max-height: $height;
     width: 100%;
 
-    img {
+    img,
+    video {
       max-height: 100%;
       max-width: 100%;
       object-fit: contain;
