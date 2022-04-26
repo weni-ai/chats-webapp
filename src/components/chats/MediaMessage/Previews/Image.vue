@@ -1,41 +1,19 @@
-<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
-  <div
+  <fullscreen-preview
     v-if="isFullscreen"
-    class="image-preview--fullscreen"
-    @click="isFullscreenByUserClick = false"
+    @download="$emit('download')"
+    @close="isFullscreenByUserClick = false"
+    @next="nextMedia"
+    @previous="previousMedia"
   >
-    <header class="toolbar" @click.stop="() => {}">
-      <span @click="$emit('download')" @keypress.enter="$emit('download')">
-        <unnnic-icon-svg icon="download-bottom-1" scheme="neutral-snow" class="clickable" />
-      </span>
-      <span
-        @click="isFullscreenByUserClick = false"
-        @keypress.enter="isFullscreenByUserClick = false"
-      >
-        <unnnic-icon-svg icon="close-1" scheme="neutral-snow" class="clickable" />
-      </span>
-    </header>
-
-    <div class="media__container">
-      <img
-        :src="src"
-        :alt="alt"
-        @click="handleImageClick"
-        @keypress.enter="handleImageClick"
-        @click.stop="() => {}"
-      />
-    </div>
-
-    <footer class="controls" @click.stop="() => {}">
-      <span @click="previousMedia" @keypress.enter="previousMedia">
-        <unnnic-icon-svg icon="arrow-left-1-1" scheme="background-snow" class="clickable" />
-      </span>
-      <span @click="nextMedia" @keypress.enter="nextMedia">
-        <unnnic-icon-svg icon="arrow-right-1-1" scheme="background-snow" class="clickable" />
-      </span>
-    </footer>
-  </div>
+    <img
+      :src="src"
+      :alt="alt"
+      @click="handleImageClick"
+      @keypress.enter="handleImageClick"
+      @click.stop="() => {}"
+    />
+  </fullscreen-preview>
 
   <img
     v-else
@@ -49,8 +27,14 @@
 </template>
 
 <script>
+import FullscreenPreview from './Fullscreen';
+
 export default {
   name: 'MediaImagePreview',
+
+  components: {
+    FullscreenPreview,
+  },
 
   props: {
     alt: {
@@ -128,68 +112,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.image-preview--fullscreen {
-  z-index: 10;
-  position: absolute;
-
-  top: 0;
-  left: 0;
-
-  max-height: 100vh;
-  height: 100vh;
-
-  max-width: 100vw;
-  width: 100vw;
-
-  padding-bottom: 1rem;
-  background: rgba(0, 0, 0, $unnnic-opacity-level-clarifying);
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-
-  .toolbar {
-    height: 3rem;
-    width: 100%;
-    background: rgba(0, 0, 0, $unnnic-opacity-level-clarifying);
-
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    padding: 0 1rem;
-  }
-
-  .media__container {
-    $height: calc(100vh - 3rem - 2rem - 1rem); // 100vh - toolbar - footer - page's padding-bottom
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    padding: 1rem;
-
-    height: $height;
-    max-height: $height;
-    width: 100%;
-
-    img {
-      max-height: 100%;
-      max-width: 100%;
-      object-fit: contain;
-    }
-  }
-
-  .controls {
-    height: 2rem;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-}
-</style>
