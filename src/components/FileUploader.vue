@@ -71,6 +71,7 @@ export default {
       this.$emit('upload');
 
       this.showUploadModal = false;
+      this.files = [];
     },
   },
 

@@ -65,7 +65,7 @@ export default {
       this.message = '';
     },
     upload() {
-      console.log('upload');
+      this.$emit('upload', [...this.files]);
     },
   },
 };

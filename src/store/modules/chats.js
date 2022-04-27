@@ -584,6 +584,8 @@ const module = {
           content: [message],
         });
       }
+
+      state.activeChat.messages = messages;
     },
   },
 
@@ -592,10 +594,11 @@ const module = {
       commit('removeChat', chat);
       commit('addClosedChat', chat);
     },
-    sendMessage({ commit, state }, text) {
+    sendMessage({ commit, state }, content) {
       if (!state.activeChat) return;
 
-      const message = { text, sent: Math.random() < 0.1 };
+      const message =
+        typeof content === 'string' ? { text: content, sent: Math.random() < 0.1 } : content;
 
       commit('sendMessage', message);
       commit('reorderChats', state.activeChat);

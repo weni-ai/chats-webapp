@@ -21,6 +21,7 @@
           componentInSidebar = componentInSidebar === 'quickMessages' ? '' : 'quickMessages'
         "
         @send="sendMessage"
+        @upload="sendFileMessage($event)"
       />
 
       <template v-if="activeChat.closed && !activeChat.tags">
@@ -133,6 +134,25 @@ export default {
     scrollMessagesToBottom() {
       this.$refs.chatMessages.$el.scrollTop = this.$refs.chatMessages.$el.scrollHeight;
     },
+    async sendFileMessage(files) {
+      try {
+        const filesInBase64 = await Promise.all(files.map((file) => this.fileToBase64(file)));
+
+        await Promise.all(
+          filesInBase64.map((file) =>
+            this.$store.dispatch('chats/sendMessage', {
+              src: file.src,
+              type: file.type,
+              isMedia: true,
+              fileExtension: file.fileExtension,
+              filename: file.filename,
+            }),
+          ),
+        );
+      } catch (e) {
+        console.error('O upload de alguns arquivos pode não ter sido concluído');
+      }
+    },
     async sendMessage() {
       const message = this.editorMessage.trim();
 
@@ -142,7 +162,24 @@ export default {
 
       this.scrollMessagesToBottom();
     },
-
+    fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const fr = new FileReader();
+        fr.readAsDataURL(file);
+        fr.onload = () =>
+          resolve({
+            filename: file.name.split('.')[0],
+            type: this.getFileType(file),
+            fileExtension: file.type.split('/')[1],
+            src: fr.result,
+          });
+        fr.onerror = (err) => reject(err);
+      });
+    },
+    getFileType(file) {
+      const type = file.type.split('/')[0];
+      return type === 'application' ? 'document' : type;
+    },
     getTodayDate() {
       return new Intl.DateTimeFormat('pt-BR', {
         dateStyle: 'short',

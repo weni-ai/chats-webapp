@@ -31,7 +31,11 @@
           <span class="time">{{ message.time }}</span>
         </div>
 
-        <div v-for="content in message.content" :key="content.text" class="message">
+        <div
+          v-for="content in message.content"
+          :key="content.text || content.filename"
+          class="message"
+        >
           <media-message v-if="content.isMedia" :media="content" />
 
           <p v-else :class="{ 'unsent-message': content.sent === false }">
