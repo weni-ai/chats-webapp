@@ -10,12 +10,11 @@
     />
 
     <div class="actions">
-      <unnnic-button
-        type="secondary"
-        text="Mensagens rápidas"
-        size="small"
-        @click="$emit('show-quick-messages')"
-      />
+      <div class="secondary">
+        <file-uploader v-model="files" @upload="upload" />
+        <unnnic-button-icon icon="flash-1-3" size="small" @click="$emit('show-quick-messages')" />
+      </div>
+
       <unnnic-button
         text="Enviar"
         iconLeft="send-mail-3-1"
@@ -28,13 +27,13 @@
 </template>
 
 <script>
-import { unnnicButton } from '@weni/unnnic-system';
+import FileUploader from '@/components/FileUploader';
 
 export default {
   name: 'MessageEditor',
 
   components: {
-    unnnicButton,
+    FileUploader,
   },
 
   props: {
@@ -43,6 +42,10 @@ export default {
       default: '',
     },
   },
+
+  data: () => ({
+    files: [],
+  }),
 
   computed: {
     message: {
@@ -60,6 +63,9 @@ export default {
       this.$emit('send');
 
       this.message = '';
+    },
+    upload() {
+      console.log('upload');
     },
   },
 };
@@ -88,6 +94,12 @@ export default {
     align-items: center;
     justify-content: flex-end;
     gap: 0.5rem;
+
+    .secondary {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
 
     .send-button {
       width: 100%;
