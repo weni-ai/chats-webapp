@@ -1,27 +1,9 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import ActiveChat from '../views/ActiveChat.vue';
+
+import routes from './routes';
 
 Vue.use(VueRouter);
-
-const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: ActiveChat,
-  },
-  {
-    path: '/closed-chats',
-    name: 'closed-chats',
-    component: () => import(/* webpackChunkName: "closed-chats" */ '@/views/ClosedChats'),
-  },
-
-  {
-    path: '/settings',
-    name: 'settings',
-    component: () => import(/* webpackChunkName: "settings" */ '@/views/settings'),
-  },
-];
 
 const router = new VueRouter({
   mode: 'history',

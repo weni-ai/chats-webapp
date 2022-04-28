@@ -2,7 +2,7 @@
   <nav>
     <section class="settings-options">
       <div
-        v-for="{ title, description, icon, route } in options"
+        v-for="{ title, description, icon, route, isActive } in options"
         :key="route"
         @click="navigate(route)"
         @keypress.enter="navigate(route)"
@@ -10,7 +10,7 @@
       >
         <unnnic-card
           type="account"
-          :enabled="route === currentRoute"
+          :enabled="isActive ? isActive(currentRoute) : isCurrentRoute(route)"
           :title="title"
           :description="description"
           :icon="icon"
@@ -50,17 +50,21 @@ export default {
         icon: 'messages-bubble-1',
         description: 'Gerencie equipes ou altere configurações do Chats.',
         route: '/settings/chats',
+        isActive: (currentRoute) => currentRoute.includes('/settings/chats'),
       },
     ],
   }),
 
   computed: {
     currentRoute() {
-      return '/settings/chats' || this.$route.path;
+      return this.$route.path;
     },
   },
 
   methods: {
+    isCurrentRoute(route) {
+      return typeof route === 'function' ? route(this.currentRoute) : route === this.currentRoute;
+    },
     navigate(route) {
       this.$router.push(route);
     },
