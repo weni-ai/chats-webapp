@@ -1,12 +1,15 @@
 <template>
   <section class="settings-layout">
     <aside>
-      <settings-options />
+      <settings-options class="options" />
     </aside>
 
-    <main>
-      <slot />
-    </main>
+    <section>
+      <section v-if="breadcrumb" class="breadcrumb">
+        <unnnic-breadcrumb :crumbs="breadcrumb" @crumbClick="$router.push($event.path)" />
+      </section>
+      <router-view />
+    </section>
   </section>
 </template>
 
@@ -19,6 +22,12 @@ export default {
   components: {
     SettingsOptions,
   },
+
+  computed: {
+    breadcrumb() {
+      return this.$route.meta.breadcrumb;
+    },
+  },
 };
 </script>
 
@@ -28,11 +37,23 @@ export default {
   grid-template-columns: 33.33% 1fr;
   grid-template-areas: 'options main';
 
+  height: 100%;
+
   padding: {
     top: 1.5rem;
     right: 1rem;
-    bottom: 1rem;
+    bottom: 1.5rem;
     left: 1.5rem;
+  }
+
+  .options {
+    height: 100%;
+    margin-right: 1rem;
+    border-right: solid 1px $unnnic-color-neutral-soft;
+  }
+
+  .breadcrumb {
+    margin-bottom: 0.5rem;
   }
 }
 </style>
