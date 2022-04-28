@@ -4,7 +4,7 @@
       <settings-options class="options" />
     </aside>
 
-    <section>
+    <section id="view">
       <section v-if="breadcrumb" class="breadcrumb">
         <unnnic-breadcrumb :crumbs="breadcrumb" @crumbClick="$router.push($event.path)" />
       </section>
@@ -38,10 +38,11 @@ export default {
   grid-template-areas: 'options main';
 
   height: 100%;
+  max-height: calc(100vh - 5.5rem);
 
   padding: {
     top: 1.5rem;
-    right: 1rem;
+    right: 0;
     bottom: 1.5rem;
     left: 1.5rem;
   }
@@ -52,8 +53,16 @@ export default {
     border-right: solid 1px $unnnic-color-neutral-soft;
   }
 
-  .breadcrumb {
-    margin-bottom: 0.5rem;
+  #view {
+    max-height: 100%;
+
+    overflow-y: auto;
+    padding-right: 1rem;
+    margin-right: 0.5rem;
+
+    .breadcrumb {
+      margin-bottom: 0.5rem;
+    }
   }
 }
 </style>
