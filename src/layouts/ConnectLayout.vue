@@ -5,7 +5,7 @@
     <nav>
       <unnnic-sidebar-primary
         :expanded="false"
-        :items="sidebarItems"
+        :items="getSidebarItems"
         class="primary-sidebar"
         language="pt-br"
         hideText="Encolher"
@@ -34,30 +34,49 @@ export default {
     ConnectHeader,
   },
 
-  data: () => ({
-    sidebarItems: [
-      {
-        label: 'Menu principal',
-        items: [{ label: 'Início', icon: 'house-1-1' }],
-      },
-      {
-        label: 'Sistemas',
-        items: [
-          { label: 'Fluxos', active: false, icon: 'hierarchy-3-2' },
-          { label: 'Inteligência Artificial', active: false, icon: 'science-fiction-robot-2' },
-          {
-            label: 'Chats',
-            active: true,
-            icon: 'messaging-we-chat-3',
-          },
-        ],
-      },
-      {
-        label: 'Perfil',
-        items: [{ label: 'Conta', active: false, icon: 'single-neutral-actions-1' }],
-      },
-    ],
-  }),
+  computed: {
+    getSidebarItems() {
+      const items = [
+        {
+          label: 'Menu principal',
+          items: [{ label: 'Início', icon: 'house-1-1' }],
+        },
+        {
+          label: 'Sistemas',
+          items: [
+            { label: 'Fluxos', active: false, icon: 'hierarchy-3-2' },
+            { label: 'Inteligência Artificial', active: false, icon: 'science-fiction-robot-2' },
+            {
+              label: 'Chats',
+              active: this.route === 'chats',
+              click: () => {
+                this.$router.push('/');
+              },
+              icon: 'messaging-we-chat-3',
+            },
+          ],
+        },
+        {
+          label: 'Projeto',
+          items: [
+            {
+              label: 'Configurações',
+              icon: this.route === 'settings' ? 'cog-2' : 'cog-1',
+              active: this.route === 'settings',
+              click: () => {
+                this.$router.push('/settings');
+              },
+            },
+          ],
+        },
+      ];
+
+      return items;
+    },
+    route() {
+      return this.$route.path.includes('settings') ? 'settings' : 'chats';
+    },
+  },
 };
 </script>
 

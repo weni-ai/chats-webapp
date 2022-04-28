@@ -15,6 +15,12 @@ const routes = [
     name: 'closed-chats',
     component: () => import(/* webpackChunkName: "closed-chats" */ '@/views/ClosedChats'),
   },
+
+  {
+    path: '/settings',
+    name: 'settings',
+    component: () => import(/* webpackChunkName: "settings" */ '@/views/settings'),
+  },
 ];
 
 const router = new VueRouter({
