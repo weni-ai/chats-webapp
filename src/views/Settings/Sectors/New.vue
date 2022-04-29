@@ -1,6 +1,6 @@
 <template>
   <section class="new-sector">
-    <unnnic-tab v-model="tab" initialTab="sector" :tabs="tabs">
+    <unnnic-tab v-model="tab" initialTab="queue" :tabs="tabs">
       <template slot="tab-head-sector">
         <div class="form-tab">
           <span class="name">Novo Setor</span>
@@ -29,66 +29,104 @@
       </template>
 
       <template slot="tab-panel-queue">
-        <section class="new-sector-tab-content">
-          <p class="title">Adicionar nova Fila</p>
-
-          <section class="inputs">
-            <unnnic-input label="Nome da fila" placeholder="Suporte nivel III" class="input" />
-            <unnnic-button type="secondary" text="Adicionar fila" />
-          </section>
-        </section>
+        <form-queue v-model="queues" />
       </template>
 
       <template slot="tab-panel-agents">
         <section></section>
       </template>
     </unnnic-tab>
+
+    <div v-show="isShowingActions" class="actions">
+      <unnnic-button text="Voltar" type="secondary" @click="previousTab" />
+      <unnnic-button text="Continuar" @click="nextTab" />
+    </div>
   </section>
 </template>
 
 <script>
+import FormQueue from '@/components/settings/forms/Queue';
 import FormSector from '@/components/settings/forms/Sector';
 
 export default {
   name: 'NewSector',
 
   components: {
+    FormQueue,
     FormSector,
   },
 
   data: () => ({
+    agents: [],
+    queues: [],
     tab: '',
     tabs: ['sector', 'queue', 'agents'],
   }),
+
+  computed: {
+    isShowingActions() {
+      const tabs = {
+        sector: () => false,
+        queue: () => !!this.queues.length,
+        agents: () => !!this.agents.length,
+      };
+
+      return tabs[this.tab]?.() || false;
+    },
+  },
+
+  methods: {
+    nextTab() {
+      const tabs = {
+        sector: () => {
+          this.tab = 'queue';
+        },
+        queue: () => {
+          this.tab = 'agents';
+        },
+        agents: () => this.$router.push('/settings/chats'),
+      };
+
+      tabs[this.tab]?.();
+    },
+    previousTab() {
+      const tabs = {
+        queue: () => {
+          this.tab = 'sector';
+        },
+        agents: () => {
+          this.tab = 'queue';
+        },
+      };
+
+      tabs[this.tab]?.();
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 .new-sector {
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
   .form-tab {
     display: flex;
     align-items: center;
     gap: 0.5rem;
   }
 
-  .new-sector-tab-content {
-    .title {
-      font-weight: $unnnic-font-weight-bold;
-      color: $unnnic-color-neutral-dark;
-      font-size: $unnnic-font-size-body-lg;
-      line-height: 1.5rem;
+  .actions {
+    margin-top: auto;
+    padding-top: 1.5rem;
 
-      margin-bottom: 1rem;
-    }
+    display: flex;
+    gap: 1rem;
 
-    .inputs {
-      display: flex;
-      align-items: flex-end;
-      gap: 1.5rem;
-
-      .input {
-        flex: 1 1;
-      }
+    & > * {
+      flex: 1 1;
     }
   }
 }

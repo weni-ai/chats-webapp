@@ -8,7 +8,10 @@
       <section v-if="breadcrumb" class="breadcrumb">
         <unnnic-breadcrumb :crumbs="breadcrumb" @crumbClick="$router.push($event.path)" />
       </section>
-      <router-view />
+
+      <section class="content">
+        <router-view />
+      </section>
     </section>
   </section>
 </template>
@@ -37,8 +40,9 @@ export default {
   grid-template-columns: 33.33% 1fr;
   grid-template-areas: 'options main';
 
-  height: 100%;
-  max-height: calc(100vh - 5.5rem);
+  $height: calc(100vh - 5.5rem);
+  height: $height;
+  max-height: $height;
 
   padding: {
     top: 1.5rem;
@@ -54,6 +58,9 @@ export default {
   }
 
   #view {
+    display: flex;
+    flex-direction: column;
+
     max-height: 100%;
 
     overflow-y: auto;
@@ -62,6 +69,11 @@ export default {
 
     .breadcrumb {
       margin-bottom: 0.5rem;
+    }
+
+    .content {
+      flex: 1 1;
+      max-height: 100%;
     }
   }
 }
