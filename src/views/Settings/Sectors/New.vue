@@ -13,14 +13,22 @@
       <template slot="tab-head-queue">
         <div class="form-tab">
           <span class="name">Filas</span>
-          <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+          <unnnic-tool-tip
+            enabled
+            text="Fila é onde o cliente aguarda atendimento de acordo com sua demanda"
+            side="right"
+          >
+            <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+          </unnnic-tool-tip>
         </div>
       </template>
 
       <template slot="tab-head-agents">
         <div class="form-tab">
           <span class="name">Agentes</span>
-          <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+          <unnnic-tool-tip enabled text="Agentes atendem os clientes através do Chats" side="right">
+            <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+          </unnnic-tool-tip>
         </div>
       </template>
 
