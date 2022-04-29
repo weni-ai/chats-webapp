@@ -34,9 +34,18 @@ const module = {
     sectors,
   },
 
-  mutations: {},
+  mutations: {
+    addSector(state, sector) {
+      const lastId = state.sectors.at(-1).id;
+      state.sectors.push({ ...sector, id: lastId + 1 });
+    },
+  },
 
-  actions: {},
+  actions: {
+    saveSector({ commit }, sector) {
+      commit('addSector', { ...sector, contacts: { count: 0 } });
+    },
+  },
 };
 
 export default module;

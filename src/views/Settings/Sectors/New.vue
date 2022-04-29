@@ -1,6 +1,6 @@
 <template>
   <section class="new-sector">
-    <unnnic-tab v-model="tab" initialTab="queue" :tabs="tabs">
+    <unnnic-tab v-model="tab" initialTab="sector" :tabs="tabs">
       <template slot="tab-head-sector">
         <div class="form-tab">
           <span class="name">Novo Setor</span>
@@ -25,16 +25,16 @@
       </template>
 
       <template slot="tab-panel-sector">
-        <form-sector @submit="tab = 'queue'" />
+        <form-sector v-model="sector" @submit="tab = 'queue'" />
       </template>
 
       <template slot="tab-panel-queue">
-        <form-queue v-model="queues" />
+        <form-queue v-model="sector.queues" />
       </template>
 
       <template slot="tab-panel-agents">
         <section>
-          <form-agent v-model="agents" />
+          <form-agent v-model="sector.agents" />
         </section>
       </template>
     </unnnic-tab>
@@ -61,8 +61,17 @@ export default {
   },
 
   data: () => ({
-    agents: [],
-    queues: [],
+    sector: {
+      name: '',
+      manager: '',
+      workingDay: {
+        start: '',
+        end: '',
+      },
+      agents: [],
+      queues: [],
+      maxSimultaneousChatsByAgent: '',
+    },
     tab: '',
     tabs: ['sector', 'queue', 'agents'],
   }),
@@ -71,8 +80,8 @@ export default {
     isShowingActions() {
       const tabs = {
         sector: () => false,
-        queue: () => !!this.queues.length,
-        agents: () => !!this.agents.length,
+        queue: () => !!this.sector.queues.length,
+        agents: () => !!this.sector.agents.length,
       };
 
       return tabs[this.tab]?.() || false;
@@ -88,7 +97,7 @@ export default {
         queue: () => {
           this.tab = 'agents';
         },
-        agents: () => this.$router.push('/settings/chats'),
+        agents: this.saveSector,
       };
 
       tabs[this.tab]?.();
@@ -104,6 +113,11 @@ export default {
       };
 
       tabs[this.tab]?.();
+    },
+    async saveSector() {
+      await this.$store.dispatch('settings/saveSector', this.sector);
+
+      this.$router.push('/settings/chats');
     },
   },
 };

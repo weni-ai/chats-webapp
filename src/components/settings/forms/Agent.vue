@@ -7,6 +7,7 @@
         v-model="agentName"
         :data="[]"
         @choose="agentName = $event"
+        @keypress.enter="addAgent"
         label="Selecionar agente"
         placeholder="Pesquise pelo nome"
         iconLeft="search-1"

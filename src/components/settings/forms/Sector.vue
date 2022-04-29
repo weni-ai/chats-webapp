@@ -2,12 +2,13 @@
   <form @submit.prevent="$emit('submit')" class="form-sector">
     <section class="form-section">
       <h2 class="title">Adicionar novo setor</h2>
-      <unnnic-input label="Nome do setor" placeholder="Suporte" />
+      <unnnic-input v-model="sector.name" label="Nome do setor" placeholder="Suporte" />
     </section>
 
     <section class="form-section">
       <h2 class="title">Atribuir um gestor</h2>
       <unnnic-autocomplete
+        v-model="sector.manager"
         label="Selecionar gestor"
         placeholder="Pesquise pelo nome"
         iconLeft="search-1"
@@ -18,11 +19,20 @@
       <h2 class="title">Definições da jornada de trabalho</h2>
 
       <section class="date-inputs">
-        <unnnic-input label="Horário de início" placeholder="08:00" />
-        <unnnic-input label="Horário de encerramento" placeholder="18:00" />
+        <unnnic-input
+          v-model="sector.workingDay.start"
+          label="Horário de início"
+          placeholder="08:00"
+        />
+        <unnnic-input
+          v-model="sector.workingDay.end"
+          label="Horário de encerramento"
+          placeholder="18:00"
+        />
       </section>
 
       <unnnic-input
+        v-model="sector.maxSimultaneousChatsByAgent"
         label="Limite de quantidade de atendimentos simultâneos por agente"
         placeholder="4"
       />
