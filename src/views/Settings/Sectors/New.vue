@@ -33,7 +33,9 @@
       </template>
 
       <template slot="tab-panel-agents">
-        <section></section>
+        <section>
+          <form-agent v-model="agents" />
+        </section>
       </template>
     </unnnic-tab>
 
@@ -45,6 +47,7 @@
 </template>
 
 <script>
+import FormAgent from '@/components/settings/forms/Agent';
 import FormQueue from '@/components/settings/forms/Queue';
 import FormSector from '@/components/settings/forms/Sector';
 
@@ -52,6 +55,7 @@ export default {
   name: 'NewSector',
 
   components: {
+    FormAgent,
     FormQueue,
     FormSector,
   },
