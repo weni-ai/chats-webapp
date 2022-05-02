@@ -42,7 +42,7 @@
 
       <template slot="tab-panel-agents">
         <section>
-          <form-agent v-model="sector.agents" :queues="sector.queues" />
+          <form-agent v-model="sector.agents" :queues="sector.queues" :sector="sector.name" />
         </section>
       </template>
     </unnnic-tab>
@@ -62,6 +62,18 @@
         @click="nextTab"
       />
     </div>
+
+    <unnnic-modal
+      :showModal="isOpenSectorConfirmationDialog"
+      text="Setor adicionado"
+      modal-icon="check-circle-1-1"
+      description="Setor de suporte, filas e agentes criados com sucesso"
+      @close="redirectToHomepage"
+    >
+      <template #options>
+        <unnnic-button text="Fechar" @click="redirectToHomepage" />
+      </template>
+    </unnnic-modal>
   </section>
 </template>
 
@@ -91,6 +103,7 @@ export default {
       queues: [],
       maxSimultaneousChatsByAgent: '',
     },
+    isOpenSectorConfirmationDialog: false,
     tab: '',
     tabs: ['sector', 'queue', 'agents'],
   }),
@@ -123,10 +136,12 @@ export default {
 
       tabs[this.tab]?.();
     },
-    saveNewAgent() {},
     async saveSector() {
       await this.$store.dispatch('settings/saveSector', this.sector);
 
+      this.isOpenSectorConfirmationDialog = true;
+    },
+    redirectToHomepage() {
       this.$router.push('/settings/chats');
     },
   },

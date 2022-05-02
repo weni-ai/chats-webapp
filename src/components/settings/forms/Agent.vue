@@ -81,6 +81,19 @@
         </template>
       </unnnic-table>
     </section>
+
+    <unnnic-modal
+      v-if="agents.length"
+      :showModal="isOpenAgentConfirmationDialog"
+      text="Agente adicionado"
+      modal-icon="check-circle-1-1"
+      :description="`${agents.at(-1).name} foi adicionado ao ${sector}`"
+      @close="isOpenAgentConfirmationDialog = false"
+    >
+      <template #options>
+        <unnnic-button text="Fechar" @click="isOpenAgentConfirmationDialog = false" />
+      </template>
+    </unnnic-modal>
   </section>
 </template>
 
@@ -92,6 +105,10 @@ export default {
     queues: {
       type: Array,
       default: () => [],
+    },
+    sector: {
+      type: String,
+      default: '',
     },
     value: {
       type: Array,
@@ -105,6 +122,7 @@ export default {
       queues: [],
     },
     queue: '',
+    isOpenAgentConfirmationDialog: false,
     tableHeaders: [
       {
         id: 'name',
@@ -150,7 +168,10 @@ export default {
 
       this.agent.name = '';
       this.agent.queues = [];
+
+      this.isOpenAgentConfirmationDialog = true;
     },
+    showAgentConfirmationDialog() {},
     addAgentQueue() {
       const queue = this.queues.find((q) => q.name === this.queue);
 
