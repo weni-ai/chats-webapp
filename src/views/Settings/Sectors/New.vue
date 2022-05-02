@@ -42,14 +42,25 @@
 
       <template slot="tab-panel-agents">
         <section>
-          <form-agent v-model="sector.agents" />
+          <form-agent v-model="sector.agents" :queues="sector.queues" />
         </section>
       </template>
     </unnnic-tab>
 
-    <div v-show="isShowingActions" class="actions">
-      <unnnic-button text="Voltar" type="secondary" @click="previousTab" />
-      <unnnic-button text="Continuar" @click="nextTab" />
+    <div class="actions">
+      <unnnic-button
+        v-if="tab === 'agents'"
+        text="Concluir"
+        class="finish-button"
+        @click="saveSector"
+      />
+      <unnnic-button
+        v-else
+        text="Continuar configurações de setor"
+        iconRight="arrow-right-1-1"
+        type="secondary"
+        @click="nextTab"
+      />
     </div>
   </section>
 </template>
@@ -84,17 +95,7 @@ export default {
     tabs: ['sector', 'queue', 'agents'],
   }),
 
-  computed: {
-    isShowingActions() {
-      const tabs = {
-        sector: () => false,
-        queue: () => !!this.sector.queues.length,
-        agents: () => !!this.sector.agents.length,
-      };
-
-      return tabs[this.tab]?.() || false;
-    },
-  },
+  computed: {},
 
   methods: {
     nextTab() {
@@ -122,6 +123,7 @@ export default {
 
       tabs[this.tab]?.();
     },
+    saveNewAgent() {},
     async saveSector() {
       await this.$store.dispatch('settings/saveSector', this.sector);
 
@@ -148,11 +150,10 @@ export default {
     margin-top: auto;
     padding-top: 1.5rem;
 
-    display: flex;
     gap: 1rem;
 
     & > * {
-      flex: 1 1;
+      width: 100%;
     }
   }
 }

@@ -37,8 +37,6 @@
         placeholder="4"
       />
     </section>
-
-    <unnnic-button type="secondary" text="Salvar alterações" class="submit-button" />
   </form>
 </template>
 
