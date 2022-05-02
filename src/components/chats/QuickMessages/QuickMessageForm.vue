@@ -25,16 +25,12 @@
       </template>
     </unnnic-input>
 
-    <unnnic-input
+    <unnnic-text-area
       :value="quickMessage.message"
       @input="quickMessage = { ...quickMessage, message: $event }"
-      size="sm"
+      label="Mensagem"
       placeholder="Insira o conteúdo da mensagem que deseja cadastrar"
-    >
-      <template #label>
-        <span class="label"> Mensagem </span>
-      </template>
-    </unnnic-input>
+    />
 
     <div class="actions">
       <unnnic-button
