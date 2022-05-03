@@ -2,29 +2,47 @@ const sectors = [
   {
     id: 1,
     name: 'Suporte',
+    manager: 'Maria da Silva',
     queues: [{}, {}, {}, {}, {}],
     agents: [{}, {}, {}, {}, {}, {}],
     contacts: {
       count: 427,
     },
+    workingDay: {
+      start: '08:00',
+      end: '18:00',
+    },
+    maxSimultaneousChatsByAgent: 4,
   },
   {
     id: 2,
     name: 'Financeiro',
+    manager: 'Carlos de Abreu',
     queues: [{}, {}],
     agents: [{}, {}, {}],
     contacts: {
       count: 312,
     },
+    workingDay: {
+      start: '08:00',
+      end: '18:00',
+    },
+    maxSimultaneousChatsByAgent: 5,
   },
   {
     id: 3,
     name: 'Suporte',
+    manager: 'Mario Souto',
     queues: [{}, {}, {}, {}, {}],
     agents: [{}, {}, {}, {}, {}, {}],
     contacts: {
       count: 427,
     },
+    workingDay: {
+      start: '08:00',
+      end: '18:00',
+    },
+    maxSimultaneousChatsByAgent: 3,
   },
 ];
 

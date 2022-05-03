@@ -2,7 +2,7 @@
   <unnnic-tab v-model="tab" initialTab="sector" :tabs="tabs" class="sector-tabs">
     <template slot="tab-head-sector">
       <div class="form-tab">
-        <span class="name">Novo Setor</span>
+        <span class="name">Setor</span>
         <unnnic-tool-tip enabled text="Setor é uma área dentro da sua organização" side="right">
           <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
         </unnnic-tool-tip>

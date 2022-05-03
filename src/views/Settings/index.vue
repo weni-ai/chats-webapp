@@ -18,13 +18,13 @@
         :key="sector.id"
         @click="
           navigate({
-            name: 'sectors.edit',
+            name: 'sectors.view',
             params: { id: sector.id },
           })
         "
         @keypress.enter="
           navigate({
-            name: 'sectors.edit',
+            name: 'sectors.view',
             params: { id: sector.id },
           })
         "
