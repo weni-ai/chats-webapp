@@ -13,13 +13,24 @@
         <unnnic-card type="blank" text="Novo setor" icon="add-1" />
       </span>
 
-      <unnnic-card
+      <div
         v-for="sector in sectors"
         :key="sector.id"
-        :title="sector.name"
-        type="default"
-        clickable
-      />
+        @click="
+          navigate({
+            name: 'sectors.edit',
+            params: { id: sector.id },
+          })
+        "
+        @keypress.enter="
+          navigate({
+            name: 'sectors.edit',
+            params: { id: sector.id },
+          })
+        "
+      >
+        <unnnic-card :title="sector.name" type="default" clickable />
+      </div>
     </section>
   </main>
 </template>
@@ -37,8 +48,8 @@ export default {
   },
 
   methods: {
-    navigate(route) {
-      this.$router.push(route);
+    navigate(params) {
+      this.$router.push(params);
     },
   },
 };

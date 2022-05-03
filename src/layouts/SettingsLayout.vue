@@ -27,8 +27,32 @@ export default {
   },
 
   computed: {
+    getters() {
+      return this.$store.getters;
+    },
     breadcrumb() {
-      return this.$route.meta.breadcrumb;
+      const { breadcrumb } = this.$route.meta;
+
+      if (!breadcrumb) return null;
+
+      return breadcrumb.map(this.parseBreadcrumb);
+    },
+  },
+
+  methods: {
+    parseBreadcrumb(breadcrumb) {
+      if (!breadcrumb) return null;
+
+      const { name, getter, solver } = breadcrumb;
+
+      if (name) return breadcrumb;
+
+      if (getter && solver)
+        return {
+          name: solver(this.getters[getter]),
+        };
+
+      return null;
     },
   },
 };

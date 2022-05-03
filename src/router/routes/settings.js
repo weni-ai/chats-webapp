@@ -6,21 +6,34 @@ const routes = [
     children: [
       {
         path: 'chats',
-        name: 'settings.chats',
+        name: 'chats',
         component: () => import('@/views/Settings'),
       },
 
       {
         path: 'chats/sectors',
-        name: 'settings.chats.sectors',
         component: { render: (h) => h('router-view') },
         children: [
           {
             path: 'new',
-            name: 'settings.chats.sectors.new',
+            name: 'sectors.new',
             component: () => import('@/views/Settings/Sectors/New'),
             meta: {
               breadcrumb: [{ name: 'Chats', path: '/settings/chats' }, { name: 'Novo setor' }],
+            },
+          },
+          {
+            path: ':id/edit',
+            name: 'sectors.edit',
+            component: () => import('@/views/Settings/Sectors/Edit'),
+            props: (route) => ({
+              id: route.params.id,
+            }),
+            meta: {
+              breadcrumb: [
+                { name: 'Chats', path: '/settings/chats' },
+                { getter: 'settings/getActiveSector', solver: (sector) => sector?.name },
+              ],
             },
           },
         ],
