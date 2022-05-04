@@ -35,21 +35,51 @@
           </section>
         </section>
       </template>
+
+      <template #queues>
+        <section class="sector-tab">
+          <h2 class="name">{{ sector.name }}</h2>
+
+          <section class="info-group">
+            <list-sector-queues :queues="sector.queues" :sector="sector.name" />
+          </section>
+        </section>
+      </template>
+
+      <template #agents>
+        <section class="sector-tab">
+          <h2 class="name">{{ sector.name }}</h2>
+
+          <section class="info-group">
+            <list-sector-agents :queues="sector.queues" :sector="sector.name" />
+          </section>
+        </section>
+      </template>
     </sector-tabs>
     <section class="actions">
-      <unnnic-button text="Voltar" type="secondary" @click="navigate('/settings/chats')" />
-      <unnnic-button text="Editar" @click="navigate(`/settings/chats/sectors/${id}/edit`)" />
+      <template v-if="tab === 'sector'">
+        <unnnic-button text="Voltar" type="secondary" @click="navigate('/settings/chats')" />
+        <unnnic-button text="Editar" @click="navigate(`/settings/chats/sectors/${id}/edit`)" />
+      </template>
+
+      <template v-else-if="tab === 'queues'">
+        <unnnic-button text="Adicionar nova fila" type="secondary" iconRight="add-circle-1" />
+      </template>
     </section>
   </section>
 </template>
 
 <script>
+import ListSectorAgents from '@/components/settings/lists/ListSectorAgents';
+import ListSectorQueues from '@/components/settings/lists/ListSectorQueues';
 import SectorTabs from '@/components/settings/SectorTabs';
 
 export default {
   name: 'ViewSector',
 
   components: {
+    ListSectorAgents,
+    ListSectorQueues,
     SectorTabs,
   },
 
@@ -76,7 +106,7 @@ export default {
 
   methods: {
     nameToEmail(name) {
-      return `${name.replaceAll(' ', '.').toLowerCase()}@email.com`;
+      return `${name.replaceAll(/(\s[a-z]{2}\s)|(\s)/g, '.').toLowerCase()}@email.com`;
     },
     navigate(route) {
       this.$router.push(route);

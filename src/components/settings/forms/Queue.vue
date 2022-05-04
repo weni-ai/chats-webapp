@@ -4,7 +4,7 @@
 
     <section class="controls">
       <unnnic-input
-        v-model="queueName"
+        v-model="name"
         label="Nome da fila"
         placeholder="Suporte nivel III"
         @keypress.enter="createQueue"
@@ -13,42 +13,27 @@
       <unnnic-button type="secondary" text="Adicionar fila" @click="createQueue" />
     </section>
 
-    <section v-if="!!queues.length" class="queues">
-      <p class="title">Filas em Suporte</p>
-
-      <unnnic-table :items="queues">
-        <template #header>
-          <unnnic-table-row :headers="tableHeaders" />
-        </template>
-
-        <template #item="{ item }">
-          <unnnic-table-row :headers="tableHeaders">
-            <template #name>
-              {{ item.name }}
-            </template>
-
-            <template #createdAt>{{ item.createdAt }}</template>
-
-            <template #visualize>
-              <unnnic-button
-                text="Detalhes"
-                type="secondary"
-                size="small"
-                class="visualize-button"
-              />
-            </template>
-          </unnnic-table-row>
-        </template>
-      </unnnic-table>
+    <section v-if="!!queues.length">
+      <list-sector-queues :queues="queues" :sector="sector" />
     </section>
   </section>
 </template>
 
 <script>
+import ListSectorQueues from '@/components/settings/lists/ListSectorQueues';
+
 export default {
   name: 'FormQueue',
 
+  components: {
+    ListSectorQueues,
+  },
+
   props: {
+    sector: {
+      type: String,
+      default: '',
+    },
     value: {
       type: Array,
       default: () => [],
@@ -56,24 +41,7 @@ export default {
   },
 
   data: () => ({
-    queueName: '',
-    tableHeaders: [
-      {
-        id: 'name',
-        text: 'Nome',
-        flex: 3,
-      },
-      {
-        id: 'createdAt',
-        text: 'Data de criação',
-        flex: 3,
-      },
-      {
-        id: 'visualize',
-        text: 'Visualizar',
-        flex: 2,
-      },
-    ],
+    name: '',
   }),
 
   computed: {
@@ -89,7 +57,7 @@ export default {
 
   methods: {
     createQueue() {
-      const name = this.queueName.trim();
+      const name = this.name.trim();
       if (!name) return;
 
       this.queues.push({
@@ -99,7 +67,7 @@ export default {
         }).format(new Date()),
       });
 
-      this.queueName = '';
+      this.name = '';
     },
   },
 };
@@ -124,12 +92,6 @@ export default {
 
     .input {
       flex: 1 1;
-    }
-  }
-
-  .queues {
-    .visualize-button {
-      width: 100%;
     }
   }
 }

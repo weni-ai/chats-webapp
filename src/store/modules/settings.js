@@ -5,7 +5,24 @@ const sectors = [
     id: 1,
     name: 'Suporte',
     manager: 'Maria da Silva',
-    queues: [{}, {}, {}, {}, {}],
+    queues: [
+      {
+        name: 'Fila 1',
+        createdAt: '25/03/2022',
+      },
+      {
+        name: 'Fila 2',
+        createdAt: '25/03/2022',
+      },
+      {
+        name: 'Fila 3',
+        createdAt: '25/03/2022',
+      },
+      {
+        name: 'Fila 4',
+        createdAt: '25/03/2022',
+      },
+    ],
     agents: [{}, {}, {}, {}, {}, {}],
     contacts: {
       count: 427,
@@ -20,7 +37,20 @@ const sectors = [
     id: 2,
     name: 'Financeiro',
     manager: 'Carlos de Abreu',
-    queues: [{}, {}],
+    queues: [
+      {
+        name: 'Cartão de crédito',
+        createdAt: '25/03/2022',
+      },
+      {
+        name: 'Fila 1',
+        createdAt: '25/03/2022',
+      },
+      {
+        name: 'Fila 2',
+        createdAt: '25/03/2022',
+      },
+    ],
     agents: [{}, {}, {}],
     contacts: {
       count: 312,

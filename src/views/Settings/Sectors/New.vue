@@ -6,7 +6,7 @@
       </template>
 
       <template #queues>
-        <form-queue v-model="sector.queues" />
+        <form-queue v-model="sector.queues" :sector="sector.name" />
       </template>
 
       <template #agents>
@@ -71,7 +71,7 @@ export default {
     },
     isOpenSectorConfirmationDialog: false,
     tab: '',
-    tabs: ['sector', 'queue', 'agents'],
+    tabs: ['sector', 'queues', 'agents'],
   }),
 
   computed: {},
@@ -80,9 +80,9 @@ export default {
     nextTab() {
       const tabs = {
         sector: () => {
-          this.tab = 'queue';
+          this.tab = 'queues';
         },
-        queue: () => {
+        queues: () => {
           this.tab = 'agents';
         },
         agents: this.saveSector,

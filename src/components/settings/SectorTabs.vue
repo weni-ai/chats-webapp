@@ -9,7 +9,7 @@
       </div>
     </template>
 
-    <template slot="tab-head-queue">
+    <template slot="tab-head-queues">
       <div class="form-tab">
         <span class="name">Filas</span>
         <unnnic-tool-tip
@@ -35,7 +35,7 @@
       <slot name="sector" />
     </template>
 
-    <template slot="tab-panel-queue">
+    <template slot="tab-panel-queues">
       <slot name="queues" />
     </template>
 
@@ -57,7 +57,7 @@ export default {
   },
 
   data: () => ({
-    tabs: ['sector', 'queue', 'agents'],
+    tabs: ['sector', 'queues', 'agents'],
   }),
 
   computed: {

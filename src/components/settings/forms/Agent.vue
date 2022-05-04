@@ -53,33 +53,8 @@
       @click="addAgent"
     />
 
-    <section v-if="!!agents.length" class="agents">
-      <p class="title">Agentes em Suporte</p>
-
-      <unnnic-table :items="agents">
-        <template #header>
-          <unnnic-table-row :headers="tableHeaders" />
-        </template>
-
-        <template #item="{ item }">
-          <unnnic-table-row :headers="tableHeaders">
-            <template #name>
-              {{ item.name }}
-            </template>
-
-            <template #additionDate>{{ item.additionDate }}</template>
-
-            <template #visualize>
-              <unnnic-button
-                text="Detalhes"
-                type="secondary"
-                size="small"
-                class="visualize-button"
-              />
-            </template>
-          </unnnic-table-row>
-        </template>
-      </unnnic-table>
+    <section v-if="!!agents.length">
+      <list-sector-agents :agents="agents" :sector="sector" />
     </section>
 
     <unnnic-modal
@@ -98,8 +73,14 @@
 </template>
 
 <script>
+import ListSectorAgents from '@/components/settings/lists/ListSectorAgents';
+
 export default {
   name: 'FormAgent',
+
+  components: {
+    ListSectorAgents,
+  },
 
   props: {
     queues: {
@@ -123,23 +104,6 @@ export default {
     },
     queue: '',
     isOpenAgentConfirmationDialog: false,
-    tableHeaders: [
-      {
-        id: 'name',
-        text: 'Nome',
-        flex: 3,
-      },
-      {
-        id: 'additionDate',
-        text: 'Data de adição',
-        flex: 3,
-      },
-      {
-        id: 'visualize',
-        text: 'Visualizar',
-        flex: 2,
-      },
-    ],
   }),
 
   computed: {
@@ -212,12 +176,6 @@ export default {
 
     .input {
       flex: 1 1;
-    }
-  }
-
-  .agents {
-    .visualize-button {
-      width: 100%;
     }
   }
 
