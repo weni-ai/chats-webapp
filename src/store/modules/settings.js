@@ -1,3 +1,5 @@
+import cloneDeep from 'lodash.clonedeep';
+
 const sectors = [
   {
     id: 1,
@@ -12,7 +14,7 @@ const sectors = [
       start: '08:00',
       end: '18:00',
     },
-    maxSimultaneousChatsByAgent: 4,
+    maxSimultaneousChatsByAgent: '4',
   },
   {
     id: 2,
@@ -27,7 +29,7 @@ const sectors = [
       start: '08:00',
       end: '18:00',
     },
-    maxSimultaneousChatsByAgent: 5,
+    maxSimultaneousChatsByAgent: '5',
   },
   {
     id: 3,
@@ -42,7 +44,7 @@ const sectors = [
       start: '08:00',
       end: '18:00',
     },
-    maxSimultaneousChatsByAgent: 3,
+    maxSimultaneousChatsByAgent: '3',
   },
 ];
 
@@ -61,17 +63,32 @@ const module = {
     setActiveSectorId(state, id) {
       state.activeSectorId = id;
     },
+    updateSector(state, sector) {
+      const index = state.sectors.findIndex((s) => s.id === sector.id);
+      state.sectors.splice(index, 1, sector);
+    },
   },
 
   actions: {
     saveSector({ commit }, sector) {
       commit('addSector', { ...sector, contacts: { count: 0 } });
     },
+    updateSector({ commit, dispatch }, sector) {
+      if (!sector.id) dispatch('saveSector', sector);
+
+      commit('updateSector', sector);
+    },
   },
 
   getters: {
     getActiveSector({ sectors, activeSectorId }) {
       return sectors.find((sector) => sector.id === activeSectorId) || null;
+    },
+    getSectorById({ sectors }) {
+      return (id) => {
+        const sector = sectors.find((sector) => sector.id === id);
+        return sector ? cloneDeep(sector) : null;
+      };
     },
   },
 };

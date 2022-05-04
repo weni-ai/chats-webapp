@@ -38,7 +38,7 @@
     </sector-tabs>
     <section class="actions">
       <unnnic-button text="Voltar" type="secondary" @click="navigate('/settings/chats')" />
-      <unnnic-button text="Editar" />
+      <unnnic-button text="Editar" @click="navigate(`/settings/chats/sectors/${id}/edit`)" />
     </section>
   </section>
 </template>
@@ -47,7 +47,7 @@
 import SectorTabs from '@/components/settings/SectorTabs';
 
 export default {
-  name: 'EditSector',
+  name: 'ViewSector',
 
   components: {
     SectorTabs,

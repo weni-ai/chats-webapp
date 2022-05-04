@@ -2,7 +2,7 @@
   <section class="new-sector">
     <sector-tabs v-model="tab">
       <template #sector>
-        <form-sector v-model="sector" @submit="tab = 'queue'" />
+        <form-sector v-model="sector" />
       </template>
 
       <template #queues>
@@ -24,12 +24,7 @@
         type="secondary"
         @click="nextTab"
       />
-      <unnnic-button
-        v-else-if="sector.agents.length !== 0"
-        text="Concluir"
-        class="finish-button"
-        @click="saveSector"
-      />
+      <unnnic-button v-else-if="sector.agents.length !== 0" text="Concluir" @click="saveSector" />
     </div>
 
     <unnnic-modal

@@ -1,12 +1,12 @@
 <template>
   <form @submit.prevent="$emit('submit')" class="form-sector">
-    <section class="form-section">
+    <section v-if="!isEditing" class="form-section">
       <h2 class="title">Adicionar novo setor</h2>
       <unnnic-input v-model="sector.name" label="Nome do setor" placeholder="Suporte" />
     </section>
 
     <section class="form-section">
-      <h2 class="title">Atribuir um gestor</h2>
+      <h2 class="title">{{ isEditing ? 'Editar' : 'Atribuir um' }} gestor</h2>
       <unnnic-autocomplete
         v-model="sector.manager"
         label="Selecionar gestor"
@@ -16,7 +16,10 @@
     </section>
 
     <section class="form-section">
-      <h2 class="title">Definições da jornada de trabalho</h2>
+      <h2 class="title">
+        {{ isEditing ? 'Editar' : 'Definições da' }}
+        jornada de trabalho
+      </h2>
 
       <section class="date-inputs">
         <unnnic-input
@@ -52,6 +55,9 @@ export default {
   },
 
   computed: {
+    isEditing() {
+      return !!this.sector?.id;
+    },
     sector: {
       get() {
         return this.value;
