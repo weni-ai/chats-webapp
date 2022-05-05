@@ -1,32 +1,8 @@
 <template>
   <section>
-    <unnnic-dropdown position="top-left">
-      <template #trigger>
-        <slot name="trigger">
-          <unnnic-button-icon slot="trigger" icon="upload-bottom-1" size="small" />
-        </slot>
-      </template>
-      <unnnic-dropdown-item>
-        <span
-          class="upload-dropdown-option"
-          @click="openFileUploadModal('media')"
-          @keypress.enter="openFileUploadModal('media')"
-        >
-          <unnnic-icon-svg icon="video-file-mp4-1" />
-          <span> Enviar mídia </span>
-        </span>
-      </unnnic-dropdown-item>
-      <unnnic-dropdown-item>
-        <span
-          class="upload-dropdown-option"
-          @click="openFileUploadModal('document')"
-          @keypress.enter="openFileUploadModal('document')"
-        >
-          <unnnic-icon-svg icon="upload-bottom-1" />
-          <span> Enviar documento </span>
-        </span>
-      </unnnic-dropdown-item>
-    </unnnic-dropdown>
+    <section>
+      <slot name="trigger" :open="openFileUploadModal" />
+    </section>
 
     <div v-if="showUploadModal" class="modal-upload-container">
       <unnnic-modal-upload
@@ -107,13 +83,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.upload-dropdown-option {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0.5rem;
-}
-
 .modal-upload-container {
   position: absolute;
   top: 0;
