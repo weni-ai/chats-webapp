@@ -52,7 +52,7 @@
 
       <unnnic-button
         text="Enviar"
-        iconLeft="send-mail-3-1"
+        iconLeft="send-email-3-1"
         size="small"
         class="send-button"
         @click="sendMessage"
