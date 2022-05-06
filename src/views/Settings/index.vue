@@ -9,28 +9,43 @@
     </header>
 
     <section class="sectors">
-      <span @click="navigate('chats/sectors/new')" @keypress.enter="navigate('sectors/new')">
-        <unnnic-card type="blank" text="Novo setor" icon="add-1" />
-      </span>
+      <div @click="navigate('chats/sectors/new')" @keypress.enter="navigate('sectors/new')">
+        <unnnic-card type="blank" text="Novo setor" icon="add-1" class="new-sector-card" />
+      </div>
 
-      <div
+      <unnnic-card-project
         v-for="sector in sectors"
         :key="sector.id"
-        @click="
+        actionText="Entrar"
+        :name="sector.name"
+        @action="
           navigate({
             name: 'sectors.view',
             params: { id: sector.id },
           })
         "
-        @keypress.enter="
-          navigate({
-            name: 'sectors.view',
-            params: { id: sector.id },
-          })
-        "
+        :statuses="[
+          {
+            title: 'Filas',
+            icon: 'hierarchy-3-2',
+            scheme: 'brand-weni',
+            count: sector.queues.length,
+          },
+          {
+            title: 'Agentes',
+            icon: 'headphones-customer-support-human-1-1',
+            scheme: 'aux-purple',
+            count: sector.agents.length,
+          },
+          {
+            title: 'Contatos',
+            icon: 'single-neutral-actions-1',
+            scheme: 'aux-lemon',
+            count: sector.contacts.count,
+          },
+        ]"
       >
-        <unnnic-card :title="sector.name" type="default" clickable />
-      </div>
+      </unnnic-card-project>
     </section>
   </main>
 </template>
@@ -78,6 +93,10 @@ export default {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
+
+    .new-sector-card {
+      height: 100%;
+    }
   }
 }
 </style>
