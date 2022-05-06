@@ -51,7 +51,11 @@
           <h2 class="name">{{ sector.name }}</h2>
 
           <section class="info-group">
-            <list-sector-agents :queues="sector.queues" :sector="sector.name" />
+            <list-sector-agents
+              :agents="sector.agents"
+              :queues="sector.queues"
+              :sector="sector.name"
+            />
           </section>
         </section>
       </template>
@@ -64,6 +68,15 @@
 
       <template v-else-if="tab === 'queues'">
         <unnnic-button text="Adicionar nova fila" type="secondary" iconRight="add-circle-1" />
+      </template>
+
+      <template v-if="tab === 'agents'">
+        <unnnic-button text="Voltar" type="secondary" @click="navigate('/settings/chats')" />
+        <unnnic-button
+          text="Adicionar novo agente"
+          iconRight="add-circle-1"
+          @click="navigate(`/settings/chats/sectors/${id}/edit`)"
+        />
       </template>
     </section>
   </section>
