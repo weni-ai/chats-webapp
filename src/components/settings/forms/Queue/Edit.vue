@@ -28,6 +28,7 @@
         :title="`Agentes na fila ${queue.name}`"
         :agents="queue.agents"
         action-text="Remover"
+        @select="removeAgent($event)"
       />
     </section>
   </section>
@@ -68,7 +69,28 @@ export default {
   },
 
   methods: {
-    addAgent() {},
+    addAgent() {
+      const { name } = this.agent;
+      const agent = {
+        name,
+        additionDate: Intl.DateTimeFormat('pt-BR', {
+          dateStyle: 'short',
+        }).format(new Date()),
+      };
+
+      this.queue = {
+        ...this.queue,
+        agents: [{ ...agent }, ...this.queue.agents],
+      };
+
+      this.agent.name = '';
+    },
+    removeAgent(agent) {
+      this.queue = {
+        ...this.queue,
+        agents: this.queue.agents.filter((a) => a.name !== agent.name),
+      };
+    },
   },
 };
 </script>
