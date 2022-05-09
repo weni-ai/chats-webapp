@@ -43,21 +43,15 @@ export default {
     parseBreadcrumb(breadcrumb) {
       if (!breadcrumb) return null;
 
-      const { name, getter, solver, path } = breadcrumb;
+      const { name, getter, path } = breadcrumb;
 
-      if (name) return breadcrumb;
+      const value = this.getters[getter];
+      const { params } = this.$route;
 
-      if (getter && solver) {
-        const value = this.getters[getter];
-        const { params } = this.$route;
-
-        return {
-          name: solver(value, params),
-          path: typeof path === 'function' ? path(value, params) : value,
-        };
-      }
-
-      return null;
+      return {
+        name: typeof name === 'function' ? name(value, params) : name,
+        path: typeof path === 'function' ? path(value, params) : path,
+      };
     },
   },
 };

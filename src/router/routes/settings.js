@@ -32,7 +32,7 @@ const routes = [
             meta: {
               breadcrumb: [
                 { name: 'Chats', path: '/settings/chats' },
-                { getter: 'settings/getActiveSector', solver: (sector) => sector?.name },
+                { getter: 'settings/getActiveSector', name: (sector) => sector?.name },
               ],
             },
           },
@@ -48,7 +48,7 @@ const routes = [
                 { name: 'Chats', path: '/settings/chats' },
                 {
                   getter: 'settings/getSectorById',
-                  solver: (getter, routeParams) => getter(Number(routeParams.id))?.name,
+                  name: (getter, routeParams) => getter(Number(routeParams.id))?.name,
                   path: (getter, routeParams) => {
                     const sector = getter(Number(routeParams.id));
 
