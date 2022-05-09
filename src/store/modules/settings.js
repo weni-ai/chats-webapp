@@ -7,19 +7,63 @@ const sectors = [
     manager: 'Maria da Silva',
     queues: [
       {
+        id: 1,
         name: 'Fila 1',
+        agents: [
+          {
+            name: 'Fabricio Correia',
+            additionDate: '25/03/2022',
+          },
+          {
+            name: 'Daniela Maciel',
+            additionDate: '25/03/2022',
+          },
+        ],
         createdAt: '25/03/2022',
       },
       {
+        id: 2,
         name: 'Fila 2',
+        agents: [
+          {
+            name: 'Fabricio Correia',
+            additionDate: '25/03/2022',
+          },
+          {
+            name: 'Daniela Maciel',
+            additionDate: '25/03/2022',
+          },
+        ],
         createdAt: '25/03/2022',
       },
       {
+        id: 3,
         name: 'Fila 3',
+        agents: [
+          {
+            name: 'Fabricio Correia',
+            additionDate: '25/03/2022',
+          },
+          {
+            name: 'Daniela Maciel',
+            additionDate: '25/03/2022',
+          },
+        ],
         createdAt: '25/03/2022',
       },
       {
+        id: 4,
         name: 'Fila 4',
+        agents: [
+          {
+            name: 'Fabricio Correia',
+            additionDate: '25/03/2022',
+          },
+          {
+            name: 'Daniela Maciel',
+            additionDate: '25/03/2022',
+          },
+        ],
         createdAt: '25/03/2022',
       },
     ],
@@ -39,15 +83,48 @@ const sectors = [
     manager: 'Carlos de Abreu',
     queues: [
       {
+        id: 1,
         name: 'Cartão de crédito',
+        agents: [
+          {
+            name: 'Fabricio Correia',
+            additionDate: '25/03/2022',
+          },
+          {
+            name: 'Daniela Maciel',
+            additionDate: '25/03/2022',
+          },
+        ],
         createdAt: '25/03/2022',
       },
       {
+        id: 2,
         name: 'Fila 1',
+        agents: [
+          {
+            name: 'Fabricio Correia',
+            additionDate: '25/03/2022',
+          },
+          {
+            name: 'Daniela Maciel',
+            additionDate: '25/03/2022',
+          },
+        ],
         createdAt: '25/03/2022',
       },
       {
+        id: 3,
         name: 'Fila 2',
+        agents: [
+          {
+            name: 'Fabricio Correia',
+            additionDate: '25/03/2022',
+          },
+          {
+            name: 'Daniela Maciel',
+            additionDate: '25/03/2022',
+          },
+        ],
         createdAt: '25/03/2022',
       },
     ],
@@ -65,7 +142,83 @@ const sectors = [
     id: 3,
     name: 'Suporte',
     manager: 'Mario Souto',
-    queues: [{}, {}, {}, {}, {}],
+    queues: [
+      {
+        id: 1,
+        name: 'Fila 1',
+        agents: [
+          {
+            name: 'Fabricio Correia',
+            additionDate: '25/03/2022',
+          },
+          {
+            name: 'Daniela Maciel',
+            additionDate: '25/03/2022',
+          },
+        ],
+        createdAt: '25/03/2022',
+      },
+      {
+        id: 2,
+        name: 'Fila 2',
+        agents: [
+          {
+            name: 'Fabricio Correia',
+            additionDate: '25/03/2022',
+          },
+          {
+            name: 'Daniela Maciel',
+            additionDate: '25/03/2022',
+          },
+        ],
+        createdAt: '25/03/2022',
+      },
+      {
+        id: 3,
+        name: 'Fila 3',
+        agents: [
+          {
+            name: 'Fabricio Correia',
+            additionDate: '25/03/2022',
+          },
+          {
+            name: 'Daniela Maciel',
+            additionDate: '25/03/2022',
+          },
+        ],
+        createdAt: '25/03/2022',
+      },
+      {
+        id: 4,
+        name: 'Fila 4',
+        agents: [
+          {
+            name: 'Fabricio Correia',
+            additionDate: '25/03/2022',
+          },
+          {
+            name: 'Daniela Maciel',
+            additionDate: '25/03/2022',
+          },
+        ],
+        createdAt: '25/03/2022',
+      },
+      {
+        id: 5,
+        name: 'Fila 5',
+        agents: [
+          {
+            name: 'Fabricio Correia',
+            additionDate: '25/03/2022',
+          },
+          {
+            name: 'Daniela Maciel',
+            additionDate: '25/03/2022',
+          },
+        ],
+        createdAt: '25/03/2022',
+      },
+    ],
     agents: [{}, {}, {}, {}, {}, {}],
     contacts: {
       count: 427,
@@ -88,7 +241,13 @@ const module = {
   mutations: {
     addSector(state, sector) {
       const lastId = state.sectors.at(-1).id;
-      state.sectors.push({ ...sector, id: lastId + 1 });
+      let queueId = 100;
+      state.sectors.push({
+        ...sector,
+        id: lastId + 1,
+        // eslint-disable-next-line no-plusplus
+        queues: sector.queues.map((q) => ({ ...q, id: queueId++ })),
+      });
     },
     setActiveSectorId(state, id) {
       state.activeSectorId = id;

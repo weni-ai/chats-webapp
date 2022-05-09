@@ -37,12 +37,20 @@
       </template>
 
       <template #queues>
-        <section class="sector-tab">
+        <section v-if="!queueToEdit" class="sector-tab">
           <h2 class="name">{{ sector.name }}</h2>
 
           <section class="info-group">
-            <list-sector-queues :queues="sector.queues" :sector="sector.name" />
+            <list-sector-queues
+              :queues="sector.queues"
+              :sector="sector.name"
+              @details="queueToEdit = $event"
+            />
           </section>
+        </section>
+
+        <section v-else>
+          <form-edit-queue v-model="queueToEdit" />
         </section>
       </template>
 
@@ -51,10 +59,10 @@
           <h2 class="name">{{ sector.name }}</h2>
 
           <section class="info-group">
-            <list-sector-agents
+            <list-agents
               :agents="sector.agents"
               :queues="sector.queues"
-              :sector="sector.name"
+              :title="`Agentes no setor ${sector.name}`"
             />
           </section>
         </section>
@@ -67,7 +75,17 @@
       </template>
 
       <template v-else-if="tab === 'queues'">
-        <unnnic-button text="Adicionar nova fila" type="secondary" iconRight="add-circle-1" />
+        <unnnic-button
+          v-if="!queueToEdit"
+          text="Adicionar nova fila"
+          type="secondary"
+          iconRight="add-circle-1"
+        />
+
+        <template v-else>
+          <unnnic-button text="Voltar" type="secondary" @click="queueToEdit = null" />
+          <unnnic-button text="Salvar alterações" />
+        </template>
       </template>
 
       <template v-if="tab === 'agents'">
@@ -83,7 +101,8 @@
 </template>
 
 <script>
-import ListSectorAgents from '@/components/settings/lists/ListSectorAgents';
+import FormEditQueue from '@/components/settings/forms/Queue/Edit';
+import ListAgents from '@/components/settings/lists/Agents';
 import ListSectorQueues from '@/components/settings/lists/ListSectorQueues';
 import SectorTabs from '@/components/settings/SectorTabs';
 
@@ -91,7 +110,8 @@ export default {
   name: 'ViewSector',
 
   components: {
-    ListSectorAgents,
+    FormEditQueue,
+    ListAgents,
     ListSectorQueues,
     SectorTabs,
   },
@@ -109,6 +129,7 @@ export default {
 
   data: () => ({
     tab: '',
+    queueToEdit: null,
   }),
 
   computed: {
