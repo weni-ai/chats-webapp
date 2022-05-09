@@ -54,7 +54,7 @@
     />
 
     <section v-if="!!agents.length">
-      <list-sector-agents :agents="agents" :sector="sector" />
+      <list-agents :agents="agents" :title="`Agentes no setor ${sector}`" />
     </section>
 
     <unnnic-modal
@@ -73,13 +73,13 @@
 </template>
 
 <script>
-import ListSectorAgents from '@/components/settings/lists/ListSectorAgents';
+import ListAgents from '@/components/settings/lists/Agents';
 
 export default {
   name: 'FormAgent',
 
   components: {
-    ListSectorAgents,
+    ListAgents,
   },
 
   props: {

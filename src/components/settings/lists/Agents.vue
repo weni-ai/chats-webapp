@@ -1,6 +1,6 @@
 <template>
-  <section class="list-sector-queues">
-    <p v-if="sector" class="title">Agentes em {{ sector }}</p>
+  <section class="list-agents">
+    <p v-if="title" class="title">{{ title }}</p>
     <unnnic-table :items="agents">
       <template #header>
         <unnnic-table-row :headers="tableHeaders" />
@@ -16,11 +16,11 @@
 
           <template #visualize>
             <unnnic-button
-              text="Detalhes"
+              :text="actionText"
               type="secondary"
               size="small"
-              class="details-button"
-              @click="$emit('details', item)"
+              class="action-button"
+              @click="$emit('select', item)"
             />
           </template>
         </unnnic-table-row>
@@ -31,14 +31,18 @@
 
 <script>
 export default {
-  name: 'ListSectorAgents',
+  name: 'ListAgents',
 
   props: {
     agents: {
       type: Array,
       default: () => [],
     },
-    sector: {
+    actionText: {
+      type: String,
+      default: 'Detalhes',
+    },
+    title: {
       type: String,
       default: '',
     },
@@ -67,7 +71,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.list-sector-queues {
+.list-agents {
   .title {
     font-weight: $unnnic-font-weight-bold;
     color: $unnnic-color-neutral-dark;
@@ -76,7 +80,8 @@ export default {
 
     margin-bottom: 1rem;
   }
-  .details-button {
+
+  .action-button {
     width: 100%;
   }
 }
