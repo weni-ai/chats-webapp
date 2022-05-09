@@ -44,7 +44,7 @@
             <list-sector-queues
               :queues="sector.queues"
               :sector="sector.name"
-              @details="queueToEdit = $event"
+              @select="queueToEdit = $event"
             />
           </section>
         </section>
@@ -55,16 +55,21 @@
       </template>
 
       <template #agents>
-        <section class="sector-tab">
+        <section v-if="!agentToEdit" class="sector-tab">
           <h2 class="name">{{ sector.name }}</h2>
 
           <section class="info-group">
             <list-agents
               :agents="sector.agents"
               :queues="sector.queues"
-              :title="`Agentes no setor ${sector.name}`"
+              @select="agentToEdit = $event"
+              :title="`Agentes em ${sector.name}`"
             />
           </section>
+        </section>
+
+        <section v-else>
+          <form-edit-agent v-model="agentToEdit" :queues="sector.queues.map((q) => q.name)" />
         </section>
       </template>
     </sector-tabs>
@@ -84,23 +89,31 @@
 
         <template v-else>
           <unnnic-button text="Voltar" type="secondary" @click="queueToEdit = null" />
-          <unnnic-button text="Salvar alterações" />
+          <unnnic-button text="Salvar alterações" @click="queueToEdit = null" />
         </template>
       </template>
 
       <template v-if="tab === 'agents'">
-        <unnnic-button text="Voltar" type="secondary" @click="navigate('/settings/chats')" />
-        <unnnic-button
-          text="Adicionar novo agente"
-          iconRight="add-circle-1"
-          @click="navigate(`/settings/chats/sectors/${id}/edit`)"
-        />
+        <template v-if="!agentToEdit">
+          <unnnic-button text="Voltar" type="secondary" @click="navigate('/settings/chats')" />
+          <unnnic-button
+            text="Adicionar novo agente"
+            iconRight="add-circle-1"
+            @click="navigate(`/settings/chats/sectors/${id}/edit`)"
+          />
+        </template>
+
+        <template v-else>
+          <unnnic-button text="Voltar" type="secondary" @click="agentToEdit = null" />
+          <unnnic-button text="Salvar alterações" @click="agentToEdit = null" />
+        </template>
       </template>
     </section>
   </section>
 </template>
 
 <script>
+import FormEditAgent from '@/components/settings/forms/Agent/Edit';
 import FormEditQueue from '@/components/settings/forms/Queue/Edit';
 import ListAgents from '@/components/settings/lists/Agents';
 import ListSectorQueues from '@/components/settings/lists/ListSectorQueues';
@@ -110,6 +123,7 @@ export default {
   name: 'ViewSector',
 
   components: {
+    FormEditAgent,
     FormEditQueue,
     ListAgents,
     ListSectorQueues,
@@ -129,6 +143,7 @@ export default {
 
   data: () => ({
     tab: '',
+    agentToEdit: null,
     queueToEdit: null,
   }),
 

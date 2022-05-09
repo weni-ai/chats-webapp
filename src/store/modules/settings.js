@@ -67,7 +67,28 @@ const sectors = [
         createdAt: '25/03/2022',
       },
     ],
-    agents: [{}, {}, {}, {}, {}, {}],
+    agents: [
+      {
+        name: 'Fabricio Correia',
+        additionDate: '25/03/2022',
+      },
+      {
+        name: 'Daniela Maciel',
+        additionDate: '25/03/2022',
+      },
+      {
+        name: 'Fabricio Correia',
+        additionDate: '25/03/2022',
+      },
+      {
+        name: 'Daniela Maciel',
+        additionDate: '25/03/2022',
+      },
+      {
+        name: 'Fabricio Correia',
+        additionDate: '25/03/2022',
+      },
+    ],
     contacts: {
       count: 427,
     },
@@ -128,7 +149,20 @@ const sectors = [
         createdAt: '25/03/2022',
       },
     ],
-    agents: [{}, {}, {}],
+    agents: [
+      {
+        name: 'Fabricio Correia',
+        additionDate: '25/03/2022',
+      },
+      {
+        name: 'Daniela Maciel',
+        additionDate: '25/03/2022',
+      },
+      {
+        name: 'Daniela Maciel',
+        additionDate: '25/03/2022',
+      },
+    ],
     contacts: {
       count: 312,
     },
@@ -219,7 +253,32 @@ const sectors = [
         createdAt: '25/03/2022',
       },
     ],
-    agents: [{}, {}, {}, {}, {}, {}],
+    agents: [
+      {
+        name: 'Daniela Maciel',
+        additionDate: '25/03/2022',
+      },
+      {
+        name: 'Daniela Maciel',
+        additionDate: '25/03/2022',
+      },
+      {
+        name: 'Daniela Maciel',
+        additionDate: '25/03/2022',
+      },
+      {
+        name: 'Daniela Maciel',
+        additionDate: '25/03/2022',
+      },
+      {
+        name: 'Daniela Maciel',
+        additionDate: '25/03/2022',
+      },
+      {
+        name: 'Daniela Maciel',
+        additionDate: '25/03/2022',
+      },
+    ],
     contacts: {
       count: 427,
     },

@@ -21,7 +21,7 @@
               type="secondary"
               size="small"
               class="visualize-button"
-              @click="$emit('details', item)"
+              @click="$emit('select', item)"
             />
           </template>
         </unnnic-table-row>
