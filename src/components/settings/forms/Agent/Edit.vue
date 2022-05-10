@@ -29,9 +29,36 @@
         title="Filas relacionadas ao agente"
         :agents="selectedQueues"
         action-text="Remover"
-        @select="removeQueue($event)"
+        @select="queueToRemove = $event"
       />
     </section>
+
+    <unnnic-modal
+      :showModal="!!queueToRemove.name"
+      modalIcon="alert-circle-1"
+      scheme="feedback-red"
+      :text="`Remover ${agent.name} de ${queueToRemove.name}`"
+      description="Tem certeza que deseja remover o agente da fila?"
+      @close="queueToRemove = {}"
+    >
+      <template #options>
+        <unnnic-button type="secondary" @click="removeQueue(queueToRemove)" text="Confirmar" />
+        <unnnic-button @click="queueToRemove = {}" text="Cancelar" />
+      </template>
+    </unnnic-modal>
+
+    <unnnic-modal
+      :showModal="isOpenRemoveQueueFeedbackModal"
+      modalIcon="check-circle-1-1"
+      scheme="feedback-green"
+      text="Agente removido da fila"
+      :description="`${agent.name} foi removido da fila Cartão de crédito`"
+      @close="isOpenRemoveQueueFeedbackModal = false"
+    >
+      <template #options>
+        <unnnic-button @click="isOpenRemoveQueueFeedbackModal = false" text="Fechar" />
+      </template>
+    </unnnic-modal>
   </section>
 </template>
 
@@ -58,7 +85,9 @@ export default {
 
   data: () => ({
     queue: null,
+    queueToRemove: {},
     queueName: '',
+    isOpenRemoveQueueFeedbackModal: false,
     selectedQueues: [
       { name: 'Cartão de crédito', additionDate: '25/03/2022' },
       { name: 'Fila 2', additionDate: '25/03/2022' },
@@ -94,6 +123,9 @@ export default {
     },
     removeQueue(queue) {
       this.selectedQueues = this.selectedQueues.filter((q) => q.name !== queue.name);
+
+      this.queueToRemove = {};
+      this.isOpenRemoveQueueFeedbackModal = true;
     },
   },
 };
