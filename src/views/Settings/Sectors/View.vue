@@ -86,6 +86,7 @@
           text="Adicionar nova fila"
           type="secondary"
           iconRight="add-circle-1"
+          @click="navigate(`/settings/chats/sectors/${id}/edit`)"
         />
 
         <template v-else>

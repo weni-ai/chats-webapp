@@ -4,11 +4,19 @@
       <template #sector>
         <form-sector v-model="sector" />
       </template>
+
+      <template #queues>
+        <form-queue v-model="queues" :sector="sector.name" />
+      </template>
+
+      <template #agents>
+        <form-agent v-model="agents" :sector="sector.name" :queues="sector.queues" />
+      </template>
     </sector-tabs>
 
     <section class="actions">
       <unnnic-button text="Voltar" type="secondary" @click="$router.back()" />
-      <unnnic-button text="Salvar" iconRight="check-circle-1-1" @click="save" />
+      <unnnic-button text="Salvar edições" iconRight="check-circle-1-1" @click="save" />
     </section>
 
     <unnnic-modal
@@ -26,13 +34,19 @@
 </template>
 
 <script>
+import cloneDeep from 'lodash.clonedeep';
+
+import FormAgent from '@/components/settings/forms/Agent';
 import FormSector from '@/components/settings/forms/Sector';
+import FormQueue from '@/components/settings/forms/Queue';
 import SectorTabs from '@/components/settings/SectorTabs';
 
 export default {
   name: 'EditSector',
 
   components: {
+    FormAgent,
+    FormQueue,
     FormSector,
     SectorTabs,
   },
@@ -43,11 +57,15 @@ export default {
 
   created() {
     this.sector = this.$store.getters['settings/getSectorById'](Number(this.id));
+    this.queues = cloneDeep(this.sector.queues);
+    this.agents = cloneDeep(this.sector.agents);
   },
 
   data: () => ({
     tab: '',
     sector: null,
+    queues: [],
+    agents: [],
     isOpenSaveConfirmationModal: false,
   }),
 
