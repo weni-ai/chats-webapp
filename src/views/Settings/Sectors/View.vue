@@ -88,8 +88,13 @@
         />
 
         <template v-else>
-          <unnnic-button text="Voltar" type="secondary" @click="queueToEdit = null" />
-          <unnnic-button text="Salvar alterações" @click="queueToEdit = null" />
+          <unnnic-button
+            text="Deletar fila"
+            type="secondary"
+            iconRight="subtract-circle-1"
+            @click="isOpenConfirmQueueDeleteModal = true"
+          />
+          <unnnic-button text="Voltar" @click="queueToEdit = null" />
         </template>
       </template>
 
@@ -109,6 +114,34 @@
         </template>
       </template>
     </section>
+
+    <unnnic-modal
+      v-if="queueToEdit"
+      :showModal="isOpenConfirmQueueDeleteModal"
+      modalIcon="alert-circle-1"
+      scheme="feedback-red"
+      :text="`Excluir fila de ${queueToEdit.name}`"
+      description="Tem certeza que deseja excluir permanentemente a fila?"
+      @close="isOpenConfirmQueueDeleteModal = false"
+    >
+      <template #options>
+        <unnnic-button type="terciary" @click="deleteQueue(queueToEdit)" text="Confirmar" />
+        <unnnic-button @click="isOpenConfirmQueueDeleteModal = false" text="Cancelar" />
+      </template>
+    </unnnic-modal>
+
+    <unnnic-modal
+      :showModal="isOpenQueueDeleteFeedbackModal"
+      modalIcon="check-circle-1"
+      scheme="feedback-green"
+      text="Fila removida"
+      description="A fila foi excluída com sucesso"
+      @close="isOpenQueueDeleteFeedbackModal = false"
+    >
+      <template #options>
+        <unnnic-button @click="isOpenQueueDeleteFeedbackModal = false" text="Fechar" />
+      </template>
+    </unnnic-modal>
   </section>
 </template>
 
@@ -145,6 +178,8 @@ export default {
     tab: '',
     agentToEdit: null,
     queueToEdit: null,
+    isOpenConfirmQueueDeleteModal: false,
+    isOpenQueueDeleteFeedbackModal: false,
   }),
 
   computed: {
@@ -154,6 +189,18 @@ export default {
   },
 
   methods: {
+    async deleteQueue(queue) {
+      const sector = {
+        ...this.sector,
+        queues: this.sector.queues.filter((q) => q.id !== queue.id),
+      };
+
+      await this.$store.dispatch('settings/updateSector', sector);
+
+      this.isOpenConfirmQueueDeleteModal = false;
+      this.queueToEdit = null;
+      this.isOpenQueueDeleteFeedbackModal = true;
+    },
     nameToEmail(name) {
       return `${name.replaceAll(/(\s[a-z]{2}\s)|(\s)/g, '.').toLowerCase()}@email.com`;
     },
