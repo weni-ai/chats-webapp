@@ -28,9 +28,39 @@
         :title="`Agentes na fila ${queue.name}`"
         :agents="queue.agents"
         action-text="Remover"
-        @select="removeAgent($event)"
+        @select="agentToRemove = $event"
       />
     </section>
+
+    <unnnic-modal
+      :showModal="!!agentToRemove.name"
+      modalIcon="alert-circle-1"
+      scheme="feedback-red"
+      :text="`Remover ${agentToRemove.name} de ${queue.name}`"
+      description="Tem certeza que deseja remover o agente da fila?"
+      @close="agentToRemove = {}"
+    >
+      <template #options>
+        <unnnic-button type="secondary" @click="removeAgent(agentToRemove)" text="Confirmar" />
+        <unnnic-button @click="agentToRemove = {}" text="Cancelar" />
+      </template>
+    </unnnic-modal>
+
+    <unnnic-modal
+      :showModal="isOpenRemoveAgentFeedbackModal"
+      modalIcon="check-circle-1-1"
+      scheme="feedback-green"
+      text="Agente removido da fila"
+      :description="`${agentToRemove.name} foi removido da fila Cartão de crédito`"
+      @close="(isOpenRemoveAgentFeedbackModal = false), (agentToRemove = {})"
+    >
+      <template #options>
+        <unnnic-button
+          @click="(isOpenRemoveAgentFeedbackModal = false), (agentToRemove = {})"
+          text="Fechar"
+        />
+      </template>
+    </unnnic-modal>
   </section>
 </template>
 
@@ -55,6 +85,8 @@ export default {
     agent: {
       name: '',
     },
+    agentToRemove: {},
+    isOpenRemoveAgentFeedbackModal: false,
   }),
 
   computed: {
@@ -90,6 +122,8 @@ export default {
         ...this.queue,
         agents: this.queue.agents.filter((a) => a.name !== agent.name),
       };
+
+      this.isOpenRemoveAgentFeedbackModal = true;
     },
   },
 };

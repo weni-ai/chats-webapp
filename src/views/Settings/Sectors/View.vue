@@ -73,6 +73,7 @@
         </section>
       </template>
     </sector-tabs>
+
     <section class="actions">
       <template v-if="tab === 'sector'">
         <unnnic-button text="Voltar" type="secondary" @click="navigate('/settings/chats')" />
@@ -125,14 +126,14 @@
       @close="isOpenConfirmQueueDeleteModal = false"
     >
       <template #options>
-        <unnnic-button type="terciary" @click="deleteQueue(queueToEdit)" text="Confirmar" />
+        <unnnic-button type="secondary" @click="deleteQueue(queueToEdit)" text="Confirmar" />
         <unnnic-button @click="isOpenConfirmQueueDeleteModal = false" text="Cancelar" />
       </template>
     </unnnic-modal>
 
     <unnnic-modal
       :showModal="isOpenQueueDeleteFeedbackModal"
-      modalIcon="check-circle-1"
+      modalIcon="check-circle-1-1"
       scheme="feedback-green"
       text="Fila removida"
       description="A fila foi excluída com sucesso"
