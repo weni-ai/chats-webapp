@@ -86,7 +86,7 @@
           text="Adicionar nova fila"
           type="secondary"
           iconRight="add-circle-1"
-          @click="navigate(`/settings/chats/sectors/${id}/edit`)"
+          @click="navigate(`/settings/chats/sectors/${id}/edit?tab=queues`)"
         />
 
         <template v-else>
@@ -106,7 +106,7 @@
           <unnnic-button
             text="Adicionar novo agente"
             iconRight="add-circle-1"
-            @click="navigate(`/settings/chats/sectors/${id}/edit`)"
+            @click="navigate(`/settings/chats/sectors/${id}/edit?tab=agents`)"
           />
         </template>
 

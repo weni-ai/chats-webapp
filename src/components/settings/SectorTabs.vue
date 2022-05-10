@@ -56,6 +56,12 @@ export default {
     },
   },
 
+  mounted() {
+    const { tab } = this.$route.query;
+
+    if (this.tabs.includes(tab)) this.tab = tab;
+  },
+
   data: () => ({
     tabs: ['sector', 'queues', 'agents'],
   }),
