@@ -39,7 +39,20 @@ export default {
       const items = [
         {
           label: 'Menu principal',
-          items: [{ label: 'Início', icon: 'house-1-1' }],
+          items: [
+            {
+              label: 'Início',
+              icon: 'house-1-1',
+            },
+            {
+              label: 'Dashboard',
+              icon: 'gauge-dashboard-2',
+              active: this.route === 'dashboard',
+              click: () => {
+                this.$router.push('/dashboard');
+              },
+            },
+          ],
         },
         {
           label: 'Sistemas',
@@ -74,7 +87,14 @@ export default {
       return items;
     },
     route() {
-      return this.$route.path.includes('settings') ? 'settings' : 'chats';
+      const routes = ['dashboard', 'settings'];
+
+      // eslint-disable-next-line guard-for-in, no-restricted-syntax
+      for (const route of routes) {
+        if (this.$route.path.includes(route)) return route;
+      }
+
+      return 'chats';
     },
   },
 };
