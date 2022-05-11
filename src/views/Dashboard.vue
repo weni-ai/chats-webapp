@@ -1,6 +1,8 @@
 <template>
-  <dashboard-layout>
-    <template #header> Construtora Stéfani </template>
+  <dashboard-layout :filters.sync="filters">
+    <template #header>
+      {{ filters === 'Juliano' ? 'Juliano da Silva' : 'Construtora Stéfani' }}
+    </template>
 
     <main class="metrics">
       <section class="general">
@@ -45,7 +47,52 @@
         />
       </section>
 
-      <section class="details">
+      <section v-if="filters === 'Juliano'" class="details">
+        <section class="metric">
+          <p class="title">
+            <unnnic-avatar-icon icon="hierarchy-3-2" size="xs" />
+            <span> Filas </span>
+          </p>
+
+          <section class="sectors">
+            <unnnic-card-project
+              v-for="queue in queues"
+              :key="queue.id"
+              :name="queue.name"
+              :statuses="getRandomMetrics()"
+            />
+          </section>
+        </section>
+
+        <section class="metric">
+          <p class="title">
+            <unnnic-avatar-icon icon="indicator" size="xs" scheme="feedback-green" />
+            <span> Agentes online </span>
+          </p>
+
+          <section class="online-agents-list">
+            <header>
+              <span>Contato</span>
+              <span class="active-chats">Tempo de interação</span>
+            </header>
+
+            <section class="agent">
+              <span>Luana Esteves Lopez</span>
+              <span class="active-chats">11min 34s</span>
+            </section>
+            <section class="agent">
+              <span>Vinícius Xavier</span>
+              <span class="active-chats">32min 4s</span>
+            </section>
+            <section class="agent">
+              <span>José Luis Filho</span>
+              <span class="active-chats">54min 3s</span>
+            </section>
+          </section>
+        </section>
+      </section>
+
+      <section v-else class="details">
         <section class="metric">
           <p class="title">
             <unnnic-avatar-icon icon="hierarchy-3-2" size="xs" />
@@ -57,7 +104,7 @@
               v-for="sector in sectors"
               :key="sector.id"
               :name="sector.name"
-              :statuses="getRandomSectorMetrics()"
+              :statuses="getRandomMetrics()"
             />
           </section>
         </section>
@@ -95,14 +142,9 @@ export default {
     DashboardLayout,
   },
 
-  props: {
-    filters: {
-      type: Object,
-      default: () => ({}),
-    },
-  },
-
   data: () => ({
+    filters: '',
+
     activeChats: {
       value: 13,
       percent: -5,
@@ -157,10 +199,13 @@ export default {
     sectors() {
       return this.$store.state.settings.sectors;
     },
+    queues() {
+      return this.sectors ? this.sectors[0].queues : [];
+    },
   },
 
   methods: {
-    getRandomSectorMetrics() {
+    getRandomMetrics() {
       const metrics = [
         {
           title: 'Tempo de espera',

@@ -33,7 +33,7 @@
     </section>
 
     <section class="view">
-      <slot :filters="{ tag, visualization, date }" />
+      <slot />
     </section>
   </section>
 </template>
@@ -41,6 +41,13 @@
 <script>
 export default {
   name: 'DashboardLayout',
+
+  props: {
+    filters: {
+      type: String,
+      default: '',
+    },
+  },
 
   data: () => ({
     tag: '',
@@ -60,6 +67,12 @@ export default {
     ],
     date: '',
   }),
+
+  watch: {
+    visualization(v) {
+      this.$emit('update:filters', v);
+    },
+  },
 };
 </script>
 
