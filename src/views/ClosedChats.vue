@@ -1,5 +1,5 @@
 <template>
-  <chats-layout>
+  <chats-layout disabled-chat-list>
     <section v-if="!!chat" class="active-chat">
       <chat-header :chat="{ ...chat }" @close="chat = null" />
       <chat-messages :chat="{ ...chat }" class="messages" />

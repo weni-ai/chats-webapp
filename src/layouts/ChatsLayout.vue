@@ -1,6 +1,6 @@
 <template>
   <section class="container">
-    <chat-queue class="queue" :disabled="$route.name !== 'home'" />
+    <the-chat-list class="chat-list" :disabled="disabledChatList" />
 
     <main>
       <slot />
@@ -13,13 +13,20 @@
 </template>
 
 <script>
-import ChatQueue from '@/components/layouts/ChatQueue';
+import TheChatList from '@/components/layouts/TheChatList';
 
 export default {
   name: 'MainLayout',
 
   components: {
-    ChatQueue,
+    TheChatList,
+  },
+
+  props: {
+    disabledChatList: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   computed: {
@@ -37,7 +44,7 @@ export default {
 
   max-height: $max-height;
 
-  .queue {
+  .chat-list {
     overflow-y: auto;
     margin: 1rem 0 0 1rem;
   }
