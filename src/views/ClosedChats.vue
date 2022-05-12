@@ -1,5 +1,5 @@
 <template>
-  <main-layout>
+  <chats-layout>
     <section v-if="!!chat" class="active-chat">
       <chat-header :chat="{ ...chat }" @close="chat = null" />
       <chat-messages :chat="{ ...chat }" class="messages" />
@@ -69,7 +69,7 @@
         </template>
       </unnnic-table>
     </section>
-  </main-layout>
+  </chats-layout>
 </template>
 
 <script>
@@ -78,7 +78,7 @@ import { mapState } from 'vuex';
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
 
-import MainLayout from '@/layouts/MainLayout';
+import ChatsLayout from '@/layouts/ChatsLayout';
 import TagFilter from '@/components/TagFilter';
 import UserAvatar from '@/components/UserAvatar';
 
@@ -94,7 +94,7 @@ export default {
   components: {
     ChatHeader,
     ChatMessages,
-    MainLayout,
+    ChatsLayout,
     TagFilter,
     UserAvatar,
   },

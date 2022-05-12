@@ -1,5 +1,5 @@
 <template>
-  <main-layout>
+  <chats-layout>
     <section v-if="!!activeChat" class="active-chat">
       <chat-header
         :chat="activeChat"
@@ -56,13 +56,13 @@
         v-bind="sidebarComponent.attrs"
       />
     </template>
-  </main-layout>
+  </chats-layout>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 
-import MainLayout from '@/layouts/MainLayout';
+import ChatsLayout from '@/layouts/ChatsLayout';
 
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
@@ -79,7 +79,7 @@ export default {
     ChatMessages,
     ContactInfo,
     QuickMessages,
-    MainLayout,
+    ChatsLayout,
     MessageEditor,
     ChatClassifier,
   },
