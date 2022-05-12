@@ -12,6 +12,7 @@
           icon="indicator"
           :value="activeChats.value"
           :percent="activeChats.percent"
+          inverted-percentage
         />
         <unnnic-tool-tip
           enabled
@@ -25,6 +26,7 @@
             scheme="aux-orange"
             :value="timeToString(waitingTime.value)"
             :percent="waitingTime.percent"
+            inverted-percentage
           />
         </unnnic-tool-tip>
         <unnnic-tool-tip enabled text="É o tempo médio de resposta ao contato" side="right">
@@ -35,6 +37,7 @@
             scheme="aux-purple"
             :value="timeToString(responseTime.value)"
             :percent="responseTime.percent"
+            inverted-percentage
           />
         </unnnic-tool-tip>
         <unnnic-card
@@ -44,6 +47,7 @@
           scheme="aux-lemon"
           :value="timeToString(interactionTime.value)"
           :percent="interactionTime.percent"
+          inverted-percentage
         />
       </section>
 
