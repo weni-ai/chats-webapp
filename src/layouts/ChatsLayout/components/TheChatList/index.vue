@@ -26,7 +26,7 @@ import { mapState } from 'vuex';
 import ChatGroup from './ChatGroup';
 
 export default {
-  name: 'ChatQueue',
+  name: 'TheChatList',
 
   components: {
     ChatGroup,

@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import TheChatList from '@/components/layouts/TheChatList';
+import TheChatList from './components/TheChatList';
 
 export default {
   name: 'ChatsLayout',
