@@ -110,9 +110,9 @@ export default {
 .message-editor {
   display: flex;
   align-items: flex-start;
-  gap: 2rem;
+  gap: $unnnic-spacing-stack-lg;
 
-  padding: 1rem;
+  padding: $unnnic-inline-sm;
   border: solid 1px $unnnic-color-neutral-clean;
   border-radius: $unnnic-border-radius-sm;
 
@@ -128,18 +128,18 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
-    gap: 0.5rem;
+    gap: $unnnic-spacing-stack-xs;
 
     .secondary {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: $unnnic-spacing-stack-xs;
 
       .upload-dropdown-option {
         display: flex;
         align-items: center;
         justify-content: flex-start;
-        gap: 0.5rem;
+        gap: $unnnic-spacing-stack-xs;
       }
     }
 

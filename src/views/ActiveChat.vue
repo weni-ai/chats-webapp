@@ -4,12 +4,12 @@
       <chat-header
         :chat="activeChat"
         @close="isCloseChatModalOpen = true"
-        @show-contact-info="componentInSidebar = 'contactInfo'"
+        @show-contact-info="componentInAsideSlot = 'contactInfo'"
       />
       <chat-messages
         :chat="activeChat"
         class="messages"
-        @show-contact-info="componentInSidebar = 'contactInfo'"
+        @show-contact-info="componentInAsideSlot = 'contactInfo'"
         ref="chatMessages"
       />
 
@@ -18,7 +18,7 @@
         v-model="editorMessage"
         class="message-editor"
         @show-quick-messages="
-          componentInSidebar = componentInSidebar === 'quickMessages' ? '' : 'quickMessages'
+          componentInAsideSlot = componentInAsideSlot === 'quickMessages' ? '' : 'quickMessages'
         "
         @send="sendMessage"
         @upload="sendFileMessage($event)"
@@ -85,7 +85,7 @@ export default {
   },
 
   data: () => ({
-    componentInSidebar: '',
+    componentInAsideSlot: '',
     editorMessage: '',
     isCloseChatModalOpen: false,
     tags: [],
@@ -96,7 +96,7 @@ export default {
       activeChat: (store) => store.chats.activeChat,
     }),
     sidebarComponent() {
-      return this.sidebarComponents[this.componentInSidebar] || {};
+      return this.sidebarComponents[this.componentInAsideSlot] || {};
     },
     sidebarComponents() {
       return {
@@ -104,7 +104,7 @@ export default {
           name: QuickMessages.name,
           listeners: {
             close: () => {
-              this.componentInSidebar = '';
+              this.componentInAsideSlot = '';
             },
             'select-quick-message': (quickMessage) => {
               this.editorMessage = quickMessage.message;
@@ -115,11 +115,11 @@ export default {
           name: ContactInfo.name,
           listeners: {
             close: () => {
-              this.componentInSidebar = '';
+              this.componentInAsideSlot = '';
             },
           },
           attrs: {
-            class: 'contact-info',
+            class: 'scrollable',
           },
         },
       };
@@ -205,7 +205,7 @@ export default {
 
   watch: {
     activeChat(newValue) {
-      if (!newValue) this.componentInSidebar = '';
+      if (!newValue) this.componentInAsideSlot = '';
     },
   },
 };
@@ -216,12 +216,12 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding-right: 1rem;
+  padding-right: $unnnic-spacing-inset-sm;
 
   .messages {
     overflow-y: auto;
-    padding-right: 1.5rem;
-    margin: 1rem 0 1rem;
+    padding-right: $unnnic-spacing-inset-md;
+    margin: $unnnic-spacing-inline-sm 0 $unnnic-spacing-inline-sm;
   }
 
   .message-editor {
@@ -231,13 +231,13 @@ export default {
   .chat-closed-message {
     width: 100%;
     text-align: center;
-    font-size: 0.875rem;
+    font-size: $unnnic-font-size-body-gt;
     line-height: 1.375rem;
     color: $unnnic-color-feedback-yellow;
   }
 }
 
-.contact-info {
+.scrollable {
   overflow-y: auto;
 }
 </style>

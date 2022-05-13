@@ -121,19 +121,19 @@ export default {
     text-align: center;
     color: $unnnic-color-neutral-dark;
     line-height: 1.375rem;
-    font-weight: 400;
-    font-size: 0.875rem;
+    font-weight: $unnnic-font-weight-regular;
+    font-size: $unnnic-font-size-body-gt;
   }
 
   .divisor {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    margin: 0.5rem 0 1rem;
+    gap: $unnnic-spacing-stack-md;
+    margin: $unnnic-inline-xs 0 $unnnic-inline-sm;
 
     .date {
-      font-weight: 700;
-      font-size: 0.5rem;
+      font-weight: $unnnic-font-weight-bold;
+      font-size: $unnnic-font-size-body-sm;
       line-height: 1rem;
       color: $unnnic-color-neutral-dark;
     }
@@ -147,34 +147,34 @@ export default {
 
   .message-group {
     display: flex;
-    gap: 1rem;
+    gap: $unnnic-spacing-stack-sm;
 
     & + .message-group {
-      padding-top: 1.5rem;
+      padding-top: $unnnic-spacing-inset-md;
     }
 
     .messages {
       .info {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 0.5rem;
+        gap: $unnnic-spacing-stack-xs;
+        margin-bottom: $unnnic-spacing-inline-xs;
 
         .username {
-          font-weight: 400;
+          font-weight: $unnnic-font-weight-regular;
           line-height: 1.5rem;
           color: $unnnic-color-neutral-dark;
         }
 
         .time {
-          font-size: 0.875rem;
+          font-size: $unnnic-font-size-body-gt;
           color: $unnnic-color-brand-sec;
         }
       }
 
       .message {
         & + .message {
-          padding-top: 0.5rem;
+          padding-top: $unnnic-spacing-inset-nano;
         }
 
         & .unsent-message {
@@ -183,20 +183,16 @@ export default {
           & .resend-button {
             display: inline-flex;
             align-items: center;
-            margin-left: 0.5rem;
+            margin-left: $unnnic-spacing-inline-xs;
           }
         }
 
         & p {
-          font-size: 0.875rem;
+          font-size: $unnnic-font-size-body-gt;
           color: $unnnic-color-neutral-dark;
         }
       }
     }
-  }
-
-  .clickable {
-    cursor: pointer;
   }
 }
 </style>

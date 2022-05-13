@@ -18,7 +18,7 @@
       </span>
     </header>
 
-    <section class="closed-message" v-if="chat.closed">
+    <section class="chat-closed-message" v-if="chat.closed">
       <span class="message">Chat encerrado em {{ chat.date || getTodayDate() }}</span>
       <unnnic-icon-svg icon="alert-circle-1-1" size="sm" scheme="neutral-darkest" />
     </section>
@@ -61,7 +61,7 @@ export default {
 .active-chat-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: $unnnic-spacing-stack-sm;
 
   .username,
   .close-button {
@@ -70,26 +70,26 @@ export default {
 
   .username {
     flex: 1;
-    font-weight: 400;
+    font-weight: $unnnic-font-weight-regular;
     line-height: 1.5rem;
     color: $unnnic-color-neutral-dark;
   }
 }
 
-.closed-message {
+.chat-closed-message {
   display: flex;
   justify-content: center;
   align-items: center;
   background: $unnnic-color-feedback-grey;
   height: 2rem;
 
-  margin-top: 1rem;
+  margin-top: $unnnic-spacing-inline-sm;
 
   .message {
-    margin-right: 0.5rem;
+    margin-right: $unnnic-spacing-inline-xs;
 
     color: $unnnic-color-neutral-dark;
-    font-size: 0.875rem;
+    font-size: $unnnic-font-size-body-gt;
     font-weight: $unnnic-font-weight-regular;
     line-height: 1.375rem;
   }
