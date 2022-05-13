@@ -205,12 +205,12 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding-right: 1.5rem;
+  padding-right: $unnnic-spacing-inset-md;
 
   .messages {
     overflow-y: auto;
-    padding-right: 1.5rem;
-    margin: 1.5rem 0 1rem;
+    padding-right: $unnnic-spacing-inset-md;
+    margin: $unnnic-spacing-inline-md 0 $unnnic-spacing-inline-sm;
   }
 }
 
@@ -218,14 +218,14 @@ export default {
   display: flex;
   flex-direction: column;
   max-height: 100%;
-  padding-right: 1.5rem;
+  padding-right: $unnnic-spacing-inset-md;
 
   h1 {
-    font-size: 1.25rem;
+    font-size: $unnnic-font-size-title-sm;
     font-weight: $unnnic-font-weight-bold;
     line-height: 1.75rem;
     color: $unnnic-color-neutral-dark;
-    margin-bottom: 1.5rem;
+    margin-bottom: $unnnic-spacing-inline-md;
   }
 
   .filters {
@@ -241,13 +241,13 @@ export default {
   .closed-chats-table {
     max-height: 100%;
     overflow-y: auto;
-    margin-top: 2rem;
+    margin-top: $unnnic-spacing-inline-lg;
 
     .tags {
       display: flex;
       justify-content: flex-start;
       align-items: center;
-      gap: 1.5rem;
+      gap: $unnnic-spacing-stack-md;
     }
   }
 
@@ -258,7 +258,7 @@ export default {
   .contact-name {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: $unnnic-spacing-stack-xs;
   }
 }
 </style>
