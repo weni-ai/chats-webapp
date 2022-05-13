@@ -6,7 +6,7 @@
       <slot />
     </main>
 
-    <section v-if="areUsingAsideSlot" class="aside">
+    <section v-if="isAsideSlotInUse" class="aside">
       <slot name="aside" />
     </section>
   </section>
@@ -16,7 +16,7 @@
 import TheChatList from '@/components/layouts/TheChatList';
 
 export default {
-  name: 'MainLayout',
+  name: 'ChatsLayout',
 
   components: {
     TheChatList,
@@ -30,7 +30,7 @@ export default {
   },
 
   computed: {
-    areUsingAsideSlot() {
+    isAsideSlotInUse() {
       return !!this.$slots.aside;
     },
   },
@@ -40,25 +40,39 @@ export default {
 <style lang="scss" scoped>
 .container {
   $max-height: calc(100vh - 5.5rem);
-  display: flex;
-
   max-height: $max-height;
+  display: flex;
 
   .chat-list {
     overflow-y: auto;
-    margin: 1rem 0 0 1rem;
+    margin: {
+      top: $unnnic-spacing-inline-sm;
+      right: 0;
+      bottom: 0;
+      left: $unnnic-spacing-inline-sm;
+    }
   }
 
   main {
-    padding: 1.5rem 0 1rem 1.5rem;
-    height: $max-height;
     flex: 1;
+    height: $max-height;
+    padding: {
+      top: $unnnic-spacing-inset-md;
+      right: 0;
+      bottom: $unnnic-spacing-inset-sm;
+      left: $unnnic-spacing-inset-md;
+    }
   }
 
   .aside {
-    padding: 1.5rem 0 1.5rem 1.5rem;
     height: $max-height;
     background: $unnnic-color-neutral-lightest;
+    padding: {
+      top: $unnnic-spacing-inset-md;
+      right: 0;
+      bottom: $unnnic-spacing-inset-md;
+      left: $unnnic-spacing-inset-md;
+    }
     width: 20.625rem;
   }
 }

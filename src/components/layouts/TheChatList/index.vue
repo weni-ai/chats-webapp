@@ -58,17 +58,17 @@ export default {
 .container {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding-bottom: 0.5rem;
+  gap: $unnnic-spacing-stack-xs;
+  padding-bottom: $unnnic-spacing-inset-nano;
 
   .chat-groups {
     flex: 1 1;
 
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: $unnnic-spacing-stack-md;
 
-    padding-right: 1rem;
+    padding-right: $unnnic-spacing-inset-xs;
     overflow-y: auto;
   }
 }
