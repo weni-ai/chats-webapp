@@ -123,7 +123,7 @@ export default {
 .contact-info {
   height: 100%;
   max-height: 100%;
-  padding-right: 1rem;
+  padding-left: $unnnic-spacing-inset-xs;
 
   .info {
     display: flex;

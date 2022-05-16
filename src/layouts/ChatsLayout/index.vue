@@ -67,13 +67,8 @@ export default {
   .aside {
     height: $max-height;
     background: $unnnic-color-neutral-lightest;
-    padding: {
-      top: $unnnic-spacing-inset-md;
-      right: 0;
-      bottom: $unnnic-spacing-inset-md;
-      left: $unnnic-spacing-inset-md;
-    }
     width: 20.625rem;
+    background: $unnnic-color-background-grass;
   }
 }
 </style>
