@@ -4,9 +4,12 @@
     <span class="filename">
       {{ fullFilename }}
     </span>
-    <span class="clickable" @click="$emit('download')" @keypress.enter="$emit('download')">
-      <unnnic-icon-svg icon="download-bottom-1" scheme="neutral-darkest" size="sm" />
-    </span>
+
+    <unnnic-tool-tip enabled text="Baixar" side="right">
+      <span class="clickable" @click="$emit('download')" @keypress.enter="$emit('download')">
+        <unnnic-icon-svg icon="download-bottom-1" scheme="neutral-darkest" size="sm" />
+      </span>
+    </unnnic-tool-tip>
   </section>
 </template>
 

@@ -20,7 +20,13 @@
       <template #label>
         <span class="label">
           Atalho
-          <unnnic-icon-svg scheme="neutral-clean" icon="information-circle-4" size="sm" />
+          <unnnic-tool-tip
+            enabled
+            text="Defina uma palavra chave para sua mensagem rápida"
+            side="right"
+          >
+            <unnnic-icon-svg scheme="neutral-clean" icon="information-circle-4" size="sm" />
+          </unnnic-tool-tip>
         </span>
       </template>
     </unnnic-input>

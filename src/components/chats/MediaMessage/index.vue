@@ -4,22 +4,24 @@
   </section>
 
   <section v-else class="media-message">
-    <image-preview
-      v-if="media.type === 'image'"
-      :src="media.src"
-      :alt="media.alt"
-      :height="media.height"
-      :width="media.width"
-      fullscreen-on-click
-      @download="download"
-    />
-    <video-preview
-      v-else-if="media.type === 'video'"
-      :src="media.src"
-      :height="media.height"
-      :width="media.width"
-      fullscreen-on-click
-    />
+    <unnnic-tool-tip enabled text="Visualizar em tela cheia" side="right">
+      <image-preview
+        v-if="media.type === 'image'"
+        :src="media.src"
+        :alt="media.alt"
+        :height="media.height"
+        :width="media.width"
+        fullscreen-on-click
+        @download="download"
+      />
+      <video-preview
+        v-else-if="media.type === 'video'"
+        :src="media.src"
+        :height="media.height"
+        :width="media.width"
+        fullscreen-on-click
+      />
+    </unnnic-tool-tip>
 
     <media-controls :fullFilename="fullFilename" @download="download" />
   </section>
@@ -84,7 +86,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .media-message {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   gap: 0.5rem;
 }

@@ -11,11 +11,11 @@
     </section>
 
     <unnnic-button
-      :text="isActiveChatsView ? 'Visualizar histórico' : 'Voltar para chats '"
-      iconRight="task-list-clock-1"
+      :text="isActiveChatView ? 'Visualizar histórico' : 'Voltar para chats'"
+      :iconRight="isActiveChatView ? 'task-list-clock-1' : 'keyboard-return'"
       type="secondary"
       size="small"
-      @click="$router.push(isActiveChatsView ? '/closed-chats' : '/')"
+      @click="$router.push(isActiveChatView ? '/closed-chats' : '/')"
     />
   </div>
 </template>
@@ -47,7 +47,7 @@ export default {
     ...mapState({
       chatGroups: (state) => state.chats.chats,
     }),
-    isActiveChatsView() {
+    isActiveChatView() {
       return this.$route.name === 'home';
     },
   },

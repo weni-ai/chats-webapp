@@ -1,19 +1,24 @@
 <template>
-  <div>
-    <header class="active-chat-header">
-      <user-avatar
-        :username="chat.username"
-        size="2xl"
-        clickable
-        @click="showContactInfo"
-        :disabled="chat.closed"
-      />
-      <span class="username" @click="showContactInfo" @keypress.enter="showContactInfo">
-        {{ chat.username }}
-      </span>
-      <span @click="$emit('close')" @keypress.enter="$emit('close')">
-        <unnnic-tool-tip enabled text="Encerrar chat" side="left">
-          <unnnic-icon-svg class="close-button" icon="close-1" size="sm" />
+  <div class="chat-header">
+    <header class="header">
+      <unnnic-tool-tip enabled text="Informações do contato" side="right">
+        <section class="info clickable">
+          <user-avatar
+            :username="chat.username"
+            size="2xl"
+            clickable
+            @click="showContactInfo"
+            :disabled="chat.closed"
+          />
+          <span class="username" @click="showContactInfo" @keypress.enter="showContactInfo">
+            {{ chat.username }}
+          </span>
+        </section>
+      </unnnic-tool-tip>
+
+      <span class="clickable" @click="$emit('close')" @keypress.enter="$emit('close')">
+        <unnnic-tool-tip enabled :text="closeButtonTooltip" side="left">
+          <unnnic-icon-svg icon="close-1" size="sm" />
         </unnnic-tool-tip>
       </span>
     </header>
@@ -36,6 +41,10 @@ export default {
   },
 
   props: {
+    closeButtonTooltip: {
+      type: String,
+      default: '',
+    },
     chat: {
       type: Object,
       required: true,
@@ -58,21 +67,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.active-chat-header {
-  display: flex;
-  align-items: center;
-  gap: $unnnic-spacing-stack-sm;
+.chat-header {
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  .username,
-  .close-button {
-    cursor: pointer;
-  }
+    .info {
+      display: flex;
+      align-items: center;
+      gap: $unnnic-spacing-stack-sm;
+    }
 
-  .username {
-    flex: 1;
-    font-weight: $unnnic-font-weight-regular;
-    line-height: 1.5rem;
-    color: $unnnic-color-neutral-dark;
+    .username {
+      flex: 1;
+      font-weight: $unnnic-font-weight-regular;
+      line-height: 1.5rem;
+      color: $unnnic-color-neutral-dark;
+    }
   }
 }
 

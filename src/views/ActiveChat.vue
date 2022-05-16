@@ -3,6 +3,7 @@
     <section v-if="!!activeChat" class="active-chat">
       <chat-header
         :chat="activeChat"
+        closeButtonTooltip="Encerrar chat"
         @close="isCloseChatModalOpen = true"
         @show-contact-info="componentInAsideSlot = 'contactInfo'"
       />

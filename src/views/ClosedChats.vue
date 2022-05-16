@@ -1,7 +1,11 @@
 <template>
   <chats-layout disabled-chat-list>
     <section v-if="!!chat" class="active-chat">
-      <chat-header :chat="{ ...chat }" @close="chat = null" />
+      <chat-header
+        :chat="{ ...chat }"
+        @close="chat = null"
+        closeButtonTooltip="Fechar visualização"
+      />
       <chat-messages :chat="{ ...chat }" class="messages" />
     </section>
 
