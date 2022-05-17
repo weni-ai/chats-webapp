@@ -1,29 +1,64 @@
 <template>
-  <aside-slot-template title="Informações do contato" @close="$listeners.close">
-    <aside-slot-template-section>
-      <section class="contact-info">
-        <div class="avatar">
-          <unnnic-icon-svg icon="single-neutral-actions-1" size="xl" />
-        </div>
+  <section class="contact-info">
+    <aside-slot-template title="Informações do contato" @close="$listeners.close">
+      <aside-slot-template-section>
+        <section class="infos">
+          <div class="avatar">
+            <unnnic-icon-svg icon="single-neutral-actions-1" size="xl" />
+          </div>
 
-        <p class="username">
-          {{ chat.username }}
-        </p>
+          <p class="username">
+            {{ chat.username }}
+          </p>
 
-        <div class="info">
-          <p>Online há 10 minutos</p>
-          <p>
-            <span class="title"> WhatsApp </span>
-            +55 47 98777 4756
-          </p>
-          <p>
-            <span class="title"> Último contato </span>
-            10/05/2022
-          </p>
-        </div>
-      </section>
-    </aside-slot-template-section>
-  </aside-slot-template>
+          <div class="connection-info">
+            <p>Online há 10 minutos</p>
+            <p>
+              <span class="title"> WhatsApp </span>
+              +55 47 98777 4756
+            </p>
+            <p>
+              <span class="title"> Último contato </span>
+              10/05/2022
+            </p>
+          </div>
+        </section>
+      </aside-slot-template-section>
+
+      <aside-slot-template-section>
+        <section class="transfer-section">
+          <unnnic-autocomplete
+            v-model="transferContactSearch"
+            :data="filteredTransferOptions"
+            @choose="transferContactTo = $event"
+            placeholder="Selecione agente, fila ou setor"
+            label="Transferir chat"
+            open-with-focus
+            size="sm"
+            highlight
+            class="channel-select"
+          />
+
+          <unnnic-button
+            class="transfer__button"
+            text="Transferir"
+            size="small"
+            :disabled="isTransferButtonDisabled"
+            @click="transferContact"
+          />
+        </section>
+      </aside-slot-template-section>
+    </aside-slot-template>
+
+    <unnnic-modal
+      text="Conversa transferida com sucesso!"
+      :description="`O contato foi encaminhado para a fila do ${transferContactTo}`"
+      modalIcon="check-circle-1-1"
+      scheme="feedback-green"
+      :showModal="showSuccessfulTransferModal"
+      @close="$store.commit('chats/setActiveChat', null), (showSuccessfulTransferModal = false)"
+    />
+  </section>
 </template>
 
 <script>
@@ -58,6 +93,10 @@ export default {
     ...mapState({
       chat: (state) => state.chats.activeChat,
     }),
+
+    isTransferButtonDisabled() {
+      return !this.transferContactTo;
+    },
 
     filteredTransferOptions() {
       const search = this.lowercase(this.transferContactSearch);
@@ -96,37 +135,46 @@ export default {
 
 <style lang="scss" scoped>
 .contact-info {
-  display: flex;
-  flex-direction: column;
-  gap: $unnnic-spacing-stack-sm;
-
-  .avatar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: $unnnic-border-radius-lg;
-
-    width: 100%;
-    min-height: 17.8125rem;
-    background: rgba($unnnic-color-brand-weni, $unnnic-opacity-level-extra-light);
-  }
-
-  .username {
-    font-weight: $unnnic-font-weight-bold;
-    font-size: $unnnic-font-size-title-sm;
-    color: $unnnic-color-aux-purple;
-  }
-
-  .info {
+  .infos {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-stack-nano;
+    gap: $unnnic-spacing-stack-sm;
 
-    font-size: $unnnic-font-size-body-md;
-    color: $unnnic-color-neutral-cloudy;
+    .avatar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: $unnnic-border-radius-lg;
 
-    .title {
+      width: 100%;
+      min-height: 17.8125rem;
+      background: rgba($unnnic-color-brand-weni, $unnnic-opacity-level-extra-light);
+    }
+
+    .username {
       font-weight: $unnnic-font-weight-bold;
+      font-size: $unnnic-font-size-title-sm;
+      color: $unnnic-color-aux-purple;
+    }
+
+    .connection-info {
+      display: flex;
+      flex-direction: column;
+      gap: $unnnic-spacing-stack-nano;
+
+      font-size: $unnnic-font-size-body-md;
+      color: $unnnic-color-neutral-cloudy;
+
+      .title {
+        font-weight: $unnnic-font-weight-bold;
+      }
+    }
+  }
+
+  .transfer-section {
+    .transfer__button {
+      margin-top: $unnnic-spacing-inline-sm;
+      width: 100%;
     }
   }
 }
