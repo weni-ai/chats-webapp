@@ -54,7 +54,7 @@ export default {
   }
 
   main {
-    flex: 1;
+    flex: 1 1;
     height: $max-height;
     padding: {
       top: $unnnic-spacing-inset-md;
@@ -70,7 +70,7 @@ export default {
     width: 20.625rem;
 
     background: $unnnic-color-background-grass;
-    padding-left: $unnnic-spacing-inline-nano;
+    padding-left: $unnnic-spacing-inline-xs;
 
     & > * {
       max-height: $max-height;
