@@ -163,6 +163,8 @@ export default {
   }
 
   .name {
+    font-size: $unnnic-font-size-body-gt;
+    font-weight: $unnnic-font-weight-bold;
     color: $unnnic-color-neutral-cloudy;
   }
 }
