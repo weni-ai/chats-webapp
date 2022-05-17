@@ -66,10 +66,15 @@ export default {
 
   .aside {
     height: $max-height;
-    background: $unnnic-color-neutral-lightest;
+    max-height: $max-height;
     width: 20.625rem;
+
     background: $unnnic-color-background-grass;
     padding-left: $unnnic-spacing-inline-nano;
+
+    & > * {
+      max-height: $max-height;
+    }
   }
 }
 </style>

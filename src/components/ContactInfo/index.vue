@@ -48,6 +48,10 @@
           />
         </section>
       </aside-slot-template-section>
+
+      <aside-slot-template-section>
+        <contact-media />
+      </aside-slot-template-section>
     </aside-slot-template>
 
     <unnnic-modal
@@ -66,6 +70,7 @@ import { mapState } from 'vuex';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
+import ContactMedia from '@/components/ContactInfo/Media';
 
 export default {
   name: 'ContactInfo',
@@ -73,6 +78,7 @@ export default {
   components: {
     AsideSlotTemplate,
     AsideSlotTemplateSection,
+    ContactMedia,
   },
 
   data: () => ({
