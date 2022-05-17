@@ -12,14 +12,14 @@
           </p>
 
           <div class="connection-info">
-            <p>Online há 10 minutos</p>
+            <p>Online há {{ chat.lastView }} minutos</p>
             <p>
-              <span class="title"> WhatsApp </span>
+              <span class="title"> {{ chat.channel }} </span>
               +55 47 98777 4756
             </p>
             <p>
               <span class="title"> Último contato </span>
-              10/05/2022
+              {{ chat.lastContactDate }}
             </p>
           </div>
         </section>

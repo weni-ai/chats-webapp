@@ -1,4 +1,4 @@
-const chats = [
+let chats = [
   {
     name: 'Fila',
     chats: [
@@ -529,6 +529,24 @@ const closedChats = [
     ],
   },
 ];
+
+const channels = ['WhatsApp', 'Telegram', 'Instagram'];
+
+chats = chats.map((group) => ({
+  ...group,
+  chats: group.chats.map((chat) => {
+    const lastView = Math.round(Math.random() * 9 + 1);
+    const lastContactDate = `${new Date().getDate().toString().padStart(2, 0)}/05/2022`;
+    const channel = channels[Math.round(Math.random() * (channels.length - 1))];
+
+    return {
+      ...chat,
+      lastView,
+      lastContactDate,
+      channel,
+    };
+  }),
+}));
 
 const module = {
   namespaced: true,
