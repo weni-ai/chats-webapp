@@ -69,6 +69,7 @@ export default {
     background: $unnnic-color-neutral-lightest;
     width: 20.625rem;
     background: $unnnic-color-background-grass;
+    padding-left: $unnnic-spacing-inline-nano;
   }
 }
 </style>
