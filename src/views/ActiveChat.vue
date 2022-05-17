@@ -225,6 +225,7 @@ export default {
   }
 
   .message-editor {
+    margin-right: $unnnic-spacing-inline-sm;
     margin-top: auto;
   }
 
