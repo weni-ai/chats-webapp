@@ -85,6 +85,17 @@ export default {
     ChatClassifier,
   },
 
+  props: {
+    id: {
+      type: [String, Number],
+      default: '',
+    },
+  },
+
+  mounted() {
+    this.setActiveChat(this.id);
+  },
+
   data: () => ({
     componentInAsideSlot: '',
     editorMessage: '',
@@ -134,6 +145,13 @@ export default {
     },
     scrollMessagesToBottom() {
       this.$refs.chatMessages.$el.scrollTop = this.$refs.chatMessages.$el.scrollHeight;
+    },
+    setActiveChat(id) {
+      const chat = this.$store.getters['chats/getChatById'](id);
+
+      if (!chat) this.$router.push('/');
+
+      this.$store.commit('chats/setActiveChat', chat);
     },
     async sendFileMessage(files) {
       try {
@@ -207,6 +225,9 @@ export default {
   watch: {
     activeChat(newValue) {
       if (!newValue) this.componentInAsideSlot = '';
+    },
+    id(id) {
+      this.setActiveChat(id);
     },
   },
 };

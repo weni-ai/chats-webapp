@@ -6,7 +6,7 @@
 
     <ul class="chats" :class="{ filled }">
       <li v-for="chat in chatGroup.chats" :key="chat.id">
-        <user-chat :chat="chat" @click="selectChat(chat)" :filled="filled" :disabled="disabled" />
+        <user-chat :chat="chat" @click="open(chat)" :filled="filled" :disabled="disabled" />
       </li>
     </ul>
   </div>
@@ -38,8 +38,12 @@ export default {
   },
 
   methods: {
-    selectChat(chat) {
-      this.$store.commit('chats/setActiveChat', { ...chat, active: true });
+    open(chat) {
+      const path = `/chats/${chat.id}`;
+
+      if (this.$route.path === path) return;
+
+      this.$router.replace(path);
     },
   },
 };

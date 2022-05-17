@@ -607,6 +607,14 @@ const module = {
     },
   },
 
+  getters: {
+    getChatById(state) {
+      const chats = state.chats.map((chatGroup) => chatGroup.chats).flat();
+
+      return (id) => chats.find((chat) => chat.id === id.toString());
+    },
+  },
+
   actions: {
     closeChat({ commit }, chat) {
       commit('removeChat', chat);
