@@ -4,24 +4,22 @@
   </section>
 
   <section v-else class="media-message">
-    <unnnic-tool-tip enabled text="Visualizar em tela cheia" side="right">
-      <image-preview
-        v-if="media.type === 'image'"
-        :src="media.src"
-        :alt="media.alt"
-        :height="media.height"
-        :width="media.width"
-        fullscreen-on-click
-        @download="download"
-      />
-      <video-preview
-        v-else-if="media.type === 'video'"
-        :src="media.src"
-        :height="media.height"
-        :width="media.width"
-        fullscreen-on-click
-      />
-    </unnnic-tool-tip>
+    <image-preview
+      v-if="media.type === 'image'"
+      :src="media.src"
+      :alt="media.alt"
+      :height="media.height"
+      :width="media.width"
+      fullscreen-on-click
+      @download="download"
+    />
+    <video-preview
+      v-else-if="media.type === 'video'"
+      :src="media.src"
+      :height="media.height"
+      :width="media.width"
+      fullscreen-on-click
+    />
 
     <media-controls :fullFilename="fullFilename" @download="download" />
   </section>

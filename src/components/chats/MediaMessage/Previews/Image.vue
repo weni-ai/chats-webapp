@@ -1,13 +1,15 @@
 <template>
   <div>
-    <img
-      :src="src"
-      :alt="alt"
-      :style="{ width: widthInRem, height: heightInRem }"
-      class="clickable"
-      @click="handleImageClick"
-      @keypress.enter="handleImageClick"
-    />
+    <unnnic-tool-tip enabled :text="tooltip" side="right">
+      <img
+        :src="src"
+        :alt="alt"
+        :style="{ width: widthInRem, height: heightInRem }"
+        class="clickable"
+        @click="handleImageClick"
+        @keypress.enter="handleImageClick"
+      />
+    </unnnic-tool-tip>
 
     <fullscreen-preview
       v-if="isFullscreen"
@@ -52,6 +54,10 @@ export default {
     src: {
       type: String,
       default: '',
+    },
+    tooltip: {
+      type: String,
+      default: 'Visualizar em tela cheia',
     },
     width: {
       type: [String, Number],
