@@ -10,7 +10,9 @@
       </span>
     </header>
 
-    <slot />
+    <section class="scrollable">
+      <slot />
+    </section>
   </aside>
 </template>
 
@@ -28,6 +30,11 @@ export default {
 
 <style lang="scss" scoped>
 .aside-slot-template {
+  display: flex;
+  flex-direction: column;
+  height: inherit;
+  max-height: inherit;
+
   .header {
     display: flex;
     align-items: center;
@@ -48,6 +55,10 @@ export default {
       font-size: $unnnic-font-size-body-lg;
       font-weight: $unnnic-font-weight-bold;
     }
+  }
+
+  .scrollable {
+    overflow-y: auto;
   }
 }
 </style>
