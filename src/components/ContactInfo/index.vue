@@ -1,68 +1,43 @@
 <template>
-  <aside class="contact-info">
-    <section class="info">
-      <header>
-        <span>Informações do Contato</span>
-        <span @click="$emit('close')" @keypress.enter="$emit('close')">
-          <unnnic-icon-svg icon="close-1" size="sm" class="close-icon" />
-        </span>
-      </header>
+  <aside-slot-template title="Informações do contato" @close="$listeners.close">
+    <aside-slot-template-section>
+      <section class="contact-info">
+        <div class="avatar">
+          <unnnic-icon-svg icon="single-neutral-actions-1" size="xl" />
+        </div>
 
-      <div class="avatar">
-        <unnnic-icon-svg icon="single-neutral-actions-1" size="xl" />
-      </div>
+        <p class="username">
+          {{ chat.username }}
+        </p>
 
-      <span class="username">
-        {{ chat.username }}
-      </span>
-
-      <span class="channel"> Canal: WhatsApp </span>
-
-      <unnnic-autocomplete
-        v-model="transferContactSearch"
-        :data="filteredTransferOptions"
-        @choose="transferContactTo = $event"
-        label="Transferir chat "
-        placeholder="Selecione agente, fila ou setor"
-        open-with-focus
-        size="sm"
-        highlight
-        class="channel-select"
-      />
-
-      <unnnic-button
-        text="Transferir"
-        size="small"
-        class="transfer-button"
-        @click="transferContact"
-        :type="!!transferContactTo ? 'primary' : 'terciary'"
-        :disabled="!transferContactTo"
-      />
-    </section>
-
-    <contact-media class="media" />
-
-    <unnnic-modal
-      text="Conversa transferida com sucesso!"
-      :description="`O contato foi encaminhado para a fila do ${transferContactTo}`"
-      modalIcon="check-circle-1-1"
-      scheme="feedback-green"
-      :showModal="showSuccessfulTransferModal"
-      @close="$store.commit('chats/setActiveChat', null), (showSuccessfulTransferModal = false)"
-    />
-  </aside>
+        <div class="info">
+          <p>Online há 10 minutos</p>
+          <p>
+            <span class="title"> WhatsApp </span>
+            +55 47 98777 4756
+          </p>
+          <p>
+            <span class="title"> Último contato </span>
+            10/05/2022
+          </p>
+        </div>
+      </section>
+    </aside-slot-template-section>
+  </aside-slot-template>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 
-import ContactMedia from './Media';
+import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
+import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
 
 export default {
   name: 'ContactInfo',
 
   components: {
-    ContactMedia,
+    AsideSlotTemplate,
+    AsideSlotTemplateSection,
   },
 
   data: () => ({
@@ -121,59 +96,38 @@ export default {
 
 <style lang="scss" scoped>
 .contact-info {
-  height: 100%;
-  max-height: 100%;
-  padding-left: $unnnic-spacing-inset-xs;
+  display: flex;
+  flex-direction: column;
+  gap: $unnnic-spacing-stack-sm;
+
+  .avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: $unnnic-border-radius-lg;
+
+    width: 100%;
+    min-height: 17.8125rem;
+    background: rgba($unnnic-color-brand-weni, $unnnic-opacity-level-extra-light);
+  }
+
+  .username {
+    font-weight: $unnnic-font-weight-bold;
+    font-size: $unnnic-font-size-title-sm;
+    color: $unnnic-color-aux-purple;
+  }
 
   .info {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: $unnnic-spacing-stack-nano;
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: $unnnic-color-neutral-dark;
+    font-size: $unnnic-font-size-body-md;
+    color: $unnnic-color-neutral-cloudy;
 
-      .close-icon {
-        cursor: pointer;
-      }
+    .title {
+      font-weight: $unnnic-font-weight-bold;
     }
-
-    .avatar {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      width: 100%;
-      min-height: 17.8125rem;
-      background: rgba($unnnic-color-brand-weni, $unnnic-opacity-level-extra-light);
-    }
-
-    .username {
-      font-size: 0.875rem;
-      line-height: 1.375rem;
-      color: $unnnic-color-neutral-dark;
-    }
-
-    .channel {
-      font-size: 0.75rem;
-      line-height: 1.25rem;
-      color: $unnnic-color-neutral-dark;
-    }
-
-    .channel-select {
-      margin-top: -0.5rem; /* the select label has a top margin of 8px */
-    }
-
-    .transfer-button {
-      flex: none;
-    }
-  }
-
-  .media {
-    margin-top: 1.5rem;
   }
 }
 </style>

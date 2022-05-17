@@ -46,6 +46,7 @@ export default {
     .title {
       color: $unnnic-color-neutral-dark;
       font-size: $unnnic-font-size-body-lg;
+      font-weight: $unnnic-font-weight-bold;
     }
   }
 }
