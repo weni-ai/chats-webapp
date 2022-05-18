@@ -8,15 +8,15 @@
       <section class="metric">
         <p class="title">
           <unnnic-avatar-icon icon="hierarchy-3-2" size="xs" />
-          <span> Setores </span>
+          <span> Filas </span>
         </p>
 
-        <section class="sectors">
+        <section class="queues">
           <unnnic-card-project
-            v-for="sector in sectors"
-            :key="sector.id"
-            :name="sector.name"
-            :statuses="sector.statuses"
+            v-for="queue in queues"
+            :key="queue.id"
+            :name="queue.name"
+            :statuses="queue.statuses"
           />
         </section>
       </section>
@@ -24,18 +24,18 @@
       <section class="metric">
         <p class="title">
           <unnnic-avatar-icon icon="indicator" size="xs" scheme="feedback-green" />
-          <span> Agentes online </span>
+          <span> Chats ativos </span>
         </p>
 
-        <section class="online-agents-list">
+        <section class="active-chats-list">
           <header>
-            <span>Agente</span>
-            <span class="active-chats">Chats ativos</span>
+            <span>Contato</span>
+            <span>Tempo de interação</span>
           </header>
 
-          <section v-for="agent in onlineAgents" :key="agent.id" class="agent">
+          <section v-for="agent in activeChats" :key="agent.id" class="agent">
             <span>{{ agent.name }}</span>
-            <span class="active-chats">{{ agent.activeChats }}</span>
+            <span class="interaction-time">{{ agent.interactionTime }}</span>
           </section>
         </section>
       </section>
@@ -67,7 +67,7 @@ export default {
         title: 'Chats ativos',
         icon: 'indicator',
         scheme: 'aux-blue',
-        value: 13,
+        value: 5,
         percent: -5,
         invertedPercentage: true,
       },
@@ -111,41 +111,37 @@ export default {
       },
     ],
 
-    onlineAgents: [
-      {
-        id: 1,
-        name: 'Fabrício Correia',
-        activeChats: 3,
-      },
-      {
-        id: 2,
-        name: 'Daniela Maciel',
-        activeChats: 4,
-      },
-      {
-        id: 3,
-        name: 'Maurício de Souza',
-        activeChats: 2,
-      },
-      {
-        id: 4,
-        name: 'Fátima Albuquerque',
-        activeChats: 3,
-      },
-    ],
-
     realtimeSimulationController: null,
   }),
 
   computed: {
-    sectors() {
-      const { sectors } = this.$store.state.settings;
+    queues() {
+      const { queues } = this.$store.state.settings.sectors[0];
 
-      return sectors.map((sector) => ({
-        id: sector.id,
-        name: sector.name,
+      return queues.map((queue) => ({
+        id: queue.id,
+        name: queue.name,
         statuses: this.getRandomMetrics(),
       }));
+    },
+    activeChats() {
+      return [
+        {
+          id: 1,
+          name: 'Luana Esteves Lopez',
+          interactionTime: this.timeToString(this.getRandomTime(10, 59)),
+        },
+        {
+          id: 2,
+          name: 'Vinícius Xavier',
+          interactionTime: this.timeToString(this.getRandomTime(10, 59)),
+        },
+        {
+          id: 3,
+          name: 'José Luis Filho',
+          interactionTime: this.timeToString(this.getRandomTime(10, 59)),
+        },
+      ];
     },
   },
 
@@ -256,22 +252,22 @@ export default {
         margin-bottom: $unnnic-spacing-inline-sm;
       }
 
-      .sectors {
+      .queues {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: $unnnic-spacing-stack-sm;
       }
 
-      .online-agents-list {
+      .active-chats-list {
         & > * {
           display: grid;
-          grid-template-columns: 3fr 1fr;
+          grid-template-columns: 1fr 1fr;
           padding: $unnnic-spacing-inset-sm;
 
           color: $unnnic-color-neutral-cloudy;
           font-size: $unnnic-font-size-body-gt;
 
-          .active-chats {
+          .interaction-time {
             text-align: center;
           }
         }
