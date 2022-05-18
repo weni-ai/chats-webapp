@@ -9,19 +9,29 @@
     </header>
 
     <section class="filters">
-      <unnnic-select v-model="tag" placeholder="Selecionar tags" label="Filtrar por tags" size="sm">
+      <unnnic-select
+        v-model="activeFilters.tag"
+        placeholder="Selecionar tags"
+        label="Filtrar por tags"
+        size="sm"
+      >
         <option v-for="tag in tags" :key="tag.value" :selected="tag.value === tag">
           {{ tag.text }}
         </option>
       </unnnic-select>
       <unnnic-autocomplete
-        v-model="visualization"
+        v-model="activeFilters.visualization"
         :data="visualizations"
         label="Visualização"
         open-with-focus
         size="sm"
       />
-      <unnnic-select v-model="date" placeholder="Agora" label="Filtrar por data" size="sm">
+      <unnnic-select
+        v-model="activeFilters.date"
+        placeholder="Agora"
+        label="Filtrar por data"
+        size="sm"
+      >
         <option value="now">Agora</option>
         <option value="last-7-days">Últimos 7 dias</option>
         <option value="last-14-days">Últimos 14 dias</option>
@@ -54,8 +64,8 @@ export default {
 
   props: {
     filters: {
-      type: String,
-      default: '',
+      type: Object,
+      default: () => ({}),
     },
     metrics: {
       type: Array,
@@ -64,13 +74,16 @@ export default {
   },
 
   data: () => ({
-    tag: '',
+    activeFilters: {
+      tag: '',
+      visualization: 'Geral',
+      date: '',
+    },
     tags: [
       { text: 'Dúvidas', value: 'doubts' },
       { text: 'Financeiro', value: 'finance' },
       { text: 'Ajuda', value: 'help' },
     ],
-    visualization: 'Geral',
     visualizations: [
       'Geral',
       { type: 'category', text: 'Departamentos' },
@@ -79,12 +92,14 @@ export default {
       { type: 'category', text: 'Agentes' },
       'Juliano',
     ],
-    date: '',
   }),
 
   watch: {
-    visualization(v) {
-      this.$emit('update:filters', v);
+    activeFilters: {
+      deep: true,
+      handler(filters) {
+        this.$emit('update:filters', filters);
+      },
     },
   },
 };
