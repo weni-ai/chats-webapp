@@ -32,6 +32,45 @@
       </unnnic-select>
     </section>
 
+    <section class="general" v-if="metrics.length !== 0">
+      <template
+        v-for="{
+          title,
+          icon,
+          scheme,
+          value,
+          percent,
+          invertedPercentage,
+          tooltip,
+          type,
+        } in metrics"
+      >
+        <unnnic-tool-tip v-if="tooltip" :key="title" enabled :text="tooltip" side="right">
+          <unnnic-card
+            type="dash"
+            :title="title"
+            :icon="icon"
+            :scheme="scheme"
+            :value="type === 'time' ? timeToString(value) : value"
+            :percent="percent"
+            :inverted-percentage="invertedPercentage"
+          />
+        </unnnic-tool-tip>
+
+        <unnnic-card
+          v-else
+          :key="title"
+          type="dash"
+          :title="title"
+          :icon="icon"
+          :scheme="scheme"
+          :value="type === 'time' ? timeToString(value) : value"
+          :percent="percent"
+          :inverted-percentage="invertedPercentage"
+        />
+      </template>
+    </section>
+
     <section class="view">
       <slot />
     </section>
@@ -46,6 +85,10 @@ export default {
     filters: {
       type: String,
       default: '',
+    },
+    metrics: {
+      type: Array,
+      default: () => [],
     },
   },
 

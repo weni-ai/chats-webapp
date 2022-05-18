@@ -1,56 +1,10 @@
 <template>
-  <dashboard-layout :filters.sync="filters">
+  <dashboard-layout :filters.sync="filters" :metrics="generalMetrics">
     <template #header>
       {{ filters === 'Juliano' ? 'Juliano da Silva' : 'Construtora Stéfani' }}
     </template>
 
     <main class="metrics">
-      <section class="general">
-        <unnnic-card
-          type="dash"
-          title="Chats ativos"
-          icon="indicator"
-          :value="activeChats.value"
-          :percent="activeChats.percent"
-          inverted-percentage
-        />
-        <unnnic-tool-tip
-          enabled
-          text="É tempo médio que o contato aguarda para ser atendido"
-          side="right"
-        >
-          <unnnic-card
-            type="dash"
-            title="Tempo de espera"
-            icon="time-clock-circle-1"
-            scheme="aux-orange"
-            :value="timeToString(waitingTime.value)"
-            :percent="waitingTime.percent"
-            inverted-percentage
-          />
-        </unnnic-tool-tip>
-        <unnnic-tool-tip enabled text="É o tempo médio de resposta ao contato" side="right">
-          <unnnic-card
-            type="dash"
-            title="Tempo de resposta"
-            icon="messaging-we-chat-3"
-            scheme="aux-purple"
-            :value="timeToString(responseTime.value)"
-            :percent="responseTime.percent"
-            inverted-percentage
-          />
-        </unnnic-tool-tip>
-        <unnnic-card
-          type="dash"
-          title="Tempo de interação"
-          icon="messages-bubble-1"
-          scheme="aux-lemon"
-          :value="timeToString(interactionTime.value)"
-          :percent="interactionTime.percent"
-          inverted-percentage
-        />
-      </section>
-
       <section v-if="filters === 'Juliano'" class="details">
         <section class="metric">
           <p class="title">
@@ -149,31 +103,54 @@ export default {
   data: () => ({
     filters: '',
 
-    activeChats: {
-      value: 13,
-      percent: -5,
-    },
-    waitingTime: {
-      value: {
-        minutes: 3,
-        seconds: 2,
+    generalMetrics: [
+      {
+        title: 'Chats ativos',
+        icon: 'indicator',
+        scheme: 'aux-blue',
+        value: 13,
+        percent: -5,
+        invertedPercentage: true,
       },
-      percent: -5,
-    },
-    responseTime: {
-      value: {
-        minutes: 4,
-        seconds: 24,
+      {
+        title: 'Tempo de espera',
+        icon: 'time-clock-circle-1',
+        type: 'time',
+        scheme: 'aux-orange',
+        value: {
+          minutes: 3,
+          seconds: 2,
+        },
+        percent: -5,
+        invertedPercentage: true,
+        tooltip: 'É tempo médio que o contato aguarda para ser atendido',
       },
-      percent: 5,
-    },
-    interactionTime: {
-      value: {
-        minutes: 46,
-        seconds: 12,
+      {
+        title: 'Tempo de resposta',
+        icon: 'messaging-we-chat-3',
+        scheme: 'aux-purple',
+        type: 'time',
+        value: {
+          minutes: 4,
+          seconds: 24,
+        },
+        percent: 5,
+        invertedPercentage: true,
+        tooltip: 'É o tempo médio de resposta ao contato',
       },
-      percent: -5,
-    },
+      {
+        title: 'Tempo de interação',
+        icon: 'messages-bubble-1',
+        scheme: 'aux-lemon',
+        type: 'time',
+        value: {
+          minutes: 46,
+          seconds: 12,
+        },
+        percent: -5,
+        invertedPercentage: true,
+      },
+    ],
 
     onlineAgents: [
       {
