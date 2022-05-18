@@ -1,8 +1,8 @@
 const routes = [
   {
-    path: '/dashboard',
-    name: 'dashboard',
-    component: () => import('@/views/Dashboard'),
+    path: '/dashboard/manager',
+    name: 'dashboard.manager',
+    component: () => import('@/views/Dashboard/Manager'),
   },
 ];
 

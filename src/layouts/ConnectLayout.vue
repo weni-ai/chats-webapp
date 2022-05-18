@@ -49,7 +49,7 @@ export default {
               icon: 'gauge-dashboard-2',
               active: this.route === 'dashboard',
               click: () => {
-                this.$router.push('/dashboard');
+                this.$router.push('/dashboard/manager');
               },
             },
           ],
