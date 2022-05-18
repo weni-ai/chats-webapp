@@ -100,6 +100,14 @@ export default {
     DashboardLayout,
   },
 
+  mounted() {
+    this.initRealtimeSimulation();
+  },
+
+  destroyed() {
+    clearInterval(this.realtimeSimulationController);
+  },
+
   data: () => ({
     filters: '',
 
@@ -174,6 +182,8 @@ export default {
         activeChats: 3,
       },
     ],
+
+    realtimeSimulationController: null,
   }),
 
   computed: {
@@ -186,6 +196,37 @@ export default {
   },
 
   methods: {
+    initRealtimeSimulation() {
+      this.realtimeSimulationController = setInterval(this.updateRandomMetric, 5000);
+    },
+    updateRandomMetric() {
+      const randomMetricIndex = Math.floor(Math.random() * this.generalMetrics.length);
+      const metric = this.generalMetrics[randomMetricIndex];
+
+      if (Math.random() > 0.2) {
+        const propToChange = Math.random() > 0.3 ? 'value' : 'percent';
+        const value = Math.random() > 0.5 ? +1 : -1;
+
+        if (propToChange === 'value') {
+          if (metric.type === 'time') {
+            metric.value.seconds += value;
+            if (metric.value.seconds < 0 || metric.value.seconds > 59) {
+              metric.value.seconds = 0;
+            }
+          } else {
+            metric.value += value;
+            if (metric.value < 1) {
+              metric.value = 1;
+            }
+          }
+        } else {
+          metric.percent += value;
+        }
+
+        this.generalMetrics[randomMetricIndex] = metric;
+      }
+    },
+
     getRandomMetrics() {
       const metrics = [
         {
