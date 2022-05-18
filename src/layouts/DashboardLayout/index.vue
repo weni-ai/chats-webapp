@@ -32,54 +32,25 @@
       </unnnic-select>
     </section>
 
-    <section class="general" v-if="metrics.length !== 0">
-      <template
-        v-for="{
-          title,
-          icon,
-          scheme,
-          value,
-          percent,
-          invertedPercentage,
-          tooltip,
-          type,
-        } in metrics"
-      >
-        <unnnic-tool-tip v-if="tooltip" :key="title" enabled :text="tooltip" side="right">
-          <unnnic-card
-            type="dash"
-            :title="title"
-            :icon="icon"
-            :scheme="scheme"
-            :value="type === 'time' ? timeToString(value) : value"
-            :percent="percent"
-            :inverted-percentage="invertedPercentage"
-          />
-        </unnnic-tool-tip>
+    <section class="scrollable">
+      <general-metrics :metrics="metrics" />
 
-        <unnnic-card
-          v-else
-          :key="title"
-          type="dash"
-          :title="title"
-          :icon="icon"
-          :scheme="scheme"
-          :value="type === 'time' ? timeToString(value) : value"
-          :percent="percent"
-          :inverted-percentage="invertedPercentage"
-        />
-      </template>
-    </section>
-
-    <section class="view">
-      <slot />
+      <section class="view">
+        <slot />
+      </section>
     </section>
   </section>
 </template>
 
 <script>
+import GeneralMetrics from './components/GeneralMetrics';
+
 export default {
   name: 'DashboardLayout',
+
+  components: {
+    GeneralMetrics,
+  },
 
   props: {
     filters: {
@@ -158,10 +129,18 @@ export default {
   }
 
   .view {
-    height: 100%;
-    max-height: 100%;
-    overflow-y: auto;
     flex: 1 1;
+  }
+
+  .scrollable {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-spacing-stack-sm;
+    overflow-y: auto;
+    padding: {
+      right: $unnnic-spacing-inset-sm;
+      bottom: $unnnic-spacing-inset-md;
+    }
   }
 }
 </style>

@@ -234,22 +234,9 @@ export default {
 
 <style lang="scss" scoped>
 .metrics {
-  padding: {
-    top: 0;
-    right: $unnnic-spacing-inset-sm;
-    bottom: $unnnic-spacing-inset-sm;
-    left: 0;
-  }
-
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-stack-sm;
-
-  .general {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: $unnnic-spacing-stack-sm;
-  }
 
   .details {
     display: grid;
