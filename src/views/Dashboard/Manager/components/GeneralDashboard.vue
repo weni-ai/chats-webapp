@@ -1,5 +1,9 @@
 <template>
   <main class="metrics">
+    <section>
+      <general-metrics :metrics="generalMetrics" />
+    </section>
+
     <section class="details">
       <section class="metric">
         <p class="title">
@@ -40,8 +44,14 @@
 </template>
 
 <script>
+import GeneralMetrics from '../../components/GeneralMetrics';
+
 export default {
   name: 'ManagerGeneralDashboard',
+
+  components: {
+    GeneralMetrics,
+  },
 
   mounted() {
     this.initRealtimeSimulation();

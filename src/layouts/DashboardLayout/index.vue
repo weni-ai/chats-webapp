@@ -42,34 +42,20 @@
       </unnnic-select>
     </section>
 
-    <section class="scrollable">
-      <general-metrics :metrics="metrics" />
-
-      <section class="view">
-        <slot />
-      </section>
+    <section class="view scrollable">
+      <slot />
     </section>
   </section>
 </template>
 
 <script>
-import GeneralMetrics from './components/GeneralMetrics';
-
 export default {
   name: 'DashboardLayout',
-
-  components: {
-    GeneralMetrics,
-  },
 
   props: {
     filters: {
       type: Object,
       default: () => ({}),
-    },
-    metrics: {
-      type: Array,
-      default: () => [],
     },
   },
 
@@ -143,19 +129,16 @@ export default {
     }
   }
 
-  .view {
-    flex: 1 1;
-  }
-
   .scrollable {
-    display: flex;
-    flex-direction: column;
-    gap: $unnnic-spacing-stack-sm;
     overflow-y: auto;
     padding: {
       right: $unnnic-spacing-inset-sm;
       bottom: $unnnic-spacing-inset-md;
     }
+  }
+
+  .view {
+    flex: 1 1;
   }
 }
 </style>

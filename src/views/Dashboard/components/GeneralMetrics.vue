@@ -1,5 +1,5 @@
 <template>
-  <section class="metrics">
+  <section class="general-metrics">
     <template
       v-for="{ title, icon, scheme, value, percent, invertedPercentage, tooltip, type } in metrics"
     >
@@ -48,7 +48,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.metrics {
+.general-metrics {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: $unnnic-spacing-stack-sm;
