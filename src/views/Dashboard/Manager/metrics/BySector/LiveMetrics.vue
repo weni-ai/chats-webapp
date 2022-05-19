@@ -1,15 +1,15 @@
 <template>
-  <main class="by-agent-dashboard">
+  <main class="by-sector-dashboard">
     <section>
       <general-metrics :metrics="generalMetrics" />
     </section>
 
-    <section class="by-agent-dashboard__metrics">
+    <section class="by-sector-dashboard__metrics">
       <card-group-metrics :metrics="queues" title="Filas" icon="hierarchy-3-2" />
       <table-metrics
         :headers="tableHeaders"
         :items="activeChats"
-        title="Chats ativos"
+        title="Agentes online"
         icon="indicator"
       />
     </section>
@@ -22,7 +22,7 @@ import GeneralMetrics from '@/views/Dashboard/components/GeneralMetrics';
 import TableMetrics from '@/views/Dashboard/components/TableMetrics';
 
 export default {
-  name: 'LiveMetricsByAgent',
+  name: 'LiveMetricsBySector',
 
   components: {
     CardGroupMetrics,
@@ -31,7 +31,7 @@ export default {
   },
 
   mounted() {
-    this.initRealtimeSimulation();
+    // this.initRealtimeSimulation();
   },
 
   destroyed() {
@@ -89,12 +89,29 @@ export default {
     ],
     tableHeaders: [
       {
-        text: 'Contato',
-        value: 'contact',
+        text: 'Agente',
+        value: 'name',
       },
       {
-        text: 'Tempo de interação',
-        value: 'interactionTime',
+        text: 'Chats ativos',
+        value: 'activeChats',
+      },
+    ],
+    activeChats: [
+      {
+        id: 1,
+        name: 'Fabricio Correia',
+        activeChats: 3,
+      },
+      {
+        id: 2,
+        name: 'Daniela Maciel',
+        activeChats: 4,
+      },
+      {
+        id: 3,
+        name: 'Juliano Mello',
+        activeChats: 4,
       },
     ],
 
@@ -110,25 +127,6 @@ export default {
         name: queue.name,
         statuses: this.getRandomMetrics(),
       }));
-    },
-    activeChats() {
-      return [
-        {
-          id: 1,
-          contact: 'Luana Esteves Lopez',
-          interactionTime: this.timeToString(this.getRandomTime(10, 59)),
-        },
-        {
-          id: 2,
-          contact: 'Vinícius Xavier',
-          interactionTime: this.timeToString(this.getRandomTime(10, 59)),
-        },
-        {
-          id: 3,
-          contact: 'José Luis Filho',
-          interactionTime: this.timeToString(this.getRandomTime(10, 59)),
-        },
-      ];
     },
   },
 
@@ -211,7 +209,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.by-agent-dashboard {
+.by-sector-dashboard {
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-stack-sm;
