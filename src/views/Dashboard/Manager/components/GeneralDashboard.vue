@@ -1,56 +1,33 @@
 <template>
-  <main class="metrics">
+  <main class="general-dashboard">
     <section>
       <general-metrics :metrics="generalMetrics" />
     </section>
 
-    <section class="details">
-      <section class="metric">
-        <p class="title">
-          <unnnic-avatar-icon icon="hierarchy-3-2" size="xs" />
-          <span> Setores </span>
-        </p>
-
-        <section class="sectors">
-          <unnnic-card-project
-            v-for="sector in sectors"
-            :key="sector.id"
-            :name="sector.name"
-            :statuses="sector.statuses"
-          />
-        </section>
-      </section>
-
-      <section class="metric">
-        <p class="title">
-          <unnnic-avatar-icon icon="indicator" size="xs" scheme="feedback-green" />
-          <span> Agentes online </span>
-        </p>
-
-        <section class="online-agents-list">
-          <header>
-            <span>Agente</span>
-            <span class="active-chats">Chats ativos</span>
-          </header>
-
-          <section v-for="agent in onlineAgents" :key="agent.id" class="agent">
-            <span>{{ agent.name }}</span>
-            <span class="active-chats">{{ agent.activeChats }}</span>
-          </section>
-        </section>
-      </section>
+    <section class="general-dashboard__metrics">
+      <card-group-metrics :metrics="sectors" title="Setores" icon="hierarchy-3-2" />
+      <table-metrics
+        :headers="tableHeaders"
+        :items="onlineAgents"
+        title="Agentes online"
+        icon="indicator"
+      />
     </section>
   </main>
 </template>
 
 <script>
+import CardGroupMetrics from '../../components/CardGroupMetrics';
 import GeneralMetrics from '../../components/GeneralMetrics';
+import TableMetrics from '../../components/TableMetrics';
 
 export default {
   name: 'ManagerGeneralDashboard',
 
   components: {
+    CardGroupMetrics,
     GeneralMetrics,
+    TableMetrics,
   },
 
   mounted() {
@@ -108,6 +85,17 @@ export default {
         },
         percent: -5,
         invertedPercentage: true,
+      },
+    ],
+
+    tableHeaders: [
+      {
+        text: 'Agente',
+        value: 'name',
+      },
+      {
+        text: 'Chats ativos',
+        value: 'activeChats',
       },
     ],
 
@@ -228,60 +216,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.metrics {
+.general-dashboard {
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-stack-sm;
 
-  .details {
+  &__metrics {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: $unnnic-spacing-stack-sm;
 
     & > :first-child {
       grid-column: span 2;
-    }
-
-    .metric {
-      background: $unnnic-color-background-snow;
-      padding: $unnnic-spacing-inset-sm;
-      border-radius: $unnnic-border-radius-sm;
-
-      .title {
-        display: flex;
-        align-items: center;
-        gap: $unnnic-spacing-stack-xs;
-        font-size: $unnnic-font-size-title-sm;
-        color: $unnnic-color-neutral-darkest;
-        margin-bottom: $unnnic-spacing-inline-sm;
-      }
-
-      .sectors {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: $unnnic-spacing-stack-sm;
-      }
-
-      .online-agents-list {
-        & > * {
-          display: grid;
-          grid-template-columns: 3fr 1fr;
-          padding: $unnnic-spacing-inset-sm;
-
-          color: $unnnic-color-neutral-cloudy;
-          font-size: $unnnic-font-size-body-gt;
-
-          .active-chats {
-            text-align: center;
-          }
-        }
-
-        header {
-          background: $unnnic-color-background-carpet;
-          color: $unnnic-color-neutral-cloudy;
-          border-radius: $unnnic-border-radius-sm;
-        }
-      }
     }
   }
 }

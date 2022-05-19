@@ -1,56 +1,33 @@
 <template>
-  <main class="metrics">
+  <main class="by-user-dashboard">
     <section>
       <general-metrics :metrics="generalMetrics" />
     </section>
 
-    <section class="details">
-      <section class="metric">
-        <p class="title">
-          <unnnic-avatar-icon icon="hierarchy-3-2" size="xs" />
-          <span> Filas </span>
-        </p>
-
-        <section class="queues">
-          <unnnic-card-project
-            v-for="queue in queues"
-            :key="queue.id"
-            :name="queue.name"
-            :statuses="queue.statuses"
-          />
-        </section>
-      </section>
-
-      <section class="metric">
-        <p class="title">
-          <unnnic-avatar-icon icon="indicator" size="xs" scheme="feedback-green" />
-          <span> Chats ativos </span>
-        </p>
-
-        <section class="active-chats-list">
-          <header>
-            <span>Contato</span>
-            <span>Tempo de interação</span>
-          </header>
-
-          <section v-for="agent in activeChats" :key="agent.id" class="agent">
-            <span>{{ agent.name }}</span>
-            <span class="interaction-time">{{ agent.interactionTime }}</span>
-          </section>
-        </section>
-      </section>
+    <section class="by-user-dashboard__metrics">
+      <card-group-metrics :metrics="queues" title="Filas" icon="hierarchy-3-2" />
+      <table-metrics
+        :headers="tableHeaders"
+        :items="activeChats"
+        title="Chats ativos"
+        icon="indicator"
+      />
     </section>
   </main>
 </template>
 
 <script>
+import CardGroupMetrics from '../../components/CardGroupMetrics';
 import GeneralMetrics from '../../components/GeneralMetrics';
+import TableMetrics from '../../components/TableMetrics';
 
 export default {
   name: 'ManagerGeneralDashboard',
 
   components: {
+    CardGroupMetrics,
     GeneralMetrics,
+    TableMetrics,
   },
 
   mounted() {
@@ -110,6 +87,16 @@ export default {
         invertedPercentage: true,
       },
     ],
+    tableHeaders: [
+      {
+        text: 'Contato',
+        value: 'contact',
+      },
+      {
+        text: 'Tempo de interação',
+        value: 'interactionTime',
+      },
+    ],
 
     realtimeSimulationController: null,
   }),
@@ -128,17 +115,17 @@ export default {
       return [
         {
           id: 1,
-          name: 'Luana Esteves Lopez',
+          contact: 'Luana Esteves Lopez',
           interactionTime: this.timeToString(this.getRandomTime(10, 59)),
         },
         {
           id: 2,
-          name: 'Vinícius Xavier',
+          contact: 'Vinícius Xavier',
           interactionTime: this.timeToString(this.getRandomTime(10, 59)),
         },
         {
           id: 3,
-          name: 'José Luis Filho',
+          contact: 'José Luis Filho',
           interactionTime: this.timeToString(this.getRandomTime(10, 59)),
         },
       ];
@@ -224,60 +211,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.metrics {
+.by-user-dashboard {
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-stack-sm;
 
-  .details {
+  &__metrics {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: $unnnic-spacing-stack-sm;
 
     & > :first-child {
       grid-column: span 2;
-    }
-
-    .metric {
-      background: $unnnic-color-background-snow;
-      padding: $unnnic-spacing-inset-sm;
-      border-radius: $unnnic-border-radius-sm;
-
-      .title {
-        display: flex;
-        align-items: center;
-        gap: $unnnic-spacing-stack-xs;
-        font-size: $unnnic-font-size-title-sm;
-        color: $unnnic-color-neutral-darkest;
-        margin-bottom: $unnnic-spacing-inline-sm;
-      }
-
-      .queues {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: $unnnic-spacing-stack-sm;
-      }
-
-      .active-chats-list {
-        & > * {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          padding: $unnnic-spacing-inset-sm;
-
-          color: $unnnic-color-neutral-cloudy;
-          font-size: $unnnic-font-size-body-gt;
-
-          .interaction-time {
-            text-align: center;
-          }
-        }
-
-        header {
-          background: $unnnic-color-background-carpet;
-          color: $unnnic-color-neutral-cloudy;
-          border-radius: $unnnic-border-radius-sm;
-        }
-      }
     }
   }
 }
