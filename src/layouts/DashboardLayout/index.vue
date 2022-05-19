@@ -29,13 +29,13 @@
         size="sm"
       />
       <unnnic-select v-model="filters.date" placeholder="Agora" label="Filtrar por data" size="sm">
-        <option value="now">Agora</option>
+        <option value="">Agora</option>
         <option value="last-7-days">Últimos 7 dias</option>
         <option value="last-14-days">Últimos 14 dias</option>
         <option value="last-30-days">Últimos 30 dias</option>
         <option value="last-12-months">Últimos 12 meses</option>
         <option value="current-month">Mês Atual</option>
-        <option value="">Desde o início</option>
+        <option value="all">Desde o início</option>
       </unnnic-select>
     </section>
 

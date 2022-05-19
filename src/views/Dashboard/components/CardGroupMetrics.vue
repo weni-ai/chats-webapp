@@ -5,7 +5,7 @@
       <span> {{ title }} </span>
     </p>
 
-    <section class="card-group-metrics__metrics">
+    <section class="card-group-metrics__metrics" :class="[`columns-${columns}`]">
       <unnnic-card-project
         v-for="metric in metrics"
         :key="metric.id"
@@ -19,6 +19,11 @@
 <script>
 export default {
   props: {
+    columns: {
+      type: String,
+      default: '2',
+      validator: (v) => ['2', '3'].includes(v),
+    },
     icon: {
       type: String,
       default: '',
@@ -56,8 +61,15 @@ export default {
 
   &__metrics {
     display: grid;
-    grid-template-columns: 1fr 1fr;
     gap: $unnnic-spacing-stack-sm;
+
+    &.columns-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    &.columns-3 {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
   }
 }
 </style>
