@@ -2,24 +2,24 @@
   <dashboard-layout :filters.sync="filters">
     <template #header> {{ header }} </template>
 
-    <manager-general-dashboard v-if="activeDashboard === 'general'" />
-    <by-user-dashboard v-if="activeDashboard === 'by-agent'" />
+    <general-live-metrics v-if="activeDashboard === 'general'" />
+    <live-metrics-by-agent v-if="activeDashboard === 'by-agent'" />
   </dashboard-layout>
 </template>
 
 <script>
 import DashboardLayout from '@/layouts/DashboardLayout';
 
-import ByUserDashboard from './components/ByUserDashboard';
-import ManagerGeneralDashboard from './components/GeneralDashboard';
+import LiveMetricsByAgent from './metrics/ByAgent/LiveMetrics';
+import GeneralLiveMetrics from './metrics/General/LiveMetrics';
 
 export default {
   name: 'DashboardManager',
 
   components: {
-    ByUserDashboard,
+    LiveMetricsByAgent,
     DashboardLayout,
-    ManagerGeneralDashboard,
+    GeneralLiveMetrics,
   },
 
   data: () => ({

@@ -17,12 +17,12 @@
 </template>
 
 <script>
-import CardGroupMetrics from '../../components/CardGroupMetrics';
-import GeneralMetrics from '../../components/GeneralMetrics';
-import TableMetrics from '../../components/TableMetrics';
+import CardGroupMetrics from '@/views/Dashboard/components/CardGroupMetrics';
+import GeneralMetrics from '@/views/Dashboard/components/GeneralMetrics';
+import TableMetrics from '@/views/Dashboard/components/TableMetrics';
 
 export default {
-  name: 'ManagerGeneralDashboard',
+  name: 'GeneralLiveMetrics',
 
   components: {
     CardGroupMetrics,
