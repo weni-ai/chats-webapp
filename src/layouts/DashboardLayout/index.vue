@@ -10,7 +10,7 @@
 
     <section class="filters">
       <unnnic-select
-        v-model="activeFilters.tag"
+        v-model="filters.tag"
         placeholder="Selecionar tags"
         label="Filtrar por tags"
         size="sm"
@@ -20,18 +20,15 @@
         </option>
       </unnnic-select>
       <unnnic-autocomplete
-        v-model="activeFilters.visualization"
+        v-model="visualizationSearch"
+        @choose="onChangeVisualization($event)"
         :data="visualizations"
         label="Visualização"
+        highlight
         open-with-focus
         size="sm"
       />
-      <unnnic-select
-        v-model="activeFilters.date"
-        placeholder="Agora"
-        label="Filtrar por data"
-        size="sm"
-      >
+      <unnnic-select v-model="filters.date" placeholder="Agora" label="Filtrar por data" size="sm">
         <option value="now">Agora</option>
         <option value="last-7-days">Últimos 7 dias</option>
         <option value="last-14-days">Últimos 14 dias</option>
@@ -52,17 +49,11 @@
 export default {
   name: 'DashboardLayout',
 
-  props: {
-    filters: {
-      type: Object,
-      default: () => ({}),
-    },
-  },
-
   data: () => ({
-    activeFilters: {
+    visualizationSearch: 'Geral',
+    filters: {
       tag: '',
-      visualization: 'Geral',
+      visualization: '',
       date: '',
     },
     tags: [
@@ -71,20 +62,36 @@ export default {
       { text: 'Ajuda', value: 'help' },
     ],
     visualizations: [
-      'Geral',
+      { text: 'Geral', value: 'general', type: 'option' },
       { type: 'category', text: 'Departamentos' },
-      'Financeiro',
-      'Suporte',
+      { text: 'Financeiro', value: 'finance', type: 'option', category: 'sector' },
+      { text: 'Suporte', value: 'support', type: 'option', category: 'sector' },
       { type: 'category', text: 'Agentes' },
-      'Juliano',
+      { text: 'Juliano', value: 'juliano', type: 'option', category: 'agent' },
     ],
   }),
 
+  methods: {
+    onChangeVisualization(visualizationValue) {
+      if (visualizationValue === 'general') this.activeFilters.visualization = {};
+
+      const { text, value, category } = this.visualizations.find(
+        (v) => v.value === visualizationValue,
+      );
+
+      this.filters.visualization = {
+        text,
+        category,
+        value,
+      };
+    },
+  },
+
   watch: {
-    activeFilters: {
+    filters: {
       deep: true,
       handler(filters) {
-        this.$emit('update:filters', filters);
+        this.$emit('filter', filters);
       },
     },
   },
