@@ -17,9 +17,9 @@
 </template>
 
 <script>
-import CardGroupMetrics from '@/views/Dashboard/components/CardGroupMetrics';
-import GeneralMetrics from '@/views/Dashboard/components/GeneralMetrics';
-import TableMetrics from '@/views/Dashboard/components/TableMetrics';
+import CardGroupMetrics from '../../CardGroupMetrics';
+import GeneralMetrics from '../../GeneralMetrics';
+import TableMetrics from '../../TableMetrics';
 
 export default {
   name: 'LiveMetricsBySector',
@@ -31,7 +31,7 @@ export default {
   },
 
   mounted() {
-    // this.initRealtimeSimulation();
+    this.initRealtimeSimulation();
   },
 
   destroyed() {

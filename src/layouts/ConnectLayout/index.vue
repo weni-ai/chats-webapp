@@ -11,7 +11,7 @@
         hideText="Encolher"
       >
         <template #header>
-          <img src="../assets/weni-logo.svg" alt="Weni's Logo" />
+          <img src="../../assets/weni-logo.svg" alt="Weni's Logo" />
         </template>
       </unnnic-sidebar-primary>
     </nav>
@@ -24,10 +24,10 @@
 <script>
 import { unnnicSidebarPrimary } from '@weni/unnnic-system';
 
-import ConnectHeader from '@/components/layouts/ConnectHeader';
+import ConnectHeader from './components/ConnectHeader';
 
 export default {
-  name: 'MainLayout',
+  name: 'ConnectLayout',
 
   components: {
     unnnicSidebarPrimary,

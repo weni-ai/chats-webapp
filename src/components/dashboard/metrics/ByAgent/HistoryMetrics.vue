@@ -1,50 +1,46 @@
 <template>
-  <main class="general-dashboard">
+  <main class="agent-history-metrics">
     <section>
       <general-metrics :metrics="generalMetrics" />
     </section>
 
-    <section class="general-dashboard__metrics">
-      <card-group-metrics :metrics="sectors" title="Setores" icon="hierarchy-3-2" />
-      <table-metrics
-        :headers="tableHeaders"
-        :items="onlineAgents"
-        title="Agentes online"
-        icon="indicator"
+    <section class="agent-history-metrics__metrics">
+      <card-group-metrics
+        :metrics="queues"
+        :title="`${agentName} em filas`"
+        icon="hierarchy-3-2"
+        columns="3"
       />
     </section>
   </main>
 </template>
 
 <script>
-import CardGroupMetrics from '@/views/Dashboard/components/CardGroupMetrics';
-import GeneralMetrics from '@/views/Dashboard/components/GeneralMetrics';
-import TableMetrics from '@/views/Dashboard/components/TableMetrics';
+import CardGroupMetrics from '../../CardGroupMetrics';
+import GeneralMetrics from '../../GeneralMetrics';
 
 export default {
-  name: 'GeneralLiveMetrics',
+  name: 'HistoryMetricsByAgent',
 
   components: {
     CardGroupMetrics,
     GeneralMetrics,
-    TableMetrics,
   },
 
-  mounted() {
-    // this.initRealtimeSimulation();
-  },
-
-  destroyed() {
-    clearInterval(this.realtimeSimulationController);
+  props: {
+    agentName: {
+      type: String,
+      default: '',
+    },
   },
 
   data: () => ({
     generalMetrics: [
       {
-        title: 'Chats ativos',
+        title: 'Quantidade de chats',
         icon: 'indicator',
         scheme: 'aux-blue',
-        value: 13,
+        value: 434,
         percent: -5,
         invertedPercentage: true,
       },
@@ -87,88 +83,21 @@ export default {
         invertedPercentage: true,
       },
     ],
-
-    tableHeaders: [
-      {
-        text: 'Agente',
-        value: 'name',
-      },
-      {
-        text: 'Chats ativos',
-        value: 'activeChats',
-      },
-    ],
-
-    onlineAgents: [
-      {
-        id: 1,
-        name: 'Fabrício Correia',
-        activeChats: 3,
-      },
-      {
-        id: 2,
-        name: 'Daniela Maciel',
-        activeChats: 4,
-      },
-      {
-        id: 3,
-        name: 'Maurício de Souza',
-        activeChats: 2,
-      },
-      {
-        id: 4,
-        name: 'Fátima Albuquerque',
-        activeChats: 3,
-      },
-    ],
-
-    realtimeSimulationController: null,
   }),
 
   computed: {
-    sectors() {
-      const { sectors } = this.$store.state.settings;
+    queues() {
+      const { queues } = this.$store.state.settings.sectors[0];
 
-      return sectors.map((sector) => ({
-        id: sector.id,
-        name: sector.name,
+      return queues.map((queue) => ({
+        id: queue.id,
+        name: queue.name,
         statuses: this.getRandomMetrics(),
       }));
     },
   },
 
   methods: {
-    initRealtimeSimulation() {
-      this.realtimeSimulationController = setInterval(this.updateRandomMetric, 5000);
-    },
-    updateRandomMetric() {
-      const randomMetricIndex = Math.floor(Math.random() * this.generalMetrics.length);
-      const metric = this.generalMetrics[randomMetricIndex];
-
-      if (Math.random() > 0.2) {
-        const propToChange = Math.random() > 0.3 ? 'value' : 'percent';
-        const value = Math.random() > 0.5 ? +1 : -1;
-
-        if (propToChange === 'value') {
-          if (metric.type === 'time') {
-            metric.value.seconds += value;
-            if (metric.value.seconds < 0 || metric.value.seconds > 59) {
-              metric.value.seconds = 0;
-            }
-          } else {
-            metric.value += value;
-            if (metric.value < 1) {
-              metric.value = 1;
-            }
-          }
-        } else {
-          metric.percent += value;
-        }
-
-        this.generalMetrics[randomMetricIndex] = metric;
-      }
-    },
-
     getRandomMetrics() {
       const metrics = [
         {
@@ -216,19 +145,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.general-dashboard {
+.agent-history-metrics {
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-stack-sm;
-
-  &__metrics {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: $unnnic-spacing-stack-sm;
-
-    & > :first-child {
-      grid-column: span 2;
-    }
-  }
 }
 </style>

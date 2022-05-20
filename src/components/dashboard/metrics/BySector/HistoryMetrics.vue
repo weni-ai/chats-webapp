@@ -1,37 +1,33 @@
 <template>
-  <main class="agent-history-metrics">
+  <main class="history-sector-metrics">
     <section>
       <general-metrics :metrics="generalMetrics" />
     </section>
 
-    <section class="agent-history-metrics__metrics">
-      <card-group-metrics
-        :metrics="queues"
-        :title="`${agentName} em filas`"
-        icon="hierarchy-3-2"
-        columns="3"
+    <section class="history-sector-metrics__metrics">
+      <card-group-metrics :metrics="queues" title="Filas" icon="hierarchy-3-2" />
+      <table-metrics
+        :headers="tableHeaders"
+        :items="chatsPerAgent"
+        title="Chats por agente"
+        icon="indicator"
       />
     </section>
   </main>
 </template>
 
 <script>
-import CardGroupMetrics from '@/views/Dashboard/components/CardGroupMetrics';
-import GeneralMetrics from '@/views/Dashboard/components/GeneralMetrics';
+import CardGroupMetrics from '../../CardGroupMetrics';
+import GeneralMetrics from '../../GeneralMetrics';
+import TableMetrics from '../../TableMetrics';
 
 export default {
-  name: 'HistoryMetricsByAgent',
+  name: 'HistoryMetricsBySector',
 
   components: {
     CardGroupMetrics,
     GeneralMetrics,
-  },
-
-  props: {
-    agentName: {
-      type: String,
-      default: '',
-    },
+    TableMetrics,
   },
 
   data: () => ({
@@ -40,7 +36,7 @@ export default {
         title: 'Quantidade de chats',
         icon: 'indicator',
         scheme: 'aux-blue',
-        value: 434,
+        value: 5365,
         percent: -5,
         invertedPercentage: true,
       },
@@ -81,6 +77,33 @@ export default {
         },
         percent: -5,
         invertedPercentage: true,
+      },
+    ],
+    tableHeaders: [
+      {
+        text: 'Agente',
+        value: 'name',
+      },
+      {
+        text: 'Chats ativos',
+        value: 'chats',
+      },
+    ],
+    chatsPerAgent: [
+      {
+        id: 1,
+        name: 'Fabricio Correia',
+        chats: 434,
+      },
+      {
+        id: 2,
+        name: 'Daniela Maciel',
+        chats: 432,
+      },
+      {
+        id: 3,
+        name: 'Juliano Mello',
+        chats: 543,
       },
     ],
   }),
@@ -145,9 +168,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.agent-history-metrics {
+.history-sector-metrics {
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-stack-sm;
+
+  &__metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $unnnic-spacing-stack-sm;
+
+    & > :first-child {
+      grid-column: span 2;
+    }
+  }
 }
 </style>

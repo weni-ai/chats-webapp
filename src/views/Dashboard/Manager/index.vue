@@ -22,12 +22,12 @@
 <script>
 import DashboardLayout from '@/layouts/DashboardLayout';
 
-import DashboardFilters from '../components/Filters';
-import LiveMetricsByAgent from '../components/metrics/ByAgent/LiveMetrics';
-import LiveMetricsBySector from '../components/metrics/BySector/LiveMetrics';
-import GeneralLiveMetrics from '../components/metrics/General/LiveMetrics';
-import HistoryMetricsByAgent from '../components/metrics/ByAgent/HistoryMetrics';
-import HistoryMetricsBySector from '../components/metrics/BySector/HistoryMetrics';
+import DashboardFilters from '@/components/dashboard/Filters';
+import LiveMetricsByAgent from '@/components/dashboard/metrics/ByAgent/LiveMetrics';
+import LiveMetricsBySector from '@/components/dashboard/metrics/BySector/LiveMetrics';
+import GeneralLiveMetrics from '@/components/dashboard/metrics/General/LiveMetrics';
+import HistoryMetricsByAgent from '@/components/dashboard/metrics/ByAgent/HistoryMetrics';
+import HistoryMetricsBySector from '@/components/dashboard/metrics/BySector/HistoryMetrics';
 
 export default {
   name: 'DashboardManager',

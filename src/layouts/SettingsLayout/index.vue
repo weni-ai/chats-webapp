@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import SettingsOptions from '@/components/layouts/SettingsOptions';
+import SettingsOptions from './components/SettingsOptions';
 
 export default {
   name: 'SettingsLayout',

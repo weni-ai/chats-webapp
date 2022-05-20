@@ -32,8 +32,6 @@
 import { unnnicInput, unnnicSelect, unnnicIcon } from '@weni/unnnic-system';
 
 export default {
-  name: 'MainHeader',
-
   components: {
     unnnicIcon,
     unnnicInput,
