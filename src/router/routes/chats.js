@@ -1,5 +1,5 @@
 import ChatsLayout from '@/layouts/ChatsLayout';
-import ActiveChat from '@/views/ActiveChat.vue';
+import ActiveChat from '@/views/chats/ActiveChat.vue';
 
 const routes = [
   {
@@ -18,7 +18,7 @@ const routes = [
   {
     path: '/closed-chats',
     name: 'closed-chats',
-    component: () => import(/* webpackChunkName: "closed-chats" */ '@/views/ClosedChats'),
+    component: () => import(/* webpackChunkName: "closed-chats" */ '@/views/chats/ClosedChats'),
   },
 ];
 

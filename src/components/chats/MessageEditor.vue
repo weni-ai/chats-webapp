@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import FileUploader from '@/components/FileUploader';
+import FileUploader from '@/components/chats/FileUploader';
 
 export default {
   name: 'MessageEditor',

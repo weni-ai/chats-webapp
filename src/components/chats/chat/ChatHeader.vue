@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import UserAvatar from '@/components/UserAvatar';
+import UserAvatar from '@/components/chats/UserAvatar';
 
 export default {
   name: 'ChatHeader',

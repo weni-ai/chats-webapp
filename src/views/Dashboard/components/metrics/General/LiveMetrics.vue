@@ -31,7 +31,7 @@ export default {
   },
 
   mounted() {
-    this.initRealtimeSimulation();
+    // this.initRealtimeSimulation();
   },
 
   destroyed() {

@@ -33,7 +33,7 @@
 <script>
 import { mapState } from 'vuex';
 
-import UserAvatar from '@/components/UserAvatar';
+import UserAvatar from '@/components/chats/UserAvatar';
 
 const ONE_MINUTE_IN_MILLISECONDS = 60000;
 

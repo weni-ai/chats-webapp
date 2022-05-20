@@ -83,8 +83,8 @@ import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
 
 import ChatsLayout from '@/layouts/ChatsLayout';
-import TagFilter from '@/components/TagFilter';
-import UserAvatar from '@/components/UserAvatar';
+import TagFilter from '@/components/chats/TagFilter';
+import UserAvatar from '@/components/chats/UserAvatar';
 
 const TAGS = {
   doubts: { text: 'Dúvidas', scheme: 'feedback-yellow' },

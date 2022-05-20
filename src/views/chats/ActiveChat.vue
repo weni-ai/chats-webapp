@@ -67,7 +67,7 @@ import ChatsLayout from '@/layouts/ChatsLayout';
 
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
-import ContactInfo from '@/components/ContactInfo';
+import ContactInfo from '@/components/chats/ContactInfo';
 import MessageEditor from '@/components/chats/MessageEditor';
 import ChatClassifier from '@/components/chats/ChatClassifier';
 import QuickMessages from '@/components/chats/QuickMessages';

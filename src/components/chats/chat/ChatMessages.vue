@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import UserAvatar from '@/components/UserAvatar';
+import UserAvatar from '@/components/chats/UserAvatar';
 import MediaMessage from '@/components/chats/MediaMessage';
 
 export default {

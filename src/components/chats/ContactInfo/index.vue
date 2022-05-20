@@ -70,7 +70,7 @@ import { mapState } from 'vuex';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
-import ContactMedia from '@/components/ContactInfo/Media';
+import ContactMedia from './Media';
 
 export default {
   name: 'ContactInfo',
