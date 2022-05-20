@@ -8,35 +8,8 @@
       <unnnic-icon-svg icon="information-circle-4" size="sm" scheme="neutral-soft" />
     </header>
 
-    <section class="filters">
-      <unnnic-select
-        v-model="filters.tag"
-        placeholder="Selecionar tags"
-        label="Filtrar por tags"
-        size="sm"
-      >
-        <option v-for="tag in tags" :key="tag.value" :selected="tag.value === tag">
-          {{ tag.text }}
-        </option>
-      </unnnic-select>
-      <unnnic-autocomplete
-        v-model="visualizationSearch"
-        @choose="onChangeVisualization($event)"
-        :data="visualizations"
-        label="Visualização"
-        highlight
-        open-with-focus
-        size="sm"
-      />
-      <unnnic-select v-model="filters.date" placeholder="Agora" label="Filtrar por data" size="sm">
-        <option value="">Agora</option>
-        <option value="last-7-days">Últimos 7 dias</option>
-        <option value="last-14-days">Últimos 14 dias</option>
-        <option value="last-30-days">Últimos 30 dias</option>
-        <option value="last-12-months">Últimos 12 meses</option>
-        <option value="current-month">Mês Atual</option>
-        <option value="all">Desde o início</option>
-      </unnnic-select>
+    <section class="actions">
+      <slot name="actions" />
     </section>
 
     <section class="view scrollable">
@@ -48,53 +21,6 @@
 <script>
 export default {
   name: 'DashboardLayout',
-
-  data: () => ({
-    visualizationSearch: 'Geral',
-    filters: {
-      tag: '',
-      visualization: '',
-      date: '',
-    },
-    tags: [
-      { text: 'Dúvidas', value: 'doubts' },
-      { text: 'Financeiro', value: 'finance' },
-      { text: 'Ajuda', value: 'help' },
-    ],
-    visualizations: [
-      { text: 'Geral', value: 'general', type: 'option' },
-      { type: 'category', text: 'Departamentos' },
-      { text: 'Financeiro', value: 'finance', type: 'option', category: 'sector' },
-      { text: 'Suporte', value: 'support', type: 'option', category: 'sector' },
-      { type: 'category', text: 'Agentes' },
-      { text: 'Juliano', value: 'juliano', type: 'option', category: 'agent' },
-    ],
-  }),
-
-  methods: {
-    onChangeVisualization(visualizationValue) {
-      if (visualizationValue === 'general') this.activeFilters.visualization = {};
-
-      const { text, value, category } = this.visualizations.find(
-        (v) => v.value === visualizationValue,
-      );
-
-      this.filters.visualization = {
-        text,
-        category,
-        value,
-      };
-    },
-  },
-
-  watch: {
-    filters: {
-      deep: true,
-      handler(filters) {
-        this.$emit('filter', filters);
-      },
-    },
-  },
 };
 </script>
 
@@ -126,14 +52,8 @@ export default {
     }
   }
 
-  .filters {
-    display: flex;
-    gap: 1rem;
+  .actions {
     margin-bottom: 1rem;
-
-    & > * {
-      min-width: 16.5rem;
-    }
   }
 
   .scrollable {
