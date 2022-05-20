@@ -23,11 +23,11 @@
 import DashboardLayout from '@/layouts/DashboardLayout';
 
 import DashboardFilters from '../components/Filters';
-import LiveMetricsByAgent from './metrics/ByAgent/LiveMetrics';
-import LiveMetricsBySector from './metrics/BySector/LiveMetrics';
-import GeneralLiveMetrics from './metrics/General/LiveMetrics';
-import HistoryMetricsByAgent from './metrics/ByAgent/HistoryMetrics';
-import HistoryMetricsBySector from './metrics/BySector/HistoryMetrics';
+import LiveMetricsByAgent from '../components/metrics/ByAgent/LiveMetrics';
+import LiveMetricsBySector from '../components/metrics/BySector/LiveMetrics';
+import GeneralLiveMetrics from '../components/metrics/General/LiveMetrics';
+import HistoryMetricsByAgent from '../components/metrics/ByAgent/HistoryMetrics';
+import HistoryMetricsBySector from '../components/metrics/BySector/HistoryMetrics';
 
 export default {
   name: 'DashboardManager',

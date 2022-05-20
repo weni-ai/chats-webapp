@@ -13,7 +13,7 @@
 <script>
 import DashboardLayout from '@/layouts/DashboardLayout';
 import DashboardFilters from '../components/Filters';
-import HistoryMetricsByAgent from '../Manager/metrics/ByAgent/HistoryMetrics';
+import HistoryMetricsByAgent from '../components/metrics/ByAgent/HistoryMetrics';
 
 export default {
   name: 'DashboardManager',
