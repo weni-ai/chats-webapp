@@ -1,6 +1,6 @@
 <template>
   <section class="contact-info">
-    <aside-slot-template title="Informações do contato" @close="$listeners.close">
+    <aside-slot-template title="Informações do contato" @action="$listeners.close">
       <aside-slot-template-section>
         <section class="infos">
           <div class="avatar">

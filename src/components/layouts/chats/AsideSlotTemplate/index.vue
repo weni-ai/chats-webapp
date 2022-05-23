@@ -2,11 +2,16 @@
   <aside class="aside-slot-template">
     <header class="header">
       <span class="title">
-        {{ title }}
+        <span v-if="icon">
+          <unnnic-icon-svg :icon="icon" size="sm" scheme="neutral-darkest" />
+        </span>
+        <span>
+          {{ title }}
+        </span>
       </span>
 
-      <span @click="$emit('close')" @keypress.enter="$emit('close')" class="clickable">
-        <unnnic-icon-svg icon="close-1" size="sm" class="close-icon" scheme="neutral-dark" />
+      <span @click="$emit('action')" @keypress.enter="$emit('action')" class="clickable">
+        <unnnic-icon-svg :icon="iconAction" size="sm" scheme="neutral-dark" />
       </span>
     </header>
 
@@ -20,6 +25,14 @@
 export default {
   name: 'AsideSlotTemplate',
   props: {
+    icon: {
+      type: String,
+      default: '',
+    },
+    iconAction: {
+      type: String,
+      default: 'close-1',
+    },
     title: {
       type: String,
       required: true,
@@ -32,7 +45,7 @@ export default {
 .aside-slot-template {
   display: flex;
   flex-direction: column;
-  height: inherit;
+  height: 100%;
   max-height: inherit;
 
   .header {
@@ -51,6 +64,10 @@ export default {
     }
 
     .title {
+      display: flex;
+      align-items: center;
+      gap: $unnnic-spacing-stack-nano;
+
       color: $unnnic-color-neutral-dark;
       font-size: $unnnic-font-size-body-lg;
       font-weight: $unnnic-font-weight-bold;
@@ -58,6 +75,7 @@ export default {
   }
 
   .scrollable {
+    height: 100%;
     overflow-y: auto;
   }
 }

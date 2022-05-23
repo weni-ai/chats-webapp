@@ -1,5 +1,5 @@
 <template>
-  <aside class="quick-messages">
+  <aside v-if="false" class="quick-messages">
     <section v-show="!areEditingOrCreating">
       <header>
         <span>Mensagens rápidas</span>
@@ -49,6 +49,38 @@
         @cancel="quickMessageToEdit = null"
       />
     </section>
+  </aside>
+
+  <aside-slot-template
+    v-else-if="!isEditing && !isCreating"
+    title="Mensagens rápidas"
+    icon="flash-1-3"
+    @action="$emit('close')"
+  >
+    <aside-slot-template-section class="fill-h">
+      <section class="fill-h message-list">
+        <div class="messages">
+          <quick-message-card
+            v-for="quickMessage in quickMessages"
+            :key="quickMessage.id"
+            :quickMessage="quickMessage"
+            clickable
+            @select="$emit('select-quick-message', quickMessage)"
+            @edit="quickMessageToEdit = quickMessage"
+            @delete="quickMessageToDelete = quickMessage"
+          />
+        </div>
+
+        <unnnic-button
+          icon-left="add-circle-1"
+          text="Adicionar nova mensagem rápida"
+          type="secondary"
+          size="small"
+          class="fill-w"
+          @click="quickMessageToEdit = createEmptyQuickMessage()"
+        />
+      </section>
+    </aside-slot-template-section>
 
     <unnnic-modal
       text="Deletar mensagem rápida"
@@ -63,10 +95,31 @@
         <unnnic-button text="Cancelar" @click="quickMessageToDelete = null" />
       </template>
     </unnnic-modal>
-  </aside>
+  </aside-slot-template>
+
+  <aside-slot-template
+    v-else
+    :title="isEditing ? 'Editar mensagem rápida' : 'Adicionar mensagem rápida'"
+    icon="flash-1-3"
+    iconAction="keyboard-arrow-left-1"
+    @action="quickMessageToEdit = null"
+  >
+    <aside-slot-template-section class="fill-h">
+      <section class="fill-h quick-message-form">
+        <quick-message-form
+          v-model="quickMessageToEdit"
+          class="quick-message-form__form"
+          @submit="addQuickMessage(quickMessageToEdit)"
+          @cancel="quickMessageToEdit = null"
+        />
+      </section>
+    </aside-slot-template-section>
+  </aside-slot-template>
 </template>
 
 <script>
+import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
+import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
 import QuickMessageCard from './QuickMessageCard';
 import QuickMessageForm from './QuickMessageForm';
 
@@ -74,6 +127,8 @@ export default {
   name: 'QuickMessages',
 
   components: {
+    AsideSlotTemplate,
+    AsideSlotTemplateSection,
     QuickMessageCard,
     QuickMessageForm,
   },
@@ -96,8 +151,11 @@ export default {
   }),
 
   computed: {
-    areEditingOrCreating() {
-      return !!this.quickMessageToEdit;
+    isEditing() {
+      return !!this.quickMessageToEdit && this.quickMessageToEdit.id;
+    },
+    isCreating() {
+      return !!this.quickMessageToEdit && !this.quickMessageToEdit.id;
     },
   },
 
@@ -136,47 +194,33 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.quick-messages {
+.fill-h {
   height: 100%;
-  padding-right: 1rem;
+}
 
-  section {
+.fill-w {
+  width: 100%;
+}
+
+.message-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: $unnnic-spacing-stack-sm;
+
+  .messages {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    gap: $unnnic-spacing-stack-xs;
+  }
+}
 
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1rem;
+.quick-message-form {
+  display: flex;
+  flex-direction: column;
 
-      span {
-        color: $unnnic-color-neutral-dark;
-        line-height: 1.5rem;
-      }
-
-      .header-button {
-        cursor: pointer;
-      }
-    }
-
-    .quick-message-form {
-      flex: 1 1;
-    }
-
-    .messages-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      padding-bottom: 1rem;
-    }
-
-    .new-message-button {
-      width: 100%;
-      margin-top: auto;
-      flex: none;
-    }
+  &__form {
+    flex: 1 1;
   }
 }
 </style>
