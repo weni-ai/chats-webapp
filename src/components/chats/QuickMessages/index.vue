@@ -83,8 +83,8 @@
     </aside-slot-template-section>
 
     <unnnic-modal
-      text="Deletar mensagem rápida"
-      description="Você tem certeza que deseja deletar a mensagem rápida?"
+      text="Excluir mensagem rápida"
+      description="Você tem certeza que deseja excluir a mensagem rápida?"
       scheme="feedback-yellow"
       modal-icon="alert-circle-1"
       @close="quickMessageToDelete = null"
