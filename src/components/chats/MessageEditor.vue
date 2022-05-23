@@ -1,5 +1,9 @@
 <template>
   <div class="message-editor">
+    <div class="suggestion-box-container" :style="{ bottom: height + 'px' }">
+      <suggestion-box :text="message" :suggestions="shortcuts" />
+    </div>
+
     <input
       v-model="message"
       class="editor"
@@ -63,12 +67,14 @@
 
 <script>
 import FileUploader from '@/components/chats/FileUploader';
+import SuggestionBox from './SuggestionBox.vue';
 
 export default {
   name: 'MessageEditor',
 
   components: {
     FileUploader,
+    SuggestionBox,
   },
 
   props: {
@@ -78,8 +84,13 @@ export default {
     },
   },
 
+  mounted() {
+    if (this.$el) this.height = this.$el.clientHeight;
+  },
+
   data: () => ({
     files: [],
+    height: 0,
   }),
 
   computed: {
@@ -90,6 +101,27 @@ export default {
       set(message) {
         this.$emit('input', message);
       },
+    },
+    shortcuts() {
+      const quickMessages = [
+        {
+          id: 1,
+          title: 'Boas-vindas',
+          shortcut: 'boas-vindas',
+          message: 'Olá, seja bem vindo (a)! Em que posso te ajudar?',
+        },
+        {
+          id: 2,
+          title: 'Transferência',
+          shortcut: 'transferencia',
+          message: 'Agradeço sua paciência, te transferirei para outro departamento.',
+        },
+      ];
+
+      return quickMessages.map(({ shortcut, message }) => ({
+        shortcut,
+        value: message,
+      }));
     },
   },
 
@@ -108,6 +140,7 @@ export default {
 
 <style lang="scss" scoped>
 .message-editor {
+  position: relative;
   display: flex;
   align-items: flex-start;
   gap: $unnnic-spacing-stack-lg;
@@ -115,6 +148,12 @@ export default {
   padding: $unnnic-inline-sm;
   border: solid 1px $unnnic-color-neutral-clean;
   border-radius: $unnnic-border-radius-sm;
+
+  .suggestion-box-container {
+    position: absolute;
+    left: 0;
+    margin-bottom: $unnnic-spacing-inline-xs;
+  }
 
   .editor {
     flex: 1 1;
