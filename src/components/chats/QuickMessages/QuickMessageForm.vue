@@ -22,7 +22,7 @@
           Atalho
           <unnnic-tool-tip
             enabled
-            text="Defina uma palavra chave para sua mensagem rápida"
+            text="Defina uma palavra chave para usar como atalho"
             side="right"
           >
             <unnnic-icon-svg scheme="neutral-clean" icon="information-circle-4" size="sm" />
