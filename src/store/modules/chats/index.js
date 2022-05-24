@@ -1,3 +1,5 @@
+import quickMessagesModule from './quickMessages';
+
 let chats = [
   {
     name: 'Fila',
@@ -550,6 +552,9 @@ chats = chats.map((group) => ({
 
 const module = {
   namespaced: true,
+  modules: {
+    quickMessages: quickMessagesModule,
+  },
   state: {
     activeChat: null,
     chats,
