@@ -134,18 +134,6 @@ export default {
   },
 
   data: () => ({
-    quickMessages: [
-      {
-        id: 1,
-        title: 'Boas-vindas',
-        message: 'Olá, seja bem vindo (a)! Em que posso te ajudar?',
-      },
-      {
-        id: 2,
-        title: 'Transferência',
-        message: 'Agradeço sua paciência, te transferirei para outro departamento.',
-      },
-    ],
     quickMessageToDelete: null,
     quickMessageToEdit: null,
   }),
@@ -157,25 +145,15 @@ export default {
     isCreating() {
       return !!this.quickMessageToEdit && !this.quickMessageToEdit.id;
     },
+    quickMessages() {
+      return this.$store.state.chats.quickMessages.messages;
+    },
   },
 
   methods: {
-    addQuickMessage(newQuickMessage) {
-      if (newQuickMessage.id) {
-        this.quickMessages = this.quickMessages.map((quickMessage) => {
-          if (quickMessage.id === newQuickMessage.id) return { ...newQuickMessage };
-
-          return quickMessage;
-        });
-
-        this.quickMessageToEdit = null;
-        return;
-      }
-
-      this.quickMessages.push({
-        ...newQuickMessage,
-        id: Math.random() * 100 + 1,
-      });
+    addQuickMessage(quickMessage) {
+      if (!quickMessage.id) this.$store.commit('chats/quickMessages/addMessage', quickMessage);
+      else this.$store.commit('chats/quickMessages/updateMessage', quickMessage);
 
       this.quickMessageToEdit = null;
     },
@@ -183,10 +161,7 @@ export default {
       return { title: '', message: '', shortcut: null };
     },
     deleteQuickMessage() {
-      this.quickMessages = this.quickMessages.filter(
-        (quickMessage) => quickMessage.id !== this.quickMessageToDelete.id,
-      );
-
+      this.$store.commit('chats/quickMessages/deleteMessage', this.quickMessageToDelete);
       this.quickMessageToDelete = null;
     },
   },
