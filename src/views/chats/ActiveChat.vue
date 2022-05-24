@@ -14,16 +14,17 @@
         ref="chatMessages"
       />
 
-      <message-editor
-        v-if="!activeChat.closed"
-        v-model="editorMessage"
-        class="message-editor"
-        @show-quick-messages="
-          componentInAsideSlot = componentInAsideSlot === 'quickMessages' ? '' : 'quickMessages'
-        "
-        @send="sendMessage"
-        @upload="sendFileMessage($event)"
-      />
+      <div class="message-editor">
+        <message-editor
+          v-if="!activeChat.closed"
+          v-model="editorMessage"
+          @show-quick-messages="
+            componentInAsideSlot = componentInAsideSlot === 'quickMessages' ? '' : 'quickMessages'
+          "
+          @send="sendMessage"
+          @upload="sendFileMessage($event)"
+        />
+      </div>
 
       <template v-if="activeChat.closed && !activeChat.tags">
         <div class="chat-closed-message">Atendimento encerrado pelo agente</div>

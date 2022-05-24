@@ -1,68 +1,76 @@
 <template>
-  <div class="message-editor">
-    <div class="suggestion-box-container" :style="{ bottom: height + 'px' }">
-      <suggestion-box :text="message" :suggestions="shortcuts" />
-    </div>
-
-    <input
-      v-model="message"
-      class="editor"
-      aria-label="message-editor"
-      placeholder="Digite sua mensagem"
-      type="text"
-      @keypress.enter="sendMessage"
-    />
-
-    <div class="actions">
-      <div class="secondary">
-        <file-uploader v-model="files" @upload="upload">
-          <template #trigger="{ open }">
-            <unnnic-tool-tip enabled text="Enviar mídia" side="top">
-              <unnnic-dropdown position="top-left">
-                <template #trigger>
-                  <slot name="trigger">
-                    <unnnic-button-icon slot="trigger" icon="upload-bottom-1" size="small" />
-                  </slot>
-                </template>
-                <unnnic-dropdown-item>
-                  <span
-                    class="upload-dropdown-option"
-                    @click="open('media')"
-                    @keypress.enter="open('media')"
-                  >
-                    <unnnic-icon-svg icon="video-file-mp4-1" />
-                    <span> Enviar foto ou vídeo </span>
-                  </span>
-                </unnnic-dropdown-item>
-                <unnnic-dropdown-item>
-                  <span
-                    class="upload-dropdown-option"
-                    @click="open('document')"
-                    @keypress.enter="open('document')"
-                  >
-                    <unnnic-icon-svg icon="upload-bottom-1" />
-                    <span> Enviar documento </span>
-                  </span>
-                </unnnic-dropdown-item>
-              </unnnic-dropdown>
-            </unnnic-tool-tip>
-          </template>
-        </file-uploader>
-
-        <unnnic-tool-tip enabled text="Mensagens rápidas" side="top">
-          <unnnic-button-icon icon="flash-1-3" size="small" @click="$emit('show-quick-messages')" />
-        </unnnic-tool-tip>
+  <section>
+    <div class="suggestion-box-container">
+      <div class="suggestion-box">
+        <suggestion-box :text="message" :suggestions="shortcuts" />
       </div>
-
-      <unnnic-button
-        text="Enviar"
-        iconLeft="send-email-3-1"
-        size="small"
-        class="send-button"
-        @click="sendMessage"
-      />
     </div>
-  </div>
+
+    <div class="message-editor">
+      <input
+        v-model="message"
+        class="editor"
+        aria-label="message-editor"
+        placeholder="Digite sua mensagem"
+        type="text"
+        @keypress.enter="sendMessage"
+      />
+
+      <div class="actions">
+        <div class="secondary">
+          <file-uploader v-model="files" @upload="upload">
+            <template #trigger="{ open }">
+              <unnnic-tool-tip enabled text="Enviar mídia" side="top">
+                <unnnic-dropdown position="top-left">
+                  <template #trigger>
+                    <slot name="trigger">
+                      <unnnic-button-icon slot="trigger" icon="upload-bottom-1" size="small" />
+                    </slot>
+                  </template>
+                  <unnnic-dropdown-item>
+                    <span
+                      class="upload-dropdown-option"
+                      @click="open('media')"
+                      @keypress.enter="open('media')"
+                    >
+                      <unnnic-icon-svg icon="video-file-mp4-1" />
+                      <span> Enviar foto ou vídeo </span>
+                    </span>
+                  </unnnic-dropdown-item>
+                  <unnnic-dropdown-item>
+                    <span
+                      class="upload-dropdown-option"
+                      @click="open('document')"
+                      @keypress.enter="open('document')"
+                    >
+                      <unnnic-icon-svg icon="upload-bottom-1" />
+                      <span> Enviar documento </span>
+                    </span>
+                  </unnnic-dropdown-item>
+                </unnnic-dropdown>
+              </unnnic-tool-tip>
+            </template>
+          </file-uploader>
+
+          <unnnic-tool-tip enabled text="Mensagens rápidas" side="top">
+            <unnnic-button-icon
+              icon="flash-1-3"
+              size="small"
+              @click="$emit('show-quick-messages')"
+            />
+          </unnnic-tool-tip>
+        </div>
+
+        <unnnic-button
+          text="Enviar"
+          iconLeft="send-email-3-1"
+          size="small"
+          class="send-button"
+          @click="sendMessage"
+        />
+      </div>
+    </div>
+  </section>
 </template>
 
 <script>
@@ -84,13 +92,8 @@ export default {
     },
   },
 
-  mounted() {
-    if (this.$el) this.height = this.$el.clientHeight;
-  },
-
   data: () => ({
     files: [],
-    height: 0,
   }),
 
   computed: {
@@ -120,7 +123,7 @@ export default {
 
       return quickMessages.map(({ shortcut, message }) => ({
         shortcut,
-        value: message,
+        preview: message,
       }));
     },
   },
@@ -140,7 +143,6 @@ export default {
 
 <style lang="scss" scoped>
 .message-editor {
-  position: relative;
   display: flex;
   align-items: flex-start;
   gap: $unnnic-spacing-stack-lg;
@@ -150,9 +152,14 @@ export default {
   border-radius: $unnnic-border-radius-sm;
 
   .suggestion-box-container {
-    position: absolute;
-    left: 0;
-    margin-bottom: $unnnic-spacing-inline-xs;
+    position: relative;
+
+    .suggestion-box {
+      margin-bottom: $unnnic-spacing-inline-xs;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
   }
 
   .editor {
