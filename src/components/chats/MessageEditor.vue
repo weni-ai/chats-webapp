@@ -110,25 +110,14 @@ export default {
       },
     },
     shortcuts() {
-      const quickMessages = [
-        {
-          id: 1,
-          title: 'Boas-vindas',
-          shortcut: 'boas-vindas',
-          message: 'Olá, seja bem vindo (a)! Em que posso te ajudar?',
-        },
-        {
-          id: 2,
-          title: 'Transferência',
-          shortcut: 'transferencia',
-          message: 'Agradeço sua paciência, te transferirei para outro departamento.',
-        },
-      ];
+      const quickMessages = this.$store.state.chats.quickMessages.messages;
 
-      return quickMessages.map(({ shortcut, message }) => ({
-        shortcut,
-        preview: message,
-      }));
+      return quickMessages
+        .filter((message) => !!message.shortcut)
+        .map(({ shortcut, message }) => ({
+          shortcut,
+          preview: message,
+        }));
     },
   },
 
