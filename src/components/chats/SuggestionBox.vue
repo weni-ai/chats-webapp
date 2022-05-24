@@ -2,20 +2,22 @@
   <section v-if="isSuggestionBoxOpen" class="suggestion-box">
     <header class="suggestion-box__header">
       Atalhos disponíveis
-      <span class="suggestion-box__header__shortcut">{{ text }}</span>
+      <span class="suggestion-box__header__shortcut">{{ search }}</span>
     </header>
 
     <section class="suggestion-box__shortcuts">
       <div
         class="suggestion-box__shortcuts__shortcut-container"
-        v-for="suggestion in suggestions"
+        v-for="suggestion in filteredSuggestions"
         :key="suggestion.shortcut"
+        @click="select(suggestion)"
+        @keypress.enter="select(suggestion)"
       >
         <h2 class="suggestion-box__shortcuts__shortcut-container__shortcut">
           /{{ suggestion.shortcut }}
         </h2>
-        <p class="suggestion-box__shortcuts__shortcut-container__value">
-          {{ suggestion.value }}
+        <p class="suggestion-box__shortcuts__shortcut-container__preview">
+          {{ suggestion.preview }}
         </p>
       </div>
     </section>
@@ -25,7 +27,7 @@
 <script>
 export default {
   props: {
-    text: {
+    search: {
       type: String,
       required: true,
     },
@@ -33,11 +35,34 @@ export default {
       type: Array,
       required: true,
     },
+    trigger: {
+      type: String,
+      default: '/',
+    },
   },
 
   computed: {
     isSuggestionBoxOpen() {
-      return this.text.charAt('0') === '/';
+      return this.searchStartsWithTrigger && !this.searchHasWhiteSpaces;
+    },
+    searchStartsWithTrigger() {
+      return this.search.charAt('0') === this.trigger;
+    },
+    searchHasWhiteSpaces() {
+      return this.search.includes(' ');
+    },
+    filteredSuggestions() {
+      const searchWithoutSlash = this.search.substring(1).toLowerCase();
+
+      return this.suggestions.filter(({ shortcut }) =>
+        shortcut.toLowerCase().includes(searchWithoutSlash),
+      );
+    },
+  },
+
+  methods: {
+    select(suggestion) {
+      this.$emit('select', suggestion);
     },
   },
 };
@@ -80,7 +105,7 @@ export default {
         line-height: 1.25rem;
       }
 
-      &__value {
+      &__preview {
         font-size: $unnnic-font-size-body-sm;
         overflow: hidden;
         text-overflow: ellipsis;

@@ -2,7 +2,11 @@
   <section>
     <div class="suggestion-box-container">
       <div class="suggestion-box">
-        <suggestion-box :text="message" :suggestions="shortcuts" />
+        <suggestion-box
+          :search="message"
+          :suggestions="shortcuts"
+          @select="message = $event.preview"
+        />
       </div>
     </div>
 
