@@ -34,14 +34,6 @@ export default {
     },
   },
 
-  data: () => ({
-    tags: [
-      { text: 'Dúvidas', value: 'doubts' },
-      { text: 'Financeiro', value: 'finance' },
-      { text: 'Ajuda', value: 'help' },
-    ],
-  }),
-
   methods: {
     handleSelectedTags(tag) {
       const tags = this.selected.find((t) => t.value === tag.value)
@@ -60,6 +52,9 @@ export default {
       set(selected) {
         this.$emit('input', selected);
       },
+    },
+    tags() {
+      return this.$store.state.chats.tags;
     },
   },
 };

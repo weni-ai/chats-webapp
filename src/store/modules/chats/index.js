@@ -1,5 +1,10 @@
 import quickMessagesModule from './quickMessages';
 
+const tags = [
+  { text: 'Dúvidas', value: 'doubts' },
+  { text: 'Financeiro', value: 'finance' },
+  { text: 'Ajuda', value: 'help' },
+];
 let chats = [
   {
     name: 'Fila',
@@ -434,7 +439,7 @@ const closedChats = [
     agent: 'Debora',
     date: '25/03/2022',
     closed: true,
-    tags: ['finance', 'help'],
+    tags: [tags[1], tags[2]],
     messages: [
       {
         id: '1',
@@ -468,7 +473,7 @@ const closedChats = [
     agent: 'Felipe',
     date: '05/02/2022',
     closed: true,
-    tags: ['finance'],
+    tags: [tags[1]],
     messages: [
       {
         id: '1',
@@ -502,7 +507,7 @@ const closedChats = [
     agent: 'Ana',
     date: '02/02/2022',
     closed: true,
-    tags: ['doubts'],
+    tags: [tags[0]],
     messages: [
       {
         id: '1',
@@ -558,6 +563,7 @@ const module = {
   state: {
     activeChat: null,
     chats,
+    tags,
     closedChats,
   },
 
