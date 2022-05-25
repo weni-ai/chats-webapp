@@ -26,15 +26,13 @@
         />
       </div>
 
-      <template v-if="activeChat.closed && !activeChat.tags">
-        <div class="chat-closed-message">Atendimento encerrado pelo agente</div>
-
+      <section v-if="activeChat.closed && !activeChat.tags" class="chat-classifier">
         <chat-classifier v-model="tags" label="Por favor, classifique o atendimento:">
           <template #actions>
             <unnnic-button text="Confirmar" type="secondary" size="small" @click="setChatTags" />
           </template>
         </chat-classifier>
-      </template>
+      </section>
     </section>
 
     <unnnic-modal
@@ -246,21 +244,14 @@ export default {
     margin: $unnnic-spacing-inline-sm 0 $unnnic-spacing-inline-sm;
   }
 
+  .chat-classifier {
+    margin-left: -$unnnic-spacing-inline-md;
+    margin-bottom: -$unnnic-spacing-inline-sm;
+  }
+
   .message-editor {
     margin-right: $unnnic-spacing-inline-sm;
     margin-top: auto;
   }
-
-  .chat-closed-message {
-    width: 100%;
-    text-align: center;
-    font-size: $unnnic-font-size-body-gt;
-    line-height: 1.375rem;
-    color: $unnnic-color-feedback-yellow;
-  }
-}
-
-.scrollable {
-  overflow-y: auto;
 }
 </style>

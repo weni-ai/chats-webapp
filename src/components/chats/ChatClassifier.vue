@@ -1,29 +1,27 @@
 <template>
-  <section>
-    <p v-if="!!label" class="label">{{ label }}</p>
-
-    <section class="container">
+  <section class="chat-classifier__container">
+    <section class="content">
+      <p v-if="!!label" class="label">{{ label }}</p>
       <section class="tags">
-        <unnnic-tag
-          v-for="tag in orderedTags"
-          :key="tag.text"
-          clickable
-          :text="tag.text"
-          :hasCloseIcon="selected.includes(tag.value)"
-          :class="{ selected: selected.includes(tag.value) }"
-          @click="handleSelectedTags(tag.value)"
-        />
+        <tag-group v-model="selected" :tags="tags" selectable />
       </section>
-      <section class="actions">
-        <slot name="actions" />
-      </section>
+    </section>
+
+    <section class="actions">
+      <slot name="actions" />
     </section>
   </section>
 </template>
 
 <script>
+import TagGroup from './TagGroup';
+
 export default {
   name: 'ChatClassifier',
+
+  components: {
+    TagGroup,
+  },
 
   props: {
     label: {
@@ -46,25 +44,15 @@ export default {
 
   methods: {
     handleSelectedTags(tag) {
-      const tags = this.selected.includes(tag)
+      const tags = this.selected.find((t) => t.value === tag.value)
         ? this.selected.filter((t) => t !== tag)
-        : [...this.selected, tag];
+        : [...this.selected, { ...tag, selected: true }];
 
       this.selected = tags;
     },
   },
 
   computed: {
-    orderedTags() {
-      const tags = [...this.tags];
-
-      const orderedTags = tags.sort((a, b) => {
-        if (this.selected.includes(a.value) > this.selected.includes(b.value)) return -1;
-        return 1;
-      });
-
-      return orderedTags;
-    },
     selected: {
       get() {
         return this.value || [];
@@ -78,32 +66,29 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.label {
-  font-size: 0.875rem;
-  color: $unnnic-color-neutral-darkest;
-  margin-bottom: 0.5rem;
-}
-
-.container {
+.chat-classifier__container {
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
+  align-items: flex-end;
+  border-top: solid 1px $unnnic-color-neutral-clean;
+  padding: $unnnic-spacing-inset-md;
 
-  padding: 1.5rem 1rem 1.5rem 1.5rem;
-  border: solid 1px $unnnic-color-neutral-soft;
-  border-radius: 0.25rem;
-
-  .tags {
-    display: flex;
-    gap: 1.5rem;
-
-    .selected {
-      border: solid 1px $unnnic-color-neutral-dark;
+  .content {
+    .label {
+      font-size: $unnnic-font-size-body-gt;
+      font-weight: $unnnic-font-weight-bold;
+      color: $unnnic-color-neutral-darkest;
+      margin-bottom: $unnnic-spacing-inline-sm;
     }
-  }
 
-  .actions {
-    align-self: center;
+    .tags {
+      display: flex;
+      gap: 1.5rem;
+
+      .selected {
+        border: solid 1px $unnnic-color-neutral-dark;
+      }
+    }
   }
 }
 </style>
