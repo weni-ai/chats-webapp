@@ -10,10 +10,20 @@
     </section>
 
     <section class="closed-chats" v-else>
-      <h1>Histórico</h1>
+      <header class="header">
+        <div class="title">
+          <unnnic-card
+            type="title"
+            title="Histórico"
+            icon="task-list-clock-1"
+            scheme="aux-purple"
+            :has-information-icon="false"
+          />
+        </div>
+      </header>
 
       <section class="filters">
-        <tag-filter v-model="tags" label="Classificar chats por tags e período" />
+        <tag-filter v-model="filteredTags" label="Classificar chats por tags e período" />
 
         <unnnic-select
           v-model="filteredDateRange"
@@ -28,6 +38,10 @@
           <option value="last-12-months">Últimos 12 meses</option>
           <option value="current-month">Mês Atual</option>
         </unnnic-select>
+
+        <unnnic-tool-tip enabled text="Limpar filtros" side="right">
+          <unnnic-button-icon icon="button-refresh-arrows-1" size="small" @click="clearFilters" />
+        </unnnic-tool-tip>
       </section>
 
       <unnnic-table :items="filteredClosedChats" class="closed-chats-table">
@@ -47,15 +61,7 @@
             <template #agentName>{{ item.agent }}</template>
 
             <template #tags>
-              <div class="tags">
-                <unnnic-tag
-                  v-for="tag in item.tags"
-                  :key="tag"
-                  :text="TAGS[tag].text"
-                  :disabled="!tags.includes(tag)"
-                  :scheme="TAGS[tag].scheme"
-                />
-              </div>
+              <tag-group :tags="item.tags" />
             </template>
 
             <template #date>{{ item.date }}</template>
@@ -81,16 +87,10 @@ import { mapState } from 'vuex';
 
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
-
 import ChatsLayout from '@/layouts/ChatsLayout';
 import TagFilter from '@/components/chats/TagFilter';
+import TagGroup from '@/components/chats/TagGroup';
 import UserAvatar from '@/components/chats/UserAvatar';
-
-const TAGS = {
-  doubts: { text: 'Dúvidas', scheme: 'feedback-yellow' },
-  finance: { text: 'Financeiro', scheme: 'feedback-red' },
-  help: { text: 'Ajuda', scheme: 'feedback-green' },
-};
 
 export default {
   name: 'ClosedChatsView',
@@ -100,6 +100,7 @@ export default {
     ChatMessages,
     ChatsLayout,
     TagFilter,
+    TagGroup,
     UserAvatar,
   },
 
@@ -111,14 +112,13 @@ export default {
   },
 
   beforeMount() {
-    if (this.tag) this.tags.push(this.tag);
+    if (this.tag) this.filteredTags.push(this.tag);
   },
 
   data: () => ({
     chat: null,
     filteredDateRange: '',
-    tags: [],
-    TAGS,
+    filteredTags: [],
     tableHeaders: [
       {
         id: 'contactName',
@@ -151,6 +151,7 @@ export default {
   computed: {
     ...mapState({
       closedChats: (state) => state.chats.closedChats,
+      tags: (state) => state.chats.tags,
     }),
 
     filteredClosedChats() {
@@ -162,11 +163,11 @@ export default {
 
   methods: {
     chatHasAllActiveFilterTags(chat) {
-      if (this.tags.length === 0) return true;
+      if (this.filteredTags.length === 0) return true;
 
       // eslint-disable-next-line no-restricted-syntax
-      for (const tag of this.tags) {
-        if (chat.tags.indexOf(tag) === -1) {
+      for (const tag of this.filteredTags) {
+        if (!chat.tags.find((t) => t.value === tag)) {
           return false;
         }
       }
@@ -200,6 +201,11 @@ export default {
 
       return dateRanges[this.filteredDateRange]();
     },
+
+    clearFilters() {
+      this.filteredTags = [];
+      this.filteredDateRange = '';
+    },
   },
 };
 </script>
@@ -224,18 +230,20 @@ export default {
   max-height: 100%;
   padding-right: $unnnic-spacing-inset-md;
 
-  h1 {
-    font-size: $unnnic-font-size-title-sm;
-    font-weight: $unnnic-font-weight-bold;
-    line-height: 1.75rem;
-    color: $unnnic-color-neutral-dark;
+  .header {
+    padding-bottom: $unnnic-spacing-inset-md;
     margin-bottom: $unnnic-spacing-inline-md;
+    border-bottom: solid 1px $unnnic-color-neutral-soft;
+
+    .title {
+      width: min-content;
+    }
   }
 
   .filters {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: flex-end;
+    gap: $unnnic-spacing-stack-sm;
 
     .date-range-select {
       flex-basis: 33.33%;

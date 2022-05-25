@@ -48,7 +48,7 @@ export default {
       chatGroups: (state) => state.chats.chats,
     }),
     isActiveChatView() {
-      return this.$route.name === 'home';
+      return ['home', 'chat'].includes(this.$route.name);
     },
   },
 };
