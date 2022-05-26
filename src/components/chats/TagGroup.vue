@@ -34,12 +34,12 @@ export default {
       'aux-purple',
       'aux-orange',
       'aux-pink',
-      // 'brand-weni-dark',
-      // 'brand-weni-soft',
+      'brand-weni-dark',
+      'brand-weni-soft',
       'aux-lemon',
       'aux-blue',
-      // 'neutral-dark',
-      // 'neutral-cloudy'
+      'neutral-dark',
+      'neutral-cloudy',
     ],
   }),
 
