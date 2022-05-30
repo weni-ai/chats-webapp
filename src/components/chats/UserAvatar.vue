@@ -73,10 +73,6 @@ $avatar-sizes: '2xl' 3rem, 'xl' $unnnic-icon-size-xl, 'lg' $unnnic-icon-size-lg,
   background: rgba($unnnic-color-brand-weni, $unnnic-opacity-level-extra-light);
   color: $unnnic-color-brand-weni-dark;
 
-  &.clickable {
-    cursor: pointer;
-  }
-
   &.active {
     background: rgba($unnnic-color-brand-weni, $unnnic-opacity-level-light);
   }
