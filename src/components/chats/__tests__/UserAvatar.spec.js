@@ -27,8 +27,7 @@ describe('UserAvatar', () => {
     const classes = wrapper.classes();
     expect(classes).toContain('active');
     expect(classes).toContain('clickable');
-    // applied by `disabled` prop
-    expect(classes).toContain('neutral-background');
+    expect(classes).toContain('disabled');
   });
 
   it('should apply the component size based on the `size` prop', () => {

@@ -38,7 +38,7 @@
         >
           <media-message v-if="content.isMedia" :media="content" />
 
-          <p v-else :class="{ 'unsent-message': content.sent === false }">
+          <p v-else :class="{ 'unsent-message': content.sent === false, disabled: chat.closed }">
             {{ content.text }}
             <unnnic-tool-tip
               v-if="content.sent === false"
@@ -185,6 +185,10 @@ export default {
             align-items: center;
             margin-left: $unnnic-spacing-inline-xs;
           }
+        }
+
+        & .disabled {
+          color: $unnnic-color-neutral-clean;
         }
 
         & p {

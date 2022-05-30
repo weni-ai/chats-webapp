@@ -5,13 +5,18 @@
       active,
       off,
       clickable,
-      'neutral-background': disabled,
+      disabled,
       [`user-avatar--${size}`]: true,
     }"
     @click="$emit('click')"
     @keypress.enter="$emit('click')"
   >
-    <unnnic-icon-svg v-if="username === 'Agente'" icon="single-neutral-actions-1" size="sm" />
+    <unnnic-icon-svg
+      v-if="username === 'Agente'"
+      icon="single-neutral-actions-1"
+      size="sm"
+      :scheme="disabled ? 'neutral-snow' : ''"
+    />
     <span v-else>
       {{ getUsernameFirstCharacter }}
     </span>
@@ -77,8 +82,9 @@ $avatar-sizes: '2xl' 3rem, 'xl' $unnnic-icon-size-xl, 'lg' $unnnic-icon-size-lg,
     background: rgba($unnnic-color-brand-weni, $unnnic-opacity-level-light);
   }
 
-  &.neutral-background {
+  &.disabled {
     background: $unnnic-color-neutral-clean;
+    color: $unnnic-color-neutral-snow;
   }
 
   &.off {
