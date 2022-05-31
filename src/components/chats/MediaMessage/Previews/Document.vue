@@ -12,10 +12,13 @@
     <span class="filename">
       {{ fullFilename }}
     </span>
-    <unnnic-icon-svg
-      icon="download-bottom-1"
-      :scheme="highlight ? 'neutral-darkest' : 'brand-weni-soft'"
-    />
+
+    <unnnic-tool-tip enabled text="Baixar" side="right">
+      <unnnic-icon-svg
+        icon="download-bottom-1"
+        :scheme="highlight ? 'neutral-darkest' : 'brand-weni-soft'"
+      />
+    </unnnic-tool-tip>
   </section>
 </template>
 
@@ -66,6 +69,7 @@ export default {
 
   .filename {
     font-size: 0.875rem;
+    color: $unnnic-color-neutral-darkest;
   }
 }
 </style>

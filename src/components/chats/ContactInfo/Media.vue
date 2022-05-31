@@ -34,6 +34,7 @@
           :key="document.filename"
           :src="document.src"
           :fullFilename="document.filename + '.' + document.fileExtension"
+          class="documents__content__document"
         />
       </section>
     </template>
@@ -154,7 +155,7 @@ export default {
 .media-tab {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: $unnnic-spacing-stack-xs;
 
   &.active {
     .name {
@@ -173,7 +174,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(auto-fill, minmix(2rem, 4rem));
-  gap: 0.5rem;
+  gap: $unnnic-spacing-stack-xs;
 
   max-width: 100%;
 }
@@ -181,6 +182,11 @@ export default {
 .documents__content {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: $unnnic-spacing-stack-xs;
+
+  &__document {
+    padding-bottom: 0.25rem;
+    border-bottom: solid 1px $unnnic-color-neutral-soft;
+  }
 }
 </style>

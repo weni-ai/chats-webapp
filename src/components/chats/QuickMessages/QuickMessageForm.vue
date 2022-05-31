@@ -88,21 +88,21 @@ export default {
 .quick-message-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: $unnnic-spacing-stack-sm;
 
   .label {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: $unnnic-spacing-stack-nano;
+    font-size: $unnnic-font-size-body-gt;
     color: $unnnic-color-neutral-dark;
-    font-weight: $unnnic-font-weight-black;
   }
 
   .actions {
     display: flex;
     align-items: center;
     margin-top: auto;
-    gap: 1rem;
+    gap: $unnnic-spacing-stack-sm;
 
     .button {
       flex: 1 1;

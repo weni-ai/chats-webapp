@@ -12,7 +12,8 @@
 
     <unnnic-button
       :text="isActiveChatView ? 'Visualizar histórico' : 'Voltar para chats'"
-      :iconRight="isActiveChatView ? 'task-list-clock-1' : 'keyboard-return'"
+      :iconRight="isActiveChatView ? 'task-list-clock-1' : ''"
+      :iconLeft="isActiveChatView ? '' : 'keyboard-arrow-left-1'"
       type="secondary"
       size="small"
       @click="$router.push(isActiveChatView ? '/closed-chats' : '/')"

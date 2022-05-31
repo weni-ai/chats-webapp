@@ -3,14 +3,19 @@
     <header class="header">
       <span class="title">
         <span v-if="icon">
-          <unnnic-icon-svg :icon="icon" size="sm" scheme="neutral-darkest" />
+          <unnnic-icon-svg :icon="icon" size="ant" scheme="neutral-darkest" />
         </span>
         <span>
           {{ title }}
         </span>
       </span>
 
-      <span @click="$emit('action')" @keypress.enter="$emit('action')" class="clickable">
+      <span
+        v-if="!noIconAction"
+        @click="$emit('action')"
+        @keypress.enter="$emit('action')"
+        class="clickable"
+      >
         <unnnic-icon-svg :icon="iconAction" size="sm" scheme="neutral-dark" />
       </span>
     </header>
@@ -32,6 +37,10 @@ export default {
     iconAction: {
       type: String,
       default: 'close-1',
+    },
+    noIconAction: {
+      type: Boolean,
+      default: false,
     },
     title: {
       type: String,
@@ -58,7 +67,7 @@ export default {
 
     padding: {
       top: $unnnic-spacing-inset-sm;
-      right: $unnnic-spacing-inset-nano;
+      right: $unnnic-spacing-inset-sm;
       bottom: $unnnic-spacing-inset-sm;
       left: $unnnic-spacing-inset-md;
     }

@@ -51,7 +51,7 @@
                 @keypress.enter="messageToResend = content"
                 class="resend-button"
               >
-                <unnnic-icon
+                <unnnic-icon-svg
                   icon="synchronize-arrow-clock-5"
                   scheme="feedback-red"
                   size="sm"

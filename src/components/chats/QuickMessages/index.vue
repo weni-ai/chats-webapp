@@ -1,58 +1,6 @@
 <template>
-  <aside v-if="false" class="quick-messages">
-    <section v-show="!areEditingOrCreating">
-      <header>
-        <span>Mensagens rápidas</span>
-        <span @click="$emit('close')" aria-label="close icon" @keypress.enter="$emit('close')">
-          <unnnic-icon-svg icon="close-1" size="sm" class="header-button" />
-        </span>
-      </header>
-
-      <div class="messages-list">
-        <quick-message-card
-          v-for="quickMessage in quickMessages"
-          :key="quickMessage.id"
-          :quickMessage="quickMessage"
-          clickable
-          @select="$emit('select-quick-message', quickMessage)"
-          @edit="quickMessageToEdit = quickMessage"
-          @delete="quickMessageToDelete = quickMessage"
-        />
-      </div>
-
-      <unnnic-button
-        class="new-message-button"
-        icon-left="add-circle-1"
-        text="Adicionar nova mensagem rápida"
-        type="secondary"
-        size="small"
-        @click="quickMessageToEdit = createEmptyQuickMessage()"
-      />
-    </section>
-
-    <section v-if="areEditingOrCreating" class="create-section">
-      <header>
-        <span>
-          {{
-            quickMessageToEdit.id ? 'Editar modelo de mensagem' : 'Adicionar nova mensagem rápida'
-          }}
-        </span>
-        <span @click="quickMessageToEdit = null" @keypress.enter="quickMessageToEdit = null">
-          <unnnic-icon icon="keyboard-return-1" size="sm" class="header-button" />
-        </span>
-      </header>
-
-      <quick-message-form
-        v-model="quickMessageToEdit"
-        class="quick-message-form"
-        @submit="addQuickMessage(quickMessageToEdit)"
-        @cancel="quickMessageToEdit = null"
-      />
-    </section>
-  </aside>
-
   <aside-slot-template
-    v-else-if="!isEditing && !isCreating"
+    v-if="!isEditing && !isCreating"
     title="Mensagens rápidas"
     icon="flash-1-3"
     @action="$emit('close')"
@@ -101,7 +49,7 @@
     v-else
     :title="isEditing ? 'Editar mensagem rápida' : 'Adicionar mensagem rápida'"
     icon="flash-1-3"
-    iconAction="keyboard-arrow-left-1"
+    no-icon-action
     @action="quickMessageToEdit = null"
   >
     <aside-slot-template-section class="fill-h">
