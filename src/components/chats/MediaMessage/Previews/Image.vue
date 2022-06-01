@@ -1,11 +1,11 @@
 <template>
-  <div>
-    <unnnic-tool-tip enabled :text="tooltip" side="right">
+  <div class="image-preview">
+    <unnnic-tool-tip class="image-preview__tooltip" enabled :text="tooltip" side="right">
       <img
         :src="src"
         :alt="alt"
-        :style="{ width: widthInRem, height: heightInRem }"
-        class="clickable"
+        :style="{ 'object-fit': objectFit }"
+        class="clickable image-preview__image"
         @click="handleImageClick"
         @keypress.enter="handleImageClick"
       />
@@ -46,10 +46,10 @@ export default {
       type: Boolean,
       default: false,
     },
-    height: {
-      type: [String, Number],
-      default: 'auto', // calculate by width with proportion of 16:9
-      validator: (h) => h === 'auto' || !Number.isNaN(Number(h)),
+    objectFit: {
+      type: String,
+      default: 'contain',
+      validator: (v) => ['fill', 'contain', 'cover', 'scale-down', 'none'].includes(v),
     },
     src: {
       type: String,
@@ -58,11 +58,6 @@ export default {
     tooltip: {
       type: String,
       default: 'Visualizar em tela cheia',
-    },
-    width: {
-      type: [String, Number],
-      default: 16 * 14, // 224px (16:9 proportion)
-      validator: (w) => !Number.isNaN(Number(w)),
     },
   },
 
@@ -74,26 +69,9 @@ export default {
     isFullscreen() {
       return this.fullscreen || this.isFullscreenByUserClick;
     },
-    heightInRem() {
-      if (this.shouldInferHeight()) {
-        const heightInRem = this.getHeightProportionalToWidthInPixels() / 16;
-
-        return `${heightInRem.toFixed('3')}rem`;
-      }
-
-      return `${this.height / 16}rem`;
-    },
-    widthInRem() {
-      return `${this.width / 16}rem`;
-    },
   },
 
   methods: {
-    getHeightProportionalToWidthInPixels() {
-      if (!this.width) return 0;
-
-      return (this.width * 9) / 16; // 16:9 proportion
-    },
     handleImageClick() {
       if (this.fullscreenOnClick) {
         this.isFullscreenByUserClick = true;
@@ -107,9 +85,23 @@ export default {
     previousMedia() {
       console.log('previous media');
     },
-    shouldInferHeight() {
-      return !this.height || (this.height === 'auto' && this.width);
-    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.image-preview {
+  height: inherit;
+  width: inherit;
+  max-height: inherit;
+  max-width: inherit;
+
+  &__tooltip,
+  &__image {
+    height: inherit;
+    width: inherit;
+    max-width: inherit;
+    max-height: inherit;
+  }
+}
+</style>

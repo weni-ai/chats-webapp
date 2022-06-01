@@ -4,22 +4,16 @@
   </section>
 
   <section v-else class="media-message">
-    <image-preview
-      v-if="media.type === 'image'"
-      :src="media.src"
-      :alt="media.alt"
-      :height="media.height"
-      :width="media.width"
-      fullscreen-on-click
-      @download="download"
-    />
-    <video-preview
-      v-else-if="media.type === 'video'"
-      :src="media.src"
-      :height="media.height"
-      :width="media.width"
-      fullscreen-on-click
-    />
+    <section class="media-message__preview">
+      <image-preview
+        v-if="media.type === 'image'"
+        :src="media.src"
+        :alt="media.alt"
+        fullscreen-on-click
+        @download="download"
+      />
+      <video-preview v-else-if="media.type === 'video'" :src="media.src" fullscreen-on-click />
+    </section>
 
     <media-controls :fullFilename="fullFilename" @download="download" />
   </section>
@@ -86,6 +80,11 @@ export default {
 .media-message {
   display: inline-flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: $unnnic-spacing-stack-xs;
+
+  &__preview {
+    max-width: calc(16px * 15);
+    max-height: calc(9px * 17);
+  }
 }
 </style>

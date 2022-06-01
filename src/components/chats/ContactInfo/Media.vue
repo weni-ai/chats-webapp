@@ -9,13 +9,11 @@
 
     <template slot="tab-panel-media">
       <section class="media__content">
-        <image-preview
-          v-for="media in medias"
-          :key="media.filename"
-          v-bind="media"
-          width="64"
-          fullscreen-on-click
-        />
+        <div v-for="media in medias" :key="media.filename" class="media__content__media">
+          <div class="media__content__media__preview">
+            <image-preview v-bind="media" fullscreen-on-click object-fit="cover" />
+          </div>
+        </div>
       </section>
     </template>
 
@@ -173,10 +171,21 @@ export default {
 .media__content {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(auto-fill, minmix(2rem, 4rem));
   gap: $unnnic-spacing-stack-xs;
 
   max-width: 100%;
+
+  &__media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+
+    &__preview {
+      height: 100%;
+      width: 100%;
+    }
+  }
 }
 
 .documents__content {
