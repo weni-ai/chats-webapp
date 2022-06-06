@@ -6,7 +6,7 @@
     </p>
 
     <section class="card-group-metrics__metrics" :class="[`columns-${columns}`]">
-      <unnnic-card-project
+      <unnnic-card-information
         v-for="metric in metrics"
         :key="metric.id"
         :name="metric.name"
