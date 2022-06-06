@@ -11,6 +11,7 @@
         v-for="suggestion in filteredSuggestions"
         :key="suggestion.shortcut"
         @click="select(suggestion)"
+        data-testid="suggestion"
         @keypress.enter="select(suggestion)"
       >
         <h2 class="suggestion-box__shortcuts__shortcut-container__shortcut">
