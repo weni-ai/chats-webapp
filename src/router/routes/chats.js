@@ -1,11 +1,11 @@
-import ChatsLayout from '@/layouts/ChatsLayout';
+import Home from '@/views/chats/Home';
 import ActiveChat from '@/views/chats/ActiveChat.vue';
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: ChatsLayout,
+    component: Home,
   },
   {
     path: '/chats/:id',
