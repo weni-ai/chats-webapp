@@ -218,6 +218,7 @@ export default {
       });
 
       this.$store.commit('chats/setActiveChat', null);
+      this.$router.replace('/');
     },
   },
 
