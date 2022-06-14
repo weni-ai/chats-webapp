@@ -4,12 +4,9 @@
       :value="quickMessage.title"
       @input="quickMessage = { ...quickMessage, title: $event }"
       size="sm"
+      label="Título"
       placeholder="Defina um título para sua resposta pronta"
-    >
-      <template #label>
-        <span class="label"> Título </span>
-      </template>
-    </unnnic-input>
+    />
 
     <unnnic-input
       :value="quickMessage.shortcut"
@@ -94,8 +91,6 @@ export default {
     display: flex;
     align-items: center;
     gap: $unnnic-spacing-stack-nano;
-    font-size: $unnnic-font-size-body-gt;
-    color: $unnnic-color-neutral-dark;
   }
 
   .actions {
