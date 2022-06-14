@@ -38,10 +38,7 @@ export default {
   position: relative;
   height: $height;
   max-height: $height;
-  margin: {
-    top: -$unnnic-spacing-inline-md;
-    bottom: -$unnnic-spacing-inline-sm;
-  }
+  margin-left: $unnnic-spacing-inline-sm;
 
   &__doodles,
   &__background {

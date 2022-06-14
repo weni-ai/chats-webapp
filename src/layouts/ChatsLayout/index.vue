@@ -56,12 +56,6 @@ export default {
   main {
     flex: 1 1;
     height: $max-height;
-    padding: {
-      top: $unnnic-spacing-inset-md;
-      right: 0;
-      bottom: $unnnic-spacing-inset-sm;
-      left: $unnnic-spacing-inset-md;
-    }
   }
 
   .aside {

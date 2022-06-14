@@ -1,92 +1,94 @@
 <template>
   <chats-layout disabled-chat-list>
-    <section v-if="!!chat" class="closed-chat">
-      <chat-header
-        :chat="{ ...chat }"
-        @close="chat = null"
-        closeButtonTooltip="Fechar visualização"
-      />
-      <chat-messages :chat="{ ...chat }" class="messages" />
+    <section class="closed-chats__container">
+      <section v-if="!!chat" class="closed-chat">
+        <chat-header
+          :chat="{ ...chat }"
+          @close="chat = null"
+          closeButtonTooltip="Fechar visualização"
+        />
+        <chat-messages :chat="{ ...chat }" class="messages" />
 
-      <section class="tags__container">
-        <section class="tags">
-          <p class="label">Tags de classificação do chat</p>
-          <section>
-            <tag-group :tags="chat.tags" />
+        <section class="tags__container">
+          <section class="tags">
+            <p class="label">Tags de classificação do chat</p>
+            <section>
+              <tag-group :tags="chat.tags" />
+            </section>
           </section>
         </section>
       </section>
-    </section>
 
-    <section class="closed-chats" v-else>
-      <header class="header">
-        <div class="title">
-          <unnnic-card
-            type="title"
-            title="Histórico"
-            icon="task-list-clock-1"
-            scheme="aux-purple"
-            :has-information-icon="false"
-          />
-        </div>
-      </header>
+      <section class="closed-chats" v-else>
+        <header class="header">
+          <div class="title">
+            <unnnic-card
+              type="title"
+              title="Histórico"
+              icon="task-list-clock-1"
+              scheme="aux-purple"
+              :has-information-icon="false"
+            />
+          </div>
+        </header>
 
-      <section class="filters">
-        <tag-filter v-model="filteredTags" label="Classificar chats por tags e período" />
+        <section class="filters">
+          <tag-filter v-model="filteredTags" label="Classificar chats por tags e período" />
 
-        <unnnic-select
-          v-model="filteredDateRange"
-          size="sm"
-          label="Selecionar período"
-          class="date-range-select"
-        >
-          <option value="">Desde o início</option>
-          <option value="last-7-days">Últimos 7 dias</option>
-          <option value="last-14-days">Últimos 14 dias</option>
-          <option value="last-30-days">Últimos 30 dias</option>
-          <option value="last-12-months">Últimos 12 meses</option>
-          <option value="current-month">Mês Atual</option>
-        </unnnic-select>
+          <unnnic-select
+            v-model="filteredDateRange"
+            size="sm"
+            label="Selecionar período"
+            class="date-range-select"
+          >
+            <option value="">Desde o início</option>
+            <option value="last-7-days">Últimos 7 dias</option>
+            <option value="last-14-days">Últimos 14 dias</option>
+            <option value="last-30-days">Últimos 30 dias</option>
+            <option value="last-12-months">Últimos 12 meses</option>
+            <option value="current-month">Mês Atual</option>
+          </unnnic-select>
 
-        <unnnic-tool-tip enabled text="Limpar filtros" side="right">
-          <unnnic-button-icon icon="button-refresh-arrows-1" size="small" @click="clearFilters" />
-        </unnnic-tool-tip>
+          <unnnic-tool-tip enabled text="Limpar filtros" side="right">
+            <unnnic-button-icon icon="button-refresh-arrows-1" size="small" @click="clearFilters" />
+          </unnnic-tool-tip>
+        </section>
+
+        <unnnic-table :items="filteredClosedChats" class="closed-chats-table">
+          <template #header>
+            <unnnic-table-row :headers="tableHeaders" />
+          </template>
+
+          <template #item="{ item }">
+            <unnnic-table-row :headers="tableHeaders">
+              <template #contactName>
+                <div class="contact-name">
+                  <user-avatar :username="item.username" size="xl" />
+                  {{ item.username }}
+                </div>
+              </template>
+
+              <template #agentName>{{ item.agent }}</template>
+
+              <template #tags>
+                <tag-group :tags="item.tags" />
+              </template>
+
+              <template #date>{{ item.date }}</template>
+
+              <template #visualize>
+                <unnnic-button
+                  text="Abrir conversa"
+                  type="secondary"
+                  size="small"
+                  class="visualize-button"
+                  @click="chat = item"
+                />
+              </template>
+            </unnnic-table-row>
+          </template>
+        </unnnic-table>
       </section>
-
-      <unnnic-table :items="filteredClosedChats" class="closed-chats-table">
-        <template #header>
-          <unnnic-table-row :headers="tableHeaders" />
-        </template>
-
-        <template #item="{ item }">
-          <unnnic-table-row :headers="tableHeaders">
-            <template #contactName>
-              <div class="contact-name">
-                <user-avatar :username="item.username" size="xl" />
-                {{ item.username }}
-              </div>
-            </template>
-
-            <template #agentName>{{ item.agent }}</template>
-
-            <template #tags>
-              <tag-group :tags="item.tags" />
-            </template>
-
-            <template #date>{{ item.date }}</template>
-
-            <template #visualize>
-              <unnnic-button
-                text="Abrir conversa"
-                type="secondary"
-                size="small"
-                class="visualize-button"
-                @click="chat = item"
-              />
-            </template>
-          </unnnic-table-row>
-        </template>
-      </unnnic-table>
     </section>
   </chats-layout>
 </template>
@@ -220,6 +222,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.closed-chats__container {
+  padding: {
+    top: $unnnic-spacing-inset-md;
+    right: 0;
+    bottom: $unnnic-spacing-inset-sm;
+    left: $unnnic-spacing-inset-md;
+  }
+}
+
 .closed-chat {
   display: flex;
   flex-direction: column;

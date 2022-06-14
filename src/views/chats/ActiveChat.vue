@@ -238,6 +238,11 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding: {
+    top: $unnnic-spacing-inset-md;
+    bottom: $unnnic-spacing-inset-sm;
+    left: $unnnic-spacing-inset-md;
+  }
 
   .messages {
     overflow-y: auto;
