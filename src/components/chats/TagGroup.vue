@@ -1,10 +1,11 @@
 <template>
-  <section class="tag-group__container">
+  <section v-if="tags.length > 0" class="tag-group__container">
     <unnnic-tag
       v-for="(tag, i) in tags"
       :key="tag.value"
       :clickable="selectable"
       :text="tag.text"
+      :data-testid="`tag__${tag.value}`"
       :hasCloseIcon="selectable && !!selected.find((t) => t.value === tag.value)"
       @click="select(tag)"
       :scheme="schemes[i % schemes.length]"
