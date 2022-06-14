@@ -60,7 +60,11 @@
       modalIcon="check-circle-1-1"
       scheme="feedback-green"
       :showModal="showSuccessfulTransferModal"
-      @close="$store.commit('chats/setActiveChat', null), (showSuccessfulTransferModal = false)"
+      @close="
+        $store.commit('chats/setActiveChat', null),
+          (showSuccessfulTransferModal = false),
+          $router.replace('/')
+      "
     />
   </section>
 </template>
