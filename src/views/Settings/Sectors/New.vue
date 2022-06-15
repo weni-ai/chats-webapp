@@ -3,16 +3,25 @@
     <div class="scrollable">
       <sector-tabs v-model="tab">
         <template #sector>
-          <form-sector v-model="sector" />
+          <form-sector v-model="sector" @validate="isSectorFormValid = $event" />
         </template>
 
         <template #queues>
-          <form-queue v-model="sector.queues" :sector="sector.name" />
+          <form-queue
+            v-model="sector.queues"
+            :sector="sector.name"
+            @validate="isQueuesFormValid = $event"
+          />
         </template>
 
         <template #agents>
           <section>
-            <form-agent v-model="sector.agents" :queues="sector.queues" :sector="sector.name" />
+            <form-agent
+              v-model="sector.agents"
+              :queues="sector.queues"
+              :sector="sector.name"
+              @validate="isAgentsFormValid = $event"
+            />
           </section>
         </template>
       </sector-tabs>
@@ -24,6 +33,7 @@
         text="Continuar configurações de setor"
         iconRight="arrow-right-1-1"
         type="secondary"
+        :disabled="!isActiveFormValid"
         @click="nextTab"
       />
       <unnnic-button v-else-if="sector.agents.length !== 0" text="Concluir" @click="saveSector" />
@@ -71,12 +81,27 @@ export default {
       queues: [],
       maxSimultaneousChatsByAgent: '',
     },
+    isSectorFormValid: false,
+    isQueuesFormValid: false,
+    isAgentsFormValid: false,
     isOpenSectorConfirmationDialog: false,
     tab: '',
     tabs: ['sector', 'queues', 'agents'],
   }),
 
-  computed: {},
+  computed: {
+    isActiveFormValid() {
+      if (!this.tab) return false;
+
+      const tabs = {
+        sector: this.isSectorFormValid,
+        queues: this.isQueuesFormValid,
+        agents: this.isAgentsFormValid,
+      };
+
+      return tabs[this.tab];
+    },
+  },
 
   methods: {
     nextTab() {
@@ -109,6 +134,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding-bottom: 1rem;
 
   .scrollable {
     overflow-y: auto;
@@ -117,9 +143,9 @@ export default {
   }
 
   .actions {
+    margin-top: auto;
     margin-right: 1.5rem;
     padding-top: 1.5rem;
-    margin-bottom: 1rem;
 
     & > * {
       width: 100%;

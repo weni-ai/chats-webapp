@@ -56,6 +56,9 @@ export default {
   },
 
   methods: {
+    validate() {
+      return this.queues.length > 0;
+    },
     createQueue() {
       const name = this.name.trim();
       if (!name) return;
@@ -68,6 +71,16 @@ export default {
       });
 
       this.name = '';
+    },
+  },
+
+  watch: {
+    queues: {
+      deep: true,
+      immediate: true,
+      handler() {
+        this.$emit('validate', this.validate());
+      },
     },
   },
 };

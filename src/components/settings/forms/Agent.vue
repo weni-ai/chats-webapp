@@ -6,7 +6,7 @@
       <section class="controls">
         <unnnic-autocomplete
           v-model="agent.name"
-          :data="[]"
+          :data="projectAgents"
           @choose="agent.name = $event"
           @keypress.enter="addAgent"
           label="Selecionar agente"
@@ -102,6 +102,13 @@ export default {
       name: '',
       queues: [],
     },
+    projectAgents: [
+      'Mariano Matos',
+      'Carla Meyer',
+      'Katia Saldanha',
+      'Vinícius Brum',
+      'Raine Paula',
+    ],
     queue: '',
     isOpenAgentConfirmationDialog: false,
   }),
@@ -135,7 +142,6 @@ export default {
 
       this.isOpenAgentConfirmationDialog = true;
     },
-    showAgentConfirmationDialog() {},
     addAgentQueue() {
       const queue = this.queues.find((q) => q.name === this.queue);
 
@@ -149,6 +155,19 @@ export default {
       );
 
       this.queue = '';
+    },
+    validate() {
+      return this.agents.length > 0;
+    },
+  },
+
+  watch: {
+    agents: {
+      deep: true,
+      immediate: true,
+      handler() {
+        this.$emit('validate', this.validate());
+      },
     },
   },
 };

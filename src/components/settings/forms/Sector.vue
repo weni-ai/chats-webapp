@@ -10,6 +10,8 @@
       <unnnic-autocomplete
         v-model="sector.manager"
         label="Selecionar gestor"
+        :data="managers"
+        open-with-focus
         placeholder="Pesquise pelo nome"
         iconLeft="search-1"
       />
@@ -54,6 +56,10 @@ export default {
     },
   },
 
+  data: () => ({
+    managers: ['Mariano Matos', 'Carla Meyer', 'Katia Saldanha', 'Vinícius Brum', 'Raine Paula'],
+  }),
+
   computed: {
     isEditing() {
       return !!this.sector?.id;
@@ -64,6 +70,32 @@ export default {
       },
       set(sector) {
         this.$emit('input', sector);
+      },
+    },
+  },
+
+  methods: {
+    validate() {
+      return this.areAllFieldsFilled();
+    },
+    areAllFieldsFilled() {
+      const { name, manager, workingDay, maxSimultaneousChatsByAgent } = this.sector;
+
+      return !!(
+        name.trim() &&
+        manager.trim() &&
+        workingDay?.start &&
+        workingDay?.end &&
+        maxSimultaneousChatsByAgent
+      );
+    },
+  },
+  watch: {
+    sector: {
+      deep: true,
+      immediate: true,
+      handler() {
+        this.$emit('validate', this.validate());
       },
     },
   },
@@ -94,11 +126,6 @@ export default {
         flex: 1 1;
       }
     }
-  }
-
-  .submit-button {
-    width: 100%;
-    margin-top: 1rem;
   }
 }
 </style>
