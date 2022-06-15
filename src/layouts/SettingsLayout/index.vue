@@ -9,9 +9,7 @@
         <unnnic-breadcrumb :crumbs="breadcrumb" @crumbClick="$router.push($event.path)" />
       </section>
 
-      <section class="content">
-        <router-view />
-      </section>
+      <router-view />
     </section>
   </section>
 </template>
@@ -61,43 +59,31 @@ export default {
 .settings-layout {
   display: grid;
   grid-template-columns: 33.33% 1fr;
+  grid-template-rows: 100%;
   grid-template-areas: 'options main';
 
-  $height: calc(100vh - 5.5rem);
-  height: $height;
-  max-height: $height;
+  height: 100%;
 
   padding: {
     top: 1.5rem;
-    right: 0;
     bottom: 1.5rem;
     left: 1.5rem;
   }
 
   .options {
+    grid-area: options;
     height: 100%;
     margin-right: 1rem;
     border-right: solid 1px $unnnic-color-neutral-soft;
   }
 
   #view {
+    grid-area: main;
+
     display: flex;
     flex-direction: column;
-
-    max-height: 100%;
-
-    overflow-y: auto;
-    padding-right: 1rem;
-    margin-right: 0.5rem;
-
-    .breadcrumb {
-      margin-bottom: 0.5rem;
-    }
-
-    .content {
-      flex: 1 1;
-      max-height: 100%;
-    }
+    gap: 0.5rem;
+    height: calc(100% - 0.5rem);
   }
 }
 </style>

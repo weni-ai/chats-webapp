@@ -104,6 +104,7 @@ export default {
 #container {
   min-height: 100vh;
   max-height: 100vh;
+  height: 100vh;
 
   display: grid;
   grid-template-rows: 5.5rem 1fr;
@@ -122,6 +123,8 @@ export default {
   }
 
   .view {
+    height: calc(100vh - 5.5rem);
+    max-height: calc(100vh - 5.5rem);
     grid-area: view;
   }
 }

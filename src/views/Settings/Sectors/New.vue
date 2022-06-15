@@ -1,20 +1,22 @@
 <template>
   <section class="new-sector">
-    <sector-tabs v-model="tab">
-      <template #sector>
-        <form-sector v-model="sector" />
-      </template>
+    <div class="scrollable">
+      <sector-tabs v-model="tab">
+        <template #sector>
+          <form-sector v-model="sector" />
+        </template>
 
-      <template #queues>
-        <form-queue v-model="sector.queues" :sector="sector.name" />
-      </template>
+        <template #queues>
+          <form-queue v-model="sector.queues" :sector="sector.name" />
+        </template>
 
-      <template #agents>
-        <section>
-          <form-agent v-model="sector.agents" :queues="sector.queues" :sector="sector.name" />
-        </section>
-      </template>
-    </sector-tabs>
+        <template #agents>
+          <section>
+            <form-agent v-model="sector.agents" :queues="sector.queues" :sector="sector.name" />
+          </section>
+        </template>
+      </sector-tabs>
+    </div>
 
     <div class="actions">
       <unnnic-button
@@ -104,16 +106,20 @@ export default {
 
 <style lang="scss" scoped>
 .new-sector {
-  height: 100%;
-
   display: flex;
   flex-direction: column;
+  height: 100%;
+
+  .scrollable {
+    overflow-y: auto;
+    padding-right: 1rem;
+    margin-right: 0.5rem;
+  }
 
   .actions {
-    margin-top: auto;
+    margin-right: 1.5rem;
     padding-top: 1.5rem;
-
-    gap: 1rem;
+    margin-bottom: 1rem;
 
     & > * {
       width: 100%;
