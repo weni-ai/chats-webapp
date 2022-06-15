@@ -3,7 +3,7 @@
     <template slot="tab-head-sector">
       <div class="form-tab">
         <span class="name">Setor</span>
-        <unnnic-tool-tip enabled text="Setor é uma área dentro da sua organização" side="right">
+        <unnnic-tool-tip enabled text="Setor é uma área dentro da sua organização" side="top">
           <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
         </unnnic-tool-tip>
       </div>
@@ -15,7 +15,7 @@
         <unnnic-tool-tip
           enabled
           text="Fila é onde o cliente aguarda atendimento de acordo com sua demanda"
-          side="right"
+          side="top"
         >
           <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
         </unnnic-tool-tip>
@@ -25,7 +25,7 @@
     <template slot="tab-head-agents">
       <div class="form-tab">
         <span class="name">Agentes</span>
-        <unnnic-tool-tip enabled text="Agentes atendem os clientes através do Chats" side="right">
+        <unnnic-tool-tip enabled text="Agentes atendem os clientes através do Chats" side="top">
           <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
         </unnnic-tool-tip>
       </div>
@@ -84,7 +84,11 @@ export default {
   .form-tab {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: $unnnic-spacing-stack-xs;
+
+    .name {
+      font-size: $unnnic-font-size-body-lg;
+    }
   }
 }
 </style>
