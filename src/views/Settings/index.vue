@@ -44,8 +44,7 @@
             count: sector.contacts.count,
           },
         ]"
-      >
-      </unnnic-card-project>
+      />
     </section>
   </main>
 </template>
@@ -72,6 +71,10 @@ export default {
 
 <style lang="scss" scoped>
 .settings-chats {
+  overflow-y: scroll;
+  padding-right: 1rem;
+  margin-right: 0.5rem;
+
   header {
     margin-bottom: 1.5rem;
 
