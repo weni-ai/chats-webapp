@@ -23,11 +23,13 @@
       </section>
     </main>
 
-    <unnnic-button text="Salvar alterações" type="secondary" />
+    <unnnic-button text="Salvar alterações" type="secondary" @click="showConfirmationAlert" />
   </section>
 </template>
 
 <script>
+import { unnnicCallAlert } from '@weni/unnnic-system';
+
 export default {
   name: 'ProfilePreferences',
 
@@ -52,6 +54,20 @@ export default {
       },
     ],
   }),
+
+  methods: {
+    showConfirmationAlert() {
+      unnnicCallAlert({
+        props: {
+          title: 'Alterações salvas',
+          icon: 'check-circle-1-1-1',
+          scheme: 'feedback-green',
+          closeText: 'Fechar',
+        },
+        seconds: 15,
+      });
+    },
+  },
 };
 </script>
 
