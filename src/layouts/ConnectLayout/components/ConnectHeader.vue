@@ -20,9 +20,11 @@
       <unnnic-icon icon="alert-circle-1" />
 
       <img
-        class="avatar"
+        class="avatar clickable"
         src="https://avataaars.io/?avatarStyle=Circle&topType=WinterHat2&accessoriesType=Kurt&hatColor=PastelBlue&facialHairType=BeardMajestic&facialHairColor=Blonde&clotheType=GraphicShirt&clotheColor=PastelBlue&graphicType=Diamond&eyeType=Default&eyebrowType=RaisedExcitedNatural&mouthType=Twinkle&skinColor=Pale"
         alt="User avatar"
+        @click="$router.push('/profile')"
+        @keydown.enter="$router.push('/profile')"
       />
     </div>
   </header>

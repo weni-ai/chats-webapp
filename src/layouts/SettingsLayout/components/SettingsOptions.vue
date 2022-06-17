@@ -24,36 +24,12 @@
 export default {
   name: 'SettingsOptions',
 
-  data: () => ({
-    options: [
-      {
-        title: 'Preferências',
-        icon: 'cog-2',
-        description: 'Altere informações do projeto ou visualize informações importantes.',
-        route: '/settings/preferences',
-      },
-      {
-        title: 'Importação',
-        icon: 'download-bottom-1',
-        description: 'Insira um arquivo de importação com fluxos e campanhas no seu projeto atual.',
-        route: '/settings/importation',
-      },
-      {
-        title: 'Exportação',
-        icon: 'upload-bottom-1',
-        description:
-          'Gere um arquivo de exportação dos fluxos ou campanhas criados no seu projeto atual.',
-        route: '/settings/exportation',
-      },
-      {
-        title: 'Chats',
-        icon: 'messages-bubble-1',
-        description: 'Gerencie equipes ou altere configurações do Chats.',
-        route: '/settings/chats',
-        isActive: (currentRoute) => currentRoute.includes('/settings/chats'),
-      },
-    ],
-  }),
+  props: {
+    options: {
+      type: Array,
+      default: () => [],
+    },
+  },
 
   computed: {
     currentRoute() {
