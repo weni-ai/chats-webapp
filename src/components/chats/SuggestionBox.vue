@@ -126,13 +126,14 @@ export default {
       reactiveKey.handler();
     },
     isSuggestionBoxOpen(isOpen) {
-      this.activeShortcutIndex = 0;
+      this.resetActiveShortcutIndex();
       this.$emit(isOpen ? 'open' : 'close');
     },
     search() {
       const suggestionsQuantity = this.filteredSuggestions.length;
-      if (this.activeShortcutIndex >= suggestionsQuantity) {
-        this.activeShortcutIndex = 0;
+
+      if (this.activeShortcutIndex >= suggestionsQuantity || !this.isActiveShortcutIndexDefined()) {
+        this.resetActiveShortcutIndex();
       }
     },
   },
