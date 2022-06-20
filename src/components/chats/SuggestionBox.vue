@@ -2,22 +2,23 @@
   <section v-if="isSuggestionBoxOpen" class="suggestion-box">
     <header class="suggestion-box__header">
       Atalhos disponíveis
-      <span class="suggestion-box__header__shortcut">{{ search }}</span>
+      <span class="suggestion-box__search">{{ search }}</span>
     </header>
 
-    <section class="suggestion-box__shortcuts">
+    <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
+    <section class="suggestion-box__shortcuts" @mousemove="activeShortcutIndex = -1">
       <div
-        class="suggestion-box__shortcuts__shortcut-container"
-        v-for="suggestion in filteredSuggestions"
+        v-for="(suggestion, index) in filteredSuggestions"
         :key="suggestion.shortcut"
         @click="select(suggestion)"
-        data-testid="suggestion"
         @keypress.enter="select(suggestion)"
+        tabindex="-1"
+        class="suggestion-box__shortcut clickable"
+        :class="{ 'is-active': index === activeShortcutIndex }"
+        data-testid="suggestion"
       >
-        <h2 class="suggestion-box__shortcuts__shortcut-container__shortcut">
-          /{{ suggestion.shortcut }}
-        </h2>
-        <p class="suggestion-box__shortcuts__shortcut-container__preview">
+        <h2 class="suggestion-box__shortcut__name">/{{ suggestion.shortcut }}</h2>
+        <p class="suggestion-box__shortcut__preview">
           {{ suggestion.preview }}
         </p>
       </div>
@@ -40,7 +41,15 @@ export default {
       type: String,
       default: '/',
     },
+    keyboardEvent: {
+      type: KeyboardEvent,
+      default: null,
+    },
   },
+
+  data: () => ({
+    activeShortcutIndex: 0,
+  }),
 
   computed: {
     isSuggestionBoxOpen() {
@@ -59,11 +68,72 @@ export default {
         shortcut.toLowerCase().includes(searchWithoutSlash),
       );
     },
+    reactiveKeys() {
+      return [
+        { key: 'ArrowUp', handler: this.onArrowUp },
+        { key: 'ArrowDown', handler: this.onArrowDown },
+        { key: 'Enter', handler: this.onEnter },
+      ];
+    },
   },
 
   methods: {
     select(suggestion) {
       this.$emit('select', suggestion);
+    },
+    onArrowUp() {
+      if (!this.isActiveShortcutIndexDefined()) {
+        this.resetActiveShortcutIndex();
+        return;
+      }
+
+      const suggestionsQuantity = this.filteredSuggestions.length;
+      const shortcutIndex = this.activeShortcutIndex - 1;
+
+      this.activeShortcutIndex = shortcutIndex < 0 ? suggestionsQuantity - 1 : shortcutIndex;
+    },
+    onArrowDown() {
+      if (!this.isActiveShortcutIndexDefined()) {
+        this.resetActiveShortcutIndex();
+        return;
+      }
+
+      const suggestionsQuantity = this.filteredSuggestions.length;
+      const shortcutIndex = this.activeShortcutIndex + 1;
+
+      this.activeShortcutIndex = shortcutIndex < 0 ? 0 : shortcutIndex % suggestionsQuantity;
+    },
+    onEnter() {
+      const activeSuggestion = this.filteredSuggestions[this.activeShortcutIndex];
+      if (!activeSuggestion) return;
+
+      this.select(activeSuggestion);
+    },
+    resetActiveShortcutIndex() {
+      this.activeShortcutIndex = 0;
+    },
+    isActiveShortcutIndexDefined() {
+      return this.activeShortcutIndex !== -1;
+    },
+  },
+
+  watch: {
+    keyboardEvent(event) {
+      const reactiveKey = this.reactiveKeys.find((k) => k.key === event.key);
+      if (!reactiveKey) return;
+
+      event.preventDefault();
+      reactiveKey.handler();
+    },
+    isSuggestionBoxOpen(isOpen) {
+      this.activeShortcutIndex = 0;
+      this.$emit(isOpen ? 'open' : 'close');
+    },
+    search() {
+      const suggestionsQuantity = this.filteredSuggestions.length;
+      if (this.activeShortcutIndex >= suggestionsQuantity) {
+        this.activeShortcutIndex = 0;
+      }
     },
   },
 };
@@ -83,36 +153,34 @@ export default {
     padding: 0 $unnnic-spacing-inset-sm $unnnic-spacing-inset-nano;
     margin-bottom: $unnnic-spacing-inline-xs;
     border-bottom: solid 1px $unnnic-color-neutral-soft;
-
-    &__shortcut {
-      font-weight: $unnnic-font-weight-black;
-      color: $unnnic-color-brand-weni-dark;
-    }
   }
 
-  &__shortcuts {
-    &__shortcut-container {
-      padding: $unnnic-spacing-inset-xs $unnnic-spacing-inset-sm;
+  &__search {
+    font-weight: $unnnic-font-weight-black;
+    color: $unnnic-color-brand-weni-dark;
+  }
 
-      &:hover {
-        cursor: pointer;
-        background: rgba($unnnic-color-aux-baby-yellow, $unnnic-opacity-level-light);
-      }
+  &__shortcut {
+    padding: $unnnic-spacing-inset-xs $unnnic-spacing-inset-sm;
 
-      &__shortcut {
-        font-size: $unnnic-font-size-body-md;
-        font-weight: $unnnic-font-weight-bold;
-        color: $unnnic-color-brand-weni-dark;
-        line-height: 1.25rem;
-      }
+    &:hover,
+    &.is-active {
+      background: rgba($unnnic-color-aux-baby-yellow, $unnnic-opacity-level-light);
+    }
 
-      &__preview {
-        font-size: $unnnic-font-size-body-sm;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        line-height: 1rem;
-      }
+    &__name {
+      font-size: $unnnic-font-size-body-md;
+      font-weight: $unnnic-font-weight-bold;
+      color: $unnnic-color-brand-weni-dark;
+      line-height: 1.25rem;
+    }
+
+    &__preview {
+      font-size: $unnnic-font-size-body-sm;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      line-height: 1rem;
     }
   }
 }

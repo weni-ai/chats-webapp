@@ -5,7 +5,10 @@
         <suggestion-box
           :search="message"
           :suggestions="shortcuts"
-          @select="message = $event.preview"
+          :keyboard-event="keyboardEvent"
+          @open="isSuggestionBoxOpen = true"
+          @close="isSuggestionBoxOpen = false"
+          @select="(message = $event.preview), focusMessageEditor()"
         />
       </div>
     </div>
@@ -14,10 +17,11 @@
       <input
         v-model="message"
         class="editor"
+        ref="messageEditor"
+        @keydown="onKeyDown"
         aria-label="message-editor"
         placeholder="Digite sua mensagem"
         type="text"
-        @keypress.enter="sendMessage"
       />
 
       <div class="actions">
@@ -98,6 +102,8 @@ export default {
 
   data: () => ({
     files: [],
+    keyboardEvent: null,
+    isSuggestionBoxOpen: false,
   }),
 
   computed: {
@@ -122,6 +128,17 @@ export default {
   },
 
   methods: {
+    /**
+     * @param {KeyboardEvent} event
+     */
+    onKeyDown(event) {
+      if (this.isSuggestionBoxOpen) {
+        this.keyboardEvent = event;
+        return;
+      }
+
+      if (event.key === 'Enter') this.sendMessage();
+    },
     sendMessage() {
       this.$emit('send');
 
@@ -129,6 +146,9 @@ export default {
     },
     upload() {
       this.$emit('upload', [...this.files]);
+    },
+    focusMessageEditor() {
+      this.$refs.messageEditor?.focus?.();
     },
   },
 };
