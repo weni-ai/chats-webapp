@@ -131,7 +131,7 @@ export default {
   .messages-section {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: $unnnic-spacing-stack-sm;
     height: 100%;
   }
 
@@ -143,8 +143,9 @@ export default {
 
     max-height: 100%;
     overflow-y: auto;
-    margin-right: -0.5rem;
-    padding-right: 0.5rem;
+    // insert space between content and scrollbar
+    margin-right: -$unnnic-spacing-inline-md;
+    padding-right: $unnnic-spacing-inset-md;
   }
 }
 
