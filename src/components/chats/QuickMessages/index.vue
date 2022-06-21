@@ -139,7 +139,7 @@ export default {
     flex: 1 1;
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-stack-xs;
+    gap: $unnnic-spacing-stack-sm;
 
     max-height: 100%;
     overflow-y: auto;
