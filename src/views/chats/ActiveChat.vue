@@ -50,11 +50,7 @@
     </unnnic-modal>
 
     <template #aside>
-      <component
-        :is="sidebarComponent.name"
-        v-on="sidebarComponent.listeners"
-        v-bind="sidebarComponent.attrs"
-      />
+      <component :is="sidebarComponent.name" v-on="sidebarComponent.listeners" />
     </template>
   </chats-layout>
 </template>
@@ -128,9 +124,6 @@ export default {
             close: () => {
               this.componentInAsideSlot = '';
             },
-          },
-          attrs: {
-            class: 'scrollable',
           },
         },
       };

@@ -5,8 +5,8 @@
     icon="flash-1-3"
     @action="$emit('close')"
   >
-    <aside-slot-template-section class="fill-h">
-      <section class="fill-h message-list">
+    <section class="messages-container">
+      <aside-slot-template-section class="messages-section">
         <div class="messages">
           <quick-message-card
             v-for="quickMessage in quickMessages"
@@ -27,8 +27,8 @@
           class="fill-w"
           @click="quickMessageToEdit = createEmptyQuickMessage()"
         />
-      </section>
-    </aside-slot-template-section>
+      </aside-slot-template-section>
+    </section>
 
     <unnnic-modal
       text="Excluir mensagem rápida"
@@ -125,16 +125,26 @@ export default {
   width: 100%;
 }
 
-.message-list {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: $unnnic-spacing-stack-sm;
+.messages-container {
+  height: 100%;
+
+  .messages-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 100%;
+  }
 
   .messages {
+    flex: 1 1;
     display: flex;
     flex-direction: column;
     gap: $unnnic-spacing-stack-xs;
+
+    max-height: 100%;
+    overflow-y: auto;
+    margin-right: -0.5rem;
+    padding-right: 0.5rem;
   }
 }
 

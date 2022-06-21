@@ -1,7 +1,7 @@
 <template>
   <aside class="aside-slot-template">
-    <header class="header">
-      <span class="title">
+    <header class="aside-slot-template__header">
+      <span class="aside-slot-template__title">
         <span v-if="icon">
           <unnnic-icon-svg :icon="icon" size="ant" scheme="neutral-darkest" />
         </span>
@@ -20,7 +20,7 @@
       </span>
     </header>
 
-    <section class="scrollable">
+    <section class="aside-slot-template__sections">
       <slot />
     </section>
   </aside>
@@ -54,10 +54,9 @@ export default {
 .aside-slot-template {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  max-height: inherit;
+  height: inherit;
 
-  .header {
+  &__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -71,21 +70,21 @@ export default {
       bottom: $unnnic-spacing-inset-sm;
       left: $unnnic-spacing-inset-md;
     }
-
-    .title {
-      display: flex;
-      align-items: center;
-      gap: $unnnic-spacing-stack-nano;
-
-      color: $unnnic-color-neutral-dark;
-      font-size: $unnnic-font-size-body-lg;
-      font-weight: $unnnic-font-weight-bold;
-    }
   }
 
-  .scrollable {
-    height: 100%;
-    overflow-y: auto;
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: $unnnic-spacing-stack-nano;
+
+    color: $unnnic-color-neutral-dark;
+    font-size: $unnnic-font-size-body-lg;
+    font-weight: $unnnic-font-weight-bold;
+  }
+
+  &__sections {
+    flex: 1 1;
+    min-height: 0;
   }
 }
 </style>

@@ -1,6 +1,10 @@
 <template>
-  <section class="contact-info">
-    <aside-slot-template title="Informações do contato" @action="$listeners.close">
+  <aside-slot-template
+    class="contact-info"
+    title="Informações do contato"
+    @action="$listeners.close"
+  >
+    <section class="scrollable">
       <aside-slot-template-section>
         <section class="infos">
           <div class="avatar">
@@ -52,8 +56,7 @@
       <aside-slot-template-section>
         <contact-media />
       </aside-slot-template-section>
-    </aside-slot-template>
-
+    </section>
     <unnnic-modal
       text="Conversa transferida com sucesso!"
       :description="`O contato foi encaminhado para a fila do ${transferContactTo}`"
@@ -66,7 +69,7 @@
           $router.replace('/')
       "
     />
-  </section>
+  </aside-slot-template>
 </template>
 
 <script>
@@ -145,6 +148,11 @@ export default {
 
 <style lang="scss" scoped>
 .contact-info {
+  .scrollable {
+    overflow-y: auto;
+    height: 100%;
+  }
+
   .infos {
     display: flex;
     flex-direction: column;
