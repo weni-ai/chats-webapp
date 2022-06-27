@@ -6,8 +6,11 @@
       :clickable="selectable"
       :text="tag.text"
       :data-testid="`tag__${tag.value}`"
-      :hasCloseIcon="selectable && !!selected.find((t) => t.value === tag.value)"
+      :has-close-icon="
+        hasCloseIcon || (selectable && !!selected.find((t) => t.value === tag.value))
+      "
       @click="select(tag)"
+      @close="close(tag)"
       :scheme="schemes[i % schemes.length]"
     />
   </section>
@@ -16,6 +19,10 @@
 <script>
 export default {
   props: {
+    hasCloseIcon: {
+      type: Boolean,
+      default: false,
+    },
     selectable: {
       type: Boolean,
       default: false,
@@ -63,6 +70,9 @@ export default {
 
       this.selected = tags;
     },
+    close(tag) {
+      this.$emit('close', tag);
+    },
   },
 };
 </script>
@@ -70,6 +80,7 @@ export default {
 <style lang="scss" scoped>
 .tag-group__container {
   display: flex;
+  flex-wrap: wrap;
   gap: $unnnic-spacing-stack-md;
   padding-left: $unnnic-spacing-inset-sm;
   user-select: none;

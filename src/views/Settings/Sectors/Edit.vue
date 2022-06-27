@@ -1,6 +1,6 @@
 <template>
   <section class="edit-sector">
-    <sector-tabs v-if="sector" v-model="tab">
+    <sector-tabs v-if="sector" v-model="tab" class="scrollable">
       <template #sector>
         <form-sector v-model="sector" />
       </template>
@@ -11,6 +11,10 @@
 
       <template #agents>
         <form-agent v-model="agents" :sector="sector.name" :queues="sector.queues" />
+      </template>
+
+      <template #tags>
+        <form-tags v-model="sector.tags" />
       </template>
     </sector-tabs>
 
@@ -39,6 +43,7 @@ import cloneDeep from 'lodash.clonedeep';
 import FormAgent from '@/components/settings/forms/Agent';
 import FormSector from '@/components/settings/forms/Sector';
 import FormQueue from '@/components/settings/forms/Queue';
+import FormTags from '@/components/settings/forms/Tags';
 import SectorTabs from '@/components/settings/SectorTabs';
 
 export default {
@@ -48,6 +53,7 @@ export default {
     FormAgent,
     FormQueue,
     FormSector,
+    FormTags,
     SectorTabs,
   },
 
@@ -80,15 +86,26 @@ export default {
 
 <style lang="scss" scoped>
 .edit-sector {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-bottom: 1rem;
+
+  .scrollable {
+    overflow-y: auto;
+    padding-right: 1rem;
+    margin-right: 0.5rem;
+  }
+
   .actions {
     display: flex;
-    align-items: center;
     gap: 1rem;
-
-    margin-top: 1.5rem;
+    margin-top: auto;
+    margin-right: 1.5rem;
+    padding-top: 1.5rem;
 
     & > * {
-      flex: 1 1;
+      width: 100%;
     }
   }
 }

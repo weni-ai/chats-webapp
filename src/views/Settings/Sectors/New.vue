@@ -24,19 +24,25 @@
             />
           </section>
         </template>
+
+        <template #tags>
+          <section>
+            <form-tags v-model="sector.tags" />
+          </section>
+        </template>
       </sector-tabs>
     </div>
 
     <div class="actions">
       <unnnic-button
-        v-if="tab !== 'agents'"
+        v-if="tab !== 'tags'"
         text="Continuar configurações de setor"
         iconRight="arrow-right-1-1"
         type="secondary"
         :disabled="!isActiveFormValid"
         @click="nextTab"
       />
-      <unnnic-button v-else-if="sector.agents.length !== 0" text="Concluir" @click="saveSector" />
+      <unnnic-button v-else :disabled="!isActiveFormValid" text="Concluir" @click="saveSector" />
     </div>
 
     <unnnic-modal
@@ -57,6 +63,7 @@
 import FormAgent from '@/components/settings/forms/Agent';
 import FormQueue from '@/components/settings/forms/Queue';
 import FormSector from '@/components/settings/forms/Sector';
+import FormTags from '@/components/settings/forms/Tags';
 import SectorTabs from '@/components/settings/SectorTabs';
 
 export default {
@@ -66,6 +73,7 @@ export default {
     FormAgent,
     FormQueue,
     FormSector,
+    FormTags,
     SectorTabs,
   },
 
@@ -79,6 +87,7 @@ export default {
       },
       agents: [],
       queues: [],
+      tags: [],
       maxSimultaneousChatsByAgent: '',
     },
     isSectorFormValid: false,
@@ -97,6 +106,7 @@ export default {
         sector: this.isSectorFormValid,
         queues: this.isQueuesFormValid,
         agents: this.isAgentsFormValid,
+        tags: this.sector.tags.length > 0,
       };
 
       return tabs[this.tab];
@@ -112,7 +122,10 @@ export default {
         queues: () => {
           this.tab = 'agents';
         },
-        agents: this.saveSector,
+        agents: () => {
+          this.tab = 'tags';
+        },
+        tags: this.saveSector,
       };
 
       tabs[this.tab]?.();

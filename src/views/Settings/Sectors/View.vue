@@ -1,6 +1,6 @@
 <template>
   <section v-if="sector" class="view-sector">
-    <sector-tabs v-model="tab">
+    <sector-tabs v-model="tab" class="scrollable">
       <template #sector>
         <section class="sector-tab">
           <h2 class="name">{{ sector.name }}</h2>
@@ -71,6 +71,10 @@
         <section v-else>
           <form-edit-agent v-model="agentToEdit" :queues="sector.queues.map((q) => q.name)" />
         </section>
+      </template>
+
+      <template #tags>
+        <form-tags v-model="sector.tags" />
       </template>
     </sector-tabs>
 
@@ -150,6 +154,7 @@
 <script>
 import FormEditAgent from '@/components/settings/forms/Agent/Edit';
 import FormEditQueue from '@/components/settings/forms/Queue/Edit';
+import FormTags from '@/components/settings/forms/Tags';
 import ListAgents from '@/components/settings/lists/Agents';
 import ListSectorQueues from '@/components/settings/lists/ListSectorQueues';
 import SectorTabs from '@/components/settings/SectorTabs';
@@ -160,6 +165,7 @@ export default {
   components: {
     FormEditAgent,
     FormEditQueue,
+    FormTags,
     ListAgents,
     ListSectorQueues,
     SectorTabs,
@@ -218,6 +224,13 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding-bottom: 1rem;
+
+  .scrollable {
+    overflow-y: auto;
+    padding-right: 1rem;
+    margin-right: 0.5rem;
+  }
 
   .sector-tab {
     .name {
@@ -263,15 +276,16 @@ export default {
       }
     }
   }
+
   .actions {
     display: flex;
-    align-items: center;
-    gap: $unnnic-inset-sm;
-
+    gap: 1rem;
     margin-top: auto;
+    margin-right: 1.5rem;
+    padding-top: 1.5rem;
 
     & > * {
-      flex: 1 1;
+      width: 100%;
     }
   }
 }

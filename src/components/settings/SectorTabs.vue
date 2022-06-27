@@ -31,6 +31,13 @@
       </div>
     </template>
 
+    <template slot="tab-head-tags">
+      <div class="form-tab">
+        <span class="name">Tags</span>
+        <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+      </div>
+    </template>
+
     <template slot="tab-panel-sector">
       <slot name="sector" />
     </template>
@@ -41,6 +48,10 @@
 
     <template slot="tab-panel-agents">
       <slot name="agents" />
+    </template>
+
+    <template slot="tab-panel-tags">
+      <slot name="tags" />
     </template>
   </unnnic-tab>
 </template>
@@ -63,7 +74,7 @@ export default {
   },
 
   data: () => ({
-    tabs: ['sector', 'queues', 'agents'],
+    tabs: ['sector', 'queues', 'agents', 'tags'],
   }),
 
   computed: {

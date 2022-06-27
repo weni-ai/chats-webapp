@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import TagGroup from './TagGroup';
+import TagGroup from '@/components/TagGroup';
 
 export default {
   name: 'ChatClassifier',

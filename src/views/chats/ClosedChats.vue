@@ -100,7 +100,7 @@ import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
 import ChatsLayout from '@/layouts/ChatsLayout';
 import TagFilter from '@/components/chats/TagFilter';
-import TagGroup from '@/components/chats/TagGroup';
+import TagGroup from '@/components/TagGroup';
 import UserAvatar from '@/components/chats/UserAvatar';
 
 export default {
