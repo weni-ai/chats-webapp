@@ -21,7 +21,7 @@
 
     <section v-if="tags.length > 0" class="form-tags__section">
       <p class="form-tags__section__label">Tags adicionadas</p>
-      <tag-group :tags="tags" has-close-icon @close="removeTag($event)" />
+      <tag-group :tags="tags" selectable has-close-icon @close="removeTag($event)" />
     </section>
   </section>
 </template>

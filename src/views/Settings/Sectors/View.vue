@@ -84,7 +84,7 @@
         <unnnic-button text="Editar" @click="navigate(`/settings/chats/sectors/${id}/edit`)" />
       </template>
 
-      <template v-else-if="tab === 'queues'">
+      <template v-if="tab === 'queues'">
         <unnnic-button
           v-if="!queueToEdit"
           text="Adicionar nova fila"
@@ -117,6 +117,16 @@
         <template v-else>
           <unnnic-button text="Voltar" type="secondary" @click="agentToEdit = null" />
           <unnnic-button text="Salvar alterações" @click="agentToEdit = null" />
+        </template>
+      </template>
+
+      <template v-if="tab === 'tags'">
+        <template>
+          <unnnic-button text="Voltar" type="secondary" @click="navigate('/settings/chats')" />
+          <unnnic-button
+            text="Salvar alterações"
+            @click="showConfirmationAlert(), navigate('/settings/chats')"
+          />
         </template>
       </template>
     </section>
@@ -152,6 +162,8 @@
 </template>
 
 <script>
+import { unnnicCallAlert } from '@weni/unnnic-system';
+
 import FormEditAgent from '@/components/settings/forms/Agent/Edit';
 import FormEditQueue from '@/components/settings/forms/Queue/Edit';
 import FormTags from '@/components/settings/forms/Tags';
@@ -214,6 +226,17 @@ export default {
     },
     navigate(route) {
       this.$router.push(route);
+    },
+    showConfirmationAlert() {
+      unnnicCallAlert({
+        props: {
+          title: 'Alterações salvas',
+          icon: 'check-circle-1-1-1',
+          scheme: 'feedback-green',
+          closeText: 'Fechar',
+        },
+        seconds: 5,
+      });
     },
   },
 };
