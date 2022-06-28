@@ -440,28 +440,160 @@ const closedChats = [
     date: '25/03/2022',
     closed: true,
     tags: [tags[1], tags[2]],
-    messages: [
+    rooms: [
       {
         id: '1',
-        username: 'Milton Neves',
-        time: '10h15',
-        content: [
-          { text: 'Oi' },
+        agent: 'Bot',
+        transferredTo: 'fila Financeiro',
+        messages: [
           {
-            text: 'Gostaria de saber se consigo pagar meu boleto depois do vencimento',
+            id: '1',
+            username: 'Milton Neves',
+            time: '10h15',
+            content: [{ text: 'Olá estou precisando de ajuda' }],
           },
-          { text: 'O boleto venceu ontem e eu não queria pagar juros' },
-          { text: 'Como faço?' },
+          {
+            id: '2',
+            username: 'Bot',
+            time: '10h18',
+            content: [{ text: 'Olá Milton, como posso te ajudar?' }],
+          },
+          {
+            id: '3',
+            username: 'Milton Neves',
+            time: '10h20',
+            content: [{ text: 'Preciso da segunda via de um boleto' }],
+          },
+          {
+            id: '4',
+            username: 'Bot',
+            time: '10h20',
+            content: [{ text: 'Vou precisar que você confirme seu CPF' }],
+          },
+          {
+            id: '5',
+            username: 'Bot',
+            time: '10h20',
+            content: [{ text: 'Vou precisar que você confirme seu CPF' }],
+          },
+          {
+            id: '6',
+            username: 'Milton Neves',
+            time: '10h21',
+            content: [{ text: '234.343.348-95' }],
+          },
+          {
+            id: '7',
+            username: 'Bot',
+            time: '10h21',
+            content: [
+              { text: 'Milton, vou te passar para o atendimento humano, peço que aguarde' },
+            ],
+          },
         ],
       },
       {
         id: '2',
-        username: 'Agente',
-        time: '10h20',
-        content: [
-          { text: 'Olá, Milton' },
+        agent: 'Fabricio Correia',
+        closedBy: 'agent',
+        transferredTo: 'fila Suporte',
+        tags: [tags[1], tags[2]],
+        messages: [
           {
-            text: 'Preciso confirmar com o financeiro, você me dá um minuto?',
+            id: '1',
+            username: 'Milton Neves',
+            time: '10h15',
+            content: [{ text: 'Olá estou precisando de ajuda' }],
+          },
+          {
+            id: '2',
+            username: 'Bot',
+            time: '10h18',
+            content: [{ text: 'Olá Milton, como posso te ajudar?' }],
+          },
+          {
+            id: '3',
+            username: 'Milton Neves',
+            time: '10h20',
+            content: [{ text: 'Preciso da segunda via de um boleto' }],
+          },
+          {
+            id: '4',
+            username: 'Bot',
+            time: '10h20',
+            content: [{ text: 'Vou precisar que você confirme seu CPF' }],
+          },
+          {
+            id: '5',
+            username: 'Bot',
+            time: '10h20',
+            content: [{ text: 'Vou precisar que você confirme seu CPF' }],
+          },
+          {
+            id: '6',
+            username: 'Milton Neves',
+            time: '10h21',
+            content: [{ text: '234.343.348-95' }],
+          },
+          {
+            id: '7',
+            username: 'Bot',
+            time: '10h21',
+            content: [
+              { text: 'Milton, vou te passar para o atendimento humano, peço que aguarde' },
+            ],
+          },
+        ],
+      },
+      {
+        id: '3',
+        agent: 'Amanda Santos',
+        closedBy: 'agent',
+        tags: [tags[1], tags[2]],
+        messages: [
+          {
+            id: '1',
+            username: 'Milton Neves',
+            time: '10h15',
+            content: [{ text: 'Olá estou precisando de ajuda' }],
+          },
+          {
+            id: '2',
+            username: 'Bot',
+            time: '10h18',
+            content: [{ text: 'Olá Milton, como posso te ajudar?' }],
+          },
+          {
+            id: '3',
+            username: 'Milton Neves',
+            time: '10h20',
+            content: [{ text: 'Preciso da segunda via de um boleto' }],
+          },
+          {
+            id: '4',
+            username: 'Bot',
+            time: '10h20',
+            content: [{ text: 'Vou precisar que você confirme seu CPF' }],
+          },
+          {
+            id: '5',
+            username: 'Bot',
+            time: '10h20',
+            content: [{ text: 'Vou precisar que você confirme seu CPF' }],
+          },
+          {
+            id: '6',
+            username: 'Milton Neves',
+            time: '10h21',
+            content: [{ text: '234.343.348-95' }],
+          },
+          {
+            id: '7',
+            username: 'Bot',
+            time: '10h21',
+            content: [
+              { text: 'Milton, vou te passar para o atendimento humano, peço que aguarde' },
+            ],
           },
         ],
       },
@@ -470,32 +602,39 @@ const closedChats = [
   {
     id: '2',
     username: 'João Claudio',
-    agent: 'Felipe',
     date: '05/02/2022',
-    closed: true,
     tags: [tags[1]],
-    messages: [
+    agent: 'Felipe',
+    closed: true,
+    rooms: [
       {
-        id: '1',
-        username: 'João Claudio',
-        time: '10h15',
-        content: [
-          { text: 'Oi' },
+        agent: 'Felipe',
+        tags: [tags[1]],
+        closedBy: 'agent',
+        messages: [
           {
-            text: 'Gostaria de saber se consigo pagar meu boleto depois do vencimento',
+            id: '1',
+            username: 'João Claudio',
+            time: '10h15',
+            content: [
+              { text: 'Oi' },
+              {
+                text: 'Gostaria de saber se consigo pagar meu boleto depois do vencimento',
+              },
+              { text: 'O boleto venceu ontem e eu não queria pagar juros' },
+              { text: 'Como faço?' },
+            ],
           },
-          { text: 'O boleto venceu ontem e eu não queria pagar juros' },
-          { text: 'Como faço?' },
-        ],
-      },
-      {
-        id: '2',
-        username: 'Agente',
-        time: '10h20',
-        content: [
-          { text: 'Olá, João' },
           {
-            text: 'Preciso confirmar com o financeiro, você me dá um minuto?',
+            id: '2',
+            username: 'Agente',
+            time: '10h20',
+            content: [
+              { text: 'Olá, João' },
+              {
+                text: 'Preciso confirmar com o financeiro, você me dá um minuto?',
+              },
+            ],
           },
         ],
       },
@@ -508,28 +647,35 @@ const closedChats = [
     date: '02/02/2022',
     closed: true,
     tags: [tags[0]],
-    messages: [
+    rooms: [
       {
-        id: '1',
-        username: 'Dulce Figueira',
-        time: '10h15',
-        content: [
-          { text: 'Oi' },
+        agent: 'Ana',
+        closedBy: 'agent',
+        tags: [tags[0]],
+        messages: [
           {
-            text: 'Gostaria de saber se consigo pagar meu boleto depois do vencimento',
+            id: '1',
+            username: 'Dulce Figueira',
+            time: '10h15',
+            content: [
+              { text: 'Oi' },
+              {
+                text: 'Gostaria de saber se consigo pagar meu boleto depois do vencimento',
+              },
+              { text: 'O boleto venceu ontem e eu não queria pagar juros' },
+              { text: 'Como faço?' },
+            ],
           },
-          { text: 'O boleto venceu ontem e eu não queria pagar juros' },
-          { text: 'Como faço?' },
-        ],
-      },
-      {
-        id: '2',
-        username: 'Agente',
-        time: '10h20',
-        content: [
-          { text: 'Olá, Dulce' },
           {
-            text: 'Preciso confirmar com o financeiro, você me dá um minuto?',
+            id: '2',
+            username: 'Agente',
+            time: '10h20',
+            content: [
+              { text: 'Olá, Dulce' },
+              {
+                text: 'Preciso confirmar com o financeiro, você me dá um minuto?',
+              },
+            ],
           },
         ],
       },
@@ -629,7 +775,20 @@ const module = {
   actions: {
     closeChat({ commit }, chat) {
       commit('removeChat', chat);
-      commit('addClosedChat', chat);
+
+      const formattedChat = {
+        ...chat,
+        rooms: [
+          {
+            agent: chat.agent,
+            messages: chat.messages,
+            tags: chat.tags,
+            closedBy: 'agent',
+          },
+        ],
+      };
+
+      commit('addClosedChat', formattedChat);
     },
     sendMessage({ commit, state }, content) {
       if (!state.activeChat) return;

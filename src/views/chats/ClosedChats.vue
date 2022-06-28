@@ -8,15 +8,6 @@
           closeButtonTooltip="Fechar visualização"
         />
         <chat-messages :chat="{ ...chat }" class="messages" />
-
-        <section class="tags__container">
-          <section class="tags">
-            <p class="label">Tags de classificação do chat</p>
-            <section>
-              <tag-group :tags="chat.tags" />
-            </section>
-          </section>
-        </section>
       </section>
 
       <section class="closed-chats" v-else>
@@ -223,6 +214,7 @@ export default {
 
 <style lang="scss" scoped>
 .closed-chats__container {
+  height: 100%;
   padding: {
     top: $unnnic-spacing-inset-md;
     right: 0;
@@ -240,27 +232,7 @@ export default {
   .messages {
     overflow-y: auto;
     padding-right: $unnnic-spacing-inset-md;
-    margin: $unnnic-spacing-inline-md 0 $unnnic-spacing-inline-sm;
-  }
-
-  .tags__container {
-    border-top: solid 1px $unnnic-color-neutral-clean;
-    margin: {
-      bottom: -$unnnic-spacing-inline-sm;
-      left: -$unnnic-spacing-inline-md;
-      right: -$unnnic-spacing-inline-md;
-    }
-
-    .tags {
-      padding: $unnnic-spacing-inset-md;
-
-      .label {
-        font-size: $unnnic-font-size-body-gt;
-        font-weight: $unnnic-font-weight-bold;
-        color: $unnnic-color-neutral-dark;
-        margin-bottom: $unnnic-spacing-inline-sm;
-      }
-    }
+    margin: $unnnic-spacing-inline-sm 0;
   }
 }
 

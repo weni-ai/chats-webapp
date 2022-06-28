@@ -82,7 +82,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   gap: $unnnic-spacing-stack-md;
-  padding-left: $unnnic-spacing-inset-sm;
+  padding-left: $unnnic-spacing-inset-xs;
   user-select: none;
 }
 </style>

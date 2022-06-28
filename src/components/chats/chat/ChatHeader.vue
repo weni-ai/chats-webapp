@@ -24,8 +24,7 @@
     </header>
 
     <section class="chat-closed-message" v-if="chat.closed">
-      <span class="message">Chat encerrado em {{ chat.date || getTodayDate() }}</span>
-      <unnnic-icon-svg icon="alert-circle-1-1" size="sm" scheme="neutral-darkest" />
+      <span class="message">{{ getFullDate(chat.date) }}</span>
     </section>
   </div>
 </template>
@@ -52,10 +51,18 @@ export default {
   },
 
   methods: {
-    getTodayDate() {
+    getFullDate(date) {
+      let parsedDate;
+      if (date) {
+        const [day, month, year] = date.split('/');
+        parsedDate = new Date(`${month}/${day}/${year}`);
+      } else {
+        parsedDate = new Date();
+      }
+
       return new Intl.DateTimeFormat('pt-BR', {
-        dateStyle: 'short',
-      }).format(new Date());
+        dateStyle: 'long',
+      }).format(parsedDate);
     },
     showContactInfo() {
       if (this.chat.username === 'Agente') return;
@@ -93,18 +100,16 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: $unnnic-color-feedback-grey;
   height: 2rem;
+  background: $unnnic-color-neutral-light;
 
   margin-top: $unnnic-spacing-inline-sm;
 
   .message {
-    margin-right: $unnnic-spacing-inline-xs;
-
     color: $unnnic-color-neutral-dark;
     font-size: $unnnic-font-size-body-gt;
     font-weight: $unnnic-font-weight-regular;
-    line-height: 1.375rem;
+    line-height: 22px;
   }
 }
 </style>

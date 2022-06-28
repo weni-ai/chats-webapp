@@ -1,68 +1,41 @@
 <template>
   <section class="chat-messages">
-    <div class="chat-begin">Início da conversa</div>
+    <section v-for="room in rooms" :key="room.id" class="chat-messages__room">
+      <div v-if="room.agent" class="chat-messages__room__divisor">
+        <div class="chat-messages__room__divisor__line" />
+        <span class="chat-messages__room__divisor__label"> Chat com {{ room.agent }} </span>
+        <div class="chat-messages__room__divisor__line" />
+      </div>
 
-    <div class="divisor">
-      <div class="line" />
-      <span class="date"> 20 de dezembro </span>
-      <div class="line" />
-    </div>
-
-    <div v-for="message in chat.messages" :key="message.id" class="message-group">
-      <span>
-        <user-avatar
-          :username="message.username"
-          :clickable="message.username !== 'Agente'"
-          @click="showContactInfo(message.username)"
+      <section class="chat-messages__messages">
+        <chat-message
+          v-for="message in room.messages"
+          :key="message.id"
+          :message="message"
           :disabled="chat.closed"
         />
-      </span>
+      </section>
 
-      <div class="messages">
-        <div class="info">
-          <span
-            class="username"
-            :class="{ clickable: message.username !== 'Agente' }"
-            @click="showContactInfo(message.username)"
-            @keypress.enter="showContactInfo(message.username)"
-          >
-            {{ message.username }}
-          </span>
-          <span class="time">{{ message.time }}</span>
-        </div>
-
-        <div
-          v-for="content in message.content"
-          :key="content.text || content.filename"
-          class="message"
-        >
-          <media-message v-if="content.isMedia" :media="content" />
-
-          <p v-else :class="{ 'unsent-message': content.sent === false, disabled: chat.closed }">
-            {{ content.text }}
-            <unnnic-tool-tip
-              v-if="content.sent === false"
-              enabled
-              text="Clique para reenviar"
-              side="right"
-            >
-              <span
-                @click="messageToResend = content"
-                @keypress.enter="messageToResend = content"
-                class="resend-button"
-              >
-                <unnnic-icon-svg
-                  icon="synchronize-arrow-clock-5"
-                  scheme="feedback-red"
-                  size="sm"
-                  clickable
-                />
-              </span>
-            </unnnic-tool-tip>
-          </p>
+      <div v-if="room.closedBy === 'agent'">
+        <div class="chat-messages__room__divisor">
+          <div class="chat-messages__room__divisor__line" />
+          <span class="chat-messages__room__divisor__label"> Chat encerrado pelo agente </span>
+          <div class="chat-messages__room__divisor__line" />
         </div>
       </div>
-    </div>
+
+      <div v-if="room.tags">
+        <section class="chat-messages__tags">
+          <p class="chat-messages__tags__label">Tags do chat</p>
+          <tag-group :tags="room.tags" />
+        </section>
+      </div>
+
+      <div v-if="room.transferredTo" class="chat-messages__room__transfer-info">
+        <unnnic-icon icon="logout-1-1" size="sm" scheme="neutral-cleanest" />
+        Contato transferido para {{ room.transferredTo }}
+      </div>
+    </section>
 
     <unnnic-modal
       :showModal="!!messageToResend"
@@ -83,15 +56,15 @@
 </template>
 
 <script>
-import UserAvatar from '@/components/chats/UserAvatar';
-import MediaMessage from '@/components/chats/MediaMessage';
+import TagGroup from '@/components/TagGroup';
+import ChatMessage from './ChatMessage';
 
 export default {
   name: 'ChatMessages',
 
   components: {
-    MediaMessage,
-    UserAvatar,
+    ChatMessage,
+    TagGroup,
   },
 
   props: {
@@ -105,6 +78,13 @@ export default {
     messageToResend: null,
   }),
 
+  computed: {
+    rooms() {
+      const { rooms, messages } = this.chat;
+      return rooms?.length > 0 ? rooms : [{ messages }];
+    },
+  },
+
   methods: {
     showContactInfo(username) {
       if (username === 'Agente') return;
@@ -117,85 +97,48 @@ export default {
 
 <style lang="scss" scoped>
 .chat-messages {
-  .chat-begin {
-    text-align: center;
-    color: $unnnic-color-neutral-dark;
-    line-height: 1.375rem;
-    font-weight: $unnnic-font-weight-regular;
-    font-size: $unnnic-font-size-body-gt;
+  &__room {
+    & + & {
+      margin-top: $unnnic-spacing-inline-md;
+    }
+
+    &__divisor {
+      display: flex;
+      align-items: center;
+      gap: $unnnic-spacing-stack-xl;
+      margin-bottom: $unnnic-inline-md;
+
+      &__label {
+        font-size: $unnnic-font-size-body-md;
+        line-height: 1.25rem;
+        color: $unnnic-color-neutral-cloudy;
+      }
+
+      &__line {
+        flex: 1;
+        height: 1px;
+        background: $unnnic-color-neutral-soft;
+      }
+    }
+
+    &__transfer-info {
+      text-align: center;
+      font-size: $unnnic-font-size-body-md;
+      line-height: 1.25rem;
+      color: $unnnic-color-neutral-cleanest;
+    }
   }
 
-  .divisor {
-    display: flex;
-    align-items: center;
-    gap: $unnnic-spacing-stack-md;
-    margin: $unnnic-inline-xs 0 $unnnic-inline-sm;
+  &__messages {
+    margin-bottom: $unnnic-spacing-inline-md;
+  }
 
-    .date {
-      font-weight: $unnnic-font-weight-bold;
-      font-size: $unnnic-font-size-body-sm;
-      line-height: 1rem;
+  &__tags {
+    margin-bottom: $unnnic-spacing-inline-md;
+    &__label {
+      font-size: $unnnic-font-size-body-gt;
       color: $unnnic-color-neutral-dark;
-    }
-
-    .line {
-      flex: 1;
-      height: 0.125rem;
-      background: $unnnic-color-neutral-lightest;
-    }
-  }
-
-  .message-group {
-    display: flex;
-    gap: $unnnic-spacing-stack-sm;
-
-    & + .message-group {
-      padding-top: $unnnic-spacing-inset-md;
-    }
-
-    .messages {
-      .info {
-        display: flex;
-        align-items: center;
-        gap: $unnnic-spacing-stack-xs;
-        margin-bottom: $unnnic-spacing-inline-xs;
-
-        .username {
-          font-weight: $unnnic-font-weight-regular;
-          line-height: 1.5rem;
-          color: $unnnic-color-neutral-dark;
-        }
-
-        .time {
-          font-size: $unnnic-font-size-body-gt;
-          color: $unnnic-color-brand-sec;
-        }
-      }
-
-      .message {
-        & + .message {
-          padding-top: $unnnic-spacing-inset-nano;
-        }
-
-        & .unsent-message {
-          color: $unnnic-color-neutral-clean;
-
-          & .resend-button {
-            display: inline-flex;
-            align-items: center;
-            margin-left: $unnnic-spacing-inline-xs;
-          }
-        }
-
-        & .disabled {
-          color: $unnnic-color-neutral-clean;
-        }
-
-        & p {
-          font-size: $unnnic-font-size-body-gt;
-          color: $unnnic-color-neutral-dark;
-        }
-      }
+      margin-bottom: $unnnic-spacing-inline-sm;
     }
   }
 }
