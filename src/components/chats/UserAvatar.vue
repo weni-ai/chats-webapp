@@ -17,6 +17,12 @@
       size="sm"
       :scheme="disabled ? 'neutral-snow' : ''"
     />
+    <unnnic-icon-svg
+      v-else-if="username === 'Bot'"
+      icon="science-fiction-robot-2"
+      size="sm"
+      :scheme="disabled ? 'neutral-snow' : ''"
+    />
     <span v-else>
       {{ getUsernameFirstCharacter }}
     </span>
