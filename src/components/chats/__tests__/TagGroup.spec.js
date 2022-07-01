@@ -1,7 +1,7 @@
 import { unnnicTag } from '@weni/unnnic-system';
 
 import { mount } from '@vue/test-utils';
-import TagGroup from '../TagGroup';
+import TagGroup from '@/components/TagGroup';
 
 function createWrapper(props) {
   const wrapper = mount(TagGroup, {
