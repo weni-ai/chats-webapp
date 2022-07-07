@@ -43,7 +43,13 @@
         size="small"
         @click="$emit('cancel')"
       />
-      <unnnic-button class="button" text="Salvar" size="small" @click="submit" />
+      <unnnic-button
+        class="button"
+        text="Salvar"
+        size="small"
+        @click="submit"
+        :disabled="isSaveButtonDisabled"
+      />
     </div>
   </section>
 </template>
@@ -60,6 +66,18 @@ export default {
   },
 
   computed: {
+    isSaveButtonDisabled() {
+      return !this.hasMessageTitle || !this.hasMessageShortcut || !this.hasMessageContent;
+    },
+    hasMessageContent() {
+      return this.quickMessage.message.trim();
+    },
+    hasMessageShortcut() {
+      return this.quickMessage.shortcut.trim();
+    },
+    hasMessageTitle() {
+      return this.quickMessage.title.trim();
+    },
     quickMessage: {
       get() {
         return this.value || {};
