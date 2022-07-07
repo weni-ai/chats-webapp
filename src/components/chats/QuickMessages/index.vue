@@ -66,6 +66,7 @@
 </template>
 
 <script>
+import { unnnicCallAlert } from '@weni/unnnic-system';
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
 import QuickMessageCard from './QuickMessageCard';
@@ -102,6 +103,16 @@ export default {
     addQuickMessage(quickMessage) {
       if (!quickMessage.id) this.$store.commit('chats/quickMessages/addMessage', quickMessage);
       else this.$store.commit('chats/quickMessages/updateMessage', quickMessage);
+
+      unnnicCallAlert({
+        props: {
+          title: 'Mensagem rápida adicionada',
+          icon: 'check-circle-1-1-1',
+          scheme: 'feedback-green',
+          closeText: 'Fechar',
+        },
+        seconds: 5,
+      });
 
       this.quickMessageToEdit = null;
     },

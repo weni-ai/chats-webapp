@@ -20,7 +20,7 @@
         ref="messageEditor"
         @keydown="onKeyDown"
         aria-label="message-editor"
-        placeholder="Digite sua mensagem"
+        placeholder="Digite uma mensagem ou use um /atalho"
         type="text"
       />
 

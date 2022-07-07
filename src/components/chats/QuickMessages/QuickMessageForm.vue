@@ -19,7 +19,7 @@
           Atalho
           <unnnic-tool-tip
             enabled
-            text="Defina uma palavra chave para usar como atalho"
+            text="Defina uma palavra-chave e facilite o uso de /atalhos"
             side="right"
           >
             <unnnic-icon-svg scheme="neutral-clean" icon="information-circle-4" size="sm" />
@@ -70,13 +70,13 @@ export default {
       return !this.hasMessageTitle || !this.hasMessageShortcut || !this.hasMessageContent;
     },
     hasMessageContent() {
-      return this.quickMessage.message.trim();
+      return this.quickMessage.message?.trim?.();
     },
     hasMessageShortcut() {
-      return this.quickMessage.shortcut.trim();
+      return this.quickMessage.shortcut?.trim?.();
     },
     hasMessageTitle() {
-      return this.quickMessage.title.trim();
+      return this.quickMessage.title?.trim?.();
     },
     quickMessage: {
       get() {
