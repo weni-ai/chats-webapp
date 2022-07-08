@@ -69,6 +69,7 @@ export default {
       {
         title: 'Tempo de interação',
         icon: 'messages-bubble-1',
+        tooltip: 'É o tempo médio de duração de um chat',
         scheme: 'aux-lemon',
         type: 'time',
         value: {
@@ -137,6 +138,7 @@ export default {
         },
         {
           title: 'Tempo de interação',
+          tooltip: 'É o tempo médio de duração de um chat',
           icon: 'messages-bubble-1',
           scheme: 'aux-lemon',
           count: this.timeToString(this.getRandomTime(2, 3)),

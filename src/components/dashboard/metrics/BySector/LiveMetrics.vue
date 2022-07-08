@@ -44,6 +44,7 @@ export default {
         title: 'Chats ativos',
         icon: 'indicator',
         scheme: 'aux-blue',
+        tooltip: 'Quantidade de chats em andamento',
         value: 5,
         percent: -5,
         invertedPercentage: true,
@@ -76,6 +77,7 @@ export default {
       },
       {
         title: 'Tempo de interação',
+        tooltip: 'É o tempo médio de duração de um chat',
         icon: 'messages-bubble-1',
         scheme: 'aux-lemon',
         type: 'time',
@@ -178,6 +180,7 @@ export default {
         },
         {
           title: 'Tempo de interação',
+          tooltip: 'É o tempo médio de duração de um chat',
           icon: 'messages-bubble-1',
           scheme: 'aux-lemon',
           count: this.timeToString(this.getRandomTime(2, 3)),
