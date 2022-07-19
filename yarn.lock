@@ -5576,6 +5576,11 @@ log-update@^2.1.0:
     cli-cursor "^2.0.0"
     wrap-ansi "^3.0.1"
 
+logrocket@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/logrocket/-/logrocket-3.0.1.tgz#c746e8df3d5fee999b152975e51db1908357a6f0"
+  integrity sha512-jOWG+jEzobKVxGytzZ+4KGm2kiMQMRTHab2uDWQyVZcHfEF38BlCH1yjQVY4LCmuQUwZitP9biMzJZnyUQ0dtQ==
+
 lower-case@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/lower-case/-/lower-case-2.0.2.tgz#6fa237c63dbdc4a82ca0fd882e4722dc5e634e28"
