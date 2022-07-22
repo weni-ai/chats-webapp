@@ -18,10 +18,12 @@
         <message-editor
           v-if="!activeChat.closed"
           v-model="editorMessage"
+          :audio.sync="audioMessage"
           @show-quick-messages="
             componentInAsideSlot = componentInAsideSlot === 'quickMessages' ? '' : 'quickMessages'
           "
-          @send="sendMessage"
+          @send-message="sendMessage"
+          @send-audio="sendAudio"
           @upload="sendFileMessage($event)"
         />
       </div>
@@ -92,6 +94,7 @@ export default {
   },
 
   data: () => ({
+    audioMessage: null,
     componentInAsideSlot: '',
     editorMessage: '',
     isCloseChatModalOpen: false,
@@ -172,6 +175,24 @@ export default {
       await this.$store.dispatch('chats/sendMessage', message);
 
       this.scrollMessagesToBottom();
+      this.editorMessage = '';
+    },
+    async sendAudio() {
+      if (!this.audioMessage) return;
+
+      // const { src, currentTime, duration } = this.audioMessage;
+
+      const message = {
+        isAudio: true,
+        audio: this.audioMessage,
+      };
+
+      console.log(message);
+
+      await this.$store.dispatch('chats/sendMessage', message);
+
+      this.scrollMessagesToBottom();
+      this.audioMessage = null;
     },
     fileToBase64(file) {
       return new Promise((resolve, reject) => {

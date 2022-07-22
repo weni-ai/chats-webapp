@@ -69,7 +69,8 @@ export default {
     flex-direction: column;
     gap: $unnnic-spacing-stack-md;
 
-    padding-right: $unnnic-spacing-inset-xs;
+    padding-right: $unnnic-spacing-inset-sm;
+    border-right: solid 1px $unnnic-color-neutral-soft;
     overflow-y: auto;
   }
 }
