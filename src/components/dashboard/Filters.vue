@@ -23,15 +23,7 @@
       </option>
     </unnnic-select>
 
-    <unnnic-select
-      v-if="dates.length !== 0"
-      v-model="filters.date"
-      placeholder="Agora"
-      label="Filtrar por data"
-      size="sm"
-    >
-      <option v-for="date in dates" :key="date.value" :value="date.value">{{ date.text }}</option>
-    </unnnic-select>
+    <unnnic-input-date-picker v-model="filters.date" size="sm" input-format="DD/MM/YYYY" />
 
     <unnnic-tool-tip enabled text="Limpar filtro" side="right">
       <unnnic-button-icon
@@ -57,10 +49,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    dates: {
-      type: Array,
-      default: () => [],
-    },
   },
 
   created() {
@@ -72,7 +60,10 @@ export default {
     filters: {
       tag: '',
       visualization: '',
-      date: '',
+      date: {
+        start: '',
+        end: '',
+      },
     },
   }),
 
@@ -81,7 +72,10 @@ export default {
       const emptyFilters = {
         tag: '',
         visualization: '',
-        date: '',
+        date: {
+          start: '',
+          end: '',
+        },
       };
       this.filters = emptyFilters;
       this.visualizationSearch = this.visualizations[0]?.text;

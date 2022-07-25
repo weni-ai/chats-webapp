@@ -3,7 +3,7 @@
     <template #header> {{ header }} </template>
 
     <template #actions>
-      <dashboard-filters @filter="filters = $event" v-bind="{ tags, visualizations, dates }" />
+      <dashboard-filters @filter="filters = $event" v-bind="{ tags, visualizations }" />
     </template>
 
     <template v-if="isLiveView">
@@ -50,7 +50,10 @@ export default {
         value: 'general',
         category: '',
       },
-      date: '',
+      date: {
+        start: '',
+        end: '',
+      },
     },
     tags: [
       { text: 'Dúvidas', value: 'doubts' },
@@ -65,20 +68,11 @@ export default {
       { type: 'category', text: 'Agentes' },
       { text: 'Juliano', value: 'juliano', type: 'option', category: 'agent' },
     ],
-    dates: [
-      { value: '', text: 'Agora' },
-      { value: 'last-7-days', text: 'Últimos 7 dias' },
-      { value: 'last-14-days', text: 'Últimos 14 dias' },
-      { value: 'last-30-days', text: 'Últimos 30 dias' },
-      { value: 'last-12-months', text: 'Últimos 12 meses' },
-      { value: 'current-month', text: 'Mês Atual' },
-      { value: 'all', text: 'Desde o início' },
-    ],
   }),
 
   computed: {
     isLiveView() {
-      return !this.filters.date;
+      return !this.filters.date.start && !this.filters.date.end;
     },
     visualization() {
       const { visualization } = this.filters;

@@ -26,19 +26,11 @@
         <section class="filters">
           <tag-filter v-model="filteredTags" label="Classificar chats por tags e período" />
 
-          <unnnic-select
+          <unnnic-input-date-picker
             v-model="filteredDateRange"
             size="sm"
-            label="Selecionar período"
-            class="date-range-select"
-          >
-            <option value="">Desde o início</option>
-            <option value="last-7-days">Últimos 7 dias</option>
-            <option value="last-14-days">Últimos 14 dias</option>
-            <option value="last-30-days">Últimos 30 dias</option>
-            <option value="last-12-months">Últimos 12 meses</option>
-            <option value="current-month">Mês Atual</option>
-          </unnnic-select>
+            input-format="DD/MM/YYYY"
+          />
 
           <unnnic-tool-tip enabled text="Limpar filtros" side="right">
             <unnnic-button-icon icon="button-refresh-arrows-1" size="small" @click="clearFilters" />
@@ -119,7 +111,10 @@ export default {
 
   data: () => ({
     chat: null,
-    filteredDateRange: '',
+    filteredDateRange: {
+      start: '',
+      end: '',
+    },
     filteredTags: [],
     tableHeaders: [
       {
@@ -184,29 +179,17 @@ export default {
     },
 
     isChatDateInFilteredRange(chat) {
-      if (!this.filteredDateRange) return true;
+      const { start, end } = this.filteredDateRange;
+      if (!start && !end) return true;
 
-      const chatDate = this.stringToDate(chat.date);
+      const chatDate = this.stringToDate(chat.date).toISOString();
 
-      const today = new Date();
-      const day = today.getDate();
-      const month = today.getMonth();
-      const year = today.getFullYear();
-
-      const dateRanges = {
-        'last-7-days': () => new Date(year, month, day - 7) <= chatDate,
-        'last-14-days': () => new Date(year, month, day - 14) <= chatDate,
-        'last-30-days': () => new Date(year, month, day - 30) <= chatDate,
-        'last-12-months': () => new Date(year, month - 12, day) <= chatDate,
-        'current-month': () => month === chatDate.getMonth(),
-      };
-
-      return dateRanges[this.filteredDateRange]();
+      return start <= chatDate && chatDate <= end;
     },
 
     clearFilters() {
       this.filteredTags = [];
-      this.filteredDateRange = '';
+      this.filteredDateRange = { start: '', end: '' };
     },
   },
 };
