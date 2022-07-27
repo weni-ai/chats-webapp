@@ -512,8 +512,31 @@ const channels = ['WhatsApp', 'Telegram', 'Instagram'];
 chats = chats.map((group) => ({
   ...group,
   chats: group.chats.map((chat) => {
-    const lastView = Math.round(Math.random() * 9 + 1);
-    const lastContactDate = `${new Date().getDate().toString().padStart(2, 0)}/05/2022`;
+    const oneMinuteInMs = 60 * 1000;
+    const oneHourInMs = 60 * oneMinuteInMs;
+    const oneDayInMs = 24 * oneHourInMs;
+
+    const today = new Date();
+    const yesterday = new Date(today.getTime() - oneDayInMs);
+
+    const getRandomDate = () => {
+      const fewMinutesAgo = Math.floor(Math.random() * (59 - 1) + 1);
+      const fewHoursAgo = Math.floor(Math.random() * (23 - 1) + 1);
+
+      const date =
+        today.getTime() -
+        (Math.random() > 0.5 ? fewHoursAgo * oneHourInMs : fewMinutesAgo * oneMinuteInMs);
+      return new Date(date);
+    };
+
+    const wasLastViewYesterday = Math.random() > 0.5;
+
+    const randomDates = [getRandomDate(), getRandomDate()];
+    randomDates.sort((a, b) => b - a);
+
+    const lastView = wasLastViewYesterday ? yesterday : randomDates[0];
+    const lastContactDate = wasLastViewYesterday ? yesterday : randomDates[1];
+
     const channel = channels[Math.round(Math.random() * (channels.length - 1))];
 
     return {
