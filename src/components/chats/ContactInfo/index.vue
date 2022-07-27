@@ -16,14 +16,14 @@
           </p>
 
           <div class="connection-info">
-            <p>Online há {{ chat.lastView }} minutos</p>
+            <p>{{ getLastViewText(chat.lastView) }}</p>
             <p>
               <span class="title"> {{ chat.channel }} </span>
               +55 47 98777 4756
             </p>
             <p>
               <span class="title"> Último contato </span>
-              {{ chat.lastContactDate }}
+              {{ getLastContactText(chat.lastContactDate) }}
             </p>
           </div>
         </section>
@@ -135,6 +135,46 @@ export default {
   },
 
   methods: {
+    getLastViewText(lastViewDate) {
+      const today = new Date();
+      const dateDifferenceInHours = this.getDatesDifferenceInHours(today, lastViewDate);
+
+      if (dateDifferenceInHours >= 24) {
+        const formattedDate = Intl.DateTimeFormat('pt-BR', {
+          dateStyle: 'short',
+        }).format(lastViewDate);
+
+        return `Online em ${formattedDate}`;
+      }
+
+      const dateDifferenceInMinutes = dateDifferenceInHours * 60;
+      return dateDifferenceInMinutes > 60
+        ? `Online há ${Number.parseInt(dateDifferenceInHours, 10)} horas`
+        : `Online há ${Number.parseInt(dateDifferenceInMinutes, 10)} minutos`;
+    },
+    getDatesDifferenceInHours(a, b) {
+      const differenceInMs = Math.abs(a - b);
+      const oneHoursInMs = 60 * 60 * 1000;
+      const differenceInHours = differenceInMs / oneHoursInMs;
+      return differenceInHours;
+    },
+    getLastContactText(lastContactDate) {
+      const today = new Date();
+      const dateDifferenceInHours = this.getDatesDifferenceInHours(today, lastContactDate);
+
+      if (dateDifferenceInHours >= 24) {
+        const formattedDate = Intl.DateTimeFormat('pt-BR', {
+          dateStyle: 'short',
+        }).format(lastContactDate);
+
+        return `em ${formattedDate}`;
+      }
+
+      const dateDifferenceInMinutes = dateDifferenceInHours * 60;
+      return dateDifferenceInMinutes > 60
+        ? `há ${Number.parseInt(dateDifferenceInHours, 10)} horas`
+        : `há ${Number.parseInt(dateDifferenceInMinutes, 10)} minutos`;
+    },
     lowercase(value) {
       return value.toString().toLowerCase();
     },
