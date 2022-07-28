@@ -22,7 +22,7 @@ import { mapState, mapGetters } from 'vuex';
 import RoomGroup from './RoomGroup';
 
 export default {
-  name: 'TheChatList',
+  name: 'TheRoomList',
 
   components: {
     RoomGroup,

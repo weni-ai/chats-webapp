@@ -6,20 +6,20 @@
 
     <ul class="chats" :class="{ filled }">
       <li v-for="room in rooms" :key="room.id">
-        <user-chat :room="room" @click="open(room)" :filled="filled" :disabled="disabled" />
+        <contact-room :room="room" @click="open(room)" :filled="filled" :disabled="disabled" />
       </li>
     </ul>
   </div>
 </template>
 
 <script>
-import UserChat from './UserChat';
+import ContactRoom from './ContactRoom';
 
 export default {
   name: 'RoomGroup',
 
   components: {
-    UserChat,
+    ContactRoom,
   },
 
   props: {

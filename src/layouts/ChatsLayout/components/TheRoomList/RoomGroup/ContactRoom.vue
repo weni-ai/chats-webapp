@@ -38,7 +38,7 @@ import UserAvatar from '@/components/chats/UserAvatar';
 const ONE_MINUTE_IN_MILLISECONDS = 60000;
 
 export default {
-  name: 'UserChat',
+  name: 'ContactRoom',
 
   components: {
     UserAvatar,
