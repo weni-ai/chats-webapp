@@ -1,12 +1,12 @@
 <template>
   <div class="chat-group" :class="{ disabled }">
     <header>
-      <h2>{{ chatGroup.name }}</h2>
+      <h2>{{ label }}</h2>
     </header>
 
     <ul class="chats" :class="{ filled }">
-      <li v-for="chat in chatGroup.chats" :key="chat.id">
-        <user-chat :chat="chat" @click="open(chat)" :filled="filled" :disabled="disabled" />
+      <li v-for="room in rooms" :key="room.id">
+        <user-chat :room="room" @click="open(room)" :filled="filled" :disabled="disabled" />
       </li>
     </ul>
   </div>
@@ -16,15 +16,15 @@
 import UserChat from './UserChat';
 
 export default {
-  name: 'ChatGroup',
+  name: 'RoomGroup',
 
   components: {
     UserChat,
   },
 
   props: {
-    chatGroup: {
-      type: Object,
+    rooms: {
+      type: Array,
       required: true,
     },
     disabled: {
@@ -34,6 +34,10 @@ export default {
     filled: {
       type: Boolean,
       default: false,
+    },
+    label: {
+      type: String,
+      default: '',
     },
   },
 

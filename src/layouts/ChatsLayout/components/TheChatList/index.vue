@@ -1,13 +1,8 @@
 <template>
   <div class="container">
     <section class="chat-groups">
-      <chat-group
-        v-for="chatGroup in chatGroups"
-        :key="chatGroup.name"
-        :chat-group="chatGroup"
-        :filled="chatGroup.name === 'Fila'"
-        :disabled="disabled"
-      />
+      <room-group label="Fila" :rooms="queue" filled />
+      <room-group label="Chats Abertos" :rooms="rooms" />
     </section>
 
     <unnnic-button
@@ -22,15 +17,15 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 
-import ChatGroup from './ChatGroup';
+import RoomGroup from './RoomGroup';
 
 export default {
   name: 'TheChatList',
 
   components: {
-    ChatGroup,
+    RoomGroup,
   },
 
   props: {
@@ -40,13 +35,21 @@ export default {
     },
   },
 
-  data: () => ({
-    tag: '',
-  }),
+  async mounted() {
+    try {
+      await this.$store.dispatch('rooms/getAll');
+    } catch {
+      console.error('Não foi possível listar as salas');
+    }
+  },
 
   computed: {
     ...mapState({
       chatGroups: (state) => state.chats.chats,
+    }),
+    ...mapGetters({
+      rooms: 'rooms/agentRooms',
+      queue: 'rooms/waitingQueue',
     }),
     isActiveChatView() {
       return ['home', 'chat'].includes(this.$route.name);
