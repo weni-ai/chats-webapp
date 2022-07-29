@@ -159,6 +159,87 @@ const rooms = [
       name: 'Financeiro',
     },
   },
+  {
+    uuid: 'abac0863-e339-4b79-92cd-55648dfc8a05',
+    ended_at: '2022-07-24T14:15:22Z',
+    is_active: false,
+    contact: {
+      id: '8e5a9345-f8fa-4928-8fc7-6b5f3affd765',
+      full_name: 'Milton Neves',
+      email: 'milton.neves@gmail.com',
+      status: 'offline',
+      last_interaction: '2022-07-24T14:15:22Z',
+      custom_fields: {
+        instagram: 'milton.neves',
+      },
+    },
+    user: {
+      id: '3cbb3f58-a241-4e4d-8fe7-2d785a0775d4',
+      full_name: 'Débora',
+      status: 'online',
+      last_interaction: '2022-07-24T14:15:22Z',
+    },
+    tags: [
+      { uuid: 'finance', title: 'Financeiro' },
+      { uuid: 'help', title: 'Ajuda' },
+    ],
+    queue: {
+      uuid: '8b68a13d-8f69-47b8-bce9-5cdc2e507c97',
+      name: 'Financeiro',
+    },
+  },
+  {
+    uuid: '135552a3-5be4-44bf-b866-6d531afb8575',
+    ended_at: '2022-07-25T14:15:22Z',
+    is_active: false,
+    contact: {
+      id: '7d8f9623-d64e-4f31-b0d4-1e23fa017ac7',
+      full_name: 'João Claudio',
+      email: 'joao.claudio@gmail.com',
+      status: 'offline',
+      last_interaction: '2022-07-24T14:15:22Z',
+      custom_fields: {
+        instagram: 'joao.claudio',
+      },
+    },
+    user: {
+      id: 'a416bee4-d470-45a8-8647-61c102882676',
+      full_name: 'Felipe',
+      status: 'online',
+      last_interaction: '2022-07-24T14:15:22Z',
+    },
+    tags: [{ uuid: 'finance', title: 'Financeiro' }],
+    queue: {
+      uuid: '8b68a13d-8f69-47b8-bce9-5cdc2e507c97',
+      name: 'Financeiro',
+    },
+  },
+  {
+    uuid: '135552a3-5be4-44bf-b866-6d531afb8575',
+    ended_at: '2022-07-10T14:15:22Z',
+    is_active: false,
+    contact: {
+      id: '7d8f9623-d64e-4f31-b0d4-1e23fa017ac7',
+      full_name: 'João Claudio',
+      email: 'joao.claudio@gmail.com',
+      status: 'offline',
+      last_interaction: '2022-07-24T14:15:22Z',
+      custom_fields: {
+        instagram: 'joao.claudio',
+      },
+    },
+    user: {
+      id: 'a416bee4-d470-45a8-8647-61c102882676',
+      full_name: 'Felipe',
+      status: 'online',
+      last_interaction: '2022-07-24T14:15:22Z',
+    },
+    tags: [{ uuid: 'finance', title: 'Financeiro' }],
+    queue: {
+      uuid: '8b68a13d-8f69-47b8-bce9-5cdc2e507c97',
+      name: 'Financeiro',
+    },
+  },
 ];
 
 export default {
@@ -166,6 +247,14 @@ export default {
     return new Promise((resolve) => {
       resolve({
         results: rooms,
+      });
+    });
+  },
+
+  async getClosed() {
+    return new Promise((resolve) => {
+      resolve({
+        results: rooms.filter((room) => !room.is_active),
       });
     });
   },

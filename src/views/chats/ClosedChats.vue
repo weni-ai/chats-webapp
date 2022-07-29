@@ -37,7 +37,7 @@
           </unnnic-tool-tip>
         </section>
 
-        <unnnic-table :items="filteredClosedChats" class="closed-chats-table">
+        <unnnic-table :items="filteredClosedRooms" class="closed-chats-table">
           <template #header>
             <unnnic-table-row :headers="tableHeaders" />
           </template>
@@ -46,12 +46,12 @@
             <unnnic-table-row :headers="tableHeaders">
               <template #contactName>
                 <div class="contact-name">
-                  <user-avatar :username="item.username" size="xl" />
-                  {{ item.username }}
+                  <user-avatar :username="item.contact.full_name" size="xl" />
+                  {{ item.contact.full_name }}
                 </div>
               </template>
 
-              <template #agentName>{{ item.agent }}</template>
+              <template #agentName>{{ item.user.full_name }}</template>
 
               <template #tags>
                 <tag-group :tags="item.tags" />
@@ -78,6 +78,8 @@
 
 <script>
 import { mapState } from 'vuex';
+
+import Room from '@/services/api/resources/room';
 
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
@@ -107,6 +109,9 @@ export default {
 
   beforeMount() {
     if (this.tag) this.filteredTags.push(this.tag);
+    if (this.closedRooms.length === 0) {
+      this.getClosedRooms();
+    }
   },
 
   data: () => ({
@@ -143,28 +148,32 @@ export default {
         flex: 3,
       },
     ],
+    closedRooms: [],
   }),
 
   computed: {
     ...mapState({
-      closedChats: (state) => state.chats.closedChats,
       tags: (state) => state.chats.tags,
     }),
 
-    filteredClosedChats() {
-      return this.closedChats
+    filteredClosedRooms() {
+      return this.closedRooms
         .filter(this.chatHasAllActiveFilterTags)
         .filter(this.isChatDateInFilteredRange);
     },
   },
 
   methods: {
+    async getClosedRooms() {
+      const response = await Room.getClosed();
+      this.closedRooms = response.results;
+    },
     chatHasAllActiveFilterTags(chat) {
       if (this.filteredTags.length === 0) return true;
 
       // eslint-disable-next-line no-restricted-syntax
       for (const tag of this.filteredTags) {
-        if (!chat.tags.find((t) => t.value === tag)) {
+        if (!chat.tags.find((t) => t.uuid === tag)) {
           return false;
         }
       }
@@ -172,19 +181,13 @@ export default {
       return true;
     },
 
-    stringToDate(date) {
-      const [day, month, year] = date.split('/');
-
-      return new Date(year, Number(month) - 1, day);
-    },
-
-    isChatDateInFilteredRange(chat) {
+    isChatDateInFilteredRange(room) {
       const { start, end } = this.filteredDateRange;
       if (!start && !end) return true;
 
-      const chatDate = this.stringToDate(chat.date).toISOString();
+      const roomDate = new Date(room.ended_at).toISOString();
 
-      return start <= chatDate && chatDate <= end;
+      return start <= roomDate && roomDate <= end;
     },
 
     clearFilters() {
