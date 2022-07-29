@@ -42,8 +42,8 @@ export default {
   },
 
   methods: {
-    open(chat) {
-      const path = `/chats/${chat.id}`;
+    open(room) {
+      const path = `/chats/${room.uuid}`;
 
       if (this.$route.path === path) return;
 
