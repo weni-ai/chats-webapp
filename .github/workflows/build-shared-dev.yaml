@@ -1,0 +1,115 @@
+name: Build Chats-WebApp in Shared
+
+on:
+  push:
+    tags:
+      - '*.*.*-develop*'
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest 
+    steps:
+      - name: Set variables
+        run: |
+            TAG=$(echo $GITHUB_REF|cut -d"/" -f3)
+            if $(echo  $TAG|grep --silent -e 'v*.*.*-develop*')
+            then 
+              echo "Found environment: DEVELOP - $TAG"
+              echo "MANIFESTS_ENVIRONMENT=develop" >> $GITHUB_ENV
+              echo "MANIFESTS_ENVIRONMENT=develop"
+              echo "TAG=$TAG" >> $GITHUB_ENV
+              echo "TAG=$TAG"
+              VERSION=${TAG#v} 
+              echo "VERSION=$VERSION" >> $GITHUB_ENV
+              echo "VERSION=$VERSION"
+              echo "COMMIT_SHA=$GITHUB_SHA" >> $GITHUB_ENV
+              echo "COMMIT_SHA=$GITHUB_SHA"
+              echo "IMAGE_TAG=${{ secrets.ECR }}/chats:webapp-$TAG" >> $GITHUB_ENV
+              echo "IMAGE_TAG=${{ secrets.ECR }}/chats:webapp-$TAG"
+            else
+              echo 'Not a valid tag. Skipping...'
+              exit 1
+            fi
+
+      - name: Check out the repo
+        uses: actions/checkout@v2
+        with:
+          ref: ${{env.GITHUB_SHA}}         # This is how we use an input edit by user
+          repository: weni-ai/chats-webapp
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to ECR
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.ECR }}
+          username: ${{ secrets.AWS_ACCESS_KEY_ID_SHARED }}       # Credentials used to push image to ECR repository
+          password: ${{ secrets.AWS_SECRET_ACCESS_KEY_SHARED }}
+
+      - name: Set Commit ID
+        id: commit_id
+        run: echo "::set-output commit=$(git rev-parse --short $GITHUB_SHA)"
+
+      - name: Build and push - Chats-WebAPP Image
+        id: docker_build1
+        uses: docker/build-push-action@v2
+        with:
+          context: .docker
+          labels: branch=${{env.TAG}},commit=${{env.COMMIT_SHA}},repository=https://github.com/weni-ai/chats-webapp
+          file: docker/Dockerfile
+          push: true
+          tags: 869898323958.dkr.ecr.us-east-1.amazonaws.com/chats:webapp-${{env.TAG}}
+          no-cache: true
+
+      - name: Check out Kubernetes Manifests
+        # Now, checkout in kubernetes manifests to update image in deployments patches
+        uses: actions/checkout@master
+        with:
+          ref: main
+          repository: Ilhasoft/kubernetes-manifests
+          token: ${{ secrets.CICEROW_GITHUB_PERMANENT_TOKEN }}
+          path: ./kubernetes-manifests/
+          # Its uses other path to not mix with source code repository used to build
+
+      - name: Set variable tag for jq
+        # This is the variable with complete image name
+        run: |
+          echo "IMAGE_TAG=869898323958.dkr.ecr.us-east-1.amazonaws.com/chats:webapp-${{github.event.inputs.tag-name}}" >> $GITHUB_ENV
+
+      - name: Update image on deployment
+        # This action uses a command to edit JSON files: jq
+        # The script does: (1-2) installs jq, (3-17) runs a for loop to build for more of one destination, (4) if to check directory in kubernetes-manifests
+        # (5-6) checks old image, (8-10) makes the change getting the original content (with cat) and replacing image (with jq)
+        # Take care with names and paths, must be checked in kubernetes-manifests repository
+        # In some cases (e. g. flows), there are more than one image to update. Use more steps if necessary.
+        run: |
+            sudo apt update
+            sudo apt install -y jq
+            for e in ${{github.event.inputs.destination-env}}; do
+              if [ -d "kubernetes-manifests/nina/${e}" ] ; then
+                echo 'Old image to replace:'
+                cat "kubernetes-manifests/nina/${e}/deployment-webapp.json" | jq '.[] | select(.path == "/spec/template/spec/containers/0/image") | .value'
+                echo 'New configurations:'
+                new_configuration=$(
+                  cat "kubernetes-manifests/nina/${e}/deployment-webapp.json" \
+                    | jq '(..|select(.path == "/spec/template/spec/containers/0/image")?) += {value: "'"${IMAGE_TAG}"'"}'
+                )
+                echo "$new_configuration"
+                echo "$new_configuration" > "kubernetes-manifests/nina/${e}/deployment-webapp.json"
+              else
+                echo "kubernetes-manifests/nina/${e}: Does not exist, skipping"
+              fi
+            done
+
+      - name: Commit & Push changes
+        # Once made a change, commit new configuration
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.CICEROW_GITHUB_PERMANENT_TOKEN }}
+          repository: Ilhasoft/kubernetes-manifests
+          directory: ./kubernetes-manifests/
+          branch: main
