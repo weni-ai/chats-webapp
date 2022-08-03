@@ -62,7 +62,7 @@ jobs:
           labels: branch=${{env.TAG}},commit=${{env.COMMIT_SHA}},repository=https://github.com/weni-ai/chats-webapp
           file: docker/Dockerfile
           push: true
-          tags: 869898323958.dkr.ecr.us-east-1.amazonaws.com/chats:webapp-${{env.TAG}}
+          tags: ${{ secrets.ECR }}/chats:webapp-${{env.TAG}}
           no-cache: true
 
       - name: Check out Kubernetes Manifests
@@ -70,38 +70,33 @@ jobs:
         uses: actions/checkout@master
         with:
           ref: main
-          repository: Ilhasoft/kubernetes-manifests
-          token: ${{ secrets.CICEROW_GITHUB_PERMANENT_TOKEN }}
+          repository: weni-ai/kubernetes-manifests-chats
+          token: ${{ secrets.DEVOPS_GITHUB_PERMANENT_TOKEN }}
           path: ./kubernetes-manifests/
           # Its uses other path to not mix with source code repository used to build
 
       - name: Set variable tag for jq
         # This is the variable with complete image name
         run: |
-          echo "IMAGE_TAG=869898323958.dkr.ecr.us-east-1.amazonaws.com/chats:webapp-${{github.event.inputs.tag-name}}" >> $GITHUB_ENV
+          echo "IMAGE_TAG=${{ secrets.ECR }}/chats:webapp-$TAG" >> $GITHUB_ENV
 
       - name: Update image on deployment
-        # This action uses a command to edit JSON files: jq
-        # The script does: (1-2) installs jq, (3-17) runs a for loop to build for more of one destination, (4) if to check directory in kubernetes-manifests
-        # (5-6) checks old image, (8-10) makes the change getting the original content (with cat) and replacing image (with jq)
-        # Take care with names and paths, must be checked in kubernetes-manifests repository
-        # In some cases (e. g. flows), there are more than one image to update. Use more steps if necessary.
         run: |
             sudo apt update
             sudo apt install -y jq
-            for e in ${{github.event.inputs.destination-env}}; do
-              if [ -d "kubernetes-manifests/nina/${e}" ] ; then
+            for e in "develop"; do
+              if [ -d "kubernetes-manifests/chats-webapp/${e}" ] ; then
                 echo 'Old image to replace:'
-                cat "kubernetes-manifests/nina/${e}/deployment-webapp.json" | jq '.[] | select(.path == "/spec/template/spec/containers/0/image") | .value'
+                cat "kubernetes-manifests/chats-webapp/${e}/deployment.json" | jq '.[] | select(.path == "/spec/template/spec/containers/0/image") | .value'
                 echo 'New configurations:'
                 new_configuration=$(
-                  cat "kubernetes-manifests/nina/${e}/deployment-webapp.json" \
+                  cat "kubernetes-manifests/chats-webapp/${e}/deployment.json" \
                     | jq '(..|select(.path == "/spec/template/spec/containers/0/image")?) += {value: "'"${IMAGE_TAG}"'"}'
                 )
                 echo "$new_configuration"
-                echo "$new_configuration" > "kubernetes-manifests/nina/${e}/deployment-webapp.json"
+                echo "$new_configuration" > "kubernetes-manifests/chats-webapp/${e}/deployment.json"
               else
-                echo "kubernetes-manifests/nina/${e}: Does not exist, skipping"
+                echo "kubernetes-manifests/chats-webapp/${e}: Does not exist, skipping"
               fi
             done
 
@@ -109,7 +104,7 @@ jobs:
         # Once made a change, commit new configuration
         uses: actions-js/push@master
         with:
-          github_token: ${{ secrets.CICEROW_GITHUB_PERMANENT_TOKEN }}
-          repository: Ilhasoft/kubernetes-manifests
+          github_token: ${{ secrets.DEVOPS_GITHUB_PERMANENT_TOKEN }}
+          repository: weni-ai/kubernetes-manifests-chats
           directory: ./kubernetes-manifests/
           branch: main
