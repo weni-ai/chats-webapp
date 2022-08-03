@@ -58,7 +58,7 @@ jobs:
         id: docker_build1
         uses: docker/build-push-action@v2
         with:
-          context: .docker
+          context: .
           labels: branch=${{env.TAG}},commit=${{env.COMMIT_SHA}},repository=https://github.com/weni-ai/chats-webapp
           file: docker/Dockerfile
           push: true
