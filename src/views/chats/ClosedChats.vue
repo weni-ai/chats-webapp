@@ -1,13 +1,13 @@
 <template>
   <chats-layout disabled-chat-list>
     <section class="closed-chats__container">
-      <section v-if="!!chat" class="closed-chat">
+      <section v-if="!!room" class="closed-chat">
         <chat-header
-          :chat="{ ...chat }"
-          @close="chat = null"
+          :room="{ ...room }"
+          @close="room = null"
           closeButtonTooltip="Fechar visualização"
         />
-        <chat-messages :chat="{ ...chat }" class="messages" />
+        <chat-messages :room="{ ...room }" :messages="messages" class="messages" />
       </section>
 
       <section class="closed-chats" v-else>
@@ -65,7 +65,7 @@
                   type="secondary"
                   size="small"
                   class="visualize-button"
-                  @click="chat = item"
+                  @click="viewClosedRoom(item)"
                 />
               </template>
             </unnnic-table-row>
@@ -80,6 +80,8 @@
 import { mapState } from 'vuex';
 
 import Room from '@/services/api/resources/room';
+import Message from '@/services/api/resources/message';
+import { groupSequentialSentMessages } from '@/utils/messages';
 
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
@@ -115,7 +117,8 @@ export default {
   },
 
   data: () => ({
-    chat: null,
+    room: null,
+    messages: [],
     filteredDateRange: {
       start: '',
       end: '',
@@ -158,17 +161,23 @@ export default {
 
     filteredClosedRooms() {
       return this.closedRooms
-        .filter(this.chatHasAllActiveFilterTags)
-        .filter(this.isChatDateInFilteredRange);
+        .filter(this.roomHasAllActiveFilterTags)
+        .filter(this.isRoomDateInFilteredRange);
     },
   },
 
   methods: {
+    async viewClosedRoom(room) {
+      const response = await Message.getByRoomId(room.uuid);
+      const messages = groupSequentialSentMessages(response.results);
+      this.messages = messages;
+      this.room = room;
+    },
     async getClosedRooms() {
       const response = await Room.getClosed();
       this.closedRooms = response.results;
     },
-    chatHasAllActiveFilterTags(chat) {
+    roomHasAllActiveFilterTags(chat) {
       if (this.filteredTags.length === 0) return true;
 
       // eslint-disable-next-line no-restricted-syntax
@@ -181,7 +190,7 @@ export default {
       return true;
     },
 
-    isChatDateInFilteredRange(room) {
+    isRoomDateInFilteredRange(room) {
       const { start, end } = this.filteredDateRange;
       if (!start && !end) return true;
 

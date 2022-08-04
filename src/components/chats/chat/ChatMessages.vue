@@ -12,32 +12,26 @@
         <chat-message
           :key="message.uuid"
           :message="message"
-          :disabled="!room.is_active"
+          :disabled="isHistory"
           @show-contact-info="showContactInfo"
         />
       </section>
-
-      <!-- missing info in API return data -->
-      <div v-if="false">
-        <div class="chat-messages__room__divisor">
-          <div class="chat-messages__room__divisor__line" />
-          <span class="chat-messages__room__divisor__label"> Chat encerrado pelo agente </span>
-          <div class="chat-messages__room__divisor__line" />
-        </div>
-      </div>
-
-      <!-- missing info in API return data -->
-      <div v-if="false">
-        <section class="chat-messages__tags">
-          <p class="chat-messages__tags__label">Tags do chat</p>
-          <tag-group :tags="room.tags" />
-        </section>
-      </div>
 
       <div v-if="isTransferInfoMessage(message)" class="chat-messages__room__transfer-info">
         <unnnic-icon icon="logout-1-1" size="sm" scheme="neutral-cleanest" />
         {{ createTransferLabel(message) }}
       </div>
+    </section>
+
+    <section class="chat-messages__room__divisor">
+      <div class="chat-messages__room__divisor__line" />
+      <span class="chat-messages__room__divisor__label"> Chat encerrado pelo agente </span>
+      <div class="chat-messages__room__divisor__line" />
+    </section>
+
+    <section class="chat-messages__tags">
+      <p class="chat-messages__tags__label">Tags do chat</p>
+      <tag-group :tags="room.tags" />
     </section>
 
     <unnnic-modal
@@ -89,6 +83,9 @@ export default {
     rooms() {
       const { rooms, messages } = this.chat;
       return rooms?.length > 0 ? rooms : [{ messages }];
+    },
+    isHistory() {
+      return !this.room.is_active;
     },
   },
 

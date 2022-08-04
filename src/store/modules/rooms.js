@@ -1,41 +1,11 @@
 import Message from '@/services/api/resources/message';
 import Room from '@/services/api/resources/room';
+import { groupSequentialSentMessages } from '@/utils/messages';
 
 const mutations = {
   SET_ROOMS: 'SET_ROOMS',
   SET_ACTIVE_ROOM: 'SET_ACTIVE_ROOM',
   SET_ACTIVE_ROOM_MESSAGES: 'SET_ACTIVE_ROOM_MESSAGES',
-};
-
-const utils = {
-  groupSequentialSentMessages(messages) {
-    const messagesWithSender = messages.map((message) =>
-      message.contact || message.user
-        ? {
-            ...message,
-            sender: message.contact || message.user,
-          }
-        : message,
-    );
-
-    const groupedMessages = messagesWithSender.reduce((acc, message) => {
-      if (!message.sender) {
-        acc.push(message);
-        return acc;
-      }
-
-      if (acc.at(-1)?.sender?.id !== message.sender.id) {
-        const m = { ...message, content: [{ uuid: message.uuid, text: message.text }] };
-        acc.push(m);
-        return acc;
-      }
-
-      acc[acc.length - 1].content.push({ uuid: message.uuid, text: message.text });
-      return acc;
-    }, []);
-
-    return groupedMessages;
-  },
 };
 
 export default {
@@ -72,7 +42,7 @@ export default {
       const { activeRoom } = state;
       if (!activeRoom) return;
       const response = await Message.getByRoomId(activeRoom.uuid);
-      const messages = utils.groupSequentialSentMessages(response.results || []);
+      const messages = groupSequentialSentMessages(response.results || []);
       commit(mutations.SET_ACTIVE_ROOM_MESSAGES, messages);
     },
     async sendMessage(ctx, text) {
