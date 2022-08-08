@@ -1,0 +1,20 @@
+{
+  "unnnic": {
+    "upload_area": {
+      "title": {
+        "text": {
+          "pt-BR": "Arraste seu arquivo aqui, ou",
+          "en": "Drag your file here, or"
+        },
+        "highlight": {
+          "pt-BR": "procure-o",
+          "en": "search for it"
+        }
+      },
+      "subtitle": {
+        "pt-BR": "Formatos suportados:",
+        "en": "Supported formats:"
+      }
+    }
+  }
+}
