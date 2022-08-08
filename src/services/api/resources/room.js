@@ -246,7 +246,7 @@ export default {
   async getAll() {
     return new Promise((resolve) => {
       resolve({
-        results: rooms,
+        results: rooms.filter((room) => room.is_active),
       });
     });
   },
