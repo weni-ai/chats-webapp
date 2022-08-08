@@ -1,22 +1,22 @@
 <template>
   <chats-layout>
-    <section v-if="!!activeChat" class="active-chat">
+    <section v-if="!!room" class="active-chat">
       <chat-header
-        :chat="activeChat"
+        :room="room"
         closeButtonTooltip="Encerrar chat"
         @close="isCloseChatModalOpen = true"
         @show-contact-info="componentInAsideSlot = 'contactInfo'"
       />
       <chat-messages
-        :chat="activeChat"
+        :room="room"
+        :messages="messages"
         class="messages"
         @show-contact-info="componentInAsideSlot = 'contactInfo'"
         ref="chatMessages"
       />
 
-      <div class="message-editor">
+      <div v-if="room.is_active" class="message-editor">
         <message-editor
-          v-if="!activeChat.closed"
           v-model="editorMessage"
           :audio.sync="audioMessage"
           @show-quick-messages="
@@ -28,7 +28,7 @@
         />
       </div>
 
-      <section v-if="activeChat.closed && !activeChat.tags" class="chat-classifier">
+      <section v-if="!room.is_active && !room.tags" class="chat-classifier">
         <chat-classifier v-model="tags" label="Por favor, classifique o atendimento:">
           <template #actions>
             <unnnic-button text="Confirmar" type="secondary" size="small" @click="setChatTags" />
@@ -84,13 +84,13 @@ export default {
 
   props: {
     id: {
-      type: [String, Number],
+      type: String,
       default: '',
     },
   },
 
   mounted() {
-    this.setActiveChat(this.id);
+    this.setActiveRoom(this.id);
   },
 
   data: () => ({
@@ -103,7 +103,8 @@ export default {
 
   computed: {
     ...mapState({
-      activeChat: (store) => store.chats.activeChat,
+      room: (state) => state.rooms.activeRoom,
+      messages: (state) => state.rooms.activeRoomMessages,
     }),
     sidebarComponent() {
       return this.sidebarComponents[this.componentInAsideSlot] || {};
@@ -135,18 +136,20 @@ export default {
 
   methods: {
     closeChat() {
-      this.$store.commit('chats/setActiveChat', { ...this.activeChat, closed: true });
+      this.$store.commit('chats/setActiveChat', { ...this.room, closed: true });
       this.isCloseChatModalOpen = false;
     },
     scrollMessagesToBottom() {
       this.$refs.chatMessages.$el.scrollTop = this.$refs.chatMessages.$el.scrollHeight;
     },
-    setActiveChat(id) {
-      const chat = this.$store.getters['chats/getChatById'](id);
-
-      if (!chat) this.$router.push('/');
-
-      this.$store.commit('chats/setActiveChat', chat);
+    async setActiveRoom(uuid) {
+      const room = this.$store.getters['rooms/getRoomById'](uuid);
+      if (!room) this.$router.push('/');
+      await this.$store.dispatch('rooms/setActiveRoom', room);
+      this.getRoomMessages();
+    },
+    getRoomMessages() {
+      this.$store.dispatch('rooms/getActiveRoomMessages');
     },
     async sendFileMessage(files) {
       try {
@@ -169,10 +172,9 @@ export default {
     },
     async sendMessage() {
       const message = this.editorMessage.trim();
-
       if (!message) return;
 
-      await this.$store.dispatch('chats/sendMessage', message);
+      await this.$store.dispatch('rooms/sendMessage', message);
 
       this.scrollMessagesToBottom();
       this.editorMessage = '';
@@ -180,14 +182,10 @@ export default {
     async sendAudio() {
       if (!this.audioMessage) return;
 
-      // const { src, currentTime, duration } = this.audioMessage;
-
       const message = {
         isAudio: true,
         audio: this.audioMessage,
       };
-
-      console.log(message);
 
       await this.$store.dispatch('chats/sendMessage', message);
 
@@ -219,16 +217,16 @@ export default {
     },
 
     async setChatTags() {
-      const { activeChat, tags } = this;
+      const { room, tags } = this;
 
       await this.$store.dispatch('chats/closeChat', {
-        id: activeChat.id,
-        username: activeChat.username,
+        id: room.id,
+        username: room.username,
         agent: 'Ana',
         date: this.getTodayDate(),
         closed: true,
         tags,
-        messages: activeChat.messages,
+        messages: room.messages,
       });
 
       this.$store.commit('chats/setActiveChat', null);
@@ -237,11 +235,11 @@ export default {
   },
 
   watch: {
-    activeChat(newValue) {
+    room(newValue) {
       if (!newValue) this.componentInAsideSlot = '';
     },
     id(id) {
-      this.setActiveChat(id);
+      this.setActiveRoom(id);
     },
   },
 };

@@ -2,9 +2,9 @@
   <div class="message-group">
     <span>
       <user-avatar
-        :username="message.username"
-        :clickable="message.username !== 'Agente'"
-        @click="showContactInfo(message.username)"
+        :username="message.sender.full_name"
+        :clickable="isContactMessage"
+        @click="showContactInfo"
         :disabled="disabled"
       />
     </span>
@@ -13,13 +13,13 @@
       <div class="info">
         <span
           class="username"
-          :class="{ clickable: message.username !== 'Agente' }"
-          @click="showContactInfo(message.username)"
-          @keypress.enter="showContactInfo(message.username)"
+          :class="{ clickable: isContactMessage }"
+          @click="showContactInfo"
+          @keypress.enter="showContactInfo"
         >
-          {{ message.username }}
+          {{ message.sender.full_name }}
         </span>
-        <span class="time">{{ message.time }}</span>
+        <span class="time">{{ sendingTime }}</span>
       </div>
 
       <div
@@ -77,6 +77,26 @@ export default {
     message: {
       type: Object,
       required: true,
+    },
+  },
+
+  computed: {
+    isContactMessage() {
+      return !!this.message.contact;
+    },
+    sendingTime() {
+      const date = new Date(this.message.created_on);
+      const formatter = Intl.DateTimeFormat('pt-BR', {
+        timeStyle: 'short',
+      });
+      const time = formatter.format(date);
+      return time.replace(':', 'h');
+    },
+  },
+
+  methods: {
+    showContactInfo() {
+      if (this.isContactMessage) this.$emit('show-contact-info');
     },
   },
 };

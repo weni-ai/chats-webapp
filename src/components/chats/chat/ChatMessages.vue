@@ -1,40 +1,37 @@
 <template>
   <section class="chat-messages">
-    <section v-for="room in rooms" :key="room.id" class="chat-messages__room">
-      <div v-if="room.agent" class="chat-messages__room__divisor">
+    <section v-for="message in messages" :key="message.uuid" class="chat-messages__room">
+      <!-- missing info in API return data -->
+      <div v-if="false" class="chat-messages__room__divisor">
         <div class="chat-messages__room__divisor__line" />
-        <span class="chat-messages__room__divisor__label"> Chat com {{ room.agent }} </span>
+        <span class="chat-messages__room__divisor__label"> Chat com {{ message.agent }} </span>
         <div class="chat-messages__room__divisor__line" />
       </div>
 
-      <section class="chat-messages__messages">
+      <section v-if="!isTransferInfoMessage(message)" class="chat-messages__messages">
         <chat-message
-          v-for="message in room.messages"
-          :key="message.id"
+          :key="message.uuid"
           :message="message"
-          :disabled="chat.closed"
+          :disabled="isHistory"
+          @show-contact-info="showContactInfo"
         />
       </section>
 
-      <div v-if="room.closedBy === 'agent'">
-        <div class="chat-messages__room__divisor">
-          <div class="chat-messages__room__divisor__line" />
-          <span class="chat-messages__room__divisor__label"> Chat encerrado pelo agente </span>
-          <div class="chat-messages__room__divisor__line" />
-        </div>
-      </div>
-
-      <div v-if="room.tags">
-        <section class="chat-messages__tags">
-          <p class="chat-messages__tags__label">Tags do chat</p>
-          <tag-group :tags="room.tags" />
-        </section>
-      </div>
-
-      <div v-if="room.transferredTo" class="chat-messages__room__transfer-info">
+      <div v-if="isTransferInfoMessage(message)" class="chat-messages__room__transfer-info">
         <unnnic-icon icon="logout-1-1" size="sm" scheme="neutral-cleanest" />
-        Contato transferido para {{ room.transferredTo }}
+        {{ createTransferLabel(message) }}
       </div>
+    </section>
+
+    <section class="chat-messages__room__divisor">
+      <div class="chat-messages__room__divisor__line" />
+      <span class="chat-messages__room__divisor__label"> Chat encerrado pelo agente </span>
+      <div class="chat-messages__room__divisor__line" />
+    </section>
+
+    <section class="chat-messages__tags">
+      <p class="chat-messages__tags__label">Tags do chat</p>
+      <tag-group :tags="room.tags" />
     </section>
 
     <unnnic-modal
@@ -68,9 +65,13 @@ export default {
   },
 
   props: {
-    chat: {
+    room: {
       type: Object,
       required: true,
+    },
+    messages: {
+      type: Array,
+      default: () => [],
     },
   },
 
@@ -83,9 +84,23 @@ export default {
       const { rooms, messages } = this.chat;
       return rooms?.length > 0 ? rooms : [{ messages }];
     },
+    isHistory() {
+      return !this.room.is_active;
+    },
   },
 
   methods: {
+    isTransferInfoMessage(message) {
+      return !message.sender;
+    },
+    createTransferLabel(message) {
+      const transferType = {
+        queue: `Contato transferido para fila ${message.name}`,
+        agent: `Contato transferido para agente ${message.name}`,
+      };
+
+      return transferType[message.type];
+    },
     showContactInfo(username) {
       if (username === 'Agente') return;
 

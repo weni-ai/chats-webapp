@@ -1,30 +1,30 @@
 <template>
   <div class="chat-group" :class="{ disabled }">
     <header>
-      <h2>{{ chatGroup.name }}</h2>
+      <h2>{{ label }}</h2>
     </header>
 
     <ul class="chats" :class="{ filled }">
-      <li v-for="chat in chatGroup.chats" :key="chat.id">
-        <user-chat :chat="chat" @click="open(chat)" :filled="filled" :disabled="disabled" />
+      <li v-for="room in rooms" :key="room.id">
+        <contact-room :room="room" @click="open(room)" :filled="filled" :disabled="disabled" />
       </li>
     </ul>
   </div>
 </template>
 
 <script>
-import UserChat from './UserChat';
+import ContactRoom from './ContactRoom';
 
 export default {
-  name: 'ChatGroup',
+  name: 'RoomGroup',
 
   components: {
-    UserChat,
+    ContactRoom,
   },
 
   props: {
-    chatGroup: {
-      type: Object,
+    rooms: {
+      type: Array,
       required: true,
     },
     disabled: {
@@ -35,11 +35,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    label: {
+      type: String,
+      default: '',
+    },
   },
 
   methods: {
-    open(chat) {
-      const path = `/chats/${chat.id}`;
+    open(room) {
+      const path = `/chats/${room.uuid}`;
 
       if (this.$route.path === path) return;
 

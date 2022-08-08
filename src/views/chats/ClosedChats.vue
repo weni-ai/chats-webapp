@@ -1,13 +1,13 @@
 <template>
   <chats-layout disabled-chat-list>
     <section class="closed-chats__container">
-      <section v-if="!!chat" class="closed-chat">
+      <section v-if="!!room" class="closed-chat">
         <chat-header
-          :chat="{ ...chat }"
-          @close="chat = null"
+          :room="{ ...room }"
+          @close="room = null"
           closeButtonTooltip="Fechar visualização"
         />
-        <chat-messages :chat="{ ...chat }" class="messages" />
+        <chat-messages :room="{ ...room }" :messages="messages" class="messages" />
       </section>
 
       <section class="closed-chats" v-else>
@@ -37,7 +37,7 @@
           </unnnic-tool-tip>
         </section>
 
-        <unnnic-table :items="filteredClosedChats" class="closed-chats-table">
+        <unnnic-table :items="filteredClosedRooms" class="closed-chats-table">
           <template #header>
             <unnnic-table-row :headers="tableHeaders" />
           </template>
@@ -46,12 +46,12 @@
             <unnnic-table-row :headers="tableHeaders">
               <template #contactName>
                 <div class="contact-name">
-                  <user-avatar :username="item.username" size="xl" />
-                  {{ item.username }}
+                  <user-avatar :username="item.contact.full_name" size="xl" />
+                  {{ item.contact.full_name }}
                 </div>
               </template>
 
-              <template #agentName>{{ item.agent }}</template>
+              <template #agentName>{{ item.user.full_name }}</template>
 
               <template #tags>
                 <tag-group :tags="item.tags" />
@@ -65,7 +65,7 @@
                   type="secondary"
                   size="small"
                   class="visualize-button"
-                  @click="chat = item"
+                  @click="viewClosedRoom(item)"
                 />
               </template>
             </unnnic-table-row>
@@ -78,6 +78,10 @@
 
 <script>
 import { mapState } from 'vuex';
+
+import Room from '@/services/api/resources/room';
+import Message from '@/services/api/resources/message';
+import { groupSequentialSentMessages } from '@/utils/messages';
 
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
@@ -107,10 +111,14 @@ export default {
 
   beforeMount() {
     if (this.tag) this.filteredTags.push(this.tag);
+    if (this.closedRooms.length === 0) {
+      this.getClosedRooms();
+    }
   },
 
   data: () => ({
-    chat: null,
+    room: null,
+    messages: [],
     filteredDateRange: {
       start: '',
       end: '',
@@ -143,28 +151,38 @@ export default {
         flex: 3,
       },
     ],
+    closedRooms: [],
   }),
 
   computed: {
     ...mapState({
-      closedChats: (state) => state.chats.closedChats,
       tags: (state) => state.chats.tags,
     }),
 
-    filteredClosedChats() {
-      return this.closedChats
-        .filter(this.chatHasAllActiveFilterTags)
-        .filter(this.isChatDateInFilteredRange);
+    filteredClosedRooms() {
+      return this.closedRooms
+        .filter(this.roomHasAllActiveFilterTags)
+        .filter(this.isRoomDateInFilteredRange);
     },
   },
 
   methods: {
-    chatHasAllActiveFilterTags(chat) {
+    async viewClosedRoom(room) {
+      const response = await Message.getByRoomId(room.uuid);
+      const messages = groupSequentialSentMessages(response.results);
+      this.messages = messages;
+      this.room = room;
+    },
+    async getClosedRooms() {
+      const response = await Room.getClosed();
+      this.closedRooms = response.results;
+    },
+    roomHasAllActiveFilterTags(chat) {
       if (this.filteredTags.length === 0) return true;
 
       // eslint-disable-next-line no-restricted-syntax
       for (const tag of this.filteredTags) {
-        if (!chat.tags.find((t) => t.value === tag)) {
+        if (!chat.tags.find((t) => t.uuid === tag)) {
           return false;
         }
       }
@@ -172,19 +190,13 @@ export default {
       return true;
     },
 
-    stringToDate(date) {
-      const [day, month, year] = date.split('/');
-
-      return new Date(year, Number(month) - 1, day);
-    },
-
-    isChatDateInFilteredRange(chat) {
+    isRoomDateInFilteredRange(room) {
       const { start, end } = this.filteredDateRange;
       if (!start && !end) return true;
 
-      const chatDate = this.stringToDate(chat.date).toISOString();
+      const roomDate = new Date(room.ended_at).toISOString();
 
-      return start <= chatDate && chatDate <= end;
+      return start <= roomDate && roomDate <= end;
     },
 
     clearFilters() {

@@ -12,18 +12,19 @@
           </div>
 
           <p class="username">
-            {{ chat.username }}
+            {{ room.contact.full_name }}
           </p>
 
           <div class="connection-info">
-            <p>{{ getLastViewText(chat.lastView) }}</p>
-            <p>
-              <span class="title"> {{ chat.channel }} </span>
-              +55 47 98777 4756
+            <p v-if="room.contact.status === 'online'">Online</p>
+            <p v-else>{{ getLastViewText(room.contact.last_interaction) }}</p>
+            <p v-for="[field, value] of Object.entries(room.contact.custom_fields)" :key="field">
+              <span class="title"> {{ field }} </span>
+              {{ value }}
             </p>
             <p>
               <span class="title"> Último contato </span>
-              {{ getLastContactText(chat.lastContactDate) }}
+              {{ getLastContactText(room.contact.last_interaction) }}
             </p>
           </div>
         </section>
@@ -104,7 +105,7 @@ export default {
 
   computed: {
     ...mapState({
-      chat: (state) => state.chats.activeChat,
+      room: (state) => state.rooms.activeRoom,
     }),
 
     isTransferButtonDisabled() {
@@ -135,8 +136,9 @@ export default {
   },
 
   methods: {
-    getLastViewText(lastViewDate) {
+    getLastViewText(lastView) {
       const today = new Date();
+      const lastViewDate = new Date(lastView);
       const dateDifferenceInHours = this.getDatesDifferenceInHours(today, lastViewDate);
 
       if (dateDifferenceInHours >= 24) {
@@ -158,8 +160,9 @@ export default {
       const differenceInHours = differenceInMs / oneHoursInMs;
       return differenceInHours;
     },
-    getLastContactText(lastContactDate) {
+    getLastContactText(lastContact) {
       const today = new Date();
+      const lastContactDate = new Date(lastContact);
       const dateDifferenceInHours = this.getDatesDifferenceInHours(today, lastContactDate);
 
       if (dateDifferenceInHours >= 24) {
