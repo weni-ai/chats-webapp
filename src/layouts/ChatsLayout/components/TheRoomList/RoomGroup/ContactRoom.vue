@@ -1,31 +1,31 @@
 <template>
   <div
     class="container"
-    :class="{ active: chat.id === activeChat.id, disabled }"
+    :class="{ active: room.uuid === activeChat.id, disabled }"
     @click="$emit('click')"
     @keypress.enter="$emit('click')"
   >
     <user-avatar
-      :username="chat.username"
-      :active="chat.id === activeChat.id"
+      :username="room.contact.full_name"
+      :active="room.uuid === activeChat.id"
       size="xl"
       :off="disabled"
     />
 
     <div class="content">
       <h3 class="username" :class="{ bold: hasUnreadMessages }">
-        {{ chat.username }}
+        {{ room.contact.full_name }}
       </h3>
       <div class="additional-information" :class="{ bold: hasUnreadMessages }">
         <span v-if="waitingTime !== 0"> Aguardando há {{ waitingTime }} minutos </span>
         <span v-else>
-          {{ chat.lastMessage }}
+          {{ room.lastMessage }}
         </span>
       </div>
     </div>
 
-    <span v-if="chat.unreadMessages !== 0" class="unread-messages" :class="{ filled }">
-      {{ chat.unreadMessages }}
+    <span v-if="room.unreadMessages !== 0" class="unread-messages" :class="{ filled }">
+      {{ room.unreadMessages }}
     </span>
   </div>
 </template>
@@ -38,14 +38,14 @@ import UserAvatar from '@/components/chats/UserAvatar';
 const ONE_MINUTE_IN_MILLISECONDS = 60000;
 
 export default {
-  name: 'UserChat',
+  name: 'ContactRoom',
 
   components: {
     UserAvatar,
   },
 
   props: {
-    chat: {
+    room: {
       type: Object,
       required: true,
     },
@@ -62,8 +62,8 @@ export default {
   mounted() {
     const randomPeriodInMilliseconds = Math.ceil(Math.random() * 30 + 1) * 1000;
 
-    if (this.chat.waitingTime) {
-      this.waitingTime = this.chat.waitingTime;
+    if (this.room.waitingTime) {
+      this.waitingTime = this.room.waitingTime;
       this.timer = setInterval(() => {
         this.waitingTime += 1;
         // ensures that all chats waiting times don't update at same time
@@ -72,7 +72,7 @@ export default {
   },
 
   destroyed() {
-    setInterval(this.timer);
+    clearInterval(this.timer);
   },
 
   data: () => ({
@@ -85,7 +85,7 @@ export default {
       activeChat: (state) => state.chats.activeChat || {},
     }),
     hasUnreadMessages() {
-      return this.chat.unreadMessages > 0;
+      return this.room.unreadMessages > 0;
     },
   },
 };

@@ -4,14 +4,14 @@
       <unnnic-tool-tip enabled text="Informações do contato" side="right">
         <section class="info clickable">
           <user-avatar
-            :username="chat.username"
+            :username="room.contact.full_name"
             size="2xl"
             clickable
             @click="showContactInfo"
-            :disabled="chat.closed"
+            :disabled="!room.is_active"
           />
           <span class="username" @click="showContactInfo" @keypress.enter="showContactInfo">
-            {{ chat.username }}
+            {{ room.contact.full_name }}
           </span>
         </section>
       </unnnic-tool-tip>
@@ -23,8 +23,8 @@
       </span>
     </header>
 
-    <section class="chat-closed-message" v-if="chat.closed">
-      <span class="message">{{ getFullDate(chat.date) }}</span>
+    <section class="chat-closed-message" v-if="!room.is_active">
+      <span class="message">{{ getFullDate(room.date) }}</span>
     </section>
   </div>
 </template>
@@ -44,7 +44,7 @@ export default {
       type: String,
       default: '',
     },
-    chat: {
+    room: {
       type: Object,
       required: true,
     },
@@ -65,7 +65,7 @@ export default {
       }).format(parsedDate);
     },
     showContactInfo() {
-      if (this.chat.username === 'Agente') return;
+      if (this.room.contact.full_name === 'Agente') return;
 
       this.$emit('show-contact-info');
     },

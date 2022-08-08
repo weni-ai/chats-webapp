@@ -2,13 +2,11 @@
   <section v-if="tags.length > 0" class="tag-group__container">
     <unnnic-tag
       v-for="(tag, i) in tags"
-      :key="tag.value"
+      :key="tag.uuid"
       :clickable="selectable"
-      :text="tag.text"
-      :data-testid="`tag__${tag.value}`"
-      :has-close-icon="
-        hasCloseIcon || (selectable && !!selected.find((t) => t.value === tag.value))
-      "
+      :text="tag.title"
+      :data-testid="`tag__${tag.uuid}`"
+      :has-close-icon="hasCloseIcon || (selectable && !!selected.find((t) => t.uuid === tag.uuid))"
       @click="select(tag)"
       @close="close(tag)"
       :scheme="schemes[i % schemes.length]"
@@ -64,8 +62,8 @@ export default {
 
   methods: {
     select(tag) {
-      const tags = this.selected.find((t) => t.value === tag.value)
-        ? this.selected.filter((t) => t.value !== tag.value)
+      const tags = this.selected.find((t) => t.uuid === tag.uuid)
+        ? this.selected.filter((t) => t.uuid !== tag.uuid)
         : [...this.selected, tag];
 
       this.selected = tags;

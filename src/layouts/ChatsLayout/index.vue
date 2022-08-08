@@ -1,6 +1,6 @@
 <template>
   <section class="container">
-    <the-chat-list class="chat-list" :disabled="disabledChatList" />
+    <the-room-list class="room-list" :disabled="disabledChatList" />
 
     <main>
       <slot />
@@ -13,13 +13,13 @@
 </template>
 
 <script>
-import TheChatList from './components/TheChatList';
+import TheRoomList from './components/TheRoomList';
 
 export default {
   name: 'ChatsLayout',
 
   components: {
-    TheChatList,
+    TheRoomList,
   },
 
   props: {
@@ -43,7 +43,7 @@ export default {
   max-height: $max-height;
   display: flex;
 
-  .chat-list {
+  .room-list {
     overflow-y: auto;
     margin: {
       top: $unnnic-spacing-inline-sm;
