@@ -5,7 +5,7 @@
         <chat-header
           :room="{ ...room }"
           @close="room = null"
-          closeButtonTooltip="Fechar visualização"
+          :closeButtonTooltip="$t('close_view')"
         />
         <chat-messages :room="{ ...room }" :messages="messages" class="messages" />
       </section>
@@ -15,7 +15,7 @@
           <div class="title">
             <unnnic-card
               type="title"
-              title="Histórico"
+              :title="$t('history')"
               icon="task-list-clock-1"
               scheme="aux-purple"
               :has-information-icon="false"
@@ -29,10 +29,10 @@
           <unnnic-input-date-picker
             v-model="filteredDateRange"
             size="sm"
-            input-format="DD/MM/YYYY"
+            :input-format="$t('date_format')"
           />
 
-          <unnnic-tool-tip enabled text="Limpar filtros" side="right">
+          <unnnic-tool-tip enabled :text="$t('filter.clear_all')" side="right">
             <unnnic-button-icon icon="button-refresh-arrows-1" size="small" @click="clearFilters" />
           </unnnic-tool-tip>
         </section>
@@ -61,7 +61,7 @@
 
               <template #visualize>
                 <unnnic-button
-                  text="Abrir conversa"
+                  :text="$t('chats.open_chat')"
                   type="secondary"
                   size="small"
                   class="visualize-button"
@@ -124,33 +124,6 @@ export default {
       end: '',
     },
     filteredTags: [],
-    tableHeaders: [
-      {
-        id: 'contactName',
-        text: 'Contato',
-        flex: 3,
-      },
-      {
-        id: 'agentName',
-        text: 'Agente',
-        flex: 2,
-      },
-      {
-        id: 'tags',
-        text: 'Tags',
-        flex: 5,
-      },
-      {
-        id: 'date',
-        text: 'Data',
-        flex: 2,
-      },
-      {
-        id: 'visualize',
-        text: 'Visualizar',
-        flex: 3,
-      },
-    ],
     closedRooms: [],
   }),
 
@@ -158,6 +131,36 @@ export default {
     ...mapState({
       tags: (state) => state.chats.tags,
     }),
+
+    tableHeaders() {
+      return [
+        {
+          id: 'contactName',
+          text: this.$t('contact'),
+          flex: 3,
+        },
+        {
+          id: 'agentName',
+          text: this.$t('agent'),
+          flex: 2,
+        },
+        {
+          id: 'tags',
+          text: this.$t('tags'),
+          flex: 5,
+        },
+        {
+          id: 'date',
+          text: this.$t('date'),
+          flex: 2,
+        },
+        {
+          id: 'visualize',
+          text: this.$t('view'),
+          flex: 3,
+        },
+      ];
+    },
 
     filteredClosedRooms() {
       return this.closedRooms

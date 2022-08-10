@@ -65,14 +65,14 @@ export default {
 
       const props = {
         media: {
-          textTitle: 'Enviar foto ou vídeo',
+          textTitle: this.$t('send_photo_or_video'),
           supportedFormats: '.png,.jpeg,.mp4',
-          textAction: this.files.length > 1 ? 'Enviar imagens' : 'Enviar imagem',
+          textAction: this.$tc('send_images', this.files.length),
         },
         document: {
-          textTitle: 'Enviar documento',
+          textTitle: this.$tc('send_docs'),
           supportedFormats: '.pdf,.doc,.txt',
-          textAction: this.files.length > 1 ? 'Enviar documentos' : 'Enviar documento',
+          textAction: this.$tc('send_docs', this.files.length),
         },
       };
 

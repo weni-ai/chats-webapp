@@ -32,9 +32,9 @@
         </template>
       </unnnic-text-editor>
 
-      <file-uploader v-if="false" v-model="files" @upload="upload">
+      <file-uploader v-if="true" v-model="files" @upload="upload">
         <template #trigger="{ open }">
-          <unnnic-tool-tip enabled text="Enviar mídia" side="top">
+          <unnnic-tool-tip enabled :text="$t('send_media')" side="top">
             <unnnic-dropdown position="top-left">
               <template #trigger>
                 <slot name="trigger">
@@ -48,7 +48,7 @@
                   @keypress.enter="open('media')"
                 >
                   <unnnic-icon-svg icon="video-file-mp4-1" />
-                  <span> Enviar foto ou vídeo </span>
+                  <span> {{ $t('send_photo_or_video') }} </span>
                 </span>
               </unnnic-dropdown-item>
               <unnnic-dropdown-item>
@@ -58,7 +58,7 @@
                   @keypress.enter="open('document')"
                 >
                   <unnnic-icon-svg icon="upload-bottom-1" />
-                  <span> Enviar documento </span>
+                  <span> {{ $tc('send_docs') }} </span>
                 </span>
               </unnnic-dropdown-item>
             </unnnic-dropdown>

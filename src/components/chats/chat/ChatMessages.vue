@@ -4,7 +4,13 @@
       <!-- missing info in API return data -->
       <div v-if="false" class="chat-messages__room__divisor">
         <div class="chat-messages__room__divisor__line" />
-        <span class="chat-messages__room__divisor__label"> Chat com {{ message.agent }} </span>
+        <span class="chat-messages__room__divisor__label">
+          {{
+            message.sender.full_name === 'Bot'
+              ? $t('chat_with.bot')
+              : $t('chat_with.agent', { name: message.sender.full_name })
+          }}
+        </span>
         <div class="chat-messages__room__divisor__line" />
       </div>
 
@@ -94,16 +100,15 @@ export default {
       return !message.sender;
     },
     createTransferLabel(message) {
+      const { name } = message.name;
       const transferType = {
-        queue: `Contato transferido para fila ${message.name}`,
-        agent: `Contato transferido para agente ${message.name}`,
+        queue: this.$t('contact_transferred_to.line', { name }),
+        agent: this.$t('contact_transferred_to.agent', { name }),
       };
 
       return transferType[message.type];
     },
-    showContactInfo(username) {
-      if (username === 'Agente') return;
-
+    showContactInfo() {
       this.$emit('show-contact-info');
     },
   },

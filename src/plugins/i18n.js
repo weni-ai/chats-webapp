@@ -16,6 +16,30 @@ const i18n = new VueI18n({
   locale: 'pt-BR',
   fallbackLocale: 'pt-BR',
   messages,
+  dateTimeFormats: {
+    'pt-BR': {
+      short: {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      },
+      long: {
+        month: 'long',
+        day: '2-digit',
+      },
+    },
+    en: {
+      short: {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      },
+      long: {
+        month: 'long',
+        day: '2-digit',
+      },
+    },
+  },
 });
 
 export default i18n;
