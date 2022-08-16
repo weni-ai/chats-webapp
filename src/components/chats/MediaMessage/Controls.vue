@@ -5,7 +5,7 @@
       {{ fullFilename }}
     </span>
 
-    <unnnic-tool-tip enabled text="Baixar" side="right">
+    <unnnic-tool-tip enabled :text="$t('download')" side="right">
       <span class="clickable" @click="$emit('download')" @keypress.enter="$emit('download')">
         <unnnic-icon-svg icon="download-bottom-1" scheme="neutral-darkest" size="sm" />
       </span>

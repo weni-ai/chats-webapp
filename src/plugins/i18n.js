@@ -1,25 +1,45 @@
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 
+// eslint-disable-next-line camelcase
+import pt_BR from '@/locales/pt_BR.json';
+import en from '@/locales/en.json';
+
 Vue.use(VueI18n);
 
 const messages = {
-  'pt-BR': {
-    upload_area: {
-      title: {
-        text: 'Arraste seu arquivo aqui, ou',
-        highlight: 'procure-o',
-      },
-
-      subtitle: 'Formatos suportados:',
-    },
-  },
+  'pt-BR': pt_BR,
+  en,
 };
 
 const i18n = new VueI18n({
   locale: 'pt-BR',
   fallbackLocale: 'pt-BR',
   messages,
+  dateTimeFormats: {
+    'pt-BR': {
+      short: {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      },
+      long: {
+        month: 'long',
+        day: '2-digit',
+      },
+    },
+    en: {
+      short: {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      },
+      long: {
+        month: 'long',
+        day: '2-digit',
+      },
+    },
+  },
 });
 
 export default i18n;

@@ -1,7 +1,7 @@
 <template>
   <aside-slot-template
     v-if="!isEditing && !isCreating"
-    title="Mensagens rápidas"
+    :title="$t('quick_message')"
     icon="flash-1-3"
     @action="$emit('close')"
   >
@@ -21,7 +21,7 @@
 
         <unnnic-button
           icon-left="add-circle-1"
-          text="Adicionar nova mensagem rápida"
+          :text="$t('quick_messages.add_new')"
           type="secondary"
           size="small"
           class="fill-w"
@@ -31,23 +31,23 @@
     </section>
 
     <unnnic-modal
-      text="Excluir mensagem rápida"
-      description="Você tem certeza que deseja excluir a mensagem rápida?"
+      :text="$t('quick_messages.delete')"
+      :description="$t('quick_messages.delete_confirm')"
       scheme="feedback-yellow"
       modal-icon="alert-circle-1"
       @close="quickMessageToDelete = null"
       :show-modal="!!quickMessageToDelete"
     >
       <template #options>
-        <unnnic-button text="Confirmar" type="terciary" @click="deleteQuickMessage" />
-        <unnnic-button text="Cancelar" @click="quickMessageToDelete = null" />
+        <unnnic-button :text="$t('confirm')" type="terciary" @click="deleteQuickMessage" />
+        <unnnic-button :text="$t('cancel')" @click="quickMessageToDelete = null" />
       </template>
     </unnnic-modal>
   </aside-slot-template>
 
   <aside-slot-template
     v-else
-    :title="isEditing ? 'Editar mensagem rápida' : 'Adicionar mensagem rápida'"
+    :title="isEditing ? $t('quick_messages.edit') : $t('quick_messages.add')"
     icon="flash-1-3"
     no-icon-action
     @action="quickMessageToEdit = null"
@@ -106,10 +106,10 @@ export default {
 
       unnnicCallAlert({
         props: {
-          title: 'Mensagem rápida adicionada',
+          title: this.$t('quick_messages.successfully_added'),
           icon: 'check-circle-1-1-1',
           scheme: 'feedback-green',
-          closeText: 'Fechar',
+          closeText: this.$t('close'),
         },
         seconds: 5,
       });

@@ -1,12 +1,12 @@
 <template>
   <div class="container">
     <section class="chat-groups">
-      <room-group label="Fila" :rooms="queue" filled />
-      <room-group label="Chats Abertos" :rooms="rooms" />
+      <room-group :label="$t('line')" :rooms="queue" filled />
+      <room-group :label="$t('chats.in_progress')" :rooms="rooms" />
     </section>
 
     <unnnic-button
-      :text="isActiveChatView ? 'Visualizar histórico' : 'Voltar para chats'"
+      :text="isActiveChatView ? $t('chats.see_history') : $t('back_to_chats')"
       :iconRight="isActiveChatView ? 'task-list-clock-1' : ''"
       :iconLeft="isActiveChatView ? '' : 'keyboard-arrow-left-1'"
       type="secondary"

@@ -17,7 +17,9 @@
         {{ room.contact.full_name }}
       </h3>
       <div class="additional-information" :class="{ bold: hasUnreadMessages }">
-        <span v-if="waitingTime !== 0"> Aguardando há {{ waitingTime }} minutos </span>
+        <span v-if="waitingTime !== 0">
+          {{ $t('waiting_for.minutes', waitingTime) }}
+        </span>
         <span v-else>
           {{ room.lastMessage }}
         </span>

@@ -4,24 +4,20 @@
       :value="quickMessage.title"
       @input="quickMessage = { ...quickMessage, title: $event }"
       size="sm"
-      label="Título"
-      placeholder="Defina um título para sua resposta pronta"
+      :label="$t('title')"
+      :placeholder="$t('quick_messages.title_field_placeholder')"
     />
 
     <unnnic-input
       :value="quickMessage.shortcut"
       @input="quickMessage = { ...quickMessage, shortcut: $event }"
       size="sm"
-      placeholder="Adicione uma palavra de atalho"
+      :placeholder="$t('quick_messages.shortcut_field_placeholder')"
     >
       <template #label>
         <span class="label">
-          Atalho
-          <unnnic-tool-tip
-            enabled
-            text="Defina uma palavra-chave e facilite o uso de /atalhos"
-            side="right"
-          >
+          {{ $t('shortcut') }}
+          <unnnic-tool-tip enabled :text="$t('quick_messages.shortcut_field_tooltip')" side="right">
             <unnnic-icon-svg scheme="neutral-clean" icon="information-circle-4" size="sm" />
           </unnnic-tool-tip>
         </span>
@@ -31,21 +27,21 @@
     <unnnic-text-area
       :value="quickMessage.message"
       @input="quickMessage = { ...quickMessage, message: $event }"
-      label="Mensagem"
-      placeholder="Insira o conteúdo da mensagem que deseja cadastrar"
+      :label="$t('message')"
+      :placeholder="$t('quick_messages.message_field_placeholder')"
     />
 
     <div class="actions">
       <unnnic-button
         class="button"
-        text="Cancelar"
+        :text="$t('cancel')"
         type="secondary"
         size="small"
         @click="$emit('cancel')"
       />
       <unnnic-button
         class="button"
-        text="Salvar"
+        :text="$t('save')"
         size="small"
         @click="submit"
         :disabled="isSaveButtonDisabled"

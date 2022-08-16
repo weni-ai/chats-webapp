@@ -1,7 +1,7 @@
 <template>
   <aside-slot-template
     class="contact-info"
-    title="Informações do contato"
+    :title="$t('contact_information')"
     @action="$listeners.close"
   >
     <section class="scrollable">
@@ -17,13 +17,12 @@
 
           <div class="connection-info">
             <p v-if="room.contact.status === 'online'">Online</p>
-            <p v-else>{{ getLastViewText(room.contact.last_interaction) }}</p>
+            <p v-else>{{ getLastTimeOnlineText(room.contact.last_interaction) }}</p>
             <p v-for="[field, value] of Object.entries(room.contact.custom_fields)" :key="field">
               <span class="title"> {{ field }} </span>
               {{ value }}
             </p>
             <p>
-              <span class="title"> Último contato </span>
               {{ getLastContactText(room.contact.last_interaction) }}
             </p>
           </div>
@@ -36,8 +35,8 @@
             v-model="transferContactSearch"
             :data="filteredTransferOptions"
             @choose="transferContactTo = $event"
-            placeholder="Selecione agente, fila ou setor"
-            label="Transferir chat"
+            :placeholder="$t('select_agent_line_or_department')"
+            :label="$t('chats.transfer')"
             open-with-focus
             size="sm"
             highlight
@@ -46,7 +45,7 @@
 
           <unnnic-button
             class="transfer__button"
-            text="Transferir"
+            :text="$t('transfer')"
             size="small"
             :disabled="isTransferButtonDisabled"
             @click="transferContact"
@@ -59,8 +58,8 @@
       </aside-slot-template-section>
     </section>
     <unnnic-modal
-      text="Conversa transferida com sucesso!"
-      :description="`O contato foi encaminhado para a fila do ${transferContactTo}`"
+      :text="$t('successfully_transferred_chat')"
+      :description="$t('successfully_transferred_contact_to.line', { name: transferContactTo })"
       modalIcon="check-circle-1-1"
       scheme="feedback-green"
       :showModal="showSuccessfulTransferModal"
@@ -136,23 +135,31 @@ export default {
   },
 
   methods: {
-    getLastViewText(lastView) {
+    getLastTimeOnlineText(lastView) {
       const today = new Date();
       const lastViewDate = new Date(lastView);
       const dateDifferenceInHours = this.getDatesDifferenceInHours(today, lastViewDate);
 
       if (dateDifferenceInHours >= 24) {
-        const formattedDate = Intl.DateTimeFormat('pt-BR', {
+        const formattedDate = Intl.DateTimeFormat(this.$i18n.locale, {
           dateStyle: 'short',
         }).format(lastViewDate);
 
-        return `Online em ${formattedDate}`;
+        const formattedTime = Intl.DateTimeFormat(this.$i18n.locale, {
+          timeStyle: 'short',
+        })
+          .format(lastViewDate)
+          .replace(':', 'h');
+
+        return this.$t('last_online_time.date', { date: formattedDate, time: formattedTime });
       }
 
       const dateDifferenceInMinutes = dateDifferenceInHours * 60;
       return dateDifferenceInMinutes > 60
-        ? `Online há ${Number.parseInt(dateDifferenceInHours, 10)} horas`
-        : `Online há ${Number.parseInt(dateDifferenceInMinutes, 10)} minutos`;
+        ? this.$t('last_online_time.hours', { hours: Number.parseInt(dateDifferenceInHours, 10) })
+        : this.$t('last_online_time.minutes', {
+            minutes: Number.parseInt(dateDifferenceInMinutes, 10),
+          });
     },
     getDatesDifferenceInHours(a, b) {
       const differenceInMs = Math.abs(a - b);
@@ -170,19 +177,21 @@ export default {
           dateStyle: 'short',
         }).format(lastContactDate);
 
-        return `em ${formattedDate}`;
+        return this.$t('last_message_time.date', { date: formattedDate });
       }
 
       const dateDifferenceInMinutes = dateDifferenceInHours * 60;
       return dateDifferenceInMinutes > 60
-        ? `há ${Number.parseInt(dateDifferenceInHours, 10)} horas`
-        : `há ${Number.parseInt(dateDifferenceInMinutes, 10)} minutos`;
+        ? this.$t('last_message_time.hours', { hours: Number.parseInt(dateDifferenceInHours, 10) })
+        : this.$t('last_message_time.minutes', {
+            minutes: Number.parseInt(dateDifferenceInMinutes, 10),
+          });
     },
     lowercase(value) {
       return value.toString().toLowerCase();
     },
     transferContact() {
-      this.$store.commit('chats/removeChat', this.chat);
+      this.$store.commit('chats/removeChat', this.room);
       this.showSuccessfulTransferModal = true;
     },
   },

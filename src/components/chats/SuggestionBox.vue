@@ -1,7 +1,7 @@
 <template>
   <section v-if="isSuggestionBoxOpen" class="suggestion-box">
     <header class="suggestion-box__header">
-      Atalhos disponíveis
+      {{ $t('quick_messages.available_shortcuts') }}
       <span class="suggestion-box__search">{{ search }}</span>
     </header>
 

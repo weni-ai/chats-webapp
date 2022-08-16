@@ -37,7 +37,7 @@
           <unnnic-tool-tip
             v-if="content.sent === false"
             enabled
-            text="Clique para reenviar"
+            :text="$t('click_to_resend')"
             side="right"
           >
             <span
