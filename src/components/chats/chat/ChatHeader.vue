@@ -1,7 +1,7 @@
 <template>
   <div class="chat-header">
     <header class="header">
-      <unnnic-tool-tip enabled text="Informações do contato" side="right">
+      <unnnic-tool-tip enabled :text="$t('contact_information')" side="right">
         <section class="info clickable">
           <user-avatar
             :username="room.contact.full_name"
@@ -24,7 +24,7 @@
     </header>
 
     <section class="chat-closed-message" v-if="!room.is_active">
-      <span class="message">{{ getFullDate(room.date) }}</span>
+      <span class="message">{{ $d(room.date ? new Date(room.date) : new Date(), 'long') }}</span>
     </section>
   </div>
 </template>
@@ -51,19 +51,6 @@ export default {
   },
 
   methods: {
-    getFullDate(date) {
-      let parsedDate;
-      if (date) {
-        const [day, month, year] = date.split('/');
-        parsedDate = new Date(`${month}/${day}/${year}`);
-      } else {
-        parsedDate = new Date();
-      }
-
-      return new Intl.DateTimeFormat('pt-BR', {
-        dateStyle: 'long',
-      }).format(parsedDate);
-    },
     showContactInfo() {
       if (this.room.contact.full_name === 'Agente') return;
 

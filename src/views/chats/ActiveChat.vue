@@ -3,7 +3,7 @@
     <section v-if="!!room" class="active-chat">
       <chat-header
         :room="room"
-        closeButtonTooltip="Encerrar chat"
+        :closeButtonTooltip="$t('chats.end')"
         @close="isCloseChatModalOpen = true"
         @show-contact-info="componentInAsideSlot = 'contactInfo'"
       />
@@ -38,16 +38,17 @@
     </section>
 
     <unnnic-modal
+      v-if="room"
       :showModal="isCloseChatModalOpen"
       @close="isCloseChatModalOpen = false"
-      title="Encerrar conversa"
-      description="Você tem certeza que deseja encerrar a conversa?"
+      :text="$t('chats.end')"
+      :description="$t('chats.end_confirmation', { name: room.contact.full_name })"
       modal-icon="alert-circle-1"
       scheme="feedback-yellow"
     >
       <template #options>
-        <unnnic-button text="Confirmar" type="terciary" @click="closeChat" />
-        <unnnic-button text="Cancelar" @click="isCloseChatModalOpen = false" />
+        <unnnic-button :text="$t('confirm')" type="terciary" @click="closeChat" />
+        <unnnic-button :text="$t('cancel')" @click="isCloseChatModalOpen = false" />
       </template>
     </unnnic-modal>
 

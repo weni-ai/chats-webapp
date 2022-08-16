@@ -8,13 +8,17 @@
     <unnnic-chat-text
       :title="quickMessage.title"
       title-color="brand-weni-dark"
-      :info="`Digite /${quickMessage.shortcut || quickMessage.title.toLowerCase()} para usar`"
+      :info="
+        $t('quick_messages.shortcut_tooltip', {
+          shortcut: quickMessage.shortcut || quickMessage.title.toLowerCase(),
+        })
+      "
       size="small"
     >
       <template slot="actions">
         <unnnic-dropdown>
           <template #trigger>
-            <unnnic-tool-tip enabled text="Remover ou editar" side="left">
+            <unnnic-tool-tip enabled :text="$t('quick_messages.delete_or_edit')" side="left">
               <div class="quick-message-actions">
                 <unnnic-icon-svg
                   icon="navigation-menu-vertical-1"
@@ -28,14 +32,14 @@
           <unnnic-dropdown-item @click="$emit('edit')">
             <div class="dropdown-item-content">
               <unnnic-icon-svg class="icon" icon="app-window-edit-1" />
-              <span> Editar </span>
+              <span> {{ $t('edit') }} </span>
             </div>
           </unnnic-dropdown-item>
 
           <unnnic-dropdown-item @click="$emit('delete')">
             <div class="dropdown-item-content">
               <unnnic-icon-svg class="icon" icon="delete-1-1" />
-              <span> Excluir </span>
+              <span> {{ $t('delete') }} </span>
             </div>
           </unnnic-dropdown-item>
         </unnnic-dropdown>
