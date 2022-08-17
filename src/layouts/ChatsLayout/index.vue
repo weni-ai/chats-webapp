@@ -1,5 +1,5 @@
 <template>
-  <section class="container">
+  <section class="chats-layout">
     <the-room-list class="room-list" :disabled="disabledChatList" />
 
     <main>
@@ -38,9 +38,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container {
-  $max-height: calc(100vh - 5.5rem);
-  max-height: $max-height;
+.chats-layout {
+  height: 100%;
+  max-height: 100%;
   display: flex;
 
   .room-list {
@@ -55,20 +55,15 @@ export default {
 
   main {
     flex: 1 1;
-    height: $max-height;
+    height: 100%;
   }
 
   .aside {
-    height: $max-height;
-    max-height: $max-height;
+    height: 100%;
     width: 20.625rem;
 
     background: $unnnic-color-background-grass;
     padding-left: $unnnic-spacing-inline-xs;
-
-    & > * {
-      max-height: $max-height;
-    }
   }
 }
 </style>

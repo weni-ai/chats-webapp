@@ -32,7 +32,7 @@
         </template>
       </unnnic-text-editor>
 
-      <file-uploader v-if="true" v-model="files" @upload="upload">
+      <file-uploader v-if="false" v-model="files" @upload="upload">
         <template #trigger="{ open }">
           <unnnic-tool-tip enabled :text="$t('send_media')" side="top">
             <unnnic-dropdown position="top-left">
