@@ -29,23 +29,19 @@ export default {
 
 <style lang="scss" scoped>
 .illustration {
-  $height: calc(100vh - 5.5rem);
-
   display: flex;
   align-items: center;
   justify-content: center;
 
   position: relative;
-  height: $height;
-  max-height: $height;
+  height: 100%;
   margin-left: $unnnic-spacing-inline-sm;
 
   &__doodles,
   &__background {
     position: absolute;
-    height: $height;
+    height: 100%;
     width: 100%;
-    max-height: $height;
     object-fit: cover;
     object-position: center;
     pointer-events: none;

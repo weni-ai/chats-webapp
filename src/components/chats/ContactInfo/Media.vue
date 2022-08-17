@@ -3,7 +3,6 @@
     <template slot="tab-head-media">
       <div class="media-tab" :class="{ active: isActiveTab('media') }">
         <span class="name">{{ $t('media') }}</span>
-        <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
       </div>
     </template>
 
@@ -20,7 +19,6 @@
     <template slot="tab-head-docs">
       <div class="media-tab" :class="{ active: isActiveTab('docs') }">
         <span class="name">{{ $t('docs') }}</span>
-        <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
       </div>
     </template>
 

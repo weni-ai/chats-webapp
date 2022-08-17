@@ -1,19 +1,17 @@
 <template>
   <div id="app">
-    <connect-layout>
-      <router-view />
-    </connect-layout>
+    <router-view />
   </div>
 </template>
 
 <script>
-import ConnectLayout from './layouts/ConnectLayout';
-
 export default {
   name: 'App',
-
-  components: {
-    ConnectLayout,
-  },
 };
 </script>
+
+<style lang="scss" scoped>
+#app {
+  height: 100%;
+}
+</style>

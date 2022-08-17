@@ -29,13 +29,13 @@
       </div>
     </section>
 
-    <section class="chat-messages__room__divisor">
+    <section v-if="!room.is_active" class="chat-messages__room__divisor">
       <div class="chat-messages__room__divisor__line" />
       <span class="chat-messages__room__divisor__label"> Chat encerrado pelo agente </span>
       <div class="chat-messages__room__divisor__line" />
     </section>
 
-    <section class="chat-messages__tags">
+    <section v-if="room.tags" class="chat-messages__tags">
       <p class="chat-messages__tags__label">Tags do chat</p>
       <tag-group :tags="room.tags" />
     </section>
@@ -100,7 +100,7 @@ export default {
       return !message.sender;
     },
     createTransferLabel(message) {
-      const { name } = message.name;
+      const { name } = message;
       const transferType = {
         queue: this.$t('contact_transferred_to.line', { name }),
         agent: this.$t('contact_transferred_to.agent', { name }),
