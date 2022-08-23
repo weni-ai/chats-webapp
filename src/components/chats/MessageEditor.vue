@@ -30,41 +30,34 @@
             ref="audioRecorder"
           />
         </template>
+
+        <template #attachment-options>
+          <div class="attachment-options-container">
+            <unnnic-dropdown-item>
+              <span
+                class="upload-dropdown-option"
+                @click="open('media')"
+                @keypress.enter="open('media')"
+              >
+                <unnnic-icon-svg icon="video-file-mp4-1" />
+                <span> {{ $t('send_photo_or_video') }} </span>
+              </span>
+            </unnnic-dropdown-item>
+            <unnnic-dropdown-item>
+              <span
+                class="upload-dropdown-option"
+                @click="open('document')"
+                @keypress.enter="open('document')"
+              >
+                <unnnic-icon-svg icon="upload-bottom-1" />
+                <span> {{ $tc('send_docs') }} </span>
+              </span>
+            </unnnic-dropdown-item>
+          </div>
+        </template>
       </unnnic-text-editor>
 
-      <file-uploader v-if="false" v-model="files" @upload="upload">
-        <template #trigger="{ open }">
-          <unnnic-tool-tip enabled :text="$t('send_media')" side="top">
-            <unnnic-dropdown position="top-left">
-              <template #trigger>
-                <slot name="trigger">
-                  <unnnic-button-icon slot="trigger" icon="upload-bottom-1" size="small" />
-                </slot>
-              </template>
-              <unnnic-dropdown-item>
-                <span
-                  class="upload-dropdown-option"
-                  @click="open('media')"
-                  @keypress.enter="open('media')"
-                >
-                  <unnnic-icon-svg icon="video-file-mp4-1" />
-                  <span> {{ $t('send_photo_or_video') }} </span>
-                </span>
-              </unnnic-dropdown-item>
-              <unnnic-dropdown-item>
-                <span
-                  class="upload-dropdown-option"
-                  @click="open('document')"
-                  @keypress.enter="open('document')"
-                >
-                  <unnnic-icon-svg icon="upload-bottom-1" />
-                  <span> {{ $tc('send_docs') }} </span>
-                </span>
-              </unnnic-dropdown-item>
-            </unnnic-dropdown>
-          </unnnic-tool-tip>
-        </template>
-      </file-uploader>
+      <file-uploader v-model="files" ref="fileUploader" @upload="upload" />
     </div>
   </section>
 </template>
@@ -167,6 +160,9 @@ export default {
     focusTextEditor() {
       this.$refs.textEditor?.focus?.();
     },
+    open(fileType) {
+      this.$refs.fileUploader.open(fileType);
+    },
   },
 };
 </script>
@@ -182,6 +178,10 @@ export default {
       bottom: 0;
       left: 0;
     }
+  }
+
+  .attachment-options-container {
+    padding: 1rem 0.5rem;
   }
 }
 </style>
