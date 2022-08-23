@@ -19,14 +19,14 @@
         @send="send"
         @keydown="onKeyDown"
         @action="$emit('show-quick-messages')"
-        @record-audio-down="record"
-        @record-audio-up="stopRecord"
+        @record-audio="record"
         ref="textEditor"
       >
         <template #footer-input>
           <unnnic-audio-recorder
             v-show="isAudioRecorderVisible"
             v-model="recordedAudio"
+            can-delete
             ref="audioRecorder"
           />
         </template>
