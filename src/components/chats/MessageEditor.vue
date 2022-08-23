@@ -20,6 +20,7 @@
         @keydown="onKeyDown"
         @action="$emit('show-quick-messages')"
         @record-audio="record"
+        :texts="textEditorTooltips"
         ref="textEditor"
       >
         <template #footer-input>
@@ -121,6 +122,22 @@ export default {
           shortcut,
           preview: message,
         }));
+    },
+    textEditorTooltips() {
+      return {
+        Undo: this.$t('undo'),
+        Redo: this.$t('redo'),
+        RecordAudio: this.$t('record_audio'),
+        Bold: this.$t('bold'),
+        Italic: this.$t('italic'),
+        Underline: this.$t('underline'),
+        List: this.$t('list'),
+        Left: this.$t('left'),
+        Center: this.$t('center'),
+        Right: this.$t('right'),
+        Justify: this.$t('justify'),
+        Attach: this.$t('attach'),
+      };
     },
   },
 

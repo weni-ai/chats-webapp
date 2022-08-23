@@ -27,6 +27,54 @@
     "pt-BR": "DD/MM/YYYY",
     "en": "MM/DD/YYYY"
   },
+  "undo": {
+    "pt-BR": "Desfazer",
+    "en": "Undo"
+  },
+  "redo": {
+    "pt-BR": "Refazer",
+    "en": "Redo"
+  },
+  "record_audio": {
+    "pt-BR": "Gravar áudio",
+    "en": "Record audio"
+  },
+  "attach": {
+    "pt-BR": "Anexo",
+    "en": "Attach"
+  },
+  "bold": {
+    "pt-BR": "Negrito",
+    "en": "Bold"
+  },
+  "italic": {
+    "pt-BR": "Itálico",
+    "en": "Italic"
+  },
+  "underline": {
+    "pt-BR": "Sublinhado",
+    "en": "Underline"
+  },
+  "list": {
+    "pt-BR": "Lista",
+    "en": "List"
+  },
+  "left": {
+    "pt-BR": "Esquerda",
+    "en": "Left"
+  },
+  "right": {
+    "pt-BR": "Direita",
+    "en": "Right"
+  },
+  "center": {
+    "pt-BR": "Centralizar",
+    "en": "Center"
+  },
+  "justify": {
+    "pt-BR": "Justificar",
+    "en": "Justify"
+  },
   "chats": {
     "in_progress": {
       "pt-BR": "Chats abertos",
