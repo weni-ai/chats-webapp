@@ -68,6 +68,10 @@
       "pt-BR": "Pegar chat",
       "en": "Get chat"
     },
+    "get_chat_question": {
+      "pt-BR": "Pegar chat?",
+      "en": "Get chat?"
+    },
     "get_chat_confirmation": {
       "pt-BR": "Confirme se deseja pegar o chat com {contact}",
       "en": "Confirm if you want to get the chat with {contact}"

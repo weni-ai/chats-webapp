@@ -23,8 +23,12 @@
       </span>
     </header>
 
-    <section class="chat-closed-message" v-if="!room.is_active">
+    <section v-if="!room.is_active" class="header-info-message">
       <span class="message">{{ $d(room.date ? new Date(room.date) : new Date(), 'long') }}</span>
+    </section>
+
+    <section v-else-if="!room.user" class="header-info-message">
+      <span class="message">Contato na fila Financeiro há 8 minutos</span>
     </section>
   </div>
 </template>
@@ -83,7 +87,7 @@ export default {
   }
 }
 
-.chat-closed-message {
+.header-info-message {
   display: flex;
   justify-content: center;
   align-items: center;

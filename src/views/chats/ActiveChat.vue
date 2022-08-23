@@ -15,7 +15,7 @@
         ref="chatMessages"
       />
 
-      <div v-if="room.is_active" class="message-editor">
+      <div v-if="isMessageEditorVisible" class="message-editor">
         <message-editor
           v-model="editorMessage"
           :audio.sync="audioMessage"
@@ -28,10 +28,24 @@
         />
       </div>
 
-      <section v-if="!room.is_active && !room.tags" class="chat-classifier">
+      <div v-if="!room.user" class="get-chat-button-container">
+        <unnnic-button
+          class="get-chat-button"
+          :text="$t('chats.get_chat')"
+          type="secondary"
+          @click="isGetChatConfirmationModalOpen = true"
+        />
+      </div>
+
+      <section v-if="isRoomClassifierVisible" class="chat-classifier">
         <chat-classifier v-model="tags" label="Por favor, classifique o atendimento:">
           <template #actions>
-            <unnnic-button text="Confirmar" type="secondary" size="small" @click="setChatTags" />
+            <unnnic-button
+              :text="$t('confirm')"
+              type="secondary"
+              size="small"
+              @click="setChatTags"
+            />
           </template>
         </chat-classifier>
       </section>
@@ -49,6 +63,25 @@
       <template #options>
         <unnnic-button :text="$t('confirm')" type="terciary" @click="closeChat" />
         <unnnic-button :text="$t('cancel')" @click="isCloseChatModalOpen = false" />
+      </template>
+    </unnnic-modal>
+
+    <unnnic-modal
+      v-if="room"
+      :showModal="isGetChatConfirmationModalOpen"
+      @close="isGetChatConfirmationModalOpen = false"
+      :text="$t('chats.get_chat_question')"
+      :description="`Confirme se deseja realizar o atendimento de ${room.contact.full_name}`"
+      modal-icon="messages-bubble-1"
+      scheme="neutral-darkest"
+    >
+      <template #options>
+        <unnnic-button
+          :text="$t('cancel')"
+          type="terciary"
+          @click="isGetChatConfirmationModalOpen = false"
+        />
+        <unnnic-button :text="$t('confirm')" type="secondary" @click="takeRoom" />
       </template>
     </unnnic-modal>
 
@@ -100,6 +133,7 @@ export default {
     editorMessage: '',
     isCloseChatModalOpen: false,
     tags: [],
+    isGetChatConfirmationModalOpen: false,
   }),
 
   computed: {
@@ -107,6 +141,12 @@ export default {
       room: (state) => state.rooms.activeRoom,
       messages: (state) => state.rooms.activeRoomMessages,
     }),
+    isMessageEditorVisible() {
+      return this.room.is_active && !!this.room.user;
+    },
+    isRoomClassifierVisible() {
+      return !this.room.is_active && !this.room.tags;
+    },
     sidebarComponent() {
       return this.sidebarComponents[this.componentInAsideSlot] || {};
     },
@@ -136,6 +176,10 @@ export default {
   },
 
   methods: {
+    takeRoom() {
+      console.log('took the room');
+      this.isGetChatConfirmationModalOpen = false;
+    },
     closeChat() {
       this.$store.commit('chats/setActiveChat', { ...this.room, closed: true });
       this.isCloseChatModalOpen = false;
@@ -271,6 +315,15 @@ export default {
   .message-editor {
     margin-right: $unnnic-spacing-inline-sm;
     margin-top: auto;
+  }
+
+  .get-chat-button-container {
+    margin-top: auto;
+    margin-right: $unnnic-spacing-inline-sm;
+
+    .get-chat-button {
+      width: 100%;
+    }
   }
 }
 </style>
