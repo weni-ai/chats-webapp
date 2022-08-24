@@ -18,6 +18,7 @@ FROM nginx
 
 COPY --from=builder /home/app/dist /usr/share/nginx/html
 
+COPY ./docker/nginx/nginx.conf /etc/nginx
 COPY docker-entrypoint.sh /usr/share/nginx/
 RUN chmod +x /usr/share/nginx/docker-entrypoint.sh
 
