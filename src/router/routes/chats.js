@@ -4,6 +4,13 @@ import ActiveChat from '@/views/chats/ActiveChat.vue';
 const routes = [
   {
     path: '/',
+    name: 'root',
+    beforeEnter: (from, to, next) => {
+      next({ name: 'home', replace: true });
+    },
+  },
+  {
+    path: '/rooms',
     name: 'home',
     component: Home,
   },

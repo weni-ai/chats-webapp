@@ -1,4 +1,5 @@
 import store from '@/store';
+import { set } from '@/utils/token';
 
 const routes = [
   {
@@ -8,11 +9,12 @@ const routes = [
     beforeEnter: async (to, from, next) => {
       const { token } = to.params;
       await store.dispatch('auth/setToken', token.replace('+', ' '));
+      set(token);
 
       if (to.query.next) {
         next(to.query.next);
       } else {
-        next('/');
+        next({ name: 'home' });
       }
     },
   },
