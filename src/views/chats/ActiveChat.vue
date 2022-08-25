@@ -56,7 +56,7 @@
       :showModal="isCloseChatModalOpen"
       @close="isCloseChatModalOpen = false"
       :text="$t('chats.end')"
-      :description="$t('chats.end_confirmation', { name: room.contact.full_name })"
+      :description="$t('chats.end_confirmation', { name: room.contact.name })"
       modal-icon="alert-circle-1"
       scheme="feedback-yellow"
     >
@@ -71,7 +71,7 @@
       :showModal="isGetChatConfirmationModalOpen"
       @close="isGetChatConfirmationModalOpen = false"
       :text="$t('chats.get_chat_question')"
-      :description="`Confirme se deseja realizar o atendimento de ${room.contact.full_name}`"
+      :description="`Confirme se deseja realizar o atendimento de ${room.contact.name}`"
       modal-icon="messages-bubble-1"
       scheme="neutral-darkest"
     >
@@ -189,7 +189,7 @@ export default {
     },
     async setActiveRoom(uuid) {
       const room = this.$store.getters['rooms/getRoomById'](uuid);
-      if (!room) this.$router.push('/');
+      if (!room) this.$router.push({ name: 'home' });
       await this.$store.dispatch('rooms/setActiveRoom', room);
       this.getRoomMessages();
     },

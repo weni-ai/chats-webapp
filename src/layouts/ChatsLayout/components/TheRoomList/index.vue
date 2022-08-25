@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 
 import RoomGroup from './RoomGroup';
 
@@ -44,9 +44,6 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      chatGroups: (state) => state.chats.chats,
-    }),
     ...mapGetters({
       rooms: 'rooms/agentRooms',
       queue: 'rooms/waitingQueue',

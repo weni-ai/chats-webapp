@@ -2,7 +2,7 @@
   <div class="message-group">
     <span>
       <user-avatar
-        :username="message.sender.full_name"
+        :username="message.sender.name"
         :clickable="isContactMessage"
         @click="showContactInfo"
         :disabled="disabled"
@@ -17,7 +17,7 @@
           @click="showContactInfo"
           @keypress.enter="showContactInfo"
         >
-          {{ message.sender.full_name }}
+          {{ message.sender.name }}
         </span>
         <span class="time">{{ sendingTime }}</span>
       </div>

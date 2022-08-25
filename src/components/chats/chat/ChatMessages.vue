@@ -6,15 +6,20 @@
         <div class="chat-messages__room__divisor__line" />
         <span class="chat-messages__room__divisor__label">
           {{
-            message.sender.full_name === 'Bot'
+            message.sender.name === 'Bot'
               ? $t('chat_with.bot')
-              : $t('chat_with.agent', { name: message.sender.full_name })
+              : $t('chat_with.agent', { name: message.sender.name })
           }}
         </span>
         <div class="chat-messages__room__divisor__line" />
       </div>
 
-      <section v-if="!isTransferInfoMessage(message)" class="chat-messages__messages">
+      <div v-if="isTransferInfoMessage(message)" class="chat-messages__room__transfer-info">
+        <unnnic-icon icon="logout-1-1" size="sm" scheme="neutral-cleanest" />
+        {{ createTransferLabel(message) }}
+      </div>
+
+      <section v-else class="chat-messages__messages">
         <chat-message
           :key="message.uuid"
           :message="message"
@@ -22,11 +27,6 @@
           @show-contact-info="showContactInfo"
         />
       </section>
-
-      <div v-if="isTransferInfoMessage(message)" class="chat-messages__room__transfer-info">
-        <unnnic-icon icon="logout-1-1" size="sm" scheme="neutral-cleanest" />
-        {{ createTransferLabel(message) }}
-      </div>
     </section>
 
     <section v-if="!room.is_active" class="chat-messages__room__divisor">
@@ -35,7 +35,7 @@
       <div class="chat-messages__room__divisor__line" />
     </section>
 
-    <section v-if="room.tags" class="chat-messages__tags">
+    <section v-if="room.tags.length > 0" class="chat-messages__tags">
       <p class="chat-messages__tags__label">Tags do chat</p>
       <tag-group :tags="room.tags" />
     </section>

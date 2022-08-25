@@ -46,12 +46,12 @@
             <unnnic-table-row :headers="tableHeaders">
               <template #contactName>
                 <div class="contact-name">
-                  <user-avatar :username="item.contact.full_name" size="xl" />
-                  {{ item.contact.full_name }}
+                  <user-avatar :username="item.contact.name" size="xl" />
+                  {{ item.contact.name }}
                 </div>
               </template>
 
-              <template #agentName>{{ item.user.full_name }}</template>
+              <template #agentName>{{ item.user.first_name }}</template>
 
               <template #tags>
                 <tag-group :tags="item.tags" />
