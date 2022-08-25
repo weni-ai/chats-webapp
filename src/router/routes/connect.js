@@ -7,7 +7,7 @@ const routes = [
     component: null,
     beforeEnter: async (to, from, next) => {
       const { token } = to.params;
-      store.dispatch('auth/setToken', token.replace('+', ' '));
+      await store.dispatch('auth/setToken', token.replace('+', ' '));
 
       if (to.query.next) {
         next(to.query.next);
