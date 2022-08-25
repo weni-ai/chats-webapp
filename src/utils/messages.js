@@ -1,13 +1,17 @@
 // eslint-disable-next-line import/prefer-default-export
 export function groupSequentialSentMessages(messages) {
-  const messagesWithSender = messages.map((message) =>
-    message.contact || message.user
-      ? {
-          ...message,
-          sender: message.contact || message.user,
-        }
-      : message,
-  );
+  const messagesWithSender = messages.map((message) => {
+    const sender = message.contact || message.user;
+    if (!sender) return message;
+    // only the contact has the `name` property
+    const { name, first_name: firstName, last_name: lastName } = sender;
+    const senderName = name || [firstName, lastName].join(' ');
+    sender.name = senderName;
+    return {
+      ...message,
+      sender,
+    };
+  });
 
   const groupedMessages = messagesWithSender.reduce((acc, message) => {
     if (!message.sender) {

@@ -4,14 +4,14 @@
       <unnnic-tool-tip enabled :text="$t('contact_information')" side="right">
         <section class="info clickable">
           <user-avatar
-            :username="room.contact.full_name"
+            :username="room.contact.name"
             size="2xl"
             clickable
             @click="showContactInfo"
             :disabled="!room.is_active"
           />
           <span class="username" @click="showContactInfo" @keypress.enter="showContactInfo">
-            {{ room.contact.full_name }}
+            {{ room.contact.name }}
           </span>
         </section>
       </unnnic-tool-tip>
@@ -56,8 +56,6 @@ export default {
 
   methods: {
     showContactInfo() {
-      if (this.room.contact.full_name === 'Agente') return;
-
       this.$emit('show-contact-info');
     },
   },

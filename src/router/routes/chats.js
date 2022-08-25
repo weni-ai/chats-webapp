@@ -6,7 +6,8 @@ const routes = [
     path: '/',
     name: 'root',
     beforeEnter: (from, to, next) => {
-      next({ name: 'home', replace: true });
+      if (to.path === '/') next({ name: 'home', replace: true });
+      else next(to.path);
     },
   },
   {

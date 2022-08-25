@@ -12,18 +12,22 @@
           </div>
 
           <p class="username">
-            {{ room.contact.full_name }}
+            {{ room.contact.name }}
           </p>
 
           <div class="connection-info">
             <p v-if="room.contact.status === 'online'">Online</p>
-            <p v-else>{{ getLastTimeOnlineText(room.contact.last_interaction) }}</p>
+            <p v-else>{{ getLastTimeOnlineText(room.contact.last_interaction || new Date()) }}</p>
             <p v-for="[field, value] of Object.entries(room.contact.custom_fields)" :key="field">
               <span class="title"> {{ field }} </span>
               {{ value }}
             </p>
             <p>
-              {{ getLastContactText(room.contact.last_interaction) }}
+              {{
+                getLastContactText(
+                  room.contact.last_interaction || new Date(Date.now() - 10 * 60 * 1000),
+                )
+              }}
             </p>
           </div>
         </section>
@@ -66,7 +70,7 @@
       @close="
         $store.commit('chats/setActiveChat', null),
           (showSuccessfulTransferModal = false),
-          $router.replace('/')
+          navigate('home')
       "
     />
   </aside-slot-template>
@@ -135,6 +139,9 @@ export default {
   },
 
   methods: {
+    navigate(name) {
+      this.$router.replace({ name });
+    },
     getLastTimeOnlineText(lastView) {
       const today = new Date();
       const lastViewDate = new Date(lastView);

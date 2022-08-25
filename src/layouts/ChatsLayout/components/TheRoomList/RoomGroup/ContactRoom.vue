@@ -6,7 +6,7 @@
     @keypress.enter="$emit('click')"
   >
     <user-avatar
-      :username="room.contact.full_name"
+      :username="room.contact.name"
       :active="room.uuid === activeChat.id"
       size="xl"
       :off="disabled"
@@ -14,7 +14,7 @@
 
     <div class="content">
       <h3 class="username" :class="{ bold: hasUnreadMessages }">
-        {{ room.contact.full_name }}
+        {{ room.contact.name }}
       </h3>
       <div class="additional-information" :class="{ bold: hasUnreadMessages }">
         <span v-if="waitingTime !== 0">

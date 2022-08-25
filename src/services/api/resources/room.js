@@ -1,3 +1,5 @@
+import http from '../http';
+
 const rooms = [
   {
     uuid: '84226d40-b580-4684-a2fa-74ac1932ff07',
@@ -244,11 +246,8 @@ const rooms = [
 
 export default {
   async getAll() {
-    return new Promise((resolve) => {
-      resolve({
-        results: rooms.filter((room) => room.is_active),
-      });
-    });
+    const response = await http.get('/room');
+    return response.data;
   },
 
   async getClosed() {
