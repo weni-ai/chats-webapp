@@ -108,3 +108,4 @@ jobs:
           repository: weni-ai/kubernetes-manifests-chats
           directory: ./kubernetes-manifests/
           branch: main
+          
