@@ -24,7 +24,7 @@
 
       <div
         v-for="content in message.content"
-        :key="content.text || content.filename || content.audio.src"
+        :key="content.uuid || content.text || content.filename || content.audio.src"
         class="message"
       >
         <media-message v-if="content.isMedia" :media="content" />

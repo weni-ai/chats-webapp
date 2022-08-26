@@ -21,7 +21,6 @@
 
       <section v-else class="chat-messages__messages">
         <chat-message
-          :key="message.uuid"
           :message="message"
           :disabled="isHistory"
           @show-contact-info="showContactInfo"
