@@ -3,7 +3,7 @@ import { get } from '@/utils/token';
 import env from '@/utils/env';
 
 const client = axios.create({
-  baseURL: env('CHATS_API_URL'),
+  baseURL: `https://${env('CHATS_API_URL')}/v1`,
 });
 
 const isProduction = process.env.NODE_ENV === 'production';
