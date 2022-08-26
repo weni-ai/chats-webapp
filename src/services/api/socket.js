@@ -1,3 +1,6 @@
+import env from '@/utils/env';
+import { get } from '@/utils/token';
+
 export class Socket {
   /**
    * @type {WebSocket}
@@ -32,6 +35,9 @@ export class Socket {
   }
 }
 
+const token = get();
 export const ws = new Socket(
-  `${process.env.VUE_APP_CHATS_WEBSOCKET_URL}/agent/rooms?Token=4215e6d6666e54f7db9f98100533aa68909fd855&project=34a93b52-231e-11ed-861d-0242ac120002`,
+  `${env(
+    'CHATS_WEBSOCKET_URL',
+  )}/agent/rooms?Token=${token}&project=34a93b52-231e-11ed-861d-0242ac120002`,
 );
