@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { get } from '@/utils/token';
+import env from '@/utils/env';
 
 const client = axios.create({
-  baseURL: process.env.VUE_APP_CHATS_API_URL,
+  baseURL: env('CHATS_API_URL'),
 });
 
 const isProduction = process.env.NODE_ENV === 'production';
