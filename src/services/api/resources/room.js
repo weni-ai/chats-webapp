@@ -246,7 +246,7 @@ const rooms = [
 
 export default {
   async getAll() {
-    const response = await http.get('/room');
+    const response = await http.get('/room/');
     return response.data;
   },
 
