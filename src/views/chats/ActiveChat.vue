@@ -123,8 +123,9 @@ export default {
     },
   },
 
-  mounted() {
-    this.setActiveRoom(this.id);
+  async mounted() {
+    await this.setActiveRoom(this.id);
+    this.getRoomMessages();
   },
 
   data: () => ({
@@ -191,7 +192,6 @@ export default {
       const room = this.$store.getters['rooms/getRoomById'](uuid);
       if (!room) this.$router.push({ name: 'home' });
       await this.$store.dispatch('rooms/setActiveRoom', room);
-      this.getRoomMessages();
     },
     getRoomMessages() {
       this.$store.dispatch('rooms/getActiveRoomMessages');
