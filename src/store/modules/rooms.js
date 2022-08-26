@@ -1,11 +1,12 @@
 import Message from '@/services/api/resources/message';
 import Room from '@/services/api/resources/room';
-import { groupSequentialSentMessages } from '@/utils/messages';
+import { groupSequentialSentMessages, parseMessageToMessageWithSenderProp } from '@/utils/messages';
 
 const mutations = {
   SET_ROOMS: 'SET_ROOMS',
   SET_ACTIVE_ROOM: 'SET_ACTIVE_ROOM',
   SET_ACTIVE_ROOM_MESSAGES: 'SET_ACTIVE_ROOM_MESSAGES',
+  NEW_MESSAGE: 'NEW_MESSAGE',
 };
 
 export default {
@@ -26,6 +27,19 @@ export default {
     [mutations.SET_ACTIVE_ROOM_MESSAGES](state, messages) {
       state.activeRoomMessages = messages;
     },
+    [mutations.NEW_MESSAGE](state, message) {
+      // TODO: fazer esse agrupamento via getter
+      const parsedMessage = parseMessageToMessageWithSenderProp(message);
+      const lastSenderUuid = state.activeRoomMessages.at(-1)?.sender?.uuid;
+      if (lastSenderUuid === parsedMessage.sender.uuid)
+        state.activeRoomMessages
+          .at(-1)
+          .content.push({ uuid: parsedMessage.uuid, text: parsedMessage.text });
+      else {
+        const { text, uuid } = parsedMessage;
+        state.activeRoomMessages.push({ ...parsedMessage, content: [{ uuid, text }] });
+      }
+    },
   },
 
   actions: {
@@ -45,8 +59,18 @@ export default {
       const messages = groupSequentialSentMessages(response.results || []);
       commit(mutations.SET_ACTIVE_ROOM_MESSAGES, messages);
     },
-    async sendMessage(ctx, text) {
-      console.log({ message: text });
+    async sendMessage({ state, commit }, text) {
+      const { activeRoom } = state;
+      if (!activeRoom) return;
+
+      const message = await Message.send(activeRoom.uuid, {
+        text,
+        user_email: activeRoom.user.email,
+      });
+      commit(mutations.NEW_MESSAGE, message);
+    },
+    async newMessage({ commit }, message) {
+      commit(mutations.NEW_MESSAGE, message);
     },
   },
 
