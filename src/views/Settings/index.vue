@@ -20,7 +20,7 @@
         :name="sector.name"
         @action="
           navigate({
-            name: 'sectors.view',
+            name: 'sectors.edit',
             params: { id: sector.id },
           })
         "

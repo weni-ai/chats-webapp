@@ -3,38 +3,18 @@
     <template slot="tab-head-sector">
       <div class="form-tab">
         <span class="name">Setor</span>
-        <unnnic-tool-tip enabled text="Setor é uma área dentro da sua organização" side="top">
-          <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
-        </unnnic-tool-tip>
       </div>
     </template>
 
     <template slot="tab-head-queues">
       <div class="form-tab">
         <span class="name">Filas</span>
-        <unnnic-tool-tip
-          enabled
-          text="Fila é onde o cliente aguarda atendimento de acordo com sua demanda"
-          side="top"
-        >
-          <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
-        </unnnic-tool-tip>
-      </div>
-    </template>
-
-    <template slot="tab-head-agents">
-      <div class="form-tab">
-        <span class="name">Agentes</span>
-        <unnnic-tool-tip enabled text="Agentes atendem os clientes através do Chats" side="top">
-          <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
-        </unnnic-tool-tip>
       </div>
     </template>
 
     <template slot="tab-head-tags">
       <div class="form-tab">
         <span class="name">Tags</span>
-        <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
       </div>
     </template>
 
@@ -44,10 +24,6 @@
 
     <template slot="tab-panel-queues">
       <slot name="queues" />
-    </template>
-
-    <template slot="tab-panel-agents">
-      <slot name="agents" />
     </template>
 
     <template slot="tab-panel-tags">
@@ -74,7 +50,7 @@ export default {
   },
 
   data: () => ({
-    tabs: ['sector', 'queues', 'agents', 'tags'],
+    tabs: ['sector', 'queues', 'tags'],
   }),
 
   computed: {

@@ -1,29 +1,44 @@
 <template>
   <form @submit.prevent="$emit('submit')" class="form-sector">
-    <section v-if="!isEditing" class="form-section">
-      <h2 class="title">Adicionar novo setor</h2>
-      <unnnic-input v-model="sector.name" label="Nome do setor" placeholder="Suporte" />
+    <section v-if="isEditing" class="form-section">
+      <h2 v-if="sector.name" class="title--lg">{{ sector.name }}</h2>
     </section>
 
-    <section class="form-section">
-      <h2 class="title">{{ isEditing ? 'Editar' : 'Atribuir um' }} gestor</h2>
-      <unnnic-autocomplete
-        v-model="sector.manager"
-        label="Selecionar gestor"
-        :data="managers"
-        open-with-focus
-        placeholder="Pesquise pelo nome"
-        iconLeft="search-1"
-      />
-    </section>
-
-    <section class="form-section">
+    <section v-else class="form-section">
       <h2 class="title">
-        {{ isEditing ? 'Editar' : 'Definições da' }}
-        jornada de trabalho
+        Adicionar novo setor
+        <unnnic-tool-tip
+          enabled
+          text="Crie um setor para gerenciar a operação de atendimento, adicionando gerentes, agentes e horário de funcionamento."
+          side="right"
+        >
+          <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+        </unnnic-tool-tip>
       </h2>
 
-      <section class="date-inputs">
+      <unnnic-input v-model="sector.name" label="Nome do setor" placeholder="Exemplo: Financeiro" />
+    </section>
+
+    <section class="form-section">
+      <h2 class="title">Gerentes de atendimento</h2>
+
+      <div class="inline-input-and-button">
+        <unnnic-autocomplete
+          v-model="sector.manager"
+          label="Adicionar gerente"
+          :data="managers"
+          open-with-focus
+          placeholder="Pesquise pelo nome ou email"
+          iconLeft="search-1"
+        />
+        <unnnic-button text="Selecionar" type="secondary" />
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h2 class="title">Definições da jornada de trabalho</h2>
+
+      <section class="form-section__inputs">
         <unnnic-input
           v-model="sector.workingDay.start"
           label="Horário de início"
@@ -34,13 +49,21 @@
           label="Horário de encerramento"
           placeholder="18:00"
         />
-      </section>
 
-      <unnnic-input
-        v-model="sector.maxSimultaneousChatsByAgent"
-        label="Limite de quantidade de atendimentos simultâneos por agente"
-        placeholder="4"
-      />
+        <unnnic-select
+          v-model="sector.workingDay.dayOfWeek"
+          label="Dias de funcionamento"
+          placeholder="Selecione"
+        >
+          <option value="week-days">Segunda à sexta</option>
+        </unnnic-select>
+
+        <unnnic-input
+          v-model="sector.maxSimultaneousChatsByAgent"
+          label="Limite de quantidade de atendimentos simultâneos por agente"
+          placeholder="4"
+        />
+      </section>
     </section>
   </form>
 </template>
@@ -86,6 +109,7 @@ export default {
         manager.trim() &&
         workingDay?.start &&
         workingDay?.end &&
+        workingDay?.dayOfWeek &&
         maxSimultaneousChatsByAgent
       );
     },
@@ -109,7 +133,21 @@ export default {
       margin-top: 1.5rem;
     }
 
+    & .inline-input-and-button {
+      & *:first-child {
+        flex: 1 1;
+      }
+
+      display: flex;
+      gap: $unnnic-spacing-stack-sm;
+      align-items: flex-end;
+    }
+
     .title {
+      &--lg {
+        font-size: $unnnic-font-size-title-sm;
+      }
+
       font-weight: $unnnic-font-weight-bold;
       color: $unnnic-color-neutral-dark;
       font-size: $unnnic-font-size-body-lg;
@@ -118,13 +156,10 @@ export default {
       margin-bottom: 1rem;
     }
 
-    .date-inputs {
-      display: flex;
-      gap: 1rem;
-
-      & > * {
-        flex: 1 1;
-      }
+    &__inputs {
+      display: grid;
+      gap: $unnnic-spacing-stack-sm;
+      grid-template-columns: 1fr 1fr;
     }
   }
 }
