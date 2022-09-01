@@ -19,7 +19,7 @@ const sectors = [
             additionDate: '25/03/2022',
           },
         ],
-        createdAt: '25/03/2022',
+        numberOfAgents: 3,
       },
       {
         id: 2,
@@ -34,7 +34,7 @@ const sectors = [
             additionDate: '25/03/2022',
           },
         ],
-        createdAt: '25/03/2022',
+        numberOfAgents: 3,
       },
       {
         id: 3,
@@ -49,7 +49,7 @@ const sectors = [
             additionDate: '25/03/2022',
           },
         ],
-        createdAt: '25/03/2022',
+        numberOfAgents: 3,
       },
       {
         id: 4,
@@ -64,7 +64,7 @@ const sectors = [
             additionDate: '25/03/2022',
           },
         ],
-        createdAt: '25/03/2022',
+        numberOfAgents: 3,
       },
     ],
     agents: [
@@ -105,6 +105,21 @@ const sectors = [
     queues: [
       {
         id: 1,
+        name: 'Pagamentos',
+        agents: [
+          {
+            name: 'Fabricio Correia',
+            additionDate: '25/03/2022',
+          },
+          {
+            name: 'Daniela Maciel',
+            additionDate: '25/03/2022',
+          },
+        ],
+        numberOfAgents: 9,
+      },
+      {
+        id: 2,
         name: 'Cartão de crédito',
         agents: [
           {
@@ -116,37 +131,7 @@ const sectors = [
             additionDate: '25/03/2022',
           },
         ],
-        createdAt: '25/03/2022',
-      },
-      {
-        id: 2,
-        name: 'Fila 1',
-        agents: [
-          {
-            name: 'Fabricio Correia',
-            additionDate: '25/03/2022',
-          },
-          {
-            name: 'Daniela Maciel',
-            additionDate: '25/03/2022',
-          },
-        ],
-        createdAt: '25/03/2022',
-      },
-      {
-        id: 3,
-        name: 'Fila 2',
-        agents: [
-          {
-            name: 'Fabricio Correia',
-            additionDate: '25/03/2022',
-          },
-          {
-            name: 'Daniela Maciel',
-            additionDate: '25/03/2022',
-          },
-        ],
-        createdAt: '25/03/2022',
+        numberOfAgents: 6,
       },
     ],
     agents: [
@@ -190,7 +175,7 @@ const sectors = [
             additionDate: '25/03/2022',
           },
         ],
-        createdAt: '25/03/2022',
+        numberOfAgents: 3,
       },
       {
         id: 2,
@@ -205,7 +190,7 @@ const sectors = [
             additionDate: '25/03/2022',
           },
         ],
-        createdAt: '25/03/2022',
+        numberOfAgents: 3,
       },
       {
         id: 3,
@@ -220,7 +205,7 @@ const sectors = [
             additionDate: '25/03/2022',
           },
         ],
-        createdAt: '25/03/2022',
+        numberOfAgents: 3,
       },
       {
         id: 4,
@@ -235,7 +220,7 @@ const sectors = [
             additionDate: '25/03/2022',
           },
         ],
-        createdAt: '25/03/2022',
+        numberOfAgents: 3,
       },
       {
         id: 5,
@@ -250,7 +235,7 @@ const sectors = [
             additionDate: '25/03/2022',
           },
         ],
-        createdAt: '25/03/2022',
+        numberOfAgents: 3,
       },
     ],
     agents: [

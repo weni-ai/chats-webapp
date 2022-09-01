@@ -1,48 +1,53 @@
 <template>
   <section class="new-sector">
-    <div class="scrollable">
-      <sector-tabs v-model="tab">
-        <template #sector>
-          <form-sector v-model="sector" @validate="isSectorFormValid = $event" />
-        </template>
+    <section class="scrollable">
+      <div class="new-sector__indicator">
+        <unnnic-indicator :current-step="step" :number-of-steps="3" :titles="stepsTitles" />
+      </div>
+      <div class="new-sector__divider" />
 
-        <template #queues>
-          <form-queue
-            v-model="sector.queues"
-            :sector="sector.name"
-            @validate="isQueuesFormValid = $event"
-          />
-        </template>
+      <section class="new-sector__form">
+        <form-sector
+          v-show="step === Steps.General"
+          v-model="sector"
+          @validate="isSectorFormValid = $event"
+        />
 
-        <template #agents>
-          <section>
-            <form-agent
-              v-model="sector.agents"
-              :queues="sector.queues"
-              :sector="sector.name"
-              @validate="isAgentsFormValid = $event"
-            />
-          </section>
-        </template>
-
-        <template #tags>
-          <section>
-            <form-tags v-model="sector.tags" />
-          </section>
-        </template>
-      </sector-tabs>
-    </div>
+        <form-queue
+          v-show="step === Steps.Queues"
+          v-model="sector.queues"
+          label="Adicionar nova Fila"
+          show-info-icon
+          :sector="sector"
+          @validate="isQueuesFormValid = $event"
+        />
+        <form-agent
+          v-show="step === Steps.Queues"
+          v-model="sector.agents"
+          :queues="sector.queues"
+          :sector="sector.name"
+          @validate="isAgentsFormValid = $event"
+        />
+        <form-tags v-show="step === Steps.Tags" v-model="sector.tags" />
+      </section>
+    </section>
 
     <div class="actions">
       <unnnic-button
-        v-if="tab !== 'tags'"
-        text="Continuar configurações de setor"
+        v-if="step !== Steps.Tags"
+        text="Salvar e continuar"
         iconRight="arrow-right-1-1"
         type="secondary"
         :disabled="!isActiveFormValid"
-        @click="nextTab"
+        @click="nextStep"
       />
-      <unnnic-button v-else :disabled="!isActiveFormValid" text="Concluir" @click="saveSector" />
+      <unnnic-button
+        v-else
+        :disabled="!isActiveFormValid"
+        type="secondary"
+        text="Salvar"
+        @click="saveSector"
+      />
     </div>
 
     <unnnic-modal
@@ -64,7 +69,12 @@ import FormAgent from '@/components/settings/forms/Agent';
 import FormQueue from '@/components/settings/forms/Queue';
 import FormSector from '@/components/settings/forms/Sector';
 import FormTags from '@/components/settings/forms/Tags';
-import SectorTabs from '@/components/settings/SectorTabs';
+
+const Steps = Object.freeze({
+  General: 1,
+  Queues: 2,
+  Tags: 3,
+});
 
 export default {
   name: 'NewSector',
@@ -74,7 +84,6 @@ export default {
     FormQueue,
     FormSector,
     FormTags,
-    SectorTabs,
   },
 
   data: () => ({
@@ -84,6 +93,7 @@ export default {
       workingDay: {
         start: '',
         end: '',
+        dayOfWeek: 'week-days',
       },
       agents: [],
       queues: [],
@@ -94,41 +104,39 @@ export default {
     isQueuesFormValid: false,
     isAgentsFormValid: false,
     isOpenSectorConfirmationDialog: false,
-    tab: '',
-    tabs: ['sector', 'queues', 'agents'],
+    Steps,
+    step: Steps.General,
+    tabs: [Steps.General, Steps.Queues, Steps.Agents],
+    stepsTitles: ['Geral', 'Filas', 'Tags'],
   }),
 
   computed: {
     isActiveFormValid() {
-      if (!this.tab) return false;
+      if (!this.step) return false;
 
-      const tabs = {
-        sector: this.isSectorFormValid,
-        queues: this.isQueuesFormValid,
-        agents: this.isAgentsFormValid,
-        tags: this.sector.tags.length > 0,
+      const steps = {
+        [Steps.General]: this.isSectorFormValid,
+        [Steps.Queues]: this.isQueuesFormValid && this.isAgentsFormValid,
+        [Steps.Tags]: this.sector.tags.length > 0,
       };
 
-      return tabs[this.tab];
+      return steps[this.step];
     },
   },
 
   methods: {
-    nextTab() {
-      const tabs = {
-        sector: () => {
-          this.tab = 'queues';
+    nextStep() {
+      const steps = {
+        [Steps.General]: () => {
+          this.step = Steps.Queues;
         },
-        queues: () => {
-          this.tab = 'agents';
+        [Steps.Queues]: () => {
+          this.step = Steps.Tags;
         },
-        agents: () => {
-          this.tab = 'tags';
-        },
-        tags: this.saveSector,
+        [Steps.Tags]: this.saveSector,
       };
 
-      tabs[this.tab]?.();
+      steps[this.step]?.();
     },
     async saveSector() {
       await this.$store.dispatch('settings/saveSector', this.sector);
@@ -147,12 +155,27 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
+  margin-right: 1.5rem;
   padding-bottom: 1rem;
 
   .scrollable {
     overflow-y: auto;
+    height: 100%;
     padding-right: 1rem;
     margin-right: 0.5rem;
+  }
+
+  &__indicator {
+    padding: 0 calc(2 * $unnnic-spacing-inset-nano);
+  }
+
+  &__divider {
+    border-top: solid 1px $unnnic-color-neutral-soft;
+    margin-top: calc(2 * $unnnic-spacing-inline-md);
+  }
+
+  &__form {
+    margin-top: $unnnic-spacing-inline-md;
   }
 
   .actions {

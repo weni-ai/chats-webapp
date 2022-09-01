@@ -6,11 +6,8 @@
       </template>
 
       <template #queues>
-        <form-queue v-model="queues" :sector="sector.name" />
-      </template>
-
-      <template #agents>
-        <form-agent v-model="agents" :sector="sector.name" :queues="sector.queues" />
+        <form-queue v-model="queues" :sector="sector" label="Criar nova fila" />
+        <form-agent v-if="false" v-model="agents" :sector="sector.name" :queues="sector.queues" />
       </template>
 
       <template #tags>
@@ -19,8 +16,7 @@
     </sector-tabs>
 
     <section class="actions">
-      <unnnic-button text="Voltar" type="secondary" @click="$router.back()" />
-      <unnnic-button text="Salvar edições" iconRight="check-circle-1-1" @click="save" />
+      <unnnic-button text="Salvar" type="secondary" @click="save" />
     </section>
 
     <unnnic-modal

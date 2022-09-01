@@ -6,7 +6,10 @@
     </p>
 
     <section class="form-tags__section">
-      <p class="form-tags__section__label">Adicionar Tags</p>
+      <p class="form-tags__section__label">
+        Adicionar tags
+        <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+      </p>
       <section class="form-tags__section__input-group">
         <unnnic-input
           v-model="tag"

@@ -13,15 +13,15 @@
             {{ item.name }}
           </template>
 
-          <template #createdAt>{{ item.createdAt }}</template>
+          <template #numberOfAgents>{{ item.numberOfAgents }}</template>
 
           <template #visualize>
             <unnnic-button
-              text="Detalhes"
+              text="Editar"
               type="secondary"
               size="small"
               class="visualize-button"
-              @click="$emit('select', item)"
+              @click="$emit('visualize', item)"
             />
           </template>
         </unnnic-table-row>
@@ -53,8 +53,8 @@ export default {
         flex: 3,
       },
       {
-        id: 'createdAt',
-        text: 'Data de criação',
+        id: 'numberOfAgents',
+        text: 'Qtd de agentes',
         flex: 3,
       },
       {

@@ -1,38 +1,51 @@
 <template>
   <section class="form-queue">
-    <p class="title">Adicionar nova Fila</p>
+    <p v-if="!showInfoIcon" class="form-queue__description">{{ infoText }}</p>
+    <p class="title">
+      {{ label }}
+      <unnnic-tool-tip v-if="showInfoIcon" enabled side="right" :text="infoText">
+        <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+      </unnnic-tool-tip>
+    </p>
 
     <section class="controls">
       <unnnic-input
         v-model="name"
         label="Nome da fila"
-        placeholder="Suporte nivel III"
-        @keypress.enter="createQueue"
+        placeholder="Exemplo: Pagamentos"
         class="input"
       />
-      <unnnic-button type="secondary" text="Adicionar fila" @click="createQueue" />
+      <unnnic-button v-if="isEditing" text="Salvar" type="secondary" />
     </section>
 
-    <section v-if="!!queues.length">
-      <list-sector-queues :queues="queues" :sector="sector" />
+    <section v-if="isEditing" class="form-queue__queues">
+      <sector-queues-list :sector="sector.name" :queues="sector.queues" />
     </section>
   </section>
 </template>
 
 <script>
-import ListSectorQueues from '@/components/settings/lists/ListSectorQueues';
+import SectorQueuesList from '@/components/settings/lists/ListSectorQueues';
 
 export default {
   name: 'FormQueue',
 
   components: {
-    ListSectorQueues,
+    SectorQueuesList,
   },
 
   props: {
-    sector: {
+    label: {
       type: String,
       default: '',
+    },
+    sector: {
+      type: Object,
+      default: () => ({}),
+    },
+    showInfoIcon: {
+      type: Boolean,
+      default: false,
     },
     value: {
       type: Array,
@@ -42,6 +55,8 @@ export default {
 
   data: () => ({
     name: '',
+    infoText:
+      'As filas servem para organizar os tipos de atendimento dentro de um setor, através das filas é possível criar grupos de atendimento, crie pelo menos uma fila para gerenciar uma equipe de agentes.',
   }),
 
   computed: {
@@ -53,24 +68,14 @@ export default {
         this.$emit('input', queues);
       },
     },
+    isEditing() {
+      return !!this.sector?.id;
+    },
   },
 
   methods: {
     validate() {
-      return this.queues.length > 0;
-    },
-    createQueue() {
-      const name = this.name.trim();
-      if (!name) return;
-
-      this.queues.push({
-        name,
-        createdAt: Intl.DateTimeFormat('pt-BR', {
-          dateStyle: 'short',
-        }).format(new Date()),
-      });
-
-      this.name = '';
+      return !!this.name;
     },
   },
 
@@ -88,6 +93,12 @@ export default {
 
 <style lang="scss" scoped>
 .form-queue {
+  &__description {
+    font-size: $unnnic-font-size-body-md;
+    color: $unnnic-color-neutral-cloudy;
+    margin: $unnnic-spacing-inline-xs 0 $unnnic-spacing-inline-md;
+  }
+
   .title {
     font-weight: $unnnic-font-weight-bold;
     color: $unnnic-color-neutral-dark;
@@ -100,7 +111,7 @@ export default {
   .controls {
     display: flex;
     align-items: flex-end;
-    gap: 1.5rem;
+    gap: $unnnic-spacing-stack-sm;
     margin-bottom: 1.5rem;
 
     .input {
