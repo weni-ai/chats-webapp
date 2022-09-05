@@ -13,6 +13,7 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'import/extensions': 'off',
     'no-shadow': 'off',
+    camelcase: 'off',
   },
   overrides: [
     {
