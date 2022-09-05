@@ -10,7 +10,7 @@
 
     <section class="controls">
       <unnnic-input
-        v-model="name"
+        v-model="queue.name"
         label="Nome da fila"
         placeholder="Exemplo: Pagamentos"
         class="input"
@@ -19,7 +19,7 @@
     </section>
 
     <section v-if="isEditing" class="form-queue__queues">
-      <sector-queues-list :sector="sector.name" :queues="sector.queues" />
+      <sector-queues-list :sector="sector.name" :queues="queues" />
     </section>
   </section>
 </template>
@@ -35,6 +35,14 @@ export default {
   },
 
   props: {
+    isEditing: {
+      type: Boolean,
+      default: false,
+    },
+    queues: {
+      type: Array,
+      default: () => [],
+    },
     label: {
       type: String,
       default: '',
@@ -48,39 +56,35 @@ export default {
       default: false,
     },
     value: {
-      type: Array,
-      default: () => [],
+      type: Object,
+      default: () => ({}),
     },
   },
 
   data: () => ({
-    name: '',
     infoText:
       'As filas servem para organizar os tipos de atendimento dentro de um setor, através das filas é possível criar grupos de atendimento, crie pelo menos uma fila para gerenciar uma equipe de agentes.',
   }),
 
   computed: {
-    queues: {
+    queue: {
       get() {
         return this.value;
       },
-      set(queues) {
-        this.$emit('input', queues);
+      set(queue) {
+        this.$emit('input', queue);
       },
-    },
-    isEditing() {
-      return !!this.sector?.id;
     },
   },
 
   methods: {
     validate() {
-      return !!this.name;
+      return !!this.queue.name;
     },
   },
 
   watch: {
-    queues: {
+    queue: {
       deep: true,
       immediate: true,
       handler() {

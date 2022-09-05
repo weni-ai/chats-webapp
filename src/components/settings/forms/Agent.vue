@@ -5,9 +5,9 @@
 
       <section class="controls">
         <unnnic-autocomplete
-          v-model="agent.name"
-          :data="projectAgents"
-          @choose="agent.name = $event"
+          v-model="search"
+          :data="agentsNames"
+          @choose="chooseAgent"
           label="Selecionar agente"
           placeholder="Pesquise pelo nome ou email"
           iconLeft="search-1"
@@ -16,12 +16,12 @@
           highlight
           class="input"
         />
-        <unnnic-button type="secondary" text="Selecionar" />
+        <unnnic-button type="secondary" text="Selecionar" @click="emitSelectedAgent" />
       </section>
     </section>
 
-    <section v-if="!!agents.length">
-      <list-agents :agents="agents" :title="`Agentes no setor ${sector}`" />
+    <section v-if="!!selectedAgents.length">
+      <list-agents :agents="selectedAgents" :title="`Agentes no setor ${sector.name}`" />
     </section>
   </section>
 </template>
@@ -37,13 +37,13 @@ export default {
   },
 
   props: {
-    queues: {
+    agents: {
       type: Array,
       default: () => [],
     },
     sector: {
-      type: String,
-      default: '',
+      type: Object,
+      default: () => ({}),
     },
     value: {
       type: Array,
@@ -52,23 +52,23 @@ export default {
   },
 
   data: () => ({
+    search: '',
     agent: {
-      name: '',
-      queues: [],
+      uuid: '',
     },
-    projectAgents: [
-      'Mariano Matos',
-      'Carla Meyer',
-      'Katia Saldanha',
-      'Vinícius Brum',
-      'Raine Paula',
-    ],
-    queue: '',
-    isOpenAgentConfirmationDialog: false,
   }),
 
   computed: {
-    agents: {
+    agentsNames() {
+      const agents = this.agents.map((agent) => {
+        const { email, first_name, last_name } = agent.user;
+
+        return first_name || last_name ? `${first_name} ${last_name}` : email;
+      });
+
+      return agents.filter((agent) => agent.includes(this.search));
+    },
+    selectedAgents: {
       get() {
         return this.value;
       },
@@ -79,13 +79,29 @@ export default {
   },
 
   methods: {
+    chooseAgent(selected) {
+      const agent = this.agents.find((agent) => {
+        const { first_name, last_name, email } = agent.user;
+        const name = `${first_name} ${last_name}`;
+
+        return name === selected || email === selected;
+      });
+
+      this.agent = agent;
+    },
+    emitSelectedAgent() {
+      if (!this.agent.uuid) return;
+
+      this.$emit('select', this.agent);
+      this.search = '';
+    },
     validate() {
-      return this.agents.length > 0;
+      return this.selectedAgents.length > 0;
     },
   },
 
   watch: {
-    agents: {
+    selectedAgents: {
       deep: true,
       immediate: true,
       handler() {
@@ -119,27 +135,6 @@ export default {
     .input {
       flex: 1 1;
     }
-  }
-
-  .agent-queues {
-    margin-top: 1rem;
-    display: grid;
-    gap: 0.5rem 1rem;
-    grid-template-columns: 1fr 1fr;
-
-    & > * {
-      padding: 0.25rem 0.5rem;
-      margin: 0 0.5rem;
-      background: $unnnic-color-background-carpet;
-      color: $unnnic-color-neutral-dark;
-      font-size: 0.875rem;
-      line-height: 1.375rem;
-    }
-  }
-
-  .new-agent-button {
-    width: 100%;
-    margin-bottom: 1.5rem;
   }
 }
 </style>

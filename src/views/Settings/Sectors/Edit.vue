@@ -1,17 +1,23 @@
 <template>
   <section class="edit-sector">
-    <sector-tabs v-if="sector" v-model="tab" class="scrollable">
+    <sector-tabs v-if="sector.uuid" v-model="tab" class="scrollable">
       <template #sector>
-        <form-sector v-model="sector" />
+        <form-sector v-model="sector" is-editing />
       </template>
 
       <template #queues>
-        <form-queue v-model="queues" :sector="sector" label="Criar nova fila" />
+        <form-queue
+          v-model="queue"
+          :sector="sector"
+          :queues="queues"
+          label="Criar nova fila"
+          is-editing
+        />
         <form-agent v-if="false" v-model="agents" :sector="sector.name" :queues="sector.queues" />
       </template>
 
       <template #tags>
-        <form-tags v-model="sector.tags" />
+        <form-tags v-model="tags" />
       </template>
     </sector-tabs>
 
@@ -34,13 +40,14 @@
 </template>
 
 <script>
-import cloneDeep from 'lodash.clonedeep';
-
 import FormAgent from '@/components/settings/forms/Agent';
 import FormSector from '@/components/settings/forms/Sector';
 import FormQueue from '@/components/settings/forms/Queue';
 import FormTags from '@/components/settings/forms/Tags';
 import SectorTabs from '@/components/settings/SectorTabs';
+
+import Sector from '@/services/api/resources/settings/sector';
+import Queue from '@/services/api/resources/settings/queue';
 
 export default {
   name: 'EditSector',
@@ -54,27 +61,66 @@ export default {
   },
 
   props: {
-    id: [String, Number],
+    uuid: [String, Number],
   },
 
-  created() {
-    this.sector = this.$store.getters['settings/getSectorById'](Number(this.id));
-    this.queues = cloneDeep(this.sector.queues);
-    this.agents = cloneDeep(this.sector.agents);
+  async beforeMount() {
+    this.getSector();
   },
 
   data: () => ({
     tab: '',
-    sector: null,
+    sector: {
+      uuid: '',
+      name: '',
+      workingDay: {
+        start: '',
+        end: '',
+        dayOfWeek: 'week-days',
+      },
+      maxSimultaneousChatsByAgent: '',
+    },
+    queue: {
+      name: '',
+    },
     queues: [],
     agents: [],
+    tags: [],
     isOpenSaveConfirmationModal: false,
   }),
 
   methods: {
+    async getSector() {
+      const { name, rooms_limit, uuid, work_end, work_start } = await Sector.find(this.uuid);
+      this.sector = {
+        uuid,
+        name,
+        workingDay: { start: work_start, end: work_end },
+        maxSimultaneousChatsByAgent: rooms_limit.toString(),
+      };
+    },
+    async getQueues() {
+      const queues = await Queue.list(this.sector.uuid);
+      this.queues = queues.results;
+    },
+    async getTags() {
+      const tags = await Sector.tags(this.sector.uuid);
+      this.tags = tags.results;
+    },
     async save() {
       await this.$store.dispatch('settings/updateSector', this.sector);
       this.isOpenSaveConfirmationModal = true;
+    },
+    async handleTabChange(currentTab) {
+      if (currentTab === 'sector') return;
+      if (currentTab === 'queues' && this.queues.length === 0) await this.getQueues();
+      if (currentTab === 'tags' && this.tags.length === 0) await this.getTags();
+    },
+  },
+
+  watch: {
+    tab(current) {
+      this.handleTabChange(current);
     },
   },
 };

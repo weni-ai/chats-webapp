@@ -16,32 +16,26 @@
       <unnnic-card-project
         v-for="sector in sectors"
         :key="sector.id"
-        actionText="Entrar"
+        actionText="Abrir"
         :name="sector.name"
         @action="
           navigate({
             name: 'sectors.edit',
-            params: { id: sector.id },
+            params: { uuid: sector.uuid },
           })
         "
         :statuses="[
           {
-            title: 'Filas',
-            icon: 'hierarchy-3-2',
-            scheme: 'brand-weni',
-            count: sector.queues.length,
-          },
-          {
             title: 'Agentes',
             icon: 'headphones-customer-support-human-1-1',
             scheme: 'aux-purple',
-            count: sector.agents.length,
+            count: sector.agents,
           },
           {
             title: 'Contatos',
             icon: 'single-neutral-actions-1',
             scheme: 'aux-lemon',
-            count: sector.contacts.count,
+            count: sector.contacts,
           },
         ]"
       />
@@ -50,20 +44,26 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import Sector from '@/services/api/resources/settings/sector';
 
 export default {
   name: 'SettingsChats',
 
-  computed: {
-    ...mapState({
-      sectors: (state) => state.settings.sectors,
-    }),
+  beforeMount() {
+    this.listSectors();
   },
+
+  data: () => ({
+    sectors: [],
+  }),
 
   methods: {
     navigate(params) {
       this.$router.push(params);
+    },
+    async listSectors() {
+      const sectors = await Sector.list();
+      this.sectors = sectors.results;
     },
   },
 };

@@ -13,7 +13,7 @@
             {{ item.name }}
           </template>
 
-          <template #numberOfAgents>{{ item.numberOfAgents }}</template>
+          <template #agents>{{ item.agents }}</template>
 
           <template #visualize>
             <unnnic-button
@@ -53,7 +53,7 @@ export default {
         flex: 3,
       },
       {
-        id: 'numberOfAgents',
+        id: 'agents',
         text: 'Qtd de agentes',
         flex: 3,
       },
