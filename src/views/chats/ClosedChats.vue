@@ -79,8 +79,8 @@
 <script>
 import { mapState } from 'vuex';
 
-import Room from '@/services/api/resources/room';
-import Message from '@/services/api/resources/message';
+import Room from '@/services/api/resources/chats/room';
+import Message from '@/services/api/resources/chats/message';
 import { groupSequentialSentMessages } from '@/utils/messages';
 
 import ChatHeader from '@/components/chats/chat/ChatHeader';
