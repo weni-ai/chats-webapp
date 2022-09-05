@@ -10,12 +10,13 @@
         <form-sector
           v-show="step === Steps.General"
           v-model="sector"
+          :managers="projectManagers"
           @validate="isSectorFormValid = $event"
         />
 
         <form-queue
           v-show="step === Steps.Queues"
-          v-model="sector.queues"
+          v-model="sector.queue"
           label="Adicionar nova Fila"
           show-info-icon
           :sector="sector"
@@ -24,11 +25,17 @@
         <form-agent
           v-show="step === Steps.Queues"
           v-model="sector.agents"
-          :queues="sector.queues"
-          :sector="sector.name"
+          :sector="sector"
+          :agents="projectAgents"
+          @select="addAgent"
           @validate="isAgentsFormValid = $event"
         />
-        <form-tags v-show="step === Steps.Tags" v-model="sector.tags" />
+        <form-tags
+          v-show="step === Steps.Tags"
+          v-model="sector.tags"
+          @add="addTag"
+          @remove="removeTag"
+        />
       </section>
     </section>
 
@@ -46,21 +53,9 @@
         :disabled="!isActiveFormValid"
         type="secondary"
         text="Salvar"
-        @click="saveSector"
+        @click="nextStep"
       />
     </div>
-
-    <unnnic-modal
-      :showModal="isOpenSectorConfirmationDialog"
-      text="Setor adicionado"
-      modal-icon="check-circle-1-1"
-      description="Setor de suporte, filas e agentes criados com sucesso"
-      @close="redirectToHomepage"
-    >
-      <template #options>
-        <unnnic-button text="Fechar" @click="redirectToHomepage" />
-      </template>
-    </unnnic-modal>
   </section>
 </template>
 
@@ -69,6 +64,10 @@ import FormAgent from '@/components/settings/forms/Agent';
 import FormQueue from '@/components/settings/forms/Queue';
 import FormSector from '@/components/settings/forms/Sector';
 import FormTags from '@/components/settings/forms/Tags';
+
+import Sector from '@/services/api/resources/settings/sector';
+import Queue from '@/services/api/resources/settings/queue';
+import Project from '@/services/api/resources/settings/project';
 
 const Steps = Object.freeze({
   General: 1,
@@ -86,27 +85,38 @@ export default {
     FormTags,
   },
 
+  async beforeMount() {
+    this.listProjectManagers();
+    this.listProjectAgents();
+  },
+
   data: () => ({
     sector: {
+      uuid: '',
       name: '',
-      manager: '',
+      manager: {
+        uuid: '',
+      },
       workingDay: {
         start: '',
         end: '',
         dayOfWeek: 'week-days',
       },
       agents: [],
-      queues: [],
+      queue: {
+        uuid: '',
+      },
       tags: [],
       maxSimultaneousChatsByAgent: '',
     },
+    projectManagers: [],
+    projectAgents: [],
     isSectorFormValid: false,
     isQueuesFormValid: false,
     isAgentsFormValid: false,
     isOpenSectorConfirmationDialog: false,
     Steps,
     step: Steps.General,
-    tabs: [Steps.General, Steps.Queues, Steps.Agents],
     stepsTitles: ['Geral', 'Filas', 'Tags'],
   }),
 
@@ -125,26 +135,84 @@ export default {
   },
 
   methods: {
-    nextStep() {
+    async listProjectManagers() {
+      const managers = await Project.managers();
+      this.projectManagers = managers.results;
+    },
+    async listProjectAgents() {
+      const agents = await Project.agents();
+      this.projectAgents = agents.results;
+    },
+    async nextStep() {
       const steps = {
-        [Steps.General]: () => {
-          this.step = Steps.Queues;
-        },
-        [Steps.Queues]: () => {
-          this.step = Steps.Tags;
-        },
-        [Steps.Tags]: this.saveSector,
+        [Steps.General]: this.handleGeneralNextStep,
+        [Steps.Queues]: this.handleQueueNextStep,
+        [Steps.Tags]: this.handleTagsNextStep,
       };
 
-      steps[this.step]?.();
+      await steps[this.step]?.();
     },
-    async saveSector() {
-      await this.$store.dispatch('settings/saveSector', this.sector);
-
-      this.isOpenSectorConfirmationDialog = true;
+    async handleGeneralNextStep() {
+      const sector = await this.createSector();
+      this.sector.uuid = sector.uuid;
+      await this.addManager();
+      this.step = Steps.Queues;
     },
-    redirectToHomepage() {
-      this.$router.push('/settings/chats');
+    async handleQueueNextStep() {
+      const queue = await this.createQueue();
+      this.sector.queue = queue;
+      await Promise.all(this.sector.agents.map(this.addAgentToQueue));
+      this.step = Steps.Tags;
+    },
+    async handleTagsNextStep() {
+      await this.createTags();
+      this.$router.push({
+        name: 'sectors',
+      });
+    },
+    async addAgentToQueue(agent) {
+      await Queue.addAgent(this.sector.queue.uuid, agent.uuid);
+    },
+    async createSector() {
+      const { name, maxSimultaneousChatsByAgent, workingDay } = this.sector;
+      const props = {
+        name,
+        rooms_limit: Number(maxSimultaneousChatsByAgent),
+        work_start: workingDay.start,
+        work_end: workingDay.end,
+      };
+      const sector = await Sector.create(props);
+      return sector;
+    },
+    async createQueue() {
+      const queue = await Queue.create({
+        name: this.sector.queue.name,
+        sectorUuid: this.sector.uuid,
+      });
+      return queue;
+    },
+    async createTags() {
+      const { tags } = this.sector;
+      await Promise.all(
+        tags.map((tag) => {
+          return Sector.addTag(this.sector.uuid, tag.name);
+        }),
+      );
+    },
+    async addTag(tagName) {
+      this.sector.tags.push({
+        uuid: Date.now().toString(),
+        name: tagName,
+      });
+    },
+    async removeTag(tagUuid) {
+      this.sector.tags = this.sector.tags.filter((tag) => tag.uuid !== tagUuid);
+    },
+    async addManager() {
+      await Sector.addManager(this.sector.uuid, this.sector.manager.uuid);
+    },
+    async addAgent(agent) {
+      this.sector.agents.push(agent);
     },
   },
 };

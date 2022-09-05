@@ -6,7 +6,7 @@ const routes = [
     children: [
       {
         path: 'chats',
-        name: 'chats',
+        name: 'sectors',
         component: () => import('@/views/Settings'),
       },
 
@@ -20,11 +20,11 @@ const routes = [
             component: () => import('@/views/Settings/Sectors/New'),
           },
           {
-            path: ':id',
+            path: ':uuid',
             name: 'sectors.edit',
             component: () => import('@/views/Settings/Sectors/Edit'),
             props: (route) => ({
-              id: route.params.id,
+              uuid: route.params.uuid,
             }),
           },
         ],

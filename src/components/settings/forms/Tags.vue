@@ -63,19 +63,14 @@ export default {
 
   methods: {
     addTag() {
-      const text = this.tag.trim();
-      if (!text) return;
+      const name = this.tag.trim();
+      if (!name) return;
 
-      const lastId = this.tags.length > 0 ? Math.max(...this.tags.map((t) => t.value)) : 0;
-      const tag = {
-        text,
-        value: lastId + 1,
-      };
-      this.tags = [...this.tags, tag];
+      this.$emit('add', name);
       this.tag = '';
     },
     removeTag(tag) {
-      this.tags = this.tags.filter((t) => t.value !== tag.value);
+      this.$emit('remove', tag.uuid);
     },
   },
 };

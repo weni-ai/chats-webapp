@@ -24,12 +24,14 @@
 
       <div class="inline-input-and-button">
         <unnnic-autocomplete
-          v-model="sector.manager"
+          v-model="manager"
           label="Adicionar gerente"
-          :data="managers"
+          :data="managersNames"
           open-with-focus
+          highlight
           placeholder="Pesquise pelo nome ou email"
           iconLeft="search-1"
+          @choose="selectManager"
         />
         <unnnic-button text="Selecionar" type="secondary" />
       </div>
@@ -73,6 +75,14 @@ export default {
   name: 'FormSector',
 
   props: {
+    isEditing: {
+      type: Boolean,
+      default: false,
+    },
+    managers: {
+      type: Array,
+      default: () => [],
+    },
     value: {
       type: Object,
       default: () => ({}),
@@ -80,12 +90,18 @@ export default {
   },
 
   data: () => ({
-    managers: ['Mariano Matos', 'Carla Meyer', 'Katia Saldanha', 'Vinícius Brum', 'Raine Paula'],
+    manager: '',
   }),
 
   computed: {
-    isEditing() {
-      return !!this.sector?.id;
+    managersNames() {
+      const managers = this.managers.map((manager) => {
+        const { email, first_name, last_name } = manager.user;
+
+        return first_name || last_name ? `${first_name} ${last_name}` : email;
+      });
+
+      return managers.filter((manager) => manager.includes(this.manager));
     },
     sector: {
       get() {
@@ -98,6 +114,15 @@ export default {
   },
 
   methods: {
+    selectManager(selected) {
+      const manager = this.managers.find((manager) => {
+        const { first_name, last_name, email } = manager.user;
+        const name = `${first_name} ${last_name}`;
+
+        return name === selected || email === selected;
+      });
+      this.sector.manager = manager;
+    },
     validate() {
       return this.areAllFieldsFilled();
     },
@@ -106,7 +131,7 @@ export default {
 
       return !!(
         name.trim() &&
-        manager.trim() &&
+        manager?.uuid &&
         workingDay?.start &&
         workingDay?.end &&
         workingDay?.dayOfWeek &&
