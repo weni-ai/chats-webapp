@@ -1,6 +1,6 @@
-import Message from '@/services/api/resources/message';
-import Room from '@/services/api/resources/room';
+import Message from '@/services/api/resources/chats/message';
 import { groupSequentialSentMessages, parseMessageToMessageWithSenderProp } from '@/utils/messages';
+import Room from '@/services/api/resources/chats/room';
 
 const mutations = {
   SET_ROOMS: 'SET_ROOMS',
