@@ -33,8 +33,19 @@
           iconLeft="search-1"
           @choose="selectManager"
         />
-        <unnnic-button text="Selecionar" type="secondary" />
+        <unnnic-button text="Selecionar" type="secondary" @click="addSectorManager" />
       </div>
+
+      <section class="form-sector__managers">
+        <selected-member
+          v-if="sector.manager.uuid"
+          :name="sector.manager.user.first_name + ' ' + sector.manager.user.last_name"
+          :email="sector.manager.user.email"
+          :avatar-url="sector.manager.user.photo_url"
+          @remove="sector.manager = {}"
+          role-name="Gerente"
+        />
+      </section>
     </section>
 
     <section class="form-section">
@@ -71,8 +82,14 @@
 </template>
 
 <script>
+import SelectedMember from '@/components/settings/forms/SelectedMember';
+
 export default {
   name: 'FormSector',
+
+  components: {
+    SelectedMember,
+  },
 
   props: {
     isEditing: {
@@ -91,6 +108,7 @@ export default {
 
   data: () => ({
     manager: '',
+    selectedManager: null,
   }),
 
   computed: {
@@ -114,6 +132,13 @@ export default {
   },
 
   methods: {
+    addSectorManager() {
+      const { selectedManager } = this;
+      if (!selectedManager) return;
+
+      this.manager = '';
+      this.sector.manager = selectedManager;
+    },
     selectManager(selected) {
       const manager = this.managers.find((manager) => {
         const { first_name, last_name, email } = manager.user;
@@ -121,7 +146,7 @@ export default {
 
         return name === selected || email === selected;
       });
-      this.sector.manager = manager;
+      this.selectedManager = manager;
     },
     validate() {
       return this.areAllFieldsFilled();
@@ -186,6 +211,10 @@ export default {
       gap: $unnnic-spacing-stack-sm;
       grid-template-columns: 1fr 1fr;
     }
+  }
+
+  &__managers {
+    margin-top: $unnnic-spacing-inline-md;
   }
 }
 </style>
