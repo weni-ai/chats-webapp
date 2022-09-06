@@ -85,7 +85,7 @@ export default {
     FormTags,
   },
 
-  async beforeMount() {
+  beforeMount() {
     this.listProjectManagers();
     this.listProjectAgents();
   },
