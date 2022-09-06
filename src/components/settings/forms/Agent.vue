@@ -20,20 +20,28 @@
       </section>
     </section>
 
-    <section v-if="!!selectedAgents.length">
-      <list-agents :agents="selectedAgents" :title="`Agentes no setor ${sector.name}`" />
+    <section v-if="selectedAgents.length > 0" class="form-agent__agents">
+      <selected-member
+        v-for="agent in selectedAgents"
+        :key="agent.uuid"
+        :name="agent.user.first_name + ' ' + agent.user.last_name"
+        :email="agent.user.email"
+        :avatar-url="agent.user.photo_url"
+        @remove="() => {}"
+        role-name="Agente"
+      />
     </section>
   </section>
 </template>
 
 <script>
-import ListAgents from '@/components/settings/lists/Agents';
+import SelectedMember from '@/components/settings/forms/SelectedMember';
 
 export default {
   name: 'FormAgent',
 
   components: {
-    ListAgents,
+    SelectedMember,
   },
 
   props: {
@@ -135,6 +143,12 @@ export default {
     .input {
       flex: 1 1;
     }
+  }
+
+  &__agents {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-spacing-stack-xs;
   }
 }
 </style>
