@@ -95,9 +95,7 @@ export default {
     sector: {
       uuid: '',
       name: '',
-      manager: {
-        uuid: '',
-      },
+      managers: [],
       workingDay: {
         start: '',
         end: '',
@@ -156,8 +154,11 @@ export default {
     async handleGeneralNextStep() {
       const sector = await this.createSector();
       this.sector.uuid = sector.uuid;
-      await this.addManager();
+      await this.addManagers();
       this.step = Steps.Queues;
+    },
+    async addManagers() {
+      await Promise.all(this.sector.managers.map(this.addManager));
     },
     async handleQueueNextStep() {
       const queue = await this.createQueue();
@@ -209,8 +210,8 @@ export default {
     async removeTag(tagUuid) {
       this.sector.tags = this.sector.tags.filter((tag) => tag.uuid !== tagUuid);
     },
-    async addManager() {
-      await Sector.addManager(this.sector.uuid, this.sector.manager.uuid);
+    async addManager(manager) {
+      await Sector.addManager(this.sector.uuid, manager.uuid);
     },
     async addAgent(agent) {
       this.sector.agents.push(agent);
