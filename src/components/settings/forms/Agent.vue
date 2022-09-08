@@ -27,7 +27,7 @@
         :name="agent.user.first_name + ' ' + agent.user.last_name"
         :email="agent.user.email"
         :avatar-url="agent.user.photo_url"
-        @remove="() => {}"
+        @remove="remove(agent.uuid)"
         role-name="Agente"
       />
     </section>
@@ -87,6 +87,9 @@ export default {
   },
 
   methods: {
+    remove(agentUuid) {
+      this.$emit('remove', agentUuid);
+    },
     chooseAgent(selected) {
       const agent = this.agents.find((agent) => {
         const { first_name, last_name, email } = agent.user;
