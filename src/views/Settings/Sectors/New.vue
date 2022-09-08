@@ -12,6 +12,7 @@
           v-model="sector"
           :managers="projectManagers"
           @validate="isSectorFormValid = $event"
+          @remove-manager="removeManager"
         />
 
         <form-queue
@@ -212,6 +213,13 @@ export default {
     },
     async addManager(manager) {
       await Sector.addManager(this.sector.uuid, manager.uuid);
+    },
+    removeManager(managerUuid) {
+      const managers = this.sector.managers.filter((manager) => manager.uuid !== managerUuid);
+      this.sector = {
+        ...this.sector,
+        managers,
+      };
     },
     async addAgent(agent) {
       this.sector.agents.push(agent);
