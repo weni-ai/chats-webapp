@@ -134,11 +134,7 @@ export default {
 
   methods: {
     removeManager(managerUuid) {
-      const managers = this.sector.managers.filter((manager) => manager.uuid !== managerUuid);
-      this.sector = {
-        ...this.sector,
-        managers,
-      };
+      this.$emit('remove-manager', managerUuid);
     },
     addSectorManager() {
       const { selectedManager } = this;
