@@ -36,13 +36,14 @@
         <unnnic-button text="Selecionar" type="secondary" @click="addSectorManager" />
       </div>
 
-      <section class="form-sector__managers">
+      <section v-if="sector.managers.length > 0" class="form-sector__managers">
         <selected-member
-          v-if="sector.manager.uuid"
-          :name="sector.manager.user.first_name + ' ' + sector.manager.user.last_name"
-          :email="sector.manager.user.email"
-          :avatar-url="sector.manager.user.photo_url"
-          @remove="sector.manager = {}"
+          v-for="manager in sector.managers"
+          :key="manager.uuid"
+          :name="`${manager.user.first_name} ${manager.user.last_name}`"
+          :email="manager.user.email"
+          :avatar-url="manager.user.photo_url"
+          @remove="removeManager(manager.uuid)"
           role-name="Gerente"
         />
       </section>
@@ -132,12 +133,24 @@ export default {
   },
 
   methods: {
+    removeManager(managerUuid) {
+      const managers = this.sector.managers.filter((manager) => manager.uuid !== managerUuid);
+      this.sector = {
+        ...this.sector,
+        managers,
+      };
+    },
     addSectorManager() {
       const { selectedManager } = this;
       if (!selectedManager) return;
 
+      const managers = [...this.sector.managers, selectedManager];
+      this.sector = {
+        ...this.sector,
+        managers,
+      };
+
       this.manager = '';
-      this.sector.manager = selectedManager;
     },
     selectManager(selected) {
       const manager = this.managers.find((manager) => {
@@ -152,11 +165,11 @@ export default {
       return this.areAllFieldsFilled();
     },
     areAllFieldsFilled() {
-      const { name, manager, workingDay, maxSimultaneousChatsByAgent } = this.sector;
+      const { name, managers, workingDay, maxSimultaneousChatsByAgent } = this.sector;
 
       return !!(
         name.trim() &&
-        manager?.uuid &&
+        managers.length > 0 &&
         workingDay?.start &&
         workingDay?.end &&
         workingDay?.dayOfWeek &&
@@ -215,6 +228,9 @@ export default {
 
   &__managers {
     margin-top: $unnnic-spacing-inline-md;
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-spacing-stack-xs;
   }
 }
 </style>
