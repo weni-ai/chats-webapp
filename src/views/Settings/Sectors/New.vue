@@ -28,6 +28,7 @@
           :sector="sector"
           :agents="projectAgents"
           @select="addAgent"
+          @remove="removeAgent"
           @validate="isAgentsFormValid = $event"
         />
         <form-tags
@@ -213,6 +214,9 @@ export default {
     },
     async addAgent(agent) {
       this.sector.agents.push(agent);
+    },
+    removeAgent(agentUuid) {
+      this.sector.agents = this.sector.agents.filter((agent) => agent.uuid !== agentUuid);
     },
   },
 };
