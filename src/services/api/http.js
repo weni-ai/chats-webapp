@@ -2,8 +2,10 @@ import axios from 'axios';
 import { get } from '@/utils/token';
 import env from '@/utils/env';
 
+const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+
 const client = axios.create({
-  baseURL: `https://${env('CHATS_API_URL')}/v1`,
+  baseURL: `${protocol}://${env('CHATS_API_URL')}/v1`,
 });
 
 client.interceptors.request.use((config) => {
