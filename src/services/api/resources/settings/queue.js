@@ -13,11 +13,27 @@ export default {
     return response.data;
   },
 
+  async delete(queueUuid) {
+    await http.delete(`/queue/${queueUuid}/`);
+  },
+
+  async agents(queueUuid) {
+    const response = await http.get('/authorization/queue/', {
+      params: {
+        queue: queueUuid,
+      },
+    });
+    return response.data;
+  },
+
   async addAgent(queueUuid, agentUuid) {
     await http.post('/authorization/queue/', {
       role: 1, // agent
       queue: queueUuid,
       permission: agentUuid,
     });
+  },
+  async removeAgent(agentUuid) {
+    await http.delete(`/authorization/queue/${agentUuid}`);
   },
 };

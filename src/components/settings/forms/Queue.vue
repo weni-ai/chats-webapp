@@ -15,11 +15,11 @@
         placeholder="Exemplo: Pagamentos"
         class="input"
       />
-      <unnnic-button v-if="isEditing" text="Salvar" type="secondary" />
+      <unnnic-button v-if="isEditing" text="Salvar" type="secondary" @click="addQueue" />
     </section>
 
     <section v-if="isEditing" class="form-queue__queues">
-      <sector-queues-list :sector="sector.name" :queues="queues" />
+      <sector-queues-list :sector="sector.name" :queues="queues" @visualize="visualize" />
     </section>
   </section>
 </template>
@@ -78,6 +78,12 @@ export default {
   },
 
   methods: {
+    visualize(queue) {
+      this.$emit('visualize', queue);
+    },
+    addQueue() {
+      this.$emit('add-queue', this.queue);
+    },
     validate() {
       return !!this.queue.name;
     },

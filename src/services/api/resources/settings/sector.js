@@ -11,12 +11,26 @@ export default {
   },
 
   async find(uuid) {
-    const response = await http.get(`/sector/${uuid}`);
+    const response = await http.get(`/sector/${uuid}/`);
     return response.data;
   },
 
   async create(props) {
     const response = await http.post('/sector/', { ...props, project: PROJECT_ID });
+    return response.data;
+  },
+
+  async update(uuid, data) {
+    const sector = await http.patch(`/sector/${uuid}/`, data);
+    return sector;
+  },
+
+  async managers(sectorUuid) {
+    const response = await http.get('/authorization/sector/', {
+      params: {
+        sector: sectorUuid,
+      },
+    });
     return response.data;
   },
 
@@ -28,6 +42,11 @@ export default {
     });
   },
 
+  async tags(sectorUuid) {
+    const response = await http.get('/tag/', { params: { sector: sectorUuid } });
+    return response.data;
+  },
+
   async addTag(sectorUuid, tagName) {
     const response = await http.post('/tag/', {
       sector: sectorUuid,
@@ -37,8 +56,7 @@ export default {
     return response.data;
   },
 
-  async tags(sectorUuid) {
-    const response = await http.get('/tag/', { params: { sector: sectorUuid } });
-    return response.data;
+  async removeTag(tagUuid) {
+    await http.delete(`/tag/${tagUuid}/`);
   },
 };

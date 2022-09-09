@@ -25,6 +25,7 @@ const routes = [
             component: () => import('@/views/Settings/Sectors/Edit'),
             props: (route) => ({
               uuid: route.params.uuid,
+              tag: route.query.tag,
             }),
           },
         ],
