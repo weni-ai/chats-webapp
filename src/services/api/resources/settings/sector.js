@@ -1,11 +1,12 @@
 import http from '@/services/api/http';
+import { getProject } from '@/utils/config';
 
-const PROJECT_ID = '34a93b52-231e-11ed-861d-0242ac120002';
+const projectUuid = getProject();
 
 export default {
   async list() {
     const response = await http.get('/sector/', {
-      params: { project: PROJECT_ID },
+      params: { project: projectUuid },
     });
     return response.data;
   },
@@ -16,7 +17,7 @@ export default {
   },
 
   async create(props) {
-    const response = await http.post('/sector/', { ...props, project: PROJECT_ID });
+    const response = await http.post('/sector/', { ...props, project: projectUuid });
     return response.data;
   },
 

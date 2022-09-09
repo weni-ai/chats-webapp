@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { get } from '@/utils/token';
+import { getToken } from '@/utils/config';
 import env from '@/utils/env';
 
 const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
@@ -9,7 +9,7 @@ const client = axios.create({
 });
 
 client.interceptors.request.use((config) => {
-  const token = get();
+  const token = getToken();
   // eslint-disable-next-line no-param-reassign
   if (token) config.headers.Authorization = `Token ${token}`;
   return config;

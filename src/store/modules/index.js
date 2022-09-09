@@ -1,10 +1,10 @@
-import auth from './auth';
+import config from './config';
 import chats from './chats';
 import settings from './settings';
 import rooms from './rooms';
 
 export default {
-  auth,
+  config,
   chats,
   settings,
   rooms,

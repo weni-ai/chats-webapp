@@ -1,15 +1,17 @@
 import store from '@/store';
-import { set } from '@/utils/token';
+import { setToken, setProject } from '@/utils/config';
 
 const routes = [
   {
-    path: '/loginexternal/:token/',
+    path: '/loginexternal/:token/:project',
     name: 'external.login',
     component: null,
     beforeEnter: async (to, from, next) => {
-      const { token } = to.params;
-      await store.dispatch('auth/setToken', token.replace('+', ' '));
-      set(token);
+      const { token, project } = to.params;
+      await store.dispatch('config/setToken', token.replace('+', ' '));
+      await store.dispatch('config/setProject', project);
+      setToken(token);
+      setProject(project);
 
       if (to.query.next) {
         next(to.query.next);

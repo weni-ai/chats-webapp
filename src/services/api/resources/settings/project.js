@@ -1,6 +1,7 @@
 import http from '@/services/api/http';
+import { getProject } from '@/utils/config';
 
-const PROJECT_ID = '34a93b52-231e-11ed-861d-0242ac120002';
+const projectUuid = getProject();
 
 export const Permissions = Object.freeze({
   Admin: 1,
@@ -12,7 +13,7 @@ export default {
   async managers() {
     const response = await http.get(`/permission/project/`, {
       params: {
-        project: PROJECT_ID,
+        project: projectUuid,
         role: Permissions.Manager,
       },
     });
@@ -22,7 +23,7 @@ export default {
   async agents() {
     const response = await http.get(`/permission/project/`, {
       params: {
-        project: PROJECT_ID,
+        project: projectUuid,
         role: Permissions.Agent,
       },
     });
