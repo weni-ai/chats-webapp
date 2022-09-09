@@ -9,7 +9,7 @@
     </header>
 
     <section class="sectors">
-      <div @click="navigate('chats/sectors/new')" @keypress.enter="navigate('sectors/new')">
+      <div @click="navigate('sectors.new')" @keypress.enter="navigate('sectors.new')">
         <unnnic-card type="blank" text="Novo setor" icon="add-1" class="new-sector-card" />
       </div>
 
@@ -18,12 +18,7 @@
         :key="sector.id"
         actionText="Abrir"
         :name="sector.name"
-        @action="
-          navigate({
-            name: 'sectors.edit',
-            params: { uuid: sector.uuid },
-          })
-        "
+        @action="navigate('sectors.edit', { uuid: sector.uuid })"
         :statuses="[
           {
             title: 'Agentes',
@@ -58,8 +53,11 @@ export default {
   }),
 
   methods: {
-    navigate(params) {
-      this.$router.push(params);
+    navigate(name, params) {
+      this.$router.push({
+        name,
+        params,
+      });
     },
     async listSectors() {
       const sectors = await Sector.list();
