@@ -16,7 +16,8 @@ const routes = [
       setProject(projectUuid);
 
       if (to.query.next) {
-        next(to.query.next);
+        const parsedNext = to.query.next.replace('/settings/chats', '/settings');
+        next(parsedNext);
       } else {
         next({ name: 'home' });
       }
