@@ -8,7 +8,7 @@ const routes = [
     component: null,
     beforeEnter: async (to, from, next) => {
       let { token = '' } = to.params;
-      token = token.replace('+', ' ');
+      token = token.replace('+', ' ').replace('Bearer', '');
       const { projectUuid = '' } = to.query;
       await store.dispatch('config/setToken', token);
       await store.dispatch('config/setProject', projectUuid);

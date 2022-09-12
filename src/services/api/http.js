@@ -11,8 +11,9 @@ const client = axios.create({
 
 client.interceptors.request.use((config) => {
   const token = getToken();
+  const type = isProduction ? 'Bearer' : 'Token';
   // eslint-disable-next-line no-param-reassign
-  if (token) config.headers.Authorization = isProduction ? token : `Token ${token}`;
+  if (token) config.headers.Authorization = `${type} ${token}`;
   return config;
 });
 
