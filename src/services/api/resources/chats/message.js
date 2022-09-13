@@ -14,4 +14,19 @@ export default {
     });
     return response.data;
   },
+
+  // eslint-disable-next-line no-unused-vars
+  async sendFile({ roomId, userEmail, file }) {
+    const msg = await this.send(roomId, {
+      text: file.name,
+      user_email: userEmail,
+    });
+    const media = await http.postForm('/media/', {
+      content_type: file.type,
+      message: msg.uuid,
+      media_file: file,
+    });
+
+    return media.data;
+  },
 };

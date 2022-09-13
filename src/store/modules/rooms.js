@@ -69,6 +69,16 @@ export default {
       });
       commit(mutations.NEW_MESSAGE, message);
     },
+    async sendFiles({ state }, files) {
+      const { activeRoom } = state;
+      if (!activeRoom) return;
+
+      await Promise.all(
+        files.map((file) =>
+          Message.sendFile({ roomId: activeRoom.uuid, userEmail: activeRoom.user.email, file }),
+        ),
+      );
+    },
     async newMessage({ commit }, message) {
       commit(mutations.NEW_MESSAGE, message);
     },

@@ -25,12 +25,15 @@ export function groupSequentialSentMessages(messages) {
     }
 
     if (acc.at(-1)?.sender?.uuid !== message.sender.uuid) {
-      const m = { ...message, content: [{ uuid: message.uuid, text: message.text }] };
+      const m = {
+        ...message,
+        content: [{ ...message }],
+      };
       acc.push(m);
       return acc;
     }
 
-    acc[acc.length - 1].content.push({ uuid: message.uuid, text: message.text });
+    acc[acc.length - 1].content.push({ ...message });
     return acc;
   }, []);
 

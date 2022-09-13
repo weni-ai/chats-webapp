@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import Media from '@/services/api/resources/chats/media';
+
 import MediaControls from './Controls';
 import DocumentPreview from './Previews/Document';
 import ImagePreview from './Previews/Image';
@@ -42,36 +44,30 @@ export default {
     },
   },
 
-  data: () => ({
-    mediaTypes: ['image', 'document', 'video'],
-  }),
-
   computed: {
     fullFilename() {
-      return this.media.filename ? `${this.media.filename}.${this.media.fileExtension}` : '';
+      const filename = this.media.url.split('/').at(-1);
+      return filename;
     },
     isDocument() {
-      return this.media.type === 'document';
+      const document = /(pdf|doc(x)?|txt)/;
+      return document.test(this.media.content_type);
     },
   },
 
   methods: {
     async download() {
-      const { src, fileExtension, type } = this.media;
-      const response = await fetch(src).catch(() =>
-        console.error('Não foi possível realizar o download no momento'),
-      );
-
-      if (!response) return;
-
-      const responseBlob = await response.blob();
-
-      const blob = new Blob([responseBlob], { type: `${type}/${fileExtension}` });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = this.fullFilename;
-      link.click();
-      URL.revokeObjectURL(link.href);
+      try {
+        const { media_file } = this.media;
+        const file = await Media.get(media_file);
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(file);
+        link.download = this.fullFilename;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      } catch (err) {
+        console.error('Não foi possível realizar o download no momento');
+      }
     },
   },
 };

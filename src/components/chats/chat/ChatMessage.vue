@@ -27,10 +27,12 @@
         :key="content.uuid || content.text || content.filename || content.audio.src"
         class="message"
       >
-        <media-message v-if="content.isMedia" :media="content" />
-        <span v-else-if="content.isAudio">
-          <unnnic-audio-recorder :src="content.audio.src" />
-        </span>
+        <section class="message__medias" v-if="content.media.length > 0">
+          <media-message v-for="media in content.media" :key="media.media_file" :media="media" />
+          <span v-if="content.isAudio">
+            <unnnic-audio-recorder :src="content.audio.src" />
+          </span>
+        </section>
 
         <p v-else :class="{ 'unsent-message': content.sent === false, disabled }">
           {{ content.text }}
@@ -148,6 +150,11 @@ export default {
       & p {
         font-size: $unnnic-font-size-body-gt;
         color: $unnnic-color-neutral-dark;
+      }
+
+      &__medias {
+        display: flex;
+        flex-direction: column;
       }
     }
   }
