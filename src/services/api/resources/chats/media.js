@@ -12,7 +12,6 @@ export default {
     const response = await client.get(url, {
       responseType: 'blob',
     });
-    console.log(response.data);
     return response.data;
   },
 };

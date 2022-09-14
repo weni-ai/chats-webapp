@@ -12,9 +12,12 @@ export default {
 
   created() {
     ws.on('msg.create', (message) => {
-      const { user } = message;
-      if (!user || !this.activeRoom || this.activeRoom.user.uuid !== user.uuid)
-        this.$store.dispatch('rooms/newMessage', message);
+      if (!this.activeRoom || this.activeRoom.user?.uuid !== message.user?.uuid)
+        this.$store.dispatch('rooms/addMessage', message);
+    });
+
+    ws.on('msg.update', (message) => {
+      this.$store.dispatch('rooms/addMessage', message);
     });
   },
 

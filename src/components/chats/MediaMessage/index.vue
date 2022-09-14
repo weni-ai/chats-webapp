@@ -6,13 +6,13 @@
   <section v-else class="media-message">
     <section class="media-message__preview">
       <image-preview
-        v-if="media.type === 'image'"
-        :src="media.src"
-        :alt="media.alt"
+        v-if="isImage"
+        :src="media.media_file"
+        :alt="fullFilename"
         fullscreen-on-click
         @download="download"
       />
-      <video-preview v-else-if="media.type === 'video'" :src="media.src" fullscreen-on-click />
+      <video-preview v-else-if="isVideo" :src="media.media_file" fullscreen-on-click />
     </section>
 
     <media-controls :fullFilename="fullFilename" @download="download" />
@@ -52,6 +52,14 @@ export default {
     isDocument() {
       const document = /(pdf|doc(x)?|txt)/;
       return document.test(this.media.content_type);
+    },
+    isImage() {
+      const image = /(png|jp(e)?g)/;
+      return image.test(this.media.content_type);
+    },
+    isVideo() {
+      const video = /(mp4)/;
+      return video.test(this.media.content_type);
     },
   },
 

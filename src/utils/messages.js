@@ -16,9 +16,7 @@ export function parseMessageToMessageWithSenderProp(message) {
 }
 
 export function groupSequentialSentMessages(messages) {
-  const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
-
-  const groupedMessages = messagesWithSender.reduce((acc, message) => {
+  const groupedMessages = messages.reduce((acc, message) => {
     if (!message.sender) {
       acc.push(message);
       return acc;

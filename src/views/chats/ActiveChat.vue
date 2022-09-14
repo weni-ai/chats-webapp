@@ -92,7 +92,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 
 import ChatsLayout from '@/layouts/ChatsLayout';
 
@@ -123,11 +123,6 @@ export default {
     },
   },
 
-  async mounted() {
-    await this.setActiveRoom(this.id);
-    this.getRoomMessages();
-  },
-
   data: () => ({
     audioMessage: null,
     componentInAsideSlot: '',
@@ -140,7 +135,9 @@ export default {
   computed: {
     ...mapState({
       room: (state) => state.rooms.activeRoom,
-      messages: (state) => state.rooms.activeRoomMessages,
+    }),
+    ...mapGetters('rooms', {
+      messages: 'groupedActiveRoomsMessage',
     }),
     isMessageEditorVisible() {
       return this.room.is_active && !!this.room.user;
@@ -186,6 +183,7 @@ export default {
       this.isCloseChatModalOpen = false;
     },
     scrollMessagesToBottom() {
+      if (!this.$refs.chatMessages) return;
       this.$refs.chatMessages.$el.scrollTop = this.$refs.chatMessages.$el.scrollHeight;
     },
     async setActiveRoom(uuid) {
@@ -193,12 +191,14 @@ export default {
       if (!room) this.$router.push({ name: 'home' });
       await this.$store.dispatch('rooms/setActiveRoom', room);
     },
-    getRoomMessages() {
-      this.$store.dispatch('rooms/getActiveRoomMessages');
+    async getRoomMessages() {
+      await this.$store.dispatch('rooms/getActiveRoomMessages');
+      this.$nextTick(this.scrollMessagesToBottom);
     },
     async sendFileMessage(files) {
       try {
         await this.$store.dispatch('rooms/sendFiles', files);
+        this.scrollMessagesToBottom();
       } catch (e) {
         console.error('O upload de alguns arquivos pode não ter sido concluído');
       }
@@ -252,8 +252,12 @@ export default {
     room(newValue) {
       if (!newValue) this.componentInAsideSlot = '';
     },
-    id(id) {
-      this.setActiveRoom(id);
+    id: {
+      immediate: true,
+      async handler() {
+        await this.setActiveRoom(this.id);
+        this.getRoomMessages();
+      },
     },
   },
 };
