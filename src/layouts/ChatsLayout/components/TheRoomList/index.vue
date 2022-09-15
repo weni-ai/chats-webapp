@@ -1,17 +1,17 @@
 <template>
   <div class="container">
     <section class="chat-groups">
-      <room-group :label="$t('line')" :rooms="queue" filled />
-      <room-group :label="$t('chats.in_progress')" :rooms="rooms" />
+      <room-group v-if="queue.length" :label="$t('line')" :rooms="queue" filled />
+      <room-group v-if="rooms.length" :label="$t('chats.in_progress')" :rooms="rooms" />
     </section>
 
     <unnnic-button
-      :text="isActiveChatView ? $t('chats.see_history') : $t('back_to_chats')"
-      :iconRight="isActiveChatView ? 'task-list-clock-1' : ''"
-      :iconLeft="isActiveChatView ? '' : 'keyboard-arrow-left-1'"
+      :text="isHistoryView ? $t('back_to_chats') : $t('chats.see_history')"
+      :iconRight="isHistoryView ? '' : 'task-list-clock-1'"
+      :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : ''"
       type="secondary"
       size="small"
-      @click="$router.push(isActiveChatView ? '/closed-chats' : '/')"
+      @click="navigate(isHistoryView ? 'home' : 'rooms.closed')"
     />
   </div>
 </template>
@@ -48,8 +48,16 @@ export default {
       rooms: 'rooms/agentRooms',
       queue: 'rooms/waitingQueue',
     }),
-    isActiveChatView() {
-      return ['home', 'chat'].includes(this.$route.name);
+    isHistoryView() {
+      return this.$route.name === 'rooms.closed';
+    },
+  },
+
+  methods: {
+    navigate(name) {
+      this.$router.push({
+        name,
+      });
     },
   },
 };
