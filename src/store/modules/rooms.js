@@ -56,7 +56,7 @@ export default {
     async getActiveRoomMessages({ commit, state }) {
       const { activeRoom } = state;
       if (!activeRoom) return;
-      const response = await Message.getByRoomId(activeRoom.uuid);
+      const response = await Message.getByRoom(activeRoom.uuid);
       const messages = response.results;
       const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
       commit(mutations.SET_ACTIVE_ROOM_MESSAGES, messagesWithSender);
