@@ -15,31 +15,17 @@ export default {
     return response.data;
   },
 
-  async sendFile({ roomId, userEmail, file }) {
+  async sendMedia({ roomId, userEmail, media }) {
     const msg = await this.send(roomId, {
-      text: file.name,
+      text: media.name,
       user_email: userEmail,
     });
-    const media = await http.postForm('/media/', {
-      content_type: file.type,
+    const response = await http.postForm('/media/', {
+      content_type: media.type,
       message: msg.uuid,
-      media_file: file,
+      media_file: media,
     });
 
-    return media.data;
-  },
-
-  async sendAudio({ roomId, userEmail, audio }) {
-    const msg = await this.send(roomId, {
-      text: audio.name,
-      user_email: userEmail,
-    });
-    const media = await http.postForm('/media/', {
-      content_type: audio.type,
-      message: msg.uuid,
-      media_file: audio,
-    });
-
-    return media.data;
+    return response.data;
   },
 };

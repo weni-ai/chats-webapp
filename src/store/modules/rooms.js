@@ -88,21 +88,15 @@ export default {
           console.error('Não foi possível enviar a mensagem');
         });
     },
-    async sendFiles({ state }, files) {
+    async sendMedias({ state }, medias) {
       const { activeRoom } = state;
       if (!activeRoom) return;
 
       await Promise.all(
-        files.map((file) =>
-          Message.sendFile({ roomId: activeRoom.uuid, userEmail: activeRoom.user.email, file }),
+        medias.map((media) =>
+          Message.sendMedia({ roomId: activeRoom.uuid, userEmail: activeRoom.user.email, media }),
         ),
       );
-    },
-    async sendAudio({ state }, audio) {
-      const { activeRoom } = state;
-      if (!activeRoom) return;
-
-      await Message.sendAudio({ roomId: activeRoom.uuid, userEmail: activeRoom.user.email, audio });
     },
     async addMessage({ commit, state }, message) {
       const messageAlreadyExists = state.activeRoomMessages.some((m) => m.uuid === message.uuid);

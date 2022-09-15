@@ -200,7 +200,7 @@ export default {
     },
     async sendFileMessage(files) {
       try {
-        await this.$store.dispatch('rooms/sendFiles', files);
+        await this.$store.dispatch('rooms/sendMedias', files);
         this.scrollMessagesToBottom();
       } catch (e) {
         console.error('O upload de alguns arquivos pode não ter sido concluído');
@@ -221,7 +221,7 @@ export default {
       const response = await fetch(this.audioMessage.src);
       const blob = await response.blob();
       const audio = new File([blob], `${Date.now().toString()}.mp3`, { type: 'audio/mpeg3' });
-      await this.$store.dispatch('rooms/sendAudio', audio);
+      await this.$store.dispatch('rooms/sendMedias', [audio]);
       this.scrollMessagesToBottom();
       this.audioMessage = null;
     },
