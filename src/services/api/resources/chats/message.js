@@ -15,7 +15,6 @@ export default {
     return response.data;
   },
 
-  // eslint-disable-next-line no-unused-vars
   async sendFile({ roomId, userEmail, file }) {
     const msg = await this.send(roomId, {
       text: file.name,
@@ -25,6 +24,20 @@ export default {
       content_type: file.type,
       message: msg.uuid,
       media_file: file,
+    });
+
+    return media.data;
+  },
+
+  async sendAudio({ roomId, userEmail, audio }) {
+    const msg = await this.send(roomId, {
+      text: audio.name,
+      user_email: userEmail,
+    });
+    const media = await http.postForm('/media/', {
+      content_type: audio.type,
+      message: msg.uuid,
+      media_file: audio,
     });
 
     return media.data;

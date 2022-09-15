@@ -98,6 +98,12 @@ export default {
         ),
       );
     },
+    async sendAudio({ state }, audio) {
+      const { activeRoom } = state;
+      if (!activeRoom) return;
+
+      await Message.sendAudio({ roomId: activeRoom.uuid, userEmail: activeRoom.user.email, audio });
+    },
     async addMessage({ commit, state }, message) {
       const messageAlreadyExists = state.activeRoomMessages.some((m) => m.uuid === message.uuid);
 

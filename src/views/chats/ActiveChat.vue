@@ -124,6 +124,9 @@ export default {
   },
 
   data: () => ({
+    /**
+     * @type {HTMLAudioElement}
+     */
     audioMessage: null,
     componentInAsideSlot: '',
     editorMessage: '',
@@ -215,13 +218,10 @@ export default {
     async sendAudio() {
       if (!this.audioMessage) return;
 
-      const message = {
-        isAudio: true,
-        audio: this.audioMessage,
-      };
-
-      await this.$store.dispatch('chats/sendMessage', message);
-
+      const response = await fetch(this.audioMessage.src);
+      const blob = await response.blob();
+      const audio = new File([blob], `${Date.now().toString()}.mp3`, { type: 'audio/mpeg3' });
+      await this.$store.dispatch('rooms/sendAudio', audio);
       this.scrollMessagesToBottom();
       this.audioMessage = null;
     },

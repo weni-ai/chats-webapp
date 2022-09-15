@@ -13,9 +13,10 @@
         @download="download"
       />
       <video-preview v-else-if="isVideo" :src="media.url" fullscreen-on-click />
+      <unnnic-audio-recorder v-else-if="isAudio" :src="media.url" />
     </section>
 
-    <media-controls :fullFilename="fullFilename" @download="download" />
+    <media-controls v-if="!isAudio" :fullFilename="fullFilename" @download="download" />
   </section>
 </template>
 
@@ -60,6 +61,10 @@ export default {
     isVideo() {
       const video = /(mp4)/;
       return video.test(this.media.content_type);
+    },
+    isAudio() {
+      const audio = /(mpeg3|wav)/;
+      return audio.test(this.media.content_type);
     },
   },
 
