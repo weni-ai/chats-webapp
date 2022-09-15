@@ -28,7 +28,7 @@
         class="message"
       >
         <section class="message__medias" v-if="content.media.length > 0">
-          <media-message v-for="media in content.media" :key="media.media_file" :media="media" />
+          <media-message v-for="media in content.media" :key="media.url" :media="media" />
           <span v-if="content.isAudio">
             <unnnic-audio-recorder :src="content.audio.src" />
           </span>

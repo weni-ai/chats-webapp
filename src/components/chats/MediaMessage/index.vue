@@ -7,12 +7,12 @@
     <section class="media-message__preview">
       <image-preview
         v-if="isImage"
-        :src="media.media_file"
+        :src="media.url"
         :alt="fullFilename"
         fullscreen-on-click
         @download="download"
       />
-      <video-preview v-else-if="isVideo" :src="media.media_file" fullscreen-on-click />
+      <video-preview v-else-if="isVideo" :src="media.url" fullscreen-on-click />
     </section>
 
     <media-controls :fullFilename="fullFilename" @download="download" />
@@ -66,8 +66,8 @@ export default {
   methods: {
     async download() {
       try {
-        const { media_file } = this.media;
-        const file = await Media.get(media_file);
+        const { url } = this.media;
+        const file = await Media.get(url);
         const link = document.createElement('a');
         link.href = URL.createObjectURL(file);
         link.download = this.fullFilename;
