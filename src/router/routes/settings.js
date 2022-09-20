@@ -5,7 +5,7 @@ const routes = [
     children: [
       {
         path: '/settings',
-        name: 'settings',
+        name: 'sectors',
         component: () => import('@/views/Settings'),
       },
 

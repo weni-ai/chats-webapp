@@ -169,7 +169,7 @@ export default {
     async handleTagsNextStep() {
       await this.createTags();
       this.$router.push({
-        name: 'settings',
+        name: 'sectors',
       });
     },
     async addAgentToQueue(agent) {
