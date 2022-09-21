@@ -30,6 +30,7 @@
             label="Setor"
             size="sm"
             class="input"
+            @input="getSectorTags(filteredSectorUuid)"
           >
             <option value="">Todos</option>
             <option
@@ -42,11 +43,13 @@
             </option>
           </unnnic-select>
 
-          <tag-filter
-            v-model="filteredTags"
-            :tags="sectorTags"
-            label="Classificar por tags"
+          <unnnic-multi-select
+            v-model="tags"
             class="input"
+            label="Filtrar por tags"
+            input-title="Pesquise e selecione tags"
+            expand
+            hide-group-title
           />
 
           <unnnic-input-date-picker
@@ -107,8 +110,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-
 import Contact from '@/services/api/resources/chats/contact';
 import Message from '@/services/api/resources/chats/message';
 import Sector from '@/services/api/resources/settings/sector';
@@ -117,7 +118,6 @@ import { groupSequentialSentMessages, parseMessageToMessageWithSenderProp } from
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
 import ChatsLayout from '@/layouts/ChatsLayout';
-import TagFilter from '@/components/chats/TagFilter';
 import TagGroup from '@/components/TagGroup';
 import UserAvatar from '@/components/chats/UserAvatar';
 
@@ -128,7 +128,6 @@ export default {
     ChatHeader,
     ChatMessages,
     ChatsLayout,
-    TagFilter,
     TagGroup,
     UserAvatar,
   },
@@ -143,7 +142,6 @@ export default {
   async beforeMount() {
     if (this.tag) this.filteredTags.push(this.tag);
     await this.getContacts();
-    this.getSectorTags();
     this.getSectors();
   },
 
@@ -155,17 +153,13 @@ export default {
       end: '',
     },
     sectorTags: [],
-    filteredTags: [],
     contacts: [],
     sectors: [],
     filteredSectorUuid: '',
+    tags: [],
   }),
 
   computed: {
-    ...mapState({
-      tags: (state) => state.chats.tags,
-    }),
-
     tableHeaders() {
       return [
         {
@@ -202,6 +196,16 @@ export default {
         .filter(this.contactHasAllActiveFilterTags)
         .filter(this.isRoomEndDateInFilteredRange);
     },
+
+    filteredTags() {
+      if (this.tags.length === 0) return [];
+
+      const group = this.tags[0];
+      if (!group?.selected && group?.selected !== 0) return [];
+
+      const tag = group.items[group.selected];
+      return [tag];
+    },
   },
 
   methods: {
@@ -217,26 +221,32 @@ export default {
       const response = await Contact.getAllWithClosedRooms();
       this.contacts = response.results;
     },
-    async getSectorTags() {
-      // Tags need to be filtered by sector.
-      // A new input filter will be implemented to do that.
-      const contact = this.contacts.find((contact) => contact.room.tags.length > 0);
-      if (!contact) return;
+    async getSectorTags(sectorUuid) {
+      if (!sectorUuid) {
+        this.tags = [];
+        return;
+      }
 
-      this.sectorTags = [...contact.room.tags];
+      const response = await Sector.tags(sectorUuid);
+      const tags = response.results;
+
+      const tagGroup = {
+        items: tags.map((tag) => ({ ...tag, title: tag.name })),
+      };
+
+      this.tags = [tagGroup];
     },
     async getSectors() {
       const response = await Sector.list();
       this.sectors = response.results;
     },
-
     contactHasAllActiveFilterTags(contact) {
       if (this.filteredTags.length === 0) return true;
       if (!contact.room.tags) return false;
 
       // eslint-disable-next-line no-restricted-syntax
       for (const tag of this.filteredTags) {
-        if (!contact.room.tags.find((t) => t.uuid === tag)) {
+        if (!contact.room.tags.some((t) => t.uuid === tag.uuid)) {
           return false;
         }
       }
@@ -261,7 +271,7 @@ export default {
 
     clearFilters() {
       this.filteredSectorUuid = '';
-      this.filteredTags = [];
+      this.tags = [];
       this.filteredDateRange = { start: '', end: '' };
     },
   },
