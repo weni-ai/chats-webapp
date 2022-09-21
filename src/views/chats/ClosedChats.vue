@@ -3,15 +3,11 @@
     <section class="closed-chats__container">
       <section v-if="!!contact" class="closed-chat">
         <chat-header
-          :room="{ contact }"
+          :room="{ ...contact.room, contact }"
           @close="contact = null"
           :closeButtonTooltip="$t('close_view')"
         />
-        <chat-messages
-          :room="{ contact, tags: contact.tags || [] }"
-          :messages="messages"
-          class="messages"
-        />
+        <chat-messages :room="{ ...contact.room, contact }" :messages="messages" class="messages" />
       </section>
 
       <section class="closed-chats" v-else>
@@ -28,21 +24,47 @@
         </header>
 
         <section class="filters">
+          <unnnic-select
+            v-if="sectors.length > 1"
+            v-model="filteredSectorUuid"
+            label="Setor"
+            size="sm"
+            class="input"
+          >
+            <option value="">Todos</option>
+            <option
+              v-for="sector in sectors"
+              :key="sector.uuid"
+              :value="sector.uuid"
+              :selected="sector.uuid === filteredSectorUuid"
+            >
+              {{ sector.name }}
+            </option>
+          </unnnic-select>
+
           <tag-filter
             v-model="filteredTags"
             :tags="sectorTags"
-            label="Classificar chats por tags e período"
+            label="Classificar por tags"
+            class="input"
           />
 
           <unnnic-input-date-picker
             v-model="filteredDateRange"
             size="sm"
+            class="input"
             :input-format="$t('date_format')"
           />
 
-          <unnnic-tool-tip enabled :text="$t('filter.clear_all')" side="right">
-            <unnnic-button-icon icon="button-refresh-arrows-1" size="small" @click="clearFilters" />
-          </unnnic-tool-tip>
+          <div class="clear-filters-button">
+            <unnnic-tool-tip enabled :text="$t('filter.clear_all')" side="right">
+              <unnnic-button-icon
+                icon="button-refresh-arrows-1"
+                size="small"
+                @click="clearFilters"
+              />
+            </unnnic-tool-tip>
+          </div>
         </section>
 
         <unnnic-table :items="filteredContacts" class="closed-chats-table">
@@ -59,13 +81,13 @@
                 </div>
               </template>
 
-              <template #agentName>{{ item.agent }}</template>
+              <template #agentName>{{ item.room.user.first_name }}</template>
 
               <template #tags>
-                <tag-group :tags="item.tags || []" />
+                <tag-group :tags="item.room.tags || []" />
               </template>
 
-              <template #date>{{ $d(new Date(item.created_on)) }}</template>
+              <template #date>{{ $d(new Date(item.room.ended_at)) }}</template>
 
               <template #visualize>
                 <unnnic-button
@@ -89,6 +111,7 @@ import { mapState } from 'vuex';
 
 import Contact from '@/services/api/resources/chats/contact';
 import Message from '@/services/api/resources/chats/message';
+import Sector from '@/services/api/resources/settings/sector';
 import { groupSequentialSentMessages, parseMessageToMessageWithSenderProp } from '@/utils/messages';
 
 import ChatHeader from '@/components/chats/chat/ChatHeader';
@@ -121,6 +144,7 @@ export default {
     if (this.tag) this.filteredTags.push(this.tag);
     await this.getContacts();
     this.getSectorTags();
+    this.getSectors();
   },
 
   data: () => ({
@@ -133,6 +157,8 @@ export default {
     sectorTags: [],
     filteredTags: [],
     contacts: [],
+    sectors: [],
+    filteredSectorUuid: '',
   }),
 
   computed: {
@@ -172,8 +198,9 @@ export default {
 
     filteredContacts() {
       return this.contacts
+        .filter(this.isRoomFromFilteredSector)
         .filter(this.contactHasAllActiveFilterTags)
-        .filter(this.isContactCreateDateInFilteredRange);
+        .filter(this.isRoomEndDateInFilteredRange);
     },
   },
 
@@ -193,18 +220,23 @@ export default {
     async getSectorTags() {
       // Tags need to be filtered by sector.
       // A new input filter will be implemented to do that.
-      const contact = this.contacts.find((contact) => contact.tags.length > 0);
+      const contact = this.contacts.find((contact) => contact.room.tags.length > 0);
       if (!contact) return;
 
-      this.sectorTags = [...contact.tags];
+      this.sectorTags = [...contact.room.tags];
     },
+    async getSectors() {
+      const response = await Sector.list();
+      this.sectors = response.results;
+    },
+
     contactHasAllActiveFilterTags(contact) {
       if (this.filteredTags.length === 0) return true;
-      if (!contact.tags) return false;
+      if (!contact.room.tags) return false;
 
       // eslint-disable-next-line no-restricted-syntax
       for (const tag of this.filteredTags) {
-        if (!contact.tags.find((t) => t.uuid === tag)) {
+        if (!contact.room.tags.find((t) => t.uuid === tag)) {
           return false;
         }
       }
@@ -212,16 +244,23 @@ export default {
       return true;
     },
 
-    isContactCreateDateInFilteredRange(contact) {
+    isRoomEndDateInFilteredRange(contact) {
       const { start, end } = this.filteredDateRange;
       if (!start && !end) return true;
 
-      const roomDate = new Date(contact.created_on).toISOString();
+      const roomDate = new Date(contact.room.ended_at).toISOString();
 
       return start <= roomDate && roomDate <= end;
     },
 
+    isRoomFromFilteredSector(contact) {
+      if (!this.filteredSectorUuid) return true;
+
+      return contact.room.queue.sector === this.filteredSectorUuid;
+    },
+
     clearFilters() {
+      this.filteredSectorUuid = '';
       this.filteredTags = [];
       this.filteredDateRange = { start: '', end: '' };
     },
@@ -273,9 +312,10 @@ export default {
     display: flex;
     align-items: flex-end;
     gap: $unnnic-spacing-stack-sm;
+    width: 90%;
 
-    .date-range-select {
-      flex-basis: 33.33%;
+    & > .input {
+      flex: 1 1;
     }
   }
 
