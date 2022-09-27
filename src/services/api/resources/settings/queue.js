@@ -33,7 +33,13 @@ export default {
       permission: agentUuid,
     });
   },
+
   async removeAgent(agentUuid) {
     await http.delete(`/authorization/queue/${agentUuid}`);
+  },
+
+  async tags(queueUuid) {
+    const response = await http.get('/tag/', { params: { queue: queueUuid } });
+    return response.data;
   },
 };

@@ -10,4 +10,9 @@ export default {
     const response = await http.get('/room/', { params: { is_active: false } });
     return response.data;
   },
+
+  async close(uuid, tags) {
+    const response = await http.put(`/room/${uuid}/close/`, { tags });
+    return response.data;
+  },
 };

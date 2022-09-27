@@ -32,13 +32,17 @@ export default {
       type: Array,
       default: () => [],
     },
+    tags: {
+      type: Array,
+      default: () => [],
+    },
   },
 
   methods: {
     handleSelectedTags(tag) {
-      const tags = this.selected.find((t) => t.value === tag.value)
-        ? this.selected.filter((t) => t !== tag)
-        : [...this.selected, { ...tag, selected: true }];
+      const tags = this.selected.some((t) => t.uuid === tag.uuid)
+        ? this.selected.filter((t) => t.uuid !== tag.uuid)
+        : [...this.selected, { ...tag }];
 
       this.selected = tags;
     },
@@ -52,9 +56,6 @@ export default {
       set(selected) {
         this.$emit('input', selected);
       },
-    },
-    tags() {
-      return this.$store.state.chats.tags;
     },
   },
 };

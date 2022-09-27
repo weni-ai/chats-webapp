@@ -38,14 +38,13 @@
       </div>
 
       <section v-if="isRoomClassifierVisible" class="chat-classifier">
-        <chat-classifier v-model="tags" label="Por favor, classifique o atendimento:">
+        <chat-classifier
+          v-model="tags"
+          :tags="sectorTags"
+          label="Por favor, classifique o atendimento:"
+        >
           <template #actions>
-            <unnnic-button
-              :text="$t('confirm')"
-              type="secondary"
-              size="small"
-              @click="setChatTags"
-            />
+            <unnnic-button :text="$t('confirm')" type="secondary" size="small" @click="closeRoom" />
           </template>
         </chat-classifier>
       </section>
@@ -61,7 +60,7 @@
       scheme="feedback-yellow"
     >
       <template #options>
-        <unnnic-button :text="$t('confirm')" type="terciary" @click="closeChat" />
+        <unnnic-button :text="$t('confirm')" type="terciary" @click="classifyRoom" />
         <unnnic-button :text="$t('cancel')" @click="isCloseChatModalOpen = false" />
       </template>
     </unnnic-modal>
@@ -103,6 +102,9 @@ import MessageEditor from '@/components/chats/MessageEditor';
 import ChatClassifier from '@/components/chats/ChatClassifier';
 import QuickMessages from '@/components/chats/QuickMessages';
 
+import Room from '@/services/api/resources/chats/room';
+import Queue from '@/services/api/resources/settings/queue';
+
 export default {
   name: 'ActiveChat',
 
@@ -132,7 +134,9 @@ export default {
     editorMessage: '',
     isCloseChatModalOpen: false,
     tags: [],
+    sectorTags: [],
     isGetChatConfirmationModalOpen: false,
+    isRoomClassifierVisible: false,
   }),
 
   computed: {
@@ -143,10 +147,7 @@ export default {
       messages: 'groupedActiveRoomsMessage',
     }),
     isMessageEditorVisible() {
-      return this.room.is_active && !!this.room.user;
-    },
-    isRoomClassifierVisible() {
-      return !this.room.is_active && !this.room.tags;
+      return !this.isRoomClassifierVisible && this.room.is_active && !!this.room.user;
     },
     sidebarComponent() {
       return this.sidebarComponents[this.componentInAsideSlot] || {};
@@ -177,13 +178,22 @@ export default {
   },
 
   methods: {
+    async classifyRoom() {
+      this.isRoomClassifierVisible = true;
+      this.isCloseChatModalOpen = false;
+      const response = await Queue.tags(this.room.queue.uuid);
+      this.sectorTags = response.results;
+    },
     takeRoom() {
       console.log('took the room');
       this.isGetChatConfirmationModalOpen = false;
     },
-    closeChat() {
-      this.$store.commit('chats/setActiveChat', { ...this.room, closed: true });
-      this.isCloseChatModalOpen = false;
+    async closeRoom() {
+      if (this.tags.length === 0) return;
+
+      const tags = this.tags.map((tag) => tag.uuid);
+      await Room.close(this.room.uuid, tags);
+      this.$router.replace({ name: 'home' });
     },
     scrollMessagesToBottom() {
       if (!this.$refs.chatMessages) return;
@@ -229,22 +239,6 @@ export default {
       return new Intl.DateTimeFormat('pt-BR', {
         dateStyle: 'short',
       }).format(new Date());
-    },
-    async setChatTags() {
-      const { room, tags } = this;
-
-      await this.$store.dispatch('chats/closeChat', {
-        id: room.id,
-        username: room.username,
-        agent: 'Ana',
-        date: this.getTodayDate(),
-        closed: true,
-        tags,
-        messages: room.messages,
-      });
-
-      this.$store.commit('chats/setActiveChat', null);
-      this.$router.replace('/');
     },
   },
 
