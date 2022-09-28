@@ -4,6 +4,8 @@ import Room from '@/services/api/resources/chats/room';
 
 const mutations = {
   SET_ROOMS: 'SET_ROOMS',
+  ADD_ROOM: 'ADD_ROOM',
+  UPDATE_ROOM: 'UPDATE_ROOM',
   SET_ACTIVE_ROOM: 'SET_ACTIVE_ROOM',
   SET_ACTIVE_ROOM_MESSAGES: 'SET_ACTIVE_ROOM_MESSAGES',
   ADD_MESSAGE: 'ADD_MESSAGE',
@@ -21,6 +23,9 @@ export default {
   mutations: {
     [mutations.SET_ROOMS](state, rooms) {
       state.rooms = rooms;
+    },
+    [mutations.ADD_ROOM](state, room) {
+      state.rooms.unshift({ ...room });
     },
     [mutations.SET_ACTIVE_ROOM](state, room) {
       state.activeRoom = room;
@@ -52,6 +57,9 @@ export default {
     },
     setActiveRoom({ commit }, room) {
       commit(mutations.SET_ACTIVE_ROOM, room);
+    },
+    addRoom({ commit }, room) {
+      commit(mutations.ADD_ROOM, room);
     },
     async getActiveRoomMessages({ commit, state }) {
       const { activeRoom } = state;
@@ -103,6 +111,13 @@ export default {
 
       if (messageAlreadyExists) commit(mutations.UPDATE_MESSAGE, { message });
       else commit(mutations.ADD_MESSAGE, message);
+    },
+    updateRoom({ state, commit }, { room, userEmail }) {
+      const rooms = state.rooms
+        .map((r) => (r.uuid === room.uuid ? { ...room } : r))
+        .filter((r) => !r.user || r.user.email === userEmail);
+      commit(mutations.SET_ROOMS, rooms);
+      commit(mutations.SET_ACTIVE_ROOM, { ...room });
     },
   },
 

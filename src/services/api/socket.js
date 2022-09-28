@@ -33,6 +33,10 @@ export class Socket {
     };
     this.#handlers.push(handler);
   }
+
+  send(message) {
+    this.#ws.send(JSON.stringify(message));
+  }
 }
 
 const token = getToken();

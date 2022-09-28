@@ -142,6 +142,7 @@ export default {
   computed: {
     ...mapState({
       room: (state) => state.rooms.activeRoom,
+      me: (state) => state.profile.me,
     }),
     ...mapGetters('rooms', {
       messages: 'groupedActiveRoomsMessage',
@@ -184,8 +185,8 @@ export default {
       const response = await Queue.tags(this.room.queue.uuid);
       this.sectorTags = response.results;
     },
-    takeRoom() {
-      console.log('took the room');
+    async takeRoom() {
+      await Room.take(this.room.uuid, this.me.email);
       this.isGetChatConfirmationModalOpen = false;
     },
     async closeRoom() {

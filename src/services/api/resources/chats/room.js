@@ -15,4 +15,9 @@ export default {
     const response = await http.put(`/room/${uuid}/close/`, { tags });
     return response.data;
   },
+
+  async take(uuid, email) {
+    const response = await http.put(`/room/${uuid}/`, { user_email: email });
+    return response.data;
+  },
 };
