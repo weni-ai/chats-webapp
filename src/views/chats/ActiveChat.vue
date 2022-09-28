@@ -191,10 +191,12 @@ export default {
     },
     async closeRoom() {
       if (this.tags.length === 0) return;
+      const { uuid } = this.room;
 
       const tags = this.tags.map((tag) => tag.uuid);
-      await Room.close(this.room.uuid, tags);
+      await Room.close(uuid, tags);
       this.$router.replace({ name: 'home' });
+      this.$store.dispatch('rooms/removeRoom', uuid);
     },
     scrollMessagesToBottom() {
       if (!this.$refs.chatMessages) return;
@@ -276,6 +278,7 @@ export default {
   }
 
   .chat-classifier {
+    margin-top: auto;
     margin-left: -$unnnic-spacing-inline-md;
     margin-bottom: -$unnnic-spacing-inline-sm;
   }

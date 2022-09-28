@@ -119,6 +119,12 @@ export default {
       commit(mutations.SET_ROOMS, rooms);
       commit(mutations.SET_ACTIVE_ROOM, { ...room });
     },
+    removeRoom({ state, commit }, roomUuid) {
+      const rooms = state.rooms.filter((r) => r.uuid !== roomUuid);
+      commit(mutations.SET_ROOMS, rooms);
+
+      if (state.activeRoom.uuid === roomUuid) commit(mutations.SET_ACTIVE_ROOM, {});
+    },
   },
 
   getters: {
