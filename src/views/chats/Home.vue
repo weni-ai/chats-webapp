@@ -1,8 +1,8 @@
 <template>
   <chats-layout>
     <section class="illustration">
-      <img class="illustration__doodles" :src="doodlesSvg" alt="" />
-      <img class="illustration__background" :src="backgroundSvg" alt="" />
+      <img class="illustration__doodles" src="/homepage-illustration/doodles.svg" alt="" />
+      <img class="illustration__background" src="/homepage-illustration/background.svg" alt="" />
     </section>
   </chats-layout>
 </template>
@@ -10,20 +10,12 @@
 <script>
 import ChatsLayout from '@/layouts/ChatsLayout';
 
-import backgroundSvg from '@/assets/homepage-illustration/background.svg';
-import doodlesSvg from '@/assets/homepage-illustration/doodles.svg';
-
 export default {
   name: 'ChatsHome',
 
   components: {
     ChatsLayout,
   },
-
-  data: () => ({
-    backgroundSvg,
-    doodlesSvg,
-  }),
 };
 </script>
 
