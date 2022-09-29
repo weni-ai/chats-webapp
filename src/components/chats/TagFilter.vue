@@ -5,11 +5,11 @@
     <section class="tags">
       <span
         v-for="tag in tags"
-        :key="tag.value"
-        @click="handleSelectedTags(tag.value)"
-        @keypress.space="handleSelectedTags(tag.value)"
+        :key="tag.uuid"
+        @click="handleSelectedTags(tag.uuid)"
+        @keypress.space="handleSelectedTags(tag.uuid)"
       >
-        <unnnic-checkbox :textRight="tag.text" size="sm" :value="selected.includes(tag.value)" />
+        <unnnic-checkbox :textRight="tag.name" size="sm" :value="selected.includes(tag.uuid)" />
       </span>
     </section>
   </section>
@@ -28,15 +28,11 @@ export default {
       type: Array,
       default: () => [],
     },
+    tags: {
+      type: Array,
+      default: () => [],
+    },
   },
-
-  data: () => ({
-    tags: [
-      { text: 'Dúvidas', value: 'doubts' },
-      { text: 'Financeiro', value: 'finance' },
-      { text: 'Ajuda', value: 'help' },
-    ],
-  }),
 
   methods: {
     handleSelectedTags(tag) {

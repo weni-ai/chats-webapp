@@ -6,20 +6,23 @@
   <section v-else class="media-message">
     <section class="media-message__preview">
       <image-preview
-        v-if="media.type === 'image'"
-        :src="media.src"
-        :alt="media.alt"
+        v-if="isImage"
+        :src="media.url"
+        :alt="fullFilename"
         fullscreen-on-click
         @download="download"
       />
-      <video-preview v-else-if="media.type === 'video'" :src="media.src" fullscreen-on-click />
+      <video-preview v-else-if="isVideo" :src="media.url" fullscreen-on-click />
+      <unnnic-audio-recorder v-else-if="isAudio" :src="media.url" />
     </section>
 
-    <media-controls :fullFilename="fullFilename" @download="download" />
+    <media-controls v-if="!isAudio" :fullFilename="fullFilename" @download="download" />
   </section>
 </template>
 
 <script>
+import Media from '@/services/api/resources/chats/media';
+
 import MediaControls from './Controls';
 import DocumentPreview from './Previews/Document';
 import ImagePreview from './Previews/Image';
@@ -42,36 +45,42 @@ export default {
     },
   },
 
-  data: () => ({
-    mediaTypes: ['image', 'document', 'video'],
-  }),
-
   computed: {
     fullFilename() {
-      return this.media.filename ? `${this.media.filename}.${this.media.fileExtension}` : '';
+      const filename = this.media.url.split('/').at(-1);
+      return filename;
     },
     isDocument() {
-      return this.media.type === 'document';
+      const document = /(pdf|doc(x)?|txt)/;
+      return document.test(this.media.content_type);
+    },
+    isImage() {
+      const image = /(png|jp(e)?g)/;
+      return image.test(this.media.content_type);
+    },
+    isVideo() {
+      const video = /(mp4)/;
+      return video.test(this.media.content_type);
+    },
+    isAudio() {
+      const audio = /(mpeg3|wav)/;
+      return audio.test(this.media.content_type);
     },
   },
 
   methods: {
     async download() {
-      const { src, fileExtension, type } = this.media;
-      const response = await fetch(src).catch(() =>
-        console.error('Não foi possível realizar o download no momento'),
-      );
-
-      if (!response) return;
-
-      const responseBlob = await response.blob();
-
-      const blob = new Blob([responseBlob], { type: `${type}/${fileExtension}` });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = this.fullFilename;
-      link.click();
-      URL.revokeObjectURL(link.href);
+      try {
+        const { url } = this.media;
+        const file = await Media.get(url);
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(file);
+        link.download = this.fullFilename;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      } catch (err) {
+        console.error('Não foi possível realizar o download no momento');
+      }
     },
   },
 };

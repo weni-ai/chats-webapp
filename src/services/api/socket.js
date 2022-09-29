@@ -1,5 +1,5 @@
 import env from '@/utils/env';
-import { get } from '@/utils/token';
+import { getToken, getProject } from '@/utils/config';
 
 export class Socket {
   /**
@@ -33,11 +33,15 @@ export class Socket {
     };
     this.#handlers.push(handler);
   }
+
+  send(message) {
+    this.#ws.send(JSON.stringify(message));
+  }
 }
 
-const token = get();
+const token = getToken();
+const project = getProject();
+
 export const ws = new Socket(
-  `${env(
-    'CHATS_WEBSOCKET_URL',
-  )}/agent/rooms?Token=${token}&project=34a93b52-231e-11ed-861d-0242ac120002`,
+  `${env('CHATS_WEBSOCKET_URL')}/agent/rooms?Token=${token}&project=${project}`,
 );

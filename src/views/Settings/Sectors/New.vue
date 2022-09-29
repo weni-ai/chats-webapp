@@ -100,7 +100,6 @@ export default {
       workingDay: {
         start: '',
         end: '',
-        dayOfWeek: 'week-days',
       },
       agents: [],
       queue: {

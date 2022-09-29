@@ -1,10 +1,10 @@
 import http from '@/services/api/http';
+import { getProject } from '@/utils/config';
 
-const PROJECT_ID = '34a93b52-231e-11ed-861d-0242ac120002';
-
+const projectUuid = getProject();
 export default {
   async create({ name, sectorUuid }) {
-    const response = await http.post('/queue/', { name, sector: sectorUuid, project: PROJECT_ID });
+    const response = await http.post('/queue/', { name, sector: sectorUuid, project: projectUuid });
     return response.data;
   },
 
@@ -33,7 +33,13 @@ export default {
       permission: agentUuid,
     });
   },
+
   async removeAgent(agentUuid) {
     await http.delete(`/authorization/queue/${agentUuid}`);
+  },
+
+  async tags(queueUuid) {
+    const response = await http.get('/tag/', { params: { queue: queueUuid } });
+    return response.data;
   },
 };

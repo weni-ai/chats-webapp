@@ -16,21 +16,22 @@ export function parseMessageToMessageWithSenderProp(message) {
 }
 
 export function groupSequentialSentMessages(messages) {
-  const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
-
-  const groupedMessages = messagesWithSender.reduce((acc, message) => {
+  const groupedMessages = messages.reduce((acc, message) => {
     if (!message.sender) {
       acc.push(message);
       return acc;
     }
 
     if (acc.at(-1)?.sender?.uuid !== message.sender.uuid) {
-      const m = { ...message, content: [{ uuid: message.uuid, text: message.text }] };
+      const m = {
+        ...message,
+        content: [{ ...message }],
+      };
       acc.push(m);
       return acc;
     }
 
-    acc[acc.length - 1].content.push({ uuid: message.uuid, text: message.text });
+    acc[acc.length - 1].content.push({ ...message });
     return acc;
   }, []);
 

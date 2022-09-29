@@ -28,7 +28,7 @@
     </section>
 
     <section v-else-if="!room.user" class="header-info-message">
-      <span class="message">Contato na fila Financeiro há 8 minutos</span>
+      <span class="message">Contato na fila {{ room.queue.name }} há 8 minutos</span>
     </section>
   </div>
 </template>

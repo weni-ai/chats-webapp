@@ -64,18 +64,11 @@
           placeholder="18:00"
         />
 
-        <unnnic-select
-          v-model="sector.workingDay.dayOfWeek"
-          label="Dias de funcionamento"
-          placeholder="Selecione"
-        >
-          <option value="week-days">Segunda à sexta</option>
-        </unnnic-select>
-
         <unnnic-input
           v-model="sector.maxSimultaneousChatsByAgent"
           label="Limite de quantidade de atendimentos simultâneos por agente"
           placeholder="4"
+          class="form-section__inputs--fill-w"
         />
       </section>
     </section>
@@ -168,7 +161,6 @@ export default {
         managers.length > 0 &&
         workingDay?.start &&
         workingDay?.end &&
-        workingDay?.dayOfWeek &&
         maxSimultaneousChatsByAgent
       );
     },
@@ -219,6 +211,10 @@ export default {
       display: grid;
       gap: $unnnic-spacing-stack-sm;
       grid-template-columns: 1fr 1fr;
+
+      &--fill-w {
+        grid-column: span 2;
+      }
     }
   }
 
