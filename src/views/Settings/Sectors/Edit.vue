@@ -48,6 +48,7 @@
           :sector="sector"
           :queues="queues"
           @visualize="visualizeQueue"
+          @add-queue="createQueue"
           label="Criar nova fila"
           is-editing
         />
@@ -138,6 +139,11 @@ export default {
   }),
 
   methods: {
+    async createQueue({ name }) {
+      const sectorUuid = this.sector.uuid;
+      await Queue.create({ name, sectorUuid });
+      await this.getQueues();
+    },
     async visualizeQueue(queue) {
       let agents = [];
       if (queue.uuid) {
