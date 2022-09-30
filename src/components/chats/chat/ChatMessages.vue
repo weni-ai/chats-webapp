@@ -24,6 +24,7 @@
           :message="message"
           :disabled="isHistory"
           @show-contact-info="showContactInfo"
+          :use-photo="usePhoto"
         />
       </section>
     </section>
@@ -77,6 +78,10 @@ export default {
     messages: {
       type: Array,
       default: () => [],
+    },
+    usePhoto: {
+      type: Boolean,
+      default: false,
     },
   },
 

@@ -6,6 +6,7 @@
         :clickable="isContactMessage"
         @click="showContactInfo"
         :disabled="disabled"
+        :photo-url="usePhoto ? message.sender.photo_url : ''"
       />
     </span>
 
@@ -79,6 +80,10 @@ export default {
     message: {
       type: Object,
       required: true,
+    },
+    usePhoto: {
+      type: Boolean,
+      default: false,
     },
   },
 
