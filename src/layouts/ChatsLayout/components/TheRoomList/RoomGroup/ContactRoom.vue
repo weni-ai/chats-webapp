@@ -7,6 +7,7 @@
   >
     <user-avatar
       :username="room.contact.name"
+      :photo-url="!!usePhoto ? room.contact.photo_url : ''"
       :active="room.uuid === activeChat.id"
       size="xl"
       :off="disabled"
@@ -56,6 +57,10 @@ export default {
       default: false,
     },
     filled: {
+      type: Boolean,
+      default: false,
+    },
+    usePhoto: {
       type: Boolean,
       default: false,
     },

@@ -23,6 +23,7 @@
       size="sm"
       :scheme="disabled ? 'neutral-snow' : ''"
     />
+    <img v-else-if="!!photoUrl" :src="photoUrl" alt="" />
     <span v-else>
       {{ getUsernameFirstCharacter }}
     </span>
@@ -59,6 +60,10 @@ export default {
     username: {
       type: String,
       required: true,
+    },
+    photoUrl: {
+      type: String,
+      default: '',
     },
   },
 
