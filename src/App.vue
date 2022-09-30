@@ -32,6 +32,7 @@ export default {
 
   async created() {
     await this.getUser();
+    this.onboarding();
     this.listeners();
   },
 
@@ -47,7 +48,13 @@ export default {
       const user = await Profile.me();
       this.$store.commit('profile/setMe', user);
     },
-    onboarding() {
+    async onboarding() {
+      const onboarded = localStorage.getItem('CHATS_USER_ONBOARDED') || (await Profile.onboarded());
+      if (onboarded) {
+        localStorage.setItem('CHATS_USER_ONBOARDED', true);
+        return;
+      }
+
       this.$router.push({ name: 'onboarding.agent' });
     },
     listeners() {

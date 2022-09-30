@@ -3,13 +3,27 @@
     <template #room-list>
       <section class="room-list">
         <div class="room-list__rooms">
-          <room-group :label="$t('chats.in_progress')" :rooms="[room]" use-photo />
+          <unnnic-tool-tip
+            v-if="!roomOpen"
+            enabled
+            text="Um contato está esperando por você!"
+            side="right"
+            force-open
+          >
+            <room-group
+              :label="$t('line')"
+              :rooms="[room]"
+              @open="(roomOpen = true), startConversation()"
+              use-photo
+            />
+          </unnnic-tool-tip>
+          <room-group v-else :label="$t('chats.in_progress')" :rooms="[room]" use-photo />
         </div>
       </section>
     </template>
 
-    <section class="room">
-      <chat-header :room="room" :closeButtonTooltip="$t('chats.end')" @close="() => {}" use-photo />
+    <section v-if="roomOpen" class="room">
+      <chat-header :room="room" :closeButtonTooltip="$t('chats.end')" @close="close" use-photo />
       <chat-messages
         :room="room"
         :messages="messages"
@@ -17,6 +31,14 @@
         ref="chatMessages"
         use-photo
       />
+
+      <div class="message-editor">
+        <message-editor />
+      </div>
+    </section>
+    <section v-else class="illustration">
+      <img class="illustration__doodles" src="/homepage-illustration/doodles.svg" alt="" />
+      <img class="illustration__background" src="/homepage-illustration/background.svg" alt="" />
     </section>
   </chats-layout>
 </template>
@@ -24,9 +46,12 @@
 <script>
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
+import MessageEditor from '@/components/chats/MessageEditor';
 import RoomGroup from '@/layouts/ChatsLayout/components/TheRoomList/RoomGroup';
 
 import ChatsLayout from '@/layouts/ChatsLayout';
+
+import Profile from '@/services/api/resources/profile';
 
 import { groupSequentialSentMessages, parseMessageToMessageWithSenderProp } from '@/utils/messages';
 
@@ -37,14 +62,12 @@ export default {
     ChatsLayout,
     ChatHeader,
     ChatMessages,
+    MessageEditor,
     RoomGroup,
   },
 
-  mounted() {
-    this.startConversation();
-  },
-
   data: () => ({
+    roomOpen: false,
     sentMessages: [],
     nilo: { uuid: 'nilo', name: 'Nilo', photo_url: '/onboarding/nilo.png' },
   }),
@@ -112,6 +135,11 @@ export default {
         });
       }
     },
+    async close() {
+      localStorage.setItem('CHATS_USER_ONBOARDED', true);
+      await Profile.onboard();
+      this.$router.push({ name: 'home' });
+    },
   },
 };
 </script>
@@ -150,6 +178,30 @@ export default {
   .message-editor {
     margin-right: $unnnic-spacing-inline-sm;
     margin-top: auto;
+  }
+}
+
+.illustration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+  height: 100%;
+  margin-left: $unnnic-spacing-inline-sm;
+
+  &__doodles,
+  &__background {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+    pointer-events: none;
+  }
+
+  &__doodles {
+    padding-left: $unnnic-spacing-inset-xs;
   }
 }
 </style>
