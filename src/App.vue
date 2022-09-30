@@ -31,6 +31,7 @@ export default {
   name: 'App',
 
   async created() {
+    this.handleLocale();
     await this.getUser();
 
     ws.on('msg.create', (message) => {
@@ -75,6 +76,18 @@ export default {
     async getUser() {
       const user = await Profile.me();
       this.$store.commit('profile/setMe', user);
+    },
+    handleLocale() {
+      window.onmessage = (ev) => {
+        const message = ev.data;
+        const isLocaleChangeMessage = message.event === 'setLanguage';
+        if (!isLocaleChangeMessage) return;
+
+        const locale = message.data.language;
+        if (!['en-us', 'pt-br', 'es'].includes(locale)) return;
+
+        this.$i18n.locale = locale;
+      };
     },
   },
 };
