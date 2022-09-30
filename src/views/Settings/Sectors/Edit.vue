@@ -168,9 +168,13 @@ export default {
         ...this.sector,
         uuid,
         name,
-        workingDay: { start: work_start, end: work_end },
+        workingDay: { start: this.normalizeTime(work_start), end: this.normalizeTime(work_end) },
         maxSimultaneousChatsByAgent: rooms_limit.toString(),
       };
+    },
+    normalizeTime(time) {
+      const timeFormat = /^(?<time>(\d\d):(\d\d))/;
+      return time.match(timeFormat)?.groups?.time || time;
     },
     async getProjectAgents() {
       const agents = await Project.agents();

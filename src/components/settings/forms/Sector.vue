@@ -56,11 +56,13 @@
         <unnnic-input
           v-model="sector.workingDay.start"
           label="Horário de início"
+          v-mask="'##:##'"
           placeholder="08:00"
         />
         <unnnic-input
           v-model="sector.workingDay.end"
           label="Horário de encerramento"
+          v-mask="'##:##'"
           placeholder="18:00"
         />
 
