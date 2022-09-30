@@ -7,6 +7,7 @@
             :username="room.contact.name"
             size="2xl"
             clickable
+            :photo-url="usePhoto ? room.contact.photo_url : ''"
             @click="showContactInfo"
             :disabled="!room.is_active"
           />
@@ -51,6 +52,10 @@ export default {
     room: {
       type: Object,
       required: true,
+    },
+    usePhoto: {
+      type: Boolean,
+      default: false,
     },
   },
 

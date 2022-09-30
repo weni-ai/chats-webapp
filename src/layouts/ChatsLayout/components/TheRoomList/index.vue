@@ -1,8 +1,13 @@
 <template>
   <div class="container">
     <section class="chat-groups">
-      <room-group v-if="queue.length" :label="$t('line')" :rooms="queue" filled />
-      <room-group v-if="rooms.length" :label="$t('chats.in_progress')" :rooms="rooms" />
+      <room-group v-if="queue.length" :label="$t('line')" :rooms="queue" filled @open="open" />
+      <room-group
+        v-if="rooms.length"
+        :label="$t('chats.in_progress')"
+        :rooms="rooms"
+        @open="open"
+      />
     </section>
 
     <unnnic-button
@@ -58,6 +63,13 @@ export default {
       this.$router.push({
         name,
       });
+    },
+    open(room) {
+      const path = `/chats/${room.uuid}`;
+
+      if (this.$route.path === path) return;
+
+      this.$router.replace(path);
     },
   },
 };

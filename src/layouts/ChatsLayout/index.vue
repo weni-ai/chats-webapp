@@ -1,6 +1,8 @@
 <template>
   <section class="chats-layout">
-    <the-room-list class="room-list" :disabled="disabledChatList" />
+    <slot name="room-list">
+      <the-room-list class="room-list" :disabled="disabledChatList" />
+    </slot>
 
     <main>
       <slot />
