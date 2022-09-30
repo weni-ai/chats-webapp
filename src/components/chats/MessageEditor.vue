@@ -137,6 +137,7 @@ export default {
         Right: this.$t('right'),
         Justify: this.$t('justify'),
         Attach: this.$t('attach'),
+        action: this.$t('quick_message'),
       };
     },
   },
