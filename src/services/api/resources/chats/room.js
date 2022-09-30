@@ -1,8 +1,11 @@
 import http from '@/services/api/http';
+import { getProject } from '@/utils/config';
 
 export default {
   async getAll() {
-    const response = await http.get('/room/', { params: { is_active: true } });
+    const response = await http.get('/room/', {
+      params: { is_active: true, project: getProject() },
+    });
     return response.data;
   },
 
