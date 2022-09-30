@@ -190,9 +190,11 @@ export default {
       this.currentTags = [...tags.results];
     },
     async save() {
-      if (this.currentTab === 'sector') this.saveSector();
-      if (this.currentTab === 'queues' && this.queueToEdit) this.saveQueue();
-      if (this.currentTab === 'tags') this.saveTags();
+      if (this.currentTab === 'sector') await this.saveSector();
+      if (this.currentTab === 'queues' && this.queueToEdit) await this.saveQueue();
+      if (this.currentTab === 'tags') await this.saveTags();
+
+      this.$router.push({ name: 'sectors' });
     },
     async saveSector() {
       const { uuid, name, workingDay, maxSimultaneousChatsByAgent } = this.sector;
