@@ -48,6 +48,7 @@
           :sector="sector"
           :queues="queues"
           @visualize="visualizeQueue"
+          @add-queue="createQueue"
           label="Criar nova fila"
           is-editing
         />
@@ -138,6 +139,11 @@ export default {
   }),
 
   methods: {
+    async createQueue({ name }) {
+      const sectorUuid = this.sector.uuid;
+      await Queue.create({ name, sectorUuid });
+      await this.getQueues();
+    },
     async visualizeQueue(queue) {
       let agents = [];
       if (queue.uuid) {
@@ -162,9 +168,13 @@ export default {
         ...this.sector,
         uuid,
         name,
-        workingDay: { start: work_start, end: work_end },
+        workingDay: { start: this.normalizeTime(work_start), end: this.normalizeTime(work_end) },
         maxSimultaneousChatsByAgent: rooms_limit.toString(),
       };
+    },
+    normalizeTime(time) {
+      const timeFormat = /^(?<time>(\d\d):(\d\d))/;
+      return time.match(timeFormat)?.groups?.time || time;
     },
     async getProjectAgents() {
       const agents = await Project.agents();
@@ -184,9 +194,11 @@ export default {
       this.currentTags = [...tags.results];
     },
     async save() {
-      if (this.currentTab === 'sector') this.saveSector();
-      if (this.currentTab === 'queues' && this.queueToEdit) this.saveQueue();
-      if (this.currentTab === 'tags') this.saveTags();
+      if (this.currentTab === 'sector') await this.saveSector();
+      if (this.currentTab === 'queues' && this.queueToEdit) await this.saveQueue();
+      if (this.currentTab === 'tags') await this.saveTags();
+
+      this.$router.push({ name: 'sectors' });
     },
     async saveSector() {
       const { uuid, name, workingDay, maxSimultaneousChatsByAgent } = this.sector;

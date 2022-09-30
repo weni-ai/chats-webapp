@@ -31,37 +31,10 @@ export default {
   name: 'App',
 
   async created() {
+    this.handleLocale();
     await this.getUser();
-
-    ws.on('msg.create', (message) => {
-      if (!this.activeRoom || this.me.uuid !== message.user?.uuid) {
-        this.$store.dispatch('rooms/addMessage', message);
-        const notification = new Notification('ping-bing');
-        notification.notify();
-      }
-    });
-
-    ws.on('rooms.create', (room) => {
-      if (!!room.user && room.user.uuid !== this.me.uuid) return;
-
-      this.$store.dispatch('rooms/addRoom', room);
-      ws.send({
-        type: 'method',
-        action: 'join',
-        content: { name: 'room', id: room.uuid },
-      });
-      const notification = new Notification('select-sound');
-      notification.notify();
-    });
-
-    ws.on('rooms.update', (room) => {
-      if (!!room.user && room.user.email !== this.me.email) return;
-      this.$store.dispatch('rooms/updateRoom', { room, userEmail: this.me.email });
-    });
-
-    ws.on('msg.update', (message) => {
-      this.$store.dispatch('rooms/addMessage', message);
-    });
+    this.onboarding();
+    this.listeners();
   },
 
   computed: {
@@ -75,6 +48,58 @@ export default {
     async getUser() {
       const user = await Profile.me();
       this.$store.commit('profile/setMe', user);
+    },
+    handleLocale() {
+      window.onmessage = (ev) => {
+        const message = ev.data;
+        const isLocaleChangeMessage = message.event === 'setLanguage';
+        if (!isLocaleChangeMessage) return;
+
+        const locale = message.data.language;
+        if (!['en-us', 'pt-br', 'es'].includes(locale)) return;
+
+        this.$i18n.locale = locale;
+      };
+    },
+    async onboarding() {
+      const onboarded = localStorage.getItem('CHATS_USER_ONBOARDED') || (await Profile.onboarded());
+      if (onboarded) {
+        localStorage.setItem('CHATS_USER_ONBOARDED', true);
+        return;
+      }
+
+      this.$router.push({ name: 'onboarding.agent' });
+    },
+    listeners() {
+      ws.on('msg.create', (message) => {
+        if (!this.activeRoom || this.me.uuid !== message.user?.uuid) {
+          this.$store.dispatch('rooms/addMessage', message);
+          const notification = new Notification('ping-bing');
+          notification.notify();
+        }
+      });
+
+      ws.on('rooms.create', (room) => {
+        if (!!room.user && room.user.uuid !== this.me.uuid) return;
+
+        this.$store.dispatch('rooms/addRoom', room);
+        ws.send({
+          type: 'method',
+          action: 'join',
+          content: { name: 'room', id: room.uuid },
+        });
+        const notification = new Notification('select-sound');
+        notification.notify();
+      });
+
+      ws.on('rooms.update', (room) => {
+        if (!!room.user && room.user.email !== this.me.email) return;
+        this.$store.dispatch('rooms/updateRoom', { room, userEmail: this.me.email });
+      });
+
+      ws.on('msg.update', (message) => {
+        this.$store.dispatch('rooms/addMessage', message);
+      });
     },
   },
 };
