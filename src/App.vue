@@ -34,7 +34,7 @@ export default {
     await this.getUser();
 
     ws.on('msg.create', (message) => {
-      if (!this.activeRoom || this.me.uuid !== message.user?.uuid) {
+      if (!this.activeRoom || this.me.email !== message.user?.email) {
         this.$store.dispatch('rooms/addMessage', message);
         const notification = new Notification('ping-bing');
         notification.notify();
