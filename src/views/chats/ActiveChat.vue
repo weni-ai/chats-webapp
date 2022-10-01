@@ -162,7 +162,7 @@ export default {
               this.componentInAsideSlot = '';
             },
             'select-quick-message': (quickMessage) => {
-              this.editorMessage = quickMessage.message;
+              this.editorMessage = quickMessage.text;
             },
           },
         },

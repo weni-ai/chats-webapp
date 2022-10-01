@@ -18,10 +18,12 @@
           <div class="connection-info">
             <p v-if="room.contact.status === 'online'">Online</p>
             <p v-else>{{ getLastTimeOnlineText(room.contact.last_interaction || new Date()) }}</p>
-            <p v-for="[field, value] of Object.entries(room.contact.custom_fields)" :key="field">
-              <span class="title"> {{ field }} </span>
-              {{ value }}
-            </p>
+            <template v-if="!!room.custom_fields">
+              <p v-for="[field, value] of Object.entries(room.contact.custom_fields)" :key="field">
+                <span class="title"> {{ field }} </span>
+                {{ value }}
+              </p>
+            </template>
             <p>
               {{
                 getLastContactText(
