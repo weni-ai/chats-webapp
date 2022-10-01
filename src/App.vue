@@ -33,7 +33,6 @@ export default {
   async created() {
     this.handleLocale();
     await this.getUser();
-    this.onboarding();
     this.listeners();
   },
 
