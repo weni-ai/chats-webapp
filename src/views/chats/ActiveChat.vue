@@ -252,6 +252,10 @@ export default {
     id: {
       immediate: true,
       async handler() {
+        if (this.$store.state.rooms.newMessagesByRoom[this.id]) {
+          this.$delete(this.$store.state.rooms.newMessagesByRoom, this.id);
+        }
+
         await this.setActiveRoom(this.id);
         this.getRoomMessages();
       },

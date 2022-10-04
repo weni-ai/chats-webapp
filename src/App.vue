@@ -75,6 +75,23 @@ export default {
           this.$store.dispatch('rooms/addMessage', message);
           const notification = new Notification('ping-bing');
           notification.notify();
+
+          if (
+            !this.$store.state.rooms.newMessagesByRoom[message.room] &&
+            !(this.$route.name === 'room' && this.$route.params.id === message.room)
+          ) {
+            this.$set(this.$store.state.rooms.newMessagesByRoom, message.room, {
+              messages: [],
+            });
+          }
+
+          if (this.$store.state.rooms.newMessagesByRoom[message.room]) {
+            this.$store.state.rooms.newMessagesByRoom[message.room].messages.push({
+              created_on: message.created_on,
+              uuid: message.uuid,
+              text: message.text,
+            });
+          }
         }
       });
 

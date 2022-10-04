@@ -18,6 +18,7 @@ export default {
     rooms: [],
     activeRoom: null,
     activeRoomMessages: [],
+    newMessagesByRoom: {},
   },
 
   mutations: {
