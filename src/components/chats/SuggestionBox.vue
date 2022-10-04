@@ -17,9 +17,9 @@
         :class="{ 'is-active': index === activeShortcutIndex }"
         data-testid="suggestion"
       >
-        <h2 class="suggestion-box__shortcut__name">/{{ suggestion.shortcut }}</h2>
+        <h2 class="suggestion-box__shortcut__name">{{ suggestion.shortcut }}</h2>
         <p class="suggestion-box__shortcut__preview">
-          {{ suggestion.preview }}
+          {{ suggestion.text }}
         </p>
       </div>
     </section>

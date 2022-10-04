@@ -9,6 +9,7 @@ import { mapState } from 'vuex';
 
 import { ws } from '@/services/api/socket';
 import Profile from '@/services/api/resources/profile';
+import QuickMessage from '@/services/api/resources/chats/quickMessage';
 
 class Notification {
   /**
@@ -31,6 +32,7 @@ export default {
   name: 'App',
 
   async created() {
+    this.loadQuickMessages();
     this.handleLocale();
     await this.getUser();
     this.listeners();
@@ -48,6 +50,12 @@ export default {
       const user = await Profile.me();
       this.$store.commit('profile/setMe', user);
     },
+
+    async loadQuickMessages() {
+      const response = await QuickMessage.all();
+      this.$store.state.chats.quickMessages.messages = response.results;
+    },
+
     handleLocale() {
       window.onmessage = (ev) => {
         const message = ev.data;

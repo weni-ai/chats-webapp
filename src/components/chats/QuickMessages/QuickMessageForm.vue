@@ -29,6 +29,7 @@
       @input="quickMessage = { ...quickMessage, text: $event }"
       :label="$t('message')"
       :placeholder="$t('quick_messages.message_field_placeholder')"
+      size="sm"
     />
 
     <div class="actions">
