@@ -145,7 +145,10 @@ export default {
         return;
       }
 
-      if (event.key === 'Enter') this.sendMessage();
+      if (event.key === 'Enter') {
+        this.sendMessage();
+        event.preventDefault();
+      }
     },
     record() {
       this.recording = true;
