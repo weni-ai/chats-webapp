@@ -9,7 +9,7 @@
       <aside-slot-template-section class="messages-section">
         <div class="messages">
           <quick-message-card
-            v-for="quickMessage in quickMessages"
+            v-for="quickMessage in $store.state.chats.quickMessages.messages"
             :key="quickMessage.uuid"
             :quickMessage="quickMessage"
             clickable
@@ -87,14 +87,9 @@ export default {
     QuickMessageForm,
   },
 
-  async mounted() {
-    this.getQuickMessages();
-  },
-
   data: () => ({
     quickMessageToDelete: null,
     quickMessageToEdit: null,
-    quickMessages: [],
   }),
 
   computed: {
@@ -107,13 +102,9 @@ export default {
   },
 
   methods: {
-    async getQuickMessages() {
-      const response = await QuickMessage.all();
-      this.quickMessages = response.results;
-    },
     async createQuickMessage({ title, text, shortcut }) {
       const quickMessage = await QuickMessage.create({ title, text, shortcut });
-      this.quickMessages.push(quickMessage);
+      this.$store.state.chats.quickMessages.messages.push(quickMessage);
 
       unnnicCallAlert({
         props: {
@@ -129,9 +120,10 @@ export default {
     },
     async updateQuickMessage({ uuid, title, text, shortcut }) {
       const quickMessage = await QuickMessage.update(uuid, { title, text, shortcut });
-      this.quickMessages = this.quickMessages.map((m) =>
-        m.uuid === quickMessage.uuid ? quickMessage : m,
-      );
+      this.$store.state.chats.quickMessages.messages =
+        this.$store.state.chats.quickMessages.messages.map((m) =>
+          m.uuid === quickMessage.uuid ? quickMessage : m,
+        );
 
       unnnicCallAlert({
         props: {
@@ -151,7 +143,8 @@ export default {
     async deleteQuickMessage() {
       const { uuid } = this.quickMessageToDelete;
       await QuickMessage.delete(uuid);
-      this.quickMessages = this.quickMessages.filter((m) => m.uuid !== uuid);
+      this.$store.state.chats.quickMessages.messages =
+        this.$store.state.chats.quickMessages.messages.filter((m) => m.uuid !== uuid);
       this.quickMessageToDelete = null;
     },
   },

@@ -8,7 +8,7 @@
           :keyboard-event="keyboardEvent"
           @open="isSuggestionBoxOpen = true"
           @close="isSuggestionBoxOpen = false"
-          @select="(message = $event.preview), focusTextEditor()"
+          @select="(message = $event.text), focusTextEditor()"
         />
       </div>
     </div>
@@ -114,14 +114,7 @@ export default {
       return !!this.audio || this.recording;
     },
     shortcuts() {
-      const quickMessages = this.$store.state.chats.quickMessages.messages;
-
-      return quickMessages
-        .filter((message) => !!message.shortcut)
-        .map(({ shortcut, message }) => ({
-          shortcut,
-          preview: message,
-        }));
+      return this.$store.state.chats.quickMessages.messages;
     },
     textEditorTooltips() {
       return {
