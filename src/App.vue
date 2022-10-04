@@ -9,6 +9,7 @@ import { mapState } from 'vuex';
 
 import { ws } from '@/services/api/socket';
 import Profile from '@/services/api/resources/profile';
+import QuickMessage from '@/services/api/resources/chats/quickMessage';
 
 class Notification {
   /**
@@ -31,6 +32,7 @@ export default {
   name: 'App',
 
   async created() {
+    this.loadQuickMessages();
     this.handleLocale();
     await this.getUser();
     this.listeners();
@@ -48,6 +50,12 @@ export default {
       const user = await Profile.me();
       this.$store.commit('profile/setMe', user);
     },
+
+    async loadQuickMessages() {
+      const response = await QuickMessage.all();
+      this.$store.state.chats.quickMessages.messages = response.results;
+    },
+
     handleLocale() {
       window.onmessage = (ev) => {
         const message = ev.data;
@@ -75,6 +83,23 @@ export default {
           this.$store.dispatch('rooms/addMessage', message);
           const notification = new Notification('ping-bing');
           notification.notify();
+
+          if (
+            !this.$store.state.rooms.newMessagesByRoom[message.room] &&
+            !(this.$route.name === 'room' && this.$route.params.id === message.room)
+          ) {
+            this.$set(this.$store.state.rooms.newMessagesByRoom, message.room, {
+              messages: [],
+            });
+          }
+
+          if (this.$store.state.rooms.newMessagesByRoom[message.room]) {
+            this.$store.state.rooms.newMessagesByRoom[message.room].messages.push({
+              created_on: message.created_on,
+              uuid: message.uuid,
+              text: message.text,
+            });
+          }
         }
       });
 

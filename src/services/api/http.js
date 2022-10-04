@@ -3,7 +3,7 @@ import { getToken } from '@/utils/config';
 import env from '@/utils/env';
 
 const isProduction = process.env.NODE_ENV === 'production';
-const protocol = isProduction ? 'https' : 'http';
+const protocol = isProduction ? 'https' : 'https';
 
 const client = axios.create({
   baseURL: `${protocol}://${env('CHATS_API_URL')}/v1`,
@@ -11,7 +11,7 @@ const client = axios.create({
 
 client.interceptors.request.use((config) => {
   const token = getToken();
-  const type = isProduction ? 'Bearer' : 'Token';
+  const type = isProduction ? 'Bearer' : 'Bearer';
   // eslint-disable-next-line no-param-reassign
   if (token) config.headers.Authorization = `${type} ${token}`;
   return config;
