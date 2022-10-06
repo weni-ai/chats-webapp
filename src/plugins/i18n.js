@@ -2,14 +2,14 @@ import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 
 // eslint-disable-next-line camelcase
-import pt_BR from '@/locales/pt_BR.json';
-import en from '@/locales/en.json';
+import pt_br from '@/locales/pt_br.json';
+import en_us from '@/locales/en_us.json';
 
 Vue.use(VueI18n);
 
 const messages = {
-  'pt-BR': pt_BR,
-  en,
+  'pt-br': pt_br,
+  'en-us': en_us,
 };
 
 const i18n = new VueI18n({
