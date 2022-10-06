@@ -12,7 +12,7 @@ export default {
   async getByContact(contactUuid, { onlyClosedRooms = true } = {}) {
     const response = await http.get('/msg/', {
       params: {
-        ordering: 'user',
+        ordering: 'created_on',
         contact: contactUuid,
         project: projectUuid,
         is_active: !onlyClosedRooms,
