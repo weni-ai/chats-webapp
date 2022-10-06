@@ -260,6 +260,10 @@ export default {
         this.getRoomMessages();
       },
     },
+
+    messages() {
+      this.$nextTick(this.scrollMessagesToBottom);
+    },
   },
 };
 </script>
