@@ -2,7 +2,7 @@
   <div class="image-preview">
     <unnnic-tool-tip class="image-preview__tooltip" enabled :text="tooltip" side="right">
       <img
-        :src="src"
+        :src="url"
         :alt="alt"
         :style="{ 'object-fit': objectFit }"
         class="clickable image-preview__image"
@@ -18,7 +18,7 @@
       @next="nextMedia"
       @previous="previousMedia"
     >
-      <img :src="src" :alt="alt" @keypress.enter="() => {}" @click.stop="() => {}" />
+      <img :src="url" :alt="alt" @keypress.enter="() => {}" @click.stop="() => {}" />
     </fullscreen-preview>
   </div>
 </template>
@@ -51,7 +51,7 @@ export default {
       default: 'contain',
       validator: (v) => ['fill', 'contain', 'cover', 'scale-down', 'none'].includes(v),
     },
-    src: {
+    url: {
       type: String,
       default: '',
     },

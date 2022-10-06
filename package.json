@@ -7,7 +7,7 @@
     "build": "yarn translations:build && vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "translations:build": "unified-translations --translations-file ./src/locales/translations.json --languages pt-BR=./src/locales/pt_BR.json,en=./src/locales/en.json"
+    "translations:build": "unified-translations --translations-file ./src/locales/translations.json --languages pt-br=./src/locales/pt_br.json,en-us=./src/locales/en_us.json"
   },
   "dependencies": {
     "@weni/unnnic-system": "1.10.14",
