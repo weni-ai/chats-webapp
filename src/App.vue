@@ -80,7 +80,6 @@ export default {
     listeners() {
       ws.on('msg.create', (message) => {
         if (!this.activeRoom || this.me.email !== message.user?.email) {
-          this.$store.dispatch('rooms/addMessage', message);
           const notification = new Notification('ping-bing');
           notification.notify();
 
@@ -91,6 +90,8 @@ export default {
             this.$set(this.$store.state.rooms.newMessagesByRoom, message.room, {
               messages: [],
             });
+          } else if (this.$route.name === 'room' && this.$route.params.id === message.room) {
+            this.$store.dispatch('rooms/addMessage', message);
           }
 
           if (this.$store.state.rooms.newMessagesByRoom[message.room]) {
