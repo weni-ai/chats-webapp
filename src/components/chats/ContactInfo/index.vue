@@ -60,7 +60,7 @@
       </aside-slot-template-section>
 
       <aside-slot-template-section>
-        <contact-media />
+        <contact-media :room="room" />
       </aside-slot-template-section>
     </section>
     <unnnic-modal
