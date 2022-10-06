@@ -57,16 +57,21 @@ export default {
     },
 
     handleLocale() {
-      window.onmessage = (ev) => {
+      window.parent.postMessage({ event: 'getLanguage' }, '*');
+
+      window.addEventListener('message', (ev) => {
         const message = ev.data;
-        const isLocaleChangeMessage = message.event === 'setLanguage';
+        const isLocaleChangeMessage = message?.event === 'setLanguage';
         if (!isLocaleChangeMessage) return;
 
-        const locale = message.data.language;
-        if (!['en-us', 'pt-br', 'es'].includes(locale)) return;
+        let locale = message?.language; // 'en-us', 'pt-br', 'es'
+
+        if (!['en-us', 'pt-br'].includes(locale)) {
+          locale = 'en-us';
+        }
 
         this.$i18n.locale = locale;
-      };
+      });
     },
     async onboarding() {
       const onboarded = localStorage.getItem('CHATS_USER_ONBOARDED') || (await Profile.onboarded());
