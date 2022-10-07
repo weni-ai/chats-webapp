@@ -19,6 +19,14 @@
         {{ createTransferLabel(message) }}
       </div>
 
+      <section v-else-if="!message.sender" class="chat-messages__messages">
+        <chat-message
+          :message="{ ...message, sender: { name: 'Bot' } }"
+          :disabled="isHistory"
+          :use-photo="usePhoto"
+        />
+      </section>
+
       <section v-else class="chat-messages__messages">
         <chat-message
           :message="message"
@@ -101,7 +109,13 @@ export default {
 
   methods: {
     isTransferInfoMessage(message) {
-      return !message.sender;
+      try {
+        const content = JSON.parse(message.text);
+
+        return ['queue', 'user'].includes(content.type);
+      } catch (error) {
+        return false;
+      }
     },
     createTransferLabel(message) {
       const { name } = message;

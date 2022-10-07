@@ -24,7 +24,7 @@
       </div>
 
       <div
-        v-for="content in message.content"
+        v-for="content in contents"
         :key="content.uuid || content.text || content.filename || content.audio.src"
         class="message"
       >
@@ -88,6 +88,9 @@ export default {
   },
 
   computed: {
+    contents() {
+      return this.message.content || [this.message];
+    },
     isContactMessage() {
       return !!this.message.contact;
     },
