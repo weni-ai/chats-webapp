@@ -11,6 +11,8 @@ import { ws } from '@/services/api/socket';
 import Profile from '@/services/api/resources/profile';
 import QuickMessage from '@/services/api/resources/chats/quickMessage';
 
+const moment = require('moment');
+
 class Notification {
   /**
    * @type {HTMLAudioElement}
@@ -64,11 +66,9 @@ export default {
         const isLocaleChangeMessage = message?.event === 'setLanguage';
         if (!isLocaleChangeMessage) return;
 
-        let locale = message?.language; // 'en-us', 'pt-br', 'es'
+        const locale = message?.language; // 'en-us', 'pt-br', 'es'
 
-        if (!['en-us', 'pt-br'].includes(locale)) {
-          locale = 'en-us';
-        }
+        moment.locale(locale);
 
         this.$i18n.locale = locale;
       });
