@@ -3,420 +3,520 @@
     "title": {
       "text": {
         "pt-br": "Arraste seu arquivo aqui, ou",
-        "en-us": "Drag your file here, or"
+        "en-us": "Drag your file here, or",
+        "es": "Arrastre su archivo aquí, o"
       },
       "highlight": {
         "pt-br": "procure-o",
-        "en-us": "search for it"
+        "en-us": "search for it",
+        "es": "búsquelo"
       }
     },
     "subtitle": {
       "pt-br": "Formatos suportados:",
-      "en-us": "Supported formats:"
+      "en-us": "Supported formats:",
+      "es": "Formatos compatibles"
     }
   },
 
   "waiting_for": {
     "minutes": {
       "pt-br": "Aguardando há 1 minuto | Aguardando há {n} minutos",
-      "en-us": "1 minute waiting | {n} minutes waiting"
+      "en-us": "1 minute waiting | {n} minutes waiting",
+      "es": "Esperando por un minuto | Esperando por {n} minutos"
     }
   },
 
   "date_format": {
     "pt-br": "DD/MM/YYYY",
-    "en-us": "MM/DD/YYYY"
+    "en-us": "MM/DD/YYYY",
+    "es": "DD/MM/YYYY"
   },
   "undo": {
     "pt-br": "Desfazer",
-    "en-us": "Undo"
+    "en-us": "Undo",
+    "es": "Deshacer"
   },
   "redo": {
     "pt-br": "Refazer",
-    "en-us": "Redo"
+    "en-us": "Redo",
+    "es": "Rehacer"
   },
   "record_audio": {
     "pt-br": "Gravar áudio",
-    "en-us": "Record audio"
+    "en-us": "Record audio",
+    "es": "Grabar audio"
   },
   "attach": {
     "pt-br": "Anexo",
-    "en-us": "Attach"
+    "en-us": "Attach",
+    "es": "Adjuntar"
   },
   "bold": {
     "pt-br": "Negrito",
-    "en-us": "Bold"
+    "en-us": "Bold",
+    "es": "Negrita"
   },
   "italic": {
     "pt-br": "Itálico",
-    "en-us": "Italic"
+    "en-us": "Italic",
+    "es": "Cursiva"
   },
   "underline": {
     "pt-br": "Sublinhado",
-    "en-us": "Underline"
+    "en-us": "Underline",
+    "es": "Subrayado"
   },
   "list": {
     "pt-br": "Lista",
-    "en-us": "List"
+    "en-us": "List",
+    "es": "Lista"
   },
   "left": {
     "pt-br": "Esquerda",
-    "en-us": "Left"
+    "en-us": "Left",
+    "es": "Izquierda"
   },
   "right": {
     "pt-br": "Direita",
-    "en-us": "Right"
+    "en-us": "Right",
+    "es": "Derecha"
   },
   "center": {
     "pt-br": "Centralizar",
-    "en-us": "Center"
+    "en-us": "Center",
+    "es": "centralizar"
   },
   "justify": {
     "pt-br": "Justificar",
-    "en-us": "Justify"
+    "en-us": "Justify",
+    "es": "Justificar"
   },
   "chats": {
     "in_progress": {
       "pt-br": "Chats abertos",
-      "en-us": "Chats in progress"
+      "en-us": "Chats in progress",
+      "es": "Chats en curso"
     },
     "end": {
       "pt-br": "Encerrar chat",
-      "en-us": "End chat"
+      "en-us": "End chat",
+      "es": "Finalizar el chat"
     },
     "end_confirmation": {
       "pt-br": "Tem certeza que gostaria de encerrar chat com {name}?",
-      "en-us": "Are you sure you'd like to close the chat with {name}?"
+      "en-us": "Are you sure you'd like to close the chat with {name}?",
+      "es": "¿Estás seguro de que quieres cerrar el chat con {name}?"
     },
     "see_history": {
       "pt-br": "Visualizar histórico",
-      "en-us": "Chats history"
+      "en-us": "Chats history",
+      "es": "Historial de chats"
     },
     "tag_request": {
       "pt-br": "@:please classifique o atendimento",
-      "en-us": "@:please tag the chat"
+      "en-us": "@:please tag the chat",
+      "es": "@:please calificar el chat"
     },
     "closed_in": {
       "pt-br": "Chat encerrado em",
-      "en-us": "Chat closed in"
+      "en-us": "Chat closed in",
+      "es": "Chat cerrado en"
     },
     "closed": {
       "pt-br": "Chat encerrado",
-      "en-us": "Closed chat"
+      "en-us": "Closed chat",
+      "es": "Chat cerrado"
     },
     "transfer": {
       "pt-br": "Transferir chat",
-      "en-us": "Transfer chat"
+      "en-us": "Transfer chat",
+      "es": "Transferir este chat"
     },
     "open_chat": {
       "pt-br": "Abrir chat",
-      "en-us": "Open chat"
+      "en-us": "Open chat",
+      "es": "Abrir el chat"
     },
     "get_chat": {
       "pt-br": "Pegar chat",
-      "en-us": "Get chat"
+      "en-us": "Get chat",
+      "es": "atrapar el chat"
     },
     "get_chat_question": {
       "pt-br": "Pegar chat?",
-      "en-us": "Get chat?"
+      "en-us": "Get chat?",
+      "es": "Obtener chat?"
     },
     "get_chat_confirmation": {
       "pt-br": "Confirme se deseja pegar o chat com {contact}",
-      "en-us": "Confirm if you want to get the chat with {contact}"
+      "en-us": "Confirm if you want to get the chat with {contact}",
+      "es": "Confirma si quieres obtener el chat con {contact}"
     },
     "you_got_chat": {
       "pt-br": "Você pegou o chat",
-      "en-us": "You got the chat"
+      "en-us": "You got the chat",
+      "es": "Tienes el chat"
     }
   },
 
   "history": {
     "pt-br": "Histórico",
-    "en-us": "History"
+    "en-us": "History",
+    "es": "Historial"
   },
   "close_view": {
     "pt-br": "Fechar visualização",
-    "en-us": "Close view"
+    "en-us": "Close view",
+    "es": "Cerrar la vista"
   },
   "transfer": {
     "pt-br": "Transferir",
-    "en-us": "Transfer"
+    "en-us": "Transfer",
+    "es": "Transferir"
   },
   "line": {
     "pt-br": "Fila",
-    "en-us": "Line"
+    "en-us": "Line",
+    "es": "Fila"
   },
   "quick_message": {
     "pt-br": "Mensagens rápidas",
-    "en-us": "Quick messages"
+    "en-us": "Quick messages",
+    "es": "Mensajes rápidos"
   },
   "send": {
     "pt-br": "Enviar",
-    "en-us": "Send"
+    "en-us": "Send",
+    "es": "Enviar"
   },
   "click_to_resend": {
     "pt-br": "Clique para reenviar",
-    "en-us": "Click to resend"
+    "en-us": "Click to resend",
+    "es": "Haga clic para reenviar"
   },
   "end": {
     "pt-br": "Encerrar",
-    "en-us": "End"
+    "en-us": "End",
+    "es": "Cerrar"
   },
   "cancel": {
     "pt-br": "Cancelar",
-    "en-us": "Cancel"
+    "en-us": "Cancel",
+    "es": "Cancelar"
   },
   "please": {
     "pt-br": "Por favor",
-    "en-us": "Please"
+    "en-us": "Please",
+    "es": "Por favor"
   },
   "confirm": {
     "pt-br": "Confirmar",
-    "en-us": "Confirm"
+    "en-us": "Confirm",
+    "es": "Confirmar"
   },
   "access_history_to_see_closed_chats": {
     "pt-br": "Acesse o histórico para visualizar chats encerrados",
-    "en-us": "Go to the chats history to see closed chats"
+    "en-us": "Go to the chats history to see closed chats",
+    "es": "Ir al historial para ver los chats cerrados"
   },
   "close": {
     "pt-br": "Fechar",
-    "en-us": "Close"
+    "en-us": "Close",
+    "es": "Fechar"
   },
   "back_to_chats": {
     "pt-br": "Voltar para chats",
-    "en-us": "Back to chats"
+    "en-us": "Back to chats",
+    "es": "Volver a los chats"
   },
   "filter": {
     "by_tags": {
       "pt-br": "Filtrar por tags",
-      "en-us": "Filter by tags"
+      "en-us": "Filter by tags",
+      "es": "Filtrar por tags"
     },
     "by_date": {
       "pt-br": "Filtrar por @.lower:date",
-      "en-us": "Filter by @.lower:date"
+      "en-us": "Filter by @.lower:date",
+      "es": "Filtrar por @.lower:date"
     },
     "clear_all": {
       "pt-br": "Limpar filtros",
-      "en-us": "Clear filters"
+      "en-us": "Clear filters",
+      "es": "Limpiar filtros"
     }
   },
   "contact": {
     "pt-br": "Contato",
-    "en-us": "Contact"
+    "en-us": "Contact",
+    "es": "Contacto"
   },
   "agent": {
     "pt-br": "Agente",
-    "en-us": "Agent"
+    "en-us": "Agent",
+    "es": "Agente"
+    
   },
   "tags": {
     "pt-br": "Tags",
+    "es": "Tags",
     "en-us": "Tags"
   },
   "date": {
     "pt-br": "Data",
-    "en-us": "Date"
+    "en-us": "Date",
+    "es": "Fecha"
   },
   "view": {
     "pt-br": "Visualizar",
-    "en-us": "View"
+    "en-us": "View",
+    "es": "Ver"
   },
   "chat_with": {
     "bot": {
       "pt-br": "Chat com Bot",
-      "en-us": "Chat with Bot"
+      "en-us": "Chat with Bot",
+      "es": "Chat con Bot"
+      
     },
     "agent": {
       "pt-br": "Chat com agente {name}",
-      "en-us": "Chat with agent {name}"
+      "en-us": "Chat with agent {name}",
+      "es": "Chat con agente {name}"
     }
   },
   "contact_forwarded_to": {
     "line": {
       "pt-br": "Contato encaminhado para fila {name}",
-      "en-us": "Contact forwarded to the {name} line"
+      "en-us": "Contact forwarded to the {name} line",
+      "es": "Contacto enviado a la fila {name}"
     }
   },
   "contact_transferred_to": {
     "line": {
       "pt-br": "Contato transferido para fila {name}",
-      "en-us": "Contact transferred to the {name} line"
+      "en-us": "Contact transferred to the {name} line",
+      "es": "Contacto transferido a la línea {name}"
     },
     "sector": {
       "pt-br": "Contato transferido para setor {name}",
-      "en-us": "Contact transferred to the {name} department"
+      "en-us": "Contact transferred to the {name} department",
+      "es": "Contacto transferido al sector {name}"
     },
     "agent": {
       "pt-br": "Contato transferido para agente {name}",
-      "en-us": "Contact transferred to agent {name}"
+      "en-us": "Contact transferred to agent {name}",
+      "es": "Contacto transferido al agente {name}"
     }
   },
   "chat_closed_by": {
     "agent": {
       "pt-br": "Chat encerrado pelo agente",
-      "en-us": "Chat closed by agent"
+      "en-us": "Chat closed by agent",
+      "es": "Chat cerrado por el agente"
     }
   },
   "contact_information": {
     "pt-br": "Informações do contato",
-    "en-us": "Contact information"
+    "en-us": "Contact information",
+    "es": "Información de contacto"
   },
   "last_online_time": {
     "minutes": {
       "pt-br": "Online há {minutes} minutos",
-      "en-us": "Online {minutes} minutes ago"
+      "en-us": "Online {minutes} minutes ago",
+      "es": "En línea hace {minutes} minutos"
     },
     "hours": {
       "pt-br": "Online há {hours} horas",
-      "en-us": "Online {hours} hours ago"
+      "en-us": "Online {hours} hours ago",
+      "es": "En línea hace {hours} horas"
     },
     "date": {
       "pt-br": "Última vez online em {time} {date}",
-      "en-us": "Last seen {time} {date}"
+      "en-us": "Last seen {time} {date}",
+      "es": "Visto por última vez {time} {date}"
     }
   },
   "last_message_time": {
     "minutes": {
       "pt-br": "Último contato há {minutes} minutos",
-      "en-us": "Last message {minutes} minutes ago"
+      "en-us": "Last message {minutes} minutes ago",
+      "es": "Último contacto hace {minutes} minutos"
     },
     "hours": {
       "pt-br": "Último contato há {hours} horas",
-      "en-us": "Last message {hours} hours ago"
+      "en-us": "Last message {hours} hours ago",
+      "es": "Último mensaje hace {hours} horas"
     },
     "date": {
       "pt-br": "Último contato em {date}",
-      "en-us": "Last message {date}"
+      "en-us": "Last message {date}",
+      "es": "Último contacto en {date}"
     }
   },
   "media": {
     "pt-br": "Mídia",
-    "en-us": "Media"
+    "en-us": "Media",
+    "es": "Multimedia"
   },
   "docs": {
     "pt-br": "Documentos",
-    "en-us": "Docs"
+    "en-us": "Docs",
+    "es": "Documentos"
   },
   "download": {
     "pt-br": "Baixar",
-    "en-us": "Download"
+    "en-us": "Download",
+    "es": "Descargar"
   },
   "text_editor_placeholder": {
     "pt-br": "Digite uma mensagem ou use um /atalho",
-    "en-us": "Enter a new message or use a /shortcut"
+    "en-us": "Enter a new message or use a /shortcut",
+    "es": "Escriba un mensaje o utilice un /atajo"
   },
   "title": {
     "pt-br": "Título",
-    "en-us": "Title"
+    "en-us": "Title",
+    "es": "Título"
+    
   },
   "shortcut": {
     "pt-br": "Atalho",
-    "en-us": "Shortcut"
+    "en-us": "Shortcut",
+    "es": "Atajo"
   },
   "message": {
     "pt-br": "Mensagem",
-    "en-us": "Message"
+    "en-us": "Message",
+    "es": "Mensaje"
   },
   "save": {
     "pt-br": "Salvar",
-    "en-us": "Save"
+    "en-us": "Save",
+    "es": "Guardar"
   },
   "edit": {
     "pt-br": "Editar",
-    "en-us": "Edit"
+    "en-us": "Edit",
+    "es": "Editar"
   },
   "delete": {
     "pt-br": "Excluir",
-    "en-us": "Delete"
+    "en-us": "Delete",
+    "es": "Eliminar"
   },
 
   "successfully_transferred_chat": {
     "pt-br": "Conversa transferida com sucesso!",
-    "en-us": "Chat transferred successfully!"
+    "en-us": "Chat transferred successfully!",
+    "es": "¡Chat transferido con éxito!"
   },
   "successfully_transferred_contact_to": {
     "line": {
       "pt-br": "O contato foi encaminhado para a fila {name}",
-      "en-us": "The contact was forwarded to the {name} line"
+      "en-us": "The contact was forwarded to the {name} line",
+      "es": "El contacto fué enviado a la línea {name}"
     }
   },
   "select_agent_line_or_department": {
-    "pt-br": "Selecione agente, fila ou setor",
-    "en-us": "Select agent, line or department"
+    "pt-br": "Selecione agente",
+    "en-us": "Select agent",
+    "es": "Seleccionar agente"
   },
 
   "send_media": {
     "pt-br": "Enviar mídia",
-    "en-us": "Send media"
+    "en-us": "Send media",
+    "es": "Enviar multimedia"
   },
   "send_photo_or_video": {
     "pt-br": "Enviar foto ou vídeo",
-    "en-us": "Send photo or video"
+    "en-us": "Send photo or video",
+    "es": "Enviar foto o vídeo"
   },
   "send_docs": {
     "pt-br": "Enviar documento | Enviar documento | Enviar documentos",
-    "en-us": "Send doc | Send doc | Send docs"
+    "en-us": "Send doc | Send doc | Send docs",
+    "es": "Enviar documento | Enviar documento | Enviar documentos"
   },
   "send_images": {
     "pt-br": "Enviar imagem | Enviar imagens",
-    "en-us": "Send image | Send image | Send images"
+    "en-us": "Send image | Send image | Send images",
+    "es": "Enviar imagen | Enviar imagen | Enviar imágenes"
   },
 
   "quick_messages": {
     "delete": {
       "pt-br": "Excluir mensagem rápida",
-      "en-us": "Delete quick message"
+      "en-us": "Delete quick message",
+      "es": "Eliminar mensaje rápido"
     },
     "delete_confirm": {
       "pt-br": "Você tem certeza que deseja excluir resposta rápida?",
-      "en-us": "Are you sure you'd like to delete quick message?"
+      "en-us": "Are you sure you'd like to delete quick message?",
+      "es": "¿Estás seguro de que quieres eliminar el mensaje rápido?"
     },
     "delete_or_edit": {
       "pt-br": "Excluir ou editar",
-      "en-us": "Delete or edit"
+      "en-us": "Delete or edit",
+      "es": "Eliminar o editar"
     },
     "shortcut_tooltip": {
       "pt-br": "Digite {shortcut} para usar",
-      "en-us": "Type {shortcut} to use"
+      "en-us": "Type {shortcut} to use",
+      "es": "Escriba {shortcut} para usar"
     },
     "add_new": {
       "pt-br": "Adicionar nova mensagem rápida",
-      "en-us": "Add new quick message"
+      "en-us": "Add new quick message",
+      "es": "Agregar nuevo mensaje rápido"
     },
     "available_shortcuts": {
       "pt-br": "Atalhos disponíveis",
-      "en-us": "Available shortcuts"
+      "en-us": "Available shortcuts",
+      "es": "Atajos disponibles"
     },
     "add": {
       "pt-br": "Adicionar mensagem rápida",
-      "en-us": "Add quick message"
+      "en-us": "Add quick message",
+      "es": "Agregar mensaje rápidoe"
     },
     "title_field_placeholder": {
       "pt-br": "Digite um título para sua mensagem rápida",
-      "en-us": "Enter a title for your quick message"
+      "en-us": "Enter a title for your quick message",
+      "es": "Introduzca un título para su mensaje rápido"
     },
     "shortcut_field_placeholder": {
       "pt-br": "Adicione uma palavra para usar como /atalho",
-      "en-us": "Add a word to use as a /shortcut"
+      "en-us": "Add a word to use as a /shortcut",
+      "es": "Agregar una palabra para usar como /atajo"
     },
     "shortcut_field_tooltip": {
       "pt-br": "Defina uma palavra-chave e facilite o uso de /atalhos",
-      "en-us": "Define a shortcut and make it easy to use /shortcuts"
+      "en-us": "Define a shortcut and make it easy to use /shortcuts",
+      "es": "Definir una palabra clave y facilitar su uso /atajos"
     },
     "message_field_placeholder": {
       "pt-br": "Digite o que você deseja",
-      "en-us": "Type what you want"
+      "en-us": "Type what you want",
+      "es": "Introduzca lo que quiere"
     },
     "successfully_added": {
       "pt-br": "Mensagem rápida adicionada",
-      "en-us": "Quick message added"
+      "en-us": "Quick message added",
+      "es": "Mensaje rápido agregado"
     },
     "edit": {
       "pt-br": "Editar mensagem rápida",
-      "en-us": "Edit quick message"
+      "en-us": "Edit quick message",
+      "es": "Editar mensaje rápido"
     }
   },
   "discard": {
     "pt-br": "Descartar",
-    "en-us": "Delete"
+    "en-us": "Delete",
+    "es": "Descartar"
   }
 }
