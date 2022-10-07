@@ -17,16 +17,18 @@
 
           <div class="connection-info">
             <p v-if="room.contact.status === 'online'">Online</p>
-            <p v-else>{{ getLastTimeOnlineText(room.contact.last_interaction || new Date()) }}</p>
-            <p v-for="[field, value] of Object.entries(room.contact.custom_fields)" :key="field">
-              <span class="title"> {{ field }} </span>
-              {{ value }}
-            </p>
-            <p>
+            <!-- <p v-else>{{ getLastTimeOnlineText(room.contact.last_interaction || new Date()) }}</p> -->
+            <template v-if="!!room.custom_fields">
+              <p v-for="[field, value] of Object.entries(room.contact.custom_fields)" :key="field">
+                <span class="title"> {{ field }} </span>
+                {{ value }}
+              </p>
+            </template>
+            <p v-if="lastMessageFromContact?.created_on">
               {{
-                getLastContactText(
-                  room.contact.last_interaction || new Date(Date.now() - 10 * 60 * 1000),
-                )
+                $t('last_message_time.date', {
+                  date: moment(lastMessageFromContact?.created_on).fromNow(),
+                })
               }}
             </p>
           </div>
@@ -37,7 +39,7 @@
         <section class="transfer-section">
           <unnnic-autocomplete
             v-model="transferContactSearch"
-            :data="filteredTransferOptions"
+            :data="transferOptions.map((option) => option.name)"
             @choose="transferContactTo = $event"
             :placeholder="$t('select_agent_line_or_department')"
             :label="$t('chats.transfer')"
@@ -51,14 +53,14 @@
             class="transfer__button"
             :text="$t('transfer')"
             size="small"
-            :disabled="isTransferButtonDisabled"
+            :disabled="!transferPersonSelected"
             @click="transferContact"
           />
         </section>
       </aside-slot-template-section>
 
       <aside-slot-template-section>
-        <contact-media />
+        <contact-media :room="room" />
       </aside-slot-template-section>
     </section>
     <unnnic-modal
@@ -81,7 +83,10 @@ import { mapState } from 'vuex';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
+import Room from '@/services/api/resources/chats/room';
 import ContactMedia from './Media';
+
+const moment = require('moment');
 
 export default {
   name: 'ContactInfo',
@@ -94,12 +99,10 @@ export default {
 
   data: () => ({
     transferOptions: [
-      'Customer success',
-      'Finanças',
-      'Gerência',
-      'Suporte Financeiro',
-      { type: 'category', text: 'Financeiro' },
-      'Juliano',
+      // {
+      //   name: 'Afrânio',
+      //   email: 'afranio.cavalcante@weni.ai',
+      // },
     ],
     transferContactSearch: '',
     transferContactTo: '',
@@ -111,34 +114,20 @@ export default {
       room: (state) => state.rooms.activeRoom,
     }),
 
-    isTransferButtonDisabled() {
-      return !this.transferContactTo;
+    lastMessageFromContact() {
+      const messages = this.$store.state.rooms.activeRoomMessages;
+
+      return messages.findLast((message) => message.contact);
     },
 
-    filteredTransferOptions() {
-      const search = this.lowercase(this.transferContactSearch);
-
-      if (!search) return this.transferOptions;
-
-      const filteredOptions = this.transferOptions.filter(
-        (option) =>
-          option.type === 'category' || this.lowercase(option.text || option).includes(search),
-      );
-
-      // remove categories without options
-      return filteredOptions.filter((option, index) => {
-        if (option.type !== 'category') return true;
-
-        const nextOption = filteredOptions[index + 1];
-
-        if (!nextOption || nextOption.type === 'category') return false;
-
-        return true;
-      });
+    transferPersonSelected() {
+      return this.transferOptions.find((option) => option.name === this.transferContactSearch);
     },
   },
 
   methods: {
+    moment,
+
     navigate(name) {
       this.$router.replace({ name });
     },
@@ -174,31 +163,12 @@ export default {
       const differenceInHours = differenceInMs / oneHoursInMs;
       return differenceInHours;
     },
-    getLastContactText(lastContact) {
-      const today = new Date();
-      const lastContactDate = new Date(lastContact);
-      const dateDifferenceInHours = this.getDatesDifferenceInHours(today, lastContactDate);
-
-      if (dateDifferenceInHours >= 24) {
-        const formattedDate = Intl.DateTimeFormat('pt-BR', {
-          dateStyle: 'short',
-        }).format(lastContactDate);
-
-        return this.$t('last_message_time.date', { date: formattedDate });
-      }
-
-      const dateDifferenceInMinutes = dateDifferenceInHours * 60;
-      return dateDifferenceInMinutes > 60
-        ? this.$t('last_message_time.hours', { hours: Number.parseInt(dateDifferenceInHours, 10) })
-        : this.$t('last_message_time.minutes', {
-            minutes: Number.parseInt(dateDifferenceInMinutes, 10),
-          });
-    },
     lowercase(value) {
       return value.toString().toLowerCase();
     },
-    transferContact() {
+    async transferContact() {
       this.$store.commit('chats/removeChat', this.room);
+      await Room.take(this.room.uuid, this.transferPersonSelected.email);
       this.showSuccessfulTransferModal = true;
     },
   },

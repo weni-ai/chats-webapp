@@ -162,7 +162,7 @@ export default {
               this.componentInAsideSlot = '';
             },
             'select-quick-message': (quickMessage) => {
-              this.editorMessage = quickMessage.message;
+              this.editorMessage = quickMessage.text;
             },
           },
         },
@@ -252,9 +252,17 @@ export default {
     id: {
       immediate: true,
       async handler() {
+        if (this.$store.state.rooms.newMessagesByRoom[this.id]) {
+          this.$delete(this.$store.state.rooms.newMessagesByRoom, this.id);
+        }
+
         await this.setActiveRoom(this.id);
         this.getRoomMessages();
       },
+    },
+
+    messages() {
+      this.$nextTick(this.scrollMessagesToBottom);
     },
   },
 };

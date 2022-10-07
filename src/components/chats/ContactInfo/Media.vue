@@ -8,7 +8,7 @@
 
     <template slot="tab-panel-media">
       <section class="media__content">
-        <div v-for="media in medias" :key="media.filename" class="media__content__media">
+        <div v-for="media in images" :key="media.url" class="media__content__media">
           <div class="media__content__media__preview">
             <image-preview v-bind="media" fullscreen-on-click object-fit="cover" />
           </div>
@@ -26,11 +26,13 @@
       <section class="documents__content">
         <document-preview
           v-for="document in documents"
+          :type="document.content_type"
           size="sm"
-          :key="document.filename"
-          :src="document.src"
-          :fullFilename="document.filename + '.' + document.fileExtension"
+          :key="document.url"
+          :src="document.url"
+          :fullFilename="document.url"
           class="documents__content__document"
+          @download="download(document.url)"
         />
       </section>
     </template>
@@ -40,6 +42,7 @@
 <script>
 import DocumentPreview from '@/components/chats/MediaMessage/Previews/Document';
 import ImagePreview from '@/components/chats/MediaMessage/Previews/Image';
+import Media from '@/services/api/resources/chats/media';
 
 export default {
   name: 'ContactMedia',
@@ -49,99 +52,65 @@ export default {
     ImagePreview,
   },
 
+  props: {
+    room: {
+      type: Object,
+    },
+  },
+
+  created() {
+    this.loadNextMedias();
+  },
+
   data: () => ({
     tab: 'media',
     tabs: ['media', 'docs'],
+    page: 1,
 
-    documents: [
-      {
-        src: 'https://picsum.photos/2480/3508',
-        type: 'document',
-        isMedia: true,
-        fileExtension: 'pdf',
-        filename: 'Boleto atualizado 1',
-      },
-      {
-        src: 'https://picsum.photos/2480/3508',
-        type: 'document',
-        isMedia: true,
-        fileExtension: 'pdf',
-        filename: 'Boleto atualizado 2',
-      },
-      {
-        src: 'https://picsum.photos/2480/3508',
-        type: 'document',
-        isMedia: true,
-        fileExtension: 'pdf',
-        filename: 'Boleto atualizado 3',
-      },
-      {
-        src: 'https://picsum.photos/2480/3508',
-        type: 'document',
-        isMedia: true,
-        fileExtension: 'pdf',
-        filename: 'Boleto atualizado 4',
-      },
-    ],
-
-    medias: [
-      {
-        src: 'https://picsum.photos/1920/1080',
-        type: 'image',
-        isMedia: true,
-        fileExtension: 'png',
-        filename: 'Captura de tela 1',
-      },
-      {
-        src: 'https://picsum.photos/1080/1920',
-        type: 'image',
-        isMedia: true,
-        width: 1080,
-        height: 'auto',
-        fileExtension: 'png',
-        filename: 'Captura de tela 2',
-      },
-      {
-        src: 'https://picsum.photos/1920/1080',
-        type: 'image',
-        isMedia: true,
-        fileExtension: 'png',
-        filename: 'Captura de tela 3',
-      },
-      {
-        src: 'https://picsum.photos/500/500',
-        type: 'image',
-        isMedia: true,
-        fileExtension: 'png',
-        filename: 'Captura de tela 4',
-      },
-      {
-        src: 'https://picsum.photos/1920/1080',
-        type: 'image',
-        isMedia: true,
-        fileExtension: 'png',
-        filename: 'Captura de tela 5',
-      },
-      {
-        src: 'https://picsum.photos/1920/1080',
-        type: 'image',
-        isMedia: true,
-        fileExtension: 'png',
-        filename: 'Captura de tela 6',
-      },
-      {
-        src: 'https://picsum.photos/1920/1080',
-        type: 'image',
-        isMedia: true,
-        fileExtension: 'png',
-        filename: 'Captura de tela 7',
-      },
-    ],
+    medias: [],
   }),
+
+  computed: {
+    images() {
+      return this.medias.filter((media) => media.content_type.startsWith('image/'));
+    },
+
+    documents() {
+      return this.medias.filter((media) => !media.content_type.startsWith('image/'));
+    },
+  },
 
   methods: {
     isActiveTab(tab) {
       return tab === this.tab;
+    },
+
+    download(url) {
+      const a = document.createElement('a');
+      a.setAttribute('href', url);
+      a.setAttribute('download', true);
+      document.body.appendChild(a);
+      a.click();
+      a.parentNode.removeChild(a);
+    },
+
+    async loadNextMedias() {
+      const response = await Media.listFromContactAndRoom({
+        contact: this.room.contact.uuid,
+        room: this.room.uuid,
+        ordering: 'content_type',
+        page: this.page,
+      });
+
+      this.medias = this.medias.concat(
+        response.results.filter((media) => !media.content_type.startsWith('audio/')),
+      );
+
+      this.page += 1;
+
+      if (response.next) {
+        this.loadNextMedias();
+      }
     },
   },
 };

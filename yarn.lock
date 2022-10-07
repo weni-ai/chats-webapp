@@ -2123,10 +2123,10 @@
     "@webassemblyjs/ast" "1.11.1"
     "@xtuc/long" "4.2.2"
 
-"@weni/unnnic-system@1.10.12":
-  version "1.10.12"
-  resolved "https://registry.yarnpkg.com/@weni/unnnic-system/-/unnnic-system-1.10.12.tgz#2109d0a0440774615e125320d0129727780829f0"
-  integrity sha512-s9TCmofSszUUL5C41i/5FqncHolWDAw8MuGKgRCwqGsvPYTV/YytNPW/BvOBDYIbNxpi+3m8A+v1BXwg+7FeyQ==
+"@weni/unnnic-system@1.10.14":
+  version "1.10.14"
+  resolved "https://registry.yarnpkg.com/@weni/unnnic-system/-/unnnic-system-1.10.14.tgz#059e40879758b701a3ddb202dc0cb9d575ff7f78"
+  integrity sha512-WOg+gjk023U7T3BKHoU48VutKjCSxV4qauCz/oByPCaOSv4fjJnQY6ios7DWDUMwzjDItZPDmxeQBGQgZZJQrQ==
   dependencies:
     core-js "^3.6.5"
     moment "^2.29.1"
@@ -5895,7 +5895,7 @@ module-alias@^2.2.2:
   resolved "https://registry.yarnpkg.com/module-alias/-/module-alias-2.2.2.tgz#151cdcecc24e25739ff0aa6e51e1c5716974c0e0"
   integrity sha512-A/78XjoX2EmNvppVWEhM2oGk3x4lLxnkEA4jTbaK97QKSDjkIoOsKQlfylt/d3kKKi596Qy3NP5XrXJ6fZIC9Q==
 
-moment@^2.29.1:
+moment@^2.29.1, moment@^2.29.4:
   version "2.29.4"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.4.tgz#3dbe052889fe7c1b2ed966fcb3a77328964ef108"
   integrity sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==

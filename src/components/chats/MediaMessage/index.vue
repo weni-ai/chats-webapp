@@ -7,7 +7,7 @@
     <section class="media-message__preview">
       <image-preview
         v-if="isImage"
-        :src="media.url"
+        :url="media.url"
         :alt="fullFilename"
         fullscreen-on-click
         @download="download"

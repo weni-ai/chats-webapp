@@ -9,6 +9,9 @@ import { mapState } from 'vuex';
 
 import { ws } from '@/services/api/socket';
 import Profile from '@/services/api/resources/profile';
+import QuickMessage from '@/services/api/resources/chats/quickMessage';
+
+const moment = require('moment');
 
 class Notification {
   /**
@@ -31,9 +34,9 @@ export default {
   name: 'App',
 
   async created() {
+    this.loadQuickMessages();
     this.handleLocale();
     await this.getUser();
-    this.onboarding();
     this.listeners();
   },
 
@@ -49,17 +52,26 @@ export default {
       const user = await Profile.me();
       this.$store.commit('profile/setMe', user);
     },
+
+    async loadQuickMessages() {
+      const response = await QuickMessage.all();
+      this.$store.state.chats.quickMessages.messages = response.results;
+    },
+
     handleLocale() {
-      window.onmessage = (ev) => {
+      window.parent.postMessage({ event: 'getLanguage' }, '*');
+
+      window.addEventListener('message', (ev) => {
         const message = ev.data;
-        const isLocaleChangeMessage = message.event === 'setLanguage';
+        const isLocaleChangeMessage = message?.event === 'setLanguage';
         if (!isLocaleChangeMessage) return;
 
-        const locale = message.data.language;
-        if (!['en-us', 'pt-br', 'es'].includes(locale)) return;
+        const locale = message?.language; // 'en-us', 'pt-br', 'es'
+
+        moment.locale(locale);
 
         this.$i18n.locale = locale;
-      };
+      });
     },
     async onboarding() {
       const onboarded = localStorage.getItem('CHATS_USER_ONBOARDED') || (await Profile.onboarded());
@@ -72,15 +84,33 @@ export default {
     },
     listeners() {
       ws.on('msg.create', (message) => {
-        if (!this.activeRoom || this.me.uuid !== message.user?.uuid) {
-          this.$store.dispatch('rooms/addMessage', message);
+        if (!this.activeRoom || this.me.email !== message.user?.email) {
           const notification = new Notification('ping-bing');
           notification.notify();
+
+          if (
+            !this.$store.state.rooms.newMessagesByRoom[message.room] &&
+            !(this.$route.name === 'room' && this.$route.params.id === message.room)
+          ) {
+            this.$set(this.$store.state.rooms.newMessagesByRoom, message.room, {
+              messages: [],
+            });
+          } else if (this.$route.name === 'room' && this.$route.params.id === message.room) {
+            this.$store.dispatch('rooms/addMessage', message);
+          }
+
+          if (this.$store.state.rooms.newMessagesByRoom[message.room]) {
+            this.$store.state.rooms.newMessagesByRoom[message.room].messages.push({
+              created_on: message.created_on,
+              uuid: message.uuid,
+              text: message.text,
+            });
+          }
         }
       });
 
       ws.on('rooms.create', (room) => {
-        if (!!room.user && room.user.uuid !== this.me.uuid) return;
+        if (!!room.user && room.user.email !== this.me.email) return;
 
         this.$store.dispatch('rooms/addRoom', room);
         ws.send({
