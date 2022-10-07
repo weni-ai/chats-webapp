@@ -363,7 +363,7 @@
   },
   "docs": {
     "pt-br": "Documentos",
-    "en-us": "Docs"
+    "en-us": "Docs",
     "es": "Documentos"
   },
   "download": {
@@ -421,9 +421,9 @@
     }
   },
   "select_agent_line_or_department": {
-    "pt-br": "Selecione agente, fila ou setor",
-    "en-us": "Select agent, line or department",
-    "es": "Seleccionar agente, línea o departamento"
+    "pt-br": "Selecione agente",
+    "en-us": "Select agent",
+    "es": "Seleccionar agente"
   },
 
   "send_media": {
