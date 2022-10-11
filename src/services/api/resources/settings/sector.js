@@ -16,6 +16,11 @@ export default {
     return response.data;
   },
 
+  async agents({ sectorUuid }) {
+    const response = await http.get(`/sector/${sectorUuid}/agents/`);
+    return response.data;
+  },
+
   async create(props) {
     const response = await http.post('/sector/', { ...props, project: projectUuid });
     return response.data;
