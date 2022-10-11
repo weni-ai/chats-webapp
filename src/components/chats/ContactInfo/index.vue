@@ -47,6 +47,8 @@
             size="sm"
             highlight
             class="channel-select"
+            :disabled="!!transferContactError"
+            :message="transferContactError"
           />
 
           <unnnic-button
@@ -84,6 +86,7 @@ import { mapState } from 'vuex';
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
 import Room from '@/services/api/resources/chats/room';
+import Sector from '@/services/api/resources/settings/sector';
 import ContactMedia from './Media';
 
 const moment = require('moment');
@@ -98,14 +101,10 @@ export default {
   },
 
   data: () => ({
-    transferOptions: [
-      // {
-      //   name: 'Afrânio',
-      //   email: 'afranio.cavalcante@weni.ai',
-      // },
-    ],
+    transferOptions: [],
     transferContactSearch: '',
     transferContactTo: '',
+    transferContactError: '',
     showSuccessfulTransferModal: false,
   }),
 
@@ -123,6 +122,29 @@ export default {
     transferPersonSelected() {
       return this.transferOptions.find((option) => option.name === this.transferContactSearch);
     },
+  },
+
+  async created() {
+    if (!this.room.queue?.sector) {
+      throw new Error(`There is no associated sector with room ${this.room.uuid}`);
+    }
+
+    try {
+      this.transferOptions = (await Sector.agents({ sectorUuid: this.room.queue.sector }))
+        .filter((agent) => agent.email !== this.$store.state.profile.me.email)
+        .map(({ first_name, last_name, email }) => {
+          return {
+            name: [first_name, last_name].join(' ').trim() || email,
+            email,
+          };
+        });
+    } catch (error) {
+      if (error?.response?.status === 403) {
+        this.transferContactError = 'Você não possui permissão para transferir este chat';
+      } else {
+        throw error;
+      }
+    }
   },
 
   methods: {
