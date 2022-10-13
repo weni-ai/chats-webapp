@@ -42,7 +42,7 @@
             :data="transferOptions.map((option) => option.name)"
             @choose="transferContactTo = $event"
             :placeholder="$t('select_agent_line_or_department')"
-            :label="$t('chats.transfer')"
+            :label="$t('chats.transfer.title')"
             open-with-focus
             size="sm"
             highlight
@@ -140,7 +140,7 @@ export default {
         });
     } catch (error) {
       if (error?.response?.status === 403) {
-        this.transferContactError = 'Você não possui permissão para transferir este chat';
+        this.transferContactError = this.$t('chats.transfer.does_not_have_permission');
       } else {
         throw error;
       }

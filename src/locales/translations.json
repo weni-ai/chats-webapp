@@ -18,7 +18,6 @@
       "es": "Formatos compatibles"
     }
   },
-
   "waiting_for": {
     "minutes": {
       "pt-br": "Aguardando há 1 minuto | Aguardando há {n} minutos",
@@ -26,7 +25,6 @@
       "es": "Esperando por un minuto | Esperando por {n} minutos"
     }
   },
-
   "date_format": {
     "pt-br": "DD/MM/YYYY",
     "en-us": "MM/DD/YYYY",
@@ -129,9 +127,16 @@
       "es": "Chat cerrado"
     },
     "transfer": {
-      "pt-br": "Transferir chat",
-      "en-us": "Transfer chat",
-      "es": "Transferir este chat"
+      "title": {
+        "pt-br": "Transferir chat",
+        "en-us": "Transfer chat",
+        "es": "Transferir este chat"
+      },
+      "does_not_have_permission": {
+        "pt-br": "Você não possui permissão para transferir este chat",
+        "en-us": "You do not have permission to transfer this chat",
+        "es": "No tiene permiso para transferir este chat"
+      }
     },
     "open_chat": {
       "pt-br": "Abrir chat",
@@ -159,7 +164,6 @@
       "es": "Tienes el chat"
     }
   },
-
   "history": {
     "pt-br": "Histórico",
     "en-us": "History",
@@ -256,12 +260,11 @@
     "pt-br": "Agente",
     "en-us": "Agent",
     "es": "Agente"
-    
   },
   "tags": {
     "pt-br": "Tags",
-    "es": "Tags",
-    "en-us": "Tags"
+    "en-us": "Tags",
+    "es": "Tags"
   },
   "date": {
     "pt-br": "Data",
@@ -278,7 +281,6 @@
       "pt-br": "Chat com Bot",
       "en-us": "Chat with Bot",
       "es": "Chat con Bot"
-      
     },
     "agent": {
       "pt-br": "Chat com agente {name}",
@@ -380,7 +382,6 @@
     "pt-br": "Título",
     "en-us": "Title",
     "es": "Título"
-    
   },
   "shortcut": {
     "pt-br": "Atalho",
@@ -407,7 +408,6 @@
     "en-us": "Delete",
     "es": "Eliminar"
   },
-
   "successfully_transferred_chat": {
     "pt-br": "Conversa transferida com sucesso!",
     "en-us": "Chat transferred successfully!",
@@ -425,7 +425,6 @@
     "en-us": "Select agent",
     "es": "Seleccionar agente"
   },
-
   "send_media": {
     "pt-br": "Enviar mídia",
     "en-us": "Send media",
@@ -446,7 +445,6 @@
     "en-us": "Send image | Send image | Send images",
     "es": "Enviar imagen | Enviar imagen | Enviar imágenes"
   },
-
   "quick_messages": {
     "delete": {
       "pt-br": "Excluir mensagem rápida",
