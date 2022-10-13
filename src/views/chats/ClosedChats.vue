@@ -174,7 +174,7 @@ export default {
         },
         {
           id: 'tags',
-          text: this.$t('tags'),
+          text: this.$t('tags.title'),
           flex: 5,
         },
         {

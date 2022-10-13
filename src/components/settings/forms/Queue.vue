@@ -62,8 +62,7 @@ export default {
   },
 
   data: () => ({
-    infoText:
-      'As filas servem para organizar os tipos de atendimento dentro de um setor, através das filas é possível criar grupos de atendimento, crie pelo menos uma fila para gerenciar uma equipe de agentes.',
+    infoText: this.$t('queue.description'),
   }),
 
   computed: {

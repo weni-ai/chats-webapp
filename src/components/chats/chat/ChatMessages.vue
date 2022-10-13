@@ -39,12 +39,12 @@
 
     <section v-if="!room.is_active" class="chat-messages__room__divisor">
       <div class="chat-messages__room__divisor__line" />
-      <span class="chat-messages__room__divisor__label"> Chat encerrado pelo agente </span>
+      <span class="chat-messages__room__divisor__label">{{ $t('chat_closed_by.agent') }}</span>
       <div class="chat-messages__room__divisor__line" />
     </section>
 
     <section v-if="room.tags.length > 0" class="chat-messages__tags">
-      <p class="chat-messages__tags__label">Tags do chat</p>
+      <p class="chat-messages__tags__label">{{ $t('chats.tags') }}</p>
       <tag-group :tags="room.tags" />
     </section>
 
