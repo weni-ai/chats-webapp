@@ -16,7 +16,7 @@
           </p>
 
           <div class="connection-info">
-            <p v-if="room.contact.status === 'online'">Online</p>
+            <p v-if="room.contact.status === 'online'">{{ $t('status.online') }}</p>
             <!-- <p v-else>{{ getLastTimeOnlineText(room.contact.last_interaction || new Date()) }}</p> -->
             <template v-if="!!room.custom_fields">
               <p v-for="[field, value] of Object.entries(room.contact.custom_fields)" :key="field">

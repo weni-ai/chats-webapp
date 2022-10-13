@@ -1,4 +1,11 @@
 {
+  "status": {
+    "online": {
+      "pt-br": "Online",
+      "en-us": "Online",
+      "es": "En línea"
+    }
+  },
   "upload_area": {
     "title": {
       "text": {
@@ -314,6 +321,32 @@
     "pt-br": "Agente",
     "en-us": "Agent",
     "es": "Agente"
+  },
+  "agents": {
+    "add": {
+      "title": {
+        "pt-br": "Adicionar agentes",
+        "en-us": "Add agents",
+        "es": "Agregar agentes"
+      },
+      "select": {
+        "label": {
+          "pt-br": "Selecionar agente",
+          "en-us": "Select agent",
+          "es": "Agente seleccionado"
+        },
+        "placeholder": {
+          "pt-br": "Pesquise pelo nome ou email",
+          "en-us": "Search for the name or email",
+          "es": "Busque el nombre o el correo electrónico"
+        }
+      },
+      "button": {
+        "pt-br": "Selecionar",
+        "en-us": "Select",
+        "es": "Seleccione"
+      }
+    }
   },
   "tags": {
     "title": {
