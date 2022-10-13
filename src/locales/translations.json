@@ -98,6 +98,11 @@
     "es": "Justificar"
   },
   "sector": {
+    "title": {
+      "pt-br": "Setor",
+      "en-us": "Sector",
+      "es": "Sector"
+    },
     "managers": {
       "title": {
         "pt-br": "Gerentes de atendimento",
@@ -137,6 +142,13 @@
           }
         }
       }
+    }
+  },
+  "queues": {
+    "title": {
+      "pt-br": "Filas",
+      "en-us": "Queues",
+      "es": "Colas"
     }
   },
   "queue": {
