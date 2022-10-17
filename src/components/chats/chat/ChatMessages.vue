@@ -118,13 +118,14 @@ export default {
       }
     },
     createTransferLabel(message) {
-      const { name } = message;
+      const text = JSON.parse(message.text);
+      const { name } = text;
       const transferType = {
         queue: this.$t('contact_transferred_to.line', { name }),
-        agent: this.$t('contact_transferred_to.agent', { name }),
+        user: this.$t('contact_transferred_to.agent', { name }),
       };
 
-      return transferType[message.type];
+      return transferType[text.type];
     },
     showContactInfo() {
       this.$emit('show-contact-info');
