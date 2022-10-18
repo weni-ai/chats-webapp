@@ -19,7 +19,7 @@
             <unnnic-icon size="sm" icon="preferences" scheme="neutral-cloudy" />
           </div>
 
-          <div class="text">Preferências</div>
+          <div class="text">{{ $t('preferences.title') }}</div>
 
           <div class="status-icon">
             <unnnic-icon
@@ -36,18 +36,26 @@
       <div class="options-container">
         <div class="label">Status</div>
 
-        <unnnic-switch v-model="online" size="small" :text-right="online ? 'Online' : 'Offline'" />
+        <unnnic-switch
+          v-model="online"
+          size="small"
+          :text-right="online ? $t('status.online') : $t('status.offline')"
+        />
 
-        <div class="label">Notificações</div>
+        <div class="label">{{ $t('preferences.notifications.title') }}</div>
 
-        <unnnic-switch v-model="sound" size="small" text-right="Som" />
+        <unnnic-switch
+          v-model="sound"
+          size="small"
+          :text-right="$t('preferences.notifications.sound')"
+        />
 
-        <div class="label">Menu ajuda</div>
+        <div class="label">{{ $t('preferences.help.title') }}</div>
 
         <unnnic-switch
           v-model="help"
           size="small"
-          :text-right="help ? 'Nilo ativo' : 'Nilo desativado'"
+          :text-right="$t(`preferences.help.nilo.${help ? 'active' : 'disabled'}`)"
         />
       </div>
     </div>

@@ -1,13 +1,10 @@
 <template>
   <section class="form-tags">
-    <p class="form-tags__description">
-      As tags são usadas para classificar características do atendimento e possibilitar a pesquisa e
-      filtragem dos chats a partir delas, defina tags que sejam relevantes para seu contexto.
-    </p>
+    <p class="form-tags__description">{{ $t('tags.description') }}</p>
 
     <section class="form-tags__section">
       <p class="form-tags__section__label">
-        Adicionar tags
+        {{ $t('tags.add.title') }}
         <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
       </p>
       <section class="form-tags__section__input-group">
@@ -15,15 +12,15 @@
           v-model="tag"
           @keypress.enter="addTag"
           class="form-tags__section__input-group__input"
-          label="Nome da tag"
-          placeholder="Exemplo: Dúvidas"
+          :label="$t('tags.add.label')"
+          :placeholder="$('tags.add.placeholder')"
         />
         <unnnic-button type="secondary" text="Adicionar" @click="addTag" />
       </section>
     </section>
 
     <section v-if="tags.length > 0" class="form-tags__section">
-      <p class="form-tags__section__label">Tags adicionadas</p>
+      <p class="form-tags__section__label">{{ $t('tags.already_added') }}</p>
       <tag-group :tags="tags" selectable has-close-icon @close="removeTag($event)" />
     </section>
   </section>
