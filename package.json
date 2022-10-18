@@ -10,7 +10,7 @@
     "translations:build": "unified-translations --translations-file ./src/locales/translations.json --languages pt-br=./src/locales/pt_br.json,en-us=./src/locales/en_us.json,es=./src/locales/es.json"
   },
   "dependencies": {
-    "@weni/unnnic-system": "1.10.14",
+    "@weni/unnnic-system": "1.10.16",
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "lodash.clonedeep": "^4.5.0",

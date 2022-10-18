@@ -135,12 +135,12 @@ export default {
 
   methods: {
     async listProjectManagers() {
-      const managers = await Project.managers();
-      this.projectManagers = managers.results;
+      const managers = (await Project.managers()).results.concat((await Project.admins()).results);
+      this.projectManagers = managers;
     },
     async listProjectAgents() {
-      const agents = await Project.agents();
-      this.projectAgents = agents.results;
+      const agents = (await Project.agents()).results.concat((await Project.admins()).results);
+      this.projectAgents = agents;
     },
     async nextStep() {
       const steps = {
