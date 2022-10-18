@@ -4,6 +4,49 @@
       "pt-br": "Online",
       "en-us": "Online",
       "es": "En línea"
+    },
+    "offline": {
+      "pt-br": "Offline",
+      "en-us": "Offline",
+      "es": "Desconectada"
+    }
+  },
+  "preferences": {
+    "title": {
+      "pt-br": "Preferências",
+      "en-us": "Preferences",
+      "es": "Preferencias"
+    },
+    "notifications": {
+      "title": {
+        "pt-br": "Notificações",
+        "en-us": "Notifications",
+        "es": "Notificaciones"
+      },
+      "sound": {
+        "pt-br": "Som",
+        "en-us": "Sound",
+        "es": "Sonido"
+      }
+    },
+    "help": {
+      "title": {
+        "pt-br": "Menu ajuda",
+        "en-us": "Help menu",
+        "es": "Menú de ayuda"
+      },
+      "nilo": {
+        "active": {
+          "pt-br": "Nilo ativo",
+          "en-us": "Nile active",
+          "es": "Nilo activo"
+        },
+        "disabled": {
+          "pt-br": "Nilo desativado",
+          "en-us": "Nile deactivated",
+          "es": "Nilo desactivado"
+        }
+      }
     }
   },
   "upload_area": {
