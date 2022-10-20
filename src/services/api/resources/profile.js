@@ -22,4 +22,29 @@ export default {
   async onboard() {
     await http.patch(`/permission/project/update_access/?project=${getProject()}`);
   },
+
+  /**
+   * {
+   *  "connection_status": "offline" | "online"
+   * }
+   */
+  status({ projectUuid }) {
+    return http.get('/internal/permission/project/status/', {
+      params: {
+        project: projectUuid,
+      },
+    });
+  },
+
+  /**
+   * {
+   *  "connection_status": "offline" | "online"
+   * }
+   */
+  updateStatus({ projectUuid, status }) {
+    return http.post('/internal/permission/project/status/', {
+      project: projectUuid,
+      status,
+    });
+  },
 };

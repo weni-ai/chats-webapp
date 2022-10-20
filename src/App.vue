@@ -12,6 +12,7 @@ import env from '@/utils/env';
 import { WS } from '@/services/api/socket';
 import Profile from '@/services/api/resources/profile';
 import QuickMessage from '@/services/api/resources/chats/quickMessage';
+import { PREFERENCES_SOUND } from './components/PreferencesBar.vue';
 
 const moment = require('moment');
 
@@ -28,6 +29,10 @@ class Notification {
   notify() {
     // if the user hadn't interacted with the page yet (click, scroll...),
     // the browser blocks the audio playing because is considered autoplay media
+    if ((localStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'no') {
+      return;
+    }
+
     this.#notification.play().catch(() => {});
   }
 }
