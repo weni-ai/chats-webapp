@@ -4,10 +4,13 @@ export class Socket {
    */
   #ws;
 
+  ws;
+
   #handlers = [];
 
   constructor(url) {
     this.#ws = new WebSocket(url);
+    this.ws = this.#ws;
     this.#createOnMessageListener();
   }
 

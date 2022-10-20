@@ -19,7 +19,9 @@
             <unnnic-icon size="sm" icon="preferences" scheme="neutral-cloudy" />
           </div>
 
-          <div class="text">{{ $t('preferences.title') }}</div>
+          <div class="text">
+            {{ $t('preferences.title') }}
+          </div>
 
           <div class="status-icon">
             <unnnic-icon
@@ -37,9 +39,11 @@
         <div class="label">Status</div>
 
         <unnnic-switch
-          v-model="online"
+          :value="$store.state.config.status === 'online'"
           size="small"
-          :text-right="online ? $t('status.online') : $t('status.offline')"
+          :text-right="
+            $store.state.config.status === 'online' ? $t('status.online') : $t('status.offline')
+          "
           @input="updateStatus"
           :disabled="loadingStatus"
         />
@@ -77,7 +81,6 @@ export default {
     return {
       canCloseOnHeaderClick: false,
       open: false,
-      online: true,
       loadingStatus: false,
       sound: false,
       help: false,
@@ -92,17 +95,17 @@ export default {
   },
 
   methods: {
-    async updateStatus() {
+    async updateStatus(online) {
       this.loadingStatus = true;
 
       const {
         data: { connection_status },
       } = await Profile.updateStatus({
         projectUuid: this.$store.state.config.project,
-        status: this.online ? 'online' : 'offline',
+        status: online ? 'online' : 'offline',
       });
 
-      this.online = connection_status === 'online';
+      this.$store.state.config.status = connection_status;
 
       this.loadingStatus = false;
     },

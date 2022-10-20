@@ -91,6 +91,10 @@ export default {
       );
 
       this.listeners();
+
+      this.ws.ws.addEventListener('open', () => {
+        this.$store.state.config.status = 'online';
+      });
     },
 
     async getUser() {
