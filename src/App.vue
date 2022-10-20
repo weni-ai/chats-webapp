@@ -7,9 +7,12 @@
 <script>
 import { mapState } from 'vuex';
 
-import { ws } from '@/services/api/socket';
+import http from '@/services/api/http';
+import env from '@/utils/env';
+import { WS } from '@/services/api/socket';
 import Profile from '@/services/api/resources/profile';
 import QuickMessage from '@/services/api/resources/chats/quickMessage';
+import { PREFERENCES_SOUND } from './components/PreferencesBar.vue';
 
 const moment = require('moment');
 
@@ -26,6 +29,10 @@ class Notification {
   notify() {
     // if the user hadn't interacted with the page yet (click, scroll...),
     // the browser blocks the audio playing because is considered autoplay media
+    if ((localStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'no') {
+      return;
+    }
+
     this.#notification.play().catch(() => {});
   }
 }
@@ -34,10 +41,13 @@ export default {
   name: 'App',
 
   async created() {
-    this.loadQuickMessages();
     this.handleLocale();
-    await this.getUser();
-    this.listeners();
+  },
+
+  data() {
+    return {
+      ws: null,
+    };
   },
 
   computed: {
@@ -45,9 +55,48 @@ export default {
       activeRoom: (state) => state.rooms.activeRoom,
       me: (state) => state.profile.me,
     }),
+
+    configsForInitializeWebSocket() {
+      return [this.$store.state.config.token, this.$store.state.config.project];
+    },
+  },
+
+  watch: {
+    configsForInitializeWebSocket: {
+      immediate: true,
+
+      handler() {
+        if (!this.configsForInitializeWebSocket.some((config) => !config)) {
+          this.initializeWebSocket();
+        }
+      },
+    },
   },
 
   methods: {
+    initializeWebSocket() {
+      const { token, project } = this.$store.state.config;
+
+      http.interceptors.request.use((config) => {
+        // eslint-disable-next-line no-param-reassign
+        config.headers.Authorization = `Bearer ${token}`;
+        return config;
+      });
+
+      this.loadQuickMessages();
+      this.getUser();
+
+      this.ws = new WS(
+        `${env('CHATS_WEBSOCKET_URL')}/agent/rooms?Token=${token}&project=${project}`,
+      );
+
+      this.listeners();
+
+      this.ws.ws.addEventListener('open', () => {
+        this.$store.state.config.status = 'online';
+      });
+    },
+
     async getUser() {
       const user = await Profile.me();
       this.$store.commit('profile/setMe', user);
@@ -83,8 +132,12 @@ export default {
       this.$router.push({ name: 'onboarding.agent' });
     },
     listeners() {
-      ws.on('msg.create', (message) => {
-        if (!this.activeRoom || this.me.email !== message.user?.email) {
+      this.ws.on('msg.create', (message) => {
+        if (this.$store.state.rooms.rooms.find((room) => room.uuid === message.room)) {
+          if (this.me.email === message.user?.email) {
+            return;
+          }
+
           const notification = new Notification('ping-bing');
           notification.notify();
 
@@ -109,11 +162,11 @@ export default {
         }
       });
 
-      ws.on('rooms.create', (room) => {
+      this.ws.on('rooms.create', (room) => {
         if (!!room.user && room.user.email !== this.me.email) return;
 
         this.$store.dispatch('rooms/addRoom', room);
-        ws.send({
+        this.ws.send({
           type: 'method',
           action: 'join',
           content: { name: 'room', id: room.uuid },
@@ -122,12 +175,12 @@ export default {
         notification.notify();
       });
 
-      ws.on('rooms.update', (room) => {
+      this.ws.on('rooms.update', (room) => {
         if (!!room.user && room.user.email !== this.me.email) return;
         this.$store.dispatch('rooms/updateRoom', { room, userEmail: this.me.email });
       });
 
-      ws.on('msg.update', (message) => {
+      this.ws.on('msg.update', (message) => {
         this.$store.dispatch('rooms/addMessage', message);
       });
     },

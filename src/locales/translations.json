@@ -1,4 +1,54 @@
 {
+  "status": {
+    "online": {
+      "pt-br": "Online",
+      "en-us": "Online",
+      "es": "En línea"
+    },
+    "offline": {
+      "pt-br": "Offline",
+      "en-us": "Offline",
+      "es": "Desconectada"
+    }
+  },
+  "preferences": {
+    "title": {
+      "pt-br": "Preferências",
+      "en-us": "Preferences",
+      "es": "Preferencias"
+    },
+    "notifications": {
+      "title": {
+        "pt-br": "Notificações",
+        "en-us": "Notifications",
+        "es": "Notificaciones"
+      },
+      "sound": {
+        "pt-br": "Som",
+        "en-us": "Sound",
+        "es": "Sonido"
+      }
+    },
+    "help": {
+      "title": {
+        "pt-br": "Menu ajuda",
+        "en-us": "Help menu",
+        "es": "Menú de ayuda"
+      },
+      "nilo": {
+        "active": {
+          "pt-br": "Nilo ativo",
+          "en-us": "Nile active",
+          "es": "Nilo activo"
+        },
+        "disabled": {
+          "pt-br": "Nilo desativado",
+          "en-us": "Nile deactivated",
+          "es": "Nilo desactivado"
+        }
+      }
+    }
+  },
   "upload_area": {
     "title": {
       "text": {
@@ -18,7 +68,6 @@
       "es": "Formatos compatibles"
     }
   },
-
   "waiting_for": {
     "minutes": {
       "pt-br": "Aguardando há 1 minuto | Aguardando há {n} minutos",
@@ -26,7 +75,6 @@
       "es": "Esperando por un minuto | Esperando por {n} minutos"
     }
   },
-
   "date_format": {
     "pt-br": "DD/MM/YYYY",
     "en-us": "MM/DD/YYYY",
@@ -92,7 +140,73 @@
     "en-us": "Justify",
     "es": "Justificar"
   },
+  "sector": {
+    "title": {
+      "pt-br": "Setor",
+      "en-us": "Sector",
+      "es": "Sector"
+    },
+    "managers": {
+      "title": {
+        "pt-br": "Gerentes de atendimento",
+        "en-us": "Service managers",
+        "es": "Gerentes de servicio"
+      },
+      "add": {
+        "label": {
+          "pt-br": "Adicionar gerente",
+          "en-us": "Add manager",
+          "es": "Agregar gerente"
+        },
+        "placeholder": {
+          "pt-br": "Pesquise pelo nome ou email",
+          "en-us": "Search for the name or email",
+          "es": "Busque el nombre o el correo electrónico"
+        }
+      },
+      "working_day": {
+        "title": {
+          "pt-br": "Definições da jornada de trabalho",
+          "en-us": "Definitions of the workday",
+          "es": "Definiciones de la jornada laboral"
+        },
+        "start": {
+          "label": {
+            "pt-br": "Horário de início",
+            "en-us": "Start time",
+            "es": "Hora de inicio"
+          }
+        },
+        "end": {
+          "label": {
+            "pt-br": "Horário de encerramento",
+            "en-us": "Closing time",
+            "es": "Tiempo de cierre"
+          }
+        }
+      }
+    }
+  },
+  "queues": {
+    "title": {
+      "pt-br": "Filas",
+      "en-us": "Queues",
+      "es": "Colas"
+    }
+  },
+  "queue": {
+    "description": {
+      "pt-br": "As filas servem para organizar os tipos de atendimento dentro de um setor, através das filas é possível criar grupos de atendimento, crie pelo menos uma fila para gerenciar uma equipe de agentes.",
+      "en-us": "The queues serve to organize the types of service within a sector, through queues it is possible to create service groups, create at least one line to manage a team of agents.",
+      "es": "Las colas sirven para organizar los tipos de servicio dentro de un sector, a través de las colas que puede crear grupos de servicios, crear al menos una línea para administrar un equipo de agentes."
+    }
+  },
   "chats": {
+    "tags": {
+      "pt-br": "Tags do chat",
+      "en-us": "Chat tags",
+      "es": "Etiquetas de chat"
+    },
     "in_progress": {
       "pt-br": "Chats abertos",
       "en-us": "Chats in progress",
@@ -129,9 +243,16 @@
       "es": "Chat cerrado"
     },
     "transfer": {
-      "pt-br": "Transferir chat",
-      "en-us": "Transfer chat",
-      "es": "Transferir este chat"
+      "title": {
+        "pt-br": "Transferir chat",
+        "en-us": "Transfer chat",
+        "es": "Transferir este chat"
+      },
+      "does_not_have_permission": {
+        "pt-br": "Você não possui permissão para transferir este chat",
+        "en-us": "You do not have permission to transfer this chat",
+        "es": "No tiene permiso para transferir este chat"
+      }
     },
     "open_chat": {
       "pt-br": "Abrir chat",
@@ -159,7 +280,6 @@
       "es": "Tienes el chat"
     }
   },
-
   "history": {
     "pt-br": "Histórico",
     "en-us": "History",
@@ -256,12 +376,66 @@
     "pt-br": "Agente",
     "en-us": "Agent",
     "es": "Agente"
-    
+  },
+  "agents": {
+    "add": {
+      "title": {
+        "pt-br": "Adicionar agentes",
+        "en-us": "Add agents",
+        "es": "Agregar agentes"
+      },
+      "select": {
+        "label": {
+          "pt-br": "Selecionar agente",
+          "en-us": "Select agent",
+          "es": "Agente seleccionado"
+        },
+        "placeholder": {
+          "pt-br": "Pesquise pelo nome ou email",
+          "en-us": "Search for the name or email",
+          "es": "Busque el nombre o el correo electrónico"
+        }
+      },
+      "button": {
+        "pt-br": "Selecionar",
+        "en-us": "Select",
+        "es": "Seleccione"
+      }
+    }
   },
   "tags": {
-    "pt-br": "Tags",
-    "es": "Tags",
-    "en-us": "Tags"
+    "title": {
+      "pt-br": "Tags",
+      "en-us": "Tags",
+      "es": "Tags"
+    },
+    "description": {
+      "pt-br": "As tags são usadas para classificar características do atendimento e possibilitar a pesquisa e filtragem dos chats a partir delas, defina tags que sejam relevantes para seu contexto.",
+      "en-us": "Tags are used to classify service characteristics and enable chat search and filtering from them, define tags that are relevant to their context.",
+      "es": "Las etiquetas se utilizan para clasificar las características del servicio y habilitar la búsqueda y el filtrado de chat de ellas, definir las etiquetas que son relevantes para su contexto."
+    },
+    "add": {
+      "title": {
+        "pt-br": "Adicionar tags",
+        "en-us": "Add tags",
+        "es": "Agregar etiquetas"
+      },
+      "label": {
+        "pt-br": "Nome da tag",
+        "en-us": "Tag name",
+        "es": "Nombre de la etiqueta"
+      },
+      "placeholder": {
+        "pt-br": "Exemplo: Dúvidas",
+        "en-us": "Example: Doubts",
+        "es": "Ejemplo: Dudas"
+      }
+    },
+    "already_added": {
+      "pt-br": "Tags adicionadas",
+      "en-us": "Added Tags",
+      "es": "Etiquetas agregadas"
+    }
   },
   "date": {
     "pt-br": "Data",
@@ -278,7 +452,6 @@
       "pt-br": "Chat com Bot",
       "en-us": "Chat with Bot",
       "es": "Chat con Bot"
-      
     },
     "agent": {
       "pt-br": "Chat com agente {name}",
@@ -380,7 +553,6 @@
     "pt-br": "Título",
     "en-us": "Title",
     "es": "Título"
-    
   },
   "shortcut": {
     "pt-br": "Atalho",
@@ -407,7 +579,6 @@
     "en-us": "Delete",
     "es": "Eliminar"
   },
-
   "successfully_transferred_chat": {
     "pt-br": "Conversa transferida com sucesso!",
     "en-us": "Chat transferred successfully!",
@@ -425,7 +596,6 @@
     "en-us": "Select agent",
     "es": "Seleccionar agente"
   },
-
   "send_media": {
     "pt-br": "Enviar mídia",
     "en-us": "Send media",
@@ -446,7 +616,6 @@
     "en-us": "Send image | Send image | Send images",
     "es": "Enviar imagen | Enviar imagen | Enviar imágenes"
   },
-
   "quick_messages": {
     "delete": {
       "pt-br": "Excluir mensagem rápida",

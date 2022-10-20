@@ -77,6 +77,7 @@ export default {
 
 <style lang="scss" scoped>
 .container {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-stack-xs;

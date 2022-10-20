@@ -1,16 +1,16 @@
-import env from '@/utils/env';
-import { getToken, getProject } from '@/utils/config';
-
 export class Socket {
   /**
    * @type {WebSocket}
    */
   #ws;
 
+  ws;
+
   #handlers = [];
 
   constructor(url) {
     this.#ws = new WebSocket(url);
+    this.ws = this.#ws;
     this.#createOnMessageListener();
   }
 
@@ -39,9 +39,4 @@ export class Socket {
   }
 }
 
-const token = getToken();
-const project = getProject();
-
-export const ws = new Socket(
-  `${env('CHATS_WEBSOCKET_URL')}/agent/rooms?Token=${token}&project=${project}`,
-);
+export const WS = Socket;

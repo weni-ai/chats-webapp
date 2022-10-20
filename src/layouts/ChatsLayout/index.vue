@@ -1,7 +1,11 @@
 <template>
   <section class="chats-layout">
     <slot name="room-list">
-      <the-room-list class="room-list" :disabled="disabledChatList" />
+      <div :style="{ display: 'flex', flexDirection: 'column' }">
+        <preferences-bar :style="{ margin: '16px 0 0 16px' }" />
+
+        <the-room-list class="room-list" :disabled="disabledChatList" />
+      </div>
     </slot>
 
     <main>
@@ -15,12 +19,14 @@
 </template>
 
 <script>
+import PreferencesBar from '@/components/PreferencesBar.vue';
 import TheRoomList from './components/TheRoomList';
 
 export default {
   name: 'ChatsLayout',
 
   components: {
+    PreferencesBar,
     TheRoomList,
   },
 
