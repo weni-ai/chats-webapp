@@ -2,19 +2,19 @@
   <unnnic-tab v-model="tab" initialTab="sector" :tabs="tabs" class="sector-tabs">
     <template slot="tab-head-sector">
       <div class="form-tab">
-        <span class="name">Setor</span>
+        <span class="name">{{ $t('sector.title') }}</span>
       </div>
     </template>
 
     <template slot="tab-head-queues">
       <div class="form-tab">
-        <span class="name">Filas</span>
+        <span class="name">{{ $t('queues.title') }}</span>
       </div>
     </template>
 
     <template slot="tab-head-tags">
       <div class="form-tab">
-        <span class="name">Tags</span>
+        <span class="name">{{ $t('tags.title') }}</span>
       </div>
     </template>
 

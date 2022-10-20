@@ -10,9 +10,9 @@ import env from './utils/env';
 
 import './styles/global.scss';
 
-LogRocket.init('lqshel/test-weni-webapp', {
+LogRocket.init(env('LOGROCKET_ID'), {
   mergeIframes: true,
-  parentDomain: env('VUE_APP_PARENT_DOMAIN'),
+  parentDomain: env('LOGROCKET_PARENT_DOMAIN'),
 });
 
 Vue.config.productionTip = false;

@@ -8,6 +8,7 @@ export default {
   state: {
     token: '',
     project: '',
+    status: '',
   },
   mutations: {
     [mutations.SET_TOKEN](state, token) {

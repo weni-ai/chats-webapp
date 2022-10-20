@@ -20,16 +20,16 @@
     </section>
 
     <section class="form-section">
-      <h2 class="title">Gerentes de atendimento</h2>
+      <h2 class="title">{{ $t('sector.managers.title') }}</h2>
 
       <div class="inline-input-and-button">
         <unnnic-autocomplete
           v-model="manager"
-          label="Adicionar gerente"
+          :label="$t('sector.managers.add.label')"
           :data="managersNames"
           open-with-focus
           highlight
-          placeholder="Pesquise pelo nome ou email"
+          :placeholder="$t('sector.managers.add.placeholder')"
           iconLeft="search-1"
           @choose="selectManager"
         />
@@ -50,12 +50,12 @@
     </section>
 
     <section class="form-section">
-      <h2 class="title">Definições da jornada de trabalho</h2>
+      <h2 class="title">{{ $t('sector.managers.working_day.title') }}</h2>
 
       <section class="form-section__inputs">
         <unnnic-input
           v-model="sector.workingDay.start"
-          label="Horário de início"
+          :label="$t('sector.managers.working_day.start.label')"
           v-mask="'##:##'"
           placeholder="08:00"
         />
@@ -68,7 +68,7 @@
 
         <unnnic-input
           v-model="sector.maxSimultaneousChatsByAgent"
-          label="Limite de quantidade de atendimentos simultâneos por agente"
+          :label="$t('sector.managers.working_day.end.label')"
           placeholder="4"
           class="form-section__inputs--fill-w"
         />

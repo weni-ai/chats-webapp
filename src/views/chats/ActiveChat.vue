@@ -17,6 +17,7 @@
 
       <div v-if="isMessageEditorVisible" class="message-editor">
         <message-editor
+          ref="message-editor"
           v-model="editorMessage"
           :audio.sync="audioMessage"
           @show-quick-messages="
@@ -236,6 +237,7 @@ export default {
       const audio = new File([blob], `${Date.now().toString()}.mp3`, { type: 'audio/mpeg3' });
       await this.$store.dispatch('rooms/sendMedias', [audio]);
       this.scrollMessagesToBottom();
+      this.$refs['message-editor'].clearAudio();
       this.audioMessage = null;
     },
     getTodayDate() {

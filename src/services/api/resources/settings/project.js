@@ -10,6 +10,16 @@ export const Permissions = Object.freeze({
 });
 
 export default {
+  async admins() {
+    const response = await http.get(`/permission/project/`, {
+      params: {
+        project: projectUuid,
+        role: Permissions.Admin,
+      },
+    });
+    return response.data;
+  },
+
   async managers() {
     const response = await http.get(`/permission/project/`, {
       params: {

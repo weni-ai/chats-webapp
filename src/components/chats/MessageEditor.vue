@@ -136,6 +136,9 @@ export default {
   },
 
   methods: {
+    clearAudio() {
+      this.$refs.audioRecorder?.discard();
+    },
     /**
      * @param {KeyboardEvent} event
      */

@@ -1,22 +1,26 @@
 <template>
   <section class="form-agent">
     <section class="section">
-      <p class="title">Adicionar agentes</p>
+      <p class="title">{{ $t('agents.add.title') }}</p>
 
       <section class="controls">
         <unnnic-autocomplete
           v-model="search"
           :data="agentsNames"
           @choose="chooseAgent"
-          label="Selecionar agente"
-          placeholder="Pesquise pelo nome ou email"
+          :label="$t('agents.add.select.label')"
+          :placeholder="$t('agents.add.select.placeholder')"
           iconLeft="search-1"
           iconRight="keyboard-return-1"
           open-with-focus
           highlight
           class="input"
         />
-        <unnnic-button type="secondary" text="Selecionar" @click="emitSelectedAgent" />
+        <unnnic-button
+          type="secondary"
+          :text="$t('agents.add.button')"
+          @click="emitSelectedAgent"
+        />
       </section>
     </section>
 
