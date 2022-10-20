@@ -13,7 +13,7 @@
           @keypress.enter="addTag"
           class="form-tags__section__input-group__input"
           :label="$t('tags.add.label')"
-          :placeholder="$('tags.add.placeholder')"
+          :placeholder="$t('tags.add.placeholder')"
         />
         <unnnic-button type="secondary" text="Adicionar" @click="addTag" />
       </section>
