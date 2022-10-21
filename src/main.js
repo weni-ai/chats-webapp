@@ -8,6 +8,8 @@ import router from './router';
 import store from './store';
 import env from './utils/env';
 
+import './utils/nilo';
+
 import './styles/global.scss';
 
 LogRocket.init(env('LOGROCKET_ID'), {
