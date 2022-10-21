@@ -91,7 +91,7 @@ export default {
     this.sound = (localStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'yes';
     this.help = (localStorage.getItem(PREFERENCES_NILO) || 'yes') === 'yes';
 
-    window.parent.postMessage({ event: `chats:${this.help ? 'show' : 'hide'}Nilo` }, '*');
+    window.dispatchEvent(new CustomEvent(`${this.help ? 'show' : 'hide'}BottomRightOptions`));
   },
 
   methods: {
@@ -117,7 +117,7 @@ export default {
     changeNilo() {
       localStorage.setItem(PREFERENCES_NILO, this.help ? 'yes' : 'no');
 
-      window.parent.postMessage({ event: `chats:${this.help ? 'show' : 'hide'}Nilo` }, '*');
+      window.dispatchEvent(new CustomEvent(`${this.help ? 'show' : 'hide'}BottomRightOptions`));
     },
   },
 };
