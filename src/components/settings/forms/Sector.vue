@@ -226,5 +226,8 @@ export default {
     flex-direction: column;
     gap: $unnnic-spacing-stack-xs;
   }
+  ::placeholder {
+    color: #d1d4da;
+  }
 }
 </style>
