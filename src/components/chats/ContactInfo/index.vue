@@ -31,6 +31,8 @@
                 })
               }}
             </p>
+
+            <p v-for="(value, key) in customFields" :key="key">{{ key }}: {{ value }}</p>
           </div>
         </section>
       </aside-slot-template-section>
@@ -121,6 +123,10 @@ export default {
 
     transferPersonSelected() {
       return this.transferOptions.find((option) => option.name === this.transferContactSearch);
+    },
+
+    customFields() {
+      return this.room.custom_fields;
     },
   },
 
