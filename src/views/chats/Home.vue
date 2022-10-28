@@ -1,5 +1,5 @@
 <template>
-  <chats-layout>
+  <chats-layout :totalOfSectors="sectors.length">
     <section class="illustration">
       <img class="illustration__doodles" src="/homepage-illustration/doodles.svg" alt="" />
       <img class="illustration__background" src="/homepage-illustration/background.svg" alt="" />
@@ -9,12 +9,20 @@
 
 <script>
 import ChatsLayout from '@/layouts/ChatsLayout';
+import Sector from '@/services/api/resources/settings/sector.js';
 
 export default {
   name: 'ChatsHome',
 
   components: {
     ChatsLayout,
+  },
+  data: () => ({
+    sectors: [],
+  }),
+  async mounted() {
+    const response = await Sector.list();
+    this.sectors = response.results;
   },
 };
 </script>
