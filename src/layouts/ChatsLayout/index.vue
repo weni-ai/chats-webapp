@@ -15,7 +15,7 @@
     <section v-if="isAsideSlotInUse" class="aside">
       <slot name="aside" />
     </section>
-    <section v-if="totalOfSectors === 0">
+    <section v-if="sectors.length === 0">
       <modal-on-boarding-chats />
     </section>
   </section>
@@ -24,6 +24,7 @@
 <script>
 import PreferencesBar from '@/components/PreferencesBar.vue';
 import ModalOnBoardingChats from '@/components/ModalOnBoardingChats.vue';
+import Sector from '@/services/api/resources/settings/sector.js';
 import TheRoomList from './components/TheRoomList';
 
 export default {
@@ -40,7 +41,14 @@ export default {
       type: Boolean,
       default: false,
     },
-    totalOfSectors: Number,
+    totalOfSectors: {},
+  },
+  data: () => ({
+    sectors: {},
+  }),
+  async mounted() {
+    const response = await Sector.list();
+    this.sectors = response.results;
   },
 
   computed: {
