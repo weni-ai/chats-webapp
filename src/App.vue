@@ -177,6 +177,16 @@ export default {
 
       this.ws.on('rooms.update', (room) => {
         if (!!room.user && room.user.email !== this.me.email) return;
+
+        if (
+          !this.$store.state.rooms.rooms.find((alreadyInRoom) => alreadyInRoom.uuid === room.uuid)
+        ) {
+          this.$store.dispatch('rooms/addRoom', room);
+
+          const notification = new Notification('select-sound');
+          notification.notify();
+        }
+
         this.$store.dispatch('rooms/updateRoom', { room, userEmail: this.me.email });
       });
 
