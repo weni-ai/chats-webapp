@@ -154,7 +154,7 @@ export default {
     },
     redirectToSettings() {
       window.parent.postMessage(
-        { event: 'chats:redirect', path: 'chats:settings:sectors/new' },
+        { event: 'chats:redirect', path: 'chats-settings:settings' },
         '*',
       );
     },
