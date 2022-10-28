@@ -687,5 +687,47 @@
     "pt-br": "Descartar",
     "en-us": "Delete",
     "es": "Descartar"
+  },
+  "on_boarding": {
+    "title": {
+      "pt-br": "Começando a usar o Chats",
+      "en-us": "Getting started with Chats",
+      "es": "Primeros pasos con los chats"
+    },
+    "title_sector": {
+      "pt-br": "Comece criando um setor",
+      "en-us": "Start by creating a sector",
+      "es": "Empiece por crear un sector"
+    },
+    "description_sector": {
+      "pt-br": "Crie um setor para gerenciar uma equipe de atendimento, é possível criar quantos setores você quiser, assim consegue gerenciar seus grupos de atendimentos por departamentos, produtos ou serviços.",
+      "en-us": "Create a sector to manage a service team, you can create as many sectors as you want, so you can manage your service groups by departments, products or services.",
+      "es": "Crea un sector para gestionar un equipo de servicio, puedes crear tantos sectores como quieras, así podrás gestionar tus grupos de servicio por departamentos, productos o servicios."
+    },
+    "title_queues": {
+      "pt-br": "Filas",
+      "en-us": "Queues",
+      "es": "Filas"
+    },
+    "description_queues": {
+      "pt-br": "Utilize filas para segmentar seus atendimentos por assuntos ou produtos, caso não desejar, basta criar somente uma fila.",
+      "en-us": "Use queues to segment your calls by subject or products, if you don't want to, just create a queue.",
+      "es": "Utilice colas para segmentar sus llamadas por tema o productos, si no quiere, simplemente cree una cola."
+    },
+    "title_tags": {
+      "pt-br": "Tags",
+      "en-us": "Tags",
+      "es": "Tags"
+    },
+    "description_tags": {
+      "pt-br": "Crie tags para classificar os chats, as tags podem ser utilizadas para gerar relatórios, filtrar atendimentos no histórico e muito mais!",
+      "en-us": "Create tags to classify chats, tags can be used to generate reports, filter calls in the history and much more!",
+      "es": "Cree tags para clasificar los chats, las etiquetas se pueden usar para generar informes, filtrar llamadas en el historial y mucho más."
+    },
+    "tooltip": {
+      "pt-br": "O Chats é o módulo de atendimento humano da Weni, confira o passo a passo para começar a usar",
+      "en-us": "Chats is Weni's human service module, check out the step by step to get started",
+      "es": "Chats es el módulo de servicio humano de Weni, echa un vistazo al paso a paso para empezar"
+    }
   }
 }

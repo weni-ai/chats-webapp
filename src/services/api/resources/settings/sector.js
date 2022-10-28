@@ -1,12 +1,10 @@
 import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 
-const projectUuid = getProject();
-
 export default {
   async list() {
     const response = await http.get('/sector/', {
-      params: { project: projectUuid },
+      params: { project: getProject() },
     });
     return response.data;
   },
@@ -22,7 +20,7 @@ export default {
   },
 
   async create(props) {
-    const response = await http.post('/sector/', { ...props, project: projectUuid });
+    const response = await http.post('/sector/', { ...props, project: getProject() });
     return response.data;
   },
 
