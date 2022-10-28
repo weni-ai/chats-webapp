@@ -153,10 +153,7 @@ export default {
       this.startAutoSkip();
     },
     redirectToSettings() {
-      window.parent.postMessage(
-        { event: 'chats:redirect', path: 'chats-settings:settings' },
-        '*',
-      );
+      window.parent.postMessage({ event: 'chats:redirect', path: 'chats-settings:settings' }, '*');
     },
   },
 
