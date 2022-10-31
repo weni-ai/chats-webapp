@@ -15,7 +15,7 @@
     <section v-if="isAsideSlotInUse" class="aside">
       <slot name="aside" />
     </section>
-    <section v-if="sectors.length === 0">
+    <section v-if="sectors === 0">
       <modal-on-boarding-chats />
     </section>
   </section>
@@ -47,8 +47,8 @@ export default {
     sectors: {},
   }),
   async mounted() {
-    const response = await Sector.list();
-    this.sectors = response.results;
+    const response = await Sector.countOfSectorsAvaible();
+    this.sectors = response.sector_count;
   },
 
   computed: {
