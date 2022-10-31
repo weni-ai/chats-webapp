@@ -37,12 +37,16 @@
                     <div class="description">{{ $t('on_boarding.description_sector') }}</div>
                   </div>
                   <div class="page">
-                    <img src="@/assets/OnBoardingChats/onBoardingChatRowImage.png" />
+                    <div class="image" @click="redirectToSettings">
+                      <img src="@/assets/OnBoardingChats/onBoardingChatRowImage.png" />
+                    </div>
                     <div class="title">{{ $t('on_boarding.title_queues') }}</div>
                     <div class="description">{{ $t('on_boarding.description_queues') }}</div>
                   </div>
                   <div class="page">
-                    <img src="@/assets/OnBoardingChats/onBoardingChatTagsImage.png" />
+                    <div class="image" @click="redirectToSettings">
+                      <img src="@/assets/OnBoardingChats/onBoardingChatTagsImage.png" />
+                    </div>
                     <div class="title">{{ $t('on_boarding.title_tags') }}</div>
                     <div class="description">{{ $t('on_boarding.description_tags') }}</div>
                   </div>
@@ -153,10 +157,7 @@ export default {
       this.startAutoSkip();
     },
     redirectToSettings() {
-      window.parent.postMessage(
-        { event: 'chats:redirect', path: 'chats:settings:sectors/new' },
-        '*',
-      );
+      window.parent.postMessage({ event: 'chats:redirect', path: 'chats-settings:settings' }, '*');
     },
   },
 
