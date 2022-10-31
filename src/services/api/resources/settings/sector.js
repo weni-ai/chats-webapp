@@ -9,6 +9,13 @@ export default {
     return response.data;
   },
 
+  async countOfSectorsAvaible() {
+    const response = await http.get('/sector/count/', {
+      params: { project: getProject() },
+    });
+    return response.data;
+  },
+
   async find(uuid) {
     const response = await http.get(`/sector/${uuid}/`);
     return response.data;
