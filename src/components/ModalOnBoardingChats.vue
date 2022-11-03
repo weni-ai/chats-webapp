@@ -6,17 +6,6 @@
     <div class="modal-container">
       <div class="modal-container-background">
         <div class="modal-background-color">
-          <div class="header">
-            <unnnic-card
-              class="unnnic-grid-span-4"
-              type="title"
-              icon="study-light-idea-1"
-              :title="$t('on_boarding.title')"
-              info-position="bottom"
-              scheme="aux-purple"
-              :info="$t('on_boarding.tooltip')"
-            />
-          </div>
           <div class="content">
             <div class="on-boarding-chat">
               <div class="slide" ref="slide">
@@ -34,7 +23,12 @@
                       <img src="@/assets/OnBoardingChats/onBoardingChatSectorImage.png" />
                     </div>
                     <div class="title">{{ $t('on_boarding.title_sector') }}</div>
-                    <div class="description">{{ $t('on_boarding.description_sector') }}</div>
+                    <div class="description">
+                      <span>
+                        {{ $t('on_boarding.description_sector') }}
+                        <a @click="redirectToSettings"> Configurar </a>
+                      </span>
+                    </div>
                   </div>
                   <div class="page">
                     <div class="image" @click="redirectToSettings">
@@ -190,30 +184,17 @@ export default {
 }
 
 .modal-container-background {
-  width: 65rem;
+  width: 708px;
   box-shadow: 0 8px 16px rgb(0 0 0 / 8%);
   transition: all 0.3s ease;
   border-radius: 0.25rem;
   overflow: hidden;
 }
 .modal-background-color {
-  min-height: 35rem;
+  min-height: 200px;
   background-color: #f9f9f9;
-  padding: 0 1.5rem;
   text-align: center;
 }
-
-.header {
-  font-weight: $unnnic-font-weight-regular;
-  font-size: $unnnic-font-size-title-sm;
-  font-family: $unnnic-font-family-primary;
-  padding: 1rem;
-  white-space: nowrap;
-  overflow: hidden;
-  display: flex;
-  text-overflow: ellipsis;
-}
-
 .on-boarding-chat {
   .slide {
     width: 100%;
@@ -227,9 +208,9 @@ export default {
 
         img {
           width: 100%;
+          max-width: 100%;
           border-radius: $unnnic-border-radius-sm;
           margin-bottom: $unnnic-spacing-stack-sm;
-          aspect-ratio: 629 / 232;
           object-fit: cover;
           cursor: pointer;
         }
@@ -241,6 +222,8 @@ export default {
           line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
           margin-bottom: $unnnic-spacing-stack-xs;
           display: flex;
+          font-size: 14px;
+          padding: 0px 16px;
         }
 
         .description {
@@ -250,6 +233,8 @@ export default {
           line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
           display: flex;
           text-align: initial;
+          font-size: 14px;
+          padding: 0px 16px;
         }
       }
     }
@@ -260,7 +245,6 @@ export default {
     padding: 1rem;
     align-items: center;
     justify-content: center;
-    margin-top: $unnnic-spacing-stack-sm;
 
     .pages {
       margin: 0 $unnnic-spacing-inline-sm;
@@ -281,6 +265,13 @@ export default {
         }
       }
     }
+  }
+  .image {
+    padding: 0px;
+  }
+  a {
+    cursor: pointer;
+    text-decoration: underline;
   }
 }
 </style>
