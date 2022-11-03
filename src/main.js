@@ -17,6 +17,8 @@ LogRocket.init(env('LOGROCKET_ID'), {
   parentDomain: env('LOGROCKET_PARENT_DOMAIN'),
 });
 
+console.info('LogRocket Config: ', env('LOGROCKET_ID'), env('LOGROCKET_PARENT_DOMAIN'));
+
 Vue.config.productionTip = false;
 
 Vue.use(VMask);
