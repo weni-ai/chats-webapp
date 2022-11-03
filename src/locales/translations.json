@@ -729,5 +729,61 @@
       "en-us": "Chats is Weni's human service module, check out the step by step to get started",
       "es": "Chats es el módulo de servicio humano de Weni, echa un vistazo al paso a paso para empezar"
     }
+  },
+  "common": {
+    "see_all": {
+      "pt-br": "Ver tudo",
+      "en": "See all"
+    },
+    "months": {
+      "pt-br": [
+        "Janeiro",
+        "Fevereiro",
+        "Março",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro"
+      ],
+      "en": [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ]
+    },
+    "days": {
+      "pt-br": [
+        "D",
+        "S",
+        "T",
+        "Q",
+        "Q",
+        "S",
+        "S"
+      ],
+      "en": [
+        "S",
+        "M",
+        "T",
+        "W",
+        "T",
+        "F",
+        "S"
+      ]
+    }
   }
 }
