@@ -61,14 +61,14 @@
         />
         <unnnic-input
           v-model="sector.workingDay.end"
-          label="Horário de encerramento"
+          :label="$t('sector.managers.working_day.end.label')"
           v-mask="'##:##'"
           placeholder="18:00"
         />
 
         <unnnic-input
           v-model="sector.maxSimultaneousChatsByAgent"
-          :label="$t('sector.managers.working_day.end.label')"
+          :label="'Limite de quantidade de atendimentos simultâneos por agente'"
           placeholder="4"
           class="form-section__inputs--fill-w"
         />
