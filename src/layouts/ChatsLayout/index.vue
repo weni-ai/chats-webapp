@@ -53,8 +53,8 @@ export default {
     isLoading: false,
   }),
   async mounted() {
-    this.isLoading = true;
     try {
+      this.isLoading = true;
       const response = await Sector.countOfSectorsAvaible();
       this.sectors = response.sector_count;
       this.isLoading = false;
