@@ -695,9 +695,9 @@
       "es": "Primeros pasos con los chats"
     },
     "title_sector": {
-      "pt-br": "Comece criando um setor",
-      "en-us": "Start by creating a sector",
-      "es": "Empiece por crear un sector"
+      "pt-br": "Configure sua equipe de atendimento!",
+      "en-us": "Configure your support team!",
+      "es": "¡Configura tu equipo de soporte!"
     },
     "description_sector": {
       "pt-br": "Crie um setor para gerenciar uma equipe de atendimento, é possível criar quantos setores você quiser, assim consegue gerenciar seus grupos de atendimentos por departamentos, produtos ou serviços.",
@@ -729,5 +729,10 @@
       "en-us": "Chats is Weni's human service module, check out the step by step to get started",
       "es": "Chats es el módulo de servicio humano de Weni, echa un vistazo al paso a paso para empezar"
     }
+  },
+  "status_agent": {
+    "pt-br": "Você está",
+    "en-us": "You are",
+    "es": "Tu estas"
   }
 }
