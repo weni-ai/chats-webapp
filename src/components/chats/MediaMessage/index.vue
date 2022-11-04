@@ -63,7 +63,7 @@ export default {
       return video.test(this.media.content_type);
     },
     isAudio() {
-      const audio = /(mpeg3|wav)/;
+      const audio = /(mpeg3|wav|ogg)/;
       return audio.test(this.media.content_type);
     },
   },
