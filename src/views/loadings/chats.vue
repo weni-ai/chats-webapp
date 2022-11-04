@@ -1,31 +1,31 @@
 <template>
   <div class="side-bar">
     <div class="unnnic-grid-giant" style="padding: 12px 24px">
-      <div class="unnnic-grid-span-10" style="display: flex; justify-content: space-between">
-        <div style="margin-top: 25px">
+      <div class="unnnic-grid-span-12" style="display: flex">
+        <div style="margin-right: 285px; margin-top: 26px">
           <unnnic-skeleton-loading height="20px" width="90px" />
         </div>
-        <div>
-          <unnnic-skeleton-loading height="45px" width="670px" />
+        <div style="margin-right: 25px">
+          <unnnic-skeleton-loading height="45px" width="550px" />
         </div>
       </div>
     </div>
     <div class="unnnic-grid-giant" style="padding: 12px 24px">
-      <div class="unnnic-grid-span-12" style="display: flex; justify-content: space-between">
-        <div>
+      <div class="unnnic-grid-span-12" style="display: flex">
+        <div style="margin-right: 25px">
           <unnnic-skeleton-loading height="45px" width="350px" />
         </div>
-        <div>
-          <unnnic-skeleton-loading height="45px" width="200px" />
+        <div style="margin-right: 25px">
+          <unnnic-skeleton-loading height="45px" width="150px" />
         </div>
-        <div>
-          <unnnic-skeleton-loading height="45px" width="200px" />
+        <div style="margin-right: 25px">
+          <unnnic-skeleton-loading height="45px" width="150px" />
         </div>
-        <div>
-          <unnnic-skeleton-loading height="45px" width="200px" />
+        <div style="margin-right: 25px">
+          <unnnic-skeleton-loading height="45px" width="150px" />
         </div>
-        <div>
-          <unnnic-skeleton-loading height="45px" width="200px" />
+        <div style="margin-right: 25px">
+          <unnnic-skeleton-loading height="45px" width="150px" />
         </div>
       </div>
     </div>
@@ -34,8 +34,6 @@
         <div class="skeleton-line"><unnnic-skeleton-loading height="45px" width="350px" /></div>
         <div class="skeleton-line"><unnnic-skeleton-loading height="45px" width="350px" /></div>
         <div class="skeleton-line"><unnnic-skeleton-loading height="20px" width="90px" /></div>
-        <div class="skeleton-line"><unnnic-skeleton-loading height="45px" width="350px" /></div>
-        <div class="skeleton-line"><unnnic-skeleton-loading height="45px" width="350px" /></div>
         <div class="skeleton-line"><unnnic-skeleton-loading height="45px" width="350px" /></div>
         <div class="skeleton-line"><unnnic-skeleton-loading height="45px" width="350px" /></div>
         <div class="skeleton-line"><unnnic-skeleton-loading height="45px" width="350px" /></div>

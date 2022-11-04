@@ -50,16 +50,16 @@ export default {
   },
   data: () => ({
     sectors: {},
-    isLoading: true,
+    isLoading: false,
   }),
   async mounted() {
     try {
-      // this.isLoading = true;
+      this.isLoading = true;
       const response = await Sector.countOfSectorsAvaible();
       this.sectors = response.sector_count;
-      // this.isLoading = false;
+      this.isLoading = false;
     } catch (error) {
-      // this.isLoading = false;
+      this.isLoading = false;
       console.log(error);
     }
   },
