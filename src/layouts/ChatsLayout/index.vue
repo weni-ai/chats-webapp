@@ -18,6 +18,9 @@
     <section v-if="sectors === 0">
       <modal-on-boarding-chats />
     </section>
+    <div>
+      <skeleton-loading v-show="isLoading" />
+    </div>
   </section>
 </template>
 
@@ -25,6 +28,7 @@
 import PreferencesBar from '@/components/PreferencesBar.vue';
 import ModalOnBoardingChats from '@/components/ModalOnBoardingChats.vue';
 import Sector from '@/services/api/resources/settings/sector.js';
+import SkeletonLoading from '@/views/loadings/chats.vue';
 import TheRoomList from './components/TheRoomList';
 
 export default {
@@ -34,6 +38,7 @@ export default {
     PreferencesBar,
     TheRoomList,
     ModalOnBoardingChats,
+    SkeletonLoading,
   },
 
   props: {
@@ -45,10 +50,18 @@ export default {
   },
   data: () => ({
     sectors: {},
+    isLoading: false,
   }),
   async mounted() {
-    const response = await Sector.countOfSectorsAvaible();
-    this.sectors = response.sector_count;
+    this.isLoading = true;
+    try {
+      const response = await Sector.countOfSectorsAvaible();
+      this.sectors = response.sector_count;
+      this.isLoading = false;
+    } catch (error) {
+      this.isLoading = false;
+      console.log(error);
+    }
   },
 
   computed: {

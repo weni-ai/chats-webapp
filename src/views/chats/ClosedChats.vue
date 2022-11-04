@@ -28,7 +28,7 @@
             v-if="sectors.length > 1"
             v-model="filteredSectorUuid"
             label="Setor"
-            size="sm"
+            size="md"
             class="input"
             @input="getSectorTags(filteredSectorUuid)"
           >
@@ -54,9 +54,10 @@
 
           <unnnic-input-date-picker
             v-model="filteredDateRange"
-            size="sm"
+            size="md"
             class="input"
             :input-format="$t('date_format')"
+            placeholde="10/08/2022"
           />
 
           <div class="clear-filters-button">
@@ -104,6 +105,9 @@
             </unnnic-table-row>
           </template>
         </unnnic-table>
+        <div v-if="isLoading" class="weni-redirecting">
+          <img class="logo" src="@/assets/LogoWeniAnimada4.svg" alt="" />
+        </div>
       </section>
     </section>
   </chats-layout>
@@ -148,6 +152,7 @@ export default {
   data: () => ({
     contact: null,
     messages: [],
+    isLoading: false,
     filteredDateRange: {
       start: '',
       end: '',
@@ -210,35 +215,58 @@ export default {
 
   methods: {
     async openContactHistory(contact) {
-      const response = await Message.getByContact(contact.uuid);
-      const messages = response.results;
-      const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
-      const groupedMessages = groupSequentialSentMessages(messagesWithSender);
-      this.messages = groupedMessages;
-      this.contact = contact;
+      try {
+        this.isLoading = true;
+        const response = await Message.getByContact(contact.uuid);
+        const messages = response.results;
+        const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
+        const groupedMessages = groupSequentialSentMessages(messagesWithSender);
+        this.messages = groupedMessages;
+        this.contact = contact;
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+      }
     },
     async getContacts() {
-      const response = await Contact.getAllWithClosedRooms();
-      this.contacts = response.results;
+      try {
+        this.isLoading = true;
+        const response = await Contact.getAllWithClosedRooms();
+        this.contacts = response.results;
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+      }
     },
     async getSectorTags(sectorUuid) {
       if (!sectorUuid) {
         this.tags = [];
         return;
       }
+      try {
+        this.isLoading = true;
+        const response = await Sector.tags(sectorUuid);
+        const tags = response.results;
 
-      const response = await Sector.tags(sectorUuid);
-      const tags = response.results;
+        const tagGroup = {
+          items: tags.map((tag) => ({ ...tag, title: tag.name })),
+        };
 
-      const tagGroup = {
-        items: tags.map((tag) => ({ ...tag, title: tag.name })),
-      };
-
-      this.tags = [tagGroup];
+        this.tags = [tagGroup];
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+      }
     },
     async getSectors() {
-      const response = await Sector.list();
-      this.sectors = response.results;
+      try {
+        this.isLoading = true;
+        const response = await Sector.list();
+        this.sectors = response.results;
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+      }
     },
     contactHasAllActiveFilterTags(contact) {
       if (this.filteredTags.length === 0) return true;
@@ -350,6 +378,20 @@ export default {
     display: flex;
     align-items: center;
     gap: $unnnic-spacing-stack-xs;
+  }
+
+  .weni-redirecting {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    flex: 1;
+    height: auto;
+  }
+  .logo {
+    width: 10%;
+    max-width: 40px;
+    max-height: 40px;
   }
 }
 </style>
