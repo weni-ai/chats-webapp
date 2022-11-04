@@ -1,33 +1,37 @@
 <template>
   <div class="side-bar">
     <div class="unnnic-grid-giant" style="padding: 12px 24px">
-      <div class="unnnic-grid-span-3" style="display: flex; flex-direction: column">
-        <unnnic-skeleton-loading height="20px" width="90px" />
-        <div style="margin-top: 10px"><unnnic-skeleton-loading height="45px" width="350px" /></div>
-      </div>
-      <div class="unnnic-grid-span-9">
-        <unnnic-skeleton-loading height="45px" />
+      <div class="unnnic-grid-span-10" style="display: flex; justify-content: space-between">
+        <div style="margin-top: 25px">
+          <unnnic-skeleton-loading height="20px" width="90px" />
+        </div>
+        <div>
+          <unnnic-skeleton-loading height="45px" width="670px" />
+        </div>
       </div>
     </div>
-    <div class="unnnic-grid-giant">
-      <div class="unnnic-grid-span-3">
-        <unnnic-skeleton-loading height="45px" width="350px" />
-      </div>
-      <div class="unnnic-grid-span-2">
-        <unnnic-skeleton-loading height="40px" width="200px" />
-      </div>
-      <div class="unnnic-grid-span-2">
-        <unnnic-skeleton-loading height="40px" width="200px" />
-      </div>
-      <div class="unnnic-grid-span-2">
-        <unnnic-skeleton-loading height="40px" width="200px" />
-      </div>
-      <div class="unnnic-grid-span-2">
-        <unnnic-skeleton-loading height="40px" width="200px" />
+    <div class="unnnic-grid-giant" style="padding: 12px 24px">
+      <div class="unnnic-grid-span-12" style="display: flex; justify-content: space-between">
+        <div>
+          <unnnic-skeleton-loading height="45px" width="350px" />
+        </div>
+        <div>
+          <unnnic-skeleton-loading height="45px" width="200px" />
+        </div>
+        <div>
+          <unnnic-skeleton-loading height="45px" width="200px" />
+        </div>
+        <div>
+          <unnnic-skeleton-loading height="45px" width="200px" />
+        </div>
+        <div>
+          <unnnic-skeleton-loading height="45px" width="200px" />
+        </div>
       </div>
     </div>
     <div class="unnnic-grid-giant">
       <div class="unnnic-grid-span-1" style="display: flex; flex-direction: column">
+        <div class="skeleton-line"><unnnic-skeleton-loading height="45px" width="350px" /></div>
         <div class="skeleton-line"><unnnic-skeleton-loading height="45px" width="350px" /></div>
         <div class="skeleton-line"><unnnic-skeleton-loading height="20px" width="90px" /></div>
         <div class="skeleton-line"><unnnic-skeleton-loading height="45px" width="350px" /></div>
