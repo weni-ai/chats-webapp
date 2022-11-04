@@ -35,6 +35,9 @@
         ]"
       />
     </section>
+    <div v-if="isLoading" class="weni-redirecting">
+      <img class="logo" src="@/assets/LogoWeniAnimada4.svg" alt="" />
+    </div>
   </main>
 </template>
 
@@ -50,6 +53,7 @@ export default {
 
   data: () => ({
     sectors: [],
+    isLoading: true,
   }),
 
   methods: {
@@ -60,8 +64,14 @@ export default {
       });
     },
     async listSectors() {
-      const sectors = await Sector.list();
-      this.sectors = sectors.results;
+      try {
+        this.isLoading = true;
+        const sectors = await Sector.list();
+        this.sectors = sectors.results;
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+      }
     },
   },
 };
@@ -98,6 +108,18 @@ export default {
     .new-sector-card {
       height: 100%;
     }
+  }
+  .weni-redirecting {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    padding: 15px;
+  }
+  .logo {
+    width: 10%;
+    max-width: 40px;
+    max-height: 40px;
   }
 }
 </style>

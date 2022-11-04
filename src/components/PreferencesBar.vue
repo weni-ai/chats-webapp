@@ -72,6 +72,7 @@
 
 <script>
 import Profile from '@/services/api/resources/profile';
+import { unnnicCallAlert } from '@weni/unnnic-system';
 
 export const PREFERENCES_SOUND = 'WENICHATS_PREFERENCES_SOUND';
 export const PREFERENCES_NILO = 'WENICHATS_PREFERENCES_NILO';
@@ -108,6 +109,7 @@ export default {
       this.$store.state.config.status = connection_status;
 
       this.loadingStatus = false;
+      this.showStatusAlert(connection_status);
     },
 
     changeSound() {
@@ -119,6 +121,19 @@ export default {
 
       window.dispatchEvent(new CustomEvent(`${this.help ? 'show' : 'hide'}BottomRightOptions`));
     },
+
+    showStatusAlert(connectionStatus) {
+      unnnicCallAlert({
+        props: {
+          title: ``,
+          text: `${this.$t('status_agent')} ${connectionStatus}`,
+          icon: 'indicator',
+          scheme: connectionStatus === 'online' ? 'feedback-green' : '$unnnic-color-neutral-black',
+          closeText: 'Fechar',
+        },
+        seconds: 15,
+      });
+    },
   },
 };
 </script>
@@ -127,6 +142,8 @@ export default {
 .preferences-bar {
   position: relative;
   height: $unnnic-font-size-body-md + $unnnic-line-height-md + 2 * $unnnic-spacing-stack-xs;
+  box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.04);
+  border-radius: 4px;
 
   .header .label {
     user-select: none;
