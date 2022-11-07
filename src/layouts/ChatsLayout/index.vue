@@ -19,7 +19,7 @@
       <modal-on-boarding-chats />
     </section>
     <div>
-      <skeleton-loading v-show="isLoading" />
+      <skeleton-loading v-show="isLoading && disabledChatList" />
     </div>
   </section>
 </template>
