@@ -1,7 +1,12 @@
 <template>
   <section class="form-agent">
     <section class="section">
-      <p class="title">{{ $t('agents.add.title') }}</p>
+      <p class="title">
+        {{ $t('agents.add.title') }}
+        <unnnic-tool-tip enabled side="right" :text="$t('new_sector.agent_tip')">
+          <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+        </unnnic-tool-tip>
+      </p>
 
       <section class="controls">
         <unnnic-autocomplete

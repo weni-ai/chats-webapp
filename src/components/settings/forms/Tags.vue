@@ -1,11 +1,13 @@
 <template>
   <section class="form-tags">
-    <p class="form-tags__description">{{ $t('tags.description') }}</p>
+    <!-- <p class="form-tags__description">{{ $t('tags.description') }}</p> -->
 
     <section class="form-tags__section">
       <p class="form-tags__section__label">
         {{ $t('tags.add.title') }}
-        <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+        <unnnic-tool-tip enabled side="right" :text="$t('new_sector.tags_tip')">
+          <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+        </unnnic-tool-tip>
       </p>
       <section class="form-tags__section__input-group">
         <unnnic-input

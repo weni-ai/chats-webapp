@@ -7,11 +7,7 @@
     <section v-else class="form-section">
       <h2 class="title">
         Adicionar novo setor
-        <unnnic-tool-tip
-          enabled
-          text="Crie um setor para gerenciar a operação de atendimento, adicionando gerentes, agentes e horário de funcionamento."
-          side="right"
-        >
+        <unnnic-tool-tip enabled :text="$t('new_sector.sector_tip')" side="right">
           <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
         </unnnic-tool-tip>
       </h2>
@@ -20,7 +16,12 @@
     </section>
 
     <section class="form-section">
-      <h2 class="title">{{ $t('sector.managers.title') }}</h2>
+      <h2 class="title">
+        {{ $t('sector.managers.title') }}
+        <unnnic-tool-tip enabled :text="$t('new_sector.agent_tip')" side="right">
+          <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+        </unnnic-tool-tip>
+      </h2>
 
       <div class="inline-input-and-button">
         <unnnic-autocomplete
@@ -33,7 +34,12 @@
           iconLeft="search-1"
           @choose="selectManager"
         />
-        <unnnic-button text="Selecionar" type="secondary" @click="addSectorManager" />
+        <unnnic-button
+          text="Selecionar"
+          type="secondary"
+          @click="addSectorManager"
+          :disabled="!selectedManager"
+        />
       </div>
 
       <section v-if="sector.managers.length > 0" class="form-sector__managers">
