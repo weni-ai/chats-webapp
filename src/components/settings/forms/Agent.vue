@@ -24,6 +24,7 @@
         <unnnic-button
           type="secondary"
           :text="$t('agents.add.button')"
+          :disabled="!selectAgent"
           @click="emitSelectedAgent"
         />
       </section>
@@ -70,6 +71,7 @@ export default {
 
   data: () => ({
     search: '',
+    selectAgent: null,
     agent: {
       uuid: '',
     },
@@ -100,6 +102,7 @@ export default {
       this.$emit('remove', agentUuid);
     },
     chooseAgent(selected) {
+      this.selectAgent = selected;
       const agent = this.agents.find((agent) => {
         const { first_name, last_name, email } = agent.user;
         const name = `${first_name} ${last_name}`;
