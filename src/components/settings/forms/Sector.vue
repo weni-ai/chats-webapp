@@ -1,3 +1,4 @@
+<!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
   <form @submit.prevent="$emit('submit')" class="form-sector">
     <section v-if="isEditing" class="form-section">
@@ -56,29 +57,42 @@
     </section>
 
     <section class="form-section">
-      <h2 class="title">{{ $t('sector.managers.working_day.title') }}</h2>
+      <div>
+        <h2 class="title">{{ $t('sector.managers.working_day.title') }}</h2>
 
-      <section class="form-section__inputs">
-        <unnnic-input
+        <section class="form-section__inputs">
+          <div>
+            <span class="label-working-day">{{
+              $t('sector.managers.working_day.start.label')
+            }}</span>
+            <input class="input-time" type="time" v-model="sector.workingDay.start" />
+          </div>
+          <!-- <unnnic-input
           v-model="sector.workingDay.start"
           :label="$t('sector.managers.working_day.start.label')"
           v-mask="'##:##'"
+          :type="timeError ? 'error' : 'normal'"
+          :message="timeError"
           placeholder="08:00"
-        />
-        <unnnic-input
-          v-model="sector.workingDay.end"
-          label="Horário de encerramento"
-          v-mask="'##:##'"
-          placeholder="18:00"
-        />
-
-        <unnnic-input
-          v-model="sector.maxSimultaneousChatsByAgent"
-          :label="$t('sector.managers.working_day.end.label')"
-          placeholder="4"
-          class="form-section__inputs--fill-w"
-        />
-      </section>
+        /> -->
+          <div>
+            <span class="label-working-day">{{ $t('sector.managers.working_day.end.label') }}</span>
+            <input class="input-time" type="time" v-model="sector.workingDay.end" />
+            <!-- <unnnic-input
+            v-model="sector.workingDay.end"
+            label="Horário de encerramento"
+            v-mask="'##:##'"
+            placeholder="18:00"
+          /> -->
+          </div>
+          <unnnic-input
+            v-model="sector.maxSimultaneousChatsByAgent"
+            :label="$t('sector.managers.working_day.end.label')"
+            placeholder="4"
+            class="form-section__inputs--fill-w"
+          />
+        </section>
+      </div>
     </section>
   </form>
 </template>
@@ -92,7 +106,6 @@ export default {
   components: {
     SelectedMember,
   },
-
   props: {
     isEditing: {
       type: Boolean,
@@ -161,9 +174,9 @@ export default {
     validate() {
       return this.areAllFieldsFilled();
     },
+
     areAllFieldsFilled() {
       const { name, managers, workingDay, maxSimultaneousChatsByAgent } = this.sector;
-
       return !!(
         name.trim() &&
         managers.length > 0 &&
@@ -224,6 +237,33 @@ export default {
         grid-column: span 2;
       }
     }
+  }
+
+  .input-time {
+    background: #fff;
+    border: 0.0625rem solid #e2e6ed;
+    border-radius: 0.25rem;
+    color: #4e5666;
+    font-weight: 400;
+    font-family: Lato;
+    box-sizing: border-box;
+    width: 100%;
+    font-size: 0.875rem;
+    line-height: 1.375rem;
+    padding: 0.75rem 1rem;
+    cursor: text;
+  }
+  .label-working-day {
+    font-weight: 400;
+    line-height: 1.375rem;
+    font-size: 0.875rem;
+    color: #67738b;
+    margin: 0.5rem 0;
+  }
+
+  input:focus {
+    outline-color: #9caccc;
+    outline: 1px solid #9caccc;
   }
 
   &__managers {
