@@ -2,7 +2,12 @@
   <section class="edit-sector">
     <sector-tabs v-if="sector.uuid" v-model="currentTab" class="scrollable">
       <template #sector>
-        <form-sector v-model="sector" is-editing @remove-manager="removeManager" />
+        <form-sector
+          v-model="sector"
+          is-editing
+          @remove-manager="removeManager"
+          :managers="projectManagers"
+        />
       </template>
 
       <template #queues>
@@ -109,6 +114,7 @@ export default {
 
     this.getSector();
     this.getManagers();
+    this.listProjectManagers();
   },
 
   data: () => ({
@@ -132,6 +138,7 @@ export default {
     queues: [],
     agents: [],
     projectAgents: [],
+    projectManagers: [],
     tags: [],
     currentTags: [],
     toAddTags: [],
@@ -139,6 +146,10 @@ export default {
   }),
 
   methods: {
+    async listProjectManagers() {
+      const managers = (await Project.managers()).results.concat((await Project.admins()).results);
+      this.projectManagers = managers;
+    },
     async createQueue({ name }) {
       const sectorUuid = this.sector.uuid;
       await Queue.create({ name, sectorUuid });
