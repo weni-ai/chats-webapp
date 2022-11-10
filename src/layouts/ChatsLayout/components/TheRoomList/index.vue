@@ -86,7 +86,7 @@ export default {
   .chat-groups {
     flex: 1 1;
 
-    width: calc(16rem + 1rem);
+    // width: calc(16rem + 1rem);
 
     display: flex;
     flex-direction: column;

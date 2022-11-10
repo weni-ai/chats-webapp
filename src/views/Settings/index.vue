@@ -15,6 +15,7 @@
 
       <unnnic-card-project
         v-for="sector in sectors"
+        class="sectors-list"
         :key="sector.id"
         actionText="Abrir"
         :name="sector.name"
@@ -107,6 +108,9 @@ export default {
 
     .new-sector-card {
       height: 100%;
+    }
+    .sectors-list {
+      background-color: $unnnic-color-background-carpet;
     }
   }
   .weni-redirecting {

@@ -24,50 +24,52 @@
         </header>
 
         <section class="filters">
-          <unnnic-select
-            v-if="sectors.length > 1"
-            v-model="filteredSectorUuid"
-            label="Setor"
-            size="md"
-            class="input"
-            @input="getSectorTags(filteredSectorUuid)"
-          >
-            <option value="">Todos</option>
-            <option
-              v-for="sector in sectors"
-              :key="sector.uuid"
-              :value="sector.uuid"
-              :selected="sector.uuid === filteredSectorUuid"
+          <div style="display: flex; align-items: flex-end; gap: 1rem; width: 100%">
+            <unnnic-select
+              v-if="sectors.length > 1"
+              v-model="filteredSectorUuid"
+              label="Setor"
+              size="md"
+              class="input"
+              @input="getSectorTags(filteredSectorUuid)"
+              style="width: 25%"
             >
-              {{ sector.name }}
-            </option>
-          </unnnic-select>
+              <option value="">Todos</option>
+              <option
+                v-for="sector in sectors"
+                :key="sector.uuid"
+                :value="sector.uuid"
+                :selected="sector.uuid === filteredSectorUuid"
+              >
+                {{ sector.name }}
+              </option>
+            </unnnic-select>
 
-          <unnnic-multi-select
-            v-model="tags"
-            class="input"
-            label="Filtrar por tags"
-            input-title="Pesquise e selecione tags"
-            expand
-            hide-group-title
-          />
+            <unnnic-multi-select
+              v-model="tags"
+              class="input"
+              label="Filtrar por tags"
+              input-title="Pesquise e selecione tags"
+              expand
+              hide-group-title
+              style="width: 35%"
+            />
 
-          <unnnic-input-date-picker
-            v-model="filteredDateRange"
-            size="md"
-            class="input"
-            :input-format="$t('date_format')"
-            placeholde="10/08/2022"
-          />
-
-          <div class="clear-filters-button">
-            <unnnic-tool-tip enabled :text="$t('filter.clear_all')" side="right">
-              <unnnic-button-icon
-                icon="button-refresh-arrows-1"
-                size="small"
-                @click="clearFilters"
-              />
-            </unnnic-tool-tip>
+            <unnnic-input-date-picker
+              v-model="filteredDateRange"
+              size="md"
+              class="input"
+              :input-format="$t('date_format')"
+            />
+            <div class="clear-filters-button">
+              <unnnic-tool-tip enabled :text="$t('filter.clear_all')" side="right">
+                <unnnic-button-icon
+                  icon="button-refresh-arrows-1"
+                  size="large"
+                  @click="clearFilters"
+                />
+              </unnnic-tool-tip>
+            </div>
           </div>
         </section>
 
@@ -350,7 +352,7 @@ export default {
     display: flex;
     align-items: flex-end;
     gap: $unnnic-spacing-stack-sm;
-    width: 90%;
+    width: 100%;
 
     & > .input {
       flex: 1 1;
