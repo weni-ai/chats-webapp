@@ -1,14 +1,17 @@
 <template>
-  <section class="chats-layout">
+  <section class="chats-layout unnnic-grid-giant">
     <slot name="room-list">
-      <div :style="{ display: 'flex', flexDirection: 'column' }">
-        <preferences-bar :style="{ margin: '16px 0 0 16px' }" />
+      <div
+        :style="{ display: 'flex', flexDirection: 'column', height: '100vh' }"
+        class="unnnic-grid-span-3"
+      >
+        <preferences-bar :style="{ margin: '16px 0 0 0px' }" />
 
         <the-room-list class="room-list" :disabled="disabledChatList" />
       </div>
     </slot>
 
-    <main>
+    <main class="unnnic-grid-span-9" style="height: 100vh">
       <slot />
     </main>
 
@@ -18,9 +21,8 @@
     <section v-if="sectors === 0">
       <modal-on-boarding-chats />
     </section>
-    <div>
-      <skeleton-loading v-show="isLoading && disabledChatList" />
-    </div>
+    <div v-show="isLoading && disabledChatList">
+      <skeleton-loading />
   </section>
 </template>
 
@@ -79,12 +81,12 @@ export default {
   display: flex;
 
   .room-list {
-    overflow-y: auto;
+    // overflow-y: auto;
     margin: {
       top: $unnnic-spacing-inline-sm;
       right: 0;
       bottom: 0;
-      left: $unnnic-spacing-inline-sm;
+      // left: $unnnic-spacing-inline-sm;
     }
   }
 

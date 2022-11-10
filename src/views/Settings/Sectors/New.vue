@@ -235,14 +235,12 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  margin-right: 1.5rem;
   padding-bottom: 1rem;
 
   .scrollable {
     overflow-y: auto;
     height: 100%;
     padding-right: 1rem;
-    margin-right: 0.5rem;
   }
 
   &__indicator {
