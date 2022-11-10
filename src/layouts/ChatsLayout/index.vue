@@ -23,7 +23,6 @@
     </section>
     <div v-show="isLoading && disabledChatList">
       <skeleton-loading />
-    </div>
   </section>
 </template>
 
