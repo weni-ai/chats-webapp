@@ -1,9 +1,9 @@
 <template>
   <section class="form-queue">
-    <p v-if="!showInfoIcon" class="form-queue__description">{{ infoText }}</p>
+    <!-- <p v-if="showInfoIcon" class="form-queue__description">{{ infoText }}</p> -->
     <p class="title">
       {{ label }}
-      <unnnic-tool-tip v-if="showInfoIcon" enabled side="right" :text="infoText">
+      <unnnic-tool-tip enabled side="right" :text="$t('new_sector.queues_tip')">
         <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
       </unnnic-tool-tip>
     </p>
@@ -60,10 +60,6 @@ export default {
       default: () => ({}),
     },
   },
-
-  data: () => ({
-    infoText: this.$t('queue.description'),
-  }),
 
   computed: {
     queue: {

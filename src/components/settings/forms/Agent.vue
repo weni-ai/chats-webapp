@@ -1,7 +1,12 @@
 <template>
   <section class="form-agent">
     <section class="section">
-      <p class="title">{{ $t('agents.add.title') }}</p>
+      <p class="title">
+        {{ $t('agents.add.title') }}
+        <unnnic-tool-tip enabled side="right" :text="$t('new_sector.agent_tip')">
+          <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+        </unnnic-tool-tip>
+      </p>
 
       <section class="controls">
         <unnnic-autocomplete
@@ -19,6 +24,7 @@
         <unnnic-button
           type="secondary"
           :text="$t('agents.add.button')"
+          :disabled="!selectAgent"
           @click="emitSelectedAgent"
         />
       </section>
@@ -65,6 +71,7 @@ export default {
 
   data: () => ({
     search: '',
+    selectAgent: null,
     agent: {
       uuid: '',
     },
@@ -95,6 +102,7 @@ export default {
       this.$emit('remove', agentUuid);
     },
     chooseAgent(selected) {
+      this.selectAgent = selected;
       const agent = this.agents.find((agent) => {
         const { first_name, last_name, email } = agent.user;
         const name = `${first_name} ${last_name}`;
