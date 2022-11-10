@@ -275,5 +275,10 @@ export default {
   ::placeholder {
     color: #d1d4da;
   }
+
+  input::-webkit-datetime-edit {
+    min-width: 100%;
+    width: 100%;
+  }
 }
 </style>
