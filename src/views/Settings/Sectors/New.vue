@@ -1,11 +1,11 @@
 <template>
   <section class="new-sector">
-    <section class="scrollable">
-      <div class="new-sector__indicator">
-        <unnnic-indicator :current-step="step" :number-of-steps="3" :titles="stepsTitles" />
-      </div>
-      <div class="new-sector__divider" />
+    <div class="new-sector__indicator">
+      <unnnic-indicator :current-step="step" :number-of-steps="3" :titles="stepsTitles" />
+    </div>
+    <div class="new-sector__divider" />
 
+    <section class="scrollable">
       <section class="new-sector__form">
         <form-sector
           v-show="step === Steps.General"
@@ -245,6 +245,7 @@ export default {
 
   &__indicator {
     padding: 0 calc(2 * $unnnic-spacing-inset-nano);
+    position: static;
   }
 
   &__divider {
