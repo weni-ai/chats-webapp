@@ -15,11 +15,11 @@
     </div>
 
     <footer class="controls" @click.stop="() => {}">
-      <span @click="previous" @keypress.enter="previous">
-        <unnnic-icon-svg icon="arrow-left-1-1" scheme="background-snow" class="clickable" />
+      <span @click="previous" @keypress.enter="previous" class="clickable">
+        <unnnic-icon-svg icon="arrow-left-1-1" scheme="background-snow" />
       </span>
-      <span @click="next" @keypress.enter="next">
-        <unnnic-icon-svg icon="arrow-right-1-1" scheme="background-snow" class="clickable" />
+      <span @click="next" @keypress.enter="next" class="clickable">
+        <unnnic-icon-svg icon="arrow-right-1-1" scheme="background-snow" />
       </span>
     </footer>
   </div>
