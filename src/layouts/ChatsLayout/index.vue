@@ -85,12 +85,10 @@ export default {
   display: flex;
 
   .room-list {
-    // overflow-y: auto;
     margin: {
       top: $unnnic-spacing-inline-sm;
       right: 0;
       bottom: 0;
-      // left: $unnnic-spacing-inline-sm;
     }
   }
 
@@ -104,7 +102,6 @@ export default {
     width: 20.625rem;
 
     background: $unnnic-color-background-grass;
-    padding-left: $unnnic-spacing-inline-xs;
   }
 }
 </style>
