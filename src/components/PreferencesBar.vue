@@ -142,7 +142,6 @@ export default {
 .preferences-bar {
   position: relative;
   height: $unnnic-font-size-body-md + $unnnic-line-height-md + 2 * $unnnic-spacing-stack-xs;
-  box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.04);
   border-radius: 4px;
 
   .header .label {
