@@ -1,8 +1,6 @@
 import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 
-const projectUuid = getProject();
-
 export default {
   async getByRoom(roomId) {
     const response = await http.get(`/msg/?room=${roomId}&ordering=created_on&limit=100`);
@@ -14,7 +12,7 @@ export default {
       params: {
         ordering: 'created_on',
         contact: contactUuid,
-        project: projectUuid,
+        project: getProject(),
         is_active: !onlyClosedRooms,
         limit: 100,
       },

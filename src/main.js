@@ -8,12 +8,16 @@ import router from './router';
 import store from './store';
 import env from './utils/env';
 
+import './utils/nilo';
+
 import './styles/global.scss';
 
 LogRocket.init(env('LOGROCKET_ID'), {
   mergeIframes: true,
   parentDomain: env('LOGROCKET_PARENT_DOMAIN'),
 });
+
+console.info('LogRocket Config: ', env('LOGROCKET_ID'), env('LOGROCKET_PARENT_DOMAIN'));
 
 Vue.config.productionTip = false;
 

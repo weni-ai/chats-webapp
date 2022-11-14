@@ -1,9 +1,11 @@
 <template>
   <chats-layout>
-    <section class="illustration">
-      <img class="illustration__doodles" src="/homepage-illustration/doodles.svg" alt="" />
-      <img class="illustration__background" src="/homepage-illustration/background.svg" alt="" />
-    </section>
+    <div class="unnnic-grid-span-12">
+      <section>
+        <img class="illustration__doodles" src="/homepage-illustration/doodles.svg" alt="" />
+        <img class="illustration__background" src="/homepage-illustration/background.svg" alt="" />
+      </section>
+    </div>
   </chats-layout>
 </template>
 
@@ -33,7 +35,7 @@ export default {
   &__background {
     position: absolute;
     height: 100%;
-    width: 100%;
+    width: 73%;
     object-fit: cover;
     object-position: center;
     pointer-events: none;
