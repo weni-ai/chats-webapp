@@ -99,7 +99,7 @@ export default {
 
   .aside {
     height: 100%;
-    width: 20.625rem;
+    width: 22.625rem;
 
     background: $unnnic-color-background-grass;
   }
