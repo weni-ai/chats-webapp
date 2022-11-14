@@ -133,7 +133,6 @@ export default {
 
         return first_name || last_name ? `${first_name} ${last_name}` : email;
       });
-
       return managers.filter((manager) => manager.includes(this.manager));
     },
     sector: {
@@ -150,6 +149,7 @@ export default {
     removeManager(managerUuid) {
       this.$emit('remove-manager', managerUuid);
     },
+
     addSectorManager() {
       const { selectedManager } = this;
       if (!selectedManager) return;
@@ -159,9 +159,10 @@ export default {
         ...this.sector,
         managers,
       };
-
-      this.manager = '';
+      this.manager = null;
+      this.selectedManager = null;
     },
+
     selectManager(selected) {
       const manager = this.managers.find((manager) => {
         const { first_name, last_name, email } = manager.user;
@@ -171,6 +172,7 @@ export default {
       });
       this.selectedManager = manager;
     },
+
     validate() {
       return this.areAllFieldsFilled();
     },
