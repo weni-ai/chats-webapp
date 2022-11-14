@@ -633,9 +633,9 @@
       "es": "Eliminar o editar"
     },
     "shortcut_tooltip": {
-      "pt-br": "Digite {shortcut} para usar",
-      "en-us": "Type {shortcut} to use",
-      "es": "Escriba {shortcut} para usar"
+      "pt-br": "Digite /{shortcut} para usar",
+      "en-us": "Type /{shortcut} to use",
+      "es": "Escriba /{shortcut} para usar"
     },
     "add_new": {
       "pt-br": "Adicionar nova mensagem rápida",
