@@ -11,11 +11,14 @@
       </div>
     </slot>
 
-    <main class="unnnic-grid-span-9" style="height: 100vh">
+    <main
+      v-bind:class="[isAsideSlotInUse ? 'unnnic-grid-span-6' : 'unnnic-grid-span-9']"
+      style="height: 100vh"
+    >
       <slot />
     </main>
 
-    <section v-if="isAsideSlotInUse" class="aside">
+    <section v-if="isAsideSlotInUse" class="aside unnnic-grid-span-3">
       <slot name="aside" />
     </section>
     <section v-if="sectors === 0">
