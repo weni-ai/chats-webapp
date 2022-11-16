@@ -633,9 +633,9 @@
       "es": "Eliminar o editar"
     },
     "shortcut_tooltip": {
-      "pt-br": "Digite {shortcut} para usar",
-      "en-us": "Type {shortcut} to use",
-      "es": "Escriba {shortcut} para usar"
+      "pt-br": "Digite /{shortcut} para usar",
+      "en-us": "Type /{shortcut} to use",
+      "es": "Escriba /{shortcut} para usar"
     },
     "add_new": {
       "pt-br": "Adicionar nova mensagem rápida",
@@ -737,24 +737,24 @@
   },
   "new_sector": {
     "sector_tip": {
-      "pt-br": "Crie um setor para gerenciar a operação de atendimento, adicionando gerentes, agentes e horário de funcionamento.",
-      "en-us": "Create a sector to manage the fulfillment operation, including roles, agents and management hours.",
-      "es": "Cree un sector para administrar la operación de cumplimiento, incluidos roles, agentes y horas de administración."
+      "pt-br": "Crie um setor para gerenciar a operação de atendimento, adicionando gerentes, agentes e horário de funcionamento",
+      "en-us": "Create a sector to manage the fulfillment operation, including roles, agents and management hours",
+      "es": "Cree un sector para administrar la operación de cumplimiento, incluidos roles, agentes y horas de administración"
     },
     "queues_tip": {
-      "pt-br": "As filas servem para organizar os tipos de atendimento dentro de um setor, através das filas é possível criar grupos de atendimento, crie pelo menos uma fila para gerenciar uma equipe de agentes.",
-      "en-us": "The queues serve to organize the types of service within a sector, through the queues it is possible to create service groups, create at least one queue to manage a team of agents.",
-      "es": "Las colas sirven para organizar los tipos de servicio dentro de un sector, a través de las colas es posible crear grupos de servicios, crear al menos una cola para gestionar un equipo de agentes."
+      "pt-br": "As filas servem para organizar os tipos de atendimento dentro de um setor, através das filas é possível criar grupos de atendimento, crie pelo menos uma fila para gerenciar uma equipe de agentes",
+      "en-us": "The queues serve to organize the types of service within a sector, through the queues it is possible to create service groups, create at least one queue to manage a team of agents",
+      "es": "Las colas sirven para organizar los tipos de servicio dentro de un sector, a través de las colas es posible crear grupos de servicios, crear al menos una cola para gestionar un equipo de agentes"
     },
     "tags_tip": {
-      "pt-br": "As tags são usadas para classificar características do atendimento e possibilitar a pesquisa de filtragem dos chats a partir delas, defina tags que sejam relevantes para o seu contexto.",
-      "en-us": "Tags are used to classify service characteristics and make it possible to search and filter chats from them, define tags that are relevant to your context.",
-      "es": "Las etiquetas se utilizan para clasificar las características de los servicios y permiten buscar y filtrar chats a partir de ellos, definir etiquetas que sean relevantes para su contexto."
+      "pt-br": "As tags são usadas para classificar características do atendimento e possibilitar a pesquisa de filtragem dos chats a partir delas, defina tags que sejam relevantes para o seu contexto",
+      "en-us": "Tags are used to classify service characteristics and make it possible to search and filter chats from them, define tags that are relevant to your context",
+      "es": "Las etiquetas se utilizan para clasificar las características de los servicios y permiten buscar y filtrar chats a partir de ellos, definir etiquetas que sean relevantes para su contexto"
     },
     "agent_tip": {
-      "pt-br": "Adicione membros no seu projeto para poder definir como gerente.",
-      "en-us": "Add members to your project to be able to set as a manager.",
-      "es": "Agregue miembros a su proyecto para poder establecer como administrador."
+      "pt-br": "Adicione membros no seu projeto para poder definir como gerente",
+      "en-us": "Add members to your project to be able to set as a manager",
+      "es": "Agregue miembros a su proyecto para poder establecer como administrador"
     }
   }
 }

@@ -18,7 +18,7 @@ export default {
 
   padding: {
     top: $unnnic-spacing-inset-md;
-    bottom: $unnnic-spacing-inset-md;
+    bottom: $unnnic-spacing-inset-xs;
     left: $unnnic-spacing-inset-md;
   }
 
