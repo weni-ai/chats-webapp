@@ -11,11 +11,14 @@
       </div>
     </slot>
 
-    <main class="unnnic-grid-span-9" style="height: 100vh">
+    <main
+      v-bind:class="[isAsideSlotInUse ? 'unnnic-grid-span-6' : 'unnnic-grid-span-9']"
+      style="height: 100vh"
+    >
       <slot />
     </main>
 
-    <section v-if="isAsideSlotInUse" class="aside">
+    <section v-if="isAsideSlotInUse" class="aside unnnic-grid-span-3">
       <slot name="aside" />
     </section>
     <section v-if="sectors === 0">
@@ -81,12 +84,10 @@ export default {
   display: flex;
 
   .room-list {
-    // overflow-y: auto;
     margin: {
       top: $unnnic-spacing-inline-sm;
       right: 0;
       bottom: 0;
-      // left: $unnnic-spacing-inline-sm;
     }
   }
 
@@ -97,10 +98,9 @@ export default {
 
   .aside {
     height: 100%;
-    width: 20.625rem;
+    width: 22.625rem;
 
     background: $unnnic-color-background-grass;
-    padding-left: $unnnic-spacing-inline-xs;
   }
 }
 </style>

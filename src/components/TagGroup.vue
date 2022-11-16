@@ -9,7 +9,7 @@
       :has-close-icon="hasCloseIcon"
       @click="select(tag)"
       @close="close(tag)"
-      :disabled="selectable && !selected.find((t) => t.uuid === tag.uuid)"
+      :disabled="!hasCloseIcon && selectable && !selected.find((t) => t.uuid === tag.uuid)"
       :scheme="schemes[i % schemes.length]"
     />
   </section>
