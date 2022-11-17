@@ -48,10 +48,17 @@
             v-for="audio in audios"
             :key="audio.url"
             class="media__content_audio__media"
-            style="display: flex"
+            style="display: flex; width: 100%"
           >
-            <audio-preview :currentAudio="audio.url"></audio-preview>
-            <span>{{ audio.duration }} </span>
+            <div style="width: 25%">
+              <audio-preview :currentAudio="audio.url"></audio-preview>
+            </div>
+            <div style="width: 75%">
+              <span
+                >Enviado por {{ audio.name }} |
+                {{ audio.duration == 'Infinity' ? 0 : audio.duration }}s
+              </span>
+            </div>
           </div>
         </section>
       </div>
@@ -127,8 +134,20 @@ export default {
         ordering: 'content_type',
         page: this.page,
       });
-      this.audios = response.results.filter((media) => media.content_type.startsWith('audio/'));
-      this.audioData(this.audios);
+      this.audios = await Promise.all(
+        response.results
+          .filter((media) => media.content_type.startsWith('audio/'))
+          .map(
+            (element) =>
+              new Promise((resolve) => {
+                const url = new Audio(element.url);
+                url.onloadedmetadata = (event) => {
+                  const { duration } = event.path[0];
+                  resolve({ ...element, duration });
+                };
+              }),
+          ),
+      );
       this.medias = this.medias.concat(
         response.results.filter((media) => !media.content_type.startsWith('audio/')),
       );
@@ -138,17 +157,6 @@ export default {
       if (response.next) {
         this.loadNextMedias();
       }
-    },
-
-    audioData(audios) {
-      // eslint-disable-next-line array-callback-return
-      audios.map((element) => {
-        const url = new Audio(element.url);
-        url.onloadedmetadata = (event) => {
-          const { duration } = event.path[0];
-          console.log(duration, 'duration');
-        };
-      });
     },
   },
 };
