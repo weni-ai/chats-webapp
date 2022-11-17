@@ -92,7 +92,7 @@ export default {
   },
 
   data: () => ({
-    tab: 'audio',
+    tab: 'media',
     tabs: ['media', 'docs', 'audio'],
     page: 1,
 
