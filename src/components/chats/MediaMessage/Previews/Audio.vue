@@ -42,6 +42,9 @@ export default {
       if (this.audio.paused) {
         this.audio.play();
         this.isTimerPlaying = true;
+        this.audio.onended = () => {
+          this.isTimerPlaying = false;
+        };
       }
     },
     pause() {
