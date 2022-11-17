@@ -117,8 +117,6 @@ export default {
 
   cursor: pointer;
 
-  width: 16rem;
-
   &.active {
     border-radius: $unnnic-border-radius-sm;
     background: rgba($unnnic-color-brand-weni, $unnnic-opacity-level-extra-light);
