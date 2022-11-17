@@ -54,9 +54,12 @@
               <audio-preview :currentAudio="audio.url"></audio-preview>
             </div>
             <div style="width: 75%">
-              <span
+              <!-- <span
                 >Enviado por {{ audio.name }} |
                 {{ audio.duration == 'Infinity' ? 0 : audio.duration }}s
+              </span> -->
+              <span>
+                Áudio enviado | {{ audio.duration == 'Infinity' ? 0 : audio.duration }}s
               </span>
             </div>
           </div>
