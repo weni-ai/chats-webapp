@@ -18,7 +18,11 @@
       <slot />
     </main>
 
-    <section v-if="isAsideSlotInUse" class="aside unnnic-grid-span-3">
+    <section
+      v-if="isAsideSlotInUse"
+      class="aside unnnic-grid-span-3"
+      style="border: 1px solid #e2e6ed"
+    >
       <slot name="aside" />
     </section>
     <section v-if="sectors === 0">
