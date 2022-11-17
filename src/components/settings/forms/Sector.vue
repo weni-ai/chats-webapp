@@ -281,6 +281,7 @@ export default {
   input::-webkit-datetime-edit {
     min-width: 100%;
     width: 100%;
+    color: #d1d4da;
   }
 }
 </style>
