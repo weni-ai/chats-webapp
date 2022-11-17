@@ -1,5 +1,5 @@
 <template>
-  <section class="chats-layout unnnic-grid-giant">
+  <section class="chats-layout unnnic-grid-giant" style="padding: 0px 10px">
     <slot name="room-list">
       <div
         :style="{ display: 'flex', flexDirection: 'column', height: '100vh' }"
@@ -18,7 +18,11 @@
       <slot />
     </main>
 
-    <section v-if="isAsideSlotInUse" class="aside unnnic-grid-span-3">
+    <section
+      v-if="isAsideSlotInUse"
+      class="aside unnnic-grid-span-3"
+      style="border: 1px solid #e2e6ed"
+    >
       <slot name="aside" />
     </section>
     <section v-if="sectors === 0">
@@ -97,8 +101,7 @@ export default {
   }
 
   .aside {
-    height: 100%;
-    width: 22.625rem;
+    height: 100vh;
 
     background: $unnnic-color-background-grass;
   }
