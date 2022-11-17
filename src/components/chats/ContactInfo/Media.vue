@@ -36,12 +36,33 @@
         />
       </section>
     </template>
+    <template slot="tab-head-audio">
+      <div class="media-tab" :class="{ active: isActiveTab('audio') }">
+        <span class="name">{{ $t('audio') }}</span>
+      </div>
+    </template>
+    <template slot="tab-panel-audio">
+      <div class="scrollable" style="background-color: #ffff">
+        <section class="media__content_audio">
+          <div
+            v-for="audio in audios"
+            :key="audio.url"
+            class="media__content_audio__media"
+            style="display: flex"
+          >
+            <audio-preview :currentAudio="audio.url"></audio-preview>
+            <span>{{ audio.duration }} </span>
+          </div>
+        </section>
+      </div>
+    </template>
   </unnnic-tab>
 </template>
 
 <script>
 import DocumentPreview from '@/components/chats/MediaMessage/Previews/Document';
 import ImagePreview from '@/components/chats/MediaMessage/Previews/Image';
+import AudioPreview from '@/components/chats/MediaMessage/Previews/Audio';
 import Media from '@/services/api/resources/chats/media';
 
 export default {
@@ -50,6 +71,7 @@ export default {
   components: {
     DocumentPreview,
     ImagePreview,
+    AudioPreview,
   },
 
   props: {
@@ -63,11 +85,15 @@ export default {
   },
 
   data: () => ({
-    tab: 'media',
-    tabs: ['media', 'docs'],
+    tab: 'audio',
+    tabs: ['media', 'docs', 'audio'],
     page: 1,
 
     medias: [],
+    audios: [],
+    audioWithDuration: [],
+    currentAudio: null,
+    audioDuration: null,
   }),
 
   computed: {
@@ -101,7 +127,8 @@ export default {
         ordering: 'content_type',
         page: this.page,
       });
-
+      this.audios = response.results.filter((media) => media.content_type.startsWith('audio/'));
+      this.audioData(this.audios);
       this.medias = this.medias.concat(
         response.results.filter((media) => !media.content_type.startsWith('audio/')),
       );
@@ -111,6 +138,17 @@ export default {
       if (response.next) {
         this.loadNextMedias();
       }
+    },
+
+    audioData(audios) {
+      // eslint-disable-next-line array-callback-return
+      audios.map((element) => {
+        const url = new Audio(element.url);
+        url.onloadedmetadata = (event) => {
+          const { duration } = event.path[0];
+          console.log(duration, 'duration');
+        };
+      });
     },
   },
 };
@@ -154,7 +192,6 @@ export default {
     }
   }
 }
-
 .documents__content {
   display: flex;
   flex-direction: column;
@@ -163,6 +200,32 @@ export default {
   &__document {
     padding-bottom: 0.25rem;
     border-bottom: solid 1px $unnnic-color-neutral-soft;
+  }
+}
+
+.media__content_audio {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: $unnnic-spacing-stack-xs;
+
+  max-width: 100%;
+
+  &__media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: solid 1px $unnnic-color-neutral-soft;
+    // aspect-ratio: 1;
+
+    &__preview {
+      height: 100%;
+      width: 15%;
+    }
+  }
+  .scrollable {
+    overflow-y: auto;
+    height: 100%;
+    background-color: #ffff;
   }
 }
 </style>
