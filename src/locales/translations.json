@@ -544,6 +544,11 @@
     "en-us": "Download",
     "es": "Descargar"
   },
+  "audio": {
+    "pt-br": "Áudio",
+    "en-us": "Audio",
+    "es": "Audio"
+  },
   "text_editor_placeholder": {
     "pt-br": "Digite uma mensagem ou use um /atalho",
     "en-us": "Enter a new message or use a /shortcut",
