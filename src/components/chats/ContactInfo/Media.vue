@@ -50,15 +50,15 @@
             class="media__content_audio__media"
             style="display: flex; width: 100%"
           >
-            <div style="width: 25%">
+            <div style="width: 6%">
               <audio-preview :currentAudio="audio.url"></audio-preview>
             </div>
-            <div style="width: 75%">
+            <div style="width: 94%">
               <!-- <span
                 >Enviado por {{ audio.name }} |
                 {{ audio.duration == 'Infinity' ? 0 : audio.duration }}s
               </span> -->
-              <span>
+              <span class="audio-text">
                 Áudio enviado | {{ audio.duration == 'Infinity' ? 0 : audio.duration }}s
               </span>
             </div>
@@ -238,5 +238,10 @@ export default {
     height: 100%;
     background-color: #ffff;
   }
+}
+
+.audio-text {
+  font-size: 0.75rem;
+  color: $unnnic-color-neutral-dark;
 }
 </style>
