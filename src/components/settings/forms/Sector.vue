@@ -65,7 +65,16 @@
             <span class="label-working-day">{{
               $t('sector.managers.working_day.start.label')
             }}</span>
-            <input class="input-time" type="time" v-model="sector.workingDay.start" />
+            <input
+              class="input-time"
+              type="time"
+              v-model="sector.workingDay.start"
+              min="00:00"
+              max="23:00"
+            />
+            <span v-show="!this.validHour" style="font-size: 12px; color: #ff4545">{{
+              this.message
+            }}</span>
           </div>
           <!-- <unnnic-input
           v-model="sector.workingDay.start"
@@ -77,7 +86,13 @@
         /> -->
           <div>
             <span class="label-working-day">{{ $t('sector.managers.working_day.end.label') }}</span>
-            <input class="input-time" type="time" v-model="sector.workingDay.end" />
+            <input
+              class="input-time"
+              type="time"
+              v-model="sector.workingDay.end"
+              min="00:01"
+              max="23:59"
+            />
             <!-- <unnnic-input
             v-model="sector.workingDay.end"
             label="Horário de encerramento"
@@ -87,7 +102,7 @@
           </div>
           <unnnic-input
             v-model="sector.maxSimultaneousChatsByAgent"
-            :label="$t('sector.managers.working_day.end.label')"
+            :label="$t('sector.managers.working_day.limit_agents.label')"
             placeholder="4"
             class="form-section__inputs--fill-w"
           />
@@ -124,6 +139,8 @@ export default {
   data: () => ({
     manager: '',
     selectedManager: null,
+    message: '',
+    validHour: false,
   }),
 
   computed: {
@@ -179,13 +196,26 @@ export default {
 
     areAllFieldsFilled() {
       const { name, managers, workingDay, maxSimultaneousChatsByAgent } = this.sector;
+      this.hourValidate(workingDay);
       return !!(
         name.trim() &&
         managers.length > 0 &&
         workingDay?.start &&
         workingDay?.end &&
+        this.validHour &&
         maxSimultaneousChatsByAgent
       );
+    },
+
+    hourValidate(hour) {
+      const inicialHour = hour.start;
+      const finalHour = hour.end;
+      if (inicialHour > finalHour) {
+        this.validHour = false;
+        this.message = 'Horário de início não pode ser maior que horário final';
+      } else {
+        this.validHour = true;
+      }
     },
   },
   watch: {
@@ -281,7 +311,6 @@ export default {
   input::-webkit-datetime-edit {
     min-width: 100%;
     width: 100%;
-    color: #d1d4da;
   }
 }
 </style>
