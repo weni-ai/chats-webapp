@@ -1,5 +1,8 @@
 <template>
-  <section class="chats-layout unnnic-grid-giant" style="padding: 0px 10px">
+  <section
+    class="chats-layout unnnic-grid-giant"
+    style="padding: 0px 0px; padding-left: 10px; overflow-y: hidden"
+  >
     <slot name="room-list">
       <div
         :style="{ display: 'flex', flexDirection: 'column', height: '100vh' }"
