@@ -183,6 +183,13 @@
             "en-us": "Closing time",
             "es": "Tiempo de cierre"
           }
+        },
+        "limit_agents": {
+          "label": {
+            "pt-br": "Limite de quantidade de atendimentos simultâneos por agente",
+            "en-us": "Limit on the number of simultaneous calls per agent",
+            "es": "Límite en el número de llamadas simultáneas por agente"
+          }
         }
       }
     }
