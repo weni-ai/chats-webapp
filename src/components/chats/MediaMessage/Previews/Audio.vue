@@ -4,7 +4,7 @@
   <div class="media__content_audio__media__preview">
     <div @click="play">
       <unnnic-icon
-        size="md"
+        size="xs"
         icon="controls-play-1"
         clickable
         scheme="neutral-dark"
@@ -13,7 +13,7 @@
     </div>
     <div @click="pause">
       <unnnic-icon
-        size="md"
+        size="xs"
         icon="controls-pause-1"
         clickable
         scheme="neutral-dark"
