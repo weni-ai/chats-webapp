@@ -25,7 +25,8 @@ jobs:
               echo "MANIFESTS_ENVIRONMENT=production" | tee >> "${GITHUB_ENV}"
             else
               echo 'Not a valid tag. Skipping...'
-            exit 1
+              exit 1
+            fi
             echo "TAG=$TAG" | tee >> "${GITHUB_ENV}"
             VERSION="${TAG}"
             echo "VERSION=${VERSION" | tee >> "${GITHUB_ENV}"
