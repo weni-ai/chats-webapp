@@ -14,7 +14,11 @@
         </span>
         <div class="chat-messages__room__divisor__line" />
       </div>
-
+      <div style="display: flex; align-items: center; text-align: center">
+        <div class="chat-messages__room__divisor__line" style="background: #d0d3d9" />
+        <span class="unread-message">Mensagens não lidas</span>
+        <div class="chat-messages__room__divisor__line" style="background: #d0d3d9" />
+      </div>
       <div v-if="isTransferInfoMessage(message)" class="chat-messages__room__transfer-info">
         <unnnic-icon
           v-if="!room.is_waiting"
@@ -258,6 +262,12 @@ export default {
       color: $unnnic-color-neutral-dark;
       margin-bottom: $unnnic-spacing-inline-sm;
     }
+  }
+  .unread-message {
+    font-weight: 700;
+    font-size: 12px;
+    color: #9caccc;
+    margin: 10px;
   }
 }
 </style>
