@@ -16,18 +16,17 @@ jobs:
             TAG="$( echo "${GITHUB_REF}" | cut -d'/' -f3 )"
             if grep -qs -e '^.*.*-develop' <<< "${TAG}" ; then
               echo "Found environment: DEVELOP - ${TAG}"
-              echo "MANIFESTS_ENVIRONMENT=develop" | tee >> "${GITHUB_ENV}"
+              echo "MANIFESTS_ENVIRONMENT=develop" | tee "${GITHUB_ENV}"
             elif grep -qs -e '^.*.*-staging' <<< "${TAG}" ; then
               echo "Found environment: STAGING - ${TAG}"
-              echo "MANIFESTS_ENVIRONMENT=staging" | tee >> "${GITHUB_ENV}"
+              echo "MANIFESTS_ENVIRONMENT=staging" | tee -a "${GITHUB_ENV}"
             elif grep -qs -e '^.^.^' <<< "${TAG}" ; then
               echo "No environment found, assuming: PRODUCTION - ${TAG}"
-              echo "MANIFESTS_ENVIRONMENT=production" | tee >> "${GITHUB_ENV}"
+              echo "MANIFESTS_ENVIRONMENT=production" | tee -a "${GITHUB_ENV}"
             else
               echo 'Not a valid tag. Skipping...'
               exit 1
             fi
-            
             echo "TAG=$TAG" | tee >> "${GITHUB_ENV}"
             VERSION="${TAG}"
             echo "VERSION=${VERSION" | tee >> "${GITHUB_ENV}"
