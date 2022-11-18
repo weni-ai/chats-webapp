@@ -12,19 +12,27 @@
           </div>
 
           <p class="username">
-            {{ room.contact.full_name }}
+            {{ room.contact.name }}
           </p>
 
           <div class="connection-info">
-            <p v-if="room.contact.status === 'online'">Online</p>
-            <p v-else>{{ getLastTimeOnlineText(room.contact.last_interaction) }}</p>
-            <p v-for="[field, value] of Object.entries(room.contact.custom_fields)" :key="field">
-              <span class="title"> {{ field }} </span>
-              {{ value }}
+            <p v-if="room.contact.status === 'online'">{{ $t('status.online') }}</p>
+            <!-- <p v-else>{{ getLastTimeOnlineText(room.contact.last_interaction || new Date()) }}</p> -->
+            <template v-if="!!room.custom_fields">
+              <p v-for="[field, value] of Object.entries(room.contact.custom_fields)" :key="field">
+                <span class="title"> {{ field }} </span>
+                {{ value }}
+              </p>
+            </template>
+            <p v-if="lastMessageFromContact?.created_on">
+              {{
+                $t('last_message_time.date', {
+                  date: moment(lastMessageFromContact?.created_on).fromNow(),
+                })
+              }}
             </p>
-            <p>
-              {{ getLastContactText(room.contact.last_interaction) }}
-            </p>
+
+            <p v-for="(value, key) in customFields" :key="key">{{ key }}: {{ value }}</p>
           </div>
         </section>
       </aside-slot-template-section>
@@ -33,28 +41,30 @@
         <section class="transfer-section">
           <unnnic-autocomplete
             v-model="transferContactSearch"
-            :data="filteredTransferOptions"
+            :data="transferOptions.map((option) => option.name)"
             @choose="transferContactTo = $event"
             :placeholder="$t('select_agent_line_or_department')"
-            :label="$t('chats.transfer')"
+            :label="$t('chats.transfer.title')"
             open-with-focus
             size="sm"
             highlight
             class="channel-select"
+            :disabled="!!transferContactError"
+            :message="transferContactError"
           />
 
           <unnnic-button
             class="transfer__button"
             :text="$t('transfer')"
             size="small"
-            :disabled="isTransferButtonDisabled"
+            :disabled="!transferPersonSelected"
             @click="transferContact"
           />
         </section>
       </aside-slot-template-section>
 
       <aside-slot-template-section>
-        <contact-media />
+        <contact-media :room="room" />
       </aside-slot-template-section>
     </section>
     <unnnic-modal
@@ -66,7 +76,7 @@
       @close="
         $store.commit('chats/setActiveChat', null),
           (showSuccessfulTransferModal = false),
-          $router.replace('/')
+          navigate('home')
       "
     />
   </aside-slot-template>
@@ -77,7 +87,11 @@ import { mapState } from 'vuex';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
+import Room from '@/services/api/resources/chats/room';
+import Sector from '@/services/api/resources/settings/sector';
 import ContactMedia from './Media';
+
+const moment = require('moment');
 
 export default {
   name: 'ContactInfo',
@@ -89,16 +103,10 @@ export default {
   },
 
   data: () => ({
-    transferOptions: [
-      'Customer success',
-      'Finanças',
-      'Gerência',
-      'Suporte Financeiro',
-      { type: 'category', text: 'Financeiro' },
-      'Juliano',
-    ],
+    transferOptions: [],
     transferContactSearch: '',
     transferContactTo: '',
+    transferContactError: '',
     showSuccessfulTransferModal: false,
   }),
 
@@ -107,34 +115,50 @@ export default {
       room: (state) => state.rooms.activeRoom,
     }),
 
-    isTransferButtonDisabled() {
-      return !this.transferContactTo;
+    lastMessageFromContact() {
+      const messages = this.$store.state.rooms.activeRoomMessages;
+
+      return messages.findLast((message) => message.contact);
     },
 
-    filteredTransferOptions() {
-      const search = this.lowercase(this.transferContactSearch);
+    transferPersonSelected() {
+      return this.transferOptions.find((option) => option.name === this.transferContactSearch);
+    },
 
-      if (!search) return this.transferOptions;
-
-      const filteredOptions = this.transferOptions.filter(
-        (option) =>
-          option.type === 'category' || this.lowercase(option.text || option).includes(search),
-      );
-
-      // remove categories without options
-      return filteredOptions.filter((option, index) => {
-        if (option.type !== 'category') return true;
-
-        const nextOption = filteredOptions[index + 1];
-
-        if (!nextOption || nextOption.type === 'category') return false;
-
-        return true;
-      });
+    customFields() {
+      return this.room.custom_fields;
     },
   },
 
+  async created() {
+    if (!this.room.queue?.sector) {
+      throw new Error(`There is no associated sector with room ${this.room.uuid}`);
+    }
+
+    try {
+      this.transferOptions = (await Sector.agents({ sectorUuid: this.room.queue.sector }))
+        .filter((agent) => agent.email !== this.$store.state.profile.me.email)
+        .map(({ first_name, last_name, email }) => {
+          return {
+            name: [first_name, last_name].join(' ').trim() || email,
+            email,
+          };
+        });
+    } catch (error) {
+      if (error?.response?.status === 403) {
+        this.transferContactError = this.$t('chats.transfer.does_not_have_permission');
+      } else {
+        throw error;
+      }
+    }
+  },
+
   methods: {
+    moment,
+
+    navigate(name) {
+      this.$router.replace({ name });
+    },
     getLastTimeOnlineText(lastView) {
       const today = new Date();
       const lastViewDate = new Date(lastView);
@@ -167,31 +191,12 @@ export default {
       const differenceInHours = differenceInMs / oneHoursInMs;
       return differenceInHours;
     },
-    getLastContactText(lastContact) {
-      const today = new Date();
-      const lastContactDate = new Date(lastContact);
-      const dateDifferenceInHours = this.getDatesDifferenceInHours(today, lastContactDate);
-
-      if (dateDifferenceInHours >= 24) {
-        const formattedDate = Intl.DateTimeFormat('pt-BR', {
-          dateStyle: 'short',
-        }).format(lastContactDate);
-
-        return this.$t('last_message_time.date', { date: formattedDate });
-      }
-
-      const dateDifferenceInMinutes = dateDifferenceInHours * 60;
-      return dateDifferenceInMinutes > 60
-        ? this.$t('last_message_time.hours', { hours: Number.parseInt(dateDifferenceInHours, 10) })
-        : this.$t('last_message_time.minutes', {
-            minutes: Number.parseInt(dateDifferenceInMinutes, 10),
-          });
-    },
     lowercase(value) {
       return value.toString().toLowerCase();
     },
-    transferContact() {
+    async transferContact() {
       this.$store.commit('chats/removeChat', this.room);
+      await Room.take(this.room.uuid, this.transferPersonSelected.email);
       this.showSuccessfulTransferModal = true;
     },
   },

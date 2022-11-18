@@ -1,12 +1,11 @@
 import axios from 'axios';
+import env from '@/utils/env';
+
+const isProduction = process.env.NODE_ENV === 'production';
+const protocol = isProduction ? 'https' : 'https';
 
 const client = axios.create({
-  baseURL: process.env.VUE_APP_CHATS_API_URL,
+  baseURL: `${protocol}://${env('CHATS_API_URL')}/v1`,
 });
-
-const token = process.env.VUE_APP_CHATS_API_TOKEN;
-const isProduction = process.env.NODE_ENV === 'production';
-
-if (token) client.defaults.headers.Authorization = `${isProduction ? 'Bearer' : 'Token'} ${token}`;
 
 export default client;

@@ -1,13 +1,13 @@
 <template>
   <chats-layout disabled-chat-list>
     <section class="closed-chats__container">
-      <section v-if="!!room" class="closed-chat">
+      <section v-if="!!contact" class="closed-chat">
         <chat-header
-          :room="{ ...room }"
-          @close="room = null"
+          :room="{ ...contact.room, contact }"
+          @close="contact = null"
           :closeButtonTooltip="$t('close_view')"
         />
-        <chat-messages :room="{ ...room }" :messages="messages" class="messages" />
+        <chat-messages :room="{ ...contact.room, contact }" :messages="messages" class="messages" />
       </section>
 
       <section class="closed-chats" v-else>
@@ -24,20 +24,56 @@
         </header>
 
         <section class="filters">
-          <tag-filter v-model="filteredTags" label="Classificar chats por tags e período" />
+          <div style="display: flex; align-items: flex-end; gap: 1rem; width: 100%">
+            <unnnic-select
+              v-if="sectors.length > 1"
+              v-model="filteredSectorUuid"
+              label="Setor"
+              size="md"
+              class="input"
+              @input="getSectorTags(filteredSectorUuid)"
+              style="width: 25%"
+            >
+              <option value="">Todos</option>
+              <option
+                v-for="sector in sectors"
+                :key="sector.uuid"
+                :value="sector.uuid"
+                :selected="sector.uuid === filteredSectorUuid"
+              >
+                {{ sector.name }}
+              </option>
+            </unnnic-select>
 
-          <unnnic-input-date-picker
-            v-model="filteredDateRange"
-            size="sm"
-            :input-format="$t('date_format')"
-          />
+            <unnnic-multi-select
+              v-model="tags"
+              class="input"
+              label="Filtrar por tags"
+              input-title="Pesquise e selecione tags"
+              expand
+              hide-group-title
+              style="width: 35%"
+            />
 
-          <unnnic-tool-tip enabled :text="$t('filter.clear_all')" side="right">
-            <unnnic-button-icon icon="button-refresh-arrows-1" size="small" @click="clearFilters" />
-          </unnnic-tool-tip>
+            <unnnic-input-date-picker
+              v-model="filteredDateRange"
+              size="md"
+              class="input"
+              :input-format="$t('date_format')"
+            />
+            <div class="clear-filters-button">
+              <unnnic-tool-tip enabled :text="$t('filter.clear_all')" side="right">
+                <unnnic-button-icon
+                  icon="button-refresh-arrows-1"
+                  size="large"
+                  @click="clearFilters"
+                />
+              </unnnic-tool-tip>
+            </div>
+          </div>
         </section>
 
-        <unnnic-table :items="filteredClosedRooms" class="closed-chats-table">
+        <unnnic-table :items="filteredContacts" class="closed-chats-table">
           <template #header>
             <unnnic-table-row :headers="tableHeaders" />
           </template>
@@ -46,18 +82,18 @@
             <unnnic-table-row :headers="tableHeaders">
               <template #contactName>
                 <div class="contact-name">
-                  <user-avatar :username="item.contact.full_name" size="xl" />
-                  {{ item.contact.full_name }}
+                  <user-avatar :username="item.name" size="xl" />
+                  {{ item.name }}
                 </div>
               </template>
 
-              <template #agentName>{{ item.user.full_name }}</template>
+              <template #agentName>{{ item.room.user.first_name }}</template>
 
               <template #tags>
-                <tag-group :tags="item.tags" />
+                <tag-group :tags="item.room.tags || []" />
               </template>
 
-              <template #date>{{ item.date }}</template>
+              <template #date>{{ $d(new Date(item.room.ended_at)) }}</template>
 
               <template #visualize>
                 <unnnic-button
@@ -65,28 +101,29 @@
                   type="secondary"
                   size="small"
                   class="visualize-button"
-                  @click="viewClosedRoom(item)"
+                  @click="openContactHistory(item)"
                 />
               </template>
             </unnnic-table-row>
           </template>
         </unnnic-table>
+        <div v-if="isLoading" class="weni-redirecting">
+          <img class="logo" src="@/assets/LogoWeniAnimada4.svg" alt="" />
+        </div>
       </section>
     </section>
   </chats-layout>
 </template>
 
 <script>
-import { mapState } from 'vuex';
-
-import Room from '@/services/api/resources/room';
-import Message from '@/services/api/resources/message';
-import { groupSequentialSentMessages } from '@/utils/messages';
+import Contact from '@/services/api/resources/chats/contact';
+import Message from '@/services/api/resources/chats/message';
+import Sector from '@/services/api/resources/settings/sector';
+import { groupSequentialSentMessages, parseMessageToMessageWithSenderProp } from '@/utils/messages';
 
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
 import ChatsLayout from '@/layouts/ChatsLayout';
-import TagFilter from '@/components/chats/TagFilter';
 import TagGroup from '@/components/TagGroup';
 import UserAvatar from '@/components/chats/UserAvatar';
 
@@ -97,7 +134,6 @@ export default {
     ChatHeader,
     ChatMessages,
     ChatsLayout,
-    TagFilter,
     TagGroup,
     UserAvatar,
   },
@@ -109,29 +145,28 @@ export default {
     },
   },
 
-  beforeMount() {
+  async beforeMount() {
     if (this.tag) this.filteredTags.push(this.tag);
-    if (this.closedRooms.length === 0) {
-      this.getClosedRooms();
-    }
+    await this.getContacts();
+    this.getSectors();
   },
 
   data: () => ({
-    room: null,
+    contact: null,
     messages: [],
+    isLoading: false,
     filteredDateRange: {
       start: '',
       end: '',
     },
-    filteredTags: [],
-    closedRooms: [],
+    sectorTags: [],
+    contacts: [],
+    sectors: [],
+    filteredSectorUuid: '',
+    tags: [],
   }),
 
   computed: {
-    ...mapState({
-      tags: (state) => state.chats.tags,
-    }),
-
     tableHeaders() {
       return [
         {
@@ -146,7 +181,7 @@ export default {
         },
         {
           id: 'tags',
-          text: this.$t('tags'),
+          text: this.$t('tags.title'),
           flex: 5,
         },
         {
@@ -162,30 +197,86 @@ export default {
       ];
     },
 
-    filteredClosedRooms() {
-      return this.closedRooms
-        .filter(this.roomHasAllActiveFilterTags)
-        .filter(this.isRoomDateInFilteredRange);
+    filteredContacts() {
+      return this.contacts
+        .filter(this.isRoomFromFilteredSector)
+        .filter(this.contactHasAllActiveFilterTags)
+        .filter(this.isRoomEndDateInFilteredRange);
+    },
+
+    filteredTags() {
+      if (this.tags.length === 0) return [];
+
+      const group = this.tags[0];
+      if (!group?.selected && group?.selected !== 0) return [];
+
+      const tag = group.items[group.selected];
+      return [tag];
     },
   },
 
   methods: {
-    async viewClosedRoom(room) {
-      const response = await Message.getByRoomId(room.uuid);
-      const messages = groupSequentialSentMessages(response.results);
-      this.messages = messages;
-      this.room = room;
+    async openContactHistory(contact) {
+      try {
+        this.isLoading = true;
+        const response = await Message.getByContact(contact.uuid);
+        const messages = response.results;
+        const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
+        const groupedMessages = groupSequentialSentMessages(messagesWithSender);
+        this.messages = groupedMessages;
+        this.contact = contact;
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+      }
     },
-    async getClosedRooms() {
-      const response = await Room.getClosed();
-      this.closedRooms = response.results;
+    async getContacts() {
+      try {
+        this.isLoading = true;
+        const response = await Contact.getAllWithClosedRooms();
+        this.contacts = response.results;
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+      }
     },
-    roomHasAllActiveFilterTags(chat) {
+    async getSectorTags(sectorUuid) {
+      if (!sectorUuid) {
+        this.tags = [];
+        return;
+      }
+      try {
+        this.isLoading = true;
+        const response = await Sector.tags(sectorUuid);
+        const tags = response.results;
+
+        const tagGroup = {
+          items: tags.map((tag) => ({ ...tag, title: tag.name })),
+        };
+
+        this.tags = [tagGroup];
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+      }
+    },
+    async getSectors() {
+      try {
+        this.isLoading = true;
+        const response = await Sector.list();
+        this.sectors = response.results;
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+      }
+    },
+    contactHasAllActiveFilterTags(contact) {
       if (this.filteredTags.length === 0) return true;
+      if (!contact.room.tags) return false;
 
       // eslint-disable-next-line no-restricted-syntax
       for (const tag of this.filteredTags) {
-        if (!chat.tags.find((t) => t.uuid === tag)) {
+        if (!contact.room.tags.some((t) => t.uuid === tag.uuid)) {
           return false;
         }
       }
@@ -193,17 +284,24 @@ export default {
       return true;
     },
 
-    isRoomDateInFilteredRange(room) {
+    isRoomEndDateInFilteredRange(contact) {
       const { start, end } = this.filteredDateRange;
       if (!start && !end) return true;
 
-      const roomDate = new Date(room.ended_at).toISOString();
+      const roomDate = new Date(contact.room.ended_at).toISOString();
 
       return start <= roomDate && roomDate <= end;
     },
 
+    isRoomFromFilteredSector(contact) {
+      if (!this.filteredSectorUuid) return true;
+
+      return contact.room.queue.sector === this.filteredSectorUuid;
+    },
+
     clearFilters() {
-      this.filteredTags = [];
+      this.filteredSectorUuid = '';
+      this.tags = [];
       this.filteredDateRange = { start: '', end: '' };
     },
   },
@@ -254,9 +352,10 @@ export default {
     display: flex;
     align-items: flex-end;
     gap: $unnnic-spacing-stack-sm;
+    width: 100%;
 
-    .date-range-select {
-      flex-basis: 33.33%;
+    & > .input {
+      flex: 1 1;
     }
   }
 
@@ -281,6 +380,20 @@ export default {
     display: flex;
     align-items: center;
     gap: $unnnic-spacing-stack-xs;
+  }
+
+  .weni-redirecting {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    flex: 1;
+    height: auto;
+  }
+  .logo {
+    width: 10%;
+    max-width: 40px;
+    max-height: 40px;
   }
 }
 </style>

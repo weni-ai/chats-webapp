@@ -6,7 +6,13 @@
 
     <ul class="chats" :class="{ filled }">
       <li v-for="room in rooms" :key="room.id">
-        <contact-room :room="room" @click="open(room)" :filled="filled" :disabled="disabled" />
+        <contact-room
+          :room="room"
+          @click="open(room)"
+          :filled="filled"
+          :disabled="disabled"
+          :use-photo="usePhoto"
+        />
       </li>
     </ul>
   </div>
@@ -39,15 +45,15 @@ export default {
       type: String,
       default: '',
     },
+    usePhoto: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   methods: {
     open(room) {
-      const path = `/chats/${room.uuid}`;
-
-      if (this.$route.path === path) return;
-
-      this.$router.replace(path);
+      this.$emit('open', room);
     },
   },
 };

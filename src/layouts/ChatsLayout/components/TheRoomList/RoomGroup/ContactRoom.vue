@@ -1,33 +1,41 @@
 <template>
   <div
     class="container"
-    :class="{ active: room.uuid === activeChat.id, disabled }"
+    :class="{
+      active: room.uuid === $route.params.id,
+      disabled,
+      'new-messages': newMessages?.length,
+    }"
     @click="$emit('click')"
     @keypress.enter="$emit('click')"
   >
     <user-avatar
-      :username="room.contact.full_name"
-      :active="room.uuid === activeChat.id"
+      :username="room.contact.name"
+      :photo-url="!!usePhoto ? room.contact.photo_url : ''"
+      :active="room.uuid === $route.params.id"
       size="xl"
       :off="disabled"
     />
 
     <div class="content">
       <h3 class="username" :class="{ bold: hasUnreadMessages }">
-        {{ room.contact.full_name }}
+        {{ room.contact.name }}
       </h3>
       <div class="additional-information" :class="{ bold: hasUnreadMessages }">
         <span v-if="waitingTime !== 0">
           {{ $t('waiting_for.minutes', waitingTime) }}
         </span>
         <span v-else>
+          <template v-if="newMessages?.length">
+            {{ newMessages[newMessages.length - 1].text }}
+          </template>
           {{ room.lastMessage }}
         </span>
       </div>
     </div>
 
-    <span v-if="room.unreadMessages !== 0" class="unread-messages" :class="{ filled }">
-      {{ room.unreadMessages }}
+    <span v-if="newMessages?.length" class="unread-messages" :class="{ filled }">
+      {{ newMessages?.length }}
     </span>
   </div>
 </template>
@@ -59,6 +67,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    usePhoto: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   mounted() {
@@ -84,7 +96,9 @@ export default {
 
   computed: {
     ...mapState({
-      activeChat: (state) => state.chats.activeChat || {},
+      newMessages(state) {
+        return state.rooms.newMessagesByRoom[this.room.uuid]?.messages;
+      },
     }),
     hasUnreadMessages() {
       return this.room.unreadMessages > 0;
@@ -103,11 +117,21 @@ export default {
 
   cursor: pointer;
 
-  width: 16rem;
-
   &.active {
     border-radius: $unnnic-border-radius-sm;
     background: rgba($unnnic-color-brand-weni, $unnnic-opacity-level-extra-light);
+  }
+
+  &.new-messages {
+    .username {
+      color: $unnnic-color-neutral-darkest;
+      font-weight: $unnnic-font-weight-bold;
+    }
+
+    .additional-information {
+      color: $unnnic-color-neutral-cloudy;
+      font-weight: $unnnic-font-weight-bold;
+    }
   }
 
   &.disabled {
@@ -137,12 +161,12 @@ export default {
 
     .username {
       color: $unnnic-color-neutral-darkest;
-      font-size: $unnnic-font-size-body-md;
+      font-size: $unnnic-font-size-body-gt;
     }
 
     .additional-information {
       color: $unnnic-color-neutral-cloudy;
-      font-size: $unnnic-font-size-body-sm;
+      font-size: $unnnic-font-size-body-md;
     }
   }
 

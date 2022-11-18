@@ -15,8 +15,9 @@
         ref="chatMessages"
       />
 
-      <div v-if="room.is_active" class="message-editor">
+      <div v-if="isMessageEditorVisible" class="message-editor">
         <message-editor
+          ref="message-editor"
           v-model="editorMessage"
           :audio.sync="audioMessage"
           @show-quick-messages="
@@ -28,10 +29,23 @@
         />
       </div>
 
-      <section v-if="!room.is_active && !room.tags" class="chat-classifier">
-        <chat-classifier v-model="tags" label="Por favor, classifique o atendimento:">
+      <div v-if="!room.user" class="get-chat-button-container">
+        <unnnic-button
+          class="get-chat-button"
+          :text="$t('chats.get_chat')"
+          type="secondary"
+          @click="isGetChatConfirmationModalOpen = true"
+        />
+      </div>
+
+      <section v-if="isRoomClassifierVisible" class="chat-classifier">
+        <chat-classifier
+          v-model="tags"
+          :tags="sectorTags"
+          label="Por favor, classifique o atendimento:"
+        >
           <template #actions>
-            <unnnic-button text="Confirmar" type="secondary" size="small" @click="setChatTags" />
+            <unnnic-button :text="$t('confirm')" type="secondary" size="small" @click="closeRoom" />
           </template>
         </chat-classifier>
       </section>
@@ -42,13 +56,32 @@
       :showModal="isCloseChatModalOpen"
       @close="isCloseChatModalOpen = false"
       :text="$t('chats.end')"
-      :description="$t('chats.end_confirmation', { name: room.contact.full_name })"
+      :description="$t('chats.end_confirmation', { name: room.contact.name })"
       modal-icon="alert-circle-1"
       scheme="feedback-yellow"
     >
       <template #options>
-        <unnnic-button :text="$t('confirm')" type="terciary" @click="closeChat" />
+        <unnnic-button :text="$t('confirm')" type="terciary" @click="classifyRoom" />
         <unnnic-button :text="$t('cancel')" @click="isCloseChatModalOpen = false" />
+      </template>
+    </unnnic-modal>
+
+    <unnnic-modal
+      v-if="room"
+      :showModal="isGetChatConfirmationModalOpen"
+      @close="isGetChatConfirmationModalOpen = false"
+      :text="$t('chats.get_chat_question')"
+      :description="`Confirme se deseja realizar o atendimento de ${room.contact.name}`"
+      modal-icon="messages-bubble-1"
+      scheme="neutral-darkest"
+    >
+      <template #options>
+        <unnnic-button
+          :text="$t('cancel')"
+          type="terciary"
+          @click="isGetChatConfirmationModalOpen = false"
+        />
+        <unnnic-button :text="$t('confirm')" type="secondary" @click="takeRoom" />
       </template>
     </unnnic-modal>
 
@@ -59,7 +92,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 
 import ChatsLayout from '@/layouts/ChatsLayout';
 
@@ -69,6 +102,9 @@ import ContactInfo from '@/components/chats/ContactInfo';
 import MessageEditor from '@/components/chats/MessageEditor';
 import ChatClassifier from '@/components/chats/ChatClassifier';
 import QuickMessages from '@/components/chats/QuickMessages';
+
+import Room from '@/services/api/resources/chats/room';
+import Queue from '@/services/api/resources/settings/queue';
 
 export default {
   name: 'ActiveChat',
@@ -90,23 +126,31 @@ export default {
     },
   },
 
-  mounted() {
-    this.setActiveRoom(this.id);
-  },
-
   data: () => ({
+    /**
+     * @type {HTMLAudioElement}
+     */
     audioMessage: null,
     componentInAsideSlot: '',
     editorMessage: '',
     isCloseChatModalOpen: false,
     tags: [],
+    sectorTags: [],
+    isGetChatConfirmationModalOpen: false,
+    isRoomClassifierVisible: false,
   }),
 
   computed: {
     ...mapState({
       room: (state) => state.rooms.activeRoom,
-      messages: (state) => state.rooms.activeRoomMessages,
+      me: (state) => state.profile.me,
     }),
+    ...mapGetters('rooms', {
+      messages: 'groupedActiveRoomsMessage',
+    }),
+    isMessageEditorVisible() {
+      return !this.isRoomClassifierVisible && this.room.is_active && !!this.room.user;
+    },
     sidebarComponent() {
       return this.sidebarComponents[this.componentInAsideSlot] || {};
     },
@@ -119,7 +163,7 @@ export default {
               this.componentInAsideSlot = '';
             },
             'select-quick-message': (quickMessage) => {
-              this.editorMessage = quickMessage.message;
+              this.editorMessage = quickMessage.text;
             },
           },
         },
@@ -136,37 +180,42 @@ export default {
   },
 
   methods: {
-    closeChat() {
-      this.$store.commit('chats/setActiveChat', { ...this.room, closed: true });
+    async classifyRoom() {
+      this.isRoomClassifierVisible = true;
       this.isCloseChatModalOpen = false;
+      const response = await Queue.tags(this.room.queue.uuid);
+      this.sectorTags = response.results;
+    },
+    async takeRoom() {
+      await Room.take(this.room.uuid, this.me.email);
+      this.isGetChatConfirmationModalOpen = false;
+    },
+    async closeRoom() {
+      if (this.tags.length === 0) return;
+      const { uuid } = this.room;
+
+      const tags = this.tags.map((tag) => tag.uuid);
+      await Room.close(uuid, tags);
+      this.$router.replace({ name: 'home' });
+      this.$store.dispatch('rooms/removeRoom', uuid);
     },
     scrollMessagesToBottom() {
+      if (!this.$refs.chatMessages) return;
       this.$refs.chatMessages.$el.scrollTop = this.$refs.chatMessages.$el.scrollHeight;
     },
     async setActiveRoom(uuid) {
       const room = this.$store.getters['rooms/getRoomById'](uuid);
-      if (!room) this.$router.push('/');
+      if (!room) this.$router.push({ name: 'home' });
       await this.$store.dispatch('rooms/setActiveRoom', room);
-      this.getRoomMessages();
     },
-    getRoomMessages() {
-      this.$store.dispatch('rooms/getActiveRoomMessages');
+    async getRoomMessages() {
+      await this.$store.dispatch('rooms/getActiveRoomMessages');
+      this.$nextTick(this.scrollMessagesToBottom);
     },
     async sendFileMessage(files) {
       try {
-        const filesInBase64 = await Promise.all(files.map((file) => this.fileToBase64(file)));
-
-        await Promise.all(
-          filesInBase64.map((file) =>
-            this.$store.dispatch('chats/sendMessage', {
-              src: file.src,
-              type: file.type,
-              isMedia: true,
-              fileExtension: file.fileExtension,
-              filename: file.filename,
-            }),
-          ),
-        );
+        await this.$store.dispatch('rooms/sendMedias', files);
+        this.scrollMessagesToBottom();
       } catch (e) {
         console.error('O upload de alguns arquivos pode não ter sido concluído');
       }
@@ -183,55 +232,18 @@ export default {
     async sendAudio() {
       if (!this.audioMessage) return;
 
-      const message = {
-        isAudio: true,
-        audio: this.audioMessage,
-      };
-
-      await this.$store.dispatch('chats/sendMessage', message);
-
+      const response = await fetch(this.audioMessage.src);
+      const blob = await response.blob();
+      const audio = new File([blob], `${Date.now().toString()}.mp3`, { type: 'audio/mpeg3' });
+      await this.$store.dispatch('rooms/sendMedias', [audio]);
       this.scrollMessagesToBottom();
+      this.$refs['message-editor'].clearAudio();
       this.audioMessage = null;
-    },
-    fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const fr = new FileReader();
-        fr.readAsDataURL(file);
-        fr.onload = () =>
-          resolve({
-            filename: file.name.split('.')[0],
-            type: this.getFileType(file),
-            fileExtension: file.type.split('/')[1],
-            src: fr.result,
-          });
-        fr.onerror = (err) => reject(err);
-      });
-    },
-    getFileType(file) {
-      const type = file.type.split('/')[0];
-      return type === 'application' ? 'document' : type;
     },
     getTodayDate() {
       return new Intl.DateTimeFormat('pt-BR', {
         dateStyle: 'short',
       }).format(new Date());
-    },
-
-    async setChatTags() {
-      const { room, tags } = this;
-
-      await this.$store.dispatch('chats/closeChat', {
-        id: room.id,
-        username: room.username,
-        agent: 'Ana',
-        date: this.getTodayDate(),
-        closed: true,
-        tags,
-        messages: room.messages,
-      });
-
-      this.$store.commit('chats/setActiveChat', null);
-      this.$router.replace('/');
     },
   },
 
@@ -239,8 +251,20 @@ export default {
     room(newValue) {
       if (!newValue) this.componentInAsideSlot = '';
     },
-    id(id) {
-      this.setActiveRoom(id);
+    id: {
+      immediate: true,
+      async handler() {
+        if (this.$store.state.rooms.newMessagesByRoom[this.id]) {
+          this.$delete(this.$store.state.rooms.newMessagesByRoom, this.id);
+        }
+
+        await this.setActiveRoom(this.id);
+        this.getRoomMessages();
+      },
+    },
+
+    messages() {
+      this.$nextTick(this.scrollMessagesToBottom);
     },
   },
 };
@@ -264,6 +288,7 @@ export default {
   }
 
   .chat-classifier {
+    margin-top: auto;
     margin-left: -$unnnic-spacing-inline-md;
     margin-bottom: -$unnnic-spacing-inline-sm;
   }
@@ -271,6 +296,15 @@ export default {
   .message-editor {
     margin-right: $unnnic-spacing-inline-sm;
     margin-top: auto;
+  }
+
+  .get-chat-button-container {
+    margin-top: auto;
+    margin-right: $unnnic-spacing-inline-sm;
+
+    .get-chat-button {
+      width: 100%;
+    }
   }
 }
 </style>

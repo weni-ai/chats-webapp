@@ -46,7 +46,7 @@
       </template>
 
       <template slot="description">
-        {{ quickMessage.message }}
+        {{ quickMessage.text }}
       </template>
     </unnnic-chat-text>
   </section>

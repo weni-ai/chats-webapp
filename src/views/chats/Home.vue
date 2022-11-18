@@ -1,17 +1,16 @@
 <template>
   <chats-layout>
-    <section class="illustration">
-      <img class="illustration__doodles" :src="doodlesSvg" alt="" />
-      <img class="illustration__background" :src="backgroundSvg" alt="" />
-    </section>
+    <div class="unnnic-grid-span-12">
+      <section>
+        <img class="illustration__doodles" src="/homepage-illustration/doodles.svg" alt="" />
+        <img class="illustration__background" src="/homepage-illustration/background.svg" alt="" />
+      </section>
+    </div>
   </chats-layout>
 </template>
 
 <script>
 import ChatsLayout from '@/layouts/ChatsLayout';
-
-import backgroundSvg from '@/assets/homepage-illustration/background.svg';
-import doodlesSvg from '@/assets/homepage-illustration/doodles.svg';
 
 export default {
   name: 'ChatsHome',
@@ -19,33 +18,24 @@ export default {
   components: {
     ChatsLayout,
   },
-
-  data: () => ({
-    backgroundSvg,
-    doodlesSvg,
-  }),
 };
 </script>
 
 <style lang="scss" scoped>
 .illustration {
-  $height: calc(100vh - 5.5rem);
-
   display: flex;
   align-items: center;
   justify-content: center;
 
   position: relative;
-  height: $height;
-  max-height: $height;
+  height: 100%;
   margin-left: $unnnic-spacing-inline-sm;
 
   &__doodles,
   &__background {
     position: absolute;
-    height: $height;
-    width: 100%;
-    max-height: $height;
+    height: 100%;
+    width: 73%;
     object-fit: cover;
     object-position: center;
     pointer-events: none;

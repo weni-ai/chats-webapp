@@ -13,7 +13,7 @@ export default {
 <style lang="scss" scoped>
 .aside-slot-template-section {
   background: $unnnic-color-background-snow;
-  padding: $unnnic-spacing-inset-sm $unnnic-spacing-inset-md;
+  padding: $unnnic-spacing-inset-md $unnnic-spacing-inset-md;
 
   &:first-child {
     padding-top: $unnnic-spacing-inset-md;
@@ -24,7 +24,7 @@ export default {
   }
 
   & + .aside-slot-template-section {
-    margin-top: $unnnic-spacing-inline-xs;
+    border-top: solid 1px $unnnic-color-neutral-soft;
   }
 }
 </style>

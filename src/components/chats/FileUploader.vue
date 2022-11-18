@@ -1,10 +1,6 @@
 <template>
-  <section>
-    <section>
-      <slot name="trigger" :open="openFileUploadModal" />
-    </section>
-
-    <div v-if="showUploadModal" class="modal-upload-container">
+  <section v-if="showUploadModal">
+    <div class="modal-upload-container">
       <unnnic-modal-upload
         v-model="files"
         v-bind="fileUploadModalProps"
@@ -35,13 +31,14 @@ export default {
   }),
 
   methods: {
+    // accessed by external components
+    open(fileType) {
+      this.showUploadModal = true;
+      this.uploadFileType = fileType;
+    },
     closeFileUploadModal() {
       this.showUploadModal = false;
       this.uploadFileType = '';
-    },
-    openFileUploadModal(fileType) {
-      this.showUploadModal = true;
-      this.uploadFileType = fileType;
     },
     upload() {
       this.$emit('upload');

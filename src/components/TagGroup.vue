@@ -4,11 +4,12 @@
       v-for="(tag, i) in tags"
       :key="tag.uuid"
       :clickable="selectable"
-      :text="tag.title"
+      :text="tag.name"
       :data-testid="`tag__${tag.uuid}`"
-      :has-close-icon="hasCloseIcon || (selectable && !!selected.find((t) => t.uuid === tag.uuid))"
+      :has-close-icon="hasCloseIcon"
       @click="select(tag)"
       @close="close(tag)"
+      :disabled="!hasCloseIcon && selectable && !selected.find((t) => t.uuid === tag.uuid)"
       :scheme="schemes[i % schemes.length]"
     />
   </section>

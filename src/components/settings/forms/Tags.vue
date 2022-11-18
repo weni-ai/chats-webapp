@@ -1,26 +1,28 @@
 <template>
   <section class="form-tags">
-    <p class="form-tags__description">
-      As tags são usadas para classificar características do atendimento e possibilitar a pesquisa e
-      filtragem dos chats a partir delas, defina tags que sejam relevantes para seu contexto.
-    </p>
+    <!-- <p class="form-tags__description">{{ $t('tags.description') }}</p> -->
 
     <section class="form-tags__section">
-      <p class="form-tags__section__label">Adicionar Tags</p>
+      <p class="form-tags__section__label">
+        {{ $t('tags.add.title') }}
+        <unnnic-tool-tip enabled side="right" :text="$t('new_sector.tags_tip')">
+          <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+        </unnnic-tool-tip>
+      </p>
       <section class="form-tags__section__input-group">
         <unnnic-input
           v-model="tag"
           @keypress.enter="addTag"
           class="form-tags__section__input-group__input"
-          label="Nome da tag"
-          placeholder="Exemplo: Dúvidas"
+          :label="$t('tags.add.label')"
+          :placeholder="$t('tags.add.placeholder')"
         />
         <unnnic-button type="secondary" text="Adicionar" @click="addTag" />
       </section>
     </section>
 
     <section v-if="tags.length > 0" class="form-tags__section">
-      <p class="form-tags__section__label">Tags adicionadas</p>
+      <p class="form-tags__section__label">{{ $t('tags.already_added') }}</p>
       <tag-group :tags="tags" selectable has-close-icon @close="removeTag($event)" />
     </section>
   </section>
@@ -60,19 +62,14 @@ export default {
 
   methods: {
     addTag() {
-      const text = this.tag.trim();
-      if (!text) return;
+      const name = this.tag.trim();
+      if (!name) return;
 
-      const lastId = this.tags.length > 0 ? Math.max(...this.tags.map((t) => t.value)) : 0;
-      const tag = {
-        text,
-        value: lastId + 1,
-      };
-      this.tags = [...this.tags, tag];
+      this.$emit('add', name);
       this.tag = '';
     },
     removeTag(tag) {
-      this.tags = this.tags.filter((t) => t.value !== tag.value);
+      this.$emit('remove', tag.uuid);
     },
   },
 };

@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import LogRocket from 'logrocket';
+import VMask from 'v-mask';
 
 import App from './App.vue';
 import i18n from './plugins/i18n';
@@ -7,14 +8,20 @@ import router from './router';
 import store from './store';
 import env from './utils/env';
 
+import './utils/nilo';
+
 import './styles/global.scss';
 
-LogRocket.init('lqshel/test-weni-webapp', {
+LogRocket.init(env('LOGROCKET_ID'), {
   mergeIframes: true,
-  parentDomain: env('VUE_APP_PARENT_DOMAIN'),
+  parentDomain: env('LOGROCKET_PARENT_DOMAIN'),
 });
 
+console.info('LogRocket Config: ', env('LOGROCKET_ID'), env('LOGROCKET_PARENT_DOMAIN'));
+
 Vue.config.productionTip = false;
+
+Vue.use(VMask);
 
 new Vue({
   i18n,

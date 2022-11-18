@@ -1,11 +1,13 @@
-import auth from './auth';
 import chats from './chats';
-import settings from './settings';
+import config from './config';
+import profile from './profile';
 import rooms from './rooms';
+import settings from './settings';
 
 export default {
-  auth,
   chats,
-  settings,
+  config,
+  profile,
   rooms,
+  settings,
 };

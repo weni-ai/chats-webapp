@@ -1,81 +1,91 @@
 <template>
   <section class="form-queue">
-    <p class="title">Adicionar nova Fila</p>
+    <!-- <p v-if="showInfoIcon" class="form-queue__description">{{ infoText }}</p> -->
+    <p class="title">
+      {{ label }}
+      <unnnic-tool-tip enabled side="right" :text="$t('new_sector.queues_tip')">
+        <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+      </unnnic-tool-tip>
+    </p>
 
     <section class="controls">
       <unnnic-input
-        v-model="name"
+        v-model="queue.name"
         label="Nome da fila"
-        placeholder="Suporte nivel III"
-        @keypress.enter="createQueue"
+        placeholder="Exemplo: Pagamentos"
         class="input"
       />
-      <unnnic-button type="secondary" text="Adicionar fila" @click="createQueue" />
+      <unnnic-button v-if="isEditing" text="Salvar" type="secondary" @click="addQueue" />
     </section>
 
-    <section v-if="!!queues.length">
-      <list-sector-queues :queues="queues" :sector="sector" />
+    <section v-if="isEditing" class="form-queue__queues">
+      <sector-queues-list :sector="sector.name" :queues="queues" @visualize="visualize" />
     </section>
   </section>
 </template>
 
 <script>
-import ListSectorQueues from '@/components/settings/lists/ListSectorQueues';
+import SectorQueuesList from '@/components/settings/lists/ListSectorQueues';
 
 export default {
   name: 'FormQueue',
 
   components: {
-    ListSectorQueues,
+    SectorQueuesList,
   },
 
   props: {
-    sector: {
-      type: String,
-      default: '',
+    isEditing: {
+      type: Boolean,
+      default: false,
     },
-    value: {
+    queues: {
       type: Array,
       default: () => [],
     },
+    label: {
+      type: String,
+      default: '',
+    },
+    sector: {
+      type: Object,
+      default: () => ({}),
+    },
+    showInfoIcon: {
+      type: Boolean,
+      default: false,
+    },
+    value: {
+      type: Object,
+      default: () => ({}),
+    },
   },
 
-  data: () => ({
-    name: '',
-  }),
-
   computed: {
-    queues: {
+    queue: {
       get() {
         return this.value;
       },
-      set(queues) {
-        this.$emit('input', queues);
+      set(queue) {
+        this.$emit('input', queue);
       },
     },
   },
 
   methods: {
-    validate() {
-      return this.queues.length > 0;
+    visualize(queue) {
+      this.$emit('visualize', queue);
     },
-    createQueue() {
-      const name = this.name.trim();
-      if (!name) return;
-
-      this.queues.push({
-        name,
-        createdAt: Intl.DateTimeFormat('pt-BR', {
-          dateStyle: 'short',
-        }).format(new Date()),
-      });
-
-      this.name = '';
+    addQueue() {
+      this.$emit('add-queue', this.queue);
+    },
+    validate() {
+      return !!this.queue.name;
     },
   },
 
   watch: {
-    queues: {
+    queue: {
       deep: true,
       immediate: true,
       handler() {
@@ -88,6 +98,12 @@ export default {
 
 <style lang="scss" scoped>
 .form-queue {
+  &__description {
+    font-size: $unnnic-font-size-body-md;
+    color: $unnnic-color-neutral-cloudy;
+    margin: $unnnic-spacing-inline-xs 0 $unnnic-spacing-inline-md;
+  }
+
   .title {
     font-weight: $unnnic-font-weight-bold;
     color: $unnnic-color-neutral-dark;
@@ -100,7 +116,7 @@ export default {
   .controls {
     display: flex;
     align-items: flex-end;
-    gap: 1.5rem;
+    gap: $unnnic-spacing-stack-sm;
     margin-bottom: 1.5rem;
 
     .input {

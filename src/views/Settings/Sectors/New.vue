@@ -1,61 +1,63 @@
 <template>
   <section class="new-sector">
-    <div class="scrollable">
-      <sector-tabs v-model="tab">
-        <template #sector>
-          <form-sector v-model="sector" @validate="isSectorFormValid = $event" />
-        </template>
-
-        <template #queues>
-          <form-queue
-            v-model="sector.queues"
-            :sector="sector.name"
-            @validate="isQueuesFormValid = $event"
-          />
-        </template>
-
-        <template #agents>
-          <section>
-            <form-agent
-              v-model="sector.agents"
-              :queues="sector.queues"
-              :sector="sector.name"
-              @validate="isAgentsFormValid = $event"
-            />
-          </section>
-        </template>
-
-        <template #tags>
-          <section>
-            <form-tags v-model="sector.tags" />
-          </section>
-        </template>
-      </sector-tabs>
+    <div class="new-sector__indicator">
+      <unnnic-indicator :current-step="step" :number-of-steps="3" :titles="stepsTitles" />
     </div>
+    <div class="new-sector__divider" />
+
+    <section class="scrollable">
+      <section class="new-sector__form">
+        <form-sector
+          v-show="step === Steps.General"
+          v-model="sector"
+          :managers="projectManagers"
+          @validate="isSectorFormValid = $event"
+          @remove-manager="removeManager"
+        />
+
+        <form-queue
+          v-show="step === Steps.Queues"
+          v-model="sector.queue"
+          label="Adicionar nova Fila"
+          show-info-icon
+          :sector="sector"
+          @validate="isQueuesFormValid = $event"
+        />
+        <form-agent
+          v-show="step === Steps.Queues"
+          v-model="sector.agents"
+          :sector="sector"
+          :agents="projectAgents"
+          @select="addAgent"
+          @remove="removeAgent"
+          @validate="isAgentsFormValid = $event"
+        />
+        <form-tags
+          v-show="step === Steps.Tags"
+          v-model="sector.tags"
+          @add="addTag"
+          @remove="removeTag"
+        />
+      </section>
+    </section>
 
     <div class="actions">
       <unnnic-button
-        v-if="tab !== 'tags'"
-        text="Continuar configurações de setor"
+        v-if="step !== Steps.Tags"
+        text="Salvar e continuar"
         iconRight="arrow-right-1-1"
         type="secondary"
         :disabled="!isActiveFormValid"
-        @click="nextTab"
+        @click="nextStep"
       />
-      <unnnic-button v-else :disabled="!isActiveFormValid" text="Concluir" @click="saveSector" />
+      <unnnic-button
+        v-else
+        :disabled="!isActiveFormValid"
+        type="secondary"
+        text="Salvar"
+        @click="nextStep"
+      />
     </div>
-
-    <unnnic-modal
-      :showModal="isOpenSectorConfirmationDialog"
-      text="Setor adicionado"
-      modal-icon="check-circle-1-1"
-      description="Setor de suporte, filas e agentes criados com sucesso"
-      @close="redirectToHomepage"
-    >
-      <template #options>
-        <unnnic-button text="Fechar" @click="redirectToHomepage" />
-      </template>
-    </unnnic-modal>
   </section>
 </template>
 
@@ -64,7 +66,16 @@ import FormAgent from '@/components/settings/forms/Agent';
 import FormQueue from '@/components/settings/forms/Queue';
 import FormSector from '@/components/settings/forms/Sector';
 import FormTags from '@/components/settings/forms/Tags';
-import SectorTabs from '@/components/settings/SectorTabs';
+
+import Sector from '@/services/api/resources/settings/sector';
+import Queue from '@/services/api/resources/settings/queue';
+import Project from '@/services/api/resources/settings/project';
+
+const Steps = Object.freeze({
+  General: 1,
+  Queues: 2,
+  Tags: 3,
+});
 
 export default {
   name: 'NewSector',
@@ -74,69 +85,146 @@ export default {
     FormQueue,
     FormSector,
     FormTags,
-    SectorTabs,
+  },
+
+  beforeMount() {
+    this.listProjectManagers();
+    this.listProjectAgents();
   },
 
   data: () => ({
     sector: {
+      uuid: '',
       name: '',
-      manager: '',
+      managers: [],
       workingDay: {
         start: '',
         end: '',
       },
       agents: [],
-      queues: [],
+      queue: {
+        uuid: '',
+      },
       tags: [],
       maxSimultaneousChatsByAgent: '',
     },
+    projectManagers: [],
+    projectAgents: [],
     isSectorFormValid: false,
     isQueuesFormValid: false,
     isAgentsFormValid: false,
     isOpenSectorConfirmationDialog: false,
-    tab: '',
-    tabs: ['sector', 'queues', 'agents'],
+    Steps,
+    step: Steps.General,
+    stepsTitles: ['Geral', 'Filas', 'Tags'],
   }),
 
   computed: {
     isActiveFormValid() {
-      if (!this.tab) return false;
+      if (!this.step) return false;
 
-      const tabs = {
-        sector: this.isSectorFormValid,
-        queues: this.isQueuesFormValid,
-        agents: this.isAgentsFormValid,
-        tags: this.sector.tags.length > 0,
+      const steps = {
+        [Steps.General]: this.isSectorFormValid,
+        [Steps.Queues]: this.isQueuesFormValid && this.isAgentsFormValid,
+        [Steps.Tags]: this.sector.tags.length > 0,
       };
 
-      return tabs[this.tab];
+      return steps[this.step];
     },
   },
 
   methods: {
-    nextTab() {
-      const tabs = {
-        sector: () => {
-          this.tab = 'queues';
-        },
-        queues: () => {
-          this.tab = 'agents';
-        },
-        agents: () => {
-          this.tab = 'tags';
-        },
-        tags: this.saveSector,
+    async listProjectManagers() {
+      const managers = (await Project.managers()).results.concat((await Project.admins()).results);
+      this.projectManagers = managers;
+    },
+    async listProjectAgents() {
+      const agents = (await Project.agents()).results.concat((await Project.admins()).results);
+      this.projectAgents = agents;
+    },
+    async nextStep() {
+      const steps = {
+        [Steps.General]: this.handleGeneralNextStep,
+        [Steps.Queues]: this.handleQueueNextStep,
+        [Steps.Tags]: this.handleTagsNextStep,
       };
 
-      tabs[this.tab]?.();
+      await steps[this.step]?.();
     },
-    async saveSector() {
-      await this.$store.dispatch('settings/saveSector', this.sector);
-
-      this.isOpenSectorConfirmationDialog = true;
+    async handleGeneralNextStep() {
+      const sector = await this.createSector();
+      this.sector.uuid = sector.uuid;
+      await this.addManagers();
+      this.step = Steps.Queues;
     },
-    redirectToHomepage() {
-      this.$router.push('/settings/chats');
+    async addManagers() {
+      await Promise.all(this.sector.managers.map(this.addManager));
+    },
+    async handleQueueNextStep() {
+      const queue = await this.createQueue();
+      this.sector.queue = queue;
+      await Promise.all(this.sector.agents.map(this.addAgentToQueue));
+      this.step = Steps.Tags;
+    },
+    async handleTagsNextStep() {
+      await this.createTags();
+      this.$router.push({
+        name: 'sectors',
+      });
+    },
+    async addAgentToQueue(agent) {
+      await Queue.addAgent(this.sector.queue.uuid, agent.uuid);
+    },
+    async createSector() {
+      const { name, maxSimultaneousChatsByAgent, workingDay } = this.sector;
+      const props = {
+        name,
+        rooms_limit: Number(maxSimultaneousChatsByAgent),
+        work_start: workingDay.start,
+        work_end: workingDay.end,
+      };
+      const sector = await Sector.create(props);
+      return sector;
+    },
+    async createQueue() {
+      const queue = await Queue.create({
+        name: this.sector.queue.name,
+        sectorUuid: this.sector.uuid,
+      });
+      return queue;
+    },
+    async createTags() {
+      const { tags } = this.sector;
+      await Promise.all(
+        tags.map((tag) => {
+          return Sector.addTag(this.sector.uuid, tag.name);
+        }),
+      );
+    },
+    async addTag(tagName) {
+      this.sector.tags.push({
+        uuid: Date.now().toString(),
+        name: tagName,
+      });
+    },
+    async removeTag(tagUuid) {
+      this.sector.tags = this.sector.tags.filter((tag) => tag.uuid !== tagUuid);
+    },
+    async addManager(manager) {
+      await Sector.addManager(this.sector.uuid, manager.uuid);
+    },
+    removeManager(managerUuid) {
+      const managers = this.sector.managers.filter((manager) => manager.uuid !== managerUuid);
+      this.sector = {
+        ...this.sector,
+        managers,
+      };
+    },
+    async addAgent(agent) {
+      this.sector.agents.push(agent);
+    },
+    removeAgent(agentUuid) {
+      this.sector.agents = this.sector.agents.filter((agent) => agent.uuid !== agentUuid);
     },
   },
 };
@@ -151,8 +239,22 @@ export default {
 
   .scrollable {
     overflow-y: auto;
+    height: 100%;
     padding-right: 1rem;
-    margin-right: 0.5rem;
+  }
+
+  &__indicator {
+    padding: 0 calc(2 * $unnnic-spacing-inset-nano);
+    position: static;
+  }
+
+  &__divider {
+    border-top: solid 1px $unnnic-color-neutral-soft;
+    margin-top: calc(2 * $unnnic-spacing-inline-md);
+  }
+
+  &__form {
+    margin-top: $unnnic-spacing-inline-md;
   }
 
   .actions {

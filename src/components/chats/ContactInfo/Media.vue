@@ -3,13 +3,12 @@
     <template slot="tab-head-media">
       <div class="media-tab" :class="{ active: isActiveTab('media') }">
         <span class="name">{{ $t('media') }}</span>
-        <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
       </div>
     </template>
 
     <template slot="tab-panel-media">
       <section class="media__content">
-        <div v-for="media in medias" :key="media.filename" class="media__content__media">
+        <div v-for="media in images" :key="media.url" class="media__content__media">
           <div class="media__content__media__preview">
             <image-preview v-bind="media" fullscreen-on-click object-fit="cover" />
           </div>
@@ -20,7 +19,6 @@
     <template slot="tab-head-docs">
       <div class="media-tab" :class="{ active: isActiveTab('docs') }">
         <span class="name">{{ $t('docs') }}</span>
-        <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
       </div>
     </template>
 
@@ -28,13 +26,45 @@
       <section class="documents__content">
         <document-preview
           v-for="document in documents"
+          :type="document.content_type"
           size="sm"
-          :key="document.filename"
-          :src="document.src"
-          :fullFilename="document.filename + '.' + document.fileExtension"
+          :key="document.url"
+          :src="document.url"
+          :fullFilename="document.url"
           class="documents__content__document"
+          @download="download(document.url)"
         />
       </section>
+    </template>
+    <template slot="tab-head-audio">
+      <div class="media-tab" :class="{ active: isActiveTab('audio') }">
+        <span class="name">{{ $t('audio') }}</span>
+      </div>
+    </template>
+    <template slot="tab-panel-audio">
+      <div class="scrollable" style="background-color: #ffff">
+        <section class="media__content_audio">
+          <div
+            v-for="audio in audios"
+            :key="audio.url"
+            class="media__content_audio__media"
+            style="display: flex; width: 100%"
+          >
+            <div style="width: 25%">
+              <audio-preview :currentAudio="audio.url"></audio-preview>
+            </div>
+            <div style="width: 75%">
+              <!-- <span
+                >Enviado por {{ audio.name }} |
+                {{ audio.duration == 'Infinity' ? 0 : audio.duration }}s
+              </span> -->
+              <span>
+                Áudio enviado | {{ audio.duration == 'Infinity' ? 0 : audio.duration }}s
+              </span>
+            </div>
+          </div>
+        </section>
+      </div>
     </template>
   </unnnic-tab>
 </template>
@@ -42,6 +72,8 @@
 <script>
 import DocumentPreview from '@/components/chats/MediaMessage/Previews/Document';
 import ImagePreview from '@/components/chats/MediaMessage/Previews/Image';
+import AudioPreview from '@/components/chats/MediaMessage/Previews/Audio';
+import Media from '@/services/api/resources/chats/media';
 
 export default {
   name: 'ContactMedia',
@@ -49,101 +81,85 @@ export default {
   components: {
     DocumentPreview,
     ImagePreview,
+    AudioPreview,
+  },
+
+  props: {
+    room: {
+      type: Object,
+    },
+  },
+
+  created() {
+    this.loadNextMedias();
   },
 
   data: () => ({
     tab: 'media',
-    tabs: ['media', 'docs'],
+    tabs: ['media', 'docs', 'audio'],
+    page: 1,
 
-    documents: [
-      {
-        src: 'https://picsum.photos/2480/3508',
-        type: 'document',
-        isMedia: true,
-        fileExtension: 'pdf',
-        filename: 'Boleto atualizado 1',
-      },
-      {
-        src: 'https://picsum.photos/2480/3508',
-        type: 'document',
-        isMedia: true,
-        fileExtension: 'pdf',
-        filename: 'Boleto atualizado 2',
-      },
-      {
-        src: 'https://picsum.photos/2480/3508',
-        type: 'document',
-        isMedia: true,
-        fileExtension: 'pdf',
-        filename: 'Boleto atualizado 3',
-      },
-      {
-        src: 'https://picsum.photos/2480/3508',
-        type: 'document',
-        isMedia: true,
-        fileExtension: 'pdf',
-        filename: 'Boleto atualizado 4',
-      },
-    ],
-
-    medias: [
-      {
-        src: 'https://picsum.photos/1920/1080',
-        type: 'image',
-        isMedia: true,
-        fileExtension: 'png',
-        filename: 'Captura de tela 1',
-      },
-      {
-        src: 'https://picsum.photos/1080/1920',
-        type: 'image',
-        isMedia: true,
-        width: 1080,
-        height: 'auto',
-        fileExtension: 'png',
-        filename: 'Captura de tela 2',
-      },
-      {
-        src: 'https://picsum.photos/1920/1080',
-        type: 'image',
-        isMedia: true,
-        fileExtension: 'png',
-        filename: 'Captura de tela 3',
-      },
-      {
-        src: 'https://picsum.photos/500/500',
-        type: 'image',
-        isMedia: true,
-        fileExtension: 'png',
-        filename: 'Captura de tela 4',
-      },
-      {
-        src: 'https://picsum.photos/1920/1080',
-        type: 'image',
-        isMedia: true,
-        fileExtension: 'png',
-        filename: 'Captura de tela 5',
-      },
-      {
-        src: 'https://picsum.photos/1920/1080',
-        type: 'image',
-        isMedia: true,
-        fileExtension: 'png',
-        filename: 'Captura de tela 6',
-      },
-      {
-        src: 'https://picsum.photos/1920/1080',
-        type: 'image',
-        isMedia: true,
-        fileExtension: 'png',
-        filename: 'Captura de tela 7',
-      },
-    ],
+    medias: [],
+    audios: [],
+    audioWithDuration: [],
+    currentAudio: null,
+    audioDuration: null,
   }),
+
+  computed: {
+    images() {
+      return this.medias.filter((media) => media.content_type.startsWith('image/'));
+    },
+
+    documents() {
+      return this.medias.filter((media) => !media.content_type.startsWith('image/'));
+    },
+  },
 
   methods: {
     isActiveTab(tab) {
       return tab === this.tab;
+    },
+
+    download(url) {
+      const a = document.createElement('a');
+      a.setAttribute('href', url);
+      a.setAttribute('download', true);
+      document.body.appendChild(a);
+      a.click();
+      a.parentNode.removeChild(a);
+    },
+
+    async loadNextMedias() {
+      const response = await Media.listFromContactAndRoom({
+        contact: this.room.contact.uuid,
+        room: this.room.uuid,
+        ordering: 'content_type',
+        page: this.page,
+      });
+      this.audios = await Promise.all(
+        response.results
+          .filter((media) => media.content_type.startsWith('audio/'))
+          .map(
+            (element) =>
+              new Promise((resolve) => {
+                const url = new Audio(element.url);
+                url.onloadedmetadata = (event) => {
+                  const { duration } = event.path[0];
+                  resolve({ ...element, duration });
+                };
+              }),
+          ),
+      );
+      this.medias = this.medias.concat(
+        response.results.filter((media) => !media.content_type.startsWith('audio/')),
+      );
+
+      this.page += 1;
+
+      if (response.next) {
+        this.loadNextMedias();
+      }
     },
   },
 };
@@ -187,7 +203,6 @@ export default {
     }
   }
 }
-
 .documents__content {
   display: flex;
   flex-direction: column;
@@ -196,6 +211,32 @@ export default {
   &__document {
     padding-bottom: 0.25rem;
     border-bottom: solid 1px $unnnic-color-neutral-soft;
+  }
+}
+
+.media__content_audio {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: $unnnic-spacing-stack-xs;
+
+  max-width: 100%;
+
+  &__media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: solid 1px $unnnic-color-neutral-soft;
+    // aspect-ratio: 1;
+
+    &__preview {
+      height: 100%;
+      width: 15%;
+    }
+  }
+  .scrollable {
+    overflow-y: auto;
+    height: 100%;
+    background-color: #ffff;
   }
 }
 </style>

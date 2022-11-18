@@ -9,61 +9,70 @@
     </header>
 
     <section class="sectors">
-      <div @click="navigate('chats/sectors/new')" @keypress.enter="navigate('sectors/new')">
+      <div @click="navigate('sectors.new')" @keypress.enter="navigate('sectors.new')">
         <unnnic-card type="blank" text="Novo setor" icon="add-1" class="new-sector-card" />
       </div>
 
       <unnnic-card-project
         v-for="sector in sectors"
+        class="sectors-list"
         :key="sector.id"
-        actionText="Entrar"
+        actionText="Abrir"
         :name="sector.name"
-        @action="
-          navigate({
-            name: 'sectors.view',
-            params: { id: sector.id },
-          })
-        "
+        @action="navigate('sectors.edit', { uuid: sector.uuid })"
         :statuses="[
-          {
-            title: 'Filas',
-            icon: 'hierarchy-3-2',
-            scheme: 'brand-weni',
-            count: sector.queues.length,
-          },
           {
             title: 'Agentes',
             icon: 'headphones-customer-support-human-1-1',
             scheme: 'aux-purple',
-            count: sector.agents.length,
+            count: sector.agents,
           },
           {
             title: 'Contatos',
             icon: 'single-neutral-actions-1',
             scheme: 'aux-lemon',
-            count: sector.contacts.count,
+            count: sector.contacts,
           },
         ]"
       />
     </section>
+    <div v-if="isLoading" class="weni-redirecting">
+      <img class="logo" src="@/assets/LogoWeniAnimada4.svg" alt="" />
+    </div>
   </main>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import Sector from '@/services/api/resources/settings/sector';
 
 export default {
   name: 'SettingsChats',
 
-  computed: {
-    ...mapState({
-      sectors: (state) => state.settings.sectors,
-    }),
+  beforeMount() {
+    this.listSectors();
   },
 
+  data: () => ({
+    sectors: [],
+    isLoading: true,
+  }),
+
   methods: {
-    navigate(params) {
-      this.$router.push(params);
+    navigate(name, params) {
+      this.$router.push({
+        name,
+        params,
+      });
+    },
+    async listSectors() {
+      try {
+        this.isLoading = true;
+        const sectors = await Sector.list();
+        this.sectors = sectors.results;
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+      }
     },
   },
 };
@@ -100,6 +109,21 @@ export default {
     .new-sector-card {
       height: 100%;
     }
+    .sectors-list {
+      background-color: $unnnic-color-background-carpet;
+    }
+  }
+  .weni-redirecting {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    padding: 15px;
+  }
+  .logo {
+    width: 10%;
+    max-width: 40px;
+    max-height: 40px;
   }
 }
 </style>

@@ -5,12 +5,9 @@
     class="document-preview clickable"
     :class="[{ highlight }, size]"
   >
-    <unnnic-icon-svg
-      icon="paginate-filter-text-1"
-      :scheme="highlight ? 'brand-weni-soft' : 'neutral-darkest'"
-    />
+    <unnnic-icon-svg :icon="icon" :scheme="highlight ? 'brand-weni-soft' : 'neutral-darkest'" />
     <span class="filename">
-      {{ fullFilename }}
+      {{ pathname }}
     </span>
 
     <unnnic-tool-tip enabled text="Baixar" side="right">
@@ -43,6 +40,19 @@ export default {
     src: {
       type: String,
       default: '',
+    },
+    type: {
+      type: String,
+    },
+  },
+
+  computed: {
+    pathname() {
+      return new URL(this.fullFilename).pathname.slice(1);
+    },
+
+    icon() {
+      return 'paginate-filter-text-1';
     },
   },
 };

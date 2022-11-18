@@ -6,37 +6,45 @@
         <div class="chat-messages__room__divisor__line" />
         <span class="chat-messages__room__divisor__label">
           {{
-            message.sender.full_name === 'Bot'
+            message.sender.name === 'Bot'
               ? $t('chat_with.bot')
-              : $t('chat_with.agent', { name: message.sender.full_name })
+              : $t('chat_with.agent', { name: message.sender.name })
           }}
         </span>
         <div class="chat-messages__room__divisor__line" />
       </div>
 
-      <section v-if="!isTransferInfoMessage(message)" class="chat-messages__messages">
-        <chat-message
-          :key="message.uuid"
-          :message="message"
-          :disabled="isHistory"
-          @show-contact-info="showContactInfo"
-        />
-      </section>
-
       <div v-if="isTransferInfoMessage(message)" class="chat-messages__room__transfer-info">
         <unnnic-icon icon="logout-1-1" size="sm" scheme="neutral-cleanest" />
         {{ createTransferLabel(message) }}
       </div>
+
+      <section v-else-if="!message.sender" class="chat-messages__messages">
+        <chat-message
+          :message="{ ...message, sender: { name: 'Bot' } }"
+          :disabled="isHistory"
+          :use-photo="usePhoto"
+        />
+      </section>
+
+      <section v-else class="chat-messages__messages">
+        <chat-message
+          :message="message"
+          :disabled="isHistory"
+          @show-contact-info="showContactInfo"
+          :use-photo="usePhoto"
+        />
+      </section>
     </section>
 
-    <section class="chat-messages__room__divisor">
+    <section v-if="!room.is_active" class="chat-messages__room__divisor">
       <div class="chat-messages__room__divisor__line" />
-      <span class="chat-messages__room__divisor__label"> Chat encerrado pelo agente </span>
+      <span class="chat-messages__room__divisor__label">{{ $t('chat_closed_by.agent') }}</span>
       <div class="chat-messages__room__divisor__line" />
     </section>
 
-    <section class="chat-messages__tags">
-      <p class="chat-messages__tags__label">Tags do chat</p>
+    <section v-if="room.tags.length > 0" class="chat-messages__tags">
+      <p class="chat-messages__tags__label">{{ $t('chats.tags') }}</p>
       <tag-group :tags="room.tags" />
     </section>
 
@@ -79,6 +87,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    usePhoto: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data: () => ({
@@ -97,16 +109,23 @@ export default {
 
   methods: {
     isTransferInfoMessage(message) {
-      return !message.sender;
+      try {
+        const content = JSON.parse(message.text);
+
+        return ['queue', 'user'].includes(content.type);
+      } catch (error) {
+        return false;
+      }
     },
     createTransferLabel(message) {
-      const { name } = message.name;
+      const text = JSON.parse(message.text);
+      const { name } = text;
       const transferType = {
         queue: this.$t('contact_transferred_to.line', { name }),
-        agent: this.$t('contact_transferred_to.agent', { name }),
+        user: this.$t('contact_transferred_to.agent', { name }),
       };
 
-      return transferType[message.type];
+      return transferType[text.type];
     },
     showContactInfo() {
       this.$emit('show-contact-info');

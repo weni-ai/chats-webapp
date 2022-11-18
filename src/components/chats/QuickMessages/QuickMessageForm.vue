@@ -25,10 +25,11 @@
     </unnnic-input>
 
     <unnnic-text-area
-      :value="quickMessage.message"
-      @input="quickMessage = { ...quickMessage, message: $event }"
+      :value="quickMessage.text"
+      @input="quickMessage = { ...quickMessage, text: $event }"
       :label="$t('message')"
       :placeholder="$t('quick_messages.message_field_placeholder')"
+      size="sm"
     />
 
     <div class="actions">
@@ -63,10 +64,10 @@ export default {
 
   computed: {
     isSaveButtonDisabled() {
-      return !this.hasMessageTitle || !this.hasMessageShortcut || !this.hasMessageContent;
+      return !this.hasMessageTitle || !this.hasMessageShortcut || !this.hasMessageText;
     },
-    hasMessageContent() {
-      return this.quickMessage.message?.trim?.();
+    hasMessageText() {
+      return this.quickMessage.text?.trim?.();
     },
     hasMessageShortcut() {
       return this.quickMessage.shortcut?.trim?.();

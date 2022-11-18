@@ -1,95 +1,67 @@
 <template>
   <section class="form-agent">
     <section class="section">
-      <p class="title">Adicionar novo Agente</p>
+      <p class="title">
+        {{ $t('agents.add.title') }}
+        <unnnic-tool-tip enabled side="right" :text="$t('new_sector.agent_tip')">
+          <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+        </unnnic-tool-tip>
+      </p>
 
       <section class="controls">
         <unnnic-autocomplete
-          v-model="agent.name"
-          :data="projectAgents"
-          @choose="agent.name = $event"
-          @keypress.enter="addAgent"
-          label="Selecionar agente"
-          placeholder="Pesquise pelo nome"
+          v-model="search"
+          :data="agentsNames"
+          @choose="chooseAgent"
+          :label="$t('agents.add.select.label')"
+          :placeholder="$t('agents.add.select.placeholder')"
           iconLeft="search-1"
           iconRight="keyboard-return-1"
           open-with-focus
           highlight
           class="input"
         />
-      </section>
-    </section>
-
-    <section class="section">
-      <p class="title">Selecionar filas para o agente</p>
-
-      <section class="controls">
-        <unnnic-autocomplete
-          v-model="queue"
-          :data="queues.map((q) => q.name)"
-          @keypress.enter="addAgentQueue"
-          label="Selecionar filas"
-          placeholder="Pesquise pelo nome da fila"
-          iconLeft="search-1"
-          iconRight="keyboard-return-1"
-          open-with-focus
-          highlight
-          class="input"
+        <unnnic-button
+          type="secondary"
+          :text="$t('agents.add.button')"
+          :disabled="!selectAgent"
+          @click="emitSelectedAgent"
         />
-        <unnnic-button type="secondary" text="Adicionar fila" @click="addAgentQueue" />
-      </section>
-
-      <section class="agent-queues">
-        <div v-for="queue in agent.queues" :key="queue.name" class="queue">
-          {{ queue.name }}
-        </div>
       </section>
     </section>
 
-    <unnnic-button
-      class="new-agent-button"
-      type="secondary"
-      text="Salvar novo agente"
-      @click="addAgent"
-    />
-
-    <section v-if="!!agents.length">
-      <list-agents :agents="agents" :title="`Agentes no setor ${sector}`" />
+    <section v-if="selectedAgents.length > 0" class="form-agent__agents">
+      <selected-member
+        v-for="agent in selectedAgents"
+        :key="agent.uuid"
+        :name="agent.user.first_name + ' ' + agent.user.last_name"
+        :email="agent.user.email"
+        :avatar-url="agent.user.photo_url"
+        @remove="remove(agent.uuid)"
+        role-name="Agente"
+      />
     </section>
-
-    <unnnic-modal
-      v-if="agents.length"
-      :showModal="isOpenAgentConfirmationDialog"
-      text="Agente adicionado"
-      modal-icon="check-circle-1-1"
-      :description="`${agents.at(-1).name} foi adicionado ao ${sector}`"
-      @close="isOpenAgentConfirmationDialog = false"
-    >
-      <template #options>
-        <unnnic-button text="Fechar" @click="isOpenAgentConfirmationDialog = false" />
-      </template>
-    </unnnic-modal>
   </section>
 </template>
 
 <script>
-import ListAgents from '@/components/settings/lists/Agents';
+import SelectedMember from '@/components/settings/forms/SelectedMember';
 
 export default {
   name: 'FormAgent',
 
   components: {
-    ListAgents,
+    SelectedMember,
   },
 
   props: {
-    queues: {
+    agents: {
       type: Array,
       default: () => [],
     },
     sector: {
-      type: String,
-      default: '',
+      type: Object,
+      default: () => ({}),
     },
     value: {
       type: Array,
@@ -98,23 +70,24 @@ export default {
   },
 
   data: () => ({
+    search: '',
+    selectAgent: null,
     agent: {
-      name: '',
-      queues: [],
+      uuid: '',
     },
-    projectAgents: [
-      'Mariano Matos',
-      'Carla Meyer',
-      'Katia Saldanha',
-      'Vinícius Brum',
-      'Raine Paula',
-    ],
-    queue: '',
-    isOpenAgentConfirmationDialog: false,
   }),
 
   computed: {
-    agents: {
+    agentsNames() {
+      const agents = this.agents.map((agent) => {
+        const { email, first_name, last_name } = agent.user;
+
+        return first_name || last_name ? `${first_name} ${last_name}` : email;
+      });
+
+      return agents.filter((agent) => agent.includes(this.search));
+    },
+    selectedAgents: {
       get() {
         return this.value;
       },
@@ -125,44 +98,33 @@ export default {
   },
 
   methods: {
-    addAgent() {
-      const name = this.agent.name.trim();
-      if (!name) return;
+    remove(agentUuid) {
+      this.$emit('remove', agentUuid);
+    },
+    chooseAgent(selected) {
+      this.selectAgent = selected;
+      const agent = this.agents.find((agent) => {
+        const { first_name, last_name, email } = agent.user;
+        const name = `${first_name} ${last_name}`;
 
-      this.agents.push({
-        name,
-        queues: this.agent.queues,
-        additionDate: Intl.DateTimeFormat('pt-BR', {
-          dateStyle: 'short',
-        }).format(new Date()),
+        return name === selected || email === selected;
       });
 
-      this.agent.name = '';
-      this.agent.queues = [];
-
-      this.isOpenAgentConfirmationDialog = true;
+      this.agent = agent;
     },
-    addAgentQueue() {
-      const queue = this.queues.find((q) => q.name === this.queue);
+    emitSelectedAgent() {
+      if (!this.agent.uuid) return;
 
-      this.agent.queues.push(
-        queue || {
-          name: this.queue,
-          createdAt: Intl.DateTimeFormat('pt-BR', {
-            dateStyle: 'short',
-          }).format(new Date()),
-        },
-      );
-
-      this.queue = '';
+      this.$emit('select', this.agent);
+      this.search = '';
     },
     validate() {
-      return this.agents.length > 0;
+      return this.selectedAgents.length > 0;
     },
   },
 
   watch: {
-    agents: {
+    selectedAgents: {
       deep: true,
       immediate: true,
       handler() {
@@ -198,25 +160,10 @@ export default {
     }
   }
 
-  .agent-queues {
-    margin-top: 1rem;
-    display: grid;
-    gap: 0.5rem 1rem;
-    grid-template-columns: 1fr 1fr;
-
-    & > * {
-      padding: 0.25rem 0.5rem;
-      margin: 0 0.5rem;
-      background: $unnnic-color-background-carpet;
-      color: $unnnic-color-neutral-dark;
-      font-size: 0.875rem;
-      line-height: 1.375rem;
-    }
-  }
-
-  .new-agent-button {
-    width: 100%;
-    margin-bottom: 1.5rem;
+  &__agents {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-spacing-stack-xs;
   }
 }
 </style>

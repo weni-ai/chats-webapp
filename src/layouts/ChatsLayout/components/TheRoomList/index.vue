@@ -1,23 +1,28 @@
 <template>
   <div class="container">
     <section class="chat-groups">
-      <room-group :label="$t('line')" :rooms="queue" filled />
-      <room-group :label="$t('chats.in_progress')" :rooms="rooms" />
+      <room-group v-if="queue.length" :label="$t('line')" :rooms="queue" filled @open="open" />
+      <room-group
+        v-if="rooms.length"
+        :label="$t('chats.in_progress')"
+        :rooms="rooms"
+        @open="open"
+      />
     </section>
 
     <unnnic-button
-      :text="isActiveChatView ? $t('chats.see_history') : $t('back_to_chats')"
-      :iconRight="isActiveChatView ? 'task-list-clock-1' : ''"
-      :iconLeft="isActiveChatView ? '' : 'keyboard-arrow-left-1'"
+      :text="isHistoryView ? $t('back_to_chats') : $t('chats.see_history')"
+      :iconRight="isHistoryView ? '' : 'task-list-clock-1'"
+      :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : ''"
       type="secondary"
       size="small"
-      @click="$router.push(isActiveChatView ? '/closed-chats' : '/')"
+      @click="navigate(isHistoryView ? 'home' : 'rooms.closed')"
     />
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 
 import RoomGroup from './RoomGroup';
 
@@ -44,15 +49,27 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      chatGroups: (state) => state.chats.chats,
-    }),
     ...mapGetters({
       rooms: 'rooms/agentRooms',
       queue: 'rooms/waitingQueue',
     }),
-    isActiveChatView() {
-      return ['home', 'chat'].includes(this.$route.name);
+    isHistoryView() {
+      return this.$route.name === 'rooms.closed';
+    },
+  },
+
+  methods: {
+    navigate(name) {
+      this.$router.push({
+        name,
+      });
+    },
+    open(room) {
+      const path = `/chats/${room.uuid}`;
+
+      if (this.$route.path === path) return;
+
+      this.$router.replace(path);
     },
   },
 };
@@ -60,6 +77,7 @@ export default {
 
 <style lang="scss" scoped>
 .container {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-stack-xs;
@@ -67,6 +85,8 @@ export default {
 
   .chat-groups {
     flex: 1 1;
+
+    // width: calc(16rem + 1rem);
 
     display: flex;
     flex-direction: column;

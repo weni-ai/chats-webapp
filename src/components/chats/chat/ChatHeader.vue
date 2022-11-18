@@ -4,14 +4,15 @@
       <unnnic-tool-tip enabled :text="$t('contact_information')" side="right">
         <section class="info clickable">
           <user-avatar
-            :username="room.contact.full_name"
+            :username="room.contact.name"
             size="2xl"
             clickable
+            :photo-url="usePhoto ? room.contact.photo_url : ''"
             @click="showContactInfo"
             :disabled="!room.is_active"
           />
           <span class="username" @click="showContactInfo" @keypress.enter="showContactInfo">
-            {{ room.contact.full_name }}
+            {{ room.contact.name }}
           </span>
         </section>
       </unnnic-tool-tip>
@@ -23,8 +24,12 @@
       </span>
     </header>
 
-    <section class="chat-closed-message" v-if="!room.is_active">
+    <section v-if="!room.is_active" class="header-info-message">
       <span class="message">{{ $d(room.date ? new Date(room.date) : new Date(), 'long') }}</span>
+    </section>
+
+    <section v-else-if="!room.user" class="header-info-message">
+      <span class="message">Contato na fila {{ room.queue.name }} há 8 minutos</span>
     </section>
   </div>
 </template>
@@ -48,12 +53,14 @@ export default {
       type: Object,
       required: true,
     },
+    usePhoto: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   methods: {
     showContactInfo() {
-      if (this.room.contact.full_name === 'Agente') return;
-
       this.$emit('show-contact-info');
     },
   },
@@ -83,7 +90,7 @@ export default {
   }
 }
 
-.chat-closed-message {
+.header-info-message {
   display: flex;
   justify-content: center;
   align-items: center;

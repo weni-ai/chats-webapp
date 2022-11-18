@@ -1,25 +1,54 @@
 <template>
-  <section class="container">
-    <the-room-list class="room-list" :disabled="disabledChatList" />
+  <section class="chats-layout unnnic-grid-giant" style="padding: 0px 10px">
+    <slot name="room-list">
+      <div
+        :style="{ display: 'flex', flexDirection: 'column', height: '100vh' }"
+        class="unnnic-grid-span-3"
+      >
+        <preferences-bar :style="{ margin: '16px 0 0 0px' }" />
 
-    <main>
+        <the-room-list class="room-list" :disabled="disabledChatList" />
+      </div>
+    </slot>
+
+    <main
+      v-bind:class="[isAsideSlotInUse ? 'unnnic-grid-span-6' : 'unnnic-grid-span-9']"
+      style="height: 100vh"
+    >
       <slot />
     </main>
 
-    <section v-if="isAsideSlotInUse" class="aside">
+    <section
+      v-if="isAsideSlotInUse"
+      class="aside unnnic-grid-span-3"
+      style="border: 1px solid #e2e6ed"
+    >
       <slot name="aside" />
     </section>
+    <section v-if="sectors === 0">
+      <modal-on-boarding-chats />
+    </section>
+    <div v-show="isLoading && disabledChatList">
+      <skeleton-loading />
+    </div>
   </section>
 </template>
 
 <script>
+import PreferencesBar from '@/components/PreferencesBar.vue';
+import ModalOnBoardingChats from '@/components/ModalOnBoardingChats.vue';
+import Sector from '@/services/api/resources/settings/sector.js';
+import SkeletonLoading from '@/views/loadings/chats.vue';
 import TheRoomList from './components/TheRoomList';
 
 export default {
   name: 'ChatsLayout',
 
   components: {
+    PreferencesBar,
     TheRoomList,
+    ModalOnBoardingChats,
+    SkeletonLoading,
   },
 
   props: {
@@ -27,6 +56,22 @@ export default {
       type: Boolean,
       default: false,
     },
+    totalOfSectors: {},
+  },
+  data: () => ({
+    sectors: {},
+    isLoading: false,
+  }),
+  async mounted() {
+    try {
+      this.isLoading = true;
+      const response = await Sector.countOfSectorsAvaible();
+      this.sectors = response.sector_count;
+      this.isLoading = false;
+    } catch (error) {
+      this.isLoading = false;
+      console.log(error);
+    }
   },
 
   computed: {
@@ -38,37 +83,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container {
-  $max-height: calc(100vh - 5.5rem);
-  max-height: $max-height;
+.chats-layout {
+  height: 100%;
+  max-height: 100%;
   display: flex;
 
   .room-list {
-    overflow-y: auto;
     margin: {
       top: $unnnic-spacing-inline-sm;
       right: 0;
       bottom: 0;
-      left: $unnnic-spacing-inline-sm;
     }
   }
 
   main {
     flex: 1 1;
-    height: $max-height;
+    height: 100%;
   }
 
   .aside {
-    height: $max-height;
-    max-height: $max-height;
-    width: 20.625rem;
+    height: 100vh;
 
     background: $unnnic-color-background-grass;
-    padding-left: $unnnic-spacing-inline-xs;
-
-    & > * {
-      max-height: $max-height;
-    }
   }
 }
 </style>
