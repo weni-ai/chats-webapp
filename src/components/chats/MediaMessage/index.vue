@@ -61,7 +61,7 @@ export default {
       return document.test(this.media.content_type);
     },
     isImage() {
-      const image = /(png|jp(e)?g)/;
+      const image = /(png|jp(e)?g|webp)/;
       return image.test(this.media.content_type);
     },
     isVideo() {
