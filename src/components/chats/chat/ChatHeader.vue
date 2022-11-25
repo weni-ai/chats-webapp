@@ -17,7 +17,12 @@
         </section>
       </unnnic-tool-tip>
 
-      <span class="clickable" @click="$emit('close')" @keypress.enter="$emit('close')">
+      <span
+        class="clickable"
+        v-if="room.user"
+        @click="$emit('close')"
+        @keypress.enter="$emit('close')"
+      >
         <unnnic-tool-tip enabled :text="closeButtonTooltip" side="left">
           <unnnic-icon-svg icon="close-1" size="sm" />
         </unnnic-tool-tip>
@@ -29,13 +34,17 @@
     </section>
 
     <section v-else-if="!room.user" class="header-info-message">
-      <span class="message">Contato na fila {{ room.queue.name }} há 8 minutos</span>
+      <span class="message"
+        >Contato na fila {{ room.queue.name }} há {{ moment(room?.created_on).fromNow() }}</span
+      >
     </section>
   </div>
 </template>
 
 <script>
 import UserAvatar from '@/components/chats/UserAvatar';
+
+const moment = require('moment');
 
 export default {
   name: 'ChatHeader',
@@ -60,6 +69,7 @@ export default {
   },
 
   methods: {
+    moment,
     showContactInfo() {
       this.$emit('show-contact-info');
     },

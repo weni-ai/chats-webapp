@@ -23,7 +23,12 @@
       </option>
     </unnnic-select>
 
-    <unnnic-input-date-picker v-model="filters.date" size="sm" input-format="DD/MM/YYYY" />
+    <unnnic-input-date-picker
+      v-model="filters.date"
+      size="sm"
+      input-format="DD/MM/YYYY"
+      style="min-width: 1.5rem"
+    />
 
     <unnnic-tool-tip enabled text="Limpar filtro" side="right">
       <unnnic-button-icon
