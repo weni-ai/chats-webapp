@@ -1,6 +1,9 @@
 <template>
   <section
-    @click="$emit('download')"
+    @click="
+      $emit('download');
+      openFile(url);
+    "
     @keypress.enter="$emit('download')"
     class="document-preview clickable"
     :class="[{ highlight }, size]"
@@ -28,6 +31,10 @@ export default {
       type: String,
       default: '',
     },
+    media: {
+      type: String,
+      default: '',
+    },
     highlight: {
       type: Boolean,
       default: false,
@@ -41,6 +48,10 @@ export default {
       type: String,
       default: '',
     },
+    url: {
+      type: String,
+      default: '',
+    },
     type: {
       type: String,
     },
@@ -48,11 +59,22 @@ export default {
 
   computed: {
     pathname() {
-      return new URL(this.fullFilename).pathname.slice(1);
+      return this.fullFilename;
     },
 
     icon() {
       return 'paginate-filter-text-1';
+    },
+  },
+
+  methods: {
+    async openFile(media) {
+      console.log(media, 'oidadas');
+      try {
+        window.open(media);
+      } catch (err) {
+        console.error('Não foi possível realizar o download no momento');
+      }
     },
   },
 };

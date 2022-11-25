@@ -135,4 +135,3 @@ jobs:
           directory: ./kubernetes-manifests/
           branch: main
           message: "From Chats-Webapp Build (Push Tag ${{ env.MANIFESTS_ENVIRONMENT }})"
-          

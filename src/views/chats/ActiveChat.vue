@@ -211,6 +211,7 @@ export default {
     async getRoomMessages() {
       await this.$store.dispatch('rooms/getActiveRoomMessages');
       this.$nextTick(this.scrollMessagesToBottom);
+      this.isRoomClassifierVisible = false;
     },
     async sendFileMessage(files) {
       try {

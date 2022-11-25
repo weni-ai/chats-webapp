@@ -1,6 +1,12 @@
 <template>
   <section v-if="isDocument">
-    <document-preview :fullFilename="fullFilename" @download="download" highlight />
+    <document-preview
+      :fullFilename="fullFilename"
+      @download="download"
+      highlight
+      :url="media.url"
+      @click="openFile"
+    />
   </section>
 
   <section v-else class="media-message">
@@ -55,7 +61,7 @@ export default {
       return document.test(this.media.content_type);
     },
     isImage() {
-      const image = /(png|jp(e)?g)/;
+      const image = /(png|jp(e)?g|webp)/;
       return image.test(this.media.content_type);
     },
     isVideo() {

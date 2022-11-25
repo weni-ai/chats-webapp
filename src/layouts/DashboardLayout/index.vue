@@ -1,20 +1,22 @@
 <template>
-  <section class="dashboard-layout">
-    <header class="dashboard__header">
-      <unnnic-avatar-icon icon="graph-stats-1" scheme="aux-purple" />
-      <span class="title">
-        <slot name="header" />
-      </span>
-      <unnnic-icon-svg icon="information-circle-4" size="sm" scheme="neutral-soft" />
-    </header>
+  <section class="dashboard-layout unnnic-grid-giant">
+    <div class="unnnic-grid-span-12">
+      <header class="dashboard__header">
+        <unnnic-avatar-icon icon="graph-stats-1" scheme="aux-purple" />
+        <span class="title">
+          <slot name="header" />
+        </span>
+        <unnnic-icon-svg icon="information-circle-4" size="sm" scheme="neutral-soft" />
+      </header>
 
-    <section class="actions">
-      <slot name="actions" />
-    </section>
+      <section class="actions">
+        <slot name="actions" />
+      </section>
 
-    <section class="view scrollable">
-      <slot />
-    </section>
+      <section class="view scrollable">
+        <slot />
+      </section>
+    </div>
   </section>
 </template>
 
@@ -27,10 +29,10 @@ export default {
 <style lang="scss" scoped>
 .dashboard-layout {
   $max-height: calc(100vh - 5.5rem);
-  height: $max-height;
-  max-height: $max-height;
+  height: 100vh;
+  // max-height: $max-height;
 
-  display: flex;
+  // display: flex;
   flex-direction: column;
 
   padding: 1.5rem 0.5rem 0 1.5rem;
