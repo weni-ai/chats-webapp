@@ -19,8 +19,8 @@
             <p v-if="room.contact.status === 'online'">{{ $t('status.online') }}</p>
             <!-- <p v-else>{{ getLastTimeOnlineText(room.contact.last_interaction || new Date()) }}</p> -->
             <template v-if="!!room.custom_fields">
-              <p v-for="[field, value] of Object.entries(room.contact.custom_fields)" :key="field">
-                <span class="title"> {{ field }} </span>
+              <p v-for="(value, key) in customFields" :key="key">
+                <span class="title"> {{ key }}: </span>
                 {{ value }}
               </p>
             </template>
@@ -31,8 +31,6 @@
                 })
               }}
             </p>
-
-            <p v-for="(value, key) in customFields" :key="key">{{ key }}: {{ value }}</p>
           </div>
         </section>
       </aside-slot-template-section>
