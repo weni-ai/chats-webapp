@@ -3,14 +3,33 @@
     class="chats-layout unnnic-grid-giant"
     style="padding: 0px 0px; padding-left: 10px; overflow-y: hidden"
   >
-    <slot name="room-list">
+    <slot name="room-list" v-if="!this.contactList">
       <div
         :style="{ display: 'flex', flexDirection: 'column', height: '100vh' }"
         class="unnnic-grid-span-3"
       >
         <preferences-bar :style="{ margin: '16px 0 0 0px' }" />
 
+        <div class="template-message-button">
+          <unnnic-button-icon
+            size="small"
+            icon="pencil-write-1"
+            style="width: 100%"
+            @click="showContactsList"
+            @keypress.enter="showContactsList"
+          />
+        </div>
+
         <the-room-list class="room-list" :disabled="disabledChatList" />
+      </div>
+    </slot>
+
+    <slot name="template-message" v-if="this.contactList">
+      <div
+        :style="{ display: 'flex', flexDirection: 'column', height: '100vh' }"
+        class="unnnic-grid-span-3"
+      >
+        <contact-list class="room-list" :disabled="disabledChatList" />
       </div>
     </slot>
 
@@ -43,6 +62,7 @@ import ModalOnBoardingChats from '@/components/ModalOnBoardingChats.vue';
 import Sector from '@/services/api/resources/settings/sector.js';
 import SkeletonLoading from '@/views/loadings/chats.vue';
 import TheRoomList from './components/TheRoomList';
+import ContactList from './components/TemplateMessages';
 
 export default {
   name: 'ChatsLayout',
@@ -52,6 +72,7 @@ export default {
     TheRoomList,
     ModalOnBoardingChats,
     SkeletonLoading,
+    ContactList,
   },
 
   props: {
@@ -61,9 +82,15 @@ export default {
     },
     totalOfSectors: {},
   },
+  methods: {
+    showContactsList() {
+      this.contactList = true;
+    },
+  },
   data: () => ({
     sectors: {},
     isLoading: false,
+    contactList: false,
   }),
   async mounted() {
     try {
@@ -97,6 +124,7 @@ export default {
       right: 0;
       bottom: 0;
     }
+    overflow-y: auto;
   }
 
   main {
@@ -108,6 +136,10 @@ export default {
     height: 100vh;
 
     background: $unnnic-color-background-grass;
+  }
+  .template-message-button {
+    margin-top: $unnnic-spacing-stack-sm;
+    margin-bottom: $unnnic-spacing-stack-sm;
   }
 }
 </style>
