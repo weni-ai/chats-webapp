@@ -1,14 +1,17 @@
+<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <div class="modal">
     <div class="modal-container">
       <div class="modal-container-background">
         <div class="modal-background-color">
           <div class="header-modal">
-            <unnnic-icon
-              style="cursor: pointer; margin-right: 26px; margin-top: 18px"
-              size="sm"
-              icon="close-1"
-            />
+            <div @click="$emit('close')">
+              <unnnic-icon
+                style="cursor: pointer; margin-right: 26px; margin-top: 18px"
+                size="sm"
+                icon="close-1"
+              />
+            </div>
           </div>
           <div class="content-title">Adicionar novo contato</div>
           <div class="form">
@@ -26,7 +29,7 @@
             </div>
           </div>
           <div class="footer">
-            <div style="margin-right: 30px; margin-left: 24px">
+            <div style="margin-right: 30px; margin-left: 24px" @click="$emit('close')">
               <unnnic-button
                 style="padding: 0.75rem 4.75rem"
                 text="Cancelar"
@@ -51,20 +54,7 @@
 
 <script>
 export default {
-  methods: {
-    // closeModal() {
-    //   closeModal
-    // },
-  },
-  props: {
-    closeModal: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  mounted() {
-    console.log(this.closeModal, `close`);
-  },
+  name: 'ModalAddNewContact',
 };
 </script>
 

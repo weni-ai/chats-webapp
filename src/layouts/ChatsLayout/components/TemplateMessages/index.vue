@@ -1,8 +1,9 @@
+<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <div class="container">
     <section class="template-messages">
-      <div>
-        <unnnic-icon icon="keyboard-arrow-left-1" @click="backToChats" /> Selecionar contatos
+      <div @click="$emit('close')" style="cursor: pointer">
+        <unnnic-icon icon="keyboard-arrow-left-1" /> Selecionar contatos
       </div>
       <div class="selected-contacts" v-if="!thereIsContact">
         <span v-if="!thereIsContact" class="no-contacts-label">Nenhum contato encontrado</span>
@@ -31,7 +32,7 @@
       </div>
       <div class="contact-list">
         <span class="title-group">A</span>
-        <div class="container-names" v-for="item in users" :key="item">
+        <div class="container-names" v-for="item in users" :key="item.nome">
           <div class="users-names">
             <unnnic-checkbox style="padding: 10px"></unnnic-checkbox>
             <user-avatar
@@ -48,7 +49,7 @@
       </div>
     </section>
     <div style="display: flex; justify-content: space-between">
-      <div class="new-contact" @click="openNewContactModal" @keypress.enter="openNewContactModal">
+      <div class="new-contact" @click="openModal">
         <unnnic-button
           style="padding: 0.75rem 4rem"
           size="small"
@@ -65,20 +66,20 @@
         style="width: 47%"
       />
     </div>
-    <modal-add-new-contact-vue v-if="isModalOpen" close-modal></modal-add-new-contact-vue>
+    <modal-add-new-contact v-show="showModal" @close="closeModal" />
   </div>
 </template>
 
 <script>
 import UserAvatar from '@/components/chats/UserAvatar';
-import ModalAddNewContactVue from '@/components/chats/TemplateMessages/ModalAddNewContact.vue';
+import ModalAddNewContact from '@/components/chats/TemplateMessages/ModalAddNewContact.vue';
 
 export default {
   name: 'ContactList',
 
   components: {
     UserAvatar,
-    ModalAddNewContactVue,
+    ModalAddNewContact,
   },
 
   props: {
@@ -95,6 +96,13 @@ export default {
     this.listAllContacts();
   },
   methods: {
+    openModal() {
+      this.showModal = true;
+    },
+    closeModal() {
+      console.log(`nao ta caindo aqui`);
+      this.showModal = false;
+    },
     listAllContacts() {
       const letras = [];
       this.users.sort((a, b) => a.nome.localeCompare(b.nome));
@@ -106,37 +114,17 @@ export default {
       this.letras = letras;
       console.log(this.letras, `aqui`);
     },
-
-    openNewContactModal() {
-      this.isModalOpen = true;
-    },
-    closeModal() {
-      this.isModalOpen = true;
-    },
   },
   data: () => ({
     thereIsContact: true,
     names: [],
-    // letras: [],
-    isModalOpen: false,
+    letras: [],
+    showModal: false,
     users: [
       { nome: 'Marcos Santos' },
       { nome: 'Lennon Bueno' },
       { nome: 'Ana Maria' },
       { nome: 'Denise Fzargo' },
-      { nome: 'Denise Fargo' },
-      { nome: 'Denise Fargo' },
-      { nome: 'Denise Fargo' },
-      { nome: 'Denise Fargo' },
-      { nome: 'Denise Fargo' },
-      { nome: 'Denise Fargo' },
-      { nome: 'Denise Fargo' },
-      { nome: 'Denise Fargo' },
-      { nome: 'Denise Fargo' },
-      { nome: 'Denise Fargo' },
-      { nome: 'Denise Fargo' },
-      { nome: 'Denise Fargo' },
-      { nome: 'Denise Fargo' },
       { nome: 'Álvaro Fernandes' },
     ],
   }),
