@@ -143,6 +143,7 @@ export default {
   position: relative;
   height: $unnnic-font-size-body-md + $unnnic-line-height-md + 2 * $unnnic-spacing-stack-xs;
   border-radius: 4px;
+  z-index: 9999;
 
   .header .label {
     user-select: none;
