@@ -475,7 +475,7 @@
   },
   "contact_transferred_to": {
     "line": {
-      "pt-br": "Contato transferido para fila {name}",
+      "pt-br": "Contato encaminhado para fila {name}",
       "en-us": "Contact transferred to the {name} line",
       "es": "Contacto transferido a la línea {name}"
     },
