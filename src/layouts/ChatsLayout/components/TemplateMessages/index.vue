@@ -1,7 +1,7 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <div class="container">
-    <section class="template-messages">
+    <section class="template-messages" v-if="!showSelectTemplate">
       <div @click="$emit('close')" style="cursor: pointer">
         <unnnic-icon icon="keyboard-arrow-left-1" /> Selecionar contatos
       </div>
@@ -48,7 +48,10 @@
         </div>
       </div>
     </section>
-    <div style="display: flex; justify-content: space-between">
+    <section class="template-messages" v-if="showSelectTemplate">
+      <layout-template-message @close="closeSelectTemplate" />
+    </section>
+    <div style="display: flex; justify-content: space-between" v-if="!showSelectTemplate">
       <div class="new-contact" @click="openModal">
         <unnnic-button
           style="padding: 0.75rem 4rem"
@@ -58,14 +61,24 @@
           :iconLeft="'add-1'"
         />
       </div>
-      <unnnic-button
-        text="Continuar"
-        :iconRight="'keyboard-arrow-right-1'"
-        type="secondary"
-        size="small"
-        style="width: 47%"
-      />
+      <div @click="openSelectTemplate">
+        <unnnic-button
+          style="padding: 0.75rem 4rem"
+          text="Continuar"
+          type="secondary"
+          size="small"
+        />
+      </div>
     </div>
+    <!-- <div style="display: flex; justify-content: space-between" v-if="showSelectTemplate">
+      <unnnic-button
+        text="Enviar"
+        size="small"
+        type="secondary"
+        iconLeft="send-email-3-1"
+        style="width: 100%"
+      />
+    </div> -->
     <modal-add-new-contact v-show="showModal" @close="closeModal" />
   </div>
 </template>
@@ -73,6 +86,7 @@
 <script>
 import UserAvatar from '@/components/chats/UserAvatar';
 import ModalAddNewContact from '@/components/chats/TemplateMessages/ModalAddNewContact.vue';
+import LayoutTemplateMessage from '@/components/chats/TemplateMessages/LayoutTemplateMessage';
 
 export default {
   name: 'ContactList',
@@ -80,6 +94,7 @@ export default {
   components: {
     UserAvatar,
     ModalAddNewContact,
+    LayoutTemplateMessage,
   },
 
   props: {
@@ -100,8 +115,13 @@ export default {
       this.showModal = true;
     },
     closeModal() {
-      console.log(`nao ta caindo aqui`);
       this.showModal = false;
+    },
+    openSelectTemplate() {
+      this.showSelectTemplate = true;
+    },
+    closeSelectTemplate() {
+      this.showSelectTemplate = false;
     },
     listAllContacts() {
       const letras = [];
@@ -120,6 +140,7 @@ export default {
     names: [],
     letras: [],
     showModal: false,
+    showSelectTemplate: false,
     users: [
       { nome: 'Marcos Santos' },
       { nome: 'Lennon Bueno' },
@@ -145,8 +166,7 @@ export default {
     flex-direction: column;
     gap: $unnnic-spacing-stack-md;
 
-    padding-right: $unnnic-spacing-inset-sm;
-    border-right: solid 1px $unnnic-color-neutral-soft;
+    // padding-right: $unnnic-spacing-inset-sm;
     overflow-y: auto;
   }
   .selected-contacts {
@@ -180,7 +200,7 @@ export default {
     .container-names {
       background-color: $unnnic-color-background-carpet;
       border-radius: 4px;
-      width: 100%;
+      width: 96%;
       height: 60px;
       margin: 8px 8px 8px 8px;
       display: flex;
