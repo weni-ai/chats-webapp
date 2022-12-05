@@ -95,7 +95,12 @@ export default {
     selectedTemplate: '',
     filteredTemplate: '',
     templates: [
-      { id: 1, name: 'template 1', content: 'Isso é o template de ID 1 😎' },
+      {
+        id: 1,
+        name: 'template 1',
+        content:
+          'Isso é o template de ID 1 HDSAUIHDIAHDSHDUISAHDIASHIDASHDIUSAHIDUHADUIHASIDHADHAIDHAU 😎',
+      },
       { id: 2, name: 'template 2', content: 'Isso é o template de ID 2 😋' },
       { id: 3, name: 'template 3', content: 'Isso é o template de ID 3 😚' },
       { id: 4, name: 'template 4', content: 'Isso é o template de ID 4 😴' },
@@ -129,6 +134,7 @@ export default {
   padding: 1rem;
   background-color: $unnnic-color-background-carpet;
   .example-text {
+    word-break: break-word;
     font-family: $unnnic-font-family-secondary;
     color: $unnnic-color-neutral-dark;
     font-size: $unnnic-font-size-body-md;
