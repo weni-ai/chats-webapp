@@ -12,7 +12,7 @@ export default {
     const response = await http.get(`/permission/project/`, {
       params: {
         project: getProject(),
-        role: Permissions.Admin,
+        // role: Permissions.Admin,
         limit: 9999,
       },
     });
@@ -23,7 +23,7 @@ export default {
     const response = await http.get(`/permission/project/`, {
       params: {
         project: getProject(),
-        role: Permissions.Manager,
+        // role: Permissions.Manager,
         limit: 9999,
       },
     });
@@ -34,7 +34,7 @@ export default {
     const response = await http.get(`/permission/project/`, {
       params: {
         project: getProject(),
-        role: Permissions.Agent,
+        // role: Permissions.Agent,
         limit: 9999,
       },
     });
