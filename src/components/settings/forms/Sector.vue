@@ -76,14 +76,6 @@
               this.message
             }}</span>
           </div>
-          <!-- <unnnic-input
-          v-model="sector.workingDay.start"
-          :label="$t('sector.managers.working_day.start.label')"
-          v-mask="'##:##'"
-          :type="timeError ? 'error' : 'normal'"
-          :message="timeError"
-          placeholder="08:00"
-        /> -->
           <div>
             <span class="label-working-day">{{ $t('sector.managers.working_day.end.label') }}</span>
             <input
@@ -93,12 +85,6 @@
               min="00:01"
               max="23:59"
             />
-            <!-- <unnnic-input
-            v-model="sector.workingDay.end"
-            label="Horário de encerramento"
-            v-mask="'##:##'"
-            placeholder="18:00"
-          /> -->
           </div>
           <unnnic-input
             v-model="sector.maxSimultaneousChatsByAgent"
@@ -114,6 +100,7 @@
 
 <script>
 import SelectedMember from '@/components/settings/forms/SelectedMember';
+import Sector from '@/services/api/resources/settings/sector';
 
 export default {
   name: 'FormSector',
@@ -176,8 +163,13 @@ export default {
         ...this.sector,
         managers,
       };
+      if (this.isEditing) this.addManager(selectedManager);
       this.manager = null;
       this.selectedManager = null;
+    },
+
+    async addManager(manager) {
+      await Sector.addManager(this.sector.uuid, manager.uuid);
     },
 
     selectManager(selected) {
