@@ -32,7 +32,6 @@
               size="md"
               class="input"
               @input="getSectorTags(filteredSectorUuid)"
-              style="width: 25%"
             >
               <option value="">Todos</option>
               <option
@@ -45,7 +44,7 @@
               </option>
             </unnnic-select>
 
-            <unnnic-multi-select
+            <!-- <unnnic-multi-select
               v-model="tags"
               class="input"
               label="Filtrar por tags"
@@ -53,6 +52,12 @@
               expand
               hide-group-title
               style="width: 35%"
+            /> -->
+            <unnnic-autocomplete-select
+              :value="[]"
+              :items="tags"
+              placeholder="Pesquisar tags"
+              :disabled="!this.filteredSectorUuid"
             />
 
             <unnnic-input-date-picker
@@ -60,6 +65,7 @@
               size="md"
               class="input"
               :input-format="$t('date_format')"
+              position="right"
             />
             <div class="clear-filters-button">
               <unnnic-tool-tip enabled :text="$t('filter.clear_all')" side="right">
@@ -127,6 +133,8 @@ import ChatsLayout from '@/layouts/ChatsLayout';
 import TagGroup from '@/components/TagGroup';
 import UserAvatar from '@/components/chats/UserAvatar';
 
+const moment = require('moment');
+
 export default {
   name: 'ClosedChatsView',
 
@@ -156,8 +164,8 @@ export default {
     messages: [],
     isLoading: false,
     filteredDateRange: {
-      start: '',
-      end: '',
+      start: moment(new Date()).startOf('month').format('YYYY-MM-DD'),
+      end: moment(new Date()).endOf('month').format('YYYY-MM-DD'),
     },
     sectorTags: [],
     contacts: [],
@@ -302,7 +310,10 @@ export default {
     clearFilters() {
       this.filteredSectorUuid = '';
       this.tags = [];
-      this.filteredDateRange = { start: '', end: '' };
+      this.filteredDateRange = {
+        start: moment(new Date()).startOf('month').format('YYYY-MM-DD'),
+        end: moment(new Date()).endOf('month').format('YYYY-MM-DD'),
+      };
     },
   },
 };
