@@ -58,6 +58,7 @@
       <template #options>
         <unnnic-button type="terciary" @click="messageToResend = null" text="Cancelar envio" />
         <unnnic-button
+          type="secondary"
           @click="(messageToResend.sent = true), (messageToResend = null)"
           text="Reenviar"
         />
