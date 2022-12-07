@@ -211,6 +211,11 @@ export default {
 
       this.$router.push({ name: 'sectors' });
     },
+
+    async removeManager(managerUuid) {
+      await Sector.removeManager(managerUuid);
+      this.removeManagerFromTheList(managerUuid);
+    },
     async saveSector() {
       const { uuid, name, workingDay, maxSimultaneousChatsByAgent } = this.sector;
       const sector = {
@@ -263,7 +268,7 @@ export default {
       if (currentTab === 'tags' && this.tags.length === 0) await this.getTags();
       this.queueToEdit = null;
     },
-    removeManager(managerUuid) {
+    removeManagerFromTheList(managerUuid) {
       const manager = this.sector.managers.find((manager) => manager.uuid === managerUuid);
       if (!manager) return;
 
