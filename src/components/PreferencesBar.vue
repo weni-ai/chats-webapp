@@ -16,7 +16,7 @@
       >
         <div class="label">
           <div class="icon">
-            <unnnic-icon size="sm" icon="preferences" scheme="neutral-cloudy" />
+            <unnnic-icon size="md" icon="preferences" scheme="neutral-cloudy" />
           </div>
 
           <div class="text">
@@ -150,10 +150,9 @@ export default {
     padding: $unnnic-spacing-inset-nano;
     display: flex;
     column-gap: $unnnic-spacing-inline-xs;
+    align-items: center;
 
     .icon {
-      padding: $unnnic-spacing-inset-nano / 4;
-
       * {
         display: block;
       }
