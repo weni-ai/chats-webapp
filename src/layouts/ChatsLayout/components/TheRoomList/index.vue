@@ -3,10 +3,12 @@
     <section class="chat-groups">
       <room-group v-if="queue.length" :label="$t('line')" :rooms="queue" filled @open="open" />
       <room-group
+        v-bind:style="isHistoryView ? 'opacity: 0.5;' : 'opacity: 20'"
         v-if="rooms.length"
         :label="$t('chats.in_progress')"
         :rooms="rooms"
         @open="open"
+        :isHistory="isHistoryView"
       />
     </section>
 

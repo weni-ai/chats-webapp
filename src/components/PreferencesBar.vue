@@ -190,6 +190,10 @@ export default {
 
     .options-container {
       display: flex;
+      background: #ffffff;
+      opacity: 20;
+      z-index: 99999;
+      position: relative;
     }
 
     .background {
