@@ -35,12 +35,12 @@
           iconLeft="search-1"
           @choose="selectManager"
         />
-        <unnnic-button
+        <!-- <unnnic-button
           text="Selecionar"
           type="secondary"
           @click="addSectorManager"
           :disabled="!selectedManager"
-        />
+        /> -->
       </div>
 
       <section v-if="sector.managers.length > 0" class="form-sector__managers">
@@ -180,6 +180,7 @@ export default {
         return name === selected || email === selected;
       });
       this.selectedManager = manager;
+      this.addSectorManager();
     },
 
     validate() {
