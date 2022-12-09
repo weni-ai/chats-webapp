@@ -23,8 +23,8 @@
           </div>
         </header>
 
-        <section class="filters">
-          <div style="display: flex; align-items: flex-end; gap: 1rem; width: 100%">
+        <section class="filters unnnic-grid-giant" style="padding: 0">
+          <div class="unnnic-grid-span-3">
             <unnnic-select
               v-if="sectors.length > 1"
               v-model="filteredSectorUuid"
@@ -43,8 +43,9 @@
                 {{ sector.name }}
               </option>
             </unnnic-select>
+          </div>
 
-            <!-- <unnnic-multi-select
+          <!-- <unnnic-multi-select
               v-model="tags"
               class="input"
               label="Filtrar por tags"
@@ -53,13 +54,17 @@
               hide-group-title
               style="width: 35%"
             /> -->
+          <div class="unnnic-grid-span-3">
+            <div style="padding-top: 38px"></div>
             <unnnic-autocomplete-select
               :value="[]"
               :items="tags"
               placeholder="Pesquisar tags"
               :disabled="!this.filteredSectorUuid"
             />
-
+          </div>
+          <div class="unnnic-grid-span-3">
+            <div style="padding-top: 38px"></div>
             <unnnic-input-date-picker
               v-model="filteredDateRange"
               size="md"
@@ -67,15 +72,17 @@
               :input-format="$t('date_format')"
               position="right"
             />
-            <div class="clear-filters-button">
-              <unnnic-tool-tip enabled :text="$t('filter.clear_all')" side="right">
-                <unnnic-button-icon
-                  icon="button-refresh-arrows-1"
-                  size="large"
-                  @click="clearFilters"
-                />
-              </unnnic-tool-tip>
-            </div>
+          </div>
+          <div class="clear-filters-button unnnic-grid-span-1">
+            <div style="padding-top: 38px"></div>
+            <unnnic-tool-tip enabled :text="$t('filter.clear_all')" side="right">
+              <unnnic-button-icon
+                icon="button-refresh-arrows-1"
+                size="large"
+                @click="clearFilters"
+                style="margin-left: -28px"
+              />
+            </unnnic-tool-tip>
           </div>
         </section>
 
@@ -105,7 +112,7 @@
                 <unnnic-button
                   :text="$t('chats.open_chat')"
                   type="secondary"
-                  size="small"
+                  size="large"
                   class="visualize-button"
                   @click="openContactHistory(item)"
                 />
@@ -359,10 +366,10 @@ export default {
   }
 
   .filters {
-    display: flex;
-    align-items: flex-end;
-    gap: $unnnic-spacing-stack-sm;
-    width: 100%;
+    // display: flex;
+    // align-items: flex-end;
+    // gap: $unnnic-spacing-stack-sm;
+    // width: 100%;
 
     & > .input {
       flex: 1 1;
