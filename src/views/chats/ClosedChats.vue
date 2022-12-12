@@ -44,20 +44,10 @@
               </option>
             </unnnic-select>
           </div>
-
-          <!-- <unnnic-multi-select
-              v-model="tags"
-              class="input"
-              label="Filtrar por tags"
-              input-title="Pesquise e selecione tags"
-              expand
-              hide-group-title
-              style="width: 35%"
-            /> -->
           <div class="unnnic-grid-span-3">
             <div style="padding-top: 38px"></div>
             <unnnic-autocomplete-select
-              :value="[]"
+              v-model="selecteds"
               :items="tags"
               placeholder="Pesquisar tags"
               :disabled="!this.filteredSectorUuid"
@@ -80,7 +70,6 @@
                 icon="button-refresh-arrows-1"
                 size="large"
                 @click="clearFilters"
-                style="margin-left: -28px"
               />
             </unnnic-tool-tip>
           </div>
@@ -175,6 +164,7 @@ export default {
       end: moment(new Date()).endOf('month').format('YYYY-MM-DD'),
     },
     sectorTags: [],
+    selecteds: [],
     contacts: [],
     sectors: [],
     filteredSectorUuid: '',
@@ -220,13 +210,9 @@ export default {
     },
 
     filteredTags() {
-      if (this.tags.length === 0) return [];
-
-      const group = this.tags[0];
-      if (!group?.selected && group?.selected !== 0) return [];
-
-      const tag = group.items[group.selected];
-      return [tag];
+      if (this.selecteds.length === 0) return [];
+      const group = this.selecteds;
+      return group;
     },
   },
 
@@ -265,11 +251,8 @@ export default {
         const response = await Sector.tags(sectorUuid);
         const tags = response.results;
 
-        const tagGroup = {
-          items: tags.map((tag) => ({ ...tag, title: tag.name })),
-        };
-
-        this.tags = [tagGroup];
+        const tagGroup = tags.map((tag) => ({ ...tag, value: tag.uuid, text: tag.name }));
+        this.tags = tagGroup;
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
@@ -288,15 +271,7 @@ export default {
     contactHasAllActiveFilterTags(contact) {
       if (this.filteredTags.length === 0) return true;
       if (!contact.room.tags) return false;
-
-      // eslint-disable-next-line no-restricted-syntax
-      for (const tag of this.filteredTags) {
-        if (!contact.room.tags.some((t) => t.uuid === tag.uuid)) {
-          return false;
-        }
-      }
-
-      return true;
+      return contact.room.tags.some((tag) => this.filteredTags.find((el) => el.uuid === tag.uuid));
     },
 
     isRoomEndDateInFilteredRange(contact) {
