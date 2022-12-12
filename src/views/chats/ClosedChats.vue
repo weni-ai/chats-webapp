@@ -49,7 +49,7 @@
             <unnnic-autocomplete-select
               v-model="selecteds"
               :items="tags"
-              placeholder="Pesquisar tags"
+              :placeholder="messageInputTags"
               :disabled="!this.filteredSectorUuid"
             />
           </div>
@@ -156,6 +156,7 @@ export default {
   },
 
   data: () => ({
+    messageInputTags: 'Pesquisar tags',
     contact: null,
     messages: [],
     isLoading: false,
