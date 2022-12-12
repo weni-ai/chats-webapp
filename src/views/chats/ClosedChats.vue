@@ -49,7 +49,7 @@
             <unnnic-autocomplete-select
               v-model="selecteds"
               :items="tags"
-              :placeholder="messageInputTags"
+              :placeholder="this.messageInputTags"
               :disabled="!this.filteredSectorUuid"
             />
           </div>
@@ -156,9 +156,9 @@ export default {
   },
 
   data: () => ({
-    messageInputTags: 'Pesquisar tags',
     contact: null,
     messages: [],
+    messageInputTags: 'Filtrar por tags',
     isLoading: false,
     filteredDateRange: {
       start: moment(new Date()).startOf('month').format('YYYY-MM-DD'),
@@ -272,6 +272,8 @@ export default {
     contactHasAllActiveFilterTags(contact) {
       if (this.filteredTags.length === 0) return true;
       if (!contact.room.tags) return false;
+      // const placeholderTags = this.filteredTags.map((el) => el.name);
+      // this.messageInputTags = placeholderTags ? placeholderTags.toString() : 'Filtrar por tags';
       return contact.room.tags.some((tag) => this.filteredTags.find((el) => el.uuid === tag.uuid));
     },
 
