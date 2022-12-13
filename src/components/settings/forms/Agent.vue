@@ -21,12 +21,12 @@
           highlight
           class="input"
         />
-        <unnnic-button
+        <!-- <unnnic-button
           type="secondary"
           :text="$t('agents.add.button')"
           :disabled="!selectAgent"
           @click="emitSelectedAgent"
-        />
+        /> -->
       </section>
     </section>
 
@@ -109,8 +109,8 @@ export default {
 
         return name === selected || email === selected;
       });
-
       this.agent = agent;
+      this.emitSelectedAgent();
     },
     emitSelectedAgent() {
       if (!this.agent.uuid) return;
