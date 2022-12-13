@@ -16,7 +16,9 @@
           </p>
 
           <div class="connection-info">
-            <p v-if="room.contact.status === 'online'">{{ $t('status.online') }}</p>
+            <p v-if="room.contact.status === 'online'">
+              {{ $t('status.online') }}
+            </p>
             <!-- <p v-else>{{ getLastTimeOnlineText(room.contact.last_interaction || new Date()) }}</p> -->
             <template v-if="!!room.custom_fields">
               <p v-for="(value, key) in customFields" :key="key">
@@ -99,6 +101,15 @@ export default {
     AsideSlotTemplateSection,
     ContactMedia,
   },
+  props: {
+    contact: {
+      type: Object,
+    },
+    isHistory: {
+      type: Boolean,
+      default: false,
+    },
+  },
 
   data: () => ({
     transferOptions: [],
@@ -115,7 +126,6 @@ export default {
 
     lastMessageFromContact() {
       const messages = this.$store.state.rooms.activeRoomMessages;
-
       return messages.findLast((message) => message.contact);
     },
 
@@ -129,24 +139,26 @@ export default {
   },
 
   async created() {
-    if (!this.room.queue?.sector) {
-      throw new Error(`There is no associated sector with room ${this.room.uuid}`);
-    }
+    if (!this.isHistory) {
+      if (!this.room.queue?.sector) {
+        throw new Error(`There is no associated sector with room ${this.room.uuid}`);
+      }
 
-    try {
-      this.transferOptions = (await Sector.agents({ sectorUuid: this.room.queue.sector }))
-        .filter((agent) => agent.email !== this.$store.state.profile.me.email)
-        .map(({ first_name, last_name, email }) => {
-          return {
-            name: [first_name, last_name].join(' ').trim() || email,
-            email,
-          };
-        });
-    } catch (error) {
-      if (error?.response?.status === 403) {
-        this.transferContactError = this.$t('chats.transfer.does_not_have_permission');
-      } else {
-        throw error;
+      try {
+        this.transferOptions = (await Sector.agents({ sectorUuid: this.room.queue.sector }))
+          .filter((agent) => agent.email !== this.$store.state.profile.me.email)
+          .map(({ first_name, last_name, email }) => {
+            return {
+              name: [first_name, last_name].join(' ').trim() || email,
+              email,
+            };
+          });
+      } catch (error) {
+        if (error?.response?.status === 403) {
+          this.transferContactError = this.$t('chats.transfer.does_not_have_permission');
+        } else {
+          throw error;
+        }
       }
     }
   },
