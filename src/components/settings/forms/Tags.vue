@@ -5,7 +5,7 @@
     <section class="form-tags__section">
       <p class="form-tags__section__label">
         {{ $t('tags.add.title') }}
-        <unnnic-tool-tip enabled side="right" :text="$t('new_sector.tags_tip')">
+        <unnnic-tool-tip enabled side="right" :text="$t('new_sector.tags_tip')" maxWidth="23rem">
           <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
         </unnnic-tool-tip>
       </p>

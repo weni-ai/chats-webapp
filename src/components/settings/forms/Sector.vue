@@ -8,7 +8,7 @@
     <section v-else class="form-section">
       <h2 class="title">
         Adicionar novo setor
-        <unnnic-tool-tip enabled :text="$t('new_sector.sector_tip')" side="right">
+        <unnnic-tool-tip enabled :text="$t('new_sector.sector_tip')" side="right" maxWidth="21rem">
           <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
         </unnnic-tool-tip>
       </h2>
@@ -19,7 +19,7 @@
     <section class="form-section">
       <h2 class="title">
         {{ $t('sector.managers.title') }}
-        <unnnic-tool-tip enabled :text="$t('new_sector.agent_tip')" side="right">
+        <unnnic-tool-tip enabled :text="$t('new_sector.agent_tip')" side="right" maxWidth="15rem">
           <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
         </unnnic-tool-tip>
       </h2>
