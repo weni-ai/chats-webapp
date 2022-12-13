@@ -6,6 +6,7 @@
           :room="{ ...contact.room, contact }"
           @close="contact = null"
           :closeButtonTooltip="$t('close_view')"
+          @show-contact-info="componentInAsideSlot = 'contactInfo'"
         />
         <chat-messages :room="{ ...contact.room, contact }" :messages="messages" class="messages" />
       </section>
@@ -24,9 +25,8 @@
         </header>
 
         <section class="filters unnnic-grid-giant" style="padding: 0">
-          <div class="unnnic-grid-span-3">
+          <div class="unnnic-grid-span-3" v-if="sectors.length !== 1">
             <unnnic-select
-              v-if="sectors.length > 1"
               v-model="filteredSectorUuid"
               label="Setor"
               size="md"
@@ -50,7 +50,7 @@
               v-model="selecteds"
               :items="tags"
               :placeholder="this.messageInputTags"
-              :disabled="!this.filteredSectorUuid"
+              :disabled="!this.filteredSectorUuid && sectors.length !== 1"
             />
           </div>
           <div class="unnnic-grid-span-3">
@@ -114,6 +114,14 @@
         </div>
       </section>
     </section>
+    <template #aside>
+      <component
+        :is="sidebarComponent.name"
+        v-on="sidebarComponent.listeners"
+        :contact="contact"
+        :isHistory="true"
+      />
+    </template>
   </chats-layout>
 </template>
 
@@ -128,6 +136,7 @@ import ChatMessages from '@/components/chats/chat/ChatMessages';
 import ChatsLayout from '@/layouts/ChatsLayout';
 import TagGroup from '@/components/TagGroup';
 import UserAvatar from '@/components/chats/UserAvatar';
+import ContactInfo from '@/components/chats/ContactInfo';
 
 const moment = require('moment');
 
@@ -140,6 +149,7 @@ export default {
     ChatsLayout,
     TagGroup,
     UserAvatar,
+    ContactInfo,
   },
 
   props: {
@@ -157,6 +167,7 @@ export default {
 
   data: () => ({
     contact: null,
+    componentInAsideSlot: '',
     messages: [],
     messageInputTags: 'Filtrar por tags',
     isLoading: false,
@@ -173,6 +184,21 @@ export default {
   }),
 
   computed: {
+    sidebarComponent() {
+      return this.sidebarComponents[this.componentInAsideSlot] || {};
+    },
+    sidebarComponents() {
+      return {
+        contactInfo: {
+          name: ContactInfo.name,
+          listeners: {
+            close: () => {
+              this.componentInAsideSlot = '';
+            },
+          },
+        },
+      };
+    },
     tableHeaders() {
       return [
         {
@@ -227,6 +253,7 @@ export default {
         const groupedMessages = groupSequentialSentMessages(messagesWithSender);
         this.messages = groupedMessages;
         this.contact = contact;
+        // this.componentInAsideSlot = 'contactInfo';
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
@@ -264,6 +291,9 @@ export default {
         this.isLoading = true;
         const response = await Sector.list();
         this.sectors = response.results;
+        if (this.sectors.length === 1) {
+          this.getSectorTags(this.sectors[0].uuid);
+        }
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
@@ -322,8 +352,8 @@ export default {
 
   .messages {
     overflow-y: auto;
-    padding-right: $unnnic-spacing-inset-md;
-    margin: $unnnic-spacing-inline-sm 0;
+    padding-right: $unnnic-spacing-inset-sm;
+    margin: $unnnic-spacing-inline-sm 0 $unnnic-spacing-inline-sm;
   }
 }
 
