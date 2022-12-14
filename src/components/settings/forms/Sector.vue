@@ -137,7 +137,17 @@ export default {
 
         return first_name || last_name ? `${first_name} ${last_name}` : email;
       });
-      return managers.filter((manager) => manager.includes(this.manager));
+      const filterDuplicateNames = managers.filter(
+        (item, index) => managers.indexOf(item) === index,
+      );
+      const sort = filterDuplicateNames.sort(function (a, b) {
+        if (a < b) {
+          return -1;
+        }
+        return sort;
+      });
+      return sort;
+      // return managers.filter((manager) => manager.includes(this.manager));
     },
     sector: {
       get() {
@@ -170,6 +180,12 @@ export default {
 
     async addManager(manager) {
       await Sector.addManager(this.sector.uuid, manager.uuid);
+      this.getManagers();
+    },
+
+    async getManagers() {
+      const managers = await Sector.managers(this.sector.uuid);
+      this.sector.managers = managers.results.map((manager) => ({ ...manager, removed: false }));
     },
 
     selectManager(selected) {
