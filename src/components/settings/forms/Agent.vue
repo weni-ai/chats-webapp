@@ -84,8 +84,16 @@ export default {
 
         return first_name || last_name ? `${first_name} ${last_name}` : email;
       });
-
-      return agents.filter((agent) => agent.includes(this.search));
+      const filterDuplicateNames = agents.filter((item, index) => agents.indexOf(item) === index);
+      // eslint-disable-next-line func-names
+      const sort = filterDuplicateNames.sort(function (a, b) {
+        if (a < b) {
+          return -1;
+        }
+        return sort;
+      });
+      return sort;
+      // return agents.filter((agent) => agent.includes(this.search));
     },
     selectedAgents: {
       get() {
