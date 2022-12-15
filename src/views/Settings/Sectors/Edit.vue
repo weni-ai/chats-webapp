@@ -66,13 +66,18 @@
 
     <section class="actions">
       <unnnic-button
-        v-if="!!queueToEdit"
+        v-if="!!queueToEdit && this.currentTab === 'queues'"
         text="Excluir"
         icon-left="delete-1"
         type="terciary"
         @click="openModalDeleteQueue(queueToEdit)"
       />
-      <unnnic-button text="Salvar" type="secondary" @click="save" />
+      <unnnic-button
+        text="Salvar"
+        type="secondary"
+        @click="save"
+        v-if="this.currentTab === 'sector'"
+      />
       <unnnic-modal
         :showModal="openModal"
         modalIcon="alert-circle-1"
@@ -238,7 +243,7 @@ export default {
       if (this.currentTab === 'queues' && this.queueToEdit) await this.saveQueue();
       if (this.currentTab === 'tags') await this.saveTags();
 
-      this.$router.push({ name: 'sectors' });
+      // this.$router.push({ name: 'sectors' });
     },
 
     async removeManager(managerUuid) {
@@ -353,7 +358,7 @@ export default {
     height: 100%;
     overflow-y: auto;
     padding-right: 1rem;
-    margin-right: 0.5rem;
+    // margin-right: 0.5rem;
   }
 
   .actions {
