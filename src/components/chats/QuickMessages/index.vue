@@ -39,8 +39,8 @@
       :show-modal="!!quickMessageToDelete"
     >
       <template #options>
-        <unnnic-button :text="$t('confirm')" type="terciary" @click="deleteQuickMessage" />
-        <unnnic-button :text="$t('cancel')" @click="quickMessageToDelete = null" />
+        <unnnic-button :text="$t('cancel')" type="terciary" @click="quickMessageToDelete = null" />
+        <unnnic-button :text="$t('confirm')" type="secondary" @click="deleteQuickMessage" />
       </template>
     </unnnic-modal>
   </aside-slot-template>

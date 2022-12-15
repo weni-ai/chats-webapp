@@ -8,7 +8,7 @@
     <section v-else class="form-section">
       <h2 class="title">
         Adicionar novo setor
-        <unnnic-tool-tip enabled :text="$t('new_sector.sector_tip')" side="right">
+        <unnnic-tool-tip enabled :text="$t('new_sector.sector_tip')" side="right" maxWidth="21rem">
           <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
         </unnnic-tool-tip>
       </h2>
@@ -19,7 +19,7 @@
     <section class="form-section">
       <h2 class="title">
         {{ $t('sector.managers.title') }}
-        <unnnic-tool-tip enabled :text="$t('new_sector.agent_tip')" side="right">
+        <unnnic-tool-tip enabled :text="$t('new_sector.agent_tip')" side="right" maxWidth="15rem">
           <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
         </unnnic-tool-tip>
       </h2>
@@ -35,12 +35,12 @@
           iconLeft="search-1"
           @choose="selectManager"
         />
-        <unnnic-button
+        <!-- <unnnic-button
           text="Selecionar"
           type="secondary"
           @click="addSectorManager"
           :disabled="!selectedManager"
-        />
+        /> -->
       </div>
 
       <section v-if="sector.managers.length > 0" class="form-sector__managers">
@@ -76,14 +76,6 @@
               this.message
             }}</span>
           </div>
-          <!-- <unnnic-input
-          v-model="sector.workingDay.start"
-          :label="$t('sector.managers.working_day.start.label')"
-          v-mask="'##:##'"
-          :type="timeError ? 'error' : 'normal'"
-          :message="timeError"
-          placeholder="08:00"
-        /> -->
           <div>
             <span class="label-working-day">{{ $t('sector.managers.working_day.end.label') }}</span>
             <input
@@ -93,12 +85,6 @@
               min="00:01"
               max="23:59"
             />
-            <!-- <unnnic-input
-            v-model="sector.workingDay.end"
-            label="Horário de encerramento"
-            v-mask="'##:##'"
-            placeholder="18:00"
-          /> -->
           </div>
           <unnnic-input
             v-model="sector.maxSimultaneousChatsByAgent"
@@ -114,6 +100,7 @@
 
 <script>
 import SelectedMember from '@/components/settings/forms/SelectedMember';
+import Sector from '@/services/api/resources/settings/sector';
 
 export default {
   name: 'FormSector',
@@ -150,7 +137,17 @@ export default {
 
         return first_name || last_name ? `${first_name} ${last_name}` : email;
       });
-      return managers.filter((manager) => manager.includes(this.manager));
+      const filterDuplicateNames = managers.filter(
+        (item, index) => managers.indexOf(item) === index,
+      );
+      const sort = filterDuplicateNames.sort(function (a, b) {
+        if (a < b) {
+          return -1;
+        }
+        return sort;
+      });
+      return sort;
+      // return managers.filter((manager) => manager.includes(this.manager));
     },
     sector: {
       get() {
@@ -176,8 +173,19 @@ export default {
         ...this.sector,
         managers,
       };
+      if (this.isEditing) this.addManager(selectedManager);
       this.manager = null;
       this.selectedManager = null;
+    },
+
+    async addManager(manager) {
+      await Sector.addManager(this.sector.uuid, manager.uuid);
+      this.getManagers();
+    },
+
+    async getManagers() {
+      const managers = await Sector.managers(this.sector.uuid);
+      this.sector.managers = managers.results.map((manager) => ({ ...manager, removed: false }));
     },
 
     selectManager(selected) {
@@ -188,6 +196,7 @@ export default {
         return name === selected || email === selected;
       });
       this.selectedManager = manager;
+      this.addSectorManager();
     },
 
     validate() {

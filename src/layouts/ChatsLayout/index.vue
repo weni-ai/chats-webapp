@@ -46,9 +46,9 @@
     >
       <slot name="aside" />
     </section>
-    <section v-if="sectors === 0">
+    <!-- <section v-if="sectors === 0">
       <modal-on-boarding-chats />
-    </section>
+    </section> -->
     <div v-show="isLoading && disabledChatList">
       <skeleton-loading />
     </div>
@@ -57,7 +57,7 @@
 
 <script>
 import PreferencesBar from '@/components/PreferencesBar.vue';
-import ModalOnBoardingChats from '@/components/ModalOnBoardingChats.vue';
+// import ModalOnBoardingChats from '@/components/ModalOnBoardingChats.vue';
 import Sector from '@/services/api/resources/settings/sector.js';
 import SkeletonLoading from '@/views/loadings/chats.vue';
 import TheRoomList from './components/TheRoomList';
@@ -69,7 +69,7 @@ export default {
   components: {
     PreferencesBar,
     TheRoomList,
-    ModalOnBoardingChats,
+    // ModalOnBoardingChats,
     SkeletonLoading,
     ContactList,
   },
