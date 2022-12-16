@@ -30,7 +30,9 @@
     </header>
 
     <section v-if="!room.is_active" class="header-info-message">
-      <span class="message">{{ $d(room.date ? new Date(room.date) : new Date(), 'long') }}</span>
+      <span class="message">{{
+        $d(room.ended_at ? new Date(room.ended_at) : new Date(), 'long')
+      }}</span>
     </section>
 
     <section v-else-if="!room.user" class="header-info-message">
@@ -67,7 +69,6 @@ export default {
       default: false,
     },
   },
-
   methods: {
     moment,
     showContactInfo() {

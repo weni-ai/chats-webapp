@@ -3,7 +3,7 @@
     <!-- <p v-if="showInfoIcon" class="form-queue__description">{{ infoText }}</p> -->
     <p class="title">
       {{ label }}
-      <unnnic-tool-tip enabled side="right" :text="$t('new_sector.queues_tip')">
+      <unnnic-tool-tip enabled side="right" :text="$t('new_sector.queues_tip')" maxWidth="23rem">
         <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
       </unnnic-tool-tip>
     </p>
