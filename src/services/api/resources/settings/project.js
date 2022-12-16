@@ -13,6 +13,7 @@ export default {
       params: {
         project: getProject(),
         // role: Permissions.Admin,
+        limit: 9999,
       },
     });
     return response.data;
@@ -23,6 +24,7 @@ export default {
       params: {
         project: getProject(),
         // role: Permissions.Manager,
+        limit: 9999,
       },
     });
     return response.data;
@@ -33,6 +35,7 @@ export default {
       params: {
         project: getProject(),
         // role: Permissions.Agent,
+        limit: 9999,
       },
     });
     return response.data;
