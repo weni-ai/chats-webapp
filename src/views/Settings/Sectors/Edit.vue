@@ -76,7 +76,7 @@
         text="Salvar"
         type="secondary"
         @click="save"
-        v-if="this.currentTab === 'sector'"
+        v-if="this.currentTab === 'sector' || this.queueToEdit"
       />
       <unnnic-modal
         :showModal="openModal"
@@ -272,6 +272,7 @@ export default {
 
       this.queueToEdit = null;
       this.showSuccessfullyUpdateSnackbar();
+      this.getQueues();
     },
     async saveTags() {
       const toAddTags = this.toAddTags.map((tag) => Sector.addTag(this.sector.uuid, tag.name));

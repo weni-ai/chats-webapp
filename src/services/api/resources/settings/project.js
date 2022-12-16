@@ -12,7 +12,7 @@ export default {
     const response = await http.get(`/permission/project/`, {
       params: {
         project: getProject(),
-        role: Permissions.Admin,
+        // role: Permissions.Admin,
       },
     });
     return response.data;
@@ -22,7 +22,7 @@ export default {
     const response = await http.get(`/permission/project/`, {
       params: {
         project: getProject(),
-        role: Permissions.Manager,
+        // role: Permissions.Manager,
       },
     });
     return response.data;
@@ -32,7 +32,7 @@ export default {
     const response = await http.get(`/permission/project/`, {
       params: {
         project: getProject(),
-        role: Permissions.Agent,
+        // role: Permissions.Agent,
       },
     });
     return response.data;
