@@ -64,6 +64,7 @@
 </template>
 
 <script>
+import TemplateMessages from '@/services/api/resources/chats/templateMessage.js';
 import ModalProgressTemplateSubmission from './ModalProgressTemplateSubmission';
 
 export default {
@@ -73,6 +74,9 @@ export default {
     ModalProgressTemplateSubmission,
   },
 
+  mounted() {
+    this.groupList();
+  },
   methods: {
     openModalProgress() {
       this.showModalProgress = true;
@@ -87,6 +91,16 @@ export default {
     selectTemplate(template) {
       this.selectedTemplate = template;
     },
+
+    async groupList() {
+      try {
+        const response = await TemplateMessages.getFlows();
+        this.templates = response.results;
+        console.log(this.templates, `listOfGroups`);
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
   data: () => ({
     showModalProgress: false,
@@ -94,18 +108,7 @@ export default {
     template: '',
     selectedTemplate: '',
     filteredTemplate: '',
-    templates: [
-      {
-        id: 1,
-        name: 'template 1',
-        content:
-          'Isso é o template de ID 1 HDSAUIHDIAHDSHDUISAHDIASHIDASHDIUSAHIDUHADUIHASIDHADHAIDHAU 😎',
-      },
-      { id: 2, name: 'template 2', content: 'Isso é o template de ID 2 😋' },
-      { id: 3, name: 'template 3', content: 'Isso é o template de ID 3 😚' },
-      { id: 4, name: 'template 4', content: 'Isso é o template de ID 4 😴' },
-      { id: 5, name: 'template 5', content: 'Isso é o template de ID 5 🥰' },
-    ],
+    templates: [],
   }),
 };
 </script>

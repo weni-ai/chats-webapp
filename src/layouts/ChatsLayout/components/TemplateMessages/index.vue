@@ -15,33 +15,33 @@
       </div>
       <div class="contact-list">
         <span class="title-group">Grupos</span>
-        <div class="container-names">
+        <div class="container-names" v-for="item in listOfGroups" :key="item.name">
           <div class="users-names">
             <unnnic-checkbox style="padding: 10px"></unnnic-checkbox>
             <user-avatar
-              username="Grupo 1"
+              :username="item.name"
               size="2xl"
               :photo-url="usePhoto ? room.contact.photo_url : ''"
             />
             <div class="names">
-              <span>Grupo 1</span>
-              <span class="number">42 contatos</span>
+              <span>{{ item.name }}</span>
+              <span class="number">{{ item.count }} contatos</span>
             </div>
           </div>
         </div>
       </div>
       <div class="contact-list">
         <span class="title-group">A</span>
-        <div class="container-names" v-for="item in users" :key="item.nome">
+        <div class="container-names" v-for="item in listOfContacts" :key="item.name">
           <div class="users-names">
             <unnnic-checkbox style="padding: 10px"></unnnic-checkbox>
             <user-avatar
-              :username="item.nome"
+              :username="item.name"
               size="2xl"
               :photo-url="usePhoto ? room.contact.photo_url : ''"
             />
             <div class="names">
-              <span>{{ item.nome }}</span>
+              <span>{{ item.name }}</span>
               <span class="number">42988850976</span>
             </div>
           </div>
@@ -87,6 +87,7 @@
 import UserAvatar from '@/components/chats/UserAvatar';
 import ModalAddNewContact from '@/components/chats/TemplateMessages/ModalAddNewContact.vue';
 import LayoutTemplateMessage from '@/components/chats/TemplateMessages/LayoutTemplateMessage';
+import TemplateMessages from '@/services/api/resources/chats/templateMessage.js';
 
 export default {
   name: 'ContactList',
@@ -108,7 +109,8 @@ export default {
     },
   },
   created() {
-    this.listAllContacts();
+    this.contactList();
+    this.groupList();
   },
   methods: {
     openModal() {
@@ -123,20 +125,42 @@ export default {
     closeSelectTemplate() {
       this.showSelectTemplate = false;
     },
-    listAllContacts() {
+    async contactList() {
+      try {
+        const response = await TemplateMessages.getListOfContacts();
+        this.listOfContacts = response.results;
+        this.listAllContacts();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async groupList() {
+      try {
+        const response = await TemplateMessages.getListOfGroups();
+        this.listOfGroups = response.results;
+        console.log(this.listOfGroups, `listOfGroups`);
+        // this.listAllContacts();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    getContactLetter() {
       const letras = [];
-      this.users.sort((a, b) => a.nome.localeCompare(b.nome));
-      this.users.forEach((element) => {
-        const l = element.nome[0].toUpperCase();
+      this.listOfContacts.sort((a, b) => a.name.localeCompare(b.name));
+      this.listOfContacts.forEach((element) => {
+        const l = element.name[0].toUpperCase();
         letras[l] = letras[l] || [];
         letras[l].push(element);
       });
       this.letras = letras;
-      console.log(this.letras, `aqui`);
+      console.log(this.letras, `alq`);
     },
   },
   data: () => ({
     thereIsContact: true,
+    listOfContacts: [],
+    listOfGroups: [],
     names: [],
     letras: [],
     showModal: false,

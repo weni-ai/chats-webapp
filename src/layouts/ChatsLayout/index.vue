@@ -10,7 +10,7 @@
       >
         <preferences-bar :style="{ margin: '16px 0 0 0px' }" />
 
-        <div class="template-message-button">
+        <div class="template-message-button" v-if="canTriggerFlows">
           <unnnic-button-icon
             size="small"
             icon="pencil-write-1"
@@ -59,6 +59,7 @@
 import PreferencesBar from '@/components/PreferencesBar.vue';
 // import ModalOnBoardingChats from '@/components/ModalOnBoardingChats.vue';
 import Sector from '@/services/api/resources/settings/sector.js';
+import TemplateMessages from '@/services/api/resources/chats/templateMessage.js';
 import SkeletonLoading from '@/views/loadings/chats.vue';
 import TheRoomList from './components/TheRoomList';
 import ContactList from './components/TemplateMessages';
@@ -81,30 +82,47 @@ export default {
     },
     totalOfSectors: {},
   },
+  mounted() {
+    this.getCountSectors();
+    this.havePermissionToSendTemplateMessage();
+  },
+
   methods: {
     showContactsList() {
       this.contactList = true;
     },
+
     closeContactList() {
       this.contactList = false;
     },
+
+    async getCountSectors() {
+      try {
+        this.isLoading = true;
+        const response = await Sector.countOfSectorsAvaible();
+        this.sectors = response.sector_count;
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+        console.log(error);
+      }
+    },
+    async havePermissionToSendTemplateMessage() {
+      try {
+        const response = await TemplateMessages.getCanTriggerFlows();
+        this.canTriggerFlows = response.can_trigger_flows;
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
+
   data: () => ({
     sectors: {},
     isLoading: false,
     contactList: false,
+    canTriggerFlows: false,
   }),
-  async mounted() {
-    try {
-      this.isLoading = true;
-      const response = await Sector.countOfSectorsAvaible();
-      this.sectors = response.sector_count;
-      this.isLoading = false;
-    } catch (error) {
-      this.isLoading = false;
-      console.log(error);
-    }
-  },
 
   computed: {
     isAsideSlotInUse() {
