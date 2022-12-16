@@ -6,6 +6,7 @@
           :room="{ ...contact.room, contact }"
           @close="contact = null"
           :closeButtonTooltip="$t('close_view')"
+          @show-contact-info="componentInAsideSlot = 'contactInfo'"
         />
         <chat-messages :room="{ ...contact.room, contact }" :messages="messages" class="messages" />
       </section>
@@ -23,16 +24,14 @@
           </div>
         </header>
 
-        <section class="filters">
-          <div style="display: flex; align-items: flex-end; gap: 1rem; width: 100%">
+        <section class="filters unnnic-grid-giant" style="padding: 0">
+          <div class="unnnic-grid-span-3" v-if="sectors.length !== 1">
             <unnnic-select
-              v-if="sectors.length > 1"
               v-model="filteredSectorUuid"
               label="Setor"
               size="md"
               class="input"
               @input="getSectorTags(filteredSectorUuid)"
-              style="width: 25%"
             >
               <option value="">Todos</option>
               <option
@@ -44,32 +43,35 @@
                 {{ sector.name }}
               </option>
             </unnnic-select>
-
-            <unnnic-multi-select
-              v-model="tags"
-              class="input"
-              label="Filtrar por tags"
-              input-title="Pesquise e selecione tags"
-              expand
-              hide-group-title
-              style="width: 35%"
+          </div>
+          <div class="unnnic-grid-span-3">
+            <div style="padding-top: 38px"></div>
+            <unnnic-autocomplete-select
+              v-model="selecteds"
+              :items="tags"
+              :placeholder="this.messageInputTags"
+              :disabled="!this.filteredSectorUuid && sectors.length !== 1"
             />
-
+          </div>
+          <div class="unnnic-grid-span-3">
+            <div style="padding-top: 38px"></div>
             <unnnic-input-date-picker
               v-model="filteredDateRange"
               size="md"
               class="input"
               :input-format="$t('date_format')"
+              position="right"
             />
-            <div class="clear-filters-button">
-              <unnnic-tool-tip enabled :text="$t('filter.clear_all')" side="right">
-                <unnnic-button-icon
-                  icon="button-refresh-arrows-1"
-                  size="large"
-                  @click="clearFilters"
-                />
-              </unnnic-tool-tip>
-            </div>
+          </div>
+          <div class="clear-filters-button unnnic-grid-span-1">
+            <div style="padding-top: 38px"></div>
+            <unnnic-tool-tip enabled :text="$t('filter.clear_all')" side="right">
+              <unnnic-button-icon
+                icon="button-refresh-arrows-1"
+                size="large"
+                @click="clearFilters"
+              />
+            </unnnic-tool-tip>
           </div>
         </section>
 
@@ -99,7 +101,7 @@
                 <unnnic-button
                   :text="$t('chats.open_chat')"
                   type="secondary"
-                  size="small"
+                  size="large"
                   class="visualize-button"
                   @click="openContactHistory(item)"
                 />
@@ -112,6 +114,14 @@
         </div>
       </section>
     </section>
+    <template #aside>
+      <component
+        :is="sidebarComponent.name"
+        v-on="sidebarComponent.listeners"
+        :contact="contact"
+        :isHistory="true"
+      />
+    </template>
   </chats-layout>
 </template>
 
@@ -126,6 +136,9 @@ import ChatMessages from '@/components/chats/chat/ChatMessages';
 import ChatsLayout from '@/layouts/ChatsLayout';
 import TagGroup from '@/components/TagGroup';
 import UserAvatar from '@/components/chats/UserAvatar';
+import ContactInfo from '@/components/chats/ContactInfo';
+
+const moment = require('moment');
 
 export default {
   name: 'ClosedChatsView',
@@ -136,6 +149,7 @@ export default {
     ChatsLayout,
     TagGroup,
     UserAvatar,
+    ContactInfo,
   },
 
   props: {
@@ -153,13 +167,16 @@ export default {
 
   data: () => ({
     contact: null,
+    componentInAsideSlot: '',
     messages: [],
+    messageInputTags: 'Filtrar por tags',
     isLoading: false,
     filteredDateRange: {
-      start: '',
-      end: '',
+      start: moment(new Date()).startOf('month').format('YYYY-MM-DD'),
+      end: moment(new Date()).endOf('month').format('YYYY-MM-DD'),
     },
     sectorTags: [],
+    selecteds: [],
     contacts: [],
     sectors: [],
     filteredSectorUuid: '',
@@ -167,6 +184,21 @@ export default {
   }),
 
   computed: {
+    sidebarComponent() {
+      return this.sidebarComponents[this.componentInAsideSlot] || {};
+    },
+    sidebarComponents() {
+      return {
+        contactInfo: {
+          name: ContactInfo.name,
+          listeners: {
+            close: () => {
+              this.componentInAsideSlot = '';
+            },
+          },
+        },
+      };
+    },
     tableHeaders() {
       return [
         {
@@ -205,13 +237,9 @@ export default {
     },
 
     filteredTags() {
-      if (this.tags.length === 0) return [];
-
-      const group = this.tags[0];
-      if (!group?.selected && group?.selected !== 0) return [];
-
-      const tag = group.items[group.selected];
-      return [tag];
+      if (this.selecteds.length === 0) return [];
+      const group = this.selecteds;
+      return group;
     },
   },
 
@@ -225,6 +253,7 @@ export default {
         const groupedMessages = groupSequentialSentMessages(messagesWithSender);
         this.messages = groupedMessages;
         this.contact = contact;
+        // this.componentInAsideSlot = 'contactInfo';
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
@@ -250,11 +279,8 @@ export default {
         const response = await Sector.tags(sectorUuid);
         const tags = response.results;
 
-        const tagGroup = {
-          items: tags.map((tag) => ({ ...tag, title: tag.name })),
-        };
-
-        this.tags = [tagGroup];
+        const tagGroup = tags.map((tag) => ({ ...tag, value: tag.uuid, text: tag.name }));
+        this.tags = tagGroup;
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
@@ -265,6 +291,9 @@ export default {
         this.isLoading = true;
         const response = await Sector.list();
         this.sectors = response.results;
+        if (this.sectors.length === 1) {
+          this.getSectorTags(this.sectors[0].uuid);
+        }
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
@@ -273,15 +302,9 @@ export default {
     contactHasAllActiveFilterTags(contact) {
       if (this.filteredTags.length === 0) return true;
       if (!contact.room.tags) return false;
-
-      // eslint-disable-next-line no-restricted-syntax
-      for (const tag of this.filteredTags) {
-        if (!contact.room.tags.some((t) => t.uuid === tag.uuid)) {
-          return false;
-        }
-      }
-
-      return true;
+      // const placeholderTags = this.filteredTags.map((el) => el.name);
+      // this.messageInputTags = placeholderTags ? placeholderTags.toString() : 'Filtrar por tags';
+      return contact.room.tags.some((tag) => this.filteredTags.find((el) => el.uuid === tag.uuid));
     },
 
     isRoomEndDateInFilteredRange(contact) {
@@ -302,7 +325,10 @@ export default {
     clearFilters() {
       this.filteredSectorUuid = '';
       this.tags = [];
-      this.filteredDateRange = { start: '', end: '' };
+      this.filteredDateRange = {
+        start: moment(new Date()).startOf('month').format('YYYY-MM-DD'),
+        end: moment(new Date()).endOf('month').format('YYYY-MM-DD'),
+      };
     },
   },
 };
@@ -323,12 +349,11 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding-right: $unnnic-spacing-inset-md;
 
   .messages {
     overflow-y: auto;
-    padding-right: $unnnic-spacing-inset-md;
-    margin: $unnnic-spacing-inline-sm 0;
+    padding-right: $unnnic-spacing-inset-sm;
+    margin: $unnnic-spacing-inline-sm 0 $unnnic-spacing-inline-sm;
   }
 }
 
@@ -349,10 +374,10 @@ export default {
   }
 
   .filters {
-    display: flex;
-    align-items: flex-end;
-    gap: $unnnic-spacing-stack-sm;
-    width: 100%;
+    // display: flex;
+    // align-items: flex-end;
+    // gap: $unnnic-spacing-stack-sm;
+    // width: 100%;
 
     & > .input {
       flex: 1 1;

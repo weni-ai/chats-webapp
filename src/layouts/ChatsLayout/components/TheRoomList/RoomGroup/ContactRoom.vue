@@ -29,7 +29,9 @@
           <template v-if="newMessages?.length">
             {{ newMessages[newMessages.length - 1].text }}
           </template>
-          {{ room.lastMessage }}
+          <!-- <template v-if="!newMessages?.length">
+            {{ room.last_message }}
+          </template> -->
         </span>
       </div>
     </div>
@@ -37,6 +39,9 @@
     <span v-if="newMessages?.length" class="unread-messages" :class="{ filled }">
       {{ newMessages?.length }}
     </span>
+    <!-- <span v-if="!newMessages?.length" class="unread-messages" :class="{ filled }">
+      {{ room.unread_msgs }}
+    </span> -->
   </div>
 </template>
 

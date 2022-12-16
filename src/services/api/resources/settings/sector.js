@@ -52,6 +52,9 @@ export default {
       permission: managerUuid,
     });
   },
+  async removeManager(managerUuid) {
+    await http.delete(`/authorization/sector/${managerUuid}`);
+  },
 
   async tags(sectorUuid) {
     const response = await http.get('/tag/', { params: { sector: sectorUuid } });
