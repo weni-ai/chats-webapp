@@ -56,15 +56,6 @@
           :text-right="$t('preferences.notifications.sound')"
           @input="changeSound"
         />
-
-        <div class="label">{{ $t('preferences.help.title') }}</div>
-
-        <unnnic-switch
-          v-model="help"
-          size="small"
-          :text-right="$t(`preferences.help.nilo.${help ? 'active' : 'disabled'}`)"
-          @input="changeNilo"
-        />
       </div>
     </div>
   </div>
@@ -75,7 +66,7 @@ import Profile from '@/services/api/resources/profile';
 import { unnnicCallAlert } from '@weni/unnnic-system';
 
 export const PREFERENCES_SOUND = 'WENICHATS_PREFERENCES_SOUND';
-export const PREFERENCES_NILO = 'WENICHATS_PREFERENCES_NILO';
+// export const PREFERENCES_NILO = 'WENICHATS_PREFERENCES_NILO';
 
 export default {
   data() {
@@ -84,13 +75,13 @@ export default {
       open: false,
       loadingStatus: false,
       sound: false,
-      help: false,
+      // help: false,
     };
   },
 
   async created() {
     this.sound = (localStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'yes';
-    this.help = (localStorage.getItem(PREFERENCES_NILO) || 'yes') === 'yes';
+    // this.help = (localStorage.getItem(PREFERENCES_NILO) || 'yes') === 'yes';
 
     window.dispatchEvent(new CustomEvent(`${this.help ? 'show' : 'hide'}BottomRightOptions`));
   },
@@ -116,11 +107,11 @@ export default {
       localStorage.setItem(PREFERENCES_SOUND, this.sound ? 'yes' : 'no');
     },
 
-    changeNilo() {
-      localStorage.setItem(PREFERENCES_NILO, this.help ? 'yes' : 'no');
+    // changeNilo() {
+    //   localStorage.setItem(PREFERENCES_NILO, this.help ? 'yes' : 'no');
 
-      window.dispatchEvent(new CustomEvent(`${this.help ? 'show' : 'hide'}BottomRightOptions`));
-    },
+    //   window.dispatchEvent(new CustomEvent(`${this.help ? 'show' : 'hide'}BottomRightOptions`));
+    // },
 
     showStatusAlert(connectionStatus) {
       unnnicCallAlert({
