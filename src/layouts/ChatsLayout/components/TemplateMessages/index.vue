@@ -13,8 +13,16 @@
           </div> -->
         </div>
       </div>
+      <div>
+        <unnnic-input
+          v-model="search"
+          icon-left="search-1"
+          size="sm"
+          placeholder="Pesquisar contato"
+        ></unnnic-input>
+      </div>
       <div class="contact-list">
-        <span class="title-group">Grupos</span>
+        <span class="title-group" v-if="listOfGroups.length > 0">Grupos</span>
         <div class="container-names" v-for="item in listOfGroups" :key="item.name">
           <div class="users-names">
             <unnnic-checkbox style="padding: 10px"></unnnic-checkbox>
@@ -31,21 +39,27 @@
         </div>
       </div>
       <div class="contact-list">
-        <span class="title-group">A</span>
-        <div class="container-names" v-for="item in listOfContacts" :key="item.name">
-          <div class="users-names">
-            <unnnic-checkbox style="padding: 10px"></unnnic-checkbox>
-            <user-avatar
-              :username="item.name"
-              size="2xl"
-              :photo-url="usePhoto ? room.contact.photo_url : ''"
-            />
-            <div class="names">
-              <span>{{ item.name }}</span>
-              <span class="number">42988850976</span>
+        <template v-for="(element, letter) in letras">
+          <span class="title-group" v-if="search === ''" :key="letter">{{ letter }}</span>
+          <div
+            class="container-names"
+            v-for="item in getFilteredContacts(element)"
+            :key="item.name"
+          >
+            <div class="users-names">
+              <unnnic-checkbox v-model="item.selected" style="padding: 10px"></unnnic-checkbox>
+              <user-avatar
+                :username="item.name"
+                size="2xl"
+                :photo-url="usePhoto ? room.contact.photo_url : ''"
+              />
+              <div class="names">
+                <span>{{ item.name }}</span>
+                <span class="number">{{ item.urns[0] }}</span>
+              </div>
             </div>
           </div>
-        </div>
+        </template>
       </div>
     </section>
     <section class="template-messages" v-if="showSelectTemplate">
@@ -54,20 +68,15 @@
     <div style="display: flex; justify-content: space-between" v-if="!showSelectTemplate">
       <div class="new-contact" @click="openModal">
         <unnnic-button
-          style="padding: 0.75rem 4rem"
+          style="width: 100%; margin-right: 2px"
           size="small"
           text="Adicionar"
           type="terciary"
           :iconLeft="'add-1'"
         />
       </div>
-      <div @click="openSelectTemplate">
-        <unnnic-button
-          style="padding: 0.75rem 4rem"
-          text="Continuar"
-          type="secondary"
-          size="small"
-        />
+      <div class="new-contact" @click="openSelectTemplate">
+        <unnnic-button text="Continuar" type="secondary" size="small" style="width: 100%" />
       </div>
     </div>
     <!-- <div style="display: flex; justify-content: space-between" v-if="showSelectTemplate">
@@ -98,6 +107,11 @@ export default {
     LayoutTemplateMessage,
   },
 
+  created() {
+    this.contactList();
+    this.groupList();
+  },
+
   props: {
     disabled: {
       type: Boolean,
@@ -108,71 +122,81 @@ export default {
       default: false,
     },
   },
-  created() {
-    this.contactList();
-    this.groupList();
-  },
+
+  data: () => ({
+    search: '',
+    thereIsContact: true,
+    listOfContacts: [],
+    listOfGroups: [],
+    names: [],
+    letras: {},
+    showModal: false,
+    showSelectTemplate: false,
+  }),
+
+  // computed: {
+  //   getFilteredContacts() {
+  //     this.isSearching = true;
+  //     return this.listOfContacts.filter((item) =>
+  //       item.name.toUpperCase().includes(this.search.toUpperCase()),
+  //     );
+  //   },
+  // },
+
   methods: {
-    openModal() {
-      this.showModal = true;
-    },
-    closeModal() {
-      this.showModal = false;
-    },
-    openSelectTemplate() {
-      this.showSelectTemplate = true;
-    },
-    closeSelectTemplate() {
-      this.showSelectTemplate = false;
+    getFilteredContacts() {
+      this.isSearching = true;
+      return this.listOfContacts.filter((item) =>
+        item.name.toUpperCase().includes(this.search.toUpperCase()),
+      );
     },
     async contactList() {
       try {
         const response = await TemplateMessages.getListOfContacts();
         this.listOfContacts = response.results;
-        this.listAllContacts();
+        this.getContactLetter();
       } catch (error) {
         console.log(error);
       }
     },
+
     async groupList() {
       try {
         const response = await TemplateMessages.getListOfGroups();
         this.listOfGroups = response.results;
-        console.log(this.listOfGroups, `listOfGroups`);
-        // this.listAllContacts();
       } catch (error) {
         console.log(error);
       }
     },
 
     getContactLetter() {
-      const letras = [];
+      const letras = {};
       this.listOfContacts.sort((a, b) => a.name.localeCompare(b.name));
       this.listOfContacts.forEach((element) => {
         const l = element.name[0].toUpperCase();
-        letras[l] = letras[l] || [];
-        letras[l].push(element);
+        const removeAccent = l.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        letras[removeAccent] = letras[removeAccent] || [];
+        letras[removeAccent].push(element);
       });
       this.letras = letras;
-      console.log(this.letras, `alq`);
+    },
+
+    openModal() {
+      this.showModal = true;
+    },
+
+    closeModal() {
+      this.showModal = false;
+    },
+
+    openSelectTemplate() {
+      this.showSelectTemplate = true;
+    },
+
+    closeSelectTemplate() {
+      this.showSelectTemplate = false;
     },
   },
-  data: () => ({
-    thereIsContact: true,
-    listOfContacts: [],
-    listOfGroups: [],
-    names: [],
-    letras: [],
-    showModal: false,
-    showSelectTemplate: false,
-    users: [
-      { nome: 'Marcos Santos' },
-      { nome: 'Lennon Bueno' },
-      { nome: 'Ana Maria' },
-      { nome: 'Denise Fzargo' },
-      { nome: 'Álvaro Fernandes' },
-    ],
-  }),
 };
 </script>
 

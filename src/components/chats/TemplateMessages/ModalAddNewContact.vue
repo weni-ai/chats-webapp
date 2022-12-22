@@ -16,12 +16,17 @@
           <div class="content-title">Adicionar novo contato</div>
           <div class="form">
             <div style="margin-bottom: 16px">
-              <unnnic-input label="Nome do setor" placeholder="Nome do setor" />
+              <unnnic-input
+                label="Nome do contato"
+                placeholder="Nome do contato"
+                v-model="contact.name"
+              />
             </div>
             <div style="margin-bottom: 44px">
               <unnnic-input
+                v-model="contact.tel"
                 label="WhatsApp"
-                placeholder="(92) 9999 99999"
+                placeholder="(99) 9999 99999"
                 class="input"
                 iconRight="view-1-1"
                 mask="(##) #### #####"
@@ -43,6 +48,7 @@
                 text="Salvar"
                 type="secondary"
                 size="large"
+                @click="saveNewContact"
               />
             </div>
           </div>
@@ -53,8 +59,35 @@
 </template>
 
 <script>
+import TemplateMessages from '@/services/api/resources/chats/templateMessage.js';
+
 export default {
   name: 'ModalAddNewContact',
+
+  data: () => ({
+    contact: {
+      name: '',
+      tel: '',
+    },
+  }),
+
+  methods: {
+    async saveNewContact() {
+      try {
+        const newContact = {
+          name: this.contact.name,
+          urns: [`tel:${this.contact.tel}`],
+          language: '',
+          groups: [],
+          fields: {},
+        };
+        console.log(newContact, `newContact`);
+        await TemplateMessages.createContact(newContact);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  },
 };
 </script>
 

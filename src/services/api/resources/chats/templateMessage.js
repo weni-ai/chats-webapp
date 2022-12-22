@@ -5,25 +5,27 @@ const uuid = getProject();
 
 export default {
   async getListOfContacts() {
-    const temp = '050c0cab-4c1d-48f1-83f1-8fba08aea5fb';
-    const response = await http.get(`/project/${temp}/list_contacts/`, {});
+    const response = await http.get(`/project/${uuid}/list_contacts/`, {});
     return response.data;
   },
 
   async getListOfGroups() {
-    const temp = '050c0cab-4c1d-48f1-83f1-8fba08aea5fb';
-    const response = await http.get(`/project/${temp}/list_groups/`);
+    const response = await http.get(`/project/${uuid}/list_groups/`);
     return response.data;
   },
 
   async getFlows() {
-    const temp = '050c0cab-4c1d-48f1-83f1-8fba08aea5fb';
-    const response = await http.get(`/project/${temp}/list_flows`);
+    const response = await http.get(`/project/${uuid}/list_flows`);
     return response.data;
   },
 
   async getCanTriggerFlows() {
     const response = await http.get(`/project/${uuid}/can_trigger_flows`);
+    return response.data;
+  },
+
+  async createContact(contact) {
+    const response = await http.post(`/project/${uuid}/create_contacts/`, contact);
     return response.data;
   },
 };
