@@ -25,7 +25,11 @@
         <span class="title-group" v-if="listOfGroups.length > 0">Grupos</span>
         <div class="container-names" v-for="item in listOfGroups" :key="item.name">
           <div class="users-names">
-            <unnnic-checkbox style="padding: 10px"></unnnic-checkbox>
+            <unnnic-checkbox
+              v-model="item.selected"
+              :selectContacts="item.selected"
+              style="padding: 10px"
+            ></unnnic-checkbox>
             <user-avatar
               :username="item.name"
               size="2xl"
@@ -40,12 +44,8 @@
       </div>
       <div class="contact-list">
         <template v-for="(element, letter) in letras">
-          <span class="title-group" v-if="search === ''" :key="letter">{{ letter }}</span>
-          <div
-            class="container-names"
-            v-for="item in getFilteredContacts(element)"
-            :key="item.name"
-          >
+          <span class="title-group" :key="letter">{{ letter }}</span>
+          <div class="container-names" v-for="item in element" :key="item.name">
             <div class="users-names">
               <unnnic-checkbox v-model="item.selected" style="padding: 10px"></unnnic-checkbox>
               <user-avatar
@@ -79,15 +79,6 @@
         <unnnic-button text="Continuar" type="secondary" size="small" style="width: 100%" />
       </div>
     </div>
-    <!-- <div style="display: flex; justify-content: space-between" v-if="showSelectTemplate">
-      <unnnic-button
-        text="Enviar"
-        size="small"
-        type="secondary"
-        iconLeft="send-email-3-1"
-        style="width: 100%"
-      />
-    </div> -->
     <modal-add-new-contact v-show="showModal" @close="closeModal" />
   </div>
 </template>
@@ -134,22 +125,19 @@ export default {
     showSelectTemplate: false,
   }),
 
-  // computed: {
-  //   getFilteredContacts() {
-  //     this.isSearching = true;
-  //     return this.listOfContacts.filter((item) =>
-  //       item.name.toUpperCase().includes(this.search.toUpperCase()),
-  //     );
-  //   },
-  // },
-
-  methods: {
+  computed: {
     getFilteredContacts() {
-      this.isSearching = true;
       return this.listOfContacts.filter((item) =>
         item.name.toUpperCase().includes(this.search.toUpperCase()),
       );
     },
+    selectContacts(value) {
+      console.log(value);
+      return value;
+    },
+  },
+
+  methods: {
     async contactList() {
       try {
         const response = await TemplateMessages.getListOfContacts();
@@ -187,6 +175,7 @@ export default {
 
     closeModal() {
       this.showModal = false;
+      this.contactList();
     },
 
     openSelectTemplate() {
@@ -213,6 +202,7 @@ export default {
     display: flex;
     flex-direction: column;
     gap: $unnnic-spacing-stack-md;
+    padding-right: 8px;
 
     // padding-right: $unnnic-spacing-inset-sm;
     overflow-y: auto;
