@@ -26,10 +26,10 @@
               <unnnic-input
                 v-model="contact.tel"
                 label="WhatsApp"
-                placeholder="(99) 9999 99999"
+                placeholder="+99 (99) 9999 99999"
                 class="input"
                 iconRight="view-1-1"
-                mask="(##) #### #####"
+                mask="+## (##) #### #####"
               />
             </div>
           </div>
@@ -71,18 +71,26 @@ export default {
     },
   }),
 
+  created: {
+    contact: {
+      name: '',
+      tel: '',
+    },
+  },
+
   methods: {
     async saveNewContact() {
       try {
+        const prepareTel = this.contact.tel.replace(/[^0-9]/g, '');
         const newContact = {
           name: this.contact.name,
-          urns: [`tel:${this.contact.tel}`],
-          language: '',
+          urns: [`tel:+${prepareTel}`],
+          language: 'eng',
           groups: [],
           fields: {},
         };
-        console.log(newContact, `newContact`);
         await TemplateMessages.createContact(newContact);
+        this.$emit('close');
       } catch (error) {
         console.log(error);
       }

@@ -76,7 +76,7 @@ import Profile from '@/services/api/resources/profile';
 import { unnnicCallAlert } from '@weni/unnnic-system';
 
 export const PREFERENCES_SOUND = 'WENICHATS_PREFERENCES_SOUND';
-// export const PREFERENCES_NILO = 'WENICHATS_PREFERENCES_NILO';
+export const PREFERENCES_NILO = 'WENICHATS_PREFERENCES_NILO';
 
 export default {
   data() {
