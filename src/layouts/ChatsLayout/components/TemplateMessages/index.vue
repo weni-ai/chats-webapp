@@ -47,7 +47,7 @@
           <span class="title-group" :key="letter">{{ letter }}</span>
           <div class="container-names" v-for="item in element" :key="item.name">
             <div class="users-names">
-              <unnnic-checkbox v-model="item.selected" style="padding: 10px"></unnnic-checkbox>
+              <unnnic-checkbox :value="item" v-model="selected" style="padding: 10px" />
               <user-avatar
                 :username="item.name"
                 size="2xl"
@@ -121,6 +121,7 @@ export default {
     listOfGroups: [],
     names: [],
     letras: {},
+    checked: [],
     showModal: false,
     showSelectTemplate: false,
   }),
@@ -131,9 +132,15 @@ export default {
         item.name.toUpperCase().includes(this.search.toUpperCase()),
       );
     },
-    selectContacts(value) {
-      console.log(value);
-      return value;
+    selected: {
+      get() {
+        console.log(this.checked, `this.checked`);
+        return this.checked || [];
+      },
+      set(newValue) {
+        console.log(newValue, `newValue`);
+        this.checked = newValue;
+      },
     },
   },
 
