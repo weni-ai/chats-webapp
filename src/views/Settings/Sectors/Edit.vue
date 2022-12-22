@@ -66,13 +66,35 @@
 
     <section class="actions">
       <unnnic-button
-        v-if="!!queueToEdit"
+        v-if="!!queueToEdit && this.currentTab === 'queues'"
         text="Excluir"
         icon-left="delete-1"
-        type="secondary"
-        @click="deleteQueue(queueToEdit.uuid)"
+        type="terciary"
+        @click="openModalDeleteQueue(queueToEdit)"
       />
-      <unnnic-button text="Salvar" :type="!!queueToEdit ? 'primary' : 'secondary'" @click="save" />
+      <unnnic-button
+        text="Salvar"
+        type="secondary"
+        @click="save"
+        v-if="this.currentTab === 'sector' || this.queueToEdit"
+      />
+      <unnnic-modal
+        :showModal="openModal"
+        modalIcon="alert-circle-1"
+        scheme="feedback-red"
+        :text="`Excluir a fila ${selectedQueue.name}`"
+        :description="`A fila ${selectedQueue.name} será permanentemente excluída`"
+        @close="closeModalDeleteQueue"
+      >
+        <template #options>
+          <unnnic-button type="terciary" @click="closeModalDeleteQueue" text="Cancelar" />
+          <unnnic-button
+            type="secondary"
+            @click="deleteQueue(selectedQueue.uuid)"
+            text="Confirmar"
+          />
+        </template>
+      </unnnic-modal>
     </section>
   </section>
 </template>
@@ -119,6 +141,7 @@ export default {
 
   data: () => ({
     currentTab: '',
+    openModal: false,
     sector: {
       uuid: '',
       name: '',
@@ -143,6 +166,7 @@ export default {
     currentTags: [],
     toAddTags: [],
     toRemoveTags: [],
+    selectedQueue: [],
   }),
 
   methods: {
@@ -154,6 +178,8 @@ export default {
       const sectorUuid = this.sector.uuid;
       await Queue.create({ name, sectorUuid });
       await this.getQueues();
+      const lastQueue = this.queues[this.queues.length - 1];
+      this.visualizeQueue(lastQueue);
     },
     async visualizeQueue(queue) {
       let agents = [];
@@ -172,6 +198,14 @@ export default {
       await Queue.delete(queueUuid);
       this.queues = this.queues.filter((queue) => queue.uuid !== queueUuid);
       this.queueToEdit = null;
+      this.closeModalDeleteQueue();
+    },
+    async openModalDeleteQueue(queue) {
+      this.selectedQueue = queue;
+      this.openModal = true;
+    },
+    async closeModalDeleteQueue() {
+      this.openModal = false;
     },
     async getSector() {
       const { name, rooms_limit, uuid, work_end, work_start } = await Sector.find(this.uuid);
@@ -209,7 +243,12 @@ export default {
       if (this.currentTab === 'queues' && this.queueToEdit) await this.saveQueue();
       if (this.currentTab === 'tags') await this.saveTags();
 
-      this.$router.push({ name: 'sectors' });
+      // this.$router.push({ name: 'sectors' });
+    },
+
+    async removeManager(managerUuid) {
+      await Sector.removeManager(managerUuid);
+      this.removeManagerFromTheList(managerUuid);
     },
     async saveSector() {
       const { uuid, name, workingDay, maxSimultaneousChatsByAgent } = this.sector;
@@ -233,6 +272,7 @@ export default {
 
       this.queueToEdit = null;
       this.showSuccessfullyUpdateSnackbar();
+      this.getQueues();
     },
     async saveTags() {
       const toAddTags = this.toAddTags.map((tag) => Sector.addTag(this.sector.uuid, tag.name));
@@ -263,7 +303,7 @@ export default {
       if (currentTab === 'tags' && this.tags.length === 0) await this.getTags();
       this.queueToEdit = null;
     },
-    removeManager(managerUuid) {
+    removeManagerFromTheList(managerUuid) {
       const manager = this.sector.managers.find((manager) => manager.uuid === managerUuid);
       if (!manager) return;
 
@@ -319,7 +359,7 @@ export default {
     height: 100%;
     overflow-y: auto;
     padding-right: 1rem;
-    margin-right: 0.5rem;
+    // margin-right: 0.5rem;
   }
 
   .actions {

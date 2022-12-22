@@ -82,7 +82,7 @@ export default {
 .settings-chats {
   overflow-y: auto;
   padding-right: 1rem;
-  margin-right: 0.5rem;
+  // margin-right: 0.5rem;
 
   header {
     margin-bottom: 1.5rem;

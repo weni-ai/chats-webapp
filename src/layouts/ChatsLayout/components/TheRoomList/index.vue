@@ -3,17 +3,18 @@
     <section class="chat-groups">
       <room-group v-if="queue.length" :label="$t('line')" :rooms="queue" filled @open="open" />
       <room-group
+        v-bind:style="isHistoryView ? 'opacity: 0.5;' : 'opacity: 20'"
         v-if="rooms.length"
         :label="$t('chats.in_progress')"
         :rooms="rooms"
         @open="open"
+        :isHistory="isHistoryView"
       />
     </section>
 
     <unnnic-button
       :text="isHistoryView ? $t('back_to_chats') : $t('chats.see_history')"
-      :iconRight="isHistoryView ? '' : 'task-list-clock-1'"
-      :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : ''"
+      :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : 'task-list-clock-1'"
       type="secondary"
       size="small"
       @click="navigate(isHistoryView ? 'home' : 'rooms.closed')"
