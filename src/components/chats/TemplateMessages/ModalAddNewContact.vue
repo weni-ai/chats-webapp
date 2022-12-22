@@ -85,7 +85,7 @@ export default {
         const newContact = {
           name: this.contact.name,
           urns: [`tel:+${prepareTel}`],
-          language: 'eng',
+          language: '',
           groups: [],
           fields: {},
         };
