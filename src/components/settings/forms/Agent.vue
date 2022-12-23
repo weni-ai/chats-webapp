@@ -86,13 +86,10 @@ export default {
       });
       const filterDuplicateNames = agents.filter((item, index) => agents.indexOf(item) === index);
       // eslint-disable-next-line func-names
-      const sort = filterDuplicateNames.sort(function (a, b) {
-        if (a < b) {
-          return -1;
-        }
-        return sort;
-      });
-      return sort;
+      const mapped = filterDuplicateNames.map((el, i) => ({ index: i, value: el.toLowerCase() }));
+      const sort = mapped.sort((a, b) => +(a.value > b.value) || +(a.value === b.value) - 1);
+      const result = sort.map((el) => filterDuplicateNames[el.index]);
+      return result;
       // return agents.filter((agent) => agent.includes(this.search));
     },
     selectedAgents: {
