@@ -8,7 +8,7 @@
       <card-group-metrics :metrics="sectors" title="Setores" icon="hierarchy-3-2" />
       <table-metrics
         :headers="tableHeaders"
-        :items="onlineAgents"
+        :items="this.agents.project_agents"
         title="Agentes online"
         icon="indicator"
       />
@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import DashboardManagerApi from '@/services/api/resources/dashboard/dashboardManager';
 import CardGroupMetrics from '../../CardGroupMetrics';
 import GeneralMetrics from '../../GeneralMetrics';
 import TableMetrics from '../../TableMetrics';
@@ -31,7 +32,7 @@ export default {
   },
 
   mounted() {
-    this.initRealtimeSimulation();
+    this.agentInfo();
   },
 
   destroyed() {
@@ -39,6 +40,7 @@ export default {
   },
 
   data: () => ({
+    agents: {},
     generalMetrics: [
       {
         title: 'Chats ativos',
@@ -104,7 +106,7 @@ export default {
     onlineAgents: [
       {
         id: 1,
-        name: 'Fabrício Correia',
+        name: 'Fabrício Correiaaaaaaaaaa',
         activeChats: 3,
       },
       {
@@ -140,6 +142,11 @@ export default {
   },
 
   methods: {
+    async agentInfo() {
+      this.agents = await DashboardManagerApi.getAgentInfo();
+      console.log(this.agents.project_agents, `aqiiuu`);
+    },
+
     initRealtimeSimulation() {
       this.realtimeSimulationController = setInterval(this.updateRandomMetric, 5000);
     },

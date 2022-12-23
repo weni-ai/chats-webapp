@@ -7,7 +7,7 @@
     </template>
 
     <template v-if="isLiveView">
-      <general-live-metrics v-if="!visualization.category" />
+      <general-live-metrics v-if="!visualization.category" :agents="this.agents" />
       <live-metrics-by-agent v-if="visualization.category === 'agent'" />
       <live-metrics-by-sector v-if="visualization.category === 'sector'" />
     </template>
@@ -28,6 +28,7 @@ import LiveMetricsBySector from '@/components/dashboard/metrics/BySector/LiveMet
 import GeneralLiveMetrics from '@/components/dashboard/metrics/General/LiveMetrics';
 import HistoryMetricsByAgent from '@/components/dashboard/metrics/ByAgent/HistoryMetrics';
 import HistoryMetricsBySector from '@/components/dashboard/metrics/BySector/HistoryMetrics';
+import DashboardManagerApi from '@/services/api/resources/dashboard/dashboardManager';
 
 export default {
   name: 'DashboardManager',
@@ -43,6 +44,7 @@ export default {
   },
 
   data: () => ({
+    agents: {},
     filters: {
       tab: '',
       visualization: {
@@ -69,6 +71,23 @@ export default {
       { text: 'Juliano', value: 'juliano', type: 'option', category: 'agent' },
     ],
   }),
+
+  mounted() {
+    // this.agentInfo();
+  },
+
+  methods: {
+    async roomInfo() {
+      const managers = await DashboardManagerApi.getRoomInfo();
+      this.info = managers.results;
+      console.log(this.info);
+    },
+
+    async agentInfo() {
+      const agent = await DashboardManagerApi.getAgentInfo();
+      this.agents = agent.results;
+    },
+  },
 
   computed: {
     isLiveView() {

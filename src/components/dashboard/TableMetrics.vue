@@ -13,9 +13,16 @@
       </header>
 
       <section class="items">
-        <section v-for="item in items" :key="item.id" class="item table-row">
-          <span v-for="header in headers" :key="header.value" class="table-col">
-            {{ item[header.value] }}
+        <section
+          v-for="item in items"
+          :key="item.permission__user__first_name"
+          class="item table-row"
+        >
+          <span class="table-col">
+            {{ item.permission__user__first_name }}
+          </span>
+          <span class="table-col">
+            {{ item.count }}
           </span>
         </section>
       </section>
@@ -25,6 +32,11 @@
 
 <script>
 export default {
+  mounted() {
+    console.log(this.items, 'items');
+    console.log(this.headers, 'alou');
+  },
+
   props: {
     headers: {
       type: Array,
