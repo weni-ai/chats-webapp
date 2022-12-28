@@ -19,6 +19,15 @@ export default {
     return response.data;
   },
 
+  async getTemplateFlow(uuidFlow) {
+    const response = await http.get(`/project/${uuid}/retrieve_flow_definitions/`, {
+      params: {
+        flow_uuid: uuidFlow,
+      },
+    });
+    return response.data;
+  },
+
   async getCanTriggerFlows() {
     const response = await http.get(`/project/${uuid}/can_trigger_flows`);
     return response.data;
