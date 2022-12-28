@@ -5,12 +5,14 @@
       <div @click="$emit('close')" style="cursor: pointer">
         <unnnic-icon icon="keyboard-arrow-left-1" /> Selecionar contatos
       </div>
-      <div class="selected-contacts" v-if="!thereIsContact">
-        <span v-if="!thereIsContact" class="no-contacts-label">Nenhum contato encontrado</span>
-        <div v-if="thereIsContact">
-          <!-- <div v-for="item in users" :key="item.nome">
+      <div class="selected-contacts" v-if="this.selected.length === 0">
+        <span class="no-contacts-label">Nenhum contato selecionado</span>
+      </div>
+      <div class="selected-contacts" v-if="this.selected.length > 0">
+        <div>
+          <div v-for="item in selected" :key="item.nome">
             <span>{{ item.nome }}</span>
-          </div> -->
+          </div>
         </div>
       </div>
       <div>
@@ -26,8 +28,8 @@
         <div class="container-names" v-for="item in listOfGroups" :key="item.name">
           <div class="users-names">
             <unnnic-checkbox
-              v-model="item.selected"
-              :selectContacts="item.selected"
+              :value="selected.some((search) => search.uuid === item.uuid)"
+              @change="setGroups(item)"
               style="padding: 10px"
             ></unnnic-checkbox>
             <user-avatar
@@ -47,7 +49,11 @@
           <span class="title-group" :key="letter">{{ letter }}</span>
           <div class="container-names" v-for="item in element" :key="item.name">
             <div class="users-names">
-              <unnnic-checkbox :value="item" v-model="selected" style="padding: 10px" />
+              <unnnic-checkbox
+                :value="selected.some((search) => search.uuid === item.uuid)"
+                @change="setContacts(item)"
+                style="padding: 10px"
+              />
               <user-avatar
                 :username="item.name"
                 size="2xl"
@@ -120,35 +126,48 @@ export default {
     listOfContacts: [],
     listOfGroups: [],
     names: [],
-    letras: {},
-    checked: [],
+    selected: [],
     showModal: false,
     showSelectTemplate: false,
   }),
 
   computed: {
-    getFilteredContacts() {
-      return this.listOfContacts.filter((item) =>
-        item.name.toUpperCase().includes(this.search.toUpperCase()),
-      );
-    },
-    selected: {
-      get() {
-        console.log(this.checked, `this.checked`);
-        return this.checked || [];
-      },
-      set(newValue) {
-        console.log(newValue, `newValue`);
-        this.checked = newValue;
-      },
+    letras() {
+      const letras = {};
+      this.listOfContacts
+        .filter((item) => item.name.toUpperCase().includes(this.search.toUpperCase()))
+        .forEach((element) => {
+          const l = element.name[0].toUpperCase();
+          const removeAccent = l.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          letras[removeAccent] = letras[removeAccent] || [];
+          letras[removeAccent].push(element);
+        });
+      return letras;
     },
   },
 
   methods: {
+    setContacts(item) {
+      if (this.selected.some((search) => search.uuid === item.uuid)) {
+        this.selected = this.selected.filter((el) => el.uuid !== item.uuid);
+      } else {
+        this.selected.push(item);
+      }
+    },
+
+    setGroups(item) {
+      if (this.selected.some((search) => search.uuid === item.uuid)) {
+        this.selected = this.selected.filter((el) => el.uuid !== item.uuid);
+      } else {
+        this.selected.push(item);
+      }
+    },
+
     async contactList() {
       try {
         const response = await TemplateMessages.getListOfContacts();
         this.listOfContacts = response.results;
+        this.listOfContacts.sort((a, b) => a.name.localeCompare(b.name));
         this.getContactLetter();
       } catch (error) {
         console.log(error);
@@ -162,18 +181,6 @@ export default {
       } catch (error) {
         console.log(error);
       }
-    },
-
-    getContactLetter() {
-      const letras = {};
-      this.listOfContacts.sort((a, b) => a.name.localeCompare(b.name));
-      this.listOfContacts.forEach((element) => {
-        const l = element.name[0].toUpperCase();
-        const removeAccent = l.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        letras[removeAccent] = letras[removeAccent] || [];
-        letras[removeAccent].push(element);
-      });
-      this.letras = letras;
     },
 
     openModal() {

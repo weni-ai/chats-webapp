@@ -9,21 +9,38 @@
         </unnnic-tool-tip>
       </div>
       <div style="padding-left: 12px">
-        <unnnic-select
+        <!-- <unnnic-select
           v-if="templates.length > 1"
           v-model="filteredTemplate"
           label="Selecionar modelo"
           size="md"
           class="input"
-          @input="selectTemplate(filteredTemplate)"
+          @input="templateMessage(filteredTemplate)"
         >
           <option
             v-for="el in templates"
-            :key="el.id"
+            :key="el.uuid"
             :value="el.content"
-            :selected="el === filteredTemplate"
+            :selected="el.uuid === filteredTemplate.uuid"
           >
             {{ el.name }}
+          </option>
+        </unnnic-select> -->
+
+        <unnnic-select
+          v-model="flowUuid"
+          label="Setor"
+          size="md"
+          class="input"
+          @input="templateMessage(flowUuid)"
+        >
+          <option
+            v-for="item in templates"
+            :key="item.uuid"
+            :value="item.uuid"
+            :selected="item.uuid === flowUuid"
+          >
+            {{ item.name }}
           </option>
         </unnnic-select>
       </div>
@@ -74,42 +91,57 @@ export default {
     ModalProgressTemplateSubmission,
   },
 
-  mounted() {
-    this.groupList();
-  },
-  methods: {
-    openModalProgress() {
-      this.showModalProgress = true;
-    },
-    closeModaProgress() {
-      this.showModalProgress = false;
-      this.showModal = true;
-    },
-    closeModal() {
-      this.showModal = false;
-    },
-    selectTemplate(template) {
-      this.selectedTemplate = template;
-    },
-
-    async groupList() {
-      try {
-        const response = await TemplateMessages.getFlows();
-        this.templates = response.results;
-        console.log(this.templates, `listOfGroups`);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-  },
   data: () => ({
     showModalProgress: false,
     showModal: false,
     template: '',
     selectedTemplate: '',
     filteredTemplate: '',
+    flowUuid: '',
     templates: [],
   }),
+
+  mounted() {
+    this.flows();
+  },
+  methods: {
+    async flows() {
+      try {
+        const response = await TemplateMessages.getFlows();
+        this.templates = response.results;
+        console.log(this.templates, `template`);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async templateMessage(uuid) {
+      console.log(uuid, 'template message');
+      try {
+        const response = await TemplateMessages.getTemplateFlow(uuid);
+        this.template = response.results;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    openModalProgress() {
+      this.showModalProgress = true;
+    },
+
+    closeModaProgress() {
+      this.showModalProgress = false;
+      this.showModal = true;
+    },
+
+    closeModal() {
+      this.showModal = false;
+    },
+
+    selectTemplate(template) {
+      this.selectedTemplate = template;
+    },
+  },
 };
 </script>
 
