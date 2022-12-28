@@ -5,13 +5,14 @@
       <div @click="$emit('close')" style="cursor: pointer">
         <unnnic-icon icon="keyboard-arrow-left-1" /> Selecionar contatos
       </div>
-      <div class="selected-contacts" v-if="this.selected.length === 0">
-        <span class="no-contacts-label">Nenhum contato selecionado</span>
+      <div class="no-selected-contacts" v-if="this.selected.length === 0">
+        <span class="contacts-label">Nenhum contato selecionado</span>
       </div>
-      <div class="selected-contacts" v-if="this.selected.length > 0">
-        <div>
-          <div v-for="item in selected" :key="item.nome">
-            <span>{{ item.nome }}</span>
+      <div style="display: flex" v-if="this.selected.length > 0">
+        <div v-for="item in selectedContacts" :key="item.nome">
+          <div class="selected-contacts">
+            <user-avatar :username="item.name" size="md" />
+            <span class="contacts-names">{{ item.name }}</span>
           </div>
         </div>
       </div>
@@ -129,6 +130,7 @@ export default {
     selected: [],
     showModal: false,
     showSelectTemplate: false,
+    selectedContacts: [],
   }),
 
   computed: {
@@ -152,6 +154,8 @@ export default {
         this.selected = this.selected.filter((el) => el.uuid !== item.uuid);
       } else {
         this.selected.push(item);
+        this.selectedContacts = this.selected;
+        console.log(this.selectedContacts, `selectedContacts`);
       }
     },
 
@@ -221,16 +225,28 @@ export default {
     // padding-right: $unnnic-spacing-inset-sm;
     overflow-y: auto;
   }
-  .selected-contacts {
+  .no-selected-contacts {
     width: 100%;
     max-width: 99%;
     border-radius: 0.6rem;
     padding: 1rem;
     background-color: $unnnic-color-background-carpet;
-    .no-contacts-label {
+    .contacts-label {
       color: $unnnic-color-neutral-cloudy;
       font-family: $unnnic-font-family-secondary;
       font-size: 0.6rem;
+    }
+  }
+  .selected-contacts {
+    display: flex;
+    .contacts-names {
+      background-color: $unnnic-color-background-carpet;
+      color: $unnnic-color-neutral-darkest;
+      font-family: $unnnic-font-family-secondary;
+      display: flex;
+      align-items: center;
+      font-weight: 400;
+      font-size: 0.75rem;
     }
   }
   .new-contact {
