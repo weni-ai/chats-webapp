@@ -85,9 +85,6 @@ export default {
         const newContact = {
           name: this.contact.name,
           urns: [`tel:+${prepareTel}`],
-          language: '',
-          groups: [],
-          fields: {},
         };
         await TemplateMessages.createContact(newContact);
         this.$emit('close');
