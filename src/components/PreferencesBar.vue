@@ -36,6 +36,16 @@
       <div class="separator"></div>
 
       <div class="options-container">
+        <div
+          style="display: flex; justify-content: center"
+          @click="openQuickMessage"
+          class="button-quick-message"
+        >
+          <div class="content">
+            <unnnic-icon size="md" scheme="neutral-cloudy" icon="flash-1-3" />
+            Mensagens rápidas
+          </div>
+        </div>
         <div class="label">Status</div>
 
         <unnnic-switch
@@ -87,6 +97,9 @@ export default {
   },
 
   methods: {
+    openQuickMessage() {
+      this.$emit('show-quick-messages');
+    },
     async updateStatus(online) {
       this.loadingStatus = true;
 
@@ -211,6 +224,27 @@ export default {
       font-weight: $unnnic-font-weight-regular;
       font-size: $unnnic-font-size-body-md;
       line-height: $unnnic-font-size-body-md + $unnnic-line-height-md;
+    }
+  }
+
+  .button-quick-message {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 16px;
+    gap: 4px;
+    cursor: pointer;
+    height: 36px;
+    background: rgba(226, 230, 237, 0.16);
+    border: 1px solid #d0d3d9;
+    border-radius: 4px;
+    .content {
+      font-family: 'Lato';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 0.75rem;
+      color: #67738b;
     }
   }
 }

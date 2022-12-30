@@ -57,6 +57,28 @@
     </section>
 
     <section class="form-section">
+      <div style="margin-bottom: 29px">
+        <h2 class="title">
+          {{ $t('sector.template_message.title') }}
+          <unnnic-tool-tip
+            enabled
+            :text="$t('sector.template_message.switch_tip')"
+            side="right"
+            maxWidth="25rem"
+          >
+            <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+          </unnnic-tool-tip>
+        </h2>
+        <unnnicSwitch
+          v-model="activeTemplateMessage"
+          @input="switchTemplateMessage"
+          :textRight="
+            this.activeTemplateMessage
+              ? $t('sector.template_message.switch_title_active')
+              : $t('sector.template_message.switch_title_disabled')
+          "
+        />
+      </div>
       <div>
         <h2 class="title">{{ $t('sector.managers.working_day.title') }}</h2>
 
@@ -124,6 +146,7 @@ export default {
   },
 
   data: () => ({
+    activeTemplateMessage: false,
     manager: '',
     selectedManager: null,
     message: '',
@@ -160,6 +183,10 @@ export default {
   methods: {
     removeManager(managerUuid) {
       this.$emit('remove-manager', managerUuid);
+    },
+
+    switchTemplateMessage() {
+      this.sector.sendTemplateMessage = this.activeTemplateMessage;
     },
 
     addSectorManager() {
