@@ -20,7 +20,7 @@
           @show-quick-messages="preferencesOpenQuickMessage"
         />
 
-        <div class="template-message-button">
+        <div class="template-message-button" v-if="canTriggerFlows">
           <unnnic-button-icon
             size="small"
             icon="pencil-write-1"
@@ -112,7 +112,7 @@ export default {
   },
   mounted() {
     this.getCountSectors();
-    // this.havePermissionToSendTemplateMessage();
+    this.havePermissionToSendTemplateMessage();
   },
 
   methods: {
