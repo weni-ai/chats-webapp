@@ -8,32 +8,15 @@
           <unnnic-icon-svg scheme="neutral-clean" icon="information-circle-4" size="sm" />
         </unnnic-tool-tip>
       </div>
-      <div style="padding-left: 12px">
-        <!-- <unnnic-select
-          v-if="templates.length > 1"
-          v-model="filteredTemplate"
-          label="Selecionar modelo"
-          size="md"
-          class="input"
-          @input="templateMessage(filteredTemplate)"
-        >
-          <option
-            v-for="el in templates"
-            :key="el.uuid"
-            :value="el.content"
-            :selected="el.uuid === filteredTemplate.uuid"
-          >
-            {{ el.name }}
-          </option>
-        </unnnic-select> -->
-
+      <div style="padding-left: 12px" v-if="!loadingFlows">
         <unnnic-select
           v-model="flowUuid"
-          label="Setor"
+          label="Selecionar modelo"
           size="md"
           class="input"
           @input="templateMessage(flowUuid)"
         >
+          <!-- <option value=""></option> -->
           <option
             v-for="item in templates"
             :key="item.uuid"
@@ -66,10 +49,10 @@
     </section>
     <div
       style="display: flex; justify-content: space-between; padding-left: 12px"
-      @click="openModalProgress"
+      @click="sendTemplate"
     >
       <unnnic-button
-        :disabled="selectedTemplate === ''"
+        :disabled="selectedFlow === ''"
         text="Enviar"
         size="small"
         type="secondary"
@@ -99,30 +82,71 @@ export default {
     filteredTemplate: '',
     flowUuid: '',
     templates: [],
+    loading: false,
+    selectedFlow: '',
+    loadingFlows: false,
+    status: '',
+    progressText: '',
   }),
 
   mounted() {
     this.flows();
   },
+
+  props: {
+    contacts: {
+      type: Array,
+    },
+    groups: {
+      type: Array,
+    },
+  },
+
   methods: {
     async flows() {
+      this.loadingFlows = true;
       try {
         const response = await TemplateMessages.getFlows();
         this.templates = response.results;
-        console.log(this.templates, `template`);
+        this.loadingFlows = false;
       } catch (error) {
+        this.loadingFlows = false;
         console.log(error);
       }
     },
 
     async templateMessage(uuid) {
-      console.log(uuid, 'template message');
+      this.selectedFlow = uuid;
       try {
         const response = await TemplateMessages.getTemplateFlow(uuid);
         this.template = response.results;
       } catch (error) {
         console.log(error);
       }
+    },
+
+    async sendTemplate() {
+      this.loading = true;
+      this.findId(this.contacts, this.groups);
+      const prepareObj = {
+        flow: this.selectedFlow,
+        groups: this.idGruops,
+        contacts: this.idContactsList,
+      };
+      this.openModalProgress();
+      try {
+        console.log(prepareObj);
+        await TemplateMessages.sendTemplate(prepareObj);
+        this.loading = false;
+      } catch (error) {
+        this.loading = false;
+        console.log(error);
+      }
+    },
+
+    findId(contacts, groups) {
+      this.idContactsList = contacts.map((el) => el.uuid);
+      this.idGruops = groups.map((el) => el.uuid);
     },
 
     openModalProgress() {

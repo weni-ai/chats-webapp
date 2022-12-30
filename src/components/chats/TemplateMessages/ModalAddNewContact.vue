@@ -71,13 +71,6 @@ export default {
     },
   }),
 
-  created: {
-    contact: {
-      name: '',
-      tel: '',
-    },
-  },
-
   methods: {
     async saveNewContact() {
       try {

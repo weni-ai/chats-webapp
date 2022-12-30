@@ -5,15 +5,13 @@
       <div @click="$emit('close')" style="cursor: pointer">
         <unnnic-icon icon="keyboard-arrow-left-1" /> Selecionar contatos
       </div>
-      <div class="no-selected-contacts" v-if="this.selected.length === 0">
+      <div class="selected-contacts" v-if="this.listOfGroupAndContactsSelected.length === 0">
         <span class="contacts-label">Nenhum contato selecionado</span>
       </div>
-      <div style="display: flex" v-if="this.selected.length > 0">
-        <div v-for="item in selectedContacts" :key="item.nome">
-          <div class="selected-contacts">
-            <user-avatar :username="item.name" size="md" />
-            <span class="contacts-names">{{ item.name }}</span>
-          </div>
+      <div class="flex" v-if="this.listOfGroupAndContactsSelected.length > 0">
+        <div v-for="item in listOfGroupAndContactsSelected" :key="item.nome">
+          <user-avatar :username="item.name" size="md" style="margin-right: 2px" />
+          <span class="contacts-names">{{ item.name }}</span>
         </div>
       </div>
       <div>
@@ -29,7 +27,7 @@
         <div class="container-names" v-for="item in listOfGroups" :key="item.name">
           <div class="users-names">
             <unnnic-checkbox
-              :value="selected.some((search) => search.uuid === item.uuid)"
+              :value="selectedGroup.some((search) => search.uuid === item.uuid)"
               @change="setGroups(item)"
               style="padding: 10px"
             ></unnnic-checkbox>
@@ -70,7 +68,11 @@
       </div>
     </section>
     <section class="template-messages" v-if="showSelectTemplate">
-      <layout-template-message @close="closeSelectTemplate" />
+      <layout-template-message
+        @close="closeSelectTemplate"
+        :contacts="selected"
+        :groups="selectedGroup"
+      />
     </section>
     <div style="display: flex; justify-content: space-between" v-if="!showSelectTemplate">
       <div class="new-contact" @click="openModal">
@@ -83,7 +85,13 @@
         />
       </div>
       <div class="new-contact" @click="openSelectTemplate">
-        <unnnic-button text="Continuar" type="secondary" size="small" style="width: 100%" />
+        <unnnic-button
+          :disabled="this.listOfGroupAndContactsSelected.length === 0"
+          text="Continuar"
+          type="secondary"
+          size="small"
+          style="width: 100%"
+        />
       </div>
     </div>
     <modal-add-new-contact v-show="showModal" @close="closeModal" />
@@ -128,9 +136,10 @@ export default {
     listOfGroups: [],
     names: [],
     selected: [],
+    selectedGroup: [],
+    listOfGroupAndContactsSelected: [],
     showModal: false,
     showSelectTemplate: false,
-    selectedContacts: [],
   }),
 
   computed: {
@@ -149,22 +158,25 @@ export default {
   },
 
   methods: {
+    createOneList() {
+      this.listOfGroupAndContactsSelected = this.selected.concat(this.selectedGroup);
+    },
     setContacts(item) {
       if (this.selected.some((search) => search.uuid === item.uuid)) {
         this.selected = this.selected.filter((el) => el.uuid !== item.uuid);
       } else {
         this.selected.push(item);
-        this.selectedContacts = this.selected;
-        console.log(this.selectedContacts, `selectedContacts`);
       }
+      this.createOneList();
     },
 
     setGroups(item) {
-      if (this.selected.some((search) => search.uuid === item.uuid)) {
-        this.selected = this.selected.filter((el) => el.uuid !== item.uuid);
+      if (this.selectedGroup.some((search) => search.uuid === item.uuid)) {
+        this.selectedGroup = this.selectedGroup.filter((el) => el.uuid !== item.uuid);
       } else {
-        this.selected.push(item);
+        this.selectedGroup.push(item);
       }
+      this.createOneList();
     },
 
     async contactList() {
@@ -225,7 +237,7 @@ export default {
     // padding-right: $unnnic-spacing-inset-sm;
     overflow-y: auto;
   }
-  .no-selected-contacts {
+  .selected-contacts {
     width: 100%;
     max-width: 99%;
     border-radius: 0.6rem;
@@ -236,9 +248,6 @@ export default {
       font-family: $unnnic-font-family-secondary;
       font-size: 0.6rem;
     }
-  }
-  .selected-contacts {
-    display: flex;
     .contacts-names {
       background-color: $unnnic-color-background-carpet;
       color: $unnnic-color-neutral-darkest;
@@ -249,6 +258,27 @@ export default {
       font-size: 0.75rem;
     }
   }
+  .flex {
+    width: 100%;
+    max-width: 99%;
+    display: flex;
+    border-radius: 0.6rem;
+    padding: 5px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    background-color: $unnnic-color-background-carpet;
+  }
+
+  .flex > div {
+    width: 7rem;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    color: $unnnic-color-neutral-darkest;
+  }
+
   .new-contact {
     width: 50%;
     display: flex;

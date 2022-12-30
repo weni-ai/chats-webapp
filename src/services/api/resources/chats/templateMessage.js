@@ -37,4 +37,9 @@ export default {
     const response = await http.post(`/project/${uuid}/create_contacts/`, contact);
     return response.data;
   },
+
+  async sendTemplate(object) {
+    const response = await http.post(`/project/${uuid}/start_flow/`, object);
+    return response.data;
+  },
 };
