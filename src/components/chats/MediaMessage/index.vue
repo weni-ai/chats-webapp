@@ -1,35 +1,23 @@
 <template>
   <section v-if="isDocument">
-    <document-preview
-      :fullFilename="fullFilename"
-      @download="download"
-      highlight
-      :url="media.url"
-      @click="openFile"
-    />
+    <document-preview @download="download" highlight :url="media.url" @click="openFile" />
   </section>
 
   <section v-else class="media-message">
     <section class="media-message__preview">
-      <image-preview
-        v-if="isImage"
-        :url="media.url"
-        :alt="fullFilename"
-        fullscreen-on-click
-        @download="download"
-      />
+      <image-preview v-if="isImage" :url="media.url" fullscreen-on-click @download="download" />
       <video-preview v-else-if="isVideo" :src="media.url" fullscreen-on-click />
       <unnnic-audio-recorder v-else-if="isAudio" :src="media.url" />
     </section>
 
-    <media-controls v-if="!isAudio" :fullFilename="fullFilename" @download="download" />
+    <!-- <media-controls v-if="!isAudio" @download="download" /> -->
   </section>
 </template>
 
 <script>
 import Media from '@/services/api/resources/chats/media';
 
-import MediaControls from './Controls';
+// import MediaControls from './Controls';
 import DocumentPreview from './Previews/Document';
 import ImagePreview from './Previews/Image';
 import VideoPreview from './Previews/Video';
@@ -40,7 +28,7 @@ export default {
   components: {
     DocumentPreview,
     ImagePreview,
-    MediaControls,
+    // MediaControls,
     VideoPreview,
   },
 
