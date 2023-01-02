@@ -185,7 +185,6 @@ export default {
         work_start: workingDay.start,
         work_end: workingDay.end,
       };
-      console.log(props, `oi`);
       const sector = await Sector.create(props);
       return sector;
     },
