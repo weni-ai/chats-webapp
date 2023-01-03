@@ -17,13 +17,32 @@
 export default {
   name: 'ModalProgressTemplateSubmission',
   data: () => ({
-    percentage: 30,
+    percentage: 0,
   }),
+
+  props: {
+    time: {
+      type: Number,
+    },
+  },
+
   mounted() {
-    setTimeout(() => {
-      // eslint-disable-next-line no-undef
-      this.$emit('close');
-    }, 2000);
+    this.startProgress();
+  },
+
+  methods: {
+    startProgress() {
+      this.percentage = 0;
+      this.id = setInterval(this.updateProgress, 32);
+    },
+    updateProgress() {
+      if (this.percentage === 100) {
+        clearInterval(this.id);
+        this.$emit('close');
+      } else {
+        this.percentage += 1;
+      }
+    },
   },
 };
 </script>
