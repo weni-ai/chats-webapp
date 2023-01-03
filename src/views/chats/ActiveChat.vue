@@ -191,7 +191,7 @@ export default {
       this.isGetChatConfirmationModalOpen = false;
     },
     async closeRoom() {
-      if (this.tags.length === 0) return;
+      // if (this.tags.length === 0) return;
       const { uuid } = this.room;
 
       const tags = this.tags.map((tag) => tag.uuid);
