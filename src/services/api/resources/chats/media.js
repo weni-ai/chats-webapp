@@ -1,5 +1,6 @@
 import http from '@/services/api/http';
 import axios from 'axios';
+import { getProject } from '@/utils/config';
 
 const client = axios.create();
 
@@ -24,6 +25,17 @@ export default {
         contact,
         room,
         page,
+      },
+    });
+    return response.data;
+  },
+  async listFromContactAndClosedRoom({ ordering, contact, page }) {
+    const response = await http.get(`/media/`, {
+      params: {
+        ordering,
+        contact,
+        page,
+        project: getProject(),
       },
     });
     return response.data;

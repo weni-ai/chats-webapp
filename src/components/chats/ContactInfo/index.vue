@@ -4,7 +4,7 @@
     :title="$t('contact_information')"
     @action="$listeners.close"
   >
-    <section class="scrollable">
+    <section v-if="!isHistory" class="scrollable">
       <aside-slot-template-section>
         <section class="infos">
           <div class="avatar">
@@ -67,6 +67,41 @@
         <contact-media :room="room" />
       </aside-slot-template-section>
     </section>
+
+    <section v-if="isHistory" class="scrollable">
+      <aside-slot-template-section>
+        <section class="infos">
+          <div class="avatar">
+            <unnnic-icon-svg icon="single-neutral-actions-1" size="xl" />
+          </div>
+
+          <p class="username">
+            {{ contact.name }}
+          </p>
+
+          <div class="connection-info">
+            <!-- <p v-else>{{ getLastTimeOnlineText(room.contact.last_interaction || new Date()) }}</p> -->
+            <template v-if="!!contact.custom_fields">
+              <p v-for="(value, key) in customFields" :key="key">
+                <span class="title"> {{ key }}: </span>
+                {{ value }}
+              </p>
+            </template>
+            <!-- <p v-if="lastMessageFromContact?.created_on">
+              {{
+                $t('last_message_time.date', {
+                  date: moment(lastMessageFromContact?.created_on).fromNow(),
+                })
+              }}
+            </p> -->
+          </div>
+        </section>
+      </aside-slot-template-section>
+
+      <aside-slot-template-section>
+        <contact-media :room="room" />
+      </aside-slot-template-section>
+    </section>
     <unnnic-modal
       :text="$t('successfully_transferred_chat')"
       :description="$t('successfully_transferred_contact_to.line', { name: transferContactTo })"
@@ -89,6 +124,7 @@ import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
 import Room from '@/services/api/resources/chats/room';
 import Sector from '@/services/api/resources/settings/sector';
+import Media from '@/services/api/resources/chats/media';
 import ContactMedia from './Media';
 
 const moment = require('moment');
@@ -139,6 +175,7 @@ export default {
   },
 
   async created() {
+    console.log(this.contact, 'oi');
     if (!this.isHistory) {
       if (!this.room.queue?.sector) {
         throw new Error(`There is no associated sector with room ${this.room.uuid}`);
@@ -160,11 +197,44 @@ export default {
           throw error;
         }
       }
+    } else {
+      this.loadNextMedias();
     }
   },
 
   methods: {
     moment,
+    async loadNextMedias() {
+      const response = await Media.listFromContactAndClosedRoom({
+        ordering: 'content_type',
+        contact: this.contact.uuid,
+        // room: this.room.uuid,
+        page: this.page,
+      });
+      this.audios = await Promise.all(
+        response.results
+          .filter((media) => media.content_type.startsWith('audio/'))
+          .map(
+            (element) =>
+              new Promise((resolve) => {
+                const url = new Audio(element.url);
+                url.onloadedmetadata = (event) => {
+                  const { duration } = event.path[0];
+                  resolve({ ...element, duration });
+                };
+              }),
+          ),
+      );
+      this.medias = this.medias.concat(
+        response.results.filter((media) => !media.content_type.startsWith('audio/')),
+      );
+
+      this.page += 1;
+
+      if (response.next) {
+        this.loadNextMedias();
+      }
+    },
 
     navigate(name) {
       this.$router.replace({ name });
