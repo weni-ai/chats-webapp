@@ -29,11 +29,13 @@ export default {
     });
     return response.data;
   },
-  async listFromContactAndClosedRoom({ ordering, contact, page }) {
+  async listFromContactAndClosedRoom({ ordering, message, contact, room, page }) {
     const response = await http.get(`/media/`, {
       params: {
         ordering,
+        message,
         contact,
+        room,
         page,
         project: getProject(),
       },
