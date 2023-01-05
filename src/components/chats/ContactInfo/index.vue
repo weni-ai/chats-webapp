@@ -175,7 +175,6 @@ export default {
   },
 
   async created() {
-    console.log(this.contact, 'oi');
     if (!this.isHistory) {
       if (!this.room.queue?.sector) {
         throw new Error(`There is no associated sector with room ${this.room.uuid}`);
