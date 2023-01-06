@@ -73,19 +73,24 @@ export default {
   }),
 
   mounted() {
-    // this.agentInfo();
+    // this.roomInfo();
+    this.sectorInfo();
+    this.agentInfo();
   },
 
   methods: {
-    async roomInfo() {
-      const managers = await DashboardManagerApi.getRoomInfo();
-      this.info = managers.results;
-      console.log(this.info);
-    },
+    // async roomInfo() {
+    //   const managers = await DashboardManagerApi.getRoomInfo();
+    //   this.info = managers.results;
+    // },
 
     async agentInfo() {
       const agent = await DashboardManagerApi.getAgentInfo();
       this.agents = agent.results;
+    },
+    async sectorInfo() {
+      const sector = await DashboardManagerApi.getSectorInfo();
+      this.sectors = sector.results;
     },
   },
 

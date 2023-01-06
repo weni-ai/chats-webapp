@@ -1,31 +1,54 @@
 <template>
   <section class="general-metrics">
-    <template
-      v-for="{ title, icon, scheme, value, percent, invertedPercentage, tooltip, type } in metrics"
-    >
-      <unnnic-tool-tip v-if="tooltip" :key="title" enabled :text="tooltip" side="right">
+    <template>
+      <unnnic-tool-tip enabled text="Quantidade de chats em andamento" side="right">
         <unnnic-card
           type="dash"
-          :title="title"
-          :icon="icon"
-          :scheme="scheme"
-          :value="type === 'time' ? timeToString(value) : value"
+          title="Chats ativos"
+          icon="indicator"
+          scheme="aux-blue"
+          :value="this.metrics.active_chats"
           :percent="percent"
           :inverted-percentage="invertedPercentage"
         />
       </unnnic-tool-tip>
-
-      <unnnic-card
-        v-else
-        :key="title"
-        type="dash"
-        :title="title"
-        :icon="icon"
-        :scheme="scheme"
-        :value="type === 'time' ? timeToString(value) : value"
-        :percent="percent"
-        :inverted-percentage="invertedPercentage"
-      />
+      <unnnic-tool-tip
+        enabled
+        text="É tempo médio que o contato aguarda para ser atendido"
+        side="right"
+      >
+        <unnnic-card
+          type="dash"
+          title="Tempo de espera"
+          icon="time-clock-circle-1"
+          scheme="aux-orange"
+          :value="timeToString(this.metrics.waiting_time)"
+          :percent="percent"
+          :inverted-percentage="invertedPercentage"
+        />
+      </unnnic-tool-tip>
+      <unnnic-tool-tip enabled text="É o tempo médio de resposta ao contato" side="right">
+        <unnnic-card
+          type="dash"
+          title="Tempo de resposta"
+          icon="messaging-we-chat-3"
+          scheme="aux-purple"
+          :value="timeToString(this.metrics.response_time)"
+          :percent="percent"
+          :inverted-percentage="invertedPercentage"
+        />
+      </unnnic-tool-tip>
+      <unnnic-tool-tip enabled text="É o tempo médio de duração de um chat" side="left">
+        <unnnic-card
+          type="dash"
+          title="Tempo de interação"
+          icon="messages-bubble-1"
+          scheme="aux-lemon"
+          :value="timeToString(this.metrics.interact_time)"
+          :percent="percent"
+          :inverted-percentage="invertedPercentage"
+        />
+      </unnnic-tool-tip>
     </template>
   </section>
 </template>
@@ -40,8 +63,11 @@ export default {
   },
 
   methods: {
-    timeToString({ minutes, seconds }) {
-      return `${minutes}min ${seconds}s`;
+    timeToString({ minutes }) {
+      if (![null, undefined, ''].includes(minutes)) {
+        return `${minutes}min`;
+      }
+      return '0min';
     },
   },
 };

@@ -33,8 +33,8 @@
 <script>
 export default {
   mounted() {
-    console.log(this.items, 'items');
-    console.log(this.headers, 'alou');
+    // console.log(this.items, 'items');
+    // console.log(this.headers, 'alou');
   },
 
   props: {
