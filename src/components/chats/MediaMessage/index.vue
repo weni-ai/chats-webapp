@@ -1,6 +1,6 @@
 <template>
   <section v-if="isDocument">
-    <document-preview @download="download" highlight :url="media.url" @click="openFile" />
+    <document-preview @download="download" highlight :url="media.url" />
   </section>
 
   <section v-else class="media-message">

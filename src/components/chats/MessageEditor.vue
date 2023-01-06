@@ -15,6 +15,7 @@
 
     <div class="message-editor">
       <unnnic-text-editor
+        :loadingValue="loadingValue"
         v-model="message"
         @send="send"
         @keydown="onKeyDown"
@@ -83,6 +84,9 @@ export default {
     value: {
       type: String,
       default: '',
+    },
+    loadingValue: {
+      type: Number,
     },
   },
 

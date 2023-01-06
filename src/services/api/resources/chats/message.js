@@ -29,16 +29,27 @@ export default {
     return response.data;
   },
 
-  async sendMedia({ roomId, userEmail, media }) {
+  async sendMedia({ roomId, userEmail, media, updateLoadingFiles }) {
+    console.log(updateLoadingFiles, `updateLoadingFiles`);
     const msg = await this.send(roomId, {
       text: '',
       user_email: userEmail,
     });
-    const response = await http.postForm('/media/', {
-      content_type: media.type,
-      message: msg.uuid,
-      media_file: media,
-    });
+    updateLoadingFiles?.(msg.uuid, 0);
+    const response = await http.postForm(
+      '/media/',
+      {
+        content_type: media.type,
+        message: msg.uuid,
+        media_file: media,
+      },
+      {
+        onUploadProgress: (event) => {
+          const progress = event.loaded / event.total;
+          updateLoadingFiles?.(msg.uuid, progress);
+        },
+      },
+    );
     return response.data;
   },
   // async sendMedia({ roomId, text, userEmail, media }) {

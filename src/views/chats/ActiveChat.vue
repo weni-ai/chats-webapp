@@ -26,6 +26,7 @@
           @send-message="sendMessage"
           @send-audio="sendAudio"
           @upload="sendFileMessage($event)"
+          :loadingValue="totalValue"
         />
       </div>
 
@@ -138,6 +139,7 @@ export default {
     sectorTags: [],
     isGetChatConfirmationModalOpen: false,
     isRoomClassifierVisible: false,
+    totalValue: undefined,
   }),
 
   computed: {
@@ -215,12 +217,22 @@ export default {
     },
     async sendFileMessage(files) {
       try {
-        await this.$store.dispatch('rooms/sendMedias', files);
+        const loadingFiles = {};
+        const updateLoadingFiles = (messageUuid, progress) => {
+          loadingFiles[messageUuid] = progress;
+          this.totalValue =
+            Object.values(loadingFiles).reduce((acc, value) => acc + value) /
+            Object.keys(loadingFiles).length;
+          console.log(this.totalValue);
+        };
+        await this.$store.dispatch('rooms/sendMedias', { files, updateLoadingFiles });
+        this.totalValue = undefined;
         this.scrollMessagesToBottom();
       } catch (e) {
         console.error('O upload de alguns arquivos pode não ter sido concluído');
       }
     },
+
     async sendMessage() {
       const message = this.editorMessage.trim();
       if (!message) return;
@@ -236,7 +248,7 @@ export default {
       const response = await fetch(this.audioMessage.src);
       const blob = await response.blob();
       const audio = new File([blob], `${Date.now().toString()}.mp3`, { type: 'audio/mpeg3' });
-      await this.$store.dispatch('rooms/sendMedias', [audio]);
+      await this.$store.dispatch('rooms/sendMedias', { files: [audio] });
       this.scrollMessagesToBottom();
       this.$refs['message-editor'].clearAudio();
       this.audioMessage = null;

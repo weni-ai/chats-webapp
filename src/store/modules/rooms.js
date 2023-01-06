@@ -97,13 +97,18 @@ export default {
           console.error('Não foi possível enviar a mensagem');
         });
     },
-    async sendMedias({ state }, medias) {
+    async sendMedias({ state }, { files: medias, updateLoadingFiles }) {
       const { activeRoom } = state;
       if (!activeRoom) return;
 
       await Promise.all(
         medias.map((media) =>
-          Message.sendMedia({ roomId: activeRoom.uuid, userEmail: activeRoom.user.email, media }),
+          Message.sendMedia({
+            roomId: activeRoom.uuid,
+            userEmail: activeRoom.user.email,
+            media,
+            updateLoadingFiles,
+          }),
         ),
       );
     },
