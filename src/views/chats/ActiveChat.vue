@@ -223,7 +223,6 @@ export default {
           this.totalValue =
             Object.values(loadingFiles).reduce((acc, value) => acc + value) /
             Object.keys(loadingFiles).length;
-          console.log(this.totalValue);
         };
         await this.$store.dispatch('rooms/sendMedias', { files, updateLoadingFiles });
         this.totalValue = undefined;

@@ -30,7 +30,6 @@ export default {
   },
 
   async sendMedia({ roomId, userEmail, media, updateLoadingFiles }) {
-    console.log(updateLoadingFiles, `updateLoadingFiles`);
     const msg = await this.send(roomId, {
       text: '',
       user_email: userEmail,
