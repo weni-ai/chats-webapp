@@ -30,8 +30,9 @@ export default {
   },
 
   async sendMedia({ roomId, userEmail, media }) {
+    const isDocument = media.type === 'application/pdf';
     const msg = await this.send(roomId, {
-      text: '',
+      text: isDocument ? media.name : '',
       user_email: userEmail,
     });
     const response = await http.postForm('/media/', {
