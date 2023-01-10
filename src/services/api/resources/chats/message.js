@@ -30,8 +30,9 @@ export default {
   },
 
   async sendMedia({ roomId, userEmail, media, updateLoadingFiles }) {
+    const isDocument = media.type === 'application/pdf';
     const msg = await this.send(roomId, {
-      text: '',
+      text: isDocument ? media.name : '',
       user_email: userEmail,
     });
     updateLoadingFiles?.(msg.uuid, 0);
