@@ -29,16 +29,27 @@ export default {
     return response.data;
   },
 
-  async sendMedia({ roomId, userEmail, media }) {
+  async sendMedia({ roomId, userEmail, media, updateLoadingFiles }) {
+    const isDocument = media.type === 'application/pdf';
     const msg = await this.send(roomId, {
-      text: '',
+      text: isDocument ? media.name : '',
       user_email: userEmail,
     });
-    const response = await http.postForm('/media/', {
-      content_type: media.type,
-      message: msg.uuid,
-      media_file: media,
-    });
+    updateLoadingFiles?.(msg.uuid, 0);
+    const response = await http.postForm(
+      '/media/',
+      {
+        content_type: media.type,
+        message: msg.uuid,
+        media_file: media,
+      },
+      {
+        onUploadProgress: (event) => {
+          const progress = event.loaded / event.total;
+          updateLoadingFiles?.(msg.uuid, progress);
+        },
+      },
+    );
     return response.data;
   },
   // async sendMedia({ roomId, text, userEmail, media }) {
