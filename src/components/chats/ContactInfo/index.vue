@@ -68,7 +68,7 @@
       </aside-slot-template-section>
     </section>
 
-    <section v-if="isHistory" class="scrollable" style="background-color: #ffffff" >
+    <section v-if="isHistory" class="scrollable" style="background-color: #ffffff">
       <aside-slot-template-section>
         <section class="infos">
           <div class="avatar">
