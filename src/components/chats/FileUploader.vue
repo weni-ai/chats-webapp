@@ -9,6 +9,7 @@
         @cancel="closeFileUploadModal"
         @close="closeFileUploadModal"
         @action="upload"
+        :maxFileSize="10.48"
       />
     </div>
   </section>
