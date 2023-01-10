@@ -96,7 +96,7 @@ export default {
     sector: {
       uuid: '',
       name: '',
-      sendTemplateMessage: '',
+      can_trigger_flows: false,
       managers: [],
       workingDay: {
         start: '',
@@ -177,10 +177,10 @@ export default {
       await Queue.addAgent(this.sector.queue.uuid, agent.uuid);
     },
     async createSector() {
-      const { name, sendTemplateMessage, maxSimultaneousChatsByAgent, workingDay } = this.sector;
+      const { name, can_trigger_flows, maxSimultaneousChatsByAgent, workingDay } = this.sector;
       const props = {
         name,
-        can_trigger_flows: sendTemplateMessage !== '',
+        can_trigger_flows: can_trigger_flows !== '',
         rooms_limit: Number(maxSimultaneousChatsByAgent),
         work_start: workingDay.start,
         work_end: workingDay.end,

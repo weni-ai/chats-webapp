@@ -70,10 +70,9 @@
           </unnnic-tool-tip>
         </h2>
         <unnnicSwitch
-          v-model="activeTemplateMessage"
-          @input="switchTemplateMessage"
+          v-model="sector.can_trigger_flows"
           :textRight="
-            this.activeTemplateMessage
+            sector.can_trigger_flows
               ? $t('sector.template_message.switch_title_active')
               : $t('sector.template_message.switch_title_disabled')
           "
@@ -146,7 +145,6 @@ export default {
   },
 
   data: () => ({
-    activeTemplateMessage: false,
     manager: '',
     selectedManager: null,
     message: '',
@@ -185,9 +183,9 @@ export default {
       this.$emit('remove-manager', managerUuid);
     },
 
-    switchTemplateMessage() {
-      this.sector.sendTemplateMessage = this.activeTemplateMessage;
-    },
+    // switchTemplateMessage() {
+    //   this.sector.can_trigger_flows = this.sector.can_trigger_flows;
+    // },
 
     addSectorManager() {
       const { selectedManager } = this;

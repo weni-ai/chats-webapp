@@ -135,9 +135,9 @@ export default {
       };
       this.openModalProgress();
       try {
-        console.log(prepareObj);
         await TemplateMessages.sendTemplate(prepareObj);
         this.loading = false;
+        this.closeModaProgress();
       } catch (error) {
         this.loading = false;
         console.log(error);
@@ -160,10 +160,7 @@ export default {
 
     closeModal() {
       this.showModal = false;
-    },
-
-    selectTemplate(template) {
-      this.selectedTemplate = template;
+      window.location.reload(true);
     },
   },
 };

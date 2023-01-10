@@ -41,7 +41,7 @@
                 @click="open('media')"
                 @keypress.enter="open('media')"
               >
-                <unnnic-icon-svg icon="video-file-mp4-1" />
+                <unnnic-icon-svg icon="common-file-horizontal-image-1" size="sm" />
                 <span> {{ $t('send_photo_or_video') }} </span>
               </span>
             </unnnic-dropdown-item>
@@ -51,7 +51,7 @@
                 @click="open('document')"
                 @keypress.enter="open('document')"
               >
-                <unnnic-icon-svg icon="upload-bottom-1" />
+                <unnnic-icon-svg icon="paginate-filter-text-1" size="sm" />
                 <span> {{ $tc('send_docs') }} </span>
               </span>
             </unnnic-dropdown-item>
