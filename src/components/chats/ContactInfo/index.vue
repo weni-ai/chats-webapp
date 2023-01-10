@@ -4,12 +4,12 @@
     :title="$t('contact_information')"
     @action="$listeners.close"
   >
-    <section v-if="!isHistory" class="scrollable">
+    <section v-if="!isHistory" class="scrollable" style="background-color: #ffffff">
       <aside-slot-template-section>
         <section class="infos">
-          <div class="avatar">
+          <!-- <div class="avatar">
             <unnnic-icon-svg icon="single-neutral-actions-1" size="xl" />
-          </div>
+          </div> -->
 
           <p class="username">
             {{ room.contact.name }}
@@ -68,7 +68,7 @@
       </aside-slot-template-section>
     </section>
 
-    <section v-if="isHistory" class="scrollable">
+    <section v-if="isHistory" class="scrollable" style="background-color: #ffffff" >
       <aside-slot-template-section>
         <section class="infos">
           <div class="avatar">

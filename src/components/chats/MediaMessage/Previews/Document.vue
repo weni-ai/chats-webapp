@@ -69,7 +69,6 @@ export default {
 
   methods: {
     async openFile(media) {
-      console.log(media, 'oidadas');
       try {
         window.open(media);
       } catch (err) {
