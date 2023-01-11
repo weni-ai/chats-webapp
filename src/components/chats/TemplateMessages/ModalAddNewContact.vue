@@ -77,7 +77,7 @@ export default {
         const prepareTel = this.contact.tel.replace(/[^0-9]/g, '');
         const newContact = {
           name: this.contact.name,
-          urns: [`tel:+${prepareTel}`],
+          urns: [`whatsapp:${prepareTel}`],
         };
         await TemplateMessages.createContact(newContact);
         this.$emit('close');
