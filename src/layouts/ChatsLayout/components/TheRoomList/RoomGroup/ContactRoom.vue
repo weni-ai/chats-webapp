@@ -106,6 +106,11 @@ export default {
       },
     }),
     hasUnreadMessages() {
+      const totalUnreadmessages = this.newMessages?.length;
+      window.parent.postMessage(
+        { event: 'chats:update-unread-messages', unreadMessages: totalUnreadmessages },
+        '*',
+      );
       return this.room.unreadMessages > 0;
     },
   },
