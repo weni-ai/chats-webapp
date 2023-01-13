@@ -38,14 +38,6 @@
           @click="isGetChatConfirmationModalOpen = true"
         />
       </div>
-      <div v-if="!room.user" class="get-chat-button-container">
-        <unnnic-button
-          class="get-chat-button"
-          :text="$t('chats.get_chat')"
-          type="secondary"
-          @click="isGetChatConfirmationModalOpen = true"
-        />
-      </div>
 
       <section v-if="isRoomClassifierVisible" class="chat-classifier">
         <chat-classifier
@@ -159,7 +151,12 @@ export default {
       messages: 'groupedActiveRoomsMessage',
     }),
     isMessageEditorVisible() {
-      return !this.isRoomClassifierVisible && this.room.is_active && !!this.room.user;
+      return (
+        !this.isRoomClassifierVisible &&
+        this.room.is_active &&
+        !this.room.wating_answer &&
+        !!this.room.user
+      );
     },
     sidebarComponent() {
       return this.sidebarComponents[this.componentInAsideSlot] || {};
