@@ -66,6 +66,26 @@ export default {
     isHistoryView() {
       return this.$route.name === 'rooms.closed';
     },
+
+    totalUnreadMessages() {
+      return this.rooms.reduce(
+        (total, room) =>
+          total + (this.$store.state.rooms.newMessagesByRoom[room.uuid]?.messages?.length || 0),
+        0,
+      );
+    },
+  },
+
+  watch: {
+    totalUnreadMessages: {
+      immediate: true,
+      handler() {
+        window.parent.postMessage(
+          { event: 'chats:update-unread-messages', unreadMessages: this.totalUnreadMessages },
+          '*',
+        );
+      },
+    },
   },
 
   methods: {
