@@ -3,6 +3,7 @@
     <section class="chat-groups">
       <room-group v-if="queue.length" :label="$t('line')" :rooms="queue" filled @open="open" />
       <room-group
+        v-if="wating.length"
         :label="$t('chats.wating_answer', { length: wating.length })"
         :rooms="wating"
         @open="open"
