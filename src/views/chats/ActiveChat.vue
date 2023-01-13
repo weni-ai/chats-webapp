@@ -15,7 +15,7 @@
         ref="chatMessages"
       />
 
-      <div v-if="isMessageEditorVisible" class="message-editor">
+      <div v-if="isMessageEditorVisible && !room.is_waiting" class="message-editor">
         <message-editor
           ref="message-editor"
           v-model="editorMessage"

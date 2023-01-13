@@ -135,7 +135,7 @@ export default {
 
   getters: {
     agentRooms(state) {
-      return state.rooms.filter((room) => !!room.user);
+      return state.rooms.filter((room) => !!room.user && room.is_waiting === false);
     },
     waitingQueue(state) {
       return state.rooms.filter((room) => !room.user);

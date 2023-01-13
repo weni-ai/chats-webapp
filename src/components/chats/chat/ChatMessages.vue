@@ -1,9 +1,5 @@
 <template>
   <section class="chat-messages">
-    <div v-if="room.is_waiting" class="chat-messages__room__transfer-info">
-      {{ $t('wating_answer.send_template') }}
-      <unnnic-icon icon="send-email-3-1" size="sm" scheme="neutral-cleanest" />
-    </div>
     <section v-for="message in messages" :key="message.uuid" class="chat-messages__room">
       <!-- missing info in API return data -->
       <div v-if="false" class="chat-messages__room__divisor">
@@ -19,8 +15,19 @@
       </div>
 
       <div v-if="isTransferInfoMessage(message)" class="chat-messages__room__transfer-info">
-        <unnnic-icon icon="logout-1-1" size="sm" scheme="neutral-cleanest" />
-        {{ createTransferLabel(message) }}
+        <unnnic-icon
+          v-if="!room.is_waiting"
+          icon="logout-1-1"
+          size="sm"
+          scheme="neutral-cleanest"
+        />
+        {{ !room.is_waiting ? createTransferLabel(message) : $t('waiting_answer.send_template') }}
+        <unnnic-icon
+          v-if="room.is_waiting"
+          icon="send-email-3-1"
+          size="sm"
+          scheme="neutral-cleanest"
+        />
       </div>
 
       <section v-else-if="!message.sender" class="chat-messages__messages">
@@ -48,7 +55,7 @@
       </section>
       <section>
         <div v-if="room.is_waiting" class="chat-messages__room__transfer-info">
-          {{ $t('wating_answer.wating_cliente_answer') }}
+          {{ $t('waiting_answer.waiting_cliente_answer') }}
         </div>
       </section>
 
