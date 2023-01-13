@@ -15,8 +15,19 @@
       </div>
 
       <div v-if="isTransferInfoMessage(message)" class="chat-messages__room__transfer-info">
-        <unnnic-icon icon="logout-1-1" size="sm" scheme="neutral-cleanest" />
-        {{ createTransferLabel(message) }}
+        <unnnic-icon
+          v-if="!room.is_waiting"
+          icon="logout-1-1"
+          size="sm"
+          scheme="neutral-cleanest"
+        />
+        {{ !room.is_waiting ? createTransferLabel(message) : $t('waiting_answer.send_template') }}
+        <unnnic-icon
+          v-if="room.is_waiting"
+          icon="send-email-3-1"
+          size="sm"
+          scheme="neutral-cleanest"
+        />
       </div>
 
       <section v-else-if="!message.sender" class="chat-messages__messages">
@@ -41,6 +52,11 @@
         <div class="chat-messages__room__divisor__line" />
         <span class="chat-messages__room__divisor__label">{{ $t('chat_closed_by.agent') }}</span>
         <div class="chat-messages__room__divisor__line" />
+      </section>
+      <section>
+        <div v-if="room.is_waiting" class="chat-messages__room__transfer-info">
+          {{ $t('waiting_answer.waiting_cliente_answer') }}
+        </div>
       </section>
 
       <section v-if="room.tags.length > 0" class="chat-messages__tags">
