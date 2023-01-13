@@ -1,5 +1,9 @@
 <template>
   <section class="chat-messages">
+    <div v-if="room.is_waiting" class="chat-messages__room__transfer-info">
+      {{ $t('wating_answer.send_template') }}
+      <unnnic-icon icon="send-email-3-1" size="sm" scheme="neutral-cleanest" />
+    </div>
     <section v-for="message in messages" :key="message.uuid" class="chat-messages__room">
       <!-- missing info in API return data -->
       <div v-if="false" class="chat-messages__room__divisor">
@@ -41,6 +45,11 @@
         <div class="chat-messages__room__divisor__line" />
         <span class="chat-messages__room__divisor__label">{{ $t('chat_closed_by.agent') }}</span>
         <div class="chat-messages__room__divisor__line" />
+      </section>
+      <section>
+        <div v-if="room.is_waiting" class="chat-messages__room__transfer-info">
+          {{ $t('wating_answer.wating_cliente_answer') }}
+        </div>
       </section>
 
       <section v-if="room.tags.length > 0" class="chat-messages__tags">

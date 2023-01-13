@@ -500,6 +500,18 @@
       "es": "Contacto enviado a la fila {name}"
     }
   },
+  "waiting_answer": {
+    "send_template": {
+      "pt-br": "Você enviou um modelo de mensagem",
+      "en-us": "You sent a message template",
+      "es": "Enviaste una plantilla de mensaje"
+    },
+    "waiting_cliente_answer": {
+      "pt-br": "Aguardando resposta do Contato",
+      "en-us": "Awaiting response from Contact",
+      "es": "En espera de respuesta de contacto"
+    }
+  },
   "contact_transferred_to": {
     "line": {
       "pt-br": "Contato encaminhado para fila {name}",
