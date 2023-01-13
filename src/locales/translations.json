@@ -241,6 +241,11 @@
       "en-us": "Chats in progress",
       "es": "Chats en curso"
     },
+    "wating_answer": {
+      "pt-br": "Aguardando resposta ({length})",
+      "en-us": "Waiting for reply  {length}",
+      "es": "Esperando respuesta {length}"
+    },
     "end": {
       "pt-br": "Encerrar chat",
       "en-us": "End chat",

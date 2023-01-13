@@ -140,6 +140,9 @@ export default {
     waitingQueue(state) {
       return state.rooms.filter((room) => !room.user);
     },
+    waitingContactAnswer(state) {
+      return state.rooms.filter((room) => room.is_waiting === true);
+    },
     getRoomById: (state) => (uuid) => {
       return state.rooms.find((room) => room.uuid === uuid);
     },

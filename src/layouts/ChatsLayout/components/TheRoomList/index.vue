@@ -3,6 +3,13 @@
     <section class="chat-groups">
       <room-group v-if="queue.length" :label="$t('line')" :rooms="queue" filled @open="open" />
       <room-group
+        :label="$t('chats.wating_answer', { length: wating.length })"
+        :rooms="wating"
+        @open="open"
+        :isWatingAnswer="true"
+        :isHistory="isHistoryView"
+      />
+      <room-group
         v-bind:style="isHistoryView ? 'opacity: 0.5;' : 'opacity: 20'"
         v-if="rooms.length"
         :label="$t('chats.in_progress')"
@@ -53,6 +60,7 @@ export default {
     ...mapGetters({
       rooms: 'rooms/agentRooms',
       queue: 'rooms/waitingQueue',
+      wating: 'rooms/waitingContactAnswer',
     }),
     isHistoryView() {
       return this.$route.name === 'rooms.closed';

@@ -38,6 +38,14 @@
           @click="isGetChatConfirmationModalOpen = true"
         />
       </div>
+      <div v-if="!room.user" class="get-chat-button-container">
+        <unnnic-button
+          class="get-chat-button"
+          :text="$t('chats.get_chat')"
+          type="secondary"
+          @click="isGetChatConfirmationModalOpen = true"
+        />
+      </div>
 
       <section v-if="isRoomClassifierVisible" class="chat-classifier">
         <chat-classifier
