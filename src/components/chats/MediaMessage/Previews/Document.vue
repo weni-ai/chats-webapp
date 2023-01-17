@@ -95,6 +95,8 @@ export default {
   &.sm {
     .filename {
       font-size: 0.75rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 
