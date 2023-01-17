@@ -134,6 +134,7 @@ export default {
           icon: 'indicator',
           scheme: connectionStatus === 'online' ? 'feedback-green' : '$unnnic-color-neutral-black',
           closeText: 'Fechar',
+          position: 'bottom-right',
         },
         seconds: 15,
       });
