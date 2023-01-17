@@ -5,7 +5,6 @@
       :fullFilename="fullFilename"
       highlight
       :url="media.url"
-      @click="openFile"
     />
   </section>
 

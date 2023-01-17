@@ -159,7 +159,7 @@ export default {
 }
 
 .fill-w {
-  width: 100%;
+  width: 103%;
 }
 
 .messages-container {
