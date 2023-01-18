@@ -15,7 +15,7 @@
         ref="chatMessages"
       />
 
-      <div v-if="isMessageEditorVisible" class="message-editor">
+      <div v-if="isMessageEditorVisible && !room.is_waiting" class="message-editor">
         <message-editor
           ref="message-editor"
           v-model="editorMessage"
@@ -151,7 +151,12 @@ export default {
       messages: 'groupedActiveRoomsMessage',
     }),
     isMessageEditorVisible() {
-      return !this.isRoomClassifierVisible && this.room.is_active && !!this.room.user;
+      return (
+        !this.isRoomClassifierVisible &&
+        this.room.is_active &&
+        !this.room.wating_answer &&
+        !!this.room.user
+      );
     },
     sidebarComponent() {
       return this.sidebarComponents[this.componentInAsideSlot] || {};

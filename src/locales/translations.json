@@ -241,6 +241,11 @@
       "en-us": "Chats in progress",
       "es": "Chats en curso"
     },
+    "wating_answer": {
+      "pt-br": "Aguardando resposta ({length})",
+      "en-us": "Waiting for reply  {length}",
+      "es": "Esperando respuesta {length}"
+    },
     "end": {
       "pt-br": "Encerrar chat",
       "en-us": "End chat",
@@ -493,6 +498,18 @@
       "pt-br": "Contato encaminhado para fila {name}",
       "en-us": "Contact forwarded to the {name} line",
       "es": "Contacto enviado a la fila {name}"
+    }
+  },
+  "waiting_answer": {
+    "send_template": {
+      "pt-br": "Você enviou um modelo de mensagem",
+      "en-us": "You sent a message template",
+      "es": "Enviaste una plantilla de mensaje"
+    },
+    "waiting_cliente_answer": {
+      "pt-br": "Aguardando resposta do Contato",
+      "en-us": "Awaiting response from Contact",
+      "es": "En espera de respuesta de contacto"
     }
   },
   "contact_transferred_to": {

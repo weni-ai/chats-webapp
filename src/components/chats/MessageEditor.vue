@@ -35,7 +35,7 @@
 
         <template #attachment-options>
           <div class="attachment-options-container">
-            <unnnic-dropdown-item>
+            <unnnic-dropdown-item class="option">
               <span
                 class="upload-dropdown-option"
                 @click="open('media')"
@@ -45,7 +45,7 @@
                 <span> {{ $t('send_photo_or_video') }} </span>
               </span>
             </unnnic-dropdown-item>
-            <unnnic-dropdown-item>
+            <unnnic-dropdown-item class="option">
               <span
                 class="upload-dropdown-option"
                 @click="open('document')"
@@ -201,6 +201,10 @@ export default {
     }
   }
 
+  .option {
+    color: $unnnic-color-neutral-dark;
+    font-size: 0.75rem;
+  }
   .attachment-options-container {
     padding: 1rem 0.5rem;
   }
