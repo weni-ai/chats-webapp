@@ -10,8 +10,19 @@
 
   <section v-else class="media-message">
     <section class="media-message__preview">
-      <image-preview v-if="isImage" :url="media.url" fullscreen-on-click @download="download" />
-      <video-preview v-else-if="isVideo" :src="media.url" fullscreen-on-click />
+      <image-preview
+        v-if="isImage"
+        :url="media.url"
+        fullscreen-on-click
+        @download="download"
+        @click="$emit('fullscreen')"
+      />
+      <video-preview
+        v-else-if="isVideo"
+        :src="media.url"
+        fullscreen-on-click
+        @click="$emit('fullscreen')"
+      />
       <unnnic-audio-recorder v-else-if="isAudio" :src="media.url" />
     </section>
 
