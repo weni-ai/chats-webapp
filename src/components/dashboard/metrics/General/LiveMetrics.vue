@@ -6,12 +6,7 @@
 
     <section class="general-dashboard__metrics">
       <card-group-metrics :metrics="sectors" title="Setores" icon="hierarchy-3-2" />
-      <table-metrics
-        :headers="tableHeaders"
-        :items="this.agents.project_agents"
-        title="Agentes online"
-        icon="indicator"
-      />
+      <table-metrics :items="this.agents.project_agents" title="Agentes online" icon="indicator" />
     </section>
   </main>
 </template>
@@ -34,6 +29,7 @@ export default {
   mounted() {
     this.roomInfo();
     this.agentInfo();
+    this.sectorInfo();
   },
 
   destroyed() {
@@ -42,30 +38,31 @@ export default {
 
   data: () => ({
     agents: {},
-    generalMetrics: [],
+    generalMetrics: {},
+    sectors: {},
   }),
-
-  computed: {
-    sectors() {
-      const { sectors } = this.$store.state.settings;
-
-      return sectors.map((sector) => ({
-        id: sector.id,
-        name: sector.name,
-        statuses: this.getRandomMetrics(),
-      }));
-    },
-  },
 
   methods: {
     async agentInfo() {
-      this.agents = await DashboardManagerApi.getAgentInfo();
-      console.log(this.agents.project_agents, `agents`);
+      try {
+        this.agents = await DashboardManagerApi.getAgentInfo();
+        console.log(this.agents, 'agents');
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     async roomInfo() {
       try {
         this.generalMetrics = await DashboardManagerApi.getRoomInfo();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async sectorInfo() {
+      try {
+        this.sectors = await DashboardManagerApi.getSectorInfo();
       } catch (error) {
         console.log(error);
       }

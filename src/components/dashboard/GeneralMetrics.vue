@@ -8,8 +8,8 @@
           icon="indicator"
           scheme="aux-blue"
           :value="this.metrics.active_chats"
-          :percent="percent"
-          :inverted-percentage="invertedPercentage"
+          :percent="0"
+          :inverted-percentage="false"
         />
       </unnnic-tool-tip>
       <unnnic-tool-tip
@@ -23,8 +23,8 @@
           icon="time-clock-circle-1"
           scheme="aux-orange"
           :value="timeToString(this.metrics.waiting_time)"
-          :percent="percent"
-          :inverted-percentage="invertedPercentage"
+          :percent="0"
+          :inverted-percentage="false"
         />
       </unnnic-tool-tip>
       <unnnic-tool-tip enabled text="É o tempo médio de resposta ao contato" side="right">
@@ -34,8 +34,8 @@
           icon="messaging-we-chat-3"
           scheme="aux-purple"
           :value="timeToString(this.metrics.response_time)"
-          :percent="percent"
-          :inverted-percentage="invertedPercentage"
+          :percent="0"
+          :inverted-percentage="false"
         />
       </unnnic-tool-tip>
       <unnnic-tool-tip enabled text="É o tempo médio de duração de um chat" side="left">
@@ -45,8 +45,8 @@
           icon="messages-bubble-1"
           scheme="aux-lemon"
           :value="timeToString(this.metrics.interact_time)"
-          :percent="percent"
-          :inverted-percentage="invertedPercentage"
+          :percent="0"
+          :inverted-percentage="false"
         />
       </unnnic-tool-tip>
     </template>
@@ -57,17 +57,39 @@
 export default {
   props: {
     metrics: {
-      type: Array,
-      default: () => [],
+      type: Object,
+      default: () => {},
     },
   },
 
+  mounted() {
+    console.log(this.metrics, 'metrics');
+  },
+
   methods: {
-    timeToString({ minutes }) {
-      if (![null, undefined, ''].includes(minutes)) {
-        return `${minutes}min`;
+    timeToString(minutes) {
+      function duas_casas(numero) {
+        if (numero <= 9) {
+          // eslint-disable-next-line no-param-reassign
+          numero = `0${numero}`;
+        }
+        return numero;
       }
-      return '0min';
+      const hora = duas_casas(Math.round(minutes / 3600));
+      const minuto = duas_casas(Math.round((minutes % 3600) / 60));
+      const segundo = duas_casas(Math.round(minutes % 3600) % 60);
+      const formatado = {
+        hour: hora,
+        minute: minuto,
+        seconds: segundo,
+      };
+      if (formatado.hour === '00' && formatado.minute !== '00') {
+        return `${formatado.minute}min ${formatado.seconds}s`;
+      }
+      if (formatado.hour === '00' && formatado.minute === '00') {
+        return `${formatado.seconds}s`;
+      }
+      return `${hora}h${minuto}min ${segundo}s`;
     },
   },
 };
