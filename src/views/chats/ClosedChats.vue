@@ -262,9 +262,16 @@ export default {
     async getContacts() {
       try {
         this.isLoading = true;
-        const response = await Contact.getAllWithClosedRooms();
+        const response = await Contact.getAllWithClosedRooms({
+          page: this.page,
+        });
         this.contacts = response.results;
         this.isLoading = false;
+        this.page += 1;
+
+        if (response.next) {
+          this.getContacts();
+        }
       } catch (error) {
         this.isLoading = false;
       }
