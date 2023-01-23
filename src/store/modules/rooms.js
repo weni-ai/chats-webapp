@@ -35,6 +35,7 @@ export default {
       state.activeRoomMessages = messages;
     },
     [mutations.ADD_MESSAGE](state, message) {
+      if (message.room !== state.activeRoom.uuid) return;
       const messageWithSender = parseMessageToMessageWithSenderProp(message);
       state.activeRoomMessages.push(messageWithSender);
     },
