@@ -10,28 +10,12 @@
         @keypress.enter="handleImageClick"
       />
     </unnnic-tool-tip>
-
-    <fullscreen-preview
-      v-if="isFullscreen"
-      @download="$emit('download')"
-      @close="isFullscreenByUserClick = false"
-      @next="nextMedia"
-      @previous="previousMedia"
-    >
-      <img :src="url" :alt="alt" @keypress.enter="() => {}" @click.stop="() => {}" />
-    </fullscreen-preview>
   </div>
 </template>
 
 <script>
-import FullscreenPreview from './Fullscreen';
-
 export default {
   name: 'MediaImagePreview',
-
-  components: {
-    FullscreenPreview,
-  },
 
   props: {
     alt: {
@@ -78,12 +62,6 @@ export default {
       }
 
       this.$emit('click');
-    },
-    nextMedia() {
-      console.log('next media');
-    },
-    previousMedia() {
-      console.log('previous media');
     },
   },
 };

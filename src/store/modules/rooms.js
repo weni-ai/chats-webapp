@@ -35,6 +35,7 @@ export default {
       state.activeRoomMessages = messages;
     },
     [mutations.ADD_MESSAGE](state, message) {
+      if (message.room !== state.activeRoom.uuid) return;
       const messageWithSender = parseMessageToMessageWithSenderProp(message);
       state.activeRoomMessages.push(messageWithSender);
     },
@@ -97,13 +98,18 @@ export default {
           console.error('Não foi possível enviar a mensagem');
         });
     },
-    async sendMedias({ state }, medias) {
+    async sendMedias({ state }, { files: medias, updateLoadingFiles }) {
       const { activeRoom } = state;
       if (!activeRoom) return;
 
       await Promise.all(
         medias.map((media) =>
-          Message.sendMedia({ roomId: activeRoom.uuid, userEmail: activeRoom.user.email, media }),
+          Message.sendMedia({
+            roomId: activeRoom.uuid,
+            userEmail: activeRoom.user.email,
+            media,
+            updateLoadingFiles,
+          }),
         ),
       );
     },
@@ -130,10 +136,13 @@ export default {
 
   getters: {
     agentRooms(state) {
-      return state.rooms.filter((room) => !!room.user);
+      return state.rooms.filter((room) => !!room.user && room.is_waiting === false);
     },
     waitingQueue(state) {
       return state.rooms.filter((room) => !room.user);
+    },
+    waitingContactAnswer(state) {
+      return state.rooms.filter((room) => room.is_waiting === true);
     },
     getRoomById: (state) => (uuid) => {
       return state.rooms.find((room) => room.uuid === uuid);

@@ -29,7 +29,12 @@
         class="message"
       >
         <section class="message__medias" v-if="content.media.length > 0">
-          <media-message v-for="media in content.media" :key="media.url" :media="media" />
+          <media-message
+            v-for="media in content.media"
+            :key="media.url"
+            :media="media"
+            @fullscreen="$emit('fullscreen', media.url)"
+          />
           <span v-if="content.isAudio">
             <unnnic-audio-recorder :src="content.audio.src" />
           </span>

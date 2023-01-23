@@ -31,14 +31,14 @@
 
           <unnnic-dropdown-item @click="$emit('edit')">
             <div class="dropdown-item-content">
-              <unnnic-icon-svg class="icon" icon="app-window-edit-1" />
+              <unnnic-icon-svg class="icon" icon="app-window-edit-1" size="sm" />
               <span> {{ $t('edit') }} </span>
             </div>
           </unnnic-dropdown-item>
 
           <unnnic-dropdown-item @click="$emit('delete')">
             <div class="dropdown-item-content">
-              <unnnic-icon-svg class="icon" icon="delete-1-1" />
+              <unnnic-icon-svg class="icon" icon="delete-1-1" size="sm" />
               <span> {{ $t('delete') }} </span>
             </div>
           </unnnic-dropdown-item>

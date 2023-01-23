@@ -192,6 +192,28 @@
           }
         }
       }
+    },
+    "template_message": {
+      "title": {
+        "pt-br": "Disparo de modelos de mensagens",
+        "en-us": "Triggering message templates",
+        "es": "Activar plantillas de mensajes"
+      },
+      "switch_title_active": {
+        "pt-br": "Disparo de modelos de mensagens ativo",
+        "en-us": "Triggering message templates active",
+        "es": "Activación de plantillas de mensajes activos"
+      },
+      "switch_title_disabled": {
+        "pt-br": "Disparo de modelos de mensagens desativado",
+        "en-us": "Triggering message templates disabled",
+        "es": "AActivación de plantillas de mensajes deshabilitada"
+      },
+      "switch_tip": {
+        "pt-br": "Ao ativar essa função os agentes deste setor terão acesso para o disparo de modelo de mensagens e adição de novos contatos",
+        "en-us": "When activating this function, the agents of this sector will have access to the triggering message templates and adding new contacts",
+        "es": "Al activar esta función, los agentes de este sector tendrán acceso a la activación de plantillas de mensajes y adición de nuevos contactos"
+      }
     }
   },
   "queues": {
@@ -218,6 +240,11 @@
       "pt-br": "Chats abertos",
       "en-us": "Chats in progress",
       "es": "Chats en curso"
+    },
+    "wating_answer": {
+      "pt-br": "Aguardando resposta ({length})",
+      "en-us": "Waiting for reply  {length}",
+      "es": "Esperando respuesta {length}"
     },
     "end": {
       "pt-br": "Encerrar chat",
@@ -471,6 +498,18 @@
       "pt-br": "Contato encaminhado para fila {name}",
       "en-us": "Contact forwarded to the {name} line",
       "es": "Contacto enviado a la fila {name}"
+    }
+  },
+  "waiting_answer": {
+    "send_template": {
+      "pt-br": "Você enviou um modelo de mensagem",
+      "en-us": "You sent a message template",
+      "es": "Enviaste una plantilla de mensaje"
+    },
+    "waiting_cliente_answer": {
+      "pt-br": "Aguardando resposta do Contato",
+      "en-us": "Awaiting response from Contact",
+      "es": "En espera de respuesta de contacto"
     }
   },
   "contact_transferred_to": {

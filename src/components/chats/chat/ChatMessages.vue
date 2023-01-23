@@ -1,3 +1,4 @@
+<!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
   <section class="chat-messages">
     <section v-for="message in messages" :key="message.uuid" class="chat-messages__room">
@@ -13,10 +14,25 @@
         </span>
         <div class="chat-messages__room__divisor__line" />
       </div>
-
+      <div style="display: flex; align-items: center; text-align: center">
+        <div class="chat-messages__room__divisor__line" style="background: #d0d3d9" />
+        <span class="unread-message">Mensagens não lidas</span>
+        <div class="chat-messages__room__divisor__line" style="background: #d0d3d9" />
+      </div>
       <div v-if="isTransferInfoMessage(message)" class="chat-messages__room__transfer-info">
-        <unnnic-icon icon="logout-1-1" size="sm" scheme="neutral-cleanest" />
-        {{ createTransferLabel(message) }}
+        <unnnic-icon
+          v-if="!room.is_waiting"
+          icon="logout-1-1"
+          size="sm"
+          scheme="neutral-cleanest"
+        />
+        {{ !room.is_waiting ? createTransferLabel(message) : $t('waiting_answer.send_template') }}
+        <unnnic-icon
+          v-if="room.is_waiting"
+          icon="send-email-3-1"
+          size="sm"
+          scheme="neutral-cleanest"
+        />
       </div>
 
       <section v-else-if="!message.sender" class="chat-messages__messages">
@@ -24,6 +40,7 @@
           :message="{ ...message, sender: { name: 'Bot' } }"
           :disabled="isHistory"
           :use-photo="usePhoto"
+          @fullscreen="openFullScreen"
         />
       </section>
 
@@ -33,6 +50,7 @@
           :disabled="isHistory"
           @show-contact-info="showContactInfo"
           :use-photo="usePhoto"
+          @fullscreen="openFullScreen"
         />
       </section>
     </section>
@@ -41,6 +59,11 @@
         <div class="chat-messages__room__divisor__line" />
         <span class="chat-messages__room__divisor__label">{{ $t('chat_closed_by.agent') }}</span>
         <div class="chat-messages__room__divisor__line" />
+      </section>
+      <section>
+        <div v-if="room.is_waiting" class="chat-messages__room__transfer-info">
+          {{ $t('waiting_answer.waiting_cliente_answer') }}
+        </div>
       </section>
 
       <section v-if="room.tags.length > 0" class="chat-messages__tags">
@@ -65,12 +88,36 @@
         />
       </template>
     </unnnic-modal>
+    <fullscreen-preview
+      v-if="isFullscreen"
+      @download="$emit('download')"
+      @close="isFullscreen = false"
+      @next="nextMedia"
+      @previous="previousMedia"
+    >
+      <video
+        v-if="currentMedia.content_type.includes('mp4')"
+        controls
+        @keypress.enter="() => {}"
+        @click.stop="() => {}"
+      >
+        <source :src="currentMedia.url" />
+      </video>
+      <img
+        v-else
+        :src="currentMedia.url"
+        :alt="currentMedia"
+        @keypress.enter="() => {}"
+        @click.stop="() => {}"
+      />
+    </fullscreen-preview>
   </section>
 </template>
 
 <script>
 import TagGroup from '@/components/TagGroup';
 import ChatMessage from './ChatMessage';
+import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
 
 export default {
   name: 'ChatMessages',
@@ -78,6 +125,7 @@ export default {
   components: {
     ChatMessage,
     TagGroup,
+    FullscreenPreview,
   },
 
   props: {
@@ -97,6 +145,8 @@ export default {
 
   data: () => ({
     messageToResend: null,
+    isFullscreen: false,
+    currentMedia: {},
   }),
 
   computed: {
@@ -106,6 +156,18 @@ export default {
     },
     isHistory() {
       return !this.room.is_active;
+    },
+    medias() {
+      return this.messages
+        .map((el) => el.content)
+        .flat()
+        .filter((el) => el)
+        .map((el) => el.media)
+        .flat()
+        .filter((el) => {
+          const media = /(png|jp(e)?g|webp|mp4)/;
+          return media.test(el.content_type);
+        });
     },
   },
 
@@ -131,6 +193,25 @@ export default {
     },
     showContactInfo() {
       this.$emit('show-contact-info');
+    },
+
+    openFullScreen(url) {
+      this.currentMedia = this.medias.find((el) => el.url === url);
+      this.isFullscreen = true;
+    },
+
+    nextMedia() {
+      const imageIndex = this.medias.findIndex((el) => el.url === this.currentMedia.url);
+      if (imageIndex + 1 < this.medias.length) {
+        this.currentMedia = this.medias[imageIndex + 1];
+      }
+    },
+
+    previousMedia() {
+      const imageIndex = this.medias.findIndex((el) => el.url === this.currentMedia.url);
+      if (imageIndex - 1 >= 0) {
+        this.currentMedia = this.medias[imageIndex - 1];
+      }
     },
   },
 };
@@ -181,6 +262,12 @@ export default {
       color: $unnnic-color-neutral-dark;
       margin-bottom: $unnnic-spacing-inline-sm;
     }
+  }
+  .unread-message {
+    font-weight: 700;
+    font-size: 12px;
+    color: #9caccc;
+    margin: 10px;
   }
 }
 </style>

@@ -76,7 +76,7 @@
         text="Salvar"
         type="secondary"
         @click="save"
-        v-if="this.currentTab === 'sector' || currentTab === 'tags'"
+        v-if="this.currentTab === 'sector' || this.queueToEdit || currentTab === 'tags'"
       />
       <unnnic-modal
         :showModal="openModal"
@@ -145,6 +145,7 @@ export default {
     sector: {
       uuid: '',
       name: '',
+      can_trigger_flows: '',
       workingDay: {
         start: '',
         end: '',
@@ -208,11 +209,13 @@ export default {
       this.openModal = false;
     },
     async getSector() {
-      const { name, rooms_limit, uuid, work_end, work_start } = await Sector.find(this.uuid);
+      const { name, can_trigger_flows, rooms_limit, uuid, work_end, work_start } =
+        await Sector.find(this.uuid);
       this.sector = {
         ...this.sector,
         uuid,
         name,
+        can_trigger_flows,
         workingDay: { start: this.normalizeTime(work_start), end: this.normalizeTime(work_end) },
         maxSimultaneousChatsByAgent: rooms_limit.toString(),
       };
@@ -251,9 +254,11 @@ export default {
       this.removeManagerFromTheList(managerUuid);
     },
     async saveSector() {
-      const { uuid, name, workingDay, maxSimultaneousChatsByAgent } = this.sector;
+      const { uuid, name, can_trigger_flows, workingDay, maxSimultaneousChatsByAgent } =
+        this.sector;
       const sector = {
         name,
+        can_trigger_flows,
         work_start: workingDay.start,
         work_end: workingDay.end,
         rooms_limit: maxSimultaneousChatsByAgent,
@@ -293,6 +298,7 @@ export default {
           icon: 'check-circle-1-1-1',
           scheme: 'feedback-green',
           closeText: this.$t('close'),
+          position: 'bottom-right',
         },
         seconds: 5,
       });
