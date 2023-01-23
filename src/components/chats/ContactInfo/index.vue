@@ -56,6 +56,7 @@
           <unnnic-button
             class="transfer__button"
             :text="$t('transfer')"
+            type="secondary"
             size="small"
             :disabled="!transferPersonSelected"
             @click="transferContact"

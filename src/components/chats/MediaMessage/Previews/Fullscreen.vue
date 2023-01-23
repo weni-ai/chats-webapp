@@ -2,9 +2,6 @@
 <template>
   <div class="fullscreen-preview" @click="close">
     <header class="toolbar" @click.stop="() => {}">
-      <span @click="download" @keypress.enter="download" class="clickable">
-        <unnnic-icon-svg icon="download-bottom-1" scheme="neutral-snow" />
-      </span>
       <span @click="close" @keypress.enter="close" class="clickable">
         <unnnic-icon-svg icon="close-1" scheme="neutral-snow" />
       </span>
@@ -71,7 +68,7 @@ export default {
   .toolbar {
     height: 3rem;
     width: 100%;
-    background: rgba(0, 0, 0, $unnnic-opacity-level-clarifying);
+    // background: rgba(0, 0, 0, $unnnic-opacity-level-clarifying);
 
     display: flex;
     align-items: center;
