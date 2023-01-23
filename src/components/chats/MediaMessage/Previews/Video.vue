@@ -1,21 +1,8 @@
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
   <div class="video-preview">
-    <fullscreen-preview
-      v-if="isFullscreen"
-      @download="$emit('download')"
-      @close="isFullscreenByUserClick = false"
-      @next="nextMedia"
-      @previous="previousMedia"
-    >
-      <video controls @keypress.enter="() => {}" @click.stop="() => {}">
-        <source :src="src" />
-      </video>
-    </fullscreen-preview>
-
     <video
       class="video-preview__video"
-      v-else
       controls
       @click="handleVideoClick"
       @keypress.enter="handleVideoClick"
@@ -26,14 +13,8 @@
 </template>
 
 <script>
-import FullscreenPreview from './Fullscreen';
-
 export default {
   name: 'MediaVideoPreview',
-
-  components: {
-    FullscreenPreview,
-  },
 
   props: {
     fullscreen: {
@@ -67,12 +48,6 @@ export default {
       }
 
       this.$emit('click');
-    },
-    nextMedia() {
-      console.log('next media');
-    },
-    previousMedia() {
-      console.log('previous media');
     },
   },
 };

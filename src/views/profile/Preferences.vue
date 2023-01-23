@@ -63,6 +63,7 @@ export default {
           icon: 'check-circle-1-1-1',
           scheme: 'feedback-green',
           closeText: 'Fechar',
+          position: 'bottom-right',
         },
         seconds: 15,
       });

@@ -76,7 +76,7 @@
         text="Salvar"
         type="secondary"
         @click="save"
-        v-if="this.currentTab === 'sector' || this.queueToEdit"
+        v-if="this.currentTab === 'sector' || this.queueToEdit || currentTab === 'tags'"
       />
       <unnnic-modal
         :showModal="openModal"
@@ -298,6 +298,7 @@ export default {
           icon: 'check-circle-1-1-1',
           scheme: 'feedback-green',
           closeText: this.$t('close'),
+          position: 'bottom-right',
         },
         seconds: 5,
       });

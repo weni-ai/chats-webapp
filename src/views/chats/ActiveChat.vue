@@ -248,11 +248,18 @@ export default {
     },
     async sendAudio() {
       if (!this.audioMessage) return;
-
+      const loadingFiles = {};
+      const updateLoadingFiles = (messageUuid, progress) => {
+        loadingFiles[messageUuid] = progress;
+        this.totalValue =
+          Object.values(loadingFiles).reduce((acc, value) => acc + value) /
+          Object.keys(loadingFiles).length;
+      };
       const response = await fetch(this.audioMessage.src);
       const blob = await response.blob();
       const audio = new File([blob], `${Date.now().toString()}.mp3`, { type: 'audio/mpeg3' });
-      await this.$store.dispatch('rooms/sendMedias', { files: [audio] });
+      await this.$store.dispatch('rooms/sendMedias', { files: [audio], updateLoadingFiles });
+      this.totalValue = undefined;
       this.scrollMessagesToBottom();
       this.$refs['message-editor'].clearAudio();
       this.audioMessage = null;

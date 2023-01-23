@@ -36,13 +36,14 @@
       <unnnic-button
         class="button"
         :text="$t('cancel')"
-        type="secondary"
+        type="terciary"
         size="small"
         @click="$emit('cancel')"
       />
       <unnnic-button
         class="button"
         :text="$t('save')"
+        type="secondary"
         size="small"
         @click="submit"
         :disabled="isSaveButtonDisabled"
