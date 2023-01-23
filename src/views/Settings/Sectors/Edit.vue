@@ -76,7 +76,7 @@
         text="Salvar"
         type="secondary"
         @click="save"
-        v-if="this.currentTab === 'sector' || currentTab === 'tags'"
+        v-if="this.currentTab === 'sector' || this.queueToEdit || currentTab === 'tags'"
       />
       <unnnic-modal
         :showModal="openModal"
