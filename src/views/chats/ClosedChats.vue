@@ -181,6 +181,7 @@ export default {
     sectors: [],
     filteredSectorUuid: '',
     tags: [],
+    page: 0,
   }),
 
   computed: {
@@ -259,23 +260,24 @@ export default {
         this.isLoading = false;
       }
     },
-    async getContacts() {
-      try {
-        this.isLoading = true;
-        const response = await Contact.getAllWithClosedRooms({
-          page: this.page,
-        });
-        this.contacts = response.results;
-        this.isLoading = false;
-        this.page += 1;
 
-        if (response.next) {
-          this.getContacts();
-        }
-      } catch (error) {
+    async getContacts() {
+      this.isLoading = true;
+      let hasNext = false;
+      try {
+        const response = await Contact.getAllWithClosedRooms(this.page * 10, 10);
+        this.page += 1;
+        this.contacts = this.contacts.concat(response.results);
+
+        hasNext = response.next;
+      } finally {
         this.isLoading = false;
       }
+      if (hasNext) {
+        this.getContacts();
+      }
     },
+
     async getSectorTags(sectorUuid) {
       if (!sectorUuid) {
         this.tags = [];
