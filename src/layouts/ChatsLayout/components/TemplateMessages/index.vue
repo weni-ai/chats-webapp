@@ -9,7 +9,7 @@
         <span class="contacts-label">Nenhum contato selecionado</span>
       </div>
       <div class="flex" v-if="this.listOfGroupAndContactsSelected.length > 0">
-        <div v-for="item in listOfGroupAndContactsSelected" :key="item.nome">
+        <div v-for="item in listOfGroupAndContactsSelected" :key="item.uuid">
           <user-avatar :username="item.name" size="md" style="margin-right: 2px" />
           <span class="contacts-names">{{ item.name }}</span>
         </div>
@@ -24,7 +24,7 @@
       </div>
       <div class="contact-list">
         <span class="title-group" v-if="listOfGroups.length > 0">Grupos</span>
-        <div class="container-names" v-for="item in listOfGroups" :key="item.name">
+        <div class="container-names" v-for="item in searchGroup" :key="item.uuid">
           <div class="users-names">
             <unnnic-checkbox
               :value="selectedGroup.some((search) => search.uuid === item.uuid)"
@@ -46,7 +46,7 @@
       <div class="contact-list">
         <template v-for="(element, letter) in letras">
           <span class="title-group" :key="letter">{{ letter }}</span>
-          <div class="container-names" v-for="item in element" :key="item.name">
+          <div class="container-names" v-for="item in element" :key="item.uuid">
             <div class="users-names">
               <unnnic-checkbox
                 :value="selected.some((search) => search.uuid === item.uuid)"
@@ -155,6 +155,11 @@ export default {
         });
       return letras;
     },
+    searchGroup() {
+      return this.listOfGroups.filter((item) =>
+        item.name.toUpperCase().includes(this.search.toUpperCase()),
+      );
+    },
   },
 
   methods: {
@@ -194,6 +199,7 @@ export default {
       try {
         const response = await TemplateMessages.getListOfGroups();
         this.listOfGroups = response.results;
+        this.listOfGroups.sort((a, b) => a.name.localeCompare(b.name));
       } catch (error) {
         console.log(error);
       }
