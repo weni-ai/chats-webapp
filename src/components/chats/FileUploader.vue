@@ -69,7 +69,7 @@ export default {
         },
         document: {
           textTitle: this.$tc('send_docs'),
-          supportedFormats: '.pdf,.doc,.txt',
+          supportedFormats: '.pdf,.doc,.txt,.xls,.csv,.xlsx',
           textAction: this.$tc('send_docs', this.files.length),
         },
       };
