@@ -274,6 +274,7 @@ export default {
   watch: {
     room(newValue) {
       if (!newValue) this.componentInAsideSlot = '';
+      if (newValue) this.editorMessage = '';
     },
     id: {
       immediate: true,
