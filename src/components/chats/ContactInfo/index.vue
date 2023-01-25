@@ -33,6 +33,17 @@
                 })
               }}
             </p>
+            <div style="display: flex; margin-left: -8px; align-items: center">
+              <unnnicSwitch :textRight="$t('switch_contact_info.switch_associate_contact')" />
+              <unnnic-tool-tip
+                enabled
+                :text="$t('switch_contact_info.switch_tooltip')"
+                side="bottom"
+                maxWidth="21rem"
+              >
+                <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+              </unnnic-tool-tip>
+            </div>
           </div>
         </section>
       </aside-slot-template-section>
