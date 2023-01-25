@@ -24,7 +24,7 @@
       </div>
       <div class="contact-list">
         <span class="title-group" v-if="listOfGroups.length > 0">Grupos</span>
-        <div class="container-names" v-for="item in listOfGroups" :key="item.name">
+        <div class="container-names" v-for="item in searchGroup" :key="item.name">
           <div class="users-names">
             <unnnic-checkbox
               :value="selectedGroup.some((search) => search.uuid === item.uuid)"
@@ -155,6 +155,11 @@ export default {
         });
       return letras;
     },
+    searchGroup() {
+      return this.listOfGroups.filter((item) =>
+        item.name.toUpperCase().includes(this.search.toUpperCase()),
+      );
+    },
   },
 
   methods: {
@@ -194,6 +199,7 @@ export default {
       try {
         const response = await TemplateMessages.getListOfGroups();
         this.listOfGroups = response.results;
+        this.listOfGroups.sort((a, b) => a.name.localeCompare(b.name));
       } catch (error) {
         console.log(error);
       }
