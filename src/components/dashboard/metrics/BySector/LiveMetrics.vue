@@ -102,7 +102,7 @@ export default {
     activeChats: [
       {
         id: 1,
-        name: 'Fabricio Correia',
+        name: 'Fabricio Correiaaaaaaaaaaaa',
         activeChats: 3,
       },
       {

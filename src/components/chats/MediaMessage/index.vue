@@ -61,7 +61,7 @@ export default {
       return filename;
     },
     isDocument() {
-      const document = /(pdf|doc(x)?|txt)/;
+      const document = /(pdf|doc(x)?|txt|xls|svn|csv|xlsx)/;
       return document.test(this.media.content_type);
     },
     isImage() {
