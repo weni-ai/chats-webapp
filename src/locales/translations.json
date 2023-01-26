@@ -556,6 +556,21 @@
       "pt-br": "Ative se deseja que o contato seja sempre atribuído diretamente a você",
       "en-us": "Enable if you want the contact to always be directly assigned to you",
       "es": "Habilite si desea que el contacto siempre se le asigne directamente"
+    },
+    "alert_linked": {
+      "pt-br": "Contato vinculado ",
+      "en-us": "Linked contact",
+      "es": "Contacto vinculado"
+    },
+    "alert_detached": {
+      "pt-br": "Contato desvinculado",
+      "en-us": "Unlinked contact",
+      "es": "Contacto desvinculado"
+    },
+    "linked_contact": {
+      "pt-br": "Contato vinculado ao agente {name}",
+      "en-us": "Contact linked to agent",
+      "es": "Contacto vinculado a agente"
     }
   },
   "last_online_time": {

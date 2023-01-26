@@ -34,7 +34,16 @@
               }}
             </p>
             <div style="display: flex; margin-left: -8px; align-items: center">
-              <unnnicSwitch :textRight="$t('switch_contact_info.switch_associate_contact')" />
+              <unnnicSwitch
+                :value="isLinkedUser"
+                @input="addContactToAgent"
+                size="small"
+                :textRight="
+                  isLinkedUser
+                    ? $t('switch_contact_info.switch_disassociate_contact')
+                    : $t('switch_contact_info.switch_associate_contact')
+                "
+              />
               <unnnic-tool-tip
                 enabled
                 :text="$t('switch_contact_info.switch_tooltip')"
@@ -43,6 +52,13 @@
               >
                 <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
               </unnnic-tool-tip>
+            </div>
+            <div v-if="isLinkedToOtherAgent">
+              <span>{{
+                $t('switch_contact_info.linked_contact', {
+                  name: this.room.linked_user,
+                })
+              }}</span>
             </div>
           </div>
         </section>
@@ -137,6 +153,8 @@ import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTempla
 import Room from '@/services/api/resources/chats/room';
 import Sector from '@/services/api/resources/settings/sector';
 import Media from '@/services/api/resources/chats/media';
+import LinkContact from '@/services/api/resources/chats/linkContact';
+import { unnnicCallAlert } from '@weni/unnnic-system';
 import ContactMedia from './Media';
 
 const moment = require('moment');
@@ -165,6 +183,8 @@ export default {
     transferContactTo: '',
     transferContactError: '',
     showSuccessfulTransferModal: false,
+    isLinkedUser: false,
+    isLinkedToOtherAgent: false,
   }),
 
   computed: {
@@ -188,6 +208,8 @@ export default {
 
   async created() {
     if (!this.isHistory) {
+      this.verifyLinkedUser();
+      if (this.room.linked_user !== '') this.isLinkedUser = true;
       if (!this.room.queue?.sector) {
         throw new Error(`There is no associated sector with room ${this.room.uuid}`);
       }
@@ -215,6 +237,61 @@ export default {
 
   methods: {
     moment,
+
+    addContactToAgent() {
+      if (!this.isLinkedUser) {
+        this.linkContact();
+      } else {
+        this.removeLinkedContact();
+      }
+    },
+
+    verifyLinkedUser() {
+      const nameUser = `${this.room.user.first_name} ${this.room.user.last_name}`;
+      if (nameUser === this.room.linked_user) {
+        this.isLinkedToOtherAgent = false;
+      } else {
+        this.isLinkedToOtherAgent = true;
+      }
+    },
+
+    async linkContact() {
+      const contact = this.room.contact.uuid;
+      try {
+        await LinkContact.linkContactToAgent({ contact });
+        this.isLinkedUser = true;
+        this.showStatusAlert(this.$t('switch_contact_info.alert_linked'));
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async removeLinkedContact() {
+      const contact = this.room.contact.uuid;
+      try {
+        await LinkContact.removeContactFromAgent(contact);
+        this.isLinkedUser = false;
+        this.showStatusAlert(this.$t('switch_contact_info.alert_detached'));
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    showStatusAlert(status) {
+      unnnicCallAlert({
+        props: {
+          title: ``,
+          text: `${status}`,
+          icon: 'check-circle-1-1-1',
+          scheme: 'feedback-green',
+          closeText: 'Fechar',
+          position: 'bottom-right',
+          size: 'small',
+        },
+        seconds: 10,
+      });
+    },
+
     async loadNextMedias() {
       const response = await Media.listFromContactAndClosedRoom({
         ordering: 'content_type',
