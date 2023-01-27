@@ -33,7 +33,10 @@
                 })
               }}
             </p>
-            <div style="display: flex; margin-left: -8px; align-items: center">
+            <div
+              style="display: flex; margin-left: -8px; align-items: center"
+              v-if="!isLinkedToOtherAgent"
+            >
               <unnnicSwitch
                 :value="isLinkedUser"
                 @input="addContactToAgent"
@@ -248,7 +251,7 @@ export default {
 
     verifyLinkedUser() {
       const nameUser = `${this.room.user.first_name} ${this.room.user.last_name}`;
-      if (nameUser === this.room.linked_user) {
+      if (nameUser === this.room.linked_user || this.room.linked_user === '') {
         this.isLinkedToOtherAgent = false;
       } else {
         this.isLinkedToOtherAgent = true;
