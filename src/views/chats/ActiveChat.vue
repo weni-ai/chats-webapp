@@ -214,6 +214,7 @@ export default {
       const room = this.$store.getters['rooms/getRoomById'](uuid);
       if (!room) this.$router.push({ name: 'home' });
       await this.$store.dispatch('rooms/setActiveRoom', room);
+      this.componentInAsideSlot = '';
     },
     async getRoomMessages() {
       await this.$store.dispatch('rooms/getActiveRoomMessages');
