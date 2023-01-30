@@ -155,7 +155,7 @@ export default {
     letras() {
       const letras = {};
       this.listOfContacts
-        .filter((item) => item.name.toUpperCase().includes(this.search.toUpperCase()))
+        .filter((item) => item.name?.toUpperCase().includes(this.search.toUpperCase()))
         .forEach((element) => {
           const l = element.name[0].toUpperCase();
           const removeAccent = l.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -199,8 +199,7 @@ export default {
         const response = await TemplateMessages.getListOfContacts(next);
         this.listOfContacts = this.listOfContacts.concat(response.results);
         this.hasNext = response.next;
-        this.listOfContacts.sort((a, b) => a.name.localeCompare(b.name));
-        this.getContactLetter();
+        this.listOfContacts.sort((a, b) => a.name?.localeCompare(b.name));
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
@@ -224,7 +223,7 @@ export default {
     async groupList() {
       try {
         const response = await TemplateMessages.getListOfGroups();
-        this.listOfGroups = response.results;
+        this.listOfGroups = response.results.filter((el) => ![null, undefined].includes(el.name));
         this.listOfGroups.sort((a, b) => a.name.localeCompare(b.name));
       } catch (error) {
         console.log(error);
