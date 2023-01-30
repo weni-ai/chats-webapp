@@ -187,9 +187,8 @@ export default {
     async contactList() {
       try {
         const response = await TemplateMessages.getListOfContacts();
-        this.listOfContacts = response.results;
+        this.listOfContacts = response.results.filter((el) => ![null, undefined].includes(el.name));
         this.listOfContacts.sort((a, b) => a.name.localeCompare(b.name));
-        this.getContactLetter();
       } catch (error) {
         console.log(error);
       }
@@ -198,7 +197,7 @@ export default {
     async groupList() {
       try {
         const response = await TemplateMessages.getListOfGroups();
-        this.listOfGroups = response.results;
+        this.listOfGroups = response.results.filter((el) => ![null, undefined].includes(el.name));
         this.listOfGroups.sort((a, b) => a.name.localeCompare(b.name));
       } catch (error) {
         console.log(error);
