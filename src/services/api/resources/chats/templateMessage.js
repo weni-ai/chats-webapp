@@ -4,8 +4,12 @@ import { getProject } from '@/utils/config';
 const uuid = getProject();
 
 export default {
-  async getListOfContacts() {
-    const response = await http.get(`/project/${uuid}/list_contacts/`, {});
+  async getListOfContacts(next) {
+    const response = await http.get(`/project/${uuid}/list_contacts/`, {
+      params: {
+        cursor: next,
+      },
+    });
     return response.data;
   },
 

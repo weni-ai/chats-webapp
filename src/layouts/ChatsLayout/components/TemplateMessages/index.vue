@@ -1,7 +1,15 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <div class="container">
-    <section class="template-messages" v-if="!showSelectTemplate">
+    <section
+      class="template-messages"
+      v-if="!showSelectTemplate"
+      @scroll="
+        (event) => {
+          handleScroll(event.srcElement);
+        }
+      "
+    >
       <div @click="$emit('close')" style="cursor: pointer">
         <unnnic-icon icon="keyboard-arrow-left-1" /> Selecionar contatos
       </div>
@@ -140,6 +148,7 @@ export default {
     listOfGroupAndContactsSelected: [],
     showModal: false,
     showSelectTemplate: false,
+    page: 0,
   }),
 
   computed: {
@@ -184,13 +193,31 @@ export default {
       this.createOneList();
     },
 
-    async contactList() {
+    async contactList(next) {
+      this.isLoading = true;
       try {
-        const response = await TemplateMessages.getListOfContacts();
-        this.listOfContacts = response.results.filter((el) => ![null, undefined].includes(el.name));
+        const response = await TemplateMessages.getListOfContacts(next);
+        this.listOfContacts = this.listOfContacts.concat(response.results);
+        this.hasNext = response.next;
         this.listOfContacts.sort((a, b) => a.name.localeCompare(b.name));
+        this.getContactLetter();
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
         console.log(error);
+      }
+    },
+
+    handleScroll(target) {
+      if (this.isLoading) return;
+      if (target.offsetHeight + Math.ceil(target.scrollTop) >= target.scrollHeight) {
+        this.searchForMoreContacts();
+      }
+    },
+
+    searchForMoreContacts() {
+      if (this.hasNext) {
+        this.contactList(this.hasNext);
       }
     },
 
