@@ -24,10 +24,11 @@
     </unnnic-select>
 
     <unnnic-input-date-picker
-      v-model="filters.date"
+      v-model="filteredDateRange"
       size="sm"
+      class="input"
       input-format="DD/MM/YYYY"
-      style="min-width: 1.5rem"
+      position="right"
     />
 
     <unnnic-tool-tip enabled text="Limpar filtro" side="right">
@@ -42,6 +43,8 @@
 </template>
 
 <script>
+const moment = require('moment');
+
 export default {
   name: 'DashboardFilters',
 
@@ -65,10 +68,10 @@ export default {
     filters: {
       tag: '',
       visualization: '',
-      date: {
-        start: '',
-        end: '',
-      },
+    },
+    filteredDateRange: {
+      start: moment(new Date()).format('YYYY-MM-DD'),
+      // end: moment(new Date()).endOf('month').format('YYYY-MM-DD'),
     },
   }),
 
@@ -77,10 +80,10 @@ export default {
       const emptyFilters = {
         tag: '',
         visualization: '',
-        date: {
-          start: '',
-          end: '',
-        },
+      };
+      this.filteredDateRange = {
+        start: moment(new Date()).startOf('month').format('YYYY-MM-DD'),
+        end: moment(new Date()).endOf('month').format('YYYY-MM-DD'),
       };
       this.filters = emptyFilters;
       this.visualizationSearch = this.visualizations[0]?.text;

@@ -37,7 +37,7 @@
 
     <section v-else-if="!room.user" class="header-info-message">
       <span class="message"
-        >Contato na fila {{ room.queue.name }} há {{ moment(room?.created_on).fromNow() }}</span
+        >Contato na fila {{ room.queue.name }} {{ moment(room?.created_on).fromNow() }}</span
       >
     </section>
   </div>

@@ -14,6 +14,7 @@
 import DashboardLayout from '@/layouts/DashboardLayout';
 import DashboardFilters from '@/components/dashboard/Filters';
 import HistoryMetricsByAgent from '@/components/dashboard/metrics/ByAgent/HistoryMetrics';
+import DashboardAgent from '@/services/api/resources/dashboard/dashboardAgent';
 
 export default {
   name: 'DashboardManager',
@@ -41,5 +42,17 @@ export default {
       { text: 'Ajuda', value: 'help' },
     ],
   }),
+
+  mounted() {
+    this.agentInfo();
+  },
+
+  methods: {
+    async agentInfo() {
+      const agent = await DashboardAgent.getAgentInfo();
+      this.info = agent.results;
+      console.log(this.info, `agent`);
+    },
+  },
 };
 </script>

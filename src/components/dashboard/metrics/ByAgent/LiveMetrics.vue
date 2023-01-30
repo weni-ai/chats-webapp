@@ -17,6 +17,7 @@
 </template>
 
 <script>
+// import DashboardManagerApi from '@/services/api/resources/dashboard/dashboardManager';
 import CardGroupMetrics from '../../CardGroupMetrics';
 import GeneralMetrics from '../../GeneralMetrics';
 import TableMetrics from '../../TableMetrics';
@@ -29,9 +30,15 @@ export default {
     GeneralMetrics,
     TableMetrics,
   },
-
+  props: {
+    agents: {
+      type: {},
+      default: {},
+    },
+  },
   mounted() {
-    this.initRealtimeSimulation();
+    // this.initRealtimeSimulation();
+    console.log(this.agents, `agent`);
   },
 
   destroyed() {
@@ -112,25 +119,6 @@ export default {
         name: queue.name,
         statuses: this.getRandomMetrics(),
       }));
-    },
-    activeChats() {
-      return [
-        {
-          id: 1,
-          contact: 'Luana Esteves Lopez',
-          interactionTime: this.timeToString(this.getRandomTime(10, 59)),
-        },
-        {
-          id: 2,
-          contact: 'Vinícius Xavier',
-          interactionTime: this.timeToString(this.getRandomTime(10, 59)),
-        },
-        {
-          id: 3,
-          contact: 'José Luis Filho',
-          interactionTime: this.timeToString(this.getRandomTime(10, 59)),
-        },
-      ];
     },
   },
 

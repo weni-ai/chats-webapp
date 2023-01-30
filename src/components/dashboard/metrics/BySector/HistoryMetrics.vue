@@ -93,7 +93,7 @@ export default {
     chatsPerAgent: [
       {
         id: 1,
-        name: 'Fabricio Correia',
+        name: 'Fabricio Correiaaaa',
         chats: 434,
       },
       {

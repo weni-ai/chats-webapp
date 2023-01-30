@@ -1,7 +1,15 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <div class="container">
-    <section class="template-messages" v-if="!showSelectTemplate">
+    <section
+      class="template-messages"
+      v-if="!showSelectTemplate"
+      @scroll="
+        (event) => {
+          handleScroll(event.srcElement);
+        }
+      "
+    >
       <div @click="$emit('close')" style="cursor: pointer">
         <unnnic-icon icon="keyboard-arrow-left-1" /> Selecionar contatos
       </div>
@@ -9,7 +17,7 @@
         <span class="contacts-label">Nenhum contato selecionado</span>
       </div>
       <div class="flex" v-if="this.listOfGroupAndContactsSelected.length > 0">
-        <div v-for="item in listOfGroupAndContactsSelected" :key="item.nome">
+        <div v-for="item in listOfGroupAndContactsSelected" :key="item.uuid">
           <user-avatar :username="item.name" size="md" style="margin-right: 2px" />
           <span class="contacts-names">{{ item.name }}</span>
         </div>
@@ -24,7 +32,7 @@
       </div>
       <div class="contact-list">
         <span class="title-group" v-if="listOfGroups.length > 0">Grupos</span>
-        <div class="container-names" v-for="item in listOfGroups" :key="item.name">
+        <div class="container-names" v-for="item in searchGroup" :key="item.uuid">
           <div class="users-names">
             <unnnic-checkbox
               :value="selectedGroup.some((search) => search.uuid === item.uuid)"
@@ -46,7 +54,7 @@
       <div class="contact-list">
         <template v-for="(element, letter) in letras">
           <span class="title-group" :key="letter">{{ letter }}</span>
-          <div class="container-names" v-for="item in element" :key="item.name">
+          <div class="container-names" v-for="item in element" :key="item.uuid">
             <div class="users-names">
               <unnnic-checkbox
                 :value="selected.some((search) => search.uuid === item.uuid)"
@@ -140,13 +148,14 @@ export default {
     listOfGroupAndContactsSelected: [],
     showModal: false,
     showSelectTemplate: false,
+    page: 0,
   }),
 
   computed: {
     letras() {
       const letras = {};
       this.listOfContacts
-        .filter((item) => item.name.toUpperCase().includes(this.search.toUpperCase()))
+        .filter((item) => item.name?.toUpperCase().includes(this.search.toUpperCase()))
         .forEach((element) => {
           const l = element.name[0].toUpperCase();
           const removeAccent = l.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -154,6 +163,11 @@ export default {
           letras[removeAccent].push(element);
         });
       return letras;
+    },
+    searchGroup() {
+      return this.listOfGroups.filter((item) =>
+        item.name.toUpperCase().includes(this.search.toUpperCase()),
+      );
     },
   },
 
@@ -179,21 +193,38 @@ export default {
       this.createOneList();
     },
 
-    async contactList() {
+    async contactList(next) {
+      this.isLoading = true;
       try {
-        const response = await TemplateMessages.getListOfContacts();
-        this.listOfContacts = response.results;
-        this.listOfContacts.sort((a, b) => a.name.localeCompare(b.name));
-        this.getContactLetter();
+        const response = await TemplateMessages.getListOfContacts(next);
+        this.listOfContacts = this.listOfContacts.concat(response.results);
+        this.hasNext = response.next;
+        this.listOfContacts.sort((a, b) => a.name?.localeCompare(b.name));
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
         console.log(error);
+      }
+    },
+
+    handleScroll(target) {
+      if (this.isLoading) return;
+      if (target.offsetHeight + Math.ceil(target.scrollTop) >= target.scrollHeight) {
+        this.searchForMoreContacts();
+      }
+    },
+
+    searchForMoreContacts() {
+      if (this.hasNext) {
+        this.contactList(this.hasNext);
       }
     },
 
     async groupList() {
       try {
         const response = await TemplateMessages.getListOfGroups();
-        this.listOfGroups = response.results;
+        this.listOfGroups = response.results.filter((el) => ![null, undefined].includes(el.name));
+        this.listOfGroups.sort((a, b) => a.name.localeCompare(b.name));
       } catch (error) {
         console.log(error);
       }
