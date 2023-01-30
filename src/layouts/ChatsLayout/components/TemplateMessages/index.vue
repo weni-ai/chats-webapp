@@ -197,10 +197,11 @@ export default {
       this.isLoading = true;
       try {
         const response = await TemplateMessages.getListOfContacts(next);
-        this.listOfContacts = this.listOfContacts.concat(response.results);
+        this.listOfContacts = this.listOfContacts
+          .concat(response.results)
+          .filter((el) => ![null, undefined].includes(el.name));
         this.hasNext = response.next;
         this.listOfContacts.sort((a, b) => a.name.localeCompare(b.name));
-        this.getContactLetter();
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
