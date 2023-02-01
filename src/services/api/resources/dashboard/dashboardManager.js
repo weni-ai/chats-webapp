@@ -16,6 +16,11 @@ export default {
     });
     return response.data;
   },
+  async getProjectInfo() {
+    const idProject = getProject();
+    const response = await http.get(`/project/${idProject}/`);
+    return response;
+  },
   async getAgentInfo(idSector, tag, startDate, endDate) {
     const idProject = getProject();
     const response = await http.get(`dashboard/${idProject}/agent/`, {
