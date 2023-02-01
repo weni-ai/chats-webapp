@@ -211,8 +211,7 @@ export default {
 
   async created() {
     if (!this.isHistory) {
-      this.verifyLinkedUser();
-      if (this.room.linked_user !== '') this.isLinkedUser = true;
+      this.loadLinkedContact();
       if (!this.room.queue?.sector) {
         throw new Error(`There is no associated sector with room ${this.room.uuid}`);
       }
@@ -258,12 +257,26 @@ export default {
       }
     },
 
+    async loadLinkedContact() {
+      const contact = this.room.contact.uuid;
+      try {
+        const response = await LinkContact.getLinketContact({ contact });
+        if (response.Detail) {
+          this.isLinkedUser = false;
+        } else {
+          this.isLinkedUser = true;
+          this.verifyLinkedUser();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
     async linkContact() {
       const contact = this.room.contact.uuid;
       try {
         await LinkContact.linkContactToAgent({ contact });
-        this.isLinkedUser = true;
         this.showStatusAlert(this.$t('switch_contact_info.alert_linked'));
+        this.verifyLinkedUser();
       } catch (error) {
         console.log(error);
       }
@@ -273,8 +286,8 @@ export default {
       const contact = this.room.contact.uuid;
       try {
         await LinkContact.removeContactFromAgent(contact);
-        this.isLinkedUser = false;
         this.showStatusAlert(this.$t('switch_contact_info.alert_detached'));
+        this.verifyLinkedUser();
       } catch (error) {
         console.log(error);
       }
