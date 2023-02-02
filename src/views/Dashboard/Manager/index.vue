@@ -3,18 +3,21 @@
     <template #header> {{ header }}</template>
 
     <template #actions>
-      <dashboard-filters @send-filter="filters" />
+      <dashboard-filters @filter="filters = $event" />
     </template>
-
     <template>
-      <general-live-metrics :agents="this.agents" />
+      <general-live-metrics v-if="this.filters.type === 'todos'" />
       <!-- <live-metrics-by-agent v-if="visualization.category === 'agent'" /> -->
-      <!-- <live-metrics-by-sector v-if="visualization.category === 'sector'" /> -->
+      <!-- <live-metrics-by-sector v-if="this.filters.type === 'sector'" /> -->
     </template>
 
     <template>
-      <!-- <history-metrics-by-agent v-if="visualization.category === 'agent'" :agentName="header" />
-      <history-metrics-by-sector v-if="visualization.category === 'sector'" /> -->
+      <!-- <history-metrics-by-agent v-if="visualization.category === 'agent'" :agentName="header" /> -->
+      <history-metrics-by-sector
+        v-if="this.filters.type === 'sector'"
+        :filter="this.filters"
+        @historyFilter="atencao = $event"
+      />
     </template>
   </dashboard-layout>
 </template>
@@ -27,7 +30,7 @@ import DashboardFilters from '@/components/dashboard/Filters';
 // import LiveMetricsBySector from '@/components/dashboard/metrics/BySector/LiveMetrics';
 import GeneralLiveMetrics from '@/components/dashboard/metrics/General/LiveMetrics';
 // import HistoryMetricsByAgent from '@/components/dashboard/metrics/ByAgent/HistoryMetrics';
-// import HistoryMetricsBySector from '@/components/dashboard/metrics/BySector/HistoryMetrics';
+import HistoryMetricsBySector from '@/components/dashboard/metrics/BySector/HistoryMetrics';
 import DashboardManagerApi from '@/services/api/resources/dashboard/dashboardManager';
 
 export default {
@@ -40,14 +43,15 @@ export default {
     DashboardLayout,
     GeneralLiveMetrics,
     // HistoryMetricsByAgent,
-    // HistoryMetricsBySector,
+    HistoryMetricsBySector,
   },
 
   data: () => ({
     agents: {},
     project: [],
-    filters: [],
-    sectorFilter: '',
+    filters: {
+      type: 'todos',
+    },
   }),
 
   mounted() {
@@ -60,33 +64,21 @@ export default {
       this.project = project.data;
     },
   },
-
+  watch: {
+    visualization(newValue) {
+      if (newValue) {
+        this.filters = newValue;
+        this.$emit('historyFilter', newValue);
+      }
+    },
+  },
   computed: {
-    isLiveView() {
-      return !this.filters.date.start && !this.filters.date.end;
-    },
-
-    filteredContacts() {
-      return this.filters
-        .filter(this.isRoomFromFilteredSector)
-        .filter(this.contactHasAllActiveFilterTags)
-        .filter(this.isRoomEndDateInFilteredRange);
-    },
     visualization() {
-      const { visualization } = this.filters;
-
-      if (visualization.value === 'general') return {};
-
-      const { text, value, category } = this.visualizations.find(
-        (v) => v.value === visualization.value,
-      );
-
-      return {
-        text,
-        category,
-        value,
-      };
+      const filter = this.filters;
+      if (filter.type === 'todos') return {};
+      return filter;
     },
+
     header() {
       const projectName = this.project.name;
       return projectName;

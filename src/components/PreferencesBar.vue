@@ -46,6 +46,16 @@
             Mensagens rápidas
           </div>
         </div>
+        <div
+          style="display: flex; justify-content: center"
+          @click="navigate('dashboard.manager')"
+          class="button-quick-message"
+        >
+          <div class="content">
+            <unnnic-icon size="md" scheme="neutral-cloudy" icon="gauge-dashboard-2" />
+            Dashboard
+          </div>
+        </div>
         <div class="label">Status</div>
 
         <unnnic-switch
@@ -97,6 +107,11 @@ export default {
   },
 
   methods: {
+    navigate(name) {
+      this.$router.push({
+        name,
+      });
+    },
     openQuickMessage() {
       this.$emit('show-quick-messages');
     },

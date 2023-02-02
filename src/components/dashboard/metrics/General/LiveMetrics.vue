@@ -32,10 +32,6 @@ export default {
     this.sectorInfo();
   },
 
-  destroyed() {
-    clearInterval(this.realtimeSimulationController);
-  },
-
   data: () => ({
     agents: {},
     generalMetrics: {},

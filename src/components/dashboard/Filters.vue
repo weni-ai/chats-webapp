@@ -6,7 +6,7 @@
         label="Filtar por setor"
         size="md"
         class="input"
-        @input="getSectorTags(filteredSectorUuid), sendFilter(filteredSectorUuid)"
+        @input="getSectorTags(filteredSectorUuid), sendFilter('sector', filteredSectorUuid)"
       >
         <option value="">Todos</option>
         <option
@@ -24,6 +24,7 @@
         :items="tags"
         :placeholder="this.messageInputTags"
         :disabled="!this.filteredSectorUuid && sectors.length !== 1"
+        @input="sendFilter('sector', filteredSectorUuid, selecteds)"
       />
 
       <unnnic-input-date-picker
@@ -31,7 +32,7 @@
         v-model="filteredDateRange"
         size="md"
         class="input"
-        input-format="DD/MM/YYYY"
+        :input-format="$t('date_format')"
         position="right"
       />
 
@@ -78,21 +79,25 @@ export default {
   data: () => ({
     filteredSectorUuid: '',
     messageInputTags: 'Filtrar por tags',
-    filters: {},
     sectors: [],
     sectorTags: [],
     tags: [],
     selecteds: [],
     filteredDateRange: {
       start: moment(new Date()).format('YYYY-MM-DD'),
-      // end: moment(new Date()).endOf('month').format('YYYY-MM-DD'),
+      end: moment(new Date()).format('YYYY-MM-DD'),
     },
   }),
 
   methods: {
-    sendFilter(filteredSectorUuid) {
-      console.log(filteredSectorUuid, 'filteredSectorUuid');
-      this.$emit('send-filter', filteredSectorUuid);
+    sendFilter(type, filteredSectorUuid, tag) {
+      const filter = {
+        type,
+        sectorUuid: filteredSectorUuid,
+        tag,
+        date: this.filteredDateRange,
+      };
+      this.$emit('filter', filter);
     },
 
     async getSectors() {
@@ -127,41 +132,21 @@ export default {
       }
     },
 
-    contactHasAllActiveFilterTags(contact) {
-      if (this.filteredTags.length === 0) return true;
-      if (!contact.room.tags) return false;
-      return contact.room.tags.some((tag) => this.filteredTags.find((el) => el.uuid === tag.uuid));
-    },
-
-    isRoomEndDateInFilteredRange(contact) {
-      const { start, end } = this.filteredDateRange;
-      if (!start && !end) return true;
-
-      const roomDate = new Date(contact.room.ended_at).toISOString();
-
-      return start <= roomDate && roomDate <= end;
-    },
-
-    isRoomFromFilteredSector(contact) {
-      if (!this.filteredSectorUuid) return true;
-
-      return contact.room.queue.sector === this.filteredSectorUuid;
-    },
-
     clearFilters() {
       this.filteredSectorUuid = '';
       this.tags = [];
       this.filteredDateRange = {
         start: moment(new Date()).format('YYYY-MM-DD'),
       };
+      this.sendFilter('todos', null, null, null);
     },
   },
 
   watch: {
-    tags: {
+    filteredSectorUuid: {
       deep: true,
-      handler(filters) {
-        this.$emit('filter', filters);
+      handler() {
+        this.sendFilter('sector', this.filteredSectorUuid, null, null);
       },
     },
   },

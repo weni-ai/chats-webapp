@@ -63,7 +63,7 @@ export default {
   },
 
   mounted() {
-    console.log(this.metrics, 'metrics');
+    // console.log(this.metrics, 'metrics');
   },
 
   methods: {
