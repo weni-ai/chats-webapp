@@ -1,74 +1,88 @@
 <template>
   <section class="dashboard-filters">
-    <unnnic-autocomplete
-      v-if="visualizations.length !== 0"
-      v-model="visualizationSearch"
-      @choose="onChooseVisualization($event)"
-      :data="visualizations"
-      label="Visualizar por setor, fila ou agente"
-      highlight
-      open-with-focus
-      size="sm"
-    />
+    <div class="dashboard-filters" style="z-index: 100">
+      <unnnic-select
+        v-model="filteredSectorUuid"
+        label="Filtar por setor"
+        size="md"
+        class="input"
+        @input="getSectorTags(filteredSectorUuid), sendFilter(filteredSectorUuid)"
+      >
+        <option value="">Todos</option>
+        <option
+          v-for="sector in sectors"
+          :key="sector.uuid"
+          :value="sector.uuid"
+          :selected="sector.uuid === filteredSectorUuid"
+        >
+          {{ sector.name }}
+        </option>
+      </unnnic-select>
 
-    <unnnic-select
-      v-if="tags.length !== 0"
-      v-model="filters.tag"
-      placeholder="Filtrar por tags"
-      label="Filtrar por tags"
-      size="sm"
-    >
-      <option v-for="tag in tags" :key="tag.value" :selected="tag.value === tag">
-        {{ tag.text }}
-      </option>
-    </unnnic-select>
-
-    <unnnic-input-date-picker
-      v-model="filteredDateRange"
-      size="sm"
-      class="input"
-      input-format="DD/MM/YYYY"
-      position="right"
-    />
-
-    <unnnic-tool-tip enabled text="Limpar filtro" side="right">
-      <unnnic-button-icon
-        icon="button-refresh-arrows-1"
-        size="small"
-        class="clear-filters-btn"
-        @click="clearFilters"
+      <unnnic-autocomplete-select
+        v-model="selecteds"
+        :items="tags"
+        :placeholder="this.messageInputTags"
+        :disabled="!this.filteredSectorUuid && sectors.length !== 1"
       />
-    </unnnic-tool-tip>
+
+      <unnnic-input-date-picker
+        style="min-width: 15px"
+        v-model="filteredDateRange"
+        size="md"
+        class="input"
+        input-format="DD/MM/YYYY"
+        position="right"
+      />
+
+      <unnnic-tool-tip enabled text="Limpar filtro" side="right">
+        <unnnic-button-icon
+          icon="button-refresh-arrows-1"
+          size="large"
+          class="clear-filters-btn"
+          @click="clearFilters"
+        />
+      </unnnic-tool-tip>
+    </div>
   </section>
 </template>
 
 <script>
+import Sector from '@/services/api/resources/settings/sector';
+
 const moment = require('moment');
 
 export default {
   name: 'DashboardFilters',
 
+  beforeMount() {
+    if (this.tag) this.filteredTags.push(this.tag);
+    this.getSectors();
+  },
+
   props: {
-    tags: {
-      type: Array,
-      default: () => [],
-    },
-    visualizations: {
-      type: Array,
-      default: () => [],
+    sectorFilter: {
+      type: String,
+      default: '',
     },
   },
 
-  created() {
-    this.visualizationSearch = this.visualizations[0]?.text;
+  computed: {
+    filteredTags() {
+      if (this.selecteds.length === 0) return [];
+      const group = this.selecteds;
+      return group;
+    },
   },
 
   data: () => ({
-    visualizationSearch: '',
-    filters: {
-      tag: '',
-      visualization: '',
-    },
+    filteredSectorUuid: '',
+    messageInputTags: 'Filtrar por tags',
+    filters: {},
+    sectors: [],
+    sectorTags: [],
+    tags: [],
+    selecteds: [],
     filteredDateRange: {
       start: moment(new Date()).format('YYYY-MM-DD'),
       // end: moment(new Date()).endOf('month').format('YYYY-MM-DD'),
@@ -76,30 +90,75 @@ export default {
   }),
 
   methods: {
-    clearFilters() {
-      const emptyFilters = {
-        tag: '',
-        visualization: '',
-      };
-      this.filteredDateRange = {
-        start: moment(new Date()).startOf('month').format('YYYY-MM-DD'),
-        end: moment(new Date()).endOf('month').format('YYYY-MM-DD'),
-      };
-      this.filters = emptyFilters;
-      this.visualizationSearch = this.visualizations[0]?.text;
+    sendFilter(filteredSectorUuid) {
+      console.log(filteredSectorUuid, 'filteredSectorUuid');
+      this.$emit('send-filter', filteredSectorUuid);
     },
-    onChooseVisualization(visualizationValue) {
-      const visualization = this.visualizations.find((v) => v.value === visualizationValue);
 
-      this.filters = {
-        ...this.filters,
-        visualization,
+    async getSectors() {
+      try {
+        this.isLoading = true;
+        const response = await Sector.list();
+        this.sectors = response.results;
+        if (this.sectors.length === 1) {
+          this.getSectorTags(this.sectors[0].uuid);
+        }
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+      }
+    },
+
+    async getSectorTags(sectorUuid) {
+      if (!sectorUuid) {
+        this.tags = [];
+        return;
+      }
+      try {
+        this.isLoading = true;
+        const response = await Sector.tags(sectorUuid);
+        const tags = response.results;
+
+        const tagGroup = tags.map((tag) => ({ ...tag, value: tag.uuid, text: tag.name }));
+        this.tags = tagGroup;
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+      }
+    },
+
+    contactHasAllActiveFilterTags(contact) {
+      if (this.filteredTags.length === 0) return true;
+      if (!contact.room.tags) return false;
+      return contact.room.tags.some((tag) => this.filteredTags.find((el) => el.uuid === tag.uuid));
+    },
+
+    isRoomEndDateInFilteredRange(contact) {
+      const { start, end } = this.filteredDateRange;
+      if (!start && !end) return true;
+
+      const roomDate = new Date(contact.room.ended_at).toISOString();
+
+      return start <= roomDate && roomDate <= end;
+    },
+
+    isRoomFromFilteredSector(contact) {
+      if (!this.filteredSectorUuid) return true;
+
+      return contact.room.queue.sector === this.filteredSectorUuid;
+    },
+
+    clearFilters() {
+      this.filteredSectorUuid = '';
+      this.tags = [];
+      this.filteredDateRange = {
+        start: moment(new Date()).format('YYYY-MM-DD'),
       };
     },
   },
 
   watch: {
-    filters: {
+    tags: {
       deep: true,
       handler(filters) {
         this.$emit('filter', filters);
