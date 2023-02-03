@@ -20,6 +20,12 @@
               {{ $t('status.online') }}
             </p>
             <!-- <p v-else>{{ getLastTimeOnlineText(room.contact.last_interaction || new Date()) }}</p> -->
+            <template>
+              <p style="margin-bottom: 0.75rem">
+                <span class="title"> {{ contactNumber.plataform }}: </span>
+                {{ contactNumber.contactNum }}
+              </p>
+            </template>
             <template v-if="!!room.custom_fields">
               <p v-for="(value, key) in customFields" :key="key">
                 <span class="title"> {{ key }}: </span>
@@ -206,6 +212,17 @@ export default {
 
     customFields() {
       return this.room.custom_fields;
+    },
+
+    contactNumber() {
+      const plataform = this.room.urn.split(':').at(0);
+      const number = this.room.urn.split(':').at(-1);
+      const whatsapp = `+ ${number.substr(-20, 2)} `;
+      const infoNumber = {
+        plataform,
+        contactNum: plataform === 'whatsapp' ? whatsapp : number,
+      };
+      return infoNumber;
     },
   },
 
