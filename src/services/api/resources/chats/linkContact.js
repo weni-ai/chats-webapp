@@ -4,6 +4,13 @@ import { getProject } from '@/utils/config';
 const uuid = getProject();
 
 export default {
+  async getLinketContact(contact) {
+    const response = await http.get(`/project/${uuid}/retrieve_linked_contact/`, {
+      params: contact,
+    });
+    return response.data;
+  },
+
   async linkContactToAgent(contact) {
     const response = await http.post(`/project/${uuid}/create_linked_contact/`, contact);
     return response.data;

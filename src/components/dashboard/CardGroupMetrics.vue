@@ -62,7 +62,7 @@ export default {
     },
   },
   mounted() {
-    console.log(this.metrics.sectors);
+    // console.log(this.metrics.sectors);
   },
   methods: {
     timeToString(minutes) {

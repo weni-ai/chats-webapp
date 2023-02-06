@@ -32,11 +32,6 @@
 
 <script>
 export default {
-  mounted() {
-    // console.log(this.items, 'items');
-    // console.log(this.headers, 'alou');
-  },
-
   props: {
     headers: {
       type: Array,
