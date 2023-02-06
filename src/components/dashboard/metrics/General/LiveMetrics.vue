@@ -32,10 +32,6 @@ export default {
     this.sectorInfo();
   },
 
-  destroyed() {
-    clearInterval(this.realtimeSimulationController);
-  },
-
   data: () => ({
     agents: {},
     generalMetrics: {},
@@ -46,7 +42,6 @@ export default {
     async agentInfo() {
       try {
         this.agents = await DashboardManagerApi.getAgentInfo();
-        console.log(this.agents, 'agents');
       } catch (error) {
         console.log(error);
       }
@@ -66,10 +61,6 @@ export default {
       } catch (error) {
         console.log(error);
       }
-    },
-
-    timeToString({ minutes, seconds }) {
-      return `${minutes}min ${seconds}s`;
     },
   },
 };

@@ -5,10 +5,9 @@
     </section>
 
     <section class="history-sector-metrics__metrics">
-      <card-group-metrics :metrics="queues" title="Filas" icon="hierarchy-3-2" />
+      <card-group-metrics :metrics="sectors" title="Filas" icon="hierarchy-3-2" />
       <table-metrics
-        :headers="tableHeaders"
-        :items="chatsPerAgent"
+        :items="this.agents.project_agents"
         title="Chats por agente"
         icon="indicator"
       />
@@ -17,9 +16,10 @@
 </template>
 
 <script>
+import DashboardManagerApi from '@/services/api/resources/dashboard/dashboardManager';
 import CardGroupMetrics from '../../CardGroupMetrics';
 import GeneralMetrics from '../../GeneralMetrics';
-import TableMetrics from '../../TableMetrics';
+// import TableMetrics from '../../TableMetrics';
 
 export default {
   name: 'HistoryMetricsBySector',
@@ -27,143 +27,82 @@ export default {
   components: {
     CardGroupMetrics,
     GeneralMetrics,
-    TableMetrics,
+    // TableMetrics,
+  },
+
+  mounted() {
+    this.agentInfo();
+    this.roomInfo();
+    this.sectorInfo();
+  },
+
+  props: {
+    filter: {
+      type: Object,
+      default: () => {},
+    },
   },
 
   data: () => ({
-    generalMetrics: [
-      {
-        title: 'Quantidade de chats',
-        icon: 'indicator',
-        scheme: 'aux-blue',
-        value: 5365,
-        percent: -5,
-        invertedPercentage: true,
-      },
-      {
-        title: 'Tempo de espera',
-        icon: 'time-clock-circle-1',
-        type: 'time',
-        scheme: 'aux-orange',
-        value: {
-          minutes: 3,
-          seconds: 2,
-        },
-        percent: -5,
-        invertedPercentage: true,
-        tooltip: 'É tempo médio que o contato aguarda para ser atendido',
-      },
-      {
-        title: 'Tempo de resposta',
-        icon: 'messaging-we-chat-3',
-        scheme: 'aux-purple',
-        type: 'time',
-        value: {
-          minutes: 4,
-          seconds: 24,
-        },
-        percent: 5,
-        invertedPercentage: true,
-        tooltip: 'É o tempo médio de resposta ao contato',
-      },
-      {
-        title: 'Tempo de interação',
-        icon: 'messages-bubble-1',
-        tooltip: 'É o tempo médio de duração de um chat',
-        scheme: 'aux-lemon',
-        type: 'time',
-        value: {
-          minutes: 46,
-          seconds: 12,
-        },
-        percent: -5,
-        invertedPercentage: true,
-      },
-    ],
-    tableHeaders: [
-      {
-        text: 'Agente',
-        value: 'name',
-      },
-      {
-        text: 'Chats ativos',
-        value: 'chats',
-      },
-    ],
-    chatsPerAgent: [
-      {
-        id: 1,
-        name: 'Fabricio Correiaaaa',
-        chats: 434,
-      },
-      {
-        id: 2,
-        name: 'Daniela Maciel',
-        chats: 432,
-      },
-      {
-        id: 3,
-        name: 'Juliano Mello',
-        chats: 543,
-      },
-    ],
+    agents: {},
+    generalMetrics: {},
+    sectors: {},
   }),
 
   computed: {
-    queues() {
-      const { queues } = this.$store.state.settings.sectors[0];
+    updateFilter() {
+      return this.filter;
+    },
+  },
 
-      return queues.map((queue) => ({
-        id: queue.id,
-        name: queue.name,
-        statuses: this.getRandomMetrics(),
-      }));
+  watch: {
+    updateFilter(newValue) {
+      if (newValue) {
+        this.agentInfo();
+        this.roomInfo();
+        this.sectorInfo();
+      }
     },
   },
 
   methods: {
-    getRandomMetrics() {
-      const metrics = [
-        {
-          title: 'Tempo de espera',
-          icon: 'time-clock-circle-1',
-          scheme: 'aux-orange',
-          count: this.timeToString(this.getRandomTime(1, 5)),
-        },
-        {
-          title: 'Tempo de resposta',
-          icon: 'messaging-we-chat-3',
-          scheme: 'aux-purple',
-          count: this.timeToString(this.getRandomTime(2, 3)),
-        },
-        {
-          title: 'Tempo de interação',
-          tooltip: 'É o tempo médio de duração de um chat',
-          icon: 'messages-bubble-1',
-          scheme: 'aux-lemon',
-          count: this.timeToString(this.getRandomTime(2, 3)),
-        },
-        {
-          title: 'Agentes online',
-          icon: 'headphones-customer-support-human-1-1',
-          scheme: 'aux-blue',
-          count: Math.round(Math.random() * (5 - 3) + 3), // random number between 3 and 5
-        },
-      ];
-
-      return metrics;
+    async agentInfo() {
+      try {
+        this.agents = await DashboardManagerApi.getAgentInfo(
+          this.filter.sectorUuid,
+          this.filter.tag,
+          this.filter.start,
+          this.filter.end,
+        );
+      } catch (error) {
+        console.log(error);
+      }
     },
-    getRandomTime(min, max) {
-      const minutes = Math.random() * (max - min) + min;
-      const seconds = Math.random() * 59;
 
-      return {
-        minutes: Math.round(minutes),
-        seconds: Math.round(seconds),
-      };
+    async roomInfo() {
+      try {
+        this.generalMetrics = await DashboardManagerApi.getRoomInfo(
+          this.filter.sectorUuid,
+          this.filter.tag,
+          this.filter.start,
+          this.filter.end,
+        );
+      } catch (error) {
+        console.log(error);
+      }
     },
-    timeToString({ minutes, seconds }) {
-      return `${minutes}min ${seconds}s`;
+
+    async sectorInfo() {
+      try {
+        this.sectors = await DashboardManagerApi.getSectorInfo(
+          this.filter.sectorUuid,
+          this.filter.tag,
+          this.filter.start,
+          this.filter.end,
+        );
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 };

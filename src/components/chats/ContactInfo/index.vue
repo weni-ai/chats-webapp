@@ -20,6 +20,12 @@
               {{ $t('status.online') }}
             </p>
             <!-- <p v-else>{{ getLastTimeOnlineText(room.contact.last_interaction || new Date()) }}</p> -->
+            <template>
+              <p style="margin-bottom: 0.75rem">
+                <span class="title"> {{ contactNumber.plataform }}: </span>
+                {{ contactNumber.contactNum }}
+              </p>
+            </template>
             <template v-if="!!room.custom_fields">
               <p v-for="(value, key) in customFields" :key="key">
                 <span class="title"> {{ key }}: </span>
@@ -207,12 +213,22 @@ export default {
     customFields() {
       return this.room.custom_fields;
     },
+
+    contactNumber() {
+      const plataform = this.room.urn.split(':').at(0);
+      const number = this.room.urn.split(':').at(-1);
+      const whatsapp = `+ ${number.substr(-20, 2)} `;
+      const infoNumber = {
+        plataform,
+        contactNum: plataform === 'whatsapp' ? whatsapp : number,
+      };
+      return infoNumber;
+    },
   },
 
   async created() {
     if (!this.isHistory) {
-      this.verifyLinkedUser();
-      if (this.room.linked_user !== '') this.isLinkedUser = true;
+      this.loadLinkedContact();
       if (!this.room.queue?.sector) {
         throw new Error(`There is no associated sector with room ${this.room.uuid}`);
       }
@@ -258,12 +274,26 @@ export default {
       }
     },
 
+    async loadLinkedContact() {
+      const contact = this.room.contact.uuid;
+      try {
+        const response = await LinkContact.getLinketContact({ contact });
+        if (response.Detail) {
+          this.isLinkedUser = false;
+        } else {
+          this.isLinkedUser = true;
+          this.verifyLinkedUser();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
     async linkContact() {
       const contact = this.room.contact.uuid;
       try {
         await LinkContact.linkContactToAgent({ contact });
-        this.isLinkedUser = true;
         this.showStatusAlert(this.$t('switch_contact_info.alert_linked'));
+        this.verifyLinkedUser();
       } catch (error) {
         console.log(error);
       }
@@ -273,8 +303,8 @@ export default {
       const contact = this.room.contact.uuid;
       try {
         await LinkContact.removeContactFromAgent(contact);
-        this.isLinkedUser = false;
         this.showStatusAlert(this.$t('switch_contact_info.alert_detached'));
+        this.verifyLinkedUser();
       } catch (error) {
         console.log(error);
       }

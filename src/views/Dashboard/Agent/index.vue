@@ -51,7 +51,7 @@ export default {
     async agentInfo() {
       const agent = await DashboardAgent.getAgentInfo();
       this.info = agent.results;
-      console.log(this.info, `agent`);
+      // console.log(this.info, `agent`);
     },
   },
 };
