@@ -217,7 +217,7 @@ export default {
     contactNumber() {
       const plataform = this.room.urn.split(':').at(0);
       const number = this.room.urn.split(':').at(-1);
-      const whatsapp = `+ ${number.substr(-20, 2)} `;
+      const whatsapp = `+ ${number.substr(-20, 20)} `;
       const infoNumber = {
         plataform,
         contactNum: plataform === 'whatsapp' ? whatsapp : number,
