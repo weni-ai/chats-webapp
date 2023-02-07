@@ -127,8 +127,11 @@ export default {
       return this.selectedAgents.length > 0;
     },
     photo(link) {
-      const getOnlyPhoto = link.split('?')[0];
-      return getOnlyPhoto;
+      if (![null, undefined, ''].includes(link)) {
+        const getOnlyPhoto = link.split('?')[0];
+        return getOnlyPhoto;
+      }
+      return link;
     },
   },
 
