@@ -49,7 +49,7 @@
           :key="manager.uuid"
           :name="`${manager.user.first_name} ${manager.user.last_name}`"
           :email="manager.user.email"
-          :avatar-url="manager.user.photo_url"
+          :avatar-url="photo(manager.user.photo_url)"
           @remove="removeManager(manager.uuid)"
           role-name="Gerente"
         />
@@ -186,6 +186,11 @@ export default {
     // switchTemplateMessage() {
     //   this.sector.can_trigger_flows = this.sector.can_trigger_flows;
     // },
+
+    photo(link) {
+      const getOnlyPhoto = link.split('?')[0];
+      return getOnlyPhoto;
+    },
 
     addSectorManager() {
       const { selectedManager } = this;
