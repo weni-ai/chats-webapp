@@ -196,6 +196,7 @@ export default {
     async takeRoom() {
       await Room.take(this.room.uuid, this.me.email);
       this.isGetChatConfirmationModalOpen = false;
+      this.setActiveRoom(this.room.uuid);
     },
     async closeRoom() {
       // if (this.tags.length === 0) return;

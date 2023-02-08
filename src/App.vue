@@ -176,7 +176,7 @@ export default {
       });
 
       this.ws.on('rooms.update', (room) => {
-        if (!!room.user && room.user.email !== this.me.email) return;
+        if (!!room.user && room.user.email !== this.me.email) this.handleLocale();
 
         if (
           !this.$store.state.rooms.rooms.find((alreadyInRoom) => alreadyInRoom.uuid === room.uuid)
