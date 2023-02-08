@@ -67,10 +67,16 @@ export default {
 
   methods: {
     async agentInfo() {
+      const temTag = ![null, undefined, ''].includes(this.filter.tag);
+      if (temTag) {
+        this.nameTag = this.filter.tag.map((el) => el.text).toString();
+      } else {
+        this.nameTag = this.filter.tag;
+      }
       try {
         this.agents = await DashboardManagerApi.getAgentInfo(
           this.filter.sectorUuid,
-          this.filter.tag,
+          this.nameTag,
           this.filter.start,
           this.filter.end,
         );
@@ -80,10 +86,16 @@ export default {
     },
 
     async roomInfo() {
+      const temTag = ![null, undefined, ''].includes(this.filter.tag);
+      if (temTag) {
+        this.nameTag = this.filter.tag.map((el) => el.text).toString();
+      } else {
+        this.nameTag = this.filter.tag;
+      }
       try {
         this.generalMetrics = await DashboardManagerApi.getRoomInfo(
           this.filter.sectorUuid,
-          this.filter.tag,
+          this.nameTag,
           this.filter.start,
           this.filter.end,
         );
@@ -93,10 +105,16 @@ export default {
     },
 
     async sectorInfo() {
+      const temTag = ![null, undefined, ''].includes(this.filter.tag);
+      if (temTag) {
+        this.nameTag = this.filter.tag.map((el) => el.text).toString();
+      } else {
+        this.nameTag = this.filter.tag;
+      }
       try {
         this.sectors = await DashboardManagerApi.getSectorInfo(
           this.filter.sectorUuid,
-          this.filter.tag,
+          this.nameTag,
           this.filter.start,
           this.filter.end,
         );

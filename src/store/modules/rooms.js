@@ -124,7 +124,7 @@ export default {
         .map((r) => (r.uuid === room.uuid ? { ...room } : r))
         .filter((r) => !r.user || r.user.email === userEmail);
       commit(mutations.SET_ROOMS, rooms);
-      commit(mutations.SET_ACTIVE_ROOM, { ...room });
+      // commit(mutations.SET_ACTIVE_ROOM, { ...room });
     },
     removeRoom({ state, commit }, roomUuid) {
       const rooms = state.rooms.filter((r) => r.uuid !== roomUuid);
