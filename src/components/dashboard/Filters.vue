@@ -124,7 +124,7 @@ export default {
         const response = await Sector.tags(sectorUuid);
         const tags = response.results;
 
-        const tagGroup = tags.map((tag) => ({ ...tag, value: tag.uuid, text: tag.name }));
+        const tagGroup = tags.map((tag) => ({ value: tag.uuid, text: tag.name }));
         this.tags = tagGroup;
         this.isLoading = false;
       } catch (error) {
