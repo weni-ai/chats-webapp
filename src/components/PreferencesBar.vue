@@ -59,10 +59,10 @@
         <div class="label">Status</div>
 
         <unnnic-switch
-          :value="$store.state.config.status === 'online'"
+          :value="$store.state.config.status === 'ONLINE'"
           size="small"
           :text-right="
-            $store.state.config.status === 'online' ? $t('status.online') : $t('status.offline')
+            $store.state.config.status === 'ONLINE' ? $t('status.online') : $t('status.offline')
           "
           @input="updateStatus"
           :disabled="loadingStatus"
@@ -95,14 +95,12 @@ export default {
       open: false,
       loadingStatus: false,
       sound: false,
-      // help: false,
+      statusAgent: localStorage.getItem('statusAgent'),
     };
   },
 
   async created() {
     this.sound = (localStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'yes';
-    // this.help = (localStorage.getItem(PREFERENCES_NILO) || 'yes') === 'yes';
-
     window.dispatchEvent(new CustomEvent(`${this.help ? 'show' : 'hide'}BottomRightOptions`));
   },
 
@@ -122,10 +120,11 @@ export default {
         data: { connection_status },
       } = await Profile.updateStatus({
         projectUuid: this.$store.state.config.project,
-        status: online ? 'online' : 'offline',
+        status: online ? 'ONLINE' : 'OFFLINE',
       });
+      console.log(connection_status, 'connection_status');
 
-      this.$store.state.config.status = connection_status;
+      localStorage.setItem('statusAgent', connection_status);
 
       this.loadingStatus = false;
       this.showStatusAlert(connection_status);
@@ -135,19 +134,13 @@ export default {
       localStorage.setItem(PREFERENCES_SOUND, this.sound ? 'yes' : 'no');
     },
 
-    // changeNilo() {
-    //   localStorage.setItem(PREFERENCES_NILO, this.help ? 'yes' : 'no');
-
-    //   window.dispatchEvent(new CustomEvent(`${this.help ? 'show' : 'hide'}BottomRightOptions`));
-    // },
-
     showStatusAlert(connectionStatus) {
       unnnicCallAlert({
         props: {
           title: ``,
           text: `${this.$t('status_agent')} ${connectionStatus}`,
           icon: 'indicator',
-          scheme: connectionStatus === 'online' ? 'feedback-green' : '$unnnic-color-neutral-black',
+          scheme: connectionStatus === 'ONLINE' ? 'feedback-green' : '$unnnic-color-neutral-black',
           closeText: 'Fechar',
           position: 'bottom-right',
         },

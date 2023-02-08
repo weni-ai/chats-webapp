@@ -93,7 +93,7 @@ export default {
       this.listeners();
 
       this.ws.ws.addEventListener('open', () => {
-        this.$store.state.config.status = 'online';
+        this.$store.state.config.status = localStorage.getItem('statusAgent');
       });
     },
 
@@ -193,6 +193,28 @@ export default {
       this.ws.on('msg.update', (message) => {
         this.$store.dispatch('rooms/addMessage', message);
       });
+
+      this.ws.on('status.update', (info) => {
+        const localStorageStatus = localStorage.getItem('statusAgent');
+        if (localStorageStatus !== info.status) {
+          if (info.from === 'system') {
+            this.updateStatus(localStorageStatus);
+          } else if (info.from === 'user') {
+            this.$store.state.config.status = info.status;
+            localStorage.setItem('statusAgent', info.status);
+          }
+        }
+      });
+    },
+    async updateStatus(localStorageStatus) {
+      const {
+        data: { connection_status },
+      } = await Profile.updateStatus({
+        projectUuid: this.$store.state.config.project,
+        status: localStorageStatus,
+      });
+      this.$store.state.config.status = connection_status;
+      localStorage.setItem('statusAgent', connection_status);
     },
   },
 };
