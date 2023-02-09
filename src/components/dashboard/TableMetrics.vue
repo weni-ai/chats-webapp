@@ -13,13 +13,9 @@
       </header>
 
       <section class="items">
-        <section
-          v-for="item in items"
-          :key="item.permission__user__first_name"
-          class="item table-row"
-        >
+        <section v-for="item in items" :key="item.user__first_name" class="item table-row">
           <span class="table-col">
-            {{ item.permission__user__first_name }}
+            {{ item.user__first_name }}
           </span>
           <span class="table-col">
             {{ item.count }}
