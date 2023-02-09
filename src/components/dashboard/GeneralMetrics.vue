@@ -75,9 +75,9 @@ export default {
         }
         return numero;
       }
-      const hora = duas_casas(Math.round(minutes / 3600));
-      const minuto = duas_casas(Math.round((minutes % 3600) / 60));
-      const segundo = duas_casas(Math.round(minutes % 3600) % 60);
+      const hora = duas_casas(Math.floor(minutes / 3600));
+      const minuto = duas_casas(Math.floor((minutes % 3600) / 60));
+      const segundo = duas_casas(Math.floor((minutes % 3600) % 60));
       const formatado = {
         hour: hora,
         minute: minuto,

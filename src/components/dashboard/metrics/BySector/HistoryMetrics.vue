@@ -7,6 +7,7 @@
     <section class="history-sector-metrics__metrics">
       <card-group-metrics :metrics="sectors" title="Filas" icon="hierarchy-3-2" />
       <table-metrics
+        :headers="tableHeaders"
         :items="this.agents.project_agents"
         title="Chats por agente"
         icon="indicator"
@@ -19,7 +20,7 @@
 import DashboardManagerApi from '@/services/api/resources/dashboard/dashboardManager';
 import CardGroupMetrics from '../../CardGroupMetrics';
 import GeneralMetrics from '../../GeneralMetrics';
-// import TableMetrics from '../../TableMetrics';
+import TableMetrics from '../../TableMetrics';
 
 export default {
   name: 'HistoryMetricsBySector',
@@ -27,7 +28,7 @@ export default {
   components: {
     CardGroupMetrics,
     GeneralMetrics,
-    // TableMetrics,
+    TableMetrics,
   },
 
   mounted() {
@@ -47,6 +48,16 @@ export default {
     agents: {},
     generalMetrics: {},
     sectors: {},
+    tableHeaders: [
+      {
+        text: 'Agente',
+        value: 'name',
+      },
+      {
+        text: 'Chats ativos',
+        value: 'chats',
+      },
+    ],
   }),
 
   computed: {

@@ -7,19 +7,15 @@
 
     <section class="table-metrics__table">
       <header class="headers table-row">
-        <span v-for="header in headers" :key="header.value" class="header table-col">{{
-          header.text
-        }}</span>
+        <span v-for="header in headers" :key="header.value" class="header table-col">
+          {{ header.text }}
+        </span>
       </header>
 
       <section class="items">
-        <section
-          v-for="item in items"
-          :key="item.permission__user__first_name"
-          class="item table-row"
-        >
+        <section v-for="item in items" :key="item.user__first_name" class="item table-row">
           <span class="table-col">
-            {{ item.permission__user__first_name }}
+            {{ item.user__first_name }}
           </span>
           <span class="table-col">
             {{ item.count }}
