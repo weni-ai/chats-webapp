@@ -19,7 +19,7 @@
 import DashboardManagerApi from '@/services/api/resources/dashboard/dashboardManager';
 import CardGroupMetrics from '../../CardGroupMetrics';
 import GeneralMetrics from '../../GeneralMetrics';
-// import TableMetrics from '../../TableMetrics';
+import TableMetrics from '../../TableMetrics';
 
 export default {
   name: 'HistoryMetricsBySector',
@@ -27,7 +27,7 @@ export default {
   components: {
     CardGroupMetrics,
     GeneralMetrics,
-    // TableMetrics,
+    TableMetrics,
   },
 
   mounted() {
