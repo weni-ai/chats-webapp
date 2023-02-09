@@ -7,6 +7,7 @@
     <section class="history-sector-metrics__metrics">
       <card-group-metrics :metrics="sectors" title="Filas" icon="hierarchy-3-2" />
       <table-metrics
+        :headers="tableHeaders"
         :items="this.agents.project_agents"
         title="Chats por agente"
         icon="indicator"
@@ -47,6 +48,16 @@ export default {
     agents: {},
     generalMetrics: {},
     sectors: {},
+    tableHeaders: [
+      {
+        text: 'Agente',
+        value: 'name',
+      },
+      {
+        text: 'Chats ativos',
+        value: 'chats',
+      },
+    ],
   }),
 
   computed: {
