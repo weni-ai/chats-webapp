@@ -1,12 +1,22 @@
+<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <section class="dashboard-layout unnnic-grid-giant">
     <div class="unnnic-grid-span-12">
-      <header class="dashboard__header">
-        <unnnic-avatar-icon icon="graph-stats-1" scheme="aux-purple" />
-        <span class="title">
-          <slot name="header" />
-        </span>
-        <unnnic-icon-svg icon="information-circle-4" size="sm" scheme="neutral-soft" />
+      <header class="dashboard__header" style="justify-content: space-between">
+        <div>
+          <unnnic-avatar-icon icon="graph-stats-1" scheme="aux-purple" />
+          <span class="title">
+            <slot name="header" />
+          </span>
+          <!-- <unnnic-icon-svg icon="information-circle-4" size="sm" scheme="neutral-soft" /> -->
+        </div>
+        <div @click="close">
+          <unnnic-icon
+            style="cursor: pointer; margin-right: 26px; margin-top: 18px"
+            size="sm"
+            icon="close-1"
+          />
+        </div>
       </header>
 
       <section class="actions">
@@ -23,6 +33,12 @@
 <script>
 export default {
   name: 'DashboardLayout',
+
+  methods: {
+    close() {
+      this.$router.replace({ name: 'home' });
+    },
+  },
 };
 </script>
 
