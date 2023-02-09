@@ -6,7 +6,12 @@
 
     <section class="general-dashboard__metrics">
       <card-group-metrics :metrics="sectors" title="Setores" icon="hierarchy-3-2" />
-      <table-metrics :items="this.agents.project_agents" title="Agentes online" icon="indicator" />
+      <table-metrics
+        :headers="tableHeaders"
+        :items="this.agents.project_agents"
+        title="Agentes online"
+        icon="indicator"
+      />
     </section>
   </main>
 </template>
@@ -36,6 +41,16 @@ export default {
     agents: {},
     generalMetrics: {},
     sectors: {},
+    tableHeaders: [
+      {
+        text: 'Agente',
+        value: 'name',
+      },
+      {
+        text: 'Chats ativos',
+        value: 'chats',
+      },
+    ],
   }),
 
   methods: {
