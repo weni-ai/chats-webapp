@@ -27,14 +27,14 @@
         @input="sendFilter('sector', filteredSectorUuid, selecteds)"
       />
 
-      <unnnic-input-date-picker
+      <!-- <unnnic-input-date-picker
         style="min-width: 15px"
         v-model="filteredDateRange"
         size="md"
         class="input"
         :input-format="$t('date_format')"
         position="right"
-      />
+      /> -->
 
       <unnnic-tool-tip enabled text="Limpar filtro" side="right">
         <unnnic-button-icon
