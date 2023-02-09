@@ -7,9 +7,9 @@
 
     <section class="table-metrics__table">
       <header class="headers table-row">
-        <span v-for="header in headers" :key="header.value" class="header table-col">{{
-          header.text
-        }}</span>
+        <span v-for="header in headers" :key="header.value" class="header table-col">
+          {{ header.text }}
+        </span>
       </header>
 
       <section class="items">
