@@ -4,7 +4,7 @@ import { getProject } from '@/utils/config';
 export default {
   async getAll() {
     const response = await http.get('/room/', {
-      params: { is_active: true, project: getProject() },
+      params: { is_active: true, project: getProject(), limit: 100 },
     });
     return response.data;
   },
