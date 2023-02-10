@@ -178,7 +178,6 @@ export default {
       this.ws.on('rooms.update', (room) => {
         if (!!room.user && room.user.email !== this.me.email) {
           this.handleLocale();
-          this.$router.replace({ name: 'home' });
         }
 
         if (
