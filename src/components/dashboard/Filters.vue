@@ -3,7 +3,7 @@
     <div class="dashboard-filters" style="z-index: 100">
       <unnnic-select
         v-model="filteredSectorUuid"
-        label="Filtar por setor"
+        label="Filtrar por setor ou agentes"
         size="md"
         class="input"
         @input="getSectorTags(filteredSectorUuid), sendFilter('sector', filteredSectorUuid)"
