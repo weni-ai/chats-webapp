@@ -5,7 +5,7 @@
     </section>
 
     <section class="general-dashboard__metrics">
-      <card-group-metrics :metrics="sectors" title="Setores" icon="hierarchy-3-2" />
+      <card-group-metrics :metrics="sectors" :title="headerTitle" icon="hierarchy-3-2" />
       <table-metrics
         :headers="tableHeaders"
         :items="this.agents.project_agents"
@@ -29,6 +29,13 @@ export default {
     CardGroupMetrics,
     GeneralMetrics,
     TableMetrics,
+  },
+
+  props: {
+    headerTitle: {
+      type: String,
+      default: '',
+    },
   },
 
   mounted() {
