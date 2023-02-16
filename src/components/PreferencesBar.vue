@@ -47,6 +47,7 @@
           </div>
         </div>
         <div
+          v-if="this.dashboard"
           style="display: flex; justify-content: center"
           @click="navigate('dashboard.manager')"
           class="button-quick-message"
@@ -89,6 +90,12 @@ export const PREFERENCES_SOUND = 'WENICHATS_PREFERENCES_SOUND';
 // export const PREFERENCES_NILO = 'WENICHATS_PREFERENCES_NILO';
 
 export default {
+  props: {
+    dashboard: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       canCloseOnHeaderClick: false,

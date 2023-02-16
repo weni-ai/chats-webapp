@@ -4,7 +4,7 @@
       <chat-header
         :room="room"
         :closeButtonTooltip="$t('chats.end')"
-        @close="isCloseChatModalOpen = true"
+        @close="openModalCloseChat"
         @show-contact-info="componentInAsideSlot = 'contactInfo'"
       />
       <chat-messages
@@ -89,6 +89,7 @@
     <template #aside>
       <component :is="sidebarComponent.name" v-on="sidebarComponent.listeners" />
     </template>
+    <modal-close-chat v-if="showCloseModal" @close="closeModalCloseChat" :room="room" />
   </chats-layout>
 </template>
 
@@ -103,6 +104,7 @@ import ContactInfo from '@/components/chats/ContactInfo';
 import MessageEditor from '@/components/chats/MessageEditor';
 import ChatClassifier from '@/components/chats/ChatClassifier';
 import QuickMessages from '@/components/chats/QuickMessages';
+import ModalCloseChat from '@/views/chats/ModalCloseChat.vue';
 
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
@@ -118,6 +120,7 @@ export default {
     ChatsLayout,
     MessageEditor,
     ChatClassifier,
+    ModalCloseChat,
   },
 
   props: {
@@ -140,6 +143,7 @@ export default {
     isGetChatConfirmationModalOpen: false,
     isRoomClassifierVisible: false,
     totalValue: undefined,
+    showCloseModal: false,
   }),
 
   computed: {
@@ -270,6 +274,13 @@ export default {
       return new Intl.DateTimeFormat('pt-BR', {
         dateStyle: 'short',
       }).format(new Date());
+    },
+    openModalCloseChat() {
+      this.showCloseModal = true;
+    },
+
+    closeModalCloseChat() {
+      this.showCloseModal = false;
     },
   },
 

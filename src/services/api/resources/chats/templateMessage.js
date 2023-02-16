@@ -32,8 +32,8 @@ export default {
     return response.data;
   },
 
-  async getCanTriggerFlows() {
-    const response = await http.get(`/project/${uuid}/can_trigger_flows`);
+  async listAccess() {
+    const response = await http.get(`/project/${uuid}/list_access`);
     return response.data;
   },
 
