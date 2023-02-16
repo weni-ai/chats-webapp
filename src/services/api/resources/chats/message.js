@@ -3,7 +3,7 @@ import { getProject } from '@/utils/config';
 
 export default {
   async getByRoom(roomId) {
-    const response = await http.get(`/msg/?room=${roomId}&ordering=created_on&limit=100`);
+    const response = await http.get(`/msg/?room=${roomId}&ordering=created_on&limit=1000`);
     return response.data;
   },
 
