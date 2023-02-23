@@ -27,6 +27,7 @@
           @send-audio="sendAudio"
           @upload="sendFileMessage($event)"
           :loadingValue="totalValue"
+          :loading="isLoading"
         />
       </div>
 
@@ -140,6 +141,7 @@ export default {
     isGetChatConfirmationModalOpen: false,
     isRoomClassifierVisible: false,
     totalValue: undefined,
+    isLoading: false,
   }),
 
   computed: {
@@ -218,9 +220,16 @@ export default {
       this.componentInAsideSlot = '';
     },
     async getRoomMessages() {
-      await this.$store.dispatch('rooms/getActiveRoomMessages');
-      this.$nextTick(this.scrollMessagesToBottom);
-      this.isRoomClassifierVisible = false;
+      this.isLoading = true;
+      try {
+        await this.$store.dispatch('rooms/getActiveRoomMessages');
+        this.$nextTick(this.scrollMessagesToBottom);
+        this.isRoomClassifierVisible = false;
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+        console.log(error);
+      }
     },
     async sendFileMessage(files) {
       try {
