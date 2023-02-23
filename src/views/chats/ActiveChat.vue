@@ -225,6 +225,7 @@ export default {
     },
     async getRoomMessages(concat) {
       this.isLoading = true;
+
       try {
         await this.$store.dispatch('rooms/getActiveRoomMessages', {
           offset: this.page * this.limit,
