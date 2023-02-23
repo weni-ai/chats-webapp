@@ -88,6 +88,10 @@ export default {
     loadingValue: {
       type: Number,
     },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data: () => ({
@@ -158,8 +162,12 @@ export default {
       }
     },
     record() {
-      this.recording = true;
-      this.$refs.audioRecorder?.record();
+      if (!this.loading) {
+        this.recording = true;
+        this.$refs.audioRecorder?.record();
+      } else {
+        console.log('Loading');
+      }
     },
     stopRecord() {
       this.recording = false;
