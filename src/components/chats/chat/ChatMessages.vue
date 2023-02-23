@@ -1,6 +1,13 @@
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
-  <section class="chat-messages">
+  <section
+    class="chat-messages"
+    @scroll="
+      (event) => {
+        handleScroll(event.srcElement);
+      }
+    "
+  >
     <section v-for="message in messages" :key="message.uuid" class="chat-messages__room">
       <!-- missing info in API return data -->
       <div v-if="false" class="chat-messages__room__divisor">
@@ -179,6 +186,12 @@ export default {
         return ['queue', 'user'].includes(content.type);
       } catch (error) {
         return false;
+      }
+    },
+
+    handleScroll(target) {
+      if (target.scrollTop === 0) {
+        this.$emit('scrollTop');
       }
     },
     createTransferLabel(message) {

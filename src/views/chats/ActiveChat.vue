@@ -13,6 +13,7 @@
         class="messages"
         @show-contact-info="componentInAsideSlot = 'contactInfo'"
         ref="chatMessages"
+        @scrollTop="searchForMoreMessages"
       />
 
       <div v-if="isMessageEditorVisible && !room.is_waiting" class="message-editor">
@@ -27,6 +28,7 @@
           @send-audio="sendAudio"
           @upload="sendFileMessage($event)"
           :loadingValue="totalValue"
+          :loading="isLoading"
         />
       </div>
 
@@ -140,12 +142,16 @@ export default {
     isGetChatConfirmationModalOpen: false,
     isRoomClassifierVisible: false,
     totalValue: undefined,
+    isLoading: false,
+    page: 0,
+    limit: 20,
   }),
 
   computed: {
     ...mapState({
       room: (state) => state.rooms.activeRoom,
       me: (state) => state.profile.me,
+      hasNext: (state) => state.rooms.hasNext,
     }),
     ...mapGetters('rooms', {
       messages: 'groupedActiveRoomsMessage',
@@ -217,10 +223,28 @@ export default {
       await this.$store.dispatch('rooms/setActiveRoom', room);
       this.componentInAsideSlot = '';
     },
-    async getRoomMessages() {
-      await this.$store.dispatch('rooms/getActiveRoomMessages');
-      this.$nextTick(this.scrollMessagesToBottom);
-      this.isRoomClassifierVisible = false;
+    async getRoomMessages(concat) {
+      this.isLoading = true;
+      try {
+        await this.$store.dispatch('rooms/getActiveRoomMessages', {
+          offset: this.page * this.limit,
+          concat,
+          limit: this.limit,
+        });
+        this.$nextTick(this.scrollMessagesToBottom);
+        this.isRoomClassifierVisible = false;
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+        console.log(error);
+      }
+    },
+
+    searchForMoreMessages() {
+      if (this.hasNext) {
+        this.page += 1;
+        this.getRoomMessages(true);
+      }
     },
     async sendFileMessage(files) {
       try {
