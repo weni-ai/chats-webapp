@@ -67,7 +67,7 @@
     <section class="actions">
       <unnnic-button
         v-if="!!queueToEdit && this.currentTab === 'queues'"
-        text="Excluir"
+        text="Excluir fila"
         icon-left="delete-1"
         type="terciary"
         @click="openModalDeleteQueue(queueToEdit)"
@@ -246,7 +246,7 @@ export default {
       if (this.currentTab === 'queues' && this.queueToEdit) await this.saveQueue();
       if (this.currentTab === 'tags') await this.saveTags();
 
-      // this.$router.push({ name: 'sectors' });
+      this.$router.push({ name: 'sectors' });
     },
 
     async removeManager(managerUuid) {
