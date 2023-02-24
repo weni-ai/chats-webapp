@@ -7,7 +7,7 @@
           title="Chats ativos"
           icon="indicator"
           scheme="aux-blue"
-          :value="this.metrics.active_chats"
+          :value="this.metrics.active_chats || 0"
           :percent="0"
           :inverted-percentage="false"
         />
@@ -89,7 +89,10 @@ export default {
       if (formatado.hour === '00' && formatado.minute === '00') {
         return `${formatado.seconds}s`;
       }
-      return `${hora}h${minuto}min ${segundo}s`;
+      if (hora || minuto || segundo) {
+        return `${hora}h${minuto}min ${segundo}s`;
+      }
+      return 0;
     },
   },
 };
