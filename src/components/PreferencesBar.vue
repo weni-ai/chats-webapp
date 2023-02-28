@@ -129,7 +129,6 @@ export default {
         projectUuid: this.$store.state.config.project,
         status: online ? 'ONLINE' : 'OFFLINE',
       });
-      console.log(connection_status, 'connection_status');
 
       localStorage.setItem('statusAgent', connection_status);
 
