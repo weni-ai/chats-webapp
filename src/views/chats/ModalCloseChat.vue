@@ -1,6 +1,6 @@
 <template>
   <div class="modal">
-    <div class="modal-container">
+    <div class="modal-container unnnic-grid-span-3">
       <div class="modal-container-background">
         <div class="modal-background-color">
           <div class="content">
@@ -13,10 +13,7 @@
             <div class="tags-list">
               <chat-classifier v-model="tags" :tags="sectorTags"> </chat-classifier>
             </div>
-            <div
-              class="button-control"
-              style="display: flex; justify-content: center; width: 100%; padding-bottom: 1.5rem"
-            >
+            <div class="button-control">
               <unnnic-button
                 type="terciary"
                 @click="closeModal"
@@ -58,19 +55,31 @@ export default {
     return {
       tags: [],
       sectorTags: [],
+      page: 0,
+      limit: 20,
     };
   },
   mounted() {
-    console.log(this.room, 'oi');
     this.classifyRoom();
   },
 
   methods: {
     async classifyRoom() {
-      this.isCloseChatModalOpen = false;
-      const response = await Queue.tags(this.room.queue.uuid);
-      this.sectorTags = response.results;
-      console.table(this.sectorTags, 'oi');
+      this.isLoading = true;
+      let hasNext = false;
+      try {
+        const response = await Queue.tags(this.room.queue.uuid, this.page * 20, 20);
+        this.page += 1;
+        // this.sectorTags = response.results;
+        this.sectorTags = this.sectorTags.concat(response.results);
+        hasNext = response.next;
+        this.isLoading = false;
+      } finally {
+        this.isLoading = false;
+      }
+      if (hasNext) {
+        this.classifyRoom();
+      }
     },
     async closeRoom() {
       const { uuid } = this.room;
@@ -142,5 +151,15 @@ export default {
 
 .tags-list {
   min-height: 125px;
+  max-height: 125px;
+  overflow-y: auto;
+}
+
+.button-control {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding-bottom: 1.5rem;
+  padding-top: 1.5rem;
 }
 </style>
