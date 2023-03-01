@@ -24,6 +24,7 @@
       </unnnic-select>
 
       <unnnic-select
+        v-if="filteredSectorUuid"
         v-model="filteredAgent"
         label="Filtrar por agente"
         size="md"
