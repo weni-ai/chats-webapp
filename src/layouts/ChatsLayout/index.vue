@@ -18,6 +18,7 @@
         <preferences-bar
           :style="{ margin: '16px 0 0 0px' }"
           @show-quick-messages="preferencesOpenQuickMessage"
+          :dashboard="canAccessDashboard"
         />
 
         <div class="template-message-button" v-if="canTriggerFlows">
@@ -144,8 +145,10 @@ export default {
     },
     async havePermissionToSendTemplateMessage() {
       try {
-        const response = await TemplateMessages.getCanTriggerFlows();
-        this.canTriggerFlows = response.can_trigger_flows;
+        const response = await TemplateMessages.listAccess();
+        this.accessList = response;
+        this.canTriggerFlows = this.accessList.can_trigger_flows;
+        this.canAccessDashboard = this.accessList.can_access_dashboard;
       } catch (error) {
         console.log(error);
       }
@@ -157,6 +160,7 @@ export default {
     isLoading: false,
     contactList: false,
     canTriggerFlows: false,
+    canAccessDashboard: false,
     showQuickMessage: false,
     openQuickMessage: false,
     teste: false,
