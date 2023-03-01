@@ -71,6 +71,8 @@
 import UserAvatar from '@/components/chats/UserAvatar';
 import MediaMessage from '@/components/chats/MediaMessage';
 
+const moment = require('moment');
+
 export default {
   components: {
     MediaMessage,
@@ -100,7 +102,20 @@ export default {
       return !!this.message.contact;
     },
     sendingTime() {
+      const given = moment(this.message.created_on, 'YYYY-MM-DD');
+      const current = moment().startOf('day');
+      const differece = moment.duration(current.diff(given)).asDays();
+
       const date = new Date(this.message.created_on);
+
+      if (differece >= 1) {
+        const formatter = Intl.DateTimeFormat('pt-BR', {
+          dateStyle: 'short',
+          timeStyle: 'short',
+        });
+        const time = formatter.format(date);
+        return time.replace(':', 'h');
+      }
       const formatter = Intl.DateTimeFormat('pt-BR', {
         timeStyle: 'short',
       });
