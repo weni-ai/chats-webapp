@@ -13,21 +13,17 @@ export default {
     });
     return response.data;
   },
-  // async getByRoom(roomId) {
-  //   const response = await http.get(
-  //     `/msg/?room=${roomId}&ordering=-created_on&reverse_results=true&limit=10`,
-  //   );
-  //   return response.data;
-  // },
 
-  async getByContact(contactUuid, { onlyClosedRooms = true } = {}) {
+  async getByContact(contactUuid, offset, limit, { onlyClosedRooms = true } = {}) {
     const response = await http.get('/msg/', {
       params: {
-        ordering: 'created_on',
+        ordering: '-created_on',
+        reverse_results: true,
         contact: contactUuid,
         project: getProject(),
         is_active: !onlyClosedRooms,
-        limit: 100,
+        offset,
+        limit,
       },
     });
     return response.data;

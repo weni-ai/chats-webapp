@@ -236,7 +236,7 @@ export default {
           concat,
           limit: this.limit,
         });
-        this.$nextTick(this.scrollMessagesToBottom);
+        // this.$nextTick(this.scrollMessagesToBottom);
         this.isRoomClassifierVisible = false;
         this.isLoading = false;
       } catch (error) {

@@ -4,11 +4,17 @@
       <section v-if="!!contact" class="closed-chat">
         <chat-header
           :room="{ ...contact.room, contact }"
-          @close="contact = null"
+          @close="close"
           :closeButtonTooltip="$t('close_view')"
           @show-contact-info="componentInAsideSlot = 'contactInfo'"
         />
-        <chat-messages :room="{ ...contact.room, contact }" :messages="messages" class="messages" />
+        <chat-messages
+          :room="{ ...contact.room, contact }"
+          :messages="messages"
+          class="messages"
+          ref="chatMessages"
+          @scrollTop="searchForMoreMessages"
+        />
       </section>
 
       <section class="closed-chats" v-else>
@@ -182,6 +188,8 @@ export default {
     filteredSectorUuid: '',
     tags: [],
     page: 0,
+    limit: 50,
+    hasNext: false,
   }),
 
   computed: {
@@ -245,20 +253,44 @@ export default {
   },
 
   methods: {
-    async openContactHistory(contact) {
+    async openContactHistory(contact, concat) {
+      const offset = this.page * this.limit;
       try {
         this.isLoading = true;
-        const response = await Message.getByContact(contact.uuid);
-        const messages = response.results;
+        const response = await Message.getByContact(contact.uuid, offset, this.limit);
+        let messages = response.results;
+        this.hasNext = response.next;
+        this.scrollMessagesToBottom();
+        if (concat) {
+          messages = response.results.concat(this.messages);
+        }
         const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
         const groupedMessages = groupSequentialSentMessages(messagesWithSender);
         this.messages = groupedMessages;
         this.contact = contact;
-        // this.componentInAsideSlot = 'contactInfo';
         this.isLoading = false;
-      } catch (error) {
+      } finally {
         this.isLoading = false;
       }
+    },
+
+    searchForMoreMessages() {
+      if (this.isLoading) return;
+      if (this.hasNext) {
+        this.page += 1;
+        this.openContactHistory(this.contact, true);
+      }
+    },
+
+    close() {
+      this.contact = null;
+      this.page = 0;
+      this.limit = 50;
+    },
+
+    scrollMessagesToBottom() {
+      if (!this.$refs.chatMessages) return;
+      this.$refs.chatMessages.$el.scrollTop = 15;
     },
 
     async getContacts() {
@@ -340,6 +372,11 @@ export default {
       };
     },
   },
+  watch: {
+    messages() {
+      this.$nextTick(this.scrollMessagesToBottom);
+    },
+  },
 };
 </script>
 
@@ -361,6 +398,7 @@ export default {
 
   .messages {
     overflow-y: auto;
+    scroll-behavior: smooth;
     padding-right: $unnnic-spacing-inset-sm;
     margin: $unnnic-spacing-inline-sm 0 $unnnic-spacing-inline-sm;
   }
