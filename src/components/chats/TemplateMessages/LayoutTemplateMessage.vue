@@ -3,15 +3,20 @@
   <div class="container">
     <section class="template-messages">
       <div @click="$emit('close')" style="cursor: pointer">
-        <unnnic-icon icon="keyboard-arrow-left-1" /> Selecionar modelo de mensagem
-        <unnnic-tool-tip enabled text="Não definido ainda" side="right">
+        <unnnic-icon icon="keyboard-arrow-left-1" /> Selecionar fluxo
+        <unnnic-tool-tip
+          enabled
+          maxWidth="18rem"
+          text="Os fluxos disponíveis aqui devem ser previamente cadastrados no módulo de fluxos, caso tenha dúvidas converse com seu gerente."
+          side="bottom"
+        >
           <unnnic-icon-svg scheme="neutral-clean" icon="information-circle-4" size="sm" />
         </unnnic-tool-tip>
       </div>
       <div style="padding-left: 12px" v-if="!loadingFlows">
         <unnnic-select
           v-model="flowUuid"
-          label="Selecionar modelo"
+          label="Selecionar fluxo"
           size="md"
           class="input"
           @input="templateMessage(flowUuid)"
