@@ -11,8 +11,15 @@ export default {
     return response.data;
   },
 
-  async list(sectorUuid) {
-    const response = await http.get('/queue/', { params: { sector: sectorUuid } });
+  async list(sectorUuid, offset, limit) {
+    const response = await http.get('/queue/', {
+      params: {
+        sector: sectorUuid,
+        ordering: '-created_on',
+        offset,
+        limit,
+      },
+    });
     return response.data;
   },
 
@@ -41,8 +48,8 @@ export default {
     await http.delete(`/authorization/queue/${agentUuid}`);
   },
 
-  async tags(queueUuid) {
-    const response = await http.get('/tag/', { params: { queue: queueUuid } });
+  async tags(queueUuid, offset, limit) {
+    const response = await http.get('/tag/', { params: { queue: queueUuid, offset, limit } });
     return response.data;
   },
 };

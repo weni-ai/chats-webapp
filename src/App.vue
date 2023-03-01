@@ -42,6 +42,10 @@ export default {
 
   async created() {
     this.handleLocale();
+    const localStorageStatus = localStorage.getItem('statusAgent');
+    if (!localStorageStatus || localStorageStatus === 'None') {
+      localStorage.setItem('statusAgent', 'OFFLINE');
+    }
   },
 
   data() {
