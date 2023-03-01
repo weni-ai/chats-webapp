@@ -168,6 +168,7 @@ export default {
     toAddTags: [],
     toRemoveTags: [],
     selectedQueue: [],
+    page: 0,
   }),
 
   methods: {
@@ -233,8 +234,23 @@ export default {
       this.sector.managers = managers.results.map((manager) => ({ ...manager, removed: false }));
     },
     async getQueues() {
-      const queues = await Queue.list(this.sector.uuid);
-      this.queues = queues.results;
+      this.loading = true;
+      let hasNext = false;
+      try {
+        const queues = await Queue.list(this.sector.uuid, this.page * 10, 10);
+        this.page += 1;
+        // this.queues = queues.results;
+        this.queues = this.queues.concat(queues.results);
+
+        hasNext = queues.next;
+
+        this.loading = false;
+      } finally {
+        this.loading = false;
+      }
+      if (hasNext) {
+        this.getQueues();
+      }
     },
     async getTags() {
       const tags = await Sector.tags(this.sector.uuid);

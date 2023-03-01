@@ -11,8 +11,15 @@ export default {
     return response.data;
   },
 
-  async list(sectorUuid) {
-    const response = await http.get('/queue/', { params: { sector: sectorUuid } });
+  async list(sectorUuid, offset, limit) {
+    const response = await http.get('/queue/', {
+      params: {
+        sector: sectorUuid,
+        ordering: '-created_on',
+        offset,
+        limit,
+      },
+    });
     return response.data;
   },
 
