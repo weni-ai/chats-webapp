@@ -6,7 +6,10 @@
       <dashboard-filters @filter="filters = $event" />
     </template>
     <template>
-      <general-live-metrics v-if="this.filters.type === 'todos'" />
+      <general-live-metrics
+        v-if="this.filters.type === 'todos'"
+        :headerTitle="this.filters.sectorUuid ? 'Filas' : 'Setores'"
+      />
       <!-- <live-metrics-by-agent v-if="visualization.category === 'agent'" /> -->
       <!-- <live-metrics-by-sector v-if="this.filters.type === 'sector'" /> -->
     </template>
@@ -16,7 +19,8 @@
       <history-metrics-by-sector
         v-if="this.filters.type === 'sector'"
         :filter="this.filters"
-        @historyFilter="atencao = $event"
+        @historyFilter="event = $event"
+        :headerTitle="this.filters.sectorUuid ? 'Filas' : 'Setores'"
       />
     </template>
   </dashboard-layout>

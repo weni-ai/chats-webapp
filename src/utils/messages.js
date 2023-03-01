@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 export function parseMessageToMessageWithSenderProp(message) {
   const sender = message.contact || message.user;
   if (!sender) return message;
@@ -21,8 +23,15 @@ export function groupSequentialSentMessages(messages) {
       acc.push(message);
       return acc;
     }
+    const getDifference = moment(message?.created_on).diff(moment(acc.at(-1)?.created_on));
+    const hours = moment.duration(getDifference).asHours();
+    const minutes = hours * 60;
 
-    if (acc.at(-1)?.sender?.uuid !== message.sender.uuid) {
+    const pastOneMinute = minutes > 1;
+
+    const verifyIdUsere = acc.at(-1)?.sender?.uuid !== message.sender.uuid;
+
+    if (verifyIdUsere || pastOneMinute) {
       const m = {
         ...message,
         content: [{ ...message }],
@@ -30,7 +39,6 @@ export function groupSequentialSentMessages(messages) {
       acc.push(m);
       return acc;
     }
-
     acc[acc.length - 1].content.push({ ...message });
     return acc;
   }, []);

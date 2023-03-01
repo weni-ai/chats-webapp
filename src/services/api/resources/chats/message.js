@@ -2,19 +2,28 @@ import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 
 export default {
-  async getByRoom(roomId) {
-    const response = await http.get(`/msg/?room=${roomId}&ordering=created_on&limit=1000`);
+  async getByRoom(roomId, offset, limit) {
+    const response = await http.get(`/msg/?room=${roomId}`, {
+      params: {
+        ordering: '-created_on',
+        reverse_results: true,
+        offset,
+        limit,
+      },
+    });
     return response.data;
   },
 
-  async getByContact(contactUuid, { onlyClosedRooms = true } = {}) {
+  async getByContact(contactUuid, offset, limit, { onlyClosedRooms = true } = {}) {
     const response = await http.get('/msg/', {
       params: {
-        ordering: 'created_on',
+        ordering: '-created_on',
+        reverse_results: true,
         contact: contactUuid,
         project: getProject(),
         is_active: !onlyClosedRooms,
-        limit: 100,
+        offset,
+        limit,
       },
     });
     return response.data;

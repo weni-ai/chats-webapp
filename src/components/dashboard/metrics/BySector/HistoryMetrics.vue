@@ -5,7 +5,7 @@
     </section>
 
     <section class="history-sector-metrics__metrics">
-      <card-group-metrics :metrics="sectors" title="Filas" icon="hierarchy-3-2" />
+      <card-group-metrics :metrics="sectors" :title="headerTitle" icon="hierarchy-3-2" />
       <table-metrics
         :headers="tableHeaders"
         :items="this.agents.project_agents"
@@ -41,6 +41,10 @@ export default {
     filter: {
       type: Object,
       default: () => {},
+    },
+    headerTitle: {
+      type: String,
+      default: '',
     },
   },
 
@@ -87,6 +91,7 @@ export default {
       try {
         this.agents = await DashboardManagerApi.getAgentInfo(
           this.filter.sectorUuid,
+          this.filter.agent,
           this.nameTag,
           this.filter.start,
           this.filter.end,
@@ -106,6 +111,7 @@ export default {
       try {
         this.generalMetrics = await DashboardManagerApi.getRoomInfo(
           this.filter.sectorUuid,
+          this.filter.agent,
           this.nameTag,
           this.filter.start,
           this.filter.end,
@@ -125,6 +131,7 @@ export default {
       try {
         this.sectors = await DashboardManagerApi.getSectorInfo(
           this.filter.sectorUuid,
+          this.filter.agent,
           this.nameTag,
           this.filter.start,
           this.filter.end,

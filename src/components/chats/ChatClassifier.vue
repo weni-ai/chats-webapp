@@ -66,7 +66,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  border-top: solid 1px $unnnic-color-neutral-clean;
+  // border-top: solid 1px $unnnic-color-neutral-clean;
   padding: $unnnic-spacing-inset-md;
 
   .content {

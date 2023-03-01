@@ -36,7 +36,7 @@
         :key="agent.uuid"
         :name="agent.user.first_name + ' ' + agent.user.last_name"
         :email="agent.user.email"
-        :avatar-url="agent.user.photo_url"
+        :avatar-url="photo(agent.user.photo_url)"
         @remove="remove(agent.uuid)"
         role-name="Agente"
       />
@@ -125,6 +125,13 @@ export default {
     },
     validate() {
       return this.selectedAgents.length > 0;
+    },
+    photo(link) {
+      if (![null, undefined, ''].includes(link)) {
+        const getOnlyPhoto = link.split('?')[0];
+        return getOnlyPhoto;
+      }
+      return link;
     },
   },
 

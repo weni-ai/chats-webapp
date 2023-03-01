@@ -10,6 +10,7 @@ const mutations = {
   SET_ACTIVE_ROOM_MESSAGES: 'SET_ACTIVE_ROOM_MESSAGES',
   ADD_MESSAGE: 'ADD_MESSAGE',
   UPDATE_MESSAGE: 'UPDATE_MESSAGE',
+  SET_ACTIVE_ROOM_HAS_NEXT: 'SET_ACTIVE_ROOM_HAS_NEXT',
 };
 
 export default {
@@ -19,6 +20,7 @@ export default {
     activeRoom: null,
     activeRoomMessages: [],
     newMessagesByRoom: {},
+    hasNext: true,
   },
 
   mutations: {
@@ -33,6 +35,9 @@ export default {
     },
     [mutations.SET_ACTIVE_ROOM_MESSAGES](state, messages) {
       state.activeRoomMessages = messages;
+    },
+    [mutations.SET_ACTIVE_ROOM_HAS_NEXT](state, hasNext) {
+      state.hasNext = hasNext;
     },
     [mutations.ADD_MESSAGE](state, message) {
       if (message.room !== state.activeRoom.uuid) return;
@@ -63,14 +68,20 @@ export default {
     addRoom({ commit }, room) {
       commit(mutations.ADD_ROOM, room);
     },
-    async getActiveRoomMessages({ commit, state }) {
+    async getActiveRoomMessages({ commit, state }, { offset, concat, limit }) {
       const { activeRoom } = state;
       if (!activeRoom) return;
-      const response = await Message.getByRoom(activeRoom.uuid);
-      const messages = response.results;
+      const response = await Message.getByRoom(activeRoom.uuid, offset, limit);
+      let messages = response.results;
+      const hasNext = response.next;
+      if (concat) {
+        messages = response.results.concat(state.activeRoomMessages);
+      }
       const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
       commit(mutations.SET_ACTIVE_ROOM_MESSAGES, messagesWithSender);
+      commit(mutations.SET_ACTIVE_ROOM_HAS_NEXT, hasNext);
     },
+
     async sendMessage({ state, commit }, text) {
       const { activeRoom } = state;
       if (!activeRoom) return;
