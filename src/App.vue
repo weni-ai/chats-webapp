@@ -42,6 +42,7 @@ export default {
 
   async created() {
     this.handleLocale();
+    setInterval(this.intervalPing, this.timerPing);
     const localStorageStatus = localStorage.getItem('statusAgent');
     if (!localStorageStatus || localStorageStatus === 'None') {
       localStorage.setItem('statusAgent', 'OFFLINE');
@@ -51,6 +52,7 @@ export default {
   data() {
     return {
       ws: null,
+      timerPing: 15000,
     };
   },
 
@@ -213,6 +215,7 @@ export default {
         }
       });
     },
+
     async updateStatus(localStorageStatus) {
       const {
         data: { connection_status },
@@ -222,6 +225,12 @@ export default {
       });
       this.$store.state.config.status = connection_status;
       localStorage.setItem('statusAgent', connection_status);
+    },
+
+    intervalPing() {
+      this.ws.send({
+        type: 'ping',
+      });
     },
   },
 };
