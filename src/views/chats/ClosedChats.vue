@@ -118,6 +118,9 @@
         <div v-if="isLoading" class="weni-redirecting">
           <img class="logo" src="@/assets/LogoWeniAnimada4.svg" alt="" />
         </div>
+        <div>
+          <unnnic-pagination v-model="currentPage" :max="totalCount" :show="5" />
+        </div>
       </section>
     </section>
     <template #aside>
@@ -189,6 +192,7 @@ export default {
     tags: [],
     page: 0,
     pageHistory: 0,
+    totalCount: 0,
     limit: 50,
     hasNext: false,
   }),
@@ -296,19 +300,36 @@ export default {
 
     async getContacts() {
       this.isLoading = true;
-      let hasNext = false;
       try {
-        const response = await Contact.getAllWithClosedRooms(this.pageHistory * 10, 10);
-        this.pageHistory += 1;
+        const response = await Contact.getAllWithClosedRooms(this.pageHistory * 1, 1);
+        this.totalCount = response.count;
+        // this.pageHistory += 1;
         this.contacts = this.contacts.concat(response.results);
 
-        hasNext = response.next;
+        this.hasNextpage = response.next;
+        console.log(this.hasNextpage, 'oi');
       } finally {
         this.isLoading = false;
       }
-      if (hasNext) {
-        this.getContacts();
+      // if (hasNext) {
+      //   this.getContacts();
+      // }
+    },
+
+    next() {
+      this.currentPage = (this.currentPage + 1) % this.pageHistory;
+    },
+
+    previous() {
+      this.currentPage -= 1;
+
+      if (this.currentPage < 0) {
+        this.currentPage = this.pageHistory - 1;
       }
+    },
+
+    goToSpecificPage(page) {
+      this.currentPage = page;
     },
 
     async getSectorTags(sectorUuid) {
