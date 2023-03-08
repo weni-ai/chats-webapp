@@ -188,6 +188,7 @@ export default {
     filteredSectorUuid: '',
     tags: [],
     page: 0,
+    pageHistory: 0,
     limit: 50,
     hasNext: false,
   }),
@@ -297,8 +298,8 @@ export default {
       this.isLoading = true;
       let hasNext = false;
       try {
-        const response = await Contact.getAllWithClosedRooms(this.page * 10, 10);
-        this.page += 1;
+        const response = await Contact.getAllWithClosedRooms(this.pageHistory * 10, 10);
+        this.pageHistory += 1;
         this.contacts = this.contacts.concat(response.results);
 
         hasNext = response.next;
