@@ -119,7 +119,9 @@
           <img class="logo" src="@/assets/LogoWeniAnimada4.svg" alt="" />
         </div>
         <div style="display: flex; align-items: center; justify-content: space-between">
-          <div>{{ this.showing }} - {{ this.sumTotal }} de {{ count }}</div>
+          <div class="count-values">
+            {{ this.showing }} - {{ this.totalShowing }} de {{ count }}
+          </div>
           <unnnic-pagination v-model="currentPage" :max="numberOfPages" :show="5" />
         </div>
       </section>
@@ -199,6 +201,8 @@ export default {
     hasNext: false,
     currentPage: 1,
     total: [],
+    totalShowing: 0,
+    showing: 0,
   }),
 
   computed: {
@@ -304,28 +308,34 @@ export default {
 
     async getContacts() {
       this.isLoading = true;
-      this.offset = (this.currentPage - 1) * 3;
-      this.limit = 3;
+      this.offset = (this.currentPage - 1) * 6;
+      this.limit = 6;
       try {
         const response = await Contact.getAllWithClosedRooms(this.offset, this.limit);
-        this.numberOfPages = Math.ceil(response.count / 3);
+        this.numberOfPages = Math.ceil(response.count / 6);
         this.count = response.count;
         this.contacts = response.results;
-        this.total = this.total.concat(response.results);
-        this.sumTotal = this.total.length;
-        if (response.next) {
-          this.countTotal(this.offset, this.limit);
+        if (!response.next) {
+          this.countTotal(this.offset, this.count);
+        } else {
+          this.countTotal(this.offset, this.contacts.length);
         }
-        this.showing = this.offset;
-        console.log(this.totalShowing);
       } finally {
         this.isLoading = false;
       }
     },
 
     countTotal(offset, limit) {
-      console.log(offset, 'offset');
-      console.log(limit, 'offset');
+      if (limit > this.count) {
+        this.totalShowing = 6;
+      } else {
+        this.totalShowing = limit;
+      }
+      if (offset === 0) {
+        this.showing = 1;
+      } else {
+        this.showing = offset;
+      }
     },
 
     async getSectorTags(sectorUuid) {
@@ -423,6 +433,12 @@ export default {
     padding-right: $unnnic-spacing-inset-sm;
     margin: $unnnic-spacing-inline-sm 0 $unnnic-spacing-inline-sm;
   }
+}
+
+.count-values {
+  color: $unnnic-color-neutral-dark;
+  size: $unnnic-font-size-body-md;
+  font-weight: 400;
 }
 
 .closed-chats {

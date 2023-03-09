@@ -6,6 +6,7 @@ export default {
     const response = await http.get('/contact/', {
       params: {
         project: getProject(),
+        ordering: 'created_on',
         offset,
         limit,
       },
