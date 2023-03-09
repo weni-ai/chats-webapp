@@ -17,6 +17,7 @@ export class Socket {
   #createOnMessageListener() {
     this.#ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      if (!data.content) return;
       const { action } = data;
       const content = JSON.parse(data.content);
 
