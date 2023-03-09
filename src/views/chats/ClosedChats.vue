@@ -118,8 +118,9 @@
         <div v-if="isLoading" class="weni-redirecting">
           <img class="logo" src="@/assets/LogoWeniAnimada4.svg" alt="" />
         </div>
-        <div>
-          <unnnic-pagination v-model="currentPage" :max="totalCount" :show="5" />
+        <div style="display: flex; align-items: center; justify-content: space-between">
+          <div>{{ this.showing }} - {{ this.sumTotal }} de {{ count }}</div>
+          <unnnic-pagination v-model="currentPage" :max="numberOfPages" :show="5" />
         </div>
       </section>
     </section>
@@ -192,9 +193,12 @@ export default {
     tags: [],
     page: 0,
     pageHistory: 0,
-    totalCount: 0,
+    numberOfPages: 0,
+    count: 1,
     limit: 50,
     hasNext: false,
+    currentPage: 1,
+    total: [],
   }),
 
   computed: {
@@ -300,36 +304,28 @@ export default {
 
     async getContacts() {
       this.isLoading = true;
+      this.offset = (this.currentPage - 1) * 3;
+      this.limit = 3;
       try {
-        const response = await Contact.getAllWithClosedRooms(this.pageHistory * 1, 1);
-        this.totalCount = response.count;
-        // this.pageHistory += 1;
-        this.contacts = this.contacts.concat(response.results);
-
-        this.hasNextpage = response.next;
-        console.log(this.hasNextpage, 'oi');
+        const response = await Contact.getAllWithClosedRooms(this.offset, this.limit);
+        this.numberOfPages = Math.ceil(response.count / 3);
+        this.count = response.count;
+        this.contacts = response.results;
+        this.total = this.total.concat(response.results);
+        this.sumTotal = this.total.length;
+        if (response.next) {
+          this.countTotal(this.offset, this.limit);
+        }
+        this.showing = this.offset;
+        console.log(this.totalShowing);
       } finally {
         this.isLoading = false;
       }
-      // if (hasNext) {
-      //   this.getContacts();
-      // }
     },
 
-    next() {
-      this.currentPage = (this.currentPage + 1) % this.pageHistory;
-    },
-
-    previous() {
-      this.currentPage -= 1;
-
-      if (this.currentPage < 0) {
-        this.currentPage = this.pageHistory - 1;
-      }
-    },
-
-    goToSpecificPage(page) {
-      this.currentPage = page;
+    countTotal(offset, limit) {
+      console.log(offset, 'offset');
+      console.log(limit, 'offset');
     },
 
     async getSectorTags(sectorUuid) {
@@ -397,6 +393,9 @@ export default {
   watch: {
     messages() {
       this.$nextTick(this.scrollMessagesToBottom);
+    },
+    currentPage() {
+      this.getContacts();
     },
   },
 };
