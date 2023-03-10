@@ -82,7 +82,6 @@ export default {
 
   methods: {
     async agentInfo() {
-      console.log(this.filter, 'oi');
       const temTag = ![null, undefined, ''].includes(this.filter.tag);
       if (temTag) {
         this.nameTag = this.filter.tag.map((el) => el.text).toString();
@@ -114,8 +113,8 @@ export default {
           this.filter.sectorUuid,
           this.filter.agent,
           this.nameTag,
-          this.filter.start,
-          this.filter.end,
+          this.filter.filteredDateRange.start,
+          this.filter.filteredDateRange.end,
         );
       } catch (error) {
         console.log(error);
@@ -134,8 +133,8 @@ export default {
           this.filter.sectorUuid,
           this.filter.agent,
           this.nameTag,
-          this.filter.start,
-          this.filter.end,
+          this.filter.filteredDateRange.start,
+          this.filter.filteredDateRange.end,
         );
       } catch (error) {
         console.log(error);
