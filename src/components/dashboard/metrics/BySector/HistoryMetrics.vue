@@ -93,8 +93,8 @@ export default {
           this.filter.sectorUuid,
           this.filter.agent,
           this.nameTag,
-          this.filter.start,
-          this.filter.end,
+          this.filter.filteredDateRange.start,
+          this.filter.filteredDateRange.end,
         );
       } catch (error) {
         console.log(error);
@@ -113,8 +113,8 @@ export default {
           this.filter.sectorUuid,
           this.filter.agent,
           this.nameTag,
-          this.filter.start,
-          this.filter.end,
+          this.filter.filteredDateRange.start,
+          this.filter.filteredDateRange.end,
         );
       } catch (error) {
         console.log(error);
@@ -133,8 +133,8 @@ export default {
           this.filter.sectorUuid,
           this.filter.agent,
           this.nameTag,
-          this.filter.start,
-          this.filter.end,
+          this.filter.filteredDateRange.start,
+          this.filter.filteredDateRange.end,
         );
       } catch (error) {
         console.log(error);
