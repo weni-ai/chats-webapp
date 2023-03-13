@@ -51,14 +51,17 @@
         @input="sendFilter('sector', filteredSectorUuid, filteredAgent, selecteds)"
       />
 
-      <!-- <unnnic-input-date-picker
+      <unnnic-input-date-picker
         style="min-width: 15px"
         v-model="filteredDateRange"
         size="md"
         class="input"
         :input-format="$t('date_format')"
         position="right"
-      /> -->
+        :submit="
+          sendFilter('sector', filteredSectorUuid, filteredAgent, selecteds, filteredDateRange)
+        "
+      />
 
       <unnnic-tool-tip enabled text="Limpar filtro" side="right">
         <unnnic-button-icon
@@ -118,13 +121,13 @@ export default {
   }),
 
   methods: {
-    sendFilter(type, filteredSectorUuid, agent, tag) {
+    sendFilter(type, filteredSectorUuid, agent, tag, filteredDateRange) {
       const filter = {
         type,
         sectorUuid: filteredSectorUuid,
         tag,
         agent,
-        date: this.filteredDateRange,
+        filteredDateRange,
       };
       this.$emit('filter', filter);
     },
