@@ -31,7 +31,17 @@
         </header>
 
         <section class="filters unnnic-grid-giant" style="padding: 0">
-          <div class="unnnic-grid-span-3" v-if="sectors.length !== 1">
+          <div class="unnnic-grid-span-2">
+            <unnnic-input
+              label="Buscar contato"
+              v-model="nameOfContact"
+              @input="getContacts(nameOfContact)"
+              icon-left="search-1"
+              size="md"
+              placeholder="Pesquisar contato"
+            ></unnnic-input>
+          </div>
+          <div class="unnnic-grid-span-2" v-if="sectors.length !== 1">
             <unnnic-select
               v-model="filteredSectorUuid"
               label="Setor"
@@ -50,7 +60,7 @@
               </option>
             </unnnic-select>
           </div>
-          <div class="unnnic-grid-span-3">
+          <div class="unnnic-grid-span-2">
             <div style="padding-top: 38px"></div>
             <unnnic-autocomplete-select
               v-model="selecteds"
@@ -59,7 +69,7 @@
               :disabled="!this.filteredSectorUuid && sectors.length !== 1"
             />
           </div>
-          <div class="unnnic-grid-span-3">
+          <div class="unnnic-grid-span-2">
             <div style="padding-top: 38px"></div>
             <unnnic-input-date-picker
               v-model="filteredDateRange"
@@ -203,6 +213,7 @@ export default {
     total: [],
     totalShowing: 0,
     showing: 0,
+    nameOfContact: '',
   }),
 
   computed: {
@@ -311,7 +322,11 @@ export default {
       this.offset = (this.currentPage - 1) * 6;
       this.limit = 6;
       try {
-        const response = await Contact.getAllWithClosedRooms(this.offset, this.limit);
+        const response = await Contact.getAllWithClosedRooms(
+          this.offset,
+          this.limit,
+          this.nameOfContact,
+        );
         this.numberOfPages = Math.ceil(response.count / 6);
         this.count = response.count;
         this.contacts = response.results;
