@@ -41,7 +41,9 @@
       >
     </section>
     <div class="header-info-message" style="display: flex" v-if="alert">
-      <span class="alert-text">{{ $t('alert_last_message_date.message') }}</span>
+      <span class="alert-text" style="margin-right: 4px">{{
+        $t('alert_last_message_date.message')
+      }}</span>
       <unnnic-tool-tip
         enabled
         :text="$t('alert_last_message_date.tip')"
