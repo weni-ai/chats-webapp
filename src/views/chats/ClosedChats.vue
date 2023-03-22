@@ -194,8 +194,8 @@ export default {
     messageInputTags: 'Filtrar por tags',
     isLoading: false,
     filteredDateRange: {
-      start: moment(new Date()).startOf('month').format('YYYY-MM-DD'),
-      end: moment(new Date()).endOf('month').format('YYYY-MM-DD'),
+      // start: moment(new Date()).startOf('month').format('YYYY-MM-DD'),
+      // end: moment(new Date()).endOf('month').format('YYYY-MM-DD'),
     },
     sectorTags: [],
     selecteds: [],
