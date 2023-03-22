@@ -40,6 +40,12 @@
         >Contato na fila {{ room.queue.name }} {{ moment(room?.created_on).fromNow() }}</span
       >
     </section>
+    <div class="header-info-message" style="display: flex" v-if="alert">
+      <span class="alert-text">{{ $t('alert_last_message_date.message') }}</span>
+      <unnnic-tool-tip enabled :text="$t('alert_last_message_date.tip')" side="bottom">
+        <unnnic-icon-svg icon="information-circle-4" scheme="neutral-cloudy" size="sm" />
+      </unnnic-tool-tip>
+    </div>
   </div>
 </template>
 
@@ -68,7 +74,12 @@ export default {
       type: Boolean,
       default: false,
     },
+    alert: {
+      type: Boolean,
+      default: false,
+    },
   },
+
   methods: {
     moment,
     showContactInfo() {
@@ -115,6 +126,10 @@ export default {
     font-size: $unnnic-font-size-body-gt;
     font-weight: $unnnic-font-weight-regular;
     line-height: 22px;
+  }
+  .alert-text {
+    color: $unnnic-color-neutral-cloudy;
+    font-size: 0.87rem;
   }
 }
 </style>

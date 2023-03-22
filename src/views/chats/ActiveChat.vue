@@ -6,6 +6,7 @@
         :closeButtonTooltip="$t('chats.end')"
         @close="openModalCloseChat"
         @show-contact-info="componentInAsideSlot = 'contactInfo'"
+        :alert="showAlertForLastMessage"
       />
       <chat-messages
         :room="room"
@@ -16,7 +17,10 @@
         @scrollTop="searchForMoreMessages"
       />
 
-      <div v-if="isMessageEditorVisible && !room.is_waiting" class="message-editor">
+      <div
+        v-if="isMessageEditorVisible && !room.is_waiting && !showAlertForLastMessage"
+        class="message-editor"
+      >
         <message-editor
           ref="message-editor"
           v-model="editorMessage"
@@ -111,6 +115,8 @@ import ModalCloseChat from '@/views/chats/ModalCloseChat.vue';
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
 
+const moment = require('moment');
+
 export default {
   name: 'ActiveChat',
 
@@ -149,6 +155,7 @@ export default {
     page: 0,
     limit: 20,
     showCloseModal: false,
+    showAlertForLastMessage: false,
   }),
 
   computed: {
@@ -225,6 +232,7 @@ export default {
       const room = this.$store.getters['rooms/getRoomById'](uuid);
       if (!room) this.$router.push({ name: 'home' });
       await this.$store.dispatch('rooms/setActiveRoom', room);
+      this.dateOfLastMessage();
       this.componentInAsideSlot = '';
     },
     async getRoomMessages(concat) {
@@ -306,6 +314,19 @@ export default {
 
     closeModalCloseChat() {
       this.showCloseModal = false;
+    },
+
+    dateOfLastMessage() {
+      const given = moment(this.room.modified_on, 'YYYY-MM-DD');
+      // const given = moment('2023-03-20', 'YYYY-MM-DD');
+      const current = moment().startOf('day');
+      const difference = moment.duration(current.diff(given)).asDays();
+      if (difference >= 1) {
+        this.showAlertForLastMessage = true;
+      } else {
+        this.showAlertForLastMessage = false;
+      }
+      console.log(this.showAlertForLastMessage, 'showAlertForLastMessage');
     },
   },
 
