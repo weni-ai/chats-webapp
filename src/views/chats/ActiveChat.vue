@@ -115,8 +115,6 @@ import ModalCloseChat from '@/views/chats/ModalCloseChat.vue';
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
 
-const moment = require('moment');
-
 export default {
   name: 'ActiveChat',
 
@@ -232,7 +230,6 @@ export default {
       const room = this.$store.getters['rooms/getRoomById'](uuid);
       if (!room) this.$router.push({ name: 'home' });
       await this.$store.dispatch('rooms/setActiveRoom', room);
-      this.dateOfLastMessage();
       this.componentInAsideSlot = '';
     },
     async getRoomMessages(concat) {
@@ -247,6 +244,7 @@ export default {
         // this.$nextTick(this.scrollMessagesToBottom);
         this.isRoomClassifierVisible = false;
         this.isLoading = false;
+        this.dateOfLastMessage();
       } catch (error) {
         this.isLoading = false;
         console.log(error);
@@ -317,16 +315,11 @@ export default {
     },
 
     dateOfLastMessage() {
-      const given = moment(this.room.modified_on, 'YYYY-MM-DD');
-      // const given = moment('2023-03-20', 'YYYY-MM-DD');
-      const current = moment().startOf('day');
-      const difference = moment.duration(current.diff(given)).asDays();
-      if (difference >= 1) {
+      if (!this.room.is_24h_valid) {
         this.showAlertForLastMessage = true;
       } else {
         this.showAlertForLastMessage = false;
       }
-      console.log(this.showAlertForLastMessage, 'showAlertForLastMessage');
     },
   },
 
