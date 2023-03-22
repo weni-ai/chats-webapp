@@ -161,6 +161,7 @@ export default {
       room: (state) => state.rooms.activeRoom,
       me: (state) => state.profile.me,
       hasNext: (state) => state.rooms.hasNext,
+      listRoomHasNext: (state) => state.rooms.listRoomHasNext,
     }),
     ...mapGetters('rooms', {
       messages: 'groupedActiveRoomsMessage',
