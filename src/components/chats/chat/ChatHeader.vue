@@ -42,7 +42,12 @@
     </section>
     <div class="header-info-message" style="display: flex" v-if="alert">
       <span class="alert-text">{{ $t('alert_last_message_date.message') }}</span>
-      <unnnic-tool-tip enabled :text="$t('alert_last_message_date.tip')" side="bottom">
+      <unnnic-tool-tip
+        enabled
+        :text="$t('alert_last_message_date.tip')"
+        side="bottom"
+        maxWidth="20rem"
+      >
         <unnnic-icon-svg icon="information-circle-4" scheme="neutral-cloudy" size="sm" />
       </unnnic-tool-tip>
     </div>
