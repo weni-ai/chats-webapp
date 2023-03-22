@@ -1,6 +1,13 @@
 <template>
   <div class="container">
-    <section class="chat-groups">
+    <section
+      class="chat-groups"
+      @scroll="
+        (event) => {
+          handleScroll(event.srcElement);
+        }
+      "
+    >
       <room-group v-if="queue.length" :label="$t('line')" :rooms="queue" filled @open="open" />
       <room-group
         v-if="wating.length"
@@ -31,7 +38,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 
 import RoomGroup from './RoomGroup';
 
@@ -48,13 +55,13 @@ export default {
       default: false,
     },
   },
+  data: () => ({
+    page: 0,
+    limit: 100,
+  }),
 
   async mounted() {
-    try {
-      await this.$store.dispatch('rooms/getAll');
-    } catch {
-      console.error('Não foi possível listar as salas');
-    }
+    this.listRoom();
   },
 
   computed: {
@@ -62,6 +69,10 @@ export default {
       rooms: 'rooms/agentRooms',
       queue: 'rooms/waitingQueue',
       wating: 'rooms/waitingContactAnswer',
+    }),
+    ...mapState({
+      hasNext: (state) => state.rooms.hasNext,
+      listRoomHasNext: (state) => state.rooms.listRoomHasNext,
     }),
     isHistoryView() {
       return this.$route.name === 'rooms.closed';
@@ -100,6 +111,29 @@ export default {
       if (this.$route.path === path) return;
 
       this.$router.replace(path);
+    },
+
+    async listRoom(concat) {
+      try {
+        await this.$store.dispatch('rooms/getAll', {
+          offset: this.page * this.limit,
+          concat,
+          limit: this.limit,
+        });
+      } catch {
+        console.error('Não foi possível listar as salas');
+      }
+    },
+    searchForMoreRooms() {
+      if (this.listRoomHasNext) {
+        this.page += 1;
+        this.listRoom(true);
+      }
+    },
+    handleScroll(target) {
+      if (target.offsetHeight + Math.ceil(target.scrollTop) >= target.scrollHeight) {
+        this.searchForMoreRooms(true);
+      }
     },
   },
 };

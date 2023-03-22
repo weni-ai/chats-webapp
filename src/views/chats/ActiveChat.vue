@@ -6,6 +6,7 @@
         :closeButtonTooltip="$t('chats.end')"
         @close="openModalCloseChat"
         @show-contact-info="componentInAsideSlot = 'contactInfo'"
+        :alert="showAlertForLastMessage"
       />
       <chat-messages
         :room="room"
@@ -16,7 +17,10 @@
         @scrollTop="searchForMoreMessages"
       />
 
-      <div v-if="isMessageEditorVisible && !room.is_waiting" class="message-editor">
+      <div
+        v-if="isMessageEditorVisible && !room.is_waiting && !showAlertForLastMessage"
+        class="message-editor"
+      >
         <message-editor
           ref="message-editor"
           v-model="editorMessage"
@@ -149,6 +153,7 @@ export default {
     page: 0,
     limit: 20,
     showCloseModal: false,
+    showAlertForLastMessage: false,
   }),
 
   computed: {
@@ -156,6 +161,7 @@ export default {
       room: (state) => state.rooms.activeRoom,
       me: (state) => state.profile.me,
       hasNext: (state) => state.rooms.hasNext,
+      listRoomHasNext: (state) => state.rooms.listRoomHasNext,
     }),
     ...mapGetters('rooms', {
       messages: 'groupedActiveRoomsMessage',
@@ -239,6 +245,7 @@ export default {
         // this.$nextTick(this.scrollMessagesToBottom);
         this.isRoomClassifierVisible = false;
         this.isLoading = false;
+        this.dateOfLastMessage();
       } catch (error) {
         this.isLoading = false;
         console.log(error);
@@ -306,6 +313,14 @@ export default {
 
     closeModalCloseChat() {
       this.showCloseModal = false;
+    },
+
+    dateOfLastMessage() {
+      if (!this.room.is_24h_valid) {
+        this.showAlertForLastMessage = true;
+      } else {
+        this.showAlertForLastMessage = false;
+      }
     },
   },
 

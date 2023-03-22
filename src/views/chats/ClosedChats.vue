@@ -31,7 +31,17 @@
         </header>
 
         <section class="filters unnnic-grid-giant" style="padding: 0">
-          <div class="unnnic-grid-span-3" v-if="sectors.length !== 1">
+          <div class="unnnic-grid-span-2">
+            <unnnic-input
+              label="Buscar contato"
+              v-model="nameOfContact"
+              @input="getContacts(nameOfContact)"
+              icon-left="search-1"
+              size="md"
+              placeholder="Pesquisar contato"
+            ></unnnic-input>
+          </div>
+          <div class="unnnic-grid-span-2" v-if="sectors.length !== 1">
             <unnnic-select
               v-model="filteredSectorUuid"
               label="Setor"
@@ -50,7 +60,7 @@
               </option>
             </unnnic-select>
           </div>
-          <div class="unnnic-grid-span-3">
+          <div class="unnnic-grid-span-2">
             <div style="padding-top: 38px"></div>
             <unnnic-autocomplete-select
               v-model="selecteds"
@@ -59,7 +69,7 @@
               :disabled="!this.filteredSectorUuid && sectors.length !== 1"
             />
           </div>
-          <div class="unnnic-grid-span-3">
+          <div class="unnnic-grid-span-2">
             <div style="padding-top: 38px"></div>
             <unnnic-input-date-picker
               v-model="filteredDateRange"
@@ -117,6 +127,12 @@
         </unnnic-table>
         <div v-if="isLoading" class="weni-redirecting">
           <img class="logo" src="@/assets/LogoWeniAnimada4.svg" alt="" />
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between">
+          <div class="count-values">
+            {{ this.showing }} - {{ this.totalShowing }} de {{ count }}
+          </div>
+          <unnnic-pagination v-model="currentPage" :max="numberOfPages" :show="5" />
         </div>
       </section>
     </section>
@@ -189,8 +205,15 @@ export default {
     tags: [],
     page: 0,
     pageHistory: 0,
+    numberOfPages: 0,
+    count: 1,
     limit: 50,
     hasNext: false,
+    currentPage: 1,
+    total: [],
+    totalShowing: 0,
+    showing: 0,
+    nameOfContact: '',
   }),
 
   computed: {
@@ -296,18 +319,37 @@ export default {
 
     async getContacts() {
       this.isLoading = true;
-      let hasNext = false;
+      this.offset = (this.currentPage - 1) * 6;
+      this.limit = 6;
       try {
-        const response = await Contact.getAllWithClosedRooms(this.pageHistory * 10, 10);
-        this.pageHistory += 1;
-        this.contacts = this.contacts.concat(response.results);
-
-        hasNext = response.next;
+        const response = await Contact.getAllWithClosedRooms(
+          this.offset,
+          this.limit,
+          this.nameOfContact,
+        );
+        this.numberOfPages = Math.ceil(response.count / 6);
+        this.count = response.count;
+        this.contacts = response.results;
+        if (!response.next) {
+          this.countTotal(this.offset, this.count);
+        } else {
+          this.countTotal(this.offset, this.contacts.length);
+        }
       } finally {
         this.isLoading = false;
       }
-      if (hasNext) {
-        this.getContacts();
+    },
+
+    countTotal(offset, limit) {
+      if (limit > this.count) {
+        this.totalShowing = 6;
+      } else {
+        this.totalShowing = limit;
+      }
+      if (offset === 0) {
+        this.showing = 1;
+      } else {
+        this.showing = offset;
       }
     },
 
@@ -377,6 +419,9 @@ export default {
     messages() {
       this.$nextTick(this.scrollMessagesToBottom);
     },
+    currentPage() {
+      this.getContacts();
+    },
   },
 };
 </script>
@@ -403,6 +448,12 @@ export default {
     padding-right: $unnnic-spacing-inset-sm;
     margin: $unnnic-spacing-inline-sm 0 $unnnic-spacing-inline-sm;
   }
+}
+
+.count-values {
+  color: $unnnic-color-neutral-dark;
+  size: $unnnic-font-size-body-md;
+  font-weight: 400;
 }
 
 .closed-chats {
