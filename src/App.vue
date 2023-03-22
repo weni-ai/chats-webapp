@@ -139,11 +139,12 @@ export default {
     },
     listeners() {
       this.ws.on('msg.create', (message) => {
-        if (this.$store.state.rooms.rooms.find((room) => room.uuid === message.room)) {
+        const findRoom = this.$store.state.rooms.rooms.find((room) => room.uuid === message.room);
+        this.$store.dispatch('rooms/bringRoomFront', findRoom);
+        if (findRoom) {
           if (this.me.email === message.user?.email) {
             return;
           }
-
           const notification = new Notification('ping-bing');
           notification.notify();
 

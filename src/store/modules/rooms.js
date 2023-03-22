@@ -11,6 +11,8 @@ const mutations = {
   ADD_MESSAGE: 'ADD_MESSAGE',
   UPDATE_MESSAGE: 'UPDATE_MESSAGE',
   SET_ACTIVE_ROOM_HAS_NEXT: 'SET_ACTIVE_ROOM_HAS_NEXT',
+  SET_ROOMS_HAS_NEXT: 'SET_ROOMS_HAS_NEXT',
+  BRING_ROOM_FRONT: 'BRING_ROOM_FRONT',
 };
 
 export default {
@@ -21,6 +23,7 @@ export default {
     activeRoomMessages: [],
     newMessagesByRoom: {},
     hasNext: true,
+    listRoomHasNext: true,
   },
 
   mutations: {
@@ -39,6 +42,12 @@ export default {
     [mutations.SET_ACTIVE_ROOM_HAS_NEXT](state, hasNext) {
       state.hasNext = hasNext;
     },
+    [mutations.SET_ROOMS_HAS_NEXT](state, hasNextRooms) {
+      state.hasNextRooms = hasNextRooms;
+    },
+    [mutations.BRING_ROOM_FRONT](state, room) {
+      state.rooms.sort((x) => (x === room ? -1 : 0));
+    },
     [mutations.ADD_MESSAGE](state, message) {
       if (message.room !== state.activeRoom.uuid) return;
       const messageWithSender = parseMessageToMessageWithSenderProp(message);
@@ -56,9 +65,14 @@ export default {
   },
 
   actions: {
-    async getAll({ commit }) {
-      const response = await Room.getAll();
-      const rooms = response.results || [];
+    async getAll({ commit, state }, { offset, concat, limit }) {
+      const response = await Room.getAll(offset, limit);
+      let rooms = response.results || [];
+      const listRoomHasNext = response.next;
+      if (concat) {
+        rooms = state.rooms.concat(response.results);
+      }
+      commit(mutations.SET_ROOMS_HAS_NEXT, listRoomHasNext);
       commit(mutations.SET_ROOMS, rooms);
       return rooms;
     },
@@ -67,6 +81,9 @@ export default {
     },
     addRoom({ commit }, room) {
       commit(mutations.ADD_ROOM, room);
+    },
+    bringRoomFront({ commit }, room) {
+      commit(mutations.BRING_ROOM_FRONT, room);
     },
     async getActiveRoomMessages({ commit, state }, { offset, concat, limit }) {
       const { activeRoom } = state;

@@ -193,7 +193,8 @@ export default {
       this.createOneList();
     },
 
-    async contactList(next) {
+    async contactList(next, cleanList = false) {
+      if (cleanList) this.listOfContacts = [];
       this.isLoading = true;
       try {
         const response = await TemplateMessages.getListOfContacts(next);
@@ -216,7 +217,7 @@ export default {
 
     searchForMoreContacts() {
       if (this.hasNext) {
-        this.contactList(this.hasNext);
+        this.contactList(this.hasNext, false);
       }
     },
 
@@ -236,7 +237,7 @@ export default {
 
     closeModal() {
       this.showModal = false;
-      this.contactList();
+      this.contactList(null, true);
     },
 
     openSelectTemplate() {
