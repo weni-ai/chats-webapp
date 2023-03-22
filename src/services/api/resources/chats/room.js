@@ -9,7 +9,7 @@ export default {
         project: getProject(),
         offset,
         limit,
-        ordering: 'user,created_on,messages__created_on',
+        ordering: 'user,created_on,-messages__created_on',
       },
     });
     return response.data;
