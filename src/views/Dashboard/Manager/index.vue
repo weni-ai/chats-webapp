@@ -8,7 +8,16 @@
     <template>
       <general-live-metrics
         v-if="this.filters.type === 'todos'"
-        :headerTitle="this.filters.sectorUuid ? 'Filas' : 'Setores'"
+        :headerTitle="this.filters.sectorUuid || this.showData ? 'Filas' : 'Setores'"
+        :totalChatsLabel="
+          this.filters.sectorUuid || this.showData ? 'Quantidade de chats' : 'Agentes online'
+        "
+        :generalCardLabel="
+          this.filters.sectorUuid || this.showData ? 'Quantidade de chats' : 'Chats ativos'
+        "
+        :agentsLabel="
+          this.filters.sectorUuid || this.showData ? 'Chats no período' : 'Chats ativos'
+        "
       />
       <!-- <live-metrics-by-agent v-if="visualization.category === 'agent'" /> -->
       <!-- <live-metrics-by-sector v-if="this.filters.type === 'sector'" /> -->
@@ -20,7 +29,16 @@
         v-if="this.filters.type === 'sector'"
         :filter="this.filters"
         @historyFilter="event = $event"
-        :headerTitle="this.filters.sectorUuid ? 'Filas' : 'Setores'"
+        :headerTitle="this.filters.sectorUuid || this.showData ? 'Filas' : 'Setores'"
+        :totalChatsLabel="
+          this.filters.sectorUuid || this.showData ? 'Quantidade de chats' : 'Agentes online'
+        "
+        :generalCardLabel="
+          this.filters.sectorUuid || this.showData ? 'Quantidade de chats' : 'Chats ativos'
+        "
+        :agentsLabel="
+          this.filters.sectorUuid || this.showData ? 'Chats no período' : 'Chats ativos'
+        "
       />
     </template>
   </dashboard-layout>
@@ -60,6 +78,7 @@ export default {
 
   mounted() {
     this.projectInfo();
+    console.log(this.filters);
   },
 
   methods: {
@@ -73,6 +92,7 @@ export default {
       if (newValue) {
         this.filters = newValue;
         this.$emit('historyFilter', newValue);
+        this.showData = !!this.filters.filteredDateRange.start;
       }
     },
   },

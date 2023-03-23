@@ -7,9 +7,11 @@
 
     <section class="table-metrics__table">
       <header class="headers table-row">
-        <span v-for="header in headers" :key="header.value" class="header table-col">
+        <!-- <span v-for="header in headers" :key="header.value" class="header table-col">
           {{ header.text }}
-        </span>
+        </span> -->
+        <span class="header table-col"> Agente </span>
+        <span class="header table-col"> {{ this.headers }} </span>
       </header>
 
       <section class="items">
@@ -30,8 +32,8 @@
 export default {
   props: {
     headers: {
-      type: Array,
-      default: () => [],
+      type: String,
+      default: '',
     },
     icon: {
       type: String,
