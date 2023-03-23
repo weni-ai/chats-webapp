@@ -78,7 +78,7 @@
 <script>
 import Sector from '@/services/api/resources/settings/sector';
 
-const moment = require('moment');
+// const moment = require('moment');
 
 export default {
   name: 'DashboardFilters',
@@ -115,8 +115,8 @@ export default {
     agents: [],
     selecteds: [],
     filteredDateRange: {
-      start: moment(new Date()).format('YYYY-MM-DD'),
-      end: moment(new Date()).format('YYYY-MM-DD'),
+      start: null,
+      end: null,
     },
   }),
 
@@ -189,7 +189,7 @@ export default {
       this.filteredAgent = '';
       this.tags = [];
       this.filteredDateRange = {
-        start: moment(new Date()).format('YYYY-MM-DD'),
+        start: null,
       };
       this.sendFilter('todos', null, null, null, null);
     },
