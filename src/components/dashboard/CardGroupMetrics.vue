@@ -30,7 +30,7 @@
             count: timeToString(metric.interact_time) || 0,
           },
           {
-            title: 'Agentes online',
+            title: totalChatsLabel,
             icon: 'headphones-customer-support-human-1-1',
             scheme: 'aux-blue',
             count: metric.online_agents || 0,
@@ -57,6 +57,10 @@ export default {
       default: 'aux-blue',
     },
     title: {
+      type: String,
+      default: '',
+    },
+    totalChatsLabel: {
       type: String,
       default: '',
     },

@@ -7,10 +7,23 @@
     </template>
 
     <template slot="tab-panel-media">
-      <section class="media__content">
+      <section class="media__content" style="width: 60px; height: 60px">
         <div v-for="media in images" :key="media.url" class="media__content__media">
           <div class="media__content__media__preview">
-            <image-preview v-bind="media" fullscreen-on-click object-fit="cover" />
+            <image-preview
+              v-if="media.content_type.startsWith('image/')"
+              v-bind="media"
+              fullscreen-on-click
+              object-fit="cover"
+              :url="media.url"
+              @click="$emit('fullscreen', media.url, images)"
+            />
+            <video-preview
+              v-if="media.content_type.startsWith('video/')"
+              :src="media.url"
+              fullscreen-on-click
+              @click="$emit('fullscreen', media.url, images)"
+            />
           </div>
         </div>
       </section>
@@ -74,6 +87,7 @@ import DocumentPreview from '@/components/chats/MediaMessage/Previews/Document';
 import ImagePreview from '@/components/chats/MediaMessage/Previews/Image';
 import AudioPreview from '@/components/chats/MediaMessage/Previews/Audio';
 import Media from '@/services/api/resources/chats/media';
+import VideoPreview from '@/components/chats/MediaMessage/Previews/Video';
 
 export default {
   name: 'ContactMedia',
@@ -82,6 +96,7 @@ export default {
     DocumentPreview,
     ImagePreview,
     AudioPreview,
+    VideoPreview,
   },
 
   props: {
@@ -108,11 +123,17 @@ export default {
 
   computed: {
     images() {
-      return this.medias.filter((media) => media.content_type.startsWith('image/'));
+      return this.medias.filter(
+        (media) =>
+          media.content_type.startsWith('image/') || media.content_type.startsWith('video/'),
+      );
     },
 
     documents() {
-      return this.medias.filter((media) => !media.content_type.startsWith('image/'));
+      return this.medias.filter(
+        (media) =>
+          !(media.content_type.startsWith('image/') || media.content_type.startsWith('video/')),
+      );
     },
   },
 

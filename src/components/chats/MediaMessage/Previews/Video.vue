@@ -55,12 +55,12 @@ export default {
 
 <style lang="scss" scoped>
 .video-preview {
-  max-height: inherit;
-  max-width: inherit;
+  max-height: 90px;
+  max-width: 90px;
 
   &__video {
-    max-height: inherit;
-    max-width: inherit;
+    max-height: 90px;
+    max-width: 90px;
   }
 }
 </style>

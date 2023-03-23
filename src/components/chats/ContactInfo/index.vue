@@ -1,3 +1,4 @@
+<!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
   <aside-slot-template
     class="contact-info"
@@ -101,7 +102,7 @@
       </aside-slot-template-section>
 
       <aside-slot-template-section>
-        <contact-media :room="room" />
+        <contact-media :room="room" @fullscreen="openFullScreen" />
       </aside-slot-template-section>
     </section>
 
@@ -151,6 +152,29 @@
           navigate('home')
       "
     />
+    <fullscreen-preview
+      v-if="isFullscreen"
+      @download="$emit('download')"
+      @close="isFullscreen = false"
+      @next="nextMedia"
+      @previous="previousMedia"
+    >
+      <video
+        v-if="currentMedia.content_type.includes('mp4')"
+        controls
+        @keypress.enter="() => {}"
+        @click.stop="() => {}"
+      >
+        <source :src="currentMedia.url" />
+      </video>
+      <img
+        v-else
+        :src="currentMedia.url"
+        :alt="currentMedia.url"
+        @keypress.enter="() => {}"
+        @click.stop="() => {}"
+      />
+    </fullscreen-preview>
   </aside-slot-template>
 </template>
 
@@ -165,6 +189,7 @@ import Media from '@/services/api/resources/chats/media';
 import LinkContact from '@/services/api/resources/chats/linkContact';
 import { unnnicCallAlert } from '@weni/unnnic-system';
 import ContactMedia from './Media';
+import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
 
 const moment = require('moment');
 
@@ -175,6 +200,7 @@ export default {
     AsideSlotTemplate,
     AsideSlotTemplateSection,
     ContactMedia,
+    FullscreenPreview,
   },
   props: {
     contact: {
@@ -194,6 +220,9 @@ export default {
     showSuccessfulTransferModal: false,
     isLinkedUser: false,
     isLinkedToOtherAgent: false,
+    isFullscreen: false,
+    currentMedia: {},
+    images: [],
   }),
 
   computed: {
@@ -256,6 +285,30 @@ export default {
 
   methods: {
     moment,
+
+    openFullScreen(url, images) {
+      console.log(url, 'url');
+      console.log(images, 'images');
+      this.images = images;
+      this.currentMedia = this.images.find((el) => el.url === url);
+      console.log(this.currentMedia, 'oi');
+      // this.currentMedia = url;
+      this.isFullscreen = true;
+    },
+
+    nextMedia() {
+      const imageIndex = this.images.findIndex((el) => el.url === this.currentMedia.url);
+      if (imageIndex + 1 < this.images.length) {
+        this.currentMedia = this.images[imageIndex + 1];
+      }
+    },
+
+    previousMedia() {
+      const imageIndex = this.images.findIndex((el) => el.url === this.currentMedia.url);
+      if (imageIndex - 1 >= 0) {
+        this.currentMedia = this.images[imageIndex - 1];
+      }
+    },
 
     addContactToAgent() {
       if (!this.isLinkedUser) {

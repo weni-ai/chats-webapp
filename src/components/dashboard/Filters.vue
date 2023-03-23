@@ -115,8 +115,8 @@ export default {
     agents: [],
     selecteds: [],
     filteredDateRange: {
-      // start: moment(new Date()).format('YYYY-MM-DD'),
-      // end: moment(new Date()).format('YYYY-MM-DD'),
+      start: null,
+      end: null,
     },
   }),
 
@@ -190,7 +190,6 @@ export default {
       this.tags = [];
       this.filteredDateRange = {
         start: null,
-        end: null,
       };
       this.sendFilter('todos', null, null, null, null);
     },

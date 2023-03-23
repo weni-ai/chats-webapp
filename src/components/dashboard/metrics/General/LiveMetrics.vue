@@ -1,7 +1,7 @@
 <template>
   <main class="general-dashboard">
     <section>
-      <general-metrics :metrics="generalMetrics" />
+      <general-metrics :metrics="generalMetrics" :generalLabel="generalCardLabel" />
     </section>
 
     <section class="general-dashboard__metrics">
@@ -33,6 +33,10 @@ export default {
 
   props: {
     headerTitle: {
+      type: String,
+      default: '',
+    },
+    generalCardLabel: {
       type: String,
       default: '',
     },
