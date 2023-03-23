@@ -47,7 +47,7 @@
               label="Setor"
               size="md"
               class="input"
-              @input="getSectorTags(filteredSectorUuid)"
+              @input="getSectorTags(filteredSectorUuid), getContacts(filteredSectorUuid)"
             >
               <option value="">Todos</option>
               <option
@@ -67,6 +67,7 @@
               :items="tags"
               :placeholder="this.messageInputTags"
               :disabled="!this.filteredSectorUuid && sectors.length !== 1"
+              @input="getContacts(selecteds)"
             />
           </div>
           <div class="unnnic-grid-span-2">
@@ -91,7 +92,7 @@
           </div>
         </section>
 
-        <unnnic-table :items="filteredContacts" class="closed-chats-table">
+        <unnnic-table :items="this.contacts" class="closed-chats-table">
           <template #header>
             <unnnic-table-row :headers="tableHeaders" />
           </template>
@@ -194,8 +195,8 @@ export default {
     messageInputTags: 'Filtrar por tags',
     isLoading: false,
     filteredDateRange: {
-      // start: moment(new Date()).startOf('month').format('YYYY-MM-DD'),
-      // end: moment(new Date()).endOf('month').format('YYYY-MM-DD'),
+      start: moment(new Date()).startOf('month').format('YYYY-MM-DD'),
+      end: moment(new Date()).endOf('month').format('YYYY-MM-DD'),
     },
     sectorTags: [],
     selecteds: [],
@@ -262,13 +263,6 @@ export default {
       ];
     },
 
-    filteredContacts() {
-      return this.contacts
-        .filter(this.isRoomFromFilteredSector)
-        .filter(this.contactHasAllActiveFilterTags)
-        .filter(this.isRoomEndDateInFilteredRange);
-    },
-
     filteredTags() {
       if (this.selecteds.length === 0) return [];
       const group = this.selecteds;
@@ -321,11 +315,20 @@ export default {
       this.isLoading = true;
       this.offset = (this.currentPage - 1) * 6;
       this.limit = 6;
+      const temTag = ![null, undefined, ''].includes(this.selecteds);
+      if (temTag) {
+        this.nameTag = this.selecteds.map((el) => el.text).toString();
+      } else {
+        this.nameTag = this.selecteds;
+      }
       try {
         const response = await Contact.getAllWithClosedRooms(
           this.offset,
           this.limit,
           this.nameOfContact,
+          this.filteredDateRange,
+          this.nameTag,
+          this.filteredSectorUuid ? this.filteredSectorUuid : null,
         );
         this.numberOfPages = Math.ceil(response.count / 6);
         this.count = response.count;
@@ -386,33 +389,36 @@ export default {
     contactHasAllActiveFilterTags(contact) {
       if (this.filteredTags.length === 0) return true;
       if (!contact.room.tags) return false;
-      // const placeholderTags = this.filteredTags.map((el) => el.name);
-      // this.messageInputTags = placeholderTags ? placeholderTags.toString() : 'Filtrar por tags';
+      this.test = contact.room.tags.some((tag) =>
+        this.filteredTags.find((el) => el.uuid === tag.uuid),
+      );
       return contact.room.tags.some((tag) => this.filteredTags.find((el) => el.uuid === tag.uuid));
     },
 
-    isRoomEndDateInFilteredRange(contact) {
-      const { start, end } = this.filteredDateRange;
-      if (!start && !end) return true;
+    // isRoomEndDateInFilteredRange(contact) {
+    //   const { start, end } = this.filteredDateRange;
+    //   if (!start && !end) return true;
 
-      const roomDate = new Date(contact.room.ended_at).toISOString();
+    //   const roomDate = new Date(contact.room.ended_at).toISOString();
 
-      return start <= roomDate && roomDate <= end;
-    },
+    //   return start <= roomDate && roomDate <= end;
+    // },
 
     isRoomFromFilteredSector(contact) {
       if (!this.filteredSectorUuid) return true;
-
+      this.sectorTest = contact.room.queue.sector === this.filteredSectorUuid;
       return contact.room.queue.sector === this.filteredSectorUuid;
     },
 
     clearFilters() {
-      this.filteredSectorUuid = '';
+      this.filteredSectorUuid = null;
       this.tags = [];
+      this.selecteds = [];
       this.filteredDateRange = {
         start: moment(new Date()).startOf('month').format('YYYY-MM-DD'),
         end: moment(new Date()).endOf('month').format('YYYY-MM-DD'),
       };
+      this.getContacts();
     },
   },
   watch: {
@@ -421,6 +427,12 @@ export default {
     },
     currentPage() {
       this.getContacts();
+    },
+    filteredDateRange: {
+      deep: true,
+      handler() {
+        this.getContacts();
+      },
     },
   },
 };
