@@ -7,7 +7,7 @@
     </template>
 
     <template slot="tab-panel-media">
-      <section class="media__content">
+      <section class="media__content" style="width: 60px; height: 60px">
         <div v-for="media in images" :key="media.url" class="media__content__media">
           <div class="media__content__media__preview">
             <image-preview
