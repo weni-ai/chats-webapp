@@ -4,7 +4,7 @@
       <unnnic-tool-tip enabled text="Quantidade de chats em andamento" side="right">
         <unnnic-card
           type="dash"
-          title="Chats ativos"
+          :title="generalLabel"
           icon="indicator"
           scheme="aux-blue"
           :value="this.metrics.active_chats || 0"
@@ -60,9 +60,13 @@ export default {
       type: Object,
       default: () => {},
     },
+    generalLabel: {
+      type: String,
+      default: '',
+    },
   },
 
-  mounted() {
+  created() {
     // console.log(this.metrics, 'metrics');
   },
 

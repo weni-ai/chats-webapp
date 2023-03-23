@@ -1,13 +1,18 @@
 <template>
   <main class="history-sector-metrics">
     <section>
-      <general-metrics :metrics="generalMetrics" />
+      <general-metrics :metrics="generalMetrics" :generalLabel="generalCardLabel" />
     </section>
 
     <section class="history-sector-metrics__metrics">
-      <card-group-metrics :metrics="sectors" :title="headerTitle" icon="hierarchy-3-2" />
+      <card-group-metrics
+        :metrics="sectors"
+        :title="headerTitle"
+        :totalChatsLabel="totalChatsLabel"
+        icon="hierarchy-3-2"
+      />
       <table-metrics
-        :headers="tableHeaders"
+        :headers="agentsLabel"
         :items="this.agents.project_agents"
         title="Chats por agente"
         icon="indicator"
@@ -46,6 +51,18 @@ export default {
       type: String,
       default: '',
     },
+    agentsLabel: {
+      type: String,
+      default: '',
+    },
+    totalChatsLabel: {
+      type: String,
+      default: '',
+    },
+    generalCardLabel: {
+      type: String,
+      default: '',
+    },
   },
 
   data: () => ({
@@ -58,7 +75,7 @@ export default {
         value: 'name',
       },
       {
-        text: 'Chats ativos',
+        text: 'Chats no período',
         value: 'chats',
       },
     ],
