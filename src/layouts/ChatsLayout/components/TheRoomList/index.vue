@@ -1,5 +1,14 @@
 <template>
   <div class="container">
+    <!-- <unnnic-input
+      v-model="nameOfContact"
+      @input="listRoom(nameOfContact)"
+      icon-left="search-1"
+      icon-right="button-refresh-arrow-1"
+      size="sm"
+      placeholder="Pesquisar contato"
+      style="margin-bottom: 1rem"
+    ></unnnic-input> -->
     <section
       class="chat-groups"
       @scroll="
@@ -8,7 +17,13 @@
         }
       "
     >
-      <room-group v-if="queue.length" :label="$t('line')" :rooms="queue" filled @open="open" />
+      <room-group
+        v-if="queue.length"
+        :label="$t('line', { length: queue.length })"
+        :rooms="queue"
+        filled
+        @open="open"
+      />
       <room-group
         v-if="wating.length"
         :label="$t('chats.wating_answer', { length: wating.length })"
@@ -20,7 +35,7 @@
       <room-group
         v-bind:style="isHistoryView ? 'opacity: 0.5;' : 'opacity: 20'"
         v-if="rooms.length"
-        :label="$t('chats.in_progress')"
+        :label="$t('chats.in_progress', { length: rooms.length })"
         :rooms="rooms"
         @open="open"
         :isHistory="isHistoryView"
@@ -57,7 +72,8 @@ export default {
   },
   data: () => ({
     page: 0,
-    limit: 100,
+    limit: 13,
+    nameOfContact: '',
   }),
 
   async mounted() {
@@ -119,6 +135,7 @@ export default {
           offset: this.page * this.limit,
           concat,
           limit: this.limit,
+          contact: this.nameOfContact,
         });
       } catch {
         console.error('Não foi possível listar as salas');
