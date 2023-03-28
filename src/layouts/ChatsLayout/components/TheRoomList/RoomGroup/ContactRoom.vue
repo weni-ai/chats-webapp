@@ -25,7 +25,16 @@
         <span v-if="waitingTime !== 0">
           {{ $t('waiting_for.minutes', waitingTime) }}
         </span>
-        <span v-else>
+        <span
+          v-else
+          style="
+            white-space: nowrap;
+            overflow: hidden;
+            display: inherit;
+            max-width: 240px;
+            text-overflow: ellipsis;
+          "
+        >
           <template v-if="newMessages?.length">
             {{ newMessages[newMessages.length - 1].text }}
           </template>
