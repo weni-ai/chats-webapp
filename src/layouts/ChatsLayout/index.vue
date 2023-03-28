@@ -190,7 +190,7 @@ export default {
 
   .room-list {
     margin: {
-      top: $unnnic-spacing-inline-sm;
+      top: 8px;
       right: 0;
       bottom: 0;
     }
@@ -209,7 +209,6 @@ export default {
   }
   .template-message-button {
     margin-top: $unnnic-spacing-stack-sm;
-    margin-bottom: $unnnic-spacing-stack-sm;
   }
 }
 </style>
