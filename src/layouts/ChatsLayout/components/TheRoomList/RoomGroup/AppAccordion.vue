@@ -5,7 +5,7 @@
       @click="toggleAccordion()"
       :aria-expanded="isOpen"
       :aria-controls="`collapse${_uid}`"
-      style="display: flex; align-items: center; justify-content: space-between"
+      style="display: flex; align-items: center; justify-content: space-between; cursor: pointer"
     >
       <slot name="title" />
       <unnnic-icon
