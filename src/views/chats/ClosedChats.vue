@@ -101,12 +101,12 @@
             <unnnic-table-row :headers="tableHeaders">
               <template #contactName>
                 <div class="contact-name">
-                  <user-avatar :username="item.name" size="xl" />
+                  <user-avatar :username="item.name" size="xl" style="min-width: 2.5rem" />
                   {{ item.name }}
                 </div>
               </template>
 
-              <template #agentName>{{ item.room.user.first_name }}</template>
+              <template #agentName>{{ item.room.user?.first_name }}</template>
 
               <template #tags>
                 <tag-group :tags="item.room.tags || []" />
@@ -334,7 +334,7 @@ export default {
         this.count = response.count;
         this.contacts = response.results;
         if (!response.next) {
-          this.countTotal(this.offset, this.count);
+          this.countTotal(this.offset, this.count, !response.next);
         } else {
           this.countTotal(this.offset, this.contacts.length);
         }
@@ -343,16 +343,16 @@ export default {
       }
     },
 
-    countTotal(offset, limit) {
+    countTotal(offset, limit, nexPage) {
       if (limit > this.count) {
         this.totalShowing = 6;
       } else {
-        this.totalShowing = limit;
+        this.totalShowing = !nexPage ? this.currentPage * 6 : this.count;
       }
       if (offset === 0) {
         this.showing = 1;
       } else {
-        this.showing = offset;
+        this.showing = !nexPage ? offset : this.contacts.length;
       }
     },
 

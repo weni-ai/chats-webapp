@@ -166,8 +166,13 @@ export default {
               new Promise((resolve) => {
                 const url = new Audio(element.url);
                 url.onloadedmetadata = (event) => {
-                  const { duration } = event.path[0];
-                  resolve({ ...element, duration });
+                  if (event.path) {
+                    const { duration } = event.path[0];
+                    resolve({ ...element, duration });
+                  } else {
+                    const duration = Math.round(url.duration);
+                    resolve({ ...element, duration });
+                  }
                 };
               }),
           ),

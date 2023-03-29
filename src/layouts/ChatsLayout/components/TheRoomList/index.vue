@@ -2,7 +2,7 @@
   <div class="container">
     <!-- <unnnic-input
       v-model="nameOfContact"
-      @input="listRoom(nameOfContact)"
+      @input="listRoom(false, nameOfContact)"
       icon-left="search-1"
       icon-right="button-refresh-arrow-1"
       size="sm"
@@ -72,7 +72,7 @@ export default {
   },
   data: () => ({
     page: 0,
-    limit: 13,
+    limit: 100,
     nameOfContact: '',
   }),
 
@@ -142,6 +142,7 @@ export default {
       }
     },
     searchForMoreRooms() {
+      // if (!this.rooms) return;
       if (this.listRoomHasNext) {
         this.page += 1;
         this.listRoom(true);
@@ -176,6 +177,7 @@ export default {
     padding-right: $unnnic-spacing-inset-sm;
     border-right: solid 1px $unnnic-color-neutral-soft;
     overflow-y: auto;
+    overflow-x: hidden;
   }
 }
 </style>
