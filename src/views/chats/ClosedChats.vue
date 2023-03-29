@@ -106,7 +106,7 @@
                 </div>
               </template>
 
-              <template #agentName>{{ item.room.user.first_name }}</template>
+              <template #agentName>{{ item.room.user?.first_name }}</template>
 
               <template #tags>
                 <tag-group :tags="item.room.tags || []" />
@@ -347,7 +347,7 @@ export default {
       if (limit > this.count) {
         this.totalShowing = 6;
       } else {
-        this.totalShowing = limit;
+        this.totalShowing = this.currentPage * 6;
       }
       if (offset === 0) {
         this.showing = 1;
