@@ -31,7 +31,7 @@
             white-space: nowrap;
             overflow: hidden;
             display: inherit;
-            max-width: 240px;
+            max-width: 215px;
             text-overflow: ellipsis;
           "
         >

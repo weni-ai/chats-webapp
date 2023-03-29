@@ -107,6 +107,7 @@ $avatar-sizes: '2xl' 3rem, 'xl' $unnnic-icon-size-xl, 'lg' $unnnic-icon-size-lg,
       width: $size;
       height: $size;
       font-size: min(calc($size / 2), 1rem);
+      min-width: 2.5rem;
     }
   }
 }
