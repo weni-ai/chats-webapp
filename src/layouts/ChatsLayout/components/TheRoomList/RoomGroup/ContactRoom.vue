@@ -15,6 +15,7 @@
       :active="room.uuid === $route.params.id"
       size="xl"
       :off="disabled"
+      style="min-width: 2.2rem"
     />
 
     <div class="content">
@@ -196,6 +197,7 @@ export default {
     align-items: center;
 
     width: 1.25rem;
+    min-width: 1.25rem;
     height: 1.25rem;
     border-radius: 50%;
     font-size: $unnnic-font-size-body-sm;

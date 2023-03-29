@@ -176,6 +176,7 @@ export default {
     padding-right: $unnnic-spacing-inset-sm;
     border-right: solid 1px $unnnic-color-neutral-soft;
     overflow-y: auto;
+    overflow-x: hidden;
   }
 }
 </style>
