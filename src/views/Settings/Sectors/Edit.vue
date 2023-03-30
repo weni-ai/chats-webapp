@@ -192,11 +192,11 @@ export default {
       try {
         let agents = [];
         if (queue.uuid) {
-          agents = await Queue.agents(queue.uuid, this.pageAgents);
+          // agents = await Queue.agents(queue.uuid, this.pageAgents);
           const response = await Queue.agents(queue.uuid, this.pageAgents * 100, 100);
           this.pageAgents += 1;
           this.agentsList = this.agentsList.concat(response.results);
-          agents = agents.results;
+          agents = this.agentsList;
           this.hasNextAgents = response.next;
           this.loading = false;
         }
