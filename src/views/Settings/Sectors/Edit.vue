@@ -169,6 +169,9 @@ export default {
     toRemoveTags: [],
     selectedQueue: [],
     page: 0,
+    pageAgents: 0,
+    hasNextAgents: false,
+    agentsList: [],
   }),
 
   methods: {
@@ -184,17 +187,30 @@ export default {
       this.visualizeQueue(lastQueue);
     },
     async visualizeQueue(queue) {
-      let agents = [];
-      if (queue.uuid) {
-        agents = await Queue.agents(queue.uuid);
-        agents = agents.results;
+      this.loading = true;
+      try {
+        let agents = [];
+        if (queue.uuid) {
+          agents = await Queue.agents(queue.uuid, this.pageAgents);
+          const response = await Queue.agents(queue.uuid, this.pageAgents * 100, 100);
+          this.pageAgents += 1;
+          this.agentsList = this.agentsList.concat(response.results);
+          agents = agents.results;
+          this.hasNextAgents = response.next;
+          this.loading = false;
+        }
+        await this.getProjectAgents();
+        this.queueToEdit = queue;
+        this.queueToEdit.agents = [...agents];
+        this.queueToEdit.currentAgents = [...agents];
+        this.queueToEdit.toAddAgents = [];
+        this.queueToEdit.toRemoveAgents = [];
+      } finally {
+        this.loading = false;
       }
-      await this.getProjectAgents();
-      this.queueToEdit = queue;
-      this.queueToEdit.agents = [...agents];
-      this.queueToEdit.currentAgents = [...agents];
-      this.queueToEdit.toAddAgents = [];
-      this.queueToEdit.toRemoveAgents = [];
+      if (this.hasNextAgents) {
+        this.visualizeQueue(this.queueToEdit);
+      }
     },
     async deleteQueue(queueUuid) {
       await Queue.delete(queueUuid);
@@ -324,6 +340,7 @@ export default {
       if (currentTab === 'queues' && this.queues.length === 0) await this.getQueues();
       if (currentTab === 'tags' && this.tags.length === 0) await this.getTags();
       this.queueToEdit = null;
+      this.pageAgents = 0;
     },
     removeManagerFromTheList(managerUuid) {
       const manager = this.sector.managers.find((manager) => manager.uuid === managerUuid);

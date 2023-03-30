@@ -27,10 +27,12 @@ export default {
     await http.delete(`/queue/${queueUuid}/`);
   },
 
-  async agents(queueUuid) {
+  async agents(queueUuid, offset, limit) {
     const response = await http.get('/authorization/queue/', {
       params: {
         queue: queueUuid,
+        offset,
+        limit,
       },
     });
     return response.data;

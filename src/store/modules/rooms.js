@@ -23,7 +23,7 @@ export default {
     activeRoomMessages: [],
     newMessagesByRoom: {},
     hasNext: true,
-    listRoomHasNext: true,
+    hasNextRooms: true,
   },
 
   mutations: {
@@ -68,7 +68,9 @@ export default {
     async getAll({ commit, state }, { offset, concat, limit, contact }) {
       const response = await Room.getAll(offset, limit, contact);
       let rooms = response.results || [];
+      console.log(response, 'response');
       const listRoomHasNext = response.next;
+      console.log(listRoomHasNext, 'listRoomHasNext rooms');
       if (concat) {
         rooms = state.rooms.concat(response.results);
       }
