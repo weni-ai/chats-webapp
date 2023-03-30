@@ -23,7 +23,7 @@ export default {
     activeRoomMessages: [],
     newMessagesByRoom: {},
     hasNext: true,
-    listRoomHasNext: true,
+    hasNextRooms: true,
   },
 
   mutations: {
