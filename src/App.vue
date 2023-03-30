@@ -229,9 +229,15 @@ export default {
     },
 
     intervalPing() {
-      this.ws.send({
-        type: 'ping',
-      });
+      try {
+        this.ws.send({
+          type: 'ping',
+          message: {},
+        });
+        console.log(this.ws, 'aqui');
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 };

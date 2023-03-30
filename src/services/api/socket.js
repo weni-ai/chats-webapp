@@ -12,6 +12,7 @@ export class Socket {
     this.#ws = new WebSocket(url);
     this.ws = this.#ws;
     this.#createOnMessageListener();
+    this.receiveMessage();
   }
 
   #createOnMessageListener() {
@@ -24,6 +25,16 @@ export class Socket {
       this.#handlers.forEach(({ message, callback }) => {
         if (message === action) callback(content);
       });
+    };
+  }
+
+  receiveMessage() {
+    this.#ws.onmessage = (msg) => {
+      const receivedMessage = JSON.parse(msg.data);
+      if (receivedMessage.type !== 'pong') {
+        console.log('mantem');
+      }
+      console.log('reconectar');
     };
   }
 
