@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <unnnic-input
+    <!-- <unnnic-input
       v-model="nameOfContact"
       @input="listRoom(false, nameOfContact)"
       icon-left="search-1"
@@ -8,7 +8,7 @@
       size="sm"
       placeholder="Pesquisar contato"
       style="margin-bottom: 1rem"
-    ></unnnic-input>
+    ></unnnic-input> -->
     <section
       class="chat-groups"
       @scroll="
