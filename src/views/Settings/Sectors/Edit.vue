@@ -184,6 +184,7 @@ export default {
       await Queue.create({ name, sectorUuid });
       await this.getQueues();
       const lastQueue = this.queues[this.queues.length - 1];
+      console.log('change here');
       this.visualizeQueue(lastQueue);
     },
     async visualizeQueue(queue) {
