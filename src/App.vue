@@ -52,7 +52,7 @@ export default {
   data() {
     return {
       ws: null,
-      timerPing: 15000,
+      timerPing: 30000,
     };
   },
 
@@ -234,9 +234,18 @@ export default {
           type: 'ping',
           message: {},
         });
-        console.log(this.ws, 'aqui');
+        this.reconect();
       } catch (error) {
         console.log(error);
+        clearInterval(this.intervalPing);
+      }
+    },
+
+    reconect() {
+      if (!this.ws.pongData) return;
+      if (this.ws.pongData.type !== 'pong' && this.ws.pongData.type !== 'notify') {
+        this.ws.ws.close();
+        this.initializeWebSocket();
       }
     },
   },

@@ -12,12 +12,13 @@ export class Socket {
     this.#ws = new WebSocket(url);
     this.ws = this.#ws;
     this.#createOnMessageListener();
-    this.receiveMessage();
+    this.#eventPong();
   }
 
   #createOnMessageListener() {
     this.#ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      this.pongData = data;
       if (!data.content) return;
       const { action } = data;
       const content = JSON.parse(data.content);
@@ -28,14 +29,8 @@ export class Socket {
     };
   }
 
-  receiveMessage() {
-    this.#ws.onmessage = (msg) => {
-      const receivedMessage = JSON.parse(msg.data);
-      if (receivedMessage.type !== 'pong') {
-        console.log('mantem');
-      }
-      console.log('reconectar');
-    };
+  #eventPong() {
+    this.#ws.onPong = this.pongData;
   }
 
   on(message, callback) {
