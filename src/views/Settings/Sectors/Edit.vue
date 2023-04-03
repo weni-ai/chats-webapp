@@ -180,19 +180,20 @@ export default {
       this.projectManagers = managers;
     },
     async createQueue({ name }) {
-      const sectorUuid = this.sector.uuid;
-      await Queue.create({ name, sectorUuid });
-      await this.getQueues();
-      const lastQueue = this.queues[this.queues.length - 1];
-      console.log('change here');
-      this.visualizeQueue(lastQueue);
+      try {
+        const sectorUuid = this.sector.uuid;
+        this.createdQueue = await Queue.create({ name, sectorUuid });
+        this.visualizeQueue(this.createdQueue);
+      } catch (error) {
+        console.log(error, 'error');
+      }
     },
+
     async visualizeQueue(queue) {
       this.loading = true;
       try {
         let agents = [];
         if (queue.uuid) {
-          // agents = await Queue.agents(queue.uuid, this.pageAgents);
           const response = await Queue.agents(queue.uuid, this.pageAgents * 100, 100);
           this.pageAgents += 1;
           this.agentsList = this.agentsList.concat(response.results);
@@ -256,7 +257,6 @@ export default {
       try {
         const queues = await Queue.list(this.sector.uuid, this.page * 10, 10);
         this.page += 1;
-        // this.queues = queues.results;
         this.queues = this.queues.concat(queues.results);
 
         hasNext = queues.next;
