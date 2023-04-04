@@ -5,6 +5,7 @@
       icon-left="search-1"
       icon-right="close-1"
       :iconRightClickable="true"
+      @icon-right-click="nameOfContact = ''"
       size="sm"
       placeholder="Pesquisar contato"
       style="margin-bottom: 1rem"
