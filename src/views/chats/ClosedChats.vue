@@ -13,6 +13,7 @@
           :messages="messages"
           class="messages"
           ref="chatMessages"
+          @show-contact-info="componentInAsideSlot = 'contactInfo'"
           @scrollTop="searchForMoreMessages"
         />
       </section>
@@ -287,6 +288,7 @@ export default {
         this.messages = groupedMessages;
         this.contact = contact;
         this.isLoading = false;
+        this.componentInAsideSlot = 'contactInfo';
       } finally {
         this.isLoading = false;
       }

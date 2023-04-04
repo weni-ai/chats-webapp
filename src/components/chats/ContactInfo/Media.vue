@@ -103,10 +103,21 @@ export default {
     room: {
       type: Object,
     },
+    contactInfo: {
+      type: Object,
+    },
+    history: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   created() {
-    this.loadNextMedias();
+    if (!this.history) {
+      this.loadNextMedias();
+    } else {
+      this.loadNextMediasClosedRoom();
+    }
   },
 
   data: () => ({
@@ -185,6 +196,41 @@ export default {
 
       if (response.next) {
         this.loadNextMedias();
+      }
+    },
+    async loadNextMediasClosedRoom() {
+      const response = await Media.listFromContactAndClosedRoom({
+        ordering: 'content_type',
+        contact: this.contactInfo.uuid,
+        page: this.page,
+      });
+      this.audios = await Promise.all(
+        response.results
+          .filter((media) => media.content_type.startsWith('audio/'))
+          .map(
+            (element) =>
+              new Promise((resolve) => {
+                const url = new Audio(element.url);
+                url.onloadedmetadata = (event) => {
+                  if (event.path) {
+                    const { duration } = event.path[0];
+                    resolve({ ...element, duration });
+                  } else {
+                    const duration = Math.round(url.duration);
+                    resolve({ ...element, duration });
+                  }
+                };
+              }),
+          ),
+      );
+      this.medias = this.medias.concat(
+        response.results.filter((media) => !media.content_type.startsWith('audio/')),
+      );
+
+      this.page += 1;
+
+      if (response.next) {
+        this.loadNextMediasClosedRoom();
       }
     },
   },
