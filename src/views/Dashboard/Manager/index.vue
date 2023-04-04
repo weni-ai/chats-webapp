@@ -9,15 +9,9 @@
       <general-live-metrics
         v-if="this.filters.type === 'todos'"
         :headerTitle="this.filters.sectorUuid || this.showData ? 'Filas' : 'Setores'"
-        :totalChatsLabel="
-          this.filters.sectorUuid || this.showData ? 'Quantidade de chats' : 'Agentes online'
-        "
-        :generalCardLabel="
-          this.filters.sectorUuid || this.showData ? 'Quantidade de chats' : 'Chats ativos'
-        "
-        :agentsLabel="
-          this.filters.sectorUuid || this.showData ? 'Chats no período' : 'Chats ativos'
-        "
+        :totalChatsLabel="this.showData ? 'Quantidade de chats' : 'Agentes online'"
+        :generalCardLabel="this.showData ? 'Quantidade de chats' : 'Chats ativos'"
+        :agentsLabel="this.showData ? 'Chats no período' : 'Chats ativos'"
       />
       <!-- <live-metrics-by-agent v-if="visualization.category === 'agent'" /> -->
       <!-- <live-metrics-by-sector v-if="this.filters.type === 'sector'" /> -->
@@ -30,15 +24,17 @@
         :filter="this.filters"
         @historyFilter="event = $event"
         :headerTitle="this.filters.sectorUuid || this.showData ? 'Filas' : 'Setores'"
-        :totalChatsLabel="
-          this.filters.sectorUuid || this.showData ? 'Quantidade de chats' : 'Agentes online'
-        "
-        :generalCardLabel="
-          this.filters.sectorUuid || this.showData ? 'Quantidade de chats' : 'Chats ativos'
-        "
-        :agentsLabel="
-          this.filters.sectorUuid || this.showData ? 'Chats no período' : 'Chats ativos'
-        "
+        :totalChatsLabel="this.showData ? 'Quantidade de chats' : 'Agentes online'"
+        :generalCardLabel="this.showData ? 'Quantidade de chats' : 'Chats ativos'"
+        :agentsLabel="this.showData ? 'Chats no período' : 'Chats ativos'"
+      />
+    </template>
+    <template>
+      <table-metrics
+        :headers="agentsLabel"
+        :items="this.agents.project_agents"
+        title="Chats por agente"
+        icon="indicator"
       />
     </template>
   </dashboard-layout>

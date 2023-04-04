@@ -1,7 +1,12 @@
 <template>
   <section class="general-metrics">
     <template>
-      <unnnic-tool-tip enabled text="Quantidade de chats em andamento" side="right">
+      <unnnic-tool-tip
+        enabled
+        text="Quantidade de chats ativos, em atendimento ou aguardando"
+        side="bottom"
+        maxWidth="15rem"
+      >
         <unnnic-card
           type="dash"
           :title="generalLabel"
@@ -14,8 +19,41 @@
       </unnnic-tool-tip>
       <unnnic-tool-tip
         enabled
-        text="É tempo médio que o contato aguarda para ser atendido"
-        side="right"
+        text="Quantidade de contatos aguardando o início do atendimento"
+        side="bottom"
+        maxWidth="15rem"
+      >
+        <unnnic-card
+          type="dash"
+          title="Aguardando atendimento"
+          icon="synchronize-arrow-clock-4"
+          scheme="feedback-blue"
+          :value="timeToString(this.metrics.waiting_time)"
+          :percent="0"
+          :inverted-percentage="false"
+        />
+      </unnnic-tool-tip>
+      <unnnic-tool-tip
+        enabled
+        text="Quantidade de transferências realizadas até agora"
+        side="bottom"
+        maxWidth="15rem"
+      >
+        <unnnic-card
+          type="dash"
+          title="Transferências"
+          icon="synchronize-arrow-clock-4"
+          scheme="aux-purple"
+          :value="timeToString(this.metrics.waiting_time)"
+          :percent="0"
+          :inverted-percentage="false"
+        />
+      </unnnic-tool-tip>
+      <unnnic-tool-tip
+        enabled
+        text="Média de tempo que os contatos aguardam até serem atendidos"
+        side="bottom"
+        maxWidth="15rem"
       >
         <unnnic-card
           type="dash"
@@ -27,7 +65,12 @@
           :inverted-percentage="false"
         />
       </unnnic-tool-tip>
-      <unnnic-tool-tip enabled text="É o tempo médio de resposta ao contato" side="right">
+      <unnnic-tool-tip
+        enabled
+        text="Média de tempo que o contato aguarda para ser respondido"
+        side="bottom"
+        maxWidth="15rem"
+      >
         <unnnic-card
           type="dash"
           title="Tempo de resposta"
@@ -38,7 +81,12 @@
           :inverted-percentage="false"
         />
       </unnnic-tool-tip>
-      <unnnic-tool-tip enabled text="É o tempo médio de duração de um chat" side="left">
+      <unnnic-tool-tip
+        enabled
+        text="Média de tempo que um atendimento completo demora"
+        side="bottom"
+        maxWidth="15rem"
+      >
         <unnnic-card
           type="dash"
           title="Tempo de interação"
@@ -105,7 +153,7 @@ export default {
 <style lang="scss" scoped>
 .general-metrics {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: $unnnic-spacing-stack-sm;
 }
 </style>
