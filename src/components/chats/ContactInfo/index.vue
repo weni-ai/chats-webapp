@@ -102,42 +102,47 @@
       </aside-slot-template-section>
 
       <aside-slot-template-section>
-        <contact-media :room="room" @fullscreen="openFullScreen" />
+        <contact-media
+          :room="room"
+          @fullscreen="openFullScreen"
+          :history="isHistory"
+          :contactInfo="contact"
+        />
       </aside-slot-template-section>
     </section>
 
     <section v-if="isHistory" class="scrollable" style="background-color: #ffffff">
       <aside-slot-template-section>
         <section class="infos">
-          <div class="avatar">
-            <unnnic-icon-svg icon="single-neutral-actions-1" size="xl" />
-          </div>
-
-          <p class="username">
-            {{ contact.name }}
-          </p>
-
           <div class="connection-info">
-            <!-- <p v-else>{{ getLastTimeOnlineText(room.contact.last_interaction || new Date()) }}</p> -->
-            <template v-if="!!contact.custom_fields">
-              <p v-for="(value, key) in customFields" :key="key">
-                <span class="title"> {{ key }}: </span>
-                {{ value }}
+            <p class="username">
+              {{ contact.name }}
+            </p>
+            <template>
+              <p style="margin-bottom: 0.75rem">
+                <span class="title"> {{ contactNumberClosedChat.plataform }}: </span>
+                {{ contactNumberClosedChat.contactNum }}
               </p>
             </template>
-            <!-- <p v-if="lastMessageFromContact?.created_on">
-              {{
-                $t('last_message_time.date', {
-                  date: moment(lastMessageFromContact?.created_on).fromNow(),
-                })
-              }}
-            </p> -->
+            <div class="connection-info">
+              <template v-if="!!contact.custom_fields">
+                <p v-for="(value, key) in customFields" :key="key">
+                  <span class="title"> {{ key }}: </span>
+                  {{ value }}
+                </p>
+              </template>
+            </div>
           </div>
         </section>
       </aside-slot-template-section>
 
       <aside-slot-template-section>
-        <contact-media :room="room" />
+        <contact-media
+          :room="room"
+          @fullscreen="openFullScreen"
+          :history="isHistory"
+          :contactInfo="contact"
+        />
       </aside-slot-template-section>
     </section>
     <unnnic-modal
@@ -185,7 +190,6 @@ import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
 import Room from '@/services/api/resources/chats/room';
 import Sector from '@/services/api/resources/settings/sector';
-import Media from '@/services/api/resources/chats/media';
 import LinkContact from '@/services/api/resources/chats/linkContact';
 import { unnnicCallAlert } from '@weni/unnnic-system';
 import ContactMedia from './Media';
@@ -253,6 +257,16 @@ export default {
       };
       return infoNumber;
     },
+    contactNumberClosedChat() {
+      const plataform = this.contact.room.urn.split(':').at(0);
+      const number = this.contact.room.urn.split(':').at(-1);
+      const whatsapp = `+ ${number.substr(-20, 20)} `;
+      const infoNumber = {
+        plataform,
+        contactNum: plataform === 'whatsapp' ? whatsapp : number,
+      };
+      return infoNumber;
+    },
   },
 
   async created() {
@@ -278,8 +292,6 @@ export default {
           throw error;
         }
       }
-    } else {
-      this.loadNextMedias();
     }
   },
 
@@ -287,12 +299,8 @@ export default {
     moment,
 
     openFullScreen(url, images) {
-      console.log(url, 'url');
-      console.log(images, 'images');
       this.images = images;
       this.currentMedia = this.images.find((el) => el.url === url);
-      console.log(this.currentMedia, 'oi');
-      // this.currentMedia = url;
       this.isFullscreen = true;
     },
 
@@ -376,38 +384,6 @@ export default {
         },
         seconds: 10,
       });
-    },
-
-    async loadNextMedias() {
-      const response = await Media.listFromContactAndClosedRoom({
-        ordering: 'content_type',
-        contact: this.contact.uuid,
-        // room: this.room.uuid,
-        page: this.page,
-      });
-      this.audios = await Promise.all(
-        response.results
-          .filter((media) => media.content_type.startsWith('audio/'))
-          .map(
-            (element) =>
-              new Promise((resolve) => {
-                const url = new Audio(element.url);
-                url.onloadedmetadata = (event) => {
-                  const { duration } = event.path[0];
-                  resolve({ ...element, duration });
-                };
-              }),
-          ),
-      );
-      this.medias = this.medias.concat(
-        response.results.filter((media) => !media.content_type.startsWith('audio/')),
-      );
-
-      this.page += 1;
-
-      if (response.next) {
-        this.loadNextMedias();
-      }
     },
 
     navigate(name) {

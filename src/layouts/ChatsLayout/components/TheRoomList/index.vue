@@ -3,7 +3,8 @@
     <unnnic-input
       v-model="nameOfContact"
       icon-left="search-1"
-      icon-right="button-refresh-arrow-1"
+      icon-right="close-1"
+      :iconRightClickable="true"
       size="sm"
       placeholder="Pesquisar contato"
       style="margin-bottom: 1rem"
@@ -137,6 +138,11 @@ export default {
       if (this.$route.path === path) return;
 
       this.$router.replace(path);
+    },
+
+    clearField() {
+      console.log(`oi`);
+      this.nameOfContact = '';
     },
 
     async listRoom(concat) {
