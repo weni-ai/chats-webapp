@@ -16,7 +16,6 @@
       <!-- <live-metrics-by-agent v-if="visualization.category === 'agent'" /> -->
       <!-- <live-metrics-by-sector v-if="this.filters.type === 'sector'" /> -->
     </template>
-
     <template>
       <!-- <history-metrics-by-agent v-if="visualization.category === 'agent'" :agentName="header" /> -->
       <history-metrics-by-sector
@@ -27,14 +26,6 @@
         :totalChatsLabel="this.showData ? 'Quantidade de chats' : 'Agentes online'"
         :generalCardLabel="this.showData ? 'Quantidade de chats' : 'Chats ativos'"
         :agentsLabel="this.showData ? 'Chats no período' : 'Chats ativos'"
-      />
-    </template>
-    <template>
-      <table-metrics
-        :headers="agentsLabel"
-        :items="this.agents.project_agents"
-        title="Chats por agente"
-        icon="indicator"
       />
     </template>
   </dashboard-layout>
@@ -65,6 +56,7 @@ export default {
   },
 
   data: () => ({
+    showData: '',
     agents: {},
     project: [],
     filters: {
@@ -74,7 +66,6 @@ export default {
 
   mounted() {
     this.projectInfo();
-    console.log(this.filters);
   },
 
   methods: {

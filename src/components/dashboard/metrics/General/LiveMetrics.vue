@@ -1,17 +1,27 @@
 <template>
-  <main class="general-dashboard">
+  <main>
     <section>
-      <general-metrics :metrics="generalMetrics" :generalLabel="generalCardLabel" />
+      <div style="display: flex; justify-content: space-between; margin-bottom: 16px">
+        <div style="width: 66%">
+          <general-metrics
+            :metrics="generalMetrics"
+            :rawData="rawInfo"
+            :generalLabel="generalCardLabel"
+          />
+        </div>
+        <div style="width: 33%">
+          <table-metrics
+            :headers="agentsLabel"
+            :items="this.agents.project_agents"
+            title="Chats por agente"
+            icon="indicator"
+          />
+        </div>
+      </div>
     </section>
 
     <section class="general-dashboard__metrics">
       <card-group-metrics :metrics="sectors" :title="headerTitle" icon="hierarchy-3-2" />
-      <table-metrics
-        :headers="tableHeaders"
-        :items="this.agents.project_agents"
-        title="Agentes online"
-        icon="indicator"
-      />
     </section>
   </main>
 </template>
@@ -46,12 +56,14 @@ export default {
     this.roomInfo();
     this.agentInfo();
     this.sectorInfo();
+    this.rawDataInfo();
   },
 
   data: () => ({
     agents: {},
     generalMetrics: {},
     sectors: {},
+    rawInfo: {},
     tableHeaders: [
       {
         text: 'Agente',
@@ -84,6 +96,14 @@ export default {
     async sectorInfo() {
       try {
         this.sectors = await DashboardManagerApi.getSectorInfo();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async rawDataInfo() {
+      try {
+        this.rawInfo = await DashboardManagerApi.getRawInfo();
+        console.log(this.rawInfo, 'adada');
       } catch (error) {
         console.log(error);
       }

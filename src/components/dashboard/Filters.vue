@@ -52,7 +52,7 @@
       />
 
       <unnnic-input-date-picker
-        style="min-width: 15px"
+        style="min-width: 20px"
         v-model="filteredDateRange"
         size="md"
         class="input"
@@ -71,6 +71,37 @@
           @click="clearFilters"
         />
       </unnnic-tool-tip>
+    </div>
+    <div>
+      <unnnic-dropdown v-bind="$props">
+        <unnnic-button-icon
+          icon="navigation-menu-vertical-1"
+          size="large"
+          class="clear-filters-btn"
+          @click="clearFilters"
+          slot="trigger"
+        />
+        <div class="attachment-options-container" style="width: 110px">
+          <unnnic-dropdown-item class="option">
+            <span
+              class="upload-dropdown-option"
+              @click="open('media')"
+              @keypress.enter="open('media')"
+            >
+              <span> Exportar em CSV </span>
+            </span>
+          </unnnic-dropdown-item>
+          <unnnic-dropdown-item class="option">
+            <span
+              class="upload-dropdown-option"
+              @click="open('document')"
+              @keypress.enter="open('document')"
+            >
+              <span> Exportar em PDF </span>
+            </span>
+          </unnnic-dropdown-item>
+        </div>
+      </unnnic-dropdown>
     </div>
   </section>
 </template>
@@ -217,9 +248,17 @@ export default {
   display: flex;
   align-items: flex-end;
   gap: 1rem;
+  width: 99%;
 
   & > *:not(:last-child) {
     min-width: 16.5rem;
   }
+}
+.option {
+  color: $unnnic-color-neutral-dark;
+  font-size: 0.75rem;
+}
+.attachment-options-container {
+  padding: 0rem 0.5rem;
 }
 </style>

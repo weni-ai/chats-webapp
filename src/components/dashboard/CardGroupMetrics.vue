@@ -12,6 +12,24 @@
         :name="metric.name"
         :statuses="[
           {
+            title: 'Chats ativos',
+            icon: 'indicator',
+            scheme: 'aux-blue',
+            count: 0,
+          },
+          {
+            title: 'Aguardando atendimento',
+            icon: 'synchronize-arrow-clock-4',
+            scheme: 'feedback-blue',
+            count: 0,
+          },
+          {
+            title: 'Transferências',
+            icon: 'time-clock-circle-1',
+            scheme: 'aux-purple',
+            count: 0,
+          },
+          {
             title: 'Tempo de espera',
             icon: 'time-clock-circle-1',
             scheme: 'aux-orange',
@@ -29,12 +47,12 @@
             scheme: 'aux-lemon',
             count: timeToString(metric.interact_time) || 0,
           },
-          {
-            title: totalChatsLabel,
-            icon: 'headphones-customer-support-human-1-1',
-            scheme: 'aux-blue',
-            count: metric.online_agents || 0,
-          },
+          // {
+          //   title: totalChatsLabel,
+          //   icon: 'headphones-customer-support-human-1-1',
+          //   scheme: 'aux-blue',
+          //   count: metric.online_agents || 0,
+          // },
         ]"
       />
     </section>

@@ -28,7 +28,7 @@
           title="Aguardando atendimento"
           icon="synchronize-arrow-clock-4"
           scheme="feedback-blue"
-          :value="timeToString(this.metrics.waiting_time)"
+          :value="this.metrics.waiting_time || 0"
           :percent="0"
           :inverted-percentage="false"
         />
@@ -44,7 +44,7 @@
           title="Transferências"
           icon="synchronize-arrow-clock-4"
           scheme="aux-purple"
-          :value="timeToString(this.metrics.waiting_time)"
+          :value="this.rawData.transfer_count || 0"
           :percent="0"
           :inverted-percentage="false"
         />
@@ -108,14 +108,18 @@ export default {
       type: Object,
       default: () => {},
     },
+    rawData: {
+      type: Object,
+      default: () => {},
+    },
     generalLabel: {
       type: String,
       default: '',
     },
   },
 
-  created() {
-    // console.log(this.metrics, 'metrics');
+  mounted() {
+    console.log(this.rawData, 'oi');
   },
 
   methods: {
@@ -153,6 +157,7 @@ export default {
 <style lang="scss" scoped>
 .general-metrics {
   display: grid;
+  widows: 50%;
   grid-template-columns: repeat(3, 1fr);
   gap: $unnnic-spacing-stack-sm;
 }

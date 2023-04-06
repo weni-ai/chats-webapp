@@ -1,12 +1,19 @@
 <template>
-  <main class="history-sector-metrics">
-    <section>
-      <general-metrics :metrics="generalMetrics" :generalLabel="generalCardLabel" />
-    </section>
+  <main>
+    <div style="width: 66%; margin-bottom: 16px">
+      <section>
+        <general-metrics
+          :metrics="generalMetrics"
+          :rawData="rawInfo"
+          :generalLabel="generalCardLabel"
+        />
+      </section>
+    </div>
 
     <section class="history-sector-metrics__metrics">
       <card-group-metrics
         :metrics="sectors"
+        :rawData="rawInfo"
         :title="headerTitle"
         :totalChatsLabel="totalChatsLabel"
         icon="hierarchy-3-2"
@@ -69,6 +76,7 @@ export default {
     agents: {},
     generalMetrics: {},
     sectors: {},
+    rawInfo: {},
     tableHeaders: [
       {
         text: 'Agente',
@@ -93,6 +101,7 @@ export default {
         this.agentInfo();
         this.roomInfo();
         this.sectorInfo();
+        this.rawDataInfo();
       }
     },
   },
@@ -147,6 +156,25 @@ export default {
       }
       try {
         this.sectors = await DashboardManagerApi.getSectorInfo(
+          this.filter.sectorUuid,
+          this.filter.agent,
+          this.nameTag,
+          this.filter.filteredDateRange.start,
+          this.filter.filteredDateRange.end,
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async rawDataInfo() {
+      const temTag = ![null, undefined, ''].includes(this.filter.tag);
+      if (temTag) {
+        this.nameTag = this.filter.tag.map((el) => el.text).toString();
+      } else {
+        this.nameTag = this.filter.tag;
+      }
+      try {
+        this.rawInfo = await DashboardManagerApi.getRawInfo(
           this.filter.sectorUuid,
           this.filter.agent,
           this.nameTag,
