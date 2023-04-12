@@ -8,10 +8,6 @@
     <section v-if="!isHistory" class="scrollable" style="background-color: #ffffff">
       <aside-slot-template-section>
         <section class="infos">
-          <!-- <div class="avatar">
-            <unnnic-icon-svg icon="single-neutral-actions-1" size="xl" />
-          </div> -->
-
           <p class="username">
             {{ room.contact.name }}
           </p>
@@ -20,7 +16,6 @@
             <p v-if="room.contact.status === 'online'">
               {{ $t('status.online') }}
             </p>
-            <!-- <p v-else>{{ getLastTimeOnlineText(room.contact.last_interaction || new Date()) }}</p> -->
             <template>
               <p style="margin-bottom: 0.75rem">
                 <span class="title"> {{ contactNumber.plataform }}: </span>
@@ -75,18 +70,20 @@
       </aside-slot-template-section>
 
       <aside-slot-template-section>
-        <p class="title-transfer-chat">Transferir Contato</p>
+        <p class="title-transfer-chat">Transferir contato</p>
         <div style="margin-top: 20px; margin-bottom: 20px">
           <unnnic-radio size="sm" v-model="transferRadio" value="agent"> Agente </unnnic-radio>
 
           <unnnic-radio size="sm" v-model="transferRadio" value="queue"> Fila </unnnic-radio>
-
-          <unnnic-radio size="sm" v-model="transferRadio" value="sector"> Setor </unnnic-radio>
         </div>
         <section class="transfer-section">
           <unnnic-autocomplete
             v-model="transferContactSearch"
-            :data="transferOptions.map((option) => option.name)"
+            :data="
+              transferRadio === `queue`
+                ? transferOptions.map((option) => `${option.name} | Setor ${option.uuid}`)
+                : transferOptions.map((option) => `${option.name}`)
+            "
             @choose="transferContactTo = $event"
             :placeholder="
               transferRadio === 'queue'
@@ -108,7 +105,6 @@
             :text="$t('transfer')"
             type="secondary"
             size="small"
-            :disabled="!transferPersonSelected"
             @click="transferContact"
           />
         </section>
@@ -258,6 +254,11 @@ export default {
     },
 
     transferPersonSelected() {
+      if (this.transferRadio === 'queue') {
+        const takeTheName = this.transferContactSearch.split('|').at(0);
+        const removeTheSpace = takeTheName.split(' ').at(0);
+        return this.transferOptions.find((option) => option.name === removeTheSpace);
+      }
       return this.transferOptions.find((option) => option.name === this.transferContactSearch);
     },
 
@@ -333,17 +334,6 @@ export default {
       }
       if (hasNext) {
         this.getQueues();
-      }
-    },
-
-    async listSectors() {
-      try {
-        this.isLoading = true;
-        const sectors = await Sector.list();
-        this.transferOptions = sectors.results;
-        this.isLoading = false;
-      } catch (error) {
-        this.isLoading = false;
       }
     },
 
@@ -493,16 +483,14 @@ export default {
       return value.toString().toLowerCase();
     },
     async transferContact() {
-      console.log(this.transferPersonSelected, 'transferPersonSelected');
+      console.log(this.transferPersonSelected, `this.transferPersonSelected`);
       this.$store.commit('chats/removeChat', this.room);
-      if (this.transferRadio === 'agent') console.log('oi');
-      await Room.take(this.room.uuid, this.transferPersonSelected.email);
-      if (this.transferRadio === 'queue') console.log('oioio');
-      await Room.take(
-        this.room.uuid,
-        this.transferPersonSelected.email,
-        this.transferPersonSelected.uuid,
-      );
+      if (this.transferRadio === 'agent') {
+        await Room.take(this.room.uuid, this.transferPersonSelected.email);
+      }
+      if (this.transferRadio === 'queue') {
+        await Room.take(this.room.uuid, null, this.transferPersonSelected.uuid);
+      }
       this.showSuccessfulTransferModal = true;
     },
   },
