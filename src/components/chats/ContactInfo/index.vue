@@ -81,7 +81,7 @@
             v-model="transferContactSearch"
             :data="
               transferRadio === `queue`
-                ? transferOptions.map((option) => `${option.name} | Setor ${option.uuid}`)
+                ? transferOptions.map((option) => `${option.name} | Setor ${option.sector_name}`)
                 : transferOptions.map((option) => `${option.name}`)
             "
             @choose="transferContactTo = $event"
