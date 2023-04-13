@@ -26,8 +26,11 @@ export default {
     return response.data;
   },
 
-  async take(uuid, email) {
-    const response = await http.put(`/room/${uuid}/`, { user_email: email });
+  async take(uuid, email, queueUuid) {
+    const response = await http.put(
+      `/room/${uuid}/`,
+      email ? { user_email: email } : { queue_uuid: queueUuid },
+    );
     return response.data;
   },
 };
