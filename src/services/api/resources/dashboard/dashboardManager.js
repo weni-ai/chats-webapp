@@ -40,7 +40,6 @@ export default {
         sector: idSector,
         agent,
         tag,
-        // tag: 'osh',
         start_date: startDate,
         end_date: endDate,
       },
@@ -54,7 +53,19 @@ export default {
         sector: idSector,
         agent,
         tag,
-        // tag: 'osh',
+        start_date: startDate,
+        end_date: endDate,
+      },
+    });
+    return response.data;
+  },
+  async downloadData(idSector, agent, tag, startDate, endDate) {
+    const idProject = getProject();
+    const response = await http.get(`dashboard/${idProject}/export/`, {
+      params: {
+        sector: idSector,
+        agent,
+        tag,
         start_date: startDate,
         end_date: endDate,
       },

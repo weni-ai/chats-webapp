@@ -103,7 +103,6 @@ export default {
     async rawDataInfo() {
       try {
         this.rawInfo = await DashboardManagerApi.getRawInfo();
-        console.log(this.rawInfo, 'adada');
       } catch (error) {
         console.log(error);
       }

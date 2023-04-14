@@ -185,6 +185,25 @@ export default {
         console.log(error);
       }
     },
+    async downloadDashboardData() {
+      const temTag = ![null, undefined, ''].includes(this.filter.tag);
+      if (temTag) {
+        this.nameTag = this.filter.tag.map((el) => el.text).toString();
+      } else {
+        this.nameTag = this.filter.tag;
+      }
+      try {
+        this.download = await DashboardManagerApi.downloadData(
+          this.filter.sectorUuid,
+          this.filter.agent,
+          this.nameTag,
+          this.filter.filteredDateRange.start,
+          this.filter.filteredDateRange.end,
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
 };
 </script>

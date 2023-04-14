@@ -78,15 +78,14 @@
           icon="navigation-menu-vertical-1"
           size="large"
           class="clear-filters-btn"
-          @click="clearFilters"
           slot="trigger"
         />
         <div class="attachment-options-container" style="width: 110px">
           <unnnic-dropdown-item class="option">
             <span
               class="upload-dropdown-option"
-              @click="open('media')"
-              @keypress.enter="open('media')"
+              @click="downloadDashboardData('csv')"
+              @keypress.enter="downloadDashboardData('csv')"
             >
               <span> Exportar em CSV </span>
             </span>
@@ -94,8 +93,8 @@
           <unnnic-dropdown-item class="option">
             <span
               class="upload-dropdown-option"
-              @click="open('document')"
-              @keypress.enter="open('document')"
+              @click="downloadDashboardData('pdf')"
+              @keypress.enter="downloadDashboardData('pdf')"
             >
               <span> Exportar em PDF </span>
             </span>
@@ -108,6 +107,7 @@
 
 <script>
 import Sector from '@/services/api/resources/settings/sector';
+import DashboardManagerApi from '@/services/api/resources/dashboard/dashboardManager';
 
 // const moment = require('moment');
 
@@ -152,6 +152,28 @@ export default {
   }),
 
   methods: {
+    async downloadDashboardData(option) {
+      console.log(option, 'option');
+      const temTag = ![null, undefined, ''].includes(this.selecteds);
+      if (temTag) {
+        this.nameTag = this.selecteds.map((el) => el.text).toString();
+      } else {
+        this.nameTag = this.selecteds;
+      }
+      try {
+        this.download = await DashboardManagerApi.downloadData(
+          this.filteredSectorUuid,
+          this.filteredAgent,
+          this.selecteds,
+          this.filteredDateRange.start,
+          this.filteredDateRange.end,
+        );
+        console.log(this.download, 'oi');
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     sendFilter(type, filteredSectorUuid, agent, tag, filteredDateRange) {
       const filter = {
         type,
