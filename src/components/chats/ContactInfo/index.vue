@@ -28,13 +28,21 @@
                 {{ value }}
               </p>
             </template>
-            <p v-if="lastMessageFromContact?.created_on">
+            <p v-if="lastMessageFromContact?.created_on" style="margin-bottom: 16px">
               {{
                 $t('last_message_time.date', {
                   date: moment(lastMessageFromContact?.created_on).fromNow(),
                 })
               }}
             </p>
+            <unnnic-button
+              class="transfer__button"
+              text="Ver histórico do contato"
+              iconLeft="export-1"
+              type="secondary"
+              size="small"
+              @click="openHistory()"
+            />
             <div
               style="display: flex; margin-left: -8px; align-items: center"
               v-if="!isLinkedToOtherAgent"
@@ -317,6 +325,9 @@ export default {
 
   methods: {
     moment,
+    openHistory() {
+      window.open(`/closed-chats?contactId=${this.room.contact.uuid}`);
+    },
 
     async getQueues() {
       this.loading = true;
