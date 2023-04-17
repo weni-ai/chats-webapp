@@ -3,7 +3,7 @@
     <template>
       <unnnic-tool-tip
         enabled
-        text="Quantidade de chats ativos, em atendimento ou aguardando"
+        text="Quantidade de chats que já estão sendo atendidos por um agente"
         side="bottom"
         maxWidth="15rem"
       >
@@ -28,7 +28,7 @@
           title="Aguardando atendimento"
           icon="synchronize-arrow-clock-4"
           scheme="feedback-blue"
-          :value="this.metrics.waiting_time || 0"
+          :value="this.rawData.queue_rooms || 0"
           :percent="0"
           :inverted-percentage="false"
         />
@@ -116,10 +116,6 @@ export default {
       type: String,
       default: '',
     },
-  },
-
-  mounted() {
-    console.log(this.rawData, 'oi');
   },
 
   methods: {

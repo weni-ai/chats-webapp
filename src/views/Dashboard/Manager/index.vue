@@ -10,8 +10,8 @@
         v-if="this.filters.type === 'todos'"
         :headerTitle="this.filters.sectorUuid || this.showData ? 'Filas' : 'Setores'"
         :totalChatsLabel="this.showData ? 'Quantidade de chats' : 'Agentes online'"
-        :generalCardLabel="this.showData ? 'Quantidade de chats' : 'Chats ativos'"
-        :agentsLabel="this.showData ? 'Chats no período' : 'Chats ativos'"
+        :generalCardLabel="this.showData ? 'Quantidade de chats' : 'Em andamento'"
+        :agentsLabel="this.showData ? 'Chats no período' : 'Em andamento'"
       />
       <!-- <live-metrics-by-agent v-if="visualization.category === 'agent'" /> -->
       <!-- <live-metrics-by-sector v-if="this.filters.type === 'sector'" /> -->
@@ -24,8 +24,8 @@
         @historyFilter="event = $event"
         :headerTitle="this.filters.sectorUuid || this.showData ? 'Filas' : 'Setores'"
         :totalChatsLabel="this.showData ? 'Quantidade de chats' : 'Agentes online'"
-        :generalCardLabel="this.showData ? 'Quantidade de chats' : 'Chats ativos'"
-        :agentsLabel="this.showData ? 'Chats no período' : 'Chats ativos'"
+        :generalCardLabel="this.showData ? 'Quantidade de chats' : 'Em andamento'"
+        :agentsLabel="this.showData ? 'Chats no período' : 'Em andamento'"
       />
     </template>
   </dashboard-layout>

@@ -12,7 +12,7 @@
         :name="metric.name"
         :statuses="[
           {
-            title: 'Chats ativos',
+            title: 'Em andamento',
             icon: 'indicator',
             scheme: 'aux-blue',
             count: 0,

@@ -237,7 +237,7 @@
       "es": "Etiquetas de chat"
     },
     "in_progress": {
-      "pt-br": "Chats abertos",
+      "pt-br": "Em andamento",
       "en-us": "Chats in progress",
       "es": "Chats en curso"
     },
@@ -257,7 +257,7 @@
       "es": "¿Estás seguro de que quieres cerrar el chat con {name}?"
     },
     "see_history": {
-      "pt-br": "Visualizar histórico",
+      "pt-br": "Histórico",
       "en-us": "Chats history",
       "es": "Historial de chats"
     },
@@ -330,9 +330,9 @@
     "es": "Transferir"
   },
   "line": {
-    "pt-br": "Fila",
-    "en-us": "Line",
-    "es": "Fila"
+    "pt-br": "Aguardando",
+    "en-us": "Waiting",
+    "es": "Espera"
   },
   "quick_message": {
     "pt-br": "Mensagens rápidas",
