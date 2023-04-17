@@ -218,6 +218,14 @@ export default {
     nameOfContact: '',
   }),
 
+  async created() {
+    if (this.$route.query.contactId) {
+      const contactUuid = this.$route.query.contactId;
+      const contact = await Contact.getUnicContactClosedRooms(contactUuid);
+      this.openContactHistory(contact, false);
+    }
+  },
+
   computed: {
     sidebarComponent() {
       return this.sidebarComponents[this.componentInAsideSlot] || {};
