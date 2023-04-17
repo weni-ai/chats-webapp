@@ -37,14 +37,14 @@
           },
           {
             title: 'Tempo de resposta',
-            icon: 'messaging-we-chat-3',
-            scheme: 'aux-purple',
+            icon: 'response-time',
+            scheme: 'aux-pink',
             count: timeToString(metric.response_time) || 0,
           },
           {
             title: 'Tempo de interação',
-            icon: 'messages-bubble-1',
-            scheme: 'aux-lemon',
+            icon: 'interaction-time',
+            scheme: 'feedback-green',
             count: timeToString(metric.interact_time) || 0,
           },
           // {

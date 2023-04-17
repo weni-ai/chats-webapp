@@ -10,7 +10,7 @@
         <unnnic-card
           type="dash"
           :title="generalLabel"
-          icon="indicator"
+          icon="messages"
           scheme="aux-blue"
           :value="this.metrics.active_chats || 0"
           :percent="0"
@@ -42,7 +42,7 @@
         <unnnic-card
           type="dash"
           title="Transferências"
-          icon="synchronize-arrow-clock-4"
+          icon="transfer-message"
           scheme="aux-purple"
           :value="this.rawData.transfer_count || 0"
           :percent="0"
@@ -74,8 +74,8 @@
         <unnnic-card
           type="dash"
           title="Tempo de resposta"
-          icon="messaging-we-chat-3"
-          scheme="aux-purple"
+          icon="response-time"
+          scheme="aux-pink"
           :value="timeToString(this.metrics.response_time)"
           :percent="0"
           :inverted-percentage="false"
@@ -90,8 +90,8 @@
         <unnnic-card
           type="dash"
           title="Tempo de interação"
-          icon="messages-bubble-1"
-          scheme="aux-lemon"
+          icon="interaction-time"
+          scheme="feedback-green"
           :value="timeToString(this.metrics.interact_time)"
           :percent="0"
           :inverted-percentage="false"
