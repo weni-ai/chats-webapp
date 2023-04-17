@@ -340,7 +340,7 @@ export default {
       this.loading = true;
       let hasNext = false;
       try {
-        const queues = await Queue.list(this.room.queue.sector, this.page * 10, 10);
+        const queues = await Queue.listByProject(this.page * 10, 10);
         this.page += 1;
         this.transferOptions = this.queues.concat(queues.results);
 
