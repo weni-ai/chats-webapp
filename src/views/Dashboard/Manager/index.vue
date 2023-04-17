@@ -9,20 +9,13 @@
       <general-live-metrics
         v-if="this.filters.type === 'todos'"
         :headerTitle="this.filters.sectorUuid || this.showData ? 'Filas' : 'Setores'"
-        :totalChatsLabel="
-          this.filters.sectorUuid || this.showData ? 'Quantidade de chats' : 'Agentes online'
-        "
-        :generalCardLabel="
-          this.filters.sectorUuid || this.showData ? 'Quantidade de chats' : 'Chats ativos'
-        "
-        :agentsLabel="
-          this.filters.sectorUuid || this.showData ? 'Chats no período' : 'Chats ativos'
-        "
+        :totalChatsLabel="this.showData ? 'Quantidade de chats' : 'Agentes online'"
+        :generalCardLabel="this.showData ? 'Quantidade de chats' : 'Em andamento'"
+        :agentsLabel="this.showData ? 'Chats no período' : 'Em andamento'"
       />
       <!-- <live-metrics-by-agent v-if="visualization.category === 'agent'" /> -->
       <!-- <live-metrics-by-sector v-if="this.filters.type === 'sector'" /> -->
     </template>
-
     <template>
       <!-- <history-metrics-by-agent v-if="visualization.category === 'agent'" :agentName="header" /> -->
       <history-metrics-by-sector
@@ -30,15 +23,9 @@
         :filter="this.filters"
         @historyFilter="event = $event"
         :headerTitle="this.filters.sectorUuid || this.showData ? 'Filas' : 'Setores'"
-        :totalChatsLabel="
-          this.filters.sectorUuid || this.showData ? 'Quantidade de chats' : 'Agentes online'
-        "
-        :generalCardLabel="
-          this.filters.sectorUuid || this.showData ? 'Quantidade de chats' : 'Chats ativos'
-        "
-        :agentsLabel="
-          this.filters.sectorUuid || this.showData ? 'Chats no período' : 'Chats ativos'
-        "
+        :totalChatsLabel="this.showData ? 'Quantidade de chats' : 'Agentes online'"
+        :generalCardLabel="this.showData ? 'Quantidade de chats' : 'Em andamento'"
+        :agentsLabel="this.showData ? 'Chats no período' : 'Em andamento'"
       />
     </template>
   </dashboard-layout>
@@ -69,6 +56,7 @@ export default {
   },
 
   data: () => ({
+    showData: '',
     agents: {},
     project: [],
     filters: {
@@ -78,7 +66,6 @@ export default {
 
   mounted() {
     this.projectInfo();
-    console.log(this.filters);
   },
 
   methods: {

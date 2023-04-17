@@ -1,5 +1,5 @@
 <template>
-  <section class="table-metrics">
+  <section class="table-metrics" style="margin-top: -247px; overflow-y: scroll; height: 474px">
     <p class="table-metrics__title">
       <unnnic-avatar-icon :icon="icon" size="xs" scheme="feedback-green" />
       <span> {{ title }} </span>
@@ -7,9 +7,6 @@
 
     <section class="table-metrics__table">
       <header class="headers table-row">
-        <!-- <span v-for="header in headers" :key="header.value" class="header table-col">
-          {{ header.text }}
-        </span> -->
         <span class="header table-col"> Agente </span>
         <span class="header table-col"> {{ this.headers }} </span>
       </header>
