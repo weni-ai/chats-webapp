@@ -43,6 +43,7 @@
               :username="item.name"
               size="2xl"
               :photo-url="usePhoto ? room.contact.photo_url : ''"
+              style="min-width: 3rem"
             />
             <div class="names">
               <span>{{ item.name }}</span>
@@ -65,6 +66,7 @@
                 :username="item.name"
                 size="2xl"
                 :photo-url="usePhoto ? room.contact.photo_url : ''"
+                style="min-width: 3rem"
               />
               <div class="names">
                 <span>{{ item.name }}</span>

@@ -28,10 +28,10 @@ export default {
    *  "connection_status": "offline" | "online"
    * }
    */
-  status({ projectUuid }) {
+  status() {
     return http.get('/internal/permission/project/status/', {
       params: {
-        project: projectUuid,
+        project: getProject(),
       },
     });
   },

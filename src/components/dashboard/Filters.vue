@@ -52,7 +52,7 @@
       />
 
       <unnnic-input-date-picker
-        style="min-width: 15px"
+        style="min-width: 20px"
         v-model="filteredDateRange"
         size="md"
         class="input"
@@ -72,11 +72,42 @@
         />
       </unnnic-tool-tip>
     </div>
+    <!-- <div>
+      <unnnic-dropdown v-bind="$props">
+        <unnnic-button-icon
+          icon="navigation-menu-vertical-1"
+          size="large"
+          class="clear-filters-btn"
+          slot="trigger"
+        />
+        <div class="attachment-options-container" style="width: 110px">
+          <unnnic-dropdown-item class="option">
+            <span
+              class="upload-dropdown-option"
+              @click="downloadDashboardData('csv')"
+              @keypress.enter="downloadDashboardData('csv')"
+            >
+              <span> Exportar em CSV </span>
+            </span>
+          </unnnic-dropdown-item>
+          <unnnic-dropdown-item class="option">
+            <span
+              class="upload-dropdown-option"
+              @click="downloadDashboardData('pdf')"
+              @keypress.enter="downloadDashboardData('pdf')"
+            >
+              <span> Exportar em PDF </span>
+            </span>
+          </unnnic-dropdown-item>
+        </div>
+      </unnnic-dropdown>
+    </div> -->
   </section>
 </template>
 
 <script>
 import Sector from '@/services/api/resources/settings/sector';
+import DashboardManagerApi from '@/services/api/resources/dashboard/dashboardManager';
 
 // const moment = require('moment');
 
@@ -121,6 +152,28 @@ export default {
   }),
 
   methods: {
+    async downloadDashboardData(option) {
+      console.log(option, 'option');
+      const temTag = ![null, undefined, ''].includes(this.selecteds);
+      if (temTag) {
+        this.nameTag = this.selecteds.map((el) => el.text).toString();
+      } else {
+        this.nameTag = this.selecteds;
+      }
+      try {
+        this.download = await DashboardManagerApi.downloadData(
+          this.filteredSectorUuid,
+          this.filteredAgent,
+          this.selecteds,
+          this.filteredDateRange.start,
+          this.filteredDateRange.end,
+        );
+        console.log(this.download, 'oi');
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     sendFilter(type, filteredSectorUuid, agent, tag, filteredDateRange) {
       const filter = {
         type,
@@ -217,9 +270,17 @@ export default {
   display: flex;
   align-items: flex-end;
   gap: 1rem;
+  width: 99%;
 
   & > *:not(:last-child) {
     min-width: 16.5rem;
   }
+}
+.option {
+  color: $unnnic-color-neutral-dark;
+  font-size: 0.75rem;
+}
+.attachment-options-container {
+  padding: 0rem 0.5rem;
 }
 </style>

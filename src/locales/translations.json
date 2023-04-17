@@ -237,7 +237,7 @@
       "es": "Etiquetas de chat"
     },
     "in_progress": {
-      "pt-br": "Chats abertos",
+      "pt-br": "Em andamento",
       "en-us": "Chats in progress",
       "es": "Chats en curso"
     },
@@ -257,7 +257,7 @@
       "es": "¿Estás seguro de que quieres cerrar el chat con {name}?"
     },
     "see_history": {
-      "pt-br": "Visualizar histórico",
+      "pt-br": "Histórico",
       "en-us": "Chats history",
       "es": "Historial de chats"
     },
@@ -330,9 +330,9 @@
     "es": "Transferir"
   },
   "line": {
-    "pt-br": "Fila",
-    "en-us": "Line",
-    "es": "Fila"
+    "pt-br": "Aguardando",
+    "en-us": "Waiting",
+    "es": "Espera"
   },
   "quick_message": {
     "pt-br": "Mensagens rápidas",
@@ -686,10 +686,20 @@
       "es": "El contacto fué enviado a la línea {name}"
     }
   },
-  "select_agent_line_or_department": {
+  "select_agent": {
     "pt-br": "Selecione agente",
     "en-us": "Select agent",
     "es": "Seleccionar agente"
+  },
+  "select_queue": {
+    "pt-br": "Selecione fila",
+    "en-us": "Select queue",
+    "es": "Seleccionar cola"
+  },
+  "select_sector": {
+    "pt-br": "Selecione setor",
+    "en-us": "Select sector",
+    "es": "Seleccionar sector"
   },
   "send_media": {
     "pt-br": "Enviar mídia",

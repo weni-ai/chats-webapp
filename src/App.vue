@@ -47,6 +47,7 @@ export default {
     if (!localStorageStatus || localStorageStatus === 'None') {
       localStorage.setItem('statusAgent', 'OFFLINE');
     }
+    this.getStatus();
   },
 
   data() {
@@ -215,6 +216,17 @@ export default {
           }
         }
       });
+    },
+    async getStatus() {
+      const localStorageStatus = localStorage.getItem('statusAgent');
+      const response = await Profile.status({
+        projectUuid: this.$store.state.config.project,
+      });
+      if (localStorageStatus === 'ONLINE' && response.data.connection_status === 'OFFLINE') {
+        this.updateStatus('ONLINE');
+      } else if (response.data.connection_status === 'ONLINE') {
+        this.updateStatus('ONLINE');
+      }
     },
 
     async updateStatus(localStorageStatus) {
