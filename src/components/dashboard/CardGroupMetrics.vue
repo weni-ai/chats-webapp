@@ -11,24 +11,24 @@
         :key="metric.name"
         :name="metric.name"
         :statuses="[
-          {
-            title: 'Em andamento',
-            icon: 'indicator',
-            scheme: 'aux-blue',
-            count: 0,
-          },
+          // {
+          //   title: 'Em andamento',
+          //   icon: 'indicator',
+          //   scheme: 'aux-blue',
+          //   count: 0,
+          // },
           // {
           //   title: 'Aguardando atendimento',
           //   icon: 'synchronize-arrow-clock-4',
           //   scheme: 'feedback-blue',
           //   count: 0,
           // },
-          {
-            title: 'Transferências',
-            icon: 'time-clock-circle-1',
-            scheme: 'aux-purple',
-            count: 0,
-          },
+          // {
+          //   title: 'Transferências',
+          //   icon: 'time-clock-circle-1',
+          //   scheme: 'aux-purple',
+          //   count: 0,
+          // },
           {
             title: 'Tempo de espera',
             icon: 'time-clock-circle-1',
