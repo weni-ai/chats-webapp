@@ -28,13 +28,22 @@
                 {{ value }}
               </p>
             </template>
-            <p v-if="lastMessageFromContact?.created_on">
+            <p v-if="lastMessageFromContact?.created_on" style="margin-bottom: 16px">
               {{
                 $t('last_message_time.date', {
                   date: moment(lastMessageFromContact?.created_on).fromNow(),
                 })
               }}
             </p>
+            <unnnic-button
+              v-if="!isHistory"
+              class="transfer__button"
+              text="Ver histórico do contato"
+              iconLeft="export-1"
+              type="secondary"
+              size="small"
+              @click="openHistory()"
+            />
             <div
               style="display: flex; margin-left: -8px; align-items: center"
               v-if="!isLinkedToOtherAgent"
@@ -241,6 +250,7 @@ export default {
     transferRadio: 'agent',
     transferLabel: '',
     page: 0,
+    contactHaveHistory: false,
   }),
 
   computed: {
@@ -290,6 +300,11 @@ export default {
 
   async created() {
     if (!this.isHistory) {
+      if (
+        moment(this.room.contact.created_on).format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')
+      ) {
+        this.contactHaveHistory = true;
+      }
       this.transferLabel = this.$t('select_agent');
       this.loadLinkedContact();
       if (!this.room.queue?.sector) {
@@ -317,6 +332,9 @@ export default {
 
   methods: {
     moment,
+    openHistory() {
+      window.open(`/closed-chats?contactId=${this.room.contact.uuid}`);
+    },
 
     async getQueues() {
       this.loading = true;

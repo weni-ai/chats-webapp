@@ -142,7 +142,6 @@ export default {
     },
 
     clearField() {
-      console.log(`oi`);
       this.nameOfContact = '';
     },
 
