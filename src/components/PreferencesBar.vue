@@ -107,6 +107,7 @@ export default {
   },
 
   async created() {
+    this.getStatus();
     this.sound = (localStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'yes';
     window.dispatchEvent(new CustomEvent(`${this.help ? 'show' : 'hide'}BottomRightOptions`));
   },
@@ -134,6 +135,11 @@ export default {
 
       this.loadingStatus = false;
       this.showStatusAlert(connection_status);
+    },
+
+    async getStatus() {
+      const response = await Profile.status({ projectUuid: this.$store.state.config.project });
+      this.$store.state.config.status = response.data.connection_status;
     },
 
     changeSound() {

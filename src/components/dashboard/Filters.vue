@@ -72,7 +72,7 @@
         />
       </unnnic-tool-tip>
     </div>
-    <div>
+    <!-- <div>
       <unnnic-dropdown v-bind="$props">
         <unnnic-button-icon
           icon="navigation-menu-vertical-1"
@@ -101,7 +101,7 @@
           </unnnic-dropdown-item>
         </div>
       </unnnic-dropdown>
-    </div>
+    </div> -->
   </section>
 </template>
 

@@ -17,12 +17,12 @@
             scheme: 'aux-blue',
             count: 0,
           },
-          {
-            title: 'Aguardando atendimento',
-            icon: 'synchronize-arrow-clock-4',
-            scheme: 'feedback-blue',
-            count: 0,
-          },
+          // {
+          //   title: 'Aguardando atendimento',
+          //   icon: 'synchronize-arrow-clock-4',
+          //   scheme: 'feedback-blue',
+          //   count: 0,
+          // },
           {
             title: 'Transferências',
             icon: 'time-clock-circle-1',
