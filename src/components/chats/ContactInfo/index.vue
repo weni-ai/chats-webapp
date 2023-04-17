@@ -36,6 +36,7 @@
               }}
             </p>
             <unnnic-button
+              v-if="!isHistory && contactHaveHistory"
               class="transfer__button"
               text="Ver histórico do contato"
               iconLeft="export-1"
@@ -249,6 +250,7 @@ export default {
     transferRadio: 'agent',
     transferLabel: '',
     page: 0,
+    contactHaveHistory: false,
   }),
 
   computed: {
@@ -298,6 +300,11 @@ export default {
 
   async created() {
     if (!this.isHistory) {
+      if (
+        moment(this.room.contact.created_on).format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')
+      ) {
+        this.contactHaveHistory = true;
+      }
       this.transferLabel = this.$t('select_agent');
       this.loadLinkedContact();
       if (!this.room.queue?.sector) {
