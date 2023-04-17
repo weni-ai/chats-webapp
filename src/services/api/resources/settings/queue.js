@@ -22,6 +22,16 @@ export default {
     });
     return response.data;
   },
+  async listByProject() {
+    const response = await http.get('/queue/', {
+      params: {
+        project: getProject(),
+        ordering: '-created_on',
+        limit: 1000,
+      },
+    });
+    return response.data;
+  },
 
   async delete(queueUuid) {
     await http.delete(`/queue/${queueUuid}/`);
