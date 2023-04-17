@@ -17,4 +17,12 @@ export default {
     });
     return response.data;
   },
+  async getUnicContactClosedRooms(contact) {
+    const response = await http.get(`/contact/${contact}`, {
+      params: {
+        project: getProject(),
+      },
+    });
+    return response.data;
+  },
 };
