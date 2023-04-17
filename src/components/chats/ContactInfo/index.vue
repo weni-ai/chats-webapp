@@ -36,7 +36,7 @@
               }}
             </p>
             <unnnic-button
-              v-if="!isHistory && contactHaveHistory"
+              v-if="!isHistory"
               class="transfer__button"
               text="Ver histórico do contato"
               iconLeft="export-1"
