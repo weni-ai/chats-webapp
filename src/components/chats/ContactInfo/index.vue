@@ -90,7 +90,7 @@
             v-model="transferContactSearch"
             :data="
               transferRadio === `queue`
-                ? transferOptions.map((option) => `${option.name} | Setor ${option.sector_name}`)
+                ? transferOptions.map((option) => `${option.name}| Setor ${option.sector_name}`)
                 : transferOptions.map((option) => `${option.name}`)
             "
             @choose="transferContactTo = $event"
@@ -266,8 +266,8 @@ export default {
     transferPersonSelected() {
       if (this.transferRadio === 'queue') {
         const takeTheName = this.transferContactSearch.split('|').at(0);
-        const removeTheSpace = takeTheName.split(' ').at(0);
-        return this.transferOptions.find((option) => option.name === removeTheSpace);
+        // const removeTheSpace = takeTheName.split(' ').at(0);
+        return this.transferOptions.find((option) => option.name === takeTheName);
       }
       return this.transferOptions.find((option) => option.name === this.transferContactSearch);
     },
@@ -501,7 +501,7 @@ export default {
       return value.toString().toLowerCase();
     },
     async transferContact() {
-      console.log(this.transferPersonSelected, `this.transferPersonSelected`);
+      console.log(this.transferPersonSelected, `oi`);
       this.$store.commit('chats/removeChat', this.room);
       if (this.transferRadio === 'agent') {
         await Room.take(this.room.uuid, this.transferPersonSelected.email);
