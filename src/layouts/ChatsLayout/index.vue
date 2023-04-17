@@ -59,7 +59,9 @@
 
     <main
       v-bind:class="[
-        isAsideSlotInUse && !this.showQuickMessage ? 'unnnic-grid-span-6' : 'unnnic-grid-span-9',
+        isAsideSlotInUse && !this.showQuickMessage && !this.showQuickMessagePreferencesBar
+          ? 'unnnic-grid-span-6'
+          : 'unnnic-grid-span-9',
       ]"
       style="height: 100vh"
     >

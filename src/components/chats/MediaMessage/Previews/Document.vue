@@ -9,7 +9,7 @@
     :class="[{ highlight }, size]"
   >
     <unnnic-icon-svg :icon="icon" :scheme="highlight ? 'brand-weni-soft' : 'neutral-darkest'" />
-    <span class="filename">
+    <span class="filename" style="white-space: nowrap">
       {{ pathname }}
     </span>
 
