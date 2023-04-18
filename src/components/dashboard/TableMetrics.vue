@@ -1,5 +1,5 @@
 <template>
-  <section class="table-metrics" style="margin-top: -247px; overflow-y: scroll; height: 534px">
+  <section class="table-metrics" style="margin-top: -247px; overflow-y: scroll">
     <p class="table-metrics__title">
       <unnnic-avatar-icon :icon="icon" size="xs" scheme="feedback-green" />
       <span> {{ title }} </span>
