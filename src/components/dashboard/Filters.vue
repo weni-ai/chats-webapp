@@ -56,6 +56,7 @@
 
       <unnnic-input-date-picker
         style="min-width: 20px"
+        :days="['D', 'S', 'T', 'Q', 'Q', 'S', 'S']"
         v-model="filteredDateRange"
         size="md"
         class="input"
