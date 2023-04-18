@@ -13,6 +13,54 @@
       <template #queues>
         <section v-if="!!queueToEdit" class="edit-sector__edit-queue">
           <h2 class="edit-sector__title">{{ queueToEdit.name }}</h2>
+          <div style="margin-bottom: 24px">
+            <unnnic-chat-text
+              style="max-width: 100%; max-height: 100%"
+              size="small"
+              title="Mensagem automática"
+              info="Defina uma resposta automática para ser enviada ao contato enquanto 
+        está aguardando atendimento, deixe em branco caso não queira 
+        nenhuma mensagem."
+            >
+              <template slot="actions">
+                <unnnic-button-icon
+                  type="secondary"
+                  size="small"
+                  icon="pencil-write-1"
+                  @click="editDescription"
+                />
+              </template>
+              <template slot="description">
+                <span v-if="!editContent">{{ description }}</span>
+                <div v-if="editContent">
+                  <unnnic-text-area
+                    size="sm"
+                    placeholder="Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando"
+                    v-model="content"
+                  />
+                </div>
+                <div
+                  style="display: flex; justify-content: space-between; margin-top: 16px"
+                  v-if="editContent"
+                >
+                  <unnnic-button
+                    style="width: 48%"
+                    size="small"
+                    type="terciary"
+                    @click="cancelEditDescription"
+                    text="Cancelar"
+                  />
+                  <unnnic-button
+                    style="width: 48%"
+                    size="small"
+                    type="secondary"
+                    @click="saveEditDescription"
+                    text="Salvar"
+                  />
+                </div>
+              </template>
+            </unnnic-chat-text>
+          </div>
           <form-agent
             v-model="queueToEdit.agents"
             :sector="sector"
@@ -172,6 +220,10 @@ export default {
     pageAgents: 0,
     hasNextAgents: false,
     agentsList: [],
+    description:
+      'Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando',
+    editContent: false,
+    content: '',
   }),
 
   methods: {
@@ -375,6 +427,19 @@ export default {
       };
       this.toAddTags.push(tag);
       this.tags.push(tag);
+    },
+
+    editDescription() {
+      this.editContent = true;
+    },
+
+    saveEditDescription() {
+      console.log(`salvou`);
+    },
+
+    cancelEditDescription() {
+      this.editContent = false;
+      this.content = '';
     },
   },
 
