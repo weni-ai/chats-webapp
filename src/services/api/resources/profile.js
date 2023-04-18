@@ -29,11 +29,7 @@ export default {
    * }
    */
   status() {
-    return http.get('/internal/permission/project/status/', {
-      params: {
-        project: getProject(),
-      },
-    });
+    return http.get(`/internal/permission/project/status/?project=${getProject()}`);
   },
 
   /**

@@ -45,7 +45,7 @@ export default {
 <style lang="scss" scoped>
 .dashboard-layout {
   $max-height: calc(100vh - 5.5rem);
-  height: 100vh;
+  // height: 100vh;
   // max-height: $max-height;
 
   // display: flex;
