@@ -2,6 +2,7 @@
   <section class="dashboard-filters">
     <div class="dashboard-filters" style="z-index: 100">
       <unnnic-select
+        style="min-width: 11.81rem; width: 19.81rem"
         v-model="filteredSectorUuid"
         label="Filtrar por setor"
         size="md"
@@ -24,6 +25,7 @@
       </unnnic-select>
 
       <unnnic-select
+        style="min-width: 11.81rem; width: 19.81rem"
         v-if="filteredSectorUuid"
         v-model="filteredAgent"
         label="Filtrar por agente"
@@ -44,6 +46,7 @@
       </unnnic-select>
 
       <unnnic-autocomplete-select
+        style="min-width: 11.81rem; width: 19.81rem"
         v-model="selecteds"
         :items="tags"
         :placeholder="this.messageInputTags"
