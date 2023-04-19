@@ -252,6 +252,7 @@ export default {
           agents = this.agentsList;
           this.hasNextAgents = response.next;
           this.loading = false;
+          this.searchDefaultMessage(queue.uuid);
         }
         await this.getProjectAgents();
         this.queueToEdit = queue;
@@ -259,6 +260,7 @@ export default {
         this.queueToEdit.currentAgents = [...agents];
         this.queueToEdit.toAddAgents = [];
         this.queueToEdit.toRemoveAgents = [];
+        this.searchDefaultMessage(queue.uuid);
       } finally {
         this.loading = false;
       }
@@ -430,16 +432,42 @@ export default {
     },
 
     editDescription() {
+      if (this.queueInfo.default_message) this.content = this.queueInfo.default_message;
       this.editContent = true;
     },
 
-    saveEditDescription() {
-      console.log(`salvou`);
+    async searchDefaultMessage(uuid) {
+      try {
+        this.queueInfo = await Queue.getQueueInformation(uuid);
+        if (![null, undefined, ''].includes(this.queueInfo.default_message)) {
+          this.description = this.queueInfo.default_message;
+        } else {
+          this.description =
+            'Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando';
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async saveEditDescription() {
+      const saveQueue = {
+        uuid: this.queueInfo.uuid,
+        default_message: this.content,
+      };
+      try {
+        await Queue.editQueue(saveQueue);
+        this.description = this.content;
+        this.editContent = false;
+        this.searchDefaultMessage(this.queueInfo.uuid);
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     cancelEditDescription() {
       this.editContent = false;
-      this.content = '';
+      if (!this.queueToEdit.default_message) this.queueToEdit.default_message = '';
     },
   },
 
