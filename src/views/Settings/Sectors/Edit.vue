@@ -25,6 +25,7 @@
             >
               <template slot="actions">
                 <unnnic-button-icon
+                  v-if="!editContent"
                   type="secondary"
                   size="small"
                   icon="pencil-write-1"
@@ -32,36 +33,17 @@
                 />
               </template>
               <template slot="description">
-                <div @focusout="saveEditDescription">
+                <div @focusout="saveEditDescription" style="word-break: break-all">
                   <span v-show="!editContent">{{ description }}</span>
                   <div v-show="editContent" @focusout="saveEditDescription">
                     <unnnic-text-area
-                      maxLength="250"
+                      :maxLength="250"
                       size="sm"
                       placeholder="Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando"
                       v-model="content"
                       ref="textEditor"
                     />
                   </div>
-                  <!-- <div
-                    style="display: flex; justify-content: space-between; margin-top: 16px"
-                    v-show="editContent"
-                  >
-                    <unnnic-button
-                      style="width: 48%"
-                      size="small"
-                      type="terciary"
-                      @click="cancelEditDescription"
-                      text="Cancelar"
-                    />
-                    <unnnic-button
-                      style="width: 48%"
-                      size="small"
-                      type="secondary"
-                      @click="saveEditDescription"
-                      text="Salvar"
-                    />
-                  </div> -->
                 </div>
               </template>
             </unnnic-chat-text>
@@ -233,7 +215,6 @@ export default {
 
   methods: {
     focusTextEditor() {
-      console.log(this.$refs.textEditor, `this.$refs.textEditor`);
       this.$refs.textEditor?.focus?.();
     },
     async listProjectManagers() {
@@ -470,6 +451,7 @@ export default {
         this.description = this.content;
         this.editContent = false;
         this.searchDefaultMessage(this.queueInfo.uuid);
+        this.getQueues();
         unnnicCallAlert({
           props: {
             title: '',
