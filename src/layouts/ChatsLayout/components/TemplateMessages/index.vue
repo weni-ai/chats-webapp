@@ -257,7 +257,7 @@ export default {
       handler() {
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
-          this.contactList(this.hasNext, true);
+          this.contactList(null, true);
         }, 1000);
       },
     },
