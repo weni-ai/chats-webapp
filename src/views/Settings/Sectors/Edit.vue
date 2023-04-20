@@ -16,11 +16,12 @@
           <div style="margin-bottom: 24px">
             <unnnic-chat-text
               style="max-width: 100%; max-height: 100%"
+              titleColor="neutral-dark"
               size="small"
               title="Mensagem automática"
               info="Defina uma resposta automática para ser enviada ao contato enquanto 
-        está aguardando atendimento, deixe em branco caso não queira 
-        nenhuma mensagem."
+            está aguardando atendimento, deixe em branco caso não queira 
+            nenhuma mensagem."
             >
               <template slot="actions">
                 <unnnic-button-icon
@@ -31,32 +32,36 @@
                 />
               </template>
               <template slot="description">
-                <span v-if="!editContent">{{ description }}</span>
-                <div v-if="editContent">
-                  <unnnic-text-area
-                    size="sm"
-                    placeholder="Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando"
-                    v-model="content"
-                  />
-                </div>
-                <div
-                  style="display: flex; justify-content: space-between; margin-top: 16px"
-                  v-if="editContent"
-                >
-                  <unnnic-button
-                    style="width: 48%"
-                    size="small"
-                    type="terciary"
-                    @click="cancelEditDescription"
-                    text="Cancelar"
-                  />
-                  <unnnic-button
-                    style="width: 48%"
-                    size="small"
-                    type="secondary"
-                    @click="saveEditDescription"
-                    text="Salvar"
-                  />
+                <div @focusout="saveEditDescription">
+                  <span v-show="!editContent">{{ description }}</span>
+                  <div v-show="editContent" @focusout="saveEditDescription">
+                    <unnnic-text-area
+                      maxLength="250"
+                      size="sm"
+                      placeholder="Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando"
+                      v-model="content"
+                      ref="textEditor"
+                    />
+                  </div>
+                  <!-- <div
+                    style="display: flex; justify-content: space-between; margin-top: 16px"
+                    v-show="editContent"
+                  >
+                    <unnnic-button
+                      style="width: 48%"
+                      size="small"
+                      type="terciary"
+                      @click="cancelEditDescription"
+                      text="Cancelar"
+                    />
+                    <unnnic-button
+                      style="width: 48%"
+                      size="small"
+                      type="secondary"
+                      @click="saveEditDescription"
+                      text="Salvar"
+                    />
+                  </div> -->
                 </div>
               </template>
             </unnnic-chat-text>
@@ -227,6 +232,10 @@ export default {
   }),
 
   methods: {
+    focusTextEditor() {
+      console.log(this.$refs.textEditor, `this.$refs.textEditor`);
+      this.$refs.textEditor?.focus?.();
+    },
     async listProjectManagers() {
       const managers = (await Project.managers()).results.concat((await Project.admins()).results);
       this.projectManagers = managers;
@@ -434,6 +443,7 @@ export default {
     editDescription() {
       if (this.queueInfo.default_message) this.content = this.queueInfo.default_message;
       this.editContent = true;
+      // this.focusTextEditor();
     },
 
     async searchDefaultMessage(uuid) {
@@ -460,6 +470,17 @@ export default {
         this.description = this.content;
         this.editContent = false;
         this.searchDefaultMessage(this.queueInfo.uuid);
+        unnnicCallAlert({
+          props: {
+            title: '',
+            text: 'Atualizações salvas',
+            icon: 'check-circle-1-1-1',
+            scheme: 'feedback-green',
+            closeText: this.$t('close'),
+            position: 'bottom-right',
+          },
+          seconds: 5,
+        });
       } catch (error) {
         console.log(error);
       }
