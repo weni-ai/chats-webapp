@@ -13,6 +13,59 @@
       <template #queues>
         <section v-if="!!queueToEdit" class="edit-sector__edit-queue">
           <h2 class="edit-sector__title">{{ queueToEdit.name }}</h2>
+          <div style="margin-bottom: 24px">
+            <unnnic-chat-text
+              style="max-width: 100%; max-height: 100%"
+              titleColor="neutral-dark"
+              size="small"
+              title="Mensagem automática"
+              info="Defina uma resposta automática para ser enviada ao contato enquanto 
+            está aguardando atendimento, deixe em branco caso não queira 
+            nenhuma mensagem."
+            >
+              <template slot="actions">
+                <unnnic-button-icon
+                  type="secondary"
+                  size="small"
+                  icon="pencil-write-1"
+                  @click="editDescription"
+                />
+              </template>
+              <template slot="description">
+                <div @focusout="saveEditDescription">
+                  <span v-show="!editContent">{{ description }}</span>
+                  <div v-show="editContent" @focusout="saveEditDescription">
+                    <unnnic-text-area
+                      maxLength="250"
+                      size="sm"
+                      placeholder="Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando"
+                      v-model="content"
+                      ref="textEditor"
+                    />
+                  </div>
+                  <!-- <div
+                    style="display: flex; justify-content: space-between; margin-top: 16px"
+                    v-show="editContent"
+                  >
+                    <unnnic-button
+                      style="width: 48%"
+                      size="small"
+                      type="terciary"
+                      @click="cancelEditDescription"
+                      text="Cancelar"
+                    />
+                    <unnnic-button
+                      style="width: 48%"
+                      size="small"
+                      type="secondary"
+                      @click="saveEditDescription"
+                      text="Salvar"
+                    />
+                  </div> -->
+                </div>
+              </template>
+            </unnnic-chat-text>
+          </div>
           <form-agent
             v-model="queueToEdit.agents"
             :sector="sector"
@@ -172,9 +225,17 @@ export default {
     pageAgents: 0,
     hasNextAgents: false,
     agentsList: [],
+    description:
+      'Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando',
+    editContent: false,
+    content: '',
   }),
 
   methods: {
+    focusTextEditor() {
+      console.log(this.$refs.textEditor, `this.$refs.textEditor`);
+      this.$refs.textEditor?.focus?.();
+    },
     async listProjectManagers() {
       const managers = (await Project.managers()).results.concat((await Project.admins()).results);
       this.projectManagers = managers;
@@ -200,6 +261,7 @@ export default {
           agents = this.agentsList;
           this.hasNextAgents = response.next;
           this.loading = false;
+          this.searchDefaultMessage(queue.uuid);
         }
         await this.getProjectAgents();
         this.queueToEdit = queue;
@@ -207,6 +269,7 @@ export default {
         this.queueToEdit.currentAgents = [...agents];
         this.queueToEdit.toAddAgents = [];
         this.queueToEdit.toRemoveAgents = [];
+        this.searchDefaultMessage(queue.uuid);
       } finally {
         this.loading = false;
       }
@@ -375,6 +438,57 @@ export default {
       };
       this.toAddTags.push(tag);
       this.tags.push(tag);
+    },
+
+    editDescription() {
+      if (this.queueInfo.default_message) this.content = this.queueInfo.default_message;
+      this.editContent = true;
+      // this.focusTextEditor();
+    },
+
+    async searchDefaultMessage(uuid) {
+      try {
+        this.queueInfo = await Queue.getQueueInformation(uuid);
+        if (![null, undefined, ''].includes(this.queueInfo.default_message)) {
+          this.description = this.queueInfo.default_message;
+        } else {
+          this.description =
+            'Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando';
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async saveEditDescription() {
+      const saveQueue = {
+        uuid: this.queueInfo.uuid,
+        default_message: this.content,
+      };
+      try {
+        await Queue.editQueue(saveQueue);
+        this.description = this.content;
+        this.editContent = false;
+        this.searchDefaultMessage(this.queueInfo.uuid);
+        unnnicCallAlert({
+          props: {
+            title: '',
+            text: 'Atualizações salvas',
+            icon: 'check-circle-1-1-1',
+            scheme: 'feedback-green',
+            closeText: this.$t('close'),
+            position: 'bottom-right',
+          },
+          seconds: 5,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    cancelEditDescription() {
+      this.editContent = false;
+      if (!this.queueToEdit.default_message) this.queueToEdit.default_message = '';
     },
   },
 

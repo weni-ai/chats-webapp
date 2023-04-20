@@ -24,13 +24,13 @@
       </div>
       <div>
         <unnnic-input
-          v-model="search"
+          v-model="searchUrn"
           icon-left="search-1"
           size="sm"
           placeholder="Pesquisar contato"
         ></unnnic-input>
       </div>
-      <div class="contact-list">
+      <div class="contact-list" v-show="!searchUrn">
         <span class="title-group" v-if="listOfGroups.length > 0">Grupos</span>
         <div class="container-names" v-for="item in searchGroup" :key="item.uuid">
           <div class="users-names">
@@ -141,6 +141,8 @@ export default {
 
   data: () => ({
     search: '',
+    searchUrn: '',
+    timerId: 0,
     thereIsContact: true,
     listOfContacts: [],
     listOfGroups: [],
@@ -157,7 +159,7 @@ export default {
     letras() {
       const letras = {};
       this.listOfContacts
-        .filter((item) => item.name?.toUpperCase().includes(this.search.toUpperCase()))
+        // .filter((item) => item.name?.toUpperCase().includes(this.search.toUpperCase()))
         .forEach((element) => {
           const l = element.name[0].toUpperCase();
           const removeAccent = l.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -199,7 +201,7 @@ export default {
       if (cleanList) this.listOfContacts = [];
       this.isLoading = true;
       try {
-        const response = await TemplateMessages.getListOfContacts(next);
+        const response = await TemplateMessages.getListOfContacts(next, this.searchUrn);
         this.listOfContacts = this.listOfContacts.concat(response.results);
         this.hasNext = response.next;
         this.listOfContacts.sort((a, b) => a.name?.localeCompare(b.name));
@@ -248,6 +250,16 @@ export default {
 
     closeSelectTemplate() {
       this.showSelectTemplate = false;
+    },
+  },
+  watch: {
+    searchUrn: {
+      handler() {
+        if (this.timerId !== 0) clearTimeout(this.timerId);
+        this.timerId = setTimeout(() => {
+          this.contactList(this.hasNext, true);
+        }, 1000);
+      },
     },
   },
 };
