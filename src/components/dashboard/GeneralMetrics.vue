@@ -3,7 +3,11 @@
     <template>
       <unnnic-tool-tip
         enabled
-        text="Quantidade de chats que já estão sendo atendidos por um agente"
+        :text="
+          generalLabel === `Em andamento`
+            ? `Quantidade de chats que já estão sendo atendidos por um agente`
+            : `Quantidade de chats que foram atendidos por um agente `
+        "
         side="bottom"
         maxWidth="15rem"
       >

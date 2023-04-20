@@ -1,3 +1,4 @@
+<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <div class="container">
     <unnnic-input
@@ -11,6 +12,32 @@
       style="margin-bottom: 1rem"
       :loading="this.loading"
     ></unnnic-input>
+    <div class="order-by">
+      <div><span>Ordenar por:</span></div>
+      <div class="apply-filter" style="cursor: pointer">
+        <span
+          :style="{
+            fontWeight: lastCreatedFilter ? '700' : '400',
+          }"
+          @click="
+            listRoom(false, '-last_interaction'),
+              ((lastCreatedFilter = true), (createdOnFilter = false))
+          "
+          >Mais recentes |</span
+        >
+        <span
+          :style="{
+            fontWeight: createdOnFilter ? '700' : '400',
+          }"
+          @click="
+            listRoom(false, 'last_interaction'),
+              ((createdOnFilter = true), (lastCreatedFilter = false))
+          "
+        >
+          Mais antigos</span
+        >
+      </div>
+    </div>
     <section
       class="chat-groups"
       @scroll="
@@ -78,6 +105,8 @@ export default {
     nameOfContact: '',
     timerId: 0,
     loading: false,
+    createdOnFilter: false,
+    lastCreatedFilter: true,
   }),
 
   async mounted() {
@@ -145,12 +174,13 @@ export default {
       this.nameOfContact = '';
     },
 
-    async listRoom(concat) {
+    async listRoom(concat, order) {
       this.loading = true;
       try {
         await this.$store.dispatch('rooms/getAll', {
           offset: this.page * this.limit,
           concat,
+          order,
           limit: this.limit,
           contact: this.nameOfContact,
         });
@@ -196,6 +226,14 @@ export default {
     border-right: solid 1px $unnnic-color-neutral-soft;
     overflow-y: auto;
     overflow-x: hidden;
+  }
+
+  .order-by {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px;
+    font-size: $unnnic-font-size-body-md;
+    color: $unnnic-color-neutral-cloudy;
   }
 }
 </style>

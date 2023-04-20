@@ -2,14 +2,14 @@ import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 
 export default {
-  async getAll(offset, limit, contact) {
+  async getAll(offset, limit, contact, order) {
     const response = await http.get('/room/', {
       params: {
         is_active: true,
         project: getProject(),
         offset,
         limit,
-        // ordering: 'user,created_on,messages__created_on',
+        ordering: `user,${order}`,
         search: contact,
       },
     });

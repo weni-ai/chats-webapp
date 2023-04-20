@@ -1,5 +1,5 @@
 import http from '@/services/api/http';
-import { getProject } from '@/utils/config';
+import { getProject, getToken } from '@/utils/config';
 
 export default {
   async me() {
@@ -29,10 +29,8 @@ export default {
    * }
    */
   status() {
-    return http.get('/internal/permission/project/status/', {
-      params: {
-        project: getProject(),
-      },
+    return http.get(`/internal/permission/project/status/?project=${getProject()}`, {
+      headers: { Authorization: `Bearer ${getToken()}` },
     });
   },
 
