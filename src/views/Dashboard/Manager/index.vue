@@ -8,7 +8,7 @@
     <template>
       <general-live-metrics
         v-if="this.filters.type === 'todos'"
-        :headerTitle="this.filters.sectorUuid || this.showData ? 'Filas' : 'Setores'"
+        :headerTitle="this.filters.sectorUuid ? 'Filas' : 'Setores'"
         :totalChatsLabel="this.showData ? 'Quantidade de chats' : 'Agentes online'"
         :generalCardLabel="this.showData ? 'Quantidade de chats' : 'Em andamento'"
         :agentsLabel="this.showData ? 'Chats no período' : 'Em andamento'"
@@ -22,7 +22,7 @@
         v-if="this.filters.type === 'sector'"
         :filter="this.filters"
         @historyFilter="event = $event"
-        :headerTitle="this.filters.sectorUuid || this.showData ? 'Filas' : 'Setores'"
+        :headerTitle="this.filters.sectorUuid ? 'Filas' : 'Setores'"
         :totalChatsLabel="this.showData ? 'Quantidade de chats' : 'Agentes online'"
         :generalCardLabel="this.showData ? 'Quantidade de chats' : 'Em andamento'"
         :agentsLabel="this.showData ? 'Chats no período' : 'Em andamento'"
