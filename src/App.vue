@@ -121,7 +121,6 @@ export default {
         this.$store.state.chats.quickMessages.messages =
           this.$store.state.chats.quickMessages.messages.concat(response.results);
         hasNext = response.next;
-        // console.log(response.next, 'oi');
         this.loading = false;
       } finally {
         this.loading = false;

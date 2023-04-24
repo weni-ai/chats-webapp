@@ -1,3 +1,4 @@
+<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <div class="chat-header">
     <header class="header">
@@ -41,9 +42,10 @@
       >
     </section>
     <div class="header-info-message" style="display: flex" v-if="alert">
-      <span class="alert-text" style="margin-right: 4px">{{
-        $t('alert_last_message_date.message')
-      }}</span>
+      <span @click="openSelectFlow" class="alert-text" style="margin-right: 4px"
+        >{{ $t('alert_last_message_date.message') }}
+        <u style="cursor: pointer">{{ $t('alert_last_message_date.message_send_flow') }}</u></span
+      >
       <unnnic-tool-tip
         enabled
         :text="$t('alert_last_message_date.tip')"
@@ -91,6 +93,10 @@ export default {
     moment,
     showContactInfo() {
       this.$emit('show-contact-info');
+    },
+
+    openSelectFlow() {
+      this.$emit('open-select-flow');
     },
   },
 };
