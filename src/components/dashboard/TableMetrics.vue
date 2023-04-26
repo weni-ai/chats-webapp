@@ -9,6 +9,7 @@
       <header class="headers table-row">
         <span class="header table-col"> Agente </span>
         <span class="header table-col"> {{ this.headers }} </span>
+        <span class="header table-col"> Encerrados </span>
       </header>
 
       <section class="items">
@@ -17,7 +18,10 @@
             {{ item.user__first_name }}
           </span>
           <span class="table-col">
-            {{ item.count }}
+            {{ item.opened_rooms }}
+          </span>
+          <span class="table-col">
+            {{ item.closed_rooms }}
           </span>
         </section>
       </section>

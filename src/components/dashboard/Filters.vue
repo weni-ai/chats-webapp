@@ -2,7 +2,7 @@
   <section class="dashboard-filters">
     <div class="dashboard-filters" style="z-index: 100">
       <unnnic-select
-        style="min-width: 11.81rem; width: 19.81rem"
+        style="min-width: 11.81rem; width: 18.65rem"
         v-model="filteredSectorUuid"
         label="Filtrar por setor"
         size="md"
@@ -25,7 +25,7 @@
       </unnnic-select>
 
       <unnnic-select
-        style="min-width: 11.81rem; width: 19.81rem"
+        style="min-width: 11.81rem; width: 18.65rem"
         v-if="filteredSectorUuid"
         v-model="filteredAgent"
         label="Filtrar por agente"
@@ -46,7 +46,7 @@
       </unnnic-select>
 
       <unnnic-autocomplete-select
-        style="min-width: 11.81rem; width: 19.81rem"
+        style="min-width: 11.81rem; width: 18.65rem"
         v-model="selecteds"
         :items="tags"
         :placeholder="this.messageInputTags"
@@ -76,7 +76,7 @@
         />
       </unnnic-tool-tip>
     </div>
-    <!-- <div>
+    <div>
       <unnnic-dropdown v-bind="$props">
         <unnnic-button-icon
           icon="navigation-menu-vertical-1"
@@ -84,28 +84,46 @@
           class="clear-filters-btn"
           slot="trigger"
         />
-        <div class="attachment-options-container" style="width: 110px">
+        <div class="attachment-options-container" style="width: 155px">
           <unnnic-dropdown-item class="option">
             <span
               class="upload-dropdown-option"
-              @click="downloadDashboardData('csv')"
-              @keypress.enter="downloadDashboardData('csv')"
+              @click="downloadDashboardData('metrics_csv')"
+              @keypress.enter="downloadDashboardData('metrics_csv')"
             >
-              <span> Exportar em CSV </span>
+              <span> Exportar métricas em CSV </span>
             </span>
           </unnnic-dropdown-item>
           <unnnic-dropdown-item class="option">
             <span
               class="upload-dropdown-option"
-              @click="downloadDashboardData('pdf')"
-              @keypress.enter="downloadDashboardData('pdf')"
+              @click="downloadDashboardData('all_csv')"
+              @keypress.enter="downloadDashboardData('all_csv')"
             >
-              <span> Exportar em PDF </span>
+              <span> Exportar tudo em CSV </span>
+            </span>
+          </unnnic-dropdown-item>
+          <unnnic-dropdown-item class="option">
+            <span
+              class="upload-dropdown-option"
+              @click="downloadDashboardData('metrics_pdf')"
+              @keypress.enter="downloadDashboardData('metrics_pdf')"
+            >
+              <span> Exportar métricas em PDF </span>
+            </span>
+          </unnnic-dropdown-item>
+          <unnnic-dropdown-item class="option">
+            <span
+              class="upload-dropdown-option"
+              @click="downloadDashboardData('all_pdf')"
+              @keypress.enter="downloadDashboardData('all_pdf')"
+            >
+              <span> Exportar tudo em PDF </span>
             </span>
           </unnnic-dropdown-item>
         </div>
       </unnnic-dropdown>
-    </div> -->
+    </div>
   </section>
 </template>
 

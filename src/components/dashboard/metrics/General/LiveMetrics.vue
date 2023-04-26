@@ -13,7 +13,8 @@
           <table-metrics
             :headers="agentsLabel"
             :items="this.agents.project_agents"
-            title="Chats por agente"
+            rawData="rawInfo"
+            title="Agentes oline"
             icon="indicator"
           />
         </div>
