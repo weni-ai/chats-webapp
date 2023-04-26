@@ -13,7 +13,7 @@
         :statuses="[
           // {
           //   title: 'Em andamento',
-          //   icon: 'indicator',
+          //   icon: 'messages',
           //   scheme: 'aux-blue',
           //   count: 0,
           // },
@@ -24,8 +24,8 @@
           //   count: 0,
           // },
           // {
-          //   title: 'Transferências',
-          //   icon: 'time-clock-circle-1',
+          //   title: 'Encerrados',
+          //   icon: 'check-circle-1-1',
           //   scheme: 'aux-purple',
           //   count: 0,
           // },

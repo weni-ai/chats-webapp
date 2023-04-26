@@ -59,7 +59,7 @@ export default {
     });
     return response.data;
   },
-  async downloadData(idSector, agent, tag, startDate, endDate) {
+  async downloadMetricData(idSector, agent, tag, startDate, endDate) {
     const idProject = getProject();
     const response = await http.get(`dashboard/${idProject}/export/`, {
       params: {
@@ -70,6 +70,36 @@ export default {
         end_date: endDate,
       },
     });
-    return response.data;
+    if (response.status === 200) {
+      const { headers } = response;
+      const blob = new Blob([response.data], { type: headers['content-type'] });
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = 'download metric';
+      link.click();
+    }
+    // return response.data;
+  },
+  async downloadAllData(idSector, agent, tag, startDate, endDate) {
+    const idProject = getProject();
+    const response = await http.get(`dashboard/${idProject}/export_dashboard/`, {
+      params: {
+        sector: idSector,
+        agent,
+        tag,
+        start_date: startDate,
+        end_date: endDate,
+      },
+    });
+    if (response.status === 200) {
+      const { headers } = response;
+      console.log(response, `oi`);
+      const blob = new Blob([response.data], { type: headers['content-type'] });
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = 'download all';
+      link.click();
+    }
+    // return response.data;
   },
 };
