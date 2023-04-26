@@ -105,6 +105,9 @@ export default {
     groups: {
       type: Array,
     },
+    selectedContact: {
+      type: Object,
+    },
   },
 
   methods: {
@@ -132,11 +135,11 @@ export default {
 
     async sendTemplate() {
       this.loading = true;
-      this.findId(this.contacts, this.groups);
+      if (!this.selectedContact) this.findId(this.contacts, this.groups);
       const prepareObj = {
         flow: this.selectedFlow,
         groups: this.idGruops,
-        contacts: this.idContactsList,
+        contacts: this.selectedContact ? [this.selectedContact.uuid] : this.idContactsList,
       };
       this.openModalProgress();
       try {
