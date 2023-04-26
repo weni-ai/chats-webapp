@@ -76,7 +76,7 @@
         />
       </unnnic-tool-tip>
     </div>
-    <div>
+    <!-- <div>
       <unnnic-dropdown v-bind="$props">
         <unnnic-button-icon
           icon="navigation-menu-vertical-1"
@@ -88,8 +88,8 @@
           <unnnic-dropdown-item class="option">
             <span
               class="upload-dropdown-option"
-              @click="downloadDashboardData('metrics_csv')"
-              @keypress.enter="downloadDashboardData('metrics_csv')"
+              @click="downloadMetric('metrics_csv')"
+              @keypress.enter="downloadMetric('metrics_csv')"
             >
               <span> Exportar métricas em CSV </span>
             </span>
@@ -106,8 +106,8 @@
           <unnnic-dropdown-item class="option">
             <span
               class="upload-dropdown-option"
-              @click="downloadDashboardData('metrics_pdf')"
-              @keypress.enter="downloadDashboardData('metrics_pdf')"
+              @click="downloadMetric('metrics_pdf')"
+              @keypress.enter="downloadMetric('metrics_pdf')"
             >
               <span> Exportar métricas em PDF </span>
             </span>
@@ -123,7 +123,7 @@
           </unnnic-dropdown-item>
         </div>
       </unnnic-dropdown>
-    </div>
+    </div> -->
   </section>
 </template>
 
@@ -174,8 +174,8 @@ export default {
   }),
 
   methods: {
-    async downloadDashboardData(option) {
-      console.log(option, 'option');
+    async downloadMetric(option) {
+      console.log(option, 'option Metric');
       const temTag = ![null, undefined, ''].includes(this.selecteds);
       if (temTag) {
         this.nameTag = this.selecteds.map((el) => el.text).toString();
@@ -183,7 +183,7 @@ export default {
         this.nameTag = this.selecteds;
       }
       try {
-        this.download = await DashboardManagerApi.downloadData(
+        this.download = await DashboardManagerApi.downloadMetricData(
           this.filteredSectorUuid,
           this.filteredAgent,
           this.selecteds,
@@ -191,6 +191,26 @@ export default {
           this.filteredDateRange.end,
         );
         console.log(this.download, 'oi');
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async downloadDashboardData(option) {
+      console.log(option, 'option All');
+      const temTag = ![null, undefined, ''].includes(this.selecteds);
+      if (temTag) {
+        this.nameTag = this.selecteds.map((el) => el.text).toString();
+      } else {
+        this.nameTag = this.selecteds;
+      }
+      try {
+        this.download = await DashboardManagerApi.downloadAllData(
+          this.filteredSectorUuid,
+          this.filteredAgent,
+          this.selecteds,
+          this.filteredDateRange.start,
+          this.filteredDateRange.end,
+        );
       } catch (error) {
         console.log(error);
       }
