@@ -2,7 +2,7 @@
   <section class="dashboard-filters">
     <div class="dashboard-filters" style="z-index: 100">
       <unnnic-select
-        style="min-width: 11.81rem; width: 19.81rem"
+        style="min-width: 11.81rem; width: 18.65rem"
         v-model="filteredSectorUuid"
         label="Filtrar por setor"
         size="md"
@@ -25,7 +25,7 @@
       </unnnic-select>
 
       <unnnic-select
-        style="min-width: 11.81rem; width: 19.81rem"
+        style="min-width: 11.81rem; width: 18.65rem"
         v-if="filteredSectorUuid"
         v-model="filteredAgent"
         label="Filtrar por agente"
@@ -46,7 +46,7 @@
       </unnnic-select>
 
       <unnnic-autocomplete-select
-        style="min-width: 11.81rem; width: 19.81rem"
+        style="min-width: 11.81rem; width: 18.65rem"
         v-model="selecteds"
         :items="tags"
         :placeholder="this.messageInputTags"
@@ -84,23 +84,41 @@
           class="clear-filters-btn"
           slot="trigger"
         />
-        <div class="attachment-options-container" style="width: 110px">
+        <div class="attachment-options-container" style="width: 155px">
           <unnnic-dropdown-item class="option">
             <span
               class="upload-dropdown-option"
-              @click="downloadDashboardData('csv')"
-              @keypress.enter="downloadDashboardData('csv')"
+              @click="downloadMetric('metrics_csv')"
+              @keypress.enter="downloadMetric('metrics_csv')"
             >
-              <span> Exportar em CSV </span>
+              <span> Exportar métricas em CSV </span>
             </span>
           </unnnic-dropdown-item>
           <unnnic-dropdown-item class="option">
             <span
               class="upload-dropdown-option"
-              @click="downloadDashboardData('pdf')"
-              @keypress.enter="downloadDashboardData('pdf')"
+              @click="downloadDashboardData('all_csv')"
+              @keypress.enter="downloadDashboardData('all_csv')"
             >
-              <span> Exportar em PDF </span>
+              <span> Exportar tudo em CSV </span>
+            </span>
+          </unnnic-dropdown-item>
+          <unnnic-dropdown-item class="option">
+            <span
+              class="upload-dropdown-option"
+              @click="downloadMetric('metrics_pdf')"
+              @keypress.enter="downloadMetric('metrics_pdf')"
+            >
+              <span> Exportar métricas em PDF </span>
+            </span>
+          </unnnic-dropdown-item>
+          <unnnic-dropdown-item class="option">
+            <span
+              class="upload-dropdown-option"
+              @click="downloadDashboardData('all_pdf')"
+              @keypress.enter="downloadDashboardData('all_pdf')"
+            >
+              <span> Exportar tudo em PDF </span>
             </span>
           </unnnic-dropdown-item>
         </div>
@@ -156,8 +174,8 @@ export default {
   }),
 
   methods: {
-    async downloadDashboardData(option) {
-      console.log(option, 'option');
+    async downloadMetric(option) {
+      console.log(option, 'option Metric');
       const temTag = ![null, undefined, ''].includes(this.selecteds);
       if (temTag) {
         this.nameTag = this.selecteds.map((el) => el.text).toString();
@@ -165,7 +183,7 @@ export default {
         this.nameTag = this.selecteds;
       }
       try {
-        this.download = await DashboardManagerApi.downloadData(
+        this.download = await DashboardManagerApi.downloadMetricData(
           this.filteredSectorUuid,
           this.filteredAgent,
           this.selecteds,
@@ -173,6 +191,26 @@ export default {
           this.filteredDateRange.end,
         );
         console.log(this.download, 'oi');
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async downloadDashboardData(option) {
+      console.log(option, 'option All');
+      const temTag = ![null, undefined, ''].includes(this.selecteds);
+      if (temTag) {
+        this.nameTag = this.selecteds.map((el) => el.text).toString();
+      } else {
+        this.nameTag = this.selecteds;
+      }
+      try {
+        this.download = await DashboardManagerApi.downloadAllData(
+          this.filteredSectorUuid,
+          this.filteredAgent,
+          this.selecteds,
+          this.filteredDateRange.start,
+          this.filteredDateRange.end,
+        );
       } catch (error) {
         console.log(error);
       }

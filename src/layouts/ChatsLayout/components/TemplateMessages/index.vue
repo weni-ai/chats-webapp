@@ -159,7 +159,7 @@ export default {
     letras() {
       const letras = {};
       this.listOfContacts
-        // .filter((item) => item.name?.toUpperCase().includes(this.search.toUpperCase()))
+        .filter((item) => item.name?.toUpperCase().includes(this.search.toUpperCase()))
         .forEach((element) => {
           const l = element.name[0].toUpperCase();
           const removeAccent = l.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -257,7 +257,7 @@ export default {
       handler() {
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
-          this.contactList(this.hasNext, true);
+          this.contactList(null, true);
         }, 1000);
       },
     },
