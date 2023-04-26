@@ -8,7 +8,7 @@
     <section class="table-metrics__table">
       <header class="headers table-row">
         <span class="header table-col"> Agente </span>
-        <span class="header table-col"> {{ this.headers }} </span>
+        <span class="header table-col" style="text-align: center"> {{ this.headers }} </span>
         <span class="header table-col"> Encerrados </span>
       </header>
 
@@ -17,10 +17,10 @@
           <span class="table-col">
             {{ item.user__first_name }}
           </span>
-          <span class="table-col">
+          <span class="table-col" style="text-align: center">
             {{ item.opened_rooms }}
           </span>
-          <span class="table-col">
+          <span class="table-col" style="text-align: center">
             {{ item.closed_rooms }}
           </span>
         </section>
