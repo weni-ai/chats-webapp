@@ -1,5 +1,5 @@
 <template>
-  <app-accordion>
+  <app-accordion :isDefaultOpen="isDefaultOpen" @change="changeAccordionOption">
     <template v-slot:title>
       <div class="chat-group" :class="{ disabled }">
         <header>
@@ -23,23 +23,6 @@
       </div>
     </template>
   </app-accordion>
-  <!-- <div class="chat-group" :class="{ disabled }">
-    <header>
-      <h2>{{ label }}</h2>
-    </header>
-
-    <ul class="chats" :class="{ filled }">
-      <li v-for="room in rooms" :key="room.id">
-        <contact-room
-          :room="room"
-          @click="open(room)"
-          :filled="filled"
-          :disabled="disabled"
-          :use-photo="usePhoto"
-        />
-      </li>
-    </ul>
-  </div> -->
 </template>
 
 <script>
@@ -52,6 +35,17 @@ export default {
   components: {
     ContactRoom,
     AppAccordion,
+  },
+
+  created() {
+    this.isDefaultOpen = !!Number(localStorage.getItem(this.id));
+    console.log(this.isDefaultOpen, `this.isDefaultOpen`);
+  },
+
+  data() {
+    return {
+      isDefaultOpen: true,
+    };
   },
 
   props: {
@@ -71,6 +65,10 @@ export default {
       type: String,
       default: '',
     },
+    id: {
+      type: String,
+      default: '',
+    },
     usePhoto: {
       type: Boolean,
       default: false,
@@ -80,6 +78,10 @@ export default {
   methods: {
     open(room) {
       this.$emit('open', room);
+    },
+
+    changeAccordionOption(parameter) {
+      localStorage.setItem(this.id, Number(parameter));
     },
   },
 };

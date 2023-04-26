@@ -161,6 +161,10 @@ export default {
       this.showQuickMessagePreferencesBar = false;
     },
     close() {
+      console.log(this.$slots.aside[0].componentOptions.listeners);
+      if (this.$slots.aside[0].componentOptions.listeners) {
+        this.$slots.aside[0].componentOptions.listeners.close();
+      }
       this.showSendFlowMessage = false;
     },
 
