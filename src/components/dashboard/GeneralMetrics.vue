@@ -37,18 +37,13 @@
           :inverted-percentage="false"
         />
       </unnnic-tool-tip>
-      <unnnic-tool-tip
-        enabled
-        text="Quantidade de transferências realizadas até agora"
-        side="bottom"
-        maxWidth="15rem"
-      >
+      <unnnic-tool-tip enabled text="Quantidade de chats encerrados" side="bottom" maxWidth="15rem">
         <unnnic-card
           type="dash"
-          title="Transferências"
-          icon="transfer-message"
+          title="Encerrados"
+          icon="check-circle-1-1"
           scheme="aux-purple"
-          :value="this.rawData.transfer_count || 0"
+          :value="this.rawData.closed_rooms || 0"
           :percent="0"
           :inverted-percentage="false"
         />
