@@ -39,7 +39,6 @@ export default {
 
   created() {
     this.isDefaultOpen = !!Number(localStorage.getItem(this.id));
-    console.log(this.isDefaultOpen, `this.isDefaultOpen`);
   },
 
   data() {

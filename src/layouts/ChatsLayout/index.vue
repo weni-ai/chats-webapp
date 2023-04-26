@@ -161,7 +161,6 @@ export default {
       this.showQuickMessagePreferencesBar = false;
     },
     close() {
-      console.log(this.$slots.aside[0].componentOptions.listeners);
       if (this.$slots.aside[0].componentOptions.listeners) {
         this.$slots.aside[0].componentOptions.listeners.close();
       }
@@ -214,7 +213,6 @@ export default {
 
   computed: {
     isAsideSlotInUse() {
-      console.log(this.$slots.aside, `this.$slots.aside`);
       if (![null, undefined, ''].includes(this.$slots.aside)) {
         if (this.$slots.aside[0].componentOptions.tag === 'QuickMessages') {
           // eslint-disable-next-line vue/no-side-effects-in-computed-properties
