@@ -6,6 +6,10 @@
         :closeButtonTooltip="$t('chats.end')"
         @close="openModalCloseChat"
         @show-contact-info="componentInAsideSlot = 'contactInfo'"
+        @open-select-flow="
+          componentInAsideSlot =
+            componentInAsideSlot === 'layoutTemplateMessage' ? '' : 'layoutTemplateMessage'
+        "
         :alert="showAlertForLastMessage"
       />
       <chat-messages
@@ -111,6 +115,7 @@ import MessageEditor from '@/components/chats/MessageEditor';
 import ChatClassifier from '@/components/chats/ChatClassifier';
 import QuickMessages from '@/components/chats/QuickMessages';
 import ModalCloseChat from '@/views/chats/ModalCloseChat.vue';
+import LayoutTemplateMessage from '@/components/chats/TemplateMessages/LayoutTemplateMessage';
 
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
@@ -127,6 +132,7 @@ export default {
     MessageEditor,
     ChatClassifier,
     ModalCloseChat,
+    LayoutTemplateMessage,
   },
 
   props: {
@@ -196,6 +202,15 @@ export default {
             close: () => {
               this.componentInAsideSlot = '';
             },
+          },
+        },
+        layoutTemplateMessage: {
+          name: LayoutTemplateMessage.name,
+          listeners: {
+            close: () => {
+              this.componentInAsideSlot = '';
+            },
+            contact: this.room.contact,
           },
         },
       };
@@ -316,6 +331,7 @@ export default {
     },
 
     dateOfLastMessage() {
+      if (!this.room) return;
       if (!this.room.is_24h_valid) {
         this.showAlertForLastMessage = true;
       } else {

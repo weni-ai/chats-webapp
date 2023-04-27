@@ -54,6 +54,9 @@ export default {
     return {
       ws: null,
       timerPing: 30000,
+      page: 0,
+      limit: 60,
+      loading: false,
     };
   },
 
@@ -110,8 +113,21 @@ export default {
     },
 
     async loadQuickMessages() {
-      const response = await QuickMessage.all();
-      this.$store.state.chats.quickMessages.messages = response.results;
+      this.loading = true;
+      let hasNext = false;
+      try {
+        const response = await QuickMessage.all(this.page * this.limit, this.limit);
+        this.page += 1;
+        this.$store.state.chats.quickMessages.messages =
+          this.$store.state.chats.quickMessages.messages.concat(response.results);
+        hasNext = response.next;
+        this.loading = false;
+      } finally {
+        this.loading = false;
+      }
+      if (hasNext) {
+        this.loadQuickMessages();
+      }
     },
 
     handleLocale() {

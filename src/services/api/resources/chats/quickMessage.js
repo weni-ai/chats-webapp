@@ -1,8 +1,13 @@
 import http from '@/services/api/http';
 
 export default {
-  async all() {
-    const response = await http.get('/quick_messages/');
+  async all(offset, limit) {
+    const response = await http.get('/quick_messages/', {
+      params: {
+        offset,
+        limit,
+      },
+    });
     return response.data;
   },
 
