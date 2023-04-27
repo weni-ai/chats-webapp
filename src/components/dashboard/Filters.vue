@@ -76,7 +76,7 @@
         />
       </unnnic-tool-tip>
     </div>
-    <!-- <div>
+    <div>
       <unnnic-dropdown v-bind="$props">
         <unnnic-button-icon
           icon="navigation-menu-vertical-1"
@@ -106,24 +106,24 @@
           <unnnic-dropdown-item class="option">
             <span
               class="upload-dropdown-option"
-              @click="downloadMetric('metrics_pdf')"
-              @keypress.enter="downloadMetric('metrics_pdf')"
+              @click="downloadMetric('metrics_xls')"
+              @keypress.enter="downloadMetric('metrics_xls')"
             >
-              <span> Exportar métricas em PDF </span>
+              <span> Exportar métricas em XLS </span>
             </span>
           </unnnic-dropdown-item>
           <unnnic-dropdown-item class="option">
             <span
               class="upload-dropdown-option"
-              @click="downloadDashboardData('all_pdf')"
-              @keypress.enter="downloadDashboardData('all_pdf')"
+              @click="downloadDashboardData('all_xls')"
+              @keypress.enter="downloadDashboardData('all_xls')"
             >
-              <span> Exportar tudo em PDF </span>
+              <span> Exportar tudo em XLS </span>
             </span>
           </unnnic-dropdown-item>
         </div>
       </unnnic-dropdown>
-    </div> -->
+    </div>
   </section>
 </template>
 
@@ -175,7 +175,6 @@ export default {
 
   methods: {
     async downloadMetric(option) {
-      console.log(option, 'option Metric');
       const temTag = ![null, undefined, ''].includes(this.selecteds);
       if (temTag) {
         this.nameTag = this.selecteds.map((el) => el.text).toString();
@@ -189,14 +188,13 @@ export default {
           this.selecteds,
           this.filteredDateRange.start,
           this.filteredDateRange.end,
+          option,
         );
-        console.log(this.download, 'oi');
       } catch (error) {
         console.log(error);
       }
     },
     async downloadDashboardData(option) {
-      console.log(option, 'option All');
       const temTag = ![null, undefined, ''].includes(this.selecteds);
       if (temTag) {
         this.nameTag = this.selecteds.map((el) => el.text).toString();
@@ -210,6 +208,7 @@ export default {
           this.selecteds,
           this.filteredDateRange.start,
           this.filteredDateRange.end,
+          option,
         );
       } catch (error) {
         console.log(error);

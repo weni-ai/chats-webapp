@@ -10,12 +10,15 @@
           </span>
           <!-- <unnnic-icon-svg icon="information-circle-4" size="sm" scheme="neutral-soft" /> -->
         </div>
-        <div @click="close">
-          <unnnic-icon
-            style="cursor: pointer; margin-right: 26px; margin-top: 18px"
-            size="sm"
-            icon="close-1"
-          />
+        <div style="display: flex">
+          <slot name="status" />
+          <div @click="close">
+            <unnnic-icon
+              style="cursor: pointer; margin-right: 26px; margin-top: 18px"
+              size="sm"
+              icon="close-1"
+            />
+          </div>
         </div>
       </header>
 
