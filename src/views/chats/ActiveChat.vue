@@ -176,6 +176,7 @@ export default {
       return (
         !this.isRoomClassifierVisible &&
         this.room.is_active &&
+        this.room.is_24h_valid &&
         !this.room.wating_answer &&
         !!this.room.user
       );
