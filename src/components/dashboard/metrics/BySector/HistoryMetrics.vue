@@ -47,6 +47,7 @@ export default {
     this.agentInfo();
     this.roomInfo();
     this.sectorInfo();
+    this.rawDataInfo();
   },
 
   props: {
