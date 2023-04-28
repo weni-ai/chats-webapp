@@ -59,9 +59,10 @@ export default {
     });
     return response.data;
   },
-  async downloadMetricData(idSector, agent, tag, startDate, endDate) {
+  async downloadMetricData(idSector, agent, tag, startDate, endDate, option) {
     const idProject = getProject();
-    const response = await http.get(`dashboard/${idProject}/export/`, {
+    const downloadOption = option === 'metrics_xls' ? `?xls=on` : '';
+    const response = await http.get(`dashboard/${idProject}/export/${downloadOption}`, {
       params: {
         sector: idSector,
         agent,
@@ -80,9 +81,10 @@ export default {
     }
     // return response.data;
   },
-  async downloadAllData(idSector, agent, tag, startDate, endDate) {
+  async downloadAllData(idSector, agent, tag, startDate, endDate, option) {
     const idProject = getProject();
-    const response = await http.get(`dashboard/${idProject}/export_dashboard/`, {
+    const downloadOption = option === 'all_xls' ? `?xls=on` : '';
+    const response = await http.get(`dashboard/${idProject}/export_dashboard/${downloadOption}`, {
       params: {
         sector: idSector,
         agent,

@@ -52,6 +52,7 @@
         :rooms="queue"
         filled
         @open="open"
+        id="queue"
       />
       <room-group
         v-if="wating.length"
@@ -60,6 +61,7 @@
         @open="open"
         :isWatingAnswer="true"
         :isHistory="isHistoryView"
+        id="wating"
       />
       <room-group
         v-bind:style="isHistoryView ? 'opacity: 0.5;' : 'opacity: 20'"
@@ -68,6 +70,7 @@
         :rooms="rooms"
         @open="open"
         :isHistory="isHistoryView"
+        id="in_progress"
       />
     </section>
 

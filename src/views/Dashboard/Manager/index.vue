@@ -1,6 +1,14 @@
 <template>
   <dashboard-layout>
     <template #header> {{ header }}</template>
+    <template v-if="!this.showData" #status>
+      <div style="margin-right: 27px">
+        <span class="card-status">
+          <unnnic-icon icon="indicator" scheme="feedback-green" style="margin-right: 12px" />
+          <span>Ao vivo</span>
+        </span>
+      </div>
+    </template>
 
     <template #actions>
       <dashboard-filters @filter="filters = $event" />
@@ -97,3 +105,16 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.card-status {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  color: $unnnic-color-neutral-dark;
+  font-size: $unnnic-font-size-body-gt;
+  width: 111px;
+  height: 48px;
+  background: #ffffff;
+  border-radius: 4px;
+}
+</style>
