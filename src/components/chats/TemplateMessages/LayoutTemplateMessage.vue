@@ -138,7 +138,7 @@ export default {
       if (!this.selectedContact) this.findId(this.contacts, this.groups);
       const prepareObj = {
         flow: this.selectedFlow,
-        groups: [],
+        groups: this.idGruops,
         contacts: this.selectedContact
           ? [this.selectedContact.contact.external_id]
           : this.idContactsList,
