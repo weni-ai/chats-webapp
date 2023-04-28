@@ -10,7 +10,7 @@
           </span>
           <!-- <unnnic-icon-svg icon="information-circle-4" size="sm" scheme="neutral-soft" /> -->
         </div>
-        <div style="display: flex">
+        <div style="display: flex; padding: 12px">
           <slot name="status" />
           <div @click="close">
             <unnnic-icon
