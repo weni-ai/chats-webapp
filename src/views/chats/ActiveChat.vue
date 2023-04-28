@@ -10,7 +10,7 @@
           componentInAsideSlot =
             componentInAsideSlot === 'layoutTemplateMessage' ? '' : 'layoutTemplateMessage'
         "
-        :alert="showAlertForLastMessage"
+        :alert="!this.room.is_24h_valid"
       />
       <chat-messages
         :room="room"
@@ -21,10 +21,7 @@
         @scrollTop="searchForMoreMessages"
       />
 
-      <div
-        v-if="isMessageEditorVisible && !room.is_waiting && !showAlertForLastMessage"
-        class="message-editor"
-      >
+      <div v-if="isMessageEditorVisible && !room.is_waiting" class="message-editor">
         <message-editor
           ref="message-editor"
           v-model="editorMessage"
