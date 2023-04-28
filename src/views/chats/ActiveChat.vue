@@ -6,7 +6,11 @@
         :closeButtonTooltip="$t('chats.end')"
         @close="openModalCloseChat"
         @show-contact-info="componentInAsideSlot = 'contactInfo'"
-        :alert="showAlertForLastMessage"
+        @open-select-flow="
+          componentInAsideSlot =
+            componentInAsideSlot === 'layoutTemplateMessage' ? '' : 'layoutTemplateMessage'
+        "
+        :alert="!this.room.is_24h_valid"
       />
       <chat-messages
         :room="room"
@@ -17,10 +21,7 @@
         @scrollTop="searchForMoreMessages"
       />
 
-      <div
-        v-if="isMessageEditorVisible && !room.is_waiting && !showAlertForLastMessage"
-        class="message-editor"
-      >
+      <div v-if="isMessageEditorVisible && !room.is_waiting" class="message-editor">
         <message-editor
           ref="message-editor"
           v-model="editorMessage"
@@ -111,6 +112,7 @@ import MessageEditor from '@/components/chats/MessageEditor';
 import ChatClassifier from '@/components/chats/ChatClassifier';
 import QuickMessages from '@/components/chats/QuickMessages';
 import ModalCloseChat from '@/views/chats/ModalCloseChat.vue';
+import LayoutTemplateMessage from '@/components/chats/TemplateMessages/LayoutTemplateMessage';
 
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
@@ -127,6 +129,7 @@ export default {
     MessageEditor,
     ChatClassifier,
     ModalCloseChat,
+    LayoutTemplateMessage,
   },
 
   props: {
@@ -170,6 +173,7 @@ export default {
       return (
         !this.isRoomClassifierVisible &&
         this.room.is_active &&
+        this.room.is_24h_valid &&
         !this.room.wating_answer &&
         !!this.room.user
       );
@@ -196,6 +200,15 @@ export default {
             close: () => {
               this.componentInAsideSlot = '';
             },
+          },
+        },
+        layoutTemplateMessage: {
+          name: LayoutTemplateMessage.name,
+          listeners: {
+            close: () => {
+              this.componentInAsideSlot = '';
+            },
+            contact: this.room,
           },
         },
       };
@@ -316,6 +329,7 @@ export default {
     },
 
     dateOfLastMessage() {
+      if (!this.room) return;
       if (!this.room.is_24h_valid) {
         this.showAlertForLastMessage = true;
       } else {

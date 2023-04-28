@@ -37,6 +37,7 @@
                   <span v-show="!editContent">{{ description }}</span>
                   <div v-show="editContent" @focusout="saveEditDescription">
                     <unnnic-text-area
+                      @focus="focusTextEditor"
                       :maxLength="250"
                       size="sm"
                       placeholder="Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando"
@@ -215,7 +216,9 @@ export default {
 
   methods: {
     focusTextEditor() {
-      this.$refs.textEditor?.focus?.();
+      this.$nextTick(() => {
+        this.$refs.textEditor?.focus();
+      });
     },
     async listProjectManagers() {
       const managers = (await Project.managers()).results.concat((await Project.admins()).results);
@@ -424,7 +427,7 @@ export default {
     editDescription() {
       if (this.queueInfo.default_message) this.content = this.queueInfo.default_message;
       this.editContent = true;
-      // this.focusTextEditor();
+      this.focusTextEditor();
     },
 
     async searchDefaultMessage(uuid) {

@@ -1,15 +1,37 @@
 <template>
   <section class="chats-layout unnnic-grid-giant" style="padding: 0px; overflow-y: hidden">
     <section
-      v-if="isAsideSlotInUse && this.showQuickMessage && !this.showQuickMessagePreferencesBar"
+      v-if="
+        isAsideSlotInUse &&
+        this.showQuickMessage &&
+        !this.showQuickMessagePreferencesBar &&
+        !this.showSendFlowMessage
+      "
       class="aside unnnic-grid-span-3"
       style="border: 1px solid #e2e6ed"
     >
       <slot name="aside" />
     </section>
+    <section
+      v-if="
+        this.showSendFlowMessage &&
+        !this.showQuickMessage &&
+        !this.showQuickMessagePreferencesBar &&
+        !this.contactList
+      "
+      :style="{ display: 'flex', flexDirection: 'column', height: '96vh', paddingLeft: '10px' }"
+      class="room-list unnnic-grid-span-3"
+    >
+      <layout-template-message :selectedContact="this.contact" @close="close" />
+    </section>
     <slot
       name="room-list"
-      v-if="!this.contactList && !this.showQuickMessage && !this.showQuickMessagePreferencesBar"
+      v-if="
+        !this.contactList &&
+        !this.showQuickMessage &&
+        !this.showQuickMessagePreferencesBar &&
+        !this.showSendFlowMessage
+      "
     >
       <div
         :style="{ display: 'flex', flexDirection: 'column', height: '100vh', paddingLeft: '10px' }"
@@ -36,7 +58,12 @@
 
     <slot
       name="template-message"
-      v-if="this.contactList && !this.showQuickMessage && !this.showQuickMessagePreferencesBar"
+      v-if="
+        this.contactList &&
+        !this.showQuickMessage &&
+        !this.showQuickMessagePreferencesBar &&
+        !this.showSendFlowMessage
+      "
     >
       <div
         :style="{ display: 'flex', flexDirection: 'column', height: '100vh', paddingLeft: '10px' }"
@@ -45,9 +72,15 @@
         <contact-list class="room-list" :disabled="disabledChatList" @close="closeContactList" />
       </div>
     </slot>
+
     <slot
       name="quick-message"
-      v-if="!this.contactList && !this.showQuickMessage && this.showQuickMessagePreferencesBar"
+      v-if="
+        !this.contactList &&
+        !this.showQuickMessage &&
+        !this.showSendFlowMessage &&
+        this.showQuickMessagePreferencesBar
+      "
     >
       <div
         :style="{ display: 'flex', flexDirection: 'column', height: '100vh' }"
@@ -56,10 +89,12 @@
         <quick-messages class="room-list" @close="closeQuickMessages" />
       </div>
     </slot>
-
     <main
       v-bind:class="[
-        isAsideSlotInUse && !this.showQuickMessage && !this.showQuickMessagePreferencesBar
+        isAsideSlotInUse &&
+        !this.showQuickMessage &&
+        !this.showQuickMessagePreferencesBar &&
+        !this.showSendFlowMessage
           ? 'unnnic-grid-span-6'
           : 'unnnic-grid-span-9',
       ]"
@@ -67,9 +102,8 @@
     >
       <slot />
     </main>
-
     <section
-      v-if="isAsideSlotInUse && !this.showQuickMessage"
+      v-if="isAsideSlotInUse && !this.showQuickMessage && !this.showSendFlowMessage"
       class="aside unnnic-grid-span-3"
       style="border: 1px solid #e2e6ed"
     >
@@ -86,11 +120,11 @@
 
 <script>
 import PreferencesBar from '@/components/PreferencesBar.vue';
-// import ModalOnBoardingChats from '@/components/ModalOnBoardingChats.vue';
 import Sector from '@/services/api/resources/settings/sector.js';
 import TemplateMessages from '@/services/api/resources/chats/templateMessage.js';
 import SkeletonLoading from '@/views/loadings/chats.vue';
 import QuickMessages from '@/components/chats/QuickMessages';
+import LayoutTemplateMessage from '@/components/chats/TemplateMessages/LayoutTemplateMessage';
 import TheRoomList from './components/TheRoomList';
 import ContactList from './components/TemplateMessages';
 
@@ -104,6 +138,7 @@ export default {
     SkeletonLoading,
     ContactList,
     QuickMessages,
+    LayoutTemplateMessage,
   },
 
   props: {
@@ -124,6 +159,12 @@ export default {
     },
     closeQuickMessages() {
       this.showQuickMessagePreferencesBar = false;
+    },
+    close() {
+      if (this.$slots.aside[0].componentOptions.listeners) {
+        this.$slots.aside[0].componentOptions.listeners.close();
+      }
+      this.showSendFlowMessage = false;
     },
 
     showContactsList() {
@@ -164,6 +205,7 @@ export default {
     canTriggerFlows: false,
     canAccessDashboard: false,
     showQuickMessage: false,
+    showSendFlowMessage: false,
     openQuickMessage: false,
     teste: false,
     showQuickMessagePreferencesBar: false,
@@ -172,12 +214,29 @@ export default {
   computed: {
     isAsideSlotInUse() {
       if (![null, undefined, ''].includes(this.$slots.aside)) {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.showQuickMessage = this.$slots.aside[0].componentOptions.tag === 'QuickMessages';
+        if (this.$slots.aside[0].componentOptions.tag === 'QuickMessages') {
+          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+          this.showQuickMessage = true;
+        } else {
+          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+          this.showQuickMessage = false;
+        }
+        if (this.$slots.aside[0].componentOptions.tag === 'LayoutTemplateMessage') {
+          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+          this.contact = this.$slots.aside[0].componentOptions.listeners.contact;
+          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+          this.showSendFlowMessage = true;
+        } else {
+          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+          this.showSendFlowMessage = false;
+        }
       } else {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.showSendFlowMessage = false;
         // eslint-disable-next-line vue/no-side-effects-in-computed-properties
         this.showQuickMessage = false;
       }
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       return !!this.$slots.aside;
     },
   },
