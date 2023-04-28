@@ -609,9 +609,14 @@
   },
   "alert_last_message_date": {
     "message": {
-      "pt-br": "Sem resposta do contato há mais 24 horas, é possível retomar a conversa através do envio de um fluxo",
-      "en-us": "No response from the contact for more than 24 hours, it is possible to resume the conversation by sending a flow",
-      "es": "Sin respuesta del contacto por más de 24 horas, es posible retomar la conversación enviando un flujo"
+      "pt-br": "Sem resposta do contato há mais 24 horas, para retomar a conversa",
+      "en-us": "No response from the contact for more than 24 hours, to resume the conversation",
+      "es": "Sin respuesta del contacto por más de 24 horas, para retomar la conversación"
+    },
+    "message_send_flow": {
+      "pt-br": "envie um fluxo",
+      "en-us": "send a flow",
+      "es": "envía un flujo"
     },
     "tip": {
       "pt-br": "A política de privacidade do WhatsApp não permite que seja enviada uma mensagem com um contato que não responde há mais de 24hrs.",

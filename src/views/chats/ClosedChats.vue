@@ -281,10 +281,10 @@ export default {
 
   methods: {
     async openContactHistory(contact, concat) {
-      const offset = this.page * this.limit;
+      const offset = this.page * 20;
       try {
         this.isLoading = true;
-        const response = await Message.getByContact(contact.uuid, offset, this.limit);
+        const response = await Message.getByContact(contact.uuid, offset, 20);
         let messages = response.results;
         this.hasNext = response.next;
         this.scrollMessagesToBottom();

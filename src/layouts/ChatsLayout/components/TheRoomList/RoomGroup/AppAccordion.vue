@@ -23,15 +23,25 @@
 
 <script>
 export default {
+  created() {
+    this.isOpen = this.isDefaultOpen;
+  },
   data() {
     return {
       isOpen: true,
     };
   },
+  props: {
+    isDefaultOpen: {
+      type: Boolean,
+      default: true,
+    },
+  },
 
   methods: {
     toggleAccordion() {
       this.isOpen = !this.isOpen;
+      this.$emit('change', this.isOpen);
     },
   },
 };
