@@ -210,7 +210,7 @@ export default {
             close: () => {
               this.componentInAsideSlot = '';
             },
-            contact: this.room.contact,
+            contact: this.room,
           },
         },
       };
