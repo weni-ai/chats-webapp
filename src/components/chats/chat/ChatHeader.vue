@@ -41,6 +41,21 @@
         >Contato na fila {{ room.queue.name }} {{ moment(room?.created_on).fromNow() }}</span
       >
     </section>
+    <div class="no-internet-connection" style="display: flex" v-if="alertNetwork">
+      <unnnic-icon-svg
+        style="margin-right: 6px"
+        icon="button-refresh-arrow-1"
+        scheme="neutral-cloudy"
+        size="sm"
+      />
+      <span @click="reconnect" class="alert-text" style="margin-right: 4px"
+        ><b>{{ $t('alert_no_internet_connection.message') }}</b>
+        {{ $t('alert_no_internet_connection.verify_connection') }}
+        <b style="cursor: pointer"
+          ><u>{{ $t('alert_no_internet_connection.reconnect') }}</u></b
+        >
+      </span>
+    </div>
     <div class="header-info-message" style="display: flex" v-if="alert">
       <span @click="openSelectFlow" class="alert-text" style="margin-right: 4px"
         >{{ $t('alert_last_message_date.message') }}
@@ -87,6 +102,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    alertNetwork: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   methods: {
@@ -97,6 +116,9 @@ export default {
 
     openSelectFlow() {
       this.$emit('open-select-flow');
+    },
+    reconnect() {
+      this.$emit('reconnect');
     },
   },
 };
@@ -131,6 +153,26 @@ export default {
   align-items: center;
   height: 2rem;
   background: $unnnic-color-neutral-light;
+
+  margin-top: $unnnic-spacing-inline-sm;
+
+  .message {
+    color: $unnnic-color-neutral-dark;
+    font-size: $unnnic-font-size-body-gt;
+    font-weight: $unnnic-font-weight-regular;
+    line-height: 22px;
+  }
+  .alert-text {
+    color: $unnnic-color-neutral-cloudy;
+    font-size: 0.87rem;
+  }
+}
+.no-internet-connection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2rem;
+  background: #fbf7c9;
 
   margin-top: $unnnic-spacing-inline-sm;
 

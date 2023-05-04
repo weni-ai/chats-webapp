@@ -624,6 +624,23 @@
       "es": "La política de privacidad de WhatsApp no ​​permite enviar un mensaje con un contacto que no responde durante más de 24 horas."
     }
   },
+  "alert_no_internet_connection": {
+    "message": {
+      "pt-br": "Aguardando conexão...",
+      "en-us": "Waiting for connection...",
+      "es": "Esperando la conexión..."
+    },
+    "verify_connection": {
+      "pt-br": "verifique sua internet",
+      "en-us": "check your internet",
+      "es": "revisa tu internet"
+    },
+    "reconnect": {
+      "pt-br": "Reconectar",
+      "en-us": "Reconnect",
+      "es": "Reconectar"
+    }
+  },
   "media": {
     "pt-br": "Mídia",
     "en-us": "Media",
