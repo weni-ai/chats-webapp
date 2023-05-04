@@ -42,12 +42,14 @@
       >
     </section>
     <div class="no-internet-connection" style="display: flex" v-if="alertNetwork">
-      <unnnic-icon-svg
-        style="margin-right: 6px"
-        icon="button-refresh-arrow-1"
-        scheme="neutral-cloudy"
-        size="sm"
-      />
+      <div class="c-loader">
+        <unnnic-icon-svg
+          style="margin-right: 6px"
+          icon="button-refresh-arrow-1"
+          scheme="neutral-cloudy"
+          size="sm"
+        />
+      </div>
       <span @click="reconnect" class="alert-text" style="margin-right: 4px"
         ><b>{{ $t('alert_no_internet_connection.message') }}</b>
         {{ $t('alert_no_internet_connection.verify_connection') }}
@@ -185,6 +187,16 @@ export default {
   .alert-text {
     color: $unnnic-color-neutral-cloudy;
     font-size: 0.87rem;
+  }
+}
+.c-loader {
+  margin-right: 6px;
+  animation: is-rotating 1.5s linear infinite;
+}
+
+@keyframes is-rotating {
+  100% {
+    transform: rotate(-360deg);
   }
 }
 </style>
