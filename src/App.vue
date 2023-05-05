@@ -270,7 +270,7 @@ export default {
     },
 
     reconect() {
-      if (!this.ws.pongData) return;
+      // if (!this.ws.pongData) return;
       if (this.ws.pongData.type !== 'pong' && this.ws.pongData.type !== 'notify') {
         this.ws.ws.close();
         this.initializeWebSocket();

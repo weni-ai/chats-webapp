@@ -11,6 +11,8 @@
             componentInAsideSlot === 'layoutTemplateMessage' ? '' : 'layoutTemplateMessage'
         "
         :alert="!this.room.is_24h_valid"
+        @reconnect="searchMessages"
+        :alertNetwork="this.networkError"
       />
       <chat-messages
         :room="room"
@@ -157,6 +159,7 @@ export default {
     limit: 20,
     showCloseModal: false,
     showAlertForLastMessage: false,
+    networkError: false,
   }),
 
   computed: {
@@ -174,6 +177,7 @@ export default {
         !this.isRoomClassifierVisible &&
         this.room.is_active &&
         this.room.is_24h_valid &&
+        !this.networkError &&
         !this.room.wating_answer &&
         !!this.room.user
       );
@@ -226,6 +230,10 @@ export default {
       await Room.take(this.room.uuid, this.me.email);
       this.isGetChatConfirmationModalOpen = false;
       this.setActiveRoom(this.room.uuid);
+      this.readMessages();
+    },
+    async readMessages() {
+      await Room.updateReadMessages(this.room.uuid, true);
     },
     async closeRoom() {
       // if (this.tags.length === 0) return;
@@ -246,6 +254,8 @@ export default {
       await this.$store.dispatch('rooms/setActiveRoom', room);
       this.componentInAsideSlot = '';
       this.page = 0;
+      this.readMessages();
+      
     },
     async getRoomMessages(concat) {
       this.isLoading = true;
@@ -259,11 +269,18 @@ export default {
         // this.$nextTick(this.scrollMessagesToBottom);
         this.isRoomClassifierVisible = false;
         this.isLoading = false;
+        this.networkError = false;
         this.dateOfLastMessage();
+        this.readMessages();
       } catch (error) {
         this.isLoading = false;
         console.log(error);
+        if (error.code === 'ERR_NETWORK') this.networkError = true;
       }
+    },
+
+    searchMessages() {
+      this.getRoomMessages(false);
     },
 
     searchForMoreMessages() {
@@ -358,6 +375,7 @@ export default {
 
     messages() {
       this.$nextTick(this.scrollMessagesToBottom);
+      this.readMessages();
     },
   },
 };
