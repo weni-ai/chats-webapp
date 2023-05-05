@@ -253,7 +253,9 @@ export default {
       if (!room) this.$router.push({ name: 'home' });
       await this.$store.dispatch('rooms/setActiveRoom', room);
       this.componentInAsideSlot = '';
+      this.page = 0;
       this.readMessages();
+      
     },
     async getRoomMessages(concat) {
       this.isLoading = true;

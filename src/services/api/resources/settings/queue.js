@@ -2,10 +2,11 @@ import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 
 export default {
-  async create({ name, sectorUuid }) {
+  async create({ name, sectorUuid, default_message }) {
     const response = await http.post('/queue/', {
       name,
       sector: sectorUuid,
+      default_message,
       project: getProject(),
     });
     return response.data;
