@@ -25,6 +25,12 @@ export default {
     const response = await http.put(`/room/${uuid}/close/`, { tags });
     return response.data;
   },
+  async updateReadMessages(uuid, read) {
+    const response = await http.patch(`/room/${uuid}/bulk_update_msgs/`, {
+      seen: read,
+    });
+    return response.data;
+  },
 
   async take(uuid, email, queueUuid) {
     const response = await http.put(
