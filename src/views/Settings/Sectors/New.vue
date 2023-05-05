@@ -192,6 +192,7 @@ export default {
       const queue = await Queue.create({
         name: this.sector.queue.name,
         sectorUuid: this.sector.uuid,
+        default_message: this.sector.queue.default_message,
       });
       return queue;
     },

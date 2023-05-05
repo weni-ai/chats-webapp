@@ -224,10 +224,10 @@ export default {
       const managers = (await Project.managers()).results.concat((await Project.admins()).results);
       this.projectManagers = managers;
     },
-    async createQueue({ name }) {
+    async createQueue({ name, default_message }) {
       try {
         const sectorUuid = this.sector.uuid;
-        this.createdQueue = await Queue.create({ name, sectorUuid });
+        this.createdQueue = await Queue.create({ name, sectorUuid, default_message });
         this.visualizeQueue(this.createdQueue);
       } catch (error) {
         console.log(error, 'error');

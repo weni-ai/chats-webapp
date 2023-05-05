@@ -39,19 +39,27 @@
           <template v-if="newMessages?.length">
             {{ newMessages[newMessages.length - 1].text }}
           </template>
-          <!-- <template v-if="!newMessages?.length">
+          <template v-if="!newMessages?.length">
             {{ room.last_message }}
-          </template> -->
+          </template>
         </span>
       </div>
     </div>
 
-    <span v-if="newMessages?.length" class="unread-messages" :class="{ filled }">
+    <span
+      v-if="newMessages?.length && !room.unread_msgs > 0"
+      class="unread-messages"
+      :class="{ filled }"
+    >
       {{ newMessages?.length }}
     </span>
-    <!-- <span v-if="!newMessages?.length" class="unread-messages" :class="{ filled }">
+    <span
+      v-if="room.unread_msgs > 0 && newMessages?.length"
+      class="unread-messages"
+      :class="{ filled }"
+    >
       {{ room.unread_msgs }}
-    </span> -->
+    </span>
   </div>
 </template>
 
@@ -116,13 +124,7 @@ export default {
       },
     }),
     hasUnreadMessages() {
-      // const totalUnreadmessages = this.newMessages?.length;
-      // console.log(totalUnreadmessages, 'totalUnreadmessagess');
-      // window.parent.postMessage(
-      //   { event: 'chats:update-unread-messages', unreadMessages: totalUnreadmessages },
-      //   '*',
-      // );
-      return this.room.unreadMessages > 0;
+      return this.room.unread_msgs > 0;
     },
   },
 };
