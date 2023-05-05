@@ -135,7 +135,7 @@ export default {
       this.$emit('add-queue', this.queue);
     },
     validate() {
-      return !!this.queue.name && !!this.queue.default_message;
+      return !!this.queue.name;
     },
   },
 
