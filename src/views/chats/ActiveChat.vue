@@ -255,7 +255,6 @@ export default {
       this.componentInAsideSlot = '';
       this.page = 0;
       this.readMessages();
-      
     },
     async getRoomMessages(concat) {
       this.isLoading = true;
