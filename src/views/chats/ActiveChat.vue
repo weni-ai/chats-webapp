@@ -255,7 +255,6 @@ export default {
       this.componentInAsideSlot = '';
       this.page = 0;
       this.readMessages();
-      
     },
     async getRoomMessages(concat) {
       this.isLoading = true;
@@ -375,7 +374,7 @@ export default {
 
     messages() {
       this.$nextTick(this.scrollMessagesToBottom);
-      this.readMessages();
+      // this.readMessages();
     },
   },
 };
