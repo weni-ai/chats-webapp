@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import LogRocket from 'logrocket';
 import VMask from 'v-mask';
+import iframessa from 'iframessa';
 
 import App from './App.vue';
 import i18n from './plugins/i18n';
@@ -11,6 +12,8 @@ import env from './utils/env';
 // import './utils/nilo';
 
 import './styles/global.scss';
+
+iframessa.register('chats');
 
 LogRocket.init(env('LOGROCKET_ID'), {
   mergeIframes: true,
