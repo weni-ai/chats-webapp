@@ -374,7 +374,7 @@ export default {
 
     messages() {
       this.$nextTick(this.scrollMessagesToBottom);
-      this.readMessages();
+      // this.readMessages();
     },
   },
 };
