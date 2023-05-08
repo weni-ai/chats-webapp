@@ -1,8 +1,6 @@
 <template>
   <div id="app">
     <router-view />
-
-    <how-to-integrate />
   </div>
 </template>
 
@@ -15,7 +13,6 @@ import { WS } from '@/services/api/socket';
 import Profile from '@/services/api/resources/profile';
 import QuickMessage from '@/services/api/resources/chats/quickMessage';
 import { PREFERENCES_SOUND } from './components/PreferencesBar.vue';
-import HowToIntegrate from './components/HowToIntegrate.vue';
 
 const moment = require('moment');
 
@@ -42,10 +39,6 @@ class Notification {
 
 export default {
   name: 'App',
-
-  components: {
-    HowToIntegrate,
-  },
 
   async created() {
     this.handleLocale();
