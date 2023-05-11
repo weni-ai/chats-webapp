@@ -77,7 +77,7 @@
       </unnnic-tool-tip>
     </div>
     <div>
-      <!-- <unnnic-dropdown v-bind="$props">
+      <unnnic-dropdown v-bind="$props">
         <unnnic-button-icon
           icon="navigation-menu-vertical-1"
           size="large"
@@ -103,7 +103,7 @@
               <span> Exportar tudo em CSV </span>
             </span>
           </unnnic-dropdown-item>
-          <unnnic-dropdown-item class="option">
+          <!-- <unnnic-dropdown-item class="option">
             <span
               class="upload-dropdown-option"
               @click="downloadMetric('metrics_xls')"
@@ -111,8 +111,8 @@
             >
               <span> Exportar métricas em XLS </span>
             </span>
-          </unnnic-dropdown-item>
-          <unnnic-dropdown-item class="option">
+          </unnnic-dropdown-item> -->
+          <!-- <unnnic-dropdown-item class="option">
             <span
               class="upload-dropdown-option"
               @click="downloadDashboardData('all_xls')"
@@ -120,9 +120,9 @@
             >
               <span> Exportar tudo em XLS </span>
             </span>
-          </unnnic-dropdown-item>
+          </unnnic-dropdown-item> -->
         </div>
-      </unnnic-dropdown> -->
+      </unnnic-dropdown>
     </div>
   </section>
 </template>
