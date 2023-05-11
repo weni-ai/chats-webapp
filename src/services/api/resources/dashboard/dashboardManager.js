@@ -76,10 +76,9 @@ export default {
       const blob = new Blob([response.data], { type: headers['content-type'] });
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
-      link.download = 'download metric';
+      link.download = 'download_metric';
       link.click();
     }
-    // return response.data;
   },
   async downloadAllData(idSector, agent, tag, startDate, endDate, option) {
     const idProject = getProject();
@@ -95,13 +94,11 @@ export default {
     });
     if (response.status === 200) {
       const { headers } = response;
-      console.log(response, `oi`);
       const blob = new Blob([response.data], { type: headers['content-type'] });
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
-      link.download = 'download all';
+      link.download = 'dashboard';
       link.click();
     }
-    // return response.data;
   },
 };
