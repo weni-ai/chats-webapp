@@ -257,24 +257,19 @@ export default {
     },
 
     intervalPing() {
-      try {
+      if (this.ws.ws.readyState === this.ws.ws.OPEN) {
         this.ws.send({
           type: 'ping',
           message: {},
         });
+      } else {
         this.reconect();
-      } catch (error) {
-        console.log(error);
-        clearInterval(this.intervalPing);
       }
     },
 
     reconect() {
-      // if (!this.ws.pongData) return;
-      if (this.ws.pongData.type !== 'pong' && this.ws.pongData.type !== 'notify') {
-        this.ws.ws.close();
-        this.initializeWebSocket();
-      }
+      this.ws.ws.close();
+      this.initializeWebSocket();
     },
   },
 };
