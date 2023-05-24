@@ -262,18 +262,14 @@ export default {
           type: 'ping',
           message: {},
         });
-        console.log('ping', `${new Date().getHours()}:${new Date().getMinutes()}`);
       } else {
-        console.log('reconnecting');
         this.reconect();
       }
     },
 
     reconect() {
       this.ws.ws.close();
-      console.log('close', `${new Date().getHours()}:${new Date().getMinutes()}`);
       this.initializeWebSocket();
-      console.log('inicialize', `${new Date().getHours()}:${new Date().getMinutes()}`);
     },
   },
 };
