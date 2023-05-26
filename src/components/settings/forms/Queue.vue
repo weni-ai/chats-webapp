@@ -7,41 +7,6 @@
         <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
       </unnnic-tool-tip>
     </p>
-    <div style="margin-bottom: 24px">
-      <unnnic-chat-text
-        style="max-width: 100%; max-height: 100%"
-        titleColor="neutral-dark"
-        size="small"
-        title="Mensagem automática"
-        info="Defina uma resposta automática para ser enviada ao contato enquanto 
-            está aguardando atendimento, deixe em branco caso não queira 
-            nenhuma mensagem."
-      >
-        <template slot="actions">
-          <unnnic-button-icon
-            v-if="!editContent"
-            type="secondary"
-            size="small"
-            icon="pencil-write-1"
-            @click="editDescription"
-          />
-        </template>
-        <template slot="description">
-          <div style="word-break: break-all">
-            <span v-show="!editContent">{{ description }}</span>
-            <div v-show="editContent">
-              <unnnic-text-area
-                @focus="focusTextEditor"
-                size="sm"
-                placeholder="Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando"
-                v-model="queue.default_message"
-                ref="textEditor"
-              />
-            </div>
-          </div>
-        </template>
-      </unnnic-chat-text>
-    </div>
 
     <section class="controls">
       <unnnic-input
@@ -176,6 +141,8 @@ export default {
 
     .input {
       flex: 1 1;
+
+      margin-top: -0.5rem;
     }
   }
 }
