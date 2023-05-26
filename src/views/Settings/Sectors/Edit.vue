@@ -12,6 +12,11 @@
 
       <template #queues>
         <section v-if="!!queueToEdit" class="edit-sector__edit-queue">
+          <unnnic-breadcrumb
+            class="edit-sector__breadcrumb"
+            :crumbs="queueBreadcrumb"
+            @crumbClick="handleCrumbClick"
+          />
           <h2 class="edit-sector__title">{{ queueToEdit.name }}</h2>
           <div style="margin-bottom: 24px">
             <unnnic-chat-text
@@ -19,8 +24,8 @@
               titleColor="neutral-dark"
               size="small"
               title="Mensagem automática"
-              info="Defina uma resposta automática para ser enviada ao contato enquanto 
-            está aguardando atendimento, deixe em branco caso não queira 
+              info="Defina uma resposta automática para ser enviada ao contato enquanto
+            está aguardando atendimento, deixe em branco caso não queira
             nenhuma mensagem."
             >
               <template slot="actions">
@@ -194,6 +199,14 @@ export default {
       name: '',
     },
     queueToEdit: null,
+    queueBreadcrumb: [
+      {
+        name: 'Filas',
+      },
+      {
+        name: '',
+      },
+    ],
     removedManagers: [],
     queues: [],
     agents: [],
@@ -253,6 +266,7 @@ export default {
         this.queueToEdit.currentAgents = [...agents];
         this.queueToEdit.toAddAgents = [];
         this.queueToEdit.toRemoveAgents = [];
+        this.queueBreadcrumb.at(-1).name = this.queueToEdit.name;
         this.searchDefaultMessage(queue.uuid);
       } finally {
         this.loading = false;
@@ -475,6 +489,12 @@ export default {
       this.editContent = false;
       if (!this.queueToEdit.default_message) this.queueToEdit.default_message = '';
     },
+
+    handleCrumbClick(queueCrumb) {
+      if (queueCrumb.name === this.queueToEdit.name) return;
+
+      this.queueToEdit = null;
+    },
   },
 
   watch: {
@@ -510,6 +530,22 @@ export default {
 
     & > * {
       width: 100%;
+    }
+  }
+
+  &__breadcrumb {
+    margin: $unnnic-spacing-inline-sm 0;
+
+    ::v-deep .unnnic-breadcrumb__container {
+      align-items: center;
+
+      &__divider {
+        display: flex;
+
+        svg {
+          top: 0;
+        }
+      }
     }
   }
 
