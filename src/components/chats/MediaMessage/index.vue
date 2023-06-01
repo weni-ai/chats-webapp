@@ -31,6 +31,8 @@
 </template>
 
 <script>
+import mime from 'mime-types';
+
 import Media from '@/services/api/resources/chats/media';
 
 // import MediaControls from './Controls';
@@ -62,7 +64,9 @@ export default {
     },
     isDocument() {
       const document = /(pdf|doc(x)?|txt|xls|svn|csv|xlsx)/;
-      return document.test(this.media.content_type);
+      const contentTypeExtension = mime.extension(this.media.content_type);
+
+      return document.test(contentTypeExtension);
     },
     isImage() {
       const image = /(png|jp(e)?g|webp)/;

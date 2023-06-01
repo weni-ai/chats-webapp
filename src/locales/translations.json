@@ -62,6 +62,23 @@
         "es": "búsquelo"
       }
     },
+    "invalid": {
+      "text": {
+        "pt-br": ", tente novamente",
+        "en-us": ", try again",
+        "es": ", inténtalo de nuevo"
+      },
+      "highlight": {
+        "pt-br": "Arquivo inválido",
+        "en-us": "Invalid file",
+        "es": "Archivo inválido"
+      },
+      "subtitle": {
+        "pt-br": "O arquivo não é suportado.",
+        "en-us": "The file is not supported.",
+        "es": "El archivo no es compatible."
+      }
+    },
     "subtitle": {
       "pt-br": "Formatos suportados:",
       "en-us": "Supported formats:",
