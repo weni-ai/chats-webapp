@@ -245,12 +245,12 @@ export default {
       }
     },
 
-    async updateStatus(localStorageStatus) {
+    async updateStatus(status) {
       const {
         data: { connection_status },
       } = await Profile.updateStatus({
         projectUuid: this.$store.state.config.project,
-        status: localStorageStatus,
+        status,
       });
       this.$store.state.config.status = connection_status;
       localStorage.setItem('statusAgent', connection_status);
@@ -270,6 +270,9 @@ export default {
     reconect() {
       this.ws.ws.close();
       this.initializeWebSocket();
+
+      const localStorageStatus = localStorage.getItem('statusAgent');
+      this.updateStatus(localStorageStatus);
     },
   },
 };
