@@ -331,6 +331,20 @@
       "es": "Tienes el chat"
     }
   },
+  "dashboard": {
+    "view-mode": {
+      "title": {
+        "pt-br": "Modo de visualização ao vivo do agente {agent}",
+        "en-us": "Agent {agent} live view mode",
+        "es": "Modo de vista en vivo del agente {agent}"
+      },
+      "close": {
+        "pt-br": "Encerrar visualização",
+        "en-us": "End visualization",
+        "es": "Visualización final"
+      }
+    }
+  },
   "history": {
     "pt-br": "Histórico",
     "en-us": "History",
