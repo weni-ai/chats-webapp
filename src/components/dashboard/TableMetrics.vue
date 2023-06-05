@@ -13,9 +13,20 @@
       </header>
 
       <section class="items">
-        <section v-for="item in items" :key="item.user__first_name" class="item table-row">
-          <span class="table-col">
-            {{ item.user__first_name }}
+        <section
+          v-for="item in items"
+          :key="item.user__first_name"
+          @click="goToViewMode"
+          @keypress.enter="goToViewMode"
+          class="item table-row"
+        >
+          <span class="table-col agent">
+            <unnnic-icon
+              icon="indicator"
+              size="sm"
+              :scheme="`feedback-${true ? 'green' : 'grey'}`"
+            />
+            <p>{{ item.user__first_name }}</p>
           </span>
           <span class="table-col" style="text-align: center">
             {{ item.opened_rooms }}
@@ -47,6 +58,14 @@ export default {
     title: {
       type: String,
       default: '',
+    },
+  },
+
+  methods: {
+    goToViewMode() {
+      this.$router.replace({
+        name: 'dashboard.view-mode',
+      });
     },
   },
 };
@@ -93,6 +112,22 @@ export default {
     .items {
       .item {
         padding: $unnnic-spacing-inset-md $unnnic-spacing-inset-sm;
+
+        .table-col {
+          &.agent {
+            display: flex;
+            align-items: center;
+            gap: $unnnic-spacing-inline-nano;
+          }
+        }
+
+        &:hover {
+          background: $unnnic-color-background-carpet;
+          text-decoration: underline;
+          text-underline-position: under;
+
+          cursor: pointer;
+        }
       }
     }
   }
