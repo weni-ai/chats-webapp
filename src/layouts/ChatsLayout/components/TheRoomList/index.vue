@@ -23,8 +23,9 @@
             listRoom(false, '-last_interaction'),
               ((lastCreatedFilter = true), (createdOnFilter = false))
           "
-          >Mais recentes |</span
+          >Mais recentes</span
         >
+        <span> | </span>
         <span
           :style="{
             fontWeight: createdOnFilter ? '700' : '400',
@@ -177,7 +178,7 @@ export default {
       this.nameOfContact = '';
     },
 
-    async listRoom(concat, order) {
+    async listRoom(concat, order = '-last_interaction') {
       this.loading = true;
       try {
         await this.$store.dispatch('rooms/getAll', {
