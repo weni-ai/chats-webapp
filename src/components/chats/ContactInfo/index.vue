@@ -36,7 +36,7 @@
               }}
             </p>
             <unnnic-button
-              v-if="!isHistory"
+              v-if="!isHistory && !isViewMode"
               class="transfer__button"
               text="Ver histórico do contato"
               iconLeft="export-1"
@@ -46,7 +46,7 @@
             />
             <div
               style="display: flex; margin-left: -8px; align-items: center"
-              v-if="!isLinkedToOtherAgent"
+              v-if="!isLinkedToOtherAgent && !isViewMode"
             >
               <unnnicSwitch
                 :value="isLinkedUser"
@@ -230,6 +230,10 @@ export default {
       type: Object,
     },
     isHistory: {
+      type: Boolean,
+      default: false,
+    },
+    isViewMode: {
       type: Boolean,
       default: false,
     },

@@ -80,6 +80,7 @@
       :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : 'task-list-clock-1'"
       type="secondary"
       size="small"
+      :disabled="isViewMode"
       @click="navigate(isHistoryView ? 'home' : 'rooms.closed')"
     />
   </div>
@@ -99,6 +100,10 @@ export default {
 
   props: {
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    isViewMode: {
       type: Boolean,
       default: false,
     },
@@ -166,12 +171,17 @@ export default {
         name,
       });
     },
-    open(room) {
-      const path = `/chats/${room.uuid}`;
+    async open(room) {
+      if (this.isViewMode) {
+        await this.$store.dispatch('rooms/setActiveRoom', room);
+        console.log(this.$store.state.rooms);
+      } else {
+        const path = `/chats/${room.uuid}`;
 
-      if (this.$route.path === path) return;
+        if (this.$route.path === path) return;
 
-      this.$router.replace(path);
+        this.$router.replace(path);
+      }
     },
 
     clearField() {
