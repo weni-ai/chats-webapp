@@ -334,14 +334,29 @@
   "dashboard": {
     "view-mode": {
       "title": {
-        "pt-br": "Modo de visualização ao vivo do agente {agent}",
-        "en-us": "Agent {agent} live view mode",
-        "es": "Modo de vista en vivo del agente {agent}"
+        "pt-br": "Modo de visualização ao vivo do agente {viewedAgent}",
+        "en-us": "Agent {viewedAgent} live view mode",
+        "es": "Modo de vista en vivo del agente {viewedAgent}"
       },
       "close": {
         "pt-br": "Encerrar visualização",
         "en-us": "End visualization",
         "es": "Visualización final"
+      },
+      "assume_chat": {
+        "pt-br": "Assumir Chat",
+        "en-us": "Take Chat",
+        "es": "Asumir Chat"
+      },
+      "assume_chat_question": {
+        "pt-br": "Assumir Chat?",
+        "en-us": "Take Chat?",
+        "es": "¿Asumir Chat?"
+      },
+      "assume_chat_confirmation": {
+        "pt-br": "Ao confirmar você removerá o Chat do agente {viewedAgent} e será o responsável pelo Chat",
+        "en-us": "When confirming you will remove the Chat from agent {viewedAgent} and will be responsible for Chat",
+        "es": "Al confirmar que eliminará el Chat del agente {viewedAgent} y será responsable del Chat"
       }
     }
   },

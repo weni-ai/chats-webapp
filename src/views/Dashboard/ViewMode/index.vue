@@ -1,59 +1,170 @@
 <template>
-  <div>
-    <header class="view-mode__header">
-      <h1 class="title">
-        <unnnic-icon icon="view-1-1" size="md" />
-        {{ $t('dashboard.view-mode.title', { agent: 'Fabricio Santos' }) }}
-      </h1>
-      <div class="close-button" @click="close" @keypress.enter="close">
-        <unnnic-tool-tip :text="$t('dashboard.view-mode.close')" enabled side="left">
-          <unnnic-icon size="sm" icon="close-1" />
-        </unnnic-tool-tip>
-      </div>
-    </header>
+  <div class="view-mode__container">
+    <view-mode-header viewedAgent="Fabricio Santos" />
+    <main class="view-mode__main unnnic-grid-giant">
+      <section class="room-list__container unnnic-grid-span-3">
+        <the-room-list class="room-list" isViewMode />
+      </section>
+      <section
+        v-if="!!room"
+        :class="['chat', `unnnic-grid-span-${isContactInfoOpened ? '6' : '9'}`]"
+      >
+        <chat-header
+          :room="room"
+          :closeButtonTooltip="$t('chats.end')"
+          @show-contact-info="handleModal('ContactInfo', 'open')"
+        />
+        <chat-messages
+          :room="room"
+          :messages="messages"
+          class="messages"
+          @show-contact-info="handleModal('ContactInfo', 'open')"
+        />
+        <div class="assume-chat__container">
+          <unnnic-button
+            class="assume-chat"
+            :text="$t('dashboard.view-mode.assume_chat')"
+            type="secondary"
+            @click="handleModal('AssumeChatConfirmation', 'open')"
+          />
+          <unnnic-modal
+            :showModal="isAssumeChatConfirmationOpened"
+            @close="handleModal('AssumeChatConfirmation', 'close')"
+            :text="$t('dashboard.view-mode.assume_chat_question')"
+            :description="
+              $t('dashboard.view-mode.assume_chat_confirmation', { agent: 'Fabricio Santos' })
+            "
+            modal-icon="messages-bubble-1"
+            scheme="neutral-darkest"
+          />
+        </div>
+      </section>
+      <contact-info
+        v-if="isContactInfoOpened"
+        class="unnnic-grid-span-3"
+        isViewMode
+        @close="handleModal('ContactInfo', 'close')"
+      />
+    </main>
   </div>
 </template>
+
 <script>
+import { mapState, mapGetters } from 'vuex';
+
+import TheRoomList from '@/layouts/ChatsLayout/components/TheRoomList';
+import ChatHeader from '@/components/chats/chat/ChatHeader';
+import ContactInfo from '@/components/chats/ContactInfo';
+import ChatMessages from '@/components/chats/chat/ChatMessages';
+import ViewModeHeader from './components/ViewModeHeader';
+
 export default {
   name: 'ViewMode',
 
+  components: {
+    TheRoomList,
+    ChatHeader,
+    ContactInfo,
+    ChatMessages,
+    ViewModeHeader,
+  },
+
+  data: () => ({
+    isContactInfoOpened: false,
+    isAssumeChatConfirmationOpened: false,
+  }),
+
+  computed: {
+    ...mapState({
+      room: (state) => state.rooms.activeRoom,
+    }),
+    ...mapGetters('rooms', {
+      messages: 'groupedActiveRoomsMessage',
+    }),
+  },
+
   methods: {
-    close() {
-      this.$router.replace({ name: 'dashboard.manager' });
+    handleModal(modalName, action) {
+      const registeredModals = ['ContactInfo', 'AssumeChatConfirmation'];
+
+      if (!registeredModals.includes(modalName)) {
+        throw new Error(`Modal name '${modalName}' not found`);
+      }
+
+      const modalActionKey = `is${modalName}Opened`;
+
+      const actionMap = {
+        open: () => {
+          this[modalActionKey] = true;
+        },
+        close: () => {
+          this[modalActionKey] = false;
+        },
+      };
+
+      if (!actionMap[action]) {
+        throw new Error(`Modal handler '${action}' not found`);
+      }
+
+      actionMap[action]();
+    },
+  },
+
+  watch: {
+    async room() {
+      try {
+        await this.$store.dispatch('rooms/getActiveRoomMessages', {
+          offset: this.page * this.limit,
+          concat: false,
+          limit: this.limit,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 };
 </script>
+
 <style lang="scss" scoped>
-.view-mode__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  padding: $unnnic-spacing-stack-xs 0;
-
-  background: $unnnic-color-brand-weni;
-  color: $unnnic-color-neutral-black;
-
-  cursor: default;
-
-  .title {
-    display: flex;
-    gap: $unnnic-spacing-inline-xs;
-    justify-content: center;
-
-    font-size: $unnnic-font-size-body-lg;
-    font-weight: $unnnic-font-weight-regular;
-
-    flex: 1;
+.view-mode {
+  &__container {
+    height: 100vh;
   }
 
-  .close-button {
-    margin-right: calc(($unnnic-font-size-body-lg / 100 * 50) + $unnnic-spacing-stack-xs);
-    cursor: pointer;
+  &__main {
+    padding: 0;
+    padding-top: $unnnic-spacing-inset-md;
+    overflow-y: hidden;
 
-    .unnnic-tooltip {
+    .room-list__container {
       display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding-left: 10px;
+    }
+
+    .chat {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+
+      .messages {
+        overflow-y: auto;
+        padding-right: $unnnic-spacing-inset-sm;
+        margin: $unnnic-spacing-inline-sm 0;
+      }
+
+      .assume-chat__container {
+        margin: {
+          top: auto;
+          right: $unnnic-spacing-inline-sm;
+        }
+
+        button {
+          width: 100%;
+        }
+      }
     }
   }
 }
