@@ -2,9 +2,7 @@
   <div class="view-mode__container">
     <view-mode-header viewedAgent="Fabricio Santos" />
     <main class="view-mode__main unnnic-grid-giant">
-      <section class="room-list__container unnnic-grid-span-3">
-        <the-room-list class="room-list" isViewMode />
-      </section>
+      <the-room-list class="room-list__container unnnic-grid-span-3" isViewMode />
       <section
         v-if="!!room"
         :class="['chat', `unnnic-grid-span-${isContactInfoOpened ? '6' : '9'}`]"
@@ -140,14 +138,19 @@ export default {
     .room-list__container {
       display: flex;
       flex-direction: column;
-      height: 100vh;
-      padding-left: 10px;
+      height: calc(100vh - 40px - $unnnic-spacing-inset-md);
+      padding-left: 0.6rem;
     }
 
     .chat {
       display: flex;
       flex-direction: column;
       height: 100%;
+
+      padding: {
+        bottom: $unnnic-spacing-inset-sm;
+        left: $unnnic-spacing-inset-md;
+      }
 
       .messages {
         overflow-y: auto;
