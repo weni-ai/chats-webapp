@@ -1,6 +1,5 @@
-import Home from '@/views/chats/Home';
-import ActiveChat from '@/views/chats/ActiveChat.vue';
-// import dashboard from 'C:/WORKSPACE/chats-webapp/src/views/Dashboard/Manager/index.vue'
+// import Home from '@/views/chats/Home';
+import Home from '@/views/chats/Home.vue';
 import dashboard from '@/views/Dashboard/Manager/index.vue';
 
 const routes = [
@@ -18,17 +17,17 @@ const routes = [
     component: Home,
   },
   {
-    path: '/dashboard/manager',
-    name: 'dashboard.manager',
-    component: dashboard,
-  },
-  {
     path: '/chats/:id',
     name: 'room',
-    component: ActiveChat,
+    component: Home,
     props: (route) => ({
       id: route.params.id,
     }),
+  },
+  {
+    path: '/dashboard/manager',
+    name: 'dashboard.manager',
+    component: dashboard,
   },
   {
     path: '/closed-chats',
