@@ -2,13 +2,27 @@
 <template>
   <div class="fullscreen-preview" @click="close">
     <header class="toolbar" @click.stop="() => {}">
+      <span @click="zoomOut" @keypress.enter="zoomOut" class="clickable">
+        <unnnic-icon-svg icon="search-1" scheme="neutral-snow" />
+      </span>
+      <span @click="zoomIn" @keypress.enter="zoomIn" class="clickable">
+        <unnnic-icon-svg icon="search-1" scheme="neutral-snow" />
+      </span>
       <span @click="close" @keypress.enter="close" class="clickable">
         <unnnic-icon-svg icon="close-1" scheme="neutral-snow" />
       </span>
     </header>
 
-    <div class="media__container">
-      <slot />
+    <div
+      class="media__container"
+      ref="mediaContainer"
+      @mousedown="startPan"
+      @mousemove="pan"
+      @mouseup="endPan"
+    >
+      <div class="media__wrapper" ref="mediaWrapper" @click.stop :style="mediaStyle">
+        <slot />
+      </div>
     </div>
 
     <footer class="controls" @click.stop="() => {}">
@@ -26,18 +40,154 @@
 export default {
   name: 'FullscreenPreview',
 
+  data() {
+    return {
+      isZoomed: false,
+      isAbleToPlan: false,
+      isPanning: false,
+      zoomScale: 1,
+      zoomInterval: 0.5,
+      panStartX: 0,
+      panStartY: 0,
+      panOffsetX: 0,
+      panOffsetY: 0,
+      prevPanOffsetX: 0,
+      prevPanOffsetY: 0,
+    };
+  },
+
   methods: {
     close() {
       this.$emit('close');
     },
+
+    zoomIn() {
+      if (!this.isZoomed) this.isZoomed = true;
+
+      if (this.zoomScale !== 3) {
+        this.zoomScale += this.zoomInterval;
+      }
+    },
+
+    zoomOut() {
+      if (this.zoomScale !== 1) {
+        this.zoomScale -= this.zoomInterval;
+      }
+      if (this.zoomScale + this.zoomInterval === 1.5) {
+        this.zoomReset();
+      }
+    },
+
+    zoomReset() {
+      this.resetPan();
+      this.isZoomed = false;
+    },
+
     download() {
       this.$emit('download');
     },
+
     next() {
+      this.zoomReset();
       this.$emit('next');
     },
+
     previous() {
+      this.zoomReset();
       this.$emit('previous');
+    },
+
+    startPan(event) {
+      if (this.isZoomed) {
+        if (!this.isPanning) {
+          this.isPanning = true;
+          this.panStartX = this.getEventX(event);
+          this.panStartY = this.getEventY(event);
+          this.prevPanOffsetX = this.panOffsetX;
+          this.prevPanOffsetY = this.panOffsetY;
+        }
+      }
+    },
+
+    pan(event) {
+      const { containerWidth, containerHeight, wrapperWidth, wrapperHeight } =
+        this.getMediaDimensions();
+
+      if (this.isAbleToPlan && this.isPanning) {
+        const x = this.getEventX(event);
+        const y = this.getEventY(event);
+
+        const maxX = Math.abs(containerWidth - wrapperWidth * this.zoomScale) / 2;
+        const maxY = Math.abs(containerHeight - wrapperHeight * this.zoomScale) / 2;
+
+        this.panOffsetX = Math.min(Math.max(this.prevPanOffsetX + x - this.panStartX, -maxX), maxX);
+        this.panOffsetY = Math.min(Math.max(this.prevPanOffsetY + y - this.panStartY, -maxY), maxY);
+      }
+    },
+
+    endPan() {
+      if (this.isPanning) {
+        this.isPanning = false;
+        this.prevPanOffsetX = this.panOffsetX;
+        this.prevPanOffsetY = this.panOffsetY;
+      }
+    },
+
+    resetPan() {
+      this.panOffsetX = 0;
+      this.panOffsetY = 0;
+      this.prevPanOffsetX = 0;
+      this.prevPanOffsetY = 0;
+    },
+
+    getEventX(event) {
+      return event.touches ? event.touches[0].clientX : event.clientX;
+    },
+
+    getEventY(event) {
+      return event.touches ? event.touches[0].clientY : event.clientY;
+    },
+
+    getMediaDimensions() {
+      const { mediaContainer, mediaWrapper } = this.$refs;
+      const containerWidth = mediaContainer.offsetWidth;
+      const containerHeight = mediaContainer.offsetHeight;
+      const wrapperWidth = mediaWrapper.offsetWidth;
+      const wrapperHeight = mediaWrapper.offsetHeight;
+
+      return {
+        containerWidth,
+        containerHeight,
+        wrapperWidth,
+        wrapperHeight,
+      };
+    },
+  },
+
+  computed: {
+    mediaStyle() {
+      return {
+        transform: `translate(${this.panOffsetX}px, ${this.panOffsetY}px) scale(${
+          this.isZoomed ? this.zoomScale : 1
+        })`,
+        cursor: this.isZoomed && this.isAbleToPlan ? 'grab' : 'auto',
+        transition: this.isPanning ? 'none' : 'transform 0.3s ease',
+      };
+    },
+  },
+
+  watch: {
+    zoomScale() {
+      if (this.isZoomed) {
+        const { containerWidth, containerHeight, wrapperWidth, wrapperHeight } =
+          this.getMediaDimensions();
+
+        const widthAbleToPlan = containerWidth < wrapperWidth * this.zoomScale;
+        const heightAbleToPlan = containerHeight < wrapperHeight * this.zoomScale;
+
+        this.isAbleToPlan = !!(widthAbleToPlan || heightAbleToPlan);
+        if (!this.isAbleToPlan) this.resetPan();
+      }
     },
   },
 };
@@ -73,7 +223,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 0.5rem;
+    gap: $unnnic-spacing-inline-sm;
     padding: 0 1rem;
   }
 
@@ -81,22 +231,40 @@ export default {
     $height: calc(100vh - 3rem - 2rem - 1rem); // 100vh - toolbar - footer - page's padding-bottom
 
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 
-    padding: 1rem;
+    // padding: 1rem;
 
     height: $height;
     max-height: $height;
-    width: 100%;
+    width: 95%;
 
-    img,
-    video {
+    overflow: hidden;
+
+    user-select: none;
+
+    .media__wrapper {
       max-height: 100%;
       max-width: 100%;
-      object-fit: contain;
+
+      display: flex;
+      justify-content: center;
+      img,
+      video {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+
+        user-select: none;
+        pointer-events: none;
+        transition: transform 0.3s ease;
+      }
     }
+
+    // &.isZoomed img {
+    //   transform: scale(this.zoomScale);
+    // }
   }
 
   .controls {
