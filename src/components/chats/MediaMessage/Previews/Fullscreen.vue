@@ -3,6 +3,18 @@
   <div class="fullscreen-preview" @click="close">
     <header class="toolbar" @click.stop="() => {}">
       <img
+        @click="rotate('left')"
+        :src="rotateLeftIcon"
+        alt=""
+        :class="['unnnic-icon__size--md', 'unnnic--clickable', `unnnic-icon-scheme--neutral-snow`]"
+      />
+      <img
+        @click="rotate('right')"
+        :src="rotateRightIcon"
+        alt=""
+        :class="['unnnic-icon__size--md', 'unnnic--clickable', `unnnic-icon-scheme--neutral-snow`]"
+      />
+      <img
         @click="zoomHandler"
         :src="zoomIcon"
         alt=""
@@ -40,6 +52,8 @@
 <script>
 import temporaryZoomIn from '@/assets/temporaryZoomIn.svg';
 import temporaryZoomOut from '@/assets/temporaryZoomOut.svg';
+import rotateRightIcon from '@/assets/temporaryRedoIcon.svg';
+import rotateLeftIcon from '@/assets/temporaryUndoIcon.svg';
 
 export default {
   name: 'FullscreenPreview',
@@ -47,7 +61,10 @@ export default {
   data() {
     return {
       zoomIcon: temporaryZoomIn,
+      rotateRightIcon,
+      rotateLeftIcon,
       isZoomed: false,
+      rotatedDeg: 0,
       isAbleToPlan: false,
       isPanning: false,
       zoomScale: 1,
@@ -69,7 +86,7 @@ export default {
     zoomHandler() {
       if (this.isZoomed) {
         this.zoomScale -= this.zoomInterval;
-        this.zoomReset();
+        this.resetZoom();
       } else {
         this.isZoomed = true;
         this.zoomScale += this.zoomInterval;
@@ -77,10 +94,24 @@ export default {
       }
     },
 
-    zoomReset() {
+    resetZoom() {
       this.zoomIcon = temporaryZoomIn;
       this.resetPan();
       this.isZoomed = false;
+    },
+
+    rotate(side) {
+      const rotateInterval = 90;
+      if (side === 'right') {
+        this.rotatedDeg = (this.rotatedDeg + rotateInterval) % 360;
+      } else {
+        this.rotatedDeg = (this.rotatedDeg - rotateInterval) % 360;
+      }
+      this.resetZoom();
+    },
+
+    resetRotate() {
+      this.rotatedDeg = 0;
     },
 
     download() {
@@ -88,12 +119,14 @@ export default {
     },
 
     next() {
-      this.zoomReset();
+      this.resetZoom();
+      this.resetRotate();
       this.$emit('next');
     },
 
     previous() {
-      this.zoomReset();
+      this.resetZoom();
+      this.resetRotate();
       this.$emit('previous');
     },
 
@@ -110,15 +143,15 @@ export default {
     },
 
     pan(event) {
-      const { containerWidth, containerHeight, wrapperWidth, wrapperHeight } =
-        this.getMediaDimensions();
-
       if (this.isAbleToPlan && this.isPanning) {
+        const { containerWidth, containerHeight } = this.getMediaDimensions();
+        const { mainDimension, secondaryDimension } = this.getWrapperDimensions();
+
         const x = this.getEventX(event);
         const y = this.getEventY(event);
 
-        const maxX = Math.abs(containerWidth - wrapperWidth * this.zoomScale) / 2;
-        const maxY = Math.abs(containerHeight - wrapperHeight * this.zoomScale) / 2;
+        const maxX = Math.abs(containerWidth - mainDimension * this.zoomScale) / 2;
+        const maxY = Math.abs(containerHeight - secondaryDimension * this.zoomScale) / 2;
 
         this.panOffsetX = Math.min(Math.max(this.prevPanOffsetX + x - this.panStartX, -maxX), maxX);
         this.panOffsetY = Math.min(Math.max(this.prevPanOffsetY + y - this.panStartY, -maxY), maxY);
@@ -150,44 +183,74 @@ export default {
 
     getMediaDimensions() {
       const { mediaContainer, mediaWrapper } = this.$refs;
-      const containerWidth = mediaContainer.offsetWidth;
-      const containerHeight = mediaContainer.offsetHeight;
-      const wrapperWidth = mediaWrapper.offsetWidth;
-      const wrapperHeight = mediaWrapper.offsetHeight;
+
+      if (mediaContainer && mediaWrapper) {
+        const containerWidth = mediaContainer.offsetWidth;
+        const containerHeight = mediaContainer.offsetHeight;
+        const wrapperWidth = mediaWrapper.offsetWidth;
+        const wrapperHeight = mediaWrapper.offsetHeight;
+
+        return {
+          containerWidth,
+          containerHeight,
+          wrapperWidth,
+          wrapperHeight,
+        };
+      }
+      return {};
+    },
+
+    getWrapperDimensions() {
+      const { wrapperWidth, wrapperHeight } = this.getMediaDimensions();
+      const isHorizontal = this.rotateDirection === 'horizontal';
+      const mainDimension = isHorizontal ? wrapperWidth : wrapperHeight;
+      const secondaryDimension = isHorizontal ? wrapperHeight : wrapperWidth;
 
       return {
-        containerWidth,
-        containerHeight,
-        wrapperWidth,
-        wrapperHeight,
+        mainDimension,
+        secondaryDimension,
       };
+    },
+
+    checkIsAbleToPan() {
+      const { containerWidth, containerHeight } = this.getMediaDimensions();
+      const { mainDimension, secondaryDimension } = this.getWrapperDimensions();
+
+      const isWidthAbleToPan = containerWidth < mainDimension * this.zoomScale;
+      const isHeightAbleToPan = containerHeight < secondaryDimension * this.zoomScale;
+
+      this.isAbleToPlan = isWidthAbleToPan || isHeightAbleToPan;
+      if (!this.isAbleToPlan) {
+        this.resetPan();
+      }
     },
   },
 
   computed: {
+    rotateDirection() {
+      const isVertical = [90, 270].includes(Math.abs(this.rotatedDeg));
+      return isVertical ? 'vertical' : 'horizontal';
+    },
+
     mediaStyle() {
+      const { containerHeight } = this.getMediaDimensions();
       return {
         transform: `translate(${this.panOffsetX}px, ${this.panOffsetY}px) scale(${
           this.isZoomed ? this.zoomScale : 1
-        })`,
+        }) rotate(${this.rotatedDeg}deg)`,
         cursor: this.isZoomed && this.isAbleToPlan ? 'grab' : 'auto',
-        transition: this.isPanning ? 'none' : 'transform 0.3s ease',
+        transition: this.isPanning ? 'none' : 'all 0.3s ease',
+        width: this.rotateDirection === 'vertical' ? `${containerHeight}px` : '100%',
       };
     },
   },
 
   watch: {
     zoomScale() {
-      if (this.isZoomed) {
-        const { containerWidth, containerHeight, wrapperWidth, wrapperHeight } =
-          this.getMediaDimensions();
-
-        const widthAbleToPlan = containerWidth < wrapperWidth * this.zoomScale;
-        const heightAbleToPlan = containerHeight < wrapperHeight * this.zoomScale;
-
-        this.isAbleToPlan = !!(widthAbleToPlan || heightAbleToPlan);
-        if (!this.isAbleToPlan) this.resetPan();
-      }
+      this.checkIsAbleToPan();
+    },
+    rotatedDeg() {
+      this.checkIsAbleToPan();
     },
   },
 };
