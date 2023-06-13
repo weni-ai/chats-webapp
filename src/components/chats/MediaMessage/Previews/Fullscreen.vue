@@ -2,12 +2,13 @@
 <template>
   <div class="fullscreen-preview" @click="close">
     <header class="toolbar" @click.stop="() => {}">
-      <span @click="zoomOut" @keypress.enter="zoomOut" class="clickable">
-        <unnnic-icon-svg icon="search-1" scheme="neutral-snow" />
-      </span>
-      <span @click="zoomIn" @keypress.enter="zoomIn" class="clickable">
-        <unnnic-icon-svg icon="search-1" scheme="neutral-snow" />
-      </span>
+      <img
+        @click="zoomHandler"
+        :src="zoomIcon"
+        alt=""
+        :class="['unnnic-icon__size--md', 'unnnic--clickable', `unnnic-icon-scheme--neutral-snow`]"
+      />
+      <!-- This img above is temporary. Then it will be refactored to an unnnic-icon-svg  -->
       <span @click="close" @keypress.enter="close" class="clickable">
         <unnnic-icon-svg icon="close-1" scheme="neutral-snow" />
       </span>
@@ -37,11 +38,15 @@
 </template>
 
 <script>
+import temporaryZoomIn from '@/assets/temporaryZoomIn.svg';
+import temporaryZoomOut from '@/assets/temporaryZoomOut.svg';
+
 export default {
   name: 'FullscreenPreview',
 
   data() {
     return {
+      zoomIcon: temporaryZoomIn,
       isZoomed: false,
       isAbleToPlan: false,
       isPanning: false,
@@ -61,24 +66,19 @@ export default {
       this.$emit('close');
     },
 
-    zoomIn() {
-      if (!this.isZoomed) this.isZoomed = true;
-
-      if (this.zoomScale !== 3) {
-        this.zoomScale += this.zoomInterval;
-      }
-    },
-
-    zoomOut() {
-      if (this.zoomScale !== 1) {
+    zoomHandler() {
+      if (this.isZoomed) {
         this.zoomScale -= this.zoomInterval;
-      }
-      if (this.zoomScale + this.zoomInterval === 1.5) {
         this.zoomReset();
+      } else {
+        this.isZoomed = true;
+        this.zoomScale += this.zoomInterval;
+        this.zoomIcon = temporaryZoomOut;
       }
     },
 
     zoomReset() {
+      this.zoomIcon = temporaryZoomIn;
       this.resetPan();
       this.isZoomed = false;
     },
@@ -234,8 +234,6 @@ export default {
     align-items: center;
     justify-content: center;
 
-    // padding: 1rem;
-
     height: $height;
     max-height: $height;
     width: 95%;
@@ -261,10 +259,6 @@ export default {
         transition: transform 0.3s ease;
       }
     }
-
-    // &.isZoomed img {
-    //   transform: scale(this.zoomScale);
-    // }
   }
 
   .controls {
