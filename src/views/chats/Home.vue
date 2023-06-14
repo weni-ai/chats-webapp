@@ -230,13 +230,21 @@ export default {
       this.sectorTags = response.results;
     },
     async takeRoom() {
-      await Room.take(this.room.uuid, this.me.email);
-      this.isGetChatConfirmationModalOpen = false;
-      this.setActiveRoom(this.room.uuid);
-      this.readMessages();
+      if (!this.isLoading) {
+        this.isLoading = true;
+
+        await Room.take(this.room.uuid, this.me.email);
+        this.isGetChatConfirmationModalOpen = false;
+        this.setActiveRoom(this.room.uuid);
+        this.readMessages();
+
+        this.isLoading = false;
+      }
     },
     async readMessages() {
-      await Room.updateReadMessages(this.room.uuid, true);
+      if (this.room && this.room.uuid) {
+        await Room.updateReadMessages(this.room.uuid, true);
+      }
     },
     async closeRoom() {
       // if (this.tags.length === 0) return;
