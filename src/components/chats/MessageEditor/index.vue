@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import FileUploader from '@/components/chats/FileUploader';
+import FileUploader from './FileUploader';
 import SuggestionBox from './SuggestionBox.vue';
 
 export default {
