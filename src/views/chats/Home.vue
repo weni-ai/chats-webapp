@@ -261,7 +261,9 @@ export default {
     },
     async setActiveRoom(uuid) {
       const room = this.$store.getters['rooms/getRoomById'](uuid);
-      if (!room) this.$router.push({ name: 'home' });
+      if (this.$route.name !== 'home' && !room) {
+        this.$router.replace({ name: 'home' });
+      }
       await this.$store.dispatch('rooms/setActiveRoom', room);
       this.componentInAsideSlot = '';
       this.page = 0;
