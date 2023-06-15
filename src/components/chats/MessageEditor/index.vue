@@ -14,50 +14,7 @@
     </div>
 
     <div class="message-editor">
-      <unnnic-text-editor
-        :loadingValue="loadingValue"
-        v-model="message"
-        @send="send"
-        @keydown="onKeyDown"
-        @action="$emit('show-quick-messages')"
-        @record-audio="record"
-        :texts="textEditorTooltips"
-        ref="textEditor"
-      >
-        <template #footer-input>
-          <unnnic-audio-recorder
-            v-show="isAudioRecorderVisible"
-            v-model="recordedAudio"
-            can-delete
-            ref="audioRecorder"
-          />
-        </template>
-
-        <template #attachment-options>
-          <div class="attachment-options-container">
-            <unnnic-dropdown-item class="option">
-              <span
-                class="upload-dropdown-option"
-                @click="open('media')"
-                @keypress.enter="open('media')"
-              >
-                <unnnic-icon-svg icon="common-file-horizontal-image-1" size="sm" />
-                <span> {{ $t('send_photo_or_video') }} </span>
-              </span>
-            </unnnic-dropdown-item>
-            <unnnic-dropdown-item class="option">
-              <span
-                class="upload-dropdown-option"
-                @click="open('document')"
-                @keypress.enter="open('document')"
-              >
-                <unnnic-icon-svg icon="paginate-filter-text-1" size="sm" />
-                <span> {{ $tc('send_docs') }} </span>
-              </span>
-            </unnnic-dropdown-item>
-          </div>
-        </template>
-      </unnnic-text-editor>
+      <text-box v-model="message" @send="send" @keydown="onKeyDown" />
 
       <file-uploader v-model="files" ref="fileUploader" @upload="upload" />
     </div>
@@ -65,6 +22,7 @@
 </template>
 
 <script>
+import TextBox from './TextBox';
 import FileUploader from './FileUploader';
 import SuggestionBox from './SuggestionBox.vue';
 
@@ -72,6 +30,7 @@ export default {
   name: 'MessageEditor',
 
   components: {
+    TextBox,
     FileUploader,
     SuggestionBox,
   },
@@ -157,6 +116,8 @@ export default {
       }
 
       if (event.key === 'Enter') {
+        if (event.shiftKey) return;
+
         this.sendMessage();
         event.preventDefault();
       }
