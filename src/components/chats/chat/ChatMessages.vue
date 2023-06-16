@@ -97,7 +97,7 @@
     </unnnic-modal>
     <fullscreen-preview
       v-if="isFullscreen"
-      @download="$emit('download')"
+      :downloadMediaUrl="currentMedia.url"
       @close="isFullscreen = false"
       @next="nextMedia"
       @previous="previousMedia"
