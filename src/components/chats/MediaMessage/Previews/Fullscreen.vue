@@ -23,9 +23,9 @@
       <!-- This img above is temporary. Then it will be refactored to an unnnic-icon-svg  -->
 
       <!-- eslint-disable-next-line vuejs-accessibility/anchor-has-content -->
-      <span class="clickable" @click="download" @keypress.enter="download" target="_blank">
+      <a class="clickable" download :href="downloadMediaUrl" target="_blank">
         <unnnic-icon icon="download-bottom-1" scheme="neutral-snow" />
-      </span>
+      </a>
       <span @click="close" @keypress.enter="close" class="clickable">
         <unnnic-icon-svg icon="close-1" scheme="neutral-snow" />
       </span>
@@ -126,17 +126,7 @@ export default {
     },
 
     download() {
-      fetch(this.downloadMediaUrl)
-        .then((response) => response.blob())
-        .then((blob) => {
-          const link = document.createElement('a');
-          link.href = window.URL.createObjectURL(blob);
-          link.download = true;
-
-          link.click();
-
-          window.URL.revokeObjectURL(link.href);
-        });
+      this.$emit('download');
     },
 
     next() {
