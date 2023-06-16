@@ -98,6 +98,7 @@
     <fullscreen-preview
       v-if="isFullscreen"
       :downloadMediaUrl="currentMedia.url"
+      :downloadMediaName="currentMedia.message"
       @close="isFullscreen = false"
       @next="nextMedia"
       @previous="previousMedia"
