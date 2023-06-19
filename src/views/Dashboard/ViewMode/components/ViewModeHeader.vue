@@ -23,8 +23,9 @@ export default {
   },
 
   methods: {
-    closeViewMode() {
-      this.$router.replace({ name: 'dashboard.manager' });
+    async closeViewMode() {
+      await this.$store.dispatch('rooms/setActiveRoom', null);
+      this.$router.push({ name: 'dashboard.manager' });
     },
   },
 };

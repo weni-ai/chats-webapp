@@ -65,8 +65,8 @@ export default {
   },
 
   actions: {
-    async getAll({ commit, state }, { offset, concat, limit, contact, order }) {
-      const response = await Room.getAll(offset, limit, contact, order);
+    async getAll({ commit, state }, { offset, concat, limit, contact, order, viewedAgent }) {
+      const response = await Room.getAll(offset, limit, contact, order, viewedAgent);
       let rooms = response.results || [];
       const listRoomHasNext = response.next;
       if (concat) {

@@ -16,8 +16,8 @@
         <section
           v-for="item in items"
           :key="item.user__first_name"
-          @click="goToViewMode"
-          @keypress.enter="goToViewMode"
+          @click="goToViewMode(item.user)"
+          @keypress.enter="goToViewMode(item.user)"
           class="item table-row"
         >
           <span class="table-col agent">
@@ -62,9 +62,10 @@ export default {
   },
 
   methods: {
-    goToViewMode() {
-      this.$router.replace({
+    goToViewMode(viewedAgent) {
+      this.$router.push({
         name: 'dashboard.view-mode',
+        params: { viewedAgent },
       });
     },
   },

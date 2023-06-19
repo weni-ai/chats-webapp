@@ -2,7 +2,13 @@
   <div class="view-mode__container">
     <view-mode-header viewedAgent="Fabricio Santos" />
     <main class="view-mode__main unnnic-grid-giant">
-      <the-room-list class="room-list__container unnnic-grid-span-3" isViewMode />
+      <the-room-list
+        v-if="viewedAgent"
+        class="room-list__container unnnic-grid-span-3"
+        isViewMode
+        :viewedAgent="viewedAgent"
+      />
+
       <section
         v-if="!!room"
         :class="['chat', `unnnic-grid-span-${isContactInfoOpened ? '6' : '9'}`]"
@@ -70,7 +76,12 @@ export default {
   data: () => ({
     isContactInfoOpened: false,
     isAssumeChatConfirmationOpened: false,
+    viewedAgent: '',
   }),
+
+  mounted() {
+    this.viewedAgent = this.$route.params.viewedAgent;
+  },
 
   computed: {
     ...mapState({

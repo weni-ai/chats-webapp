@@ -107,6 +107,9 @@ export default {
       type: Boolean,
       default: false,
     },
+    viewedAgent: {
+      type: String,
+    },
   },
   data: () => ({
     page: 0,
@@ -174,7 +177,6 @@ export default {
     async open(room) {
       if (this.isViewMode) {
         await this.$store.dispatch('rooms/setActiveRoom', room);
-        console.log(this.$store.state.rooms);
       } else {
         const path = `/chats/${room.uuid}`;
 
@@ -190,6 +192,7 @@ export default {
 
     async listRoom(concat, order = '-last_interaction') {
       this.loading = true;
+      const { viewedAgent } = this;
       try {
         await this.$store.dispatch('rooms/getAll', {
           offset: this.page * this.limit,
@@ -197,6 +200,7 @@ export default {
           order,
           limit: this.limit,
           contact: this.nameOfContact,
+          viewedAgent,
         });
         this.loading = false;
       } catch {

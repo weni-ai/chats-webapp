@@ -10,7 +10,7 @@ const routes = [
     component: () => import('@/views/Dashboard/Agent'),
   },
   {
-    path: '/dashboard/view-mode',
+    path: '/dashboard/view-mode/:viewedAgent',
     name: 'dashboard.view-mode',
     component: () => import('@/views/Dashboard/ViewMode'),
   },
