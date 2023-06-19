@@ -13,11 +13,7 @@
         v-if="!!room"
         :class="['chat', `unnnic-grid-span-${isContactInfoOpened ? '6' : '9'}`]"
       >
-        <chat-header
-          :room="room"
-          :closeButtonTooltip="$t('chats.end')"
-          @show-contact-info="handleModal('ContactInfo', 'open')"
-        />
+        <chat-header :room="room" @show-contact-info="handleModal('ContactInfo', 'open')" />
         <chat-messages
           :room="room"
           :messages="messages"
