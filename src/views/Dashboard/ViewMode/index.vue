@@ -43,6 +43,9 @@
           />
         </div>
       </section>
+
+      <chats-background v-else class="unnnic-grid-span-9" />
+
       <contact-info
         v-if="isContactInfoOpened"
         class="unnnic-grid-span-3"
@@ -57,6 +60,7 @@
 import { mapState, mapGetters } from 'vuex';
 
 import TheRoomList from '@/layouts/ChatsLayout/components/TheRoomList';
+import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ContactInfo from '@/components/chats/ContactInfo';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
@@ -67,6 +71,7 @@ export default {
 
   components: {
     TheRoomList,
+    ChatsBackground,
     ChatHeader,
     ContactInfo,
     ChatMessages,
@@ -136,6 +141,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$mainHeight: calc(100vh - 40px - $unnnic-spacing-inset-md);
+
 .view-mode {
   &__container {
     height: 100vh;
@@ -147,16 +154,18 @@ export default {
     overflow-y: hidden;
 
     .room-list__container {
+      height: $mainHeight;
+
       display: flex;
       flex-direction: column;
-      height: calc(100vh - 40px - $unnnic-spacing-inset-md);
       padding-left: 0.6rem;
     }
 
     .chat {
+      height: $mainHeight;
+
       display: flex;
       flex-direction: column;
-      height: 100%;
 
       padding: {
         bottom: $unnnic-spacing-inset-sm;
