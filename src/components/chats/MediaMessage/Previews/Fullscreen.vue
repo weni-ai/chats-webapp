@@ -139,6 +139,14 @@ export default {
           link.click();
 
           window.URL.revokeObjectURL(link.href);
+        })
+        .catch(() => {
+          const link = document.createElement('a');
+          link.target = '_blank';
+          link.href = this.downloadMediaUrl;
+          link.download = this.downloadMediaName;
+
+          link.click();
         });
     },
 
