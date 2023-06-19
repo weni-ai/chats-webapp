@@ -88,6 +88,7 @@ export default {
       await Room.close(uuid, tags);
       this.$router.replace({ name: 'home' });
       this.$store.dispatch('rooms/removeRoom', uuid);
+      this.closeModal();
     },
     closeModal() {
       this.$emit('close');
