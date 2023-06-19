@@ -24,7 +24,7 @@
             <unnnic-icon
               icon="indicator"
               size="sm"
-              :scheme="`feedback-${true ? 'green' : 'grey'}`"
+              :scheme="`feedback-${item.user_status.toLowerCase() === 'online' ? 'green' : 'grey'}`"
             />
             <p>{{ item.user__first_name }}</p>
           </span>
@@ -118,6 +118,13 @@ export default {
             display: flex;
             align-items: center;
             gap: $unnnic-spacing-inline-nano;
+            overflow: hidden;
+
+            p {
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+            }
           }
         }
 
