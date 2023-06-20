@@ -77,24 +77,14 @@
       </template>
     </unnnic-modal>
 
-    <unnnic-modal
+    <modal-get-chat
       v-if="room"
       :showModal="isGetChatConfirmationModalOpen"
-      @close="isGetChatConfirmationModalOpen = false"
-      :text="$t('chats.get_chat_question')"
+      @closeModal="isGetChatConfirmationModalOpen = false"
+      :title="$t('chats.get_chat_question')"
       :description="`Confirme se deseja realizar o atendimento de ${room.contact.name}`"
-      modal-icon="messages-bubble-1"
-      scheme="neutral-darkest"
-    >
-      <template #options>
-        <unnnic-button
-          :text="$t('cancel')"
-          type="terciary"
-          @click="isGetChatConfirmationModalOpen = false"
-        />
-        <unnnic-button :text="$t('confirm')" type="secondary" @click="takeRoom" />
-      </template>
-    </unnnic-modal>
+      :whenGetChat="whenGetChat"
+    />
 
     <template #aside>
       <component :is="sidebarComponent.name" v-on="sidebarComponent.listeners" />
@@ -120,6 +110,7 @@ import LayoutTemplateMessage from '@/components/chats/TemplateMessages/LayoutTem
 
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
+import ModalGetChat from '@/components/chats/chat/ModalGetChat';
 
 export default {
   name: 'ChatsHome',
@@ -135,6 +126,7 @@ export default {
     ChatClassifier,
     ModalCloseChat,
     LayoutTemplateMessage,
+    ModalGetChat,
   },
 
   props: {
@@ -229,12 +221,6 @@ export default {
       const response = await Queue.tags(this.room.queue.uuid);
       this.sectorTags = response.results;
     },
-    async takeRoom() {
-      await Room.take(this.room.uuid, this.me.email);
-      this.isGetChatConfirmationModalOpen = false;
-      this.setActiveRoom(this.room.uuid);
-      this.readMessages();
-    },
     async readMessages() {
       await Room.updateReadMessages(this.room.uuid, true);
     },
@@ -258,6 +244,10 @@ export default {
       this.componentInAsideSlot = '';
       this.page = 0;
       this.readMessages();
+    },
+    whenGetChat() {
+      this.componentInAsideSlot = '';
+      this.page = 0;
     },
     async getRoomMessages(concat) {
       this.isLoading = true;

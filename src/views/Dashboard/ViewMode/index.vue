@@ -27,7 +27,7 @@
             type="secondary"
             @click="handleModal('AssumeChatConfirmation', 'open')"
           />
-          <unnnic-modal
+          <!-- <unnnic-modal
             :showModal="isAssumeChatConfirmationOpened"
             @close="handleModal('AssumeChatConfirmation', 'close')"
             :text="$t('dashboard.view-mode.assume_chat_question')"
@@ -36,6 +36,23 @@
             "
             modal-icon="messages-bubble-1"
             scheme="neutral-darkest"
+          >
+            <template #options>
+              <unnnic-button
+                :text="$t('cancel')"
+                type="terciary"
+                @click="isGetChatConfirmationModalOpen = false"
+              />
+              <unnnic-button :text="$t('confirm')" type="secondary" @click="takeRoom" />
+            </template>
+          </unnnic-modal> -->
+          <modal-get-chat
+            :showModal="isAssumeChatConfirmationOpened"
+            @closeModal="handleModal('AssumeChatConfirmation', 'close')"
+            :title="$t('dashboard.view-mode.assume_chat_question')"
+            :description="
+              $t('dashboard.view-mode.assume_chat_confirmation', { agent: 'Fabricio Santos' })
+            "
           />
         </div>
       </section>
@@ -60,6 +77,7 @@ import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ContactInfo from '@/components/chats/ContactInfo';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
+import ModalGetChat from '@/components/chats/chat/ModalGetChat';
 import ViewModeHeader from './components/ViewModeHeader';
 
 export default {
@@ -72,6 +90,7 @@ export default {
     ContactInfo,
     ChatMessages,
     ViewModeHeader,
+    ModalGetChat,
   },
 
   data: () => ({
@@ -81,6 +100,7 @@ export default {
   }),
 
   mounted() {
+    console.log(this.room);
     this.viewedAgent = this.$route.params.viewedAgent;
   },
 
