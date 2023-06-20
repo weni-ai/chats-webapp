@@ -129,7 +129,11 @@ export default {
     },
 
     download() {
-      fetch(this.downloadMediaUrl)
+      fetch(this.downloadMediaUrl, {
+        headers: {
+          'Access-Control-Allow-Origin': 'https://chats.dev.cloud.weni.ai/',
+        },
+      })
         .then((response) => response.blob())
         .then((blob) => {
           const link = document.createElement('a');
