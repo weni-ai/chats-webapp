@@ -22,30 +22,12 @@
         />
         <div class="assume-chat__container">
           <unnnic-button
+            v-if="room.user?.email !== me.email"
             class="assume-chat"
             :text="$t('dashboard.view-mode.assume_chat')"
             type="secondary"
             @click="handleModal('AssumeChatConfirmation', 'open')"
           />
-          <!-- <unnnic-modal
-            :showModal="isAssumeChatConfirmationOpened"
-            @close="handleModal('AssumeChatConfirmation', 'close')"
-            :text="$t('dashboard.view-mode.assume_chat_question')"
-            :description="
-              $t('dashboard.view-mode.assume_chat_confirmation', { agent: 'Fabricio Santos' })
-            "
-            modal-icon="messages-bubble-1"
-            scheme="neutral-darkest"
-          >
-            <template #options>
-              <unnnic-button
-                :text="$t('cancel')"
-                type="terciary"
-                @click="isGetChatConfirmationModalOpen = false"
-              />
-              <unnnic-button :text="$t('confirm')" type="secondary" @click="takeRoom" />
-            </template>
-          </unnnic-modal> -->
           <modal-get-chat
             :showModal="isAssumeChatConfirmationOpened"
             @closeModal="handleModal('AssumeChatConfirmation', 'close')"
@@ -53,6 +35,7 @@
             :description="
               $t('dashboard.view-mode.assume_chat_confirmation', { agent: 'Fabricio Santos' })
             "
+            :whenGetChat="whenGetChat"
           />
         </div>
       </section>
@@ -100,13 +83,13 @@ export default {
   }),
 
   mounted() {
-    console.log(this.room);
     this.viewedAgent = this.$route.params.viewedAgent;
   },
 
   computed: {
     ...mapState({
       room: (state) => state.rooms.activeRoom,
+      me: (state) => state.profile.me,
     }),
     ...mapGetters('rooms', {
       messages: 'groupedActiveRoomsMessage',
@@ -137,6 +120,9 @@ export default {
       }
 
       actionMap[action]();
+    },
+    whenGetChat() {
+      this.$router.push({ name: 'room', params: { id: this.room.uuid } });
     },
   },
 
