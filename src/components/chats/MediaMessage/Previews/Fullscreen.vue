@@ -129,11 +129,42 @@ export default {
     },
 
     download() {
-      fetch(this.downloadMediaUrl, {
-        headers: {
-          'Access-Control-Allow-Origin': 'https://chats.dev.cloud.weni.ai/',
-        },
-      })
+      function treatedUrl(url) {
+        // Gambiarra alert: function required to be able to download images in dev and prod.
+        // Adding region in chats prod image url and deleting region in flows dev image url.
+
+        const domain = 's3';
+        const mappings = {
+          'production-chats': {
+            region: 'sa-east-1',
+          },
+          'develop-flows': {
+            region: 'us-east-1',
+          },
+        };
+
+        if (
+          url.includes('production-chats') &&
+          !url.includes(mappings['production-chats'].region)
+        ) {
+          const { region } = mappings['production-chats'];
+          const [part1, part2] = url.split(domain);
+
+          if (part2) {
+            return `${part1}${domain}.${region}${part2}`;
+          }
+        }
+
+        if (url.includes('develop-flows') && url.includes(mappings['develop-flows'].region)) {
+          const { region } = mappings['develop-flows'];
+          return url.replace(`.${region}`, '');
+        }
+
+        return url;
+      }
+
+      const url = treatedUrl(this.downloadMediaUrl);
+      fetch(url)
         .then((response) => response.blob())
         .then((blob) => {
           const link = document.createElement('a');
