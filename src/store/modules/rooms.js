@@ -156,7 +156,7 @@ export default {
       commit(mutations.SET_ROOMS, rooms);
 
       const roomIsActive = room.uuid === state.activeRoom.uuid;
-      const differentUsers = room.user.email !== userEmail;
+      const differentUsers = room.user && room.user.email !== userEmail;
 
       if (roomIsActive && differentUsers) {
         router.replace({ name: 'home' });

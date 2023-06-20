@@ -242,7 +242,7 @@ export default {
       }
     },
     async readMessages() {
-      if (this.room && this.room.uuid) {
+      if (this.room && this.room.uuid && this.room.user && this.room.user.email === this.me.email) {
         await Room.updateReadMessages(this.room.uuid, true);
       }
     },
