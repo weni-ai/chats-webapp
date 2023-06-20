@@ -81,9 +81,13 @@
       <aside-slot-template-section>
         <p class="title-transfer-chat">Transferir contato</p>
         <div style="margin-top: 20px; margin-bottom: 20px">
-          <unnnic-radio size="sm" v-model="transferRadio" value="agent"> Agente </unnnic-radio>
+          <unnnic-radio size="sm" v-model="transferRadio" value="agent" :disabled="isViewMode">
+            Agente
+          </unnnic-radio>
 
-          <unnnic-radio size="sm" v-model="transferRadio" value="queue"> Fila </unnnic-radio>
+          <unnnic-radio size="sm" v-model="transferRadio" value="queue" :disabled="isViewMode">
+            Fila
+          </unnnic-radio>
         </div>
         <section class="transfer-section">
           <unnnic-autocomplete
@@ -105,7 +109,7 @@
             size="sm"
             highlight
             class="channel-select"
-            :disabled="!!transferContactError"
+            :disabled="!!transferContactError || isViewMode"
             :message="transferContactError"
           />
 
@@ -115,6 +119,7 @@
             type="secondary"
             size="small"
             @click="transferContact"
+            :disabled="isViewMode"
           />
         </section>
       </aside-slot-template-section>
