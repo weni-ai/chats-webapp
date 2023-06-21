@@ -21,6 +21,11 @@
         :class="['unnnic-icon__size--md', 'unnnic--clickable', `unnnic-icon-scheme--neutral-snow`]"
       />
       <!-- This img above is temporary. Then it will be refactored to an unnnic-icon-svg  -->
+
+      <!-- eslint-disable-next-line vuejs-accessibility/anchor-has-content -->
+      <span class="clickable" @click="download">
+        <unnnic-icon icon="download-bottom-1" scheme="neutral-snow" />
+      </span>
       <span @click="close" @keypress.enter="close" class="clickable">
         <unnnic-icon-svg icon="close-1" scheme="neutral-snow" />
       </span>
@@ -57,6 +62,15 @@ import rotateLeftIcon from '@/assets/temporaryUndoIcon.svg';
 
 export default {
   name: 'FullscreenPreview',
+
+  props: {
+    downloadMediaUrl: {
+      type: String,
+    },
+    downloadMediaName: {
+      type: String,
+    },
+  },
 
   data() {
     return {
@@ -115,7 +129,60 @@ export default {
     },
 
     download() {
-      this.$emit('download');
+      function treatedUrl(url) {
+        // Gambiarra alert: function required to be able to download images in dev and prod.
+        // Adding region in chats prod image url and deleting region in flows dev image url.
+
+        const domain = 's3';
+        const mappings = {
+          'production-chats': {
+            region: 'sa-east-1',
+          },
+          'develop-flows': {
+            region: 'us-east-1',
+          },
+        };
+
+        if (
+          url.includes('production-chats') &&
+          !url.includes(mappings['production-chats'].region)
+        ) {
+          const { region } = mappings['production-chats'];
+          const [part1, part2] = url.split(domain);
+
+          if (part2) {
+            return `${part1}${domain}.${region}${part2}`;
+          }
+        }
+
+        if (url.includes('develop-flows') && url.includes(mappings['develop-flows'].region)) {
+          const { region } = mappings['develop-flows'];
+          return url.replace(`.${region}`, '');
+        }
+
+        return url;
+      }
+
+      const url = treatedUrl(this.downloadMediaUrl);
+      fetch(url)
+        .then((response) => response.blob())
+        .then((blob) => {
+          const link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = this.downloadMediaName;
+
+          link.click();
+
+          window.URL.revokeObjectURL(link.href);
+        })
+        .catch(() => {
+          const link = document.createElement('a');
+          link.target = '_blank';
+          link.href = this.downloadMediaUrl;
+          link.download = this.downloadMediaName;
+
+          link.click();
+        });
     },
 
     next() {
