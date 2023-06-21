@@ -1,8 +1,6 @@
 import Message from '@/services/api/resources/chats/message';
 import { groupSequentialSentMessages, parseMessageToMessageWithSenderProp } from '@/utils/messages';
 import Room from '@/services/api/resources/chats/room';
-// eslint-disable-next-line import/no-cycle
-import router from '../../router';
 
 const mutations = {
   SET_ROOMS: 'SET_ROOMS',
@@ -149,7 +147,7 @@ export default {
       if (messageAlreadyExists) commit(mutations.UPDATE_MESSAGE, { message });
       else commit(mutations.ADD_MESSAGE, message);
     },
-    updateRoom({ state, commit }, { room, userEmail }) {
+    updateRoom({ state, commit }, { room, userEmail, routerReplace }) {
       const rooms = state.rooms
         .map((r) => (r.uuid === room.uuid ? { ...room } : r))
         .filter((r) => !r.user || r.user.email === userEmail);
@@ -159,7 +157,7 @@ export default {
       const differentUsers = room.user && room.user.email !== userEmail;
 
       if (roomIsActive && differentUsers) {
-        router.replace({ name: 'home' });
+        routerReplace();
       }
       if (!room.is_waiting && roomIsActive) {
         commit(mutations.SET_ACTIVE_ROOM, { ...room });

@@ -209,7 +209,11 @@ export default {
           notification.notify();
         }
 
-        this.$store.dispatch('rooms/updateRoom', { room, userEmail: this.me.email });
+        this.$store.dispatch('rooms/updateRoom', {
+          room,
+          userEmail: this.me.email,
+          routerReplace: () => this.$router.replace({ name: 'home' }),
+        });
       });
 
       this.ws.on('msg.update', (message) => {
