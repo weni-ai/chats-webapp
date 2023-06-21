@@ -190,11 +190,6 @@ export default {
         if (!!room.user && room.user.email !== this.me.email) return;
 
         this.$store.dispatch('rooms/addRoom', room);
-        this.ws.send({
-          type: 'method',
-          action: 'join',
-          content: { name: 'room', id: room.uuid },
-        });
         const notification = new Notification('select-sound');
         notification.notify();
       });
@@ -214,7 +209,11 @@ export default {
           notification.notify();
         }
 
-        this.$store.dispatch('rooms/updateRoom', { room, userEmail: this.me.email });
+        this.$store.dispatch('rooms/updateRoom', {
+          room,
+          userEmail: this.me.email,
+          routerReplace: () => this.$router.replace({ name: 'home' }),
+        });
       });
 
       this.ws.on('msg.update', (message) => {

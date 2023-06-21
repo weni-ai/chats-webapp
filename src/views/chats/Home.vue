@@ -222,7 +222,9 @@ export default {
       this.sectorTags = response.results;
     },
     async readMessages() {
-      await Room.updateReadMessages(this.room.uuid, true);
+      if (this.room && this.room.uuid && this.room.user && this.room.user.email === this.me.email) {
+        await Room.updateReadMessages(this.room.uuid, true);
+      }
     },
     async closeRoom() {
       // if (this.tags.length === 0) return;
@@ -239,7 +241,9 @@ export default {
     },
     async setActiveRoom(uuid) {
       const room = this.$store.getters['rooms/getRoomById'](uuid);
-      if (!room) this.$router.push({ name: 'home' });
+      if (this.$route.name !== 'home' && !room) {
+        this.$router.replace({ name: 'home' });
+      }
       await this.$store.dispatch('rooms/setActiveRoom', room);
       this.componentInAsideSlot = '';
       this.page = 0;
