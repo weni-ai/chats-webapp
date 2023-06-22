@@ -84,6 +84,11 @@ export default {
 
   mounted() {
     this.viewedAgent = this.$route.params.viewedAgent;
+    this.$store.dispatch('dashboard/setViewedAgent', this.viewedAgent);
+  },
+
+  beforeDestroy() {
+    this.$store.dispatch('dashboard/setViewedAgent', '');
   },
 
   computed: {

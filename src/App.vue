@@ -64,6 +64,7 @@ export default {
     ...mapState({
       activeRoom: (state) => state.rooms.activeRoom,
       me: (state) => state.profile.me,
+      viewedAgent: (state) => state.dashboard.viewedAgent,
     }),
 
     configsForInitializeWebSocket() {
@@ -72,6 +73,11 @@ export default {
   },
 
   watch: {
+    viewedAgent: {
+      handler() {
+        this.reconect();
+      },
+    },
     configsForInitializeWebSocket: {
       immediate: true,
 
@@ -97,7 +103,9 @@ export default {
       this.getUser();
 
       this.ws = new WS(
-        `${env('CHATS_WEBSOCKET_URL')}/agent/rooms?Token=${token}&project=${project}`,
+        `${env('CHATS_WEBSOCKET_URL')}/agent/rooms?Token=${token}&project=${project}${
+          this.viewedAgent ? `&user_email=${this.viewedAgent}` : ''
+        }`,
       );
 
       this.listeners();
@@ -156,28 +164,33 @@ export default {
     },
     listeners() {
       this.ws.on('msg.create', (message) => {
-        const findRoom = this.$store.state.rooms.rooms.find((room) => room.uuid === message.room);
+        const { rooms, newMessagesByRoom, activeRoom } = this.$store.state.rooms;
+        const findRoom = rooms.find((room) => room.uuid === message.room);
+
         this.$store.dispatch('rooms/bringRoomFront', findRoom);
         if (findRoom) {
           if (this.me.email === message.user?.email) {
             return;
           }
+
           const notification = new Notification('ping-bing');
           notification.notify();
 
-          if (
-            !this.$store.state.rooms.newMessagesByRoom[message.room] &&
-            !(this.$route.name === 'room' && this.$route.params.id === message.room)
-          ) {
-            this.$set(this.$store.state.rooms.newMessagesByRoom, message.room, {
+          const hasNewMessages = !!newMessagesByRoom[message.room];
+          const isCurrentRoom =
+            this.$route.name === 'room' && this.$route.params.id === message.room;
+          const isViewMode = this.viewedAgent && activeRoom.uuid === message.room;
+
+          if (!hasNewMessages && !(isCurrentRoom || isViewMode)) {
+            this.$set(newMessagesByRoom, message.room, {
               messages: [],
             });
-          } else if (this.$route.name === 'room' && this.$route.params.id === message.room) {
+          } else if (isCurrentRoom || isViewMode) {
             this.$store.dispatch('rooms/addMessage', message);
           }
 
-          if (this.$store.state.rooms.newMessagesByRoom[message.room]) {
-            this.$store.state.rooms.newMessagesByRoom[message.room].messages.push({
+          if (hasNewMessages) {
+            newMessagesByRoom[message.room].messages.push({
               created_on: message.created_on,
               uuid: message.uuid,
               text: message.text,
