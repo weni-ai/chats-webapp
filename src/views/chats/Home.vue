@@ -86,6 +86,15 @@
       :whenGetChat="whenGetChat"
     />
 
+    <unnnic-modal
+      :text="$t('chats.your_chat_assumed', { contact: assumedChatContactName })"
+      :description="$t('chats.your_chat_assumed_description', { contact: assumedChatContactName })"
+      modalIcon="check-circle-1-1"
+      scheme="feedback-green"
+      :showModal="showModalAssumedChat"
+      @close="closeModalAssumedChat"
+    />
+
     <template #aside>
       <component :is="sidebarComponent.name" v-on="sidebarComponent.listeners" />
     </template>
@@ -163,6 +172,8 @@ export default {
       me: (state) => state.profile.me,
       hasNext: (state) => state.rooms.hasNext,
       listRoomHasNext: (state) => state.rooms.listRoomHasNext,
+      showModalAssumedChat: ({ dashboard }) => dashboard.showModalAssumedChat,
+      assumedChatContactName: ({ dashboard }) => dashboard.assumedChatContactName,
     }),
     ...mapGetters('rooms', {
       messages: 'groupedActiveRoomsMessage',
@@ -340,6 +351,10 @@ export default {
 
     closeModalCloseChat() {
       this.showCloseModal = false;
+    },
+
+    closeModalAssumedChat() {
+      this.$store.dispatch('dashboard/setShowModalAssumedChat', false);
     },
 
     dateOfLastMessage() {

@@ -156,9 +156,17 @@ export default {
       const roomIsActive = room.uuid === state.activeRoom.uuid;
       const differentUsers = room.user && room.user.email !== userEmail;
 
-      if (roomIsActive && differentUsers) {
-        routerReplace();
+      if (differentUsers) {
+        if (!room.is_waiting) {
+          commit('dashboard/SET_SHOW_MODAL_ASSUMED_CHAT', true, { root: true });
+          commit('dashboard/SET_ASSUMED_CHAT_CONTACT_NAME', room.contact.name, { root: true });
+        }
+
+        if (roomIsActive) {
+          routerReplace();
+        }
       }
+
       if (!room.is_waiting && roomIsActive) {
         commit(mutations.SET_ACTIVE_ROOM, { ...room });
       }

@@ -329,6 +329,16 @@
       "pt-br": "Você pegou o chat",
       "en-us": "You got the chat",
       "es": "Tienes el chat"
+    },
+    "your_chat_assumed": {
+      "pt-br": "O Chat com {contact} foi transferido",
+      "en-us": "Chat with {contact} has been transferred",
+      "es": "El chat con {contact} ha sido transferido"
+    },
+    "your_chat_assumed_description": {
+      "pt-br": "Seu chat com {contact} foi assumido por outro agente",
+      "en-us": "Your chat with {contact} has been taken over by another agent",
+      "es": "Otro agente se ha hecho cargo de su chat con {contacto}"
     }
   },
   "dashboard": {
