@@ -147,17 +147,17 @@ export default {
       if (messageAlreadyExists) commit(mutations.UPDATE_MESSAGE, { message });
       else commit(mutations.ADD_MESSAGE, message);
     },
-    updateRoom({ state, commit }, { room, userEmail }) {
+    updateRoom({ state, commit }, { room, userEmail, routerReplace }) {
       const rooms = state.rooms
         .map((r) => (r.uuid === room.uuid ? { ...room } : r))
         .filter((r) => !r.user || r.user.email === userEmail);
       commit(mutations.SET_ROOMS, rooms);
 
       const roomIsActive = room.uuid === state.activeRoom.uuid;
-      const differentUsers = room.user.email !== userEmail;
+      const differentUsers = room.user && room.user.email !== userEmail;
 
       if (roomIsActive && differentUsers) {
-        window.location.reload(true);
+        routerReplace();
       }
       if (!room.is_waiting && roomIsActive) {
         commit(mutations.SET_ACTIVE_ROOM, { ...room });
