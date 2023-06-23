@@ -1,5 +1,5 @@
 <template>
-  <div :class="['unnnic-text-editor', loadingValue !== undefined && 'status-loading']">
+  <div :class="['text-box', loadingValue !== undefined && 'status-loading']">
     <!-- <div v-if="loadingValue !== undefined" class="loading">
       <div class="indicator" :style="{ width: `${loadingValue * 100}%` }"></div>
     </div> -->
@@ -22,7 +22,33 @@
     <div class="actions">
       <unnnic-button-icon v-if="!isTyping" type="secondary" size="large" icon="microphone" />
 
-      <unnnic-button-icon v-if="!isTyping" type="primary" size="large" icon="add-1" />
+      <unnnic-dropdown :open="true" position="top-left" class="more-actions">
+        <unnnic-button-icon
+          slot="trigger"
+          v-if="!isTyping"
+          type="primary"
+          size="large"
+          icon="add-1"
+        />
+
+        <div class="more-actions-container">
+          <more-actions-option
+            :action="() => console.log('quickmessage')"
+            icon="flash-1-4"
+            :title="$t('quick_message')"
+          />
+          <more-actions-option
+            :action="() => console.log('suggested_answers')"
+            icon="study-light-idea-1"
+            :title="$t('suggested_answers')"
+          />
+          <more-actions-option
+            :action="() => console.log('attach')"
+            icon="attachment"
+            :title="$t('attach')"
+          />
+        </div>
+      </unnnic-dropdown>
 
       <unnnic-button-icon
         v-if="isTyping"
@@ -36,8 +62,13 @@
 </template>
 
 <script>
+import MoreActionsOption from './MoreActionsOption';
+
 export default {
   name: 'TextBox',
+  components: {
+    MoreActionsOption,
+  },
 
   props: {
     loadingValue: {
@@ -111,7 +142,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.unnnic-text-editor {
+.text-box {
   display: grid;
   grid-template-areas:
     'loading loading-side'
@@ -187,6 +218,12 @@ export default {
     grid-area: actions;
     display: flex;
     gap: $unnnic-spacing-stack-xs;
+
+    .more-actions {
+      ::v-deep .unnnic-dropdown__content {
+        padding: 0 $unnnic-spacing-inset-sm;
+      }
+    }
   }
 }
 </style>
