@@ -43,6 +43,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
   props: {
     headers: {
@@ -63,12 +65,24 @@ export default {
     },
   },
 
+  computed: {
+    ...mapState({
+      me: (state) => state.profile.me,
+    }),
+  },
+
   methods: {
     goToViewMode(viewedAgent) {
-      this.$router.push({
-        name: 'dashboard.view-mode',
-        params: { viewedAgent },
-      });
+      if (viewedAgent === this.me.email) {
+        this.$router.push({
+          name: 'home',
+        });
+      } else {
+        this.$router.push({
+          name: 'dashboard.view-mode',
+          params: { viewedAgent },
+        });
+      }
     },
   },
 };
