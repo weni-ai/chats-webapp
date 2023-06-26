@@ -33,17 +33,17 @@
 
         <div class="more-actions-container">
           <more-actions-option
-            :action="() => console.log('quickmessage')"
+            :action="() => emitAction('quick-messages')"
             icon="flash-1-4"
             :title="$t('quick_message')"
           />
-          <more-actions-option
-            :action="() => console.log('suggested_answers')"
+          <!-- <more-actions-option
+            :action="() => {}"
             icon="study-light-idea-1"
             :title="$t('suggested_answers')"
-          />
+          /> -->
           <more-actions-option
-            :action="() => console.log('attach')"
+            :action="() => emitAction('attachment')"
             icon="attachment"
             :title="$t('attach')"
           />
@@ -136,6 +136,10 @@ export default {
         this.textAreaRows = calculatedRows;
         textarea.style.overflowY = 'hidden';
       }
+    },
+
+    emitAction(action) {
+      this.$emit(`action-${action}`);
     },
   },
 };

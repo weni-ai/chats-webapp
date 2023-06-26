@@ -14,7 +14,13 @@
     </div>
 
     <div class="message-editor">
-      <text-box v-model="message" @send="send" @keydown="onKeyDown" />
+      <text-box
+        v-model="message"
+        @send="send"
+        @keydown="onKeyDown"
+        @action-quick-messages="$emit('show-quick-messages')"
+        @action-attachment="open('media')"
+      />
 
       <file-uploader v-model="files" ref="fileUploader" @upload="upload" />
     </div>
