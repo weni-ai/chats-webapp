@@ -32,13 +32,11 @@ export default {
 
   methods: {
     // accessed by external components
-    open(fileType) {
+    open() {
       this.showUploadModal = true;
-      this.uploadFileType = fileType;
     },
     closeFileUploadModal() {
       this.showUploadModal = false;
-      this.uploadFileType = '';
     },
     upload() {
       this.$emit('upload');
@@ -58,22 +56,14 @@ export default {
       },
     },
     fileUploadModalProps() {
-      if (!this.uploadFileType) return {};
-
       const props = {
-        media: {
-          textTitle: this.$t('send_photo_or_video'),
-          supportedFormats: '.png,.jpeg,.mp4',
-          textAction: this.$tc('send_images', this.files.length),
-        },
-        document: {
-          textTitle: this.$tc('send_docs'),
-          supportedFormats: '.pdf,.doc,.txt,.xls,.csv,.xlsx',
-          textAction: this.$tc('send_docs', this.files.length),
-        },
+        textTitle: this.$t('send_media'),
+        supportedFormats: '.png,.jpeg,.jpg,.mp4,.pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,.xlsx',
+        subtitle: this.$t('upload_area.subtitle', { exampleExtensions: '.PNG, .MP4, .PDF' }),
+        textAction: this.$t('send'),
       };
 
-      return props[this.uploadFileType] || {};
+      return props;
     },
   },
 };

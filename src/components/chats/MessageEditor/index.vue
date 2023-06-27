@@ -19,7 +19,7 @@
         @send="send"
         @keydown="onKeyDown"
         @action-quick-messages="$emit('show-quick-messages')"
-        @action-attachment="open('media')"
+        @action-attachment="openFileUploader"
       />
 
       <file-uploader v-model="files" ref="fileUploader" @upload="upload" />
@@ -156,8 +156,8 @@ export default {
     focusTextEditor() {
       this.$refs.textEditor?.focus?.();
     },
-    open(fileType) {
-      this.$refs.fileUploader.open(fileType);
+    openFileUploader() {
+      this.$refs.fileUploader.open();
     },
   },
 };

@@ -80,9 +80,9 @@
       }
     },
     "subtitle": {
-      "pt-br": "Formatos suportados:",
-      "en-us": "Supported formats:",
-      "es": "Formatos compatibles"
+      "pt-br": "Formatos suportados: {exampleExtensions} e outros",
+      "en-us": "Supported formats: {exampleExtensions} and others",
+      "es": "Formatos compatibles: {exampleExtensions} y otros"
     }
   },
   "waiting_for": {
