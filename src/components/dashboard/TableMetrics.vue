@@ -13,7 +13,7 @@
       </header>
 
       <section class="items">
-        <section v-for="item in items" :key="item.user__first_name" class="item table-row">
+        <section v-for="item in items" :key="item.user" class="item table-row">
           <span class="table-col">
             {{ item.user__first_name }}
           </span>
