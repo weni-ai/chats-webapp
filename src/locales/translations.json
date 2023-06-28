@@ -85,6 +85,13 @@
       "es": "Formatos compatibles: {exampleExtensions} y otros"
     }
   },
+  "dropzone": {
+    "description": {
+      "pt-br": "Solte aqui seu arquivo para enviar",
+      "en-us": "Drop your file here to send",
+      "es": "Suelta tu archivo aquí para enviar"
+    }
+  },
   "waiting_for": {
     "minutes": {
       "pt-br": "Aguardando há 1 minuto | Aguardando há {n} minutos",
