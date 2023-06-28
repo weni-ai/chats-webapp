@@ -15,7 +15,7 @@
         @reconnect="searchMessages"
         :alertNetwork="this.networkError"
       />
-      <chats-dropzone>
+      <chats-dropzone @open-file-uploader="openFileUploader">
         <chat-messages
           :room="room"
           :messages="messages"
@@ -35,7 +35,7 @@
             "
             @send-message="sendMessage"
             @send-audio="sendAudio"
-            @upload="sendFileMessage($event)"
+            @open-file-uploader="openFileUploader"
             :loadingValue="totalValue"
             :loading="isLoading"
           />
@@ -98,6 +98,8 @@
       </template>
     </unnnic-modal>
 
+    <file-uploader v-model="files" ref="fileUploader" @upload="sendFileMessage" />
+
     <template #aside>
       <component :is="sidebarComponent.name" v-on="sidebarComponent.listeners" />
     </template>
@@ -124,6 +126,8 @@ import LayoutTemplateMessage from '@/components/chats/TemplateMessages/LayoutTem
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
 
+import FileUploader from '@/components/chats/MessageEditor/FileUploader';
+
 export default {
   name: 'ChatsHome',
 
@@ -138,6 +142,7 @@ export default {
     MessageEditor,
     ChatClassifier,
     ModalCloseChat,
+    FileUploader,
     LayoutTemplateMessage,
   },
 
@@ -167,6 +172,7 @@ export default {
     showCloseModal: false,
     showAlertForLastMessage: false,
     networkError: false,
+    files: [],
   }),
 
   computed: {
@@ -305,7 +311,8 @@ export default {
         this.getRoomMessages(true);
       }
     },
-    async sendFileMessage(files) {
+    async sendFileMessage() {
+      const { files } = this;
       try {
         const loadingFiles = {};
         const updateLoadingFiles = (messageUuid, progress) => {
@@ -360,6 +367,13 @@ export default {
 
     closeModalCloseChat() {
       this.showCloseModal = false;
+    },
+
+    openFileUploader(files) {
+      this.$refs.fileUploader.open();
+      if (files) {
+        this.files = [...files];
+      }
     },
 
     dateOfLastMessage() {

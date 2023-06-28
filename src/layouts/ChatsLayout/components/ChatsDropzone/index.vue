@@ -5,23 +5,22 @@
     :class="{
       dropzone: true,
       dragging: isDragging,
-      error: hasError,
     }"
     @dragenter.stop.prevent="dragenter"
     @dragover.stop.prevent="dragover"
     @dragleave.stop.prevent="dragleave"
-    @dragend.stop.prevent="dragend"
     @drop.stop.prevent="drop"
   >
     <div v-if="isDragging" class="dropzone__description">
       <unnnic-icon-svg
         class="unnnic-upload-area__dropzone__icon"
         icon="upload-bottom-1"
-        :scheme="hasError ? 'feedback-red' : 'brand-weni'"
+        scheme="brand-weni"
         size="xl"
       />
       <h1>{{ $t('dropzone.description') }}</h1>
     </div>
+
     <slot />
   </div>
 </template>
@@ -29,67 +28,49 @@
 <script>
 export default {
   name: 'ChatsDropzone',
+
   data() {
     return {
+      files: [],
       hasError: false,
       isDragging: false,
       dragEnterCounter: 0, // to handle dragenter/dragleave on child elements
-      currentFiles: null,
     };
   },
+
   methods: {
+    openFileUploader(files) {
+      this.$emit('open-file-uploader', files);
+    },
+
     dragenter() {
       this.dragEnterCounter += 1;
       this.isDragging = true;
     },
+
     dragover() {
       this.isDragging = true;
     },
+
     dragleave() {
       this.dragEnterCounter -= 1;
+
       if (this.dragEnterCounter === 0) {
         this.isDragging = false;
       }
     },
-    dragend() {
-      this.isDragging = false;
-    },
-    drop() {
-      // event
-      this.isDragging = false;
 
-      // const { files } = event.dataTransfer;
+    drop(event) {
+      const { files } = event.dataTransfer;
+      this.openFileUploader(files);
+
+      this.dragEnterCounter = 0;
+      this.isDragging = false;
 
       // if (this.validateFiles(files)) {
-      //   this.addFiles(files);
+      // this.files = files;
       // }
     },
-    // addFiles(files) {
-    //   let totalLength = files.length;
-
-    //   if (!this.shouldReplace) {
-    //     totalLength += this.currentFiles.length;
-    //   }
-
-    //   if (totalLength > this.maximumUploads) {
-    //     this.setErrorState();
-    //     return;
-    //   }
-
-    //   const validFiles = Array.from(files).filter((file) => {
-    //     if (this.validFormat([file]) && this.validSize([file])) {
-    //       return true;
-    //     }
-    //     return false;
-    //   });
-
-    //   if (this.shouldReplace) {
-    //     this.currentFiles = validFiles;
-    //   } else {
-    //     this.currentFiles = this.currentFiles.concat(validFiles);
-    //   }
-    //   this.emitFileChange();
-    // },
   },
 };
 </script>

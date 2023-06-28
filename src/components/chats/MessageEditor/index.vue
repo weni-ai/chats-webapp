@@ -21,15 +21,12 @@
         @action-quick-messages="$emit('show-quick-messages')"
         @action-attachment="openFileUploader"
       />
-
-      <file-uploader v-model="files" ref="fileUploader" @upload="upload" />
     </div>
   </section>
 </template>
 
 <script>
 import TextBox from './TextBox';
-import FileUploader from './FileUploader';
 import SuggestionBox from './SuggestionBox.vue';
 
 export default {
@@ -37,7 +34,6 @@ export default {
 
   components: {
     TextBox,
-    FileUploader,
     SuggestionBox,
   },
 
@@ -60,7 +56,6 @@ export default {
   },
 
   data: () => ({
-    files: [],
     keyboardEvent: null,
     isSuggestionBoxOpen: false,
     recording: false,
@@ -150,14 +145,11 @@ export default {
     sendAudio() {
       this.$emit('send-audio');
     },
-    upload() {
-      this.$emit('upload', [...this.files]);
-    },
     focusTextEditor() {
       this.$refs.textEditor?.focus?.();
     },
     openFileUploader() {
-      this.$refs.fileUploader.open();
+      this.$emit('open-file-uploader');
     },
   },
 };
