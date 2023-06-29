@@ -1,3 +1,5 @@
+import Dasboard from '@/services/api/resources/chats/dashboard';
+
 const mutations = {
   SET_VIEWED_AGENT: 'SET_VIEWED_AGENT',
   SET_SHOW_MODAL_ASSUMED_CHAT: 'SET_SHOW_MODAL_ASSUMED_CHAT',
@@ -7,13 +9,16 @@ const mutations = {
 export default {
   namespaced: true,
   state: {
-    viewedAgent: '',
+    viewedAgent: {
+      email: '',
+      name: '',
+    },
     showModalAssumedChat: false,
     assumedChatContactName: '',
   },
 
   mutations: {
-    [mutations.SET_VIEWED_AGENT](state, viewedAgent = '') {
+    [mutations.SET_VIEWED_AGENT](state, viewedAgent = { email: '', name: '' }) {
       state.viewedAgent = viewedAgent;
     },
     [mutations.SET_SHOW_MODAL_ASSUMED_CHAT](state, isAssumedChat = false) {
@@ -42,6 +47,19 @@ export default {
     },
     setShowModalAssumedChat({ commit }, isAssumedChat) {
       commit(mutations.SET_SHOW_MODAL_ASSUMED_CHAT, isAssumedChat);
+    },
+    async getViewedAgentData({ commit }, agentEmail) {
+      const response = await Dasboard.getViewedAgentData(agentEmail);
+
+      const { first_name, last_name } = response;
+      const newViewedAgent = {
+        name: `${first_name} ${last_name}`,
+        email: agentEmail,
+      };
+
+      commit(mutations.SET_VIEWED_AGENT, newViewedAgent);
+
+      return newViewedAgent;
     },
   },
 };

@@ -73,7 +73,7 @@ export default {
 
   methods: {
     goToViewMode(viewedAgent) {
-      if (viewedAgent === this.me.email) {
+      if (viewedAgent.email === this.me.email) {
         this.$router.push({
           name: 'home',
         });

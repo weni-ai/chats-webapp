@@ -73,11 +73,12 @@ export default {
   },
 
   watch: {
-    viewedAgent: {
+    'viewedAgent.email': {
       handler() {
         this.reconect();
       },
     },
+
     configsForInitializeWebSocket: {
       immediate: true,
 
@@ -92,6 +93,7 @@ export default {
   methods: {
     initializeWebSocket() {
       const { token, project } = this.$store.state.config;
+      const { viewedAgent } = this.$route.params;
 
       http.interceptors.request.use((config) => {
         // eslint-disable-next-line no-param-reassign
@@ -104,7 +106,7 @@ export default {
 
       this.ws = new WS(
         `${env('CHATS_WEBSOCKET_URL')}/agent/rooms?Token=${token}&project=${project}${
-          this.viewedAgent ? `&user_email=${this.viewedAgent}` : ''
+          viewedAgent ? `&user_email=${viewedAgent}` : ''
         }`,
       );
 
@@ -179,7 +181,7 @@ export default {
           const hasNewMessages = !!newMessagesByRoom[message.room];
           const isCurrentRoom =
             this.$route.name === 'room' && this.$route.params.id === message.room;
-          const isViewMode = this.viewedAgent && activeRoom.uuid === message.room;
+          const isViewMode = this.$route.params.viewedAgent && activeRoom.uuid === message.room;
 
           if (!hasNewMessages && !(isCurrentRoom || isViewMode)) {
             this.$set(newMessagesByRoom, message.room, {

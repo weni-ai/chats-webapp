@@ -1,12 +1,12 @@
 <template>
   <div class="view-mode__container">
-    <view-mode-header viewedAgent="Fabricio Santos" />
+    <view-mode-header :viewedAgent="viewedAgent.name" />
     <main class="view-mode__main unnnic-grid-giant">
       <the-room-list
         v-if="viewedAgent"
         class="room-list__container unnnic-grid-span-3"
         isViewMode
-        :viewedAgent="viewedAgent"
+        :viewedAgent="this.viewedAgent.email"
       />
 
       <section
@@ -33,7 +33,7 @@
             @closeModal="handleModal('AssumeChatConfirmation', 'close')"
             :title="$t('dashboard.view-mode.assume_chat_question')"
             :description="
-              $t('dashboard.view-mode.assume_chat_confirmation', { agent: 'Fabricio Santos' })
+              $t('dashboard.view-mode.assume_chat_confirmation', { agent: viewedAgent.name })
             "
             :whenGetChat="whenGetChat"
           />
@@ -79,22 +79,21 @@ export default {
   data: () => ({
     isContactInfoOpened: false,
     isAssumeChatConfirmationOpened: false,
-    viewedAgent: '',
   }),
 
   mounted() {
-    this.viewedAgent = this.$route.params.viewedAgent;
-    this.$store.dispatch('dashboard/setViewedAgent', this.viewedAgent);
+    this.$store.dispatch('dashboard/getViewedAgentData', this.$route.params.viewedAgent);
   },
 
   beforeDestroy() {
-    this.$store.dispatch('dashboard/setViewedAgent', '');
+    this.$store.dispatch('dashboard/setViewedAgent', { name: '', email: '' });
   },
 
   computed: {
     ...mapState({
       room: (state) => state.rooms.activeRoom,
       me: (state) => state.profile.me,
+      viewedAgent: (state) => state.dashboard.viewedAgent,
     }),
     ...mapGetters('rooms', {
       messages: 'groupedActiveRoomsMessage',
