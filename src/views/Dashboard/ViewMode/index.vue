@@ -3,7 +3,7 @@
     <view-mode-header :viewedAgent="viewedAgent.name" />
     <main class="view-mode__main unnnic-grid-giant">
       <the-room-list
-        v-if="viewedAgent"
+        v-if="viewedAgent.email"
         class="room-list__container unnnic-grid-span-3"
         isViewMode
         :viewedAgent="this.viewedAgent.email"
