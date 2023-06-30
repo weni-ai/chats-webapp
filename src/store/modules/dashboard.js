@@ -1,4 +1,4 @@
-import Dasboard from '@/services/api/resources/chats/dashboard';
+import Dasboard from '@/services/api/resources/dashboard/dashboardManager';
 
 const mutations = {
   SET_VIEWED_AGENT: 'SET_VIEWED_AGENT',

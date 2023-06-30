@@ -153,7 +153,7 @@ export default {
         .filter((r) => !r.user || r.user.email === userEmail);
       commit(mutations.SET_ROOMS, rooms);
 
-      const roomIsActive = room.uuid === state.activeRoom.uuid;
+      const roomIsActive = state.activeRoom && room.uuid === state.activeRoom.uuid;
       const differentUsers = room.user && room.user.email !== userEmail;
 
       if (differentUsers) {
