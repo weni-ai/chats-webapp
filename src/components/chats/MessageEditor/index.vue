@@ -18,6 +18,7 @@
         v-model="message"
         @send="send"
         @keydown="onKeyDown"
+        @paste="handlePaste"
         @action-quick-messages="$emit('show-quick-messages')"
         @action-attachment="openFileUploader"
       />
@@ -123,6 +124,27 @@ export default {
         event.preventDefault();
       }
     },
+
+    handlePaste(event) {
+      const { items } = event.clipboardData || event.originalEvent.clipboardData;
+      const itemsArray = [...items];
+      const imagePastes = itemsArray.filter(
+        (item) => item.type.includes('image') || item.type === 'video/mp4',
+      );
+
+      const fileList = imagePastes.map((imagePaste) => {
+        const blob = imagePaste.getAsFile();
+        const dateOfPrintPaste = new Date(Date.now()).toUTCString();
+        const fileName = blob.name === 'image.png' ? dateOfPrintPaste : blob.name;
+        const file = new File([blob], fileName, { type: blob.type });
+        return file;
+      });
+
+      if (fileList.length) {
+        this.openFileUploader(fileList);
+      }
+    },
+
     record() {
       if (!this.loading) {
         this.recording = true;
@@ -148,8 +170,8 @@ export default {
     focusTextEditor() {
       this.$refs.textEditor?.focus?.();
     },
-    openFileUploader() {
-      this.$emit('open-file-uploader');
+    openFileUploader(files) {
+      this.$emit('open-file-uploader', files);
     },
   },
 };

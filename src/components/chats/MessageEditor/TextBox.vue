@@ -15,6 +15,7 @@
         :value="value"
         @input="handleTextarea"
         @keydown="keyDownTextarea"
+        @paste="paste"
         @focus="isFocused = true"
         @blur="isFocused = false"
       ></textarea>
@@ -106,6 +107,10 @@ export default {
       if (event.key === 'Enter' && !event.shiftKey && !!this.message.trim()) {
         this.clearTextarea();
       }
+    },
+
+    paste(event) {
+      this.$emit('paste', event);
     },
 
     clearTextarea() {

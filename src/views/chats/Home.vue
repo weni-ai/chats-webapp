@@ -371,6 +371,7 @@ export default {
 
     openFileUploader(files) {
       this.$refs.fileUploader.open();
+
       if (files) {
         this.files = [...files];
       }
