@@ -156,9 +156,11 @@ export default {
       const isTransferedToOtherUser = room.user && room.user.email !== userEmail;
       const isTransferedByMe = room.transferred_by === userEmail;
       const isActiveRoom = state.activeRoom && room.uuid === state.activeRoom.uuid;
+      const isTransferedFromAQueue =
+        room.transfer_history.at(-2)?.type === 'queue' || room.transfer_history.length === 0;
 
       if (!isTransferedByMe && isTransferedToOtherUser) {
-        if (!room.is_waiting) {
+        if (!isTransferedFromAQueue && !room.is_waiting) {
           commit('dashboard/SET_SHOW_MODAL_ASSUMED_CHAT', true, { root: true });
           commit('dashboard/SET_ASSUMED_CHAT_CONTACT_NAME', room.contact.name, { root: true });
         }
