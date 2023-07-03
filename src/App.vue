@@ -104,11 +104,17 @@ export default {
       this.loadQuickMessages();
       this.getUser();
 
-      this.ws = new WS(
-        `${env('CHATS_WEBSOCKET_URL')}/agent/rooms?Token=${token}&project=${project}${
-          viewedAgent ? `&user_email=${viewedAgent}` : ''
-        }`,
-      );
+      if (viewedAgent) {
+        this.ws = new WS(
+          `${env(
+            'CHATS_WEBSOCKET_URL',
+          )}/manager/rooms?Token=${token}&project=${project}&user_email=${viewedAgent}`,
+        );
+      } else {
+        this.ws = new WS(
+          `${env('CHATS_WEBSOCKET_URL')}/agent/rooms?Token=${token}&project=${project}`,
+        );
+      }
 
       this.listeners();
 
