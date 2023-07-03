@@ -153,21 +153,22 @@ export default {
         .filter((r) => !r.user || r.user.email === userEmail);
       commit(mutations.SET_ROOMS, rooms);
 
-      const roomIsActive = state.activeRoom && room.uuid === state.activeRoom.uuid;
-      const differentUsers = room.user && room.user.email !== userEmail;
+      const isTransferedToOtherUser = room.user && room.user.email !== userEmail;
+      const isTransferedByMe = room.transferred_by === userEmail;
+      const isActiveRoom = state.activeRoom && room.uuid === state.activeRoom.uuid;
 
-      if (differentUsers) {
+      if (!isTransferedByMe && isTransferedToOtherUser) {
         if (!room.is_waiting) {
           commit('dashboard/SET_SHOW_MODAL_ASSUMED_CHAT', true, { root: true });
           commit('dashboard/SET_ASSUMED_CHAT_CONTACT_NAME', room.contact.name, { root: true });
         }
 
-        if (roomIsActive) {
+        if (isActiveRoom) {
           routerReplace();
         }
       }
 
-      if (!room.is_waiting && roomIsActive) {
+      if (!room.is_waiting && isActiveRoom) {
         commit(mutations.SET_ACTIVE_ROOM, { ...room });
       }
     },

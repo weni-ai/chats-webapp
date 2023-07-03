@@ -510,7 +510,6 @@ export default {
       return value.toString().toLowerCase();
     },
     async transferContact() {
-      console.log(this.transferPersonSelected, `oi`);
       this.$store.commit('chats/removeChat', this.room);
       if (this.transferRadio === 'agent') {
         await Room.take(this.room.uuid, this.transferPersonSelected.email);
