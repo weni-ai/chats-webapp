@@ -20,7 +20,6 @@
         :messages="messages"
         class="messages"
         @show-contact-info="componentInAsideSlot = 'contactInfo'"
-        ref="chatMessages"
         @scrollTop="searchForMoreMessages"
       />
 
@@ -246,10 +245,6 @@ export default {
       this.$router.replace({ name: 'home' });
       this.$store.dispatch('rooms/removeRoom', uuid);
     },
-    scrollMessagesToBottom() {
-      if (!this.$refs.chatMessages) return;
-      this.$refs.chatMessages.$el.scrollTop = this.$refs.chatMessages.$el.scrollHeight;
-    },
     async setActiveRoom(uuid) {
       const room = this.$store.getters['rooms/getRoomById'](uuid);
       if (this.$route.name !== 'home' && !room) {
@@ -273,7 +268,6 @@ export default {
           concat,
           limit: this.limit,
         });
-        // this.$nextTick(this.scrollMessagesToBottom);
         this.isRoomClassifierVisible = false;
         this.isLoading = false;
         this.networkError = false;
@@ -307,7 +301,6 @@ export default {
         };
         await this.$store.dispatch('rooms/sendMedias', { files, updateLoadingFiles });
         this.totalValue = undefined;
-        this.scrollMessagesToBottom();
       } catch (e) {
         console.error('O upload de alguns arquivos pode não ter sido concluído');
       }
@@ -319,7 +312,6 @@ export default {
 
       await this.$store.dispatch('rooms/sendMessage', message);
 
-      this.scrollMessagesToBottom();
       this.editorMessage = '';
     },
     async sendAudio() {
@@ -336,7 +328,6 @@ export default {
       const audio = new File([blob], `${Date.now().toString()}.mp3`, { type: 'audio/mpeg3' });
       await this.$store.dispatch('rooms/sendMedias', { files: [audio], updateLoadingFiles });
       this.totalValue = undefined;
-      this.scrollMessagesToBottom();
       this.$refs['message-editor'].clearAudio();
       this.audioMessage = null;
     },
@@ -382,11 +373,6 @@ export default {
         await this.setActiveRoom(this.id);
         this.getRoomMessages();
       },
-    },
-
-    messages() {
-      this.$nextTick(this.scrollMessagesToBottom);
-      // this.readMessages();
     },
   },
 };
