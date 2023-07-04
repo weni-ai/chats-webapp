@@ -171,8 +171,8 @@ export default {
       this.$router.push({ name: 'onboarding.agent' });
     },
     listeners() {
-      this.ws.on('msg.create', (message) => {
-        const { rooms, newMessagesByRoom, activeRoom } = this.$store.state.rooms;
+      this.ws.on('msg.create', async (message) => {
+        const { rooms, activeRoom } = this.$store.state.rooms;
         const findRoom = rooms.find((room) => room.uuid === message.room);
 
         this.$store.dispatch('rooms/bringRoomFront', findRoom);
@@ -184,26 +184,23 @@ export default {
           const notification = new Notification('ping-bing');
           notification.notify();
 
-          const hasNewMessages = !!newMessagesByRoom[message.room];
           const isCurrentRoom =
             this.$route.name === 'room' && this.$route.params.id === message.room;
-          const isViewMode = this.$route.params.viewedAgent && activeRoom.uuid === message.room;
+          const isViewModeCurrentRoom =
+            this.$route.params.viewedAgent && activeRoom?.uuid === message.room;
 
-          if (!hasNewMessages && !(isCurrentRoom || isViewMode)) {
-            this.$set(newMessagesByRoom, message.room, {
-              messages: [],
-            });
-          } else if (isCurrentRoom || isViewMode) {
+          if (isCurrentRoom || isViewModeCurrentRoom) {
             this.$store.dispatch('rooms/addMessage', message);
           }
 
-          if (hasNewMessages) {
-            newMessagesByRoom[message.room].messages.push({
+          this.$store.dispatch('rooms/addNewMessagesByRoom', {
+            room: message.room,
+            message: {
               created_on: message.created_on,
               uuid: message.uuid,
               text: message.text,
-            });
-          }
+            },
+          });
         }
       });
 
