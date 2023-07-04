@@ -230,10 +230,12 @@ export default {
           notification.notify();
         }
 
+        const { viewedAgent } = this;
         this.$store.dispatch('rooms/updateRoom', {
           room,
           userEmail: this.me.email,
           routerReplace: () => this.$router.replace({ name: 'home' }),
+          viewedAgent,
         });
       });
 
