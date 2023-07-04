@@ -15,7 +15,7 @@
       <section class="items">
         <section
           v-for="item in items"
-          :key="item.user__first_name"
+          :key="item.user"
           @click="goToViewMode(item.user)"
           @keypress.enter="goToViewMode(item.user)"
           class="item table-row"
