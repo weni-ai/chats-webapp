@@ -19,6 +19,7 @@
           :messages="messages"
           class="messages"
           @show-contact-info="handleModal('ContactInfo', 'open')"
+          @scrollTop="searchForMoreMessages"
         />
         <div class="assume-chat__container">
           <unnnic-button
@@ -79,6 +80,8 @@ export default {
   data: () => ({
     isContactInfoOpened: false,
     isAssumeChatConfirmationOpened: false,
+    chatPage: 0,
+    chatLimit: 20,
   }),
 
   mounted() {
@@ -94,6 +97,7 @@ export default {
       room: (state) => state.rooms.activeRoom,
       me: (state) => state.profile.me,
       viewedAgent: (state) => state.dashboard.viewedAgent,
+      hasNext: (state) => state.rooms.hasNext,
     }),
     ...mapGetters('rooms', {
       messages: 'groupedActiveRoomsMessage',
@@ -101,6 +105,23 @@ export default {
   },
 
   methods: {
+    async getRoomMessages(concat = false) {
+      try {
+        await this.$store.dispatch('rooms/getActiveRoomMessages', {
+          offset: this.chatPage * this.chatLimit,
+          concat,
+          limit: this.chatLimit,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    searchForMoreMessages() {
+      if (this.hasNext) {
+        this.chatPage += 1;
+        this.getRoomMessages(true);
+      }
+    },
     handleModal(modalName, action) {
       const registeredModals = ['ContactInfo', 'AssumeChatConfirmation'];
 
@@ -131,16 +152,8 @@ export default {
   },
 
   watch: {
-    async room() {
-      try {
-        await this.$store.dispatch('rooms/getActiveRoomMessages', {
-          offset: this.page * this.limit,
-          concat: false,
-          limit: this.limit,
-        });
-      } catch (error) {
-        console.log(error);
-      }
+    room() {
+      this.getRoomMessages();
     },
   },
 };
