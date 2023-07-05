@@ -141,6 +141,7 @@ export default {
               overflow: hidden;
               white-space: nowrap;
               text-overflow: ellipsis;
+              border-bottom: 1px solid transparent;
             }
           }
         }
@@ -151,6 +152,10 @@ export default {
           text-underline-position: under;
 
           cursor: pointer;
+
+          .agent > p {
+            border-bottom: 1px solid $unnnic-color-neutral-cloudy;
+          }
         }
       }
     }
