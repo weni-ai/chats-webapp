@@ -172,8 +172,10 @@ $mainHeight: calc(100vh - 40px);
   }
 
   &__main {
-    padding: 0;
+    height: $mainHeight;
     overflow-y: hidden;
+
+    padding: 0;
 
     .room-list__container {
       height: $mainHeight;
@@ -214,6 +216,7 @@ $mainHeight: calc(100vh - 40px);
 
     .contact-info {
       border: 1px solid $unnnic-color-neutral-soft;
+      overflow-y: auto;
     }
   }
 }
