@@ -84,6 +84,10 @@ export default {
     chatLimit: 20,
   }),
 
+  beforeMount() {
+    this.$store.dispatch('rooms/setActiveRoom', '');
+  },
+
   mounted() {
     this.$store.dispatch('dashboard/getViewedAgentData', this.$route.params.viewedAgent);
   },
