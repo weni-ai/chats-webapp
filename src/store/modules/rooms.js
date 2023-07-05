@@ -13,7 +13,7 @@ const mutations = {
   SET_ACTIVE_ROOM_HAS_NEXT: 'SET_ACTIVE_ROOM_HAS_NEXT',
   SET_ROOMS_HAS_NEXT: 'SET_ROOMS_HAS_NEXT',
   BRING_ROOM_FRONT: 'BRING_ROOM_FRONT',
-  ADD_NEW_MESSAGES_BY_ROOM: 'ADD_NEW_MESSAGES_BY_ROOM',
+  UPDATE_NEW_MESSAGES_BY_ROOM: 'UPDATE_NEW_MESSAGES_BY_ROOM',
 };
 
 export default {
@@ -63,11 +63,13 @@ export default {
         return message.uuid === uuid ? { ...updatedMessage } : message;
       });
     },
-    [mutations.ADD_NEW_MESSAGES_BY_ROOM](state, { room, message }) {
+    [mutations.UPDATE_NEW_MESSAGES_BY_ROOM](state, { room, message, reset = false }) {
+      const roomMessages = state.newMessagesByRoom[room]?.messages || [];
+
       state.newMessagesByRoom = {
         ...state.newMessagesByRoom,
         [room]: {
-          messages: [...(state.newMessagesByRoom[room]?.messages || []), message],
+          messages: reset ? [] : [...roomMessages, message],
         },
       };
     },
@@ -195,7 +197,10 @@ export default {
       if (state.activeRoom.uuid === roomUuid) commit(mutations.SET_ACTIVE_ROOM, {});
     },
     addNewMessagesByRoom({ commit }, { room, message }) {
-      commit(mutations.ADD_NEW_MESSAGES_BY_ROOM, { room, message });
+      commit(mutations.UPDATE_NEW_MESSAGES_BY_ROOM, { room, message });
+    },
+    resetNewMessagesByRoom({ commit }, { room }) {
+      commit(mutations.UPDATE_NEW_MESSAGES_BY_ROOM, { room, reset: true });
     },
   },
 

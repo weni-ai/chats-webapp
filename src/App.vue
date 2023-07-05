@@ -192,7 +192,6 @@ export default {
           if (isCurrentRoom || isViewModeCurrentRoom) {
             this.$store.dispatch('rooms/addMessage', message);
           }
-
           this.$store.dispatch('rooms/addNewMessagesByRoom', {
             room: message.room,
             message: {
@@ -234,6 +233,12 @@ export default {
           routerReplace: () => this.$router.replace({ name: 'home' }),
           viewedAgentEmail: viewedAgent.email,
         });
+
+        if (room.unread_msgs === 0) {
+          this.$store.dispatch('rooms/resetNewMessagesByRoom', {
+            room: room.uuid,
+          });
+        }
       });
 
       this.ws.on('msg.update', (message) => {

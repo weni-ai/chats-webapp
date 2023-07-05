@@ -47,18 +47,11 @@
     </div>
 
     <span
-      v-if="newMessages?.length && !room.unread_msgs > 0"
+      v-if="room.unread_msgs || newMessages?.length"
       class="unread-messages"
       :class="{ filled }"
     >
-      {{ newMessages?.length }}
-    </span>
-    <span
-      v-if="room.unread_msgs > 0 && !newMessages?.length"
-      class="unread-messages"
-      :class="{ filled }"
-    >
-      {{ room.unread_msgs }}
+      {{ room.unread_msgs + (newMessages?.length || 0) }}
     </span>
   </div>
 </template>
