@@ -156,14 +156,14 @@ export default {
       if (messageAlreadyExists) commit(mutations.UPDATE_MESSAGE, { message });
       else commit(mutations.ADD_MESSAGE, message);
     },
-    updateRoom({ state, commit }, { room, userEmail, routerReplace, viewedAgent }) {
+    updateRoom({ state, commit }, { room, userEmail, routerReplace, viewedAgentEmail }) {
       const rooms = state.rooms
         .map((mappedRoom) => (mappedRoom.uuid === room.uuid ? { ...room } : mappedRoom))
         .filter(
           (filteredRoom) =>
             !filteredRoom.user ||
             filteredRoom.user.email === userEmail ||
-            (viewedAgent && filteredRoom.user.email === viewedAgent.email),
+            filteredRoom.user.email === viewedAgentEmail,
         );
       commit(mutations.SET_ROOMS, rooms);
 
@@ -174,12 +174,12 @@ export default {
       const isActiveRoom = state.activeRoom && room.uuid === state.activeRoom.uuid;
 
       if (!isTransferedByMe && isTransferedToOtherUser) {
-        if (!isTransferedFromAQueue && !room.is_waiting) {
+        if (!isTransferedFromAQueue && !room.is_waiting && !viewedAgentEmail) {
           commit('dashboard/SET_SHOW_MODAL_ASSUMED_CHAT', true, { root: true });
           commit('dashboard/SET_ASSUMED_CHAT_CONTACT_NAME', room.contact.name, { root: true });
         }
 
-        if (isActiveRoom && !viewedAgent.email) {
+        if (isActiveRoom && !viewedAgentEmail) {
           routerReplace();
         }
       }

@@ -232,7 +232,7 @@ export default {
           room,
           userEmail: this.me.email,
           routerReplace: () => this.$router.replace({ name: 'home' }),
-          viewedAgent,
+          viewedAgentEmail: viewedAgent.email,
         });
       });
 
