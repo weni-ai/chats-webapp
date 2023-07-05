@@ -15,9 +15,9 @@
       <section class="items">
         <section
           v-for="item in items"
-          :key="item.user"
-          @click="goToViewMode(item.user)"
-          @keypress.enter="goToViewMode(item.user)"
+          :key="item.email"
+          @click="goToViewMode(item.email)"
+          @keypress.enter="goToViewMode(item.email)"
           class="item table-row"
         >
           <span class="table-col agent">
@@ -25,10 +25,10 @@
               icon="indicator"
               size="sm"
               :scheme="`feedback-${
-                item.user_status?.toLowerCase() === 'online' ? 'green' : 'grey'
+                item.agent_status?.toLowerCase() === 'online' ? 'green' : 'grey'
               }`"
             />
-            <p>{{ item.user__first_name }}</p>
+            <p>{{ item.first_name }}</p>
           </span>
           <span class="table-col" style="text-align: center">
             {{ item.opened_rooms }}
