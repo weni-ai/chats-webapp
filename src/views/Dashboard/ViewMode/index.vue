@@ -126,6 +126,10 @@ export default {
         this.getRoomMessages(true);
       }
     },
+    resetRoomMessagesParams() {
+      this.chatPage = 0;
+      this.chatLimit = 20;
+    },
     handleModal(modalName, action) {
       const registeredModals = ['ContactInfo', 'AssumeChatConfirmation'];
 
@@ -157,6 +161,7 @@ export default {
 
   watch: {
     room() {
+      this.resetRoomMessagesParams();
       this.getRoomMessages();
     },
   },
