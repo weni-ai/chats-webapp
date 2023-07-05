@@ -179,7 +179,7 @@ export default {
           commit('dashboard/SET_ASSUMED_CHAT_CONTACT_NAME', room.contact.name, { root: true });
         }
 
-        if (isActiveRoom && !viewedAgent) {
+        if (isActiveRoom && !viewedAgent.email) {
           routerReplace();
         }
       }
