@@ -45,7 +45,7 @@
 
       <contact-info
         v-if="isContactInfoOpened"
-        class="unnnic-grid-span-3"
+        class="unnnic-grid-span-3 contact-info"
         isViewMode
         @close="handleModal('ContactInfo', 'close')"
       />
@@ -160,7 +160,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$mainHeight: calc(100vh - 40px - $unnnic-spacing-inset-md);
+$mainHeight: calc(100vh - 40px);
 
 .view-mode {
   &__container {
@@ -169,7 +169,6 @@ $mainHeight: calc(100vh - 40px - $unnnic-spacing-inset-md);
 
   &__main {
     padding: 0;
-    padding-top: $unnnic-spacing-inset-md;
     overflow-y: hidden;
 
     .room-list__container {
@@ -207,6 +206,10 @@ $mainHeight: calc(100vh - 40px - $unnnic-spacing-inset-md);
           width: 100%;
         }
       }
+    }
+
+    .contact-info {
+      border: 1px solid $unnnic-color-neutral-soft;
     }
   }
 }
