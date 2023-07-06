@@ -171,6 +171,7 @@ export default {
 
       const isTransferedToOtherUser = room.user && room.user.email !== userEmail;
       const isTransferedByMe = room.transferred_by === userEmail;
+      const isTransferedByViewedAgent = room.transferred_by === viewedAgentEmail;
       const isTransferedFromAQueue =
         room.transfer_history.at(-2)?.type === 'queue' || room.transfer_history.length === 0;
       const isActiveRoom = state.activeRoom && room.uuid === state.activeRoom.uuid;
@@ -187,6 +188,10 @@ export default {
       }
 
       if (!room.is_waiting && isActiveRoom) {
+        if (isTransferedByViewedAgent) {
+          commit(mutations.SET_ACTIVE_ROOM, {});
+          return;
+        }
         commit(mutations.SET_ACTIVE_ROOM, { ...room });
       }
     },

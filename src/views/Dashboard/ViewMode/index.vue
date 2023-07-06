@@ -10,7 +10,7 @@
       />
 
       <section
-        v-if="!!room"
+        v-if="!!room && room.uuid"
         :class="['chat', `unnnic-grid-span-${isContactInfoOpened ? '6' : '9'}`]"
       >
         <chat-header :room="room" @show-contact-info="handleModal('ContactInfo', 'open')" />
@@ -162,7 +162,9 @@ export default {
   watch: {
     room() {
       this.resetRoomMessagesParams();
-      this.getRoomMessages();
+      if (this.room?.uuid) {
+        this.getRoomMessages();
+      }
     },
   },
 };
