@@ -161,12 +161,13 @@ export default {
     updateRoom({ state, commit }, { room, userEmail, routerReplace, viewedAgentEmail }) {
       const rooms = state.rooms
         .map((mappedRoom) => (mappedRoom.uuid === room.uuid ? { ...room } : mappedRoom))
-        .filter(
-          (filteredRoom) =>
-            !filteredRoom.user ||
-            filteredRoom.user.email === userEmail ||
-            filteredRoom.user.email === viewedAgentEmail,
-        );
+        .filter((filteredRoom) => {
+          if (!filteredRoom.user) return false;
+          if (viewedAgentEmail) {
+            return filteredRoom.user.email === viewedAgentEmail;
+          }
+          return filteredRoom.user.email === userEmail;
+        });
       commit(mutations.SET_ROOMS, rooms);
 
       const isTransferedToOtherUser = room.user && room.user.email !== userEmail;

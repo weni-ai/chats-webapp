@@ -9,46 +9,45 @@
         :viewedAgent="this.viewedAgent.email"
       />
 
-      <section
-        v-if="!!room && room.uuid"
-        :class="['chat', `unnnic-grid-span-${isContactInfoOpened ? '6' : '9'}`]"
-      >
-        <chat-header :room="room" @show-contact-info="handleModal('ContactInfo', 'open')" />
-        <chat-messages
-          :room="room"
-          :messages="messages"
-          class="messages"
-          @show-contact-info="handleModal('ContactInfo', 'open')"
-          @scrollTop="searchForMoreMessages"
+      <template v-if="!!room && room.uuid">
+        <section :class="['chat', `unnnic-grid-span-${isContactInfoOpened ? '6' : '9'}`]">
+          <chat-header :room="room" @show-contact-info="handleModal('ContactInfo', 'open')" />
+          <chat-messages
+            :room="room"
+            :messages="messages"
+            class="messages"
+            @show-contact-info="handleModal('ContactInfo', 'open')"
+            @scrollTop="searchForMoreMessages"
+          />
+          <div class="assume-chat__container">
+            <unnnic-button
+              v-if="room.user?.email !== me.email"
+              class="assume-chat"
+              :text="$t('dashboard.view-mode.assume_chat')"
+              type="secondary"
+              @click="handleModal('AssumeChatConfirmation', 'open')"
+            />
+            <modal-get-chat
+              :showModal="isAssumeChatConfirmationOpened"
+              @closeModal="handleModal('AssumeChatConfirmation', 'close')"
+              :title="$t('dashboard.view-mode.assume_chat_question')"
+              :description="
+                $t('dashboard.view-mode.assume_chat_confirmation', { agent: viewedAgent.name })
+              "
+              :whenGetChat="whenGetChat"
+            />
+          </div>
+        </section>
+
+        <contact-info
+          v-if="isContactInfoOpened"
+          class="unnnic-grid-span-3 contact-info"
+          isViewMode
+          @close="handleModal('ContactInfo', 'close')"
         />
-        <div class="assume-chat__container">
-          <unnnic-button
-            v-if="room.user?.email !== me.email"
-            class="assume-chat"
-            :text="$t('dashboard.view-mode.assume_chat')"
-            type="secondary"
-            @click="handleModal('AssumeChatConfirmation', 'open')"
-          />
-          <modal-get-chat
-            :showModal="isAssumeChatConfirmationOpened"
-            @closeModal="handleModal('AssumeChatConfirmation', 'close')"
-            :title="$t('dashboard.view-mode.assume_chat_question')"
-            :description="
-              $t('dashboard.view-mode.assume_chat_confirmation', { agent: viewedAgent.name })
-            "
-            :whenGetChat="whenGetChat"
-          />
-        </div>
-      </section>
+      </template>
 
       <chats-background v-else class="unnnic-grid-span-9" />
-
-      <contact-info
-        v-if="isContactInfoOpened"
-        class="unnnic-grid-span-3 contact-info"
-        isViewMode
-        @close="handleModal('ContactInfo', 'close')"
-      />
     </main>
   </div>
 </template>
