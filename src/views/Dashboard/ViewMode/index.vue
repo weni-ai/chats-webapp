@@ -1,5 +1,5 @@
 <template>
-  <div class="view-mode__container">
+  <div class="view-mode__container" v-if="viewedAgent.email">
     <view-mode-header :viewedAgent="viewedAgent.name" />
     <main class="view-mode__main unnnic-grid-giant">
       <the-room-list
