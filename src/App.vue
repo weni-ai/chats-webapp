@@ -241,6 +241,10 @@ export default {
         }
       });
 
+      this.ws.on('rooms.close', (room) => {
+        this.$store.dispatch('rooms/removeRoom', room.uuid);
+      });
+
       this.ws.on('msg.update', (message) => {
         this.$store.dispatch('rooms/addMessage', message);
       });
