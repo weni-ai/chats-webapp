@@ -162,7 +162,7 @@ export default {
       const rooms = state.rooms
         .map((mappedRoom) => (mappedRoom.uuid === room.uuid ? { ...room } : mappedRoom))
         .filter((filteredRoom) => {
-          if (!filteredRoom.user) return false;
+          if (!filteredRoom.user) return filteredRoom;
           if (viewedAgentEmail) {
             return filteredRoom.user.email === viewedAgentEmail;
           }
