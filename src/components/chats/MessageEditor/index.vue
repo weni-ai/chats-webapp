@@ -14,20 +14,61 @@
     </div>
 
     <div class="message-editor">
-      <text-box
-        v-model="message"
-        @send="send"
-        @keydown="onKeyDown"
-        @paste="handlePaste"
-        @action-quick-messages="$emit('show-quick-messages')"
-        @action-attachment="openFileUploader"
-      />
+      <div class="message-editor-box__container">
+        <text-box
+          ref="textBox"
+          v-model="message"
+          @keydown="onKeyDown"
+          @paste="handlePaste"
+          @is-typing-handler="isTypingHandler"
+        />
+      </div>
+      <div class="message-editor__actions">
+        <unnnic-button-icon v-if="!isTyping" type="secondary" size="large" icon="microphone" />
+
+        <unnnic-dropdown v-if="!isTyping" :open="true" position="top-left" class="more-actions">
+          <unnnic-button-icon
+            slot="trigger"
+            v-if="!isTyping"
+            type="primary"
+            size="large"
+            icon="add-1"
+          />
+
+          <div class="more-actions-container">
+            <more-actions-option
+              :action="() => $emit('show-quick-messages')"
+              icon="flash-1-4"
+              :title="$t('quick_message')"
+            />
+            <!-- <more-actions-option
+            :action="() => {}"
+            icon="study-light-idea-1"
+            :title="$t('suggested_answers')"
+          /> -->
+            <more-actions-option
+              :action="() => openFileUploader"
+              icon="attachment"
+              :title="$t('attach')"
+            />
+          </div>
+        </unnnic-dropdown>
+
+        <unnnic-button-icon
+          v-if="isTyping"
+          @click="send"
+          type="secondary"
+          size="large"
+          icon="send-email-3-1"
+        />
+      </div>
     </div>
   </section>
 </template>
 
 <script>
 import TextBox from './TextBox';
+import MoreActionsOption from './MoreActionsOption.vue';
 import SuggestionBox from './SuggestionBox.vue';
 
 export default {
@@ -36,6 +77,7 @@ export default {
   components: {
     TextBox,
     SuggestionBox,
+    MoreActionsOption,
   },
 
   props: {
@@ -60,6 +102,7 @@ export default {
     keyboardEvent: null,
     isSuggestionBoxOpen: false,
     recording: false,
+    isTyping: false,
   }),
 
   computed: {
@@ -124,7 +167,9 @@ export default {
         event.preventDefault();
       }
     },
-
+    isTypingHandler(isTyping = false) {
+      this.isTyping = isTyping;
+    },
     handlePaste(event) {
       const { items } = event.clipboardData || event.originalEvent.clipboardData;
       const itemsArray = [...items];
@@ -158,6 +203,7 @@ export default {
       this.$refs.audioRecorder?.stop();
     },
     send() {
+      this.$refs.textBox.clearTextarea();
       this.sendMessage();
       this.sendAudio();
     },
@@ -179,6 +225,11 @@ export default {
 
 <style lang="scss" scoped>
 .message-editor {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: $unnnic-spacing-stack-xs;
+  align-items: end;
+
   .suggestion-box-container {
     position: relative;
 
@@ -190,12 +241,30 @@ export default {
     }
   }
 
-  .option {
-    color: $unnnic-color-neutral-dark;
-    font-size: 0.75rem;
+  // .option {
+  //   color: $unnnic-color-neutral-dark;
+  //   font-size: 0.75rem;
+  // }
+  // .attachment-options-container {
+  //   padding: 1rem 0.5rem;
+  // }
+
+  &-box__container {
+    border: $unnnic-border-width-thinner solid $unnnic-color-neutral-clean;
+    border-radius: $unnnic-border-radius-sm;
+    background-color: $unnnic-color-neutral-snow;
+    height: 100%;
   }
-  .attachment-options-container {
-    padding: 1rem 0.5rem;
+
+  &__actions {
+    display: flex;
+    gap: $unnnic-spacing-stack-xs;
+
+    .more-actions {
+      ::v-deep .unnnic-dropdown__content {
+        padding: 0 $unnnic-spacing-inset-sm;
+      }
+    }
   }
 }
 </style>

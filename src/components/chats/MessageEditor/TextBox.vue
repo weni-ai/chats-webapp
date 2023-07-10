@@ -20,56 +20,12 @@
         @blur="isFocused = false"
       ></textarea>
     </div>
-    <div class="actions">
-      <unnnic-button-icon v-if="!isTyping" type="secondary" size="large" icon="microphone" />
-
-      <unnnic-dropdown :open="true" position="top-left" class="more-actions">
-        <unnnic-button-icon
-          slot="trigger"
-          v-if="!isTyping"
-          type="primary"
-          size="large"
-          icon="add-1"
-        />
-
-        <div class="more-actions-container">
-          <more-actions-option
-            :action="() => emitAction('quick-messages')"
-            icon="flash-1-4"
-            :title="$t('quick_message')"
-          />
-          <!-- <more-actions-option
-            :action="() => {}"
-            icon="study-light-idea-1"
-            :title="$t('suggested_answers')"
-          /> -->
-          <more-actions-option
-            :action="() => emitAction('attachment')"
-            icon="attachment"
-            :title="$t('attach')"
-          />
-        </div>
-      </unnnic-dropdown>
-
-      <unnnic-button-icon
-        v-if="isTyping"
-        @click="$emit('send')"
-        type="secondary"
-        size="large"
-        icon="send-email-3-1"
-      />
-    </div>
   </div>
 </template>
 
 <script>
-import MoreActionsOption from './MoreActionsOption';
-
 export default {
   name: 'TextBox',
-  components: {
-    MoreActionsOption,
-  },
 
   props: {
     loadingValue: {
@@ -87,7 +43,6 @@ export default {
     minTextareaRows: 1,
     maxTextareaRows: 5,
     currentTextAreaRows: 1,
-    isTyping: false,
   }),
 
   methods: {
@@ -95,7 +50,7 @@ export default {
       this.message = event.target.value;
       this.$emit('input', event.target.value);
 
-      this.isTyping = this.message.length > 0;
+      this.$emit('is-typing-handler', this.message.length > 0);
 
       this.adjustTextareaHeight();
     },
@@ -116,7 +71,7 @@ export default {
     clearTextarea() {
       this.message = '';
       this.adjustTextareaHeight();
-      this.isTyping = false;
+      this.$emit('is-typing-handler', false);
     },
 
     adjustTextareaHeight() {
@@ -142,25 +97,12 @@ export default {
         textarea.style.overflowY = 'hidden';
       }
     },
-
-    emitAction(action) {
-      this.$emit(`action-${action}`);
-    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .text-box {
-  display: grid;
-  grid-template-areas:
-    'loading loading-side'
-    'text-editor actions'
-    'format empty';
-  grid-template-columns: 1fr auto;
-  grid-column-gap: $unnnic-spacing-inline-xs;
-  align-items: end;
-
   .loading {
     grid-area: loading;
     width: 100%;
@@ -177,9 +119,9 @@ export default {
     }
   }
 
-  &:not(.status-loading) .text-editor {
-    border-radius: $unnnic-border-radius-sm;
-  }
+  // &:not(.status-loading) .text-editor {
+  //   border-radius: $unnnic-border-radius-sm;
+  // }
 
   .text-editor {
     $padding-vertical: calc($unnnic-spacing-stack-nano / 2 + $unnnic-spacing-stack-xs);
@@ -187,10 +129,11 @@ export default {
     grid-area: text-editor;
     box-sizing: border-box;
     overflow: auto;
-    background-color: $unnnic-color-neutral-snow;
-    border-radius: 0 0 $unnnic-border-radius-sm $unnnic-border-radius-sm;
+    // background-color: $unnnic-color-neutral-snow;
+    // border-radius: 0 0 $unnnic-border-radius-sm $unnnic-border-radius-sm;
+    border-radius: $unnnic-border-radius-sm;
     padding-left: $unnnic-spacing-stack-sm;
-    border: $unnnic-border-width-thinner solid $unnnic-color-neutral-clean;
+    // border: $unnnic-border-width-thinner solid $unnnic-color-neutral-clean;
     outline: none;
     color: $unnnic-color-neutral-dark;
     cursor: text;
@@ -220,18 +163,6 @@ export default {
 
     .unnnic-icon {
       margin-bottom: $padding-vertical;
-    }
-  }
-
-  .actions {
-    grid-area: actions;
-    display: flex;
-    gap: $unnnic-spacing-stack-xs;
-
-    .more-actions {
-      ::v-deep .unnnic-dropdown__content {
-        padding: 0 $unnnic-spacing-inset-sm;
-      }
     }
   }
 }
