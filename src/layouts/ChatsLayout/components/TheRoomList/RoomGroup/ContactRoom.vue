@@ -2,7 +2,7 @@
   <div
     class="container"
     :class="{
-      active: room.uuid === $route.params.id,
+      active: room.uuid === activeRoomId,
       disabled,
       'new-messages': newMessages?.length,
     }"
@@ -12,7 +12,7 @@
     <user-avatar
       :username="room.contact.name"
       :photo-url="!!usePhoto ? room.contact.photo_url : ''"
-      :active="room.uuid === $route.params.id"
+      :active="room.uuid === activeRoomId"
       size="xl"
       :off="disabled"
       style="min-width: 2.2rem"
@@ -47,18 +47,11 @@
     </div>
 
     <span
-      v-if="newMessages?.length && !room.unread_msgs > 0"
+      v-if="room.unread_msgs || newMessages?.length"
       class="unread-messages"
       :class="{ filled }"
     >
-      {{ newMessages?.length }}
-    </span>
-    <span
-      v-if="room.unread_msgs > 0 && !newMessages?.length"
-      class="unread-messages"
-      :class="{ filled }"
-    >
-      {{ room.unread_msgs }}
+      {{ room.unread_msgs + (newMessages?.length || 0) }}
     </span>
   </div>
 </template>
@@ -122,6 +115,7 @@ export default {
       newMessages(state) {
         return state.rooms.newMessagesByRoom[this.room.uuid]?.messages;
       },
+      activeRoomId: (state) => state.rooms.activeRoom?.uuid,
     }),
     hasUnreadMessages() {
       return this.room.unread_msgs > 0;

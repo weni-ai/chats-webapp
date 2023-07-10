@@ -9,6 +9,11 @@ const routes = [
     name: 'dashboard.agent',
     component: () => import('@/views/Dashboard/Agent'),
   },
+  {
+    path: '/dashboard/view-mode/:viewedAgent',
+    name: 'dashboard.view-mode',
+    component: () => import('@/views/Dashboard/ViewMode'),
+  },
 ];
 
 export default routes;

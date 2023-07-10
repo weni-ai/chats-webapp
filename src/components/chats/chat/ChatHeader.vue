@@ -20,7 +20,7 @@
 
       <span
         class="clickable"
-        v-if="room.user"
+        v-if="room.user && !!closeButtonTooltip"
         @click="$emit('close')"
         @keypress.enter="$emit('close')"
       >

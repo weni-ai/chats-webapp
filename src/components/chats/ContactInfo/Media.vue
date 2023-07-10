@@ -268,6 +268,7 @@ export default {
     align-items: center;
     justify-content: center;
     aspect-ratio: 1;
+    height: 100%;
 
     &__preview {
       height: 100%;

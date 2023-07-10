@@ -329,6 +329,45 @@
       "pt-br": "Você pegou o chat",
       "en-us": "You got the chat",
       "es": "Tienes el chat"
+    },
+    "your_chat_assumed": {
+      "pt-br": "O Chat com {contact} foi transferido",
+      "en-us": "Chat with {contact} has been transferred",
+      "es": "El chat con {contact} ha sido transferido"
+    },
+    "your_chat_assumed_description": {
+      "pt-br": "Seu chat com {contact} foi assumido por outro agente",
+      "en-us": "Your chat with {contact} has been taken over by another agent",
+      "es": "Otro agente se ha hecho cargo de su chat con {contacto}"
+    }
+  },
+  "dashboard": {
+    "view-mode": {
+      "title": {
+        "pt-br": "Modo de visualização ao vivo do agente {viewedAgent}",
+        "en-us": "Agent {viewedAgent} live view mode",
+        "es": "Modo de vista en vivo del agente {viewedAgent}"
+      },
+      "close": {
+        "pt-br": "Encerrar visualização",
+        "en-us": "End visualization",
+        "es": "Visualización final"
+      },
+      "assume_chat": {
+        "pt-br": "Assumir Chat",
+        "en-us": "Take Chat",
+        "es": "Asumir Chat"
+      },
+      "assume_chat_question": {
+        "pt-br": "Assumir Chat?",
+        "en-us": "Take Chat?",
+        "es": "¿Asumir Chat?"
+      },
+      "assume_chat_confirmation": {
+        "pt-br": "Ao confirmar você removerá o Chat do agente {viewedAgent} e será o responsável pelo Chat",
+        "en-us": "When confirming you will remove the Chat from agent {viewedAgent} and will be responsible for Chat",
+        "es": "Al confirmar que eliminará el Chat del agente {viewedAgent} y será responsable del Chat"
+      }
     }
   },
   "history": {

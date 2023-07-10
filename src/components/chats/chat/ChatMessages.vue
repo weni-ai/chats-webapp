@@ -2,6 +2,7 @@
 <template>
   <section
     class="chat-messages"
+    ref="chatMessages"
     @scroll="
       (event) => {
         handleScroll(event.srcElement);
@@ -226,6 +227,20 @@ export default {
       if (imageIndex - 1 >= 0) {
         this.currentMedia = this.medias[imageIndex - 1];
       }
+    },
+
+    scrollMessagesToBottom() {
+      const { chatMessages } = this.$refs;
+      if (!chatMessages) return;
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    },
+  },
+
+  watch: {
+    messages() {
+      this.$nextTick(() => {
+        this.scrollMessagesToBottom();
+      });
     },
   },
 };

@@ -36,7 +36,7 @@
               }}
             </p>
             <unnnic-button
-              v-if="!isHistory"
+              v-if="!isHistory && !isViewMode"
               class="transfer__button"
               text="Ver histórico do contato"
               iconLeft="export-1"
@@ -46,7 +46,7 @@
             />
             <div
               style="display: flex; margin-left: -8px; align-items: center"
-              v-if="!isLinkedToOtherAgent"
+              v-if="!isLinkedToOtherAgent && !isViewMode"
             >
               <unnnicSwitch
                 :value="isLinkedUser"
@@ -81,9 +81,13 @@
       <aside-slot-template-section>
         <p class="title-transfer-chat">Transferir contato</p>
         <div style="margin-top: 20px; margin-bottom: 20px">
-          <unnnic-radio size="sm" v-model="transferRadio" value="agent"> Agente </unnnic-radio>
+          <unnnic-radio size="sm" v-model="transferRadio" value="agent" :disabled="isViewMode">
+            Agente
+          </unnnic-radio>
 
-          <unnnic-radio size="sm" v-model="transferRadio" value="queue"> Fila </unnnic-radio>
+          <unnnic-radio size="sm" v-model="transferRadio" value="queue" :disabled="isViewMode">
+            Fila
+          </unnnic-radio>
         </div>
         <section class="transfer-section">
           <unnnic-autocomplete
@@ -105,7 +109,7 @@
             size="sm"
             highlight
             class="channel-select"
-            :disabled="!!transferContactError"
+            :disabled="!!transferContactError || isViewMode"
             :message="transferContactError"
           />
 
@@ -115,6 +119,7 @@
             type="secondary"
             size="small"
             @click="transferContact"
+            :disabled="isViewMode"
           />
         </section>
       </aside-slot-template-section>
@@ -230,6 +235,10 @@ export default {
       type: Object,
     },
     isHistory: {
+      type: Boolean,
+      default: false,
+    },
+    isViewMode: {
       type: Boolean,
       default: false,
     },
@@ -501,7 +510,6 @@ export default {
       return value.toString().toLowerCase();
     },
     async transferContact() {
-      console.log(this.transferPersonSelected, `oi`);
       this.$store.commit('chats/removeChat', this.room);
       if (this.transferRadio === 'agent') {
         await Room.take(this.room.uuid, this.transferPersonSelected.email);
