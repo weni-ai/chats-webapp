@@ -16,20 +16,33 @@
     <div class="message-editor">
       <div class="message-editor-box__container">
         <text-box
+          v-if="false"
           ref="textBox"
           v-model="message"
           @keydown="onKeyDown"
           @paste="handlePaste"
           @is-typing-handler="isTypingHandler"
         />
+        <unnnic-audio-recorder
+          v-show="isAudioRecorderVisible"
+          v-model="recordedAudio"
+          can-delete
+          ref="audioRecorder"
+        />
       </div>
       <div class="message-editor__actions">
-        <unnnic-button-icon v-if="!isTyping" type="secondary" size="large" icon="microphone" />
+        <unnnic-button-icon
+          v-if="!isTyping"
+          @click="record"
+          type="secondary"
+          size="large"
+          icon="microphone"
+        />
 
         <unnnic-dropdown v-if="!isTyping" :open="true" position="top-left" class="more-actions">
           <unnnic-button-icon
-            slot="trigger"
             v-if="!isTyping"
+            slot="trigger"
             type="primary"
             size="large"
             icon="add-1"
