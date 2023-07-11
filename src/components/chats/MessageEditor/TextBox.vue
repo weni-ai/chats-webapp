@@ -5,7 +5,16 @@
     </div> -->
 
     <div class="text-editor" @click="$refs.textareaRef.focus()" @keypress.enter="() => {}">
-      <unnnic-icon icon="emoji" class="clickable" size="ant" />
+      <div @click.stop="handleEmojiPicker" @keypress.enter="handleEmojiPicker">
+        <unnnic-icon icon="emoji" class="clickable" size="ant" />
+      </div>
+
+      <emoji-picker
+        v-if="isEmojiPickerOpen"
+        @emojiSelected="updateMessageWithEmoji"
+        @close="closeEmojiPicker"
+      />
+
       <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -->
       <textarea
         placeholder="Mensagem"
@@ -24,8 +33,14 @@
 </template>
 
 <script>
+import EmojiPicker from './EmojiPicker';
+
 export default {
   name: 'TextBox',
+
+  components: {
+    EmojiPicker,
+  },
 
   props: {
     loadingValue: {
@@ -43,6 +58,7 @@ export default {
     minTextareaRows: 1,
     maxTextareaRows: 5,
     currentTextAreaRows: 1,
+    isEmojiPickerOpen: false,
   }),
 
   methods: {
@@ -53,6 +69,27 @@ export default {
       this.$emit('is-typing-handler', this.message.length > 0);
 
       this.adjustTextareaHeight();
+    },
+
+    updateMessageWithEmoji(emoji) {
+      this.message += emoji;
+      this.$emit('input', this.message);
+    },
+
+    openEmojiPicker() {
+      this.isEmojiPickerOpen = true;
+    },
+
+    closeEmojiPicker() {
+      this.isEmojiPickerOpen = false;
+    },
+
+    handleEmojiPicker() {
+      if (this.isEmojiPickerOpen) {
+        this.closeEmojiPicker();
+      } else {
+        this.openEmojiPicker();
+      }
     },
 
     keyDownTextarea(event) {
@@ -103,6 +140,8 @@ export default {
 
 <style lang="scss" scoped>
 .text-box {
+  position: relative;
+
   .loading {
     grid-area: loading;
     width: 100%;
