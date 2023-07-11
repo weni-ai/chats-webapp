@@ -1,9 +1,5 @@
 <template>
-  <div :class="['text-box', loadingValue !== undefined && 'status-loading']">
-    <!-- <div v-if="loadingValue !== undefined" class="loading">
-      <div class="indicator" :style="{ width: `${loadingValue * 100}%` }"></div>
-    </div> -->
-
+  <div class="text-box">
     <div class="text-editor" @click="$refs.textareaRef.focus()" @keypress.enter="() => {}">
       <div @click.stop="handleEmojiPicker" @keypress.enter="handleEmojiPicker">
         <unnnic-icon icon="emoji" class="clickable" size="ant" />
@@ -142,37 +138,14 @@ export default {
 .text-box {
   position: relative;
 
-  .loading {
-    grid-area: loading;
-    width: 100%;
-    height: $unnnic-border-width-thin;
-    border-radius: $unnnic-border-radius-sm $unnnic-border-radius-sm 0 0;
-    position: relative;
-    overflow: hidden;
-    background-color: rgba($unnnic-color-neutral-cleanest, $unnnic-opacity-level-light);
-
-    .indicator {
-      height: $unnnic-border-width-thin;
-      background-color: $unnnic-color-neutral-cleanest;
-      transition: width 0.2s;
-    }
-  }
-
-  // &:not(.status-loading) .text-editor {
-  //   border-radius: $unnnic-border-radius-sm;
-  // }
-
   .text-editor {
     $padding-vertical: calc($unnnic-spacing-stack-nano / 2 + $unnnic-spacing-stack-xs);
 
     grid-area: text-editor;
     box-sizing: border-box;
     overflow: auto;
-    // background-color: $unnnic-color-neutral-snow;
-    // border-radius: 0 0 $unnnic-border-radius-sm $unnnic-border-radius-sm;
     border-radius: $unnnic-border-radius-sm;
     padding-left: $unnnic-spacing-stack-sm;
-    // border: $unnnic-border-width-thinner solid $unnnic-color-neutral-clean;
     outline: none;
     color: $unnnic-color-neutral-dark;
     cursor: text;

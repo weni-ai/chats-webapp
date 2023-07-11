@@ -14,7 +14,10 @@
     </div>
 
     <div class="message-editor">
-      <div class="message-editor-box__container">
+      <div :class="['message-editor-box__container', loadingValue !== undefined && 'loading']">
+        <div v-if="loadingValue !== undefined" class="loading-indicator__container">
+          <div class="loading-indicator" :style="{ width: `${loadingValue * 100}%` }"></div>
+        </div>
         <text-box
           v-if="!isAudioRecorderVisible"
           ref="textBox"
@@ -22,11 +25,12 @@
           @keydown="onKeyDown"
           @paste="handlePaste"
           @is-typing-handler="isTypingHandler"
+          :loadingValue="loadingValue"
         />
         <unnnic-audio-recorder
           ref="audioRecorder"
           class="message-editor__audio-recorder"
-          v-show="isAudioRecorderVisible"
+          v-show="isAudioRecorderVisible && loadingValue === undefined"
           v-model="recordedAudio"
           @status="updateAudioRecorderStatus"
         />
@@ -59,7 +63,7 @@
             :title="$t('suggested_answers')"
           /> -->
             <more-actions-option
-              :action="() => openFileUploader"
+              :action="openFileUploader"
               icon="attachment"
               :title="$t('attach')"
             />
@@ -269,10 +273,32 @@ export default {
   // }
 
   &-box__container {
+    position: relative;
     border: $unnnic-border-width-thinner solid $unnnic-color-neutral-clean;
     border-radius: $unnnic-border-radius-sm;
     background-color: $unnnic-color-neutral-snow;
     height: 100%;
+
+    &.loading {
+      border-radius: 0 0 $unnnic-border-radius-sm $unnnic-border-radius-sm;
+
+      .loading-indicator__container {
+        position: absolute;
+        top: 0;
+        z-index: 100;
+        grid-area: loading;
+        width: 100%;
+        height: $unnnic-border-width-thin;
+        overflow: hidden;
+        background-color: rgba($unnnic-color-neutral-cleanest, $unnnic-opacity-level-light);
+
+        .loading-indicator {
+          height: $unnnic-border-width-thin;
+          background-color: $unnnic-color-neutral-cleanest;
+          transition: width 0.2s;
+        }
+      }
+    }
   }
 
   &__actions {
