@@ -10,7 +10,7 @@
       </div>
 
       <emoji-picker
-        v-if="isEmojiPickerOpen"
+        v-show="isEmojiPickerOpen"
         @emojiSelected="handleTextarea"
         @close="closeEmojiPicker"
       />
