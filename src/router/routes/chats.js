@@ -1,6 +1,4 @@
-// import Home from '@/views/chats/Home';
 import Home from '@/views/chats/Home.vue';
-import dashboard from '@/views/Dashboard/Manager/index.vue';
 
 const routes = [
   {
@@ -23,11 +21,6 @@ const routes = [
     props: (route) => ({
       id: route.params.id,
     }),
-  },
-  {
-    path: '/dashboard/manager',
-    name: 'dashboard.manager',
-    component: dashboard,
   },
   {
     path: '/closed-chats',

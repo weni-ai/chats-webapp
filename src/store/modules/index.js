@@ -3,6 +3,7 @@ import config from './config';
 import profile from './profile';
 import rooms from './rooms';
 import settings from './settings';
+import dashboard from './dashboard';
 
 export default {
   chats,
@@ -10,4 +11,5 @@ export default {
   profile,
   rooms,
   settings,
+  dashboard,
 };

@@ -2,16 +2,22 @@ import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 
 export default {
-  async getAll(offset, limit, contact, order) {
+  async getAll(offset, limit, contact, order, viewedAgent) {
+    const params = {
+      is_active: true,
+      project: getProject(),
+      offset,
+      limit,
+      ordering: `user,${order}`,
+      search: contact,
+    };
+
+    if (viewedAgent) {
+      params.email = viewedAgent;
+    }
+
     const response = await http.get('/room/', {
-      params: {
-        is_active: true,
-        project: getProject(),
-        offset,
-        limit,
-        ordering: `user,${order}`,
-        search: contact,
-      },
+      params,
     });
     return response.data;
   },

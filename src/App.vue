@@ -64,6 +64,7 @@ export default {
     ...mapState({
       activeRoom: (state) => state.rooms.activeRoom,
       me: (state) => state.profile.me,
+      viewedAgent: (state) => state.dashboard.viewedAgent,
     }),
 
     configsForInitializeWebSocket() {
@@ -72,6 +73,12 @@ export default {
   },
 
   watch: {
+    'viewedAgent.email': {
+      handler() {
+        this.reconect();
+      },
+    },
+
     configsForInitializeWebSocket: {
       immediate: true,
 
@@ -86,6 +93,7 @@ export default {
   methods: {
     initializeWebSocket() {
       const { token, project } = this.$store.state.config;
+      const { viewedAgent } = this.$route.params;
 
       http.interceptors.request.use((config) => {
         // eslint-disable-next-line no-param-reassign
@@ -96,9 +104,17 @@ export default {
       this.loadQuickMessages();
       this.getUser();
 
-      this.ws = new WS(
-        `${env('CHATS_WEBSOCKET_URL')}/agent/rooms?Token=${token}&project=${project}`,
-      );
+      if (viewedAgent) {
+        this.ws = new WS(
+          `${env(
+            'CHATS_WEBSOCKET_URL',
+          )}/manager/rooms?Token=${token}&project=${project}&user_email=${viewedAgent}`,
+        );
+      } else {
+        this.ws = new WS(
+          `${env('CHATS_WEBSOCKET_URL')}/agent/rooms?Token=${token}&project=${project}`,
+        );
+      }
 
       this.listeners();
 
@@ -155,34 +171,35 @@ export default {
       this.$router.push({ name: 'onboarding.agent' });
     },
     listeners() {
-      this.ws.on('msg.create', (message) => {
-        const findRoom = this.$store.state.rooms.rooms.find((room) => room.uuid === message.room);
+      this.ws.on('msg.create', async (message) => {
+        const { rooms, activeRoom } = this.$store.state.rooms;
+        const findRoom = rooms.find((room) => room.uuid === message.room);
+
         this.$store.dispatch('rooms/bringRoomFront', findRoom);
         if (findRoom) {
           if (this.me.email === message.user?.email) {
             return;
           }
+
           const notification = new Notification('ping-bing');
           notification.notify();
 
-          if (
-            !this.$store.state.rooms.newMessagesByRoom[message.room] &&
-            !(this.$route.name === 'room' && this.$route.params.id === message.room)
-          ) {
-            this.$set(this.$store.state.rooms.newMessagesByRoom, message.room, {
-              messages: [],
-            });
-          } else if (this.$route.name === 'room' && this.$route.params.id === message.room) {
+          const isCurrentRoom =
+            this.$route.name === 'room' && this.$route.params.id === message.room;
+          const isViewModeCurrentRoom =
+            this.$route.params.viewedAgent && activeRoom?.uuid === message.room;
+
+          if (isCurrentRoom || isViewModeCurrentRoom) {
             this.$store.dispatch('rooms/addMessage', message);
           }
-
-          if (this.$store.state.rooms.newMessagesByRoom[message.room]) {
-            this.$store.state.rooms.newMessagesByRoom[message.room].messages.push({
+          this.$store.dispatch('rooms/addNewMessagesByRoom', {
+            room: message.room,
+            message: {
               created_on: message.created_on,
               uuid: message.uuid,
               text: message.text,
-            });
-          }
+            },
+          });
         }
       });
 
@@ -209,11 +226,23 @@ export default {
           notification.notify();
         }
 
+        const { viewedAgent } = this;
         this.$store.dispatch('rooms/updateRoom', {
           room,
           userEmail: this.me.email,
           routerReplace: () => this.$router.replace({ name: 'home' }),
+          viewedAgentEmail: viewedAgent.email,
         });
+
+        if (room.unread_msgs === 0) {
+          this.$store.dispatch('rooms/resetNewMessagesByRoom', {
+            room: room.uuid,
+          });
+        }
+      });
+
+      this.ws.on('rooms.close', (room) => {
+        this.$store.dispatch('rooms/removeRoom', room.uuid);
       });
 
       this.ws.on('msg.update', (message) => {

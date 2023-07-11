@@ -80,6 +80,7 @@
       :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : 'task-list-clock-1'"
       type="secondary"
       size="small"
+      :disabled="isViewMode"
       @click="navigate(isHistoryView ? 'home' : 'rooms.closed')"
     />
   </div>
@@ -101,6 +102,13 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    isViewMode: {
+      type: Boolean,
+      default: false,
+    },
+    viewedAgent: {
+      type: String,
     },
   },
   data: () => ({
@@ -166,12 +174,16 @@ export default {
         name,
       });
     },
-    open(room) {
-      const path = `/chats/${room.uuid}`;
+    async open(room) {
+      if (this.isViewMode) {
+        await this.$store.dispatch('rooms/setActiveRoom', room);
+      } else {
+        const path = `/chats/${room.uuid}`;
 
-      if (this.$route.path === path) return;
+        if (this.$route.path === path) return;
 
-      this.$router.replace(path);
+        this.$router.replace(path);
+      }
     },
 
     clearField() {
@@ -180,6 +192,7 @@ export default {
 
     async listRoom(concat, order = '-last_interaction') {
       this.loading = true;
+      const { viewedAgent } = this;
       try {
         await this.$store.dispatch('rooms/getAll', {
           offset: this.page * this.limit,
@@ -187,6 +200,7 @@ export default {
           order,
           limit: this.limit,
           contact: this.nameOfContact,
+          viewedAgent,
         });
         this.loading = false;
       } catch {

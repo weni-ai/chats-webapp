@@ -101,4 +101,8 @@ export default {
       link.click();
     }
   },
+  async getViewedAgentData(agentEmail) {
+    const response = await http.get('/accounts/userdata/', { params: { user_email: agentEmail } });
+    return response.data;
+  },
 };

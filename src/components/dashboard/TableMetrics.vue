@@ -13,9 +13,22 @@
       </header>
 
       <section class="items">
-        <section v-for="item in items" :key="item.user" class="item table-row">
-          <span class="table-col">
-            {{ item.user__first_name }}
+        <section
+          v-for="item in items"
+          :key="item.email"
+          @click="goToViewMode(item.email)"
+          @keypress.enter="goToViewMode(item.email)"
+          class="item table-row"
+        >
+          <span class="table-col agent">
+            <unnnic-icon
+              icon="indicator"
+              size="sm"
+              :scheme="`feedback-${
+                item.agent_status?.toLowerCase() === 'online' ? 'green' : 'grey'
+              }`"
+            />
+            <p>{{ item.first_name }}</p>
           </span>
           <span class="table-col" style="text-align: center">
             {{ item.opened_rooms }}
@@ -30,6 +43,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
   props: {
     headers: {
@@ -47,6 +62,27 @@ export default {
     title: {
       type: String,
       default: '',
+    },
+  },
+
+  computed: {
+    ...mapState({
+      me: (state) => state.profile.me,
+    }),
+  },
+
+  methods: {
+    goToViewMode(viewedAgent) {
+      if (viewedAgent === this.me.email) {
+        this.$router.push({
+          name: 'home',
+        });
+      } else {
+        this.$router.push({
+          name: 'dashboard.view-mode',
+          params: { viewedAgent },
+        });
+      }
     },
   },
 };
@@ -93,6 +129,34 @@ export default {
     .items {
       .item {
         padding: $unnnic-spacing-inset-md $unnnic-spacing-inset-sm;
+
+        .table-col {
+          &.agent {
+            display: flex;
+            align-items: center;
+            gap: $unnnic-spacing-inline-nano;
+            overflow: hidden;
+
+            p {
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              border-bottom: 1px solid transparent;
+            }
+          }
+        }
+
+        &:hover {
+          background: $unnnic-color-background-carpet;
+          text-decoration: underline;
+          text-underline-position: under;
+
+          cursor: pointer;
+
+          .agent > p {
+            border-bottom: 1px solid $unnnic-color-neutral-cloudy;
+          }
+        }
       }
     }
   }

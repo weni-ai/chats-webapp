@@ -79,24 +79,23 @@
       </template>
     </unnnic-modal>
 
-    <unnnic-modal
+    <modal-get-chat
       v-if="room"
       :showModal="isGetChatConfirmationModalOpen"
-      @close="isGetChatConfirmationModalOpen = false"
-      :text="$t('chats.get_chat_question')"
+      @closeModal="isGetChatConfirmationModalOpen = false"
+      :title="$t('chats.get_chat_question')"
       :description="`Confirme se deseja realizar o atendimento de ${room.contact.name}`"
-      modal-icon="messages-bubble-1"
-      scheme="neutral-darkest"
-    >
-      <template #options>
-        <unnnic-button
-          :text="$t('cancel')"
-          type="terciary"
-          @click="isGetChatConfirmationModalOpen = false"
-        />
-        <unnnic-button :text="$t('confirm')" type="secondary" @click="takeRoom" />
-      </template>
-    </unnnic-modal>
+      :whenGetChat="whenGetChat"
+    />
+
+    <unnnic-modal
+      :text="$t('chats.your_chat_assumed', { contact: assumedChatContactName })"
+      :description="$t('chats.your_chat_assumed_description', { contact: assumedChatContactName })"
+      modalIcon="check-circle-1-1"
+      scheme="feedback-green"
+      :showModal="showModalAssumedChat"
+      @close="closeModalAssumedChat"
+    />
 
     <file-uploader v-model="files" ref="fileUploader" @upload="sendFileMessage" />
 
@@ -125,6 +124,7 @@ import LayoutTemplateMessage from '@/components/chats/TemplateMessages/LayoutTem
 
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
+import ModalGetChat from '@/components/chats/chat/ModalGetChat';
 
 import FileUploader from '@/components/chats/MessageEditor/FileUploader';
 
@@ -144,6 +144,7 @@ export default {
     ModalCloseChat,
     FileUploader,
     LayoutTemplateMessage,
+    ModalGetChat,
   },
 
   props: {
@@ -181,6 +182,8 @@ export default {
       me: (state) => state.profile.me,
       hasNext: (state) => state.rooms.hasNext,
       listRoomHasNext: (state) => state.rooms.listRoomHasNext,
+      showModalAssumedChat: ({ dashboard }) => dashboard.showModalAssumedChat,
+      assumedChatContactName: ({ dashboard }) => dashboard.assumedChatContactName,
     }),
     ...mapGetters('rooms', {
       messages: 'groupedActiveRoomsMessage',
@@ -239,18 +242,6 @@ export default {
       const response = await Queue.tags(this.room.queue.uuid);
       this.sectorTags = response.results;
     },
-    async takeRoom() {
-      if (!this.isLoading) {
-        this.isLoading = true;
-
-        await Room.take(this.room.uuid, this.me.email);
-        this.isGetChatConfirmationModalOpen = false;
-        this.setActiveRoom(this.room.uuid);
-        this.readMessages();
-
-        this.isLoading = false;
-      }
-    },
     async readMessages() {
       if (this.room && this.room.uuid && this.room.user && this.room.user.email === this.me.email) {
         await Room.updateReadMessages(this.room.uuid, true);
@@ -265,10 +256,6 @@ export default {
       this.$router.replace({ name: 'home' });
       this.$store.dispatch('rooms/removeRoom', uuid);
     },
-    scrollMessagesToBottom() {
-      if (!this.$refs.chatMessages) return;
-      this.$refs.chatMessages.$el.scrollTop = this.$refs.chatMessages.$el.scrollHeight;
-    },
     async setActiveRoom(uuid) {
       const room = this.$store.getters['rooms/getRoomById'](uuid);
       if (this.$route.name !== 'home' && !room) {
@@ -279,6 +266,10 @@ export default {
       this.page = 0;
       this.readMessages();
     },
+    whenGetChat() {
+      this.componentInAsideSlot = '';
+      this.page = 0;
+    },
     async getRoomMessages(concat) {
       this.isLoading = true;
 
@@ -288,7 +279,6 @@ export default {
           concat,
           limit: this.limit,
         });
-        // this.$nextTick(this.scrollMessagesToBottom);
         this.isRoomClassifierVisible = false;
         this.isLoading = false;
         this.networkError = false;
@@ -323,7 +313,6 @@ export default {
         };
         await this.$store.dispatch('rooms/sendMedias', { files, updateLoadingFiles });
         this.totalValue = undefined;
-        this.scrollMessagesToBottom();
       } catch (e) {
         console.error('O upload de alguns arquivos pode não ter sido concluído');
       }
@@ -335,7 +324,6 @@ export default {
 
       await this.$store.dispatch('rooms/sendMessage', message);
 
-      this.scrollMessagesToBottom();
       this.editorMessage = '';
     },
     async sendAudio() {
@@ -352,7 +340,6 @@ export default {
       const audio = new File([blob], `${Date.now().toString()}.mp3`, { type: 'audio/mpeg3' });
       await this.$store.dispatch('rooms/sendMedias', { files: [audio], updateLoadingFiles });
       this.totalValue = undefined;
-      this.scrollMessagesToBottom();
       this.$refs['message-editor'].clearAudio();
       this.audioMessage = null;
     },
@@ -375,6 +362,10 @@ export default {
       if (files) {
         this.files = [...files];
       }
+    },
+
+    closeModalAssumedChat() {
+      this.$store.dispatch('dashboard/setShowModalAssumedChat', false);
     },
 
     dateOfLastMessage() {
@@ -402,11 +393,6 @@ export default {
         await this.setActiveRoom(this.id);
         this.getRoomMessages();
       },
-    },
-
-    messages() {
-      this.$nextTick(this.scrollMessagesToBottom);
-      // this.readMessages();
     },
   },
 };

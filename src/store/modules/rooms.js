@@ -13,6 +13,7 @@ const mutations = {
   SET_ACTIVE_ROOM_HAS_NEXT: 'SET_ACTIVE_ROOM_HAS_NEXT',
   SET_ROOMS_HAS_NEXT: 'SET_ROOMS_HAS_NEXT',
   BRING_ROOM_FRONT: 'BRING_ROOM_FRONT',
+  UPDATE_NEW_MESSAGES_BY_ROOM: 'UPDATE_NEW_MESSAGES_BY_ROOM',
 };
 
 export default {
@@ -62,11 +63,21 @@ export default {
         return message.uuid === uuid ? { ...updatedMessage } : message;
       });
     },
+    [mutations.UPDATE_NEW_MESSAGES_BY_ROOM](state, { room, message, reset = false }) {
+      const roomMessages = state.newMessagesByRoom[room]?.messages || [];
+
+      state.newMessagesByRoom = {
+        ...state.newMessagesByRoom,
+        [room]: {
+          messages: reset ? [] : [...roomMessages, message],
+        },
+      };
+    },
   },
 
   actions: {
-    async getAll({ commit, state }, { offset, concat, limit, contact, order }) {
-      const response = await Room.getAll(offset, limit, contact, order);
+    async getAll({ commit, state }, { offset, concat, limit, contact, order, viewedAgent }) {
+      const response = await Room.getAll(offset, limit, contact, order, viewedAgent);
       let rooms = response.results || [];
       const listRoomHasNext = response.next;
       if (concat) {
@@ -147,19 +158,41 @@ export default {
       if (messageAlreadyExists) commit(mutations.UPDATE_MESSAGE, { message });
       else commit(mutations.ADD_MESSAGE, message);
     },
-    updateRoom({ state, commit }, { room, userEmail, routerReplace }) {
+    updateRoom({ state, commit }, { room, userEmail, routerReplace, viewedAgentEmail }) {
       const rooms = state.rooms
-        .map((r) => (r.uuid === room.uuid ? { ...room } : r))
-        .filter((r) => !r.user || r.user.email === userEmail);
+        .map((mappedRoom) => (mappedRoom.uuid === room.uuid ? { ...room } : mappedRoom))
+        .filter((filteredRoom) => {
+          if (!filteredRoom.user) return filteredRoom;
+          if (viewedAgentEmail) {
+            return filteredRoom.user.email === viewedAgentEmail;
+          }
+          return filteredRoom.user.email === userEmail;
+        });
       commit(mutations.SET_ROOMS, rooms);
 
-      const roomIsActive = room.uuid === state.activeRoom.uuid;
-      const differentUsers = room.user && room.user.email !== userEmail;
+      const isTransferedToOtherUser = room.user && room.user.email !== userEmail;
+      const isTransferedByMe = room.transferred_by === userEmail;
+      const isTransferedByViewedAgent = room.transferred_by === viewedAgentEmail;
+      const isTransferedFromAQueue =
+        room.transfer_history.at(-2)?.type === 'queue' || room.transfer_history.length === 0;
+      const isActiveRoom = state.activeRoom && room.uuid === state.activeRoom.uuid;
 
-      if (roomIsActive && differentUsers) {
-        routerReplace();
+      if (!isTransferedByMe && isTransferedToOtherUser) {
+        if (!isTransferedFromAQueue && !room.is_waiting && !viewedAgentEmail) {
+          commit('dashboard/SET_SHOW_MODAL_ASSUMED_CHAT', true, { root: true });
+          commit('dashboard/SET_ASSUMED_CHAT_CONTACT_NAME', room.contact.name, { root: true });
+        }
+
+        if (isActiveRoom && !viewedAgentEmail) {
+          routerReplace();
+        }
       }
-      if (!room.is_waiting && roomIsActive) {
+
+      if (!room.is_waiting && isActiveRoom) {
+        if (isTransferedByViewedAgent) {
+          commit(mutations.SET_ACTIVE_ROOM, {});
+          return;
+        }
         commit(mutations.SET_ACTIVE_ROOM, { ...room });
       }
     },
@@ -168,6 +201,12 @@ export default {
       commit(mutations.SET_ROOMS, rooms);
 
       if (state.activeRoom.uuid === roomUuid) commit(mutations.SET_ACTIVE_ROOM, {});
+    },
+    addNewMessagesByRoom({ commit }, { room, message }) {
+      commit(mutations.UPDATE_NEW_MESSAGES_BY_ROOM, { room, message });
+    },
+    resetNewMessagesByRoom({ commit }, { room }) {
+      commit(mutations.UPDATE_NEW_MESSAGES_BY_ROOM, { room, reset: true });
     },
   },
 
