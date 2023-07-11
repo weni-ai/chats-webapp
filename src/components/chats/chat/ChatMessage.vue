@@ -36,7 +36,7 @@
             @fullscreen="$emit('fullscreen', media.url)"
           />
           <span v-if="content.isAudio">
-            <unnnic-audio-recorder :src="content.audio.src" />
+            <unnnic-audio-recorder :src="content.audio.src" :canDiscard="false" />
           </span>
         </section>
 

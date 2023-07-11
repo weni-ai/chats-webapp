@@ -16,7 +16,7 @@
     <div class="message-editor">
       <div class="message-editor-box__container">
         <text-box
-          v-if="false"
+          v-if="!isAudioRecorderVisible"
           ref="textBox"
           v-model="message"
           @keydown="onKeyDown"
@@ -24,29 +24,28 @@
           @is-typing-handler="isTypingHandler"
         />
         <unnnic-audio-recorder
+          ref="audioRecorder"
+          class="message-editor__audio-recorder"
           v-show="isAudioRecorderVisible"
           v-model="recordedAudio"
-          can-delete
-          ref="audioRecorder"
+          @status="updateAudioRecorderStatus"
         />
       </div>
       <div class="message-editor__actions">
         <unnnic-button-icon
-          v-if="!isTyping"
+          v-if="!isTyping && !isAudioRecorderVisible"
           @click="record"
           type="secondary"
           size="large"
           icon="microphone"
         />
 
-        <unnnic-dropdown v-if="!isTyping" :open="true" position="top-left" class="more-actions">
-          <unnnic-button-icon
-            v-if="!isTyping"
-            slot="trigger"
-            type="primary"
-            size="large"
-            icon="add-1"
-          />
+        <unnnic-dropdown
+          v-if="!isTyping && !isAudioRecorderVisible"
+          position="top-left"
+          class="more-actions"
+        >
+          <unnnic-button-icon slot="trigger" type="primary" size="large" icon="add-1" />
 
           <div class="more-actions-container">
             <more-actions-option
@@ -68,7 +67,7 @@
         </unnnic-dropdown>
 
         <unnnic-button-icon
-          v-if="isTyping"
+          v-if="isTyping || isAudioRecorderVisible"
           @click="send"
           type="secondary"
           size="large"
@@ -114,7 +113,7 @@ export default {
   data: () => ({
     keyboardEvent: null,
     isSuggestionBoxOpen: false,
-    recording: false,
+    audioRecorderStatus: '',
     isTyping: false,
   }),
 
@@ -136,7 +135,10 @@ export default {
       },
     },
     isAudioRecorderVisible() {
-      return !!this.audio || this.recording;
+      return (
+        !!this.audio ||
+        ['recording', 'recorded', 'playing', 'paused'].includes(this.audioRecorderStatus)
+      );
     },
     shortcuts() {
       return this.$store.state.chats.quickMessages.messages;
@@ -205,25 +207,26 @@ export default {
 
     record() {
       if (!this.loading) {
-        this.recording = true;
         this.$refs.audioRecorder?.record();
       } else {
         console.log('Loading');
       }
     },
     stopRecord() {
-      this.recording = false;
       this.$refs.audioRecorder?.stop();
     },
     send() {
-      this.$refs.textBox.clearTextarea();
+      this.$refs.textBox?.clearTextarea();
       this.sendMessage();
       this.sendAudio();
     },
     sendMessage() {
       this.$emit('send-message');
     },
-    sendAudio() {
+    async sendAudio() {
+      if (this.audioRecorderStatus === 'recording') {
+        await this.stopRecord();
+      }
       this.$emit('send-audio');
     },
     focusTextEditor() {
@@ -231,6 +234,9 @@ export default {
     },
     openFileUploader(files) {
       this.$emit('open-file-uploader', files);
+    },
+    updateAudioRecorderStatus(status) {
+      this.audioRecorderStatus = status;
     },
   },
 };
@@ -278,6 +284,14 @@ export default {
         padding: 0 $unnnic-spacing-inset-sm;
       }
     }
+  }
+
+  &__audio-recorder {
+    width: 100%;
+    height: 100%;
+    justify-content: flex-end;
+
+    padding-right: $unnnic-spacing-stack-sm;
   }
 }
 </style>
