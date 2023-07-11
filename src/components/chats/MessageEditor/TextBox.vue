@@ -11,7 +11,7 @@
 
       <emoji-picker
         v-if="isEmojiPickerOpen"
-        @emojiSelected="updateMessageWithEmoji"
+        @emojiSelected="handleTextarea"
         @close="closeEmojiPicker"
       />
 
@@ -63,17 +63,17 @@ export default {
 
   methods: {
     handleTextarea(event) {
-      this.message = event.target.value;
-      this.$emit('input', event.target.value);
+      if (typeof event === 'string') {
+        this.message += event;
+        this.$emit('input', this.message);
+      } else {
+        this.message = event.target.value;
+        this.$emit('input', event.target.value);
+      }
 
       this.$emit('is-typing-handler', this.message.length > 0);
 
       this.adjustTextareaHeight();
-    },
-
-    updateMessageWithEmoji(emoji) {
-      this.message += emoji;
-      this.$emit('input', this.message);
     },
 
     openEmojiPicker() {
