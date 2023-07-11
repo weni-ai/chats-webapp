@@ -4,7 +4,7 @@
     @keypress.enter="() => {}"
     ref="pickerContainer"
     class="emoji-picker"
-  ></div>
+  />
 </template>
 
 <script>
@@ -50,8 +50,22 @@ export default {
   position: absolute;
   bottom: 100%;
 
-  * {
-    font-family: 'Roboto';
+  animation: slideInUp 0.3s;
+
+  :deep(em-emoji-picker) {
+    --border-radius: 16px; // Variables don't work here
+    --font-family: $unnnic-font-family;
+  }
+}
+
+@keyframes slideInUp {
+  0% {
+    transform: translateY(5%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0%);
+    opacity: 1;
   }
 }
 </style>
