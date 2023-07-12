@@ -69,7 +69,7 @@ export default {
 
     drop(event) {
       const { files } = event.dataTransfer;
-      this.openFileUploader(files);
+      if (files.length > 0) this.openFileUploader(files);
 
       this.dragEnterCounter = 0;
       this.isDragging = false;
