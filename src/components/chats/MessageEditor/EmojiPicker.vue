@@ -53,8 +53,15 @@ export default {
   animation: slideInUp 0.3s;
 
   :deep(em-emoji-picker) {
-    --border-radius: 16px; // Variables don't work here
+    // Some variables don't work here
+    --border-radius: 16px;
     --font-family: $unnnic-font-family;
+    --rgb-accent: 0, 158, 150;
+    --rgb-color: 59, 65, 77;
+    --color-border: rgb(244, 246, 248);
+    --shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.1);
+
+    cursor: default;
   }
 }
 
