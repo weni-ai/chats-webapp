@@ -4,14 +4,14 @@
     class="dropzone"
     :class="{
       dropzone: true,
-      dragging: isDragging,
+      dragging: show && isDragging,
     }"
     @dragenter.stop.prevent="dragenter"
     @dragover.stop.prevent="dragover"
     @dragleave.stop.prevent="dragleave"
     @drop.stop.prevent="drop"
   >
-    <div v-if="isDragging" class="dropzone__description">
+    <div v-if="show && isDragging" class="dropzone__description">
       <unnnic-icon-svg
         class="unnnic-upload-area__dropzone__icon"
         icon="upload-bottom-1"
@@ -28,6 +28,13 @@
 <script>
 export default {
   name: 'ChatsDropzone',
+
+  props: {
+    show: {
+      type: Boolean,
+      default: true,
+    },
+  },
 
   data() {
     return {
@@ -66,10 +73,6 @@ export default {
 
       this.dragEnterCounter = 0;
       this.isDragging = false;
-
-      // if (this.validateFiles(files)) {
-      // this.files = files;
-      // }
     },
   },
 };
