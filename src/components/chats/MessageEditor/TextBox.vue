@@ -152,31 +152,38 @@ export default {
   .text-editor {
     $padding-vertical: calc($unnnic-spacing-stack-nano / 2 + $unnnic-spacing-stack-xs);
 
-    grid-area: text-editor;
-    box-sizing: border-box;
-    overflow: auto;
-    border-radius: $unnnic-border-radius-sm;
-    padding-left: $unnnic-spacing-stack-sm;
     outline: none;
-    color: $unnnic-color-neutral-dark;
-    cursor: text;
+    border-radius: $unnnic-border-radius-sm;
+
+    padding-left: $unnnic-spacing-stack-sm;
+
     display: flex;
     align-items: flex-end;
     gap: $unnnic-spacing-inline-ant;
 
+    color: $unnnic-color-neutral-dark;
+
+    overflow: auto;
+    cursor: text;
+
     .text-input {
-      color: $unnnic-color-neutral-cloudy;
-      font-family: $unnnic-font-family-secondary;
-      font-size: $unnnic-font-size-body-gt;
-      line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
-      font-weight: $unnnic-font-weight-regular;
       border: none;
+
       padding: $padding-vertical 0;
       padding-right: $unnnic-spacing-inline-lg;
-      resize: none;
-      overflow-y: hidden;
 
       flex: 1;
+
+      font: {
+        family: $unnnic-font-family-secondary;
+        size: $unnnic-font-size-body-gt;
+        weight: $unnnic-font-weight-regular;
+      }
+      line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
+      color: $unnnic-color-neutral-cloudy;
+
+      resize: none;
+      overflow-y: hidden;
       outline: none;
 
       &::placeholder {
