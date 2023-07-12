@@ -18,7 +18,7 @@
       <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -->
       <textarea
         placeholder="Mensagem"
-        class="inside"
+        class="text-input"
         ref="textareaRef"
         :rows="currentTextAreaRows"
         :value="value"
@@ -164,7 +164,7 @@ export default {
     align-items: flex-end;
     gap: $unnnic-spacing-inline-ant;
 
-    .inside {
+    .text-input {
       color: $unnnic-color-neutral-cloudy;
       font-family: $unnnic-font-family-secondary;
       font-size: $unnnic-font-size-body-gt;
@@ -180,7 +180,7 @@ export default {
       outline: none;
 
       &::placeholder {
-        color: $unnnic-color-neutral-cloudy;
+        color: $unnnic-color-neutral-clean;
       }
     }
 
