@@ -2,7 +2,11 @@
   <div class="text-box">
     <div class="text-editor" @click="$refs.textareaRef.focus()" @keypress.enter="() => {}">
       <div @click.stop="handleEmojiPicker" @keypress.enter="handleEmojiPicker">
-        <unnnic-icon icon="emoji" class="clickable" size="ant" />
+        <unnnic-icon
+          icon="emoji"
+          :class="['emoji-button', 'clickable', message && 'typing']"
+          size="ant"
+        />
       </div>
 
       <emoji-picker
@@ -14,7 +18,7 @@
       <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -->
       <textarea
         placeholder="Mensagem"
-        class="inside"
+        class="text-input"
         ref="textareaRef"
         :rows="currentTextAreaRows"
         :value="value"
@@ -160,7 +164,7 @@ export default {
     align-items: flex-end;
     gap: $unnnic-spacing-inline-ant;
 
-    .inside {
+    .text-input {
       color: $unnnic-color-neutral-cloudy;
       font-family: $unnnic-font-family-secondary;
       font-size: $unnnic-font-size-body-gt;
@@ -176,12 +180,22 @@ export default {
       outline: none;
 
       &::placeholder {
-        color: $unnnic-color-neutral-cloudy;
+        color: $unnnic-color-neutral-clean;
       }
     }
 
-    .unnnic-icon {
+    :deep(.emoji-button) {
       margin-bottom: $padding-vertical;
+
+      svg > path {
+        fill: $unnnic-color-neutral-cloudy;
+      }
+
+      &.typing {
+        svg > path {
+          fill: $unnnic-color-neutral-cleanest;
+        }
+      }
     }
   }
 }

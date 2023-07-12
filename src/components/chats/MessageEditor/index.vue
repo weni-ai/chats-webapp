@@ -14,7 +14,13 @@
     </div>
 
     <div class="message-editor">
-      <div :class="['message-editor-box__container', loadingValue !== undefined && 'loading']">
+      <div
+        :class="[
+          'message-editor-box__container',
+          loadingValue !== undefined && 'loading',
+          isTyping && 'typing',
+        ]"
+      >
         <div v-if="loadingValue !== undefined" class="loading-indicator__container">
           <div class="loading-indicator" :style="{ width: `${loadingValue * 100}%` }"></div>
         </div>
@@ -73,7 +79,7 @@
         <unnnic-button-icon
           v-if="isTyping || isAudioRecorderVisible"
           @click="send"
-          type="secondary"
+          type="primary"
           size="large"
           icon="send-email-3-1"
         />
@@ -278,6 +284,10 @@ export default {
     border-radius: $unnnic-border-radius-sm;
     background-color: $unnnic-color-neutral-snow;
     height: 100%;
+
+    &.typing {
+      border-color: $unnnic-color-neutral-cleanest;
+    }
 
     &.loading {
       border-radius: 0 0 $unnnic-border-radius-sm $unnnic-border-radius-sm;
