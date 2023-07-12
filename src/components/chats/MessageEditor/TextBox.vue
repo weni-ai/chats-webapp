@@ -131,6 +131,13 @@ export default {
       }
     },
   },
+
+  watch: {
+    value(newValue) {
+      this.message = newValue;
+      this.$emit('is-typing-handler', this.message.length > 0);
+    },
+  },
 };
 </script>
 
