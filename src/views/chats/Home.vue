@@ -15,7 +15,7 @@
         @reconnect="searchMessages"
         :alertNetwork="this.networkError"
       />
-      <chats-dropzone @open-file-uploader="openFileUploader">
+      <chats-dropzone @open-file-uploader="openFileUploader" :show="room.user && room.is_24h_valid">
         <chat-messages
           :room="room"
           :messages="messages"

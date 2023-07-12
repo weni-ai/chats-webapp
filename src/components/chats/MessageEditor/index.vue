@@ -199,7 +199,7 @@ export default {
       const fileList = imagePastes.map((imagePaste) => {
         const blob = imagePaste.getAsFile();
         const dateOfPrintPaste = new Date(Date.now()).toUTCString();
-        const fileName = blob.name === 'image.png' ? dateOfPrintPaste : blob.name;
+        const fileName = blob.name === 'image.png' ? `${dateOfPrintPaste}.png` : blob.name;
         const file = new File([blob], fileName, { type: blob.type });
         return file;
       });
