@@ -5,7 +5,7 @@
         v-model="files"
         v-bind="fileUploadModalProps"
         acceptMultiple
-        :maximumUploads="5"
+        :maximumUploads="maximumUploads"
         @cancel="closeFileUploadModal"
         @close="closeFileUploadModal"
         @action="upload"
@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import mime from 'mime-types';
+
 export default {
   name: 'FileUploader',
 
@@ -28,6 +30,20 @@ export default {
   data: () => ({
     showUploadModal: false,
     uploadFileType: '',
+    maximumUploads: 5,
+    supportedFormats: [
+      '.png',
+      '.jpeg',
+      '.jpg',
+      '.mp4',
+      '.pdf',
+      '.doc',
+      '.docx',
+      '.txt',
+      '.xls',
+      '.xlsx',
+      '.csv',
+    ],
   }),
 
   methods: {
@@ -44,21 +60,49 @@ export default {
       this.showUploadModal = false;
       this.files = [];
     },
+
+    validFiles(files) {
+      if (files.length > this.maximumUploads) return [];
+
+      return Array.from(files).filter((file) => {
+        if (this.validFormat([file])) {
+          return true;
+        }
+        return false;
+      });
+    },
+
+    validFormat(files) {
+      const formats = this.supportedFormats.map((format) => format.trim());
+
+      const isValid = Array.from(files).find((file) => {
+        const fileName = file.name.toLowerCase();
+        const fileType = file.type.toLowerCase();
+        const fileExtension = `.${fileName.split('.').pop()}`;
+
+        const isValidFileExtension = formats.includes(fileExtension);
+        const isValidFileType = fileType === mime.lookup(fileName);
+
+        return isValidFileExtension && isValidFileType;
+      });
+
+      return isValid;
+    },
   },
 
   computed: {
     files: {
       get() {
-        return this.value;
+        return this.validFiles(this.value);
       },
       set(files) {
-        this.$emit('input', files);
+        this.$emit('input', this.validFiles(files));
       },
     },
     fileUploadModalProps() {
       const props = {
         textTitle: this.$t('send_media'),
-        supportedFormats: '.png,.jpeg,.jpg,.mp4,.pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,.xlsx',
+        supportedFormats: this.supportedFormats.join(),
         subtitle: this.$t('upload_area.subtitle', { exampleExtensions: '.PNG, .MP4, .PDF' }),
         textAction: this.$t('send'),
       };
