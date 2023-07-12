@@ -153,27 +153,11 @@ export default {
     shortcuts() {
       return this.$store.state.chats.quickMessages.messages;
     },
-    textEditorTooltips() {
-      return {
-        Undo: this.$t('undo'),
-        Redo: this.$t('redo'),
-        RecordAudio: this.$t('record_audio'),
-        Bold: this.$t('bold'),
-        Italic: this.$t('italic'),
-        Underline: this.$t('underline'),
-        List: this.$t('list'),
-        Left: this.$t('left'),
-        Center: this.$t('center'),
-        Right: this.$t('right'),
-        Justify: this.$t('justify'),
-        Attach: this.$t('attach'),
-        action: this.$t('quick_message'),
-      };
-    },
   },
 
   methods: {
     clearAudio() {
+      // Accessed by parent components
       this.$refs.audioRecorder?.discard();
     },
     /**
@@ -270,19 +254,13 @@ export default {
     }
   }
 
-  // .option {
-  //   color: $unnnic-color-neutral-dark;
-  //   font-size: 0.75rem;
-  // }
-  // .attachment-options-container {
-  //   padding: 1rem 0.5rem;
-  // }
-
   &-box__container {
     position: relative;
+
     border: $unnnic-border-width-thinner solid $unnnic-color-neutral-clean;
     border-radius: $unnnic-border-radius-sm;
     background-color: $unnnic-color-neutral-snow;
+
     height: 100%;
 
     &.typing {
@@ -296,14 +274,19 @@ export default {
         position: absolute;
         top: 0;
         z-index: 100;
+
         grid-area: loading;
+
         width: 100%;
         height: $unnnic-border-width-thin;
-        overflow: hidden;
+
         background-color: rgba($unnnic-color-neutral-cleanest, $unnnic-opacity-level-light);
+
+        overflow: hidden;
 
         .loading-indicator {
           height: $unnnic-border-width-thin;
+
           background-color: $unnnic-color-neutral-cleanest;
           transition: width 0.2s;
         }
@@ -325,6 +308,7 @@ export default {
   &__audio-recorder {
     width: 100%;
     height: 100%;
+
     justify-content: flex-end;
 
     padding-right: $unnnic-spacing-stack-sm;
