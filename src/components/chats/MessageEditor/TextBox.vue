@@ -23,7 +23,7 @@
         @paste="paste"
         @focus="() => setIsFocused(true)"
         @blur="() => setIsFocused(false)"
-      ></textarea>
+      />
     </div>
   </div>
 </template>
@@ -140,6 +140,14 @@ export default {
     value(newValue) {
       this.message = newValue;
       this.$emit('is-typing-handler', this.message.length > 0);
+    },
+
+    isEmojiPickerOpen(newValue) {
+      if (newValue) {
+        this.setIsFocused(true);
+      } else if (this.$refs.textareaRef !== document.activeElement) {
+        this.setIsFocused(false);
+      }
     },
   },
 };
