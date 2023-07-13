@@ -44,18 +44,14 @@
       </div>
       <div class="message-editor__actions">
         <unnnic-button-icon
-          v-if="!isTyping && !isAudioRecorderVisible"
+          v-if="showActionButton"
           @click="record"
           type="secondary"
           size="large"
           icon="microphone"
         />
 
-        <unnnic-dropdown
-          v-if="!isTyping && !isAudioRecorderVisible"
-          position="top-left"
-          class="more-actions"
-        >
+        <unnnic-dropdown v-if="showActionButton" position="top-left" class="more-actions">
           <unnnic-button-icon slot="trigger" type="primary" size="large" icon="add-1" />
 
           <div class="more-actions-container">
@@ -65,10 +61,10 @@
               :title="$t('quick_message')"
             />
             <!-- <more-actions-option
-            :action="() => {}"
-            icon="study-light-idea-1"
-            :title="$t('suggested_answers')"
-          /> -->
+              :action="() => {}"
+              icon="study-light-idea-1"
+              :title="$t('suggested_answers')"
+            /> -->
             <more-actions-option
               :action="openFileUploader"
               icon="attachment"
@@ -78,7 +74,7 @@
         </unnnic-dropdown>
 
         <unnnic-button-icon
-          v-if="isTyping || isAudioRecorderVisible"
+          v-if="isTyping || isAudioRecorderVisible || loadingValue !== undefined"
           @click="send"
           type="primary"
           size="large"
@@ -154,6 +150,10 @@ export default {
     },
     shortcuts() {
       return this.$store.state.chats.quickMessages.messages;
+    },
+    showActionButton() {
+      const { isTyping, isAudioRecorderVisible, loadingValue } = this;
+      return !isTyping && !isAudioRecorderVisible && loadingValue === undefined;
     },
   },
 
