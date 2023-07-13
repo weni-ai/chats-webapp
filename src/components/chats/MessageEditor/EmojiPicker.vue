@@ -20,7 +20,9 @@ export default {
     emojiPickerPreferences() {
       return {
         set: 'apple',
+        theme: 'light',
         previewPosition: 'none',
+        searchPosition: 'none',
         navPosition: 'bottom',
         noResultsEmoji: 'cry',
         maxFrequentRows: 3,

@@ -2,11 +2,7 @@
   <div class="text-box">
     <div class="text-editor" @click="$refs.textareaRef.focus()" @keypress.enter="() => {}">
       <div @click.stop="handleEmojiPicker" @keypress.enter="handleEmojiPicker">
-        <unnnic-icon
-          icon="emoji"
-          :class="['emoji-button', 'clickable', message && 'typing']"
-          size="ant"
-        />
+        <unnnic-icon icon="emoji" :class="['emoji-button', 'clickable']" size="ant" />
       </div>
 
       <emoji-picker
@@ -25,8 +21,8 @@
         @input="handleTextarea"
         @keydown="keyDownTextarea"
         @paste="paste"
-        @focus="isFocused = true"
-        @blur="isFocused = false"
+        @focus="() => setIsFocused(true)"
+        @blur="() => setIsFocused(false)"
       ></textarea>
     </div>
   </div>
@@ -62,6 +58,10 @@ export default {
   }),
 
   methods: {
+    setIsFocused(isFocused = false) {
+      this.$emit('is-focused-handler', isFocused);
+    },
+
     handleTextarea(event) {
       if (typeof event === 'string') {
         this.message += event;
@@ -195,13 +195,7 @@ export default {
       margin-bottom: $padding-vertical;
 
       svg > path {
-        fill: $unnnic-color-neutral-cloudy;
-      }
-
-      &.typing {
-        svg > path {
-          fill: $unnnic-color-neutral-cleanest;
-        }
+        fill: $unnnic-color-neutral-cleanest;
       }
     }
   }

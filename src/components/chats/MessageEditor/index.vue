@@ -18,7 +18,7 @@
         :class="[
           'message-editor-box__container',
           loadingValue !== undefined && 'loading',
-          isTyping && 'typing',
+          isFocused && 'focused',
         ]"
       >
         <div v-if="loadingValue !== undefined" class="loading-indicator__container">
@@ -31,6 +31,7 @@
           @keydown="onKeyDown"
           @paste="handlePaste"
           @is-typing-handler="isTypingHandler"
+          @is-focused-handler="isFocusedHandler"
           :loadingValue="loadingValue"
         />
         <unnnic-audio-recorder
@@ -125,6 +126,7 @@ export default {
     isSuggestionBoxOpen: false,
     audioRecorderStatus: '',
     isTyping: false,
+    isFocused: false,
   }),
 
   computed: {
@@ -178,6 +180,9 @@ export default {
     },
     isTypingHandler(isTyping = false) {
       this.isTyping = isTyping;
+    },
+    isFocusedHandler(isFocused = false) {
+      this.isFocused = isFocused;
     },
     handlePaste(event) {
       const { items } = event.clipboardData || event.originalEvent.clipboardData;
@@ -263,7 +268,7 @@ export default {
 
     height: 100%;
 
-    &.typing {
+    &.focused {
       border-color: $unnnic-color-neutral-cleanest;
     }
 
