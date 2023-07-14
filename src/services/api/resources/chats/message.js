@@ -2,15 +2,19 @@ import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 
 export default {
-  async getByRoom(roomId, offset, limit) {
-    const response = await http.get(`/msg/?room=${roomId}`, {
-      params: {
-        ordering: '-created_on',
-        reverse_results: true,
-        offset,
-        limit,
-      },
-    });
+  async getByRoom({ roomId, limit, nextMessages }) {
+    const params = {
+      ordering: '-created_on',
+      reverse_results: true,
+      limit,
+    };
+
+    const nextMessagesStringParams = nextMessages?.split('/msg/')?.[1];
+    const url = nextMessages ? `/msg/${nextMessagesStringParams}` : `/msg/?room=${roomId}`;
+    const config = nextMessages ? {} : { params };
+
+    const response = await http.get(url, config);
+
     return response.data;
   },
 
