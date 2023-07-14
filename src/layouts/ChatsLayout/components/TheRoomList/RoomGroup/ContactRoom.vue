@@ -8,6 +8,7 @@
     }"
     @click="$emit('click')"
     @keypress.enter="$emit('click')"
+    :tabindex="0"
   >
     <user-avatar
       :username="room.contact.name"
@@ -19,22 +20,17 @@
     />
 
     <div class="content">
-      <h3 class="username" :class="{ bold: hasUnreadMessages }">
+      <h3 class="username ellipsis" :title="room.contact.name" :class="{ bold: hasUnreadMessages }">
         {{ room.contact.name }}
       </h3>
       <div class="additional-information" :class="{ bold: hasUnreadMessages }">
-        <span v-if="waitingTime !== 0">
+        <p v-if="waitingTime !== 0" class="ellipsis">
           {{ $t('waiting_for.minutes', waitingTime) }}
-        </span>
-        <span
+        </p>
+        <p
           v-else
-          style="
-            white-space: nowrap;
-            overflow: hidden;
-            display: inherit;
-            max-width: 215px;
-            text-overflow: ellipsis;
-          "
+          class="ellipsis"
+          :title="newMessages?.[newMessages.length - 1]?.text || room?.last_message || ''"
         >
           <template v-if="newMessages?.length">
             {{ newMessages[newMessages.length - 1].text }}
@@ -42,7 +38,7 @@
           <template v-if="!newMessages?.length">
             {{ room.last_message }}
           </template>
-        </span>
+        </p>
       </div>
     </div>
 
@@ -50,6 +46,7 @@
       v-if="room.unread_msgs || newMessages?.length"
       class="unread-messages"
       :class="{ filled }"
+      :title="`${room.unread_msgs + (newMessages?.length || 0)} mensagens não lidas`"
     >
       {{ room.unread_msgs + (newMessages?.length || 0) }}
     </span>
@@ -126,9 +123,10 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  display: flex;
+  display: grid;
+  grid-template-columns: max-content 1fr min-content;
   align-items: center;
-  justify-content: space-between;
+  // justify-content: space-between;
   gap: 0.5rem;
   padding: 0.5rem;
 
@@ -168,9 +166,13 @@ export default {
   }
 
   .content {
+    margin-right: auto;
+
     display: flex;
     flex-flow: column wrap;
-    margin-right: auto;
+
+    width: 100%;
+    overflow: hidden;
 
     & .bold {
       font-weight: $unnnic-font-weight-bold;
@@ -182,8 +184,18 @@ export default {
     }
 
     .additional-information {
+      width: 100%;
+
       color: $unnnic-color-neutral-cloudy;
       font-size: $unnnic-font-size-body-md;
+    }
+
+    .ellipsis {
+      width: 100%;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 
