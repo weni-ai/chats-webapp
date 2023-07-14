@@ -240,6 +240,11 @@ export default {
     messages() {
       this.$nextTick(() => {
         this.scrollMessagesToBottom();
+
+        const { clientHeight, scrollHeight } = this.$refs.chatMessages;
+        if (clientHeight === scrollHeight) {
+          this.$emit('scrollTop');
+        }
       });
     },
   },

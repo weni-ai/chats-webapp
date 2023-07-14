@@ -15,7 +15,7 @@ export default {
       params.email = viewedAgent;
     }
 
-    const nextRoomsStringParams = nextRooms.split('/room/')[1];
+    const nextRoomsStringParams = nextRooms?.split('/room/')?.[1];
     const url = nextRooms ? `/room/${nextRoomsStringParams}` : '/room/';
     const config = nextRooms ? {} : { params };
 
