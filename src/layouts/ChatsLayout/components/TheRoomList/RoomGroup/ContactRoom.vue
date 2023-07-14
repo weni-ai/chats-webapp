@@ -126,8 +126,8 @@ export default {
   display: grid;
   grid-template-columns: max-content 1fr min-content;
   align-items: center;
-  // justify-content: space-between;
   gap: 0.5rem;
+
   padding: 0.5rem;
 
   cursor: pointer;
