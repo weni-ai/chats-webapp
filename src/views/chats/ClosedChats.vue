@@ -292,6 +292,10 @@ export default {
         }
         const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
         const groupedMessages = groupSequentialSentMessages(messagesWithSender);
+
+        // commit(mutations.SET_ACTIVE_ROOM_MESSAGES, messagesWithSender);
+        // commit(mutations.SET_ACTIVE_ROOM_NEXT_MESSAGES, responseNextMessages);
+
         this.messages = groupedMessages;
         this.contact = contact;
         this.isLoading = false;
