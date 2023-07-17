@@ -36,12 +36,12 @@
             @fullscreen="$emit('fullscreen', media.url)"
           />
           <span v-if="content.isAudio">
-            <unnnic-audio-recorder :src="content.audio.src" />
+            <unnnic-audio-recorder :src="content.audio.src" :canDiscard="false" />
           </span>
         </section>
 
         <p v-else :class="{ 'unsent-message': content.sent === false, disabled }">
-          <span v-html="removeHtmlDangerousContent(content.text)" />
+          <span v-html="removeHtmlDangerousContent(content.text).replace(/\n/g, '<br/>')" />
           <unnnic-tool-tip
             v-if="content.sent === false"
             enabled

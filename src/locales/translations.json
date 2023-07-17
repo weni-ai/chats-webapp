@@ -80,9 +80,16 @@
       }
     },
     "subtitle": {
-      "pt-br": "Formatos suportados:",
-      "en-us": "Supported formats:",
-      "es": "Formatos compatibles"
+      "pt-br": "Formatos suportados: {exampleExtensions} e outros",
+      "en-us": "Supported formats: {exampleExtensions} and others",
+      "es": "Formatos compatibles: {exampleExtensions} y otros"
+    }
+  },
+  "dropzone": {
+    "description": {
+      "pt-br": "Solte aqui seu arquivo para enviar",
+      "en-us": "Drop your file here to send",
+      "es": "Suelta tu archivo aquí para enviar"
     }
   },
   "waiting_for": {
@@ -112,7 +119,7 @@
     "en-us": "Record audio",
     "es": "Grabar audio"
   },
-  "attach": {
+  "attachment": {
     "pt-br": "Anexo",
     "en-us": "Attach",
     "es": "Adjuntar"
@@ -394,6 +401,16 @@
     "pt-br": "Mensagens rápidas",
     "en-us": "Quick messages",
     "es": "Mensajes rápidos"
+  },
+  "suggested_answers": {
+    "pt-br": "Respostas sugeridas",
+    "en-us": "Suggested Answers",
+    "es": "Respuestas sugeridas"
+  },
+  "attach": {
+    "pt-br": "Anexar",
+    "en-us": "Attach",
+    "es": "adjuntar"
   },
   "send": {
     "pt-br": "Enviar",

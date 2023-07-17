@@ -15,29 +15,32 @@
         @reconnect="searchMessages"
         :alertNetwork="this.networkError"
       />
-      <chat-messages
-        :room="room"
-        :messages="messages"
-        class="messages"
-        @show-contact-info="componentInAsideSlot = 'contactInfo'"
-        @scrollTop="searchForMoreMessages"
-      />
-
-      <div v-if="isMessageEditorVisible && !room.is_waiting" class="message-editor">
-        <message-editor
-          ref="message-editor"
-          v-model="editorMessage"
-          :audio.sync="audioMessage"
-          @show-quick-messages="
-            componentInAsideSlot = componentInAsideSlot === 'quickMessages' ? '' : 'quickMessages'
-          "
-          @send-message="sendMessage"
-          @send-audio="sendAudio"
-          @upload="sendFileMessage($event)"
-          :loadingValue="totalValue"
-          :loading="isLoading"
+      <chats-dropzone @open-file-uploader="openFileUploader" :show="room.user && room.is_24h_valid">
+        <chat-messages
+          :room="room"
+          :messages="messages"
+          class="messages"
+          @show-contact-info="componentInAsideSlot = 'contactInfo'"
+          ref="chatMessages"
+          @scrollTop="searchForMoreMessages"
         />
-      </div>
+
+        <div v-if="isMessageEditorVisible && !room.is_waiting" class="message-editor">
+          <message-editor
+            ref="message-editor"
+            v-model="editorMessage"
+            :audio.sync="audioMessage"
+            @show-quick-messages="
+              componentInAsideSlot = componentInAsideSlot === 'quickMessages' ? '' : 'quickMessages'
+            "
+            @send-message="sendMessage"
+            @send-audio="sendAudio"
+            @open-file-uploader="openFileUploader"
+            :loadingValue="totalValue"
+            :loading="isLoading"
+          />
+        </div>
+      </chats-dropzone>
 
       <div v-if="!room.user" class="get-chat-button-container">
         <unnnic-button
@@ -94,6 +97,8 @@
       @close="closeModalAssumedChat"
     />
 
+    <file-uploader v-model="files" ref="fileUploader" @upload="sendFileMessage" />
+
     <template #aside>
       <component :is="sidebarComponent.name" v-on="sidebarComponent.listeners" />
     </template>
@@ -106,6 +111,7 @@ import { mapState, mapGetters } from 'vuex';
 
 import ChatsLayout from '@/layouts/ChatsLayout';
 import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
+import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone';
 
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
@@ -120,12 +126,15 @@ import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat';
 
+import FileUploader from '@/components/chats/MessageEditor/FileUploader';
+
 export default {
   name: 'ChatsHome',
 
   components: {
     ChatsLayout,
     ChatsBackground,
+    ChatsDropzone,
     ChatHeader,
     ChatMessages,
     ContactInfo,
@@ -133,6 +142,7 @@ export default {
     MessageEditor,
     ChatClassifier,
     ModalCloseChat,
+    FileUploader,
     LayoutTemplateMessage,
     ModalGetChat,
   },
@@ -163,6 +173,7 @@ export default {
     showCloseModal: false,
     showAlertForLastMessage: false,
     networkError: false,
+    files: [],
   }),
 
   computed: {
@@ -290,7 +301,8 @@ export default {
         this.getRoomMessages(true);
       }
     },
-    async sendFileMessage(files) {
+    async sendFileMessage() {
+      const { files } = this;
       try {
         const loadingFiles = {};
         const updateLoadingFiles = (messageUuid, progress) => {
@@ -342,6 +354,14 @@ export default {
 
     closeModalCloseChat() {
       this.showCloseModal = false;
+    },
+
+    openFileUploader(files) {
+      this.$refs.fileUploader.open();
+
+      if (files) {
+        this.files = [...files];
+      }
     },
 
     closeModalAssumedChat() {
@@ -405,14 +425,13 @@ export default {
     margin-right: $unnnic-spacing-inline-sm;
     margin-top: auto;
   }
+}
+.get-chat-button-container {
+  margin-top: auto;
+  margin-right: $unnnic-spacing-inline-sm;
 
-  .get-chat-button-container {
-    margin-top: auto;
-    margin-right: $unnnic-spacing-inline-sm;
-
-    .get-chat-button {
-      width: 100%;
-    }
+  .get-chat-button {
+    width: 100%;
   }
 }
 </style>
