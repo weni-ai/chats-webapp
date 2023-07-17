@@ -237,15 +237,18 @@ export default {
   },
 
   watch: {
-    messages() {
-      this.$nextTick(() => {
-        this.scrollMessagesToBottom();
+    messages: {
+      immediate: true,
+      handler() {
+        this.$nextTick(() => {
+          this.scrollMessagesToBottom();
 
-        const { clientHeight, scrollHeight } = this.$refs.chatMessages;
-        if (clientHeight === scrollHeight) {
-          this.$emit('scrollTop');
-        }
-      });
+          const { clientHeight, scrollHeight } = this.$refs.chatMessages;
+          if (clientHeight === scrollHeight) {
+            this.$emit('scrollTop');
+          }
+        });
+      },
     },
   },
 };

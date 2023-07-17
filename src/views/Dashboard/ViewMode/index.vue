@@ -79,8 +79,6 @@ export default {
   data: () => ({
     isContactInfoOpened: false,
     isAssumeChatConfirmationOpened: false,
-    chatPage: 0,
-    chatLimit: 20,
   }),
 
   beforeMount() {
