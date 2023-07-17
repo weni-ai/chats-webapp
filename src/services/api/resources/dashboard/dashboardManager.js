@@ -1,12 +1,11 @@
 import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 
-async function downloadFileXlsx(path) {
+async function downloadFileXlsx(path, filename) {
   try {
     const response = await fetch(path);
     const blob = await response.blob();
     const link = document.createElement('a');
-    const filename = 'dashboard_export_data.xlsx';
 
     link.href = window.URL.createObjectURL(blob);
     link.download = filename;
@@ -93,7 +92,8 @@ export default {
       const { data, headers } = response;
 
       if (option.includes('xls') && data.path_file) {
-        downloadFileXlsx(data.path_file);
+        downloadFileXlsx(data.path_file, 'chats_dashboard_metrics.xlsx');
+        return;
       }
 
       const blob = new Blob([data], { type: headers['content-type'] });
@@ -119,7 +119,8 @@ export default {
       const { data, headers } = response;
 
       if (option.includes('xls') && data.path_file) {
-        downloadFileXlsx(data.path_file);
+        downloadFileXlsx(data.path_file, 'chats_dashboard_all.xlsx');
+        return;
       }
 
       const blob = new Blob([data], { type: headers['content-type'] });
