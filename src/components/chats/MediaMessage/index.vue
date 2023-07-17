@@ -23,7 +23,7 @@
         fullscreen-on-click
         @click="$emit('fullscreen')"
       />
-      <unnnic-audio-recorder v-else-if="isAudio" :src="media.url" />
+      <unnnic-audio-recorder v-else-if="isAudio" :src="media.url" :canDiscard="false" />
     </section>
 
     <!-- <media-controls v-if="!isAudio" @download="download" /> -->
