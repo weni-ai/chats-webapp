@@ -2,11 +2,10 @@ import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 
 export default {
-  async getByRoom({ roomId, limit, nextMessages }) {
+  async getByRoom({ roomId, nextMessages }) {
     const params = {
       ordering: '-created_on',
       reverse_results: true,
-      limit,
     };
 
     const nextMessagesStringParams = nextMessages?.split('/msg/')?.[1];
@@ -18,18 +17,21 @@ export default {
     return response.data;
   },
 
-  async getByContact(contactUuid, offset, limit, { onlyClosedRooms = true } = {}) {
-    const response = await http.get('/msg/', {
-      params: {
-        ordering: '-created_on',
-        reverse_results: true,
-        contact: contactUuid,
-        project: getProject(),
-        is_active: !onlyClosedRooms,
-        offset,
-        limit,
-      },
-    });
+  async getByContact({ contactUuid, nextMessages, onlyClosedRooms = true }) {
+    const params = {
+      ordering: '-created_on',
+      reverse_results: true,
+      contact: contactUuid,
+      project: getProject(),
+      is_active: !onlyClosedRooms,
+    };
+
+    const nextMessagesStringParams = nextMessages?.split('/msg/')?.[1];
+    const url = `/msg/${nextMessages ? nextMessagesStringParams : ''}`;
+    const config = nextMessages ? {} : { params };
+
+    const response = await http.get(url, config);
+
     return response.data;
   },
 

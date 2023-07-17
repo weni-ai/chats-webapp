@@ -100,7 +100,7 @@ export default {
       room: (state) => state.rooms.activeRoom,
       me: (state) => state.profile.me,
       viewedAgent: (state) => state.dashboard.viewedAgent,
-      hasNext: (state) => state.rooms.hasNext,
+      nextMessages: (state) => state.rooms.nextMessages,
     }),
     ...mapGetters('rooms', {
       messages: 'groupedActiveRoomsMessage',
@@ -111,23 +111,16 @@ export default {
     async getRoomMessages(concat = false) {
       try {
         await this.$store.dispatch('rooms/getActiveRoomMessages', {
-          offset: this.chatPage * this.chatLimit,
           concat,
-          limit: this.chatLimit,
         });
       } catch (error) {
         console.log(error);
       }
     },
     searchForMoreMessages() {
-      if (this.hasNext) {
-        this.chatPage += 1;
+      if (this.nextMessages) {
         this.getRoomMessages(true);
       }
-    },
-    resetRoomMessagesParams() {
-      this.chatPage = 0;
-      this.chatLimit = 20;
     },
     handleModal(modalName, action) {
       const registeredModals = ['ContactInfo', 'AssumeChatConfirmation'];
@@ -160,7 +153,6 @@ export default {
 
   watch: {
     room() {
-      this.resetRoomMessagesParams();
       if (this.room?.uuid) {
         this.getRoomMessages();
       }
