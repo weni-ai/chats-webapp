@@ -1,6 +1,24 @@
 import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 
+async function downloadFileXlsx(path) {
+  try {
+    const response = await fetch(path);
+    const blob = await response.blob();
+    const link = document.createElement('a');
+    const filename = 'dashboard_export_data.xlsx';
+
+    link.href = window.URL.createObjectURL(blob);
+    link.download = filename;
+
+    link.click();
+
+    window.URL.revokeObjectURL(link.href);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export default {
   async getRoomInfo(idSector, agent, tag, startDate, endDate) {
     const idProject = getProject();
@@ -72,8 +90,13 @@ export default {
       },
     });
     if (response.status === 200) {
-      const { headers } = response;
-      const blob = new Blob([response.data], { type: headers['content-type'] });
+      const { data, headers } = response;
+
+      if (option.includes('xls') && data.path_file) {
+        downloadFileXlsx(data.path_file);
+      }
+
+      const blob = new Blob([data], { type: headers['content-type'] });
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
       link.download = 'download_metric';
@@ -93,8 +116,13 @@ export default {
       },
     });
     if (response.status === 200) {
-      const { headers } = response;
-      const blob = new Blob([response.data], { type: headers['content-type'] });
+      const { data, headers } = response;
+
+      if (option.includes('xls') && data.path_file) {
+        downloadFileXlsx(data.path_file);
+      }
+
+      const blob = new Blob([data], { type: headers['content-type'] });
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
       link.download = 'dashboard';
