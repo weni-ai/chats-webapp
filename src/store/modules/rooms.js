@@ -111,11 +111,11 @@ export default {
     bringRoomFront({ commit }, room) {
       commit(mutations.BRING_ROOM_FRONT, room);
     },
-    async getActiveRoomMessages({ commit, state }, { concat, limit }) {
+    async getActiveRoomMessages({ commit, state }, { concat }) {
       const { activeRoom, nextMessages } = state;
       if (!activeRoom) return;
 
-      const response = await Message.getByRoom({ roomId: activeRoom.uuid, limit, nextMessages });
+      const response = await Message.getByRoom({ roomId: activeRoom.uuid, nextMessages });
       let messages = response.results;
       const responseNextMessages = response.next;
 
