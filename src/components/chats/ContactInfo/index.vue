@@ -1,3 +1,4 @@
+<!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
   <aside-slot-template
@@ -8,26 +9,14 @@
     <section v-if="!isHistory" class="scrollable" style="background-color: #ffffff">
       <aside-slot-template-section>
         <section class="infos">
-          <p class="username">
+          <h1 class="username">
             {{ room.contact.name }}
-          </p>
+          </h1>
 
           <div class="connection-info">
             <p v-if="room.contact.status === 'online'">
               {{ $t('status.online') }}
             </p>
-            <template>
-              <p style="margin-bottom: 0.75rem">
-                <span class="title"> {{ contactNumber.plataform }}: </span>
-                {{ contactNumber.contactNum }}
-              </p>
-            </template>
-            <template v-if="!!room.custom_fields">
-              <p v-for="(value, key) in customFields" :key="key">
-                <span class="title"> {{ key }}: </span>
-                {{ value }}
-              </p>
-            </template>
             <p v-if="lastMessageFromContact?.created_on" style="margin-bottom: 16px">
               {{
                 $t('last_message_time.date', {
@@ -35,15 +24,42 @@
                 })
               }}
             </p>
-            <unnnic-button
-              v-if="!isHistory && !isViewMode"
-              class="transfer__button"
-              text="Ver histórico do contato"
-              iconLeft="export-1"
-              type="secondary"
-              size="small"
-              @click="openHistory()"
-            />
+            <template>
+              <hgroup class="info">
+                <h3 class="title">{{ contactNumber.plataform }}:</h3>
+                <h4 class="description">{{ contactNumber.contactNum }}</h4>
+              </hgroup>
+            </template>
+            <template v-if="!!room.custom_fields">
+              <div
+                v-for="(value, key) in customFields"
+                :key="key"
+                class="info custom"
+                @blur="setCustomFieldEditing('')"
+              >
+                <component
+                  :is="customFieldEditing !== key ? 'h3' : 'label'"
+                  class="title"
+                  tabindex="0"
+                  >{{ key }}:</component
+                >
+                <h4
+                  v-show="customFieldEditing !== key"
+                  class="description"
+                  tabindex="0"
+                  @click="setCustomFieldEditing(key)"
+                  @keypress.enter="setCustomFieldEditing(key)"
+                >
+                  {{ value }}
+                </h4>
+                <input
+                  v-show="customFieldEditing === key"
+                  :ref="'custom_field_input_' + key"
+                  type="text"
+                  :value="key"
+                />
+              </div>
+            </template>
             <div
               style="display: flex; margin-left: -8px; align-items: center"
               v-if="!isLinkedToOtherAgent && !isViewMode"
@@ -67,6 +83,15 @@
                 <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
               </unnnic-tool-tip>
             </div>
+            <unnnic-button
+              v-if="!isHistory && !isViewMode"
+              class="transfer__button"
+              text="Ver histórico do contato"
+              iconLeft="export-1"
+              type="secondary"
+              size="small"
+              @click="openHistory()"
+            />
             <div v-if="isLinkedToOtherAgent">
               <span>{{
                 $t('switch_contact_info.linked_contact', {
@@ -260,6 +285,7 @@ export default {
     transferLabel: '',
     page: 0,
     contactHaveHistory: false,
+    customFieldEditing: '',
   }),
 
   computed: {
@@ -288,7 +314,7 @@ export default {
     contactNumber() {
       const plataform = this.room.urn.split(':').at(0);
       const number = this.room.urn.split(':').at(-1);
-      const whatsapp = `+ ${number.substr(-20, 20)} `;
+      const whatsapp = `+${number.substr(-20, 20)} `;
       const infoNumber = {
         plataform,
         contactNum: plataform === 'whatsapp' ? whatsapp : number,
@@ -381,6 +407,10 @@ export default {
           throw error;
         }
       }
+    },
+
+    setCustomFieldEditing(customField) {
+      this.customFieldEditing = customField;
     },
 
     openFullScreen(url, images) {
@@ -538,6 +568,14 @@ export default {
         }
       },
     },
+    async customFieldEditing(newCustomField) {
+      this.$nextTick(() => {
+        if (newCustomField) {
+          const input = this.$refs[`custom_field_input_${newCustomField}`]?.[0];
+          input.focus();
+        }
+      });
+    },
   },
 };
 </script>
@@ -579,8 +617,38 @@ export default {
       font-size: $unnnic-font-size-body-md;
       color: $unnnic-color-neutral-cloudy;
 
-      .title {
-        font-weight: $unnnic-font-weight-bold;
+      .info {
+        display: flex;
+        align-items: center;
+        gap: $unnnic-spacing-inline-nano;
+
+        &:not(.custom) {
+          margin-bottom: 0.75rem;
+        }
+
+        .title {
+          font-weight: $unnnic-font-weight-bold;
+          text-transform: capitalize;
+        }
+
+        .title,
+        .description {
+          font-size: $unnnic-font-size-body-gt;
+          cursor: default;
+        }
+
+        &.custom {
+          .description {
+            border: 1px solid transparent;
+            border-radius: $unnnic-border-radius-sm;
+
+            cursor: text;
+
+            &:hover {
+              border: 1px solid $unnnic-color-neutral-clean;
+            }
+          }
+        }
       }
     }
   }
