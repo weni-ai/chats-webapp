@@ -73,7 +73,9 @@ export default {
 
       this.$emit('is-typing-handler', this.message.length > 0);
 
-      this.adjustTextareaHeight();
+      this.$nextTick(() => {
+        this.adjustTextareaHeight();
+      });
     },
 
     openEmojiPicker() {
@@ -124,6 +126,7 @@ export default {
 
       const lineHeight = parseFloat(getComputedStyle(textarea).lineHeight);
       const maxHeight = this.maxTextareaRows * lineHeight;
+
       if (textarea.scrollHeight > maxHeight) {
         this.textAreaRows = this.maxTextareaRows;
         textarea.style.overflowY = 'scroll';
@@ -140,6 +143,9 @@ export default {
     value(newValue) {
       this.message = newValue;
       this.$emit('is-typing-handler', this.message.length > 0);
+      this.$nextTick(() => {
+        this.adjustTextareaHeight();
+      });
     },
 
     isEmojiPickerOpen(newValue) {
