@@ -70,12 +70,6 @@ export default {
         this.message = event.target.value;
         this.$emit('input', event.target.value);
       }
-
-      this.$emit('is-typing-handler', this.message.length > 0);
-
-      this.$nextTick(() => {
-        this.adjustTextareaHeight();
-      });
     },
 
     openEmojiPicker() {
@@ -133,7 +127,7 @@ export default {
   watch: {
     value(newValue) {
       this.message = newValue;
-      this.$emit('is-typing-handler', this.message.length > 0);
+      this.$emit('is-typing-handler', this.message.trim().length > 0);
       this.$nextTick(() => {
         this.adjustTextareaHeight();
       });
