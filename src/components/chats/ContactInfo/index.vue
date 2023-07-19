@@ -31,33 +31,33 @@
               </hgroup>
             </template>
             <template v-if="!!room.custom_fields">
-              <div
-                v-for="(value, key) in customFields"
-                :key="key"
-                class="info custom"
-                @blur="setCustomFieldEditing('')"
-              >
+              <div v-for="(value, key) in customFields" :key="key" class="info custom">
                 <component
-                  :is="customFieldEditing !== key ? 'h3' : 'label'"
+                  :is="isCurrentCustomField(key) ? 'label' : 'h3'"
                   class="title"
                   tabindex="0"
                   >{{ key }}:</component
                 >
-                <h4
-                  v-show="customFieldEditing !== key"
-                  class="description"
-                  tabindex="0"
-                  @click="setCustomFieldEditing(key)"
-                  @keypress.enter="setCustomFieldEditing(key)"
-                >
-                  {{ value }}
-                </h4>
-                <input
-                  v-show="customFieldEditing === key"
-                  :ref="'custom_field_input_' + key"
-                  type="text"
-                  :value="key"
-                />
+                <div :class="['description', isCurrentCustomField(key) && 'editing']">
+                  <unnnic-tool-tip enabled :text="$t('edit')" side="right">
+                    <h4
+                      v-show="!isCurrentCustomField(key)"
+                      tabindex="0"
+                      @click="updateCurrentCustomField({ key, value })"
+                      @keypress.enter="updateCurrentCustomField({ key, value })"
+                    >
+                      {{ value }}
+                    </h4>
+                  </unnnic-tool-tip>
+                  <input
+                    v-show="isCurrentCustomField(key)"
+                    :ref="'custom_field_input_' + key"
+                    type="text"
+                    :value="currentCustomField?.[key]"
+                    @input="updateCurrentCustomField({ key, value: $event.target.value || '' })"
+                    @blur="saveCurrentCustomFieldValue"
+                  />
+                </div>
               </div>
             </template>
             <div
@@ -285,7 +285,10 @@ export default {
     transferLabel: '',
     page: 0,
     contactHaveHistory: false,
-    customFieldEditing: '',
+    // customFieldEditing: '',
+    // customFieldEditingDescription: '',
+    customFields: [],
+    currentCustomField: {},
   }),
 
   computed: {
@@ -305,10 +308,6 @@ export default {
         return this.transferOptions.find((option) => option.name === takeTheName);
       }
       return this.transferOptions.find((option) => option.name === this.transferContactSearch);
-    },
-
-    customFields() {
-      return this.room.custom_fields;
     },
 
     contactNumber() {
@@ -335,6 +334,8 @@ export default {
 
   async created() {
     if (!this.isHistory) {
+      this.customFields = this.room.custom_fields;
+
       if (
         moment(this.room.contact.created_on).format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')
       ) {
@@ -409,8 +410,26 @@ export default {
       }
     },
 
-    setCustomFieldEditing(customField) {
-      this.customFieldEditing = customField;
+    getCurrentCustomFieldKey() {
+      return Object.keys(this.currentCustomField)?.[0];
+    },
+
+    isCurrentCustomField(key) {
+      if (!this.currentCustomField) return false;
+      return this.getCurrentCustomFieldKey() === key;
+    },
+
+    updateCurrentCustomField({ key, value }) {
+      this.currentCustomField = key && value ? { [key]: value } : {};
+    },
+
+    saveCurrentCustomFieldValue() {
+      const currentCustomFieldKey = this.getCurrentCustomFieldKey();
+      const currentCustomFieldValue = this.currentCustomField[currentCustomFieldKey];
+      this.customFields[currentCustomFieldKey] = currentCustomFieldValue;
+      // call edit custom field requisition passin this.currentCustomField...
+
+      this.updateCurrentCustomField({});
     },
 
     openFullScreen(url, images) {
@@ -568,13 +587,17 @@ export default {
         }
       },
     },
-    async customFieldEditing(newCustomField) {
-      this.$nextTick(() => {
-        if (newCustomField) {
-          const input = this.$refs[`custom_field_input_${newCustomField}`]?.[0];
-          input.focus();
-        }
-      });
+    currentCustomField(newCustomField) {
+      if (newCustomField) {
+        this.$nextTick(() => {
+          const inputRef = `custom_field_input_${this.getCurrentCustomFieldKey()}`;
+          const input = this.$refs[inputRef]?.[0];
+
+          if (input) {
+            input.focus();
+          }
+        });
+      }
     },
   },
 };
@@ -646,6 +669,21 @@ export default {
 
             &:hover {
               border: 1px solid $unnnic-color-neutral-clean;
+            }
+
+            &.editing {
+              width: 30%;
+              border: 1px solid $unnnic-color-neutral-cleanest;
+
+              input {
+                width: 100%;
+                border: none;
+                border-radius: $unnnic-border-radius-sm;
+                padding: 0;
+                outline: none;
+                font-size: $unnnic-font-size-body-gt;
+                color: $unnnic-color-neutral-cloudy;
+              }
             }
           }
         }
