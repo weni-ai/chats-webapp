@@ -1,5 +1,5 @@
 <template>
-  <section class="chats-layout unnnic-grid-giant" style="padding: 0px; overflow-y: hidden">
+  <section class="chats-layout unnnic-grid-giant">
     <section
       v-if="
         isAsideSlotInUse &&
@@ -19,7 +19,7 @@
         !this.showQuickMessagePreferencesBar &&
         !this.contactList
       "
-      :style="{ display: 'flex', flexDirection: 'column', height: '96vh', paddingLeft: '10px' }"
+      :style="{ display: 'flex', flexDirection: 'column', height: '96vh' }"
       class="room-list unnnic-grid-span-3"
     >
       <layout-template-message :selectedContact="this.contact" @close="close" />
@@ -33,12 +33,8 @@
         !this.showSendFlowMessage
       "
     >
-      <div
-        :style="{ display: 'flex', flexDirection: 'column', height: '100vh', paddingLeft: '10px' }"
-        class="unnnic-grid-span-3"
-      >
+      <div class="unnnic-grid-span-3 sidebar">
         <preferences-bar
-          :style="{ margin: '16px 0 0 0px' }"
           @show-quick-messages="preferencesOpenQuickMessage"
           :dashboard="canAccessDashboard"
         />
@@ -244,18 +240,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.chats-layout {
-  height: 100%;
-  max-height: 100%;
-  display: flex;
+section.chats-layout {
+  padding: 0;
 
-  .room-list {
-    margin: {
-      top: 8px;
-      right: 0;
-      bottom: 0;
+  height: 100%;
+  max-height: 100vh;
+  overflow-y: hidden;
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+
+    height: 100%;
+
+    padding: $unnnic-spacing-inset-sm;
+    padding-right: 0;
+
+    .room-list {
+      overflow-y: auto;
     }
-    overflow-y: auto;
   }
 
   main {
