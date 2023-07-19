@@ -229,7 +229,6 @@ export default {
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-stack-xs;
-  padding-bottom: $unnnic-spacing-inset-nano;
 
   .chat-groups {
     flex: 1 1;
