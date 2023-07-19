@@ -327,7 +327,9 @@ export default {
       this.editorMessage = '';
     },
     async sendAudio() {
-      if (!this.audioMessage) return;
+      if (!this.audioMessage || this.isLoading) return;
+      this.isLoading = true;
+
       const loadingFiles = {};
       const updateLoadingFiles = (messageUuid, progress) => {
         loadingFiles[messageUuid] = progress;
@@ -342,6 +344,8 @@ export default {
       this.totalValue = undefined;
       this.$refs['message-editor'].clearAudio();
       this.audioMessage = null;
+
+      this.isLoading = false;
     },
     getTodayDate() {
       return new Intl.DateTimeFormat('pt-BR', {
