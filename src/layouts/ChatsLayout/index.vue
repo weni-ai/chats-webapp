@@ -1,5 +1,5 @@
 <template>
-  <section class="chats-layout unnnic-grid-giant">
+  <section :class="['chats-layout', isAsideSlotInUse && !this.showQuickMessage && 'has-aside']">
     <section
       v-if="
         isAsideSlotInUse &&
@@ -105,9 +105,6 @@
     >
       <slot name="aside" />
     </section>
-    <!-- <section v-if="sectors === 0">
-      <modal-on-boarding-chats />
-    </section> -->
     <div v-show="isLoading && disabledChatList">
       <skeleton-loading />
     </div>
@@ -243,18 +240,26 @@ export default {
 section.chats-layout {
   padding: 0;
 
-  height: 100%;
+  height: 100vh;
   max-height: 100vh;
   overflow-y: hidden;
+  display: grid;
+  grid-template-columns: 2.8fr 9fr;
+
+  &.has-aside {
+    grid-template-columns: 2.8fr 6.2fr 2.8fr;
+  }
 
   .sidebar {
     display: flex;
     flex-direction: column;
+    gap: $unnnic-spacing-stack-xs;
 
-    height: 100%;
+    height: 100vh;
 
     padding: $unnnic-spacing-inset-sm;
     padding-right: 0;
+    grid-column: 1;
 
     .room-list {
       overflow-y: auto;
@@ -262,7 +267,11 @@ section.chats-layout {
   }
 
   main {
+    margin-left: $unnnic-spacing-inline-sm;
+
     flex: 1 1;
+    grid-column: 2;
+
     height: 100%;
   }
 
@@ -270,9 +279,8 @@ section.chats-layout {
     height: 100vh;
 
     background: $unnnic-color-background-grass;
-  }
-  .template-message-button {
-    margin-top: $unnnic-spacing-stack-sm;
+
+    grid-column: 3;
   }
 }
 </style>

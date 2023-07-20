@@ -407,11 +407,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: {
-    top: $unnnic-spacing-inset-md;
-    bottom: $unnnic-spacing-inset-sm;
-    left: $unnnic-spacing-inset-md;
-  }
+  padding: $unnnic-spacing-stack-sm 0;
 
   .messages {
     overflow-y: auto;
@@ -426,7 +422,6 @@ export default {
   }
 
   .message-editor {
-    margin-right: $unnnic-spacing-inline-sm;
     margin-top: auto;
   }
 }
