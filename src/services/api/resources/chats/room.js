@@ -45,4 +45,9 @@ export default {
     );
     return response.data;
   },
+
+  async updateCustomFields(uuid, customFields = {}) {
+    const response = await http.patch(`/room/${uuid}/update_custom_fields/`, customFields);
+    return response.data;
+  },
 };

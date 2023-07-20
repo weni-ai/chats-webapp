@@ -423,11 +423,12 @@ export default {
       this.currentCustomField = key && value ? { [key]: value } : {};
     },
 
-    saveCurrentCustomFieldValue() {
+    async saveCurrentCustomFieldValue() {
       const currentCustomFieldKey = this.getCurrentCustomFieldKey();
       const currentCustomFieldValue = this.currentCustomField[currentCustomFieldKey];
       this.customFields[currentCustomFieldKey] = currentCustomFieldValue;
-      // call edit custom field requisition passin this.currentCustomField...
+
+      await Room.updateCustomFields(this.room.uuid, this.currentCustomField);
 
       this.updateCurrentCustomField({});
     },
@@ -505,11 +506,11 @@ export default {
       }
     },
 
-    showStatusAlert(status) {
+    showAlert(text) {
       unnnicCallAlert({
         props: {
           title: ``,
-          text: `${status}`,
+          text: `${text}`,
           icon: 'check-circle-1-1-1',
           scheme: 'feedback-green',
           closeText: 'Fechar',
@@ -518,6 +519,10 @@ export default {
         },
         seconds: 10,
       });
+    },
+
+    showStatusAlert(status) {
+      this.showAlert(status);
     },
 
     navigate(name) {
