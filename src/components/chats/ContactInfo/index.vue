@@ -48,9 +48,13 @@
                   >{{ key }}:</component
                 >
                 <div :class="['description', isCurrentCustomField(key) && 'editing']">
-                  <unnnic-tool-tip enabled :text="$t('edit')" side="right">
+                  <unnnic-tool-tip
+                    v-show="!isCurrentCustomField(key)"
+                    enabled
+                    :text="$t('edit')"
+                    side="bottom"
+                  >
                     <h4
-                      v-show="!isCurrentCustomField(key)"
                       tabindex="0"
                       @click="updateCurrentCustomField({ key, value })"
                       @keypress.enter="updateCurrentCustomField({ key, value })"
@@ -65,6 +69,8 @@
                     :value="currentCustomField?.[key]"
                     @input="updateCurrentCustomField({ key, value: $event.target.value || '' })"
                     @blur="saveCurrentCustomFieldValue"
+                    @keypress.enter="saveCurrentCustomFieldValue"
+                    maxlength="50"
                   />
                 </div>
               </div>
@@ -429,15 +435,20 @@ export default {
     },
 
     updateCurrentCustomField({ key, value }) {
-      this.currentCustomField = key && value ? { [key]: value } : {};
+      this.currentCustomField = key ? { [key]: value } : {};
     },
 
-    async saveCurrentCustomFieldValue() {
+    saveCurrentCustomFieldValue() {
       const currentCustomFieldKey = this.getCurrentCustomFieldKey();
       const currentCustomFieldValue = this.currentCustomField[currentCustomFieldKey];
-      this.customFields[currentCustomFieldKey] = currentCustomFieldValue;
 
-      await Room.updateCustomFields(this.room.uuid, this.currentCustomField);
+      if (currentCustomFieldValue) {
+        if (currentCustomFieldValue !== this.customFields[currentCustomFieldKey]) {
+          Room.updateCustomFields(this.room.uuid, this.currentCustomField);
+        }
+
+        this.customFields[currentCustomFieldKey] = currentCustomFieldValue;
+      }
 
       this.updateCurrentCustomField({});
     },
@@ -693,14 +704,26 @@ export default {
             border: 1px solid transparent;
             border-radius: $unnnic-border-radius-sm;
 
+            display: flex;
+
+            max-width: 100%;
+
             cursor: text;
+
+            overflow: hidden;
+
+            > .unnnic-tooltip {
+              display: flex;
+
+              width: 100%;
+            }
 
             &:hover {
               border: 1px solid $unnnic-color-neutral-clean;
             }
 
             &.editing {
-              width: 30%;
+              width: 100%;
               border: 1px solid $unnnic-color-neutral-cleanest;
 
               input {
@@ -712,6 +735,13 @@ export default {
                 font-size: $unnnic-font-size-body-gt;
                 color: $unnnic-color-neutral-cloudy;
               }
+            }
+
+            h4 {
+              width: 100%;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
             }
           }
         }
