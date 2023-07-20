@@ -9,9 +9,18 @@
     <section v-if="!isHistory" class="scrollable" style="background-color: #ffffff">
       <aside-slot-template-section>
         <section class="infos">
-          <h1 class="username">
-            {{ room.contact.name }}
-          </h1>
+          <header class="connection-info__header">
+            <h1 class="username">
+              {{ room.contact.name }}
+            </h1>
+
+            <!-- <unnnic-button-icon
+              @click="refreshContactInfos"
+              type="secondary"
+              size="small"
+              icon="button-refresh-arrow-1"
+            /> -->
+          </header>
 
           <div class="connection-info">
             <p v-if="room.contact.status === 'online'">
@@ -506,6 +515,14 @@ export default {
       }
     },
 
+    async refreshContactInfos() {
+      try {
+        this.showAlert('Informações atualizadas');
+      } catch (error) {
+        console.error('Erro ao atualizar as informações do contato.');
+      }
+    },
+
     showAlert(text) {
       unnnicCallAlert({
         props: {
@@ -644,6 +661,12 @@ export default {
 
       font-size: $unnnic-font-size-body-md;
       color: $unnnic-color-neutral-cloudy;
+
+      &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
 
       .info {
         display: flex;
