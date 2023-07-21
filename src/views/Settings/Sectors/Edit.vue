@@ -188,6 +188,7 @@ export default {
       name: '',
       can_trigger_flows: '',
       can_edit_custom_fields: '',
+      sign_messages: '',
       workingDay: {
         start: '',
         end: '',
@@ -294,6 +295,7 @@ export default {
         name,
         can_trigger_flows,
         can_edit_custom_fields,
+        sign_messages,
         rooms_limit,
         uuid,
         work_end,
@@ -305,6 +307,7 @@ export default {
         name,
         can_trigger_flows,
         can_edit_custom_fields,
+        sign_messages,
         workingDay: { start: this.normalizeTime(work_start), end: this.normalizeTime(work_end) },
         maxSimultaneousChatsByAgent: rooms_limit.toString(),
       };
@@ -362,6 +365,7 @@ export default {
         name,
         can_trigger_flows,
         can_edit_custom_fields,
+        sign_messages,
         workingDay,
         maxSimultaneousChatsByAgent,
       } = this.sector;
@@ -370,6 +374,7 @@ export default {
         name,
         can_trigger_flows,
         can_edit_custom_fields,
+        sign_messages,
         work_start: workingDay.start,
         work_end: workingDay.end,
         rooms_limit: maxSimultaneousChatsByAgent,

@@ -69,6 +69,25 @@
               : $t('sector.additional_options.template_message.switch_disabled')
           "
         />
+        <div class="form-section__switch__container">
+          <unnnicSwitch
+            v-model="sector.sign_messages"
+            :textRight="
+              sector.sign_messages
+                ? $t('sector.additional_options.agents_signature.switch_active')
+                : $t('sector.additional_options.agents_signature.switch_disabled')
+            "
+          />
+          <unnnic-tool-tip
+            enabled
+            :text="$t('sector.additional_options.agents_signature.tooltip')"
+            side="right"
+            maxWidth="15rem"
+          >
+            <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+          </unnnic-tool-tip>
+        </div>
+
         <unnnicSwitch
           v-model="sector.can_edit_custom_fields"
           :textRight="$t('sector.additional_options.edit_custom_fields')"
@@ -296,6 +315,15 @@ export default {
       margin-bottom: 1rem;
     }
 
+    &__switch__container {
+      display: flex;
+      align-items: center;
+
+      .unnnic-tooltip {
+        display: flex;
+      }
+    }
+
     &__inputs {
       display: grid;
       gap: $unnnic-spacing-stack-sm;
@@ -304,6 +332,10 @@ export default {
       &--fill-w {
         grid-column: span 2;
       }
+    }
+
+    .unnnic-switch {
+      align-items: center;
     }
   }
 
