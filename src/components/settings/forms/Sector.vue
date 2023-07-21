@@ -59,23 +59,19 @@
     <section class="form-section">
       <div style="margin-bottom: 29px">
         <h2 class="title">
-          {{ $t('sector.template_message.title') }}
-          <unnnic-tool-tip
-            enabled
-            :text="$t('sector.template_message.switch_tip')"
-            side="right"
-            maxWidth="25rem"
-          >
-            <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
-          </unnnic-tool-tip>
+          {{ $t('sector.additional_options.title') }}
         </h2>
         <unnnicSwitch
           v-model="sector.can_trigger_flows"
           :textRight="
             sector.can_trigger_flows
-              ? $t('sector.template_message.switch_title_active')
-              : $t('sector.template_message.switch_title_disabled')
+              ? $t('sector.additional_options.template_message.switch_active')
+              : $t('sector.additional_options.template_message.switch_disabled')
           "
+        />
+        <unnnicSwitch
+          v-model="sector.can_edit_custom_fields"
+          :textRight="$t('sector.additional_options.edit_custom_fields')"
         />
       </div>
       <div>
