@@ -3,6 +3,7 @@ const defaultProps = {
     uuid: '',
     name: '',
     can_trigger_flows: false,
+    can_edit_custom_fields: false,
     managers: [],
     workingDay: {
       start: '',

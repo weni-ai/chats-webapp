@@ -217,26 +217,28 @@
         }
       }
     },
-    "template_message": {
+    "additional_options": {
       "title": {
-        "pt-br": "Disparo de modelos de mensagens",
-        "en-us": "Triggering message templates",
-        "es": "Activar plantillas de mensajes"
+        "pt-br": "Opções adicionais",
+        "en-us": "Additional options",
+        "es": "Opciones adicionales"
       },
-      "switch_title_active": {
-        "pt-br": "Disparo de modelos de mensagens ativo",
-        "en-us": "Triggering message templates active",
-        "es": "Activación de plantillas de mensajes activos"
+      "template_message": {
+        "switch_active": {
+          "pt-br": "Disparo de modelos de mensagens ativo",
+          "en-us": "Triggering message templates active",
+          "es": "Activación de plantillas de mensajes activos"
+        },
+        "switch_disabled": {
+          "pt-br": "Disparo de modelos de mensagens desativado",
+          "en-us": "Triggering message templates disabled",
+          "es": "Activación de plantillas de mensajes deshabilitada"
+        }
       },
-      "switch_title_disabled": {
-        "pt-br": "Disparo de modelos de mensagens desativado",
-        "en-us": "Triggering message templates disabled",
-        "es": "AActivación de plantillas de mensajes deshabilitada"
-      },
-      "switch_tip": {
-        "pt-br": "Ao ativar essa função os agentes deste setor terão acesso para o disparo de modelo de mensagens e adição de novos contatos",
-        "en-us": "When activating this function, the agents of this sector will have access to the triggering message templates and adding new contacts",
-        "es": "Al activar esta función, los agentes de este sector tendrán acceso a la activación de plantillas de mensajes y adición de nuevos contactos"
+      "edit_custom_fields": {
+        "pt-br": "Permitir que agentes editem Custom Fields",
+        "en-us": "Allow agents to edit Custom Fields",
+        "es": "Permitir que los agentes editen Custom Fields"
       }
     }
   },
