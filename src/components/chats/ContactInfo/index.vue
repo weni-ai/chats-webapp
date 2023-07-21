@@ -1,4 +1,3 @@
-<!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
   <aside-slot-template
@@ -40,40 +39,16 @@
               </hgroup>
             </template>
             <template v-if="!!room.custom_fields">
-              <div v-for="(value, key) in customFields" :key="key" class="info custom">
-                <component
-                  :is="isCurrentCustomField(key) ? 'label' : 'h3'"
-                  class="title"
-                  tabindex="0"
-                  >{{ key }}:</component
-                >
-                <div :class="['description', isCurrentCustomField(key) && 'editing']">
-                  <unnnic-tool-tip
-                    v-show="!isCurrentCustomField(key)"
-                    enabled
-                    :text="$t('edit')"
-                    side="bottom"
-                  >
-                    <h4
-                      tabindex="0"
-                      @click="updateCurrentCustomField({ key, value })"
-                      @keypress.enter="updateCurrentCustomField({ key, value })"
-                    >
-                      {{ value }}
-                    </h4>
-                  </unnnic-tool-tip>
-                  <input
-                    v-show="isCurrentCustomField(key)"
-                    :ref="'custom_field_input_' + key"
-                    type="text"
-                    :value="currentCustomField?.[key]"
-                    @input="updateCurrentCustomField({ key, value: $event.target.value || '' })"
-                    @blur="saveCurrentCustomFieldValue"
-                    @keypress.enter="saveCurrentCustomFieldValue"
-                    maxlength="50"
-                  />
-                </div>
-              </div>
+              <custom-field
+                v-for="(value, key) in customFields"
+                :key="key"
+                :title="key"
+                :description="value"
+                :value="currentCustomField?.[key]"
+                :is-current="isCurrentCustomField(key)"
+                @update-current-custom-field="updateCurrentCustomField"
+                @save-value="saveCurrentCustomFieldValue"
+              />
             </template>
             <div
               style="display: flex; margin-left: -8px; align-items: center"
@@ -256,6 +231,7 @@ import Sector from '@/services/api/resources/settings/sector';
 import LinkContact from '@/services/api/resources/chats/linkContact';
 import { unnnicCallAlert } from '@weni/unnnic-system';
 import Queue from '@/services/api/resources/settings/queue';
+import CustomField from './CustomField';
 import ContactMedia from './Media';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
 
@@ -267,6 +243,7 @@ export default {
   components: {
     AsideSlotTemplate,
     AsideSlotTemplateSection,
+    CustomField,
     ContactMedia,
     FullscreenPreview,
   },
@@ -620,18 +597,6 @@ export default {
         }
       },
     },
-    currentCustomField(newCustomField) {
-      if (newCustomField) {
-        this.$nextTick(() => {
-          const inputRef = `custom_field_input_${this.getCurrentCustomFieldKey()}`;
-          const input = this.$refs[inputRef]?.[0];
-
-          if (input) {
-            input.focus();
-          }
-        });
-      }
-    },
   },
 };
 </script>
@@ -697,53 +662,6 @@ export default {
         .description {
           font-size: $unnnic-font-size-body-gt;
           cursor: default;
-        }
-
-        &.custom {
-          .description {
-            border: 1px solid transparent;
-            border-radius: $unnnic-border-radius-sm;
-
-            display: flex;
-
-            max-width: 100%;
-
-            cursor: text;
-
-            overflow: hidden;
-
-            > .unnnic-tooltip {
-              display: flex;
-
-              width: 100%;
-            }
-
-            &:hover {
-              border: 1px solid $unnnic-color-neutral-clean;
-            }
-
-            &.editing {
-              width: 100%;
-              border: 1px solid $unnnic-color-neutral-cleanest;
-
-              input {
-                width: 100%;
-                border: none;
-                border-radius: $unnnic-border-radius-sm;
-                padding: 0;
-                outline: none;
-                font-size: $unnnic-font-size-body-gt;
-                color: $unnnic-color-neutral-cloudy;
-              }
-            }
-
-            h4 {
-              width: 100%;
-              white-space: nowrap;
-              overflow: hidden;
-              text-overflow: ellipsis;
-            }
-          }
         }
       }
     }
