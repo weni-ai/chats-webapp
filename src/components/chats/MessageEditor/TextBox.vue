@@ -70,10 +70,6 @@ export default {
         this.message = event.target.value;
         this.$emit('input', event.target.value);
       }
-
-      this.$emit('is-typing-handler', this.message.length > 0);
-
-      this.adjustTextareaHeight();
     },
 
     openEmojiPicker() {
@@ -113,33 +109,28 @@ export default {
 
     adjustTextareaHeight() {
       const textarea = this.$refs.textareaRef;
-      textarea.style.height = `${textarea.scrollHeight}px`;
-
-      if (this.message.length === 0) {
-        this.textAreaRows = this.minTextareaRows;
-        textarea.style.height = 'auto';
-        textarea.style.overflowY = 'hidden';
-        return;
-      }
+      textarea.style.height = 'auto';
 
       const lineHeight = parseFloat(getComputedStyle(textarea).lineHeight);
       const maxHeight = this.maxTextareaRows * lineHeight;
-      if (textarea.scrollHeight > maxHeight) {
-        this.textAreaRows = this.maxTextareaRows;
-        textarea.style.overflowY = 'scroll';
-        textarea.style.height = `${maxHeight}px`;
-      } else {
-        const calculatedRows = Math.ceil(textarea.scrollHeight / lineHeight);
-        this.textAreaRows = calculatedRows;
-        textarea.style.overflowY = 'hidden';
-      }
+
+      const calculatedHeight = Math.min(maxHeight, textarea.scrollHeight);
+      textarea.style.height = `${calculatedHeight}px`;
+
+      const calculatedRows = Math.ceil(calculatedHeight / lineHeight);
+      this.textAreaRows = calculatedRows;
+
+      textarea.style.overflowY = textarea.scrollHeight > maxHeight ? 'scroll' : 'hidden';
     },
   },
 
   watch: {
     value(newValue) {
       this.message = newValue;
-      this.$emit('is-typing-handler', this.message.length > 0);
+      this.$emit('is-typing-handler', this.message.trim().length > 0);
+      this.$nextTick(() => {
+        this.adjustTextareaHeight();
+      });
     },
 
     isEmojiPickerOpen(newValue) {
