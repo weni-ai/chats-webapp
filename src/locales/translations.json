@@ -239,6 +239,23 @@
         "pt-br": "Permitir que agentes editem Custom Fields",
         "en-us": "Allow agents to edit Custom Fields",
         "es": "Permitir que los agentes editen Custom Fields"
+      },
+      "agents_signature": {
+        "tooltip": {
+          "pt-br": "Cada mensagem trocada terá o nome do agente que está respondendo",
+          "en-us": "Each message exchanged will have the name of the agent who is answering",
+          "es": "Cada mensaje intercambiado tendrá el nombre del agente que responde"
+        },
+        "switch_active": {
+          "pt-br": "Assinatura ativa",
+          "en-us": "Active signature",
+          "es": "Firma activa"
+        },
+        "switch_disabled": {
+          "pt-br": "Assinatura desativada",
+          "en-us": "Disabled signature",
+          "es": "Firma discapacitada"
+        }
       }
     }
   },
