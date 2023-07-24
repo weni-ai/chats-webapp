@@ -86,18 +86,19 @@ export default {
 }
 
 .dropzone {
-  height: 100%;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin: {
-    top: $unnnic-spacing-inset-sm;
-    right: $unnnic-spacing-inset-sm;
-  }
+
+  height: 100%;
+
+  overflow: hidden;
+
+  margin-top: $unnnic-spacing-inset-sm;
 
   &.dragging {
     position: relative;
+    margin-right: $unnnic-spacing-inset-sm;
 
     &::before,
     &::after {
