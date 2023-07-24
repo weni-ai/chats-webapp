@@ -1,41 +1,23 @@
 <template>
-  <section :class="['chats-layout', isAsideSlotInUse && !this.showQuickMessage && 'has-aside']">
-    <section
-      v-if="
-        isAsideSlotInUse &&
-        this.showQuickMessage &&
-        !this.showQuickMessagePreferencesBar &&
-        !this.showSendFlowMessage
-      "
+  <section :class="['chats-layout', isAsideVisible && 'has-aside']">
+    <!-- <section
+      v-if="isAsideVisible"
       class="aside unnnic-grid-span-3"
       style="border: 1px solid #e2e6ed"
     >
       <slot name="aside" />
-    </section>
+    </section> -->
     <section
-      v-if="
-        this.showSendFlowMessage &&
-        !this.showQuickMessage &&
-        !this.showQuickMessagePreferencesBar &&
-        !this.contactList
-      "
+      v-if="showSendFlowMessage"
       :style="{ display: 'flex', flexDirection: 'column', height: '96vh' }"
       class="room-list unnnic-grid-span-3"
     >
       <layout-template-message :selectedContact="this.contact" @close="close" />
     </section>
-    <slot
-      name="room-list"
-      v-if="
-        !this.contactList &&
-        !this.showQuickMessage &&
-        !this.showQuickMessagePreferencesBar &&
-        !this.showSendFlowMessage
-      "
-    >
+    <slot name="room-list" v-if="isRoomListVisible">
       <div class="unnnic-grid-span-3 sidebar">
         <preferences-bar
-          @show-quick-messages="preferencesOpenQuickMessage"
+          @show-quick-messages="handlerShowQuickMessages"
           :dashboard="canAccessDashboard"
         />
 
@@ -52,15 +34,7 @@
       </div>
     </slot>
 
-    <slot
-      name="template-message"
-      v-if="
-        this.contactList &&
-        !this.showQuickMessage &&
-        !this.showQuickMessagePreferencesBar &&
-        !this.showSendFlowMessage
-      "
-    >
+    <slot name="template-message" v-if="contactListVisible">
       <div
         :style="{ display: 'flex', flexDirection: 'column', height: '100vh', paddingLeft: '10px' }"
         class="unnnic-grid-span-3"
@@ -69,37 +43,26 @@
       </div>
     </slot>
 
-    <slot
-      name="quick-message"
-      v-if="
-        !this.contactList &&
-        !this.showQuickMessage &&
-        !this.showSendFlowMessage &&
-        this.showQuickMessagePreferencesBar
-      "
-    >
+    <slot name="quick-message" v-if="quickMessagesVisible">
       <div
-        :style="{ display: 'flex', flexDirection: 'column', height: '100vh' }"
+        :style="{ display: 'flex', flexDirection: 'column', height: '100vh', gridColumn: 1 }"
         class="unnnic-grid-span-3"
       >
-        <quick-messages class="room-list" @close="closeQuickMessages" />
+        <quick-messages
+          class="room-list"
+          @close="handlerShowQuickMessages"
+          @select-quick-message="selectQuickMessage"
+        />
       </div>
     </slot>
     <main
-      v-bind:class="[
-        isAsideSlotInUse &&
-        !this.showQuickMessage &&
-        !this.showQuickMessagePreferencesBar &&
-        !this.showSendFlowMessage
-          ? 'unnnic-grid-span-6'
-          : 'unnnic-grid-span-9',
-      ]"
+      :class="{ 'unnnic-grid-span-6': isAsideVisible, 'unnnic-grid-span-9': !isAsideVisible }"
       style="height: 100vh"
     >
       <slot />
     </main>
     <section
-      v-if="isAsideSlotInUse && !this.showQuickMessage && !this.showSendFlowMessage"
+      v-if="isAsideVisible"
       class="aside unnnic-grid-span-3"
       style="border: 1px solid #e2e6ed"
     >
@@ -139,19 +102,27 @@ export default {
       type: Boolean,
       default: false,
     },
-    totalOfSectors: {},
   },
+
   mounted() {
     this.getCountSectors();
     this.havePermissionToSendTemplateMessage();
   },
 
+  data: () => ({
+    sectors: {},
+    isLoading: false,
+    contactList: false,
+    canTriggerFlows: false,
+    canAccessDashboard: false,
+    showQuickMessages: false,
+    showSendFlowMessage: false,
+    quickMessage: '',
+  }),
+
   methods: {
-    preferencesOpenQuickMessage() {
-      this.showQuickMessagePreferencesBar = true;
-    },
-    closeQuickMessages() {
-      this.showQuickMessagePreferencesBar = false;
+    handlerShowQuickMessages() {
+      this.showQuickMessages = !this.showQuickMessages;
     },
     close() {
       if (this.$slots.aside[0].componentOptions.listeners) {
@@ -189,48 +160,23 @@ export default {
         console.log(error);
       }
     },
+    selectQuickMessage(quickMessage) {
+      this.$emit('select-quick-message', quickMessage);
+    },
   },
 
-  data: () => ({
-    sectors: {},
-    isLoading: false,
-    contactList: false,
-    canTriggerFlows: false,
-    canAccessDashboard: false,
-    showQuickMessage: false,
-    showSendFlowMessage: false,
-    openQuickMessage: false,
-    teste: false,
-    showQuickMessagePreferencesBar: false,
-  }),
-
   computed: {
-    isAsideSlotInUse() {
-      if (![null, undefined, ''].includes(this.$slots.aside)) {
-        if (this.$slots.aside[0].componentOptions.tag === 'QuickMessages') {
-          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-          this.showQuickMessage = true;
-        } else {
-          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-          this.showQuickMessage = false;
-        }
-        if (this.$slots.aside[0].componentOptions.tag === 'LayoutTemplateMessage') {
-          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-          this.contact = this.$slots.aside[0].componentOptions.listeners.contact;
-          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-          this.showSendFlowMessage = true;
-        } else {
-          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-          this.showSendFlowMessage = false;
-        }
-      } else {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.showSendFlowMessage = false;
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.showQuickMessage = false;
-      }
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+    isAsideVisible() {
       return !!this.$slots.aside;
+    },
+    isRoomListVisible() {
+      return !this.contactList && !this.showQuickMessages && !this.showSendFlowMessage;
+    },
+    contactListVisible() {
+      return this.contactList && !this.showQuickMessages && !this.showSendFlowMessage;
+    },
+    quickMessagesVisible() {
+      return !this.contactList && !this.showSendFlowMessage && this.showQuickMessages;
     },
   },
 };
