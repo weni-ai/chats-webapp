@@ -85,7 +85,6 @@ export default {
   &__sections {
     flex: 1 1;
     min-height: 0;
-    display: grid;
   }
 }
 </style>
