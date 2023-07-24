@@ -181,8 +181,7 @@ export default {
     ...mapState({
       room: (state) => state.rooms.activeRoom,
       me: (state) => state.profile.me,
-      hasNext: (state) => state.rooms.hasNext,
-      listRoomHasNext: (state) => state.rooms.listRoomHasNext,
+      nextMessages: (state) => state.rooms.nextMessages,
       showModalAssumedChat: ({ dashboard }) => dashboard.showModalAssumedChat,
       assumedChatContactName: ({ dashboard }) => dashboard.assumedChatContactName,
     }),
@@ -276,9 +275,7 @@ export default {
 
       try {
         await this.$store.dispatch('rooms/getActiveRoomMessages', {
-          offset: this.page * this.limit,
           concat,
-          limit: this.limit,
         });
         this.isRoomClassifierVisible = false;
         this.isLoading = false;
@@ -297,8 +294,7 @@ export default {
     },
 
     searchForMoreMessages() {
-      if (this.hasNext) {
-        this.page += 1;
+      if (this.nextMessages) {
         this.getRoomMessages(true);
       }
     },

@@ -2,30 +2,36 @@ import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 
 export default {
-  async getByRoom(roomId, offset, limit) {
-    const response = await http.get(`/msg/?room=${roomId}`, {
-      params: {
-        ordering: '-created_on',
-        reverse_results: true,
-        offset,
-        limit,
-      },
-    });
+  async getByRoom({ roomId, nextMessages }) {
+    const params = {
+      ordering: '-created_on',
+      reverse_results: true,
+    };
+
+    const nextMessagesStringParams = nextMessages?.split('/msg/')?.[1];
+    const url = nextMessages ? `/msg/${nextMessagesStringParams}` : `/msg/?room=${roomId}`;
+    const config = nextMessages ? {} : { params };
+
+    const response = await http.get(url, config);
+
     return response.data;
   },
 
-  async getByContact(contactUuid, offset, limit, { onlyClosedRooms = true } = {}) {
-    const response = await http.get('/msg/', {
-      params: {
-        ordering: '-created_on',
-        reverse_results: true,
-        contact: contactUuid,
-        project: getProject(),
-        is_active: !onlyClosedRooms,
-        offset,
-        limit,
-      },
-    });
+  async getByContact({ contactUuid, nextMessages, onlyClosedRooms = true }) {
+    const params = {
+      ordering: '-created_on',
+      reverse_results: true,
+      contact: contactUuid,
+      project: getProject(),
+      is_active: !onlyClosedRooms,
+    };
+
+    const nextMessagesStringParams = nextMessages?.split('/msg/')?.[1];
+    const url = `/msg/${nextMessages ? nextMessagesStringParams : ''}`;
+    const config = nextMessages ? {} : { params };
+
+    const response = await http.get(url, config);
+
     return response.data;
   },
 

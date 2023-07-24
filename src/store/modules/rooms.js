@@ -10,8 +10,8 @@ const mutations = {
   SET_ACTIVE_ROOM_MESSAGES: 'SET_ACTIVE_ROOM_MESSAGES',
   ADD_MESSAGE: 'ADD_MESSAGE',
   UPDATE_MESSAGE: 'UPDATE_MESSAGE',
-  SET_ACTIVE_ROOM_HAS_NEXT: 'SET_ACTIVE_ROOM_HAS_NEXT',
-  SET_ROOMS_HAS_NEXT: 'SET_ROOMS_HAS_NEXT',
+  SET_ACTIVE_ROOM_NEXT_MESSAGES: 'SET_ACTIVE_ROOM_NEXT_MESSAGES',
+  SET_ROOMS_NEXT_ROOMS: 'SET_ROOMS_NEXT_ROOMS',
   BRING_ROOM_FRONT: 'BRING_ROOM_FRONT',
   UPDATE_NEW_MESSAGES_BY_ROOM: 'UPDATE_NEW_MESSAGES_BY_ROOM',
 };
@@ -23,8 +23,8 @@ export default {
     activeRoom: null,
     activeRoomMessages: [],
     newMessagesByRoom: {},
-    hasNext: true,
-    hasNextRooms: true,
+    nextMessages: '',
+    nextRooms: '',
   },
 
   mutations: {
@@ -40,11 +40,11 @@ export default {
     [mutations.SET_ACTIVE_ROOM_MESSAGES](state, messages) {
       state.activeRoomMessages = messages;
     },
-    [mutations.SET_ACTIVE_ROOM_HAS_NEXT](state, hasNext) {
-      state.hasNext = hasNext;
+    [mutations.SET_ACTIVE_ROOM_NEXT_MESSAGES](state, nextMessages) {
+      state.nextMessages = nextMessages;
     },
-    [mutations.SET_ROOMS_HAS_NEXT](state, hasNextRooms) {
-      state.hasNextRooms = hasNextRooms;
+    [mutations.SET_ROOMS_NEXT_ROOMS](state, next) {
+      state.nextRooms = next;
     },
     [mutations.BRING_ROOM_FRONT](state, room) {
       state.rooms.sort((x) => (x === room ? -1 : 0));
@@ -76,15 +76,25 @@ export default {
   },
 
   actions: {
-    async getAll({ commit, state }, { offset, concat, limit, contact, order, viewedAgent }) {
-      const response = await Room.getAll(offset, limit, contact, order, viewedAgent);
+    async getAll({ commit, state }, { concat, limit, contact, order, viewedAgent }) {
+      const response = await Room.getAll({
+        limit,
+        contact,
+        order,
+        viewedAgent,
+        nextRooms: state.nextRooms,
+      });
+
       let rooms = response.results || [];
-      const listRoomHasNext = response.next;
+      const responseNextRooms = response.next;
+
       if (concat) {
         rooms = state.rooms.concat(response.results);
       }
-      commit(mutations.SET_ROOMS_HAS_NEXT, listRoomHasNext);
+
+      commit(mutations.SET_ROOMS_NEXT_ROOMS, responseNextRooms);
       commit(mutations.SET_ROOMS, rooms);
+
       return rooms;
     },
     setActiveRoom({ commit }, room) {
@@ -96,18 +106,21 @@ export default {
     bringRoomFront({ commit }, room) {
       commit(mutations.BRING_ROOM_FRONT, room);
     },
-    async getActiveRoomMessages({ commit, state }, { offset, concat, limit }) {
-      const { activeRoom } = state;
+    async getActiveRoomMessages({ commit, state }, { concat }) {
+      const { activeRoom, nextMessages } = state;
       if (!activeRoom) return;
-      const response = await Message.getByRoom(activeRoom.uuid, offset, limit);
+
+      const response = await Message.getByRoom({ roomId: activeRoom.uuid, nextMessages });
       let messages = response.results;
-      const hasNext = response.next;
+      const responseNextMessages = response.next;
+
       if (concat) {
         messages = response.results.concat(state.activeRoomMessages);
       }
+
       const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
       commit(mutations.SET_ACTIVE_ROOM_MESSAGES, messagesWithSender);
-      commit(mutations.SET_ACTIVE_ROOM_HAS_NEXT, hasNext);
+      commit(mutations.SET_ACTIVE_ROOM_NEXT_MESSAGES, responseNextMessages);
     },
 
     async sendMessage({ state, commit }, text) {
