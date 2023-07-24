@@ -1,21 +1,14 @@
 <template>
   <section :class="['chats-layout', isAsideVisible && 'has-aside']">
-    <!-- <section
-      v-if="isAsideVisible"
-      class="aside unnnic-grid-span-3"
-      style="border: 1px solid #e2e6ed"
-    >
-      <slot name="aside" />
-    </section> -->
     <section
       v-if="showSendFlowMessage"
       :style="{ display: 'flex', flexDirection: 'column', height: '96vh' }"
-      class="room-list unnnic-grid-span-3"
+      class="room-list"
     >
       <layout-template-message :selectedContact="this.contact" @close="close" />
     </section>
     <slot name="room-list" v-if="isRoomListVisible">
-      <div class="unnnic-grid-span-3 sidebar">
+      <div class="sidebar">
         <preferences-bar
           @show-quick-messages="handlerShowQuickMessages"
           :dashboard="canAccessDashboard"
@@ -37,17 +30,14 @@
     <slot name="template-message" v-if="contactListVisible">
       <div
         :style="{ display: 'flex', flexDirection: 'column', height: '100vh', paddingLeft: '10px' }"
-        class="unnnic-grid-span-3"
+        class=""
       >
         <contact-list class="room-list" :disabled="disabledChatList" @close="closeContactList" />
       </div>
     </slot>
 
     <slot name="quick-message" v-if="quickMessagesVisible">
-      <div
-        :style="{ display: 'flex', flexDirection: 'column', height: '100vh', gridColumn: 1 }"
-        class="unnnic-grid-span-3"
-      >
+      <div class="quick-message">
         <quick-messages
           class="room-list"
           @close="handlerShowQuickMessages"
@@ -55,17 +45,10 @@
         />
       </div>
     </slot>
-    <main
-      :class="{ 'unnnic-grid-span-6': isAsideVisible, 'unnnic-grid-span-9': !isAsideVisible }"
-      style="height: 100vh"
-    >
+    <main>
       <slot />
     </main>
-    <section
-      v-if="isAsideVisible"
-      class="aside unnnic-grid-span-3"
-      style="border: 1px solid #e2e6ed"
-    >
+    <section v-if="isAsideVisible" class="aside">
       <slot name="aside" />
     </section>
     <div v-show="isLoading && disabledChatList">
@@ -221,9 +204,21 @@ section.chats-layout {
     height: 100%;
   }
 
+  .quick-message {
+    grid-column: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    height: 100vh;
+
+    border: 1px solid $unnnic-color-neutral-soft;
+  }
+
   .aside {
     height: 100vh;
 
+    border: 1px solid $unnnic-color-neutral-soft;
     background: $unnnic-color-background-grass;
 
     grid-column: 3;
