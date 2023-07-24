@@ -14,7 +14,6 @@ export default {
 <style lang="scss" scoped>
 .chats-background {
   position: relative;
-
   height: 100%;
 
   .illustration {
