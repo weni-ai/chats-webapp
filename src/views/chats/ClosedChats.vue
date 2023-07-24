@@ -314,6 +314,7 @@ export default {
       this.contact = null;
       this.page = 0;
       this.limit = 50;
+      this.componentInAsideSlot = '';
     },
 
     scrollMessagesToBottom() {
