@@ -1,45 +1,16 @@
 <template>
-  <section class="chats-layout unnnic-grid-giant" style="padding: 0px; overflow-y: hidden">
+  <section :class="['chats-layout', isAsideVisible && 'has-aside']">
     <section
-      v-if="
-        isAsideSlotInUse &&
-        this.showQuickMessage &&
-        !this.showQuickMessagePreferencesBar &&
-        !this.showSendFlowMessage
-      "
-      class="aside unnnic-grid-span-3"
-      style="border: 1px solid #e2e6ed"
-    >
-      <slot name="aside" />
-    </section>
-    <section
-      v-if="
-        this.showSendFlowMessage &&
-        !this.showQuickMessage &&
-        !this.showQuickMessagePreferencesBar &&
-        !this.contactList
-      "
-      :style="{ display: 'flex', flexDirection: 'column', height: '96vh', paddingLeft: '10px' }"
-      class="room-list unnnic-grid-span-3"
+      v-if="showSendFlowMessage"
+      :style="{ display: 'flex', flexDirection: 'column', height: '96vh' }"
+      class="room-list"
     >
       <layout-template-message :selectedContact="this.contact" @close="close" />
     </section>
-    <slot
-      name="room-list"
-      v-if="
-        !this.contactList &&
-        !this.showQuickMessage &&
-        !this.showQuickMessagePreferencesBar &&
-        !this.showSendFlowMessage
-      "
-    >
-      <div
-        :style="{ display: 'flex', flexDirection: 'column', height: '100vh', paddingLeft: '10px' }"
-        class="unnnic-grid-span-3"
-      >
+    <slot name="room-list" v-if="isRoomListVisible">
+      <div class="sidebar">
         <preferences-bar
-          :style="{ margin: '16px 0 0 0px' }"
-          @show-quick-messages="preferencesOpenQuickMessage"
+          @show-quick-messages="handlerShowQuickMessages"
           :dashboard="canAccessDashboard"
         />
 
@@ -56,62 +27,30 @@
       </div>
     </slot>
 
-    <slot
-      name="template-message"
-      v-if="
-        this.contactList &&
-        !this.showQuickMessage &&
-        !this.showQuickMessagePreferencesBar &&
-        !this.showSendFlowMessage
-      "
-    >
+    <slot name="template-message" v-if="contactListVisible">
       <div
         :style="{ display: 'flex', flexDirection: 'column', height: '100vh', paddingLeft: '10px' }"
-        class="unnnic-grid-span-3"
+        class=""
       >
         <contact-list class="room-list" :disabled="disabledChatList" @close="closeContactList" />
       </div>
     </slot>
 
-    <slot
-      name="quick-message"
-      v-if="
-        !this.contactList &&
-        !this.showQuickMessage &&
-        !this.showSendFlowMessage &&
-        this.showQuickMessagePreferencesBar
-      "
-    >
-      <div
-        :style="{ display: 'flex', flexDirection: 'column', height: '100vh' }"
-        class="unnnic-grid-span-3"
-      >
-        <quick-messages class="room-list" @close="closeQuickMessages" />
+    <slot name="quick-message" v-if="quickMessagesVisible">
+      <div class="quick-message">
+        <quick-messages
+          class="room-list"
+          @close="handlerShowQuickMessages"
+          @select-quick-message="selectQuickMessage"
+        />
       </div>
     </slot>
-    <main
-      v-bind:class="[
-        isAsideSlotInUse &&
-        !this.showQuickMessage &&
-        !this.showQuickMessagePreferencesBar &&
-        !this.showSendFlowMessage
-          ? 'unnnic-grid-span-6'
-          : 'unnnic-grid-span-9',
-      ]"
-      style="height: 100vh"
-    >
+    <main>
       <slot />
     </main>
-    <section
-      v-if="isAsideSlotInUse && !this.showQuickMessage && !this.showSendFlowMessage"
-      class="aside unnnic-grid-span-3"
-      style="border: 1px solid #e2e6ed"
-    >
+    <section v-if="isAsideVisible" class="aside">
       <slot name="aside" />
     </section>
-    <!-- <section v-if="sectors === 0">
-      <modal-on-boarding-chats />
-    </section> -->
     <div v-show="isLoading && disabledChatList">
       <skeleton-loading />
     </div>
@@ -146,19 +85,27 @@ export default {
       type: Boolean,
       default: false,
     },
-    totalOfSectors: {},
   },
+
   mounted() {
     this.getCountSectors();
     this.havePermissionToSendTemplateMessage();
   },
 
+  data: () => ({
+    sectors: {},
+    isLoading: false,
+    contactList: false,
+    canTriggerFlows: false,
+    canAccessDashboard: false,
+    showQuickMessages: false,
+    showSendFlowMessage: false,
+    quickMessage: '',
+  }),
+
   methods: {
-    preferencesOpenQuickMessage() {
-      this.showQuickMessagePreferencesBar = true;
-    },
-    closeQuickMessages() {
-      this.showQuickMessagePreferencesBar = false;
+    handlerShowQuickMessages() {
+      this.showQuickMessages = !this.showQuickMessages;
     },
     close() {
       if (this.$slots.aside[0].componentOptions.listeners) {
@@ -196,80 +143,85 @@ export default {
         console.log(error);
       }
     },
+    selectQuickMessage(quickMessage) {
+      this.$emit('select-quick-message', quickMessage);
+    },
   },
 
-  data: () => ({
-    sectors: {},
-    isLoading: false,
-    contactList: false,
-    canTriggerFlows: false,
-    canAccessDashboard: false,
-    showQuickMessage: false,
-    showSendFlowMessage: false,
-    openQuickMessage: false,
-    teste: false,
-    showQuickMessagePreferencesBar: false,
-  }),
-
   computed: {
-    isAsideSlotInUse() {
-      if (![null, undefined, ''].includes(this.$slots.aside)) {
-        if (this.$slots.aside[0].componentOptions.tag === 'QuickMessages') {
-          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-          this.showQuickMessage = true;
-        } else {
-          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-          this.showQuickMessage = false;
-        }
-        if (this.$slots.aside[0].componentOptions.tag === 'LayoutTemplateMessage') {
-          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-          this.contact = this.$slots.aside[0].componentOptions.listeners.contact;
-          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-          this.showSendFlowMessage = true;
-        } else {
-          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-          this.showSendFlowMessage = false;
-        }
-      } else {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.showSendFlowMessage = false;
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.showQuickMessage = false;
-      }
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+    isAsideVisible() {
       return !!this.$slots.aside;
+    },
+    isRoomListVisible() {
+      return !this.contactList && !this.showQuickMessages && !this.showSendFlowMessage;
+    },
+    contactListVisible() {
+      return this.contactList && !this.showQuickMessages && !this.showSendFlowMessage;
+    },
+    quickMessagesVisible() {
+      return !this.contactList && !this.showSendFlowMessage && this.showQuickMessages;
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.chats-layout {
-  height: 100%;
-  max-height: 100%;
-  display: flex;
+section.chats-layout {
+  padding: 0;
 
-  .room-list {
-    margin: {
-      top: 8px;
-      right: 0;
-      bottom: 0;
+  height: 100vh;
+  max-height: 100vh;
+  overflow-y: hidden;
+  display: grid;
+  grid-template-columns: 2.8fr 9fr;
+
+  &.has-aside {
+    grid-template-columns: 2.8fr 6.2fr 2.8fr;
+  }
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-spacing-stack-xs;
+
+    height: 100vh;
+
+    padding: $unnnic-spacing-inset-sm;
+    padding-right: 0;
+    grid-column: 1;
+
+    .room-list {
+      overflow-y: auto;
     }
-    overflow-y: auto;
   }
 
   main {
+    margin-left: $unnnic-spacing-inline-sm;
+
     flex: 1 1;
+    grid-column: 2;
+
     height: 100%;
+  }
+
+  .quick-message {
+    grid-column: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    height: 100vh;
+
+    border: 1px solid $unnnic-color-neutral-soft;
   }
 
   .aside {
     height: 100vh;
 
+    border: 1px solid $unnnic-color-neutral-soft;
     background: $unnnic-color-background-grass;
-  }
-  .template-message-button {
-    margin-top: $unnnic-spacing-stack-sm;
+
+    grid-column: 3;
   }
 }
 </style>
