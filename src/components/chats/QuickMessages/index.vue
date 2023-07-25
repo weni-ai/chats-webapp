@@ -52,7 +52,7 @@
     no-icon-action
     @action="quickMessageToEdit = null"
   >
-    <aside-slot-template-section class="fill-h">
+    <aside-slot-template-section class="fill-h fill-w">
       <section class="fill-h quick-message-form">
         <quick-message-form
           v-model="quickMessageToEdit"
