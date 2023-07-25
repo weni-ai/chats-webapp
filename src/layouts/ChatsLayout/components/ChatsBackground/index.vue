@@ -34,10 +34,6 @@ export default {
       object-position: center;
       pointer-events: none;
     }
-
-    &__doodles {
-      padding-left: $unnnic-spacing-inset-xs;
-    }
   }
 }
 </style>
