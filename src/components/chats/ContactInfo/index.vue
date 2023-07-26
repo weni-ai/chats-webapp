@@ -15,6 +15,7 @@
 
             <unnnic-button-icon
               @click="refreshContactInfos"
+              :disabled="loading"
               type="secondary"
               size="small"
               icon="button-refresh-arrow-1"
@@ -503,6 +504,8 @@ export default {
     },
 
     async refreshContactInfos() {
+      this.loading = true;
+
       const { uuid } = this.room;
 
       try {
@@ -512,6 +515,8 @@ export default {
       } catch (error) {
         console.error('Erro ao atualizar as informações do contato.', error);
       }
+
+      this.loading = false;
     },
 
     showAlert(text) {
