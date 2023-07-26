@@ -177,7 +177,6 @@ export default {
     display: flex;
     flex-direction: column;
     gap: $unnnic-spacing-stack-sm;
-    border-right: solid 1px #e2e6ed;
 
     max-height: 100%;
     overflow-y: auto;
