@@ -9,6 +9,7 @@
       @icon-right-click="nameOfContact = ''"
       size="sm"
       placeholder="Pesquisar contato"
+      style="margin-bottom: 1rem"
       :loading="this.loading"
     ></unnnic-input>
     <div class="order-by">
@@ -227,7 +228,8 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: $unnnic-spacing-stack-sm;
+  gap: $unnnic-spacing-stack-xs;
+  padding-bottom: $unnnic-spacing-inset-nano;
 
   .chat-groups {
     flex: 1 1;

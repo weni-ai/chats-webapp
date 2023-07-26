@@ -215,7 +215,6 @@ export default {
       & p {
         font-size: $unnnic-font-size-body-gt;
         color: $unnnic-color-neutral-dark;
-        overflow-wrap: anywhere;
       }
 
       &__medias {
