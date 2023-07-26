@@ -25,7 +25,7 @@
             <p v-if="room.contact.status === 'online'">
               {{ $t('status.online') }}
             </p>
-            <p v-if="lastMessageFromContact?.created_on" style="margin-bottom: 16px">
+            <p v-if="lastMessageFromContact?.created_on" style="margin-bottom: 12px">
               {{
                 $t('last_message_time.date', {
                   date: moment(lastMessageFromContact?.created_on).fromNow(),
@@ -51,45 +51,45 @@
                 @save-value="saveCurrentCustomFieldValue"
               />
             </template>
-            <div
-              style="display: flex; margin-left: -8px; align-items: center"
-              v-if="!isLinkedToOtherAgent && !isViewMode"
-            >
-              <unnnicSwitch
-                :value="isLinkedUser"
-                @input="addContactToAgent"
-                size="small"
-                :textRight="
-                  isLinkedUser
-                    ? $t('switch_contact_info.switch_disassociate_contact')
-                    : $t('switch_contact_info.switch_associate_contact')
-                "
-              />
-              <unnnic-tool-tip
-                enabled
-                :text="$t('switch_contact_info.switch_tooltip')"
-                side="bottom"
-                maxWidth="21rem"
-              >
-                <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
-              </unnnic-tool-tip>
-            </div>
-            <unnnic-button
-              v-if="!isHistory && !isViewMode"
-              class="transfer__button"
-              text="Ver histórico do contato"
-              iconLeft="export-1"
-              type="secondary"
+          </div>
+          <div
+            style="display: flex; margin-left: -8px; align-items: center"
+            v-if="!isLinkedToOtherAgent && !isViewMode"
+          >
+            <unnnicSwitch
+              :value="isLinkedUser"
+              @input="addContactToAgent"
               size="small"
-              @click="openHistory()"
+              :textRight="
+                isLinkedUser
+                  ? $t('switch_contact_info.switch_disassociate_contact')
+                  : $t('switch_contact_info.switch_associate_contact')
+              "
             />
-            <div v-if="isLinkedToOtherAgent">
-              <span>{{
-                $t('switch_contact_info.linked_contact', {
-                  name: this.room.linked_user,
-                })
-              }}</span>
-            </div>
+            <unnnic-tool-tip
+              enabled
+              :text="$t('switch_contact_info.switch_tooltip')"
+              side="bottom"
+              maxWidth="21rem"
+            >
+              <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+            </unnnic-tool-tip>
+          </div>
+          <unnnic-button
+            v-if="!isHistory && !isViewMode"
+            class="transfer__button"
+            text="Ver histórico do contato"
+            iconLeft="export-1"
+            type="secondary"
+            size="small"
+            @click="openHistory()"
+          />
+          <div v-if="isLinkedToOtherAgent">
+            <span>{{
+              $t('switch_contact_info.linked_contact', {
+                name: this.room.linked_user,
+              })
+            }}</span>
           </div>
         </section>
       </aside-slot-template-section>
@@ -664,7 +664,7 @@ export default {
         gap: $unnnic-spacing-inline-nano;
 
         &:not(.custom) {
-          margin-bottom: 0.75rem;
+          margin-bottom: $unnnic-spacing-inline-ant;
         }
 
         .title {
