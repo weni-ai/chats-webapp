@@ -22,6 +22,15 @@ export default {
     return response.data;
   },
 
+  async getByUuid({ uuid }) {
+    if (uuid) {
+      const response = await http.get(`/room/${uuid}/`);
+      return response.data;
+    }
+
+    return console.error('"Uuid" necessário para requisição.');
+  },
+
   async getClosed() {
     const response = await http.get('/room/', { params: { is_active: false } });
     return response.data;

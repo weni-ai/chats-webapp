@@ -13,12 +13,12 @@
               {{ room.contact.name }}
             </h1>
 
-            <!-- <unnnic-button-icon
+            <unnnic-button-icon
               @click="refreshContactInfos"
               type="secondary"
               size="small"
               icon="button-refresh-arrow-1"
-            /> -->
+            />
           </header>
 
           <div class="connection-info">
@@ -503,10 +503,14 @@ export default {
     },
 
     async refreshContactInfos() {
+      const { uuid } = this.room;
+
       try {
+        await this.$store.dispatch('rooms/updateRoomContact', { uuid });
+
         this.showAlert('Informações atualizadas');
       } catch (error) {
-        console.error('Erro ao atualizar as informações do contato.');
+        console.error('Erro ao atualizar as informações do contato.', error);
       }
     },
 
@@ -579,6 +583,11 @@ export default {
     },
   },
   watch: {
+    room(newRoom) {
+      if (!this.isHistory) {
+        this.customFields = newRoom.custom_fields;
+      }
+    },
     transferRadio: {
       handler() {
         if (this.transferRadio === 'queue') {
