@@ -2,11 +2,10 @@ import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 
 export default {
-  async getAll(offset, limit, contact, order, viewedAgent) {
+  async getAll({ limit, contact, order, viewedAgent, nextRooms }) {
     const params = {
       is_active: true,
       project: getProject(),
-      offset,
       limit,
       ordering: `user,${order}`,
       search: contact,
@@ -16,10 +15,21 @@ export default {
       params.email = viewedAgent;
     }
 
-    const response = await http.get('/room/', {
-      params,
-    });
+    const nextRoomsStringParams = nextRooms?.split('/room/')?.[1];
+    const url = nextRooms ? `/room/${nextRoomsStringParams}` : '/room/';
+    const config = nextRooms ? {} : { params };
+
+    const response = await http.get(url, config);
     return response.data;
+  },
+
+  async getByUuid({ uuid }) {
+    if (uuid) {
+      const response = await http.get(`/room/${uuid}/`);
+      return response.data;
+    }
+
+    return console.error('"Uuid" necessário para requisição.');
   },
 
   async getClosed() {
@@ -43,6 +53,11 @@ export default {
       `/room/${uuid}/`,
       email ? { user_email: email } : { queue_uuid: queueUuid },
     );
+    return response.data;
+  },
+
+  async updateCustomFields(uuid, customFields = {}) {
+    const response = await http.patch(`/room/${uuid}/update_custom_fields/`, customFields);
     return response.data;
   },
 };
