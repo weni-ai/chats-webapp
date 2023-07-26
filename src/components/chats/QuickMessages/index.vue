@@ -4,6 +4,7 @@
     :title="$t('quick_message')"
     icon="flash-1-3"
     @action="$emit('close')"
+    :flexible="true"
   >
     <section class="messages-container">
       <aside-slot-template-section class="messages-section">
