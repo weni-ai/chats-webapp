@@ -165,6 +165,7 @@ export default {
 
 .messages-container {
   height: 100%;
+  width: 100%;
 
   .messages-section {
     display: flex;
