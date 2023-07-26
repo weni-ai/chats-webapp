@@ -317,6 +317,7 @@ export default {
 
     close() {
       this.contact = null;
+      this.componentInAsideSlot = '';
     },
 
     scrollMessagesToBottom() {
