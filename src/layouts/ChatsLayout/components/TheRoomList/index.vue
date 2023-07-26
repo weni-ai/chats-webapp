@@ -112,8 +112,6 @@ export default {
     },
   },
   data: () => ({
-    page: 0,
-    limit: 100,
     nameOfContact: '',
     timerId: 0,
     loading: false,
@@ -133,7 +131,7 @@ export default {
     }),
     ...mapState({
       hasNext: (state) => state.rooms.hasNext,
-      listRoomHasNext: (state) => state.rooms.listRoomHasNext,
+      nextRooms: (state) => state.rooms.nextRooms,
     }),
     isHistoryView() {
       return this.$route.name === 'rooms.closed';
@@ -195,10 +193,8 @@ export default {
       const { viewedAgent } = this;
       try {
         await this.$store.dispatch('rooms/getAll', {
-          offset: this.page * this.limit,
           concat,
           order,
-          limit: this.limit,
           contact: this.nameOfContact,
           viewedAgent,
         });
@@ -209,8 +205,7 @@ export default {
       }
     },
     searchForMoreRooms() {
-      if (this.listRoomHasNext) {
-        this.page += 1;
+      if (this.nextRooms) {
         this.listRoom(true);
       }
     },

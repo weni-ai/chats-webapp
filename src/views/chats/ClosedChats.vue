@@ -210,7 +210,7 @@ export default {
     numberOfPages: 0,
     count: 1,
     limit: 50,
-    hasNext: false,
+    nextMessages: '',
     currentPage: 1,
     total: [],
     totalShowing: 0,
@@ -281,18 +281,24 @@ export default {
 
   methods: {
     async openContactHistory(contact, concat) {
-      const offset = this.page * 20;
       try {
         this.isLoading = true;
-        const response = await Message.getByContact(contact.uuid, offset, 20);
+        const response = await Message.getByContact({
+          contactUuid: contact.uuid,
+          nextMessages: this.nextMessages,
+        });
         let messages = response.results;
-        this.hasNext = response.next;
+        this.nextMessages = response.next;
         this.scrollMessagesToBottom();
         if (concat) {
           messages = response.results.concat(this.messages);
         }
         const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
         const groupedMessages = groupSequentialSentMessages(messagesWithSender);
+
+        // commit(mutations.SET_ACTIVE_ROOM_MESSAGES, messagesWithSender);
+        // commit(mutations.SET_ACTIVE_ROOM_NEXT_MESSAGES, responseNextMessages);
+
         this.messages = groupedMessages;
         this.contact = contact;
         this.isLoading = false;
@@ -304,16 +310,13 @@ export default {
 
     searchForMoreMessages() {
       if (this.isLoading) return;
-      if (this.hasNext) {
-        this.page += 1;
+      if (this.nextMessages) {
         this.openContactHistory(this.contact, true);
       }
     },
 
     close() {
       this.contact = null;
-      this.page = 0;
-      this.limit = 50;
     },
 
     scrollMessagesToBottom() {
