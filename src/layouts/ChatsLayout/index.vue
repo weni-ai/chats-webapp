@@ -28,7 +28,10 @@
     </slot>
 
     <slot name="template-message" v-if="contactListVisible">
-      <div :style="{ display: 'flex', flexDirection: 'column', height: '100vh' }">
+      <div
+        :style="{ display: 'flex', flexDirection: 'column', height: '100vh', paddingLeft: '10px' }"
+        class=""
+      >
         <contact-list class="room-list" :disabled="disabledChatList" @close="closeContactList" />
       </div>
     </slot>

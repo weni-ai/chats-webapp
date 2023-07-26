@@ -272,7 +272,6 @@ export default {
   flex-direction: column;
   gap: $unnnic-spacing-stack-xs;
   padding-bottom: $unnnic-spacing-inset-nano;
-  height: 100%;
 
   .template-messages {
     flex: 1 1;
