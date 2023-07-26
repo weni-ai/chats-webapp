@@ -97,6 +97,11 @@ export default {
 
       return rooms;
     },
+    async updateRoomContact({ commit }, { uuid }) {
+      const newRoom = await Room.getByUuid({ uuid });
+
+      commit(mutations.SET_ACTIVE_ROOM, newRoom);
+    },
     setActiveRoom({ commit }, room) {
       commit(mutations.SET_ACTIVE_ROOM, room);
     },

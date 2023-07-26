@@ -1,8 +1,5 @@
 <template>
-  <chats-layout
-    ref="chats-layout"
-    @select-quick-message="(quickMessage) => updateEditorMessage(quickMessage.text)"
-  >
+  <chats-layout>
     <chats-background v-if="!room" />
     <section v-if="!!room" class="active-chat">
       <chat-header
@@ -33,7 +30,9 @@
             ref="message-editor"
             v-model="editorMessage"
             :audio.sync="audioMessage"
-            @show-quick-messages="handlerShowQuickMessages"
+            @show-quick-messages="
+              componentInAsideSlot = componentInAsideSlot === 'quickMessages' ? '' : 'quickMessages'
+            "
             @send-message="sendMessage"
             @send-audio="sendAudio"
             @open-file-uploader="openFileUploader"
@@ -203,17 +202,17 @@ export default {
     },
     sidebarComponents() {
       return {
-        // quickMessages: {
-        //   name: QuickMessages.name,
-        //   listeners: {
-        //     close: () => {
-        //       this.componentInAsideSlot = '';
-        //     },
-        //     'select-quick-message': (quickMessage) => {
-        //       this.editorMessage = quickMessage.text;
-        //     },
-        //   },
-        // },
+        quickMessages: {
+          name: QuickMessages.name,
+          listeners: {
+            close: () => {
+              this.componentInAsideSlot = '';
+            },
+            'select-quick-message': (quickMessage) => {
+              this.editorMessage = quickMessage.text;
+            },
+          },
+        },
         contactInfo: {
           name: ContactInfo.name,
           listeners: {
@@ -349,11 +348,6 @@ export default {
         dateStyle: 'short',
       }).format(new Date());
     },
-
-    handlerShowQuickMessages() {
-      this.$refs['chats-layout']?.handlerShowQuickMessages();
-    },
-
     openModalCloseChat() {
       this.showCloseModal = true;
     },
@@ -382,10 +376,6 @@ export default {
         this.showAlertForLastMessage = false;
       }
     },
-
-    updateEditorMessage(message) {
-      this.editorMessage = message;
-    },
   },
 
   watch: {
@@ -413,8 +403,11 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  max-height: 100vh;
-  padding: $unnnic-spacing-stack-sm 0;
+  padding: {
+    top: $unnnic-spacing-inset-md;
+    bottom: $unnnic-spacing-inset-sm;
+    left: $unnnic-spacing-inset-md;
+  }
 
   .messages {
     overflow-y: auto;
@@ -429,6 +422,7 @@ export default {
   }
 
   .message-editor {
+    margin-right: $unnnic-spacing-inline-sm;
     margin-top: auto;
   }
 }

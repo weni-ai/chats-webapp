@@ -1,7 +1,7 @@
 <template>
   <div class="view-mode__container" v-if="viewedAgent.email">
     <view-mode-header :viewedAgent="viewedAgent.name" />
-    <main :class="['view-mode__main', isContactInfoOpened && 'has-aside']">
+    <main class="view-mode__main unnnic-grid-giant">
       <the-room-list
         v-if="viewedAgent.email"
         class="room-list__container unnnic-grid-span-3"
@@ -10,7 +10,7 @@
       />
 
       <template v-if="!!room && room.uuid">
-        <section class="chat">
+        <section :class="['chat', `unnnic-grid-span-${isContactInfoOpened ? '6' : '9'}`]">
           <chat-header :room="room" @show-contact-info="handleModal('ContactInfo', 'open')" />
           <chat-messages
             :room="room"
@@ -41,13 +41,13 @@
 
         <contact-info
           v-if="isContactInfoOpened"
-          class="contact-info"
+          class="unnnic-grid-span-3 contact-info"
           isViewMode
           @close="handleModal('ContactInfo', 'close')"
         />
       </template>
 
-      <chats-background v-else class="view-mode__background" />
+      <chats-background v-else class="unnnic-grid-span-9" />
     </main>
   </div>
 </template>
@@ -165,38 +165,20 @@ $mainHeight: calc(100vh - 40px);
 .view-mode {
   &__container {
     height: 100vh;
-
-    overflow: hidden;
   }
 
   &__main {
     height: $mainHeight;
-    max-height: $mainHeight;
-
     overflow-y: hidden;
 
     padding: 0;
-
-    display: grid;
-    grid-template-columns: 2.8fr 9fr;
-
-    &.has-aside {
-      grid-template-columns: 2.8fr 6.2fr 2.8fr;
-    }
 
     .room-list__container {
       height: $mainHeight;
 
       display: flex;
       flex-direction: column;
-
-      padding: $unnnic-spacing-inset-sm;
-      padding: {
-        right: 0;
-        top: 0;
-      }
-
-      grid-column: 1;
+      padding-left: 0.6rem;
     }
 
     .chat {
@@ -205,11 +187,9 @@ $mainHeight: calc(100vh - 40px);
       display: flex;
       flex-direction: column;
 
-      grid-column: 2;
-
       padding: {
         bottom: $unnnic-spacing-inset-sm;
-        left: $unnnic-spacing-inline-sm;
+        left: $unnnic-spacing-inset-md;
       }
 
       .messages {
@@ -232,17 +212,8 @@ $mainHeight: calc(100vh - 40px);
 
     .contact-info {
       border: 1px solid $unnnic-color-neutral-soft;
-
       overflow-y: auto;
-
-      grid-column: 3;
     }
-  }
-
-  &__background {
-    grid-column: 2;
-
-    margin-left: $unnnic-spacing-inline-sm;
   }
 }
 </style>

@@ -8,26 +8,23 @@
     <section v-if="!isHistory" class="scrollable" style="background-color: #ffffff">
       <aside-slot-template-section>
         <section class="infos">
-          <p class="username">
-            {{ room.contact.name }}
-          </p>
+          <header class="connection-info__header">
+            <h1 class="username">
+              {{ room.contact.name }}
+            </h1>
+
+            <unnnic-button-icon
+              @click="refreshContactInfos"
+              type="secondary"
+              size="small"
+              icon="button-refresh-arrow-1"
+            />
+          </header>
 
           <div class="connection-info">
             <p v-if="room.contact.status === 'online'">
               {{ $t('status.online') }}
             </p>
-            <template>
-              <p style="margin-bottom: 0.75rem">
-                <span class="title"> {{ contactNumber.plataform }}: </span>
-                {{ contactNumber.contactNum }}
-              </p>
-            </template>
-            <template v-if="!!room.custom_fields">
-              <p v-for="(value, key) in customFields" :key="key">
-                <span class="title"> {{ key }}: </span>
-                {{ value }}
-              </p>
-            </template>
             <p v-if="lastMessageFromContact?.created_on" style="margin-bottom: 16px">
               {{
                 $t('last_message_time.date', {
@@ -35,15 +32,25 @@
                 })
               }}
             </p>
-            <unnnic-button
-              v-if="!isHistory && !isViewMode"
-              class="transfer__button"
-              text="Ver histórico do contato"
-              iconLeft="export-1"
-              type="secondary"
-              size="small"
-              @click="openHistory()"
-            />
+            <template>
+              <hgroup class="info">
+                <h3 class="title">{{ contactNumber.plataform }}:</h3>
+                <h4 class="description">{{ contactNumber.contactNum }}</h4>
+              </hgroup>
+            </template>
+            <template v-if="!!room.custom_fields">
+              <custom-field
+                v-for="(value, key) in customFields"
+                :key="key"
+                :title="key"
+                :description="value"
+                :is-editable="room.can_edit_custom_fields"
+                :is-current="isCurrentCustomField(key)"
+                :value="currentCustomField?.[key]"
+                @update-current-custom-field="updateCurrentCustomField"
+                @save-value="saveCurrentCustomFieldValue"
+              />
+            </template>
             <div
               style="display: flex; margin-left: -8px; align-items: center"
               v-if="!isLinkedToOtherAgent && !isViewMode"
@@ -67,6 +74,15 @@
                 <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
               </unnnic-tool-tip>
             </div>
+            <unnnic-button
+              v-if="!isHistory && !isViewMode"
+              class="transfer__button"
+              text="Ver histórico do contato"
+              iconLeft="export-1"
+              type="secondary"
+              size="small"
+              @click="openHistory()"
+            />
             <div v-if="isLinkedToOtherAgent">
               <span>{{
                 $t('switch_contact_info.linked_contact', {
@@ -216,6 +232,7 @@ import Sector from '@/services/api/resources/settings/sector';
 import LinkContact from '@/services/api/resources/chats/linkContact';
 import { unnnicCallAlert } from '@weni/unnnic-system';
 import Queue from '@/services/api/resources/settings/queue';
+import CustomField from './CustomField';
 import ContactMedia from './Media';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
 
@@ -227,6 +244,7 @@ export default {
   components: {
     AsideSlotTemplate,
     AsideSlotTemplateSection,
+    CustomField,
     ContactMedia,
     FullscreenPreview,
   },
@@ -260,6 +278,8 @@ export default {
     transferLabel: '',
     page: 0,
     contactHaveHistory: false,
+    customFields: [],
+    currentCustomField: {},
   }),
 
   computed: {
@@ -281,14 +301,10 @@ export default {
       return this.transferOptions.find((option) => option.name === this.transferContactSearch);
     },
 
-    customFields() {
-      return this.room.custom_fields;
-    },
-
     contactNumber() {
       const plataform = this.room.urn.split(':').at(0);
       const number = this.room.urn.split(':').at(-1);
-      const whatsapp = `+ ${number.substr(-20, 20)} `;
+      const whatsapp = `+${number.substr(-20, 20)} `;
       const infoNumber = {
         plataform,
         contactNum: plataform === 'whatsapp' ? whatsapp : number,
@@ -309,6 +325,8 @@ export default {
 
   async created() {
     if (!this.isHistory) {
+      this.customFields = this.room.custom_fields;
+
       if (
         moment(this.room.contact.created_on).format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')
       ) {
@@ -381,6 +399,34 @@ export default {
           throw error;
         }
       }
+    },
+
+    getCurrentCustomFieldKey() {
+      return Object.keys(this.currentCustomField)?.[0];
+    },
+
+    isCurrentCustomField(key) {
+      if (!this.currentCustomField) return false;
+      return this.getCurrentCustomFieldKey() === key;
+    },
+
+    updateCurrentCustomField({ key, value }) {
+      this.currentCustomField = key ? { [key]: value } : {};
+    },
+
+    saveCurrentCustomFieldValue() {
+      const currentCustomFieldKey = this.getCurrentCustomFieldKey();
+      const currentCustomFieldValue = this.currentCustomField[currentCustomFieldKey];
+
+      if (currentCustomFieldValue) {
+        if (currentCustomFieldValue !== this.customFields[currentCustomFieldKey]) {
+          Room.updateCustomFields(this.room.uuid, this.currentCustomField);
+        }
+
+        this.customFields[currentCustomFieldKey] = currentCustomFieldValue;
+      }
+
+      this.updateCurrentCustomField({});
     },
 
     openFullScreen(url, images) {
@@ -456,11 +502,23 @@ export default {
       }
     },
 
-    showStatusAlert(status) {
+    async refreshContactInfos() {
+      const { uuid } = this.room;
+
+      try {
+        await this.$store.dispatch('rooms/updateRoomContact', { uuid });
+
+        this.showAlert('Informações atualizadas');
+      } catch (error) {
+        console.error('Erro ao atualizar as informações do contato.', error);
+      }
+    },
+
+    showAlert(text) {
       unnnicCallAlert({
         props: {
           title: ``,
-          text: `${status}`,
+          text: `${text}`,
           icon: 'check-circle-1-1-1',
           scheme: 'feedback-green',
           closeText: 'Fechar',
@@ -469,6 +527,10 @@ export default {
         },
         seconds: 10,
       });
+    },
+
+    showStatusAlert(status) {
+      this.showAlert(status);
     },
 
     navigate(name) {
@@ -521,6 +583,11 @@ export default {
     },
   },
   watch: {
+    room(newRoom) {
+      if (!this.isHistory) {
+        this.customFields = newRoom.custom_fields;
+      }
+    },
     transferRadio: {
       handler() {
         if (this.transferRadio === 'queue') {
@@ -579,8 +646,31 @@ export default {
       font-size: $unnnic-font-size-body-md;
       color: $unnnic-color-neutral-cloudy;
 
-      .title {
-        font-weight: $unnnic-font-weight-bold;
+      &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .info {
+        display: flex;
+        align-items: center;
+        gap: $unnnic-spacing-inline-nano;
+
+        &:not(.custom) {
+          margin-bottom: 0.75rem;
+        }
+
+        .title {
+          font-weight: $unnnic-font-weight-bold;
+          text-transform: capitalize;
+        }
+
+        .title,
+        .description {
+          font-size: $unnnic-font-size-body-gt;
+          cursor: default;
+        }
       }
     }
   }
