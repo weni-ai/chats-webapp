@@ -20,7 +20,7 @@
       </span>
     </header>
 
-    <section class="aside-slot-template__sections">
+    <section :class="['aside-slot-template__sections', flexible && 'flexible']">
       <slot />
     </section>
   </aside>
@@ -45,6 +45,10 @@ export default {
     title: {
       type: String,
       required: true,
+    },
+    flexible: {
+      type: String,
+      required: false,
     },
   },
 };
@@ -85,7 +89,11 @@ export default {
   &__sections {
     flex: 1 1;
     min-height: 0;
-    display: flex;
+    display: grid;
+
+    &.flexible {
+      display: flex;
+    }
   }
 }
 </style>
