@@ -5,7 +5,7 @@
     :title="$t('contact_information')"
     @action="$listeners.close"
   >
-    <section v-if="!isHistory" class="scrollable" style="background-color: #ffffff">
+    <section v-if="!isHistory" class="scrollable">
       <aside-slot-template-section>
         <section class="infos">
           <p class="username">
@@ -134,7 +134,7 @@
       </aside-slot-template-section>
     </section>
 
-    <section v-if="isHistory" class="scrollable" style="background-color: #ffffff">
+    <section v-if="isHistory" class="scrollable">
       <aside-slot-template-section>
         <section class="infos">
           <div class="connection-info">
@@ -547,6 +547,12 @@ export default {
   .scrollable {
     overflow-y: auto;
     height: 100%;
+  }
+
+  section {
+    width: 100%;
+
+    background-color: $unnnic-color-background-snow;
   }
 
   .infos {
