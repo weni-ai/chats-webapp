@@ -44,8 +44,9 @@
                 :key="key"
                 :title="key"
                 :description="value"
-                :value="currentCustomField?.[key]"
+                :is-editable="room.can_edit_custom_fields"
                 :is-current="isCurrentCustomField(key)"
+                :value="currentCustomField?.[key]"
                 @update-current-custom-field="updateCurrentCustomField"
                 @save-value="saveCurrentCustomFieldValue"
               />
@@ -277,8 +278,6 @@ export default {
     transferLabel: '',
     page: 0,
     contactHaveHistory: false,
-    // customFieldEditing: '',
-    // customFieldEditingDescription: '',
     customFields: [],
     currentCustomField: {},
   }),

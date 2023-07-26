@@ -1,19 +1,30 @@
 <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
   <div class="custom-field">
-    <component :is="isCurrent ? 'label' : 'h3'" class="title" tabindex="0">{{ title }}: </component>
-    <div :class="['description', isCurrent && 'editing']">
-      <unnnic-tool-tip v-show="!isCurrent" enabled :text="$t('edit')" side="bottom">
+    <component :is="isEditable && isCurrent ? 'label' : 'h3'" class="title" tabindex="0"
+      >{{ title }}:
+    </component>
+    <div :class="['description', isEditable && 'editable', isCurrent && 'current']">
+      <unnnic-tool-tip
+        v-show="!isCurrent"
+        class="tooltip"
+        side="bottom"
+        :enabled="isEditable"
+        :text="$t('edit')"
+        :title="description"
+      >
         <h4
           tabindex="0"
-          @click="updateCurrentCustomField({ key: title, value: description })"
-          @keypress.enter="updateCurrentCustomField({ key: title, value: description })"
+          @click="isEditable && updateCurrentCustomField({ key: title, value: description })"
+          @keypress.enter="
+            isEditable && updateCurrentCustomField({ key: title, value: description })
+          "
         >
           {{ description }}
         </h4>
       </unnnic-tool-tip>
       <input
-        v-show="isCurrent"
+        v-show="isEditable && isCurrent"
         :ref="'custom_field_input_' + title"
         type="text"
         :value="value"
@@ -39,6 +50,11 @@ export default {
       type: String,
       default: '',
       required: true,
+    },
+    isEditable: {
+      type: Boolean,
+      default: false,
+      required: false,
     },
     isCurrent: {
       type: Boolean,
@@ -93,6 +109,8 @@ export default {
   .title,
   .description {
     font-size: $unnnic-font-size-body-gt;
+
+    cursor: default;
   }
 
   .description {
@@ -103,21 +121,23 @@ export default {
 
     max-width: 100%;
 
-    cursor: text;
-
     overflow: hidden;
 
-    > .unnnic-tooltip {
+    > .tooltip {
       display: flex;
 
       width: 100%;
     }
 
-    &:hover {
-      border: 1px solid $unnnic-color-neutral-clean;
+    &.editable {
+      cursor: text;
+
+      &:hover {
+        border: 1px solid $unnnic-color-neutral-clean;
+      }
     }
 
-    &.editing {
+    &.current {
       width: 100%;
       border: 1px solid $unnnic-color-neutral-cleanest;
 

@@ -61,6 +61,14 @@
         <h2 class="title">
           {{ $t('sector.additional_options.title') }}
         </h2>
+        <unnnicSwitch
+          v-model="sector.can_trigger_flows"
+          :textRight="
+            sector.can_trigger_flows
+              ? $t('sector.additional_options.template_message.switch_active')
+              : $t('sector.additional_options.template_message.switch_disabled')
+          "
+        />
         <div class="form-section__switch__container">
           <unnnicSwitch
             v-model="sector.sign_messages"
