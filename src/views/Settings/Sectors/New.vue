@@ -98,6 +98,7 @@ export default {
       name: '',
       can_trigger_flows: false,
       can_edit_custom_fields: false,
+      sign_messages: false,
       managers: [],
       workingDay: {
         start: '',
@@ -182,6 +183,7 @@ export default {
         name,
         can_trigger_flows,
         can_edit_custom_fields,
+        sign_messages,
         maxSimultaneousChatsByAgent,
         workingDay,
       } = this.sector;
@@ -189,6 +191,7 @@ export default {
         name,
         can_trigger_flows: can_trigger_flows !== '',
         can_edit_custom_fields: can_edit_custom_fields !== '',
+        sign_messages: sign_messages !== '',
         rooms_limit: Number(maxSimultaneousChatsByAgent),
         work_start: workingDay.start,
         work_end: workingDay.end,
