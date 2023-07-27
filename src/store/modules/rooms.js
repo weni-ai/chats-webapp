@@ -176,6 +176,9 @@ export default {
       if (messageAlreadyExists) commit(mutations.UPDATE_MESSAGE, { message });
       else commit(mutations.ADD_MESSAGE, message);
     },
+    async clearNextMessages({ commit }) {
+      commit(mutations.SET_ACTIVE_ROOM_NEXT_MESSAGES, '');
+    },
     updateRoom({ state, commit }, { room, userEmail, routerReplace, viewedAgentEmail }) {
       const rooms = state.rooms
         .map((mappedRoom) => (mappedRoom.uuid === room.uuid ? { ...room } : mappedRoom))
