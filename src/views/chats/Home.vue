@@ -400,6 +400,8 @@ export default {
           this.$delete(this.$store.state.rooms.newMessagesByRoom, this.id);
         }
 
+        this.$store.dispatch('rooms/clearNextMessages');
+
         await this.setActiveRoom(this.id);
         this.getRoomMessages();
       },
