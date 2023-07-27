@@ -40,7 +40,7 @@
           </span>
         </section>
 
-        <p v-else :class="{ 'unsent-message': content.sent === false, disabled }">
+        <p v-if="content.text" :class="{ 'unsent-message': content.sent === false, disabled }">
           <span v-html="removeHtmlDangerousContent(content.text).replace(/\n/g, '<br/>')" />
           <unnnic-tool-tip
             v-if="content.sent === false"
