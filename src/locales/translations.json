@@ -836,6 +836,16 @@
     "es": "Mensajes rápidos"
   },
   "quick_messages": {
+    "title": {
+      "pt-br": "Mensagens rápidas",
+      "en-us": "Quick messages",
+      "es": "Mensajes rápidos"
+    },
+    "title_by_sector": {
+      "pt-br": "Mensagens rápidas em {sector}",
+      "en-us": "Quick messages in {sector}",
+      "es": "Mensajes rápidos en {sector}"
+    },
     "personal": {
       "pt-br": "Suas mensagens rápidas",
       "en-us": "Your quick messages",

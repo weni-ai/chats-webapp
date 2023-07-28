@@ -19,19 +19,19 @@
     </section>
 
     <section v-if="isEditing" class="form-queue__queues">
-      <sector-queues-list :sector="sector.name" :queues="queues" @visualize="visualize" />
+      <list-sector-queues :sector="sector.name" :queues="queues" @visualize="visualize" />
     </section>
   </section>
 </template>
 
 <script>
-import SectorQueuesList from '@/components/settings/lists/ListSectorQueues';
+import ListSectorQueues from '@/components/settings/lists/ListSectorQueues';
 
 export default {
   name: 'FormQueue',
 
   components: {
-    SectorQueuesList,
+    ListSectorQueues,
   },
 
   props: {

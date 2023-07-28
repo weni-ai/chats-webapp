@@ -100,6 +100,10 @@
         />
       </template>
 
+      <template #quick-messages>
+        <form-quick-messages :quick_messages="quick_messages" :sector="sector" />
+      </template>
+
       <template #tags>
         <form-tags v-model="tags" @add="addTagToAddList" @remove="addTagToRemoveList" />
       </template>
@@ -118,6 +122,12 @@
         type="secondary"
         @click="save"
         v-if="this.currentTab === 'sector' || this.queueToEdit || currentTab === 'tags'"
+      />
+      <unnnic-button
+        icon-left="add-circle-1"
+        :text="$t('quick_messages.add_new')"
+        type="secondary"
+        v-if="this.currentTab === 'quick-messages'"
       />
       <unnnic-modal
         :showModal="openModal"
@@ -146,11 +156,13 @@ import { unnnicCallAlert } from '@weni/unnnic-system';
 import FormAgent from '@/components/settings/forms/Agent';
 import FormSector from '@/components/settings/forms/Sector';
 import FormQueue from '@/components/settings/forms/Queue';
+import FormQuickMessages from '@/components/settings/forms/QuickMessages';
 import FormTags from '@/components/settings/forms/Tags';
 import SectorTabs from '@/components/settings/SectorTabs';
 
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
+import QuickMessage from '@/services/api/resources/chats/quickMessage';
 import Project from '@/services/api/resources/settings/project';
 
 export default {
@@ -160,6 +172,7 @@ export default {
     FormAgent,
     FormQueue,
     FormSector,
+    FormQuickMessages,
     FormTags,
     SectorTabs,
   },
@@ -214,6 +227,7 @@ export default {
     agents: [],
     projectAgents: [],
     projectManagers: [],
+    quick_messages: [],
     tags: [],
     currentTags: [],
     toAddTags: [],
@@ -342,6 +356,10 @@ export default {
         this.getQueues();
       }
     },
+    async getQuickMessages() {
+      const quick_messages = await QuickMessage.getAll({ offset: 10, limit: 10, sector: true });
+      this.quick_messages = quick_messages.results;
+    },
     async getTags() {
       const tags = await Sector.tags(this.sector.uuid);
       this.tags = tags.results;
@@ -422,6 +440,8 @@ export default {
     async handleTabChange(currentTab) {
       if (currentTab === 'sector') return;
       if (currentTab === 'queues' && this.queues.length === 0) await this.getQueues();
+      if (currentTab === 'quick-messages' && this.quick_messages.length === 0)
+        await this.getQuickMessages();
       if (currentTab === 'tags' && this.tags.length === 0) await this.getTags();
       this.queueToEdit = null;
       this.pageAgents = 0;

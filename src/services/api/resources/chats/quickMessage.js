@@ -5,7 +5,7 @@ export default {
     const endpoint = sector ? '/sector_quick_messages/' : '/quick_messages/';
 
     const response = await http.get(endpoint, {
-      params: {
+      [sector ? 'data' : 'params']: {
         offset,
         limit,
       },
