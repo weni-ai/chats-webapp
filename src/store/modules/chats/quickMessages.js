@@ -2,6 +2,7 @@ const module = {
   namespaced: true,
   state: {
     messages: [],
+    sharedMessages: [],
   },
   mutations: {
     addMessage(state, message) {

@@ -7,16 +7,37 @@
   >
     <section class="messages-container">
       <aside-slot-template-section class="messages-section">
-        <div class="messages">
-          <quick-message-card
-            v-for="quickMessage in $store.state.chats.quickMessages.messages"
-            :key="quickMessage.uuid"
-            :quickMessage="quickMessage"
-            clickable
-            @select="$emit('select-quick-message', quickMessage)"
-            @edit="quickMessageToEdit = quickMessage"
-            @delete="quickMessageToDelete = quickMessage"
-          />
+        <div>
+          <app-accordion class="messages" :title="$t('quick_messages.personal')">
+            <template v-slot:content>
+              <div class="chat-group">
+                <quick-message-card
+                  v-for="quickMessage in $store.state.chats.quickMessages.messages"
+                  :key="quickMessage.uuid"
+                  :quickMessage="quickMessage"
+                  clickable
+                  @select="$emit('select-quick-message', quickMessage)"
+                  @edit="quickMessageToEdit = quickMessage"
+                  @delete="quickMessageToDelete = quickMessage"
+                />
+              </div>
+            </template>
+          </app-accordion>
+          <app-accordion class="messages-shared" :title="$t('quick_messages.shared')">
+            <template v-slot:content>
+              <div class="chat-group">
+                <quick-message-card
+                  v-for="quickMessage in $store.state.chats.quickMessages.messages"
+                  :key="quickMessage.uuid"
+                  :quickMessage="quickMessage"
+                  clickable
+                  @select="$emit('select-quick-message', quickMessage)"
+                  @edit="quickMessageToEdit = quickMessage"
+                  @delete="quickMessageToDelete = quickMessage"
+                />
+              </div>
+            </template>
+          </app-accordion>
         </div>
 
         <unnnic-button
@@ -73,6 +94,7 @@
 import { unnnicCallAlert } from '@weni/unnnic-system';
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
+import AppAccordion from '@/components/chats/AppAccordion';
 import QuickMessage from '@/services/api/resources/chats/quickMessage';
 import QuickMessageCard from './QuickMessageCard';
 import QuickMessageForm from './QuickMessageForm';
@@ -83,6 +105,7 @@ export default {
   components: {
     AsideSlotTemplate,
     AsideSlotTemplateSection,
+    AppAccordion,
     QuickMessageCard,
     QuickMessageForm,
   },
@@ -180,7 +203,7 @@ export default {
     border-right: solid 1px #e2e6ed;
 
     max-height: 100%;
-    overflow-y: auto;
+    overflow: hidden auto;
     // insert space between content and scrollbar
     margin-right: -$unnnic-spacing-inline-md;
     padding-right: $unnnic-spacing-inset-md;

@@ -132,7 +132,8 @@ export default {
       this.loading = true;
       let hasNext = false;
       try {
-        const response = await QuickMessage.all(this.page * this.limit, this.limit);
+        const { page, limit } = this;
+        const response = await QuickMessage.getAll({ offset: page * limit, limit, sector: true });
         this.page += 1;
         this.$store.state.chats.quickMessages.messages =
           this.$store.state.chats.quickMessages.messages.concat(response.results);

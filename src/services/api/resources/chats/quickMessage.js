@@ -1,8 +1,10 @@
 import http from '@/services/api/http';
 
 export default {
-  async all(offset, limit) {
-    const response = await http.get('/quick_messages/', {
+  async getAll({ offset, limit, sector = false }) {
+    const endpoint = sector ? '/sector_quick_messages/' : '/quick_messages/';
+
+    const response = await http.get(endpoint, {
       params: {
         offset,
         limit,
