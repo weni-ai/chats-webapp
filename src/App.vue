@@ -170,6 +170,16 @@ export default {
 
       this.$router.push({ name: 'onboarding.agent' });
     },
+
+    isAJson(message) {
+      try {
+        JSON.parse(message);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+
     listeners() {
       this.ws.on('msg.create', async (message) => {
         const { rooms, activeRoom } = this.$store.state.rooms;
@@ -192,6 +202,9 @@ export default {
           if (isCurrentRoom || isViewModeCurrentRoom) {
             this.$store.dispatch('rooms/addMessage', message);
           }
+
+          if (this.isAJson(message.text)) return;
+
           this.$store.dispatch('rooms/addNewMessagesByRoom', {
             room: message.room,
             message: {
