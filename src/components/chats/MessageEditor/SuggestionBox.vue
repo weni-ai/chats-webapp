@@ -9,7 +9,7 @@
     <section class="suggestion-box__shortcuts" @mousemove="activeShortcutIndex = -1">
       <div
         v-for="(suggestion, index) in filteredSuggestions"
-        :key="suggestion.shortcut"
+        :key="suggestion.uuid"
         @click="select(suggestion)"
         @keypress.enter="select(suggestion)"
         tabindex="-1"
