@@ -22,6 +22,15 @@ export default {
     return response.data;
   },
 
+  async getByUuid({ uuid }) {
+    if (uuid) {
+      const response = await http.get(`/room/${uuid}/`);
+      return response.data;
+    }
+
+    return console.error('"Uuid" necessário para requisição.');
+  },
+
   async getClosed() {
     const response = await http.get('/room/', { params: { is_active: false } });
     return response.data;
@@ -43,6 +52,11 @@ export default {
       `/room/${uuid}/`,
       email ? { user_email: email } : { queue_uuid: queueUuid },
     );
+    return response.data;
+  },
+
+  async updateCustomFields(uuid, customFields = {}) {
+    const response = await http.patch(`/room/${uuid}/update_custom_fields/`, customFields);
     return response.data;
   },
 };

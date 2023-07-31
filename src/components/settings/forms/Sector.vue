@@ -88,10 +88,10 @@
           </unnnic-tool-tip>
         </div>
 
-        <!-- <unnnicSwitch
+        <unnnicSwitch
           v-model="sector.can_edit_custom_fields"
           :textRight="$t('sector.additional_options.edit_custom_fields')"
-        /> -->
+        />
       </div>
       <div>
         <h2 class="title">{{ $t('sector.managers.working_day.title') }}</h2>
