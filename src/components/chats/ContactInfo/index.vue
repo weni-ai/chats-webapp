@@ -14,11 +14,11 @@
             </h1>
 
             <unnnic-button-icon
-              @click="refreshContactInfos"
-              :disabled="loading"
+              icon="button-refresh-arrow-1"
               type="secondary"
               size="small"
-              icon="button-refresh-arrow-1"
+              @click="refreshContactInfos"
+              :disabled="isRefreshContactDisabled"
             />
           </header>
 
@@ -281,6 +281,7 @@ export default {
     contactHaveHistory: false,
     customFields: [],
     currentCustomField: {},
+    isRefreshContactDisabled: false,
   }),
 
   computed: {
@@ -504,7 +505,14 @@ export default {
     },
 
     async refreshContactInfos() {
-      this.loading = true;
+      if (this.isRefreshContactDisabled) return;
+
+      this.isRefreshContactDisabled = true;
+      const timeToCanRefreshAgain = 5000;
+
+      setTimeout(() => {
+        this.isRefreshContactDisabled = false;
+      }, timeToCanRefreshAgain);
 
       const { uuid } = this.room;
 
@@ -515,8 +523,6 @@ export default {
       } catch (error) {
         console.error('Erro ao atualizar as informações do contato.', error);
       }
-
-      this.loading = false;
     },
 
     showAlert(text) {
