@@ -109,6 +109,8 @@
 <script>
 import { mapState, mapGetters } from 'vuex';
 
+import * as notifications from '@/utils/notifications';
+
 import ChatsLayout from '@/layouts/ChatsLayout';
 import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
 import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone';
@@ -398,6 +400,10 @@ export default {
         this.getRoomMessages();
       },
     },
+  },
+
+  mounted() {
+    notifications.requestPermission();
   },
 };
 </script>
