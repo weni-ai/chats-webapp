@@ -37,6 +37,7 @@
         :style="{ display: 'flex', flexDirection: 'column', height: '100vh', paddingLeft: '10px' }"
         class="unnnic-grid-span-3"
       >
+        <button @click="requestNotificationsPermission">Ativar notificações</button>
         <preferences-bar
           :style="{ margin: '16px 0 0 0px' }"
           @show-quick-messages="preferencesOpenQuickMessage"
@@ -119,6 +120,8 @@
 </template>
 
 <script>
+import * as notifications from '@/utils/notifications';
+
 import PreferencesBar from '@/components/PreferencesBar.vue';
 import Sector from '@/services/api/resources/settings/sector.js';
 import TemplateMessages from '@/services/api/resources/chats/templateMessage.js';
@@ -154,6 +157,9 @@ export default {
   },
 
   methods: {
+    requestNotificationsPermission() {
+      notifications.requestPermission();
+    },
     preferencesOpenQuickMessage() {
       this.showQuickMessagePreferencesBar = true;
     },
