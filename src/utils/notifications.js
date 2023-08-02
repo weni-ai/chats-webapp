@@ -1,6 +1,6 @@
 import i18n from '@/plugins/i18n';
-import logo from '../assets/weni-logo.svg';
 import iframessa from 'iframessa';
+import logo from '../assets/weni-logo.svg';
 
 iframessa.register('chats');
 
