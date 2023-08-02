@@ -8,7 +8,7 @@
       :aria-controls="`collapse${_uid}`"
       style="display: flex; align-items: center; justify-content: space-between; cursor: pointer"
     >
-      <header :class="{ disabled }">
+      <header>
         <h2>{{ title }}</h2>
       </header>
       <unnnic-icon
@@ -62,12 +62,6 @@ export default {
     justify-content: space-between;
 
     padding: 0 0 0.5rem 0.5rem;
-
-    &.disabled {
-      h2 {
-        color: $unnnic-color-neutral-lightest;
-      }
-    }
 
     h2 {
       font-size: $unnnic-font-size-body-md;
