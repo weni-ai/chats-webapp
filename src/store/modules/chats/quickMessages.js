@@ -20,8 +20,31 @@ export default {
     [mutations.SET_QUICK_MESSAGES](state, quickMessages) {
       state.quickMessages = quickMessages;
     },
-    [mutations.ADD_QUICK_MESSAGE](state, quickMessage) {
-      state.quickMessages.unshift({ ...quickMessage });
+    [mutations.ADD_QUICK_MESSAGE](state, { title, text, shortcut }) {
+      state.quickMessages.unshift({ title, text, shortcut });
+    },
+    [mutations.UPDATE_QUICK_MESSAGE](state, { uuid, title, text, shortcut }) {
+      const quickMessageToUpdate = state.quickMessages.find(
+        (quickMessage) => quickMessage.uuid === uuid,
+      );
+
+      if (quickMessageToUpdate) {
+        const updatedQuickMessage = {
+          ...quickMessageToUpdate,
+          title,
+          text,
+          shortcut,
+        };
+
+        state.quickMessages = state.quickMessages.map((quickMessage) =>
+          quickMessage.uuid === uuid ? updatedQuickMessage : quickMessage,
+        );
+      }
+    },
+    [mutations.DELETE_QUICK_MESSAGE](state, uuid) {
+      state.quickMessages = state.quickMessages.filter(
+        (quickMessage) => quickMessage.uuid !== uuid,
+      );
     },
     [mutations.SET_NEXT_QUICK_MESSAGES](state, nextQuickMessages) {
       state.nextQuickMessages = nextQuickMessages;
@@ -40,6 +63,26 @@ export default {
       commit(mutations.SET_QUICK_MESSAGES, newQuickMessages);
 
       return newQuickMessages;
+    },
+
+    async create({ commit }, { title, text, shortcut }) {
+      const newQuickMessage = { title, text, shortcut };
+      await QuickMessage.create(newQuickMessage);
+
+      commit(mutations.ADD_QUICK_MESSAGE, newQuickMessage);
+    },
+
+    async update({ commit }, { uuid, title, text, shortcut }) {
+      const dataToUpdate = { title, text, shortcut };
+      await QuickMessage.update(uuid, dataToUpdate);
+
+      commit(mutations.UPDATE_QUICK_MESSAGE, { uuid, ...dataToUpdate });
+    },
+
+    async delete({ commit }, uuid) {
+      await QuickMessage.delete(uuid);
+
+      commit(mutations.DELETE_QUICK_MESSAGE, uuid);
     },
   },
 };

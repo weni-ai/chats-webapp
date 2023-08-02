@@ -89,12 +89,14 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex';
+
 import { unnnicCallAlert } from '@weni/unnnic-system';
+
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
 import AppAccordion from '@/components/chats/AppAccordion';
-import QuickMessage from '@/services/api/resources/chats/quickMessage';
-import { mapState } from 'vuex';
+
 import QuickMessageCard from './QuickMessageCard';
 import QuickMessageForm from './QuickMessageForm';
 
@@ -129,9 +131,14 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      actionCreateQuickMessage: 'chats/quickMessages/create',
+      actionUpdateQuickMessage: 'chats/quickMessages/update',
+      actionDeleteQuickMessage: 'chats/quickMessages/delete',
+    }),
+
     async createQuickMessage({ title, text, shortcut }) {
-      const quickMessage = await QuickMessage.create({ title, text, shortcut });
-      this.$store.state.chats.quickMessages.messages.push(quickMessage);
+      this.actionCreateQuickMessage({ title, text, shortcut });
 
       unnnicCallAlert({
         props: {
@@ -147,11 +154,7 @@ export default {
       this.quickMessageToEdit = null;
     },
     async updateQuickMessage({ uuid, title, text, shortcut }) {
-      const quickMessage = await QuickMessage.update(uuid, { title, text, shortcut });
-      this.$store.state.chats.quickMessages.messages =
-        this.$store.state.chats.quickMessages.messages.map((m) =>
-          m.uuid === quickMessage.uuid ? quickMessage : m,
-        );
+      this.actionUpdateQuickMessage({ uuid, title, text, shortcut });
 
       unnnicCallAlert({
         props: {
@@ -171,9 +174,8 @@ export default {
     },
     async deleteQuickMessage() {
       const { uuid } = this.quickMessageToDelete;
-      await QuickMessage.delete(uuid);
-      this.$store.state.chats.quickMessages.messages =
-        this.$store.state.chats.quickMessages.messages.filter((m) => m.uuid !== uuid);
+
+      this.actionDeleteQuickMessage(uuid);
       this.quickMessageToDelete = null;
     },
   },
