@@ -84,6 +84,10 @@ export default {
       display: flex;
       align-items: center;
       gap: 0.5rem;
+
+      span {
+        white-space: nowrap;
+      }
     }
   }
   .clickable {
