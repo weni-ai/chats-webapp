@@ -271,21 +271,21 @@ export default {
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-stack-xs;
-  padding-bottom: $unnnic-spacing-inset-nano;
+
+  padding: $unnnic-spacing-inset-sm;
+  padding-right: 0;
+  height: 100%;
 
   .template-messages {
     flex: 1 1;
     display: flex;
     flex-direction: column;
     gap: $unnnic-spacing-stack-md;
-    padding-right: 8px;
-
-    // padding-right: $unnnic-spacing-inset-sm;
     overflow-y: auto;
   }
   .selected-contacts {
     width: 100%;
-    max-width: 99%;
+    max-width: 100%;
     border-radius: 0.6rem;
     padding: 1rem;
     background-color: $unnnic-color-background-carpet;
@@ -336,6 +336,10 @@ export default {
     color: $unnnic-color-neutral-dark;
   }
   .contact-list {
+    padding-right: $unnnic-spacing-inset-sm;
+
+    overflow: hidden scroll;
+
     .title-group {
       color: $unnnic-color-neutral-dark;
       font-size: 0.75rem;

@@ -2,7 +2,7 @@
   <section
     @click="$emit('select', quickMessage)"
     @keypress.enter="$emit('select', quickMessage)"
-    class="quick-message-card"
+    class="quick-message-card__container"
     :class="{ clickable }"
   >
     <unnnic-chat-text
@@ -14,6 +14,7 @@
         })
       "
       size="small"
+      class="quick-message-card"
     >
       <template slot="actions">
         <unnnic-dropdown>
@@ -71,18 +72,26 @@ export default {
 
 <style lang="scss" scoped>
 .quick-message-card {
-  .quick-message-actions {
-    display: flex;
-    align-items: center;
-  }
+  overflow-wrap: anywhere;
 
-  .dropdown-item-content {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  &__container {
+    .quick-message-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .dropdown-item-content {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      span {
+        white-space: nowrap;
+      }
+    }
   }
-}
-.clickable {
-  cursor: pointer;
+  .clickable {
+    cursor: pointer;
+  }
 }
 </style>

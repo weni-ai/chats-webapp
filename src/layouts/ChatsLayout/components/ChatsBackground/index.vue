@@ -14,6 +14,7 @@ export default {
 <style lang="scss" scoped>
 .chats-background {
   position: relative;
+
   height: 100%;
 
   .illustration {
@@ -32,10 +33,6 @@ export default {
       object-fit: cover;
       object-position: center;
       pointer-events: none;
-    }
-
-    &__doodles {
-      padding-left: $unnnic-spacing-inset-xs;
     }
   }
 }
