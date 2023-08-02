@@ -1,25 +1,45 @@
-const module = {
+import QuickMessage from '@/services/api/resources/chats/quickMessage';
+
+const mutations = {
+  SET_QUICK_MESSAGES: 'SET_QUICK_MESSAGES',
+  ADD_QUICK_MESSAGE: 'ADD_QUICK_MESSAGE',
+  UPDATE_QUICK_MESSAGE: 'UPDATE_QUICK_MESSAGE',
+  DELETE_QUICK_MESSAGE: 'DELETE_QUICK_MESSAGE',
+  SET_NEXT_QUICK_MESSAGES: 'SET_NEXT_QUICK_MESSAGES',
+};
+
+export default {
   namespaced: true,
+
   state: {
-    messages: [],
-    sharedMessages: [],
+    quickMessages: [],
+    nextQuickMessages: '',
   },
+
   mutations: {
-    addMessage(state, message) {
-      const messagesIds = state.messages.map((m) => m.id);
-      const highestMessageId = Math.max(...messagesIds);
-      state.messages.push({
-        ...message,
-        id: highestMessageId + 1,
-      });
+    [mutations.SET_QUICK_MESSAGES](state, quickMessages) {
+      state.quickMessages = quickMessages;
     },
-    updateMessage(state, message) {
-      state.messages = state.messages.map((m) => (m.id === message.id ? { ...message } : m));
+    [mutations.ADD_QUICK_MESSAGE](state, quickMessage) {
+      state.quickMessages.unshift({ ...quickMessage });
     },
-    deleteMessage(state, message) {
-      state.messages = state.messages.filter((m) => m.id !== message.id);
+    [mutations.SET_NEXT_QUICK_MESSAGES](state, nextQuickMessages) {
+      state.nextQuickMessages = nextQuickMessages;
+    },
+  },
+
+  actions: {
+    async getAll({ commit, state }) {
+      const { quickMessages, nextQuickMessages } = state;
+
+      const response = await QuickMessage.getAll({ nextQuickMessages });
+      const responseNext = response.next;
+      const newQuickMessages = [...quickMessages, ...response.results] || [];
+
+      commit(mutations.SET_NEXT_QUICK_MESSAGES, responseNext);
+      commit(mutations.SET_QUICK_MESSAGES, newQuickMessages);
+
+      return newQuickMessages;
     },
   },
 };
-
-export default module;

@@ -1,4 +1,5 @@
-import quickMessagesModule from './quickMessages';
+import quickMessages from './quickMessages';
+import quickMessagesShared from './quickMessagesShared';
 
 const tags = [
   { text: 'Dúvidas', value: 'doubts' },
@@ -551,7 +552,8 @@ chats = chats.map((group) => ({
 const module = {
   namespaced: true,
   modules: {
-    quickMessages: quickMessagesModule,
+    quickMessages,
+    quickMessagesShared,
   },
   state: {
     activeChat: null,

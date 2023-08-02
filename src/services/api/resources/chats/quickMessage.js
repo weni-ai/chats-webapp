@@ -1,15 +1,27 @@
 import http from '@/services/api/http';
 
-export default {
-  async getAll({ offset, limit, sector = false }) {
-    const endpoint = sector ? '/sector_quick_messages/' : '/quick_messages/';
+function getURLParams({ URL, endpoint }) {
+  return URL?.split(endpoint)?.[1];
+}
 
-    const response = await http.get(endpoint, {
-      [sector ? 'data' : 'params']: {
-        offset,
-        limit,
-      },
-    });
+export default {
+  async getAll({ nextQuickMessages = '' }) {
+    const endpoint = '/quick_messages/';
+    const params = getURLParams({ URL: nextQuickMessages, endpoint });
+
+    const url = nextQuickMessages ? `${endpoint}${params}` : endpoint;
+    const response = await http.get(url);
+
+    return response.data;
+  },
+
+  async getAllBySector({ nextQuickMessagesShared = '' }) {
+    const endpoint = '/sector_quick_messages/';
+    const params = getURLParams({ URL: nextQuickMessagesShared, endpoint });
+
+    const url = nextQuickMessagesShared ? `${endpoint}${params}` : endpoint;
+    const response = await http.get(url);
+
     return response.data;
   },
 
