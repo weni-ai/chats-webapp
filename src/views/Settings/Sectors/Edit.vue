@@ -100,6 +100,15 @@
         />
       </template>
 
+      <template #quick-messages>
+        <form-quick-messages
+          ref="formQuickMessages"
+          :quick-messages-shared="quickMessagesShared"
+          :sector="sector"
+          @update-is-quick-message-editing="handleIsQuickMessageEditing"
+        />
+      </template>
+
       <template #tags>
         <form-tags v-model="tags" @add="addTagToAddList" @remove="addTagToRemoveList" />
       </template>
@@ -114,10 +123,28 @@
         @click="openModalDeleteQueue(queueToEdit)"
       />
       <unnnic-button
-        text="Salvar"
+        :text="$t('cancel')"
+        type="terciary"
+        @click="cancel"
+        v-if="this.isQuickMessageEditing"
+      />
+      <unnnic-button
+        :text="$t('save')"
         type="secondary"
         @click="save"
-        v-if="this.currentTab === 'sector' || this.queueToEdit || currentTab === 'tags'"
+        v-if="
+          this.currentTab === 'sector' ||
+          this.queueToEdit ||
+          this.isQuickMessageEditing ||
+          currentTab === 'tags'
+        "
+      />
+      <unnnic-button
+        v-if="this.currentTab === 'quick-messages' && !isQuickMessageEditing"
+        :text="$t('quick_messages.add_new')"
+        icon-left="add-circle-1"
+        type="secondary"
+        @click="() => quickMessageHandler('create')"
       />
       <unnnic-modal
         :showModal="openModal"
@@ -128,11 +155,11 @@
         @close="closeModalDeleteQueue"
       >
         <template #options>
-          <unnnic-button type="terciary" @click="closeModalDeleteQueue" text="Cancelar" />
+          <unnnic-button type="terciary" @click="closeModalDeleteQueue" :text="$t('cancel')" />
           <unnnic-button
             type="secondary"
             @click="deleteQueue(selectedQueue.uuid)"
-            text="Confirmar"
+            :text="$t('confirm')"
           />
         </template>
       </unnnic-modal>
@@ -141,11 +168,14 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import { unnnicCallAlert } from '@weni/unnnic-system';
 
 import FormAgent from '@/components/settings/forms/Agent';
 import FormSector from '@/components/settings/forms/Sector';
 import FormQueue from '@/components/settings/forms/Queue';
+import FormQuickMessages from '@/components/settings/forms/QuickMessages';
 import FormTags from '@/components/settings/forms/Tags';
 import SectorTabs from '@/components/settings/SectorTabs';
 
@@ -160,6 +190,7 @@ export default {
     FormAgent,
     FormQueue,
     FormSector,
+    FormQuickMessages,
     FormTags,
     SectorTabs,
   },
@@ -173,7 +204,8 @@ export default {
   },
 
   async beforeMount() {
-    if (['sector', 'queues', 'tags'].includes(this.tab)) this.currentTab = this.tab;
+    if (['sector', 'queues', 'quick-messages', 'tags'].includes(this.tab))
+      this.currentTab = this.tab;
 
     this.getSector();
     this.getManagers();
@@ -227,13 +259,44 @@ export default {
       'Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando',
     editContent: false,
     content: '',
+    isQuickMessageEditing: false,
   }),
+
+  computed: {
+    ...mapState({
+      quickMessagesShared: (state) => state.chats.quickMessagesShared.quickMessagesShared,
+    }),
+  },
 
   methods: {
     focusTextEditor() {
       this.$nextTick(() => {
         this.$refs.textEditor?.focus();
       });
+    },
+    handleIsQuickMessageEditing(boolean) {
+      this.isQuickMessageEditing = boolean;
+    },
+    async quickMessageHandler(action) {
+      const { uuid } = this;
+      const { formQuickMessages } = this.$refs;
+
+      const actions = {
+        create: () => {
+          formQuickMessages.create();
+          this.isQuickMessageEditing = true;
+        },
+        save: () => {
+          formQuickMessages.save({ uuid });
+          this.isQuickMessageEditing = false;
+        },
+      };
+
+      if (actions[action]) {
+        actions[action]();
+      } else {
+        console.error('Invalid action.');
+      }
     },
     async listProjectManagers() {
       const managers = (await Project.managers()).results.concat((await Project.admins()).results);
@@ -347,9 +410,15 @@ export default {
       this.tags = tags.results;
       this.currentTags = [...tags.results];
     },
+
+    async cancel() {
+      this.$router.push({ name: 'sectors' });
+    },
+
     async save() {
       if (this.currentTab === 'sector') await this.saveSector();
       if (this.currentTab === 'queues' && this.queueToEdit) await this.saveQueue();
+      if (this.currentTab === 'quick-messages') await this.quickMessageHandler('save');
       if (this.currentTab === 'tags') await this.saveTags();
 
       this.$router.push({ name: 'sectors' });
@@ -435,7 +504,7 @@ export default {
     },
     updateQueryParams(currentTab) {
       const query = {};
-      if (['sector', 'queues', 'tags'].includes(currentTab)) {
+      if (['sector', 'queues', 'quick-messages', 'tags'].includes(currentTab)) {
         query.tab = currentTab;
       }
 

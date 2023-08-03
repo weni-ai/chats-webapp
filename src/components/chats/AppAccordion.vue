@@ -2,12 +2,15 @@
 <template>
   <div>
     <div
+      class="app-accordion"
       @click="toggleAccordion()"
       :aria-expanded="isOpen"
       :aria-controls="`collapse${_uid}`"
       style="display: flex; align-items: center; justify-content: space-between; cursor: pointer"
     >
-      <slot name="title" />
+      <header>
+        <h2>{{ title }}</h2>
+      </header>
       <unnnic-icon
         size="xs"
         :icon="isOpen ? 'arrow-button-up-1' : 'arrow-button-down-1'"
@@ -32,6 +35,10 @@ export default {
     };
   },
   props: {
+    title: {
+      type: String,
+      default: 'Seção',
+    },
     isDefaultOpen: {
       type: Boolean,
       default: true,
@@ -47,4 +54,21 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.app-accordion {
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 0 0.5rem 0.5rem;
+
+    h2 {
+      font-size: $unnnic-font-size-body-md;
+      font-weight: $unnnic-font-weight-regular;
+      line-height: 1.25rem;
+      color: $unnnic-color-neutral-cloudy;
+    }
+  }
+}
+</style>
