@@ -82,7 +82,7 @@ export default {
     async delete({ commit }, quickMessageUuid) {
       await QuickMessage.delete(quickMessageUuid);
 
-      commit(mutations.DELETE_QUICK_MESSAGE, quickMessageUuid);
+      commit(mutations.DELETE_QUICK_MESSAGE_SHARED, quickMessageUuid);
     },
   },
 };

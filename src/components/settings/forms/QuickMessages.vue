@@ -10,6 +10,7 @@
       v-else
       :sector="sector.name"
       :quick-messages-shared="quickMessagesShared"
+      @delete-quick-message="this.delete"
     />
   </section>
 </template>
@@ -101,11 +102,8 @@ export default {
       this.quickMessageToEdit = null;
     },
 
-    async delete() {
-      const { uuid } = this.quickMessageToDelete;
-
+    async delete(uuid) {
       this.actionDeleteQuickMessage(uuid);
-      this.quickMessageToDelete = null;
     },
   },
 };

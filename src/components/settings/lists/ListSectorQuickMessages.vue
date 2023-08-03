@@ -9,7 +9,7 @@
       clickable
       @select.stop
       @edit.stop
-      @delete.stop
+      @delete="$emit('delete-quick-message', message.uuid)"
     />
   </section>
 </template>
