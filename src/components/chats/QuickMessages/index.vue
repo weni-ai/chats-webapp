@@ -189,11 +189,12 @@ export default {
 }
 
 .fill-w {
-  width: 103%;
+  width: 100%;
 }
 
 .messages-section {
   height: 100%;
+  width: 100%;
   overflow: hidden scroll;
 
   &__container {
@@ -209,7 +210,6 @@ export default {
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-stack-sm;
-  border-right: solid 1px #e2e6ed;
 
   // insert space between content and scrollbar
   margin-right: -$unnnic-spacing-inline-md;
