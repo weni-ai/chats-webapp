@@ -32,7 +32,7 @@
       size="sm"
     />
 
-    <div class="actions">
+    <div class="actions" v-if="!externalActions">
       <unnnic-button
         class="button"
         :text="$t('cancel')"
@@ -60,6 +60,10 @@ export default {
     value: {
       type: Object,
       default: null,
+    },
+    externalActions: {
+      type: Boolean,
+      default: false,
     },
   },
 

@@ -4,12 +4,7 @@
       v-if="quickMessageToUpdate"
       v-model="quickMessageToUpdate"
       class="quick-message-form__form"
-      @submit="
-        !!quickMessageToEdit.uuid
-          ? updateQuickMessage(quickMessageToEdit)
-          : createQuickMessage(quickMessageToEdit)
-      "
-      @cancel="quickMessageToEdit = null"
+      externalActions
     />
     <list-sector-quick-messages
       v-else
@@ -68,11 +63,11 @@ export default {
       actionDeleteQuickMessage: 'chats/quickMessagesShared/delete',
     }),
 
-    createEmptyQuickMessage() {
+    create() {
       this.quickMessageToUpdate = { title: '', text: '', shortcut: null };
     },
 
-    async createQuickMessage({ sectorUuid }) {
+    async save({ sectorUuid }) {
       await this.actionCreateQuickMessage({ sectorUuid, ...this.quickMessageToUpdate });
 
       unnnicCallAlert({
@@ -89,7 +84,7 @@ export default {
       this.quickMessageToUpdate = null;
     },
 
-    async updateQuickMessage({ uuid, title, text, shortcut }) {
+    async update({ uuid, title, text, shortcut }) {
       this.actionUpdateQuickMessage({ uuid, title, text, shortcut });
 
       unnnicCallAlert({
@@ -106,7 +101,7 @@ export default {
       this.quickMessageToEdit = null;
     },
 
-    async deleteQuickMessage() {
+    async delete() {
       const { uuid } = this.quickMessageToDelete;
 
       this.actionDeleteQuickMessage(uuid);

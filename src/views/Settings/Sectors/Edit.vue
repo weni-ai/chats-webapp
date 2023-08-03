@@ -273,23 +273,23 @@ export default {
         this.$refs.textEditor?.focus();
       });
     },
-    async quickMessageHandler(action) {
+    async quickMessageHandler(action, uuid = '') {
       const { formQuickMessages } = this.$refs;
 
       const actions = {
         create: () => {
-          formQuickMessages.createEmptyQuickMessage();
+          formQuickMessages.create();
           this.isQuickMessageEditing = true;
         },
         update: () => {
           console.log('Update');
         },
         save: () => {
-          formQuickMessages.createQuickMessage({ sectorUuid: this.uuid });
+          formQuickMessages.save({ sectorUuid: this.uuid });
           this.isQuickMessageEditing = false;
         },
         delete: () => {
-          console.log('Delete');
+          formQuickMessages.delete(uuid);
         },
       };
 
