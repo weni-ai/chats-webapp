@@ -3,7 +3,7 @@
     <unnnic-input
       :value="quickMessage.title"
       @input="quickMessage = { ...quickMessage, title: $event }"
-      size="sm"
+      :size="size"
       :label="$t('title')"
       :placeholder="$t('quick_messages.title_field_placeholder')"
     />
@@ -11,7 +11,7 @@
     <unnnic-input
       :value="quickMessage.shortcut"
       @input="quickMessage = { ...quickMessage, shortcut: $event }"
-      size="sm"
+      :size="size"
       :placeholder="$t('quick_messages.shortcut_field_placeholder')"
     >
       <template #label>
@@ -29,7 +29,7 @@
       @input="quickMessage = { ...quickMessage, text: $event }"
       :label="$t('message')"
       :placeholder="$t('quick_messages.message_field_placeholder')"
-      size="sm"
+      :size="size"
     />
 
     <div class="actions" v-if="!externalActions">
@@ -60,6 +60,10 @@ export default {
     value: {
       type: Object,
       default: null,
+    },
+    size: {
+      type: String,
+      default: 'sm',
     },
     externalActions: {
       type: Boolean,

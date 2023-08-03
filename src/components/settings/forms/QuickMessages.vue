@@ -1,11 +1,18 @@
 <template>
   <section class="form-quick-messages">
-    <quick-message-form
-      v-if="quickMessageToUpdate"
-      v-model="quickMessageToUpdate"
-      class="quick-message-form__form"
-      externalActions
-    />
+    <section v-if="quickMessageToUpdate">
+      <unnnic-breadcrumb
+        class="form-quick-messages__breadcrumb"
+        :crumbs="quickMessagesBreadcrumb"
+        @crumbClick="handleIsQuickMessageEditing(false)"
+      />
+      <quick-message-form
+        v-model="quickMessageToUpdate"
+        class="quick-message-form__form"
+        externalActions
+        size="md"
+      />
+    </section>
     <list-sector-quick-messages
       v-else
       :sector="sector.name"
@@ -45,6 +52,14 @@ export default {
 
   data: () => ({
     quickMessageToUpdate: null,
+    quickMessagesBreadcrumb: [
+      {
+        name: 'Mensagens',
+      },
+      {
+        name: 'Adicionar nova mensagem',
+      },
+    ],
   }),
 
   computed: {
@@ -64,6 +79,10 @@ export default {
       actionUpdateQuickMessage: 'chats/quickMessagesShared/update',
       actionDeleteQuickMessage: 'chats/quickMessagesShared/delete',
     }),
+
+    handleIsQuickMessageEditing(boolean) {
+      this.$emit('update-is-quick-message-editing', boolean);
+    },
 
     create() {
       this.quickMessageToUpdate = { title: '', text: '', shortcut: null };
@@ -94,7 +113,7 @@ export default {
     },
 
     async update(quickMessage) {
-      this.$emit('update-is-quick-message-editing', true);
+      this.handleIsQuickMessageEditing(true);
       this.quickMessageToUpdate = quickMessage;
     },
 
@@ -131,6 +150,26 @@ export default {
 
       &__input {
         flex: 1 1;
+      }
+    }
+  }
+
+  &__breadcrumb {
+    margin: 0 0 $unnnic-spacing-stack-md;
+
+    ::v-deep .unnnic-breadcrumb__container {
+      align-items: center;
+
+      &__link {
+        font-size: $unnnic-font-size-body-gt;
+      }
+
+      &__divider {
+        display: flex;
+
+        svg {
+          top: 0;
+        }
       }
     }
   }
