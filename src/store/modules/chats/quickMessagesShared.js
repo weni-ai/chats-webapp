@@ -20,8 +20,9 @@ export default {
     [mutations.SET_QUICK_MESSAGES_SHARED](state, quickMessagesShared) {
       state.quickMessagesShared = quickMessagesShared;
     },
-    [mutations.ADD_QUICK_MESSAGE_SHARED](state, { sectorUuid, title, text, shortcut }) {
-      state.quickMessagesShared.unshift({ sector: sectorUuid, title, text, shortcut });
+    [mutations.ADD_QUICK_MESSAGE_SHARED](state, quickMessage) {
+      state.quickMessagesShared.unshift(quickMessage);
+      console.log();
     },
     [mutations.UPDATE_QUICK_MESSAGE_SHARED](state, { uuid, title, text, shortcut }) {
       const quickMessageToUpdate = state.quickMessagesShared.find(
@@ -67,9 +68,9 @@ export default {
 
     async create({ commit }, { sectorUuid, title, text, shortcut }) {
       const newQuickMessageShared = { sectorUuid, title, text, shortcut };
-      await QuickMessage.createBySector(newQuickMessageShared);
+      const response = await QuickMessage.createBySector(newQuickMessageShared);
 
-      commit(mutations.ADD_QUICK_MESSAGE_SHARED, newQuickMessageShared);
+      commit(mutations.ADD_QUICK_MESSAGE_SHARED, response);
     },
 
     async update({ commit }, { quickMessageUuid, title, text, shortcut }) {
