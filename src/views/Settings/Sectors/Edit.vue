@@ -101,7 +101,7 @@
       </template>
 
       <template #quick-messages>
-        <form-quick-messages :quick_messages="quick_messages" :sector="sector" />
+        <form-quick-messages :quick-messages-shared="quickMessagesShared" :sector="sector" />
       </template>
 
       <template #tags>
@@ -162,8 +162,8 @@ import SectorTabs from '@/components/settings/SectorTabs';
 
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
-import QuickMessage from '@/services/api/resources/chats/quickMessage';
 import Project from '@/services/api/resources/settings/project';
+import { mapState } from 'vuex';
 
 export default {
   name: 'EditSector',
@@ -227,7 +227,6 @@ export default {
     agents: [],
     projectAgents: [],
     projectManagers: [],
-    quick_messages: [],
     tags: [],
     currentTags: [],
     toAddTags: [],
@@ -242,6 +241,12 @@ export default {
     editContent: false,
     content: '',
   }),
+
+  computed: {
+    ...mapState({
+      quickMessagesShared: (state) => state.chats.quickMessagesShared.quickMessagesShared,
+    }),
+  },
 
   methods: {
     focusTextEditor() {
@@ -356,10 +361,6 @@ export default {
         this.getQueues();
       }
     },
-    async getQuickMessages() {
-      const quick_messages = await QuickMessage.getAll({ offset: 10, limit: 10, sector: true });
-      this.quick_messages = quick_messages.results;
-    },
     async getTags() {
       const tags = await Sector.tags(this.sector.uuid);
       this.tags = tags.results;
@@ -440,8 +441,6 @@ export default {
     async handleTabChange(currentTab) {
       if (currentTab === 'sector') return;
       if (currentTab === 'queues' && this.queues.length === 0) await this.getQueues();
-      if (currentTab === 'quick-messages' && this.quick_messages.length === 0)
-        await this.getQuickMessages();
       if (currentTab === 'tags' && this.tags.length === 0) await this.getTags();
       this.queueToEdit = null;
       this.pageAgents = 0;

@@ -1,8 +1,9 @@
 <template>
   <section class="form-quick-messages">
-    <section class="form-queue__queues">
-      <list-sector-quick-messages :sector="sector.name" :quick_messages="quick_messages" />
-    </section>
+    <list-sector-quick-messages
+      :sector="sector.name"
+      :quick-messages-shared="quickMessagesShared"
+    />
   </section>
 </template>
 
@@ -17,7 +18,7 @@ export default {
   },
 
   props: {
-    quick_messages: {
+    quickMessagesShared: {
       type: Array,
       default: () => [],
     },

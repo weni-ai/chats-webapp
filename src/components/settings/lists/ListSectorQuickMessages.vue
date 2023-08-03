@@ -3,7 +3,7 @@
     <p v-if="sector" class="title">{{ $t('quick_messages.title_by_sector', { sector }) }}</p>
 
     <quick-message-card
-      v-for="message in quick_messages"
+      v-for="message in quickMessagesShared"
       :key="message.uuid"
       :quickMessage="message"
       clickable
@@ -25,7 +25,7 @@ export default {
   },
 
   props: {
-    quick_messages: {
+    quickMessagesShared: {
       type: Array,
       default: () => [],
     },
