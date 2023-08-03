@@ -105,6 +105,7 @@
           ref="formQuickMessages"
           :quick-messages-shared="quickMessagesShared"
           :sector="sector"
+          @update-is-quick-message-editing="handleIsQuickMessageEditing"
         />
       </template>
 
@@ -273,7 +274,11 @@ export default {
         this.$refs.textEditor?.focus();
       });
     },
-    async quickMessageHandler(action, uuid = '') {
+    handleIsQuickMessageEditing(boolean) {
+      this.isQuickMessageEditing = boolean;
+    },
+    async quickMessageHandler(action) {
+      const { uuid } = this;
       const { formQuickMessages } = this.$refs;
 
       const actions = {
@@ -281,15 +286,9 @@ export default {
           formQuickMessages.create();
           this.isQuickMessageEditing = true;
         },
-        update: () => {
-          console.log('Update');
-        },
         save: () => {
-          formQuickMessages.save({ sectorUuid: this.uuid });
+          formQuickMessages.save({ uuid });
           this.isQuickMessageEditing = false;
-        },
-        delete: () => {
-          formQuickMessages.delete(uuid);
         },
       };
 

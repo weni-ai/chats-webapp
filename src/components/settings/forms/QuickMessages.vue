@@ -10,6 +10,7 @@
       v-else
       :sector="sector.name"
       :quick-messages-shared="quickMessagesShared"
+      @edit-quick-message="this.update"
       @delete-quick-message="this.delete"
     />
   </section>
@@ -68,8 +69,15 @@ export default {
       this.quickMessageToUpdate = { title: '', text: '', shortcut: null };
     },
 
-    async save({ sectorUuid }) {
-      await this.actionCreateQuickMessage({ sectorUuid, ...this.quickMessageToUpdate });
+    async save({ uuid }) {
+      if (this.quickMessageToUpdate.uuid) {
+        await this.actionUpdateQuickMessage({
+          quickMessageUuid: this.quickMessageToUpdate.uuid,
+          ...this.quickMessageToUpdate,
+        });
+      } else {
+        await this.actionCreateQuickMessage({ sectorUuid: uuid, ...this.quickMessageToUpdate });
+      }
 
       unnnicCallAlert({
         props: {
@@ -85,21 +93,9 @@ export default {
       this.quickMessageToUpdate = null;
     },
 
-    async update({ uuid, title, text, shortcut }) {
-      this.actionUpdateQuickMessage({ uuid, title, text, shortcut });
-
-      unnnicCallAlert({
-        props: {
-          title: this.$t('quick_messages.successfully_added'),
-          icon: 'check-circle-1-1-1',
-          scheme: 'feedback-green',
-          closeText: this.$t('close'),
-          position: 'bottom-right',
-        },
-        seconds: 5,
-      });
-
-      this.quickMessageToEdit = null;
+    async update(quickMessage) {
+      this.$emit('update-is-quick-message-editing', true);
+      this.quickMessageToUpdate = quickMessage;
     },
 
     async delete(uuid) {

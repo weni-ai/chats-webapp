@@ -7,8 +7,8 @@
       :key="message.uuid"
       :quickMessage="message"
       clickable
-      @select.stop
-      @edit.stop
+      @select="$emit('edit-quick-message', message)"
+      @edit="$emit('edit-quick-message', message)"
       @delete="$emit('delete-quick-message', message.uuid)"
     />
   </section>

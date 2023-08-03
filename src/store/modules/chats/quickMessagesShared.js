@@ -74,13 +74,13 @@ export default {
 
     async update({ commit }, { quickMessageUuid, title, text, shortcut }) {
       const dataToUpdate = { title, text, shortcut };
-      await QuickMessage.update(quickMessageUuid, dataToUpdate);
+      await QuickMessage.updateBySector(quickMessageUuid, dataToUpdate);
 
-      commit(mutations.UPDATE_QUICK_MESSAGE, { uuid: quickMessageUuid, ...dataToUpdate });
+      commit(mutations.UPDATE_QUICK_MESSAGE_SHARED, { uuid: quickMessageUuid, ...dataToUpdate });
     },
 
     async delete({ commit }, quickMessageUuid) {
-      await QuickMessage.delete(quickMessageUuid);
+      await QuickMessage.deleteBySector(quickMessageUuid);
 
       commit(mutations.DELETE_QUICK_MESSAGE_SHARED, quickMessageUuid);
     },
