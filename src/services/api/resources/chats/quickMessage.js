@@ -35,6 +35,17 @@ export default {
     return response.data;
   },
 
+  async createBySector({ sectorUuid, title, text, shortcut = null }) {
+    const response = await http.post('/sector_quick_messages/', {
+      sector: sectorUuid,
+      title,
+      text,
+      shortcut,
+    });
+
+    return response.data;
+  },
+
   async update(uuid, { title, text, shortcut = null }) {
     const response = await http.patch(`/quick_messages/${uuid}/`, {
       title,
@@ -45,8 +56,23 @@ export default {
     return response.data;
   },
 
+  async updateBySector(quickMessageUuid, { title, text, shortcut = null }) {
+    const response = await http.patch(`/sector_quick_messages/${quickMessageUuid}/`, {
+      title,
+      text,
+      shortcut,
+    });
+
+    return response.data;
+  },
+
   async delete(uuid) {
     const response = await http.delete(`/quick_messages/${uuid}/`);
+    return response.data;
+  },
+
+  async deleteBySector(quickMessageUuid) {
+    const response = await http.delete(`/sector_quick_messages/${quickMessageUuid}/`);
     return response.data;
   },
 };
