@@ -101,7 +101,11 @@
       </template>
 
       <template #quick-messages>
-        <form-quick-messages :quick-messages-shared="quickMessagesShared" :sector="sector" />
+        <form-quick-messages
+          ref="formQuickMessages"
+          :quick-messages-shared="quickMessagesShared"
+          :sector="sector"
+        />
       </template>
 
       <template #tags>
@@ -124,10 +128,11 @@
         v-if="this.currentTab === 'sector' || this.queueToEdit || currentTab === 'tags'"
       />
       <unnnic-button
-        icon-left="add-circle-1"
-        :text="$t('quick_messages.add_new')"
-        type="secondary"
         v-if="this.currentTab === 'quick-messages'"
+        :text="$t('quick_messages.add_new')"
+        icon-left="add-circle-1"
+        type="secondary"
+        @click="() => quickMessageHandler('create')"
       />
       <unnnic-modal
         :showModal="openModal"
@@ -151,6 +156,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import { unnnicCallAlert } from '@weni/unnnic-system';
 
 import FormAgent from '@/components/settings/forms/Agent';
@@ -163,7 +170,6 @@ import SectorTabs from '@/components/settings/SectorTabs';
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
 import Project from '@/services/api/resources/settings/project';
-import { mapState } from 'vuex';
 
 export default {
   name: 'EditSector',
@@ -253,6 +259,25 @@ export default {
       this.$nextTick(() => {
         this.$refs.textEditor?.focus();
       });
+    },
+    quickMessageHandler(action) {
+      const actions = {
+        create() {
+          this.$refs.formQuickMessages.createEmptyQuickMessage();
+        },
+        update() {
+          console.log('Update');
+        },
+        delete() {
+          console.log('Delete');
+        },
+      };
+
+      if (actions[action]) {
+        actions[action]();
+      } else {
+        console.log('Invalid action.');
+      }
     },
     async listProjectManagers() {
       const managers = (await Project.managers()).results.concat((await Project.admins()).results);

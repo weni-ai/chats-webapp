@@ -1,6 +1,18 @@
 <template>
   <section class="form-quick-messages">
+    <quick-message-form
+      v-if="quickMessageToUpdate"
+      v-model="quickMessageToUpdate"
+      class="quick-message-form__form"
+      @submit="
+        !!quickMessageToEdit.uuid
+          ? updateQuickMessage(quickMessageToEdit)
+          : createQuickMessage(quickMessageToEdit)
+      "
+      @cancel="quickMessageToEdit = null"
+    />
     <list-sector-quick-messages
+      v-else
       :sector="sector.name"
       :quick-messages-shared="quickMessagesShared"
     />
@@ -8,12 +20,18 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
+import { unnnicCallAlert } from '@weni/unnnic-system';
+
 import ListSectorQuickMessages from '@/components/settings/lists/ListSectorQuickMessages';
+import QuickMessageForm from '@/components/chats/QuickMessages/QuickMessageForm';
 
 export default {
   name: 'FormQuickMessages',
 
   components: {
+    QuickMessageForm,
     ListSectorQuickMessages,
   },
 
@@ -29,7 +47,7 @@ export default {
   },
 
   data: () => ({
-    tag: '',
+    quickMessageToUpdate: null,
   }),
 
   computed: {
@@ -43,7 +61,58 @@ export default {
     },
   },
 
-  methods: {},
+  methods: {
+    ...mapActions({
+      actionCreateQuickMessage: 'chats/quickMessagesShared/create',
+      actionUpdateQuickMessage: 'chats/quickMessagesShared/update',
+      actionDeleteQuickMessage: 'chats/quickMessagesShared/delete',
+    }),
+
+    createEmptyQuickMessage() {
+      this.quickMessageToUpdate = { title: '', text: '', shortcut: null };
+    },
+
+    async createQuickMessage() {
+      await this.actionCreateQuickMessage(this.quickMessageToUpdate);
+
+      unnnicCallAlert({
+        props: {
+          title: this.$t('quick_messages.successfully_added'),
+          icon: 'check-circle-1-1-1',
+          scheme: 'feedback-green',
+          closeText: this.$t('close'),
+          position: 'bottom-right',
+        },
+        seconds: 5,
+      });
+
+      this.quickMessageToUpdate = null;
+    },
+
+    async updateQuickMessage({ uuid, title, text, shortcut }) {
+      this.actionUpdateQuickMessage({ uuid, title, text, shortcut });
+
+      unnnicCallAlert({
+        props: {
+          title: this.$t('quick_messages.successfully_added'),
+          icon: 'check-circle-1-1-1',
+          scheme: 'feedback-green',
+          closeText: this.$t('close'),
+          position: 'bottom-right',
+        },
+        seconds: 5,
+      });
+
+      this.quickMessageToEdit = null;
+    },
+
+    async deleteQuickMessage() {
+      const { uuid } = this.quickMessageToDelete;
+
+      this.actionDeleteQuickMessage(uuid);
+      this.quickMessageToDelete = null;
+    },
+  },
 };
 </script>
 
