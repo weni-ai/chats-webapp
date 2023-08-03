@@ -49,6 +49,9 @@ export default {
   }
 
   .quick-message-card {
+    &:not(:first-child) {
+      margin-top: $unnnic-spacing-stack-sm;
+    }
     :deep(.unnnic-chat-text) {
       max-width: initial;
     }
