@@ -29,6 +29,7 @@
                 v-for="quickMessage in quickMessagesShared"
                 :key="quickMessage.uuid"
                 :quickMessage="quickMessage"
+                :withActions="false"
                 clickable
                 @select="$emit('select-quick-message', quickMessage)"
                 @edit="quickMessageToEdit = quickMessage"

@@ -15,7 +15,7 @@
       "
       size="small"
     >
-      <template slot="actions">
+      <template slot="actions" v-if="withActions">
         <unnnic-dropdown>
           <template #trigger>
             <unnnic-tool-tip enabled :text="$t('quick_messages.delete_or_edit')" side="left">
@@ -57,13 +57,17 @@ export default {
   name: 'QuickMessageCard',
 
   props: {
+    quickMessage: {
+      type: Object,
+      required: true,
+    },
     clickable: {
       type: Boolean,
       default: false,
     },
-    quickMessage: {
-      type: Object,
-      required: true,
+    withActions: {
+      type: Boolean,
+      default: true,
     },
   },
 };
