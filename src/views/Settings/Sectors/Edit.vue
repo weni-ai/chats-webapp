@@ -122,13 +122,24 @@
         @click="openModalDeleteQueue(queueToEdit)"
       />
       <unnnic-button
-        text="Salvar"
-        type="secondary"
-        @click="save"
-        v-if="this.currentTab === 'sector' || this.queueToEdit || currentTab === 'tags'"
+        :text="$t('cancel')"
+        type="terciary"
+        @click="cancel"
+        v-if="this.isQuickMessageEditing"
       />
       <unnnic-button
-        v-if="this.currentTab === 'quick-messages'"
+        :text="$t('save')"
+        type="secondary"
+        @click="save"
+        v-if="
+          this.currentTab === 'sector' ||
+          this.queueToEdit ||
+          this.isQuickMessageEditing ||
+          currentTab === 'tags'
+        "
+      />
+      <unnnic-button
+        v-if="this.currentTab === 'quick-messages' && !isQuickMessageEditing"
         :text="$t('quick_messages.add_new')"
         icon-left="add-circle-1"
         type="secondary"
@@ -143,11 +154,11 @@
         @close="closeModalDeleteQueue"
       >
         <template #options>
-          <unnnic-button type="terciary" @click="closeModalDeleteQueue" text="Cancelar" />
+          <unnnic-button type="terciary" @click="closeModalDeleteQueue" :text="$t('cancel')" />
           <unnnic-button
             type="secondary"
             @click="deleteQueue(selectedQueue.uuid)"
-            text="Confirmar"
+            :text="$t('confirm')"
           />
         </template>
       </unnnic-modal>
@@ -192,7 +203,8 @@ export default {
   },
 
   async beforeMount() {
-    if (['sector', 'queues', 'tags'].includes(this.tab)) this.currentTab = this.tab;
+    if (['sector', 'queues', 'quick-messages', 'tags'].includes(this.tab))
+      this.currentTab = this.tab;
 
     this.getSector();
     this.getManagers();
@@ -246,6 +258,7 @@ export default {
       'Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando',
     editContent: false,
     content: '',
+    isQuickMessageEditing: false,
   }),
 
   computed: {
@@ -260,15 +273,22 @@ export default {
         this.$refs.textEditor?.focus();
       });
     },
-    quickMessageHandler(action) {
+    async quickMessageHandler(action) {
+      const { formQuickMessages } = this.$refs;
+
       const actions = {
-        create() {
-          this.$refs.formQuickMessages.createEmptyQuickMessage();
+        create: () => {
+          formQuickMessages.createEmptyQuickMessage();
+          this.isQuickMessageEditing = true;
         },
-        update() {
+        update: () => {
           console.log('Update');
         },
-        delete() {
+        save: () => {
+          formQuickMessages.createQuickMessage({ sectorUuid: this.uuid });
+          this.isQuickMessageEditing = false;
+        },
+        delete: () => {
           console.log('Delete');
         },
       };
@@ -276,7 +296,7 @@ export default {
       if (actions[action]) {
         actions[action]();
       } else {
-        console.log('Invalid action.');
+        console.error('Invalid action.');
       }
     },
     async listProjectManagers() {
@@ -391,9 +411,15 @@ export default {
       this.tags = tags.results;
       this.currentTags = [...tags.results];
     },
+
+    async cancel() {
+      this.$router.push({ name: 'sectors' });
+    },
+
     async save() {
       if (this.currentTab === 'sector') await this.saveSector();
       if (this.currentTab === 'queues' && this.queueToEdit) await this.saveQueue();
+      if (this.currentTab === 'quick-messages') await this.quickMessageHandler('save');
       if (this.currentTab === 'tags') await this.saveTags();
 
       this.$router.push({ name: 'sectors' });
@@ -479,7 +505,7 @@ export default {
     },
     updateQueryParams(currentTab) {
       const query = {};
-      if (['sector', 'queues', 'tags'].includes(currentTab)) {
+      if (['sector', 'queues', 'quick-messages', 'tags'].includes(currentTab)) {
         query.tab = currentTab;
       }
 

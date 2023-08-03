@@ -72,8 +72,8 @@ export default {
       this.quickMessageToUpdate = { title: '', text: '', shortcut: null };
     },
 
-    async createQuickMessage() {
-      await this.actionCreateQuickMessage(this.quickMessageToUpdate);
+    async createQuickMessage({ sectorUuid }) {
+      await this.actionCreateQuickMessage({ sectorUuid, ...this.quickMessageToUpdate });
 
       unnnicCallAlert({
         props: {
