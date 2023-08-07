@@ -493,6 +493,7 @@ export default {
       if (currentTab === 'queues' && this.queues.length === 0) await this.getQueues();
       if (currentTab === 'tags' && this.tags.length === 0) await this.getTags();
       this.queueToEdit = null;
+      this.isQuickMessageEditing = false;
       this.pageAgents = 0;
     },
     removeManagerFromTheList(managerUuid) {
