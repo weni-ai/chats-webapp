@@ -57,6 +57,7 @@ export default {
 <style lang="scss" scoped>
 .app-accordion {
   margin-bottom: $unnnic-spacing-stack-sm;
+
   header {
     display: flex;
     align-items: center;
