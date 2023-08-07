@@ -4,7 +4,12 @@
       <unnnic-breadcrumb
         class="form-quick-messages__breadcrumb"
         :crumbs="quickMessagesBreadcrumb"
-        @crumbClick="handleIsQuickMessageEditing(false)"
+        @crumbClick="
+          () => {
+            this.handleIsQuickMessageEditing(false);
+            this.quickMessageToUpdate = null;
+          }
+        "
       />
       <quick-message-form
         v-model="quickMessageToUpdate"
@@ -17,6 +22,7 @@
       v-else
       :sector="sector.name"
       :quick-messages-shared="quickMessagesShared"
+      @create-quick-message="this.create"
       @edit-quick-message="this.update"
       @delete-quick-message="this.delete"
     />
@@ -85,6 +91,7 @@ export default {
     },
 
     create() {
+      this.handleIsQuickMessageEditing(true);
       this.quickMessageToUpdate = { title: '', text: '', shortcut: null };
     },
 
