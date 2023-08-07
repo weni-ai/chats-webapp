@@ -9,7 +9,7 @@
       <div class="messages-section">
         <app-accordion class="messages" :title="$t('quick_messages.personal')">
           <template v-slot:content>
-            <div class="chat-group">
+            <div class="messages-group">
               <quick-message-card
                 v-for="quickMessage in quickMessages"
                 :key="quickMessage.uuid"
@@ -22,9 +22,13 @@
             </div>
           </template>
         </app-accordion>
-        <app-accordion class="messages-shared" :title="$t('quick_messages.shared')">
+        <app-accordion
+          v-if="quickMessagesShared.length > 0"
+          class="messages-shared"
+          :title="$t('quick_messages.shared')"
+        >
           <template v-slot:content>
-            <div class="chat-group">
+            <div class="messages-group">
               <quick-message-card
                 v-for="quickMessage in quickMessagesShared"
                 :key="quickMessage.uuid"
@@ -195,7 +199,15 @@ export default {
 .messages-section {
   height: 100%;
   width: 100%;
-  overflow: hidden scroll;
+  overflow: hidden auto;
+
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: $unnnic-spacing-stack-md;
+
+  // insert space between content and scrollbar
+  margin-right: -$unnnic-spacing-inline-sm;
+  padding-right: $unnnic-spacing-inline-sm;
 
   &__container {
     display: flex;
@@ -209,11 +221,11 @@ export default {
   flex: 1 1;
   display: flex;
   flex-direction: column;
-  gap: $unnnic-spacing-stack-sm;
 
-  // insert space between content and scrollbar
-  margin-right: -$unnnic-spacing-inline-md;
-  padding-right: $unnnic-spacing-inset-md;
+  &-group {
+    display: grid;
+    gap: $unnnic-spacing-stack-sm;
+  }
 }
 
 .quick-message-form {

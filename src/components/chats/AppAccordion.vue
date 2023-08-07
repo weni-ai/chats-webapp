@@ -56,12 +56,11 @@ export default {
 
 <style lang="scss" scoped>
 .app-accordion {
+  margin-bottom: $unnnic-spacing-stack-sm;
   header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    padding: 0 0 0.5rem 0.5rem;
 
     h2 {
       font-size: $unnnic-font-size-body-md;

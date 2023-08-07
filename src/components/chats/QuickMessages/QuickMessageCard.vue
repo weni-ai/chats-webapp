@@ -75,6 +75,10 @@ export default {
 
 <style lang="scss" scoped>
 .quick-message-card {
+  :deep(.unnnic-chat-text) {
+    line-break: anywhere;
+  }
+
   .quick-message-actions {
     display: flex;
     align-items: center;
@@ -84,6 +88,8 @@ export default {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+
+    white-space: nowrap;
   }
 }
 .clickable {
