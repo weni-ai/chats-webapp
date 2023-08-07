@@ -7,7 +7,7 @@
         @crumbClick="
           () => {
             this.handleIsQuickMessageEditing(false);
-            this.quickMessageToUpdate = null;
+            this.resetQuickMessageToUpdate();
           }
         "
       />
@@ -68,23 +68,16 @@ export default {
     ],
   }),
 
-  computed: {
-    tags: {
-      get() {
-        return this.value;
-      },
-      set(tags) {
-        this.$emit('input', tags);
-      },
-    },
-  },
-
   methods: {
     ...mapActions({
       actionCreateQuickMessage: 'chats/quickMessagesShared/create',
       actionUpdateQuickMessage: 'chats/quickMessagesShared/update',
       actionDeleteQuickMessage: 'chats/quickMessagesShared/delete',
     }),
+
+    resetQuickMessageToUpdate() {
+      this.quickMessageToUpdate = null;
+    },
 
     handleIsQuickMessageEditing(boolean) {
       this.$emit('update-is-quick-message-editing', boolean);
@@ -116,7 +109,7 @@ export default {
         seconds: 5,
       });
 
-      this.quickMessageToUpdate = null;
+      this.resetQuickMessageToUpdate();
     },
 
     async update(quickMessage) {

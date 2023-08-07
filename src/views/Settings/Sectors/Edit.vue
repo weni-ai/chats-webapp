@@ -269,6 +269,12 @@ export default {
   },
 
   methods: {
+    resetTabsData() {
+      this.queueToEdit = null;
+      this.isQuickMessageEditing = false;
+      this.pageAgents = 0;
+      this.$refs.formQuickMessages?.resetQuickMessageToUpdate();
+    },
     focusTextEditor() {
       this.$nextTick(() => {
         this.$refs.textEditor?.focus();
@@ -412,7 +418,7 @@ export default {
     },
 
     async cancel() {
-      this.$router.push({ name: 'sectors' });
+      this.resetTabsData();
     },
 
     async save() {
@@ -420,6 +426,11 @@ export default {
       if (this.currentTab === 'queues' && this.queueToEdit) await this.saveQueue();
       if (this.currentTab === 'quick-messages') await this.quickMessageHandler('save');
       if (this.currentTab === 'tags') await this.saveTags();
+
+      if (['queues', 'quick-messages'].includes(this.currentTab)) {
+        this.resetTabsData();
+        return;
+      }
 
       this.$router.push({ name: 'sectors' });
     },
@@ -492,9 +503,8 @@ export default {
       if (currentTab === 'sector') return;
       if (currentTab === 'queues' && this.queues.length === 0) await this.getQueues();
       if (currentTab === 'tags' && this.tags.length === 0) await this.getTags();
-      this.queueToEdit = null;
-      this.isQuickMessageEditing = false;
-      this.pageAgents = 0;
+
+      this.resetTabsData();
     },
     removeManagerFromTheList(managerUuid) {
       const manager = this.sector.managers.find((manager) => manager.uuid === managerUuid);
