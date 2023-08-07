@@ -846,6 +846,23 @@
       "en-us": "Quick messages in {sector}",
       "es": "Mensajes rápidos en {sector}"
     },
+    "without_messages": {
+      "start": {
+        "pt-br": "Por enquanto não há mensagens rápidas neste setor,",
+        "en-us": "For now there are no quick messages in this sector,",
+        "es": "Por ahora no hay mensajes rápidos en este sector,"
+      },
+      "middle": {
+        "pt-br": "adicione uma mensagem",
+        "en-us": "add a message",
+        "es": "añade un mensaje"
+      },
+      "end": {
+        "pt-br": "para os agentes deste setor utilizarem.",
+        "en-us": "for agents in this sector to use.",
+        "es": "para los agentes en este sector los usan."
+      }
+    },
     "personal": {
       "pt-br": "Suas mensagens rápidas",
       "en-us": "Your quick messages",
