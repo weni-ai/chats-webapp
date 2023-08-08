@@ -86,6 +86,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import TextBox from './TextBox';
 import MoreActionsOption from './MoreActionsOption.vue';
 import SuggestionBox from './SuggestionBox.vue';
@@ -126,6 +128,11 @@ export default {
   }),
 
   computed: {
+    ...mapState({
+      quickMessages: (state) => state.chats.quickMessages.quickMessages,
+      quickMessagesShared: (state) => state.chats.quickMessagesShared.quickMessagesShared,
+    }),
+
     message: {
       get() {
         return this.value;
@@ -149,7 +156,7 @@ export default {
       );
     },
     shortcuts() {
-      return this.$store.state.chats.quickMessages.messages;
+      return [...this.quickMessages, ...this.quickMessagesShared];
     },
     showActionButton() {
       const { isTyping, isAudioRecorderVisible, loadingValue } = this;

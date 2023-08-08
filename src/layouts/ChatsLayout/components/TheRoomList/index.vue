@@ -247,7 +247,7 @@ export default {
   .order-by {
     display: flex;
     justify-content: space-between;
-    padding: 6px;
+
     font-size: $unnnic-font-size-body-md;
     color: $unnnic-color-neutral-cloudy;
   }

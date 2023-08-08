@@ -6,30 +6,54 @@
     @action="$emit('close')"
     :flexible="true"
   >
-    <section class="messages-container">
-      <aside-slot-template-section class="messages-section">
-        <div class="messages">
-          <quick-message-card
-            v-for="quickMessage in $store.state.chats.quickMessages.messages"
-            :key="quickMessage.uuid"
-            :quickMessage="quickMessage"
-            clickable
-            @select="$emit('select-quick-message', quickMessage)"
-            @edit="quickMessageToEdit = quickMessage"
-            @delete="quickMessageToDelete = quickMessage"
-          />
-        </div>
+    <aside-slot-template-section class="messages-section__container">
+      <div class="messages-section">
+        <app-accordion class="messages" :title="$t('quick_messages.personal')">
+          <template v-slot:content>
+            <div class="messages-group">
+              <quick-message-card
+                v-for="quickMessage in quickMessages"
+                :key="quickMessage.uuid"
+                :quickMessage="quickMessage"
+                clickable
+                @select="$emit('select-quick-message', quickMessage)"
+                @edit="quickMessageToEdit = quickMessage"
+                @delete="quickMessageToDelete = quickMessage"
+              />
+            </div>
+          </template>
+        </app-accordion>
+        <app-accordion
+          v-if="quickMessagesShared.length > 0"
+          class="messages-shared"
+          :title="$t('quick_messages.shared')"
+        >
+          <template v-slot:content>
+            <div class="messages-group">
+              <quick-message-card
+                v-for="quickMessage in quickMessagesShared"
+                :key="quickMessage.uuid"
+                :quickMessage="quickMessage"
+                :withActions="false"
+                clickable
+                @select="$emit('select-quick-message', quickMessage)"
+                @edit="quickMessageToEdit = quickMessage"
+                @delete="quickMessageToDelete = quickMessage"
+              />
+            </div>
+          </template>
+        </app-accordion>
+      </div>
 
-        <unnnic-button
-          icon-left="add-circle-1"
-          :text="$t('quick_messages.add_new')"
-          type="secondary"
-          size="small"
-          class="fill-w"
-          @click="quickMessageToEdit = createEmptyQuickMessage()"
-        />
-      </aside-slot-template-section>
-    </section>
+      <unnnic-button
+        icon-left="add-circle-1"
+        :text="$t('quick_messages.add_new')"
+        type="secondary"
+        size="small"
+        class="fill-w"
+        @click="quickMessageToEdit = createEmptyQuickMessage()"
+      />
+    </aside-slot-template-section>
 
     <unnnic-modal
       :text="$t('quick_messages.delete')"
@@ -71,10 +95,14 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex';
+
 import { unnnicCallAlert } from '@weni/unnnic-system';
+
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
-import QuickMessage from '@/services/api/resources/chats/quickMessage';
+import AppAccordion from '@/components/chats/AppAccordion';
+
 import QuickMessageCard from './QuickMessageCard';
 import QuickMessageForm from './QuickMessageForm';
 
@@ -84,6 +112,7 @@ export default {
   components: {
     AsideSlotTemplate,
     AsideSlotTemplateSection,
+    AppAccordion,
     QuickMessageCard,
     QuickMessageForm,
   },
@@ -94,6 +123,11 @@ export default {
   }),
 
   computed: {
+    ...mapState({
+      quickMessages: (state) => state.chats.quickMessages.quickMessages,
+      quickMessagesShared: (state) => state.chats.quickMessagesShared.quickMessagesShared,
+    }),
+
     isEditing() {
       return !!this.quickMessageToEdit && this.quickMessageToEdit.id;
     },
@@ -103,9 +137,14 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      actionCreateQuickMessage: 'chats/quickMessages/create',
+      actionUpdateQuickMessage: 'chats/quickMessages/update',
+      actionDeleteQuickMessage: 'chats/quickMessages/delete',
+    }),
+
     async createQuickMessage({ title, text, shortcut }) {
-      const quickMessage = await QuickMessage.create({ title, text, shortcut });
-      this.$store.state.chats.quickMessages.messages.push(quickMessage);
+      this.actionCreateQuickMessage({ title, text, shortcut });
 
       unnnicCallAlert({
         props: {
@@ -121,11 +160,7 @@ export default {
       this.quickMessageToEdit = null;
     },
     async updateQuickMessage({ uuid, title, text, shortcut }) {
-      const quickMessage = await QuickMessage.update(uuid, { title, text, shortcut });
-      this.$store.state.chats.quickMessages.messages =
-        this.$store.state.chats.quickMessages.messages.map((m) =>
-          m.uuid === quickMessage.uuid ? quickMessage : m,
-        );
+      this.actionUpdateQuickMessage({ uuid, title, text, shortcut });
 
       unnnicCallAlert({
         props: {
@@ -145,9 +180,8 @@ export default {
     },
     async deleteQuickMessage() {
       const { uuid } = this.quickMessageToDelete;
-      await QuickMessage.delete(uuid);
-      this.$store.state.chats.quickMessages.messages =
-        this.$store.state.chats.quickMessages.messages.filter((m) => m.uuid !== uuid);
+
+      this.actionDeleteQuickMessage(uuid);
       this.quickMessageToDelete = null;
     },
   },
@@ -163,28 +197,35 @@ export default {
   width: 100%;
 }
 
-.messages-container {
+.messages-section {
   height: 100%;
   width: 100%;
+  overflow: hidden auto;
 
-  .messages-section {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: $unnnic-spacing-stack-md;
+
+  // insert space between content and scrollbar
+  margin-right: -$unnnic-spacing-inline-sm;
+  padding-right: $unnnic-spacing-inline-sm;
+
+  &__container {
     display: flex;
     flex-direction: column;
     gap: $unnnic-spacing-stack-sm;
     height: 100%;
   }
+}
 
-  .messages {
-    flex: 1 1;
-    display: flex;
-    flex-direction: column;
+.messages {
+  flex: 1 1;
+  display: flex;
+  flex-direction: column;
+
+  &-group {
+    display: grid;
     gap: $unnnic-spacing-stack-sm;
-
-    max-height: 100%;
-    overflow-y: auto;
-    // insert space between content and scrollbar
-    margin-right: -$unnnic-spacing-inline-md;
-    padding-right: $unnnic-spacing-inset-md;
   }
 }
 
