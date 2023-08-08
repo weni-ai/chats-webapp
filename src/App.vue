@@ -9,6 +9,7 @@ import { mapState } from 'vuex';
 
 import http from '@/services/api/http';
 import env from '@/utils/env';
+import { sendWindowNotification } from '@/utils/notifications';
 import { WS } from '@/services/api/socket';
 import Profile from '@/services/api/resources/profile';
 import QuickMessage from '@/services/api/resources/chats/quickMessage';
@@ -193,6 +194,14 @@ export default {
 
           const notification = new Notification('ping-bing');
           notification.notify();
+
+          if (document.hidden) {
+            sendWindowNotification({
+              title: message.contact.name,
+              message: message.text,
+              image: message.media?.[0]?.url,
+            });
+          }
 
           const isCurrentRoom =
             this.$route.name === 'room' && this.$route.params.id === message.room;
