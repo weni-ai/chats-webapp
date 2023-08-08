@@ -206,17 +206,6 @@ export default {
     },
     sidebarComponents() {
       return {
-        // quickMessages: {
-        //   name: QuickMessages.name,
-        //   listeners: {
-        //     close: () => {
-        //       this.componentInAsideSlot = '';
-        //     },
-        //     'select-quick-message': (quickMessage) => {
-        //       this.editorMessage = quickMessage.text;
-        //     },
-        //   },
-        // },
         contactInfo: {
           name: ContactInfo.name,
           listeners: {
