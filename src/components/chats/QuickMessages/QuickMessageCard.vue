@@ -2,7 +2,7 @@
   <section
     @click="$emit('select', quickMessage)"
     @keypress.enter="$emit('select', quickMessage)"
-    class="quick-message-card"
+    class="quick-message-card__container"
     :class="{ clickable }"
   >
     <unnnic-chat-text
@@ -14,6 +14,7 @@
         })
       "
       size="small"
+      class="quick-message-card"
     >
       <template slot="actions" v-if="withActions">
         <unnnic-dropdown>
@@ -91,8 +92,5 @@ export default {
 
     white-space: nowrap;
   }
-}
-.clickable {
-  cursor: pointer;
 }
 </style>
