@@ -60,9 +60,9 @@ export default {
 
   computed: {
     ...mapState({
-      activeRoom: 'rooms/activeRoom',
-      me: 'profile/me',
-      viewedAgent: 'dashboard/viewedAgent',
+      activeRoom: (state) => state.rooms.activeRoom,
+      me: (state) => state.profile.me,
+      viewedAgent: (state) => state.dashboard.viewedAgent,
       nextQuickMessages: (state) => state.chats.quickMessages.nextQuickMessages,
       nextQuickMessagesShared: (state) => state.chats.quickMessagesShared.nextQuickMessagesShared,
     }),
