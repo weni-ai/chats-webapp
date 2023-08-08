@@ -106,6 +106,7 @@
           :quick-messages-shared="quickMessagesShared"
           :sector="sector"
           @update-is-quick-message-editing="handleIsQuickMessageEditing"
+          @validate="isQuickMessagesFormValid = $event"
         />
       </template>
 
@@ -132,6 +133,7 @@
         :text="$t('save')"
         type="secondary"
         @click="save"
+        :disabled="isQuickMessageEditing && !isQuickMessagesFormValid"
         v-if="
           this.currentTab === 'sector' ||
           this.queueToEdit ||
@@ -260,6 +262,7 @@ export default {
     editContent: false,
     content: '',
     isQuickMessageEditing: false,
+    isQuickMessagesFormValid: false,
   }),
 
   computed: {

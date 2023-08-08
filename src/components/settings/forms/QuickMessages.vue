@@ -120,6 +120,20 @@ export default {
     async delete(uuid) {
       this.actionDeleteQuickMessage(uuid);
     },
+    validate() {
+      if (!this.quickMessageToUpdate) return false;
+
+      const { title, shortcut, text } = this.quickMessageToUpdate;
+      return !!title && shortcut && text;
+    },
+  },
+
+  computed: {},
+
+  watch: {
+    quickMessageToUpdate() {
+      this.$emit('validate', this.validate());
+    },
   },
 };
 </script>
