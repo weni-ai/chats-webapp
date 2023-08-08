@@ -307,6 +307,8 @@ export default {
   }
 
   &__actions {
+    margin-right: $unnnic-spacing-inline-sm;
+
     display: flex;
     gap: $unnnic-spacing-stack-xs;
 

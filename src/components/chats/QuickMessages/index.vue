@@ -4,6 +4,7 @@
     :title="$t('quick_message')"
     icon="flash-1-3"
     @action="$emit('close')"
+    :flexible="true"
   >
     <aside-slot-template-section class="messages-section__container">
       <div class="messages-section">
@@ -76,7 +77,7 @@
     no-icon-action
     @action="quickMessageToEdit = null"
   >
-    <aside-slot-template-section class="fill-h">
+    <aside-slot-template-section class="fill-h fill-w">
       <section class="fill-h quick-message-form">
         <quick-message-form
           v-model="quickMessageToEdit"
@@ -210,10 +211,12 @@ export default {
   padding-right: $unnnic-spacing-inline-sm;
 
   &__container {
+    height: 100%;
+    width: 100%;
+
     display: flex;
     flex-direction: column;
     gap: $unnnic-spacing-stack-sm;
-    height: 100%;
   }
 }
 
