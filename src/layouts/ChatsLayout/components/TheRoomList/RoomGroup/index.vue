@@ -1,12 +1,5 @@
 <template>
-  <app-accordion :isDefaultOpen="isDefaultOpen" @change="changeAccordionOption">
-    <template v-slot:title>
-      <div class="chat-group" :class="{ disabled }">
-        <header>
-          <h2>{{ label }}</h2>
-        </header>
-      </div>
-    </template>
+  <app-accordion :title="label" :isDefaultOpen="isDefaultOpen" @change="changeAccordionOption">
     <template v-slot:content>
       <div class="chat-group">
         <ul class="chats" :class="{ filled }">
@@ -26,8 +19,8 @@
 </template>
 
 <script>
+import AppAccordion from '@/components/chats/AppAccordion';
 import ContactRoom from './ContactRoom';
-import AppAccordion from './AppAccordion';
 
 export default {
   name: 'RoomGroup',
@@ -88,28 +81,6 @@ export default {
 
 <style lang="scss" scoped>
 .chat-group {
-  &.disabled {
-    header {
-      h2 {
-        color: $unnnic-color-neutral-lightest;
-      }
-    }
-  }
-
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 0 0 0.5rem 0.5rem;
-    h2 {
-      font-size: $unnnic-font-size-body-md;
-      font-weight: $unnnic-font-weight-regular;
-      line-height: 1.25rem;
-      color: $unnnic-color-neutral-cloudy;
-    }
-  }
-
   ul.chats {
     list-style-type: none;
     margin: 0;

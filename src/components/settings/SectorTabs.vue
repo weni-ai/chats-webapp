@@ -1,5 +1,5 @@
 <template>
-  <unnnic-tab v-model="tab" initialTab="sector" :tabs="tabs" class="sector-tabs">
+  <unnnic-tab v-model="tab" :initialTab="tab || 'sector'" :tabs="tabs" class="sector-tabs">
     <template slot="tab-head-sector">
       <div class="form-tab">
         <span class="name">{{ $t('sector.title') }}</span>
@@ -9,6 +9,12 @@
     <template slot="tab-head-queues">
       <div class="form-tab">
         <span class="name">{{ $t('queues.title') }}</span>
+      </div>
+    </template>
+
+    <template slot="tab-head-quick-messages">
+      <div class="form-tab">
+        <span class="name">{{ $t('quick_messages.title') }}</span>
       </div>
     </template>
 
@@ -24,6 +30,10 @@
 
     <template slot="tab-panel-queues">
       <slot name="queues" />
+    </template>
+
+    <template slot="tab-panel-quick-messages">
+      <slot name="quick-messages" />
     </template>
 
     <template slot="tab-panel-tags">
@@ -50,7 +60,7 @@ export default {
   },
 
   data: () => ({
-    tabs: ['sector', 'queues', 'tags'],
+    tabs: ['sector', 'queues', 'quick-messages', 'tags'],
   }),
 
   computed: {

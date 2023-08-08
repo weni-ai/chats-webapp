@@ -416,11 +416,6 @@
     "en-us": "Waiting",
     "es": "Espera"
   },
-  "quick_message": {
-    "pt-br": "Mensagens rápidas",
-    "en-us": "Quick messages",
-    "es": "Mensajes rápidos"
-  },
   "suggested_answers": {
     "pt-br": "Respostas sugeridas",
     "en-us": "Suggested Answers",
@@ -835,7 +830,49 @@
     "en-us": "Send image | Send image | Send images",
     "es": "Enviar imagen | Enviar imagen | Enviar imágenes"
   },
+  "quick_message": {
+    "pt-br": "Mensagens rápidas",
+    "en-us": "Quick messages",
+    "es": "Mensajes rápidos"
+  },
   "quick_messages": {
+    "title": {
+      "pt-br": "Mensagens rápidas",
+      "en-us": "Quick messages",
+      "es": "Mensajes rápidos"
+    },
+    "title_by_sector": {
+      "pt-br": "Mensagens rápidas em {sector}",
+      "en-us": "Quick messages in {sector}",
+      "es": "Mensajes rápidos en {sector}"
+    },
+    "without_messages": {
+      "start": {
+        "pt-br": "Por enquanto não há mensagens rápidas neste setor,",
+        "en-us": "For now there are no quick messages in this sector,",
+        "es": "Por ahora no hay mensajes rápidos en este sector,"
+      },
+      "middle": {
+        "pt-br": "adicione uma mensagem",
+        "en-us": "add a message",
+        "es": "añade un mensaje"
+      },
+      "end": {
+        "pt-br": "para os agentes deste setor utilizarem.",
+        "en-us": "for agents in this sector to use.",
+        "es": "para los agentes en este sector los usan."
+      }
+    },
+    "personal": {
+      "pt-br": "Suas mensagens rápidas",
+      "en-us": "Your quick messages",
+      "es": "Tus mensajes rápidos"
+    },
+    "shared": {
+      "pt-br": "Mensagens rápidas compartilhadas",
+      "en-us": "Shared quick messages",
+      "es": "Mensajes rápidos compartidos"
+    },
     "delete": {
       "pt-br": "Excluir mensagem rápida",
       "en-us": "Delete quick message",

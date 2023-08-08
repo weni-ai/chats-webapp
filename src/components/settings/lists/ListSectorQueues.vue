@@ -32,7 +32,7 @@
 
 <script>
 export default {
-  name: 'ListSectorQueue',
+  name: 'ListSectorQueues',
 
   props: {
     queues: {

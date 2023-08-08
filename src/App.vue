@@ -12,7 +12,6 @@ import env from '@/utils/env';
 import { sendWindowNotification } from '@/utils/notifications';
 import { WS } from '@/services/api/socket';
 import Profile from '@/services/api/resources/profile';
-import QuickMessage from '@/services/api/resources/chats/quickMessage';
 import { PREFERENCES_SOUND } from './components/PreferencesBar.vue';
 
 const moment = require('moment');
@@ -55,17 +54,17 @@ export default {
     return {
       ws: null,
       timerPing: 30000,
-      page: 0,
-      limit: 60,
       loading: false,
     };
   },
 
   computed: {
     ...mapState({
-      activeRoom: (state) => state.rooms.activeRoom,
-      me: (state) => state.profile.me,
-      viewedAgent: (state) => state.dashboard.viewedAgent,
+      activeRoom: 'rooms/activeRoom',
+      me: 'profile/me',
+      viewedAgent: 'dashboard/viewedAgent',
+      nextQuickMessages: (state) => state.chats.quickMessages.nextQuickMessages,
+      nextQuickMessagesShared: (state) => state.chats.quickMessagesShared.nextQuickMessagesShared,
     }),
 
     configsForInitializeWebSocket() {
@@ -103,6 +102,7 @@ export default {
       });
 
       this.loadQuickMessages();
+      this.loadQuickMessagesShared();
       this.getUser();
 
       if (viewedAgent) {
@@ -131,19 +131,27 @@ export default {
 
     async loadQuickMessages() {
       this.loading = true;
-      let hasNext = false;
       try {
-        const response = await QuickMessage.all(this.page * this.limit, this.limit);
-        this.page += 1;
-        this.$store.state.chats.quickMessages.messages =
-          this.$store.state.chats.quickMessages.messages.concat(response.results);
-        hasNext = response.next;
-        this.loading = false;
+        await this.$store.dispatch('chats/quickMessages/getAll');
       } finally {
         this.loading = false;
       }
-      if (hasNext) {
+
+      if (this.nextQuickMessages) {
         this.loadQuickMessages();
+      }
+    },
+
+    async loadQuickMessagesShared() {
+      this.loading = true;
+      try {
+        await this.$store.dispatch('chats/quickMessagesShared/getAll');
+      } finally {
+        this.loading = false;
+      }
+
+      if (this.nextQuickMessagesShared) {
+        this.loadQuickMessagesShared();
       }
     },
 
