@@ -1,4 +1,5 @@
 import http from '@/services/api/http';
+import { getProject } from '@/utils/config';
 
 function getURLParams({ URL, endpoint }) {
   return URL?.split(endpoint)?.[1];
@@ -16,7 +17,8 @@ export default {
   },
 
   async getAllBySector({ nextQuickMessagesShared = '' }) {
-    const endpoint = '/sector_quick_messages/';
+    const projectUuid = getProject();
+    const endpoint = `/sector_quick_messages/?project=${projectUuid}`;
     const params = getURLParams({ URL: nextQuickMessagesShared, endpoint });
 
     const url = nextQuickMessagesShared ? `${endpoint}${params}` : endpoint;
