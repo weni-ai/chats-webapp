@@ -14,8 +14,8 @@ jobs:
         run: |
               npm install -g yarn
               yarn install
-      # - name: Run lint
-      #   run: yarn lint
+      - name: Run lint
+        run: yarn lint
       - name: Run tests
         run: yarn test:unit
       - name: Upload coverage reports to Codecov
