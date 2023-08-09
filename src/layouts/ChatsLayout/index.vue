@@ -5,7 +5,10 @@
       :style="{ display: 'flex', flexDirection: 'column', height: '96vh' }"
       class="room-list"
     >
-      <layout-template-message :selectedContact="this.contact" @close="close" />
+      <layout-template-message
+        :selectedContact="this.$store.state.rooms.activeRoom.contact"
+        @close="handlerShowSendFlowMessages"
+      />
     </section>
     <slot name="room-list" v-if="isRoomListVisible">
       <div class="sidebar">
@@ -103,6 +106,9 @@ export default {
   methods: {
     handlerShowQuickMessages() {
       this.showQuickMessages = !this.showQuickMessages;
+    },
+    handlerShowSendFlowMessages() {
+      this.showSendFlowMessage = !this.showSendFlowMessage;
     },
     close() {
       if (this.$slots.aside[0].componentOptions.listeners) {

@@ -139,9 +139,7 @@ export default {
       const prepareObj = {
         flow: this.selectedFlow,
         groups: this.idGruops,
-        contacts: this.selectedContact
-          ? [this.selectedContact.contact.external_id]
-          : this.idContactsList,
+        contacts: this.selectedContact ? [this.selectedContact.external_id] : this.idContactsList,
         room: this.selectedContact ? this.selectedContact.uuid : null,
       };
       this.openModalProgress();

@@ -10,10 +10,7 @@
         :closeButtonTooltip="$t('chats.end')"
         @close="openModalCloseChat"
         @show-contact-info="componentInAsideSlot = 'contactInfo'"
-        @open-select-flow="
-          componentInAsideSlot =
-            componentInAsideSlot === 'layoutTemplateMessage' ? '' : 'layoutTemplateMessage'
-        "
+        @open-select-flow="handlerShowSendFlowMessages"
         :alert="!this.room.is_24h_valid"
         @reconnect="searchMessages"
         :alertNetwork="this.networkError"
@@ -206,17 +203,6 @@ export default {
     },
     sidebarComponents() {
       return {
-        // quickMessages: {
-        //   name: QuickMessages.name,
-        //   listeners: {
-        //     close: () => {
-        //       this.componentInAsideSlot = '';
-        //     },
-        //     'select-quick-message': (quickMessage) => {
-        //       this.editorMessage = quickMessage.text;
-        //     },
-        //   },
-        // },
         contactInfo: {
           name: ContactInfo.name,
           listeners: {
@@ -358,6 +344,10 @@ export default {
 
     handlerShowQuickMessages() {
       this.$refs['chats-layout']?.handlerShowQuickMessages();
+    },
+
+    handlerShowSendFlowMessages() {
+      this.$refs['chats-layout']?.handlerShowSendFlowMessages();
     },
 
     openModalCloseChat() {
