@@ -269,14 +269,14 @@ export default {
   &-box__container {
     position: relative;
 
-    border: $unnnic-border-width-thinner solid $unnnic-color-neutral-clean;
+    border: $unnnic-border-width-thinner solid $unnnic-color-neutral-cleanest;
     border-radius: $unnnic-border-radius-sm;
     background-color: $unnnic-color-neutral-snow;
 
     height: 100%;
 
     &.focused {
-      border-color: $unnnic-color-neutral-cleanest;
+      border-color: $unnnic-color-neutral-clean;
     }
 
     &.loading {
@@ -292,14 +292,14 @@ export default {
         width: 100%;
         height: $unnnic-border-width-thin;
 
-        background-color: rgba($unnnic-color-neutral-cleanest, $unnnic-opacity-level-light);
+        background-color: rgba($unnnic-color-neutral-clean, $unnnic-opacity-level-light);
 
         overflow: hidden;
 
         .loading-indicator {
           height: $unnnic-border-width-thin;
 
-          background-color: $unnnic-color-neutral-cleanest;
+          background-color: $unnnic-color-neutral-clean;
           transition: width 0.2s;
         }
       }

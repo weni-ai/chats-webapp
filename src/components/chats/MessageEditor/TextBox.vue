@@ -186,7 +186,7 @@ export default {
       outline: none;
 
       &::placeholder {
-        color: $unnnic-color-neutral-clean;
+        color: $unnnic-color-neutral-cleanest;
       }
     }
 
@@ -194,7 +194,7 @@ export default {
       margin-bottom: $padding-vertical;
 
       svg > path {
-        fill: $unnnic-color-neutral-cleanest;
+        fill: $unnnic-color-neutral-clean;
       }
     }
   }

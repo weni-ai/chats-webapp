@@ -1,6 +1,6 @@
 <template>
   <section class="media-message-controls">
-    <unnnic-icon-svg icon="paginate-filter-text-1" scheme="neutral-cleanest" size="sm" />
+    <unnnic-icon-svg icon="paginate-filter-text-1" scheme="neutral-clean" size="sm" />
     <span class="filename">
       {{ fullFilename }}
     </span>
@@ -34,7 +34,7 @@ export default {
 
   .filename {
     font-size: 0.75rem;
-    color: $unnnic-color-neutral-cleanest;
+    color: $unnnic-color-neutral-clean;
     line-height: 1.25rem;
   }
 }
