@@ -6,16 +6,35 @@
         <unnnic-switch
           :value="copilotActive"
           size="small"
-          :text-right="$t('settings.messages.copilot.status.off')"
+          :text-right="$t(`settings.messages.copilot.status.${copilotActive ? 'on' : 'off'}`)"
           @input="saveSector($event)"
         />
-        <p v-if="showIntegrationsMessage" class="without-messages">
+        <p v-if="copilotShowIntegrationsMessage" class="without-messages">
           {{ $t('settings.messages.copilot.integration.start') }}
           <button @click="redirectToIntegrations">
             {{ $t('settings.messages.copilot.integration.middle') }}
           </button>
           {{ $t('settings.messages.copilot.integration.end') }}
         </p>
+        <unnnic-switch
+          v-if="copilotActive && !copilotShowIntegrationsMessage"
+          :value="copilotCustomRulesActive"
+          size="small"
+          :text-right="
+            $t(`settings.messages.copilot.custom_rules.status.${copilotActive ? 'on' : 'off'}`)
+          "
+          @input="handleCustomRules"
+        />
+        <unnnic-text-area
+          v-if="copilotCustomRulesActive"
+          :label="$t('settings.messages.copilot.custom_rules.title')"
+          :placeholder="$t('settings.messages.copilot.custom_rules.explanation')"
+          value=""
+          :maxLength="1500"
+          :disabled="false"
+          type="normal"
+          :errors="[]"
+        />
       </div>
     </section>
 
@@ -69,15 +88,20 @@ export default {
   data: () => {
     return {
       copilotActive: false,
-      showIntegrationsMessage: false,
+      copilotCustomRulesActive: false,
+      copilotShowIntegrationsMessage: false,
     };
   },
 
   mounted() {
     this.copilotActive = this.sector.config.can_use_chat_completion;
+    this.copilotCustomRulesActive = this.sector.config.can_input_context;
   },
 
   methods: {
+    handleCustomRules(event) {
+      this.copilotCustomRulesActive = event;
+    },
     redirectToIntegrations() {
       window.parent.postMessage(
         { event: 'redirect', path: 'integrations:apps/chatgpt/details' },
@@ -85,7 +109,7 @@ export default {
       );
     },
     async saveSector(copilotActive) {
-      this.copilotActive = true;
+      this.copilotActive = copilotActive;
       const { uuid, name } = this.sector;
 
       const newSector = {
@@ -98,7 +122,7 @@ export default {
       const response = await Sector.update(uuid, newSector);
       if (response.status === 400) {
         this.copilotActive = false;
-        this.showIntegrationsMessage = true;
+        this.copilotShowIntegrationsMessage = true;
       }
     },
   },
@@ -114,7 +138,7 @@ export default {
   &__copilot {
     &__integration {
       display: grid;
-      gap: $unnnic-spacing-xs;
+      gap: $unnnic-spacing-sm;
     }
   }
 

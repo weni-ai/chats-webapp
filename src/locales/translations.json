@@ -1000,9 +1000,9 @@
       },
       "copilot": {
         "title": {
-          "pt-br": "Copiloto",
-          "en-us": "Co-pilot",
-          "es": "Copiloto"
+          "pt-br": "CoPiloto",
+          "en-us": "CoPilot",
+          "es": "CoPiloto"
         },
         "status": {
           "on": {
@@ -1018,9 +1018,9 @@
         },
         "custom_rules": {
           "title": {
-            "pt-br": "Regras do copiloto",
-            "en-us": "Co-pilot rules",
-            "es": "Reglas del copiloto"
+            "pt-br": "Regras do CoPiloto",
+            "en-us": "CoPilot rules",
+            "es": "Reglas del CoPiloto"
           },
           "status": {
             "on": {
@@ -1035,9 +1035,9 @@
             }
           },
           "explanation": {
-            "pt-br": "Escreva aqui instruções para o copilot como por exemplo “utilize um emoji em resposta”",
-            "en-us": "Write here instructions for the co-pilot as for example “use an emoji in the answer”",
-            "es": "Escriba instrucciones para el copiloto aquí, como “use un emoji en respuesta”"
+            "pt-br": "Escreva aqui instruções para o CoPiloto como por exemplo “utilize um emoji em resposta”",
+            "en-us": "Write here instructions for the CoPilot as for example “use an emoji in the answer”",
+            "es": "Escriba instrucciones para el CoPilotoo aquí, como “use un emoji en respuesta”"
           }
         },
         "integration": {
@@ -1052,9 +1052,9 @@
             "es": "clic aquí, "
           },
           "end": {
-            "pt-br": "o copiloto oferece respostas prontas baseadas no histórico de atendimento do contato.",
-            "en-us": "the co-pilot offers prompt responses based on the contact's service history.",
-            "es": "el copiloto ofrece respuestas rápidas basadas en el historial de servicio del contacto."
+            "pt-br": "o CoPiloto oferece respostas prontas baseadas no histórico de atendimento do contato.",
+            "en-us": "the CoPilot offers prompt responses based on the contact's service history.",
+            "es": "el CoPiloto ofrece respuestas rápidas basadas en el historial de servicio del contacto."
           }
         }
       }
