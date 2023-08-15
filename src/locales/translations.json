@@ -999,6 +999,11 @@
         "es": "Mensajes"
       },
       "copilot": {
+        "title": {
+          "pt-br": "Copiloto",
+          "en-us": "Co-pilot",
+          "es": "Copiloto"
+        },
         "status": {
           "on": {
             "pt-br": "Ativo",

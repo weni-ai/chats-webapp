@@ -38,7 +38,7 @@ import ListSectorQuickMessages from '@/components/settings/lists/ListSectorQuick
 import QuickMessageForm from '@/components/chats/QuickMessages/QuickMessageForm';
 
 export default {
-  name: 'FormQuickMessages',
+  name: 'FormMessages',
 
   components: {
     QuickMessageForm,
