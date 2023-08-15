@@ -45,11 +45,13 @@
         </option>
       </unnnic-select>
 
-      <unnnic-autocomplete-select
+      <unnnic-select-smart
         style="min-width: 11.81rem; width: 18.65rem"
+        :options="tags"
         v-model="selecteds"
-        :items="tags"
-        :placeholder="this.messageInputTags"
+        autocomplete
+        autocompleteIconLeft
+        autocompleteClearOnFocus
         :disabled="!this.filteredSectorUuid && sectors.length !== 1"
         @input="sendFilter('sector', filteredSectorUuid, filteredAgent, selecteds)"
       />
@@ -177,7 +179,7 @@ export default {
     async downloadMetric(option) {
       const temTag = ![null, undefined, ''].includes(this.selecteds);
       if (temTag) {
-        this.nameTag = this.selecteds.map((el) => el.text).toString();
+        this.nameTag = this.selecteds.map((el) => el.label).toString();
       } else {
         this.nameTag = this.selecteds;
       }
@@ -197,7 +199,7 @@ export default {
     async downloadDashboardData(option) {
       const temTag = ![null, undefined, ''].includes(this.selecteds);
       if (temTag) {
-        this.nameTag = this.selecteds.map((el) => el.text).toString();
+        this.nameTag = this.selecteds.map((el) => el.label).toString();
       } else {
         this.nameTag = this.selecteds;
       }
@@ -248,9 +250,10 @@ export default {
       try {
         this.isLoading = true;
         const response = await Sector.tags(sectorUuid);
-        const tags = response.results;
+        const responseTags = response.results;
 
-        const tagGroup = tags.map((tag) => ({ value: tag.uuid, text: tag.name }));
+        const tagGroup = responseTags.map((tag) => ({ value: tag.uuid, label: tag.name }));
+        tagGroup.push({ value: '', label: 'Filtrar por tags' });
         this.tags = tagGroup;
         this.isLoading = false;
       } catch (error) {
