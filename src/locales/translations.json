@@ -950,6 +950,70 @@
       "en-us": "Getting started with Chats",
       "es": "Primeros pasos con los chats"
     },
+    "settings": {
+      "messages": {
+        "title": {
+          "pt-br": "Mensagens",
+          "en-us": "Messages",
+          "es": "Mensajes"
+        },
+        "copilot": {
+          "status": {
+            "on": {
+              "pt-br": "Ativo",
+              "en-us": "Active",
+              "es": "Activo"
+            },
+            "off": {
+              "pt-br": "Inativo",
+              "en-us": "Inactive",
+              "es": "Inactivo"
+            }
+          },
+          "custom_rules": {
+            "title": {
+              "pt-br": "Regras do copiloto",
+              "en-us": "Co-pilot rules",
+              "es": "Reglas del copiloto"
+            },
+            "status": {
+              "on": {
+                "pt-br": "Utilizar regras personalizadas",
+                "en-us": "Use custom rules",
+                "es": "Usar reglas personalizadas"
+              },
+              "off": {
+                "pt-br": "Não utilizar regras personalizadas",
+                "en-us": "Do not use custom rules",
+                "es": "No utilizar reglas personalizadas"
+              }
+            },
+            "explanation": {
+              "pt-br": "Escreva aqui instruções para o copilot como por exemplo “utilize um emoji em resposta”",
+              "en-us": "Write here instructions for the co-pilot as for example “use an emoji in the answer”",
+              "es": "Escriba instrucciones para el copiloto aquí, como “use un emoji en respuesta”"
+            }
+          },
+          "integration": {
+            "start": {
+              "pt-br": "Para usar, faça integração com o ChatGPT ",
+              "en-us": "To use, integrate with ChatGPT by ",
+              "es": "Para usar, integre con ChatGPT haciendo "
+            },
+            "middle": {
+              "pt-br": "clicando aqui, ",
+              "en-us": "clicking here, ",
+              "es": "clic aquí, "
+            },
+            "end": {
+              "pt-br": "o copiloto oferece respostas prontas baseadas no histórico de atendimento do contato.",
+              "en-us": "the co-pilot offers prompt responses based on the contact's service history.",
+              "es": "el copiloto ofrece respuestas rápidas basadas en el historial de servicio del contacto."
+            }
+          }
+        }
+      }
+    },
     "title_sector": {
       "pt-br": "Configure sua equipe de atendimento!",
       "en-us": "Configure your support team!",
