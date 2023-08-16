@@ -25,16 +25,17 @@
       </h2>
 
       <div class="inline-input-and-button">
-        <unnnic-autocomplete
-          v-model="manager"
-          :label="$t('sector.managers.add.label')"
-          :data="managersNames"
-          open-with-focus
-          highlight
-          :placeholder="$t('sector.managers.add.placeholder')"
-          iconLeft="search-1"
-          @choose="selectManager"
-        />
+        <div>
+          <unnnic-label :label="$t('sector.managers.add.label')" />
+          <unnnic-select-smart
+            v-model="manager"
+            :options="managersNames"
+            autocomplete
+            autocompleteIconLeft
+            autocompleteClearOnFocus
+            @input="selectManager"
+          />
+        </div>
         <!-- <unnnic-button
           text="Selecionar"
           type="secondary"
@@ -169,13 +170,23 @@ export default {
   computed: {
     managersNames() {
       const managers = this.managers.map((manager) => {
-        const { email, first_name, last_name } = manager.user;
+        const {
+          user: { email, first_name, last_name },
+          uuid,
+        } = manager;
 
-        return first_name || last_name ? `${first_name} ${last_name}` : email;
+        return {
+          value: uuid,
+          label: first_name || last_name ? `${first_name} ${last_name}` : email,
+        };
       });
       const filterDuplicateNames = managers.filter(
         (item, index) => managers.indexOf(item) === index,
       );
+      filterDuplicateNames.push({
+        value: '',
+        label: this.$t('sector.managers.add.placeholder'),
+      });
       // const mapped = filterDuplicateNames.map((el, i) => ({ index: i, value: el.toLowerCase() }));
       // const sort = mapped.sort((a, b) => +(a.value > b.value) || +(a.value === b.value) - 1);
       // const result = sort.map((el) => filterDuplicateNames[el.index]);
@@ -214,7 +225,12 @@ export default {
       const { selectedManager } = this;
       if (!selectedManager) return;
 
-      const managers = [...this.sector.managers, selectedManager];
+      const managers = this.sector.managers.some(
+        (manager) => manager.email === selectedManager.email,
+      )
+        ? this.sector.managers
+        : [...this.sector.managers, selectedManager];
+
       this.sector = {
         ...this.sector,
         managers,
@@ -236,10 +252,9 @@ export default {
 
     selectManager(selected) {
       const manager = this.managers.find((manager) => {
-        const { first_name, last_name, email } = manager.user;
-        const name = `${first_name} ${last_name}`;
+        const { uuid } = manager;
 
-        return name === selected || email === selected;
+        return uuid === selected[0].value;
       });
       this.selectedManager = manager;
       this.addSectorManager();
