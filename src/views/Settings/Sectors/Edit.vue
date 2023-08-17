@@ -146,7 +146,7 @@
         :text="$t('quick_messages.add_new')"
         icon-left="add-circle-1"
         type="secondary"
-        @click="() => quickMessageHandler('create')"
+        @click="() => messagesHandler('create')"
       />
       <unnnic-modal
         :showModal="openModal"
@@ -170,7 +170,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import { unnnicCallAlert } from '@weni/unnnic-system';
 
@@ -271,6 +271,12 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      setCopilotActive: 'config/setCopilotActive',
+      setCopilotCustomRulesActive: 'config/setCopilotCustomRulesActive',
+      setCopilotCustomRules: 'config/setCopilotCustomRules',
+    }),
+
     resetTabsData() {
       this.queueToEdit = null;
       this.isQuickMessageEditing = false;
@@ -384,6 +390,9 @@ export default {
         workingDay: { start: this.normalizeTime(work_start), end: this.normalizeTime(work_end) },
         maxSimultaneousChatsByAgent: rooms_limit.toString(),
       };
+      this.setCopilotActive(this.sector.config.can_use_chat_completion);
+      this.setCopilotCustomRulesActive(this.sector.config.can_input_context);
+      this.setCopilotCustomRules(this.sector.config.completion_context);
     },
     normalizeTime(time) {
       const timeFormat = /^(?<time>(\d\d):(\d\d))/;

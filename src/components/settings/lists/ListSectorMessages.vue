@@ -7,7 +7,7 @@
           :value="copilotActive"
           size="small"
           :text-right="$t(`settings.messages.copilot.status.${copilotActive ? 'on' : 'off'}`)"
-          @input="saveSector($event)"
+          @input="handleCopilotActive"
         />
         <p v-if="copilotShowIntegrationsMessage" class="without-messages">
           {{ $t('settings.messages.copilot.integration.start') }}
@@ -17,23 +17,25 @@
           {{ $t('settings.messages.copilot.integration.end') }}
         </p>
         <unnnic-switch
-          v-if="copilotActive && !copilotShowIntegrationsMessage"
+          v-if="copilotActive && !copilotShowIntegrationsMessage && !isLoading"
           :value="copilotCustomRulesActive"
           size="small"
           :text-right="
-            $t(`settings.messages.copilot.custom_rules.status.${copilotActive ? 'on' : 'off'}`)
+            $t(
+              `settings.messages.copilot.custom_rules.status.${
+                copilotCustomRulesActive ? 'on' : 'off'
+              }`,
+            )
           "
-          @input="handleCustomRules"
+          @input="handleCustomRulesActive"
         />
         <unnnic-text-area
-          v-if="copilotCustomRulesActive"
+          v-if="copilotActive && copilotCustomRulesActive && !isLoading"
+          :value="copilotCustomRules"
+          @input="handleCustomRules"
           :label="$t('settings.messages.copilot.custom_rules.title')"
           :placeholder="$t('settings.messages.copilot.custom_rules.explanation')"
-          value=""
           :maxLength="1500"
-          :disabled="false"
-          type="normal"
-          :errors="[]"
         />
       </div>
     </section>
@@ -67,6 +69,8 @@
 import Sector from '@/services/api/resources/settings/sector';
 import QuickMessageCard from '@/components/chats/QuickMessages/QuickMessageCard';
 
+import { mapActions, mapState } from 'vuex';
+
 export default {
   name: 'ListSectorQuickMessages',
 
@@ -87,43 +91,76 @@ export default {
 
   data: () => {
     return {
-      copilotActive: false,
-      copilotCustomRulesActive: false,
+      isLoading: false,
       copilotShowIntegrationsMessage: false,
     };
   },
 
-  mounted() {
-    this.copilotActive = this.sector.config.can_use_chat_completion;
-    this.copilotCustomRulesActive = this.sector.config.can_input_context;
+  beforeDestroy() {
+    this.saveSector();
+  },
+
+  computed: {
+    ...mapState({
+      copilotActive: (state) => state.config.copilot.active,
+      copilotCustomRulesActive: (state) => state.config.copilot.customRulesActive,
+      copilotCustomRules: (state) => state.config.copilot.customRules,
+    }),
   },
 
   methods: {
-    handleCustomRules(event) {
-      this.copilotCustomRulesActive = event;
+    ...mapActions({
+      setCopilotActive: 'config/setCopilotActive',
+      setCopilotCustomRulesActive: 'config/setCopilotCustomRulesActive',
+      setCopilotCustomRules: 'config/setCopilotCustomRules',
+    }),
+
+    handleCopilotActive(boolean) {
+      this.setCopilotActive(boolean);
+      this.saveSector();
     },
+
+    handleCustomRulesActive(boolean) {
+      this.setCopilotCustomRulesActive(boolean);
+    },
+
+    handleCustomRules(customRules) {
+      this.setCopilotCustomRules(customRules);
+    },
+
     redirectToIntegrations() {
       window.parent.postMessage(
         { event: 'redirect', path: 'integrations:apps/chatgpt/details' },
         '*',
       );
     },
-    async saveSector(copilotActive) {
-      this.copilotActive = copilotActive;
+
+    async saveSector() {
       const { uuid, name } = this.sector;
 
       const newSector = {
         name,
         config: {
-          can_use_chat_completion: copilotActive,
+          can_use_chat_completion: this.copilotActive,
+          can_input_context: this.copilotCustomRulesActive,
+          completion_context: this.copilotCustomRules,
         },
       };
 
+      this.isLoading = true;
       const response = await Sector.update(uuid, newSector);
-      if (response.status === 400) {
-        this.copilotActive = false;
+
+      if (response.status === 400 || response.config.can_use_chat_completion === undefined) {
         this.copilotShowIntegrationsMessage = true;
+        this.setCopilotActive(false);
+      } else {
+        this.copilotShowIntegrationsMessage = false;
+        this.setCopilotActive(response.config.can_use_chat_completion);
+        this.setCopilotCustomRulesActive(response.config.can_input_context);
+        this.setCopilotCustomRules(response.config.completion_context);
       }
+
+      this.isLoading = false;
     },
   },
 };
