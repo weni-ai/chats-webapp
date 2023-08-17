@@ -6,7 +6,7 @@
     </header>
 
     <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
-    <section class="suggestion-box__shortcuts" @mousemove="activeShortcutIndex = -1">
+    <section class="suggestion-box__shortcuts" ref="refShortcuts">
       <div
         v-for="(suggestion, index) in filteredSuggestions"
         :key="suggestion.uuid"
@@ -16,6 +16,8 @@
         class="suggestion-box__shortcut clickable"
         :class="{ 'is-active': index === activeShortcutIndex }"
         data-testid="suggestion"
+        @mouseenter="activeShortcutIndex = index"
+        @focus="activeShortcutIndex = index"
       >
         <h2 class="suggestion-box__shortcut__name">{{ suggestion.shortcut }}</h2>
         <p class="suggestion-box__shortcut__preview">
@@ -124,6 +126,9 @@ export default {
 
       event.preventDefault();
       reactiveKey.handler();
+
+      const scrollElement = this.$refs.refShortcuts.childNodes[this.activeShortcutIndex];
+      scrollElement.scrollIntoView({ block: 'nearest' });
     },
     isSuggestionBoxOpen(isOpen) {
       this.resetActiveShortcutIndex();
@@ -142,43 +147,63 @@ export default {
 
 <style lang="scss" scoped>
 .suggestion-box {
+  display: flex;
+  flex-direction: column;
+  gap: $unnnic-spacing-xs;
+
+  position: absolute;
+  bottom: calc(100% + $unnnic-spacing-xs);
+
   background: $unnnic-color-background-snow;
-  box-shadow: $unnnic-shadow-level-near;
-  padding: $unnnic-spacing-inset-sm 0;
   border-radius: $unnnic-border-radius-md;
-  width: 239px;
+  padding: $unnnic-spacing-sm 0;
+  box-shadow: $unnnic-shadow-level-near;
+
+  width: calc(100% - $unnnic-spacing-sm);
+  max-height: 40vh;
+  overflow: hidden;
 
   &__header {
-    font-size: $unnnic-font-size-body-md;
+    padding: 0 $unnnic-spacing-sm $unnnic-spacing-xs;
+    font-size: $unnnic-font-size-body-gt;
+
     line-height: 1.25rem;
-    padding: 0 $unnnic-spacing-inset-sm $unnnic-spacing-inset-nano;
-    margin-bottom: $unnnic-spacing-inline-xs;
-    border-bottom: solid 1px $unnnic-color-neutral-soft;
   }
 
   &__search {
     font-weight: $unnnic-font-weight-black;
-    color: $unnnic-color-brand-weni-dark;
+    color: $unnnic-color-aux-purple-500;
+  }
+
+  &__shortcuts {
+    max-height: 100%;
+    overflow-y: auto;
   }
 
   &__shortcut {
-    padding: $unnnic-spacing-inset-xs $unnnic-spacing-inset-sm;
+    padding: $unnnic-spacing-xs $unnnic-spacing-sm;
 
-    &:hover,
     &.is-active {
-      background: rgba($unnnic-color-aux-baby-yellow, $unnnic-opacity-level-light);
+      background: $unnnic-color-neutral-lightest;
+
+      &:active {
+        background: $unnnic-color-neutral-light;
+      }
     }
 
     &__name {
-      font-size: $unnnic-font-size-body-md;
+      margin-bottom: $unnnic-spacing-nano;
+
+      font-size: $unnnic-font-size-body-gt;
       font-weight: $unnnic-font-weight-bold;
-      color: $unnnic-color-brand-weni-dark;
+      color: $unnnic-color-aux-purple-500;
       line-height: 1.25rem;
     }
 
     &__preview {
-      font-size: $unnnic-font-size-body-sm;
       overflow: hidden;
+
+      font-size: $unnnic-font-size-body-md;
       text-overflow: ellipsis;
       white-space: nowrap;
       line-height: 1rem;

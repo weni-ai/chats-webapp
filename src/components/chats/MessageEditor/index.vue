@@ -1,18 +1,5 @@
 <template>
   <section>
-    <div class="suggestion-box-container">
-      <div class="suggestion-box">
-        <suggestion-box
-          :search="message"
-          :suggestions="shortcuts"
-          :keyboard-event="keyboardEvent"
-          @open="isSuggestionBoxOpen = true"
-          @close="isSuggestionBoxOpen = false"
-          @select="(message = $event.text), focusTextEditor()"
-        />
-      </div>
-    </div>
-
     <div class="message-editor">
       <div
         :class="[
@@ -81,6 +68,14 @@
           icon="send-email-3-1"
         />
       </div>
+      <suggestion-box
+        :search="message"
+        :suggestions="shortcuts"
+        :keyboard-event="keyboardEvent"
+        @open="isSuggestionBoxOpen = true"
+        @close="isSuggestionBoxOpen = false"
+        @select="(message = $event.text), focusTextEditor()"
+      />
     </div>
   </section>
 </template>
@@ -250,21 +245,12 @@ export default {
 
 <style lang="scss" scoped>
 .message-editor {
+  position: relative;
+
   display: grid;
   grid-template-columns: 1fr auto;
   gap: $unnnic-spacing-stack-xs;
   align-items: end;
-
-  .suggestion-box-container {
-    position: relative;
-
-    .suggestion-box {
-      margin-bottom: $unnnic-spacing-inline-xs;
-      position: absolute;
-      bottom: 0;
-      left: 0;
-    }
-  }
 
   &-box__container {
     position: relative;
