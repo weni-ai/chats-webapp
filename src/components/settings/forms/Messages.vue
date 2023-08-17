@@ -18,9 +18,9 @@
         size="md"
       />
     </section>
-    <list-sector-quick-messages
+    <list-sector-messages
       v-else
-      :sector="sector.name"
+      :sector="sector"
       :quick-messages-shared="quickMessagesShared"
       @create-quick-message="this.create"
       @edit-quick-message="this.update"
@@ -34,15 +34,15 @@ import { mapActions } from 'vuex';
 
 import { unnnicCallAlert } from '@weni/unnnic-system';
 
-import ListSectorQuickMessages from '@/components/settings/lists/ListSectorQuickMessages';
+import ListSectorMessages from '@/components/settings/lists/ListSectorMessages';
 import QuickMessageForm from '@/components/chats/QuickMessages/QuickMessageForm';
 
 export default {
-  name: 'FormQuickMessages',
+  name: 'FormMessages',
 
   components: {
     QuickMessageForm,
-    ListSectorQuickMessages,
+    ListSectorMessages,
   },
 
   props: {

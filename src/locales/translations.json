@@ -1003,6 +1003,75 @@
     "en-us": "You are",
     "es": "Tu estas"
   },
+  "settings": {
+    "messages": {
+      "title": {
+        "pt-br": "Mensagens",
+        "en-us": "Messages",
+        "es": "Mensajes"
+      },
+      "copilot": {
+        "title": {
+          "pt-br": "CoPiloto",
+          "en-us": "CoPilot",
+          "es": "CoPiloto"
+        },
+        "status": {
+          "on": {
+            "pt-br": "Ativo",
+            "en-us": "Active",
+            "es": "Activo"
+          },
+          "off": {
+            "pt-br": "Inativo",
+            "en-us": "Inactive",
+            "es": "Inactivo"
+          }
+        },
+        "custom_rules": {
+          "title": {
+            "pt-br": "Regras do CoPiloto",
+            "en-us": "CoPilot rules",
+            "es": "Reglas del CoPiloto"
+          },
+          "status": {
+            "on": {
+              "pt-br": "Utilizar regras personalizadas",
+              "en-us": "Use custom rules",
+              "es": "Usar reglas personalizadas"
+            },
+            "off": {
+              "pt-br": "Não utilizar regras personalizadas",
+              "en-us": "Do not use custom rules",
+              "es": "No utilizar reglas personalizadas"
+            }
+          },
+          "explanation": {
+            "pt-br": "Escreva aqui instruções para o CoPiloto como por exemplo “utilize um emoji em resposta”",
+            "en-us": "Write here instructions for the CoPilot as for example “use an emoji in the answer”",
+            "es": "Escriba instrucciones para el CoPilotoo aquí, como “use un emoji en respuesta”"
+          }
+        },
+        "integration": {
+          "start": {
+            "pt-br": "Para usar, faça integração com o ChatGPT ",
+            "en-us": "To use, integrate with ChatGPT by ",
+            "es": "Para usar, integre con ChatGPT haciendo "
+          },
+          "middle": {
+            "pt-br": "clicando aqui, ",
+            "en-us": "clicking here, ",
+            "es": "clic aquí, "
+          },
+          "end": {
+            "pt-br": "o CoPiloto oferece respostas prontas baseadas no histórico de atendimento do contato.",
+            "en-us": "the CoPilot offers prompt responses based on the contact's service history.",
+            "es": "el CoPiloto ofrece respuestas rápidas basadas en el historial de servicio del contacto."
+          }
+        }
+      }
+    }
+  },
   "new_sector": {
     "sector_tip": {
       "pt-br": "Crie um setor para gerenciar a operação de atendimento, adicionando gerentes, agentes e horário de funcionamento",

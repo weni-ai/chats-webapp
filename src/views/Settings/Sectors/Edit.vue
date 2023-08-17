@@ -100,9 +100,9 @@
         />
       </template>
 
-      <template #quick-messages>
-        <form-quick-messages
-          ref="formQuickMessages"
+      <template #messages>
+        <form-messages
+          ref="formMessages"
           :quick-messages-shared="quickMessagesShared"
           :sector="sector"
           @update-is-quick-message-editing="handleIsQuickMessageEditing"
@@ -142,11 +142,11 @@
         "
       />
       <unnnic-button
-        v-if="this.currentTab === 'quick-messages' && !isQuickMessageEditing"
+        v-if="this.currentTab === 'messages' && !isQuickMessageEditing"
         :text="$t('quick_messages.add_new')"
         icon-left="add-circle-1"
         type="secondary"
-        @click="() => quickMessageHandler('create')"
+        @click="() => messagesHandler('create')"
       />
       <unnnic-modal
         :showModal="openModal"
@@ -170,14 +170,14 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import { unnnicCallAlert } from '@weni/unnnic-system';
 
 import FormAgent from '@/components/settings/forms/Agent';
 import FormSector from '@/components/settings/forms/Sector';
 import FormQueue from '@/components/settings/forms/Queue';
-import FormQuickMessages from '@/components/settings/forms/QuickMessages';
+import FormMessages from '@/components/settings/forms/Messages';
 import FormTags from '@/components/settings/forms/Tags';
 import SectorTabs from '@/components/settings/SectorTabs';
 
@@ -192,7 +192,7 @@ export default {
     FormAgent,
     FormQueue,
     FormSector,
-    FormQuickMessages,
+    FormMessages,
     FormTags,
     SectorTabs,
   },
@@ -206,8 +206,7 @@ export default {
   },
 
   async beforeMount() {
-    if (['sector', 'queues', 'quick-messages', 'tags'].includes(this.tab))
-      this.currentTab = this.tab;
+    if (['sector', 'queues', 'messages', 'tags'].includes(this.tab)) this.currentTab = this.tab;
 
     this.getSector();
     this.getManagers();
@@ -272,11 +271,17 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      setCopilotActive: 'config/setCopilotActive',
+      setCopilotCustomRulesActive: 'config/setCopilotCustomRulesActive',
+      setCopilotCustomRules: 'config/setCopilotCustomRules',
+    }),
+
     resetTabsData() {
       this.queueToEdit = null;
       this.isQuickMessageEditing = false;
       this.pageAgents = 0;
-      this.$refs.formQuickMessages?.resetQuickMessageToUpdate();
+      this.$refs.formMessages?.resetQuickMessageToUpdate();
     },
     focusTextEditor() {
       this.$nextTick(() => {
@@ -286,17 +291,17 @@ export default {
     handleIsQuickMessageEditing(boolean) {
       this.isQuickMessageEditing = boolean;
     },
-    async quickMessageHandler(action) {
+    async messagesHandler(action) {
       const { uuid } = this;
-      const { formQuickMessages } = this.$refs;
+      const { formMessages } = this.$refs;
 
       const actions = {
         create: () => {
-          formQuickMessages.create();
+          formMessages.create();
           this.isQuickMessageEditing = true;
         },
         save: () => {
-          formQuickMessages.save({ uuid });
+          formMessages.save({ uuid });
           this.isQuickMessageEditing = false;
         },
       };
@@ -367,6 +372,7 @@ export default {
         name,
         can_trigger_flows,
         can_edit_custom_fields,
+        config,
         sign_messages,
         rooms_limit,
         uuid,
@@ -379,10 +385,14 @@ export default {
         name,
         can_trigger_flows,
         can_edit_custom_fields,
+        config,
         sign_messages,
         workingDay: { start: this.normalizeTime(work_start), end: this.normalizeTime(work_end) },
         maxSimultaneousChatsByAgent: rooms_limit.toString(),
       };
+      this.setCopilotActive(this.sector.config.can_use_chat_completion);
+      this.setCopilotCustomRulesActive(this.sector.config.can_input_context);
+      this.setCopilotCustomRules(this.sector.config.completion_context);
     },
     normalizeTime(time) {
       const timeFormat = /^(?<time>(\d\d):(\d\d))/;
@@ -427,10 +437,10 @@ export default {
     async save() {
       if (this.currentTab === 'sector') await this.saveSector();
       if (this.currentTab === 'queues' && this.queueToEdit) await this.saveQueue();
-      if (this.currentTab === 'quick-messages') await this.quickMessageHandler('save');
+      if (this.currentTab === 'messages') await this.messagesHandler('save');
       if (this.currentTab === 'tags') await this.saveTags();
 
-      if (['queues', 'quick-messages'].includes(this.currentTab)) {
+      if (['queues', 'messages'].includes(this.currentTab)) {
         this.resetTabsData();
         return;
       }
@@ -518,7 +528,7 @@ export default {
     },
     updateQueryParams(currentTab) {
       const query = {};
-      if (['sector', 'queues', 'quick-messages', 'tags'].includes(currentTab)) {
+      if (['sector', 'queues', 'messages', 'tags'].includes(currentTab)) {
         query.tab = currentTab;
       }
 
