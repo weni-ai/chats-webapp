@@ -8,7 +8,9 @@
     @focus="emitEvent('focus')"
     @keypress.enter="emitEvent('keypress')"
   >
-    <h2 class="suggestion-box__shortcut__title">{{ copilot ? $t('copilot') : `/${shortcut}` }}</h2>
+    <h2 class="suggestion-box__shortcut__title">
+      {{ copilot ? $t('copilot.name') : `/${shortcut}` }}
+    </h2>
     <p class="suggestion-box__shortcut__description">
       {{ copilot ? $t('quick_messages.copilot') : description }}
     </p>

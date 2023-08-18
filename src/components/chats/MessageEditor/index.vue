@@ -83,6 +83,13 @@
         @open="isSuggestionBoxOpen = true"
         @close="isSuggestionBoxOpen = false"
         @select="(message = $event.text), focusTextEditor()"
+        @open-copilot="openCopilot"
+      />
+      <co-pilot
+        v-if="isCopilotOpen"
+        ref="copilot"
+        @select="(message = $event), focusTextEditor()"
+        @close="isCopilotOpen = false"
       />
     </div>
   </section>
@@ -94,6 +101,7 @@ import { mapState } from 'vuex';
 import TextBox from './TextBox';
 import MoreActionsOption from './MoreActionsOption.vue';
 import SuggestionBox from './SuggestionBox.vue';
+import CoPilot from './CoPilot';
 
 export default {
   name: 'MessageEditor',
@@ -102,6 +110,7 @@ export default {
     TextBox,
     SuggestionBox,
     MoreActionsOption,
+    CoPilot,
   },
 
   props: {
@@ -125,6 +134,7 @@ export default {
   data: () => ({
     keyboardEvent: null,
     isSuggestionBoxOpen: false,
+    isCopilotOpen: false,
     audioRecorderStatus: '',
     isTyping: false,
     isFocused: false,
@@ -169,6 +179,11 @@ export default {
   },
 
   methods: {
+    openCopilot() {
+      this.isCopilotOpen = true;
+      this.message = '';
+      this.$refs.copilot.focus();
+    },
     clearAudio() {
       // Accessed by parent components
       this.$refs.audioRecorder?.discard();

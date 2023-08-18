@@ -40,6 +40,15 @@ export default {
     return console.error('"Uuid" necessário para requisição.');
   },
 
+  async getCopilotSuggestion({ uuid }) {
+    if (uuid) {
+      const response = await http.post(`/room/${uuid}/chat_completion/`);
+      return response.data;
+    }
+
+    return console.error('"Uuid" necessário para requisição.');
+  },
+
   async getClosed() {
     const response = await http.get('/room/', { params: { is_active: false } });
     return response.data;

@@ -997,9 +997,21 @@
     "es": "Tu estas"
   },
   "copilot": {
-    "pt-br": "CoPiloto",
-    "en-us": "CoPilot",
-    "es": "CoPiloto"
+    "name": {
+      "pt-br": "CoPiloto",
+      "en-us": "CoPilot",
+      "es": "CoPiloto"
+    },
+    "loading": {
+      "pt-br": "O CoPiloto está digitando",
+      "en-us": "The CoPilot is typing",
+      "es": "El CoPiloto está escribiendo"
+    },
+    "suggestion": {
+      "pt-br": "Resposta sugerida pelo CoPiloto",
+      "en-us": "Answer suggested by CoPilot",
+      "es": "Respuesta sugerida por CoPilot"
+    }
   },
   "settings": {
     "messages": {
