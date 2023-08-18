@@ -1,5 +1,5 @@
 <template>
-  <div class="co-pilot" :class="{ loading: isLoading }">
+  <div class="co-pilot" :class="{ loading: isLoading }" v-click-outside="close">
     <header class="co-pilot__header">
       <div class="co-pilot__header__title">
         <unnnic-icon icon="study-light-idea-1" />
@@ -28,6 +28,7 @@
   </div>
 </template>
 <script>
+import vClickOutside from 'v-click-outside';
 import { mapActions, mapState } from 'vuex';
 
 export default {
@@ -45,6 +46,9 @@ export default {
     setTimeout(() => {
       this.isLoading = false;
     }, 3000);
+  },
+  directives: {
+    clickOutside: vClickOutside.directive,
   },
   computed: {
     ...mapState({
@@ -64,6 +68,9 @@ export default {
     },
   },
   watch: {
+    'document.activeElement': function (va) {
+      console.log(va);
+    },
     isLoading(newIsLoading) {
       if (newIsLoading === false) {
         console.log(newIsLoading);
