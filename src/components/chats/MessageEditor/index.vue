@@ -82,13 +82,13 @@
         :copilot="canUseCopilot"
         @open="isSuggestionBoxOpen = true"
         @close="isSuggestionBoxOpen = false"
-        @select="(message = $event.text), focusTextEditor()"
+        @select="setMessage($event.text)"
         @open-copilot="openCopilot"
       />
       <co-pilot
         v-if="isCopilotOpen"
         ref="copilot"
-        @select="(message = $event), focusTextEditor()"
+        @select="setMessage($event)"
         @close="isCopilotOpen = false"
       />
     </div>
@@ -182,7 +182,12 @@ export default {
     openCopilot() {
       this.isCopilotOpen = true;
       this.message = '';
-      this.$refs.copilot.focus();
+    },
+    setMessage(newMessage) {
+      this.message = newMessage;
+      this.$nextTick(() => {
+        this.$refs.textBox.focus();
+      });
     },
     clearAudio() {
       // Accessed by parent components
@@ -253,9 +258,6 @@ export default {
         await this.stopRecord();
       }
       this.$emit('send-audio');
-    },
-    focusTextEditor() {
-      this.$refs.textEditor?.focus?.();
     },
     openFileUploader(files) {
       this.$emit('open-file-uploader', files);

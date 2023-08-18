@@ -58,6 +58,11 @@ export default {
   }),
 
   methods: {
+    focus() {
+      // accessed externaly
+      this.$refs.textareaRef?.focus();
+    },
+
     setIsFocused(isFocused = false) {
       this.$emit('is-focused-handler', isFocused);
     },

@@ -5,9 +5,14 @@
         <unnnic-icon icon="study-light-idea-1" />
         <h1>{{ isLoading ? $t('copilot.loading') : $t('copilot.suggestion') }}</h1>
       </div>
-      <div @click="close" @keypress.enter="close">
+      <button
+        class="co-pilot__header__close"
+        ref="closeButton"
+        @click="close"
+        @keypress.enter="close"
+      >
         <unnnic-icon icon="close-1" size="xs" class="clickable" />
-      </div>
+      </button>
     </header>
     <section class="co-pilot__response">
       <img
@@ -68,9 +73,6 @@ export default {
     },
   },
   watch: {
-    'document.activeElement': function (va) {
-      console.log(va);
-    },
     isLoading(newIsLoading) {
       if (newIsLoading === false) {
         console.log(newIsLoading);
@@ -154,6 +156,14 @@ export default {
       :deep(svg > path) {
         fill: $unnnic-color-weni-600;
       }
+    }
+
+    &__close {
+      margin: 0;
+      outline: none;
+      border: none;
+      padding: 0;
+      background-color: $unnnic-color-background-snow;
     }
   }
 
