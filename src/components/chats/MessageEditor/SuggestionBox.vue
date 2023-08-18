@@ -6,30 +6,36 @@
     </header>
 
     <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
+    <suggestion-box-shortcut
+      v-if="copilot"
+      copilot
+      @click="openCopilot"
+      @keypress.enter="openCopilot"
+    />
     <section class="suggestion-box__shortcuts" ref="refShortcuts">
-      <div
+      <suggestion-box-shortcut
         v-for="(suggestion, index) in filteredSuggestions"
         :key="suggestion.uuid"
+        :shortcut="suggestion.shortcut"
+        :description="suggestion.text"
+        :isActive="activeShortcutIndex === index"
         @click="select(suggestion)"
         @keypress.enter="select(suggestion)"
-        tabindex="-1"
-        class="suggestion-box__shortcut clickable"
-        :class="{ 'is-active': index === activeShortcutIndex }"
-        data-testid="suggestion"
         @mouseenter="activeShortcutIndex = index"
         @focus="activeShortcutIndex = index"
-      >
-        <h2 class="suggestion-box__shortcut__name">{{ suggestion.shortcut }}</h2>
-        <p class="suggestion-box__shortcut__preview">
-          {{ suggestion.text }}
-        </p>
-      </div>
+      />
     </section>
   </section>
 </template>
 
 <script>
+import SuggestionBoxShortcut from '@/components/chats/MessageEditor/SuggestionBoxShortcut';
+
 export default {
+  name: 'SuggestionBox',
+  components: {
+    SuggestionBoxShortcut,
+  },
   props: {
     search: {
       type: String,
@@ -47,10 +53,14 @@ export default {
       type: KeyboardEvent,
       default: null,
     },
+    copilot: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data: () => ({
-    activeShortcutIndex: 0,
+    activeShortcutIndex: null,
   }),
 
   computed: {
@@ -83,6 +93,9 @@ export default {
     select(suggestion) {
       this.$emit('select', suggestion);
     },
+    openCopilot() {
+      this.$emit('open-copilot');
+    },
     onArrowUp() {
       if (!this.isActiveShortcutIndexDefined()) {
         this.resetActiveShortcutIndex();
@@ -92,7 +105,10 @@ export default {
       const suggestionsQuantity = this.filteredSuggestions.length;
       const shortcutIndex = this.activeShortcutIndex - 1;
 
-      this.activeShortcutIndex = shortcutIndex < 0 ? suggestionsQuantity - 1 : shortcutIndex;
+      this.activeShortcutIndex =
+        this.activeShortcutIndex === null || shortcutIndex < 0
+          ? suggestionsQuantity - 1
+          : shortcutIndex;
     },
     onArrowDown() {
       if (!this.isActiveShortcutIndexDefined()) {
@@ -102,17 +118,24 @@ export default {
 
       const suggestionsQuantity = this.filteredSuggestions.length;
       const shortcutIndex = this.activeShortcutIndex + 1;
-
-      this.activeShortcutIndex = shortcutIndex < 0 ? 0 : shortcutIndex % suggestionsQuantity;
+      this.activeShortcutIndex =
+        this.activeShortcutIndex === null || shortcutIndex < 0
+          ? 0
+          : shortcutIndex % suggestionsQuantity;
     },
     onEnter() {
       const activeSuggestion = this.filteredSuggestions[this.activeShortcutIndex];
-      if (!activeSuggestion) return;
+      if (!activeSuggestion) {
+        if (this.copilot) {
+          this.openCopilot();
+        }
+        return;
+      }
 
       this.select(activeSuggestion);
     },
     resetActiveShortcutIndex() {
-      this.activeShortcutIndex = 0;
+      this.activeShortcutIndex = null;
     },
     isActiveShortcutIndexDefined() {
       return this.activeShortcutIndex !== -1;
@@ -178,36 +201,6 @@ export default {
   &__shortcuts {
     max-height: 100%;
     overflow-y: auto;
-  }
-
-  &__shortcut {
-    padding: $unnnic-spacing-xs $unnnic-spacing-sm;
-
-    &.is-active {
-      background: $unnnic-color-neutral-lightest;
-
-      &:active {
-        background: $unnnic-color-neutral-light;
-      }
-    }
-
-    &__name {
-      margin-bottom: $unnnic-spacing-nano;
-
-      font-size: $unnnic-font-size-body-gt;
-      font-weight: $unnnic-font-weight-bold;
-      color: $unnnic-color-aux-purple-500;
-      line-height: 1.25rem;
-    }
-
-    &__preview {
-      overflow: hidden;
-
-      font-size: $unnnic-font-size-body-md;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      line-height: 1rem;
-    }
   }
 }
 </style>

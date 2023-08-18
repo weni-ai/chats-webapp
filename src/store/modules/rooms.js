@@ -13,6 +13,7 @@ const mutations = {
   SET_ACTIVE_ROOM_HAS_NEXT: 'SET_ACTIVE_ROOM_HAS_NEXT',
   SET_ROOMS_HAS_NEXT: 'SET_ROOMS_HAS_NEXT',
   BRING_ROOM_FRONT: 'BRING_ROOM_FRONT',
+  SET_CAN_USE_COPILOT: 'SET_CAN_USE_COPILOT',
   UPDATE_NEW_MESSAGES_BY_ROOM: 'UPDATE_NEW_MESSAGES_BY_ROOM',
 };
 
@@ -25,6 +26,7 @@ export default {
     newMessagesByRoom: {},
     hasNext: true,
     hasNextRooms: true,
+    canUseCopilot: false,
   },
 
   mutations: {
@@ -48,6 +50,9 @@ export default {
     },
     [mutations.BRING_ROOM_FRONT](state, room) {
       state.rooms.sort((x) => (x === room ? -1 : 0));
+    },
+    [mutations.SET_CAN_USE_COPILOT](state, canUseCopilot) {
+      state.canUseCopilot = canUseCopilot;
     },
     [mutations.ADD_MESSAGE](state, message) {
       if (message.room !== state.activeRoom.uuid) return;
@@ -100,6 +105,10 @@ export default {
     },
     bringRoomFront({ commit }, room) {
       commit(mutations.BRING_ROOM_FRONT, room);
+    },
+    async getCanUseCopilot({ state, commit }) {
+      const response = await Room.getCanUseCopilot({ uuid: state.activeRoom.uuid });
+      commit(mutations.SET_CAN_USE_COPILOT, response.can_use_chat_completion);
     },
     async getActiveRoomMessages({ commit, state }, { offset, concat, limit }) {
       const { activeRoom } = state;

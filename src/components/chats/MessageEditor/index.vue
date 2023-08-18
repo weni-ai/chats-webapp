@@ -38,7 +38,11 @@
           icon="microphone"
         />
 
-        <unnnic-dropdown v-if="showActionButton" position="top-left" class="more-actions">
+        <unnnic-dropdown
+          v-if="showActionButton || isSuggestionBoxOpen"
+          position="top-left"
+          class="more-actions"
+        >
           <unnnic-button-icon slot="trigger" type="primary" size="large" icon="add-1" />
 
           <div class="more-actions-container">
@@ -61,7 +65,10 @@
         </unnnic-dropdown>
 
         <unnnic-button-icon
-          v-if="isTyping || isAudioRecorderVisible || loadingValue !== undefined"
+          v-if="
+            !isSuggestionBoxOpen &&
+            (isTyping || isAudioRecorderVisible || loadingValue !== undefined)
+          "
           @click="send"
           type="primary"
           size="large"
@@ -72,6 +79,7 @@
         :search="message"
         :suggestions="shortcuts"
         :keyboard-event="keyboardEvent"
+        :copilot="canUseCopilot"
         @open="isSuggestionBoxOpen = true"
         @close="isSuggestionBoxOpen = false"
         @select="(message = $event.text), focusTextEditor()"
@@ -126,6 +134,7 @@ export default {
     ...mapState({
       quickMessages: (state) => state.chats.quickMessages.quickMessages,
       quickMessagesShared: (state) => state.chats.quickMessagesShared.quickMessagesShared,
+      canUseCopilot: (state) => state.rooms.canUseCopilot,
     }),
 
     message: {

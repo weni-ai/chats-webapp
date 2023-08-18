@@ -903,6 +903,11 @@
       "en-us": "Available shortcuts",
       "es": "Atajos disponibles"
     },
+    "copilot": {
+      "pt-br": "Agora o ChatGPT é seu CoPiloto! Utilize as respostas sugeridas pela Inteligência artificial para agilizar seus atendimentos!",
+      "en-us": "Now ChatGPT is your CoPilot! Use the answers suggested by Artificial Intelligence to speed up your calls!",
+      "es": "¡Ahora ChatGPT es tu CoPiloto! ¡Usa las respuestas sugeridas por la Inteligencia Artificial para acelerar tus llamadas!"
+    },
     "add": {
       "pt-br": "Adicionar mensagem rápida",
       "en-us": "Add quick message",
@@ -991,6 +996,11 @@
     "en-us": "You are",
     "es": "Tu estas"
   },
+  "copilot": {
+    "pt-br": "CoPiloto",
+    "en-us": "CoPilot",
+    "es": "CoPiloto"
+  },
   "settings": {
     "messages": {
       "title": {
@@ -999,11 +1009,6 @@
         "es": "Mensajes"
       },
       "copilot": {
-        "title": {
-          "pt-br": "CoPiloto",
-          "en-us": "CoPilot",
-          "es": "CoPiloto"
-        },
         "status": {
           "on": {
             "pt-br": "Ativo",
