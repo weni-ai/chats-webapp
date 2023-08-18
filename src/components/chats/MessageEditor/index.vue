@@ -1,18 +1,5 @@
 <template>
   <section>
-    <div class="suggestion-box-container">
-      <div class="suggestion-box">
-        <suggestion-box
-          :search="message"
-          :suggestions="shortcuts"
-          :keyboard-event="keyboardEvent"
-          @open="isSuggestionBoxOpen = true"
-          @close="isSuggestionBoxOpen = false"
-          @select="(message = $event.text), focusTextEditor()"
-        />
-      </div>
-    </div>
-
     <div class="message-editor">
       <div
         :class="[
@@ -51,7 +38,11 @@
           icon="microphone"
         />
 
-        <unnnic-dropdown v-if="showActionButton" position="top-left" class="more-actions">
+        <unnnic-dropdown
+          v-if="showActionButton || isSuggestionBoxOpen"
+          position="top-left"
+          class="more-actions"
+        >
           <unnnic-button-icon slot="trigger" type="primary" size="large" icon="add-1" />
 
           <div class="more-actions-container">
@@ -74,13 +65,32 @@
         </unnnic-dropdown>
 
         <unnnic-button-icon
-          v-if="isTyping || isAudioRecorderVisible || loadingValue !== undefined"
+          v-if="
+            !isSuggestionBoxOpen &&
+            (isTyping || isAudioRecorderVisible || loadingValue !== undefined)
+          "
           @click="send"
           type="primary"
           size="large"
           icon="send-email-3-1"
         />
       </div>
+      <suggestion-box
+        :search="message"
+        :suggestions="shortcuts"
+        :keyboard-event="keyboardEvent"
+        :copilot="canUseCopilot"
+        @open="isSuggestionBoxOpen = true"
+        @close="isSuggestionBoxOpen = false"
+        @select="(message = $event.text), focusTextEditor()"
+        @open-copilot="openCopilot"
+      />
+      <co-pilot
+        v-if="isCopilotOpen"
+        ref="copilot"
+        @select="(message = $event), focusTextEditor()"
+        @close="isCopilotOpen = false"
+      />
     </div>
   </section>
 </template>
@@ -91,6 +101,7 @@ import { mapState } from 'vuex';
 import TextBox from './TextBox';
 import MoreActionsOption from './MoreActionsOption.vue';
 import SuggestionBox from './SuggestionBox.vue';
+import CoPilot from './CoPilot';
 
 export default {
   name: 'MessageEditor',
@@ -99,6 +110,7 @@ export default {
     TextBox,
     SuggestionBox,
     MoreActionsOption,
+    CoPilot,
   },
 
   props: {
@@ -122,6 +134,7 @@ export default {
   data: () => ({
     keyboardEvent: null,
     isSuggestionBoxOpen: false,
+    isCopilotOpen: false,
     audioRecorderStatus: '',
     isTyping: false,
     isFocused: false,
@@ -131,6 +144,7 @@ export default {
     ...mapState({
       quickMessages: (state) => state.chats.quickMessages.quickMessages,
       quickMessagesShared: (state) => state.chats.quickMessagesShared.quickMessagesShared,
+      canUseCopilot: (state) => state.rooms.canUseCopilot,
     }),
 
     message: {
@@ -165,6 +179,11 @@ export default {
   },
 
   methods: {
+    openCopilot() {
+      this.isCopilotOpen = true;
+      this.message = '';
+      this.$refs.copilot.focus();
+    },
     clearAudio() {
       // Accessed by parent components
       this.$refs.audioRecorder?.discard();
@@ -250,21 +269,12 @@ export default {
 
 <style lang="scss" scoped>
 .message-editor {
+  position: relative;
+
   display: grid;
   grid-template-columns: 1fr auto;
   gap: $unnnic-spacing-stack-xs;
   align-items: end;
-
-  .suggestion-box-container {
-    position: relative;
-
-    .suggestion-box {
-      margin-bottom: $unnnic-spacing-inline-xs;
-      position: absolute;
-      bottom: 0;
-      left: 0;
-    }
-  }
 
   &-box__container {
     position: relative;

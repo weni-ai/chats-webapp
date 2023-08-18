@@ -1,7 +1,7 @@
 <template>
   <section class="list-sector-messages">
     <section class="list-sector-messages__copilot">
-      <p v-if="sector" class="title">{{ $t('settings.messages.copilot.title') }}</p>
+      <p v-if="sector" class="title">{{ $t('copilot.name') }}</p>
       <div class="list-sector-messages__copilot__integration">
         <unnnic-switch
           :value="copilotActive"
