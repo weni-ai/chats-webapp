@@ -1,5 +1,10 @@
 <template>
-  <div class="co-pilot" :class="{ loading: isLoading }" v-click-outside="close">
+  <div
+    class="co-pilot"
+    :class="{ loading: isLoading }"
+    v-click-outside="close"
+    @keydown.esc="close"
+  >
     <header class="co-pilot__header">
       <div class="co-pilot__header__title">
         <unnnic-icon icon="study-light-idea-1" />
@@ -9,7 +14,7 @@
         class="co-pilot__header__close"
         ref="closeButton"
         @click="close"
-        @keypress.enter="close"
+        @keypress.esc="close"
       >
         <unnnic-icon icon="close-1" size="xs" class="clickable" />
       </button>
@@ -24,7 +29,7 @@
       <button
         v-else
         class="co-pilot__response__suggestion clickable"
-        @click="select('Sugestão')"
+        @click="select('Para pagar seu boleto basta acessar seu aplicativo e gerar um novo boleto')"
         ref="suggestion"
       >
         Para pagar seu boleto basta acessar seu aplicativo e gerar um novo boleto
