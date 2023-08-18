@@ -75,7 +75,6 @@ export default {
   watch: {
     isLoading(newIsLoading) {
       if (newIsLoading === false) {
-        console.log(newIsLoading);
         this.$nextTick(() => {
           this.$refs.suggestion.focus();
         });

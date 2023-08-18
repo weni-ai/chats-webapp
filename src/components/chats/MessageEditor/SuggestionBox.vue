@@ -159,7 +159,7 @@ export default {
     search(newSearch) {
       const searchHasValue = !!newSearch.replace('/', '');
 
-      if (searchHasValue) {
+      if (!this.copilot || searchHasValue) {
         this.resetActiveShortcutIndex();
       } else {
         this.activeShortcutIndex = null;
