@@ -169,29 +169,26 @@ export default {
 
   computed: {
     managersNames() {
-      const managers = this.managers.map((manager) => {
+      const managersNames = [
+        {
+          value: '',
+          label: this.$t('sector.managers.add.placeholder'),
+        },
+      ];
+
+      this.managers.forEach((manager) => {
         const {
           user: { email, first_name, last_name },
           uuid,
         } = manager;
 
-        return {
+        managersNames.push({
           value: uuid,
           label: first_name || last_name ? `${first_name} ${last_name}` : email,
-        };
+        });
       });
-      const filterDuplicateNames = managers.filter(
-        (item, index) => managers.indexOf(item) === index,
-      );
-      filterDuplicateNames.push({
-        value: '',
-        label: this.$t('sector.managers.add.placeholder'),
-      });
-      // const mapped = filterDuplicateNames.map((el, i) => ({ index: i, value: el.toLowerCase() }));
-      // const sort = mapped.sort((a, b) => +(a.value > b.value) || +(a.value === b.value) - 1);
-      // const result = sort.map((el) => filterDuplicateNames[el.index]);
-      return filterDuplicateNames;
-      // return managers.filter((manager) => manager.includes(this.manager));
+
+      return managersNames;
     },
 
     sector: {
