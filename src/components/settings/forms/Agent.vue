@@ -9,18 +9,18 @@
       </p>
 
       <section class="controls">
-        <unnnic-autocomplete
-          v-model="search"
-          :data="agentsNames"
-          @choose="chooseAgent"
-          :label="$t('agents.add.select.label')"
-          :placeholder="$t('agents.add.select.placeholder')"
-          iconLeft="search-1"
-          iconRight="keyboard-return-1"
-          open-with-focus
-          highlight
-          class="input"
-        />
+        <div>
+          <unnnic-label :label="$t('agents.add.select.label')" />
+          <unnnic-select-smart
+            v-model="search"
+            class="input"
+            :options="agentsNames"
+            autocomplete
+            autocompleteIconLeft
+            autocompleteClearOnFocus
+            @input="chooseAgent"
+          />
+        </div>
         <!-- <unnnic-button
           type="secondary"
           :text="$t('agents.add.button')"
@@ -72,25 +72,31 @@ export default {
   data: () => ({
     search: '',
     selectAgent: null,
-    agent: {
-      uuid: '',
-    },
+    agent: '',
   }),
 
   computed: {
     agentsNames() {
-      const agents = this.agents.map((agent) => {
-        const { email, first_name, last_name } = agent.user;
+      const agentsNames = [
+        {
+          value: '',
+          label: this.$t('agents.add.select.placeholder'),
+        },
+      ];
 
-        return first_name || last_name ? `${first_name} ${last_name}` : email;
+      this.agents.forEach((agent) => {
+        const {
+          user: { email, first_name, last_name },
+          uuid,
+        } = agent;
+
+        agentsNames.push({
+          value: uuid,
+          label: first_name || last_name ? `${first_name} ${last_name}` : email,
+        });
       });
-      const filterDuplicateNames = agents.filter((item, index) => agents.indexOf(item) === index);
-      // eslint-disable-next-line func-names
-      // const mapped = filterDuplicateNames.map((el, i) => ({ index: i, value: el.toLowerCase() }));
-      // const sort = mapped.sort((a, b) => +(a.value > b.value) || +(a.value === b.value) - 1);
-      // const result = sort.map((el) => filterDuplicateNames[el.index]);
-      return filterDuplicateNames;
-      // return agents.filter((agent) => agent.includes(this.search));
+
+      return agentsNames;
     },
     selectedAgents: {
       get() {
@@ -109,10 +115,9 @@ export default {
     chooseAgent(selected) {
       this.selectAgent = selected;
       const agent = this.agents.find((agent) => {
-        const { first_name, last_name, email } = agent.user;
-        const name = `${first_name} ${last_name}`;
+        const { uuid } = agent;
 
-        return name === selected || email === selected;
+        return uuid === selected[0].value;
       });
       this.agent = agent;
       this.emitSelectedAgent();
@@ -160,16 +165,6 @@ export default {
     line-height: 1.5rem;
 
     margin-bottom: 0.5rem;
-  }
-
-  .controls {
-    display: flex;
-    align-items: flex-end;
-    gap: 1rem;
-
-    .input {
-      flex: 1 1;
-    }
   }
 
   &__agents {
