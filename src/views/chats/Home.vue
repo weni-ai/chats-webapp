@@ -251,7 +251,7 @@ export default {
         this.$router.replace({ name: 'home' });
       }
       await this.$store.dispatch('rooms/setActiveRoom', room);
-      await this.$store.dispatch('rooms/getCanUseCopilot');
+      // await this.$store.dispatch('rooms/getCanUseCopilot');
       this.componentInAsideSlot = '';
       this.page = 0;
       this.readMessages();
