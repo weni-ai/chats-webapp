@@ -1,6 +1,7 @@
 <template>
   <section class="list-sector-messages">
-    <section class="list-sector-messages__copilot">
+    <!-- Temporarily commented out while co-pilot is not yet in production -->
+    <!-- <section class="list-sector-messages__copilot">
       <p v-if="sector" class="title">{{ $t('copilot.name') }}</p>
       <div class="list-sector-messages__copilot__integration">
         <unnnic-switch
@@ -38,7 +39,7 @@
           :maxLength="1500"
         />
       </div>
-    </section>
+    </section> -->
 
     <section>
       <p v-if="sector" class="title">
