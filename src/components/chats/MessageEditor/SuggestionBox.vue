@@ -135,7 +135,7 @@ export default {
       this.select(activeSuggestion);
     },
     resetActiveShortcutIndex() {
-      this.activeShortcutIndex = null;
+      this.activeShortcutIndex = 0;
     },
     isActiveShortcutIndexDefined() {
       return this.activeShortcutIndex !== -1;
@@ -154,14 +154,15 @@ export default {
       scrollElement.scrollIntoView({ block: 'nearest' });
     },
     isSuggestionBoxOpen(isOpen) {
-      this.resetActiveShortcutIndex();
       this.$emit(isOpen ? 'open' : 'close');
     },
-    search() {
-      const suggestionsQuantity = this.filteredSuggestions.length;
+    search(newSearch) {
+      const searchHasValue = !!newSearch.replace('/', '');
 
-      if (this.activeShortcutIndex >= suggestionsQuantity || !this.isActiveShortcutIndexDefined()) {
+      if (!this.copilot || searchHasValue) {
         this.resetActiveShortcutIndex();
+      } else {
+        this.activeShortcutIndex = null;
       }
     },
   },

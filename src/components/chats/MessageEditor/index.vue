@@ -31,7 +31,14 @@
       </div>
       <div class="message-editor__actions">
         <unnnic-button-icon
-          v-if="showActionButton"
+          v-if="canUseCopilot && !isCopilotOpen && showActionButton"
+          @click="openCopilot"
+          type="secondary"
+          size="large"
+          icon="study-light-idea-1"
+        />
+        <unnnic-button-icon
+          v-if="!canUseCopilot && showActionButton"
           @click="record"
           type="secondary"
           size="large"
@@ -47,19 +54,20 @@
 
           <div class="more-actions-container">
             <more-actions-option
-              :action="() => $emit('show-quick-messages')"
-              icon="flash-1-4"
-              :title="$t('quick_message')"
+              v-if="canUseCopilot"
+              :action="record"
+              icon="microphone"
+              :title="$t('record_audio')"
             />
-            <!-- <more-actions-option
-              :action="() => {}"
-              icon="study-light-idea-1"
-              :title="$t('suggested_answers')"
-            /> -->
             <more-actions-option
               :action="openFileUploader"
               icon="attachment"
               :title="$t('attach')"
+            />
+            <more-actions-option
+              :action="() => $emit('show-quick-messages')"
+              icon="flash-1-4"
+              :title="$t('quick_message')"
             />
           </div>
         </unnnic-dropdown>
@@ -82,13 +90,13 @@
         :copilot="canUseCopilot"
         @open="isSuggestionBoxOpen = true"
         @close="isSuggestionBoxOpen = false"
-        @select="(message = $event.text), focusTextEditor()"
+        @select="setMessage($event.text)"
         @open-copilot="openCopilot"
       />
       <co-pilot
         v-if="isCopilotOpen"
         ref="copilot"
-        @select="(message = $event), focusTextEditor()"
+        @select="setMessage($event)"
         @close="isCopilotOpen = false"
       />
     </div>
@@ -182,7 +190,12 @@ export default {
     openCopilot() {
       this.isCopilotOpen = true;
       this.message = '';
-      this.$refs.copilot.focus();
+    },
+    setMessage(newMessage) {
+      this.message = newMessage;
+      this.$nextTick(() => {
+        this.$refs.textBox.focus();
+      });
     },
     clearAudio() {
       // Accessed by parent components
@@ -253,9 +266,6 @@ export default {
         await this.stopRecord();
       }
       this.$emit('send-audio');
-    },
-    focusTextEditor() {
-      this.$refs.textEditor?.focus?.();
     },
     openFileUploader(files) {
       this.$emit('open-file-uploader', files);

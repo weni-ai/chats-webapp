@@ -1,13 +1,23 @@
 <template>
-  <div class="co-pilot" :class="{ loading: isLoading }" v-click-outside="close">
+  <div
+    class="co-pilot"
+    :class="{ loading: isLoading }"
+    v-click-outside="close"
+    @keydown.esc="close"
+  >
     <header class="co-pilot__header">
       <div class="co-pilot__header__title">
         <unnnic-icon icon="study-light-idea-1" />
         <h1>{{ isLoading ? $t('copilot.loading') : $t('copilot.suggestion') }}</h1>
       </div>
-      <div @click="close" @keypress.enter="close">
+      <button
+        class="co-pilot__header__close"
+        ref="closeButton"
+        @click="close"
+        @keypress.esc="close"
+      >
         <unnnic-icon icon="close-1" size="xs" class="clickable" />
-      </div>
+      </button>
     </header>
     <section class="co-pilot__response">
       <img
@@ -19,7 +29,7 @@
       <button
         v-else
         class="co-pilot__response__suggestion clickable"
-        @click="select('Sugestão')"
+        @click="select('Para pagar seu boleto basta acessar seu aplicativo e gerar um novo boleto')"
         ref="suggestion"
       >
         Para pagar seu boleto basta acessar seu aplicativo e gerar um novo boleto
@@ -39,7 +49,7 @@ export default {
     };
   },
   mounted() {
-    // this.getCopilotSuggestion();
+    this.getCopilotSuggestion();
     this.$nextTick(() => {
       this.$refs.closeButton.focus();
     });
@@ -68,12 +78,8 @@ export default {
     },
   },
   watch: {
-    'document.activeElement': function (va) {
-      console.log(va);
-    },
     isLoading(newIsLoading) {
       if (newIsLoading === false) {
-        console.log(newIsLoading);
         this.$nextTick(() => {
           this.$refs.suggestion.focus();
         });
@@ -154,6 +160,14 @@ export default {
       :deep(svg > path) {
         fill: $unnnic-color-weni-600;
       }
+    }
+
+    &__close {
+      margin: 0;
+      outline: none;
+      border: none;
+      padding: 0;
+      background-color: $unnnic-color-background-snow;
     }
   }
 
