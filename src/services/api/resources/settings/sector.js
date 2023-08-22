@@ -32,8 +32,11 @@ export default {
   },
 
   async update(uuid, data) {
-    const sector = await http.patch(`/sector/${uuid}/`, data);
-    return sector;
+    const response = await http
+      .patch(`/sector/${uuid}/`, data)
+      .then((response) => response.data)
+      .catch((error) => error.response);
+    return response;
   },
 
   async managers(sectorUuid) {

@@ -6,28 +6,36 @@
     </header>
 
     <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
-    <section class="suggestion-box__shortcuts" @mousemove="activeShortcutIndex = -1">
-      <div
+    <suggestion-box-shortcut
+      v-if="copilot"
+      copilot
+      @click="openCopilot"
+      @keypress.enter="openCopilot"
+    />
+    <section class="suggestion-box__shortcuts" ref="refShortcuts">
+      <suggestion-box-shortcut
         v-for="(suggestion, index) in filteredSuggestions"
         :key="suggestion.uuid"
+        :shortcut="suggestion.shortcut"
+        :description="suggestion.text"
+        :isActive="activeShortcutIndex === index"
         @click="select(suggestion)"
         @keypress.enter="select(suggestion)"
-        tabindex="-1"
-        class="suggestion-box__shortcut clickable"
-        :class="{ 'is-active': index === activeShortcutIndex }"
-        data-testid="suggestion"
-      >
-        <h2 class="suggestion-box__shortcut__name">{{ suggestion.shortcut }}</h2>
-        <p class="suggestion-box__shortcut__preview">
-          {{ suggestion.text }}
-        </p>
-      </div>
+        @mouseenter="activeShortcutIndex = index"
+        @focus="activeShortcutIndex = index"
+      />
     </section>
   </section>
 </template>
 
 <script>
+import SuggestionBoxShortcut from '@/components/chats/MessageEditor/SuggestionBoxShortcut';
+
 export default {
+  name: 'SuggestionBox',
+  components: {
+    SuggestionBoxShortcut,
+  },
   props: {
     search: {
       type: String,
@@ -45,10 +53,14 @@ export default {
       type: KeyboardEvent,
       default: null,
     },
+    copilot: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data: () => ({
-    activeShortcutIndex: 0,
+    activeShortcutIndex: null,
   }),
 
   computed: {
@@ -81,6 +93,9 @@ export default {
     select(suggestion) {
       this.$emit('select', suggestion);
     },
+    openCopilot() {
+      this.$emit('open-copilot');
+    },
     onArrowUp() {
       if (!this.isActiveShortcutIndexDefined()) {
         this.resetActiveShortcutIndex();
@@ -90,7 +105,10 @@ export default {
       const suggestionsQuantity = this.filteredSuggestions.length;
       const shortcutIndex = this.activeShortcutIndex - 1;
 
-      this.activeShortcutIndex = shortcutIndex < 0 ? suggestionsQuantity - 1 : shortcutIndex;
+      this.activeShortcutIndex =
+        this.activeShortcutIndex === null || shortcutIndex < 0
+          ? suggestionsQuantity - 1
+          : shortcutIndex;
     },
     onArrowDown() {
       if (!this.isActiveShortcutIndexDefined()) {
@@ -100,12 +118,19 @@ export default {
 
       const suggestionsQuantity = this.filteredSuggestions.length;
       const shortcutIndex = this.activeShortcutIndex + 1;
-
-      this.activeShortcutIndex = shortcutIndex < 0 ? 0 : shortcutIndex % suggestionsQuantity;
+      this.activeShortcutIndex =
+        this.activeShortcutIndex === null || shortcutIndex < 0
+          ? 0
+          : shortcutIndex % suggestionsQuantity;
     },
     onEnter() {
       const activeSuggestion = this.filteredSuggestions[this.activeShortcutIndex];
-      if (!activeSuggestion) return;
+      if (!activeSuggestion) {
+        if (this.copilot) {
+          this.openCopilot();
+        }
+        return;
+      }
 
       this.select(activeSuggestion);
     },
@@ -124,16 +149,20 @@ export default {
 
       event.preventDefault();
       reactiveKey.handler();
+
+      const scrollElement = this.$refs.refShortcuts.childNodes[this.activeShortcutIndex];
+      scrollElement.scrollIntoView({ block: 'nearest' });
     },
     isSuggestionBoxOpen(isOpen) {
-      this.resetActiveShortcutIndex();
       this.$emit(isOpen ? 'open' : 'close');
     },
-    search() {
-      const suggestionsQuantity = this.filteredSuggestions.length;
+    search(newSearch) {
+      const searchHasValue = !!newSearch.replace('/', '');
 
-      if (this.activeShortcutIndex >= suggestionsQuantity || !this.isActiveShortcutIndexDefined()) {
+      if (!this.copilot || searchHasValue) {
         this.resetActiveShortcutIndex();
+      } else {
+        this.activeShortcutIndex = null;
       }
     },
   },
@@ -142,47 +171,37 @@ export default {
 
 <style lang="scss" scoped>
 .suggestion-box {
+  display: flex;
+  flex-direction: column;
+  gap: $unnnic-spacing-xs;
+
+  position: absolute;
+  bottom: calc(100% + $unnnic-spacing-xs);
+
   background: $unnnic-color-background-snow;
-  box-shadow: $unnnic-shadow-level-near;
-  padding: $unnnic-spacing-inset-sm 0;
   border-radius: $unnnic-border-radius-md;
-  width: 239px;
+  padding: $unnnic-spacing-sm 0;
+  box-shadow: $unnnic-shadow-level-near;
+
+  width: calc(100% - $unnnic-spacing-sm);
+  max-height: 40vh;
+  overflow: hidden;
 
   &__header {
-    font-size: $unnnic-font-size-body-md;
+    padding: 0 $unnnic-spacing-sm $unnnic-spacing-xs;
+    font-size: $unnnic-font-size-body-gt;
+
     line-height: 1.25rem;
-    padding: 0 $unnnic-spacing-inset-sm $unnnic-spacing-inset-nano;
-    margin-bottom: $unnnic-spacing-inline-xs;
-    border-bottom: solid 1px $unnnic-color-neutral-soft;
   }
 
   &__search {
     font-weight: $unnnic-font-weight-black;
-    color: $unnnic-color-brand-weni-dark;
+    color: $unnnic-color-aux-purple-500;
   }
 
-  &__shortcut {
-    padding: $unnnic-spacing-inset-xs $unnnic-spacing-inset-sm;
-
-    &:hover,
-    &.is-active {
-      background: rgba($unnnic-color-aux-baby-yellow, $unnnic-opacity-level-light);
-    }
-
-    &__name {
-      font-size: $unnnic-font-size-body-md;
-      font-weight: $unnnic-font-weight-bold;
-      color: $unnnic-color-brand-weni-dark;
-      line-height: 1.25rem;
-    }
-
-    &__preview {
-      font-size: $unnnic-font-size-body-sm;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      line-height: 1rem;
-    }
+  &__shortcuts {
+    max-height: 100%;
+    overflow-y: auto;
   }
 }
 </style>
