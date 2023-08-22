@@ -28,18 +28,13 @@
         <div class="chat-messages__room__divisor__line" style="background: #d0d3d9" />
       </div> -->
       <div v-if="isTransferInfoMessage(message)" class="chat-messages__room__transfer-info">
-        <unnnic-icon
-          v-if="!room.is_waiting"
-          icon="logout-1-1"
-          size="sm"
-          scheme="neutral-cleanest"
-        />
+        <unnnic-icon v-if="!room.is_waiting" icon="logout-1-1" size="sm" scheme="neutral-clean" />
         {{ !room.is_waiting ? createTransferLabel(message) : $t('waiting_answer.send_template') }}
         <unnnic-icon
           v-if="room.is_waiting"
           icon="send-email-3-1"
           size="sm"
-          scheme="neutral-cleanest"
+          scheme="neutral-clean"
         />
       </div>
 
@@ -276,7 +271,7 @@ export default {
       text-align: center;
       font-size: $unnnic-font-size-body-md;
       line-height: 1.25rem;
-      color: $unnnic-color-neutral-cleanest;
+      color: $unnnic-color-neutral-clean;
     }
   }
 

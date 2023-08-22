@@ -111,7 +111,7 @@ export default {
     async agentInfo() {
       const temTag = ![null, undefined, ''].includes(this.filter.tag);
       if (temTag) {
-        this.nameTag = this.filter.tag.map((el) => el.text).toString();
+        this.nameTag = this.filter.tag.map((el) => el.value).toString();
       } else {
         this.nameTag = this.filter.tag;
       }
@@ -131,7 +131,7 @@ export default {
     async roomInfo() {
       const temTag = ![null, undefined, ''].includes(this.filter.tag);
       if (temTag) {
-        this.nameTag = this.filter.tag.map((el) => el.text).toString();
+        this.nameTag = this.filter.tag.map((el) => el.value).toString();
       } else {
         this.nameTag = this.filter.tag;
       }
@@ -151,7 +151,7 @@ export default {
     async sectorInfo() {
       const temTag = ![null, undefined, ''].includes(this.filter.tag);
       if (temTag) {
-        this.nameTag = this.filter.tag.map((el) => el.text).toString();
+        this.nameTag = this.filter.tag.map((el) => el.value).toString();
       } else {
         this.nameTag = this.filter.tag;
       }
@@ -170,7 +170,7 @@ export default {
     async rawDataInfo() {
       const temTag = ![null, undefined, ''].includes(this.filter.tag);
       if (temTag) {
-        this.nameTag = this.filter.tag.map((el) => el.text).toString();
+        this.nameTag = this.filter.tag.map((el) => el.value).toString();
       } else {
         this.nameTag = this.filter.tag;
       }
@@ -189,7 +189,7 @@ export default {
     async downloadDashboardData() {
       const temTag = ![null, undefined, ''].includes(this.filter.tag);
       if (temTag) {
-        this.nameTag = this.filter.tag.map((el) => el.text).toString();
+        this.nameTag = this.filter.tag.map((el) => el.value).toString();
       } else {
         this.nameTag = this.filter.tag;
       }

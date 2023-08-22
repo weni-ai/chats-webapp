@@ -164,6 +164,18 @@
     "en-us": "Justify",
     "es": "Justificar"
   },
+  "select_smart": {
+    "without_results": {
+      "pt-br": "Nenhum resultado encontrado",
+      "en-us": "No results found",
+      "es": "Ningún resultado encontrado"
+    },
+    "without_multiple_selected": {
+      "pt-br": "Nenhuma opção selecionada",
+      "en-us": "No option selected",
+      "es": "Ninguna opción seleccionada"
+    }
+  },
   "sector": {
     "title": {
       "pt-br": "Setor",

@@ -94,12 +94,12 @@ $avatar-sizes: '2xl' 3rem, 'xl' $unnnic-icon-size-xl, 'lg' $unnnic-icon-size-lg,
   }
 
   &.disabled {
-    background: $unnnic-color-neutral-clean;
+    background: $unnnic-color-neutral-cleanest;
     color: $unnnic-color-neutral-snow;
   }
 
   &.off {
-    color: $unnnic-color-neutral-clean;
+    color: $unnnic-color-neutral-cleanest;
   }
 
   @each $name, $size in $avatar-sizes {

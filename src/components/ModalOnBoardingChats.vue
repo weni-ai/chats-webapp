@@ -51,7 +51,7 @@
                 <unnnic-icon
                   icon="arrow-left-1-1"
                   size="sm"
-                  scheme="neutral-clean"
+                  scheme="neutral-cleanest"
                   clickable
                   @click="
                     resetAutoSkip();
@@ -74,7 +74,7 @@
                 <unnnic-icon
                   icon="arrow-right-1-1"
                   size="sm"
-                  scheme="neutral-clean"
+                  scheme="neutral-cleanest"
                   clickable
                   @click="
                     resetAutoSkip();
@@ -256,12 +256,12 @@ export default {
         width: 0.25rem;
         height: 0.25rem;
         border-radius: 0.25rem;
-        background-color: rgba($unnnic-color-neutral-clean, $unnnic-opacity-level-overlay);
+        background-color: rgba($unnnic-color-neutral-cleanest, $unnnic-opacity-level-overlay);
         transition: all 0.5s;
 
         &.active {
           width: 1rem;
-          background-color: $unnnic-color-neutral-clean;
+          background-color: $unnnic-color-neutral-cleanest;
         }
       }
     }

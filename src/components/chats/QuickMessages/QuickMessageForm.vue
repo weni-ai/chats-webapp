@@ -18,7 +18,7 @@
         <span class="label">
           {{ $t('shortcut') }}
           <unnnic-tool-tip enabled :text="$t('quick_messages.shortcut_field_tooltip')" side="right">
-            <unnnic-icon-svg scheme="neutral-clean" icon="information-circle-4" size="sm" />
+            <unnnic-icon-svg scheme="neutral-cleanest" icon="information-circle-4" size="sm" />
           </unnnic-tool-tip>
         </span>
       </template>
