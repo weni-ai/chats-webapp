@@ -90,6 +90,12 @@ export default {
     },
   },
 
+  beforeMount() {
+    this.loadQuickMessages();
+    this.loadQuickMessagesShared();
+    this.getUser();
+  },
+
   methods: {
     initializeWebSocket() {
       const { token, project } = this.$store.state.config;
@@ -100,10 +106,6 @@ export default {
         config.headers.Authorization = `Bearer ${token}`;
         return config;
       });
-
-      this.loadQuickMessages();
-      this.loadQuickMessagesShared();
-      this.getUser();
 
       if (viewedAgent) {
         this.ws = new WS(

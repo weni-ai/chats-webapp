@@ -151,7 +151,7 @@ export default {
       reactiveKey.handler();
 
       const scrollElement = this.$refs.refShortcuts.childNodes[this.activeShortcutIndex];
-      scrollElement.scrollIntoView({ block: 'nearest' });
+      scrollElement?.scrollIntoView({ block: 'nearest' });
     },
     isSuggestionBoxOpen(isOpen) {
       this.$emit(isOpen ? 'open' : 'close');
