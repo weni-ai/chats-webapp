@@ -143,9 +143,8 @@ export default {
     },
     async listProjectAgents() {
       const agents = (await Project.agents()).results.concat((await Project.admins()).results);
-      console.log('agents', agents);
       const uniqueAgents = [...new Map(agents.map((agent) => [agent.uuid, agent])).values()];
-      console.log('uniqueAgents', uniqueAgents);
+
       this.projectAgents = uniqueAgents;
     },
     async nextStep() {
