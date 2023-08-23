@@ -178,7 +178,18 @@ export default {
       );
     },
     shortcuts() {
-      return [...this.quickMessages, ...this.quickMessagesShared];
+      const allShortcuts = [...this.quickMessages, ...this.quickMessagesShared];
+      const uniqueShortcuts = [];
+
+      allShortcuts.forEach((item) => {
+        const isDuplicate = uniqueShortcuts.some((uniqueItem) => uniqueItem.uuid === item.uuid);
+
+        if (!isDuplicate) {
+          uniqueShortcuts.push(item);
+        }
+      });
+
+      return uniqueShortcuts;
     },
     showActionButton() {
       const { isTyping, isAudioRecorderVisible, loadingValue } = this;
