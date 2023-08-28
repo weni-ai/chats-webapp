@@ -22,6 +22,7 @@
     "mime-types": "^2.1.35",
     "moment": "^2.29.4",
     "path-browserify": "^1.0.1",
+    "plyr": "^3.7.8",
     "v-click-outside": "^3.2.0",
     "v-mask": "^2.3.0",
     "vue": "^2.6.14",

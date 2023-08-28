@@ -17,12 +17,7 @@
         @download="download"
         @click="$emit('fullscreen')"
       />
-      <video-preview
-        v-else-if="isVideo"
-        :src="media.url"
-        fullscreen-on-click
-        @click="$emit('fullscreen')"
-      />
+      <video-preview v-else-if="isVideo" :src="media.url" />
       <unnnic-audio-recorder v-else-if="isAudio" :src="media.url" :canDiscard="false" />
     </section>
 
@@ -46,7 +41,6 @@ export default {
   components: {
     DocumentPreview,
     ImagePreview,
-    // MediaControls,
     VideoPreview,
   },
 
@@ -106,8 +100,10 @@ export default {
   gap: $unnnic-spacing-stack-xs;
 
   &__preview {
-    max-width: calc(16px * 15);
-    max-height: calc(9px * 17);
+    max-width: calc(16px * 25);
+    max-height: calc(9px * 25);
+
+    display: flex;
   }
 }
 </style>
