@@ -57,8 +57,8 @@ export default {
 
   :deep() {
     .plyr {
-      width: calc(16px * 25);
-      height: calc(9px * 25);
+      min-width: calc(16px * 25);
+      min-height: calc(9px * 25);
     }
 
     :is(.plyr__progress, .plyr__volume) input[type='range'] {
