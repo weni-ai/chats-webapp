@@ -49,7 +49,7 @@ export default {
     };
   },
   mounted() {
-    // this.getCopilotSuggestion();
+    this.getCopilotSuggestion();
     this.$nextTick(() => {
       this.$refs.closeButton.focus();
     });
