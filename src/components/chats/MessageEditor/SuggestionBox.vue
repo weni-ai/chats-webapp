@@ -1,5 +1,10 @@
 <template>
-  <section v-if="isSuggestionBoxOpen" class="suggestion-box">
+  <section
+    v-if="isSuggestionBoxOpen"
+    class="suggestion-box"
+    v-click-outside="close"
+    @keydown.esc="close"
+  >
     <header class="suggestion-box__header">
       {{ $t('quick_messages.available_shortcuts') }}
       <span class="suggestion-box__search">{{ search }}</span>
@@ -29,10 +34,14 @@
 </template>
 
 <script>
+import vClickOutside from 'v-click-outside';
 import SuggestionBoxShortcut from '@/components/chats/MessageEditor/SuggestionBoxShortcut';
 
 export default {
   name: 'SuggestionBox',
+  directives: {
+    clickOutside: vClickOutside.directive,
+  },
   components: {
     SuggestionBoxShortcut,
   },
@@ -93,6 +102,9 @@ export default {
     select(suggestion) {
       this.$emit('select', suggestion);
     },
+    close() {
+      this.$emit('close');
+    },
     openCopilot() {
       this.$emit('open-copilot');
     },
@@ -151,7 +163,7 @@ export default {
       reactiveKey.handler();
 
       const scrollElement = this.$refs.refShortcuts.childNodes[this.activeShortcutIndex];
-      scrollElement.scrollIntoView({ block: 'nearest' });
+      scrollElement?.scrollIntoView({ block: 'nearest' });
     },
     isSuggestionBoxOpen(isOpen) {
       this.$emit(isOpen ? 'open' : 'close');
