@@ -56,11 +56,11 @@ export default {
   animation: slideInUp 0.3s;
 
   :deep(em-emoji-picker) {
-    // Some variables don't work here
+    // Most variables don't work here
     --border-radius: 16px;
     --font-family: $unnnic-font-family;
-    --rgb-accent: 0, 158, 150;
-    --rgb-color: 59, 65, 77;
+    --rgb-accent: 0, 164, 159; // $unnnic-color-weni-600
+    --rgb-color: 59, 65, 77; // $unnnic-color-neutral-darkest
     --color-border: rgb(244, 246, 248);
     --shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.1);
 

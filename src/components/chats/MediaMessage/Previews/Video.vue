@@ -52,7 +52,7 @@ export default {
 .video-preview {
   display: inline-grid;
 
-  --plyr-color-main: #{$unnnic-color-brand-weni-soft};
+  --plyr-color-main: #{$unnnic-color-weni-600};
   --plyr-font-family: #{$unnnic-font-family-secondary};
 
   :deep() {
