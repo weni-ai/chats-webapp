@@ -42,8 +42,11 @@ export default {
 
   async getCopilotSuggestion({ uuid }) {
     if (uuid) {
-      const response = await http.post(`/room/${uuid}/chat_completion/`);
-      return response.data;
+      const response = await http
+        .post(`/room/${uuid}/chat_completion/`)
+        .then((response) => response.data)
+        .catch((error) => error.response);
+      return response;
     }
 
     return console.error('"Uuid" necessário para requisição.');

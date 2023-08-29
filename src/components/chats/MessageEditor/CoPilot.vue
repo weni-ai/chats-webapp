@@ -1,14 +1,23 @@
 <template>
   <div
     class="co-pilot"
-    :class="{ loading: isLoading }"
+    :class="{ loading: isLoading, error: isError }"
     v-click-outside="close"
     @keydown.esc="close"
   >
     <header class="co-pilot__header">
       <div class="co-pilot__header__title">
-        <unnnic-icon icon="study-light-idea-1" />
-        <h1>{{ isLoading ? $t('copilot.loading') : $t('copilot.suggestion') }}</h1>
+        <unnnic-icon v-if="isError" icon="alert-circle-1" />
+        <unnnic-icon v-else icon="study-light-idea-1" />
+        <h1>
+          {{
+            isLoading
+              ? $t('copilot.loading')
+              : copilotSuggestion
+              ? $t('copilot.suggestion')
+              : $t('copilot.error')
+          }}
+        </h1>
       </div>
       <button
         class="co-pilot__header__close"
@@ -29,10 +38,10 @@
       <button
         v-else
         class="co-pilot__response__suggestion clickable"
-        @click="select('Para pagar seu boleto basta acessar seu aplicativo e gerar um novo boleto')"
+        @click="select(copilotSuggestion)"
         ref="suggestion"
       >
-        Para pagar seu boleto basta acessar seu aplicativo e gerar um novo boleto
+        {{ copilotSuggestion || $t('copilot.try_again') }}
       </button>
     </section>
   </div>
@@ -46,16 +55,24 @@ export default {
   data() {
     return {
       isLoading: true,
+      suggestionTimeout: null,
     };
   },
-  mounted() {
-    this.getCopilotSuggestion();
+  async mounted() {
     this.$nextTick(() => {
       this.$refs.closeButton.focus();
     });
-    setTimeout(() => {
+
+    const SUGGESTION__TIMEOUT = 1000 * 45; // 45 secs
+    this.suggestionTimeout = setTimeout(() => {
       this.isLoading = false;
-    }, 3000);
+    }, SUGGESTION__TIMEOUT);
+
+    const responseCopilotStatus = await this.getCopilotSuggestion();
+    if (responseCopilotStatus && responseCopilotStatus !== 200) {
+      clearInterval(this.suggestionTimeout);
+      this.isLoading = false;
+    }
   },
   directives: {
     clickOutside: vClickOutside.directive,
@@ -64,16 +81,21 @@ export default {
     ...mapState({
       copilotSuggestion: (state) => state.rooms.copilotSuggestion,
     }),
+    isError() {
+      return !this.isLoading && !this.copilotSuggestion;
+    },
   },
   methods: {
     ...mapActions({
       getCopilotSuggestion: 'rooms/getCopilotSuggestion',
+      clearCopilotSuggestion: 'rooms/clearCopilotSuggestion',
     }),
     close() {
       this.$emit('close');
     },
     select(suggestion) {
       this.$emit('select', suggestion);
+      this.clearCopilotSuggestion();
       this.close();
     },
   },
@@ -83,6 +105,12 @@ export default {
         this.$nextTick(() => {
           this.$refs.suggestion.focus();
         });
+      }
+    },
+    copilotSuggestion(newValue) {
+      if (newValue) {
+        clearInterval(this.suggestionTimeout);
+        this.isLoading = false;
       }
     },
   },
@@ -102,11 +130,7 @@ export default {
   overflow: hidden;
 
   &.loading {
-    padding: $unnnic-spacing-sm;
-
     .co-pilot__header {
-      padding-bottom: $unnnic-spacing-xs;
-
       &__title h1 {
         &::after {
           overflow: hidden;
@@ -126,7 +150,45 @@ export default {
     }
   }
 
-  &:not(.loading) {
+  &.error {
+    background-color: $unnnic-color-neutral-lightest;
+
+    .co-pilot__header {
+      &__title {
+        h1 {
+          color: $unnnic-color-neutral-dark;
+        }
+        :deep(svg > path) {
+          fill: $unnnic-color-aux-red-500;
+        }
+      }
+      &__close {
+        background-color: $unnnic-color-neutral-lightest;
+      }
+    }
+
+    .co-pilot__response {
+      &__suggestion {
+        padding: 0;
+        padding-top: $unnnic-spacing-xs;
+
+        background-color: $unnnic-color-neutral-lightest;
+
+        text-align: center;
+      }
+    }
+  }
+
+  &.loading,
+  &.error {
+    padding: $unnnic-spacing-sm;
+
+    .co-pilot__header {
+      padding-bottom: $unnnic-spacing-xs;
+    }
+  }
+
+  &:not(.loading, .error) {
     .co-pilot__header {
       padding: $unnnic-spacing-xs $unnnic-spacing-sm;
     }

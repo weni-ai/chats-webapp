@@ -89,7 +89,7 @@
         :keyboard-event="keyboardEvent"
         :copilot="canUseCopilot"
         @open="isSuggestionBoxOpen = true"
-        @close="isSuggestionBoxOpen = false"
+        @close="closeSuggestionBox"
         @select="setMessage($event.text)"
         @open-copilot="openCopilot"
       />
@@ -215,8 +215,20 @@ export default {
     /**
      * @param {KeyboardEvent} event
      */
+    closeSuggestionBox() {
+      this.isSuggestionBoxOpen = false;
+
+      if (this.message.includes('/')) {
+        this.message = '';
+      }
+    },
     onKeyDown(event) {
       if (this.isSuggestionBoxOpen) {
+        if (event.key === 'Escape') {
+          this.closeSuggestionBox();
+          return;
+        }
+
         this.keyboardEvent = event;
         return;
       }
