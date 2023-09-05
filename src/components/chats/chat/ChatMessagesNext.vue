@@ -1,0 +1,294 @@
+<!-- eslint-disable vuejs-accessibility/media-has-caption -->
+<template>
+  <section
+    class="chat-messages"
+    ref="chatMessages"
+    @scroll="
+      (event) => {
+        handleScroll(event.srcElement);
+      }
+    "
+  >
+    <section v-for="groupMessage in groupMessagesByDate" :key="groupMessage.date">
+      <chat-feedback :feedback="groupMessage.date" />
+
+      <section
+        v-for="message in groupMessage.messages"
+        :key="message.uuid"
+        class="chat-messages__room"
+      >
+        <!-- Feedbacks -->
+
+        <chat-feedback
+          v-if="isTransferInfoMessage(message)"
+          :feedback="
+            !room.is_waiting ? createTransferLabel(message) : $t('waiting_answer.send_template')
+          "
+        />
+
+        <!-- Bot -->
+        <section v-else-if="!message.sender" class="chat-messages__messages">
+          <chat-message
+            :message="{ ...message, sender: { name: 'Bot' } }"
+            :disabled="isHistory"
+            :use-photo="usePhoto"
+            @fullscreen="openFullScreen"
+          />
+        </section>
+
+        <!-- Message text -->
+        <section v-else class="chat-messages__messages">
+          <chat-message
+            :message="message"
+            :disabled="isHistory"
+            @show-contact-info="showContactInfo"
+            :use-photo="usePhoto"
+            @fullscreen="openFullScreen"
+          />
+        </section>
+      </section>
+    </section>
+
+    <div style="position: sticky; bottom: 0px; background-color: white">
+      <!-- Contact in queue -->
+      <section v-if="!room.is_active" class="chat-messages__room__divisor">
+        <div class="chat-messages__room__divisor__line" />
+        <span class="chat-messages__room__divisor__label">{{ $t('chat_closed_by.agent') }}</span>
+        <div class="chat-messages__room__divisor__line" />
+      </section>
+
+      <!-- Waiting contact answer -->
+      <section>
+        <div v-if="room.is_waiting" class="chat-messages__room__transfer-info">
+          {{ $t('waiting_answer.waiting_cliente_answer') }}
+        </div>
+      </section>
+
+      <!-- Closed chat tags  -->
+      <section v-if="room.tags.length > 0" class="chat-messages__tags">
+        <p class="chat-messages__tags__label">{{ $t('chats.tags') }}</p>
+        <tag-group :tags="room.tags" />
+      </section>
+    </div>
+
+    <!-- Media fullscreen -->
+    <fullscreen-preview
+      v-if="isFullscreen"
+      :downloadMediaUrl="currentMedia.url"
+      :downloadMediaName="currentMedia.message"
+      @close="isFullscreen = false"
+      @next="nextMedia"
+      @previous="previousMedia"
+    >
+      <video
+        v-if="currentMedia.content_type.includes('mp4')"
+        controls
+        @keypress.enter="() => {}"
+        @click.stop="() => {}"
+      >
+        <source :src="currentMedia.url" />
+      </video>
+      <img
+        v-else
+        :src="currentMedia.url"
+        :alt="currentMedia"
+        @keypress.enter="() => {}"
+        @click.stop="() => {}"
+      />
+    </fullscreen-preview>
+  </section>
+</template>
+
+<script>
+import TagGroup from '@/components/TagGroup';
+import ChatFeedback from './ChatFeedback';
+import ChatMessage from './ChatMessage';
+import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
+
+export default {
+  name: 'ChatMessages',
+
+  components: {
+    ChatFeedback,
+    ChatMessage,
+    TagGroup,
+    FullscreenPreview,
+  },
+
+  props: {
+    room: {
+      type: Object,
+      required: true,
+    },
+    messages: {
+      type: Array,
+      default: () => [],
+    },
+    usePhoto: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  data: () => ({
+    messageToResend: null,
+    isFullscreen: false,
+    currentMedia: {},
+  }),
+
+  computed: {
+    groupMessagesByDate() {
+      const groupedMessages = {};
+
+      const today = new Date().toISOString().split('T')[0];
+
+      this.messages.forEach((message) => {
+        const createdOn = message.created_on.split('T')[0];
+        const displayDate = createdOn === today ? 'Hoje' : createdOn;
+        if (!groupedMessages[createdOn]) {
+          groupedMessages[createdOn] = {
+            date: displayDate,
+            messages: [],
+          };
+        }
+
+        groupedMessages[createdOn].messages.push(message);
+      });
+
+      return Object.values(groupedMessages);
+    },
+    rooms() {
+      const { rooms, messages } = this.chat;
+      return rooms?.length > 0 ? rooms : [{ messages }];
+    },
+    isHistory() {
+      return !this.room.is_active;
+    },
+    medias() {
+      return this.messages
+        .map((el) => el.content)
+        .flat()
+        .filter((el) => el)
+        .map((el) => el.media)
+        .flat()
+        .filter((el) => {
+          const media = /(png|jp(e)?g|webp|mp4)/;
+          return media.test(el.content_type);
+        });
+    },
+  },
+
+  methods: {
+    isTransferInfoMessage(message) {
+      try {
+        const content = JSON.parse(message.text);
+
+        return ['queue', 'user'].includes(content.type);
+      } catch (error) {
+        return false;
+      }
+    },
+
+    handleScroll(target) {
+      if (target.scrollTop === 0) {
+        this.$emit('scrollTop');
+      }
+    },
+    createTransferLabel(message) {
+      const text = JSON.parse(message.text);
+      const { name } = text;
+      const transferType = {
+        queue: this.$t('contact_transferred_to.line', { name }),
+        user: this.$t('contact_transferred_to.agent', { name }),
+      };
+
+      return transferType[text.type];
+    },
+    showContactInfo() {
+      this.$emit('show-contact-info');
+    },
+
+    openFullScreen(url) {
+      this.currentMedia = this.medias.find((el) => el.url === url);
+      this.isFullscreen = true;
+    },
+
+    nextMedia() {
+      const imageIndex = this.medias.findIndex((el) => el.url === this.currentMedia.url);
+      if (imageIndex + 1 < this.medias.length) {
+        this.currentMedia = this.medias[imageIndex + 1];
+      }
+    },
+
+    previousMedia() {
+      const imageIndex = this.medias.findIndex((el) => el.url === this.currentMedia.url);
+      if (imageIndex - 1 >= 0) {
+        this.currentMedia = this.medias[imageIndex - 1];
+      }
+    },
+
+    scrollMessagesToBottom() {
+      const { chatMessages } = this.$refs;
+      if (!chatMessages) return;
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    },
+  },
+
+  watch: {
+    messages(newmessages) {
+      console.log(JSON.parse(JSON.stringify(newmessages, null, 2)));
+      this.$nextTick(() => {
+        this.scrollMessagesToBottom();
+      });
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+.chat-messages {
+  &__room {
+    & + & {
+      margin-top: $unnnic-spacing-inline-md;
+    }
+
+    &__divisor {
+      display: flex;
+      align-items: center;
+      gap: $unnnic-spacing-stack-xl;
+      margin-bottom: $unnnic-inline-md;
+
+      &__label {
+        font-size: $unnnic-font-size-body-md;
+        line-height: 1.25rem;
+        color: $unnnic-color-neutral-cloudy;
+      }
+
+      &__line {
+        flex: 1;
+        height: 1px;
+        background: $unnnic-color-neutral-soft;
+      }
+    }
+  }
+
+  &__messages {
+    margin-bottom: $unnnic-spacing-inline-md;
+  }
+
+  &__tags {
+    margin-bottom: $unnnic-spacing-inline-md;
+    &__label {
+      font-size: $unnnic-font-size-body-gt;
+      color: $unnnic-color-neutral-dark;
+      margin-bottom: $unnnic-spacing-inline-sm;
+    }
+  }
+  .unread-message {
+    font-weight: 700;
+    font-size: 12px;
+    color: #9caccc;
+    margin: 10px;
+  }
+}
+</style>
