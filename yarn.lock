@@ -2148,12 +2148,13 @@
     "@webassemblyjs/ast" "1.11.1"
     "@xtuc/long" "4.2.2"
 
-"@weni/unnnic-system@1.16.17":
-  version "1.16.17"
-  resolved "https://registry.yarnpkg.com/@weni/unnnic-system/-/unnnic-system-1.16.17.tgz#ec86cf8a4b1d416836e3a11c3c73231f8cd43dd1"
-  integrity sha512-9uCTAHPxKd/mTJVbcmG44nUoq/uZ2CcR1WBncPD4dW4YiMMgdWk7ULFRoB5pKGiy+AyHf86uT8nEbelWrdWzqA==
+"@weni/unnnic-system@^1.16.47":
+  version "1.16.47"
+  resolved "https://registry.yarnpkg.com/@weni/unnnic-system/-/unnnic-system-1.16.47.tgz#f62f95b08aaf61a384bf7807b6569a3734fe6308"
+  integrity sha512-j0ONzL7g7eh2eC+FO9qlNQ+SxI8lyiyyYD3kGPA9lta1NC9aNcBytx0vZpbYtHjtBXw9+XgdOqtgrwjHkQr5Zw==
   dependencies:
     core-js "^3.6.5"
+    lodash "^4.17.21"
     mime-types "^2.1.35"
     moment "^2.29.1"
     v-click-outside "^3.1.2"
@@ -8071,7 +8072,7 @@ uuid@^8.3.2:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
-v-click-outside@^3.1.2:
+v-click-outside@^3.1.2, v-click-outside@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/v-click-outside/-/v-click-outside-3.2.0.tgz#850ac3f52d66d84b9f7e8002a1bcadcafec5534e"
   integrity sha512-QD0bDy38SHJXQBjgnllmkI/rbdiwmq9RC+/+pvrFjYJKTn8dtp7Penf9q1lLBta280fYG2q53mgLhQ+3l3z74w==

@@ -93,7 +93,6 @@ export default {
       this.editContent = false;
     },
     visualize(queue) {
-      console.log(queue, 'visualize');
       this.$emit('visualize', queue);
     },
     addQueue() {

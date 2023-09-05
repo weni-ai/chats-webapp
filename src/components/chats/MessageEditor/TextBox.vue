@@ -58,6 +58,11 @@ export default {
   }),
 
   methods: {
+    focus() {
+      // accessed externaly
+      this.$refs.textareaRef?.focus();
+    },
+
     setIsFocused(isFocused = false) {
       this.$emit('is-focused-handler', isFocused);
     },
@@ -186,7 +191,7 @@ export default {
       outline: none;
 
       &::placeholder {
-        color: $unnnic-color-neutral-clean;
+        color: $unnnic-color-neutral-cleanest;
       }
     }
 
@@ -194,7 +199,7 @@ export default {
       margin-bottom: $padding-vertical;
 
       svg > path {
-        fill: $unnnic-color-neutral-cleanest;
+        fill: $unnnic-color-neutral-clean;
       }
     }
   }

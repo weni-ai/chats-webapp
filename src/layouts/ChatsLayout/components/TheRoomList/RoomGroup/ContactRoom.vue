@@ -152,7 +152,7 @@ export default {
   &.disabled {
     .content {
       .username {
-        color: $unnnic-color-neutral-clean;
+        color: $unnnic-color-neutral-cleanest;
       }
 
       .additional-information {
@@ -161,7 +161,7 @@ export default {
     }
 
     .unread-messages {
-      color: $unnnic-color-neutral-clean;
+      color: $unnnic-color-neutral-cleanest;
     }
   }
 

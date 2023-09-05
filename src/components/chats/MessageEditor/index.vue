@@ -1,18 +1,5 @@
 <template>
   <section>
-    <div class="suggestion-box-container">
-      <div class="suggestion-box">
-        <suggestion-box
-          :search="message"
-          :suggestions="shortcuts"
-          :keyboard-event="keyboardEvent"
-          @open="isSuggestionBoxOpen = true"
-          @close="isSuggestionBoxOpen = false"
-          @select="(message = $event.text), focusTextEditor()"
-        />
-      </div>
-    </div>
-
     <div class="message-editor">
       <div
         :class="[
@@ -44,43 +31,74 @@
       </div>
       <div class="message-editor__actions">
         <unnnic-button-icon
-          v-if="showActionButton"
+          v-if="canUseCopilot && !isCopilotOpen && showActionButton"
+          @click="openCopilot"
+          type="secondary"
+          size="large"
+          icon="study-light-idea-1"
+        />
+        <unnnic-button-icon
+          v-if="!canUseCopilot && showActionButton"
           @click="record"
           type="secondary"
           size="large"
           icon="microphone"
         />
 
-        <unnnic-dropdown v-if="showActionButton" position="top-left" class="more-actions">
+        <unnnic-dropdown
+          v-if="showActionButton || isSuggestionBoxOpen"
+          position="top-left"
+          class="more-actions"
+        >
           <unnnic-button-icon slot="trigger" type="primary" size="large" icon="add-1" />
 
           <div class="more-actions-container">
             <more-actions-option
-              :action="() => $emit('show-quick-messages')"
-              icon="flash-1-4"
-              :title="$t('quick_message')"
+              v-if="canUseCopilot"
+              :action="record"
+              icon="microphone"
+              :title="$t('record_audio')"
             />
-            <!-- <more-actions-option
-              :action="() => {}"
-              icon="study-light-idea-1"
-              :title="$t('suggested_answers')"
-            /> -->
             <more-actions-option
               :action="openFileUploader"
               icon="attachment"
               :title="$t('attach')"
             />
+            <more-actions-option
+              :action="() => $emit('show-quick-messages')"
+              icon="flash-1-4"
+              :title="$t('quick_message')"
+            />
           </div>
         </unnnic-dropdown>
 
         <unnnic-button-icon
-          v-if="isTyping || isAudioRecorderVisible || loadingValue !== undefined"
+          v-if="
+            !isSuggestionBoxOpen &&
+            (isTyping || isAudioRecorderVisible || loadingValue !== undefined)
+          "
           @click="send"
           type="primary"
           size="large"
           icon="send-email-3-1"
         />
       </div>
+      <suggestion-box
+        :search="message"
+        :suggestions="shortcuts"
+        :keyboard-event="keyboardEvent"
+        :copilot="canUseCopilot"
+        @open="isSuggestionBoxOpen = true"
+        @close="closeSuggestionBox"
+        @select="setMessage($event.text)"
+        @open-copilot="openCopilot"
+      />
+      <co-pilot
+        v-if="isCopilotOpen"
+        ref="copilot"
+        @select="setMessage($event)"
+        @close="isCopilotOpen = false"
+      />
     </div>
   </section>
 </template>
@@ -91,6 +109,7 @@ import { mapState } from 'vuex';
 import TextBox from './TextBox';
 import MoreActionsOption from './MoreActionsOption.vue';
 import SuggestionBox from './SuggestionBox.vue';
+import CoPilot from './CoPilot';
 
 export default {
   name: 'MessageEditor',
@@ -99,6 +118,7 @@ export default {
     TextBox,
     SuggestionBox,
     MoreActionsOption,
+    CoPilot,
   },
 
   props: {
@@ -122,6 +142,7 @@ export default {
   data: () => ({
     keyboardEvent: null,
     isSuggestionBoxOpen: false,
+    isCopilotOpen: false,
     audioRecorderStatus: '',
     isTyping: false,
     isFocused: false,
@@ -131,6 +152,7 @@ export default {
     ...mapState({
       quickMessages: (state) => state.chats.quickMessages.quickMessages,
       quickMessagesShared: (state) => state.chats.quickMessagesShared.quickMessagesShared,
+      canUseCopilot: (state) => state.rooms.canUseCopilot,
     }),
 
     message: {
@@ -156,7 +178,18 @@ export default {
       );
     },
     shortcuts() {
-      return [...this.quickMessages, ...this.quickMessagesShared];
+      const allShortcuts = [...this.quickMessages, ...this.quickMessagesShared];
+      const uniqueShortcuts = [];
+
+      allShortcuts.forEach((item) => {
+        const isDuplicate = uniqueShortcuts.some((uniqueItem) => uniqueItem.uuid === item.uuid);
+
+        if (!isDuplicate) {
+          uniqueShortcuts.push(item);
+        }
+      });
+
+      return uniqueShortcuts;
     },
     showActionButton() {
       const { isTyping, isAudioRecorderVisible, loadingValue } = this;
@@ -165,6 +198,16 @@ export default {
   },
 
   methods: {
+    openCopilot() {
+      this.isCopilotOpen = true;
+      this.message = '';
+    },
+    setMessage(newMessage) {
+      this.message = newMessage;
+      this.$nextTick(() => {
+        this.$refs.textBox.focus();
+      });
+    },
     clearAudio() {
       // Accessed by parent components
       this.$refs.audioRecorder?.discard();
@@ -172,8 +215,20 @@ export default {
     /**
      * @param {KeyboardEvent} event
      */
+    closeSuggestionBox() {
+      this.isSuggestionBoxOpen = false;
+
+      if (this.message.includes('/')) {
+        this.message = '';
+      }
+    },
     onKeyDown(event) {
       if (this.isSuggestionBoxOpen) {
+        if (event.key === 'Escape') {
+          this.closeSuggestionBox();
+          return;
+        }
+
         this.keyboardEvent = event;
         return;
       }
@@ -235,9 +290,6 @@ export default {
       }
       this.$emit('send-audio');
     },
-    focusTextEditor() {
-      this.$refs.textEditor?.focus?.();
-    },
     openFileUploader(files) {
       this.$emit('open-file-uploader', files);
     },
@@ -250,33 +302,24 @@ export default {
 
 <style lang="scss" scoped>
 .message-editor {
+  position: relative;
+
   display: grid;
   grid-template-columns: 1fr auto;
   gap: $unnnic-spacing-stack-xs;
   align-items: end;
 
-  .suggestion-box-container {
-    position: relative;
-
-    .suggestion-box {
-      margin-bottom: $unnnic-spacing-inline-xs;
-      position: absolute;
-      bottom: 0;
-      left: 0;
-    }
-  }
-
   &-box__container {
     position: relative;
 
-    border: $unnnic-border-width-thinner solid $unnnic-color-neutral-clean;
+    border: $unnnic-border-width-thinner solid $unnnic-color-neutral-cleanest;
     border-radius: $unnnic-border-radius-sm;
     background-color: $unnnic-color-neutral-snow;
 
     height: 100%;
 
     &.focused {
-      border-color: $unnnic-color-neutral-cleanest;
+      border-color: $unnnic-color-neutral-clean;
     }
 
     &.loading {
@@ -292,14 +335,14 @@ export default {
         width: 100%;
         height: $unnnic-border-width-thin;
 
-        background-color: rgba($unnnic-color-neutral-cleanest, $unnnic-opacity-level-light);
+        background-color: rgba($unnnic-color-neutral-clean, $unnnic-opacity-level-light);
 
         overflow: hidden;
 
         .loading-indicator {
           height: $unnnic-border-width-thin;
 
-          background-color: $unnnic-color-neutral-cleanest;
+          background-color: $unnnic-color-neutral-clean;
           transition: width 0.2s;
         }
       }

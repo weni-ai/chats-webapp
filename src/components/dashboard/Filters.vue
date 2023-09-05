@@ -24,32 +24,24 @@
         </option>
       </unnnic-select>
 
-      <unnnic-select
-        style="min-width: 11.81rem; width: 18.65rem"
-        v-if="filteredSectorUuid"
-        v-model="filteredAgent"
-        label="Filtrar por agente"
-        size="md"
-        class="input"
-        @input="sendFilter('sector', filteredSectorUuid, filteredAgent)"
-        searchPlaceholder="oi"
-      >
-        <option value="">Buscar por agente</option>
-        <option
-          v-for="agent in agents"
-          :key="agent.email"
-          :value="agent.email"
-          :selected="agent.email === filteredAgent"
-        >
-          {{ agent.name }}
-        </option>
-      </unnnic-select>
+      <div v-if="filteredSectorUuid" style="min-width: 11.81rem; width: 18.65rem">
+        <unnnic-label label="Filtrar por agente" />
+        <unnnic-select-smart
+          v-model="filteredAgent"
+          :options="agents"
+          autocomplete
+          autocompleteClearOnFocus
+          @input="sendFilter('sector', filteredSectorUuid, filteredAgent)"
+        />
+      </div>
 
-      <unnnic-autocomplete-select
+      <unnnic-select-smart
         style="min-width: 11.81rem; width: 18.65rem"
+        :options="tags"
         v-model="selecteds"
-        :items="tags"
-        :placeholder="this.messageInputTags"
+        autocomplete
+        autocompleteIconLeft
+        autocompleteClearOnFocus
         :disabled="!this.filteredSectorUuid && sectors.length !== 1"
         @input="sendFilter('sector', filteredSectorUuid, filteredAgent, selecteds)"
       />
@@ -164,7 +156,7 @@ export default {
     messageInputAgent: 'Filtrar por agente',
     sectors: [],
     sectorTags: [],
-    tags: [],
+    tags: [{ value: '', label: 'Filtrar por tags' }],
     agents: [],
     selecteds: [],
     filteredDateRange: {
@@ -177,7 +169,7 @@ export default {
     async downloadMetric(option) {
       const temTag = ![null, undefined, ''].includes(this.selecteds);
       if (temTag) {
-        this.nameTag = this.selecteds.map((el) => el.text).toString();
+        this.nameTag = this.selecteds.map((el) => el.label).toString();
       } else {
         this.nameTag = this.selecteds;
       }
@@ -197,7 +189,7 @@ export default {
     async downloadDashboardData(option) {
       const temTag = ![null, undefined, ''].includes(this.selecteds);
       if (temTag) {
-        this.nameTag = this.selecteds.map((el) => el.text).toString();
+        this.nameTag = this.selecteds.map((el) => el.label).toString();
       } else {
         this.nameTag = this.selecteds;
       }
@@ -220,7 +212,7 @@ export default {
         type,
         sectorUuid: filteredSectorUuid,
         tag,
-        agent,
+        agent: agent?.[0]?.value || '',
         filteredDateRange,
       };
       this.$emit('filter', filter);
@@ -248,9 +240,10 @@ export default {
       try {
         this.isLoading = true;
         const response = await Sector.tags(sectorUuid);
-        const tags = response.results;
+        const responseTags = response.results;
 
-        const tagGroup = tags.map((tag) => ({ value: tag.uuid, text: tag.name }));
+        const tagGroup = responseTags.map((tag) => ({ value: tag.uuid, label: tag.name }));
+        tagGroup.push({ value: '', label: 'Filtrar por tags' });
         this.tags = tagGroup;
         this.isLoading = false;
       } catch (error) {
@@ -267,10 +260,11 @@ export default {
         const response = await Sector.agents({ sectorUuid: uuid });
         const agents = response.map(({ first_name, last_name, email }) => {
           return {
-            name: [first_name, last_name].join(' ').trim() || email,
-            email,
+            label: [first_name, last_name].join(' ').trim() || email,
+            value: email,
           };
         });
+        agents.push({ value: '', label: 'Buscar por agente' });
         this.agents = agents;
         this.isLoading = false;
       } catch (error) {
@@ -293,7 +287,7 @@ export default {
     filteredSectorUuid: {
       deep: true,
       handler() {
-        this.sendFilter('sector', this.filteredSectorUuid, null, null, null);
+        this.sendFilter('sector', this.filteredAgent, null, null, null);
       },
     },
     filteredAgent: {

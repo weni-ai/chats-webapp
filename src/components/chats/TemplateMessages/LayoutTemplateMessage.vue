@@ -10,7 +10,7 @@
           text="Os fluxos disponíveis aqui devem ser previamente cadastrados no módulo de fluxos, caso tenha dúvidas converse com seu gerente."
           side="bottom"
         >
-          <unnnic-icon-svg scheme="neutral-clean" icon="information-circle-4" size="sm" />
+          <unnnic-icon-svg scheme="neutral-cleanest" icon="information-circle-4" size="sm" />
         </unnnic-tool-tip>
       </div>
       <div style="padding-left: 12px" v-if="!loadingFlows">

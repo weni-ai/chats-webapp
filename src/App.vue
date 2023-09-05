@@ -90,20 +90,24 @@ export default {
     },
   },
 
+  beforeMount() {
+    const { token } = this.$store.state.config;
+
+    http.interceptors.request.use((config) => {
+      // eslint-disable-next-line no-param-reassign
+      config.headers.Authorization = `Bearer ${token}`;
+      return config;
+    });
+
+    this.loadQuickMessages();
+    this.loadQuickMessagesShared();
+    this.getUser();
+  },
+
   methods: {
     initializeWebSocket() {
       const { token, project } = this.$store.state.config;
       const { viewedAgent } = this.$route.params;
-
-      http.interceptors.request.use((config) => {
-        // eslint-disable-next-line no-param-reassign
-        config.headers.Authorization = `Bearer ${token}`;
-        return config;
-      });
-
-      this.loadQuickMessages();
-      this.loadQuickMessagesShared();
-      this.getUser();
 
       if (viewedAgent) {
         this.ws = new WS(

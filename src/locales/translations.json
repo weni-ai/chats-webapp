@@ -164,6 +164,18 @@
     "en-us": "Justify",
     "es": "Justificar"
   },
+  "select_smart": {
+    "without_results": {
+      "pt-br": "Nenhum resultado encontrado",
+      "en-us": "No results found",
+      "es": "Ningún resultado encontrado"
+    },
+    "without_multiple_selected": {
+      "pt-br": "Nenhuma opção selecionada",
+      "en-us": "No option selected",
+      "es": "Ninguna opción seleccionada"
+    }
+  },
   "sector": {
     "title": {
       "pt-br": "Setor",
@@ -903,6 +915,11 @@
       "en-us": "Available shortcuts",
       "es": "Atajos disponibles"
     },
+    "copilot": {
+      "pt-br": "Agora o ChatGPT é seu CoPiloto! Utilize as respostas sugeridas pela Inteligência artificial para agilizar seus atendimentos!",
+      "en-us": "Now ChatGPT is your CoPilot! Use the answers suggested by Artificial Intelligence to speed up your calls!",
+      "es": "¡Ahora ChatGPT es tu CoPiloto! ¡Usa las respuestas sugeridas por la Inteligencia Artificial para acelerar tus llamadas!"
+    },
     "add": {
       "pt-br": "Adicionar mensagem rápida",
       "en-us": "Add quick message",
@@ -990,6 +1007,97 @@
     "pt-br": "Você está",
     "en-us": "You are",
     "es": "Tu estas"
+  },
+  "copilot": {
+    "name": {
+      "pt-br": "CoPiloto",
+      "en-us": "CoPilot",
+      "es": "CoPiloto"
+    },
+    "loading": {
+      "pt-br": "O CoPiloto está digitando",
+      "en-us": "The CoPilot is typing",
+      "es": "El CoPiloto está escribiendo"
+    },
+    "error": {
+      "pt-br": "O CoPiloto não está respondendo",
+      "en-us": "CoPilot is not responding",
+      "es": "CoPilot no responde"
+    },
+    "try_again": {
+      "pt-br": "Tente novamente em alguns instantes, caso persista avise ao administrador do projeto.",
+      "en-us": "Try again in a few moments, if it persists, notify the project administrator.",
+      "es": "Vuelve a intentarlo en unos momentos, si persiste avisa al administrador del proyecto."
+    },
+    "suggestion": {
+      "pt-br": "Resposta sugerida pelo CoPiloto",
+      "en-us": "Answer suggested by CoPilot",
+      "es": "Respuesta sugerida por CoPilot"
+    }
+  },
+  "settings": {
+    "messages": {
+      "title": {
+        "pt-br": "Mensagens",
+        "en-us": "Messages",
+        "es": "Mensajes"
+      },
+      "copilot": {
+        "status": {
+          "on": {
+            "pt-br": "Ativo",
+            "en-us": "Active",
+            "es": "Activo"
+          },
+          "off": {
+            "pt-br": "Inativo",
+            "en-us": "Inactive",
+            "es": "Inactivo"
+          }
+        },
+        "custom_rules": {
+          "title": {
+            "pt-br": "Regras do CoPiloto",
+            "en-us": "CoPilot rules",
+            "es": "Reglas del CoPiloto"
+          },
+          "status": {
+            "on": {
+              "pt-br": "Utilizar regras personalizadas",
+              "en-us": "Use custom rules",
+              "es": "Usar reglas personalizadas"
+            },
+            "off": {
+              "pt-br": "Não utilizar regras personalizadas",
+              "en-us": "Do not use custom rules",
+              "es": "No utilizar reglas personalizadas"
+            }
+          },
+          "explanation": {
+            "pt-br": "Escreva aqui instruções para o CoPiloto como por exemplo “utilize um emoji em resposta”",
+            "en-us": "Write here instructions for the CoPilot as for example “use an emoji in the answer”",
+            "es": "Escriba instrucciones para el CoPilotoo aquí, como “use un emoji en respuesta”"
+          }
+        },
+        "integration": {
+          "start": {
+            "pt-br": "Para usar, faça integração com o ChatGPT ",
+            "en-us": "To use, integrate with ChatGPT by ",
+            "es": "Para usar, integre con ChatGPT haciendo "
+          },
+          "middle": {
+            "pt-br": "clicando aqui, ",
+            "en-us": "clicking here, ",
+            "es": "clic aquí, "
+          },
+          "end": {
+            "pt-br": "o CoPiloto oferece respostas prontas baseadas no histórico de atendimento do contato.",
+            "en-us": "the CoPilot offers prompt responses based on the contact's service history.",
+            "es": "el CoPiloto ofrece respuestas rápidas basadas en el historial de servicio del contacto."
+          }
+        }
+      }
+    }
   },
   "new_sector": {
     "sector_tip": {

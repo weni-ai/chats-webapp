@@ -133,13 +133,13 @@ export default {
       cursor: text;
 
       &:hover {
-        border: 1px solid $unnnic-color-neutral-clean;
+        border: 1px solid $unnnic-color-neutral-cleanest;
       }
     }
 
     &.current {
       width: 100%;
-      border: 1px solid $unnnic-color-neutral-cleanest;
+      border: 1px solid $unnnic-color-neutral-clean;
 
       input {
         width: 100%;

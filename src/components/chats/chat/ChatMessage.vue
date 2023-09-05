@@ -203,7 +203,7 @@ export default {
       }
 
       & .unsent-message {
-        color: $unnnic-color-neutral-clean;
+        color: $unnnic-color-neutral-cleanest;
 
         & .resend-button {
           display: inline-flex;

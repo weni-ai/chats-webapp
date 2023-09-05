@@ -51,6 +51,7 @@ export default {
 .emoji-picker {
   position: absolute;
   bottom: 100%;
+  z-index: 1;
 
   animation: slideInUp 0.3s;
 

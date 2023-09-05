@@ -12,9 +12,9 @@
       </div>
     </template>
 
-    <template slot="tab-head-quick-messages">
+    <template slot="tab-head-messages">
       <div class="form-tab">
-        <span class="name">{{ $t('quick_messages.title') }}</span>
+        <span class="name">{{ $t('settings.messages.title') }}</span>
       </div>
     </template>
 
@@ -32,8 +32,8 @@
       <slot name="queues" />
     </template>
 
-    <template slot="tab-panel-quick-messages">
-      <slot name="quick-messages" />
+    <template slot="tab-panel-messages">
+      <slot name="messages" />
     </template>
 
     <template slot="tab-panel-tags">
@@ -60,7 +60,7 @@ export default {
   },
 
   data: () => ({
-    tabs: ['sector', 'queues', 'quick-messages', 'tags'],
+    tabs: ['sector', 'queues', 'messages', 'tags'],
   }),
 
   computed: {
