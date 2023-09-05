@@ -112,13 +112,24 @@ export default {
       commit(mutations.BRING_ROOM_FRONT, room);
     },
     async getCanUseCopilot({ state, commit }) {
-      const response = await Room.getCanUseCopilot({ uuid: state.activeRoom.uuid });
-      commit(mutations.SET_CAN_USE_COPILOT, response.can_use_chat_completion);
+      if (state.activeRoom) {
+        const response = await Room.getCanUseCopilot({ uuid: state.activeRoom.uuid });
+        commit(mutations.SET_CAN_USE_COPILOT, response.can_use_chat_completion);
+      }
     },
-    async getCopilotSuggestion({ state, commit }) {
-      const response = await Room.getCopilotSuggestion({ uuid: state.activeRoom.uuid });
-      console.log(response);
+    async clearCopilotSuggestion({ commit }) {
       commit(mutations.SET_COPILOT_SUGGESTION, '');
+    },
+    async getCopilotSuggestion({ dispatch, state, commit }) {
+      dispatch('clearCopilotSuggestion');
+      const response = await Room.getCopilotSuggestion({ uuid: state.activeRoom.uuid });
+      const suggestion = response?.choices?.[0]?.message?.content;
+      if (suggestion) {
+        commit(mutations.SET_COPILOT_SUGGESTION, suggestion || '');
+      } else if (response.status !== 200) {
+        return response.status;
+      }
+      return undefined;
     },
     async getActiveRoomMessages({ commit, state }, { offset, concat, limit }) {
       const { activeRoom } = state;
