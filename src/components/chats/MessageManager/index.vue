@@ -221,8 +221,8 @@ export default {
     closeSuggestionBox() {
       this.isSuggestionBoxOpen = false;
 
-      if (this.textBoxMessage.includes('/')) {
-        this.clearTextBox();
+      if (this.message.startsWith('/')) {
+        this.message = '';
       }
     },
     onKeyDown(event) {
