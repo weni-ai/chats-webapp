@@ -89,6 +89,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: $unnnic-spacing-inset-sm;
 
   height: 100%;
 

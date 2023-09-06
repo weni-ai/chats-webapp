@@ -114,7 +114,7 @@ import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
 import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone';
 
 import ChatHeader from '@/components/chats/chat/ChatHeader';
-import ChatMessages from '@/components/chats/chat/ChatMessages';
+import ChatMessages from '@/components/chats/chat/ChatMessagesNext';
 import ContactInfo from '@/components/chats/ContactInfo';
 import MessageEditor from '@/components/chats/MessageEditor';
 import ChatClassifier from '@/components/chats/ChatClassifier';
@@ -420,7 +420,6 @@ export default {
   .messages {
     overflow-y: auto;
     padding-right: $unnnic-spacing-inset-sm;
-    margin: $unnnic-spacing-inline-sm 0 $unnnic-spacing-inline-sm;
   }
 
   .chat-classifier {
