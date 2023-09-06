@@ -14,7 +14,7 @@
       v-for="groupMessage in groupMessagesByDate"
       :key="groupMessage.date"
     >
-      <chat-feedback :feedback="groupMessage.date" />
+      <chat-feedback :feedback="groupMessage.date" scheme="purple" />
 
       <section
         v-for="message in groupMessage.messages"
