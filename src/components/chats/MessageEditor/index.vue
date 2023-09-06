@@ -218,7 +218,7 @@ export default {
     closeSuggestionBox() {
       this.isSuggestionBoxOpen = false;
 
-      if (this.message[0] === '/') {
+      if (this.message.startsWith('/')) {
         this.message = '';
       }
     },
