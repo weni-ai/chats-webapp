@@ -1,6 +1,6 @@
 <template>
   <div class="chat-feedback__container">
-    <strong class="chat-feedback">
+    <strong :class="['chat-feedback', scheme ? `chat-feedback--${scheme}` : '']">
       {{ feedback }}
     </strong>
   </div>
@@ -15,25 +15,40 @@ export default {
       default: '',
       required: true,
     },
+    scheme: {
+      type: String,
+      default: 'blue',
+      validator(value) {
+        return ['blue', 'purple', 'red', 'green', 'yellow'].includes(value);
+      },
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.chat-feedback {
-  margin: 0 auto;
-  border-radius: $unnnic-border-radius-lg;
+$scheme-colors: 'blue' $unnnic-color-aux-blue-100, 'purple' $unnnic-color-aux-purple-100,
+  'green' $unnnic-color-aux-green-100, 'yellow' $unnnic-color-aux-yellow-100,
+  'red' $unnnic-color-aux-red-100;
 
-  padding: $unnnic-spacing-nano $unnnic-spacing-xs;
+.chat-feedback__container {
+  display: flex;
 
-  background-color: $unnnic-color-aux-blue-100;
+  .chat-feedback {
+    margin: 0 auto;
+    border-radius: $unnnic-border-radius-lg;
 
-  font-size: $unnnic-font-size-body-md;
-  color: $unnnic-color-neutral-black;
-  font-weight: $unnnic-font-weight-regular;
+    padding: $unnnic-spacing-nano $unnnic-spacing-xs;
 
-  &__container {
-    display: flex;
+    font-size: $unnnic-font-size-body-md;
+    color: $unnnic-color-neutral-black;
+    font-weight: $unnnic-font-weight-regular;
+
+    @each $name, $color in $scheme-colors {
+      &--#{$name} {
+        background-color: $color;
+      }
+    }
   }
 }
 </style>
