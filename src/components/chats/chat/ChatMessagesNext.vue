@@ -144,7 +144,16 @@ export default {
 
       this.messages.forEach((message) => {
         const createdOn = message.created_on.split('T')[0];
-        const displayDate = createdOn === today ? 'Hoje' : createdOn;
+        const arrayOfDate = createdOn.split('-');
+        const year = arrayOfDate[0];
+        const month = arrayOfDate[1];
+        const day = arrayOfDate[2];
+
+        const displayDate =
+          createdOn === today
+            ? this.$t('today')
+            : this.$t('date_format_variable', { year, month, day });
+
         if (!groupedMessages[createdOn]) {
           groupedMessages[createdOn] = {
             date: displayDate,
@@ -235,8 +244,7 @@ export default {
   },
 
   watch: {
-    messages(newmessages) {
-      console.log(JSON.parse(JSON.stringify(newmessages, null, 2)));
+    messages() {
       this.$nextTick(() => {
         this.scrollMessagesToBottom();
       });

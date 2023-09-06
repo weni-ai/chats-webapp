@@ -104,6 +104,11 @@
     "en-us": "MM/DD/YYYY",
     "es": "DD/MM/YYYY"
   },
+  "date_format_variable": {
+    "pt-br": "{day}/{month}/{year}",
+    "en-us": "{month}/{day}/{year}",
+    "es": "{day}/{month}/{year}"
+  },
   "undo": {
     "pt-br": "Desfazer",
     "en-us": "Undo",
@@ -417,6 +422,11 @@
     "pt-br": "Fechar visualização",
     "en-us": "Close view",
     "es": "Cerrar la vista"
+  },
+  "today": {
+    "pt-br": "Hoje",
+    "en-us": "Today",
+    "es": "Hoy"
   },
   "transfer": {
     "pt-br": "Transferir",
