@@ -199,8 +199,6 @@ section.chats-layout {
   }
 
   main {
-    padding-left: $unnnic-spacing-inline-sm;
-
     flex: 1 1;
     grid-column: 2;
 
