@@ -97,9 +97,19 @@ export default {
 
   margin-top: $unnnic-spacing-inset-sm;
 
+  padding-left: $unnnic-spacing-inline-sm;
+
   &.dragging {
     position: relative;
-    margin-right: $unnnic-spacing-inset-sm;
+
+    border-radius: $unnnic-border-radius-lg;
+
+    margin: $unnnic-spacing-inset-sm;
+    margin-bottom: 0;
+
+    padding-left: 0;
+
+    background-color: $unnnic-color-neutral-white;
 
     &::before,
     &::after {
