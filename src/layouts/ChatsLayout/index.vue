@@ -190,7 +190,7 @@ section.chats-layout {
     height: 100vh;
 
     padding: $unnnic-spacing-inset-sm;
-    padding-right: 0;
+    padding-right: $unnnic-spacing-xs;
     grid-column: 1;
 
     .room-list {
