@@ -9,7 +9,11 @@
       }
     "
   >
-    <section v-for="groupMessage in groupMessagesByDate" :key="groupMessage.date">
+    <section
+      class="chat-messages__messages"
+      v-for="groupMessage in groupMessagesByDate"
+      :key="groupMessage.date"
+    >
       <chat-feedback :feedback="groupMessage.date" />
 
       <section
@@ -27,7 +31,7 @@
         />
 
         <!-- Bot -->
-        <section v-else-if="!message.sender" class="chat-messages__messages">
+        <section v-else-if="!message.sender">
           <chat-message
             :message="{ ...message, sender: { name: 'Bot' } }"
             :disabled="isHistory"
@@ -37,7 +41,7 @@
         </section>
 
         <!-- Message text -->
-        <section v-else class="chat-messages__messages">
+        <section v-else>
           <chat-message
             :message="message"
             :disabled="isHistory"
@@ -256,10 +260,6 @@ export default {
 <style lang="scss" scoped>
 .chat-messages {
   &__room {
-    & + & {
-      margin-top: $unnnic-spacing-inline-md;
-    }
-
     &__divisor {
       display: flex;
       align-items: center;
@@ -281,7 +281,12 @@ export default {
   }
 
   &__messages {
-    margin-bottom: $unnnic-spacing-inline-md;
+    display: grid;
+    gap: $unnnic-spacing-md;
+
+    & + & {
+      margin-top: $unnnic-spacing-md;
+    }
   }
 
   &__tags {
