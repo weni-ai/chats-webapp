@@ -199,12 +199,14 @@ section.chats-layout {
   }
 
   main {
-    margin-left: $unnnic-spacing-inline-sm;
+    padding-left: $unnnic-spacing-inline-sm;
 
     flex: 1 1;
     grid-column: 2;
 
     height: 100vh;
+
+    background-color: $unnnic-color-background-carpet;
   }
 
   .quick-message {
