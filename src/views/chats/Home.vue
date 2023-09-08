@@ -5,7 +5,8 @@
   >
     <chats-background v-if="!room" />
     <section v-if="!!room" class="active-chat">
-      <chat-header
+      <unnnic-chats-header :title="room.contact.name || ''" :avatarName="room.contact.name" />
+      <!-- <chat-header
         :room="room"
         :closeButtonTooltip="$t('chats.end')"
         @close="openModalCloseChat"
@@ -14,7 +15,7 @@
         :alert="!this.room.is_24h_valid"
         @reconnect="searchMessages"
         :alertNetwork="this.networkError"
-      />
+      /> -->
       <chats-dropzone @open-file-uploader="openFileUploader" :show="room.user && room.is_24h_valid">
         <chat-messages
           :room="room"
@@ -415,7 +416,7 @@ export default {
   flex-direction: column;
   height: 100%;
   max-height: 100vh;
-  padding: $unnnic-spacing-stack-sm 0;
+  padding-bottom: $unnnic-spacing-stack-sm;
 
   .messages {
     overflow-y: auto;
