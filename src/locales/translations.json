@@ -602,13 +602,6 @@
       "es": "Chat con agente {name}"
     }
   },
-  "contact_forwarded_to": {
-    "line": {
-      "pt-br": "Contato encaminhado para fila {name}",
-      "en-us": "Contact forwarded to the {name} line",
-      "es": "Contacto enviado a la fila {name}"
-    }
-  },
   "waiting_answer": {
     "send_template": {
       "pt-br": "Você enviou um modelo de mensagem",
@@ -621,22 +614,20 @@
       "es": "En espera de respuesta de contacto"
     }
   },
-  "contact_transferred_to": {
-    "line": {
-      "pt-br": "Contato encaminhado para fila {name}",
-      "en-us": "Contact transferred to the {name} line",
-      "es": "Contacto transferido a la línea {name}"
-    },
-    "sector": {
-      "pt-br": "Contato transferido para setor {name}",
-      "en-us": "Contact transferred to the {name} department",
-      "es": "Contacto transferido al sector {name}"
-    },
-    "agent": {
-      "pt-br": "Contato transferido para agente {name}",
-      "en-us": "Contact transferred to agent {name}",
-      "es": "Contacto transferido al agente {name}"
-    }
+  "contact_forwarded_to_queue": {
+    "pt-br": "Contato encaminhado para fila {queue}",
+    "en-us": "Contact forwarded to the {queue} line",
+    "es": "Contacto enviado a la cola {queue}"
+  },
+  "contact_transferred_to_agent": {
+    "pt-br": "Contato transferido para agente {agent}",
+    "en-us": "Contact transferred to agent {agent}",
+    "es": "Contacto transferido al agente {agent}"
+  },
+  "agent_took_from_queue": {
+    "pt-br": "{agent} pegou da fila {queue}",
+    "en-us": "{agent} took from queue {queue}",
+    "es": "{agent} tomó de la cola {queue}"
   },
   "chat_closed_by": {
     "agent": {
