@@ -211,8 +211,8 @@ export default {
       const text = JSON.parse(message.text);
       const { name } = text;
       const transferType = {
-        queue: this.$t('contact_transferred_to.line', { name }),
-        user: this.$t('contact_transferred_to.agent', { name }),
+        queue: this.$t('contact_forwarded_to_queue', { queue: name }),
+        user: this.$t('contact_transferred_to_agent', { agent: name }),
       };
 
       return transferType[text.type];
