@@ -1,3 +1,4 @@
+<!-- eslint-disable vuejs-accessibility/alt-text -->
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
   <section
@@ -30,26 +31,51 @@
           "
         />
 
-        <!-- Bot -->
-        <section v-else-if="!message.sender">
-          <chat-message
-            :message="{ ...message, sender: { name: 'Bot' } }"
-            :disabled="isHistory"
-            :use-photo="usePhoto"
-            @fullscreen="openFullScreen"
-          />
-        </section>
+        <div class="chat-message__container" v-else>
+          <unnnic-chats-message
+            v-if="message.text"
+            :type="message.user ? 'sent' : 'received'"
+            :class="['chat-message', message.user ? 'sent' : 'received']"
+            :time="new Date(message.created_on)"
+          >
+            <template v-if="message.text" #text>
+              {{ message.text }}
+            </template>
+          </unnnic-chats-message>
+          <template v-for="media in message.media">
+            <unnnic-chats-message
+              v-if="isMedia(media)"
+              :key="media.created_on"
+              :type="message.user ? 'sent' : 'received'"
+              :class="['chat-message', message.user ? 'sent' : 'received']"
+              :time="new Date(message.created_on)"
+            >
+              <template #media>
+                <img v-if="isImage(media)" :src="media.url" />
 
-        <!-- Message text -->
-        <section v-else>
-          <chat-message
-            :message="message"
-            :disabled="isHistory"
-            @show-contact-info="showContactInfo"
-            :use-photo="usePhoto"
-            @fullscreen="openFullScreen"
-          />
-        </section>
+                <video v-else-if="isVideo(media)">
+                  <source :src="media.url" />
+                </video>
+
+                <unnnic-audio-recorder
+                  v-else-if="isAudio(media)"
+                  ref="audio-recorder"
+                  class="audio"
+                  :src="media.url"
+                  :canDiscard="false"
+                />
+              </template>
+            </unnnic-chats-message>
+            <unnnic-chats-message
+              v-else
+              :key="media.created_on"
+              :type="message.user ? 'sent' : 'received'"
+              :class="['chat-message', message.user ? 'sent' : 'received']"
+              :time="new Date(message.created_on)"
+              :documentName="media.url.split('/').at(-1)"
+            />
+          </template>
+        </div>
       </section>
     </section>
 
@@ -106,7 +132,6 @@
 <script>
 import TagGroup from '@/components/TagGroup';
 import ChatFeedback from './ChatFeedback';
-import ChatMessage from './ChatMessage';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
 
 export default {
@@ -114,7 +139,6 @@ export default {
 
   components: {
     ChatFeedback,
-    ChatMessage,
     TagGroup,
     FullscreenPreview,
   },
@@ -192,6 +216,23 @@ export default {
   },
 
   methods: {
+    isMediaOfType(media, type) {
+      return media && media.content_type.includes(type);
+    },
+    isImage(media) {
+      return this.isMediaOfType(media, 'image');
+    },
+    isVideo(media) {
+      return this.isMediaOfType(media, 'video');
+    },
+    isAudio(media) {
+      return this.isMediaOfType(media, 'audio');
+    },
+    isMedia(media) {
+      const { isAudio, isImage, isVideo } = this;
+      return isAudio(media) || isImage(media) || isVideo(media);
+    },
+
     isTransferInfoMessage(message) {
       try {
         const content = JSON.parse(message.text);
@@ -276,6 +317,21 @@ export default {
         flex: 1;
         height: 1px;
         background: $unnnic-color-neutral-soft;
+      }
+    }
+
+    .chat-message__container {
+      display: grid;
+
+      .chat-message {
+        &.sent {
+          justify-self: flex-end;
+        }
+
+        .audio {
+          padding: $unnnic-spacing-xs;
+          margin: $unnnic-spacing-nano 0;
+        }
       }
     }
   }
