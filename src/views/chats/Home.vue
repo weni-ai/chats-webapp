@@ -26,19 +26,18 @@
           @scrollTop="searchForMoreMessages"
         />
 
-        <div v-if="isMessageEditorVisible && !room.is_waiting" class="message-editor">
-          <message-editor
-            ref="message-editor"
-            v-model="editorMessage"
-            :audio.sync="audioMessage"
-            @show-quick-messages="handlerShowQuickMessages"
-            @send-message="sendMessage"
-            @send-audio="sendAudio"
-            @open-file-uploader="openFileUploader"
-            :loadingValue="totalValue"
-            :loading="isLoading"
-          />
-        </div>
+        <message-manager
+          v-if="isMessageManagerVisible && !room.is_waiting"
+          ref="message-editor"
+          v-model="editorMessage"
+          :audio.sync="audioMessage"
+          @show-quick-messages="handlerShowQuickMessages"
+          @send-message="sendMessage"
+          @send-audio="sendAudio"
+          @open-file-uploader="openFileUploader"
+          :loadingValue="totalValue"
+          :loading="isLoading"
+        />
       </chats-dropzone>
 
       <div v-if="!room.user" class="get-chat-button-container">
@@ -117,7 +116,6 @@ import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone';
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessagesNext';
 import ContactInfo from '@/components/chats/ContactInfo';
-import MessageEditor from '@/components/chats/MessageEditor';
 import ChatClassifier from '@/components/chats/ChatClassifier';
 import QuickMessages from '@/components/chats/QuickMessages';
 import ModalCloseChat from '@/views/chats/ModalCloseChat.vue';
@@ -126,8 +124,9 @@ import LayoutTemplateMessage from '@/components/chats/TemplateMessages/LayoutTem
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat';
+import MessageManager from '@/components/chats/MessageManager';
 
-import FileUploader from '@/components/chats/MessageEditor/FileUploader';
+import FileUploader from '@/components/chats/MessageManager/FileUploader';
 
 export default {
   name: 'ChatsHome',
@@ -140,7 +139,7 @@ export default {
     ChatMessages,
     ContactInfo,
     QuickMessages,
-    MessageEditor,
+    MessageManager,
     ChatClassifier,
     ModalCloseChat,
     FileUploader,
@@ -189,7 +188,7 @@ export default {
     ...mapGetters('rooms', {
       messages: 'groupedActiveRoomsMessage',
     }),
-    isMessageEditorVisible() {
+    isMessageManagerVisible() {
       return (
         !this.isRoomClassifierVisible &&
         this.room.is_active &&
@@ -427,10 +426,6 @@ export default {
     margin-top: auto;
     margin-left: -$unnnic-spacing-inline-md;
     margin-bottom: -$unnnic-spacing-inline-sm;
-  }
-
-  .message-editor {
-    margin-top: auto;
   }
 }
 .get-chat-button-container {

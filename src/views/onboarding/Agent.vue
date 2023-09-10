@@ -32,8 +32,8 @@
         use-photo
       />
 
-      <div class="message-editor">
-        <message-editor />
+      <div class="message-manager">
+        <message-manager />
       </div>
     </section>
     <section v-else class="illustration">
@@ -46,7 +46,7 @@
 <script>
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
-import MessageEditor from '@/components/chats/MessageEditor';
+import MessageManager from '@/components/chats/MessageManager';
 import RoomGroup from '@/layouts/ChatsLayout/components/TheRoomList/RoomGroup';
 
 import ChatsLayout from '@/layouts/ChatsLayout';
@@ -62,7 +62,7 @@ export default {
     ChatsLayout,
     ChatHeader,
     ChatMessages,
-    MessageEditor,
+    MessageManager,
     RoomGroup,
   },
 
@@ -175,7 +175,7 @@ export default {
     margin: $unnnic-spacing-inline-sm 0 $unnnic-spacing-inline-sm;
   }
 
-  .message-editor {
+  .message-manager {
     margin-right: $unnnic-spacing-inline-sm;
     margin-top: auto;
   }
