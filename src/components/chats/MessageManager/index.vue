@@ -1,9 +1,9 @@
 <template>
   <section>
-    <div class="message-editor">
+    <div class="message-manager">
       <div
         :class="[
-          'message-editor-box__container',
+          'message-manager-box__container',
           loadingValue !== undefined && 'loading',
           isFocused && 'focused',
         ]"
@@ -23,13 +23,13 @@
         />
         <unnnic-audio-recorder
           ref="audioRecorder"
-          class="message-editor__audio-recorder"
+          class="message-manager__audio-recorder"
           v-show="isAudioRecorderVisible && loadingValue === undefined"
           v-model="recordedAudio"
           @status="updateAudioRecorderStatus"
         />
       </div>
-      <div class="message-editor__actions">
+      <div class="message-manager__actions">
         <unnnic-button-icon
           v-if="canUseCopilot && !isCopilotOpen && showActionButton"
           @click="openCopilot"
@@ -112,7 +112,7 @@ import SuggestionBox from './SuggestionBox.vue';
 import CoPilot from './CoPilot';
 
 export default {
-  name: 'MessageEditor',
+  name: 'MessageManager',
 
   components: {
     TextBox,
@@ -301,7 +301,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.message-editor {
+.message-manager {
   position: relative;
 
   display: grid;
@@ -356,7 +356,7 @@ export default {
     gap: $unnnic-spacing-stack-xs;
 
     .more-actions {
-      ::v-deep .unnnic-dropdown__content {
+      :deep(.unnnic-dropdown__content) {
         padding: 0 $unnnic-spacing-inset-sm;
       }
     }

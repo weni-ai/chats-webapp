@@ -35,7 +35,7 @@
 
 <script>
 import vClickOutside from 'v-click-outside';
-import SuggestionBoxShortcut from '@/components/chats/MessageEditor/SuggestionBoxShortcut';
+import SuggestionBoxShortcut from './SuggestionBoxShortcut';
 
 export default {
   name: 'SuggestionBox',
