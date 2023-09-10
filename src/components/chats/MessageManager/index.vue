@@ -14,7 +14,7 @@
         <text-box
           v-if="!isAudioRecorderVisible"
           ref="textBox"
-          v-model="message"
+          v-model="textBoxMessage"
           @keydown="onKeyDown"
           @paste="handlePaste"
           @is-typing-handler="isTypingHandler"
@@ -155,12 +155,12 @@ export default {
       canUseCopilot: (state) => state.rooms.canUseCopilot,
     }),
 
-    message: {
+    textBoxMessage: {
       get() {
         return this.value;
       },
-      set(message) {
-        this.$emit('input', message);
+      set(textBoxMessage) {
+        this.$emit('input', textBoxMessage);
       },
     },
     recordedAudio: {
@@ -200,10 +200,10 @@ export default {
   methods: {
     openCopilot() {
       this.isCopilotOpen = true;
-      this.message = '';
+      this.clearTextBox();
     },
     setMessage(newMessage) {
-      this.message = newMessage;
+      this.textBoxMessage = newMessage;
       this.$nextTick(() => {
         this.$refs.textBox.focus();
       });
@@ -212,14 +212,17 @@ export default {
       // Accessed by parent components
       this.$refs.audioRecorder?.discard();
     },
+    clearTextBox() {
+      this.textBoxMessage = '';
+    },
     /**
      * @param {KeyboardEvent} event
      */
     closeSuggestionBox() {
       this.isSuggestionBoxOpen = false;
 
-      if (this.message.includes('/')) {
-        this.message = '';
+      if (this.textBoxMessage.includes('/')) {
+        this.clearTextBox();
       }
     },
     onKeyDown(event) {
@@ -236,7 +239,7 @@ export default {
       if (event.key === 'Enter') {
         if (event.shiftKey) return;
 
-        this.sendMessage();
+        this.sendTextBoxMessage();
         event.preventDefault();
       }
     },
@@ -278,11 +281,15 @@ export default {
     },
     send() {
       this.$refs.textBox?.clearTextarea();
-      this.sendMessage();
+      this.sendTextBoxMessage();
       this.sendAudio();
     },
-    sendMessage() {
-      this.$emit('send-message');
+    async sendTextBoxMessage() {
+      const message = this.textBoxMessage.trim();
+      if (message) {
+        await this.$store.dispatch('rooms/sendMessage', message);
+        this.clearTextBox();
+      }
     },
     async sendAudio() {
       if (this.audioRecorderStatus === 'recording') {
