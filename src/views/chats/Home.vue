@@ -1,7 +1,7 @@
 <template>
   <chats-layout
     ref="chats-layout"
-    @select-quick-message="(quickMessage) => updateEditorMessage(quickMessage.text)"
+    @select-quick-message="(quickMessage) => updateTextBoxMessage(quickMessage.text)"
   >
     <chats-background v-if="!room" />
     <section v-if="!!room" class="active-chat">
@@ -29,10 +29,9 @@
         <message-manager
           v-if="isMessageManagerVisible && !room.is_waiting"
           ref="message-editor"
-          v-model="editorMessage"
+          v-model="textBoxMessage"
           :audio.sync="audioMessage"
           @show-quick-messages="handlerShowQuickMessages"
-          @send-message="sendMessage"
           @send-audio="sendAudio"
           @open-file-uploader="openFileUploader"
           :loadingValue="totalValue"
@@ -160,7 +159,7 @@ export default {
      */
     audioMessage: null,
     componentInAsideSlot: '',
-    editorMessage: '',
+    textBoxMessage: '',
     isCloseChatModalOpen: false,
     tags: [],
     sectorTags: [],
@@ -307,15 +306,6 @@ export default {
         console.error('O upload de alguns arquivos pode não ter sido concluído');
       }
     },
-
-    async sendMessage() {
-      const message = this.editorMessage.trim();
-      if (!message) return;
-
-      await this.$store.dispatch('rooms/sendMessage', message);
-
-      this.editorMessage = '';
-    },
     async sendAudio() {
       if (!this.audioMessage || this.isLoading) return;
       this.isLoading = true;
@@ -380,15 +370,15 @@ export default {
       }
     },
 
-    updateEditorMessage(message) {
-      this.editorMessage = message;
+    updateTextBoxMessage(message) {
+      this.textBoxMessage = message;
     },
   },
 
   watch: {
     room(newValue) {
       if (!newValue) this.componentInAsideSlot = '';
-      if (newValue) this.editorMessage = '';
+      if (newValue) this.updateTextBoxMessage('');
     },
     id: {
       immediate: true,
