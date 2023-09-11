@@ -37,6 +37,7 @@
             :type="message.user ? 'sent' : 'received'"
             :class="['chat-message', message.user ? 'sent' : 'received']"
             :time="new Date(message.created_on)"
+            :status="messageStatus(message)"
           >
             <template v-if="message.text" #text>
               {{ message.text }}
@@ -130,6 +131,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import TagGroup from '@/components/TagGroup';
 import ChatFeedback from './ChatFeedback';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
@@ -165,6 +168,9 @@ export default {
   }),
 
   computed: {
+    ...mapState({
+      roomMessagesSendingUuids: (state) => state.roomMessages.roomMessagesSendingUuids,
+    }),
     groupMessagesByDate() {
       const groupedMessages = {};
 
@@ -231,6 +237,12 @@ export default {
     isMedia(media) {
       const { isAudio, isImage, isVideo } = this;
       return isAudio(media) || isImage(media) || isVideo(media);
+    },
+    messageStatus(message) {
+      if (message) {
+        return this.roomMessagesSendingUuids.includes(message.uuid) ? 'sending' : 'sent';
+      }
+      return '';
     },
 
     isTransferInfoMessage(message) {

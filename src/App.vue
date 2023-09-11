@@ -221,7 +221,7 @@ export default {
             this.$route.params.viewedAgent && activeRoom?.uuid === message.room;
 
           if (isCurrentRoom || isViewModeCurrentRoom) {
-            this.$store.dispatch('rooms/addMessage', message);
+            this.$store.dispatch('roomMessages/addMessage', message);
           }
 
           if (this.isAJson(message.text)) return;
@@ -280,7 +280,7 @@ export default {
       });
 
       this.ws.on('msg.update', (message) => {
-        this.$store.dispatch('rooms/addMessage', message);
+        this.$store.dispatch('roomMessages/addMessage', message);
       });
 
       this.ws.on('status.update', (info) => {

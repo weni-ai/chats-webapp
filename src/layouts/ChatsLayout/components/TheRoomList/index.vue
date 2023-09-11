@@ -131,7 +131,6 @@ export default {
       wating: 'rooms/waitingContactAnswer',
     }),
     ...mapState({
-      hasNext: (state) => state.rooms.hasNext,
       listRoomHasNext: (state) => state.rooms.listRoomHasNext,
     }),
     isHistoryView() {

@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+import { mapState } from 'vuex';
 
 import * as notifications from '@/utils/notifications';
 
@@ -179,13 +179,11 @@ export default {
     ...mapState({
       room: (state) => state.rooms.activeRoom,
       me: (state) => state.profile.me,
-      hasNext: (state) => state.rooms.hasNext,
+      messages: (state) => state.roomMessages.roomMessages,
+      hasNextMessages: (state) => state.roomMessages.hasNextMessages,
       listRoomHasNext: (state) => state.rooms.listRoomHasNext,
       showModalAssumedChat: ({ dashboard }) => dashboard.showModalAssumedChat,
       assumedChatContactName: ({ dashboard }) => dashboard.assumedChatContactName,
-    }),
-    ...mapGetters('rooms', {
-      messages: 'groupedActiveRoomsMessage',
     }),
     isMessageManagerVisible() {
       return (
@@ -263,7 +261,7 @@ export default {
       this.isLoading = true;
 
       try {
-        await this.$store.dispatch('rooms/getActiveRoomMessages', {
+        await this.$store.dispatch('roomMessages/getRoomMessages', {
           offset: this.page * this.limit,
           concat,
           limit: this.limit,
@@ -285,7 +283,7 @@ export default {
     },
 
     searchForMoreMessages() {
-      if (this.hasNext) {
+      if (this.hasNextMessages) {
         this.page += 1;
         this.getRoomMessages(true);
       }
