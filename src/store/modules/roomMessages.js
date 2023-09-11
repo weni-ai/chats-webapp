@@ -52,7 +52,11 @@ export default {
       state.roomMessages = state.roomMessages.map((message) => {
         return message.uuid === uuid ? { ...updatedMessage } : message;
       });
-      delete state.roomMessagesSendingUuids[message.uuid];
+
+      state.roomMessagesSendingUuids.splice(
+        state.roomMessagesSendingUuids.indexOf(message.uuid),
+        1,
+      );
     },
   },
 
