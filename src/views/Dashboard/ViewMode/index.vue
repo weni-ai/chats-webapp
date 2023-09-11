@@ -100,9 +100,9 @@ export default {
       room: (state) => state.rooms.activeRoom,
       me: (state) => state.profile.me,
       viewedAgent: (state) => state.dashboard.viewedAgent,
-      hasNext: (state) => state.rooms.hasNext,
+      hasNextMessages: (state) => state.roomMessages.hasNextMessages,
     }),
-    ...mapGetters('rooms', {
+    ...mapGetters('roomMessages', {
       messages: 'groupedActiveRoomsMessage',
     }),
   },
@@ -110,7 +110,7 @@ export default {
   methods: {
     async getRoomMessages(concat = false) {
       try {
-        await this.$store.dispatch('rooms/getActiveRoomMessages', {
+        await this.$store.dispatch('roomMessages/getRoomMessages', {
           offset: this.chatPage * this.chatLimit,
           concat,
           limit: this.chatLimit,
@@ -120,7 +120,7 @@ export default {
       }
     },
     searchForMoreMessages() {
-      if (this.hasNext) {
+      if (this.hasNextMessages) {
         this.chatPage += 1;
         this.getRoomMessages(true);
       }

@@ -290,7 +290,7 @@ export default {
     }),
 
     lastMessageFromContact() {
-      const messages = this.$store.state.rooms.activeRoomMessages;
+      const messages = this.$store.state.roomMessages.roomMessages;
       return messages.findLast((message) => message.contact);
     },
 
