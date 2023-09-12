@@ -37,7 +37,7 @@
             :type="message.user ? 'sent' : 'received'"
             :class="['chat-message', message.user ? 'sent' : 'received']"
             :time="new Date(message.created_on)"
-            :status="messageStatus(message)"
+            :status="messageStatus({ message })"
           >
             <template v-if="message.text" #text>
               {{ message.text }}
@@ -50,9 +50,10 @@
               :type="message.user ? 'sent' : 'received'"
               :class="['chat-message', message.user ? 'sent' : 'received']"
               :time="new Date(message.created_on)"
+              :status="messageStatus({ message })"
             >
               <template #media>
-                <img v-if="isImage(media)" :src="media.url" />
+                <img v-if="isImage(media)" :src="media.url || media.preview" />
 
                 <video v-else-if="isVideo(media)">
                   <source :src="media.url" />
@@ -62,8 +63,9 @@
                   v-else-if="isAudio(media)"
                   ref="audio-recorder"
                   class="audio"
-                  :src="media.url"
+                  :src="media.url || media.preview"
                   :canDiscard="false"
+                  :reqStatus="messageStatus({ message, media })"
                 />
               </template>
             </unnnic-chats-message>
@@ -223,7 +225,7 @@ export default {
 
   methods: {
     isMediaOfType(media, type) {
-      return media && media.content_type.includes(type);
+      return media && media.content_type?.includes(type);
     },
     isImage(media) {
       return this.isMediaOfType(media, 'image');
@@ -238,11 +240,16 @@ export default {
       const { isAudio, isImage, isVideo } = this;
       return isAudio(media) || isImage(media) || isVideo(media);
     },
-    messageStatus(message) {
+    messageStatus({ message, media }) {
       if (message) {
-        return this.roomMessagesSendingUuids.includes(message.uuid) ? 'sending' : 'sent';
+        if (this.roomMessagesSendingUuids.includes(message.uuid)) {
+          return 'sending';
+        }
+        if (media && this.isAudio(media)) {
+          return 'default';
+        }
       }
-      return '';
+      return 'sent';
     },
 
     isTransferInfoMessage(message) {

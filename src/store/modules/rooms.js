@@ -1,4 +1,3 @@
-import Message from '@/services/api/resources/chats/message';
 import Room from '@/services/api/resources/chats/room';
 
 const mutations = {
@@ -103,22 +102,6 @@ export default {
         return response.status;
       }
       return undefined;
-    },
-
-    async sendMedias({ state }, { files: medias, updateLoadingFiles }) {
-      const { activeRoom } = state;
-      if (!activeRoom) return;
-
-      await Promise.all(
-        medias.map((media) =>
-          Message.sendMedia({
-            roomId: activeRoom.uuid,
-            userEmail: activeRoom.user.email,
-            media,
-            updateLoadingFiles,
-          }),
-        ),
-      );
     },
     updateRoom({ state, commit }, { room, userEmail, routerReplace, viewedAgentEmail }) {
       const rooms = state.rooms

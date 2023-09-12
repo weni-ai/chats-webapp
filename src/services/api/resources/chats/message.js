@@ -53,6 +53,7 @@ export default {
       },
       {
         onUploadProgress: (event) => {
+          // const progress = parseInt(Math.round((event.loaded * 100) / event.total), 10);
           const progress = event.loaded / event.total;
           updateLoadingFiles?.(msg.uuid, progress);
         },
@@ -60,19 +61,4 @@ export default {
     );
     return response.data;
   },
-  // async sendMedia({ roomId, text, userEmail, media }) {
-  //   // const msg = await this.send(roomId, {
-  //   //   text: media.name,
-  //   //   user_email: userEmail,
-  //   // });
-  //   const response = await http.postForm('/msg/create_media/', {
-  //     'message.room': roomId,
-  //     'message.user_email': userEmail,
-  //     'message.text': text,
-  //     content_type: media.type,
-  //     media_file: media,
-  //   });
-  //   console.log(response.data, 'response.data');
-  //   return response.data;
-  // },
 };
