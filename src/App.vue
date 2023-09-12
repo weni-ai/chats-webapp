@@ -280,6 +280,9 @@ export default {
       });
 
       this.ws.on('msg.update', (message) => {
+        if (this.me.email === message.user?.email) {
+          return;
+        }
         this.$store.dispatch('roomMessages/addMessage', message);
       });
 

@@ -294,11 +294,11 @@ export default {
         const loadingFiles = {};
         const updateLoadingFiles = (messageUuid, progress) => {
           loadingFiles[messageUuid] = progress;
-          this.totalValue =
-            Object.values(loadingFiles).reduce((acc, value) => acc + value) /
-            Object.keys(loadingFiles).length;
+          // this.totalValue =
+          //   Object.values(loadingFiles).reduce((acc, value) => acc + value) /
+          //   Object.keys(loadingFiles).length;
         };
-        await this.$store.dispatch('rooms/sendMedias', { files, updateLoadingFiles });
+        await this.$store.dispatch('roomMessages/sendMedias', { files, updateLoadingFiles });
         this.totalValue = undefined;
       } catch (e) {
         console.error('O upload de alguns arquivos pode não ter sido concluído');
@@ -311,14 +311,14 @@ export default {
       const loadingFiles = {};
       const updateLoadingFiles = (messageUuid, progress) => {
         loadingFiles[messageUuid] = progress;
-        this.totalValue =
-          Object.values(loadingFiles).reduce((acc, value) => acc + value) /
-          Object.keys(loadingFiles).length;
+        // this.totalValue =
+        //   Object.values(loadingFiles).reduce((acc, value) => acc + value) /
+        //   Object.keys(loadingFiles).length;
       };
       const response = await fetch(this.audioMessage.src);
       const blob = await response.blob();
       const audio = new File([blob], `${Date.now().toString()}.mp3`, { type: 'audio/mpeg3' });
-      await this.$store.dispatch('rooms/sendMedias', { files: [audio], updateLoadingFiles });
+      await this.$store.dispatch('roomMessages/sendMedias', { files: [audio], updateLoadingFiles });
       this.totalValue = undefined;
       this.$refs['message-editor'].clearAudio();
       this.audioMessage = null;

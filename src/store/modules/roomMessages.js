@@ -44,18 +44,28 @@ export default {
       state.roomMessages.push(messageWithSender);
       state.roomMessagesSendingUuids.push(message.uuid);
     },
-    [mutations.UPDATE_MESSAGE](state, { message, toUpdateUuid = '' }) {
-      if (message.room !== Rooms.state.activeRoom.uuid) return;
-      const uuid = toUpdateUuid || message.uuid;
+    [mutations.UPDATE_MESSAGE](
+      state,
+      { media, toUpdateMediaPreview, message, toUpdateMessageUuid = '' },
+    ) {
+      const uuid = toUpdateMessageUuid || message.uuid;
+      const treatedMessage = message;
 
-      const updatedMessage = parseMessageToMessageWithSenderProp(message);
-      state.roomMessages = state.roomMessages.map((message) => {
-        return message.uuid === uuid ? { ...updatedMessage } : message;
-      });
+      if (media) {
+        const mediaIndex = treatedMessage.media.findIndex((mappedMessage) => {
+          return mappedMessage.preview === toUpdateMediaPreview;
+        });
+        treatedMessage.media[mediaIndex] = media;
+      }
 
-      state.roomMessagesSendingUuids.splice(
-        state.roomMessagesSendingUuids.indexOf(message.uuid),
-        1,
+      const updatedMessage = parseMessageToMessageWithSenderProp(treatedMessage);
+      const messageIndex = state.roomMessages.findIndex(
+        (mappedMessage) => mappedMessage.uuid === uuid,
+      );
+      state.roomMessages[messageIndex] = updatedMessage;
+
+      state.roomMessagesSendingUuids = state.roomMessagesSendingUuids.filter(
+        (mappedMessageUuid) => mappedMessageUuid !== uuid,
       );
     },
   },
@@ -131,11 +141,47 @@ export default {
         user_email: activeRoom.user.email,
       })
         .then((message) => {
-          commit(mutations.UPDATE_MESSAGE, { message, toUpdateUuid: temporaryMessage.uuid });
+          commit(mutations.UPDATE_MESSAGE, { message, toUpdateMessageUuid: temporaryMessage.uuid });
         })
         .catch(() => {
           console.error('Não foi possível enviar a mensagem');
         });
+    },
+    async sendMedias({ commit }, { files: medias, updateLoadingFiles }) {
+      const { activeRoom } = Rooms.state;
+      if (!activeRoom) return;
+
+      medias.forEach(async (media) => {
+        const mediaPreview = URL.createObjectURL(media);
+        const temporaryMessage = {
+          uuid: Date.now().toString(),
+          created_on: new Date().toISOString(),
+          media: [{ preview: mediaPreview, content_type: media.type }],
+          room: activeRoom.uuid,
+          seen: false,
+          user: { ...activeRoom.user },
+        };
+
+        commit(mutations.ADD_MESSAGE, { message: temporaryMessage });
+
+        Message.sendMedia({
+          roomId: activeRoom.uuid,
+          userEmail: activeRoom.user.email,
+          media,
+          updateLoadingFiles,
+        })
+          .then((media) => {
+            commit(mutations.UPDATE_MESSAGE, {
+              media,
+              message: temporaryMessage,
+              toUpdateMediaPreview: mediaPreview,
+              toUpdateMessageUuid: temporaryMessage.uuid,
+            });
+          })
+          .catch(() => {
+            console.error('Não foi possível enviar a mídia');
+          });
+      });
     },
   },
 };
