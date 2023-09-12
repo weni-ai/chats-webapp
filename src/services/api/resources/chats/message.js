@@ -29,11 +29,12 @@ export default {
     return response.data;
   },
 
-  async send(roomId, { text, user_email: userEmail }) {
+  async send(roomId, { text, user_email: userEmail, seen }) {
     const response = await http.post('/msg/', {
       room: roomId,
       text,
       user_email: userEmail,
+      seen,
     });
     return response.data;
   },
