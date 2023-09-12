@@ -9,6 +9,7 @@ const mutations = {
   SET_ROOM_HAS_NEXT_MESSAGES: 'SET_ROOM_HAS_NEXT_MESSAGES',
   ADD_MESSAGE: 'ADD_MESSAGE',
   UPDATE_MESSAGE: 'UPDATE_MESSAGE',
+  SET_FAILED_MESSAGE: 'SET_FAILED_MESSAGE',
 };
 
 function createTemporaryMessage({ activeRoom, text = '', media = [] }) {
@@ -41,6 +42,7 @@ export default {
     // ],
     roomMessages: [],
     roomMessagesSendingUuids: [],
+    roomMessagesFailedUuids: [],
     hasNextMessages: true,
   },
 
@@ -63,6 +65,22 @@ export default {
 
       if (message.user?.email && message.user.email === Profile.state.me?.email) {
         roomMessagesSendingUuids.push(uuid);
+      }
+    },
+    [mutations.SET_FAILED_MESSAGE](state, { message }) {
+      const { roomMessagesFailedUuids } = state;
+      const { uuid } = message;
+
+      console.log(message);
+
+      if (message.room !== Rooms.state.activeRoom.uuid) return;
+
+      state.roomMessagesSendingUuids = state.roomMessagesSendingUuids.filter(
+        (mappedMessageUuid) => mappedMessageUuid !== uuid,
+      );
+
+      if (message.user?.email && message.user.email === Profile.state.me?.email) {
+        roomMessagesFailedUuids.push(uuid);
       }
     },
     [mutations.UPDATE_MESSAGE](
@@ -167,6 +185,37 @@ export default {
         console.error('An error occurred while sending the message', error);
       }
     },
+    async resendMessage({ commit }, { message }) {
+      const { activeRoom } = Rooms.state;
+      if (!activeRoom) return;
+
+      // Send the message and update it with the actual message data
+      try {
+        const updatedMessage = await Message.send(activeRoom.uuid, {
+          text: message.text,
+          user_email: activeRoom.user.email,
+          seen: true,
+        });
+        commit(mutations.UPDATE_MESSAGE, {
+          message: updatedMessage,
+          toUpdateMessageUuid: message.uuid,
+        });
+      } catch (error) {
+        console.error('An error occurred while sending the message', error);
+      }
+    },
+
+    async resendMessages({ state, dispatch }) {
+      const { roomMessagesSendingUuids, roomMessages } = state;
+      if (roomMessagesSendingUuids > 0) {
+        roomMessagesSendingUuids.forEach((messageUuid) => {
+          const messageIndex = roomMessages.findIndex(
+            (mappedMessage) => mappedMessage.uuid === messageUuid,
+          );
+          dispatch('resendMessage', { message: roomMessages[messageIndex] });
+        });
+      }
+    },
 
     async sendMedias({ commit }, { files: medias, updateLoadingFiles }) {
       const { activeRoom } = Rooms.state;
@@ -197,6 +246,9 @@ export default {
             toUpdateMessageUuid: temporaryMessage.uuid,
           });
         } catch (error) {
+          commit(mutations.SET_FAILED_MESSAGE, {
+            message: temporaryMessage,
+          });
           console.error('An error occurred while sending the media', error);
         }
       });

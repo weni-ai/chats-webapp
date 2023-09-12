@@ -66,6 +66,7 @@
                   :src="media.url || media.preview"
                   :canDiscard="false"
                   :reqStatus="messageStatus({ message, media })"
+                  @failed-click="resendMedia({ message, media })"
                 />
               </template>
             </unnnic-chats-message>
@@ -133,7 +134,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import TagGroup from '@/components/TagGroup';
 import ChatFeedback from './ChatFeedback';
@@ -169,9 +170,16 @@ export default {
     currentMedia: {},
   }),
 
+  mounted() {
+    window.addEventListener('online', () => {
+      this.resendMessages();
+    });
+  },
+
   computed: {
     ...mapState({
       roomMessagesSendingUuids: (state) => state.roomMessages.roomMessagesSendingUuids,
+      roomMessagesFailedUuids: (state) => state.roomMessages.roomMessagesFailedUuids,
     }),
     groupMessagesByDate() {
       const groupedMessages = {};
@@ -224,6 +232,10 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      resendMessages: 'roomMessages/resendMessages',
+      resendMessage: 'roomMessages/resendMessage',
+    }),
     isMediaOfType(media, type) {
       return media && media.content_type?.includes(type);
     },
@@ -245,11 +257,19 @@ export default {
         if (this.roomMessagesSendingUuids.includes(message.uuid)) {
           return 'sending';
         }
+        if (this.roomMessagesFailedUuids.includes(message.uuid)) {
+          return 'failed';
+        }
         if (media && this.isAudio(media)) {
           return 'default';
         }
       }
       return 'sent';
+    },
+
+    resendMedia({ message, media }) {
+      // this.resendMessage(message);
+      console.log({ message, media });
     },
 
     isTransferInfoMessage(message) {
