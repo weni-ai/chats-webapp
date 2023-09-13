@@ -1,6 +1,6 @@
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
-  <div class="video-preview">
+  <div class="video-preview" :class="{ 'is-fullscreen': isFullcreen }">
     <video class="video-preview__video" ref="player">
       <source :src="src" />
     </video>
@@ -18,6 +18,13 @@ export default {
       type: String,
       default: '',
     },
+  },
+
+  data() {
+    return {
+      player: null,
+      isFullcreen: false,
+    };
   },
 
   mounted() {
@@ -41,6 +48,13 @@ export default {
         speed: this.$t('video_player.speed'),
       },
       resetOnEnd: true,
+    });
+
+    this.player.on('enterfullscreen', () => {
+      this.isFullcreen = true;
+    });
+    this.player.on('exitfullscreen', () => {
+      this.isFullcreen = false;
     });
   },
 };
@@ -67,6 +81,20 @@ export default {
 
     .plyr__volume input[type='range'] {
       max-width: $unnnic-spacing-giant;
+    }
+
+    .plyr__menu,
+    [data-plyr='download'] {
+      display: none;
+    }
+  }
+
+  &.is-fullscreen {
+    :deep() {
+      .plyr__menu,
+      [data-plyr='download'] {
+        display: flex;
+      }
     }
   }
 }
