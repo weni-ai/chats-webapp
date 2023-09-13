@@ -29,20 +29,21 @@ export default {
     return response.data;
   },
 
-  async send(roomId, { text, user_email: userEmail, seen }) {
+  async send(roomId, { text, user_email, seen }) {
     const response = await http.post('/msg/', {
       room: roomId,
       text,
-      user_email: userEmail,
+      user_email,
       seen,
     });
     return response.data;
   },
 
-  async sendMedia({ roomId, userEmail, media, updateLoadingFiles }) {
+  async sendMedia(roomId, { user_email, media, updateLoadingFiles }) {
     const msg = await this.send(roomId, {
       text: '',
-      user_email: userEmail,
+      user_email,
+      seen: true,
     });
     updateLoadingFiles?.(msg.uuid, 0);
     const response = await http.postForm(

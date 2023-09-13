@@ -51,12 +51,13 @@
               :class="['chat-message', message.user ? 'sent' : 'received']"
               :time="new Date(message.created_on)"
               :status="messageStatus({ message })"
+              @click="resendMedia({ message, media })"
             >
               <template #media>
                 <img v-if="isImage(media)" :src="media.url || media.preview" />
 
                 <video v-else-if="isVideo(media)">
-                  <source :src="media.url" />
+                  <source :src="media.url || media.preview" />
                 </video>
 
                 <unnnic-audio-recorder
@@ -235,6 +236,7 @@ export default {
     ...mapActions({
       resendMessages: 'roomMessages/resendMessages',
       resendMessage: 'roomMessages/resendMessage',
+      resendMedia: 'roomMessages/resendMedia',
     }),
     isMediaOfType(media, type) {
       return media && media.content_type?.includes(type);
@@ -265,11 +267,6 @@ export default {
         }
       }
       return 'sent';
-    },
-
-    resendMedia({ message, media }) {
-      // this.resendMessage(message);
-      console.log({ message, media });
     },
 
     isTransferInfoMessage(message) {
