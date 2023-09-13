@@ -287,8 +287,8 @@ export default {
     async sendTextBoxMessage() {
       const message = this.textBoxMessage.trim();
       if (message) {
-        await this.$store.dispatch('roomMessages/sendMessage', message);
         this.clearTextBox();
+        await this.$store.dispatch('roomMessages/sendMessage', message);
       }
     },
     async sendAudio() {
