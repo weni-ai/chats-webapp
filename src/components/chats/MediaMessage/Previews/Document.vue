@@ -8,7 +8,7 @@
     class="document-preview clickable"
     :class="[{ highlight }, size]"
   >
-    <unnnic-icon-svg :icon="icon" :scheme="highlight ? 'brand-weni-soft' : 'neutral-darkest'" />
+    <unnnic-icon-svg :icon="icon" :scheme="highlight ? 'weni-600' : 'neutral-darkest'" />
     <span class="filename" style="white-space: nowrap">
       {{ pathname }}
     </span>
@@ -16,7 +16,7 @@
     <unnnic-tool-tip enabled text="Baixar" side="right">
       <unnnic-icon-svg
         icon="download-bottom-1"
-        :scheme="highlight ? 'neutral-darkest' : 'brand-weni-soft'"
+        :scheme="highlight ? 'neutral-darkest' : 'weni-600'"
       />
     </unnnic-tool-tip>
   </section>
@@ -87,7 +87,7 @@ export default {
 
   &.highlight {
     .filename {
-      color: $unnnic-color-brand-weni-soft;
+      color: $unnnic-color-weni-600;
       font-weight: $unnnic-font-weight-bold;
     }
   }
