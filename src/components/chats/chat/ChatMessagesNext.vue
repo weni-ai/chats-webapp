@@ -39,9 +39,7 @@
             :time="new Date(message.created_on)"
             :status="messageStatus({ message })"
           >
-            <template v-if="message.text" #text>
-              {{ message.text }}
-            </template>
+            {{ message.text }}
           </unnnic-chats-message>
           <template v-for="media in message.media">
             <unnnic-chats-message
@@ -49,27 +47,28 @@
               :key="media.created_on"
               :type="message.user ? 'sent' : 'received'"
               :class="['chat-message', message.user ? 'sent' : 'received']"
+              :mediaType="isImage(media) ? 'image' : isVideo(media) ? 'video' : 'audio'"
               :time="new Date(message.created_on)"
               :status="messageStatus({ message })"
               @click="resendMedia({ message, media })"
             >
-              <template #media>
-                <img v-if="isImage(media)" :src="media.url || media.preview" />
+              <img v-if="isImage(media)" class="media" :src="media.url || media.preview" />
 
-                <video v-else-if="isVideo(media)">
-                  <source :src="media.url || media.preview" />
-                </video>
+              <video-player
+                v-else-if="isVideo(media)"
+                class="media"
+                :src="media.url || media.preview"
+              />
 
-                <unnnic-audio-recorder
-                  v-else-if="isAudio(media)"
-                  ref="audio-recorder"
-                  class="audio"
-                  :src="media.url || media.preview"
-                  :canDiscard="false"
-                  :reqStatus="messageStatus({ message, media })"
-                  @failed-click="resendMedia({ message, media })"
-                />
-              </template>
+              <unnnic-audio-recorder
+                v-else-if="isAudio(media)"
+                ref="audio-recorder"
+                class="media audio"
+                :src="media.url || media.preview"
+                :canDiscard="false"
+                :reqStatus="messageStatus({ message, media })"
+                @failed-click="resendMedia({ message, media })"
+              />
             </unnnic-chats-message>
             <unnnic-chats-message
               v-else
@@ -140,6 +139,7 @@ import { mapActions, mapState } from 'vuex';
 import TagGroup from '@/components/TagGroup';
 import ChatFeedback from './ChatFeedback';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
+import VideoPlayer from '../MediaMessage/Previews/Video.vue';
 
 export default {
   name: 'ChatMessages',
@@ -148,6 +148,7 @@ export default {
     ChatFeedback,
     TagGroup,
     FullscreenPreview,
+    VideoPlayer,
   },
 
   props: {
