@@ -1,6 +1,6 @@
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
-  <div class="video-preview">
+  <div class="video-preview" :class="{ 'is-fullscreen': isFullcreen }">
     <video class="video-preview__video" ref="player">
       <source :src="src" />
     </video>
@@ -18,6 +18,13 @@ export default {
       type: String,
       default: '',
     },
+  },
+
+  data() {
+    return {
+      player: null,
+      isFullcreen: false,
+    };
   },
 
   mounted() {
@@ -42,6 +49,13 @@ export default {
       },
       resetOnEnd: true,
     });
+
+    this.player.on('enterfullscreen', () => {
+      this.isFullcreen = true;
+    });
+    this.player.on('exitfullscreen', () => {
+      this.isFullcreen = false;
+    });
   },
 };
 </script>
@@ -54,19 +68,65 @@ export default {
 
   --plyr-color-main: #{$unnnic-color-weni-600};
   --plyr-font-family: #{$unnnic-font-family-secondary};
+  --plyr-control-spacing: #{$unnnic-spacing-xs};
 
   :deep() {
     .plyr {
-      min-width: calc(16px * 25);
-      min-height: calc(9px * 25);
+      width: 100%;
+      height: 100%;
     }
 
     :is(.plyr__progress, .plyr__volume) input[type='range'] {
       min-width: $unnnic-spacing-xl;
+
+      &::-webkit-slider-thumb {
+        cursor: pointer;
+      }
     }
 
-    .plyr__volume input[type='range'] {
-      max-width: $unnnic-spacing-giant;
+    .plyr__volume {
+      position: relative;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      input[type='range'] {
+        position: absolute;
+        bottom: calc(100% + (var(--plyr-control-spacing)));
+        padding: var(--plyr-control-spacing);
+        box-sizing: content-box;
+
+        rotate: -90deg;
+
+        max-width: $unnnic-spacing-giant;
+        opacity: 0;
+        visibility: hidden;
+
+        transition: all 0.3s ease;
+      }
+
+      &:hover,
+      & :hover {
+        input[type='range'] {
+          opacity: 1;
+          visibility: visible;
+        }
+      }
+    }
+
+    .plyr__menu,
+    [data-plyr='download'] {
+      display: none;
+    }
+  }
+
+  &.is-fullscreen {
+    :deep() {
+      .plyr__menu,
+      [data-plyr='download'] {
+        display: flex;
+      }
     }
   }
 }
