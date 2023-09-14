@@ -278,9 +278,11 @@ export default {
         if (status === 'failed') {
           this.resendMedia({ message, media });
         } else {
+          const mediaToDownload = media.url || media.preview;
           const a = document.createElement('a');
-          a.setAttribute('href', media.url || media.preview);
-          a.setAttribute('download', true);
+          a.setAttribute('href', mediaToDownload);
+          a.setAttribute('target', '_blank');
+          a.setAttribute('download', media.url?.split('/').at(-1) || media.file.name);
           document.body.appendChild(a);
           a.click();
           a.parentNode.removeChild(a);
