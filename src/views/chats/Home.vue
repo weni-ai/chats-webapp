@@ -3,8 +3,9 @@
     ref="chats-layout"
     @select-quick-message="(quickMessage) => updateTextBoxMessage(quickMessage.text)"
   >
-    <chats-background v-if="!room" />
-    <section v-if="!!room" class="active-chat">
+    <room-loading v-show="isLoading" />
+    <chats-background v-if="!room && !isLoading" />
+    <section v-if="!!room && !isLoading" class="active-chat">
       <unnnic-chats-header :title="room.contact.name || ''" :avatarName="room.contact.name" />
       <!-- <chat-header
         :room="room"
@@ -126,6 +127,7 @@ import ModalGetChat from '@/components/chats/chat/ModalGetChat';
 import MessageManager from '@/components/chats/MessageManager';
 
 import FileUploader from '@/components/chats/MessageManager/FileUploader';
+import RoomLoading from '@/views/loadings/Room.vue';
 
 export default {
   name: 'ChatsHome',
@@ -144,6 +146,7 @@ export default {
     FileUploader,
     LayoutTemplateMessage,
     ModalGetChat,
+    RoomLoading,
   },
 
   props: {
@@ -384,9 +387,10 @@ export default {
         if (this.$store.state.rooms.newMessagesByRoom[this.id]) {
           this.$delete(this.$store.state.rooms.newMessagesByRoom, this.id);
         }
-
+        this.isLoading = true;
         await this.setActiveRoom(this.id);
-        this.getRoomMessages();
+        await this.getRoomMessages();
+        this.isLoading = false;
       },
     },
   },
