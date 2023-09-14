@@ -52,7 +52,13 @@
               :status="messageStatus({ message })"
               @click="resendMedia({ message, media })"
             >
-              <img v-if="isImage(media)" class="media" :src="media.url || media.preview" />
+              <img
+                v-if="isImage(media)"
+                class="media image"
+                :src="media.url || media.preview"
+                @click="openFullScreen(media.url)"
+                @keypress.enter="openFullScreen(media.url)"
+              />
 
               <video-player
                 v-else-if="isVideo(media)"
@@ -224,9 +230,6 @@ export default {
     },
     medias() {
       return this.messages
-        .map((el) => el.content)
-        .flat()
-        .filter((el) => el)
         .map((el) => el.media)
         .flat()
         .filter((el) => {
@@ -387,6 +390,10 @@ export default {
       .chat-message {
         &.sent {
           justify-self: flex-end;
+        }
+
+        .image {
+          cursor: pointer;
         }
 
         .audio {
