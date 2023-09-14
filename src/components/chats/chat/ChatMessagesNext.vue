@@ -139,6 +139,7 @@
 import { mapActions, mapState } from 'vuex';
 
 import TagGroup from '@/components/TagGroup';
+import Media from '@/services/api/resources/chats/media';
 import ChatFeedback from './ChatFeedback';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
 import VideoPlayer from '../MediaMessage/Previews/Video.vue';
@@ -271,21 +272,26 @@ export default {
       }
       return 'sent';
     },
-    documentClickHandler({ message, media }) {
+    async documentClickHandler({ message, media }) {
       if (message && media) {
         const status = this.messageStatus({ message, media });
 
         if (status === 'failed') {
           this.resendMedia({ message, media });
         } else {
-          const mediaToDownload = media.url || media.preview;
-          const a = document.createElement('a');
-          a.setAttribute('href', mediaToDownload);
-          a.setAttribute('target', '_blank');
-          a.setAttribute('download', media.url?.split('/').at(-1) || media.file.name);
-          document.body.appendChild(a);
-          a.click();
-          a.parentNode.removeChild(a);
+          try {
+            const mediaToDownload = media.url || media.preview;
+            const filename = media.url?.split('/').at(-1) || media.file.name;
+            const file = await Media.get(mediaToDownload);
+            const link = document.createElement('a');
+
+            link.href = URL.createObjectURL(file);
+            link.download = filename;
+            link.click();
+            URL.revokeObjectURL(link.href);
+          } catch (err) {
+            console.error('Unable to download at now.');
+          }
         }
       }
     },
@@ -394,6 +400,7 @@ export default {
   &__messages {
     display: grid;
     gap: $unnnic-spacing-md;
+    margin-top: $unnnic-spacing-sm;
 
     & + & {
       margin-top: $unnnic-spacing-md;
