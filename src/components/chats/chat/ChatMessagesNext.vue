@@ -272,11 +272,19 @@ export default {
       return 'sent';
     },
     documentClickHandler({ message, media }) {
-      const status = this.messageStatus({ message, media });
-      if (status === 'failed') {
-        this.resendMedia({ message, media });
-      } else {
-        fetch(media.url);
+      if (message && media) {
+        const status = this.messageStatus({ message, media });
+
+        if (status === 'failed') {
+          this.resendMedia({ message, media });
+        } else {
+          const a = document.createElement('a');
+          a.setAttribute('href', media.url || media.preview);
+          a.setAttribute('download', true);
+          document.body.appendChild(a);
+          a.click();
+          a.parentNode.removeChild(a);
+        }
       }
     },
 
