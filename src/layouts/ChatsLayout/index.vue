@@ -199,8 +199,6 @@ section.chats-layout {
   }
 
   main {
-    position: relative;
-
     flex: 1 1;
     grid-column: 2;
 
