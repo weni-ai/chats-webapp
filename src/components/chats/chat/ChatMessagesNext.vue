@@ -76,7 +76,9 @@
               :type="message.user ? 'sent' : 'received'"
               :class="['chat-message', message.user ? 'sent' : 'received']"
               :time="new Date(message.created_on)"
-              :documentName="media.url.split('/').at(-1)"
+              :documentName="media.url?.split('/').at(-1) || media.file.name"
+              :status="messageStatus({ message })"
+              @click="documentClickHandler({ message, media })"
             />
           </template>
         </div>
@@ -269,6 +271,14 @@ export default {
       }
       return 'sent';
     },
+    documentClickHandler({ message, media }) {
+      const status = this.messageStatus({ message, media });
+      if (status === 'failed') {
+        this.resendMedia({ message, media });
+      } else {
+        fetch(media.url);
+      }
+    },
 
     isTransferInfoMessage(message) {
       try {
@@ -277,12 +287,6 @@ export default {
         return ['queue', 'user'].includes(content.type);
       } catch (error) {
         return false;
-      }
-    },
-
-    handleScroll(target) {
-      if (target.scrollTop === 0) {
-        this.$emit('scrollTop');
       }
     },
     createTransferLabel(message) {
@@ -295,6 +299,7 @@ export default {
 
       return transferType[text.type];
     },
+
     showContactInfo() {
       this.$emit('show-contact-info');
     },
@@ -303,14 +308,12 @@ export default {
       this.currentMedia = this.medias.find((el) => el.url === url);
       this.isFullscreen = true;
     },
-
     nextMedia() {
       const imageIndex = this.medias.findIndex((el) => el.url === this.currentMedia.url);
       if (imageIndex + 1 < this.medias.length) {
         this.currentMedia = this.medias[imageIndex + 1];
       }
     },
-
     previousMedia() {
       const imageIndex = this.medias.findIndex((el) => el.url === this.currentMedia.url);
       if (imageIndex - 1 >= 0) {
@@ -322,6 +325,11 @@ export default {
       const { chatMessages } = this.$refs;
       if (!chatMessages) return;
       chatMessages.scrollTop = chatMessages.scrollHeight;
+    },
+    handleScroll(target) {
+      if (target.scrollTop === 0) {
+        this.$emit('scrollTop');
+      }
     },
   },
 
