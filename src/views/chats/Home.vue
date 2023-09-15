@@ -6,7 +6,13 @@
     <room-loading v-show="isLoading" />
     <chats-background v-if="!room && !isLoading" />
     <section v-if="!!room && !isLoading" class="active-chat">
-      <unnnic-chats-header :title="room.contact.name || ''" :avatarName="room.contact.name" />
+      <unnnic-chats-header
+        :title="room.contact.name || ''"
+        :avatarClick="teste"
+        :titleClick="teste"
+        :avatarName="room.contact.name"
+        :close="openModalCloseChat"
+      />
       <!-- <chat-header
         :room="room"
         :closeButtonTooltip="$t('chats.end')"
@@ -230,6 +236,10 @@ export default {
       this.isCloseChatModalOpen = false;
       const response = await Queue.tags(this.room.queue.uuid);
       this.sectorTags = response.results;
+    },
+    teste() {
+      console.log('teste');
+      this.componentInAsideSlot = 'contactInfo';
     },
     async readMessages() {
       if (this.room && this.room.uuid && this.room.user && this.room.user.email === this.me.email) {
