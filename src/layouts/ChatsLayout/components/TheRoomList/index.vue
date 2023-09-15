@@ -73,10 +73,10 @@
       />
     </section>
 
-    <unnnic-button
+    <unnnic-button-next
       :text="isHistoryView ? $t('back_to_chats') : $t('chats.see_history')"
       :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : 'task-list-clock-1'"
-      type="secondary"
+      type="terciary"
       size="small"
       :disabled="isViewMode"
       @click="navigate(isHistoryView ? 'home' : 'rooms.closed')"

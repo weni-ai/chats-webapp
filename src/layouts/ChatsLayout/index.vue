@@ -18,10 +18,10 @@
         />
 
         <div class="template-message-button" v-if="canTriggerFlows">
-          <unnnic-button-icon
+          <unnnic-button-next
             size="small"
-            icon="pencil-write-1"
-            style="width: 100%"
+            type="terciary"
+            iconCenter="pencil-write-1"
             @click="showContactsList"
           />
         </div>
@@ -200,6 +200,12 @@ section.chats-layout {
     padding: 0 0 $unnnic-spacing-sm $unnnic-spacing-xs;
 
     grid-column: 1;
+
+    .template-message-button {
+      button {
+        width: 100%;
+      }
+    }
 
     .room-list {
       overflow-y: auto;
