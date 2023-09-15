@@ -291,20 +291,42 @@
     }
   },
   "chats": {
+    "room_list": {
+      "order_by": {
+        "pt-br": "Ordenar por:",
+        "en-us": "Order by:",
+        "es": "Ordenar por:"
+      },
+      "most_recent": {
+        "pt-br": "Mais recentes",
+        "en-us": "Most recent",
+        "es": "Mais recente"
+      },
+      "older": {
+        "pt-br": "Mais antigos",
+        "en-us": "Older",
+        "es": "Más antiguo"
+      }
+    },
     "tags": {
       "pt-br": "Tags do chat",
       "en-us": "Chat tags",
       "es": "Etiquetas de chat"
     },
     "in_progress": {
-      "pt-br": "Em andamento",
-      "en-us": "Chats in progress",
-      "es": "Chats en curso"
+      "pt-br": "Em andamento ({length})",
+      "en-us": "Chats in progress ({length})",
+      "es": "Chats en curso ({length})"
     },
     "wating_answer": {
       "pt-br": "Aguardando resposta ({length})",
-      "en-us": "Waiting for reply  {length}",
-      "es": "Esperando respuesta {length}"
+      "en-us": "Waiting for reply ({length})",
+      "es": "Esperando respuesta ({length})"
+    },
+    "waiting": {
+      "pt-br": "Aguardando ({length})",
+      "en-us": "Waiting ({length})",
+      "es": "Esperando ({length})"
     },
     "end": {
       "pt-br": "Encerrar chat",
@@ -432,11 +454,6 @@
     "pt-br": "Transferir",
     "en-us": "Transfer",
     "es": "Transferir"
-  },
-  "line": {
-    "pt-br": "Aguardando",
-    "en-us": "Waiting",
-    "es": "Espera"
   },
   "suggested_answers": {
     "pt-br": "Respostas sugeridas",

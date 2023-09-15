@@ -1,25 +1,16 @@
 <template>
-  <app-accordion :title="label" :isDefaultOpen="isDefaultOpen" @change="changeAccordionOption">
-    <template v-slot:content>
-      <div class="chat-group">
-        <ul class="chats" :class="{ filled }">
-          <li v-for="room in rooms" :key="room.id">
-            <contact-room
-              :room="room"
-              @click="open(room)"
-              :filled="filled"
-              :disabled="disabled"
-              :use-photo="usePhoto"
-            />
-          </li>
-        </ul>
-      </div>
-    </template>
-  </app-accordion>
+  <unnnic-collapse :title="label" :active="true" @change="changeAccordionOption" size="md">
+    <contact-room
+      v-for="room in rooms"
+      :key="room.id"
+      :room="room"
+      @click="open(room)"
+      :filled="filled"
+    />
+  </unnnic-collapse>
 </template>
 
 <script>
-import AppAccordion from '@/components/chats/AppAccordion';
 import ContactRoom from './ContactRoom';
 
 export default {
@@ -27,11 +18,6 @@ export default {
 
   components: {
     ContactRoom,
-    AppAccordion,
-  },
-
-  created() {
-    this.isDefaultOpen = !!Number(localStorage.getItem(this.id));
   },
 
   data() {
@@ -45,10 +31,6 @@ export default {
       type: Array,
       required: true,
     },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
     filled: {
       type: Boolean,
       default: false,
@@ -60,10 +42,6 @@ export default {
     id: {
       type: String,
       default: '',
-    },
-    usePhoto: {
-      type: Boolean,
-      default: false,
     },
   },
 

@@ -12,7 +12,9 @@
       :loading="this.loading"
     ></unnnic-input>
     <div class="order-by">
-      <div><span>Ordenar por:</span></div>
+      <div>
+        <span>{{ $t('chats.room_list.order_by') }}</span>
+      </div>
       <div class="apply-filter" style="cursor: pointer">
         <span
           :style="{
@@ -22,7 +24,7 @@
             listRoom(false, '-last_interaction'),
               ((lastCreatedFilter = true), (createdOnFilter = false))
           "
-          >Mais recentes</span
+          >{{ $t('chats.room_list.most_recent') }}</span
         >
         <span> | </span>
         <span
@@ -34,7 +36,7 @@
               ((createdOnFilter = true), (lastCreatedFilter = false))
           "
         >
-          Mais antigos</span
+          {{ $t('chats.room_list.older') }}</span
         >
       </div>
     </div>
@@ -48,7 +50,7 @@
     >
       <room-group
         v-if="queue.length"
-        :label="$t('line', { length: queue.length })"
+        :label="$t('chats.waiting', { length: queue.length })"
         :rooms="queue"
         filled
         @open="open"
@@ -59,8 +61,6 @@
         :label="$t('chats.wating_answer', { length: wating.length })"
         :rooms="wating"
         @open="open"
-        :isWatingAnswer="true"
-        :isHistory="isHistoryView"
         id="wating"
       />
       <room-group
@@ -69,7 +69,6 @@
         :label="$t('chats.in_progress', { length: rooms.length })"
         :rooms="rooms"
         @open="open"
-        :isHistory="isHistoryView"
         id="in_progress"
       />
     </section>
@@ -233,11 +232,10 @@ export default {
 
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-stack-md;
+    gap: $unnnic-spacing-sm;
 
     padding-right: $unnnic-spacing-xs;
     margin-right: -$unnnic-spacing-xs; // For the scrollbar to stick to the edge
-    border-right: solid 1px $unnnic-color-neutral-soft;
     overflow-y: auto;
     overflow-x: hidden;
   }
