@@ -52,7 +52,13 @@
               :status="messageStatus({ message })"
               @click="resendMedia({ message, media })"
             >
-              <img v-if="isImage(media)" class="media" :src="media.url || media.preview" />
+              <img
+                v-if="isImage(media)"
+                class="media image"
+                :src="media.url || media.preview"
+                @click="openFullScreen(media.url)"
+                @keypress.enter="openFullScreen(media.url)"
+              />
 
               <video-player
                 v-else-if="isVideo(media)"
@@ -139,6 +145,7 @@
 import { mapActions, mapState } from 'vuex';
 
 import TagGroup from '@/components/TagGroup';
+import Media from '@/services/api/resources/chats/media';
 import ChatFeedback from './ChatFeedback';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
 import VideoPlayer from '../MediaMessage/Previews/Video.vue';
@@ -223,9 +230,6 @@ export default {
     },
     medias() {
       return this.messages
-        .map((el) => el.content)
-        .flat()
-        .filter((el) => el)
         .map((el) => el.media)
         .flat()
         .filter((el) => {
@@ -271,19 +275,26 @@ export default {
       }
       return 'sent';
     },
-    documentClickHandler({ message, media }) {
+    async documentClickHandler({ message, media }) {
       if (message && media) {
         const status = this.messageStatus({ message, media });
 
         if (status === 'failed') {
           this.resendMedia({ message, media });
         } else {
-          const a = document.createElement('a');
-          a.setAttribute('href', media.url || media.preview);
-          a.setAttribute('download', true);
-          document.body.appendChild(a);
-          a.click();
-          a.parentNode.removeChild(a);
+          try {
+            const mediaToDownload = media.url || media.preview;
+            const filename = media.url?.split('/').at(-1) || media.file.name;
+            const file = await Media.get(mediaToDownload);
+            const link = document.createElement('a');
+
+            link.href = URL.createObjectURL(file);
+            link.download = filename;
+            link.click();
+            URL.revokeObjectURL(link.href);
+          } catch (err) {
+            console.error('Unable to download at now.');
+          }
         }
       }
     },
@@ -381,6 +392,10 @@ export default {
           justify-self: flex-end;
         }
 
+        .image {
+          cursor: pointer;
+        }
+
         .audio {
           padding: $unnnic-spacing-xs;
           margin: $unnnic-spacing-nano 0;
@@ -392,6 +407,7 @@ export default {
   &__messages {
     display: grid;
     gap: $unnnic-spacing-md;
+    margin-top: $unnnic-spacing-sm;
 
     & + & {
       margin-top: $unnnic-spacing-md;

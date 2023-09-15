@@ -248,13 +248,22 @@ export default {
 
     async resendMessages({ state, dispatch }) {
       const { roomMessagesSendingUuids, roomMessages } = state;
-      if (roomMessagesSendingUuids > 0) {
-        roomMessagesSendingUuids.forEach((messageUuid) => {
+      if (roomMessagesSendingUuids.length > 0) {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const messageUuid of roomMessagesSendingUuids) {
+          /*
+            As it is important that messages are sent in the same order in which they were
+            registered, it is necessary to use this "for...of" as it makes it possible
+            to send messages sequentially, synchronously
+          */
+
           const messageIndex = roomMessages.findIndex(
             (mappedMessage) => mappedMessage.uuid === messageUuid,
           );
-          dispatch('resendMessage', { message: roomMessages[messageIndex] });
-        });
+
+          // eslint-disable-next-line no-await-in-loop
+          await dispatch('resendMessage', { message: roomMessages[messageIndex] });
+        }
       }
     },
   },

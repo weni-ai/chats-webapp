@@ -89,13 +89,11 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: $unnnic-spacing-inset-sm;
+  gap: $unnnic-spacing-nano;
 
   height: 100%;
 
   overflow: hidden;
-
-  margin-top: $unnnic-spacing-inset-sm;
 
   padding-left: $unnnic-spacing-inline-sm;
 
