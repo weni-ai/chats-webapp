@@ -4,12 +4,11 @@
     <unnnic-input
       v-model="nameOfContact"
       icon-left="search-1"
-      icon-right="close-1"
+      :icon-right="nameOfContact ? 'close-1' : ''"
       :iconRightClickable="true"
       @icon-right-click="nameOfContact = ''"
       size="sm"
-      placeholder="Pesquisar contato"
-      :loading="this.loading"
+      :placeholder="$t('chats.search_contact')"
     ></unnnic-input>
     <div class="order-by">
       <div>
