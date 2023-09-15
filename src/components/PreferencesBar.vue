@@ -191,14 +191,14 @@ export default {
     .status-icon {
       padding: $unnnic-spacing-inset-nano / 2;
 
-      rotate: -90deg;
+      rotate: 90deg;
 
       * {
         display: block;
       }
 
       &.open {
-        rotate: 90deg;
+        rotate: -90deg;
       }
     }
   }
