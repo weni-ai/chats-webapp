@@ -308,6 +308,11 @@
         "es": "Más antiguo"
       }
     },
+    "search_contact": {
+      "pt-br": "Pesquisar contato",
+      "en-us": "Search contact",
+      "es": "Buscar contacto"
+    },
     "tags": {
       "pt-br": "Tags do chat",
       "en-us": "Chat tags",
