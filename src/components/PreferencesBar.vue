@@ -7,77 +7,66 @@
     @focus="open = true"
     @blur="open = false"
   >
-    <div class="background">
-      <div
-        ref="header"
-        class="header"
+    <div
+      ref="header"
+      class="header"
+      @mousedown.prevent
+      @click.stop="open ? $refs['preferences-bar'].blur() : $refs['preferences-bar'].focus()"
+    >
+      <div class="label">
+        <div class="icon">
+          <unnnic-icon size="md" icon="preferences" scheme="neutral-cloudy" />
+        </div>
+
+        <div class="text">
+          {{ $t('preferences.title') }}
+        </div>
+
+        <div class="status-icon" :class="{ open }">
+          <unnnic-icon size="sm" icon="arrow-right-1-1" scheme="neutral-darkest" />
+        </div>
+      </div>
+    </div>
+
+    <div class="options-container">
+      <div class="label">Status</div>
+
+      <unnnic-switch
+        :value="$store.state.config.status === 'ONLINE'"
+        size="small"
+        :text-right="
+          $store.state.config.status === 'ONLINE' ? $t('status.online') : $t('status.offline')
+        "
+        @input="updateStatus"
+        :disabled="loadingStatus"
+      />
+
+      <div class="label">{{ $t('preferences.notifications.title') }}</div>
+
+      <unnnic-switch
+        v-model="sound"
+        size="small"
+        :text-right="$t('preferences.notifications.sound')"
+        @input="changeSound"
+      />
+
+      <unnnic-button-next
         @mousedown.prevent
-        @click.stop="open ? $refs['preferences-bar'].blur() : $refs['preferences-bar'].focus()"
-      >
-        <div class="label">
-          <div class="icon">
-            <unnnic-icon size="md" icon="preferences" scheme="neutral-cloudy" />
-          </div>
-
-          <div class="text">
-            {{ $t('preferences.title') }}
-          </div>
-
-          <div class="status-icon">
-            <unnnic-icon
-              size="xs"
-              :icon="open ? 'arrow-button-up-1' : 'arrow-button-down-1'"
-              scheme="neutral-darkest"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div class="separator"></div>
-
-      <div class="options-container">
-        <div
-          style="display: flex; justify-content: center"
-          @click="openQuickMessage"
-          class="button-quick-message"
-        >
-          <div class="content">
-            <unnnic-icon size="md" scheme="neutral-cloudy" icon="flash-1-3" />
-            Mensagens rápidas
-          </div>
-        </div>
-        <div
-          v-if="this.dashboard"
-          style="display: flex; justify-content: center"
-          @click="navigate('dashboard.manager')"
-          class="button-quick-message"
-        >
-          <div class="content">
-            <unnnic-icon size="md" scheme="neutral-cloudy" icon="gauge-dashboard-2" />
-            Dashboard
-          </div>
-        </div>
-        <div class="label">Status</div>
-
-        <unnnic-switch
-          :value="$store.state.config.status === 'ONLINE'"
-          size="small"
-          :text-right="
-            $store.state.config.status === 'ONLINE' ? $t('status.online') : $t('status.offline')
-          "
-          @input="updateStatus"
-          :disabled="loadingStatus"
-        />
-
-        <div class="label">{{ $t('preferences.notifications.title') }}</div>
-
-        <unnnic-switch
-          v-model="sound"
-          size="small"
-          :text-right="$t('preferences.notifications.sound')"
-          @input="changeSound"
-        />
-      </div>
+        :text="$t('quick_messages.title')"
+        icon-left="flash-1-3"
+        type="terciary"
+        size="small"
+        @click="openQuickMessage"
+      />
+      <unnnic-button-next
+        @mousedown.prevent
+        v-if="this.dashboard"
+        text="Dashboard"
+        icon-left="gauge-dashboard-2"
+        type="terciary"
+        size="small"
+        @click="navigate('dashboard.manager')"
+      />
     </div>
   </div>
 </template>
@@ -87,7 +76,6 @@ import Profile from '@/services/api/resources/profile';
 import { unnnicCallAlert } from '@weni/unnnic-system';
 
 export const PREFERENCES_SOUND = 'WENICHATS_PREFERENCES_SOUND';
-// export const PREFERENCES_NILO = 'WENICHATS_PREFERENCES_NILO';
 
 export default {
   props: {
@@ -166,16 +154,24 @@ export default {
 <style lang="scss" scoped>
 .preferences-bar {
   position: relative;
-  height: $unnnic-font-size-body-md + $unnnic-line-height-md + 2 * $unnnic-spacing-stack-xs;
-  border-radius: 4px;
+  padding: $unnnic-spacing-sm 0;
+  margin-left: -$unnnic-spacing-xs;
 
   .header .label {
+    position: relative;
+    z-index: 100000;
+
+    display: flex;
+    align-items: center;
+    column-gap: $unnnic-spacing-xs;
+
+    background-color: $unnnic-color-background-snow;
+
+    padding: $unnnic-spacing-xs 0 0 $unnnic-spacing-xs;
+    box-sizing: content-box;
+
     user-select: none;
     cursor: pointer;
-    padding: $unnnic-spacing-inset-nano;
-    display: flex;
-    column-gap: $unnnic-spacing-inline-xs;
-    align-items: center;
 
     .icon {
       * {
@@ -188,56 +184,51 @@ export default {
       color: $unnnic-color-neutral-cloudy;
       font-family: $unnnic-font-family-secondary;
       font-weight: $unnnic-font-weight-regular;
-      font-size: $unnnic-font-size-body-md;
+      font-size: $unnnic-font-size-body-gt;
       line-height: $unnnic-font-size-body-md + $unnnic-line-height-md;
     }
 
     .status-icon {
       padding: $unnnic-spacing-inset-nano / 2;
 
+      rotate: -90deg;
+
       * {
         display: block;
       }
-    }
-  }
 
-  .background {
-    background-color: $unnnic-color-background-snow;
-    border-radius: $unnnic-border-radius-sm;
+      &.open {
+        rotate: 90deg;
+      }
+    }
   }
 
   &:focus {
     outline: none;
 
-    .separator {
-      display: block;
-    }
-
     .options-container {
-      display: flex;
-      background: #ffffff;
-      opacity: 20;
+      position: absolute;
       z-index: 99999;
-      position: relative;
-    }
 
-    .background {
-      box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.04);
-    }
-  }
+      display: flex;
 
-  .separator {
-    display: none;
-    height: $unnnic-border-width-thinner;
-    background-color: $unnnic-color-neutral-soft;
-    margin: 0 $unnnic-spacing-inline-xs;
+      margin-right: $unnnic-spacing-nano;
+
+      box-shadow: $unnnic-shadow-level-separated;
+      border-radius: $unnnic-border-radius-sm;
+      background-color: $unnnic-color-background-snow;
+
+      width: calc(100% - $unnnic-spacing-nano);
+    }
   }
 
   .options-container {
     display: none;
     flex-direction: column;
     row-gap: $unnnic-spacing-stack-xs;
-    padding: $unnnic-spacing-inset-sm;
+
+    padding: $unnnic-spacing-ant;
+    padding-bottom: $unnnic-spacing-xs;
 
     .label {
       color: $unnnic-color-neutral-cloudy;
@@ -245,27 +236,6 @@ export default {
       font-weight: $unnnic-font-weight-regular;
       font-size: $unnnic-font-size-body-md;
       line-height: $unnnic-font-size-body-md + $unnnic-line-height-md;
-    }
-  }
-
-  .button-quick-message {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 8px 16px;
-    gap: 4px;
-    cursor: pointer;
-    height: 36px;
-    background: rgba(226, 230, 237, 0.16);
-    border: 1px solid #d0d3d9;
-    border-radius: 4px;
-    .content {
-      font-family: 'Lato';
-      font-style: normal;
-      font-weight: 400;
-      font-size: 0.75rem;
-      color: #67738b;
     }
   }
 }

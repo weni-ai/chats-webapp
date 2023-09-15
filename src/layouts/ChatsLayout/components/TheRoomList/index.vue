@@ -231,13 +231,12 @@ export default {
   .chat-groups {
     flex: 1 1;
 
-    // width: calc(16rem + 1rem);
-
     display: flex;
     flex-direction: column;
     gap: $unnnic-spacing-stack-md;
 
-    padding-right: $unnnic-spacing-inset-sm;
+    padding-right: $unnnic-spacing-xs;
+    margin-right: -$unnnic-spacing-xs; // For the scrollbar to stick to the edge
     border-right: solid 1px $unnnic-color-neutral-soft;
     overflow-y: auto;
     overflow-x: hidden;

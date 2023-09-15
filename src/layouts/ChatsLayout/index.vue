@@ -180,6 +180,10 @@ section.chats-layout {
   display: grid;
   grid-template-columns: $aside-width auto;
 
+  & > *:not(:last-child) {
+    border-right: 1px solid $unnnic-color-neutral-soft;
+  }
+
   &.has-aside {
     grid-template-columns: $aside-width auto $aside-width;
   }
@@ -193,12 +197,16 @@ section.chats-layout {
     width: $aside-width;
     min-width: $aside-width;
 
-    padding: $unnnic-spacing-inset-sm;
-    padding-right: $unnnic-spacing-xs;
+    padding: 0 0 $unnnic-spacing-sm $unnnic-spacing-xs;
+
     grid-column: 1;
 
     .room-list {
       overflow-y: auto;
+    }
+
+    & > * {
+      padding-right: $unnnic-spacing-xs;
     }
   }
 
@@ -228,8 +236,6 @@ section.chats-layout {
     height: 100vh;
     width: $aside-width;
     min-width: $aside-width;
-
-    border: 1px solid $unnnic-color-neutral-soft;
     background: $unnnic-color-background-grass;
 
     grid-column: 3;
