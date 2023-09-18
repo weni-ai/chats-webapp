@@ -3,7 +3,7 @@
   <aside-slot-template
     class="contact-info"
     :title="$t('contact_information')"
-    @action="$listeners.close"
+    @close="$listeners.close"
   >
     <section v-if="!isHistory" class="scrollable">
       <aside-slot-template-section>

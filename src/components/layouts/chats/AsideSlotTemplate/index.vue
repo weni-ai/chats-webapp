@@ -1,6 +1,6 @@
 <template>
   <aside class="aside-slot-template">
-    <header class="aside-slot-template__header">
+    <!-- <header class="aside-slot-template__header">
       <span class="aside-slot-template__title">
         <span v-if="icon">
           <unnnic-icon-svg :icon="icon" size="ant" scheme="neutral-darkest" />
@@ -18,9 +18,11 @@
       >
         <unnnic-icon-svg :icon="iconAction" size="sm" scheme="neutral-dark" />
       </span>
-    </header>
+    </header> -->
 
-    <section :class="['aside-slot-template__sections', flexible && 'flexible']">
+    <unnnic-chats-header :title="title" :avatarIcon="icon" :close="() => $emit('close')" />
+
+    <section :class="['aside-slot-template__sections']">
       <slot />
     </section>
   </aside>
@@ -46,10 +48,6 @@ export default {
       type: String,
       required: true,
     },
-    flexible: {
-      type: String,
-      required: false,
-    },
   },
 };
 </script>
@@ -59,22 +57,6 @@ export default {
   display: flex;
   flex-direction: column;
   height: inherit;
-
-  &__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    background: $unnnic-color-background-snow;
-    border-bottom: solid 1px $unnnic-color-neutral-soft;
-
-    padding: {
-      top: $unnnic-spacing-inset-sm;
-      right: $unnnic-spacing-inset-sm;
-      bottom: $unnnic-spacing-inset-sm;
-      left: $unnnic-spacing-inset-md;
-    }
-  }
 
   &__title {
     display: flex;
@@ -90,10 +72,6 @@ export default {
     flex: 1 1;
     min-height: 0;
     display: grid;
-
-    &.flexible {
-      display: flex;
-    }
   }
 }
 </style>

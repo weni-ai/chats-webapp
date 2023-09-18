@@ -33,17 +33,17 @@
     />
 
     <div class="actions" v-if="!externalActions">
-      <unnnic-button
+      <unnnic-button-next
         class="button"
         :text="$t('cancel')"
-        type="terciary"
+        type="secondary"
         size="small"
         @click="$emit('cancel')"
       />
-      <unnnic-button
+      <unnnic-button-next
         class="button"
         :text="$t('save')"
-        type="secondary"
+        type="primary"
         size="small"
         @click="submit"
         :disabled="isSaveButtonDisabled"

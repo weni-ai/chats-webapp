@@ -7,7 +7,7 @@
   >
     <unnnic-chat-text
       :title="quickMessage.title"
-      title-color="brand-weni-dark"
+      titleColor="aux-purple-500"
       :info="
         $t('quick_messages.shortcut_tooltip', {
           shortcut: quickMessage.shortcut || quickMessage.title.toLowerCase(),
@@ -75,6 +75,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.quick-message-card__container {
+  &:not(:last-of-type) {
+    margin-bottom: $unnnic-spacing-xs;
+  }
+}
 .quick-message-card {
   :deep(.unnnic-chat-text) {
     line-break: anywhere;
