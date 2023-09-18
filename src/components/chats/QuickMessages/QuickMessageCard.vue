@@ -24,7 +24,7 @@
                 <unnnic-icon-svg
                   icon="navigation-menu-vertical-1"
                   size="sm"
-                  scheme="brand-weni-dark"
+                  scheme="neutral-darkest"
                 />
               </div>
             </unnnic-tool-tip>

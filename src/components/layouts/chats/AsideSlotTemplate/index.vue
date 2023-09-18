@@ -20,7 +20,12 @@
       </span>
     </header> -->
 
-    <unnnic-chats-header :title="title" :avatarIcon="icon" :close="() => $emit('close')" />
+    <unnnic-chats-header
+      :title="title"
+      :avatarIcon="icon"
+      :close="() => $emit('close')"
+      :back="back"
+    />
 
     <section :class="['aside-slot-template__sections']">
       <slot />
@@ -47,6 +52,11 @@ export default {
     title: {
       type: String,
       required: true,
+    },
+    back: {
+      type: Function,
+      default: undefined,
+      required: false,
     },
   },
 };
