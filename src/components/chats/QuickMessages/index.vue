@@ -39,7 +39,7 @@
 
       <unnnic-button-next
         icon-left="add-1"
-        :text="$t('quick_messages.add_new')"
+        :text="$t('quick_messages.new')"
         type="terciary"
         size="small"
         class="fill-w"
@@ -64,9 +64,10 @@
 
   <aside-slot-template
     v-else
-    :title="isEditing ? $t('quick_messages.edit') : $t('quick_messages.add')"
+    :title="$t('quick_message')"
     icon="flash-1-3"
-    @close="quickMessageToEdit = null"
+    :back="() => (quickMessageToEdit = null)"
+    @close="$emit('close')"
   >
     <aside-slot-template-section class="fill-h fill-w">
       <section class="fill-h quick-message-form">

@@ -935,10 +935,20 @@
       "en-us": "Type /{shortcut} to use",
       "es": "Escriba /{shortcut} para usar"
     },
-    "add_new": {
+    "new": {
       "pt-br": "Nova mensagem rápida",
       "en-us": "New quick message",
       "es": "Nuevo mensaje rápido"
+    },
+    "add": {
+      "pt-br": "Adicionar nova mensagem",
+      "en-us": "Add new message",
+      "es": "Agregar nuevo mensaje"
+    },
+    "edit": {
+      "pt-br": "Editar mensagem",
+      "en-us": "Edit message",
+      "es": "Editar mensaje"
     },
     "available_shortcuts": {
       "pt-br": "Atalhos disponíveis",
@@ -950,25 +960,15 @@
       "en-us": "Now ChatGPT is your CoPilot! Use the answers suggested by Artificial Intelligence to speed up your calls!",
       "es": "¡Ahora ChatGPT es tu CoPiloto! ¡Usa las respuestas sugeridas por la Inteligencia Artificial para acelerar tus llamadas!"
     },
-    "add": {
-      "pt-br": "Adicionar mensagem rápida",
-      "en-us": "Add quick message",
-      "es": "Agregar mensaje rápidoe"
-    },
     "title_field_placeholder": {
-      "pt-br": "Digite um título para sua mensagem rápida",
-      "en-us": "Enter a title for your quick message",
-      "es": "Introduzca un título para su mensaje rápido"
+      "pt-br": "Ex: Boas vindas",
+      "en-us": "Ex: Welcome",
+      "es": "Ej: Bienvenido"
     },
     "shortcut_field_placeholder": {
-      "pt-br": "Adicione uma palavra para usar como /atalho",
-      "en-us": "Add a word to use as a /shortcut",
-      "es": "Agregar una palabra para usar como /atajo"
-    },
-    "shortcut_field_tooltip": {
-      "pt-br": "Defina uma palavra-chave e facilite o uso de /atalhos",
-      "en-us": "Define a shortcut and make it easy to use /shortcuts",
-      "es": "Definir una palabra clave y facilitar su uso /atajos"
+      "pt-br": "Ex: Oi",
+      "en-us": "Ex: Hi",
+      "es": "Ej: Hola"
     },
     "message_field_placeholder": {
       "pt-br": "Digite o que você deseja",
@@ -984,11 +984,6 @@
       "pt-br": "Mensagem rápida atualizada",
       "en-us": "Quick message updated",
       "es": "Mensaje rápido actualizado"
-    },
-    "edit": {
-      "pt-br": "Editar mensagem rápida",
-      "en-us": "Edit quick message",
-      "es": "Editar mensaje rápido"
     }
   },
   "discard": {

@@ -143,7 +143,7 @@
       />
       <unnnic-button
         v-if="this.currentTab === 'messages' && !isQuickMessageEditing"
-        :text="$t('quick_messages.add_new')"
+        :text="$t('quick_messages.new')"
         icon-left="add-circle-1"
         type="secondary"
         @click="() => messagesHandler('create')"
