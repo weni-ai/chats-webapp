@@ -929,9 +929,9 @@
       "es": "Escriba /{shortcut} para usar"
     },
     "add_new": {
-      "pt-br": "Adicionar nova mensagem rápida",
-      "en-us": "Add new quick message",
-      "es": "Agregar nuevo mensaje rápido"
+      "pt-br": "Nova mensagem rápida",
+      "en-us": "New quick message",
+      "es": "Nuevo mensaje rápido"
     },
     "available_shortcuts": {
       "pt-br": "Atalhos disponíveis",
@@ -972,6 +972,11 @@
       "pt-br": "Mensagem rápida adicionada",
       "en-us": "Quick message added",
       "es": "Mensaje rápido agregado"
+    },
+    "successfully_updated": {
+      "pt-br": "Mensagem rápida atualizada",
+      "en-us": "Quick message updated",
+      "es": "Mensaje rápido actualizado"
     },
     "edit": {
       "pt-br": "Editar mensagem rápida",
