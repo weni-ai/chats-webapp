@@ -107,27 +107,13 @@
           </unnnic-radio>
         </div>
         <section class="transfer-section">
-          <unnnic-autocomplete
-            v-model="transferContactSearch"
-            :data="
-              transferRadio === `queue`
-                ? transferOptions.map((option) => `${option.name}| Setor ${option.sector_name}`)
-                : transferOptions.map((option) => `${option.name}`)
-            "
-            @choose="transferContactTo = $event"
-            :placeholder="
-              transferRadio === 'queue'
-                ? (transferLabel = $t('select_queue'))
-                : transferRadio === 'agent'
-                ? (transferLabel = $t('select_agent'))
-                : (transferLabel = $t('select_sector'))
-            "
-            open-with-focus
-            size="sm"
-            highlight
-            class="channel-select"
+          <unnnic-select-smart
+            v-model="transferContactTo"
+            :options="transferOptions"
+            autocomplete
+            autocompleteIconLeft
+            autocompleteClearOnFocus
             :disabled="!!transferContactError || isViewMode"
-            :message="transferContactError"
           />
 
           <unnnic-button-next
@@ -341,14 +327,18 @@ export default {
       }
 
       try {
-        this.transferOptions = (await Sector.agents({ sectorUuid: this.room.queue.sector }))
-          .filter((agent) => agent.email !== this.$store.state.profile.me.email)
-          .map(({ first_name, last_name, email }) => {
-            return {
-              name: [first_name, last_name].join(' ').trim() || email,
-              email,
-            };
+        const treatedAgents = [{ value: '', label: this.$t('select_agent') }];
+        const agents = (await Sector.agents({ sectorUuid: this.room.queue.sector })).filter(
+          (agent) => agent.email !== this.$store.state.profile.me.email,
+        );
+
+        agents.forEach(({ first_name, last_name, email }) => {
+          treatedAgents.push({
+            label: [first_name, last_name].join(' ').trim() || email,
+            value: email,
           });
+        });
+        this.transferOptions = treatedAgents;
       } catch (error) {
         if (error?.response?.status === 403) {
           this.transferContactError = this.$t('chats.transfer.does_not_have_permission');
@@ -369,11 +359,19 @@ export default {
       this.loading = true;
       let hasNext = false;
       try {
-        const queues = await Queue.listByProject(this.page * 10, 10);
+        const newQueues = await Queue.listByProject(this.page * 10, 10);
         this.page += 1;
-        this.transferOptions = this.queues.concat(queues.results);
 
-        hasNext = queues.next;
+        const treatedQueues = [{ value: '', label: this.$t('select_queue') }];
+        this.queues.concat(newQueues.results).forEach(({ name, sector_name, uuid }) => {
+          treatedQueues.push({
+            label: `${name} | ${this.$t('sector.title')} ${sector_name}`,
+            value: uuid,
+          });
+        });
+        this.transferOptions = treatedQueues;
+
+        hasNext = newQueues.next;
 
         this.loading = false;
       } finally {
@@ -486,7 +484,7 @@ export default {
       const contact = this.room.contact.uuid;
       try {
         await LinkContact.linkContactToAgent({ contact });
-        this.showStatusAlert(this.$t('contact_info.alert_linked'));
+        this.showAlert(this.$t('contact_info.alert_linked'));
         this.verifyLinkedUser();
       } catch (error) {
         console.log(error);
@@ -497,7 +495,7 @@ export default {
       const contact = this.room.contact.uuid;
       try {
         await LinkContact.removeContactFromAgent(contact);
-        this.showStatusAlert(this.$t('contact_info.alert_detached'));
+        this.showAlert(this.$t('contact_info.alert_detached'));
         this.verifyLinkedUser();
       } catch (error) {
         console.log(error);
@@ -525,23 +523,15 @@ export default {
       }
     },
 
-    showAlert(text) {
+    showAlert(text, type = 'success') {
       unnnicCallAlert({
         props: {
-          title: ``,
-          text: `${text}`,
-          icon: 'check-circle-1-1-1',
-          scheme: 'feedback-green',
-          closeText: 'Fechar',
-          position: 'bottom-right',
+          text,
+          type,
           size: 'small',
         },
-        seconds: 10,
+        seconds: 5,
       });
-    },
-
-    showStatusAlert(status) {
-      this.showAlert(status);
     },
 
     navigate(name) {
@@ -606,15 +596,14 @@ export default {
           this.page = 0;
           this.getQueues();
         }
-        if (this.transferRadio === 'sector') {
-          this.transferContactSearch = '';
-          this.listSectors();
-        }
         if (this.transferRadio === 'agent') {
           this.transferContactSearch = '';
           this.listAgents();
         }
       },
+    },
+    transferContactError(error) {
+      this.showAlert(error, 'error');
     },
   },
 };
