@@ -490,6 +490,16 @@
     "en-us": "Cancel",
     "es": "Cancelar"
   },
+  "add": {
+    "pt-br": "Adicionar",
+    "en-us": "Add",
+    "es": "Agregar"
+  },
+  "continue": {
+    "pt-br": "Continuar",
+    "en-us": "Continue",
+    "es": "Continuar"
+  },
   "please": {
     "pt-br": "Por favor",
     "en-us": "Please",
@@ -499,6 +509,11 @@
     "pt-br": "Confirmar",
     "en-us": "Confirm",
     "es": "Confirmar"
+  },
+  "back": {
+    "pt-br": "Voltar",
+    "en-us": "Back",
+    "es": "Volver"
   },
   "access_history_to_see_closed_chats": {
     "pt-br": "Acesse o histórico para visualizar chats encerrados",
@@ -511,9 +526,9 @@
     "es": "Fechar"
   },
   "back_to_chats": {
-    "pt-br": "Voltar para chats",
-    "en-us": "Back to chats",
-    "es": "Volver a los chats"
+    "pt-br": "@:back para chats",
+    "en-us": "@:back to chats",
+    "es": "@:back a los chats"
   },
   "filter": {
     "by_tags": {
@@ -818,6 +833,11 @@
     "en-us": "Delete",
     "es": "Eliminar"
   },
+  "search_or_select": {
+    "pt-br": "Pesquise ou selecione",
+    "en-us": "Search or select",
+    "es": "Buscar o seleccionar"
+  },
   "successfully_transferred_chat": {
     "pt-br": "Conversa transferida com sucesso!",
     "en-us": "Chat transferred successfully!",
@@ -869,6 +889,65 @@
     "pt-br": "Mensagens rápidas",
     "en-us": "Quick messages",
     "es": "Mensajes rápidos"
+  },
+  "flows_trigger": {
+    "title": {
+      "pt-br": "Disparo de fluxos",
+      "en-us": "Flows trigger",
+      "es": "Activación de flujo"
+    },
+    "subtitle": {
+      "pt-br": "Contatos de {queue}",
+      "en-us": "Contacts of {queue}",
+      "es": "Contactos de {queue}"
+    },
+    "groups": {
+      "pt-br": "Grupos ({length})",
+      "en-us": "Groups ({length})",
+      "es": "Grupos ({length})"
+    },
+    "group_contacts": {
+      "pt-br": "{n} contato | {n} contatos",
+      "en-us": "{n} contact | {n} contacts",
+      "es": "{n} contacto | {n} contactos"
+    },
+    "letter_group": {
+      "pt-br": "{letter} ({length})",
+      "en-us": "{letter} ({length})",
+      "es": "{letter} ({length})"
+    },
+    "add_new_contact": {
+      "title": {
+        "pt-br": "Adicionar novo contato",
+        "en-us": "Add new contact",
+        "es": "Añadir nuevo contacto"
+      },
+      "contact_name": {
+        "pt-br": "Nome do contato",
+        "en-us": "Contact name",
+        "es": "Nombre de contacto"
+      }
+    },
+    "select": {
+      "pt-br": "Selecionar fluxo",
+      "en-us": "Select flow",
+      "es": "Seleccionar flujo"
+    },
+    "sending": {
+      "pt-br": "Enviando fluxo",
+      "en-us": "Sending flow",
+      "es": "Enviando flujo"
+    },
+    "successfully_sent": {
+      "pt-br": "Fluxo enviado com sucesso",
+      "en-us": "Flow sent successfully",
+      "es": "Flujo enviado exitosamente"
+    },
+    "successfully_add_contact": {
+      "pt-br": "Contato adicionado com sucesso",
+      "en-us": "Contact added successfully",
+      "es": "Contacto agregado exitosamente"
+    }
   },
   "quick_messages": {
     "title": {

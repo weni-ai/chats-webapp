@@ -5,7 +5,7 @@
       <div class="modal-container-background">
         <div class="modal-background-color">
           <div>
-            <unnnic-progress-bar v-model="percentage"> </unnnic-progress-bar>
+            <unnnic-progress-bar v-model="percentage" :title="$t('flows_trigger.sending')" />
           </div>
         </div>
       </div>
