@@ -3,9 +3,9 @@
     ref="chats-layout"
     @select-quick-message="(quickMessage) => updateTextBoxMessage(quickMessage.text)"
   >
-    <room-loading v-show="isLoading" />
-    <chats-background v-if="!room && !isLoading" />
-    <section v-if="!!room && !isLoading" class="active-chat">
+    <room-loading v-show="skeletonIsActive" />
+    <chats-background v-if="!room && !skeletonIsActive" />
+    <section v-if="!!room && !skeletonIsActive" class="active-chat">
       <unnnic-chats-header
         :title="room.contact.name || ''"
         :avatarClick="teste"
@@ -182,6 +182,7 @@ export default {
     showAlertForLastMessage: false,
     networkError: false,
     files: [],
+    skeletonIsActive: false,
   }),
 
   computed: {
@@ -307,9 +308,9 @@ export default {
         const loadingFiles = {};
         const updateLoadingFiles = (messageUuid, progress) => {
           loadingFiles[messageUuid] = progress;
-          // this.totalValue =
-          //   Object.values(loadingFiles).reduce((acc, value) => acc + value) /
-          //   Object.keys(loadingFiles).length;
+          this.totalValue =
+            Object.values(loadingFiles).reduce((acc, value) => acc + value) /
+            Object.keys(loadingFiles).length;
         };
         await this.$store.dispatch('roomMessages/sendMedias', { files, updateLoadingFiles });
         this.totalValue = undefined;
@@ -324,9 +325,9 @@ export default {
       const loadingFiles = {};
       const updateLoadingFiles = (messageUuid, progress) => {
         loadingFiles[messageUuid] = progress;
-        // this.totalValue =
-        //   Object.values(loadingFiles).reduce((acc, value) => acc + value) /
-        //   Object.keys(loadingFiles).length;
+        this.totalValue =
+          Object.values(loadingFiles).reduce((acc, value) => acc + value) /
+          Object.keys(loadingFiles).length;
       };
       const response = await fetch(this.audioMessage.src);
       const blob = await response.blob();
@@ -397,10 +398,12 @@ export default {
         if (this.$store.state.rooms.newMessagesByRoom[this.id]) {
           this.$delete(this.$store.state.rooms.newMessagesByRoom, this.id);
         }
+        this.skeletonIsActive = true;
         this.isLoading = true;
         await this.setActiveRoom(this.id);
         await this.getRoomMessages();
         this.isLoading = false;
+        this.skeletonIsActive = false;
       },
     },
   },
