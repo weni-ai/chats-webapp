@@ -159,7 +159,7 @@ export default {
 
   .header .label {
     position: relative;
-    z-index: 100000;
+    z-index: 10;
 
     display: flex;
     align-items: center;
@@ -208,7 +208,7 @@ export default {
 
     .options-container {
       position: absolute;
-      z-index: 99999;
+      z-index: 9;
 
       display: flex;
 
