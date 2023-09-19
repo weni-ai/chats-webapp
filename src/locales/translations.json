@@ -749,9 +749,9 @@
       "es": "Último mensaje hace {hours} horas"
     },
     "date": {
-      "pt-br": "Último contato em {date}",
+      "pt-br": "Último contato {date}",
       "en-us": "Last message {date}",
-      "es": "Último contacto en {date}"
+      "es": "Último contacto {date}"
     }
   },
   "alert_last_message_date": {
