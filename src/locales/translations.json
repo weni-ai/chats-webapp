@@ -283,13 +283,6 @@
       "es": "Colas"
     }
   },
-  "queue": {
-    "description": {
-      "pt-br": "As filas servem para organizar os tipos de atendimento dentro de um setor, através das filas é possível criar grupos de atendimento, crie pelo menos uma fila para gerenciar uma equipe de agentes.",
-      "en-us": "The queues serve to organize the types of service within a sector, through queues it is possible to create service groups, create at least one line to manage a team of agents.",
-      "es": "Las colas sirven para organizar los tipos de servicio dentro de un sector, a través de las colas que puede crear grupos de servicios, crear al menos una línea para administrar un equipo de agentes."
-    }
-  },
   "chats": {
     "room_list": {
       "order_by": {
@@ -557,6 +550,11 @@
     "en-us": "Agent",
     "es": "Agente"
   },
+  "queue": {
+    "pt-br": "Fila",
+    "en-us": "Queue",
+    "es": "Cola"
+  },
   "agents": {
     "add": {
       "title": {
@@ -674,15 +672,17 @@
     }
   },
   "contact_information": {
-    "pt-br": "Informações do contato",
-    "en-us": "Contact information",
-    "es": "Información de contacto"
   },
-  "switch_contact_info": {
+  "contact_info": {
+    "title": {
+      "pt-br": "Informações do contato",
+      "en-us": "Contact information",
+      "es": "Información de contacto"
+    },
     "switch_associate_contact": {
-      "pt-br": "Vincular contato desativado",
-      "en-us": "Linked contact disabled",
-      "es": "Contacto vinculado deshabilitado"
+      "pt-br": "Contato desvinculado",
+      "en-us": "Unlinked contact",
+      "es": "Contacto desvinculado"
     },
     "switch_disassociate_contact": {
       "pt-br": "Contato vinculado",
@@ -706,8 +706,18 @@
     },
     "linked_contact": {
       "pt-br": "Contato vinculado ao agente {name}",
-      "en-us": "Contact linked to agent",
-      "es": "Contacto vinculado a agente"
+      "en-us": "Contact linked to agent {name}",
+      "es": "Contacto vinculado a agente {name}"
+    },
+    "see_contact_history": {
+      "pt-br": "Ver histórico do contato",
+      "en-us": "View contact history",
+      "es": "Ver historial de contactos"
+    },
+    "transfer_contact": {
+      "pt-br": "Transferir contato",
+      "en-us": "Transfer contact",
+      "es": "Transferir contacto"
     }
   },
   "last_online_time": {
@@ -739,9 +749,9 @@
       "es": "Último mensaje hace {hours} horas"
     },
     "date": {
-      "pt-br": "Último contato em {date}",
+      "pt-br": "Último contato {date}",
       "en-us": "Last message {date}",
-      "es": "Último contacto en {date}"
+      "es": "Último contacto {date}"
     }
   },
   "alert_last_message_date": {

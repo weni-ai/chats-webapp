@@ -2,7 +2,7 @@
 <template>
   <aside-slot-template
     class="contact-info"
-    :title="$t('contact_information')"
+    :title="$t('contact_info.title')"
     @close="$listeners.close"
   >
     <section v-if="!isHistory" class="scrollable">
@@ -13,9 +13,9 @@
               {{ room.contact.name }}
             </h1>
 
-            <unnnic-button-icon
-              icon="button-refresh-arrow-1"
-              type="secondary"
+            <unnnic-button-next
+              iconCenter="button-refresh-arrow-1"
+              type="terciary"
               size="small"
               @click="refreshContactInfos"
               :disabled="isRefreshContactDisabled"
@@ -63,31 +63,31 @@
               size="small"
               :textRight="
                 isLinkedUser
-                  ? $t('switch_contact_info.switch_disassociate_contact')
-                  : $t('switch_contact_info.switch_associate_contact')
+                  ? $t('contact_info.switch_disassociate_contact')
+                  : $t('contact_info.switch_associate_contact')
               "
             />
             <unnnic-tool-tip
               enabled
-              :text="$t('switch_contact_info.switch_tooltip')"
+              :text="$t('contact_info.switch_tooltip')"
               side="bottom"
               maxWidth="21rem"
             >
               <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
             </unnnic-tool-tip>
           </div>
-          <unnnic-button
+          <unnnic-button-next
             v-if="!isHistory && !isViewMode"
             class="transfer__button"
-            text="Ver histórico do contato"
+            :text="$t('contact_info.see_contact_history')"
             iconLeft="export-1"
-            type="secondary"
+            type="terciary"
             size="small"
             @click="openHistory()"
           />
           <div v-if="isLinkedToOtherAgent">
             <span>{{
-              $t('switch_contact_info.linked_contact', {
+              $t('contact_info.linked_contact', {
                 name: this.room.linked_user,
               })
             }}</span>
@@ -96,44 +96,30 @@
       </aside-slot-template-section>
 
       <aside-slot-template-section>
-        <p class="title-transfer-chat">Transferir contato</p>
+        <p class="title-transfer-chat">{{ $t('contact_info.transfer_contact') }}</p>
         <div style="margin-top: 20px; margin-bottom: 20px">
           <unnnic-radio size="sm" v-model="transferRadio" value="agent" :disabled="isViewMode">
-            Agente
+            {{ $t('agent') }}
           </unnnic-radio>
 
           <unnnic-radio size="sm" v-model="transferRadio" value="queue" :disabled="isViewMode">
-            Fila
+            {{ $t('queue') }}
           </unnnic-radio>
         </div>
         <section class="transfer-section">
-          <unnnic-autocomplete
-            v-model="transferContactSearch"
-            :data="
-              transferRadio === `queue`
-                ? transferOptions.map((option) => `${option.name}| Setor ${option.sector_name}`)
-                : transferOptions.map((option) => `${option.name}`)
-            "
-            @choose="transferContactTo = $event"
-            :placeholder="
-              transferRadio === 'queue'
-                ? (transferLabel = $t('select_queue'))
-                : transferRadio === 'agent'
-                ? (transferLabel = $t('select_agent'))
-                : (transferLabel = $t('select_sector'))
-            "
-            open-with-focus
-            size="sm"
-            highlight
-            class="channel-select"
+          <unnnic-select-smart
+            v-model="transferContactTo"
+            :options="transferOptions"
+            autocomplete
+            autocompleteIconLeft
+            autocompleteClearOnFocus
             :disabled="!!transferContactError || isViewMode"
-            :message="transferContactError"
           />
 
-          <unnnic-button
+          <unnnic-button-next
             class="transfer__button"
             :text="$t('transfer')"
-            type="secondary"
+            type="terciary"
             size="small"
             @click="transferContact"
             :disabled="isViewMode"
@@ -187,7 +173,11 @@
     </section>
     <unnnic-modal
       :text="$t('successfully_transferred_chat')"
-      :description="$t('successfully_transferred_contact_to.line', { name: transferContactTo })"
+      :description="
+        $t('successfully_transferred_contact_to.line', {
+          name: transferContactTo?.[0]?.label || '',
+        })
+      "
       modalIcon="check-circle-1-1"
       scheme="feedback-green"
       :showModal="showSuccessfulTransferModal"
@@ -266,8 +256,7 @@ export default {
   data: () => ({
     transferOptions: [],
     queues: [],
-    transferContactSearch: '',
-    transferContactTo: '',
+    transferContactTo: [],
     transferContactError: '',
     showSuccessfulTransferModal: false,
     isLinkedUser: false,
@@ -295,12 +284,8 @@ export default {
     },
 
     transferPersonSelected() {
-      if (this.transferRadio === 'queue') {
-        const takeTheName = this.transferContactSearch.split('|').at(0);
-        // const removeTheSpace = takeTheName.split(' ').at(0);
-        return this.transferOptions.find((option) => option.name === takeTheName);
-      }
-      return this.transferOptions.find((option) => option.name === this.transferContactSearch);
+      const selectedOptionValue = this.transferContactTo?.[0]?.value;
+      return this.transferOptions.find((option) => option.value === selectedOptionValue);
     },
 
     contactNumber() {
@@ -341,14 +326,18 @@ export default {
       }
 
       try {
-        this.transferOptions = (await Sector.agents({ sectorUuid: this.room.queue.sector }))
-          .filter((agent) => agent.email !== this.$store.state.profile.me.email)
-          .map(({ first_name, last_name, email }) => {
-            return {
-              name: [first_name, last_name].join(' ').trim() || email,
-              email,
-            };
+        const treatedAgents = [{ value: '', label: this.$t('select_agent') }];
+        const agents = (await Sector.agents({ sectorUuid: this.room.queue.sector })).filter(
+          (agent) => agent.email !== this.$store.state.profile.me.email,
+        );
+
+        agents.forEach(({ first_name, last_name, email }) => {
+          treatedAgents.push({
+            label: [first_name, last_name].join(' ').trim() || email,
+            value: email,
           });
+        });
+        this.transferOptions = treatedAgents;
       } catch (error) {
         if (error?.response?.status === 403) {
           this.transferContactError = this.$t('chats.transfer.does_not_have_permission');
@@ -369,11 +358,19 @@ export default {
       this.loading = true;
       let hasNext = false;
       try {
-        const queues = await Queue.listByProject(this.page * 10, 10);
+        const newQueues = await Queue.listByProject(this.page * 10, 10);
         this.page += 1;
-        this.transferOptions = this.queues.concat(queues.results);
 
-        hasNext = queues.next;
+        const treatedQueues = [{ value: '', label: this.$t('select_queue') }];
+        this.queues.concat(newQueues.results).forEach(({ name, sector_name, uuid }) => {
+          treatedQueues.push({
+            label: `${name} | ${this.$t('sector.title')} ${sector_name}`,
+            value: uuid,
+          });
+        });
+        this.transferOptions = treatedQueues;
+
+        hasNext = newQueues.next;
 
         this.loading = false;
       } finally {
@@ -486,7 +483,7 @@ export default {
       const contact = this.room.contact.uuid;
       try {
         await LinkContact.linkContactToAgent({ contact });
-        this.showStatusAlert(this.$t('switch_contact_info.alert_linked'));
+        this.showAlert(this.$t('contact_info.alert_linked'));
         this.verifyLinkedUser();
       } catch (error) {
         console.log(error);
@@ -497,7 +494,7 @@ export default {
       const contact = this.room.contact.uuid;
       try {
         await LinkContact.removeContactFromAgent(contact);
-        this.showStatusAlert(this.$t('switch_contact_info.alert_detached'));
+        this.showAlert(this.$t('contact_info.alert_detached'));
         this.verifyLinkedUser();
       } catch (error) {
         console.log(error);
@@ -525,23 +522,15 @@ export default {
       }
     },
 
-    showAlert(text) {
+    showAlert(text, type = 'success') {
       unnnicCallAlert({
         props: {
-          title: ``,
-          text: `${text}`,
-          icon: 'check-circle-1-1-1',
-          scheme: 'feedback-green',
-          closeText: 'Fechar',
-          position: 'bottom-right',
+          text,
+          type,
           size: 'small',
         },
-        seconds: 10,
+        seconds: 5,
       });
-    },
-
-    showStatusAlert(status) {
-      this.showAlert(status);
     },
 
     navigate(name) {
@@ -585,10 +574,10 @@ export default {
     async transferContact() {
       this.$store.commit('chats/removeChat', this.room);
       if (this.transferRadio === 'agent') {
-        await Room.take(this.room.uuid, this.transferPersonSelected.email);
+        await Room.take(this.room.uuid, this.transferPersonSelected.value);
       }
       if (this.transferRadio === 'queue') {
-        await Room.take(this.room.uuid, null, this.transferPersonSelected.uuid);
+        await Room.take(this.room.uuid, null, this.transferPersonSelected.value);
       }
       this.showSuccessfulTransferModal = true;
     },
@@ -602,19 +591,18 @@ export default {
     transferRadio: {
       handler() {
         if (this.transferRadio === 'queue') {
-          this.transferContactSearch = '';
+          this.transferContactTo = [];
           this.page = 0;
           this.getQueues();
         }
-        if (this.transferRadio === 'sector') {
-          this.transferContactSearch = '';
-          this.listSectors();
-        }
         if (this.transferRadio === 'agent') {
-          this.transferContactSearch = '';
+          this.transferContactTo = [];
           this.listAgents();
         }
       },
+    },
+    transferContactError(error) {
+      this.showAlert(error, 'error');
     },
   },
 };
@@ -652,7 +640,7 @@ export default {
     .username {
       font-weight: $unnnic-font-weight-bold;
       font-size: $unnnic-font-size-title-sm;
-      color: $unnnic-color-aux-purple;
+      color: $unnnic-color-neutral-dark;
     }
 
     .connection-info {
@@ -695,7 +683,7 @@ export default {
   .title-transfer-chat {
     font-weight: $unnnic-font-weight-bold;
     font-size: $unnnic-font-size-body-gt;
-    color: $unnnic-color-aux-purple;
+    color: $unnnic-color-neutral-dark;
   }
 
   .transfer-section {

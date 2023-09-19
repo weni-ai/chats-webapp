@@ -245,7 +245,7 @@ export default {
 
   &.active {
     .name {
-      color: $unnnic-color-aux-purple;
+      color: $unnnic-color-neutral-dark;
     }
   }
 
