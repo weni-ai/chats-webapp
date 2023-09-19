@@ -173,7 +173,11 @@
     </section>
     <unnnic-modal
       :text="$t('successfully_transferred_chat')"
-      :description="$t('successfully_transferred_contact_to.line', { name: transferContactTo })"
+      :description="
+        $t('successfully_transferred_contact_to.line', {
+          name: transferContactTo?.[0]?.label || '',
+        })
+      "
       modalIcon="check-circle-1-1"
       scheme="feedback-green"
       :showModal="showSuccessfulTransferModal"
@@ -252,8 +256,7 @@ export default {
   data: () => ({
     transferOptions: [],
     queues: [],
-    transferContactSearch: '',
-    transferContactTo: '',
+    transferContactTo: [],
     transferContactError: '',
     showSuccessfulTransferModal: false,
     isLinkedUser: false,
@@ -281,12 +284,8 @@ export default {
     },
 
     transferPersonSelected() {
-      if (this.transferRadio === 'queue') {
-        const takeTheName = this.transferContactSearch.split('|').at(0);
-        // const removeTheSpace = takeTheName.split(' ').at(0);
-        return this.transferOptions.find((option) => option.name === takeTheName);
-      }
-      return this.transferOptions.find((option) => option.name === this.transferContactSearch);
+      const selectedOptionValue = this.transferContactTo?.[0]?.value;
+      return this.transferOptions.find((option) => option.value === selectedOptionValue);
     },
 
     contactNumber() {
@@ -575,10 +574,10 @@ export default {
     async transferContact() {
       this.$store.commit('chats/removeChat', this.room);
       if (this.transferRadio === 'agent') {
-        await Room.take(this.room.uuid, this.transferPersonSelected.email);
+        await Room.take(this.room.uuid, this.transferPersonSelected.value);
       }
       if (this.transferRadio === 'queue') {
-        await Room.take(this.room.uuid, null, this.transferPersonSelected.uuid);
+        await Room.take(this.room.uuid, null, this.transferPersonSelected.value);
       }
       this.showSuccessfulTransferModal = true;
     },
@@ -592,12 +591,12 @@ export default {
     transferRadio: {
       handler() {
         if (this.transferRadio === 'queue') {
-          this.transferContactSearch = '';
+          this.transferContactTo = [];
           this.page = 0;
           this.getQueues();
         }
         if (this.transferRadio === 'agent') {
-          this.transferContactSearch = '';
+          this.transferContactTo = [];
           this.listAgents();
         }
       },
