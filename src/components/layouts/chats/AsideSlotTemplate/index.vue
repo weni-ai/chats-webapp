@@ -1,27 +1,8 @@
 <template>
   <aside class="aside-slot-template">
-    <!-- <header class="aside-slot-template__header">
-      <span class="aside-slot-template__title">
-        <span v-if="icon">
-          <unnnic-icon-svg :icon="icon" size="ant" scheme="neutral-darkest" />
-        </span>
-        <span>
-          {{ title }}
-        </span>
-      </span>
-
-      <span
-        v-if="!noIconAction"
-        @click="$emit('action')"
-        @keypress.enter="$emit('action')"
-        class="clickable"
-      >
-        <unnnic-icon-svg :icon="iconAction" size="sm" scheme="neutral-dark" />
-      </span>
-    </header> -->
-
     <unnnic-chats-header
       :title="title"
+      :subtitle="subtitle"
       :avatarIcon="icon"
       :close="() => $emit('close')"
       :back="back"
@@ -52,6 +33,10 @@ export default {
     title: {
       type: String,
       required: true,
+    },
+    subtitle: {
+      type: String,
+      required: false,
     },
     back: {
       type: Function,
