@@ -4,15 +4,16 @@
     <unnnic-input
       v-model="nameOfContact"
       icon-left="search-1"
-      icon-right="close-1"
+      :icon-right="nameOfContact ? 'close-1' : ''"
       :iconRightClickable="true"
       @icon-right-click="nameOfContact = ''"
       size="sm"
-      placeholder="Pesquisar contato"
-      :loading="this.loading"
+      :placeholder="$t('chats.search_contact')"
     ></unnnic-input>
     <div class="order-by">
-      <div><span>Ordenar por:</span></div>
+      <div>
+        <span>{{ $t('chats.room_list.order_by') }}</span>
+      </div>
       <div class="apply-filter" style="cursor: pointer">
         <span
           :style="{
@@ -22,7 +23,7 @@
             listRoom(false, '-last_interaction'),
               ((lastCreatedFilter = true), (createdOnFilter = false))
           "
-          >Mais recentes</span
+          >{{ $t('chats.room_list.most_recent') }}</span
         >
         <span> | </span>
         <span
@@ -34,7 +35,7 @@
               ((createdOnFilter = true), (lastCreatedFilter = false))
           "
         >
-          Mais antigos</span
+          {{ $t('chats.room_list.older') }}</span
         >
       </div>
     </div>
@@ -48,7 +49,7 @@
     >
       <room-group
         v-if="queue.length"
-        :label="$t('line', { length: queue.length })"
+        :label="$t('chats.waiting', { length: queue.length })"
         :rooms="queue"
         filled
         @open="open"
@@ -59,8 +60,6 @@
         :label="$t('chats.wating_answer', { length: wating.length })"
         :rooms="wating"
         @open="open"
-        :isWatingAnswer="true"
-        :isHistory="isHistoryView"
         id="wating"
       />
       <room-group
@@ -69,15 +68,14 @@
         :label="$t('chats.in_progress', { length: rooms.length })"
         :rooms="rooms"
         @open="open"
-        :isHistory="isHistoryView"
         id="in_progress"
       />
     </section>
 
-    <unnnic-button
+    <unnnic-button-next
       :text="isHistoryView ? $t('back_to_chats') : $t('chats.see_history')"
       :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : 'task-list-clock-1'"
-      type="secondary"
+      type="terciary"
       size="small"
       :disabled="isViewMode"
       @click="navigate(isHistoryView ? 'home' : 'rooms.closed')"
@@ -231,14 +229,12 @@ export default {
   .chat-groups {
     flex: 1 1;
 
-    // width: calc(16rem + 1rem);
-
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-stack-md;
+    gap: $unnnic-spacing-sm;
 
-    padding-right: $unnnic-spacing-inset-sm;
-    border-right: solid 1px $unnnic-color-neutral-soft;
+    padding-right: $unnnic-spacing-xs;
+    margin-right: -$unnnic-spacing-xs; // For the scrollbar to stick to the edge
     overflow-y: auto;
     overflow-x: hidden;
   }

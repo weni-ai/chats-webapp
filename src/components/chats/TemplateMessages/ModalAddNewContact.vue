@@ -13,12 +13,12 @@
               />
             </div>
           </div>
-          <div class="content-title">Adicionar novo contato</div>
+          <div class="content-title">{{ $t('flows_trigger.add_new_contact.title') }}</div>
           <div class="form">
             <div style="margin-bottom: 16px">
               <unnnic-input
-                label="Nome do contato"
-                placeholder="Nome do contato"
+                :label="$t('flows_trigger.add_new_contact.contact_name')"
+                :placeholder="$t('flows_trigger.add_new_contact.contact_name')"
                 v-model="contact.name"
               />
             </div>
@@ -28,7 +28,6 @@
                 label="WhatsApp"
                 placeholder="+99 (99) 9999 99999"
                 class="input"
-                iconRight="view-1-1"
                 mask="+## (##) #### #####"
               />
             </div>
@@ -37,7 +36,7 @@
             <div style="margin-right: 30px; margin-left: 24px" @click="$emit('close')">
               <unnnic-button
                 style="padding: 0.75rem 4.75rem"
-                text="Cancelar"
+                :text="$t('cancel')"
                 type="terciary"
                 :disabled="false"
               />
@@ -45,7 +44,7 @@
             <div>
               <unnnic-button
                 style="padding: 0.75rem 5rem"
-                text="Salvar"
+                :text="$t('save')"
                 type="secondary"
                 size="large"
                 @click="saveNewContact"
@@ -59,6 +58,7 @@
 </template>
 
 <script>
+import { unnnicCallAlert } from '@weni/unnnic-system';
 import TemplateMessages from '@/services/api/resources/chats/templateMessage.js';
 
 export default {
@@ -80,6 +80,16 @@ export default {
           urns: [`whatsapp:${prepareTel}`],
         };
         await TemplateMessages.createContact(newContact);
+
+        unnnicCallAlert({
+          props: {
+            text: this.$t('flows_trigger.successfully_add_contact'),
+            type: 'success',
+            scheme: 'feedback-green',
+          },
+          seconds: 5,
+        });
+
         this.$emit('close');
       } catch (error) {
         console.log(error);

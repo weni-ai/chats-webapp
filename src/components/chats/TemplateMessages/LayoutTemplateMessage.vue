@@ -2,35 +2,16 @@
 <template>
   <div class="container">
     <section class="template-messages">
-      <div @click="$emit('close')" style="cursor: pointer">
-        <unnnic-icon icon="keyboard-arrow-left-1" /> Selecionar fluxo
-        <unnnic-tool-tip
-          enabled
-          maxWidth="18rem"
-          text="Os fluxos disponíveis aqui devem ser previamente cadastrados no módulo de fluxos, caso tenha dúvidas converse com seu gerente."
-          side="bottom"
-        >
-          <unnnic-icon-svg scheme="neutral-cleanest" icon="information-circle-4" size="sm" />
-        </unnnic-tool-tip>
-      </div>
-      <div style="padding-left: 12px" v-if="!loadingFlows">
-        <unnnic-select
+      <div>
+        <unnnic-label :label="$t('flows_trigger.select')" />
+        <unnnic-select-smart
           v-model="flowUuid"
-          label="Selecionar fluxo"
-          size="md"
-          class="input"
-          @input="templateMessage(flowUuid)"
-        >
-          <!-- <option value=""></option> -->
-          <option
-            v-for="item in templates"
-            :key="item.uuid"
-            :value="item.uuid"
-            :selected="item.uuid === flowUuid"
-          >
-            {{ item.name }}
-          </option>
-        </unnnic-select>
+          :options="templates"
+          autocomplete
+          autocompleteIconLeft
+          autocompleteClearOnFocus
+          @input="templateMessage(flowUuid?.[0].value)"
+        />
       </div>
       <div style="padding-left: 12px">
         <div class="selected-template" v-if="this.selectedTemplate">
@@ -42,33 +23,30 @@
       <div v-if="showModalProgress">
         <modal-progress-template-submission @close="closeModaProgress" />
       </div>
-      <div v-if="showModal">
-        <unnnicModal
-          modalIcon="check-circle-1-1"
-          scheme="feedback-green"
-          text="Modelo de Mensagem enviado"
-          description="Sua mensagem foi enviada aos contatos selecionados"
-          @close="closeModal"
-        />
-      </div>
     </section>
-    <div
-      style="display: flex; justify-content: space-between; padding-left: 12px"
-      @click="sendTemplate"
-    >
-      <unnnic-button
-        :disabled="selectedFlow === ''"
-        text="Enviar"
+    <div class="template-messages__handlers">
+      <unnnic-button-next
+        :text="$t('back')"
         size="small"
-        type="secondary"
+        type="ghost"
+        @click="$emit('back')"
+        style="width: 100%"
+      />
+      <unnnic-button-next
+        :disabled="selectedFlow === ''"
+        :text="$t('send')"
+        size="small"
+        type="primary"
         iconLeft="send-email-3-1"
         style="width: 100%"
+        @click="sendTemplate"
       />
     </div>
   </div>
 </template>
 
 <script>
+import { unnnicCallAlert } from '@weni/unnnic-system';
 import TemplateMessages from '@/services/api/resources/chats/templateMessage.js';
 import ModalProgressTemplateSubmission from './ModalProgressTemplateSubmission';
 
@@ -79,20 +57,21 @@ export default {
     ModalProgressTemplateSubmission,
   },
 
-  data: () => ({
-    showModalProgress: false,
-    showModal: false,
-    template: '',
-    selectedTemplate: '',
-    filteredTemplate: '',
-    flowUuid: '',
-    templates: [],
-    loading: false,
-    selectedFlow: '',
-    loadingFlows: false,
-    status: '',
-    progressText: '',
-  }),
+  data() {
+    return {
+      showModalProgress: false,
+      template: '',
+      selectedTemplate: '',
+      filteredTemplate: '',
+      flowUuid: [],
+      templates: [{ value: '', label: this.$t('search_or_select') }],
+      loading: false,
+      selectedFlow: '',
+      loadingFlows: false,
+      status: '',
+      progressText: '',
+    };
+  },
 
   mounted() {
     this.flows();
@@ -115,7 +94,23 @@ export default {
       this.loadingFlows = true;
       try {
         const response = await TemplateMessages.getFlows();
-        this.templates = response.results;
+
+        const treatedTemplates = [
+          {
+            value: '',
+            label: this.$t('search_or_select'),
+          },
+        ];
+        response.results.forEach((flow) => {
+          const { name, uuid } = flow;
+
+          treatedTemplates.push({
+            value: uuid,
+            label: name,
+          });
+        });
+        this.templates = treatedTemplates;
+
         this.loadingFlows = false;
       } catch (error) {
         this.loadingFlows = false;
@@ -164,12 +159,17 @@ export default {
 
     closeModaProgress() {
       this.showModalProgress = false;
-      this.showModal = true;
-    },
 
-    closeModal() {
-      this.showModal = false;
-      window.location.reload(true);
+      unnnicCallAlert({
+        props: {
+          text: this.$t('flows_trigger.successfully_sent'),
+          type: 'success',
+          scheme: 'feedback-green',
+        },
+        seconds: 5,
+      });
+
+      this.$emit('close');
     },
   },
 };
@@ -190,6 +190,11 @@ export default {
     flex-direction: column;
     gap: $unnnic-spacing-stack-md;
     overflow-y: auto;
+
+    &__handlers {
+      display: flex;
+      gap: $unnnic-spacing-xs;
+    }
   }
 }
 .selected-template {

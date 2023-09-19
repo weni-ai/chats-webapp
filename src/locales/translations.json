@@ -291,20 +291,47 @@
     }
   },
   "chats": {
+    "room_list": {
+      "order_by": {
+        "pt-br": "Ordenar por:",
+        "en-us": "Order by:",
+        "es": "Ordenar por:"
+      },
+      "most_recent": {
+        "pt-br": "Mais recentes",
+        "en-us": "Most recent",
+        "es": "Mais recente"
+      },
+      "older": {
+        "pt-br": "Mais antigos",
+        "en-us": "Older",
+        "es": "Más antiguo"
+      }
+    },
+    "search_contact": {
+      "pt-br": "Pesquisar contato",
+      "en-us": "Search contact",
+      "es": "Buscar contacto"
+    },
     "tags": {
       "pt-br": "Tags do chat",
       "en-us": "Chat tags",
       "es": "Etiquetas de chat"
     },
     "in_progress": {
-      "pt-br": "Em andamento",
-      "en-us": "Chats in progress",
-      "es": "Chats en curso"
+      "pt-br": "Em andamento ({length})",
+      "en-us": "Chats in progress ({length})",
+      "es": "Chats en curso ({length})"
     },
     "wating_answer": {
       "pt-br": "Aguardando resposta ({length})",
-      "en-us": "Waiting for reply  {length}",
-      "es": "Esperando respuesta {length}"
+      "en-us": "Waiting for reply ({length})",
+      "es": "Esperando respuesta ({length})"
+    },
+    "waiting": {
+      "pt-br": "Aguardando ({length})",
+      "en-us": "Waiting ({length})",
+      "es": "Esperando ({length})"
     },
     "end": {
       "pt-br": "Encerrar chat",
@@ -433,11 +460,6 @@
     "en-us": "Transfer",
     "es": "Transferir"
   },
-  "line": {
-    "pt-br": "Aguardando",
-    "en-us": "Waiting",
-    "es": "Espera"
-  },
   "suggested_answers": {
     "pt-br": "Respostas sugeridas",
     "en-us": "Suggested Answers",
@@ -468,6 +490,16 @@
     "en-us": "Cancel",
     "es": "Cancelar"
   },
+  "add": {
+    "pt-br": "Adicionar",
+    "en-us": "Add",
+    "es": "Agregar"
+  },
+  "continue": {
+    "pt-br": "Continuar",
+    "en-us": "Continue",
+    "es": "Continuar"
+  },
   "please": {
     "pt-br": "Por favor",
     "en-us": "Please",
@@ -477,6 +509,11 @@
     "pt-br": "Confirmar",
     "en-us": "Confirm",
     "es": "Confirmar"
+  },
+  "back": {
+    "pt-br": "Voltar",
+    "en-us": "Back",
+    "es": "Volver"
   },
   "access_history_to_see_closed_chats": {
     "pt-br": "Acesse o histórico para visualizar chats encerrados",
@@ -489,9 +526,9 @@
     "es": "Fechar"
   },
   "back_to_chats": {
-    "pt-br": "Voltar para chats",
-    "en-us": "Back to chats",
-    "es": "Volver a los chats"
+    "pt-br": "@:back para chats",
+    "en-us": "@:back to chats",
+    "es": "@:back a los chats"
   },
   "filter": {
     "by_tags": {
@@ -803,6 +840,11 @@
     "en-us": "Delete",
     "es": "Eliminar"
   },
+  "search_or_select": {
+    "pt-br": "Pesquise ou selecione",
+    "en-us": "Search or select",
+    "es": "Buscar o seleccionar"
+  },
   "successfully_transferred_chat": {
     "pt-br": "Conversa transferida com sucesso!",
     "en-us": "Chat transferred successfully!",
@@ -854,6 +896,65 @@
     "pt-br": "Mensagens rápidas",
     "en-us": "Quick messages",
     "es": "Mensajes rápidos"
+  },
+  "flows_trigger": {
+    "title": {
+      "pt-br": "Disparo de fluxos",
+      "en-us": "Flows trigger",
+      "es": "Activación de flujo"
+    },
+    "subtitle": {
+      "pt-br": "Contatos de {queue}",
+      "en-us": "Contacts of {queue}",
+      "es": "Contactos de {queue}"
+    },
+    "groups": {
+      "pt-br": "Grupos ({length})",
+      "en-us": "Groups ({length})",
+      "es": "Grupos ({length})"
+    },
+    "group_contacts": {
+      "pt-br": "{n} contato | {n} contatos",
+      "en-us": "{n} contact | {n} contacts",
+      "es": "{n} contacto | {n} contactos"
+    },
+    "letter_group": {
+      "pt-br": "{letter} ({length})",
+      "en-us": "{letter} ({length})",
+      "es": "{letter} ({length})"
+    },
+    "add_new_contact": {
+      "title": {
+        "pt-br": "Adicionar novo contato",
+        "en-us": "Add new contact",
+        "es": "Añadir nuevo contacto"
+      },
+      "contact_name": {
+        "pt-br": "Nome do contato",
+        "en-us": "Contact name",
+        "es": "Nombre de contacto"
+      }
+    },
+    "select": {
+      "pt-br": "Selecionar fluxo",
+      "en-us": "Select flow",
+      "es": "Seleccionar flujo"
+    },
+    "sending": {
+      "pt-br": "Enviando fluxo",
+      "en-us": "Sending flow",
+      "es": "Enviando flujo"
+    },
+    "successfully_sent": {
+      "pt-br": "Fluxo enviado com sucesso",
+      "en-us": "Flow sent successfully",
+      "es": "Flujo enviado exitosamente"
+    },
+    "successfully_add_contact": {
+      "pt-br": "Contato adicionado com sucesso",
+      "en-us": "Contact added successfully",
+      "es": "Contacto agregado exitosamente"
+    }
   },
   "quick_messages": {
     "title": {
@@ -913,10 +1014,20 @@
       "en-us": "Type /{shortcut} to use",
       "es": "Escriba /{shortcut} para usar"
     },
-    "add_new": {
-      "pt-br": "Adicionar nova mensagem rápida",
-      "en-us": "Add new quick message",
-      "es": "Agregar nuevo mensaje rápido"
+    "new": {
+      "pt-br": "Nova mensagem rápida",
+      "en-us": "New quick message",
+      "es": "Nuevo mensaje rápido"
+    },
+    "add": {
+      "pt-br": "Adicionar nova mensagem",
+      "en-us": "Add new message",
+      "es": "Agregar nuevo mensaje"
+    },
+    "edit": {
+      "pt-br": "Editar mensagem",
+      "en-us": "Edit message",
+      "es": "Editar mensaje"
     },
     "available_shortcuts": {
       "pt-br": "Atalhos disponíveis",
@@ -928,25 +1039,15 @@
       "en-us": "Now ChatGPT is your CoPilot! Use the answers suggested by Artificial Intelligence to speed up your calls!",
       "es": "¡Ahora ChatGPT es tu CoPiloto! ¡Usa las respuestas sugeridas por la Inteligencia Artificial para acelerar tus llamadas!"
     },
-    "add": {
-      "pt-br": "Adicionar mensagem rápida",
-      "en-us": "Add quick message",
-      "es": "Agregar mensaje rápidoe"
-    },
     "title_field_placeholder": {
-      "pt-br": "Digite um título para sua mensagem rápida",
-      "en-us": "Enter a title for your quick message",
-      "es": "Introduzca un título para su mensaje rápido"
+      "pt-br": "Ex: Boas vindas",
+      "en-us": "Ex: Welcome",
+      "es": "Ej: Bienvenido"
     },
     "shortcut_field_placeholder": {
-      "pt-br": "Adicione uma palavra para usar como /atalho",
-      "en-us": "Add a word to use as a /shortcut",
-      "es": "Agregar una palabra para usar como /atajo"
-    },
-    "shortcut_field_tooltip": {
-      "pt-br": "Defina uma palavra-chave e facilite o uso de /atalhos",
-      "en-us": "Define a shortcut and make it easy to use /shortcuts",
-      "es": "Definir una palabra clave y facilitar su uso /atajos"
+      "pt-br": "Ex: Oi",
+      "en-us": "Ex: Hi",
+      "es": "Ej: Hola"
     },
     "message_field_placeholder": {
       "pt-br": "Digite o que você deseja",
@@ -958,10 +1059,10 @@
       "en-us": "Quick message added",
       "es": "Mensaje rápido agregado"
     },
-    "edit": {
-      "pt-br": "Editar mensagem rápida",
-      "en-us": "Edit quick message",
-      "es": "Editar mensaje rápido"
+    "successfully_updated": {
+      "pt-br": "Mensagem rápida atualizada",
+      "en-us": "Quick message updated",
+      "es": "Mensaje rápido actualizado"
     }
   },
   "discard": {
