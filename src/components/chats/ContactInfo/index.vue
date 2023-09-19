@@ -2,7 +2,7 @@
 <template>
   <aside-slot-template
     class="contact-info"
-    :title="$t('contact_information')"
+    :title="$t('contact_info.title')"
     @close="$listeners.close"
   >
     <section v-if="!isHistory" class="scrollable">
@@ -13,9 +13,9 @@
               {{ room.contact.name }}
             </h1>
 
-            <unnnic-button-icon
-              icon="button-refresh-arrow-1"
-              type="secondary"
+            <unnnic-button-next
+              iconCenter="button-refresh-arrow-1"
+              type="terciary"
               size="small"
               @click="refreshContactInfos"
               :disabled="isRefreshContactDisabled"
@@ -63,31 +63,31 @@
               size="small"
               :textRight="
                 isLinkedUser
-                  ? $t('switch_contact_info.switch_disassociate_contact')
-                  : $t('switch_contact_info.switch_associate_contact')
+                  ? $t('contact_info.switch_disassociate_contact')
+                  : $t('contact_info.switch_associate_contact')
               "
             />
             <unnnic-tool-tip
               enabled
-              :text="$t('switch_contact_info.switch_tooltip')"
+              :text="$t('contact_info.switch_tooltip')"
               side="bottom"
               maxWidth="21rem"
             >
               <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
             </unnnic-tool-tip>
           </div>
-          <unnnic-button
+          <unnnic-button-next
             v-if="!isHistory && !isViewMode"
             class="transfer__button"
-            text="Ver histórico do contato"
+            :text="$t('contact_info.see_contact_history')"
             iconLeft="export-1"
-            type="secondary"
+            type="terciary"
             size="small"
             @click="openHistory()"
           />
           <div v-if="isLinkedToOtherAgent">
             <span>{{
-              $t('switch_contact_info.linked_contact', {
+              $t('contact_info.linked_contact', {
                 name: this.room.linked_user,
               })
             }}</span>
@@ -96,14 +96,14 @@
       </aside-slot-template-section>
 
       <aside-slot-template-section>
-        <p class="title-transfer-chat">Transferir contato</p>
+        <p class="title-transfer-chat">{{ $t('contact_info.transfer_contact') }}</p>
         <div style="margin-top: 20px; margin-bottom: 20px">
           <unnnic-radio size="sm" v-model="transferRadio" value="agent" :disabled="isViewMode">
-            Agente
+            {{ $t('agent') }}
           </unnnic-radio>
 
           <unnnic-radio size="sm" v-model="transferRadio" value="queue" :disabled="isViewMode">
-            Fila
+            {{ $t('queue') }}
           </unnnic-radio>
         </div>
         <section class="transfer-section">
@@ -130,10 +130,10 @@
             :message="transferContactError"
           />
 
-          <unnnic-button
+          <unnnic-button-next
             class="transfer__button"
             :text="$t('transfer')"
-            type="secondary"
+            type="terciary"
             size="small"
             @click="transferContact"
             :disabled="isViewMode"
@@ -486,7 +486,7 @@ export default {
       const contact = this.room.contact.uuid;
       try {
         await LinkContact.linkContactToAgent({ contact });
-        this.showStatusAlert(this.$t('switch_contact_info.alert_linked'));
+        this.showStatusAlert(this.$t('contact_info.alert_linked'));
         this.verifyLinkedUser();
       } catch (error) {
         console.log(error);
@@ -497,7 +497,7 @@ export default {
       const contact = this.room.contact.uuid;
       try {
         await LinkContact.removeContactFromAgent(contact);
-        this.showStatusAlert(this.$t('switch_contact_info.alert_detached'));
+        this.showStatusAlert(this.$t('contact_info.alert_detached'));
         this.verifyLinkedUser();
       } catch (error) {
         console.log(error);
@@ -652,7 +652,7 @@ export default {
     .username {
       font-weight: $unnnic-font-weight-bold;
       font-size: $unnnic-font-size-title-sm;
-      color: $unnnic-color-aux-purple;
+      color: $unnnic-color-neutral-dark;
     }
 
     .connection-info {
@@ -695,7 +695,7 @@ export default {
   .title-transfer-chat {
     font-weight: $unnnic-font-weight-bold;
     font-size: $unnnic-font-size-body-gt;
-    color: $unnnic-color-aux-purple;
+    color: $unnnic-color-neutral-dark;
   }
 
   .transfer-section {
