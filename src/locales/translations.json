@@ -914,9 +914,9 @@
       "es": "Activación de flujo"
     },
     "subtitle": {
-      "pt-br": "Contatos de {queue}",
-      "en-us": "Contacts of {queue}",
-      "es": "Contactos de {queue}"
+      "pt-br": "Contatos de {project}",
+      "en-us": "Contacts of {project}",
+      "es": "Contactos de {project}"
     },
     "groups": {
       "pt-br": "Grupos ({length})",

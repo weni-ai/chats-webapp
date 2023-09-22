@@ -2,7 +2,7 @@
 <template>
   <aside-slot-template
     :title="$t('flows_trigger.title')"
-    :subtitle="$t('flows_trigger.subtitle', { queue: 'Atendimento humano' })"
+    :subtitle="$t('flows_trigger.subtitle', { project: projectName })"
     icon="send-email-3-1"
     @close="$emit('close')"
   >
@@ -105,6 +105,7 @@ import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTempla
 import ModalAddNewContact from '@/components/chats/FlowsTrigger/ModalAddNewContact.vue';
 import SelectFlow from '@/components/chats/FlowsTrigger/SelectFlow';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
+import ProjectApi from '@/services/api/resources/settings/project';
 
 export default {
   name: 'FlowsTrigger',
@@ -117,6 +118,7 @@ export default {
   },
 
   created() {
+    this.projectInfo();
     this.contactList();
     this.groupList();
   },
@@ -129,6 +131,7 @@ export default {
   },
 
   data: () => ({
+    projectName: '',
     search: '',
     searchUrn: '',
     timerId: 0,
@@ -167,6 +170,11 @@ export default {
   },
 
   methods: {
+    async projectInfo() {
+      const project = await ProjectApi.getInfo();
+      this.projectName = project.data.name;
+    },
+
     setContacts(item) {
       if (this.selected.some((search) => search.uuid === item.uuid)) {
         this.selected = this.selected.filter((el) => el.uuid !== item.uuid);

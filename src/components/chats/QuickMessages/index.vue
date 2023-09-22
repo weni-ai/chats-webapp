@@ -187,7 +187,6 @@ export default {
 
 .messages-section {
   height: 100%;
-  width: 100%;
   overflow: hidden auto;
 
   // insert space between content and scrollbar
