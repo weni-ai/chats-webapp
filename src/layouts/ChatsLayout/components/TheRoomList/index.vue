@@ -57,7 +57,7 @@
       />
       <room-group
         v-if="wating.length"
-        :label="$t('chats.wating_answer', { length: wating.length })"
+        :label="$t('chats.sent_flows', { length: wating.length })"
         :rooms="wating"
         @open="open"
         id="wating"
