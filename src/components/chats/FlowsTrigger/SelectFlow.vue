@@ -1,30 +1,21 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
-  <div class="container">
-    <section class="template-messages">
-      <div>
-        <unnnic-label :label="$t('flows_trigger.select')" />
-        <unnnic-select-smart
-          v-model="flowUuid"
-          :options="templates"
-          autocomplete
-          autocompleteIconLeft
-          autocompleteClearOnFocus
-          @input="templateMessage(flowUuid?.[0].value)"
-        />
-      </div>
-      <div style="padding-left: 12px">
-        <div class="selected-template" v-if="this.selectedTemplate">
-          <div class="example-text">
-            <span>{{ this.selectedTemplate }}</span>
-          </div>
-        </div>
-      </div>
-      <div v-if="showModalProgress">
-        <modal-progress-template-submission @close="closeModaProgress" />
-      </div>
-    </section>
-    <div class="template-messages__handlers">
+  <section class="flows-trigger">
+    <div>
+      <unnnic-label :label="$t('flows_trigger.select')" />
+      <unnnic-select-smart
+        v-model="flowUuid"
+        :options="templates"
+        autocomplete
+        autocompleteIconLeft
+        autocompleteClearOnFocus
+        @input="getFlowTrigger(flowUuid?.[0].value)"
+      />
+    </div>
+    <div v-if="showProgressBar">
+      <modal-progress-template-submission @close="closeModaProgress" />
+    </div>
+    <div class="flows-trigger__handlers">
       <unnnic-button-next
         :text="$t('back')"
         size="small"
@@ -39,19 +30,19 @@
         type="primary"
         iconLeft="send-email-3-1"
         style="width: 100%"
-        @click="sendTemplate"
+        @click="sendFlow"
       />
     </div>
-  </div>
+  </section>
 </template>
 
 <script>
 import { unnnicCallAlert } from '@weni/unnnic-system';
-import TemplateMessages from '@/services/api/resources/chats/templateMessage.js';
+import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import ModalProgressTemplateSubmission from './ModalProgressTemplateSubmission';
 
 export default {
-  name: 'LayoutTemplateMessage',
+  name: 'SelectFlow',
 
   components: {
     ModalProgressTemplateSubmission,
@@ -59,7 +50,7 @@ export default {
 
   data() {
     return {
-      showModalProgress: false,
+      showProgressBar: false,
       template: '',
       selectedTemplate: '',
       filteredTemplate: '',
@@ -93,7 +84,7 @@ export default {
     async flows() {
       this.loadingFlows = true;
       try {
-        const response = await TemplateMessages.getFlows();
+        const response = await FlowsTrigger.getFlows();
 
         const treatedTemplates = [
           {
@@ -118,17 +109,17 @@ export default {
       }
     },
 
-    async templateMessage(uuid) {
+    async getFlowTrigger(uuid) {
       this.selectedFlow = uuid;
       try {
-        const response = await TemplateMessages.getTemplateFlow(uuid);
+        const response = await FlowsTrigger.getFlowTrigger(uuid);
         this.template = response.results;
       } catch (error) {
         console.log(error);
       }
     },
 
-    async sendTemplate() {
+    async sendFlow() {
       this.loading = true;
       if (!this.selectedContact) this.findId(this.contacts, this.groups);
       const prepareObj = {
@@ -139,7 +130,7 @@ export default {
       };
       this.openModalProgress();
       try {
-        await TemplateMessages.sendTemplate(prepareObj);
+        await FlowsTrigger.sendFlow(prepareObj);
         this.loading = false;
         this.closeModaProgress();
       } catch (error) {
@@ -154,11 +145,11 @@ export default {
     },
 
     openModalProgress() {
-      this.showModalProgress = true;
+      this.showProgressBar = true;
     },
 
     closeModaProgress() {
-      this.showModalProgress = false;
+      this.showProgressBar = false;
 
       unnnicCallAlert({
         props: {
@@ -176,38 +167,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: $unnnic-spacing-stack-xs;
-  padding-bottom: $unnnic-spacing-inset-nano;
-  padding: 0px;
+.flows-trigger {
+  flex: 1 1;
+  justify-content: space-between;
 
-  .template-messages {
-    flex: 1 1;
+  &__handlers {
     display: flex;
-    flex-direction: column;
-    gap: $unnnic-spacing-stack-md;
-    overflow-y: auto;
-
-    &__handlers {
-      display: flex;
-      gap: $unnnic-spacing-xs;
-    }
-  }
-}
-.selected-template {
-  width: 100%;
-  max-width: 99%;
-  border-radius: 0.6rem;
-  padding: 1rem;
-  background-color: $unnnic-color-background-carpet;
-  .example-text {
-    word-break: break-word;
-    font-family: $unnnic-font-family-secondary;
-    color: $unnnic-color-neutral-dark;
-    font-size: $unnnic-font-size-body-md;
+    gap: $unnnic-spacing-xs;
   }
 }
 </style>

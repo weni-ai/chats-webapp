@@ -1,15 +1,5 @@
 <template>
   <section :class="['chats-layout', isAsideVisible && 'has-aside']">
-    <section
-      v-if="showSendFlowMessage"
-      :style="{ display: 'flex', flexDirection: 'column', height: '96vh' }"
-      class="room-list"
-    >
-      <layout-template-message
-        :selectedContact="this.$store.state.rooms.activeRoom.contact"
-        @close="handlerShowSendFlowMessages"
-      />
-    </section>
     <slot name="room-list" v-if="isRoomListVisible">
       <div class="sidebar">
         <preferences-bar
@@ -17,23 +7,25 @@
           :dashboard="canAccessDashboard"
         />
 
-        <div class="template-message-button" v-if="canTriggerFlows">
+        <div class="flows-trigger-button" v-if="canTriggerFlows">
           <unnnic-button-next
             size="small"
             type="terciary"
             iconCenter="pencil-write-1"
-            @click="showContactsList"
+            @click="openFlowsTrigger"
           />
         </div>
 
-        <the-room-list class="room-list" :disabled="disabledChatList" />
+        <the-room-list class="room-list" />
       </div>
     </slot>
 
-    <slot name="template-message" v-if="contactListVisible">
-      <div :style="{ display: 'flex', flexDirection: 'column', height: '100vh' }">
-        <contact-list class="room-list" :disabled="disabledChatList" @close="closeContactList" />
-      </div>
+    <slot name="flows-trigger" v-if="flowsTriggerVisible">
+      <layout-flows-trigger
+        class="room-list"
+        :selectedContact="flowsTriggerContact"
+        @close="closeFlowsTrigger"
+      />
     </slot>
 
     <slot name="quick-message" v-if="quickMessagesVisible">
@@ -51,21 +43,20 @@
     <section v-if="isAsideVisible" class="aside">
       <slot name="aside" />
     </section>
-    <div v-show="isLoading && disabledChatList">
+    <!-- <div v-show="isLoading">
       <skeleton-loading />
-    </div>
+    </div> -->
   </section>
 </template>
 
 <script>
 import PreferencesBar from '@/components/PreferencesBar.vue';
 import Sector from '@/services/api/resources/settings/sector.js';
-import TemplateMessages from '@/services/api/resources/chats/templateMessage.js';
-import SkeletonLoading from '@/views/loadings/chats.vue';
+import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
+// import SkeletonLoading from '@/views/loadings/chats.vue';
 import QuickMessages from '@/components/chats/QuickMessages';
-import LayoutTemplateMessage from '@/components/chats/TemplateMessages/LayoutTemplateMessage';
 import TheRoomList from './components/TheRoomList';
-import ContactList from './components/TemplateMessages';
+import LayoutFlowsTrigger from './components/FlowsTrigger';
 
 export default {
   name: 'ChatsLayout',
@@ -73,33 +64,24 @@ export default {
   components: {
     PreferencesBar,
     TheRoomList,
-    // ModalOnBoardingChats,
-    SkeletonLoading,
-    ContactList,
+    // SkeletonLoading,
+    LayoutFlowsTrigger,
     QuickMessages,
-    LayoutTemplateMessage,
-  },
-
-  props: {
-    disabledChatList: {
-      type: Boolean,
-      default: false,
-    },
   },
 
   mounted() {
     this.getCountSectors();
-    this.havePermissionToSendTemplateMessage();
+    this.getPermissionToSendFlowsTrigger();
   },
 
   data: () => ({
     sectors: {},
     isLoading: false,
-    contactList: false,
     canTriggerFlows: false,
     canAccessDashboard: false,
+    showFlowsTrigger: false,
     showQuickMessages: false,
-    showSendFlowMessage: false,
+    flowsTriggerContact: null,
     quickMessage: '',
   }),
 
@@ -107,22 +89,23 @@ export default {
     handlerShowQuickMessages() {
       this.showQuickMessages = !this.showQuickMessages;
     },
-    handlerShowSendFlowMessages() {
-      this.showSendFlowMessage = !this.showSendFlowMessage;
+    openFlowsTrigger({ contact = null }) {
+      if (contact) {
+        this.flowsTriggerContact = contact;
+      }
+      this.showFlowsTrigger = true;
+    },
+    closeFlowsTrigger() {
+      this.showFlowsTrigger = false;
+      if (this.flowsTriggerContact) {
+        this.flowsTriggerContact = null;
+      }
     },
     close() {
       if (this.$slots.aside[0].componentOptions.listeners) {
         this.$slots.aside[0].componentOptions.listeners.close();
       }
-      this.showSendFlowMessage = false;
-    },
-
-    showContactsList() {
-      this.contactList = true;
-    },
-
-    closeContactList() {
-      this.contactList = false;
+      this.showFlowsTrigger = false;
     },
 
     async getCountSectors() {
@@ -136,9 +119,9 @@ export default {
         console.log(error);
       }
     },
-    async havePermissionToSendTemplateMessage() {
+    async getPermissionToSendFlowsTrigger() {
       try {
-        const response = await TemplateMessages.listAccess();
+        const response = await FlowsTrigger.listAccess();
         this.accessList = response;
         this.canTriggerFlows = this.accessList.can_trigger_flows;
         this.canAccessDashboard = this.accessList.can_access_dashboard;
@@ -156,13 +139,13 @@ export default {
       return !!this.$slots.aside;
     },
     isRoomListVisible() {
-      return !this.contactList && !this.showQuickMessages && !this.showSendFlowMessage;
+      return !this.showFlowsTrigger && !this.showQuickMessages;
     },
-    contactListVisible() {
-      return this.contactList && !this.showQuickMessages && !this.showSendFlowMessage;
+    flowsTriggerVisible() {
+      return this.showFlowsTrigger && !this.showQuickMessages;
     },
     quickMessagesVisible() {
-      return !this.contactList && !this.showSendFlowMessage && this.showQuickMessages;
+      return !this.showFlowsTrigger && this.showQuickMessages;
     },
   },
 };
@@ -197,11 +180,11 @@ section.chats-layout {
     width: $aside-width;
     min-width: $aside-width;
 
-    padding: 0 0 $unnnic-spacing-sm $unnnic-spacing-xs;
+    padding: 0 0 $unnnic-spacing-xs $unnnic-spacing-xs;
 
     grid-column: 1;
 
-    .template-message-button {
+    .flows-trigger-button {
       button {
         width: 100%;
       }

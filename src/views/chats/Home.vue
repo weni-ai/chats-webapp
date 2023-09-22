@@ -8,8 +8,8 @@
     <section v-if="!!room && !skeletonIsActive" class="active-chat">
       <unnnic-chats-header
         :title="room.contact.name || ''"
-        :avatarClick="teste"
-        :titleClick="teste"
+        :avatarClick="openContactInfo"
+        :titleClick="openContactInfo"
         :avatarName="room.contact.name"
         :close="openModalCloseChat"
       />
@@ -18,7 +18,7 @@
         :closeButtonTooltip="$t('chats.end')"
         @close="openModalCloseChat"
         @show-contact-info="componentInAsideSlot = 'contactInfo'"
-        @open-select-flow="handlerShowSendFlowMessages"
+        @open-select-flow="openFlowsTrigger"
         :alert="!this.room.is_24h_valid"
         @reconnect="searchMessages"
         :alertNetwork="this.networkError"
@@ -125,7 +125,6 @@ import ContactInfo from '@/components/chats/ContactInfo';
 import ChatClassifier from '@/components/chats/ChatClassifier';
 import QuickMessages from '@/components/chats/QuickMessages';
 import ModalCloseChat from '@/views/chats/ModalCloseChat.vue';
-import LayoutTemplateMessage from '@/components/chats/TemplateMessages/LayoutTemplateMessage';
 
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
@@ -150,7 +149,6 @@ export default {
     ChatClassifier,
     ModalCloseChat,
     FileUploader,
-    LayoutTemplateMessage,
     ModalGetChat,
     RoomLoading,
   },
@@ -218,15 +216,6 @@ export default {
             },
           },
         },
-        layoutTemplateMessage: {
-          name: LayoutTemplateMessage.name,
-          listeners: {
-            close: () => {
-              this.componentInAsideSlot = '';
-            },
-            contact: this.room,
-          },
-        },
       };
     },
   },
@@ -238,8 +227,7 @@ export default {
       const response = await Queue.tags(this.room.queue.uuid);
       this.sectorTags = response.results;
     },
-    teste() {
-      console.log('teste');
+    openContactInfo() {
       this.componentInAsideSlot = 'contactInfo';
     },
     async readMessages() {
@@ -349,8 +337,8 @@ export default {
       this.$refs['chats-layout']?.handlerShowQuickMessages();
     },
 
-    handlerShowSendFlowMessages() {
-      this.$refs['chats-layout']?.handlerShowSendFlowMessages();
+    openFlowsTrigger() {
+      this.$refs['chats-layout']?.openFlowsTrigger({ contact: this.room?.contact });
     },
 
     openModalCloseChat() {
