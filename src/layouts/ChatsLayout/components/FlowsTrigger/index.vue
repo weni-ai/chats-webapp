@@ -6,24 +6,22 @@
     icon="send-email-3-1"
     @close="$emit('close')"
   >
-    <aside-slot-template-section class="template-messages" v-if="showSelectTemplate">
-      <layout-template-message
-        @back="closeSelectTemplate"
+    <aside-slot-template-section class="flows-trigger" v-if="showSelectFlow">
+      <select-flow
+        @back="closeSelectFlow"
         @close="$emit('close')"
         :contacts="selected"
         :groups="selectedGroup"
+        :selected-contact="selectedContact"
       />
     </aside-slot-template-section>
-    <aside-slot-template-section class="template-messages" v-else>
+    <aside-slot-template-section class="flows-trigger" v-else>
       <unnnic-input
         v-model="searchUrn"
         icon-left="search-1"
         :placeholder="$t('chats.search_contact')"
       ></unnnic-input>
-      <section
-        class="template-messages__selecteds"
-        v-if="listOfGroupAndContactsSelected.length > 0"
-      >
+      <section class="flows-trigger__selecteds" v-if="listOfGroupAndContactsSelected.length > 0">
         <unnnic-tag
           type="default"
           v-for="item in listOfGroupAndContactsSelected"
@@ -35,7 +33,7 @@
         />
       </section>
       <section
-        class="template-messages__groups"
+        class="flows-trigger__groups"
         @scroll="
           (event) => {
             handleScroll(event.srcElement);
@@ -79,23 +77,24 @@
           </unnnic-collapse>
         </template>
       </section>
+      <div class="flows-trigger__handlers" v-if="!showSelectFlow">
+        <unnnic-button-next
+          size="small"
+          type="secondary"
+          :text="$t('add')"
+          :iconLeft="'add-1'"
+          @click="openModal"
+        />
+        <unnnic-button-next
+          :disabled="this.listOfGroupAndContactsSelected.length === 0"
+          :text="$t('continue')"
+          type="primary"
+          size="small"
+          @click="openSelectFlow"
+        />
+      </div>
     </aside-slot-template-section>
-    <div class="template-messages__handlers" v-if="!showSelectTemplate">
-      <unnnic-button-next
-        size="small"
-        type="secondary"
-        :text="$t('add')"
-        :iconLeft="'add-1'"
-        @click="openModal"
-      />
-      <unnnic-button-next
-        :disabled="this.listOfGroupAndContactsSelected.length === 0"
-        :text="$t('continue')"
-        type="primary"
-        size="small"
-        @click="openSelectTemplate"
-      />
-    </div>
+
     <modal-add-new-contact v-if="showModal" @close="closeModal" />
   </aside-slot-template>
 </template>
@@ -103,18 +102,18 @@
 <script>
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
-import ModalAddNewContact from '@/components/chats/TemplateMessages/ModalAddNewContact.vue';
-import LayoutTemplateMessage from '@/components/chats/TemplateMessages/LayoutTemplateMessage';
-import TemplateMessages from '@/services/api/resources/chats/templateMessage.js';
+import ModalAddNewContact from '@/components/chats/FlowsTrigger/ModalAddNewContact.vue';
+import SelectFlow from '@/components/chats/FlowsTrigger/SelectFlow';
+import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 
 export default {
-  name: 'ContactList',
+  name: 'FlowsTrigger',
 
   components: {
     AsideSlotTemplate,
     AsideSlotTemplateSection,
     ModalAddNewContact,
-    LayoutTemplateMessage,
+    SelectFlow,
   },
 
   created() {
@@ -123,13 +122,9 @@ export default {
   },
 
   props: {
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    usePhoto: {
-      type: Boolean,
-      default: false,
+    selectedContact: {
+      type: Object,
+      required: false,
     },
   },
 
@@ -144,7 +139,7 @@ export default {
     selected: [],
     selectedGroup: [],
     showModal: false,
-    showSelectTemplate: false,
+    showSelectFlow: false,
     page: 0,
   }),
 
@@ -201,7 +196,7 @@ export default {
       if (cleanList) this.listOfContacts = [];
       this.isLoading = true;
       try {
-        const response = await TemplateMessages.getListOfContacts(next, this.searchUrn);
+        const response = await FlowsTrigger.getListOfContacts(next, this.searchUrn);
         this.listOfContacts = this.listOfContacts.concat(response.results);
         this.hasNext = response.next;
         this.listOfContacts.sort((a, b) => a.name?.localeCompare(b.name));
@@ -227,7 +222,7 @@ export default {
 
     async groupList() {
       try {
-        const response = await TemplateMessages.getListOfGroups();
+        const response = await FlowsTrigger.getListOfGroups();
         this.listOfGroups = response.results.filter((el) => ![null, undefined].includes(el.name));
         this.listOfGroups.sort((a, b) => a.name.localeCompare(b.name));
       } catch (error) {
@@ -244,12 +239,12 @@ export default {
       this.contactList(null, true);
     },
 
-    openSelectTemplate() {
-      this.showSelectTemplate = true;
+    openSelectFlow() {
+      this.showSelectFlow = true;
     },
 
-    closeSelectTemplate() {
-      this.showSelectTemplate = false;
+    closeSelectFlow() {
+      this.showSelectFlow = false;
     },
   },
   watch: {
@@ -261,12 +256,20 @@ export default {
         }, 1000);
       },
     },
+    selectedContact: {
+      immediate: true,
+      handler(newSelectedContact) {
+        if (newSelectedContact) {
+          this.openSelectFlow();
+        }
+      },
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.template-messages {
+.flows-trigger {
   display: flex;
   overflow: hidden;
   flex-direction: column;
@@ -301,12 +304,12 @@ export default {
     flex: 1 1;
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-stack-md;
+    gap: $unnnic-spacing-sm;
     overflow-y: auto;
 
     // Space between content and scrollbar
-    margin-right: -$unnnic-spacing-sm;
-    padding-right: $unnnic-spacing-sm;
+    margin-right: -$unnnic-spacing-xs;
+    padding-right: $unnnic-spacing-xs;
 
     .contact {
       &:not(:last-of-type) {
@@ -315,105 +318,12 @@ export default {
     }
   }
 }
-.template-messages__handlers {
-  padding: $unnnic-spacing-xs;
-  padding-top: 0;
-
+.flows-trigger__handlers {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $unnnic-spacing-xs;
   align-items: end;
 
   background-color: $unnnic-color-background-carpet;
-}
-.selected-contacts {
-  width: 100%;
-  max-width: 100%;
-  border-radius: 0.6rem;
-  padding: 1rem;
-  background-color: $unnnic-color-background-carpet;
-  .contacts-label {
-    color: $unnnic-color-neutral-cloudy;
-    font-family: $unnnic-font-family-secondary;
-    font-size: 0.6rem;
-  }
-  .contacts-names {
-    background-color: $unnnic-color-background-carpet;
-    color: $unnnic-color-neutral-darkest;
-    font-family: $unnnic-font-family-secondary;
-    display: flex;
-    align-items: center;
-    font-weight: 400;
-    font-size: 0.75rem;
-  }
-}
-.flex {
-  width: 100%;
-  max-width: 99%;
-  display: flex;
-  border-radius: 0.6rem;
-  padding: 5px;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  background-color: $unnnic-color-background-carpet;
-}
-
-.flex > div {
-  width: 7rem;
-  display: flex;
-  align-items: center;
-  padding: 5px;
-  white-space: nowrap;
-  font-size: 0.75rem;
-  color: $unnnic-color-neutral-darkest;
-}
-
-.new-contact {
-  width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: $unnnic-font-family-secondary;
-  font-size: 0.75rem;
-  font-weight: 400;
-  color: $unnnic-color-neutral-dark;
-}
-.contact-list {
-  padding-right: $unnnic-spacing-inset-sm;
-
-  overflow: hidden scroll;
-
-  .title-group {
-    color: $unnnic-color-neutral-dark;
-    font-size: 0.75rem;
-    margin: 8px 8px 8px 8px;
-  }
-  .container-names {
-    background-color: $unnnic-color-background-carpet;
-    border-radius: 4px;
-    width: 96%;
-    height: 60px;
-    margin: 8px 8px 8px 8px;
-    display: flex;
-    flex-direction: row;
-    .users-names {
-      display: flex;
-      align-items: center;
-      color: $unnnic-color-neutral-darkest;
-
-      .names {
-        display: flex;
-        flex-direction: column;
-        margin-left: 10px;
-        font-size: 0.875rem;
-        .number {
-          color: $unnnic-color-neutral-cloudy;
-          font-weight: 400;
-          font-size: 0.75rem;
-          margin-top: 8px;
-        }
-      }
-    }
-  }
 }
 </style>

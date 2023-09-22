@@ -24,7 +24,7 @@ export default {
     return response.data;
   },
 
-  async getTemplateFlow(uuidFlow) {
+  async getFlowTrigger(uuidFlow) {
     const response = await http.get(`/project/${getProject()}/retrieve_flow_definitions/`, {
       params: {
         flow_uuid: uuidFlow,
@@ -43,7 +43,7 @@ export default {
     return response.data;
   },
 
-  async sendTemplate(object) {
+  async sendFlow(object) {
     const response = await http.post(`/project/${getProject()}/start_flow/`, object);
     return response.data;
   },

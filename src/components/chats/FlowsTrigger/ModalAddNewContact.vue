@@ -59,7 +59,7 @@
 
 <script>
 import { unnnicCallAlert } from '@weni/unnnic-system';
-import TemplateMessages from '@/services/api/resources/chats/templateMessage.js';
+import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 
 export default {
   name: 'ModalAddNewContact',
@@ -79,7 +79,7 @@ export default {
           name: this.contact.name,
           urns: [`whatsapp:${prepareTel}`],
         };
-        await TemplateMessages.createContact(newContact);
+        await FlowsTrigger.createContact(newContact);
 
         unnnicCallAlert({
           props: {
