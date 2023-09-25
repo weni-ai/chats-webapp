@@ -154,11 +154,12 @@ export default {
     },
 
     async download(url) {
+      const filename = url.split('/').at(-1);
       try {
         const file = await Media.get(url);
         const link = document.createElement('a');
         link.href = URL.createObjectURL(file);
-        link.download = this.fullFilename;
+        link.download = filename;
         link.click();
         URL.revokeObjectURL(link.href);
       } catch (err) {
