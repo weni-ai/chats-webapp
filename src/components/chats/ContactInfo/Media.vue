@@ -153,9 +153,8 @@ export default {
       return tab === this.tab;
     },
 
-    async download() {
+    async download(url) {
       try {
-        const { url } = this.media;
         const file = await Media.get(url);
         const link = document.createElement('a');
         link.href = URL.createObjectURL(file);
