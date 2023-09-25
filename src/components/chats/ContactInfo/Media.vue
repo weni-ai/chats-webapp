@@ -153,13 +153,18 @@ export default {
       return tab === this.tab;
     },
 
-    download(url) {
-      const a = document.createElement('a');
-      a.setAttribute('href', url);
-      a.setAttribute('download', true);
-      document.body.appendChild(a);
-      a.click();
-      a.parentNode.removeChild(a);
+    async download() {
+      try {
+        const { url } = this.media;
+        const file = await Media.get(url);
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(file);
+        link.download = this.fullFilename;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      } catch (err) {
+        console.error('Não foi possível realizar o download no momento');
+      }
     },
 
     async loadNextMedias() {
