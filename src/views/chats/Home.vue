@@ -3,9 +3,9 @@
     ref="chats-layout"
     @select-quick-message="(quickMessage) => updateTextBoxMessage(quickMessage.text)"
   >
-    <room-loading v-show="skeletonIsActive" />
-    <chats-background v-if="!room && !skeletonIsActive" />
-    <section v-if="!!room && !skeletonIsActive" class="active-chat">
+    <room-loading v-show="isRoomSkeletonActive" />
+    <chats-background v-if="!room && !isRoomSkeletonActive" />
+    <section v-if="!!room && !isRoomSkeletonActive" class="active-chat">
       <unnnic-chats-header
         :title="room.contact.name || ''"
         :avatarClick="openContactInfo"
@@ -180,7 +180,7 @@ export default {
     showAlertForLastMessage: false,
     networkError: false,
     files: [],
-    skeletonIsActive: false,
+    isRoomSkeletonActive: false,
   }),
 
   computed: {
@@ -386,12 +386,12 @@ export default {
         if (this.$store.state.rooms.newMessagesByRoom[this.id]) {
           this.$delete(this.$store.state.rooms.newMessagesByRoom, this.id);
         }
-        this.skeletonIsActive = true;
+        this.isRoomSkeletonActive = true;
         this.isLoading = true;
         await this.setActiveRoom(this.id);
         await this.getRoomMessages();
         this.isLoading = false;
-        this.skeletonIsActive = false;
+        this.isRoomSkeletonActive = false;
       },
     },
   },
