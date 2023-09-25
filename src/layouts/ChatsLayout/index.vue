@@ -159,9 +159,13 @@ section.chats-layout {
 
   height: 100vh;
   max-height: 100vh;
-  overflow-y: hidden;
+  width: 100vw;
+  max-width: 100vw;
+
   display: grid;
   grid-template-columns: $aside-width auto;
+
+  overflow: hidden;
 
   & > *:not(:last-child) {
     border-right: 1px solid $unnnic-color-neutral-soft;
@@ -200,7 +204,6 @@ section.chats-layout {
   }
 
   main {
-    flex: 1 1;
     grid-column: 2;
 
     height: 100vh;
