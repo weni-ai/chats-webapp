@@ -316,10 +316,10 @@
       "en-us": "Chats in progress ({length})",
       "es": "Chats en curso ({length})"
     },
-    "wating_answer": {
-      "pt-br": "Aguardando resposta ({length})",
-      "en-us": "Waiting for reply ({length})",
-      "es": "Esperando respuesta ({length})"
+    "sent_flows": {
+      "pt-br": "Fluxos enviados ({length})",
+      "en-us": "Sent flows ({length})",
+      "es": "Flujos enviados ({length})"
     },
     "waiting": {
       "pt-br": "Aguardando ({length})",
@@ -914,9 +914,9 @@
       "es": "Activación de flujo"
     },
     "subtitle": {
-      "pt-br": "Contatos de {queue}",
-      "en-us": "Contacts of {queue}",
-      "es": "Contactos de {queue}"
+      "pt-br": "Contatos de {project}",
+      "en-us": "Contacts of {project}",
+      "es": "Contactos de {project}"
     },
     "groups": {
       "pt-br": "Grupos ({length})",

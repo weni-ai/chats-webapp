@@ -57,7 +57,7 @@
       />
       <room-group
         v-if="wating.length"
-        :label="$t('chats.wating_answer', { length: wating.length })"
+        :label="$t('chats.sent_flows', { length: wating.length })"
         :rooms="wating"
         @open="open"
         id="wating"
@@ -224,19 +224,23 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: $unnnic-spacing-stack-sm;
+  gap: $unnnic-spacing-stack-xs;
 
   .chat-groups {
     flex: 1 1;
 
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-sm;
 
+    margin-top: $unnnic-spacing-sm;
     padding-right: $unnnic-spacing-xs;
     margin-right: -$unnnic-spacing-xs; // For the scrollbar to stick to the edge
     overflow-y: auto;
     overflow-x: hidden;
+
+    :deep(.unnnic-collapse) {
+      padding-bottom: $unnnic-spacing-sm;
+    }
   }
 
   .order-by {

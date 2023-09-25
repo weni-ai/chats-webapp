@@ -3,6 +3,7 @@
   <aside-slot-template
     class="contact-info"
     :title="$t('contact_info.title')"
+    icon="information-circle-4"
     @close="$listeners.close"
   >
     <section v-if="!isHistory" class="scrollable">

@@ -3,13 +3,13 @@
     ref="chats-layout"
     @select-quick-message="(quickMessage) => updateTextBoxMessage(quickMessage.text)"
   >
-    <room-loading v-show="isLoading" />
-    <chats-background v-if="!room && !isLoading" />
-    <section v-if="!!room && !isLoading" class="active-chat">
+    <room-loading v-show="isRoomSkeletonActive" />
+    <chats-background v-if="!room && !isRoomSkeletonActive" />
+    <section v-if="!!room && !isRoomSkeletonActive" class="active-chat">
       <unnnic-chats-header
         :title="room.contact.name || ''"
-        :avatarClick="teste"
-        :titleClick="teste"
+        :avatarClick="openContactInfo"
+        :titleClick="openContactInfo"
         :avatarName="room.contact.name"
         :close="openModalCloseChat"
       />
@@ -18,7 +18,7 @@
         :closeButtonTooltip="$t('chats.end')"
         @close="openModalCloseChat"
         @show-contact-info="componentInAsideSlot = 'contactInfo'"
-        @open-select-flow="handlerShowSendFlowMessages"
+        @open-select-flow="openFlowsTrigger"
         :alert="!this.room.is_24h_valid"
         @reconnect="searchMessages"
         :alertNetwork="this.networkError"
@@ -125,7 +125,6 @@ import ContactInfo from '@/components/chats/ContactInfo';
 import ChatClassifier from '@/components/chats/ChatClassifier';
 import QuickMessages from '@/components/chats/QuickMessages';
 import ModalCloseChat from '@/views/chats/ModalCloseChat.vue';
-import LayoutTemplateMessage from '@/components/chats/TemplateMessages/LayoutTemplateMessage';
 
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
@@ -150,7 +149,6 @@ export default {
     ChatClassifier,
     ModalCloseChat,
     FileUploader,
-    LayoutTemplateMessage,
     ModalGetChat,
     RoomLoading,
   },
@@ -182,6 +180,7 @@ export default {
     showAlertForLastMessage: false,
     networkError: false,
     files: [],
+    isRoomSkeletonActive: false,
   }),
 
   computed: {
@@ -217,15 +216,6 @@ export default {
             },
           },
         },
-        layoutTemplateMessage: {
-          name: LayoutTemplateMessage.name,
-          listeners: {
-            close: () => {
-              this.componentInAsideSlot = '';
-            },
-            contact: this.room,
-          },
-        },
       };
     },
   },
@@ -237,8 +227,7 @@ export default {
       const response = await Queue.tags(this.room.queue.uuid);
       this.sectorTags = response.results;
     },
-    teste() {
-      console.log('teste');
+    openContactInfo() {
       this.componentInAsideSlot = 'contactInfo';
     },
     async readMessages() {
@@ -307,9 +296,9 @@ export default {
         const loadingFiles = {};
         const updateLoadingFiles = (messageUuid, progress) => {
           loadingFiles[messageUuid] = progress;
-          // this.totalValue =
-          //   Object.values(loadingFiles).reduce((acc, value) => acc + value) /
-          //   Object.keys(loadingFiles).length;
+          this.totalValue =
+            Object.values(loadingFiles).reduce((acc, value) => acc + value) /
+            Object.keys(loadingFiles).length;
         };
         await this.$store.dispatch('roomMessages/sendMedias', { files, updateLoadingFiles });
         this.totalValue = undefined;
@@ -324,9 +313,9 @@ export default {
       const loadingFiles = {};
       const updateLoadingFiles = (messageUuid, progress) => {
         loadingFiles[messageUuid] = progress;
-        // this.totalValue =
-        //   Object.values(loadingFiles).reduce((acc, value) => acc + value) /
-        //   Object.keys(loadingFiles).length;
+        this.totalValue =
+          Object.values(loadingFiles).reduce((acc, value) => acc + value) /
+          Object.keys(loadingFiles).length;
       };
       const response = await fetch(this.audioMessage.src);
       const blob = await response.blob();
@@ -348,8 +337,8 @@ export default {
       this.$refs['chats-layout']?.handlerShowQuickMessages();
     },
 
-    handlerShowSendFlowMessages() {
-      this.$refs['chats-layout']?.handlerShowSendFlowMessages();
+    openFlowsTrigger() {
+      this.$refs['chats-layout']?.openFlowsTrigger({ contact: this.room?.contact });
     },
 
     openModalCloseChat() {
@@ -397,10 +386,12 @@ export default {
         if (this.$store.state.rooms.newMessagesByRoom[this.id]) {
           this.$delete(this.$store.state.rooms.newMessagesByRoom, this.id);
         }
+        this.isRoomSkeletonActive = true;
         this.isLoading = true;
         await this.setActiveRoom(this.id);
         await this.getRoomMessages();
         this.isLoading = false;
+        this.isRoomSkeletonActive = false;
       },
     },
   },

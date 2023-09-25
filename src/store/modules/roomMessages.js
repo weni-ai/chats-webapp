@@ -165,36 +165,38 @@ export default {
       const { activeRoom } = Rooms.state;
       if (!activeRoom) return;
 
-      medias.forEach(async (media) => {
-        // Create a temporary message to display while sending
-        const mediaPreview = URL.createObjectURL(media);
-        const temporaryMessage = createTemporaryMessage({
-          activeRoom,
-          text: '',
-          media: [{ preview: mediaPreview, file: media, content_type: media.type }],
-        });
-        commit(mutations.ADD_MESSAGE, { message: temporaryMessage });
+      await Promise.all(
+        medias.map(async (media) => {
+          // Create a temporary message to display while sending
+          const mediaPreview = URL.createObjectURL(media);
+          const temporaryMessage = createTemporaryMessage({
+            activeRoom,
+            text: '',
+            media: [{ preview: mediaPreview, file: media, content_type: media.type }],
+          });
+          commit(mutations.ADD_MESSAGE, { message: temporaryMessage });
 
-        // Send the message and update it with the actual message data
-        try {
-          const sentMedia = await Message.sendMedia(activeRoom.uuid, {
-            user_email: activeRoom.user.email,
-            media,
-            updateLoadingFiles,
-          });
-          commit(mutations.UPDATE_MESSAGE, {
-            media: sentMedia,
-            message: temporaryMessage,
-            toUpdateMediaPreview: mediaPreview,
-            toUpdateMessageUuid: temporaryMessage.uuid,
-          });
-        } catch (error) {
-          commit(mutations.SET_FAILED_MESSAGE, {
-            message: temporaryMessage,
-          });
-          console.error('An error occurred while sending the media', error);
-        }
-      });
+          // Send the message and update it with the actual message data
+          try {
+            const sentMedia = await Message.sendMedia(activeRoom.uuid, {
+              user_email: activeRoom.user.email,
+              media,
+              updateLoadingFiles,
+            });
+            commit(mutations.UPDATE_MESSAGE, {
+              media: sentMedia,
+              message: temporaryMessage,
+              toUpdateMediaPreview: mediaPreview,
+              toUpdateMessageUuid: temporaryMessage.uuid,
+            });
+          } catch (error) {
+            commit(mutations.SET_FAILED_MESSAGE, {
+              message: temporaryMessage,
+            });
+            console.error('An error occurred while sending the media', error);
+          }
+        }),
+      );
     },
 
     async resendMessage({ commit }, { message }) {
