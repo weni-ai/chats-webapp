@@ -18,10 +18,12 @@ export default {
 
   async getAllBySector({ nextQuickMessagesShared = '' }) {
     const projectUuid = getProject();
-    const endpoint = `/sector_quick_messages/?project=${projectUuid}`;
+    const endpoint = `/sector_quick_messages/`;
     const params = getURLParams({ URL: nextQuickMessagesShared, endpoint });
 
-    const url = nextQuickMessagesShared ? `${endpoint}${params}` : endpoint;
+    const url = nextQuickMessagesShared
+      ? `${endpoint}${params}`
+      : `${endpoint}?project=${projectUuid}`;
     const response = await http.get(url);
 
     return response.data;
