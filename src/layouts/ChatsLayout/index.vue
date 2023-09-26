@@ -1,14 +1,16 @@
 <template>
   <section :class="['chats-layout', isAsideVisible && 'has-aside']">
     <slot name="room-list" v-if="isRoomListVisible">
-      <div class="sidebar">
+      <sidebar-loading v-show="isLoadingSidebar" />
+      <div v-show="!isLoadingSidebar" class="sidebar">
         <preferences-bar
           @show-quick-messages="handlerShowQuickMessages"
           :dashboard="canAccessDashboard"
         />
 
-        <div class="flows-trigger-button" v-if="canTriggerFlows">
+        <div class="flows-trigger-button">
           <unnnic-button-next
+            v-if="canTriggerFlows"
             size="small"
             type="terciary"
             iconCenter="pencil-write-1"
@@ -17,6 +19,15 @@
         </div>
 
         <the-room-list class="room-list" />
+
+        <unnnic-button-next
+          class="history-button"
+          :text="isHistoryView ? $t('back_to_chats') : $t('chats.see_history')"
+          :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : 'task-list-clock-1'"
+          type="terciary"
+          size="small"
+          @click="navigate(isHistoryView ? 'home' : 'rooms.closed')"
+        />
       </div>
     </slot>
 
@@ -43,17 +54,14 @@
     <section v-if="isAsideVisible" class="aside">
       <slot name="aside" />
     </section>
-    <!-- <div v-show="isLoading">
-      <skeleton-loading />
-    </div> -->
   </section>
 </template>
 
 <script>
+import SidebarLoading from '@/views/loadings/HomeSidebar';
 import PreferencesBar from '@/components/PreferencesBar.vue';
 import Sector from '@/services/api/resources/settings/sector.js';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
-// import SkeletonLoading from '@/views/loadings/chats.vue';
 import QuickMessages from '@/components/chats/QuickMessages';
 import TheRoomList from './components/TheRoomList';
 import LayoutFlowsTrigger from './components/FlowsTrigger';
@@ -64,19 +72,21 @@ export default {
   components: {
     PreferencesBar,
     TheRoomList,
-    // SkeletonLoading,
+    SidebarLoading,
     LayoutFlowsTrigger,
     QuickMessages,
   },
 
-  mounted() {
-    this.getCountSectors();
-    this.getPermissionToSendFlowsTrigger();
+  async mounted() {
+    await this.getCountSectors();
+    await this.getPermissionToSendFlowsTrigger();
+    this.isLoadingSidebar = false;
   },
 
   data: () => ({
     sectors: {},
     isLoading: false,
+    isLoadingSidebar: true,
     canTriggerFlows: false,
     canAccessDashboard: false,
     showFlowsTrigger: false,
@@ -132,6 +142,11 @@ export default {
     selectQuickMessage(quickMessage) {
       this.$emit('select-quick-message', quickMessage);
     },
+    navigate(name) {
+      this.$router.push({
+        name,
+      });
+    },
   },
 
   computed: {
@@ -146,6 +161,9 @@ export default {
     },
     quickMessagesVisible() {
       return !this.showFlowsTrigger && this.showQuickMessages;
+    },
+    isHistoryView() {
+      return this.$route.name === 'rooms.closed';
     },
   },
 };
@@ -188,6 +206,10 @@ section.chats-layout {
       button {
         width: 100%;
       }
+    }
+
+    .history-button {
+      margin-right: $unnnic-spacing-xs;
     }
 
     .room-list {

@@ -66,7 +66,6 @@
         id="wating"
       />
       <room-group
-        v-bind:style="isHistoryView ? 'opacity: 0.5;' : 'opacity: 20'"
         v-if="rooms.length"
         :label="$t('chats.in_progress', { length: rooms.length })"
         :rooms="rooms"
@@ -74,15 +73,6 @@
         id="in_progress"
       />
     </section>
-
-    <unnnic-button-next
-      :text="isHistoryView ? $t('back_to_chats') : $t('chats.see_history')"
-      :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : 'task-list-clock-1'"
-      type="terciary"
-      size="small"
-      :disabled="isViewMode"
-      @click="navigate(isHistoryView ? 'home' : 'rooms.closed')"
-    />
   </div>
 </template>
 
@@ -136,9 +126,6 @@ export default {
     ...mapState({
       listRoomHasNext: (state) => state.rooms.listRoomHasNext,
     }),
-    isHistoryView() {
-      return this.$route.name === 'rooms.closed';
-    },
 
     totalUnreadMessages() {
       return this.rooms.reduce(
@@ -170,11 +157,6 @@ export default {
   },
 
   methods: {
-    navigate(name) {
-      this.$router.push({
-        name,
-      });
-    },
     async open(room) {
       if (this.isViewMode) {
         await this.$store.dispatch('rooms/setActiveRoom', room);
