@@ -39,7 +39,10 @@
         >
       </div>
     </div>
+
+    <rooms-list-loading v-if="isLoadingRooms" />
     <section
+      v-else
       class="chat-groups"
       @scroll="
         (event) => {
@@ -86,12 +89,14 @@
 <script>
 import { mapState, mapGetters } from 'vuex';
 
+import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import RoomGroup from './RoomGroup';
 
 export default {
   name: 'TheRoomList',
 
   components: {
+    RoomsListLoading,
     RoomGroup,
   },
 
@@ -113,7 +118,7 @@ export default {
     limit: 100,
     nameOfContact: '',
     timerId: 0,
-    loading: false,
+    isLoadingRooms: true,
     createdOnFilter: false,
     lastCreatedFilter: true,
   }),
@@ -159,7 +164,7 @@ export default {
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
           this.listRoom(false);
-        }, 1000);
+        }, 800);
       },
     },
   },
@@ -187,7 +192,7 @@ export default {
     },
 
     async listRoom(concat, order = '-last_interaction') {
-      this.loading = true;
+      this.isLoadingRooms = true;
       const { viewedAgent } = this;
       try {
         await this.$store.dispatch('rooms/getAll', {
@@ -198,9 +203,9 @@ export default {
           contact: this.nameOfContact,
           viewedAgent,
         });
-        this.loading = false;
+        this.isLoadingRooms = false;
       } catch {
-        this.loading = false;
+        this.isLoadingRooms = false;
         console.error('Não foi possível listar as salas');
       }
     },
