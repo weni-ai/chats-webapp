@@ -152,8 +152,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$aside-width: 300px;
-
 section.chats-layout {
   padding: 0;
 
@@ -163,7 +161,7 @@ section.chats-layout {
   max-width: 100vw;
 
   display: grid;
-  grid-template-columns: $aside-width auto;
+  grid-template-columns: 3fr 9fr;
 
   overflow: hidden;
 
@@ -172,7 +170,7 @@ section.chats-layout {
   }
 
   &.has-aside {
-    grid-template-columns: $aside-width auto $aside-width;
+    grid-template-columns: 3fr 6fr 3fr;
   }
 
   .sidebar {
@@ -181,8 +179,6 @@ section.chats-layout {
     gap: $unnnic-spacing-stack-xs;
 
     height: 100vh;
-    width: $aside-width;
-    min-width: $aside-width;
 
     padding: 0 0 $unnnic-spacing-xs $unnnic-spacing-xs;
 
@@ -218,16 +214,12 @@ section.chats-layout {
     flex-direction: column;
 
     height: 100vh;
-    width: $aside-width;
-    min-width: $aside-width;
 
     border: 1px solid $unnnic-color-neutral-soft;
   }
 
   .aside {
     height: 100vh;
-    width: $aside-width;
-    min-width: $aside-width;
     background: $unnnic-color-background-grass;
 
     grid-column: 3;
