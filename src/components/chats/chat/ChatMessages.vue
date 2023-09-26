@@ -1,15 +1,12 @@
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
-  <section
-    class="chat-messages"
-    ref="chatMessages"
-    @scroll="
-      (event) => {
-        handleScroll(event.srcElement);
-      }
-    "
-  >
-    <section v-for="message in messages" :key="message.uuid" class="chat-messages__room">
+  <section class="chat-messages" ref="chatMessages" @scroll="handleScroll">
+    <section
+      v-for="message in messages"
+      :key="message.uuid"
+      :ref="`message-${message.uuid}`"
+      class="chat-messages__room"
+    >
       <!-- missing info in API return data -->
       <div v-if="false" class="chat-messages__room__divisor">
         <div class="chat-messages__room__divisor__line" />
@@ -151,7 +148,12 @@ export default {
     messageToResend: null,
     isFullscreen: false,
     currentMedia: {},
+    prevUuidBeforePagination: null,
   }),
+
+  mounted() {
+    this.handleScroll();
+  },
 
   computed: {
     rooms() {
@@ -186,8 +188,11 @@ export default {
       }
     },
 
-    handleScroll(target) {
-      if (target.scrollTop === 0) {
+    handleScroll() {
+      const { chatMessages } = this.$refs;
+      if (!chatMessages) return;
+
+      if (chatMessages.scrollTop === 0) {
         this.$emit('scrollTop');
       }
     },
@@ -224,17 +229,30 @@ export default {
       }
     },
 
-    scrollMessagesToBottom() {
+    async manageScrollForNewMessages() {
       const { chatMessages } = this.$refs;
       if (!chatMessages) return;
-      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      const { prevUuidBeforePagination, messages } = this;
+
+      if (prevUuidBeforePagination && chatMessages.scrollTop === 0) {
+        const elementToScroll = this.$refs[`message-${prevUuidBeforePagination}`]?.[0];
+        if (elementToScroll) {
+          await elementToScroll.scrollIntoView({ block: 'start' });
+          chatMessages.scrollTop += 1;
+        }
+      } else {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      this.prevUuidBeforePagination = messages?.[0]?.uuid;
     },
   },
 
   watch: {
     messages() {
       this.$nextTick(() => {
-        this.scrollMessagesToBottom();
+        this.manageScrollForNewMessages();
       });
     },
   },
