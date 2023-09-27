@@ -199,7 +199,8 @@
     />
     <fullscreen-preview
       v-if="isFullscreen"
-      @download="$emit('download')"
+      :downloadMediaUrl="currentMedia.url"
+      :downloadMediaName="currentMedia.message"
       @close="isFullscreen = false"
       @next="nextMedia"
       @previous="previousMedia"
