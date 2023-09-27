@@ -23,22 +23,27 @@ export function groupSequentialSentMessages(messages) {
       acc.push(message);
       return acc;
     }
-    const getDifference = moment(message?.created_on).diff(moment(acc.at(-1)?.created_on));
-    const hours = moment.duration(getDifference).asHours();
-    const minutes = hours * 60;
+    const messageTime = moment(message?.created_on);
+    const lastMessageTime = moment(acc.at(-1)?.created_on);
 
-    const pastOneMinute = minutes > 1;
+    const sameMinute = messageTime.isSame(lastMessageTime, 'minute');
 
-    const verifyIdUsere = acc.at(-1)?.sender?.uuid !== message.sender.uuid;
+    const isCommingDifferentUsers = acc.at(-1)?.sender?.uuid !== message.sender.uuid;
 
-    if (verifyIdUsere || pastOneMinute) {
-      const m = {
+    if (isCommingDifferentUsers || !sameMinute) {
+      const charsFromDayToMinute = 16;
+      const groupUuid = `${message.created_on.slice(0, charsFromDayToMinute)}-${
+        message.sender.uuid
+      }`;
+      const newGroup = {
         ...message,
         content: [{ ...message }],
+        uuid: groupUuid || message.uuid,
       };
-      acc.push(m);
+      acc.push(newGroup);
       return acc;
     }
+
     acc[acc.length - 1].content.push({ ...message });
     return acc;
   }, []);
