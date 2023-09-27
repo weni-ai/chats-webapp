@@ -37,15 +37,12 @@
 
     <template slot="tab-panel-docs">
       <section class="documents__content">
-        <document-preview
+        <unnnic-chats-message
           v-for="document in documents"
-          :type="document.content_type"
-          size="sm"
           :key="document.url"
-          :src="document.url"
-          :fullFilename="document.url"
-          class="documents__content__document"
-          @download="download(document.url)"
+          :time="new Date(document.created_on)"
+          :documentName="treatedMediaName(document.url)"
+          @click="download(document.url)"
         />
       </section>
     </template>
@@ -83,7 +80,6 @@
 </template>
 
 <script>
-import DocumentPreview from '@/components/chats/MediaMessage/Previews/Document';
 import ImagePreview from '@/components/chats/MediaMessage/Previews/Image';
 import AudioPreview from '@/components/chats/MediaMessage/Previews/Audio';
 import Media from '@/services/api/resources/chats/media';
@@ -93,7 +89,6 @@ export default {
   name: 'ContactMedia',
 
   components: {
-    DocumentPreview,
     ImagePreview,
     AudioPreview,
     VideoPreview,
@@ -153,13 +148,22 @@ export default {
       return tab === this.tab;
     },
 
+    treatedMediaName(mediaName) {
+      if (mediaName) {
+        return mediaName.split('/')?.at(-1);
+      }
+
+      throw new Error('Pass as a parameter the name of the media you want to handle');
+    },
+
     download(url) {
-      const a = document.createElement('a');
-      a.setAttribute('href', url);
-      a.setAttribute('download', true);
-      document.body.appendChild(a);
-      a.click();
-      a.parentNode.removeChild(a);
+      try {
+        const mediaName = this.treatedMediaName(url);
+
+        Media.download({ media: url, name: mediaName });
+      } catch (error) {
+        console.error('An error occurred when trying to download the media:', error);
+      }
     },
 
     async loadNextMedias() {
@@ -276,14 +280,15 @@ export default {
     }
   }
 }
-.documents__content {
-  display: flex;
-  flex-direction: column;
-  gap: $unnnic-spacing-stack-xs;
 
-  &__document {
-    padding-bottom: 0.25rem;
-    border-bottom: solid 1px $unnnic-color-neutral-soft;
+.documents__content {
+  display: grid;
+  gap: $unnnic-spacing-nano;
+
+  :deep(.unnnic-chats-message.is-document) {
+    .unnnic-chats-message__time {
+      display: none;
+    }
   }
 }
 
