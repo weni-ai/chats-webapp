@@ -149,11 +149,8 @@ export default {
     isFullscreen: false,
     currentMedia: {},
     prevUuidBeforePagination: null,
+    prevRoomUuid: null,
   }),
-
-  mounted() {
-    this.handleScroll();
-  },
 
   computed: {
     rooms() {
@@ -233,7 +230,12 @@ export default {
       const { chatMessages } = this.$refs;
       if (!chatMessages) return;
 
-      const { prevUuidBeforePagination, messages } = this;
+      const { prevUuidBeforePagination, prevRoomUuid, messages } = this;
+
+      if (prevRoomUuid !== this.room.uuid) {
+        this.handleScroll();
+        this.scrollToBottom();
+      }
 
       if (prevUuidBeforePagination && chatMessages.scrollTop === 0) {
         const elementToScroll = this.$refs[`message-${prevUuidBeforePagination}`]?.[0];
@@ -242,10 +244,18 @@ export default {
           chatMessages.scrollTop += 1;
         }
       } else {
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        this.scrollToBottom();
       }
 
+      this.prevRoomUuid = this.room.uuid;
       this.prevUuidBeforePagination = messages?.[0]?.uuid;
+    },
+
+    scrollToBottom() {
+      const { chatMessages } = this.$refs;
+      if (!chatMessages) return;
+
+      chatMessages.scrollTop = chatMessages.scrollHeight;
     },
   },
 
