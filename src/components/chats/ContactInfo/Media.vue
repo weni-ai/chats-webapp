@@ -7,10 +7,10 @@
     </template>
 
     <template slot="tab-panel-media">
-      <section class="media__content" style="width: 60px; height: 60px">
-        <div v-for="media in images" :key="media.url" class="media__content__media">
+      <section class="media__content">
+        <div v-for="media in images" :key="media.url">
           <div class="media__content__media__preview">
-            <image-preview
+            <!-- <image-preview
               v-if="media.content_type.startsWith('image/')"
               v-bind="media"
               fullscreen-on-click
@@ -23,7 +23,8 @@
               :src="media.url"
               fullscreen-on-click
               @click="$emit('fullscreen', media.url, images)"
-            />
+            /> -->
+            <media-preview :image="media.url" @click="$emit('fullscreen', media.url, images)" />
           </div>
         </div>
       </section>
@@ -80,18 +81,20 @@
 </template>
 
 <script>
-import ImagePreview from '@/components/chats/MediaMessage/Previews/Image';
+// import ImagePreview from '@/components/chats/MediaMessage/Previews/Image';
 import AudioPreview from '@/components/chats/MediaMessage/Previews/Audio';
 import Media from '@/services/api/resources/chats/media';
-import VideoPreview from '@/components/chats/MediaMessage/Previews/Video';
+// import VideoPreview from '@/components/chats/MediaMessage/Previews/Video';
+import MediaPreview from '@/components/chats/MediaMessage/Previews/Media';
 
 export default {
   name: 'ContactMedia',
 
   components: {
-    ImagePreview,
+    // ImagePreview,
     AudioPreview,
-    VideoPreview,
+    // VideoPreview,
+    MediaPreview,
   },
 
   props: {
