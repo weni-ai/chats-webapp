@@ -285,15 +285,10 @@ export default {
           try {
             const mediaToDownload = media.url || media.preview;
             const filename = media.url?.split('/').at(-1) || media.file.name;
-            const file = await Media.get(mediaToDownload);
-            const link = document.createElement('a');
 
-            link.href = URL.createObjectURL(file);
-            link.download = filename;
-            link.click();
-            URL.revokeObjectURL(link.href);
-          } catch (err) {
-            console.error('Unable to download at now.');
+            Media.download({ media: mediaToDownload, name: filename });
+          } catch (error) {
+            console.error('An error occurred when trying to download the media:', error);
           }
         }
       }
