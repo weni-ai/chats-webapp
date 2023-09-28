@@ -7,7 +7,7 @@
     </template>
 
     <template slot="tab-panel-media">
-      <section class="media__content">
+      <section class="medias__content">
         <media-preview
           v-for="(media, index) in images"
           :key="media.created_on + index"
@@ -41,27 +41,21 @@
       </div>
     </template>
     <template slot="tab-panel-audio">
-      <div class="scrollable" style="background-color: #ffff">
-        <section class="media__content_audio">
-          <div
+      <div class="scrollable">
+        <section class="audios__content">
+          <unnnic-tool-tip
             v-for="audio in audios"
             :key="audio.url"
-            class="media__content_audio__media"
-            style="display: flex; width: 100%"
+            :text="audioTooltipText(audio)"
+            side="top"
+            enabled
           >
-            <div style="width: 6%">
-              <audio-preview :currentAudio="audio.url"></audio-preview>
-            </div>
-            <div style="width: 94%">
-              <span
-                >Enviado por {{ audio.sender }} |
-                {{ audio.duration == 'Infinity' ? 0 : audio.duration }}s
-              </span>
-              <!-- <span class="audio-text">
-                Áudio enviado | {{ audio.duration == 'Infinity' ? 0 : audio.duration }}s
-              </span> -->
-            </div>
-          </div>
+            <unnnic-audio-recorder
+              class="audios__content__audio"
+              :src="audio.url"
+              :canDiscard="false"
+            />
+          </unnnic-tool-tip>
         </section>
       </div>
     </template>
@@ -69,16 +63,15 @@
 </template>
 
 <script>
-import AudioPreview from '@/components/chats/MediaMessage/Previews/Audio';
 import Media from '@/services/api/resources/chats/media';
 import MediaPreview from '@/components/chats/MediaMessage/Previews/Media';
+import moment from 'moment';
 
 export default {
   name: 'ContactMedia',
 
   components: {
     MediaPreview,
-    AudioPreview,
   },
 
   props: {
@@ -133,6 +126,14 @@ export default {
   methods: {
     isActiveTab(tab) {
       return tab === this.tab;
+    },
+
+    audioTooltipText(audio) {
+      return this.$t('contact_info.audio_tooltip', {
+        agent: audio.sender || '',
+        date: moment(audio.created_on).format('L'),
+        time: moment(audio.created_on).format('LT'),
+      });
     },
 
     treatedMediaName(mediaName) {
@@ -247,7 +248,7 @@ export default {
   }
 }
 
-.media__content {
+.medias__content {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
   gap: $unnnic-spacing-xs;
@@ -264,29 +265,12 @@ export default {
   }
 }
 
-.media__content_audio {
+.audios__content {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: $unnnic-spacing-stack-xs;
+  gap: $unnnic-spacing-sm;
 
-  max-width: 100%;
-
-  &__media {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-bottom: solid 1px $unnnic-color-neutral-soft;
-    // aspect-ratio: 1;
-
-    &__preview {
-      height: 100%;
-      width: 15%;
-    }
-  }
-  .scrollable {
-    overflow-y: auto;
-    height: 100%;
-    background-color: #ffff;
+  &__audio {
+    padding: $unnnic-spacing-sm;
   }
 }
 

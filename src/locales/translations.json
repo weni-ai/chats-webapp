@@ -671,8 +671,6 @@
       "es": "Chat cerrado por el agente"
     }
   },
-  "contact_information": {
-  },
   "contact_info": {
     "title": {
       "pt-br": "Informações do contato",
@@ -718,6 +716,11 @@
       "pt-br": "Transferir contato",
       "en-us": "Transfer contact",
       "es": "Transferir contacto"
+    },
+    "audio_tooltip": {
+      "pt-br": "{agent} {date} às {time}",
+      "en-us": "{agent} {date} at {time}",
+      "es": "{agent} {date} a las {time}"
     }
   },
   "last_online_time": {
