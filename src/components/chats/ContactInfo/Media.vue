@@ -189,6 +189,8 @@ export default {
       if (response.next) {
         this.loadNextMedias();
       }
+
+      this.$emit('loaded-medias');
     },
     async loadNextMediasClosedRoom() {
       const response = await Media.listFromContactAndClosedRoom({

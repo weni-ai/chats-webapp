@@ -242,7 +242,7 @@ section.chats-layout {
 
   .aside {
     height: 100vh;
-    background: $unnnic-color-background-grass;
+    background: $unnnic-color-background-snow;
 
     grid-column: 3;
   }

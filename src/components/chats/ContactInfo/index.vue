@@ -1,215 +1,220 @@
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
-  <aside-slot-template
-    class="contact-info"
-    :title="$t('contact_info.title')"
-    icon="information-circle-4"
-    @close="$listeners.close"
-  >
-    <section v-if="!isHistory" class="scrollable">
-      <aside-slot-template-section>
-        <section class="infos">
-          <header class="connection-info__header">
-            <h1 class="username">
-              {{ room.contact.name }}
-            </h1>
+  <div>
+    <contact-infos-loading v-show="isLoading" />
+    <aside-slot-template
+      v-show="!isLoading"
+      class="contact-info"
+      :title="$t('contact_info.title')"
+      icon="information-circle-4"
+      @close="$listeners.close"
+    >
+      <section v-if="!isHistory" class="scrollable">
+        <aside-slot-template-section>
+          <section class="infos">
+            <header class="connection-info__header">
+              <h1 class="username">
+                {{ room.contact.name }}
+              </h1>
 
-            <unnnic-button-next
-              iconCenter="button-refresh-arrow-1"
-              type="terciary"
-              size="small"
-              @click="refreshContactInfos"
-              :disabled="isRefreshContactDisabled"
-            />
-          </header>
-
-          <div class="connection-info">
-            <p v-if="room.contact.status === 'online'">
-              {{ $t('status.online') }}
-            </p>
-            <p v-if="lastMessageFromContact?.created_on" style="margin-bottom: 12px">
-              {{
-                $t('last_message_time.date', {
-                  date: moment(lastMessageFromContact?.created_on).fromNow(),
-                })
-              }}
-            </p>
-            <template>
-              <hgroup class="info">
-                <h3 class="title">{{ contactNumber.plataform }}:</h3>
-                <h4 class="description">{{ contactNumber.contactNum }}</h4>
-              </hgroup>
-            </template>
-            <template v-if="!!room.custom_fields">
-              <custom-field
-                v-for="(value, key) in customFields"
-                :key="key"
-                :title="key"
-                :description="value"
-                :is-editable="room.can_edit_custom_fields"
-                :is-current="isCurrentCustomField(key)"
-                :value="currentCustomField?.[key]"
-                @update-current-custom-field="updateCurrentCustomField"
-                @save-value="saveCurrentCustomFieldValue"
+              <unnnic-button-next
+                iconCenter="button-refresh-arrow-1"
+                type="terciary"
+                size="small"
+                @click="refreshContactInfos"
+                :disabled="isRefreshContactDisabled"
               />
-            </template>
-          </div>
-          <div
-            style="display: flex; margin-left: -8px; align-items: center"
-            v-if="!isLinkedToOtherAgent && !isViewMode"
-          >
-            <unnnicSwitch
-              :value="isLinkedUser"
-              @input="addContactToAgent"
-              size="small"
-              :textRight="
-                isLinkedUser
-                  ? $t('contact_info.switch_disassociate_contact')
-                  : $t('contact_info.switch_associate_contact')
-              "
-            />
-            <unnnic-tool-tip
-              enabled
-              :text="$t('contact_info.switch_tooltip')"
-              side="bottom"
-              maxWidth="21rem"
-            >
-              <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
-            </unnnic-tool-tip>
-          </div>
-          <unnnic-button-next
-            v-if="!isHistory && !isViewMode"
-            class="transfer__button"
-            :text="$t('contact_info.see_contact_history')"
-            iconLeft="export-1"
-            type="terciary"
-            size="small"
-            @click="openHistory()"
-          />
-          <div v-if="isLinkedToOtherAgent">
-            <span>{{
-              $t('contact_info.linked_contact', {
-                name: this.room.linked_user,
-              })
-            }}</span>
-          </div>
-        </section>
-      </aside-slot-template-section>
+            </header>
 
-      <aside-slot-template-section>
-        <p class="title-transfer-chat">{{ $t('contact_info.transfer_contact') }}</p>
-        <div style="margin-top: 20px; margin-bottom: 20px">
-          <unnnic-radio size="sm" v-model="transferRadio" value="agent" :disabled="isViewMode">
-            {{ $t('agent') }}
-          </unnnic-radio>
-
-          <unnnic-radio size="sm" v-model="transferRadio" value="queue" :disabled="isViewMode">
-            {{ $t('queue') }}
-          </unnnic-radio>
-        </div>
-        <section class="transfer-section">
-          <unnnic-select-smart
-            v-model="transferContactTo"
-            :options="transferOptions"
-            autocomplete
-            autocompleteIconLeft
-            autocompleteClearOnFocus
-            :disabled="!!transferContactError || isViewMode"
-          />
-
-          <unnnic-button-next
-            class="transfer__button"
-            :text="$t('transfer')"
-            type="terciary"
-            size="small"
-            @click="transferContact"
-            :disabled="isViewMode"
-          />
-        </section>
-      </aside-slot-template-section>
-
-      <aside-slot-template-section>
-        <contact-media
-          :room="room"
-          @fullscreen="openFullScreen"
-          :history="isHistory"
-          :contactInfo="contact"
-        />
-      </aside-slot-template-section>
-    </section>
-
-    <section v-if="isHistory" class="scrollable">
-      <aside-slot-template-section>
-        <section class="infos">
-          <div class="connection-info">
-            <p class="username">
-              {{ contact.name }}
-            </p>
-            <template>
-              <p style="margin-bottom: 0.75rem">
-                <span class="title"> {{ contactNumberClosedChat.plataform }}: </span>
-                {{ contactNumberClosedChat.contactNum }}
-              </p>
-            </template>
             <div class="connection-info">
-              <template v-if="!!contact.custom_fields">
-                <p v-for="(value, key) in customFields" :key="key">
-                  <span class="title"> {{ key }}: </span>
-                  {{ value }}
-                </p>
+              <p v-if="room.contact.status === 'online'">
+                {{ $t('status.online') }}
+              </p>
+              <p v-if="lastMessageFromContact?.created_on" style="margin-bottom: 12px">
+                {{
+                  $t('last_message_time.date', {
+                    date: moment(lastMessageFromContact?.created_on).fromNow(),
+                  })
+                }}
+              </p>
+              <template>
+                <hgroup class="info">
+                  <h3 class="title">{{ contactNumber.plataform }}:</h3>
+                  <h4 class="description">{{ contactNumber.contactNum }}</h4>
+                </hgroup>
+              </template>
+              <template v-if="!!room.custom_fields">
+                <custom-field
+                  v-for="(value, key) in customFields"
+                  :key="key"
+                  :title="key"
+                  :description="value"
+                  :is-editable="room.can_edit_custom_fields"
+                  :is-current="isCurrentCustomField(key)"
+                  :value="currentCustomField?.[key]"
+                  @update-current-custom-field="updateCurrentCustomField"
+                  @save-value="saveCurrentCustomFieldValue"
+                />
               </template>
             </div>
-          </div>
-        </section>
-      </aside-slot-template-section>
+            <div
+              style="display: flex; margin-left: -8px; align-items: center"
+              v-if="!isLinkedToOtherAgent && !isViewMode"
+            >
+              <unnnicSwitch
+                :value="isLinkedUser"
+                @input="addContactToAgent"
+                size="small"
+                :textRight="
+                  isLinkedUser
+                    ? $t('contact_info.switch_disassociate_contact')
+                    : $t('contact_info.switch_associate_contact')
+                "
+              />
+              <unnnic-tool-tip
+                enabled
+                :text="$t('contact_info.switch_tooltip')"
+                side="bottom"
+                maxWidth="21rem"
+              >
+                <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+              </unnnic-tool-tip>
+            </div>
+            <unnnic-button-next
+              v-if="!isHistory && !isViewMode"
+              class="transfer__button"
+              :text="$t('contact_info.see_contact_history')"
+              iconLeft="export-1"
+              type="terciary"
+              size="small"
+              @click="openHistory()"
+            />
+            <div v-if="isLinkedToOtherAgent">
+              <span>{{
+                $t('contact_info.linked_contact', {
+                  name: this.room.linked_user,
+                })
+              }}</span>
+            </div>
+          </section>
+        </aside-slot-template-section>
 
-      <aside-slot-template-section>
-        <contact-media
-          :room="room"
-          @fullscreen="openFullScreen"
-          :history="isHistory"
-          :contactInfo="contact"
+        <aside-slot-template-section>
+          <p class="title-transfer-chat">{{ $t('contact_info.transfer_contact') }}</p>
+          <div style="margin-top: 20px; margin-bottom: 20px">
+            <unnnic-radio size="sm" v-model="transferRadio" value="agent" :disabled="isViewMode">
+              {{ $t('agent') }}
+            </unnnic-radio>
+
+            <unnnic-radio size="sm" v-model="transferRadio" value="queue" :disabled="isViewMode">
+              {{ $t('queue') }}
+            </unnnic-radio>
+          </div>
+          <section class="transfer-section">
+            <unnnic-select-smart
+              v-model="transferContactTo"
+              :options="transferOptions"
+              autocomplete
+              autocompleteIconLeft
+              autocompleteClearOnFocus
+              :disabled="!!transferContactError || isViewMode"
+            />
+
+            <unnnic-button-next
+              class="transfer__button"
+              :text="$t('transfer')"
+              type="terciary"
+              size="small"
+              @click="transferContact"
+              :disabled="isViewMode"
+            />
+          </section>
+        </aside-slot-template-section>
+
+        <aside-slot-template-section>
+          <contact-media
+            :room="room"
+            @fullscreen="openFullScreen"
+            :history="isHistory"
+            :contactInfo="contact"
+            @loaded-medias="isLoading = false"
+          />
+        </aside-slot-template-section>
+      </section>
+
+      <section v-if="isHistory" class="scrollable">
+        <aside-slot-template-section>
+          <section class="infos">
+            <div class="connection-info">
+              <p class="username">
+                {{ contact.name }}
+              </p>
+              <template>
+                <p style="margin-bottom: 0.75rem">
+                  <span class="title"> {{ contactNumberClosedChat.plataform }}: </span>
+                  {{ contactNumberClosedChat.contactNum }}
+                </p>
+              </template>
+              <div class="connection-info">
+                <template v-if="!!contact.custom_fields">
+                  <p v-for="(value, key) in customFields" :key="key">
+                    <span class="title"> {{ key }}: </span>
+                    {{ value }}
+                  </p>
+                </template>
+              </div>
+            </div>
+          </section>
+        </aside-slot-template-section>
+
+        <aside-slot-template-section>
+          <contact-media
+            :room="room"
+            @fullscreen="openFullScreen"
+            :history="isHistory"
+            :contactInfo="contact"
+          />
+        </aside-slot-template-section>
+      </section>
+      <unnnic-modal
+        :text="$t('successfully_transferred_chat')"
+        :description="
+          $t('successfully_transferred_contact_to.line', {
+            name: transferContactTo?.[0]?.label || '',
+          })
+        "
+        modalIcon="check-circle-1-1"
+        scheme="feedback-green"
+        :showModal="showSuccessfulTransferModal"
+        @close="
+          $store.commit('chats/setActiveChat', null),
+            (showSuccessfulTransferModal = false),
+            navigate('home')
+        "
+      />
+      <fullscreen-preview
+        v-if="isFullscreen"
+        @download="$emit('download')"
+        @close="isFullscreen = false"
+        @next="nextMedia"
+        @previous="previousMedia"
+      >
+        <video-preview
+          v-if="currentMedia.content_type.includes('mp4')"
+          @keypress.enter="() => {}"
+          @click.stop="() => {}"
+          :src="currentMedia.url"
         />
-      </aside-slot-template-section>
-    </section>
-    <unnnic-modal
-      :text="$t('successfully_transferred_chat')"
-      :description="
-        $t('successfully_transferred_contact_to.line', {
-          name: transferContactTo?.[0]?.label || '',
-        })
-      "
-      modalIcon="check-circle-1-1"
-      scheme="feedback-green"
-      :showModal="showSuccessfulTransferModal"
-      @close="
-        $store.commit('chats/setActiveChat', null),
-          (showSuccessfulTransferModal = false),
-          navigate('home')
-      "
-    />
-    <fullscreen-preview
-      v-if="isFullscreen"
-      @download="$emit('download')"
-      @close="isFullscreen = false"
-      @next="nextMedia"
-      @previous="previousMedia"
-    >
-      <video-preview
-        v-if="currentMedia.content_type.includes('mp4')"
-        @keypress.enter="() => {}"
-        @click.stop="() => {}"
-        :src="currentMedia.url"
-      />
-      <img
-        v-else
-        :src="currentMedia.url"
-        :alt="currentMedia.url"
-        @keypress.enter="() => {}"
-        @click.stop="() => {}"
-      />
-    </fullscreen-preview>
-  </aside-slot-template>
+        <img
+          v-else
+          :src="currentMedia.url"
+          :alt="currentMedia.url"
+          @keypress.enter="() => {}"
+          @click.stop="() => {}"
+        />
+      </fullscreen-preview>
+    </aside-slot-template>
+  </div>
 </template>
 
 <script>
@@ -222,6 +227,7 @@ import Sector from '@/services/api/resources/settings/sector';
 import LinkContact from '@/services/api/resources/chats/linkContact';
 import { unnnicCallAlert } from '@weni/unnnic-system';
 import Queue from '@/services/api/resources/settings/queue';
+import ContactInfosLoading from '@/views/loadings/ContactInfos.vue';
 import CustomField from './CustomField';
 import ContactMedia from './Media';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
@@ -233,6 +239,7 @@ export default {
   name: 'ContactInfo',
 
   components: {
+    ContactInfosLoading,
     AsideSlotTemplate,
     AsideSlotTemplateSection,
     CustomField,
@@ -255,6 +262,7 @@ export default {
   },
 
   data: () => ({
+    isLoading: true,
     transferOptions: [],
     queues: [],
     transferContactTo: [],
