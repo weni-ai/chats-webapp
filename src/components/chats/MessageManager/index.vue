@@ -84,7 +84,7 @@
         />
       </div>
       <suggestion-box
-        :search="message"
+        :search="textBoxMessage"
         :suggestions="shortcuts"
         :keyboard-event="keyboardEvent"
         :copilot="canUseCopilot"
@@ -221,8 +221,8 @@ export default {
     closeSuggestionBox() {
       this.isSuggestionBoxOpen = false;
 
-      if (this.message.startsWith('/')) {
-        this.message = '';
+      if (this.textBoxMessage.startsWith('/')) {
+        this.textBoxMessage = '';
       }
     },
     onKeyDown(event) {
