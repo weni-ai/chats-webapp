@@ -8,25 +8,13 @@
 
     <template slot="tab-panel-media">
       <section class="media__content">
-        <div v-for="media in images" :key="media.url">
-          <div class="media__content__media__preview">
-            <!-- <image-preview
-              v-if="media.content_type.startsWith('image/')"
-              v-bind="media"
-              fullscreen-on-click
-              object-fit="cover"
-              :url="media.url"
-              @click="$emit('fullscreen', media.url, images)"
-            />
-            <video-preview
-              v-if="media.content_type.startsWith('video/')"
-              :src="media.url"
-              fullscreen-on-click
-              @click="$emit('fullscreen', media.url, images)"
-            /> -->
-            <media-preview :image="media.url" @click="$emit('fullscreen', media.url, images)" />
-          </div>
-        </div>
+        <media-preview
+          v-for="(media, index) in images"
+          :key="media.created_on + index"
+          :src="media.url"
+          :is-video="media.content_type.startsWith('video/')"
+          @click="$emit('fullscreen', media.url, images)"
+        />
       </section>
     </template>
 
@@ -81,20 +69,16 @@
 </template>
 
 <script>
-// import ImagePreview from '@/components/chats/MediaMessage/Previews/Image';
 import AudioPreview from '@/components/chats/MediaMessage/Previews/Audio';
 import Media from '@/services/api/resources/chats/media';
-// import VideoPreview from '@/components/chats/MediaMessage/Previews/Video';
 import MediaPreview from '@/components/chats/MediaMessage/Previews/Media';
 
 export default {
   name: 'ContactMedia',
 
   components: {
-    // ImagePreview,
-    AudioPreview,
-    // VideoPreview,
     MediaPreview,
+    AudioPreview,
   },
 
   props: {
@@ -265,23 +249,8 @@ export default {
 
 .media__content {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: $unnnic-spacing-stack-xs;
-
-  max-width: 100%;
-
-  &__media {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    aspect-ratio: 1;
-    height: 100%;
-
-    &__preview {
-      height: 100%;
-      width: 100%;
-    }
-  }
+  grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+  gap: $unnnic-spacing-xs;
 }
 
 .documents__content {

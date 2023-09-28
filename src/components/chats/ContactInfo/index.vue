@@ -195,14 +195,12 @@
       @next="nextMedia"
       @previous="previousMedia"
     >
-      <video
+      <video-preview
         v-if="currentMedia.content_type.includes('mp4')"
-        controls
         @keypress.enter="() => {}"
         @click.stop="() => {}"
-      >
-        <source :src="currentMedia.url" />
-      </video>
+        :src="currentMedia.url"
+      />
       <img
         v-else
         :src="currentMedia.url"
@@ -227,6 +225,7 @@ import Queue from '@/services/api/resources/settings/queue';
 import CustomField from './CustomField';
 import ContactMedia from './Media';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
+import VideoPreview from '../MediaMessage/Previews/Video';
 
 const moment = require('moment');
 
@@ -239,6 +238,7 @@ export default {
     CustomField,
     ContactMedia,
     FullscreenPreview,
+    VideoPreview,
   },
   props: {
     contact: {

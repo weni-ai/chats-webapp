@@ -1,9 +1,24 @@
+<!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
   <div class="media-preview">
+    <template v-if="isVideo">
+      <unnnic-icon icon="button-play-1" size="md" class="media-preview__video-play-icon" />
+      <video
+        :src="src"
+        :alt="alt"
+        class="media-preview__media"
+        muted
+        ref="video"
+        @click="handleClick"
+        @keypress.enter="handleClick"
+      />
+    </template>
+
     <img
-      :src="image"
+      v-else
+      :src="src"
       :alt="alt"
-      class="media-preview__image"
+      class="media-preview__media"
       @click="handleClick"
       @keypress.enter="handleClick"
     />
@@ -19,9 +34,13 @@ export default {
       type: String,
       default: '',
     },
-    image: {
+    src: {
       type: String,
       default: '',
+    },
+    isVideo: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -34,16 +53,29 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$preview-size: 68px;
-.image-preview {
-  height: $preview-size;
-  width: $preview-size;
-  max-height: $preview-size;
-  max-width: $preview-size;
+.media-preview {
+  position: relative;
 
-  &__image {
+  box-shadow: $unnnic-shadow-level-near;
+
+  aspect-ratio: 1/1;
+  overflow: hidden;
+
+  cursor: pointer;
+
+  &__media {
     width: 100%;
     height: 100%;
+
+    object-fit: cover;
+  }
+
+  &__video-play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
   }
 }
 </style>
