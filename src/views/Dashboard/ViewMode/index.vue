@@ -1,44 +1,46 @@
 <template>
-  <div class="view-mode__container" v-if="viewedAgent.email">
-    <view-mode-header :viewedAgent="viewedAgent.name" />
-    <main :class="['view-mode__main', isContactInfoOpened && 'has-aside']">
-      <the-room-list
-        v-if="viewedAgent.email"
-        class="room-list__container unnnic-grid-span-3"
-        isViewMode
-        :viewedAgent="this.viewedAgent.email"
-      />
+  <div>
+    <chats-layout v-if="viewedAgent.email" :viewed-agent="this.viewedAgent.email">
+      <view-mode-header :viewedAgent="viewedAgent.name" />
 
-      <template v-if="!!room && room.uuid">
-        <section class="chat">
-          <chat-header :room="room" @show-contact-info="handleModal('ContactInfo', 'open')" />
-          <chat-messages
+      <room-loading v-show="isRoomSkeletonActive" />
+      <chats-background v-if="!room && !isRoomSkeletonActive" />
+      <template v-if="!!room && room.uuid && !isRoomSkeletonActive">
+        <section class="view-mode__active-chat">
+          <unnnic-chats-header
+            :title="room.contact.name || ''"
+            :avatarClick="() => handleModal('ContactInfo', 'open')"
+            :titleClick="() => handleModal('ContactInfo', 'open')"
+            :avatarName="room.contact.name"
+          />
+          <chat-messages-next
             :room="room"
             :messages="messages"
             class="messages"
             @show-contact-info="handleModal('ContactInfo', 'open')"
             @scrollTop="searchForMoreMessages"
           />
-          <div class="assume-chat__container">
-            <unnnic-button
-              v-if="room.user?.email !== me.email"
-              class="assume-chat"
-              :text="$t('dashboard.view-mode.assume_chat')"
-              type="secondary"
-              @click="handleModal('AssumeChatConfirmation', 'open')"
-            />
-            <modal-get-chat
-              :showModal="isAssumeChatConfirmationOpened"
-              @closeModal="handleModal('AssumeChatConfirmation', 'close')"
-              :title="$t('dashboard.view-mode.assume_chat_question')"
-              :description="
-                $t('dashboard.view-mode.assume_chat_confirmation', { agent: viewedAgent.name })
-              "
-              :whenGetChat="whenGetChat"
-            />
-          </div>
+          <unnnic-button-next
+            v-if="room.user?.email !== me.email"
+            class="assume-chat"
+            :text="$t('dashboard.view-mode.assume_chat')"
+            type="terciary"
+            @click="handleModal('AssumeChatConfirmation', 'open')"
+          />
         </section>
+      </template>
 
+      <modal-get-chat
+        :showModal="isAssumeChatConfirmationOpened"
+        @closeModal="handleModal('AssumeChatConfirmation', 'close')"
+        :title="$t('dashboard.view-mode.assume_chat_question')"
+        :description="
+          $t('dashboard.view-mode.assume_chat_confirmation', { agent: viewedAgent.name })
+        "
+        :whenGetChat="whenGetChat"
+      />
+
+      <template #aside>
         <contact-info
           v-if="isContactInfoOpened"
           class="contact-info"
@@ -46,37 +48,37 @@
           @close="handleModal('ContactInfo', 'close')"
         />
       </template>
-
-      <chats-background v-else class="view-mode__background" />
-    </main>
+    </chats-layout>
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex';
 
-import TheRoomList from '@/layouts/ChatsLayout/components/TheRoomList';
+import ChatsLayout from '@/layouts/ChatsLayout';
+import RoomLoading from '@/views/loadings/Room.vue';
 import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
-import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ContactInfo from '@/components/chats/ContactInfo';
-import ChatMessages from '@/components/chats/chat/ChatMessages';
+import ChatMessagesNext from '@/components/chats/chat/ChatMessagesNext';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat';
+
 import ViewModeHeader from './components/ViewModeHeader';
 
 export default {
   name: 'ViewMode',
 
   components: {
-    TheRoomList,
     ChatsBackground,
-    ChatHeader,
+    ChatsLayout,
     ContactInfo,
-    ChatMessages,
+    ChatMessagesNext,
     ViewModeHeader,
     ModalGetChat,
+    RoomLoading,
   },
 
   data: () => ({
+    isRoomSkeletonActive: false,
     isContactInfoOpened: false,
     isAssumeChatConfirmationOpened: false,
     chatPage: 0,
@@ -159,10 +161,14 @@ export default {
   },
 
   watch: {
-    room() {
+    async room() {
       this.resetRoomMessagesParams();
+      this.isContactInfoOpened = false;
+
       if (this.room?.uuid) {
-        this.getRoomMessages();
+        this.isRoomSkeletonActive = true;
+        await this.getRoomMessages();
+        this.isRoomSkeletonActive = false;
       }
     },
   },
@@ -170,89 +176,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$mainHeight: calc(100vh - 40px);
-
 .view-mode {
-  &__container {
-    height: 100vh;
-
-    overflow: hidden;
-  }
-
-  &__main {
-    height: $mainHeight;
-    max-height: $mainHeight;
-
-    overflow-y: hidden;
-
-    padding: 0;
-
+  &__active-chat {
     display: grid;
-    grid-template-columns: 2.8fr 9fr;
+    grid-template-rows: 1fr auto 1fr;
 
-    &.has-aside {
-      grid-template-columns: 2.8fr 6.2fr 2.8fr;
+    height: 100%;
+
+    padding-bottom: $unnnic-spacing-sm;
+
+    .chat-messages {
+      padding-left: $unnnic-spacing-sm;
     }
 
-    .room-list__container {
-      height: $mainHeight;
-
-      display: flex;
-      flex-direction: column;
-
-      padding: $unnnic-spacing-inset-sm;
-      padding: {
-        right: 0;
-        top: 0;
+    :deep(.unnnic-chats-header) {
+      .unnnic-button-close {
+        display: none;
       }
-
-      grid-column: 1;
-    }
-
-    .chat {
-      height: $mainHeight;
-
-      display: flex;
-      flex-direction: column;
-
-      grid-column: 2;
-
-      padding: {
-        bottom: $unnnic-spacing-inset-sm;
-        left: $unnnic-spacing-inline-sm;
-      }
-
-      .messages {
-        overflow-y: auto;
-        padding-right: $unnnic-spacing-inset-sm;
-        margin: $unnnic-spacing-inline-sm 0;
-      }
-
-      .assume-chat__container {
-        margin: {
-          top: auto;
-          right: $unnnic-spacing-inline-sm;
-        }
-
-        button {
-          width: 100%;
-        }
-      }
-    }
-
-    .contact-info {
-      border: 1px solid $unnnic-color-neutral-soft;
-
-      overflow-y: auto;
-
-      grid-column: 3;
     }
   }
 
-  &__background {
-    grid-column: 2;
-
-    margin-left: $unnnic-spacing-inline-sm;
+  .assume-chat {
+    margin: $unnnic-spacing-nano $unnnic-spacing-inline-sm 0;
   }
 }
 </style>

@@ -1,14 +1,15 @@
 <template>
-  <section :class="['chats-layout', isAsideVisible && 'has-aside']">
+  <section :class="['chats-layout', isAsideVisible && 'has-aside', isViewMode && 'view-mode']">
     <slot name="room-list" v-if="isRoomListVisible">
       <sidebar-loading v-show="isLoadingSidebar" />
       <div v-show="!isLoadingSidebar" class="sidebar">
         <preferences-bar
+          v-if="!isViewMode"
           @show-quick-messages="handlerShowQuickMessages"
           :dashboard="canAccessDashboard"
         />
 
-        <div class="flows-trigger-button">
+        <div class="flows-trigger-button" v-if="!isViewMode">
           <unnnic-button-next
             v-if="canTriggerFlows"
             size="small"
@@ -18,7 +19,7 @@
           />
         </div>
 
-        <the-room-list class="room-list" />
+        <the-room-list class="room-list" :isViewMode="isViewMode" :viewedAgent="viewedAgent" />
 
         <unnnic-button-next
           class="history-button"
@@ -75,6 +76,13 @@ export default {
     SidebarLoading,
     LayoutFlowsTrigger,
     QuickMessages,
+  },
+
+  props: {
+    viewedAgent: {
+      type: String,
+      default: '',
+    },
   },
 
   async mounted() {
@@ -165,6 +173,9 @@ export default {
     isHistoryView() {
       return this.$route.name === 'rooms.closed';
     },
+    isViewMode() {
+      return !!this.viewedAgent;
+    },
   },
 };
 </script>
@@ -180,6 +191,7 @@ section.chats-layout {
 
   display: grid;
   grid-template-columns: 3fr 9fr;
+  grid-template-rows: 100vh;
 
   overflow: hidden;
 
@@ -191,12 +203,21 @@ section.chats-layout {
     grid-template-columns: 3fr 6fr 3fr;
   }
 
+  &.view-mode {
+    $viewModeHeaderHeight: 40px;
+
+    position: relative;
+
+    padding-top: $viewModeHeaderHeight;
+    grid-template-rows: calc(100vh - $viewModeHeaderHeight);
+  }
+
   .sidebar {
     display: flex;
     flex-direction: column;
     gap: $unnnic-spacing-stack-xs;
 
-    height: 100vh;
+    height: 100%;
 
     padding: 0 0 $unnnic-spacing-xs $unnnic-spacing-xs;
 
@@ -224,7 +245,7 @@ section.chats-layout {
   main {
     grid-column: 2;
 
-    height: 100vh;
+    height: 100%;
 
     background-color: $unnnic-color-background-carpet;
   }
@@ -235,13 +256,13 @@ section.chats-layout {
     display: flex;
     flex-direction: column;
 
-    height: 100vh;
+    height: 100%;
 
     border: 1px solid $unnnic-color-neutral-soft;
   }
 
   .aside {
-    height: 100vh;
+    height: 100%;
     background: $unnnic-color-background-snow;
 
     grid-column: 3;

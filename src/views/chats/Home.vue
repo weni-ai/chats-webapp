@@ -410,11 +410,6 @@ export default {
   max-height: 100vh;
   padding-bottom: $unnnic-spacing-stack-sm;
 
-  .messages {
-    overflow-y: auto;
-    padding-right: $unnnic-spacing-inset-sm;
-  }
-
   .chat-classifier {
     margin-top: auto;
     margin-left: -$unnnic-spacing-inline-md;
@@ -422,8 +417,7 @@ export default {
   }
 }
 .get-chat-button-container {
-  margin-top: auto;
-  margin-right: $unnnic-spacing-inline-sm;
+  margin: auto $unnnic-spacing-inline-sm 0;
 
   .get-chat-button {
     width: 100%;

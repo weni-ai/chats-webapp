@@ -359,6 +359,9 @@ export default {
 
 <style lang="scss" scoped>
 .chat-messages {
+  height: 100%;
+  overflow: hidden auto;
+
   &__room {
     &__divisor {
       display: flex;
@@ -403,6 +406,9 @@ export default {
     display: grid;
     gap: $unnnic-spacing-md;
     margin-top: $unnnic-spacing-sm;
+
+    overflow: hidden auto;
+    padding-right: $unnnic-spacing-inset-sm;
 
     & + & {
       margin-top: $unnnic-spacing-md;
