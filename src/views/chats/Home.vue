@@ -47,10 +47,10 @@
       </chats-dropzone>
 
       <div v-if="!room.user" class="get-chat-button-container">
-        <unnnic-button
+        <unnnic-button-next
           class="get-chat-button"
           :text="$t('chats.get_chat')"
-          type="secondary"
+          type="terciary"
           @click="isGetChatConfirmationModalOpen = true"
         />
       </div>

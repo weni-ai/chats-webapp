@@ -15,7 +15,13 @@
       v-for="groupMessage in groupMessagesByDate"
       :key="groupMessage.date"
     >
-      <chat-feedback :feedback="groupMessage.date" scheme="purple" />
+      <div class="chat-messages__messages__start-feedbacks">
+        <chat-feedback :feedback="groupMessage.date" scheme="purple" />
+        <chat-feedback
+          v-if="room.is_waiting"
+          :feedback="$t('waiting_answer.waiting_cliente_answer')"
+        />
+      </div>
 
       <section
         v-for="message in groupMessage.messages"
@@ -97,13 +103,6 @@
         <div class="chat-messages__room__divisor__line" />
         <span class="chat-messages__room__divisor__label">{{ $t('chat_closed_by.agent') }}</span>
         <div class="chat-messages__room__divisor__line" />
-      </section>
-
-      <!-- Waiting contact answer -->
-      <section>
-        <div v-if="room.is_waiting" class="chat-messages__room__transfer-info">
-          {{ $t('waiting_answer.waiting_cliente_answer') }}
-        </div>
       </section>
 
       <!-- Closed chat tags  -->
@@ -412,6 +411,11 @@ export default {
 
     & + & {
       margin-top: $unnnic-spacing-md;
+    }
+
+    &__start-feedbacks {
+      display: grid;
+      gap: $unnnic-spacing-xs;
     }
   }
 
