@@ -12,6 +12,7 @@
             :avatarClick="() => handleModal('ContactInfo', 'open')"
             :titleClick="() => handleModal('ContactInfo', 'open')"
             :avatarName="room.contact.name"
+            :close="() => {}"
           />
           <chat-messages-next
             :room="room"

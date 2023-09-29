@@ -103,68 +103,6 @@ export default {
       }
       return undefined;
     },
-    async getActiveRoomMessages({ commit, state }, { offset, concat, limit }) {
-      const { activeRoom } = state;
-      if (!activeRoom) return;
-      const response = await Message.getByRoom(activeRoom.uuid, offset, limit);
-      let messages = response.results;
-      const hasNext = response.next;
-      if (concat) {
-        messages = response.results.concat(state.activeRoomMessages);
-      }
-      const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
-      commit(mutations.SET_ACTIVE_ROOM_MESSAGES, messagesWithSender);
-      commit(mutations.SET_ACTIVE_ROOM_HAS_NEXT, hasNext);
-    },
-
-    async sendMessage({ state, commit }, text) {
-      const { activeRoom } = state;
-      if (!activeRoom) return;
-
-      const temporaryMessage = {
-        uuid: Date.now().toString(),
-        text,
-        created_on: new Date().toISOString(),
-        media: [],
-        room: activeRoom.uuid,
-        seen: false,
-        user: { ...activeRoom.user },
-      };
-
-      commit(mutations.ADD_MESSAGE, temporaryMessage);
-
-      Message.send(activeRoom.uuid, {
-        text,
-        user_email: activeRoom.user.email,
-      })
-        .then((message) => {
-          commit(mutations.UPDATE_MESSAGE, { message, toUpdateUuid: temporaryMessage.uuid });
-        })
-        .catch(() => {
-          console.error('Não foi possível enviar a mensagem');
-        });
-    },
-    async sendMedias({ state }, { files: medias, updateLoadingFiles }) {
-      const { activeRoom } = state;
-      if (!activeRoom) return;
-
-      await Promise.all(
-        medias.map((media) =>
-          Message.sendMedia({
-            roomId: activeRoom.uuid,
-            userEmail: activeRoom.user.email,
-            media,
-            updateLoadingFiles,
-          }),
-        ),
-      );
-    },
-    async addMessage({ commit, state }, message) {
-      const messageAlreadyExists = state.activeRoomMessages.some((m) => m.uuid === message.uuid);
-
-      if (messageAlreadyExists) commit(mutations.UPDATE_MESSAGE, { message });
-      else commit(mutations.ADD_MESSAGE, message);
-    },
     updateRoom({ state, commit }, { room, userEmail, routerReplace, viewedAgentEmail }) {
       const rooms = state.rooms
         .map((mappedRoom) => (mappedRoom.uuid === room.uuid ? { ...room } : mappedRoom))
