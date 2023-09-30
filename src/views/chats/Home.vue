@@ -3,8 +3,9 @@
     ref="chats-layout"
     @select-quick-message="(quickMessage) => updateEditorMessage(quickMessage.text)"
   >
-    <chats-background v-if="!room" />
-    <section v-if="!!room" class="active-chat">
+    <room-loading v-show="isRoomSkeletonActive" />
+    <chats-background v-if="!room && !isRoomSkeletonActive" />
+    <section v-if="!!room && !isRoomSkeletonActive" class="active-chat">
       <chat-header
         :room="room"
         :closeButtonTooltip="$t('chats.end')"
@@ -127,6 +128,7 @@ import Queue from '@/services/api/resources/settings/queue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat';
 
 import FileUploader from '@/components/chats/MessageEditor/FileUploader';
+import RoomLoading from '@/views/loadings/Room.vue';
 
 export default {
   name: 'ChatsHome',
@@ -145,6 +147,7 @@ export default {
     FileUploader,
     LayoutTemplateMessage,
     ModalGetChat,
+    RoomLoading,
   },
 
   props: {
@@ -174,6 +177,7 @@ export default {
     showAlertForLastMessage: false,
     networkError: false,
     files: [],
+    isRoomSkeletonActive: false,
   }),
 
   computed: {
@@ -263,22 +267,26 @@ export default {
     async getRoomMessages(concat) {
       this.isLoading = true;
 
-      try {
-        await this.$store.dispatch('rooms/getActiveRoomMessages', {
+      await this.$store
+        .dispatch('rooms/getActiveRoomMessages', {
           offset: this.page * this.limit,
           concat,
           limit: this.limit,
+        })
+        .then(() => {
+          this.isRoomClassifierVisible = false;
+          this.isLoading = false;
+          this.networkError = false;
+          this.dateOfLastMessage();
+          this.readMessages();
+
+          this.isRoomSkeletonActive = false;
+        })
+        .catch((error) => {
+          this.isLoading = false;
+          console.error(error);
+          if (error.code === 'ERR_NETWORK') this.networkError = true;
         });
-        this.isRoomClassifierVisible = false;
-        this.isLoading = false;
-        this.networkError = false;
-        this.dateOfLastMessage();
-        this.readMessages();
-      } catch (error) {
-        this.isLoading = false;
-        console.log(error);
-        if (error.code === 'ERR_NETWORK') this.networkError = true;
-      }
     },
 
     searchMessages() {
@@ -397,8 +405,9 @@ export default {
           this.$delete(this.$store.state.rooms.newMessagesByRoom, this.id);
         }
 
+        this.isRoomSkeletonActive = true;
         await this.setActiveRoom(this.id);
-        this.getRoomMessages();
+        await this.getRoomMessages();
       },
     },
   },
