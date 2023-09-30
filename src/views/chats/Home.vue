@@ -3,8 +3,9 @@
     ref="chats-layout"
     @select-quick-message="(quickMessage) => updateEditorMessage(quickMessage.text)"
   >
-    <chats-background v-if="!room" />
-    <section v-if="!!room" class="active-chat">
+    <room-loading v-show="isRoomSkeletonActive" />
+    <chats-background v-if="!room && !isRoomSkeletonActive" />
+    <section v-if="!!room && !isRoomSkeletonActive" class="active-chat">
       <chat-header
         :room="room"
         :closeButtonTooltip="$t('chats.end')"
@@ -127,6 +128,7 @@ import Queue from '@/services/api/resources/settings/queue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat';
 
 import FileUploader from '@/components/chats/MessageEditor/FileUploader';
+import RoomLoading from '@/views/loadings/Room.vue';
 
 export default {
   name: 'ChatsHome',
@@ -145,6 +147,7 @@ export default {
     FileUploader,
     LayoutTemplateMessage,
     ModalGetChat,
+    RoomLoading,
   },
 
   props: {
@@ -174,6 +177,7 @@ export default {
     showAlertForLastMessage: false,
     networkError: false,
     files: [],
+    isRoomSkeletonActive: false,
   }),
 
   computed: {
