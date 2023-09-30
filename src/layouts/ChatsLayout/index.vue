@@ -205,7 +205,6 @@ section.chats-layout {
   main {
     margin-left: $unnnic-spacing-inline-sm;
 
-    position: relative;
     grid-column: 2;
 
     height: 100vh;
