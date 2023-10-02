@@ -199,6 +199,8 @@ section.chats-layout {
     border-right: 1px solid $unnnic-color-neutral-soft;
   }
 
+  overflow: hidden;
+
   &.has-aside {
     grid-template-columns: 3fr 6fr 3fr;
   }

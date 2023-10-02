@@ -10,6 +10,7 @@ import Rooms from './rooms';
 
 const mutations = {
   SET_ROOM_MESSAGES: 'SET_ROOM_MESSAGES',
+  SET_ROOM_MESSAGES_SORTED: 'SET_ROOM_MESSAGES_SORTED',
   SET_ROOM_HAS_NEXT_MESSAGES: 'SET_ROOM_HAS_NEXT_MESSAGES',
   ADD_MESSAGE: 'ADD_MESSAGE',
   UPDATE_MESSAGE: 'UPDATE_MESSAGE',
@@ -44,6 +45,7 @@ export default {
   namespaced: true,
   state: {
     roomMessages: [],
+    roomMessagesSorted: [],
     roomMessagesSendingUuids: [],
     roomMessagesFailedUuids: [],
     hasNextMessages: true,
@@ -52,6 +54,9 @@ export default {
   mutations: {
     [mutations.SET_ROOM_MESSAGES](state, messages) {
       state.roomMessages = messages;
+    },
+    [mutations.SET_ROOM_MESSAGES_SORTED](state, messages) {
+      state.roomMessagesSorted = messages;
     },
     [mutations.SET_ROOM_HAS_NEXT_MESSAGES](state, hasNextMessages) {
       state.hasNextMessages = hasNextMessages;
@@ -120,15 +125,46 @@ export default {
     async getRoomMessages({ commit, state }, { offset, concat, limit }) {
       const { activeRoom } = Rooms.state;
       if (!activeRoom) return;
-      const response = await Message.getByRoom(activeRoom.uuid, offset, limit);
-      let messages = response.results;
-      const hasNext = response.next;
-      if (concat) {
-        messages = response.results.concat(state.roomMessages);
+
+      const maxRetries = 3;
+      let currentRetry = 0;
+
+      // eslint-disable-next-line consistent-return
+      async function fetchData() {
+        try {
+          const response = await Message.getByRoom(activeRoom.uuid, offset, limit);
+
+          let messages = response.results;
+          const hasNext = response.next;
+          if (concat) {
+            messages = response.results.concat(state.roomMessages);
+          }
+
+          if (messages?.[0] && activeRoom?.uuid && messages?.[0]?.room === activeRoom.uuid) {
+            const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
+            commit(mutations.SET_ROOM_MESSAGES, messagesWithSender);
+            commit(mutations.SET_ROOM_HAS_NEXT_MESSAGES, hasNext);
+          }
+        } catch (error) {
+          console.error('An error ocurred when try get the room messages', error);
+
+          if (currentRetry < maxRetries) {
+            currentRetry += 1;
+
+            const TWO_SECONDS = 2000;
+
+            return new Promise((resolve) => {
+              setTimeout(() => {
+                resolve(fetchData());
+              }, TWO_SECONDS);
+            });
+          }
+          throw new Error(
+            `Several errors occurred when trying to request messages from the room. There will be no automatic retries.`,
+          );
+        }
       }
-      const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
-      commit(mutations.SET_ROOM_MESSAGES, messagesWithSender);
-      commit(mutations.SET_ROOM_HAS_NEXT_MESSAGES, hasNext);
+      await fetchData();
     },
 
     async addMessage({ commit, state }, message) {

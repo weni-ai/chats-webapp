@@ -262,22 +262,26 @@ export default {
     async getRoomMessages(concat) {
       this.isLoading = true;
 
-      try {
-        await this.$store.dispatch('roomMessages/getRoomMessages', {
+      await this.$store
+        .dispatch('roomMessages/getRoomMessages', {
           offset: this.page * this.limit,
           concat,
           limit: this.limit,
+        })
+        .then(() => {
+          this.isRoomClassifierVisible = false;
+          this.isLoading = false;
+          this.networkError = false;
+          this.dateOfLastMessage();
+          this.readMessages();
+
+          this.isRoomSkeletonActive = false;
+        })
+        .catch((error) => {
+          this.isLoading = false;
+          console.error(error);
+          if (error.code === 'ERR_NETWORK') this.networkError = true;
         });
-        this.isRoomClassifierVisible = false;
-        this.isLoading = false;
-        this.networkError = false;
-        this.dateOfLastMessage();
-        this.readMessages();
-      } catch (error) {
-        this.isLoading = false;
-        console.log(error);
-        if (error.code === 'ERR_NETWORK') this.networkError = true;
-      }
     },
 
     searchMessages() {
@@ -386,12 +390,10 @@ export default {
         if (this.$store.state.rooms.newMessagesByRoom[this.id]) {
           this.$delete(this.$store.state.rooms.newMessagesByRoom, this.id);
         }
+
         this.isRoomSkeletonActive = true;
-        this.isLoading = true;
         await this.setActiveRoom(this.id);
         await this.getRoomMessages();
-        this.isLoading = false;
-        this.isRoomSkeletonActive = false;
       },
     },
   },
