@@ -131,18 +131,50 @@ export default {
       }
       return undefined;
     },
+
     async getActiveRoomMessages({ commit, state }, { offset, concat, limit }) {
       const { activeRoom } = state;
       if (!activeRoom) return;
-      const response = await Message.getByRoom(activeRoom.uuid, offset, limit);
-      let messages = response.results;
-      const hasNext = response.next;
-      if (concat) {
-        messages = response.results.concat(state.activeRoomMessages);
+
+      const maxRetries = 3;
+      let currentRetry = 0;
+
+      // eslint-disable-next-line consistent-return
+      async function fetchData() {
+        try {
+          const response = await Message.getByRoom(activeRoom.uuid, offset, limit);
+
+          let messages = response.results;
+          const hasNext = response.next;
+          if (concat) {
+            messages = response.results.concat(state.activeRoomMessages);
+          }
+
+          if (messages?.[0] && activeRoom?.uuid && messages?.[0]?.room === activeRoom.uuid) {
+            const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
+            commit(mutations.SET_ACTIVE_ROOM_MESSAGES, messagesWithSender);
+            commit(mutations.SET_ACTIVE_ROOM_HAS_NEXT, hasNext);
+          }
+        } catch (error) {
+          console.error('An error ocurred when try get the room messages', error);
+
+          if (currentRetry < maxRetries) {
+            currentRetry += 1;
+
+            const TWO_SECONDS = 2000;
+
+            return new Promise((resolve) => {
+              setTimeout(() => {
+                resolve(fetchData());
+              }, TWO_SECONDS);
+            });
+          }
+          throw new Error(
+            `Several errors occurred when trying to request messages from the room. There will be no automatic retries.`,
+          );
+        }
       }
-      const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
-      commit(mutations.SET_ACTIVE_ROOM_MESSAGES, messagesWithSender);
-      commit(mutations.SET_ACTIVE_ROOM_HAS_NEXT, hasNext);
+      await fetchData();
     },
 
     async sendMessage({ state, commit }, text) {

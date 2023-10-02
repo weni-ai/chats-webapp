@@ -174,9 +174,13 @@ section.chats-layout {
 
   height: 100vh;
   max-height: 100vh;
-  overflow-y: hidden;
+  width: 100vw;
+  max-width: 100vw;
+
   display: grid;
   grid-template-columns: 2.8fr 9fr;
+
+  overflow: hidden;
 
   &.has-aside {
     grid-template-columns: 2.8fr 6.2fr 2.8fr;
@@ -201,7 +205,6 @@ section.chats-layout {
   main {
     margin-left: $unnnic-spacing-inline-sm;
 
-    flex: 1 1;
     grid-column: 2;
 
     height: 100vh;
