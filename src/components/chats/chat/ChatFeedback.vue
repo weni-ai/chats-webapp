@@ -32,6 +32,8 @@ $scheme-colors: 'blue' $unnnic-color-aux-blue-100, 'purple' $unnnic-color-aux-pu
   'red' $unnnic-color-aux-red-100;
 
 .chat-feedback__container {
+  margin-top: $unnnic-spacing-md;
+
   display: flex;
 
   .chat-feedback {

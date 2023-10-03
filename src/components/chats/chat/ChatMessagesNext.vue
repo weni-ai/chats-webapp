@@ -3,12 +3,12 @@
 <template>
   <section class="chat-messages" ref="chatMessages" @scroll="handleScroll">
     <section
-      class="chat-messages__messages"
-      v-for="groupMessage in groupMessagesByDate"
-      :key="groupMessage.date"
+      v-for="(messagesByDate, name) in roomMessagesSorted"
+      :key="name"
+      class="chat-messages__container-date"
     >
       <div class="chat-messages__messages__start-feedbacks">
-        <chat-feedback :feedback="groupMessage.date" scheme="purple" />
+        <chat-feedback :feedback="name" scheme="purple" />
         <chat-feedback
           v-if="room.is_waiting"
           :feedback="$t('waiting_answer.waiting_cliente_answer')"
@@ -16,76 +16,76 @@
       </div>
 
       <section
-        v-for="message in groupMessage.messages"
-        :key="message.uuid"
-        class="chat-messages__room"
+        v-for="(messagesByMinute, name) in messagesByDate"
+        class="chat-messages__container-minute"
+        :key="name"
       >
-        <!-- Feedbacks -->
+        <template v-for="message in messagesByMinute">
+          <chat-feedback
+            v-if="isTransferInfoMessage(message)"
+            :feedback="
+              !room.is_waiting ? createTransferLabel(message) : $t('waiting_answer.send_template')
+            "
+            :key="message.uuid"
+          />
 
-        <chat-feedback
-          v-if="isTransferInfoMessage(message)"
-          :feedback="
-            !room.is_waiting ? createTransferLabel(message) : $t('waiting_answer.send_template')
-          "
-        />
-
-        <div class="chat-message__container" v-else>
-          <unnnic-chats-message
-            v-if="message.text"
-            :type="message.user ? 'sent' : 'received'"
-            :class="['chat-message', message.user ? 'sent' : 'received']"
-            :time="new Date(message.created_on)"
-            :status="messageStatus({ message })"
-          >
-            {{ message.text }}
-          </unnnic-chats-message>
-          <template v-for="media in message.media">
+          <template v-else>
             <unnnic-chats-message
-              v-if="isMedia(media)"
-              :key="media.created_on"
-              :type="message.user ? 'sent' : 'received'"
-              :class="['chat-message', message.user ? 'sent' : 'received']"
-              :mediaType="isImage(media) ? 'image' : isVideo(media) ? 'video' : 'audio'"
+              v-if="message.text"
+              :type="message.user || (!message.user && !message.contact) ? 'sent' : 'received'"
+              :class="['chat-messages__message', message.user ? 'sent' : 'received']"
               :time="new Date(message.created_on)"
               :status="messageStatus({ message })"
-              @click="resendMedia({ message, media })"
+              :key="message.uuid"
             >
-              <img
-                v-if="isImage(media)"
-                class="media image"
-                :src="media.url || media.preview"
-                @click="openFullScreen(media.url)"
-                @keypress.enter="openFullScreen(media.url)"
-              />
-
-              <video-player
-                v-else-if="isVideo(media)"
-                class="media"
-                :src="media.url || media.preview"
-              />
-
-              <unnnic-audio-recorder
-                v-else-if="isAudio(media)"
-                ref="audio-recorder"
-                class="media audio"
-                :src="media.url || media.preview"
-                :canDiscard="false"
-                :reqStatus="messageStatus({ message, media })"
-                @failed-click="resendMedia({ message, media })"
-              />
+              {{ message.text }}
             </unnnic-chats-message>
-            <unnnic-chats-message
-              v-else
-              :key="media.created_on"
-              :type="message.user ? 'sent' : 'received'"
-              :class="['chat-message', message.user ? 'sent' : 'received']"
-              :time="new Date(message.created_on)"
-              :documentName="media.url?.split('/').at(-1) || media.file.name"
-              :status="messageStatus({ message })"
-              @click="documentClickHandler({ message, media })"
-            />
+            <template v-for="media in message.media">
+              <unnnic-chats-message
+                v-if="isMedia(media)"
+                :key="media.created_on"
+                :type="message.user ? 'sent' : 'received'"
+                :class="['chat-messages__message', message.user ? 'sent' : 'received']"
+                :mediaType="isImage(media) ? 'image' : isVideo(media) ? 'video' : 'audio'"
+                :time="new Date(message.created_on)"
+                :status="messageStatus({ message })"
+                @click="resendMedia({ message, media })"
+              >
+                <img
+                  v-if="isImage(media)"
+                  class="media image"
+                  :src="media.url || media.preview"
+                  @click="openFullScreen(media.url)"
+                  @keypress.enter="openFullScreen(media.url)"
+                />
+                <video-player
+                  v-else-if="isVideo(media)"
+                  class="media"
+                  :src="media.url || media.preview"
+                />
+                <unnnic-audio-recorder
+                  v-else-if="isAudio(media)"
+                  ref="audio-recorder"
+                  class="media audio"
+                  :src="media.url || media.preview"
+                  :canDiscard="false"
+                  :reqStatus="messageStatus({ message, media })"
+                  @failed-click="resendMedia({ message, media })"
+                />
+              </unnnic-chats-message>
+              <unnnic-chats-message
+                v-else
+                :key="media.created_on"
+                :type="message.user ? 'sent' : 'received'"
+                :class="['chat-messages__message', message.user ? 'sent' : 'received']"
+                :time="new Date(message.created_on)"
+                :documentName="media.url?.split('/').at(-1) || media.file.name"
+                :status="messageStatus({ message })"
+                @click="documentClickHandler({ message, media })"
+              />
+            </template>
           </template>
-        </div>
+        </template>
       </section>
     </section>
 
@@ -156,10 +156,6 @@ export default {
       type: Object,
       required: true,
     },
-    messages: {
-      type: Array,
-      default: () => [],
-    },
     usePhoto: {
       type: Boolean,
       default: false,
@@ -184,36 +180,9 @@ export default {
     ...mapState({
       roomMessagesSendingUuids: (state) => state.roomMessages.roomMessagesSendingUuids,
       roomMessagesFailedUuids: (state) => state.roomMessages.roomMessagesFailedUuids,
+      roomMessages: (state) => state.roomMessages.roomMessages,
+      roomMessagesSorted: (state) => state.roomMessages.roomMessagesSorted,
     }),
-    groupMessagesByDate() {
-      const groupedMessages = {};
-
-      const today = new Date().toISOString().split('T')[0];
-
-      this.messages.forEach((message) => {
-        const createdOn = message.created_on.split('T')[0];
-        const arrayOfDate = createdOn.split('-');
-        const year = arrayOfDate[0];
-        const month = arrayOfDate[1];
-        const day = arrayOfDate[2];
-
-        const displayDate =
-          createdOn === today
-            ? this.$t('today')
-            : this.$t('date_format_variable', { year, month, day });
-
-        if (!groupedMessages[createdOn]) {
-          groupedMessages[createdOn] = {
-            date: displayDate,
-            messages: [],
-          };
-        }
-
-        groupedMessages[createdOn].messages.push(message);
-      });
-
-      return Object.values(groupedMessages);
-    },
     rooms() {
       const { rooms, messages } = this.chat;
       return rooms?.length > 0 ? rooms : [{ messages }];
@@ -222,7 +191,7 @@ export default {
       return !this.room.is_active;
     },
     medias() {
-      return this.messages
+      return this.roomMessages
         .map((el) => el.media)
         .flat()
         .filter((el) => {
@@ -371,7 +340,7 @@ export default {
   },
 
   watch: {
-    messages() {
+    roomMessages() {
       this.$nextTick(() => {
         this.manageScrollForNewMessages();
       });
@@ -385,7 +354,36 @@ export default {
   height: 100%;
   overflow: hidden auto;
 
-  &__room {
+  &__container-date {
+    &:last-of-type {
+      margin-bottom: $unnnic-spacing-md;
+    }
+  }
+
+  &__container-minute {
+    display: grid;
+  }
+
+  &__message {
+    margin-top: $unnnic-spacing-md;
+
+    &.sent {
+      justify-self: flex-end;
+    }
+
+    & + & {
+      margin-top: $unnnic-spacing-nano;
+    }
+
+    .image {
+      cursor: pointer;
+    }
+
+    .audio {
+      padding: $unnnic-spacing-xs;
+      margin: $unnnic-spacing-nano 0;
+    }
+
     &__divisor {
       display: flex;
       align-items: center;
@@ -404,25 +402,6 @@ export default {
         background: $unnnic-color-neutral-soft;
       }
     }
-
-    .chat-message__container {
-      display: grid;
-
-      .chat-message {
-        &.sent {
-          justify-self: flex-end;
-        }
-
-        .image {
-          cursor: pointer;
-        }
-
-        .audio {
-          padding: $unnnic-spacing-xs;
-          margin: $unnnic-spacing-nano 0;
-        }
-      }
-    }
   }
 
   &__messages {
@@ -435,11 +414,6 @@ export default {
 
     & + & {
       margin-top: $unnnic-spacing-md;
-    }
-
-    &__start-feedbacks {
-      display: grid;
-      gap: $unnnic-spacing-xs;
     }
   }
 

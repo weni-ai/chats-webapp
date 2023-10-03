@@ -26,10 +26,7 @@
       <chats-dropzone @open-file-uploader="openFileUploader" :show="room.user && room.is_24h_valid">
         <chat-messages
           :room="room"
-          :messages="messages"
-          class="messages"
           @show-contact-info="componentInAsideSlot = 'contactInfo'"
-          ref="chatMessages"
           @scrollTop="searchForMoreMessages"
         />
 
@@ -187,7 +184,6 @@ export default {
     ...mapState({
       room: (state) => state.rooms.activeRoom,
       me: (state) => state.profile.me,
-      messages: (state) => state.roomMessages.roomMessages,
       hasNextMessages: (state) => state.roomMessages.hasNextMessages,
       listRoomHasNext: (state) => state.rooms.listRoomHasNext,
       showModalAssumedChat: ({ dashboard }) => dashboard.showModalAssumedChat,

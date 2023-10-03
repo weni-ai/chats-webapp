@@ -1,4 +1,6 @@
 // import mime from 'mime-types';
+import moment from 'moment';
+
 import {
   isMessageInActiveRoom,
   isMessageFromCurrentUser,
@@ -10,7 +12,7 @@ import Rooms from './rooms';
 
 const mutations = {
   SET_ROOM_MESSAGES: 'SET_ROOM_MESSAGES',
-  SET_ROOM_MESSAGES_SORTED: 'SET_ROOM_MESSAGES_SORTED',
+  ADD_ROOM_MESSAGE_SORTED: 'ADD_ROOM_MESSAGE_SORTED',
   SET_ROOM_HAS_NEXT_MESSAGES: 'SET_ROOM_HAS_NEXT_MESSAGES',
   ADD_MESSAGE: 'ADD_MESSAGE',
   UPDATE_MESSAGE: 'UPDATE_MESSAGE',
@@ -45,7 +47,7 @@ export default {
   namespaced: true,
   state: {
     roomMessages: [],
-    roomMessagesSorted: [],
+    roomMessagesSorted: null,
     roomMessagesSendingUuids: [],
     roomMessagesFailedUuids: [],
     hasNextMessages: true,
@@ -55,8 +57,19 @@ export default {
     [mutations.SET_ROOM_MESSAGES](state, messages) {
       state.roomMessages = messages;
     },
-    [mutations.SET_ROOM_MESSAGES_SORTED](state, messages) {
-      state.roomMessagesSorted = messages;
+    [mutations.ADD_ROOM_MESSAGE_SORTED](state, { date, minute, message }) {
+      if (!state.roomMessagesSorted) {
+        state.roomMessagesSorted = {};
+      }
+
+      if (!state.roomMessagesSorted[date]) {
+        state.roomMessagesSorted[date] = {};
+      }
+      if (!state.roomMessagesSorted[date][minute]) {
+        state.roomMessagesSorted[date][minute] = [];
+      }
+
+      state.roomMessagesSorted[date][minute].push(message);
     },
     [mutations.SET_ROOM_HAS_NEXT_MESSAGES](state, hasNextMessages) {
       state.hasNextMessages = hasNextMessages;
@@ -141,8 +154,14 @@ export default {
           }
 
           if (messages?.[0] && activeRoom?.uuid && messages?.[0]?.room === activeRoom.uuid) {
-            const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
-            commit(mutations.SET_ROOM_MESSAGES, messagesWithSender);
+            messages.forEach((message) => {
+              const date = moment(message.created_on).format('L');
+              const minute = moment(message.created_on).format('LT');
+
+              commit(mutations.ADD_ROOM_MESSAGE_SORTED, { date, minute, message });
+            });
+
+            commit(mutations.SET_ROOM_MESSAGES, messages);
             commit(mutations.SET_ROOM_HAS_NEXT_MESSAGES, hasNext);
           }
         } catch (error) {
@@ -164,6 +183,7 @@ export default {
           );
         }
       }
+
       await fetchData();
     },
 
