@@ -7,6 +7,7 @@
 <script>
 import { mapState } from 'vuex';
 
+import { getToken } from '@/utils/config';
 import http from '@/services/api/http';
 import env from '@/utils/env';
 import { sendWindowNotification } from '@/utils/notifications';
@@ -65,10 +66,17 @@ export default {
       viewedAgent: (state) => state.dashboard.viewedAgent,
       nextQuickMessages: (state) => state.chats.quickMessages.nextQuickMessages,
       nextQuickMessagesShared: (state) => state.chats.quickMessagesShared.nextQuickMessagesShared,
+      appToken: (state) => state.config.token,
+      appProject: (state) => state.config.project,
     }),
 
     configsForInitializeWebSocket() {
-      return [this.$store.state.config.token, this.$store.state.config.project];
+      const { appToken, appProject } = this;
+
+      return [appToken, appProject];
+    },
+    teste() {
+      return 'teste';
     },
   },
 
@@ -91,11 +99,9 @@ export default {
   },
 
   beforeMount() {
-    const { token } = this.$store.state.config;
-
     http.interceptors.request.use((config) => {
       // eslint-disable-next-line no-param-reassign
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${getToken()}`;
       return config;
     });
 
@@ -106,18 +112,18 @@ export default {
 
   methods: {
     initializeWebSocket() {
-      const { token, project } = this.$store.state.config;
+      const { appToken, appProject } = this;
       const { viewedAgent } = this.$route.params;
 
       if (viewedAgent) {
         this.ws = new WS(
           `${env(
             'CHATS_WEBSOCKET_URL',
-          )}/manager/rooms?Token=${token}&project=${project}&user_email=${viewedAgent}`,
+          )}/manager/rooms?Token=${appToken}&project=${appProject}&user_email=${viewedAgent}`,
         );
       } else {
         this.ws = new WS(
-          `${env('CHATS_WEBSOCKET_URL')}/agent/rooms?Token=${token}&project=${project}`,
+          `${env('CHATS_WEBSOCKET_URL')}/agent/rooms?Token=${appToken}&project=${appProject}`,
         );
       }
 
