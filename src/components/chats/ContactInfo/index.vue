@@ -9,15 +9,16 @@
       icon="information-circle-4"
       @close="$listeners.close"
     >
-      <section v-if="!isHistory" class="scrollable">
+      <section class="scrollable">
         <aside-slot-template-section>
           <section class="infos">
             <header class="connection-info__header">
               <h1 class="username">
-                {{ room.contact.name }}
+                {{ contact?.name || room.contact.name }}
               </h1>
 
               <unnnic-button-next
+                v-if="!isHistory"
                 iconCenter="button-refresh-arrow-1"
                 type="terciary"
                 size="small"
@@ -27,7 +28,7 @@
             </header>
 
             <div class="connection-info">
-              <p v-if="room.contact.status === 'online'">
+              <p v-if="room?.contact.status === 'online'">
                 {{ $t('status.online') }}
               </p>
               <p v-if="lastMessageFromContact?.created_on" style="margin-bottom: 12px">
@@ -43,7 +44,7 @@
                   <h4 class="description">{{ contactNumber.contactNum }}</h4>
                 </hgroup>
               </template>
-              <template v-if="!!room.custom_fields">
+              <template v-if="!isHistory && !!room.custom_fields">
                 <custom-field
                   v-for="(value, key) in customFields"
                   :key="key"
@@ -59,7 +60,7 @@
             </div>
             <div
               style="display: flex; margin-left: -8px; align-items: center"
-              v-if="!isLinkedToOtherAgent && !isViewMode"
+              v-if="!isLinkedToOtherAgent && !isViewMode && !isHistory"
             >
               <unnnicSwitch
                 :value="isLinkedUser"
@@ -99,7 +100,10 @@
           </section>
         </aside-slot-template-section>
 
-        <aside-slot-template-section>
+        <aside-slot-template-section v-if="isHistory">
+          <h2 class="contact_history__title">{{ $t('chats.closed_chats.contact_history') }}</h2>
+        </aside-slot-template-section>
+        <aside-slot-template-section v-else>
           <p class="title-transfer-chat">{{ $t('contact_info.transfer_contact') }}</p>
           <div style="margin-top: 20px; margin-bottom: 20px">
             <unnnic-radio size="sm" v-model="transferRadio" value="agent" :disabled="isViewMode">
@@ -142,7 +146,7 @@
         </aside-slot-template-section>
       </section>
 
-      <section v-if="isHistory" class="scrollable">
+      <!-- <section v-if="isHistory" class="scrollable">
         <aside-slot-template-section>
           <section class="infos">
             <div class="connection-info">
@@ -173,9 +177,10 @@
             @fullscreen="openFullScreen"
             :history="isHistory"
             :contactInfo="contact"
+            @loaded-medias="set"
           />
         </aside-slot-template-section>
-      </section>
+      </section> -->
       <unnnic-modal
         :text="$t('successfully_transferred_chat')"
         :description="
@@ -289,7 +294,10 @@ export default {
 
     lastMessageFromContact() {
       const messages = this.$store.state.roomMessages.roomMessages;
-      return messages.findLast((message) => message.contact);
+      if (messages) {
+        return messages.findLast((message) => message.contact);
+      }
+      return '';
     },
 
     transferPersonSelected() {
@@ -298,19 +306,9 @@ export default {
     },
 
     contactNumber() {
-      const plataform = this.room.urn.split(':').at(0);
-      const number = this.room.urn.split(':').at(-1);
+      const plataform = (this.contact?.room || this.room).urn.split(':').at(0);
+      const number = (this.contact?.room || this.room).urn.split(':').at(-1);
       const whatsapp = `+${number.substr(-20, 20)} `;
-      const infoNumber = {
-        plataform,
-        contactNum: plataform === 'whatsapp' ? whatsapp : number,
-      };
-      return infoNumber;
-    },
-    contactNumberClosedChat() {
-      const plataform = this.contact.room.urn.split(':').at(0);
-      const number = this.contact.room.urn.split(':').at(-1);
-      const whatsapp = `+ ${number.substr(-20, 20)} `;
       const infoNumber = {
         plataform,
         contactNum: plataform === 'whatsapp' ? whatsapp : number,
@@ -324,7 +322,8 @@ export default {
       this.customFields = this.room.custom_fields;
 
       if (
-        moment(this.room.contact.created_on).format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')
+        moment((this.contact || this.room.contact).created_on).format('YYYY-MM-DD') <
+        moment().format('YYYY-MM-DD')
       ) {
         this.contactHaveHistory = true;
       }
@@ -686,6 +685,14 @@ export default {
           cursor: default;
         }
       }
+    }
+  }
+
+  .contact_history {
+    &__title {
+      color: $unnnic-color-neutral-dark;
+      font-size: $unnnic-font-size-body-lg;
+      font-weight: $unnnic-font-weight-bold;
     }
   }
 

@@ -24,10 +24,18 @@ const routes = [
   },
   {
     path: '/closed-chats',
-    name: 'rooms.closed',
-    component: () => import(/* webpackChunkName: "closed-rooms" */ '@/views/chats/ClosedChats'),
+    name: 'closed-rooms',
+    component: () => import(/* webpackChunkName: "closed-rooms" */ '@/views/chats/ClosedChatsNext'),
     props: (route) => ({
       tag: route.query.tag,
+    }),
+  },
+  {
+    path: '/closed-chats/:roomId',
+    name: 'closed-rooms.selected',
+    component: () => import(/* webpackChunkName: "closed-rooms" */ '@/views/chats/ClosedChatsNext'),
+    props: (route) => ({
+      roomId: route.params.roomId,
     }),
   },
 ];

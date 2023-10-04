@@ -169,6 +169,11 @@
     "en-us": "Justify",
     "es": "Justificar"
   },
+  "without_results": {
+    "pt-br": "Nenhum resultado correspondente",
+    "en-us": "No matching results",
+    "es": "No hay resultados coincidentes"
+  },
   "select_smart": {
     "without_results": {
       "pt-br": "Nenhum resultado encontrado",
@@ -402,6 +407,23 @@
       "pt-br": "Seu chat com {contact} foi assumido por outro agente",
       "en-us": "Your chat with {contact} has been taken over by another agent",
       "es": "Otro agente se ha hecho cargo de su chat con {contacto}"
+    },
+    "closed_chats": {
+      "history": {
+        "pt-br": "Histórico",
+        "en-us": "History",
+        "es": "Historia"
+      },
+      "project_history": {
+        "pt-br": "Histórico do projeto",
+        "en-us": "Project history",
+        "es": "Historia del proyecto"
+      },
+      "contact_history": {
+        "pt-br": "Histórico do contato",
+        "en-us": "Contact history",
+        "es": "Historia del contacto"
+      }
     }
   },
   "dashboard": {
@@ -507,6 +529,11 @@
     "pt-br": "Voltar",
     "en-us": "Back",
     "es": "Volver"
+  },
+  "clear": {
+    "pt-br": "Limpar",
+    "en-us": "Clear",
+    "es": "Limpiar"
   },
   "access_history_to_see_closed_chats": {
     "pt-br": "Acesse o histórico para visualizar chats encerrados",
@@ -803,6 +830,21 @@
     "en-us": "Media",
     "es": "Multimedia"
   },
+  "medias": {
+    "pt-br": "Mídias",
+    "en-us": "Medias",
+    "es": "Multimedias"
+  },
+  "audio": {
+    "pt-br": "Áudio",
+    "en-us": "Audio",
+    "es": "Audio"
+  },
+  "audios": {
+    "pt-br": "Áudios",
+    "en-us": "Audios",
+    "es": "Audios"
+  },
   "docs": {
     "pt-br": "Documentos",
     "en-us": "Docs",
@@ -812,11 +854,6 @@
     "pt-br": "Baixar",
     "en-us": "Download",
     "es": "Descargar"
-  },
-  "audio": {
-    "pt-br": "Áudio",
-    "en-us": "Audio",
-    "es": "Audio"
   },
   "text_editor_placeholder": {
     "pt-br": "Digite uma mensagem ou use um /atalho",

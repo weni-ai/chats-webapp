@@ -1,8 +1,8 @@
 <template>
-  <unnnic-tab v-model="tab" :tabs="tabs">
+  <unnnic-tab size="md" v-model="tab" :tabs="tabs">
     <template slot="tab-head-media">
       <div class="media-tab" :class="{ active: isActiveTab('media') }">
-        <span class="name">{{ $t('media') }}</span>
+        <span class="name">{{ $t('medias') }}</span>
       </div>
     </template>
 
@@ -37,7 +37,7 @@
     </template>
     <template slot="tab-head-audio">
       <div class="media-tab" :class="{ active: isActiveTab('audio') }">
-        <span class="name">{{ $t('audio') }}</span>
+        <span class="name">{{ $t('audios') }}</span>
       </div>
     </template>
     <template slot="tab-panel-audio">
@@ -87,12 +87,14 @@ export default {
     },
   },
 
-  created() {
+  async created() {
     if (!this.history) {
-      this.loadNextMedias();
+      await this.loadNextMedias();
     } else {
-      this.loadNextMediasClosedRoom();
+      await this.loadNextMediasClosedRoom();
     }
+
+    this.$emit('loaded-medias');
   },
 
   data: () => ({
@@ -189,8 +191,6 @@ export default {
       if (response.next) {
         this.loadNextMedias();
       }
-
-      this.$emit('loaded-medias');
     },
     async loadNextMediasClosedRoom() {
       const response = await Media.listFromContactAndClosedRoom({
@@ -232,24 +232,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.media-tab {
-  display: flex;
-  align-items: center;
-  gap: $unnnic-spacing-stack-xs;
-
-  &.active {
-    .name {
-      color: $unnnic-color-neutral-dark;
-    }
-  }
-
-  .name {
-    font-size: $unnnic-font-size-body-gt;
-    font-weight: $unnnic-font-weight-bold;
-    color: $unnnic-color-neutral-cloudy;
-  }
-}
-
 .medias__content {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));

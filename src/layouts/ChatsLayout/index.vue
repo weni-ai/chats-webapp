@@ -27,7 +27,7 @@
           :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : 'task-list-clock-1'"
           type="terciary"
           size="small"
-          @click="navigate(isHistoryView ? 'home' : 'rooms.closed')"
+          @click="navigate(isHistoryView ? 'home' : 'closed-rooms')"
         />
       </div>
     </slot>
@@ -171,7 +171,7 @@ export default {
       return !this.showFlowsTrigger && this.showQuickMessages;
     },
     isHistoryView() {
-      return this.$route.name === 'rooms.closed';
+      return this.$route.name === 'closed-rooms';
     },
     isViewMode() {
       return !!this.viewedAgent;
