@@ -3,12 +3,12 @@
 <template>
   <section class="chat-messages" ref="chatMessages" @scroll="handleScroll">
     <section
-      v-for="(messagesByDate, name) in roomMessagesSorted"
-      :key="name"
+      v-for="messagesByDate in roomMessagesSorted"
+      :key="messagesByDate.date"
       class="chat-messages__container-date"
     >
       <div class="chat-messages__messages__start-feedbacks">
-        <chat-feedback :feedback="name" scheme="purple" />
+        <chat-feedback :feedback="messagesByDate.date" scheme="purple" />
         <chat-feedback
           v-if="room.is_waiting"
           :feedback="$t('waiting_answer.waiting_cliente_answer')"
@@ -16,11 +16,11 @@
       </div>
 
       <section
-        v-for="(messagesByMinute, name) in messagesByDate"
+        v-for="messagesByMinute in messagesByDate.minutes"
         class="chat-messages__container-minute"
-        :key="name"
+        :key="messagesByDate.date + messagesByMinute.minute"
       >
-        <template v-for="message in messagesByMinute">
+        <template v-for="message in messagesByMinute.messages">
           <chat-feedback
             v-if="isTransferInfoMessage(message)"
             :feedback="
@@ -351,8 +351,11 @@ export default {
 
 <style lang="scss" scoped>
 .chat-messages {
-  height: 100%;
   overflow: hidden auto;
+
+  padding-right: $unnnic-spacing-sm;
+
+  height: 100%;
 
   &__container-date {
     &:last-of-type {

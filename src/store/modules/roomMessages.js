@@ -13,6 +13,7 @@ import Rooms from './rooms';
 const mutations = {
   SET_ROOM_MESSAGES: 'SET_ROOM_MESSAGES',
   ADD_ROOM_MESSAGE_SORTED: 'ADD_ROOM_MESSAGE_SORTED',
+  RESET_ROOM_MESSAGE_SORTED: 'RESET_ROOM_MESSAGE_SORTED',
   SET_ROOM_HAS_NEXT_MESSAGES: 'SET_ROOM_HAS_NEXT_MESSAGES',
   ADD_MESSAGE: 'ADD_MESSAGE',
   UPDATE_MESSAGE: 'UPDATE_MESSAGE',
@@ -47,7 +48,7 @@ export default {
   namespaced: true,
   state: {
     roomMessages: [],
-    roomMessagesSorted: null,
+    roomMessagesSorted: [],
     roomMessagesSendingUuids: [],
     roomMessagesFailedUuids: [],
     hasNextMessages: true,
@@ -57,19 +58,66 @@ export default {
     [mutations.SET_ROOM_MESSAGES](state, messages) {
       state.roomMessages = messages;
     },
-    [mutations.ADD_ROOM_MESSAGE_SORTED](state, { date, minute, message }) {
-      if (!state.roomMessagesSorted) {
-        state.roomMessagesSorted = {};
+
+    /**
+     * Adds a message to the roomMessagesSorted data structure.
+     *
+     * This function is designed to follow the state with the following format:
+     * [{
+     *   date: "",
+     *   minutes: [{
+     *     minute: "",
+     *     messages: [{
+     *       // ... (message data)
+     *     }]
+     *   }]
+     * }]
+     *
+     * The choice of this format was motivated by the following topics:
+     *
+     * 1. **Reactivity**: Allows real-time state updates, ensuring that changes
+     *    are immediately reflected in observers. This is possible thanks to the use of arrays, as JavaScript
+     *    does not observe property mutations in plain objects.
+     *
+     * 2. **Unshift and Push**: The ability to use `unshift` and `push` makes it easier to add messages in chronological order.
+     *
+     * 3. **Grouping**: Group messages by date and sending time.
+     *
+     * @param {object} payload.message - The message to be added.
+     * @param {boolean} payload.addBefore - Specifies whether the message should be added before or after existing ones.
+     */
+    [mutations.ADD_ROOM_MESSAGE_SORTED](state, { message, addBefore }) {
+      const messageTimestamp = moment(message.created_on);
+      const messageDate = messageTimestamp.format('L');
+      const messageMinute = messageTimestamp.format('LT');
+
+      let dateIndex = state.roomMessagesSorted.findIndex((obj) => obj.date === messageDate);
+
+      if (dateIndex === -1) {
+        dateIndex = addBefore ? 0 : state.roomMessagesSorted.length;
+        const newDateEntry = { date: messageDate, minutes: [] };
+        state.roomMessagesSorted.splice(dateIndex, 0, newDateEntry);
       }
 
-      if (!state.roomMessagesSorted[date]) {
-        state.roomMessagesSorted[date] = {};
-      }
-      if (!state.roomMessagesSorted[date][minute]) {
-        state.roomMessagesSorted[date][minute] = [];
+      const currentDateEntry = state.roomMessagesSorted[dateIndex];
+      let minuteIndex = currentDateEntry.minutes.findIndex((obj) => obj.minute === messageMinute);
+
+      if (minuteIndex === -1) {
+        minuteIndex = addBefore ? 0 : currentDateEntry.minutes.length;
+        const newMinuteEntry = { minute: messageMinute, messages: [] };
+        currentDateEntry.minutes.splice(minuteIndex, 0, newMinuteEntry);
       }
 
-      state.roomMessagesSorted[date][minute].push(message);
+      const currentMinuteEntry = currentDateEntry.minutes[minuteIndex];
+
+      if (addBefore) {
+        currentMinuteEntry.messages.unshift(message);
+      } else {
+        currentMinuteEntry.messages.push(message);
+      }
+    },
+    [mutations.RESET_ROOM_MESSAGE_SORTED](state) {
+      state.roomMessagesSorted = [];
     },
     [mutations.SET_ROOM_HAS_NEXT_MESSAGES](state, hasNextMessages) {
       state.hasNextMessages = hasNextMessages;
@@ -135,35 +183,39 @@ export default {
   },
 
   actions: {
-    async getRoomMessages({ commit, state }, { offset, concat, limit }) {
+    async getRoomMessages({ commit }, { offset, concat, limit }) {
       const { activeRoom } = Rooms.state;
-      if (!activeRoom) return;
+
+      if (!activeRoom) {
+        return;
+      }
 
       const maxRetries = 3;
       let currentRetry = 0;
 
-      // eslint-disable-next-line consistent-return
       async function fetchData() {
         try {
           const response = await Message.getByRoom(activeRoom.uuid, offset, limit);
 
-          let messages = response.results;
-          const hasNext = response.next;
+          const { results: messages, next: hasNext } = response;
+
+          if (!messages?.[0] || !activeRoom?.uuid || messages?.[0]?.room !== activeRoom.uuid) {
+            return;
+          }
+
           if (concat) {
-            messages = response.results.concat(state.roomMessages);
-          }
-
-          if (messages?.[0] && activeRoom?.uuid && messages?.[0]?.room === activeRoom.uuid) {
-            messages.forEach((message) => {
-              const date = moment(message.created_on).format('L');
-              const minute = moment(message.created_on).format('LT');
-
-              commit(mutations.ADD_ROOM_MESSAGE_SORTED, { date, minute, message });
+            messages.reverse().forEach((message) => {
+              commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message, addBefore: concat });
             });
-
-            commit(mutations.SET_ROOM_MESSAGES, messages);
-            commit(mutations.SET_ROOM_HAS_NEXT_MESSAGES, hasNext);
+          } else {
+            commit(mutations.RESET_ROOM_MESSAGE_SORTED);
+            messages.forEach((message) => {
+              commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message });
+            });
           }
+
+          commit(mutations.SET_ROOM_MESSAGES, messages);
+          commit(mutations.SET_ROOM_HAS_NEXT_MESSAGES, hasNext);
         } catch (error) {
           console.error('An error ocurred when try get the room messages', error);
 
@@ -172,15 +224,16 @@ export default {
 
             const TWO_SECONDS = 2000;
 
-            return new Promise((resolve) => {
+            await new Promise((resolve) => {
               setTimeout(() => {
                 resolve(fetchData());
               }, TWO_SECONDS);
             });
+          } else {
+            throw new Error(
+              `Several errors occurred when trying to request messages from the room. There will be no automatic retries.`,
+            );
           }
-          throw new Error(
-            `Several errors occurred when trying to request messages from the room. There will be no automatic retries.`,
-          );
         }
       }
 
@@ -193,7 +246,10 @@ export default {
       );
 
       if (messageAlreadyExists) commit(mutations.UPDATE_MESSAGE, { message });
-      else commit(mutations.ADD_MESSAGE, { message });
+      else {
+        commit(mutations.ADD_MESSAGE, { message });
+        commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message });
+      }
     },
 
     async sendMessage({ commit }, text) {
@@ -203,6 +259,7 @@ export default {
       // Create a temporary message to display while sending
       const temporaryMessage = createTemporaryMessage({ activeRoom, text });
       commit(mutations.ADD_MESSAGE, { message: temporaryMessage });
+      commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message: temporaryMessage });
 
       // Send the message and update it with the actual message data
       try {
@@ -231,6 +288,7 @@ export default {
             media: [{ preview: mediaPreview, file: media, content_type: media.type }],
           });
           commit(mutations.ADD_MESSAGE, { message: temporaryMessage });
+          commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message: temporaryMessage });
 
           // Send the message and update it with the actual message data
           try {
