@@ -262,7 +262,9 @@ export default {
 
     isFirstMessageByBot(messagesByDateMinutes) {
       return messagesByDateMinutes.some((minute) =>
-        minute.messages.some((message) => !message.contact && !message.user),
+        minute.messages.some(
+          (message) => !message.contact && !message.user && !this.isTransferInfoMessage(message),
+        ),
       );
     },
 
