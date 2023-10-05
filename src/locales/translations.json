@@ -545,6 +545,11 @@
     "en-us": "Close",
     "es": "Fechar"
   },
+  "all": {
+    "pt-br": "Todos",
+    "en-us": "All",
+    "es": "Todos"
+  },
   "back_to_chats": {
     "pt-br": "@:back para chats",
     "en-us": "@:back to chats",
@@ -607,6 +612,11 @@
         "es": "Seleccione"
       }
     }
+  },
+  "name_or_phone": {
+    "pt-br": "Nome ou telefone",
+    "en-us": "Name or telephone",
+    "es": "Nombre o teléfono"
   },
   "tags": {
     "title": {

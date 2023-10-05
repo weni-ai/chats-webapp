@@ -25,15 +25,28 @@
         <section class="closed-chats__list__handlers">
           <div class="closed-chats__list__handlers__input">
             <unnnic-label :label="$t('chats.search_contact')" />
-            <unnnic-input v-model="filterContact" icon-left="search-1" />
+            <unnnic-input
+              v-model="filterContact"
+              icon-left="search-1"
+              :placeholder="$t('name_or_phone')"
+            />
           </div>
           <div class="closed-chats__list__handlers__input">
             <unnnic-label :label="$t('sector.title')" />
-            <unnnic-select-smart v-model="filterSector" :options="[]" />
+            <unnnic-select-smart
+              v-model="filterSector"
+              :options="sectorsToFilter"
+              ordered-by-index
+            />
           </div>
           <div class="closed-chats__list__handlers__input">
-            <unnnic-label :label="$t('filter.by_tags')" />
-            <unnnic-select-smart v-model="filterTag" disabled :options="[]" />
+            <unnnic-label :label="$t('tags.title')" />
+            <unnnic-select-smart
+              v-model="filterTag"
+              :disabled="filterSector[0]?.value === 'all' || tagsToFilter.length < 2"
+              :options="tagsToFilter"
+              multiple
+            />
           </div>
           <div class="closed-chats__list__handlers__input">
             <unnnic-label :label="$t('filter.by_date')" />
@@ -94,6 +107,7 @@
 import moment from 'moment';
 
 import ProjectApi from '@/services/api/resources/settings/project';
+import Sector from '@/services/api/resources/settings/sector';
 import Contact from '@/services/api/resources/chats/contact';
 import Message from '@/services/api/resources/chats/message';
 
@@ -123,9 +137,11 @@ export default {
       },
     ],
     selectedRoom: null,
-    filterContact: null,
-    filterSector: null,
-    filterTag: null,
+    sectorsToFilter: [],
+    tagsToFilter: [],
+    filterContact: [],
+    filterSector: [],
+    filterTag: [],
     filterDate: {
       start: moment().subtract(1, 'week').format('YYYY-MM-DD'),
       end: moment().format('YYYY-MM-DD'),
@@ -133,11 +149,20 @@ export default {
   }),
 
   created() {
+    this.getSectors();
+    this.filterSector = [this.filterSectorsOptionAll];
+
     this.projectInfo();
     this.crumbs.push({
       name: this.$t('chats.closed_chats.history'),
       path: 'closed-rooms',
     });
+  },
+
+  computed: {
+    filterSectorsOptionAll() {
+      return { value: 'all', label: this.$t('all') };
+    },
   },
 
   methods: {
@@ -148,6 +173,40 @@ export default {
     async projectInfo() {
       const project = await ProjectApi.getInfo();
       this.project = project.data;
+    },
+
+    async getSectors() {
+      try {
+        const response = await Sector.list();
+        const { results } = response;
+
+        const newSectors = [this.filterSectorsOptionAll];
+        results.forEach(({ uuid, name }) => newSectors.push({ value: uuid, label: name }));
+        this.sectorsToFilter = newSectors;
+
+        if (results.length > 0) {
+          this.getSectorTags(results[0].uuid);
+        }
+      } catch (error) {
+        console.error('The sectors could not be loaded at this time.', error);
+      }
+    },
+
+    async getSectorTags(sectorUuid) {
+      if (!sectorUuid) {
+        this.tagsToFilter = [];
+        return;
+      }
+      try {
+        const response = await Sector.tags(sectorUuid);
+        const { results } = response;
+
+        const newTags = [{ value: '', label: this.$t('filter.by_tags') }];
+        results.forEach(({ uuid, name }) => newTags.push({ value: uuid, label: name }));
+        this.tagsToFilter = newTags;
+      } catch (error) {
+        console.error('The sector tags could not be loaded at this time.', error);
+      }
     },
 
     // async getClosedChat(contact, concat) {
