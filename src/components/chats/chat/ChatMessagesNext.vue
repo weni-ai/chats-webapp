@@ -8,7 +8,12 @@
       class="chat-messages__container-date"
     >
       <div class="chat-messages__messages__start-feedbacks">
-        <chat-feedback :feedback="messagesByDate.date" scheme="purple" />
+        <chat-feedback
+          :feedback="messagesByDate.date"
+          class="chat-messages__messages__start-feedbacks__date"
+          scheme="purple"
+          divisor
+        />
         <chat-feedback
           v-if="room.is_waiting"
           :feedback="$t('waiting_answer.waiting_cliente_answer')"
@@ -36,8 +41,11 @@
           <template v-else>
             <unnnic-chats-message
               v-if="message.text"
-              :type="message.user || (!message.user && !message.contact) ? 'sent' : 'received'"
-              :class="['chat-messages__message', message.user ? 'sent' : 'received']"
+              :type="message.user || isMessageByBot(message) ? 'sent' : 'received'"
+              :class="[
+                'chat-messages__message',
+                message.user || isMessageByBot(message) ? 'sent' : 'received',
+              ]"
               :time="new Date(message.created_on)"
               :status="messageStatus({ message })"
               :key="message.uuid"
@@ -268,6 +276,10 @@ export default {
       );
     },
 
+    isMessageByBot(message) {
+      return !message.user && !message.contact;
+    },
+
     isTransferInfoMessage(message) {
       try {
         const content = JSON.parse(message.text);
@@ -384,10 +396,15 @@ export default {
 
     &.sent {
       justify-self: flex-end;
-    }
 
-    & + & {
-      margin-top: $unnnic-spacing-nano;
+      & + & {
+        margin-top: $unnnic-spacing-nano;
+      }
+    }
+    &.received {
+      & + & {
+        margin-top: $unnnic-spacing-nano;
+      }
     }
 
     .image {

@@ -1,5 +1,5 @@
 <template>
-  <div class="chat-feedback__container">
+  <div :class="{ 'chat-feedback__container': true, divisor }">
     <strong :class="['chat-feedback', scheme ? `chat-feedback--${scheme}` : '']">
       {{ feedback }}
     </strong>
@@ -22,6 +22,10 @@ export default {
         return ['blue', 'purple', 'red', 'green', 'yellow'].includes(value);
       },
     },
+    divisor: {
+      type: Boolean,
+      default: false,
+    },
   },
 };
 </script>
@@ -35,6 +39,11 @@ $scheme-colors: 'blue' $unnnic-color-aux-blue-100, 'purple' $unnnic-color-aux-pu
   margin-top: $unnnic-spacing-md;
 
   display: flex;
+
+  &.divisor {
+    padding-top: $unnnic-spacing-md;
+    border-top: $unnnic-border-width-thinner solid $unnnic-color-neutral-soft;
+  }
 
   .chat-feedback {
     margin: 0 auto;

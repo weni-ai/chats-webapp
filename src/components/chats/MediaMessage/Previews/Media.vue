@@ -63,6 +63,12 @@ export default {
 
   cursor: pointer;
 
+  transition: scale ease-in-out 0.1s;
+
+  &:hover {
+    scale: 1.05;
+  }
+
   &__media {
     width: 100%;
     height: 100%;
