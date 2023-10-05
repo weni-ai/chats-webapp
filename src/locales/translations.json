@@ -664,9 +664,9 @@
   },
   "chat_with": {
     "bot": {
-      "pt-br": "Chat com Bot",
-      "en-us": "Chat with Bot",
-      "es": "Chat con Bot"
+      "pt-br": "Chat com bot",
+      "en-us": "Chat with bot",
+      "es": "Chat con bot"
     },
     "agent": {
       "pt-br": "Chat com agente {name}",

@@ -40,7 +40,7 @@ $scheme-colors: 'blue' $unnnic-color-aux-blue-100, 'purple' $unnnic-color-aux-pu
     margin: 0 auto;
     border-radius: $unnnic-border-radius-lg;
 
-    padding: $unnnic-spacing-nano $unnnic-spacing-xs;
+    padding: $unnnic-spacing-nano $unnnic-spacing-sm;
 
     font-size: $unnnic-font-size-body-md;
     color: $unnnic-color-neutral-black;

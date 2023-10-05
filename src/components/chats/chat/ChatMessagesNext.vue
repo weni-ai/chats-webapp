@@ -13,6 +13,10 @@
           v-if="room.is_waiting"
           :feedback="$t('waiting_answer.waiting_cliente_answer')"
         />
+        <chat-feedback
+          v-if="isFirstMessageByBot(messagesByDate.minutes)"
+          :feedback="$t('chat_with.bot')"
+        />
       </div>
 
       <section
@@ -254,6 +258,12 @@ export default {
           }
         }
       }
+    },
+
+    isFirstMessageByBot(messagesByDateMinutes) {
+      return messagesByDateMinutes.some((minute) =>
+        minute.messages.some((message) => !message.contact && !message.user),
+      );
     },
 
     isTransferInfoMessage(message) {
