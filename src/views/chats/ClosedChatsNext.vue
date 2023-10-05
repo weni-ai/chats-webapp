@@ -1,5 +1,6 @@
 <template>
-  <div class="closed-chats">
+  <closed-chats-header-loading v-if="isLoadingHeader" />
+  <div class="closed-chats" v-else>
     <header v-if="project">
       <unnnic-chats-header
         :title="project.name"
@@ -112,11 +113,13 @@ import Contact from '@/services/api/resources/chats/contact';
 import Message from '@/services/api/resources/chats/message';
 
 import ContactInfo from '@/components/chats/ContactInfo';
+import ClosedChatsHeaderLoading from '@/views/loadings/ClosedChats/ClosedChatsHeader.vue';
 
 export default {
   name: 'ClosedChatsNext',
 
   components: {
+    ClosedChatsHeaderLoading,
     ContactInfo,
   },
 
@@ -128,6 +131,7 @@ export default {
   },
 
   data: () => ({
+    isLoadingHeader: true,
     rooms: [],
     project: null,
     crumbs: [
@@ -173,6 +177,7 @@ export default {
     async projectInfo() {
       const project = await ProjectApi.getInfo();
       this.project = project.data;
+      this.isLoadingHeader = false;
     },
 
     async getSectors() {
