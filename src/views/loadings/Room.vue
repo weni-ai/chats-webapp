@@ -1,9 +1,6 @@
 <template>
   <div class="room-loading">
-    <header>
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading />
-    </header>
+    <room-header-loading v-if="!onlyMessages" />
     <main>
       <div class="room-loading__messages">
         <unnnic-skeleton-loading width="80px" height="23px" />
@@ -20,7 +17,7 @@
           <unnnic-skeleton-loading />
         </div>
       </div>
-      <div class="room-loading__messages-manager">
+      <div v-if="!onlyMessages" class="room-loading__messages-manager">
         <unnnic-skeleton-loading />
         <unnnic-skeleton-loading />
         <unnnic-skeleton-loading />
@@ -30,8 +27,21 @@
 </template>
 
 <script>
+import RoomHeaderLoading from '@/views/loadings/RoomHeader.vue';
+
 export default {
   name: 'RoomLoading',
+
+  components: {
+    RoomHeaderLoading,
+  },
+
+  props: {
+    onlyMessages: {
+      type: Boolean,
+      default: false,
+    },
+  },
 };
 </script>
 
@@ -45,20 +55,6 @@ export default {
 
   z-index: 10000;
 
-  header {
-    padding: $unnnic-spacing-sm;
-
-    display: grid;
-    gap: $unnnic-spacing-md;
-    grid-template-columns: 40px 70%;
-
-    box-shadow: $unnnic-shadow-level-far;
-
-    & > * {
-      width: 100%;
-      height: 40px;
-    }
-  }
   main {
     display: grid;
     grid-template-rows: 1fr auto;

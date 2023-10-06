@@ -9,16 +9,18 @@
         :crumbs="crumbs"
         :close="backToHome"
       />
+      <room-header-loading v-show="roomId && isLoadingSelectedRoom" />
       <unnnic-chats-header
-        v-if="selectedRoom"
+        v-if="!isLoadingSelectedRoom && selectedRoom"
         :title="selectedRoom.name"
         :avatarName="selectedRoom.name"
         :close="() => {}"
       />
     </header>
     <main>
-      <section v-if="roomId && selectedRoom" class="closed-chats__selected-chat">
-        <div>chatMessages</div>
+      <section v-if="roomId" class="closed-chats__selected-chat">
+        <room-loading v-show="isLoadingSelectedRoom" only-messages />
+        <div v-show="!isLoadingSelectedRoom && selectedRoom">chatMessages</div>
         <contact-info is-history :contact="selectedRoom" @close="() => {}" />
       </section>
 
@@ -114,12 +116,16 @@ import Message from '@/services/api/resources/chats/message';
 
 import ContactInfo from '@/components/chats/ContactInfo';
 import ClosedChatsHeaderLoading from '@/views/loadings/ClosedChats/ClosedChatsHeader.vue';
+import RoomHeaderLoading from '@/views/loadings/RoomHeader.vue';
+import RoomLoading from '@/views/loadings/Room.vue';
 
 export default {
   name: 'ClosedChatsNext',
 
   components: {
     ClosedChatsHeaderLoading,
+    RoomHeaderLoading,
+    RoomLoading,
     ContactInfo,
   },
 
@@ -132,6 +138,7 @@ export default {
 
   data: () => ({
     isLoadingHeader: true,
+    isLoadingSelectedRoom: false,
     rooms: [],
     project: null,
     crumbs: [
@@ -242,6 +249,8 @@ export default {
       immediate: true,
       async handler(roomId) {
         if (roomId) {
+          this.isLoadingSelectedRoom = true;
+
           this.crumbs.push({
             name: 'Nome do usuário',
             path: 'closed-rooms/:roomId',
@@ -251,6 +260,8 @@ export default {
           console.log(responseRoomMessages);
           this.selectedRoom = responseRoom;
           // this.selectedRoomMessages = responseRoomMessages;
+
+          this.isLoadingSelectedRoom = false;
         }
       },
     },
