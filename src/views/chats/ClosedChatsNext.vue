@@ -62,11 +62,7 @@
           </div>
           <unnnic-button type="secondary" :text="$t('clear')" />
         </section>
-        <unnnic-table
-          v-if="this.mockedRooms.length > 0"
-          :items="mockedRooms"
-          class="closed-chats__list__table"
-        >
+        <unnnic-table v-if="this.rooms.length > 0" :items="rooms" class="closed-chats__list__table">
           <template #header>
             <unnnic-table-row :headers="tableHeaders" />
           </template>
@@ -74,9 +70,11 @@
           <template #item="{ item }">
             <unnnic-table-row :headers="tableHeaders">
               <template #contactName>
-                <div class="contact-name">
+                <div class="closed-chats__list__table__contact">
                   <unnnic-chats-user-avatar :username="item.contact.name" />
-                  {{ item.contact.name }}
+                  <p class="closed-chats__list__table__contact__name">
+                    {{ item.contact.name }}
+                  </p>
                 </div>
               </template>
 
@@ -88,19 +86,26 @@
 
               <template #date>{{ $d(new Date(item.ended_at)) }}</template>
 
-              <!-- <template #visualize>
+              <template #visualize>
                 <unnnic-button
-                  :text="$t('chats.open_chat')"
+                  class="closed-chats__list__table__visualize"
+                  :text="$t('see')"
                   type="secondary"
                   size="large"
-                  class="visualize-button"
-                  @click="openContactHistory(item)"
                 />
-              </template> -->
+              </template>
             </unnnic-table-row>
           </template>
         </unnnic-table>
         <p class="closed-chats__list__table__no-results" v-else>{{ $t('without_results') }}</p>
+
+        <section class="closed-chats__list__pages">
+          <p class="closed-chats__list__pages__count">
+            {{ tablePagination }}
+          </p>
+
+          <unnnic-pagination v-model="roomsCurrentPage" :max="roomsCountPages" :show="roomsLimit" />
+        </section>
       </section>
     </main>
   </div>
@@ -111,7 +116,7 @@ import moment from 'moment';
 
 import ProjectApi from '@/services/api/resources/settings/project';
 import Sector from '@/services/api/resources/settings/sector';
-import Contact from '@/services/api/resources/chats/contact';
+import History from '@/services/api/resources/chats/history';
 import Message from '@/services/api/resources/chats/message';
 
 import ContactInfo from '@/components/chats/ContactInfo';
@@ -142,15 +147,22 @@ export default {
   data: () => ({
     isLoadingHeader: true,
     isLoadingSelectedRoom: false,
-    rooms: [],
-    project: null,
+
     crumbs: [
       {
         name: 'Chats',
         path: 'home',
       },
     ],
+    project: null,
+    rooms: [],
+    roomsCount: 0,
+    roomsCountPages: 0,
+    roomsCurrentPage: 1,
+    roomsLimit: 5,
+
     selectedRoom: null,
+
     sectorsToFilter: [],
     tagsToFilter: [],
     filterContact: [],
@@ -163,6 +175,8 @@ export default {
   }),
 
   created() {
+    this.getHistoryRooms();
+
     this.getSectors();
     this.filterSector = [this.filterSectorsOptionAll];
 
@@ -208,48 +222,14 @@ export default {
       ];
     },
 
-    mockedRooms() {
-      return [
-        {
-          uuid: '1e2f586c-1152-4a3a-9bfc-fc69da4f538d',
-          created_on: '2023-10-04T17:20:09.497802-03:00',
-          ended_at: '2023-10-04T17:21:10.497802-03:00',
-          user: {
-            first_name: 'João',
-            last_name: 'Atendente',
-          },
-          contact: {
-            uuid: '864d8b62-2a6f-4147-b765-a9fedc059cd5',
-            name: 'Maria das Graças',
-          },
-          tags: [
-            {
-              uuid: 'fcc06594-f407-490b-b08f-cb0abdb5314d',
-              name: 'SAC',
-            },
-            {
-              uuid: '65d95a04-f54e-42fd-a19a-b0b5f365896e',
-              name: 'Resolvido',
-            },
-            {
-              uuid: 'f5d95a04-f54e-42fd-a19a-b0b5f365896e',
-              name: 'Tag2',
-            },
-            {
-              uuid: 'e5d95a04-f54e-42fd-a19a-b0b5f365896e',
-              name: 'Tag4',
-            },
-            {
-              uuid: 'r5d95a04-f54e-42fd-a19a-b0b5f365896e',
-              name: 'Tag3',
-            },
-            {
-              uuid: 't5d95a04-f54e-42fd-a19a-b0b5f365896e',
-              name: 'Tag6',
-            },
-          ],
-        },
-      ];
+    tablePagination() {
+      const { roomsCurrentPage, roomsLimit, roomsCount } = this;
+
+      return this.$t('pagination', {
+        from: (roomsCurrentPage - 1) * roomsLimit + 1,
+        to: Math.min(roomsCurrentPage * roomsLimit, roomsCount),
+        total: roomsCount,
+      });
     },
   },
 
@@ -298,27 +278,20 @@ export default {
       }
     },
 
-    // async getClosedChat(contact, concat) {
-    //   const offset = this.page * 20;
-    //   try {
-    //     this.isLoading = true;
-    //     const response = await Message.getByContact(contact.uuid, offset, 20);
-    //     let messages = response.results;
-    //     this.hasNext = response.next;
-    //     this.scrollMessagesToBottom();
-    //     if (concat) {
-    //       messages = response.results.concat(this.messages);
-    //     }
-    //     const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
-    //     const groupedMessages = groupSequentialSentMessages(messagesWithSender);
-    //     this.messages = groupedMessages;
-    //     this.contact = contact;
-    //     this.isLoading = false;
-    //     this.componentInAsideSlot = 'contactInfo';
-    //   } finally {
-    //     this.isLoading = false;
-    //   }
-    // },
+    async getHistoryRooms() {
+      const { roomsCurrentPage, roomsLimit } = this;
+
+      const offset = (roomsCurrentPage - 1) * roomsLimit;
+
+      try {
+        const response = await History.getHistoryRooms({ offset, limit: roomsLimit });
+        this.rooms = response.results;
+        this.roomsCount = response.count;
+        this.roomsCountPages = Math.ceil(response.count / roomsLimit);
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
 
   watch: {
@@ -332,7 +305,7 @@ export default {
             name: 'Nome do usuário',
             path: 'closed-rooms/:roomId',
           });
-          const responseRoom = await Contact.getUnicContactClosedRooms(roomId);
+          const responseRoom = await History.getUnicContactClosedRooms(roomId);
           const responseRoomMessages = await Message.getByContact(roomId, 20, 20);
           console.log(responseRoomMessages);
           this.selectedRoom = responseRoom;
@@ -341,6 +314,9 @@ export default {
           this.isLoadingSelectedRoom = false;
         }
       },
+    },
+    roomsCurrentPage() {
+      this.getHistoryRooms();
     },
   },
 };
@@ -356,12 +332,20 @@ export default {
 
   overflow: hidden;
 
+  main {
+    height: 100%;
+    overflow: hidden;
+  }
+
   &__list {
     padding: $unnnic-spacing-md;
     padding-top: $unnnic-spacing-sm;
 
     display: grid;
     gap: $unnnic-spacing-sm;
+
+    grid-template-rows: auto 1fr auto;
+    height: 100%;
 
     &__handlers {
       display: grid;
@@ -381,8 +365,47 @@ export default {
     }
 
     &__table {
+      overflow: hidden;
+
       &__no-results {
         color: $unnnic-color-neutral-cloudy;
+        font-size: $unnnic-font-size-body-gt;
+      }
+
+      &__contact {
+        display: flex;
+        align-items: center;
+        gap: $unnnic-spacing-nano;
+
+        &__name {
+          overflow: hidden;
+
+          width: 100%;
+
+          font-size: $unnnic-font-size-body-lg;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+
+      &__visualize {
+        width: 100%;
+      }
+    }
+
+    &__pages {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      height: min-content;
+
+      margin-top: $unnnic-spacing-md;
+      border-top: $unnnic-border-width-thinner solid $unnnic-color-neutral-soft;
+      padding-top: $unnnic-spacing-md;
+
+      &__count {
+        color: $unnnic-color-neutral-dark;
         font-size: $unnnic-font-size-body-gt;
       }
     }

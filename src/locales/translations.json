@@ -572,6 +572,11 @@
       "es": "Limpiar filtros"
     }
   },
+  "pagination": {
+    "pt-br": "{from} - {to} de {total}",
+    "en-us": "{from} - {to} of {total}",
+    "es": "{from} - {to} de {total}"
+  },
   "contact": {
     "pt-br": "Contato",
     "en-us": "Contact",
@@ -660,6 +665,11 @@
   "view": {
     "pt-br": "Visualizar",
     "en-us": "View",
+    "es": "Ver"
+  },
+  "see": {
+    "pt-br": "Ver",
+    "en-us": "See",
     "es": "Ver"
   },
   "chat_with": {
