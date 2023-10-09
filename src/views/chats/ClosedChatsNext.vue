@@ -165,7 +165,7 @@ export default {
 
     sectorsToFilter: [],
     tagsToFilter: [],
-    filterContact: [],
+    filterContact: '',
     filterSector: [],
     filterTag: [],
     filterDate: {
@@ -226,7 +226,7 @@ export default {
       const { roomsCurrentPage, roomsLimit, roomsCount } = this;
 
       return this.$t('pagination', {
-        from: (roomsCurrentPage - 1) * roomsLimit + 1,
+        from: roomsCount === 0 ? 0 : (roomsCurrentPage - 1) * roomsLimit + 1,
         to: Math.min(roomsCurrentPage * roomsLimit, roomsCount),
         total: roomsCount,
       });
@@ -242,6 +242,36 @@ export default {
       const project = await ProjectApi.getInfo();
       this.project = project.data;
       this.isLoadingHeader = false;
+    },
+
+    async getHistoryRooms(paginate) {
+      const { roomsCurrentPage, roomsLimit, filterDate, filterContact, filterSector, filterTag } =
+        this;
+
+      if (!paginate) {
+        this.roomsCurrentPage = 1;
+      }
+
+      const offset = (roomsCurrentPage - 1) * roomsLimit;
+      const tagsToReq = filterTag.map((tag) => tag.label).join(',');
+      const sectionToReq = filterSector[0]?.value === 'all' ? '' : filterSector[0]?.value;
+
+      try {
+        const response = await History.getHistoryRooms({
+          offset,
+          limit: roomsLimit,
+          ended_at_before: filterDate.end,
+          ended_at_after: filterDate.start,
+          search: filterContact,
+          sector: sectionToReq,
+          tag: tagsToReq,
+        });
+        this.rooms = response.results;
+        this.roomsCount = response.count;
+        this.roomsCountPages = Math.ceil(response.count / roomsLimit);
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     async getSectors() {
@@ -278,20 +308,7 @@ export default {
       }
     },
 
-    async getHistoryRooms() {
-      const { roomsCurrentPage, roomsLimit } = this;
-
-      const offset = (roomsCurrentPage - 1) * roomsLimit;
-
-      try {
-        const response = await History.getHistoryRooms({ offset, limit: roomsLimit });
-        this.rooms = response.results;
-        this.roomsCount = response.count;
-        this.roomsCountPages = Math.ceil(response.count / roomsLimit);
-      } catch (error) {
-        console.log(error);
-      }
-    },
+    resetFilters() {},
   },
 
   watch: {
@@ -316,8 +333,19 @@ export default {
       },
     },
     roomsCurrentPage() {
-      this.getHistoryRooms();
+      this.getHistoryRooms(true);
     },
+    filterContact() {
+      const TIME_TO_WAIT_TYPING = 800;
+
+      if (this.timeout !== 0) clearTimeout(this.timeout);
+      this.timerId = setTimeout(() => {
+        this.getHistoryRooms();
+      }, TIME_TO_WAIT_TYPING);
+    },
+    filterSector: 'getHistoryRooms',
+    filterTag: 'getHistoryRooms',
+    filterDate: 'getHistoryRooms',
   },
 };
 </script>

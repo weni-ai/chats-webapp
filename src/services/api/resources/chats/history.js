@@ -2,24 +2,56 @@ import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 
 export default {
-  async getHistoryRooms({ offset, limit = 5 }) {
-    const response = await http.get(`/history/rooms`, {
+  // async getAllWithClosedRooms(offset, limit, contact, date, tags, sector) {
+  //   const response = await http.get('/contact/', {
+  //     params: {
+  //       project: getProject(),
+  //       offset,
+  //       limit,
+  //       search: contact,
+  //       r_ended_at_after: date.start,
+  //       r_ended_at_before: date.end,
+  //       tag: tags,
+  //       sector,
+  //     },
+  //   });
+  //   return response.data;
+  // },
+  // async getUnicContactClosedRooms(contact) {
+  //   const response = await http.get(`/contact/${contact}`, {
+  //     params: {
+  //       project: getProject(),
+  //     },
+  //   });
+  //   return response.data;
+  // },
+  async getHistoryRooms({
+    offset = 0,
+    limit = 5,
+    ended_at_before = '',
+    ended_at_after = '',
+    search = '',
+    sector = '',
+    tag = '',
+  }) {
+    const response = await http.get(`/history/rooms/`, {
       params: {
-        ended_at_before: '',
-        ended_at_after: '',
-        tag: '',
         project: getProject(),
-        ordering: '-ended_at',
-        search: '',
         offset,
         limit,
+        ended_at_before,
+        ended_at_after,
+        sector,
+        search,
+        tag,
+        ordering: '-ended_at',
       },
     });
-    console.log('response', response);
     return response.data;
   },
+
   async getHistoryContactRoomsUuids({ contact }) {
-    const response = await http.get(`/history/rooms`, {
+    const response = await http.get(`/history/rooms/`, {
       params: {
         project: getProject(),
         contact,
