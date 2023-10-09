@@ -3,7 +3,7 @@
   <section class="chat-messages" ref="chatMessages" @scroll="handleScroll">
     <section
       v-for="message in messages"
-      :key="message.uuid"
+      :key="message.uuid + message.created_on"
       :ref="`message-${message.uuid}`"
       class="chat-messages__room"
     >
@@ -234,7 +234,9 @@ export default {
 
       if (prevRoomUuid !== this.room.uuid) {
         this.handleScroll();
-        this.scrollToBottom();
+        setTimeout(() => {
+          this.scrollToBottom();
+        }, 100);
       }
 
       if (prevUuidBeforePagination && chatMessages.scrollTop === 0) {
