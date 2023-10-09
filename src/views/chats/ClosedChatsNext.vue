@@ -63,11 +63,11 @@
           <unnnic-button type="secondary" :text="$t('clear')" />
         </section>
         <unnnic-table
-          v-if="this.rooms.length > 0"
-          :items="this.contacts"
+          v-if="this.mockedRooms.length > 0"
+          :items="mockedRooms"
           class="closed-chats__list__table"
         >
-          <!-- <template #header>
+          <template #header>
             <unnnic-table-row :headers="tableHeaders" />
           </template>
 
@@ -75,20 +75,20 @@
             <unnnic-table-row :headers="tableHeaders">
               <template #contactName>
                 <div class="contact-name">
-                  <user-avatar :username="item.name" size="xl" style="min-width: 2.5rem" />
-                  {{ item.name }}
+                  <unnnic-chats-user-avatar :username="item.contact.name" />
+                  {{ item.contact.name }}
                 </div>
               </template>
 
-              <template #agentName>{{ item.room.user?.first_name }}</template>
+              <template #agentName>{{ item.user?.first_name }}</template>
 
               <template #tags>
-                <tag-group :tags="item.room.tags || []" />
+                <tag-group :tags="item.tags || []" :flex="false" />
               </template>
 
-              <template #date>{{ $d(new Date(item.room.ended_at)) }}</template>
+              <template #date>{{ $d(new Date(item.ended_at)) }}</template>
 
-              <template #visualize>
+              <!-- <template #visualize>
                 <unnnic-button
                   :text="$t('chats.open_chat')"
                   type="secondary"
@@ -96,9 +96,9 @@
                   class="visualize-button"
                   @click="openContactHistory(item)"
                 />
-              </template>
+              </template> -->
             </unnnic-table-row>
-          </template> -->
+          </template>
         </unnnic-table>
         <p class="closed-chats__list__table__no-results" v-else>{{ $t('without_results') }}</p>
       </section>
@@ -119,6 +119,8 @@ import ClosedChatsHeaderLoading from '@/views/loadings/ClosedChats/ClosedChatsHe
 import RoomHeaderLoading from '@/views/loadings/RoomHeader.vue';
 import RoomLoading from '@/views/loadings/Room.vue';
 
+import TagGroup from '@/components/TagGroup.vue';
+
 export default {
   name: 'ClosedChatsNext',
 
@@ -127,6 +129,7 @@ export default {
     RoomHeaderLoading,
     RoomLoading,
     ContactInfo,
+    TagGroup,
   },
 
   props: {
@@ -173,6 +176,80 @@ export default {
   computed: {
     filterSectorsOptionAll() {
       return { value: 'all', label: this.$t('all') };
+    },
+
+    tableHeaders() {
+      return [
+        {
+          id: 'contactName',
+          text: this.$t('contact'),
+          flex: 1,
+        },
+        {
+          id: 'agentName',
+          text: this.$t('agent'),
+          flex: 1,
+        },
+        {
+          id: 'tags',
+          text: this.$t('tags.title'),
+          flex: 1,
+        },
+        {
+          id: 'date',
+          text: this.$t('date'),
+          flex: 1,
+        },
+        {
+          id: 'visualize',
+          text: this.$t('view'),
+          flex: 1,
+        },
+      ];
+    },
+
+    mockedRooms() {
+      return [
+        {
+          uuid: '1e2f586c-1152-4a3a-9bfc-fc69da4f538d',
+          created_on: '2023-10-04T17:20:09.497802-03:00',
+          ended_at: '2023-10-04T17:21:10.497802-03:00',
+          user: {
+            first_name: 'João',
+            last_name: 'Atendente',
+          },
+          contact: {
+            uuid: '864d8b62-2a6f-4147-b765-a9fedc059cd5',
+            name: 'Maria das Graças',
+          },
+          tags: [
+            {
+              uuid: 'fcc06594-f407-490b-b08f-cb0abdb5314d',
+              name: 'SAC',
+            },
+            {
+              uuid: '65d95a04-f54e-42fd-a19a-b0b5f365896e',
+              name: 'Resolvido',
+            },
+            {
+              uuid: 'f5d95a04-f54e-42fd-a19a-b0b5f365896e',
+              name: 'Tag2',
+            },
+            {
+              uuid: 'e5d95a04-f54e-42fd-a19a-b0b5f365896e',
+              name: 'Tag4',
+            },
+            {
+              uuid: 'r5d95a04-f54e-42fd-a19a-b0b5f365896e',
+              name: 'Tag3',
+            },
+            {
+              uuid: 't5d95a04-f54e-42fd-a19a-b0b5f365896e',
+              name: 'Tag6',
+            },
+          ],
+        },
+      ];
     },
   },
 
