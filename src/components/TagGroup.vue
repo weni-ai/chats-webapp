@@ -14,7 +14,12 @@
         :scheme="schemes[i % schemes.length]"
         :ref="tag.uuid"
       />
-      <p v-if="remainingTags > 0" class="tag-group__remaining-children" ref="remainingTagsRef">
+      <p
+        v-if="remainingTags > 0"
+        :title="this.tagNames.join(', ')"
+        class="tag-group__remaining-children"
+        ref="remainingTagsRef"
+      >
         +{{ remainingTags }}
       </p>
     </div>
@@ -66,6 +71,7 @@ export default {
       return;
     }
 
+    console.log(this.tags);
     this.remainingTags = this.tags.length;
 
     const observer = new IntersectionObserver(this.handleIntersection);
@@ -85,6 +91,9 @@ export default {
       set(tags) {
         this.$emit('input', tags);
       },
+    },
+    tagNames() {
+      return this.tags.map((tag) => tag.name);
     },
   },
 
