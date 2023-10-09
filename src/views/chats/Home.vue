@@ -5,7 +5,7 @@
   >
     <room-loading v-show="isRoomSkeletonActive" />
     <chats-background v-if="!room && !isRoomSkeletonActive" />
-    <section v-if="!!room && !isRoomSkeletonActive" class="active-chat">
+    <section v-if="room" v-show="!isRoomSkeletonActive" class="active-chat">
       <chat-header
         :room="room"
         :closeButtonTooltip="$t('chats.end')"
