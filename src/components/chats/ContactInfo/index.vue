@@ -14,7 +14,7 @@
           <section class="infos">
             <header class="connection-info__header">
               <h1 class="username">
-                {{ contact?.name || room.contact.name }}
+                {{ closedRoom.contact.name || room.contact.name }}
               </h1>
 
               <unnnic-button-next
@@ -140,7 +140,7 @@
             :room="room"
             @fullscreen="openFullScreen"
             :history="isHistory"
-            :contactInfo="contact"
+            :contactInfo="closedRoom.contact"
             @loaded-medias="isLoading = false"
           />
         </aside-slot-template-section>
@@ -253,7 +253,7 @@ export default {
     VideoPreview,
   },
   props: {
-    contact: {
+    closedRoom: {
       type: Object,
     },
     isHistory: {
@@ -306,8 +306,8 @@ export default {
     },
 
     contactNumber() {
-      const plataform = (this.contact?.room || this.room).urn.split(':').at(0);
-      const number = (this.contact?.room || this.room).urn.split(':').at(-1);
+      const plataform = (this.closedRoom || this.room).urn.split(':').at(0);
+      const number = (this.closedRoom || this.room).urn.split(':').at(-1);
       const whatsapp = `+${number.substr(-20, 20)} `;
       const infoNumber = {
         plataform,
@@ -322,7 +322,7 @@ export default {
       this.customFields = this.room.custom_fields;
 
       if (
-        moment((this.contact || this.room.contact).created_on).format('YYYY-MM-DD') <
+        moment((this.closedRoom || this.room).contact.created_on).format('YYYY-MM-DD') <
         moment().format('YYYY-MM-DD')
       ) {
         this.contactHaveHistory = true;
@@ -359,7 +359,7 @@ export default {
   methods: {
     moment,
     openHistory() {
-      window.open(`/closed-chats?contactId=${this.room.contact.uuid}`);
+      window.open(`/closed-chats/${this.room.contact.uuid}`);
     },
 
     async getQueues() {

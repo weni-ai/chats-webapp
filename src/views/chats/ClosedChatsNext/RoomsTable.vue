@@ -116,8 +116,6 @@ export default {
     roomsCurrentPage: 1,
     roomsLimit: 5,
 
-    selectedRoom: null,
-
     sectorsToFilter: [],
     tagsToFilter: [],
     filterContact: '',
