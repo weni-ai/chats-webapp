@@ -1,5 +1,6 @@
 <template>
-  <section v-if="isDocument">
+  <p v-if="isGeolocation">{{ media.url }}</p>
+  <section v-else-if="isDocument">
     <document-preview
       @download="download"
       :fullFilename="fullFilename"
@@ -73,6 +74,10 @@ export default {
     isAudio() {
       const audio = /(mpeg3|wav|ogg)/;
       return audio.test(this.media.content_type);
+    },
+    isGeolocation() {
+      const geolocation = /(geo)/;
+      return geolocation.test(this.media.content_type);
     },
   },
 
