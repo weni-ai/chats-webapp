@@ -8,6 +8,7 @@
         avatarIcon="task-list-clock-1"
         :crumbs="crumbs"
         :close="backToHome"
+        @crumbClick="handlerCrumbClick"
       />
       <room-header-loading v-show="roomId && isLoadingSelectedRoom" />
       <unnnic-chats-header
@@ -21,9 +22,10 @@
       <section v-if="roomId" class="closed-chats__selected-chat">
         <room-loading v-show="isLoadingSelectedRoom" only-messages />
         <chat-messages
-          v-show="!isLoadingSelectedRoom && selectedRoom"
+          v-if="selectedRoom"
+          v-show="!isLoadingSelectedRoom"
           :room="selectedRoom"
-          @scrollTop="() => {}"
+          @scrollTop="testeDoScroll"
         />
         <contact-info is-history :closed-room="selectedRoom" @close="() => {}" />
       </section>
@@ -42,6 +44,7 @@ import ContactInfo from '@/components/chats/ContactInfo';
 import ClosedChatsHeaderLoading from '@/views/loadings/ClosedChats/ClosedChatsHeader.vue';
 import RoomHeaderLoading from '@/views/loadings/RoomHeader.vue';
 import RoomLoading from '@/views/loadings/Room.vue';
+import { mapState } from 'vuex';
 import ClosedChatsRoomsTable from './RoomsTable';
 
 export default {
@@ -76,6 +79,7 @@ export default {
     project: null,
 
     selectedRoom: null,
+    selectedRoomsUuids: null,
   }),
 
   created() {
@@ -86,9 +90,19 @@ export default {
     });
   },
 
+  computed: {
+    ...mapState({
+      roomMessagesNext: (state) => state.roomMessages.roomMessagesNext,
+    }),
+  },
+
   methods: {
     backToHome() {
       this.$router.push({ name: 'home' });
+    },
+
+    handlerCrumbClick(crumb) {
+      console.log(crumb);
     },
 
     async projectInfo() {
@@ -103,6 +117,28 @@ export default {
 
       this.$router.push({ name: 'closed-rooms' });
     },
+
+    async testeDoScroll() {
+      if (this.roomMessagesNext) {
+        this.getHistoryContactRoomMessages();
+      } else {
+        const roomUuidIndex = this.selectedRoomsUuids?.findIndex(
+          (room) => room.uuid === this.roomId,
+        );
+        const previousRoom = this.selectedRoomsUuids[roomUuidIndex - 1];
+
+        if (previousRoom) {
+          const responseRoom = await History.getHistoryContactRoom({ room: previousRoom.uuid });
+          await this.$store.dispatch('rooms/setActiveRoom', responseRoom);
+          this.getHistoryContactRoomMessages();
+          this.selectedRoom = responseRoom;
+        }
+      }
+    },
+
+    async getHistoryContactRoomMessages() {
+      await this.$store.dispatch('roomMessages/getRoomMessages');
+    },
   },
 
   watch: {
@@ -111,18 +147,20 @@ export default {
       async handler(roomId) {
         if (roomId) {
           this.isLoadingSelectedRoom = true;
+
           const responseRoom = await History.getHistoryContactRoom({ room: roomId });
           this.crumbs.push({
             name: responseRoom.contact.name,
             path: 'closed-rooms/:roomId',
           });
           await this.$store.dispatch('rooms/setActiveRoom', responseRoom);
-          await this.$store.dispatch('roomMessages/getRoomMessages', {
-            offset: this.page * this.limit,
-            limit: this.limit,
-          });
-
+          this.getHistoryContactRoomMessages();
           this.selectedRoom = responseRoom;
+
+          const responseRoomUuids = await History.getHistoryContactRoomsUuids({
+            external_id: responseRoom.contact.external_id,
+          });
+          this.selectedRoomsUuids = responseRoomUuids.results;
 
           this.isLoadingSelectedRoom = false;
         }

@@ -103,7 +103,7 @@ export default {
       room: (state) => state.rooms.activeRoom,
       me: (state) => state.profile.me,
       viewedAgent: (state) => state.dashboard.viewedAgent,
-      hasNextMessages: (state) => state.roomMessages.hasNextMessages,
+      roomMessagesNext: (state) => state.roomMessages.roomMessagesNext,
     }),
     ...mapGetters('roomMessages', {
       messages: 'groupedActiveRoomsMessage',
@@ -123,7 +123,7 @@ export default {
       }
     },
     searchForMoreMessages() {
-      if (this.hasNextMessages) {
+      if (this.roomMessagesNext) {
         this.chatPage += 1;
         this.getRoomMessages(true);
       }

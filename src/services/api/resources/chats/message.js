@@ -1,16 +1,30 @@
 import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 
+function getURLParams({ URL, endpoint }) {
+  return URL?.split(endpoint)?.[1];
+}
+
 export default {
-  async getByRoom(roomId, offset, limit) {
-    const response = await http.get(`/msg/?room=${roomId}`, {
-      params: {
-        ordering: '-created_on',
-        reverse_results: true,
-        offset,
-        limit,
-      },
-    });
+  async getByRoom({ nextReq }, roomId, offset, limit) {
+    const endpoint = '/msg/';
+    const paramsNextReq = getURLParams({ URL: nextReq, endpoint });
+    const params = {
+      room: roomId,
+      ordering: '-created_on',
+      reverse_results: true,
+      offset,
+      limit,
+    };
+
+    let response;
+
+    if (nextReq && paramsNextReq) {
+      response = await http.get(`${endpoint}${paramsNextReq}`);
+    } else {
+      response = await http.get(endpoint, { params });
+    }
+
     return response.data;
   },
 

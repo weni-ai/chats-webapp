@@ -184,7 +184,7 @@ export default {
     ...mapState({
       room: (state) => state.rooms.activeRoom,
       me: (state) => state.profile.me,
-      hasNextMessages: (state) => state.roomMessages.hasNextMessages,
+      roomMessagesNext: (state) => state.roomMessages.roomMessagesNext,
       listRoomHasNext: (state) => state.rooms.listRoomHasNext,
       showModalAssumedChat: ({ dashboard }) => dashboard.showModalAssumedChat,
       assumedChatContactName: ({ dashboard }) => dashboard.assumedChatContactName,
@@ -285,7 +285,7 @@ export default {
     },
 
     searchForMoreMessages() {
-      if (this.hasNextMessages) {
+      if (this.roomMessagesNext) {
         this.page += 1;
         this.getRoomMessages(true);
       }

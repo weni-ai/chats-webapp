@@ -50,11 +50,11 @@ export default {
     return response.data;
   },
 
-  async getHistoryContactRoomsUuids({ contact }) {
+  async getHistoryContactRoomsUuids({ external_id }) {
     const response = await http.get(`/history/rooms/`, {
       params: {
         project: getProject(),
-        contact,
+        contact: external_id,
         ordering: 'ended_at',
         basic: true,
       },

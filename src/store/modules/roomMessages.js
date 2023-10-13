@@ -14,7 +14,7 @@ const mutations = {
   SET_ROOM_MESSAGES: 'SET_ROOM_MESSAGES',
   ADD_ROOM_MESSAGE_SORTED: 'ADD_ROOM_MESSAGE_SORTED',
   RESET_ROOM_MESSAGE_SORTED: 'RESET_ROOM_MESSAGE_SORTED',
-  SET_ROOM_HAS_NEXT_MESSAGES: 'SET_ROOM_HAS_NEXT_MESSAGES',
+  SET_ROOM_MESSAGES_NEXT: 'SET_ROOM_MESSAGES_NEXT',
   ADD_MESSAGE: 'ADD_MESSAGE',
   UPDATE_MESSAGE: 'UPDATE_MESSAGE',
   SET_FAILED_MESSAGE: 'SET_FAILED_MESSAGE',
@@ -51,7 +51,7 @@ export default {
     roomMessagesSorted: [],
     roomMessagesSendingUuids: [],
     roomMessagesFailedUuids: [],
-    hasNextMessages: true,
+    roomMessagesNext: '',
   },
 
   mutations: {
@@ -119,8 +119,8 @@ export default {
     [mutations.RESET_ROOM_MESSAGE_SORTED](state) {
       state.roomMessagesSorted = [];
     },
-    [mutations.SET_ROOM_HAS_NEXT_MESSAGES](state, hasNextMessages) {
-      state.hasNextMessages = hasNextMessages;
+    [mutations.SET_ROOM_MESSAGES_NEXT](state, roomMessagesNext) {
+      state.roomMessagesNext = roomMessagesNext;
     },
     [mutations.ADD_MESSAGE](state, { message }) {
       const { roomMessages, roomMessagesSendingUuids } = state;
@@ -183,9 +183,8 @@ export default {
   },
 
   actions: {
-    async getRoomMessages({ commit }, { offset, concat, limit }) {
+    async getRoomMessages({ commit, state }, { offset, concat, limit }) {
       const { activeRoom } = Rooms.state;
-      console.log('activeRoom', activeRoom);
 
       if (!activeRoom) {
         return;
@@ -194,9 +193,11 @@ export default {
       const maxRetries = 3;
       let currentRetry = 0;
 
+      const nextReq = state.roomMessagesNext;
+
       async function fetchData() {
         try {
-          const response = await Message.getByRoom(activeRoom.uuid, offset, limit);
+          const response = await Message.getByRoom({ nextReq }, activeRoom.uuid, offset, limit);
 
           const { results: messages, next: hasNext } = response;
 
@@ -204,9 +205,12 @@ export default {
             return;
           }
 
-          if (concat) {
+          if (nextReq || concat) {
             messages.reverse().forEach((message) => {
-              commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message, addBefore: concat });
+              commit(mutations.ADD_ROOM_MESSAGE_SORTED, {
+                message,
+                addBefore: !!nextReq || concat,
+              });
             });
           } else {
             commit(mutations.RESET_ROOM_MESSAGE_SORTED);
@@ -216,7 +220,7 @@ export default {
           }
 
           commit(mutations.SET_ROOM_MESSAGES, messages);
-          commit(mutations.SET_ROOM_HAS_NEXT_MESSAGES, hasNext);
+          commit(mutations.SET_ROOM_MESSAGES_NEXT, hasNext);
         } catch (error) {
           console.error('An error ocurred when try get the room messages', error);
 

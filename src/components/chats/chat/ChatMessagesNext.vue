@@ -15,7 +15,7 @@
           divisor
         />
         <chat-feedback
-          v-if="room.is_waiting"
+          v-if="room?.is_waiting"
           :feedback="$t('waiting_answer.waiting_cliente_answer')"
         />
         <chat-feedback
@@ -33,7 +33,7 @@
           <chat-feedback
             v-if="isTransferInfoMessage(message)"
             :feedback="
-              !room.is_waiting ? createTransferLabel(message) : $t('waiting_answer.send_template')
+              !room?.is_waiting ? createTransferLabel(message) : $t('waiting_answer.send_template')
             "
             :key="message.uuid"
           />
