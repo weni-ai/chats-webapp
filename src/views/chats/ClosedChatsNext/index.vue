@@ -121,6 +121,7 @@ export default {
     async testeDoScroll() {
       if (this.roomMessagesNext) {
         this.getHistoryContactRoomMessages();
+        console.log('aq');
       } else {
         const roomUuidIndex = this.selectedRoomsUuids?.findIndex(
           (room) => room.uuid === this.roomId,
@@ -128,6 +129,7 @@ export default {
         const previousRoom = this.selectedRoomsUuids[roomUuidIndex - 1];
 
         if (previousRoom) {
+          console.log(previousRoom);
           const responseRoom = await History.getHistoryContactRoom({ room: previousRoom.uuid });
           await this.$store.dispatch('rooms/setActiveRoom', responseRoom);
           this.getHistoryContactRoomMessages();
@@ -137,7 +139,7 @@ export default {
     },
 
     async getHistoryContactRoomMessages() {
-      await this.$store.dispatch('roomMessages/getRoomMessages');
+      await this.$store.dispatch('roomMessages/getRoomMessages', {});
     },
   },
 

@@ -183,7 +183,7 @@ export default {
   },
 
   actions: {
-    async getRoomMessages({ commit, state }, { offset, concat, limit }) {
+    async getRoomMessages({ commit, state }, { offset = null, concat = false, limit = null }) {
       const { activeRoom } = Rooms.state;
 
       if (!activeRoom) {

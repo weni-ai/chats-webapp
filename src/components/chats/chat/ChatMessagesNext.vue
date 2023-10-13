@@ -101,13 +101,11 @@
       </section>
     </section>
 
-    <div style="position: sticky; bottom: 0px; background-color: white">
-      <!-- Closed chat tags  -->
-      <section v-if="room.tags.length > 0" class="chat-messages__tags">
-        <p class="chat-messages__tags__label">{{ $t('chats.tags') }}</p>
-        <tag-group :tags="room.tags" />
-      </section>
-    </div>
+    <!-- Closed chat tags  -->
+    <section v-if="room.tags.length > 0" class="chat-messages__tags">
+      <chat-feedback :feedback="roomEndedChatFeedback" scheme="purple" />
+      <tag-group :tags="room.tags" />
+    </section>
 
     <!-- Media fullscreen -->
     <fullscreen-preview
@@ -139,6 +137,7 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
+import moment from 'moment';
 
 import TagGroup from '@/components/TagGroup';
 import Media from '@/services/api/resources/chats/media';
@@ -203,6 +202,11 @@ export default {
           const media = /(png|jp(e)?g|webp|mp4)/;
           return media.test(el.content_type);
         });
+    },
+    roomEndedChatFeedback() {
+      return `${this.$t('chats.closed')} ${moment(this.room.ended_at).format('LT')}h ${moment(
+        this.room.ended_at,
+      ).format('L')}`;
     },
   },
 
@@ -444,17 +448,13 @@ export default {
 
   &__tags {
     margin-bottom: $unnnic-spacing-inline-md;
-    &__label {
-      font-size: $unnnic-font-size-body-gt;
-      color: $unnnic-color-neutral-dark;
-      margin-bottom: $unnnic-spacing-inline-sm;
+
+    display: grid;
+    gap: $unnnic-spacing-md;
+
+    :deep(.tag-group__tags) {
+      justify-content: center;
     }
-  }
-  .unread-message {
-    font-weight: 700;
-    font-size: 12px;
-    color: #9caccc;
-    margin: 10px;
   }
 }
 </style>

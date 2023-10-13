@@ -167,6 +167,19 @@ $tag-size: 28px;
     align-self: flex-start;
     user-select: none;
     overflow: hidden;
+
+    :deep(.unnnic-tag) {
+      width: min-content;
+      max-width: 100%;
+
+      .unnnic-tag__label {
+        width: 100%;
+
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
   }
 
   &__remaining-children {
