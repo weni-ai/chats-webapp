@@ -41,7 +41,9 @@
         </section>
 
         <p v-if="content.text" :class="{ 'unsent-message': content.sent === false, disabled }">
-          <span v-html="removeHtmlDangerousContent(content.text).replace(/\n/g, '<br/>')" />
+          <span
+            v-html="treatTextUrl(removeHtmlDangerousContent(content.text).replace(/\n/g, '<br/>'))"
+          />
           <unnnic-tool-tip
             v-if="content.sent === false"
             enabled
@@ -127,6 +129,10 @@ export default {
   methods: {
     showContactInfo() {
       if (this.isContactMessage) this.$emit('show-contact-info');
+    },
+    treatTextUrl(text) {
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      return text.replace(urlRegex, '<a href="$1" target="_blank">$1</a>');
     },
     removeHtmlDangerousContent(text) {
       // eslint-disable-next-line default-param-last
