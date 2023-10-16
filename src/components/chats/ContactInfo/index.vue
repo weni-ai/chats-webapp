@@ -14,7 +14,7 @@
           <section class="infos">
             <header class="connection-info__header">
               <h1 class="username">
-                {{ closedRoom.contact.name || room.contact.name }}
+                {{ (closedRoom || room).contact.name }}
               </h1>
 
               <unnnic-button-next
@@ -140,7 +140,7 @@
             :room="room"
             @fullscreen="openFullScreen"
             :history="isHistory"
-            :contactInfo="closedRoom.contact"
+            :contactInfo="(closedRoom || room).contact"
             @loaded-medias="isLoading = false"
           />
         </aside-slot-template-section>
