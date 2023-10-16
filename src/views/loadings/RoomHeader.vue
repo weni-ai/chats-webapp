@@ -16,7 +16,6 @@ export default {
 <style lang="scss" scoped>
 .room-header-loading {
   width: 100%;
-  height: 100%;
 
   z-index: 10000;
 

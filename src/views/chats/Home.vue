@@ -13,16 +13,7 @@
         :avatarName="room.contact.name"
         :close="openModalCloseChat"
       />
-      <!-- <chat-header
-        :room="room"
-        :closeButtonTooltip="$t('chats.end')"
-        @close="openModalCloseChat"
-        @show-contact-info="componentInAsideSlot = 'contactInfo'"
-        @open-select-flow="openFlowsTrigger"
-        :alert="!this.room.is_24h_valid"
-        @reconnect="searchMessages"
-        :alertNetwork="this.networkError"
-      /> -->
+      <chat-header-send-flow v-if="!room.is_24h_valid" @send-flow="openFlowsTrigger" />
       <chats-dropzone @open-file-uploader="openFileUploader" :show="room.user && room.is_24h_valid">
         <chat-messages
           :room="room"
@@ -116,7 +107,7 @@ import ChatsLayout from '@/layouts/ChatsLayout';
 import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
 import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone';
 
-import ChatHeader from '@/components/chats/chat/ChatHeader';
+import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow';
 import ChatMessages from '@/components/chats/chat/ChatMessagesNext';
 import ContactInfo from '@/components/chats/ContactInfo';
 import ChatClassifier from '@/components/chats/ChatClassifier';
@@ -138,7 +129,7 @@ export default {
     ChatsLayout,
     ChatsBackground,
     ChatsDropzone,
-    ChatHeader,
+    ChatHeaderSendFlow,
     ChatMessages,
     ContactInfo,
     QuickMessages,

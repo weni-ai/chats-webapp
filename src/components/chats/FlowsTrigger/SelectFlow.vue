@@ -39,6 +39,7 @@
 <script>
 import { unnnicCallAlert } from '@weni/unnnic-system';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
+import { mapState } from 'vuex';
 import ModalProgressTemplateSubmission from './ModalProgressTemplateSubmission';
 
 export default {
@@ -78,6 +79,12 @@ export default {
     selectedContact: {
       type: Object,
     },
+  },
+
+  computed: {
+    ...mapState({
+      room: (state) => state.rooms.activeRoom,
+    }),
   },
 
   methods: {
@@ -126,7 +133,7 @@ export default {
         flow: this.selectedFlow,
         groups: this.idGruops,
         contacts: this.selectedContact ? [this.selectedContact.external_id] : this.idContactsList,
-        room: this.selectedContact ? this.selectedContact.uuid : null,
+        room: this.room?.uuid,
       };
       this.openModalProgress();
       try {
