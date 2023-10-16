@@ -49,6 +49,7 @@
               :time="new Date(message.created_on)"
               :status="messageStatus({ message })"
               :key="message.uuid"
+              :ref="`message-${message.uuid}`"
             >
               {{ message.text }}
             </unnnic-chats-message>
@@ -56,6 +57,7 @@
               <unnnic-chats-message
                 v-if="isMedia(media)"
                 :key="media.created_on"
+                :ref="`message-${message.uuid}`"
                 :type="message.user ? 'sent' : 'received'"
                 :class="['chat-messages__message', message.user ? 'sent' : 'received']"
                 :mediaType="isImage(media) ? 'image' : isVideo(media) ? 'video' : 'audio'"
@@ -88,6 +90,7 @@
               <unnnic-chats-message
                 v-else
                 :key="media.created_on"
+                :ref="`message-${message.uuid}`"
                 :type="message.user ? 'sent' : 'received'"
                 :class="['chat-messages__message', message.user ? 'sent' : 'received']"
                 :time="new Date(message.created_on)"
@@ -100,10 +103,15 @@
         </template>
       </section>
     </section>
-
     <!-- Closed chat tags  -->
+    <!-- <chat-feedback
+      v-for="room in rooms"
+      :key="room.uuid"
+      :feedback="roomEndedChatFeedback(room)"
+      scheme="purple"
+    /> -->
     <section v-if="room.tags.length > 0" class="chat-messages__tags">
-      <chat-feedback :feedback="roomEndedChatFeedback" scheme="purple" />
+      <!-- <chat-feedback :feedback="roomEndedChatFeedback(room)" scheme="purple" ref="endChatElement" /> -->
       <tag-group :tags="room.tags" />
     </section>
 
@@ -160,7 +168,11 @@ export default {
       type: Object,
       required: true,
     },
-    usePhoto: {
+    rooms: {
+      type: Object,
+      required: false,
+    },
+    isHistory: {
       type: Boolean,
       default: false,
     },
@@ -178,6 +190,15 @@ export default {
     window.addEventListener('online', () => {
       this.resendMessages();
     });
+
+    // const observer = new IntersectionObserver((entries) => {
+    //   entries.forEach((entry) => {
+    //     console.log('intersecting', entry.isIntersecting);
+    //   });
+    // });
+    // const { endChatElement } = this.$refs;
+
+    // observer.observe(endChatElement.$el);
   },
 
   computed: {
@@ -187,13 +208,10 @@ export default {
       roomMessages: (state) => state.roomMessages.roomMessages,
       roomMessagesSorted: (state) => state.roomMessages.roomMessagesSorted,
     }),
-    rooms() {
-      const { rooms, messages } = this.chat;
-      return rooms?.length > 0 ? rooms : [{ messages }];
-    },
-    isHistory() {
-      return !this.room.is_active;
-    },
+    // rooms() {
+    //   const { rooms, messages } = this.chat;
+    //   return rooms?.length > 0 ? rooms : [{ messages }];
+    // },
     medias() {
       return this.roomMessages
         .map((el) => el.media)
@@ -202,11 +220,6 @@ export default {
           const media = /(png|jp(e)?g|webp|mp4)/;
           return media.test(el.content_type);
         });
-    },
-    roomEndedChatFeedback() {
-      return `${this.$t('chats.closed')} ${moment(this.room.ended_at).format('LT')}h ${moment(
-        this.room.ended_at,
-      ).format('L')}`;
     },
   },
 
@@ -265,6 +278,18 @@ export default {
       }
     },
 
+    roomEndedChatFeedback(room) {
+      return `${this.$t('chats.closed')} ${moment(room.ended_at).format('LT')}h ${moment(
+        room.ended_at,
+      ).format('L')}`;
+    },
+
+    isEdgeRoomMessage(messagesByDateMinutes) {
+      return messagesByDateMinutes.some((minute) =>
+        minute.messages.some((message) => message.room !== this.room.uuid),
+      );
+    },
+
     isFirstMessageByBot(messagesByDateMinutes) {
       return messagesByDateMinutes.some((minute) =>
         minute.messages.some(
@@ -321,6 +346,13 @@ export default {
     handleScroll() {
       const { chatMessages } = this.$refs;
       if (!chatMessages) return;
+      // console.log(this.isEdgeRoomMessage(this.roomMessagesSorted[0].minutes), this.room.uuid);
+      // if (this.isEdgeRoomMessage(this.roomMessagesSorted[0].minutes)) {
+      //   this.$router.replace({
+      //     name: 'closed-rooms.selected',
+      //     params: { roomId: this.room.uuid },
+      //   });
+      // }
 
       if (chatMessages.scrollTop === 0) {
         this.$emit('scrollTop');

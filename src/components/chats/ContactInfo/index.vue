@@ -1,6 +1,6 @@
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
-  <div>
+  <div class="contact-info__container">
     <contact-infos-loading v-show="isLoading" />
     <aside-slot-template
       v-show="!isLoading"
@@ -617,9 +617,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.contact-info__container {
+  height: 100%;
+
+  overflow: hidden;
+}
+
 .contact-info {
   .scrollable {
-    overflow-y: auto;
+    overflow: hidden auto;
     height: 100%;
   }
 
