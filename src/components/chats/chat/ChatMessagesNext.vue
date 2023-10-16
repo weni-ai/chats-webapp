@@ -31,9 +31,9 @@
       >
         <template v-for="message in messagesByMinute.messages">
           <chat-feedback
-            v-if="isTransferInfoMessage(message)"
+            v-if="isFeedbackMessage(message)"
             :feedback="
-              !room?.is_waiting ? createTransferLabel(message) : $t('waiting_answer.send_template')
+              !room?.is_waiting ? createFeedbackLabel(message) : $t('waiting_answer.send_template')
             "
             :key="message.uuid"
           />
@@ -293,7 +293,7 @@ export default {
     isFirstMessageByBot(messagesByDateMinutes) {
       return messagesByDateMinutes.some((minute) =>
         minute.messages.some(
-          (message) => !message.contact && !message.user && !this.isTransferInfoMessage(message),
+          (message) => !message.contact && !message.user && !this.isFeedbackMessage(message),
         ),
       );
     },
@@ -302,24 +302,92 @@ export default {
       return !message.user && !message.contact;
     },
 
-    isTransferInfoMessage(message) {
+    isFeedbackMessage(message) {
       try {
-        const content = JSON.parse(message.text);
+        const textJson = JSON.parse(message.text);
 
-        return ['queue', 'user'].includes(content.type);
+        const isNewFeedback = !!textJson.method && !!textJson.content;
+        const isOldFeedback = ['queue', 'user'].includes(textJson.type);
+
+        return isNewFeedback || isOldFeedback;
       } catch (error) {
         return false;
       }
     },
-    createTransferLabel(message) {
-      const text = JSON.parse(message.text);
-      const { name } = text;
-      const transferType = {
-        queue: this.$t('contact_forwarded_to_queue', { queue: name }),
-        user: this.$t('contact_transferred_to_agent', { agent: name }),
+    createFeedbackLabel(message) {
+      const textJson = JSON.parse(message.text);
+      const t = (key, params) => this.$t(key, params);
+
+      const isOldFeedback = textJson.type;
+
+      if (isOldFeedback) {
+        const { type, name } = textJson;
+
+        const oldFeedbackLabels = {
+          queue: t('contact_transferred_to_queue', { queue: name }),
+          user: t('contact_transferred_to_agent', { agent: name }),
+        };
+        return oldFeedbackLabels[type];
+      }
+
+      const { method, content } = textJson;
+
+      function getPickLabel(action, from, to) {
+        if (action === 'pick' && from?.type === 'user') {
+          return t('chats.feedback.pick_of_agent', {
+            manager: from.name,
+            agent: to.name,
+          });
+        }
+        if (action === 'pick' && from?.type === 'queue') {
+          return t('chats.feedback.pick_of_queue', {
+            agent: to.name,
+            queue: from.name,
+          });
+        }
+        return '';
+      }
+
+      function getTransferLabel(action, from, to) {
+        if (action === 'transfer' && to?.type === 'queue') {
+          return t('chats.feedback.transfer_to_queue', {
+            agent: from.name,
+            queue: to.name,
+          });
+        }
+        if (action === 'transfer' && to?.type === 'user') {
+          return t('chats.feedback.transfer_to_agent', {
+            agent1: to.name,
+            agent2: from.name,
+          });
+        }
+        return '';
+      }
+
+      function getForwardLabel(action, to) {
+        if (action === 'forward') {
+          return t('chats.feedback.forwarded_to_agent', {
+            agent: to.name,
+          });
+        }
+        return '';
+      }
+
+      const feedbackLabels = {
+        rt:
+          getPickLabel(content.action, content.from, content.to) ||
+          getTransferLabel(content.action, content.from, content.to) ||
+          getForwardLabel(content.action, content.to),
+        fs: t('chats.feedback.sent_flow', { flow: content.name }),
+        ecf: t('chats.feedback.edit_custom_field', {
+          agent: content.user,
+          custom_field: content.cf_name,
+          old: content.old,
+          new: content.new,
+        }),
       };
 
-      return transferType[text.type];
+      return feedbackLabels[method] || '';
     },
 
     showContactInfo() {

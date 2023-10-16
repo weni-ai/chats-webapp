@@ -289,6 +289,43 @@
     }
   },
   "chats": {
+    "feedback": {
+      "forwarded_to_agent": {
+        "pt-br": "Contato encaminhado para agente {agent}",
+        "en-us": "Contact forwarded to agent {agent}",
+        "es": "Contacto reenviado al agente {agente}"
+      },
+      "transfer_to_agent": {
+        "pt-br": "{agent1} transferiu para {agent2}",
+        "en-us": "{agent1} transferred to {agent2}",
+        "es": "{agent1} transferido a {agent2}"
+      },
+      "transfer_to_queue": {
+        "pt-br": "{agent} transferiu para fila {queue}",
+        "en-us": "{agent} transferred to queue {queue}",
+        "es": "{agent} transferido a la cola {queue}"
+      },
+      "pick_of_queue": {
+        "pt-br": "{agent} pegou da fila {queue}",
+        "en-us": "{agent} got it from the queue {queue}",
+        "es": "{agent} lo obtuvo de la cola {queue}"
+      },
+      "pick_of_agent": {
+        "pt-br": "{manager} assumiu o chat de {agent}",
+        "en-us": "{manager} has taken over {agent}'s chat",
+        "es": "{manager} se ha hecho cargo del chat de {agent}"
+      },
+      "sent_flow": {
+        "pt-br": "Fluxo {flow} enviado",
+        "en-us": "Flow {flow} sent",
+        "es": "Flujo {flow} enviado"
+      },
+      "edit_custom_field": {
+        "pt-br": "{agent} mudou o custom field {custom_field} de {old} para {new}",
+        "en-us": "{agent} changed custom field {custom_field} from {old} to {new}",
+        "es": "{agent} cambió el campo personalizado {custom_field} de {old} a {new}"
+      }
+    },
     "room_list": {
       "order_by": {
         "pt-br": "Ordenar por:",
@@ -696,10 +733,10 @@
       "es": "En espera de respuesta de contacto"
     }
   },
-  "contact_forwarded_to_queue": {
-    "pt-br": "Contato encaminhado para fila {queue}",
-    "en-us": "Contact forwarded to the {queue} line",
-    "es": "Contacto enviado a la cola {queue}"
+  "contact_transferred_to_queue": {
+    "pt-br": "Contato transferido para fila {queue}",
+    "en-us": "Contact transferred to queue {queue}",
+    "es": "Contacto transferido a la cola {queue}"
   },
   "contact_transferred_to_agent": {
     "pt-br": "Contato transferido para agente {agent}",

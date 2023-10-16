@@ -34,7 +34,7 @@ export default {
   align-items: center;
   gap: $unnnic-spacing-nano;
 
-  padding: $unnnic-spacing-nano 0;
+  padding: $unnnic-spacing-nano;
 
   background-color: $unnnic-color-neutral-cloudy;
 
