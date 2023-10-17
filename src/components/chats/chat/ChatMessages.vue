@@ -262,10 +262,13 @@ export default {
   },
 
   watch: {
-    messages() {
-      this.$nextTick(() => {
-        this.manageScrollForNewMessages();
-      });
+    messages: {
+      immediate: true,
+      handler() {
+        this.$nextTick(() => {
+          this.manageScrollForNewMessages();
+        });
+      },
     },
   },
 };
