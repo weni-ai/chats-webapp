@@ -150,8 +150,6 @@ export default {
   async created() {
     this.isFiltersLoading = true;
 
-    await this.getHistoryRooms();
-
     await this.getSectors();
     this.filterSector = [this.filterSectorsOptionAll];
     this.filterDate = this.filterDateDefault;
@@ -304,7 +302,7 @@ export default {
       const TIME_TO_WAIT_TYPING = 800;
 
       if (this.timeout !== 0) clearTimeout(this.timeout);
-      this.timerId = setTimeout(() => {
+      this.timeout = setTimeout(() => {
         this.getHistoryRooms();
       }, TIME_TO_WAIT_TYPING);
     },
