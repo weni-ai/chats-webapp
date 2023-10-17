@@ -1,6 +1,7 @@
 <template>
   <section class="closed-chats__rooms-table">
-    <section class="closed-chats__rooms-table__handlers">
+    <rooms-table-filters-loading v-if="isFiltersLoading" />
+    <section v-else class="closed-chats__rooms-table__handlers">
       <div class="closed-chats__rooms-table__handlers__input">
         <unnnic-label :label="$t('chats.search_contact')" />
         <unnnic-input
@@ -33,8 +34,10 @@
       </div>
       <unnnic-button :text="$t('clear')" type="secondary" @click="resetFilters" />
     </section>
+
+    <rooms-table-loading v-if="isTableLoading" />
     <unnnic-table
-      v-if="this.rooms.length > 0"
+      v-if="!isTableLoading && this.rooms.length > 0"
       :items="rooms"
       class="closed-chats__rooms-table__table"
     >
@@ -66,7 +69,7 @@
               class="closed-chats__rooms-table__table__visualize"
               :text="$t('see')"
               type="secondary"
-              size="large"
+              size="small"
               @click="
                 $router.push({ name: 'closed-rooms.selected', params: { roomId: item.uuid } })
               "
@@ -75,9 +78,15 @@
         </unnnic-table-row>
       </template>
     </unnnic-table>
-    <p class="closed-chats__rooms-table__table__no-results" v-else>{{ $t('without_results') }}</p>
+    <p
+      v-if="!isTableLoading && this.rooms.length === 0"
+      class="closed-chats__rooms-table__table__no-results"
+    >
+      {{ $t('without_results') }}
+    </p>
 
-    <section class="closed-chats__rooms-table__pages">
+    <rooms-table-pages-loading v-if="isPagesLoading" />
+    <section v-else class="closed-chats__rooms-table__pages">
       <p class="closed-chats__rooms-table__pages__count">
         {{ tablePagination }}
       </p>
@@ -93,6 +102,10 @@ import moment from 'moment';
 import Sector from '@/services/api/resources/settings/sector';
 import History from '@/services/api/resources/chats/history';
 
+import RoomsTableFiltersLoading from '@/views/loadings/ClosedChats/RoomsTableFiltersLoading';
+import RoomsTableLoading from '@/views/loadings/ClosedChats/RoomsTableLoading';
+import RoomsTablePagesLoading from '@/views/loadings/ClosedChats/RoomsTablePagesLoading';
+
 import TagGroup from '@/components/TagGroup.vue';
 
 export default {
@@ -100,6 +113,9 @@ export default {
 
   components: {
     TagGroup,
+    RoomsTableFiltersLoading,
+    RoomsTableLoading,
+    RoomsTablePagesLoading,
   },
 
   props: {
@@ -110,6 +126,10 @@ export default {
   },
 
   data: () => ({
+    isFiltersLoading: true,
+    isTableLoading: true,
+    isPagesLoading: true,
+
     rooms: [],
     roomsCount: 0,
     roomsCountPages: 0,
@@ -127,13 +147,17 @@ export default {
     },
   }),
 
-  created() {
-    this.getHistoryRooms();
+  async created() {
+    this.isFiltersLoading = true;
 
-    this.getSectors();
+    await this.getHistoryRooms();
+
+    await this.getSectors();
     this.filterSector = [this.filterSectorsOptionAll];
     this.filterDate = this.filterDateDefault;
     this.tagsToFilter = this.filterTagDefault;
+
+    this.isFiltersLoading = false;
   },
 
   computed: {
@@ -195,6 +219,9 @@ export default {
 
   methods: {
     async getHistoryRooms(paginate) {
+      this.isTableLoading = true;
+      this.isPagesLoading = true;
+
       const { roomsCurrentPage, roomsLimit, filterDate, filterContact, filterSector, filterTag } =
         this;
 
@@ -222,6 +249,9 @@ export default {
       } catch (error) {
         console.log(error);
       }
+
+      this.isTableLoading = false;
+      this.isPagesLoading = false;
     },
 
     async getSectors() {
@@ -304,6 +334,11 @@ export default {
       gap: $unnnic-spacing-sm;
       justify-content: space-between;
       align-items: flex-end;
+
+      .unnnic-label__label {
+        margin: 0;
+        margin-bottom: $unnnic-spacing-nano;
+      }
 
       &__input {
         width: 100%;

@@ -1,7 +1,7 @@
 <template>
-  <closed-chats-header-loading v-if="isLoadingHeader" />
-  <div class="closed-chats" v-else>
-    <header v-if="project">
+  <div class="closed-chats">
+    <closed-chats-header-loading v-if="isLoadingHeader" />
+    <header v-if="!isLoadingHeader && project">
       <unnnic-chats-header
         :title="project.name"
         :subtitle="$t('chats.closed_chats.project_history')"

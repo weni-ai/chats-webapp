@@ -547,7 +547,7 @@ export default {
   }
 
   &__tags {
-    margin-bottom: $unnnic-spacing-inline-md;
+    margin: $unnnic-spacing-inline-md 0;
 
     display: grid;
     gap: $unnnic-spacing-md;
