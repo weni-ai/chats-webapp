@@ -32,7 +32,12 @@
           :inputFormat="$t('date_format')"
         />
       </div>
-      <unnnic-button :text="$t('clear')" type="secondary" @click="resetFilters" />
+      <unnnic-button
+        :text="$t('clear')"
+        :disabled="isFiltersDefault"
+        type="secondary"
+        @click="resetFilters"
+      />
     </section>
 
     <rooms-table-loading v-if="isTableLoading" />
@@ -213,6 +218,21 @@ export default {
         total: roomsCount,
       });
     },
+
+    isFiltersDefault() {
+      const { filterContact, filterSector, filterTag, filterDate, filterDateDefault } = this;
+
+      if (
+        filterContact === '' &&
+        filterSector[0].value === 'all' &&
+        filterTag.length === 0 &&
+        filterDate === filterDateDefault
+      ) {
+        return true;
+      }
+
+      return false;
+    },
   },
 
   methods: {
@@ -287,6 +307,10 @@ export default {
     },
 
     resetFilters() {
+      if (this.isFiltersDefault) {
+        return;
+      }
+
       this.filterContact = '';
       this.filterSector = [this.filterSectorsOptionAll];
       this.filterTag = [];
