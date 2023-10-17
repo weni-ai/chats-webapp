@@ -22,7 +22,7 @@
       @input="quickMessage = { ...quickMessage, text: $event }"
       :label="$t('message')"
       :placeholder="$t('quick_messages.message_field_placeholder')"
-      :maxLength="150"
+      :maxLength="1000"
       size="md"
     />
 
