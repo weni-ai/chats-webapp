@@ -100,10 +100,10 @@
           </section>
         </aside-slot-template-section>
 
-        <aside-slot-template-section v-if="isHistory">
+        <!-- <aside-slot-template-section v-if="isHistory">
           <h2 class="contact_history__title">{{ $t('chats.closed_chats.contact_history') }}</h2>
-        </aside-slot-template-section>
-        <aside-slot-template-section v-else>
+        </aside-slot-template-section> -->
+        <aside-slot-template-section v-if="!isHistory">
           <p class="title-transfer-chat">{{ $t('contact_info.transfer_contact') }}</p>
           <div style="margin-top: 20px; margin-bottom: 20px">
             <unnnic-radio size="sm" v-model="transferRadio" value="agent" :disabled="isViewMode">
