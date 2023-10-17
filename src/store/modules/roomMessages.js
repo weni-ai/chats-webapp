@@ -13,8 +13,9 @@ import Rooms from './rooms';
 const mutations = {
   SET_ROOM_MESSAGES: 'SET_ROOM_MESSAGES',
   ADD_ROOM_MESSAGE_SORTED: 'ADD_ROOM_MESSAGE_SORTED',
-  RESET_ROOM_MESSAGE_SORTED: 'RESET_ROOM_MESSAGE_SORTED',
+  RESET_ROOM_MESSAGES_SORTED: 'RESET_ROOM_MESSAGES_SORTED',
   SET_ROOM_MESSAGES_NEXT: 'SET_ROOM_MESSAGES_NEXT',
+  RESET_ROOM_MESSAGES_NEXT: 'RESET_ROOM_MESSAGES_NEXT',
   ADD_MESSAGE: 'ADD_MESSAGE',
   UPDATE_MESSAGE: 'UPDATE_MESSAGE',
   SET_FAILED_MESSAGE: 'SET_FAILED_MESSAGE',
@@ -116,8 +117,11 @@ export default {
         currentMinuteEntry.messages.push(message);
       }
     },
-    [mutations.RESET_ROOM_MESSAGE_SORTED](state) {
+    [mutations.RESET_ROOM_MESSAGES_SORTED](state) {
       state.roomMessagesSorted = [];
+    },
+    [mutations.RESET_ROOM_MESSAGES_NEXT](state) {
+      state.roomMessagesNext = '';
     },
     [mutations.SET_ROOM_MESSAGES_NEXT](state, roomMessagesNext) {
       state.roomMessagesNext = roomMessagesNext;
@@ -213,7 +217,7 @@ export default {
               });
             });
           } else {
-            commit(mutations.RESET_ROOM_MESSAGE_SORTED);
+            commit(mutations.RESET_ROOM_MESSAGES_SORTED);
             messages.forEach((message) => {
               commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message });
             });
@@ -243,6 +247,11 @@ export default {
       }
 
       await fetchData();
+    },
+
+    resetRoomMessages({ commit }) {
+      commit(mutations.RESET_ROOM_MESSAGES_SORTED);
+      commit(mutations.RESET_ROOM_MESSAGES_NEXT);
     },
 
     async addMessage({ commit, state }, message) {

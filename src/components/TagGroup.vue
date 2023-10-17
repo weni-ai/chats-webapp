@@ -71,7 +71,6 @@ export default {
       return;
     }
 
-    console.log(this.tags);
     this.remainingTags = this.tags.length;
 
     const observer = new IntersectionObserver(this.handleIntersection);

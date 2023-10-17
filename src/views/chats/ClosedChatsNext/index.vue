@@ -25,10 +25,9 @@
           v-if="selectedRoom"
           v-show="!isLoadingSelectedRoom"
           :room="selectedRoom"
-          :rooms="selectedRoomsUuids"
-          @scrollTop="testeDoScroll"
+          @scrollTop="chatScrollTop"
         />
-        <contact-info is-history :closed-room="selectedRoom" @close="() => {}" />
+        <contact-info v-if="selectedRoom" is-history :closedRoom="selectedRoom" @close="() => {}" />
       </section>
 
       <closed-chats-rooms-table v-else :project="project" />
@@ -89,27 +88,6 @@ export default {
       name: this.$t('chats.closed_chats.history'),
       path: 'closed-rooms',
     });
-
-    console.log(this.roomId);
-    if (this.roomId) {
-      this.isLoadingSelectedRoom = true;
-
-      const responseRoom = await History.getHistoryContactRoom({ room: this.roomId });
-      this.crumbs.push({
-        name: responseRoom.contact.name,
-        path: 'closed-rooms/:roomId',
-      });
-      this.selectedRoom = responseRoom;
-      console.log('responseRoom', responseRoom);
-      await this.$store.dispatch('rooms/setActiveRoom', this.selectedRoom);
-      await this.getHistoryContactRoomMessages();
-      const responseRoomUuids = await History.getHistoryContactRoomsUuids({
-        external_id: responseRoom.contact.external_id,
-      });
-      this.selectedRoomsUuids = responseRoomUuids.results;
-
-      this.isLoadingSelectedRoom = false;
-    }
   },
 
   computed: {
@@ -140,26 +118,21 @@ export default {
       this.$router.push({ name: 'closed-rooms' });
     },
 
-    async testeDoScroll() {
-      console.log('roomMessagesNext', this.roomMessagesNext);
+    async chatScrollTop() {
       if (this.roomMessagesNext) {
         this.getHistoryContactRoomMessages();
       } else {
-        const roomUuidIndex = this.selectedRoomsUuids?.findIndex(
-          (room) => room.uuid === this.roomId,
-        );
-        console.log('roomUuidIndex', this.selectedRoomsUuids[roomUuidIndex]);
-        const previousRoom = this.selectedRoomsUuids[roomUuidIndex - 1];
-
-        console.log('previousRoom', previousRoom.uuid);
-        if (previousRoom) {
-          console.log(previousRoom);
-          const responseRoom = await History.getHistoryContactRoom({ room: previousRoom.uuid });
-          await this.$store.dispatch('rooms/setActiveRoom', responseRoom);
-          this.getHistoryContactRoomMessages();
-          console.log('responseRoom', responseRoom);
-          this.selectedRoom = responseRoom;
-        }
+        // const roomUuidIndex = this.selectedRoomsUuids?.findIndex(
+        //   (room) => room.uuid === this.roomId,
+        // );
+        // const previousRoom = this.selectedRoomsUuids[roomUuidIndex - 1];
+        //
+        // if (previousRoom) {
+        //   const responseRoom = await History.getHistoryContactRoom({ room: previousRoom.uuid });
+        //   await this.$store.dispatch('rooms/setActiveRoom', responseRoom);
+        //   this.getHistoryContactRoomMessages();
+        //   this.selectedRoom = responseRoom;
+        // }
       }
     },
 
@@ -168,15 +141,42 @@ export default {
     },
   },
 
-  // watch: {
-  //   roomId: {
-  //     async handler(roomId) {
-  //       if (roomId) {
-  //         await this.$store.dispatch('rooms/setActiveRoom', this.selectedRoom);
-  //       }
-  //     },
-  //   },
-  // },
+  watch: {
+    roomId: {
+      immediate: true,
+      async handler(roomId) {
+        if (!roomId) {
+          await this.$store.dispatch('rooms/setActiveRoom', null);
+          await this.$store.dispatch('roomMessages/resetRoomMessages');
+        }
+        if (roomId) {
+          this.isLoadingSelectedRoom = true;
+
+          const responseRoom = await History.getHistoryContactRoom({ room: roomId });
+
+          const STATUS_NOT_FOUND = 404;
+          if (responseRoom.status === STATUS_NOT_FOUND) {
+            this.$router.push({ name: 'closed-rooms' });
+            return;
+          }
+
+          this.crumbs.push({
+            name: responseRoom.contact.name,
+            path: 'closed-rooms/:roomId',
+          });
+          this.selectedRoom = responseRoom;
+          await this.$store.dispatch('rooms/setActiveRoom', this.selectedRoom);
+          await this.getHistoryContactRoomMessages();
+          const responseRoomUuids = await History.getHistoryContactRoomsUuids({
+            external_id: responseRoom.contact.external_id,
+          });
+          this.selectedRoomsUuids = responseRoomUuids.results;
+
+          this.isLoadingSelectedRoom = false;
+        }
+      },
+    },
+  },
 };
 </script>
 

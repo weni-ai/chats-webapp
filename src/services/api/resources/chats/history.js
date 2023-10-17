@@ -62,11 +62,15 @@ export default {
     return response.data;
   },
   async getHistoryContactRoom({ room }) {
-    const response = await http.get(`/history/rooms/${room}/`, {
-      params: {
-        project: getProject(),
-      },
-    });
-    return response.data;
+    const response = await http
+      .get(`/history/rooms/${room}/`, {
+        params: {
+          project: getProject(),
+        },
+      })
+      .then((response) => response.data)
+      .catch((error) => error.response);
+
+    return response;
   },
 };
