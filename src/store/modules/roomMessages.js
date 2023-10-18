@@ -44,6 +44,11 @@ function removeMessageFromFaileds({ state }, messageUuid) {
     (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
   );
 }
+function removeMessageFromInPromise({ state }, messageUuid) {
+  state.roomMessagesInPromiseUuids = state.roomMessagesInPromiseUuids.filter(
+    (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
+  );
+}
 
 export default {
   namespaced: true,
@@ -51,6 +56,7 @@ export default {
     roomMessages: [],
     roomMessagesSorted: [],
     roomMessagesSendingUuids: [],
+    roomMessagesInPromiseUuids: [],
     roomMessagesFailedUuids: [],
     roomMessagesNext: '',
   },
@@ -327,22 +333,27 @@ export default {
       );
     },
 
-    async resendMessage({ commit }, { message }) {
+    async resendMessage({ commit, state }, { message }) {
       const { activeRoom } = Rooms.state;
-      if (!activeRoom) return;
+      if (!activeRoom || state.roomMessagesInPromiseUuids.includes(message.uuid)) return;
 
       // Send the message and update it with the actual message data
       try {
+        state.roomMessagesInPromiseUuids.push(message.uuid);
         const updatedMessage = await Message.send(activeRoom.uuid, {
           text: message.text,
           user_email: activeRoom.user.email,
           seen: true,
         });
-        commit(mutations.UPDATE_MESSAGE, {
+        removeMessageFromInPromise({ state }, message.uuid);
+
+        await commit(mutations.UPDATE_MESSAGE, {
           message: updatedMessage,
           toUpdateMessageUuid: message.uuid,
         });
       } catch (error) {
+        removeMessageFromInPromise({ state }, message.uuid);
+
         console.error('An error occurred while sending the message', error);
       }
     },
@@ -356,7 +367,7 @@ export default {
         state.roomMessagesSendingUuids.push(message.uuid);
       }
 
-      // Send the message and update it with the actual message data
+      // Send the media and update it with the actual media data
       try {
         const updatedMedia = await Message.sendMedia(activeRoom.uuid, {
           user_email: activeRoom.user.email,
