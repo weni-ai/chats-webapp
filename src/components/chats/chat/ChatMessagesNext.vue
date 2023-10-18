@@ -32,9 +32,7 @@
         <template v-for="message in messagesByMinute.messages">
           <chat-feedback
             v-if="isFeedbackMessage(message)"
-            :feedback="
-              !room?.is_waiting ? createFeedbackLabel(message) : $t('waiting_answer.send_template')
-            "
+            :feedback="createFeedbackLabel(message)"
             :key="message.uuid"
           />
 
@@ -378,13 +376,10 @@ export default {
           getPickLabel(content.action, content.from, content.to) ||
           getTransferLabel(content.action, content.from, content.to) ||
           getForwardLabel(content.action, content.to),
-        fs: t('chats.feedback.sent_flow', { flow: content.name }),
-        ecf: t('chats.feedback.edit_custom_field', {
-          agent: content.user,
-          custom_field: content.cf_name,
-          old: content.old,
-          new: content.new,
-        }),
+        fs: `${t('flow')} <i>${content.name}</i> ${t('sent')}`,
+        ecf: `${content.user} ${t('chats.feedback.edit_custom_field')} <i>${
+          content.custom_field_name
+        }</i> ${t('from')} <i>${content.old}</i> ${t('to')} <i>${content.new}</i>`,
       };
 
       return feedbackLabels[method] || '';

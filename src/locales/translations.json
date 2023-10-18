@@ -315,15 +315,10 @@
         "en-us": "{manager} has taken over {agent}'s chat",
         "es": "{manager} se ha hecho cargo del chat de {agent}"
       },
-      "sent_flow": {
-        "pt-br": "Fluxo {flow} enviado",
-        "en-us": "Flow {flow} sent",
-        "es": "Flujo {flow} enviado"
-      },
       "edit_custom_field": {
-        "pt-br": "{agent} mudou o custom field {custom_field} de {old} para {new}",
-        "en-us": "{agent} changed custom field {custom_field} from {old} to {new}",
-        "es": "{agent} cambió el campo personalizado {custom_field} de {old} a {new}"
+        "pt-br": "mudou o custom field",
+        "en-us": "changed custom field",
+        "es": "cambió el campo personalizado"
       }
     },
     "room_list": {
@@ -501,6 +496,26 @@
     "pt-br": "Fechar visualização",
     "en-us": "Close view",
     "es": "Cerrar la vista"
+  },
+  "flow": {
+    "pt-br": "Fluxo",
+    "en-us": "Flow",
+    "es": "Flujo"
+  },
+  "sent": {
+    "pt-br": "enviado",
+    "en-us": "sent",
+    "es": "enviado"
+  },
+  "from": {
+    "pt-br": "de",
+    "en-us": "from",
+    "es": "de"
+  },
+  "to": {
+    "pt-br": "para",
+    "en-us": "to",
+    "es": "a"
   },
   "today": {
     "pt-br": "Hoje",

@@ -1,8 +1,9 @@
 <template>
   <div :class="{ 'chat-feedback__container': true, divisor }">
-    <strong :class="['chat-feedback', scheme ? `chat-feedback--${scheme}` : '']">
-      {{ feedback }}
-    </strong>
+    <strong
+      :class="['chat-feedback', scheme ? `chat-feedback--${scheme}` : '']"
+      v-html="treatedFeedback"
+    />
   </div>
 </template>
 
@@ -25,6 +26,13 @@ export default {
     divisor: {
       type: Boolean,
       default: false,
+    },
+  },
+
+  computed: {
+    treatedFeedback() {
+      const trimFeedback = this.feedback.trim();
+      return trimFeedback.charAt(0).toUpperCase() + trimFeedback.slice(1);
     },
   },
 };
