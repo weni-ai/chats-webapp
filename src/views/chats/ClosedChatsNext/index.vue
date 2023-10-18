@@ -15,7 +15,6 @@
         v-if="!isLoadingSelectedRoom && selectedRoom"
         :title="selectedRoom.contact.name"
         :avatarName="selectedRoom.contact.name"
-        :close="closeSelectedRoom"
       />
     </header>
     <main>
@@ -102,20 +101,20 @@ export default {
     },
 
     handlerCrumbClick(crumb) {
-      console.log(crumb);
+      if (crumb.name === this.selectedRoom.contact.name) return;
+
+      this.selectedRoom = null;
+
+      const index = this.crumbs.findIndex((item) => item.path === crumb.path);
+      this.crumbs = this.crumbs.slice(0, index + 1);
+
+      this.$router.push({ name: crumb.path });
     },
 
     async projectInfo() {
       const project = await ProjectApi.getInfo();
       this.project = project.data;
       this.isLoadingHeader = false;
-    },
-
-    closeSelectedRoom() {
-      this.selectedRoom = null;
-      this.crumbs.pop();
-
-      this.$router.push({ name: 'closed-rooms' });
     },
 
     async chatScrollTop() {

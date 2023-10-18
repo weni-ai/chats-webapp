@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@emoji-mart/data": "^1.1.2",
-    "@weni/unnnic-system": "1.16.62",
+    "@weni/unnnic-system": "1.16.63",
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "emoji-mart": "^5.5.2",
