@@ -59,18 +59,18 @@
         id="queue"
       />
       <room-group
-        v-if="wating.length"
-        :label="$t('chats.sent_flows', { length: wating.length })"
-        :rooms="wating"
-        @open="open"
-        id="wating"
-      />
-      <room-group
         v-if="rooms.length"
         :label="$t('chats.in_progress', { length: rooms.length })"
         :rooms="rooms"
         @open="open"
         id="in_progress"
+      />
+      <room-group
+        v-if="wating.length"
+        :label="$t('chats.sent_flows', { length: wating.length })"
+        :rooms="wating"
+        @open="open"
+        id="wating"
       />
     </section>
   </div>
