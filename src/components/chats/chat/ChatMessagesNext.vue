@@ -331,36 +331,52 @@ export default {
       const { method, content } = textJson;
 
       function getPickLabel(action, from, to) {
-        if (action === 'pick' && from?.type === 'user') {
-          return t('chats.feedback.pick_of_agent', {
-            manager: from.name,
-            agent: to.name,
-          });
-        }
-        if (action === 'pick' && from?.type === 'queue') {
-          return t('chats.feedback.pick_of_queue', {
-            agent: to.name,
-            queue: from.name,
-          });
+        if (action === 'pick') {
+          if (from?.type === 'user') {
+            return t('chats.feedback.pick_of_agent', {
+              manager: to.name,
+              agent: from.name,
+            });
+          }
+          if (from?.type === 'queue') {
+            return t('chats.feedback.pick_of_queue', {
+              agent: to.name,
+              queue: from.name,
+            });
+          }
         }
         return '';
       }
 
-      function getTransferLabel(action, from, to) {
-        if (action === 'transfer' && to?.type === 'queue') {
-          return t('chats.feedback.transfer_to_queue', {
-            agent: from.name,
-            queue: to.name,
-          });
-        }
-        if (action === 'transfer' && to?.type === 'user') {
-          return t('chats.feedback.transfer_to_agent', {
-            agent1: to.name,
-            agent2: from.name,
-          });
+      const getTransferLabel = (action, from, to) => {
+        if (action === 'transfer') {
+          if (from?.type === 'user' && to?.type === 'queue') {
+            return t('chats.feedback.transfer_to_queue', {
+              agent: from.name,
+              queue: to.name,
+            });
+          }
+          if (from?.type === 'queue' && to?.type === 'queue') {
+            return t('chats.feedback.transfer_from_queue_to_queue', {
+              queue1: from.name,
+              queue2: to.name,
+            });
+          }
+          if (from?.type === 'queue' && to?.type === 'user') {
+            return t('chats.feedback.transfer_from_queue_to_agent', {
+              queue: from.name,
+              agent: to.name,
+            });
+          }
+          if (from?.type === 'user' && to?.type === 'user') {
+            return t('chats.feedback.transfer_to_agent', {
+              agent1: from.name,
+              agent2: to.name,
+            });
+          }
         }
         return '';
-      }
+      };
 
       function getForwardLabel(action, to) {
         if (action === 'forward') {

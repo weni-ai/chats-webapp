@@ -119,7 +119,7 @@ export default {
       const isTransferedByMe = room.transferred_by === userEmail;
       const isTransferedByViewedAgent = room.transferred_by === viewedAgentEmail;
       const isTransferedFromAQueue =
-        room.transfer_history?.at(-2)?.type === 'queue' || room.transfer_history?.length === 0;
+        room.transfer_history?.from?.type === 'queue' || !room.transfer_history?.from;
       const isActiveRoom = state.activeRoom && room.uuid === state.activeRoom.uuid;
 
       if (!isTransferedByMe && isTransferedToOtherUser) {

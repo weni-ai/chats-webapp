@@ -305,6 +305,16 @@
         "en-us": "{agent} transferred to queue {queue}",
         "es": "{agent} transferido a la cola {queue}"
       },
+      "transfer_from_queue_to_queue": {
+        "pt-br": "Foi transferido da fila {queue1} para fila {queue2}",
+        "en-us": "Was transferred from queue {queue1} to queue {queue2}",
+        "es": "Fue transferido de la cola {queue1} a la cola {queue2}"
+      },
+      "transfer_from_queue_to_agent": {
+        "pt-br": "Foi transferido da fila {queue} para {agent}",
+        "en-us": "Was transferred from queue {queue} to {agent}",
+        "es": "Fue transferido de la cola {queue} a {agent}"
+      },
       "pick_of_queue": {
         "pt-br": "{agent} pegou da fila {queue}",
         "en-us": "{agent} got it from the queue {queue}",
@@ -316,9 +326,9 @@
         "es": "{manager} se ha hecho cargo del chat de {agent}"
       },
       "edit_custom_field": {
-        "pt-br": "mudou o custom field",
-        "en-us": "changed custom field",
-        "es": "cambió el campo personalizado"
+        "pt-br": "editou o custom field",
+        "en-us": "edited custom field",
+        "es": "editado el custom field"
       }
     },
     "room_list": {
