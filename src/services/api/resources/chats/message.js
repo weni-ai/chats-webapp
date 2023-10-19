@@ -69,7 +69,6 @@ export default {
       },
       {
         onUploadProgress: (event) => {
-          // const progress = parseInt(Math.round((event.loaded * 100) / event.total), 10);
           const progress = event.loaded / event.total;
           updateLoadingFiles?.(msg.uuid, progress);
         },
