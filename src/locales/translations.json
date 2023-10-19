@@ -1067,6 +1067,11 @@
         "es": "Nombre de contacto"
       }
     },
+    "already_open_room": {
+      "pt-br": "{contact} já possui uma sala aberta",
+      "en-us": "{contact} already has an open room",
+      "es": "{contact} ya tiene sala abierta"
+    },
     "select": {
       "pt-br": "Selecionar fluxo",
       "en-us": "Select flow",

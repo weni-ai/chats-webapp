@@ -38,6 +38,16 @@ export default {
     return response.data;
   },
 
+  async checkContact(contact) {
+    const response = await http.get(`project/retrieve_flow_warning/`, {
+      params: {
+        project: getProject(),
+        contact,
+      },
+    });
+    return response.data;
+  },
+
   async createContact(contact) {
     const response = await http.post(`/project/${getProject()}/create_contacts/`, contact);
     return response.data;

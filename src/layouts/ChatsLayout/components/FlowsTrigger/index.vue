@@ -40,23 +40,16 @@
           }
         "
       >
-        <unnnic-collapse
-          :title="$t('flows_trigger.groups', { length: listOfGroups.length })"
-          active
-          v-if="listOfGroups.length > 0"
-        >
-          <unnnic-chats-contact
-            v-for="item in searchGroup"
-            :key="item.uuid"
-            :username="item.name"
-            :lastMessage="$tc('flows_trigger.group_contacts', item.count)"
-            :tabindex="0"
-            checkboxWhenSelect
-            :selected="selectedGroup.some((search) => search.uuid === item.uuid)"
-            @click="setGroups(item)"
-            @keypress.enter="setGroups(item)"
-          />
-        </unnnic-collapse>
+        <section class="flows-trigger__contact-alerts">
+          <strong
+            v-for="contact in openedRoomsAlerts"
+            :key="contact"
+            class="flows-trigger__contact-alerts__alert"
+          >
+            <unnnic-icon size="md" icon="alert-circle-1-1" scheme="feedback-yellow" />
+            {{ $t('flows_trigger.already_open_room', { contact }) }}
+          </strong>
+        </section>
         <template v-for="(element, letter) in letras">
           <unnnic-collapse
             :key="letter"
@@ -141,6 +134,7 @@ export default {
     names: [],
     selected: [],
     selectedGroup: [],
+    openedRoomsAlerts: [],
     showModal: false,
     showSelectFlow: false,
     page: 0,
@@ -175,11 +169,20 @@ export default {
       this.projectName = project.data.name;
     },
 
-    setContacts(item) {
-      if (this.selected.some((search) => search.uuid === item.uuid)) {
-        this.selected = this.selected.filter((el) => el.uuid !== item.uuid);
+    setContacts(contact) {
+      if (this.selected.some((search) => search.uuid === contact.uuid)) {
+        this.selected = this.selected.filter((el) => el.uuid !== contact.uuid);
+
+        this.openedRoomsAlerts = this.openedRoomsAlerts.filter((mappedContactName) => {
+          return mappedContactName !== contact.name;
+        });
       } else {
-        this.selected.push(item);
+        this.selected.push(contact);
+        const responseCheckContact = FlowsTrigger.checkContact(contact.uuid);
+
+        if (responseCheckContact.show_warning) {
+          this.openedRoomsAlerts.push(contact.name);
+        }
       }
     },
 
@@ -300,10 +303,10 @@ export default {
 
   &__selecteds {
     display: flex;
-    gap: 8px;
+    gap: $unnnic-spacing-xs;
     overflow: hidden auto;
     flex-wrap: wrap;
-    max-height: 64px;
+    max-height: $unnnic-spacing-xgiant;
 
     scroll-snap-type: y proximity;
   }
@@ -325,8 +328,31 @@ export default {
       }
     }
   }
+
+  &__contact-alerts {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-spacing-sm;
+
+    &__alert {
+      border: $unnnic-border-width-thinner solid $unnnic-color-neutral-soft;
+      border-radius: $unnnic-border-radius-sm;
+
+      padding: $unnnic-spacing-sm;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $unnnic-spacing-xs;
+
+      font-weight: $unnnic-font-weight-regular;
+      font-size: $unnnic-font-size-body-gt;
+    }
+  }
 }
 .flows-trigger__handlers {
+  margin-top: auto;
+
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $unnnic-spacing-xs;
