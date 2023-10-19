@@ -49,11 +49,11 @@
               :key="message.uuid"
               :ref="`message-${message.uuid}`"
             >
-              {{ message.text }}
+              {{ isGeolocation(message.media[0]) ? message.media[0].url : message.text }}
             </unnnic-chats-message>
             <template v-for="media in message.media">
               <unnnic-chats-message
-                v-if="isMedia(media)"
+                v-if="isMedia(media) && !isGeolocation(media)"
                 :key="media.created_on"
                 :ref="`message-${message.uuid}`"
                 :type="message.user ? 'sent' : 'received'"
@@ -86,7 +86,7 @@
                 />
               </unnnic-chats-message>
               <unnnic-chats-message
-                v-else
+                v-else-if="!isMedia(media)"
                 :key="media.created_on"
                 :ref="`message-${message.uuid}`"
                 :type="message.user ? 'sent' : 'received'"
@@ -239,9 +239,12 @@ export default {
     isAudio(media) {
       return this.isMediaOfType(media, 'audio');
     },
+    isGeolocation(media) {
+      return this.isMediaOfType(media, 'geo');
+    },
     isMedia(media) {
-      const { isAudio, isImage, isVideo } = this;
-      return isAudio(media) || isImage(media) || isVideo(media);
+      const { isAudio, isImage, isVideo, isGeolocation } = this;
+      return isAudio(media) || isImage(media) || isVideo(media) || isGeolocation(media);
     },
     messageStatus({ message, media }) {
       if (message) {
