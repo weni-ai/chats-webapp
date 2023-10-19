@@ -154,9 +154,7 @@ export default {
       unnnicCallAlert({
         props: {
           text: this.$t('quick_messages.successfully_updated'),
-          icon: 'success',
-          scheme: 'feedback-green',
-          onClose: this.$t('close'),
+          type: 'success',
         },
         seconds: 5,
       });

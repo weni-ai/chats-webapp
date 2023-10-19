@@ -162,7 +162,6 @@ export default {
         props: {
           text: this.$t('flows_trigger.successfully_sent'),
           type: 'success',
-          scheme: 'feedback-green',
         },
         seconds: 5,
       });

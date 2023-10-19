@@ -137,7 +137,6 @@ export default {
     showStatusAlert(connectionStatus) {
       unnnicCallAlert({
         props: {
-          title: ``,
           text: `${this.$t('status_agent')} ${connectionStatus}`,
           icon: 'indicator',
           scheme: connectionStatus === 'ONLINE' ? 'feedback-green' : '$unnnic-color-neutral-black',

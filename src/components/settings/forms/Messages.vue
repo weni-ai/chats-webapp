@@ -100,11 +100,8 @@ export default {
 
       unnnicCallAlert({
         props: {
-          title: this.$t('quick_messages.successfully_added'),
-          icon: 'check-circle-1-1-1',
-          scheme: 'feedback-green',
-          closeText: this.$t('close'),
-          position: 'bottom-right',
+          text: this.$t('quick_messages.successfully_added'),
+          type: 'success',
         },
         seconds: 5,
       });

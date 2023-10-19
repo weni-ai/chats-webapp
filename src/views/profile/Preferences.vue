@@ -59,11 +59,8 @@ export default {
     showConfirmationAlert() {
       unnnicCallAlert({
         props: {
-          title: 'Alterações salvas',
-          icon: 'check-circle-1-1-1',
-          scheme: 'feedback-green',
-          closeText: 'Fechar',
-          position: 'bottom-right',
+          text: 'Alterações salvas',
+          type: 'success',
         },
         seconds: 15,
       });

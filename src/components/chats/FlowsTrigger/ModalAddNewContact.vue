@@ -85,7 +85,6 @@ export default {
           props: {
             text: this.$t('flows_trigger.successfully_add_contact'),
             type: 'success',
-            scheme: 'feedback-green',
           },
           seconds: 5,
         });
