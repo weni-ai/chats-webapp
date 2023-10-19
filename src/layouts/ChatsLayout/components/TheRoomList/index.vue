@@ -72,6 +72,9 @@
         @open="open"
         id="wating"
       />
+      <p v-if="showNoResultsError" class="no-results">
+        {{ $t('without_results') }}
+      </p>
     </section>
   </div>
 </template>
@@ -132,6 +135,15 @@ export default {
         (total, room) =>
           total + (this.$store.state.rooms.newMessagesByRoom[room.uuid]?.messages?.length || 0),
         0,
+      );
+    },
+
+    showNoResultsError() {
+      return (
+        !this.isLoadingRooms &&
+        this.rooms.length === 0 &&
+        this.rooms_queue.length === 0 &&
+        this.rooms_sent_flows.length === 0
       );
     },
   },
@@ -227,6 +239,11 @@ export default {
 
     :deep(.unnnic-collapse) {
       padding-bottom: $unnnic-spacing-sm;
+    }
+
+    .no-results {
+      color: $unnnic-color-neutral-cloudy;
+      font-size: $unnnic-font-size-body-gt;
     }
   }
 
