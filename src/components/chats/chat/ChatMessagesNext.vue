@@ -425,7 +425,7 @@ export default {
     handleScroll() {
       const { chatMessages } = this.$refs;
       if (!chatMessages) return;
-      // console.log(this.isEdgeRoomMessage(this.roomMessagesSorted[0].minutes), this.room.uuid);
+
       // if (this.isEdgeRoomMessage(this.roomMessagesSorted[0].minutes)) {
       //   this.$router.replace({
       //     name: 'closed-rooms.selected',
@@ -442,15 +442,17 @@ export default {
       const { chatMessages } = this.$refs;
       if (!chatMessages) return;
 
-      const { prevUuidBeforePagination, prevRoomUuid, messages } = this;
+      const { prevUuidBeforePagination, prevRoomUuid, roomMessagesSorted } = this;
 
       if (prevRoomUuid !== this.room.uuid) {
         this.handleScroll();
-        this.scrollToBottom();
+        setTimeout(() => {
+          this.scrollToBottom();
+        }, 200);
       }
 
       if (prevUuidBeforePagination && chatMessages.scrollTop === 0) {
-        const elementToScroll = this.$refs[`message-${prevUuidBeforePagination}`]?.[0];
+        const elementToScroll = this.$refs[`message-${prevUuidBeforePagination}`]?.[0]?.$el;
         if (elementToScroll) {
           await elementToScroll.scrollIntoView({ block: 'start' });
           chatMessages.scrollTop += 1;
@@ -460,7 +462,7 @@ export default {
       }
 
       this.prevRoomUuid = this.room.uuid;
-      this.prevUuidBeforePagination = messages?.[0]?.uuid;
+      this.prevUuidBeforePagination = roomMessagesSorted[0].minutes[0].messages?.[0]?.uuid;
     },
 
     scrollToBottom() {
