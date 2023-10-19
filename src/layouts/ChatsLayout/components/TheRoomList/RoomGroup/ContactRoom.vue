@@ -34,7 +34,6 @@ export default {
       this.waitingTime = this.room.waitingTime;
       this.timer = setInterval(() => {
         this.waitingTime += 1;
-        console.log(1);
         // ensures that all chats waiting times don't update at same time
       }, ONE_MINUTE_IN_MILLISECONDS + randomPeriodInMilliseconds);
     }
