@@ -4,15 +4,16 @@
     <unnnic-input
       v-model="nameOfContact"
       icon-left="search-1"
-      icon-right="close-1"
+      :icon-right="nameOfContact ? 'close-1' : ''"
       :iconRightClickable="true"
       @icon-right-click="nameOfContact = ''"
       size="sm"
-      placeholder="Pesquisar contato"
-      :loading="this.loading"
+      :placeholder="$t('chats.search_contact')"
     ></unnnic-input>
     <div class="order-by">
-      <div><span>Ordenar por:</span></div>
+      <div>
+        <span>{{ $t('chats.room_list.order_by') }}</span>
+      </div>
       <div class="apply-filter" style="cursor: pointer">
         <span
           :style="{
@@ -22,7 +23,7 @@
             listRoom(false, '-last_interaction'),
               ((lastCreatedFilter = true), (createdOnFilter = false))
           "
-          >Mais recentes</span
+          >{{ $t('chats.room_list.most_recent') }}</span
         >
         <span> | </span>
         <span
@@ -34,11 +35,14 @@
               ((createdOnFilter = true), (lastCreatedFilter = false))
           "
         >
-          Mais antigos</span
+          {{ $t('chats.room_list.older') }}</span
         >
       </div>
     </div>
+
+    <rooms-list-loading v-if="isLoadingRooms" />
     <section
+      v-else
       class="chat-groups"
       @scroll="
         (event) => {
@@ -47,53 +51,45 @@
       "
     >
       <room-group
-        v-if="queue.length"
-        :label="$t('line', { length: queue.length })"
-        :rooms="queue"
+        v-if="rooms_queue.length"
+        :label="$t('chats.waiting', { length: rooms_queue.length })"
+        :rooms="rooms_queue"
         filled
         @open="open"
         id="queue"
       />
       <room-group
-        v-if="wating.length"
-        :label="$t('chats.wating_answer', { length: wating.length })"
-        :rooms="wating"
-        @open="open"
-        :isWatingAnswer="true"
-        :isHistory="isHistoryView"
-        id="wating"
-      />
-      <room-group
-        v-bind:style="isHistoryView ? 'opacity: 0.5;' : 'opacity: 20'"
         v-if="rooms.length"
         :label="$t('chats.in_progress', { length: rooms.length })"
         :rooms="rooms"
         @open="open"
-        :isHistory="isHistoryView"
         id="in_progress"
       />
+      <room-group
+        v-if="rooms_sent_flows.length"
+        :label="$t('chats.sent_flows', { length: rooms_sent_flows.length })"
+        :rooms="rooms_sent_flows"
+        @open="open"
+        id="wating"
+      />
+      <p v-if="showNoResultsError" class="no-results">
+        {{ $t('without_results') }}
+      </p>
     </section>
-
-    <unnnic-button
-      :text="isHistoryView ? $t('back_to_chats') : $t('chats.see_history')"
-      :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : 'task-list-clock-1'"
-      type="secondary"
-      size="small"
-      :disabled="isViewMode"
-      @click="navigate(isHistoryView ? 'home' : 'rooms.closed')"
-    />
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex';
 
+import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import RoomGroup from './RoomGroup';
 
 export default {
   name: 'TheRoomList',
 
   components: {
+    RoomsListLoading,
     RoomGroup,
   },
 
@@ -115,7 +111,7 @@ export default {
     limit: 100,
     nameOfContact: '',
     timerId: 0,
-    loading: false,
+    isLoadingRooms: true,
     createdOnFilter: false,
     lastCreatedFilter: true,
   }),
@@ -127,22 +123,27 @@ export default {
   computed: {
     ...mapGetters({
       rooms: 'rooms/agentRooms',
-      queue: 'rooms/waitingQueue',
-      wating: 'rooms/waitingContactAnswer',
+      rooms_queue: 'rooms/waitingQueue',
+      rooms_sent_flows: 'rooms/waitingContactAnswer',
     }),
     ...mapState({
-      hasNext: (state) => state.rooms.hasNext,
       listRoomHasNext: (state) => state.rooms.listRoomHasNext,
     }),
-    isHistoryView() {
-      return this.$route.name === 'rooms.closed';
-    },
 
     totalUnreadMessages() {
       return this.rooms.reduce(
         (total, room) =>
           total + (this.$store.state.rooms.newMessagesByRoom[room.uuid]?.messages?.length || 0),
         0,
+      );
+    },
+
+    showNoResultsError() {
+      return (
+        !this.isLoadingRooms &&
+        this.rooms.length === 0 &&
+        this.rooms_queue.length === 0 &&
+        this.rooms_sent_flows.length === 0
       );
     },
   },
@@ -162,17 +163,12 @@ export default {
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
           this.listRoom(false);
-        }, 1000);
+        }, 800);
       },
     },
   },
 
   methods: {
-    navigate(name) {
-      this.$router.push({
-        name,
-      });
-    },
     async open(room) {
       if (this.isViewMode) {
         await this.$store.dispatch('rooms/setActiveRoom', room);
@@ -190,7 +186,7 @@ export default {
     },
 
     async listRoom(concat, order = '-last_interaction') {
-      this.loading = true;
+      this.isLoadingRooms = true;
       const { viewedAgent } = this;
       try {
         await this.$store.dispatch('rooms/getAll', {
@@ -201,9 +197,9 @@ export default {
           contact: this.nameOfContact,
           viewedAgent,
         });
-        this.loading = false;
+        this.isLoadingRooms = false;
       } catch {
-        this.loading = false;
+        this.isLoadingRooms = false;
         console.error('Não foi possível listar as salas');
       }
     },
@@ -227,21 +223,28 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: $unnnic-spacing-stack-sm;
+  gap: $unnnic-spacing-stack-xs;
 
   .chat-groups {
     flex: 1 1;
 
-    // width: calc(16rem + 1rem);
-
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-stack-md;
 
-    padding-right: $unnnic-spacing-inset-sm;
-    border-right: solid 1px $unnnic-color-neutral-soft;
+    margin-top: $unnnic-spacing-sm;
+    padding-right: $unnnic-spacing-xs;
+    margin-right: -$unnnic-spacing-xs; // For the scrollbar to stick to the edge
     overflow-y: auto;
     overflow-x: hidden;
+
+    :deep(.unnnic-collapse) {
+      padding-bottom: $unnnic-spacing-sm;
+    }
+
+    .no-results {
+      color: $unnnic-color-neutral-cloudy;
+      font-size: $unnnic-font-size-body-gt;
+    }
   }
 
   .order-by {

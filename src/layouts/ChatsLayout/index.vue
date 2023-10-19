@@ -1,39 +1,43 @@
 <template>
-  <section :class="['chats-layout', isAsideVisible && 'has-aside']">
-    <section
-      v-if="showSendFlowMessage"
-      :style="{ display: 'flex', flexDirection: 'column', height: '96vh' }"
-      class="room-list"
-    >
-      <layout-template-message
-        :selectedContact="this.$store.state.rooms.activeRoom.contact"
-        @close="handlerShowSendFlowMessages"
-      />
-    </section>
+  <section :class="['chats-layout', isAsideVisible && 'has-aside', isViewMode && 'view-mode']">
     <slot name="room-list" v-if="isRoomListVisible">
-      <div class="sidebar">
+      <sidebar-loading v-show="isLoadingSidebar" />
+      <div v-show="!isLoadingSidebar" class="sidebar">
         <preferences-bar
+          v-if="!isViewMode"
           @show-quick-messages="handlerShowQuickMessages"
           :dashboard="canAccessDashboard"
         />
 
-        <div class="template-message-button" v-if="canTriggerFlows">
-          <unnnic-button-icon
+        <div class="flows-trigger-button" v-if="!isViewMode">
+          <unnnic-button-next
+            v-if="canTriggerFlows"
             size="small"
-            icon="pencil-write-1"
-            style="width: 100%"
-            @click="showContactsList"
+            type="terciary"
+            iconCenter="pencil-write-1"
+            @click="openFlowsTrigger"
           />
         </div>
 
-        <the-room-list class="room-list" :disabled="disabledChatList" />
+        <the-room-list class="room-list" :isViewMode="isViewMode" :viewedAgent="viewedAgent" />
+
+        <unnnic-button-next
+          class="history-button"
+          :text="isHistoryView ? $t('back_to_chats') : $t('chats.see_history')"
+          :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : 'task-list-clock-1'"
+          type="terciary"
+          size="small"
+          @click="navigate(isHistoryView ? 'home' : 'closed-rooms')"
+        />
       </div>
     </slot>
 
-    <slot name="template-message" v-if="contactListVisible">
-      <div :style="{ display: 'flex', flexDirection: 'column', height: '100vh' }">
-        <contact-list class="room-list" :disabled="disabledChatList" @close="closeContactList" />
-      </div>
+    <slot name="flows-trigger" v-if="flowsTriggerVisible">
+      <layout-flows-trigger
+        class="room-list"
+        :selectedContact="flowsTriggerContact"
+        @close="closeFlowsTrigger"
+      />
     </slot>
 
     <slot name="quick-message" v-if="quickMessagesVisible">
@@ -51,21 +55,17 @@
     <section v-if="isAsideVisible" class="aside">
       <slot name="aside" />
     </section>
-    <div v-show="isLoading && disabledChatList">
-      <skeleton-loading />
-    </div>
   </section>
 </template>
 
 <script>
+import SidebarLoading from '@/views/loadings/HomeSidebar';
 import PreferencesBar from '@/components/PreferencesBar.vue';
 import Sector from '@/services/api/resources/settings/sector.js';
-import TemplateMessages from '@/services/api/resources/chats/templateMessage.js';
-import SkeletonLoading from '@/views/loadings/chats.vue';
+import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import QuickMessages from '@/components/chats/QuickMessages';
-import LayoutTemplateMessage from '@/components/chats/TemplateMessages/LayoutTemplateMessage';
 import TheRoomList from './components/TheRoomList';
-import ContactList from './components/TemplateMessages';
+import LayoutFlowsTrigger from './components/FlowsTrigger';
 
 export default {
   name: 'ChatsLayout',
@@ -73,33 +73,33 @@ export default {
   components: {
     PreferencesBar,
     TheRoomList,
-    // ModalOnBoardingChats,
-    SkeletonLoading,
-    ContactList,
+    SidebarLoading,
+    LayoutFlowsTrigger,
     QuickMessages,
-    LayoutTemplateMessage,
   },
 
   props: {
-    disabledChatList: {
-      type: Boolean,
-      default: false,
+    viewedAgent: {
+      type: String,
+      default: '',
     },
   },
 
-  mounted() {
-    this.getCountSectors();
-    this.havePermissionToSendTemplateMessage();
+  async mounted() {
+    await this.getCountSectors();
+    await this.getPermissionToSendFlowsTrigger();
+    this.isLoadingSidebar = false;
   },
 
   data: () => ({
     sectors: {},
     isLoading: false,
-    contactList: false,
+    isLoadingSidebar: true,
     canTriggerFlows: false,
     canAccessDashboard: false,
+    showFlowsTrigger: false,
     showQuickMessages: false,
-    showSendFlowMessage: false,
+    flowsTriggerContact: null,
     quickMessage: '',
   }),
 
@@ -107,22 +107,23 @@ export default {
     handlerShowQuickMessages() {
       this.showQuickMessages = !this.showQuickMessages;
     },
-    handlerShowSendFlowMessages() {
-      this.showSendFlowMessage = !this.showSendFlowMessage;
+    openFlowsTrigger({ contact = null }) {
+      if (contact) {
+        this.flowsTriggerContact = contact;
+      }
+      this.showFlowsTrigger = true;
+    },
+    closeFlowsTrigger() {
+      this.showFlowsTrigger = false;
+      if (this.flowsTriggerContact) {
+        this.flowsTriggerContact = null;
+      }
     },
     close() {
       if (this.$slots.aside[0].componentOptions.listeners) {
         this.$slots.aside[0].componentOptions.listeners.close();
       }
-      this.showSendFlowMessage = false;
-    },
-
-    showContactsList() {
-      this.contactList = true;
-    },
-
-    closeContactList() {
-      this.contactList = false;
+      this.showFlowsTrigger = false;
     },
 
     async getCountSectors() {
@@ -136,9 +137,9 @@ export default {
         console.log(error);
       }
     },
-    async havePermissionToSendTemplateMessage() {
+    async getPermissionToSendFlowsTrigger() {
       try {
-        const response = await TemplateMessages.listAccess();
+        const response = await FlowsTrigger.listAccess();
         this.accessList = response;
         this.canTriggerFlows = this.accessList.can_trigger_flows;
         this.canAccessDashboard = this.accessList.can_access_dashboard;
@@ -149,6 +150,11 @@ export default {
     selectQuickMessage(quickMessage) {
       this.$emit('select-quick-message', quickMessage);
     },
+    navigate(name) {
+      this.$router.push({
+        name,
+      });
+    },
   },
 
   computed: {
@@ -156,13 +162,19 @@ export default {
       return !!this.$slots.aside;
     },
     isRoomListVisible() {
-      return !this.contactList && !this.showQuickMessages && !this.showSendFlowMessage;
+      return !this.showFlowsTrigger && !this.showQuickMessages;
     },
-    contactListVisible() {
-      return this.contactList && !this.showQuickMessages && !this.showSendFlowMessage;
+    flowsTriggerVisible() {
+      return this.showFlowsTrigger && !this.showQuickMessages;
     },
     quickMessagesVisible() {
-      return !this.contactList && !this.showSendFlowMessage && this.showQuickMessages;
+      return !this.showFlowsTrigger && this.showQuickMessages;
+    },
+    isHistoryView() {
+      return this.$route.name === 'closed-rooms';
+    },
+    isViewMode() {
+      return !!this.viewedAgent;
     },
   },
 };
@@ -178,12 +190,28 @@ section.chats-layout {
   max-width: 100vw;
 
   display: grid;
-  grid-template-columns: 2.8fr 9fr;
+  grid-template-columns: 3fr 9fr;
+  grid-template-rows: 100vh;
+
+  overflow: hidden;
+
+  & > *:not(:last-child) {
+    border-right: 1px solid $unnnic-color-neutral-soft;
+  }
 
   overflow: hidden;
 
   &.has-aside {
-    grid-template-columns: 2.8fr 6.2fr 2.8fr;
+    grid-template-columns: 3fr 6fr 3fr;
+  }
+
+  &.view-mode {
+    $viewModeHeaderHeight: 40px;
+
+    position: relative;
+
+    padding-top: $viewModeHeaderHeight;
+    grid-template-rows: calc(100vh - $viewModeHeaderHeight);
   }
 
   .sidebar {
@@ -191,23 +219,37 @@ section.chats-layout {
     flex-direction: column;
     gap: $unnnic-spacing-stack-xs;
 
-    height: 100vh;
+    height: 100%;
 
-    padding: $unnnic-spacing-inset-sm;
-    padding-right: 0;
+    padding: 0 0 $unnnic-spacing-xs $unnnic-spacing-xs;
+
     grid-column: 1;
+
+    .flows-trigger-button {
+      button {
+        width: 100%;
+      }
+    }
+
+    .history-button {
+      margin-right: $unnnic-spacing-xs;
+    }
 
     .room-list {
       overflow-y: auto;
     }
+
+    & > * {
+      padding-right: $unnnic-spacing-xs;
+    }
   }
 
   main {
-    margin-left: $unnnic-spacing-inline-sm;
-
     grid-column: 2;
 
-    height: 100vh;
+    height: 100%;
+
+    background-color: $unnnic-color-background-carpet;
   }
 
   .quick-message {
@@ -216,16 +258,14 @@ section.chats-layout {
     display: flex;
     flex-direction: column;
 
-    height: 100vh;
+    height: 100%;
 
     border: 1px solid $unnnic-color-neutral-soft;
   }
 
   .aside {
-    height: 100vh;
-
-    border: 1px solid $unnnic-color-neutral-soft;
-    background: $unnnic-color-background-grass;
+    height: 100%;
+    background: $unnnic-color-background-snow;
 
     grid-column: 3;
   }

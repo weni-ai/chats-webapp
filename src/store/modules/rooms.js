@@ -1,5 +1,3 @@
-import Message from '@/services/api/resources/chats/message';
-import { groupSequentialSentMessages, parseMessageToMessageWithSenderProp } from '@/utils/messages';
 import Room from '@/services/api/resources/chats/room';
 
 const mutations = {
@@ -7,10 +5,6 @@ const mutations = {
   ADD_ROOM: 'ADD_ROOM',
   UPDATE_ROOM: 'UPDATE_ROOM',
   SET_ACTIVE_ROOM: 'SET_ACTIVE_ROOM',
-  SET_ACTIVE_ROOM_MESSAGES: 'SET_ACTIVE_ROOM_MESSAGES',
-  ADD_MESSAGE: 'ADD_MESSAGE',
-  UPDATE_MESSAGE: 'UPDATE_MESSAGE',
-  SET_ACTIVE_ROOM_HAS_NEXT: 'SET_ACTIVE_ROOM_HAS_NEXT',
   SET_ROOMS_HAS_NEXT: 'SET_ROOMS_HAS_NEXT',
   BRING_ROOM_FRONT: 'BRING_ROOM_FRONT',
   SET_CAN_USE_COPILOT: 'SET_CAN_USE_COPILOT',
@@ -23,9 +17,7 @@ export default {
   state: {
     rooms: [],
     activeRoom: null,
-    activeRoomMessages: [],
     newMessagesByRoom: {},
-    hasNext: true,
     hasNextRooms: true,
     canUseCopilot: false,
     copilotSuggestion: '',
@@ -41,12 +33,6 @@ export default {
     [mutations.SET_ACTIVE_ROOM](state, room) {
       state.activeRoom = room;
     },
-    [mutations.SET_ACTIVE_ROOM_MESSAGES](state, messages) {
-      state.activeRoomMessages = messages;
-    },
-    [mutations.SET_ACTIVE_ROOM_HAS_NEXT](state, hasNext) {
-      state.hasNext = hasNext;
-    },
     [mutations.SET_ROOMS_HAS_NEXT](state, hasNextRooms) {
       state.hasNextRooms = hasNextRooms;
     },
@@ -58,20 +44,6 @@ export default {
     },
     [mutations.SET_COPILOT_SUGGESTION](state, copilotSuggestion) {
       state.copilotSuggestion = copilotSuggestion;
-    },
-    [mutations.ADD_MESSAGE](state, message) {
-      if (message.room !== state.activeRoom.uuid) return;
-      const messageWithSender = parseMessageToMessageWithSenderProp(message);
-      state.activeRoomMessages.push(messageWithSender);
-    },
-    [mutations.UPDATE_MESSAGE](state, { message, toUpdateUuid = '' }) {
-      if (message.room !== state.activeRoom.uuid) return;
-      const uuid = toUpdateUuid || message.uuid;
-
-      const updatedMessage = parseMessageToMessageWithSenderProp(message);
-      state.activeRoomMessages = state.activeRoomMessages.map((message) => {
-        return message.uuid === uuid ? { ...updatedMessage } : message;
-      });
     },
     [mutations.UPDATE_NEW_MESSAGES_BY_ROOM](state, { room, message, reset = false }) {
       const roomMessages = state.newMessagesByRoom[room]?.messages || [];
@@ -131,100 +103,6 @@ export default {
       }
       return undefined;
     },
-
-    async getActiveRoomMessages({ commit, state }, { offset, concat, limit }) {
-      const { activeRoom } = state;
-      if (!activeRoom) return;
-
-      const maxRetries = 3;
-      let currentRetry = 0;
-
-      // eslint-disable-next-line consistent-return
-      async function fetchData() {
-        try {
-          const response = await Message.getByRoom(activeRoom.uuid, offset, limit);
-
-          let messages = response.results;
-          const hasNext = response.next;
-          if (concat) {
-            messages = response.results.concat(state.activeRoomMessages);
-          }
-
-          if (messages?.[0] && activeRoom?.uuid && messages?.[0]?.room === activeRoom.uuid) {
-            const messagesWithSender = messages.map(parseMessageToMessageWithSenderProp);
-            commit(mutations.SET_ACTIVE_ROOM_MESSAGES, messagesWithSender);
-            commit(mutations.SET_ACTIVE_ROOM_HAS_NEXT, hasNext);
-          }
-        } catch (error) {
-          console.error('An error ocurred when try get the room messages', error);
-
-          if (currentRetry < maxRetries) {
-            currentRetry += 1;
-
-            const TWO_SECONDS = 2000;
-
-            return new Promise((resolve) => {
-              setTimeout(() => {
-                resolve(fetchData());
-              }, TWO_SECONDS);
-            });
-          }
-          throw new Error(
-            `Several errors occurred when trying to request messages from the room. There will be no automatic retries.`,
-          );
-        }
-      }
-      await fetchData();
-    },
-
-    async sendMessage({ state, commit }, text) {
-      const { activeRoom } = state;
-      if (!activeRoom) return;
-
-      const temporaryMessage = {
-        uuid: Date.now().toString(),
-        text,
-        created_on: new Date().toISOString(),
-        media: [],
-        room: activeRoom.uuid,
-        seen: false,
-        user: { ...activeRoom.user },
-      };
-
-      commit(mutations.ADD_MESSAGE, temporaryMessage);
-
-      Message.send(activeRoom.uuid, {
-        text,
-        user_email: activeRoom.user.email,
-      })
-        .then((message) => {
-          commit(mutations.UPDATE_MESSAGE, { message, toUpdateUuid: temporaryMessage.uuid });
-        })
-        .catch(() => {
-          console.error('Não foi possível enviar a mensagem');
-        });
-    },
-    async sendMedias({ state }, { files: medias, updateLoadingFiles }) {
-      const { activeRoom } = state;
-      if (!activeRoom) return;
-
-      await Promise.all(
-        medias.map((media) =>
-          Message.sendMedia({
-            roomId: activeRoom.uuid,
-            userEmail: activeRoom.user.email,
-            media,
-            updateLoadingFiles,
-          }),
-        ),
-      );
-    },
-    async addMessage({ commit, state }, message) {
-      const messageAlreadyExists = state.activeRoomMessages.some((m) => m.uuid === message.uuid);
-
-      if (messageAlreadyExists) commit(mutations.UPDATE_MESSAGE, { message });
-      else commit(mutations.ADD_MESSAGE, message);
-    },
     updateRoom({ state, commit }, { room, userEmail, routerReplace, viewedAgentEmail }) {
       const rooms = state.rooms
         .map((mappedRoom) => (mappedRoom.uuid === room.uuid ? { ...room } : mappedRoom))
@@ -241,7 +119,7 @@ export default {
       const isTransferedByMe = room.transferred_by === userEmail;
       const isTransferedByViewedAgent = room.transferred_by === viewedAgentEmail;
       const isTransferedFromAQueue =
-        room.transfer_history.at(-2)?.type === 'queue' || room.transfer_history.length === 0;
+        room.transfer_history?.from?.type === 'queue' || !room.transfer_history?.from;
       const isActiveRoom = state.activeRoom && room.uuid === state.activeRoom.uuid;
 
       if (!isTransferedByMe && isTransferedToOtherUser) {
@@ -282,16 +160,13 @@ export default {
       return state.rooms.filter((room) => !!room.user && room.is_waiting === false);
     },
     waitingQueue(state) {
-      return state.rooms.filter((room) => !room.user);
+      return state.rooms.filter((room) => !room.user && !room.is_waiting);
     },
     waitingContactAnswer(state) {
       return state.rooms.filter((room) => room.is_waiting === true);
     },
     getRoomById: (state) => (uuid) => {
       return state.rooms.find((room) => room.uuid === uuid);
-    },
-    groupedActiveRoomsMessage: (state) => {
-      return groupSequentialSentMessages(state.activeRoomMessages);
     },
   },
 };

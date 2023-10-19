@@ -1,9 +1,9 @@
 <template>
   <section>
-    <div class="message-editor">
+    <div class="message-manager">
       <div
         :class="[
-          'message-editor-box__container',
+          'message-manager-box__container',
           loadingValue !== undefined && 'loading',
           isFocused && 'focused',
         ]"
@@ -14,7 +14,7 @@
         <text-box
           v-if="!isAudioRecorderVisible"
           ref="textBox"
-          v-model="message"
+          v-model="textBoxMessage"
           @keydown="onKeyDown"
           @paste="handlePaste"
           @is-typing-handler="isTypingHandler"
@@ -23,26 +23,26 @@
         />
         <unnnic-audio-recorder
           ref="audioRecorder"
-          class="message-editor__audio-recorder"
+          class="message-manager__audio-recorder"
           v-show="isAudioRecorderVisible && loadingValue === undefined"
           v-model="recordedAudio"
           @status="updateAudioRecorderStatus"
         />
       </div>
-      <div class="message-editor__actions">
-        <unnnic-button-icon
+      <div class="message-manager__actions">
+        <unnnic-button-next
           v-if="canUseCopilot && !isCopilotOpen && showActionButton"
           @click="openCopilot"
-          type="secondary"
+          type="terciary"
           size="large"
-          icon="study-light-idea-1"
+          iconCenter="study-light-idea-1"
         />
-        <unnnic-button-icon
+        <unnnic-button-next
           v-if="!canUseCopilot && showActionButton"
           @click="record"
-          type="secondary"
+          type="terciary"
           size="large"
-          icon="microphone"
+          iconCenter="microphone"
         />
 
         <unnnic-dropdown
@@ -50,7 +50,7 @@
           position="top-left"
           class="more-actions"
         >
-          <unnnic-button-icon slot="trigger" type="primary" size="large" icon="add-1" />
+          <unnnic-button-next slot="trigger" type="primary" size="large" iconCenter="add-1" />
 
           <div class="more-actions-container">
             <more-actions-option
@@ -72,7 +72,7 @@
           </div>
         </unnnic-dropdown>
 
-        <unnnic-button-icon
+        <unnnic-button-next
           v-if="
             !isSuggestionBoxOpen &&
             (isTyping || isAudioRecorderVisible || loadingValue !== undefined)
@@ -80,11 +80,11 @@
           @click="send"
           type="primary"
           size="large"
-          icon="send-email-3-1"
+          iconCenter="send-email-3-1"
         />
       </div>
       <suggestion-box
-        :search="message"
+        :search="textBoxMessage"
         :suggestions="shortcuts"
         :keyboard-event="keyboardEvent"
         :copilot="canUseCopilot"
@@ -112,7 +112,7 @@ import SuggestionBox from './SuggestionBox.vue';
 import CoPilot from './CoPilot';
 
 export default {
-  name: 'MessageEditor',
+  name: 'MessageManager',
 
   components: {
     TextBox,
@@ -155,12 +155,12 @@ export default {
       canUseCopilot: (state) => state.rooms.canUseCopilot,
     }),
 
-    message: {
+    textBoxMessage: {
       get() {
         return this.value;
       },
-      set(message) {
-        this.$emit('input', message);
+      set(textBoxMessage) {
+        this.$emit('input', textBoxMessage);
       },
     },
     recordedAudio: {
@@ -200,10 +200,10 @@ export default {
   methods: {
     openCopilot() {
       this.isCopilotOpen = true;
-      this.message = '';
+      this.clearTextBox();
     },
     setMessage(newMessage) {
-      this.message = newMessage;
+      this.textBoxMessage = newMessage;
       this.$nextTick(() => {
         this.$refs.textBox.focus();
       });
@@ -212,14 +212,17 @@ export default {
       // Accessed by parent components
       this.$refs.audioRecorder?.discard();
     },
+    clearTextBox() {
+      this.textBoxMessage = '';
+    },
     /**
      * @param {KeyboardEvent} event
      */
     closeSuggestionBox() {
       this.isSuggestionBoxOpen = false;
 
-      if (this.message.startsWith('/')) {
-        this.message = '';
+      if (this.textBoxMessage.startsWith('/')) {
+        this.textBoxMessage = '';
       }
     },
     onKeyDown(event) {
@@ -236,7 +239,7 @@ export default {
       if (event.key === 'Enter') {
         if (event.shiftKey) return;
 
-        this.sendMessage();
+        this.sendTextBoxMessage();
         event.preventDefault();
       }
     },
@@ -278,11 +281,15 @@ export default {
     },
     send() {
       this.$refs.textBox?.clearTextarea();
-      this.sendMessage();
+      this.sendTextBoxMessage();
       this.sendAudio();
     },
-    sendMessage() {
-      this.$emit('send-message');
+    async sendTextBoxMessage() {
+      const message = this.textBoxMessage.trim();
+      if (message) {
+        this.clearTextBox();
+        await this.$store.dispatch('roomMessages/sendMessage', message);
+      }
     },
     async sendAudio() {
       if (this.audioRecorderStatus === 'recording') {
@@ -301,7 +308,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.message-editor {
+.message-manager {
   position: relative;
 
   display: grid;
@@ -356,7 +363,7 @@ export default {
     gap: $unnnic-spacing-stack-xs;
 
     .more-actions {
-      ::v-deep .unnnic-dropdown__content {
+      :deep(.unnnic-dropdown__content) {
         padding: 0 $unnnic-spacing-inset-sm;
       }
     }

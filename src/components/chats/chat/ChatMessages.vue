@@ -1,93 +1,119 @@
+<!-- eslint-disable vuejs-accessibility/alt-text -->
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
   <section class="chat-messages" ref="chatMessages" @scroll="handleScroll">
     <section
-      v-for="message in messages"
-      :key="message.uuid + message.created_on"
-      :ref="`message-${message.uuid}`"
-      class="chat-messages__room"
+      v-for="messagesByDate in roomMessagesSorted"
+      :key="messagesByDate.date"
+      class="chat-messages__container-date"
     >
-      <!-- missing info in API return data -->
-      <div v-if="false" class="chat-messages__room__divisor">
-        <div class="chat-messages__room__divisor__line" />
-        <span class="chat-messages__room__divisor__label">
-          {{
-            message.sender.name === 'Bot'
-              ? $t('chat_with.bot')
-              : $t('chat_with.agent', { name: message.sender.name })
-          }}
-        </span>
-        <div class="chat-messages__room__divisor__line" />
-      </div>
-      <!-- <div style="display: flex; align-items: center; text-align: center">
-        <div class="chat-messages__room__divisor__line" style="background: #d0d3d9" />
-        <span class="unread-message">Mensagens não lidas</span>
-        <div class="chat-messages__room__divisor__line" style="background: #d0d3d9" />
-      </div> -->
-      <div v-if="isTransferInfoMessage(message)" class="chat-messages__room__transfer-info">
-        <unnnic-icon v-if="!room.is_waiting" icon="logout-1-1" size="sm" scheme="neutral-clean" />
-        {{ !room.is_waiting ? createTransferLabel(message) : $t('waiting_answer.send_template') }}
-        <unnnic-icon
-          v-if="room.is_waiting"
-          icon="send-email-3-1"
-          size="sm"
-          scheme="neutral-clean"
+      <div class="chat-messages__messages__start-feedbacks">
+        <chat-feedback
+          :feedback="messagesByDate.date"
+          class="chat-messages__messages__start-feedbacks__date"
+          scheme="purple"
+          divisor
+        />
+        <chat-feedback
+          v-if="room?.is_waiting"
+          :feedback="$t('waiting_answer.waiting_cliente_answer')"
+        />
+        <chat-feedback
+          v-if="isFirstMessageByBot(messagesByDate.minutes)"
+          :feedback="$t('chat_with.bot')"
         />
       </div>
 
-      <section v-else-if="!message.sender" class="chat-messages__messages">
-        <chat-message
-          :message="{ ...message, sender: { name: 'Bot' } }"
-          :disabled="isHistory"
-          :use-photo="usePhoto"
-          @fullscreen="openFullScreen"
-        />
-      </section>
+      <section
+        v-for="messagesByMinute in messagesByDate.minutes"
+        class="chat-messages__container-minute"
+        :key="messagesByDate.date + messagesByMinute.minute"
+      >
+        <template v-for="message in messagesByMinute.messages">
+          <chat-feedback
+            v-if="isFeedbackMessage(message)"
+            :feedback="createFeedbackLabel(message)"
+            :key="message.uuid"
+          />
 
-      <section v-else class="chat-messages__messages">
-        <chat-message
-          :message="message"
-          :disabled="isHistory"
-          @show-contact-info="showContactInfo"
-          :use-photo="usePhoto"
-          @fullscreen="openFullScreen"
-        />
+          <template v-else>
+            <unnnic-chats-message
+              v-if="message.text"
+              :type="message.user || isMessageByBot(message) ? 'sent' : 'received'"
+              :class="[
+                'chat-messages__message',
+                message.user || isMessageByBot(message) ? 'sent' : 'received',
+              ]"
+              :time="new Date(message.created_on)"
+              :status="messageStatus({ message })"
+              :key="message.uuid"
+              :ref="`message-${message.uuid}`"
+            >
+              {{ isGeolocation(message.media[0]) ? message.media[0].url : message.text }}
+            </unnnic-chats-message>
+            <template v-for="media in message.media">
+              <unnnic-chats-message
+                v-if="isMedia(media) && !isGeolocation(media)"
+                :key="media.created_on"
+                :ref="`message-${message.uuid}`"
+                :type="message.user ? 'sent' : 'received'"
+                :class="['chat-messages__message', message.user ? 'sent' : 'received']"
+                :mediaType="isImage(media) ? 'image' : isVideo(media) ? 'video' : 'audio'"
+                :time="new Date(message.created_on)"
+                :status="messageStatus({ message })"
+                @click="resendMedia({ message, media })"
+              >
+                <img
+                  v-if="isImage(media)"
+                  class="media image"
+                  :src="media.url || media.preview"
+                  @click="openFullScreen(media.url)"
+                  @keypress.enter="openFullScreen(media.url)"
+                />
+                <video-player
+                  v-else-if="isVideo(media)"
+                  class="media"
+                  :src="media.url || media.preview"
+                />
+                <unnnic-audio-recorder
+                  v-else-if="isAudio(media)"
+                  ref="audio-recorder"
+                  class="media audio"
+                  :src="media.url || media.preview"
+                  :canDiscard="false"
+                  :reqStatus="messageStatus({ message, media })"
+                  @failed-click="resendMedia({ message, media })"
+                />
+              </unnnic-chats-message>
+              <unnnic-chats-message
+                v-else-if="!isMedia(media)"
+                :key="media.created_on"
+                :ref="`message-${message.uuid}`"
+                :type="message.user ? 'sent' : 'received'"
+                :class="['chat-messages__message', message.user ? 'sent' : 'received']"
+                :time="new Date(message.created_on)"
+                :documentName="media.url?.split('/').at(-1) || media.file.name"
+                :status="messageStatus({ message })"
+                @click="documentClickHandler({ message, media })"
+              />
+            </template>
+          </template>
+        </template>
       </section>
     </section>
-    <div style="position: sticky; bottom: 0px; background-color: white">
-      <section v-if="!room.is_active" class="chat-messages__room__divisor">
-        <div class="chat-messages__room__divisor__line" />
-        <span class="chat-messages__room__divisor__label">{{ $t('chat_closed_by.agent') }}</span>
-        <div class="chat-messages__room__divisor__line" />
-      </section>
-      <section>
-        <div v-if="room.is_waiting" class="chat-messages__room__transfer-info">
-          {{ $t('waiting_answer.waiting_cliente_answer') }}
-        </div>
-      </section>
+    <!-- Closed chat tags  -->
+    <!-- <chat-feedback
+      v-for="room in rooms"
+      :key="room.uuid"
+      :feedback="roomEndedChatFeedback(room)"
+      scheme="purple"
+    /> -->
+    <section v-if="room.tags.length > 0" class="chat-messages__tags">
+      <!-- <chat-feedback :feedback="roomEndedChatFeedback(room)" scheme="purple" ref="endChatElement" /> -->
+      <tag-group :tags="room.tags" />
+    </section>
 
-      <section v-if="room.tags.length > 0" class="chat-messages__tags">
-        <p class="chat-messages__tags__label">{{ $t('chats.tags') }}</p>
-        <tag-group :tags="room.tags" />
-      </section>
-    </div>
-
-    <unnnic-modal
-      :showModal="!!messageToResend"
-      modalIcon="alert-circle-1"
-      text="Mensagem não enviada"
-      description="Sua mensagem não foi enviada. Deseja reenviar?"
-      @close="messageToResend = null"
-    >
-      <template #options>
-        <unnnic-button type="terciary" @click="messageToResend = null" text="Cancelar envio" />
-        <unnnic-button
-          type="secondary"
-          @click="(messageToResend.sent = true), (messageToResend = null)"
-          text="Reenviar"
-        />
-      </template>
-    </unnnic-modal>
+    <!-- Media fullscreen -->
     <fullscreen-preview
       v-if="isFullscreen"
       :downloadMediaUrl="currentMedia.url"
@@ -116,17 +142,23 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex';
+import moment from 'moment';
+
 import TagGroup from '@/components/TagGroup';
-import ChatMessage from './ChatMessage';
+import Media from '@/services/api/resources/chats/media';
+import ChatFeedback from './ChatFeedback';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
+import VideoPlayer from '../MediaMessage/Previews/Video.vue';
 
 export default {
   name: 'ChatMessages',
 
   components: {
-    ChatMessage,
+    ChatFeedback,
     TagGroup,
     FullscreenPreview,
+    VideoPlayer,
   },
 
   props: {
@@ -134,11 +166,11 @@ export default {
       type: Object,
       required: true,
     },
-    messages: {
-      type: Array,
-      default: () => [],
+    rooms: {
+      type: Object,
+      required: false,
     },
-    usePhoto: {
+    isHistory: {
       type: Boolean,
       default: false,
     },
@@ -152,19 +184,30 @@ export default {
     prevRoomUuid: null,
   }),
 
+  mounted() {
+    window.addEventListener('online', () => {
+      this.resendMessages();
+    });
+
+    // const observer = new IntersectionObserver((entries) => {
+    //   entries.forEach((entry) => {
+    //     console.log('intersecting', entry.isIntersecting);
+    //   });
+    // });
+    // const { endChatElement } = this.$refs;
+
+    // observer.observe(endChatElement.$el);
+  },
+
   computed: {
-    rooms() {
-      const { rooms, messages } = this.chat;
-      return rooms?.length > 0 ? rooms : [{ messages }];
-    },
-    isHistory() {
-      return !this.room.is_active;
-    },
+    ...mapState({
+      roomMessagesSendingUuids: (state) => state.roomMessages.roomMessagesSendingUuids,
+      roomMessagesFailedUuids: (state) => state.roomMessages.roomMessagesFailedUuids,
+      roomMessages: (state) => state.roomMessages.roomMessages,
+      roomMessagesSorted: (state) => state.roomMessages.roomMessagesSorted,
+    }),
     medias() {
-      return this.messages
-        .map((el) => el.content)
-        .flat()
-        .filter((el) => el)
+      return this.roomMessages
         .map((el) => el.media)
         .flat()
         .filter((el) => {
@@ -175,34 +218,188 @@ export default {
   },
 
   methods: {
-    isTransferInfoMessage(message) {
-      try {
-        const content = JSON.parse(message.text);
+    ...mapActions({
+      resendMessages: 'roomMessages/resendMessages',
+      resendMessage: 'roomMessages/resendMessage',
+      resendMedia: 'roomMessages/resendMedia',
+    }),
+    isMediaOfType(media, type) {
+      return media && media.content_type?.includes(type);
+    },
+    isImage(media) {
+      return this.isMediaOfType(media, 'image');
+    },
+    isVideo(media) {
+      return this.isMediaOfType(media, 'video');
+    },
+    isAudio(media) {
+      return this.isMediaOfType(media, 'audio');
+    },
+    isGeolocation(media) {
+      return this.isMediaOfType(media, 'geo');
+    },
+    isMedia(media) {
+      const { isAudio, isImage, isVideo, isGeolocation } = this;
+      return isAudio(media) || isImage(media) || isVideo(media) || isGeolocation(media);
+    },
+    messageStatus({ message, media }) {
+      if (message) {
+        if (this.roomMessagesSendingUuids.includes(message.uuid)) {
+          return 'sending';
+        }
+        if (this.roomMessagesFailedUuids.includes(message.uuid)) {
+          return 'failed';
+        }
+        if (media && this.isAudio(media)) {
+          return 'default';
+        }
+      }
+      return 'sent';
+    },
+    async documentClickHandler({ message, media }) {
+      if (message && media) {
+        const status = this.messageStatus({ message, media });
 
-        return ['queue', 'user'].includes(content.type);
+        if (status === 'failed') {
+          this.resendMedia({ message, media });
+        } else {
+          try {
+            const mediaToDownload = media.url || media.preview;
+            const filename = media.url?.split('/').at(-1) || media.file.name;
+
+            Media.download({ media: mediaToDownload, name: filename });
+          } catch (error) {
+            console.error('An error occurred when trying to download the media:', error);
+          }
+        }
+      }
+    },
+
+    roomEndedChatFeedback(room) {
+      return `${this.$t('chats.closed')} ${moment(room.ended_at).format('LT')}h ${moment(
+        room.ended_at,
+      ).format('L')}`;
+    },
+
+    isEdgeRoomMessage(messagesByDateMinutes) {
+      return messagesByDateMinutes.some((minute) =>
+        minute.messages.some((message) => message.room !== this.room.uuid),
+      );
+    },
+
+    isFirstMessageByBot(messagesByDateMinutes) {
+      return messagesByDateMinutes.some((minute) =>
+        minute.messages.some(
+          (message) => !message.contact && !message.user && !this.isFeedbackMessage(message),
+        ),
+      );
+    },
+
+    isMessageByBot(message) {
+      return !message.user && !message.contact;
+    },
+
+    isFeedbackMessage(message) {
+      try {
+        const textJson = JSON.parse(message.text);
+
+        const isNewFeedback = !!textJson.method && !!textJson.content;
+        const isOldFeedback = ['queue', 'user'].includes(textJson.type);
+
+        return isNewFeedback || isOldFeedback;
       } catch (error) {
         return false;
       }
     },
+    createFeedbackLabel(message) {
+      const textJson = JSON.parse(message.text);
+      const t = (key, params) => this.$t(key, params);
 
-    handleScroll() {
-      const { chatMessages } = this.$refs;
-      if (!chatMessages) return;
+      const isOldFeedback = textJson.type;
 
-      if (chatMessages.scrollTop === 0) {
-        this.$emit('scrollTop');
+      if (isOldFeedback) {
+        const { type, name } = textJson;
+
+        const oldFeedbackLabels = {
+          queue: t('contact_transferred_to_queue', { queue: name }),
+          user: t('contact_transferred_to_agent', { agent: name }),
+        };
+        return oldFeedbackLabels[type];
       }
-    },
-    createTransferLabel(message) {
-      const text = JSON.parse(message.text);
-      const { name } = text;
-      const transferType = {
-        queue: this.$t('contact_transferred_to.line', { name }),
-        user: this.$t('contact_transferred_to.agent', { name }),
+
+      const { method, content } = textJson;
+
+      function getPickLabel(action, from, to) {
+        if (action === 'pick') {
+          if (from?.type === 'user') {
+            return t('chats.feedback.pick_of_agent', {
+              manager: to.name,
+              agent: from.name,
+            });
+          }
+          if (from?.type === 'queue') {
+            return t('chats.feedback.pick_of_queue', {
+              agent: to.name,
+              queue: from.name,
+            });
+          }
+        }
+        return '';
+      }
+
+      const getTransferLabel = (action, from, to) => {
+        if (action === 'transfer') {
+          if (from?.type === 'user' && to?.type === 'queue') {
+            return t('chats.feedback.transfer_to_queue', {
+              agent: from.name,
+              queue: to.name,
+            });
+          }
+          if (from?.type === 'queue' && to?.type === 'queue') {
+            return t('chats.feedback.transfer_from_queue_to_queue', {
+              queue1: from.name,
+              queue2: to.name,
+            });
+          }
+          if (from?.type === 'queue' && to?.type === 'user') {
+            return t('chats.feedback.transfer_from_queue_to_agent', {
+              queue: from.name,
+              agent: to.name,
+            });
+          }
+          if (from?.type === 'user' && to?.type === 'user') {
+            return t('chats.feedback.transfer_to_agent', {
+              agent1: from.name,
+              agent2: to.name,
+            });
+          }
+        }
+        return '';
       };
 
-      return transferType[text.type];
+      function getForwardLabel(action, to) {
+        if (action === 'forward') {
+          return t('chats.feedback.forwarded_to_agent', {
+            agent: to.name,
+          });
+        }
+        return '';
+      }
+
+      const feedbackLabels = {
+        rt:
+          getPickLabel(content.action, content.from, content.to) ||
+          getTransferLabel(content.action, content.from, content.to) ||
+          getForwardLabel(content.action, content.to),
+        fs: `${t('flow')} <i>${content.name}</i> ${t('sent')}`,
+        ecf: `${content.user} ${t('chats.feedback.edit_custom_field')} <i>${
+          content.custom_field_name
+        }</i> ${t('from')} <i>${content.old}</i> ${t('to')} <i>${content.new}</i>`,
+      };
+
+      return feedbackLabels[method] || '';
     },
+
     showContactInfo() {
       this.$emit('show-contact-info');
     },
@@ -211,14 +408,12 @@ export default {
       this.currentMedia = this.medias.find((el) => el.url === url);
       this.isFullscreen = true;
     },
-
     nextMedia() {
       const imageIndex = this.medias.findIndex((el) => el.url === this.currentMedia.url);
       if (imageIndex + 1 < this.medias.length) {
         this.currentMedia = this.medias[imageIndex + 1];
       }
     },
-
     previousMedia() {
       const imageIndex = this.medias.findIndex((el) => el.url === this.currentMedia.url);
       if (imageIndex - 1 >= 0) {
@@ -226,21 +421,37 @@ export default {
       }
     },
 
+    handleScroll() {
+      const { chatMessages } = this.$refs;
+      if (!chatMessages) return;
+
+      // if (this.isEdgeRoomMessage(this.roomMessagesSorted[0].minutes)) {
+      //   this.$router.replace({
+      //     name: 'closed-rooms.selected',
+      //     params: { roomId: this.room.uuid },
+      //   });
+      // }
+
+      if (chatMessages.scrollTop === 0) {
+        this.$emit('scrollTop');
+      }
+    },
+
     async manageScrollForNewMessages() {
       const { chatMessages } = this.$refs;
       if (!chatMessages) return;
 
-      const { prevUuidBeforePagination, prevRoomUuid, messages } = this;
+      const { prevUuidBeforePagination, prevRoomUuid, roomMessagesSorted } = this;
 
       if (prevRoomUuid !== this.room.uuid) {
         this.handleScroll();
         setTimeout(() => {
           this.scrollToBottom();
-        }, 100);
+        }, 200);
       }
 
       if (prevUuidBeforePagination && chatMessages.scrollTop === 0) {
-        const elementToScroll = this.$refs[`message-${prevUuidBeforePagination}`]?.[0];
+        const elementToScroll = this.$refs[`message-${prevUuidBeforePagination}`]?.[0]?.$el;
         if (elementToScroll) {
           await elementToScroll.scrollIntoView({ block: 'start' });
           chatMessages.scrollTop += 1;
@@ -250,7 +461,7 @@ export default {
       }
 
       this.prevRoomUuid = this.room.uuid;
-      this.prevUuidBeforePagination = messages?.[0]?.uuid;
+      this.prevUuidBeforePagination = roomMessagesSorted[0].minutes[0].messages?.[0]?.uuid;
     },
 
     scrollToBottom() {
@@ -262,13 +473,10 @@ export default {
   },
 
   watch: {
-    messages: {
-      immediate: true,
-      handler() {
-        this.$nextTick(() => {
-          this.manageScrollForNewMessages();
-        });
-      },
+    roomMessages() {
+      this.$nextTick(() => {
+        this.manageScrollForNewMessages();
+      });
     },
   },
 };
@@ -276,9 +484,45 @@ export default {
 
 <style lang="scss" scoped>
 .chat-messages {
-  &__room {
-    & + & {
-      margin-top: $unnnic-spacing-inline-md;
+  overflow: hidden auto;
+
+  padding-right: $unnnic-spacing-sm;
+
+  height: 100%;
+
+  &__container-date {
+    &:last-of-type {
+      margin-bottom: $unnnic-spacing-md;
+    }
+  }
+
+  &__container-minute {
+    display: grid;
+  }
+
+  &__message {
+    margin-top: $unnnic-spacing-md;
+
+    &.sent {
+      justify-self: flex-end;
+
+      & + & {
+        margin-top: $unnnic-spacing-nano;
+      }
+    }
+    &.received {
+      & + & {
+        margin-top: $unnnic-spacing-nano;
+      }
+    }
+
+    .image {
+      cursor: pointer;
+    }
+
+    .audio {
+      padding: $unnnic-spacing-xs;
+      margin: $unnnic-spacing-nano 0;
     }
 
     &__divisor {
@@ -299,32 +543,30 @@ export default {
         background: $unnnic-color-neutral-soft;
       }
     }
-
-    &__transfer-info {
-      text-align: center;
-      font-size: $unnnic-font-size-body-md;
-      line-height: 1.25rem;
-      color: $unnnic-color-neutral-clean;
-    }
   }
 
   &__messages {
-    margin-bottom: $unnnic-spacing-inline-md;
+    display: grid;
+    gap: $unnnic-spacing-md;
+    margin-top: $unnnic-spacing-sm;
+
+    overflow: hidden auto;
+    padding-right: $unnnic-spacing-inset-sm;
+
+    & + & {
+      margin-top: $unnnic-spacing-md;
+    }
   }
 
   &__tags {
-    margin-bottom: $unnnic-spacing-inline-md;
-    &__label {
-      font-size: $unnnic-font-size-body-gt;
-      color: $unnnic-color-neutral-dark;
-      margin-bottom: $unnnic-spacing-inline-sm;
+    margin: $unnnic-spacing-inline-md 0;
+
+    display: grid;
+    gap: $unnnic-spacing-md;
+
+    :deep(.tag-group__tags) {
+      justify-content: center;
     }
-  }
-  .unread-message {
-    font-weight: 700;
-    font-size: 12px;
-    color: #9caccc;
-    margin: 10px;
   }
 }
 </style>

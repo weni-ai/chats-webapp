@@ -1,3 +1,6 @@
+import Rooms from '../store/modules/rooms';
+import Profile from '../store/modules/profile';
+
 const moment = require('moment');
 
 export function parseMessageToMessageWithSenderProp(message) {
@@ -15,6 +18,16 @@ export function parseMessageToMessageWithSenderProp(message) {
     ...message,
     sender,
   };
+}
+
+export function isMessageInActiveRoom(message) {
+  const { activeRoom } = Rooms.state;
+  return message.room === activeRoom?.uuid;
+}
+
+export function isMessageFromCurrentUser(message) {
+  const { me } = Profile.state;
+  return message.user?.email === me?.email;
 }
 
 export function groupSequentialSentMessages(messages) {

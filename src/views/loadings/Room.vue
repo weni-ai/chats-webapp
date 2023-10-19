@@ -1,12 +1,9 @@
 <template>
   <div class="room-loading">
-    <header>
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading />
-    </header>
+    <room-header-loading v-if="!onlyMessages" />
     <main>
       <div class="room-loading__messages">
-        <unnnic-skeleton-loading width="250px" height="23px" />
+        <unnnic-skeleton-loading width="80px" height="23px" />
         <div class="message">
           <unnnic-skeleton-loading />
         </div>
@@ -20,7 +17,7 @@
           <unnnic-skeleton-loading />
         </div>
       </div>
-      <div class="room-loading__messages-manager">
+      <div v-if="!onlyMessages" class="room-loading__messages-manager">
         <unnnic-skeleton-loading />
         <unnnic-skeleton-loading />
         <unnnic-skeleton-loading />
@@ -30,8 +27,21 @@
 </template>
 
 <script>
+import RoomHeaderLoading from '@/views/loadings/RoomHeader.vue';
+
 export default {
   name: 'RoomLoading',
+
+  components: {
+    RoomHeaderLoading,
+  },
+
+  props: {
+    onlyMessages: {
+      type: Boolean,
+      default: false,
+    },
+  },
 };
 </script>
 
@@ -45,18 +55,6 @@ export default {
 
   z-index: 10000;
 
-  header {
-    padding: $unnnic-spacing-sm 0;
-
-    display: grid;
-    gap: $unnnic-spacing-md;
-    grid-template-columns: 48px 70%;
-
-    & > * {
-      width: 100%;
-      height: 48px;
-    }
-  }
   main {
     display: grid;
     grid-template-rows: 1fr auto;
@@ -70,19 +68,33 @@ export default {
       flex-direction: column;
       align-items: center;
       gap: $unnnic-spacing-md;
-      grid-template-rows: 23px 60px 60px 60px 60px;
+      grid-template-rows: 23px 95px 95px 70px 70px;
 
       .message {
         width: 55%;
         height: 100%;
         min-height: 46px;
 
-        align-self: start;
-        max-height: 60px;
-
         & > * {
           width: 100%;
           height: 100%;
+        }
+
+        &:nth-of-type(1),
+        &:nth-of-type(2) {
+          max-height: 95px;
+        }
+        &:nth-of-type(3),
+        &:nth-of-type(4) {
+          max-height: 70px;
+        }
+
+        &:nth-child(odd) {
+          align-self: end;
+        }
+
+        &:nth-child(even) {
+          align-self: start;
         }
       }
     }

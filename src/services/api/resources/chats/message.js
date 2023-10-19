@@ -1,16 +1,30 @@
 import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 
+function getURLParams({ URL, endpoint }) {
+  return URL?.split(endpoint)?.[1];
+}
+
 export default {
-  async getByRoom(roomId, offset, limit) {
-    const response = await http.get(`/msg/?room=${roomId}`, {
-      params: {
-        ordering: '-created_on',
-        reverse_results: true,
-        offset,
-        limit,
-      },
-    });
+  async getByRoom({ nextReq }, roomId, offset, limit) {
+    const endpoint = '/msg/';
+    const paramsNextReq = getURLParams({ URL: nextReq, endpoint });
+    const params = {
+      room: roomId,
+      ordering: '-created_on',
+      reverse_results: true,
+      offset,
+      limit,
+    };
+
+    let response;
+
+    if (nextReq && paramsNextReq) {
+      response = await http.get(`${endpoint}${paramsNextReq}`);
+    } else {
+      response = await http.get(endpoint, { params });
+    }
+
     return response.data;
   },
 
@@ -29,19 +43,21 @@ export default {
     return response.data;
   },
 
-  async send(roomId, { text, user_email: userEmail }) {
+  async send(roomId, { text, user_email, seen }) {
     const response = await http.post('/msg/', {
       room: roomId,
       text,
-      user_email: userEmail,
+      user_email,
+      seen,
     });
     return response.data;
   },
 
-  async sendMedia({ roomId, userEmail, media, updateLoadingFiles }) {
+  async sendMedia(roomId, { user_email, media, updateLoadingFiles }) {
     const msg = await this.send(roomId, {
       text: '',
-      user_email: userEmail,
+      user_email,
+      seen: true,
     });
     updateLoadingFiles?.(msg.uuid, 0);
     const response = await http.postForm(
@@ -60,19 +76,4 @@ export default {
     );
     return response.data;
   },
-  // async sendMedia({ roomId, text, userEmail, media }) {
-  //   // const msg = await this.send(roomId, {
-  //   //   text: media.name,
-  //   //   user_email: userEmail,
-  //   // });
-  //   const response = await http.postForm('/msg/create_media/', {
-  //     'message.room': roomId,
-  //     'message.user_email': userEmail,
-  //     'message.text': text,
-  //     content_type: media.type,
-  //     media_file: media,
-  //   });
-  //   console.log(response.data, 'response.data');
-  //   return response.data;
-  // },
 };

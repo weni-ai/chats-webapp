@@ -8,10 +8,10 @@ import es from '@/locales/es.json';
 
 const moment = require('moment');
 
-moment.locale('pt-br');
-
 require('moment/locale/pt-br');
 require('moment/locale/es');
+
+moment.locale('pt-br');
 
 Vue.use(VueI18n);
 

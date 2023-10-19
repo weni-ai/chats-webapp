@@ -33,11 +33,17 @@ export default {
 
 <style lang="scss" scoped>
 .view-mode__header {
+  position: absolute;
+  top: 0;
+  left: 0;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
 
   padding: $unnnic-spacing-stack-xs 0;
+
+  width: 100%;
 
   background: $unnnic-color-brand-weni;
   color: $unnnic-color-neutral-black;

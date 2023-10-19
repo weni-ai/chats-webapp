@@ -1,51 +1,44 @@
 <template>
   <chats-layout
     ref="chats-layout"
-    @select-quick-message="(quickMessage) => updateEditorMessage(quickMessage.text)"
+    @select-quick-message="(quickMessage) => updateTextBoxMessage(quickMessage.text)"
   >
     <room-loading v-show="isRoomSkeletonActive" />
     <chats-background v-if="!room && !isRoomSkeletonActive" />
-    <section v-if="room" v-show="!isRoomSkeletonActive" class="active-chat">
-      <chat-header
-        :room="room"
-        :closeButtonTooltip="$t('chats.end')"
-        @close="openModalCloseChat"
-        @show-contact-info="componentInAsideSlot = 'contactInfo'"
-        @open-select-flow="handlerShowSendFlowMessages"
-        :alert="!this.room.is_24h_valid"
-        @reconnect="searchMessages"
-        :alertNetwork="this.networkError"
+    <section v-if="!!room" v-show="!isRoomSkeletonActive" class="active-chat">
+      <unnnic-chats-header
+        :title="room.contact.name || ''"
+        :avatarClick="openContactInfo"
+        :titleClick="openContactInfo"
+        :avatarName="room.contact.name"
+        :close="openModalCloseChat"
       />
+      <chat-header-send-flow v-if="!room.is_24h_valid" @send-flow="openFlowsTrigger" />
       <chats-dropzone @open-file-uploader="openFileUploader" :show="room.user && room.is_24h_valid">
         <chat-messages
           :room="room"
-          :messages="messages"
-          class="messages"
           @show-contact-info="componentInAsideSlot = 'contactInfo'"
-          ref="chatMessages"
           @scrollTop="searchForMoreMessages"
         />
 
-        <div v-if="isMessageEditorVisible && !room.is_waiting" class="message-editor">
-          <message-editor
-            ref="message-editor"
-            v-model="editorMessage"
-            :audio.sync="audioMessage"
-            @show-quick-messages="handlerShowQuickMessages"
-            @send-message="sendMessage"
-            @send-audio="sendAudio"
-            @open-file-uploader="openFileUploader"
-            :loadingValue="totalValue"
-            :loading="isLoading"
-          />
-        </div>
+        <message-manager
+          v-if="isMessageManagerVisible && !room.is_waiting"
+          ref="message-editor"
+          v-model="textBoxMessage"
+          :audio.sync="audioMessage"
+          @show-quick-messages="handlerShowQuickMessages"
+          @send-audio="sendAudio"
+          @open-file-uploader="openFileUploader"
+          :loadingValue="totalValue"
+          :loading="isLoading"
+        />
       </chats-dropzone>
 
       <div v-if="!room.user" class="get-chat-button-container">
         <unnnic-button
           class="get-chat-button"
           :text="$t('chats.get_chat')"
-          type="secondary"
+          type="primary"
           @click="isGetChatConfirmationModalOpen = true"
         />
       </div>
@@ -106,7 +99,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+import { mapState } from 'vuex';
 
 import * as notifications from '@/utils/notifications';
 
@@ -114,20 +107,19 @@ import ChatsLayout from '@/layouts/ChatsLayout';
 import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
 import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone';
 
-import ChatHeader from '@/components/chats/chat/ChatHeader';
+import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
 import ContactInfo from '@/components/chats/ContactInfo';
-import MessageEditor from '@/components/chats/MessageEditor';
 import ChatClassifier from '@/components/chats/ChatClassifier';
 import QuickMessages from '@/components/chats/QuickMessages';
 import ModalCloseChat from '@/views/chats/ModalCloseChat.vue';
-import LayoutTemplateMessage from '@/components/chats/TemplateMessages/LayoutTemplateMessage';
 
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat';
+import MessageManager from '@/components/chats/MessageManager';
 
-import FileUploader from '@/components/chats/MessageEditor/FileUploader';
+import FileUploader from '@/components/chats/MessageManager/FileUploader';
 import RoomLoading from '@/views/loadings/Room.vue';
 
 export default {
@@ -137,15 +129,14 @@ export default {
     ChatsLayout,
     ChatsBackground,
     ChatsDropzone,
-    ChatHeader,
+    ChatHeaderSendFlow,
     ChatMessages,
     ContactInfo,
     QuickMessages,
-    MessageEditor,
+    MessageManager,
     ChatClassifier,
     ModalCloseChat,
     FileUploader,
-    LayoutTemplateMessage,
     ModalGetChat,
     RoomLoading,
   },
@@ -163,7 +154,7 @@ export default {
      */
     audioMessage: null,
     componentInAsideSlot: '',
-    editorMessage: '',
+    textBoxMessage: '',
     isCloseChatModalOpen: false,
     tags: [],
     sectorTags: [],
@@ -184,15 +175,12 @@ export default {
     ...mapState({
       room: (state) => state.rooms.activeRoom,
       me: (state) => state.profile.me,
-      hasNext: (state) => state.rooms.hasNext,
+      roomMessagesNext: (state) => state.roomMessages.roomMessagesNext,
       listRoomHasNext: (state) => state.rooms.listRoomHasNext,
       showModalAssumedChat: ({ dashboard }) => dashboard.showModalAssumedChat,
       assumedChatContactName: ({ dashboard }) => dashboard.assumedChatContactName,
     }),
-    ...mapGetters('rooms', {
-      messages: 'groupedActiveRoomsMessage',
-    }),
-    isMessageEditorVisible() {
+    isMessageManagerVisible() {
       return (
         !this.isRoomClassifierVisible &&
         this.room.is_active &&
@@ -215,15 +203,6 @@ export default {
             },
           },
         },
-        layoutTemplateMessage: {
-          name: LayoutTemplateMessage.name,
-          listeners: {
-            close: () => {
-              this.componentInAsideSlot = '';
-            },
-            contact: this.room,
-          },
-        },
       };
     },
   },
@@ -234,6 +213,9 @@ export default {
       this.isCloseChatModalOpen = false;
       const response = await Queue.tags(this.room.queue.uuid);
       this.sectorTags = response.results;
+    },
+    openContactInfo() {
+      this.componentInAsideSlot = 'contactInfo';
     },
     async readMessages() {
       if (this.room && this.room.uuid && this.room.user && this.room.user.email === this.me.email) {
@@ -268,7 +250,7 @@ export default {
       this.isLoading = true;
 
       await this.$store
-        .dispatch('rooms/getActiveRoomMessages', {
+        .dispatch('roomMessages/getRoomMessages', {
           offset: this.page * this.limit,
           concat,
           limit: this.limit,
@@ -278,7 +260,6 @@ export default {
           this.isLoading = false;
           this.networkError = false;
           this.dateOfLastMessage();
-          this.readMessages();
 
           this.isRoomSkeletonActive = false;
         })
@@ -294,7 +275,7 @@ export default {
     },
 
     searchForMoreMessages() {
-      if (this.hasNext) {
+      if (this.roomMessagesNext) {
         this.page += 1;
         this.getRoomMessages(true);
       }
@@ -309,20 +290,11 @@ export default {
             Object.values(loadingFiles).reduce((acc, value) => acc + value) /
             Object.keys(loadingFiles).length;
         };
-        await this.$store.dispatch('rooms/sendMedias', { files, updateLoadingFiles });
+        await this.$store.dispatch('roomMessages/sendMedias', { files, updateLoadingFiles });
         this.totalValue = undefined;
       } catch (e) {
         console.error('O upload de alguns arquivos pode não ter sido concluído');
       }
-    },
-
-    async sendMessage() {
-      const message = this.editorMessage.trim();
-      if (!message) return;
-
-      await this.$store.dispatch('rooms/sendMessage', message);
-
-      this.editorMessage = '';
     },
     async sendAudio() {
       if (!this.audioMessage || this.isLoading) return;
@@ -338,7 +310,7 @@ export default {
       const response = await fetch(this.audioMessage.src);
       const blob = await response.blob();
       const audio = new File([blob], `${Date.now().toString()}.mp3`, { type: 'audio/mpeg3' });
-      await this.$store.dispatch('rooms/sendMedias', { files: [audio], updateLoadingFiles });
+      await this.$store.dispatch('roomMessages/sendMedias', { files: [audio], updateLoadingFiles });
       this.totalValue = undefined;
       this.$refs['message-editor'].clearAudio();
       this.audioMessage = null;
@@ -355,8 +327,8 @@ export default {
       this.$refs['chats-layout']?.handlerShowQuickMessages();
     },
 
-    handlerShowSendFlowMessages() {
-      this.$refs['chats-layout']?.handlerShowSendFlowMessages();
+    openFlowsTrigger() {
+      this.$refs['chats-layout']?.openFlowsTrigger({ contact: this.room?.contact });
     },
 
     openModalCloseChat() {
@@ -388,15 +360,15 @@ export default {
       }
     },
 
-    updateEditorMessage(message) {
-      this.editorMessage = message;
+    updateTextBoxMessage(message) {
+      this.textBoxMessage = message;
     },
   },
 
   watch: {
     room(newValue) {
       if (!newValue) this.componentInAsideSlot = '';
-      if (newValue) this.editorMessage = '';
+      if (newValue) this.updateTextBoxMessage('');
     },
     id: {
       immediate: true,
@@ -406,6 +378,7 @@ export default {
         }
 
         this.isRoomSkeletonActive = true;
+        await this.$store.dispatch('roomMessages/resetRoomMessages');
         await this.setActiveRoom(this.id);
         await this.getRoomMessages();
       },
@@ -424,27 +397,16 @@ export default {
   flex-direction: column;
   height: 100%;
   max-height: 100vh;
-  padding: $unnnic-spacing-stack-sm 0;
-
-  .messages {
-    overflow-y: auto;
-    padding-right: $unnnic-spacing-inset-sm;
-    margin: $unnnic-spacing-inline-sm 0 $unnnic-spacing-inline-sm;
-  }
+  padding-bottom: $unnnic-spacing-stack-sm;
 
   .chat-classifier {
     margin-top: auto;
     margin-left: -$unnnic-spacing-inline-md;
     margin-bottom: -$unnnic-spacing-inline-sm;
   }
-
-  .message-editor {
-    margin-top: auto;
-  }
 }
 .get-chat-button-container {
-  margin-top: auto;
-  margin-right: $unnnic-spacing-inline-sm;
+  margin: auto $unnnic-spacing-inline-sm 0;
 
   .get-chat-button {
     width: 100%;

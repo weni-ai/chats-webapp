@@ -17,6 +17,16 @@ export default {
     return response.data;
   },
 
+  async download({ media, name }) {
+    const file = await this.get(media);
+    const link = document.createElement('a');
+
+    link.href = URL.createObjectURL(file);
+    link.download = name;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  },
+
   async listFromContactAndRoom({ ordering, message, contact, room, page }) {
     const response = await http.get(`/media/`, {
       params: {

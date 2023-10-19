@@ -104,6 +104,11 @@
     "en-us": "MM/DD/YYYY",
     "es": "DD/MM/YYYY"
   },
+  "date_format_variable": {
+    "pt-br": "{day}/{month}/{year}",
+    "en-us": "{month}/{day}/{year}",
+    "es": "{day}/{month}/{year}"
+  },
   "undo": {
     "pt-br": "Desfazer",
     "en-us": "Undo",
@@ -163,6 +168,11 @@
     "pt-br": "Justificar",
     "en-us": "Justify",
     "es": "Justificar"
+  },
+  "without_results": {
+    "pt-br": "Nenhum resultado correspondente",
+    "en-us": "No matching results",
+    "es": "No hay resultados coincidentes"
   },
   "select_smart": {
     "without_results": {
@@ -278,28 +288,90 @@
       "es": "Colas"
     }
   },
-  "queue": {
-    "description": {
-      "pt-br": "As filas servem para organizar os tipos de atendimento dentro de um setor, através das filas é possível criar grupos de atendimento, crie pelo menos uma fila para gerenciar uma equipe de agentes.",
-      "en-us": "The queues serve to organize the types of service within a sector, through queues it is possible to create service groups, create at least one line to manage a team of agents.",
-      "es": "Las colas sirven para organizar los tipos de servicio dentro de un sector, a través de las colas que puede crear grupos de servicios, crear al menos una línea para administrar un equipo de agentes."
-    }
-  },
   "chats": {
+    "feedback": {
+      "forwarded_to_agent": {
+        "pt-br": "Contato encaminhado para agente {agent}",
+        "en-us": "Contact forwarded to agent {agent}",
+        "es": "Contacto reenviado al agente {agente}"
+      },
+      "transfer_to_agent": {
+        "pt-br": "{agent1} transferiu para {agent2}",
+        "en-us": "{agent1} transferred to {agent2}",
+        "es": "{agent1} transferido a {agent2}"
+      },
+      "transfer_to_queue": {
+        "pt-br": "{agent} transferiu para fila {queue}",
+        "en-us": "{agent} transferred to queue {queue}",
+        "es": "{agent} transferido a la cola {queue}"
+      },
+      "transfer_from_queue_to_queue": {
+        "pt-br": "Foi transferido da fila {queue1} para fila {queue2}",
+        "en-us": "Was transferred from queue {queue1} to queue {queue2}",
+        "es": "Fue transferido de la cola {queue1} a la cola {queue2}"
+      },
+      "transfer_from_queue_to_agent": {
+        "pt-br": "Foi transferido da fila {queue} para {agent}",
+        "en-us": "Was transferred from queue {queue} to {agent}",
+        "es": "Fue transferido de la cola {queue} a {agent}"
+      },
+      "pick_of_queue": {
+        "pt-br": "{agent} pegou da fila {queue}",
+        "en-us": "{agent} got it from the queue {queue}",
+        "es": "{agent} lo obtuvo de la cola {queue}"
+      },
+      "pick_of_agent": {
+        "pt-br": "{manager} assumiu o chat de {agent}",
+        "en-us": "{manager} has taken over {agent}'s chat",
+        "es": "{manager} se ha hecho cargo del chat de {agent}"
+      },
+      "edit_custom_field": {
+        "pt-br": "editou o custom field",
+        "en-us": "edited custom field",
+        "es": "editado el custom field"
+      }
+    },
+    "room_list": {
+      "order_by": {
+        "pt-br": "Ordenar por:",
+        "en-us": "Order by:",
+        "es": "Ordenar por:"
+      },
+      "most_recent": {
+        "pt-br": "Mais recentes",
+        "en-us": "Most recent",
+        "es": "Mais recente"
+      },
+      "older": {
+        "pt-br": "Mais antigos",
+        "en-us": "Older",
+        "es": "Más antiguo"
+      }
+    },
+    "search_contact": {
+      "pt-br": "Pesquisar contato",
+      "en-us": "Search contact",
+      "es": "Buscar contacto"
+    },
     "tags": {
       "pt-br": "Tags do chat",
       "en-us": "Chat tags",
       "es": "Etiquetas de chat"
     },
     "in_progress": {
-      "pt-br": "Em andamento",
-      "en-us": "Chats in progress",
-      "es": "Chats en curso"
+      "pt-br": "Em andamento ({length})",
+      "en-us": "Chats in progress ({length})",
+      "es": "Chats en curso ({length})"
     },
-    "wating_answer": {
-      "pt-br": "Aguardando resposta ({length})",
-      "en-us": "Waiting for reply  {length}",
-      "es": "Esperando respuesta {length}"
+    "sent_flows": {
+      "pt-br": "Fluxos enviados ({length})",
+      "en-us": "Sent flows ({length})",
+      "es": "Flujos enviados ({length})"
+    },
+    "waiting": {
+      "pt-br": "Aguardando ({length})",
+      "en-us": "Waiting ({length})",
+      "es": "Esperando ({length})"
     },
     "end": {
       "pt-br": "Encerrar chat",
@@ -377,6 +449,23 @@
       "pt-br": "Seu chat com {contact} foi assumido por outro agente",
       "en-us": "Your chat with {contact} has been taken over by another agent",
       "es": "Otro agente se ha hecho cargo de su chat con {contacto}"
+    },
+    "closed_chats": {
+      "history": {
+        "pt-br": "Histórico",
+        "en-us": "History",
+        "es": "Historia"
+      },
+      "project_history": {
+        "pt-br": "Histórico do projeto",
+        "en-us": "Project history",
+        "es": "Historia del proyecto"
+      },
+      "contact_history": {
+        "pt-br": "Histórico do contato",
+        "en-us": "Contact history",
+        "es": "Historia del contacto"
+      }
     }
   },
   "dashboard": {
@@ -418,15 +507,35 @@
     "en-us": "Close view",
     "es": "Cerrar la vista"
   },
+  "flow": {
+    "pt-br": "Fluxo",
+    "en-us": "Flow",
+    "es": "Flujo"
+  },
+  "sent": {
+    "pt-br": "enviado",
+    "en-us": "sent",
+    "es": "enviado"
+  },
+  "from": {
+    "pt-br": "de",
+    "en-us": "from",
+    "es": "de"
+  },
+  "to": {
+    "pt-br": "para",
+    "en-us": "to",
+    "es": "a"
+  },
+  "today": {
+    "pt-br": "Hoje",
+    "en-us": "Today",
+    "es": "Hoy"
+  },
   "transfer": {
     "pt-br": "Transferir",
     "en-us": "Transfer",
     "es": "Transferir"
-  },
-  "line": {
-    "pt-br": "Aguardando",
-    "en-us": "Waiting",
-    "es": "Espera"
   },
   "suggested_answers": {
     "pt-br": "Respostas sugeridas",
@@ -458,6 +567,16 @@
     "en-us": "Cancel",
     "es": "Cancelar"
   },
+  "add": {
+    "pt-br": "Adicionar",
+    "en-us": "Add",
+    "es": "Agregar"
+  },
+  "continue": {
+    "pt-br": "Continuar",
+    "en-us": "Continue",
+    "es": "Continuar"
+  },
   "please": {
     "pt-br": "Por favor",
     "en-us": "Please",
@@ -467,6 +586,16 @@
     "pt-br": "Confirmar",
     "en-us": "Confirm",
     "es": "Confirmar"
+  },
+  "back": {
+    "pt-br": "Voltar",
+    "en-us": "Back",
+    "es": "Volver"
+  },
+  "clear": {
+    "pt-br": "Limpar",
+    "en-us": "Clear",
+    "es": "Limpiar"
   },
   "access_history_to_see_closed_chats": {
     "pt-br": "Acesse o histórico para visualizar chats encerrados",
@@ -478,10 +607,15 @@
     "en-us": "Close",
     "es": "Fechar"
   },
+  "all": {
+    "pt-br": "Todos",
+    "en-us": "All",
+    "es": "Todos"
+  },
   "back_to_chats": {
-    "pt-br": "Voltar para chats",
-    "en-us": "Back to chats",
-    "es": "Volver a los chats"
+    "pt-br": "@:back para chats",
+    "en-us": "@:back to chats",
+    "es": "@:back a los chats"
   },
   "filter": {
     "by_tags": {
@@ -500,6 +634,11 @@
       "es": "Limpiar filtros"
     }
   },
+  "pagination": {
+    "pt-br": "{from} - {to} de {total}",
+    "en-us": "{from} - {to} of {total}",
+    "es": "{from} - {to} de {total}"
+  },
   "contact": {
     "pt-br": "Contato",
     "en-us": "Contact",
@@ -509,6 +648,11 @@
     "pt-br": "Agente",
     "en-us": "Agent",
     "es": "Agente"
+  },
+  "queue": {
+    "pt-br": "Fila",
+    "en-us": "Queue",
+    "es": "Cola"
   },
   "agents": {
     "add": {
@@ -535,6 +679,11 @@
         "es": "Seleccione"
       }
     }
+  },
+  "name_or_phone": {
+    "pt-br": "Nome ou telefone",
+    "en-us": "Name or telephone",
+    "es": "Nombre o teléfono"
   },
   "tags": {
     "title": {
@@ -580,23 +729,21 @@
     "en-us": "View",
     "es": "Ver"
   },
+  "see": {
+    "pt-br": "Ver",
+    "en-us": "See",
+    "es": "Ver"
+  },
   "chat_with": {
     "bot": {
-      "pt-br": "Chat com Bot",
-      "en-us": "Chat with Bot",
-      "es": "Chat con Bot"
+      "pt-br": "Chat com bot",
+      "en-us": "Chat with bot",
+      "es": "Chat con bot"
     },
     "agent": {
       "pt-br": "Chat com agente {name}",
       "en-us": "Chat with agent {name}",
       "es": "Chat con agente {name}"
-    }
-  },
-  "contact_forwarded_to": {
-    "line": {
-      "pt-br": "Contato encaminhado para fila {name}",
-      "en-us": "Contact forwarded to the {name} line",
-      "es": "Contacto enviado a la fila {name}"
     }
   },
   "waiting_answer": {
@@ -611,22 +758,20 @@
       "es": "En espera de respuesta de contacto"
     }
   },
-  "contact_transferred_to": {
-    "line": {
-      "pt-br": "Contato encaminhado para fila {name}",
-      "en-us": "Contact transferred to the {name} line",
-      "es": "Contacto transferido a la línea {name}"
-    },
-    "sector": {
-      "pt-br": "Contato transferido para setor {name}",
-      "en-us": "Contact transferred to the {name} department",
-      "es": "Contacto transferido al sector {name}"
-    },
-    "agent": {
-      "pt-br": "Contato transferido para agente {name}",
-      "en-us": "Contact transferred to agent {name}",
-      "es": "Contacto transferido al agente {name}"
-    }
+  "contact_transferred_to_queue": {
+    "pt-br": "Contato transferido para fila {queue}",
+    "en-us": "Contact transferred to queue {queue}",
+    "es": "Contacto transferido a la cola {queue}"
+  },
+  "contact_transferred_to_agent": {
+    "pt-br": "Contato transferido para agente {agent}",
+    "en-us": "Contact transferred to agent {agent}",
+    "es": "Contacto transferido al agente {agent}"
+  },
+  "agent_took_from_queue": {
+    "pt-br": "{agent} pegou da fila {queue}",
+    "en-us": "{agent} took from queue {queue}",
+    "es": "{agent} tomó de la cola {queue}"
   },
   "chat_closed_by": {
     "agent": {
@@ -635,16 +780,16 @@
       "es": "Chat cerrado por el agente"
     }
   },
-  "contact_information": {
-    "pt-br": "Informações do contato",
-    "en-us": "Contact information",
-    "es": "Información de contacto"
-  },
-  "switch_contact_info": {
+  "contact_info": {
+    "title": {
+      "pt-br": "Informações do contato",
+      "en-us": "Contact information",
+      "es": "Información de contacto"
+    },
     "switch_associate_contact": {
-      "pt-br": "Vincular contato desativado",
-      "en-us": "Linked contact disabled",
-      "es": "Contacto vinculado deshabilitado"
+      "pt-br": "Contato desvinculado",
+      "en-us": "Unlinked contact",
+      "es": "Contacto desvinculado"
     },
     "switch_disassociate_contact": {
       "pt-br": "Contato vinculado",
@@ -668,8 +813,23 @@
     },
     "linked_contact": {
       "pt-br": "Contato vinculado ao agente {name}",
-      "en-us": "Contact linked to agent",
-      "es": "Contacto vinculado a agente"
+      "en-us": "Contact linked to agent {name}",
+      "es": "Contacto vinculado a agente {name}"
+    },
+    "see_contact_history": {
+      "pt-br": "Ver histórico do contato",
+      "en-us": "View contact history",
+      "es": "Ver historial de contactos"
+    },
+    "transfer_contact": {
+      "pt-br": "Transferir contato",
+      "en-us": "Transfer contact",
+      "es": "Transferir contacto"
+    },
+    "audio_tooltip": {
+      "pt-br": "{agent} {date} às {time}",
+      "en-us": "{agent} {date} at {time}",
+      "es": "{agent} {date} a las {time}"
     }
   },
   "last_online_time": {
@@ -701,9 +861,9 @@
       "es": "Último mensaje hace {hours} horas"
     },
     "date": {
-      "pt-br": "Último contato em {date}",
+      "pt-br": "Último contato {date}",
       "en-us": "Last message {date}",
-      "es": "Último contacto en {date}"
+      "es": "Último contacto {date}"
     }
   },
   "alert_last_message_date": {
@@ -752,6 +912,21 @@
     "en-us": "Media",
     "es": "Multimedia"
   },
+  "medias": {
+    "pt-br": "Mídias",
+    "en-us": "Medias",
+    "es": "Multimedias"
+  },
+  "audio": {
+    "pt-br": "Áudio",
+    "en-us": "Audio",
+    "es": "Audio"
+  },
+  "audios": {
+    "pt-br": "Áudios",
+    "en-us": "Audios",
+    "es": "Audios"
+  },
   "docs": {
     "pt-br": "Documentos",
     "en-us": "Docs",
@@ -761,11 +936,6 @@
     "pt-br": "Baixar",
     "en-us": "Download",
     "es": "Descargar"
-  },
-  "audio": {
-    "pt-br": "Áudio",
-    "en-us": "Audio",
-    "es": "Audio"
   },
   "text_editor_placeholder": {
     "pt-br": "Digite uma mensagem ou use um /atalho",
@@ -801,6 +971,11 @@
     "pt-br": "Excluir",
     "en-us": "Delete",
     "es": "Eliminar"
+  },
+  "search_or_select": {
+    "pt-br": "Pesquise ou selecione",
+    "en-us": "Search or select",
+    "es": "Buscar o seleccionar"
   },
   "successfully_transferred_chat": {
     "pt-br": "Conversa transferida com sucesso!",
@@ -853,6 +1028,70 @@
     "pt-br": "Mensagens rápidas",
     "en-us": "Quick messages",
     "es": "Mensajes rápidos"
+  },
+  "flows_trigger": {
+    "title": {
+      "pt-br": "Disparo de fluxos",
+      "en-us": "Flows trigger",
+      "es": "Activación de flujo"
+    },
+    "subtitle": {
+      "pt-br": "Contatos de {project}",
+      "en-us": "Contacts of {project}",
+      "es": "Contactos de {project}"
+    },
+    "groups": {
+      "pt-br": "Grupos ({length})",
+      "en-us": "Groups ({length})",
+      "es": "Grupos ({length})"
+    },
+    "group_contacts": {
+      "pt-br": "{n} contato | {n} contatos",
+      "en-us": "{n} contact | {n} contacts",
+      "es": "{n} contacto | {n} contactos"
+    },
+    "letter_group": {
+      "pt-br": "{letter} ({length})",
+      "en-us": "{letter} ({length})",
+      "es": "{letter} ({length})"
+    },
+    "add_new_contact": {
+      "title": {
+        "pt-br": "Adicionar novo contato",
+        "en-us": "Add new contact",
+        "es": "Añadir nuevo contacto"
+      },
+      "contact_name": {
+        "pt-br": "Nome do contato",
+        "en-us": "Contact name",
+        "es": "Nombre de contacto"
+      }
+    },
+    "already_open_room": {
+      "pt-br": "{contact} já possui uma sala aberta",
+      "en-us": "{contact} already has an open room",
+      "es": "{contact} ya tiene sala abierta"
+    },
+    "select": {
+      "pt-br": "Selecionar fluxo",
+      "en-us": "Select flow",
+      "es": "Seleccionar flujo"
+    },
+    "sending": {
+      "pt-br": "Enviando fluxo",
+      "en-us": "Sending flow",
+      "es": "Enviando flujo"
+    },
+    "successfully_sent": {
+      "pt-br": "Fluxo enviado com sucesso",
+      "en-us": "Flow sent successfully",
+      "es": "Flujo enviado exitosamente"
+    },
+    "successfully_add_contact": {
+      "pt-br": "Contato adicionado com sucesso",
+      "en-us": "Contact added successfully",
+      "es": "Contacto agregado exitosamente"
+    }
   },
   "quick_messages": {
     "title": {
@@ -912,10 +1151,20 @@
       "en-us": "Type /{shortcut} to use",
       "es": "Escriba /{shortcut} para usar"
     },
-    "add_new": {
-      "pt-br": "Adicionar nova mensagem rápida",
-      "en-us": "Add new quick message",
-      "es": "Agregar nuevo mensaje rápido"
+    "new": {
+      "pt-br": "Nova mensagem rápida",
+      "en-us": "New quick message",
+      "es": "Nuevo mensaje rápido"
+    },
+    "add": {
+      "pt-br": "Adicionar nova mensagem",
+      "en-us": "Add new message",
+      "es": "Agregar nuevo mensaje"
+    },
+    "edit": {
+      "pt-br": "Editar mensagem",
+      "en-us": "Edit message",
+      "es": "Editar mensaje"
     },
     "available_shortcuts": {
       "pt-br": "Atalhos disponíveis",
@@ -927,25 +1176,15 @@
       "en-us": "Now ChatGPT is your CoPilot! Use the answers suggested by Artificial Intelligence to speed up your calls!",
       "es": "¡Ahora ChatGPT es tu CoPiloto! ¡Usa las respuestas sugeridas por la Inteligencia Artificial para acelerar tus llamadas!"
     },
-    "add": {
-      "pt-br": "Adicionar mensagem rápida",
-      "en-us": "Add quick message",
-      "es": "Agregar mensaje rápidoe"
-    },
     "title_field_placeholder": {
-      "pt-br": "Digite um título para sua mensagem rápida",
-      "en-us": "Enter a title for your quick message",
-      "es": "Introduzca un título para su mensaje rápido"
+      "pt-br": "Ex: Boas vindas",
+      "en-us": "Ex: Welcome",
+      "es": "Ej: Bienvenido"
     },
     "shortcut_field_placeholder": {
-      "pt-br": "Adicione uma palavra para usar como /atalho",
-      "en-us": "Add a word to use as a /shortcut",
-      "es": "Agregar una palabra para usar como /atajo"
-    },
-    "shortcut_field_tooltip": {
-      "pt-br": "Defina uma palavra-chave e facilite o uso de /atalhos",
-      "en-us": "Define a shortcut and make it easy to use /shortcuts",
-      "es": "Definir una palabra clave y facilitar su uso /atajos"
+      "pt-br": "Ex: Oi",
+      "en-us": "Ex: Hi",
+      "es": "Ej: Hola"
     },
     "message_field_placeholder": {
       "pt-br": "Digite o que você deseja",
@@ -957,10 +1196,10 @@
       "en-us": "Quick message added",
       "es": "Mensaje rápido agregado"
     },
-    "edit": {
-      "pt-br": "Editar mensagem rápida",
-      "en-us": "Edit quick message",
-      "es": "Editar mensaje rápido"
+    "successfully_updated": {
+      "pt-br": "Mensagem rápida atualizada",
+      "en-us": "Quick message updated",
+      "es": "Mensaje rápido actualizado"
     }
   },
   "discard": {

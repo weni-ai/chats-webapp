@@ -1,31 +1,20 @@
 <template>
-  <unnnic-tab v-model="tab" :tabs="tabs">
+  <unnnic-tab size="md" v-model="tab" :tabs="tabs">
     <template slot="tab-head-media">
       <div class="media-tab" :class="{ active: isActiveTab('media') }">
-        <span class="name">{{ $t('media') }}</span>
+        <span class="name">{{ $t('medias') }}</span>
       </div>
     </template>
 
     <template slot="tab-panel-media">
-      <section class="media__content" style="width: 60px; height: 60px">
-        <div v-for="media in images" :key="media.url" class="media__content__media">
-          <div class="media__content__media__preview">
-            <image-preview
-              v-if="media.content_type.startsWith('image/')"
-              v-bind="media"
-              fullscreen-on-click
-              object-fit="cover"
-              :url="media.url"
-              @click="$emit('fullscreen', media.url, images)"
-            />
-            <video-preview
-              v-if="media.content_type.startsWith('video/')"
-              :src="media.url"
-              fullscreen-on-click
-              @click="$emit('fullscreen', media.url, images)"
-            />
-          </div>
-        </div>
+      <section class="medias__content">
+        <media-preview
+          v-for="(media, index) in images"
+          :key="media.created_on + index"
+          :src="media.url"
+          :is-video="media.content_type.startsWith('video/')"
+          @click="$emit('fullscreen', media.url, images)"
+        />
       </section>
     </template>
 
@@ -37,45 +26,36 @@
 
     <template slot="tab-panel-docs">
       <section class="documents__content">
-        <document-preview
+        <unnnic-chats-message
           v-for="document in documents"
-          :type="document.content_type"
-          size="sm"
           :key="document.url"
-          :src="document.url"
-          :fullFilename="document.url"
-          class="documents__content__document"
-          @download="download(document.url)"
+          :time="new Date(document.created_on)"
+          :documentName="treatedMediaName(document.url)"
+          @click="download(document.url)"
         />
       </section>
     </template>
     <template slot="tab-head-audio">
       <div class="media-tab" :class="{ active: isActiveTab('audio') }">
-        <span class="name">{{ $t('audio') }}</span>
+        <span class="name">{{ $t('audios') }}</span>
       </div>
     </template>
     <template slot="tab-panel-audio">
-      <div class="scrollable" style="background-color: #ffff">
-        <section class="media__content_audio">
-          <div
+      <div class="scrollable">
+        <section class="audios__content">
+          <unnnic-tool-tip
             v-for="audio in audios"
             :key="audio.url"
-            class="media__content_audio__media"
-            style="display: flex; width: 100%"
+            :text="audioTooltipText(audio)"
+            side="top"
+            enabled
           >
-            <div style="width: 6%">
-              <audio-preview :currentAudio="audio.url"></audio-preview>
-            </div>
-            <div style="width: 94%">
-              <span
-                >Enviado por {{ audio.sender }} |
-                {{ audio.duration == 'Infinity' ? 0 : audio.duration }}s
-              </span>
-              <!-- <span class="audio-text">
-                Áudio enviado | {{ audio.duration == 'Infinity' ? 0 : audio.duration }}s
-              </span> -->
-            </div>
-          </div>
+            <unnnic-audio-recorder
+              class="audios__content__audio"
+              :src="audio.url"
+              :canDiscard="false"
+            />
+          </unnnic-tool-tip>
         </section>
       </div>
     </template>
@@ -83,20 +63,15 @@
 </template>
 
 <script>
-import DocumentPreview from '@/components/chats/MediaMessage/Previews/Document';
-import ImagePreview from '@/components/chats/MediaMessage/Previews/Image';
-import AudioPreview from '@/components/chats/MediaMessage/Previews/Audio';
 import Media from '@/services/api/resources/chats/media';
-import VideoPreview from '@/components/chats/MediaMessage/Previews/Video';
+import MediaPreview from '@/components/chats/MediaMessage/Previews/Media';
+import moment from 'moment';
 
 export default {
   name: 'ContactMedia',
 
   components: {
-    DocumentPreview,
-    ImagePreview,
-    AudioPreview,
-    VideoPreview,
+    MediaPreview,
   },
 
   props: {
@@ -112,12 +87,14 @@ export default {
     },
   },
 
-  created() {
+  async created() {
     if (!this.history) {
-      this.loadNextMedias();
+      await this.loadNextMedias();
     } else {
-      this.loadNextMediasClosedRoom();
+      await this.loadNextMediasClosedRoom();
     }
+
+    this.$emit('loaded-medias');
   },
 
   data: () => ({
@@ -153,17 +130,29 @@ export default {
       return tab === this.tab;
     },
 
-    async download(url) {
-      const filename = url.split('/').at(-1);
+    audioTooltipText(audio) {
+      return this.$t('contact_info.audio_tooltip', {
+        agent: audio.sender || '',
+        date: moment(audio.created_on).format('L'),
+        time: moment(audio.created_on).format('LT'),
+      });
+    },
+
+    treatedMediaName(mediaName) {
+      if (mediaName) {
+        return mediaName.split('/')?.at(-1);
+      }
+
+      throw new Error('Pass as a parameter the name of the media you want to handle');
+    },
+
+    download(url) {
       try {
-        const file = await Media.get(url);
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(file);
-        link.download = filename;
-        link.click();
-        URL.revokeObjectURL(link.href);
-      } catch (err) {
-        console.error('Não foi possível realizar o download no momento');
+        const mediaName = this.treatedMediaName(url);
+
+        Media.download({ media: url, name: mediaName });
+      } catch (error) {
+        console.error('An error occurred when trying to download the media:', error);
       }
     },
 
@@ -243,78 +232,29 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.media-tab {
-  display: flex;
-  align-items: center;
-  gap: $unnnic-spacing-stack-xs;
-
-  &.active {
-    .name {
-      color: $unnnic-color-aux-purple;
-    }
-  }
-
-  .name {
-    font-size: $unnnic-font-size-body-gt;
-    font-weight: $unnnic-font-weight-bold;
-    color: $unnnic-color-neutral-cloudy;
-  }
-}
-
-.media__content {
+.medias__content {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: $unnnic-spacing-stack-xs;
-
-  max-width: 100%;
-
-  &__media {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    aspect-ratio: 1;
-    height: 100%;
-
-    &__preview {
-      height: 100%;
-      width: 100%;
-    }
-  }
+  grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+  gap: $unnnic-spacing-xs;
 }
+
 .documents__content {
-  display: flex;
-  flex-direction: column;
-  gap: $unnnic-spacing-stack-xs;
+  display: grid;
+  gap: $unnnic-spacing-nano;
 
-  &__document {
-    padding-bottom: 0.25rem;
-    border-bottom: solid 1px $unnnic-color-neutral-soft;
+  :deep(.unnnic-chats-message.is-document) {
+    .unnnic-chats-message__time {
+      display: none;
+    }
   }
 }
 
-.media__content_audio {
+.audios__content {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: $unnnic-spacing-stack-xs;
+  gap: $unnnic-spacing-sm;
 
-  max-width: 100%;
-
-  &__media {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-bottom: solid 1px $unnnic-color-neutral-soft;
-    // aspect-ratio: 1;
-
-    &__preview {
-      height: 100%;
-      width: 15%;
-    }
-  }
-  .scrollable {
-    overflow-y: auto;
-    height: 100%;
-    background-color: #ffff;
+  &__audio {
+    padding: $unnnic-spacing-sm;
   }
 }
 

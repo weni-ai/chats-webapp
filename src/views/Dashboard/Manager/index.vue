@@ -48,7 +48,7 @@ import DashboardFilters from '@/components/dashboard/Filters';
 import GeneralLiveMetrics from '@/components/dashboard/metrics/General/LiveMetrics';
 // import HistoryMetricsByAgent from '@/components/dashboard/metrics/ByAgent/HistoryMetrics';
 import HistoryMetricsBySector from '@/components/dashboard/metrics/BySector/HistoryMetrics';
-import DashboardManagerApi from '@/services/api/resources/dashboard/dashboardManager';
+import ProjectApi from '@/services/api/resources/settings/project';
 
 export default {
   name: 'DashboardManager',
@@ -78,7 +78,7 @@ export default {
 
   methods: {
     async projectInfo() {
-      const project = await DashboardManagerApi.getProjectInfo();
+      const project = await ProjectApi.getInfo();
       this.project = project.data;
     },
   },

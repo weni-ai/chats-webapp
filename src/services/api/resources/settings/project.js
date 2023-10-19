@@ -40,4 +40,10 @@ export default {
     });
     return response.data;
   },
+
+  async getInfo() {
+    const projectUuid = getProject();
+    const response = await http.get(`/project/${projectUuid}/`);
+    return response;
+  },
 };

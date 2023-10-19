@@ -143,7 +143,7 @@
       />
       <unnnic-button
         v-if="this.currentTab === 'messages' && !isQuickMessageEditing"
-        :text="$t('quick_messages.add_new')"
+        :text="$t('quick_messages.new')"
         icon-left="add-circle-1"
         type="secondary"
         @click="() => messagesHandler('create')"
@@ -503,11 +503,8 @@ export default {
     showSuccessfullyUpdateSnackbar() {
       unnnicCallAlert({
         props: {
-          title: 'Alterações salvas',
-          icon: 'check-circle-1-1-1',
-          scheme: 'feedback-green',
-          closeText: this.$t('close'),
-          position: 'bottom-right',
+          text: 'Alterações salvas',
+          type: 'success',
         },
         seconds: 5,
       });
@@ -586,12 +583,8 @@ export default {
         this.getQueues();
         unnnicCallAlert({
           props: {
-            title: '',
             text: 'Atualizações salvas',
-            icon: 'check-circle-1-1-1',
-            scheme: 'feedback-green',
-            closeText: this.$t('close'),
-            position: 'bottom-right',
+            type: 'success',
           },
           seconds: 5,
         });

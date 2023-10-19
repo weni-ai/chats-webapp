@@ -70,7 +70,7 @@ export default {
   },
 
   data: () => ({
-    search: '',
+    search: [],
     selectAgent: null,
     agent: '',
   }),
@@ -126,7 +126,7 @@ export default {
       if (!this.agent.uuid) return;
 
       this.$emit('select', this.agent);
-      this.search = '';
+      this.search = [];
     },
     validate() {
       return this.selectedAgents.length > 0;

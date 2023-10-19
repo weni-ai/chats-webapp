@@ -1,9 +1,10 @@
 <template>
   <section class="quick-message-form">
+    <h1 v-if="title" class="quick-message-form__title">{{ title }}</h1>
     <unnnic-input
       :value="quickMessage.title"
       @input="quickMessage = { ...quickMessage, title: $event }"
-      :size="size"
+      size="md"
       :label="$t('title')"
       :placeholder="$t('quick_messages.title_field_placeholder')"
     />
@@ -11,39 +12,32 @@
     <unnnic-input
       :value="quickMessage.shortcut"
       @input="quickMessage = { ...quickMessage, shortcut: $event }"
-      :size="size"
+      size="md"
       :placeholder="$t('quick_messages.shortcut_field_placeholder')"
-    >
-      <template #label>
-        <span class="label">
-          {{ $t('shortcut') }}
-          <unnnic-tool-tip enabled :text="$t('quick_messages.shortcut_field_tooltip')" side="right">
-            <unnnic-icon-svg scheme="neutral-cleanest" icon="information-circle-4" size="sm" />
-          </unnnic-tool-tip>
-        </span>
-      </template>
-    </unnnic-input>
+      :label="$t('shortcut')"
+    />
 
     <unnnic-text-area
       :value="quickMessage.text"
       @input="quickMessage = { ...quickMessage, text: $event }"
       :label="$t('message')"
       :placeholder="$t('quick_messages.message_field_placeholder')"
-      :size="size"
+      :maxLength="1000"
+      size="md"
     />
 
     <div class="actions" v-if="!externalActions">
-      <unnnic-button
+      <unnnic-button-next
         class="button"
         :text="$t('cancel')"
-        type="terciary"
+        type="secondary"
         size="small"
         @click="$emit('cancel')"
       />
-      <unnnic-button
+      <unnnic-button-next
         class="button"
         :text="$t('save')"
-        type="secondary"
+        type="primary"
         size="small"
         @click="submit"
         :disabled="isSaveButtonDisabled"
@@ -68,6 +62,10 @@ export default {
     externalActions: {
       type: Boolean,
       default: false,
+    },
+    title: {
+      type: String,
+      require: false,
     },
   },
 
@@ -110,6 +108,12 @@ export default {
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-stack-sm;
+
+  &__title {
+    font-size: $unnnic-font-size-body-lg;
+    line-height: $unnnic-font-size-body-lg + $unnnic-line-height-medium;
+    color: $unnnic-color-neutral-dark;
+  }
 
   .label {
     display: flex;
