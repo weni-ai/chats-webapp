@@ -28,7 +28,7 @@
         <div>
           <unnnic-label :label="$t('sector.managers.add.label')" />
           <unnnic-select-smart
-            v-model="manager"
+            v-model="selectedManager"
             :options="managersNames"
             autocomplete
             autocompleteIconLeft
@@ -161,8 +161,7 @@ export default {
   },
 
   data: () => ({
-    manager: '',
-    selectedManager: null,
+    selectedManager: [],
     message: '',
     validHour: false,
   }),
@@ -206,9 +205,16 @@ export default {
       this.$emit('remove-manager', managerUuid);
     },
 
-    // switchTemplateMessage() {
-    //   this.sector.can_trigger_flows = this.sector.can_trigger_flows;
-    // },
+    selectManager(selectedManager) {
+      if (selectedManager.length > 0) {
+        const manager = this.managers.find((manager) => {
+          const { uuid } = manager;
+
+          return uuid === selectedManager[0].value;
+        });
+        this.addSectorManager(manager);
+      }
+    },
 
     photo(link) {
       if (![null, undefined, ''].includes(link)) {
@@ -218,23 +224,21 @@ export default {
       return link;
     },
 
-    addSectorManager() {
-      const { selectedManager } = this;
-      if (!selectedManager) return;
+    addSectorManager(manager) {
+      if (manager) {
+        const managers = this.sector.managers.some(
+          (mappedManager) => mappedManager.user.email === manager.user.email,
+        )
+          ? this.sector.managers
+          : [...this.sector.managers, manager];
 
-      const managers = this.sector.managers.some(
-        (manager) => manager.email === selectedManager.email,
-      )
-        ? this.sector.managers
-        : [...this.sector.managers, selectedManager];
-
-      this.sector = {
-        ...this.sector,
-        managers,
-      };
-      if (this.isEditing) this.addManager(selectedManager);
-      this.manager = null;
-      this.selectedManager = null;
+        this.sector = {
+          ...this.sector,
+          managers,
+        };
+        if (this.isEditing) this.addManager(manager);
+        this.selectedManager = [this.managersNames[0]];
+      }
     },
 
     async addManager(manager) {
@@ -245,16 +249,6 @@ export default {
     async getManagers() {
       const managers = await Sector.managers(this.sector.uuid);
       this.sector.managers = managers.results.map((manager) => ({ ...manager, removed: false }));
-    },
-
-    selectManager(selected) {
-      const manager = this.managers.find((manager) => {
-        const { uuid } = manager;
-
-        return uuid === selected[0].value;
-      });
-      this.selectedManager = manager;
-      this.addSectorManager();
     },
 
     validate() {
