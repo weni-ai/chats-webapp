@@ -260,7 +260,6 @@ export default {
           this.isLoading = false;
           this.networkError = false;
           this.dateOfLastMessage();
-          this.readMessages();
 
           this.isRoomSkeletonActive = false;
         })
