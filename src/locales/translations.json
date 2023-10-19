@@ -740,6 +740,13 @@
       "es": "Reconectar"
     }
   },
+  "video_player": {
+    "speed": {
+      "pt-br": "Velocidade",
+      "en-us": "Speed",
+      "es": "Velocidad"
+    }
+  },
   "media": {
     "pt-br": "Mídia",
     "en-us": "Media",

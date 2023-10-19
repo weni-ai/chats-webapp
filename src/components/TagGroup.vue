@@ -42,7 +42,7 @@ export default {
       'aux-orange',
       'aux-pink',
       'brand-weni-dark',
-      'brand-weni-soft',
+      'weni-600',
       'aux-lemon',
       'aux-blue',
       'neutral-dark',
