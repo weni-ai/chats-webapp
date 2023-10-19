@@ -75,9 +75,6 @@ export default {
 
       return [appToken, appProject];
     },
-    teste() {
-      return 'teste';
-    },
   },
 
   watch: {
