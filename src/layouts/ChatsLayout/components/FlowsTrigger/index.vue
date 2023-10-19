@@ -40,7 +40,7 @@
           }
         "
       >
-        <section class="flows-trigger__contact-alerts">
+        <section class="flows-trigger__contact-alerts" v-if="openedRoomsAlerts.length > 0">
           <strong
             v-for="contact in openedRoomsAlerts"
             :key="contact"
@@ -178,11 +178,20 @@ export default {
         });
       } else {
         this.selected.push(contact);
-        const responseCheckContact = FlowsTrigger.checkContact(contact.uuid);
-
-        if (responseCheckContact.show_warning) {
-          this.openedRoomsAlerts.push(contact.name);
-        }
+        FlowsTrigger.checkContact(contact.uuid)
+          .then((response) => {
+            if (response.show_warning) {
+              this.openedRoomsAlerts.push(contact.name);
+            }
+          })
+          .catch(
+            (error) =>
+              new Error(
+                `An error occurred when trying to check if the
+                contact "${contact.name}" already had an open room:`,
+                error,
+              ),
+          );
       }
     },
 
