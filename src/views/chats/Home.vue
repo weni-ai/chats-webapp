@@ -379,6 +379,7 @@ export default {
         }
 
         this.isRoomSkeletonActive = true;
+        await this.$store.dispatch('roomMessages/resetRoomMessages');
         await this.setActiveRoom(this.id);
         await this.getRoomMessages();
       },
