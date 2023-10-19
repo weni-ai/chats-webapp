@@ -210,6 +210,9 @@ export default {
       if (this.selectedGroup.some((search) => search.uuid === item.uuid)) {
         this.selectedGroup = this.selectedGroup.filter((el) => el.uuid !== item.uuid);
       }
+      this.openedRoomsAlerts = this.openedRoomsAlerts.filter((mappedContactName) => {
+        return mappedContactName !== item.name;
+      });
     },
 
     async contactList(next, cleanList = false) {
