@@ -180,7 +180,7 @@ export default {
 .view-mode {
   &__active-chat {
     display: grid;
-    grid-template-rows: 1fr auto 1fr;
+    grid-template-rows: auto 1fr auto;
 
     height: 100%;
 
