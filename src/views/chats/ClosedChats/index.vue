@@ -38,7 +38,7 @@
 import ProjectApi from '@/services/api/resources/settings/project';
 import History from '@/services/api/resources/chats/history';
 
-import ChatMessages from '@/components/chats/chat/ChatMessagesNext';
+import ChatMessages from '@/components/chats/chat/ChatMessages';
 import ContactInfo from '@/components/chats/ContactInfo';
 import ClosedChatsHeaderLoading from '@/views/loadings/ClosedChats/ClosedChatsHeader.vue';
 import RoomHeaderLoading from '@/views/loadings/RoomHeader.vue';
@@ -47,7 +47,7 @@ import { mapState } from 'vuex';
 import ClosedChatsRoomsTable from './RoomsTable';
 
 export default {
-  name: 'ClosedChatsNext',
+  name: 'ClosedChats',
 
   components: {
     ClosedChatsHeaderLoading,

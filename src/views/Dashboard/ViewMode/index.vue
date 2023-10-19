@@ -14,7 +14,7 @@
             :avatarName="room.contact.name"
             :close="() => {}"
           />
-          <chat-messages-next
+          <chat-messages
             :room="room"
             :messages="messages"
             class="messages"
@@ -60,7 +60,7 @@ import ChatsLayout from '@/layouts/ChatsLayout';
 import RoomLoading from '@/views/loadings/Room.vue';
 import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
 import ContactInfo from '@/components/chats/ContactInfo';
-import ChatMessagesNext from '@/components/chats/chat/ChatMessagesNext';
+import ChatMessages from '@/components/chats/chat/ChatMessages';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat';
 
 import ViewModeHeader from './components/ViewModeHeader';
@@ -72,7 +72,7 @@ export default {
     ChatsBackground,
     ChatsLayout,
     ContactInfo,
-    ChatMessagesNext,
+    ChatMessages,
     ViewModeHeader,
     ModalGetChat,
     RoomLoading,

@@ -25,7 +25,7 @@ const routes = [
   {
     path: '/closed-chats',
     name: 'closed-rooms',
-    component: () => import('@/views/chats/ClosedChatsNext/index'),
+    component: () => import('@/views/chats/ClosedChats/index'),
     props: (route) => ({
       tag: route.query.tag,
     }),
@@ -33,7 +33,7 @@ const routes = [
   {
     path: '/closed-chats/:roomId',
     name: 'closed-rooms.selected',
-    component: () => import('@/views/chats/ClosedChatsNext/index'),
+    component: () => import('@/views/chats/ClosedChats/index'),
     props: (route) => ({
       roomId: route.params.roomId,
     }),

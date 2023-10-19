@@ -108,7 +108,7 @@ import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
 import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone';
 
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow';
-import ChatMessages from '@/components/chats/chat/ChatMessagesNext';
+import ChatMessages from '@/components/chats/chat/ChatMessages';
 import ContactInfo from '@/components/chats/ContactInfo';
 import ChatClassifier from '@/components/chats/ChatClassifier';
 import QuickMessages from '@/components/chats/QuickMessages';
