@@ -287,7 +287,6 @@ export default {
         const response = await Message.getByContact(contact.uuid, offset, 20);
         let messages = response.results;
         this.hasNext = response.next;
-        this.scrollMessagesToBottom();
         if (concat) {
           messages = response.results.concat(this.messages);
         }
@@ -315,11 +314,6 @@ export default {
       this.page = 0;
       this.limit = 50;
       this.componentInAsideSlot = '';
-    },
-
-    scrollMessagesToBottom() {
-      if (!this.$refs.chatMessages) return;
-      this.$refs.chatMessages.$el.scrollTop = 15;
     },
 
     async getContacts() {
@@ -467,7 +461,6 @@ export default {
 
   .messages {
     overflow-y: auto;
-    scroll-behavior: smooth;
     padding-right: $unnnic-spacing-inset-sm;
     margin: $unnnic-spacing-inline-sm 0 $unnnic-spacing-inline-sm;
   }
