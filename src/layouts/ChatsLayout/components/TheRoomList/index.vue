@@ -51,9 +51,9 @@
       "
     >
       <room-group
-        v-if="queue.length"
-        :label="$t('chats.waiting', { length: queue.length })"
-        :rooms="queue"
+        v-if="rooms_queue.length"
+        :label="$t('chats.waiting', { length: rooms_queue.length })"
+        :rooms="rooms_queue"
         filled
         @open="open"
         id="queue"
@@ -66,9 +66,9 @@
         id="in_progress"
       />
       <room-group
-        v-if="wating.length"
-        :label="$t('chats.sent_flows', { length: wating.length })"
-        :rooms="wating"
+        v-if="rooms_sent_flows.length"
+        :label="$t('chats.sent_flows', { length: rooms_sent_flows.length })"
+        :rooms="rooms_sent_flows"
         @open="open"
         id="wating"
       />
@@ -120,8 +120,8 @@ export default {
   computed: {
     ...mapGetters({
       rooms: 'rooms/agentRooms',
-      queue: 'rooms/waitingQueue',
-      wating: 'rooms/waitingContactAnswer',
+      rooms_queue: 'rooms/waitingQueue',
+      rooms_sent_flows: 'rooms/waitingContactAnswer',
     }),
     ...mapState({
       listRoomHasNext: (state) => state.rooms.listRoomHasNext,
