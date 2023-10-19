@@ -206,10 +206,6 @@ export default {
       roomMessages: (state) => state.roomMessages.roomMessages,
       roomMessagesSorted: (state) => state.roomMessages.roomMessagesSorted,
     }),
-    // rooms() {
-    //   const { rooms, messages } = this.chat;
-    //   return rooms?.length > 0 ? rooms : [{ messages }];
-    // },
     medias() {
       return this.roomMessages
         .map((el) => el.media)
