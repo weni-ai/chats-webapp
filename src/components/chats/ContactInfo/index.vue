@@ -146,41 +146,6 @@
         </aside-slot-template-section>
       </section>
 
-      <!-- <section v-if="isHistory" class="scrollable">
-        <aside-slot-template-section>
-          <section class="infos">
-            <div class="connection-info">
-              <p class="username">
-                {{ contact.name }}
-              </p>
-              <template>
-                <p style="margin-bottom: 0.75rem">
-                  <span class="title"> {{ contactNumberClosedChat.plataform }}: </span>
-                  {{ contactNumberClosedChat.contactNum }}
-                </p>
-              </template>
-              <div class="connection-info">
-                <template v-if="!!contact.custom_fields">
-                  <p v-for="(value, key) in customFields" :key="key">
-                    <span class="title"> {{ key }}: </span>
-                    {{ value }}
-                  </p>
-                </template>
-              </div>
-            </div>
-          </section>
-        </aside-slot-template-section>
-
-        <aside-slot-template-section>
-          <contact-media
-            :room="room"
-            @fullscreen="openFullScreen"
-            :history="isHistory"
-            :contactInfo="contact"
-            @loaded-medias="set"
-          />
-        </aside-slot-template-section>
-      </section> -->
       <unnnic-modal
         :text="$t('successfully_transferred_chat')"
         :description="
