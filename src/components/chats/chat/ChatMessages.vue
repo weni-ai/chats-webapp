@@ -379,9 +379,16 @@ export default {
 
       function getForwardLabel(action, to) {
         if (action === 'forward') {
-          return t('chats.feedback.forwarded_to_agent', {
-            agent: to.name,
-          });
+          if (to?.type === 'user') {
+            return t('chats.feedback.forwarded_to_agent', {
+              agent: to.name,
+            });
+          }
+          if (to?.type === 'queue') {
+            return t('chats.feedback.forwarded_to_queue', {
+              queue: to.name,
+            });
+          }
         }
         return '';
       }
