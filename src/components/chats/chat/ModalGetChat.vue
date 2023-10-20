@@ -58,7 +58,9 @@ export default {
 
       await Room.take(this.room.uuid, this.me.email);
       await this.setActiveRoom(this.room.uuid);
-      Room.updateReadMessages(this.room.uuid, true);
+      if (this.room.user) {
+        Room.updateReadMessages(this.room.uuid, true);
+      }
 
       this.close();
     },
