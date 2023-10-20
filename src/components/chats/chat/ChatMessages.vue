@@ -38,7 +38,7 @@
 
           <template v-else>
             <unnnic-chats-message
-              v-if="message.text"
+              v-if="message.text || isGeolocation(message.media[0])"
               :type="message.user || isMessageByBot(message) ? 'sent' : 'received'"
               :class="[
                 'chat-messages__message',
@@ -49,7 +49,7 @@
               :key="message.uuid"
               :ref="`message-${message.uuid}`"
             >
-              {{ isGeolocation(message.media[0]) ? message.media[0].url : message.text }}
+              {{ isGeolocation(message.media[0]) ? message.media[0]?.url : message.text }}
             </unnnic-chats-message>
             <template v-for="media in message.media">
               <unnnic-chats-message
@@ -86,7 +86,7 @@
                 />
               </unnnic-chats-message>
               <unnnic-chats-message
-                v-else-if="!isMedia(media)"
+                v-else-if="!isGeolocation(media)"
                 :key="media.created_on"
                 :ref="`message-${message.uuid}`"
                 :type="message.user ? 'sent' : 'received'"
@@ -115,9 +115,9 @@
 
     <!-- Media fullscreen -->
     <fullscreen-preview
-      v-if="isFullscreen"
-      :downloadMediaUrl="currentMedia.url"
-      :downloadMediaName="currentMedia.message"
+      v-if="isFullscreen && currentMedia"
+      :downloadMediaUrl="currentMedia?.url"
+      :downloadMediaName="currentMedia?.message"
       @close="isFullscreen = false"
       @next="nextMedia"
       @previous="previousMedia"
@@ -210,10 +210,7 @@ export default {
       return this.roomMessages
         .map((el) => el.media)
         .flat()
-        .filter((el) => {
-          const media = /(png|jp(e)?g|webp|mp4)/;
-          return media.test(el.content_type);
-        });
+        .filter((media) => this.isMedia(media));
     },
   },
 
@@ -236,11 +233,14 @@ export default {
       return this.isMediaOfType(media, 'audio');
     },
     isGeolocation(media) {
-      return this.isMediaOfType(media, 'geo');
+      if (media) {
+        return this.isMediaOfType(media, 'geo');
+      }
+      return false;
     },
     isMedia(media) {
-      const { isAudio, isImage, isVideo, isGeolocation } = this;
-      return isAudio(media) || isImage(media) || isVideo(media) || isGeolocation(media);
+      const { isAudio, isImage, isVideo } = this;
+      return isAudio(media) || isImage(media) || isVideo(media);
     },
     messageStatus({ message, media }) {
       if (message) {
