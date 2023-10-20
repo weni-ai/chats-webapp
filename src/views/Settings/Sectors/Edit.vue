@@ -120,12 +120,12 @@
         v-if="!!queueToEdit && this.currentTab === 'queues'"
         text="Excluir fila"
         icon-left="delete-1"
-        type="terciary"
+        type="tertiary"
         @click="openModalDeleteQueue(queueToEdit)"
       />
       <unnnic-button
         :text="$t('cancel')"
-        type="terciary"
+        type="tertiary"
         @click="cancel"
         v-if="this.isQuickMessageEditing"
       />
@@ -157,7 +157,7 @@
         @close="closeModalDeleteQueue"
       >
         <template #options>
-          <unnnic-button type="terciary" @click="closeModalDeleteQueue" :text="$t('cancel')" />
+          <unnnic-button type="tertiary" @click="closeModalDeleteQueue" :text="$t('cancel')" />
           <unnnic-button
             type="secondary"
             @click="deleteQueue(selectedQueue.uuid)"

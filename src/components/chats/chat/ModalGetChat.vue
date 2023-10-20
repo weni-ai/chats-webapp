@@ -8,7 +8,7 @@
     scheme="neutral-darkest"
   >
     <template #options>
-      <unnnic-button :text="$t('cancel')" type="terciary" @click="close" />
+      <unnnic-button :text="$t('cancel')" type="tertiary" @click="close" />
       <unnnic-button :text="$t('confirm')" type="secondary" @click="getChat" />
     </template>
   </unnnic-modal>
