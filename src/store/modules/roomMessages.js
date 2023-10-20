@@ -224,7 +224,7 @@ export default {
               });
             });
 
-            newMessages = newMessages.concat(state.roomMessages);
+            newMessages = newMessages.reverse().concat(state.roomMessages);
           } else {
             commit(mutations.RESET_ROOM_MESSAGES_SORTED);
             messages.forEach((message) => {

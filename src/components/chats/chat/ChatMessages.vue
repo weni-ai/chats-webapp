@@ -18,10 +18,6 @@
           v-if="room?.is_waiting"
           :feedback="$t('waiting_answer.waiting_cliente_answer')"
         />
-        <chat-feedback
-          v-if="isFirstMessageByBot(messagesByDate.minutes)"
-          :feedback="$t('chat_with.bot')"
-        />
       </div>
 
       <section
@@ -30,6 +26,15 @@
         :key="messagesByDate.date + messagesByMinute.minute"
       >
         <template v-for="message in messagesByMinute.messages">
+          <chat-feedback
+            v-if="isChatSeparatorFeedback(message.uuid)"
+            :feedback="
+              startMessagesBy.agent === message.uuid
+                ? $t('chat_with.agent', { name: message?.user?.first_name })
+                : $t('chat_with.bot')
+            "
+            :key="'feedback' + message.uuid"
+          />
           <chat-feedback
             v-if="isFeedbackMessage(message)"
             :feedback="createFeedbackLabel(message)"
@@ -182,6 +187,10 @@ export default {
     currentMedia: {},
     prevUuidBeforePagination: null,
     prevRoomUuid: null,
+    startMessagesBy: {
+      bot: '',
+      agent: '',
+    },
   }),
 
   mounted() {
@@ -287,12 +296,24 @@ export default {
       );
     },
 
-    isFirstMessageByBot(messagesByDateMinutes) {
-      return messagesByDateMinutes.some((minute) =>
-        minute.messages.some(
-          (message) => !message.contact && !message.user && !this.isFeedbackMessage(message),
-        ),
-      );
+    setStartFeedbacks() {
+      const newFirstMessageByAgentUuid = this.roomMessages.find(
+        (message) => message.user && !this.isFeedbackMessage(message),
+      )?.uuid;
+      const newFirstMessageByBotUuid = this.roomMessages.find(
+        (message) => !message.contact && !message.user && !this.isFeedbackMessage(message),
+      )?.uuid;
+
+      if (newFirstMessageByAgentUuid) {
+        this.startMessagesBy.agent = newFirstMessageByAgentUuid;
+      }
+      if (newFirstMessageByBotUuid) {
+        this.startMessagesBy.bot = newFirstMessageByBotUuid;
+      }
+    },
+
+    isChatSeparatorFeedback(messageUuid) {
+      return [this.startMessagesBy.bot, this.startMessagesBy.agent].includes(messageUuid);
     },
 
     isMessageByBot(message) {
@@ -481,6 +502,7 @@ export default {
 
   watch: {
     roomMessages() {
+      this.setStartFeedbacks();
       this.$nextTick(() => {
         this.manageScrollForNewMessages();
       });
