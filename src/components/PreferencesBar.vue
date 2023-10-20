@@ -50,20 +50,20 @@
         @input="changeSound"
       />
 
-      <unnnic-button-next
+      <unnnic-button
         @mousedown.prevent
         :text="$t('quick_messages.title')"
         icon-left="flash-1-3"
-        type="terciary"
+        type="secondary"
         size="small"
         @click="openQuickMessage"
       />
-      <unnnic-button-next
+      <unnnic-button
         @mousedown.prevent
         v-if="this.dashboard"
         text="Dashboard"
         icon-left="gauge-dashboard-2"
-        type="terciary"
+        type="secondary"
         size="small"
         @click="navigate('dashboard.manager')"
       />

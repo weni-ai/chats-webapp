@@ -210,6 +210,7 @@ export default {
           const response = await Message.getByRoom({ nextReq }, activeRoom.uuid, offset, limit);
 
           const { results: messages, next: hasNext } = response;
+          let newMessages = messages;
 
           if (!messages?.[0] || !activeRoom?.uuid || messages?.[0]?.room !== activeRoom.uuid) {
             return;
@@ -222,6 +223,8 @@ export default {
                 addBefore: !!nextReq || concat,
               });
             });
+
+            newMessages = newMessages.reverse().concat(state.roomMessages);
           } else {
             commit(mutations.RESET_ROOM_MESSAGES_SORTED);
             messages.forEach((message) => {
@@ -229,7 +232,7 @@ export default {
             });
           }
 
-          commit(mutations.SET_ROOM_MESSAGES, messages);
+          commit(mutations.SET_ROOM_MESSAGES, newMessages);
           commit(mutations.SET_ROOM_MESSAGES_NEXT, hasNext);
         } catch (error) {
           console.error('An error ocurred when try get the room messages', error);

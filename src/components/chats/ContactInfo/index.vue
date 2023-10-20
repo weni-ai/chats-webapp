@@ -17,10 +17,10 @@
                 {{ (closedRoom || room).contact.name }}
               </h1>
 
-              <unnnic-button-next
+              <unnnic-button
                 v-if="!isHistory"
                 iconCenter="button-refresh-arrow-1"
-                type="terciary"
+                type="tertiary"
                 size="small"
                 @click="refreshContactInfos"
                 :disabled="isRefreshContactDisabled"
@@ -81,12 +81,12 @@
                 <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
               </unnnic-tool-tip>
             </div>
-            <unnnic-button-next
+            <unnnic-button
               v-if="!isHistory && !isViewMode"
               class="transfer__button"
               :text="$t('contact_info.see_contact_history')"
               iconLeft="export-1"
-              type="terciary"
+              type="tertiary"
               size="small"
               @click="openHistory()"
             />
@@ -124,10 +124,10 @@
               :disabled="!!transferContactError || isViewMode"
             />
 
-            <unnnic-button-next
+            <unnnic-button
               class="transfer__button"
               :text="$t('transfer')"
-              type="terciary"
+              type="secondary"
               size="small"
               @click="transferContact"
               :disabled="isViewMode"

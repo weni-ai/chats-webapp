@@ -37,10 +37,10 @@
         </unnnic-collapse>
       </div>
 
-      <unnnic-button-next
+      <unnnic-button
         icon-left="add-1"
         :text="$t('quick_messages.new')"
-        type="terciary"
+        type="secondary"
         size="small"
         class="fill-w"
         @click="quickMessageToEdit = createEmptyQuickMessage()"
@@ -56,8 +56,8 @@
       :show-modal="!!quickMessageToDelete"
     >
       <template #options>
-        <unnnic-button :text="$t('cancel')" type="terciary" @click="quickMessageToDelete = null" />
-        <unnnic-button :text="$t('confirm')" type="secondary" @click="deleteQuickMessage" />
+        <unnnic-button :text="$t('cancel')" type="secondary" @click="quickMessageToDelete = null" />
+        <unnnic-button :text="$t('confirm')" type="tertiary" @click="deleteQuickMessage" />
       </template>
     </unnnic-modal>
   </aside-slot-template>

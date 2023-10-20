@@ -10,10 +10,10 @@
         />
 
         <div class="flows-trigger-button" v-if="!isViewMode">
-          <unnnic-button-next
+          <unnnic-button
             v-if="canTriggerFlows"
             size="small"
-            type="terciary"
+            type="secondary"
             iconCenter="pencil-write-1"
             @click="openFlowsTrigger"
           />
@@ -21,11 +21,11 @@
 
         <the-room-list class="room-list" :isViewMode="isViewMode" :viewedAgent="viewedAgent" />
 
-        <unnnic-button-next
+        <unnnic-button
           class="history-button"
           :text="isHistoryView ? $t('back_to_chats') : $t('chats.see_history')"
           :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : 'task-list-clock-1'"
-          type="terciary"
+          type="secondary"
           size="small"
           @click="navigate(isHistoryView ? 'home' : 'closed-rooms')"
         />

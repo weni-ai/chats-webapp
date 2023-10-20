@@ -16,14 +16,14 @@
       <modal-progress-template-submission @close="closeModaProgress" />
     </div>
     <div class="flows-trigger__handlers">
-      <unnnic-button-next
+      <unnnic-button
         :text="$t('back')"
         size="small"
-        type="ghost"
+        type="tertiary"
         @click="$emit('back')"
         style="width: 100%"
       />
-      <unnnic-button-next
+      <unnnic-button
         :disabled="selectedFlow === ''"
         :text="$t('send')"
         size="small"

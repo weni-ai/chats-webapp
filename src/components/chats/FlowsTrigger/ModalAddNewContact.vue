@@ -37,7 +37,7 @@
               <unnnic-button
                 style="padding: 0.75rem 4.75rem"
                 :text="$t('cancel')"
-                type="terciary"
+                type="tertiary"
                 :disabled="false"
               />
             </div>

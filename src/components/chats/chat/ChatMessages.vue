@@ -18,10 +18,6 @@
           v-if="room?.is_waiting"
           :feedback="$t('waiting_answer.waiting_cliente_answer')"
         />
-        <chat-feedback
-          v-if="isFirstMessageByBot(messagesByDate.minutes)"
-          :feedback="$t('chat_with.bot')"
-        />
       </div>
 
       <section
@@ -31,6 +27,15 @@
       >
         <template v-for="message in messagesByMinute.messages">
           <chat-feedback
+            v-if="isChatSeparatorFeedback(message.uuid)"
+            :feedback="
+              startMessagesBy.agent === message.uuid
+                ? $t('chat_with.agent', { name: message?.user?.first_name })
+                : $t('chat_with.bot')
+            "
+            :key="'feedback' + message.uuid"
+          />
+          <chat-feedback
             v-if="isFeedbackMessage(message)"
             :feedback="createFeedbackLabel(message)"
             :key="message.uuid"
@@ -38,7 +43,7 @@
 
           <template v-else>
             <unnnic-chats-message
-              v-if="message.text"
+              v-if="message.text || isGeolocation(message.media[0])"
               :type="message.user || isMessageByBot(message) ? 'sent' : 'received'"
               :class="[
                 'chat-messages__message',
@@ -49,7 +54,7 @@
               :key="message.uuid"
               :ref="`message-${message.uuid}`"
             >
-              {{ isGeolocation(message.media[0]) ? message.media[0].url : message.text }}
+              {{ isGeolocation(message.media[0]) ? message.media[0]?.url : message.text }}
             </unnnic-chats-message>
             <template v-for="media in message.media">
               <unnnic-chats-message
@@ -86,7 +91,7 @@
                 />
               </unnnic-chats-message>
               <unnnic-chats-message
-                v-else-if="!isMedia(media)"
+                v-else-if="!isGeolocation(media)"
                 :key="media.created_on"
                 :ref="`message-${message.uuid}`"
                 :type="message.user ? 'sent' : 'received'"
@@ -115,9 +120,9 @@
 
     <!-- Media fullscreen -->
     <fullscreen-preview
-      v-if="isFullscreen"
-      :downloadMediaUrl="currentMedia.url"
-      :downloadMediaName="currentMedia.message"
+      v-if="isFullscreen && currentMedia"
+      :downloadMediaUrl="currentMedia?.url"
+      :downloadMediaName="currentMedia?.message"
       @close="isFullscreen = false"
       @next="nextMedia"
       @previous="previousMedia"
@@ -182,6 +187,10 @@ export default {
     currentMedia: {},
     prevUuidBeforePagination: null,
     prevRoomUuid: null,
+    startMessagesBy: {
+      bot: '',
+      agent: '',
+    },
   }),
 
   mounted() {
@@ -210,10 +219,7 @@ export default {
       return this.roomMessages
         .map((el) => el.media)
         .flat()
-        .filter((el) => {
-          const media = /(png|jp(e)?g|webp|mp4)/;
-          return media.test(el.content_type);
-        });
+        .filter((media) => this.isMedia(media));
     },
   },
 
@@ -236,11 +242,14 @@ export default {
       return this.isMediaOfType(media, 'audio');
     },
     isGeolocation(media) {
-      return this.isMediaOfType(media, 'geo');
+      if (media) {
+        return this.isMediaOfType(media, 'geo');
+      }
+      return false;
     },
     isMedia(media) {
-      const { isAudio, isImage, isVideo, isGeolocation } = this;
-      return isAudio(media) || isImage(media) || isVideo(media) || isGeolocation(media);
+      const { isAudio, isImage, isVideo } = this;
+      return isAudio(media) || isImage(media) || isVideo(media);
     },
     messageStatus({ message, media }) {
       if (message) {
@@ -287,12 +296,24 @@ export default {
       );
     },
 
-    isFirstMessageByBot(messagesByDateMinutes) {
-      return messagesByDateMinutes.some((minute) =>
-        minute.messages.some(
-          (message) => !message.contact && !message.user && !this.isFeedbackMessage(message),
-        ),
-      );
+    setStartFeedbacks() {
+      const newFirstMessageByAgentUuid = this.roomMessages.find(
+        (message) => message.user && !this.isFeedbackMessage(message),
+      )?.uuid;
+      const newFirstMessageByBotUuid = this.roomMessages.find(
+        (message) => !message.contact && !message.user && !this.isFeedbackMessage(message),
+      )?.uuid;
+
+      if (newFirstMessageByAgentUuid) {
+        this.startMessagesBy.agent = newFirstMessageByAgentUuid;
+      }
+      if (newFirstMessageByBotUuid) {
+        this.startMessagesBy.bot = newFirstMessageByBotUuid;
+      }
+    },
+
+    isChatSeparatorFeedback(messageUuid) {
+      return [this.startMessagesBy.bot, this.startMessagesBy.agent].includes(messageUuid);
     },
 
     isMessageByBot(message) {
@@ -379,9 +400,16 @@ export default {
 
       function getForwardLabel(action, to) {
         if (action === 'forward') {
-          return t('chats.feedback.forwarded_to_agent', {
-            agent: to.name,
-          });
+          if (to?.type === 'user') {
+            return t('chats.feedback.forwarded_to_agent', {
+              agent: to.name,
+            });
+          }
+          if (to?.type === 'queue') {
+            return t('chats.feedback.forwarded_to_queue', {
+              queue: to.name,
+            });
+          }
         }
         return '';
       }
@@ -474,6 +502,7 @@ export default {
 
   watch: {
     roomMessages() {
+      this.setStartFeedbacks();
       this.$nextTick(() => {
         this.manageScrollForNewMessages();
       });

@@ -66,7 +66,7 @@
       scheme="feedback-yellow"
     >
       <template #options>
-        <unnnic-button :text="$t('cancel')" type="terciary" @click="isCloseChatModalOpen = false" />
+        <unnnic-button :text="$t('cancel')" type="tertiary" @click="isCloseChatModalOpen = false" />
         <unnnic-button :text="$t('confirm')" type="secondary" @click="classifyRoom" />
       </template>
     </unnnic-modal>

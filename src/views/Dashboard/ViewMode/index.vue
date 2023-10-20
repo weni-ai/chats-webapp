@@ -21,11 +21,11 @@
             @show-contact-info="handleModal('ContactInfo', 'open')"
             @scrollTop="searchForMoreMessages"
           />
-          <unnnic-button-next
+          <unnnic-button
             v-if="room.user?.email !== me.email"
             class="assume-chat"
             :text="$t('dashboard.view-mode.assume_chat')"
-            type="terciary"
+            type="secondary"
             @click="handleModal('AssumeChatConfirmation', 'open')"
           />
         </section>

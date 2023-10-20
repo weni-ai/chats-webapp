@@ -8,7 +8,7 @@
     scheme="neutral-darkest"
   >
     <template #options>
-      <unnnic-button :text="$t('cancel')" type="terciary" @click="close" />
+      <unnnic-button :text="$t('cancel')" type="tertiary" @click="close" />
       <unnnic-button :text="$t('confirm')" type="secondary" @click="getChat" />
     </template>
   </unnnic-modal>
@@ -58,7 +58,9 @@ export default {
 
       await Room.take(this.room.uuid, this.me.email);
       await this.setActiveRoom(this.room.uuid);
-      Room.updateReadMessages(this.room.uuid, true);
+      if (this.room.user) {
+        Room.updateReadMessages(this.room.uuid, true);
+      }
 
       this.close();
     },
