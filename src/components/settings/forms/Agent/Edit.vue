@@ -42,7 +42,7 @@
       @close="queueToRemove = {}"
     >
       <template #options>
-        <unnnic-button type="terciary" @click="queueToRemove = {}" text="Cancelar" />
+        <unnnic-button type="tertiary" @click="queueToRemove = {}" text="Cancelar" />
         <unnnic-button type="secondary" @click="removeQueue(queueToRemove)" text="Confirmar" />
       </template>
     </unnnic-modal>

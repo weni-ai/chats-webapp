@@ -41,7 +41,7 @@
       @close="agentToRemove = {}"
     >
       <template #options>
-        <unnnic-button type="terciary" @click="agentToRemove = {}" text="Cancelar" />
+        <unnnic-button type="tertiary" @click="agentToRemove = {}" text="Cancelar" />
         <unnnic-button type="secondary" @click="removeAgent(agentToRemove)" text="Confirmar" />
       </template>
     </unnnic-modal>

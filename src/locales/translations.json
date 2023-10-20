@@ -293,7 +293,12 @@
       "forwarded_to_agent": {
         "pt-br": "Contato encaminhado para agente {agent}",
         "en-us": "Contact forwarded to agent {agent}",
-        "es": "Contacto reenviado al agente {agente}"
+        "es": "Contacto reenviado al agente {agent}"
+      },
+      "forwarded_to_queue": {
+        "pt-br": "Contato encaminhado para fila {queue}",
+        "en-us": "Contact forwarded to queue {queue}",
+        "es": "Contacto reenviado a la cola {queue}"
       },
       "transfer_to_agent": {
         "pt-br": "{agent1} transferiu para {agent2}",

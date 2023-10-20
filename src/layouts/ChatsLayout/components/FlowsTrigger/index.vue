@@ -71,14 +71,14 @@
         </template>
       </section>
       <div class="flows-trigger__handlers" v-if="!showSelectFlow">
-        <unnnic-button-next
+        <unnnic-button
           size="small"
-          type="secondary"
+          type="alternative"
           :text="$t('add')"
           :iconLeft="'add-1'"
           @click="openModal"
         />
-        <unnnic-button-next
+        <unnnic-button
           :disabled="this.listOfGroupAndContactsSelected.length === 0"
           :text="$t('continue')"
           type="primary"

@@ -15,7 +15,7 @@
             </div>
             <div class="button-control">
               <unnnic-button
-                type="terciary"
+                type="tertiary"
                 @click="closeModal"
                 text="Cancelar"
                 style="width: 162px; margin-right: 15px"

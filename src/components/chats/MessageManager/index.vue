@@ -30,17 +30,17 @@
         />
       </div>
       <div class="message-manager__actions">
-        <unnnic-button-next
+        <unnnic-button
           v-if="canUseCopilot && !isCopilotOpen && showActionButton"
           @click="openCopilot"
-          type="terciary"
+          type="secondary"
           size="large"
           iconCenter="study-light-idea-1"
         />
-        <unnnic-button-next
+        <unnnic-button
           v-if="!canUseCopilot && showActionButton"
           @click="record"
-          type="terciary"
+          type="secondary"
           size="large"
           iconCenter="microphone"
         />
@@ -50,7 +50,7 @@
           position="top-left"
           class="more-actions"
         >
-          <unnnic-button-next slot="trigger" type="primary" size="large" iconCenter="add-1" />
+          <unnnic-button slot="trigger" type="primary" size="large" iconCenter="add-1" />
 
           <div class="more-actions-container">
             <more-actions-option
@@ -72,7 +72,7 @@
           </div>
         </unnnic-dropdown>
 
-        <unnnic-button-next
+        <unnnic-button
           v-if="
             !isSuggestionBoxOpen &&
             (isTyping || isAudioRecorderVisible || loadingValue !== undefined)
