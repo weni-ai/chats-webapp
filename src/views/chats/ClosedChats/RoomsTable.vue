@@ -90,8 +90,8 @@
       {{ $t('without_results') }}
     </p>
 
-    <rooms-table-pages-loading v-if="isPagesLoading" />
-    <section v-else class="closed-chats__rooms-table__pages">
+    <rooms-table-pages-loading v-show="isPagesLoading" />
+    <section v-show="!isPagesLoading" class="closed-chats__rooms-table__pages">
       <p class="closed-chats__rooms-table__pages__count">
         {{ tablePagination }}
       </p>
@@ -243,7 +243,7 @@ export default {
       const { roomsCurrentPage, roomsLimit, filterDate, filterContact, filterSector, filterTag } =
         this;
 
-      if (!paginate) {
+      if (paginate !== true) {
         this.roomsCurrentPage = 1;
       }
 
