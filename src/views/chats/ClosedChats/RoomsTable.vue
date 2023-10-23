@@ -236,14 +236,14 @@ export default {
   },
 
   methods: {
-    async getHistoryRooms({ paginate = false }) {
+    async getHistoryRooms(paginate) {
       this.isTableLoading = true;
       this.isPagesLoading = true;
 
       const { roomsCurrentPage, roomsLimit, filterDate, filterContact, filterSector, filterTag } =
         this;
 
-      if (!paginate) {
+      if (paginate !== true) {
         this.roomsCurrentPage = 1;
       }
 
@@ -320,7 +320,7 @@ export default {
 
   watch: {
     roomsCurrentPage() {
-      this.getHistoryRooms({ paginate: true });
+      this.getHistoryRooms(true);
     },
     filterContact() {
       const TIME_TO_WAIT_TYPING = 800;
