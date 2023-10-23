@@ -136,12 +136,16 @@ export default {
           return `${string}px`;
         }
 
-        const remainingTagsPaddingLeft = parseFloat(getComputedStyle(remainingTagsRef).paddingLeft);
-        container.style.paddingRight = addPx(
-          remainingTagsRef.offsetWidth + remainingTagsPaddingLeft,
-        );
+        if (remainingTagsRef) {
+          const remainingTagsPaddingLeft = parseFloat(
+            getComputedStyle(remainingTagsRef).paddingLeft,
+          );
+          container.style.paddingRight = addPx(
+            remainingTagsRef.offsetWidth + remainingTagsPaddingLeft,
+          );
 
-        remainingTagsRef.style.left = addPx(remainingTagsPos);
+          remainingTagsRef.style.left = addPx(remainingTagsPos);
+        }
       });
     },
   },

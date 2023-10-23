@@ -34,11 +34,13 @@
                 : $t('chat_with.bot')
             "
             :key="'feedback' + message.uuid"
+            :title="messageFormatTitle(new Date(message.created_on))"
           />
           <chat-feedback
             v-if="isFeedbackMessage(message)"
             :feedback="createFeedbackLabel(message)"
             :key="message.uuid"
+            :title="messageFormatTitle(new Date(message.created_on))"
           />
 
           <template v-else>
@@ -53,6 +55,7 @@
               :status="messageStatus({ message })"
               :key="message.uuid"
               :ref="`message-${message.uuid}`"
+              :title="messageFormatTitle(new Date(message.created_on))"
             >
               {{ isGeolocation(message.media[0]) ? message.media[0]?.url : message.text }}
             </unnnic-chats-message>
@@ -66,6 +69,7 @@
                 :mediaType="isImage(media) ? 'image' : isVideo(media) ? 'video' : 'audio'"
                 :time="new Date(message.created_on)"
                 :status="messageStatus({ message })"
+                :title="messageFormatTitle(new Date(message.created_on))"
                 @click="resendMedia({ message, media })"
               >
                 <img
@@ -99,6 +103,7 @@
                 :time="new Date(message.created_on)"
                 :documentName="media.url?.split('/').at(-1) || media.file.name"
                 :status="messageStatus({ message })"
+                :title="messageFormatTitle(new Date(message.created_on))"
                 @click="documentClickHandler({ message, media })"
               />
             </template>
@@ -288,6 +293,10 @@ export default {
       return `${this.$t('chats.closed')} ${moment(room.ended_at).format('LT')}h ${moment(
         room.ended_at,
       ).format('L')}`;
+    },
+
+    messageFormatTitle(date) {
+      return `${moment(date).format('HH:mm')} | ${moment(date).format('L')}`;
     },
 
     isEdgeRoomMessage(messagesByDateMinutes) {
