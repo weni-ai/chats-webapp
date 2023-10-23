@@ -1,4 +1,5 @@
 import http from '@/services/api/http';
+import Profile from '@/store/modules/profile';
 import { getProject } from '@/utils/config';
 
 async function downloadFileXlsx(path, filename) {
@@ -101,6 +102,7 @@ export default {
   async downloadAllData(idSector, agent, tag, startDate, endDate, option) {
     const idProject = getProject();
     const downloadOption = option === 'all_xls' ? `?xls=on` : '';
+    const { me } = Profile.state;
     const response = await http.get(`dashboard/${idProject}/export_dashboard/${downloadOption}`, {
       params: {
         sector: idSector,
@@ -108,6 +110,7 @@ export default {
         tag,
         start_date: startDate,
         end_date: endDate,
+        user_request: me?.email,
       },
     });
     if (response.status === 200) {
