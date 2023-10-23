@@ -90,8 +90,8 @@
       {{ $t('without_results') }}
     </p>
 
-    <rooms-table-pages-loading v-if="isPagesLoading" />
-    <section v-else class="closed-chats__rooms-table__pages">
+    <rooms-table-pages-loading v-show="isPagesLoading" />
+    <section v-show="!isPagesLoading" class="closed-chats__rooms-table__pages">
       <p class="closed-chats__rooms-table__pages__count">
         {{ tablePagination }}
       </p>
@@ -236,7 +236,7 @@ export default {
   },
 
   methods: {
-    async getHistoryRooms(paginate) {
+    async getHistoryRooms({ paginate = false }) {
       this.isTableLoading = true;
       this.isPagesLoading = true;
 
@@ -320,7 +320,7 @@ export default {
 
   watch: {
     roomsCurrentPage() {
-      this.getHistoryRooms(true);
+      this.getHistoryRooms({ paginate: true });
     },
     filterContact() {
       const TIME_TO_WAIT_TYPING = 800;
