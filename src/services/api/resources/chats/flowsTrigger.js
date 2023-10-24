@@ -47,6 +47,10 @@ export default {
     });
     return response.data;
   },
+  async listFlowsStart() {
+    const response = await http.get(`/project/${getProject()}/list_flows_start/`);
+    return response.data;
+  },
 
   async createContact(contact) {
     const response = await http.post(`/project/${getProject()}/create_contacts/`, contact);
