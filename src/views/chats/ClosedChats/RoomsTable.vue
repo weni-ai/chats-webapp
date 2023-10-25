@@ -90,14 +90,13 @@
       {{ $t('without_results') }}
     </p>
 
-    <rooms-table-pages-loading v-show="isPagesLoading" />
-    <section v-show="!isPagesLoading" class="closed-chats__rooms-table__pages">
-      <p class="closed-chats__rooms-table__pages__count">
-        {{ tablePagination }}
-      </p>
-
-      <unnnic-pagination v-model="roomsCurrentPage" :max="roomsCountPages" :show="roomsLimit" />
-    </section>
+    <table-pagination
+      v-model="roomsCurrentPage"
+      :count="roomsCount"
+      :countPages="roomsCountPages"
+      :limit="roomsLimit"
+      :is-loading="isPagesLoading"
+    />
   </section>
 </template>
 
@@ -109,8 +108,7 @@ import History from '@/services/api/resources/chats/history';
 
 import RoomsTableFiltersLoading from '@/views/loadings/ClosedChats/RoomsTableFiltersLoading';
 import RoomsTableLoading from '@/views/loadings/ClosedChats/RoomsTableLoading';
-import RoomsTablePagesLoading from '@/views/loadings/ClosedChats/RoomsTablePagesLoading';
-
+import TablePagination from '@/components/TablePagination';
 import TagGroup from '@/components/TagGroup.vue';
 
 export default {
@@ -120,7 +118,7 @@ export default {
     TagGroup,
     RoomsTableFiltersLoading,
     RoomsTableLoading,
-    RoomsTablePagesLoading,
+    TablePagination,
   },
 
   props: {
@@ -209,16 +207,6 @@ export default {
       ];
     },
 
-    tablePagination() {
-      const { roomsCurrentPage, roomsLimit, roomsCount } = this;
-
-      return this.$t('pagination', {
-        from: roomsCount === 0 ? 0 : (roomsCurrentPage - 1) * roomsLimit + 1,
-        to: Math.min(roomsCurrentPage * roomsLimit, roomsCount),
-        total: roomsCount,
-      });
-    },
-
     isFiltersDefault() {
       const { filterContact, filterSector, filterTag, filterDate, filterDateDefault } = this;
 
@@ -236,14 +224,14 @@ export default {
   },
 
   methods: {
-    async getHistoryRooms({ paginate = false }) {
+    async getHistoryRooms(paginate) {
       this.isTableLoading = true;
       this.isPagesLoading = true;
 
       const { roomsCurrentPage, roomsLimit, filterDate, filterContact, filterSector, filterTag } =
         this;
 
-      if (!paginate) {
+      if (paginate !== true) {
         this.roomsCurrentPage = 1;
       }
 
@@ -320,7 +308,7 @@ export default {
 
   watch: {
     roomsCurrentPage() {
-      this.getHistoryRooms({ paginate: true });
+      this.getHistoryRooms(true);
     },
     filterContact() {
       const TIME_TO_WAIT_TYPING = 800;
@@ -397,23 +385,6 @@ export default {
 
       &__visualize {
         width: 100%;
-      }
-    }
-
-    &__pages {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      height: min-content;
-
-      margin-top: $unnnic-spacing-md;
-      border-top: $unnnic-border-width-thinner solid $unnnic-color-neutral-soft;
-      padding-top: $unnnic-spacing-md;
-
-      &__count {
-        color: $unnnic-color-neutral-dark;
-        font-size: $unnnic-font-size-body-gt;
       }
     }
   }

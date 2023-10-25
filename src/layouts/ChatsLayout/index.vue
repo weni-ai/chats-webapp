@@ -14,7 +14,7 @@
             v-if="canTriggerFlows"
             size="small"
             type="secondary"
-            iconCenter="pencil-write-1"
+            iconCenter="send-email-3-1"
             @click="openFlowsTrigger"
           />
         </div>

@@ -35,6 +35,8 @@ export default {
   display: flex;
   flex-direction: column;
 
+  overflow: hidden auto;
+
   &__categories,
   &__row {
     display: grid;
