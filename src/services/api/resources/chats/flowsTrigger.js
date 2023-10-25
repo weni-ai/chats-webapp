@@ -47,13 +47,13 @@ export default {
     });
     return response.data;
   },
-  async listFlowsStart({ offset = 0, limit = 5, ended_at_before = '', ended_at_after = '' }) {
+  async listFlowsStart({ offset = 0, limit = 5, start_time = '', end_time = '' }) {
     const response = await http.get(`/project/${getProject()}/list_flows_start/`, {
       params: {
         offset,
         limit,
-        ended_at_before,
-        ended_at_after,
+        start_time,
+        end_time,
       },
     });
     return response.data;
