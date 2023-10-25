@@ -95,7 +95,7 @@ export default {
   }),
 
   async mounted() {
-    this.triggeredFlows = await FlowsTrigger.listFlowsStart();
+    this.getListFlowsStart();
   },
 
   computed: {
@@ -134,6 +134,41 @@ export default {
     getTime(date) {
       return moment(date).format('HH:mm');
     },
+    async getListFlowsStart(paginate) {
+      this.isTableLoading = true;
+      this.isPagesLoading = true;
+
+      const { triggeredFlowsCurrentPage, triggeredFlowsLimit, filterDate } = this;
+
+      if (paginate !== true) {
+        this.triggeredFlowsCurrentPage = 1;
+      }
+
+      const offset = (triggeredFlowsCurrentPage - 1) * triggeredFlowsLimit;
+
+      try {
+        const response = await FlowsTrigger.listFlowsStart({
+          offset,
+          limit: triggeredFlowsLimit,
+          ended_at_before: filterDate.end,
+          ended_at_after: filterDate.start,
+        });
+        this.triggeredFlows = response.results || response;
+        this.triggeredFlowsCount = response.count || 0;
+        this.triggeredFlowsCountPages = Math.ceil(response.count || 0 / triggeredFlowsLimit);
+      } catch (error) {
+        console.log(error);
+      }
+
+      this.isTableLoading = false;
+      this.isPagesLoading = false;
+    },
+  },
+  watch: {
+    triggeredFlowsCurrentPage() {
+      this.getListFlowsStart(true);
+    },
+    filterDate: 'getListFlowsStart',
   },
 };
 </script>

@@ -47,8 +47,15 @@ export default {
     });
     return response.data;
   },
-  async listFlowsStart() {
-    const response = await http.get(`/project/${getProject()}/list_flows_start/`);
+  async listFlowsStart({ offset = 0, limit = 5, ended_at_before = '', ended_at_after = '' }) {
+    const response = await http.get(`/project/${getProject()}/list_flows_start/`, {
+      params: {
+        offset,
+        limit,
+        ended_at_before,
+        ended_at_after,
+      },
+    });
     return response.data;
   },
 
