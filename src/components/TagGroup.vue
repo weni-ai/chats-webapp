@@ -156,9 +156,12 @@ export default {
 $tag-size: 28px;
 .tag-group {
   display: flex;
-  height: $tag-size;
   overflow-y: hidden;
   align-items: center;
+
+  &:not(.flex) {
+    height: $tag-size;
+  }
 
   &__tags {
     position: relative;
