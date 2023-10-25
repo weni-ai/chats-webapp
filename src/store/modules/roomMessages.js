@@ -194,9 +194,7 @@ export default {
 
   actions: {
     async getRoomMessages({ commit, state }, { offset = null, concat = false, limit = null }) {
-      const { activeRoom } = Rooms.state;
-
-      if (!activeRoom) {
+      if (!Rooms.state.activeRoom?.uuid) {
         return;
       }
 
@@ -207,12 +205,17 @@ export default {
 
       async function fetchData() {
         try {
-          const response = await Message.getByRoom({ nextReq }, activeRoom.uuid, offset, limit);
+          const response = await Message.getByRoom(
+            { nextReq },
+            Rooms.state.activeRoom.uuid,
+            offset,
+            limit,
+          );
 
           const { results: messages, next: hasNext } = response;
           let newMessages = messages;
 
-          if (!messages?.[0] || !activeRoom?.uuid || messages?.[0]?.room !== activeRoom.uuid) {
+          if (messages?.[0]?.room !== Rooms.state.activeRoom.uuid) {
             return;
           }
 
