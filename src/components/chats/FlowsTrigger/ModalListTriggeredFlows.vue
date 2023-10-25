@@ -16,7 +16,8 @@
         />
       </div>
     </section>
-    <!-- <rooms-table-loading v-if="isTableLoading" /> -->
+
+    <triggered-flows-loading v-if="isTableLoading" />
     <unnnic-table
       v-if="!isTableLoading && triggeredFlows.length > 0"
       :items="triggeredFlows"
@@ -63,14 +64,17 @@
 
 <script>
 import moment from 'moment';
-import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 
+import TriggeredFlowsLoading from '@/views/loadings/TriggeredFlowsLoading';
 import TablePagination from '@/components/TablePagination';
+
+import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 
 export default {
   name: 'ModalListTriggeredFlows',
 
   components: {
+    TriggeredFlowsLoading,
     TablePagination,
   },
 
