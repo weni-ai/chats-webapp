@@ -150,8 +150,8 @@ export default {
         const response = await FlowsTrigger.listFlowsStart({
           offset,
           limit: triggeredFlowsLimit,
-          ended_at_before: filterDate.end,
-          ended_at_after: filterDate.start,
+          end_time: filterDate.end,
+          start_time: filterDate.start,
         });
         this.triggeredFlows = response.results || response;
         this.triggeredFlowsCount = response.count || 0;
