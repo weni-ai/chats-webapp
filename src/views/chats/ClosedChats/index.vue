@@ -91,7 +91,7 @@ export default {
 
   computed: {
     ...mapState({
-      roomMessagesNext: (state) => state.roomMessages.roomMessagesNext,
+      roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,
     }),
   },
 
@@ -128,7 +128,7 @@ export default {
         //
         // if (previousRoom) {
         //   const responseRoom = await History.getHistoryContactRoom({ room: previousRoom.uuid });
-        //   await this.$store.dispatch('rooms/setActiveRoom', responseRoom);
+        //   await this.$store.dispatch('chats/rooms/setActiveRoom', responseRoom);
         //   this.getHistoryContactRoomMessages();
         //   this.selectedRoom = responseRoom;
         // }
@@ -136,7 +136,7 @@ export default {
     },
 
     async getHistoryContactRoomMessages() {
-      await this.$store.dispatch('roomMessages/getRoomMessages', { concat: true });
+      await this.$store.dispatch('chats/roomMessages/getRoomMessages', { concat: true });
     },
   },
 
@@ -145,8 +145,8 @@ export default {
       immediate: true,
       async handler(roomId) {
         if (!roomId) {
-          await this.$store.dispatch('rooms/setActiveRoom', null);
-          await this.$store.dispatch('roomMessages/resetRoomMessages');
+          await this.$store.dispatch('chats/rooms/setActiveRoom', null);
+          await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
         }
         if (roomId) {
           this.isLoadingSelectedRoom = true;
@@ -164,7 +164,7 @@ export default {
             path: 'closed-rooms/:roomId',
           });
           this.selectedRoom = responseRoom;
-          await this.$store.dispatch('rooms/setActiveRoom', this.selectedRoom);
+          await this.$store.dispatch('chats/rooms/setActiveRoom', this.selectedRoom);
           await this.getHistoryContactRoomMessages();
           const responseRoomUuids = await History.getHistoryContactRoomsUuids({
             external_id: responseRoom.contact.external_id,

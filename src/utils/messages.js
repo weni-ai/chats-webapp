@@ -1,4 +1,4 @@
-import Rooms from '../store/modules/rooms';
+import Rooms from '../store/modules/chats/rooms';
 import Profile from '../store/modules/profile';
 
 const moment = require('moment');

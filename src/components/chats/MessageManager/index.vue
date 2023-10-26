@@ -152,7 +152,7 @@ export default {
     ...mapState({
       quickMessages: (state) => state.chats.quickMessages.quickMessages,
       quickMessagesShared: (state) => state.chats.quickMessagesShared.quickMessagesShared,
-      canUseCopilot: (state) => state.rooms.canUseCopilot,
+      canUseCopilot: (state) => state.chats.rooms.canUseCopilot,
     }),
 
     textBoxMessage: {
@@ -288,7 +288,7 @@ export default {
       const message = this.textBoxMessage.trim();
       if (message) {
         this.clearTextBox();
-        await this.$store.dispatch('roomMessages/sendMessage', message);
+        await this.$store.dispatch('chats/roomMessages/sendMessage', message);
       }
     },
     async sendAudio() {

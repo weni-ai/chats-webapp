@@ -1,8 +1,8 @@
 import chats from './chats';
 import config from './config';
 import profile from './profile';
-import rooms from './rooms';
-import roomMessages from './roomMessages';
+import rooms from './chats/rooms';
+import roomMessages from './chats/roomMessages';
 import settings from './settings';
 import dashboard from './dashboard';
 

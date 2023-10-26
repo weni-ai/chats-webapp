@@ -173,10 +173,10 @@ export default {
 
   computed: {
     ...mapState({
-      room: (state) => state.rooms.activeRoom,
+      room: (state) => state.chats.rooms.activeRoom,
       me: (state) => state.profile.me,
-      roomMessagesNext: (state) => state.roomMessages.roomMessagesNext,
-      listRoomHasNext: (state) => state.rooms.listRoomHasNext,
+      roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,
+      listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
       showModalAssumedChat: ({ dashboard }) => dashboard.showModalAssumedChat,
       assumedChatContactName: ({ dashboard }) => dashboard.assumedChatContactName,
     }),
@@ -229,15 +229,15 @@ export default {
       const tags = this.tags.map((tag) => tag.uuid);
       await Room.close(uuid, tags);
       this.$router.replace({ name: 'home' });
-      this.$store.dispatch('rooms/removeRoom', uuid);
+      this.$store.dispatch('chats/rooms/removeRoom', uuid);
     },
     async setActiveRoom(uuid) {
-      const room = this.$store.getters['rooms/getRoomById'](uuid);
+      const room = this.$store.getters['chats/rooms/getRoomById'](uuid);
       if (this.$route.name !== 'home' && !room) {
         this.$router.replace({ name: 'home' });
       }
-      await this.$store.dispatch('rooms/setActiveRoom', room);
-      await this.$store.dispatch('rooms/getCanUseCopilot');
+      await this.$store.dispatch('chats/rooms/setActiveRoom', room);
+      await this.$store.dispatch('chats/rooms/getCanUseCopilot');
       this.componentInAsideSlot = '';
       this.page = 0;
       this.readMessages();
@@ -250,7 +250,7 @@ export default {
       this.isLoading = true;
 
       await this.$store
-        .dispatch('roomMessages/getRoomMessages', {
+        .dispatch('chats/roomMessages/getRoomMessages', {
           offset: this.page * this.limit,
           concat,
           limit: this.limit,
@@ -290,7 +290,7 @@ export default {
             Object.values(loadingFiles).reduce((acc, value) => acc + value) /
             Object.keys(loadingFiles).length;
         };
-        await this.$store.dispatch('roomMessages/sendMedias', { files, updateLoadingFiles });
+        await this.$store.dispatch('chats/roomMessages/sendMedias', { files, updateLoadingFiles });
         this.totalValue = undefined;
       } catch (e) {
         console.error('O upload de alguns arquivos pode não ter sido concluído');
@@ -310,7 +310,10 @@ export default {
       const response = await fetch(this.audioMessage.src);
       const blob = await response.blob();
       const audio = new File([blob], `${Date.now().toString()}.mp3`, { type: 'audio/mpeg3' });
-      await this.$store.dispatch('roomMessages/sendMedias', { files: [audio], updateLoadingFiles });
+      await this.$store.dispatch('chats/roomMessages/sendMedias', {
+        files: [audio],
+        updateLoadingFiles,
+      });
       this.totalValue = undefined;
       this.$refs['message-editor'].clearAudio();
       this.audioMessage = null;
@@ -373,12 +376,12 @@ export default {
     id: {
       immediate: true,
       async handler() {
-        if (this.$store.state.rooms.newMessagesByRoom[this.id]) {
-          this.$delete(this.$store.state.rooms.newMessagesByRoom, this.id);
+        if (this.$store.state.chats.rooms.newMessagesByRoom[this.id]) {
+          this.$delete(this.$store.state.chats.rooms.newMessagesByRoom, this.id);
         }
 
         this.isRoomSkeletonActive = true;
-        await this.$store.dispatch('roomMessages/resetRoomMessages');
+        await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
         await this.setActiveRoom(this.id);
         await this.getRoomMessages();
       },

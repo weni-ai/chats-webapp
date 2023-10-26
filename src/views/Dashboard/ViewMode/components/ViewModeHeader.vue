@@ -24,7 +24,7 @@ export default {
 
   methods: {
     async closeViewMode() {
-      await this.$store.dispatch('rooms/setActiveRoom', null);
+      await this.$store.dispatch('chats/rooms/setActiveRoom', null);
       this.$router.push({ name: 'dashboard.manager' });
     },
   },

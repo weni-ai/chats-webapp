@@ -44,7 +44,7 @@ export default {
 
   computed: {
     ...mapState({
-      room: (state) => state.rooms.activeRoom,
+      room: (state) => state.chats.rooms.activeRoom,
       me: (state) => state.profile.me,
     }),
   },
@@ -74,9 +74,9 @@ export default {
     },
 
     async setActiveRoom(uuid) {
-      const room = this.$store.getters['rooms/getRoomById'](uuid);
+      const room = this.$store.getters['chats/rooms/getRoomById'](uuid);
       if (!room) this.$router.push({ name: 'home' });
-      await this.$store.dispatch('rooms/setActiveRoom', room);
+      await this.$store.dispatch('chats/rooms/setActiveRoom', room);
     },
   },
 };

@@ -122,18 +122,19 @@ export default {
 
   computed: {
     ...mapGetters({
-      rooms: 'rooms/agentRooms',
-      rooms_queue: 'rooms/waitingQueue',
-      rooms_sent_flows: 'rooms/waitingContactAnswer',
+      rooms: 'chats/rooms/agentRooms',
+      rooms_queue: 'chats/rooms/waitingQueue',
+      rooms_sent_flows: 'chats/rooms/waitingContactAnswer',
     }),
     ...mapState({
-      listRoomHasNext: (state) => state.rooms.listRoomHasNext,
+      listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
     }),
 
     totalUnreadMessages() {
       return this.rooms.reduce(
         (total, room) =>
-          total + (this.$store.state.rooms.newMessagesByRoom[room.uuid]?.messages?.length || 0),
+          total +
+          (this.$store.state.chats.rooms.newMessagesByRoom[room.uuid]?.messages?.length || 0),
         0,
       );
     },
@@ -171,7 +172,7 @@ export default {
   methods: {
     async open(room) {
       if (this.isViewMode) {
-        await this.$store.dispatch('rooms/setActiveRoom', room);
+        await this.$store.dispatch('chats/rooms/setActiveRoom', room);
       } else {
         const path = `/chats/${room.uuid}`;
 
@@ -189,7 +190,7 @@ export default {
       this.isLoadingRooms = true;
       const { viewedAgent } = this;
       try {
-        await this.$store.dispatch('rooms/getAll', {
+        await this.$store.dispatch('chats/rooms/getAll', {
           offset: this.page * this.limit,
           concat,
           order,

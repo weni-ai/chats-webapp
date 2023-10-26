@@ -215,10 +215,10 @@ export default {
 
   computed: {
     ...mapState({
-      roomMessagesSendingUuids: (state) => state.roomMessages.roomMessagesSendingUuids,
-      roomMessagesFailedUuids: (state) => state.roomMessages.roomMessagesFailedUuids,
-      roomMessages: (state) => state.roomMessages.roomMessages,
-      roomMessagesSorted: (state) => state.roomMessages.roomMessagesSorted,
+      roomMessagesSendingUuids: (state) => state.chats.roomMessages.roomMessagesSendingUuids,
+      roomMessagesFailedUuids: (state) => state.chats.roomMessages.roomMessagesFailedUuids,
+      roomMessages: (state) => state.chats.roomMessages.roomMessages,
+      roomMessagesSorted: (state) => state.chats.roomMessages.roomMessagesSorted,
     }),
     medias() {
       return this.roomMessages
@@ -230,9 +230,9 @@ export default {
 
   methods: {
     ...mapActions({
-      resendMessages: 'roomMessages/resendMessages',
-      resendMessage: 'roomMessages/resendMessage',
-      resendMedia: 'roomMessages/resendMedia',
+      resendMessages: 'chats/roomMessages/resendMessages',
+      resendMessage: 'chats/roomMessages/resendMessage',
+      resendMedia: 'chats/roomMessages/resendMedia',
     }),
     isMediaOfType(media, type) {
       return media && media.content_type?.includes(type);

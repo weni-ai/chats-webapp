@@ -106,7 +106,7 @@ export default {
         initial_message: this.message,
       });
 
-      await this.$store.dispatch('rooms/setActiveRoom', response);
+      await this.$store.dispatch('chats/rooms/setActiveRoom', response);
 
       this.close();
     },

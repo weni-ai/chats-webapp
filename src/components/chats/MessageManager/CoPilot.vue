@@ -79,7 +79,7 @@ export default {
   },
   computed: {
     ...mapState({
-      copilotSuggestion: (state) => state.rooms.copilotSuggestion,
+      copilotSuggestion: (state) => state.chats.rooms.copilotSuggestion,
     }),
     isError() {
       return !this.isLoading && !this.copilotSuggestion;
@@ -87,8 +87,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      getCopilotSuggestion: 'rooms/getCopilotSuggestion',
-      clearCopilotSuggestion: 'rooms/clearCopilotSuggestion',
+      getCopilotSuggestion: 'chats/rooms/getCopilotSuggestion',
+      clearCopilotSuggestion: 'chats/rooms/clearCopilotSuggestion',
     }),
     close() {
       this.$emit('close');

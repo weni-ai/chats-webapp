@@ -61,7 +61,7 @@ export default {
 
   computed: {
     ...mapState({
-      activeRoom: (state) => state.rooms.activeRoom,
+      activeRoom: (state) => state.chats.rooms.activeRoom,
       me: (state) => state.profile.me,
       viewedAgent: (state) => state.dashboard.viewedAgent,
       nextQuickMessages: (state) => state.chats.quickMessages.nextQuickMessages,
@@ -198,10 +198,10 @@ export default {
 
     listeners() {
       this.ws.on('msg.create', async (message) => {
-        const { rooms, activeRoom } = this.$store.state.rooms;
+        const { rooms, activeRoom } = this.$store.state.chats.rooms;
         const findRoom = rooms.find((room) => room.uuid === message.room);
 
-        this.$store.dispatch('rooms/bringRoomFront', findRoom);
+        this.$store.dispatch('chats/rooms/bringRoomFront', findRoom);
         if (findRoom) {
           if (this.me.email === message.user?.email) {
             return;
@@ -224,12 +224,12 @@ export default {
             this.$route.params.viewedAgent && activeRoom?.uuid === message.room;
 
           if (isCurrentRoom || isViewModeCurrentRoom) {
-            this.$store.dispatch('roomMessages/addMessage', message);
+            this.$store.dispatch('chats/roomMessages/addMessage', message);
           }
 
           if (this.isAJson(message.text)) return;
 
-          this.$store.dispatch('rooms/addNewMessagesByRoom', {
+          this.$store.dispatch('chats/rooms/addNewMessagesByRoom', {
             room: message.room,
             message: {
               created_on: message.created_on,
@@ -243,7 +243,7 @@ export default {
       this.ws.on('rooms.create', (room) => {
         if (!!room.user && room.user.email !== this.me.email) return;
 
-        this.$store.dispatch('rooms/addRoom', room);
+        this.$store.dispatch('chats/rooms/addRoom', room);
         const notification = new Notification('select-sound');
         notification.notify();
       });
@@ -255,16 +255,18 @@ export default {
         }
 
         if (
-          !this.$store.state.rooms.rooms.find((alreadyInRoom) => alreadyInRoom.uuid === room.uuid)
+          !this.$store.state.chats.rooms.rooms.find(
+            (alreadyInRoom) => alreadyInRoom.uuid === room.uuid,
+          )
         ) {
-          this.$store.dispatch('rooms/addRoom', room);
+          this.$store.dispatch('chats/rooms/addRoom', room);
 
           const notification = new Notification('select-sound');
           notification.notify();
         }
 
         const { viewedAgent } = this;
-        this.$store.dispatch('rooms/updateRoom', {
+        this.$store.dispatch('chats/rooms/updateRoom', {
           room,
           userEmail: this.me.email,
           routerReplace: () => this.$router.replace({ name: 'home' }),
@@ -272,21 +274,21 @@ export default {
         });
 
         if (room.unread_msgs === 0) {
-          this.$store.dispatch('rooms/resetNewMessagesByRoom', {
+          this.$store.dispatch('chats/rooms/resetNewMessagesByRoom', {
             room: room.uuid,
           });
         }
       });
 
       this.ws.on('rooms.close', (room) => {
-        this.$store.dispatch('rooms/removeRoom', room.uuid);
+        this.$store.dispatch('chats/rooms/removeRoom', room.uuid);
       });
 
       this.ws.on('msg.update', (message) => {
         if (this.me.email === message.user?.email) {
           return;
         }
-        this.$store.dispatch('roomMessages/addMessage', message);
+        this.$store.dispatch('chats/roomMessages/addMessage', message);
       });
 
       this.ws.on('status.update', (info) => {

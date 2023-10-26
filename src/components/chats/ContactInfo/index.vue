@@ -270,11 +270,11 @@ export default {
 
   computed: {
     ...mapState({
-      room: (state) => state.rooms.activeRoom,
+      room: (state) => state.chats.rooms.activeRoom,
     }),
 
     lastMessageFromContact() {
-      const messages = this.$store.state.roomMessages.roomMessages;
+      const messages = this.$store.state.chats.roomMessages.roomMessages;
       if (messages) {
         return messages.findLast((message) => message.contact);
       }
@@ -507,7 +507,7 @@ export default {
       const { uuid } = this.room;
 
       try {
-        await this.$store.dispatch('rooms/updateRoomContact', { uuid });
+        await this.$store.dispatch('chats/rooms/updateRoomContact', { uuid });
 
         this.showAlert('Informações atualizadas');
       } catch (error) {
@@ -565,7 +565,6 @@ export default {
       return value.toString().toLowerCase();
     },
     async transferContact() {
-      this.$store.commit('chats/removeChat', this.room);
       if (this.transferRadio === 'agent') {
         await Room.take(this.room.uuid, this.transferPersonSelected.value);
       }

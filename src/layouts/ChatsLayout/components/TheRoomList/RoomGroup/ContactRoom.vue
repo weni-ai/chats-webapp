@@ -51,9 +51,9 @@ export default {
   computed: {
     ...mapState({
       newMessages(state) {
-        return state.rooms.newMessagesByRoom[this.room.uuid]?.messages;
+        return state.chats.rooms.newMessagesByRoom[this.room.uuid]?.messages;
       },
-      activeRoomId: (state) => state.rooms.activeRoom?.uuid,
+      activeRoomId: (state) => state.chats.rooms.activeRoom?.uuid,
     }),
     lastMessage() {
       const { newMessages, room } = this;
