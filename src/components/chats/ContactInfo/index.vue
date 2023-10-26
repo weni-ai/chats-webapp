@@ -86,9 +86,18 @@
               class="transfer__button"
               :text="$t('contact_info.see_contact_history')"
               iconLeft="export-1"
-              type="tertiary"
+              type="secondary"
               size="small"
               @click="openHistory()"
+            />
+            <unnnic-button
+              v-if="!isHistory && !isViewMode"
+              class="open-discussion"
+              :text="$t('discussions.start_discussion.title')"
+              iconLeft="messaging-we-chat-3"
+              type="primary"
+              size="large"
+              @click="handleModalStartDiscussion()"
             />
             <div v-if="isLinkedToOtherAgent">
               <span>{{
@@ -146,6 +155,10 @@
         </aside-slot-template-section>
       </section>
 
+      <modal-start-discussion
+        :showModal="isShowModalStartDiscussion"
+        @close="handleModalStartDiscussion()"
+      />
       <unnnic-modal
         :text="$t('successfully_transferred_chat')"
         :description="
@@ -202,6 +215,7 @@ import CustomField from './CustomField';
 import ContactMedia from './Media';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
 import VideoPreview from '../MediaMessage/Previews/Video';
+import ModalStartDiscussion from './ModalStartDiscussion';
 
 const moment = require('moment');
 
@@ -216,6 +230,7 @@ export default {
     ContactMedia,
     FullscreenPreview,
     VideoPreview,
+    ModalStartDiscussion,
   },
   props: {
     closedRoom: {
@@ -250,6 +265,7 @@ export default {
     customFields: [],
     currentCustomField: {},
     isRefreshContactDisabled: false,
+    isShowModalStartDiscussion: false,
   }),
 
   computed: {
@@ -325,6 +341,10 @@ export default {
     moment,
     openHistory() {
       window.open(`/closed-chats/${this.room.contact.uuid}`);
+    },
+
+    handleModalStartDiscussion() {
+      this.isShowModalStartDiscussion = !this.isShowModalStartDiscussion;
     },
 
     async getQueues() {
