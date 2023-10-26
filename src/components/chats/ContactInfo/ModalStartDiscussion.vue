@@ -57,6 +57,7 @@
 <script>
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
+import Discussion from '@/services/api/resources/chats/discussion';
 
 export default {
   name: 'ModalStartDiscussion',
@@ -82,7 +83,9 @@ export default {
 
   async created() {
     await this.getSectors();
-    this.queuesToSelect = [{ value: '', label: this.$t('queue') }];
+    this.queuesToSelect = [
+      { value: '', label: this.$t('discussions.start_discussion.form.search_queue') },
+    ];
   },
 
   computed: {
@@ -97,6 +100,14 @@ export default {
     },
 
     async startDiscussion() {
+      const response = await Discussion.create({
+        queue: this.queue[0].value || '',
+        subject: this.subject,
+        initial_message: this.message,
+      });
+
+      await this.$store.dispatch('rooms/setActiveRoom', response);
+
       this.close();
     },
 
@@ -105,7 +116,9 @@ export default {
         const response = await Sector.list();
         const { results } = response;
 
-        const newSectors = [{ value: '', label: this.$t('sector.title') }];
+        const newSectors = [
+          { value: '', label: this.$t('discussions.start_discussion.form.search_sector') },
+        ];
         results.forEach(({ uuid, name }) => newSectors.push({ value: uuid, label: name }));
         this.sectorsToSelect = newSectors;
       } catch (error) {
@@ -160,7 +173,7 @@ export default {
     }
   }
   :deep(.unnnic-modal-container-background) {
-    width: 66%; // -> 8 / 12
+    width: 50%; // -> 6 / 12
   }
 }
 </style>

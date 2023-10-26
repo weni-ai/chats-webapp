@@ -870,6 +870,16 @@
           "en-us": "Select queue",
           "es": "Seleccionar cola"
         },
+        "search_sector": {
+          "pt-br": "Pesquisar setor",
+          "en-us": "Search Sector",
+          "es": "Buscar sector"
+        },
+        "search_queue": {
+          "pt-br": "Pesquisar fila",
+          "en-us": "Search queue",
+          "es": "Buscar cola"
+        },
         "subject": {
           "pt-br": "Assunto",
           "en-us": "Subject",
