@@ -17,6 +17,7 @@
 <script>
 import { mapState } from 'vuex';
 
+import Profile from '@/services/api/resources/profile';
 import Room from '@/services/api/resources/chats/room';
 
 export default {
@@ -55,8 +56,15 @@ export default {
 
     async getChat() {
       if (this.whenGetChat) this.whenGetChat();
+      let me = this.me.email;
 
-      await Room.take(this.room.uuid, this.me.email);
+      if (!me) {
+        const response = await Profile.me();
+        me = response.email;
+        this.$store.commit('profile/setMe', response);
+      }
+
+      await Room.take(this.room.uuid, me);
       await this.setActiveRoom(this.room.uuid);
       if (this.room.user) {
         Room.updateReadMessages(this.room.uuid, true);
