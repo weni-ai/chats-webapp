@@ -15,11 +15,19 @@ const routes = [
     component: Home,
   },
   {
-    path: '/chats/:id',
+    path: '/chats/:roomId',
     name: 'room',
     component: Home,
     props: (route) => ({
-      id: route.params.id,
+      roomId: route.params.roomId,
+    }),
+  },
+  {
+    path: '/discussions/:discussionId',
+    name: 'discussion',
+    component: Home,
+    props: (route) => ({
+      discussionId: route.params.discussionId,
     }),
   },
   {

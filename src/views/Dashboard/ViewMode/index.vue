@@ -157,7 +157,7 @@ export default {
       actionMap[action]();
     },
     whenGetChat() {
-      this.$router.push({ name: 'room', params: { id: this.room.uuid } });
+      this.$router.push({ name: 'room', params: { roomId: this.room.uuid } });
     },
   },
 

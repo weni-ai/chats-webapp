@@ -57,7 +57,6 @@
 <script>
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
-import Discussion from '@/services/api/resources/chats/discussion';
 
 export default {
   name: 'ModalStartDiscussion',
@@ -100,13 +99,13 @@ export default {
     },
 
     async startDiscussion() {
-      const response = await Discussion.create({
+      const newDiscussion = await this.$store.dispatch('chats/discussions/create', {
         queue: this.queue[0].value || '',
         subject: this.subject,
         initial_message: this.message,
       });
 
-      await this.$store.dispatch('chats/rooms/setActiveRoom', response);
+      this.$router.push({ name: 'discussion', params: { discussionId: newDiscussion.uuid } });
 
       this.close();
     },

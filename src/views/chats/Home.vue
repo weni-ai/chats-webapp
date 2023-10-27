@@ -3,6 +3,7 @@
     ref="chats-layout"
     @select-quick-message="(quickMessage) => updateTextBoxMessage(quickMessage.text)"
   >
+    <div v-if="discussionId">{{ discussionId }}</div>
     <room-loading v-show="isRoomSkeletonActive" />
     <chats-background v-if="!room && !isRoomSkeletonActive" />
     <section v-if="!!room" v-show="!isRoomSkeletonActive" class="active-chat">
@@ -142,7 +143,11 @@ export default {
   },
 
   props: {
-    id: {
+    roomId: {
+      type: String,
+      default: '',
+    },
+    discussionId: {
       type: String,
       default: '',
     },
@@ -373,17 +378,19 @@ export default {
       if (!newValue) this.componentInAsideSlot = '';
       if (newValue) this.updateTextBoxMessage('');
     },
-    id: {
+    roomId: {
       immediate: true,
-      async handler() {
-        if (this.$store.state.chats.rooms.newMessagesByRoom[this.id]) {
-          this.$delete(this.$store.state.chats.rooms.newMessagesByRoom, this.id);
-        }
+      async handler(roomId) {
+        if (roomId) {
+          if (this.$store.state.chats.rooms.newMessagesByRoom[roomId]) {
+            this.$delete(this.$store.state.chats.rooms.newMessagesByRoom, roomId);
+          }
 
-        this.isRoomSkeletonActive = true;
-        await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
-        await this.setActiveRoom(this.id);
-        await this.getRoomMessages();
+          this.isRoomSkeletonActive = true;
+          await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
+          await this.setActiveRoom(roomId);
+          await this.getRoomMessages();
+        }
       },
     },
   },
