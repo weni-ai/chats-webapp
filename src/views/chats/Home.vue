@@ -5,12 +5,12 @@
   >
     <div v-if="discussionId">{{ discussionId }}</div>
     <room-loading v-show="isRoomSkeletonActive" />
-    <chats-background v-if="!room && !isRoomSkeletonActive" />
+    <chats-background v-if="!room && !discussion && !isRoomSkeletonActive" />
     <section v-if="!!room" v-show="!isRoomSkeletonActive" class="active-chat">
       <unnnic-chats-header
         :title="room.contact.name || ''"
-        :avatarClick="openContactInfo"
-        :titleClick="openContactInfo"
+        :avatarClick="() => openRoomContactInfo()"
+        :titleClick="() => openRoomContactInfo()"
         :avatarName="room.contact.name"
         :close="openModalCloseChat"
       />
@@ -18,7 +18,7 @@
       <chats-dropzone @open-file-uploader="openFileUploader" :show="room.user && room.is_24h_valid">
         <chat-messages
           :room="room"
-          @show-contact-info="componentInAsideSlot = 'contactInfo'"
+          @show-contact-info="openRoomContactInfo"
           @scrollTop="searchForMoreMessages"
         />
 
@@ -57,6 +57,8 @@
       </section>
     </section>
 
+    <section v-if="!!discussion"></section>
+
     <unnnic-modal
       v-if="room"
       :showModal="isCloseChatModalOpen"
@@ -93,7 +95,7 @@
     <file-uploader v-model="files" ref="fileUploader" @upload="sendFileMessage" />
 
     <template #aside>
-      <component :is="sidebarComponent.name" v-on="sidebarComponent.listeners" />
+      <contact-info v-if="room && isRoomContactInfoOpen" @close="closeRoomContactInfo" />
     </template>
     <modal-close-chat v-if="showCloseModal" @close="closeModalCloseChat" :room="room" />
   </chats-layout>
@@ -112,7 +114,6 @@ import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
 import ContactInfo from '@/components/chats/ContactInfo';
 import ChatClassifier from '@/components/chats/ChatClassifier';
-import QuickMessages from '@/components/chats/QuickMessages';
 import ModalCloseChat from '@/views/chats/ModalCloseChat.vue';
 
 import Room from '@/services/api/resources/chats/room';
@@ -133,7 +134,6 @@ export default {
     ChatHeaderSendFlow,
     ChatMessages,
     ContactInfo,
-    QuickMessages,
     MessageManager,
     ChatClassifier,
     ModalCloseChat,
@@ -158,7 +158,7 @@ export default {
      * @type {HTMLAudioElement}
      */
     audioMessage: null,
-    componentInAsideSlot: '',
+    isRoomContactInfoOpen: false,
     textBoxMessage: '',
     isCloseChatModalOpen: false,
     tags: [],
@@ -179,6 +179,7 @@ export default {
   computed: {
     ...mapState({
       room: (state) => state.chats.rooms.activeRoom,
+      discussion: (state) => state.chats.discussions.activeDiscussion,
       me: (state) => state.profile.me,
       roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,
       listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
@@ -195,21 +196,6 @@ export default {
         !!this.room.user
       );
     },
-    sidebarComponent() {
-      return this.sidebarComponents[this.componentInAsideSlot] || {};
-    },
-    sidebarComponents() {
-      return {
-        contactInfo: {
-          name: ContactInfo.name,
-          listeners: {
-            close: () => {
-              this.componentInAsideSlot = '';
-            },
-          },
-        },
-      };
-    },
   },
 
   methods: {
@@ -219,8 +205,11 @@ export default {
       const response = await Queue.tags(this.room.queue.uuid);
       this.sectorTags = response.results;
     },
-    openContactInfo() {
-      this.componentInAsideSlot = 'contactInfo';
+    openRoomContactInfo() {
+      this.isRoomContactInfoOpen = true;
+    },
+    closeRoomContactInfo() {
+      this.isRoomContactInfoOpen = false;
     },
     async readMessages() {
       if (this.room && this.room.uuid && this.room.user && this.room.user.email === this.me.email) {
@@ -243,12 +232,12 @@ export default {
       }
       await this.$store.dispatch('chats/rooms/setActiveRoom', room);
       await this.$store.dispatch('chats/rooms/getCanUseCopilot');
-      this.componentInAsideSlot = '';
+      this.closeRoomContactInfo();
       this.page = 0;
       this.readMessages();
     },
     whenGetChat() {
-      this.componentInAsideSlot = '';
+      this.closeRoomContactInfo();
       this.page = 0;
     },
     async getRoomMessages(concat) {
@@ -375,7 +364,7 @@ export default {
 
   watch: {
     room(newValue) {
-      if (!newValue) this.componentInAsideSlot = '';
+      if (!newValue) this.closeRoomContactInfo();
       if (newValue) this.updateTextBoxMessage('');
     },
     roomId: {
