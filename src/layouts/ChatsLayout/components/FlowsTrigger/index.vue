@@ -17,7 +17,7 @@
     </aside-slot-template-section>
     <aside-slot-template-section class="flows-trigger" v-else>
       <unnnic-button
-        type="primary"
+        type="secondary"
         size="small"
         :text="$t('flows_trigger.triggered_flows.title')"
         @click="showTriggeredFlowsModal = true"

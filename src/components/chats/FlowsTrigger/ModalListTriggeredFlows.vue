@@ -11,7 +11,7 @@
         <unnnic-input-date-picker
           class="modal-list-triggered-flows__handlers__date-picker"
           v-model="filterDate"
-          position="right"
+          position="left"
           :inputFormat="$t('date_format')"
         />
       </div>
@@ -179,7 +179,7 @@ export default {
     margin-bottom: $unnnic-spacing-sm;
 
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
 
     &__input {
       display: grid;
@@ -216,19 +216,27 @@ export default {
     display: grid;
     grid-template-rows: auto 1fr auto;
 
+    overflow: visible;
+
     & > * {
       background-color: $unnnic-color-neutral-white;
     }
 
-    .unnnic-modal-container-background-body-description {
-      display: flex;
-      flex-direction: column;
+    .unnnic-modal-container-background-body {
+      border-radius: $unnnic-spacing-nano $unnnic-spacing-nano 0 0;
 
-      overflow: visible;
-    }
-    .unnnic-modal-container-background-body-description-container {
-      padding-bottom: 0;
-      overflow: visible hidden;
+      &-description {
+        display: grid;
+        grid-template-rows: auto 1fr;
+
+        overflow: visible;
+
+        &-container {
+          padding-bottom: 0;
+
+          overflow: visible;
+        }
+      }
     }
 
     .unnnic-modal-container-background-button {
