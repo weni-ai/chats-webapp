@@ -150,12 +150,12 @@ export default {
         const response = await FlowsTrigger.listFlowsStart({
           offset,
           limit: triggeredFlowsLimit,
-          end_time: filterDate.end,
-          start_time: filterDate.start,
+          created_on_after: filterDate.start,
+          created_on_before: filterDate.end,
         });
-        this.triggeredFlows = response.results || response;
-        this.triggeredFlowsCount = response.count || 0;
-        this.triggeredFlowsCountPages = Math.ceil(response.count || 0 / triggeredFlowsLimit);
+        this.triggeredFlows = response.results;
+        this.triggeredFlowsCount = response.count;
+        this.triggeredFlowsCountPages = Math.ceil(response.count / triggeredFlowsLimit);
       } catch (error) {
         console.log(error);
       }
