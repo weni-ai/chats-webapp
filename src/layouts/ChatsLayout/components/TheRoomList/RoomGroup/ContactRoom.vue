@@ -6,6 +6,7 @@
     :unreadMessages="unreadMessages"
     :tabindex="0"
     :selected="room.uuid === activeRoomId"
+    :locale="locale"
     @click="$emit('click')"
     @keypress.enter="$emit('click')"
   >
@@ -68,8 +69,10 @@ export default {
     },
     unreadMessages() {
       const { room, newMessages } = this;
-
       return room.unread_msgs + (newMessages?.length || 0);
+    },
+    locale() {
+      return this.$i18n.locale === 'en-us' ? 'en' : this.$i18n.locale;
     },
   },
 };
