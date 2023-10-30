@@ -42,6 +42,12 @@ export default {
   name: 'App',
 
   async created() {
+    http.interceptors.request.use((config) => {
+      // eslint-disable-next-line no-param-reassign
+      config.headers.Authorization = `Bearer ${getToken()}`;
+      return config;
+    });
+
     this.handleLocale();
     setInterval(this.intervalPing, this.timerPing);
     const localStorageStatus = localStorage.getItem('statusAgent');
@@ -49,6 +55,12 @@ export default {
       localStorage.setItem('statusAgent', 'OFFLINE');
     }
     this.getStatus();
+  },
+
+  async beforeMount() {
+    await this.getUser();
+    this.loadQuickMessages();
+    this.loadQuickMessagesShared();
   },
 
   data() {
@@ -93,18 +105,6 @@ export default {
         }
       },
     },
-  },
-
-  beforeMount() {
-    http.interceptors.request.use((config) => {
-      // eslint-disable-next-line no-param-reassign
-      config.headers.Authorization = `Bearer ${getToken()}`;
-      return config;
-    });
-
-    this.loadQuickMessages();
-    this.loadQuickMessagesShared();
-    this.getUser();
   },
 
   methods: {
