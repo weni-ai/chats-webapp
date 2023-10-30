@@ -7,8 +7,6 @@
 <script>
 import { mapState } from 'vuex';
 
-import { getToken } from '@/utils/config';
-import http from '@/services/api/http';
 import env from '@/utils/env';
 import { sendWindowNotification } from '@/utils/notifications';
 import { WS } from '@/services/api/socket';
@@ -41,13 +39,7 @@ class Notification {
 export default {
   name: 'App',
 
-  async created() {
-    http.interceptors.request.use((config) => {
-      // eslint-disable-next-line no-param-reassign
-      config.headers.Authorization = `Bearer ${getToken()}`;
-      return config;
-    });
-
+  created() {
     this.handleLocale();
     setInterval(this.intervalPing, this.timerPing);
     const localStorageStatus = localStorage.getItem('statusAgent');
@@ -59,8 +51,8 @@ export default {
 
   async beforeMount() {
     await this.getUser();
-    this.loadQuickMessages();
-    this.loadQuickMessagesShared();
+    await this.loadQuickMessages();
+    await this.loadQuickMessagesShared();
   },
 
   data() {
