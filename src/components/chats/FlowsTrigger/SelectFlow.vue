@@ -129,21 +129,26 @@ export default {
     async sendFlow() {
       this.loading = true;
       if (!this.selectedContact) this.findId(this.contacts, this.groups);
-      const prepareObj = {
-        flow: this.selectedFlow,
-        groups: this.idGruops,
-        contacts: this.selectedContact ? [this.selectedContact.external_id] : this.idContactsList,
-        room: this.room?.uuid,
-      };
+
       this.openModalProgress();
-      try {
-        await FlowsTrigger.sendFlow(prepareObj);
-        this.loading = false;
-        this.closeModaProgress();
-      } catch (error) {
-        this.loading = false;
-        console.log(error);
-      }
+      (this.selectedContact ? [this.selectedContact] : this.contacts).forEach(async (contact) => {
+        const prepareObj = {
+          flow: this.selectedFlow,
+          groups: this.idGruops,
+          contacts: this.selectedContact ? [this.selectedContact.external_id] : [contact.uuid],
+          room: this.room?.uuid,
+          contact_name: this.selectedContact ? this.selectedContact.name : contact.name,
+        };
+
+        try {
+          await FlowsTrigger.sendFlow(prepareObj);
+          this.loading = false;
+          this.closeModaProgress();
+        } catch (error) {
+          this.loading = false;
+          console.log(error);
+        }
+      });
     },
 
     findId(contacts, groups) {

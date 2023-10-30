@@ -1,7 +1,7 @@
 <template>
-  <section class="rooms-table-pages-loading">
-    <unnnic-skeleton-loading class="rooms-table-pages-loading__count" />
-    <div class="rooms-table-pages-loading__pagination">
+  <section class="table-pagination-loading">
+    <unnnic-skeleton-loading class="table-pagination-loading__count" />
+    <div class="table-pagination-loading__pagination">
       <unnnic-skeleton-loading v-for="page in 7" :key="`page-${page}`" height="36px" width="36px" />
     </div>
   </section>
@@ -9,12 +9,12 @@
 
 <script>
 export default {
-  name: 'RoomsTablePagesLoading',
+  name: 'TablePaginationLoading',
 };
 </script>
 
 <style lang="scss" scoped>
-.rooms-table-pages-loading {
+.table-pagination-loading {
   z-index: 10000;
 
   margin-top: $unnnic-spacing-md;
