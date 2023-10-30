@@ -118,6 +118,7 @@ export default {
 
   async mounted() {
     this.listRoom();
+    this.listDiscussions();
   },
 
   computed: {
@@ -208,6 +209,13 @@ export default {
       if (this.listRoomHasNext) {
         this.page += 1;
         this.listRoom(true);
+      }
+    },
+    async listDiscussions() {
+      try {
+        await this.$store.dispatch('chats/discussions/getAll');
+      } catch {
+        console.error('Não foi possível listar as discussões');
       }
     },
     handleScroll(target) {

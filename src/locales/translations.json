@@ -903,6 +903,11 @@
         "en-us": "About the discussion",
         "es": "Sobre la discusión"
       },
+      "started_in": {
+        "pt-br": "Iniciada em",
+        "en-us": "Started in",
+        "es": "Inició en"
+      },
       "agents_involved": {
         "pt-br": "Agentes envolvidos",
         "en-us": "Agents involved",
@@ -941,6 +946,11 @@
         "pt-br": "Selecionar agente",
         "en-us": "Select agent",
         "es": "Agente seleccionado"
+      },
+      "search_agent": {
+        "pt-br": "Pesquisar agente",
+        "en-us": "Search agent",
+        "es": "Buscar agente"
       }
     },
     "notification_new": {

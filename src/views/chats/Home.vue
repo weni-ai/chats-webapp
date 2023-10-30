@@ -96,6 +96,7 @@
 
     <template #aside>
       <contact-info v-if="room && isRoomContactInfoOpen" @close="closeRoomContactInfo" />
+      <discussion-sidebar v-if="discussion" />
     </template>
     <modal-close-chat v-if="showCloseModal" @close="closeModalCloseChat" :room="room" />
   </chats-layout>
@@ -113,6 +114,7 @@ import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone';
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
 import ContactInfo from '@/components/chats/ContactInfo';
+import DiscussionSidebar from '@/components/chats/DiscussionSidebar';
 import ChatClassifier from '@/components/chats/ChatClassifier';
 import ModalCloseChat from '@/views/chats/ModalCloseChat.vue';
 
@@ -134,6 +136,7 @@ export default {
     ChatHeaderSendFlow,
     ChatMessages,
     ContactInfo,
+    DiscussionSidebar,
     MessageManager,
     ChatClassifier,
     ModalCloseChat,
@@ -178,9 +181,9 @@ export default {
 
   computed: {
     ...mapState({
+      me: (state) => state.profile.me,
       room: (state) => state.chats.rooms.activeRoom,
       discussion: (state) => state.chats.discussions.activeDiscussion,
-      me: (state) => state.profile.me,
       roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,
       listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
       showModalAssumedChat: ({ dashboard }) => dashboard.showModalAssumedChat,
@@ -235,6 +238,13 @@ export default {
       this.closeRoomContactInfo();
       this.page = 0;
       this.readMessages();
+    },
+    async setActiveDiscussion(uuid) {
+      const discussion = this.$store.getters['chats/discussions/getDiscussionById'](uuid);
+      if (this.$route.name !== 'home' && !discussion) {
+        this.$router.replace({ name: 'home' });
+      }
+      await this.$store.dispatch('chats/discussions/setActiveDiscussion', discussion);
     },
     whenGetChat() {
       this.closeRoomContactInfo();
@@ -379,6 +389,18 @@ export default {
           await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
           await this.setActiveRoom(roomId);
           await this.getRoomMessages();
+        } else {
+          await this.setActiveRoom('');
+        }
+      },
+    },
+    discussionId: {
+      immediate: true,
+      async handler(discussionId) {
+        if (discussionId) {
+          this.setActiveDiscussion(discussionId);
+        } else {
+          await this.setActiveDiscussion('');
         }
       },
     },

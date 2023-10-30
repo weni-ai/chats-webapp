@@ -159,7 +159,9 @@ export default {
 
   computed: {
     isAsideVisible() {
-      return !!this.$slots.aside;
+      return (
+        !!this.$slots.aside && this.$slots.aside.filter((slot) => slot.componentOptions).length > 0
+      );
     },
     isRoomListVisible() {
       return !this.showFlowsTrigger && !this.showQuickMessages;
