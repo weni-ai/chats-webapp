@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import http from '@/services/api/http';
+
 import temporaryZoomIn from '@/assets/temporaryZoomIn.svg';
 import temporaryZoomOut from '@/assets/temporaryZoomOut.svg';
 import rotateRightIcon from '@/assets/temporaryRedoIcon.svg';
@@ -165,7 +167,8 @@ export default {
       }
 
       const url = treatedUrl(this.downloadMediaUrl);
-      fetch(url)
+      http
+        .get(url)
         .then((response) => response.blob())
         .then((blob) => {
           const link = document.createElement('a');
