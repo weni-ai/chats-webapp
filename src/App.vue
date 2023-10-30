@@ -7,10 +7,14 @@
 <script>
 import { mapState } from 'vuex';
 
+import http from '@/services/api/http';
+
 import env from '@/utils/env';
 import { sendWindowNotification } from '@/utils/notifications';
 import { WS } from '@/services/api/socket';
 import Profile from '@/services/api/resources/profile';
+
+import { getToken } from './utils/config';
 import { PREFERENCES_SOUND } from './components/PreferencesBar.vue';
 
 const moment = require('moment');
@@ -39,20 +43,27 @@ class Notification {
 export default {
   name: 'App',
 
-  created() {
+  async beforeMount() {
+    http.interceptors.request.use((config) => {
+      // eslint-disable-next-line no-param-reassign
+      config.headers.Authorization = `Bearer ${getToken()}`;
+      return config;
+    });
+
     this.handleLocale();
     setInterval(this.intervalPing, this.timerPing);
     const localStorageStatus = localStorage.getItem('statusAgent');
     if (!localStorageStatus || localStorageStatus === 'None') {
       localStorage.setItem('statusAgent', 'OFFLINE');
     }
-    this.getStatus();
   },
 
-  async beforeMount() {
+  async mounted() {
     await this.getUser();
-    await this.loadQuickMessages();
-    await this.loadQuickMessagesShared();
+
+    this.getStatus();
+    this.loadQuickMessages();
+    this.loadQuickMessagesShared();
   },
 
   data() {
