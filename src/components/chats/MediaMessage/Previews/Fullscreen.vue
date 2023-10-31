@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import http from '@/services/api/http';
+import axios from 'axios';
 
 import temporaryZoomIn from '@/assets/temporaryZoomIn.svg';
 import temporaryZoomOut from '@/assets/temporaryZoomOut.svg';
@@ -167,7 +167,8 @@ export default {
       }
 
       const url = treatedUrl(this.downloadMediaUrl);
-      http
+
+      axios
         .get(url)
         .then((response) => response.blob())
         .then((blob) => {
