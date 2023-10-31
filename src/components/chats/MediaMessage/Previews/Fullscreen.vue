@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import Media from '@/services/api/resources/chats/media';
+
 import temporaryZoomIn from '@/assets/temporaryZoomIn.svg';
 import temporaryZoomOut from '@/assets/temporaryZoomOut.svg';
 import rotateRightIcon from '@/assets/temporaryRedoIcon.svg';
@@ -166,38 +168,11 @@ export default {
 
       const url = treatedUrl(this.downloadMediaUrl);
 
-      const image = new Image();
-      image.crossOrigin = 'anonymous';
-      image.src = url;
-
-      image.onload = () => {
-        try {
-          const canvas = document.createElement('canvas');
-          canvas.width = image.naturalWidth;
-          canvas.height = image.naturalHeight;
-          canvas.getContext('2d').drawImage(image, 0, 0);
-
-          const blob = canvas.toDataURL();
-          console.log('blob:', blob);
-
-          const link = document.createElement('a');
-          link.href = window.URL.createObjectURL(blob);
-          link.download = this.downloadMediaName;
-
-          link.click();
-
-          window.URL.revokeObjectURL(link.href);
-        } catch (error) {
-          const link = document.createElement('a');
-          link.target = '_blank';
-          link.href = this.downloadMediaUrl;
-          link.download = this.downloadMediaName;
-
-          link.click();
-
-          console.error(error);
-        }
-      };
+      try {
+        Media.download({ media: url, name: this.downloadMediaName });
+      } catch (error) {
+        console.error('An error occurred when trying to download the media:', error);
+      }
     },
 
     next() {
