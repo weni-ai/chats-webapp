@@ -19,6 +19,10 @@ export default {
     });
     return response.data;
   },
+  async delete({ discussionUuid }) {
+    const response = http.delete(`discussion/${discussionUuid}`);
+    return response.data;
+  },
   async addAgent({ discussionUuid, user_email }) {
     const response = await http.post(`discussion/${discussionUuid}`, { user_email });
     return response.data;

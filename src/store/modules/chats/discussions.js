@@ -37,18 +37,27 @@ export default {
       commit(mutations.SET_ACTIVE_DISCUSSION, newDiscussion);
       return newDiscussion;
     },
+
     async addAgent({ state }, { user_email }) {
       await Discussion.addAgent({
         discussionUuid: state.activeDiscussion.uuid,
         user_email,
       });
     },
+
     setActiveDiscussion({ commit }, discussion) {
       commit(mutations.SET_ACTIVE_DISCUSSION, discussion);
     },
+
+    delete({ state, commit }) {
+      Discussion.delete({ discussionUuid: state.activeDiscussion.uuid });
+      commit(mutations.SET_ACTIVE_DISCUSSION, null);
+    },
+
     getDiscussionDetails({ state }) {
       return Discussion.getDiscussionDetails({ discussionUuid: state.activeDiscussion.uuid });
     },
+
     getDiscussionAgents({ state }) {
       return Discussion.getDiscussionAgents({ discussionUuid: state.activeDiscussion.uuid });
     },

@@ -4,10 +4,24 @@
       isOwnDiscussion ? $t('discussions.about.title') : $t('chats.closed_chats.contact_history')
     "
     :icon="isOwnDiscussion ? 'information-circle-4' : 'synchronize-arrow-clock-4'"
-    @close="$emit('close')"
+    @close="handleEndDiscussionModal"
   >
     <discussion-about v-if="isOwnDiscussion" :details="details" />
     <discussion-contact-history v-else :details="details" />
+
+    <unnnic-modal
+      v-if="isEndDiscussionModalOpen"
+      @close="handleEndDiscussionModal"
+      :text="$t('discussions.close.title')"
+      :description="$t('discussions.close.description')"
+      modalIcon="alert-circle-1"
+      scheme="feedback-yellow"
+    >
+      <template #options>
+        <unnnic-button :text="$t('cancel')" type="tertiary" @click="handleEndDiscussionModal" />
+        <unnnic-button :text="$t('end')" type="primary" @click="endDiscussion" />
+      </template>
+    </unnnic-modal>
   </aside-slot-template>
 </template>
 
@@ -31,6 +45,8 @@ export default {
     return {
       details: null,
       isOwnDiscussion: false,
+
+      isEndDiscussionModalOpen: false,
     };
   },
 
@@ -46,5 +62,22 @@ export default {
       discussion: (state) => state.chats.discussions.activeDiscussion,
     }),
   },
+
+  methods: {
+    handleEndDiscussionModal() {
+      this.isEndDiscussionModalOpen = !this.isEndDiscussionModalOpen;
+    },
+
+    async endDiscussion() {
+      await this.$store.dispatch('chats/discussions/delete');
+      this.handleEndDiscussionModal();
+    },
+  },
 };
 </script>
+
+<style lang="scss" scoped>
+:deep(.unnnic-modal-container-background-button) {
+  padding-top: 0;
+}
+</style>

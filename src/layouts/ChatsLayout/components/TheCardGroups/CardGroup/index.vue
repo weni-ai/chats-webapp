@@ -8,7 +8,7 @@
         v-for="discussion in discussions"
         :key="discussion.uuid"
         :username="discussion.subject"
-        :lastMessage="discussion.contact"
+        :lastMessage="`${$t('discussions.title')} ${$t('about')} ${discussion.contact}`"
         :tabindex="0"
         :selected="discussion.uuid === activeDiscussionId"
         @click="open(discussion)"
