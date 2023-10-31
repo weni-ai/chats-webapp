@@ -24,7 +24,7 @@ export default {
   actions: {
     async getAll({ commit }) {
       const newDiscussions = await Discussion.listAll();
-      commit(mutations.SET_DISCUSSIONS, newDiscussions);
+      commit(mutations.SET_DISCUSSIONS, newDiscussions?.results);
     },
 
     async create({ commit }, { queue, subject, initial_message }) {
@@ -48,6 +48,9 @@ export default {
     },
     getDiscussionDetails({ state }) {
       return Discussion.getDiscussionDetails({ discussionUuid: state.activeDiscussion.uuid });
+    },
+    getDiscussionAgents({ state }) {
+      return Discussion.getDiscussionAgents({ discussionUuid: state.activeDiscussion.uuid });
     },
   },
 

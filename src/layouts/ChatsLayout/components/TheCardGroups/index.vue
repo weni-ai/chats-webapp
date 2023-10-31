@@ -50,27 +50,29 @@
         }
       "
     >
-      <room-group
+      <card-group
+        v-if="discussions.length"
+        :label="$t('chats.discussions', { length: discussions.length })"
+        :discussions="discussions"
+        @open="openDiscussion"
+      />
+      <card-group
         v-if="rooms_queue.length"
         :label="$t('chats.waiting', { length: rooms_queue.length })"
         :rooms="rooms_queue"
-        filled
-        @open="open"
-        id="queue"
+        @open="openRoom"
       />
-      <room-group
+      <card-group
         v-if="rooms.length"
         :label="$t('chats.in_progress', { length: rooms.length })"
         :rooms="rooms"
-        @open="open"
-        id="in_progress"
+        @open="openRoom"
       />
-      <room-group
+      <card-group
         v-if="rooms_sent_flows.length"
         :label="$t('chats.sent_flows', { length: rooms_sent_flows.length })"
         :rooms="rooms_sent_flows"
-        @open="open"
-        id="wating"
+        @open="openRoom"
       />
       <p v-if="showNoResultsError" class="no-results">
         {{ $t('without_results') }}
@@ -83,14 +85,14 @@
 import { mapState, mapGetters } from 'vuex';
 
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
-import RoomGroup from './RoomGroup';
+import CardGroup from './CardGroup';
 
 export default {
-  name: 'TheRoomList',
+  name: 'TheCardGroups',
 
   components: {
     RoomsListLoading,
-    RoomGroup,
+    CardGroup,
   },
 
   props: {
@@ -128,6 +130,7 @@ export default {
       rooms_sent_flows: 'chats/rooms/waitingContactAnswer',
     }),
     ...mapState({
+      discussions: (state) => state.chats.discussions.discussions,
       listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
     }),
 
@@ -171,7 +174,7 @@ export default {
   },
 
   methods: {
-    async open(room) {
+    async openRoom(room) {
       if (this.isViewMode) {
         await this.$store.dispatch('chats/rooms/setActiveRoom', room);
       } else {
@@ -181,6 +184,10 @@ export default {
 
         this.$router.replace(path);
       }
+    },
+
+    async openDiscussion(discussion) {
+      await this.$store.dispatch('chats/discussions/setActiveDiscussion', discussion);
     },
 
     clearField() {

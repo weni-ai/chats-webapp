@@ -21,7 +21,7 @@
         iconLeft="add-1"
         type="secondary"
         @click="handleAddAgentModal"
-        :disabled="this.agentsInvolved.length >= 5"
+        :disabled="this.agentsInvolved?.length >= 5"
       />
 
       <unnnic-modal
@@ -95,7 +95,10 @@ export default {
     };
   },
   async created() {
-    this.agentsInvolved = this.details.discussion_users;
+    const responseAgents = await this.$store.dispatch('chats/discussions/getDiscussionAgents');
+    if (responseAgents.results) {
+      this.agentsInvolved = responseAgents.results;
+    }
     this.agentsToSelect = [{ value: '', label: this.$t('discussions.add_agents.search_agent') }];
   },
   computed: {
