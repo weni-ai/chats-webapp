@@ -166,13 +166,20 @@ export default {
 
       const url = treatedUrl(this.downloadMediaUrl);
 
-      fetch(url, {
-        headers: {
-          Origin: 'https://chats.dev.cloud.weni.ai',
-        },
-      })
-        .then((response) => response.blob())
-        .then((blob) => {
+      const image = new Image();
+      image.crossOrigin = 'anonymous';
+      image.src = url;
+
+      image.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = image.naturalWidth;
+          canvas.height = image.naturalHeight;
+          canvas.getContext('2d').drawImage(image, 0, 0);
+
+          const blob = canvas.toDataURL();
+          console.log('blob:', blob);
+
           const link = document.createElement('a');
           link.href = window.URL.createObjectURL(blob);
           link.download = this.downloadMediaName;
@@ -180,15 +187,17 @@ export default {
           link.click();
 
           window.URL.revokeObjectURL(link.href);
-        })
-        .catch(() => {
+        } catch (error) {
           const link = document.createElement('a');
           link.target = '_blank';
           link.href = this.downloadMediaUrl;
           link.download = this.downloadMediaName;
 
           link.click();
-        });
+
+          console.error(error);
+        }
+      };
     },
 
     next() {
