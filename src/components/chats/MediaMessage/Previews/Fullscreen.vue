@@ -55,8 +55,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 import temporaryZoomIn from '@/assets/temporaryZoomIn.svg';
 import temporaryZoomOut from '@/assets/temporaryZoomOut.svg';
 import rotateRightIcon from '@/assets/temporaryRedoIcon.svg';
@@ -168,8 +166,11 @@ export default {
 
       const url = treatedUrl(this.downloadMediaUrl);
 
-      axios
-        .get(url)
+      fetch(url, {
+        headers: {
+          Origin: 'https://chats.dev.cloud.weni.ai',
+        },
+      })
         .then((response) => response.blob())
         .then((blob) => {
           const link = document.createElement('a');
