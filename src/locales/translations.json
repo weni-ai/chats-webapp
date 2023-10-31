@@ -1172,6 +1172,23 @@
       "en-us": "Contacts of {project}",
       "es": "Contactos de {project}"
     },
+    "triggered_flows": {
+      "title": {
+        "pt-br": "Fluxos disparados",
+        "en-us": "Triggered flows",
+        "es": "Flujos activados"
+      },
+      "single": {
+        "pt-br": "Fluxo disparado",
+        "en-us": "Triggered flow",
+        "es": "Flujo activado"
+      },
+      "trigger_time": {
+        "pt-br": "Hora do disparo",
+        "en-us": "Trigger time",
+        "es": "Tiempo de activación"
+      }
+    },
     "groups": {
       "pt-br": "Grupos ({length})",
       "en-us": "Groups ({length})",

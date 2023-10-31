@@ -16,6 +16,12 @@
       />
     </aside-slot-template-section>
     <aside-slot-template-section class="flows-trigger" v-else>
+      <unnnic-button
+        type="secondary"
+        size="small"
+        :text="$t('flows_trigger.triggered_flows.title')"
+        @click="showTriggeredFlowsModal = true"
+      />
       <unnnic-input
         v-model="searchUrn"
         icon-left="search-1"
@@ -88,6 +94,10 @@
       </div>
     </aside-slot-template-section>
 
+    <modal-list-triggered-flows
+      v-if="showTriggeredFlowsModal"
+      @close="showTriggeredFlowsModal = false"
+    />
     <modal-add-new-contact v-if="showModal" @close="closeModal" />
   </aside-slot-template>
 </template>
@@ -95,6 +105,7 @@
 <script>
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
+import ModalListTriggeredFlows from '@/components/chats/FlowsTrigger/ModalListTriggeredFlows.vue';
 import ModalAddNewContact from '@/components/chats/FlowsTrigger/ModalAddNewContact.vue';
 import SelectFlow from '@/components/chats/FlowsTrigger/SelectFlow';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
@@ -106,6 +117,7 @@ export default {
   components: {
     AsideSlotTemplate,
     AsideSlotTemplateSection,
+    ModalListTriggeredFlows,
     ModalAddNewContact,
     SelectFlow,
   },
@@ -136,6 +148,7 @@ export default {
     selectedGroup: [],
     openedRoomsAlerts: [],
     showModal: false,
+    showTriggeredFlowsModal: false,
     showSelectFlow: false,
     page: 0,
   }),
