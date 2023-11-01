@@ -1,11 +1,10 @@
 // import mime from 'mime-types';
-import moment from 'moment';
-
 import {
   isMessageInActiveRoom,
   isMessageFromCurrentUser,
-  groupSequentialSentMessages,
+  groupMessages,
   parseMessageToMessageWithSenderProp,
+  treatMessages,
 } from '@/utils/messages';
 import Message from '@/services/api/resources/chats/message';
 import Rooms from './rooms';
@@ -66,62 +65,8 @@ export default {
       state.roomMessages = messages;
     },
 
-    /**
-     * Adds a message to the roomMessagesSorted data structure.
-     *
-     * This function is designed to follow the state with the following format:
-     * [{
-     *   date: "",
-     *   minutes: [{
-     *     minute: "",
-     *     messages: [{
-     *       // ... (message data)
-     *     }]
-     *   }]
-     * }]
-     *
-     * The choice of this format was motivated by the following topics:
-     *
-     * 1. **Reactivity**: Allows real-time state updates, ensuring that changes
-     *    are immediately reflected in observers. This is possible thanks to the use of arrays, as JavaScript
-     *    does not observe property mutations in plain objects.
-     *
-     * 2. **Unshift and Push**: The ability to use `unshift` and `push` makes it easier to add messages in chronological order.
-     *
-     * 3. **Grouping**: Group messages by date and sending time.
-     *
-     * @param {object} payload.message - The message to be added.
-     * @param {boolean} payload.addBefore - Specifies whether the message should be added before or after existing ones.
-     */
     [mutations.ADD_ROOM_MESSAGE_SORTED](state, { message, addBefore }) {
-      const messageTimestamp = moment(message.created_on);
-      const messageDate = messageTimestamp.format('L');
-      const messageMinute = messageTimestamp.format('LT');
-
-      let dateIndex = state.roomMessagesSorted.findIndex((obj) => obj.date === messageDate);
-
-      if (dateIndex === -1) {
-        dateIndex = addBefore ? 0 : state.roomMessagesSorted.length;
-        const newDateEntry = { date: messageDate, minutes: [] };
-        state.roomMessagesSorted.splice(dateIndex, 0, newDateEntry);
-      }
-
-      const currentDateEntry = state.roomMessagesSorted[dateIndex];
-      let minuteIndex = currentDateEntry.minutes.findIndex((obj) => obj.minute === messageMinute);
-
-      if (minuteIndex === -1) {
-        minuteIndex = addBefore ? 0 : currentDateEntry.minutes.length;
-        const newMinuteEntry = { minute: messageMinute, messages: [] };
-        currentDateEntry.minutes.splice(minuteIndex, 0, newMinuteEntry);
-      }
-
-      const currentMinuteEntry = currentDateEntry.minutes[minuteIndex];
-
-      if (addBefore) {
-        currentMinuteEntry.messages.unshift(message);
-      } else {
-        currentMinuteEntry.messages.push(message);
-      }
+      groupMessages(state.roomMessagesSorted, { message, addBefore });
     },
     [mutations.RESET_ROOM_MESSAGES_SORTED](state) {
       state.roomMessagesSorted = [];
@@ -186,79 +131,22 @@ export default {
     },
   },
 
-  getters: {
-    groupedActiveRoomsMessage: (state) => {
-      return groupSequentialSentMessages(state.roomMessages);
-    },
-  },
-
   actions: {
-    async getRoomMessages({ commit, state }, { offset = null, concat = false, limit = null }) {
-      if (!Rooms.state.activeRoom?.uuid) {
-        return;
-      }
-
-      const maxRetries = 3;
-      let currentRetry = 0;
-
+    async getRoomMessages({ commit, state }, { offset = null, limit = null }) {
       const nextReq = state.roomMessagesNext;
 
-      async function fetchData() {
-        try {
-          const response = await Message.getByRoom(
-            { nextReq },
-            Rooms.state.activeRoom.uuid,
-            offset,
-            limit,
-          );
-
-          const { results: messages, next: hasNext } = response;
-          let newMessages = messages;
-
-          if (messages?.[0]?.room !== Rooms.state.activeRoom.uuid) {
-            return;
-          }
-
-          if (nextReq || concat) {
-            messages.reverse().forEach((message) => {
-              commit(mutations.ADD_ROOM_MESSAGE_SORTED, {
-                message,
-                addBefore: !!nextReq || concat,
-              });
-            });
-
-            newMessages = newMessages.reverse().concat(state.roomMessages);
-          } else {
-            commit(mutations.RESET_ROOM_MESSAGES_SORTED);
-            messages.forEach((message) => {
-              commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message });
-            });
-          }
-
-          commit(mutations.SET_ROOM_MESSAGES, newMessages);
-          commit(mutations.SET_ROOM_MESSAGES_NEXT, hasNext);
-        } catch (error) {
-          console.error('An error ocurred when try get the room messages', error);
-
-          if (currentRetry < maxRetries) {
-            currentRetry += 1;
-
-            const TWO_SECONDS = 2000;
-
-            await new Promise((resolve) => {
-              setTimeout(() => {
-                resolve(fetchData());
-              }, TWO_SECONDS);
-            });
-          } else {
-            throw new Error(
-              `Several errors occurred when trying to request messages from the room. There will be no automatic retries.`,
-            );
-          }
-        }
-      }
-
-      await fetchData();
+      treatMessages({
+        itemUuid: Rooms.state.activeRoom?.uuid,
+        getItemMessages: () =>
+          Message.getByRoom({ nextReq }, Rooms.state.activeRoom?.uuid, offset, limit),
+        oldMessages: state.roomMessages,
+        nextReq,
+        addSortedMessage: ({ message, addBefore }) =>
+          commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message, addBefore }),
+        resetSortedMessages: () => commit(mutations.RESET_ROOM_MESSAGES_SORTED),
+        setMessages: (messages) => commit(mutations.SET_ROOM_MESSAGES, messages),
+        setMessagesNext: (next) => commit(mutations.SET_ROOM_MESSAGES_NEXT, next),
+      });
     },
 
     resetRoomMessages({ commit }) {

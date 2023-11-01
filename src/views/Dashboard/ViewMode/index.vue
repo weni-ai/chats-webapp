@@ -105,9 +105,6 @@ export default {
       viewedAgent: (state) => state.dashboard.viewedAgent,
       roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,
     }),
-    ...mapGetters('roomMessages', {
-      messages: 'groupedActiveRoomsMessage',
-    }),
   },
 
   methods: {

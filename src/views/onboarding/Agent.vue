@@ -53,7 +53,7 @@ import ChatsLayout from '@/layouts/ChatsLayout';
 
 import Profile from '@/services/api/resources/profile';
 
-import { groupSequentialSentMessages, parseMessageToMessageWithSenderProp } from '@/utils/messages';
+// import { groupSequentialSentMessages, parseMessageToMessageWithSenderProp } from '@/utils/messages';
 
 export default {
   name: 'AgentOnboarding',
@@ -103,8 +103,8 @@ export default {
       return messages;
     },
     messages() {
-      const messagesWithSender = this.sentMessages.map(parseMessageToMessageWithSenderProp);
-      const groupedMessages = groupSequentialSentMessages(messagesWithSender);
+      // const messagesWithSender = this.sentMessages.map(parseMessageToMessageWithSenderProp);
+      const groupedMessages = []; // groupSequentialSentMessages(messagesWithSender)
       return groupedMessages;
     },
   },
