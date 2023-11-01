@@ -16,7 +16,7 @@
       />
       <chat-header-send-flow v-if="!room.is_24h_valid" @send-flow="openFlowsTrigger" />
       <chats-dropzone @open-file-uploader="openFileUploader" :show="room.user && room.is_24h_valid">
-        <chat-messages :room="room" @scrollTop="searchForMoreMessages" />
+        <home-room-messages @handle-room-skeleton="isRoomSkeletonActive = $event" />
 
         <message-manager
           v-if="isMessageManagerVisible && !room.is_waiting"
@@ -108,7 +108,6 @@ import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
 import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone';
 
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow';
-import ChatMessages from '@/components/chats/chat/ChatMessages';
 import ContactInfo from '@/components/chats/ContactInfo';
 import DiscussionSidebar from '@/components/chats/DiscussionSidebar';
 import ChatClassifier from '@/components/chats/ChatClassifier';
@@ -122,6 +121,7 @@ import MessageManager from '@/components/chats/MessageManager';
 import FileUploader from '@/components/chats/MessageManager/FileUploader';
 import RoomLoading from '@/views/loadings/Room.vue';
 import HomeChatDiscussion from './HomeChatDiscussion';
+import HomeRoomMessages from './HomeRoomMessages';
 
 export default {
   name: 'ChatsHome',
@@ -131,9 +131,9 @@ export default {
     ChatsBackground,
     ChatsDropzone,
     ChatHeaderSendFlow,
-    ChatMessages,
     ContactInfo,
     HomeChatDiscussion,
+    HomeRoomMessages,
     DiscussionSidebar,
     MessageManager,
     ChatClassifier,
@@ -168,11 +168,7 @@ export default {
     isRoomClassifierVisible: false,
     totalValue: undefined,
     isLoading: false,
-    page: 0,
-    limit: 20,
     showCloseModal: false,
-    showAlertForLastMessage: false,
-    networkError: false,
     files: [],
     isRoomSkeletonActive: false,
   }),
@@ -181,6 +177,7 @@ export default {
     ...mapState({
       me: (state) => state.profile.me,
       room: (state) => state.chats.rooms.activeRoom,
+      rooms: (state) => state.chats.rooms.rooms,
       discussion: (state) => state.chats.discussions.activeDiscussion,
       roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,
       listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
@@ -192,7 +189,6 @@ export default {
         !this.isRoomClassifierVisible &&
         this.room.is_active &&
         this.room.is_24h_valid &&
-        !this.networkError &&
         !this.room.wating_answer &&
         !!this.room.user
       );
@@ -254,42 +250,8 @@ export default {
     },
     whenGetChat() {
       this.closeRoomContactInfo();
-      this.page = 0;
-    },
-    async getRoomMessages(concat) {
-      this.isLoading = true;
-
-      await this.$store
-        .dispatch('chats/roomMessages/getRoomMessages', {
-          offset: this.page * this.limit,
-          concat,
-          limit: this.limit,
-        })
-        .then(() => {
-          this.isRoomClassifierVisible = false;
-          this.isLoading = false;
-          this.networkError = false;
-          this.dateOfLastMessage();
-
-          this.isRoomSkeletonActive = false;
-        })
-        .catch((error) => {
-          this.isLoading = false;
-          console.error(error);
-          if (error.code === 'ERR_NETWORK') this.networkError = true;
-        });
     },
 
-    searchMessages() {
-      this.getRoomMessages(false);
-    },
-
-    searchForMoreMessages() {
-      if (this.roomMessagesNext) {
-        this.page += 1;
-        this.getRoomMessages(true);
-      }
-    },
     async sendFileMessage() {
       const { files } = this;
       try {
@@ -364,15 +326,6 @@ export default {
       this.$store.dispatch('dashboard/setShowModalAssumedChat', false);
     },
 
-    dateOfLastMessage() {
-      if (!this.room) return;
-      if (!this.room.is_24h_valid) {
-        this.showAlertForLastMessage = true;
-      } else {
-        this.showAlertForLastMessage = false;
-      }
-    },
-
     updateTextBoxMessage(message) {
       this.textBoxMessage = message;
     },
@@ -386,7 +339,7 @@ export default {
     roomId: {
       immediate: true,
       async handler(roomId) {
-        if (roomId) {
+        if (roomId && roomId !== this.room?.uuid) {
           if (this.$store.state.chats.rooms.newMessagesByRoom[roomId]) {
             this.$delete(this.$store.state.chats.rooms.newMessagesByRoom, roomId);
           }
@@ -394,11 +347,16 @@ export default {
           this.isRoomSkeletonActive = true;
           await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
           await this.setActiveRoom(roomId);
-          await this.getRoomMessages();
         } else {
           await this.setActiveRoom('');
         }
+        this.isRoomClassifierVisible = false;
       },
+    },
+    async rooms(rooms) {
+      if (rooms.length > 0 && this.roomId && this.roomId !== this.room?.uuid) {
+        await this.setActiveRoom(this.roomId);
+      }
     },
     discussionId: {
       immediate: true,

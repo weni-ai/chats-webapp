@@ -6,7 +6,10 @@
       scheme="purple"
       divisor
     />
-    <chat-feedback v-if="isRoomWaiting" :feedback="$t('waiting_answer.waiting_cliente_answer')" />
+    <chat-feedback
+      v-if="showWaitingFeedback"
+      :feedback="$t('waiting_answer.waiting_cliente_answer')"
+    />
   </div>
 </template>
 
@@ -25,9 +28,8 @@ export default {
       type: String,
       required: true,
     },
-    isRoomWaiting: {
+    showWaitingFeedback: {
       type: Boolean,
-      required: false,
       default: false,
     },
   },

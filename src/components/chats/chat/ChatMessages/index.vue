@@ -3,13 +3,13 @@
 <template>
   <section class="chat-messages" ref="chatMessages" @scroll="handleScroll">
     <section
-      v-for="messagesByDate in roomMessagesSorted"
+      v-for="messagesByDate in messagesSorted"
       :key="messagesByDate.date"
       class="chat-messages__container-date"
     >
       <chat-messages-start-feedbacks
         :dateFeedback="messagesByDate.date"
-        :isRoomWaiting="room?.is_waiting"
+        :showWaitingFeedback="showWaitingFeedback"
       />
 
       <section
@@ -110,9 +110,9 @@
       :feedback="roomEndedChatFeedback(room)"
       scheme="purple"
     /> -->
-    <section v-if="room.tags.length > 0" class="chat-messages__tags">
+    <section v-if="tags.length > 0" class="chat-messages__tags">
       <!-- <chat-feedback :feedback="roomEndedChatFeedback(room)" scheme="purple" ref="endChatElement" /> -->
-      <tag-group :tags="room.tags" />
+      <tag-group :tags="tags" />
     </section>
 
     <!-- Media fullscreen -->
@@ -144,7 +144,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+// import { mapActions, mapState } from 'vuex';
 import moment from 'moment';
 
 import Media from '@/services/api/resources/chats/media';
@@ -169,13 +169,51 @@ export default {
   },
 
   props: {
-    room: {
-      type: Object,
+    chatUuid: {
+      type: String,
       required: true,
     },
-    isHistory: {
+
+    messages: {
+      type: Array,
+      required: true,
+    },
+    messagesSorted: {
+      type: Array,
+      required: true,
+    },
+    messagesSendingUuids: {
+      type: Array,
+      required: true,
+    },
+    messagesFailedUuids: {
+      type: Array,
+      required: true,
+    },
+
+    resendMessages: {
+      type: Function,
+      required: true,
+    },
+    resendMessage: {
+      type: Function,
+      required: true,
+    },
+    resendMedia: {
+      type: Function,
+      required: true,
+    },
+
+    tags: {
+      type: Array,
+      default: () => [],
+      required: false,
+    },
+
+    showWaitingFeedback: {
       type: Boolean,
       default: false,
+      required: false,
     },
   },
 
@@ -183,8 +221,8 @@ export default {
     messageToResend: null,
     isFullscreen: false,
     currentMedia: {},
-    prevUuidBeforePagination: null,
-    prevRoomUuid: null,
+    lastMessageUuidBeforePagination: null,
+    prevChatUuid: null,
     startMessagesBy: {
       bot: '',
       agent: '',
@@ -207,14 +245,8 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      roomMessagesSendingUuids: (state) => state.chats.roomMessages.roomMessagesSendingUuids,
-      roomMessagesFailedUuids: (state) => state.chats.roomMessages.roomMessagesFailedUuids,
-      roomMessages: (state) => state.chats.roomMessages.roomMessages,
-      roomMessagesSorted: (state) => state.chats.roomMessages.roomMessagesSorted,
-    }),
     medias() {
-      return this.roomMessages
+      return this.messages
         .map((el) => el.media)
         .flat()
         .filter((media) => this.isMedia(media));
@@ -222,11 +254,6 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      resendMessages: 'chats/roomMessages/resendMessages',
-      resendMessage: 'chats/roomMessages/resendMessage',
-      resendMedia: 'chats/roomMessages/resendMedia',
-    }),
     isMediaOfType(media, type) {
       return media && media.content_type?.includes(type);
     },
@@ -251,10 +278,10 @@ export default {
     },
     messageStatus({ message, media }) {
       if (message) {
-        if (this.roomMessagesSendingUuids.includes(message.uuid)) {
+        if (this.messagesSendingUuids.includes(message.uuid)) {
           return 'sending';
         }
-        if (this.roomMessagesFailedUuids.includes(message.uuid)) {
+        if (this.messagesFailedUuids.includes(message.uuid)) {
           return 'failed';
         }
         if (media && this.isAudio(media)) {
@@ -282,27 +309,27 @@ export default {
       }
     },
 
-    roomEndedChatFeedback(room) {
-      return `${this.$t('chats.closed')} ${moment(room.ended_at).format('LT')}h ${moment(
-        room.ended_at,
-      ).format('L')}`;
-    },
+    // roomEndedChatFeedback(room) {
+    //   return `${this.$t('chats.closed')} ${moment(room.ended_at).format('LT')}h ${moment(
+    //     room.ended_at,
+    //   ).format('L')}`;
+    // },
 
     messageFormatTitle(date) {
       return `${moment(date).format('HH:mm')} | ${moment(date).format('L')}`;
     },
 
-    isEdgeRoomMessage(messagesByDateMinutes) {
-      return messagesByDateMinutes.some((minute) =>
-        minute.messages.some((message) => message.room !== this.room.uuid),
-      );
-    },
+    // isEdgeRoomMessage(messagesByDateMinutes) {
+    //   return messagesByDateMinutes.some((minute) =>
+    //     minute.messages.some((message) => message.room !== this.chatUuid),
+    //   );
+    // },
 
     setStartFeedbacks() {
-      const newFirstMessageByAgentUuid = this.roomMessages.find(
+      const newFirstMessageByAgentUuid = this.messages.find(
         (message) => message.user && !this.isFeedbackMessage(message),
       )?.uuid;
-      const newFirstMessageByBotUuid = this.roomMessages.find(
+      const newFirstMessageByBotUuid = this.messages.find(
         (message) => !message.contact && !message.user && !this.isFeedbackMessage(message),
       )?.uuid;
 
@@ -356,10 +383,10 @@ export default {
       const { chatMessages } = this.$refs;
       if (!chatMessages) return;
 
-      // if (this.isEdgeRoomMessage(this.roomMessagesSorted[0].minutes)) {
+      // if (this.isEdgeRoomMessage(this.messagesSorted[0].minutes)) {
       //   this.$router.replace({
       //     name: 'closed-rooms.selected',
-      //     params: { roomId: this.room.uuid },
+      //     params: { roomId: this.chatUuid },
       //   });
       // }
 
@@ -372,17 +399,17 @@ export default {
       const { chatMessages } = this.$refs;
       if (!chatMessages) return;
 
-      const { prevUuidBeforePagination, prevRoomUuid, roomMessagesSorted } = this;
+      const { lastMessageUuidBeforePagination, prevChatUuid, messagesSorted } = this;
 
-      if (prevRoomUuid !== this.room.uuid) {
+      if (prevChatUuid !== this.chatUuid) {
         this.handleScroll();
         setTimeout(() => {
           this.scrollToBottom();
         }, 200);
       }
 
-      if (prevUuidBeforePagination && chatMessages.scrollTop === 0) {
-        const elementToScroll = this.$refs[`message-${prevUuidBeforePagination}`]?.[0]?.$el;
+      if (lastMessageUuidBeforePagination && chatMessages.scrollTop === 0) {
+        const elementToScroll = this.$refs[`message-${lastMessageUuidBeforePagination}`]?.[0]?.$el;
         if (elementToScroll) {
           await elementToScroll.scrollIntoView({ block: 'start' });
           chatMessages.scrollTop += 1;
@@ -391,8 +418,8 @@ export default {
         this.scrollToBottom();
       }
 
-      this.prevRoomUuid = this.room.uuid;
-      this.prevUuidBeforePagination = roomMessagesSorted[0].minutes[0].messages?.[0]?.uuid;
+      this.prevChatUuid = this.chatUuid;
+      this.lastMessageUuidBeforePagination = messagesSorted[0].minutes[0].messages?.[0]?.uuid;
     },
 
     scrollToBottom() {
@@ -404,7 +431,7 @@ export default {
   },
 
   watch: {
-    roomMessages() {
+    messages() {
       this.setStartFeedbacks();
       this.$nextTick(() => {
         this.manageScrollForNewMessages();

@@ -135,7 +135,7 @@ export default {
     async getRoomMessages({ commit, state }, { offset = null, limit = null }) {
       const nextReq = state.roomMessagesNext;
 
-      treatMessages({
+      await treatMessages({
         itemUuid: Rooms.state.activeRoom?.uuid,
         getItemMessages: () =>
           Message.getByRoom({ nextReq }, Rooms.state.activeRoom?.uuid, offset, limit),
