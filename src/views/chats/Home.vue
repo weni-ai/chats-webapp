@@ -16,11 +16,7 @@
       />
       <chat-header-send-flow v-if="!room.is_24h_valid" @send-flow="openFlowsTrigger" />
       <chats-dropzone @open-file-uploader="openFileUploader" :show="room.user && room.is_24h_valid">
-        <chat-messages
-          :room="room"
-          @show-contact-info="openRoomContactInfo"
-          @scrollTop="searchForMoreMessages"
-        />
+        <chat-messages :room="room" @scrollTop="searchForMoreMessages" />
 
         <message-manager
           v-if="isMessageManagerVisible && !room.is_waiting"
@@ -57,7 +53,7 @@
       </section>
     </section>
 
-    <section v-if="!!discussion"></section>
+    <home-chat-discussion v-if="!!discussion" @open-file-uploader="openFileUploader" />
 
     <unnnic-modal
       v-if="room"
@@ -125,6 +121,7 @@ import MessageManager from '@/components/chats/MessageManager';
 
 import FileUploader from '@/components/chats/MessageManager/FileUploader';
 import RoomLoading from '@/views/loadings/Room.vue';
+import HomeChatDiscussion from './HomeChatDiscussion';
 
 export default {
   name: 'ChatsHome',
@@ -136,6 +133,7 @@ export default {
     ChatHeaderSendFlow,
     ChatMessages,
     ContactInfo,
+    HomeChatDiscussion,
     DiscussionSidebar,
     MessageManager,
     ChatClassifier,
@@ -230,9 +228,9 @@ export default {
     },
     async setActiveRoom(uuid) {
       const room = this.$store.getters['chats/rooms/getRoomById'](uuid);
-      if (this.$route.name !== 'home' && !room) {
-        this.$router.replace({ name: 'home' });
-      }
+      // if (this.$route.name !== 'home' && !room) {
+      //   this.$router.replace({ name: 'home' });
+      // }
       await this.$store.dispatch('chats/rooms/setActiveRoom', room);
       await this.$store.dispatch('chats/rooms/getCanUseCopilot');
       this.closeRoomContactInfo();
@@ -241,10 +239,18 @@ export default {
     },
     async setActiveDiscussion(uuid) {
       const discussion = this.$store.getters['chats/discussions/getDiscussionById'](uuid);
-      if (this.$route.name !== 'home' && !discussion) {
-        this.$router.replace({ name: 'home' });
-      }
+      // if (this.$route.name !== 'home' && !discussion) {
+      //   this.$router.replace({ name: 'home' });
+      // }
       await this.$store.dispatch('chats/discussions/setActiveDiscussion', discussion);
+    },
+
+    async getDiscussionMessages(concat) {
+      await this.$store.dispatch('chats/discussionMessages/getDiscussionMessages', {
+        offset: this.page * this.limit,
+        concat,
+        limit: this.limit,
+      });
     },
     whenGetChat() {
       this.closeRoomContactInfo();
@@ -398,11 +404,14 @@ export default {
       immediate: true,
       async handler(discussionId) {
         if (discussionId) {
-          this.setActiveDiscussion(discussionId);
+          await this.setActiveDiscussion(discussionId);
         } else {
           await this.setActiveDiscussion('');
         }
       },
+    },
+    async discussion() {
+      await this.getDiscussionMessages();
     },
   },
 

@@ -437,10 +437,6 @@ export default {
       return feedbackLabels[method] || '';
     },
 
-    showContactInfo() {
-      this.$emit('show-contact-info');
-    },
-
     openFullScreen(url) {
       this.currentMedia = this.medias.find((el) => el.url === url);
       this.isFullscreen = true;

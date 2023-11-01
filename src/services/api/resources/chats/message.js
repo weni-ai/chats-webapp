@@ -1,5 +1,11 @@
 import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
+import axios from 'axios';
+
+// TODO: Remove after backend is not mocked
+const httpDiscussion = axios.create({
+  baseURL: `https://a89f398a-8473-4d5e-87da-e297b4c02dc9.mock.pstmn.io/v1`,
+});
 
 function getURLParams({ URL, endpoint }) {
   return URL?.split(endpoint)?.[1];
@@ -23,6 +29,25 @@ export default {
       response = await http.get(`${endpoint}${paramsNextReq}`);
     } else {
       response = await http.get(endpoint, { params });
+    }
+
+    return response.data;
+  },
+
+  async getByDiscussion({ nextReq }, discussionUuid, offset, limit) {
+    const endpoint = `discussion/${discussionUuid}/list_messages/`;
+    const paramsNextReq = getURLParams({ URL: nextReq, endpoint });
+    const params = {
+      offset,
+      limit,
+    };
+
+    let response;
+
+    if (nextReq && paramsNextReq) {
+      response = await httpDiscussion.get(`${endpoint}${paramsNextReq}`);
+    } else {
+      response = await httpDiscussion.get(endpoint, { params });
     }
 
     return response.data;

@@ -16,7 +16,6 @@
           />
           <chat-messages
             :room="room"
-            :messages="messages"
             class="messages"
             @show-contact-info="handleModal('ContactInfo', 'open')"
             @scrollTop="searchForMoreMessages"
@@ -54,7 +53,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+import { mapState } from 'vuex';
 
 import ChatsLayout from '@/layouts/ChatsLayout';
 import RoomLoading from '@/views/loadings/Room.vue';

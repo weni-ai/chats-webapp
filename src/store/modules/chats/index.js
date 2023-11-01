@@ -3,6 +3,7 @@ import roomMessages from './roomMessages';
 import quickMessages from './quickMessages';
 import quickMessagesShared from './quickMessagesShared';
 import discussions from './discussions';
+import discussionMessages from './discussionMessages';
 
 const module = {
   namespaced: true,
@@ -12,6 +13,7 @@ const module = {
     quickMessages,
     quickMessagesShared,
     discussions,
+    discussionMessages,
   },
 };
 

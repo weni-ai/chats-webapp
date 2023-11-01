@@ -3,6 +3,7 @@ import Rooms from '@/store/modules/chats/rooms';
 
 import { getProject } from '@/utils/config';
 
+// TODO: Remove after backend is not mocked
 const http = axios.create({
   baseURL: `https://a89f398a-8473-4d5e-87da-e297b4c02dc9.mock.pstmn.io/v1`,
 });
