@@ -6,7 +6,7 @@
     <div v-if="discussionId">{{ discussionId }}</div>
     <room-loading v-show="isRoomSkeletonActive" />
     <chats-background v-if="!room && !discussion && !isRoomSkeletonActive" />
-    <section v-if="!!room" v-show="!isRoomSkeletonActive" class="active-chat">
+    <section v-if="!!room && !discussion" v-show="!isRoomSkeletonActive" class="active-chat">
       <unnnic-chats-header
         :title="room.contact.name || ''"
         :avatarClick="() => openRoomContactInfo()"
@@ -53,7 +53,11 @@
       </section>
     </section>
 
-    <home-chat-discussion v-if="!!discussion" @open-file-uploader="openFileUploader" />
+    <home-discussion-messages
+      v-if="!!discussion"
+      @open-file-uploader="openFileUploader"
+      @handle-room-skeleton="isRoomSkeletonActive = $event"
+    />
 
     <unnnic-modal
       v-if="room"
@@ -120,7 +124,7 @@ import MessageManager from '@/components/chats/MessageManager';
 
 import FileUploader from '@/components/chats/MessageManager/FileUploader';
 import RoomLoading from '@/views/loadings/Room.vue';
-import HomeChatDiscussion from './HomeChatDiscussion';
+import HomeDiscussionMessages from './HomeDiscussionMessages';
 import HomeRoomMessages from './HomeRoomMessages';
 
 export default {
@@ -132,7 +136,7 @@ export default {
     ChatsDropzone,
     ChatHeaderSendFlow,
     ContactInfo,
-    HomeChatDiscussion,
+    HomeDiscussionMessages,
     HomeRoomMessages,
     DiscussionSidebar,
     MessageManager,
@@ -179,6 +183,7 @@ export default {
       room: (state) => state.chats.rooms.activeRoom,
       rooms: (state) => state.chats.rooms.rooms,
       discussion: (state) => state.chats.discussions.activeDiscussion,
+      discussions: (state) => state.chats.discussions.discussions,
       roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,
       listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
       showModalAssumedChat: ({ dashboard }) => dashboard.showModalAssumedChat,
@@ -223,10 +228,8 @@ export default {
       this.$store.dispatch('chats/rooms/removeRoom', uuid);
     },
     async setActiveRoom(uuid) {
+      this.isRoomSkeletonActive = true;
       const room = this.$store.getters['chats/rooms/getRoomById'](uuid);
-      // if (this.$route.name !== 'home' && !room) {
-      //   this.$router.replace({ name: 'home' });
-      // }
       await this.$store.dispatch('chats/rooms/setActiveRoom', room);
       await this.$store.dispatch('chats/rooms/getCanUseCopilot');
       this.closeRoomContactInfo();
@@ -235,19 +238,9 @@ export default {
     },
     async setActiveDiscussion(uuid) {
       const discussion = this.$store.getters['chats/discussions/getDiscussionById'](uuid);
-      // if (this.$route.name !== 'home' && !discussion) {
-      //   this.$router.replace({ name: 'home' });
-      // }
       await this.$store.dispatch('chats/discussions/setActiveDiscussion', discussion);
     },
 
-    async getDiscussionMessages(concat) {
-      await this.$store.dispatch('chats/discussionMessages/getDiscussionMessages', {
-        offset: this.page * this.limit,
-        concat,
-        limit: this.limit,
-      });
-    },
     whenGetChat() {
       this.closeRoomContactInfo();
     },
@@ -335,6 +328,17 @@ export default {
     room(newValue) {
       if (!newValue) this.closeRoomContactInfo();
       if (newValue) this.updateTextBoxMessage('');
+
+      if (this.rooms.length > 0) {
+        if (!newValue?.uuid) {
+          this.$router.replace({ name: 'home' });
+          return;
+        }
+
+        if (newValue?.uuid !== this.roomId) {
+          this.$router.replace({ name: 'room', params: { roomId: newValue.uuid } });
+        }
+      }
     },
     roomId: {
       immediate: true,
@@ -344,11 +348,8 @@ export default {
             this.$delete(this.$store.state.chats.rooms.newMessagesByRoom, roomId);
           }
 
-          this.isRoomSkeletonActive = true;
           await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
-          await this.setActiveRoom(roomId);
-        } else {
-          await this.setActiveRoom('');
+          // await this.setActiveRoom(roomId);
         }
         this.isRoomClassifierVisible = false;
       },
@@ -356,20 +357,45 @@ export default {
     async rooms(rooms) {
       if (rooms.length > 0 && this.roomId && this.roomId !== this.room?.uuid) {
         await this.setActiveRoom(this.roomId);
+        if (this.$route.name !== 'home' && !this.room) {
+          this.$router.replace({ name: 'home' });
+          this.isRoomSkeletonActive = false;
+        }
+      }
+    },
+    async discussion(newValue) {
+      if (this.rooms.length > 0) {
+        if (!newValue?.uuid) {
+          this.$router.replace({ name: 'home' });
+          return;
+        }
+
+        if (newValue?.uuid !== this.discussionId) {
+          this.$router.replace({ name: 'discussion', params: { discussionId: newValue.uuid } });
+        }
       }
     },
     discussionId: {
       immediate: true,
       async handler(discussionId) {
-        if (discussionId) {
-          await this.setActiveDiscussion(discussionId);
-        } else {
-          await this.setActiveDiscussion('');
+        if (discussionId && discussionId !== this.discussion?.uuid) {
+          await this.$store.dispatch('chats/discussionMessages/resetDiscussionMessages');
+          // await this.setActiveDiscussion(discussionId);
         }
       },
     },
-    async discussion() {
-      await this.getDiscussionMessages();
+    async discussions(discussions) {
+      if (
+        discussions.length > 0 &&
+        this.discussionId &&
+        this.discussionId !== this.discussion?.uuid
+      ) {
+        await this.setActiveDiscussion(this.discussionId);
+        if (this.$route.name !== 'home' && !this.discussion) {
+          this.$router.replace({ name: 'home' });
+          this.isRoomSkeletonActive = false;
+        }
+      }
     },
   },
 

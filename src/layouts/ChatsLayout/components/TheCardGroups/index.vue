@@ -175,15 +175,7 @@ export default {
 
   methods: {
     async openRoom(room) {
-      if (this.isViewMode) {
-        await this.$store.dispatch('chats/rooms/setActiveRoom', room);
-      } else {
-        const path = `/chats/${room.uuid}`;
-
-        if (this.$route.path === path) return;
-
-        this.$router.replace(path);
-      }
+      await this.$store.dispatch('chats/rooms/setActiveRoom', room);
     },
 
     async openDiscussion(discussion) {

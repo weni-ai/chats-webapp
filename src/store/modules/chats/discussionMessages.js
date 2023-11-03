@@ -18,6 +18,9 @@ export default {
   state: {
     discussionMessages: [],
     discussionMessagesSorted: [],
+    discussionMessagesSendingUuids: [],
+    discussionMessagesInPromiseUuids: [],
+    discussionMessagesFailedUuids: [],
     discussionMessagesNext: '',
   },
 
@@ -41,7 +44,7 @@ export default {
   },
 
   actions: {
-    async getDiscussionMessages({ commit, state }, { offset = null, limit = null }) {
+    async getDiscussionMessages({ commit, state }, { offset, limit }) {
       const nextReq = state.discussionMessagesNext;
 
       treatMessages({
