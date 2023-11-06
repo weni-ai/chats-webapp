@@ -5,7 +5,7 @@ import { getProject } from '@/utils/config';
 
 // TODO: Remove after backend is not mocked
 const http = axios.create({
-  baseURL: `https://a89f398a-8473-4d5e-87da-e297b4c02dc9.mock.pstmn.io/v1`,
+  baseURL: `https://3ca2c5f1-68af-4a4c-9c8d-88af26b086e2.mock.pstmn.io/v1`,
 });
 
 export default {

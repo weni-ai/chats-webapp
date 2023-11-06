@@ -165,7 +165,7 @@ export default {
         itemUser: { user: { ...activeRoom.user } },
         message: text,
         sendItemMessage: () =>
-          Message.send(activeRoom.uuid, {
+          Message.sendRoomMessage(activeRoom.uuid, {
             text,
             user_email: activeRoom.user.email,
             seen: true,

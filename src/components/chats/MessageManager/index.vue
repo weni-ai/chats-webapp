@@ -294,7 +294,7 @@ export default {
         this.clearTextBox();
 
         if (this.isDiscussion) {
-          await this.$store.dispatch('chats/discussionMessages/sendMessage', message);
+          await this.$store.dispatch('chats/discussionMessages/sendDiscussionMessage', message);
           return;
         }
 

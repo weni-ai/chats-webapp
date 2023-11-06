@@ -4,7 +4,7 @@ import axios from 'axios';
 
 // TODO: Remove after backend is not mocked
 const httpDiscussion = axios.create({
-  baseURL: `https://a89f398a-8473-4d5e-87da-e297b4c02dc9.mock.pstmn.io/v1`,
+  baseURL: `https://3ca2c5f1-68af-4a4c-9c8d-88af26b086e2.mock.pstmn.io/v1`,
 });
 
 function getURLParams({ URL, endpoint }) {
@@ -68,12 +68,19 @@ export default {
     return response.data;
   },
 
-  async send(roomId, { text, user_email, seen }) {
+  async sendRoomMessage(roomId, { text, user_email, seen }) {
     const response = await http.post('/msg/', {
       room: roomId,
       text,
       user_email,
       seen,
+    });
+    return response.data;
+  },
+
+  async sendDiscussionMessage(discussionUuid, { text }) {
+    const response = await httpDiscussion.post(`/discussion/${discussionUuid}/send_messages/`, {
+      text,
     });
     return response.data;
   },

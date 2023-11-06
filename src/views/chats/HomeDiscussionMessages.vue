@@ -20,17 +20,7 @@
         @scrollTop="searchForMoreMessages"
       />
 
-      <!-- <message-manager
-        v-if="isMessageManagerVisible && !room.is_waiting"
-        ref="message-editor"
-        v-model="textBoxMessage"
-        :audio.sync="audioMessage"
-        @show-quick-messages="handlerShowQuickMessages"
-        @send-audio="sendAudio"
-        @open-file-uploader="$emit('openFileUploader', $event)"
-        :loadingValue="totalValue"
-        :loading="isLoading"
-      /> -->
+      <message-manager ref="message-editor" v-model="textBoxMessage" isDiscussion />
     </chats-dropzone>
   </section>
 </template>
@@ -40,18 +30,21 @@ import { mapActions, mapState } from 'vuex';
 
 import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone';
 import ChatMessages from '@/components/chats/chat/ChatMessages/index.vue';
+import MessageManager from '@/components/chats/MessageManager';
 
 export default {
   name: 'HomeDiscussionMessages',
   components: {
     ChatsDropzone,
     ChatMessages,
+    MessageManager,
   },
 
   data: () => {
     return {
       page: 0,
       limit: 20,
+      textBoxMessage: '',
     };
   },
 
