@@ -3,7 +3,6 @@
     ref="chats-layout"
     @select-quick-message="(quickMessage) => updateTextBoxMessage(quickMessage.text)"
   >
-    <div v-if="discussionId">{{ discussionId }}</div>
     <room-loading v-show="isRoomSkeletonActive" />
     <chats-background v-if="!room && !discussion && !isRoomSkeletonActive" />
     <section v-if="!!room && !discussion" v-show="!isRoomSkeletonActive" class="active-chat">
