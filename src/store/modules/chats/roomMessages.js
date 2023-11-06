@@ -5,6 +5,7 @@ import {
   groupMessages,
   parseMessageToMessageWithSenderProp,
   treatMessages,
+  sendMessage,
 } from '@/utils/messages';
 import Message from '@/services/api/resources/chats/message';
 import Rooms from './rooms';
@@ -19,18 +20,6 @@ const mutations = {
   UPDATE_MESSAGE: 'UPDATE_MESSAGE',
   SET_FAILED_MESSAGE: 'SET_FAILED_MESSAGE',
 };
-
-function createTemporaryMessage({ activeRoom, text = '', media = [] }) {
-  return {
-    uuid: Date.now().toString(),
-    text,
-    created_on: new Date().toISOString(),
-    media,
-    room: activeRoom.uuid,
-    seen: true,
-    user: { ...activeRoom.user },
-  };
-}
 
 function removeMessageFromSendings({ state }, messageUuid) {
   state.roomMessagesSendingUuids = state.roomMessagesSendingUuids.filter(
@@ -166,66 +155,66 @@ export default {
       }
     },
 
-    async sendMessage({ commit }, text) {
+    async sendRoomMessage({ commit }, text) {
       const { activeRoom } = Rooms.state;
       if (!activeRoom) return;
 
-      // Create a temporary message to display while sending
-      const temporaryMessage = createTemporaryMessage({ activeRoom, text });
-      commit(mutations.ADD_MESSAGE, { message: temporaryMessage });
-      commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message: temporaryMessage });
-
-      // Send the message and update it with the actual message data
-      try {
-        const message = await Message.send(activeRoom.uuid, {
-          text,
-          user_email: activeRoom.user.email,
-          seen: true,
-        });
-        commit(mutations.UPDATE_MESSAGE, { message, toUpdateMessageUuid: temporaryMessage.uuid });
-      } catch (error) {
-        console.error('An error occurred while sending the message', error);
-      }
+      await sendMessage({
+        itemType: 'room',
+        itemUuid: activeRoom.uuid,
+        itemUser: { user: { ...activeRoom.user } },
+        message: text,
+        sendItemMessage: () =>
+          Message.send(activeRoom.uuid, {
+            text,
+            user_email: activeRoom.user.email,
+            seen: true,
+          }),
+        addMessage: (message) => commit(mutations.ADD_MESSAGE, { message }),
+        addSortedMessage: (message) => commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message }),
+        updateMessage: ({ message, toUpdateMessageUuid }) =>
+          commit(mutations.UPDATE_MESSAGE, { message, toUpdateMessageUuid }),
+      });
     },
 
-    async sendMedias({ commit }, { files: medias, updateLoadingFiles }) {
-      const { activeRoom } = Rooms.state;
-      if (!activeRoom) return;
+    // async sendMedias({ commit }, { files: medias, updateLoadingFiles }) {
+    //   const { activeRoom } = Rooms.state;
+    //   if (!activeRoom) return;
 
-      await Promise.all(
-        medias.map(async (media) => {
-          // Create a temporary message to display while sending
-          const mediaPreview = URL.createObjectURL(media);
-          const temporaryMessage = createTemporaryMessage({
-            activeRoom,
-            text: '',
-            media: [{ preview: mediaPreview, file: media, content_type: media.type }],
-          });
-          commit(mutations.ADD_MESSAGE, { message: temporaryMessage });
-          commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message: temporaryMessage });
+    //   await Promise.all(
+    //     medias.map(async (media) => {
+    //       // Create a temporary message to display while sending
+    //       const mediaPreview = URL.createObjectURL(media);
+    //       const temporaryMessage = createTemporaryMessage({
+    //         activeRoom,
+    //         text: '',
+    //         media: [{ preview: mediaPreview, file: media, content_type: media.type }],
+    //       });
+    //       commit(mutations.ADD_MESSAGE, { message: temporaryMessage });
+    //       commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message: temporaryMessage });
 
-          // Send the message and update it with the actual message data
-          try {
-            const sentMedia = await Message.sendMedia(activeRoom.uuid, {
-              user_email: activeRoom.user.email,
-              media,
-              updateLoadingFiles,
-            });
-            commit(mutations.UPDATE_MESSAGE, {
-              media: sentMedia,
-              message: temporaryMessage,
-              toUpdateMediaPreview: mediaPreview,
-              toUpdateMessageUuid: temporaryMessage.uuid,
-            });
-          } catch (error) {
-            commit(mutations.SET_FAILED_MESSAGE, {
-              message: temporaryMessage,
-            });
-            console.error('An error occurred while sending the media', error);
-          }
-        }),
-      );
-    },
+    //       // Send the message and update it with the actual message data
+    //       try {
+    //         const sentMedia = await Message.sendMedia(activeRoom.uuid, {
+    //           user_email: activeRoom.user.email,
+    //           media,
+    //           updateLoadingFiles,
+    //         });
+    //         commit(mutations.UPDATE_MESSAGE, {
+    //           media: sentMedia,
+    //           message: temporaryMessage,
+    //           toUpdateMediaPreview: mediaPreview,
+    //           toUpdateMessageUuid: temporaryMessage.uuid,
+    //         });
+    //       } catch (error) {
+    //         commit(mutations.SET_FAILED_MESSAGE, {
+    //           message: temporaryMessage,
+    //         });
+    //         console.error('An error occurred while sending the media', error);
+    //       }
+    //     }),
+    //   );
+    // },
 
     async resendMessage({ commit, state }, { message }) {
       const { activeRoom } = Rooms.state;

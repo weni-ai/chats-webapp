@@ -137,6 +137,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isDiscussion: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data: () => ({
@@ -288,7 +292,13 @@ export default {
       const message = this.textBoxMessage.trim();
       if (message) {
         this.clearTextBox();
-        await this.$store.dispatch('chats/roomMessages/sendMessage', message);
+
+        if (this.isDiscussion) {
+          await this.$store.dispatch('chats/discussionMessages/sendMessage', message);
+          return;
+        }
+
+        await this.$store.dispatch('chats/roomMessages/sendRoomMessage', message);
       }
     },
     async sendAudio() {

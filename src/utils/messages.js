@@ -3,6 +3,24 @@ import moment from 'moment';
 import Rooms from '../store/modules/chats/rooms';
 import Profile from '../store/modules/profile';
 
+function createTemporaryMessage({
+  itemType = '',
+  itemUuid = '',
+  itemUser = {},
+  message = '',
+  media = [],
+}) {
+  return {
+    uuid: Date.now().toString(),
+    text: message,
+    created_on: new Date().toISOString(),
+    media: media || [],
+    [itemType]: itemUuid,
+    seen: true,
+    ...itemUser,
+  };
+}
+
 export function parseMessageToMessageWithSenderProp(message) {
   const sender = message.contact || message.user;
   if (!sender) return message;
@@ -107,6 +125,34 @@ export async function treatMessages({
 
   setMessages(newMessages);
   setMessagesNext(next);
+}
+
+export async function sendMessage({
+  itemType,
+  itemUuid,
+  itemUser,
+  message,
+  sendItemMessage,
+  addMessage,
+  addSortedMessage,
+  updateMessage,
+}) {
+  if (!itemUuid) {
+    return;
+  }
+
+  // Create a temporary message to display while sending
+  const temporaryMessage = createTemporaryMessage({ itemType, itemUuid, itemUser, message });
+  addMessage(temporaryMessage);
+  addSortedMessage(temporaryMessage);
+
+  // Send the message and update it with the actual message data
+  try {
+    const newMessage = await sendItemMessage();
+    updateMessage({ message: newMessage, toUpdateMessageUuid: temporaryMessage.uuid });
+  } catch (error) {
+    console.error('An error occurred while sending the message', error);
+  }
 }
 
 /**
