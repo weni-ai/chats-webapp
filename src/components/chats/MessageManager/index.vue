@@ -128,10 +128,6 @@ export default {
     loadingFileValue: {
       type: Number,
     },
-    isDiscussion: {
-      type: Boolean,
-      default: false,
-    },
   },
 
   data: () => ({
@@ -155,6 +151,7 @@ export default {
       quickMessages: (state) => state.chats.quickMessages.quickMessages,
       quickMessagesShared: (state) => state.chats.quickMessagesShared.quickMessagesShared,
       canUseCopilot: (state) => state.chats.rooms.canUseCopilot,
+      discussionId: (state) => state.chats.discussions.activeDiscussion?.uuid,
     }),
 
     textBoxMessage: {
@@ -286,12 +283,11 @@ export default {
       if (message) {
         this.clearTextBox();
 
-        if (this.isDiscussion) {
-          await this.$store.dispatch('chats/discussionMessages/sendDiscussionMessage', message);
-          return;
-        }
+        const actionType = this.discussionId
+          ? 'chats/discussionMessages/sendDiscussionMessage'
+          : 'chats/roomMessages/sendRoomMessage';
 
-        await this.$store.dispatch('chats/roomMessages/sendRoomMessage', message);
+        await this.$store.dispatch(actionType, message);
       }
     },
     async sendAudio() {
@@ -313,7 +309,7 @@ export default {
       const blob = await response.blob();
       const audio = new File([blob], `${Date.now().toString()}.mp3`, { type: 'audio/mpeg3' });
 
-      const actionType = this.isDiscussion
+      const actionType = this.discussionId
         ? 'chats/discussionMessages/sendDiscussionMedias'
         : 'chats/roomMessages/sendRoomMedias';
 

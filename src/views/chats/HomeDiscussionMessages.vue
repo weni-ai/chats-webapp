@@ -21,12 +21,7 @@
         @scrollTop="searchForMoreMessages"
       />
 
-      <message-manager
-        ref="message-editor"
-        v-model="textBoxMessage"
-        isDiscussion
-        @open-file-uploader="openFileUploader"
-      />
+      <message-manager v-model="textBoxMessage" @open-file-uploader="openFileUploader" />
     </chats-dropzone>
   </section>
 </template>
