@@ -8,13 +8,13 @@ function createTemporaryMessage({
   itemUuid = '',
   itemUser = {},
   message = '',
-  media = [],
+  medias = [],
 }) {
   return {
     uuid: Date.now().toString(),
     text: message,
     created_on: new Date().toISOString(),
-    media: media || [],
+    media: medias || [],
     [itemType]: itemUuid,
     seen: true,
     user: itemUser,
@@ -153,6 +153,53 @@ export async function sendMessage({
   } catch (error) {
     console.error('An error occurred while sending the message', error);
   }
+}
+
+export async function sendMedias({
+  itemType,
+  itemUuid,
+  itemUser,
+  medias,
+  sendItemMedia,
+  addMessage,
+  addFailedMessage,
+  addSortedMessage,
+  updateMessage,
+}) {
+  if (!itemUuid) {
+    return;
+  }
+
+  // Create a temporary message to display while sending
+
+  await Promise.all(
+    medias.map(async (media) => {
+      // Create a temporary message to display while sending
+      const mediaPreview = URL.createObjectURL(media);
+      const temporaryMessage = createTemporaryMessage({
+        itemType,
+        itemUuid,
+        itemUser,
+        medias: [{ preview: mediaPreview, file: media, content_type: media.type }],
+      });
+      addMessage(temporaryMessage);
+      addSortedMessage(temporaryMessage);
+
+      // Send the message and update it with the actual message data
+      try {
+        const sentMedia = await sendItemMedia(media);
+        updateMessage({
+          media: sentMedia,
+          message: temporaryMessage,
+          toUpdateMediaPreview: mediaPreview,
+          toUpdateMessageUuid: temporaryMessage.uuid,
+        });
+      } catch (error) {
+        addFailedMessage(temporaryMessage);
+        console.error('An error occurred while sending the media', error);
+      }
+    }),
+  );
 }
 
 /**

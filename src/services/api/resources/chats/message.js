@@ -85,8 +85,8 @@ export default {
     return response.data;
   },
 
-  async sendMedia(roomId, { user_email, media, updateLoadingFiles }) {
-    const msg = await this.send(roomId, {
+  async sendRoomMedia(roomId, { user_email, media, updateLoadingFiles }) {
+    const msg = await this.sendRoomMessage(roomId, {
       text: '',
       user_email,
       seen: true,

@@ -254,7 +254,10 @@ export default {
             Object.values(loadingFiles).reduce((acc, value) => acc + value) /
             Object.keys(loadingFiles).length;
         };
-        await this.$store.dispatch('chats/roomMessages/sendMedias', { files, updateLoadingFiles });
+        await this.$store.dispatch('chats/roomMessages/sendRoomMedias', {
+          files,
+          updateLoadingFiles,
+        });
         this.totalValue = undefined;
       } catch (e) {
         console.error('O upload de alguns arquivos pode não ter sido concluído');
@@ -274,7 +277,7 @@ export default {
       const response = await fetch(this.audioMessage.src);
       const blob = await response.blob();
       const audio = new File([blob], `${Date.now().toString()}.mp3`, { type: 'audio/mpeg3' });
-      await this.$store.dispatch('chats/roomMessages/sendMedias', {
+      await this.$store.dispatch('chats/roomMessages/sendRoomMedias', {
         files: [audio],
         updateLoadingFiles,
       });
