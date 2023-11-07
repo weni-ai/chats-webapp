@@ -1,5 +1,6 @@
 <template>
   <aside-slot-template
+    class="discussion-sidebar"
     :title="
       isOwnDiscussion ? $t('discussions.about.title') : $t('chats.closed_chats.contact_history')
     "
@@ -7,7 +8,7 @@
     @close="handleEndDiscussionModal"
   >
     <discussion-about v-if="isOwnDiscussion" :details="details" />
-    <discussion-contact-history v-else :details="details" />
+    <home-room-messages v-else />
 
     <unnnic-modal
       v-if="isEndDiscussionModalOpen"
@@ -29,8 +30,8 @@
 import { mapState } from 'vuex';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
+import HomeRoomMessages from '@/views/chats/HomeRoomMessages.vue';
 import DiscussionAbout from './DiscussionAbout';
-import DiscussionContactHistory from './DiscussionContactHistory';
 
 export default {
   name: 'DiscussionSidebar',
@@ -38,7 +39,7 @@ export default {
   components: {
     AsideSlotTemplate,
     DiscussionAbout,
-    DiscussionContactHistory,
+    HomeRoomMessages,
   },
 
   data: () => {
@@ -77,7 +78,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:deep(.unnnic-modal-container-background-button) {
-  padding-top: 0;
+.discussion-sidebar {
+  .chat-messages {
+    padding: 0 $unnnic-spacing-xs;
+  }
+  :deep(.unnnic-modal-container-background-button) {
+    padding-top: 0;
+  }
 }
 </style>
