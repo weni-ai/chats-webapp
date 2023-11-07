@@ -4,12 +4,15 @@
       <div
         :class="[
           'message-manager-box__container',
-          loadingValue !== undefined && 'loading',
+          isLoadingValueValid && 'loading',
           isFocused && 'focused',
         ]"
       >
-        <div v-if="loadingValue !== undefined" class="loading-indicator__container">
-          <div class="loading-indicator" :style="{ width: `${loadingValue * 100}%` }"></div>
+        <div v-if="isLoadingValueValid" class="loading-indicator__container">
+          <div
+            class="loading-indicator"
+            :style="{ width: `${(loadingFileValue || loadingValue) * 100}%` }"
+          ></div>
         </div>
         <text-box
           v-if="!isAudioRecorderVisible"
@@ -19,13 +22,12 @@
           @paste="handlePaste"
           @is-typing-handler="isTypingHandler"
           @is-focused-handler="isFocusedHandler"
-          :loadingValue="loadingValue"
         />
         <unnnic-audio-recorder
           ref="audioRecorder"
           class="message-manager__audio-recorder"
-          v-show="isAudioRecorderVisible && loadingValue === undefined"
-          v-model="recordedAudio"
+          v-show="isAudioRecorderVisible && !isLoadingValueValid"
+          v-model="audioMessage"
           @status="updateAudioRecorderStatus"
         />
       </div>
@@ -73,10 +75,7 @@
         </unnnic-dropdown>
 
         <unnnic-button
-          v-if="
-            !isSuggestionBoxOpen &&
-            (isTyping || isAudioRecorderVisible || loadingValue !== undefined)
-          "
+          v-if="!isSuggestionBoxOpen && (isTyping || isAudioRecorderVisible || isLoadingValueValid)"
           @click="send"
           type="primary"
           size="large"
@@ -122,20 +121,12 @@ export default {
   },
 
   props: {
-    audio: {
-      type: HTMLAudioElement,
-      default: null,
-    },
     value: {
       type: String,
       default: '',
     },
-    loadingValue: {
+    loadingFileValue: {
       type: Number,
-    },
-    loading: {
-      type: Boolean,
-      default: false,
     },
     isDiscussion: {
       type: Boolean,
@@ -147,9 +138,16 @@ export default {
     keyboardEvent: null,
     isSuggestionBoxOpen: false,
     isCopilotOpen: false,
-    audioRecorderStatus: '',
     isTyping: false,
     isFocused: false,
+
+    /**
+     * @type {HTMLAudioElement}
+     */
+    audioMessage: null,
+    audioRecorderStatus: '',
+    isLoading: false,
+    loadingValue: null,
   }),
 
   computed: {
@@ -167,19 +165,14 @@ export default {
         this.$emit('input', textBoxMessage);
       },
     },
-    recordedAudio: {
-      get() {
-        return this.audio;
-      },
-      set(audio) {
-        this.$emit('update:audio', audio);
-      },
-    },
     isAudioRecorderVisible() {
       return (
-        !!this.audio ||
+        !!this.audioMessage ||
         ['recording', 'recorded', 'playing', 'paused'].includes(this.audioRecorderStatus)
       );
+    },
+    isLoadingValueValid() {
+      return typeof this.loadingValue === 'number' || typeof this.loadingFileValue === 'number';
     },
     shortcuts() {
       const allShortcuts = [...this.quickMessages, ...this.quickMessagesShared];
@@ -196,8 +189,8 @@ export default {
       return uniqueShortcuts;
     },
     showActionButton() {
-      const { isTyping, isAudioRecorderVisible, loadingValue } = this;
-      return !isTyping && !isAudioRecorderVisible && loadingValue === undefined;
+      const { isTyping, isAudioRecorderVisible, isLoadingValueValid } = this;
+      return !isTyping && !isAudioRecorderVisible && !isLoadingValueValid;
     },
   },
 
@@ -213,8 +206,8 @@ export default {
       });
     },
     clearAudio() {
-      // Accessed by parent components
       this.$refs.audioRecorder?.discard();
+      this.audioMessage = null;
     },
     clearTextBox() {
       this.textBoxMessage = '';
@@ -274,10 +267,10 @@ export default {
     },
 
     record() {
-      if (!this.loading) {
+      if (!this.isLoading) {
         this.$refs.audioRecorder?.record();
       } else {
-        console.log('Loading');
+        console.info('Loading');
       }
     },
     stopRecord() {
@@ -305,7 +298,34 @@ export default {
       if (this.audioRecorderStatus === 'recording') {
         await this.stopRecord();
       }
-      this.$emit('send-audio');
+
+      if (!this.audioMessage || this.isLoading) return;
+      this.isLoading = true;
+
+      const loadingFiles = {};
+      const updateLoadingFiles = (messageUuid, progress) => {
+        loadingFiles[messageUuid] = progress;
+        this.totalValue =
+          Object.values(loadingFiles).reduce((acc, value) => acc + value) /
+          Object.keys(loadingFiles).length;
+      };
+      const response = await fetch(this.audioMessage.src);
+      const blob = await response.blob();
+      const audio = new File([blob], `${Date.now().toString()}.mp3`, { type: 'audio/mpeg3' });
+
+      const actionType = this.isDiscussion
+        ? 'chats/discussionMessages/sendDiscussionMedias'
+        : 'chats/roomMessages/sendRoomMedias';
+
+      await this.$store.dispatch(actionType, {
+        files: [audio],
+        updateLoadingFiles,
+      });
+
+      this.totalValue = undefined;
+      this.clearAudio();
+
+      this.isLoading = false;
     },
     openFileUploader(files) {
       this.$emit('open-file-uploader', files);

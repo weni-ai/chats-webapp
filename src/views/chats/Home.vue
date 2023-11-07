@@ -19,14 +19,10 @@
 
         <message-manager
           v-if="isMessageManagerVisible && !room.is_waiting"
-          ref="message-editor"
           v-model="textBoxMessage"
-          :audio.sync="audioMessage"
+          :loadingFileValue="totalValue"
           @show-quick-messages="handlerShowQuickMessages"
-          @send-audio="sendAudio"
           @open-file-uploader="openFileUploader"
-          :loadingValue="totalValue"
-          :loading="isLoading"
         />
       </chats-dropzone>
 
@@ -158,10 +154,6 @@ export default {
   },
 
   data: () => ({
-    /**
-     * @type {HTMLAudioElement}
-     */
-    audioMessage: null,
     isRoomContactInfoOpen: false,
     textBoxMessage: '',
     isCloseChatModalOpen: false,
@@ -170,7 +162,6 @@ export default {
     isGetChatConfirmationModalOpen: false,
     isRoomClassifierVisible: false,
     totalValue: undefined,
-    isLoading: false,
     showCloseModal: false,
     files: [],
     isRoomSkeletonActive: false,
@@ -254,14 +245,11 @@ export default {
             Object.values(loadingFiles).reduce((acc, value) => acc + value) /
             Object.keys(loadingFiles).length;
         };
-        if (this.discussionId) {
-          await this.$store.dispatch('chats/discussionMessages/sendDiscussionMedias', {
-            files,
-            updateLoadingFiles,
-          });
-          return;
-        }
-        await this.$store.dispatch('chats/roomMessages/sendRoomMedias', {
+        const actionType = this.discussionId
+          ? 'chats/discussionMessages/sendDiscussionMedias'
+          : 'chats/roomMessages/sendRoomMedias';
+
+        await this.$store.dispatch(actionType, {
           files,
           updateLoadingFiles,
         });
@@ -270,30 +258,6 @@ export default {
       } finally {
         this.totalValue = undefined;
       }
-    },
-    async sendAudio() {
-      if (!this.audioMessage || this.isLoading) return;
-      this.isLoading = true;
-
-      const loadingFiles = {};
-      const updateLoadingFiles = (messageUuid, progress) => {
-        loadingFiles[messageUuid] = progress;
-        this.totalValue =
-          Object.values(loadingFiles).reduce((acc, value) => acc + value) /
-          Object.keys(loadingFiles).length;
-      };
-      const response = await fetch(this.audioMessage.src);
-      const blob = await response.blob();
-      const audio = new File([blob], `${Date.now().toString()}.mp3`, { type: 'audio/mpeg3' });
-      await this.$store.dispatch('chats/roomMessages/sendRoomMedias', {
-        files: [audio],
-        updateLoadingFiles,
-      });
-      this.totalValue = undefined;
-      this.$refs['message-editor'].clearAudio();
-      this.audioMessage = null;
-
-      this.isLoading = false;
     },
     getTodayDate() {
       return new Intl.DateTimeFormat('pt-BR', {
