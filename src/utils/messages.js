@@ -1,6 +1,5 @@
 import moment from 'moment';
 
-import Rooms from '../store/modules/chats/rooms';
 import Profile from '../store/modules/profile';
 
 function createTemporaryMessage({
@@ -36,11 +35,6 @@ export function parseMessageToMessageWithSenderProp(message) {
     ...message,
     sender,
   };
-}
-
-export function isMessageInActiveRoom(message) {
-  const { activeRoom } = Rooms.state;
-  return message.room === activeRoom?.uuid;
 }
 
 export function isMessageFromCurrentUser(message) {

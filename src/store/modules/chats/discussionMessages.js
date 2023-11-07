@@ -1,8 +1,8 @@
 import {
   groupMessages,
   isMessageFromCurrentUser,
-  isMessageInActiveRoom,
   parseMessageToMessageWithSenderProp,
+  sendMedias,
   sendMessage,
   treatMessages,
 } from '@/utils/messages';
@@ -18,8 +18,13 @@ const mutations = {
   SET_DISCUSSION_MESSAGES_NEXT: 'SET_DISCUSSION_MESSAGES_NEXT',
   RESET_DISCUSSION_MESSAGES_NEXT: 'RESET_DISCUSSION_MESSAGES_NEXT',
   UPDATE_DISCUSSION_MESSAGE: 'UPDATE_DISCUSSION_MESSAGE',
-  SET_FAILED_MESSAGE: 'SET_FAILED_MESSAGE',
+  ADD_FAILED_DISCUSSION_MESSAGE: 'ADD_FAILED_DISCUSSION_MESSAGE',
 };
+
+function isMessageInActiveDiscussion(message) {
+  const { activeDiscussion } = Discussions.state;
+  return message.discussion === activeDiscussion?.uuid;
+}
 
 function removeMessageFromSendings({ state }, messageUuid) {
   state.discussionMessagesSendingUuids = state.discussionMessagesSendingUuids.filter(
@@ -53,13 +58,25 @@ export default {
       const { discussionMessages, discussionMessagesSendingUuids } = state;
       const { uuid } = message;
 
-      if (isMessageInActiveRoom(message)) {
+      if (isMessageInActiveDiscussion(message)) {
         const messageWithSender = parseMessageToMessageWithSenderProp(message);
 
         discussionMessages.push(messageWithSender);
 
         if (isMessageFromCurrentUser(message)) {
           discussionMessagesSendingUuids.push(uuid);
+        }
+      }
+    },
+    [mutations.ADD_FAILED_DISCUSSION_MESSAGE](state, { message }) {
+      const { roomMessagesFailedUuids } = state;
+      const { uuid } = message;
+
+      if (isMessageInActiveDiscussion(message)) {
+        removeMessageFromSendings({ state }, uuid);
+
+        if (isMessageFromCurrentUser(message)) {
+          roomMessagesFailedUuids.push(uuid);
         }
       }
     },
@@ -144,6 +161,36 @@ export default {
         addSortedMessage: (message) => commit(mutations.ADD_DISCUSSION_MESSAGE_SORTED, { message }),
         updateMessage: ({ message, toUpdateMessageUuid }) =>
           commit(mutations.UPDATE_DISCUSSION_MESSAGE, { message, toUpdateMessageUuid }),
+      });
+    },
+
+    async sendDiscussionMedias({ commit }, { files: medias, updateLoadingFiles }) {
+      const { activeDiscussion } = Discussions.state;
+      if (!activeDiscussion) return;
+
+      await sendMedias({
+        itemType: 'discussion',
+        itemUuid: activeDiscussion.uuid,
+        itemUser: activeDiscussion.user,
+        medias,
+        sendItemMedia: (media) =>
+          Message.sendDiscussionMedia(activeDiscussion.uuid, {
+            media,
+            updateLoadingFiles,
+          }),
+        addMessage: (message) => commit(mutations.ADD_DISCUSSION_MESSAGE, { message }),
+        addSortedMessage: (message) => commit(mutations.ADD_DISCUSSION_MESSAGE_SORTED, { message }),
+        addFailedMessage: (message) =>
+          commit(mutations.ADD_FAILED_DISCUSSION_MESSAGE, {
+            message,
+          }),
+        updateMessage: ({ media, message, toUpdateMessageUuid, toUpdateMediaPreview }) =>
+          commit(mutations.UPDATE_DISCUSSION_MESSAGE, {
+            media,
+            message,
+            toUpdateMessageUuid,
+            toUpdateMediaPreview,
+          }),
       });
     },
   },

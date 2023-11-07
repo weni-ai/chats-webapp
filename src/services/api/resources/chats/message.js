@@ -108,4 +108,26 @@ export default {
     );
     return response.data;
   },
+
+  async sendDiscussionMedia(roomId, { media, updateLoadingFiles }) {
+    const msg = await this.sendDiscussionMessage(roomId, {
+      text: '',
+    });
+    updateLoadingFiles?.(msg.uuid, 0);
+    const response = await httpDiscussion.postForm(
+      '/media/',
+      {
+        content_type: media.type,
+        discussion_message: msg.uuid,
+        media_file: media,
+      },
+      {
+        onUploadProgress: (event) => {
+          const progress = event.loaded / event.total;
+          updateLoadingFiles?.(msg.uuid, progress);
+        },
+      },
+    );
+    return response.data;
+  },
 };

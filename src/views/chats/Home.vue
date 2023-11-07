@@ -254,13 +254,21 @@ export default {
             Object.values(loadingFiles).reduce((acc, value) => acc + value) /
             Object.keys(loadingFiles).length;
         };
+        if (this.discussionId) {
+          await this.$store.dispatch('chats/discussionMessages/sendDiscussionMedias', {
+            files,
+            updateLoadingFiles,
+          });
+          return;
+        }
         await this.$store.dispatch('chats/roomMessages/sendRoomMedias', {
           files,
           updateLoadingFiles,
         });
-        this.totalValue = undefined;
       } catch (e) {
         console.error('O upload de alguns arquivos pode não ter sido concluído');
+      } finally {
+        this.totalValue = undefined;
       }
     },
     async sendAudio() {

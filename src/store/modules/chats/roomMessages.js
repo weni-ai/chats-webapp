@@ -1,6 +1,5 @@
 // import mime from 'mime-types';
 import {
-  isMessageInActiveRoom,
   isMessageFromCurrentUser,
   groupMessages,
   parseMessageToMessageWithSenderProp,
@@ -21,6 +20,11 @@ const mutations = {
   UPDATE_MESSAGE: 'UPDATE_MESSAGE',
   ADD_FAILED_MESSAGE: 'ADD_FAILED_MESSAGE',
 };
+
+function isMessageInActiveRoom(message) {
+  const { activeRoom } = Rooms.state;
+  return message.room === activeRoom?.uuid;
+}
 
 function removeMessageFromSendings({ state }, messageUuid) {
   state.roomMessagesSendingUuids = state.roomMessagesSendingUuids.filter(

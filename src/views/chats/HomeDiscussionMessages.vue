@@ -6,7 +6,7 @@
       avatarIcon="forum"
       size="small"
     />
-    <chats-dropzone @open-file-uploader="$emit('openFileUploader', $event)">
+    <chats-dropzone @open-file-uploader="openFileUploader">
       <chat-messages
         v-if="discussion?.uuid"
         :chatUuid="discussion.uuid"
@@ -21,7 +21,12 @@
         @scrollTop="searchForMoreMessages"
       />
 
-      <message-manager ref="message-editor" v-model="textBoxMessage" isDiscussion />
+      <message-manager
+        ref="message-editor"
+        v-model="textBoxMessage"
+        isDiscussion
+        @open-file-uploader="openFileUploader"
+      />
     </chats-dropzone>
   </section>
 </template>
@@ -68,6 +73,10 @@ export default {
       discussionResendMessage: 'chats/discussionMessages/discussionResendMessage',
       discussionResendMedia: 'chats/discussionMessages/resendMedia',
     }),
+
+    openFileUploader(files) {
+      this.$emit('open-file-uploader', files);
+    },
 
     async getDiscussionMessages() {
       await this.$store
