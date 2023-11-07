@@ -1,6 +1,6 @@
 <template>
   <unnnic-chats-contact
-    :username="room.contact.name"
+    :title="room.contact.name"
     :lastMessage="lastMessage"
     :waitingTime="waitingTimeComputed"
     :unreadMessages="unreadMessages"

@@ -3,7 +3,7 @@
     :title="
       isOwnDiscussion ? $t('discussions.about.title') : $t('chats.closed_chats.contact_history')
     "
-    :icon="isOwnDiscussion ? 'information-circle-4' : 'synchronize-arrow-clock-4'"
+    :icon="isOwnDiscussion ? 'chat_info' : 'synchronize-arrow-clock-4'"
     @close="handleEndDiscussionModal"
   >
     <discussion-about v-if="isOwnDiscussion" :details="details" />

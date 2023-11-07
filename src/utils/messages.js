@@ -17,7 +17,7 @@ function createTemporaryMessage({
     media: media || [],
     [itemType]: itemUuid,
     seen: true,
-    ...itemUser,
+    user: itemUser,
   };
 }
 

@@ -162,7 +162,7 @@ export default {
       await sendMessage({
         itemType: 'room',
         itemUuid: activeRoom.uuid,
-        itemUser: { user: { ...activeRoom.user } },
+        itemUser: activeRoom.user,
         message: text,
         sendItemMessage: () =>
           Message.sendRoomMessage(activeRoom.uuid, {

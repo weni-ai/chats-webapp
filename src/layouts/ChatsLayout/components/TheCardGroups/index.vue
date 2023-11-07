@@ -148,7 +148,8 @@ export default {
         !this.isLoadingRooms &&
         this.rooms.length === 0 &&
         this.rooms_queue.length === 0 &&
-        this.rooms_sent_flows.length === 0
+        this.rooms_sent_flows.length === 0 &&
+        this.discussions.length === 0
       );
     },
   },

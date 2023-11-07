@@ -8,6 +8,7 @@ import {
 } from '@/utils/messages';
 import Message from '@/services/api/resources/chats/message';
 import Discussions from './discussions';
+import Profile from '../profile';
 
 const mutations = {
   SET_DISCUSSION_MESSAGES: 'SET_DISCUSSION_MESSAGES',
@@ -133,7 +134,7 @@ export default {
       await sendMessage({
         itemType: 'discussion',
         itemUuid: activeDiscussion.uuid,
-        itemUser: { sender: { ...activeDiscussion.user } },
+        itemUser: activeDiscussion.user || { email: Profile.state.me?.email },
         message: text,
         sendItemMessage: () =>
           Message.sendDiscussionMessage(activeDiscussion.uuid, {

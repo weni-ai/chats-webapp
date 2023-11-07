@@ -38,16 +38,14 @@
           <template v-else>
             <unnnic-chats-message
               v-if="message.text || isGeolocation(message.media[0])"
-              :type="message.user || isMessageByBot(message) ? 'sent' : 'received'"
-              :class="[
-                'chat-messages__message',
-                message.user || isMessageByBot(message) ? 'sent' : 'received',
-              ]"
+              :type="messageType(message)"
+              :class="['chat-messages__message', messageType(message)]"
               :time="new Date(message.created_on)"
               :status="messageStatus({ message })"
               :key="message.uuid"
               :ref="`message-${message.uuid}`"
               :title="messageFormatTitle(new Date(message.created_on))"
+              :signature="messageSignature(message)"
             >
               {{ isGeolocation(message.media[0]) ? message.media[0]?.url : message.text }}
             </unnnic-chats-message>
@@ -56,12 +54,13 @@
                 v-if="isMedia(media) && !isGeolocation(media)"
                 :key="media.created_on"
                 :ref="`message-${message.uuid}`"
-                :type="message.user ? 'sent' : 'received'"
-                :class="['chat-messages__message', message.user ? 'sent' : 'received']"
+                :type="messageType(message)"
+                :class="['chat-messages__message', messageType(message)]"
                 :mediaType="isImage(media) ? 'image' : isVideo(media) ? 'video' : 'audio'"
                 :time="new Date(message.created_on)"
                 :status="messageStatus({ message })"
                 :title="messageFormatTitle(new Date(message.created_on))"
+                :signature="messageSignature(message)"
                 @click="resendMedia({ message, media })"
               >
                 <img
@@ -90,12 +89,13 @@
                 v-else-if="!isGeolocation(media)"
                 :key="media.created_on"
                 :ref="`message-${message.uuid}`"
-                :type="message.user ? 'sent' : 'received'"
-                :class="['chat-messages__message', message.user ? 'sent' : 'received']"
+                :type="messageType(message)"
+                :class="['chat-messages__message', messageType(message)]"
                 :time="new Date(message.created_on)"
                 :documentName="media.url?.split('/').at(-1) || media.file.name"
                 :status="messageStatus({ message })"
                 :title="messageFormatTitle(new Date(message.created_on))"
+                :signature="messageSignature(message)"
                 @click="documentClickHandler({ message, media })"
               />
             </template>
@@ -147,6 +147,7 @@
 // import { mapActions, mapState } from 'vuex';
 import moment from 'moment';
 
+import { isMessageFromCurrentUser } from '@/utils/messages';
 import Media from '@/services/api/resources/chats/media';
 import TagGroup from '@/components/TagGroup';
 import VideoPlayer from '@/components/chats/MediaMessage/Previews/Video';
@@ -189,6 +190,10 @@ export default {
     messagesFailedUuids: {
       type: Array,
       required: true,
+    },
+    signatures: {
+      type: Boolean,
+      default: false,
     },
 
     resendMessages: {
@@ -315,8 +320,22 @@ export default {
     //   ).format('L')}`;
     // },
 
+    messageType(message) {
+      return isMessageFromCurrentUser(message) || this.isMessageByBot(message)
+        ? 'sent'
+        : 'received';
+    },
+
     messageFormatTitle(date) {
       return `${moment(date).format('HH:mm')} | ${moment(date).format('L')}`;
+    },
+
+    messageSignature(message) {
+      if (!this.signatures) {
+        return '';
+      }
+      const { first_name, last_name, email } = message.user;
+      return first_name ? `${first_name} ${last_name}` : email;
     },
 
     // isEdgeRoomMessage(messagesByDateMinutes) {

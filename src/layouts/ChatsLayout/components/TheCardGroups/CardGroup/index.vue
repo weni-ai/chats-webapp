@@ -7,8 +7,8 @@
       <unnnic-chats-contact
         v-for="discussion in discussions"
         :key="discussion.uuid"
-        :username="discussion.subject"
-        :lastMessage="`${$t('discussions.title')} ${$t('about')} ${discussion.contact}`"
+        :title="discussion.subject"
+        :discussionGoal="discussion.contact"
         :tabindex="0"
         :selected="discussion.uuid === activeDiscussionId"
         @click="open(discussion)"

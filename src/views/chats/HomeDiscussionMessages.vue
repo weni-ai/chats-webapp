@@ -3,8 +3,8 @@
     <unnnic-chats-header
       :title="discussion.subject"
       :subtitle="`${$t('discussions.title')} ${$t('about')} ${discussion.contact}`"
-      :avatarName="discussion.subject"
-      :close="() => {}"
+      avatarIcon="forum"
+      size="small"
     />
     <chats-dropzone @open-file-uploader="$emit('openFileUploader', $event)">
       <chat-messages
@@ -17,6 +17,7 @@
         :resendMessages="discussionResendMessages"
         :resendMessage="discussionResendMessage"
         :resendMedia="discussionResendMedia"
+        signatures
         @scrollTop="searchForMoreMessages"
       />
 
@@ -103,4 +104,24 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.home-discussion-messages {
+  padding-bottom: $unnnic-spacing-sm;
+
+  height: 100%;
+  max-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  :deep(.unnnic-chats-header) {
+    .unnnic-chats-header__avatar-icon {
+      background-color: $unnnic-color-aux-purple-500;
+
+      [class*='unnnic-icon'] {
+        color: $unnnic-color-weni-50;
+      }
+    }
+  }
+}
+</style>
