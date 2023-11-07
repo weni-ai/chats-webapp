@@ -12,7 +12,7 @@
       </h2>
       <ul>
         <li v-for="user in agentsInvolved" :key="getUserFullName(user)">
-          {{ `${getUserFullName(user)} ${getUserRoleTreated(user.role)}` }}
+          {{ `${getUserFullName(user)} ${getUserRoleTreated(user)}` }}
         </li>
       </ul>
 
@@ -116,9 +116,12 @@ export default {
       return `${first_name} ${last_name}`;
     },
 
-    getUserRoleTreated(role) {
-      const roles = ['1', '2', '3']; // TODO: Check role handling and change these numbers to permissions
-      return roles[role] || '';
+    getUserRoleTreated(user) {
+      const roles = {
+        0: user.email === this.$store.state.profile.me?.email ? this.$t('you') : '',
+        1: this.$t('manager'),
+      };
+      return roles[user.role] ? `(${roles[user.role]})` : '';
     },
 
     handleAddAgentModal() {

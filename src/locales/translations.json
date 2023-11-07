@@ -664,6 +664,16 @@
     "en-us": "Agent",
     "es": "Agente"
   },
+  "manager": {
+    "pt-br": "Gestor",
+    "en-us": "Manager",
+    "es": "Gerente"
+  },
+  "you": {
+    "pt-br": "Você",
+    "en-us": "You",
+    "es": "Tú"
+  },
   "queue": {
     "pt-br": "Fila",
     "en-us": "Queue",
