@@ -47,8 +47,16 @@
           iconCenter="microphone"
         />
 
+        <unnnic-button
+          v-if="discussionId && showActionButton"
+          @click="openFileUploader"
+          type="secondary"
+          size="large"
+          iconCenter="attachment"
+        />
+
         <unnnic-dropdown
-          v-if="showActionButton || isSuggestionBoxOpen"
+          v-if="(showActionButton || isSuggestionBoxOpen) && !discussionId"
           position="top-left"
           class="more-actions"
         >
@@ -83,6 +91,7 @@
         />
       </div>
       <suggestion-box
+        v-if="!discussionId"
         :search="textBoxMessage"
         :suggestions="shortcuts"
         :keyboard-event="keyboardEvent"
