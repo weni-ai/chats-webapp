@@ -133,11 +133,15 @@ export default {
       try {
         const response = await Queue.list(sectorUuid);
         const { results } = response;
-        console.log(response);
 
         const newQueues = this.queuesToSelect;
         results.forEach(({ uuid, name }) => newQueues.push({ value: uuid, label: name }));
         this.queuesToSelect = newQueues;
+
+        if (results.length === 1 && newQueues?.[1]) {
+          const uniqueQueue = [newQueues[1]];
+          this.queue = uniqueQueue;
+        }
       } catch (error) {
         console.error('The sector tags could not be loaded at this time.', error);
       }
