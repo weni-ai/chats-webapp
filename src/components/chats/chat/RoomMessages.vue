@@ -1,7 +1,7 @@
 <template>
   <chat-messages
-    v-if="roomUuid"
-    :chatUuid="roomUuid"
+    v-if="room?.uuid"
+    :chatUuid="room.uuid"
     :messages="roomMessages"
     :messagesSorted="roomMessagesSorted"
     :messagesSendingUuids="roomMessagesSendingUuids"
@@ -9,6 +9,7 @@
     :resendMessages="roomResendMessages"
     :resendMessage="roomResendMessage"
     :resendMedia="roomResendMedia"
+    :tags="room?.tags"
     @scrollTop="searchForMoreMessages"
   />
 </template>
@@ -31,7 +32,7 @@ export default {
 
   computed: {
     ...mapState({
-      roomUuid: (state) => state.chats.rooms.activeRoom?.uuid,
+      room: (state) => state.chats.rooms.activeRoom,
       roomMessages: (state) => state.chats.roomMessages.roomMessages,
       roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,
       roomMessagesSorted: (state) => state.chats.roomMessages.roomMessagesSorted,
@@ -70,7 +71,7 @@ export default {
   },
 
   watch: {
-    roomUuid: {
+    'room.uuid': {
       immediate: true,
       handler(roomUuid) {
         if (roomUuid) {

@@ -9,6 +9,7 @@
         :crumbs="crumbs"
         :close="backToHome"
         @crumbClick="handlerCrumbClick"
+        size="large"
       />
       <room-header-loading v-show="roomId && isLoadingSelectedRoom" />
       <unnnic-chats-header
@@ -20,12 +21,7 @@
     <main>
       <section v-if="roomId" class="closed-chats__selected-chat">
         <room-loading v-show="isLoadingSelectedRoom" only-messages />
-        <chat-messages
-          v-if="selectedRoom"
-          v-show="!isLoadingSelectedRoom"
-          :room="selectedRoom"
-          @scrollTop="chatScrollTop"
-        />
+        <room-messages v-if="selectedRoom" v-show="!isLoadingSelectedRoom" />
         <contact-info v-if="selectedRoom" is-history :closedRoom="selectedRoom" @close="() => {}" />
       </section>
 
@@ -38,7 +34,7 @@
 import ProjectApi from '@/services/api/resources/settings/project';
 import History from '@/services/api/resources/chats/history';
 
-import ChatMessages from '@/components/chats/chat/ChatMessages';
+import RoomMessages from '@/components/chats/chat/RoomMessages';
 import ContactInfo from '@/components/chats/ContactInfo';
 import ClosedChatsHeaderLoading from '@/views/loadings/ClosedChats/ClosedChatsHeader.vue';
 import RoomHeaderLoading from '@/views/loadings/RoomHeader.vue';
@@ -55,7 +51,7 @@ export default {
     RoomLoading,
     ContactInfo,
     ClosedChatsRoomsTable,
-    ChatMessages,
+    RoomMessages,
   },
 
   props: {

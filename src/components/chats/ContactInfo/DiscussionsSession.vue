@@ -6,7 +6,10 @@
     <h2 class="contact-info__discussions__title">{{ $tc('discussions.title', 2) }}</h2>
     <ul class="contact-info__discussions__list">
       <li v-for="discussionClosed in discussionsCloseds" :key="discussionClosed.uuid">
-        <button class="contact-info__discussions__list-item" @click="handleDiscussionClosedModal">
+        <button
+          class="contact-info__discussions__list-item"
+          @click="openDiscussionClosed(discussionClosed.uuid)"
+        >
           {{ getDiscussionStartedBy(discussionClosed) }}
         </button>
       </li>
@@ -14,9 +17,10 @@
 
     <unnnic-modal
       v-if="showDiscussionClosedModal"
-      :text="$t('discussions.start_discussion.title')"
+      :text="$t('discussions.history')"
       @close="handleDiscussionClosedModal"
     >
+      <discussion-messages />
     </unnnic-modal>
   </aside-slot-template-section>
 </template>
@@ -25,11 +29,13 @@ import moment from 'moment';
 import { mapState } from 'vuex';
 
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
+import DiscussionMessages from '../chat/DiscussionMessages';
 
 export default {
   name: 'DiscussionsSession',
   components: {
     AsideSlotTemplateSection,
+    DiscussionMessages,
   },
   data() {
     return {
@@ -56,6 +62,10 @@ export default {
         name: discussion.created_by,
       })}`;
     },
+    async openDiscussionClosed(discussionUuid) {
+      await this.$store.dispatch('chats/discussions/setActiveDiscussion', { uuid: discussionUuid });
+      this.handleDiscussionClosedModal();
+    },
     handleDiscussionClosedModal() {
       this.showDiscussionClosedModal = !this.showDiscussionClosedModal;
     },
@@ -73,6 +83,7 @@ export default {
     font-size: $unnnic-font-size-body-lg;
     font-weight: $unnnic-font-weight-bold;
   }
+
   &__list {
     display: grid;
     gap: $unnnic-spacing-xs;
@@ -88,6 +99,20 @@ export default {
       font-family: $unnnic-font-family-secondary;
 
       cursor: pointer;
+    }
+  }
+
+  :deep(.unnnic-modal) {
+    .unnnic-modal-container-background {
+      width: 66%; // -> 8 / 12
+      height: 80%;
+
+      display: grid;
+
+      &-body-description-container {
+        padding: $unnnic-spacing-md;
+        padding-top: 0;
+      }
     }
   }
 }

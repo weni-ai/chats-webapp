@@ -963,6 +963,11 @@
         "es": "Buscar agente"
       }
     },
+    "history": {
+      "pt-br": "Histórico da discussão",
+      "en-us": "Discussion history",
+      "es": "Historial de discusión"
+    },
     "started_by": {
       "pt-br": "Discussão iniciada por {name}",
       "en-us": "Discussion started by {name}",
