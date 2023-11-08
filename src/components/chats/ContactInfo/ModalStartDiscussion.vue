@@ -175,8 +175,19 @@ export default {
       }
     }
   }
-  :deep(.unnnic-modal-container-background) {
-    width: 50%; // -> 6 / 12
+  :deep(.unnnic-label__label),
+  :deep(.unnnic-form__label) {
+    margin: 0 0 $unnnic-spacing-nano;
+  }
+
+  :deep(.unnnic-modal-container) {
+    .unnnic-modal-container-background {
+      width: 50%; // -> 6 / 12
+
+      &-body-description-container {
+        padding-bottom: 0;
+      }
+    }
   }
 }
 </style>
