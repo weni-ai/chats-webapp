@@ -18,7 +18,7 @@ import { mapActions, mapState } from 'vuex';
 import ChatMessages from '@/components/chats/chat/ChatMessages/index.vue';
 
 export default {
-  name: 'HomeRoomMessages',
+  name: 'RoomMessages',
 
   components: { ChatMessages },
 

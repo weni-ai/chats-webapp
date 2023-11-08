@@ -8,7 +8,7 @@
     @close="handleEndDiscussionModal"
   >
     <discussion-about v-if="isOwnDiscussion" :details="details" />
-    <home-room-messages v-else />
+    <room-messages v-else />
 
     <unnnic-modal
       v-if="isEndDiscussionModalOpen"
@@ -30,7 +30,7 @@
 import { mapState } from 'vuex';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
-import HomeRoomMessages from '@/views/chats/HomeRoomMessages.vue';
+import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
 import DiscussionAbout from './DiscussionAbout';
 
 export default {
@@ -39,7 +39,7 @@ export default {
   components: {
     AsideSlotTemplate,
     DiscussionAbout,
-    HomeRoomMessages,
+    RoomMessages,
   },
 
   data: () => {

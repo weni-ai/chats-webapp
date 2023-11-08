@@ -16,6 +16,7 @@
       />
       <unnnic-chats-header
         v-if="!!discussion"
+        class="discussion-header"
         :title="discussion.subject"
         :subtitle="`${$t('discussions.title')} ${$t('about')} ${discussion.contact}`"
         avatarIcon="forum"
@@ -27,11 +28,11 @@
         @open-file-uploader="openFileUploader"
         :show="(!!room && room.user && room.is_24h_valid) || !!discussion"
       >
-        <home-room-messages
+        <room-messages
           v-if="!!room && !discussion"
           @handle-room-skeleton="isRoomSkeletonActive = $event"
         />
-        <home-discussion-messages
+        <discussion-messages
           v-if="!!discussion"
           @handle-room-skeleton="isRoomSkeletonActive = $event"
         />
@@ -119,9 +120,13 @@ import ChatsLayout from '@/layouts/ChatsLayout';
 import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
 import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone';
 
+import RoomLoading from '@/views/loadings/Room.vue';
+import RoomMessages from '@/components/chats/chat/RoomMessages';
+import DiscussionMessages from '@/components/chats/chat/DiscussionMessages';
+import DiscussionSidebar from '@/components/chats/DiscussionSidebar';
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow';
 import ContactInfo from '@/components/chats/ContactInfo';
-import DiscussionSidebar from '@/components/chats/DiscussionSidebar';
+import FileUploader from '@/components/chats/MessageManager/FileUploader';
 import ChatClassifier from '@/components/chats/ChatClassifier';
 import ModalCloseChat from '@/views/chats/ModalCloseChat.vue';
 
@@ -129,11 +134,6 @@ import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat';
 import MessageManager from '@/components/chats/MessageManager';
-
-import FileUploader from '@/components/chats/MessageManager/FileUploader';
-import RoomLoading from '@/views/loadings/Room.vue';
-import HomeDiscussionMessages from './HomeDiscussionMessages';
-import HomeRoomMessages from './HomeRoomMessages';
 
 export default {
   name: 'ChatsHome',
@@ -144,8 +144,8 @@ export default {
     ChatsDropzone,
     ChatHeaderSendFlow,
     ContactInfo,
-    HomeDiscussionMessages,
-    HomeRoomMessages,
+    DiscussionMessages,
+    RoomMessages,
     DiscussionSidebar,
     MessageManager,
     ChatClassifier,
@@ -407,6 +407,18 @@ export default {
     margin-top: auto;
     margin-left: -$unnnic-spacing-inline-md;
     margin-bottom: -$unnnic-spacing-inline-sm;
+  }
+
+  .discussion-header {
+    :deep(.unnnic-chats-header) {
+      .unnnic-chats-header__avatar-icon {
+        background-color: $unnnic-color-aux-purple-500;
+
+        [class*='unnnic-icon'] {
+          color: $unnnic-color-weni-50;
+        }
+      }
+    }
   }
 }
 .get-chat-button-container {

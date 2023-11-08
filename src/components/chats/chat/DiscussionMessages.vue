@@ -20,7 +20,7 @@ import { mapActions, mapState } from 'vuex';
 import ChatMessages from '@/components/chats/chat/ChatMessages/index.vue';
 
 export default {
-  name: 'HomeDiscussionMessages',
+  name: 'DiscussionMessages',
   components: {
     ChatMessages,
   },
@@ -86,25 +86,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.home-discussion-messages {
-  padding-bottom: $unnnic-spacing-sm;
-
-  height: 100%;
-  max-height: 100vh;
-
-  display: flex;
-  flex-direction: column;
-
-  :deep(.unnnic-chats-header) {
-    .unnnic-chats-header__avatar-icon {
-      background-color: $unnnic-color-aux-purple-500;
-
-      [class*='unnnic-icon'] {
-        color: $unnnic-color-weni-50;
-      }
-    }
-  }
-}
-</style>
