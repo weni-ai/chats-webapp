@@ -91,7 +91,7 @@
               @click="openHistory()"
             />
             <unnnic-button
-              v-if="!isHistory && !isViewMode"
+              v-if="!isViewMode"
               class="open-discussion"
               :text="$t('discussions.start_discussion.title')"
               iconLeft="messaging-we-chat-3"
