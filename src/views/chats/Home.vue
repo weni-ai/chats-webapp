@@ -23,7 +23,10 @@
         size="small"
       />
 
-      <chat-header-send-flow v-if="!!room && !room.is_24h_valid" @send-flow="openFlowsTrigger" />
+      <chat-header-send-flow
+        v-if="!!room && !discussion && !room.is_24h_valid"
+        @send-flow="openFlowsTrigger"
+      />
       <chats-dropzone
         @open-file-uploader="openFileUploader"
         :show="(!!room && room.user && room.is_24h_valid) || !!discussion"
