@@ -859,9 +859,9 @@
   },
   "discussions": {
     "title": {
-      "pt-br": "Discussão",
-      "en-us": "Discussion",
-      "es": "Discusión"
+      "pt-br": "Discussão | Discussões",
+      "en-us": "Discussion | Discussions",
+      "es": "Discusión | Discusiones"
     },
     "start_discussion": {
       "title": {
@@ -962,6 +962,11 @@
         "en-us": "Search agent",
         "es": "Buscar agente"
       }
+    },
+    "started_by": {
+      "pt-br": "Discussão iniciada por {name}",
+      "en-us": "Discussion started by {name}",
+      "es": "Discusión iniciada por {name}"
     },
     "notification_new": {
       "pt-br": "Nova discussão recebida",

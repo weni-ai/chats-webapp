@@ -45,4 +45,13 @@ export default {
     });
     return response.data;
   },
+  async listCloseds({ room }) {
+    const response = await http.get(`discussion/`, {
+      params: {
+        project: getProject() || '',
+        room,
+      },
+    });
+    return response.data;
+  },
 };

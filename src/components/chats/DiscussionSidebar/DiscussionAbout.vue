@@ -2,7 +2,7 @@
   <main v-if="details">
     <aside-slot-template-section>
       <h2>
-        {{ `${$t('discussions.title')} ${$t('about')} ${details?.contact}` }}
+        {{ `${$tc('discussions.title')} ${$t('about')} ${details?.contact}` }}
       </h2>
       <p>{{ `${$t('discussions.about.started_in')} ${discussionStartDate}` }}</p>
     </aside-slot-template-section>

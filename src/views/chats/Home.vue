@@ -18,7 +18,7 @@
         v-if="!!discussion"
         class="discussion-header"
         :title="discussion.subject"
-        :subtitle="`${$t('discussions.title')} ${$t('about')} ${discussion.contact}`"
+        :subtitle="`${$tc('discussions.title')} ${$t('about')} ${discussion.contact}`"
         avatarIcon="forum"
         size="small"
       />

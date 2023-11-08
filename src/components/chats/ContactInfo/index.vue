@@ -109,9 +109,7 @@
           </section>
         </aside-slot-template-section>
 
-        <!-- <aside-slot-template-section v-if="isHistory">
-          <h2 class="contact_history__title">{{ $t('chats.closed_chats.contact_history') }}</h2>
-        </aside-slot-template-section> -->
+        <discussions-session v-if="isHistory" />
         <aside-slot-template-section v-if="!isHistory">
           <p class="title-transfer-chat">{{ $t('contact_info.transfer_contact') }}</p>
           <div style="margin-top: 20px; margin-bottom: 20px">
@@ -205,17 +203,22 @@ import { mapState } from 'vuex';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
+
+import ContactInfosLoading from '@/views/loadings/ContactInfos.vue';
+
 import Room from '@/services/api/resources/chats/room';
 import Sector from '@/services/api/resources/settings/sector';
 import LinkContact from '@/services/api/resources/chats/linkContact';
-import { unnnicCallAlert } from '@weni/unnnic-system';
 import Queue from '@/services/api/resources/settings/queue';
-import ContactInfosLoading from '@/views/loadings/ContactInfos.vue';
+
+import { unnnicCallAlert } from '@weni/unnnic-system';
+
 import CustomField from './CustomField';
 import ContactMedia from './Media';
-import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
 import VideoPreview from '../MediaMessage/Previews/Video';
+import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
 import ModalStartDiscussion from './ModalStartDiscussion';
+import DiscussionsSession from './DiscussionsSession';
 
 const moment = require('moment');
 
@@ -231,6 +234,7 @@ export default {
     FullscreenPreview,
     VideoPreview,
     ModalStartDiscussion,
+    DiscussionsSession,
   },
   props: {
     closedRoom: {
@@ -299,40 +303,44 @@ export default {
   },
 
   async created() {
-    if (!this.isHistory) {
-      this.customFields = this.room.custom_fields;
+    if (this.isHistory) {
+      return;
+    }
 
-      if (
-        moment((this.closedRoom || this.room).contact.created_on).format('YYYY-MM-DD') <
-        moment().format('YYYY-MM-DD')
-      ) {
-        this.contactHaveHistory = true;
-      }
-      this.transferLabel = this.$t('select_agent');
-      this.loadLinkedContact();
-      if (!this.room.queue?.sector) {
-        throw new Error(`There is no associated sector with room ${this.room.uuid}`);
-      }
+    const { room } = this;
 
-      try {
-        const treatedAgents = [{ value: '', label: this.$t('select_agent') }];
-        const agents = (await Sector.agents({ sectorUuid: this.room.queue.sector })).filter(
-          (agent) => agent.email !== this.$store.state.profile.me.email,
-        );
+    this.customFields = room.custom_fields;
 
-        agents.forEach(({ first_name, last_name, email }) => {
-          treatedAgents.push({
-            label: [first_name, last_name].join(' ').trim() || email,
-            value: email,
-          });
+    if (
+      moment((this.closedRoom || room).contact.created_on).format('YYYY-MM-DD') <
+      moment().format('YYYY-MM-DD')
+    ) {
+      this.contactHaveHistory = true;
+    }
+    this.transferLabel = this.$t('select_agent');
+    this.loadLinkedContact();
+    if (!room.queue?.sector) {
+      throw new Error(`There is no associated sector with room ${room.uuid}`);
+    }
+
+    try {
+      const treatedAgents = [{ value: '', label: this.$t('select_agent') }];
+      const agents = (await Sector.agents({ sectorUuid: room.queue.sector })).filter(
+        (agent) => agent.email !== this.$store.state.profile.me.email,
+      );
+
+      agents.forEach(({ first_name, last_name, email }) => {
+        treatedAgents.push({
+          label: [first_name, last_name].join(' ').trim() || email,
+          value: email,
         });
-        this.transferOptions = treatedAgents;
-      } catch (error) {
-        if (error?.response?.status === 403) {
-          this.transferContactError = this.$t('chats.transfer.does_not_have_permission');
-        } else {
-          throw error;
-        }
+      });
+      this.transferOptions = treatedAgents;
+    } catch (error) {
+      if (error?.response?.status === 403) {
+        this.transferContactError = this.$t('chats.transfer.does_not_have_permission');
+      } else {
+        throw error;
       }
     }
   },
@@ -675,14 +683,6 @@ export default {
           cursor: default;
         }
       }
-    }
-  }
-
-  .contact_history {
-    &__title {
-      color: $unnnic-color-neutral-dark;
-      font-size: $unnnic-font-size-body-lg;
-      font-weight: $unnnic-font-weight-bold;
     }
   }
 
