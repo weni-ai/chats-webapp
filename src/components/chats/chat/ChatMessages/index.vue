@@ -19,7 +19,7 @@
       >
         <template v-for="message in messagesByMinute.messages">
           <chat-feedback
-            v-if="isChatSeparatorFeedback(message.uuid)"
+            v-if="isChatSeparatorFeedback(message.uuid) && showChatSeparator"
             :feedback="
               startMessagesBy.agent === message.uuid
                 ? $t('chat_with.agent', { name: message?.user?.first_name })
@@ -218,6 +218,11 @@ export default {
     showWaitingFeedback: {
       type: Boolean,
       default: false,
+      required: false,
+    },
+    showChatSeparator: {
+      type: Boolean,
+      default: true,
       required: false,
     },
   },

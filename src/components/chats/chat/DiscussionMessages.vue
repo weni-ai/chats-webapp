@@ -9,6 +9,7 @@
     :resendMessages="discussionResendMessages"
     :resendMessage="discussionResendMessage"
     :resendMedia="discussionResendMedia"
+    :showChatSeparator="false"
     signatures
     @scrollTop="searchForMoreMessages"
   />
