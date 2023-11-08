@@ -59,9 +59,20 @@ export default {
       commit(mutations.SET_ACTIVE_DISCUSSION, discussion);
     },
 
-    delete({ state, commit }) {
-      Discussion.delete({ discussionUuid: state.activeDiscussion.uuid });
-      commit(mutations.SET_ACTIVE_DISCUSSION, null);
+    async delete({ state, commit }) {
+      try {
+        const { activeDiscussion } = state;
+        await Discussion.delete({ discussionUuid: activeDiscussion.uuid });
+
+        const discussions = state.discussions.filter(
+          (discussion) => discussion.uuid !== activeDiscussion.uuid,
+        );
+
+        commit(mutations.SET_DISCUSSIONS, discussions);
+        commit(mutations.SET_ACTIVE_DISCUSSION, null);
+      } catch (error) {
+        console.error('An error occurred while deleting the discussion:', error);
+      }
     },
 
     getDiscussionDetails({ state }) {
