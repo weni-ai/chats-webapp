@@ -16,8 +16,9 @@
       @close="handleEndDiscussionModal"
       :text="$t('discussions.close.title')"
       :description="$t('discussions.close.description')"
-      modalIcon="alert-circle-1"
+      modalIcon="error"
       scheme="feedback-yellow"
+      class="discussion-sidebar__end-modal"
     >
       <template #options>
         <unnnic-button :text="$t('cancel')" type="tertiary" @click="handleEndDiscussionModal" />
@@ -83,8 +84,11 @@ export default {
   .chat-messages {
     padding: 0 $unnnic-spacing-xs;
   }
-  :deep(.unnnic-modal-container-background-button) {
-    padding-top: 0;
+
+  &__end-modal {
+    :deep(.unnnic-modal-container-background-button) {
+      padding-top: 0;
+    }
   }
 }
 </style>

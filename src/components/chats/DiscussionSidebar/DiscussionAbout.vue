@@ -1,13 +1,13 @@
 <template>
-  <main v-if="details">
-    <aside-slot-template-section>
-      <h2>
+  <main v-if="details" class="discussion-about">
+    <aside-slot-template-section class="discussion-about__section">
+      <h2 class="discussion-about__section__title">
         {{ `${$tc('discussions.title')} ${$t('about')} ${details?.contact}` }}
       </h2>
       <p>{{ `${$t('discussions.about.started_in')} ${discussionStartDate}` }}</p>
     </aside-slot-template-section>
-    <aside-slot-template-section>
-      <h2>
+    <aside-slot-template-section class="discussion-about__section">
+      <h2 class="discussion-about__section__title">
         {{ $t('discussions.about.agents_involved') }}
       </h2>
       <ul>
@@ -171,30 +171,46 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.add-agent-modal {
-  :deep(.unnnic-modal-container) {
-    .unnnic-modal-container-background {
-      width: 50%;
+.discussion-about {
+  &__section {
+    display: grid;
+    gap: $unnnic-spacing-xs;
 
-      overflow: visible;
+    color: $unnnic-color-neutral-dark;
+    font-size: $unnnic-font-size-body-gt;
+    font-weight: $unnnic-font-weight-regular;
 
-      &-body-description {
-        display: grid;
-        gap: $unnnic-spacing-sm;
-
-        overflow: visible;
-
-        &-container {
-          padding-bottom: 0;
-
-          overflow: visible;
-        }
-      }
+    &__title {
+      font-size: $unnnic-font-size-body-gt;
+      font-weight: $unnnic-font-weight-bold;
     }
   }
 
-  &__input {
-    text-align: start;
+  .add-agent-modal {
+    :deep(.unnnic-modal-container) {
+      .unnnic-modal-container-background {
+        width: 50%;
+
+        overflow: visible;
+
+        &-body-description {
+          display: grid;
+          gap: $unnnic-spacing-sm;
+
+          overflow: visible;
+
+          &-container {
+            padding-bottom: 0;
+
+            overflow: visible;
+          }
+        }
+      }
+    }
+
+    &__input {
+      text-align: start;
+    }
   }
 }
 </style>
