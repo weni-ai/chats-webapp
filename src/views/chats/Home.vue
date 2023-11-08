@@ -5,20 +5,39 @@
   >
     <room-loading v-show="isRoomSkeletonActive" />
     <chats-background v-if="!room && !discussion && !isRoomSkeletonActive" />
-    <section v-if="!!room && !discussion" v-show="!isRoomSkeletonActive" class="active-chat">
+    <section v-if="!!room || !!discussion" v-show="!isRoomSkeletonActive" class="active-chat">
       <unnnic-chats-header
+        v-if="!!room && !discussion"
         :title="room.contact.name || ''"
         :avatarClick="() => openRoomContactInfo()"
         :titleClick="() => openRoomContactInfo()"
         :avatarName="room.contact.name"
         :close="openModalCloseChat"
       />
-      <chat-header-send-flow v-if="!room.is_24h_valid" @send-flow="openFlowsTrigger" />
-      <chats-dropzone @open-file-uploader="openFileUploader" :show="room.user && room.is_24h_valid">
-        <home-room-messages @handle-room-skeleton="isRoomSkeletonActive = $event" />
+      <unnnic-chats-header
+        v-if="!!discussion"
+        :title="discussion.subject"
+        :subtitle="`${$t('discussions.title')} ${$t('about')} ${discussion.contact}`"
+        avatarIcon="forum"
+        size="small"
+      />
+
+      <chat-header-send-flow v-if="!!room && !room.is_24h_valid" @send-flow="openFlowsTrigger" />
+      <chats-dropzone
+        @open-file-uploader="openFileUploader"
+        :show="(!!room && room.user && room.is_24h_valid) || !!discussion"
+      >
+        <home-room-messages
+          v-if="!!room && !discussion"
+          @handle-room-skeleton="isRoomSkeletonActive = $event"
+        />
+        <home-discussion-messages
+          v-if="!!discussion"
+          @handle-room-skeleton="isRoomSkeletonActive = $event"
+        />
 
         <message-manager
-          v-if="isMessageManagerVisible && !room.is_waiting"
+          v-if="isMessageManagerRoomVisible || !!discussion"
           v-model="textBoxMessage"
           :loadingFileValue="totalValue"
           @show-quick-messages="handlerShowQuickMessages"
@@ -26,7 +45,7 @@
         />
       </chats-dropzone>
 
-      <div v-if="!room.user" class="get-chat-button-container">
+      <div v-if="!room?.user && !discussion" class="get-chat-button-container">
         <unnnic-button
           class="get-chat-button"
           :text="$t('chats.get_chat')"
@@ -47,12 +66,6 @@
         </chat-classifier>
       </section>
     </section>
-
-    <home-discussion-messages
-      v-if="!!discussion"
-      @open-file-uploader="openFileUploader"
-      @handle-room-skeleton="isRoomSkeletonActive = $event"
-    />
 
     <unnnic-modal
       v-if="room"
@@ -179,13 +192,16 @@ export default {
       showModalAssumedChat: ({ dashboard }) => dashboard.showModalAssumedChat,
       assumedChatContactName: ({ dashboard }) => dashboard.assumedChatContactName,
     }),
-    isMessageManagerVisible() {
+    isMessageManagerRoomVisible() {
+      const { room } = this;
       return (
-        !this.isRoomClassifierVisible &&
-        this.room.is_active &&
-        this.room.is_24h_valid &&
-        !this.room.wating_answer &&
-        !!this.room.user
+        room &&
+        room.user &&
+        room.is_active &&
+        room.is_24h_valid &&
+        !room.is_waiting &&
+        !room.wating_answer &&
+        !this.isRoomClassifierVisible
       );
     },
   },

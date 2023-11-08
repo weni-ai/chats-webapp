@@ -1,51 +1,34 @@
 <template>
-  <section class="home-discussion-messages">
-    <unnnic-chats-header
-      :title="discussion.subject"
-      :subtitle="`${$t('discussions.title')} ${$t('about')} ${discussion.contact}`"
-      avatarIcon="forum"
-      size="small"
-    />
-    <chats-dropzone @open-file-uploader="openFileUploader">
-      <chat-messages
-        v-if="discussion?.uuid"
-        :chatUuid="discussion.uuid"
-        :messages="discussionMessages"
-        :messagesSorted="discussionMessagesSorted"
-        :messagesSendingUuids="discussionMessagesSendingUuids"
-        :messagesFailedUuids="discussionMessagesFailedUuids"
-        :resendMessages="discussionResendMessages"
-        :resendMessage="discussionResendMessage"
-        :resendMedia="discussionResendMedia"
-        signatures
-        @scrollTop="searchForMoreMessages"
-      />
-
-      <message-manager v-model="textBoxMessage" @open-file-uploader="openFileUploader" />
-    </chats-dropzone>
-  </section>
+  <chat-messages
+    v-if="discussion?.uuid"
+    :chatUuid="discussion.uuid"
+    :messages="discussionMessages"
+    :messagesSorted="discussionMessagesSorted"
+    :messagesSendingUuids="discussionMessagesSendingUuids"
+    :messagesFailedUuids="discussionMessagesFailedUuids"
+    :resendMessages="discussionResendMessages"
+    :resendMessage="discussionResendMessage"
+    :resendMedia="discussionResendMedia"
+    signatures
+    @scrollTop="searchForMoreMessages"
+  />
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone';
 import ChatMessages from '@/components/chats/chat/ChatMessages/index.vue';
-import MessageManager from '@/components/chats/MessageManager';
 
 export default {
   name: 'HomeDiscussionMessages',
   components: {
-    ChatsDropzone,
     ChatMessages,
-    MessageManager,
   },
 
   data: () => {
     return {
       page: 0,
       limit: 20,
-      textBoxMessage: '',
     };
   },
 
@@ -68,10 +51,6 @@ export default {
       discussionResendMessage: 'chats/discussionMessages/discussionResendMessage',
       discussionResendMedia: 'chats/discussionMessages/resendMedia',
     }),
-
-    openFileUploader(files) {
-      this.$emit('open-file-uploader', files);
-    },
 
     async getDiscussionMessages() {
       await this.$store
