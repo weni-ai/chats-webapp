@@ -97,7 +97,7 @@ export default {
     },
 
     handlerCrumbClick(crumb) {
-      if (crumb.name === this.selectedRoom.contact.name) return;
+      if (crumb.name === this.selectedRoom?.contact.name) return;
 
       this.selectedRoom = null;
 
