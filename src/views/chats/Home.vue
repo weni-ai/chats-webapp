@@ -384,7 +384,7 @@ export default {
         this.discussionId !== this.discussion?.uuid
       ) {
         await this.setActiveDiscussion(this.discussionId);
-        if (this.$route.name !== 'home' && !this.discussion) {
+        if (this.$route.name !== 'home' && !this.discussion && !this.room) {
           this.$router.replace({ name: 'home' });
           this.isRoomSkeletonActive = false;
         }

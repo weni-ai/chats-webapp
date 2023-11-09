@@ -1,7 +1,13 @@
 <template>
   <unnnic-collapse :title="label" :active="true" size="md">
     <template v-if="rooms">
-      <room-card v-for="room in rooms" :key="room.id" :room="room" @click="open(room)" />
+      <room-card
+        v-for="room in rooms"
+        :key="room.id"
+        :room="room"
+        @click="open(room)"
+        :unselected="!!activeDiscussionId"
+      />
     </template>
     <template v-if="discussions">
       <unnnic-chats-contact

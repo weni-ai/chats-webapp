@@ -5,7 +5,7 @@
     :waitingTime="waitingTimeComputed"
     :unreadMessages="unreadMessages"
     :tabindex="0"
-    :selected="room.uuid === activeRoomId"
+    :selected="room.uuid === activeRoomId && !unselected"
     :locale="locale"
     @click="$emit('click')"
     @keypress.enter="$emit('click')"
@@ -25,6 +25,10 @@ export default {
     room: {
       type: Object,
       required: true,
+    },
+    unselected: {
+      type: Boolean,
+      default: false,
     },
   },
 

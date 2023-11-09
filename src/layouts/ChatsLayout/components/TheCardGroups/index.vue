@@ -176,6 +176,7 @@ export default {
 
   methods: {
     async openRoom(room) {
+      await this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
       await this.$store.dispatch('chats/rooms/setActiveRoom', room);
     },
 
