@@ -7,7 +7,6 @@
 <script>
 import { mapState } from 'vuex';
 
-// import { getToken } from '@/utils/config';
 import http from '@/services/api/http';
 import env from '@/utils/env';
 import { sendWindowNotification } from '@/utils/notifications';
