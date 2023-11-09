@@ -42,15 +42,14 @@ export default {
   name: 'App',
 
   async created() {
+    console.log('before intercept appToken:', this.appToken);
     console.time('intercepting');
-    console.time('intercepting2');
     http.interceptors.request.use((config) => {
       // eslint-disable-next-line no-param-reassign
       config.headers.Authorization = `Bearer ${getToken()}`;
-      console.timeEnd('intercepting');
       return config;
     });
-    console.timeEnd('intercepting2');
+    console.timeEnd('intercepting');
 
     console.log('after intercept appToken:', this.appToken);
 
@@ -106,7 +105,7 @@ export default {
     },
   },
 
-  beforeMount() {
+  mounted() {
     console.log('beforeMount appToken:', this.appToken);
     this.getUser();
     this.getStatus();
@@ -139,13 +138,19 @@ export default {
     },
 
     async getUser() {
+      console.log('getting user');
+      console.log('getting user token', this.appToken);
+
       const user = await Profile.me();
       this.$store.commit('profile/setMe', user);
     },
 
     async loadQuickMessages() {
+      console.log('getting quick messages');
+
       this.loading = true;
       try {
+        console.log('getting quick messages token', this.appToken);
         await this.$store.dispatch('chats/quickMessages/getAll');
       } finally {
         this.loading = false;
@@ -157,8 +162,10 @@ export default {
     },
 
     async loadQuickMessagesShared() {
+      console.log('getting quick messages shared');
       this.loading = true;
       try {
+        console.log('getting quick messages shared token', this.appToken);
         await this.$store.dispatch('chats/quickMessagesShared/getAll');
       } finally {
         this.loading = false;
