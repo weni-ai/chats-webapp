@@ -46,7 +46,7 @@ export default {
     console.time('intercepting');
     http.interceptors.request.use((config) => {
       // eslint-disable-next-line no-param-reassign
-      config.headers.Authorization = `Bearer ${getToken()}`;
+      config.headers.Authorization = `Bearer ${this.appToken}`;
       return config;
     });
     console.timeEnd('intercepting');
