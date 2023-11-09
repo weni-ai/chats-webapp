@@ -7,6 +7,7 @@ export function getToken() {
 }
 
 export async function setToken(token) {
+  console.log('setting token:', token);
   localStorage.setItem(TOKEN_ITEM_LOCAL_STORAGE, token);
 }
 

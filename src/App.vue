@@ -41,14 +41,14 @@ class Notification {
 export default {
   name: 'App',
 
-  async created() {
+  async mounted() {
     console.log('before intercept appToken:', this.appToken);
     console.time('intercepting');
-    http.interceptors.request.use((config) => {
-      // eslint-disable-next-line no-param-reassign
-      config.headers.Authorization = `Bearer ${getToken()}`;
-      return config;
-    });
+    // http.interceptors.request.use((config) => {
+    //   // eslint-disable-next-line no-param-reassign
+    //   config.headers.Authorization = `Bearer ${getToken()}`;
+    //   return config;
+    // });
     console.timeEnd('intercepting');
 
     console.log('after intercept appToken:', this.appToken);
@@ -59,6 +59,12 @@ export default {
     if (!localStorageStatus || localStorageStatus === 'None') {
       localStorage.setItem('statusAgent', 'OFFLINE');
     }
+
+    console.log('beforeMount appToken:', this.appToken);
+    this.getUser();
+    this.getStatus();
+    this.loadQuickMessages();
+    this.loadQuickMessagesShared();
   },
 
   data() {
@@ -103,14 +109,6 @@ export default {
         }
       },
     },
-  },
-
-  mounted() {
-    console.log('beforeMount appToken:', this.appToken);
-    this.getUser();
-    this.getStatus();
-    this.loadQuickMessages();
-    this.loadQuickMessagesShared();
   },
 
   methods: {
