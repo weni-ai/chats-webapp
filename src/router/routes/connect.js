@@ -11,7 +11,6 @@ const routes = [
       let { token = '' } = to.params;
       token = token.replace('+', ' ').replace('Bearer ', '');
       const { projectUuid = '' } = to.query;
-      console.log('connect setting token:', token);
       await store.dispatch('config/setToken', token);
       await store.dispatch('config/setProject', projectUuid);
       setToken(token);
