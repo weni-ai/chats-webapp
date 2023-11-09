@@ -44,11 +44,11 @@ export default {
   async mounted() {
     console.log('before intercept appToken:', this.appToken);
     console.time('intercepting');
-    // http.interceptors.request.use((config) => {
-    //   // eslint-disable-next-line no-param-reassign
-    //   config.headers.Authorization = `Bearer ${getToken()}`;
-    //   return config;
-    // });
+    http.interceptors.request.use((config) => {
+      // eslint-disable-next-line no-param-reassign
+      config.headers.Authorization = `Bearer ${getToken()}`;
+      return config;
+    });
     console.timeEnd('intercepting');
 
     console.log('after intercept appToken:', this.appToken);
