@@ -66,6 +66,7 @@ export default {
   props: {
     downloadMediaUrl: {
       type: String,
+      required: true,
     },
     downloadMediaName: {
       type: String,
