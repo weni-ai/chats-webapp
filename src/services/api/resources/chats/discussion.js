@@ -1,12 +1,6 @@
-import axios from 'axios';
+import http from '@/services/api/http';
 import Rooms from '@/store/modules/chats/rooms';
-
 import { getProject } from '@/utils/config';
-
-// TODO: Remove after backend is not mocked
-const http = axios.create({
-  baseURL: `https://3ca2c5f1-68af-4a4c-9c8d-88af26b086e2.mock.pstmn.io/v1`,
-});
 
 export default {
   async create({ queue, subject, initial_message }) {

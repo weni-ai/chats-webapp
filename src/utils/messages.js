@@ -58,11 +58,9 @@ export async function getMessages({ itemUuid, getItemMessages }) {
 
       const { results: responseMessages, next: responseNext } = response;
 
-      // if ((messages?.[0]?.room || messages?.[0]?.discussion) !== itemUuid) {
-      //   return;
-      // }
-      //
-      // TODO: Uncomment after backend is not mocked
+      if ((messages?.[0]?.room || messages?.[0]?.discussion) !== itemUuid) {
+        return;
+      }
 
       messages = responseMessages;
       next = responseNext;

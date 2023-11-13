@@ -1,11 +1,5 @@
 import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
-import axios from 'axios';
-
-// TODO: Remove after backend is not mocked
-const httpDiscussion = axios.create({
-  baseURL: `https://3ca2c5f1-68af-4a4c-9c8d-88af26b086e2.mock.pstmn.io/v1`,
-});
 
 function getURLParams({ URL, endpoint }) {
   return URL?.split(endpoint)?.[1];
@@ -45,9 +39,9 @@ export default {
     let response;
 
     if (nextReq && paramsNextReq) {
-      response = await httpDiscussion.get(`${endpoint}${paramsNextReq}`);
+      response = await http.get(`${endpoint}${paramsNextReq}`);
     } else {
-      response = await httpDiscussion.get(endpoint, { params });
+      response = await http.get(endpoint, { params });
     }
 
     return response.data;
@@ -79,7 +73,7 @@ export default {
   },
 
   async sendDiscussionMessage(discussionUuid, { text }) {
-    const response = await httpDiscussion.post(`/discussion/${discussionUuid}/send_messages/`, {
+    const response = await http.post(`/discussion/${discussionUuid}/send_messages/`, {
       text,
     });
     return response.data;
@@ -114,7 +108,7 @@ export default {
       text: '',
     });
     updateLoadingFiles?.(msg.uuid, 0);
-    const response = await httpDiscussion.postForm(
+    const response = await http.postForm(
       '/media/',
       {
         content_type: media.type,

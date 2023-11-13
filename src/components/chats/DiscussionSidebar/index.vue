@@ -55,8 +55,7 @@ export default {
 
   async created() {
     this.details = await this.$store.dispatch('chats/discussions/getDiscussionDetails');
-    this.isOwnDiscussion = this.me.email === this.discussion.created_by?.email || true;
-    // TODO: Remove "|| true" when the backend returns the email of the user who created the discussion
+    this.isOwnDiscussion = this.me.email === this.discussion.created_by?.email;
   },
 
   computed: {
