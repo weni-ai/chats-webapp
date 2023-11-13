@@ -1,4 +1,5 @@
 import Discussion from '@/services/api/resources/chats/discussion';
+import Rooms from './rooms';
 
 const mutations = {
   SET_DISCUSSIONS: 'SET_DISCUSSIONS',
@@ -49,8 +50,12 @@ export default {
       });
 
       if (responseDiscussion.status === 201 || (responseDiscussion && !responseDiscussion.status)) {
-        commit(mutations.ADD_DISCUSSION, responseDiscussion);
-        commit(mutations.SET_ACTIVE_DISCUSSION, responseDiscussion);
+        const discussionWithContact = {
+          ...responseDiscussion,
+          contact: Rooms.state.activeRoom?.contact.name,
+        };
+        commit(mutations.ADD_DISCUSSION, discussionWithContact);
+        commit(mutations.SET_ACTIVE_DISCUSSION, discussionWithContact);
       }
 
       return responseDiscussion;

@@ -107,7 +107,10 @@
     <file-uploader v-model="files" ref="fileUploader" @upload="sendFileMessage" />
 
     <template #aside>
-      <contact-info v-if="room && isRoomContactInfoOpen" @close="closeRoomContactInfo" />
+      <contact-info
+        v-if="room && isRoomContactInfoOpen && !discussion"
+        @close="closeRoomContactInfo"
+      />
       <discussion-sidebar v-if="discussion" />
     </template>
     <modal-close-chat v-if="showCloseModal" @close="closeModalCloseChat" :room="room" />
