@@ -49,6 +49,7 @@
         type="primary"
         @click="startDiscussion"
         :disabled="isConfirmButtonDisabled"
+        :loading="startDiscussionLoading"
       />
     </template>
   </unnnic-modal>
@@ -79,6 +80,8 @@ export default {
 
       sectorsToSelect: [],
       queuesToSelect: [],
+
+      startDiscussionLoading: false,
     };
   },
 
@@ -101,6 +104,7 @@ export default {
     },
 
     async startDiscussion() {
+      this.startDiscussionLoading = true;
       const responseDiscussion = await this.$store.dispatch('chats/discussions/create', {
         queue: this.queue[0].value || '',
         subject: this.subject,
@@ -109,28 +113,30 @@ export default {
 
       this.close();
 
-      if (responseDiscussion.status) {
-        let errorText = '';
-
-        switch (responseDiscussion.status) {
-          case 409:
-            errorText = this.$t('discussions.errors.already_open');
-            break;
-          case 403:
-            errorText = this.$t('discussions.errors.permission');
-            break;
-          default:
-            errorText = this.$t('discussions.errors.generic');
-            break;
-        }
-
-        unnnicCallAlert({
-          props: {
-            text: errorText,
-            type: 'error',
-          },
-        });
+      if (!responseDiscussion.status) {
+        return;
       }
+
+      let errorText = '';
+
+      switch (responseDiscussion.status) {
+        case 409:
+          errorText = this.$t('discussions.errors.already_open');
+          break;
+        case 403:
+          errorText = this.$t('discussions.errors.permission');
+          break;
+        default:
+          errorText = this.$t('discussions.errors.generic');
+          break;
+      }
+
+      unnnicCallAlert({
+        props: {
+          text: errorText,
+          type: 'error',
+        },
+      });
     },
 
     async getSectors() {

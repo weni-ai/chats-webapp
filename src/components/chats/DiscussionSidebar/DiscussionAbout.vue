@@ -54,6 +54,7 @@
             :text="$t('add')"
             type="primary"
             :disabled="!agentSelected[0]"
+            :loading="addAgentLoading"
             @click="addAgent"
           />
         </template>
@@ -90,6 +91,7 @@ export default {
       agentsInvolved: null,
 
       isAddAgentModalOpen: false,
+      addAgentLoading: false,
       agentsToSelect: [],
       agentSelected: [],
     };
@@ -138,6 +140,7 @@ export default {
       }
 
       try {
+        this.addAgentLoading = true;
         const responseAgent = await this.$store.dispatch('chats/discussions/addAgent', {
           user_email: newAgent.value,
         });

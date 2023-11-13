@@ -22,7 +22,12 @@
     >
       <template #options>
         <unnnic-button :text="$t('cancel')" type="tertiary" @click="handleEndDiscussionModal" />
-        <unnnic-button :text="$t('end')" type="primary" @click="endDiscussion" />
+        <unnnic-button
+          :text="$t('end')"
+          type="primary"
+          @click="endDiscussion"
+          :loading="endDiscussionLoading"
+        />
       </template>
     </unnnic-modal>
   </aside-slot-template>
@@ -50,6 +55,7 @@ export default {
       isOwnDiscussion: false,
 
       isEndDiscussionModalOpen: false,
+      endDiscussionLoading: false,
     };
   },
 
@@ -71,6 +77,7 @@ export default {
     },
 
     async endDiscussion() {
+      this.endDiscussionLoading = true;
       await this.$store.dispatch('chats/discussions/delete');
       this.handleEndDiscussionModal();
     },
