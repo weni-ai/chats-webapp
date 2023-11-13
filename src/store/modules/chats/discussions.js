@@ -2,6 +2,7 @@ import Discussion from '@/services/api/resources/chats/discussion';
 
 const mutations = {
   SET_DISCUSSIONS: 'SET_DISCUSSIONS',
+  ADD_DISCUSSION: 'ADD_DISCUSSION',
   SET_DISCUSSIONS_CLOSEDS: 'SET_DISCUSSIONS_CLOSEDS',
   SET_ACTIVE_DISCUSSION: 'SET_ACTIVE_DISCUSSION',
 };
@@ -18,6 +19,9 @@ export default {
     [mutations.SET_DISCUSSIONS](state, discussions) {
       state.discussions = discussions;
     },
+    [mutations.ADD_DISCUSSION](state, discussion) {
+      state.discussions.unshift({ ...discussion });
+    },
     [mutations.SET_DISCUSSIONS_CLOSEDS](state, discussionsCloseds) {
       state.discussionsCloseds = discussionsCloseds;
     },
@@ -32,8 +36,8 @@ export default {
       commit(mutations.SET_DISCUSSIONS, newDiscussions?.results);
     },
 
-    async getAllClosed({ commit }, { room }) {
-      const newDiscussions = await Discussion.listCloseds({ room });
+    async getAllClosed({ commit }, { roomId }) {
+      const newDiscussions = await Discussion.listCloseds({ roomId });
       commit(mutations.SET_DISCUSSIONS_CLOSEDS, newDiscussions?.results);
     },
 
@@ -44,6 +48,7 @@ export default {
         initial_message,
       });
 
+      commit(mutations.ADD_DISCUSSION, newDiscussion);
       commit(mutations.SET_ACTIVE_DISCUSSION, newDiscussion);
       return newDiscussion;
     },

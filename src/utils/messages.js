@@ -58,7 +58,7 @@ export async function getMessages({ itemUuid, getItemMessages }) {
 
       const { results: responseMessages, next: responseNext } = response;
 
-      if ((messages?.[0]?.room || messages?.[0]?.discussion) !== itemUuid) {
+      if ((responseMessages?.[0]?.room || responseMessages?.[0]?.discussion) !== itemUuid) {
         return;
       }
 

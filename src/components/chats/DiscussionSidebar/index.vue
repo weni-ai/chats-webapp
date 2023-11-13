@@ -55,7 +55,7 @@ export default {
 
   async created() {
     this.details = await this.$store.dispatch('chats/discussions/getDiscussionDetails');
-    this.isOwnDiscussion = this.me.email === this.discussion.created_by?.email;
+    this.isOwnDiscussion = this.me.email === this.details.created_by?.email;
   },
 
   computed: {

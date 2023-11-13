@@ -45,7 +45,7 @@ export default {
   async created() {
     try {
       const { room } = this;
-      await this.$store.dispatch('chats/discussions/getAllClosed', { room });
+      await this.$store.dispatch('chats/discussions/getAllClosed', { roomId: room?.uuid });
     } catch (error) {
       console.error('Error listing closed discussions', error);
     }
