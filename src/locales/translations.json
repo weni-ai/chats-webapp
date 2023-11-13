@@ -982,6 +982,23 @@
       "pt-br": "Entrar na discussão",
       "en-us": "Get into the discussion",
       "es": "Únete a la discusión"
+    },
+    "errors": {
+      "already_open": {
+        "pt-br": "Erro ao iniciar discussão, verifique se já existe outra discussão aberta",
+        "en-us": "Error starting discussion, check if there is already another discussion open",
+        "es": "Error al iniciar la discusión, verifique si ya hay otra discusión abierta"
+      },
+      "permission": {
+        "pt-br": "Erro ao iniciar discussão, verifique sua permissão",
+        "en-us": "Error starting discussion, check your permission",
+        "es": "Error al iniciar la discusión, verifique su permiso"
+      },
+      "generic": {
+        "pt-br": "Erro ao iniciar discussão",
+        "en-us": "Error starting discussion",
+        "es": "Error al iniciar la discusión"
+      }
     }
   },
   "last_online_time": {

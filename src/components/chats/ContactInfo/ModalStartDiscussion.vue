@@ -58,6 +58,8 @@
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
 
+import { unnnicCallAlert } from '@weni/unnnic-system';
+
 export default {
   name: 'ModalStartDiscussion',
 
@@ -99,15 +101,36 @@ export default {
     },
 
     async startDiscussion() {
-      const newDiscussion = await this.$store.dispatch('chats/discussions/create', {
+      const responseDiscussion = await this.$store.dispatch('chats/discussions/create', {
         queue: this.queue[0].value || '',
         subject: this.subject,
         initial_message: this.message,
       });
 
-      this.$router.push({ name: 'discussion', params: { discussionId: newDiscussion.uuid } });
-
       this.close();
+
+      if (responseDiscussion.status) {
+        let errorText = '';
+
+        switch (responseDiscussion.status) {
+          case 409:
+            errorText = this.$t('discussions.errors.already_open');
+            break;
+          case 403:
+            errorText = this.$t('discussions.errors.permission');
+            break;
+          default:
+            errorText = this.$t('discussions.errors.generic');
+            break;
+        }
+
+        unnnicCallAlert({
+          props: {
+            text: errorText,
+            type: 'error',
+          },
+        });
+      }
     },
 
     async getSectors() {

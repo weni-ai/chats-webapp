@@ -4,13 +4,16 @@ import { getProject } from '@/utils/config';
 
 export default {
   async create({ queue, subject, initial_message }) {
-    const response = await http.post(`discussion/`, {
-      room: Rooms.state.activeRoom.uuid || '',
-      queue,
-      subject,
-      initial_message,
-    });
-    return response.data;
+    const response = await http
+      .post(`discussion/`, {
+        room: Rooms.state.activeRoom.uuid || '',
+        queue,
+        subject,
+        initial_message,
+      })
+      .then((response) => response.data)
+      .catch((error) => error.response);
+    return response;
   },
   async delete({ discussionUuid }) {
     const response = http.delete(`discussion/${discussionUuid}/`);

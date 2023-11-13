@@ -42,15 +42,18 @@ export default {
     },
 
     async create({ commit }, { queue, subject, initial_message }) {
-      const newDiscussion = await Discussion.create({
+      const responseDiscussion = await Discussion.create({
         queue,
         subject,
         initial_message,
       });
 
-      commit(mutations.ADD_DISCUSSION, newDiscussion);
-      commit(mutations.SET_ACTIVE_DISCUSSION, newDiscussion);
-      return newDiscussion;
+      if (responseDiscussion.status === 201 || (responseDiscussion && !responseDiscussion.status)) {
+        commit(mutations.ADD_DISCUSSION, responseDiscussion);
+        commit(mutations.SET_ACTIVE_DISCUSSION, responseDiscussion);
+      }
+
+      return responseDiscussion;
     },
 
     async addAgent({ state }, { user_email }) {
