@@ -1,146 +1,155 @@
 <!-- eslint-disable vuejs-accessibility/alt-text -->
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
-  <section class="chat-messages" ref="chatMessages" @scroll="handleScroll">
+  <div>
+    <chat-messages-loading v-show="isLoading" />
     <section
-      v-for="messagesByDate in messagesSorted"
-      :key="messagesByDate.date"
-      class="chat-messages__container-date"
+      class="chat-messages"
+      ref="chatMessages"
+      @scroll="handleScroll"
+      v-show="!isLoading"
+      v-if="chatUuid && messagesSorted"
     >
-      <chat-messages-start-feedbacks
-        :dateFeedback="messagesByDate.date"
-        :showWaitingFeedback="showWaitingFeedback"
-      />
-
       <section
-        v-for="messagesByMinute in messagesByDate.minutes"
-        class="chat-messages__container-minute"
-        :key="messagesByDate.date + messagesByMinute.minute"
+        v-for="messagesByDate in messagesSorted"
+        :key="messagesByDate.date"
+        class="chat-messages__container-date"
       >
-        <template v-for="message in messagesByMinute.messages">
-          <chat-feedback
-            v-if="isChatSeparatorFeedback(message.uuid) && showChatSeparator"
-            :feedback="
-              startMessagesBy.agent === message.uuid
-                ? $t('chat_with.agent', { name: message?.user?.first_name })
-                : $t('chat_with.bot')
-            "
-            :key="'feedback' + message.uuid"
-            :title="messageFormatTitle(new Date(message.created_on))"
-          />
-          <chat-messages-feedback-message
-            v-if="isFeedbackMessage(message)"
-            :message="message"
-            :key="message.uuid"
-            :title="messageFormatTitle(new Date(message.created_on))"
-          />
+        <chat-messages-start-feedbacks
+          :dateFeedback="messagesByDate.date"
+          :showWaitingFeedback="showWaitingFeedback"
+        />
 
-          <template v-else>
-            <unnnic-chats-message
-              v-if="message.text || isGeolocation(message.media[0])"
-              :type="messageType(message)"
-              :class="['chat-messages__message', messageType(message)]"
-              :time="new Date(message.created_on)"
-              :status="messageStatus({ message })"
-              :key="message.uuid"
-              :ref="`message-${message.uuid}`"
+        <section
+          v-for="messagesByMinute in messagesByDate.minutes"
+          class="chat-messages__container-minute"
+          :key="messagesByDate.date + messagesByMinute.minute"
+        >
+          <template v-for="message in messagesByMinute.messages">
+            <chat-feedback
+              v-if="isChatSeparatorFeedback(message.uuid) && showChatSeparator"
+              :feedback="
+                startMessagesBy.agent === message.uuid
+                  ? $t('chat_with.agent', { name: message?.user?.first_name })
+                  : $t('chat_with.bot')
+              "
+              :key="'feedback' + message.uuid"
               :title="messageFormatTitle(new Date(message.created_on))"
-              :signature="messageSignature(message)"
-            >
-              {{ isGeolocation(message.media[0]) ? message.media[0]?.url : message.text }}
-            </unnnic-chats-message>
-            <template v-for="media in message.media">
+            />
+            <chat-messages-feedback-message
+              v-if="isFeedbackMessage(message)"
+              :message="message"
+              :key="message.uuid"
+              :title="messageFormatTitle(new Date(message.created_on))"
+            />
+
+            <template v-else>
               <unnnic-chats-message
-                v-if="isMedia(media) && !isGeolocation(media)"
-                :key="media.created_on"
-                :ref="`message-${message.uuid}`"
+                v-if="message.text || isGeolocation(message.media[0])"
                 :type="messageType(message)"
                 :class="['chat-messages__message', messageType(message)]"
-                :mediaType="isImage(media) ? 'image' : isVideo(media) ? 'video' : 'audio'"
                 :time="new Date(message.created_on)"
                 :status="messageStatus({ message })"
+                :key="message.uuid"
+                :ref="`message-${message.uuid}`"
                 :title="messageFormatTitle(new Date(message.created_on))"
                 :signature="messageSignature(message)"
-                @click="resendMedia({ message, media })"
               >
-                <img
-                  v-if="isImage(media)"
-                  class="media image"
-                  :src="media.url || media.preview"
-                  @click="openFullScreen(media.url)"
-                  @keypress.enter="openFullScreen(media.url)"
-                />
-                <video-player
-                  v-else-if="isVideo(media)"
-                  class="media"
-                  :src="media.url || media.preview"
-                />
-                <unnnic-audio-recorder
-                  v-else-if="isAudio(media)"
-                  ref="audio-recorder"
-                  class="media audio"
-                  :src="media.url || media.preview"
-                  :canDiscard="false"
-                  :reqStatus="messageStatus({ message, media })"
-                  @failed-click="resendMedia({ message, media })"
-                />
+                {{ isGeolocation(message.media[0]) ? message.media[0]?.url : message.text }}
               </unnnic-chats-message>
-              <unnnic-chats-message
-                v-else-if="!isGeolocation(media)"
-                :key="media.created_on"
-                :ref="`message-${message.uuid}`"
-                :type="messageType(message)"
-                :class="['chat-messages__message', messageType(message)]"
-                :time="new Date(message.created_on)"
-                :documentName="media.url?.split('/').at(-1) || media.file.name"
-                :status="messageStatus({ message })"
-                :title="messageFormatTitle(new Date(message.created_on))"
-                :signature="messageSignature(message)"
-                @click="documentClickHandler({ message, media })"
-              />
+              <template v-for="media in message.media">
+                <unnnic-chats-message
+                  v-if="isMedia(media) && !isGeolocation(media)"
+                  :key="media.created_on"
+                  :ref="`message-${message.uuid}`"
+                  :type="messageType(message)"
+                  :class="['chat-messages__message', messageType(message)]"
+                  :mediaType="isImage(media) ? 'image' : isVideo(media) ? 'video' : 'audio'"
+                  :time="new Date(message.created_on)"
+                  :status="messageStatus({ message })"
+                  :title="messageFormatTitle(new Date(message.created_on))"
+                  :signature="messageSignature(message)"
+                  @click="resendMedia({ message, media })"
+                >
+                  <img
+                    v-if="isImage(media)"
+                    class="media image"
+                    :src="media.url || media.preview"
+                    @click="openFullScreen(media.url)"
+                    @keypress.enter="openFullScreen(media.url)"
+                  />
+                  <video-player
+                    v-else-if="isVideo(media)"
+                    class="media"
+                    :src="media.url || media.preview"
+                  />
+                  <unnnic-audio-recorder
+                    v-else-if="isAudio(media)"
+                    ref="audio-recorder"
+                    class="media audio"
+                    :src="media.url || media.preview"
+                    :canDiscard="false"
+                    :reqStatus="messageStatus({ message, media })"
+                    @failed-click="resendMedia({ message, media })"
+                  />
+                </unnnic-chats-message>
+                <unnnic-chats-message
+                  v-else-if="!isGeolocation(media)"
+                  :key="media.created_on"
+                  :ref="`message-${message.uuid}`"
+                  :type="messageType(message)"
+                  :class="['chat-messages__message', messageType(message)]"
+                  :time="new Date(message.created_on)"
+                  :documentName="media.url?.split('/').at(-1) || media.file.name"
+                  :status="messageStatus({ message })"
+                  :title="messageFormatTitle(new Date(message.created_on))"
+                  :signature="messageSignature(message)"
+                  @click="documentClickHandler({ message, media })"
+                />
+              </template>
             </template>
           </template>
-        </template>
+        </section>
       </section>
-    </section>
-    <!-- Closed chat tags  -->
-    <!-- <chat-feedback
+      <!-- Closed chat tags  -->
+      <!-- <chat-feedback
       v-for="room in rooms"
       :key="room.uuid"
       :feedback="roomEndedChatFeedback(room)"
       scheme="purple"
     /> -->
-    <section v-if="tags.length > 0" class="chat-messages__tags">
-      <!-- <chat-feedback :feedback="roomEndedChatFeedback(room)" scheme="purple" ref="endChatElement" /> -->
-      <tag-group :tags="tags" />
-    </section>
+      <section v-if="tags.length > 0" v-show="!isLoading" class="chat-messages__tags">
+        <!-- <chat-feedback :feedback="roomEndedChatFeedback(room)" scheme="purple" ref="endChatElement" /> -->
+        <tag-group :tags="tags" />
+      </section>
 
-    <!-- Media fullscreen -->
-    <fullscreen-preview
-      v-if="isFullscreen && currentMedia"
-      :downloadMediaUrl="currentMedia?.url"
-      :downloadMediaName="currentMedia?.message"
-      @close="isFullscreen = false"
-      @next="nextMedia"
-      @previous="previousMedia"
-    >
-      <video
-        v-if="currentMedia.content_type.includes('mp4')"
-        controls
-        @keypress.enter="() => {}"
-        @click.stop="() => {}"
+      <!-- Media fullscreen -->
+      <fullscreen-preview
+        v-if="isFullscreen && currentMedia"
+        :downloadMediaUrl="currentMedia?.url"
+        :downloadMediaName="currentMedia?.message"
+        @close="isFullscreen = false"
+        @next="nextMedia"
+        @previous="previousMedia"
       >
-        <source :src="currentMedia.url" />
-      </video>
-      <img
-        v-else
-        :src="currentMedia.url"
-        :alt="currentMedia"
-        @keypress.enter="() => {}"
-        @click.stop="() => {}"
-      />
-    </fullscreen-preview>
-  </section>
+        <video
+          v-if="currentMedia.content_type.includes('mp4')"
+          controls
+          @keypress.enter="() => {}"
+          @click.stop="() => {}"
+        >
+          <source :src="currentMedia.url" />
+        </video>
+        <img
+          v-else
+          :src="currentMedia.url"
+          :alt="currentMedia"
+          @keypress.enter="() => {}"
+          @click.stop="() => {}"
+        />
+      </fullscreen-preview>
+    </section>
+  </div>
 </template>
 
 <script>
@@ -149,6 +158,8 @@ import moment from 'moment';
 
 import { isMessageFromCurrentUser } from '@/utils/messages';
 import Media from '@/services/api/resources/chats/media';
+
+import ChatMessagesLoading from '@/views/loadings/chat/ChatMessages';
 import TagGroup from '@/components/TagGroup';
 import VideoPlayer from '@/components/chats/MediaMessage/Previews/Video';
 import FullscreenPreview from '@/components/chats/MediaMessage/Previews/Fullscreen';
@@ -161,6 +172,7 @@ export default {
   name: 'ChatMessages',
 
   components: {
+    ChatMessagesLoading,
     ChatFeedback,
     ChatMessagesStartFeedbacks,
     ChatMessagesFeedbackMessage,
@@ -224,6 +236,11 @@ export default {
       type: Boolean,
       default: true,
       required: false,
+    },
+
+    isLoading: {
+      type: Boolean,
+      default: false,
     },
   },
 

@@ -120,7 +120,7 @@ export default {
     async getDiscussionMessages({ commit, state }, { offset, limit }) {
       const nextReq = state.discussionMessagesNext;
 
-      treatMessages({
+      await treatMessages({
         itemUuid: Discussions.state.activeDiscussion?.uuid,
         getItemMessages: () =>
           Message.getByDiscussion(

@@ -4,6 +4,7 @@
     <contact-infos-loading v-show="isLoading" />
     <aside-slot-template
       v-show="!isLoading"
+      v-if="closedRoom || room"
       class="contact-info"
       :title="$t('contact_info.title')"
       icon="information-circle-4"

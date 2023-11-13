@@ -3,10 +3,11 @@
     ref="chats-layout"
     @select-quick-message="(quickMessage) => updateTextBoxMessage(quickMessage.text)"
   >
-    <room-loading v-show="isRoomSkeletonActive" />
     <chats-background v-if="!room && !discussion && !isRoomSkeletonActive" />
-    <section v-if="!!room || !!discussion" v-show="!isRoomSkeletonActive" class="active-chat">
+    <section v-if="!!room || !!discussion" class="active-chat">
+      <chat-header-loading v-show="isRoomSkeletonActive" />
       <unnnic-chats-header
+        v-show="!isRoomSkeletonActive"
         v-if="!!room && !discussion"
         :title="room.contact.name || ''"
         :avatarClick="() => openRoomContactInfo()"
@@ -15,6 +16,7 @@
         :close="openModalCloseChat"
       />
       <unnnic-chats-header
+        v-show="!isRoomSkeletonActive"
         v-if="!!discussion"
         class="discussion-header"
         :title="discussion.subject"
@@ -24,26 +26,21 @@
       />
 
       <chat-header-send-flow
-        v-if="!!room && !discussion && !room.is_24h_valid"
+        v-if="!!room && !discussion && !room.is_24h_valid && !isRoomSkeletonActive"
         @send-flow="openFlowsTrigger"
       />
       <chats-dropzone
         @open-file-uploader="openFileUploader"
         :show="(!!room && room.user && room.is_24h_valid) || !!discussion"
       >
-        <room-messages
-          v-if="!!room && !discussion"
-          @handle-room-skeleton="isRoomSkeletonActive = $event"
-        />
-        <discussion-messages
-          v-if="!!discussion"
-          @handle-room-skeleton="isRoomSkeletonActive = $event"
-        />
+        <room-messages v-if="!!room && !discussion" />
+        <discussion-messages v-if="!!discussion" />
 
         <message-manager
           v-if="isMessageManagerRoomVisible || !!discussion"
           v-model="textBoxMessage"
           :loadingFileValue="totalValue"
+          :showSkeletonLoading="isRoomSkeletonActive"
           @show-quick-messages="handlerShowQuickMessages"
           @open-file-uploader="openFileUploader"
         />
@@ -126,7 +123,7 @@ import ChatsLayout from '@/layouts/ChatsLayout';
 import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
 import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone';
 
-import RoomLoading from '@/views/loadings/Room.vue';
+import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader';
 import RoomMessages from '@/components/chats/chat/RoomMessages';
 import DiscussionMessages from '@/components/chats/chat/DiscussionMessages';
 import DiscussionSidebar from '@/components/chats/DiscussionSidebar';
@@ -148,6 +145,7 @@ export default {
     ChatsLayout,
     ChatsBackground,
     ChatsDropzone,
+    ChatHeaderLoading,
     ChatHeaderSendFlow,
     ContactInfo,
     DiscussionMessages,
@@ -158,7 +156,6 @@ export default {
     ModalCloseChat,
     FileUploader,
     ModalGetChat,
-    RoomLoading,
   },
 
   props: {
@@ -240,13 +237,8 @@ export default {
       this.$store.dispatch('chats/rooms/removeRoom', uuid);
     },
     async setActiveRoom(uuid) {
-      this.isRoomSkeletonActive = true;
       const room = this.$store.getters['chats/rooms/getRoomById'](uuid);
       await this.$store.dispatch('chats/rooms/setActiveRoom', room);
-      await this.$store.dispatch('chats/rooms/getCanUseCopilot');
-      this.closeRoomContactInfo();
-      this.page = 0;
-      this.readMessages();
     },
     async setActiveDiscussion(uuid) {
       const discussion = this.$store.getters['chats/discussions/getDiscussionById'](uuid);
@@ -321,16 +313,22 @@ export default {
   },
 
   watch: {
-    room(newValue) {
-      if (!newValue) this.closeRoomContactInfo();
-      if (newValue) this.updateTextBoxMessage('');
-
+    async room(newValue, oldValue) {
       if (this.rooms.length > 0) {
         if (!newValue?.uuid) {
           this.$router.replace({ name: 'home' });
           return;
         }
 
+        if (newValue.uuid !== oldValue?.uuid) {
+          this.isRoomSkeletonActive = true;
+          this.updateTextBoxMessage('');
+          this.page = 0;
+          this.closeRoomContactInfo();
+          await this.$store.dispatch('chats/rooms/getCanUseCopilot');
+          this.readMessages();
+          this.isRoomSkeletonActive = false;
+        }
         if (newValue?.uuid !== this.roomId) {
           this.$router.replace({ name: 'room', params: { roomId: newValue.uuid } });
         }
@@ -345,7 +343,6 @@ export default {
           }
 
           await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
-          // await this.setActiveRoom(roomId);
         }
         this.isRoomClassifierVisible = false;
       },
@@ -376,7 +373,6 @@ export default {
       async handler(discussionId) {
         if (discussionId && discussionId !== this.discussion?.uuid) {
           await this.$store.dispatch('chats/discussionMessages/resetDiscussionMessages');
-          // await this.setActiveDiscussion(discussionId);
         }
       },
     },

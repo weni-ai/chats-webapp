@@ -1,7 +1,6 @@
 <template>
   <chat-messages
-    v-if="discussion?.uuid"
-    :chatUuid="discussion.uuid"
+    :chatUuid="discussion?.uuid || ''"
     :messages="discussionMessages"
     :messagesSorted="discussionMessagesSorted"
     :messagesSendingUuids="discussionMessagesSendingUuids"
@@ -10,6 +9,7 @@
     :resendMessage="discussionResendMessage"
     :resendMedia="discussionResendMedia"
     :showChatSeparator="false"
+    :isLoading="isLoading"
     signatures
     @scrollTop="searchForMoreMessages"
   />
@@ -30,6 +30,7 @@ export default {
     return {
       page: 0,
       limit: 20,
+      isLoading: true,
     };
   },
 
@@ -54,13 +55,14 @@ export default {
     }),
 
     async getDiscussionMessages() {
+      this.isLoading = true;
       await this.$store
         .dispatch('chats/discussionMessages/getDiscussionMessages', {
           offset: this.page * this.limit,
           limit: this.limit,
         })
         .then(() => {
-          this.$emit('handle-room-skeleton', false);
+          this.isLoading = false;
         })
         .catch((error) => {
           console.error(error);

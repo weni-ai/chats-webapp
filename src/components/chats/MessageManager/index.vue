@@ -1,6 +1,7 @@
 <template>
   <section>
-    <div class="message-manager">
+    <message-manager-loading v-show="showSkeletonLoading" />
+    <div class="message-manager" v-show="!showSkeletonLoading">
       <div
         :class="[
           'message-manager-box__container',
@@ -114,6 +115,8 @@
 <script>
 import { mapState } from 'vuex';
 
+import MessageManagerLoading from '@/views/loadings/chat/MessageManager';
+
 import TextBox from './TextBox';
 import MoreActionsOption from './MoreActionsOption.vue';
 import SuggestionBox from './SuggestionBox.vue';
@@ -123,6 +126,7 @@ export default {
   name: 'MessageManager',
 
   components: {
+    MessageManagerLoading,
     TextBox,
     SuggestionBox,
     MoreActionsOption,
@@ -136,6 +140,10 @@ export default {
     },
     loadingFileValue: {
       type: Number,
+    },
+    showSkeletonLoading: {
+      type: Boolean,
+      default: false,
     },
   },
 

@@ -11,18 +11,18 @@
         @crumbClick="handlerCrumbClick"
         size="large"
       />
-      <room-header-loading v-show="roomId && isLoadingSelectedRoom" />
+      <chat-header-loading v-show="roomId && isLoadingSelectedRoom" />
       <unnnic-chats-header
-        v-if="!isLoadingSelectedRoom && selectedRoom"
+        v-show="!isLoadingSelectedRoom"
+        v-if="selectedRoom"
         :title="selectedRoom.contact.name"
         :avatarName="selectedRoom.contact.name"
       />
     </header>
     <main>
       <section v-if="roomId" class="closed-chats__selected-chat">
-        <room-loading v-show="isLoadingSelectedRoom" only-messages />
-        <room-messages v-if="selectedRoom" v-show="!isLoadingSelectedRoom" />
-        <contact-info v-if="selectedRoom" is-history :closedRoom="selectedRoom" @close="() => {}" />
+        <room-messages />
+        <contact-info is-history :closedRoom="selectedRoom" @close="() => {}" />
       </section>
 
       <closed-chats-rooms-table v-else :project="project" />
@@ -31,15 +31,15 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import ProjectApi from '@/services/api/resources/settings/project';
 import History from '@/services/api/resources/chats/history';
 
 import RoomMessages from '@/components/chats/chat/RoomMessages';
 import ContactInfo from '@/components/chats/ContactInfo';
 import ClosedChatsHeaderLoading from '@/views/loadings/ClosedChats/ClosedChatsHeader.vue';
-import RoomHeaderLoading from '@/views/loadings/RoomHeader.vue';
-import RoomLoading from '@/views/loadings/Room.vue';
-import { mapState } from 'vuex';
+import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 import ClosedChatsRoomsTable from './RoomsTable';
 
 export default {
@@ -47,8 +47,7 @@ export default {
 
   components: {
     ClosedChatsHeaderLoading,
-    RoomHeaderLoading,
-    RoomLoading,
+    ChatHeaderLoading,
     ContactInfo,
     ClosedChatsRoomsTable,
     RoomMessages,

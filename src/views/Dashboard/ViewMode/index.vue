@@ -3,14 +3,15 @@
     <chats-layout v-if="viewedAgent.email" :viewed-agent="this.viewedAgent.email">
       <view-mode-header :viewedAgent="viewedAgent.name" />
 
-      <room-loading v-show="isRoomSkeletonActive" />
       <chats-background v-if="!room && !discussion && !isRoomSkeletonActive" />
       <section
         v-if="!!room || !!discussion"
         v-show="!isRoomSkeletonActive"
         class="view-mode__active-chat"
       >
+        <chat-header-loading v-show="isRoomSkeletonActive" />
         <unnnic-chats-header
+          v-show="!isRoomSkeletonActive"
           v-if="!!room && !discussion"
           :title="room.contact.name || ''"
           :avatarClick="() => handleModal('ContactInfo', 'open')"
@@ -18,6 +19,7 @@
           :avatarName="room.contact.name"
         />
         <unnnic-chats-header
+          v-show="!isRoomSkeletonActive"
           v-if="!!discussion"
           class="discussion-header"
           :title="discussion.subject"
@@ -26,14 +28,8 @@
           size="small"
         />
 
-        <room-messages
-          v-if="!!room && !discussion"
-          @handle-room-skeleton="isRoomSkeletonActive = $event"
-        />
-        <discussion-messages
-          v-if="!!discussion"
-          @handle-room-skeleton="isRoomSkeletonActive = $event"
-        />
+        <room-messages v-if="!!room && !discussion" />
+        <discussion-messages v-if="!!discussion" />
         <unnnic-button
           v-if="room && !discussion && room.user?.email !== me.email"
           class="assume-chat"
@@ -76,7 +72,7 @@
 import { mapState } from 'vuex';
 
 import ChatsLayout from '@/layouts/ChatsLayout';
-import RoomLoading from '@/views/loadings/Room.vue';
+import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
 import ContactInfo from '@/components/chats/ContactInfo';
 import RoomMessages from '@/components/chats/chat/RoomMessages';
@@ -91,12 +87,12 @@ export default {
   components: {
     ChatsBackground,
     ChatsLayout,
+    ChatHeaderLoading,
     ContactInfo,
     RoomMessages,
     DiscussionMessages,
     ViewModeHeader,
     ModalGetChat,
-    RoomLoading,
   },
 
   data: () => ({

@@ -1,7 +1,6 @@
 <template>
   <chat-messages
-    v-if="room?.uuid"
-    :chatUuid="room.uuid"
+    :chatUuid="room?.uuid || ''"
     :messages="roomMessages"
     :messagesSorted="roomMessagesSorted"
     :messagesSendingUuids="roomMessagesSendingUuids"
@@ -10,6 +9,7 @@
     :resendMessage="roomResendMessage"
     :resendMedia="roomResendMedia"
     :tags="room?.tags"
+    :isLoading="isLoading"
     @scrollTop="searchForMoreMessages"
   />
 </template>
@@ -27,6 +27,7 @@ export default {
     return {
       page: 0,
       limit: 20,
+      isLoading: true,
     };
   },
 
@@ -49,13 +50,14 @@ export default {
     }),
 
     async getRoomMessages() {
+      this.isLoading = true;
       await this.$store
         .dispatch('chats/roomMessages/getRoomMessages', {
           offset: this.page * this.limit,
           limit: this.limit,
         })
         .then(() => {
-          this.$emit('handle-room-skeleton', false);
+          this.isLoading = false;
         })
         .catch((error) => {
           console.error(error);
