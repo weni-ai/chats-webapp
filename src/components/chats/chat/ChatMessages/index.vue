@@ -1,10 +1,9 @@
 <!-- eslint-disable vuejs-accessibility/alt-text -->
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
-  <div>
+  <div class="chat-messages">
     <chat-messages-loading v-show="isLoading" />
     <section
-      class="chat-messages"
       ref="chatMessages"
       @scroll="handleScroll"
       v-show="!isLoading"
