@@ -137,14 +137,17 @@ export default {
         return;
       }
 
-      await this.$store.dispatch('chats/discussions/addAgent', {
-        user_email: newAgent.value,
-      });
+      try {
+        const responseAgent = await this.$store.dispatch('chats/discussions/addAgent', {
+          user_email: newAgent.value,
+        });
 
-      const [first_name, last_name] = newAgent.label.split(' ');
-      this.agentsInvolved.push({ first_name, last_name });
+        this.agentsInvolved.push(responseAgent);
 
-      this.handleAddAgentModal();
+        this.handleAddAgentModal();
+      } catch (error) {
+        console.error('An error occurred when trying to add agent to discussion:', error);
+      }
     },
   },
 

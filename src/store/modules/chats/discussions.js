@@ -62,10 +62,12 @@ export default {
     },
 
     async addAgent({ state }, { user_email }) {
-      await Discussion.addAgent({
+      const responseAgent = await Discussion.addAgent({
         discussionUuid: state.activeDiscussion.uuid,
         user_email,
       });
+
+      return responseAgent;
     },
 
     setActiveDiscussion({ commit }, discussion) {
