@@ -70,6 +70,10 @@ export default {
   async created() {
     this.details = await this.$store.dispatch('chats/discussions/getDiscussionDetails');
     this.isOwnDiscussion = this.me.email === this.details.created_by?.email;
+    await this.$store.dispatch('chats/rooms/setActiveRoom', {
+      uuid: this.details.room,
+      contact: { name: this.details.contact },
+    });
     this.isSidebarLoading = false;
   },
 

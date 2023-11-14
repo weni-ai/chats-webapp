@@ -325,11 +325,14 @@ export default {
           this.updateTextBoxMessage('');
           this.page = 0;
           this.closeRoomContactInfo();
-          await this.$store.dispatch('chats/rooms/getCanUseCopilot');
-          this.readMessages();
+
+          if (!this.discussionId) {
+            await this.$store.dispatch('chats/rooms/getCanUseCopilot');
+            this.readMessages();
+          }
           this.isRoomSkeletonActive = false;
         }
-        if (newValue?.uuid !== this.roomId) {
+        if (newValue?.uuid !== this.roomId && !this.discussionId) {
           this.$router.replace({ name: 'room', params: { roomId: newValue.uuid } });
         }
       }
