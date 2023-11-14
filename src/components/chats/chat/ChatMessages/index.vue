@@ -1,9 +1,10 @@
 <!-- eslint-disable vuejs-accessibility/alt-text -->
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
-  <div class="chat-messages">
+  <div class="chat-messages__container">
     <chat-messages-loading v-show="isLoading" />
     <section
+      class="chat-messages"
       ref="chatMessages"
       @scroll="handleScroll"
       v-show="!isLoading"
@@ -482,6 +483,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.chat-messages__container {
+  overflow: hidden;
+
+  height: 100%;
+}
+
 .chat-messages {
   overflow: hidden auto;
 
