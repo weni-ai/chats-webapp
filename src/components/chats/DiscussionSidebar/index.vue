@@ -9,7 +9,7 @@
       "
       :icon="isOwnDiscussion ? 'chat_info' : 'history'"
       iconScheme="neutral-dark"
-      @close="handleEndDiscussionModal"
+      :close="isOwnDiscussion ? handleEndDiscussionModal : null"
     >
       <discussion-about v-if="isOwnDiscussion" :details="details" />
       <room-messages v-else />
@@ -67,16 +67,6 @@ export default {
     };
   },
 
-  async created() {
-    this.details = await this.$store.dispatch('chats/discussions/getDiscussionDetails');
-    this.isOwnDiscussion = this.me.email === this.details.created_by?.email;
-    await this.$store.dispatch('chats/rooms/setActiveRoom', {
-      uuid: this.details.room,
-      contact: { name: this.details.contact },
-    });
-    this.isSidebarLoading = false;
-  },
-
   computed: {
     ...mapState({
       me: (state) => state.profile.me,
@@ -85,6 +75,17 @@ export default {
   },
 
   methods: {
+    async loadDiscussionDetails() {
+      this.isSidebarLoading = true;
+
+      this.details = await this.$store.dispatch('chats/discussions/getDiscussionDetails');
+      this.isOwnDiscussion = this.me.email === this.details.created_by?.email;
+      await this.$store.dispatch('chats/rooms/setActiveRoom', {
+        uuid: this.details.room,
+        contact: { name: this.details.contact },
+      });
+      this.isSidebarLoading = false;
+    },
     handleEndDiscussionModal() {
       this.isEndDiscussionModalOpen = !this.isEndDiscussionModalOpen;
     },
@@ -94,6 +95,15 @@ export default {
       await this.$store.dispatch('chats/rooms/setActiveRoom', null);
       await this.$store.dispatch('chats/discussions/delete');
       this.handleEndDiscussionModal();
+    },
+  },
+
+  watch: {
+    discussion: {
+      immediate: true,
+      async handler() {
+        await this.loadDiscussionDetails();
+      },
     },
   },
 };

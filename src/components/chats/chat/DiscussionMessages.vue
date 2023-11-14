@@ -82,6 +82,7 @@ export default {
       immediate: true,
       handler(discussionUuid) {
         if (discussionUuid) {
+          this.page = 0;
           this.getDiscussionMessages();
         }
       },

@@ -4,7 +4,7 @@
       :title="title"
       :subtitle="subtitle"
       :avatarIcon="icon"
-      :close="() => $emit('close')"
+      :close="close"
       :back="back"
       :sectionIconScheme="iconScheme || 'aux-purple'"
     />
@@ -36,6 +36,11 @@ export default {
       required: false,
     },
     back: {
+      type: Function,
+      default: undefined,
+      required: false,
+    },
+    close: {
       type: Function,
       default: undefined,
       required: false,

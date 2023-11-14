@@ -77,6 +77,7 @@ export default {
       immediate: true,
       handler(roomUuid) {
         if (roomUuid) {
+          this.page = 0;
           this.getRoomMessages();
         }
       },
