@@ -7,7 +7,6 @@
 <script>
 import { mapState } from 'vuex';
 
-import { getToken } from '@/utils/config';
 import http from '@/services/api/http';
 import env from '@/utils/env';
 import { sendWindowNotification } from '@/utils/notifications';
@@ -41,14 +40,26 @@ class Notification {
 export default {
   name: 'App',
 
-  async created() {
+  created() {
+    http.interceptors.request.use((config) => {
+      // eslint-disable-next-line no-param-reassign
+      config.headers.Authorization = `Bearer ${this.appToken}`;
+      return config;
+    });
+
     this.handleLocale();
     setInterval(this.intervalPing, this.timerPing);
     const localStorageStatus = localStorage.getItem('statusAgent');
     if (!localStorageStatus || localStorageStatus === 'None') {
       localStorage.setItem('statusAgent', 'OFFLINE');
     }
+  },
+
+  async mounted() {
+    this.getUser();
     this.getStatus();
+    this.loadQuickMessages();
+    this.loadQuickMessagesShared();
   },
 
   data() {
@@ -93,18 +104,6 @@ export default {
         }
       },
     },
-  },
-
-  beforeMount() {
-    http.interceptors.request.use((config) => {
-      // eslint-disable-next-line no-param-reassign
-      config.headers.Authorization = `Bearer ${getToken()}`;
-      return config;
-    });
-
-    this.loadQuickMessages();
-    this.loadQuickMessagesShared();
-    this.getUser();
   },
 
   methods: {

@@ -30,6 +30,6 @@ COPY ./docker/nginx/nginx.conf /etc/nginx
 COPY docker-entrypoint.sh /usr/share/nginx/
 RUN chmod +x /usr/share/nginx/docker-entrypoint.sh
 
-EXPOSE 80
+EXPOSE 8080
 ENTRYPOINT [ "/usr/share/nginx/docker-entrypoint.sh" ]
 CMD ["nginx", "-g", "daemon off;"]
