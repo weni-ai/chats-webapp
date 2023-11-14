@@ -2,12 +2,12 @@
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
   <div class="chat-messages__container">
-    <chat-messages-loading v-show="isLoading" />
+    <chat-messages-loading v-show="isSkeletonLoadingActive" />
     <section
       class="chat-messages"
       ref="chatMessages"
       @scroll="handleScroll"
-      v-show="!isLoading"
+      v-show="!isSkeletonLoadingActive"
       v-if="chatUuid && messagesSorted"
     >
       <section
@@ -118,7 +118,7 @@
       :feedback="roomEndedChatFeedback(room)"
       scheme="purple"
     /> -->
-      <section v-if="tags.length > 0" v-show="!isLoading" class="chat-messages__tags">
+      <section v-if="tags.length > 0" v-show="!isSkeletonLoadingActive" class="chat-messages__tags">
         <!-- <chat-feedback :feedback="roomEndedChatFeedback(room)" scheme="purple" ref="endChatElement" /> -->
         <tag-group :tags="tags" />
       </section>
@@ -277,6 +277,11 @@ export default {
         .map((el) => el.media)
         .flat()
         .filter((media) => this.isMedia(media));
+    },
+
+    isSkeletonLoadingActive() {
+      const { isLoading, prevChatUuid, chatUuid } = this;
+      return isLoading && prevChatUuid !== chatUuid;
     },
   },
 
@@ -460,7 +465,7 @@ export default {
       }
 
       this.prevChatUuid = this.chatUuid;
-      this.lastMessageUuidBeforePagination = messagesSorted[0].minutes[0].messages?.[0]?.uuid;
+      this.lastMessageUuidBeforePagination = messagesSorted?.[0]?.minutes?.[0]?.messages?.[0]?.uuid;
     },
 
     scrollToBottom() {
