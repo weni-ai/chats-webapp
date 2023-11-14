@@ -6,6 +6,7 @@
       :avatarIcon="icon"
       :close="() => $emit('close')"
       :back="back"
+      :sectionIconScheme="iconScheme || 'aux-purple'"
     />
 
     <section :class="['aside-slot-template__sections']">
@@ -22,13 +23,9 @@ export default {
       type: String,
       default: '',
     },
-    iconAction: {
+    iconScheme: {
       type: String,
-      default: 'close-1',
-    },
-    noIconAction: {
-      type: Boolean,
-      default: false,
+      default: '',
     },
     title: {
       type: String,

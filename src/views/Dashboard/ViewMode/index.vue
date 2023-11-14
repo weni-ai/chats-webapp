@@ -3,33 +3,48 @@
     <chats-layout v-if="viewedAgent.email" :viewed-agent="this.viewedAgent.email">
       <view-mode-header :viewedAgent="viewedAgent.name" />
 
-      <room-loading v-show="isRoomSkeletonActive" />
-      <chats-background v-if="!room && !isRoomSkeletonActive" />
-      <template v-if="!!room && room.uuid && !isRoomSkeletonActive">
-        <section class="view-mode__active-chat">
-          <unnnic-chats-header
-            :title="room.contact.name || ''"
-            :avatarClick="() => handleModal('ContactInfo', 'open')"
-            :titleClick="() => handleModal('ContactInfo', 'open')"
-            :avatarName="room.contact.name"
-            :close="() => {}"
-          />
-          <chat-messages
-            :room="room"
-            :messages="messages"
-            class="messages"
-            @show-contact-info="handleModal('ContactInfo', 'open')"
-            @scrollTop="searchForMoreMessages"
-          />
-          <unnnic-button
-            v-if="room.user?.email !== me.email"
-            class="assume-chat"
-            :text="$t('dashboard.view-mode.assume_chat')"
-            type="secondary"
-            @click="handleModal('AssumeChatConfirmation', 'open')"
-          />
-        </section>
-      </template>
+      <chats-background v-if="!room && !discussion && !isRoomSkeletonActive" />
+      <section
+        v-if="!!room || !!discussion"
+        v-show="!isRoomSkeletonActive"
+        class="view-mode__active-chat"
+      >
+        <chat-header-loading v-show="isRoomSkeletonActive" />
+        <unnnic-chats-header
+          v-show="!isRoomSkeletonActive"
+          v-if="!!room && !discussion"
+          :title="room.contact.name || ''"
+          :avatarClick="() => handleModal('ContactInfo', 'open')"
+          :titleClick="() => handleModal('ContactInfo', 'open')"
+          :avatarName="room.contact.name"
+        />
+        <unnnic-chats-header
+          v-show="!isRoomSkeletonActive"
+          v-if="!!discussion"
+          class="discussion-header"
+          :title="discussion.subject"
+          :subtitle="`${$tc('discussions.title')} ${$t('about')} ${discussion.contact}`"
+          avatarIcon="forum"
+          size="small"
+        />
+
+        <room-messages v-if="!!room && !discussion" />
+        <discussion-messages v-if="!!discussion" />
+        <unnnic-button
+          v-if="room && !discussion && room.user?.email !== me.email"
+          class="assume-chat"
+          :text="$t('dashboard.view-mode.assume_chat')"
+          type="secondary"
+          @click="handleModal('AssumeChatConfirmation', 'open')"
+        />
+        <unnnic-button
+          v-if="!!discussion"
+          class="assume-chat"
+          type="primary"
+          :text="$t('discussions.join')"
+          @click="joinDiscussion"
+        />
+      </section>
 
       <modal-get-chat
         :showModal="isAssumeChatConfirmationOpened"
@@ -54,13 +69,14 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+import { mapState } from 'vuex';
 
 import ChatsLayout from '@/layouts/ChatsLayout';
-import RoomLoading from '@/views/loadings/Room.vue';
+import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
 import ContactInfo from '@/components/chats/ContactInfo';
-import ChatMessages from '@/components/chats/chat/ChatMessages';
+import RoomMessages from '@/components/chats/chat/RoomMessages';
+import DiscussionMessages from '@/components/chats/chat/DiscussionMessages';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat';
 
 import ViewModeHeader from './components/ViewModeHeader';
@@ -71,23 +87,22 @@ export default {
   components: {
     ChatsBackground,
     ChatsLayout,
+    ChatHeaderLoading,
     ContactInfo,
-    ChatMessages,
+    RoomMessages,
+    DiscussionMessages,
     ViewModeHeader,
     ModalGetChat,
-    RoomLoading,
   },
 
   data: () => ({
     isRoomSkeletonActive: false,
     isContactInfoOpened: false,
     isAssumeChatConfirmationOpened: false,
-    chatPage: 0,
-    chatLimit: 20,
   }),
 
   beforeMount() {
-    this.$store.dispatch('rooms/setActiveRoom', '');
+    this.$store.dispatch('chats/rooms/setActiveRoom', '');
   },
 
   mounted() {
@@ -100,38 +115,15 @@ export default {
 
   computed: {
     ...mapState({
-      room: (state) => state.rooms.activeRoom,
+      room: (state) => state.chats.rooms.activeRoom,
+      discussion: (state) => state.chats.discussions.activeDiscussion,
       me: (state) => state.profile.me,
       viewedAgent: (state) => state.dashboard.viewedAgent,
-      roomMessagesNext: (state) => state.roomMessages.roomMessagesNext,
-    }),
-    ...mapGetters('roomMessages', {
-      messages: 'groupedActiveRoomsMessage',
+      roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,
     }),
   },
 
   methods: {
-    async getRoomMessages(concat = false) {
-      try {
-        await this.$store.dispatch('roomMessages/getRoomMessages', {
-          offset: this.chatPage * this.chatLimit,
-          concat,
-          limit: this.chatLimit,
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    searchForMoreMessages() {
-      if (this.roomMessagesNext) {
-        this.chatPage += 1;
-        this.getRoomMessages(true);
-      }
-    },
-    resetRoomMessagesParams() {
-      this.chatPage = 0;
-      this.chatLimit = 20;
-    },
     handleModal(modalName, action) {
       const registeredModals = ['ContactInfo', 'AssumeChatConfirmation'];
 
@@ -156,21 +148,24 @@ export default {
 
       actionMap[action]();
     },
+    async joinDiscussion() {
+      try {
+        await this.$store.dispatch('chats/discussions/addAgent', {
+          user_email: this.me.email,
+        });
+        this.$router.push({ name: 'discussion', params: { discussionId: this.discussion.uuid } });
+      } catch (error) {
+        console.error('An error occurred when trying to join into discussion:', error);
+      }
+    },
     whenGetChat() {
-      this.$router.push({ name: 'room', params: { id: this.room.uuid } });
+      this.$router.push({ name: 'room', params: { roomId: this.room.uuid } });
     },
   },
 
   watch: {
     async room() {
-      this.resetRoomMessagesParams();
       this.isContactInfoOpened = false;
-
-      if (this.room?.uuid) {
-        this.isRoomSkeletonActive = true;
-        await this.getRoomMessages();
-        this.isRoomSkeletonActive = false;
-      }
     },
   },
 };
@@ -190,9 +185,15 @@ export default {
       padding-left: $unnnic-spacing-sm;
     }
 
-    :deep(.unnnic-chats-header) {
-      .unnnic-button-close {
-        display: none;
+    .discussion-header {
+      :deep(.unnnic-chats-header) {
+        .unnnic-chats-header__avatar-icon {
+          background-color: $unnnic-color-aux-purple-500;
+
+          [class*='unnnic-icon'] {
+            color: $unnnic-color-weni-50;
+          }
+        }
       }
     }
   }

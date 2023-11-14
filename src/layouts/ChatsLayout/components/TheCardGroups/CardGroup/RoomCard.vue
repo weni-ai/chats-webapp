@@ -1,11 +1,11 @@
 <template>
   <unnnic-chats-contact
-    :username="room.contact.name"
+    :title="room.contact.name"
     :lastMessage="lastMessage"
     :waitingTime="waitingTimeComputed"
     :unreadMessages="unreadMessages"
     :tabindex="0"
-    :selected="room.uuid === activeRoomId"
+    :selected="room.uuid === activeRoomId && !unselected"
     :locale="locale"
     @click="$emit('click')"
     @keypress.enter="$emit('click')"
@@ -19,12 +19,16 @@ import { mapState } from 'vuex';
 const ONE_MINUTE_IN_MILLISECONDS = 60000;
 
 export default {
-  name: 'ContactRoom',
+  name: 'RoomCard',
 
   props: {
     room: {
       type: Object,
       required: true,
+    },
+    unselected: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -52,9 +56,9 @@ export default {
   computed: {
     ...mapState({
       newMessages(state) {
-        return state.rooms.newMessagesByRoom[this.room.uuid]?.messages;
+        return state.chats.rooms.newMessagesByRoom[this.room.uuid]?.messages;
       },
-      activeRoomId: (state) => state.rooms.activeRoom?.uuid,
+      activeRoomId: (state) => state.chats.rooms.activeRoom?.uuid,
     }),
     lastMessage() {
       const { newMessages, room } = this;

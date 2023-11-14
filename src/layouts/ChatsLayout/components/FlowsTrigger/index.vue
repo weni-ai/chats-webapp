@@ -65,7 +65,7 @@
             <unnnic-chats-contact
               v-for="item in element"
               :key="item.uuid"
-              :username="item.name"
+              :title="item.name"
               :lastMessage="item.urns[0]"
               :tabindex="0"
               checkboxWhenSelect

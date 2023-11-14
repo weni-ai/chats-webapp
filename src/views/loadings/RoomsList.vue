@@ -41,8 +41,6 @@ export default {
   width: 100%;
   height: 100%;
 
-  z-index: 10000;
-
   header {
     padding: $unnnic-spacing-ant 0;
 

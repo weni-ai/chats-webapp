@@ -3,38 +3,50 @@
     ref="chats-layout"
     @select-quick-message="(quickMessage) => updateTextBoxMessage(quickMessage.text)"
   >
-    <room-loading v-show="isRoomSkeletonActive" />
-    <chats-background v-if="!room && !isRoomSkeletonActive" />
-    <section v-if="!!room" v-show="!isRoomSkeletonActive" class="active-chat">
+    <chats-background v-if="!room && !discussion && !isRoomSkeletonActive" />
+    <section v-if="!!room || !!discussion" class="active-chat">
+      <chat-header-loading v-show="isRoomSkeletonActive" />
       <unnnic-chats-header
+        v-show="!isRoomSkeletonActive"
+        v-if="!!room && !discussion"
         :title="room.contact.name || ''"
-        :avatarClick="openContactInfo"
-        :titleClick="openContactInfo"
+        :avatarClick="() => openRoomContactInfo()"
+        :titleClick="() => openRoomContactInfo()"
         :avatarName="room.contact.name"
         :close="openModalCloseChat"
       />
-      <chat-header-send-flow v-if="!room.is_24h_valid" @send-flow="openFlowsTrigger" />
-      <chats-dropzone @open-file-uploader="openFileUploader" :show="room.user && room.is_24h_valid">
-        <chat-messages
-          :room="room"
-          @show-contact-info="componentInAsideSlot = 'contactInfo'"
-          @scrollTop="searchForMoreMessages"
-        />
+      <unnnic-chats-header
+        v-show="!isRoomSkeletonActive"
+        v-if="!!discussion"
+        class="discussion-header"
+        :title="discussion.subject"
+        :subtitle="`${$tc('discussions.title')} ${$t('about')} ${discussion.contact}`"
+        avatarIcon="forum"
+        size="small"
+      />
+
+      <chat-header-send-flow
+        v-if="!!room && !discussion && !room.is_24h_valid && !isRoomSkeletonActive"
+        @send-flow="openFlowsTrigger"
+      />
+      <chats-dropzone
+        @open-file-uploader="openFileUploader"
+        :show="(!!room && room.user && room.is_24h_valid) || !!discussion"
+      >
+        <room-messages v-if="!!room && !discussion" />
+        <discussion-messages v-if="!!discussion" />
 
         <message-manager
-          v-if="isMessageManagerVisible && !room.is_waiting"
-          ref="message-editor"
+          v-if="isMessageManagerRoomVisible || !!discussion"
           v-model="textBoxMessage"
-          :audio.sync="audioMessage"
+          :loadingFileValue="totalValue"
+          :showSkeletonLoading="isRoomSkeletonActive"
           @show-quick-messages="handlerShowQuickMessages"
-          @send-audio="sendAudio"
           @open-file-uploader="openFileUploader"
-          :loadingValue="totalValue"
-          :loading="isLoading"
         />
       </chats-dropzone>
 
-      <div v-if="!room.user" class="get-chat-button-container">
+      <div v-if="!room?.user && !discussion" class="get-chat-button-container">
         <unnnic-button
           class="get-chat-button"
           :text="$t('chats.get_chat')"
@@ -92,7 +104,11 @@
     <file-uploader v-model="files" ref="fileUploader" @upload="sendFileMessage" />
 
     <template #aside>
-      <component :is="sidebarComponent.name" v-on="sidebarComponent.listeners" />
+      <contact-info
+        v-if="room && isRoomContactInfoOpen && !discussion"
+        @close="closeRoomContactInfo"
+      />
+      <discussion-sidebar v-if="discussion" />
     </template>
     <modal-close-chat v-if="showCloseModal" @close="closeModalCloseChat" :room="room" />
   </chats-layout>
@@ -107,20 +123,20 @@ import ChatsLayout from '@/layouts/ChatsLayout';
 import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
 import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone';
 
+import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader';
+import RoomMessages from '@/components/chats/chat/RoomMessages';
+import DiscussionMessages from '@/components/chats/chat/DiscussionMessages';
+import DiscussionSidebar from '@/components/chats/DiscussionSidebar';
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow';
-import ChatMessages from '@/components/chats/chat/ChatMessages';
 import ContactInfo from '@/components/chats/ContactInfo';
+import FileUploader from '@/components/chats/MessageManager/FileUploader';
 import ChatClassifier from '@/components/chats/ChatClassifier';
-import QuickMessages from '@/components/chats/QuickMessages';
 import ModalCloseChat from '@/views/chats/ModalCloseChat.vue';
 
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat';
 import MessageManager from '@/components/chats/MessageManager';
-
-import FileUploader from '@/components/chats/MessageManager/FileUploader';
-import RoomLoading from '@/views/loadings/Room.vue';
 
 export default {
   name: 'ChatsHome',
@@ -129,31 +145,32 @@ export default {
     ChatsLayout,
     ChatsBackground,
     ChatsDropzone,
+    ChatHeaderLoading,
     ChatHeaderSendFlow,
-    ChatMessages,
     ContactInfo,
-    QuickMessages,
+    DiscussionMessages,
+    RoomMessages,
+    DiscussionSidebar,
     MessageManager,
     ChatClassifier,
     ModalCloseChat,
     FileUploader,
     ModalGetChat,
-    RoomLoading,
   },
 
   props: {
-    id: {
+    roomId: {
+      type: String,
+      default: '',
+    },
+    discussionId: {
       type: String,
       default: '',
     },
   },
 
   data: () => ({
-    /**
-     * @type {HTMLAudioElement}
-     */
-    audioMessage: null,
-    componentInAsideSlot: '',
+    isRoomContactInfoOpen: false,
     textBoxMessage: '',
     isCloseChatModalOpen: false,
     tags: [],
@@ -161,49 +178,34 @@ export default {
     isGetChatConfirmationModalOpen: false,
     isRoomClassifierVisible: false,
     totalValue: undefined,
-    isLoading: false,
-    page: 0,
-    limit: 20,
     showCloseModal: false,
-    showAlertForLastMessage: false,
-    networkError: false,
     files: [],
     isRoomSkeletonActive: false,
   }),
 
   computed: {
     ...mapState({
-      room: (state) => state.rooms.activeRoom,
       me: (state) => state.profile.me,
-      roomMessagesNext: (state) => state.roomMessages.roomMessagesNext,
-      listRoomHasNext: (state) => state.rooms.listRoomHasNext,
+      room: (state) => state.chats.rooms.activeRoom,
+      rooms: (state) => state.chats.rooms.rooms,
+      discussion: (state) => state.chats.discussions.activeDiscussion,
+      discussions: (state) => state.chats.discussions.discussions,
+      roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,
+      listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
       showModalAssumedChat: ({ dashboard }) => dashboard.showModalAssumedChat,
       assumedChatContactName: ({ dashboard }) => dashboard.assumedChatContactName,
     }),
-    isMessageManagerVisible() {
+    isMessageManagerRoomVisible() {
+      const { room } = this;
       return (
-        !this.isRoomClassifierVisible &&
-        this.room.is_active &&
-        this.room.is_24h_valid &&
-        !this.networkError &&
-        !this.room.wating_answer &&
-        !!this.room.user
+        room &&
+        room.user &&
+        room.is_active &&
+        room.is_24h_valid &&
+        !room.is_waiting &&
+        !room.wating_answer &&
+        !this.isRoomClassifierVisible
       );
-    },
-    sidebarComponent() {
-      return this.sidebarComponents[this.componentInAsideSlot] || {};
-    },
-    sidebarComponents() {
-      return {
-        contactInfo: {
-          name: ContactInfo.name,
-          listeners: {
-            close: () => {
-              this.componentInAsideSlot = '';
-            },
-          },
-        },
-      };
     },
   },
 
@@ -214,8 +216,11 @@ export default {
       const response = await Queue.tags(this.room.queue.uuid);
       this.sectorTags = response.results;
     },
-    openContactInfo() {
-      this.componentInAsideSlot = 'contactInfo';
+    openRoomContactInfo() {
+      this.isRoomContactInfoOpen = true;
+    },
+    closeRoomContactInfo() {
+      this.isRoomContactInfoOpen = false;
     },
     async readMessages() {
       if (this.room && this.room.uuid && this.room.user && this.room.user.email === this.me.email) {
@@ -229,57 +234,21 @@ export default {
       const tags = this.tags.map((tag) => tag.uuid);
       await Room.close(uuid, tags);
       this.$router.replace({ name: 'home' });
-      this.$store.dispatch('rooms/removeRoom', uuid);
+      this.$store.dispatch('chats/rooms/removeRoom', uuid);
     },
     async setActiveRoom(uuid) {
-      const room = this.$store.getters['rooms/getRoomById'](uuid);
-      if (this.$route.name !== 'home' && !room) {
-        this.$router.replace({ name: 'home' });
-      }
-      await this.$store.dispatch('rooms/setActiveRoom', room);
-      await this.$store.dispatch('rooms/getCanUseCopilot');
-      this.componentInAsideSlot = '';
-      this.page = 0;
-      this.readMessages();
+      const room = this.$store.getters['chats/rooms/getRoomById'](uuid);
+      await this.$store.dispatch('chats/rooms/setActiveRoom', room);
     },
+    async setActiveDiscussion(uuid) {
+      const discussion = this.$store.getters['chats/discussions/getDiscussionById'](uuid);
+      await this.$store.dispatch('chats/discussions/setActiveDiscussion', discussion);
+    },
+
     whenGetChat() {
-      this.componentInAsideSlot = '';
-      this.page = 0;
-    },
-    async getRoomMessages(concat) {
-      this.isLoading = true;
-
-      await this.$store
-        .dispatch('roomMessages/getRoomMessages', {
-          offset: this.page * this.limit,
-          concat,
-          limit: this.limit,
-        })
-        .then(() => {
-          this.isRoomClassifierVisible = false;
-          this.isLoading = false;
-          this.networkError = false;
-          this.dateOfLastMessage();
-
-          this.isRoomSkeletonActive = false;
-        })
-        .catch((error) => {
-          this.isLoading = false;
-          console.error(error);
-          if (error.code === 'ERR_NETWORK') this.networkError = true;
-        });
+      this.closeRoomContactInfo();
     },
 
-    searchMessages() {
-      this.getRoomMessages(false);
-    },
-
-    searchForMoreMessages() {
-      if (this.roomMessagesNext) {
-        this.page += 1;
-        this.getRoomMessages(true);
-      }
-    },
     async sendFileMessage() {
       const { files } = this;
       try {
@@ -290,32 +259,19 @@ export default {
             Object.values(loadingFiles).reduce((acc, value) => acc + value) /
             Object.keys(loadingFiles).length;
         };
-        await this.$store.dispatch('roomMessages/sendMedias', { files, updateLoadingFiles });
-        this.totalValue = undefined;
+        const actionType = this.discussionId
+          ? 'chats/discussionMessages/sendDiscussionMedias'
+          : 'chats/roomMessages/sendRoomMedias';
+
+        await this.$store.dispatch(actionType, {
+          files,
+          updateLoadingFiles,
+        });
       } catch (e) {
         console.error('O upload de alguns arquivos pode não ter sido concluído');
+      } finally {
+        this.totalValue = undefined;
       }
-    },
-    async sendAudio() {
-      if (!this.audioMessage || this.isLoading) return;
-      this.isLoading = true;
-
-      const loadingFiles = {};
-      const updateLoadingFiles = (messageUuid, progress) => {
-        loadingFiles[messageUuid] = progress;
-        this.totalValue =
-          Object.values(loadingFiles).reduce((acc, value) => acc + value) /
-          Object.keys(loadingFiles).length;
-      };
-      const response = await fetch(this.audioMessage.src);
-      const blob = await response.blob();
-      const audio = new File([blob], `${Date.now().toString()}.mp3`, { type: 'audio/mpeg3' });
-      await this.$store.dispatch('roomMessages/sendMedias', { files: [audio], updateLoadingFiles });
-      this.totalValue = undefined;
-      this.$refs['message-editor'].clearAudio();
-      this.audioMessage = null;
-
-      this.isLoading = false;
     },
     getTodayDate() {
       return new Intl.DateTimeFormat('pt-BR', {
@@ -351,37 +307,87 @@ export default {
       this.$store.dispatch('dashboard/setShowModalAssumedChat', false);
     },
 
-    dateOfLastMessage() {
-      if (!this.room) return;
-      if (!this.room.is_24h_valid) {
-        this.showAlertForLastMessage = true;
-      } else {
-        this.showAlertForLastMessage = false;
-      }
-    },
-
     updateTextBoxMessage(message) {
       this.textBoxMessage = message;
     },
   },
 
   watch: {
-    room(newValue) {
-      if (!newValue) this.componentInAsideSlot = '';
-      if (newValue) this.updateTextBoxMessage('');
-    },
-    id: {
-      immediate: true,
-      async handler() {
-        if (this.$store.state.rooms.newMessagesByRoom[this.id]) {
-          this.$delete(this.$store.state.rooms.newMessagesByRoom, this.id);
+    async room(newValue, oldValue) {
+      if (this.rooms.length > 0) {
+        if (!newValue?.uuid) {
+          this.$router.replace({ name: 'home' });
+          return;
         }
 
-        this.isRoomSkeletonActive = true;
-        await this.$store.dispatch('roomMessages/resetRoomMessages');
-        await this.setActiveRoom(this.id);
-        await this.getRoomMessages();
+        if (newValue.uuid !== oldValue?.uuid) {
+          this.isRoomSkeletonActive = true;
+          this.updateTextBoxMessage('');
+          this.page = 0;
+          this.closeRoomContactInfo();
+          await this.$store.dispatch('chats/rooms/getCanUseCopilot');
+          this.readMessages();
+          this.isRoomSkeletonActive = false;
+        }
+        if (newValue?.uuid !== this.roomId) {
+          this.$router.replace({ name: 'room', params: { roomId: newValue.uuid } });
+        }
+      }
+    },
+    roomId: {
+      immediate: true,
+      async handler(roomId) {
+        if (roomId && roomId !== this.room?.uuid) {
+          if (this.$store.state.chats.rooms.newMessagesByRoom[roomId]) {
+            this.$delete(this.$store.state.chats.rooms.newMessagesByRoom, roomId);
+          }
+
+          await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
+        }
+        this.isRoomClassifierVisible = false;
       },
+    },
+    async rooms(rooms) {
+      if (rooms.length > 0 && this.roomId && this.roomId !== this.room?.uuid) {
+        await this.setActiveRoom(this.roomId);
+        if (this.$route.name !== 'home' && !this.room) {
+          this.$router.replace({ name: 'home' });
+          this.isRoomSkeletonActive = false;
+        }
+      }
+    },
+    async discussion(newValue) {
+      if (this.rooms.length > 0) {
+        if (!newValue?.uuid) {
+          this.$router.replace({ name: 'home' });
+          return;
+        }
+
+        if (newValue?.uuid !== this.discussionId) {
+          this.$router.replace({ name: 'discussion', params: { discussionId: newValue.uuid } });
+        }
+      }
+    },
+    discussionId: {
+      immediate: true,
+      async handler(discussionId) {
+        if (discussionId && discussionId !== this.discussion?.uuid) {
+          await this.$store.dispatch('chats/discussionMessages/resetDiscussionMessages');
+        }
+      },
+    },
+    async discussions(discussions) {
+      if (
+        discussions.length > 0 &&
+        this.discussionId &&
+        this.discussionId !== this.discussion?.uuid
+      ) {
+        await this.setActiveDiscussion(this.discussionId);
+        if (this.$route.name !== 'home' && !this.discussion && !this.room) {
+          this.$router.replace({ name: 'home' });
+          this.isRoomSkeletonActive = false;
+        }
+      }
     },
   },
 
@@ -403,6 +409,18 @@ export default {
     margin-top: auto;
     margin-left: -$unnnic-spacing-inline-md;
     margin-bottom: -$unnnic-spacing-inline-sm;
+  }
+
+  .discussion-header {
+    :deep(.unnnic-chats-header) {
+      .unnnic-chats-header__avatar-icon {
+        background-color: $unnnic-color-aux-purple-500;
+
+        [class*='unnnic-icon'] {
+          color: $unnnic-color-weni-50;
+        }
+      }
+    }
   }
 }
 .get-chat-button-container {

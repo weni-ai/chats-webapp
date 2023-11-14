@@ -19,7 +19,7 @@
           />
         </div>
 
-        <the-room-list class="room-list" :isViewMode="isViewMode" :viewedAgent="viewedAgent" />
+        <the-card-groups class="room-list" :isViewMode="isViewMode" :viewedAgent="viewedAgent" />
 
         <unnnic-button
           class="history-button"
@@ -64,7 +64,7 @@ import PreferencesBar from '@/components/PreferencesBar.vue';
 import Sector from '@/services/api/resources/settings/sector.js';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import QuickMessages from '@/components/chats/QuickMessages';
-import TheRoomList from './components/TheRoomList';
+import TheCardGroups from './components/TheCardGroups';
 import LayoutFlowsTrigger from './components/FlowsTrigger';
 
 export default {
@@ -72,7 +72,7 @@ export default {
 
   components: {
     PreferencesBar,
-    TheRoomList,
+    TheCardGroups,
     SidebarLoading,
     LayoutFlowsTrigger,
     QuickMessages,
@@ -159,7 +159,9 @@ export default {
 
   computed: {
     isAsideVisible() {
-      return !!this.$slots.aside;
+      return (
+        !!this.$slots.aside && this.$slots.aside.filter((slot) => slot.componentOptions).length > 0
+      );
     },
     isRoomListVisible() {
       return !this.showFlowsTrigger && !this.showQuickMessages;

@@ -12,10 +12,12 @@
   // display: revert;
 }
 
-/* Preferred box-sizing value */
+/* Preferred zeroed boxes and box-sizing value  */
 *,
 *::before,
 *::after {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
