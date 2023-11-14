@@ -111,6 +111,11 @@ export default {
         ecf: `${content.user} ${t('chats.feedback.edit_custom_field')} <i>${
           content.custom_field_name
         }</i> ${t('from')} <i>${content.old}</i> ${t('to')} <i>${content.new}</i>`,
+        dc: `${t('chats.feedback.discussion_created', {
+          agent: content.user,
+          queue: content.queue,
+        })}`,
+        da: `${t('chats.feedback.discussion_joined', { agent: content.user })}`,
       };
 
       return feedbackLabels[method] || '';
