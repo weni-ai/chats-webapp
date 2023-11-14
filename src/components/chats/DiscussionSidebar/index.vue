@@ -91,6 +91,7 @@ export default {
 
     async endDiscussion() {
       this.isEndDiscussionLoading = true;
+      await this.$store.dispatch('chats/rooms/setActiveRoom', null);
       await this.$store.dispatch('chats/discussions/delete');
       this.handleEndDiscussionModal();
     },
