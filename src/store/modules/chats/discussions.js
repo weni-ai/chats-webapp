@@ -73,6 +73,20 @@ export default {
       return responseDiscussion;
     },
 
+    addDiscussion({ commit }, discussion) {
+      commit(mutations.ADD_DISCUSSION, discussion);
+    },
+
+    removeDiscussion({ state, commit }, discussionUuid) {
+      const discussions = state.discussions.filter(
+        (discussion) => discussion.uuid !== discussionUuid,
+      );
+      commit(mutations.SET_DISCUSSIONS, discussions);
+
+      if (state.activeDiscussion.uuid === discussionUuid)
+        commit(mutations.SET_ACTIVE_DISCUSSION, {});
+    },
+
     addNewMessagesByDiscussion({ commit }, { discussion, message }) {
       commit(mutations.UPDATE_NEW_MESSAGES_BY_DISCUSSION, { discussion, message });
     },

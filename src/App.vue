@@ -329,8 +329,30 @@ export default {
         }
       });
 
+      this.ws.on('discussions.update', (discussion) => {
+        const { discussions } = this.$store.state.chats.discussions;
+        const isNewDiscussion = !discussions.find(
+          (mappedDiscussion) => mappedDiscussion.uuid === discussion.uuid,
+        );
+
+        if (isNewDiscussion && discussion.user.email !== this.me.email) {
+          this.$store.dispatch('chats/discussions/addDiscussion', discussion);
+
+          const notification = new Notification('select-sound');
+          notification.notify();
+        }
+      });
+
       this.ws.on('rooms.close', (room) => {
         this.$store.dispatch('chats/rooms/removeRoom', room.uuid);
+      });
+
+      this.ws.on('discussions.close', (discussion) => {
+        this.$store.dispatch('chats/discussions/removeDiscussion', discussion.uuid);
+
+        if (this.$route.params.discussionId === discussion.uuid) {
+          this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
+        }
       });
 
       this.ws.on('msg.update', (message) => {
