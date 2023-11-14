@@ -144,6 +144,18 @@ export default {
       commit(mutations.RESET_DISCUSSION_MESSAGES_NEXT);
     },
 
+    async addDiscussionMessage({ commit, state }, message) {
+      const messageAlreadyExists = state.discussionMessages.some(
+        (mappedMessage) => mappedMessage.uuid === message.uuid,
+      );
+
+      if (messageAlreadyExists) commit(mutations.UPDATE_DISCUSSION_MESSAGE, { message });
+      else {
+        commit(mutations.ADD_DISCUSSION_MESSAGE, { message });
+        commit(mutations.ADD_DISCUSSION_MESSAGE_SORTED, { message });
+      }
+    },
+
     async sendDiscussionMessage({ commit }, text) {
       const { activeDiscussion } = Discussions.state;
       if (!activeDiscussion) return;
