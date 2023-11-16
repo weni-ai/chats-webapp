@@ -50,7 +50,7 @@
 
         <unnnic-button
           v-if="discussionId && showActionButton"
-          @click="openFileUploader"
+          @click="openFileUploader([])"
           type="secondary"
           size="large"
           iconCenter="attachment"
@@ -71,7 +71,7 @@
               :title="$t('record_audio')"
             />
             <more-actions-option
-              :action="openFileUploader"
+              :action="openFileUploader([])"
               icon="attachment"
               :title="$t('attach')"
             />
@@ -419,6 +419,10 @@ export default {
     justify-content: flex-end;
 
     padding-right: $unnnic-spacing-stack-sm;
+
+    :deep(.audio-player) {
+      width: auto;
+    }
   }
 }
 </style>

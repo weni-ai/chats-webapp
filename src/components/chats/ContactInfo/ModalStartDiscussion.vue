@@ -111,6 +111,13 @@ export default {
         initial_message: this.message,
       });
 
+      if (this.$route.path !== 'discussion' && responseDiscussion.uuid) {
+        this.$router.push({
+          name: 'discussion',
+          params: { discussionId: responseDiscussion.uuid },
+        });
+      }
+
       this.close();
 
       if (!responseDiscussion.status) {

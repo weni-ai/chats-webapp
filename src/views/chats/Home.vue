@@ -298,7 +298,7 @@ export default {
     openFileUploader(files) {
       this.$refs.fileUploader.open();
 
-      if (files) {
+      if (files?.length > 0) {
         this.files = [...files];
       }
     },
