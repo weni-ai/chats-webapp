@@ -70,6 +70,7 @@ import Project from '@/services/api/resources/settings/project';
 
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
 import SelectedMember from '@/components/settings/forms/SelectedMember';
+import { mapState } from 'vuex';
 
 export default {
   name: 'DiscussionAbout',
@@ -97,6 +98,9 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      me: (state) => state.profile.me,
+    }),
     discussionStartDate() {
       const { created_on } = this.details;
       const date = new Date(created_on);
@@ -113,7 +117,7 @@ export default {
 
     getUserRoleTreated(user) {
       const roles = {
-        0: user.email === this.$store.state.profile.me?.email ? this.$t('you') : '',
+        0: user.email === this.me?.email ? this.$t('you') : '',
         1: this.$t('manager'),
       };
       return roles[user.role] ? `(${roles[user.role]})` : '';
@@ -150,12 +154,20 @@ export default {
 
   watch: {
     async isAddAgentModalOpen(newIsAddAgentModalOpen) {
-      if (newIsAddAgentModalOpen && this.agentsToSelect.length < 2) {
+      if (newIsAddAgentModalOpen) {
         const response = await Project.agents();
         const { results } = response;
 
-        const newAgents = this.agentsToSelect;
-        results.forEach(({ user }) =>
+        const agentsInvolvedNames = [
+          ...this.agentsInvolved.map((agent) => this.getUserFullName(agent)),
+        ];
+        const filteredAgents = results.filter(
+          (agent) => !agentsInvolvedNames.includes(this.getUserFullName(agent.user)),
+        );
+
+        const newAgents = [this.agentsToSelect[0]];
+
+        filteredAgents.forEach(({ user }) =>
           newAgents.push({
             value: user.email,
             label: this.getUserFullName(user),
