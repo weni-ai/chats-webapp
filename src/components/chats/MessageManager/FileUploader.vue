@@ -110,6 +110,14 @@ export default {
       return props;
     },
   },
+
+  watch: {
+    showUploadModal(newShowUploadModal) {
+      if (!newShowUploadModal) {
+        this.files = [];
+      }
+    },
+  },
 };
 </script>
 

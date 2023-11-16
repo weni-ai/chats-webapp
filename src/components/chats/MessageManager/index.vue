@@ -50,7 +50,7 @@
 
         <unnnic-button
           v-if="discussionId && showActionButton"
-          @click="openFileUploader([])"
+          @click="openFileUploader"
           type="secondary"
           size="large"
           iconCenter="attachment"
@@ -71,7 +71,7 @@
               :title="$t('record_audio')"
             />
             <more-actions-option
-              :action="openFileUploader([])"
+              :action="openFileUploader"
               icon="attachment"
               :title="$t('attach')"
             />
@@ -341,7 +341,7 @@ export default {
       this.isLoading = false;
     },
     openFileUploader(files) {
-      this.$emit('open-file-uploader', files);
+      this.$emit('open-file-uploader', files?.length > 0 ? files : []);
     },
     updateAudioRecorderStatus(status) {
       this.audioRecorderStatus = status;
