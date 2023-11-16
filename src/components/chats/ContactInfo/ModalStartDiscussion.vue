@@ -14,6 +14,7 @@
             :options="sectorsToSelect"
             autocomplete
             autocompleteIconLeft
+            autocompleteClearOnFocus
           />
         </div>
         <div class="start-discussion-form__selects__input">
@@ -24,6 +25,7 @@
             :options="queuesToSelect"
             autocomplete
             autocompleteIconLeft
+            autocompleteClearOnFocus
           />
         </div>
       </div>
@@ -154,6 +156,7 @@ export default {
         const newSectors = [
           { value: '', label: this.$t('discussions.start_discussion.form.search_sector') },
         ];
+
         results.forEach(({ uuid, name }) => newSectors.push({ value: uuid, label: name }));
         this.sectorsToSelect = newSectors;
       } catch (error) {
@@ -170,7 +173,7 @@ export default {
         const response = await Queue.list(sectorUuid);
         const { results } = response;
 
-        const newQueues = this.queuesToSelect;
+        const newQueues = [this.queuesToSelect[0]];
         results.forEach(({ uuid, name }) => newQueues.push({ value: uuid, label: name }));
         this.queuesToSelect = newQueues;
 
@@ -187,6 +190,9 @@ export default {
   watch: {
     sector(sector) {
       if (sector[0].value) {
+        if (this.queuesToSelect[0]) {
+          this.queue = [this.queuesToSelect[0]];
+        }
         this.getSectorQueues(sector[0].value);
       }
     },
