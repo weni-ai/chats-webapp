@@ -160,10 +160,12 @@ export default {
       const { activeDiscussion } = Discussions.state;
       if (!activeDiscussion) return;
 
+      const me = { ...Profile.state.me };
+
       await sendMessage({
         itemType: 'discussion',
         itemUuid: activeDiscussion.uuid,
-        itemUser: activeDiscussion.user || { email: Profile.state.me?.email },
+        itemUser: activeDiscussion.user || me,
         message: text,
         sendItemMessage: () =>
           Message.sendDiscussionMessage(activeDiscussion.uuid, {
@@ -180,10 +182,12 @@ export default {
       const { activeDiscussion } = Discussions.state;
       if (!activeDiscussion) return;
 
+      const me = { ...Profile.state.me };
+
       await sendMedias({
         itemType: 'discussion',
         itemUuid: activeDiscussion.uuid,
-        itemUser: activeDiscussion.user || { email: Profile.state.me?.email },
+        itemUser: activeDiscussion.user || me,
         medias,
         sendItemMedia: (media) =>
           Message.sendDiscussionMedia(activeDiscussion.uuid, {
