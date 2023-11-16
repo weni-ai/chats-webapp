@@ -152,6 +152,8 @@ export default {
     flex-direction: column;
     gap: $unnnic-spacing-xs;
 
+    overflow: hidden;
+
     :deep(.chat-messages) {
       padding: 0;
     }
@@ -162,5 +164,10 @@ export default {
       padding-top: 0;
     }
   }
+
+  // .aside-slot-template__sections {
+  //   display: flex;
+  //   width: 100%;
+  // }
 }
 </style>
