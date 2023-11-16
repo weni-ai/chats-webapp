@@ -83,8 +83,9 @@ export default {
       );
       commit(mutations.SET_DISCUSSIONS, discussions);
 
-      if (state.activeDiscussion.uuid === discussionUuid)
-        commit(mutations.SET_ACTIVE_DISCUSSION, {});
+      if (state.activeDiscussion && state.activeDiscussion?.uuid === discussionUuid) {
+        commit(mutations.SET_ACTIVE_DISCUSSION, null);
+      }
     },
 
     addNewMessagesByDiscussion({ commit }, { discussion, message }) {
