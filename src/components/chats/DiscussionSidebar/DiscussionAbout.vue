@@ -96,13 +96,6 @@ export default {
       agentSelected: [],
     };
   },
-  async created() {
-    const responseAgents = await this.$store.dispatch('chats/discussions/getDiscussionAgents');
-    if (responseAgents.results) {
-      this.agentsInvolved = responseAgents.results;
-    }
-    this.agentsToSelect = [{ value: '', label: this.$t('discussions.add_agents.search_agent') }];
-  },
   computed: {
     discussionStartDate() {
       const { created_on } = this.details;
@@ -171,6 +164,18 @@ export default {
         );
         this.agentsToSelect = newAgents;
       }
+    },
+    details: {
+      immediate: true,
+      async handler() {
+        const responseAgents = await this.$store.dispatch('chats/discussions/getDiscussionAgents');
+        if (responseAgents.results) {
+          this.agentsInvolved = responseAgents.results;
+        }
+        this.agentsToSelect = [
+          { value: '', label: this.$t('discussions.add_agents.search_agent') },
+        ];
+      },
     },
   },
 };

@@ -6,6 +6,7 @@ const mutations = {
   ADD_DISCUSSION: 'ADD_DISCUSSION',
   SET_DISCUSSIONS_CLOSEDS: 'SET_DISCUSSIONS_CLOSEDS',
   SET_ACTIVE_DISCUSSION: 'SET_ACTIVE_DISCUSSION',
+  UPDATE_NEW_MESSAGES_BY_DISCUSSION: 'UPDATE_NEW_MESSAGES_BY_DISCUSSION',
 };
 
 export default {
@@ -14,6 +15,7 @@ export default {
     discussions: [],
     discussionsCloseds: [],
     activeDiscussion: null,
+    newMessagesByDiscussion: {},
   },
 
   mutations: {
@@ -28,6 +30,16 @@ export default {
     },
     [mutations.SET_ACTIVE_DISCUSSION](state, room) {
       state.activeDiscussion = room;
+    },
+    [mutations.UPDATE_NEW_MESSAGES_BY_DISCUSSION](state, { discussion, message, reset = false }) {
+      const discussionMessages = state.newMessagesByDiscussion[discussion]?.messages || [];
+
+      state.newMessagesByDiscussion = {
+        ...state.newMessagesByDiscussion,
+        [discussion]: {
+          messages: reset ? [] : [...discussionMessages, message],
+        },
+      };
     },
   },
 
@@ -59,6 +71,28 @@ export default {
       }
 
       return responseDiscussion;
+    },
+
+    addDiscussion({ commit }, discussion) {
+      commit(mutations.ADD_DISCUSSION, discussion);
+    },
+
+    removeDiscussion({ state, commit }, discussionUuid) {
+      const discussions = state.discussions.filter(
+        (discussion) => discussion.uuid !== discussionUuid,
+      );
+      commit(mutations.SET_DISCUSSIONS, discussions);
+
+      if (state.activeDiscussion.uuid === discussionUuid)
+        commit(mutations.SET_ACTIVE_DISCUSSION, {});
+    },
+
+    addNewMessagesByDiscussion({ commit }, { discussion, message }) {
+      commit(mutations.UPDATE_NEW_MESSAGES_BY_DISCUSSION, { discussion, message });
+    },
+
+    resetNewMessagesByDiscussion({ commit }, { discussion }) {
+      commit(mutations.UPDATE_NEW_MESSAGES_BY_DISCUSSION, { discussion, reset: true });
     },
 
     async addAgent({ state }, { user_email }) {

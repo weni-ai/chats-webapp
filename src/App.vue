@@ -218,7 +218,7 @@ export default {
           }
 
           const isCurrentRoom =
-            this.$route.name === 'room' && this.$route.params.id === message.room;
+            this.$route.name === 'room' && this.$route.params.roomId === message.room;
           const isViewModeCurrentRoom =
             this.$route.params.viewedAgent && activeRoom?.uuid === message.room;
 
@@ -230,6 +230,56 @@ export default {
 
           this.$store.dispatch('chats/rooms/addNewMessagesByRoom', {
             room: message.room,
+            message: {
+              created_on: message.created_on,
+              uuid: message.uuid,
+              text: message.text,
+            },
+          });
+        }
+      });
+
+      this.ws.on('discussion_msg.create', async (message) => {
+        const { discussions, activeDiscussion } = this.$store.state.chats.discussions;
+        const findDiscussion = discussions.find(
+          (discussion) => discussion.uuid === message.discussion,
+        );
+
+        // this.$store.dispatch('chats/rooms/bringRoomFront', findRoom);
+        if (findDiscussion) {
+          if (this.me.email === message.user?.email) {
+            return;
+          }
+
+          const notification = new Notification('ping-bing');
+          notification.notify();
+
+          if (document.hidden) {
+            sendWindowNotification({
+              title: message.contact.name,
+              message: message.text,
+              image: message.media?.[0]?.url,
+            });
+          }
+
+          const isCurrentDiscussion =
+            this.$route.name === 'discussion' &&
+            this.$route.params.discussionId === message.discussion;
+          const isViewModeCurrentDiscussion =
+            this.$route.params.viewedAgent && activeDiscussion?.uuid === message.discussion;
+          const shouldAddDiscussionMessage = isCurrentDiscussion || isViewModeCurrentDiscussion;
+
+          if (shouldAddDiscussionMessage) {
+            this.$store.dispatch('chats/discussionMessages/addDiscussionMessage', message);
+          }
+
+          const isJsonMessage = this.isAJson(message.text);
+          if (shouldAddDiscussionMessage || isJsonMessage) {
+            return;
+          }
+
+          this.$store.dispatch('chats/discussions/addNewMessagesByDiscussion', {
+            discussion: message.discussion,
             message: {
               created_on: message.created_on,
               uuid: message.uuid,
@@ -279,8 +329,30 @@ export default {
         }
       });
 
+      this.ws.on('discussions.update', (discussion) => {
+        const { discussions } = this.$store.state.chats.discussions;
+        const isNewDiscussion = !discussions.find(
+          (mappedDiscussion) => mappedDiscussion.uuid === discussion.uuid,
+        );
+
+        if (isNewDiscussion && discussion.user.email !== this.me.email) {
+          this.$store.dispatch('chats/discussions/addDiscussion', discussion);
+
+          const notification = new Notification('select-sound');
+          notification.notify();
+        }
+      });
+
       this.ws.on('rooms.close', (room) => {
         this.$store.dispatch('chats/rooms/removeRoom', room.uuid);
+      });
+
+      this.ws.on('discussions.close', (discussion) => {
+        this.$store.dispatch('chats/discussions/removeDiscussion', discussion.uuid);
+
+        if (this.$route.params.discussionId === discussion.uuid) {
+          this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
+        }
       });
 
       this.ws.on('msg.update', (message) => {

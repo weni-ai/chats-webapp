@@ -34,14 +34,14 @@
       </div>
       <div class="message-manager__actions">
         <unnnic-button
-          v-if="canUseCopilot && !isCopilotOpen && showActionButton"
+          v-if="canUseCopilot && !isCopilotOpen && showActionButton && !discussionId"
           @click="openCopilot"
           type="secondary"
           size="large"
           iconCenter="study-light-idea-1"
         />
         <unnnic-button
-          v-if="!canUseCopilot && showActionButton"
+          v-if="(!canUseCopilot || discussionId) && showActionButton"
           @click="record"
           type="secondary"
           size="large"
@@ -96,7 +96,7 @@
         :search="textBoxMessage"
         :suggestions="shortcuts"
         :keyboard-event="keyboardEvent"
-        :copilot="canUseCopilot"
+        :copilot="canUseCopilot && !discussionId"
         @open="isSuggestionBoxOpen = true"
         @close="closeSuggestionBox"
         @select="setMessage($event.text)"

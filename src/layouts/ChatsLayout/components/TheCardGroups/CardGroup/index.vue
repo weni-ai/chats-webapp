@@ -17,6 +17,7 @@
         :discussionGoal="discussion.contact"
         :tabindex="0"
         :selected="discussion.uuid === activeDiscussionId"
+        :unreadMessages="unreadMessages(discussion.uuid)"
         @click="open(discussion)"
         @keypress.enter="open(discussion)"
       />
@@ -62,6 +63,9 @@ export default {
 
   computed: {
     ...mapState({
+      newMessagesByDiscussion(state) {
+        return state.chats.discussions.newMessagesByDiscussion;
+      },
       activeDiscussionId: (state) => state.chats.discussions.activeDiscussion?.uuid,
     }),
   },
@@ -69,6 +73,10 @@ export default {
   methods: {
     open(room) {
       this.$emit('open', room);
+    },
+    unreadMessages(discussionId) {
+      const { newMessagesByDiscussion } = this;
+      return newMessagesByDiscussion?.[discussionId]?.messages?.length || 0;
     },
   },
 };

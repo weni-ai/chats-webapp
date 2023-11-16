@@ -325,11 +325,14 @@ export default {
           this.updateTextBoxMessage('');
           this.page = 0;
           this.closeRoomContactInfo();
-          await this.$store.dispatch('chats/rooms/getCanUseCopilot');
-          this.readMessages();
+
+          if (!this.discussionId) {
+            await this.$store.dispatch('chats/rooms/getCanUseCopilot');
+            this.readMessages();
+          }
           this.isRoomSkeletonActive = false;
         }
-        if (newValue?.uuid !== this.roomId) {
+        if (newValue?.uuid !== this.roomId && !this.discussionId) {
           this.$router.replace({ name: 'room', params: { roomId: newValue.uuid } });
         }
       }
@@ -337,13 +340,17 @@ export default {
     roomId: {
       immediate: true,
       async handler(roomId) {
-        if (roomId && roomId !== this.room?.uuid) {
-          if (this.$store.state.chats.rooms.newMessagesByRoom[roomId]) {
-            this.$delete(this.$store.state.chats.rooms.newMessagesByRoom, roomId);
-          }
+        if (roomId && roomId === this.room?.uuid) {
+          const hasNewMessages = this.$store.state.chats.rooms.newMessagesByRoom[roomId];
 
-          await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
+          if (hasNewMessages) {
+            this.$store.dispatch('chats/rooms/resetNewMessagesByRoom', {
+              room: roomId,
+            });
+          }
         }
+
+        await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
         this.isRoomClassifierVisible = false;
       },
     },
@@ -371,9 +378,17 @@ export default {
     discussionId: {
       immediate: true,
       async handler(discussionId) {
-        if (discussionId && discussionId !== this.discussion?.uuid) {
-          await this.$store.dispatch('chats/discussionMessages/resetDiscussionMessages');
+        if (discussionId && discussionId === this.discussion?.uuid) {
+          const hasNewMessages =
+            this.$store.state.chats.discussions.newMessagesByDiscussion[discussionId];
+
+          if (hasNewMessages) {
+            this.$store.dispatch('chats/discussions/resetNewMessagesByDiscussion', {
+              discussion: discussionId,
+            });
+          }
         }
+        await this.$store.dispatch('chats/discussionMessages/resetDiscussionMessages');
       },
     },
     async discussions(discussions) {

@@ -8,7 +8,7 @@
       class="contact-info"
       :title="$t('contact_info.title')"
       icon="information-circle-4"
-      @close="$listeners.close"
+      :close="$listeners.close"
     >
       <section class="scrollable">
         <aside-slot-template-section>

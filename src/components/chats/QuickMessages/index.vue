@@ -3,7 +3,7 @@
     v-if="!isEditing && !isCreating"
     :title="$t('quick_message')"
     icon="flash-1-3"
-    @close="$emit('close')"
+    :close="() => $emit('close')"
   >
     <aside-slot-template-section class="messages-section__container">
       <div class="messages-section">
