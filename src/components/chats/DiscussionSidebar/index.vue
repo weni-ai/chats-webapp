@@ -12,7 +12,17 @@
       :close="isOwnDiscussion ? handleEndDiscussionModal : null"
     >
       <discussion-about v-if="isOwnDiscussion" :details="details" />
-      <room-messages v-else />
+      <section v-else class="discussion-sidebar__room">
+        <room-messages />
+        <unnnic-button
+          :text="$t('update')"
+          type="primary"
+          iconLeft="refresh"
+          size="small"
+          :loading="isMessagesRoomLoading"
+          @click="updateRoomMessages"
+        />
+      </section>
 
       <unnnic-modal
         v-if="isEndDiscussionModalOpen"
@@ -58,6 +68,7 @@ export default {
   data: () => {
     return {
       isSidebarLoading: true,
+      isMessagesRoomLoading: false,
 
       details: null,
       isOwnDiscussion: false,
@@ -86,6 +97,22 @@ export default {
       });
       this.isSidebarLoading = false;
     },
+
+    async updateRoomMessages() {
+      this.isMessagesRoomLoading = true;
+      await this.$store
+        .dispatch('chats/roomMessages/getRoomMessages', {
+          offset: 0,
+          limit: 20,
+        })
+        .then(() => {
+          this.isMessagesRoomLoading = false;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+
     handleEndDiscussionModal() {
       this.isEndDiscussionModalOpen = !this.isEndDiscussionModalOpen;
     },
@@ -117,8 +144,17 @@ export default {
 }
 
 .discussion-sidebar {
-  .chat-messages {
-    padding: 0 $unnnic-spacing-xs;
+  padding: $unnnic-spacing-xs;
+  padding-bottom: $unnnic-spacing-sm;
+
+  &__room {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-spacing-xs;
+
+    :deep(.chat-messages) {
+      padding: 0;
+    }
   }
 
   &__end-modal {

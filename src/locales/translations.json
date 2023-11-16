@@ -577,6 +577,11 @@
     "en-us": "Send",
     "es": "Enviar"
   },
+  "update": {
+    "pt-br": "Atualizar",
+    "en-us": "Update",
+    "es": "Actualizar"
+  },
   "click_to_resend": {
     "pt-br": "Clique para reenviar",
     "en-us": "Click to resend",
