@@ -37,7 +37,7 @@
         <discussion-messages v-if="!!discussion" />
 
         <message-manager
-          v-if="isMessageManagerRoomVisible || !!discussion"
+          v-if="isMessageManagerRoomVisible || isMessageManagerDiscussionVisible"
           v-model="textBoxMessage"
           :loadingFileValue="totalValue"
           :showSkeletonLoading="isRoomSkeletonActive"
@@ -46,14 +46,20 @@
         />
       </chats-dropzone>
 
-      <div v-if="!room?.user && !discussion" class="get-chat-button-container">
-        <unnnic-button
-          class="get-chat-button"
-          :text="$t('chats.get_chat')"
-          type="primary"
-          @click="isGetChatConfirmationModalOpen = true"
-        />
-      </div>
+      <unnnic-button
+        v-if="!room?.user && !discussion"
+        class="get-chat-button"
+        :text="$t('chats.get_chat')"
+        type="primary"
+        @click="isGetChatConfirmationModalOpen = true"
+      />
+      <unnnic-button
+        v-if="discussion && !isMessageManagerDiscussionVisible"
+        class="get-chat-button"
+        :text="$t('discussions.join')"
+        type="primary"
+        @click="discussionJoin"
+      />
 
       <!-- <section v-if="isRoomClassifierVisible" class="chat-classifier">
         <chat-classifier
@@ -207,6 +213,10 @@ export default {
         !this.isRoomClassifierVisible
       );
     },
+    isMessageManagerDiscussionVisible() {
+      const { discussion } = this;
+      return discussion && (!discussion.is_queued || discussion.created_by === this.me.email);
+    },
   },
 
   methods: {
@@ -242,6 +252,12 @@ export default {
     async setActiveDiscussion(uuid) {
       const discussion = this.$store.getters['chats/discussions/getDiscussionById'](uuid);
       await this.$store.dispatch('chats/discussions/setActiveDiscussion', discussion);
+    },
+
+    async discussionJoin() {
+      await this.$store.dispatch('chats/discussions/addAgent', {
+        user_email: this.me.email,
+      });
     },
 
     whenGetChat() {
@@ -437,11 +453,8 @@ export default {
     }
   }
 }
-.get-chat-button-container {
-  margin: auto $unnnic-spacing-inline-sm 0;
 
-  .get-chat-button {
-    width: 100%;
-  }
+.get-chat-button {
+  margin: auto $unnnic-spacing-inline-sm 0;
 }
 </style>
