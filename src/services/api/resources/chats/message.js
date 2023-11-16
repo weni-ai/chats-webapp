@@ -103,25 +103,27 @@ export default {
     return response.data;
   },
 
-  async sendDiscussionMedia(roomId, { media, updateLoadingFiles }) {
-    const msg = await this.sendDiscussionMessage(roomId, {
-      text: '',
-    });
-    updateLoadingFiles?.(msg.uuid, 0);
+  async sendDiscussionMedia(discussionUuid, { media, updateLoadingFiles }) {
+    console.log('media', media);
+    console.log('updateLoadingFiles', updateLoadingFiles);
+
+    const mediaUuid = media.name + Date.now();
+
+    updateLoadingFiles?.(mediaUuid, 0);
     const response = await http.postForm(
-      '/media/',
+      `/discussion/${discussionUuid}/send_media_messages/`,
       {
         content_type: media.type,
-        discussion_message: msg.uuid,
+        text: '',
         media_file: media,
       },
       {
         onUploadProgress: (event) => {
           const progress = event.loaded / event.total;
-          updateLoadingFiles?.(msg.uuid, progress);
+          updateLoadingFiles?.(mediaUuid, progress);
         },
       },
     );
-    return response.data;
+    return response.data?.media?.[0];
   },
 };

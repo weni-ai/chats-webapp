@@ -183,7 +183,7 @@ export default {
       await sendMedias({
         itemType: 'discussion',
         itemUuid: activeDiscussion.uuid,
-        itemUser: activeDiscussion.user,
+        itemUser: activeDiscussion.user || { email: Profile.state.me?.email },
         medias,
         sendItemMedia: (media) =>
           Message.sendDiscussionMedia(activeDiscussion.uuid, {
