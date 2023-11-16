@@ -141,6 +141,7 @@ export default {
         this.agentsInvolved.push(responseAgent);
 
         this.handleAddAgentModal();
+        this.addAgentLoading = false;
       } catch (error) {
         console.error('An error occurred when trying to add agent to discussion:', error);
       }
