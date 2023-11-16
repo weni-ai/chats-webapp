@@ -97,6 +97,7 @@ export default {
       font-weight: $unnnic-font-weight-bold;
       text-decoration-line: underline;
       font-family: $unnnic-font-family-secondary;
+      text-align: start;
 
       cursor: pointer;
     }

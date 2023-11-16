@@ -89,6 +89,11 @@ export default {
     async loadDiscussionDetails() {
       this.isSidebarLoading = true;
 
+      // const responseAgents = await this.$store.dispatch('chats/discussions/getDiscussionAgents');
+      // if (responseAgents.results) {
+      //   this.details.agentsInvolved = responseAgents.results;
+      // }
+
       this.details = await this.$store.dispatch('chats/discussions/getDiscussionDetails');
       this.isOwnDiscussion = this.me.email === this.details.created_by?.email;
       await this.$store.dispatch('chats/rooms/setActiveRoom', {
