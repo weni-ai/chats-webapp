@@ -349,6 +349,13 @@ export default {
           const notification = new Notification('select-sound');
           notification.notify();
         }
+
+        if (
+          discussion.added_agents.length >= 2 &&
+          !discussion.added_agents.includes(this.me.email)
+        ) {
+          this.$store.dispatch('chats/discussions/removeDiscussion', discussion.uuid);
+        }
       });
 
       this.ws.on('rooms.close', (room) => {
