@@ -32,6 +32,8 @@ export default {
     const endpoint = `discussion/${discussionUuid}/list_messages/`;
     const paramsNextReq = getURLParams({ URL: nextReq, endpoint });
     const params = {
+      ordering: '-created_on',
+      reverse_results: true,
       offset,
       limit,
     };
@@ -104,9 +106,6 @@ export default {
   },
 
   async sendDiscussionMedia(discussionUuid, { media, updateLoadingFiles }) {
-    console.log('media', media);
-    console.log('updateLoadingFiles', updateLoadingFiles);
-
     const mediaUuid = media.name + Date.now();
 
     updateLoadingFiles?.(mediaUuid, 0);
