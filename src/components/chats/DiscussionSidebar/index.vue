@@ -144,10 +144,10 @@ export default {
 }
 
 .discussion-sidebar {
-  padding: $unnnic-spacing-xs;
-  padding-bottom: $unnnic-spacing-sm;
-
   &__room {
+    padding: $unnnic-spacing-xs;
+    padding-bottom: $unnnic-spacing-sm;
+
     display: flex;
     flex-direction: column;
     gap: $unnnic-spacing-xs;
