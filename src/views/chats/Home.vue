@@ -12,7 +12,7 @@
         :title="room.contact.name || ''"
         :avatarClick="() => openRoomContactInfo()"
         :titleClick="() => openRoomContactInfo()"
-        :avatarName="room.contact.name"
+        :avatarName="room?.contact?.name"
         :close="openModalCloseChat"
       />
       <unnnic-chats-header
@@ -55,7 +55,7 @@
         />
       </div>
 
-      <section v-if="isRoomClassifierVisible" class="chat-classifier">
+      <!-- <section v-if="isRoomClassifierVisible" class="chat-classifier">
         <chat-classifier
           v-model="tags"
           :tags="sectorTags"
@@ -65,10 +65,10 @@
             <unnnic-button :text="$t('confirm')" type="secondary" size="small" @click="closeRoom" />
           </template>
         </chat-classifier>
-      </section>
+      </section> -->
     </section>
 
-    <unnnic-modal
+    <!-- <unnnic-modal
       v-if="room"
       :showModal="isCloseChatModalOpen"
       @close="isCloseChatModalOpen = false"
@@ -81,7 +81,7 @@
         <unnnic-button :text="$t('cancel')" type="tertiary" @click="isCloseChatModalOpen = false" />
         <unnnic-button :text="$t('confirm')" type="secondary" @click="classifyRoom" />
       </template>
-    </unnnic-modal>
+    </unnnic-modal> -->
 
     <modal-get-chat
       v-if="room"
@@ -130,7 +130,7 @@ import DiscussionSidebar from '@/components/chats/DiscussionSidebar';
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow';
 import ContactInfo from '@/components/chats/ContactInfo';
 import FileUploader from '@/components/chats/MessageManager/FileUploader';
-import ChatClassifier from '@/components/chats/ChatClassifier';
+// import ChatClassifier from '@/components/chats/ChatClassifier';
 import ModalCloseChat from '@/views/chats/ModalCloseChat.vue';
 
 import Room from '@/services/api/resources/chats/room';
@@ -152,7 +152,7 @@ export default {
     RoomMessages,
     DiscussionSidebar,
     MessageManager,
-    ChatClassifier,
+    // ChatClassifier,
     ModalCloseChat,
     FileUploader,
     ModalGetChat,
@@ -227,15 +227,14 @@ export default {
         await Room.updateReadMessages(this.room.uuid, true);
       }
     },
-    async closeRoom() {
-      // if (this.tags.length === 0) return;
-      const { uuid } = this.room;
+    // async closeRoom() {
+    //   // if (this.tags.length === 0) return;
+    //   const { uuid } = this.room;
 
-      const tags = this.tags.map((tag) => tag.uuid);
-      await Room.close(uuid, tags);
-      this.$router.replace({ name: 'home' });
-      this.$store.dispatch('chats/rooms/removeRoom', uuid);
-    },
+    //   const tags = this.tags.map((tag) => tag.uuid);
+    //   await Room.close(uuid, tags);
+    //   this.$store.dispatch('chats/rooms/removeRoom', uuid);
+    // },
     async setActiveRoom(uuid) {
       const room = this.$store.getters['chats/rooms/getRoomById'](uuid);
       await this.$store.dispatch('chats/rooms/setActiveRoom', room);

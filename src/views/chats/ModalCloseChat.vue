@@ -86,7 +86,6 @@ export default {
 
       const tags = this.tags.map((tag) => tag.uuid);
       await Room.close(uuid, tags);
-      this.$router.replace({ name: 'home' });
       this.$store.dispatch('chats/rooms/removeRoom', uuid);
       this.closeModal();
     },
