@@ -348,7 +348,9 @@ export default {
     // },
 
     messageType(message) {
-      return isMessageFromCurrentUser(message) || this.isMessageByBot(message)
+      return isMessageFromCurrentUser(message) ||
+        this.isMessageByBot(message) ||
+        message.user?.email === this.$store.state.dashboard.viewedAgent.email
         ? 'sent'
         : 'received';
     },

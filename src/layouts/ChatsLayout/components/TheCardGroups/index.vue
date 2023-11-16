@@ -214,7 +214,8 @@ export default {
     },
     async listDiscussions() {
       try {
-        await this.$store.dispatch('chats/discussions/getAll');
+        const { viewedAgent } = this;
+        await this.$store.dispatch('chats/discussions/getAll', { viewedAgent });
       } catch {
         console.error('Não foi possível listar as discussões');
       }

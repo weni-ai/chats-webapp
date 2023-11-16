@@ -44,8 +44,8 @@ export default {
   },
 
   actions: {
-    async getAll({ commit }) {
-      const newDiscussions = await Discussion.listAll();
+    async getAll({ commit }, { viewedAgent }) {
+      const newDiscussions = await Discussion.listAll({ viewedAgent });
       commit(mutations.SET_DISCUSSIONS, newDiscussions?.results);
     },
 

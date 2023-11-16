@@ -31,12 +31,18 @@ export default {
     const response = await http.get(`discussion/${discussionUuid}/list_agents/`);
     return response.data;
   },
-  async listAll() {
+  async listAll({ viewedAgent }) {
+    const params = {
+      project: getProject() || '',
+      is_active: true,
+    };
+
+    if (viewedAgent) {
+      params.email = viewedAgent;
+    }
+
     const response = await http.get(`discussion/`, {
-      params: {
-        project: getProject() || '',
-        is_active: true,
-      },
+      params,
     });
     return response.data;
   },
