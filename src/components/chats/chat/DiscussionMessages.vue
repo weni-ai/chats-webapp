@@ -82,6 +82,7 @@ export default {
       immediate: true,
       handler(discussionUuid) {
         if (discussionUuid) {
+          this.$store.dispatch('chats/discussionMessages/resetDiscussionMessages');
           this.page = 0;
           this.getDiscussionMessages();
         }
