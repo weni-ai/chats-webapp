@@ -255,8 +255,9 @@ export default {
           notification.notify();
 
           if (document.hidden) {
+            const { first_name, last_name } = message.user;
             sendWindowNotification({
-              title: message.contact.name,
+              title: `${first_name} ${last_name}`,
               message: message.text,
               image: message.media?.[0]?.url,
             });
