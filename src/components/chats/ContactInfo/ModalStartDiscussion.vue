@@ -96,7 +96,7 @@ export default {
 
   computed: {
     isConfirmButtonDisabled() {
-      return !this.sector[0] || !this.queue[0] || !this.subject || !this.message;
+      return !this.sector[0] || !this.queue[0]?.value || !this.subject || !this.message;
     },
   },
 
