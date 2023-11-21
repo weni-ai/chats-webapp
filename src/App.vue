@@ -374,6 +374,7 @@ export default {
 
         if (this.$route.params.discussionId === discussion.uuid) {
           this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
+          this.$store.dispatch('chats/rooms/setActiveRoom', null);
         }
       });
 
