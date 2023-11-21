@@ -56,7 +56,7 @@
 
       <button-join-discussion
         v-if="discussion && !isMessageManagerDiscussionVisible"
-        @join="isCurrentUserInDiscussion = true"
+        @join="tempJoinedDiscussions.push(discussion.uuid)"
       />
 
       <!-- <section v-if="isRoomClassifierVisible" class="chat-classifier">
@@ -187,7 +187,7 @@ export default {
     showCloseModal: false,
     files: [],
     isRoomSkeletonActive: false,
-    isCurrentUserInDiscussion: false,
+    tempJoinedDiscussions: [],
   }),
 
   computed: {
@@ -222,6 +222,9 @@ export default {
           discussion.created_by === this.me.email ||
           this.isCurrentUserInDiscussion)
       );
+    },
+    isCurrentUserInDiscussion() {
+      return this.tempJoinedDiscussions.includes(this.discussion.uuid);
     },
   },
 
