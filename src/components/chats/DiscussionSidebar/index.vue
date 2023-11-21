@@ -156,6 +156,7 @@ export default {
 
     :deep(.chat-messages) {
       padding: 0;
+      padding-right: $unnnic-spacing-xs;
     }
   }
 
