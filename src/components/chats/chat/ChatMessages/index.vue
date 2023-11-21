@@ -47,7 +47,11 @@
               <unnnic-chats-message
                 v-if="message.text || isGeolocation(message.media[0])"
                 :type="messageType(message)"
-                :class="['chat-messages__message', messageType(message)]"
+                :class="[
+                  'chat-messages__message',
+                  messageType(message),
+                  { 'different-user': isMessageByTwoDifferentUsers(message) },
+                ]"
                 :time="new Date(message.created_on)"
                 :status="messageStatus({ message })"
                 :key="message.uuid"
@@ -63,7 +67,11 @@
                   :key="media.created_on"
                   :ref="`message-${message.uuid}`"
                   :type="messageType(message)"
-                  :class="['chat-messages__message', messageType(message)]"
+                  :class="[
+                    'chat-messages__message',
+                    messageType(message),
+                    { 'different-user': isMessageByTwoDifferentUsers(message) },
+                  ]"
                   :mediaType="isImage(media) ? 'image' : isVideo(media) ? 'video' : 'audio'"
                   :time="new Date(message.created_on)"
                   :status="messageStatus({ message })"
@@ -98,7 +106,11 @@
                   :key="media.created_on"
                   :ref="`message-${message.uuid}`"
                   :type="messageType(message)"
-                  :class="['chat-messages__message', messageType(message)]"
+                  :class="[
+                    'chat-messages__message',
+                    messageType(message),
+                    { 'different-user': isMessageByTwoDifferentUsers(message) },
+                  ]"
                   :time="new Date(message.created_on)"
                   :documentName="media.url?.split('/').at(-1) || media.file.name"
                   :status="messageStatus({ message })"
@@ -356,6 +368,20 @@ export default {
         : 'received';
     },
 
+    isMessageByTwoDifferentUsers(message) {
+      const messageIndex = this.messages.findIndex(
+        (mappedMessage) => mappedMessage.uuid === message.uuid,
+      );
+      const indexedMessage = this.messages[messageIndex];
+      const lastIndexedMessage = this.messages[messageIndex - 1];
+      const existentMessage = indexedMessage.uuid === message.uuid;
+
+      if (existentMessage && lastIndexedMessage?.user && message.user) {
+        return lastIndexedMessage.user.email !== message.user.email;
+      }
+      return false;
+    },
+
     messageFormatTitle(date) {
       return `${moment(date).format('HH:mm')} | ${moment(date).format('L')}`;
     },
@@ -524,9 +550,14 @@ export default {
         margin-top: $unnnic-spacing-nano;
       }
     }
+
     &.received {
       & + & {
         margin-top: $unnnic-spacing-nano;
+      }
+
+      &.different-user {
+        margin-top: $unnnic-spacing-md !important;
       }
     }
 
