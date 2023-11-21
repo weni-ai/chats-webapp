@@ -559,19 +559,6 @@ export default {
     }
   }
 
-  &__messages {
-    display: grid;
-    gap: $unnnic-spacing-md;
-    margin-top: $unnnic-spacing-sm;
-
-    overflow: hidden auto;
-    padding-right: $unnnic-spacing-inset-sm;
-
-    & + & {
-      margin-top: $unnnic-spacing-md;
-    }
-  }
-
   &__tags {
     margin: $unnnic-spacing-inline-md 0;
 

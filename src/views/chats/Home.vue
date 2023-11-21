@@ -53,12 +53,10 @@
         type="primary"
         @click="isGetChatConfirmationModalOpen = true"
       />
-      <unnnic-button
+
+      <button-join-discussion
         v-if="discussion && !isMessageManagerDiscussionVisible"
-        class="get-chat-button"
-        :text="$t('discussions.join')"
-        type="primary"
-        @click="discussionJoin"
+        @join="isCurrentUserInDiscussion = true"
       />
 
       <!-- <section v-if="isRoomClassifierVisible" class="chat-classifier">
@@ -143,6 +141,7 @@ import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat';
 import MessageManager from '@/components/chats/MessageManager';
+import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion';
 
 export default {
   name: 'ChatsHome',
@@ -158,6 +157,7 @@ export default {
     RoomMessages,
     DiscussionSidebar,
     MessageManager,
+    ButtonJoinDiscussion,
     // ChatClassifier,
     ModalCloseChat,
     FileUploader,
@@ -187,6 +187,7 @@ export default {
     showCloseModal: false,
     files: [],
     isRoomSkeletonActive: false,
+    isCurrentUserInDiscussion: false,
   }),
 
   computed: {
@@ -215,7 +216,12 @@ export default {
     },
     isMessageManagerDiscussionVisible() {
       const { discussion } = this;
-      return discussion && (!discussion.is_queued || discussion.created_by === this.me.email);
+      return (
+        discussion &&
+        (!discussion.is_queued ||
+          discussion.created_by === this.me.email ||
+          this.isCurrentUserInDiscussion)
+      );
     },
   },
 
@@ -252,12 +258,6 @@ export default {
     async setActiveDiscussion(uuid) {
       const discussion = this.$store.getters['chats/discussions/getDiscussionById'](uuid);
       await this.$store.dispatch('chats/discussions/setActiveDiscussion', discussion);
-    },
-
-    async discussionJoin() {
-      await this.$store.dispatch('chats/discussions/addAgent', {
-        user_email: this.me.email,
-      });
     },
 
     whenGetChat() {

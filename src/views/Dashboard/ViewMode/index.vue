@@ -37,13 +37,7 @@
           type="secondary"
           @click="handleModal('AssumeChatConfirmation', 'open')"
         />
-        <unnnic-button
-          v-if="!!discussion"
-          class="assume-chat"
-          type="primary"
-          :text="$t('discussions.join')"
-          @click="joinDiscussion"
-        />
+        <button-join-discussion v-if="!!discussion" @click="whenJoinDiscussion" />
       </section>
 
       <modal-get-chat
@@ -78,6 +72,7 @@ import ContactInfo from '@/components/chats/ContactInfo';
 import RoomMessages from '@/components/chats/chat/RoomMessages';
 import DiscussionMessages from '@/components/chats/chat/DiscussionMessages';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat';
+import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion';
 
 import ViewModeHeader from './components/ViewModeHeader';
 
@@ -93,6 +88,7 @@ export default {
     DiscussionMessages,
     ViewModeHeader,
     ModalGetChat,
+    ButtonJoinDiscussion,
   },
 
   data: () => ({
@@ -149,15 +145,7 @@ export default {
 
       actionMap[action]();
     },
-    async joinDiscussion() {
-      try {
-        await this.$store.dispatch('chats/discussions/addAgent', {
-          user_email: this.me.email,
-        });
-      } catch (error) {
-        console.error('An error occurred when trying to join into discussion:', error);
-      }
-
+    whenJoinDiscussion() {
       this.$router.push({ name: 'discussion', params: { discussionId: this.discussion.uuid } });
     },
     whenGetChat() {
