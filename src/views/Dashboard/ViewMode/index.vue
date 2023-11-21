@@ -153,10 +153,11 @@ export default {
         await this.$store.dispatch('chats/discussions/addAgent', {
           user_email: this.me.email,
         });
-        this.$router.push({ name: 'discussion', params: { discussionId: this.discussion.uuid } });
       } catch (error) {
         console.error('An error occurred when trying to join into discussion:', error);
       }
+
+      this.$router.push({ name: 'discussion', params: { discussionId: this.discussion.uuid } });
     },
     whenGetChat() {
       this.$router.push({ name: 'room', params: { roomId: this.room.uuid } });
