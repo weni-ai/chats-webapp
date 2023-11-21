@@ -350,6 +350,7 @@ export default {
     messageType(message) {
       return isMessageFromCurrentUser(message) ||
         this.isMessageByBot(message) ||
+        (!message.discussion && !message.contact) ||
         message.user?.email === this.$store.state.dashboard.viewedAgent.email
         ? 'sent'
         : 'received';
