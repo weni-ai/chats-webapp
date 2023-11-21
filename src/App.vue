@@ -345,7 +345,7 @@ export default {
       });
 
       this.ws.on('discussions.update', (discussion) => {
-        const { discussions } = this.$store.state.chats.discussions;
+        const { discussions, activeDiscussion } = this.$store.state.chats.discussions;
         const isNewDiscussion = !discussions.find(
           (mappedDiscussion) => mappedDiscussion.uuid === discussion.uuid,
         );
@@ -355,6 +355,10 @@ export default {
 
           const notification = new Notification('achievement-confirmation');
           notification.notify();
+        }
+
+        if (activeDiscussion.uuid === discussion.uuid) {
+          this.$store.dispatch('chats/discussions/setActiveDiscussion', discussion);
         }
 
         if (
