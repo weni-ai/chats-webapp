@@ -308,7 +308,7 @@ export default {
         if (existentDiscussion) return;
 
         this.$store.dispatch('chats/discussions/addDiscussion', discussion);
-        const notification = new Notification('select-sound');
+        const notification = new Notification('achievement-confirmation');
         notification.notify();
       });
 
@@ -353,7 +353,7 @@ export default {
         if (isNewDiscussion && discussion.user.email !== this.me.email) {
           this.$store.dispatch('chats/discussions/addDiscussion', discussion);
 
-          const notification = new Notification('select-sound');
+          const notification = new Notification('achievement-confirmation');
           notification.notify();
         }
 
