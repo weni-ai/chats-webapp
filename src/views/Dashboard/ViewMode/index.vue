@@ -102,7 +102,8 @@ export default {
   }),
 
   beforeMount() {
-    this.$store.dispatch('chats/rooms/setActiveRoom', '');
+    this.$store.dispatch('chats/rooms/setActiveRoom', null);
+    this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
   },
 
   mounted() {
