@@ -367,8 +367,6 @@ export default {
             });
           }
         }
-
-        await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
         this.isRoomClassifierVisible = false;
       },
     },
@@ -406,7 +404,6 @@ export default {
             });
           }
         }
-        await this.$store.dispatch('chats/discussionMessages/resetDiscussionMessages');
       },
     },
     async discussions(discussions) {

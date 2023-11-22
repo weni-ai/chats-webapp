@@ -109,7 +109,7 @@ export async function treatMessages({
 
     newMessages = newMessages.reverse().concat(oldMessages);
   } else {
-    resetSortedMessages();
+    await resetSortedMessages();
     messages.forEach((message) => {
       addSortedMessage({ message });
     });
