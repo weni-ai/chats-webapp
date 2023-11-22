@@ -1,6 +1,7 @@
 <template>
   <chats-layout
     ref="chats-layout"
+    :class="['home-chats-layout', { 'has-discussion': !!discussion }]"
     @select-quick-message="(quickMessage) => updateTextBoxMessage(quickMessage.text)"
   >
     <chats-background v-if="!room && !discussion && !isRoomSkeletonActive" />
@@ -431,6 +432,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.home-chats-layout {
+  &.has-aside.has-discussion {
+    grid-template-columns: 3fr 5.5fr 3.5fr;
+  }
+}
+
 .active-chat {
   display: flex;
   flex-direction: column;
