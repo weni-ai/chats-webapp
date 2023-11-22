@@ -155,24 +155,24 @@ export default {
   watch: {
     async isAddAgentModalOpen(newIsAddAgentModalOpen) {
       if (newIsAddAgentModalOpen) {
-        const response = await Project.agents();
+        const response = await Project.allUsers();
         const { results } = response;
 
         const agentsInvolvedNames = [
           ...this.agentsInvolved.map((agent) => this.getUserFullName(agent)),
         ];
         const filteredAgents = results.filter(
-          (agent) => !agentsInvolvedNames.includes(this.getUserFullName(agent.user)),
+          (agent) => !agentsInvolvedNames.includes(this.getUserFullName(agent)),
         );
 
         const newAgents = [this.agentsToSelect[0]];
 
-        filteredAgents.forEach(({ user }) =>
+        filteredAgents.forEach((agent) =>
           newAgents.push({
-            value: user.email,
-            label: this.getUserFullName(user),
-            description: user.email,
-            photoUrl: user.photoUrl,
+            value: agent.email,
+            label: this.getUserFullName(agent),
+            description: agent.email,
+            photoUrl: agent.photoUrl,
           }),
         );
         this.agentsToSelect = newAgents;
