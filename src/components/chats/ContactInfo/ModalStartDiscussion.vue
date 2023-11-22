@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import Sector from '@/services/api/resources/settings/sector';
+import Discussion from '@/services/api/resources/chats/discussion';
 import Queue from '@/services/api/resources/settings/queue';
 
 import { unnnicCallAlert } from '@weni/unnnic-system';
@@ -150,7 +150,7 @@ export default {
 
     async getSectors() {
       try {
-        const response = await Sector.list();
+        const response = await Discussion.getSectors();
         const { results } = response;
 
         const newSectors = [

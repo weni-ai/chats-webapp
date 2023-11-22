@@ -77,7 +77,6 @@ export default {
       immediate: true,
       handler(roomUuid) {
         if (roomUuid) {
-          this.$store.dispatch('chats/roomMessages/resetRoomMessages');
           this.page = 0;
           this.getRoomMessages();
         }

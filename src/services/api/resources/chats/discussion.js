@@ -31,6 +31,12 @@ export default {
     const response = await http.get(`discussion/${discussionUuid}/list_agents/`);
     return response.data;
   },
+  async getSectors() {
+    const response = await http.get(`project/${getProject()}/list_discussion_sector/`, {
+      limit: 9999,
+    });
+    return response.data;
+  },
   async listAll({ viewedAgent }) {
     const params = {
       project: getProject() || '',

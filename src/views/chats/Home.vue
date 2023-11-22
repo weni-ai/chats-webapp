@@ -56,8 +56,9 @@
       />
 
       <button-join-discussion
-        v-if="discussion && !isMessageManagerDiscussionVisible"
-        @join="tempJoinedDiscussions.push(discussion.uuid)"
+        v-if="discussion"
+        v-show="!isMessageManagerDiscussionVisible"
+        @join="whenJoinDiscussion"
       />
 
       <!-- <section v-if="isRoomClassifierVisible" class="chat-classifier">
@@ -264,6 +265,10 @@ export default {
       await this.$store.dispatch('chats/discussions/setActiveDiscussion', discussion);
     },
 
+    whenJoinDiscussion() {
+      this.tempJoinedDiscussions.push(this.discussion.uuid);
+    },
+
     whenGetChat() {
       this.closeRoomContactInfo();
     },
@@ -368,8 +373,6 @@ export default {
             });
           }
         }
-
-        await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
         this.isRoomClassifierVisible = false;
       },
     },
@@ -383,13 +386,13 @@ export default {
       }
     },
     async discussion(newValue) {
-      if (this.rooms.length > 0) {
-        if (!newValue?.uuid) {
+      if (this.discussions.length > 0) {
+        if (this.$route.name !== 'home' && !newValue?.uuid) {
           this.$router.replace({ name: 'home' });
           return;
         }
 
-        if (newValue?.uuid !== this.discussionId) {
+        if (this.$route.name !== 'discussion' && newValue && newValue.uuid !== this.discussionId) {
           this.$router.replace({ name: 'discussion', params: { discussionId: newValue.uuid } });
         }
       }
@@ -407,7 +410,6 @@ export default {
             });
           }
         }
-        await this.$store.dispatch('chats/discussionMessages/resetDiscussionMessages');
       },
     },
     async discussions(discussions) {
