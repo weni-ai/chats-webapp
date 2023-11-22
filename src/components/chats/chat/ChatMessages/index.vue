@@ -374,7 +374,7 @@ export default {
       );
       const indexedMessage = this.messages[messageIndex];
       const lastIndexedMessage = this.messages[messageIndex - 1];
-      const existentMessage = indexedMessage.uuid === message.uuid;
+      const existentMessage = indexedMessage?.uuid === message.uuid;
 
       if (existentMessage && lastIndexedMessage?.user && message.user) {
         return lastIndexedMessage.user.email !== message.user.email;
