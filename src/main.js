@@ -12,7 +12,10 @@ import env from './utils/env';
 
 import './styles/global.scss';
 
-console.info('LogRocket Config: ', env('LOGROCKET_ID'), env('LOGROCKET_PARENT_DOMAIN'));
+const LOGROCKET_ID = env('LOGROCKET_ID');
+const LOGROCKET_PARENT_DOMAIN = env('LOGROCKET_PARENT_DOMAIN');
+
+console.info('LogRocket Config: ', LOGROCKET_ID, LOGROCKET_PARENT_DOMAIN);
 
 Vue.config.productionTip = false;
 
@@ -25,7 +28,9 @@ new Vue({
   render: (h) => h(App),
 }).$mount('#app');
 
-LogRocket.init(env('LOGROCKET_ID'), {
-  mergeIframes: true,
-  parentDomain: env('LOGROCKET_PARENT_DOMAIN'),
-});
+if (LOGROCKET_ID && LOGROCKET_PARENT_DOMAIN) {
+  LogRocket.init(LOGROCKET_ID, {
+    mergeIframes: true,
+    parentDomain: LOGROCKET_PARENT_DOMAIN,
+  });
+}
