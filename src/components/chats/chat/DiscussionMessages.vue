@@ -6,7 +6,6 @@
     :messagesSendingUuids="discussionMessagesSendingUuids"
     :messagesFailedUuids="discussionMessagesFailedUuids"
     :resendMessages="discussionResendMessages"
-    :resendMessage="discussionResendMessage"
     :resendMedia="discussionResendMedia"
     :showChatSeparator="false"
     :isLoading="isLoading"
@@ -49,9 +48,8 @@ export default {
 
   methods: {
     ...mapActions({
-      discussionResendMessages: 'chats/discussionMessages/resendMessages',
-      discussionResendMessage: 'chats/discussionMessages/discussionResendMessage',
-      discussionResendMedia: 'chats/discussionMessages/resendMedia',
+      discussionResendMessages: 'chats/discussionMessages/resendDiscussionMessages',
+      discussionResendMedia: 'chats/discussionMessages/resendDiscussionMedia',
     }),
 
     async getDiscussionMessages() {
