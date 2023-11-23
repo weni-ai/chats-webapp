@@ -69,14 +69,14 @@ export default {
       }
     },
     [mutations.ADD_FAILED_DISCUSSION_MESSAGE](state, { message }) {
-      const { roomMessagesFailedUuids } = state;
+      const { discussionMessagesFailedUuids } = state;
       const { uuid } = message;
 
       if (isMessageInActiveDiscussion(message)) {
         removeMessageFromSendings({ state }, uuid);
 
         if (isMessageFromCurrentUser(message)) {
-          roomMessagesFailedUuids.push(uuid);
+          discussionMessagesFailedUuids.push(uuid);
         }
       }
     },

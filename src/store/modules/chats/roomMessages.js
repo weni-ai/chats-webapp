@@ -6,6 +6,7 @@ import {
   treatMessages,
   sendMessage,
   sendMedias,
+  resendMedia,
 } from '@/utils/messages';
 import Message from '@/services/api/resources/chats/message';
 import Rooms from './rooms';
@@ -238,33 +239,33 @@ export default {
       }
     },
 
-    async resendMedia({ commit, state }, { message, media }) {
+    async resendRoomMedia({ commit, state }, { message, media }) {
       const { activeRoom } = Rooms.state;
       if (!activeRoom) return;
 
-      if (isMessageFromCurrentUser(message)) {
-        removeMessageFromFaileds({ state }, message.uuid);
-        state.roomMessagesSendingUuids.push(message.uuid);
-      }
-
-      // Send the media and update it with the actual media data
-      try {
-        const updatedMedia = await Message.sendMedia(activeRoom.uuid, {
-          user_email: activeRoom.user.email,
-          media: media.file,
-        });
-        commit(mutations.UPDATE_MESSAGE, {
-          media: updatedMedia,
-          message,
-          toUpdateMediaPreview: media.preview,
-          toUpdateMessageUuid: message.uuid,
-        });
-      } catch (error) {
-        commit(mutations.ADD_FAILED_MESSAGE, {
-          message,
-        });
-        console.error('An error occurred while sending the message', error);
-      }
+      await resendMedia({
+        itemUuid: activeRoom.uuid,
+        message,
+        media,
+        sendItemMedia: (media) =>
+          Message.sendRoomMedia(activeRoom.uuid, {
+            user_email: activeRoom.user.email,
+            media: media.file,
+          }),
+        addFailedMessage: (message) =>
+          commit(mutations.ADD_FAILED_MESSAGE, {
+            message,
+          }),
+        removeFailedMessage: (message) => removeMessageFromFaileds({ state }, message),
+        addSendingMessage: (message) => state.roomMessagesSendingUuids.push(message),
+        updateMessage: ({ media, message, toUpdateMessageUuid, toUpdateMediaPreview }) =>
+          commit(mutations.UPDATE_MESSAGE, {
+            media,
+            message,
+            toUpdateMessageUuid,
+            toUpdateMediaPreview,
+          }),
+      });
     },
 
     async resendMessages({ state, dispatch }) {

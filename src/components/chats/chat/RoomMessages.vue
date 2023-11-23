@@ -46,7 +46,7 @@ export default {
     ...mapActions({
       roomResendMessages: 'chats/roomMessages/resendMessages',
       roomResendMessage: 'chats/roomMessages/roomResendMessage',
-      roomResendMedia: 'chats/roomMessages/resendMedia',
+      roomResendMedia: 'chats/roomMessages/resendRoomMedia',
     }),
 
     async getRoomMessages() {

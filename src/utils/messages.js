@@ -194,6 +194,40 @@ export async function sendMedias({
   );
 }
 
+export async function resendMedia({
+  itemUuid,
+  sendItemMedia,
+  addFailedMessage,
+  removeFailedMessage,
+  addSendingMessage,
+  updateMessage,
+  message,
+  media,
+}) {
+  if (!itemUuid) {
+    return;
+  }
+
+  if (isMessageFromCurrentUser(message)) {
+    removeFailedMessage(message.uuid);
+    addSendingMessage(message.uuid);
+  }
+
+  // Send the media and update it with the actual media data
+  try {
+    const updatedMedia = await sendItemMedia(media);
+    updateMessage({
+      media: updatedMedia,
+      message,
+      toUpdateMediaPreview: media.preview,
+      toUpdateMessageUuid: message.uuid,
+    });
+  } catch (error) {
+    addFailedMessage(message);
+    console.error('An error occurred while sending the media', error);
+  }
+}
+
 /**
  * Adds a message to the roomMessagesSorted data structure.
  *
