@@ -369,7 +369,8 @@ export default {
           }
           this.isRoomSkeletonActive = false;
         }
-        if (this.$route.name !== 'room' && newValue.uuid !== this.roomId && !this.discussionId) {
+
+        if (newValue.uuid !== this.roomId && !this.discussionId) {
           this.$router.replace({ name: 'room', params: { roomId: newValue.uuid } });
         }
       }
@@ -405,7 +406,11 @@ export default {
           return;
         }
 
-        if (this.$route.name !== 'discussion' && newValue && newValue.uuid !== this.discussionId) {
+        if (!newValue?.uuid) {
+          return;
+        }
+
+        if (newValue.uuid !== this.discussionId) {
           this.$router.replace({ name: 'discussion', params: { discussionId: newValue.uuid } });
         }
       }

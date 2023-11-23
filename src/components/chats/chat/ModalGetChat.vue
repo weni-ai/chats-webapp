@@ -75,7 +75,6 @@ export default {
 
     async setActiveRoom(uuid) {
       const room = this.$store.getters['chats/rooms/getRoomById'](uuid);
-      if (!room) this.$router.push({ name: 'home' });
       await this.$store.dispatch('chats/rooms/setActiveRoom', room);
     },
   },
