@@ -19,6 +19,8 @@ const mutations = {
   RESET_DISCUSSION_MESSAGES_SORTED: 'RESET_DISCUSSION_MESSAGES_SORTED',
   SET_DISCUSSION_MESSAGES_NEXT: 'SET_DISCUSSION_MESSAGES_NEXT',
   RESET_DISCUSSION_MESSAGES_NEXT: 'RESET_DISCUSSION_MESSAGES_NEXT',
+  SET_DISCUSSION_MESSAGES_PREVIOUS: 'SET_DISCUSSION_MESSAGES_PREVIOUS',
+  RESET_DISCUSSION_MESSAGES_PREVIOUS: 'RESET_DISCUSSION_MESSAGES_PREVIOUS',
   UPDATE_DISCUSSION_MESSAGE: 'UPDATE_DISCUSSION_MESSAGE',
   ADD_FAILED_DISCUSSION_MESSAGE: 'ADD_FAILED_DISCUSSION_MESSAGE',
 };
@@ -54,6 +56,7 @@ export default {
     discussionMessagesInPromiseUuids: [],
     discussionMessagesFailedUuids: [],
     discussionMessagesNext: '',
+    discussionMessagesPrevious: '',
   },
 
   mutations: {
@@ -65,6 +68,12 @@ export default {
     },
     [mutations.RESET_DISCUSSION_MESSAGES_NEXT](state) {
       state.discussionMessagesNext = '';
+    },
+    [mutations.SET_DISCUSSION_MESSAGES_PREVIOUS](state, discussionMessagesPrevious) {
+      state.discussionMessagesPrevious = discussionMessagesPrevious;
+    },
+    [mutations.RESET_DISCUSSION_MESSAGES_PREVIOUS](state) {
+      state.discussionMessagesPrevious = '';
     },
 
     [mutations.ADD_DISCUSSION_MESSAGE](state, { message }) {
@@ -149,12 +158,15 @@ export default {
         resetSortedMessages: () => commit(mutations.RESET_DISCUSSION_MESSAGES_SORTED),
         setMessages: (messages) => commit(mutations.SET_DISCUSSION_MESSAGES, messages),
         setMessagesNext: (next) => commit(mutations.SET_DISCUSSION_MESSAGES_NEXT, next),
+        setMessagesPrevious: (previous) =>
+          commit(mutations.SET_DISCUSSION_MESSAGES_PREVIOUS, previous),
       });
     },
 
     resetDiscussionMessages({ commit }) {
       commit(mutations.RESET_DISCUSSION_MESSAGES_SORTED);
       commit(mutations.RESET_DISCUSSION_MESSAGES_NEXT);
+      commit(mutations.RESET_DISCUSSION_MESSAGES_PREVIOUS);
     },
 
     async addDiscussionMessage({ commit, state }, message) {

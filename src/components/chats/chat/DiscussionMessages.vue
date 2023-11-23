@@ -3,6 +3,7 @@
     :chatUuid="discussion?.uuid || ''"
     :messages="discussionMessages"
     :messagesNext="discussionMessagesNext || ''"
+    :messagesPrevious="discussionMessagesPrevious || ''"
     :messagesSorted="discussionMessagesSorted"
     :messagesSendingUuids="discussionMessagesSendingUuids"
     :messagesFailedUuids="discussionMessagesFailedUuids"
@@ -39,6 +40,8 @@ export default {
       discussion: (state) => state.chats.discussions.activeDiscussion,
       discussionMessages: (state) => state.chats.discussionMessages.discussionMessages,
       discussionMessagesNext: (state) => state.chats.discussionMessages.discussionMessagesNext,
+      discussionMessagesPrevious: (state) =>
+        state.chats.discussionMessages.discussionMessagesPrevious,
       discussionMessagesSorted: (state) => state.chats.discussionMessages.discussionMessagesSorted,
       discussionMessagesSendingUuids: (state) =>
         state.chats.discussionMessages.discussionMessagesSendingUuids,

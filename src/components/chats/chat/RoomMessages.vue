@@ -3,6 +3,7 @@
     :chatUuid="room?.uuid || ''"
     :messages="roomMessages"
     :messagesNext="roomMessagesNext || ''"
+    :messagesPrevious="roomMessagesPrevious || ''"
     :messagesSorted="roomMessagesSorted"
     :messagesSendingUuids="roomMessagesSendingUuids"
     :messagesFailedUuids="roomMessagesFailedUuids"
@@ -36,6 +37,7 @@ export default {
       room: (state) => state.chats.rooms.activeRoom,
       roomMessages: (state) => state.chats.roomMessages.roomMessages,
       roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,
+      roomMessagesPrevious: (state) => state.chats.roomMessages.roomMessagesPrevious,
       roomMessagesSorted: (state) => state.chats.roomMessages.roomMessagesSorted,
       roomMessagesSendingUuids: (state) => state.chats.roomMessages.roomMessagesSendingUuids,
       roomMessagesFailedUuids: (state) => state.chats.roomMessages.roomMessagesFailedUuids,
