@@ -350,14 +350,14 @@ export default {
           (mappedDiscussion) => mappedDiscussion.uuid === discussion.uuid,
         );
 
-        if (isNewDiscussion && discussion.user.email !== this.me.email) {
+        if (isNewDiscussion && discussion.created_by !== this.me.email) {
           this.$store.dispatch('chats/discussions/addDiscussion', discussion);
 
           const notification = new Notification('achievement-confirmation');
           notification.notify();
         }
 
-        if (activeDiscussion.uuid === discussion.uuid) {
+        if (activeDiscussion?.uuid === discussion.uuid) {
           this.$store.dispatch('chats/discussions/setActiveDiscussion', discussion);
         }
 
