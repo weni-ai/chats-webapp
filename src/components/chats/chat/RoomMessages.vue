@@ -2,6 +2,7 @@
   <chat-messages
     :chatUuid="room?.uuid || ''"
     :messages="roomMessages"
+    :messagesNext="roomMessagesNext"
     :messagesSorted="roomMessagesSorted"
     :messagesSendingUuids="roomMessagesSendingUuids"
     :messagesFailedUuids="roomMessagesFailedUuids"
