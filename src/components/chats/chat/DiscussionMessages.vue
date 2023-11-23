@@ -80,9 +80,9 @@ export default {
   watch: {
     'discussion.uuid': {
       immediate: true,
-      handler(discussionUuid) {
+      async handler(discussionUuid) {
         if (discussionUuid) {
-          this.$store.dispatch('chats/discussionMessages/resetDiscussionMessages');
+          await this.$store.dispatch('chats/discussionMessages/resetDiscussionMessages');
           this.page = 0;
           this.getDiscussionMessages();
         }

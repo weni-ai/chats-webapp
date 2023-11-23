@@ -230,6 +230,15 @@ export default {
     },
   },
 
+  async created() {
+    if (this.$route.name === 'home') {
+      await this.$store.dispatch('chats/discussionMessages/resetDiscussionMessages');
+      await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
+      await this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
+      await this.$store.dispatch('chats/rooms/setActiveRoom', null);
+    }
+  },
+
   methods: {
     async classifyRoom() {
       this.isRoomClassifierVisible = true;
@@ -339,8 +348,12 @@ export default {
   watch: {
     async room(newValue, oldValue) {
       if (this.rooms.length > 0) {
-        if (this.$route.name !== 'home' && !newValue?.uuid) {
+        if (this.$route.name !== 'home' && !newValue.uuid) {
           this.$router.replace({ name: 'home' });
+          return;
+        }
+
+        if (!newValue?.uuid) {
           return;
         }
 
@@ -356,7 +369,7 @@ export default {
           }
           this.isRoomSkeletonActive = false;
         }
-        if (this.$route.name !== 'room' && newValue?.uuid !== this.roomId && !this.discussionId) {
+        if (this.$route.name !== 'room' && newValue.uuid !== this.roomId && !this.discussionId) {
           this.$router.replace({ name: 'room', params: { roomId: newValue.uuid } });
         }
       }

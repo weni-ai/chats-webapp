@@ -75,8 +75,9 @@ export default {
   watch: {
     'room.uuid': {
       immediate: true,
-      handler(roomUuid) {
+      async handler(roomUuid) {
         if (roomUuid) {
+          await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
           this.page = 0;
           this.getRoomMessages();
         }
