@@ -17,7 +17,9 @@ const mutations = {
   ADD_ROOM_MESSAGE_SORTED: 'ADD_ROOM_MESSAGE_SORTED',
   RESET_ROOM_MESSAGES_SORTED: 'RESET_ROOM_MESSAGES_SORTED',
   SET_ROOM_MESSAGES_NEXT: 'SET_ROOM_MESSAGES_NEXT',
+  SET_ROOM_MESSAGES_PREVIOUS: 'SET_ROOM_MESSAGES_PREVIOUS',
   RESET_ROOM_MESSAGES_NEXT: 'RESET_ROOM_MESSAGES_NEXT',
+  RESET_ROOM_MESSAGES_PREVIOUS: 'RESET_ROOM_MESSAGES_PREVIOUS',
   ADD_MESSAGE: 'ADD_MESSAGE',
   UPDATE_MESSAGE: 'UPDATE_MESSAGE',
   ADD_FAILED_MESSAGE: 'ADD_FAILED_MESSAGE',
@@ -54,6 +56,7 @@ export default {
     roomMessagesInPromiseUuids: [],
     roomMessagesFailedUuids: [],
     roomMessagesNext: '',
+    roomMessagesPrevious: '',
   },
 
   mutations: {
@@ -67,11 +70,17 @@ export default {
     [mutations.RESET_ROOM_MESSAGES_SORTED](state) {
       state.roomMessagesSorted = [];
     },
+    [mutations.SET_ROOM_MESSAGES_NEXT](state, roomMessagesNext) {
+      state.roomMessagesNext = roomMessagesNext;
+    },
     [mutations.RESET_ROOM_MESSAGES_NEXT](state) {
       state.roomMessagesNext = '';
     },
-    [mutations.SET_ROOM_MESSAGES_NEXT](state, roomMessagesNext) {
-      state.roomMessagesNext = roomMessagesNext;
+    [mutations.SET_ROOM_MESSAGES_PREVIOUS](state, roomMessagesPrevious) {
+      state.roomMessagesPrevious = roomMessagesPrevious;
+    },
+    [mutations.RESET_ROOM_MESSAGES_PREVIOUS](state) {
+      state.roomMessagesPrevious = '';
     },
     [mutations.ADD_MESSAGE](state, { message }) {
       const { roomMessages, roomMessagesSendingUuids } = state;
@@ -142,12 +151,14 @@ export default {
         resetSortedMessages: () => commit(mutations.RESET_ROOM_MESSAGES_SORTED),
         setMessages: (messages) => commit(mutations.SET_ROOM_MESSAGES, messages),
         setMessagesNext: (next) => commit(mutations.SET_ROOM_MESSAGES_NEXT, next),
+        setMessagesPrevious: (previous) => commit(mutations.SET_ROOM_MESSAGES_PREVIOUS, previous),
       });
     },
 
     resetRoomMessages({ commit }) {
       commit(mutations.RESET_ROOM_MESSAGES_SORTED);
       commit(mutations.RESET_ROOM_MESSAGES_NEXT);
+      commit(mutations.RESET_ROOM_MESSAGES_PREVIOUS);
     },
 
     async addMessage({ commit, state }, message) {

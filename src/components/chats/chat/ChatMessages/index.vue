@@ -203,6 +203,14 @@ export default {
       type: Array,
       required: true,
     },
+    messagesNext: {
+      type: String,
+      required: true,
+    },
+    messagesPrevious: {
+      type: String,
+      required: false,
+    },
     messagesSorted: {
       type: Array,
       required: true,
@@ -479,7 +487,11 @@ export default {
         }, 200);
       }
 
-      if (lastMessageUuidBeforePagination && chatMessages.scrollTop === 0) {
+      if (
+        lastMessageUuidBeforePagination &&
+        chatMessages.scrollTop === 0 &&
+        (this.messagesNext || this.messagesPrevious)
+      ) {
         const elementToScroll = this.$refs[`message-${lastMessageUuidBeforePagination}`]?.[0]?.$el;
         if (elementToScroll) {
           await elementToScroll.scrollIntoView({ block: 'start' });

@@ -118,9 +118,13 @@ export default {
       display: grid;
       grid-template-rows: auto 1fr;
 
-      &-body-description-container {
-        padding: $unnnic-spacing-md;
-        padding-top: 0;
+      &-body-description {
+        text-align: start;
+
+        &-container {
+          padding: $unnnic-spacing-md;
+          padding-top: 0;
+        }
       }
     }
   }

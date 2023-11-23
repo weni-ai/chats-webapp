@@ -49,6 +49,7 @@ export async function getMessages({ itemUuid, getItemMessages }) {
 
   let messages = [];
   let next = '';
+  let previous = '';
   const maxRetries = 3;
   let currentRetry = 0;
 
@@ -56,7 +57,11 @@ export async function getMessages({ itemUuid, getItemMessages }) {
     try {
       const response = await getItemMessages();
 
-      const { results: responseMessages, next: responseNext } = response;
+      const {
+        results: responseMessages,
+        next: responseNext,
+        previous: responsePrevious,
+      } = response;
 
       if ((responseMessages?.[0]?.room || responseMessages?.[0]?.discussion) !== itemUuid) {
         return;
@@ -64,6 +69,7 @@ export async function getMessages({ itemUuid, getItemMessages }) {
 
       messages = responseMessages;
       next = responseNext;
+      previous = responsePrevious;
     } catch (error) {
       console.error('An error ocurred when try get the room messages', error);
 
@@ -86,7 +92,7 @@ export async function getMessages({ itemUuid, getItemMessages }) {
   }
 
   await fetchData();
-  return { messages, next };
+  return { messages, next, previous };
 }
 
 export async function treatMessages({
@@ -98,8 +104,9 @@ export async function treatMessages({
   resetSortedMessages,
   setMessages,
   setMessagesNext,
+  setMessagesPrevious,
 }) {
-  const { messages, next } = await getMessages({ itemUuid, getItemMessages });
+  const { messages, next, previous } = await getMessages({ itemUuid, getItemMessages });
   let newMessages = messages;
 
   if (nextReq) {
@@ -117,6 +124,7 @@ export async function treatMessages({
 
   setMessages(newMessages);
   setMessagesNext(next);
+  setMessagesPrevious(previous);
 }
 
 export async function sendMessage({
