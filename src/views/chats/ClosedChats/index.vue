@@ -84,6 +84,11 @@ export default {
     });
   },
 
+  beforeDestroy() {
+    this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
+    this.$store.dispatch('chats/rooms/setActiveRoom', null);
+  },
+
   computed: {
     ...mapState({
       roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,

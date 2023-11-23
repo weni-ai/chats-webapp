@@ -70,6 +70,13 @@ export default {
       this.showDiscussionClosedModal = !this.showDiscussionClosedModal;
     },
   },
+  watch: {
+    showDiscussionClosedModal(newShowDiscussionClosedModal) {
+      if (!newShowDiscussionClosedModal) {
+        this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
+      }
+    },
+  },
 };
 </script>
 
@@ -109,6 +116,7 @@ export default {
       height: 80%;
 
       display: grid;
+      grid-template-rows: auto 1fr;
 
       &-body-description-container {
         padding: $unnnic-spacing-md;
