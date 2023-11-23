@@ -6,7 +6,6 @@
     :messagesSendingUuids="roomMessagesSendingUuids"
     :messagesFailedUuids="roomMessagesFailedUuids"
     :resendMessages="roomResendMessages"
-    :resendMessage="roomResendMessage"
     :resendMedia="roomResendMedia"
     :tags="room?.tags"
     :isLoading="isLoading"
@@ -44,9 +43,8 @@ export default {
 
   methods: {
     ...mapActions({
-      roomResendMessages: 'chats/roomMessages/resendMessages',
-      roomResendMessage: 'chats/roomMessages/roomResendMessage',
-      roomResendMedia: 'chats/roomMessages/resendMedia',
+      roomResendMessages: 'chats/roomMessages/resendRoomMessages',
+      roomResendMedia: 'chats/roomMessages/resendRoomMedia',
     }),
 
     async getRoomMessages() {
@@ -75,8 +73,9 @@ export default {
   watch: {
     'room.uuid': {
       immediate: true,
-      handler(roomUuid) {
+      async handler(roomUuid) {
         if (roomUuid) {
+          await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
           this.page = 0;
           this.getRoomMessages();
         }

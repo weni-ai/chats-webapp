@@ -6,6 +6,8 @@ import {
   treatMessages,
   sendMessage,
   sendMedias,
+  resendMedia,
+  resendMessage,
 } from '@/utils/messages';
 import Message from '@/services/api/resources/chats/message';
 import Rooms from './rooms';
@@ -213,61 +215,56 @@ export default {
       });
     },
 
-    async resendMessage({ commit, state }, { message }) {
-      const { activeRoom } = Rooms.state;
-      if (!activeRoom || state.roomMessagesInPromiseUuids.includes(message.uuid)) return;
-
-      // Send the message and update it with the actual message data
-      try {
-        state.roomMessagesInPromiseUuids.push(message.uuid);
-        const updatedMessage = await Message.send(activeRoom.uuid, {
-          text: message.text,
-          user_email: activeRoom.user.email,
-          seen: true,
-        });
-        removeMessageFromInPromise({ state }, message.uuid);
-
-        await commit(mutations.UPDATE_MESSAGE, {
-          message: updatedMessage,
-          toUpdateMessageUuid: message.uuid,
-        });
-      } catch (error) {
-        removeMessageFromInPromise({ state }, message.uuid);
-
-        console.error('An error occurred while sending the message', error);
-      }
-    },
-
-    async resendMedia({ commit, state }, { message, media }) {
+    async resendRoomMessage({ commit, state }, { message }) {
       const { activeRoom } = Rooms.state;
       if (!activeRoom) return;
 
-      if (isMessageFromCurrentUser(message)) {
-        removeMessageFromFaileds({ state }, message.uuid);
-        state.roomMessagesSendingUuids.push(message.uuid);
-      }
-
-      // Send the media and update it with the actual media data
-      try {
-        const updatedMedia = await Message.sendMedia(activeRoom.uuid, {
-          user_email: activeRoom.user.email,
-          media: media.file,
-        });
-        commit(mutations.UPDATE_MESSAGE, {
-          media: updatedMedia,
-          message,
-          toUpdateMediaPreview: media.preview,
-          toUpdateMessageUuid: message.uuid,
-        });
-      } catch (error) {
-        commit(mutations.ADD_FAILED_MESSAGE, {
-          message,
-        });
-        console.error('An error occurred while sending the message', error);
-      }
+      await resendMessage({
+        itemUuid: activeRoom.uuid,
+        message,
+        sendItemMessage: () =>
+          Message.sendRoomMessage(activeRoom.uuid, {
+            text: message.text,
+            user_email: activeRoom.user.email,
+            seen: true,
+          }),
+        updateMessage: ({ message, toUpdateMessageUuid }) =>
+          commit(mutations.UPDATE_MESSAGE, { message, toUpdateMessageUuid }),
+        messagesInPromiseUuids: state.roomMessagesInPromiseUuids,
+        removeInPromiseMessage: (message) => removeMessageFromInPromise({ state }, message),
+      });
     },
 
-    async resendMessages({ state, dispatch }) {
+    async resendRoomMedia({ commit, state }, { message, media }) {
+      const { activeRoom } = Rooms.state;
+      if (!activeRoom) return;
+
+      await resendMedia({
+        itemUuid: activeRoom.uuid,
+        message,
+        media,
+        sendItemMedia: (media) =>
+          Message.sendRoomMedia(activeRoom.uuid, {
+            user_email: activeRoom.user.email,
+            media: media.file,
+          }),
+        addFailedMessage: (message) =>
+          commit(mutations.ADD_FAILED_MESSAGE, {
+            message,
+          }),
+        removeFailedMessage: (message) => removeMessageFromFaileds({ state }, message),
+        addSendingMessage: (message) => state.roomMessagesSendingUuids.push(message),
+        updateMessage: ({ media, message, toUpdateMessageUuid, toUpdateMediaPreview }) =>
+          commit(mutations.UPDATE_MESSAGE, {
+            media,
+            message,
+            toUpdateMessageUuid,
+            toUpdateMediaPreview,
+          }),
+      });
+    },
+
+    async resendRoomMessages({ state, dispatch }) {
       const { roomMessagesSendingUuids, roomMessages } = state;
       if (roomMessagesSendingUuids.length > 0) {
         // eslint-disable-next-line no-restricted-syntax
@@ -283,7 +280,7 @@ export default {
           );
 
           // eslint-disable-next-line no-await-in-loop
-          await dispatch('resendMessage', { message: roomMessages[messageIndex] });
+          await dispatch('resendRoomMessage', { message: roomMessages[messageIndex] });
         }
       }
     },

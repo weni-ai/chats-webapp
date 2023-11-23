@@ -147,6 +147,33 @@ export async function sendMessage({
   }
 }
 
+export async function resendMessage({
+  itemUuid,
+  message,
+  sendItemMessage,
+  updateMessage,
+  messagesInPromiseUuids,
+  removeInPromiseMessage,
+}) {
+  if (!itemUuid || messagesInPromiseUuids.includes(message.uuid)) return;
+
+  // Send the message and update it with the actual message data
+  try {
+    messagesInPromiseUuids.push(message.uuid);
+    const updatedMessage = await sendItemMessage();
+    removeInPromiseMessage(message.uuid);
+
+    await updateMessage({
+      message: updatedMessage,
+      toUpdateMessageUuid: message.uuid,
+    });
+  } catch (error) {
+    removeInPromiseMessage(message.uuid);
+
+    console.error('An error occurred while sending the message', error);
+  }
+}
+
 export async function sendMedias({
   itemType,
   itemUuid,
@@ -192,6 +219,40 @@ export async function sendMedias({
       }
     }),
   );
+}
+
+export async function resendMedia({
+  itemUuid,
+  sendItemMedia,
+  addFailedMessage,
+  removeFailedMessage,
+  addSendingMessage,
+  updateMessage,
+  message,
+  media,
+}) {
+  if (!itemUuid) {
+    return;
+  }
+
+  if (isMessageFromCurrentUser(message)) {
+    removeFailedMessage(message.uuid);
+    addSendingMessage(message.uuid);
+  }
+
+  // Send the media and update it with the actual media data
+  try {
+    const updatedMedia = await sendItemMedia(media);
+    updateMessage({
+      media: updatedMedia,
+      message,
+      toUpdateMediaPreview: media.preview,
+      toUpdateMessageUuid: message.uuid,
+    });
+  } catch (error) {
+    addFailedMessage(message);
+    console.error('An error occurred while sending the media', error);
+  }
 }
 
 /**

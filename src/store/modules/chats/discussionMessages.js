@@ -2,6 +2,8 @@ import {
   groupMessages,
   isMessageFromCurrentUser,
   parseMessageToMessageWithSenderProp,
+  resendMedia,
+  resendMessage,
   sendMedias,
   sendMessage,
   treatMessages,
@@ -28,6 +30,17 @@ function isMessageInActiveDiscussion(message) {
 
 function removeMessageFromSendings({ state }, messageUuid) {
   state.discussionMessagesSendingUuids = state.discussionMessagesSendingUuids.filter(
+    (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
+  );
+}
+
+function removeMessageFromFaileds({ state }, messageUuid) {
+  state.discussionMessagesFailedUuids = state.discussionMessagesFailedUuids.filter(
+    (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
+  );
+}
+function removeMessageFromInPromise({ state }, messageUuid) {
+  state.discussionMessagesInPromiseUuids = state.discussionMessagesInPromiseUuids.filter(
     (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
   );
 }
@@ -69,14 +82,14 @@ export default {
       }
     },
     [mutations.ADD_FAILED_DISCUSSION_MESSAGE](state, { message }) {
-      const { roomMessagesFailedUuids } = state;
+      const { discussionMessagesFailedUuids } = state;
       const { uuid } = message;
 
       if (isMessageInActiveDiscussion(message)) {
         removeMessageFromSendings({ state }, uuid);
 
         if (isMessageFromCurrentUser(message)) {
-          roomMessagesFailedUuids.push(uuid);
+          discussionMessagesFailedUuids.push(uuid);
         }
       }
     },
@@ -208,6 +221,73 @@ export default {
             toUpdateMediaPreview,
           }),
       });
+    },
+
+    async resendDiscussionMessage({ commit, state }, { message }) {
+      const { activeDiscussion } = Discussions.state;
+      if (!activeDiscussion) return;
+
+      await resendMessage({
+        itemUuid: activeDiscussion.uuid,
+        message,
+        sendItemMessage: () =>
+          Message.sendDiscussionMessage(activeDiscussion.uuid, {
+            text: message.text,
+          }),
+        updateMessage: ({ message, toUpdateMessageUuid }) =>
+          commit(mutations.UPDATE_DISCUSSION_MESSAGE, { message, toUpdateMessageUuid }),
+        messagesInPromiseUuids: state.discussionMessagesInPromiseUuids,
+        removeInPromiseMessage: (message) => removeMessageFromInPromise({ state }, message),
+      });
+    },
+
+    async resendDiscussionMedia({ commit, state }, { message, media }) {
+      const { activeDiscussion } = Discussions.state;
+      if (!activeDiscussion) return;
+
+      await resendMedia({
+        itemUuid: activeDiscussion.uuid,
+        message,
+        media,
+        sendItemMedia: (media) =>
+          Message.sendDiscussionMedia(activeDiscussion.uuid, {
+            media: media.file,
+          }),
+        addFailedMessage: (message) =>
+          commit(mutations.ADD_FAILED_DISCUSSION_MESSAGE, {
+            message,
+          }),
+        removeFailedMessage: (message) => removeMessageFromFaileds({ state }, message),
+        addSendingMessage: (message) => state.discussionMessagesSendingUuids.push(message),
+        updateMessage: ({ media, message, toUpdateMessageUuid, toUpdateMediaPreview }) =>
+          commit(mutations.UPDATE_DISCUSSION_MESSAGE, {
+            media,
+            message,
+            toUpdateMessageUuid,
+            toUpdateMediaPreview,
+          }),
+      });
+    },
+
+    async resendDiscussionMessages({ state, dispatch }) {
+      const { discussionMessagesSendingUuids, discussionMessages } = state;
+      if (discussionMessagesSendingUuids.length > 0) {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const messageUuid of discussionMessagesSendingUuids) {
+          /*
+            As it is important that messages are sent in the same order in which they were
+            registered, it is necessary to use this "for...of" as it makes it possible
+            to send messages sequentially, synchronously
+          */
+
+          const messageIndex = discussionMessages.findIndex(
+            (mappedMessage) => mappedMessage.uuid === messageUuid,
+          );
+
+          // eslint-disable-next-line no-await-in-loop
+          await dispatch('resendDiscussionMessage', { message: discussionMessages[messageIndex] });
+        }
+      }
     },
   },
 };
