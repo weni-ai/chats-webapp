@@ -2,7 +2,7 @@
   <chat-messages
     :chatUuid="discussion?.uuid || ''"
     :messages="discussionMessages"
-    :messagesNext="discussionMessagesNext"
+    :messagesNext="discussionMessagesNext || ''"
     :messagesSorted="discussionMessagesSorted"
     :messagesSendingUuids="discussionMessagesSendingUuids"
     :messagesFailedUuids="discussionMessagesFailedUuids"
