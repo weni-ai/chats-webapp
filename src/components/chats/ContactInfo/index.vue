@@ -169,7 +169,7 @@
         scheme="feedback-green"
         :showModal="showSuccessfulTransferModal"
         @close="
-          $store.commit('chats/setActiveChat', null),
+          $store.dispatch('chats/rooms/setActiveRoom', null),
             (showSuccessfulTransferModal = false),
             navigate('home')
         "
