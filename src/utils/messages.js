@@ -147,6 +147,33 @@ export async function sendMessage({
   }
 }
 
+export async function resendMessage({
+  itemUuid,
+  message,
+  sendItemMessage,
+  updateMessage,
+  messagesInPromiseUuids,
+  removeInPromiseMessage,
+}) {
+  if (!itemUuid || messagesInPromiseUuids.includes(message.uuid)) return;
+
+  // Send the message and update it with the actual message data
+  try {
+    messagesInPromiseUuids.push(message.uuid);
+    const updatedMessage = await sendItemMessage();
+    removeInPromiseMessage(message.uuid);
+
+    await updateMessage({
+      message: updatedMessage,
+      toUpdateMessageUuid: message.uuid,
+    });
+  } catch (error) {
+    removeInPromiseMessage(message.uuid);
+
+    console.error('An error occurred while sending the message', error);
+  }
+}
+
 export async function sendMedias({
   itemType,
   itemUuid,

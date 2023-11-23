@@ -224,10 +224,6 @@ export default {
       type: Function,
       required: true,
     },
-    resendMessage: {
-      type: Function,
-      required: true,
-    },
     resendMedia: {
       type: Function,
       required: true,

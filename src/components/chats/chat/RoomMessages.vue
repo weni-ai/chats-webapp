@@ -6,7 +6,6 @@
     :messagesSendingUuids="roomMessagesSendingUuids"
     :messagesFailedUuids="roomMessagesFailedUuids"
     :resendMessages="roomResendMessages"
-    :resendMessage="roomResendMessage"
     :resendMedia="roomResendMedia"
     :tags="room?.tags"
     :isLoading="isLoading"
@@ -44,8 +43,7 @@ export default {
 
   methods: {
     ...mapActions({
-      roomResendMessages: 'chats/roomMessages/resendMessages',
-      roomResendMessage: 'chats/roomMessages/roomResendMessage',
+      roomResendMessages: 'chats/roomMessages/resendRoomMessages',
       roomResendMedia: 'chats/roomMessages/resendRoomMedia',
     }),
 
