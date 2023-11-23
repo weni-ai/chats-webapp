@@ -339,7 +339,7 @@ export default {
   watch: {
     async room(newValue, oldValue) {
       if (this.rooms.length > 0) {
-        if (!newValue?.uuid) {
+        if (this.$route.name !== 'home' && !newValue?.uuid) {
           this.$router.replace({ name: 'home' });
           return;
         }
@@ -356,7 +356,7 @@ export default {
           }
           this.isRoomSkeletonActive = false;
         }
-        if (newValue?.uuid !== this.roomId && !this.discussionId) {
+        if (this.$route.name !== 'room' && newValue?.uuid !== this.roomId && !this.discussionId) {
           this.$router.replace({ name: 'room', params: { roomId: newValue.uuid } });
         }
       }
