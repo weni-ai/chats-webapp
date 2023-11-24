@@ -99,7 +99,7 @@ export default {
             label: this.$t('search_or_select'),
           },
         ];
-        response.results.forEach((flow) => {
+        response.forEach((flow) => {
           const { name, uuid } = flow;
 
           treatedTemplates.push({
