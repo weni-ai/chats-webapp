@@ -13,29 +13,23 @@
     <template #actions>
       <dashboard-filters @filter="filters = $event" />
     </template>
-    <template>
-      <general-live-metrics
-        v-if="this.filters.type === 'todos'"
-        :headerTitle="this.filters.sectorUuid ? 'Filas' : 'Setores'"
-        :totalChatsLabel="this.showData ? 'Quantidade de chats' : 'Agentes online'"
-        :generalCardLabel="this.showData ? 'Quantidade de chats' : 'Em andamento'"
-        :agentsLabel="this.showData ? 'Chats no período' : 'Em andamento'"
-      />
-      <!-- <live-metrics-by-agent v-if="visualization.category === 'agent'" /> -->
-      <!-- <live-metrics-by-sector v-if="this.filters.type === 'sector'" /> -->
-    </template>
-    <template>
-      <!-- <history-metrics-by-agent v-if="visualization.category === 'agent'" :agentName="header" /> -->
-      <history-metrics-by-sector
-        v-if="this.filters.type === 'sector'"
-        :filter="this.filters"
-        @historyFilter="event = $event"
-        :headerTitle="this.filters.sectorUuid ? 'Filas' : 'Setores'"
-        :totalChatsLabel="this.showData ? 'Quantidade de chats' : 'Agentes online'"
-        :generalCardLabel="this.showData ? 'Quantidade de chats' : 'Em andamento'"
-        :agentsLabel="this.showData ? 'Chats no período' : 'Em andamento'"
-      />
-    </template>
+
+    <history-metrics-by-sector
+      v-if="filters?.sector"
+      :filter="filters"
+      @historyFilter="event = $event"
+      :headerTitle="filters?.sector ? 'Filas' : 'Setores'"
+      :totalChatsLabel="showData ? 'Quantidade de chats' : 'Agentes online'"
+      :generalCardLabel="showData ? 'Quantidade de chats' : 'Em andamento'"
+      :agentsLabel="showData ? 'Chats no período' : 'Em andamento'"
+    />
+    <general-live-metrics
+      v-else
+      :headerTitle="filters?.sector ? 'Filas' : 'Setores'"
+      :totalChatsLabel="showData ? 'Quantidade de chats' : 'Agentes online'"
+      :generalCardLabel="showData ? 'Quantidade de chats' : 'Em andamento'"
+      :agentsLabel="showData ? 'Chats no período' : 'Em andamento'"
+    />
   </dashboard-layout>
 </template>
 
@@ -43,10 +37,7 @@
 import DashboardLayout from '@/layouts/DashboardLayout';
 
 import DashboardFilters from '@/components/dashboard/Filters';
-// import LiveMetricsByAgent from '@/components/dashboard/metrics/ByAgent/LiveMetrics';
-// import LiveMetricsBySector from '@/components/dashboard/metrics/BySector/LiveMetrics';
 import GeneralLiveMetrics from '@/components/dashboard/metrics/General/LiveMetrics';
-// import HistoryMetricsByAgent from '@/components/dashboard/metrics/ByAgent/HistoryMetrics';
 import HistoryMetricsBySector from '@/components/dashboard/metrics/BySector/HistoryMetrics';
 import ProjectApi from '@/services/api/resources/settings/project';
 
@@ -55,11 +46,8 @@ export default {
 
   components: {
     DashboardFilters,
-    // LiveMetricsByAgent,
-    // LiveMetricsBySector,
     DashboardLayout,
     GeneralLiveMetrics,
-    // HistoryMetricsByAgent,
     HistoryMetricsBySector,
   },
 
@@ -67,9 +55,7 @@ export default {
     showData: '',
     agents: {},
     project: [],
-    filters: {
-      type: 'todos',
-    },
+    filters: null,
   }),
 
   mounted() {
@@ -87,14 +73,13 @@ export default {
       if (newValue) {
         this.filters = newValue;
         this.$emit('historyFilter', newValue);
-        this.showData = !!this.filters.filteredDateRange.start;
+        this.showData = !!this.filters?.filterDate.start;
       }
     },
   },
   computed: {
     visualization() {
       const filter = this.filters;
-      if (filter.type === 'todos') return {};
       return filter;
     },
 

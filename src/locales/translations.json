@@ -648,10 +648,20 @@
     "es": "@:back a los chats"
   },
   "filter": {
+    "by_tag": {
+      "pt-br": "Filtrar por tag",
+      "en-us": "Filter by tag",
+      "es": "Filtrar por tag"
+    },
     "by_tags": {
       "pt-br": "Filtrar por tags",
       "en-us": "Filter by tags",
       "es": "Filtrar por tags"
+    },
+    "by_agent": {
+      "pt-br": "Filtrar por agente",
+      "en-us": "Filter by agent",
+      "es": "Filtrar por agente"
     },
     "by_date": {
       "pt-br": "Filtrar por @.lower:date",
@@ -758,6 +768,11 @@
       "en-us": "Added Tags",
       "es": "Etiquetas agregadas"
     }
+  },
+  "tag": {
+    "pt-br": "Tag",
+    "en-us": "Tag",
+    "es": "Tag"
   },
   "date": {
     "pt-br": "Data",

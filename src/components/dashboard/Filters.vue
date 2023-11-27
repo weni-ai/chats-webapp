@@ -1,121 +1,97 @@
 <template>
-  <section class="dashboard-filters">
-    <div class="dashboard-filters" style="z-index: 100">
-      <unnnic-select
-        style="min-width: 11.81rem; width: 18.65rem"
-        v-model="filteredSectorUuid"
-        label="Filtrar por setor"
-        size="md"
-        class="input"
-        @input="
-          getSectorTags(filteredSectorUuid),
-            getSectorAgentes(filteredSectorUuid),
-            sendFilter('sector', filteredSectorUuid)
-        "
-      >
-        <option value="">Todos</option>
-        <option
-          v-for="sector in sectors"
-          :key="sector.uuid"
-          :value="sector.uuid"
-          :selected="sector.uuid === filteredSectorUuid"
-        >
-          {{ sector.name }}
-        </option>
-      </unnnic-select>
-
-      <div v-if="filteredSectorUuid" style="min-width: 11.81rem; width: 18.65rem">
-        <unnnic-label label="Filtrar por agente" />
+  <section class="dashboard-filters-header">
+    <div class="dashboard-filters">
+      <div class="dashboard-filters__input">
+        <unnnic-label :label="$t('sector.title')" />
         <unnnic-select-smart
-          v-model="filteredAgent"
-          :options="agents"
+          v-model="filterSector"
+          :options="sectorsToFilter"
+          ordered-by-index
           autocomplete
           autocompleteClearOnFocus
-          @input="sendFilter('sector', filteredSectorUuid, filteredAgent)"
         />
       </div>
 
-      <unnnic-select-smart
-        style="min-width: 11.81rem; width: 18.65rem"
-        :options="tags"
-        v-model="selecteds"
-        autocomplete
-        autocompleteIconLeft
-        autocompleteClearOnFocus
-        :disabled="!this.filteredSectorUuid && sectors.length !== 1"
-        @input="sendFilter('sector', filteredSectorUuid, filteredAgent, selecteds)"
-      />
-
-      <unnnic-input-date-picker
-        style="min-width: 20px"
-        :days="['D', 'S', 'T', 'Q', 'Q', 'S', 'S']"
-        v-model="filteredDateRange"
-        size="md"
-        class="input"
-        :input-format="$t('date_format')"
-        position="right"
-        :submit="
-          sendFilter('sector', filteredSectorUuid, filteredAgent, selecteds, filteredDateRange)
-        "
-      />
-
-      <unnnic-tool-tip enabled text="Limpar filtro" side="right">
-        <unnnic-button-icon
-          icon="button-refresh-arrows-1"
-          size="large"
-          class="clear-filters-btn"
-          @click="clearFilters"
+      <div class="dashboard-filters__input">
+        <unnnic-label :label="$t('agent')" />
+        <unnnic-select-smart
+          v-model="filterAgent"
+          :options="agentsToFilter"
+          :disabled="filterSector[0]?.value === 'all' || agentsToFilter.length < 2"
+          autocomplete
+          autocompleteClearOnFocus
         />
-      </unnnic-tool-tip>
-    </div>
-    <div>
-      <unnnic-dropdown v-bind="$props">
-        <unnnic-button-icon
-          icon="navigation-menu-vertical-1"
-          size="large"
-          class="clear-filters-btn"
-          slot="trigger"
+      </div>
+
+      <div class="dashboard-filters__input">
+        <unnnic-label :label="$t('tag')" />
+        <unnnic-select-smart
+          v-model="filterTag"
+          :disabled="filterSector[0]?.value === 'all' || tagsToFilter.length < 2"
+          :options="tagsToFilter"
+          autocomplete
+          autocompleteClearOnFocus
         />
-        <div class="attachment-options-container" style="width: 155px">
-          <unnnic-dropdown-item class="option">
-            <span
-              class="upload-dropdown-option"
-              @click="downloadMetric('metrics_csv')"
-              @keypress.enter="downloadMetric('metrics_csv')"
-            >
-              <span> Exportar métricas em CSV </span>
-            </span>
-          </unnnic-dropdown-item>
-          <unnnic-dropdown-item class="option">
-            <span
-              class="upload-dropdown-option"
-              @click="downloadDashboardData('all_csv')"
-              @keypress.enter="downloadDashboardData('all_csv')"
-            >
-              <span> Exportar tudo em CSV </span>
-            </span>
-          </unnnic-dropdown-item>
-          <unnnic-dropdown-item class="option">
-            <span
-              class="upload-dropdown-option"
-              @click="downloadMetric('metrics_xls')"
-              @keypress.enter="downloadMetric('metrics_xls')"
-            >
-              <span> Exportar métricas em XLS </span>
-            </span>
-          </unnnic-dropdown-item>
-          <unnnic-dropdown-item class="option">
-            <span
-              class="upload-dropdown-option"
-              @click="downloadDashboardData('all_xls')"
-              @keypress.enter="downloadDashboardData('all_xls')"
-            >
-              <span> Exportar tudo em XLS </span>
-            </span>
-          </unnnic-dropdown-item>
-        </div>
-      </unnnic-dropdown>
+      </div>
+
+      <div class="dashboard-filters__input">
+        <unnnic-label :label="$t('date')" />
+        <unnnic-input-date-picker
+          v-model="filterDate"
+          position="right"
+          :input-format="$t('date_format')"
+        />
+      </div>
+
+      <unnnic-button
+        :text="$t('clear')"
+        :disabled="isFiltersDefault"
+        type="secondary"
+        @click="resetFilters"
+      />
     </div>
+
+    <unnnic-dropdown v-bind="$props">
+      <unnnic-button icon-center="more_vert" type="secondary" slot="trigger" />
+      <div class="attachment-options-container" style="width: 155px">
+        <unnnic-dropdown-item class="option">
+          <span
+            class="upload-dropdown-option"
+            @click="downloadMetric('metrics_csv')"
+            @keypress.enter="downloadMetric('metrics_csv')"
+          >
+            <span> Exportar métricas em CSV </span>
+          </span>
+        </unnnic-dropdown-item>
+        <unnnic-dropdown-item class="option">
+          <span
+            class="upload-dropdown-option"
+            @click="downloadDashboardData('all_csv')"
+            @keypress.enter="downloadDashboardData('all_csv')"
+          >
+            <span> Exportar tudo em CSV </span>
+          </span>
+        </unnnic-dropdown-item>
+        <unnnic-dropdown-item class="option">
+          <span
+            class="upload-dropdown-option"
+            @click="downloadMetric('metrics_xls')"
+            @keypress.enter="downloadMetric('metrics_xls')"
+          >
+            <span> Exportar métricas em XLS </span>
+          </span>
+        </unnnic-dropdown-item>
+        <unnnic-dropdown-item class="option">
+          <span
+            class="upload-dropdown-option"
+            @click="downloadDashboardData('all_xls')"
+            @keypress.enter="downloadDashboardData('all_xls')"
+          >
+            <span> Exportar tudo em XLS </span>
+          </span>
+        </unnnic-dropdown-item>
+      </div>
+    </unnnic-dropdown>
   </section>
 </template>
 
@@ -123,63 +99,81 @@
 import Sector from '@/services/api/resources/settings/sector';
 import DashboardManagerApi from '@/services/api/resources/dashboard/dashboardManager';
 
-// const moment = require('moment');
-
 export default {
   name: 'DashboardFilters',
 
-  beforeMount() {
-    if (this.tag) this.filteredTags.push(this.tag);
-    if (this.agent) this.filteredAgentes.push(this.agent);
-    this.getSectors();
-  },
-
-  props: {
-    sectorFilter: {
-      type: String,
-      default: '',
-    },
-  },
-
-  computed: {
-    filteredTags() {
-      if (this.selecteds.length === 0) return [];
-      const group = this.selecteds;
-      return group;
-    },
-  },
-
   data: () => ({
-    filteredSectorUuid: '',
-    filteredAgent: '',
-    messageInputTags: 'Filtrar por tags',
-    messageInputAgent: 'Filtrar por agente',
-    sectors: [],
-    sectorTags: [],
-    tags: [{ value: '', label: 'Filtrar por tags' }],
-    agents: [],
-    selecteds: [],
-    filteredDateRange: {
+    sectorsToFilter: [],
+    agentsToFilter: [],
+    tagsToFilter: [],
+    filterSector: [],
+    filterAgent: [],
+    filterTag: [],
+    filterDate: {
       start: null,
       end: null,
     },
   }),
 
+  async created() {
+    await this.getSectors();
+
+    this.filterSector = [this.filterSectorsOptionAll];
+    this.agentsToFilter = this.filterAgentDefault;
+    this.tagsToFilter = this.filterTagDefault;
+  },
+
+  computed: {
+    filterSectorsOptionAll() {
+      return { value: 'all', label: this.$t('all') };
+    },
+
+    filterAgentDefault() {
+      return [{ value: '', label: this.$t('filter.by_agent') }];
+    },
+
+    filterTagDefault() {
+      return [{ value: '', label: this.$t('filter.by_tag') }];
+    },
+
+    filterDateDefault() {
+      return {
+        start: null,
+        end: null,
+      };
+    },
+
+    isFiltersDefault() {
+      const { filterSector, filterAgent, filterTag, filterDate, filterDateDefault } = this;
+
+      if (
+        filterSector[0].value === 'all' &&
+        filterAgent.length === 0 &&
+        filterTag.length === 0 &&
+        filterDate === filterDateDefault
+      ) {
+        return true;
+      }
+
+      return false;
+    },
+
+    cleanFilterSector() {
+      const { filterSector } = this;
+
+      return filterSector[0]?.value === 'all' ? '' : filterSector[0]?.value;
+    },
+  },
+
   methods: {
     async downloadMetric(option) {
-      const temTag = ![null, undefined, ''].includes(this.selecteds);
-      if (temTag) {
-        this.nameTag = this.selecteds.map((el) => el.label).toString();
-      } else {
-        this.nameTag = this.selecteds;
-      }
       try {
-        this.download = await DashboardManagerApi.downloadMetricData(
-          this.filteredSectorUuid,
-          this.filteredAgent,
-          this.selecteds,
-          this.filteredDateRange.start,
-          this.filteredDateRange.end,
+        await DashboardManagerApi.downloadMetricData(
+          this.cleanFilterSector,
+          this.filterAgent?.[0]?.value || '',
+          this.filterTag?.[0]?.label || '',
+          this.filterDate.start,
+          this.filterDate.end,
           option,
         );
       } catch (error) {
@@ -187,19 +181,13 @@ export default {
       }
     },
     async downloadDashboardData(option) {
-      const temTag = ![null, undefined, ''].includes(this.selecteds);
-      if (temTag) {
-        this.nameTag = this.selecteds.map((el) => el.label).toString();
-      } else {
-        this.nameTag = this.selecteds;
-      }
       try {
-        this.download = await DashboardManagerApi.downloadAllData(
-          this.filteredSectorUuid,
-          this.filteredAgent,
-          this.selecteds,
-          this.filteredDateRange.start,
-          this.filteredDateRange.end,
+        await DashboardManagerApi.downloadAllData(
+          this.cleanFilterSector,
+          this.filterAgent?.[0]?.value || '',
+          this.filterTag?.[0]?.label || '',
+          this.filterDate.start,
+          this.filterDate.end,
           option,
         );
       } catch (error) {
@@ -207,108 +195,129 @@ export default {
       }
     },
 
-    sendFilter(type, filteredSectorUuid, agent, tag, filteredDateRange) {
-      const filter = {
-        type,
-        sectorUuid: filteredSectorUuid,
-        tag,
-        agent: agent?.[0]?.value || '',
-        filteredDateRange,
-      };
-      this.$emit('filter', filter);
-    },
-
     async getSectors() {
       try {
-        this.isLoading = true;
-        const response = await Sector.list();
-        this.sectors = response.results;
-        if (this.sectors.length === 1) {
-          this.getSectorTags(this.sectors[0].uuid);
+        const { results } = await Sector.list();
+
+        const newSectors = [this.filterSectorsOptionAll];
+        results.forEach(({ uuid, name }) => newSectors.push({ value: uuid, label: name }));
+        this.sectorsToFilter = newSectors;
+
+        if (results.length > 0) {
+          this.getSectorAgents(results[0].uuid);
+          this.getSectorTags(results[0].uuid);
         }
-        this.isLoading = false;
       } catch (error) {
-        this.isLoading = false;
+        console.error('The sectors could not be loaded at this time.', error);
+      }
+    },
+
+    async getSectorAgents(sectorUuid) {
+      if (!sectorUuid) {
+        this.agentsToFilter = [];
+        return;
+      }
+      try {
+        const results = await Sector.agents({ sectorUuid });
+        const newAgents = this.agentsToFilter;
+        results.forEach(({ first_name, last_name, email }) => {
+          newAgents.push({
+            label: [first_name, last_name].join(' ').trim() || email,
+            value: email,
+          });
+        });
+        this.agentsToFilter = newAgents;
+      } catch (error) {
+        console.error('The sector agents could not be loaded at this time.', error);
       }
     },
 
     async getSectorTags(sectorUuid) {
       if (!sectorUuid) {
-        this.tags = [];
+        this.tagsToFilter = [];
         return;
       }
       try {
-        this.isLoading = true;
-        const response = await Sector.tags(sectorUuid);
-        const responseTags = response.results;
+        const { results } = await Sector.tags(sectorUuid);
 
-        const tagGroup = responseTags.map((tag) => ({ value: tag.uuid, label: tag.name }));
-        tagGroup.push({ value: '', label: 'Filtrar por tags' });
-        this.tags = tagGroup;
-        this.isLoading = false;
+        const newTags = this.tagsToFilter;
+        results.forEach(({ uuid, name }) => newTags.push({ value: uuid, label: name }));
+        this.tagsToFilter = newTags;
       } catch (error) {
-        this.isLoading = false;
-      }
-    },
-    async getSectorAgentes(uuid) {
-      if (!uuid) {
-        this.agents = [];
-        return;
-      }
-      try {
-        this.isLoading = true;
-        const response = await Sector.agents({ sectorUuid: uuid });
-        const agents = response.map(({ first_name, last_name, email }) => {
-          return {
-            label: [first_name, last_name].join(' ').trim() || email,
-            value: email,
-          };
-        });
-        agents.push({ value: '', label: 'Buscar por agente' });
-        this.agents = agents;
-        this.isLoading = false;
-      } catch (error) {
-        this.isLoading = false;
+        console.error('The sector tags could not be loaded at this time.', error);
       }
     },
 
-    clearFilters() {
-      this.filteredSectorUuid = '';
-      this.filteredAgent = '';
-      this.tags = [];
-      this.filteredDateRange = {
-        start: null,
+    sendFilter() {
+      const { filterTag, filterAgent, filterDate } = this;
+      const filter = {
+        sector: this.cleanFilterSector,
+        tags: filterTag?.[0]?.value || '',
+        agent: filterAgent?.[0]?.value || '',
+        filterDate,
       };
-      this.sendFilter('todos', null, null, null, null);
+      this.$emit('filter', filter);
+    },
+
+    resetFilters() {
+      if (this.isFiltersDefault) {
+        return;
+      }
+
+      this.filterAgent = [this.filterAgentDefault];
+      this.filterTag = [this.filterTagDefault];
+      this.filterSector = [this.filterSectorsOptionAll];
+      this.filterDate = this.filterDateDefault;
+
+      this.sendFilter();
+    },
+
+    updateFiltering(filter) {
+      if (!filter?.[0]?.value) {
+        return;
+      }
+
+      this.sendFilter();
     },
   },
 
   watch: {
-    filteredSectorUuid: {
-      deep: true,
-      handler() {
-        this.sendFilter('sector', this.filteredAgent, null, null, null);
-      },
-    },
-    filteredAgent: {
-      deep: true,
-      handler() {
-        this.sendFilter('sector', this.filteredSectorUuid, this.filteredAgent, null, null);
-      },
-    },
+    filterSector: 'sendFilter',
+    filterAgent: 'sendFilter',
+    filterTag: 'sendFilter',
+    filterDate: 'sendFilter',
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.dashboard-filters {
+.dashboard-filters-header {
   display: flex;
   align-items: flex-end;
-  gap: 1rem;
-  width: 99%;
+  gap: $unnnic-spacing-sm;
+}
 
-  & > *:not(:last-child) {
-    min-width: 16.5rem;
+.dashboard-filters {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) auto auto;
+
+  gap: $unnnic-spacing-sm;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  width: 100%;
+
+  .unnnic-label__label {
+    margin: 0;
+    margin-bottom: $unnnic-spacing-nano;
+  }
+
+  &__input {
+    width: 100%;
+  }
+
+  &__date-picker {
+    display: grid;
   }
 }
 .option {

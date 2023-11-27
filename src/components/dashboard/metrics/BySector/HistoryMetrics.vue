@@ -109,19 +109,13 @@ export default {
 
   methods: {
     async agentInfo() {
-      const temTag = ![null, undefined, ''].includes(this.filter.tag);
-      if (temTag) {
-        this.nameTag = this.filter.tag.map((el) => el.value).toString();
-      } else {
-        this.nameTag = this.filter.tag;
-      }
       try {
         this.agents = await DashboardManagerApi.getAgentInfo(
-          this.filter.sectorUuid,
+          this.filter.sector,
           this.filter.agent,
-          this.nameTag,
-          this.filter.filteredDateRange.start,
-          this.filter.filteredDateRange.end,
+          this.filter.tags,
+          this.filter.filterDate.start,
+          this.filter.filterDate.end,
         );
       } catch (error) {
         console.log(error);
@@ -129,19 +123,13 @@ export default {
     },
 
     async roomInfo() {
-      const temTag = ![null, undefined, ''].includes(this.filter.tag);
-      if (temTag) {
-        this.nameTag = this.filter.tag.map((el) => el.value).toString();
-      } else {
-        this.nameTag = this.filter.tag;
-      }
       try {
         this.generalMetrics = await DashboardManagerApi.getRoomInfo(
-          this.filter.sectorUuid,
+          this.filter.sector,
           this.filter.agent,
-          this.nameTag,
-          this.filter.filteredDateRange.start,
-          this.filter.filteredDateRange.end,
+          this.filter.tags,
+          this.filter.filterDate.start,
+          this.filter.filterDate.end,
         );
       } catch (error) {
         console.log(error);
@@ -149,57 +137,39 @@ export default {
     },
 
     async sectorInfo() {
-      const temTag = ![null, undefined, ''].includes(this.filter.tag);
-      if (temTag) {
-        this.nameTag = this.filter.tag.map((el) => el.value).toString();
-      } else {
-        this.nameTag = this.filter.tag;
-      }
       try {
         this.sectors = await DashboardManagerApi.getSectorInfo(
-          this.filter.sectorUuid,
+          this.filter.sector,
           this.filter.agent,
-          this.nameTag,
-          this.filter.filteredDateRange.start,
-          this.filter.filteredDateRange.end,
+          this.filter.tags,
+          this.filter.filterDate.start,
+          this.filter.filterDate.end,
         );
       } catch (error) {
         console.log(error);
       }
     },
     async rawDataInfo() {
-      const temTag = ![null, undefined, ''].includes(this.filter.tag);
-      if (temTag) {
-        this.nameTag = this.filter.tag.map((el) => el.value).toString();
-      } else {
-        this.nameTag = this.filter.tag;
-      }
       try {
         this.rawInfo = await DashboardManagerApi.getRawInfo(
-          this.filter.sectorUuid,
+          this.filter.sector,
           this.filter.agent,
-          this.nameTag,
-          this.filter.filteredDateRange.start,
-          this.filter.filteredDateRange.end,
+          this.filter.tags,
+          this.filter.filterDate.start,
+          this.filter.filterDate.end,
         );
       } catch (error) {
         console.log(error);
       }
     },
     async downloadDashboardData() {
-      const temTag = ![null, undefined, ''].includes(this.filter.tag);
-      if (temTag) {
-        this.nameTag = this.filter.tag.map((el) => el.value).toString();
-      } else {
-        this.nameTag = this.filter.tag;
-      }
       try {
         this.download = await DashboardManagerApi.downloadData(
-          this.filter.sectorUuid,
+          this.filter.sector,
           this.filter.agent,
-          this.nameTag,
-          this.filter.filteredDateRange.start,
-          this.filter.filteredDateRange.end,
+          this.filter.tags,
+          this.filter.filterDate.start,
+          this.filter.filterDate.end,
         );
       } catch (error) {
         console.log(error);
