@@ -28,6 +28,27 @@ export default {
     return response.data;
   },
 
+  async getByDiscussion({ nextReq }, discussionUuid, offset, limit) {
+    const endpoint = `discussion/${discussionUuid}/list_messages/`;
+    const paramsNextReq = getURLParams({ URL: nextReq, endpoint });
+    const params = {
+      ordering: '-created_on',
+      reverse_results: true,
+      offset,
+      limit,
+    };
+
+    let response;
+
+    if (nextReq && paramsNextReq) {
+      response = await http.get(`${endpoint}${paramsNextReq}`);
+    } else {
+      response = await http.get(endpoint, { params });
+    }
+
+    return response.data;
+  },
+
   async getByContact(contactUuid, offset, limit, { onlyClosedRooms = true } = {}) {
     const response = await http.get('/msg/', {
       params: {
@@ -43,7 +64,7 @@ export default {
     return response.data;
   },
 
-  async send(roomId, { text, user_email, seen }) {
+  async sendRoomMessage(roomId, { text, user_email, seen }) {
     const response = await http.post('/msg/', {
       room: roomId,
       text,
@@ -53,8 +74,15 @@ export default {
     return response.data;
   },
 
-  async sendMedia(roomId, { user_email, media, updateLoadingFiles }) {
-    const msg = await this.send(roomId, {
+  async sendDiscussionMessage(discussionUuid, { text }) {
+    const response = await http.post(`/discussion/${discussionUuid}/send_messages/`, {
+      text,
+    });
+    return response.data;
+  },
+
+  async sendRoomMedia(roomId, { user_email, media, updateLoadingFiles }) {
+    const msg = await this.sendRoomMessage(roomId, {
       text: '',
       user_email,
       seen: true,
@@ -75,5 +103,26 @@ export default {
       },
     );
     return response.data;
+  },
+
+  async sendDiscussionMedia(discussionUuid, { media, updateLoadingFiles }) {
+    const mediaUuid = media.name + Date.now();
+
+    updateLoadingFiles?.(mediaUuid, 0);
+    const response = await http.postForm(
+      `/discussion/${discussionUuid}/send_media_messages/`,
+      {
+        content_type: media.type,
+        text: '',
+        media_file: media,
+      },
+      {
+        onUploadProgress: (event) => {
+          const progress = event.loaded / event.total;
+          updateLoadingFiles?.(mediaUuid, progress);
+        },
+      },
+    );
+    return response.data?.media?.[0];
   },
 };

@@ -50,27 +50,29 @@
         }
       "
     >
-      <room-group
+      <card-group
+        v-if="discussions.length"
+        :label="$t('chats.discussions', { length: discussions.length })"
+        :discussions="discussions"
+        @open="openDiscussion"
+      />
+      <card-group
         v-if="rooms_queue.length"
         :label="$t('chats.waiting', { length: rooms_queue.length })"
         :rooms="rooms_queue"
-        filled
-        @open="open"
-        id="queue"
+        @open="openRoom"
       />
-      <room-group
+      <card-group
         v-if="rooms.length"
         :label="$t('chats.in_progress', { length: rooms.length })"
         :rooms="rooms"
-        @open="open"
-        id="in_progress"
+        @open="openRoom"
       />
-      <room-group
+      <card-group
         v-if="rooms_sent_flows.length"
         :label="$t('chats.sent_flows', { length: rooms_sent_flows.length })"
         :rooms="rooms_sent_flows"
-        @open="open"
-        id="wating"
+        @open="openRoom"
       />
       <p v-if="showNoResultsError" class="no-results">
         {{ $t('without_results') }}
@@ -83,14 +85,14 @@
 import { mapState, mapGetters } from 'vuex';
 
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
-import RoomGroup from './RoomGroup';
+import CardGroup from './CardGroup';
 
 export default {
-  name: 'TheRoomList',
+  name: 'TheCardGroups',
 
   components: {
     RoomsListLoading,
-    RoomGroup,
+    CardGroup,
   },
 
   props: {
@@ -118,22 +120,25 @@ export default {
 
   async mounted() {
     this.listRoom();
+    this.listDiscussions();
   },
 
   computed: {
     ...mapGetters({
-      rooms: 'rooms/agentRooms',
-      rooms_queue: 'rooms/waitingQueue',
-      rooms_sent_flows: 'rooms/waitingContactAnswer',
+      rooms: 'chats/rooms/agentRooms',
+      rooms_queue: 'chats/rooms/waitingQueue',
+      rooms_sent_flows: 'chats/rooms/waitingContactAnswer',
     }),
     ...mapState({
-      listRoomHasNext: (state) => state.rooms.listRoomHasNext,
+      discussions: (state) => state.chats.discussions.discussions,
+      listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
     }),
 
     totalUnreadMessages() {
       return this.rooms.reduce(
         (total, room) =>
-          total + (this.$store.state.rooms.newMessagesByRoom[room.uuid]?.messages?.length || 0),
+          total +
+          (this.$store.state.chats.rooms.newMessagesByRoom[room.uuid]?.messages?.length || 0),
         0,
       );
     },
@@ -143,7 +148,8 @@ export default {
         !this.isLoadingRooms &&
         this.rooms.length === 0 &&
         this.rooms_queue.length === 0 &&
-        this.rooms_sent_flows.length === 0
+        this.rooms_sent_flows.length === 0 &&
+        this.discussions.length === 0
       );
     },
   },
@@ -169,16 +175,13 @@ export default {
   },
 
   methods: {
-    async open(room) {
-      if (this.isViewMode) {
-        await this.$store.dispatch('rooms/setActiveRoom', room);
-      } else {
-        const path = `/chats/${room.uuid}`;
+    async openRoom(room) {
+      await this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
+      await this.$store.dispatch('chats/rooms/setActiveRoom', room);
+    },
 
-        if (this.$route.path === path) return;
-
-        this.$router.replace(path);
-      }
+    async openDiscussion(discussion) {
+      await this.$store.dispatch('chats/discussions/setActiveDiscussion', discussion);
     },
 
     clearField() {
@@ -189,7 +192,7 @@ export default {
       this.isLoadingRooms = true;
       const { viewedAgent } = this;
       try {
-        await this.$store.dispatch('rooms/getAll', {
+        await this.$store.dispatch('chats/rooms/getAll', {
           offset: this.page * this.limit,
           concat,
           order,
@@ -207,6 +210,14 @@ export default {
       if (this.listRoomHasNext) {
         this.page += 1;
         this.listRoom(true);
+      }
+    },
+    async listDiscussions() {
+      try {
+        const { viewedAgent } = this;
+        await this.$store.dispatch('chats/discussions/getAll', { viewedAgent });
+      } catch {
+        console.error('Não foi possível listar as discussões');
       }
     },
     handleScroll(target) {

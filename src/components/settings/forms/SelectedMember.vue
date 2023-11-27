@@ -1,13 +1,7 @@
 <template>
   <div class="selected-member">
     <div class="selected-member__avatar">
-      <img
-        :src="
-          avatarUrl ||
-          'https://avataaars.io/?avatarStyle=Circle&topType=LongHairFro&accessoriesType=Wayfarers&hairColor=BrownDark&facialHairType=Blank&clotheType=GraphicShirt&clotheColor=Gray01&graphicType=Skull&eyeType=Happy&eyebrowType=UpDown&mouthType=Sad&skinColor=Pale'
-        "
-        :alt="`${name}'s avatar`"
-      />
+      <img :src="avatarUrl || '/avatar/default.svg'" :alt="`${name}'s avatar`" />
     </div>
     <div class="selected-member__info">
       <span class="selected-member__name">{{ name }}</span>
@@ -61,13 +55,21 @@ export default {
   align-items: center;
   gap: $unnnic-spacing-stack-xs;
 
+  text-align: start;
+
   &__avatar {
-    width: $unnnic-avatar-size-sm;
-    height: $unnnic-avatar-size-sm;
     border-radius: 50%;
 
+    overflow: hidden;
+
+    width: $unnnic-avatar-size-sm;
+    height: $unnnic-avatar-size-sm;
+
     & > img {
-      object-fit: contain;
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
     }
   }
 

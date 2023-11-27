@@ -4,7 +4,7 @@
     :title="$t('flows_trigger.title')"
     :subtitle="$t('flows_trigger.subtitle', { project: projectName })"
     icon="send-email-3-1"
-    @close="$emit('close')"
+    :close="() => $emit('close')"
   >
     <aside-slot-template-section class="flows-trigger" v-if="showSelectFlow">
       <select-flow
@@ -65,7 +65,7 @@
             <unnnic-chats-contact
               v-for="item in element"
               :key="item.uuid"
-              :username="item.name"
+              :title="item.name"
               :lastMessage="item.urns[0]"
               :tabindex="0"
               checkboxWhenSelect

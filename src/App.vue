@@ -72,7 +72,7 @@ export default {
 
   computed: {
     ...mapState({
-      activeRoom: (state) => state.rooms.activeRoom,
+      activeRoom: (state) => state.chats.rooms.activeRoom,
       me: (state) => state.profile.me,
       viewedAgent: (state) => state.dashboard.viewedAgent,
       nextQuickMessages: (state) => state.chats.quickMessages.nextQuickMessages,
@@ -197,10 +197,10 @@ export default {
 
     listeners() {
       this.ws.on('msg.create', async (message) => {
-        const { rooms, activeRoom } = this.$store.state.rooms;
+        const { rooms, activeRoom } = this.$store.state.chats.rooms;
         const findRoom = rooms.find((room) => room.uuid === message.room);
 
-        this.$store.dispatch('rooms/bringRoomFront', findRoom);
+        this.$store.dispatch('chats/rooms/bringRoomFront', findRoom);
         if (findRoom) {
           if (this.me.email === message.user?.email) {
             return;
@@ -218,18 +218,69 @@ export default {
           }
 
           const isCurrentRoom =
-            this.$route.name === 'room' && this.$route.params.id === message.room;
+            this.$route.name === 'room' && this.$route.params.roomId === message.room;
           const isViewModeCurrentRoom =
             this.$route.params.viewedAgent && activeRoom?.uuid === message.room;
 
           if (isCurrentRoom || isViewModeCurrentRoom) {
-            this.$store.dispatch('roomMessages/addMessage', message);
+            this.$store.dispatch('chats/roomMessages/addMessage', message);
           }
 
           if (this.isAJson(message.text)) return;
 
-          this.$store.dispatch('rooms/addNewMessagesByRoom', {
+          this.$store.dispatch('chats/rooms/addNewMessagesByRoom', {
             room: message.room,
+            message: {
+              created_on: message.created_on,
+              uuid: message.uuid,
+              text: message.text,
+            },
+          });
+        }
+      });
+
+      this.ws.on('discussion_msg.create', async (message) => {
+        const { discussions, activeDiscussion } = this.$store.state.chats.discussions;
+        const findDiscussion = discussions.find(
+          (discussion) => discussion.uuid === message.discussion,
+        );
+
+        // this.$store.dispatch('chats/rooms/bringRoomFront', findRoom);
+        if (findDiscussion) {
+          if (this.me.email === message.user?.email) {
+            return;
+          }
+
+          const notification = new Notification('ping-bing');
+          notification.notify();
+
+          if (document.hidden) {
+            const { first_name, last_name } = message.user;
+            sendWindowNotification({
+              title: `${first_name} ${last_name}`,
+              message: message.text,
+              image: message.media?.[0]?.url,
+            });
+          }
+
+          const isCurrentDiscussion =
+            this.$route.name === 'discussion' &&
+            this.$route.params.discussionId === message.discussion;
+          const isViewModeCurrentDiscussion =
+            this.$route.params.viewedAgent && activeDiscussion?.uuid === message.discussion;
+          const shouldAddDiscussionMessage = isCurrentDiscussion || isViewModeCurrentDiscussion;
+
+          if (shouldAddDiscussionMessage) {
+            this.$store.dispatch('chats/discussionMessages/addDiscussionMessage', message);
+          }
+
+          const isJsonMessage = this.isAJson(message.text);
+          if (shouldAddDiscussionMessage || isJsonMessage) {
+            return;
+          }
+
+          this.$store.dispatch('chats/discussions/addNewMessagesByDiscussion', {
+            discussion: message.discussion,
             message: {
               created_on: message.created_on,
               uuid: message.uuid,
@@ -242,8 +293,22 @@ export default {
       this.ws.on('rooms.create', (room) => {
         if (!!room.user && room.user.email !== this.me.email) return;
 
-        this.$store.dispatch('rooms/addRoom', room);
+        this.$store.dispatch('chats/rooms/addRoom', room);
         const notification = new Notification('select-sound');
+        notification.notify();
+      });
+
+      this.ws.on('discussions.create', (discussion) => {
+        if (!!discussion.created_by && discussion.created_by === this.me.email) return;
+
+        const { discussions } = this.$store.state.chats.discussions;
+        const existentDiscussion = discussions.find(
+          (mappedDiscussion) => mappedDiscussion.uuid === discussion.uuid,
+        );
+        if (existentDiscussion) return;
+
+        this.$store.dispatch('chats/discussions/addDiscussion', discussion);
+        const notification = new Notification('achievement-confirmation');
         notification.notify();
       });
 
@@ -254,16 +319,18 @@ export default {
         }
 
         if (
-          !this.$store.state.rooms.rooms.find((alreadyInRoom) => alreadyInRoom.uuid === room.uuid)
+          !this.$store.state.chats.rooms.rooms.find(
+            (alreadyInRoom) => alreadyInRoom.uuid === room.uuid,
+          )
         ) {
-          this.$store.dispatch('rooms/addRoom', room);
+          this.$store.dispatch('chats/rooms/addRoom', room);
 
           const notification = new Notification('select-sound');
           notification.notify();
         }
 
         const { viewedAgent } = this;
-        this.$store.dispatch('rooms/updateRoom', {
+        this.$store.dispatch('chats/rooms/updateRoom', {
           room,
           userEmail: this.me.email,
           routerReplace: () => this.$router.replace({ name: 'home' }),
@@ -271,21 +338,55 @@ export default {
         });
 
         if (room.unread_msgs === 0) {
-          this.$store.dispatch('rooms/resetNewMessagesByRoom', {
+          this.$store.dispatch('chats/rooms/resetNewMessagesByRoom', {
             room: room.uuid,
           });
         }
       });
 
+      this.ws.on('discussions.update', (discussion) => {
+        const { discussions, activeDiscussion } = this.$store.state.chats.discussions;
+        const isNewDiscussion = !discussions.find(
+          (mappedDiscussion) => mappedDiscussion.uuid === discussion.uuid,
+        );
+
+        if (isNewDiscussion && discussion.created_by !== this.me.email) {
+          this.$store.dispatch('chats/discussions/addDiscussion', discussion);
+
+          const notification = new Notification('achievement-confirmation');
+          notification.notify();
+        }
+
+        if (activeDiscussion?.uuid === discussion.uuid) {
+          this.$store.dispatch('chats/discussions/setActiveDiscussion', discussion);
+        }
+
+        if (
+          discussion.added_agents.length >= 2 &&
+          !discussion.added_agents.includes(this.me.email)
+        ) {
+          this.$store.dispatch('chats/discussions/removeDiscussion', discussion.uuid);
+        }
+      });
+
       this.ws.on('rooms.close', (room) => {
-        this.$store.dispatch('rooms/removeRoom', room.uuid);
+        this.$store.dispatch('chats/rooms/removeRoom', room.uuid);
+      });
+
+      this.ws.on('discussions.close', (discussion) => {
+        this.$store.dispatch('chats/discussions/removeDiscussion', discussion.uuid);
+
+        if (this.$route.params.discussionId === discussion.uuid) {
+          this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
+          this.$store.dispatch('chats/rooms/setActiveRoom', null);
+        }
       });
 
       this.ws.on('msg.update', (message) => {
         if (this.me.email === message.user?.email) {
           return;
         }
-        this.$store.dispatch('roomMessages/addMessage', message);
+        this.$store.dispatch('chats/roomMessages/addMessage', message);
       });
 
       this.ws.on('status.update', (info) => {

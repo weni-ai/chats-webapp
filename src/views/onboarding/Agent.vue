@@ -10,14 +10,14 @@
             side="right"
             force-open
           >
-            <room-group
+            <card-group
               :label="$t('line')"
               :rooms="[room]"
               @open="(roomOpen = true), startConversation()"
               use-photo
             />
           </unnnic-tool-tip>
-          <room-group v-else :label="$t('chats.in_progress')" :rooms="[room]" use-photo />
+          <card-group v-else :label="$t('chats.in_progress')" :rooms="[room]" use-photo />
         </div>
       </section>
     </template>
@@ -47,13 +47,13 @@
 import ChatHeader from '@/components/chats/chat/ChatHeader';
 import ChatMessages from '@/components/chats/chat/ChatMessages';
 import MessageManager from '@/components/chats/MessageManager';
-import RoomGroup from '@/layouts/ChatsLayout/components/TheRoomList/RoomGroup';
+import CardGroup from '@/layouts/ChatsLayout/components/TheCardGroups/CardGroup';
 
 import ChatsLayout from '@/layouts/ChatsLayout';
 
 import Profile from '@/services/api/resources/profile';
 
-import { groupSequentialSentMessages, parseMessageToMessageWithSenderProp } from '@/utils/messages';
+// import { groupSequentialSentMessages, parseMessageToMessageWithSenderProp } from '@/utils/messages';
 
 export default {
   name: 'AgentOnboarding',
@@ -63,7 +63,7 @@ export default {
     ChatHeader,
     ChatMessages,
     MessageManager,
-    RoomGroup,
+    CardGroup,
   },
 
   data: () => ({
@@ -103,8 +103,8 @@ export default {
       return messages;
     },
     messages() {
-      const messagesWithSender = this.sentMessages.map(parseMessageToMessageWithSenderProp);
-      const groupedMessages = groupSequentialSentMessages(messagesWithSender);
+      // const messagesWithSender = this.sentMessages.map(parseMessageToMessageWithSenderProp);
+      const groupedMessages = []; // groupSequentialSentMessages(messagesWithSender)
       return groupedMessages;
     },
   },

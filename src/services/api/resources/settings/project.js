@@ -41,6 +41,15 @@ export default {
     return response.data;
   },
 
+  async allUsers() {
+    const response = await http.get(`/project/${getProject()}/list_users`, {
+      params: {
+        limit: 9999,
+      },
+    });
+    return response.data;
+  },
+
   async getInfo() {
     const projectUuid = getProject();
     const response = await http.get(`/project/${projectUuid}/`);

@@ -145,7 +145,9 @@ export default {
       const rooms = state.rooms.filter((r) => r.uuid !== roomUuid);
       commit(mutations.SET_ROOMS, rooms);
 
-      if (state.activeRoom.uuid === roomUuid) commit(mutations.SET_ACTIVE_ROOM, {});
+      if (state.activeRoom && state.activeRoom?.uuid === roomUuid) {
+        commit(mutations.SET_ACTIVE_ROOM, null);
+      }
     },
     addNewMessagesByRoom({ commit }, { room, message }) {
       commit(mutations.UPDATE_NEW_MESSAGES_BY_ROOM, { room, message });

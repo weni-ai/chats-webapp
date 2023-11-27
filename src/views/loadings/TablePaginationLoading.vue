@@ -15,8 +15,6 @@ export default {
 
 <style lang="scss" scoped>
 .table-pagination-loading {
-  z-index: 10000;
-
   margin-top: $unnnic-spacing-md;
   border-top: $unnnic-border-width-thinner solid $unnnic-color-neutral-soft;
   padding-top: $unnnic-spacing-md;

@@ -334,6 +334,16 @@
         "pt-br": "editou o custom field",
         "en-us": "edited custom field",
         "es": "editado el custom field"
+      },
+      "discussion_created": {
+        "pt-br": "{agent} iniciou a discussão com fila {queue}",
+        "en-us": "{agent} started discussion with queue {queue}",
+        "es": "{agent} inició la discusión con la cola {queue}"
+      },
+      "discussion_joined": {
+        "pt-br": "{agent} entrou na discussão",
+        "en-us": "{agent} joined the discussion",
+        "es": "{agent} se unió a la discusión"
       }
     },
     "room_list": {
@@ -363,6 +373,16 @@
       "en-us": "Chat tags",
       "es": "Etiquetas de chat"
     },
+    "discussions": {
+      "pt-br": "Discussões ({length})",
+      "en-us": "Discussions ({length})",
+      "es": "Discusiones ({length})"
+    },
+    "waiting": {
+      "pt-br": "Aguardando ({length})",
+      "en-us": "Waiting ({length})",
+      "es": "Esperando ({length})"
+    },
     "in_progress": {
       "pt-br": "Em andamento ({length})",
       "en-us": "Chats in progress ({length})",
@@ -372,11 +392,6 @@
       "pt-br": "Fluxos enviados ({length})",
       "en-us": "Sent flows ({length})",
       "es": "Flujos enviados ({length})"
-    },
-    "waiting": {
-      "pt-br": "Aguardando ({length})",
-      "en-us": "Waiting ({length})",
-      "es": "Esperando ({length})"
     },
     "end": {
       "pt-br": "Encerrar chat",
@@ -532,6 +547,11 @@
     "en-us": "to",
     "es": "a"
   },
+  "about": {
+    "pt-br": "sobre",
+    "en-us": "about",
+    "es": "acerca de"
+  },
   "today": {
     "pt-br": "Hoje",
     "en-us": "Today",
@@ -556,6 +576,11 @@
     "pt-br": "Enviar",
     "en-us": "Send",
     "es": "Enviar"
+  },
+  "update": {
+    "pt-br": "Atualizar",
+    "en-us": "Update",
+    "es": "Actualizar"
   },
   "click_to_resend": {
     "pt-br": "Clique para reenviar",
@@ -653,6 +678,16 @@
     "pt-br": "Agente",
     "en-us": "Agent",
     "es": "Agente"
+  },
+  "manager": {
+    "pt-br": "Gestor",
+    "en-us": "Manager",
+    "es": "Gerente"
+  },
+  "you": {
+    "pt-br": "Você",
+    "en-us": "You",
+    "es": "Tú"
   },
   "queue": {
     "pt-br": "Fila",
@@ -835,6 +870,150 @@
       "pt-br": "{agent} {date} às {time}",
       "en-us": "{agent} {date} at {time}",
       "es": "{agent} {date} a las {time}"
+    }
+  },
+  "discussions": {
+    "title": {
+      "pt-br": "Discussão | Discussões",
+      "en-us": "Discussion | Discussions",
+      "es": "Discusión | Discusiones"
+    },
+    "start_discussion": {
+      "title": {
+        "pt-br": "Iniciar discussão",
+        "en-us": "Start discussion",
+        "es": "Iniciar discusión"
+      },
+      "form": {
+        "select_sector": {
+          "pt-br": "Selecionar setor",
+          "en-us": "Select Sector",
+          "es": "Seleccionar sector"
+        },
+        "select_queue": {
+          "pt-br": "Selecionar fila",
+          "en-us": "Select queue",
+          "es": "Seleccionar cola"
+        },
+        "search_sector": {
+          "pt-br": "Pesquisar setor",
+          "en-us": "Search Sector",
+          "es": "Buscar sector"
+        },
+        "search_queue": {
+          "pt-br": "Pesquisar fila",
+          "en-us": "Search queue",
+          "es": "Buscar cola"
+        },
+        "subject": {
+          "pt-br": "Assunto",
+          "en-us": "Subject",
+          "es": "Sujeto"
+        },
+        "discussion_reason": {
+          "pt-br": "Motivo da discussão",
+          "en-us": "Reason for the discussion",
+          "es": "Motivo de discusión"
+        },
+        "explain_situation": {
+          "pt-br": "Explique a situação",
+          "en-us": "Explain the situation",
+          "es": "Explica la situación"
+        }
+      }
+    },
+    "about": {
+      "title": {
+        "pt-br": "Sobre a discussão",
+        "en-us": "About the discussion",
+        "es": "Sobre la discusión"
+      },
+      "started_in": {
+        "pt-br": "Iniciada em",
+        "en-us": "Started in",
+        "es": "Inició en"
+      },
+      "agents_involved": {
+        "pt-br": "Agentes envolvidos",
+        "en-us": "Agents involved",
+        "es": "Agentes involucrados"
+      },
+      "add_agent": {
+        "pt-br": "Adicionar agente",
+        "en-us": "Add Agent",
+        "es": "Agregar agente"
+      }
+    },
+    "close": {
+      "title": {
+        "pt-br": "Encerrar discussão",
+        "en-us": "Arrange",
+        "es": "Finalizar la discusión"
+      },
+      "description": {
+        "pt-br": "Você não poderá mais trocar mensagens nesta discussão",
+        "en-us": "You can no longer exchange messages in this discussion",
+        "es": "Ya no podrás intercambiar mensajes en este hilo."
+      }
+    },
+    "add_agents": {
+      "title": {
+        "pt-br": "Adicionar agentes",
+        "en-us": "Add Agents",
+        "es": "Agregar agentes"
+      },
+      "description": {
+        "pt-br": "Ao adicionar um agente na discussão não será possível remover depois",
+        "en-us": "When adding an agent in the discussion it will not be possible to remove later",
+        "es": "Al agregar un agente a la discusión no será posible eliminarlo más tarde"
+      },
+      "select_agent": {
+        "pt-br": "Selecionar agente",
+        "en-us": "Select agent",
+        "es": "Agente seleccionado"
+      },
+      "search_agent": {
+        "pt-br": "Pesquisar agente",
+        "en-us": "Search agent",
+        "es": "Buscar agente"
+      }
+    },
+    "history": {
+      "pt-br": "Histórico da discussão",
+      "en-us": "Discussion history",
+      "es": "Historial de discusión"
+    },
+    "started_by": {
+      "pt-br": "Discussão iniciada por {name}",
+      "en-us": "Discussion started by {name}",
+      "es": "Discusión iniciada por {name}"
+    },
+    "notification_new": {
+      "pt-br": "Nova discussão recebida",
+      "en-us": "New discussion received",
+      "es": "Nueva discusión recibida"
+    },
+    "join": {
+      "pt-br": "Entrar na discussão",
+      "en-us": "Get into the discussion",
+      "es": "Únete a la discusión"
+    },
+    "errors": {
+      "already_open": {
+        "pt-br": "Erro ao iniciar discussão, verifique se já existe outra discussão aberta",
+        "en-us": "Error starting discussion, check if there is already another discussion open",
+        "es": "Error al iniciar la discusión, verifique si ya hay otra discusión abierta"
+      },
+      "permission": {
+        "pt-br": "Erro ao iniciar discussão, verifique sua permissão",
+        "en-us": "Error starting discussion, check your permission",
+        "es": "Error al iniciar la discusión, verifique su permiso"
+      },
+      "generic": {
+        "pt-br": "Erro ao iniciar discussão",
+        "en-us": "Error starting discussion",
+        "es": "Error al iniciar la discusión"
+      }
     }
   },
   "last_online_time": {

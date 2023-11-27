@@ -1,5 +1,5 @@
 <template>
-  <div class="room-header-loading">
+  <div class="chat-header-loading">
     <header>
       <unnnic-skeleton-loading />
       <unnnic-skeleton-loading />
@@ -9,12 +9,12 @@
 
 <script>
 export default {
-  name: 'RoomHeaderLoading',
+  name: 'ChatHeaderLoading',
 };
 </script>
 
 <style lang="scss" scoped>
-.room-header-loading {
+.chat-header-loading {
   width: 100%;
 
   z-index: 10000;
