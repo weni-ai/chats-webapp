@@ -20,8 +20,30 @@ export default {
   },
 
   async getFlows() {
-    const response = await http.get(`/project/${getProject()}/list_flows`);
-    return response.data;
+    let nextCursor;
+    let flows = [];
+    let loopCount = 0;
+    const maxLoopCount = 10;
+
+    async function fetchData(cursor) {
+      const response = await http.get(`/project/${getProject()}/list_flows/`, {
+        params: { cursor },
+      });
+      return response.data;
+    }
+
+    // Work around alert: This loop is required by ensures that all streams,
+    // which contain the chats tag, are loaded before returning
+
+    while ((nextCursor === undefined || nextCursor) && loopCount <= maxLoopCount) {
+      // eslint-disable-next-line no-await-in-loop
+      const responseData = await fetchData(nextCursor);
+      flows = flows.concat(responseData.results);
+      nextCursor = responseData.next;
+      loopCount += 1;
+    }
+
+    return Promise.all(flows);
   },
 
   async getFlowTrigger(uuidFlow) {
