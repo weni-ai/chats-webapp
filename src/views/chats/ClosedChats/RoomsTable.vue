@@ -24,7 +24,7 @@
         />
       </div>
       <div class="closed-chats__rooms-table__handlers__input">
-        <unnnic-label :label="$t('filter.by_date')" />
+        <unnnic-label :label="$t('date')" />
         <unnnic-input-date-picker
           class="closed-chats__rooms-table__handlers__date-picker"
           v-model="filterDate"
