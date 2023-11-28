@@ -55,6 +55,15 @@ export default {
     return response.data;
   },
 
+  async getFlowTemplateVariables(uuidFlow) {
+    const response = await http.get(`/project/${getProject()}/retrieve_flow_template_variables/`, {
+      params: {
+        flow_uuid: uuidFlow,
+      },
+    });
+    return response.data;
+  },
+
   async listAccess() {
     const response = await http.get(`/project/${getProject()}/list_access`);
     return response.data;

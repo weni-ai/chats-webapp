@@ -9,7 +9,7 @@
         autocomplete
         autocompleteIconLeft
         autocompleteClearOnFocus
-        @input="getFlowTrigger(flowUuid?.[0].value)"
+        @input="getFlowInfos(flowUuid?.[0].value)"
       />
     </div>
     <div v-if="showProgressBar">
@@ -116,13 +116,19 @@ export default {
       }
     },
 
-    async getFlowTrigger(uuid) {
-      this.selectedFlow = uuid;
+    async getFlowInfos(uuid) {
+      console.log('');
       try {
-        const response = await FlowsTrigger.getFlowTrigger(uuid);
-        this.template = response.results;
+        await FlowsTrigger.getFlowTrigger(uuid);
+        this.selectedFlow = uuid;
       } catch (error) {
-        console.log(error);
+        console.log('An error occurred when trying get flow definitions:', error);
+      }
+      try {
+        const responseFlowVariables = await FlowsTrigger.getFlowTemplateVariables(uuid);
+        console.log({ responseFlowVariables });
+      } catch (error) {
+        console.log('An error occurred when trying get flow template variables:', error);
       }
     },
 
