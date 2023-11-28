@@ -1,7 +1,12 @@
 <template>
   <section class="dashboard-filters">
-    <div class="dashboard-filters__align-to-metrics">
-      <div class="dashboard-filters__input">
+    <div
+      :class="[
+        'dashboard-filters__align-to-metrics',
+        { 'without-sector': sectorsToFilter.length === 2 },
+      ]"
+    >
+      <div class="dashboard-filters__input" v-if="sectorsToFilter.length > 2">
         <unnnic-label :label="$t('sector.title')" />
         <unnnic-select-smart
           v-model="filterSector"
@@ -113,11 +118,11 @@ export default {
   }),
 
   async created() {
-    await this.getSectors();
-
     this.filterSector = [this.filterSectorsOptionAll];
     this.agentsToFilter = this.filterAgentDefault;
     this.tagsToFilter = this.filterTagDefault;
+
+    await this.getSectors();
   },
 
   computed: {
@@ -141,10 +146,17 @@ export default {
     },
 
     isFiltersDefault() {
-      const { filterSector, filterAgent, filterTag, filterDate, filterDateDefault } = this;
+      const {
+        sectorsToFilter,
+        filterSector,
+        filterAgent,
+        filterTag,
+        filterDate,
+        filterDateDefault,
+      } = this;
 
       if (
-        filterSector[0].value === 'all' &&
+        (filterSector[0]?.value === 'all' || sectorsToFilter.length === 2) &&
         filterAgent.length === 0 &&
         filterTag.length === 0 &&
         filterDate === filterDateDefault
@@ -199,6 +211,10 @@ export default {
         const newSectors = [this.filterSectorsOptionAll];
         results.forEach(({ uuid, name }) => newSectors.push({ value: uuid, label: name }));
         this.sectorsToFilter = newSectors;
+
+        if (results.length === 1) {
+          this.filterSector = [newSectors[1]];
+        }
 
         if (results.length > 0) {
           this.getSectorAgents(results[0].uuid);
@@ -263,7 +279,9 @@ export default {
 
       this.filterAgent = [this.filterAgentDefault];
       this.filterTag = [this.filterTagDefault];
-      this.filterSector = [this.filterSectorsOptionAll];
+      if (this.sectorsToFilter.length > 2) {
+        this.filterSector = [this.filterSectorsOptionAll];
+      }
       this.filterDate = this.filterDateDefault;
 
       this.sendFilter();
@@ -301,6 +319,12 @@ export default {
     gap: $unnnic-spacing-sm;
 
     width: calc(69.1% + ($unnnic-spacing-sm * 2));
+
+    &.without-sector {
+      grid-template-columns: repeat(2, 1fr);
+
+      width: calc(47% + ($unnnic-spacing-sm * 1));
+    }
   }
 
   &__date-picker {
