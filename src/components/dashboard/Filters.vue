@@ -182,7 +182,7 @@ export default {
         await DashboardManagerApi.downloadAllData(
           this.cleanFilterSector,
           this.filterAgent?.[0]?.value || '',
-          this.filterTag?.[0]?.label || '',
+          this.filterTag?.[0]?.value || '',
           this.filterDate.start,
           this.filterDate.end,
           option,
