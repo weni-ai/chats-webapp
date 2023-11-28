@@ -3,7 +3,7 @@
     <div
       :class="[
         'dashboard-filters__align-to-metrics',
-        { 'without-sector': sectorsToFilter.length === 2 },
+        { 'without-sector': sectorsToFilter.length < 3 },
       ]"
     >
       <div class="dashboard-filters__input" v-if="sectorsToFilter.length > 2">
