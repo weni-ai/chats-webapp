@@ -1,4 +1,6 @@
 import moment from 'moment';
+import Rooms from '../store/modules/chats/rooms';
+import Discussions from '../store/modules/chats/discussions';
 
 import Profile from '../store/modules/profile';
 
@@ -63,8 +65,19 @@ export async function getMessages({ itemUuid, getItemMessages }) {
         previous: responsePrevious,
       } = response;
 
-      if ((responseMessages?.[0]?.room || responseMessages?.[0]?.discussion) !== itemUuid) {
-        return;
+      const firstMessage = responseMessages?.[0];
+
+      if (firstMessage) {
+        const activeRoomUUID = Rooms.state.activeRoom?.uuid;
+        const activeDiscussionUUID = Discussions.state.activeDiscussion?.uuid;
+
+        if (firstMessage.room && firstMessage.room !== activeRoomUUID) {
+          return;
+        }
+
+        if (firstMessage.discussion && firstMessage.discussion !== activeDiscussionUUID) {
+          return;
+        }
       }
 
       messages = responseMessages;
@@ -108,6 +121,10 @@ export async function treatMessages({
 }) {
   const { messages, next, previous } = await getMessages({ itemUuid, getItemMessages });
   let newMessages = messages;
+
+  if (!newMessages.length) {
+    return;
+  }
 
   if (nextReq) {
     messages.reverse().forEach((message) => {
