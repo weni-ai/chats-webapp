@@ -16,7 +16,7 @@
       :headers="agentsLabel"
       :items="this.agents.project_agents"
       rawData="rawInfo"
-      title="Agentes oline"
+      title="Agentes online"
       icon="indicator"
       class="grid-3"
     />
