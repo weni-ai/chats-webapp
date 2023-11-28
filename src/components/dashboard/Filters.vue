@@ -22,6 +22,7 @@
           v-model="filterAgent"
           :options="agentsToFilter"
           :disabled="filterSector[0]?.value === 'all' || agentsToFilter.length < 2"
+          ordered-by-index
           autocomplete
           autocompleteClearOnFocus
         />
@@ -32,6 +33,7 @@
           v-model="filterTag"
           :disabled="filterSector[0]?.value === 'all' || tagsToFilter.length < 2"
           :options="tagsToFilter"
+          ordered-by-index
           autocomplete
           autocompleteClearOnFocus
         />
@@ -119,8 +121,8 @@ export default {
 
   async created() {
     this.filterSector = [this.filterSectorsOptionAll];
-    this.agentsToFilter = this.filterAgentDefault;
-    this.tagsToFilter = this.filterTagDefault;
+    this.agentsToFilter = this.filterAgentDefault.concat(this.filterOptionNone);
+    this.tagsToFilter = this.filterTagDefault.concat(this.filterOptionNone);
 
     await this.getSectors();
   },
@@ -145,6 +147,10 @@ export default {
       };
     },
 
+    filterOptionNone() {
+      return [{ value: 'none', label: this.$t('none') }];
+    },
+
     isFiltersDefault() {
       const {
         sectorsToFilter,
@@ -166,23 +172,23 @@ export default {
 
       return false;
     },
-
-    cleanFilterSector() {
-      const { filterSector } = this;
-
-      return filterSector[0]?.value === 'all' ? '' : filterSector[0]?.value;
-    },
   },
 
   methods: {
+    cleanFilter(property = '') {
+      const filterValue = this[property][0]?.value;
+      return filterValue === 'all' || filterValue === 'none' ? '' : filterValue;
+    },
+
     async downloadMetric(option) {
+      const { cleanFilter, filterDate } = this;
       try {
         await DashboardManagerApi.downloadMetricData(
-          this.cleanFilterSector,
-          this.filterAgent?.[0]?.value || '',
-          this.filterTag?.[0]?.label || '',
-          this.filterDate.start,
-          this.filterDate.end,
+          cleanFilter('filterSector'),
+          cleanFilter('filterAgent'),
+          cleanFilter('filterTag'),
+          filterDate.start,
+          filterDate.end,
           option,
         );
       } catch (error) {
@@ -190,13 +196,14 @@ export default {
       }
     },
     async downloadDashboardData(option) {
+      const { cleanFilter, filterDate } = this;
       try {
         await DashboardManagerApi.downloadAllData(
-          this.cleanFilterSector,
-          this.filterAgent?.[0]?.value || '',
-          this.filterTag?.[0]?.value || '',
-          this.filterDate.start,
-          this.filterDate.end,
+          cleanFilter('filterSector'),
+          cleanFilter('filterAgent'),
+          cleanFilter('filterTag'),
+          filterDate.start,
+          filterDate.end,
           option,
         );
       } catch (error) {
@@ -262,11 +269,11 @@ export default {
     },
 
     sendFilter() {
-      const { filterTag, filterAgent, filterDate } = this;
+      const { cleanFilter, filterDate } = this;
       const filter = {
-        sector: this.cleanFilterSector,
-        tags: filterTag?.[0]?.value || '',
-        agent: filterAgent?.[0]?.value || '',
+        sector: cleanFilter('filterSector'),
+        tags: cleanFilter('filterTag'),
+        agent: cleanFilter('filterAgent'),
         filterDate,
       };
       this.$emit('filter', filter);

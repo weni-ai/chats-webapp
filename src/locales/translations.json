@@ -627,6 +627,11 @@
     "en-us": "Clear",
     "es": "Limpiar"
   },
+  "none": {
+    "pt-br": "Nenhum",
+    "en-us": "None",
+    "es": "Ninguno"
+  },
   "access_history_to_see_closed_chats": {
     "pt-br": "Acesse o histórico para visualizar chats encerrados",
     "en-us": "Go to the chats history to see closed chats",
