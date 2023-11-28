@@ -1,6 +1,6 @@
 <template>
-  <section class="dashboard-filters-header">
-    <div class="dashboard-filters">
+  <section class="dashboard-filters">
+    <div class="dashboard-filters__align-to-metrics">
       <div class="dashboard-filters__input">
         <unnnic-label :label="$t('sector.title')" />
         <unnnic-select-smart
@@ -11,7 +11,6 @@
           autocompleteClearOnFocus
         />
       </div>
-
       <div class="dashboard-filters__input">
         <unnnic-label :label="$t('agent')" />
         <unnnic-select-smart
@@ -22,7 +21,6 @@
           autocompleteClearOnFocus
         />
       </div>
-
       <div class="dashboard-filters__input">
         <unnnic-label :label="$t('tag')" />
         <unnnic-select-smart
@@ -33,25 +31,24 @@
           autocompleteClearOnFocus
         />
       </div>
-
-      <div class="dashboard-filters__input">
-        <unnnic-label :label="$t('date')" />
-        <unnnic-input-date-picker
-          v-model="filterDate"
-          position="right"
-          :input-format="$t('date_format')"
-        />
-      </div>
-
-      <unnnic-button
-        :text="$t('clear')"
-        :disabled="isFiltersDefault"
-        type="secondary"
-        @click="resetFilters"
+    </div>
+    <div class="dashboard-filters__input">
+      <unnnic-label :label="$t('date')" />
+      <unnnic-input-date-picker
+        v-model="filterDate"
+        position="right"
+        :input-format="$t('date_format')"
       />
     </div>
 
-    <unnnic-dropdown v-bind="$props">
+    <unnnic-button
+      :text="$t('clear')"
+      :disabled="isFiltersDefault"
+      type="secondary"
+      @click="resetFilters"
+    />
+
+    <unnnic-dropdown v-bind="$props" class="dashboard-filters__export">
       <unnnic-button icon-center="more_vert" type="secondary" slot="trigger" />
       <div class="attachment-options-container" style="width: 155px">
         <unnnic-dropdown-item class="option">
@@ -291,33 +288,32 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.dashboard-filters-header {
-  display: flex;
-  align-items: flex-end;
-  gap: $unnnic-spacing-sm;
-}
-
 .dashboard-filters {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr) auto auto;
-
+  display: flex;
   gap: $unnnic-spacing-sm;
-  justify-content: space-between;
   align-items: flex-end;
 
   width: 100%;
 
-  .unnnic-label__label {
-    margin: 0;
-    margin-bottom: $unnnic-spacing-nano;
-  }
+  &__align-to-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $unnnic-spacing-sm;
 
-  &__input {
-    width: 100%;
+    width: calc(69.1% + ($unnnic-spacing-sm * 2));
   }
 
   &__date-picker {
     display: grid;
+  }
+
+  &__export {
+    margin-left: auto;
+  }
+
+  .unnnic-label__label {
+    margin: 0;
+    margin-bottom: $unnnic-spacing-nano;
   }
 }
 .option {
