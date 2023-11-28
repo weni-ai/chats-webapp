@@ -1,29 +1,25 @@
 <template>
-  <main>
-    <section>
-      <div style="display: flex; justify-content: space-between; margin-bottom: 16px">
-        <div style="width: 66%">
-          <general-metrics
-            :metrics="generalMetrics"
-            :rawData="rawInfo"
-            :generalLabel="generalCardLabel"
-          />
-        </div>
-        <div style="width: 33%">
-          <table-metrics
-            :headers="agentsLabel"
-            :items="this.agents.project_agents"
-            rawData="rawInfo"
-            title="Agentes oline"
-            icon="indicator"
-          />
-        </div>
-      </div>
-    </section>
-
-    <section class="general-dashboard__metrics">
-      <card-group-metrics :metrics="sectors" :title="headerTitle" icon="hierarchy-3-2" />
-    </section>
+  <main class="general-dashboard">
+    <general-metrics
+      :metrics="generalMetrics"
+      :rawData="rawInfo"
+      :generalLabel="generalCardLabel"
+      class="grid-1"
+    />
+    <card-group-metrics
+      :metrics="sectors"
+      :title="headerTitle"
+      icon="hierarchy-3-2"
+      class="grid-2"
+    />
+    <table-metrics
+      :headers="agentsLabel"
+      :items="this.agents.project_agents"
+      rawData="rawInfo"
+      title="Agentes online"
+      icon="indicator"
+      class="grid-3"
+    />
   </main>
 </template>
 
@@ -114,18 +110,21 @@ export default {
 
 <style lang="scss" scoped>
 .general-dashboard {
-  display: flex;
-  flex-direction: column;
-  gap: $unnnic-spacing-stack-sm;
+  display: grid;
+  grid-template-areas:
+    'grid-1 grid-1 grid-3'
+    'grid-2 grid-2 grid-3'
+    '. . grid-3';
+  gap: $unnnic-spacing-sm;
 
-  &__metrics {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: $unnnic-spacing-stack-sm;
-
-    & > :first-child {
-      grid-column: span 2;
-    }
+  .grid-1 {
+    grid-area: grid-1;
+  }
+  .grid-2 {
+    grid-area: grid-2;
+  }
+  .grid-3 {
+    grid-area: grid-3;
   }
 }
 </style>

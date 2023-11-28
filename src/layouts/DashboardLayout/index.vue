@@ -48,10 +48,7 @@ export default {
 <style lang="scss" scoped>
 .dashboard-layout {
   $max-height: calc(100vh - 5.5rem);
-  // height: 100vh;
-  // max-height: $max-height;
-
-  // display: flex;
+  min-height: 100%;
   flex-direction: column;
 
   padding: 1.5rem 0.5rem 0 1.5rem;
@@ -80,7 +77,6 @@ export default {
   .scrollable {
     overflow-y: auto;
     padding: {
-      right: $unnnic-spacing-inset-sm;
       bottom: $unnnic-spacing-inset-md;
     }
   }

@@ -1,102 +1,100 @@
 <template>
   <section class="general-metrics">
-    <template>
-      <unnnic-tool-tip
-        enabled
-        :text="
-          generalLabel === `Em andamento`
-            ? `Quantidade de chats que já estão sendo atendidos por um agente`
-            : `Quantidade de chats que foram atendidos por um agente `
-        "
-        side="bottom"
-        maxWidth="15rem"
-      >
-        <unnnic-card
-          type="dash"
-          :title="generalLabel"
-          icon="messages"
-          scheme="aux-blue"
-          :value="this.metrics.active_chats || 0"
-          :percent="0"
-          :inverted-percentage="false"
-        />
-      </unnnic-tool-tip>
-      <unnnic-tool-tip
-        enabled
-        text="Quantidade de contatos aguardando o início do atendimento"
-        side="bottom"
-        maxWidth="15rem"
-      >
-        <unnnic-card
-          type="dash"
-          title="Aguardando atendimento"
-          icon="synchronize-arrow-clock-4"
-          scheme="feedback-blue"
-          :value="this.rawData.queue_rooms || 0"
-          :percent="0"
-          :inverted-percentage="false"
-        />
-      </unnnic-tool-tip>
-      <unnnic-tool-tip enabled text="Quantidade de chats encerrados" side="bottom" maxWidth="15rem">
-        <unnnic-card
-          type="dash"
-          title="Encerrados"
-          icon="check-circle-1-1"
-          scheme="aux-purple"
-          :value="this.rawData.closed_rooms || 0"
-          :percent="0"
-          :inverted-percentage="false"
-        />
-      </unnnic-tool-tip>
-      <unnnic-tool-tip
-        enabled
-        text="Média de tempo que os contatos aguardam até serem atendidos"
-        side="bottom"
-        maxWidth="15rem"
-      >
-        <unnnic-card
-          type="dash"
-          title="Tempo de espera"
-          icon="time-clock-circle-1"
-          scheme="aux-orange"
-          :value="timeToString(this.metrics.waiting_time)"
-          :percent="0"
-          :inverted-percentage="false"
-        />
-      </unnnic-tool-tip>
-      <unnnic-tool-tip
-        enabled
-        text="Média de tempo que o contato aguarda para ser respondido"
-        side="bottom"
-        maxWidth="15rem"
-      >
-        <unnnic-card
-          type="dash"
-          title="Tempo de resposta"
-          icon="response-time"
-          scheme="aux-pink"
-          :value="timeToString(this.metrics.response_time)"
-          :percent="0"
-          :inverted-percentage="false"
-        />
-      </unnnic-tool-tip>
-      <unnnic-tool-tip
-        enabled
-        text="Média de tempo que um atendimento completo demora"
-        side="bottom"
-        maxWidth="15rem"
-      >
-        <unnnic-card
-          type="dash"
-          title="Tempo de interação"
-          icon="interaction-time"
-          scheme="feedback-green"
-          :value="timeToString(this.metrics.interact_time)"
-          :percent="0"
-          :inverted-percentage="false"
-        />
-      </unnnic-tool-tip>
-    </template>
+    <unnnic-tool-tip
+      enabled
+      :text="
+        generalLabel === `Em andamento`
+          ? `Quantidade de chats que já estão sendo atendidos por um agente`
+          : `Quantidade de chats que foram atendidos por um agente `
+      "
+      side="bottom"
+      maxWidth="15rem"
+    >
+      <unnnic-card
+        type="dash"
+        :title="generalLabel"
+        icon="messages"
+        scheme="aux-blue"
+        :value="this.metrics.active_chats || 0"
+        :percent="0"
+        :inverted-percentage="false"
+      />
+    </unnnic-tool-tip>
+    <unnnic-tool-tip
+      enabled
+      text="Quantidade de contatos aguardando o início do atendimento"
+      side="bottom"
+      maxWidth="15rem"
+    >
+      <unnnic-card
+        type="dash"
+        title="Aguardando atendimento"
+        icon="synchronize-arrow-clock-4"
+        scheme="feedback-blue"
+        :value="this.rawData.queue_rooms || 0"
+        :percent="0"
+        :inverted-percentage="false"
+      />
+    </unnnic-tool-tip>
+    <unnnic-tool-tip enabled text="Quantidade de chats encerrados" side="bottom" maxWidth="15rem">
+      <unnnic-card
+        type="dash"
+        title="Encerrados"
+        icon="check-circle-1-1"
+        scheme="aux-purple"
+        :value="this.rawData.closed_rooms || 0"
+        :percent="0"
+        :inverted-percentage="false"
+      />
+    </unnnic-tool-tip>
+    <unnnic-tool-tip
+      enabled
+      text="Média de tempo que os contatos aguardam até serem atendidos"
+      side="bottom"
+      maxWidth="15rem"
+    >
+      <unnnic-card
+        type="dash"
+        title="Tempo de espera"
+        icon="time-clock-circle-1"
+        scheme="aux-orange"
+        :value="timeToString(this.metrics.waiting_time)"
+        :percent="0"
+        :inverted-percentage="false"
+      />
+    </unnnic-tool-tip>
+    <unnnic-tool-tip
+      enabled
+      text="Média de tempo que o contato aguarda para ser respondido"
+      side="bottom"
+      maxWidth="15rem"
+    >
+      <unnnic-card
+        type="dash"
+        title="Tempo de resposta"
+        icon="response-time"
+        scheme="aux-pink"
+        :value="timeToString(this.metrics.response_time)"
+        :percent="0"
+        :inverted-percentage="false"
+      />
+    </unnnic-tool-tip>
+    <unnnic-tool-tip
+      enabled
+      text="Média de tempo que um atendimento completo demora"
+      side="bottom"
+      maxWidth="15rem"
+    >
+      <unnnic-card
+        type="dash"
+        title="Tempo de interação"
+        icon="interaction-time"
+        scheme="feedback-green"
+        :value="timeToString(this.metrics.interact_time)"
+        :percent="0"
+        :inverted-percentage="false"
+      />
+    </unnnic-tool-tip>
   </section>
 </template>
 
@@ -152,8 +150,9 @@ export default {
 <style lang="scss" scoped>
 .general-metrics {
   display: grid;
-  widows: 50%;
   grid-template-columns: repeat(3, 1fr);
   gap: $unnnic-spacing-stack-sm;
+
+  height: min-content;
 }
 </style>

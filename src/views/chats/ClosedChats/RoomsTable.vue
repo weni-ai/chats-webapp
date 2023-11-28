@@ -10,7 +10,7 @@
           :placeholder="$t('name_or_phone')"
         />
       </div>
-      <div class="closed-chats__rooms-table__handlers__input">
+      <div class="closed-chats__rooms-table__handlers__input" v-if="sectorsToFilter.length > 2">
         <unnnic-label :label="$t('sector.title')" />
         <unnnic-select-smart v-model="filterSector" :options="sectorsToFilter" ordered-by-index />
       </div>
@@ -153,10 +153,10 @@ export default {
   async created() {
     this.isFiltersLoading = true;
 
-    await this.getSectors();
     this.filterSector = [this.filterSectorsOptionAll];
     this.filterDate = this.filterDateDefault;
     this.tagsToFilter = this.filterTagDefault;
+    await this.getSectors();
 
     this.isFiltersLoading = false;
   },
@@ -208,11 +208,18 @@ export default {
     },
 
     isFiltersDefault() {
-      const { filterContact, filterSector, filterTag, filterDate, filterDateDefault } = this;
+      const {
+        sectorsToFilter,
+        filterContact,
+        filterSector,
+        filterTag,
+        filterDate,
+        filterDateDefault,
+      } = this;
 
       if (
         filterContact === '' &&
-        filterSector[0].value === 'all' &&
+        (filterSector[0]?.value === 'all' || sectorsToFilter.length === 2) &&
         filterTag.length === 0 &&
         filterDate === filterDateDefault
       ) {
@@ -262,12 +269,15 @@ export default {
 
     async getSectors() {
       try {
-        const response = await Sector.list();
-        const { results } = response;
+        const { results } = await Sector.list();
 
         const newSectors = [this.filterSectorsOptionAll];
         results.forEach(({ uuid, name }) => newSectors.push({ value: uuid, label: name }));
         this.sectorsToFilter = newSectors;
+
+        if (results.length === 1) {
+          this.filterSector = [newSectors[1]];
+        }
 
         if (results.length > 0) {
           this.getSectorTags(results[0].uuid);
@@ -283,8 +293,7 @@ export default {
         return;
       }
       try {
-        const response = await Sector.tags(sectorUuid);
-        const { results } = response;
+        const { results } = await Sector.tags(sectorUuid);
 
         const newTags = this.tagsToFilter;
         results.forEach(({ uuid, name }) => newTags.push({ value: uuid, label: name }));
@@ -300,7 +309,9 @@ export default {
       }
 
       this.filterContact = '';
-      this.filterSector = [this.filterSectorsOptionAll];
+      if (this.sectorsToFilter.length > 2) {
+        this.filterSector = [this.filterSectorsOptionAll];
+      }
       this.filterTag = [];
       this.filterDate = this.filterDateDefault;
     },

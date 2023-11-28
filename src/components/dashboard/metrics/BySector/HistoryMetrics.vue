@@ -1,30 +1,26 @@
 <template>
-  <main>
-    <div style="width: 66%; margin-bottom: 16px">
-      <section>
-        <general-metrics
-          :metrics="generalMetrics"
-          :rawData="rawInfo"
-          :generalLabel="generalCardLabel"
-        />
-      </section>
-    </div>
-
-    <section class="history-sector-metrics__metrics">
-      <card-group-metrics
-        :metrics="sectors"
-        :rawData="rawInfo"
-        :title="headerTitle"
-        :totalChatsLabel="totalChatsLabel"
-        icon="hierarchy-3-2"
-      />
-      <table-metrics
-        :headers="agentsLabel"
-        :items="this.agents.project_agents"
-        title="Chats por agente"
-        icon="indicator"
-      />
-    </section>
+  <main class="history-metrics">
+    <general-metrics
+      :metrics="generalMetrics"
+      :rawData="rawInfo"
+      :generalLabel="generalCardLabel"
+      class="grid-1"
+    />
+    <card-group-metrics
+      :metrics="sectors"
+      :rawData="rawInfo"
+      :title="headerTitle"
+      :totalChatsLabel="totalChatsLabel"
+      icon="hierarchy-3-2"
+      class="grid-2"
+    />
+    <table-metrics
+      :headers="agentsLabel"
+      :items="this.agents.project_agents"
+      title="Chats por agente"
+      icon="indicator"
+      class="grid-3"
+    />
   </main>
 </template>
 
@@ -180,6 +176,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.history-metrics {
+  display: grid;
+  grid-template-areas:
+    'grid-1 grid-1 grid-3'
+    'grid-2 grid-2 grid-3'
+    '. . grid-3';
+  gap: $unnnic-spacing-sm;
+
+  .grid-1 {
+    grid-area: grid-1;
+  }
+  .grid-2 {
+    grid-area: grid-2;
+  }
+  .grid-3 {
+    grid-area: grid-3;
+  }
+}
 .history-sector-metrics {
   display: flex;
   flex-direction: column;
