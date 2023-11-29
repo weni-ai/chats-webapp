@@ -1,13 +1,13 @@
 <template>
-  <section class="rooms-table-loading">
-    <header class="rooms-table-loading__categories">
+  <section class="triggered-flows-loading">
+    <header class="triggered-flows-loading__categories">
       <unnnic-skeleton-loading />
       <unnnic-skeleton-loading />
       <unnnic-skeleton-loading />
       <unnnic-skeleton-loading />
       <unnnic-skeleton-loading />
     </header>
-    <section class="rooms-table-loading__row" v-for="row in 4" :key="`row-${row}`">
+    <section class="triggered-flows-loading__row" v-for="row in 4" :key="`row-${row}`">
       <unnnic-skeleton-loading />
       <unnnic-skeleton-loading />
       <unnnic-skeleton-loading />
@@ -19,12 +19,12 @@
 
 <script>
 export default {
-  name: 'RoomsTableFiltersLoading',
+  name: 'TriggeredFlowsLoading',
 };
 </script>
 
 <style lang="scss" scoped>
-.rooms-table-loading {
+.triggered-flows-loading {
   display: flex;
   flex-direction: column;
 
