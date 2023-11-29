@@ -357,6 +357,10 @@ export default {
           return;
         }
 
+        if (newValue.uuid !== this.roomId && !this.discussionId) {
+          this.$router.replace({ name: 'room', params: { roomId: newValue.uuid } });
+        }
+
         if (newValue.uuid !== oldValue?.uuid) {
           this.isRoomSkeletonActive = true;
           this.updateTextBoxMessage('');
@@ -368,10 +372,6 @@ export default {
             this.readMessages();
           }
           this.isRoomSkeletonActive = false;
-        }
-
-        if (newValue.uuid !== this.roomId && !this.discussionId) {
-          this.$router.replace({ name: 'room', params: { roomId: newValue.uuid } });
         }
       }
     },
