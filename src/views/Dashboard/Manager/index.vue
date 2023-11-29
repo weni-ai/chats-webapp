@@ -15,16 +15,8 @@
     </template>
 
     <history-metrics-by-sector
-      v-if="filters?.sector"
       :filter="filters"
       @historyFilter="event = $event"
-      :headerTitle="filters?.sector ? 'Filas' : 'Setores'"
-      :totalChatsLabel="showData ? 'Quantidade de chats' : 'Agentes online'"
-      :generalCardLabel="showData ? 'Quantidade de chats' : 'Em andamento'"
-      :agentsLabel="showData ? 'Chats no período' : 'Em andamento'"
-    />
-    <general-live-metrics
-      v-else
       :headerTitle="filters?.sector ? 'Filas' : 'Setores'"
       :totalChatsLabel="showData ? 'Quantidade de chats' : 'Agentes online'"
       :generalCardLabel="showData ? 'Quantidade de chats' : 'Em andamento'"
@@ -37,7 +29,6 @@
 import DashboardLayout from '@/layouts/DashboardLayout';
 
 import DashboardFilters from '@/components/dashboard/Filters';
-import GeneralLiveMetrics from '@/components/dashboard/metrics/General/LiveMetrics';
 import HistoryMetricsBySector from '@/components/dashboard/metrics/BySector/HistoryMetrics';
 import ProjectApi from '@/services/api/resources/settings/project';
 
@@ -47,7 +38,6 @@ export default {
   components: {
     DashboardFilters,
     DashboardLayout,
-    GeneralLiveMetrics,
     HistoryMetricsBySector,
   },
 
