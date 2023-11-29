@@ -11,6 +11,7 @@
         autocompleteClearOnFocus
         @input="getFlowInfos(flowUuid?.[0].value)"
       />
+      <trigger-flows-template-loading v-if="isLoadingFlowsInfos" />
     </div>
     <div v-if="showProgressBar">
       <modal-progress-template-submission @close="closeModaProgress" />
@@ -37,9 +38,12 @@
 </template>
 
 <script>
-import { unnnicCallAlert } from '@weni/unnnic-system';
-import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import { mapState } from 'vuex';
+import { unnnicCallAlert } from '@weni/unnnic-system';
+
+import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
+import TriggerFlowsTemplateLoading from '@/views/loadings/FlowsTrigger/TriggerFlowsTemplateLoading';
+
 import ModalProgressTemplateSubmission from './ModalProgressTemplateSubmission';
 
 export default {
@@ -47,6 +51,7 @@ export default {
 
   components: {
     ModalProgressTemplateSubmission,
+    TriggerFlowsTemplateLoading,
   },
 
   data() {
@@ -62,6 +67,7 @@ export default {
       loadingFlows: false,
       status: '',
       progressText: '',
+      isLoadingFlowsInfos: false,
     };
   },
 
@@ -117,7 +123,8 @@ export default {
     },
 
     async getFlowInfos(uuid) {
-      console.log('');
+      this.isLoadingFlowsInfos = true;
+
       try {
         await FlowsTrigger.getFlowTrigger(uuid);
         this.selectedFlow = uuid;
@@ -130,6 +137,8 @@ export default {
       } catch (error) {
         console.log('An error occurred when trying get flow template variables:', error);
       }
+
+      this.isLoadingFlowsInfos = false;
     },
 
     async sendFlow() {
