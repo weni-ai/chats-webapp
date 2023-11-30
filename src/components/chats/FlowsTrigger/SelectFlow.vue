@@ -25,7 +25,7 @@
         style="width: 100%"
       />
       <unnnic-button
-        :disabled="selectedFlow === ''"
+        :disabled="!selectedFlow || isLoadingFlowsInfos"
         :text="$t('send')"
         size="small"
         type="primary"
