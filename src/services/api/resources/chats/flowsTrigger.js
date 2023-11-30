@@ -46,19 +46,23 @@ export default {
     return Promise.all(flows);
   },
 
-  async getFlowTrigger(uuidFlow) {
+  async getFlowTrigger(flowUuid) {
+    if (!flowUuid) return null;
+
     const response = await http.get(`/project/${getProject()}/retrieve_flow_definitions/`, {
       params: {
-        flow_uuid: uuidFlow,
+        flow_uuid: flowUuid,
       },
     });
     return response.data;
   },
 
-  async getFlowTemplateVariables(uuidFlow) {
+  async getFlowTemplateVariables(flowUuid) {
+    if (!flowUuid) return null;
+
     const response = await http.get(`/project/${getProject()}/retrieve_flow_template_variables/`, {
       params: {
-        flow_uuid: uuidFlow,
+        flow_uuid: flowUuid,
       },
     });
     return response.data;

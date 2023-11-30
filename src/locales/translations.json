@@ -527,6 +527,11 @@
     "en-us": "Close view",
     "es": "Cerrar la vista"
   },
+  "variable": {
+    "pt-br": "Variável",
+    "en-us": "Variable",
+    "es": "Variable"
+  },
   "flow": {
     "pt-br": "Fluxo",
     "en-us": "Flow",
@@ -1256,6 +1261,11 @@
         "es": "Tiempo de activación"
       }
     },
+    "preview_template_unavailable": {
+      "pt-br": "Pré-visualização indisponível",
+      "en-us": "Preview unavailable",
+      "es": "Vista previa no disponible"
+    },
     "groups": {
       "pt-br": "Grupos ({length})",
       "en-us": "Groups ({length})",
@@ -1302,6 +1312,11 @@
       "pt-br": "Fluxo enviado com sucesso",
       "en-us": "Flow sent successfully",
       "es": "Flujo enviado exitosamente"
+    },
+    "error_sent": {
+      "pt-br": "Erro ao enviar o fluxo",
+      "en-us": "Error sending flow",
+      "es": "Error al enviar la flujo"
     },
     "successfully_add_contact": {
       "pt-br": "Contato adicionado com sucesso",
