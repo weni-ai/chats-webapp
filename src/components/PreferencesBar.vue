@@ -15,15 +15,19 @@
     >
       <div class="label">
         <div class="icon">
-          <unnnic-icon size="md" icon="preferences" scheme="neutral-cloudy" />
+          <unnnic-icon size="md" icon="tune" scheme="neutral-cloudy" />
         </div>
 
         <div class="text">
           {{ $t('preferences.title') }}
         </div>
 
-        <div class="status-icon" :class="{ open }">
-          <unnnic-icon size="sm" icon="arrow-right-1-1" scheme="neutral-darkest" />
+        <div class="status-icon">
+          <unnnic-icon
+            size="md"
+            :icon="open ? 'expand_less' : 'expand_more'"
+            scheme="neutral-darkest"
+          />
         </div>
       </div>
     </div>
@@ -188,16 +192,8 @@ export default {
     }
 
     .status-icon {
-      padding: $unnnic-spacing-inset-nano / 2;
-
-      rotate: 90deg;
-
       * {
         display: block;
-      }
-
-      &.open {
-        rotate: -90deg;
       }
     }
   }
