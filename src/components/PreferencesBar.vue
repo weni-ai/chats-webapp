@@ -122,7 +122,7 @@ export default {
       localStorage.setItem('statusAgent', connection_status);
 
       this.loadingStatus = false;
-      this.showStatusAlert(connection_status);
+      this.showStatusAlert(connection_status.toLowerCase());
     },
 
     async getStatus() {
@@ -139,7 +139,7 @@ export default {
         props: {
           text: `${this.$t('status_agent')} ${connectionStatus}`,
           icon: 'indicator',
-          scheme: connectionStatus === 'ONLINE' ? 'feedback-green' : '$unnnic-color-neutral-black',
+          scheme: connectionStatus === 'online' ? 'feedback-green' : '$unnnic-color-neutral-black',
           closeText: 'Fechar',
           position: 'bottom-right',
         },
