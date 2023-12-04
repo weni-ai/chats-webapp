@@ -169,7 +169,7 @@ export default {
 
     height: 100%;
 
-    padding-bottom: $unnnic-spacing-sm;
+    padding-bottom: $unnnic-spacing-xs;
 
     .chat-messages__container {
       padding-left: $unnnic-spacing-sm;
