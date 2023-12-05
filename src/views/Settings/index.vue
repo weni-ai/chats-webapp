@@ -10,7 +10,7 @@
 
     <section class="sectors">
       <div @click="navigate('sectors.new')" @keypress.enter="navigate('sectors.new')">
-        <unnnic-card type="blank" text="Novo setor" icon="add-1" class="new-sector-card" />
+        <unnnic-card type="blank" text="Novo setor" icon="add" class="new-sector-card" />
       </div>
 
       <unnnic-card-project
@@ -23,13 +23,13 @@
         :statuses="[
           {
             title: 'Agentes',
-            icon: 'headphones-customer-support-human-1-1',
+            icon: 'headphones',
             scheme: 'aux-purple',
             count: sector.agents,
           },
           {
             title: 'Contatos',
-            icon: 'single-neutral-actions-1',
+            icon: 'person',
             scheme: 'aux-lemon',
             count: sector.contacts,
           },
