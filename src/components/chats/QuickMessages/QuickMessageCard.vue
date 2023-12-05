@@ -21,25 +21,21 @@
           <template #trigger>
             <unnnic-tool-tip enabled :text="$t('quick_messages.delete_or_edit')" side="left">
               <div class="quick-message-actions">
-                <unnnic-icon-svg
-                  icon="navigation-menu-vertical-1"
-                  size="sm"
-                  scheme="neutral-darkest"
-                />
+                <unnnic-icon-svg icon="more_vert" size="sm" scheme="neutral-darkest" />
               </div>
             </unnnic-tool-tip>
           </template>
 
           <unnnic-dropdown-item @click="$emit('edit')">
             <div class="dropdown-item-content">
-              <unnnic-icon-svg class="icon" icon="app-window-edit-1" size="sm" />
+              <unnnic-icon-svg class="icon" icon="edit_square" size="sm" />
               <span> {{ $t('edit') }} </span>
             </div>
           </unnnic-dropdown-item>
 
           <unnnic-dropdown-item @click="$emit('delete')">
             <div class="dropdown-item-content">
-              <unnnic-icon-svg class="icon" icon="delete-1-1" size="sm" />
+              <unnnic-icon-svg class="icon" icon="delete" size="sm" />
               <span> {{ $t('delete') }} </span>
             </div>
           </unnnic-dropdown-item>

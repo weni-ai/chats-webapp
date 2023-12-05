@@ -61,7 +61,7 @@
           position="top-left"
           class="more-actions"
         >
-          <unnnic-button slot="trigger" type="primary" size="large" iconCenter="add-1" />
+          <unnnic-button slot="trigger" type="primary" size="large" iconCenter="add" />
 
           <div class="more-actions-container">
             <more-actions-option
@@ -77,7 +77,7 @@
             />
             <more-actions-option
               :action="() => $emit('show-quick-messages')"
-              icon="flash-1-4"
+              icon="bolt"
               :title="$t('quick_message')"
             />
           </div>
@@ -88,7 +88,7 @@
           @click="send"
           type="primary"
           size="large"
-          iconCenter="send-email-3-1"
+          iconCenter="send"
         />
       </div>
       <suggestion-box

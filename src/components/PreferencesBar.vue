@@ -57,7 +57,7 @@
       <unnnic-button
         @mousedown.prevent
         :text="$t('quick_messages.title')"
-        icon-left="flash-1-3"
+        icon-left="bolt"
         type="secondary"
         size="small"
         @click="openQuickMessage"
@@ -66,7 +66,7 @@
         @mousedown.prevent
         v-if="this.dashboard"
         text="Dashboard"
-        icon-left="gauge-dashboard-2"
+        icon-left="bar_chart_4_bars"
         type="secondary"
         size="small"
         @click="navigate('dashboard.manager')"
