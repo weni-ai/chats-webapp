@@ -60,34 +60,7 @@
         v-show="!isMessageManagerDiscussionVisible"
         @join="whenJoinDiscussion"
       />
-
-      <!-- <section v-if="isRoomClassifierVisible" class="chat-classifier">
-        <chat-classifier
-          v-model="tags"
-          :tags="sectorTags"
-          label="Por favor, classifique o atendimento:"
-        >
-          <template #actions>
-            <unnnic-button :text="$t('confirm')" type="secondary" size="small" @click="closeRoom" />
-          </template>
-        </chat-classifier>
-      </section> -->
     </section>
-
-    <!-- <unnnic-modal
-      v-if="room"
-      :showModal="isCloseChatModalOpen"
-      @close="isCloseChatModalOpen = false"
-      :text="$t('chats.end')"
-      :description="$t('chats.end_confirmation', { name: room.contact.name })"
-      modal-icon="alert-circle-1"
-      scheme="feedback-yellow"
-    >
-      <template #options>
-        <unnnic-button :text="$t('cancel')" type="tertiary" @click="isCloseChatModalOpen = false" />
-        <unnnic-button :text="$t('confirm')" type="secondary" @click="classifyRoom" />
-      </template>
-    </unnnic-modal> -->
 
     <modal-get-chat
       v-if="room"
@@ -137,7 +110,6 @@ import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow';
 import ContactInfo from '@/components/chats/ContactInfo';
 import FileUploader from '@/components/chats/MessageManager/FileUploader';
 // import ChatClassifier from '@/components/chats/ChatClassifier';
-import ModalCloseChat from '@/views/chats/ModalCloseChat.vue';
 
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
@@ -145,8 +117,10 @@ import ModalGetChat from '@/components/chats/chat/ModalGetChat';
 import MessageManager from '@/components/chats/MessageManager';
 import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion';
 
+import ModalCloseChat from './ModalCloseChat.vue';
+
 export default {
-  name: 'ChatsHome',
+  name: 'ViewHome',
 
   components: {
     ChatsLayout,
