@@ -76,14 +76,14 @@
                 side="bottom"
                 maxWidth="21rem"
               >
-                <unnnic-icon-svg icon="info" scheme="neutral-soft" size="sm" />
+                <unnnic-icon-svg icon="info" scheme="neutral-cloudy" size="sm" />
               </unnnic-tool-tip>
             </div>
             <unnnic-button
               v-if="!isHistory && !isViewMode"
               class="transfer__button"
               :text="$t('contact_info.see_contact_history')"
-              iconLeft="open_in_new"
+              iconLeft="history"
               type="secondary"
               size="small"
               @click="openHistory()"

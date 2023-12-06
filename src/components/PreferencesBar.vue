@@ -178,6 +178,7 @@ export default {
 
     .icon {
       * {
+        font-size: 20px;
         display: block;
       }
     }
