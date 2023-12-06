@@ -38,14 +38,15 @@
           @click="openCopilot"
           type="secondary"
           size="large"
-          iconCenter="study-light-idea-1"
+          iconCenter="wb_incandescent"
+          class="message-manager__actions__co-pilot"
         />
         <unnnic-button
           v-if="(!canUseCopilot || discussionId) && showActionButton"
           @click="record"
           type="secondary"
           size="large"
-          iconCenter="microphone"
+          iconCenter="mic"
         />
 
         <unnnic-button
@@ -54,6 +55,7 @@
           type="secondary"
           size="large"
           iconCenter="attachment"
+          next
         />
 
         <unnnic-dropdown
@@ -67,7 +69,7 @@
             <more-actions-option
               v-if="canUseCopilot"
               :action="record"
-              icon="microphone"
+              icon="mic"
               :title="$t('record_audio')"
             />
             <more-actions-option
@@ -404,6 +406,10 @@ export default {
 
     display: flex;
     gap: $unnnic-spacing-stack-xs;
+
+    &__co-pilot {
+      rotate: 180deg;
+    }
 
     .more-actions {
       :deep(.unnnic-dropdown__content) {

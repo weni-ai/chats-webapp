@@ -2,7 +2,12 @@
   <div class="text-box">
     <div class="text-editor" @click="$refs.textareaRef.focus()" @keypress.enter="() => {}">
       <div @click.stop="handleEmojiPicker" @keypress.enter="handleEmojiPicker">
-        <unnnic-icon icon="emoji" :class="['emoji-button', 'clickable']" size="ant" />
+        <unnnic-icon
+          icon="add_reaction"
+          scheme="neutral-clean"
+          :class="['emoji-button', 'clickable']"
+          size="ant"
+        />
       </div>
 
       <emoji-picker
@@ -197,10 +202,6 @@ export default {
 
     :deep(.emoji-button) {
       margin-bottom: $padding-vertical;
-
-      svg > path {
-        fill: $unnnic-color-neutral-clean;
-      }
     }
   }
 }
