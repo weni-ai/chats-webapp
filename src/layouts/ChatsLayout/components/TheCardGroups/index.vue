@@ -75,7 +75,7 @@
         @open="openRoom"
       />
       <p v-if="showNoResultsError" class="no-results">
-        {{ $t('without_results') }}
+        {{ isSearching ? $t('without_results') : $t('without_chats') }}
       </p>
     </section>
   </div>
@@ -116,6 +116,7 @@ export default {
     isLoadingRooms: true,
     createdOnFilter: false,
     lastCreatedFilter: true,
+    isSearching: false,
   }),
 
   async mounted() {
@@ -165,10 +166,16 @@ export default {
       },
     },
     nameOfContact: {
-      handler() {
+      handler(newNameOfContact) {
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
           this.listRoom(false);
+
+          if (newNameOfContact) {
+            this.isSearching = true;
+          } else {
+            this.isSearching = false;
+          }
         }, 800);
       },
     },
