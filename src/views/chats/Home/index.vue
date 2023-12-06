@@ -109,10 +109,8 @@ import DiscussionSidebar from '@/components/chats/DiscussionSidebar';
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow';
 import ContactInfo from '@/components/chats/ContactInfo';
 import FileUploader from '@/components/chats/MessageManager/FileUploader';
-// import ChatClassifier from '@/components/chats/ChatClassifier';
 
 import Room from '@/services/api/resources/chats/room';
-import Queue from '@/services/api/resources/settings/queue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat';
 import MessageManager from '@/components/chats/MessageManager';
 import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion';
@@ -134,7 +132,6 @@ export default {
     DiscussionSidebar,
     MessageManager,
     ButtonJoinDiscussion,
-    // ChatClassifier,
     ModalCloseChat,
     FileUploader,
     ModalGetChat,
@@ -154,11 +151,7 @@ export default {
   data: () => ({
     isRoomContactInfoOpen: false,
     textBoxMessage: '',
-    isCloseChatModalOpen: false,
-    tags: [],
-    sectorTags: [],
     isGetChatConfirmationModalOpen: false,
-    isRoomClassifierVisible: false,
     totalValue: undefined,
     showCloseModal: false,
     files: [],
@@ -173,8 +166,6 @@ export default {
       rooms: (state) => state.chats.rooms.rooms,
       discussion: (state) => state.chats.discussions.activeDiscussion,
       discussions: (state) => state.chats.discussions.discussions,
-      roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,
-      listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
       showModalAssumedChat: ({ dashboard }) => dashboard.showModalAssumedChat,
       assumedChatContactName: ({ dashboard }) => dashboard.assumedChatContactName,
     }),
@@ -186,8 +177,7 @@ export default {
         room.is_active &&
         room.is_24h_valid &&
         !room.is_waiting &&
-        !room.wating_answer &&
-        !this.isRoomClassifierVisible
+        !room.wating_answer
       );
     },
     isMessageManagerDiscussionVisible() {
@@ -214,12 +204,6 @@ export default {
   },
 
   methods: {
-    async classifyRoom() {
-      this.isRoomClassifierVisible = true;
-      this.isCloseChatModalOpen = false;
-      const response = await Queue.tags(this.room.queue.uuid);
-      this.sectorTags = response.results;
-    },
     openRoomContactInfo() {
       this.isRoomContactInfoOpen = true;
     },
@@ -231,14 +215,6 @@ export default {
         await Room.updateReadMessages(this.room.uuid, true);
       }
     },
-    // async closeRoom() {
-    //   // if (this.tags.length === 0) return;
-    //   const { uuid } = this.room;
-
-    //   const tags = this.tags.map((tag) => tag.uuid);
-    //   await Room.close(uuid, tags);
-    //   this.$store.dispatch('chats/rooms/removeRoom', uuid);
-    // },
     async setActiveRoom(uuid) {
       const room = this.$store.getters['chats/rooms/getRoomById'](uuid);
       await this.$store.dispatch('chats/rooms/setActiveRoom', room);
@@ -279,11 +255,6 @@ export default {
       } finally {
         this.totalValue = undefined;
       }
-    },
-    getTodayDate() {
-      return new Intl.DateTimeFormat('pt-BR', {
-        dateStyle: 'short',
-      }).format(new Date());
     },
 
     handlerShowQuickMessages() {
@@ -361,7 +332,6 @@ export default {
             });
           }
         }
-        this.isRoomClassifierVisible = false;
       },
     },
     async rooms(rooms) {
