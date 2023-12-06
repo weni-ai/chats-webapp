@@ -79,24 +79,24 @@
                 <unnnic-icon-svg icon="info" scheme="neutral-cloudy" size="sm" />
               </unnnic-tool-tip>
             </div>
-            <unnnic-button
-              v-if="!isHistory && !isViewMode"
-              class="transfer__button"
-              :text="$t('contact_info.see_contact_history')"
-              iconLeft="history"
-              type="secondary"
-              size="small"
-              @click="openHistory()"
-            />
-            <unnnic-button
-              v-if="!isViewMode"
-              class="open-discussion"
-              :text="$t('discussions.start_discussion.title')"
-              iconLeft="forum"
-              type="primary"
-              size="large"
-              @click="handleModalStartDiscussion()"
-            />
+            <nav class="infos__nav">
+              <unnnic-button
+                v-if="!isHistory && !isViewMode"
+                :text="$t('contact_info.see_contact_history')"
+                iconLeft="history"
+                type="secondary"
+                size="small"
+                @click="openHistory()"
+              />
+              <unnnic-button
+                v-if="!isViewMode"
+                :text="$t('discussions.start_discussion.title')"
+                iconLeft="forum"
+                type="primary"
+                size="small"
+                @click="handleModalStartDiscussion()"
+              />
+            </nav>
             <div v-if="isLinkedToOtherAgent">
               <span>{{
                 $t('contact_info.linked_contact', {
@@ -700,6 +700,11 @@ export default {
       :deep(.unnnic-tooltip) {
         display: flex;
       }
+    }
+
+    &__nav {
+      display: grid;
+      gap: $unnnic-spacing-xs;
     }
   }
 
