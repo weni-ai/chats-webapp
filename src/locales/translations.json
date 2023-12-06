@@ -877,9 +877,9 @@
       "es": "Contacto vinculado a agente {name}"
     },
     "see_contact_history": {
-      "pt-br": "Ver histórico do contato",
-      "en-us": "View contact history",
-      "es": "Ver historial de contactos"
+      "pt-br": "Ver histórico",
+      "en-us": "View history",
+      "es": "Ver historial"
     },
     "transfer_contact": {
       "pt-br": "Transferir contato",
