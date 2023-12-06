@@ -2,7 +2,7 @@
   <aside-slot-template
     v-if="!isEditing && !isCreating"
     :title="$t('quick_message')"
-    icon="flash-1-3"
+    icon="bolt"
     :close="() => $emit('close')"
   >
     <aside-slot-template-section class="messages-section__container">
@@ -38,7 +38,7 @@
       </div>
 
       <unnnic-button
-        icon-left="add-1"
+        icon-left="add"
         :text="$t('quick_messages.new')"
         type="secondary"
         size="small"
@@ -65,7 +65,7 @@
   <aside-slot-template
     v-else
     :title="$t('quick_message')"
-    icon="flash-1-3"
+    icon="bolt"
     :back="() => (quickMessageToEdit = null)"
     @close="$emit('close')"
   >

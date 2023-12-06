@@ -1,7 +1,7 @@
 <template>
   <header class="view-mode__header" v-if="viewedAgent">
     <h1 class="title">
-      <unnnic-icon icon="view-1-1" size="md" />
+      <unnnic-icon icon="visibility" size="md" />
       {{ $t('dashboard.view-mode.title', { viewedAgent }) }}
     </h1>
     <div class="close-button" @click="closeViewMode" @keypress.enter="closeViewMode">

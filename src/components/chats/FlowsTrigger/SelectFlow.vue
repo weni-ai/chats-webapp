@@ -28,7 +28,7 @@
         :text="$t('send')"
         size="small"
         type="primary"
-        iconLeft="send-email-3-1"
+        iconLeft="send"
         style="width: 100%"
         @click="sendFlow"
       />

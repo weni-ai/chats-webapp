@@ -13,7 +13,7 @@
     </div>
 
     <div class="selected-member__remove-button" @click="remove" @keypress.enter="remove">
-      <unnnic-icon icon="delete-1-1" scheme="neutral-darkest" size="sm" clickable />
+      <unnnic-icon icon="cancel" scheme="neutral-darkest" size="sm" clickable />
     </div>
   </div>
 </template>
@@ -91,6 +91,10 @@ export default {
     line-height: 1.375rem;
     font-size: $unnnic-font-size-body-md;
     color: $unnnic-color-neutral-cloudy;
+  }
+
+  &__remove-button {
+    display: flex;
   }
 }
 </style>
