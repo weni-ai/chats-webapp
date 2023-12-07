@@ -12,30 +12,9 @@ import env from '@/utils/env';
 import { sendWindowNotification } from '@/utils/notifications';
 import { WS } from '@/services/api/socket';
 import Profile from '@/services/api/resources/profile';
-import { PREFERENCES_SOUND } from './components/PreferencesBar.vue';
+import { SoundNotification } from '@/services/websocket/soundNotification.js';
 
 const moment = require('moment');
-
-class Notification {
-  /**
-   * @type {HTMLAudioElement}
-   */
-  #notification;
-
-  constructor(soundName, type = 'wav') {
-    this.#notification = new Audio(`/notifications/${soundName}.${type}`);
-  }
-
-  notify() {
-    // if the user hadn't interacted with the page yet (click, scroll...),
-    // the browser blocks the audio playing because is considered autoplay media
-    if ((localStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'no') {
-      return;
-    }
-
-    this.#notification.play().catch(() => {});
-  }
-}
 
 export default {
   name: 'App',
@@ -206,7 +185,7 @@ export default {
             return;
           }
 
-          const notification = new Notification('ping-bing');
+          const notification = new SoundNotification('ping-bing');
           notification.notify();
 
           if (document.hidden) {
@@ -251,7 +230,7 @@ export default {
             return;
           }
 
-          const notification = new Notification('ping-bing');
+          const notification = new SoundNotification('ping-bing');
           notification.notify();
 
           if (document.hidden) {
@@ -294,7 +273,7 @@ export default {
         if (!!room.user && room.user.email !== this.me.email) return;
 
         this.$store.dispatch('chats/rooms/addRoom', room);
-        const notification = new Notification('select-sound');
+        const notification = new SoundNotification('select-sound');
         notification.notify();
       });
 
@@ -308,7 +287,7 @@ export default {
         if (existentDiscussion) return;
 
         this.$store.dispatch('chats/discussions/addDiscussion', discussion);
-        const notification = new Notification('achievement-confirmation');
+        const notification = new SoundNotification('achievement-confirmation');
         notification.notify();
       });
 
@@ -325,7 +304,7 @@ export default {
         ) {
           this.$store.dispatch('chats/rooms/addRoom', room);
 
-          const notification = new Notification('select-sound');
+          const notification = new SoundNotification('select-sound');
           notification.notify();
         }
 
@@ -353,7 +332,7 @@ export default {
         if (isNewDiscussion && discussion.created_by !== this.me.email) {
           this.$store.dispatch('chats/discussions/addDiscussion', discussion);
 
-          const notification = new Notification('achievement-confirmation');
+          const notification = new SoundNotification('achievement-confirmation');
           notification.notify();
         }
 
