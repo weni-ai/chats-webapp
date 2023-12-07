@@ -34,7 +34,7 @@
         class="get-chat-button"
         :text="$t('chats.get_chat')"
         type="primary"
-        @click="isGetChatConfirmationModalOpen = true"
+        @click="openModal('getChat')"
       />
 
       <button-join-discussion
