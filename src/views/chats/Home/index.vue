@@ -109,13 +109,15 @@ export default {
     },
   },
 
-  data: () => ({
-    isRoomContactInfoOpen: false,
-    textBoxMessage: '',
-    uploadFilesProgress: undefined,
-    isChatSkeletonActive: false,
-    tempJoinedDiscussions: [],
-  }),
+  data() {
+    return {
+      isRoomContactInfoOpen: false,
+      textBoxMessage: '',
+      uploadFilesProgress: undefined,
+      isChatSkeletonActive: false,
+      tempJoinedDiscussions: [],
+    };
+  },
 
   computed: {
     ...mapState({
@@ -163,43 +165,18 @@ export default {
     openModal(modalName) {
       this.$refs.homeModals.openModal(modalName);
     },
-
     openModalFileUploader(files) {
       this.$refs.homeModals.openModal('fileUploader', files);
     },
-
-    setUploadFilesProgress(progress) {
-      this.uploadFilesProgress = progress;
-    },
-
     openRoomContactInfo() {
       this.isRoomContactInfoOpen = true;
     },
     closeRoomContactInfo() {
       this.isRoomContactInfoOpen = false;
     },
-    async readMessages() {
-      if (this.room && this.room.uuid && this.room.user && this.room.user.email === this.me.email) {
-        await Room.updateReadMessages(this.room.uuid, true);
-      }
-    },
-    async setActiveRoom(uuid) {
-      const room = this.$store.getters['chats/rooms/getRoomById'](uuid);
-      await this.$store.dispatch('chats/rooms/setActiveRoom', room);
-    },
-    async setActiveDiscussion(uuid) {
-      const discussion = this.$store.getters['chats/discussions/getDiscussionById'](uuid);
-      await this.$store.dispatch('chats/discussions/setActiveDiscussion', discussion);
-    },
-
-    whenJoinDiscussion() {
-      this.tempJoinedDiscussions.push(this.discussion.uuid);
-    },
-
     handlerShowQuickMessages() {
       this.$refs['chats-layout']?.handlerShowQuickMessages();
     },
-
     openFlowsTrigger() {
       this.$refs['chats-layout']?.openFlowsTrigger({ contact: this.room?.contact });
     },
@@ -207,104 +184,145 @@ export default {
     updateTextBoxMessage(message) {
       this.textBoxMessage = message;
     },
+    setUploadFilesProgress(progress) {
+      this.uploadFilesProgress = progress;
+    },
+
+    async setActiveRoom(uuid) {
+      if (this.roomId !== this.room?.uuid) {
+        const room = this.$store.getters['chats/rooms/getRoomById'](uuid);
+        if (room) {
+          await this.$store.dispatch('chats/rooms/setActiveRoom', room);
+        }
+      }
+    },
+    async readMessages() {
+      const { room } = this;
+      if (room && room.uuid && room.user && room.user.email === this.me.email) {
+        await Room.updateReadMessages(room.uuid, true);
+      }
+    },
+
+    async setActiveDiscussion(uuid) {
+      if (this.discussionId && this.discussionId !== this.discussion?.uuid) {
+        const discussion = this.$store.getters['chats/discussions/getDiscussionById'](uuid);
+        if (discussion) {
+          await this.$store.dispatch('chats/discussions/setActiveDiscussion', discussion);
+        }
+      }
+    },
+    whenJoinDiscussion() {
+      this.tempJoinedDiscussions.push(this.discussion.uuid);
+    },
+
+    isValidChat(activeChat) {
+      return activeChat?.uuid;
+    },
+
+    async redirectIfNoChat(activeChat) {
+      if (this.$route.name !== 'home' && !activeChat) {
+        this.$router.replace({ name: 'home' });
+        return true;
+      }
+      return false;
+    },
+    async shouldRedirect(activeChat) {
+      if ((await this.redirectIfNoChat(activeChat)) || !this.isValidChat(activeChat)) {
+        return true;
+      }
+
+      return false;
+    },
+    async redirectToActiveChat({ routeName, paramName, activeChatUuid }) {
+      if (activeChatUuid !== this[paramName]) {
+        this.$router.replace({ name: routeName, params: { [paramName]: activeChatUuid } });
+      }
+    },
+
+    async resetActiveChatUnreadMessages({
+      chatPathUuid = '',
+      activeChatUuid = '',
+      unreadMessages = null,
+      resetUnreadMessages = () => {},
+    }) {
+      if (chatPathUuid && chatPathUuid === activeChatUuid) {
+        const hasUnreadMessages = unreadMessages?.[chatPathUuid];
+
+        if (hasUnreadMessages) {
+          resetUnreadMessages();
+        }
+      }
+    },
   },
 
   watch: {
-    async room(newValue, oldValue) {
-      if (this.rooms.length > 0) {
-        if (this.$route.name !== 'home' && !newValue) {
-          this.$router.replace({ name: 'home' });
-          return;
+    async room(newRoom, oldRoom) {
+      const { room, roomId, rooms } = this;
+      if (rooms.length > 0) {
+        if (await this.shouldRedirect(newRoom)) return;
+
+        if (!this.discussionId) {
+          this.redirectToActiveChat({
+            routeName: 'room',
+            paramName: 'roomId',
+            activeChatUuid: newRoom.uuid,
+          });
         }
 
-        if (!newValue?.uuid) {
-          return;
-        }
-
-        if (newValue.uuid !== this.roomId && !this.discussionId) {
-          this.$router.replace({ name: 'room', params: { roomId: newValue.uuid } });
-        }
-
-        if (newValue.uuid !== oldValue?.uuid) {
+        if (newRoom.uuid !== oldRoom?.uuid) {
           this.isChatSkeletonActive = true;
+
           this.updateTextBoxMessage('');
-          this.page = 0;
           this.closeRoomContactInfo();
 
           if (!this.discussionId) {
             await this.$store.dispatch('chats/rooms/getCanUseCopilot');
             this.readMessages();
           }
-          this.isChatSkeletonActive = false;
-        }
-      }
-    },
-    roomId: {
-      immediate: true,
-      async handler(roomId) {
-        if (roomId && roomId === this.room?.uuid) {
-          const hasNewMessages = this.$store.state.chats.rooms.newMessagesByRoom[roomId];
 
-          if (hasNewMessages) {
-            this.$store.dispatch('chats/rooms/resetNewMessagesByRoom', {
-              room: roomId,
-            });
-          }
-        }
-      },
-    },
-    async rooms(rooms) {
-      if (rooms.length > 0 && this.roomId && this.roomId !== this.room?.uuid) {
-        await this.setActiveRoom(this.roomId);
-        if (this.$route.name !== 'home' && !this.room) {
-          this.$router.replace({ name: 'home' });
           this.isChatSkeletonActive = false;
         }
+
+        this.resetActiveChatUnreadMessages({
+          chatPathUuid: roomId,
+          activeChatUuid: room?.uuid,
+          unreadMessages: rooms?.newMessagesByRoom,
+          resetUnreadMessages: this.$store.dispatch('chats/rooms/resetNewMessagesByRoom', {
+            room: roomId,
+          }),
+        });
       }
     },
-    async discussion(newValue) {
+    async rooms() {
+      await this.setActiveRoom(this.roomId);
+    },
+    async discussion(newDiscussion) {
+      const { discussion, discussionId, discussions } = this;
+
       if (this.discussions.length > 0) {
-        if (this.$route.name !== 'home' && !newValue) {
-          this.$router.replace({ name: 'home' });
-          return;
-        }
+        if (await this.shouldRedirect(newDiscussion)) return;
 
-        if (!newValue?.uuid) {
-          return;
-        }
+        this.redirectToActiveChat({
+          routeName: 'discussion',
+          paramName: 'discussionId',
+          activeChatUuid: newDiscussion.uuid,
+        });
 
-        if (newValue.uuid !== this.discussionId) {
-          this.$router.replace({ name: 'discussion', params: { discussionId: newValue.uuid } });
-        }
-      }
-    },
-    discussionId: {
-      immediate: true,
-      async handler(discussionId) {
-        if (discussionId && discussionId === this.discussion?.uuid) {
-          const hasNewMessages =
-            this.$store.state.chats.discussions.newMessagesByDiscussion[discussionId];
-
-          if (hasNewMessages) {
-            this.$store.dispatch('chats/discussions/resetNewMessagesByDiscussion', {
+        this.resetActiveChatUnreadMessages({
+          chatPathUuid: discussionId,
+          activeChatUuid: discussion?.uuid,
+          unreadMessages: discussions?.newMessagesByDiscussion,
+          resetUnreadMessages: this.$store.dispatch(
+            'chats/discussions/resetNewMessagesByDiscussion',
+            {
               discussion: discussionId,
-            });
-          }
-        }
-      },
-    },
-    async discussions(discussions) {
-      if (
-        discussions.length > 0 &&
-        this.discussionId &&
-        this.discussionId !== this.discussion?.uuid
-      ) {
-        await this.setActiveDiscussion(this.discussionId);
-        if (this.$route.name !== 'home' && !this.discussion && !this.room) {
-          this.$router.replace({ name: 'home' });
-          this.isChatSkeletonActive = false;
-        }
+            },
+          ),
+        });
       }
+    },
+    async discussions() {
+      await this.setActiveDiscussion(this.discussionId);
     },
   },
 
