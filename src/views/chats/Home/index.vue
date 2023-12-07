@@ -9,11 +9,11 @@
       <home-chat-headers
         :isLoading="isChatSkeletonActive"
         @openRoomContactInfo="openRoomContactInfo"
-        @openModalCloseChat="openModalCloseChat"
+        @openModalCloseChat="openModal('closeChat')"
         @openFlowsTrigger="openFlowsTrigger"
       />
       <chats-dropzone
-        @open-file-uploader="openFileUploader"
+        @open-file-uploader="openModalFileUploader"
         :show="(!!room && room.user && room.is_24h_valid) || !!discussion"
       >
         <room-messages v-if="!!room && !discussion" />
@@ -22,10 +22,10 @@
         <message-manager
           v-if="isMessageManagerRoomVisible || isMessageManagerDiscussionVisible"
           v-model="textBoxMessage"
-          :loadingFileValue="totalValue"
+          :loadingFileValue="uploadFilesProgress"
           :showSkeletonLoading="isChatSkeletonActive"
           @show-quick-messages="handlerShowQuickMessages"
-          @open-file-uploader="openFileUploader"
+          @open-file-uploader="openModalFileUploader"
         />
       </chats-dropzone>
 
@@ -44,26 +44,6 @@
       />
     </section>
 
-    <modal-get-chat
-      v-if="room"
-      :showModal="isGetChatConfirmationModalOpen"
-      @closeModal="isGetChatConfirmationModalOpen = false"
-      :title="$t('chats.get_chat_question')"
-      :description="`Confirme se deseja realizar o atendimento de ${room.contact.name}`"
-      :whenGetChat="whenGetChat"
-    />
-
-    <unnnic-modal
-      :text="$t('chats.your_chat_assumed', { contact: assumedChatContactName })"
-      :description="$t('chats.your_chat_assumed_description', { contact: assumedChatContactName })"
-      modalIcon="check-circle-1-1"
-      scheme="feedback-green"
-      :showModal="showModalAssumedChat"
-      @close="closeModalAssumedChat"
-    />
-
-    <file-uploader v-model="files" ref="fileUploader" @upload="sendFileMessage" />
-
     <template #aside>
       <contact-info
         v-if="room && isRoomContactInfoOpen && !discussion"
@@ -71,7 +51,12 @@
       />
       <discussion-sidebar v-if="discussion" />
     </template>
-    <modal-close-chat v-if="showCloseModal" @close="closeModalCloseChat" :room="room" />
+
+    <home-modals
+      ref="homeModals"
+      @got-chat="closeRoomContactInfo"
+      @file-uploader-progress="setUploadFilesProgress"
+    />
   </chats-layout>
 </template>
 
@@ -88,15 +73,13 @@ import RoomMessages from '@/components/chats/chat/RoomMessages';
 import DiscussionMessages from '@/components/chats/chat/DiscussionMessages';
 import DiscussionSidebar from '@/components/chats/DiscussionSidebar';
 import ContactInfo from '@/components/chats/ContactInfo';
-import FileUploader from '@/components/chats/MessageManager/FileUploader';
 
 import Room from '@/services/api/resources/chats/room';
-import ModalGetChat from '@/components/chats/chat/ModalGetChat';
 import MessageManager from '@/components/chats/MessageManager';
 import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion';
 
 import HomeChatHeaders from './HomeChatHeaders.vue';
-import ModalCloseChat from './ModalCloseChat.vue';
+import HomeModals from './HomeModals.vue';
 
 export default {
   name: 'ViewHome',
@@ -112,9 +95,7 @@ export default {
     MessageManager,
     ButtonJoinDiscussion,
     HomeChatHeaders,
-    ModalCloseChat,
-    FileUploader,
-    ModalGetChat,
+    HomeModals,
   },
 
   props: {
@@ -131,10 +112,7 @@ export default {
   data: () => ({
     isRoomContactInfoOpen: false,
     textBoxMessage: '',
-    isGetChatConfirmationModalOpen: false,
-    totalValue: undefined,
-    showCloseModal: false,
-    files: [],
+    uploadFilesProgress: undefined,
     isChatSkeletonActive: false,
     tempJoinedDiscussions: [],
   }),
@@ -146,8 +124,6 @@ export default {
       rooms: (state) => state.chats.rooms.rooms,
       discussion: (state) => state.chats.discussions.activeDiscussion,
       discussions: (state) => state.chats.discussions.discussions,
-      showModalAssumedChat: ({ dashboard }) => dashboard.showModalAssumedChat,
-      assumedChatContactName: ({ dashboard }) => dashboard.assumedChatContactName,
     }),
     isMessageManagerRoomVisible() {
       const { room } = this;
@@ -184,6 +160,18 @@ export default {
   },
 
   methods: {
+    openModal(modalName) {
+      this.$refs.homeModals.openModal(modalName);
+    },
+
+    openModalFileUploader(files) {
+      this.$refs.homeModals.openModal('fileUploader', files);
+    },
+
+    setUploadFilesProgress(progress) {
+      this.uploadFilesProgress = progress;
+    },
+
     openRoomContactInfo() {
       this.isRoomContactInfoOpen = true;
     },
@@ -208,61 +196,12 @@ export default {
       this.tempJoinedDiscussions.push(this.discussion.uuid);
     },
 
-    whenGetChat() {
-      this.closeRoomContactInfo();
-    },
-
-    async sendFileMessage() {
-      const { files } = this;
-      try {
-        const loadingFiles = {};
-        const updateLoadingFiles = (messageUuid, progress) => {
-          loadingFiles[messageUuid] = progress;
-          this.totalValue =
-            Object.values(loadingFiles).reduce((acc, value) => acc + value) /
-            Object.keys(loadingFiles).length;
-        };
-        const actionType = this.discussionId
-          ? 'chats/discussionMessages/sendDiscussionMedias'
-          : 'chats/roomMessages/sendRoomMedias';
-
-        await this.$store.dispatch(actionType, {
-          files,
-          updateLoadingFiles,
-        });
-      } catch (e) {
-        console.error('O upload de alguns arquivos pode não ter sido concluído');
-      } finally {
-        this.totalValue = undefined;
-      }
-    },
-
     handlerShowQuickMessages() {
       this.$refs['chats-layout']?.handlerShowQuickMessages();
     },
 
     openFlowsTrigger() {
       this.$refs['chats-layout']?.openFlowsTrigger({ contact: this.room?.contact });
-    },
-
-    openModalCloseChat() {
-      this.showCloseModal = true;
-    },
-
-    closeModalCloseChat() {
-      this.showCloseModal = false;
-    },
-
-    openFileUploader(files) {
-      this.$refs.fileUploader.open();
-
-      if (files?.length > 0) {
-        this.files = [...files];
-      }
-    },
-
-    closeModalAssumedChat() {
-      this.$store.dispatch('dashboard/setShowModalAssumedChat', false);
     },
 
     updateTextBoxMessage(message) {
@@ -388,12 +327,6 @@ export default {
   height: 100%;
   max-height: 100vh;
   padding-bottom: $unnnic-spacing-xs;
-
-  .chat-classifier {
-    margin-top: auto;
-    margin-left: -$unnnic-spacing-inline-md;
-    margin-bottom: -$unnnic-spacing-inline-sm;
-  }
 }
 
 .get-chat-button {

@@ -55,7 +55,7 @@ export default {
       this.showUploadModal = false;
     },
     upload() {
-      this.$emit('upload');
+      this.sendFileMessage();
 
       this.showUploadModal = false;
       this.files = [];
@@ -87,6 +87,34 @@ export default {
       });
 
       return isValid;
+    },
+
+    async sendFileMessage() {
+      const { value: files } = this;
+      try {
+        const loadingFiles = {};
+        const updateLoadingFiles = (messageUuid, progress) => {
+          loadingFiles[messageUuid] = progress;
+          this.$emit(
+            'progress',
+            Object.values(loadingFiles).reduce((acc, value) => acc + value) /
+              Object.keys(loadingFiles).length,
+          );
+        };
+        const actionType =
+          this.$route.name === 'discussion'
+            ? 'chats/discussionMessages/sendDiscussionMedias'
+            : 'chats/roomMessages/sendRoomMedias';
+
+        await this.$store.dispatch(actionType, {
+          files,
+          updateLoadingFiles,
+        });
+      } catch (e) {
+        console.error('Uploading some files may not have completed');
+      } finally {
+        this.$emit('progress', undefined);
+      }
     },
   },
 
