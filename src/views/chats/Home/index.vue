@@ -4,31 +4,13 @@
     :class="['home-chats-layout', { 'has-discussion': !!discussion }]"
     @select-quick-message="(quickMessage) => updateTextBoxMessage(quickMessage.text)"
   >
-    <chats-background v-if="!room && !discussion && !isRoomSkeletonActive" />
+    <chats-background v-if="!room && !discussion && !isChatSkeletonActive" />
     <section v-if="!!room || !!discussion" class="active-chat">
-      <chat-header-loading v-show="isRoomSkeletonActive" />
-      <unnnic-chats-header
-        v-show="!isRoomSkeletonActive"
-        v-if="!!room && !discussion"
-        :title="room.contact.name || ''"
-        :avatarClick="() => openRoomContactInfo()"
-        :titleClick="() => openRoomContactInfo()"
-        :avatarName="room?.contact?.name"
-        :close="openModalCloseChat"
-      />
-      <unnnic-chats-header
-        v-show="!isRoomSkeletonActive"
-        v-if="!!discussion"
-        class="discussion-header"
-        :title="discussion.subject"
-        :subtitle="`${$tc('discussions.title')} ${$t('about')} ${discussion.contact}`"
-        avatarIcon="forum"
-        size="small"
-      />
-
-      <chat-header-send-flow
-        v-if="!!room && !discussion && !room.is_24h_valid && !isRoomSkeletonActive"
-        @send-flow="openFlowsTrigger"
+      <home-chat-headers
+        :isLoading="isChatSkeletonActive"
+        @openRoomContactInfo="openRoomContactInfo"
+        @openModalCloseChat="openModalCloseChat"
+        @openFlowsTrigger="openFlowsTrigger"
       />
       <chats-dropzone
         @open-file-uploader="openFileUploader"
@@ -41,7 +23,7 @@
           v-if="isMessageManagerRoomVisible || isMessageManagerDiscussionVisible"
           v-model="textBoxMessage"
           :loadingFileValue="totalValue"
-          :showSkeletonLoading="isRoomSkeletonActive"
+          :showSkeletonLoading="isChatSkeletonActive"
           @show-quick-messages="handlerShowQuickMessages"
           @open-file-uploader="openFileUploader"
         />
@@ -102,11 +84,9 @@ import ChatsLayout from '@/layouts/ChatsLayout';
 import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
 import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone';
 
-import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader';
 import RoomMessages from '@/components/chats/chat/RoomMessages';
 import DiscussionMessages from '@/components/chats/chat/DiscussionMessages';
 import DiscussionSidebar from '@/components/chats/DiscussionSidebar';
-import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow';
 import ContactInfo from '@/components/chats/ContactInfo';
 import FileUploader from '@/components/chats/MessageManager/FileUploader';
 
@@ -115,6 +95,7 @@ import ModalGetChat from '@/components/chats/chat/ModalGetChat';
 import MessageManager from '@/components/chats/MessageManager';
 import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion';
 
+import HomeChatHeaders from './HomeChatHeaders.vue';
 import ModalCloseChat from './ModalCloseChat.vue';
 
 export default {
@@ -124,14 +105,13 @@ export default {
     ChatsLayout,
     ChatsBackground,
     ChatsDropzone,
-    ChatHeaderLoading,
-    ChatHeaderSendFlow,
     ContactInfo,
     DiscussionMessages,
     RoomMessages,
     DiscussionSidebar,
     MessageManager,
     ButtonJoinDiscussion,
+    HomeChatHeaders,
     ModalCloseChat,
     FileUploader,
     ModalGetChat,
@@ -155,7 +135,7 @@ export default {
     totalValue: undefined,
     showCloseModal: false,
     files: [],
-    isRoomSkeletonActive: false,
+    isChatSkeletonActive: false,
     tempJoinedDiscussions: [],
   }),
 
@@ -307,7 +287,7 @@ export default {
         }
 
         if (newValue.uuid !== oldValue?.uuid) {
-          this.isRoomSkeletonActive = true;
+          this.isChatSkeletonActive = true;
           this.updateTextBoxMessage('');
           this.page = 0;
           this.closeRoomContactInfo();
@@ -316,7 +296,7 @@ export default {
             await this.$store.dispatch('chats/rooms/getCanUseCopilot');
             this.readMessages();
           }
-          this.isRoomSkeletonActive = false;
+          this.isChatSkeletonActive = false;
         }
       }
     },
@@ -339,7 +319,7 @@ export default {
         await this.setActiveRoom(this.roomId);
         if (this.$route.name !== 'home' && !this.room) {
           this.$router.replace({ name: 'home' });
-          this.isRoomSkeletonActive = false;
+          this.isChatSkeletonActive = false;
         }
       }
     },
@@ -383,7 +363,7 @@ export default {
         await this.setActiveDiscussion(this.discussionId);
         if (this.$route.name !== 'home' && !this.discussion && !this.room) {
           this.$router.replace({ name: 'home' });
-          this.isRoomSkeletonActive = false;
+          this.isChatSkeletonActive = false;
         }
       }
     },
@@ -413,18 +393,6 @@ export default {
     margin-top: auto;
     margin-left: -$unnnic-spacing-inline-md;
     margin-bottom: -$unnnic-spacing-inline-sm;
-  }
-
-  .discussion-header {
-    :deep(.unnnic-chats-header) {
-      .unnnic-chats-header__avatar-icon {
-        background-color: $unnnic-color-aux-purple-500;
-
-        [class*='unnnic-icon'] {
-          color: $unnnic-color-weni-50;
-        }
-      }
-    }
   }
 }
 
