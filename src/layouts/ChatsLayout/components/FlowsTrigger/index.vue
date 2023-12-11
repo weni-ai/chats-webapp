@@ -270,9 +270,13 @@ export default {
       this.showModal = true;
     },
 
-    closeModal() {
+    async closeModal(newContact) {
       this.showModal = false;
-      this.contactList(null, true);
+      await this.contactList(null, true);
+
+      if (newContact) {
+        this.setContacts(newContact);
+      }
     },
 
     openSelectFlow() {

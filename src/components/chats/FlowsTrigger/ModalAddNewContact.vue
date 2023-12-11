@@ -61,7 +61,7 @@ export default {
           name: this.contact.name,
           urns: [`whatsapp:${prepareTel}`],
         };
-        await FlowsTrigger.createContact(newContact);
+        const response = await FlowsTrigger.createContact(newContact);
 
         unnnicCallAlert({
           props: {
@@ -71,7 +71,7 @@ export default {
           seconds: 5,
         });
 
-        this.$emit('close');
+        this.$emit('close', response);
       } catch (error) {
         console.log(error);
       }
