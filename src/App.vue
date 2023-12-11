@@ -13,6 +13,7 @@ import { sendWindowNotification } from '@/utils/notifications';
 import { WS } from '@/services/api/socket';
 import Profile from '@/services/api/resources/profile';
 import { SoundNotification } from '@/services/websocket/soundNotification.js';
+import WebSocket from '@/services/websocket';
 
 const moment = require('moment');
 
@@ -175,48 +176,7 @@ export default {
     },
 
     listeners() {
-      this.ws.on('msg.create', async (message) => {
-        const { rooms, activeRoom } = this.$store.state.chats.rooms;
-        const findRoom = rooms.find((room) => room.uuid === message.room);
-
-        this.$store.dispatch('chats/rooms/bringRoomFront', findRoom);
-        if (findRoom) {
-          if (this.me.email === message.user?.email) {
-            return;
-          }
-
-          const notification = new SoundNotification('ping-bing');
-          notification.notify();
-
-          if (document.hidden) {
-            sendWindowNotification({
-              title: message.contact.name,
-              message: message.text,
-              image: message.media?.[0]?.url,
-            });
-          }
-
-          const isCurrentRoom =
-            this.$route.name === 'room' && this.$route.params.roomId === message.room;
-          const isViewModeCurrentRoom =
-            this.$route.params.viewedAgent && activeRoom?.uuid === message.room;
-
-          if (isCurrentRoom || isViewModeCurrentRoom) {
-            this.$store.dispatch('chats/roomMessages/addMessage', message);
-          }
-
-          if (this.isAJson(message.text)) return;
-
-          this.$store.dispatch('chats/rooms/addNewMessagesByRoom', {
-            room: message.room,
-            message: {
-              created_on: message.created_on,
-              uuid: message.uuid,
-              text: message.text,
-            },
-          });
-        }
-      });
+      this.ws.on('msg.create', WebSocket.room.message.create);
 
       this.ws.on('discussion_msg.create', async (message) => {
         const { discussions, activeDiscussion } = this.$store.state.chats.discussions;
