@@ -16,17 +16,19 @@
       />
     </aside-slot-template-section>
     <aside-slot-template-section class="flows-trigger" v-else>
-      <unnnic-button
-        type="secondary"
-        size="small"
-        :text="$t('flows_trigger.triggered_flows.title')"
-        @click="showTriggeredFlowsModal = true"
-      />
-      <unnnic-input
-        v-model="searchUrn"
-        icon-left="search-1"
-        :placeholder="$t('chats.search_contact')"
-      ></unnnic-input>
+      <section class="flows-trigger__triggereds-and-search">
+        <unnnic-button
+          type="secondary"
+          size="small"
+          :text="$t('flows_trigger.triggered_flows.title')"
+          @click="showTriggeredFlowsModal = true"
+        />
+        <unnnic-input
+          v-model="searchUrn"
+          icon-left="search-1"
+          :placeholder="$t('chats.search_contact')"
+        ></unnnic-input>
+      </section>
       <section class="flows-trigger__selecteds" v-if="listOfGroupAndContactsSelected.length > 0">
         <unnnic-tag
           type="default"
@@ -76,7 +78,7 @@
           </unnnic-collapse>
         </template>
       </section>
-      <div class="flows-trigger__handlers" v-if="!showSelectFlow">
+      <section class="flows-trigger__handlers" v-if="!showSelectFlow">
         <unnnic-button
           size="small"
           type="secondary"
@@ -91,7 +93,7 @@
           size="small"
           @click="openSelectFlow"
         />
-      </div>
+      </section>
     </aside-slot-template-section>
 
     <modal-list-triggered-flows
@@ -328,6 +330,11 @@ export default {
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+  }
+
+  &__triggereds-and-search {
+    display: grid;
+    gap: $unnnic-spacing-nano;
   }
 
   &__selecteds {
