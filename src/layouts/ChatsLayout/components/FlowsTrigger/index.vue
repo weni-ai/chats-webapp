@@ -60,12 +60,14 @@
         </section>
         <template v-for="(element, letter) in letras">
           <unnnic-collapse
+            class="flows-trigger__groups__group"
             :key="letter"
             :title="$t('flows_trigger.letter_group', { letter, length: element.length })"
             active
           >
             <unnnic-chats-contact
               v-for="item in element"
+              class="flows-trigger__groups__group__contact"
               :key="item.uuid"
               :title="item.name"
               :lastMessage="item.urns[0]"
@@ -358,7 +360,7 @@ export default {
     margin-right: -$unnnic-spacing-xs;
     padding-right: $unnnic-spacing-xs;
 
-    .contact {
+    &__group__contact {
       &:not(:last-of-type) {
         margin-bottom: $unnnic-spacing-nano;
       }
