@@ -79,7 +79,7 @@
       <div class="flows-trigger__handlers" v-if="!showSelectFlow">
         <unnnic-button
           size="small"
-          type="alternative"
+          type="secondary"
           :text="$t('add')"
           :iconLeft="'add'"
           @click="openModal"

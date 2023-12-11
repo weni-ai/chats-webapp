@@ -37,7 +37,7 @@
               <unnnic-button
                 style="padding: 0.75rem 4.75rem"
                 :text="$t('cancel')"
-                type="tertiary"
+                type="secondary"
                 :disabled="false"
               />
             </div>
@@ -45,7 +45,7 @@
               <unnnic-button
                 style="padding: 0.75rem 5rem"
                 :text="$t('save')"
-                type="secondary"
+                type="primary"
                 size="large"
                 @click="saveNewContact"
               />
