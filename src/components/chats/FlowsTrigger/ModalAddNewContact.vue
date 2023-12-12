@@ -26,6 +26,7 @@
         type="primary"
         @click="saveNewContact"
         :disabled="!isValidForm"
+        :loading="isLoading"
       />
     </template>
   </unnnic-modal>
@@ -44,6 +45,7 @@ export default {
       tel: '',
     },
     telMask: '+## (##) #### #####',
+    isLoading: false,
   }),
 
   computed: {
@@ -55,6 +57,8 @@ export default {
 
   methods: {
     async saveNewContact() {
+      this.isLoading = true;
+
       try {
         const prepareTel = this.contact.tel.replace(/[^0-9]/g, '');
         const newContact = {
@@ -71,8 +75,12 @@ export default {
           seconds: 5,
         });
 
+        this.isLoading = false;
+
         this.$emit('close', response);
       } catch (error) {
+        this.isLoading = false;
+
         console.log(error);
       }
     },
