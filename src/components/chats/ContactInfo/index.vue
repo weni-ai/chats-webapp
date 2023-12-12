@@ -7,7 +7,7 @@
       v-if="closedRoom || room"
       class="contact-info"
       :title="$t('contact_info.title')"
-      icon="information-circle-4"
+      icon="info"
       :close="$listeners.close"
     >
       <section class="scrollable">
@@ -20,7 +20,7 @@
 
               <unnnic-button
                 v-if="!isHistory"
-                iconCenter="button-refresh-arrow-1"
+                iconCenter="sync"
                 type="tertiary"
                 size="small"
                 @click="refreshContactInfos"
@@ -59,10 +59,7 @@
                 />
               </template>
             </div>
-            <div
-              style="display: flex; margin-left: -8px; align-items: center"
-              v-if="!isLinkedToOtherAgent && !isViewMode && !isHistory"
-            >
+            <div v-if="!isLinkedToOtherAgent && !isViewMode && !isHistory" class="sync-contact">
               <unnnicSwitch
                 :value="isLinkedUser"
                 @input="addContactToAgent"
@@ -79,27 +76,27 @@
                 side="bottom"
                 maxWidth="21rem"
               >
-                <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
+                <unnnic-icon-svg icon="info" scheme="neutral-cloudy" size="sm" />
               </unnnic-tool-tip>
             </div>
-            <unnnic-button
-              v-if="!isHistory && !isViewMode"
-              class="transfer__button"
-              :text="$t('contact_info.see_contact_history')"
-              iconLeft="export-1"
-              type="secondary"
-              size="small"
-              @click="openHistory()"
-            />
-            <unnnic-button
-              v-if="!isViewMode"
-              class="open-discussion"
-              :text="$t('discussions.start_discussion.title')"
-              iconLeft="messaging-we-chat-3"
-              type="primary"
-              size="large"
-              @click="handleModalStartDiscussion()"
-            />
+            <nav class="infos__nav">
+              <unnnic-button
+                v-if="!isHistory && !isViewMode"
+                :text="$t('contact_info.see_contact_history')"
+                iconLeft="history"
+                type="secondary"
+                size="small"
+                @click="openHistory()"
+              />
+              <unnnic-button
+                v-if="!isViewMode"
+                :text="$t('discussions.start_discussion.title')"
+                iconLeft="forum"
+                type="primary"
+                size="small"
+                @click="handleModalStartDiscussion()"
+              />
+            </nav>
             <div v-if="isLinkedToOtherAgent">
               <span>{{
                 $t('contact_info.linked_contact', {
@@ -112,7 +109,9 @@
 
         <discussions-session v-if="isHistory" />
         <aside-slot-template-section v-if="!isHistory">
-          <p class="title-transfer-chat">{{ $t('contact_info.transfer_contact') }}</p>
+          <p class="title-transfer-chat">
+            {{ $t('contact_info.transfer_contact') }}
+          </p>
           <div style="margin-top: 20px; margin-bottom: 20px">
             <unnnic-radio size="sm" v-model="transferRadio" value="agent" :disabled="isViewMode">
               {{ $t('agent') }}
@@ -555,12 +554,17 @@ export default {
           .format(lastViewDate)
           .replace(':', 'h');
 
-        return this.$t('last_online_time.date', { date: formattedDate, time: formattedTime });
+        return this.$t('last_online_time.date', {
+          date: formattedDate,
+          time: formattedTime,
+        });
       }
 
       const dateDifferenceInMinutes = dateDifferenceInHours * 60;
       return dateDifferenceInMinutes > 60
-        ? this.$t('last_online_time.hours', { hours: Number.parseInt(dateDifferenceInHours, 10) })
+        ? this.$t('last_online_time.hours', {
+            hours: Number.parseInt(dateDifferenceInHours, 10),
+          })
         : this.$t('last_online_time.minutes', {
             minutes: Number.parseInt(dateDifferenceInMinutes, 10),
           });
@@ -685,6 +689,22 @@ export default {
           cursor: default;
         }
       }
+    }
+
+    .sync-contact {
+      margin-left: -$unnnic-spacing-xs;
+
+      display: flex;
+      align-items: center;
+
+      :deep(.unnnic-tooltip) {
+        display: flex;
+      }
+    }
+
+    &__nav {
+      display: grid;
+      gap: $unnnic-spacing-xs;
     }
   }
 

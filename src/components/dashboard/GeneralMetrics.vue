@@ -13,7 +13,7 @@
       <unnnic-card
         type="dash"
         :title="generalLabel"
-        icon="messages"
+        icon="mark_chat_unread"
         scheme="aux-blue"
         :value="this.metrics.active_chats || 0"
         :percent="0"
@@ -29,7 +29,7 @@
       <unnnic-card
         type="dash"
         title="Aguardando atendimento"
-        icon="synchronize-arrow-clock-4"
+        icon="pending"
         scheme="feedback-blue"
         :value="this.rawData.queue_rooms || 0"
         :percent="0"
@@ -40,7 +40,7 @@
       <unnnic-card
         type="dash"
         title="Encerrados"
-        icon="check-circle-1-1"
+        icon="check_circle"
         scheme="aux-purple"
         :value="this.rawData.closed_rooms || 0"
         :percent="0"
@@ -56,7 +56,7 @@
       <unnnic-card
         type="dash"
         title="Tempo de espera"
-        icon="time-clock-circle-1"
+        icon="chronic"
         scheme="aux-orange"
         :value="timeToString(this.metrics.waiting_time)"
         :percent="0"
@@ -72,7 +72,7 @@
       <unnnic-card
         type="dash"
         title="Tempo de resposta"
-        icon="response-time"
+        icon="acute"
         scheme="aux-pink"
         :value="timeToString(this.metrics.response_time)"
         :percent="0"
@@ -88,7 +88,7 @@
       <unnnic-card
         type="dash"
         title="Tempo de interação"
-        icon="interaction-time"
+        icon="history_toggle_off"
         scheme="feedback-green"
         :value="timeToString(this.metrics.interact_time)"
         :percent="0"

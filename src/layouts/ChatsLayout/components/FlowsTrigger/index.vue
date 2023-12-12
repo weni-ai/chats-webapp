@@ -3,7 +3,7 @@
   <aside-slot-template
     :title="$t('flows_trigger.title')"
     :subtitle="$t('flows_trigger.subtitle', { project: projectName })"
-    icon="send-email-3-1"
+    icon="send"
     :close="() => $emit('close')"
   >
     <aside-slot-template-section class="flows-trigger" v-if="showSelectFlow">
@@ -52,7 +52,7 @@
             :key="contact"
             class="flows-trigger__contact-alerts__alert"
           >
-            <unnnic-icon size="md" icon="alert-circle-1-1" scheme="feedback-yellow" />
+            <unnnic-icon size="md" icon="info" filled scheme="feedback-yellow" />
             {{ $t('flows_trigger.already_open_room', { contact }) }}
           </strong>
         </section>
@@ -81,7 +81,7 @@
           size="small"
           type="alternative"
           :text="$t('add')"
-          :iconLeft="'add-1'"
+          :iconLeft="'add'"
           @click="openModal"
         />
         <unnnic-button

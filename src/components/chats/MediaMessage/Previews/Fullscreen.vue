@@ -1,34 +1,12 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <div class="fullscreen-preview" @click="close">
-    <header class="toolbar" @click.stop="() => {}">
-      <img
-        @click="rotate('left')"
-        :src="rotateLeftIcon"
-        alt=""
-        :class="['unnnic-icon__size--md', 'unnnic--clickable', `unnnic-icon-scheme--neutral-snow`]"
-      />
-      <img
-        @click="rotate('right')"
-        :src="rotateRightIcon"
-        alt=""
-        :class="['unnnic-icon__size--md', 'unnnic--clickable', `unnnic-icon-scheme--neutral-snow`]"
-      />
-      <img
-        @click="zoomHandler"
-        :src="zoomIcon"
-        alt=""
-        :class="['unnnic-icon__size--md', 'unnnic--clickable', `unnnic-icon-scheme--neutral-snow`]"
-      />
-      <!-- This img above is temporary. Then it will be refactored to an unnnic-icon-svg  -->
-
-      <!-- eslint-disable-next-line vuejs-accessibility/anchor-has-content -->
-      <span class="clickable" @click="download">
-        <unnnic-icon icon="download-bottom-1" scheme="neutral-snow" />
-      </span>
-      <span @click="close" @keypress.enter="close" class="clickable">
-        <unnnic-icon-svg icon="close-1" scheme="neutral-snow" />
-      </span>
+    <header class="toolbar" @click.stop>
+      <fullscreen-control @click="rotate('left')" icon="rotate_left" />
+      <fullscreen-control @click="rotate('right')" icon="rotate_right" />
+      <fullscreen-control @click="zoomHandler" :icon="isZoomed ? 'zoom_out' : 'zoom_in'" />
+      <fullscreen-control @click="download" icon="download" />
+      <fullscreen-control @click="close" icon="close" />
     </header>
 
     <div
@@ -43,25 +21,22 @@
       </div>
     </div>
 
-    <footer class="controls" @click.stop="() => {}">
-      <span @click="previous" @keypress.enter="previous" class="clickable">
-        <unnnic-icon-svg icon="arrow-left-1-1" scheme="background-snow" />
-      </span>
-      <span @click="next" @keypress.enter="next" class="clickable">
-        <unnnic-icon-svg icon="arrow-right-1-1" scheme="background-snow" />
-      </span>
+    <footer class="controls" @click.stop>
+      <fullscreen-control @click="previous" icon="chevron_left" />
+      <fullscreen-control @click="next" icon="chevron_right" />
     </footer>
   </div>
 </template>
 
 <script>
-import temporaryZoomIn from '@/assets/temporaryZoomIn.svg';
-import temporaryZoomOut from '@/assets/temporaryZoomOut.svg';
-import rotateRightIcon from '@/assets/temporaryRedoIcon.svg';
-import rotateLeftIcon from '@/assets/temporaryUndoIcon.svg';
+import FullscreenControl from './FullscreenControl';
 
 export default {
   name: 'FullscreenPreview',
+
+  components: {
+    FullscreenControl,
+  },
 
   props: {
     downloadMediaUrl: {
@@ -75,9 +50,6 @@ export default {
 
   data() {
     return {
-      zoomIcon: temporaryZoomIn,
-      rotateRightIcon,
-      rotateLeftIcon,
       isZoomed: false,
       rotatedDeg: 0,
       isAbleToPlan: false,
@@ -105,12 +77,10 @@ export default {
       } else {
         this.isZoomed = true;
         this.zoomScale += this.zoomInterval;
-        this.zoomIcon = temporaryZoomOut;
       }
     },
 
     resetZoom() {
-      this.zoomIcon = temporaryZoomIn;
       this.resetPan();
       this.isZoomed = false;
     },
@@ -349,7 +319,6 @@ export default {
   .toolbar {
     height: 3rem;
     width: 100%;
-    // background: rgba(0, 0, 0, $unnnic-opacity-level-clarifying);
 
     display: flex;
     align-items: center;
