@@ -1,60 +1,35 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
-  <div class="modal">
-    <div class="modal-container">
-      <div class="modal-container-background">
-        <div class="modal-background-color">
-          <div class="header-modal">
-            <div @click="$emit('close')">
-              <unnnic-icon
-                style="cursor: pointer; margin-right: 26px; margin-top: 18px"
-                size="sm"
-                icon="close-1"
-              />
-            </div>
-          </div>
-          <div class="content-title">{{ $t('flows_trigger.add_new_contact.title') }}</div>
-          <div class="form">
-            <div style="margin-bottom: 16px">
-              <unnnic-input
-                :label="$t('flows_trigger.add_new_contact.contact_name')"
-                :placeholder="$t('flows_trigger.add_new_contact.contact_name')"
-                v-model="contact.name"
-              />
-            </div>
-            <div style="margin-bottom: 44px">
-              <unnnic-input
-                v-model="contact.tel"
-                label="WhatsApp"
-                placeholder="+99 (99) 9999 99999"
-                class="input"
-                mask="+## (##) #### #####"
-              />
-            </div>
-          </div>
-          <div class="footer">
-            <div style="margin-right: 30px; margin-left: 24px" @click="$emit('close')">
-              <unnnic-button
-                style="padding: 0.75rem 4.75rem"
-                :text="$t('cancel')"
-                type="tertiary"
-                :disabled="false"
-              />
-            </div>
-            <div>
-              <unnnic-button
-                style="padding: 0.75rem 5rem"
-                :text="$t('save')"
-                type="secondary"
-                size="large"
-                @click="saveNewContact"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <unnnic-modal
+    @close="$emit('close')"
+    :text="$t('flows_trigger.add_new_contact.title')"
+    class="modal-add-new-contact"
+  >
+    <form class="modal-add-new-contact__form" @submit.stop="">
+      <unnnic-input
+        v-model="contact.name"
+        :label="$t('flows_trigger.add_new_contact.contact_name')"
+        :placeholder="$t('flows_trigger.add_new_contact.contact_name')"
+      />
+      <unnnic-input
+        v-model="contact.tel"
+        label="WhatsApp"
+        placeholder="+99 (99) 9999 99999"
+        :mask="telMask"
+      />
+    </form>
+
+    <template #options>
+      <unnnic-button :text="$t('cancel')" type="secondary" @click="$emit('close')" />
+      <unnnic-button
+        :text="$t('save')"
+        type="primary"
+        @click="saveNewContact"
+        :disabled="!isValidForm"
+        :loading="isLoading"
+      />
+    </template>
+  </unnnic-modal>
 </template>
 
 <script>
@@ -69,17 +44,28 @@ export default {
       name: '',
       tel: '',
     },
+    telMask: '+## (##) #### #####',
+    isLoading: false,
   }),
+
+  computed: {
+    isValidForm() {
+      const { contact, telMask } = this;
+      return contact.name && contact.tel.length === telMask.length;
+    },
+  },
 
   methods: {
     async saveNewContact() {
+      this.isLoading = true;
+
       try {
         const prepareTel = this.contact.tel.replace(/[^0-9]/g, '');
         const newContact = {
           name: this.contact.name,
           urns: [`whatsapp:${prepareTel}`],
         };
-        await FlowsTrigger.createContact(newContact);
+        const response = await FlowsTrigger.createContact(newContact);
 
         unnnicCallAlert({
           props: {
@@ -89,8 +75,12 @@ export default {
           seconds: 5,
         });
 
-        this.$emit('close');
+        this.isLoading = false;
+
+        this.$emit('close', response);
       } catch (error) {
+        this.isLoading = false;
+
         console.log(error);
       }
     },
@@ -99,63 +89,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.modal {
-  position: fixed;
-  z-index: 9998;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  transition: opacity 0.3s ease;
-}
-.header-modal {
-  display: flex;
-  justify-content: flex-end;
-  border-spacing: $unnnic-spacing-inline-md;
-}
-
-.modal-container {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-container-background {
-  width: 498px;
-  box-shadow: 0 8px 16px rgb(0 0 0 / 8%);
-  transition: all 0.3s ease;
-  border-radius: 0.25rem;
-  overflow: hidden;
-  background-color: $unnnic-color-background-carpet;
-}
-.modal-background-color {
-  min-height: 388px;
-
-  .content-title {
-    color: $unnnic-color-neutral-darkest;
-    font-weight: $unnnic-font-weight-black;
-    font-size: $unnnic-font-size-title-sm;
-    line-height: $unnnic-line-height-md;
-    margin-top: 18px;
-    margin-bottom: 32px;
-    text-align: center;
+.modal-add-new-contact {
+  &__form {
+    text-align: start;
   }
-}
-.form {
-  width: 90%;
-  margin-left: 24px;
-  margin-bottom: 32px;
-  ::placeholder {
-    color: #d1d4da;
-  }
-}
 
-.footer {
-  display: flex;
-  // margin-left: 24px;
-  // margin-bottom: 32px;
+  :deep(.unnnic-modal-container-background-body-description-container) {
+    padding-bottom: 0;
+  }
 }
 </style>
