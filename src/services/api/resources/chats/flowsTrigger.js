@@ -8,7 +8,7 @@ export default {
     const response = await http.get(`/project/${getProject()}/list_contacts/`, {
       params: {
         cursor: next,
-        name: search,
+        search,
       },
     });
     return response.data;
