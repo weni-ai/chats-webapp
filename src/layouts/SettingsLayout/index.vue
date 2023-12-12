@@ -16,12 +16,6 @@ export default {
 .settings-layout {
   height: 100%;
 
-  padding: {
-    top: $unnnic-spacing-inset-md;
-    bottom: $unnnic-spacing-inset-xs;
-    left: $unnnic-spacing-inset-md;
-  }
-
   #view {
     padding-top: $unnnic-spacing-inset-nano;
 
