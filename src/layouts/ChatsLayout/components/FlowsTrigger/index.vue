@@ -29,6 +29,7 @@
           :placeholder="$t('chats.search_contact')"
         ></unnnic-input>
       </section>
+
       <section class="flows-trigger__selecteds" v-if="listOfGroupAndContactsSelected.length > 0">
         <unnnic-tag
           type="default"
@@ -40,6 +41,7 @@
           @close="unselectItem(item)"
         />
       </section>
+
       <section
         class="flows-trigger__groups"
         @scroll="
@@ -58,27 +60,35 @@
             {{ $t('flows_trigger.already_open_room', { contact }) }}
           </strong>
         </section>
-        <template v-for="(element, letter) in letras">
-          <unnnic-collapse
-            class="flows-trigger__groups__group"
-            :key="letter"
-            :title="$t('flows_trigger.letter_group', { letter, length: element.length })"
-            active
-          >
-            <unnnic-chats-contact
-              v-for="item in element"
-              class="flows-trigger__groups__group__contact"
-              :key="item.uuid"
-              :title="item.name"
-              :lastMessage="item.urns[0]"
-              :tabindex="0"
-              checkboxWhenSelect
-              :selected="selected.some((search) => search.uuid === item.uuid)"
-              @click="setContacts(item)"
-              @keypress.enter="setGroups(item)"
-            />
-          </unnnic-collapse>
-        </template>
+
+        <flows-contacts-loading v-show="isContactsLoading" />
+        <p v-if="showErrorContactsNoResults" class="flows-trigger__groups__no-results">
+          {{ $t('without_results') }}
+        </p>
+
+        <section v-show="!isContactsLoading">
+          <template v-for="(element, letter) in letras">
+            <unnnic-collapse
+              class="flows-trigger__groups__group"
+              :key="letter"
+              :title="$t('flows_trigger.letter_group', { letter, length: element.length })"
+              active
+            >
+              <unnnic-chats-contact
+                v-for="item in element"
+                class="flows-trigger__groups__group__contact"
+                :key="item.uuid"
+                :title="item.name"
+                :lastMessage="item.urns[0]"
+                :tabindex="0"
+                checkboxWhenSelect
+                :selected="selected.some((search) => search.uuid === item.uuid)"
+                @click="setContacts(item)"
+                @keypress.enter="setGroups(item)"
+              />
+            </unnnic-collapse>
+          </template>
+        </section>
       </section>
       <section class="flows-trigger__handlers" v-if="!showSelectFlow">
         <unnnic-button
@@ -112,6 +122,9 @@ import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTempla
 import ModalListTriggeredFlows from '@/components/chats/FlowsTrigger/ModalListTriggeredFlows.vue';
 import ModalAddNewContact from '@/components/chats/FlowsTrigger/ModalAddNewContact.vue';
 import SelectFlow from '@/components/chats/FlowsTrigger/SelectFlow';
+
+import FlowsContactsLoading from '@/views/loadings/FlowsTrigger/FlowsContactsLoading';
+
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import ProjectApi from '@/services/api/resources/settings/project';
 
@@ -121,6 +134,7 @@ export default {
   components: {
     AsideSlotTemplate,
     AsideSlotTemplateSection,
+    FlowsContactsLoading,
     ModalListTriggeredFlows,
     ModalAddNewContact,
     SelectFlow,
@@ -155,6 +169,7 @@ export default {
     showTriggeredFlowsModal: false,
     showSelectFlow: false,
     page: 0,
+    isContactsLoading: true,
   }),
 
   computed: {
@@ -177,6 +192,9 @@ export default {
     },
     listOfGroupAndContactsSelected() {
       return this.selected.concat(this.selectedGroup);
+    },
+    showErrorContactsNoResults() {
+      return !this.isContactsLoading && this.searchUrn && this.listOfContacts.length === 0;
     },
   },
 
@@ -234,21 +252,21 @@ export default {
 
     async contactList(next, cleanList = false) {
       if (cleanList) this.listOfContacts = [];
-      this.isLoading = true;
+      this.isContactsLoading = true;
       try {
         const response = await FlowsTrigger.getListOfContacts(next, this.searchUrn);
         this.listOfContacts = this.listOfContacts.concat(response.results);
         this.hasNext = response.next;
         this.listOfContacts.sort((a, b) => a.name?.localeCompare(b.name));
-        this.isLoading = false;
+        this.isContactsLoading = false;
       } catch (error) {
-        this.isLoading = false;
+        this.isContactsLoading = false;
         console.log(error);
       }
     },
 
     handleScroll(target) {
-      if (this.isLoading) return;
+      if (this.isContactsLoading) return;
       if (target.offsetHeight + Math.ceil(target.scrollTop) >= target.scrollHeight) {
         this.searchForMoreContacts();
       }
@@ -297,7 +315,7 @@ export default {
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
           this.contactList(null, true);
-        }, 1000);
+        }, 500);
       },
     },
     selectedContact: {
@@ -364,6 +382,11 @@ export default {
       &:not(:last-of-type) {
         margin-bottom: $unnnic-spacing-nano;
       }
+    }
+
+    &__no-results {
+      color: $unnnic-color-neutral-cloudy;
+      font-size: $unnnic-font-size-body-gt;
     }
   }
 
