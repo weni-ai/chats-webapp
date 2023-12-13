@@ -38,14 +38,15 @@
           @click="openCopilot"
           type="secondary"
           size="large"
-          iconCenter="study-light-idea-1"
+          iconCenter="wb_incandescent"
+          class="message-manager__actions__co-pilot"
         />
         <unnnic-button
           v-if="(!canUseCopilot || discussionId) && showActionButton"
           @click="record"
           type="secondary"
           size="large"
-          iconCenter="microphone"
+          iconCenter="mic"
         />
 
         <unnnic-button
@@ -54,6 +55,7 @@
           type="secondary"
           size="large"
           iconCenter="attachment"
+          next
         />
 
         <unnnic-dropdown
@@ -61,13 +63,13 @@
           position="top-left"
           class="more-actions"
         >
-          <unnnic-button slot="trigger" type="primary" size="large" iconCenter="add-1" />
+          <unnnic-button slot="trigger" type="primary" size="large" iconCenter="add" />
 
           <div class="more-actions-container">
             <more-actions-option
               v-if="canUseCopilot"
               :action="record"
-              icon="microphone"
+              icon="mic"
               :title="$t('record_audio')"
             />
             <more-actions-option
@@ -77,7 +79,7 @@
             />
             <more-actions-option
               :action="() => $emit('show-quick-messages')"
-              icon="flash-1-4"
+              icon="bolt"
               :title="$t('quick_message')"
             />
           </div>
@@ -88,7 +90,7 @@
           @click="send"
           type="primary"
           size="large"
-          iconCenter="send-email-3-1"
+          iconCenter="send"
         />
       </div>
       <suggestion-box
@@ -404,6 +406,10 @@ export default {
 
     display: flex;
     gap: $unnnic-spacing-stack-xs;
+
+    &__co-pilot {
+      rotate: 180deg;
+    }
 
     .more-actions {
       :deep(.unnnic-dropdown__content) {

@@ -1,7 +1,7 @@
 <template>
   <unnnic-dropdown-item class="more-actions-option" @click="action" @keypress.enter="action">
     <div class="title">
-      <unnnic-icon-svg :icon="icon" size="sm" />
+      <unnnic-icon-svg :icon="icon" next size="sm" />
       <span> {{ title }} </span>
     </div>
   </unnnic-dropdown-item>

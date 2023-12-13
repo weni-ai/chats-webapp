@@ -8,7 +8,7 @@
     <header class="co-pilot__header">
       <div class="co-pilot__header__title">
         <unnnic-icon v-if="isError" icon="alert-circle-1" />
-        <unnnic-icon v-else icon="study-light-idea-1" />
+        <unnnic-icon v-else icon="wb_incandescent" class="co-pilot__header__title__light-icon" />
         <h1>
           {{
             isLoading
@@ -25,7 +25,7 @@
         @click="close"
         @keypress.esc="close"
       >
-        <unnnic-icon icon="close-1" size="xs" class="clickable" />
+        <unnnic-icon icon="close" size="xs" class="clickable" />
       </button>
     </header>
     <section class="co-pilot__response">
@@ -206,21 +206,17 @@ export default {
       align-items: center;
       gap: $unnnic-spacing-nano;
 
-      .unnnic-icon {
-        width: 20px;
-        height: 20px;
-        min-width: 20px;
-        min-height: 20px;
+      :deep(.co-pilot__header__title__light-icon) {
+        rotate: 180deg;
+
+        color: $unnnic-color-weni-600;
+        font-size: 20px;
       }
 
       h1 {
         color: $unnnic-color-weni-600;
         font-weight: $unnnic-font-weight-bold;
         font-size: $unnnic-font-size-body-md;
-      }
-
-      :deep(svg > path) {
-        fill: $unnnic-color-weni-600;
       }
     }
 

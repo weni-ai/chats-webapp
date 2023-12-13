@@ -14,7 +14,7 @@
             v-if="canTriggerFlows"
             size="small"
             type="secondary"
-            iconCenter="send-email-3-1"
+            iconCenter="send"
             @click="openFlowsTrigger"
           />
         </div>
@@ -24,7 +24,7 @@
         <unnnic-button
           class="history-button"
           :text="isHistoryView ? $t('back_to_chats') : $t('chats.see_history')"
-          :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : 'task-list-clock-1'"
+          :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : 'history'"
           type="secondary"
           size="small"
           @click="navigate(isHistoryView ? 'home' : 'closed-rooms')"

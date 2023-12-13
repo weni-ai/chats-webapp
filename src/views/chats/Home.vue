@@ -463,7 +463,7 @@ export default {
   flex-direction: column;
   height: 100%;
   max-height: 100vh;
-  padding-bottom: $unnnic-spacing-stack-sm;
+  padding-bottom: $unnnic-spacing-xs;
 
   .chat-classifier {
     margin-top: auto;

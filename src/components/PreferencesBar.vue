@@ -15,15 +15,19 @@
     >
       <div class="label">
         <div class="icon">
-          <unnnic-icon size="md" icon="preferences" scheme="neutral-cloudy" />
+          <unnnic-icon size="md" icon="tune" scheme="neutral-cloudy" />
         </div>
 
         <div class="text">
           {{ $t('preferences.title') }}
         </div>
 
-        <div class="status-icon" :class="{ open }">
-          <unnnic-icon size="sm" icon="arrow-right-1-1" scheme="neutral-darkest" />
+        <div class="status-icon">
+          <unnnic-icon
+            size="md"
+            :icon="open ? 'expand_less' : 'expand_more'"
+            scheme="neutral-darkest"
+          />
         </div>
       </div>
     </div>
@@ -53,7 +57,7 @@
       <unnnic-button
         @mousedown.prevent
         :text="$t('quick_messages.title')"
-        icon-left="flash-1-3"
+        icon-left="bolt"
         type="secondary"
         size="small"
         @click="openQuickMessage"
@@ -62,7 +66,7 @@
         @mousedown.prevent
         v-if="this.dashboard"
         text="Dashboard"
-        icon-left="gauge-dashboard-2"
+        icon-left="bar_chart_4_bars"
         type="secondary"
         size="small"
         @click="navigate('dashboard.manager')"
@@ -122,7 +126,7 @@ export default {
       localStorage.setItem('statusAgent', connection_status);
 
       this.loadingStatus = false;
-      this.showStatusAlert(connection_status);
+      this.showStatusAlert(connection_status.toLowerCase());
     },
 
     async getStatus() {
@@ -139,7 +143,7 @@ export default {
         props: {
           text: `${this.$t('status_agent')} ${connectionStatus}`,
           icon: 'indicator',
-          scheme: connectionStatus === 'ONLINE' ? 'feedback-green' : '$unnnic-color-neutral-black',
+          scheme: connectionStatus === 'online' ? 'feedback-green' : '$unnnic-color-neutral-black',
           closeText: 'Fechar',
           position: 'bottom-right',
         },
@@ -174,6 +178,7 @@ export default {
 
     .icon {
       * {
+        font-size: 20px;
         display: block;
       }
     }
@@ -188,16 +193,8 @@ export default {
     }
 
     .status-icon {
-      padding: $unnnic-spacing-inset-nano / 2;
-
-      rotate: 90deg;
-
       * {
         display: block;
-      }
-
-      &.open {
-        rotate: -90deg;
       }
     }
   }

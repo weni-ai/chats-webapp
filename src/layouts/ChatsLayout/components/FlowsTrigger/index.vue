@@ -3,7 +3,7 @@
   <aside-slot-template
     :title="$t('flows_trigger.title')"
     :subtitle="$t('flows_trigger.subtitle', { project: projectName })"
-    icon="send-email-3-1"
+    icon="send"
     :close="() => $emit('close')"
   >
     <aside-slot-template-section class="flows-trigger" v-if="showSelectFlow">
@@ -16,17 +16,20 @@
       />
     </aside-slot-template-section>
     <aside-slot-template-section class="flows-trigger" v-else>
-      <unnnic-button
-        type="secondary"
-        size="small"
-        :text="$t('flows_trigger.triggered_flows.title')"
-        @click="showTriggeredFlowsModal = true"
-      />
-      <unnnic-input
-        v-model="searchUrn"
-        icon-left="search-1"
-        :placeholder="$t('chats.search_contact')"
-      ></unnnic-input>
+      <section class="flows-trigger__triggereds-and-search">
+        <unnnic-button
+          type="secondary"
+          size="small"
+          :text="$t('flows_trigger.triggered_flows.title')"
+          @click="showTriggeredFlowsModal = true"
+        />
+        <unnnic-input
+          v-model="searchUrn"
+          icon-left="search-1"
+          :placeholder="$t('chats.search_contact')"
+        ></unnnic-input>
+      </section>
+
       <section class="flows-trigger__selecteds" v-if="listOfGroupAndContactsSelected.length > 0">
         <unnnic-tag
           type="default"
@@ -38,6 +41,7 @@
           @close="unselectItem(item)"
         />
       </section>
+
       <section
         class="flows-trigger__groups"
         @scroll="
@@ -52,36 +56,46 @@
             :key="contact"
             class="flows-trigger__contact-alerts__alert"
           >
-            <unnnic-icon size="md" icon="alert-circle-1-1" scheme="feedback-yellow" />
+            <unnnic-icon size="md" icon="info" filled scheme="feedback-yellow" />
             {{ $t('flows_trigger.already_open_room', { contact }) }}
           </strong>
         </section>
-        <template v-for="(element, letter) in letras">
-          <unnnic-collapse
-            :key="letter"
-            :title="$t('flows_trigger.letter_group', { letter, length: element.length })"
-            active
-          >
-            <unnnic-chats-contact
-              v-for="item in element"
-              :key="item.uuid"
-              :title="item.name"
-              :lastMessage="item.urns[0]"
-              :tabindex="0"
-              checkboxWhenSelect
-              :selected="selected.some((search) => search.uuid === item.uuid)"
-              @click="setContacts(item)"
-              @keypress.enter="setGroups(item)"
-            />
-          </unnnic-collapse>
-        </template>
+
+        <flows-contacts-loading v-show="isContactsLoading" />
+        <p v-if="showErrorContactsNoResults" class="flows-trigger__groups__no-results">
+          {{ $t('without_results') }}
+        </p>
+
+        <section v-show="!isContactsLoading">
+          <template v-for="(element, letter) in letras">
+            <unnnic-collapse
+              class="flows-trigger__groups__group"
+              :key="letter"
+              :title="$t('flows_trigger.letter_group', { letter, length: element.length })"
+              active
+            >
+              <unnnic-chats-contact
+                v-for="item in element"
+                class="flows-trigger__groups__group__contact"
+                :key="item.uuid"
+                :title="item.name"
+                :lastMessage="item.urns[0]"
+                :tabindex="0"
+                checkboxWhenSelect
+                :selected="selected.some((search) => search.uuid === item.uuid)"
+                @click="setContacts(item)"
+                @keypress.enter="setGroups(item)"
+              />
+            </unnnic-collapse>
+          </template>
+        </section>
       </section>
-      <div class="flows-trigger__handlers" v-if="!showSelectFlow">
+      <section class="flows-trigger__handlers" v-if="!showSelectFlow">
         <unnnic-button
           size="small"
-          type="alternative"
+          type="secondary"
           :text="$t('add')"
-          :iconLeft="'add-1'"
+          :iconLeft="'add'"
           @click="openModal"
         />
         <unnnic-button
@@ -91,7 +105,7 @@
           size="small"
           @click="openSelectFlow"
         />
-      </div>
+      </section>
     </aside-slot-template-section>
 
     <modal-list-triggered-flows
@@ -108,6 +122,9 @@ import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTempla
 import ModalListTriggeredFlows from '@/components/chats/FlowsTrigger/ModalListTriggeredFlows.vue';
 import ModalAddNewContact from '@/components/chats/FlowsTrigger/ModalAddNewContact.vue';
 import SelectFlow from '@/components/chats/FlowsTrigger/SelectFlow';
+
+import FlowsContactsLoading from '@/views/loadings/FlowsTrigger/FlowsContactsLoading';
+
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import ProjectApi from '@/services/api/resources/settings/project';
 
@@ -117,6 +134,7 @@ export default {
   components: {
     AsideSlotTemplate,
     AsideSlotTemplateSection,
+    FlowsContactsLoading,
     ModalListTriggeredFlows,
     ModalAddNewContact,
     SelectFlow,
@@ -151,6 +169,7 @@ export default {
     showTriggeredFlowsModal: false,
     showSelectFlow: false,
     page: 0,
+    isContactsLoading: true,
   }),
 
   computed: {
@@ -173,6 +192,9 @@ export default {
     },
     listOfGroupAndContactsSelected() {
       return this.selected.concat(this.selectedGroup);
+    },
+    showErrorContactsNoResults() {
+      return !this.isContactsLoading && this.searchUrn && this.listOfContacts.length === 0;
     },
   },
 
@@ -230,21 +252,21 @@ export default {
 
     async contactList(next, cleanList = false) {
       if (cleanList) this.listOfContacts = [];
-      this.isLoading = true;
+      this.isContactsLoading = true;
       try {
         const response = await FlowsTrigger.getListOfContacts(next, this.searchUrn);
         this.listOfContacts = this.listOfContacts.concat(response.results);
         this.hasNext = response.next;
         this.listOfContacts.sort((a, b) => a.name?.localeCompare(b.name));
-        this.isLoading = false;
+        this.isContactsLoading = false;
       } catch (error) {
-        this.isLoading = false;
+        this.isContactsLoading = false;
         console.log(error);
       }
     },
 
     handleScroll(target) {
-      if (this.isLoading) return;
+      if (this.isContactsLoading) return;
       if (target.offsetHeight + Math.ceil(target.scrollTop) >= target.scrollHeight) {
         this.searchForMoreContacts();
       }
@@ -270,9 +292,13 @@ export default {
       this.showModal = true;
     },
 
-    closeModal() {
+    async closeModal(newContact) {
       this.showModal = false;
-      this.contactList(null, true);
+      await this.contactList(null, true);
+
+      if (newContact) {
+        this.setContacts(newContact);
+      }
     },
 
     openSelectFlow() {
@@ -289,7 +315,7 @@ export default {
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
           this.contactList(null, true);
-        }, 1000);
+        }, 500);
       },
     },
     selectedContact: {
@@ -326,6 +352,11 @@ export default {
     }
   }
 
+  &__triggereds-and-search {
+    display: grid;
+    gap: $unnnic-spacing-nano;
+  }
+
   &__selecteds {
     display: flex;
     gap: $unnnic-spacing-xs;
@@ -347,10 +378,15 @@ export default {
     margin-right: -$unnnic-spacing-xs;
     padding-right: $unnnic-spacing-xs;
 
-    .contact {
+    &__group__contact {
       &:not(:last-of-type) {
         margin-bottom: $unnnic-spacing-nano;
       }
+    }
+
+    &__no-results {
+      color: $unnnic-color-neutral-cloudy;
+      font-size: $unnnic-font-size-body-gt;
     }
   }
 
