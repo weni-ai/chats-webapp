@@ -244,19 +244,13 @@ export default {
         }),
       );
 
-      this.ws.on('discussions.create', (discussion) => {
-        if (!!discussion.created_by && discussion.created_by === this.me.email) return;
-
-        const { discussions } = this.$store.state.chats.discussions;
-        const existentDiscussion = discussions.find(
-          (mappedDiscussion) => mappedDiscussion.uuid === discussion.uuid,
-        );
-        if (existentDiscussion) return;
-
-        this.$store.dispatch('chats/discussions/addDiscussion', discussion);
-        const notification = new SoundNotification('achievement-confirmation');
-        notification.notify();
-      });
+      this.ws.on('discussions.create', (discussion) =>
+        WebSocket.discussion.create({
+          discussion,
+          store: this.$store,
+          me: this.me,
+        }),
+      );
 
       this.ws.on('rooms.update', (room) =>
         WebSocket.room.update({
