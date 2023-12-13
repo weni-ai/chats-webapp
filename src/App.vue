@@ -310,12 +310,13 @@ export default {
         }
       });
 
-      this.ws.on('msg.update', (message) => {
-        if (this.me.email === message.user?.email) {
-          return;
-        }
-        this.$store.dispatch('chats/roomMessages/addMessage', message);
-      });
+      this.ws.on('msg.update', (message) =>
+        WebSocket.room.message.update({
+          message,
+          store: this.$store,
+          me: this.me,
+        }),
+      );
 
       this.ws.on('status.update', (info) => {
         const localStorageStatus = localStorage.getItem('statusAgent');
