@@ -12,8 +12,8 @@ import env from '@/utils/env';
 import { sendWindowNotification } from '@/utils/notifications';
 import { WS } from '@/services/api/socket';
 import Profile from '@/services/api/resources/profile';
-import { SoundNotification } from '@/services/websocket/soundNotification.js';
-import WebSocket from '@/services/websocket';
+import SoundNotification from '@/services/api/websocket/soundNotification';
+import WebSocket from '@/services/api/websocket';
 
 const moment = require('moment');
 
@@ -176,7 +176,14 @@ export default {
     },
 
     listeners() {
-      this.ws.on('msg.create', WebSocket.room.message.create);
+      this.ws.on('msg.create', (message) =>
+        WebSocket.room.message.create({
+          message,
+          store: this.$store,
+          route: this.$route,
+          me: this.me,
+        }),
+      );
 
       this.ws.on('discussion_msg.create', async (message) => {
         const { discussions, activeDiscussion } = this.$store.state.chats.discussions;

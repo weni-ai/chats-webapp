@@ -1,6 +1,6 @@
 export const PREFERENCES_SOUND = 'WENICHATS_PREFERENCES_SOUND';
 
-export class SoundNotification {
+export default class SoundNotification {
   /**
    * @type {HTMLAudioElement}
    */

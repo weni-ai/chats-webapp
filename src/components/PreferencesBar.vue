@@ -77,7 +77,7 @@
 
 <script>
 import Profile from '@/services/api/resources/profile';
-import { PREFERENCES_SOUND } from '@/services/websocket/soundNotification.js';
+import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 
 import { unnnicCallAlert } from '@weni/unnnic-system';
 
