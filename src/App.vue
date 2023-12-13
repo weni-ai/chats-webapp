@@ -295,14 +295,13 @@ export default {
         }),
       );
 
-      this.ws.on('discussions.close', (discussion) => {
-        this.$store.dispatch('chats/discussions/removeDiscussion', discussion.uuid);
-
-        if (this.$route.params.discussionId === discussion.uuid) {
-          this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
-          this.$store.dispatch('chats/rooms/setActiveRoom', null);
-        }
-      });
+      this.ws.on('discussions.close', (discussion) =>
+        WebSocket.discussion.delete({
+          discussion,
+          store: this.$store,
+          route: this.$route,
+        }),
+      );
 
       this.ws.on('msg.update', (message) =>
         WebSocket.room.message.update({
