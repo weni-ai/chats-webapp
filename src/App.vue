@@ -236,13 +236,13 @@ export default {
         }
       });
 
-      this.ws.on('rooms.create', (room) => {
-        if (!!room.user && room.user.email !== this.me.email) return;
-
-        this.$store.dispatch('chats/rooms/addRoom', room);
-        const notification = new SoundNotification('select-sound');
-        notification.notify();
-      });
+      this.ws.on('rooms.create', (room) =>
+        WebSocket.room.create({
+          room,
+          store: this.$store,
+          me: this.me,
+        }),
+      );
 
       this.ws.on('discussions.create', (discussion) => {
         if (!!discussion.created_by && discussion.created_by === this.me.email) return;
