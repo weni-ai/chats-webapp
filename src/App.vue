@@ -294,9 +294,12 @@ export default {
         }
       });
 
-      this.ws.on('rooms.close', (room) => {
-        this.$store.dispatch('chats/rooms/removeRoom', room.uuid);
-      });
+      this.ws.on('rooms.close', (room) =>
+        WebSocket.room.delete({
+          room,
+          store: this.$store,
+        }),
+      );
 
       this.ws.on('discussions.close', (discussion) => {
         this.$store.dispatch('chats/discussions/removeDiscussion', discussion.uuid);
