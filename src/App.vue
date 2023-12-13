@@ -258,37 +258,15 @@ export default {
         notification.notify();
       });
 
-      this.ws.on('rooms.update', (room) => {
-        if (!!room.user && room.user.email !== this.me.email) {
-          this.handleLocale();
-          // this.$router.replace({ name: 'home' });
-        }
-
-        if (
-          !this.$store.state.chats.rooms.rooms.find(
-            (alreadyInRoom) => alreadyInRoom.uuid === room.uuid,
-          )
-        ) {
-          this.$store.dispatch('chats/rooms/addRoom', room);
-
-          const notification = new SoundNotification('select-sound');
-          notification.notify();
-        }
-
-        const { viewedAgent } = this;
-        this.$store.dispatch('chats/rooms/updateRoom', {
+      this.ws.on('rooms.update', (room) =>
+        WebSocket.room.update({
           room,
-          userEmail: this.me.email,
-          routerReplace: () => this.$router.replace({ name: 'home' }),
-          viewedAgentEmail: viewedAgent.email,
-        });
-
-        if (room.unread_msgs === 0) {
-          this.$store.dispatch('chats/rooms/resetNewMessagesByRoom', {
-            room: room.uuid,
-          });
-        }
-      });
+          store: this.$store,
+          router: this.$router,
+          me: this.me,
+          viewedAgent: this.viewedAgent,
+        }),
+      );
 
       this.ws.on('discussions.update', (discussion) => {
         const { discussions, activeDiscussion } = this.$store.state.chats.discussions;
