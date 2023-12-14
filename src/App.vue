@@ -9,10 +9,8 @@ import { mapState } from 'vuex';
 
 import http from '@/services/api/http';
 import env from '@/utils/env';
-import { sendWindowNotification } from '@/utils/notifications';
 import { WS } from '@/services/api/socket';
 import Profile from '@/services/api/resources/profile';
-import SoundNotification from '@/services/api/websocket/soundNotification';
 import WebSocket from '@/services/api/websocket';
 
 const moment = require('moment');
@@ -185,56 +183,14 @@ export default {
         }),
       );
 
-      this.ws.on('discussion_msg.create', async (message) => {
-        const { discussions, activeDiscussion } = this.$store.state.chats.discussions;
-        const findDiscussion = discussions.find(
-          (discussion) => discussion.uuid === message.discussion,
-        );
-
-        // this.$store.dispatch('chats/rooms/bringRoomFront', findRoom);
-        if (findDiscussion) {
-          if (this.me.email === message.user?.email) {
-            return;
-          }
-
-          const notification = new SoundNotification('ping-bing');
-          notification.notify();
-
-          if (document.hidden) {
-            const { first_name, last_name } = message.user;
-            sendWindowNotification({
-              title: `${first_name} ${last_name}`,
-              message: message.text,
-              image: message.media?.[0]?.url,
-            });
-          }
-
-          const isCurrentDiscussion =
-            this.$route.name === 'discussion' &&
-            this.$route.params.discussionId === message.discussion;
-          const isViewModeCurrentDiscussion =
-            this.$route.params.viewedAgent && activeDiscussion?.uuid === message.discussion;
-          const shouldAddDiscussionMessage = isCurrentDiscussion || isViewModeCurrentDiscussion;
-
-          if (shouldAddDiscussionMessage) {
-            this.$store.dispatch('chats/discussionMessages/addDiscussionMessage', message);
-          }
-
-          const isJsonMessage = this.isAJson(message.text);
-          if (shouldAddDiscussionMessage || isJsonMessage) {
-            return;
-          }
-
-          this.$store.dispatch('chats/discussions/addNewMessagesByDiscussion', {
-            discussion: message.discussion,
-            message: {
-              created_on: message.created_on,
-              uuid: message.uuid,
-              text: message.text,
-            },
-          });
-        }
-      });
+      this.ws.on('discussion_msg.create', (message) =>
+        WebSocket.discussion.message.create({
+          message,
+          store: this.$store,
+          route: this.$route,
+          me: this.me,
+        }),
+      );
 
       this.ws.on('rooms.create', (room) =>
         WebSocket.room.create({
