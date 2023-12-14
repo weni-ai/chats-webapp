@@ -1,6 +1,7 @@
 const mutations = {
   SET_TOKEN: 'SET_TOKEN',
   SET_PROJECT: 'SET_PROJECT',
+  SET_STATUS: 'SET_STATUS',
   SET_COPILOT_ACTIVE: 'SET_COPILOT_ACTIVE',
   SET_COPILOT_CUSTOM_RULES_ACTIVE: 'SET_COPILOT_CUSTOM_RULES_ACTIVE',
   SET_COPILOT_CUSTOM_RULES: 'SET_COPILOT_CUSTOM_RULES',
@@ -25,6 +26,9 @@ export default {
     [mutations.SET_PROJECT](state, project) {
       state.project = project;
     },
+    [mutations.SET_STATUS](state, status) {
+      state.status = status;
+    },
     [mutations.SET_COPILOT_ACTIVE](state, active) {
       state.copilot.active = active;
     },
@@ -41,6 +45,9 @@ export default {
     },
     setProject({ commit }, project) {
       commit(mutations.SET_PROJECT, project);
+    },
+    setStatus({ commit }, status) {
+      commit(mutations.SET_STATUS, status);
     },
     setCopilotActive({ commit }, active) {
       commit(mutations.SET_COPILOT_ACTIVE, active);

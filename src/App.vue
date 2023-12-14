@@ -164,15 +164,6 @@ export default {
       this.$router.push({ name: 'onboarding.agent' });
     },
 
-    isAJson(message) {
-      try {
-        JSON.parse(message);
-        return true;
-      } catch {
-        return false;
-      }
-    },
-
     listeners() {
       this.ws.on('msg.create', (message) =>
         WebSocket.room.message.create({
@@ -249,17 +240,7 @@ export default {
         }),
       );
 
-      this.ws.on('status.update', (info) => {
-        const localStorageStatus = localStorage.getItem('statusAgent');
-        if (localStorageStatus !== info.status) {
-          if (info.from === 'system') {
-            this.updateStatus(localStorageStatus);
-          } else if (info.from === 'user') {
-            this.$store.state.config.status = info.status;
-            localStorage.setItem('statusAgent', info.status);
-          }
-        }
-      });
+      this.ws.on('status.update', (content) => WebSocket.status.update({ content, app: this }));
     },
     async getStatus() {
       const localStorageStatus = localStorage.getItem('statusAgent');
