@@ -262,31 +262,13 @@ export default {
         }),
       );
 
-      this.ws.on('discussions.update', (discussion) => {
-        const { discussions, activeDiscussion } = this.$store.state.chats.discussions;
-        const isNewDiscussion = !discussions.find(
-          (mappedDiscussion) => mappedDiscussion.uuid === discussion.uuid,
-        );
-
-        if (isNewDiscussion && discussion.created_by !== this.me.email) {
-          this.$store.dispatch('chats/discussions/addDiscussion', discussion);
-
-          const notification = new SoundNotification('achievement-confirmation');
-          notification.notify();
-        }
-
-        if (activeDiscussion?.uuid === discussion.uuid) {
-          this.$store.dispatch('chats/discussions/setActiveDiscussion', discussion);
-          this.$store.dispatch('chats/rooms/setActiveRoom', null);
-        }
-
-        if (
-          discussion.added_agents.length >= 2 &&
-          !discussion.added_agents.includes(this.me.email)
-        ) {
-          this.$store.dispatch('chats/discussions/removeDiscussion', discussion.uuid);
-        }
-      });
+      this.ws.on('discussions.update', (discussion) =>
+        WebSocket.discussion.update({
+          discussion,
+          store: this.$store,
+          me: this.me,
+        }),
+      );
 
       this.ws.on('rooms.close', (room) =>
         WebSocket.room.delete({
