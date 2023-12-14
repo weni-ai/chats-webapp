@@ -1,11 +1,7 @@
-import room from './room';
-import discussion from './discussion';
-import status from './status';
+import setup from './setup';
 import soundNotification from './soundNotification';
 
 export default {
-  room,
-  discussion,
-  status,
+  setup,
   soundNotification,
 };
