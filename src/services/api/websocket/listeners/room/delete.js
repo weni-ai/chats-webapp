@@ -1,3 +1,3 @@
-export default async ({ room, store }) => {
-  store.dispatch('chats/rooms/removeRoom', room.uuid);
+export default async (room, { app }) => {
+  app.$store.dispatch('chats/rooms/removeRoom', room.uuid);
 };

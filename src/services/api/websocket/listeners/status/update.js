@@ -1,4 +1,4 @@
-export default ({ content, app }) => {
+export default (content, { app }) => {
   const localStorageStatus = localStorage.getItem('statusAgent');
   const { from, status } = content;
 

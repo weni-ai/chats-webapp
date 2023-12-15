@@ -3,12 +3,12 @@ import SoundNotification from '@/services/api/websocket/soundNotification';
 import { sendWindowNotification } from '@/utils/notifications';
 import { isValidJson } from '@/utils/messages';
 
-export default ({ message, store, route, me }) => {
-  const { discussions, activeDiscussion } = store.state.chats.discussions;
+export default (message, { app }) => {
+  const { discussions, activeDiscussion } = app.$store.state.chats.discussions;
   const findDiscussion = discussions.find((discussion) => discussion.uuid === message.discussion);
 
   if (findDiscussion) {
-    if (me.email === message.user?.email) {
+    if (app.me.email === message.user?.email) {
       return;
     }
 
@@ -25,13 +25,13 @@ export default ({ message, store, route, me }) => {
     }
 
     const isCurrentDiscussion =
-      route.name === 'discussion' && route.params.discussionId === message.discussion;
+      app.$route.name === 'discussion' && app.$route.params.discussionId === message.discussion;
     const isViewModeCurrentDiscussion =
-      route.params.viewedAgent && activeDiscussion?.uuid === message.discussion;
+      app.$route.params.viewedAgent && activeDiscussion?.uuid === message.discussion;
     const shouldAddDiscussionMessage = isCurrentDiscussion || isViewModeCurrentDiscussion;
 
     if (shouldAddDiscussionMessage) {
-      store.dispatch('chats/discussionMessages/addDiscussionMessage', message);
+      app.$store.dispatch('chats/discussionMessages/addDiscussionMessage', message);
     }
 
     const isJsonMessage = isValidJson(message.text);
@@ -39,7 +39,7 @@ export default ({ message, store, route, me }) => {
       return;
     }
 
-    store.dispatch('chats/discussions/addNewMessagesByDiscussion', {
+    app.$store.dispatch('chats/discussions/addNewMessagesByDiscussion', {
       discussion: message.discussion,
       message: {
         created_on: message.created_on,

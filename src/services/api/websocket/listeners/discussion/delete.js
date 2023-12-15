@@ -1,8 +1,8 @@
-export default ({ discussion, store, route }) => {
-  store.dispatch('chats/discussions/removeDiscussion', discussion.uuid);
+export default (discussion, { app }) => {
+  app.$store.dispatch('chats/discussions/removeDiscussion', discussion.uuid);
 
-  if (route.params.discussionId === discussion.uuid) {
-    store.dispatch('chats/discussions/setActiveDiscussion', null);
-    store.dispatch('chats/rooms/setActiveRoom', null);
+  if (app.$route.params.discussionId === discussion.uuid) {
+    app.$store.dispatch('chats/discussions/setActiveDiscussion', null);
+    app.$store.dispatch('chats/rooms/setActiveRoom', null);
   }
 };

@@ -1,82 +1,24 @@
-import listenerRoom from './room';
-import listenerDiscussion from './discussion';
-import listenerStatus from './status';
+import roomListener from './room';
+import discussionListener from './discussion';
+import statusListener from './status';
 
 export default ({ ws, app }) => {
-  ws.on('msg.create', (message) =>
-    listenerRoom.message.create({
-      message,
-      store: app.$store,
-      route: app.$route,
-      me: app.me,
-    }),
-  );
+  const createListener = (callback) => (payload) => {
+    callback(payload, {
+      app,
+    });
+  };
 
-  ws.on('discussion_msg.create', (message) =>
-    listenerDiscussion.message.create({
-      message,
-      store: app.$store,
-      route: app.$route,
-      me: app.me,
-    }),
-  );
+  ws.on('rooms.create', createListener(roomListener.create));
+  ws.on('rooms.update', createListener(roomListener.update));
+  ws.on('rooms.close', createListener(roomListener.delete));
+  ws.on('msg.create', createListener(roomListener.message.create));
+  ws.on('msg.update', createListener(roomListener.message.update)); // Used when sending media in the room
 
-  ws.on('rooms.create', (room) =>
-    listenerRoom.create({
-      room,
-      store: app.$store,
-      me: app.me,
-    }),
-  );
+  ws.on('discussion_msg.create', createListener(discussionListener.message.create));
+  ws.on('discussions.create', createListener(discussionListener.create));
+  ws.on('discussions.update', createListener(discussionListener.update));
+  ws.on('discussions.close', createListener(discussionListener.delete));
 
-  ws.on('discussions.create', (discussion) =>
-    listenerDiscussion.create({
-      discussion,
-      store: app.$store,
-      me: app.me,
-    }),
-  );
-
-  ws.on('rooms.update', (room) =>
-    listenerRoom.update({
-      room,
-      store: app.$store,
-      router: app.$router,
-      me: app.me,
-      viewedAgent: app.viewedAgent,
-    }),
-  );
-
-  ws.on('discussions.update', (discussion) =>
-    listenerDiscussion.update({
-      discussion,
-      store: app.$store,
-      me: app.me,
-    }),
-  );
-
-  ws.on('rooms.close', (room) =>
-    listenerRoom.delete({
-      room,
-      store: app.$store,
-    }),
-  );
-
-  ws.on('discussions.close', (discussion) =>
-    listenerDiscussion.delete({
-      discussion,
-      store: app.$store,
-      route: app.$route,
-    }),
-  );
-
-  ws.on('msg.update', (message) =>
-    listenerRoom.message.update({
-      message,
-      store: app.$store,
-      me: app.me,
-    }),
-  );
-
-  ws.on('status.update', (content) => listenerStatus.update({ content, app: this }));
+  ws.on('status.update', createListener(statusListener.update));
 };

@@ -2,13 +2,13 @@ import SoundNotification from '@/services/api/websocket/soundNotification';
 import { sendWindowNotification } from '@/utils/notifications';
 import { isValidJson } from '@/utils/messages';
 
-export default async ({ message, store, route, me }) => {
-  const { rooms, activeRoom } = store.state.chats.rooms;
+export default async (message, { app }) => {
+  const { rooms, activeRoom } = app.$store.state.chats.rooms;
   const findRoom = rooms.find((room) => room.uuid === message.room);
 
-  store.dispatch('chats/rooms/bringRoomFront', findRoom);
+  app.$store.dispatch('chats/rooms/bringRoomFront', findRoom);
   if (findRoom) {
-    if (me.email === message.user?.email) {
+    if (app.me.email === message.user?.email) {
       return;
     }
 
@@ -23,16 +23,17 @@ export default async ({ message, store, route, me }) => {
       });
     }
 
-    const isCurrentRoom = route.name === 'room' && route.params.roomId === message.room;
-    const isViewModeCurrentRoom = route.params.viewedAgent && activeRoom?.uuid === message.room;
+    const isCurrentRoom = app.$route.name === 'room' && app.$route.params.roomId === message.room;
+    const isViewModeCurrentRoom =
+      app.$route.params.viewedAgent && activeRoom?.uuid === message.room;
 
     if (isCurrentRoom || isViewModeCurrentRoom) {
-      store.dispatch('chats/roomMessages/addMessage', message);
+      app.$store.dispatch('chats/roomMessages/addMessage', message);
     }
 
     if (isValidJson(message.text)) return;
 
-    store.dispatch('chats/rooms/addNewMessagesByRoom', {
+    app.$store.dispatch('chats/rooms/addNewMessagesByRoom', {
       room: message.room,
       message: {
         created_on: message.created_on,
