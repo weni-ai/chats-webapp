@@ -26,6 +26,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import isMobile from 'is-mobile';
 
 import * as notifications from '@/utils/notifications';
 
@@ -71,14 +72,6 @@ export default {
     };
   },
 
-  computed: {
-    ...mapState({
-      isMobile: (state) => state.config.isMobile,
-      room: (state) => state.chats.rooms.activeRoom,
-      discussion: (state) => state.chats.discussions.activeDiscussion,
-    }),
-  },
-
   async created() {
     if (this.$route.name === 'home') {
       await this.$store.dispatch('chats/discussionMessages/resetDiscussionMessages');
@@ -86,6 +79,17 @@ export default {
       await this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
       await this.$store.dispatch('chats/rooms/setActiveRoom', null);
     }
+  },
+
+  computed: {
+    ...mapState({
+      room: (state) => state.chats.rooms.activeRoom,
+      discussion: (state) => state.chats.discussions.activeDiscussion,
+    }),
+
+    isMobile() {
+      return isMobile();
+    },
   },
 
   methods: {

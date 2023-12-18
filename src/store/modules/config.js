@@ -17,7 +17,6 @@ export default {
       customRulesActive: false,
       customRules: '',
     },
-    isMobile: window.screen.width <= 600,
   },
   mutations: {
     [mutations.SET_TOKEN](state, token) {
