@@ -74,11 +74,8 @@ export default {
   computed: {
     ...mapState({
       isMobile: (state) => state.config.isMobile,
-      me: (state) => state.profile.me,
       room: (state) => state.chats.rooms.activeRoom,
-      rooms: (state) => state.chats.rooms.rooms,
       discussion: (state) => state.chats.discussions.activeDiscussion,
-      discussions: (state) => state.chats.discussions.discussions,
     }),
   },
 
