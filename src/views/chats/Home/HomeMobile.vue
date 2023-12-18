@@ -1,5 +1,5 @@
 <template>
-  <div class="home-mobile">
+  <div class="home-mobile" v-if="!room && !discussion">
     <unnnic-chats-header
       title="Chats"
       subtitle="Nome do projeto"
@@ -12,19 +12,29 @@
     </main>
     <unnnic-chats-navbar :links="navs" />
   </div>
+  <mobile-chat v-else />
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import TheCardGroups from '@/layouts/ChatsLayout/components/TheCardGroups';
+
+import MobileChat from '@/views/chats/Mobile/MobileChat';
 
 export default {
   name: 'HomeMobile',
 
   components: {
     TheCardGroups,
+    MobileChat,
   },
 
   computed: {
+    ...mapState({
+      room: (state) => state.chats.rooms.activeRoom,
+      discussion: (state) => state.chats.discussions.activeDiscussion,
+    }),
     navs() {
       return [
         {

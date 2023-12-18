@@ -5,6 +5,7 @@
       @openRoomContactInfo="emitOpenRoomContactInfo"
       @openModalCloseChat="openModal('closeChat')"
       @openFlowsTrigger="openFlowsTrigger"
+      @back="clearActiveChats"
     />
     <chats-dropzone
       @open-file-uploader="openModalFileUploader"
@@ -209,6 +210,13 @@ export default {
           resetUnreadMessages();
         }
       }
+    },
+
+    async clearActiveChats() {
+      const { dispatch } = this.$store;
+
+      await dispatch('chats/discussions/setActiveDiscussion', null);
+      await dispatch('chats/rooms/setActiveRoom', null);
     },
   },
 
