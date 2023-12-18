@@ -1,5 +1,5 @@
 <template>
-  <section class="home-modals">
+  <section class="home-chat-modals">
     <modal-get-chat
       :showModal="modalsShowing.getChat"
       @closeModal="closeModal('getChat')"
@@ -40,7 +40,7 @@ import ModalGetChat from '@/components/chats/chat/ModalGetChat';
 import ModalCloseChat from './ModalCloseChat.vue';
 
 export default {
-  name: 'HomeModals',
+  name: 'HomeChatModals',
 
   components: {
     FileUploader,
