@@ -144,7 +144,7 @@
       <unnnic-button
         v-if="this.currentTab === 'messages' && !isQuickMessageEditing"
         :text="$t('quick_messages.new')"
-        icon-left="add-circle-1"
+        icon-left="add"
         type="secondary"
         @click="() => messagesHandler('create')"
       />
@@ -620,21 +620,19 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding-bottom: 1rem;
 
   .scrollable {
     height: 100%;
     overflow-y: auto;
-    padding-right: 1rem;
-    // margin-right: 0.5rem;
+    padding-right: $unnnic-spacing-sm;
   }
 
   .actions {
     display: flex;
-    gap: 1rem;
+    gap: $unnnic-spacing-sm;
     margin-top: auto;
-    margin-right: 1.5rem;
-    padding-top: 1.5rem;
+    margin-right: $unnnic-spacing-sm;
+    padding-top: $unnnic-spacing-sm;
 
     & > * {
       width: 100%;

@@ -5,7 +5,7 @@
       <unnnic-chats-header
         :title="project.name"
         :subtitle="$t('chats.closed_chats.project_history')"
-        avatarIcon="task-list-clock-1"
+        avatarIcon="history"
         :crumbs="crumbs"
         :close="backToHome"
         @crumbClick="handlerCrumbClick"

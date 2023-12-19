@@ -4,11 +4,10 @@
     <div class="unnnic-grid-span-12">
       <header class="dashboard__header" style="justify-content: space-between">
         <div>
-          <unnnic-avatar-icon icon="graph-stats-1" scheme="aux-purple" />
+          <unnnic-avatar-icon icon="bar_chart_4_bars" scheme="aux-purple" />
           <span class="title">
             <slot name="header" />
           </span>
-          <!-- <unnnic-icon-svg icon="information-circle-4" size="sm" scheme="neutral-soft" /> -->
         </div>
         <div style="display: flex; padding: 12px">
           <slot name="status" />

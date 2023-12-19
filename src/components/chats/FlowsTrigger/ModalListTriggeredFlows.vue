@@ -65,7 +65,7 @@
 <script>
 import moment from 'moment';
 
-import TriggeredFlowsLoading from '@/views/loadings/TriggeredFlowsLoading';
+import TriggeredFlowsLoading from '@/views/loadings/FlowsTrigger/TriggeredFlowsLoading';
 import TablePagination from '@/components/TablePagination';
 
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
