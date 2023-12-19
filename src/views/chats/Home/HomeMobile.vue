@@ -8,7 +8,7 @@
       sectionIconScheme="weni-600"
     />
     <main class="home-mobile__main">
-      <the-card-groups class="room-list" />
+      <the-card-groups class="home-mobile__chats-list" />
     </main>
     <unnnic-chats-navbar :links="navs" />
   </div>
@@ -88,6 +88,10 @@ export default {
     overflow: hidden;
 
     padding: $unnnic-spacing-xs $unnnic-spacing-sm 0;
+  }
+
+  &__chats-list {
+    height: 100%;
   }
 }
 </style>

@@ -8,7 +8,7 @@
       :titleClick="() => emitOpenRoomContactInfo()"
       :avatarName="headerRoomTitle"
       :close="emitOpenModalCloseChat"
-      :back="emitBack"
+      :back="isMobile ? emitBack : null"
     />
     <unnnic-chats-header
       v-show="isShowingDiscussionHeader"
@@ -17,7 +17,7 @@
       :subtitle="headerDiscussionSubtitle"
       avatarIcon="forum"
       size="small"
-      :back="emitBack"
+      :back="isMobile ? emitBack : null"
     />
 
     <chat-header-send-flow v-if="isShowingSendFlowHeader" @send-flow="emitOpenFlowsTrigger" />
@@ -94,7 +94,7 @@ export default {
       this.$emit('openFlowsTrigger');
     },
     emitBack() {
-      return isMobile && this.$emit('back');
+      return this.$emit('back');
     },
   },
 };
