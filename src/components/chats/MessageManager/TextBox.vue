@@ -44,10 +44,6 @@ export default {
   },
 
   props: {
-    loadingValue: {
-      type: Number,
-    },
-
     value: {
       type: String,
       default: '',
