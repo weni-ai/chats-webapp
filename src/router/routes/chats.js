@@ -1,4 +1,4 @@
-import Home from '@/views/chats/Home.vue';
+import Home from '@/views/chats/Home';
 
 const routes = [
   {
