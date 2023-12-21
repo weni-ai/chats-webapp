@@ -2,12 +2,7 @@
   <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
   <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
   <section class="text-box">
-    <div
-      class="text-editor"
-      :class="{ mobile: isMobile }"
-      @click="$refs.textareaRef.focus()"
-      @keypress.enter="() => {}"
-    >
+    <div class="text-editor" :class="{ mobile: isMobile }" @click="$refs.textareaRef.focus()">
       <unnnic-button
         v-if="isMobile"
         class="text-editor__mobile-button"
@@ -44,14 +39,32 @@
         @blur="() => setIsFocused(false)"
       />
 
-      <unnnic-button
-        v-if="isMobile"
-        class="text-editor__mobile-button"
-        iconCenter="attachment"
-        type="tertiary"
-        scheme="neutral-dark"
-        @click.stop="emitHandleAttachment"
-      />
+      <unnnic-dropdown position="top-left" class="more-actions">
+        <unnnic-button
+          slot="trigger"
+          class="text-editor__mobile-button"
+          iconCenter="attachment"
+          type="tertiary"
+          scheme="neutral-dark"
+          next
+        />
+
+        <div class="more-actions-container">
+          <more-actions-option
+            icon="image"
+            :title="$t('photo_or_video')"
+            :action="() => {}"
+            inputType="image"
+          />
+          <more-actions-option
+            icon="article"
+            :title="$t('doc')"
+            :action="() => {}"
+            inputType="doc"
+            @files-selected="emitHandleAttachment($event)"
+          />
+        </div>
+      </unnnic-dropdown>
     </div>
   </section>
 </template>
@@ -60,12 +73,14 @@
 import isMobile from 'is-mobile';
 
 import EmojiPicker from './EmojiPicker';
+import MoreActionsOption from './MoreActionsOption';
 
 export default {
   name: 'TextBox',
 
   components: {
     EmojiPicker,
+    MoreActionsOption,
   },
 
   props: {
@@ -129,8 +144,11 @@ export default {
       this.$emit('handle-copilot');
     },
 
-    emitHandleAttachment() {
-      this.$emit('handle-attachment');
+    emitHandleAttachment(files) {
+      console.log({ files });
+      if (files) {
+        this.$emit('handle-attachment', files);
+      }
     },
 
     keyDownTextarea(event) {
@@ -208,7 +226,6 @@ export default {
 
     color: $unnnic-color-neutral-dark;
 
-    overflow: auto;
     cursor: text;
 
     &.mobile {

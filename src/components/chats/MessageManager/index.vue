@@ -18,6 +18,7 @@
           @paste="handlePaste"
           @is-typing-handler="isTypingHandler"
           @is-focused-handler="isFocusedHandler"
+          @handle-attachment="openFileUploader($event)"
         />
         <unnnic-audio-recorder
           ref="audioRecorder"
@@ -81,13 +82,18 @@
         </unnnic-dropdown>
 
         <unnnic-button
-          v-if="
-            !isSuggestionBoxOpen && (isTyping || isAudioRecorderVisible || isFileLoadingValueValid)
-          "
+          v-if="showSendMessageButton"
           @click="send"
           type="primary"
           size="large"
           iconCenter="send"
+        />
+        <unnnic-button
+          v-else-if="isMobile"
+          @click="record"
+          type="primary"
+          size="large"
+          iconCenter="mic"
         />
       </div>
       <suggestion-box
@@ -112,6 +118,7 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
 import { mapState } from 'vuex';
 
 import MessageManagerLoading from '@/views/loadings/chat/MessageManager';
@@ -171,6 +178,10 @@ export default {
       discussionId: (state) => state.chats.discussions.activeDiscussion?.uuid,
     }),
 
+    isMobile() {
+      return isMobile();
+    },
+
     textBoxMessage: {
       get() {
         return this.value;
@@ -203,8 +214,15 @@ export default {
       return uniqueShortcuts;
     },
     showActionButton() {
-      const { isTyping, isAudioRecorderVisible, isFileLoadingValueValid } = this;
-      return !isTyping && !isAudioRecorderVisible && !isFileLoadingValueValid;
+      const { isTyping, isAudioRecorderVisible, isFileLoadingValueValid, isMobile } = this;
+      return !isTyping && !isAudioRecorderVisible && !isFileLoadingValueValid && !isMobile;
+    },
+    showSendMessageButton() {
+      const { isSuggestionBoxOpen, isTyping, isAudioRecorderVisible, isFileLoadingValueValid } =
+        this;
+      return (
+        !isSuggestionBoxOpen && (isTyping || isAudioRecorderVisible || isFileLoadingValueValid)
+      );
     },
   },
 
