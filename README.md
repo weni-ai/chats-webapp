@@ -22,7 +22,8 @@ This repository has been carefully developed with our customers' needs and conce
 
 > [Usability documentation](https://docs.weni.ai/l/pt/atendimento-humano)
 
-<img src="https://github.com/weni-ai/chats-webapp/assets/69015179/5b7d696a-958b-4317-bd02-14669525dc0c" />
+<img src="https://github.com/weni-ai/chats-webapp/assets/69015179/712b36c8-a2b4-4307-9fb2-17c88a12fb08" />
+
 
 <br/> 
 
