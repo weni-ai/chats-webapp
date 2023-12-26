@@ -4,7 +4,7 @@ import env from '@/utils/env';
 import listeners from './listeners';
 
 export default class WebSocketSetup {
-  THIRTY_SECONDS = 3000;
+  THIRTY_SECONDS = 30000;
 
   constructor({ app }) {
     this.app = app;
