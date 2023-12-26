@@ -1,4 +1,4 @@
-export class Socket {
+export default class Socket {
   /**
    * @type {WebSocket}
    */
@@ -45,5 +45,3 @@ export class Socket {
     this.#ws.send(JSON.stringify(message));
   }
 }
-
-export const WS = Socket;

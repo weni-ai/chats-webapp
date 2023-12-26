@@ -77,9 +77,9 @@
 
 <script>
 import Profile from '@/services/api/resources/profile';
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 
-export const PREFERENCES_SOUND = 'WENICHATS_PREFERENCES_SOUND';
+import { unnnicCallAlert } from '@weni/unnnic-system';
 
 export default {
   props: {
