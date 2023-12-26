@@ -4,6 +4,15 @@ import Discussions from '../store/modules/chats/discussions';
 
 import Profile from '../store/modules/profile';
 
+export function isValidJson(message) {
+  try {
+    JSON.parse(message);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function createTemporaryMessage({
   itemType = '',
   itemUuid = '',
