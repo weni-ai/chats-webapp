@@ -58,7 +58,7 @@ export default {
     upload() {
       this.sendFileMessage();
 
-      this.showUploadModal = false;
+      this.closeFileUploadModal();
       this.files = [];
     },
 
