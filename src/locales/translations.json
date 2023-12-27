@@ -1223,10 +1223,20 @@
     "en-us": "Send photo or video",
     "es": "Enviar foto o vídeo"
   },
+  "photo_or_video": {
+    "pt-br": "Foto ou vídeo",
+    "en-us": "Photo or video",
+    "es": "Foto o vídeo"
+  },
   "send_docs": {
     "pt-br": "Enviar documento | Enviar documento | Enviar documentos",
     "en-us": "Send doc | Send doc | Send docs",
     "es": "Enviar documento | Enviar documento | Enviar documentos"
+  },
+  "doc": {
+    "pt-br": "Documento",
+    "en-us": "Doc",
+    "es": "Documento"
   },
   "send_images": {
     "pt-br": "Enviar imagem | Enviar imagens",
