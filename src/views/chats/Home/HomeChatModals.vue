@@ -27,6 +27,7 @@
       v-model="modalFileUploaderFiles"
       ref="fileUploader"
       @progress="emitFileUploaderProgress"
+      @close="closeModal('fileUploader')"
     />
 
     <modal-quick-messages
