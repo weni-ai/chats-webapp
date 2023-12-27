@@ -1,14 +1,13 @@
 <template>
   <unnnic-modal
-    @close="closeModal"
+    class="modal-close-chat"
+    scheme="neutral-darkest"
     :text="$t('chats.to_end_rate_the_chat')"
     :description="$t('chats.tags_help')"
-    scheme="neutral-darkest"
-    class="modal-close-chat"
+    @close="closeModal"
   >
     <div class="modal-close-chat__tags-list">
-      <chat-classifier v-model="tags" :tags="sectorTags" :loading="isLoadingTags">
-      </chat-classifier>
+      <chat-classifier v-model="tags" :tags="sectorTags" :loading="isLoadingTags" />
     </div>
 
     <template #options>
@@ -24,9 +23,13 @@
 </template>
 
 <script>
-import ChatClassifier from '@/components/chats/ChatClassifier';
+import isMobile from 'is-mobile';
+import { unnnicCallAlert } from '@weni/unnnic-system';
+
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
+
+import ChatClassifier from '@/components/chats/ChatClassifier';
 
 export default {
   components: {
@@ -52,6 +55,12 @@ export default {
   },
   mounted() {
     this.classifyRoom();
+  },
+
+  computed: {
+    isMobile() {
+      return isMobile();
+    },
   },
 
   methods: {
@@ -81,6 +90,15 @@ export default {
       this.$store.dispatch('chats/rooms/removeRoom', uuid);
 
       this.isLoadingCloseRoom = false;
+      if (this.isMobile) {
+        unnnicCallAlert({
+          props: {
+            text: this.$t('chats.chat_with_contact_ended', { contact: this.room.contact.name }),
+            scheme: 'feedback-grey',
+          },
+          seconds: 5,
+        });
+      }
       this.closeModal();
     },
     closeModal() {

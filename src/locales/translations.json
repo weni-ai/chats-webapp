@@ -408,6 +408,11 @@
       "en-us": "Tags help you locate chats and also generate good reports",
       "es": "Las etiquetas te ayudan a localizar chats y también a generar buenos informes."
     },
+    "chat_with_contact_ended": {
+      "pt-br": "Chat com {contact} encerrado",
+      "en-us": "Chat with {contact} closed",
+      "es": "Chat con {contact} cerrado"
+    },
     "see_history": {
       "pt-br": "Histórico",
       "en-us": "Chats history",
