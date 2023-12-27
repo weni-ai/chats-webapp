@@ -398,15 +398,15 @@
       "en-us": "Sent flows ({length})",
       "es": "Flujos enviados ({length})"
     },
-    "end": {
-      "pt-br": "Encerrar chat",
-      "en-us": "End chat",
-      "es": "Finalizar el chat"
+    "to_end_rate_the_chat": {
+      "pt-br": "Para encerrar, classifique o chat",
+      "en-us": "To close, rate the chat",
+      "es": "Para cerrar califica el chat"
     },
-    "end_confirmation": {
-      "pt-br": "Tem certeza que gostaria de encerrar chat com {name}?",
-      "en-us": "Are you sure you'd like to close the chat with {name}?",
-      "es": "¿Estás seguro de que quieres cerrar el chat con {name}?"
+    "tags_help": {
+      "pt-br": "As tags ajudam a localizar os chats e também gerar bons relatórios",
+      "en-us": "Tags help you locate chats and also generate good reports",
+      "es": "Las etiquetas te ayudan a localizar chats y también a generar buenos informes."
     },
     "see_history": {
       "pt-br": "Histórico",
