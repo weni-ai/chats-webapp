@@ -9,7 +9,7 @@
         iconCenter="bolt"
         type="tertiary"
         scheme="neutral-dark"
-        @click.stop="emitHandleCopilot"
+        @click.stop="emitHandleQuickMessages"
       />
       <div v-else @click.stop="handleEmojiPicker">
         <unnnic-icon
@@ -39,7 +39,7 @@
         @blur="() => setIsFocused(false)"
       />
 
-      <unnnic-dropdown position="top-left" class="more-actions">
+      <unnnic-dropdown position="top-left" class="more-actions" v-if="isMobile">
         <unnnic-button
           slot="trigger"
           class="text-editor__mobile-button"
@@ -140,8 +140,8 @@ export default {
       }
     },
 
-    emitHandleCopilot() {
-      this.$emit('handle-copilot');
+    emitHandleQuickMessages() {
+      this.$emit('handle-quick-messages');
     },
 
     emitHandleAttachment(files) {

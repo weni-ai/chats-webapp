@@ -4,7 +4,7 @@
       :isLoading="isChatSkeletonActive"
       @openRoomContactInfo="emitOpenRoomContactInfo"
       @openModalCloseChat="openModal('closeChat')"
-      @openFlowsTrigger="openFlowsTrigger"
+      @openFlowsTrigger="emitOpenFlowsTrigger"
       @back="clearActiveChats"
     />
     <chats-dropzone
@@ -19,7 +19,7 @@
         v-model="textBoxMessage"
         :loadingFileValue="uploadFilesProgress"
         :showSkeletonLoading="isChatSkeletonActive"
-        @show-quick-messages="handlerShowQuickMessages"
+        @show-quick-messages="emitHandleShowQuickMessages"
         @open-file-uploader="openModalFileUploader"
       />
     </chats-dropzone>
@@ -131,16 +131,16 @@ export default {
       this.$refs['home-chat-modals'].openModal('fileUploader', files);
     },
     emitOpenRoomContactInfo() {
-      this.$emit('openRoomContactInfo');
+      this.$emit('open-room-contact-info');
     },
     emitCloseRoomContactInfo() {
-      this.$emit('closeRoomContactInfo');
+      this.$emit('close-room-contact-info');
     },
-    handlerShowQuickMessages() {
-      this.$refs['chats-layout']?.handlerShowQuickMessages();
+    emitHandleShowQuickMessages() {
+      this.$emit('handle-show-quick-messages');
     },
-    openFlowsTrigger() {
-      this.$refs['chats-layout']?.openFlowsTrigger({ contact: this.room?.contact });
+    emitOpenFlowsTrigger() {
+      this.$emit('open-flows-trigger');
     },
 
     updateTextBoxMessage(message) {

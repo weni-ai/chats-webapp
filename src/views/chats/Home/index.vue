@@ -10,8 +10,10 @@
     <home-chat
       v-show="!!room || !!discussion"
       ref="home-chat"
-      @openRoomContactInfo="openRoomContactInfo"
-      @closeRoomContactInfo="closeRoomContactInfo"
+      @open-room-contact-info="openRoomContactInfo"
+      @close-room-contact-info="closeRoomContactInfo"
+      @handle-show-quick-messages="handlerShowQuickMessages"
+      @open-flows-trigger="openFlowsTrigger"
     />
 
     <template #aside>
@@ -98,6 +100,12 @@ export default {
     },
     closeRoomContactInfo() {
       this.isRoomContactInfoOpen = false;
+    },
+    handlerShowQuickMessages() {
+      this.$refs['chats-layout']?.handlerShowQuickMessages();
+    },
+    openFlowsTrigger() {
+      this.$refs['chats-layout']?.openFlowsTrigger({ contact: this.room?.contact });
     },
     updateTextBoxMessage(message) {
       this.$refs['home-chat']?.updateTextBoxMessage(message);

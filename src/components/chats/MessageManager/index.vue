@@ -18,6 +18,7 @@
           @paste="handlePaste"
           @is-typing-handler="isTypingHandler"
           @is-focused-handler="isFocusedHandler"
+          @handle-quick-messages="emitShowQuickMessages"
           @handle-attachment="openFileUploader($event)"
         />
         <unnnic-audio-recorder
@@ -74,7 +75,7 @@
               :title="$t('attach')"
             />
             <more-actions-option
-              :action="() => $emit('show-quick-messages')"
+              :action="emitShowQuickMessages"
               icon="bolt"
               :title="$t('quick_message')"
             />
@@ -230,6 +231,9 @@ export default {
     openCopilot() {
       this.isCopilotOpen = true;
       this.clearTextBox();
+    },
+    emitShowQuickMessages() {
+      this.$emit('show-quick-messages');
     },
     setMessage(newMessage) {
       this.textBoxMessage = newMessage;
