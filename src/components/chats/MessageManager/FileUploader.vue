@@ -52,12 +52,13 @@ export default {
       this.showUploadModal = true;
     },
     closeFileUploadModal() {
+      this.$emit('close');
       this.showUploadModal = false;
     },
     upload() {
       this.sendFileMessage();
 
-      this.showUploadModal = false;
+      this.closeFileUploadModal();
       this.files = [];
     },
 
