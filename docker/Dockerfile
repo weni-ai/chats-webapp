@@ -1,35 +1,32 @@
-FROM node:14-alpine as builder
+# syntax=docker/dockerfile:1
+
+ARG NODE_VERSION="14.17.4"
+ARG BASE_VERSION="alpine3.14"
+
+FROM node:${NODE_VERSION}-${BASE_VERSION} as builder
 
 WORKDIR /home/app
 
-ARG VUE_APP_CHATS_API_URL=http://localhost:8000/v1
-ARG VUE_APP_CHATS_API_TOKEN
-ARG VUE_APP_CHATS_WEBSOCKET_URL
-ARG VUE_APP_LOGROCKET_ID
-ARG VUE_APP_LOGROCKET_PARENT_DOMAIN
-ARG VUE_APP_BOT_URL
+RUN apk --no-cache add git
 
-ENV VUE_APP_CHATS_API_URL $VUE_APP_CHATS_API_URL
-ENV VUE_APP_CHATS_API_TOKEN $VUE_APP_CHATS_API_TOKEN
-ENV VUE_APP_CHATS_WEBSOCKET_URL $VUE_APP_CHATS_WEBSOCKET_URL
-ENV VUE_APP_LOGROCKET_ID $VUE_APP_LOGROCKET_ID
-ENV VUE_APP_LOGROCKET_PARENT_DOMAIN $VUE_APP_LOGROCKET_PARENT_DOMAIN
-ENV VUE_APP_BOT_URL $VUE_APP_BOT_URL
+COPY package.json yarn.lock ./
 
-COPY package.json .
-COPY yarn.lock .
-RUN yarn install
-COPY . .
+RUN --mount=type=cache,target=/root/.yarn \
+    YARN_CACHE_FOLDER=/root/.yarn yarn install
+
+COPY . ./
+
 RUN yarn build
 
-FROM nginx
+FROM nginxinc/nginx-unprivileged:1.25-alpine
 
-COPY --from=builder /home/app/dist /usr/share/nginx/html
+COPY --chown=nginx:nginx docker/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY --from=builder --chown=nginx:nginx /home/app/dist /usr/share/nginx/html/chats/
+COPY docker-entrypoint.sh /
+RUN mv /usr/share/nginx/html/chats/index.html /usr/share/nginx/html/chats/index.html.tmpl \
+    && cd /usr/share/nginx/html/chats/ \
+    && ln -s /tmp/index.html
 
-COPY ./docker/nginx/nginx.conf /etc/nginx
-COPY docker-entrypoint.sh /usr/share/nginx/
-RUN chmod +x /usr/share/nginx/docker-entrypoint.sh
-
-EXPOSE 80
-ENTRYPOINT [ "/usr/share/nginx/docker-entrypoint.sh" ]
+EXPOSE 8080
+ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
