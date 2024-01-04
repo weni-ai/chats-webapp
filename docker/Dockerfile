@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1
+# syntax = docker/dockerfile:1
 
 ARG NODE_VERSION="14.17.4"
 ARG BASE_VERSION="alpine3.14"
@@ -7,7 +7,7 @@ FROM node:${NODE_VERSION}-${BASE_VERSION} as builder
 
 WORKDIR /home/app
 
-RUN apk --no-cache add git
+RUN apk --no-cache add git bash
 
 COPY package.json yarn.lock ./
 
