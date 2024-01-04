@@ -24,12 +24,12 @@ export default {
     });
 
     this.handleLocale();
-    this.restoreUserStatus();
+    this.restoreLocalStorageUserStatus();
   },
 
   async mounted() {
     this.getUser();
-    this.getStatus();
+    this.getUserStatus();
     this.loadQuickMessages();
     this.loadQuickMessagesShared();
   },
@@ -79,12 +79,12 @@ export default {
   },
 
   methods: {
-    restoreUserStatus() {
-      const localStorageStatus = localStorage.getItem('statusAgent');
-      if (!localStorageStatus || localStorageStatus === 'None') {
+    restoreLocalStorageUserStatus() {
+      const userStatus = localStorage.getItem('statusAgent');
+      if (!['OFFLINE', 'ONLINE'].includes(userStatus)) {
         localStorage.setItem('statusAgent', 'OFFLINE');
       }
-      this.$store.dispatch('config/setStatus', localStorageStatus);
+      this.$store.dispatch('config/setStatus', userStatus);
     },
 
     async getUser() {
@@ -144,19 +144,24 @@ export default {
       this.$router.push({ name: 'onboarding.agent' });
     },
 
-    async getStatus() {
-      const localStorageStatus = localStorage.getItem('statusAgent');
-      const response = await Profile.status({
-        projectUuid: this.$store.state.config.project,
+    async getUserStatus() {
+      const userStatus = localStorage.getItem('statusAgent');
+      const projectUuid = this.$store.state.config.project;
+      const {
+        data: { connection_status: responseStatus },
+      } = await Profile.status({
+        projectUuid,
       });
-      if (localStorageStatus === 'ONLINE' && response.data.connection_status === 'OFFLINE') {
-        this.updateStatus('ONLINE');
-      } else if (response.data.connection_status === 'ONLINE') {
-        this.updateStatus('ONLINE');
+
+      if (
+        (userStatus === 'ONLINE' && responseStatus === 'OFFLINE') ||
+        responseStatus === 'ONLINE'
+      ) {
+        this.updateUserStatus('ONLINE');
       }
     },
 
-    async updateStatus(status) {
+    async updateUserStatus(status) {
       const {
         data: { connection_status },
       } = await Profile.updateStatus({
