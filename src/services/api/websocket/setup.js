@@ -61,5 +61,8 @@ export default class WebSocketSetup {
   reconnect() {
     this.ws.ws.close();
     this.connect();
+
+    const localStorageStatus = localStorage.getItem('statusAgent');
+    this.app.updateUserStatus(localStorageStatus);
   }
 }
