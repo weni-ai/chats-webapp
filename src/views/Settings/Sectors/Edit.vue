@@ -67,7 +67,7 @@
                 }
                 queueToEdit.agents.push(agent);
                 queueToEdit.toRemoveAgents = queueToEdit.toRemoveAgents.filter(
-                  (agent) => agent.uuid !== agent.uuid,
+                  (agentToRemoveUuid) => agentToRemoveUuid !== agent.uuid,
                 );
               }
             "
@@ -333,7 +333,7 @@ export default {
         if (queue.uuid) {
           const response = await Queue.agents(queue.uuid, this.pageAgents * 100, 100);
           this.pageAgents += 1;
-          this.agentsList = this.agentsList.concat(response.results);
+          this.agentsList = response.results;
           agents = this.agentsList;
           this.hasNextAgents = response.next;
           this.loading = false;
