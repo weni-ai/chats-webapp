@@ -337,6 +337,8 @@ export default {
   flex-direction: column;
   gap: $unnnic-spacing-sm;
 
+  overflow: hidden;
+
   background-color: $unnnic-color-background-carpet;
 
   :deep(.unnnic-tag) {

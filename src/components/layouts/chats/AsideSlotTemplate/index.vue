@@ -58,7 +58,9 @@ export default {
 .aside-slot-template {
   display: flex;
   flex-direction: column;
-  height: inherit;
+  height: 100%;
+
+  overflow: hidden;
 
   &__title {
     display: flex;
