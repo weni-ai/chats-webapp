@@ -1296,6 +1296,11 @@
       "en-us": "{letter} ({length})",
       "es": "{letter} ({length})"
     },
+    "add_contact": {
+      "pt-br": "Adicionar contato",
+      "en-us": "Add contact",
+      "es": "Añadir contacto"
+    },
     "add_new_contact": {
       "title": {
         "pt-br": "Adicionar novo contato",

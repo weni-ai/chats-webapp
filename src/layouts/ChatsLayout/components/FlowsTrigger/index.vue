@@ -16,19 +16,30 @@
       />
     </aside-slot-template-section>
     <aside-slot-template-section class="flows-trigger" v-else>
-      <section class="flows-trigger__triggereds-and-search">
+      <header class="flows-trigger__header">
         <unnnic-button
+          v-if="!isMobile"
           type="secondary"
           size="small"
           :text="$t('flows_trigger.triggered_flows.title')"
           @click="showTriggeredFlowsModal = true"
         />
+
         <unnnic-input
           v-model="searchUrn"
           icon-left="search-1"
           :placeholder="$t('chats.search_contact')"
-        ></unnnic-input>
-      </section>
+        />
+
+        <unnnic-button
+          v-if="isMobile"
+          size="large"
+          type="primary"
+          :text="$t('flows_trigger.add_contact')"
+          iconLeft="add"
+          @click="openModal"
+        />
+      </header>
 
       <section class="flows-trigger__selecteds" v-if="listOfGroupAndContactsSelected.length > 0">
         <unnnic-tag
@@ -95,7 +106,7 @@
           size="small"
           type="secondary"
           :text="$t('add')"
-          :iconLeft="'add'"
+          iconLeft="add"
           @click="openModal"
         />
         <unnnic-button
@@ -119,6 +130,8 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
+
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
 import ModalListTriggeredFlows from '@/components/chats/FlowsTrigger/ModalListTriggeredFlows.vue';
@@ -172,6 +185,8 @@ export default {
     showSelectFlow: false,
     page: 0,
     isContactsLoading: true,
+
+    isMobile: isMobile(),
   }),
 
   computed: {
@@ -356,7 +371,7 @@ export default {
     }
   }
 
-  &__triggereds-and-search {
+  &__header {
     display: grid;
     gap: $unnnic-spacing-nano;
   }
