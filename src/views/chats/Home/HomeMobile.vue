@@ -128,5 +128,9 @@ export default {
   &__chats-list {
     height: 100%;
   }
+
+  :deep(.unnnic-modal) {
+    position: absolute;
+  }
 }
 </style>

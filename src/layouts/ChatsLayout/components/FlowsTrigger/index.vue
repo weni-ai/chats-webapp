@@ -108,11 +108,13 @@
       </section>
     </aside-slot-template-section>
 
-    <modal-list-triggered-flows
-      v-if="showTriggeredFlowsModal"
-      @close="showTriggeredFlowsModal = false"
-    />
-    <modal-add-new-contact v-if="showModal" @close="closeModal" />
+    <template v-slot:modals>
+      <modal-list-triggered-flows
+        v-if="showTriggeredFlowsModal"
+        @close="showTriggeredFlowsModal = false"
+      />
+      <modal-add-new-contact v-if="showModal" @close="closeModal" />
+    </template>
   </aside-slot-template>
 </template>
 

@@ -13,6 +13,8 @@
     <section :class="['aside-slot-template__sections']">
       <slot />
     </section>
+
+    <slot name="modals" />
   </aside>
 </template>
 
@@ -56,6 +58,8 @@ export default {
 
 <style lang="scss" scoped>
 .aside-slot-template {
+  position: relative;
+
   display: flex;
   flex-direction: column;
   height: 100%;
