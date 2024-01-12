@@ -1318,6 +1318,11 @@
       "en-us": "{contact} already has an open room",
       "es": "{contact} ya tiene sala abierta"
     },
+    "send": {
+      "pt-br": "Enviar fluxo",
+      "en-us": "Send flow",
+      "es": "Enviar flujo"
+    },
     "select": {
       "pt-br": "Selecionar fluxo",
       "en-us": "Select flow",
@@ -1328,10 +1333,10 @@
       "en-us": "Sending flow",
       "es": "Enviando flujo"
     },
-    "successfully_sent": {
-      "pt-br": "Fluxo enviado com sucesso",
-      "en-us": "Flow sent successfully",
-      "es": "Flujo enviado exitosamente"
+    "successfully_triggered": {
+      "pt-br": "Fluxo disparado com sucesso",
+      "en-us": "Flow triggered successfully",
+      "es": "Flujo disparado exitosamente"
     },
     "successfully_add_contact": {
       "pt-br": "Contato adicionado com sucesso",

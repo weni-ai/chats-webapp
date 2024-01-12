@@ -68,7 +68,7 @@ export default {
 
       unnnicCallAlert({
         props: {
-          text: this.$t('flows_trigger.successfully_sent'),
+          text: this.$t('flows_trigger.successfully_triggered'),
           type: 'success',
         },
         seconds: 5,

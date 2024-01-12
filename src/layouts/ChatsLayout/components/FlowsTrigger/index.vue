@@ -6,7 +6,7 @@
     icon="send"
     :close="() => $emit('close')"
   >
-    <aside-slot-template-section class="flows-trigger" v-if="showSendFlow">
+    <aside-slot-template-section class="flows-trigger" v-if="showSendFlowStep">
       <send-flow
         @back="closeSendFlow"
         @close="$emit('close')"
@@ -37,7 +37,7 @@
           type="primary"
           :text="$t('flows_trigger.add_contact')"
           iconLeft="add"
-          @click="openModal"
+          @click="openNewContactModal"
         />
       </header>
 
@@ -101,13 +101,19 @@
           </template>
         </section>
       </section>
-      <section class="flows-trigger__handlers" v-if="!showSendFlow">
+      <unnnic-button
+        v-if="isMobile && selected.length > 0"
+        type="primary"
+        iconCenter="send"
+        @click="openSendFlow"
+      />
+      <section class="flows-trigger__handlers" v-else-if="!isMobile && !showSendFlow">
         <unnnic-button
           size="small"
           type="secondary"
           :text="$t('add')"
           iconLeft="add"
-          @click="openModal"
+          @click="openNewContactModal"
         />
         <unnnic-button
           :disabled="this.listOfGroupAndContactsSelected.length === 0"
@@ -124,7 +130,13 @@
         v-if="showTriggeredFlowsModal"
         @close="showTriggeredFlowsModal = false"
       />
-      <modal-add-new-contact v-if="showModal" @close="closeModal" />
+      <modal-add-new-contact v-if="showNewContactModal" @close="closeNewContactModal" />
+      <modal-send-flow
+        v-if="showSendFlowModal"
+        :contacts="selected"
+        @close="closeSendFlow"
+        @send-flow-finished="$emit('close')"
+      />
     </template>
   </aside-slot-template>
 </template>
@@ -136,6 +148,7 @@ import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
 import ModalListTriggeredFlows from '@/components/chats/FlowsTrigger/ModalListTriggeredFlows.vue';
 import ModalAddNewContact from '@/components/chats/FlowsTrigger/ModalAddNewContact.vue';
+import ModalSendFlow from '@/components/chats/FlowsTrigger/ModalSendFlow.vue';
 import SendFlow from '@/components/chats/FlowsTrigger/SendFlow';
 
 import FlowsContactsLoading from '@/views/loadings/FlowsTrigger/FlowsContactsLoading';
@@ -152,6 +165,7 @@ export default {
     FlowsContactsLoading,
     ModalListTriggeredFlows,
     ModalAddNewContact,
+    ModalSendFlow,
     SendFlow,
   },
 
@@ -180,7 +194,7 @@ export default {
     selected: [],
     selectedGroup: [],
     openedRoomsAlerts: [],
-    showModal: false,
+    showNewContactModal: false,
     showTriggeredFlowsModal: false,
     showSendFlow: false,
     page: 0,
@@ -212,6 +226,12 @@ export default {
     },
     showErrorContactsNoResults() {
       return !this.isContactsLoading && this.searchUrn && this.listOfContacts.length === 0;
+    },
+    showSendFlowModal() {
+      return this.isMobile && this.showSendFlow;
+    },
+    showSendFlowStep() {
+      return !this.isMobile && this.showSendFlow;
     },
   },
 
@@ -305,12 +325,12 @@ export default {
       }
     },
 
-    openModal() {
-      this.showModal = true;
+    openNewContactModal() {
+      this.showNewContactModal = true;
     },
 
-    async closeModal(newContact) {
-      this.showModal = false;
+    async closeNewContactModal(newContact) {
+      this.showNewContactModal = false;
       await this.contactList(null, true);
 
       if (newContact) {
