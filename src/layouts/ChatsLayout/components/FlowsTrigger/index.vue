@@ -6,9 +6,9 @@
     icon="send"
     :close="() => $emit('close')"
   >
-    <aside-slot-template-section class="flows-trigger" v-if="showSelectFlow">
-      <select-flow
-        @back="closeSelectFlow"
+    <aside-slot-template-section class="flows-trigger" v-if="showSendFlow">
+      <send-flow
+        @back="closeSendFlow"
         @close="$emit('close')"
         :contacts="selected"
         :groups="selectedGroup"
@@ -101,7 +101,7 @@
           </template>
         </section>
       </section>
-      <section class="flows-trigger__handlers" v-if="!showSelectFlow">
+      <section class="flows-trigger__handlers" v-if="!showSendFlow">
         <unnnic-button
           size="small"
           type="secondary"
@@ -114,7 +114,7 @@
           :text="$t('continue')"
           type="primary"
           size="small"
-          @click="openSelectFlow"
+          @click="openSendFlow"
         />
       </section>
     </aside-slot-template-section>
@@ -136,7 +136,7 @@ import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
 import ModalListTriggeredFlows from '@/components/chats/FlowsTrigger/ModalListTriggeredFlows.vue';
 import ModalAddNewContact from '@/components/chats/FlowsTrigger/ModalAddNewContact.vue';
-import SelectFlow from '@/components/chats/FlowsTrigger/SelectFlow';
+import SendFlow from '@/components/chats/FlowsTrigger/SendFlow';
 
 import FlowsContactsLoading from '@/views/loadings/FlowsTrigger/FlowsContactsLoading';
 
@@ -152,7 +152,7 @@ export default {
     FlowsContactsLoading,
     ModalListTriggeredFlows,
     ModalAddNewContact,
-    SelectFlow,
+    SendFlow,
   },
 
   created() {
@@ -182,7 +182,7 @@ export default {
     openedRoomsAlerts: [],
     showModal: false,
     showTriggeredFlowsModal: false,
-    showSelectFlow: false,
+    showSendFlow: false,
     page: 0,
     isContactsLoading: true,
 
@@ -318,12 +318,12 @@ export default {
       }
     },
 
-    openSelectFlow() {
-      this.showSelectFlow = true;
+    openSendFlow() {
+      this.showSendFlow = true;
     },
 
-    closeSelectFlow() {
-      this.showSelectFlow = false;
+    closeSendFlow() {
+      this.showSendFlow = false;
     },
   },
   watch: {
@@ -339,7 +339,7 @@ export default {
       immediate: true,
       handler(newSelectedContact) {
         if (newSelectedContact) {
-          this.openSelectFlow();
+          this.openSendFlow();
         }
       },
     },
