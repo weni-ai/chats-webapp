@@ -612,6 +612,11 @@
     "en-us": "Add",
     "es": "Agregar"
   },
+  "proceed": {
+    "pt-br": "Prosseguir",
+    "en-us": "Proceed",
+    "es": "Proceder"
+  },
   "continue": {
     "pt-br": "Continuar",
     "en-us": "Continue",
@@ -1300,6 +1305,11 @@
       "pt-br": "Adicionar contato",
       "en-us": "Add contact",
       "es": "Añadir contacto"
+    },
+    "remove_selected_contacts": {
+      "pt-br": "Remover contatos selecionados",
+      "en-us": "Remove selected contacts",
+      "es": "Quitar contactos seleccionados"
     },
     "add_new_contact": {
       "title": {

@@ -41,17 +41,11 @@
         />
       </header>
 
-      <section class="flows-trigger__selecteds" v-if="listOfGroupAndContactsSelected.length > 0">
-        <unnnic-tag
-          type="default"
-          v-for="item in listOfGroupAndContactsSelected"
-          :key="item.uuid"
-          :text="item.name"
-          hasCloseIcon
-          scheme="background-snow"
-          @close="unselectItem(item)"
-        />
-      </section>
+      <selected-contacts-section
+        :contacts="listOfGroupAndContactsSelected"
+        @click="selectedContactHandler($event)"
+        @remove-contact="selectedContactHandler($event)"
+      />
 
       <section
         class="flows-trigger__groups"
@@ -137,6 +131,12 @@
         @close="closeSendFlow"
         @send-flow-finished="$emit('close')"
       />
+      <modal-remove-selected-contacts
+        v-if="showRemoveSelectedContactsModal"
+        :contacts="selected"
+        @remove-contacts="removeContactsByModal"
+        @close="closeRemoveSelectedContactsModal"
+      />
     </template>
   </aside-slot-template>
 </template>
@@ -149,6 +149,8 @@ import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTempla
 import ModalListTriggeredFlows from '@/components/chats/FlowsTrigger/ModalListTriggeredFlows.vue';
 import ModalAddNewContact from '@/components/chats/FlowsTrigger/ModalAddNewContact.vue';
 import ModalSendFlow from '@/components/chats/FlowsTrigger/ModalSendFlow.vue';
+import ModalRemoveSelectedContacts from '@/components/chats/FlowsTrigger/ModalRemoveSelectedContacts.vue';
+import SelectedContactsSection from '@/components/chats/FlowsTrigger/SelectedContactsSection.vue';
 import SendFlow from '@/components/chats/FlowsTrigger/SendFlow';
 
 import FlowsContactsLoading from '@/views/loadings/FlowsTrigger/FlowsContactsLoading';
@@ -166,6 +168,8 @@ export default {
     ModalListTriggeredFlows,
     ModalAddNewContact,
     ModalSendFlow,
+    ModalRemoveSelectedContacts,
+    SelectedContactsSection,
     SendFlow,
   },
 
@@ -183,22 +187,25 @@ export default {
   },
 
   data: () => ({
+    isContactsLoading: true,
+
     projectName: '',
     search: '',
     searchUrn: '',
     timerId: 0,
-    thereIsContact: true,
+
     listOfContacts: [],
     listOfGroups: [],
-    names: [],
     selected: [],
     selectedGroup: [],
     openedRoomsAlerts: [],
+
     showNewContactModal: false,
     showTriggeredFlowsModal: false,
     showSendFlow: false,
+    showRemoveSelectedContactsModal: false,
+
     page: 0,
-    isContactsLoading: true,
 
     isMobile: isMobile(),
   }),
@@ -275,12 +282,26 @@ export default {
       }
     },
 
+    removeContactsByModal(contactsToRemove) {
+      if (!contactsToRemove) return;
+
+      this.closeRemoveSelectedContactsModal();
+
+      contactsToRemove.forEach((contact) => this.unselectItem(contact));
+    },
+
+    selectedContactHandler(contact) {
+      if (!this.isMobile || this.listOfGroupAndContactsSelected.length === 1) {
+        this.unselectItem(contact);
+        return;
+      }
+
+      this.openRemoveSelectedContactsModal();
+    },
+
     unselectItem(item) {
       if (this.selected.some((search) => search.uuid === item.uuid)) {
         this.selected = this.selected.filter((el) => el.uuid !== item.uuid);
-      }
-      if (this.selectedGroup.some((search) => search.uuid === item.uuid)) {
-        this.selectedGroup = this.selectedGroup.filter((el) => el.uuid !== item.uuid);
       }
       this.openedRoomsAlerts = this.openedRoomsAlerts.filter((mappedContactName) => {
         return mappedContactName !== item.name;
@@ -341,9 +362,15 @@ export default {
     openSendFlow() {
       this.showSendFlow = true;
     },
-
     closeSendFlow() {
       this.showSendFlow = false;
+    },
+
+    openRemoveSelectedContactsModal() {
+      this.showRemoveSelectedContactsModal = true;
+    },
+    closeRemoveSelectedContactsModal() {
+      this.showRemoveSelectedContactsModal = false;
     },
   },
   watch: {
@@ -378,32 +405,9 @@ export default {
 
   background-color: $unnnic-color-background-carpet;
 
-  :deep(.unnnic-tag) {
-    background-color: $unnnic-color-background-snow;
-
-    max-width: 100%;
-    scroll-snap-align: start;
-
-    .unnnic-tag__label {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-  }
-
   &__header {
     display: grid;
     gap: $unnnic-spacing-nano;
-  }
-
-  &__selecteds {
-    display: flex;
-    gap: $unnnic-spacing-xs;
-    overflow: hidden auto;
-    flex-wrap: wrap;
-    max-height: $unnnic-spacing-xgiant;
-
-    scroll-snap-type: y proximity;
   }
 
   &__groups {
