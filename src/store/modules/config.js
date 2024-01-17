@@ -1,3 +1,6 @@
+import Profile from '@/services/api/resources/profile';
+import { setStatus as setLocalStatus } from '@/utils/config';
+
 const mutations = {
   SET_TOKEN: 'SET_TOKEN',
   SET_PROJECT: 'SET_PROJECT',
@@ -48,6 +51,28 @@ export default {
     },
     setStatus({ commit }, status) {
       commit(mutations.SET_STATUS, status);
+    },
+    getStatus({ state }) {
+      const response = Profile.status({ projectUuid: state.project });
+      return response?.data?.connection_status;
+    },
+    updateStatus({ state, dispatch }, status) {
+      const validStatus = ['online', 'offline'];
+
+      if (typeof status !== 'string') {
+        throw new Error(typeof status, status);
+      }
+      if (!validStatus.includes(status.toLowerCase())) {
+        throw new Error(`Invalid status. Try any for these: ${validStatus.join(', ')}`);
+      }
+
+      const response = Profile.updateStatus({
+        projectUuid: state.project,
+        status: status.toUpperCase(),
+      });
+      const newStatus = response?.data?.connection_status || 'OFFLINE';
+      dispatch('setStatus', newStatus);
+      setLocalStatus(newStatus);
     },
     setCopilotActive({ commit }, active) {
       commit(mutations.SET_COPILOT_ACTIVE, active);
