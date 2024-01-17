@@ -1,18 +1,22 @@
 <template>
   <div class="home-mobile" v-if="!room && !discussion">
-    <section class="home-mobile__tab__chats" v-if="showChats">
+    <main class="home-mobile__main">
       <unnnic-chats-header
+        v-if="showChats"
         title="Chats"
         subtitle="Nome do projeto"
         avatarIcon="forum"
         :back="() => {}"
         sectionIconScheme="weni-600"
       />
-      <main class="home-mobile__main">
+      <section class="home-mobile__tab__chats" v-if="showChats">
         <the-card-groups class="home-mobile__chats-list" />
-      </main>
-    </section>
-    <flows-trigger v-else :selectedContact="null" @close="openTabChats" />
+      </section>
+      <flows-trigger v-else-if="showFlowsTrigger" :selectedContact="null" @close="openTabChats" />
+
+      <modal-preferences v-if="showPreferences" />
+    </main>
+
     <unnnic-chats-navbar :links="navs" :initialLink="currentTab" />
   </div>
   <mobile-chat v-else />
@@ -23,6 +27,7 @@ import { mapState } from 'vuex';
 
 import TheCardGroups from '@/layouts/ChatsLayout/components/TheCardGroups';
 import FlowsTrigger from '@/layouts/ChatsLayout/components/FlowsTrigger';
+import ModalPreferences from '@/components/chats/Mobile/ModalPreferences.vue';
 
 import MobileChat from '@/views/chats/Mobile/MobileChat';
 
@@ -32,12 +37,14 @@ export default {
   components: {
     TheCardGroups,
     FlowsTrigger,
+    ModalPreferences,
     MobileChat,
   },
 
   data() {
     return {
       currentTab: 'chats',
+      oldTab: '',
     };
   },
 
@@ -79,13 +86,23 @@ export default {
             default: 'preferences',
             selected: 'preferences',
           },
-          action: () => {},
+          action: () => this.openTabPreferences(),
         },
       ];
     },
 
+    showFlowsTrigger() {
+      const { currentTab, oldTab, showPreferences } = this;
+      const tab = 'flows_trigger';
+      return currentTab === tab || (showPreferences && oldTab === tab);
+    },
     showChats() {
-      return this.currentTab === 'chats';
+      const { currentTab, oldTab, showPreferences } = this;
+      const tab = 'chats';
+      return currentTab === tab || (showPreferences && oldTab === tab);
+    },
+    showPreferences() {
+      return this.currentTab === 'preferences';
     },
   },
 
@@ -99,12 +116,20 @@ export default {
       this.currentTab = tab;
     },
 
+    openTabFlowsTrigger() {
+      this.updateCurrentTab('flows_trigger');
+    },
     openTabChats() {
       this.updateCurrentTab('chats');
     },
+    openTabPreferences() {
+      this.updateCurrentTab('preferences');
+    },
+  },
 
-    openTabFlowsTrigger() {
-      this.updateCurrentTab('flows_trigger');
+  watch: {
+    currentTab(newTab, oldTab) {
+      this.oldTab = oldTab;
     },
   },
 };
@@ -120,6 +145,12 @@ export default {
   height: 100vh;
 
   &__main {
+    position: relative;
+
+    overflow: hidden;
+  }
+
+  &__tab__chats {
     overflow: hidden;
 
     padding: $unnnic-spacing-xs $unnnic-spacing-sm 0;
