@@ -14,7 +14,7 @@
       </section>
       <flows-trigger v-else-if="showFlowsTrigger" :selectedContact="null" @close="openTabChats" />
 
-      <modal-preferences v-if="showPreferences" />
+      <modal-preferences v-if="showPreferences" @close="returnToOldTab" />
     </main>
 
     <unnnic-chats-navbar :links="navs" :initialLink="currentTab" />
@@ -124,6 +124,10 @@ export default {
     },
     openTabPreferences() {
       this.updateCurrentTab('preferences');
+    },
+
+    returnToOldTab() {
+      this.currentTab = this.oldTab;
     },
   },
 
