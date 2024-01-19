@@ -8,11 +8,7 @@
     <unnnic-chat-text
       :title="quickMessage.title"
       titleColor="aux-purple-500"
-      :info="
-        $t('quick_messages.shortcut_tooltip', {
-          shortcut: quickMessage.shortcut || quickMessage.title.toLowerCase(),
-        })
-      "
+      :info="quickMessageCardInfo"
       size="small"
       class="quick-message-card"
     >
@@ -50,6 +46,8 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
+
 export default {
   name: 'QuickMessageCard',
 
@@ -65,6 +63,25 @@ export default {
     withActions: {
       type: Boolean,
       default: true,
+    },
+  },
+
+  data() {
+    return {
+      isMobile: isMobile(),
+    };
+  },
+
+  computed: {
+    quickMessageCardInfo() {
+      const { isMobile, quickMessage } = this;
+      if (isMobile) {
+        return '';
+      }
+
+      return this.$t('quick_messages.shortcut_tooltip', {
+        shortcut: quickMessage.shortcut || quickMessage.title.toLowerCase(),
+      });
     },
   },
 };

@@ -45,7 +45,6 @@ export default {
 
   methods: {
     handleFileChange(event) {
-      console.log('uai');
       const selectedFiles = event.target.files;
       this.$emit('files-selected', selectedFiles);
     },
