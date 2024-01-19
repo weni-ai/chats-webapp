@@ -31,6 +31,7 @@
         iconLeft="bolt"
         type="secondary"
         size="large"
+        @click="$emit('open-quick-messages')"
       />
     </template>
   </unnnic-modal>

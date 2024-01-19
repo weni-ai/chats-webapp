@@ -12,9 +12,19 @@
       <section class="home-mobile__tab__chats" v-if="showChats">
         <the-card-groups class="home-mobile__chats-list" />
       </section>
+
       <flows-trigger v-else-if="showFlowsTrigger" :selectedContact="null" @close="openTabChats" />
 
-      <modal-preferences v-if="showPreferences" @close="returnToOldTab" />
+      <quick-messages
+        v-else-if="showQuickMessages"
+        @close="closeQuickMessages"
+        @select-quick-message="closeQuickMessages"
+      />
+      <modal-preferences
+        v-if="showPreferences"
+        @close="returnToOldTab"
+        @open-quick-messages="openQuickMessages"
+      />
     </main>
 
     <unnnic-chats-navbar :links="navs" :initialLink="currentTab" />
@@ -27,7 +37,9 @@ import { mapState } from 'vuex';
 
 import TheCardGroups from '@/layouts/ChatsLayout/components/TheCardGroups';
 import FlowsTrigger from '@/layouts/ChatsLayout/components/FlowsTrigger';
+
 import ModalPreferences from '@/components/chats/Mobile/ModalPreferences.vue';
+import QuickMessages from '@/components/chats/QuickMessages';
 
 import MobileChat from '@/views/chats/Mobile/MobileChat';
 
@@ -38,6 +50,7 @@ export default {
     TheCardGroups,
     FlowsTrigger,
     ModalPreferences,
+    QuickMessages,
     MobileChat,
   },
 
@@ -45,6 +58,7 @@ export default {
     return {
       currentTab: 'chats',
       oldTab: '',
+      isOpenedQuickMessages: false,
     };
   },
 
@@ -102,7 +116,10 @@ export default {
       return currentTab === tab || (showPreferences && oldTab === tab);
     },
     showPreferences() {
-      return this.currentTab === 'preferences';
+      return this.currentTab === 'preferences' && !this.isOpenedQuickMessages;
+    },
+    showQuickMessages() {
+      return this.currentTab === 'preferences' && this.isOpenedQuickMessages;
     },
   },
 
@@ -126,6 +143,13 @@ export default {
       this.updateCurrentTab('preferences');
     },
 
+    openQuickMessages() {
+      this.isOpenedQuickMessages = true;
+    },
+    closeQuickMessages() {
+      this.isOpenedQuickMessages = false;
+    },
+
     returnToOldTab() {
       this.currentTab = this.oldTab;
     },
@@ -134,6 +158,10 @@ export default {
   watch: {
     currentTab(newTab, oldTab) {
       this.oldTab = oldTab;
+
+      if (oldTab === 'preferences') {
+        this.closeQuickMessages();
+      }
     },
   },
 };
