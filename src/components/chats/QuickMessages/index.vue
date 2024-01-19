@@ -13,7 +13,7 @@
             :key="quickMessage.uuid"
             :quickMessage="quickMessage"
             clickable
-            @select="$emit('select-quick-message', quickMessage)"
+            @select="selectQuickMessage"
             @edit="quickMessageToEdit = quickMessage"
             @delete="quickMessageToDelete = quickMessage"
           />
@@ -30,7 +30,7 @@
             :quickMessage="quickMessage"
             :withActions="false"
             clickable
-            @select="$emit('select-quick-message', quickMessage)"
+            @select="selectQuickMessage"
             @edit="quickMessageToEdit = quickMessage"
             @delete="quickMessageToDelete = quickMessage"
           />
@@ -47,19 +47,25 @@
       />
     </aside-slot-template-section>
 
-    <unnnic-modal
-      :text="$t('quick_messages.delete')"
-      :description="$t('quick_messages.delete_confirm')"
-      scheme="feedback-yellow"
-      modal-icon="alert-circle-1"
-      @close="quickMessageToDelete = null"
-      :show-modal="!!quickMessageToDelete"
-    >
-      <template #options>
-        <unnnic-button :text="$t('cancel')" type="secondary" @click="quickMessageToDelete = null" />
-        <unnnic-button :text="$t('confirm')" type="tertiary" @click="deleteQuickMessage" />
-      </template>
-    </unnnic-modal>
+    <template v-slot:modals>
+      <unnnic-modal
+        :text="$t('quick_messages.delete')"
+        :description="$t('quick_messages.delete_confirm')"
+        scheme="feedback-yellow"
+        modal-icon="alert-circle-1"
+        @close="quickMessageToDelete = null"
+        :show-modal="!!quickMessageToDelete"
+      >
+        <template #options>
+          <unnnic-button
+            :text="$t('cancel')"
+            type="secondary"
+            @click="quickMessageToDelete = null"
+          />
+          <unnnic-button :text="$t('confirm')" type="tertiary" @click="deleteQuickMessage" />
+        </template>
+      </unnnic-modal>
+    </template>
   </aside-slot-template>
 
   <aside-slot-template
@@ -67,13 +73,14 @@
     :title="$t('quick_message')"
     icon="bolt"
     :back="() => (quickMessageToEdit = null)"
-    @close="$emit('close')"
+    :close="() => $emit('close')"
   >
     <aside-slot-template-section class="fill-h fill-w">
-      <section class="fill-h quick-message-form">
+      <section class="fill-h quick-messages-form">
+        <h1 class="quick-messages-form__title">{{ quickMessageFormTitle }}</h1>
         <quick-message-form
           v-model="quickMessageToEdit"
-          class="quick-message-form__form"
+          class="quick-messages-form__form"
           @submit="
             !!quickMessageToEdit.uuid
               ? updateQuickMessage(quickMessageToEdit)
@@ -87,6 +94,7 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
 import { mapState, mapActions } from 'vuex';
 
 import { unnnicCallAlert } from '@weni/unnnic-system';
@@ -108,6 +116,8 @@ export default {
   },
 
   data: () => ({
+    isMobile: isMobile(),
+
     quickMessageToDelete: null,
     quickMessageToEdit: null,
   }),
@@ -119,10 +129,24 @@ export default {
     }),
 
     isEditing() {
-      return !!this.quickMessageToEdit && this.quickMessageToEdit.id;
+      const { quickMessageToEdit } = this;
+      return quickMessageToEdit && quickMessageToEdit.uuid;
     },
     isCreating() {
-      return !!this.quickMessageToEdit && !this.quickMessageToEdit.id;
+      const { quickMessageToEdit } = this;
+      return quickMessageToEdit && !quickMessageToEdit.uuid;
+    },
+
+    quickMessageFormTitle() {
+      if (this.isEditing) {
+        return this.$t('quick_messages.edit');
+      }
+
+      if (this.isCreating) {
+        return this.$t('quick_messages.add');
+      }
+
+      return '';
     },
   },
 
@@ -170,6 +194,13 @@ export default {
       this.actionDeleteQuickMessage(uuid);
       this.quickMessageToDelete = null;
     },
+    selectQuickMessage(quickMessage) {
+      if (this.isMobile) {
+        this.quickMessageToEdit = quickMessage;
+      } else {
+        this.$emit('select-quick-message', quickMessage);
+      }
+    },
   },
 };
 </script>
@@ -214,9 +245,16 @@ export default {
   }
 }
 
-.quick-message-form {
+.quick-messages-form {
   display: flex;
   flex-direction: column;
+  gap: $unnnic-spacing-sm;
+
+  &__title {
+    font-size: $unnnic-font-size-body-lg;
+    font-weight: $unnnic-font-weight-regular;
+    color: $unnnic-color-neutral-dark;
+  }
 
   &__form {
     flex: 1 1;
