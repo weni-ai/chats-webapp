@@ -77,6 +77,7 @@ export default {
 <style lang="scss" scoped>
 .quick-messages-list {
   height: 100%;
+  width: 100%;
   overflow: hidden auto;
 
   // insert space between content and scrollbar

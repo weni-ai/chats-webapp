@@ -42,6 +42,7 @@
       ref="home-chat-modals"
       @got-chat="emitCloseRoomContactInfo"
       @file-uploader-progress="setUploadFilesProgress"
+      @select-quick-message="updateTextBoxMessage($event?.text)"
     />
   </section>
 </template>

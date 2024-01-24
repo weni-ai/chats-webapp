@@ -29,7 +29,11 @@
       @progress="emitFileUploaderProgress"
     />
 
-    <modal-quick-messages v-if="modalsShowing.quickMessages" @close="closeModal('quickMessages')" />
+    <modal-quick-messages
+      v-if="modalsShowing.quickMessages"
+      @close="closeModal('quickMessages')"
+      @select-quick-message="emitSelectQuickMessage"
+    />
   </section>
 </template>
 
@@ -98,6 +102,9 @@ export default {
     },
     emitFileUploaderProgress(progress) {
       this.$emit('file-uploader-progress', progress);
+    },
+    emitSelectQuickMessage(quickMessage) {
+      this.$emit('select-quick-message', quickMessage);
     },
   },
 
