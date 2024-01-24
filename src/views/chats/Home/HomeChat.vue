@@ -19,7 +19,7 @@
         v-model="textBoxMessage"
         :loadingFileValue="uploadFilesProgress"
         :showSkeletonLoading="isChatSkeletonActive"
-        @show-quick-messages="emitHandleShowQuickMessages"
+        @show-quick-messages="handleShowQuickMessages"
         @open-file-uploader="openModalFileUploader"
       />
     </chats-dropzone>
@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
 import { mapState } from 'vuex';
 
 import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone';
@@ -76,6 +77,8 @@ export default {
 
   data() {
     return {
+      isMobile: isMobile(),
+
       isRoomContactInfoOpen: false,
       textBoxMessage: '',
       uploadFilesProgress: undefined,
@@ -141,6 +144,17 @@ export default {
     },
     emitOpenFlowsTrigger() {
       this.$emit('open-flows-trigger');
+    },
+    handleShowModalQuickMessages() {
+      this.showModalQuickMessages = !this.showModalQuickMessages;
+    },
+    handleShowQuickMessages() {
+      if (this.isMobile) {
+        this.openModal('quickMessages');
+        return;
+      }
+
+      this.emitHandleShowQuickMessages();
     },
 
     updateTextBoxMessage(message) {

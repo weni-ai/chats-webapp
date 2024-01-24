@@ -28,6 +28,8 @@
       ref="fileUploader"
       @progress="emitFileUploaderProgress"
     />
+
+    <modal-quick-messages v-if="modalsShowing.quickMessages" @close="closeModal('quickMessages')" />
   </section>
 </template>
 
@@ -36,6 +38,7 @@ import { mapState } from 'vuex';
 
 import FileUploader from '@/components/chats/MessageManager/FileUploader';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat';
+import ModalQuickMessages from '@/components/chats/QuickMessages/ModalQuickMessages.vue';
 
 import ModalCloseChat from './ModalCloseChat.vue';
 
@@ -45,6 +48,7 @@ export default {
   components: {
     FileUploader,
     ModalGetChat,
+    ModalQuickMessages,
     ModalCloseChat,
   },
 
@@ -55,6 +59,7 @@ export default {
         assumedChat: false,
         closeChat: false,
         fileUploader: false,
+        quickMessages: false,
       },
 
       modalFileUploaderFiles: [],
@@ -107,3 +112,8 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.home-chat-modals {
+  position: absolute;
+}
+</style>
