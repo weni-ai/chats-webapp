@@ -6,36 +6,11 @@
     :close="() => $emit('close')"
   >
     <aside-slot-template-section class="messages-section__container">
-      <div class="messages-section">
-        <unnnic-collapse class="messages" active :title="$t('quick_messages.personal')">
-          <quick-message-card
-            v-for="quickMessage in quickMessages"
-            :key="quickMessage.uuid"
-            :quickMessage="quickMessage"
-            clickable
-            @select="selectQuickMessage"
-            @edit="quickMessageToEdit = quickMessage"
-            @delete="quickMessageToDelete = quickMessage"
-          />
-        </unnnic-collapse>
-        <unnnic-collapse
-          v-if="quickMessagesShared.length > 0"
-          class="messages-shared"
-          :title="$t('quick_messages.shared')"
-          active
-        >
-          <quick-message-card
-            v-for="quickMessage in quickMessagesShared"
-            :key="quickMessage.uuid"
-            :quickMessage="quickMessage"
-            :withActions="false"
-            clickable
-            @select="selectQuickMessage"
-            @edit="quickMessageToEdit = quickMessage"
-            @delete="quickMessageToDelete = quickMessage"
-          />
-        </unnnic-collapse>
-      </div>
+      <quick-messages-list
+        @select-quick-message="selectQuickMessage"
+        @edit-quick-message="quickMessageToEdit = $event"
+        @delete-quick-message="quickMessageToDelete = $event"
+      />
 
       <unnnic-button
         icon-left="add"
@@ -95,14 +70,14 @@
 
 <script>
 import isMobile from 'is-mobile';
-import { mapState, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 
 import { unnnicCallAlert } from '@weni/unnnic-system';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
 
-import QuickMessageCard from './QuickMessageCard';
+import QuickMessagesList from './QuickMessagesList';
 import QuickMessageForm from './QuickMessageForm';
 
 export default {
@@ -111,7 +86,7 @@ export default {
   components: {
     AsideSlotTemplate,
     AsideSlotTemplateSection,
-    QuickMessageCard,
+    QuickMessagesList,
     QuickMessageForm,
   },
 
@@ -123,11 +98,6 @@ export default {
   }),
 
   computed: {
-    ...mapState({
-      quickMessages: (state) => state.chats.quickMessages.quickMessages,
-      quickMessagesShared: (state) => state.chats.quickMessagesShared.quickMessagesShared,
-    }),
-
     isEditing() {
       const { quickMessageToEdit } = this;
       return quickMessageToEdit && quickMessageToEdit.uuid;
@@ -214,35 +184,15 @@ export default {
   width: 100%;
 }
 
-.messages-section {
+.messages-section__container {
   height: 100%;
-  overflow: hidden auto;
+  width: 100%;
 
-  // insert space between content and scrollbar
-  margin-right: -$unnnic-spacing-xs;
-  padding-right: $unnnic-spacing-xs;
-
-  &__container {
-    height: 100%;
-    width: 100%;
-
-    display: flex;
-    flex-direction: column;
-    gap: $unnnic-spacing-stack-sm;
-
-    overflow: hidden;
-  }
-}
-
-.messages {
-  flex: 1 1;
   display: flex;
   flex-direction: column;
+  gap: $unnnic-spacing-stack-sm;
 
-  &-group {
-    display: grid;
-    gap: $unnnic-spacing-stack-sm;
-  }
+  overflow: hidden;
 }
 
 .quick-messages-form {
