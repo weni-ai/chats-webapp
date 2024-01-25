@@ -1,6 +1,6 @@
 <template>
-  <section class="closed-chats__rooms-table">
-    <closed-chats-rooms-table-filters @update-filters="filters = $event" />
+  <section class="closed-chats__rooms-table" :class="{ mobile: isMobile }">
+    <closed-chats-rooms-table-filters v-show="!isMobile" @update-filters="filters = $event" />
 
     <rooms-table-loading v-if="isTableLoading" />
     <unnnic-table
@@ -16,7 +16,7 @@
         <unnnic-table-row :headers="tableHeaders">
           <template #contactName>
             <div class="closed-chats__rooms-table__table__contact">
-              <unnnic-chats-user-avatar :username="item.contact.name" />
+              <unnnic-chats-user-avatar :username="item.contact.name" v-if="!isMobile" />
               <p class="closed-chats__rooms-table__table__contact__name">
                 {{ item.contact.name }}
               </p>
@@ -32,8 +32,15 @@
           <template #date>{{ $d(new Date(item.ended_at)) }}</template>
 
           <template #visualize>
+            <div v-if="isMobile">
+              <unnnic-icon
+                class="closed-chats__rooms-table__table__visualize-icon"
+                icon="open_in_new"
+              />
+            </div>
             <unnnic-button
-              class="closed-chats__rooms-table__table__visualize"
+              v-else
+              class="closed-chats__rooms-table__table__visualize-button"
               :text="$t('see')"
               type="secondary"
               size="small"
@@ -54,15 +61,25 @@
 
     <table-pagination
       v-model="roomsCurrentPage"
-      :count="roomsCount"
+      :count="isMobile ? null : roomsCount"
       :countPages="roomsCountPages"
-      :limit="roomsLimit"
+      :limit="roomsLimitPagination"
       :is-loading="isPagesLoading"
+    />
+
+    <unnnic-button
+      v-if="isMobile"
+      class="closed-chats__rooms-table__table__mobile-filters"
+      iconCenter="search"
+      type="primary"
+      size="large"
     />
   </section>
 </template>
 
 <script>
+import isMobile from 'is-mobile';
+
 import History from '@/services/api/resources/chats/history';
 
 import RoomsTableLoading from '@/views/loadings/ClosedChats/RoomsTableLoading';
@@ -89,6 +106,8 @@ export default {
   },
 
   data: () => ({
+    isMobile: isMobile(),
+
     isTableLoading: true,
     isPagesLoading: true,
 
@@ -96,7 +115,8 @@ export default {
     roomsCount: 0,
     roomsCountPages: 0,
     roomsCurrentPage: 1,
-    roomsLimit: 5,
+    roomsLimit: isMobile ? 10 : 5,
+    roomsLimitPagination: 5,
 
     filters: {
       contact: '',
@@ -108,33 +128,25 @@ export default {
 
   computed: {
     tableHeaders() {
+      const createHeader = (id, text, showInMobile = true) => {
+        if (!showInMobile && this.isMobile) {
+          return null;
+        }
+
+        return {
+          id,
+          text: this.$t(text),
+          flex: 1,
+        };
+      };
+
       return [
-        {
-          id: 'contactName',
-          text: this.$t('contact'),
-          flex: 1,
-        },
-        {
-          id: 'agentName',
-          text: this.$t('agent'),
-          flex: 1,
-        },
-        {
-          id: 'tags',
-          text: this.$t('tags.title'),
-          flex: 1,
-        },
-        {
-          id: 'date',
-          text: this.$t('date'),
-          flex: 1,
-        },
-        {
-          id: 'visualize',
-          text: this.$t('view'),
-          flex: 1,
-        },
-      ];
+        createHeader('contactName', 'contact'),
+        createHeader('agentName', 'agent', false),
+        createHeader('tags', 'tags.title', false),
+        createHeader('date', 'date'),
+        createHeader('visualize', 'view'),
+      ].filter((header) => header !== null);
     },
   },
 
@@ -200,6 +212,29 @@ export default {
     grid-template-rows: auto 1fr auto;
     height: 100%;
 
+    &.mobile {
+      grid-template-rows: 1fr auto auto;
+
+      overflow: hidden;
+      :deep(.unnnic-table) {
+        .header {
+          background-color: $unnnic-color-aux-purple-100;
+          .col {
+            color: $unnnic-color-neutral-dark;
+          }
+        }
+
+        .scroll {
+          padding-right: 0;
+
+          .item {
+            border-radius: 0;
+            border-bottom: 1px solid $unnnic-color-neutral-cleanest;
+          }
+        }
+      }
+    }
+
     &__table {
       overflow: hidden;
 
@@ -224,8 +259,19 @@ export default {
         }
       }
 
-      &__visualize {
+      &__visualize-icon {
+        display: flex;
+
+        user-select: none;
+        cursor: pointer;
+      }
+
+      &__visualize-button {
         width: 100%;
+      }
+
+      &__mobile-filters {
+        justify-self: flex-end;
       }
     }
   }
