@@ -13,13 +13,13 @@
 ### Summary of Changes
 <!--- Describe your changes in detail -->
 
-### Design Files
-<!--- (If appropriate) Links to the design files used for reference during implementation. -->
+### Design Files <!--- (If appropriate) -->
+<!--- Links to the design files used for reference during implementation. -->
 
 - [Design File 1](link_to_design_file_1)
 
 ### Demonstration <!--- (If appropriate) -->
-<!--- (If appropriate) Include a screenshot or video showcasing a feature or fix implemented in this pull request. -->
+<!--- Include a screenshot or video showcasing a feature or fix implemented in this pull request. -->
 
 <br />
 
