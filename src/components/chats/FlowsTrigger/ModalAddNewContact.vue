@@ -15,7 +15,7 @@
         v-model="contact.tel"
         label="WhatsApp"
         placeholder="+99 (99) 9999 99999"
-        :mask="telMask"
+        :mask="Object.values(telMask)"
       />
     </form>
 
@@ -44,14 +44,22 @@ export default {
       name: '',
       tel: '',
     },
-    telMask: '+## (##) #### #####',
+    telMask: {
+      telephone: '+## (##) #### ####',
+      cellphone: '+## (##) ##### ####',
+    },
     isLoading: false,
   }),
 
   computed: {
     isValidForm() {
       const { contact, telMask } = this;
-      return contact.name && contact.tel.length === telMask.length;
+
+      return (
+        contact.name &&
+        (contact.tel.length === telMask.telephone.length ||
+          contact.tel.length === telMask.cellphone.length)
+      );
     },
   },
 
