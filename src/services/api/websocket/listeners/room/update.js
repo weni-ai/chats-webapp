@@ -9,7 +9,8 @@ export default async (room, { app }) => {
     if (room.transfer_history?.action === 'transfer') {
       const notification = new SoundNotification('achievement-confirmation');
       notification.notify();
-    } else if (room.transfer_history?.action === 'foward') {
+    }
+    if (room.transfer_history?.action === 'forward') {
       const notification = new SoundNotification('select-sound');
       notification.notify();
     }
