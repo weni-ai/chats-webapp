@@ -6,7 +6,7 @@ export default async (room, { app }) => {
   ) {
     app.$store.dispatch('chats/rooms/addRoom', room);
 
-    const notification = new SoundNotification('select-sound');
+    const notification = new SoundNotification('achievement-confirmation');
     notification.notify();
   }
 
