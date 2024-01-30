@@ -14,7 +14,7 @@
       <unnnic-input
         v-model="contact.tel"
         label="WhatsApp"
-        placeholder="+99 (99) 9999 99999"
+        placeholder="+99 (99) 99999 9999"
         :mask="Object.values(telMask)"
       />
     </form>
