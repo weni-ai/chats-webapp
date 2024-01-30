@@ -1,7 +1,11 @@
 <template>
   <div class="rooms-table-filters__container">
-    <rooms-table-filters-loading v-if="isFiltersLoading" />
-    <section v-else class="rooms-table-filters">
+    <rooms-table-filters-loading v-if="isFiltersLoading" :vertically="vertically" />
+    <section
+      v-else
+      class="rooms-table-filters"
+      :class="{ 'rooms-table-filters--vertically': vertically }"
+    >
       <div class="rooms-table-filters__input">
         <unnnic-label :label="$t('chats.search_contact')" />
         <unnnic-input
@@ -33,9 +37,11 @@
         />
       </div>
       <unnnic-button
+        class="rooms-table-filters__clear-button"
+        :iconLeft="clearFiltersIconLeft"
         :text="$t('clear')"
         :disabled="isFiltersDefault"
-        type="secondary"
+        :type="clearFiltersType"
         @click="resetFilters"
       />
     </section>
@@ -44,6 +50,7 @@
 
 <script>
 import moment from 'moment';
+import isMobile from 'is-mobile';
 
 import Sector from '@/services/api/resources/settings/sector';
 
@@ -56,8 +63,17 @@ export default {
     RoomsTableFiltersLoading,
   },
 
+  props: {
+    vertically: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   data() {
     return {
+      isMobile: isMobile(),
+
       isFiltersLoading: true,
       filterContactTimeout: 0,
 
@@ -120,6 +136,13 @@ export default {
       }
 
       return false;
+    },
+
+    clearFiltersIconLeft() {
+      return this.isMobile ? 'cached' : '';
+    },
+    clearFiltersType() {
+      return this.isMobile ? 'tertiary' : 'secondary';
     },
   },
 
@@ -209,6 +232,22 @@ export default {
   gap: $unnnic-spacing-sm;
   justify-content: space-between;
   align-items: flex-end;
+
+  &--vertically {
+    display: flex;
+    flex-direction: column;
+
+    .rooms-table-filters {
+      &__date-picker,
+      &__clear-button {
+        width: 100%;
+      }
+    }
+
+    :deep(.input.unnnic-form) {
+      width: 100%;
+    }
+  }
 
   .unnnic-label__label {
     margin: 0;

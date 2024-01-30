@@ -1,6 +1,11 @@
 <template>
   <section class="closed-chats__rooms-table" :class="{ mobile: isMobile }">
     <closed-chats-rooms-table-filters v-show="!isMobile" @update-filters="filters = $event" />
+    <modal-closed-chats-filters
+      v-show="isMobile && showModalFilters"
+      @update-filters="filters = $event"
+      @close="handleShowModalFilters"
+    />
 
     <rooms-table-loading v-if="isTableLoading" />
     <unnnic-table
@@ -73,6 +78,7 @@
       iconCenter="search"
       type="primary"
       size="large"
+      @click="handleShowModalFilters"
     />
   </section>
 </template>
@@ -85,6 +91,7 @@ import History from '@/services/api/resources/chats/history';
 import RoomsTableLoading from '@/views/loadings/ClosedChats/RoomsTableLoading';
 import TablePagination from '@/components/TablePagination';
 import TagGroup from '@/components/TagGroup.vue';
+import ModalClosedChatsFilters from '@/components/chats/Mobile/ModalClosedChatsFilters.vue';
 
 import ClosedChatsRoomsTableFilters from './RoomsTableFilters.vue';
 
@@ -96,6 +103,7 @@ export default {
     ClosedChatsRoomsTableFilters,
     RoomsTableLoading,
     TablePagination,
+    ModalClosedChatsFilters,
   },
 
   props: {
@@ -110,6 +118,7 @@ export default {
 
     isTableLoading: true,
     isPagesLoading: true,
+    showModalFilters: false,
 
     rooms: [],
     roomsCount: 0,
@@ -189,13 +198,22 @@ export default {
       this.isTableLoading = false;
       this.isPagesLoading = false;
     },
+
+    handleShowModalFilters() {
+      this.showModalFilters = !this.showModalFilters;
+    },
   },
 
   watch: {
     roomsCurrentPage() {
       this.getHistoryRooms(true);
     },
-    filters: 'getHistoryRooms',
+    filters: {
+      deep: true,
+      handler() {
+        this.getHistoryRooms();
+      },
+    },
   },
 };
 </script>
