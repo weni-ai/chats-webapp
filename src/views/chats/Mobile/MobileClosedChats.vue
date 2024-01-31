@@ -139,5 +139,9 @@ export default {
   :deep(.chat-messages) {
     padding: 0 $unnnic-spacing-ant;
   }
+
+  &__room {
+    overflow: hidden;
+  }
 }
 </style>
