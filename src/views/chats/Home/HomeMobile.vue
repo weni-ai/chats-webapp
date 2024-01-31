@@ -1,7 +1,8 @@
 <template>
-  <div class="home-mobile" v-if="!room && !discussion">
+  <mobile-chat v-if="showActiveChat" />
+  <div class="home-mobile" v-else>
     <main class="home-mobile__main">
-      <mobile-closed-chats v-if="showHistory" />
+      <mobile-closed-chats v-if="showHistory" @close="openTabChats" />
 
       <flows-trigger v-else-if="showFlowsTrigger" :selectedContact="null" @close="openTabChats" />
 
@@ -31,7 +32,6 @@
 
     <unnnic-chats-navbar :links="navs" :initialLink="currentTab" />
   </div>
-  <mobile-chat v-else />
 </template>
 
 <script>
@@ -129,6 +129,10 @@ export default {
     },
     showQuickMessages() {
       return this.currentTab === 'preferences' && this.isOpenedQuickMessages;
+    },
+    showActiveChat() {
+      const { showChats, room, discussion } = this;
+      return showChats && (room || discussion);
     },
   },
 
