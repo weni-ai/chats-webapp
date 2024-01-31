@@ -18,6 +18,7 @@
         <chat-messages-start-feedbacks
           :dateFeedback="messagesByDate.date"
           :showWaitingFeedback="showWaitingFeedback"
+          :isClosedChat="isClosedChat"
         />
 
         <section
@@ -33,12 +34,14 @@
                   ? $t('chat_with.agent', { name: message?.user?.first_name })
                   : $t('chat_with.bot')
               "
+              :scheme="isClosedChat ? 'gray' : 'blue'"
               :key="'feedback' + message.uuid"
               :title="messageFormatTitle(new Date(message.created_on))"
             />
             <chat-messages-feedback-message
               v-if="isFeedbackMessage(message)"
               :message="message"
+              :scheme="isClosedChat ? 'gray' : 'blue'"
               :key="message.uuid"
               :title="messageFormatTitle(new Date(message.created_on))"
             />
@@ -255,6 +258,10 @@ export default {
     },
 
     isLoading: {
+      type: Boolean,
+      default: false,
+    },
+    isClosedChat: {
       type: Boolean,
       default: false,
     },
