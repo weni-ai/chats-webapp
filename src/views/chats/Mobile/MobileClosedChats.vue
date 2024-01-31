@@ -57,6 +57,9 @@ export default {
     this.resetRoom();
     this.getProjectInfo();
   },
+  async beforeDestroy() {
+    this.resetRoom();
+  },
 
   computed: {
     ...mapState({
