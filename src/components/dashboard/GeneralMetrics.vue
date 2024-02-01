@@ -15,7 +15,7 @@
         :title="generalLabel"
         icon="mark_chat_unread"
         scheme="aux-blue"
-        :value="this.metrics.active_chats || 0"
+        :value="this.rawData.raw_data?.[0].active_rooms || 0"
         :percent="0"
         :inverted-percentage="false"
       />
@@ -31,7 +31,7 @@
         title="Aguardando atendimento"
         icon="pending"
         scheme="feedback-blue"
-        :value="this.rawData.queue_rooms || 0"
+        :value="this.rawData.raw_data?.[0].queue_rooms || 0"
         :percent="0"
         :inverted-percentage="false"
       />
@@ -42,7 +42,7 @@
         title="Encerrados"
         icon="check_circle"
         scheme="aux-purple"
-        :value="this.rawData.closed_rooms || 0"
+        :value="this.rawData.raw_data?.[0].closed_rooms || 0"
         :percent="0"
         :inverted-percentage="false"
       />
@@ -58,7 +58,7 @@
         title="Tempo de espera"
         icon="chronic"
         scheme="aux-orange"
-        :value="timeToString(this.metrics.waiting_time)"
+        :value="timeToString(this.metrics.rooms_data?.[0].waiting_time)"
         :percent="0"
         :inverted-percentage="false"
       />
@@ -74,7 +74,7 @@
         title="Tempo de resposta"
         icon="acute"
         scheme="aux-pink"
-        :value="timeToString(this.metrics.response_time)"
+        :value="timeToString(this.metrics.rooms_data?.[0].response_time)"
         :percent="0"
         :inverted-percentage="false"
       />
@@ -90,7 +90,7 @@
         title="Tempo de interação"
         icon="history_toggle_off"
         scheme="feedback-green"
-        :value="timeToString(this.metrics.interact_time)"
+        :value="timeToString(this.metrics.rooms_data?.[0].interact_time)"
         :percent="0"
         :inverted-percentage="false"
       />
@@ -142,6 +142,12 @@ export default {
         return `${hora}h${minuto}min ${segundo}s`;
       }
       return 0;
+    },
+  },
+
+  watch: {
+    rawData() {
+      console.log('rawData', this.rawData.raw_data);
     },
   },
 };
