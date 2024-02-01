@@ -144,12 +144,6 @@ export default {
       return 0;
     },
   },
-
-  watch: {
-    rawData() {
-      console.log('rawData', this.rawData.raw_data);
-    },
-  },
 };
 </script>
 
