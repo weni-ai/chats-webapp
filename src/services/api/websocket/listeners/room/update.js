@@ -6,8 +6,14 @@ export default async (room, { app }) => {
   ) {
     app.$store.dispatch('chats/rooms/addRoom', room);
 
-    const notification = new SoundNotification('select-sound');
-    notification.notify();
+    if (room.transfer_history?.action === 'transfer') {
+      const notification = new SoundNotification('achievement-confirmation');
+      notification.notify();
+    }
+    if (room.transfer_history?.action === 'forward') {
+      const notification = new SoundNotification('select-sound');
+      notification.notify();
+    }
   }
 
   app.$store.dispatch('chats/rooms/updateRoom', {
