@@ -129,7 +129,9 @@ export default {
         }
 
         if (isActiveRoom && !viewedAgentEmail) {
+          commit(mutations.SET_ACTIVE_ROOM, null);
           routerReplace();
+          return;
         }
       }
 
