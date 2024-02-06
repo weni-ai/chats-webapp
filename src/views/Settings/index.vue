@@ -1,7 +1,7 @@
 <template>
   <main class="settings-chats" ref="sectorsSection" @scroll="onScroll">
     <header>
-      <h1 class="title">Gerenciar Chatshfsdfhdu</h1>
+      <h1 class="title">Gerenciar Chats</h1>
       <p class="description">
         Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua
         organização.
