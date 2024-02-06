@@ -1,7 +1,7 @@
 <template>
   <main class="settings-chats" ref="sectorsSection" @scroll="onScroll">
     <header>
-      <h1 class="title">Gerenciar Chats</h1>
+      <h1 class="title">Gerenciar Chatshfsdfhdu</h1>
       <p class="description">
         Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua
         organização.
@@ -97,17 +97,13 @@ export default {
     },
 
     onScroll() {
-      if (
-        this.$refs.sectorsSection.scrollTop + this.$refs.sectorsSection.clientHeight >=
-        this.$refs.sectorsSection.scrollHeight
-      ) {
+      const sectorSection = this.$refs.sectorsSection;
+      const isScrollInBottom =
+        sectorSection.scrollTop + sectorSection.clientHeight >= sectorSection.scrollHeight;
+      if (isScrollInBottom) {
         this.listMoreSectors();
       }
     },
-  },
-
-  mounted() {
-    window.addEventListener('scroll', this.onScroll);
   },
 };
 </script>
