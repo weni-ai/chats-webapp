@@ -1,14 +1,16 @@
 <template>
   <unnnic-modal
     class="modal-close-chat"
+    :class="{ 'modal-close-chat--mobile': isMobile }"
     scheme="neutral-darkest"
     :text="$t('chats.to_end_rate_the_chat')"
     :description="$t('chats.tags_help')"
+    :close-icon="isMobile"
     @close="closeModal"
   >
-    <div class="modal-close-chat__tags-list">
+    <section class="modal-close-chat__tags-list">
       <chat-classifier v-model="tags" :tags="sectorTags" :loading="isLoadingTags" />
-    </div>
+    </section>
 
     <template #options>
       <unnnic-button :text="$t('cancel')" type="secondary" @click="closeModal" />
@@ -112,6 +114,44 @@ export default {
 
 <style lang="scss" scoped>
 .modal-close-chat {
+  /*
+     These "deep" properties and their following code are being applied temporarily while
+     the unnnic modal does not undergo refactoring. They adjust the style of the modal
+     and its parts to ensure a consistent experience during this transition period.
+   */
+  :deep(.unnnic-modal-container) .unnnic-modal-container-background-body {
+    &-title {
+      padding: $unnnic-spacing-nano;
+    }
+
+    &-description {
+      padding: 0;
+
+      &-container {
+        padding-bottom: 0;
+      }
+    }
+  }
+
+  &--mobile {
+    :deep(.unnnic-modal-container) .unnnic-modal-container-background {
+      &-body {
+        padding: $unnnic-spacing-sm;
+
+        &-description-container {
+          padding: 0 $unnnic-spacing-sm;
+        }
+      }
+      &-button {
+        padding: $unnnic-spacing-md $unnnic-spacing-sm;
+
+        :first-child {
+          margin-right: $unnnic-spacing-xs;
+        }
+      }
+    }
+  }
+
   &__tags-list {
     margin-top: $unnnic-spacing-md;
 
