@@ -6,9 +6,9 @@
     :class="['home-chats-layout', { 'has-discussion': !!discussion }]"
     @select-quick-message="(quickMessage) => updateTextBoxMessage(quickMessage.text)"
   >
-    <chats-background v-if="!room && !discussion && !isChatSkeletonActive" />
+    <chats-background v-if="!room?.uuid && !discussion?.uuid && !isChatSkeletonActive" />
     <home-chat
-      v-show="!!room || !!discussion"
+      v-show="room?.uuid || discussion?.uuid"
       ref="home-chat"
       @open-room-contact-info="openRoomContactInfo"
       @close-room-contact-info="closeRoomContactInfo"
