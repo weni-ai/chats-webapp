@@ -14,8 +14,8 @@
       <unnnic-input
         v-model="contact.tel"
         :label="inputLabelContactTel"
-        placeholder="+99 (99) 9999 99999"
-        :mask="telMask"
+        placeholder="+99 (99) 99999 9999"
+        :mask="Object.values(telMask)"
       />
     </form>
 
@@ -51,7 +51,10 @@ export default {
       name: '',
       tel: '',
     },
-    telMask: '+## (##) #### #####',
+    telMask: {
+      telephone: '+## (##) #### ####',
+      cellphone: '+## (##) ##### ####',
+    },
     isLoading: false,
     isMobile: isMobile(),
   }),
@@ -59,14 +62,19 @@ export default {
   computed: {
     isValidForm() {
       const { contact, telMask } = this;
-      return contact.name && contact.tel.length === telMask.length;
+
+      return (
+        contact.name &&
+        (contact.tel.length === telMask.telephone.length ||
+          contact.tel.length === telMask.cellphone.length)
+      );
     },
 
     inputPlaceholderContactName() {
       return this.$t('flows_trigger.add_new_contact.contact_name');
     },
     inputLabelContactName() {
-      return this.isMobile ? '' : this.inputPlaceholderContactName();
+      return this.isMobile ? '' : this.inputPlaceholderContactName;
     },
     inputLabelContactTel() {
       return this.isMobile ? '' : 'WhatsApp';
