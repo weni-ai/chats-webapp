@@ -30,7 +30,7 @@
       />
     </main>
 
-    <unnnic-chats-navbar :links="navs" :initialLink="currentTab" />
+    <unnnic-chats-navbar v-model="currentTab" :links="navs" />
   </div>
 </template>
 
@@ -76,34 +76,22 @@ export default {
       return [
         {
           name: 'history',
-          icon: {
-            default: 'history',
-            selected: 'history',
-          },
+          icon: 'history',
           action: () => this.openHistory(),
         },
         {
           name: 'flows_trigger',
-          icon: {
-            default: 'send',
-            selected: 'send',
-          },
+          icon: 'send',
           action: () => this.openTabFlowsTrigger(),
         },
         {
           name: 'chats',
-          icon: {
-            default: 'forum',
-            selected: 'forum',
-          },
+          icon: 'forum',
           action: () => this.openTabChats(),
         },
         {
           name: 'preferences',
-          icon: {
-            default: 'preferences',
-            selected: 'preferences',
-          },
+          icon: 'preferences',
           action: () => this.openTabPreferences(),
         },
       ];

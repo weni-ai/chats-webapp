@@ -2148,10 +2148,10 @@
     "@webassemblyjs/ast" "1.11.1"
     "@xtuc/long" "4.2.2"
 
-"@weni/unnnic-system@1.16.72":
-  version "1.16.72"
-  resolved "https://registry.yarnpkg.com/@weni/unnnic-system/-/unnnic-system-1.16.72.tgz#4f013e361b8e162b7dbd3d642f29dd721b13ac5c"
-  integrity sha512-V/LwhwZ+FIYAbvzjgkU3S3oufmbnbyL5BhGaR5XgB9OoT6WHVGxab3cjnRt4+wXmV1D1B9uk+DCGWrFsd5FzSw==
+"@weni/unnnic-system@1.24.6":
+  version "1.24.6"
+  resolved "https://registry.yarnpkg.com/@weni/unnnic-system/-/unnnic-system-1.24.6.tgz#33990054b174d30bbe4f25ab682867f844178596"
+  integrity sha512-S9vlYDTRT03y5VgX9t0tEa8uTd5KzoMJQPPXP72ucwl+UrslY8g1eGx2dBSy3PZruJDkUEOwCTNZoptZSHxWDg==
   dependencies:
     core-js "^3.6.5"
     lodash "^4.17.21"
