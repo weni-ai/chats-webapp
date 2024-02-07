@@ -72,10 +72,10 @@
 import isMobile from 'is-mobile';
 import { mapActions } from 'vuex';
 
-import { unnnicCallAlert } from '@weni/unnnic-system';
-
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
+
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 import QuickMessagesList from './QuickMessagesList';
 import QuickMessageForm from './QuickMessageForm';
@@ -130,7 +130,7 @@ export default {
     async createQuickMessage({ title, text, shortcut }) {
       this.actionCreateQuickMessage({ title, text, shortcut });
 
-      unnnicCallAlert({
+      callUnnnicAlert({
         props: {
           text: this.$t('quick_messages.successfully_added'),
           type: 'success',
@@ -145,7 +145,7 @@ export default {
     async updateQuickMessage({ uuid, title, text, shortcut }) {
       this.actionUpdateQuickMessage({ uuid, title, text, shortcut });
 
-      unnnicCallAlert({
+      callUnnnicAlert({
         props: {
           text: this.$t('quick_messages.successfully_updated'),
           type: 'success',

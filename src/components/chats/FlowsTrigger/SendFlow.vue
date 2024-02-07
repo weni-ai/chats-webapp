@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 import SelectFlow from './SelectFlow';
 import SendFlowButton from './SendFlowButton';
@@ -66,7 +66,7 @@ export default {
     closeModalProgress() {
       this.showProgressBar = false;
 
-      unnnicCallAlert({
+      callUnnnicAlert({
         props: {
           text: this.$t('flows_trigger.successfully_triggered'),
           type: 'success',

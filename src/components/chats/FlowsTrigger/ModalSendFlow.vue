@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 import SelectFlow from './SelectFlow';
 import SendFlowButton from './SendFlowButton';
@@ -43,7 +43,7 @@ export default {
 
   methods: {
     finishSendFlow() {
-      unnnicCallAlert({
+      callUnnnicAlert({
         props: {
           text: this.$t('flows_trigger.successfully_triggered'),
           type: 'success',

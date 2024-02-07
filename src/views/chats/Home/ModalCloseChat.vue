@@ -24,10 +24,11 @@
 
 <script>
 import isMobile from 'is-mobile';
-import { unnnicCallAlert } from '@weni/unnnic-system';
 
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
+
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 import ChatClassifier from '@/components/chats/ChatClassifier';
 
@@ -90,8 +91,9 @@ export default {
       this.$store.dispatch('chats/rooms/removeRoom', uuid);
 
       this.isLoadingCloseRoom = false;
+
       if (this.isMobile) {
-        unnnicCallAlert({
+        callUnnnicAlert({
           props: {
             text: this.$t('chats.chat_with_contact_ended', { contact: this.room.contact.name }),
             scheme: 'feedback-grey',
