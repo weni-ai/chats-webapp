@@ -13,7 +13,7 @@
     </section>
 
     <template #options>
-      <unnnic-button :text="$t('cancel')" type="secondary" @click="closeModal" />
+      <unnnic-button :text="$t('cancel')" type="tertiary" @click="closeModal" />
       <unnnic-button
         :text="$t('end')"
         type="primary"
