@@ -92,7 +92,7 @@
                 @click="openHistory()"
               />
               <unnnic-button
-                v-if="!isViewMode"
+                v-if="!isViewMode && !isMobile"
                 :text="$t('discussions.start_discussion.title')"
                 iconLeft="forum"
                 type="primary"
