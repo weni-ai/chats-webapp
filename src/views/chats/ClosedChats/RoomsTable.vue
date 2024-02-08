@@ -65,6 +65,7 @@
     </p>
 
     <table-pagination
+      v-if="showTablePagination"
       v-model="roomsCurrentPage"
       :count="isMobile ? null : roomsCount"
       :countPages="roomsCountPages"
@@ -156,6 +157,11 @@ export default {
         createHeader('date', 'date'),
         createHeader('visualize', 'view'),
       ].filter((header) => header !== null);
+    },
+
+    showTablePagination() {
+      const { isMobile, roomsCountPages } = this;
+      return !isMobile || (isMobile && roomsCountPages);
     },
   },
 
