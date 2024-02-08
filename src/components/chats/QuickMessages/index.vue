@@ -24,20 +24,22 @@
 
     <template v-slot:modals>
       <unnnic-modal
+        class="quick-messages__modal-delete"
         :text="$t('quick_messages.delete')"
-        :description="$t('quick_messages.delete_confirm')"
-        scheme="feedback-yellow"
-        modal-icon="alert-circle-1"
+        :description="$t('action_cannot_be_reversed')"
+        scheme="feedback-red"
+        modal-icon="error"
+        :close-icon="isMobile"
         @close="quickMessageToDelete = null"
         :show-modal="!!quickMessageToDelete"
       >
         <template #options>
           <unnnic-button
             :text="$t('cancel')"
-            type="secondary"
+            type="tertiary"
             @click="quickMessageToDelete = null"
           />
-          <unnnic-button :text="$t('confirm')" type="tertiary" @click="deleteQuickMessage" />
+          <unnnic-button :text="$t('delete')" type="warning" @click="deleteQuickMessage" />
         </template>
       </unnnic-modal>
     </template>
@@ -193,6 +195,17 @@ export default {
   gap: $unnnic-spacing-stack-sm;
 
   overflow: hidden;
+}
+
+.quick-messages__modal-delete {
+  :deep(.unnnic-modal-container) .unnnic-modal-container-background {
+    &-body-description {
+      text-align: center;
+    }
+    &-button :first-child {
+      margin-right: $unnnic-spacing-xs;
+    }
+  }
 }
 
 .quick-messages-form {

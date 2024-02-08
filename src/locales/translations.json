@@ -607,6 +607,11 @@
     "en": "Click to resend",
     "es": "Haga clic para reenviar"
   },
+  "action_cannot_be_reversed": {
+    "pt-br": "Essa ação não poderá ser revertida",
+    "en": "This action cannot be reversed",
+    "es": "Esta acción no se puede revertir"
+  },
   "end": {
     "pt-br": "Encerrar",
     "en": "End",
@@ -1196,10 +1201,15 @@
     "en": "Edit",
     "es": "Editar"
   },
+  "exclude": {
+    "pt-br": "Excluir",
+    "en": "Exclude",
+    "es": "Borrar"
+  },
   "delete": {
     "pt-br": "Excluir",
     "en": "Delete",
-    "es": "Eliminar"
+    "es": "Excluir"
   },
   "search_or_select": {
     "pt-br": "Pesquise ou selecione",
@@ -1403,7 +1413,7 @@
       "es": "Mensajes rápidos compartidos"
     },
     "delete": {
-      "pt-br": "Excluir mensagem rápida",
+      "pt-br": "Deletar mensagem rápida",
       "en": "Delete quick message",
       "es": "Eliminar mensaje rápido"
     },
