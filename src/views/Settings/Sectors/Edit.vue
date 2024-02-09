@@ -134,14 +134,9 @@
           :text="$t('delete_sector')"
           type="warning"
           iconLeft="delete"
-          @click="openModalDeleteSector"
+          @click="openModalDelete = true"
           :disabled="isQuickMessageEditing && !isQuickMessagesFormValid"
-          v-if="
-            this.currentTab === 'sector' ||
-            this.queueToEdit ||
-            this.isQuickMessageEditing ||
-            currentTab === 'tags'
-          "
+          v-if="this.currentTab === 'sector'"
         />
         <unnnic-button
           :text="$t('save')"
@@ -169,8 +164,8 @@
         :validateLabel="`Confirme digitando ${sector.name}`"
         :actionPrimaryLabel="$t('confirm')"
         :actionSecondaryLabel="$t('cancel')"
-        @click-action-primary="deleteSector()"
-        @click-action-secondary="closeModalDeleteSector()"
+        @click-action-primary="deleteSector(sector.uuid)"
+        @click-action-secondary="openModalDelete = false"
       />
 
       <unnnic-button
@@ -263,6 +258,7 @@ export default {
       managers: [],
       maxSimultaneousChatsByAgent: '',
     },
+    sectorDelete: null,
     queue: {
       name: '',
     },
@@ -308,6 +304,7 @@ export default {
       setCopilotActive: 'config/setCopilotActive',
       setCopilotCustomRulesActive: 'config/setCopilotCustomRulesActive',
       setCopilotCustomRules: 'config/setCopilotCustomRules',
+      actionDeleteSector: 'settings/deleteSector',
     }),
 
     resetTabsData() {
@@ -390,8 +387,7 @@ export default {
     async deleteQueue(queueUuid) {
       await Queue.delete(queueUuid);
       this.queues = this.queues.filter((queue) => queue.uuid !== queueUuid);
-      this.queueToEdit = null;
-      this.closeModalDeleteQueue();
+      this.openModalDelete = true;
     },
     async openModalDeleteQueue(queue) {
       this.selectedQueue = queue;
@@ -481,16 +477,9 @@ export default {
       this.$router.push({ name: 'sectors' });
     },
 
-    async openModalDeleteSector() {
-      this.openModalDelete = true;
-    },
-
-    async closeModalDeleteSector() {
-      this.openModalDelete = false;
-    },
-
-    async deleteSector() {
-      console.log('vamos deletar?');
+    async deleteSector(sectorUuid) {
+      console.log('o id é ', sectorUuid);
+      this.actionDeleteSector(sectorUuid);
     },
 
     async removeManager(managerUuid) {
