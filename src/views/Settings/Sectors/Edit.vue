@@ -129,18 +129,50 @@
         @click="cancel"
         v-if="this.isQuickMessageEditing"
       />
-      <unnnic-button
-        :text="$t('save')"
-        type="secondary"
-        @click="save"
-        :disabled="isQuickMessageEditing && !isQuickMessagesFormValid"
-        v-if="
-          this.currentTab === 'sector' ||
-          this.queueToEdit ||
-          this.isQuickMessageEditing ||
-          currentTab === 'tags'
-        "
+      <section class="buttons">
+        <unnnic-button
+          :text="$t('delete_sector')"
+          type="warning"
+          iconLeft="delete"
+          @click="openModalDeleteSector"
+          :disabled="isQuickMessageEditing && !isQuickMessagesFormValid"
+          v-if="
+            this.currentTab === 'sector' ||
+            this.queueToEdit ||
+            this.isQuickMessageEditing ||
+            currentTab === 'tags'
+          "
+        />
+        <unnnic-button
+          :text="$t('save')"
+          type="secondary"
+          @click="save"
+          :disabled="isQuickMessageEditing && !isQuickMessagesFormValid"
+          v-if="
+            this.currentTab === 'sector' ||
+            this.queueToEdit ||
+            this.isQuickMessageEditing ||
+            currentTab === 'tags'
+          "
+        />
+      </section>
+
+      <unnnic-modal-next
+        v-if="openModalDelete"
+        type="alert"
+        icon="alert-circle-1"
+        scheme="feedback-red"
+        :title="`Deletar setor ${sector.name}`"
+        :description="`Essa opção não poderá ser revertida.`"
+        :validate="`${sector.name}`"
+        :validatePlaceholder="`${sector.name}`"
+        :validateLabel="`Confirme digitando ${sector.name}`"
+        :actionPrimaryLabel="$t('confirm')"
+        :actionSecondaryLabel="$t('cancel')"
+        @click-action-primary="deleteSector()"
+        @click-action-secondary="closeModalDeleteSector()"
       />
+
       <unnnic-button
         v-if="this.currentTab === 'messages' && !isQuickMessageEditing"
         :text="$t('quick_messages.new')"
@@ -216,6 +248,7 @@ export default {
   data: () => ({
     currentTab: '',
     openModal: false,
+    openModalDelete: false,
     sector: {
       uuid: '',
       name: '',
@@ -448,6 +481,18 @@ export default {
       this.$router.push({ name: 'sectors' });
     },
 
+    async openModalDeleteSector() {
+      this.openModalDelete = true;
+    },
+
+    async closeModalDeleteSector() {
+      this.openModalDelete = false;
+    },
+
+    async deleteSector() {
+      console.log('vamos deletar?');
+    },
+
     async removeManager(managerUuid) {
       await Sector.removeManager(managerUuid);
       this.removeManagerFromTheList(managerUuid);
@@ -637,6 +682,12 @@ export default {
     & > * {
       width: 100%;
     }
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-spacing-sm;
   }
 
   &__breadcrumb {
