@@ -479,9 +479,9 @@ export default {
 
     async deleteSector(sectorUuid) {
       console.log('o id é ', sectorUuid);
-      // this.actionDelete Sector(sectorUuid);
       try {
         await this.actionDeleteSector(sectorUuid);
+        this.$router.push({ name: 'sectors' });
         this.openModalDelete = false;
         unnnicCallAlert({
           props: {
