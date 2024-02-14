@@ -161,7 +161,7 @@
         :description="`Essa opção não poderá ser revertida.`"
         :validate="`${sector.name}`"
         :validatePlaceholder="`${sector.name}`"
-        :validateLabel="`Confirme digitando ${sector.name}`"
+        :validateLabel="`Confirme digitando &quot;${sector.name}&quot;`"
         :actionPrimaryLabel="$t('confirm')"
         :actionSecondaryLabel="$t('cancel')"
         @click-action-primary="deleteSector(sector.uuid)"
@@ -479,7 +479,28 @@ export default {
 
     async deleteSector(sectorUuid) {
       console.log('o id é ', sectorUuid);
-      this.actionDeleteSector(sectorUuid);
+      // this.actionDelete Sector(sectorUuid);
+      try {
+        await this.actionDeleteSector(sectorUuid);
+        this.openModalDelete = false;
+        unnnicCallAlert({
+          props: {
+            text: 'Setor deletado com sucesso!',
+            type: 'success',
+          },
+          seconds: 5,
+        });
+      } catch (error) {
+        console.log(error);
+        this.openModalDelete = false;
+        unnnicCallAlert({
+          props: {
+            text: 'Não foi possível deletar o setor, tente novamente mais tarde.',
+            type: 'error',
+          },
+          seconds: 5,
+        });
+      }
     },
 
     async removeManager(managerUuid) {
