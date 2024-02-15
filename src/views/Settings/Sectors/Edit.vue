@@ -157,11 +157,11 @@
         type="alert"
         icon="alert-circle-1"
         scheme="feedback-red"
-        :title="`Deletar setor ${sector.name}`"
-        :description="`Essa opção não poderá ser revertida.`"
+        :title="$t('delete_sector') + ` ${sector.name}`"
+        :description="$t('cant_revert')"
         :validate="`${sector.name}`"
         :validatePlaceholder="`${sector.name}`"
-        :validateLabel="`Confirme digitando &quot;${sector.name}&quot;`"
+        :validateLabel="$t('confirm_typing') + ` &quot;${sector.name}&quot;`"
         :actionPrimaryLabel="$t('confirm')"
         :actionSecondaryLabel="$t('cancel')"
         @click-action-primary="deleteSector(sector.uuid)"
@@ -478,11 +478,10 @@ export default {
     },
 
     async deleteSector(sectorUuid) {
-      console.log('o id é ', sectorUuid);
       try {
         await this.actionDeleteSector(sectorUuid);
-        this.$router.push({ name: 'sectors' });
         this.openModalDelete = false;
+        this.$router.push({ name: 'sectors' });
         unnnicCallAlert({
           props: {
             text: 'Setor deletado com sucesso!',
