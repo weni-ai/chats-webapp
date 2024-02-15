@@ -1,5 +1,6 @@
 <template>
-  <mobile-chat v-if="showActiveChat" />
+  <mobile-select-org-project v-if="!project" />
+  <mobile-chat v-else-if="showActiveChat" />
   <div class="home-mobile" v-else>
     <main class="home-mobile__main">
       <mobile-closed-chats v-if="showHistory" @close="openTabChats" />
@@ -40,11 +41,12 @@ import { mapState } from 'vuex';
 import TheCardGroups from '@/layouts/ChatsLayout/components/TheCardGroups';
 import FlowsTrigger from '@/layouts/ChatsLayout/components/FlowsTrigger';
 
-import ModalPreferences from '@/components/chats/Mobile/ModalPreferences.vue';
-import QuickMessages from '@/components/chats/QuickMessages';
-
+import MobileSelectOrgProject from '@/views/chats/Mobile/MobileSelectOrgProject';
 import MobileChat from '@/views/chats/Mobile/MobileChat';
 import MobileClosedChats from '@/views/chats/Mobile/MobileClosedChats';
+
+import ModalPreferences from '@/components/chats/Mobile/ModalPreferences.vue';
+import QuickMessages from '@/components/chats/QuickMessages';
 
 export default {
   name: 'HomeMobile',
@@ -55,6 +57,7 @@ export default {
     MobileClosedChats,
     ModalPreferences,
     QuickMessages,
+    MobileSelectOrgProject,
     MobileChat,
   },
 
@@ -68,6 +71,7 @@ export default {
 
   computed: {
     ...mapState({
+      project: (state) => state.config.project,
       room: (state) => state.chats.rooms.activeRoom,
       discussion: (state) => state.chats.discussions.activeDiscussion,
     }),

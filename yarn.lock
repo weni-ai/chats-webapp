@@ -2148,11 +2148,12 @@
     "@webassemblyjs/ast" "1.11.1"
     "@xtuc/long" "4.2.2"
 
-"@weni/unnnic-system@1.24.6":
-  version "1.24.6"
-  resolved "https://registry.yarnpkg.com/@weni/unnnic-system/-/unnnic-system-1.24.6.tgz#33990054b174d30bbe4f25ab682867f844178596"
-  integrity sha512-S9vlYDTRT03y5VgX9t0tEa8uTd5KzoMJQPPXP72ucwl+UrslY8g1eGx2dBSy3PZruJDkUEOwCTNZoptZSHxWDg==
+"@weni/unnnic-system@1.24.8":
+  version "1.24.8"
+  resolved "https://registry.yarnpkg.com/@weni/unnnic-system/-/unnnic-system-1.24.8.tgz#02e8a37605e678ff2d390b724c3476da7b5ec07e"
+  integrity sha512-161a3WYJCf5Y4Kkd8YlvKsYnzky5fXEl5zznE6jLd+zoulf9iBO26CrJjS2upTSbWOF0Pb7/DqEIR6WEDDRrIw==
   dependencies:
+    axios "^1.5.1"
     core-js "^3.6.5"
     lodash "^4.17.21"
     mime-types "^2.1.35"
@@ -2447,6 +2448,15 @@ axios@^0.27.2:
   dependencies:
     follow-redirects "^1.14.9"
     form-data "^4.0.0"
+
+axios@^1.5.1:
+  version "1.6.7"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.6.7.tgz#7b48c2e27c96f9c68a2f8f31e2ab19f59b06b0a7"
+  integrity sha512-/hDJGff6/c7u0hDkvkGxR/oy6CbCs8ziCsC7SqmhjfozqiJGc8Z11wrv9z9lYfY4K8l+H9TpjcMDX0xOZmx+RA==
+  dependencies:
+    follow-redirects "^1.15.4"
+    form-data "^4.0.0"
+    proxy-from-env "^1.1.0"
 
 babel-jest@^27.0.6, babel-jest@^27.1.0, babel-jest@^27.5.1:
   version "27.5.1"
@@ -4243,6 +4253,11 @@ follow-redirects@^1.0.0, follow-redirects@^1.14.9:
   version "1.15.2"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.2.tgz#b460864144ba63f2681096f274c4e57026da2c13"
   integrity sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==
+
+follow-redirects@^1.15.4:
+  version "1.15.5"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.5.tgz#54d4d6d062c0fa7d9d17feb008461550e3ba8020"
+  integrity sha512-vSFWUON1B+yAw1VN4xMfxgn5fTUiaOzAJCKBwIIgT/+7CuGy9+r+5gITvP62j3RmaD5Ph65UaERdOSRGUzZtgw==
 
 form-data@^3.0.0:
   version "3.0.1"
@@ -6918,6 +6933,11 @@ proxy-addr@~2.0.7:
   dependencies:
     forwarded "0.2.0"
     ipaddr.js "1.9.1"
+
+proxy-from-env@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/proxy-from-env/-/proxy-from-env-1.1.0.tgz#e102f16ca355424865755d2c9e8ea4f24d58c3e2"
+  integrity sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==
 
 pseudomap@^1.0.2:
   version "1.0.2"
