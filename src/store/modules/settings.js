@@ -28,7 +28,6 @@ const module = {
     },
     deleteSector(state, sectorUuid) {
       state.sectors = state.sectors.filter((sector) => sector.uuid !== sectorUuid);
-      console.log(state.sectors);
     },
   },
 
@@ -42,8 +41,6 @@ const module = {
       commit('updateSector', sector);
     },
     async deleteSector({ commit }, sectorUuid) {
-      console.log(sectorUuid);
-
       await Sector.deleteSector(sectorUuid);
 
       commit('deleteSector', sectorUuid);
