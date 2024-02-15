@@ -16,8 +16,8 @@ export function getProject() {
   return project;
 }
 
-export async function setProject(token) {
-  localStorage.setItem(PROJECT_ITEM_LOCAL_STORAGE, token);
+export async function setProject(projectUuid) {
+  localStorage.setItem(PROJECT_ITEM_LOCAL_STORAGE, projectUuid);
 }
 
 export async function setStatus(status) {

@@ -1,5 +1,9 @@
 import Profile from '@/services/api/resources/profile';
-import { setStatus as setLocalStatus } from '@/utils/config';
+import {
+  setToken as setLocalToken,
+  setProject as setLocalProject,
+  setStatus as setLocalStatus,
+} from '@/utils/config';
 
 const mutations = {
   SET_TOKEN: 'SET_TOKEN',
@@ -43,10 +47,12 @@ export default {
     },
   },
   actions: {
-    setToken({ commit }, token) {
+    async setToken({ commit }, token) {
+      setLocalToken(token);
       commit(mutations.SET_TOKEN, token);
     },
-    setProject({ commit }, project) {
+    async setProject({ commit }, project) {
+      setLocalProject(project);
       commit(mutations.SET_PROJECT, project);
     },
     setStatus({ commit }, status) {
