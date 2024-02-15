@@ -258,7 +258,6 @@ export default {
       managers: [],
       maxSimultaneousChatsByAgent: '',
     },
-    sectorDelete: null,
     queue: {
       name: '',
     },
