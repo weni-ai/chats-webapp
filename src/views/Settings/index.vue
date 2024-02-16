@@ -1,5 +1,5 @@
 <template>
-  <main class="settings-chats">
+  <main class="settings-chats" ref="sectorsSection" @scroll="onScroll">
     <header>
       <h1 class="title">Gerenciar Chats</h1>
       <p class="description">
@@ -55,6 +55,7 @@ export default {
   data: () => ({
     sectors: [],
     isLoading: true,
+    nextPage: null,
   }),
 
   methods: {
@@ -68,10 +69,39 @@ export default {
       try {
         this.isLoading = true;
         const sectors = await Sector.list();
+        this.nextPage = sectors.next;
         this.sectors = sectors.results;
+        this.next = sectors.next;
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
+      }
+    },
+
+    async listMoreSectors() {
+      if (this.isLoading || !this.nextPage) {
+        return;
+      }
+
+      try {
+        this.isLoading = true;
+        const newSectors = await Sector.list(this.nextPage);
+        this.nextPage = newSectors.next;
+        this.sectors = [...this.sectors, ...newSectors.results];
+        if (newSectors) {
+          this.isLoading = false;
+        }
+      } catch (error) {
+        this.isLoading = false;
+      }
+    },
+
+    onScroll() {
+      const sectorSection = this.$refs.sectorsSection;
+      const isScrollInBottom =
+        sectorSection.scrollTop + sectorSection.clientHeight >= sectorSection.scrollHeight;
+      if (isScrollInBottom) {
+        this.listMoreSectors();
       }
     },
   },

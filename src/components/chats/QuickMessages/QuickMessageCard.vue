@@ -8,11 +8,7 @@
     <unnnic-chat-text
       :title="quickMessage.title"
       titleColor="aux-purple-500"
-      :info="
-        $t('quick_messages.shortcut_tooltip', {
-          shortcut: quickMessage.shortcut || quickMessage.title.toLowerCase(),
-        })
-      "
+      :info="quickMessageCardInfo"
       size="small"
       class="quick-message-card"
     >
@@ -26,17 +22,17 @@
             </unnnic-tool-tip>
           </template>
 
-          <unnnic-dropdown-item @click="$emit('edit')">
+          <unnnic-dropdown-item @click="$emit('edit', quickMessage)">
             <div class="dropdown-item-content">
               <unnnic-icon-svg class="icon" icon="edit_square" size="sm" />
               <span> {{ $t('edit') }} </span>
             </div>
           </unnnic-dropdown-item>
 
-          <unnnic-dropdown-item @click="$emit('delete')">
+          <unnnic-dropdown-item @click="$emit('delete', quickMessage)">
             <div class="dropdown-item-content">
               <unnnic-icon-svg class="icon" icon="delete" size="sm" />
-              <span> {{ $t('delete') }} </span>
+              <span> {{ $t('exclude') }} </span>
             </div>
           </unnnic-dropdown-item>
         </unnnic-dropdown>
@@ -50,6 +46,8 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
+
 export default {
   name: 'QuickMessageCard',
 
@@ -65,6 +63,25 @@ export default {
     withActions: {
       type: Boolean,
       default: true,
+    },
+  },
+
+  data() {
+    return {
+      isMobile: isMobile(),
+    };
+  },
+
+  computed: {
+    quickMessageCardInfo() {
+      const { isMobile, quickMessage } = this;
+      if (isMobile) {
+        return '';
+      }
+
+      return this.$t('quick_messages.shortcut_tooltip', {
+        shortcut: quickMessage.shortcut || quickMessage.title.toLowerCase(),
+      });
     },
   },
 };

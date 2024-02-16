@@ -76,7 +76,7 @@ export default {
       return room.unread_msgs + (newMessages?.length || 0);
     },
     locale() {
-      return this.$i18n.locale === 'en-us' ? 'en' : this.$i18n.locale;
+      return this.$i18n.locale;
     },
   },
 };

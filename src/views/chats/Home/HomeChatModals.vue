@@ -1,5 +1,5 @@
 <template>
-  <section class="home-modals">
+  <section class="home-chat-modals">
     <modal-get-chat
       :showModal="modalsShowing.getChat"
       @closeModal="closeModal('getChat')"
@@ -27,7 +27,12 @@
       v-model="modalFileUploaderFiles"
       ref="fileUploader"
       @progress="emitFileUploaderProgress"
-      @close="closeModal('fileUploader')"
+    />
+
+    <modal-quick-messages
+      v-if="modalsShowing.quickMessages"
+      @close="closeModal('quickMessages')"
+      @select-quick-message="emitSelectQuickMessage"
     />
   </section>
 </template>
@@ -37,15 +42,17 @@ import { mapState } from 'vuex';
 
 import FileUploader from '@/components/chats/MessageManager/FileUploader';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat';
+import ModalQuickMessages from '@/components/chats/QuickMessages/ModalQuickMessages.vue';
 
 import ModalCloseChat from './ModalCloseChat.vue';
 
 export default {
-  name: 'HomeModals',
+  name: 'HomeChatModals',
 
   components: {
     FileUploader,
     ModalGetChat,
+    ModalQuickMessages,
     ModalCloseChat,
   },
 
@@ -56,6 +63,7 @@ export default {
         assumedChat: false,
         closeChat: false,
         fileUploader: false,
+        quickMessages: false,
       },
 
       modalFileUploaderFiles: [],
@@ -95,6 +103,9 @@ export default {
     emitFileUploaderProgress(progress) {
       this.$emit('file-uploader-progress', progress);
     },
+    emitSelectQuickMessage(quickMessage) {
+      this.$emit('select-quick-message', quickMessage);
+    },
   },
 
   watch: {
@@ -108,3 +119,8 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.home-chat-modals {
+  position: absolute;
+}
+</style>

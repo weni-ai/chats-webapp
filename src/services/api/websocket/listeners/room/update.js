@@ -19,7 +19,7 @@ export default async (room, { app }) => {
   app.$store.dispatch('chats/rooms/updateRoom', {
     room,
     userEmail: app.me.email,
-    routerReplace: () => app.router.replace({ name: 'home' }),
+    routerReplace: () => app.$router.replace({ name: 'home' }),
     viewedAgentEmail: app.viewedAgent.email,
   });
 

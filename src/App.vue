@@ -126,7 +126,7 @@ export default {
         const isLocaleChangeMessage = message?.event === 'setLanguage';
         if (!isLocaleChangeMessage) return;
 
-        const locale = message?.language; // 'en-us', 'pt-br', 'es'
+        const locale = message?.language; // 'en', 'pt-br', 'es'
 
         moment.locale(locale);
 

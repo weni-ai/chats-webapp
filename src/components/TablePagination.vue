@@ -1,8 +1,15 @@
 <template>
   <div class="table-pagination">
     <table-pagination-loading v-show="isLoading" />
-    <section v-show="!isLoading" class="table-pagination__pages">
-      <p class="table-pagination__pages__count">
+    <section
+      v-show="!isLoading"
+      class="table-pagination__pages"
+      :class="{
+        'table-pagination__pages--itens-center': !showCount,
+        'table-pagination__pages--with-divider': !isMobile,
+      }"
+    >
+      <p class="table-pagination__count" v-if="showCount">
         {{ tablePagination }}
       </p>
 
@@ -17,6 +24,8 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
+
 import TablePaginationLoading from '@/views/loadings/TablePaginationLoading';
 
 export default {
@@ -33,7 +42,7 @@ export default {
     },
     count: {
       type: Number,
-      required: true,
+      required: false,
     },
     countPages: {
       type: Number,
@@ -49,6 +58,12 @@ export default {
     },
   },
 
+  data() {
+    return {
+      isMobile: isMobile(),
+    };
+  },
+
   computed: {
     tablePagination() {
       const { value, limit, count } = this;
@@ -58,6 +73,10 @@ export default {
         to: Math.min(value * limit, count),
         total: count,
       });
+    },
+
+    showCount() {
+      return typeof this.count === 'number';
     },
   },
 };
@@ -72,14 +91,20 @@ export default {
 
     height: min-content;
 
-    margin-top: $unnnic-spacing-md;
-    border-top: $unnnic-border-width-thinner solid $unnnic-color-neutral-soft;
-    padding-top: $unnnic-spacing-md;
-
-    &__count {
-      color: $unnnic-color-neutral-dark;
-      font-size: $unnnic-font-size-body-gt;
+    &--itens-center {
+      justify-content: center;
     }
+
+    &--with-divider {
+      margin-top: $unnnic-spacing-md;
+      border-top: $unnnic-border-width-thinner solid $unnnic-color-neutral-soft;
+      padding-top: $unnnic-spacing-md;
+    }
+  }
+
+  &__count {
+    color: $unnnic-color-neutral-dark;
+    font-size: $unnnic-font-size-body-gt;
   }
 }
 </style>
