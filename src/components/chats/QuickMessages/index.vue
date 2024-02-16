@@ -13,6 +13,16 @@
       />
 
       <unnnic-button
+        v-if="isMobile"
+        class="quick-messages__mobile-new"
+        float
+        type="primary"
+        iconCenter="add"
+        size="extra-large"
+        @click="quickMessageToEdit = createEmptyQuickMessage()"
+      />
+      <unnnic-button
+        v-else
         icon-left="add"
         :text="$t('quick_messages.new')"
         type="secondary"
@@ -222,5 +232,8 @@ export default {
   &__form {
     flex: 1 1;
   }
+}
+.quick-messages__mobile-new {
+  margin: 0 $unnnic-spacing-ant $unnnic-spacing-md 0;
 }
 </style>

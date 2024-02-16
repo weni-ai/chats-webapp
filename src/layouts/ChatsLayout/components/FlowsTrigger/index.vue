@@ -97,8 +97,12 @@
       </section>
       <unnnic-button
         v-if="isMobile && selected.length > 0"
+        class="flows-trigger__mobile-send"
         type="primary"
         iconCenter="send"
+        size="extra-large"
+        float
+        iconFilled
         @click="openSendFlow"
       />
       <section class="flows-trigger__handlers" v-else-if="!isMobile && !showSendFlow">
@@ -454,6 +458,12 @@ export default {
     }
   }
 }
+.flows-trigger__mobile-send {
+  z-index: 100;
+
+  margin: 0 $unnnic-spacing-ant $unnnic-spacing-md 0;
+}
+
 .flows-trigger__handlers {
   margin-top: auto;
 

@@ -78,7 +78,8 @@
       class="closed-chats__rooms-table__table__mobile-filters"
       iconCenter="search"
       type="primary"
-      size="large"
+      size="extra-large"
+      float
       @click="handleShowModalFilters"
     />
   </section>
@@ -295,7 +296,7 @@ export default {
       }
 
       &__mobile-filters {
-        justify-self: flex-end;
+        margin: 0 $unnnic-spacing-ant $unnnic-spacing-md 0;
       }
     }
   }
