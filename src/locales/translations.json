@@ -547,6 +547,11 @@
     "en": "Close view",
     "es": "Cerrar la vista"
   },
+  "logout": {
+    "pt-br": "Sair",
+    "en": "Logout",
+    "es": "Cerrar sesión"
+  },
   "flow": {
     "pt-br": "Fluxo",
     "en": "Flow",

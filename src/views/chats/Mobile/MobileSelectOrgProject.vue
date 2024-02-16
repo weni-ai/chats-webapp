@@ -1,10 +1,24 @@
 <template>
-  <unnnic-connect-project-selector
-    :env="appEnviroment"
-    :authorization="`Bearer ${userToken}`"
-    :page.sync="route"
-    :project-uuid.sync="projectUuid"
-  />
+  <section class="mobile-select-org-project">
+    <header></header>
+
+    <main class="mobile-select-org-project__main">
+      <unnnic-connect-project-selector
+        :env="appEnviroment"
+        :authorization="`Bearer ${userToken}`"
+        :page.sync="route"
+        :project-uuid.sync="projectUuid"
+      />
+
+      <unnnic-button
+        class="mobile-select-org-project__logout"
+        iconCenter="logout"
+        type="tertiary"
+        size="large"
+        :text="$t('logout')"
+      />
+    </main>
+  </section>
 </template>
 
 <script>
@@ -38,4 +52,18 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.mobile-select-org-project {
+  &__main {
+    padding: $unnnic-spacing-ant;
+  }
+}
+
+:deep(.unnnic-button).mobile-select-org-project__logout {
+  width: 100%;
+
+  * {
+    color: $unnnic-color-aux-red-500;
+  }
+}
+</style>
