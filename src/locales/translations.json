@@ -1186,6 +1186,16 @@
     "en-us": "Confirm by typing",
     "es": "Confirmar escribiendo"
   },
+  "sector_deleted_success": {
+    "pt-br": "Setor deletado com sucesso!",
+    "en-us": "Sector deleted successfully!",
+    "es": "¡Sector eliminado con éxito!"
+  },
+  "sector_delete_error": {
+    "pt-br": "Não foi possível deletar o setor, tente novamente mais tarde.",
+    "en-us": "Unable to delete sector, please try again later.",
+    "es": "No se puede eliminar el sector. Vuelva a intentarlo más tarde."
+  },
   "edit": {
     "pt-br": "Editar",
     "en-us": "Edit",

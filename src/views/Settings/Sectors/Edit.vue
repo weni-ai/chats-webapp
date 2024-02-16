@@ -483,7 +483,7 @@ export default {
         this.$router.push({ name: 'sectors' });
         unnnicCallAlert({
           props: {
-            text: 'Setor deletado com sucesso!',
+            text: this.$t('sector_deleted_success'),
             type: 'success',
           },
           seconds: 5,
@@ -493,7 +493,7 @@ export default {
         this.openModalDelete = false;
         unnnicCallAlert({
           props: {
-            text: 'Não foi possível deletar o setor, tente novamente mais tarde.',
+            text: this.$t('sector_delete_error'),
             type: 'error',
           },
           seconds: 5,
