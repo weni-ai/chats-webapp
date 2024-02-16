@@ -49,6 +49,11 @@ export default {
     return response;
   },
 
+  async deleteSector(sectorUuid) {
+    const response = await http.delete(`/sector/${sectorUuid}`);
+    return response.data;
+  },
+
   async managers(sectorUuid) {
     const response = await http.get('/authorization/sector/', {
       params: {
