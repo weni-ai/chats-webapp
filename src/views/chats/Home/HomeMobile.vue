@@ -9,7 +9,7 @@
       <unnnic-chats-header
         v-else-if="showChats"
         title="Chats"
-        subtitle="Nome do projeto"
+        :subtitle="projectName"
         avatarIcon="forum"
         :back="() => {}"
         sectionIconScheme="weni-600"
@@ -37,6 +37,8 @@
 <script>
 import { mapState } from 'vuex';
 
+import ProjectApi from '@/services/api/resources/settings/project';
+
 import TheCardGroups from '@/layouts/ChatsLayout/components/TheCardGroups';
 import FlowsTrigger from '@/layouts/ChatsLayout/components/FlowsTrigger';
 
@@ -63,7 +65,13 @@ export default {
       currentTab: 'chats',
       oldTab: '',
       isOpenedQuickMessages: false,
+
+      projectName: '',
     };
+  },
+
+  created() {
+    this.getProjectName();
   },
 
   computed: {
@@ -125,6 +133,11 @@ export default {
   },
 
   methods: {
+    async getProjectName() {
+      const project = await ProjectApi.getInfo();
+      this.projectName = project.data.name || '';
+    },
+
     updateCurrentTab(tab) {
       const navNames = this.navs.map((nav) => nav.name);
       if (!navNames.includes(tab)) {
