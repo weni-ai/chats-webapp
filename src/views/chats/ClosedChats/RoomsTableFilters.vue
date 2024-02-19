@@ -29,7 +29,14 @@
       </div>
       <div class="rooms-table-filters__input">
         <unnnic-label :label="$t('date')" />
+        <unnnic-select-smart
+          v-if="isMobile"
+          v-model="filterDate"
+          :options="datesToFilter"
+          ordered-by-index
+        />
         <unnnic-input-date-picker
+          v-else
           class="rooms-table-filters__date-picker"
           v-model="filterDate"
           position="right"
@@ -79,19 +86,19 @@ export default {
 
       sectorsToFilter: [],
       tagsToFilter: [],
+      datesToFilter: [],
+
       filterContact: '',
       filterSector: [],
       filterTag: [],
-      filterDate: {
-        start: moment().subtract(1, 'week').format('YYYY-MM-DD'),
-        end: moment().format('YYYY-MM-DD'),
-      },
+      filterDate: null,
     };
   },
 
   async created() {
     this.isFiltersLoading = true;
 
+    this.datesToFilter = this.datesToFilterOptions;
     this.filterSector = [this.filterSectorsOptionAll];
     this.filterDate = this.filterDateDefault;
     this.tagsToFilter = this.filterTagDefault;
@@ -110,10 +117,51 @@ export default {
     },
 
     filterDateDefault() {
+      if (this.isMobile) {
+        return [this.datesToFilter.find((obj) => obj.value === 'last_7_days')];
+      }
       return {
         start: moment().subtract(1, 'week').format('YYYY-MM-DD'),
         end: moment().format('YYYY-MM-DD'),
       };
+    },
+    datesToFilterOptions() {
+      return [
+        'today',
+        'yesterday',
+        'last_7_days',
+        'last_30_days',
+        'current_month',
+        'last_12_months',
+      ].map((date) => ({
+        value: date,
+        label: this.$t(`filter.dates.${date}`),
+      }));
+    },
+    treatedFilterDate() {
+      const { filterDate, isMobile } = this;
+      const today = moment().format('YYYY-MM-DD');
+
+      if (isMobile) {
+        const getRelativeDate = (offset, unit) =>
+          moment().subtract(offset, unit).format('YYYY-MM-DD');
+
+        const startDateMapping = {
+          today,
+          yesterday: getRelativeDate(1, 'day'),
+          last_7_days: getRelativeDate(1, 'week'),
+          last_30_days: getRelativeDate(1, 'month'),
+          current_month: moment().startOf('month').format('YYYY-MM-DD'),
+          last_12_months: getRelativeDate(12, 'month'),
+        };
+
+        const selectedDate = startDateMapping[filterDate[0]?.value];
+        if (selectedDate) {
+          return { start: selectedDate, end: today };
+        }
+      }
+
+      return filterDate;
     },
 
     isFiltersDefault() {
@@ -197,13 +245,13 @@ export default {
     },
 
     emitUpdateFilters() {
-      const { filterContact, filterDate, filterSector, filterTag } = this;
+      const { filterContact, treatedFilterDate, filterSector, filterTag } = this;
 
       this.$emit('update-filters', {
         contact: filterContact,
         sector: filterSector,
         tag: filterTag,
-        date: filterDate,
+        date: treatedFilterDate,
       });
     },
   },
