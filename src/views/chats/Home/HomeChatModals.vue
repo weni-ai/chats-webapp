@@ -105,6 +105,7 @@ export default {
     },
     emitSelectQuickMessage(quickMessage) {
       this.$emit('select-quick-message', quickMessage);
+      this.closeModal('quickMessages');
     },
   },
 
