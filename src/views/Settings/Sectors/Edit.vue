@@ -131,14 +131,6 @@
       />
       <section class="buttons">
         <unnnic-button
-          :text="$t('delete_sector')"
-          type="warning"
-          iconLeft="delete"
-          @click="openModalDelete = true"
-          :disabled="isQuickMessageEditing && !isQuickMessagesFormValid"
-          v-if="this.currentTab === 'sector'"
-        />
-        <unnnic-button
           :text="$t('save')"
           type="secondary"
           @click="save"
@@ -151,23 +143,6 @@
           "
         />
       </section>
-
-      <unnnic-modal-next
-        v-if="openModalDelete"
-        type="alert"
-        icon="alert-circle-1"
-        scheme="feedback-red"
-        :title="$t('delete_sector') + ` ${sector.name}`"
-        :description="$t('cant_revert')"
-        :validate="`${sector.name}`"
-        :validatePlaceholder="`${sector.name}`"
-        :validateLabel="$t('confirm_typing') + ` &quot;${sector.name}&quot;`"
-        :actionPrimaryLabel="$t('confirm')"
-        :actionSecondaryLabel="$t('cancel')"
-        @click-action-primary="deleteSector(sector.uuid)"
-        @click-action-secondary="openModalDelete = false"
-      />
-
       <unnnic-button
         v-if="this.currentTab === 'messages' && !isQuickMessageEditing"
         :text="$t('quick_messages.new')"
@@ -243,7 +218,6 @@ export default {
   data: () => ({
     currentTab: '',
     openModal: false,
-    openModalDelete: false,
     sector: {
       uuid: '',
       name: '',
@@ -303,7 +277,6 @@ export default {
       setCopilotActive: 'config/setCopilotActive',
       setCopilotCustomRulesActive: 'config/setCopilotCustomRulesActive',
       setCopilotCustomRules: 'config/setCopilotCustomRules',
-      actionDeleteSector: 'settings/deleteSector',
     }),
 
     resetTabsData() {
@@ -474,31 +447,6 @@ export default {
       }
 
       this.$router.push({ name: 'sectors' });
-    },
-
-    async deleteSector(sectorUuid) {
-      try {
-        await this.actionDeleteSector(sectorUuid);
-        this.openModalDelete = false;
-        this.$router.push({ name: 'sectors' });
-        unnnicCallAlert({
-          props: {
-            text: this.$t('sector_deleted_success'),
-            type: 'success',
-          },
-          seconds: 5,
-        });
-      } catch (error) {
-        console.log(error);
-        this.openModalDelete = false;
-        unnnicCallAlert({
-          props: {
-            text: this.$t('sector_delete_error'),
-            type: 'error',
-          },
-          seconds: 5,
-        });
-      }
     },
 
     async removeManager(managerUuid) {
