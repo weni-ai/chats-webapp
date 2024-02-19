@@ -129,7 +129,7 @@
         @click="cancel"
         v-if="this.isQuickMessageEditing"
       />
-      <section class="buttons">
+      <section class="button-action">
         <unnnic-button
           :text="$t('save')"
           type="secondary"
@@ -640,7 +640,7 @@ export default {
     }
   }
 
-  .buttons {
+  .button-action {
     display: flex;
     flex-direction: column;
     gap: $unnnic-spacing-sm;
