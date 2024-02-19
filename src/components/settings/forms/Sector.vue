@@ -130,7 +130,7 @@
             class="form-section__inputs--fill-w"
           />
         </section>
-        <section class="form-section__buttons">
+        <section class="form-section__handlers">
           <unnnic-button
             :text="$t('delete_sector')"
             type="warning"
