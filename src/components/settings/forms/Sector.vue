@@ -400,7 +400,7 @@ export default {
       align-items: center;
     }
 
-    &__buttons {
+    &__handlers {
       margin-top: $unnnic-spacing-md;
       button {
         width: 100%;
