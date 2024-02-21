@@ -37,7 +37,11 @@
           <template #date>{{ $d(new Date(item.ended_at)) }}</template>
 
           <template #visualize>
-            <div v-if="isMobile" @click="$emit('open-room', item)" @keypress.enter="() => {}">
+            <div
+              v-if="isMobile"
+              @click="$emit('open-room', item)"
+              @keypress.enter="$emit('open-room', item)"
+            >
               <unnnic-icon
                 class="closed-chats__rooms-table__table__visualize-icon"
                 icon="open_in_new"
