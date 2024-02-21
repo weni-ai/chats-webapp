@@ -1,18 +1,11 @@
 <template>
-  <unnnic-dropdown-item class="more-actions-option" @click="action" @keypress.enter="action">
-    <div class="title">
-      <unnnic-icon-svg :icon="icon" next size="sm" />
-      <span> {{ title }} </span>
-      <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -->
-      <input
-        class="input-file"
-        v-if="inputType"
-        type="file"
-        :accept="inputFileExtensions"
-        @change="handleFileChange"
-      />
-      <!-- TODO: debug @change function not being called -->
-    </div>
+  <unnnic-dropdown-item
+    class="more-actions-option"
+    @click="handlerClick"
+    @keypress.enter="handlerClick"
+  >
+    <unnnic-icon-svg :icon="icon" next size="sm" />
+    <p>{{ title }}</p>
   </unnnic-dropdown-item>
 </template>
 
@@ -23,7 +16,7 @@ export default {
   props: {
     icon: { type: String, required: true },
     title: { type: String, required: true },
-    action: { type: Function, required: true },
+    action: { type: Function, required: false },
     inputType: {
       type: String,
       required: false,
@@ -44,6 +37,16 @@ export default {
   },
 
   methods: {
+    handlerClick() {
+      return this.inputType ? this.openFileSelector() : this.action();
+    },
+    openFileSelector() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = this.inputFileExtensions;
+      input.addEventListener('change', this.handleFileChange);
+      input.click();
+    },
     handleFileChange(event) {
       const selectedFiles = event.target.files;
       this.$emit('files-selected', selectedFiles);
@@ -55,31 +58,14 @@ export default {
 <style lang="scss" scoped>
 a.more-actions-option {
   &::before {
-    margin: 0;
+    display: none;
   }
 
-  .title {
-    position: relative;
+  padding: $unnnic-spacing-stack-sm 0;
 
-    padding: $unnnic-spacing-stack-sm 0;
+  display: flex;
+  gap: $unnnic-spacing-inline-xs;
 
-    display: flex;
-    gap: $unnnic-spacing-inline-xs;
-
-    width: max-content;
-  }
-
-  .input-file {
-    position: absolute;
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 100%;
-
-    background-color: transparent;
-    border: none;
-    opacity: 0;
-  }
+  width: max-content;
 }
 </style>
