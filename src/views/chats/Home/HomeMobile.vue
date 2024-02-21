@@ -1,6 +1,7 @@
 <template>
-  <mobile-chat v-if="showActiveChat" />
+  <mobile-chat v-if="showActiveChat" @transferred-contact="handleChatTransfer" />
   <div class="home-mobile" v-else>
+    <!-- callUnnnicAlert is using the class of this element below as containerRef -->
     <main class="home-mobile__main">
       <mobile-closed-chats v-if="showHistory" @close="openTabChats" />
 
@@ -48,6 +49,8 @@ import QuickMessages from '@/components/chats/QuickMessages';
 import MobileChat from '@/views/chats/Mobile/MobileChat';
 import MobileClosedChats from '@/views/chats/Mobile/MobileClosedChats';
 
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
+
 export default {
   name: 'HomeMobile',
 
@@ -67,6 +70,7 @@ export default {
       isOpenedQuickMessages: false,
 
       projectName: '',
+      isCallingTransferAlert: false,
     };
   },
 
@@ -127,8 +131,8 @@ export default {
       return this.currentTab === 'preferences' && this.isOpenedQuickMessages;
     },
     showActiveChat() {
-      const { showChats, room, discussion } = this;
-      return showChats && (room || discussion);
+      const { showChats, room, discussion, isCallingTransferAlert } = this;
+      return showChats && (room || discussion) && !isCallingTransferAlert;
     },
   },
 
@@ -169,6 +173,38 @@ export default {
 
     returnToOldTab() {
       this.currentTab = this.oldTab;
+    },
+
+    handleChatTransfer() {
+      this.callTransferChatAlert();
+    },
+
+    async callTransferChatAlert() {
+      /*
+         "isCallingTransferAlert" is the condition used to mount
+         home-mobile__main and "$nextTick" is necessary to ensure that the
+         alert has the element "home-mobile__main" mounted as container and
+         do not overlap it.
+      */
+      this.isCallingTransferAlert = true;
+
+      await this.$nextTick();
+      callUnnnicAlert({
+        props: {
+          text: this.$t('contact_transferred_with_success'),
+          type: 'success',
+        },
+        seconds: 5,
+      });
+
+      /*
+        "$nextTick" was not used here because more than one update to the
+        DOM is made for callUnnnicAlert to be called. setTimeout gives time
+        for the alert to be mounted and thus sets isCallingTransferAlert to false.
+      */
+      setTimeout(() => {
+        this.isCallingTransferAlert = false;
+      }, 400);
     },
   },
 

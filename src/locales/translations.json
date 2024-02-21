@@ -880,6 +880,11 @@
       "es": "En espera de respuesta de contacto"
     }
   },
+  "contact_transferred_with_success": {
+    "pt-br": "Contato transferido com sucesso",
+    "en": "Contact successfully transferred",
+    "es": "Contacto transferido con éxito"
+  },
   "contact_transferred_to_queue": {
     "pt-br": "Contato transferido para fila {queue}",
     "en": "Contact transferred to queue {queue}",
@@ -952,6 +957,11 @@
       "pt-br": "{agent} {date} às {time}",
       "en": "{agent} {date} at {time}",
       "es": "{agent} {date} a las {time}"
+    },
+    "transfering_chat": {
+      "pt-br": "Transferindo o chat ​📬",
+      "en": "Transferring the chat 📬",
+      "es": "Transfiriendo el chat 📬"
     }
   },
   "discussions": {
