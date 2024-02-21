@@ -80,7 +80,6 @@ export default {
   width: 100%;
   overflow: hidden auto;
 
-  // insert space between content and scrollbar
   margin-right: -$unnnic-spacing-xs;
   padding-right: $unnnic-spacing-xs;
 }
