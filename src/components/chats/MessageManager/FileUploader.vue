@@ -17,6 +17,8 @@
 <script>
 import mime from 'mime-types';
 
+import { sendFileMessage as sendFileMessage2 } from '@/utils/medias';
+
 export default {
   name: 'FileUploader',
 
@@ -92,30 +94,36 @@ export default {
 
     async sendFileMessage() {
       const { value: files } = this;
-      try {
-        const loadingFiles = {};
-        const updateLoadingFiles = (messageUuid, progress) => {
-          loadingFiles[messageUuid] = progress;
-          this.$emit(
-            'progress',
-            Object.values(loadingFiles).reduce((acc, value) => acc + value) /
-              Object.keys(loadingFiles).length,
-          );
-        };
-        const actionType =
-          this.$route.name === 'discussion'
-            ? 'chats/discussionMessages/sendDiscussionMedias'
-            : 'chats/roomMessages/sendRoomMedias';
 
-        await this.$store.dispatch(actionType, {
-          files,
-          updateLoadingFiles,
-        });
-      } catch (e) {
-        console.error('Uploading some files may not have completed');
-      } finally {
-        this.$emit('progress', undefined);
-      }
+      sendFileMessage2({
+        files,
+        routeName: this.$route.name,
+        storeDispatch: this.$store.dispatch,
+      });
+      //   try {
+      //     const loadingFiles = {};
+      //     const updateLoadingFiles = (messageUuid, progress) => {
+      //       loadingFiles[messageUuid] = progress;
+      //       this.$emit(
+      //         'progress',
+      //         Object.values(loadingFiles).reduce((acc, value) => acc + value) /
+      //           Object.keys(loadingFiles).length,
+      //       );
+      //     };
+      //     const actionType =
+      //       this.$route.name === 'discussion'
+      //         ? 'chats/discussionMessages/sendDiscussionMedias'
+      //         : 'chats/roomMessages/sendRoomMedias';
+
+      //     await this.$store.dispatch(actionType, {
+      //       files,
+      //       updateLoadingFiles,
+      //     });
+      //   } catch (e) {
+      //     console.error('Uploading some files may not have completed');
+      //   } finally {
+      //     this.$emit('progress', undefined);
+      //   }
     },
   },
 

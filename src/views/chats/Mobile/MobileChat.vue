@@ -1,5 +1,9 @@
 <template>
-  <contact-info v-if="showRoomContactInfo" @close="handleRoomContactInfo" />
+  <contact-info
+    v-if="showRoomContactInfo"
+    @close="handleRoomContactInfo"
+    @transferred-contact="emitTransferredContact"
+  />
   <home-chat
     class="mobile-chat"
     v-else
@@ -31,6 +35,10 @@ export default {
     },
     handleQuickMessagesModal() {
       this.showQuickMessagesModal = !this.showQuickMessagesModal;
+    },
+
+    emitTransferredContact() {
+      this.$emit('transferred-contact');
     },
   },
 };

@@ -1,7 +1,8 @@
 <template>
   <mobile-select-org-project v-if="!project" />
-  <mobile-chat v-else-if="showActiveChat" />
+  <mobile-chat v-else-if="showActiveChat" @transferred-contact="handleChatTransfer" />
   <div class="home-mobile" v-else>
+    <!-- callUnnnicAlert is using the class of this element below as containerRef -->
     <main class="home-mobile__main">
       <mobile-closed-chats v-if="showHistory" @close="openTabChats" />
 
@@ -10,7 +11,7 @@
       <unnnic-chats-header
         v-else-if="showChats"
         title="Chats"
-        subtitle="Nome do projeto"
+        :subtitle="projectName"
         avatarIcon="forum"
         :back="() => {}"
         sectionIconScheme="weni-600"
@@ -38,6 +39,8 @@
 <script>
 import { mapState } from 'vuex';
 
+import ProjectApi from '@/services/api/resources/settings/project';
+
 import TheCardGroups from '@/layouts/ChatsLayout/components/TheCardGroups';
 import FlowsTrigger from '@/layouts/ChatsLayout/components/FlowsTrigger';
 
@@ -47,6 +50,8 @@ import MobileClosedChats from '@/views/chats/Mobile/MobileClosedChats';
 
 import ModalPreferences from '@/components/chats/Mobile/ModalPreferences.vue';
 import QuickMessages from '@/components/chats/QuickMessages';
+
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 export default {
   name: 'HomeMobile',
@@ -66,7 +71,14 @@ export default {
       currentTab: 'chats',
       oldTab: '',
       isOpenedQuickMessages: false,
+
+      projectName: '',
+      isCallingTransferAlert: false,
     };
+  },
+
+  created() {
+    this.getProjectName();
   },
 
   computed: {
@@ -123,12 +135,17 @@ export default {
       return this.currentTab === 'preferences' && this.isOpenedQuickMessages;
     },
     showActiveChat() {
-      const { showChats, room, discussion } = this;
-      return showChats && (room || discussion);
+      const { showChats, room, discussion, isCallingTransferAlert } = this;
+      return showChats && (room || discussion) && !isCallingTransferAlert;
     },
   },
 
   methods: {
+    async getProjectName() {
+      const project = await ProjectApi.getInfo();
+      this.projectName = project.data.name || '';
+    },
+
     updateCurrentTab(tab) {
       const navNames = this.navs.map((nav) => nav.name);
       if (!navNames.includes(tab)) {
@@ -160,6 +177,38 @@ export default {
 
     returnToOldTab() {
       this.currentTab = this.oldTab;
+    },
+
+    handleChatTransfer() {
+      this.callTransferChatAlert();
+    },
+
+    async callTransferChatAlert() {
+      /*
+         "isCallingTransferAlert" is the condition used to mount
+         home-mobile__main and "$nextTick" is necessary to ensure that the
+         alert has the element "home-mobile__main" mounted as container and
+         do not overlap it.
+      */
+      this.isCallingTransferAlert = true;
+
+      await this.$nextTick();
+      callUnnnicAlert({
+        props: {
+          text: this.$t('contact_transferred_with_success'),
+          type: 'success',
+        },
+        seconds: 5,
+      });
+
+      /*
+        "$nextTick" was not used here because more than one update to the
+        DOM is made for callUnnnicAlert to be called. setTimeout gives time
+        for the alert to be mounted and thus sets isCallingTransferAlert to false.
+      */
+      setTimeout(() => {
+        this.isCallingTransferAlert = false;
+      }, 400);
     },
   },
 

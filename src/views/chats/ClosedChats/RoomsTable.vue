@@ -37,7 +37,11 @@
           <template #date>{{ $d(new Date(item.ended_at)) }}</template>
 
           <template #visualize>
-            <div v-if="isMobile" @click="$emit('open-room', item)" @keypress.enter="() => {}">
+            <div
+              v-if="isMobile"
+              @click="$emit('open-room', item)"
+              @keypress.enter="$emit('open-room', item)"
+            >
               <unnnic-icon
                 class="closed-chats__rooms-table__table__visualize-icon"
                 icon="open_in_new"
@@ -78,7 +82,8 @@
       class="closed-chats__rooms-table__table__mobile-filters"
       iconCenter="search"
       type="primary"
-      size="large"
+      size="extra-large"
+      float
       @click="handleShowModalFilters"
     />
   </section>
@@ -295,7 +300,7 @@ export default {
       }
 
       &__mobile-filters {
-        justify-self: flex-end;
+        margin: 0 $unnnic-spacing-ant $unnnic-spacing-md 0;
       }
     }
   }

@@ -53,15 +53,14 @@
           <more-actions-option
             icon="image"
             :title="$t('photo_or_video')"
-            :action="() => {}"
             inputType="image"
+            @files-selected="emitHandleAttachment"
           />
           <more-actions-option
             icon="article"
             :title="$t('doc')"
-            :action="() => {}"
             inputType="doc"
-            @files-selected="emitHandleAttachment($event)"
+            @files-selected="emitHandleAttachment"
           />
         </div>
       </unnnic-dropdown>
@@ -145,7 +144,6 @@ export default {
     },
 
     emitHandleAttachment(files) {
-      console.log({ files });
       if (files) {
         this.$emit('handle-attachment', files);
       }

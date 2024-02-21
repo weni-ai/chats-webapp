@@ -3,7 +3,7 @@
   <section class="send-flow">
     <select-flow v-model="selectedFlow" />
     <div v-if="showProgressBar">
-      <modal-progress-template-submission @close="closeModalProgress" />
+      <modal-progress-bar-false @close="closeModalProgress" :title="$t('flows_trigger.sending')" />
     </div>
     <footer class="send-flow__handlers">
       <unnnic-button
@@ -28,9 +28,10 @@
 <script>
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
+import ModalProgressBarFalse from '@/components/ModalProgressBarFalse';
+
 import SelectFlow from './SelectFlow';
 import SendFlowButton from './SendFlowButton';
-import ModalProgressTemplateSubmission from './ModalProgressTemplateSubmission';
 
 export default {
   name: 'SendFlow',
@@ -38,7 +39,7 @@ export default {
   components: {
     SelectFlow,
     SendFlowButton,
-    ModalProgressTemplateSubmission,
+    ModalProgressBarFalse,
   },
 
   data() {

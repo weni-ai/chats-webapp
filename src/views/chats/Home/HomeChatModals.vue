@@ -1,5 +1,5 @@
 <template>
-  <section class="home-chat-modals">
+  <section class="home-chat-modals" :class="{ 'home-chat-modals--mobile': isMobile }">
     <modal-get-chat
       :showModal="modalsShowing.getChat"
       @closeModal="closeModal('getChat')"
@@ -27,6 +27,7 @@
       v-model="modalFileUploaderFiles"
       ref="fileUploader"
       @progress="emitFileUploaderProgress"
+      @close="closeModal('fileUploader')"
     />
 
     <modal-quick-messages
@@ -39,6 +40,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import isMobile from 'is-mobile';
 
 import FileUploader from '@/components/chats/MessageManager/FileUploader';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat';
@@ -58,6 +60,8 @@ export default {
 
   data() {
     return {
+      isMobile: isMobile(),
+
       modalsShowing: {
         getChat: false,
         assumedChat: false,
@@ -105,6 +109,7 @@ export default {
     },
     emitSelectQuickMessage(quickMessage) {
       this.$emit('select-quick-message', quickMessage);
+      this.closeModal('quickMessages');
     },
   },
 
@@ -121,6 +126,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .home-chat-modals {
-  position: absolute;
+  &--mobile {
+    position: absolute;
+  }
 }
 </style>
