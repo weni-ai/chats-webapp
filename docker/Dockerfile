@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1
 
-ARG NODE_VERSION="18.4.0"
-ARG BASE_VERSION="alpine3.14"
+ARG NODE_VERSION="18.14.0"
+ARG BASE_VERSION="alpine3.17"
 
 FROM node:${NODE_VERSION}-${BASE_VERSION} as builder
 
