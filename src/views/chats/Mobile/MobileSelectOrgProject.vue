@@ -1,6 +1,8 @@
 <template>
   <section class="mobile-select-org-project">
-    <header></header>
+    <header class="mobile-select-org-project__header">
+      <img :src="weniChatsLogo" alt="Weni Chats" />
+    </header>
 
     <main class="mobile-select-org-project__main">
       <unnnic-connect-project-selector
@@ -22,13 +24,17 @@
 </template>
 
 <script>
-import env from '@/utils/env';
 import { mapActions, mapState } from 'vuex';
+
+import weniChatsLogo from '@/assets/weni-chats-logo.svg';
+
+import env from '@/utils/env';
 
 export default {
   name: 'MobileSelectOrgProject',
   data() {
     return {
+      weniChatsLogo,
       appEnviroment: env('VUE_APP_CHATS_ENVIRONMENT'),
       route: 'orgs',
       projectUuid: '',
@@ -54,6 +60,15 @@ export default {
 
 <style lang="scss" scoped>
 .mobile-select-org-project {
+  &__header {
+    padding: $unnnic-spacing-md;
+
+    display: flex;
+    justify-content: center;
+
+    background-color: $unnnic-color-neutral-lightest;
+  }
+
   &__main {
     padding: $unnnic-spacing-ant;
   }
