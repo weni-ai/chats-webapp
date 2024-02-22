@@ -6,6 +6,7 @@
 
     <main class="mobile-select-org-project__main">
       <unnnic-connect-project-selector
+        class="main__orgs-projects"
         :env="appEnviroment"
         :authorization="`Bearer ${userToken}`"
         :page.sync="route"
@@ -13,7 +14,7 @@
       />
 
       <unnnic-button
-        class="mobile-select-org-project__logout"
+        class="main__logout"
         iconCenter="logout"
         type="tertiary"
         size="large"
@@ -66,6 +67,13 @@ export default {
 
 <style lang="scss" scoped>
 .mobile-select-org-project {
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
   &__header {
     padding: $unnnic-spacing-md;
 
@@ -76,12 +84,37 @@ export default {
   }
 
   &__main {
-    padding: $unnnic-spacing-ant;
+    padding: $unnnic-spacing-md $unnnic-spacing-ant;
+
+    height: 100%;
+
+    display: grid;
+    grid-template-rows: 1fr auto;
+    gap: $unnnic-spacing-md;
+
+    overflow: hidden;
+
+    .main__orgs-projects {
+      display: flex;
+      flex-direction: column;
+
+      overflow: hidden;
+
+      :deep(.organizations-list),
+      :deep(.projects-list) {
+        margin: -$unnnic-spacing-ant;
+        padding: $unnnic-spacing-ant;
+
+        height: 100%;
+
+        overflow: scroll;
+      }
+    }
   }
 }
 
-:deep(.unnnic-button).mobile-select-org-project__logout {
-  width: 100%;
+:deep(.unnnic-button).main__logout {
+  min-width: 100%;
 
   * {
     color: $unnnic-color-aux-red-500;
