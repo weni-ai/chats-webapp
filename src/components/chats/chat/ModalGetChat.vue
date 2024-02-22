@@ -1,17 +1,32 @@
 <template>
-  <unnnic-modal
-    :showModal="showModal"
-    @close="close"
-    :text="title"
-    :description="description"
-    modal-icon="messages-bubble-1"
-    scheme="neutral-darkest"
-  >
-    <template #options>
-      <unnnic-button :text="$t('cancel')" type="tertiary" @click="close" />
-      <unnnic-button :text="$t('confirm')" type="secondary" @click="getChat" />
-    </template>
-  </unnnic-modal>
+  <section>
+    <unnnic-modal
+      :showModal="showModal"
+      @close="close"
+      :text="title"
+      :description="description"
+      modal-icon="messages-bubble-1"
+      scheme="neutral-darkest"
+    >
+      <template #options>
+        <unnnic-button :text="$t('cancel')" type="tertiary" @click="close" />
+        <unnnic-button :text="$t('confirm')" type="secondary" @click="getChat" />
+      </template>
+    </unnnic-modal>
+
+    <unnnic-modal
+      text="Alguem já pegou esse chat"
+      description="Um outro agente já pegou esse chat"
+      modalIcon="check-circle-1-1"
+      scheme="feedback-green"
+      :showModal="showModalTake"
+      @close="close"
+    >
+      <template #options>
+        <unnnic-button :text="$t('cancel')" type="tertiary" @click="closeTake" />
+      </template>
+    </unnnic-modal>
+  </section>
 </template>
 
 <script>
@@ -42,6 +57,12 @@ export default {
     },
   },
 
+  data() {
+    return {
+      showModalTake: false,
+    };
+  },
+
   computed: {
     ...mapState({
       room: (state) => state.chats.rooms.activeRoom,
@@ -49,9 +70,29 @@ export default {
     }),
   },
 
+  watch: {
+    room: {
+      handler() {
+        if (!this.room) {
+          this.close();
+          this.open();
+        }
+      },
+      deep: true,
+    },
+  },
+
   methods: {
     close() {
       this.$emit('closeModal');
+    },
+
+    closeTake() {
+      this.showModalTake = false;
+    },
+
+    open() {
+      this.showModalTake = true;
     },
 
     async getChat() {
