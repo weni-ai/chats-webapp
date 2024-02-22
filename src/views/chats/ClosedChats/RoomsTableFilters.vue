@@ -101,7 +101,7 @@ export default {
     this.datesToFilter = this.datesToFilterOptions;
     this.filterSector = [this.filterSectorsOptionAll];
     this.filterDate = this.filterDateDefault;
-    this.tagsToFilter = this.filterTagDefault;
+    this.tagsToFilter = [this.filterTagDefault];
     await this.getSectors();
 
     this.isFiltersLoading = false;
@@ -113,7 +113,7 @@ export default {
     },
 
     filterTagDefault() {
-      return [{ value: '', label: this.$t('filter.by_tags') }];
+      return { value: '', label: this.$t('filter.by_tags') };
     },
 
     filterDateDefault() {
@@ -206,24 +206,23 @@ export default {
         if (results.length === 1) {
           this.filterSector = [newSectors[1]];
         }
-
-        if (results.length > 0) {
-          this.getSectorTags(results[0].uuid);
-        }
       } catch (error) {
         console.error('The sectors could not be loaded at this time.', error);
       }
     },
 
     async getSectorTags(sectorUuid) {
+      this.filterTag = [];
+
       if (!sectorUuid) {
         this.tagsToFilter = [];
         return;
       }
+
       try {
         const { results } = await Sector.tags(sectorUuid);
 
-        const newTags = this.tagsToFilter;
+        const newTags = [this.filterTagDefault];
         results.forEach(({ uuid, name }) => newTags.push({ value: uuid, label: name }));
         this.tagsToFilter = newTags;
       } catch (error) {
@@ -265,7 +264,12 @@ export default {
         this.emitUpdateFilters();
       }, TIME_TO_WAIT_TYPING);
     },
-    filterSector: 'emitUpdateFilters',
+    filterSector(newFilterSector) {
+      const sectorValue = newFilterSector?.[0].value;
+      if (sectorValue !== 'all') {
+        this.getSectorTags(sectorValue);
+      }
+    },
     filterTag: 'emitUpdateFilters',
     filterDate: 'emitUpdateFilters',
   },
