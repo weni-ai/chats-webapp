@@ -1,6 +1,10 @@
 <template>
   <section class="mobile-select-org-project">
-    <header class="mobile-select-org-project__header">
+    <header
+      class="mobile-select-org-project__header"
+      @click="removeProject"
+      @keypress.enter="removeProject"
+    >
       <img :src="weniChatsLogo" alt="Weni Chats" />
     </header>
 
@@ -54,12 +58,16 @@ export default {
     logout() {
       Keycloak.keycloak.logout();
     },
+    removeProject() {
+      if (this.route !== 'orgs') {
+        this.route = 'orgs';
+        this.projectUuid = '';
+      }
+    },
   },
   watch: {
     projectUuid(newProjectUuid) {
-      if (newProjectUuid) {
-        this.setProject(newProjectUuid);
-      }
+      this.setProject(newProjectUuid || '');
     },
   },
 };
