@@ -13,7 +13,7 @@
         title="Chats"
         :subtitle="projectName"
         avatarIcon="forum"
-        :back="() => {}"
+        :back="homeBack"
         sectionIconScheme="weni-600"
       />
       <section class="home-mobile__tab__chats" v-if="showChats">
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import ProjectApi from '@/services/api/resources/settings/project';
 
@@ -75,10 +75,6 @@ export default {
       projectName: '',
       isCallingTransferAlert: false,
     };
-  },
-
-  created() {
-    this.getProjectName();
   },
 
   computed: {
@@ -141,6 +137,12 @@ export default {
   },
 
   methods: {
+    ...mapActions('config', ['setProject']),
+
+    homeBack() {
+      this.setProject('');
+    },
+
     async getProjectName() {
       const project = await ProjectApi.getInfo();
       this.projectName = project.data.name || '';
@@ -218,6 +220,12 @@ export default {
 
       if (oldTab === 'preferences') {
         this.closeQuickMessages();
+      }
+    },
+
+    project(newProject) {
+      if (newProject) {
+        this.getProjectName();
       }
     },
   },

@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/prefer-default-export
 export async function sendFileMessage({ files, routeName, storeDispatch }) {
   try {
     const loadingFiles = {};
