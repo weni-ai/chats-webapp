@@ -23,11 +23,15 @@ export default {
       return config;
     });
 
+    if (!this.appToken) return;
+
     this.handleLocale();
     this.restoreLocalStorageUserStatus();
   },
 
   async mounted() {
+    if (!this.appToken) return;
+
     this.getUser();
     this.getUserStatus();
     this.loadQuickMessages();

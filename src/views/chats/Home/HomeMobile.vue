@@ -77,10 +77,6 @@ export default {
     };
   },
 
-  created() {
-    this.getProjectName();
-  },
-
   computed: {
     ...mapState({
       project: (state) => state.config.project,
@@ -224,6 +220,12 @@ export default {
 
       if (oldTab === 'preferences') {
         this.closeQuickMessages();
+      }
+    },
+
+    project(newProject) {
+      if (newProject) {
+        this.getProjectName();
       }
     },
   },

@@ -18,6 +18,7 @@
         type="tertiary"
         size="large"
         :text="$t('logout')"
+        @click="logout"
       />
     </main>
   </section>
@@ -25,6 +26,8 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
+
+import Keycloak from '@/services/keycloak';
 
 import weniChatsLogo from '@/assets/weni-chats-logo.svg';
 
@@ -47,6 +50,9 @@ export default {
   },
   methods: {
     ...mapActions('config', ['setProject']),
+    logout() {
+      Keycloak.keycloak.logout();
+    },
   },
   watch: {
     projectUuid(newProjectUuid) {
