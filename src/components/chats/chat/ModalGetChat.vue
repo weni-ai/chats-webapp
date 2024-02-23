@@ -15,17 +15,13 @@
     </unnnic-modal>
 
     <unnnic-modal
-      text="Alguem já pegou esse chat"
-      description="Um outro agente já pegou esse chat"
+      :text="$t('already_got_chat')"
+      :description="$t('a_agent_already_got')"
       modalIcon="check-circle-1-1"
       scheme="feedback-green"
-      :showModal="showModalTake"
-      @close="close"
-    >
-      <template #options>
-        <unnnic-button :text="$t('cancel')" type="tertiary" @click="closeTake" />
-      </template>
-    </unnnic-modal>
+      :showModal="showModalCaughtChat"
+      @close="closeCaughtChatModal"
+    />
   </section>
 </template>
 
@@ -59,7 +55,7 @@ export default {
 
   data() {
     return {
-      showModalTake: false,
+      showModalCaughtChat: false,
     };
   },
 
@@ -75,7 +71,7 @@ export default {
       handler() {
         if (!this.room) {
           this.close();
-          this.open();
+          this.openCaughtChatModal();
         }
       },
       deep: true,
@@ -87,12 +83,12 @@ export default {
       this.$emit('closeModal');
     },
 
-    closeTake() {
-      this.showModalTake = false;
+    closeCaughtChatModal() {
+      this.showModalCaughtChat = false;
     },
 
-    open() {
-      this.showModalTake = true;
+    openCaughtChatModal() {
+      this.showModalCaughtChat = true;
     },
 
     async getChat() {

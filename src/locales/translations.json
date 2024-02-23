@@ -1198,6 +1198,16 @@
       "es": "El contacto fué enviado a la línea {name}"
     }
   },
+  "already_got_chat": {
+    "pt-br": "Alguem já pegou esse chat",
+    "en-us": "Somebody already got the chat",
+    "es": "Alguien ya ha contestado el chat"
+  },
+  "a_agent_already_got": {
+    "pt-br": "Um outro agente já pegou esse chat.",
+    "en-us": "Another agent has already picked up the chat.",
+    "es": "Otro agente ya contestó el chat."
+  },
   "select_agent": {
     "pt-br": "Selecione agente",
     "en-us": "Select agent",
