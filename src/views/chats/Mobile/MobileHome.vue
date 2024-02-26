@@ -1,6 +1,5 @@
 <template>
-  <mobile-select-org-project v-if="!project" />
-  <mobile-chat v-else-if="showActiveChat" @transferred-contact="handleChatTransfer" />
+  <mobile-chat v-if="showActiveChat" @transferred-contact="handleChatTransfer" />
   <div class="mobile-home" v-else>
     <!-- callUnnnicAlert is using the class of this element below as containerRef -->
     <main class="mobile-home__main">
@@ -37,14 +36,13 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapState } from 'vuex';
 
 import ProjectApi from '@/services/api/resources/settings/project';
 
 import TheCardGroups from '@/layouts/ChatsLayout/components/TheCardGroups';
 import FlowsTrigger from '@/layouts/ChatsLayout/components/FlowsTrigger';
 
-import MobileSelectOrgProject from '@/views/chats/Mobile/MobileSelectOrgProject';
 import MobileChat from '@/views/chats/Mobile/MobileChat';
 import MobileClosedChats from '@/views/chats/Mobile/MobileClosedChats';
 
@@ -63,7 +61,6 @@ export default {
     MobileClosedChats,
     ModalPreferences,
     QuickMessages,
-    MobileSelectOrgProject,
     MobileChat,
   },
 
@@ -138,10 +135,8 @@ export default {
   },
 
   methods: {
-    ...mapActions('config', ['setProject']),
-
     homeBack() {
-      this.setProject('');
+      this.$router.push({ name: 'orgs' });
     },
 
     async getProjectName() {
