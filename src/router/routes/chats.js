@@ -1,4 +1,9 @@
-import Home from '@/views/chats/Home';
+import isMobile from 'is-mobile';
+
+import DesktopHome from '@/views/chats/Home';
+import MobileHome from '@/views/chats/Mobile/MobileHome';
+
+const Home = isMobile() ? MobileHome : DesktopHome;
 
 const routes = [
   {
