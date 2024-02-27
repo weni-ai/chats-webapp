@@ -49,8 +49,8 @@ export default {
     return response;
   },
 
-  async deleteSector(sectorUuid) {
-    const response = await http.delete(`/sector/${sectorUuid}`);
+  async deleteSector(sectorUuid, user_email) {
+    const response = await http.delete(`/sector/${sectorUuid}`, { params: user_email });
     return response.data;
   },
 
