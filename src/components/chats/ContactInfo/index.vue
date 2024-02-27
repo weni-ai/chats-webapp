@@ -318,7 +318,7 @@ export default {
     contactNumber() {
       const plataform = (this.closedRoom || this.room).urn.split(':').at(0);
       const number = (this.closedRoom || this.room).urn.split(':').at(-1);
-      const whatsapp = `+${number.substr(-20, 20)} `;
+      const whatsapp = `+${number.substr(-20, 20)}`;
       const infoNumber = {
         plataform,
         contactNum: plataform === 'whatsapp' ? whatsapp : number,
@@ -373,7 +373,18 @@ export default {
   methods: {
     moment,
     openHistory() {
-      window.open(`/closed-chats/${this.room.contact.uuid}`);
+      const { plataform, contactNum } = this.contactNumber;
+      const contactUrn = plataform === 'whatsapp' ? contactNum.replace('+', '') : contactNum;
+
+      const A_YEAR_AGO = moment().subtract(12, 'month').format('YYYY-MM-DD');
+
+      this.$router.push({
+        name: 'closed-rooms',
+        query: {
+          contactUrn,
+          startDate: A_YEAR_AGO,
+        },
+      });
     },
 
     emitClose() {
