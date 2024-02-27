@@ -1,17 +1,28 @@
 <template>
-  <unnnic-modal
-    :showModal="showModal"
-    @close="close"
-    :text="title"
-    :description="description"
-    modal-icon="messages-bubble-1"
-    scheme="neutral-darkest"
-  >
-    <template #options>
-      <unnnic-button :text="$t('cancel')" type="tertiary" @click="close" />
-      <unnnic-button :text="$t('confirm')" type="secondary" @click="getChat" />
-    </template>
-  </unnnic-modal>
+  <section>
+    <unnnic-modal
+      :showModal="showModal"
+      @close="close"
+      :text="title"
+      :description="description"
+      modal-icon="messages-bubble-1"
+      scheme="neutral-darkest"
+    >
+      <template #options>
+        <unnnic-button :text="$t('cancel')" type="tertiary" @click="close" />
+        <unnnic-button :text="$t('confirm')" type="secondary" @click="getChat" />
+      </template>
+    </unnnic-modal>
+
+    <unnnic-modal
+      :text="$t('already_got_chat')"
+      :description="$t('a_agent_already_got')"
+      modalIcon="check-circle-1-1"
+      scheme="feedback-green"
+      :showModal="showModalCaughtChat"
+      @close="closeCaughtChatModal"
+    />
+  </section>
 </template>
 
 <script>
@@ -42,6 +53,12 @@ export default {
     },
   },
 
+  data() {
+    return {
+      showModalCaughtChat: false,
+    };
+  },
+
   computed: {
     ...mapState({
       room: (state) => state.chats.rooms.activeRoom,
@@ -49,9 +66,29 @@ export default {
     }),
   },
 
+  watch: {
+    room: {
+      handler() {
+        if (!this.room) {
+          this.close();
+          this.openCaughtChatModal();
+        }
+      },
+      deep: true,
+    },
+  },
+
   methods: {
     close() {
       this.$emit('closeModal');
+    },
+
+    closeCaughtChatModal() {
+      this.showModalCaughtChat = false;
+    },
+
+    openCaughtChatModal() {
+      this.showModalCaughtChat = true;
     },
 
     async getChat() {
