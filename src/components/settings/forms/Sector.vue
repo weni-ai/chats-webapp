@@ -130,12 +130,38 @@
             class="form-section__inputs--fill-w"
           />
         </section>
+        <section class="form-section__handlers">
+          <unnnic-button
+            :text="$t('delete_sector')"
+            type="warning"
+            iconLeft="delete"
+            size="small"
+            @click="openModalDelete = true"
+          />
+        </section>
+        <unnnic-modal-next
+          v-if="openModalDelete"
+          type="alert"
+          icon="alert-circle-1"
+          scheme="feedback-red"
+          :title="$t('delete_sector') + ` ${sector.name}`"
+          :description="$t('cant_revert')"
+          :validate="`${sector.name}`"
+          :validatePlaceholder="`${sector.name}`"
+          :validateLabel="$t('confirm_typing') + ` &quot;${sector.name}&quot;`"
+          :actionPrimaryLabel="$t('confirm')"
+          :actionSecondaryLabel="$t('cancel')"
+          @click-action-primary="deleteSector(sector.uuid)"
+          @click-action-secondary="openModalDelete = false"
+        />
       </div>
     </section>
   </form>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+import { unnnicCallAlert } from '@weni/unnnic-system';
 import SelectedMember from '@/components/settings/forms/SelectedMember';
 import Sector from '@/services/api/resources/settings/sector';
 
@@ -164,6 +190,7 @@ export default {
     selectedManager: [],
     message: '',
     validHour: false,
+    openModalDelete: false,
   }),
 
   computed: {
@@ -201,6 +228,10 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      actionDeleteSector: 'settings/deleteSector',
+    }),
+
     removeManager(managerUuid) {
       this.$emit('remove-manager', managerUuid);
     },
@@ -278,6 +309,31 @@ export default {
         this.validHour = true;
       }
     },
+
+    async deleteSector(sectorUuid) {
+      try {
+        await this.actionDeleteSector(sectorUuid);
+        this.openModalDelete = false;
+        this.$router.push({ name: 'sectors' });
+        unnnicCallAlert({
+          props: {
+            text: this.$t('sector_deleted_success'),
+            type: 'success',
+          },
+          seconds: 5,
+        });
+      } catch (error) {
+        console.log(error);
+        this.openModalDelete = false;
+        unnnicCallAlert({
+          props: {
+            text: this.$t('sector_delete_error'),
+            type: 'error',
+          },
+          seconds: 5,
+        });
+      }
+    },
   },
   watch: {
     sector: {
@@ -342,6 +398,13 @@ export default {
 
     .unnnic-switch {
       align-items: center;
+    }
+
+    &__handlers {
+      margin-top: $unnnic-spacing-md;
+      button {
+        width: 100%;
+      }
     }
   }
 
