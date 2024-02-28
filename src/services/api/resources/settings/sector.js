@@ -1,4 +1,5 @@
 import http from '@/services/api/http';
+import Profile from '@/store/modules/profile';
 import { getProject } from '@/utils/config';
 
 function getURLParams({ URL, endpoint }) {
@@ -49,8 +50,9 @@ export default {
     return response;
   },
 
-  async deleteSector(sectorUuid, user_email) {
-    const response = await http.delete(`/sector/${sectorUuid}`, { params: user_email });
+  async deleteSector(sectorUuid) {
+    const { me } = Profile.state;
+    const response = await http.delete(`/sector/${sectorUuid}/?user=${me?.email}`);
     return response.data;
   },
 

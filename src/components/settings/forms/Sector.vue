@@ -137,6 +137,7 @@
             iconLeft="delete"
             size="small"
             @click="openModalDelete = true"
+            v-if="isEditing"
           />
         </section>
         <unnnic-modal-next
