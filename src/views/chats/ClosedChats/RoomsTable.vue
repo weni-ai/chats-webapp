@@ -80,10 +80,10 @@
     <unnnic-button
       v-if="isMobile"
       class="closed-chats__rooms-table__table__mobile-filters"
-      iconCenter="search"
+      iconLeft="search"
+      :text="$t('search')"
       type="primary"
-      size="extra-large"
-      float
+      size="large"
       @click="handleShowModalFilters"
     />
   </section>
@@ -244,6 +244,8 @@ export default {
     &.mobile {
       grid-template-rows: 1fr auto auto;
 
+      padding: $unnnic-spacing-sm;
+
       overflow: hidden;
       :deep(.unnnic-table) {
         .header {
@@ -297,10 +299,6 @@ export default {
 
       &__visualize-button {
         width: 100%;
-      }
-
-      &__mobile-filters {
-        margin: 0 $unnnic-spacing-ant $unnnic-spacing-md 0;
       }
     }
   }
