@@ -18,47 +18,45 @@
       </template>
 
       <template #item="{ item }">
-        <unnnic-table-row :headers="tableHeaders">
-          <template #contactName>
-            <div class="closed-chats__rooms-table__table__contact">
-              <unnnic-chats-user-avatar :username="item.contact.name" v-if="!isMobile" />
-              <p class="closed-chats__rooms-table__table__contact__name">
-                {{ item.contact.name }}
-              </p>
-            </div>
-          </template>
+        <section @click="emitOpenRoom(item)" @keypress.enter="emitOpenRoom(item)">
+          <unnnic-table-row :headers="tableHeaders">
+            <template #contactName>
+              <div class="closed-chats__rooms-table__table__contact">
+                <unnnic-chats-user-avatar :username="item.contact.name" v-if="!isMobile" />
+                <p class="closed-chats__rooms-table__table__contact__name">
+                  {{ item.contact.name }}
+                </p>
+              </div>
+            </template>
 
-          <template #agentName>{{ item.user?.first_name }}</template>
+            <template #agentName>{{ item.user?.first_name }}</template>
 
-          <template #tags>
-            <tag-group :tags="item.tags || []" :flex="false" />
-          </template>
+            <template #tags>
+              <tag-group :tags="item.tags || []" :flex="false" />
+            </template>
 
-          <template #date>{{ $d(new Date(item.ended_at)) }}</template>
+            <template #date>{{ $d(new Date(item.ended_at)) }}</template>
 
-          <template #visualize>
-            <div
-              v-if="isMobile"
-              @click="$emit('open-room', item)"
-              @keypress.enter="$emit('open-room', item)"
-            >
-              <unnnic-icon
-                class="closed-chats__rooms-table__table__visualize-icon"
-                icon="open_in_new"
+            <template #visualize>
+              <div v-if="isMobile" @click="emitOpenRoom(item)" @keypress.enter="emitOpenRoom(item)">
+                <unnnic-icon
+                  class="closed-chats__rooms-table__table__visualize-icon"
+                  icon="open_in_new"
+                />
+              </div>
+              <unnnic-button
+                v-else
+                class="closed-chats__rooms-table__table__visualize-button"
+                :text="$t('see')"
+                type="secondary"
+                size="small"
+                @click="
+                  $router.push({ name: 'closed-rooms.selected', params: { roomId: item.uuid } })
+                "
               />
-            </div>
-            <unnnic-button
-              v-else
-              class="closed-chats__rooms-table__table__visualize-button"
-              :text="$t('see')"
-              type="secondary"
-              size="small"
-              @click="
-                $router.push({ name: 'closed-rooms.selected', params: { roomId: item.uuid } })
-              "
-            />
-          </template>
-        </unnnic-table-row>
+            </template>
+          </unnnic-table-row>
+        </section>
       </template>
     </unnnic-table>
     <p
@@ -212,6 +210,11 @@ export default {
 
     handleShowModalFilters() {
       this.showModalFilters = !this.showModalFilters;
+    },
+    emitOpenRoom(room) {
+      if (this.isMobile) {
+        this.$emit('open-room', room);
+      }
     },
   },
 
