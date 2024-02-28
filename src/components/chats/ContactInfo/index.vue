@@ -673,6 +673,8 @@ export default {
   height: 100%;
 
   overflow: hidden;
+
+  background-color: $unnnic-color-background-snow;
 }
 
 .contact-info {

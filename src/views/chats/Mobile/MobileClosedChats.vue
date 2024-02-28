@@ -141,6 +141,8 @@ export default {
   }
 
   &__room {
+    height: 100%;
+
     overflow: hidden;
   }
 }
