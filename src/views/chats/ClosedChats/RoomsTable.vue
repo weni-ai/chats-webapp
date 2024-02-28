@@ -1,9 +1,9 @@
 <template>
   <section class="closed-chats__rooms-table" :class="{ mobile: isMobile }">
-    <closed-chats-rooms-table-filters v-show="!isMobile" @update-filters="filters = $event" />
+    <closed-chats-rooms-table-filters v-show="!isMobile" @input="filters = $event" />
     <modal-closed-chats-filters
-      v-show="isMobile && showModalFilters"
-      @update-filters="filters = $event"
+      v-if="isMobile && showModalFilters"
+      v-model="filters"
       @close="handleShowModalFilters"
     />
 

@@ -6,7 +6,7 @@
     :text="$t('search')"
     @close="$emit('close')"
   >
-    <rooms-table-filters @update-filters="filters = $event" vertically />
+    <rooms-table-filters v-model="filters" vertically />
 
     <template #options>
       <unnnic-button type="primary" :text="$t('search')" @click="emitFilters" />
@@ -24,6 +24,10 @@ export default {
   },
 
   props: {
+    value: {
+      type: Object,
+      default: null,
+    },
     showModal: {
       type: Boolean,
     },
@@ -31,12 +35,12 @@ export default {
 
   data() {
     return {
-      filters: null,
+      filters: this.value,
     };
   },
   methods: {
     emitFilters() {
-      this.$emit('update-filters', this.filters);
+      this.$emit('input', this.filters);
       this.closeModalInternally();
     },
     closeModalInternally() {
