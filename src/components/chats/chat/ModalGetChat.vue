@@ -68,7 +68,6 @@ export default {
             props: {
               text: this.$t('chats.feedback.agent_took_chat', {
                 contact: oldRoom?.contact?.name,
-                agent: oldRoom?.transfer_history?.from?.name,
               }),
               type: 'default',
               position: 'bottom-right',
