@@ -9,7 +9,7 @@
         :crumbs="crumbs"
         :close="backToHome"
         @crumbClick="handlerCrumbClick"
-        size="large"
+        :size="closedChatsHeaderSize"
       />
       <chat-header-loading v-show="roomId && isLoadingSelectedRoom" />
       <unnnic-chats-header
@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
 import { mapState } from 'vuex';
 
 import ProjectApi from '@/services/api/resources/settings/project';
@@ -61,6 +62,8 @@ export default {
   },
 
   data: () => ({
+    isMobile: isMobile(),
+
     isLoadingHeader: true,
     isLoadingSelectedRoom: false,
 
@@ -88,6 +91,10 @@ export default {
     ...mapState({
       roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,
     }),
+
+    closedChatsHeaderSize() {
+      return this.isMobile ? 'small' : 'large';
+    },
   },
 
   methods: {

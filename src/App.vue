@@ -23,11 +23,15 @@ export default {
       return config;
     });
 
+    if (!this.appToken) return;
+
     this.handleLocale();
     this.restoreLocalStorageUserStatus();
   },
 
   async mounted() {
+    if (!this.appToken) return;
+
     this.getUser();
     this.getUserStatus();
     this.loadQuickMessages();
@@ -126,7 +130,7 @@ export default {
         const isLocaleChangeMessage = message?.event === 'setLanguage';
         if (!isLocaleChangeMessage) return;
 
-        const locale = message?.language; // 'en-us', 'pt-br', 'es'
+        const locale = message?.language; // 'en', 'pt-br', 'es'
 
         moment.locale(locale);
 
@@ -177,6 +181,6 @@ export default {
 
 <style lang="scss" scoped>
 #app {
-  height: 100%;
+  height: 100vh;
 }
 </style>

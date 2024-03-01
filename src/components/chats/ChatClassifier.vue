@@ -1,33 +1,31 @@
 <template>
-  <section class="chat-classifier__container">
-    <section class="content">
-      <p v-if="!!label" class="label">{{ label }}</p>
-      <section class="tags">
-        <tag-group v-model="selected" :tags="tags" selectable />
-      </section>
-    </section>
-
-    <section class="actions">
-      <slot name="actions" />
-    </section>
+  <section class="chat-classifier">
+    <chat-classifier-loading v-if="loading" />
+    <tag-group
+      v-else
+      class="chat-classifier__tag-group"
+      v-model="selected"
+      :tags="tags"
+      scheme="aux-purple"
+      selectable
+    />
   </section>
 </template>
 
 <script>
+import ChatClassifierLoading from '@/views/loadings/chat/ChatClassifier';
+
 import TagGroup from '@/components/TagGroup';
 
 export default {
   name: 'ChatClassifier',
 
   components: {
+    ChatClassifierLoading,
     TagGroup,
   },
 
   props: {
-    label: {
-      type: String,
-      default: '',
-    },
     value: {
       type: Array,
       default: () => [],
@@ -35,6 +33,10 @@ export default {
     tags: {
       type: Array,
       default: () => [],
+    },
+    loading: {
+      type: Boolean,
+      default: true,
     },
   },
 
@@ -62,29 +64,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.chat-classifier__container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  // border-top: solid 1px $unnnic-color-neutral-clean;
-  padding: $unnnic-spacing-inset-md;
+.chat-classifier {
+  width: 100%;
 
-  .content {
-    .label {
-      font-size: $unnnic-font-size-body-gt;
-      font-weight: $unnnic-font-weight-bold;
-      color: $unnnic-color-neutral-darkest;
-      margin-bottom: $unnnic-spacing-inline-sm;
-    }
-
-    .tags {
-      display: flex;
-      gap: 1.5rem;
-
-      .selected {
-        border: solid 1px $unnnic-color-neutral-dark;
-      }
-    }
+  :deep(.tag-group__tags) {
+    justify-content: center;
   }
 }
 </style>

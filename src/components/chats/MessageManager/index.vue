@@ -5,16 +5,11 @@
       <div
         :class="[
           'message-manager-box__container',
-          isLoadingValueValid && 'loading',
+          isFileLoadingValueValid && 'loading',
           isFocused && 'focused',
         ]"
       >
-        <div v-if="isLoadingValueValid" class="loading-indicator__container">
-          <div
-            class="loading-indicator"
-            :style="{ width: `${(loadingFileValue || loadingValue) * 100}%` }"
-          ></div>
-        </div>
+        <loading-bar v-if="isFileLoadingValueValid" :value="loadingFileValue" />
         <text-box
           v-if="!isAudioRecorderVisible"
           ref="textBox"
@@ -23,11 +18,13 @@
           @paste="handlePaste"
           @is-typing-handler="isTypingHandler"
           @is-focused-handler="isFocusedHandler"
+          @handle-quick-messages="emitShowQuickMessages"
+          @handle-attachment="openFileUploader($event)"
         />
         <unnnic-audio-recorder
           ref="audioRecorder"
           class="message-manager__audio-recorder"
-          v-show="isAudioRecorderVisible && !isLoadingValueValid"
+          v-show="isAudioRecorderVisible && !isFileLoadingValueValid"
           v-model="audioMessage"
           @status="updateAudioRecorderStatus"
         />
@@ -78,7 +75,7 @@
               :title="$t('attach')"
             />
             <more-actions-option
-              :action="() => $emit('show-quick-messages')"
+              :action="emitShowQuickMessages"
               icon="bolt"
               :title="$t('quick_message')"
             />
@@ -86,11 +83,18 @@
         </unnnic-dropdown>
 
         <unnnic-button
-          v-if="!isSuggestionBoxOpen && (isTyping || isAudioRecorderVisible || isLoadingValueValid)"
+          v-if="showSendMessageButton"
           @click="send"
           type="primary"
           size="large"
           iconCenter="send"
+        />
+        <unnnic-button
+          v-else-if="isMobile"
+          @click="record"
+          type="primary"
+          size="large"
+          iconCenter="mic"
         />
       </div>
       <suggestion-box
@@ -115,12 +119,14 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
 import { mapState } from 'vuex';
 
 import MessageManagerLoading from '@/views/loadings/chat/MessageManager';
 
 import TextBox from './TextBox';
 import MoreActionsOption from './MoreActionsOption.vue';
+import LoadingBar from './LoadingBar';
 import SuggestionBox from './SuggestionBox.vue';
 import CoPilot from './CoPilot';
 
@@ -130,6 +136,7 @@ export default {
   components: {
     MessageManagerLoading,
     TextBox,
+    LoadingBar,
     SuggestionBox,
     MoreActionsOption,
     CoPilot,
@@ -162,7 +169,6 @@ export default {
     audioMessage: null,
     audioRecorderStatus: '',
     isLoading: false,
-    loadingValue: null,
   }),
 
   computed: {
@@ -172,6 +178,10 @@ export default {
       canUseCopilot: (state) => state.chats.rooms.canUseCopilot,
       discussionId: (state) => state.chats.discussions.activeDiscussion?.uuid,
     }),
+
+    isMobile() {
+      return isMobile();
+    },
 
     textBoxMessage: {
       get() {
@@ -187,8 +197,8 @@ export default {
         ['recording', 'recorded', 'playing', 'paused'].includes(this.audioRecorderStatus)
       );
     },
-    isLoadingValueValid() {
-      return typeof this.loadingValue === 'number' || typeof this.loadingFileValue === 'number';
+    isFileLoadingValueValid() {
+      return typeof this.loadingFileValue === 'number';
     },
     shortcuts() {
       const allShortcuts = [...this.quickMessages, ...this.quickMessagesShared];
@@ -205,8 +215,15 @@ export default {
       return uniqueShortcuts;
     },
     showActionButton() {
-      const { isTyping, isAudioRecorderVisible, isLoadingValueValid } = this;
-      return !isTyping && !isAudioRecorderVisible && !isLoadingValueValid;
+      const { isTyping, isAudioRecorderVisible, isFileLoadingValueValid, isMobile } = this;
+      return !isTyping && !isAudioRecorderVisible && !isFileLoadingValueValid && !isMobile;
+    },
+    showSendMessageButton() {
+      const { isSuggestionBoxOpen, isTyping, isAudioRecorderVisible, isFileLoadingValueValid } =
+        this;
+      return (
+        !isSuggestionBoxOpen && (isTyping || isAudioRecorderVisible || isFileLoadingValueValid)
+      );
     },
   },
 
@@ -214,6 +231,9 @@ export default {
     openCopilot() {
       this.isCopilotOpen = true;
       this.clearTextBox();
+    },
+    emitShowQuickMessages() {
+      this.$emit('show-quick-messages');
     },
     setMessage(newMessage) {
       this.textBoxMessage = newMessage;
@@ -376,28 +396,6 @@ export default {
 
     &.loading {
       border-radius: 0 0 $unnnic-border-radius-sm $unnnic-border-radius-sm;
-
-      .loading-indicator__container {
-        position: absolute;
-        top: 0;
-        z-index: 100;
-
-        grid-area: loading;
-
-        width: 100%;
-        height: $unnnic-border-width-thin;
-
-        background-color: rgba($unnnic-color-neutral-clean, $unnnic-opacity-level-light);
-
-        overflow: hidden;
-
-        .loading-indicator {
-          height: $unnnic-border-width-thin;
-
-          background-color: $unnnic-color-neutral-clean;
-          transition: width 0.2s;
-        }
-      }
     }
   }
 
