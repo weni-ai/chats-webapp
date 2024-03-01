@@ -129,18 +129,20 @@
         @click="cancel"
         v-if="this.isQuickMessageEditing"
       />
-      <unnnic-button
-        :text="$t('save')"
-        type="secondary"
-        @click="save"
-        :disabled="isQuickMessageEditing && !isQuickMessagesFormValid"
-        v-if="
-          this.currentTab === 'sector' ||
-          this.queueToEdit ||
-          this.isQuickMessageEditing ||
-          currentTab === 'tags'
-        "
-      />
+      <section class="button-action">
+        <unnnic-button
+          :text="$t('save')"
+          type="secondary"
+          @click="save"
+          :disabled="isQuickMessageEditing && !isQuickMessagesFormValid"
+          v-if="
+            this.currentTab === 'sector' ||
+            this.queueToEdit ||
+            this.isQuickMessageEditing ||
+            currentTab === 'tags'
+          "
+        />
+      </section>
       <unnnic-button
         v-if="this.currentTab === 'messages' && !isQuickMessageEditing"
         :text="$t('quick_messages.new')"
@@ -357,8 +359,7 @@ export default {
     async deleteQueue(queueUuid) {
       await Queue.delete(queueUuid);
       this.queues = this.queues.filter((queue) => queue.uuid !== queueUuid);
-      this.queueToEdit = null;
-      this.closeModalDeleteQueue();
+      this.openModalDelete = true;
     },
     async openModalDeleteQueue(queue) {
       this.selectedQueue = queue;
@@ -637,6 +638,12 @@ export default {
     & > * {
       width: 100%;
     }
+  }
+
+  .button-action {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-spacing-sm;
   }
 
   &__breadcrumb {

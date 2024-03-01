@@ -349,6 +349,11 @@
         "pt-br": "{agent} entrou na discussão",
         "en-us": "{agent} joined the discussion",
         "es": "{agent} se unió a la discusión"
+      },
+      "agent_took_chat": {
+        "pt-br": "Ops! O chat com contato {contact} foi assumido por um agente",
+        "en-us": "Oops! The chat with the contact {contact} has already been taken over by a agent",
+        "es": "¡Ups! El chat con el contacto {contact} ha sido asumido por un agente"
       }
     },
     "room_list": {
@@ -456,9 +461,9 @@
       "es": "Obtener chat?"
     },
     "get_chat_confirmation": {
-      "pt-br": "Confirme se deseja pegar o chat com {contact}",
-      "en-us": "Confirm if you want to get the chat with {contact}",
-      "es": "Confirma si quieres obtener el chat con {contact}"
+      "pt-br": "Confirme se deseja realizar o atendimento de {contact}",
+      "en-us": "Confirm if you want to do the service of {contact}",
+      "es": "Confirma si deseas realizar el servicio de {contact}"
     },
     "you_got_chat": {
       "pt-br": "Você pegou o chat",
@@ -1171,6 +1176,31 @@
     "en-us": "Save",
     "es": "Guardar"
   },
+  "delete_sector": {
+    "pt-br": "Deletar setor",
+    "en-us": "Delete sector",
+    "es": "Eliminar sector"
+  },
+  "cant_revert": {
+    "pt-br": "Essa opção não poderá ser revertida",
+    "en-us": "This option cannot be reversed",
+    "es": "Esta opción no se puede revertir"
+  },
+  "confirm_typing": {
+    "pt-br": "Confirme digitando",
+    "en-us": "Confirm by typing",
+    "es": "Confirmar escribiendo"
+  },
+  "sector_deleted_success": {
+    "pt-br": "Setor deletado com sucesso!",
+    "en-us": "Sector deleted successfully!",
+    "es": "¡Sector eliminado con éxito!"
+  },
+  "sector_delete_error": {
+    "pt-br": "Não foi possível deletar o setor, tente novamente mais tarde.",
+    "en-us": "Unable to delete sector, please try again later.",
+    "es": "No se puede eliminar el sector. Vuelva a intentarlo más tarde."
+  },
   "edit": {
     "pt-br": "Editar",
     "en-us": "Edit",
@@ -1197,6 +1227,16 @@
       "en-us": "The contact was forwarded to the {name} line",
       "es": "El contacto fué enviado a la línea {name}"
     }
+  },
+  "already_got_chat": {
+    "pt-br": "Alguém já pegou esse chat",
+    "en-us": "Somebody already got the chat",
+    "es": "Alguien ya ha contestado el chat"
+  },
+  "a_agent_already_got": {
+    "pt-br": "Um outro agente já pegou esse chat.",
+    "en-us": "Another agent has already picked up the chat.",
+    "es": "Otro agente ya contestó el chat."
   },
   "select_agent": {
     "pt-br": "Selecione agente",
