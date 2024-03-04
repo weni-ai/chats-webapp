@@ -15,9 +15,11 @@
 </template>
 
 <script>
-import mime from 'mime-types';
-
-import { sendFileMessage as sendFileMessage2 } from '@/utils/medias';
+import {
+  validateMediaFormat,
+  sendMediaMessage,
+  getSupportedChatMediaFormats,
+} from '@/utils/medias';
 
 export default {
   name: 'FileUploader',
@@ -33,19 +35,6 @@ export default {
     showUploadModal: false,
     uploadFileType: '',
     maximumUploads: 5,
-    supportedFormats: [
-      '.png',
-      '.jpeg',
-      '.jpg',
-      '.mp4',
-      '.pdf',
-      '.doc',
-      '.docx',
-      '.txt',
-      '.xls',
-      '.xlsx',
-      '.csv',
-    ],
   }),
 
   methods: {
@@ -58,7 +47,14 @@ export default {
       this.showUploadModal = false;
     },
     upload() {
-      this.sendFileMessage();
+      const { value: files } = this;
+
+      sendMediaMessage({
+        files,
+        routeName: this.$route.name,
+        storeDispatch: this.$store.dispatch,
+        progressCallback: (progress) => this.$emit('progress', progress),
+      });
 
       this.closeFileUploadModal();
       this.files = [];
@@ -68,62 +64,11 @@ export default {
       if (files.length > this.maximumUploads) return [];
 
       return Array.from(files).filter((file) => {
-        if (this.validFormat([file])) {
+        if (validateMediaFormat([file])) {
           return true;
         }
         return false;
       });
-    },
-
-    validFormat(files) {
-      const formats = this.supportedFormats.map((format) => format.trim());
-
-      const isValid = Array.from(files).find((file) => {
-        const fileName = file.name.toLowerCase();
-        const fileType = file.type.toLowerCase();
-        const fileExtension = `.${fileName.split('.').pop()}`;
-
-        const isValidFileExtension = formats.includes(fileExtension);
-        const isValidFileType = fileType === mime.lookup(fileName);
-
-        return isValidFileExtension && isValidFileType;
-      });
-
-      return isValid;
-    },
-
-    async sendFileMessage() {
-      const { value: files } = this;
-
-      sendFileMessage2({
-        files,
-        routeName: this.$route.name,
-        storeDispatch: this.$store.dispatch,
-      });
-      //   try {
-      //     const loadingFiles = {};
-      //     const updateLoadingFiles = (messageUuid, progress) => {
-      //       loadingFiles[messageUuid] = progress;
-      //       this.$emit(
-      //         'progress',
-      //         Object.values(loadingFiles).reduce((acc, value) => acc + value) /
-      //           Object.keys(loadingFiles).length,
-      //       );
-      //     };
-      //     const actionType =
-      //       this.$route.name === 'discussion'
-      //         ? 'chats/discussionMessages/sendDiscussionMedias'
-      //         : 'chats/roomMessages/sendRoomMedias';
-
-      //     await this.$store.dispatch(actionType, {
-      //       files,
-      //       updateLoadingFiles,
-      //     });
-      //   } catch (e) {
-      //     console.error('Uploading some files may not have completed');
-      //   } finally {
-      //     this.$emit('progress', undefined);
-      //   }
     },
   },
 
@@ -139,7 +84,7 @@ export default {
     fileUploadModalProps() {
       const props = {
         textTitle: this.$t('send_media'),
-        supportedFormats: this.supportedFormats.join(),
+        supportedFormats: getSupportedChatMediaFormats().join(),
         subtitle: this.$t('upload_area.subtitle', { exampleExtensions: '.PNG, .MP4, .PDF' }),
         textAction: this.$t('send'),
       };
