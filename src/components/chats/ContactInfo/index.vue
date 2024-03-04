@@ -40,10 +40,16 @@
                 }}
               </p>
               <template>
-                <hgroup class="info">
-                  <h3 class="title">{{ contactNumber.plataform }}:</h3>
-                  <h4 class="description">{{ contactNumber.contactNum }}</h4>
-                </hgroup>
+                <section class="infos">
+                  <hgroup class="info">
+                    <h3 class="title">{{ contactNumber.plataform }}:</h3>
+                    <h4 class="description">{{ contactNumber.contactNum }}</h4>
+                  </hgroup>
+                  <hgroup class="info">
+                    <h3 class="title">Protocolo:</h3>
+                    <h4 class="description">00000000000000000</h4>
+                  </hgroup>
+                </section>
               </template>
               <template v-if="!isHistory && !!room.custom_fields">
                 <custom-field
@@ -680,14 +686,20 @@ export default {
         justify-content: space-between;
       }
 
-      .info {
+      .infos {
         display: flex;
-        align-items: center;
+        flex-direction: column;
         gap: $unnnic-spacing-inline-nano;
 
         &:not(.custom) {
           margin-bottom: $unnnic-spacing-inline-ant;
         }
+      }
+
+      .info {
+        display: flex;
+        align-items: center;
+        gap: $unnnic-spacing-inline-nano;
 
         .title {
           font-weight: $unnnic-font-weight-bold;

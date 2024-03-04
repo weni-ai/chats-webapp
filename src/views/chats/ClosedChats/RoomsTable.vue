@@ -7,7 +7,7 @@
         <unnnic-input
           v-model="filterContact"
           icon-left="search-1"
-          :placeholder="$t('name_or_phone')"
+          :placeholder="$t('name_or_phone_or_protocol')"
         />
       </div>
       <div class="closed-chats__rooms-table__handlers__input" v-if="sectorsToFilter.length > 2">
