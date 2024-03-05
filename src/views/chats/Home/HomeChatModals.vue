@@ -28,6 +28,7 @@
       ref="fileUploader"
       @progress="emitFileUploaderProgress"
       @close="closeModal('fileUploader')"
+      :mediasType="modalFileUploaderMediaType"
     />
 
     <modal-quick-messages
@@ -71,6 +72,7 @@ export default {
       },
 
       modalFileUploaderFiles: [],
+      modalFileUploaderMediaType: '',
     };
   },
 
@@ -90,15 +92,20 @@ export default {
 
       this.modalsShowing[modalName] = action === 'open';
     },
-    openModal(modalName, files) {
+    openModal(modalName) {
       this.toggleModal(modalName, 'open');
-
-      if (files?.length > 0) {
-        this.modalFileUploaderFiles = [...files];
-      }
     },
     closeModal(modalName) {
       this.toggleModal(modalName, 'close');
+    },
+
+    configFileUploader({ files, filesType }) {
+      if (files?.length > 0) {
+        this.modalFileUploaderFiles = [...files];
+      }
+      if (filesType) {
+        this.modalFileUploaderMediaType = filesType;
+      }
     },
 
     emitGotChat() {
