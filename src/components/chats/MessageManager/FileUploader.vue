@@ -1,5 +1,26 @@
 <template>
-  <section v-if="showUploadModal">
+  <section v-if="isMobile && showUploadModal">
+    <unnnic-modal
+      class="modal-upload-confirm"
+      v-if="value.length > 0"
+      @close="closeFileUploadModal"
+      :text="$t('confirm_send')"
+    >
+      <unnnic-import-card
+        v-for="file in value"
+        :key="file.name + file.lastModified"
+        :title="file.name"
+        :isImporting="false"
+        :canImport="false"
+        canDelete
+        @delete="removeSelectedFile(file)"
+      />
+      <template #options>
+        <unnnic-button :text="$t('send')" type="primary" @click="upload" />
+      </template>
+    </unnnic-modal>
+  </section>
+  <section v-else-if="showUploadModal">
     <div class="modal-upload-container">
       <unnnic-modal-upload
         v-model="files"
@@ -15,6 +36,8 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
+
 import {
   validateMediaFormat,
   sendMediaMessage,
@@ -29,9 +52,15 @@ export default {
       type: Array,
       default: () => [],
     },
+    mediasType: {
+      type: String,
+      required: false,
+    },
   },
 
   data: () => ({
+    isMobile: isMobile(),
+
     showUploadModal: false,
     uploadFileType: '',
     maximumUploads: 5,
@@ -70,6 +99,31 @@ export default {
         return false;
       });
     },
+
+    openFileSelector() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = getSupportedChatMediaFormats(this.mediasType).join();
+      input.addEventListener('change', this.handleFileChange);
+      input.addEventListener('cancel', this.closeFileUploadModal);
+      input.click();
+    },
+
+    handleFileChange(event) {
+      const selectedFiles = event.target.files;
+      const validFiles = this.validFiles(selectedFiles);
+
+      if (validFiles.length === 0) this.closeFileUploadModal();
+
+      this.$emit('input', validFiles);
+    },
+
+    removeSelectedFile(file) {
+      this.files = this.files.filter((mappedFile) => mappedFile.name !== file.name);
+      if (this.files.length === 1) {
+        this.closeFileUploadModal();
+      }
+    },
   },
 
   computed: {
@@ -95,9 +149,12 @@ export default {
 
   watch: {
     showUploadModal(newShowUploadModal) {
-      if (!newShowUploadModal) {
-        this.files = [];
+      if (newShowUploadModal) {
+        if (this.isMobile) this.openFileSelector();
+        return;
       }
+
+      this.files = [];
     },
   },
 };
@@ -121,6 +178,22 @@ export default {
   & > * {
     max-width: 32rem;
     flex: 1;
+  }
+}
+
+.modal-upload-confirm {
+  :deep(.unnnic-modal-container-background-body-description) {
+    padding: 0;
+
+    .unnnic-import-card__data {
+      overflow: hidden;
+
+      &__title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
   }
 }
 </style>

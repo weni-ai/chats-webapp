@@ -1,19 +1,11 @@
 import mime from 'mime-types';
 
-export function getSupportedChatMediaFormats() {
-  return [
-    '.png',
-    '.jpeg',
-    '.jpg',
-    '.mp4',
-    '.pdf',
-    '.doc',
-    '.docx',
-    '.txt',
-    '.xls',
-    '.xlsx',
-    '.csv',
-  ];
+export function getSupportedChatMediaFormats(type = 'all') {
+  const mediaFormatsMap = {
+    image: ['.png', '.jpeg', '.jpg', '.mp4'],
+    doc: ['.pdf', '.doc', '.docx', '.txt', '.xls', '.xlsx', '.csv'],
+  };
+  return mediaFormatsMap[type] || Object.values(mediaFormatsMap).flat();
 }
 
 /**
