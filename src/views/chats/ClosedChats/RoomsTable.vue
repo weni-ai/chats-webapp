@@ -55,7 +55,7 @@
           <template #contactName>
             <div class="closed-chats__rooms-table__table__contact">
               <unnnic-chats-user-avatar :username="item.contact.name" />
-              <p class="closed-chats__rooms-table__table__contact__name">
+              <p class="closed-chats__rooms-table__table__contact__name" :title="item.contact.name">
                 {{ item.contact.name }}
               </p>
             </div>

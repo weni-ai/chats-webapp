@@ -45,9 +45,9 @@
                     <h3 class="title">{{ contactNumber.plataform }}:</h3>
                     <h4 class="description">{{ contactNumber.contactNum }}</h4>
                   </hgroup>
-                  <hgroup class="info">
+                  <hgroup class="info" v-if="contactProtocol.length > 0">
                     <h3 class="title">Protocolo:</h3>
-                    <h4 class="description">00000000000000000</h4>
+                    <h4 class="description">{{ contactProtocol }}</h4>
                   </hgroup>
                 </section>
               </template>
@@ -307,6 +307,9 @@ export default {
       };
       return infoNumber;
     },
+    contactProtocol() {
+      return (this.closedRoom || this.room).protocol;
+    },
   },
 
   async created() {
@@ -356,6 +359,7 @@ export default {
     moment,
     openHistory() {
       const { plataform, contactNum } = this.contactNumber;
+      const protocol = this.contactProtocol;
       const contactUrn = plataform === 'whatsapp' ? contactNum.replace('+', '') : contactNum;
 
       const A_YEAR_AGO = moment().subtract(12, 'month').format('YYYY-MM-DD');
@@ -364,6 +368,7 @@ export default {
         name: 'closed-rooms',
         query: {
           contactUrn,
+          protocol,
           startDate: A_YEAR_AGO,
         },
       });
