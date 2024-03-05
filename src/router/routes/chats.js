@@ -1,12 +1,22 @@
-import Home from '@/views/chats/Home';
+import isMobile from 'is-mobile';
+
+import DesktopHome from '@/views/chats/Home';
+import MobileHome from '@/views/chats/Mobile/MobileHome';
+
+const Home = isMobile() ? MobileHome : DesktopHome;
 
 const routes = [
   {
     path: '/',
     name: 'root',
     beforeEnter: (from, to, next) => {
-      if (to.path === '/') next({ name: 'home', replace: true });
-      else next(to.path);
+      if (to.path === '/') {
+        if (isMobile()) {
+          next({ name: 'orgs', replace: true });
+        } else {
+          next({ name: 'home', replace: true });
+        }
+      } else next(to.path);
     },
   },
   {
