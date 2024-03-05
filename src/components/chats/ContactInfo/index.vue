@@ -45,13 +45,13 @@
                   <h4 class="description">{{ contactNumber.contactNum }}</h4>
                 </hgroup>
               </template>
-              <template v-if="!isHistory && !!room.custom_fields">
+              <template v-if="!!room.custom_fields">
                 <custom-field
                   v-for="(value, key) in customFields"
                   :key="key"
                   :title="key"
                   :description="value"
-                  :is-editable="room.can_edit_custom_fields"
+                  :is-editable="!isHistory && room.can_edit_custom_fields"
                   :is-current="isCurrentCustomField(key)"
                   :value="currentCustomField?.[key]"
                   @update-current-custom-field="updateCurrentCustomField"
@@ -304,16 +304,16 @@ export default {
   },
 
   async created() {
+    const { closedRoom, room } = this;
+
+    this.customFields = (closedRoom || room)?.custom_fields;
+
     if (this.isHistory) {
       return;
     }
 
-    const { room } = this;
-
-    this.customFields = room.custom_fields;
-
     if (
-      moment((this.closedRoom || room).contact.created_on).format('YYYY-MM-DD') <
+      moment((closedRoom || room).contact.created_on).format('YYYY-MM-DD') <
       moment().format('YYYY-MM-DD')
     ) {
       this.contactHaveHistory = true;
@@ -601,9 +601,7 @@ export default {
   },
   watch: {
     room(newRoom) {
-      if (!this.isHistory) {
-        this.customFields = newRoom.custom_fields;
-      }
+      this.customFields = newRoom.custom_fields;
     },
     transferRadio: {
       handler() {
