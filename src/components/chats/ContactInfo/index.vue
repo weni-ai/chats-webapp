@@ -45,7 +45,7 @@
                     <h3 class="title">{{ contactNumber.plataform }}:</h3>
                     <h4 class="description">{{ contactNumber.contactNum }}</h4>
                   </hgroup>
-                  <hgroup class="info" v-if="contactProtocol.length > 0">
+                  <hgroup class="info" v-if="contactProtocol?.length > 0">
                     <h3 class="title">{{ $t('protocol') }}:</h3>
                     <h4 class="description">{{ contactProtocol }}</h4>
                   </hgroup>
