@@ -607,6 +607,11 @@
     "en": "Send",
     "es": "Enviar"
   },
+  "confirm_send": {
+    "pt-br": "Confirmar envio",
+    "en": "Confirm submission",
+    "es": "Confirmar envío"
+  },
   "update": {
     "pt-br": "Atualizar",
     "en": "Update",

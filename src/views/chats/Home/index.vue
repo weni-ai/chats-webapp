@@ -1,7 +1,5 @@
 <template>
-  <home-mobile v-if="isMobile" />
   <chats-layout
-    v-else
     ref="chats-layout"
     :class="['home-chats-layout', { 'has-discussion': !!discussion }]"
     @select-quick-message="(quickMessage) => updateTextBoxMessage(quickMessage.text)"
@@ -28,9 +26,9 @@
 
 <script>
 import { mapState } from 'vuex';
-import isMobile from 'is-mobile';
 
 import * as notifications from '@/utils/notifications';
+import { resetChats } from '@/utils/chats';
 
 import ChatsLayout from '@/layouts/ChatsLayout';
 import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
@@ -39,7 +37,6 @@ import DiscussionSidebar from '@/components/chats/DiscussionSidebar';
 import ContactInfo from '@/components/chats/ContactInfo';
 
 import HomeChat from './HomeChat';
-import HomeMobile from './HomeMobile';
 
 export default {
   name: 'ViewHome',
@@ -50,7 +47,6 @@ export default {
     ContactInfo,
     DiscussionSidebar,
     HomeChat,
-    HomeMobile,
   },
 
   props: {
@@ -76,10 +72,7 @@ export default {
 
   async created() {
     if (this.$route.name === 'home') {
-      await this.$store.dispatch('chats/discussionMessages/resetDiscussionMessages');
-      await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
-      await this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
-      await this.$store.dispatch('chats/rooms/setActiveRoom', null);
+      resetChats();
     }
   },
 
@@ -88,10 +81,6 @@ export default {
       room: (state) => state.chats.rooms.activeRoom,
       discussion: (state) => state.chats.discussions.activeDiscussion,
     }),
-
-    isMobile() {
-      return isMobile();
-    },
   },
 
   methods: {

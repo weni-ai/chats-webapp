@@ -19,7 +19,7 @@
           @is-typing-handler="isTypingHandler"
           @is-focused-handler="isFocusedHandler"
           @handle-quick-messages="emitShowQuickMessages"
-          @handle-attachment="openFileUploader($event)"
+          @open-file-uploader="openFileUploader"
         />
         <unnnic-audio-recorder
           ref="audioRecorder"
@@ -362,8 +362,8 @@ export default {
 
       this.isLoading = false;
     },
-    openFileUploader(files) {
-      this.$emit('open-file-uploader', files?.length > 0 ? files : []);
+    openFileUploader(files, filesType) {
+      this.$emit('open-file-uploader', files?.length > 0 ? files : [], filesType);
     },
     updateAudioRecorderStatus(status) {
       this.audioRecorderStatus = status;

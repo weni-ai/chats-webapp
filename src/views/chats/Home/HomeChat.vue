@@ -131,8 +131,10 @@ export default {
     openModal(modalName) {
       this.$refs['home-chat-modals'].openModal(modalName);
     },
-    openModalFileUploader(files) {
-      this.$refs['home-chat-modals'].openModal('fileUploader', files);
+    openModalFileUploader(files, filesType) {
+      const teste = this.$refs['home-chat-modals'];
+      teste.configFileUploader({ files, filesType });
+      teste.openModal('fileUploader');
     },
     emitOpenRoomContactInfo() {
       this.$emit('open-room-contact-info');
@@ -208,7 +210,10 @@ export default {
     },
     async redirectToActiveChat({ routeName, paramName, activeChatUuid, pathChatUuid }) {
       if (activeChatUuid !== pathChatUuid) {
-        this.$router.replace({ name: routeName, params: { [paramName]: activeChatUuid } });
+        this.$router[this.isMobile ? 'push' : 'replace']({
+          name: routeName,
+          params: { [paramName]: activeChatUuid },
+        });
       }
     },
 
@@ -236,43 +241,46 @@ export default {
   },
 
   watch: {
-    async room(newRoom, oldRoom) {
-      const { room, pathRoomId, rooms } = this;
-      if (rooms.length > 0) {
-        if (await this.shouldRedirect(newRoom)) return;
-
-        if (!this.pathDiscussionId) {
-          this.redirectToActiveChat({
-            routeName: 'room',
-            paramName: 'roomId',
-            activeChatUuid: newRoom.uuid,
-            pathChatUuid: this.pathRoomId,
-          });
-        }
-
-        if (newRoom.uuid !== oldRoom?.uuid) {
-          this.isChatSkeletonActive = true;
-
-          this.updateTextBoxMessage('');
-          this.emitCloseRoomContactInfo();
+    room: {
+      immediate: true,
+      async handler(newRoom, oldRoom) {
+        const { room, pathRoomId, rooms } = this;
+        if (rooms.length > 0) {
+          if (await this.shouldRedirect(newRoom)) return;
 
           if (!this.pathDiscussionId) {
-            await this.$store.dispatch('chats/rooms/getCanUseCopilot');
-            this.readMessages();
+            this.redirectToActiveChat({
+              routeName: 'room',
+              paramName: 'roomId',
+              activeChatUuid: newRoom.uuid,
+              pathChatUuid: this.pathRoomId,
+            });
           }
 
-          this.isChatSkeletonActive = false;
-        }
+          if (newRoom.uuid !== oldRoom?.uuid) {
+            this.isChatSkeletonActive = true;
 
-        this.resetActiveChatUnreadMessages({
-          chatPathUuid: pathRoomId,
-          activeChatUuid: room?.uuid,
-          unreadMessages: rooms?.newMessagesByRoom,
-          resetUnreadMessages: this.$store.dispatch('chats/rooms/resetNewMessagesByRoom', {
-            room: pathRoomId,
-          }),
-        });
-      }
+            this.updateTextBoxMessage('');
+            this.emitCloseRoomContactInfo();
+
+            if (!this.pathDiscussionId) {
+              await this.$store.dispatch('chats/rooms/getCanUseCopilot');
+              this.readMessages();
+            }
+
+            this.isChatSkeletonActive = false;
+          }
+
+          this.resetActiveChatUnreadMessages({
+            chatPathUuid: pathRoomId,
+            activeChatUuid: room?.uuid,
+            unreadMessages: rooms?.newMessagesByRoom,
+            resetUnreadMessages: this.$store.dispatch('chats/rooms/resetNewMessagesByRoom', {
+              room: pathRoomId,
+            }),
+          });
+        }
+      },
     },
     async rooms() {
       await this.setActiveRoom(this.pathRoomId);
