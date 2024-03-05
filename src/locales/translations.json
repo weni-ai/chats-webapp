@@ -745,6 +745,16 @@
     "en-us": "Name or telephone",
     "es": "Nombre o teléfono"
   },
+  "name_or_phone_or_protocol": {
+    "pt-br": "Nome, telefone ou procotolo",
+    "en-us": "Name, telephone or protocol",
+    "es": "Nombre, teléfono o protocolo"
+  },
+  "protocol": {
+    "pt-br": "Protocolo",
+    "en-us": "Protocol",
+    "es": "Protocolo"
+  },
   "tags": {
     "title": {
       "pt-br": "Tags",

@@ -7,7 +7,7 @@
         <unnnic-input
           v-model="filterContact"
           icon-left="search-1"
-          :placeholder="$t('name_or_phone')"
+          :placeholder="$t('name_or_phone_or_protocol')"
         />
       </div>
       <div class="closed-chats__rooms-table__handlers__input" v-if="sectorsToFilter.length > 2">
@@ -55,7 +55,7 @@
           <template #contactName>
             <div class="closed-chats__rooms-table__table__contact">
               <unnnic-chats-user-avatar :username="item.contact.name" />
-              <p class="closed-chats__rooms-table__table__contact__name">
+              <p class="closed-chats__rooms-table__table__contact__name" :title="item.contact.name">
                 {{ item.contact.name }}
               </p>
             </div>
