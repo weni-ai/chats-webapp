@@ -14,8 +14,13 @@
         :env="appEnviroment"
         :authorization="`Bearer ${userToken}`"
         :page.sync="route"
+        :organization-uuid.sync="organizationUuid"
+        :organizations-items.sync="organizations"
+        :projects-items.sync="projects"
         :project-uuid.sync="projectUuid"
-      />
+      >
+        <template #subtitle>{{ orgAndProjectSubtitle }}</template>
+      </unnnic-connect-project-selector>
 
       <unnnic-button
         class="main__logout"
@@ -45,13 +50,20 @@ export default {
       weniChatsLogo,
       appEnviroment: env('VUE_APP_CHATS_ENVIRONMENT'),
       route: 'orgs',
+      organizationUuid: '',
+      organizations: [],
       projectUuid: '',
+      projects: [],
     };
   },
   computed: {
     ...mapState({
       userToken: (state) => state.config.token,
     }),
+
+    orgAndProjectSubtitle() {
+      return this.$t(`${this.projectUuid ? 'select_project' : 'select_org'}.choose_one`);
+    },
   },
   methods: {
     ...mapActions('config', ['setProject']),
@@ -70,6 +82,16 @@ export default {
       this.setProject(newProjectUuid || '');
       if (newProjectUuid) {
         this.$router.push({ name: 'home' });
+      }
+    },
+    organizations(newOrganizations) {
+      if (newOrganizations.length === 1) {
+        this.organizationUuid = newOrganizations[0].uuid;
+      }
+    },
+    projects(newProjects) {
+      if (newProjects.length === 1) {
+        this.projectUuid = newProjects[0].uuid;
       }
     },
   },
