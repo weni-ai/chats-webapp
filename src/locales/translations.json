@@ -662,6 +662,11 @@
     "en": "Back",
     "es": "Volver"
   },
+  "back_to_home_page": {
+    "pt-br": "Voltar para o início",
+    "en": "Back to home page",
+    "es": "Regresar a la página principal"
+  },
   "clear": {
     "pt-br": "Limpar",
     "en": "Clear",

@@ -33,6 +33,13 @@
         size="large"
         @click="$emit('open-quick-messages')"
       />
+      <unnnic-button
+        :text="$t('back_to_home_page')"
+        iconLeft="arrow_back"
+        type="tertiary"
+        size="large"
+        @click="$emit('back-to-home')"
+      />
     </template>
   </unnnic-modal>
 </template>
@@ -102,12 +109,20 @@ export default {
 <style lang="scss" scoped>
 .modal-preferences {
   :deep(.unnnic-modal-container) {
-    .unnnic-modal-container-background-body {
-      &-description {
+    .unnnic-modal-container-background {
+      &-body-description {
         padding: 0;
 
         &-container {
           padding-bottom: 0;
+        }
+      }
+      &-button {
+        flex-direction: column;
+        gap: $unnnic-spacing-sm;
+
+        > * {
+          margin: 0;
         }
       }
     }
