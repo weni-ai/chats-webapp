@@ -1,6 +1,11 @@
 <template>
   <section class="quick-messages-list">
+    <p v-if="withoutQuickMessages" class="quick-messages-list__without">
+      {{ $t('quick_messages.without_messages') }}
+    </p>
+
     <unnnic-collapse
+      v-else
       class="quick-messages-list__personals"
       :title="$t('quick_messages.personal')"
       active
@@ -58,6 +63,10 @@ export default {
       quickMessages: (state) => state.chats.quickMessages.quickMessages,
       quickMessagesShared: (state) => state.chats.quickMessagesShared.quickMessagesShared,
     }),
+
+    withoutQuickMessages() {
+      return this.quickMessages.length === 0 && this.quickMessagesShared.length === 0;
+    },
   },
 
   methods: {
@@ -82,5 +91,10 @@ export default {
 
   margin-right: -$unnnic-spacing-xs;
   padding-right: $unnnic-spacing-xs;
+
+  &__without {
+    font-size: $unnnic-font-size-body-md;
+    color: $unnnic-color-neutral-cloudy;
+  }
 }
 </style>

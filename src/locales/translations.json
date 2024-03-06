@@ -1443,6 +1443,11 @@
       "es": "Mensajes rápidos en {sector}"
     },
     "without_messages": {
+      "pt-br": "Por enquanto você não possui mensagens rápidas, adicione uma :)",
+      "en": "For now you do not have quick messages, add one :)",
+      "es": "Por ahora no tienes mensajes rápidos, agregue uno :)"
+    },
+    "without_messages_shared": {
       "start": {
         "pt-br": "Por enquanto não há mensagens rápidas neste setor,",
         "en": "For now there are no quick messages in this sector,",
