@@ -65,7 +65,7 @@ export default {
     }),
 
     orgAndProjectSubtitle() {
-      return this.$t(`${this.projectUuid ? 'select_project' : 'select_org'}.choose_one`);
+      return this.$t(`${this.organizationUuid ? 'select_project' : 'select_org'}.choose_one`);
     },
   },
   methods: {
