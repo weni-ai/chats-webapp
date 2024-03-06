@@ -15,11 +15,15 @@
       <template slot="actions" v-if="withActions">
         <unnnic-dropdown>
           <template #trigger>
-            <unnnic-tool-tip enabled :text="$t('quick_messages.delete_or_edit')" side="left">
-              <div class="quick-message-actions">
-                <unnnic-icon-svg icon="more_vert" size="sm" scheme="neutral-darkest" />
-              </div>
+            <unnnic-tool-tip
+              v-if="!isMobile"
+              enabled
+              :text="$t('quick_messages.delete_or_edit')"
+              side="left"
+            >
+              <unnnic-icon-svg icon="more_vert" size="sm" scheme="neutral-darkest" />
             </unnnic-tool-tip>
+            <unnnic-icon-svg v-else icon="more_vert" size="sm" scheme="neutral-darkest" />
           </template>
 
           <unnnic-dropdown-item @click="$emit('edit', quickMessage)">
@@ -96,11 +100,6 @@ export default {
 .quick-message-card {
   :deep(.unnnic-chat-text) {
     line-break: anywhere;
-  }
-
-  .quick-message-actions {
-    display: flex;
-    align-items: center;
   }
 
   .dropdown-item-content {
