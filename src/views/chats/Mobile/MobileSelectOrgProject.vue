@@ -54,8 +54,11 @@ export default {
       organizations: [],
       projectUuid: '',
       projects: [],
+
+      skipSteps: this.$route.params.from !== 'home',
     };
   },
+
   computed: {
     ...mapState({
       userToken: (state) => state.config.token,
@@ -85,12 +88,12 @@ export default {
       }
     },
     organizations(newOrganizations) {
-      if (newOrganizations.length === 1) {
+      if (this.skipSteps && newOrganizations.length === 1) {
         this.organizationUuid = newOrganizations[0].uuid;
       }
     },
     projects(newProjects) {
-      if (newProjects.length === 1) {
+      if (this.skipSteps && newProjects.length === 1) {
         this.projectUuid = newProjects[0].uuid;
       }
     },
