@@ -1699,5 +1699,19 @@
       "en": "Add members to your project to be able to set as a manager",
       "es": "Agregue miembros a su proyecto para poder establecer como administrador"
     }
+  },
+  "select_org": {
+    "choose_one": {
+      "pt-br": "Escolha uma para acessar o Weni Chats",
+      "en": "Choose one to access Weni Chats",
+      "es": "Elija uno para acceder a los chats de Weni"
+    }
+  },
+  "select_project": {
+    "choose_one": {
+      "pt-br": "Escolha um para acessar o Weni Chats",
+      "en": "Choose one to access Weni Chats",
+      "es": "Elija uno para acceder a los chats de Weni"
+    }
   }
 }
