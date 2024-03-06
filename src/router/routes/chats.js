@@ -23,6 +23,9 @@ const routes = [
     path: '/rooms',
     name: 'home',
     component: Home,
+    props: (route) => ({
+      newQuickMessage: route.query.newQuickMessage,
+    }),
   },
   {
     path: '/chats/:roomId',

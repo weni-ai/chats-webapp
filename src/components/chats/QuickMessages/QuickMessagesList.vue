@@ -52,6 +52,9 @@ export default {
       type: Boolean,
       default: true,
     },
+    isEmpty: {
+      type: Boolean,
+    },
   },
 
   components: {
@@ -78,6 +81,14 @@ export default {
     },
     emitDeleteQuickMessage(quickMessage) {
       this.$emit('delete-quick-message', quickMessage);
+    },
+  },
+  watch: {
+    withoutQuickMessages: {
+      immediate: true,
+      handler(newWithoutQuickMessages) {
+        this.$emit('update:isEmpty', newWithoutQuickMessages);
+      },
     },
   },
 };

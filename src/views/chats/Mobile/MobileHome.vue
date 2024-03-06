@@ -21,6 +21,7 @@
 
       <quick-messages
         v-else-if="showQuickMessages"
+        ref="quickMessages"
         @close="closeQuickMessages"
         @select-quick-message="closeQuickMessages"
       />
@@ -217,6 +218,12 @@ export default {
       async handler(newRoute) {
         if ((!this.room?.uuid && !this.discussion?.uuid) || newRoute.name === 'home') {
           resetChats();
+        }
+
+        if (newRoute.query.newQuickMessage) {
+          await this.openTabPreferences();
+          await this.openQuickMessages();
+          await this.$refs.quickMessages?.openQuickMessageCreation();
         }
       },
     },
