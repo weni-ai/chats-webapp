@@ -43,18 +43,24 @@
                 }}
               </p>
               <template>
-                <hgroup class="info">
-                  <h3 class="title">{{ contactNumber.plataform }}:</h3>
-                  <h4 class="description">{{ contactNumber.contactNum }}</h4>
-                </hgroup>
+                <section class="infos">
+                  <hgroup class="info">
+                    <h3 class="title">{{ contactNumber.plataform }}:</h3>
+                    <h4 class="description">{{ contactNumber.contactNum }}</h4>
+                  </hgroup>
+                  <hgroup class="info" v-if="contactProtocol?.length > 0">
+                    <h3 class="title">{{ $t('protocol') }}:</h3>
+                    <h4 class="description">{{ contactProtocol }}</h4>
+                  </hgroup>
+                </section>
               </template>
-              <template v-if="!isHistory && !!room.custom_fields">
+              <template v-if="!!room.custom_fields">
                 <custom-field
                   v-for="(value, key) in customFields"
                   :key="key"
                   :title="key"
                   :description="value"
-                  :is-editable="room.can_edit_custom_fields"
+                  :is-editable="!isHistory && room.can_edit_custom_fields"
                   :is-current="isCurrentCustomField(key)"
                   :value="currentCustomField?.[key]"
                   @update-current-custom-field="updateCurrentCustomField"
@@ -318,26 +324,29 @@ export default {
     contactNumber() {
       const plataform = (this.closedRoom || this.room).urn.split(':').at(0);
       const number = (this.closedRoom || this.room).urn.split(':').at(-1);
-      const whatsapp = `+${number.substr(-20, 20)} `;
+      const whatsapp = `+${number.substr(-20, 20)}`;
       const infoNumber = {
         plataform,
         contactNum: plataform === 'whatsapp' ? whatsapp : number,
       };
       return infoNumber;
     },
+    contactProtocol() {
+      return (this.closedRoom || this.room).protocol;
+    },
   },
 
   async created() {
+    const { closedRoom, room } = this;
+
+    this.customFields = (closedRoom || room)?.custom_fields;
+
     if (this.isHistory) {
       return;
     }
 
-    const { room } = this;
-
-    this.customFields = room.custom_fields;
-
     if (
-      moment((this.closedRoom || room).contact.created_on).format('YYYY-MM-DD') <
+      moment((closedRoom || room).contact.created_on).format('YYYY-MM-DD') <
       moment().format('YYYY-MM-DD')
     ) {
       this.contactHaveHistory = true;
@@ -373,7 +382,20 @@ export default {
   methods: {
     moment,
     openHistory() {
-      window.open(`/closed-chats/${this.room.contact.uuid}`);
+      const { plataform, contactNum } = this.contactNumber;
+      const protocol = this.contactProtocol;
+      const contactUrn = plataform === 'whatsapp' ? contactNum.replace('+', '') : contactNum;
+
+      const A_YEAR_AGO = moment().subtract(12, 'month').format('YYYY-MM-DD');
+
+      this.$router.push({
+        name: 'closed-rooms',
+        query: {
+          contactUrn,
+          protocol,
+          startDate: A_YEAR_AGO,
+        },
+      });
     },
 
     emitClose() {
@@ -644,9 +666,7 @@ export default {
   },
   watch: {
     room(newRoom) {
-      if (!this.isHistory) {
-        this.customFields = newRoom.custom_fields;
-      }
+      this.customFields = newRoom.custom_fields;
     },
     transferRadio: {
       handler() {
@@ -725,14 +745,20 @@ export default {
         justify-content: space-between;
       }
 
-      .info {
+      .infos {
         display: flex;
-        align-items: center;
+        flex-direction: column;
         gap: $unnnic-spacing-inline-nano;
 
         &:not(.custom) {
           margin-bottom: $unnnic-spacing-inline-ant;
         }
+      }
+
+      .info {
+        display: flex;
+        align-items: center;
+        gap: $unnnic-spacing-inline-nano;
 
         .title {
           font-weight: $unnnic-font-weight-bold;
