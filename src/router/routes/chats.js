@@ -35,7 +35,11 @@ const routes = [
     name: 'closed-rooms',
     component: () => import('@/views/chats/ClosedChats/index'),
     props: (route) => ({
-      tag: route.query.tag,
+      contactUrn: route.query.contactUrn,
+      sector: route.query.sector,
+      tags: route.query.tags,
+      startDate: route.query.startDate,
+      endDate: route.query.endDate,
     }),
   },
   {

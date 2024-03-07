@@ -22,7 +22,7 @@
           <template #contactName>
             <div class="closed-chats__rooms-table__table__contact">
               <unnnic-chats-user-avatar :username="item.contact.name" v-if="!isMobile" />
-              <p class="closed-chats__rooms-table__table__contact__name">
+              <p class="closed-chats__rooms-table__table__contact__name" :title="item.contact.name">
                 {{ item.contact.name }}
               </p>
             </div>
@@ -160,6 +160,20 @@ export default {
   },
 
   methods: {
+    setFiltersByQueryParams() {
+      const { contactUrn, startDate, endDate } = this.$route.query;
+
+      this.filterContact = contactUrn || '';
+
+      if (startDate) {
+        this.filterDate.start = startDate;
+      }
+
+      if (endDate) {
+        this.filterDate.end = endDate;
+      }
+    },
+
     async getHistoryRooms(paginate) {
       this.isTableLoading = true;
       this.isPagesLoading = true;
