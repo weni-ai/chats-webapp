@@ -618,7 +618,7 @@ export default {
       return value.toString().toLowerCase();
     },
     async transferContact() {
-      if (isMobile) {
+      if (this.isMobile) {
         await this.handleFalseTransferProgressBar();
       }
       if (this.transferRadio === 'agent') {
@@ -627,9 +627,12 @@ export default {
       if (this.transferRadio === 'queue') {
         await Room.take(this.room.uuid, null, this.transferPersonSelected.value);
       }
-      this.$store.dispatch('chats/rooms/setActiveRoom', null);
 
-      if (isMobile) return;
+      if (this.isMobile) {
+        this.$store.dispatch('chats/rooms/setActiveRoom', null);
+        return;
+      }
+
       this.showSuccessfulTransferModal = true;
     },
     async handleFalseTransferProgressBar() {
