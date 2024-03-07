@@ -22,20 +22,6 @@ export default {
       config.headers.Authorization = `Bearer ${this.appToken}`;
       return config;
     });
-
-    if (!this.appToken) return;
-
-    this.handleLocale();
-    this.restoreLocalStorageUserStatus();
-  },
-
-  async mounted() {
-    if (!this.appToken) return;
-
-    this.getUser();
-    this.getUserStatus();
-    this.loadQuickMessages();
-    this.loadQuickMessagesShared();
   },
 
   data() {
@@ -64,6 +50,21 @@ export default {
   },
 
   watch: {
+    appToken(newAppToken) {
+      if (newAppToken) {
+        this.handleLocale();
+        this.restoreLocalStorageUserStatus();
+
+        this.getUser();
+      }
+    },
+    appProject(newAppProject) {
+      if (newAppProject) {
+        this.getUserStatus();
+        this.loadQuickMessages();
+        this.loadQuickMessagesShared();
+      }
+    },
     'viewedAgent.email': {
       handler() {
         this.ws.reconnect();
