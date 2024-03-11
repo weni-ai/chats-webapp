@@ -87,8 +87,22 @@ export default {
 
         this.$emit('close', response);
       } catch (error) {
-        this.isLoading = false;
+        if (error?.response?.status === 400) {
+          const prepareTel = this.contact.tel.replace(/[^0-9]/g, '');
+          const contact = [`${prepareTel}`];
+          unnnicCallAlert({
+            props: {
+              text: this.$t('flows_trigger.contact_already_exists', { contact }),
+              type: 'error',
+            },
+            seconds: 5,
+          });
+        } else {
+          throw error;
+        }
 
+        this.isLoading = false;
+        this.$emit('close');
         console.log(error);
       }
     },
