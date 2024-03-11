@@ -16,22 +16,16 @@ const moment = require('moment');
 export default {
   name: 'App',
 
-  created() {
+  beforeCreate() {
     http.interceptors.request.use((config) => {
       // eslint-disable-next-line no-param-reassign
       config.headers.Authorization = `Bearer ${this.appToken}`;
       return config;
     });
-
-    this.handleLocale();
-    this.restoreLocalStorageUserStatus();
   },
 
-  async mounted() {
-    this.getUser();
-    this.getUserStatus();
-    this.loadQuickMessages();
-    this.loadQuickMessagesShared();
+  created() {
+    this.handleLocale();
   },
 
   data() {
@@ -60,6 +54,25 @@ export default {
   },
 
   watch: {
+    appToken: {
+      immediate: true,
+      handler(newAppToken) {
+        if (newAppToken) {
+          this.getUser();
+        }
+      },
+    },
+    appProject: {
+      immediate: true,
+      handler(newAppProject) {
+        if (newAppProject && this.appToken) {
+          this.restoreLocalStorageUserStatus();
+          this.getUserStatus();
+          this.loadQuickMessages();
+          this.loadQuickMessagesShared();
+        }
+      },
+    },
     'viewedAgent.email': {
       handler() {
         this.ws.reconnect();
@@ -126,7 +139,7 @@ export default {
         const isLocaleChangeMessage = message?.event === 'setLanguage';
         if (!isLocaleChangeMessage) return;
 
-        const locale = message?.language; // 'en-us', 'pt-br', 'es'
+        const locale = message?.language; // 'en', 'pt-br', 'es'
 
         moment.locale(locale);
 
@@ -177,6 +190,6 @@ export default {
 
 <style lang="scss" scoped>
 #app {
-  height: 100%;
+  height: 100vh;
 }
 </style>

@@ -1,14 +1,15 @@
 <template>
   <div class="chat-messages__messages__start-feedbacks">
     <chat-feedback
-      :feedback="dateFeedback"
       class="chat-messages__messages__start-feedbacks__date"
-      scheme="purple"
+      :feedback="dateFeedback"
+      :scheme="isClosedChat ? 'gray' : 'purple'"
       divisor
     />
     <chat-feedback
       v-if="showWaitingFeedback"
       :feedback="$t('waiting_answer.waiting_cliente_answer')"
+      :scheme="isClosedChat ? 'gray' : 'blue'"
     />
   </div>
 </template>
@@ -29,6 +30,10 @@ export default {
       required: true,
     },
     showWaitingFeedback: {
+      type: Boolean,
+      default: false,
+    },
+    isClosedChat: {
       type: Boolean,
       default: false,
     },

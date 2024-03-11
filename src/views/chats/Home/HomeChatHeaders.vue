@@ -8,6 +8,7 @@
       :titleClick="() => emitOpenRoomContactInfo()"
       :avatarName="headerRoomTitle"
       :close="emitOpenModalCloseChat"
+      :back="isMobile ? emitBack : null"
     />
     <unnnic-chats-header
       v-show="isShowingDiscussionHeader"
@@ -16,6 +17,7 @@
       :subtitle="headerDiscussionSubtitle"
       avatarIcon="forum"
       size="small"
+      :back="isMobile ? emitBack : null"
     />
 
     <chat-header-send-flow v-if="isShowingSendFlowHeader" @send-flow="emitOpenFlowsTrigger" />
@@ -24,6 +26,8 @@
 
 <script>
 import { mapState } from 'vuex';
+import isMobile from 'is-mobile';
+
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader';
 
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow';
@@ -48,6 +52,10 @@ export default {
       room: (state) => state.chats.rooms.activeRoom,
       discussion: (state) => state.chats.discussions.activeDiscussion,
     }),
+
+    isMobile() {
+      return isMobile();
+    },
 
     isShowingRoomHeader() {
       const { room, discussion, isLoading } = this;
@@ -84,6 +92,9 @@ export default {
     },
     emitOpenFlowsTrigger() {
       this.$emit('openFlowsTrigger');
+    },
+    emitBack() {
+      return this.$emit('back');
     },
   },
 };

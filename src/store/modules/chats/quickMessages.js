@@ -20,8 +20,8 @@ export default {
     [mutations.SET_QUICK_MESSAGES](state, quickMessages) {
       state.quickMessages = quickMessages;
     },
-    [mutations.ADD_QUICK_MESSAGE](state, { title, text, shortcut }) {
-      state.quickMessages.unshift({ title, text, shortcut });
+    [mutations.ADD_QUICK_MESSAGE](state, quickMessage) {
+      state.quickMessages.unshift(quickMessage);
     },
     [mutations.UPDATE_QUICK_MESSAGE](state, { uuid, title, text, shortcut }) {
       const quickMessageToUpdate = state.quickMessages.find(
@@ -67,9 +67,8 @@ export default {
 
     async create({ commit }, { title, text, shortcut }) {
       const newQuickMessage = { title, text, shortcut };
-      await QuickMessage.create(newQuickMessage);
-
-      commit(mutations.ADD_QUICK_MESSAGE, newQuickMessage);
+      const response = await QuickMessage.create(newQuickMessage);
+      commit(mutations.ADD_QUICK_MESSAGE, response);
     },
 
     async update({ commit }, { uuid, title, text, shortcut }) {

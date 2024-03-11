@@ -8,19 +8,24 @@
     <form class="modal-add-new-contact__form" @submit.stop="">
       <unnnic-input
         v-model="contact.name"
-        :label="$t('flows_trigger.add_new_contact.contact_name')"
-        :placeholder="$t('flows_trigger.add_new_contact.contact_name')"
+        :label="inputLabelContactName"
+        :placeholder="inputPlaceholderContactName"
       />
       <unnnic-input
         v-model="contact.tel"
-        label="WhatsApp"
+        :label="inputLabelContactTel"
         placeholder="+99 (99) 99999 9999"
         :mask="Object.values(telMask)"
       />
     </form>
 
     <template #options>
-      <unnnic-button :text="$t('cancel')" type="secondary" @click="$emit('close')" />
+      <unnnic-button
+        v-if="!isMobile"
+        :text="$t('cancel')"
+        type="secondary"
+        @click="$emit('close')"
+      />
       <unnnic-button
         :text="$t('save')"
         type="primary"
@@ -33,8 +38,11 @@
 </template>
 
 <script>
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import isMobile from 'is-mobile';
+
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
+
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 export default {
   name: 'ModalAddNewContact',
@@ -49,6 +57,7 @@ export default {
       cellphone: '+## (##) ##### ####',
     },
     isLoading: false,
+    isMobile: isMobile(),
   }),
 
   computed: {
@@ -60,6 +69,16 @@ export default {
         (contact.tel.length === telMask.telephone.length ||
           contact.tel.length === telMask.cellphone.length)
       );
+    },
+
+    inputPlaceholderContactName() {
+      return this.$t('flows_trigger.add_new_contact.contact_name');
+    },
+    inputLabelContactName() {
+      return this.isMobile ? '' : this.inputPlaceholderContactName;
+    },
+    inputLabelContactTel() {
+      return this.isMobile ? '' : 'WhatsApp';
     },
   },
 
@@ -75,7 +94,7 @@ export default {
         };
         const response = await FlowsTrigger.createContact(newContact);
 
-        unnnicCallAlert({
+        callUnnnicAlert({
           props: {
             text: this.$t('flows_trigger.successfully_add_contact'),
             type: 'success',
@@ -99,11 +118,22 @@ export default {
 <style lang="scss" scoped>
 .modal-add-new-contact {
   &__form {
+    display: grid;
+    gap: $unnnic-spacing-xs;
+
     text-align: start;
   }
 
-  :deep(.unnnic-modal-container-background-body-description-container) {
-    padding-bottom: 0;
+  :deep(.unnnic-modal-container) {
+    .unnnic-modal-container-background-body {
+      &-description {
+        padding: 0;
+
+        &-container {
+          padding-bottom: 0;
+        }
+      }
+    }
   }
 }
 </style>

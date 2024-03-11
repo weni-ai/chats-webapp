@@ -1,5 +1,5 @@
 <template>
-  <section class="home-modals">
+  <section class="home-chat-modals" :class="{ 'home-chat-modals--mobile': isMobile }">
     <modal-get-chat
       :showModal="modalsShowing.getChat"
       @closeModal="closeModal('getChat')"
@@ -28,37 +28,51 @@
       ref="fileUploader"
       @progress="emitFileUploaderProgress"
       @close="closeModal('fileUploader')"
+      :mediasType="modalFileUploaderMediaType"
+    />
+
+    <modal-quick-messages
+      v-if="modalsShowing.quickMessages"
+      @close="closeModal('quickMessages')"
+      @select-quick-message="emitSelectQuickMessage"
     />
   </section>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+import isMobile from 'is-mobile';
 
 import FileUploader from '@/components/chats/MessageManager/FileUploader';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat';
+import ModalQuickMessages from '@/components/chats/QuickMessages/ModalQuickMessages.vue';
 
 import ModalCloseChat from './ModalCloseChat.vue';
 
 export default {
-  name: 'HomeModals',
+  name: 'HomeChatModals',
 
   components: {
     FileUploader,
     ModalGetChat,
+    ModalQuickMessages,
     ModalCloseChat,
   },
 
   data() {
     return {
+      isMobile: isMobile(),
+
       modalsShowing: {
         getChat: false,
         assumedChat: false,
         closeChat: false,
         fileUploader: false,
+        quickMessages: false,
       },
 
       modalFileUploaderFiles: [],
+      modalFileUploaderMediaType: '',
     };
   },
 
@@ -78,15 +92,20 @@ export default {
 
       this.modalsShowing[modalName] = action === 'open';
     },
-    openModal(modalName, files) {
+    openModal(modalName) {
       this.toggleModal(modalName, 'open');
-
-      if (files?.length > 0) {
-        this.modalFileUploaderFiles = [...files];
-      }
     },
     closeModal(modalName) {
       this.toggleModal(modalName, 'close');
+    },
+
+    configFileUploader({ files, filesType }) {
+      if (files?.length > 0) {
+        this.modalFileUploaderFiles = [...files];
+      }
+      if (filesType) {
+        this.modalFileUploaderMediaType = filesType;
+      }
     },
 
     emitGotChat() {
@@ -94,6 +113,10 @@ export default {
     },
     emitFileUploaderProgress(progress) {
       this.$emit('file-uploader-progress', progress);
+    },
+    emitSelectQuickMessage(quickMessage) {
+      this.$emit('select-quick-message', quickMessage);
+      this.closeModal('quickMessages');
     },
   },
 
@@ -108,3 +131,10 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.home-chat-modals {
+  &--mobile {
+    position: absolute;
+  }
+}
+</style>
