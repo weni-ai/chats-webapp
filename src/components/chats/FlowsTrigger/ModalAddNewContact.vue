@@ -44,6 +44,8 @@ import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
+import { unnnicCallAlert } from '@weni/unnnic-system';
+
 export default {
   name: 'ModalAddNewContact',
 
