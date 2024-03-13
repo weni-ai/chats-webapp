@@ -21,7 +21,7 @@ export default {
     const params = {
       project_uuid: getProject(),
       ...(searchStartsWithNumber ? { number: search } : { name: search }),
-      page_size: 100,
+      page_size: search ? 10 : 100,
     };
 
     try {
