@@ -252,20 +252,22 @@ export default {
     },
 
     async contactList(next, cleanList = false) {
-      if (cleanList) this.listOfContacts = [];
-      this.isContactsLoading = true;
-      try {
-        const response = await FlowsAPI.getContacts(this.searchUrn);
-        this.listOfContacts = this.listOfContacts.concat(response.data || []);
-        this.hasNext = response.next;
-        this.listOfContacts.sort((a, b) => a.name?.localeCompare(b.name));
+      if (!this.searchUrn || this.searchUrn.length >= 3) {
+        if (cleanList) this.listOfContacts = [];
+        this.isContactsLoading = true;
+        try {
+          const response = await FlowsAPI.getContacts(this.searchUrn);
+          this.listOfContacts = this.listOfContacts.concat(response.data || []);
+          this.hasNext = response.next;
+          this.listOfContacts.sort((a, b) => a.name?.localeCompare(b.name));
 
-        if (response.status !== 'canceled') {
+          if (response.status !== 'canceled') {
+            this.isContactsLoading = false;
+          }
+        } catch (error) {
           this.isContactsLoading = false;
+          console.log(error);
         }
-      } catch (error) {
-        this.isContactsLoading = false;
-        console.log(error);
       }
     },
 
