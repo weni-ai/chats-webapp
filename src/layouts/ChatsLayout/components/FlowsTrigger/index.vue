@@ -286,7 +286,7 @@ export default {
     },
 
     getContactUrn(item) {
-      return item.urns ? `${item.urns?.[0].scheme}:${item.urns?.[0].path}` : '';
+      return item.urns ? `${item.urns?.[0]?.scheme}:${item.urns?.[0]?.path}` : '';
     },
 
     async groupList() {
