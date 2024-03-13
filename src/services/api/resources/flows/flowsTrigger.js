@@ -7,8 +7,16 @@ const http = axios.create({
   headers: { Authorization: `Bearer ${getToken()}` },
 });
 
+let cancelTokenSource = null;
+
 export default {
   async getContacts(search) {
+    if (cancelTokenSource) {
+      cancelTokenSource.cancel();
+    }
+
+    cancelTokenSource = axios.CancelToken.source();
+
     const searchStartsWithNumber = /^[0-9]/.test(search);
     const params = {
       project_uuid: getProject(),
@@ -16,7 +24,18 @@ export default {
       page_size: 100,
     };
 
-    const response = await http.get(`/contacts_elastic.json/`, { params });
-    return response.data;
+    try {
+      const response = await http.get(`/contacts_elastic.json/`, {
+        params,
+        cancelToken: cancelTokenSource.token,
+      });
+      return { data: response.data, status: 'success' };
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        return { status: 'canceled' };
+      }
+
+      return { status: 'error', error };
+    }
   },
 };
