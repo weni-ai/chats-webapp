@@ -1372,6 +1372,11 @@
       "pt-br": "Contato adicionado com sucesso",
       "en": "Contact added successfully",
       "es": "Contacto agregado exitosamente"
+    },
+    "contact_already_exists": {
+      "pt-br": "O número {contact} já está salvo em sua lista de contatos",
+      "en-us": "The number {contact} is already saved in your contact list",
+      "es": "El número {contact} ya está guardado en tu lista de contactos"
     }
   },
   "quick_messages": {
