@@ -79,7 +79,7 @@
                 class="flows-trigger__groups__group__contact"
                 :key="item.uuid"
                 :title="item.name"
-                :lastMessage="item.urns[0]"
+                :lastMessage="getContactUrn(item)"
                 :tabindex="0"
                 checkboxWhenSelect
                 :selected="selected.some((search) => search.uuid === item.uuid)"
@@ -126,6 +126,7 @@ import SelectFlow from '@/components/chats/FlowsTrigger/SelectFlow';
 import FlowsContactsLoading from '@/views/loadings/FlowsTrigger/FlowsContactsLoading';
 
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
+import FlowsAPI from '@/services/api/resources/flows/flowsTrigger.js';
 import ProjectApi from '@/services/api/resources/settings/project';
 
 export default {
@@ -251,21 +252,29 @@ export default {
     },
 
     async contactList(next, cleanList = false) {
-      if (cleanList) this.listOfContacts = [];
-      this.isContactsLoading = true;
-      try {
-        const response = await FlowsTrigger.getListOfContacts(next, this.searchUrn);
-        this.listOfContacts = this.listOfContacts.concat(response.results);
-        this.hasNext = response.next;
-        this.listOfContacts.sort((a, b) => a.name?.localeCompare(b.name));
-        this.isContactsLoading = false;
-      } catch (error) {
-        this.isContactsLoading = false;
-        console.log(error);
+      if (!this.searchUrn || this.searchUrn.length >= 3) {
+        if (cleanList) this.listOfContacts = [];
+        this.isContactsLoading = true;
+        try {
+          const response = await FlowsAPI.getContacts(this.searchUrn);
+          this.listOfContacts = this.listOfContacts.concat(response.data || []);
+          this.hasNext = response.next;
+          this.listOfContacts.sort((a, b) => a.name?.localeCompare(b.name));
+
+          if (response.status !== 'canceled') {
+            this.isContactsLoading = false;
+          }
+        } catch (error) {
+          this.isContactsLoading = false;
+          console.log(error);
+        }
       }
     },
 
     handleScroll(target) {
+      // Pagination temporarily removed, remove the condition below to work again.
+      if (this.hasNext || !this.hasNext) return;
+
       if (this.isContactsLoading) return;
       if (target.offsetHeight + Math.ceil(target.scrollTop) >= target.scrollHeight) {
         this.searchForMoreContacts();
@@ -276,6 +285,10 @@ export default {
       if (this.hasNext) {
         this.contactList(this.hasNext, false);
       }
+    },
+
+    getContactUrn(item) {
+      return item.urns ? `${item.urns?.[0]?.scheme}:${item.urns?.[0]?.path}` : '';
     },
 
     async groupList() {
