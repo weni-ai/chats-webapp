@@ -167,6 +167,8 @@ export default {
     },
     nameOfContact: {
       handler(newNameOfContact) {
+        const TIME_TO_WAIT_TYPING = 1300;
+
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
           this.listRoom(false);
@@ -176,7 +178,7 @@ export default {
           } else {
             this.isSearching = false;
           }
-        }, 800);
+        }, TIME_TO_WAIT_TYPING);
       },
     },
   },
