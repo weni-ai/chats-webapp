@@ -54,11 +54,11 @@ export default {
   },
 
   async created() {
-    this.resetRoom();
+    this.resetChat();
     this.getProjectInfo();
   },
   async beforeDestroy() {
-    this.resetRoom();
+    this.resetChat();
   },
 
   computed: {
@@ -71,7 +71,7 @@ export default {
     },
 
     roomBack() {
-      return this.room?.uuid ? () => this.resetRoom() : null;
+      return this.room?.uuid ? () => this.resetChat() : null;
     },
     roomHeaderClick() {
       return this.room?.uuid ? () => this.handleShowRoomInfos() : null;
@@ -93,12 +93,13 @@ export default {
       await this.$store.dispatch('chats/rooms/setActiveRoom', room);
     },
 
-    resetRoom() {
+    async resetChat() {
       this.handleRoom(null);
+      await this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
     },
 
     closeHistory() {
-      this.resetRoom();
+      this.resetChat();
       this.emitClose();
     },
 
@@ -141,6 +142,8 @@ export default {
   }
 
   &__room {
+    height: 100%;
+
     overflow: hidden;
   }
 }

@@ -1,9 +1,9 @@
 <template>
   <section class="closed-chats__rooms-table" :class="{ mobile: isMobile }">
-    <closed-chats-rooms-table-filters v-show="!isMobile" @update-filters="filters = $event" />
+    <closed-chats-rooms-table-filters v-show="!isMobile" @input="filters = $event" />
     <modal-closed-chats-filters
-      v-show="isMobile && showModalFilters"
-      @update-filters="filters = $event"
+      v-if="isMobile && showModalFilters"
+      v-model="filters"
       @close="handleShowModalFilters"
     />
 
@@ -18,47 +18,48 @@
       </template>
 
       <template #item="{ item }">
-        <unnnic-table-row :headers="tableHeaders">
-          <template #contactName>
-            <div class="closed-chats__rooms-table__table__contact">
-              <unnnic-chats-user-avatar :username="item.contact.name" v-if="!isMobile" />
-              <p class="closed-chats__rooms-table__table__contact__name" :title="item.contact.name">
-                {{ item.contact.name }}
-              </p>
-            </div>
-          </template>
+        <section @click="emitOpenRoom(item)" @keypress.enter="emitOpenRoom(item)">
+          <unnnic-table-row :headers="tableHeaders">
+            <template #contactName>
+              <div class="closed-chats__rooms-table__table__contact">
+                <unnnic-chats-user-avatar :username="item.contact.name" v-if="!isMobile" />
+                <p
+                  class="closed-chats__rooms-table__table__contact__name"
+                  :title="item.contact.name"
+                >
+                  {{ item.contact.name }}
+                </p>
+              </div>
+            </template>
 
-          <template #agentName>{{ item.user?.first_name }}</template>
+            <template #agentName>{{ item.user?.first_name }}</template>
 
-          <template #tags>
-            <tag-group :tags="item.tags || []" :flex="false" />
-          </template>
+            <template #tags>
+              <tag-group :tags="item.tags || []" :flex="false" />
+            </template>
 
-          <template #date>{{ $d(new Date(item.ended_at)) }}</template>
+            <template #date>{{ $d(new Date(item.ended_at)) }}</template>
 
-          <template #visualize>
-            <div
-              v-if="isMobile"
-              @click="$emit('open-room', item)"
-              @keypress.enter="$emit('open-room', item)"
-            >
-              <unnnic-icon
-                class="closed-chats__rooms-table__table__visualize-icon"
-                icon="open_in_new"
+            <template #visualize>
+              <div v-if="isMobile" @click="emitOpenRoom(item)" @keypress.enter="emitOpenRoom(item)">
+                <unnnic-icon
+                  class="closed-chats__rooms-table__table__visualize-icon"
+                  icon="open_in_new"
+                />
+              </div>
+              <unnnic-button
+                v-else
+                class="closed-chats__rooms-table__table__visualize-button"
+                :text="$t('see')"
+                type="secondary"
+                size="small"
+                @click="
+                  $router.push({ name: 'closed-rooms.selected', params: { roomId: item.uuid } })
+                "
               />
-            </div>
-            <unnnic-button
-              v-else
-              class="closed-chats__rooms-table__table__visualize-button"
-              :text="$t('see')"
-              type="secondary"
-              size="small"
-              @click="
-                $router.push({ name: 'closed-rooms.selected', params: { roomId: item.uuid } })
-              "
-            />
-          </template>
-        </unnnic-table-row>
+            </template>
+          </unnnic-table-row>
+        </section>
       </template>
     </unnnic-table>
     <p
@@ -80,10 +81,10 @@
     <unnnic-button
       v-if="isMobile"
       class="closed-chats__rooms-table__table__mobile-filters"
-      iconCenter="search"
+      iconLeft="search"
+      :text="$t('search')"
       type="primary"
-      size="extra-large"
-      float
+      size="large"
       @click="handleShowModalFilters"
     />
   </section>
@@ -227,6 +228,11 @@ export default {
     handleShowModalFilters() {
       this.showModalFilters = !this.showModalFilters;
     },
+    emitOpenRoom(room) {
+      if (this.isMobile) {
+        this.$emit('open-room', room);
+      }
+    },
   },
 
   watch: {
@@ -257,6 +263,8 @@ export default {
 
     &.mobile {
       grid-template-rows: 1fr auto auto;
+
+      padding: $unnnic-spacing-sm;
 
       overflow: hidden;
       :deep(.unnnic-table) {
@@ -311,10 +319,6 @@ export default {
 
       &__visualize-button {
         width: 100%;
-      }
-
-      &__mobile-filters {
-        margin: 0 $unnnic-spacing-ant $unnnic-spacing-md 0;
       }
     }
   }

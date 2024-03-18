@@ -71,6 +71,10 @@ export default {
   },
 
   props: {
+    value: {
+      type: Object,
+      default: null,
+    },
     vertically: {
       type: Boolean,
       default: false,
@@ -102,6 +106,9 @@ export default {
     this.filterSector = [this.filterSectorsOptionAll];
     this.filterDate = this.filterDateDefault;
     this.tagsToFilter = [this.filterTagDefault];
+
+    this.updateFiltersByValue();
+
     await this.getSectors();
 
     this.isFiltersLoading = false;
@@ -137,31 +144,6 @@ export default {
         value: date,
         label: this.$t(`filter.dates.${date}`),
       }));
-    },
-    treatedFilterDate() {
-      const { filterDate, isMobile } = this;
-      const today = moment().format('YYYY-MM-DD');
-
-      if (isMobile) {
-        const getRelativeDate = (offset, unit) =>
-          moment().subtract(offset, unit).format('YYYY-MM-DD');
-
-        const startDateMapping = {
-          today,
-          yesterday: getRelativeDate(1, 'day'),
-          last_7_days: getRelativeDate(1, 'week'),
-          last_30_days: getRelativeDate(1, 'month'),
-          current_month: moment().startOf('month').format('YYYY-MM-DD'),
-          last_12_months: getRelativeDate(12, 'month'),
-        };
-
-        const selectedDate = startDateMapping[filterDate[0]?.value];
-        if (selectedDate) {
-          return { start: selectedDate, end: today };
-        }
-      }
-
-      return filterDate;
     },
 
     isFiltersDefault() {
@@ -243,21 +225,70 @@ export default {
       this.filterDate = this.filterDateDefault;
     },
 
-    emitUpdateFilters() {
-      const { filterContact, treatedFilterDate, filterSector, filterTag } = this;
+    getRelativeDate(date, type = 'extensive') {
+      const getRelativeDate = (offset, unit) =>
+        moment().subtract(offset, unit).format('YYYY-MM-DD');
+      const digitDateMapping = {
+        today: moment().format('YYYY-MM-DD'),
+        yesterday: getRelativeDate(1, 'day'),
+        last_7_days: getRelativeDate(1, 'week'),
+        last_30_days: getRelativeDate(1, 'month'),
+        current_month: moment().startOf('month').format('YYYY-MM-DD'),
+        last_12_months: getRelativeDate(12, 'month'),
+      };
 
-      this.$emit('update-filters', {
+      if (type === 'extensive') {
+        const extensiveDateMapping = {};
+        Object.entries(digitDateMapping).forEach(([key, value]) => {
+          extensiveDateMapping[value] = key;
+        });
+
+        return extensiveDateMapping[date];
+      }
+
+      if (type === 'digit') {
+        return digitDateMapping[date];
+      }
+      return '';
+    },
+
+    emitUpdateFilters() {
+      const { filterContact, filterDate, filterSector, filterTag } = this;
+      const dateStart = this.getRelativeDate(filterDate[0]?.value, 'digit');
+      const dateEnd = this.getRelativeDate('today', 'digit');
+
+      this.$emit('input', {
         contact: filterContact,
         sector: filterSector,
         tag: filterTag,
-        date: treatedFilterDate,
+        date: {
+          start: filterDate.start || dateStart,
+          end: filterDate.end || dateEnd,
+        },
       });
+    },
+
+    updateFiltersByValue() {
+      if (this.value) {
+        const { contact, sector, tag, date } = this.value;
+        const dateStart = this.getRelativeDate(date.start, 'extensive');
+        const matchingDate = this.datesToFilter.find((date) => date.value === dateStart);
+
+        this.filterContact = contact;
+        this.filterSector = sector;
+        this.filterTag = tag;
+        this.filterDate = [matchingDate];
+      }
     },
   },
 
   watch: {
     filterContact() {
       const TIME_TO_WAIT_TYPING = 800;
+
+      if (isMobile) {
+        this.emitUpdateFilters();
+      }
 
       if (this.filterContactTimeout !== 0) clearTimeout(this.filterContactTimeout);
       this.filterContactTimeout = setTimeout(() => {
