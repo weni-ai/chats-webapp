@@ -1,8 +1,12 @@
 <template>
   <div class="home-mobile" v-if="!room && !discussion">
     <main class="home-mobile__main">
+      <mobile-closed-chats v-if="showHistory" />
+
+      <flows-trigger v-else-if="showFlowsTrigger" :selectedContact="null" @close="openTabChats" />
+
       <unnnic-chats-header
-        v-if="showChats"
+        v-else-if="showChats"
         title="Chats"
         subtitle="Nome do projeto"
         avatarIcon="forum"
@@ -12,8 +16,6 @@
       <section class="home-mobile__tab__chats" v-if="showChats">
         <the-card-groups class="home-mobile__chats-list" />
       </section>
-
-      <flows-trigger v-else-if="showFlowsTrigger" :selectedContact="null" @close="openTabChats" />
 
       <quick-messages
         v-else-if="showQuickMessages"
@@ -42,6 +44,7 @@ import ModalPreferences from '@/components/chats/Mobile/ModalPreferences.vue';
 import QuickMessages from '@/components/chats/QuickMessages';
 
 import MobileChat from '@/views/chats/Mobile/MobileChat';
+import MobileClosedChats from '@/views/chats/Mobile/MobileClosedChats';
 
 export default {
   name: 'HomeMobile',
@@ -49,6 +52,7 @@ export default {
   components: {
     TheCardGroups,
     FlowsTrigger,
+    MobileClosedChats,
     ModalPreferences,
     QuickMessages,
     MobileChat,
@@ -76,7 +80,7 @@ export default {
             default: 'history',
             selected: 'history',
           },
-          action: () => {},
+          action: () => this.openHistory(),
         },
         {
           name: 'flows_trigger',
@@ -105,6 +109,11 @@ export default {
       ];
     },
 
+    showHistory() {
+      const { currentTab, oldTab, showPreferences } = this;
+      const tab = 'history';
+      return currentTab === tab || (showPreferences && oldTab === tab);
+    },
     showFlowsTrigger() {
       const { currentTab, oldTab, showPreferences } = this;
       const tab = 'flows_trigger';
@@ -133,6 +142,9 @@ export default {
       this.currentTab = tab;
     },
 
+    openHistory() {
+      this.updateCurrentTab('history');
+    },
     openTabFlowsTrigger() {
       this.updateCurrentTab('flows_trigger');
     },

@@ -109,6 +109,11 @@
     "en": "Language",
     "es": "Idioma"
   },
+  "search": {
+    "pt-br": "Pesquisar",
+    "en": "Search",
+    "es": "Buscar"
+  },
   "date_format_variable": {
     "pt-br": "{day}/{month}/{year}",
     "en": "{month}/{day}/{year}",
