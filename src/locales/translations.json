@@ -612,6 +612,11 @@
     "en-us": "Add",
     "es": "Agregar"
   },
+  "proceed": {
+    "pt-br": "Prosseguir",
+    "en-us": "Proceed",
+    "es": "Proceder"
+  },
   "continue": {
     "pt-br": "Continuar",
     "en-us": "Continue",
@@ -1306,6 +1311,16 @@
       "en-us": "{letter} ({length})",
       "es": "{letter} ({length})"
     },
+    "add_contact": {
+      "pt-br": "Adicionar contato",
+      "en-us": "Add contact",
+      "es": "Añadir contacto"
+    },
+    "remove_selected_contacts": {
+      "pt-br": "Remover contatos selecionados",
+      "en-us": "Remove selected contacts",
+      "es": "Quitar contactos seleccionados"
+    },
     "add_new_contact": {
       "title": {
         "pt-br": "Adicionar novo contato",
@@ -1323,6 +1338,11 @@
       "en-us": "{contact} already has an open room",
       "es": "{contact} ya tiene sala abierta"
     },
+    "send": {
+      "pt-br": "Enviar fluxo",
+      "en-us": "Send flow",
+      "es": "Enviar flujo"
+    },
     "select": {
       "pt-br": "Selecionar fluxo",
       "en-us": "Select flow",
@@ -1333,10 +1353,10 @@
       "en-us": "Sending flow",
       "es": "Enviando flujo"
     },
-    "successfully_sent": {
-      "pt-br": "Fluxo enviado com sucesso",
-      "en-us": "Flow sent successfully",
-      "es": "Flujo enviado exitosamente"
+    "successfully_triggered": {
+      "pt-br": "Fluxo disparado com sucesso",
+      "en-us": "Flow triggered successfully",
+      "es": "Flujo disparado exitosamente"
     },
     "successfully_add_contact": {
       "pt-br": "Contato adicionado com sucesso",

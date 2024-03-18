@@ -59,7 +59,7 @@
       </span>
     </div>
     <div class="header-info-message" style="display: flex" v-if="alert">
-      <span @click="openSelectFlow" class="alert-text" style="margin-right: 4px"
+      <span @click="openSendFlow" class="alert-text" style="margin-right: 4px"
         >{{ $t('alert_last_message_date.message') }}
         <u style="cursor: pointer">{{ $t('alert_last_message_date.message_send_flow') }}</u></span
       >
@@ -116,8 +116,8 @@ export default {
       this.$emit('show-contact-info');
     },
 
-    openSelectFlow() {
-      this.$emit('open-select-flow');
+    openSendFlow() {
+      this.$emit('open-send-flow');
     },
     reconnect() {
       this.$emit('reconnect');
