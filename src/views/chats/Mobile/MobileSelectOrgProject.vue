@@ -80,6 +80,9 @@ export default {
   watch: {
     projectUuid(newProjectUuid) {
       this.setProject(newProjectUuid || '');
+      if (newProjectUuid) {
+        this.$router.push({ name: 'home' });
+      }
     },
     organizations(newOrganizations) {
       if (newOrganizations.length === 1) {

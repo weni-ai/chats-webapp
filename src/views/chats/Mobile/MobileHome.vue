@@ -1,9 +1,8 @@
 <template>
-  <mobile-select-org-project v-if="!project" />
-  <mobile-chat v-else-if="showActiveChat" @transferred-contact="handleChatTransfer" />
-  <div class="home-mobile" v-else>
+  <mobile-chat v-if="showActiveChat" @transferred-contact="handleChatTransfer" />
+  <div class="mobile-home" v-else>
     <!-- callUnnnicAlert is using the class of this element below as containerRef -->
-    <main class="home-mobile__main">
+    <main class="mobile-home__main">
       <mobile-closed-chats v-if="showHistory" @close="openTabChats" />
 
       <flows-trigger v-else-if="showFlowsTrigger" :selectedContact="null" @close="openTabChats" />
@@ -16,8 +15,8 @@
         :back="homeBack"
         sectionIconScheme="weni-600"
       />
-      <section class="home-mobile__tab__chats" v-if="showChats">
-        <the-card-groups class="home-mobile__chats-list" />
+      <section class="mobile-home__tab__chats" v-if="showChats">
+        <the-card-groups class="mobile-home__chats-list" />
       </section>
 
       <quick-messages
@@ -37,14 +36,13 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapState } from 'vuex';
 
 import ProjectApi from '@/services/api/resources/settings/project';
 
 import TheCardGroups from '@/layouts/ChatsLayout/components/TheCardGroups';
 import FlowsTrigger from '@/layouts/ChatsLayout/components/FlowsTrigger';
 
-import MobileSelectOrgProject from '@/views/chats/Mobile/MobileSelectOrgProject';
 import MobileChat from '@/views/chats/Mobile/MobileChat';
 import MobileClosedChats from '@/views/chats/Mobile/MobileClosedChats';
 
@@ -52,9 +50,10 @@ import ModalPreferences from '@/components/chats/Mobile/ModalPreferences.vue';
 import QuickMessages from '@/components/chats/QuickMessages';
 
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
+import { resetChats } from '@/utils/chats';
 
 export default {
-  name: 'HomeMobile',
+  name: 'MobileHome',
 
   components: {
     TheCardGroups,
@@ -62,7 +61,6 @@ export default {
     MobileClosedChats,
     ModalPreferences,
     QuickMessages,
-    MobileSelectOrgProject,
     MobileChat,
   },
 
@@ -137,10 +135,8 @@ export default {
   },
 
   methods: {
-    ...mapActions('config', ['setProject']),
-
     homeBack() {
-      this.setProject('');
+      this.$router.push({ name: 'orgs' });
     },
 
     async getProjectName() {
@@ -188,8 +184,8 @@ export default {
     async callTransferChatAlert() {
       /*
          "isCallingTransferAlert" is the condition used to mount
-         home-mobile__main and "$nextTick" is necessary to ensure that the
-         alert has the element "home-mobile__main" mounted as container and
+         mobile-home__main and "$nextTick" is necessary to ensure that the
+         alert has the element "mobile-home__main" mounted as container and
          do not overlap it.
       */
       this.isCallingTransferAlert = true;
@@ -215,6 +211,14 @@ export default {
   },
 
   watch: {
+    $route: {
+      immediate: true,
+      async handler(newRoute) {
+        if ((!this.room?.uuid && !this.discussion?.uuid) || newRoute.name === 'home') {
+          resetChats();
+        }
+      },
+    },
     currentTab(newTab, oldTab) {
       this.oldTab = oldTab;
 
@@ -233,7 +237,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.home-mobile {
+.mobile-home {
   overflow: hidden;
 
   display: grid;
