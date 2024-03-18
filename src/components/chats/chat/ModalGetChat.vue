@@ -5,28 +5,21 @@
       @close="close"
       :text="title"
       :description="description"
-      modal-icon="messages-bubble-1"
+      modal-icon="forum"
       scheme="neutral-darkest"
     >
       <template #options>
         <unnnic-button :text="$t('cancel')" type="tertiary" @click="close" />
-        <unnnic-button :text="$t('confirm')" type="secondary" @click="getChat" />
+        <unnnic-button :text="$t('confirm')" type="primary" @click="getChat" />
       </template>
     </unnnic-modal>
-
-    <unnnic-modal
-      :text="$t('already_got_chat')"
-      :description="$t('a_agent_already_got')"
-      modalIcon="check-circle-1-1"
-      scheme="feedback-green"
-      :showModal="showModalCaughtChat"
-      @close="closeCaughtChatModal"
-    />
   </section>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+
+import { unnnicCallAlert } from '@weni/unnnic-system';
 
 import Profile from '@/services/api/resources/profile';
 import Room from '@/services/api/resources/chats/room';
@@ -68,10 +61,19 @@ export default {
 
   watch: {
     room: {
-      handler() {
-        if (!this.room) {
+      handler(newRoom, oldRoom) {
+        if (this.showModal === true && newRoom == null) {
           this.close();
-          this.openCaughtChatModal();
+          unnnicCallAlert({
+            props: {
+              text: this.$t('chats.feedback.agent_took_chat', {
+                contact: oldRoom?.contact?.name,
+              }),
+              type: 'default',
+              position: 'bottom-right',
+            },
+            seconds: 15,
+          });
         }
       },
       deep: true,
