@@ -28,6 +28,7 @@
         v-if="showPreferences"
         @close="returnToOldTab"
         @open-quick-messages="openQuickMessages"
+        @back-to-home="homeBack"
       />
     </main>
 
