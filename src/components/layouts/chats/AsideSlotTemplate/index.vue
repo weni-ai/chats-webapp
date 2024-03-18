@@ -4,6 +4,7 @@
       :title="title"
       :subtitle="subtitle"
       :avatarIcon="icon"
+      :avatarName="avatarName"
       :close="close"
       :back="back"
       :sectionIconScheme="iconScheme || 'aux-purple'"
@@ -32,6 +33,10 @@ export default {
       required: true,
     },
     subtitle: {
+      type: String,
+      required: false,
+    },
+    avatarName: {
       type: String,
       required: false,
     },

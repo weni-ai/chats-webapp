@@ -398,15 +398,20 @@
       "en-us": "Sent flows ({length})",
       "es": "Flujos enviados ({length})"
     },
-    "end": {
-      "pt-br": "Encerrar chat",
-      "en-us": "End chat",
-      "es": "Finalizar el chat"
+    "to_end_rate_the_chat": {
+      "pt-br": "Para encerrar, classifique o chat",
+      "en-us": "To close, rate the chat",
+      "es": "Para cerrar califica el chat"
     },
-    "end_confirmation": {
-      "pt-br": "Tem certeza que gostaria de encerrar chat com {name}?",
-      "en-us": "Are you sure you'd like to close the chat with {name}?",
-      "es": "¿Estás seguro de que quieres cerrar el chat con {name}?"
+    "tags_help": {
+      "pt-br": "As tags ajudam a localizar os chats e também gerar bons relatórios",
+      "en-us": "Tags help you locate chats and also generate good reports",
+      "es": "Las etiquetas te ayudan a localizar chats y también a generar buenos informes."
+    },
+    "chat_with_contact_ended": {
+      "pt-br": "Chat com {contact} encerrado",
+      "en-us": "Chat with {contact} closed",
+      "es": "Chat con {contact} cerrado"
     },
     "see_history": {
       "pt-br": "Histórico",
@@ -1233,10 +1238,20 @@
     "en-us": "Send photo or video",
     "es": "Enviar foto o vídeo"
   },
+  "photo_or_video": {
+    "pt-br": "Foto ou vídeo",
+    "en-us": "Photo or video",
+    "es": "Foto o vídeo"
+  },
   "send_docs": {
     "pt-br": "Enviar documento | Enviar documento | Enviar documentos",
     "en-us": "Send doc | Send doc | Send docs",
     "es": "Enviar documento | Enviar documento | Enviar documentos"
+  },
+  "doc": {
+    "pt-br": "Documento",
+    "en-us": "Doc",
+    "es": "Documento"
   },
   "send_images": {
     "pt-br": "Enviar imagem | Enviar imagens",

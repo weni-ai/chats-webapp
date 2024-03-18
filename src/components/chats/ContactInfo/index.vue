@@ -7,8 +7,11 @@
       v-if="closedRoom || room"
       class="contact-info"
       :title="$t('contact_info.title')"
-      icon="info"
-      :close="$listeners.close"
+      :subtitle="headerMobileSubtitle"
+      :avatarName="headerMobileSubtitle"
+      :icon="headerDesktopIcon"
+      :close="emitClose"
+      :back="headerMobileBack"
     >
       <section class="scrollable">
         <aside-slot-template-section>
@@ -206,6 +209,7 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
 import { mapState } from 'vuex';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
@@ -283,6 +287,20 @@ export default {
     ...mapState({
       room: (state) => state.chats.rooms.activeRoom,
     }),
+
+    isMobile() {
+      return isMobile();
+    },
+
+    headerMobileSubtitle() {
+      return this.isMobile ? this.room?.contact?.name : '';
+    },
+    headerMobileBack() {
+      return this.isMobile ? () => this.emitClose() : undefined;
+    },
+    headerDesktopIcon() {
+      return !this.isMobile ? 'info' : '';
+    },
 
     lastMessageFromContact() {
       const messages = this.$store.state.chats.roomMessages.roomMessages;
@@ -372,6 +390,10 @@ export default {
           startDate: A_YEAR_AGO,
         },
       });
+    },
+
+    emitClose() {
+      this.$emit('close');
     },
 
     handleModalStartDiscussion() {
