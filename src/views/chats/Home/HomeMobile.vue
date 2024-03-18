@@ -1,5 +1,6 @@
 <template>
-  <mobile-chat v-if="showActiveChat" @transferred-contact="handleChatTransfer" />
+  <mobile-select-org-project v-if="!project" />
+  <mobile-chat v-else-if="showActiveChat" @transferred-contact="handleChatTransfer" />
   <div class="home-mobile" v-else>
     <!-- callUnnnicAlert is using the class of this element below as containerRef -->
     <main class="home-mobile__main">
@@ -12,7 +13,7 @@
         title="Chats"
         :subtitle="projectName"
         avatarIcon="forum"
-        :back="() => {}"
+        :back="homeBack"
         sectionIconScheme="weni-600"
       />
       <section class="home-mobile__tab__chats" v-if="showChats">
@@ -36,18 +37,19 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import ProjectApi from '@/services/api/resources/settings/project';
 
 import TheCardGroups from '@/layouts/ChatsLayout/components/TheCardGroups';
 import FlowsTrigger from '@/layouts/ChatsLayout/components/FlowsTrigger';
 
-import ModalPreferences from '@/components/chats/Mobile/ModalPreferences.vue';
-import QuickMessages from '@/components/chats/QuickMessages';
-
+import MobileSelectOrgProject from '@/views/chats/Mobile/MobileSelectOrgProject';
 import MobileChat from '@/views/chats/Mobile/MobileChat';
 import MobileClosedChats from '@/views/chats/Mobile/MobileClosedChats';
+
+import ModalPreferences from '@/components/chats/Mobile/ModalPreferences.vue';
+import QuickMessages from '@/components/chats/QuickMessages';
 
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
@@ -60,6 +62,7 @@ export default {
     MobileClosedChats,
     ModalPreferences,
     QuickMessages,
+    MobileSelectOrgProject,
     MobileChat,
   },
 
@@ -74,12 +77,9 @@ export default {
     };
   },
 
-  created() {
-    this.getProjectName();
-  },
-
   computed: {
     ...mapState({
+      project: (state) => state.config.project,
       room: (state) => state.chats.rooms.activeRoom,
       discussion: (state) => state.chats.discussions.activeDiscussion,
     }),
@@ -137,6 +137,12 @@ export default {
   },
 
   methods: {
+    ...mapActions('config', ['setProject']),
+
+    homeBack() {
+      this.setProject('');
+    },
+
     async getProjectName() {
       const project = await ProjectApi.getInfo();
       this.projectName = project.data.name || '';
@@ -214,6 +220,12 @@ export default {
 
       if (oldTab === 'preferences') {
         this.closeQuickMessages();
+      }
+    },
+
+    project(newProject) {
+      if (newProject) {
+        this.getProjectName();
       }
     },
   },
