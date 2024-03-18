@@ -6,7 +6,21 @@
       :text="$t('quick_messages.title')"
       @close="$emit('close')"
     >
-      <quick-messages-list :withHandlers="false" @select-quick-message="emitSelectQuickMessage" />
+      <quick-messages-list
+        :withHandlers="false"
+        :isEmpty.sync="isQuickMessagesEmpty"
+        @select-quick-message="emitSelectQuickMessage"
+      />
+      <template #options>
+        <unnnic-button
+          v-if="isQuickMessagesEmpty"
+          iconLeft="add"
+          :text="$t('quick_messages.new')"
+          type="primary"
+          size="large"
+          @click="openHomeNewQuickMessage"
+        />
+      </template>
     </unnnic-modal>
   </main>
 </template>
@@ -21,9 +35,18 @@ export default {
     QuickMessagesList,
   },
 
+  data() {
+    return {
+      isQuickMessagesEmpty: false,
+    };
+  },
+
   methods: {
     emitSelectQuickMessage(quickMessage) {
       this.$emit('select-quick-message', quickMessage);
+    },
+    openHomeNewQuickMessage() {
+      this.$router.push({ name: 'home', query: { newQuickMessage: true } });
     },
   },
 };
@@ -61,6 +84,11 @@ $modalBorderRadius: $unnnic-border-radius-md + $unnnic-border-radius-lg;
           &-container {
             padding: 0 $unnnic-spacing-sm;
           }
+        }
+
+        &-button {
+          padding: $unnnic-spacing-sm;
+          padding-top: $unnnic-spacing-md;
         }
       }
     }

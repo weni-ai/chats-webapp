@@ -19,7 +19,7 @@
         type="primary"
         iconCenter="add"
         size="extra-large"
-        @click="quickMessageToEdit = createEmptyQuickMessage()"
+        @click="openQuickMessageCreation"
       />
       <unnnic-button
         v-else
@@ -28,7 +28,7 @@
         type="secondary"
         size="small"
         class="fill-w"
-        @click="quickMessageToEdit = createEmptyQuickMessage()"
+        @click="openQuickMessageCreation"
       />
     </aside-slot-template-section>
 
@@ -130,6 +130,10 @@ export default {
 
       return '';
     },
+
+    emptyQuickMessage() {
+      return { title: '', text: '', shortcut: null };
+    },
   },
 
   methods: {
@@ -167,8 +171,8 @@ export default {
 
       this.quickMessageToEdit = null;
     },
-    createEmptyQuickMessage() {
-      return { title: '', text: '', shortcut: null };
+    openQuickMessageCreation() {
+      this.quickMessageToEdit = this.emptyQuickMessage;
     },
     async deleteQuickMessage() {
       const { uuid } = this.quickMessageToDelete;

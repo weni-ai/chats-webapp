@@ -16,26 +16,16 @@ const moment = require('moment');
 export default {
   name: 'App',
 
-  created() {
+  beforeCreate() {
     http.interceptors.request.use((config) => {
       // eslint-disable-next-line no-param-reassign
       config.headers.Authorization = `Bearer ${this.appToken}`;
       return config;
     });
-
-    if (!this.appToken) return;
-
-    this.handleLocale();
-    this.restoreLocalStorageUserStatus();
   },
 
-  async mounted() {
-    if (!this.appToken) return;
-
-    this.getUser();
-    this.getUserStatus();
-    this.loadQuickMessages();
-    this.loadQuickMessagesShared();
+  created() {
+    this.handleLocale();
   },
 
   data() {
@@ -64,6 +54,25 @@ export default {
   },
 
   watch: {
+    appToken: {
+      immediate: true,
+      handler(newAppToken) {
+        if (newAppToken) {
+          this.getUser();
+        }
+      },
+    },
+    appProject: {
+      immediate: true,
+      handler(newAppProject) {
+        if (newAppProject && this.appToken) {
+          this.restoreLocalStorageUserStatus();
+          this.getUserStatus();
+          this.loadQuickMessages();
+          this.loadQuickMessagesShared();
+        }
+      },
+    },
     'viewedAgent.email': {
       handler() {
         this.ws.reconnect();
