@@ -121,16 +121,16 @@
           <p class="title-transfer-chat">
             {{ $t('contact_info.transfer_contact') }}
           </p>
-          <div style="margin-top: 20px; margin-bottom: 20px">
-            <unnnic-radio size="sm" v-model="transferRadio" value="agent" :disabled="isViewMode">
-              {{ $t('agent') }}
-            </unnnic-radio>
-
-            <unnnic-radio size="sm" v-model="transferRadio" value="queue" :disabled="isViewMode">
-              {{ $t('queue') }}
-            </unnnic-radio>
-          </div>
           <section class="transfer-section">
+            <section class="transfer__radios">
+              <unnnic-radio size="sm" v-model="transferRadio" value="agent" :disabled="isViewMode">
+                {{ $t('agent') }}
+              </unnnic-radio>
+
+              <unnnic-radio size="sm" v-model="transferRadio" value="queue" :disabled="isViewMode">
+                {{ $t('queue') }}
+              </unnnic-radio>
+            </section>
             <unnnic-select-smart
               v-model="transferContactTo"
               :options="transferOptions"
@@ -143,7 +143,7 @@
             <unnnic-button
               class="transfer__button"
               :text="$t('transfer')"
-              type="secondary"
+              type="primary"
               size="small"
               @click="transferContact"
               :disabled="transferContactTo.length === 0 || isViewMode"
@@ -800,8 +800,12 @@ export default {
   }
 
   .transfer-section {
+    .transfer__radios {
+      margin-top: $unnnic-spacing-ant;
+      margin-bottom: $unnnic-spacing-xs;
+    }
     .transfer__button {
-      margin-top: $unnnic-spacing-inline-sm;
+      margin-top: $unnnic-spacing-xs;
       width: 100%;
     }
   }
