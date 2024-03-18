@@ -98,7 +98,7 @@
                 @click="openHistory()"
               />
               <unnnic-button
-                v-if="!isViewMode"
+                v-if="!isViewMode && !isMobile"
                 :text="$t('discussions.start_discussion.title')"
                 iconLeft="forum"
                 type="primary"
@@ -166,6 +166,13 @@
         :showModal="isShowModalStartDiscussion"
         @close="handleModalStartDiscussion()"
       />
+
+      <modal-progress-bar-false
+        v-if="showTransferProgressBar"
+        :title="$t('contact_info.transfering_chat')"
+        type="secondary"
+        @close="closeTransferProgressBar"
+      />
       <unnnic-modal
         :text="$t('successfully_transferred_chat')"
         :description="
@@ -176,11 +183,7 @@
         modalIcon="check-circle-1-1"
         scheme="feedback-green"
         :showModal="showSuccessfulTransferModal"
-        @close="
-          $store.dispatch('chats/rooms/setActiveRoom', null),
-            (showSuccessfulTransferModal = false),
-            navigate('home')
-        "
+        @close="(showSuccessfulTransferModal = false), navigate('home')"
       />
       <fullscreen-preview
         v-if="isFullscreen"
@@ -214,6 +217,7 @@ import { mapState } from 'vuex';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
+import ModalProgressBarFalse from '@/components/ModalProgressBarFalse';
 
 import ContactInfosLoading from '@/views/loadings/ContactInfos.vue';
 
@@ -246,6 +250,7 @@ export default {
     VideoPreview,
     ModalStartDiscussion,
     DiscussionsSession,
+    ModalProgressBarFalse,
   },
   props: {
     closedRoom: {
@@ -268,6 +273,7 @@ export default {
     transferContactTo: [],
     transferContactError: '',
     showSuccessfulTransferModal: false,
+    showTransferProgressBar: false,
     isLinkedUser: false,
     isLinkedToOtherAgent: false,
     isFullscreen: false,
@@ -623,13 +629,39 @@ export default {
       return value.toString().toLowerCase();
     },
     async transferContact() {
+      if (isMobile) {
+        await this.handleFalseTransferProgressBar();
+      }
       if (this.transferRadio === 'agent') {
         await Room.take(this.room.uuid, this.transferPersonSelected.value);
       }
       if (this.transferRadio === 'queue') {
         await Room.take(this.room.uuid, null, this.transferPersonSelected.value);
       }
+      this.$store.dispatch('chats/rooms/setActiveRoom', null);
+
+      if (isMobile) return;
       this.showSuccessfulTransferModal = true;
+    },
+    async handleFalseTransferProgressBar() {
+      this.showTransferProgressBar = true;
+
+      return new Promise((resolve) => {
+        const waitForCloseTransferProgressBar = () => {
+          if (!this.showTransferProgressBar) {
+            resolve();
+          } else {
+            setTimeout(waitForCloseTransferProgressBar, 100);
+          }
+        };
+
+        waitForCloseTransferProgressBar();
+      }).then(() => {
+        this.$emit('transferred-contact');
+      });
+    },
+    closeTransferProgressBar() {
+      this.showTransferProgressBar = false;
     },
   },
   watch: {
@@ -669,7 +701,7 @@ export default {
     height: 100%;
   }
 
-  section {
+  .aside-slot-template-section {
     width: 100%;
 
     background-color: $unnnic-color-background-snow;

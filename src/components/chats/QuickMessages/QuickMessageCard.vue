@@ -32,7 +32,7 @@
           <unnnic-dropdown-item @click="$emit('delete', quickMessage)">
             <div class="dropdown-item-content">
               <unnnic-icon-svg class="icon" icon="delete" size="sm" />
-              <span> {{ $t('delete') }} </span>
+              <span> {{ $t('exclude') }} </span>
             </div>
           </unnnic-dropdown-item>
         </unnnic-dropdown>

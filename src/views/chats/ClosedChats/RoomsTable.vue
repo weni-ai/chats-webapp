@@ -69,6 +69,7 @@
     </p>
 
     <table-pagination
+      v-if="showTablePagination"
       v-model="roomsCurrentPage"
       :count="isMobile ? null : roomsCount"
       :countPages="roomsCountPages"
@@ -81,7 +82,8 @@
       class="closed-chats__rooms-table__table__mobile-filters"
       iconCenter="search"
       type="primary"
-      size="large"
+      size="extra-large"
+      float
       @click="handleShowModalFilters"
     />
   </section>
@@ -160,6 +162,11 @@ export default {
         createHeader('date', 'date'),
         createHeader('visualize', 'view'),
       ].filter((header) => header !== null);
+    },
+
+    showTablePagination() {
+      const { isMobile, roomsCountPages } = this;
+      return !isMobile || (isMobile && roomsCountPages);
     },
   },
 
@@ -307,7 +314,7 @@ export default {
       }
 
       &__mobile-filters {
-        justify-self: flex-end;
+        margin: 0 $unnnic-spacing-ant $unnnic-spacing-md 0;
       }
     }
   }

@@ -6,6 +6,7 @@
       class="chat-classifier__tag-group"
       v-model="selected"
       :tags="tags"
+      scheme="aux-purple"
       selectable
     />
   </section>
@@ -66,7 +67,7 @@ export default {
 .chat-classifier {
   width: 100%;
 
-  :deep(.chat-classifier__tag-group) {
+  :deep(.tag-group__tags) {
     justify-content: center;
   }
 }

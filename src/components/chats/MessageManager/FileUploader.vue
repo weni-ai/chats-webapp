@@ -1,5 +1,26 @@
 <template>
-  <section v-if="showUploadModal">
+  <section v-if="isMobile && showUploadModal">
+    <unnnic-modal
+      class="modal-upload-confirm"
+      v-if="value.length > 0"
+      @close="closeFileUploadModal"
+      :text="$t('confirm_send')"
+    >
+      <unnnic-import-card
+        v-for="file in value"
+        :key="file.name + file.lastModified"
+        :title="file.name"
+        :isImporting="false"
+        :canImport="false"
+        canDelete
+        @delete="removeSelectedFile(file)"
+      />
+      <template #options>
+        <unnnic-button :text="$t('send')" type="primary" @click="upload" />
+      </template>
+    </unnnic-modal>
+  </section>
+  <section v-else-if="showUploadModal">
     <div class="modal-upload-container">
       <unnnic-modal-upload
         v-model="files"
@@ -15,7 +36,13 @@
 </template>
 
 <script>
-import mime from 'mime-types';
+import isMobile from 'is-mobile';
+
+import {
+  validateMediaFormat,
+  sendMediaMessage,
+  getSupportedChatMediaFormats,
+} from '@/utils/medias';
 
 export default {
   name: 'FileUploader',
@@ -25,25 +52,18 @@ export default {
       type: Array,
       default: () => [],
     },
+    mediasType: {
+      type: String,
+      required: false,
+    },
   },
 
   data: () => ({
+    isMobile: isMobile(),
+
     showUploadModal: false,
     uploadFileType: '',
     maximumUploads: 5,
-    supportedFormats: [
-      '.png',
-      '.jpeg',
-      '.jpg',
-      '.mp4',
-      '.pdf',
-      '.doc',
-      '.docx',
-      '.txt',
-      '.xls',
-      '.xlsx',
-      '.csv',
-    ],
   }),
 
   methods: {
@@ -56,7 +76,14 @@ export default {
       this.showUploadModal = false;
     },
     upload() {
-      this.sendFileMessage();
+      const { value: files } = this;
+
+      sendMediaMessage({
+        files,
+        routeName: this.$route.name,
+        storeDispatch: this.$store.dispatch,
+        progressCallback: (progress) => this.$emit('progress', progress),
+      });
 
       this.closeFileUploadModal();
       this.files = [];
@@ -66,55 +93,35 @@ export default {
       if (files.length > this.maximumUploads) return [];
 
       return Array.from(files).filter((file) => {
-        if (this.validFormat([file])) {
+        if (validateMediaFormat([file])) {
           return true;
         }
         return false;
       });
     },
 
-    validFormat(files) {
-      const formats = this.supportedFormats.map((format) => format.trim());
-
-      const isValid = Array.from(files).find((file) => {
-        const fileName = file.name.toLowerCase();
-        const fileType = file.type.toLowerCase();
-        const fileExtension = `.${fileName.split('.').pop()}`;
-
-        const isValidFileExtension = formats.includes(fileExtension);
-        const isValidFileType = fileType === mime.lookup(fileName);
-
-        return isValidFileExtension && isValidFileType;
-      });
-
-      return isValid;
+    openFileSelector() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = getSupportedChatMediaFormats(this.mediasType).join();
+      input.addEventListener('change', this.handleFileChange);
+      input.addEventListener('cancel', this.closeFileUploadModal);
+      input.click();
     },
 
-    async sendFileMessage() {
-      const { value: files } = this;
-      try {
-        const loadingFiles = {};
-        const updateLoadingFiles = (messageUuid, progress) => {
-          loadingFiles[messageUuid] = progress;
-          this.$emit(
-            'progress',
-            Object.values(loadingFiles).reduce((acc, value) => acc + value) /
-              Object.keys(loadingFiles).length,
-          );
-        };
-        const actionType =
-          this.$route.name === 'discussion'
-            ? 'chats/discussionMessages/sendDiscussionMedias'
-            : 'chats/roomMessages/sendRoomMedias';
+    handleFileChange(event) {
+      const selectedFiles = event.target.files;
+      const validFiles = this.validFiles(selectedFiles);
 
-        await this.$store.dispatch(actionType, {
-          files,
-          updateLoadingFiles,
-        });
-      } catch (e) {
-        console.error('Uploading some files may not have completed');
-      } finally {
-        this.$emit('progress', undefined);
+      if (validFiles.length === 0) this.closeFileUploadModal();
+
+      this.$emit('input', validFiles);
+    },
+
+    removeSelectedFile(file) {
+      this.files = this.files.filter((mappedFile) => mappedFile.name !== file.name);
+      if (this.files.length === 1) {
+        this.closeFileUploadModal();
       }
     },
   },
@@ -131,7 +138,7 @@ export default {
     fileUploadModalProps() {
       const props = {
         textTitle: this.$t('send_media'),
-        supportedFormats: this.supportedFormats.join(),
+        supportedFormats: getSupportedChatMediaFormats().join(),
         subtitle: this.$t('upload_area.subtitle', { exampleExtensions: '.PNG, .MP4, .PDF' }),
         textAction: this.$t('send'),
       };
@@ -142,9 +149,12 @@ export default {
 
   watch: {
     showUploadModal(newShowUploadModal) {
-      if (!newShowUploadModal) {
-        this.files = [];
+      if (newShowUploadModal) {
+        if (this.isMobile) this.openFileSelector();
+        return;
       }
+
+      this.files = [];
     },
   },
 };
@@ -168,6 +178,22 @@ export default {
   & > * {
     max-width: 32rem;
     flex: 1;
+  }
+}
+
+.modal-upload-confirm {
+  :deep(.unnnic-modal-container-background-body-description) {
+    padding: 0;
+
+    .unnnic-import-card__data {
+      overflow: hidden;
+
+      &__title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
   }
 }
 </style>

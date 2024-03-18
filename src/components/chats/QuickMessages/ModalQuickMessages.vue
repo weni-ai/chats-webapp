@@ -6,7 +6,7 @@
       :text="$t('quick_messages.title')"
       @close="$emit('close')"
     >
-      <quick-messages-list @select-quick-message="emitSelectQuickMessage" />
+      <quick-messages-list :withHandlers="false" @select-quick-message="emitSelectQuickMessage" />
     </unnnic-modal>
   </main>
 </template>
@@ -59,7 +59,7 @@ $modalBorderRadius: $unnnic-border-radius-md + $unnnic-border-radius-lg;
           padding: 0;
 
           &-container {
-            padding-bottom: 0;
+            padding: 0 $unnnic-spacing-sm;
           }
         }
       }

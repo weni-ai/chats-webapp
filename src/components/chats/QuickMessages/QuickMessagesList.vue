@@ -9,7 +9,7 @@
         v-for="quickMessage in quickMessages"
         :key="quickMessage.uuid"
         :quickMessage="quickMessage"
-        :withActions="!isMobile"
+        :withActions="withHandlers"
         clickable
         @select="emitSelectQuickMessage"
         @edit="emitEditQuickMessage"
@@ -35,7 +35,6 @@
 </template>
 
 <script>
-import isMobile from 'is-mobile';
 import { mapState } from 'vuex';
 
 import QuickMessageCard from './QuickMessageCard';
@@ -43,14 +42,15 @@ import QuickMessageCard from './QuickMessageCard';
 export default {
   name: 'QuickMessagesList',
 
-  components: {
-    QuickMessageCard,
+  props: {
+    withHandlers: {
+      type: Boolean,
+      default: true,
+    },
   },
 
-  data() {
-    return {
-      isMobile: isMobile(),
-    };
+  components: {
+    QuickMessageCard,
   },
 
   computed: {

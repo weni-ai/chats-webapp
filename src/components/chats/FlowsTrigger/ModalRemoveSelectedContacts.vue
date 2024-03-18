@@ -19,7 +19,7 @@
         @click="closeModalInternally"
       />
       <unnnic-button
-        :text="$t('proceed')"
+        :text="$t('confirm')"
         type="primary"
         size="large"
         @click="emitRemoveContacts"

@@ -7,11 +7,12 @@
         :clickable="selectable"
         :text="tag.name"
         :data-testid="`tag__${tag.uuid}`"
-        :has-close-icon="hasCloseIcon"
+        :has-close-icon="showCloseIcon(tag)"
         @click="select(tag)"
         @close="close(tag)"
-        :disabled="!hasCloseIcon && selectable && !selected.find((t) => t.uuid === tag.uuid)"
-        :scheme="schemes[i % schemes.length]"
+        :disabled="!scheme && !hasCloseIcon && selectable && !isSelectedTag(tag)"
+        :class="{ 'tag-group__tags__tag--selected': isSelectedTag(tag) }"
+        :scheme="scheme || schemes[i % schemes.length]"
         :ref="tag.uuid"
       />
       <p
@@ -40,6 +41,10 @@ export default {
     flex: {
       type: Boolean,
       default: true,
+    },
+    scheme: {
+      type: String,
+      default: '',
     },
     tags: {
       type: Array,
@@ -98,14 +103,23 @@ export default {
 
   methods: {
     select(tag) {
-      const tags = this.selected.find((t) => t.uuid === tag.uuid)
+      const tags = this.isSelectedTag(tag)
         ? this.selected.filter((t) => t.uuid !== tag.uuid)
         : [...this.selected, tag];
 
       this.selected = tags;
     },
     close(tag) {
+      if (this.selectable) {
+        this.select(tag);
+      }
       this.$emit('close', tag);
+    },
+    isSelectedTag(tag) {
+      return this.selected.find((mappedTag) => mappedTag.uuid === tag.uuid);
+    },
+    showCloseIcon(tag) {
+      return this.hasCloseIcon || (this.selectable && this.isSelectedTag(tag));
     },
     handleIntersection(entries) {
       entries.forEach((entry) => {
@@ -184,6 +198,11 @@ $tag-size: 28px;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+      }
+
+      &.tag-group__tags__tag--selected {
+        outline: $unnnic-border-width-thinner solid $unnnic-color-neutral-clean;
+        outline-offset: -$unnnic-border-width-thinner;
       }
     }
   }

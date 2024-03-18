@@ -13,6 +13,16 @@
       />
 
       <unnnic-button
+        v-if="isMobile"
+        class="quick-messages__mobile-new"
+        float
+        type="primary"
+        iconCenter="add"
+        size="extra-large"
+        @click="quickMessageToEdit = createEmptyQuickMessage()"
+      />
+      <unnnic-button
+        v-else
         icon-left="add"
         :text="$t('quick_messages.new')"
         type="secondary"
@@ -24,20 +34,22 @@
 
     <template v-slot:modals>
       <unnnic-modal
+        class="quick-messages__modal-delete"
         :text="$t('quick_messages.delete')"
-        :description="$t('quick_messages.delete_confirm')"
-        scheme="feedback-yellow"
-        modal-icon="alert-circle-1"
+        :description="$t('action_cannot_be_reversed')"
+        scheme="feedback-red"
+        modal-icon="error"
+        :close-icon="isMobile"
         @close="quickMessageToDelete = null"
         :show-modal="!!quickMessageToDelete"
       >
         <template #options>
           <unnnic-button
             :text="$t('cancel')"
-            type="secondary"
+            type="tertiary"
             @click="quickMessageToDelete = null"
           />
-          <unnnic-button :text="$t('confirm')" type="tertiary" @click="deleteQuickMessage" />
+          <unnnic-button :text="$t('delete')" type="warning" @click="deleteQuickMessage" />
         </template>
       </unnnic-modal>
     </template>
@@ -72,10 +84,10 @@
 import isMobile from 'is-mobile';
 import { mapActions } from 'vuex';
 
-import { unnnicCallAlert } from '@weni/unnnic-system';
-
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
+
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 import QuickMessagesList from './QuickMessagesList';
 import QuickMessageForm from './QuickMessageForm';
@@ -130,7 +142,7 @@ export default {
     async createQuickMessage({ title, text, shortcut }) {
       this.actionCreateQuickMessage({ title, text, shortcut });
 
-      unnnicCallAlert({
+      callUnnnicAlert({
         props: {
           text: this.$t('quick_messages.successfully_added'),
           type: 'success',
@@ -145,7 +157,7 @@ export default {
     async updateQuickMessage({ uuid, title, text, shortcut }) {
       this.actionUpdateQuickMessage({ uuid, title, text, shortcut });
 
-      unnnicCallAlert({
+      callUnnnicAlert({
         props: {
           text: this.$t('quick_messages.successfully_updated'),
           type: 'success',
@@ -195,6 +207,17 @@ export default {
   overflow: hidden;
 }
 
+.quick-messages__modal-delete {
+  :deep(.unnnic-modal-container) .unnnic-modal-container-background {
+    &-body-description {
+      text-align: center;
+    }
+    &-button :first-child {
+      margin-right: $unnnic-spacing-xs;
+    }
+  }
+}
+
 .quick-messages-form {
   display: flex;
   flex-direction: column;
@@ -209,5 +232,8 @@ export default {
   &__form {
     flex: 1 1;
   }
+}
+.quick-messages__mobile-new {
+  margin: 0 $unnnic-spacing-ant $unnnic-spacing-md 0;
 }
 </style>

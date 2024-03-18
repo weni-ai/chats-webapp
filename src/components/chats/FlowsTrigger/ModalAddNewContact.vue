@@ -40,8 +40,9 @@
 <script>
 import isMobile from 'is-mobile';
 
-import { unnnicCallAlert } from '@weni/unnnic-system';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
+
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 export default {
   name: 'ModalAddNewContact',
@@ -93,7 +94,7 @@ export default {
         };
         const response = await FlowsTrigger.createContact(newContact);
 
-        unnnicCallAlert({
+        callUnnnicAlert({
           props: {
             text: this.$t('flows_trigger.successfully_add_contact'),
             type: 'success',

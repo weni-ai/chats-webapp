@@ -597,6 +597,11 @@
     "en": "Send",
     "es": "Enviar"
   },
+  "confirm_send": {
+    "pt-br": "Confirmar envio",
+    "en": "Confirm submission",
+    "es": "Confirmar envío"
+  },
   "update": {
     "pt-br": "Atualizar",
     "en": "Update",
@@ -606,6 +611,11 @@
     "pt-br": "Clique para reenviar",
     "en": "Click to resend",
     "es": "Haga clic para reenviar"
+  },
+  "action_cannot_be_reversed": {
+    "pt-br": "Essa ação não poderá ser revertida",
+    "en": "This action cannot be reversed",
+    "es": "Esta acción no se puede revertir"
   },
   "end": {
     "pt-br": "Encerrar",
@@ -702,6 +712,38 @@
       "pt-br": "Limpar filtros",
       "en": "Clear filters",
       "es": "Limpiar filtros"
+    },
+    "dates": {
+      "today": {
+        "pt-br": "Hoje",
+        "en": "Today",
+        "es": "Hoy"
+      },
+      "yesterday": {
+        "pt-br": "Ontem",
+        "en": "Yesterday",
+        "es": "Ayer"
+      },
+      "last_7_days": {
+        "pt-br": "Últimos 7 dias",
+        "en": "Last 7 days",
+        "es": "Últimos 7 días"
+      },
+      "last_30_days": {
+        "pt-br": "Últimos 30 dias",
+        "en": "Last 30 days",
+        "es": "Últimos 30 días"
+      },
+      "current_month": {
+        "pt-br": "Mês atual",
+        "en": "Current month",
+        "es": "Mes actual"
+      },
+      "last_12_months": {
+        "pt-br": "Últimos 12 meses",
+        "en": "Last 12 months",
+        "es": "Últimos 12 meses"
+      }
     }
   },
   "pagination": {
@@ -853,6 +895,11 @@
       "es": "En espera de respuesta de contacto"
     }
   },
+  "contact_transferred_with_success": {
+    "pt-br": "Contato transferido com sucesso",
+    "en": "Contact successfully transferred",
+    "es": "Contacto transferido con éxito"
+  },
   "contact_transferred_to_queue": {
     "pt-br": "Contato transferido para fila {queue}",
     "en": "Contact transferred to queue {queue}",
@@ -925,6 +972,11 @@
       "pt-br": "{agent} {date} às {time}",
       "en": "{agent} {date} at {time}",
       "es": "{agent} {date} a las {time}"
+    },
+    "transfering_chat": {
+      "pt-br": "Transferindo o chat ​📬",
+      "en": "Transferring the chat 📬",
+      "es": "Transfiriendo el chat 📬"
     }
   },
   "discussions": {
@@ -1206,10 +1258,15 @@
     "en": "Edit",
     "es": "Editar"
   },
+  "exclude": {
+    "pt-br": "Excluir",
+    "en": "Exclude",
+    "es": "Borrar"
+  },
   "delete": {
     "pt-br": "Excluir",
     "en": "Delete",
-    "es": "Eliminar"
+    "es": "Excluir"
   },
   "search_or_select": {
     "pt-br": "Pesquise ou selecione",
@@ -1418,7 +1475,7 @@
       "es": "Mensajes rápidos compartidos"
     },
     "delete": {
-      "pt-br": "Excluir mensagem rápida",
+      "pt-br": "Deletar mensagem rápida",
       "en": "Delete quick message",
       "es": "Eliminar mensaje rápido"
     },

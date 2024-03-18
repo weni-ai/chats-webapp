@@ -53,15 +53,12 @@
           <more-actions-option
             icon="image"
             :title="$t('photo_or_video')"
-            :action="() => {}"
-            inputType="image"
+            :action="() => emitOpenFileUploader({ filesType: 'image' })"
           />
           <more-actions-option
             icon="article"
             :title="$t('doc')"
-            :action="() => {}"
-            inputType="doc"
-            @files-selected="emitHandleAttachment($event)"
+            :action="() => emitOpenFileUploader({ filesType: 'doc' })"
           />
         </div>
       </unnnic-dropdown>
@@ -144,11 +141,8 @@ export default {
       this.$emit('handle-quick-messages');
     },
 
-    emitHandleAttachment(files) {
-      console.log({ files });
-      if (files) {
-        this.$emit('handle-attachment', files);
-      }
+    emitOpenFileUploader({ filesType }) {
+      this.$emit('open-file-uploader', null, filesType);
     },
 
     keyDownTextarea(event) {

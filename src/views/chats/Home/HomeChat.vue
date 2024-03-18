@@ -131,8 +131,10 @@ export default {
     openModal(modalName) {
       this.$refs['home-chat-modals'].openModal(modalName);
     },
-    openModalFileUploader(files) {
-      this.$refs['home-chat-modals'].openModal('fileUploader', files);
+    openModalFileUploader(files, filesType) {
+      const homeChatModals = this.$refs['home-chat-modals'];
+      homeChatModals.configFileUploader({ files, filesType });
+      homeChatModals.openModal('fileUploader');
     },
     emitOpenRoomContactInfo() {
       this.$emit('open-room-contact-info');
