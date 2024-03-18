@@ -1,5 +1,5 @@
 <template>
-  <chat-feedback :feedback="createFeedbackLabel(message)" />
+  <chat-feedback :feedback="createFeedbackLabel(message)" :scheme="scheme" />
 </template>
 
 <script>
@@ -16,6 +16,10 @@ export default {
     message: {
       type: Object,
       required: true,
+    },
+    scheme: {
+      type: String,
+      default: 'blue',
     },
   },
 
