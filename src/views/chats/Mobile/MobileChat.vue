@@ -1,10 +1,11 @@
 <template>
-  <contact-info v-if="showRoomContactInfo" @close="closeRoomContactInfo" />
+  <contact-info v-if="showRoomContactInfo" @close="handleRoomContactInfo" />
   <home-chat
     class="mobile-chat"
     v-else
-    @open-room-contact-info="openRoomContactInfo"
-    @close-room-contact-info="closeRoomContactInfo"
+    @open-room-contact-info="handleRoomContactInfo"
+    @close-room-contact-info="handleRoomContactInfo"
+    @handle-show-quick-messages="handleQuickMessagesModal"
   />
 </template>
 
@@ -21,14 +22,15 @@ export default {
   data() {
     return {
       showRoomContactInfo: false,
+      showQuickMessagesModal: false,
     };
   },
   methods: {
-    openRoomContactInfo() {
-      this.showRoomContactInfo = true;
+    handleRoomContactInfo() {
+      this.showRoomContactInfo = !this.showRoomContactInfo;
     },
-    closeRoomContactInfo() {
-      this.showRoomContactInfo = false;
+    handleQuickMessagesModal() {
+      this.showQuickMessagesModal = !this.showQuickMessagesModal;
     },
   },
 };

@@ -22,14 +22,14 @@
             </unnnic-tool-tip>
           </template>
 
-          <unnnic-dropdown-item @click="$emit('edit')">
+          <unnnic-dropdown-item @click="$emit('edit', quickMessage)">
             <div class="dropdown-item-content">
               <unnnic-icon-svg class="icon" icon="edit_square" size="sm" />
               <span> {{ $t('edit') }} </span>
             </div>
           </unnnic-dropdown-item>
 
-          <unnnic-dropdown-item @click="$emit('delete')">
+          <unnnic-dropdown-item @click="$emit('delete', quickMessage)">
             <div class="dropdown-item-content">
               <unnnic-icon-svg class="icon" icon="delete" size="sm" />
               <span> {{ $t('delete') }} </span>
