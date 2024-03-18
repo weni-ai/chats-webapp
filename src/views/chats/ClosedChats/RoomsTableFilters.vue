@@ -107,6 +107,7 @@ export default {
     this.filterDate = this.filterDateDefault;
     this.tagsToFilter = [this.filterTagDefault];
 
+    this.setFiltersByQueryParams();
     this.updateFiltersByValue();
 
     await this.getSectors();
@@ -266,6 +267,20 @@ export default {
           end: filterDate.end || dateEnd,
         },
       });
+    },
+
+    setFiltersByQueryParams() {
+      const { contactUrn, startDate, endDate } = this.$route.query;
+
+      this.filterContact = contactUrn || '';
+
+      if (startDate) {
+        this.filterDate.start = startDate;
+      }
+
+      if (endDate) {
+        this.filterDate.end = endDate;
+      }
     },
 
     updateFiltersByValue() {
