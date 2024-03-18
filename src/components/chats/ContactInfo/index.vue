@@ -146,7 +146,7 @@
               type="secondary"
               size="small"
               @click="transferContact"
-              :disabled="isViewMode"
+              :disabled="transferContactTo.length === 0 || isViewMode"
             />
           </section>
         </aside-slot-template-section>
