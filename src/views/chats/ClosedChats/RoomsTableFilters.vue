@@ -180,7 +180,7 @@ export default {
   methods: {
     async getSectors() {
       try {
-        const { results } = await Sector.list();
+        const { results } = await Sector.list({ limit: 50 });
 
         const newSectors = [this.filterSectorsOptionAll];
         results.forEach(({ uuid, name }) => newSectors.push({ value: uuid, label: name }));
