@@ -68,6 +68,7 @@ export default {
             props: {
               text: this.$t('chats.feedback.agent_took_chat', {
                 contact: oldRoom?.contact?.name,
+                agent: oldRoom?.transfer_history?.from?.name,
               }),
               type: 'default',
               position: 'bottom-right',
@@ -103,7 +104,7 @@ export default {
         this.$store.commit('profile/setMe', response);
       }
 
-      await Room.take(this.room.uuid, me);
+      await Room.getQueueRoom(this.room.uuid, me);
       await this.setActiveRoom(this.room.uuid);
       if (this.room.user) {
         Room.updateReadMessages(this.room.uuid, true);

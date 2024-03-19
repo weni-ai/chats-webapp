@@ -351,9 +351,9 @@
         "es": "{agent} se unió a la discusión"
       },
       "agent_took_chat": {
-        "pt-br": "Ops! O chat com contato {contact} foi assumido por um agente",
-        "en-us": "Oops! The chat with the contact {contact} has already been taken over by a agent",
-        "es": "¡Ups! El chat con el contacto {contact} ha sido asumido por un agente"
+        "pt-br": "Ops! O chat com contato {contact} foi assumido pelo agente {agent}",
+        "en-us": "Oops! The chat with the contact {contact} has already been taken over by the agent {agent}",
+        "es": "¡Ups! El chat con el contacto {contact} ha sido asumido por el agente {agent}"
       }
     },
     "room_list": {
