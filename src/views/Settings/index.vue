@@ -85,7 +85,7 @@ export default {
 
       try {
         this.isLoading = true;
-        const newSectors = await Sector.list(this.nextPage);
+        const newSectors = await Sector.list({ nextReq: this.nextPage });
         this.nextPage = newSectors.next;
         this.sectors = [...this.sectors, ...newSectors.results];
         if (newSectors) {

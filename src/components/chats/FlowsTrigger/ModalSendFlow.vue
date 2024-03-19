@@ -70,5 +70,10 @@ export default {
       }
     }
   }
+  :deep(.unnnic-select-smart) .dropdown-data {
+    // !important at position is needed here because the
+    // unnnicSelectSmart base already uses !important
+    position: initial !important;
+  }
 }
 </style>

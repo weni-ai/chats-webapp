@@ -314,17 +314,22 @@ export default {
     },
 
     async contactList(next, cleanList = false) {
-      if (cleanList) this.listOfContacts = [];
-      this.isContactsLoading = true;
-      try {
-        const response = await FlowsAPI.getContacts(this.searchUrn);
-        this.listOfContacts = this.listOfContacts.concat(response);
-        this.hasNext = response.next;
-        this.listOfContacts.sort((a, b) => a.name?.localeCompare(b.name));
-        this.isContactsLoading = false;
-      } catch (error) {
-        this.isContactsLoading = false;
-        console.log(error);
+      if (!this.searchUrn || this.searchUrn.length >= 3) {
+        if (cleanList) this.listOfContacts = [];
+        this.isContactsLoading = true;
+        try {
+          const response = await FlowsAPI.getContacts(this.searchUrn);
+          this.listOfContacts = this.listOfContacts.concat(response.data || []);
+          this.hasNext = response.next;
+          this.listOfContacts.sort((a, b) => a.name?.localeCompare(b.name));
+
+          if (response.status !== 'canceled') {
+            this.isContactsLoading = false;
+          }
+        } catch (error) {
+          this.isContactsLoading = false;
+          console.log(error);
+        }
       }
     },
 
@@ -345,7 +350,7 @@ export default {
     },
 
     getContactUrn(item) {
-      return item.urns ? `${item.urns?.[0].scheme}:${item.urns?.[0].path}` : '';
+      return item.urns ? `${item.urns?.[0]?.scheme}:${item.urns?.[0]?.path}` : '';
     },
 
     async groupList() {
