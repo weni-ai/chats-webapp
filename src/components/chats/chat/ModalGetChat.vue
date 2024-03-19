@@ -1,21 +1,25 @@
 <template>
-  <unnnic-modal
-    :showModal="showModal"
-    @close="close"
-    :text="title"
-    :description="description"
-    modal-icon="messages-bubble-1"
-    scheme="neutral-darkest"
-  >
-    <template #options>
-      <unnnic-button :text="$t('cancel')" type="tertiary" @click="close" />
-      <unnnic-button :text="$t('confirm')" type="secondary" @click="getChat" />
-    </template>
-  </unnnic-modal>
+  <section>
+    <unnnic-modal
+      :showModal="showModal"
+      @close="close"
+      :text="title"
+      :description="description"
+      modal-icon="forum"
+      scheme="neutral-darkest"
+    >
+      <template #options>
+        <unnnic-button :text="$t('cancel')" type="tertiary" @click="close" />
+        <unnnic-button :text="$t('confirm')" type="primary" @click="getChat" />
+      </template>
+    </unnnic-modal>
+  </section>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+
+import { unnnicCallAlert } from '@weni/unnnic-system';
 
 import Profile from '@/services/api/resources/profile';
 import Room from '@/services/api/resources/chats/room';
@@ -42,6 +46,12 @@ export default {
     },
   },
 
+  data() {
+    return {
+      showModalCaughtChat: false,
+    };
+  },
+
   computed: {
     ...mapState({
       room: (state) => state.chats.rooms.activeRoom,
@@ -49,9 +59,39 @@ export default {
     }),
   },
 
+  watch: {
+    room: {
+      handler(newRoom, oldRoom) {
+        if (this.showModal === true && newRoom == null) {
+          this.close();
+          unnnicCallAlert({
+            props: {
+              text: this.$t('chats.feedback.agent_took_chat', {
+                contact: oldRoom?.contact?.name,
+                agent: oldRoom?.transfer_history?.from?.name,
+              }),
+              type: 'default',
+              position: 'bottom-right',
+            },
+            seconds: 15,
+          });
+        }
+      },
+      deep: true,
+    },
+  },
+
   methods: {
     close() {
       this.$emit('closeModal');
+    },
+
+    closeCaughtChatModal() {
+      this.showModalCaughtChat = false;
+    },
+
+    openCaughtChatModal() {
+      this.showModalCaughtChat = true;
     },
 
     async getChat() {
@@ -64,7 +104,7 @@ export default {
         this.$store.commit('profile/setMe', response);
       }
 
-      await Room.take(this.room.uuid, me);
+      await Room.getQueueRoom(this.room.uuid, me);
       await this.setActiveRoom(this.room.uuid);
       if (this.room.user) {
         Room.updateReadMessages(this.room.uuid, true);

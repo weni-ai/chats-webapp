@@ -359,6 +359,11 @@
         "pt-br": "{agent} entrou na discussão",
         "en": "{agent} joined the discussion",
         "es": "{agent} se unió a la discusión"
+      },
+      "agent_took_chat": {
+        "pt-br": "Ops! O chat com contato {contact} foi assumido pelo agente {agent}",
+        "en-us": "Oops! The chat with the contact {contact} has already been taken over by the agent {agent}",
+        "es": "¡Ups! El chat con el contacto {contact} ha sido asumido por el agente {agent}"
       }
     },
     "room_list": {
@@ -471,9 +476,9 @@
       "es": "Obtener chat?"
     },
     "get_chat_confirmation": {
-      "pt-br": "Confirme se deseja pegar o chat com {contact}",
-      "en": "Confirm if you want to get the chat with {contact}",
-      "es": "Confirma si quieres obtener el chat con {contact}"
+      "pt-br": "Confirme se deseja realizar o atendimento de {contact}",
+      "en-us": "Confirm if you want to do the service of {contact}",
+      "es": "Confirma si deseas realizar el servicio de {contact}"
     },
     "you_got_chat": {
       "pt-br": "Você pegou o chat",
