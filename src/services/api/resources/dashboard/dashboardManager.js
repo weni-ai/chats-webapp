@@ -75,15 +75,18 @@ export default {
   async downloadMetricData(idSector, agent, tag, startDate, endDate, option) {
     const idProject = getProject();
     const downloadOption = option === 'metrics_xls' ? `?xls=on` : '';
-    const response = await http.get(`dashboard/${idProject}/export/${downloadOption}`, {
-      params: {
-        sector: idSector,
-        agent,
-        tag,
-        start_date: startDate,
-        end_date: endDate,
+    const response = await http.get(
+      `dashboard/${idProject}/export/${downloadOption}`,
+      {
+        params: {
+          sector: idSector,
+          agent,
+          tag,
+          start_date: startDate,
+          end_date: endDate,
+        },
       },
-    });
+    );
     if (response.status === 200) {
       const { data, headers } = response;
 
@@ -103,16 +106,19 @@ export default {
     const idProject = getProject();
     const downloadOption = option === 'all_xls' ? `?xls=on` : '';
     const { me } = Profile.state;
-    const response = await http.get(`dashboard/${idProject}/export_dashboard/${downloadOption}`, {
-      params: {
-        sector: idSector,
-        agent,
-        tag,
-        start_date: startDate,
-        end_date: endDate,
-        user_request: me?.email,
+    const response = await http.get(
+      `dashboard/${idProject}/export_dashboard/${downloadOption}`,
+      {
+        params: {
+          sector: idSector,
+          agent,
+          tag,
+          start_date: startDate,
+          end_date: endDate,
+          user_request: me?.email,
+        },
       },
-    });
+    );
     if (response.status === 200) {
       const { data, headers } = response;
 
@@ -129,7 +135,9 @@ export default {
     }
   },
   async getViewedAgentData(agentEmail) {
-    const response = await http.get('/accounts/userdata/', { params: { user_email: agentEmail } });
+    const response = await http.get('/accounts/userdata/', {
+      params: { user_email: agentEmail },
+    });
     return response.data;
   },
 };

@@ -1,12 +1,16 @@
 <template>
   <section class="card-group-metrics">
     <p class="title">
-      <unnnic-avatar-icon :icon="icon" size="xs" :scheme="scheme" />
+      <UnnnicAvatarIcon
+        :icon="icon"
+        size="xs"
+        :scheme="scheme"
+      />
       <span> {{ title }} </span>
     </p>
 
     <section class="card-group-metrics__metrics">
-      <unnnic-card-information
+      <UnnnicCardInformation
         v-for="metric in metrics.sectors"
         :key="metric.name"
         :name="metric.name"

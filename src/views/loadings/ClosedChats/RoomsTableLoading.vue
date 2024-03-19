@@ -1,25 +1,29 @@
 <template>
   <section class="rooms-table-loading">
     <header class="rooms-table-loading__categories">
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading />
+      <UnnnicSkeletonLoading />
+      <UnnnicSkeletonLoading />
+      <UnnnicSkeletonLoading />
+      <UnnnicSkeletonLoading />
+      <UnnnicSkeletonLoading />
     </header>
-    <section class="rooms-table-loading__row" v-for="row in 4" :key="`row-${row}`">
+    <section
+      class="rooms-table-loading__row"
+      v-for="row in 4"
+      :key="`row-${row}`"
+    >
       <div class="rooms-table-loading__contact-info">
-        <unnnic-skeleton-loading height="40px" />
-        <unnnic-skeleton-loading />
+        <UnnnicSkeletonLoading height="40px" />
+        <UnnnicSkeletonLoading />
       </div>
-      <unnnic-skeleton-loading class="rooms-table-loading__agent" />
+      <UnnnicSkeletonLoading class="rooms-table-loading__agent" />
       <div class="rooms-table-loading__tags">
-        <unnnic-skeleton-loading />
-        <unnnic-skeleton-loading />
-        <unnnic-skeleton-loading />
+        <UnnnicSkeletonLoading />
+        <UnnnicSkeletonLoading />
+        <UnnnicSkeletonLoading />
       </div>
-      <unnnic-skeleton-loading class="rooms-table-loading__date" />
-      <unnnic-skeleton-loading class="rooms-table-loading__show" />
+      <UnnnicSkeletonLoading class="rooms-table-loading__date" />
+      <UnnnicSkeletonLoading class="rooms-table-loading__show" />
     </section>
   </section>
 </template>

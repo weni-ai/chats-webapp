@@ -18,7 +18,10 @@ export default (discussion, { app }) => {
     app.$store.dispatch('chats/rooms/setActiveRoom', null);
   }
 
-  if (discussion.added_agents.length >= 2 && !discussion.added_agents.includes(app.me.email)) {
+  if (
+    discussion.added_agents.length >= 2 &&
+    !discussion.added_agents.includes(app.me.email)
+  ) {
     app.$store.dispatch('chats/discussions/removeDiscussion', discussion.uuid);
   }
 };

@@ -1,13 +1,16 @@
 <template>
-  <dashboard-layout>
+  <DashboardLayout>
     <template #header> {{ agent.name }} </template>
 
     <template #actions>
-      <dashboard-filters @filter="filters = $event" :tags="tags" />
+      <DashboardFilters
+        @filter="filters = $event"
+        :tags="tags"
+      />
     </template>
 
-    <history-metrics-by-agent :agentName="agent.name" />
-  </dashboard-layout>
+    <HistoryMetricsByAgent :agentName="agent.name" />
+  </DashboardLayout>
 </template>
 
 <script>

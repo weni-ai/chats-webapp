@@ -76,7 +76,10 @@ export default {
   },
 
   async updateCustomFields(uuid, customFields = {}) {
-    const response = await http.patch(`/room/${uuid}/update_custom_fields/`, customFields);
+    const response = await http.patch(
+      `/room/${uuid}/update_custom_fields/`,
+      customFields,
+    );
     return response.data;
   },
 };

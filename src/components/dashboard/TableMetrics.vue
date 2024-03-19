@@ -1,14 +1,23 @@
 <template>
   <section class="table-metrics">
     <p class="table-metrics__title">
-      <unnnic-avatar-icon :icon="icon" size="xs" scheme="feedback-green" />
+      <UnnnicAvatarIcon
+        :icon="icon"
+        size="xs"
+        scheme="feedback-green"
+      />
       <span> {{ title }} </span>
     </p>
 
     <section class="table-metrics__table">
       <header class="headers table-row">
         <span class="header table-col"> Agente </span>
-        <span class="header table-col" style="text-align: center"> {{ this.headers }} </span>
+        <span
+          class="header table-col"
+          style="text-align: center"
+        >
+          {{ this.headers }}
+        </span>
         <span class="header table-col"> Encerrados </span>
       </header>
 
@@ -21,7 +30,7 @@
           class="item table-row"
         >
           <span class="table-col agent">
-            <unnnic-icon
+            <UnnnicIcon
               icon="indicator"
               size="sm"
               :scheme="`feedback-${
@@ -30,10 +39,16 @@
             />
             <p>{{ item.first_name }}</p>
           </span>
-          <span class="table-col" style="text-align: center">
+          <span
+            class="table-col"
+            style="text-align: center"
+          >
             {{ item.opened_rooms }}
           </span>
-          <span class="table-col" style="text-align: center">
+          <span
+            class="table-col"
+            style="text-align: center"
+          >
             {{ item.closed_rooms }}
           </span>
         </section>

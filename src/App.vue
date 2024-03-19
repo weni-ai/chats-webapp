@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view />
+    <RouterView />
   </div>
 </template>
 
@@ -41,7 +41,8 @@ export default {
       me: (state) => state.profile.me,
       viewedAgent: (state) => state.dashboard.viewedAgent,
       nextQuickMessages: (state) => state.chats.quickMessages.nextQuickMessages,
-      nextQuickMessagesShared: (state) => state.chats.quickMessagesShared.nextQuickMessagesShared,
+      nextQuickMessagesShared: (state) =>
+        state.chats.quickMessagesShared.nextQuickMessagesShared,
       appToken: (state) => state.config.token,
       appProject: (state) => state.config.project,
     }),
@@ -148,7 +149,9 @@ export default {
     },
 
     async onboarding() {
-      const onboarded = localStorage.getItem('CHATS_USER_ONBOARDED') || (await Profile.onboarded());
+      const onboarded =
+        localStorage.getItem('CHATS_USER_ONBOARDED') ||
+        (await Profile.onboarded());
       if (onboarded) {
         localStorage.setItem('CHATS_USER_ONBOARDED', true);
         return;

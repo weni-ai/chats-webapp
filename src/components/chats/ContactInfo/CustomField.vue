@@ -1,11 +1,16 @@
 <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
   <div class="custom-field">
-    <component :is="isEditable && isCurrent ? 'label' : 'h3'" class="title" tabindex="0"
+    <component
+      :is="isEditable && isCurrent ? 'label' : 'h3'"
+      class="title"
+      tabindex="0"
       >{{ title }}:
     </component>
-    <div :class="['description', isEditable && 'editable', isCurrent && 'current']">
-      <unnnic-tool-tip
+    <div
+      :class="['description', isEditable && 'editable', isCurrent && 'current']"
+    >
+      <UnnnicToolTip
         v-show="!isCurrent"
         class="tooltip"
         side="bottom"
@@ -15,20 +20,29 @@
       >
         <h4
           tabindex="0"
-          @click="isEditable && updateCurrentCustomField({ key: title, value: description })"
+          @click="
+            isEditable &&
+              updateCurrentCustomField({ key: title, value: description })
+          "
           @keypress.enter="
-            isEditable && updateCurrentCustomField({ key: title, value: description })
+            isEditable &&
+              updateCurrentCustomField({ key: title, value: description })
           "
         >
           {{ description }}
         </h4>
-      </unnnic-tool-tip>
+      </UnnnicToolTip>
       <input
         v-show="isEditable && isCurrent"
         :ref="'custom_field_input_' + title"
         type="text"
         :value="value"
-        @input="updateCurrentCustomField({ key: title, value: $event.target.value || '' })"
+        @input="
+          updateCurrentCustomField({
+            key: title,
+            value: $event.target.value || '',
+          })
+        "
         @blur="saveValue"
         @keypress.enter="saveValue"
         maxlength="50"

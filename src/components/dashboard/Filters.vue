@@ -6,59 +6,76 @@
         { 'without-sector': sectorsToFilter.length < 3 },
       ]"
     >
-      <div class="dashboard-filters__input" v-if="sectorsToFilter.length > 2">
-        <unnnic-label :label="$t('sector.title')" />
-        <unnnic-select-smart
+      <div
+        class="dashboard-filters__input"
+        v-if="sectorsToFilter.length > 2"
+      >
+        <UnnnicLabel :label="$t('sector.title')" />
+        <UnnnicSelectSmart
           v-model="filterSector"
           :options="sectorsToFilter"
-          ordered-by-index
+          orderedByIndex
           autocomplete
           autocompleteClearOnFocus
         />
       </div>
       <div class="dashboard-filters__input">
-        <unnnic-label :label="$t('agent')" />
-        <unnnic-select-smart
+        <UnnnicLabel :label="$t('agent')" />
+        <UnnnicSelectSmart
           v-model="filterAgent"
           :options="agentsToFilter"
-          :disabled="filterSector[0]?.value === 'all' || agentsToFilter.length < 2"
-          ordered-by-index
+          :disabled="
+            filterSector[0]?.value === 'all' || agentsToFilter.length < 2
+          "
+          orderedByIndex
           autocomplete
           autocompleteClearOnFocus
         />
       </div>
       <div class="dashboard-filters__input">
-        <unnnic-label :label="$t('tag')" />
-        <unnnic-select-smart
+        <UnnnicLabel :label="$t('tag')" />
+        <UnnnicSelectSmart
           v-model="filterTag"
-          :disabled="filterSector[0]?.value === 'all' || tagsToFilter.length < 2"
+          :disabled="
+            filterSector[0]?.value === 'all' || tagsToFilter.length < 2
+          "
           :options="tagsToFilter"
-          ordered-by-index
+          orderedByIndex
           autocomplete
           autocompleteClearOnFocus
         />
       </div>
     </div>
     <div class="dashboard-filters__input">
-      <unnnic-label :label="$t('date')" />
-      <unnnic-input-date-picker
+      <UnnnicLabel :label="$t('date')" />
+      <UnnnicInputDatePicker
         v-model="filterDate"
         position="right"
-        :input-format="$t('date_format')"
+        :inputFormat="$t('date_format')"
       />
     </div>
 
-    <unnnic-button
+    <UnnnicButton
       :text="$t('clear')"
       :disabled="isFiltersDefault"
       type="secondary"
       @click="resetFilters"
     />
 
-    <unnnic-dropdown v-bind="$props" class="dashboard-filters__export">
-      <unnnic-button icon-center="more_vert" type="secondary" slot="trigger" />
-      <div class="attachment-options-container" style="width: 155px">
-        <unnnic-dropdown-item class="option">
+    <UnnnicDropdown
+      v-bind="$props"
+      class="dashboard-filters__export"
+    >
+      <UnnnicButton
+        iconCenter="more_vert"
+        type="secondary"
+        slot="trigger"
+      />
+      <div
+        class="attachment-options-container"
+        style="width: 155px"
+      >
+        <UnnnicDropdownItem class="option">
           <span
             class="upload-dropdown-option"
             @click="downloadMetric('metrics_csv')"
@@ -66,8 +83,8 @@
           >
             <span> Exportar métricas em CSV </span>
           </span>
-        </unnnic-dropdown-item>
-        <unnnic-dropdown-item class="option">
+        </UnnnicDropdownItem>
+        <UnnnicDropdownItem class="option">
           <span
             class="upload-dropdown-option"
             @click="downloadDashboardData('all_csv')"
@@ -75,8 +92,8 @@
           >
             <span> Exportar tudo em CSV </span>
           </span>
-        </unnnic-dropdown-item>
-        <unnnic-dropdown-item class="option">
+        </UnnnicDropdownItem>
+        <UnnnicDropdownItem class="option">
           <span
             class="upload-dropdown-option"
             @click="downloadMetric('metrics_xls')"
@@ -84,8 +101,8 @@
           >
             <span> Exportar métricas em XLS </span>
           </span>
-        </unnnic-dropdown-item>
-        <unnnic-dropdown-item class="option">
+        </UnnnicDropdownItem>
+        <UnnnicDropdownItem class="option">
           <span
             class="upload-dropdown-option"
             @click="downloadDashboardData('all_xls')"
@@ -93,9 +110,9 @@
           >
             <span> Exportar tudo em XLS </span>
           </span>
-        </unnnic-dropdown-item>
+        </UnnnicDropdownItem>
       </div>
-    </unnnic-dropdown>
+    </UnnnicDropdown>
   </section>
 </template>
 
@@ -216,7 +233,9 @@ export default {
         const { results } = await Sector.list();
 
         const newSectors = [this.filterSectorsOptionAll];
-        results.forEach(({ uuid, name }) => newSectors.push({ value: uuid, label: name }));
+        results.forEach(({ uuid, name }) =>
+          newSectors.push({ value: uuid, label: name }),
+        );
         this.sectorsToFilter = newSectors;
 
         if (results.length === 1) {
@@ -248,7 +267,10 @@ export default {
         });
         this.agentsToFilter = newAgents;
       } catch (error) {
-        console.error('The sector agents could not be loaded at this time.', error);
+        console.error(
+          'The sector agents could not be loaded at this time.',
+          error,
+        );
       }
     },
 
@@ -261,10 +283,15 @@ export default {
         const { results } = await Sector.tags(sectorUuid);
 
         const newTags = this.tagsToFilter;
-        results.forEach(({ uuid, name }) => newTags.push({ value: uuid, label: name }));
+        results.forEach(({ uuid, name }) =>
+          newTags.push({ value: uuid, label: name }),
+        );
         this.tagsToFilter = newTags;
       } catch (error) {
-        console.error('The sector tags could not be loaded at this time.', error);
+        console.error(
+          'The sector tags could not be loaded at this time.',
+          error,
+        );
       }
     },
 

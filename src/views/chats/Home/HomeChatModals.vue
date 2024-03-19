@@ -1,29 +1,38 @@
 <template>
-  <section class="home-chat-modals" :class="{ 'home-chat-modals--mobile': isMobile }">
-    <modal-get-chat
+  <section
+    class="home-chat-modals"
+    :class="{ 'home-chat-modals--mobile': isMobile }"
+  >
+    <ModalGetChat
       :showModal="modalsShowing.getChat"
       @closeModal="closeModal('getChat')"
       :title="$t('chats.get_chat_question')"
-      :description="$t('chats.get_chat_confirmation', { contact: room?.contact?.name })"
+      :description="
+        $t('chats.get_chat_confirmation', { contact: room?.contact?.name })
+      "
       :whenGetChat="emitGotChat"
     />
 
-    <unnnic-modal
+    <UnnnicModal
       :text="$t('chats.your_chat_assumed', { contact: assumedChatContactName })"
-      :description="$t('chats.your_chat_assumed_description', { contact: assumedChatContactName })"
+      :description="
+        $t('chats.your_chat_assumed_description', {
+          contact: assumedChatContactName,
+        })
+      "
       modalIcon="check-circle-1-1"
       scheme="feedback-green"
       :showModal="modalsShowing.assumedChat"
       @close="closeModal('assumedChat')"
     />
 
-    <modal-close-chat
+    <ModalCloseChat
       v-if="modalsShowing.closeChat"
       @close="closeModal('closeChat')"
       :room="room"
     />
 
-    <file-uploader
+    <FileUploader
       v-model="modalFileUploaderFiles"
       ref="fileUploader"
       @progress="emitFileUploaderProgress"
@@ -31,7 +40,7 @@
       :mediasType="modalFileUploaderMediaType"
     />
 
-    <modal-quick-messages
+    <ModalQuickMessages
       v-if="modalsShowing.quickMessages"
       @close="closeModal('quickMessages')"
       @select-quick-message="emitSelectQuickMessage"
@@ -80,7 +89,8 @@ export default {
     ...mapState({
       room: (state) => state.chats.rooms.activeRoom,
       showModalAssumedChat: ({ dashboard }) => dashboard.showModalAssumedChat,
-      assumedChatContactName: ({ dashboard }) => dashboard.assumedChatContactName,
+      assumedChatContactName: ({ dashboard }) =>
+        dashboard.assumedChatContactName,
     }),
   },
 

@@ -1,18 +1,18 @@
 <template>
-  <aside-slot-template
+  <AsideSlotTemplate
     v-if="!isEditing && !isCreating"
     :title="$t('quick_message')"
     icon="bolt"
     :close="() => $emit('close')"
   >
-    <aside-slot-template-section class="messages-section__container">
-      <quick-messages-list
+    <AsideSlotTemplateSection class="messages-section__container">
+      <QuickMessagesList
         @select-quick-message="selectQuickMessage"
         @edit-quick-message="quickMessageToEdit = $event"
         @delete-quick-message="quickMessageToDelete = $event"
       />
 
-      <unnnic-button
+      <UnnnicButton
         v-if="isMobile"
         class="quick-messages__mobile-new"
         float
@@ -21,51 +21,55 @@
         size="extra-large"
         @click="openQuickMessageCreation"
       />
-      <unnnic-button
+      <UnnnicButton
         v-else
-        icon-left="add"
+        iconLeft="add"
         :text="$t('quick_messages.new')"
         type="secondary"
         size="small"
         class="fill-w"
         @click="openQuickMessageCreation"
       />
-    </aside-slot-template-section>
+    </AsideSlotTemplateSection>
 
     <template v-slot:modals>
-      <unnnic-modal
+      <UnnnicModal
         class="quick-messages__modal-delete"
         :text="$t('quick_messages.delete')"
         :description="$t('action_cannot_be_reversed')"
         scheme="feedback-red"
-        modal-icon="error"
-        :close-icon="isMobile"
+        modalIcon="error"
+        :closeIcon="isMobile"
         @close="quickMessageToDelete = null"
-        :show-modal="!!quickMessageToDelete"
+        :showModal="!!quickMessageToDelete"
       >
         <template #options>
-          <unnnic-button
+          <UnnnicButton
             :text="$t('cancel')"
             type="tertiary"
             @click="quickMessageToDelete = null"
           />
-          <unnnic-button :text="$t('delete')" type="warning" @click="deleteQuickMessage" />
+          <UnnnicButton
+            :text="$t('delete')"
+            type="warning"
+            @click="deleteQuickMessage"
+          />
         </template>
-      </unnnic-modal>
+      </UnnnicModal>
     </template>
-  </aside-slot-template>
+  </AsideSlotTemplate>
 
-  <aside-slot-template
+  <AsideSlotTemplate
     v-else
     :title="$t('quick_message')"
     icon="bolt"
     :back="() => (quickMessageToEdit = null)"
     :close="() => $emit('close')"
   >
-    <aside-slot-template-section class="fill-h fill-w">
+    <AsideSlotTemplateSection class="fill-h fill-w">
       <section class="fill-h quick-messages-form">
         <h1 class="quick-messages-form__title">{{ quickMessageFormTitle }}</h1>
-        <quick-message-form
+        <QuickMessageForm
           v-model="quickMessageToEdit"
           class="quick-messages-form__form"
           @submit="
@@ -76,8 +80,8 @@
           @cancel="quickMessageToEdit = null"
         />
       </section>
-    </aside-slot-template-section>
-  </aside-slot-template>
+    </AsideSlotTemplateSection>
+  </AsideSlotTemplate>
 </template>
 
 <script>

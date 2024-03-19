@@ -125,9 +125,12 @@ export default {
         }
       }
 
-      const updatedMessage = parseMessageToMessageWithSenderProp(treatedMessage);
+      const updatedMessage =
+        parseMessageToMessageWithSenderProp(treatedMessage);
 
-      const messageIndex = roomMessages.findIndex((mappedMessage) => mappedMessage.uuid === uuid);
+      const messageIndex = roomMessages.findIndex(
+        (mappedMessage) => mappedMessage.uuid === uuid,
+      );
       if (messageIndex !== -1) {
         roomMessages[messageIndex] = updatedMessage;
       }
@@ -143,15 +146,23 @@ export default {
       await treatMessages({
         itemUuid: Rooms.state.activeRoom?.uuid,
         getItemMessages: () =>
-          Message.getByRoom({ nextReq }, Rooms.state.activeRoom?.uuid, offset, limit),
+          Message.getByRoom(
+            { nextReq },
+            Rooms.state.activeRoom?.uuid,
+            offset,
+            limit,
+          ),
         oldMessages: state.roomMessages,
         nextReq,
         addSortedMessage: ({ message, addBefore }) =>
           commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message, addBefore }),
         resetSortedMessages: () => commit(mutations.RESET_ROOM_MESSAGES_SORTED),
-        setMessages: (messages) => commit(mutations.SET_ROOM_MESSAGES, messages),
-        setMessagesNext: (next) => commit(mutations.SET_ROOM_MESSAGES_NEXT, next),
-        setMessagesPrevious: (previous) => commit(mutations.SET_ROOM_MESSAGES_PREVIOUS, previous),
+        setMessages: (messages) =>
+          commit(mutations.SET_ROOM_MESSAGES, messages),
+        setMessagesNext: (next) =>
+          commit(mutations.SET_ROOM_MESSAGES_NEXT, next),
+        setMessagesPrevious: (previous) =>
+          commit(mutations.SET_ROOM_MESSAGES_PREVIOUS, previous),
       });
     },
 
@@ -189,7 +200,8 @@ export default {
             seen: true,
           }),
         addMessage: (message) => commit(mutations.ADD_MESSAGE, { message }),
-        addSortedMessage: (message) => commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message }),
+        addSortedMessage: (message) =>
+          commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message }),
         updateMessage: ({ message, toUpdateMessageUuid }) =>
           commit(mutations.UPDATE_MESSAGE, { message, toUpdateMessageUuid }),
       });
@@ -211,12 +223,18 @@ export default {
             updateLoadingFiles,
           }),
         addMessage: (message) => commit(mutations.ADD_MESSAGE, { message }),
-        addSortedMessage: (message) => commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message }),
+        addSortedMessage: (message) =>
+          commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message }),
         addFailedMessage: (message) =>
           commit(mutations.ADD_FAILED_MESSAGE, {
             message,
           }),
-        updateMessage: ({ media, message, toUpdateMessageUuid, toUpdateMediaPreview }) =>
+        updateMessage: ({
+          media,
+          message,
+          toUpdateMessageUuid,
+          toUpdateMediaPreview,
+        }) =>
           commit(mutations.UPDATE_MESSAGE, {
             media,
             message,
@@ -242,7 +260,8 @@ export default {
         updateMessage: ({ message, toUpdateMessageUuid }) =>
           commit(mutations.UPDATE_MESSAGE, { message, toUpdateMessageUuid }),
         messagesInPromiseUuids: state.roomMessagesInPromiseUuids,
-        removeInPromiseMessage: (message) => removeMessageFromInPromise({ state }, message),
+        removeInPromiseMessage: (message) =>
+          removeMessageFromInPromise({ state }, message),
       });
     },
 
@@ -263,9 +282,16 @@ export default {
           commit(mutations.ADD_FAILED_MESSAGE, {
             message,
           }),
-        removeFailedMessage: (message) => removeMessageFromFaileds({ state }, message),
-        addSendingMessage: (message) => state.roomMessagesSendingUuids.push(message),
-        updateMessage: ({ media, message, toUpdateMessageUuid, toUpdateMediaPreview }) =>
+        removeFailedMessage: (message) =>
+          removeMessageFromFaileds({ state }, message),
+        addSendingMessage: (message) =>
+          state.roomMessagesSendingUuids.push(message),
+        updateMessage: ({
+          media,
+          message,
+          toUpdateMessageUuid,
+          toUpdateMediaPreview,
+        }) =>
           commit(mutations.UPDATE_MESSAGE, {
             media,
             message,
@@ -291,7 +317,9 @@ export default {
           );
 
           // eslint-disable-next-line no-await-in-loop
-          await dispatch('resendRoomMessage', { message: roomMessages[messageIndex] });
+          await dispatch('resendRoomMessage', {
+            message: roomMessages[messageIndex],
+          });
         }
       }
     },

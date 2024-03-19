@@ -35,7 +35,10 @@ export default {
     // Work around alert: This loop is required by ensures that all streams,
     // which contain the chats tag, are loaded before returning
 
-    while ((nextCursor === undefined || nextCursor) && loopCount <= maxLoopCount) {
+    while (
+      (nextCursor === undefined || nextCursor) &&
+      loopCount <= maxLoopCount
+    ) {
       // eslint-disable-next-line no-await-in-loop
       const responseData = await fetchData(nextCursor);
       flows = flows.concat(responseData.results);
@@ -47,11 +50,14 @@ export default {
   },
 
   async getFlowTrigger(uuidFlow) {
-    const response = await http.get(`/project/${getProject()}/retrieve_flow_definitions/`, {
-      params: {
-        flow_uuid: uuidFlow,
+    const response = await http.get(
+      `/project/${getProject()}/retrieve_flow_definitions/`,
+      {
+        params: {
+          flow_uuid: uuidFlow,
+        },
       },
-    });
+    );
     return response.data;
   },
 
@@ -69,25 +75,39 @@ export default {
     });
     return response.data;
   },
-  async listFlowsStart({ offset = 0, limit = 5, created_on_before = '', created_on_after = '' }) {
-    const response = await http.get(`/project/${getProject()}/list_flows_start/`, {
-      params: {
-        offset,
-        limit,
-        created_on_before,
-        created_on_after,
+  async listFlowsStart({
+    offset = 0,
+    limit = 5,
+    created_on_before = '',
+    created_on_after = '',
+  }) {
+    const response = await http.get(
+      `/project/${getProject()}/list_flows_start/`,
+      {
+        params: {
+          offset,
+          limit,
+          created_on_before,
+          created_on_after,
+        },
       },
-    });
+    );
     return response.data;
   },
 
   async createContact(contact) {
-    const response = await http.post(`/project/${getProject()}/create_contacts/`, contact);
+    const response = await http.post(
+      `/project/${getProject()}/create_contacts/`,
+      contact,
+    );
     return response.data;
   },
 
   async sendFlow(object) {
-    const response = await http.post(`/project/${getProject()}/start_flow/`, object);
+    const response = await http.post(
+      `/project/${getProject()}/start_flow/`,
+      object,
+    );
     return response.data;
   },
 };

@@ -41,7 +41,9 @@ describe('FormSector', () => {
   });
 
   it('should render all inputs', () => {
-    const inputSector = wrapper.findAllComponents({ name: 'unnnic-input' }).at(0);
+    const inputSector = wrapper
+      .findAllComponents({ name: 'unnnic-input' })
+      .at(0);
     expect(inputSector.exists()).toBe(true);
     expect(inputSector.props('label')).toMatch(/Nome do setor/gi);
     expect(inputSector.props('placeholder')).toMatch(/Exemplo: Financeiro/gi);
@@ -49,17 +51,23 @@ describe('FormSector', () => {
     const inputManager = wrapper.find('.unnnic-autocomplete');
     expect(inputManager.exists()).toBe(true);
     expect(inputManager.props('label')).toMatch(/Adicionar gerente/gi);
-    expect(inputManager.props('placeholder')).toMatch(/Pesquise pelo nome ou email/gi);
+    expect(inputManager.props('placeholder')).toMatch(
+      /Pesquise pelo nome ou email/gi,
+    );
 
     const inputTrigger = wrapper.find('.unnnic-switch');
     expect(inputTrigger.exists()).toBe(true);
     const inputTriggerLabel = wrapper.find('.unnnic-switch__label');
-    expect(inputTriggerLabel.text()).toMatch(/Disparo de modelos de mensagens desativado/gi);
+    expect(inputTriggerLabel.text()).toMatch(
+      /Disparo de modelos de mensagens desativado/gi,
+    );
 
     const inputsTime = wrapper.findAll('input[type="time"]');
     expect(inputsTime.length).toBe(2);
 
-    const inputLimitSimultaneousChats = wrapper.findAllComponents({ name: 'unnnic-input' }).at(-1);
+    const inputLimitSimultaneousChats = wrapper
+      .findAllComponents({ name: 'unnnic-input' })
+      .at(-1);
     expect(inputLimitSimultaneousChats.exists()).toBe(true);
     expect(inputLimitSimultaneousChats.props('label')).toMatch(
       /Limite de quantidade de atendimentos simultâneos por agente/gi,
@@ -92,7 +100,9 @@ describe('FormSector', () => {
       },
     });
 
-    const selectedMemberCards = wrapper.findAllComponents({ name: 'selected-member' });
+    const selectedMemberCards = wrapper.findAllComponents({
+      name: 'selected-member',
+    });
     expect(selectedMemberCards.length).toBe(2);
   });
 });

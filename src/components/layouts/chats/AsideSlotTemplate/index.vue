@@ -1,6 +1,6 @@
 <template>
   <aside class="aside-slot-template">
-    <unnnic-chats-header
+    <UnnnicChatsHeader
       :title="title"
       :subtitle="subtitle"
       :avatarIcon="icon"

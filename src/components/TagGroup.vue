@@ -1,16 +1,22 @@
 <template>
   <section :class="{ 'tag-group': true, flex }">
-    <div v-if="tags.length > 0" class="tag-group__tags" ref="container">
-      <unnnic-tag
+    <div
+      v-if="tags.length > 0"
+      class="tag-group__tags"
+      ref="container"
+    >
+      <UnnnicTag
         v-for="(tag, i) in tags"
         :key="tag.uuid"
         :clickable="selectable"
         :text="tag.name"
         :data-testid="`tag__${tag.uuid}`"
-        :has-close-icon="showCloseIcon(tag)"
+        :hasCloseIcon="showCloseIcon(tag)"
         @click="select(tag)"
         @close="close(tag)"
-        :disabled="!scheme && !hasCloseIcon && selectable && !isSelectedTag(tag)"
+        :disabled="
+          !scheme && !hasCloseIcon && selectable && !isSelectedTag(tag)
+        "
         :class="{ 'tag-group__tags__tag--selected': isSelectedTag(tag) }"
         :scheme="scheme || schemes[i % schemes.length]"
         :ref="tag.uuid"
@@ -128,7 +134,8 @@ export default {
 
         if (entry.isIntersecting) {
           this.remainingTags -= 1;
-          remainingTagsPos = entry.target.offsetLeft + entry.boundingClientRect.width;
+          remainingTagsPos =
+            entry.target.offsetLeft + entry.boundingClientRect.width;
         } else {
           this.remainingTags += 1;
 
@@ -140,8 +147,10 @@ export default {
             const lastElement = this.$refs[lastChildUuid]?.[0].$el;
 
             if (lastElement) {
-              const lastElementBoundingRect = lastElement.getBoundingClientRect();
-              remainingTagsPos = lastElement.offsetLeft + lastElementBoundingRect.width;
+              const lastElementBoundingRect =
+                lastElement.getBoundingClientRect();
+              remainingTagsPos =
+                lastElement.offsetLeft + lastElementBoundingRect.width;
             }
           }
         }

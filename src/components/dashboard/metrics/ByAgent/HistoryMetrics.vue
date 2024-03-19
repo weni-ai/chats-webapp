@@ -1,11 +1,11 @@
 <template>
   <main class="agent-history-metrics">
     <section>
-      <general-metrics :metrics="generalMetrics" />
+      <GeneralMetrics :metrics="generalMetrics" />
     </section>
 
     <section class="agent-history-metrics__metrics">
-      <card-group-metrics
+      <CardGroupMetrics
         :metrics="queues"
         :title="`${agentName} em filas`"
         icon="hierarchy-3-2"

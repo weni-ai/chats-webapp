@@ -11,19 +11,23 @@
     @click="$emit('click')"
     @keypress.enter="$emit('click')"
   >
-    <unnnic-icon-svg
+    <UnnnicIconSvg
       v-if="username === 'Agente'"
       icon="single-neutral-actions-1"
       size="sm"
       :scheme="disabled ? 'neutral-snow' : ''"
     />
-    <unnnic-icon-svg
+    <UnnnicIconSvg
       v-else-if="username === 'Bot'"
       icon="science-fiction-robot-2"
       size="sm"
       :scheme="disabled ? 'neutral-snow' : ''"
     />
-    <img v-else-if="!!photoUrl" :src="photoUrl" alt="" />
+    <img
+      v-else-if="!!photoUrl"
+      :src="photoUrl"
+      alt=""
+    />
     <span v-else>
       {{ getUsernameFirstCharacter }}
     </span>
@@ -55,7 +59,8 @@ export default {
       type: String,
       default: 'md',
       validator: (value) =>
-        ['nano', 'xs', 'sm', 'ant', 'md', 'lg', 'xl', '2xl'].indexOf(value) !== -1,
+        ['nano', 'xs', 'sm', 'ant', 'md', 'lg', 'xl', '2xl'].indexOf(value) !==
+        -1,
     },
     username: {
       type: String,
@@ -77,8 +82,8 @@ export default {
 
 <style lang="scss" scoped>
 $avatar-sizes: '2xl' 3rem, 'xl' $unnnic-icon-size-xl, 'lg' $unnnic-icon-size-lg,
-  'md' $unnnic-icon-size-md, 'ant' $unnnic-icon-size-ant, 'sm' $unnnic-icon-size-sm,
-  'xs' $unnnic-icon-size-xs;
+  'md' $unnnic-icon-size-md, 'ant' $unnnic-icon-size-ant,
+  'sm' $unnnic-icon-size-sm, 'xs' $unnnic-icon-size-xs;
 
 .user-avatar {
   display: flex;

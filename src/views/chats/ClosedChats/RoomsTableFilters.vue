@@ -1,41 +1,53 @@
 <template>
   <div class="rooms-table-filters__container">
-    <rooms-table-filters-loading v-if="isFiltersLoading" :vertically="vertically" />
+    <RoomsTableFiltersLoading
+      v-if="isFiltersLoading"
+      :vertically="vertically"
+    />
     <section
       v-else
       class="rooms-table-filters"
       :class="{ 'rooms-table-filters--vertically': vertically }"
     >
       <div class="rooms-table-filters__input">
-        <unnnic-label :label="$t('chats.search_contact')" />
-        <unnnic-input
+        <UnnnicLabel :label="$t('chats.search_contact')" />
+        <UnnnicInput
           v-model="filterContact"
-          icon-left="search-1"
+          iconLeft="search-1"
           :placeholder="$t('name_or_phone')"
         />
       </div>
-      <div class="rooms-table-filters__input" v-if="sectorsToFilter.length > 2">
-        <unnnic-label :label="$t('sector.title')" />
-        <unnnic-select-smart v-model="filterSector" :options="sectorsToFilter" ordered-by-index />
+      <div
+        class="rooms-table-filters__input"
+        v-if="sectorsToFilter.length > 2"
+      >
+        <UnnnicLabel :label="$t('sector.title')" />
+        <UnnnicSelectSmart
+          v-model="filterSector"
+          :options="sectorsToFilter"
+          orderedByIndex
+        />
       </div>
       <div class="rooms-table-filters__input">
-        <unnnic-label :label="$t('tags.title')" />
-        <unnnic-select-smart
+        <UnnnicLabel :label="$t('tags.title')" />
+        <UnnnicSelectSmart
           v-model="filterTag"
-          :disabled="filterSector[0]?.value === 'all' || tagsToFilter.length < 2"
+          :disabled="
+            filterSector[0]?.value === 'all' || tagsToFilter.length < 2
+          "
           :options="tagsToFilter"
           multiple
         />
       </div>
       <div class="rooms-table-filters__input">
-        <unnnic-label :label="$t('date')" />
-        <unnnic-select-smart
+        <UnnnicLabel :label="$t('date')" />
+        <UnnnicSelectSmart
           v-if="isMobile"
           v-model="filterDate"
           :options="datesToFilter"
-          ordered-by-index
+          orderedByIndex
         />
-        <unnnic-input-date-picker
+        <UnnnicInputDatePicker
           v-else
           class="rooms-table-filters__date-picker"
           v-model="filterDate"
@@ -43,7 +55,7 @@
           :inputFormat="$t('date_format')"
         />
       </div>
-      <unnnic-button
+      <UnnnicButton
         class="rooms-table-filters__clear-button"
         :iconLeft="clearFiltersIconLeft"
         :text="$t('clear')"
@@ -183,7 +195,9 @@ export default {
         const { results } = await Sector.list();
 
         const newSectors = [this.filterSectorsOptionAll];
-        results.forEach(({ uuid, name }) => newSectors.push({ value: uuid, label: name }));
+        results.forEach(({ uuid, name }) =>
+          newSectors.push({ value: uuid, label: name }),
+        );
         this.sectorsToFilter = newSectors;
 
         if (results.length === 1) {
@@ -206,10 +220,15 @@ export default {
         const { results } = await Sector.tags(sectorUuid);
 
         const newTags = [this.filterTagDefault];
-        results.forEach(({ uuid, name }) => newTags.push({ value: uuid, label: name }));
+        results.forEach(({ uuid, name }) =>
+          newTags.push({ value: uuid, label: name }),
+        );
         this.tagsToFilter = newTags;
       } catch (error) {
-        console.error('The sector tags could not be loaded at this time.', error);
+        console.error(
+          'The sector tags could not be loaded at this time.',
+          error,
+        );
       }
     },
 
@@ -287,7 +306,9 @@ export default {
       if (this.value) {
         const { contact, sector, tag, date } = this.value;
         const dateStart = this.getRelativeDate(date.start, 'extensive');
-        const matchingDate = this.datesToFilter.find((date) => date.value === dateStart);
+        const matchingDate = this.datesToFilter.find(
+          (date) => date.value === dateStart,
+        );
 
         this.filterContact = contact;
         this.filterSector = sector;
@@ -305,7 +326,8 @@ export default {
         this.emitUpdateFilters();
       }
 
-      if (this.filterContactTimeout !== 0) clearTimeout(this.filterContactTimeout);
+      if (this.filterContactTimeout !== 0)
+        clearTimeout(this.filterContactTimeout);
       this.filterContactTimeout = setTimeout(() => {
         this.emitUpdateFilters();
       }, TIME_TO_WAIT_TYPING);

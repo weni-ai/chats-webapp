@@ -37,7 +37,10 @@ export default {
   },
 
   async create(props) {
-    const response = await http.post('/sector/', { ...props, project: getProject() });
+    const response = await http.post('/sector/', {
+      ...props,
+      project: getProject(),
+    });
     return response.data;
   },
 
@@ -70,7 +73,9 @@ export default {
   },
 
   async tags(sectorUuid) {
-    const response = await http.get('/tag/', { params: { sector: sectorUuid } });
+    const response = await http.get('/tag/', {
+      params: { sector: sectorUuid },
+    });
     return response.data;
   },
 

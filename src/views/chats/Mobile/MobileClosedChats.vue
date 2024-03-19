@@ -1,6 +1,6 @@
 <template>
   <section class="mobile-closed-chats">
-    <unnnic-chats-header
+    <UnnnicChatsHeader
       v-if="!showRoomInfos"
       :back="roomBack"
       :title="$t('chats.closed_chats.history')"
@@ -12,15 +12,22 @@
       :titleClick="roomHeaderClick"
     />
 
-    <closed-chats-rooms-table v-if="!room" :project="project" @open-room="handleRoom" />
-    <section class="mobile-closed-chats__room" v-else>
-      <contact-info
+    <ClosedChatsRoomsTable
+      v-if="!room"
+      :project="project"
+      @open-room="handleRoom"
+    />
+    <section
+      class="mobile-closed-chats__room"
+      v-else
+    >
+      <ContactInfo
         v-if="showRoomInfos"
         isHistory
         :closedRoom="room"
         @close="handleShowRoomInfos"
       />
-      <room-messages v-else />
+      <RoomMessages v-else />
     </section>
   </section>
 </template>
@@ -113,7 +120,9 @@ export default {
       immediate: true,
       async handler(roomId) {
         if (roomId) {
-          const responseRoom = await History.getHistoryContactRoom({ room: roomId });
+          const responseRoom = await History.getHistoryContactRoom({
+            room: roomId,
+          });
 
           const STATUS_NOT_FOUND = 404;
           if (responseRoom.status === STATUS_NOT_FOUND) {

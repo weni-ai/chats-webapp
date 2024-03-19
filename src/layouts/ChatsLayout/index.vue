@@ -1,16 +1,31 @@
 <template>
-  <section :class="['chats-layout', isAsideVisible && 'has-aside', isViewMode && 'view-mode']">
-    <slot name="room-list" v-if="isRoomListVisible">
-      <sidebar-loading v-show="isLoadingSidebar" />
-      <div v-show="!isLoadingSidebar" class="sidebar">
-        <preferences-bar
+  <section
+    :class="[
+      'chats-layout',
+      isAsideVisible && 'has-aside',
+      isViewMode && 'view-mode',
+    ]"
+  >
+    <slot
+      name="room-list"
+      v-if="isRoomListVisible"
+    >
+      <SidebarLoading v-show="isLoadingSidebar" />
+      <div
+        v-show="!isLoadingSidebar"
+        class="sidebar"
+      >
+        <PreferencesBar
           v-if="!isViewMode"
           @show-quick-messages="handlerShowQuickMessages"
           :dashboard="canAccessDashboard"
         />
 
-        <div class="flows-trigger-button" v-if="!isViewMode">
-          <unnnic-button
+        <div
+          class="flows-trigger-button"
+          v-if="!isViewMode"
+        >
+          <UnnnicButton
             v-if="canTriggerFlows"
             size="small"
             type="secondary"
@@ -19,9 +34,13 @@
           />
         </div>
 
-        <the-card-groups class="room-list" :isViewMode="isViewMode" :viewedAgent="viewedAgent" />
+        <TheCardGroups
+          class="room-list"
+          :isViewMode="isViewMode"
+          :viewedAgent="viewedAgent"
+        />
 
-        <unnnic-button
+        <UnnnicButton
           class="history-button"
           :text="isHistoryView ? $t('back_to_chats') : $t('chats.see_history')"
           :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : 'history'"
@@ -32,17 +51,23 @@
       </div>
     </slot>
 
-    <slot name="flows-trigger" v-if="flowsTriggerVisible">
-      <layout-flows-trigger
+    <slot
+      name="flows-trigger"
+      v-if="flowsTriggerVisible"
+    >
+      <LayoutFlowsTrigger
         class="room-list"
         :selectedContact="flowsTriggerContact"
         @close="closeFlowsTrigger"
       />
     </slot>
 
-    <slot name="quick-message" v-if="quickMessagesVisible">
+    <slot
+      name="quick-message"
+      v-if="quickMessagesVisible"
+    >
       <div class="quick-message">
-        <quick-messages
+        <QuickMessages
           class="room-list"
           @close="handlerShowQuickMessages"
           @select-quick-message="selectQuickMessage"
@@ -52,7 +77,10 @@
     <main>
       <slot />
     </main>
-    <section v-if="isAsideVisible" class="aside">
+    <section
+      v-if="isAsideVisible"
+      class="aside"
+    >
       <slot name="aside" />
     </section>
   </section>
@@ -160,7 +188,8 @@ export default {
   computed: {
     isAsideVisible() {
       return (
-        !!this.$slots.aside && this.$slots.aside.filter((slot) => slot.componentOptions).length > 0
+        !!this.$slots.aside &&
+        this.$slots.aside.filter((slot) => slot.componentOptions).length > 0
       );
     },
     isRoomListVisible() {

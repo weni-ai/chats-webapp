@@ -2,8 +2,12 @@
   <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
   <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
   <section class="text-box">
-    <div class="text-editor" :class="{ mobile: isMobile }" @click="$refs.textareaRef.focus()">
-      <unnnic-button
+    <div
+      class="text-editor"
+      :class="{ mobile: isMobile }"
+      @click="$refs.textareaRef.focus()"
+    >
+      <UnnnicButton
         v-if="isMobile"
         class="text-editor__mobile-button"
         iconCenter="bolt"
@@ -11,8 +15,11 @@
         scheme="neutral-dark"
         @click.stop="emitHandleQuickMessages"
       />
-      <div v-else @click.stop="handleEmojiPicker">
-        <unnnic-icon
+      <div
+        v-else
+        @click.stop="handleEmojiPicker"
+      >
+        <UnnnicIcon
           icon="add_reaction"
           scheme="neutral-clean"
           :class="['emoji-button', 'clickable']"
@@ -20,7 +27,7 @@
         />
       </div>
 
-      <emoji-picker
+      <EmojiPicker
         v-show="isEmojiPickerOpen"
         @emojiSelected="handleTextarea"
         @close="closeEmojiPicker"
@@ -39,8 +46,12 @@
         @blur="() => setIsFocused(false)"
       />
 
-      <unnnic-dropdown position="top-left" class="more-actions" v-if="isMobile">
-        <unnnic-button
+      <UnnnicDropdown
+        position="top-left"
+        class="more-actions"
+        v-if="isMobile"
+      >
+        <UnnnicButton
           slot="trigger"
           class="text-editor__mobile-button"
           iconCenter="attachment"
@@ -50,18 +61,18 @@
         />
 
         <div class="more-actions-container">
-          <more-actions-option
+          <MoreActionsOption
             icon="image"
             :title="$t('photo_or_video')"
             :action="() => emitOpenFileUploader({ filesType: 'image' })"
           />
-          <more-actions-option
+          <MoreActionsOption
             icon="article"
             :title="$t('doc')"
             :action="() => emitOpenFileUploader({ filesType: 'doc' })"
           />
         </div>
-      </unnnic-dropdown>
+      </UnnnicDropdown>
     </div>
   </section>
 </template>
@@ -177,7 +188,8 @@ export default {
       const calculatedRows = Math.ceil(calculatedHeight / lineHeight);
       this.textAreaRows = calculatedRows;
 
-      textarea.style.overflowY = textarea.scrollHeight > maxHeight ? 'scroll' : 'hidden';
+      textarea.style.overflowY =
+        textarea.scrollHeight > maxHeight ? 'scroll' : 'hidden';
     },
   },
 
@@ -206,7 +218,9 @@ export default {
   position: relative;
 
   .text-editor {
-    $padding-vertical: calc($unnnic-spacing-stack-nano / 2 + $unnnic-spacing-stack-xs);
+    $padding-vertical: calc(
+      $unnnic-spacing-stack-nano / 2 + $unnnic-spacing-stack-xs
+    );
     $mobile-button-size: 44px; // = button size large (46px) - 2px of message manager border
 
     outline: none;

@@ -1,12 +1,15 @@
 <template>
-  <section v-if="queue" class="view-queue">
+  <section
+    v-if="queue"
+    class="view-queue"
+  >
     <h2 class="name">{{ queue.name }}</h2>
 
     <section class="info-group">
       <p class="title">Adicionar novo Agente</p>
 
       <section class="controls">
-        <unnnic-autocomplete
+        <UnnnicAutocomplete
           v-model="agent.name"
           :data="[]"
           @choose="agent.name = $event"
@@ -15,24 +18,31 @@
           placeholder="Pesquise pelo nome"
           iconLeft="search-1"
           iconRight="keyboard-return-1"
-          open-with-focus
+          openWithFocus
           highlight
           class="input"
         />
-        <unnnic-button type="secondary" text="Adicionar agente" @click="addAgent" />
+        <UnnnicButton
+          type="secondary"
+          text="Adicionar agente"
+          @click="addAgent"
+        />
       </section>
     </section>
 
-    <section v-if="queue.agents.length !== 0" class="info-group">
-      <list-agents
+    <section
+      v-if="queue.agents.length !== 0"
+      class="info-group"
+    >
+      <ListAgents
         :title="`Agentes na fila ${queue.name}`"
         :agents="queue.agents"
-        action-text="Remover"
+        actionText="Remover"
         @select="agentToRemove = $event"
       />
     </section>
 
-    <unnnic-modal
+    <UnnnicModal
       :showModal="!!agentToRemove.name"
       modalIcon="alert-circle-1"
       scheme="feedback-red"
@@ -41,12 +51,20 @@
       @close="agentToRemove = {}"
     >
       <template #options>
-        <unnnic-button type="tertiary" @click="agentToRemove = {}" text="Cancelar" />
-        <unnnic-button type="secondary" @click="removeAgent(agentToRemove)" text="Confirmar" />
+        <UnnnicButton
+          type="tertiary"
+          @click="agentToRemove = {}"
+          text="Cancelar"
+        />
+        <UnnnicButton
+          type="secondary"
+          @click="removeAgent(agentToRemove)"
+          text="Confirmar"
+        />
       </template>
-    </unnnic-modal>
+    </UnnnicModal>
 
-    <unnnic-modal
+    <UnnnicModal
       :showModal="isOpenRemoveAgentFeedbackModal"
       modalIcon="check-circle-1-1"
       scheme="feedback-green"
@@ -55,12 +73,14 @@
       @close="(isOpenRemoveAgentFeedbackModal = false), (agentToRemove = {})"
     >
       <template #options>
-        <unnnic-button
-          @click="(isOpenRemoveAgentFeedbackModal = false), (agentToRemove = {})"
+        <UnnnicButton
+          @click="
+            (isOpenRemoveAgentFeedbackModal = false), (agentToRemove = {})
+          "
           text="Fechar"
         />
       </template>
-    </unnnic-modal>
+    </UnnnicModal>
   </section>
 </template>
 

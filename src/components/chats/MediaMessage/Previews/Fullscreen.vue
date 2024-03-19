@@ -1,12 +1,33 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
-  <div class="fullscreen-preview" @click="close">
-    <header class="toolbar" @click.stop>
-      <fullscreen-control @click="rotate('left')" icon="rotate_left" />
-      <fullscreen-control @click="rotate('right')" icon="rotate_right" />
-      <fullscreen-control @click="zoomHandler" :icon="isZoomed ? 'zoom_out' : 'zoom_in'" />
-      <fullscreen-control @click="download" icon="download" />
-      <fullscreen-control @click="close" icon="close" />
+  <div
+    class="fullscreen-preview"
+    @click="close"
+  >
+    <header
+      class="toolbar"
+      @click.stop
+    >
+      <FullscreenControl
+        @click="rotate('left')"
+        icon="rotate_left"
+      />
+      <FullscreenControl
+        @click="rotate('right')"
+        icon="rotate_right"
+      />
+      <FullscreenControl
+        @click="zoomHandler"
+        :icon="isZoomed ? 'zoom_out' : 'zoom_in'"
+      />
+      <FullscreenControl
+        @click="download"
+        icon="download"
+      />
+      <FullscreenControl
+        @click="close"
+        icon="close"
+      />
     </header>
 
     <div
@@ -16,14 +37,28 @@
       @mousemove="pan"
       @mouseup="endPan"
     >
-      <div class="media__wrapper" ref="mediaWrapper" @click.stop :style="mediaStyle">
+      <div
+        class="media__wrapper"
+        ref="mediaWrapper"
+        @click.stop
+        :style="mediaStyle"
+      >
         <slot />
       </div>
     </div>
 
-    <footer class="controls" @click.stop>
-      <fullscreen-control @click="previous" icon="chevron_left" />
-      <fullscreen-control @click="next" icon="chevron_right" />
+    <footer
+      class="controls"
+      @click.stop
+    >
+      <FullscreenControl
+        @click="previous"
+        icon="chevron_left"
+      />
+      <FullscreenControl
+        @click="next"
+        icon="chevron_right"
+      />
     </footer>
   </div>
 </template>
@@ -126,7 +161,10 @@ export default {
           }
         }
 
-        if (url.includes('develop-flows') && url.includes(mappings['develop-flows'].region)) {
+        if (
+          url.includes('develop-flows') &&
+          url.includes(mappings['develop-flows'].region)
+        ) {
           const { region } = mappings['develop-flows'];
           return url.replace(`.${region}`, '');
         }
@@ -183,16 +221,25 @@ export default {
     pan(event) {
       if (this.isAbleToPlan && this.isPanning) {
         const { containerWidth, containerHeight } = this.getMediaDimensions();
-        const { mainDimension, secondaryDimension } = this.getWrapperDimensions();
+        const { mainDimension, secondaryDimension } =
+          this.getWrapperDimensions();
 
         const x = this.getEventX(event);
         const y = this.getEventY(event);
 
-        const maxX = Math.abs(containerWidth - mainDimension * this.zoomScale) / 2;
-        const maxY = Math.abs(containerHeight - secondaryDimension * this.zoomScale) / 2;
+        const maxX =
+          Math.abs(containerWidth - mainDimension * this.zoomScale) / 2;
+        const maxY =
+          Math.abs(containerHeight - secondaryDimension * this.zoomScale) / 2;
 
-        this.panOffsetX = Math.min(Math.max(this.prevPanOffsetX + x - this.panStartX, -maxX), maxX);
-        this.panOffsetY = Math.min(Math.max(this.prevPanOffsetY + y - this.panStartY, -maxY), maxY);
+        this.panOffsetX = Math.min(
+          Math.max(this.prevPanOffsetX + x - this.panStartX, -maxX),
+          maxX,
+        );
+        this.panOffsetY = Math.min(
+          Math.max(this.prevPanOffsetY + y - this.panStartY, -maxY),
+          maxY,
+        );
       }
     },
 
@@ -255,7 +302,8 @@ export default {
       const { mainDimension, secondaryDimension } = this.getWrapperDimensions();
 
       const isWidthAbleToPan = containerWidth < mainDimension * this.zoomScale;
-      const isHeightAbleToPan = containerHeight < secondaryDimension * this.zoomScale;
+      const isHeightAbleToPan =
+        containerHeight < secondaryDimension * this.zoomScale;
 
       this.isAbleToPlan = isWidthAbleToPan || isHeightAbleToPan;
       if (!this.isAbleToPlan) {
@@ -273,12 +321,15 @@ export default {
     mediaStyle() {
       const { containerHeight } = this.getMediaDimensions();
       return {
-        transform: `translate(${this.panOffsetX}px, ${this.panOffsetY}px) scale(${
-          this.isZoomed ? this.zoomScale : 1
-        }) rotate(${this.rotatedDeg}deg)`,
+        transform: `translate(${this.panOffsetX}px, ${
+          this.panOffsetY
+        }px) scale(${this.isZoomed ? this.zoomScale : 1}) rotate(${
+          this.rotatedDeg
+        }deg)`,
         cursor: this.isZoomed && this.isAbleToPlan ? 'grab' : 'auto',
         transition: this.isPanning ? 'none' : 'all 0.3s ease',
-        width: this.rotateDirection === 'vertical' ? `${containerHeight}px` : '100%',
+        width:
+          this.rotateDirection === 'vertical' ? `${containerHeight}px` : '100%',
       };
     },
   },
@@ -328,7 +379,9 @@ export default {
   }
 
   .media__container {
-    $height: calc(100vh - 3rem - 2rem - 1rem); // 100vh - toolbar - footer - page's padding-bottom
+    $height: calc(
+      100vh - 3rem - 2rem - 1rem
+    ); // 100vh - toolbar - footer - page's padding-bottom
 
     display: flex;
     align-items: center;
