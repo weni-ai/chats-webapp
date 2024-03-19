@@ -297,7 +297,7 @@ export default {
 <style lang="scss" scoped>
 .fullscreen-preview {
   z-index: 10;
-  position: absolute;
+  position: fixed;
 
   top: 0;
   left: 0;

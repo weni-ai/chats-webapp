@@ -7,8 +7,11 @@
       v-if="closedRoom || room"
       class="contact-info"
       :title="$t('contact_info.title')"
-      icon="info"
-      :close="$listeners.close"
+      :subtitle="headerMobileSubtitle"
+      :avatarName="headerMobileSubtitle"
+      :icon="headerDesktopIcon"
+      :close="emitClose"
+      :back="headerMobileBack"
     >
       <section class="scrollable">
         <aside-slot-template-section>
@@ -40,18 +43,24 @@
                 }}
               </p>
               <template>
-                <hgroup class="info">
-                  <h3 class="title">{{ contactNumber.plataform }}:</h3>
-                  <h4 class="description">{{ contactNumber.contactNum }}</h4>
-                </hgroup>
+                <section class="infos">
+                  <hgroup class="info">
+                    <h3 class="title">{{ contactNumber.plataform }}:</h3>
+                    <h4 class="description">{{ contactNumber.contactNum }}</h4>
+                  </hgroup>
+                  <hgroup class="info" v-if="contactProtocol?.length > 0">
+                    <h3 class="title">{{ $t('protocol') }}:</h3>
+                    <h4 class="description">{{ contactProtocol }}</h4>
+                  </hgroup>
+                </section>
               </template>
-              <template v-if="!isHistory && !!room.custom_fields">
+              <template v-if="!!room.custom_fields">
                 <custom-field
                   v-for="(value, key) in customFields"
                   :key="key"
                   :title="key"
                   :description="value"
-                  :is-editable="room.can_edit_custom_fields"
+                  :is-editable="!isHistory && room.can_edit_custom_fields"
                   :is-current="isCurrentCustomField(key)"
                   :value="currentCustomField?.[key]"
                   @update-current-custom-field="updateCurrentCustomField"
@@ -89,7 +98,7 @@
                 @click="openHistory()"
               />
               <unnnic-button
-                v-if="!isViewMode"
+                v-if="!isViewMode && !isMobile"
                 :text="$t('discussions.start_discussion.title')"
                 iconLeft="forum"
                 type="primary"
@@ -112,16 +121,16 @@
           <p class="title-transfer-chat">
             {{ $t('contact_info.transfer_contact') }}
           </p>
-          <div style="margin-top: 20px; margin-bottom: 20px">
-            <unnnic-radio size="sm" v-model="transferRadio" value="agent" :disabled="isViewMode">
-              {{ $t('agent') }}
-            </unnnic-radio>
-
-            <unnnic-radio size="sm" v-model="transferRadio" value="queue" :disabled="isViewMode">
-              {{ $t('queue') }}
-            </unnnic-radio>
-          </div>
           <section class="transfer-section">
+            <section class="transfer__radios">
+              <unnnic-radio size="sm" v-model="transferRadio" value="agent" :disabled="isViewMode">
+                {{ $t('agent') }}
+              </unnnic-radio>
+
+              <unnnic-radio size="sm" v-model="transferRadio" value="queue" :disabled="isViewMode">
+                {{ $t('queue') }}
+              </unnnic-radio>
+            </section>
             <unnnic-select-smart
               v-model="transferContactTo"
               :options="transferOptions"
@@ -134,10 +143,10 @@
             <unnnic-button
               class="transfer__button"
               :text="$t('transfer')"
-              type="secondary"
+              type="primary"
               size="small"
               @click="transferContact"
-              :disabled="isViewMode"
+              :disabled="transferContactTo.length === 0 || isViewMode"
             />
           </section>
         </aside-slot-template-section>
@@ -157,6 +166,13 @@
         :showModal="isShowModalStartDiscussion"
         @close="handleModalStartDiscussion()"
       />
+
+      <modal-progress-bar-false
+        v-if="showTransferProgressBar"
+        :title="$t('contact_info.transfering_chat')"
+        type="secondary"
+        @close="closeTransferProgressBar"
+      />
       <unnnic-modal
         :text="$t('successfully_transferred_chat')"
         :description="
@@ -167,11 +183,7 @@
         modalIcon="check-circle-1-1"
         scheme="feedback-green"
         :showModal="showSuccessfulTransferModal"
-        @close="
-          $store.dispatch('chats/rooms/setActiveRoom', null),
-            (showSuccessfulTransferModal = false),
-            navigate('home')
-        "
+        @close="(showSuccessfulTransferModal = false), navigate('home')"
       />
       <fullscreen-preview
         v-if="isFullscreen"
@@ -200,10 +212,12 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
 import { mapState } from 'vuex';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
+import ModalProgressBarFalse from '@/components/ModalProgressBarFalse';
 
 import ContactInfosLoading from '@/views/loadings/ContactInfos.vue';
 
@@ -236,6 +250,7 @@ export default {
     VideoPreview,
     ModalStartDiscussion,
     DiscussionsSession,
+    ModalProgressBarFalse,
   },
   props: {
     closedRoom: {
@@ -258,6 +273,7 @@ export default {
     transferContactTo: [],
     transferContactError: '',
     showSuccessfulTransferModal: false,
+    showTransferProgressBar: false,
     isLinkedUser: false,
     isLinkedToOtherAgent: false,
     isFullscreen: false,
@@ -277,6 +293,20 @@ export default {
     ...mapState({
       room: (state) => state.chats.rooms.activeRoom,
     }),
+
+    isMobile() {
+      return isMobile();
+    },
+
+    headerMobileSubtitle() {
+      return this.isMobile ? this.room?.contact?.name : '';
+    },
+    headerMobileBack() {
+      return this.isMobile ? () => this.emitClose() : undefined;
+    },
+    headerDesktopIcon() {
+      return !this.isMobile ? 'info' : '';
+    },
 
     lastMessageFromContact() {
       const messages = this.$store.state.chats.roomMessages.roomMessages;
@@ -301,19 +331,22 @@ export default {
       };
       return infoNumber;
     },
+    contactProtocol() {
+      return (this.closedRoom || this.room).protocol;
+    },
   },
 
   async created() {
+    const { closedRoom, room } = this;
+
+    this.customFields = (closedRoom || room)?.custom_fields;
+
     if (this.isHistory) {
       return;
     }
 
-    const { room } = this;
-
-    this.customFields = room.custom_fields;
-
     if (
-      moment((this.closedRoom || room).contact.created_on).format('YYYY-MM-DD') <
+      moment((closedRoom || room).contact.created_on).format('YYYY-MM-DD') <
       moment().format('YYYY-MM-DD')
     ) {
       this.contactHaveHistory = true;
@@ -350,6 +383,7 @@ export default {
     moment,
     openHistory() {
       const { plataform, contactNum } = this.contactNumber;
+      const protocol = this.contactProtocol;
       const contactUrn = plataform === 'whatsapp' ? contactNum.replace('+', '') : contactNum;
 
       const A_YEAR_AGO = moment().subtract(12, 'month').format('YYYY-MM-DD');
@@ -358,9 +392,14 @@ export default {
         name: 'closed-rooms',
         query: {
           contactUrn,
+          protocol,
           startDate: A_YEAR_AGO,
         },
       });
+    },
+
+    emitClose() {
+      this.$emit('close');
     },
 
     handleModalStartDiscussion() {
@@ -590,20 +629,47 @@ export default {
       return value.toString().toLowerCase();
     },
     async transferContact() {
+      if (this.isMobile) {
+        await this.handleFalseTransferProgressBar();
+      }
       if (this.transferRadio === 'agent') {
         await Room.take(this.room.uuid, this.transferPersonSelected.value);
       }
       if (this.transferRadio === 'queue') {
         await Room.take(this.room.uuid, null, this.transferPersonSelected.value);
       }
+
+      if (this.isMobile) {
+        this.$store.dispatch('chats/rooms/setActiveRoom', null);
+        return;
+      }
+
       this.showSuccessfulTransferModal = true;
+    },
+    async handleFalseTransferProgressBar() {
+      this.showTransferProgressBar = true;
+
+      return new Promise((resolve) => {
+        const waitForCloseTransferProgressBar = () => {
+          if (!this.showTransferProgressBar) {
+            resolve();
+          } else {
+            setTimeout(waitForCloseTransferProgressBar, 100);
+          }
+        };
+
+        waitForCloseTransferProgressBar();
+      }).then(() => {
+        this.$emit('transferred-contact');
+      });
+    },
+    closeTransferProgressBar() {
+      this.showTransferProgressBar = false;
     },
   },
   watch: {
     room(newRoom) {
-      if (!this.isHistory) {
-        this.customFields = newRoom.custom_fields;
-      }
+      this.customFields = newRoom.custom_fields;
     },
     transferRadio: {
       handler() {
@@ -630,6 +696,8 @@ export default {
   height: 100%;
 
   overflow: hidden;
+
+  background-color: $unnnic-color-background-snow;
 }
 
 .contact-info {
@@ -638,7 +706,7 @@ export default {
     height: 100%;
   }
 
-  section {
+  .aside-slot-template-section {
     width: 100%;
 
     background-color: $unnnic-color-background-snow;
@@ -680,14 +748,20 @@ export default {
         justify-content: space-between;
       }
 
-      .info {
+      .infos {
         display: flex;
-        align-items: center;
+        flex-direction: column;
         gap: $unnnic-spacing-inline-nano;
 
         &:not(.custom) {
           margin-bottom: $unnnic-spacing-inline-ant;
         }
+      }
+
+      .info {
+        display: flex;
+        align-items: center;
+        gap: $unnnic-spacing-inline-nano;
 
         .title {
           font-weight: $unnnic-font-weight-bold;
@@ -726,8 +800,12 @@ export default {
   }
 
   .transfer-section {
+    .transfer__radios {
+      margin-top: $unnnic-spacing-ant;
+      margin-bottom: $unnnic-spacing-xs;
+    }
     .transfer__button {
-      margin-top: $unnnic-spacing-inline-sm;
+      margin-top: $unnnic-spacing-xs;
       width: 100%;
     }
   }

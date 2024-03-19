@@ -1,5 +1,8 @@
 <template>
-  <section class="rooms-table-filters-loading">
+  <section
+    class="rooms-table-filters-loading"
+    :class="{ 'rooms-table-filters-loading--vertically': vertically }"
+  >
     <div class="rooms-table-filters-loading__filter" v-for="filter in 4" :key="`filter-${filter}`">
       <unnnic-skeleton-loading />
       <unnnic-skeleton-loading />
@@ -11,6 +14,13 @@
 <script>
 export default {
   name: 'RoomsTableFiltersLoading',
+
+  props: {
+    vertically: {
+      type: Boolean,
+      default: false,
+    },
+  },
 };
 </script>
 
@@ -23,7 +33,16 @@ export default {
   justify-content: space-between;
   align-items: flex-end;
 
-  z-index: 10000;
+  overflow: hidden;
+
+  &--vertically {
+    grid-template-columns: auto;
+    justify-content: stretch;
+
+    .rooms-table-filters-loading__clear {
+      width: 100%;
+    }
+  }
 
   &__filter {
     display: grid;

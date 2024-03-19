@@ -1,5 +1,4 @@
 import store from '@/store';
-import { setToken, setProject } from '@/utils/config';
 
 const routes = [
   {
@@ -12,8 +11,6 @@ const routes = [
       const { projectUuid = '' } = to.query;
       await store.dispatch('config/setToken', token);
       await store.dispatch('config/setProject', projectUuid);
-      setToken(token);
-      setProject(projectUuid);
 
       if (to.query.next) {
         const parsedNext = to.query.next.replace(
