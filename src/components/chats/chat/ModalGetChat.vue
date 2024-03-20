@@ -56,6 +56,7 @@ export default {
     ...mapState({
       room: (state) => state.chats.rooms.activeRoom,
       me: (state) => state.profile.me,
+      viewedAgent: (state) => state.dashboard.viewedAgent,
     }),
   },
 
@@ -103,7 +104,12 @@ export default {
         this.$store.commit('profile/setMe', response);
       }
 
-      await Room.getQueueRoom(this.room.uuid, me);
+      if (this.viewedAgent.name === '') {
+        await Room.getQueueRoom(this.room.uuid, me);
+      } else {
+        await Room.take(this.room.uuid, me);
+      }
+
       await this.setActiveRoom(this.room.uuid);
       if (this.room.user) {
         Room.updateReadMessages(this.room.uuid, true);
