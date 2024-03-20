@@ -8,35 +8,35 @@
     <unnnic-chat-text
       :title="quickMessage.title"
       titleColor="aux-purple-500"
-      :info="
-        $t('quick_messages.shortcut_tooltip', {
-          shortcut: quickMessage.shortcut || quickMessage.title.toLowerCase(),
-        })
-      "
+      :info="quickMessageCardInfo"
       size="small"
       class="quick-message-card"
     >
       <template slot="actions" v-if="withActions">
         <unnnic-dropdown>
           <template #trigger>
-            <unnnic-tool-tip enabled :text="$t('quick_messages.delete_or_edit')" side="left">
-              <div class="quick-message-actions">
-                <unnnic-icon-svg icon="more_vert" size="sm" scheme="neutral-darkest" />
-              </div>
+            <unnnic-tool-tip
+              v-if="!isMobile"
+              enabled
+              :text="$t('quick_messages.delete_or_edit')"
+              side="left"
+            >
+              <unnnic-icon-svg icon="more_vert" size="sm" scheme="neutral-darkest" />
             </unnnic-tool-tip>
+            <unnnic-icon-svg v-else icon="more_vert" size="sm" scheme="neutral-darkest" />
           </template>
 
-          <unnnic-dropdown-item @click="$emit('edit')">
+          <unnnic-dropdown-item @click="$emit('edit', quickMessage)">
             <div class="dropdown-item-content">
               <unnnic-icon-svg class="icon" icon="edit_square" size="sm" />
               <span> {{ $t('edit') }} </span>
             </div>
           </unnnic-dropdown-item>
 
-          <unnnic-dropdown-item @click="$emit('delete')">
+          <unnnic-dropdown-item @click="$emit('delete', quickMessage)">
             <div class="dropdown-item-content">
               <unnnic-icon-svg class="icon" icon="delete" size="sm" />
-              <span> {{ $t('delete') }} </span>
+              <span> {{ $t('exclude') }} </span>
             </div>
           </unnnic-dropdown-item>
         </unnnic-dropdown>
@@ -50,6 +50,8 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
+
 export default {
   name: 'QuickMessageCard',
 
@@ -67,6 +69,25 @@ export default {
       default: true,
     },
   },
+
+  data() {
+    return {
+      isMobile: isMobile(),
+    };
+  },
+
+  computed: {
+    quickMessageCardInfo() {
+      const { isMobile, quickMessage } = this;
+      if (isMobile) {
+        return '';
+      }
+
+      return this.$t('quick_messages.shortcut_tooltip', {
+        shortcut: quickMessage.shortcut || quickMessage.title.toLowerCase(),
+      });
+    },
+  },
 };
 </script>
 
@@ -79,11 +100,6 @@ export default {
 .quick-message-card {
   :deep(.unnnic-chat-text) {
     line-break: anywhere;
-  }
-
-  .quick-message-actions {
-    display: flex;
-    align-items: center;
   }
 
   .dropdown-item-content {

@@ -11,6 +11,7 @@
     :resendMedia="roomResendMedia"
     :tags="room?.tags"
     :isLoading="isLoading"
+    :isClosedChat="!!room?.ended_at"
     @scrollTop="searchForMoreMessages"
   />
 </template>

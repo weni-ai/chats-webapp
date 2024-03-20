@@ -107,7 +107,7 @@ export default {
 .quick-message-form {
   display: flex;
   flex-direction: column;
-  gap: $unnnic-spacing-stack-sm;
+  gap: $unnnic-spacing-xs;
 
   &__title {
     font-size: $unnnic-font-size-body-lg;
@@ -130,6 +130,11 @@ export default {
     .button {
       flex: 1 1;
     }
+  }
+
+  :deep([class*='label']) {
+    margin-top: 0;
+    margin-bottom: $unnnic-spacing-nano;
   }
 }
 </style>

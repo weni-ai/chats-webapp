@@ -45,11 +45,11 @@
         {{ $t('quick_messages.title_by_sector', { sector: sector.name }) }}
       </p>
       <p v-if="quickMessagesShared.length === 0" class="without-messages">
-        {{ $t('quick_messages.without_messages.start') }}
+        {{ $t('quick_messages.without_messages_shared.start') }}
         <button @click="$emit('create-quick-message')">
-          {{ $t('quick_messages.without_messages.middle') }}
+          {{ $t('quick_messages.without_messages_shared.middle') }}
         </button>
-        {{ $t('quick_messages.without_messages.end') }}
+        {{ $t('quick_messages.without_messages_shared.end') }}
       </p>
 
       <quick-message-card

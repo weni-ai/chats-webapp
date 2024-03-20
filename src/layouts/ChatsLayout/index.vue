@@ -261,8 +261,6 @@ section.chats-layout {
     flex-direction: column;
 
     height: 100%;
-
-    border: 1px solid $unnnic-color-neutral-soft;
   }
 
   .aside {
