@@ -126,7 +126,9 @@ describe('Sector', () => {
 
     await Sector.removeManager(managerUuid);
 
-    expect(http.delete).toHaveBeenCalledWith(`/authorization/sector/${managerUuid}`);
+    expect(http.delete).toHaveBeenCalledWith(
+      `/authorization/sector/${managerUuid}`,
+    );
   });
 
   it('should return a list of tags for a sector', async () => {

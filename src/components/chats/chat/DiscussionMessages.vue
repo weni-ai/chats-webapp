@@ -1,5 +1,5 @@
 <template>
-  <chat-messages
+  <ChatMessages
     :chatUuid="discussion?.uuid || ''"
     :messages="discussionMessages"
     :messagesNext="discussionMessagesNext || ''"
@@ -38,11 +38,14 @@ export default {
   computed: {
     ...mapState({
       discussion: (state) => state.chats.discussions.activeDiscussion,
-      discussionMessages: (state) => state.chats.discussionMessages.discussionMessages,
-      discussionMessagesNext: (state) => state.chats.discussionMessages.discussionMessagesNext,
+      discussionMessages: (state) =>
+        state.chats.discussionMessages.discussionMessages,
+      discussionMessagesNext: (state) =>
+        state.chats.discussionMessages.discussionMessagesNext,
       discussionMessagesPrevious: (state) =>
         state.chats.discussionMessages.discussionMessagesPrevious,
-      discussionMessagesSorted: (state) => state.chats.discussionMessages.discussionMessagesSorted,
+      discussionMessagesSorted: (state) =>
+        state.chats.discussionMessages.discussionMessagesSorted,
       discussionMessagesSendingUuids: (state) =>
         state.chats.discussionMessages.discussionMessagesSendingUuids,
       discussionMessagesFailedUuids: (state) =>
@@ -52,7 +55,8 @@ export default {
 
   methods: {
     ...mapActions({
-      discussionResendMessages: 'chats/discussionMessages/resendDiscussionMessages',
+      discussionResendMessages:
+        'chats/discussionMessages/resendDiscussionMessages',
       discussionResendMedia: 'chats/discussionMessages/resendDiscussionMedia',
     }),
 
@@ -84,7 +88,9 @@ export default {
       immediate: true,
       async handler(discussionUuid) {
         if (discussionUuid) {
-          await this.$store.dispatch('chats/discussionMessages/resetDiscussionMessages');
+          await this.$store.dispatch(
+            'chats/discussionMessages/resetDiscussionMessages',
+          );
           this.page = 0;
           this.getDiscussionMessages();
         }

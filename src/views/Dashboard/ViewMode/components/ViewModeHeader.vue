@@ -1,13 +1,30 @@
 <template>
-  <header class="view-mode__header" v-if="viewedAgent">
+  <header
+    class="view-mode__header"
+    v-if="viewedAgent"
+  >
     <h1 class="title">
-      <unnnic-icon icon="visibility" size="md" />
+      <UnnnicIcon
+        icon="visibility"
+        size="md"
+      />
       {{ $t('dashboard.view-mode.title', { viewedAgent }) }}
     </h1>
-    <div class="close-button" @click="closeViewMode" @keypress.enter="closeViewMode">
-      <unnnic-tool-tip :text="$t('dashboard.view-mode.close')" enabled side="left">
-        <unnnic-icon size="sm" icon="close-1" />
-      </unnnic-tool-tip>
+    <div
+      class="close-button"
+      @click="closeViewMode"
+      @keypress.enter="closeViewMode"
+    >
+      <UnnnicToolTip
+        :text="$t('dashboard.view-mode.close')"
+        enabled
+        side="left"
+      >
+        <UnnnicIcon
+          size="sm"
+          icon="close-1"
+        />
+      </UnnnicToolTip>
     </div>
   </header>
 </template>
@@ -62,7 +79,9 @@ export default {
   }
 
   .close-button {
-    margin-right: calc(($unnnic-font-size-body-lg / 100 * 50) + $unnnic-spacing-stack-xs);
+    margin-right: calc(
+      ($unnnic-font-size-body-lg / 100 * 50) + $unnnic-spacing-stack-xs
+    );
     cursor: pointer;
 
     .unnnic-tooltip {

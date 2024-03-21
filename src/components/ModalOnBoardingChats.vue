@@ -8,7 +8,10 @@
         <div class="modal-background-color">
           <div class="content">
             <div class="on-boarding-chat">
-              <div class="slide" ref="slide">
+              <div
+                class="slide"
+                ref="slide"
+              >
                 <div
                   :style="{ width: `${100 * pages}%` }"
                   class="pages"
@@ -19,10 +22,17 @@
                   @mouseleave.self="startAutoSkip"
                 >
                   <div class="page">
-                    <div class="image" @click="redirectToSettings">
-                      <img src="@/assets/OnBoardingChats/onBoardingChatSectorImage.png" />
+                    <div
+                      class="image"
+                      @click="redirectToSettings"
+                    >
+                      <img
+                        src="@/assets/OnBoardingChats/onBoardingChatSectorImage.png"
+                      />
                     </div>
-                    <div class="title">{{ $t('on_boarding.title_sector') }}</div>
+                    <div class="title">
+                      {{ $t('on_boarding.title_sector') }}
+                    </div>
                     <div class="description">
                       <span>
                         {{ $t('on_boarding.description_sector') }}
@@ -31,24 +41,40 @@
                     </div>
                   </div>
                   <div class="page">
-                    <div class="image" @click="redirectToSettings">
-                      <img src="@/assets/OnBoardingChats/onBoardingChatRowImage.png" />
+                    <div
+                      class="image"
+                      @click="redirectToSettings"
+                    >
+                      <img
+                        src="@/assets/OnBoardingChats/onBoardingChatRowImage.png"
+                      />
                     </div>
-                    <div class="title">{{ $t('on_boarding.title_queues') }}</div>
-                    <div class="description">{{ $t('on_boarding.description_queues') }}</div>
+                    <div class="title">
+                      {{ $t('on_boarding.title_queues') }}
+                    </div>
+                    <div class="description">
+                      {{ $t('on_boarding.description_queues') }}
+                    </div>
                   </div>
                   <div class="page">
-                    <div class="image" @click="redirectToSettings">
-                      <img src="@/assets/OnBoardingChats/onBoardingChatTagsImage.png" />
+                    <div
+                      class="image"
+                      @click="redirectToSettings"
+                    >
+                      <img
+                        src="@/assets/OnBoardingChats/onBoardingChatTagsImage.png"
+                      />
                     </div>
                     <div class="title">{{ $t('on_boarding.title_tags') }}</div>
-                    <div class="description">{{ $t('on_boarding.description_tags') }}</div>
+                    <div class="description">
+                      {{ $t('on_boarding.description_tags') }}
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div class="controlers">
-                <unnnic-icon
+                <UnnnicIcon
                   icon="arrow-left-1-1"
                   size="sm"
                   scheme="neutral-cleanest"
@@ -71,7 +97,7 @@
                   ></div>
                 </div>
 
-                <unnnic-icon
+                <UnnnicIcon
                   icon="arrow-right-1-1"
                   size="sm"
                   scheme="neutral-cleanest"
@@ -151,7 +177,10 @@ export default {
       this.startAutoSkip();
     },
     redirectToSettings() {
-      window.parent.postMessage({ event: 'chats:redirect', path: 'chats-settings:settings' }, '*');
+      window.parent.postMessage(
+        { event: 'chats:redirect', path: 'chats-settings:settings' },
+        '*',
+      );
     },
   },
 
@@ -256,7 +285,10 @@ export default {
         width: 0.25rem;
         height: 0.25rem;
         border-radius: 0.25rem;
-        background-color: rgba($unnnic-color-neutral-cleanest, $unnnic-opacity-level-overlay);
+        background-color: rgba(
+          $unnnic-color-neutral-cleanest,
+          $unnnic-opacity-level-overlay
+        );
         transition: all 0.5s;
 
         &.active {

@@ -1,7 +1,13 @@
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
-  <div class="video-preview" :class="{ 'is-fullscreen': isFullcreen }">
-    <video class="video-preview__video" ref="player">
+  <div
+    class="video-preview"
+    :class="{ 'is-fullscreen': isFullcreen }"
+  >
+    <video
+      class="video-preview__video"
+      ref="player"
+    >
       <source :src="src" />
     </video>
   </div>

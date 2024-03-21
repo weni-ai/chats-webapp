@@ -1,16 +1,19 @@
 <template>
   <div>
-    <chats-layout v-if="viewedAgent.email" :viewed-agent="this.viewedAgent.email">
-      <view-mode-header :viewedAgent="viewedAgent.name" />
+    <ChatsLayout
+      v-if="viewedAgent.email"
+      :viewedAgent="this.viewedAgent.email"
+    >
+      <ViewModeHeader :viewedAgent="viewedAgent.name" />
 
-      <chats-background v-if="!room && !discussion && !isRoomSkeletonActive" />
+      <ChatsBackground v-if="!room && !discussion && !isRoomSkeletonActive" />
       <section
         v-if="!!room || !!discussion"
         v-show="!isRoomSkeletonActive"
         class="view-mode__active-chat"
       >
-        <chat-header-loading v-show="isRoomSkeletonActive" />
-        <unnnic-chats-header
+        <ChatHeaderLoading v-show="isRoomSkeletonActive" />
+        <UnnnicChatsHeader
           v-show="!isRoomSkeletonActive"
           v-if="!!room && !discussion"
           :title="room.contact.name || ''"
@@ -18,47 +21,54 @@
           :titleClick="() => handleModal('ContactInfo', 'open')"
           :avatarName="room.contact.name"
         />
-        <unnnic-chats-header
+        <UnnnicChatsHeader
           v-show="!isRoomSkeletonActive"
           v-if="!!discussion"
           class="discussion-header"
           :title="discussion.subject"
-          :subtitle="`${$tc('discussions.title')} ${$t('about')} ${discussion.contact}`"
+          :subtitle="`${$tc('discussions.title')} ${$t('about')} ${
+            discussion.contact
+          }`"
           avatarIcon="forum"
           size="small"
         />
 
-        <room-messages v-if="!!room && !discussion" />
-        <discussion-messages v-if="!!discussion" />
-        <unnnic-button
+        <RoomMessages v-if="!!room && !discussion" />
+        <DiscussionMessages v-if="!!discussion" />
+        <UnnnicButton
           v-if="room && !discussion && room.user?.email !== me.email"
           class="assume-chat"
           :text="$t('dashboard.view-mode.assume_chat')"
           type="secondary"
           @click="handleModal('AssumeChatConfirmation', 'open')"
         />
-        <button-join-discussion v-if="!!discussion" @click="whenJoinDiscussion" />
+        <ButtonJoinDiscussion
+          v-if="!!discussion"
+          @click="whenJoinDiscussion"
+        />
       </section>
 
-      <modal-get-chat
+      <ModalGetChat
         :showModal="isAssumeChatConfirmationOpened"
         @closeModal="handleModal('AssumeChatConfirmation', 'close')"
         :title="$t('dashboard.view-mode.assume_chat_question')"
         :description="
-          $t('dashboard.view-mode.assume_chat_confirmation', { agent: viewedAgent.name })
+          $t('dashboard.view-mode.assume_chat_confirmation', {
+            agent: viewedAgent.name,
+          })
         "
         :whenGetChat="whenGetChat"
       />
 
       <template #aside>
-        <contact-info
+        <ContactInfo
           v-if="isContactInfoOpened"
           class="contact-info"
           isViewMode
           @close="handleModal('ContactInfo', 'close')"
         />
       </template>
-    </chats-layout>
+    </ChatsLayout>
   </div>
 </template>
 
@@ -103,7 +113,10 @@ export default {
   },
 
   mounted() {
-    this.$store.dispatch('dashboard/getViewedAgentData', this.$route.params.viewedAgent);
+    this.$store.dispatch(
+      'dashboard/getViewedAgentData',
+      this.$route.params.viewedAgent,
+    );
   },
 
   beforeDestroy() {
@@ -146,7 +159,10 @@ export default {
       actionMap[action]();
     },
     whenJoinDiscussion() {
-      this.$router.push({ name: 'discussion', params: { discussionId: this.discussion.uuid } });
+      this.$router.push({
+        name: 'discussion',
+        params: { discussionId: this.discussion.uuid },
+      });
     },
     whenGetChat() {
       this.$router.push({ name: 'room', params: { roomId: this.room.uuid } });

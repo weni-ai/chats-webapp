@@ -1,20 +1,20 @@
 <template>
   <section class="home-chat">
-    <home-chat-headers
+    <HomeChatHeaders
       :isLoading="isChatSkeletonActive"
       @openRoomContactInfo="emitOpenRoomContactInfo"
       @openModalCloseChat="openModal('closeChat')"
       @openFlowsTrigger="emitOpenFlowsTrigger"
       @back="clearActiveChats"
     />
-    <chats-dropzone
+    <ChatsDropzone
       @open-file-uploader="openModalFileUploader"
       :show="(!!room && room.user && room.is_24h_valid) || !!discussion"
     >
-      <room-messages v-if="!!room && !discussion" />
-      <discussion-messages v-if="!!discussion" />
+      <RoomMessages v-if="!!room && !discussion" />
+      <DiscussionMessages v-if="!!discussion" />
 
-      <message-manager
+      <MessageManager
         v-if="isMessageManagerRoomVisible || isMessageManagerDiscussionVisible"
         v-model="textBoxMessage"
         :loadingFileValue="uploadFilesProgress"
@@ -22,9 +22,9 @@
         @show-quick-messages="handleShowQuickMessages"
         @open-file-uploader="openModalFileUploader"
       />
-    </chats-dropzone>
+    </ChatsDropzone>
 
-    <unnnic-button
+    <UnnnicButton
       v-if="!room?.user && !discussion"
       class="get-chat-button"
       :text="$t('chats.get_chat')"
@@ -32,13 +32,13 @@
       @click="openModal('getChat')"
     />
 
-    <button-join-discussion
+    <ButtonJoinDiscussion
       v-if="discussion"
       v-show="!isMessageManagerDiscussionVisible"
       @join="whenJoinDiscussion"
     />
 
-    <home-chat-modals
+    <HomeChatModals
       ref="home-chat-modals"
       @got-chat="emitCloseRoomContactInfo"
       @file-uploader-progress="setUploadFilesProgress"
@@ -183,10 +183,17 @@ export default {
     },
 
     async setActiveDiscussion(uuid) {
-      if (this.pathDiscussionId && this.pathDiscussionId !== this.discussion?.uuid) {
-        const discussion = this.$store.getters['chats/discussions/getDiscussionById'](uuid);
+      if (
+        this.pathDiscussionId &&
+        this.pathDiscussionId !== this.discussion?.uuid
+      ) {
+        const discussion =
+          this.$store.getters['chats/discussions/getDiscussionById'](uuid);
         if (discussion) {
-          await this.$store.dispatch('chats/discussions/setActiveDiscussion', discussion);
+          await this.$store.dispatch(
+            'chats/discussions/setActiveDiscussion',
+            discussion,
+          );
         }
       }
     },
@@ -206,9 +213,17 @@ export default {
       return false;
     },
     async shouldRedirect(activeChat) {
-      return (await this.redirectIfNoChat(activeChat)) || !this.isValidChat(activeChat);
+      return (
+        (await this.redirectIfNoChat(activeChat)) ||
+        !this.isValidChat(activeChat)
+      );
     },
-    async redirectToActiveChat({ routeName, paramName, activeChatUuid, pathChatUuid }) {
+    async redirectToActiveChat({
+      routeName,
+      paramName,
+      activeChatUuid,
+      pathChatUuid,
+    }) {
       if (activeChatUuid !== pathChatUuid) {
         this.$router[this.isMobile ? 'push' : 'replace']({
           name: routeName,
@@ -275,9 +290,12 @@ export default {
             chatPathUuid: pathRoomId,
             activeChatUuid: room?.uuid,
             unreadMessages: rooms?.newMessagesByRoom,
-            resetUnreadMessages: this.$store.dispatch('chats/rooms/resetNewMessagesByRoom', {
-              room: pathRoomId,
-            }),
+            resetUnreadMessages: this.$store.dispatch(
+              'chats/rooms/resetNewMessagesByRoom',
+              {
+                room: pathRoomId,
+              },
+            ),
           });
         }
       },

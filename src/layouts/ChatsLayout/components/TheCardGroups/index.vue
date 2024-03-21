@@ -1,20 +1,23 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <div class="container">
-    <unnnic-input
+    <UnnnicInput
       v-model="nameOfContact"
-      icon-left="search-1"
-      :icon-right="nameOfContact ? 'close-1' : ''"
+      iconLeft="search-1"
+      :iconRight="nameOfContact ? 'close-1' : ''"
       :iconRightClickable="true"
       @icon-right-click="nameOfContact = ''"
       size="sm"
       :placeholder="$t('chats.search_contact')"
-    ></unnnic-input>
+    ></UnnnicInput>
     <div class="order-by">
       <div>
         <span>{{ $t('chats.room_list.order_by') }}</span>
       </div>
-      <div class="apply-filter" style="cursor: pointer">
+      <div
+        class="apply-filter"
+        style="cursor: pointer"
+      >
         <span
           :style="{
             fontWeight: lastCreatedFilter ? '700' : '400',
@@ -40,7 +43,7 @@
       </div>
     </div>
 
-    <rooms-list-loading v-if="isLoadingRooms" />
+    <RoomsListLoading v-if="isLoadingRooms" />
     <section
       v-else
       class="chat-groups"
@@ -50,31 +53,34 @@
         }
       "
     >
-      <card-group
+      <CardGroup
         v-if="discussions.length"
         :label="$t('chats.discussions', { length: discussions.length })"
         :discussions="discussions"
         @open="openDiscussion"
       />
-      <card-group
+      <CardGroup
         v-if="rooms_queue.length"
         :label="$t('chats.waiting', { length: rooms_queue.length })"
         :rooms="rooms_queue"
         @open="openRoom"
       />
-      <card-group
+      <CardGroup
         v-if="rooms.length"
         :label="$t('chats.in_progress', { length: rooms.length })"
         :rooms="rooms"
         @open="openRoom"
       />
-      <card-group
+      <CardGroup
         v-if="rooms_sent_flows.length"
         :label="$t('chats.sent_flows', { length: rooms_sent_flows.length })"
         :rooms="rooms_sent_flows"
         @open="openRoom"
       />
-      <p v-if="showNoResultsError" class="no-results">
+      <p
+        v-if="showNoResultsError"
+        class="no-results"
+      >
         {{ isSearching ? $t('without_results') : $t('without_chats') }}
       </p>
     </section>
@@ -139,7 +145,8 @@ export default {
       return this.rooms.reduce(
         (total, room) =>
           total +
-          (this.$store.state.chats.rooms.newMessagesByRoom[room.uuid]?.messages?.length || 0),
+          (this.$store.state.chats.rooms.newMessagesByRoom[room.uuid]?.messages
+            ?.length || 0),
         0,
       );
     },
@@ -160,7 +167,10 @@ export default {
       immediate: true,
       handler() {
         window.parent.postMessage(
-          { event: 'chats:update-unread-messages', unreadMessages: this.totalUnreadMessages },
+          {
+            event: 'chats:update-unread-messages',
+            unreadMessages: this.totalUnreadMessages,
+          },
           '*',
         );
       },
@@ -190,7 +200,10 @@ export default {
     },
 
     async openDiscussion(discussion) {
-      await this.$store.dispatch('chats/discussions/setActiveDiscussion', discussion);
+      await this.$store.dispatch(
+        'chats/discussions/setActiveDiscussion',
+        discussion,
+      );
     },
 
     clearField() {
@@ -230,7 +243,10 @@ export default {
       }
     },
     handleScroll(target) {
-      if (target.offsetHeight + Math.ceil(target.scrollTop) >= target.scrollHeight) {
+      if (
+        target.offsetHeight + Math.ceil(target.scrollTop) >=
+        target.scrollHeight
+      ) {
         this.searchForMoreRooms(true);
       }
     },

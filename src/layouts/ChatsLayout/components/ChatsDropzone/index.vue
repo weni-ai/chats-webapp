@@ -11,8 +11,11 @@
     @dragleave.stop.prevent="dragleave"
     @drop.stop.prevent="drop"
   >
-    <div v-if="show && isDragging" class="dropzone__description">
-      <unnnic-icon-svg
+    <div
+      v-if="show && isDragging"
+      class="dropzone__description"
+    >
+      <UnnnicIconSvg
         class="unnnic-upload-area__dropzone__icon"
         icon="upload-bottom-1"
         scheme="brand-weni"

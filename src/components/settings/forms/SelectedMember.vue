@@ -1,19 +1,38 @@
 <template>
   <div class="selected-member">
     <div class="selected-member__avatar">
-      <img :src="avatarUrl || '/avatar/default.svg'" :alt="`${name}'s avatar`" />
+      <img
+        :src="avatarUrl || '/avatar/default.svg'"
+        :alt="`${name}'s avatar`"
+      />
     </div>
     <div class="selected-member__info">
       <span class="selected-member__name">{{ name }}</span>
       <span class="selected-member__email">{{ email }}</span>
     </div>
 
-    <div v-if="!!roleName" class="selected-member__role">
-      <unnnic-button disabled :text="roleName" size="small" />
+    <div
+      v-if="!!roleName"
+      class="selected-member__role"
+    >
+      <UnnnicButton
+        disabled
+        :text="roleName"
+        size="small"
+      />
     </div>
 
-    <div class="selected-member__remove-button" @click="remove" @keypress.enter="remove">
-      <unnnic-icon icon="cancel" scheme="neutral-darkest" size="sm" clickable />
+    <div
+      class="selected-member__remove-button"
+      @click="remove"
+      @keypress.enter="remove"
+    >
+      <UnnnicIcon
+        icon="cancel"
+        scheme="neutral-darkest"
+        size="sm"
+        clickable
+      />
     </div>
   </div>
 </template>

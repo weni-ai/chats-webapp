@@ -1,6 +1,11 @@
 <template>
   <div class="image-preview">
-    <unnnic-tool-tip class="image-preview__tooltip" enabled :text="tooltip" side="right">
+    <UnnnicToolTip
+      class="image-preview__tooltip"
+      enabled
+      :text="tooltip"
+      side="right"
+    >
       <img
         :src="url"
         :alt="alt"
@@ -9,7 +14,7 @@
         @click="handleImageClick"
         @keypress.enter="handleImageClick"
       />
-    </unnnic-tool-tip>
+    </UnnnicToolTip>
   </div>
 </template>
 
@@ -33,7 +38,8 @@ export default {
     objectFit: {
       type: String,
       default: 'contain',
-      validator: (v) => ['fill', 'contain', 'cover', 'scale-down', 'none'].includes(v),
+      validator: (v) =>
+        ['fill', 'contain', 'cover', 'scale-down', 'none'].includes(v),
     },
     url: {
       type: String,

@@ -1,18 +1,18 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <main class="modal-quick-messages">
-    <unnnic-modal
+    <UnnnicModal
       class="modal-quick-messages__modal"
       :text="$t('quick_messages.title')"
       @close="$emit('close')"
     >
-      <quick-messages-list
+      <QuickMessagesList
         :withHandlers="false"
         :isEmpty.sync="isQuickMessagesEmpty"
         @select-quick-message="emitSelectQuickMessage"
       />
       <template #options>
-        <unnnic-button
+        <UnnnicButton
           v-if="isQuickMessagesEmpty"
           iconLeft="add"
           :text="$t('quick_messages.new')"
@@ -21,7 +21,7 @@
           @click="openHomeNewQuickMessage"
         />
       </template>
-    </unnnic-modal>
+    </UnnnicModal>
   </main>
 </template>
 

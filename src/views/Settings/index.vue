@@ -1,19 +1,31 @@
 <template>
-  <main class="settings-chats" ref="sectorsSection" @scroll="onScroll">
+  <main
+    class="settings-chats"
+    ref="sectorsSection"
+    @scroll="onScroll"
+  >
     <header>
       <h1 class="title">Gerenciar Chats</h1>
       <p class="description">
-        Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua
-        organização.
+        Adicione, visualize e gerencie os setores, filas, gestores e agentes
+        dentro da sua organização.
       </p>
     </header>
 
     <section class="sectors">
-      <div @click="navigate('sectors.new')" @keypress.enter="navigate('sectors.new')">
-        <unnnic-card type="blank" text="Novo setor" icon="add" class="new-sector-card" />
+      <div
+        @click="navigate('sectors.new')"
+        @keypress.enter="navigate('sectors.new')"
+      >
+        <UnnnicCard
+          type="blank"
+          text="Novo setor"
+          icon="add"
+          class="new-sector-card"
+        />
       </div>
 
-      <unnnic-card-project
+      <UnnnicCardProject
         v-for="sector in sectors"
         class="sectors-list"
         :key="sector.id"
@@ -36,8 +48,15 @@
         ]"
       />
     </section>
-    <div v-if="isLoading" class="weni-redirecting">
-      <img class="logo" src="@/assets/LogoWeniAnimada4.svg" alt="" />
+    <div
+      v-if="isLoading"
+      class="weni-redirecting"
+    >
+      <img
+        class="logo"
+        src="@/assets/LogoWeniAnimada4.svg"
+        alt=""
+      />
     </div>
   </main>
 </template>
@@ -99,7 +118,8 @@ export default {
     onScroll() {
       const sectorSection = this.$refs.sectorsSection;
       const isScrollInBottom =
-        sectorSection.scrollTop + sectorSection.clientHeight >= sectorSection.scrollHeight;
+        sectorSection.scrollTop + sectorSection.clientHeight >=
+        sectorSection.scrollHeight;
       if (isScrollInBottom) {
         this.listMoreSectors();
       }

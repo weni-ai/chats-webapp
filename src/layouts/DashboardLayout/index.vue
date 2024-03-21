@@ -2,9 +2,15 @@
 <template>
   <section class="dashboard-layout unnnic-grid-giant">
     <div class="unnnic-grid-span-12">
-      <header class="dashboard__header" style="justify-content: space-between">
+      <header
+        class="dashboard__header"
+        style="justify-content: space-between"
+      >
         <div>
-          <unnnic-avatar-icon icon="bar_chart_4_bars" scheme="aux-purple" />
+          <UnnnicAvatarIcon
+            icon="bar_chart_4_bars"
+            scheme="aux-purple"
+          />
           <span class="title">
             <slot name="header" />
           </span>
@@ -12,7 +18,7 @@
         <div style="display: flex; padding: 12px">
           <slot name="status" />
           <div @click="close">
-            <unnnic-icon
+            <UnnnicIcon
               style="cursor: pointer; margin-right: 26px; margin-top: 18px"
               size="sm"
               icon="close-1"

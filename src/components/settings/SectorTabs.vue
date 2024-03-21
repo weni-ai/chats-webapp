@@ -1,5 +1,10 @@
 <template>
-  <unnnic-tab v-model="tab" :initialTab="tab || 'sector'" :tabs="tabs" class="sector-tabs">
+  <UnnnicTab
+    v-model="tab"
+    :initialTab="tab || 'sector'"
+    :tabs="tabs"
+    class="sector-tabs"
+  >
     <template slot="tab-head-sector">
       <div class="form-tab">
         <span class="name">{{ $t('sector.title') }}</span>
@@ -39,7 +44,7 @@
     <template slot="tab-panel-tags">
       <slot name="tags" />
     </template>
-  </unnnic-tab>
+  </UnnnicTab>
 </template>
 
 <script>

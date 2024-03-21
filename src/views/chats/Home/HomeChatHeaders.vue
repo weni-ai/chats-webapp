@@ -1,7 +1,7 @@
 <template>
   <section class="home-chat-headers">
-    <chat-header-loading v-show="isLoading" />
-    <unnnic-chats-header
+    <ChatHeaderLoading v-show="isLoading" />
+    <UnnnicChatsHeader
       v-show="isShowingRoomHeader"
       :title="headerRoomTitle"
       :avatarClick="() => emitOpenRoomContactInfo()"
@@ -10,7 +10,7 @@
       :close="emitOpenModalCloseChat"
       :back="isMobile ? emitBack : null"
     />
-    <unnnic-chats-header
+    <UnnnicChatsHeader
       v-show="isShowingDiscussionHeader"
       class="home-chat-headers__discussion"
       :title="headerDiscussionTitle"
@@ -20,7 +20,10 @@
       :back="isMobile ? emitBack : null"
     />
 
-    <chat-header-send-flow v-if="isShowingSendFlowHeader" @send-flow="emitOpenFlowsTrigger" />
+    <ChatHeaderSendFlow
+      v-if="isShowingSendFlowHeader"
+      @send-flow="emitOpenFlowsTrigger"
+    />
   </section>
 </template>
 
@@ -80,7 +83,9 @@ export default {
     },
     headerDiscussionSubtitle() {
       const { discussion } = this;
-      return `${this.$tc('discussions.title')} ${this.$t('about')} ${discussion?.contact}`;
+      return `${this.$tc('discussions.title')} ${this.$t('about')} ${
+        discussion?.contact
+      }`;
     },
   },
   methods: {

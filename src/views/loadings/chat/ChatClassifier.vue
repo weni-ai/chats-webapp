@@ -1,6 +1,9 @@
 <template>
   <div class="chat-classifier-loading">
-    <unnnic-skeleton-loading v-for="item in 8" :key="`item-${item}`" />
+    <UnnnicSkeletonLoading
+      v-for="item in 8"
+      :key="`item-${item}`"
+    />
   </div>
 </template>
 

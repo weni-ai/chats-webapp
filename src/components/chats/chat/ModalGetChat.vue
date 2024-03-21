@@ -1,18 +1,26 @@
 <template>
   <section>
-    <unnnic-modal
+    <UnnnicModal
       :showModal="showModal"
       @close="close"
       :text="title"
       :description="description"
-      modal-icon="forum"
+      modalIcon="forum"
       scheme="neutral-darkest"
     >
       <template #options>
-        <unnnic-button :text="$t('cancel')" type="tertiary" @click="close" />
-        <unnnic-button :text="$t('confirm')" type="primary" @click="getChat" />
+        <UnnnicButton
+          :text="$t('cancel')"
+          type="tertiary"
+          @click="close"
+        />
+        <UnnnicButton
+          :text="$t('confirm')"
+          type="primary"
+          @click="getChat"
+        />
       </template>
-    </unnnic-modal>
+    </UnnnicModal>
   </section>
 </template>
 

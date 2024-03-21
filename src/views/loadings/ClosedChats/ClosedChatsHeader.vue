@@ -2,17 +2,17 @@
   <header class="closed-chats-header-loading">
     <section class="closed-chats-header-loading__topbar">
       <div class="closed-chats-header-loading__topbar__breadcrumbs">
-        <unnnic-skeleton-loading />
-        <unnnic-skeleton-loading />
-        <unnnic-skeleton-loading />
+        <UnnnicSkeletonLoading />
+        <UnnnicSkeletonLoading />
+        <UnnnicSkeletonLoading />
       </div>
-      <unnnic-skeleton-loading />
+      <UnnnicSkeletonLoading />
     </section>
     <section class="closed-chats-header-loading__infos">
-      <unnnic-skeleton-loading tag="div" />
+      <UnnnicSkeletonLoading tag="div" />
       <section class="closed-chats-header-loading__infos__title">
-        <unnnic-skeleton-loading tag="div" />
-        <unnnic-skeleton-loading tag="div" />
+        <UnnnicSkeletonLoading tag="div" />
+        <UnnnicSkeletonLoading tag="div" />
       </section>
     </section>
   </header>

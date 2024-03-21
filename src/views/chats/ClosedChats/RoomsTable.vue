@@ -1,28 +1,40 @@
 <template>
-  <section class="closed-chats__rooms-table" :class="{ mobile: isMobile }">
-    <closed-chats-rooms-table-filters v-show="!isMobile" @input="filters = $event" />
-    <modal-closed-chats-filters
+  <section
+    class="closed-chats__rooms-table"
+    :class="{ mobile: isMobile }"
+  >
+    <ClosedChatsRoomsTableFilters
+      v-show="!isMobile"
+      @input="filters = $event"
+    />
+    <ModalClosedChatsFilters
       v-if="isMobile && showModalFilters"
       v-model="filters"
       @close="handleShowModalFilters"
     />
 
-    <rooms-table-loading v-if="isTableLoading" />
-    <unnnic-table
+    <RoomsTableLoading v-if="isTableLoading" />
+    <UnnnicTable
       v-if="!isTableLoading && this.rooms.length > 0"
       :items="rooms"
       class="closed-chats__rooms-table__table"
     >
       <template #header>
-        <unnnic-table-row :headers="tableHeaders" />
+        <UnnnicTableRow :headers="tableHeaders" />
       </template>
 
       <template #item="{ item }">
-        <section @click="emitOpenRoom(item)" @keypress.enter="emitOpenRoom(item)">
-          <unnnic-table-row :headers="tableHeaders">
+        <section
+          @click="emitOpenRoom(item)"
+          @keypress.enter="emitOpenRoom(item)"
+        >
+          <UnnnicTableRow :headers="tableHeaders">
             <template #contactName>
               <div class="closed-chats__rooms-table__table__contact">
-                <unnnic-chats-user-avatar :username="item.contact.name" v-if="!isMobile" />
+                <UnnnicChatsUserAvatar
+                  :username="item.contact.name"
+                  v-if="!isMobile"
+                />
                 <p
                   class="closed-chats__rooms-table__table__contact__name"
                   :title="item.contact.name"
@@ -35,33 +47,43 @@
             <template #agentName>{{ item.user?.first_name }}</template>
 
             <template #tags>
-              <tag-group :tags="item.tags || []" :flex="false" />
+              <TagGroup
+                :tags="item.tags || []"
+                :flex="false"
+              />
             </template>
 
             <template #date>{{ $d(new Date(item.ended_at)) }}</template>
 
             <template #visualize>
-              <div v-if="isMobile" @click="emitOpenRoom(item)" @keypress.enter="emitOpenRoom(item)">
-                <unnnic-icon
+              <div
+                v-if="isMobile"
+                @click="emitOpenRoom(item)"
+                @keypress.enter="emitOpenRoom(item)"
+              >
+                <UnnnicIcon
                   class="closed-chats__rooms-table__table__visualize-icon"
                   icon="open_in_new"
                 />
               </div>
-              <unnnic-button
+              <UnnnicButton
                 v-else
                 class="closed-chats__rooms-table__table__visualize-button"
                 :text="$t('see')"
                 type="secondary"
                 size="small"
                 @click="
-                  $router.push({ name: 'closed-rooms.selected', params: { roomId: item.uuid } })
+                  $router.push({
+                    name: 'closed-rooms.selected',
+                    params: { roomId: item.uuid },
+                  })
                 "
               />
             </template>
-          </unnnic-table-row>
+          </UnnnicTableRow>
         </section>
       </template>
-    </unnnic-table>
+    </UnnnicTable>
     <p
       v-if="!isTableLoading && this.rooms.length === 0"
       class="closed-chats__rooms-table__table__no-results"
@@ -69,16 +91,16 @@
       {{ $t('without_results') }}
     </p>
 
-    <table-pagination
+    <TablePagination
       v-if="showTablePagination"
       v-model="roomsCurrentPage"
       :count="isMobile ? null : roomsCount"
       :countPages="roomsCountPages"
       :limit="roomsLimitPagination"
-      :is-loading="isPagesLoading"
+      :isLoading="isPagesLoading"
     />
 
-    <unnnic-button
+    <UnnnicButton
       v-if="isMobile"
       class="closed-chats__rooms-table__table__mobile-filters"
       iconLeft="search"

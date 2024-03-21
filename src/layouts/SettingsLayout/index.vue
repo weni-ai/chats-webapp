@@ -1,7 +1,7 @@
 <template>
   <section class="settings-layout">
     <section id="view">
-      <router-view />
+      <RouterView />
     </section>
   </section>
 </template>

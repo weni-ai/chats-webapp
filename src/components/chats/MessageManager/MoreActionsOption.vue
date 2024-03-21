@@ -1,9 +1,17 @@
 <template>
   <section>
-    <unnnic-dropdown-item class="more-actions-option" @click="action" @keypress.enter="action">
-      <unnnic-icon-svg :icon="icon" next size="sm" />
+    <UnnnicDropdownItem
+      class="more-actions-option"
+      @click="action"
+      @keypress.enter="action"
+    >
+      <UnnnicIconSvg
+        :icon="icon"
+        next
+        size="sm"
+      />
       <p>{{ title }}</p>
-    </unnnic-dropdown-item>
+    </UnnnicDropdownItem>
   </section>
 </template>
 

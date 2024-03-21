@@ -1,8 +1,8 @@
 <template>
   <div class="chat-header-loading">
     <header>
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading />
+      <UnnnicSkeletonLoading />
+      <UnnnicSkeletonLoading />
     </header>
   </div>
 </template>

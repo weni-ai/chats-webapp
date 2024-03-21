@@ -47,7 +47,9 @@ describe('TagGroup', () => {
     });
 
     await wrapper.findComponent('[data-testid="tag__doubts"]').trigger('click');
-    await wrapper.findComponent('[data-testid="tag__finance"]').trigger('click');
+    await wrapper
+      .findComponent('[data-testid="tag__finance"]')
+      .trigger('click');
     const emittedInputEvent = wrapper.emitted('input').flat(Infinity);
 
     expect(emittedInputEvent.length).toBe(2);
@@ -66,7 +68,9 @@ describe('TagGroup', () => {
     });
 
     await wrapper.get('[data-testid="tag__doubts"]').trigger('click');
-    await wrapper.findComponent('[data-testid="tag__finance"]').trigger('click');
+    await wrapper
+      .findComponent('[data-testid="tag__finance"]')
+      .trigger('click');
     await wrapper.findComponent('[data-testid="tag__doubts"]').trigger('click');
 
     expect(wrapper.emitted('input').length).toBe(3);

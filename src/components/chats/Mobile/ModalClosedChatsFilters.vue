@@ -1,17 +1,24 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
-  <unnnic-modal
+  <UnnnicModal
     ref="refModalClosedChatsFilters"
     class="modal-closed-chats-filters"
     :text="$t('search')"
     @close="$emit('close')"
   >
-    <rooms-table-filters v-model="filters" vertically />
+    <RoomsTableFilters
+      v-model="filters"
+      vertically
+    />
 
     <template #options>
-      <unnnic-button type="primary" :text="$t('search')" @click="emitFilters" />
+      <UnnnicButton
+        type="primary"
+        :text="$t('search')"
+        @click="emitFilters"
+      />
     </template>
-  </unnnic-modal>
+  </UnnnicModal>
 </template>
 
 <script>

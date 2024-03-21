@@ -1,19 +1,22 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <section class="send-flow">
-    <select-flow v-model="selectedFlow" />
+    <SelectFlow v-model="selectedFlow" />
     <div v-if="showProgressBar">
-      <modal-progress-bar-false @close="closeModalProgress" :title="$t('flows_trigger.sending')" />
+      <ModalProgressBarFalse
+        @close="closeModalProgress"
+        :title="$t('flows_trigger.sending')"
+      />
     </div>
     <footer class="send-flow__handlers">
-      <unnnic-button
+      <UnnnicButton
         class="send-flow__handlers__button"
         :text="$t('back')"
         size="small"
         type="tertiary"
         @click="$emit('back')"
       />
-      <send-flow-button
+      <SendFlowButton
         class="send-flow__handlers__button"
         :contacts="contacts"
         :selectedContact="selectedContact"

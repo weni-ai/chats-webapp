@@ -1,27 +1,35 @@
 <template>
-  <unnnic-modal
+  <UnnnicModal
     class="modal-close-chat"
     :class="{ 'modal-close-chat--mobile': isMobile }"
     scheme="neutral-darkest"
     :text="$t('chats.to_end_rate_the_chat')"
     :description="$t('chats.tags_help')"
-    :close-icon="isMobile"
+    :closeIcon="isMobile"
     @close="closeModal"
   >
     <section class="modal-close-chat__tags-list">
-      <chat-classifier v-model="tags" :tags="sectorTags" :loading="isLoadingTags" />
+      <ChatClassifier
+        v-model="tags"
+        :tags="sectorTags"
+        :loading="isLoadingTags"
+      />
     </section>
 
     <template #options>
-      <unnnic-button :text="$t('cancel')" type="tertiary" @click="closeModal" />
-      <unnnic-button
+      <UnnnicButton
+        :text="$t('cancel')"
+        type="tertiary"
+        @click="closeModal"
+      />
+      <UnnnicButton
         :text="$t('end')"
         type="primary"
         @click="closeRoom"
         :loading="isLoadingCloseRoom"
       />
     </template>
-  </unnnic-modal>
+  </UnnnicModal>
 </template>
 
 <script>
@@ -69,7 +77,11 @@ export default {
       this.isLoadingTags = true;
       let hasNext = false;
       try {
-        const response = await Queue.tags(this.room.queue.uuid, this.page * 20, 20);
+        const response = await Queue.tags(
+          this.room.queue.uuid,
+          this.page * 20,
+          20,
+        );
         this.page += 1;
         // this.sectorTags = response.results;
         this.sectorTags = this.sectorTags.concat(response.results);

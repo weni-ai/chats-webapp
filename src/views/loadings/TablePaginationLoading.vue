@@ -1,8 +1,13 @@
 <template>
   <section class="table-pagination-loading">
-    <unnnic-skeleton-loading class="table-pagination-loading__count" />
+    <UnnnicSkeletonLoading class="table-pagination-loading__count" />
     <div class="table-pagination-loading__pagination">
-      <unnnic-skeleton-loading v-for="page in 7" :key="`page-${page}`" height="36px" width="36px" />
+      <UnnnicSkeletonLoading
+        v-for="page in 7"
+        :key="`page-${page}`"
+        height="36px"
+        width="36px"
+      />
     </div>
   </section>
 </template>
