@@ -10,6 +10,7 @@ const mutations = {
   SET_CAN_USE_COPILOT: 'SET_CAN_USE_COPILOT',
   SET_COPILOT_SUGGESTION: 'SET_COPILOT_SUGGESTION',
   UPDATE_NEW_MESSAGES_BY_ROOM: 'UPDATE_NEW_MESSAGES_BY_ROOM',
+  SET_SELECTED_ROOMS_TO_TRANFER: 'SET_SELECTED_ROOMS_TO_TRANFER',
 };
 
 export default {
@@ -21,6 +22,7 @@ export default {
     hasNextRooms: true,
     canUseCopilot: false,
     copilotSuggestion: '',
+    selectedRoomsToTransfer: [],
   },
 
   mutations: {
@@ -45,7 +47,10 @@ export default {
     [mutations.SET_COPILOT_SUGGESTION](state, copilotSuggestion) {
       state.copilotSuggestion = copilotSuggestion;
     },
-    [mutations.UPDATE_NEW_MESSAGES_BY_ROOM](state, { room, message, reset = false }) {
+    [mutations.UPDATE_NEW_MESSAGES_BY_ROOM](
+      state,
+      { room, message, reset = false },
+    ) {
       const roomMessages = state.newMessagesByRoom[room]?.messages || [];
 
       state.newMessagesByRoom = {
@@ -55,11 +60,23 @@ export default {
         },
       };
     },
+    [mutations.SET_SELECTED_ROOMS_TO_TRANFER](state, rooms) {
+      state.selectedRoomsToTransfer = rooms;
+    },
   },
 
   actions: {
-    async getAll({ commit, state }, { offset, concat, limit, contact, order, viewedAgent }) {
-      const response = await Room.getAll(offset, limit, contact, order, viewedAgent);
+    async getAll(
+      { commit, state },
+      { offset, concat, limit, contact, order, viewedAgent },
+    ) {
+      const response = await Room.getAll(
+        offset,
+        limit,
+        contact,
+        order,
+        viewedAgent,
+      );
       let rooms = response.results || [];
       const listRoomHasNext = response.next;
       if (concat) {
@@ -85,7 +102,9 @@ export default {
     },
     async getCanUseCopilot({ state, commit }) {
       if (state.activeRoom) {
-        const response = await Room.getCanUseCopilot({ uuid: state.activeRoom.uuid });
+        const response = await Room.getCanUseCopilot({
+          uuid: state.activeRoom.uuid,
+        });
         commit(mutations.SET_CAN_USE_COPILOT, response.can_use_chat_completion);
       }
     },
@@ -94,7 +113,9 @@ export default {
     },
     async getCopilotSuggestion({ dispatch, state, commit }) {
       dispatch('clearCopilotSuggestion');
-      const response = await Room.getCopilotSuggestion({ uuid: state.activeRoom.uuid });
+      const response = await Room.getCopilotSuggestion({
+        uuid: state.activeRoom.uuid,
+      });
       const suggestion = response?.choices?.[0]?.message?.content;
       if (suggestion) {
         commit(mutations.SET_COPILOT_SUGGESTION, suggestion || '');
@@ -103,9 +124,14 @@ export default {
       }
       return undefined;
     },
-    updateRoom({ state, commit }, { room, userEmail, routerReplace, viewedAgentEmail }) {
+    updateRoom(
+      { state, commit },
+      { room, userEmail, routerReplace, viewedAgentEmail },
+    ) {
       const rooms = state.rooms
-        .map((mappedRoom) => (mappedRoom.uuid === room.uuid ? { ...room } : mappedRoom))
+        .map((mappedRoom) =>
+          mappedRoom.uuid === room.uuid ? { ...room } : mappedRoom,
+        )
         .filter((filteredRoom) => {
           if (!filteredRoom.user) return filteredRoom;
           if (viewedAgentEmail) {
@@ -115,17 +141,23 @@ export default {
         });
       commit(mutations.SET_ROOMS, rooms);
 
-      const isTransferedToOtherUser = room.user && room.user.email !== userEmail;
+      const isTransferedToOtherUser =
+        room.user && room.user.email !== userEmail;
       const isTransferedByMe = room.transferred_by === userEmail;
-      const isTransferedByViewedAgent = room.transferred_by === viewedAgentEmail;
+      const isTransferedByViewedAgent =
+        room.transferred_by === viewedAgentEmail;
       const isTransferedFromAQueue =
-        room.transfer_history?.from?.type === 'queue' || !room.transfer_history?.from;
-      const isActiveRoom = state.activeRoom && room.uuid === state.activeRoom.uuid;
+        room.transfer_history?.from?.type === 'queue' ||
+        !room.transfer_history?.from;
+      const isActiveRoom =
+        state.activeRoom && room.uuid === state.activeRoom.uuid;
 
       if (!isTransferedByMe && isTransferedToOtherUser) {
         if (!isTransferedFromAQueue && !room.is_waiting && !viewedAgentEmail) {
           commit('dashboard/SET_SHOW_MODAL_ASSUMED_CHAT', true, { root: true });
-          commit('dashboard/SET_ASSUMED_CHAT_CONTACT_NAME', room.contact.name, { root: true });
+          commit('dashboard/SET_ASSUMED_CHAT_CONTACT_NAME', room.contact.name, {
+            root: true,
+          });
         }
 
         if (isActiveRoom && !viewedAgentEmail) {
@@ -157,11 +189,16 @@ export default {
     resetNewMessagesByRoom({ commit }, { room }) {
       commit(mutations.UPDATE_NEW_MESSAGES_BY_ROOM, { room, reset: true });
     },
+    setSelectedRoomsToTransfer({ commit }, rooms) {
+      commit(mutations.SET_SELECTED_ROOMS_TO_TRANFER, rooms);
+    },
   },
 
   getters: {
     agentRooms(state) {
-      return state.rooms.filter((room) => !!room.user && room.is_waiting === false);
+      return state.rooms.filter(
+        (room) => !!room.user && room.is_waiting === false,
+      );
     },
     waitingQueue(state) {
       return state.rooms.filter((room) => !room.user && !room.is_waiting);

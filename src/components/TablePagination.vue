@@ -1,6 +1,6 @@
 <template>
   <div class="table-pagination">
-    <table-pagination-loading v-show="isLoading" />
+    <TablePaginationLoading v-show="isLoading" />
     <section
       v-show="!isLoading"
       class="table-pagination__pages"
@@ -9,11 +9,14 @@
         'table-pagination__pages--with-divider': !isMobile,
       }"
     >
-      <p class="table-pagination__count" v-if="showCount">
+      <p
+        class="table-pagination__count"
+        v-if="showCount"
+      >
         {{ tablePagination }}
       </p>
 
-      <unnnic-pagination
+      <UnnnicPagination
         :value="value"
         @input="$emit('input', $event)"
         :max="countPages"

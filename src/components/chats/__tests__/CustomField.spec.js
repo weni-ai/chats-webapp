@@ -29,7 +29,9 @@ describe('CustomField', () => {
 
   it('should renders the title and description', () => {
     expect(wrapper.find('.title').text()).toBe(`${defaultProps.title}:`);
-    expect(wrapper.find('.description h4').text()).toBe(defaultProps.description);
+    expect(wrapper.find('.description h4').text()).toBe(
+      defaultProps.description,
+    );
   });
 
   it('should shows the input field when isCurrent prop is true', async () => {

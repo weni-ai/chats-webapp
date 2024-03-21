@@ -824,12 +824,12 @@
   },
   "name_or_phone_or_protocol": {
     "pt-br": "Nome, telefone ou procotolo",
-    "en-us": "Name, telephone or protocol",
+    "en": "Name, phone or procotolo",
     "es": "Nombre, teléfono o protocolo"
   },
   "protocol": {
     "pt-br": "Protocolo",
-    "en-us": "Protocol",
+    "en": "Protocol",
     "es": "Protocolo"
   },
   "tags": {
@@ -937,6 +937,28 @@
       "es": "Chat cerrado por el agente"
     }
   },
+  "transfer_contact": {
+    "pt-br": "Transferir contato | Transferir contatos",
+    "en": "Transfer contact | Transfer contacts",
+    "es": "Transferir contacto | Transferir contacts"
+  },
+  "bulk_transfer": {
+    "transfer_selected_contacts": {
+      "pt-br": "Transferir contatos selecionados",
+      "en": "Transfer selected contacts",
+      "es": "Transferir contactos seleccionados"
+    },
+    "agent_transfer_success": {
+      "pt-br": "Contatos transferidos com sucesso para agente {agent}",
+      "en": "Contacts successfully transferred to agent {agent}",
+      "es": "Contactos transferidos con éxito al agente {agent}"
+    },
+    "queue_transfer_success": {
+      "pt-br": "Contatos transferidos com sucesso para fila {queue}",
+      "en": "Contacts successfully transferred to queue {queue}",
+      "es": "Contactos transferidos con éxito a la cola {queue}"
+    }
+  },
   "contact_info": {
     "title": {
       "pt-br": "Informações do contato",
@@ -977,11 +999,6 @@
       "pt-br": "Ver histórico",
       "en": "View history",
       "es": "Ver historial"
-    },
-    "transfer_contact": {
-      "pt-br": "Transferir contato",
-      "en": "Transfer contact",
-      "es": "Transferir contacto"
     },
     "audio_tooltip": {
       "pt-br": "{agent} {date} às {time}",
@@ -1447,7 +1464,7 @@
     },
     "contact_already_exists": {
       "pt-br": "O número {contact} já está salvo em sua lista de contatos",
-      "en-us": "The number {contact} is already saved in your contact list",
+      "en": "The number {contact} is already saved in your contact list",
       "es": "El número {contact} ya está guardado en tu lista de contactos"
     }
   },

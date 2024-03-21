@@ -1,12 +1,17 @@
 <template>
-  <aside-slot-template-section
+  <AsideSlotTemplateSection
     v-if="discussionsCloseds?.length > 0"
     class="contact-info__discussions"
     :class="{ 'contact-info__discussions--mobile': isMobile }"
   >
-    <h2 class="contact-info__discussions__title">{{ $tc('discussions.title', 2) }}</h2>
+    <h2 class="contact-info__discussions__title">
+      {{ $tc('discussions.title', 2) }}
+    </h2>
     <ul class="contact-info__discussions__list">
-      <li v-for="discussionClosed in discussionsCloseds" :key="discussionClosed.uuid">
+      <li
+        v-for="discussionClosed in discussionsCloseds"
+        :key="discussionClosed.uuid"
+      >
         <button
           class="contact-info__discussions__list-item"
           @click="openDiscussionClosed(discussionClosed.uuid)"
@@ -16,14 +21,14 @@
       </li>
     </ul>
 
-    <unnnic-modal
+    <UnnnicModal
       v-if="showDiscussionClosedModal"
       :text="$t('discussions.history')"
       @close="handleDiscussionClosedModal"
     >
-      <discussion-messages />
-    </unnnic-modal>
-  </aside-slot-template-section>
+      <DiscussionMessages />
+    </UnnnicModal>
+  </AsideSlotTemplateSection>
 </template>
 <script>
 import isMobile from 'is-mobile';
@@ -49,7 +54,9 @@ export default {
   async created() {
     try {
       const { room } = this;
-      await this.$store.dispatch('chats/discussions/getAllClosed', { roomId: room?.uuid });
+      await this.$store.dispatch('chats/discussions/getAllClosed', {
+        roomId: room?.uuid,
+      });
     } catch (error) {
       console.error('Error listing closed discussions', error);
     }
@@ -62,12 +69,17 @@ export default {
   },
   methods: {
     getDiscussionStartedBy(discussion) {
-      return `${moment(discussion.created_on).format('L')} | ${this.$t('discussions.started_by', {
-        name: discussion.created_by,
-      })}`;
+      return `${moment(discussion.created_on).format('L')} | ${this.$t(
+        'discussions.started_by',
+        {
+          name: discussion.created_by,
+        },
+      )}`;
     },
     async openDiscussionClosed(discussionUuid) {
-      await this.$store.dispatch('chats/discussions/setActiveDiscussion', { uuid: discussionUuid });
+      await this.$store.dispatch('chats/discussions/setActiveDiscussion', {
+        uuid: discussionUuid,
+      });
       this.handleDiscussionClosedModal();
     },
     handleDiscussionClosedModal() {

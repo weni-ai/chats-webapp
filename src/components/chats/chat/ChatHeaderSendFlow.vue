@@ -10,14 +10,18 @@
         {{ $t('alert_last_message_date.message_send_flow') }}
       </a>
     </p>
-    <unnnic-tool-tip
+    <UnnnicToolTip
       enabled
       :text="$t('alert_last_message_date.tip')"
       side="bottom"
       maxWidth="20rem"
     >
-      <unnnic-icon-svg icon="alert-circle-1-1" scheme="neutral-white" size="sm" />
-    </unnnic-tool-tip>
+      <UnnnicIconSvg
+        icon="alert-circle-1-1"
+        scheme="neutral-white"
+        size="sm"
+      />
+    </UnnnicToolTip>
   </div>
 </template>
 

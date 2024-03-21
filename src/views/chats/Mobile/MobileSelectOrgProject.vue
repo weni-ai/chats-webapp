@@ -5,24 +5,27 @@
       @click="removeProject"
       @keypress.enter="removeProject"
     >
-      <img :src="weniChatsLogo" alt="Weni Chats" />
+      <img
+        :src="weniChatsLogo"
+        alt="Weni Chats"
+      />
     </header>
 
     <main class="mobile-select-org-project__main">
-      <unnnic-connect-project-selector
+      <UnnnicConnectProjectSelector
         class="main__orgs-projects"
         :env="appEnviroment"
         :authorization="`Bearer ${userToken}`"
         :page.sync="route"
-        :organization-uuid.sync="organizationUuid"
-        :organizations-items.sync="organizations"
-        :projects-items.sync="projects"
-        :project-uuid.sync="projectUuid"
+        :organizationUuid.sync="organizationUuid"
+        :organizationsItems.sync="organizations"
+        :projectsItems.sync="projects"
+        :projectUuid.sync="projectUuid"
       >
         <template #subtitle>{{ orgAndProjectSubtitle }}</template>
-      </unnnic-connect-project-selector>
+      </UnnnicConnectProjectSelector>
 
-      <unnnic-button
+      <UnnnicButton
         class="main__logout"
         iconCenter="logout"
         type="tertiary"
@@ -65,7 +68,9 @@ export default {
     }),
 
     orgAndProjectSubtitle() {
-      return this.$t(`${this.organizationUuid ? 'select_project' : 'select_org'}.choose_one`);
+      return this.$t(
+        `${this.organizationUuid ? 'select_project' : 'select_org'}.choose_one`,
+      );
     },
   },
   methods: {

@@ -1,16 +1,31 @@
 <template>
-  <section :class="['chats-layout', isAsideVisible && 'has-aside', isViewMode && 'view-mode']">
-    <slot name="room-list" v-if="isRoomListVisible">
-      <sidebar-loading v-show="isLoadingSidebar" />
-      <div v-show="!isLoadingSidebar" class="sidebar">
-        <preferences-bar
+  <section
+    :class="[
+      'chats-layout',
+      isAsideVisible && 'has-aside',
+      isViewMode && 'view-mode',
+    ]"
+  >
+    <slot
+      name="room-list"
+      v-if="isRoomListVisible"
+    >
+      <SidebarLoading v-show="isLoadingSidebar" />
+      <div
+        v-show="!isLoadingSidebar"
+        class="sidebar"
+      >
+        <PreferencesBar
           v-if="!isViewMode"
           @show-quick-messages="handlerShowQuickMessages"
           :dashboard="canAccessDashboard"
         />
 
-        <div class="flows-trigger-button" v-if="!isViewMode">
-          <unnnic-button
+        <div
+          class="flows-trigger-button"
+          v-if="!isViewMode"
+        >
+          <UnnnicButton
             v-if="canTriggerFlows"
             size="small"
             type="secondary"
@@ -19,30 +34,33 @@
           />
         </div>
 
-        <the-card-groups class="room-list" :isViewMode="isViewMode" :viewedAgent="viewedAgent" />
-
-        <unnnic-button
-          class="history-button"
-          :text="isHistoryView ? $t('back_to_chats') : $t('chats.see_history')"
-          :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : 'history'"
-          type="secondary"
-          size="small"
-          @click="navigate(isHistoryView ? 'home' : 'closed-rooms')"
+        <TheCardGroups
+          class="room-list"
+          :isViewMode="isViewMode"
+          :viewedAgent="viewedAgent"
         />
+
+        <ChatsLayoutFooterButton class="footer-button" />
       </div>
     </slot>
 
-    <slot name="flows-trigger" v-if="flowsTriggerVisible">
-      <layout-flows-trigger
+    <slot
+      name="flows-trigger"
+      v-if="flowsTriggerVisible"
+    >
+      <LayoutFlowsTrigger
         class="room-list"
         :selectedContact="flowsTriggerContact"
         @close="closeFlowsTrigger"
       />
     </slot>
 
-    <slot name="quick-message" v-if="quickMessagesVisible">
+    <slot
+      name="quick-message"
+      v-if="quickMessagesVisible"
+    >
       <div class="quick-message">
-        <quick-messages
+        <QuickMessages
           class="room-list"
           @close="handlerShowQuickMessages"
           @select-quick-message="selectQuickMessage"
@@ -52,7 +70,10 @@
     <main>
       <slot />
     </main>
-    <section v-if="isAsideVisible" class="aside">
+    <section
+      v-if="isAsideVisible"
+      class="aside"
+    >
       <slot name="aside" />
     </section>
   </section>
@@ -66,6 +87,7 @@ import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import QuickMessages from '@/components/chats/QuickMessages';
 import TheCardGroups from './components/TheCardGroups';
 import LayoutFlowsTrigger from './components/FlowsTrigger';
+import ChatsLayoutFooterButton from './components/FooterButton';
 
 export default {
   name: 'ChatsLayout',
@@ -76,6 +98,7 @@ export default {
     SidebarLoading,
     LayoutFlowsTrigger,
     QuickMessages,
+    ChatsLayoutFooterButton,
   },
 
   props: {
@@ -150,17 +173,13 @@ export default {
     selectQuickMessage(quickMessage) {
       this.$emit('select-quick-message', quickMessage);
     },
-    navigate(name) {
-      this.$router.push({
-        name,
-      });
-    },
   },
 
   computed: {
     isAsideVisible() {
       return (
-        !!this.$slots.aside && this.$slots.aside.filter((slot) => slot.componentOptions).length > 0
+        !!this.$slots.aside &&
+        this.$slots.aside.filter((slot) => slot.componentOptions).length > 0
       );
     },
     isRoomListVisible() {
@@ -171,9 +190,6 @@ export default {
     },
     quickMessagesVisible() {
       return !this.showFlowsTrigger && this.showQuickMessages;
-    },
-    isHistoryView() {
-      return this.$route.name === 'closed-rooms';
     },
     isViewMode() {
       return !!this.viewedAgent;
@@ -231,10 +247,6 @@ section.chats-layout {
       button {
         width: 100%;
       }
-    }
-
-    .history-button {
-      margin-right: $unnnic-spacing-xs;
     }
 
     .room-list {

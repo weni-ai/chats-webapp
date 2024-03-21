@@ -1,11 +1,14 @@
 <template>
   <div class="discussion-sidebar-loading">
     <header>
-      <unnnic-skeleton-loading tag="div" />
+      <UnnnicSkeletonLoading tag="div" />
     </header>
     <main>
-      <unnnic-skeleton-loading v-for="item in 5" :key="`item-${item}`" />
-      <unnnic-skeleton-loading class="item-last" />
+      <UnnnicSkeletonLoading
+        v-for="item in 5"
+        :key="`item-${item}`"
+      />
+      <UnnnicSkeletonLoading class="item-last" />
     </main>
   </div>
 </template>

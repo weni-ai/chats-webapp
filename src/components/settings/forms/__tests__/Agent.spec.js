@@ -41,7 +41,9 @@ describe('FormAgent', () => {
     const inputAgent = wrapper.find('.unnnic-autocomplete');
     expect(inputAgent.exists()).toBe(true);
     expect(inputAgent.props('label')).toMatch(/Selecionar agente/gi);
-    expect(inputAgent.props('placeholder')).toMatch(/Pesquise pelo nome ou email/gi);
+    expect(inputAgent.props('placeholder')).toMatch(
+      /Pesquise pelo nome ou email/gi,
+    );
   });
 
   it('should have a agents list rendered', async () => {
@@ -66,7 +68,9 @@ describe('FormAgent', () => {
       ],
     });
 
-    const selectedMemberCards = wrapper.findAllComponents({ name: 'selected-member' });
+    const selectedMemberCards = wrapper.findAllComponents({
+      name: 'selected-member',
+    });
     expect(selectedMemberCards.length).toBe(2);
   });
 });

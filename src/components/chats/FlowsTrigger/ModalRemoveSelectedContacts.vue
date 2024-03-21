@@ -1,31 +1,31 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
-  <unnnic-modal
+  <UnnnicModal
     @close="$emit('close')"
     :text="$t('flows_trigger.remove_selected_contacts')"
     class="modal-remove-selected-contacts"
     ref="refModalRemoveSelectedContacts"
     :showModal="contacts.length > 0"
   >
-    <selected-contacts-section
+    <SelectedContactsSection
       :contacts="newContacts"
       @remove-contact="removeModalContact($event)"
     />
     <template #options>
-      <unnnic-button
+      <UnnnicButton
         :text="$t('cancel')"
         type="secondary"
         size="large"
         @click="closeModalInternally"
       />
-      <unnnic-button
+      <UnnnicButton
         :text="$t('confirm')"
         type="primary"
         size="large"
         @click="emitRemoveContacts"
       />
     </template>
-  </unnnic-modal>
+  </UnnnicModal>
 </template>
 
 <script>
@@ -53,8 +53,12 @@ export default {
 
   computed: {
     newContacts() {
-      const uuidsToRemove = this.contactsToRemove.map((contact) => contact.uuid);
-      const newContacts = this.contacts.filter((contact) => !uuidsToRemove.includes(contact.uuid));
+      const uuidsToRemove = this.contactsToRemove.map(
+        (contact) => contact.uuid,
+      );
+      const newContacts = this.contacts.filter(
+        (contact) => !uuidsToRemove.includes(contact.uuid),
+      );
       return newContacts;
     },
   },

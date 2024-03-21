@@ -1,6 +1,6 @@
 <template>
   <section class="profile-preferences">
-    <unnnic-breadcrumb :crumbs="breadcrumb" />
+    <UnnnicBreadcrumb :crumbs="breadcrumb" />
 
     <main>
       <header class="profile-preferences__header">
@@ -9,11 +9,12 @@
 
       <section class="profile-preferences__content">
         <p class="profile-preferences__label">
-          Para seu conforto, habilite e desabilite as notificações sonoras do WeniChats
+          Para seu conforto, habilite e desabilite as notificações sonoras do
+          WeniChats
         </p>
 
         <section class="profile-preferences__options">
-          <unnnic-switch
+          <UnnnicSwitch
             v-for="option in options"
             :key="option.label"
             v-model="option.value"
@@ -23,7 +24,11 @@
       </section>
     </main>
 
-    <unnnic-button text="Salvar alterações" type="secondary" @click="showConfirmationAlert" />
+    <UnnnicButton
+      text="Salvar alterações"
+      type="secondary"
+      @click="showConfirmationAlert"
+    />
   </section>
 </template>
 
@@ -41,7 +46,8 @@ export default {
     ],
     options: [
       {
-        label: 'Som de novas mensagens de contatos que estão aguardando na fila',
+        label:
+          'Som de novas mensagens de contatos que estão aguardando na fila',
         value: true,
       },
       {

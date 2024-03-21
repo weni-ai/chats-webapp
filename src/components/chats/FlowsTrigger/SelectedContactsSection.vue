@@ -5,7 +5,7 @@
     @click="$emit('click')"
     @keypress.enter="$emit('click')"
   >
-    <unnnic-tag
+    <UnnnicTag
       type="default"
       v-for="contact in contacts"
       :key="contact.uuid"

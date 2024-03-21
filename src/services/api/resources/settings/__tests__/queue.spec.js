@@ -13,11 +13,20 @@ describe('Queue', () => {
     const sectorUuid = '123';
     const defaultMessage = 'Default message';
 
-    const expectedData = { id: '456', name, sector: sectorUuid, default_message: defaultMessage };
+    const expectedData = {
+      id: '456',
+      name,
+      sector: sectorUuid,
+      default_message: defaultMessage,
+    };
 
     http.post.mockResolvedValue({ data: expectedData });
 
-    const result = await Queue.create({ name, sectorUuid, default_message: defaultMessage });
+    const result = await Queue.create({
+      name,
+      sectorUuid,
+      default_message: defaultMessage,
+    });
 
     expect(http.post).toHaveBeenCalledWith('/queue/', {
       name,
@@ -115,7 +124,9 @@ describe('Queue', () => {
 
     await Queue.removeAgent(agentUuid);
 
-    expect(http.delete).toHaveBeenCalledWith(`/authorization/queue/${agentUuid}`);
+    expect(http.delete).toHaveBeenCalledWith(
+      `/authorization/queue/${agentUuid}`,
+    );
   });
 
   it('should edit a queue', async () => {

@@ -2,7 +2,9 @@ import SoundNotification from '@/services/api/websocket/soundNotification';
 
 export default async (room, { app }) => {
   if (
-    !app.$store.state.chats.rooms.rooms.find((alreadyInRoom) => alreadyInRoom.uuid === room.uuid)
+    !app.$store.state.chats.rooms.rooms.find(
+      (alreadyInRoom) => alreadyInRoom.uuid === room.uuid,
+    )
   ) {
     app.$store.dispatch('chats/rooms/addRoom', room);
 

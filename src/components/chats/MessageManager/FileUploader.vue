@@ -1,12 +1,12 @@
 <template>
   <section v-if="isMobile && showUploadModal">
-    <unnnic-modal
+    <UnnnicModal
       class="modal-upload-confirm"
       v-if="value.length > 0"
       @close="closeFileUploadModal"
       :text="$t('confirm_send')"
     >
-      <unnnic-import-card
+      <UnnnicImportCard
         v-for="file in value"
         :key="file.name + file.lastModified"
         :title="file.name"
@@ -16,13 +16,17 @@
         @delete="removeSelectedFile(file)"
       />
       <template #options>
-        <unnnic-button :text="$t('send')" type="primary" @click="upload" />
+        <UnnnicButton
+          :text="$t('send')"
+          type="primary"
+          @click="upload"
+        />
       </template>
-    </unnnic-modal>
+    </UnnnicModal>
   </section>
   <section v-else-if="showUploadModal">
     <div class="modal-upload-container">
-      <unnnic-modal-upload
+      <UnnnicModalUpload
         v-model="files"
         v-bind="fileUploadModalProps"
         acceptMultiple
@@ -119,7 +123,9 @@ export default {
     },
 
     removeSelectedFile(file) {
-      this.files = this.files.filter((mappedFile) => mappedFile.name !== file.name);
+      this.files = this.files.filter(
+        (mappedFile) => mappedFile.name !== file.name,
+      );
       if (this.files.length === 1) {
         this.closeFileUploadModal();
       }
@@ -139,7 +145,9 @@ export default {
       const props = {
         textTitle: this.$t('send_media'),
         supportedFormats: getSupportedChatMediaFormats().join(),
-        subtitle: this.$t('upload_area.subtitle', { exampleExtensions: '.PNG, .MP4, .PDF' }),
+        subtitle: this.$t('upload_area.subtitle', {
+          exampleExtensions: '.PNG, .MP4, .PDF',
+        }),
         textAction: this.$t('send'),
       };
 

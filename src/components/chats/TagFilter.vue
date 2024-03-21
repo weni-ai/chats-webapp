@@ -1,6 +1,11 @@
 <template>
   <section>
-    <p v-if="!!label" class="label">{{ label }}</p>
+    <p
+      v-if="!!label"
+      class="label"
+    >
+      {{ label }}
+    </p>
 
     <section class="tags">
       <span
@@ -9,7 +14,11 @@
         @click="handleSelectedTags(tag.uuid)"
         @keypress.space="handleSelectedTags(tag.uuid)"
       >
-        <unnnic-checkbox :textRight="tag.name" size="sm" :value="selected.includes(tag.uuid)" />
+        <UnnnicCheckbox
+          :textRight="tag.name"
+          size="sm"
+          :value="selected.includes(tag.uuid)"
+        />
       </span>
     </section>
   </section>

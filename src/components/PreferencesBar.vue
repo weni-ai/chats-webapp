@@ -11,11 +11,19 @@
       ref="header"
       class="header"
       @mousedown.prevent
-      @click.stop="open ? $refs['preferences-bar'].blur() : $refs['preferences-bar'].focus()"
+      @click.stop="
+        open
+          ? $refs['preferences-bar'].blur()
+          : $refs['preferences-bar'].focus()
+      "
     >
       <div class="label">
         <div class="icon">
-          <unnnic-icon size="md" icon="tune" scheme="neutral-cloudy" />
+          <UnnnicIcon
+            size="md"
+            icon="tune"
+            scheme="neutral-cloudy"
+          />
         </div>
 
         <div class="text">
@@ -23,7 +31,7 @@
         </div>
 
         <div class="status-icon">
-          <unnnic-icon
+          <UnnnicIcon
             size="md"
             :icon="open ? 'expand_less' : 'expand_more'"
             scheme="neutral-darkest"
@@ -35,11 +43,13 @@
     <div class="options-container">
       <div class="label">Status</div>
 
-      <unnnic-switch
+      <UnnnicSwitch
         :value="$store.state.config.status === 'ONLINE'"
         size="small"
-        :text-right="
-          $store.state.config.status === 'ONLINE' ? $t('status.online') : $t('status.offline')
+        :textRight="
+          $store.state.config.status === 'ONLINE'
+            ? $t('status.online')
+            : $t('status.offline')
         "
         @input="updateStatus"
         :disabled="loadingStatus"
@@ -47,26 +57,26 @@
 
       <div class="label">{{ $t('preferences.notifications.title') }}</div>
 
-      <unnnic-switch
+      <UnnnicSwitch
         v-model="sound"
         size="small"
-        :text-right="$t('preferences.notifications.sound')"
+        :textRight="$t('preferences.notifications.sound')"
         @input="changeSound"
       />
 
-      <unnnic-button
+      <UnnnicButton
         @mousedown.prevent
         :text="$t('quick_messages.title')"
-        icon-left="bolt"
+        iconLeft="bolt"
         type="secondary"
         size="small"
         @click="openQuickMessage"
       />
-      <unnnic-button
+      <UnnnicButton
         @mousedown.prevent
         v-if="this.dashboard"
         text="Dashboard"
-        icon-left="bar_chart_4_bars"
+        iconLeft="bar_chart_4_bars"
         type="secondary"
         size="small"
         @click="navigate('dashboard.manager')"
@@ -101,7 +111,9 @@ export default {
   async created() {
     this.getStatus();
     this.sound = (localStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'yes';
-    window.dispatchEvent(new CustomEvent(`${this.help ? 'show' : 'hide'}BottomRightOptions`));
+    window.dispatchEvent(
+      new CustomEvent(`${this.help ? 'show' : 'hide'}BottomRightOptions`),
+    );
   },
 
   methods: {
@@ -130,7 +142,9 @@ export default {
     },
 
     async getStatus() {
-      const response = await Profile.status({ projectUuid: this.$store.state.config.project });
+      const response = await Profile.status({
+        projectUuid: this.$store.state.config.project,
+      });
       this.$store.state.config.status = response.data.connection_status;
     },
 
@@ -143,7 +157,10 @@ export default {
         props: {
           text: `${this.$t('status_agent')} ${connectionStatus}`,
           icon: 'indicator',
-          scheme: connectionStatus === 'online' ? 'feedback-green' : '$unnnic-color-neutral-black',
+          scheme:
+            connectionStatus === 'online'
+              ? 'feedback-green'
+              : '$unnnic-color-neutral-black',
           closeText: 'Fechar',
           position: 'bottom-right',
         },

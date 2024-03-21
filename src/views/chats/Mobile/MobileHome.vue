@@ -1,13 +1,26 @@
 <template>
-  <mobile-chat v-if="showActiveChat" @transferred-contact="handleChatTransfer" />
-  <div class="mobile-home" v-else>
+  <MobileChat
+    v-if="showActiveChat"
+    @transferred-contact="handleChatTransfer"
+  />
+  <div
+    class="mobile-home"
+    v-else
+  >
     <!-- callUnnnicAlert is using the class of this element below as containerRef -->
     <main class="mobile-home__main">
-      <mobile-closed-chats v-if="showHistory" @close="openTabChats" />
+      <MobileClosedChats
+        v-if="showHistory"
+        @close="openTabChats"
+      />
 
-      <flows-trigger v-else-if="showFlowsTrigger" :selectedContact="null" @close="openTabChats" />
+      <FlowsTrigger
+        v-else-if="showFlowsTrigger"
+        :selectedContact="null"
+        @close="openTabChats"
+      />
 
-      <unnnic-chats-header
+      <UnnnicChatsHeader
         v-else-if="showChats"
         title="Chats"
         :subtitle="projectName"
@@ -15,17 +28,20 @@
         :back="homeBack"
         sectionIconScheme="weni-600"
       />
-      <section class="mobile-home__tab__chats" v-if="showChats">
-        <the-card-groups class="mobile-home__chats-list" />
+      <section
+        class="mobile-home__tab__chats"
+        v-if="showChats"
+      >
+        <TheCardGroups class="mobile-home__chats-list" />
       </section>
 
-      <quick-messages
+      <QuickMessages
         v-else-if="showQuickMessages"
         ref="quickMessages"
         @close="closeQuickMessages"
         @select-quick-message="closeQuickMessages"
       />
-      <modal-preferences
+      <ModalPreferences
         v-if="showPreferences"
         @close="returnToOldTab"
         @open-quick-messages="openQuickMessages"
@@ -33,7 +49,10 @@
       />
     </main>
 
-    <unnnic-chats-navbar v-model="currentTab" :links="navs" />
+    <UnnnicChatsNavbar
+      v-model="currentTab"
+      :links="navs"
+    />
   </div>
 </template>
 
@@ -149,7 +168,11 @@ export default {
     updateCurrentTab(tab) {
       const navNames = this.navs.map((nav) => nav.name);
       if (!navNames.includes(tab)) {
-        throw new Error(`The tab "${tab}" is not a valid tab. Try any of: ${navNames.join(', ')}`);
+        throw new Error(
+          `The tab "${tab}" is not a valid tab. Try any of: ${navNames.join(
+            ', ',
+          )}`,
+        );
       }
 
       this.currentTab = tab;
@@ -216,7 +239,10 @@ export default {
     $route: {
       immediate: true,
       async handler(newRoute) {
-        if ((!this.room?.uuid && !this.discussion?.uuid) || newRoute.name === 'home') {
+        if (
+          (!this.room?.uuid && !this.discussion?.uuid) ||
+          newRoute.name === 'home'
+        ) {
           resetChats();
         }
 

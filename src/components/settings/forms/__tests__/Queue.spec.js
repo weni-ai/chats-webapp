@@ -38,7 +38,9 @@ describe('FormQueue', () => {
   });
 
   it('should render all inputs', () => {
-    const inputQueue = wrapper.findAllComponents({ name: 'unnnic-input' }).at(0);
+    const inputQueue = wrapper
+      .findAllComponents({ name: 'unnnic-input' })
+      .at(0);
     expect(inputQueue.exists()).toBe(true);
     expect(inputQueue.props('label')).toMatch(/Nome da fila/gi);
     expect(inputQueue.props('placeholder')).toMatch(/Exemplo: Pagamentos/gi);

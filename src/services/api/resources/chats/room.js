@@ -1,4 +1,5 @@
 import http from '@/services/api/http';
+import Profile from '@/store/modules/profile';
 import { getProject } from '@/utils/config';
 import Profile from '@/store/modules/profile';
 
@@ -83,7 +84,24 @@ export default {
   },
 
   async updateCustomFields(uuid, customFields = {}) {
-    const response = await http.patch(`/room/${uuid}/update_custom_fields/`, customFields);
+    const response = await http.patch(
+      `/room/${uuid}/update_custom_fields/`,
+      customFields,
+    );
+    return response.data;
+  },
+
+  async bulkTranfer({ rooms = [], intended_agent = '', intended_queue = '' }) {
+    const { email: user_email } = Profile.state.me;
+
+    const response = await http.patch(`room/bulk_transfer/`, {
+      params: {
+        user_request: user_email,
+        rooms_list: rooms,
+        queue_uuid: intended_queue,
+        user_email: intended_agent,
+      },
+    });
     return response.data;
   },
 };

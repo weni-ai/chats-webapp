@@ -69,7 +69,9 @@ export default {
         throw new Error(typeof status, status);
       }
       if (!validStatus.includes(status.toLowerCase())) {
-        throw new Error(`Invalid status. Try any for these: ${validStatus.join(', ')}`);
+        throw new Error(
+          `Invalid status. Try any for these: ${validStatus.join(', ')}`,
+        );
       }
 
       const response = Profile.updateStatus({

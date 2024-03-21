@@ -1,5 +1,5 @@
 <template>
-  <unnnic-button
+  <UnnnicButton
     class="send-flow__handlers__button"
     :disabled="selectedFlow === ''"
     :loading="isLoading"
@@ -48,7 +48,9 @@ export default {
       this.isLoading = true;
       this.$emit('send-flow-started');
 
-      const contactsToSendFlow = this.selectedContact ? [this.selectedContact] : this.contacts;
+      const contactsToSendFlow = this.selectedContact
+        ? [this.selectedContact]
+        : this.contacts;
 
       const sendFlowToContact = async (contact) => {
         const prepareObj = {

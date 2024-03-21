@@ -3,11 +3,15 @@
     class="rooms-table-filters-loading"
     :class="{ 'rooms-table-filters-loading--vertically': vertically }"
   >
-    <div class="rooms-table-filters-loading__filter" v-for="filter in 4" :key="`filter-${filter}`">
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading />
+    <div
+      class="rooms-table-filters-loading__filter"
+      v-for="filter in 4"
+      :key="`filter-${filter}`"
+    >
+      <UnnnicSkeletonLoading />
+      <UnnnicSkeletonLoading />
     </div>
-    <unnnic-skeleton-loading class="rooms-table-filters-loading__clear" />
+    <UnnnicSkeletonLoading class="rooms-table-filters-loading__clear" />
   </section>
 </template>
 

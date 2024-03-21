@@ -3,7 +3,7 @@
 <template>
   <div class="media__content_audio__media__preview">
     <div @click="play">
-      <unnnic-icon
+      <UnnnicIcon
         size="xs"
         icon="controls-play-1"
         clickable
@@ -12,7 +12,7 @@
       />
     </div>
     <div @click="pause">
-      <unnnic-icon
+      <UnnnicIcon
         size="xs"
         icon="controls-pause-1"
         clickable

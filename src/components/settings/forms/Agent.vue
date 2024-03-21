@@ -3,15 +3,23 @@
     <section class="section">
       <p class="title">
         {{ $t('agents.add.title') }}
-        <unnnic-tool-tip enabled side="right" :text="$t('new_sector.agent_tip')">
-          <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
-        </unnnic-tool-tip>
+        <UnnnicToolTip
+          enabled
+          side="right"
+          :text="$t('new_sector.agent_tip')"
+        >
+          <UnnnicIconSvg
+            icon="information-circle-4"
+            scheme="neutral-soft"
+            size="sm"
+          />
+        </UnnnicToolTip>
       </p>
 
       <section class="controls">
         <div>
-          <unnnic-label :label="$t('agents.add.select.label')" />
-          <unnnic-select-smart
+          <UnnnicLabel :label="$t('agents.add.select.label')" />
+          <UnnnicSelectSmart
             v-model="search"
             class="input"
             :options="agentsNames"
@@ -30,15 +38,18 @@
       </section>
     </section>
 
-    <section v-if="selectedAgents.length > 0" class="form-agent__agents">
-      <selected-member
+    <section
+      v-if="selectedAgents.length > 0"
+      class="form-agent__agents"
+    >
+      <SelectedMember
         v-for="agent in selectedAgents"
         :key="agent.uuid"
         :name="agent.user.first_name + ' ' + agent.user.last_name"
         :email="agent.user.email"
-        :avatar-url="photo(agent.user.photo_url)"
+        :avatarUrl="photo(agent.user.photo_url)"
         @remove="remove(agent.uuid)"
-        role-name="Agente"
+        roleName="Agente"
       />
     </section>
   </section>

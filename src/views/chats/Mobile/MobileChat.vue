@@ -1,10 +1,10 @@
 <template>
-  <contact-info
+  <ContactInfo
     v-if="showRoomContactInfo"
     @close="closeRoomContactInfo"
     @transferred-contact="emitTransferredContact"
   />
-  <home-chat
+  <HomeChat
     class="mobile-chat"
     v-else
     @open-room-contact-info="openRoomContactInfo"

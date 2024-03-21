@@ -1,7 +1,7 @@
 <template>
   <p v-if="isGeolocation">{{ media.url }}</p>
   <section v-else-if="isDocument">
-    <document-preview
+    <DocumentPreview
       @download="download"
       :fullFilename="fullFilename"
       highlight
@@ -9,17 +9,27 @@
     />
   </section>
 
-  <section v-else class="media-message">
+  <section
+    v-else
+    class="media-message"
+  >
     <section class="media-message__preview">
-      <image-preview
+      <ImagePreview
         v-if="isImage"
         :url="media.url"
-        fullscreen-on-click
+        fullscreenOnClick
         @download="download"
         @click="$emit('fullscreen')"
       />
-      <video-preview v-else-if="isVideo" :src="media.url" />
-      <unnnic-audio-recorder v-else-if="isAudio" :src="media.url" :canDiscard="false" />
+      <VideoPreview
+        v-else-if="isVideo"
+        :src="media.url"
+      />
+      <UnnnicAudioRecorder
+        v-else-if="isAudio"
+        :src="media.url"
+        :canDiscard="false"
+      />
     </section>
 
     <!-- <media-controls v-if="!isAudio" @download="download" /> -->
