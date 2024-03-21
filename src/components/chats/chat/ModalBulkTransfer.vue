@@ -2,8 +2,26 @@
   <UnnnicModal
     :text="$t('bulk_transfer.transfer_selected_contacts')"
     class="modal-bulk-transfer"
+    :closeIcon="false"
   >
-    <section>
+    <section class="modal-bulk-transfer__select-destination">
+      <section class="select-destination__radios">
+        <UnnnicRadio
+          size="md"
+          v-model="destinationType"
+          value="agent"
+        >
+          {{ $t('agent') }}
+        </UnnnicRadio>
+
+        <UnnnicRadio
+          size="md"
+          v-model="destinationType"
+          value="queue"
+        >
+          {{ $t('queue') }}
+        </UnnnicRadio>
+      </section>
       <UnnnicSelectSmart
         v-model="selectedDestination"
         :options="destinations"
@@ -16,7 +34,7 @@
     <template #options>
       <UnnnicButton
         :text="$t('cancel')"
-        type="secondary"
+        type="tertiary"
         size="large"
         @click="$emit('close')"
       />
@@ -34,12 +52,24 @@
 <script>
 import Room from '@/services/api/resources/chats/room';
 import { mapState } from 'vuex';
+// import Sector from '@/services/api/resources/settings/sector';
+import Queue from '@/services/api/resources/settings/queue';
+
 export default {
+  name: 'ModalBulkTransfer',
+
   data() {
     return {
       selectedDestination: [],
+      destinationType: 'agent',
       destinations: [],
+      queues: null,
+      agents: null,
     };
+  },
+
+  created() {
+    this.getDestinations();
   },
 
   computed: {
@@ -50,11 +80,76 @@ export default {
   },
 
   methods: {
+    async getDestinations() {
+      const newQueues = await Queue.listByProject();
+
+      const treatedQueues = [{ value: '', label: this.$t('select_queue') }];
+      treatedQueues
+        .concat(newQueues.results)
+        .forEach(({ name, sector_name, uuid }) => {
+          treatedQueues.push({
+            label: `${name} | ${this.$t('sector.title')} ${sector_name}`,
+            value: uuid,
+          });
+        });
+      this.queues = treatedQueues;
+    },
+
+    // async listAgents() {
+    //   this.agents = (
+    //     await Sector.agents({ sectorUuid: this.room.queue.sector })
+    //   )
+    //     .filter((agent) => agent.email !== this.$store.state.profile.me.email)
+    //     .map(({ first_name, last_name, email }) => {
+    //       return {
+    //         name: [first_name, last_name].join(' ').trim() || email,
+    //         email,
+    //       };
+    //     });
+    // },
     bulkTransfer() {
-      Room.bulkTranfer({ rooms: this.selectedRoomsToTransfer });
+      const { destinationType, selectedRoomsToTransfer } = this;
+      const destination = this.selectedDestination?.[0]?.value;
+      const destinationProperty =
+        destinationType === 'queue' ? 'intended_queue' : 'intended_agent';
+
+      Room.bulkTranfer({
+        rooms: selectedRoomsToTransfer,
+        [destinationProperty]: destination,
+      });
+    },
+  },
+
+  watch: {
+    destinationType(newDestinationType) {
+      const { queues, agents } = this;
+      this.destinations = newDestinationType === 'queue' ? queues : agents;
     },
   },
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.modal-bulk-transfer {
+  :deep(.unnnic-modal-container) {
+    .unnnic-modal-container-background-body {
+      padding-top: $unnnic-spacing-giant;
+
+      &-description-container {
+        padding-bottom: 0;
+      }
+    }
+  }
+  &__select-destination {
+    display: grid;
+    gap: $unnnic-spacing-sm;
+  }
+
+  .select-destination {
+    &__radios {
+      display: flex;
+      gap: $unnnic-spacing-sm;
+    }
+  }
+}
+</style>

@@ -84,7 +84,7 @@ export default {
     return response.data;
   },
 
-  async bulkTranfer({ rooms = [], intended_user = '', intended_queue = '' }) {
+  async bulkTranfer({ rooms = [], intended_agent = '', intended_queue = '' }) {
     const { email: user_email } = Profile.state.me;
 
     const response = await http.patch(`room/bulk_transfer/`, {
@@ -92,7 +92,7 @@ export default {
         user_request: user_email,
         rooms_list: rooms,
         queue_uuid: intended_queue,
-        user_email: intended_user,
+        user_email: intended_agent,
       },
     });
     return response.data;
