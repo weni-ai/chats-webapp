@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-cycle
 import store from '@/store';
 
 const routes = [
@@ -14,7 +13,10 @@ const routes = [
       await store.dispatch('config/setProject', projectUuid);
 
       if (to.query.next) {
-        const parsedNext = to.query.next.replace('/settings/chats', '/settings');
+        const parsedNext = to.query.next.replace(
+          '/settings/chats',
+          '/settings',
+        );
         next(parsedNext);
       } else {
         next({ name: 'home' });
