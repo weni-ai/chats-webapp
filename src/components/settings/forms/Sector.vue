@@ -23,11 +23,11 @@
       <h2 class="title">
         {{ $t('sector.add') }}
         <UnnnicToolTip
-            enabled
-            :text="$t('new_sector.sector_tip')"
-            side="right"
-            maxWidth="21rem"
-          >
+          enabled
+          :text="$t('new_sector.sector_tip')"
+          side="right"
+          maxWidth="21rem"
+        >
           <UnnnicIconSvg
             icon="information-circle-4"
             scheme="neutral-soft"
@@ -36,7 +36,7 @@
         </UnnnicToolTip>
       </h2>
 
-      <unnnic-input
+      <UnnnicInput
         v-model="sector.name"
         :label="$t('sector.name')"
         :placeholder="$t('sector.placeholder')"
