@@ -4,7 +4,7 @@
       v-if="sector"
       class="title"
     >
-    {{ $t('queues.queue_title') }} {{ sector }}
+      {{ $t('queues.queue_title') }} {{ sector }}
     </p>
 
     <UnnnicTable :items="queues">

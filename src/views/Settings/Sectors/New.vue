@@ -124,7 +124,11 @@ export default {
       isOpenSectorConfirmationDialog: false,
       Steps,
       step: Steps.General,
-      stepsTitles: [this.$t('sector.geral'), this.$t('sector.queues'), this.$t('sector.tags')],
+      stepsTitles: [
+        this.$t('sector.geral'),
+        this.$t('sector.queues'),
+        this.$t('sector.tags')
+      ],
     };
   },
 
