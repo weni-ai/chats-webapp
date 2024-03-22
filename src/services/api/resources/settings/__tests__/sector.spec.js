@@ -82,7 +82,7 @@ describe('Sector', () => {
     const uuid = '456';
     const data = { name: 'Sector Updated' };
 
-    http.patch.mockResolvedValue(data);
+    http.patch.mockResolvedValue({ data });
 
     const result = await Sector.update(uuid, data);
 
