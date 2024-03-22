@@ -7,21 +7,23 @@ function createWrapper(props) {
   const wrapper = mount(TagGroup, {
     propsData: props,
     stubs: {
-      unnnicTag,
+      UnnnicTag: unnnicTag,
     },
   });
 
   return wrapper;
 }
 
+const tags = [
+  { uuid: 'finance', name: 'Financeiro' },
+  { uuid: 'doubts', name: 'Dúvidas' },
+  { uuid: 'help', name: 'Ajuda' },
+];
+
 describe('TagGroup', () => {
   it('should renders all the tags passed in `tags` prop', () => {
     const wrapper = createWrapper({
-      tags: [
-        { value: 'finance', text: 'Financeiro' },
-        { value: 'doubts', text: 'Dúvidas' },
-        { value: 'help', text: 'Ajuda' },
-      ],
+      tags,
     });
 
     expect(wrapper.html()).toContain('Financeiro');
@@ -31,16 +33,12 @@ describe('TagGroup', () => {
 
   it('should not render when `tags` prop is not passed', () => {
     const wrapper = createWrapper();
+    const tags = wrapper.findAllComponents(unnnicTag);
 
-    expect(wrapper.html()).toBeFalsy();
+    expect(tags.length).toBe(0);
   });
 
   it('should be able to select tags when `selectable` prop is passed', async () => {
-    const tags = [
-      { value: 'finance', text: 'Financeiro' },
-      { value: 'doubts', text: 'Dúvidas' },
-      { value: 'help', text: 'Ajuda' },
-    ];
     const wrapper = createWrapper({
       tags,
       selectable: true,
@@ -53,17 +51,13 @@ describe('TagGroup', () => {
     const emittedInputEvent = wrapper.emitted('input').flat(Infinity);
 
     expect(emittedInputEvent.length).toBe(2);
-    expect(emittedInputEvent.find((e) => e.value === 'doubts')).toBeTruthy();
-    expect(emittedInputEvent.find((e) => e.value === 'finance')).toBeTruthy();
+    expect(emittedInputEvent.find((e) => e.uuid === 'doubts')).toBeTruthy();
+    expect(emittedInputEvent.find((e) => e.uuid === 'finance')).toBeTruthy();
   });
 
   it('should unselect the tag when the clicked tag is already selected', async () => {
     const wrapper = createWrapper({
-      tags: [
-        { value: 'finance', text: 'Financeiro' },
-        { value: 'doubts', text: 'Dúvidas' },
-        { value: 'help', text: 'Ajuda' },
-      ],
+      tags,
       selectable: true,
     });
 

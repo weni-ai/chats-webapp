@@ -1,5 +1,4 @@
 import { mount, createLocalVue } from '@vue/test-utils';
-import { unnnicToolTip } from '@weni/unnnic-system';
 import i18n from '@/plugins/i18n';
 
 import CustomField from '../ContactInfo/CustomField';
@@ -11,7 +10,7 @@ function createWrapper() {
   const wrapper = mount(CustomField, {
     propsData: defaultProps,
     stubs: {
-      unnnicToolTip,
+      UnnnicToolTip: true,
     },
     localVue,
     i18n,

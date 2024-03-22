@@ -2,7 +2,7 @@ const defaultProps = {
   value: {
     uuid: '',
   },
-  label: 'Adicionar nova Fila',
+  label: 'Create new queue',
 };
 
 export default defaultProps;

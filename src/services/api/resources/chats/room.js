@@ -1,6 +1,7 @@
 import http from '@/services/api/http';
 import Profile from '@/store/modules/profile';
 import { getProject } from '@/utils/config';
+import Profile from '@/store/modules/profile';
 
 export default {
   async getAll(offset, limit, contact, order, viewedAgent) {
@@ -72,6 +73,14 @@ export default {
     const response = await http.put(
       `/room/${uuid}/`,
       email ? { user_email: email } : { queue_uuid: queueUuid },
+    );
+    return response.data;
+  },
+
+  async getQueueRoom(uuid) {
+    const { me } = Profile.state;
+    const response = await http.patch(
+      `/room/${uuid}/pick_queue_room/?user_email=${me?.email}`,
     );
     return response.data;
   },
