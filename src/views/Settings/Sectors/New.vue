@@ -48,7 +48,7 @@
     <div class="actions">
       <UnnnicButton
         v-if="step !== Steps.Tags"
-        text="Salvar e continuar"
+        :text="$t('sector.save')"
         iconRight="arrow-right-1-1"
         type="secondary"
         :disabled="!isActiveFormValid"
@@ -96,35 +96,37 @@ export default {
     this.listProjectAgents();
   },
 
-  data: () => ({
-    sector: {
-      uuid: '',
-      name: '',
-      can_trigger_flows: false,
-      can_edit_custom_fields: false,
-      sign_messages: false,
-      managers: [],
-      workingDay: {
-        start: '',
-        end: '',
-      },
-      agents: [],
-      queue: {
+  data() {
+    return {
+      sector: {
         uuid: '',
+        name: '',
+        can_trigger_flows: false,
+        can_edit_custom_fields: false,
+        sign_messages: false,
+        managers: [],
+        workingDay: {
+          start: '',
+          end: '',
+        },
+        agents: [],
+        queue: {
+          uuid: '',
+        },
+        tags: [],
+        maxSimultaneousChatsByAgent: '',
       },
-      tags: [],
-      maxSimultaneousChatsByAgent: '',
-    },
-    projectManagers: [],
-    projectAgents: [],
-    isSectorFormValid: false,
-    isQueuesFormValid: false,
-    isAgentsFormValid: false,
-    isOpenSectorConfirmationDialog: false,
-    Steps,
-    step: Steps.General,
-    stepsTitles: ['Geral', 'Filas', 'Tags'],
-  }),
+      projectManagers: [],
+      projectAgents: [],
+      isSectorFormValid: false,
+      isQueuesFormValid: false,
+      isAgentsFormValid: false,
+      isOpenSectorConfirmationDialog: false,
+      Steps,
+      step: Steps.General,
+      stepsTitles: [this.$t('sector.geral'), this.$t('sector.queues'), this.$t('sector.tags')],
+    };
+  },
 
   computed: {
     isActiveFormValid() {

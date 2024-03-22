@@ -207,6 +207,41 @@
       "en": "Sector",
       "es": "Sector"
     },
+    "geral": {
+      "pt-br": "Geral",
+      "en": "General",
+      "es": "General"
+    },
+    "queues": {
+      "pt-br": "Filas",
+      "en": "Queues",
+      "es": "Colas"
+    },
+    "tags": {
+      "pt-br": "Tags",
+      "en": "Etiquetas",
+      "es": "Tags"
+    },
+    "add": {
+      "pt-br": "Adicionar novo setor",
+      "en": "Add new sector",
+      "es": "Agregar nuevo sector"
+    },
+    "name": {
+      "pt-br": "Nome do setor",
+      "en": "Sector name",
+      "es": "Nombre del sector"
+    },
+    "placeholder": {
+      "pt-br": "Exemplo: Financeiro",
+      "en": "Example: Financial",
+      "es": "Ejemplo: Financiero"
+    },
+    "save": {
+      "pt-br": "Salvar e continuar",
+      "en": "Guardar y continuar",
+      "es": "Save and continue"
+    },
     "managers": {
       "title": {
         "pt-br": "Gerentes de atendimento",
@@ -301,6 +336,46 @@
       "pt-br": "Filas",
       "en": "Queues",
       "es": "Colas"
+    },
+    "create_queue": {
+      "pt-br": "Criar nova fila",
+      "en": "Create new queue",
+      "es": "Crear nueva cola"
+    },
+    "queue_name": {
+      "pt-br": "Nome da fila",
+      "en": "Queue name",
+      "es": "Nombre de cola"
+    },
+    "queue_name_placeholder": {
+      "pt-br": "Exemplo: Pagamentos",
+      "en": "Example: Payments",
+      "es": "Ejemplo: Pagos"
+    },
+    "queue_title": {
+      "pt-br": "Filas em",
+      "en": "Queues in",
+      "es": "Cola en"
+    },
+    "queue_edit": {
+      "pt-br": "Editar",
+      "en": "Edit",
+      "es": "Editar"
+    },
+    "queue_table_name": {
+      "pt-br": "Nome",
+      "en": "Name",
+      "es": "Nombre"
+    },
+    "quantity_agents": {
+      "pt-br": "Qtd de agentes",
+      "en": "Number of agents",
+      "es": "Cantidad de agentes"
+    },
+    "visualize": {
+      "pt-br": "Visualizar",
+      "en": "Visualize",
+      "es": "Para ver"
     }
   },
   "chats": {
@@ -858,6 +933,11 @@
         "pt-br": "Exemplo: Dúvidas",
         "en": "Example: Doubts",
         "es": "Ejemplo: Dudas"
+      },
+      "tag": {
+        "pt-br": "Adicionar",
+        "en": "Add",
+        "es": "Agregar"
       }
     },
     "already_added": {
@@ -1723,6 +1803,38 @@
           }
         }
       }
+    }
+  },
+  "config_chats" : {
+    "manage_chats": {
+      "pt-br": "Gerenciar Chats",
+      "en": "Manage chats",
+      "es": "Gestionar chats"
+    },
+    "manage_description": {
+      "pt-br": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
+      "en": "Add, view and manage sectors, queues, managers and agents within your organization.",
+      "es": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización."
+    },
+    "new_sector": {
+      "pt-br": "Novo setor",
+      "en": "Nuevo sector",
+      "es": "New sector"
+    },
+    "agent_title": {
+      "pt-br": "Agentes",
+      "en": "Agents",
+      "es": "Agentes"
+    },
+    "contacts": {
+      "pt-br": "Contatos",
+      "en": "Contacts",
+      "es": "Contactos"
+    },
+    "open": {
+      "pt-br": "Abrir",
+      "en": "Open",
+      "es": "Abrir"
     }
   },
   "new_sector": {
