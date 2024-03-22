@@ -1,6 +1,6 @@
 <template>
   <section class="list-sector-queues">
-    <p v-if="sector" class="title">Filas em {{ sector }}</p>
+    <p v-if="sector" class="title">{{ $t('queues.queue_title') }} {{ sector }}</p>
 
     <unnnic-table :items="queues">
       <template #header>
@@ -17,7 +17,7 @@
 
           <template #visualize>
             <unnnic-button
-              text="Editar"
+              :text="$t('queues.queue_edit')"
               type="secondary"
               size="small"
               class="visualize-button"
@@ -45,25 +45,28 @@ export default {
     },
   },
 
-  data: () => ({
-    tableHeaders: [
-      {
-        id: 'name',
-        text: 'Nome',
-        flex: 3,
-      },
-      {
-        id: 'agents',
-        text: 'Qtd de agentes',
-        flex: 3,
-      },
-      {
-        id: 'visualize',
-        text: 'Visualizar',
-        flex: 2,
-      },
-    ],
-  }),
+  data() {
+    return {
+      tableHeaders: [
+        {
+          id: 'name',
+          text: this.$t('queues.queue_table_name'),
+          flex: 3,
+        },
+        {
+          id: 'agents',
+          text: this.$t('queues.quantity_agents'),
+          flex: 3,
+        },
+        {
+          id: 'visualize',
+          text: this.$t('queues.visualize'),
+          flex: 2,
+        },
+        // outros cabeçalhos de tabela...
+      ],
+    };
+  },
 };
 </script>
 

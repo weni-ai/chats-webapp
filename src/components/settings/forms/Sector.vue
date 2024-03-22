@@ -7,13 +7,17 @@
 
     <section v-else class="form-section">
       <h2 class="title">
-        Adicionar novo setor
+        {{ $t('sector.add') }}
         <unnnic-tool-tip enabled :text="$t('new_sector.sector_tip')" side="right" maxWidth="21rem">
           <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
         </unnnic-tool-tip>
       </h2>
 
-      <unnnic-input v-model="sector.name" label="Nome do setor" placeholder="Exemplo: Financeiro" />
+      <unnnic-input
+        v-model="sector.name"
+        :label="$t('sector.name')"
+        :placeholder="$t('sector.placeholder')"
+      />
     </section>
 
     <section class="form-section">

@@ -11,8 +11,8 @@
     <section class="controls">
       <unnnic-input
         v-model="queue.name"
-        label="Nome da fila"
-        placeholder="Exemplo: Pagamentos"
+        :label="$t('queues.queue_name')"
+        :placeholder="$t('queues.queue_name_placeholder')"
         class="input"
       />
       <unnnic-button v-if="isEditing" text="Salvar" type="secondary" @click="addQueue" />

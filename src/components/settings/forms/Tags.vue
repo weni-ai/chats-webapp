@@ -17,7 +17,7 @@
           :label="$t('tags.add.label')"
           :placeholder="$t('tags.add.placeholder')"
         />
-        <unnnic-button type="secondary" text="Adicionar" @click="addTag" />
+        <unnnic-button type="secondary" :text="$t('tags.add.tag')" @click="addTag" />
       </section>
     </section>
 
