@@ -127,7 +127,7 @@ export default {
       stepsTitles: [
         this.$t('sector.geral'),
         this.$t('sector.queues'),
-        this.$t('sector.tags')
+        this.$t('sector.tags'),
       ],
     };
   },
