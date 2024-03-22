@@ -1,12 +1,12 @@
 <template>
   <main class="history-metrics">
-    <general-metrics
+    <GeneralMetrics
       :metrics="generalMetrics"
       :rawData="rawInfo"
       :generalLabel="generalCardLabel"
       class="grid-1"
     />
-    <card-group-metrics
+    <CardGroupMetrics
       :metrics="sectors"
       :rawData="rawInfo"
       :title="headerTitle"
@@ -14,7 +14,7 @@
       icon="hierarchy-3-2"
       class="grid-2"
     />
-    <table-metrics
+    <TableMetrics
       :headers="agentsLabel"
       :items="this.agents.project_agents"
       title="Chats por agente"

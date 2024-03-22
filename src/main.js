@@ -4,6 +4,7 @@ import VMask from 'v-mask';
 
 import App from './App.vue';
 import i18n from './plugins/i18n';
+import UnnnicSystem from './plugins/UnnnicSystem';
 import router from './router';
 import store from './store';
 import env from './utils/env';
@@ -19,6 +20,7 @@ console.info('LogRocket Config: ', LOGROCKET_ID, LOGROCKET_PARENT_DOMAIN);
 
 Vue.config.productionTip = false;
 
+Vue.use(UnnnicSystem);
 Vue.use(VMask);
 
 new Vue({

@@ -1,17 +1,24 @@
 <template>
   <section :class="{ 'tag-group': true, flex }">
-    <div v-if="tags.length > 0" class="tag-group__tags" ref="container">
-      <unnnic-tag
+    <div
+      v-if="tags.length > 0"
+      class="tag-group__tags"
+      ref="container"
+    >
+      <UnnnicTag
         v-for="(tag, i) in tags"
         :key="tag.uuid"
         :clickable="selectable"
         :text="tag.name"
         :data-testid="`tag__${tag.uuid}`"
-        :has-close-icon="hasCloseIcon"
+        :hasCloseIcon="showCloseIcon(tag)"
         @click="select(tag)"
         @close="close(tag)"
-        :disabled="!hasCloseIcon && selectable && !selected.find((t) => t.uuid === tag.uuid)"
-        :scheme="schemes[i % schemes.length]"
+        :disabled="
+          !scheme && !hasCloseIcon && selectable && !isSelectedTag(tag)
+        "
+        :class="{ 'tag-group__tags__tag--selected': isSelectedTag(tag) }"
+        :scheme="scheme || schemes[i % schemes.length]"
         :ref="tag.uuid"
       />
       <p
@@ -40,6 +47,10 @@ export default {
     flex: {
       type: Boolean,
       default: true,
+    },
+    scheme: {
+      type: String,
+      default: '',
     },
     tags: {
       type: Array,
@@ -98,14 +109,23 @@ export default {
 
   methods: {
     select(tag) {
-      const tags = this.selected.find((t) => t.uuid === tag.uuid)
+      const tags = this.isSelectedTag(tag)
         ? this.selected.filter((t) => t.uuid !== tag.uuid)
         : [...this.selected, tag];
 
       this.selected = tags;
     },
     close(tag) {
+      if (this.selectable) {
+        this.select(tag);
+      }
       this.$emit('close', tag);
+    },
+    isSelectedTag(tag) {
+      return this.selected.find((mappedTag) => mappedTag.uuid === tag.uuid);
+    },
+    showCloseIcon(tag) {
+      return this.hasCloseIcon || (this.selectable && this.isSelectedTag(tag));
     },
     handleIntersection(entries) {
       entries.forEach((entry) => {
@@ -114,7 +134,8 @@ export default {
 
         if (entry.isIntersecting) {
           this.remainingTags -= 1;
-          remainingTagsPos = entry.target.offsetLeft + entry.boundingClientRect.width;
+          remainingTagsPos =
+            entry.target.offsetLeft + entry.boundingClientRect.width;
         } else {
           this.remainingTags += 1;
 
@@ -126,8 +147,10 @@ export default {
             const lastElement = this.$refs[lastChildUuid]?.[0].$el;
 
             if (lastElement) {
-              const lastElementBoundingRect = lastElement.getBoundingClientRect();
-              remainingTagsPos = lastElement.offsetLeft + lastElementBoundingRect.width;
+              const lastElementBoundingRect =
+                lastElement.getBoundingClientRect();
+              remainingTagsPos =
+                lastElement.offsetLeft + lastElementBoundingRect.width;
             }
           }
         }
@@ -184,6 +207,11 @@ $tag-size: 28px;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+      }
+
+      &.tag-group__tags__tag--selected {
+        outline: $unnnic-border-width-thinner solid $unnnic-color-neutral-clean;
+        outline-offset: -$unnnic-border-width-thinner;
       }
     }
   }

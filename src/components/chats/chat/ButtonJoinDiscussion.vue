@@ -1,5 +1,5 @@
 <template>
-  <unnnic-button
+  <UnnnicButton
     class="join-discussion"
     :text="$t('discussions.join')"
     type="primary"

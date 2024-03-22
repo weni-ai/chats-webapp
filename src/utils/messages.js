@@ -37,7 +37,13 @@ export function parseMessageToMessageWithSenderProp(message) {
 
   // only the contact has the `name` and `uuid` properties
   // the user's uuid is his email
-  const { uuid, email, name, first_name: firstName, last_name: lastName } = sender;
+  const {
+    uuid,
+    email,
+    name,
+    first_name: firstName,
+    last_name: lastName,
+  } = sender;
   const senderName = name || [firstName, lastName].join(' ');
   const senderUuid = uuid || email;
   sender.name = senderName;
@@ -84,7 +90,10 @@ export async function getMessages({ itemUuid, getItemMessages }) {
           return;
         }
 
-        if (firstMessage.discussion && firstMessage.discussion !== activeDiscussionUUID) {
+        if (
+          firstMessage.discussion &&
+          firstMessage.discussion !== activeDiscussionUUID
+        ) {
           return;
         }
       }
@@ -128,7 +137,10 @@ export async function treatMessages({
   setMessagesNext,
   setMessagesPrevious,
 }) {
-  const { messages, next, previous } = await getMessages({ itemUuid, getItemMessages });
+  const { messages, next, previous } = await getMessages({
+    itemUuid,
+    getItemMessages,
+  });
   let newMessages = messages;
 
   if (!newMessages.length) {
@@ -168,14 +180,22 @@ export async function sendMessage({
   }
 
   // Create a temporary message to display while sending
-  const temporaryMessage = createTemporaryMessage({ itemType, itemUuid, itemUser, message });
+  const temporaryMessage = createTemporaryMessage({
+    itemType,
+    itemUuid,
+    itemUser,
+    message,
+  });
   addMessage(temporaryMessage);
   addSortedMessage(temporaryMessage);
 
   // Send the message and update it with the actual message data
   try {
     const newMessage = await sendItemMessage();
-    updateMessage({ message: newMessage, toUpdateMessageUuid: temporaryMessage.uuid });
+    updateMessage({
+      message: newMessage,
+      toUpdateMessageUuid: temporaryMessage.uuid,
+    });
   } catch (error) {
     console.error('An error occurred while sending the message', error);
   }
@@ -233,7 +253,9 @@ export async function sendMedias({
         itemType,
         itemUuid,
         itemUser,
-        medias: [{ preview: mediaPreview, file: media, content_type: media.type }],
+        medias: [
+          { preview: mediaPreview, file: media, content_type: media.type },
+        ],
       });
       addMessage(temporaryMessage);
       addSortedMessage(temporaryMessage);
@@ -321,7 +343,9 @@ export function groupMessages(messagesReference, { message, addBefore }) {
   const messageDate = messageTimestamp.format('L');
   const messageMinute = messageTimestamp.format('LT');
 
-  let dateIndex = messagesReference.findIndex((obj) => obj.date === messageDate);
+  let dateIndex = messagesReference.findIndex(
+    (obj) => obj.date === messageDate,
+  );
 
   if (dateIndex === -1) {
     dateIndex = addBefore ? 0 : messagesReference.length;
@@ -330,7 +354,9 @@ export function groupMessages(messagesReference, { message, addBefore }) {
   }
 
   const currentDateEntry = messagesReference[dateIndex];
-  let minuteIndex = currentDateEntry.minutes.findIndex((obj) => obj.minute === messageMinute);
+  let minuteIndex = currentDateEntry.minutes.findIndex(
+    (obj) => obj.minute === messageMinute,
+  );
 
   if (minuteIndex === -1) {
     minuteIndex = addBefore ? 0 : currentDateEntry.minutes.length;

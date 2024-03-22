@@ -1,9 +1,10 @@
 <template>
   <aside class="aside-slot-template">
-    <unnnic-chats-header
+    <UnnnicChatsHeader
       :title="title"
       :subtitle="subtitle"
       :avatarIcon="icon"
+      :avatarName="avatarName"
       :close="close"
       :back="back"
       :sectionIconScheme="iconScheme || 'aux-purple'"
@@ -12,6 +13,8 @@
     <section :class="['aside-slot-template__sections']">
       <slot />
     </section>
+
+    <slot name="modals" />
   </aside>
 </template>
 
@@ -35,6 +38,10 @@ export default {
       type: String,
       required: false,
     },
+    avatarName: {
+      type: String,
+      required: false,
+    },
     back: {
       type: Function,
       default: undefined,
@@ -51,9 +58,13 @@ export default {
 
 <style lang="scss" scoped>
 .aside-slot-template {
+  position: relative;
+
   display: flex;
   flex-direction: column;
-  height: inherit;
+  height: 100%;
+
+  overflow: hidden;
 
   &__title {
     display: flex;

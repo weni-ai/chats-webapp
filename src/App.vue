@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view />
+    <RouterView />
   </div>
 </template>
 
@@ -16,22 +16,16 @@ const moment = require('moment');
 export default {
   name: 'App',
 
-  created() {
+  beforeCreate() {
     http.interceptors.request.use((config) => {
       // eslint-disable-next-line no-param-reassign
       config.headers.Authorization = `Bearer ${this.appToken}`;
       return config;
     });
-
-    this.handleLocale();
-    this.restoreLocalStorageUserStatus();
   },
 
-  async mounted() {
-    this.getUser();
-    this.getUserStatus();
-    this.loadQuickMessages();
-    this.loadQuickMessagesShared();
+  created() {
+    this.handleLocale();
   },
 
   data() {
@@ -47,7 +41,8 @@ export default {
       me: (state) => state.profile.me,
       viewedAgent: (state) => state.dashboard.viewedAgent,
       nextQuickMessages: (state) => state.chats.quickMessages.nextQuickMessages,
-      nextQuickMessagesShared: (state) => state.chats.quickMessagesShared.nextQuickMessagesShared,
+      nextQuickMessagesShared: (state) =>
+        state.chats.quickMessagesShared.nextQuickMessagesShared,
       appToken: (state) => state.config.token,
       appProject: (state) => state.config.project,
     }),
@@ -60,6 +55,25 @@ export default {
   },
 
   watch: {
+    appToken: {
+      immediate: true,
+      handler(newAppToken) {
+        if (newAppToken) {
+          this.getUser();
+        }
+      },
+    },
+    appProject: {
+      immediate: true,
+      handler(newAppProject) {
+        if (newAppProject && this.appToken) {
+          this.restoreLocalStorageUserStatus();
+          this.getUserStatus();
+          this.loadQuickMessages();
+          this.loadQuickMessagesShared();
+        }
+      },
+    },
     'viewedAgent.email': {
       handler() {
         this.ws.reconnect();
@@ -126,7 +140,7 @@ export default {
         const isLocaleChangeMessage = message?.event === 'setLanguage';
         if (!isLocaleChangeMessage) return;
 
-        const locale = message?.language; // 'en-us', 'pt-br', 'es'
+        const locale = message?.language; // 'en', 'pt-br', 'es'
 
         moment.locale(locale);
 
@@ -135,7 +149,9 @@ export default {
     },
 
     async onboarding() {
-      const onboarded = localStorage.getItem('CHATS_USER_ONBOARDED') || (await Profile.onboarded());
+      const onboarded =
+        localStorage.getItem('CHATS_USER_ONBOARDED') ||
+        (await Profile.onboarded());
       if (onboarded) {
         localStorage.setItem('CHATS_USER_ONBOARDED', true);
         return;
@@ -177,6 +193,6 @@ export default {
 
 <style lang="scss" scoped>
 #app {
-  height: 100%;
+  height: 100vh;
 }
 </style>

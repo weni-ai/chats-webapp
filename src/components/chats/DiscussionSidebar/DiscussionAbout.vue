@@ -1,22 +1,30 @@
 <template>
-  <main v-if="details" class="discussion-about">
-    <aside-slot-template-section class="discussion-about__section">
+  <main
+    v-if="details"
+    class="discussion-about"
+  >
+    <AsideSlotTemplateSection class="discussion-about__section">
       <h2 class="discussion-about__section__title">
         {{ `${$tc('discussions.title')} ${$t('about')} ${details?.contact}` }}
       </h2>
-      <p>{{ `${$t('discussions.about.started_in')} ${discussionStartDate}` }}</p>
-    </aside-slot-template-section>
-    <aside-slot-template-section class="discussion-about__section">
+      <p>
+        {{ `${$t('discussions.about.started_in')} ${discussionStartDate}` }}
+      </p>
+    </AsideSlotTemplateSection>
+    <AsideSlotTemplateSection class="discussion-about__section">
       <h2 class="discussion-about__section__title">
         {{ $t('discussions.about.agents_involved') }}
       </h2>
       <ul>
-        <li v-for="user in agentsInvolved" :key="getUserFullName(user)">
+        <li
+          v-for="user in agentsInvolved"
+          :key="getUserFullName(user)"
+        >
           {{ `${getUserFullName(user)} ${getUserRoleTreated(user)}` }}
         </li>
       </ul>
 
-      <unnnic-button
+      <UnnnicButton
         :text="$t('discussions.about.add_agent')"
         iconLeft="add-1"
         type="secondary"
@@ -24,7 +32,7 @@
         :disabled="this.agentsInvolved?.length >= 5"
       />
 
-      <unnnic-modal
+      <UnnnicModal
         v-if="isAddAgentModalOpen"
         @close="handleAddAgentModal"
         class="add-agent-modal"
@@ -32,8 +40,8 @@
         :description="$t('discussions.add_agents.description')"
       >
         <div class="add-agent-modal__input">
-          <unnnic-label :label="$t('discussions.add_agents.select_agent')" />
-          <unnnic-select-smart
+          <UnnnicLabel :label="$t('discussions.add_agents.select_agent')" />
+          <UnnnicSelectSmart
             v-model="agentSelected"
             :options="agentsToSelect"
             autocomplete
@@ -41,7 +49,7 @@
             autocompleteClearOnFocus
           />
         </div>
-        <selected-member
+        <SelectedMember
           v-if="agentSelected[0]"
           :name="agentSelected[0].label"
           :email="agentSelected[0].description"
@@ -49,8 +57,12 @@
           @remove="agentSelected = []"
         />
         <template #options>
-          <unnnic-button :text="$t('cancel')" type="secondary" @click="handleAddAgentModal" />
-          <unnnic-button
+          <UnnnicButton
+            :text="$t('cancel')"
+            type="secondary"
+            @click="handleAddAgentModal"
+          />
+          <UnnnicButton
             :text="$t('add')"
             type="primary"
             :disabled="!agentSelected[0]"
@@ -58,8 +70,8 @@
             @click="addAgent"
           />
         </template>
-      </unnnic-modal>
-    </aside-slot-template-section>
+      </UnnnicModal>
+    </AsideSlotTemplateSection>
   </main>
 </template>
 
@@ -138,16 +150,22 @@ export default {
 
       try {
         this.addAgentLoading = true;
-        const responseAgent = await this.$store.dispatch('chats/discussions/addAgent', {
-          user_email: newAgent.value,
-        });
+        const responseAgent = await this.$store.dispatch(
+          'chats/discussions/addAgent',
+          {
+            user_email: newAgent.value,
+          },
+        );
 
         this.agentsInvolved.push(responseAgent);
 
         this.handleAddAgentModal();
         this.addAgentLoading = false;
       } catch (error) {
-        console.error('An error occurred when trying to add agent to discussion:', error);
+        console.error(
+          'An error occurred when trying to add agent to discussion:',
+          error,
+        );
       }
     },
   },
@@ -181,7 +199,9 @@ export default {
     details: {
       immediate: true,
       async handler() {
-        const responseAgents = await this.$store.dispatch('chats/discussions/getDiscussionAgents');
+        const responseAgents = await this.$store.dispatch(
+          'chats/discussions/getDiscussionAgents',
+        );
         if (responseAgents.results) {
           this.agentsInvolved = responseAgents.results;
         }

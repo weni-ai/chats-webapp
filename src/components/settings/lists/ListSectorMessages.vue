@@ -1,26 +1,40 @@
 <template>
   <section class="list-sector-messages">
     <section class="list-sector-messages__copilot">
-      <p v-if="sector" class="title">{{ $t('copilot.name') }}</p>
+      <p
+        v-if="sector"
+        class="title"
+      >
+        {{ $t('copilot.name') }}
+      </p>
       <div class="list-sector-messages__copilot__integration">
-        <unnnic-switch
+        <UnnnicSwitch
           :value="copilotActive"
           size="small"
-          :text-right="$t(`settings.messages.copilot.status.${copilotActive ? 'on' : 'off'}`)"
+          :textRight="
+            $t(
+              `settings.messages.copilot.status.${
+                copilotActive ? 'on' : 'off'
+              }`,
+            )
+          "
           @input="handleCopilotActive"
         />
-        <p v-if="copilotShowIntegrationsMessage" class="without-messages">
+        <p
+          v-if="copilotShowIntegrationsMessage"
+          class="without-messages"
+        >
           {{ $t('settings.messages.copilot.integration.start') }}
           <button @click="redirectToIntegrations">
             {{ $t('settings.messages.copilot.integration.middle') }}
           </button>
           {{ $t('settings.messages.copilot.integration.end') }}
         </p>
-        <unnnic-switch
+        <UnnnicSwitch
           v-if="copilotActive && !copilotShowIntegrationsMessage && !isLoading"
           :value="copilotCustomRulesActive"
           size="small"
-          :text-right="
+          :textRight="
             $t(
               `settings.messages.copilot.custom_rules.status.${
                 copilotCustomRulesActive ? 'on' : 'off'
@@ -29,30 +43,38 @@
           "
           @input="handleCustomRulesActive"
         />
-        <unnnic-text-area
+        <UnnnicTextArea
           v-if="copilotActive && copilotCustomRulesActive && !isLoading"
           :value="copilotCustomRules"
           @input="handleCustomRules"
           :label="$t('settings.messages.copilot.custom_rules.title')"
-          :placeholder="$t('settings.messages.copilot.custom_rules.explanation')"
+          :placeholder="
+            $t('settings.messages.copilot.custom_rules.explanation')
+          "
           :maxLength="1500"
         />
       </div>
     </section>
 
     <section>
-      <p v-if="sector" class="title">
+      <p
+        v-if="sector"
+        class="title"
+      >
         {{ $t('quick_messages.title_by_sector', { sector: sector.name }) }}
       </p>
-      <p v-if="quickMessagesShared.length === 0" class="without-messages">
-        {{ $t('quick_messages.without_messages.start') }}
+      <p
+        v-if="quickMessagesShared.length === 0"
+        class="without-messages"
+      >
+        {{ $t('quick_messages.without_messages_shared.start') }}
         <button @click="$emit('create-quick-message')">
-          {{ $t('quick_messages.without_messages.middle') }}
+          {{ $t('quick_messages.without_messages_shared.middle') }}
         </button>
-        {{ $t('quick_messages.without_messages.end') }}
+        {{ $t('quick_messages.without_messages_shared.end') }}
       </p>
 
-      <quick-message-card
+      <QuickMessageCard
         v-for="message in quickMessagesShared"
         :key="message.uuid"
         :quickMessage="message"
@@ -103,7 +125,8 @@ export default {
   computed: {
     ...mapState({
       copilotActive: (state) => state.config.copilot.active,
-      copilotCustomRulesActive: (state) => state.config.copilot.customRulesActive,
+      copilotCustomRulesActive: (state) =>
+        state.config.copilot.customRulesActive,
       copilotCustomRules: (state) => state.config.copilot.customRules,
     }),
   },
@@ -150,7 +173,10 @@ export default {
       this.isLoading = true;
       const response = await Sector.update(uuid, newSector);
 
-      if (response.status === 400 || response.config.can_use_chat_completion === undefined) {
+      if (
+        response.status === 400 ||
+        response.config.can_use_chat_completion === undefined
+      ) {
         this.copilotShowIntegrationsMessage = true;
         this.setCopilotActive(false);
       } else {

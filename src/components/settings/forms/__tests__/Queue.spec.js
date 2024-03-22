@@ -2,7 +2,7 @@ import { mount, createLocalVue } from '@vue/test-utils';
 import { unnnicToolTip } from '@weni/unnnic-system';
 import i18n from '@/plugins/i18n';
 
-import FormQueue from '../Queue';
+import FormQueue from '../Queue.vue';
 import defaultProps from './mocks/queueMock';
 
 const localVue = createLocalVue();
@@ -11,7 +11,7 @@ function createWrapper() {
   const wrapper = mount(FormQueue, {
     propsData: defaultProps,
     stubs: {
-      unnnicToolTip,
+      UnnnicToolTip: true,
     },
     localVue,
     i18n,
@@ -29,16 +29,17 @@ describe('FormQueue', () => {
 
   it('should render all section titles and tooltips', () => {
     const titles = wrapper.findAll('.title');
-    const tooltips = wrapper.findAll('.unnnic-tooltip');
+    const tooltips = wrapper.findAllComponents(unnnicToolTip);
 
-    expect(titles.at(0).text()).toMatch(/Adicionar nova Fila/gi);
-
+    expect(titles.at(0).text()).toMatch(/Create new queue/gi);
     expect(titles.length).toBe(1);
     expect(tooltips.length).toBe(1);
   });
 
   it('should render all inputs', () => {
-    const inputQueue = wrapper.findAllComponents({ name: 'unnnic-input' }).at(0);
+    const inputQueue = wrapper
+      .findAllComponents({ name: 'unnnic-input' })
+      .at(0);
     expect(inputQueue.exists()).toBe(true);
     expect(inputQueue.props('label')).toMatch(/Nome da fila/gi);
     expect(inputQueue.props('placeholder')).toMatch(/Exemplo: Pagamentos/gi);

@@ -1,10 +1,18 @@
 <template>
-  <unnnic-dropdown-item class="more-actions-option" @click="action" @keypress.enter="action">
-    <div class="title">
-      <unnnic-icon-svg :icon="icon" next size="sm" />
-      <span> {{ title }} </span>
-    </div>
-  </unnnic-dropdown-item>
+  <section>
+    <UnnnicDropdownItem
+      class="more-actions-option"
+      @click="action"
+      @keypress.enter="action"
+    >
+      <UnnnicIconSvg
+        :icon="icon"
+        next
+        size="sm"
+      />
+      <p>{{ title }}</p>
+    </UnnnicDropdownItem>
+  </section>
 </template>
 
 <script>
@@ -15,6 +23,13 @@ export default {
     icon: { type: String, required: true },
     title: { type: String, required: true },
     action: { type: Function, required: true },
+    inputType: {
+      type: String,
+      required: false,
+      validator(value) {
+        return ['image', 'doc'].includes(value);
+      },
+    },
   },
 };
 </script>
@@ -22,14 +37,14 @@ export default {
 <style lang="scss" scoped>
 a.more-actions-option {
   &::before {
-    margin: 0;
+    display: none;
   }
 
-  .title {
-    padding: $unnnic-spacing-stack-sm 0;
-    display: flex;
-    gap: $unnnic-spacing-inline-xs;
-    width: max-content;
-  }
+  padding: $unnnic-spacing-stack-sm 0;
+
+  display: flex;
+  gap: $unnnic-spacing-inline-xs;
+
+  width: max-content;
 }
 </style>

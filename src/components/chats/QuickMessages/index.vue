@@ -1,79 +1,77 @@
 <template>
-  <aside-slot-template
+  <AsideSlotTemplate
     v-if="!isEditing && !isCreating"
     :title="$t('quick_message')"
     icon="bolt"
     :close="() => $emit('close')"
   >
-    <aside-slot-template-section class="messages-section__container">
-      <div class="messages-section">
-        <unnnic-collapse class="messages" active :title="$t('quick_messages.personal')">
-          <quick-message-card
-            v-for="quickMessage in quickMessages"
-            :key="quickMessage.uuid"
-            :quickMessage="quickMessage"
-            clickable
-            @select="$emit('select-quick-message', quickMessage)"
-            @edit="quickMessageToEdit = quickMessage"
-            @delete="quickMessageToDelete = quickMessage"
-          />
-        </unnnic-collapse>
-        <unnnic-collapse
-          v-if="quickMessagesShared.length > 0"
-          class="messages-shared"
-          :title="$t('quick_messages.shared')"
-          active
-        >
-          <quick-message-card
-            v-for="quickMessage in quickMessagesShared"
-            :key="quickMessage.uuid"
-            :quickMessage="quickMessage"
-            :withActions="false"
-            clickable
-            @select="$emit('select-quick-message', quickMessage)"
-            @edit="quickMessageToEdit = quickMessage"
-            @delete="quickMessageToDelete = quickMessage"
-          />
-        </unnnic-collapse>
-      </div>
+    <AsideSlotTemplateSection class="messages-section__container">
+      <QuickMessagesList
+        @select-quick-message="selectQuickMessage"
+        @edit-quick-message="quickMessageToEdit = $event"
+        @delete-quick-message="quickMessageToDelete = $event"
+      />
 
-      <unnnic-button
-        icon-left="add"
+      <UnnnicButton
+        v-if="isMobile"
+        class="quick-messages__mobile-new"
+        float
+        type="primary"
+        iconCenter="add"
+        size="extra-large"
+        @click="openQuickMessageCreation"
+      />
+      <UnnnicButton
+        v-else
+        iconLeft="add"
         :text="$t('quick_messages.new')"
         type="secondary"
         size="small"
         class="fill-w"
-        @click="quickMessageToEdit = createEmptyQuickMessage()"
+        @click="openQuickMessageCreation"
       />
-    </aside-slot-template-section>
+    </AsideSlotTemplateSection>
 
-    <unnnic-modal
-      :text="$t('quick_messages.delete')"
-      :description="$t('quick_messages.delete_confirm')"
-      scheme="feedback-yellow"
-      modal-icon="alert-circle-1"
-      @close="quickMessageToDelete = null"
-      :show-modal="!!quickMessageToDelete"
-    >
-      <template #options>
-        <unnnic-button :text="$t('cancel')" type="secondary" @click="quickMessageToDelete = null" />
-        <unnnic-button :text="$t('confirm')" type="tertiary" @click="deleteQuickMessage" />
-      </template>
-    </unnnic-modal>
-  </aside-slot-template>
+    <template v-slot:modals>
+      <UnnnicModal
+        class="quick-messages__modal-delete"
+        :text="$t('quick_messages.delete')"
+        :description="$t('action_cannot_be_reversed')"
+        scheme="feedback-red"
+        modalIcon="error"
+        :closeIcon="isMobile"
+        @close="quickMessageToDelete = null"
+        :showModal="!!quickMessageToDelete"
+      >
+        <template #options>
+          <UnnnicButton
+            :text="$t('cancel')"
+            type="tertiary"
+            @click="quickMessageToDelete = null"
+          />
+          <UnnnicButton
+            :text="$t('delete')"
+            type="warning"
+            @click="deleteQuickMessage"
+          />
+        </template>
+      </UnnnicModal>
+    </template>
+  </AsideSlotTemplate>
 
-  <aside-slot-template
+  <AsideSlotTemplate
     v-else
     :title="$t('quick_message')"
     icon="bolt"
     :back="() => (quickMessageToEdit = null)"
-    @close="$emit('close')"
+    :close="() => $emit('close')"
   >
-    <aside-slot-template-section class="fill-h fill-w">
-      <section class="fill-h quick-message-form">
-        <quick-message-form
+    <AsideSlotTemplateSection class="fill-h fill-w">
+      <section class="fill-h quick-messages-form">
+        <h1 class="quick-messages-form__title">{{ quickMessageFormTitle }}</h1>
+        <QuickMessageForm
           v-model="quickMessageToEdit"
-          class="quick-message-form__form"
+          class="quick-messages-form__form"
           @submit="
             !!quickMessageToEdit.uuid
               ? updateQuickMessage(quickMessageToEdit)
@@ -82,19 +80,20 @@
           @cancel="quickMessageToEdit = null"
         />
       </section>
-    </aside-slot-template-section>
-  </aside-slot-template>
+    </AsideSlotTemplateSection>
+  </AsideSlotTemplate>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
-
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import isMobile from 'is-mobile';
+import { mapActions } from 'vuex';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
 
-import QuickMessageCard from './QuickMessageCard';
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
+
+import QuickMessagesList from './QuickMessagesList';
 import QuickMessageForm from './QuickMessageForm';
 
 export default {
@@ -103,26 +102,41 @@ export default {
   components: {
     AsideSlotTemplate,
     AsideSlotTemplateSection,
-    QuickMessageCard,
+    QuickMessagesList,
     QuickMessageForm,
   },
 
   data: () => ({
+    isMobile: isMobile(),
+
     quickMessageToDelete: null,
     quickMessageToEdit: null,
   }),
 
   computed: {
-    ...mapState({
-      quickMessages: (state) => state.chats.quickMessages.quickMessages,
-      quickMessagesShared: (state) => state.chats.quickMessagesShared.quickMessagesShared,
-    }),
-
     isEditing() {
-      return !!this.quickMessageToEdit && this.quickMessageToEdit.id;
+      const { quickMessageToEdit } = this;
+      return quickMessageToEdit && quickMessageToEdit.uuid;
     },
     isCreating() {
-      return !!this.quickMessageToEdit && !this.quickMessageToEdit.id;
+      const { quickMessageToEdit } = this;
+      return quickMessageToEdit && !quickMessageToEdit.uuid;
+    },
+
+    quickMessageFormTitle() {
+      if (this.isEditing) {
+        return this.$t('quick_messages.edit');
+      }
+
+      if (this.isCreating) {
+        return this.$t('quick_messages.add');
+      }
+
+      return '';
+    },
+
+    emptyQuickMessage() {
+      return { title: '', text: '', shortcut: null };
     },
   },
 
@@ -136,7 +150,7 @@ export default {
     async createQuickMessage({ title, text, shortcut }) {
       this.actionCreateQuickMessage({ title, text, shortcut });
 
-      unnnicCallAlert({
+      callUnnnicAlert({
         props: {
           text: this.$t('quick_messages.successfully_added'),
           type: 'success',
@@ -151,7 +165,7 @@ export default {
     async updateQuickMessage({ uuid, title, text, shortcut }) {
       this.actionUpdateQuickMessage({ uuid, title, text, shortcut });
 
-      unnnicCallAlert({
+      callUnnnicAlert({
         props: {
           text: this.$t('quick_messages.successfully_updated'),
           type: 'success',
@@ -161,14 +175,21 @@ export default {
 
       this.quickMessageToEdit = null;
     },
-    createEmptyQuickMessage() {
-      return { title: '', text: '', shortcut: null };
+    openQuickMessageCreation() {
+      this.quickMessageToEdit = this.emptyQuickMessage;
     },
     async deleteQuickMessage() {
       const { uuid } = this.quickMessageToDelete;
 
       this.actionDeleteQuickMessage(uuid);
       this.quickMessageToDelete = null;
+    },
+    selectQuickMessage(quickMessage) {
+      if (this.isMobile) {
+        this.quickMessageToEdit = quickMessage;
+      } else {
+        this.$emit('select-quick-message', quickMessage);
+      }
     },
   },
 };
@@ -183,43 +204,44 @@ export default {
   width: 100%;
 }
 
-.messages-section {
+.messages-section__container {
   height: 100%;
-  overflow: hidden auto;
+  width: 100%;
 
-  // insert space between content and scrollbar
-  margin-right: -$unnnic-spacing-xs;
-  padding-right: $unnnic-spacing-xs;
+  display: flex;
+  flex-direction: column;
+  gap: $unnnic-spacing-stack-sm;
 
-  &__container {
-    height: 100%;
-    width: 100%;
+  overflow: hidden;
+}
 
-    display: flex;
-    flex-direction: column;
-    gap: $unnnic-spacing-stack-sm;
-
-    overflow: hidden;
+.quick-messages__modal-delete {
+  :deep(.unnnic-modal-container) .unnnic-modal-container-background {
+    &-body-description {
+      text-align: center;
+    }
+    &-button :first-child {
+      margin-right: $unnnic-spacing-xs;
+    }
   }
 }
 
-.messages {
-  flex: 1 1;
+.quick-messages-form {
   display: flex;
   flex-direction: column;
+  gap: $unnnic-spacing-sm;
 
-  &-group {
-    display: grid;
-    gap: $unnnic-spacing-stack-sm;
+  &__title {
+    font-size: $unnnic-font-size-body-lg;
+    font-weight: $unnnic-font-weight-regular;
+    color: $unnnic-color-neutral-dark;
   }
-}
-
-.quick-message-form {
-  display: flex;
-  flex-direction: column;
 
   &__form {
     flex: 1 1;
   }
+}
+.quick-messages__mobile-new {
+  margin: 0 $unnnic-spacing-ant $unnnic-spacing-md 0;
 }
 </style>

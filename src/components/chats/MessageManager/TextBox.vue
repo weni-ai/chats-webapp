@@ -1,8 +1,25 @@
 <template>
-  <div class="text-box">
-    <div class="text-editor" @click="$refs.textareaRef.focus()" @keypress.enter="() => {}">
-      <div @click.stop="handleEmojiPicker" @keypress.enter="handleEmojiPicker">
-        <unnnic-icon
+  <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
+  <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
+  <section class="text-box">
+    <div
+      class="text-editor"
+      :class="{ mobile: isMobile }"
+      @click="$refs.textareaRef.focus()"
+    >
+      <UnnnicButton
+        v-if="isMobile"
+        class="text-editor__mobile-button"
+        iconCenter="bolt"
+        type="tertiary"
+        scheme="neutral-dark"
+        @click.stop="emitHandleQuickMessages"
+      />
+      <div
+        v-else
+        @click.stop="handleEmojiPicker"
+      >
+        <UnnnicIcon
           icon="add_reaction"
           scheme="neutral-clean"
           :class="['emoji-button', 'clickable']"
@@ -10,15 +27,14 @@
         />
       </div>
 
-      <emoji-picker
+      <EmojiPicker
         v-show="isEmojiPickerOpen"
         @emojiSelected="handleTextarea"
         @close="closeEmojiPicker"
       />
 
-      <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -->
       <textarea
-        placeholder="Mensagem"
+        :placeholder="$t('message')"
         class="text-input"
         ref="textareaRef"
         :rows="currentTextAreaRows"
@@ -29,25 +45,53 @@
         @focus="() => setIsFocused(true)"
         @blur="() => setIsFocused(false)"
       />
+
+      <UnnnicDropdown
+        position="top-left"
+        class="more-actions"
+        v-if="isMobile"
+      >
+        <UnnnicButton
+          slot="trigger"
+          class="text-editor__mobile-button"
+          iconCenter="attachment"
+          type="tertiary"
+          scheme="neutral-dark"
+          next
+        />
+
+        <div class="more-actions-container">
+          <MoreActionsOption
+            icon="image"
+            :title="$t('photo_or_video')"
+            :action="() => emitOpenFileUploader({ filesType: 'image' })"
+          />
+          <MoreActionsOption
+            icon="article"
+            :title="$t('doc')"
+            :action="() => emitOpenFileUploader({ filesType: 'doc' })"
+          />
+        </div>
+      </UnnnicDropdown>
     </div>
-  </div>
+  </section>
 </template>
 
 <script>
+import isMobile from 'is-mobile';
+
 import EmojiPicker from './EmojiPicker';
+import MoreActionsOption from './MoreActionsOption';
 
 export default {
   name: 'TextBox',
 
   components: {
     EmojiPicker,
+    MoreActionsOption,
   },
 
   props: {
-    loadingValue: {
-      type: Number,
-    },
-
     value: {
       type: String,
       default: '',
@@ -61,6 +105,12 @@ export default {
     currentTextAreaRows: 1,
     isEmojiPickerOpen: false,
   }),
+
+  computed: {
+    isMobile() {
+      return isMobile();
+    },
+  },
 
   methods: {
     focus() {
@@ -98,6 +148,14 @@ export default {
       }
     },
 
+    emitHandleQuickMessages() {
+      this.$emit('handle-quick-messages');
+    },
+
+    emitOpenFileUploader({ filesType }) {
+      this.$emit('open-file-uploader', null, filesType);
+    },
+
     keyDownTextarea(event) {
       this.message = event.target.value;
       this.$emit('keydown', event);
@@ -130,7 +188,8 @@ export default {
       const calculatedRows = Math.ceil(calculatedHeight / lineHeight);
       this.textAreaRows = calculatedRows;
 
-      textarea.style.overflowY = textarea.scrollHeight > maxHeight ? 'scroll' : 'hidden';
+      textarea.style.overflowY =
+        textarea.scrollHeight > maxHeight ? 'scroll' : 'hidden';
     },
   },
 
@@ -159,7 +218,10 @@ export default {
   position: relative;
 
   .text-editor {
-    $padding-vertical: calc($unnnic-spacing-stack-nano / 2 + $unnnic-spacing-stack-xs);
+    $padding-vertical: calc(
+      $unnnic-spacing-stack-nano / 2 + $unnnic-spacing-stack-xs
+    );
+    $mobile-button-size: 44px; // = button size large (46px) - 2px of message manager border
 
     outline: none;
     border-radius: $unnnic-border-radius-sm;
@@ -172,8 +234,25 @@ export default {
 
     color: $unnnic-color-neutral-dark;
 
-    overflow: auto;
     cursor: text;
+
+    &.mobile {
+      padding: 0;
+      gap: 0;
+
+      .text-input {
+        padding: ($padding-vertical + 1px) 0;
+      }
+    }
+
+    :deep(.text-editor__mobile-button) {
+      width: $mobile-button-size;
+      height: $mobile-button-size;
+    }
+
+    :deep(.emoji-button) {
+      margin-bottom: $padding-vertical;
+    }
 
     .text-input {
       border: none;
@@ -198,10 +277,6 @@ export default {
       &::placeholder {
         color: $unnnic-color-neutral-cleanest;
       }
-    }
-
-    :deep(.emoji-button) {
-      margin-bottom: $padding-vertical;
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <unnnic-modal
+  <UnnnicModal
     v-if="showModal"
     @close="close"
     class="start-discussion-form__modal"
@@ -8,8 +8,10 @@
     <section class="start-discussion-form">
       <div class="start-discussion-form__selects">
         <div class="start-discussion-form__selects__input">
-          <unnnic-label :label="$t('discussions.start_discussion.form.select_sector')" />
-          <unnnic-select-smart
+          <UnnnicLabel
+            :label="$t('discussions.start_discussion.form.select_sector')"
+          />
+          <UnnnicSelectSmart
             v-model="sector"
             :options="sectorsToSelect"
             autocomplete
@@ -18,8 +20,10 @@
           />
         </div>
         <div class="start-discussion-form__selects__input">
-          <unnnic-label :label="$t('discussions.start_discussion.form.select_queue')" />
-          <unnnic-select-smart
+          <UnnnicLabel
+            :label="$t('discussions.start_discussion.form.select_queue')"
+          />
+          <UnnnicSelectSmart
             v-model="queue"
             :disabled="sector[0]?.value === '' || queuesToSelect.length < 2"
             :options="queuesToSelect"
@@ -29,7 +33,7 @@
           />
         </div>
       </div>
-      <unnnic-input
+      <UnnnicInput
         v-model="subject"
         size="md"
         :maxlength="50"
@@ -37,7 +41,7 @@
         :label="$t('discussions.start_discussion.form.subject')"
       />
 
-      <unnnic-text-area
+      <UnnnicTextArea
         v-model="message"
         :label="$t('message')"
         :placeholder="$t('discussions.start_discussion.form.explain_situation')"
@@ -45,8 +49,12 @@
       />
     </section>
     <template #options>
-      <unnnic-button :text="$t('cancel')" type="secondary" @click="close" />
-      <unnnic-button
+      <UnnnicButton
+        :text="$t('cancel')"
+        type="secondary"
+        @click="close"
+      />
+      <UnnnicButton
         :text="$t('confirm')"
         type="primary"
         @click="startDiscussion"
@@ -54,7 +62,7 @@
         :loading="startDiscussionLoading"
       />
     </template>
-  </unnnic-modal>
+  </UnnnicModal>
 </template>
 
 <script>
@@ -90,13 +98,21 @@ export default {
   async created() {
     await this.getSectors();
     this.queuesToSelect = [
-      { value: '', label: this.$t('discussions.start_discussion.form.search_queue') },
+      {
+        value: '',
+        label: this.$t('discussions.start_discussion.form.search_queue'),
+      },
     ];
   },
 
   computed: {
     isConfirmButtonDisabled() {
-      return !this.sector[0] || !this.queue[0]?.value || !this.subject || !this.message;
+      return (
+        !this.sector[0] ||
+        !this.queue[0]?.value ||
+        !this.subject ||
+        !this.message
+      );
     },
   },
 
@@ -107,11 +123,14 @@ export default {
 
     async startDiscussion() {
       this.startDiscussionLoading = true;
-      const responseDiscussion = await this.$store.dispatch('chats/discussions/create', {
-        queue: this.queue[0].value || '',
-        subject: this.subject,
-        initial_message: this.message,
-      });
+      const responseDiscussion = await this.$store.dispatch(
+        'chats/discussions/create',
+        {
+          queue: this.queue[0].value || '',
+          subject: this.subject,
+          initial_message: this.message,
+        },
+      );
 
       if (this.$route.path !== 'discussion' && responseDiscussion.uuid) {
         this.$router.push({
@@ -154,10 +173,15 @@ export default {
         const { results } = response;
 
         const newSectors = [
-          { value: '', label: this.$t('discussions.start_discussion.form.search_sector') },
+          {
+            value: '',
+            label: this.$t('discussions.start_discussion.form.search_sector'),
+          },
         ];
 
-        results.forEach(({ uuid, name }) => newSectors.push({ value: uuid, label: name }));
+        results.forEach(({ uuid, name }) =>
+          newSectors.push({ value: uuid, label: name }),
+        );
         this.sectorsToSelect = newSectors;
       } catch (error) {
         console.error('The sectors could not be loaded at this time.', error);
@@ -174,7 +198,9 @@ export default {
         const { results } = response;
 
         const newQueues = [this.queuesToSelect[0]];
-        results.forEach(({ uuid, name }) => newQueues.push({ value: uuid, label: name }));
+        results.forEach(({ uuid, name }) =>
+          newQueues.push({ value: uuid, label: name }),
+        );
         this.queuesToSelect = newQueues;
 
         if (results.length === 1 && newQueues?.[1]) {
@@ -182,7 +208,10 @@ export default {
           this.queue = uniqueQueue;
         }
       } catch (error) {
-        console.error('The sector tags could not be loaded at this time.', error);
+        console.error(
+          'The sector tags could not be loaded at this time.',
+          error,
+        );
       }
     },
   },

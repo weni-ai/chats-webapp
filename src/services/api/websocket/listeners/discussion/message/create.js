@@ -5,7 +5,9 @@ import { isValidJson } from '@/utils/messages';
 
 export default (message, { app }) => {
   const { discussions, activeDiscussion } = app.$store.state.chats.discussions;
-  const findDiscussion = discussions.find((discussion) => discussion.uuid === message.discussion);
+  const findDiscussion = discussions.find(
+    (discussion) => discussion.uuid === message.discussion,
+  );
 
   if (findDiscussion) {
     if (app.me.email === message.user?.email) {
@@ -25,13 +27,19 @@ export default (message, { app }) => {
     }
 
     const isCurrentDiscussion =
-      app.$route.name === 'discussion' && app.$route.params.discussionId === message.discussion;
+      app.$route.name === 'discussion' &&
+      app.$route.params.discussionId === message.discussion;
     const isViewModeCurrentDiscussion =
-      app.$route.params.viewedAgent && activeDiscussion?.uuid === message.discussion;
-    const shouldAddDiscussionMessage = isCurrentDiscussion || isViewModeCurrentDiscussion;
+      app.$route.params.viewedAgent &&
+      activeDiscussion?.uuid === message.discussion;
+    const shouldAddDiscussionMessage =
+      isCurrentDiscussion || isViewModeCurrentDiscussion;
 
     if (shouldAddDiscussionMessage) {
-      app.$store.dispatch('chats/discussionMessages/addDiscussionMessage', message);
+      app.$store.dispatch(
+        'chats/discussionMessages/addDiscussionMessage',
+        message,
+      );
     }
 
     const isJsonMessage = isValidJson(message.text);

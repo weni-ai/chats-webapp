@@ -1,7 +1,12 @@
 <template>
   <section class="quick-message-form">
-    <h1 v-if="title" class="quick-message-form__title">{{ title }}</h1>
-    <unnnic-input
+    <h1
+      v-if="title"
+      class="quick-message-form__title"
+    >
+      {{ title }}
+    </h1>
+    <UnnnicInput
       :value="quickMessage.title"
       @input="quickMessage = { ...quickMessage, title: $event }"
       size="md"
@@ -9,7 +14,7 @@
       :placeholder="$t('quick_messages.title_field_placeholder')"
     />
 
-    <unnnic-input
+    <UnnnicInput
       :value="quickMessage.shortcut"
       @input="quickMessage = { ...quickMessage, shortcut: $event }"
       size="md"
@@ -17,7 +22,7 @@
       :label="$t('shortcut')"
     />
 
-    <unnnic-text-area
+    <UnnnicTextArea
       :value="quickMessage.text"
       @input="quickMessage = { ...quickMessage, text: $event }"
       :label="$t('message')"
@@ -26,15 +31,18 @@
       size="md"
     />
 
-    <div class="actions" v-if="!externalActions">
-      <unnnic-button
+    <div
+      class="actions"
+      v-if="!externalActions"
+    >
+      <UnnnicButton
         class="button"
         :text="$t('cancel')"
         type="tertiary"
         size="small"
         @click="$emit('cancel')"
       />
-      <unnnic-button
+      <UnnnicButton
         class="button"
         :text="$t('save')"
         type="primary"
@@ -71,7 +79,11 @@ export default {
 
   computed: {
     isSaveButtonDisabled() {
-      return !this.hasMessageTitle || !this.hasMessageShortcut || !this.hasMessageText;
+      return (
+        !this.hasMessageTitle ||
+        !this.hasMessageShortcut ||
+        !this.hasMessageText
+      );
     },
     hasMessageText() {
       return this.quickMessage.text?.trim?.();
@@ -107,7 +119,7 @@ export default {
 .quick-message-form {
   display: flex;
   flex-direction: column;
-  gap: $unnnic-spacing-stack-sm;
+  gap: $unnnic-spacing-xs;
 
   &__title {
     font-size: $unnnic-font-size-body-lg;
@@ -130,6 +142,11 @@ export default {
     .button {
       flex: 1 1;
     }
+  }
+
+  :deep([class*='label']) {
+    margin-top: 0;
+    margin-bottom: $unnnic-spacing-nano;
   }
 }
 </style>

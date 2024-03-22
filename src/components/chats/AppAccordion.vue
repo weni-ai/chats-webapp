@@ -6,19 +6,27 @@
       @click="toggleAccordion()"
       :aria-expanded="isOpen"
       :aria-controls="`collapse${_uid}`"
-      style="display: flex; align-items: center; justify-content: space-between; cursor: pointer"
+      style="
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+      "
     >
       <header>
         <h2>{{ title }}</h2>
       </header>
-      <unnnic-icon
+      <UnnnicIcon
         size="xs"
         :icon="isOpen ? 'arrow-button-up-1' : 'arrow-button-down-1'"
         scheme="neutral-darkest"
       />
     </div>
 
-    <div v-show="isOpen" :id="`collapse${_uid}`">
+    <div
+      v-show="isOpen"
+      :id="`collapse${_uid}`"
+    >
       <slot name="content" />
     </div>
   </div>

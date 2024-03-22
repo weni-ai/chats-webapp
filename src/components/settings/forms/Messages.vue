@@ -1,7 +1,7 @@
 <template>
   <section class="form-quick-messages">
     <section v-if="quickMessageToUpdate">
-      <unnnic-breadcrumb
+      <UnnnicBreadcrumb
         class="form-quick-messages__breadcrumb"
         :crumbs="quickMessagesBreadcrumb"
         @crumbClick="
@@ -11,17 +11,17 @@
           }
         "
       />
-      <quick-message-form
+      <QuickMessageForm
         v-model="quickMessageToUpdate"
         class="quick-message-form__form"
         externalActions
         size="md"
       />
     </section>
-    <list-sector-messages
+    <ListSectorMessages
       v-else
       :sector="sector"
-      :quick-messages-shared="quickMessagesShared"
+      :quickMessagesShared="quickMessagesShared"
       @create-quick-message="this.create"
       @edit-quick-message="this.update"
       @delete-quick-message="this.delete"
@@ -95,7 +95,10 @@ export default {
           ...this.quickMessageToUpdate,
         });
       } else {
-        await this.actionCreateQuickMessage({ sectorUuid: uuid, ...this.quickMessageToUpdate });
+        await this.actionCreateQuickMessage({
+          sectorUuid: uuid,
+          ...this.quickMessageToUpdate,
+        });
       }
 
       unnnicCallAlert({

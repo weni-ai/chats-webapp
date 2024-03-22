@@ -11,14 +11,17 @@
     </header>
 
     <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
-    <suggestion-box-shortcut
+    <SuggestionBoxShortcut
       v-if="copilot"
       copilot
       @click="openCopilot"
       @keypress.enter="openCopilot"
     />
-    <section class="suggestion-box__shortcuts" ref="refShortcuts">
-      <suggestion-box-shortcut
+    <section
+      class="suggestion-box__shortcuts"
+      ref="refShortcuts"
+    >
+      <SuggestionBoxShortcut
         v-for="(suggestion, index) in filteredSuggestions"
         :key="suggestion.uuid"
         :shortcut="suggestion.shortcut"
@@ -136,7 +139,8 @@ export default {
           : shortcutIndex % suggestionsQuantity;
     },
     onEnter() {
-      const activeSuggestion = this.filteredSuggestions[this.activeShortcutIndex];
+      const activeSuggestion =
+        this.filteredSuggestions[this.activeShortcutIndex];
       if (!activeSuggestion) {
         if (this.copilot) {
           this.openCopilot();
@@ -162,7 +166,8 @@ export default {
       event.preventDefault();
       reactiveKey.handler();
 
-      const scrollElement = this.$refs.refShortcuts.childNodes[this.activeShortcutIndex];
+      const scrollElement =
+        this.$refs.refShortcuts.childNodes[this.activeShortcutIndex];
       scrollElement?.scrollIntoView({ block: 'nearest' });
     },
     isSuggestionBoxOpen(isOpen) {

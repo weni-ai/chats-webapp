@@ -1,8 +1,12 @@
 import { mount, createLocalVue } from '@vue/test-utils';
-import { unnnicToolTip } from '@weni/unnnic-system';
+import {
+  unnnicToolTip,
+  unnnicLabel,
+  unnnicSelectSmart,
+} from '@weni/unnnic-system';
 import i18n from '@/plugins/i18n';
 
-import FormSector from '../Sector';
+import FormSector from '../Sector.vue';
 import defaultProps from './mocks/sectorMock';
 
 const localVue = createLocalVue();
@@ -11,7 +15,8 @@ function createWrapper() {
   const wrapper = mount(FormSector, {
     propsData: defaultProps,
     stubs: {
-      unnnicToolTip,
+      UnnnicToolTip: true,
+      UnnnicSelectSmart: true,
     },
     localVue,
     i18n,
@@ -29,7 +34,7 @@ describe('FormSector', () => {
 
   it('should render all section titles and tooltips', () => {
     const titles = wrapper.findAll('h2.title');
-    const tooltips = wrapper.findAll('.unnnic-tooltip');
+    const tooltips = wrapper.findAllComponents(unnnicToolTip);
 
     expect(titles.at(0).text()).toMatch(/Adicionar novo setor/gi);
     expect(titles.at(1).text()).toMatch(/Gerentes de atendimento/gi);
@@ -41,25 +46,33 @@ describe('FormSector', () => {
   });
 
   it('should render all inputs', () => {
-    const inputSector = wrapper.findAllComponents({ name: 'unnnic-input' }).at(0);
+    const inputSector = wrapper
+      .findAllComponents({ name: 'unnnic-input' })
+      .at(0);
     expect(inputSector.exists()).toBe(true);
     expect(inputSector.props('label')).toMatch(/Nome do setor/gi);
     expect(inputSector.props('placeholder')).toMatch(/Exemplo: Financeiro/gi);
 
-    const inputManager = wrapper.find('.unnnic-autocomplete');
-    expect(inputManager.exists()).toBe(true);
-    expect(inputManager.props('label')).toMatch(/Adicionar gerente/gi);
-    expect(inputManager.props('placeholder')).toMatch(/Pesquise pelo nome ou email/gi);
+    const selectManagerLabel = wrapper.findAllComponents(unnnicLabel).at(0);
+    const selects = wrapper.findAllComponents(unnnicSelectSmart);
+
+    expect(selectManagerLabel.exists()).toBe(true);
+    expect(selectManagerLabel.props('label')).toMatch(/Adicionar gerente/gi);
+    expect(selects.length).toBe(1);
 
     const inputTrigger = wrapper.find('.unnnic-switch');
-    expect(inputTrigger.exists()).toBe(true);
     const inputTriggerLabel = wrapper.find('.unnnic-switch__label');
-    expect(inputTriggerLabel.text()).toMatch(/Disparo de modelos de mensagens desativado/gi);
+    expect(inputTrigger.exists()).toBe(true);
+    expect(inputTriggerLabel.text()).toMatch(
+      /Disparo de modelos de mensagens desativado/gi,
+    );
 
     const inputsTime = wrapper.findAll('input[type="time"]');
     expect(inputsTime.length).toBe(2);
 
-    const inputLimitSimultaneousChats = wrapper.findAllComponents({ name: 'unnnic-input' }).at(-1);
+    const inputLimitSimultaneousChats = wrapper
+      .findAllComponents({ name: 'unnnic-input' })
+      .at(-1);
     expect(inputLimitSimultaneousChats.exists()).toBe(true);
     expect(inputLimitSimultaneousChats.props('label')).toMatch(
       /Limite de quantidade de atendimentos simultâneos por agente/gi,
@@ -92,7 +105,9 @@ describe('FormSector', () => {
       },
     });
 
-    const selectedMemberCards = wrapper.findAllComponents({ name: 'selected-member' });
+    const selectedMemberCards = wrapper.findAllComponents({
+      name: 'selected-member',
+    });
     expect(selectedMemberCards.length).toBe(2);
   });
 });

@@ -1,21 +1,22 @@
 <template>
   <section>
-    <message-manager-loading v-show="showSkeletonLoading" />
-    <div class="message-manager" v-show="!showSkeletonLoading">
+    <MessageManagerLoading v-show="showSkeletonLoading" />
+    <div
+      class="message-manager"
+      v-show="!showSkeletonLoading"
+    >
       <div
         :class="[
           'message-manager-box__container',
-          isLoadingValueValid && 'loading',
+          isFileLoadingValueValid && 'loading',
           isFocused && 'focused',
         ]"
       >
-        <div v-if="isLoadingValueValid" class="loading-indicator__container">
-          <div
-            class="loading-indicator"
-            :style="{ width: `${(loadingFileValue || loadingValue) * 100}%` }"
-          ></div>
-        </div>
-        <text-box
+        <LoadingBar
+          v-if="isFileLoadingValueValid"
+          :value="loadingFileValue"
+        />
+        <TextBox
           v-if="!isAudioRecorderVisible"
           ref="textBox"
           v-model="textBoxMessage"
@@ -23,25 +24,29 @@
           @paste="handlePaste"
           @is-typing-handler="isTypingHandler"
           @is-focused-handler="isFocusedHandler"
+          @handle-quick-messages="emitShowQuickMessages"
+          @open-file-uploader="openFileUploader"
         />
-        <unnnic-audio-recorder
+        <UnnnicAudioRecorder
           ref="audioRecorder"
           class="message-manager__audio-recorder"
-          v-show="isAudioRecorderVisible && !isLoadingValueValid"
+          v-show="isAudioRecorderVisible && !isFileLoadingValueValid"
           v-model="audioMessage"
           @status="updateAudioRecorderStatus"
         />
       </div>
       <div class="message-manager__actions">
-        <unnnic-button
-          v-if="canUseCopilot && !isCopilotOpen && showActionButton && !discussionId"
+        <UnnnicButton
+          v-if="
+            canUseCopilot && !isCopilotOpen && showActionButton && !discussionId
+          "
           @click="openCopilot"
           type="secondary"
           size="large"
           iconCenter="wb_incandescent"
           class="message-manager__actions__co-pilot"
         />
-        <unnnic-button
+        <UnnnicButton
           v-if="(!canUseCopilot || discussionId) && showActionButton"
           @click="record"
           type="secondary"
@@ -49,7 +54,7 @@
           iconCenter="mic"
         />
 
-        <unnnic-button
+        <UnnnicButton
           v-if="discussionId && showActionButton"
           @click="openFileUploader"
           type="secondary"
@@ -58,53 +63,65 @@
           next
         />
 
-        <unnnic-dropdown
+        <UnnnicDropdown
           v-if="(showActionButton || isSuggestionBoxOpen) && !discussionId"
           position="top-left"
           class="more-actions"
         >
-          <unnnic-button slot="trigger" type="primary" size="large" iconCenter="add" />
+          <UnnnicButton
+            slot="trigger"
+            type="primary"
+            size="large"
+            iconCenter="add"
+          />
 
           <div class="more-actions-container">
-            <more-actions-option
+            <MoreActionsOption
               v-if="canUseCopilot"
               :action="record"
               icon="mic"
               :title="$t('record_audio')"
             />
-            <more-actions-option
+            <MoreActionsOption
               :action="openFileUploader"
               icon="attachment"
               :title="$t('attach')"
             />
-            <more-actions-option
-              :action="() => $emit('show-quick-messages')"
+            <MoreActionsOption
+              :action="emitShowQuickMessages"
               icon="bolt"
               :title="$t('quick_message')"
             />
           </div>
-        </unnnic-dropdown>
+        </UnnnicDropdown>
 
-        <unnnic-button
-          v-if="!isSuggestionBoxOpen && (isTyping || isAudioRecorderVisible || isLoadingValueValid)"
+        <UnnnicButton
+          v-if="showSendMessageButton"
           @click="send"
           type="primary"
           size="large"
           iconCenter="send"
         />
+        <UnnnicButton
+          v-else-if="isMobile"
+          @click="record"
+          type="primary"
+          size="large"
+          iconCenter="mic"
+        />
       </div>
-      <suggestion-box
+      <SuggestionBox
         v-if="!discussionId"
         :search="textBoxMessage"
         :suggestions="shortcuts"
-        :keyboard-event="keyboardEvent"
+        :keyboardEvent="keyboardEvent"
         :copilot="canUseCopilot && !discussionId"
         @open="isSuggestionBoxOpen = true"
         @close="closeSuggestionBox"
         @select="setMessage($event.text)"
         @open-copilot="openCopilot"
       />
-      <co-pilot
+      <CoPilot
         v-if="isCopilotOpen"
         ref="copilot"
         @select="setMessage($event)"
@@ -115,12 +132,14 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
 import { mapState } from 'vuex';
 
 import MessageManagerLoading from '@/views/loadings/chat/MessageManager';
 
 import TextBox from './TextBox';
 import MoreActionsOption from './MoreActionsOption.vue';
+import LoadingBar from './LoadingBar';
 import SuggestionBox from './SuggestionBox.vue';
 import CoPilot from './CoPilot';
 
@@ -130,6 +149,7 @@ export default {
   components: {
     MessageManagerLoading,
     TextBox,
+    LoadingBar,
     SuggestionBox,
     MoreActionsOption,
     CoPilot,
@@ -162,16 +182,20 @@ export default {
     audioMessage: null,
     audioRecorderStatus: '',
     isLoading: false,
-    loadingValue: null,
   }),
 
   computed: {
     ...mapState({
       quickMessages: (state) => state.chats.quickMessages.quickMessages,
-      quickMessagesShared: (state) => state.chats.quickMessagesShared.quickMessagesShared,
+      quickMessagesShared: (state) =>
+        state.chats.quickMessagesShared.quickMessagesShared,
       canUseCopilot: (state) => state.chats.rooms.canUseCopilot,
       discussionId: (state) => state.chats.discussions.activeDiscussion?.uuid,
     }),
+
+    isMobile() {
+      return isMobile();
+    },
 
     textBoxMessage: {
       get() {
@@ -184,18 +208,22 @@ export default {
     isAudioRecorderVisible() {
       return (
         !!this.audioMessage ||
-        ['recording', 'recorded', 'playing', 'paused'].includes(this.audioRecorderStatus)
+        ['recording', 'recorded', 'playing', 'paused'].includes(
+          this.audioRecorderStatus,
+        )
       );
     },
-    isLoadingValueValid() {
-      return typeof this.loadingValue === 'number' || typeof this.loadingFileValue === 'number';
+    isFileLoadingValueValid() {
+      return typeof this.loadingFileValue === 'number';
     },
     shortcuts() {
       const allShortcuts = [...this.quickMessages, ...this.quickMessagesShared];
       const uniqueShortcuts = [];
 
       allShortcuts.forEach((item) => {
-        const isDuplicate = uniqueShortcuts.some((uniqueItem) => uniqueItem.uuid === item.uuid);
+        const isDuplicate = uniqueShortcuts.some(
+          (uniqueItem) => uniqueItem.uuid === item.uuid,
+        );
 
         if (!isDuplicate) {
           uniqueShortcuts.push(item);
@@ -205,8 +233,30 @@ export default {
       return uniqueShortcuts;
     },
     showActionButton() {
-      const { isTyping, isAudioRecorderVisible, isLoadingValueValid } = this;
-      return !isTyping && !isAudioRecorderVisible && !isLoadingValueValid;
+      const {
+        isTyping,
+        isAudioRecorderVisible,
+        isFileLoadingValueValid,
+        isMobile,
+      } = this;
+      return (
+        !isTyping &&
+        !isAudioRecorderVisible &&
+        !isFileLoadingValueValid &&
+        !isMobile
+      );
+    },
+    showSendMessageButton() {
+      const {
+        isSuggestionBoxOpen,
+        isTyping,
+        isAudioRecorderVisible,
+        isFileLoadingValueValid,
+      } = this;
+      return (
+        !isSuggestionBoxOpen &&
+        (isTyping || isAudioRecorderVisible || isFileLoadingValueValid)
+      );
     },
   },
 
@@ -214,6 +264,9 @@ export default {
     openCopilot() {
       this.isCopilotOpen = true;
       this.clearTextBox();
+    },
+    emitShowQuickMessages() {
+      this.$emit('show-quick-messages');
     },
     setMessage(newMessage) {
       this.textBoxMessage = newMessage;
@@ -263,7 +316,8 @@ export default {
       this.isFocused = isFocused;
     },
     handlePaste(event) {
-      const { items } = event.clipboardData || event.originalEvent.clipboardData;
+      const { items } =
+        event.clipboardData || event.originalEvent.clipboardData;
       const itemsArray = [...items];
       const imagePastes = itemsArray.filter(
         (item) => item.type.includes('image') || item.type === 'video/mp4',
@@ -272,7 +326,8 @@ export default {
       const fileList = imagePastes.map((imagePaste) => {
         const blob = imagePaste.getAsFile();
         const dateOfPrintPaste = new Date(Date.now()).toUTCString();
-        const fileName = blob.name === 'image.png' ? `${dateOfPrintPaste}.png` : blob.name;
+        const fileName =
+          blob.name === 'image.png' ? `${dateOfPrintPaste}.png` : blob.name;
         const file = new File([blob], fileName, { type: blob.type });
         return file;
       });
@@ -326,7 +381,9 @@ export default {
       };
       const response = await fetch(this.audioMessage.src);
       const blob = await response.blob();
-      const audio = new File([blob], `${Date.now().toString()}.mp3`, { type: 'audio/mpeg3' });
+      const audio = new File([blob], `${Date.now().toString()}.mp3`, {
+        type: 'audio/mpeg3',
+      });
 
       const actionType = this.discussionId
         ? 'chats/discussionMessages/sendDiscussionMedias'
@@ -342,8 +399,12 @@ export default {
 
       this.isLoading = false;
     },
-    openFileUploader(files) {
-      this.$emit('open-file-uploader', files?.length > 0 ? files : []);
+    openFileUploader(files, filesType) {
+      this.$emit(
+        'open-file-uploader',
+        files?.length > 0 ? files : [],
+        filesType,
+      );
     },
     updateAudioRecorderStatus(status) {
       this.audioRecorderStatus = status;
@@ -376,28 +437,6 @@ export default {
 
     &.loading {
       border-radius: 0 0 $unnnic-border-radius-sm $unnnic-border-radius-sm;
-
-      .loading-indicator__container {
-        position: absolute;
-        top: 0;
-        z-index: 100;
-
-        grid-area: loading;
-
-        width: 100%;
-        height: $unnnic-border-width-thin;
-
-        background-color: rgba($unnnic-color-neutral-clean, $unnnic-opacity-level-light);
-
-        overflow: hidden;
-
-        .loading-indicator {
-          height: $unnnic-border-width-thin;
-
-          background-color: $unnnic-color-neutral-clean;
-          transition: width 0.2s;
-        }
-      }
     }
   }
 

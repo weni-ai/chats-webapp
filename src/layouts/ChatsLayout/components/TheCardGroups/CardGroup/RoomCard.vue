@@ -1,5 +1,5 @@
 <template>
-  <unnnic-chats-contact
+  <UnnnicChatsContact
     :title="room.contact.name"
     :lastMessage="lastMessage"
     :waitingTime="waitingTimeComputed"
@@ -10,7 +10,7 @@
     @click="$emit('click')"
     @keypress.enter="$emit('click')"
   >
-  </unnnic-chats-contact>
+  </UnnnicChatsContact>
 </template>
 
 <script>
@@ -62,7 +62,9 @@ export default {
     }),
     lastMessage() {
       const { newMessages, room } = this;
-      return newMessages?.[newMessages.length - 1]?.text || room?.last_message || '';
+      return (
+        newMessages?.[newMessages.length - 1]?.text || room?.last_message || ''
+      );
     },
     waitingTimeComputed() {
       const { waitingTime } = this;
@@ -76,7 +78,7 @@ export default {
       return room.unread_msgs + (newMessages?.length || 0);
     },
     locale() {
-      return this.$i18n.locale === 'en-us' ? 'en' : this.$i18n.locale;
+      return this.$i18n.locale;
     },
   },
 };
