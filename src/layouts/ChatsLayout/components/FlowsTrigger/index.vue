@@ -89,7 +89,7 @@
         </p>
 
         <section v-show="!isContactsLoading">
-          <template v-for="(element, letter) in letras">
+          <template v-for="(element, letter) in letters">
             <UnnnicCollapse
               class="flows-trigger__groups__group"
               :key="letter"
@@ -244,21 +244,23 @@ export default {
   }),
 
   computed: {
-    letras() {
-      const letras = {};
+    letters() {
+      const letters = {};
       this.listOfContacts
-        .filter((item) =>
-          item.name?.toUpperCase().includes(this.search.toUpperCase()),
+        .filter(
+          (item) =>
+            item.name?.toUpperCase().includes(this.search.toUpperCase()) &&
+            item.urns?.[0],
         )
         .forEach((element) => {
           const l = element.name[0].toUpperCase();
           const removeAccent = l
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '');
-          letras[removeAccent] = letras[removeAccent] || [];
-          letras[removeAccent].push(element);
+          letters[removeAccent] = letters[removeAccent] || [];
+          letters[removeAccent].push(element);
         });
-      return letras;
+      return letters;
     },
     searchGroup() {
       return this.listOfGroups.filter((item) =>
@@ -395,9 +397,8 @@ export default {
     },
 
     getContactUrn(item) {
-      return item.urns
-        ? `${item.urns?.[0]?.scheme}:${item.urns?.[0]?.path}`
-        : '';
+      const urn = item.urns?.[0];
+      return urn ? `${urn?.scheme}:${urn?.path}` : '';
     },
 
     async groupList() {

@@ -4,7 +4,12 @@ import { getProject, getToken } from '@/utils/config';
 
 const http = axios.create({
   baseURL: env('VUE_APP_FLOWS_API_URL'),
-  headers: { Authorization: `Bearer ${getToken()}` },
+});
+
+http.interceptors.request.use((config) => {
+  // eslint-disable-next-line no-param-reassign
+  config.headers.Authorization = `Bearer ${getToken()}`;
+  return config;
 });
 
 let cancelTokenSource = null;
