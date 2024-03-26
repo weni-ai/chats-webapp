@@ -31,7 +31,7 @@ export default {
       });
 
       const resultsResponse = {
-        results: response.results,
+        results: response.data,
       };
 
       console.log(resultsResponse);
