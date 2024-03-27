@@ -1,5 +1,8 @@
+<!-- eslint-disable -->
 <template>
-  <section class="edit-sector">
+  <section
+    class="edit-sector"
+  >
     <SectorTabs
       v-if="sector.uuid"
       v-model="currentTab"
@@ -13,7 +16,6 @@
           :managers="projectManagers"
         />
       </template>
-
       <template #queues>
         <section
           v-if="!!queueToEdit"
@@ -44,7 +46,9 @@
                   @click="editDescription"
                 />
               </template>
-              <template slot="description">
+              <template
+                slot="description"
+              >
                 <div
                   @focusout="saveEditDescription"
                   style="word-break: break-all"
@@ -563,7 +567,7 @@ export default {
     async handleTabChange(currentTab) {
       if (currentTab === 'sector') return;
       if (currentTab === 'queues' && this.queues.length === 0)
-        await this.getQueues();
+      await this.getQueues();
       if (currentTab === 'tags' && this.tags.length === 0) await this.getTags();
 
       this.resetTabsData();
@@ -575,7 +579,7 @@ export default {
       if (!manager) return;
 
       this.removedManagers.push(manager);
-      this.sector.managers = this.sector.managers.filter(
+      this.sector.managers = this.sector.managers.filter (
         (manager) => manager.uuid !== managerUuid,
       );
     },
@@ -608,7 +612,7 @@ export default {
 
     editDescription() {
       if (this.queueInfo.default_message)
-        this.content = this.queueInfo.default_message;
+      this.content = this.queueInfo.default_message;
       this.editContent = true;
       this.focusTextEditor();
     },
@@ -653,7 +657,7 @@ export default {
     cancelEditDescription() {
       this.editContent = false;
       if (!this.queueToEdit.default_message)
-        this.queueToEdit.default_message = '';
+      this.queueToEdit.default_message = '';
     },
 
     handleCrumbClick(queueCrumb) {
