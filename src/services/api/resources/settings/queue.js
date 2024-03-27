@@ -73,7 +73,9 @@ export default {
   },
 
   async tags(queueUuid, offset, limit) {
-    const response = await http.get('/tag/', { params: { queue: queueUuid, offset, limit } });
+    const response = await http.get('/tag/', {
+      params: { queue: queueUuid, offset, limit },
+    });
     return response.data;
   },
 };

@@ -1,13 +1,18 @@
 <template>
   <section class="list-agents">
-    <p v-if="title" class="title">{{ title }}</p>
-    <unnnic-table :items="agents">
+    <p
+      v-if="title"
+      class="title"
+    >
+      {{ title }}
+    </p>
+    <UnnnicTable :items="agents">
       <template #header>
-        <unnnic-table-row :headers="tableHeaders" />
+        <UnnnicTableRow :headers="tableHeaders" />
       </template>
 
       <template #item="{ item }">
-        <unnnic-table-row :headers="tableHeaders">
+        <UnnnicTableRow :headers="tableHeaders">
           <template #name>
             {{ item.name }}
           </template>
@@ -15,7 +20,7 @@
           <template #additionDate>{{ item.additionDate }}</template>
 
           <template #visualize>
-            <unnnic-button
+            <UnnnicButton
               :text="actionText"
               type="secondary"
               size="small"
@@ -23,9 +28,9 @@
               @click="$emit('select', item)"
             />
           </template>
-        </unnnic-table-row>
+        </UnnnicTableRow>
       </template>
-    </unnnic-table>
+    </UnnnicTable>
   </section>
 </template>
 

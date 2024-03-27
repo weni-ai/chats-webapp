@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 
 import store from '@/store';
 import { getProject, getToken } from '@/utils/config';
+import Keycloak from '@/services/keycloak';
 import routes from './routes';
 import afterEachMiddlewares from './middlewares/afterEach';
 
@@ -15,6 +16,22 @@ const router = new VueRouter({
 });
 
 afterEachMiddlewares.forEach((middleware) => router.afterEach(middleware));
+
+router.beforeEach(async (to, from, next) => {
+  const authenticated = await Keycloak.isAuthenticated();
+  if (authenticated) {
+    const { token } = Keycloak.keycloak;
+    await store.dispatch('config/setToken', token);
+
+    if (to.hash.startsWith('#state=')) {
+      next({ ...to, hash: '' });
+    } else {
+      next();
+    }
+  } else {
+    Keycloak.keycloak.login();
+  }
+});
 
 router.afterEach(() => {
   if (!store.state.config.token) {

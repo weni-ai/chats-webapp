@@ -20,7 +20,10 @@ export default {
     return response.data;
   },
   async addAgent({ discussionUuid, user_email }) {
-    const response = await http.post(`discussion/${discussionUuid}/add_agents/`, { user_email });
+    const response = await http.post(
+      `discussion/${discussionUuid}/add_agents/`,
+      { user_email },
+    );
     return response.data;
   },
   async getDiscussionDetails({ discussionUuid }) {
@@ -28,13 +31,18 @@ export default {
     return response.data;
   },
   async getDiscussionAgents({ discussionUuid }) {
-    const response = await http.get(`discussion/${discussionUuid}/list_agents/`);
+    const response = await http.get(
+      `discussion/${discussionUuid}/list_agents/`,
+    );
     return response.data;
   },
   async getSectors() {
-    const response = await http.get(`project/${getProject()}/list_discussion_sector/`, {
-      limit: 9999,
-    });
+    const response = await http.get(
+      `project/${getProject()}/list_discussion_sector/`,
+      {
+        limit: 9999,
+      },
+    );
     return response.data;
   },
   async listAll({ viewedAgent }) {

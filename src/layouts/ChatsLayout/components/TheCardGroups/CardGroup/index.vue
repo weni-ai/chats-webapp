@@ -1,7 +1,11 @@
 <template>
-  <unnnic-collapse :title="label" :active="true" size="md">
+  <UnnnicCollapse
+    :title="label"
+    :active="true"
+    size="md"
+  >
     <template v-if="rooms">
-      <room-card
+      <RoomCard
         v-for="room in rooms"
         :key="room.id"
         :room="room"
@@ -10,7 +14,7 @@
       />
     </template>
     <template v-if="discussions">
-      <unnnic-chats-contact
+      <UnnnicChatsContact
         v-for="discussion in discussions"
         :key="discussion.uuid"
         :title="discussion.subject"
@@ -22,7 +26,7 @@
         @keypress.enter="open(discussion)"
       />
     </template>
-  </unnnic-collapse>
+  </UnnnicCollapse>
 </template>
 
 <script>
@@ -66,7 +70,8 @@ export default {
       newMessagesByDiscussion(state) {
         return state.chats.discussions.newMessagesByDiscussion;
       },
-      activeDiscussionId: (state) => state.chats.discussions.activeDiscussion?.uuid,
+      activeDiscussionId: (state) =>
+        state.chats.discussions.activeDiscussion?.uuid,
     }),
   },
 

@@ -1,29 +1,36 @@
 <template>
   <section class="home-chat-headers">
-    <chat-header-loading v-show="isLoading" />
-    <unnnic-chats-header
+    <ChatHeaderLoading v-show="isLoading" />
+    <UnnnicChatsHeader
       v-show="isShowingRoomHeader"
       :title="headerRoomTitle"
       :avatarClick="() => emitOpenRoomContactInfo()"
       :titleClick="() => emitOpenRoomContactInfo()"
       :avatarName="headerRoomTitle"
       :close="emitOpenModalCloseChat"
+      :back="isMobile ? emitBack : null"
     />
-    <unnnic-chats-header
+    <UnnnicChatsHeader
       v-show="isShowingDiscussionHeader"
       class="home-chat-headers__discussion"
       :title="headerDiscussionTitle"
       :subtitle="headerDiscussionSubtitle"
       avatarIcon="forum"
       size="small"
+      :back="isMobile ? emitBack : null"
     />
 
-    <chat-header-send-flow v-if="isShowingSendFlowHeader" @send-flow="emitOpenFlowsTrigger" />
+    <ChatHeaderSendFlow
+      v-if="isShowingSendFlowHeader"
+      @send-flow="emitOpenFlowsTrigger"
+    />
   </section>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+import isMobile from 'is-mobile';
+
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader';
 
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow';
@@ -49,6 +56,10 @@ export default {
       discussion: (state) => state.chats.discussions.activeDiscussion,
     }),
 
+    isMobile() {
+      return isMobile();
+    },
+
     isShowingRoomHeader() {
       const { room, discussion, isLoading } = this;
       return room && !discussion && !isLoading;
@@ -72,7 +83,9 @@ export default {
     },
     headerDiscussionSubtitle() {
       const { discussion } = this;
-      return `${this.$tc('discussions.title')} ${this.$t('about')} ${discussion?.contact}`;
+      return `${this.$tc('discussions.title')} ${this.$t('about')} ${
+        discussion?.contact
+      }`;
     },
   },
   methods: {
@@ -84,6 +97,9 @@ export default {
     },
     emitOpenFlowsTrigger() {
       this.$emit('openFlowsTrigger');
+    },
+    emitBack() {
+      return this.$emit('back');
     },
   },
 };

@@ -1,18 +1,18 @@
 <template>
   <div class="closed-chats">
-    <closed-chats-header-loading v-if="isLoadingHeader" />
+    <ClosedChatsHeaderLoading v-if="isLoadingHeader" />
     <header v-if="!isLoadingHeader && project">
-      <unnnic-chats-header
+      <UnnnicChatsHeader
         :title="project.name"
         :subtitle="$t('chats.closed_chats.project_history')"
         avatarIcon="history"
         :crumbs="crumbs"
         :close="backToHome"
         @crumbClick="handlerCrumbClick"
-        size="large"
+        :size="closedChatsHeaderSize"
       />
-      <chat-header-loading v-show="roomId && isLoadingSelectedRoom" />
-      <unnnic-chats-header
+      <ChatHeaderLoading v-show="roomId && isLoadingSelectedRoom" />
+      <UnnnicChatsHeader
         v-show="!isLoadingSelectedRoom"
         v-if="selectedRoom"
         :title="selectedRoom.contact.name"
@@ -20,17 +20,28 @@
       />
     </header>
     <main>
-      <section v-if="roomId" class="closed-chats__selected-chat">
-        <room-messages />
-        <contact-info is-history :closedRoom="selectedRoom" @close="() => {}" />
+      <section
+        v-if="roomId"
+        class="closed-chats__selected-chat"
+      >
+        <RoomMessages />
+        <ContactInfo
+          isHistory
+          :closedRoom="selectedRoom"
+          @close="() => {}"
+        />
       </section>
 
-      <closed-chats-rooms-table v-else :project="project" />
+      <ClosedChatsRoomsTable
+        v-else
+        :project="project"
+      />
     </main>
   </div>
 </template>
 
 <script>
+import isMobile from 'is-mobile';
 import { mapState } from 'vuex';
 
 import ProjectApi from '@/services/api/resources/settings/project';
@@ -61,6 +72,8 @@ export default {
   },
 
   data: () => ({
+    isMobile: isMobile(),
+
     isLoadingHeader: true,
     isLoadingSelectedRoom: false,
 
@@ -88,6 +101,10 @@ export default {
     ...mapState({
       roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,
     }),
+
+    closedChatsHeaderSize() {
+      return this.isMobile ? 'small' : 'large';
+    },
   },
 
   methods: {
@@ -131,7 +148,9 @@ export default {
     },
 
     async getHistoryContactRoomMessages() {
-      await this.$store.dispatch('chats/roomMessages/getRoomMessages', { concat: true });
+      await this.$store.dispatch('chats/roomMessages/getRoomMessages', {
+        concat: true,
+      });
     },
   },
 
@@ -146,7 +165,9 @@ export default {
         if (roomId) {
           this.isLoadingSelectedRoom = true;
 
-          const responseRoom = await History.getHistoryContactRoom({ room: roomId });
+          const responseRoom = await History.getHistoryContactRoom({
+            room: roomId,
+          });
 
           const STATUS_NOT_FOUND = 404;
           if (responseRoom.status === STATUS_NOT_FOUND) {
@@ -159,7 +180,10 @@ export default {
             path: 'closed-rooms/:roomId',
           });
           this.selectedRoom = responseRoom;
-          await this.$store.dispatch('chats/rooms/setActiveRoom', this.selectedRoom);
+          await this.$store.dispatch(
+            'chats/rooms/setActiveRoom',
+            this.selectedRoom,
+          );
           await this.getHistoryContactRoomMessages();
           const responseRoomUuids = await History.getHistoryContactRoomsUuids({
             external_id: responseRoom.contact.external_id,

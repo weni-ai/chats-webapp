@@ -1,5 +1,8 @@
 <template>
-  <chat-feedback :feedback="createFeedbackLabel(message)" />
+  <ChatFeedback
+    :feedback="createFeedbackLabel(message)"
+    :scheme="scheme"
+  />
 </template>
 
 <script>
@@ -16,6 +19,10 @@ export default {
     message: {
       type: Object,
       required: true,
+    },
+    scheme: {
+      type: String,
+      default: 'blue',
     },
   },
 
@@ -110,7 +117,9 @@ export default {
         fs: `${t('flow')} <i>${content.name}</i> ${t('sent')}`,
         ecf: `${content.user} ${t('chats.feedback.edit_custom_field')} <i>${
           content.custom_field_name
-        }</i> ${t('from')} <i>${content.old}</i> ${t('to')} <i>${content.new}</i>`,
+        }</i> ${t('from')} <i>${content.old}</i> ${t('to')} <i>${
+          content.new
+        }</i>`,
         dc: `${t('chats.feedback.discussion_created', {
           agent: content.user,
           queue: content.queue,

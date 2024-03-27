@@ -1,20 +1,28 @@
 <template>
   <div class="discussion-sidebar__container">
-    <discussion-sidebar-loading v-show="isSidebarLoading" />
-    <aside-slot-template
+    <DiscussionSidebarLoading v-show="isSidebarLoading" />
+    <AsideSlotTemplate
       class="discussion-sidebar"
       v-show="!isSidebarLoading"
       :title="
-        isOwnDiscussion ? $t('discussions.about.title') : $t('chats.closed_chats.contact_history')
+        isOwnDiscussion
+          ? $t('discussions.about.title')
+          : $t('chats.closed_chats.contact_history')
       "
       :icon="isOwnDiscussion ? 'chat_info' : 'history'"
       iconScheme="neutral-dark"
       :close="isOwnDiscussion ? handleEndDiscussionModal : null"
     >
-      <discussion-about v-if="isOwnDiscussion" :details="details" />
-      <section v-else class="discussion-sidebar__room">
-        <room-messages />
-        <unnnic-button
+      <DiscussionAbout
+        v-if="isOwnDiscussion"
+        :details="details"
+      />
+      <section
+        v-else
+        class="discussion-sidebar__room"
+      >
+        <RoomMessages />
+        <UnnnicButton
           :text="$t('update')"
           type="primary"
           iconLeft="refresh"
@@ -24,7 +32,7 @@
         />
       </section>
 
-      <unnnic-modal
+      <UnnnicModal
         v-if="isEndDiscussionModalOpen"
         @close="handleEndDiscussionModal"
         :text="$t('discussions.close.title')"
@@ -34,16 +42,20 @@
         class="discussion-sidebar__end-modal"
       >
         <template #options>
-          <unnnic-button :text="$t('cancel')" type="tertiary" @click="handleEndDiscussionModal" />
-          <unnnic-button
+          <UnnnicButton
+            :text="$t('cancel')"
+            type="tertiary"
+            @click="handleEndDiscussionModal"
+          />
+          <UnnnicButton
             :text="$t('end')"
             type="primary"
             @click="endDiscussion"
             :loading="isEndDiscussionLoading"
           />
         </template>
-      </unnnic-modal>
-    </aside-slot-template>
+      </UnnnicModal>
+    </AsideSlotTemplate>
   </div>
 </template>
 
@@ -89,7 +101,9 @@ export default {
     async loadDiscussionDetails() {
       this.isSidebarLoading = true;
 
-      this.details = await this.$store.dispatch('chats/discussions/getDiscussionDetails');
+      this.details = await this.$store.dispatch(
+        'chats/discussions/getDiscussionDetails',
+      );
       this.isOwnDiscussion = this.me.email === this.details.created_by?.email;
       await this.$store.dispatch('chats/rooms/setActiveRoom', {
         uuid: this.details.room,

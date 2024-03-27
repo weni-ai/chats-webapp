@@ -20,7 +20,9 @@ export default {
       type: String,
       default: 'blue',
       validator(value) {
-        return ['blue', 'purple', 'red', 'green', 'yellow'].includes(value);
+        return ['blue', 'purple', 'red', 'green', 'yellow', 'gray'].includes(
+          value,
+        );
       },
     },
     divisor: {
@@ -39,9 +41,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$scheme-colors: 'blue' $unnnic-color-aux-blue-100, 'purple' $unnnic-color-aux-purple-100,
-  'green' $unnnic-color-aux-green-100, 'yellow' $unnnic-color-aux-yellow-100,
-  'red' $unnnic-color-aux-red-100;
+$scheme-colors: 'blue' $unnnic-color-aux-blue-100,
+  'purple' $unnnic-color-aux-purple-100, 'green' $unnnic-color-aux-green-100,
+  'yellow' $unnnic-color-aux-yellow-100, 'red' $unnnic-color-aux-red-100,
+  'gray' $unnnic-color-neutral-soft;
 
 .chat-feedback__container {
   margin-top: $unnnic-spacing-md;

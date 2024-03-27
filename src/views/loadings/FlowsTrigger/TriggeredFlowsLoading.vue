@@ -1,18 +1,22 @@
 <template>
   <section class="rooms-table-loading">
     <header class="rooms-table-loading__categories">
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading />
+      <UnnnicSkeletonLoading />
+      <UnnnicSkeletonLoading />
+      <UnnnicSkeletonLoading />
+      <UnnnicSkeletonLoading />
+      <UnnnicSkeletonLoading />
     </header>
-    <section class="rooms-table-loading__row" v-for="row in 4" :key="`row-${row}`">
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading />
+    <section
+      class="rooms-table-loading__row"
+      v-for="row in 4"
+      :key="`row-${row}`"
+    >
+      <UnnnicSkeletonLoading />
+      <UnnnicSkeletonLoading />
+      <UnnnicSkeletonLoading />
+      <UnnnicSkeletonLoading />
+      <UnnnicSkeletonLoading />
     </section>
   </section>
 </template>

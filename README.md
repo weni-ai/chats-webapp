@@ -1,18 +1,21 @@
 <div align="center">
 
-<img src="https://github.com/Ilhasoft/weni-platform/raw/main/images/logos/png/weni-396x129-color.png" width="100px" />
+<img src="https://github.com/Ilhasoft/weni-webapp/raw/main/src/assets/LogoWeniAnimada.svg" height="100" />
 
-*This project is a module of [Weni](https://github.com/weni-ai) integrated inside [Weni WebApp (Connect)](https://github.com/weni-ai/weni-webapp)*
+[![Run Unit Tests, Lint Files and Build Project](https://github.com/weni-ai/chats-webapp/actions/workflows/test-and-build.yml/badge.svg?branch=main)](https://github.com/weni-ai/chats-webapp/actions/workflows/test-and-build.yml)
+[![codecov](https://codecov.io/gh/weni-ai/chats-webapp/graph/badge.svg?token=4G62T5ER2Z)](https://codecov.io/gh/weni-ai/chats-webapp)
 
-<br/> 
+_This project is a module of [Weni](https://github.com/weni-ai) integrated inside [Weni WebApp (Connect)](https://github.com/weni-ai/weni-webapp)_
 
-# CHATS
+<br/>
+
+# Weni Chats
 
 Chats is the official human service module of the Weni platform.
 
 </div>
 
-<br/> 
+<br/>
 
 # About
 
@@ -24,8 +27,7 @@ This repository has been carefully developed with our customers' needs and conce
 
 <img src="https://github.com/weni-ai/chats-webapp/assets/69015179/712b36c8-a2b4-4307-9fb2-17c88a12fb08" />
 
-
-<br/> 
+<br/>
 
 # Technologies
 
@@ -35,15 +37,16 @@ This repository has been carefully developed with our customers' needs and conce
 - [Axios](https://axios-http.com/ptbr/docs/intro)
 - [Unnnic](https://github.com/weni-ai/unnnic) (Weni's design system)
 
-<br/> 
+<br/>
 
 # Requirements
+
 Before running the application, make sure you have installed the following tools on your machine:
 
 - [Node.js 18.16.1](https://nodejs.org/en)
 - [NPM](https://www.npmjs.com/) or [Yarn](https://yarnpkg.com/) (recommended)
 
-<br/> 
+<br/>
 
 # Set up
 
@@ -65,26 +68,31 @@ Before running the application, make sure you have installed the following tools
   yarn
 ```
 
-<br/> 
+<br/>
 
 # How to develop
+
 ## Environment variables
+
 1. Rename the .env.local.sample file to .env.local
 2. Configure the .env.local following the patterns below
- 
-| Variable | Type | Default | Description |
-|--|--|--|--|
-| VUE_APP_CHATS_API_URL | `string` | Empty | URN of the backend environment to API requests. Without protocol (http/https) and without slash at the end.
-| VUE_APP_CHATS_WEBSOCKET_URL  | `string` | Empty | URL of the backend environment to WebSocket requests. With protocol _wss_ and without slash at the end.
 
-<br/> 
+| Variable                    | Type     | Default   | Description                                                                                                 |
+| --------------------------- | -------- | --------- | ----------------------------------------------------------------------------------------------------------- |
+| VUE_APP_CHATS_API_URL       | `string` | Empty     | URN of the backend environment to API requests. Without protocol (http/https) and without slash at the end. |
+| VUE_APP_CHATS_WEBSOCKET_URL | `string` | Empty     | URL of the backend environment to WebSocket requests. With protocol _wss_ and without slash at the end.     |
+| VUE_APP_CHATS_ENVIRONMENT   | `string` | `develop` | Environment in which the project is running. Accepts `develop`, `staging` or `production`.                  |
+
+<br/>
 
 ## Tokens
+
 ...
 
-<br/> 
+<br/>
 
 ## Execution
+
 Start the server with:
 
 ```
@@ -93,36 +101,39 @@ Start the server with:
 
 After that, it will be available at http://localhost:8080.
 
-<br/> 
+<br/>
 
 # Development Workflow
 
-| Command | Description |
-|--|--|
-| yarn | Install dependencies
-| yarn serve | serve with hot reload at localhost:8080
-| yarn build | Build for production with minification
-| yarn build --report | Build for production and view the bundle analyzer report
-| yarn translations:build | Build translations for production
-| yarn translations:suggest-from-pt-br | Build translations for production with suggestions. Add at least one language in the translations file so that suggestions in other languages can be generated.
-| yarn lint | Show lint warnings and errors
-| yarn test:unit | Run all tests
-| yarn test:unit --watch | Run test in watch mode
+| Command                              | Description                                                                                                                                                     |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| yarn                                 | Install dependencies                                                                                                                                            |
+| yarn serve                           | serve with hot reload at localhost:8080                                                                                                                         |
+| yarn build                           | Build for production with minification                                                                                                                          |
+| yarn build --report                  | Build for production and view the bundle analyzer report                                                                                                        |
+| yarn translations:build              | Build translations for production                                                                                                                               |
+| yarn translations:suggest-from-pt-br | Build translations for production with suggestions. Add at least one language in the translations file so that suggestions in other languages can be generated. |
+| yarn lint                            | Show lint warnings and errors                                                                                                                                   |
+| yarn test:unit                       | Run all tests                                                                                                                                                   |
+| yarn test:unit --watch               | Run test in watch mode                                                                                                                                          |
 
-<br/> 
+<br/>
 
 # Open-Source Governance
+
 The Weni Platform open source projects are governed by @weni-ai. Weni opens all its software parts under terms of an open-source license to reach potential users and partners mainly. Secondly, Weni wants to reach developers by building a community for some pieces that are more reusable in other businesses or software projects, such as NLP models or tools. Besides that, the openness of our software is also related to building trust by enabling our external stakeholders to audit the security of our software.
 
-<br/> 
+<br/>
 
 # Community
+
 - Join our community chat to discuss with our internal team
 - Join #dev for help from the community to development issues
 
 <br/>
 
 # Contributing
+
 We are looking for collaboration from the Open Source community! There's so much we want to do, including but not limited to: enhancing existing applications with new features, optimizing the NLP tasks and algorithms involved that boost accuracy, new communication channels and integrations.
 
 - Please read our contribution guidelines for details on what and how you can contribute.

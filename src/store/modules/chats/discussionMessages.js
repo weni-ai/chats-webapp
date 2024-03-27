@@ -31,20 +31,23 @@ function isMessageInActiveDiscussion(message) {
 }
 
 function removeMessageFromSendings({ state }, messageUuid) {
-  state.discussionMessagesSendingUuids = state.discussionMessagesSendingUuids.filter(
-    (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
-  );
+  state.discussionMessagesSendingUuids =
+    state.discussionMessagesSendingUuids.filter(
+      (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
+    );
 }
 
 function removeMessageFromFaileds({ state }, messageUuid) {
-  state.discussionMessagesFailedUuids = state.discussionMessagesFailedUuids.filter(
-    (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
-  );
+  state.discussionMessagesFailedUuids =
+    state.discussionMessagesFailedUuids.filter(
+      (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
+    );
 }
 function removeMessageFromInPromise({ state }, messageUuid) {
-  state.discussionMessagesInPromiseUuids = state.discussionMessagesInPromiseUuids.filter(
-    (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
-  );
+  state.discussionMessagesInPromiseUuids =
+    state.discussionMessagesInPromiseUuids.filter(
+      (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
+    );
 }
 
 export default {
@@ -69,7 +72,10 @@ export default {
     [mutations.RESET_DISCUSSION_MESSAGES_NEXT](state) {
       state.discussionMessagesNext = '';
     },
-    [mutations.SET_DISCUSSION_MESSAGES_PREVIOUS](state, discussionMessagesPrevious) {
+    [mutations.SET_DISCUSSION_MESSAGES_PREVIOUS](
+      state,
+      discussionMessagesPrevious,
+    ) {
       state.discussionMessagesPrevious = discussionMessagesPrevious;
     },
     [mutations.RESET_DISCUSSION_MESSAGES_PREVIOUS](state) {
@@ -119,7 +125,8 @@ export default {
         }
       }
 
-      const updatedMessage = parseMessageToMessageWithSenderProp(treatedMessage);
+      const updatedMessage =
+        parseMessageToMessageWithSenderProp(treatedMessage);
 
       const messageIndex = discussionMessages.findIndex(
         (mappedMessage) => mappedMessage.uuid === uuid,
@@ -154,10 +161,16 @@ export default {
         oldMessages: state.discussionMessages,
         nextReq,
         addSortedMessage: ({ message, addBefore }) =>
-          commit(mutations.ADD_DISCUSSION_MESSAGE_SORTED, { message, addBefore }),
-        resetSortedMessages: () => commit(mutations.RESET_DISCUSSION_MESSAGES_SORTED),
-        setMessages: (messages) => commit(mutations.SET_DISCUSSION_MESSAGES, messages),
-        setMessagesNext: (next) => commit(mutations.SET_DISCUSSION_MESSAGES_NEXT, next),
+          commit(mutations.ADD_DISCUSSION_MESSAGE_SORTED, {
+            message,
+            addBefore,
+          }),
+        resetSortedMessages: () =>
+          commit(mutations.RESET_DISCUSSION_MESSAGES_SORTED),
+        setMessages: (messages) =>
+          commit(mutations.SET_DISCUSSION_MESSAGES, messages),
+        setMessagesNext: (next) =>
+          commit(mutations.SET_DISCUSSION_MESSAGES_NEXT, next),
         setMessagesPrevious: (previous) =>
           commit(mutations.SET_DISCUSSION_MESSAGES_PREVIOUS, previous),
       });
@@ -174,7 +187,8 @@ export default {
         (mappedMessage) => mappedMessage.uuid === message.uuid,
       );
 
-      if (messageAlreadyExists) commit(mutations.UPDATE_DISCUSSION_MESSAGE, { message });
+      if (messageAlreadyExists)
+        commit(mutations.UPDATE_DISCUSSION_MESSAGE, { message });
       else {
         commit(mutations.ADD_DISCUSSION_MESSAGE, { message });
         commit(mutations.ADD_DISCUSSION_MESSAGE_SORTED, { message });
@@ -196,14 +210,22 @@ export default {
           Message.sendDiscussionMessage(activeDiscussion.uuid, {
             text,
           }),
-        addMessage: (message) => commit(mutations.ADD_DISCUSSION_MESSAGE, { message }),
-        addSortedMessage: (message) => commit(mutations.ADD_DISCUSSION_MESSAGE_SORTED, { message }),
+        addMessage: (message) =>
+          commit(mutations.ADD_DISCUSSION_MESSAGE, { message }),
+        addSortedMessage: (message) =>
+          commit(mutations.ADD_DISCUSSION_MESSAGE_SORTED, { message }),
         updateMessage: ({ message, toUpdateMessageUuid }) =>
-          commit(mutations.UPDATE_DISCUSSION_MESSAGE, { message, toUpdateMessageUuid }),
+          commit(mutations.UPDATE_DISCUSSION_MESSAGE, {
+            message,
+            toUpdateMessageUuid,
+          }),
       });
     },
 
-    async sendDiscussionMedias({ commit }, { files: medias, updateLoadingFiles }) {
+    async sendDiscussionMedias(
+      { commit },
+      { files: medias, updateLoadingFiles },
+    ) {
       const { activeDiscussion } = Discussions.state;
       if (!activeDiscussion) return;
 
@@ -219,13 +241,20 @@ export default {
             media,
             updateLoadingFiles,
           }),
-        addMessage: (message) => commit(mutations.ADD_DISCUSSION_MESSAGE, { message }),
-        addSortedMessage: (message) => commit(mutations.ADD_DISCUSSION_MESSAGE_SORTED, { message }),
+        addMessage: (message) =>
+          commit(mutations.ADD_DISCUSSION_MESSAGE, { message }),
+        addSortedMessage: (message) =>
+          commit(mutations.ADD_DISCUSSION_MESSAGE_SORTED, { message }),
         addFailedMessage: (message) =>
           commit(mutations.ADD_FAILED_DISCUSSION_MESSAGE, {
             message,
           }),
-        updateMessage: ({ media, message, toUpdateMessageUuid, toUpdateMediaPreview }) =>
+        updateMessage: ({
+          media,
+          message,
+          toUpdateMessageUuid,
+          toUpdateMediaPreview,
+        }) =>
           commit(mutations.UPDATE_DISCUSSION_MESSAGE, {
             media,
             message,
@@ -247,9 +276,13 @@ export default {
             text: message.text,
           }),
         updateMessage: ({ message, toUpdateMessageUuid }) =>
-          commit(mutations.UPDATE_DISCUSSION_MESSAGE, { message, toUpdateMessageUuid }),
+          commit(mutations.UPDATE_DISCUSSION_MESSAGE, {
+            message,
+            toUpdateMessageUuid,
+          }),
         messagesInPromiseUuids: state.discussionMessagesInPromiseUuids,
-        removeInPromiseMessage: (message) => removeMessageFromInPromise({ state }, message),
+        removeInPromiseMessage: (message) =>
+          removeMessageFromInPromise({ state }, message),
       });
     },
 
@@ -269,9 +302,16 @@ export default {
           commit(mutations.ADD_FAILED_DISCUSSION_MESSAGE, {
             message,
           }),
-        removeFailedMessage: (message) => removeMessageFromFaileds({ state }, message),
-        addSendingMessage: (message) => state.discussionMessagesSendingUuids.push(message),
-        updateMessage: ({ media, message, toUpdateMessageUuid, toUpdateMediaPreview }) =>
+        removeFailedMessage: (message) =>
+          removeMessageFromFaileds({ state }, message),
+        addSendingMessage: (message) =>
+          state.discussionMessagesSendingUuids.push(message),
+        updateMessage: ({
+          media,
+          message,
+          toUpdateMessageUuid,
+          toUpdateMediaPreview,
+        }) =>
           commit(mutations.UPDATE_DISCUSSION_MESSAGE, {
             media,
             message,
@@ -297,7 +337,9 @@ export default {
           );
 
           // eslint-disable-next-line no-await-in-loop
-          await dispatch('resendDiscussionMessage', { message: discussionMessages[messageIndex] });
+          await dispatch('resendDiscussionMessage', {
+            message: discussionMessages[messageIndex],
+          });
         }
       }
     },

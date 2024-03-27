@@ -1,25 +1,32 @@
 <template>
   <section class="edit-sector">
-    <sector-tabs v-if="sector.uuid" v-model="currentTab" class="scrollable">
+    <SectorTabs
+      v-if="sector.uuid"
+      v-model="currentTab"
+      class="scrollable"
+    >
       <template #sector>
-        <form-sector
+        <FormSector
           v-model="sector"
-          is-editing
+          isEditing
           @remove-manager="removeManager"
           :managers="projectManagers"
         />
       </template>
 
       <template #queues>
-        <section v-if="!!queueToEdit" class="edit-sector__edit-queue">
-          <unnnic-breadcrumb
+        <section
+          v-if="!!queueToEdit"
+          class="edit-sector__edit-queue"
+        >
+          <UnnnicBreadcrumb
             class="edit-sector__breadcrumb"
             :crumbs="queueBreadcrumb"
             @crumbClick="handleCrumbClick"
           />
           <h2 class="edit-sector__title">{{ queueToEdit.name }}</h2>
           <div style="margin-bottom: 24px">
-            <unnnic-chat-text
+            <UnnnicChatText
               style="max-width: 100%; max-height: 100%"
               titleColor="neutral-dark"
               size="small"
@@ -29,7 +36,7 @@
             nenhuma mensagem."
             >
               <template slot="actions">
-                <unnnic-button-icon
+                <UnnnicButtonIcon
                   v-if="!editContent"
                   type="secondary"
                   size="small"
@@ -38,10 +45,16 @@
                 />
               </template>
               <template slot="description">
-                <div @focusout="saveEditDescription" style="word-break: break-all">
+                <div
+                  @focusout="saveEditDescription"
+                  style="word-break: break-all"
+                >
                   <span v-show="!editContent">{{ description }}</span>
-                  <div v-show="editContent" @focusout="saveEditDescription">
-                    <unnnic-text-area
+                  <div
+                    v-show="editContent"
+                    @focusout="saveEditDescription"
+                  >
+                    <UnnnicTextArea
                       @focus="focusTextEditor"
                       :maxLength="250"
                       size="sm"
@@ -52,15 +65,17 @@
                   </div>
                 </div>
               </template>
-            </unnnic-chat-text>
+            </UnnnicChatText>
           </div>
-          <form-agent
+          <FormAgent
             v-model="queueToEdit.agents"
             :sector="sector"
             :agents="projectAgents"
             @select="
               (agent) => {
-                const alreadyInQueue = queueToEdit.currentAgents.some((a) => a.uuid === agent.uuid);
+                const alreadyInQueue = queueToEdit.currentAgents.some(
+                  (a) => a.uuid === agent.uuid,
+                );
 
                 if (!alreadyInQueue) {
                   queueToEdit.toAddAgents.push(agent.uuid);
@@ -80,7 +95,9 @@
                 if (alreadyInQueue) {
                   queueToEdit.toRemoveAgents.push(agentUuid);
                 }
-                queueToEdit.agents = queueToEdit.agents.filter((agent) => agent.uuid !== agentUuid);
+                queueToEdit.agents = queueToEdit.agents.filter(
+                  (agent) => agent.uuid !== agentUuid,
+                );
                 queueToEdit.toAddAgents = queueToEdit.toAddAgents.filter(
                   (agent) => agent !== agentUuid,
                 );
@@ -88,7 +105,7 @@
             "
           />
         </section>
-        <form-queue
+        <FormQueue
           v-else
           v-model="queue"
           :sector="sector"
@@ -96,14 +113,14 @@
           @visualize="visualizeQueue"
           @add-queue="createQueue"
           label="Criar nova fila"
-          is-editing
+          isEditing
         />
       </template>
 
       <template #messages>
-        <form-messages
+        <FormMessages
           ref="formMessages"
-          :quick-messages-shared="quickMessagesShared"
+          :quickMessagesShared="quickMessagesShared"
           :sector="sector"
           @update-is-quick-message-editing="handleIsQuickMessageEditing"
           @validate="isQuickMessagesFormValid = $event"
@@ -111,26 +128,30 @@
       </template>
 
       <template #tags>
-        <form-tags v-model="tags" @add="addTagToAddList" @remove="addTagToRemoveList" />
+        <FormTags
+          v-model="tags"
+          @add="addTagToAddList"
+          @remove="addTagToRemoveList"
+        />
       </template>
-    </sector-tabs>
+    </SectorTabs>
 
     <section class="actions">
-      <unnnic-button
+      <UnnnicButton
         v-if="!!queueToEdit && this.currentTab === 'queues'"
         text="Excluir fila"
-        icon-left="delete-1"
+        iconLeft="delete-1"
         type="tertiary"
         @click="openModalDeleteQueue(queueToEdit)"
       />
-      <unnnic-button
+      <UnnnicButton
         :text="$t('cancel')"
         type="tertiary"
         @click="cancel"
         v-if="this.isQuickMessageEditing"
       />
       <section class="button-action">
-        <unnnic-button
+        <UnnnicButton
           :text="$t('save')"
           type="secondary"
           @click="save"
@@ -143,14 +164,14 @@
           "
         />
       </section>
-      <unnnic-button
+      <UnnnicButton
         v-if="this.currentTab === 'messages' && !isQuickMessageEditing"
         :text="$t('quick_messages.new')"
-        icon-left="add"
+        iconLeft="add"
         type="secondary"
         @click="() => messagesHandler('create')"
       />
-      <unnnic-modal
+      <UnnnicModal
         :showModal="openModal"
         modalIcon="alert-circle-1"
         scheme="feedback-red"
@@ -159,14 +180,18 @@
         @close="closeModalDeleteQueue"
       >
         <template #options>
-          <unnnic-button type="tertiary" @click="closeModalDeleteQueue" :text="$t('cancel')" />
-          <unnnic-button
+          <UnnnicButton
+            type="tertiary"
+            @click="closeModalDeleteQueue"
+            :text="$t('cancel')"
+          />
+          <UnnnicButton
             type="secondary"
             @click="deleteQueue(selectedQueue.uuid)"
             :text="$t('confirm')"
           />
         </template>
-      </unnnic-modal>
+      </UnnnicModal>
     </section>
   </section>
 </template>
@@ -208,7 +233,8 @@ export default {
   },
 
   async beforeMount() {
-    if (['sector', 'queues', 'messages', 'tags'].includes(this.tab)) this.currentTab = this.tab;
+    if (['sector', 'queues', 'messages', 'tags'].includes(this.tab))
+      this.currentTab = this.tab;
 
     this.getSector();
     this.getManagers();
@@ -268,7 +294,8 @@ export default {
 
   computed: {
     ...mapState({
-      quickMessagesShared: (state) => state.chats.quickMessagesShared.quickMessagesShared,
+      quickMessagesShared: (state) =>
+        state.chats.quickMessagesShared.quickMessagesShared,
     }),
   },
 
@@ -315,13 +342,19 @@ export default {
       }
     },
     async listProjectManagers() {
-      const managers = (await Project.managers()).results.concat((await Project.admins()).results);
+      const managers = (await Project.managers()).results.concat(
+        (await Project.admins()).results,
+      );
       this.projectManagers = managers;
     },
     async createQueue({ name, default_message }) {
       try {
         const sectorUuid = this.sector.uuid;
-        this.createdQueue = await Queue.create({ name, sectorUuid, default_message });
+        this.createdQueue = await Queue.create({
+          name,
+          sectorUuid,
+          default_message,
+        });
         this.visualizeQueue(this.createdQueue);
       } catch (error) {
         console.log(error, 'error');
@@ -333,7 +366,11 @@ export default {
       try {
         let agents = [];
         if (queue.uuid) {
-          const response = await Queue.agents(queue.uuid, this.pageAgents * 100, 100);
+          const response = await Queue.agents(
+            queue.uuid,
+            this.pageAgents * 100,
+            100,
+          );
           this.pageAgents += 1;
           this.agentsList = response.results;
           agents = this.agentsList;
@@ -388,7 +425,10 @@ export default {
         can_edit_custom_fields,
         config,
         sign_messages,
-        workingDay: { start: this.normalizeTime(work_start), end: this.normalizeTime(work_end) },
+        workingDay: {
+          start: this.normalizeTime(work_start),
+          end: this.normalizeTime(work_end),
+        },
         maxSimultaneousChatsByAgent: rooms_limit.toString(),
       };
       this.setCopilotActive(this.sector.config.can_use_chat_completion);
@@ -405,7 +445,10 @@ export default {
     },
     async getManagers() {
       const managers = await Sector.managers(this.uuid);
-      this.sector.managers = managers.results.map((manager) => ({ ...manager, removed: false }));
+      this.sector.managers = managers.results.map((manager) => ({
+        ...manager,
+        removed: false,
+      }));
     },
     async getQueues() {
       this.loading = true;
@@ -437,7 +480,8 @@ export default {
 
     async save() {
       if (this.currentTab === 'sector') await this.saveSector();
-      if (this.currentTab === 'queues' && this.queueToEdit) await this.saveQueue();
+      if (this.currentTab === 'queues' && this.queueToEdit)
+        await this.saveQueue();
       if (this.currentTab === 'messages') await this.messagesHandler('save');
       if (this.currentTab === 'tags') await this.saveTags();
 
@@ -481,7 +525,9 @@ export default {
       const { uuid, toAddAgents, toRemoveAgents } = this.queueToEdit;
 
       await Promise.all([
-        ...toAddAgents.map((agentUuid) => this.addAgentToQueue(agentUuid, uuid)),
+        ...toAddAgents.map((agentUuid) =>
+          this.addAgentToQueue(agentUuid, uuid),
+        ),
         ...toRemoveAgents.map(this.removeAgentFromQueue),
       ]);
 
@@ -490,8 +536,12 @@ export default {
       this.getQueues();
     },
     async saveTags() {
-      const toAddTags = this.toAddTags.map((tag) => Sector.addTag(this.sector.uuid, tag.name));
-      const toRemoveTags = this.toRemoveTags.map((tagUuid) => Sector.removeTag(tagUuid));
+      const toAddTags = this.toAddTags.map((tag) =>
+        Sector.addTag(this.sector.uuid, tag.name),
+      );
+      const toRemoveTags = this.toRemoveTags.map((tagUuid) =>
+        Sector.removeTag(tagUuid),
+      );
       await Promise.all([...toAddTags, ...toRemoveTags]);
       this.showSuccessfullyUpdateSnackbar();
     },
@@ -512,17 +562,22 @@ export default {
     },
     async handleTabChange(currentTab) {
       if (currentTab === 'sector') return;
-      if (currentTab === 'queues' && this.queues.length === 0) await this.getQueues();
+      if (currentTab === 'queues' && this.queues.length === 0)
+        await this.getQueues();
       if (currentTab === 'tags' && this.tags.length === 0) await this.getTags();
 
       this.resetTabsData();
     },
     removeManagerFromTheList(managerUuid) {
-      const manager = this.sector.managers.find((manager) => manager.uuid === managerUuid);
+      const manager = this.sector.managers.find(
+        (manager) => manager.uuid === managerUuid,
+      );
       if (!manager) return;
 
       this.removedManagers.push(manager);
-      this.sector.managers = this.sector.managers.filter((manager) => manager.uuid !== managerUuid);
+      this.sector.managers = this.sector.managers.filter(
+        (manager) => manager.uuid !== managerUuid,
+      );
     },
     updateQueryParams(currentTab) {
       const query = {};
@@ -552,7 +607,8 @@ export default {
     },
 
     editDescription() {
-      if (this.queueInfo.default_message) this.content = this.queueInfo.default_message;
+      if (this.queueInfo.default_message)
+        this.content = this.queueInfo.default_message;
       this.editContent = true;
       this.focusTextEditor();
     },
@@ -596,7 +652,8 @@ export default {
 
     cancelEditDescription() {
       this.editContent = false;
-      if (!this.queueToEdit.default_message) this.queueToEdit.default_message = '';
+      if (!this.queueToEdit.default_message)
+        this.queueToEdit.default_message = '';
     },
 
     handleCrumbClick(queueCrumb) {

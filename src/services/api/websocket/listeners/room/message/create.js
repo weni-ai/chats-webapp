@@ -23,7 +23,8 @@ export default async (message, { app }) => {
       });
     }
 
-    const isCurrentRoom = app.$route.name === 'room' && app.$route.params.roomId === message.room;
+    const isCurrentRoom =
+      app.$route.name === 'room' && app.$route.params.roomId === message.room;
     const isViewModeCurrentRoom =
       app.$route.params.viewedAgent && activeRoom?.uuid === message.room;
 

@@ -49,7 +49,12 @@ export default {
     return response.data;
   },
 
-  async getByContact(contactUuid, offset, limit, { onlyClosedRooms = true } = {}) {
+  async getByContact(
+    contactUuid,
+    offset,
+    limit,
+    { onlyClosedRooms = true } = {},
+  ) {
     const response = await http.get('/msg/', {
       params: {
         ordering: '-created_on',
@@ -75,9 +80,12 @@ export default {
   },
 
   async sendDiscussionMessage(discussionUuid, { text }) {
-    const response = await http.post(`/discussion/${discussionUuid}/send_messages/`, {
-      text,
-    });
+    const response = await http.post(
+      `/discussion/${discussionUuid}/send_messages/`,
+      {
+        text,
+      },
+    );
     return response.data;
   },
 

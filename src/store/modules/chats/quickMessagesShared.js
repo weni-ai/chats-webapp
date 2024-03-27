@@ -24,7 +24,10 @@ export default {
       state.quickMessagesShared.unshift(quickMessage);
       console.log();
     },
-    [mutations.UPDATE_QUICK_MESSAGE_SHARED](state, { uuid, title, text, shortcut }) {
+    [mutations.UPDATE_QUICK_MESSAGE_SHARED](
+      state,
+      { uuid, title, text, shortcut },
+    ) {
       const quickMessageToUpdate = state.quickMessagesShared.find(
         (quickMessage) => quickMessage.uuid === uuid,
       );
@@ -37,8 +40,11 @@ export default {
           shortcut,
         };
 
-        state.quickMessagesShared = state.quickMessagesShared.map((quickMessage) =>
-          quickMessage.uuid === uuid ? updatedQuickMessageShared : quickMessage,
+        state.quickMessagesShared = state.quickMessagesShared.map(
+          (quickMessage) =>
+            quickMessage.uuid === uuid
+              ? updatedQuickMessageShared
+              : quickMessage,
         );
       }
     },
@@ -56,9 +62,12 @@ export default {
     async getAll({ commit, state }) {
       const { quickMessagesShared, nextQuickMessagesShared } = state;
 
-      const response = await QuickMessage.getAllBySector({ nextQuickMessagesShared });
+      const response = await QuickMessage.getAllBySector({
+        nextQuickMessagesShared,
+      });
       const responseNext = response.next;
-      const newQuickMessagesShared = [...quickMessagesShared, ...response.results] || [];
+      const newQuickMessagesShared =
+        [...quickMessagesShared, ...response.results] || [];
 
       commit(mutations.SET_NEXT_QUICK_MESSAGES_SHARED, responseNext);
       commit(mutations.SET_QUICK_MESSAGES_SHARED, newQuickMessagesShared);
@@ -77,7 +86,10 @@ export default {
       const dataToUpdate = { title, text, shortcut };
       await QuickMessage.updateBySector(quickMessageUuid, dataToUpdate);
 
-      commit(mutations.UPDATE_QUICK_MESSAGE_SHARED, { uuid: quickMessageUuid, ...dataToUpdate });
+      commit(mutations.UPDATE_QUICK_MESSAGE_SHARED, {
+        uuid: quickMessageUuid,
+        ...dataToUpdate,
+      });
     },
 
     async delete({ commit }, quickMessageUuid) {

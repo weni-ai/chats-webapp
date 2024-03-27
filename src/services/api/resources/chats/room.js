@@ -1,5 +1,6 @@
 import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
+import Profile from '@/store/modules/profile';
 
 export default {
   async getAll(offset, limit, contact, order, viewedAgent) {
@@ -75,8 +76,19 @@ export default {
     return response.data;
   },
 
+  async getQueueRoom(uuid) {
+    const { me } = Profile.state;
+    const response = await http.patch(
+      `/room/${uuid}/pick_queue_room/?user_email=${me?.email}`,
+    );
+    return response.data;
+  },
+
   async updateCustomFields(uuid, customFields = {}) {
-    const response = await http.patch(`/room/${uuid}/update_custom_fields/`, customFields);
+    const response = await http.patch(
+      `/room/${uuid}/update_custom_fields/`,
+      customFields,
+    );
     return response.data;
   },
 };

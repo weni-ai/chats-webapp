@@ -1,46 +1,70 @@
 <template>
-  <chats-layout>
+  <ChatsLayout>
     <template #room-list>
       <section class="room-list">
         <div class="room-list__rooms">
-          <unnnic-tool-tip
+          <UnnnicToolTip
             v-if="!roomOpen"
             enabled
             text="Um contato está esperando por você!"
             side="right"
-            force-open
+            forceOpen
           >
-            <card-group
+            <CardGroup
               :label="$t('line')"
               :rooms="[room]"
               @open="(roomOpen = true), startConversation()"
-              use-photo
+              usePhoto
             />
-          </unnnic-tool-tip>
-          <card-group v-else :label="$t('chats.in_progress')" :rooms="[room]" use-photo />
+          </UnnnicToolTip>
+          <CardGroup
+            v-else
+            :label="$t('chats.in_progress')"
+            :rooms="[room]"
+            usePhoto
+          />
         </div>
       </section>
     </template>
 
-    <section v-if="roomOpen" class="room">
-      <chat-header :room="room" :closeButtonTooltip="$t('chats.end')" @close="close" use-photo />
-      <chat-messages
+    <section
+      v-if="roomOpen"
+      class="room"
+    >
+      <ChatHeader
+        :room="room"
+        :closeButtonTooltip="$t('chats.end')"
+        @close="close"
+        usePhoto
+      />
+      <ChatMessages
         :room="room"
         :messages="messages"
         class="messages"
         ref="chatMessages"
-        use-photo
+        usePhoto
       />
 
       <div class="message-manager">
-        <message-manager />
+        <MessageManager />
       </div>
     </section>
-    <section v-else class="illustration">
-      <img class="illustration__doodles" src="/homepage-illustration/doodles.svg" alt="" />
-      <img class="illustration__background" src="/homepage-illustration/background.svg" alt="" />
+    <section
+      v-else
+      class="illustration"
+    >
+      <img
+        class="illustration__doodles"
+        src="/homepage-illustration/doodles.svg"
+        alt=""
+      />
+      <img
+        class="illustration__background"
+        src="/homepage-illustration/background.svg"
+        alt=""
+      />
     </section>
-  </chats-layout>
+  </ChatsLayout>
 </template>
 
 <script>
@@ -88,7 +112,10 @@ export default {
     },
     messagesWithSentTimeout() {
       const messages = [
-        ['Olá, acho que nos conhecemos, mas caso você não lembre sou o Nilo 😁', 0],
+        [
+          'Olá, acho que nos conhecemos, mas caso você não lembre sou o Nilo 😁',
+          0,
+        ],
         [
           'Agente, esse é o novo módulo de atendimento humano da Weni, e é por aqui que você poderá fazer o atendimento dos seus clientes',
         ],

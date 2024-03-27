@@ -1,11 +1,17 @@
 <template>
-  <aside-slot-template-section
+  <AsideSlotTemplateSection
     v-if="discussionsCloseds?.length > 0"
     class="contact-info__discussions"
+    :class="{ 'contact-info__discussions--mobile': isMobile }"
   >
-    <h2 class="contact-info__discussions__title">{{ $tc('discussions.title', 2) }}</h2>
+    <h2 class="contact-info__discussions__title">
+      {{ $tc('discussions.title', 2) }}
+    </h2>
     <ul class="contact-info__discussions__list">
-      <li v-for="discussionClosed in discussionsCloseds" :key="discussionClosed.uuid">
+      <li
+        v-for="discussionClosed in discussionsCloseds"
+        :key="discussionClosed.uuid"
+      >
         <button
           class="contact-info__discussions__list-item"
           @click="openDiscussionClosed(discussionClosed.uuid)"
@@ -15,16 +21,17 @@
       </li>
     </ul>
 
-    <unnnic-modal
+    <UnnnicModal
       v-if="showDiscussionClosedModal"
       :text="$t('discussions.history')"
       @close="handleDiscussionClosedModal"
     >
-      <discussion-messages />
-    </unnnic-modal>
-  </aside-slot-template-section>
+      <DiscussionMessages />
+    </UnnnicModal>
+  </AsideSlotTemplateSection>
 </template>
 <script>
+import isMobile from 'is-mobile';
 import moment from 'moment';
 import { mapState } from 'vuex';
 
@@ -39,13 +46,17 @@ export default {
   },
   data() {
     return {
+      isMobile: isMobile(),
+
       showDiscussionClosedModal: false,
     };
   },
   async created() {
     try {
       const { room } = this;
-      await this.$store.dispatch('chats/discussions/getAllClosed', { roomId: room?.uuid });
+      await this.$store.dispatch('chats/discussions/getAllClosed', {
+        roomId: room?.uuid,
+      });
     } catch (error) {
       console.error('Error listing closed discussions', error);
     }
@@ -58,12 +69,17 @@ export default {
   },
   methods: {
     getDiscussionStartedBy(discussion) {
-      return `${moment(discussion.created_on).format('L')} | ${this.$t('discussions.started_by', {
-        name: discussion.created_by,
-      })}`;
+      return `${moment(discussion.created_on).format('L')} | ${this.$t(
+        'discussions.started_by',
+        {
+          name: discussion.created_by,
+        },
+      )}`;
     },
     async openDiscussionClosed(discussionUuid) {
-      await this.$store.dispatch('chats/discussions/setActiveDiscussion', { uuid: discussionUuid });
+      await this.$store.dispatch('chats/discussions/setActiveDiscussion', {
+        uuid: discussionUuid,
+      });
       this.handleDiscussionClosedModal();
     },
     handleDiscussionClosedModal() {
@@ -110,23 +126,28 @@ export default {
     }
   }
 
-  :deep(.unnnic-modal) {
-    .unnnic-modal-container-background {
-      width: 66%; // -> 8 / 12
-      height: 80%;
+  :deep(.unnnic-modal) .unnnic-modal-container-background {
+    width: 66%; // -> 8 / 12
+    height: 80%;
 
-      display: grid;
-      grid-template-rows: auto 1fr;
+    display: grid;
+    grid-template-rows: auto 1fr;
 
-      &-body-description {
-        text-align: start;
+    &-body-description {
+      text-align: start;
 
-        &-container {
-          padding: $unnnic-spacing-md;
-          padding-top: 0;
-        }
+      &-container {
+        padding: $unnnic-spacing-md;
+        padding-top: 0;
       }
     }
+  }
+}
+
+.contact-info__discussions--mobile {
+  :deep(.unnnic-modal) .unnnic-modal-container-background {
+    width: 100%;
+    height: 90%;
   }
 }
 </style>

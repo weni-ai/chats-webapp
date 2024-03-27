@@ -8,17 +8,27 @@
     class="document-preview clickable"
     :class="[{ highlight }, size]"
   >
-    <unnnic-icon-svg :icon="icon" :scheme="highlight ? 'weni-600' : 'neutral-darkest'" />
-    <span class="filename" style="white-space: nowrap">
+    <UnnnicIconSvg
+      :icon="icon"
+      :scheme="highlight ? 'weni-600' : 'neutral-darkest'"
+    />
+    <span
+      class="filename"
+      style="white-space: nowrap"
+    >
       {{ pathname }}
     </span>
 
-    <unnnic-tool-tip enabled text="Baixar" side="right">
-      <unnnic-icon-svg
+    <UnnnicToolTip
+      enabled
+      text="Baixar"
+      side="right"
+    >
+      <UnnnicIconSvg
         icon="download-bottom-1"
         :scheme="highlight ? 'neutral-darkest' : 'weni-600'"
       />
-    </unnnic-tool-tip>
+    </UnnnicToolTip>
   </section>
 </template>
 

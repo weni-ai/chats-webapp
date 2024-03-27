@@ -1,33 +1,69 @@
 <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
-  <form @submit.prevent="$emit('submit')" class="form-sector">
-    <section v-if="isEditing" class="form-section">
-      <h2 v-if="sector.name" class="title--lg">{{ sector.name }}</h2>
+  <form
+    @submit.prevent="$emit('submit')"
+    class="form-sector"
+  >
+    <section
+      v-if="isEditing"
+      class="form-section"
+    >
+      <h2
+        v-if="sector.name"
+        class="title--lg"
+      >
+        {{ sector.name }}
+      </h2>
     </section>
 
-    <section v-else class="form-section">
+    <section
+      v-else
+      class="form-section"
+    >
       <h2 class="title">
         Adicionar novo setor
-        <unnnic-tool-tip enabled :text="$t('new_sector.sector_tip')" side="right" maxWidth="21rem">
-          <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
-        </unnnic-tool-tip>
+        <UnnnicToolTip
+          enabled
+          :text="$t('new_sector.sector_tip')"
+          side="right"
+          maxWidth="21rem"
+        >
+          <UnnnicIconSvg
+            icon="information-circle-4"
+            scheme="neutral-soft"
+            size="sm"
+          />
+        </UnnnicToolTip>
       </h2>
 
-      <unnnic-input v-model="sector.name" label="Nome do setor" placeholder="Exemplo: Financeiro" />
+      <UnnnicInput
+        v-model="sector.name"
+        label="Nome do setor"
+        placeholder="Exemplo: Financeiro"
+      />
     </section>
 
     <section class="form-section">
       <h2 class="title">
         {{ $t('sector.managers.title') }}
-        <unnnic-tool-tip enabled :text="$t('new_sector.agent_tip')" side="right" maxWidth="15rem">
-          <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
-        </unnnic-tool-tip>
+        <UnnnicToolTip
+          enabled
+          :text="$t('new_sector.agent_tip')"
+          side="right"
+          maxWidth="15rem"
+        >
+          <UnnnicIconSvg
+            icon="information-circle-4"
+            scheme="neutral-soft"
+            size="sm"
+          />
+        </UnnnicToolTip>
       </h2>
 
       <div class="inline-input-and-button">
         <div>
-          <unnnic-label :label="$t('sector.managers.add.label')" />
-          <unnnic-select-smart
+          <UnnnicLabel :label="$t('sector.managers.add.label')" />
+          <UnnnicSelectSmart
             v-model="selectedManager"
             :options="managersNames"
             autocomplete
@@ -44,15 +80,18 @@
         /> -->
       </div>
 
-      <section v-if="sector.managers.length > 0" class="form-sector__managers">
-        <selected-member
+      <section
+        v-if="sector.managers.length > 0"
+        class="form-sector__managers"
+      >
+        <SelectedMember
           v-for="manager in sector.managers"
           :key="manager.uuid"
           :name="`${manager.user.first_name} ${manager.user.last_name}`"
           :email="manager.user.email"
-          :avatar-url="photo(manager.user.photo_url)"
+          :avatarUrl="photo(manager.user.photo_url)"
           @remove="removeManager(manager.uuid)"
-          role-name="Gerente"
+          roleName="Gerente"
         />
       </section>
     </section>
@@ -62,7 +101,7 @@
         <h2 class="title">
           {{ $t('sector.additional_options.title') }}
         </h2>
-        <unnnicSwitch
+        <UnnnicSwitch
           v-model="sector.can_trigger_flows"
           :textRight="
             sector.can_trigger_flows
@@ -71,25 +110,31 @@
           "
         />
         <div class="form-section__switch__container">
-          <unnnicSwitch
+          <UnnnicSwitch
             v-model="sector.sign_messages"
             :textRight="
               sector.sign_messages
                 ? $t('sector.additional_options.agents_signature.switch_active')
-                : $t('sector.additional_options.agents_signature.switch_disabled')
+                : $t(
+                    'sector.additional_options.agents_signature.switch_disabled',
+                  )
             "
           />
-          <unnnic-tool-tip
+          <UnnnicToolTip
             enabled
             :text="$t('sector.additional_options.agents_signature.tooltip')"
             side="right"
             maxWidth="15rem"
           >
-            <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
-          </unnnic-tool-tip>
+            <UnnnicIconSvg
+              icon="information-circle-4"
+              scheme="neutral-soft"
+              size="sm"
+            />
+          </UnnnicToolTip>
         </div>
 
-        <unnnicSwitch
+        <UnnnicSwitch
           v-model="sector.can_edit_custom_fields"
           :textRight="$t('sector.additional_options.edit_custom_fields')"
         />
@@ -109,12 +154,16 @@
               min="00:00"
               max="23:00"
             />
-            <span v-show="!this.validHour" style="font-size: 12px; color: #ff4545">{{
-              this.message
-            }}</span>
+            <span
+              v-show="!this.validHour"
+              style="font-size: 12px; color: #ff4545"
+              >{{ this.message }}</span
+            >
           </div>
           <div>
-            <span class="label-working-day">{{ $t('sector.managers.working_day.end.label') }}</span>
+            <span class="label-working-day">{{
+              $t('sector.managers.working_day.end.label')
+            }}</span>
             <input
               class="input-time"
               type="time"
@@ -123,7 +172,7 @@
               max="23:59"
             />
           </div>
-          <unnnic-input
+          <UnnnicInput
             v-model="sector.maxSimultaneousChatsByAgent"
             :label="$t('sector.managers.working_day.limit_agents.label')"
             placeholder="4"
@@ -280,7 +329,10 @@ export default {
 
     async getManagers() {
       const managers = await Sector.managers(this.sector.uuid);
-      this.sector.managers = managers.results.map((manager) => ({ ...manager, removed: false }));
+      this.sector.managers = managers.results.map((manager) => ({
+        ...manager,
+        removed: false,
+      }));
     },
 
     validate() {
@@ -288,7 +340,8 @@ export default {
     },
 
     areAllFieldsFilled() {
-      const { name, managers, workingDay, maxSimultaneousChatsByAgent } = this.sector;
+      const { name, managers, workingDay, maxSimultaneousChatsByAgent } =
+        this.sector;
       this.hourValidate(workingDay);
       return !!(
         name.trim() &&

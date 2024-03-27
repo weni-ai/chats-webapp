@@ -7,16 +7,19 @@ function getURLParams({ URL, endpoint }) {
 }
 
 export default {
-  async list(nextReq) {
-    if (nextReq) {
-      const endpoint = '/sector/';
-      const paramsNextReq = getURLParams({ URL: nextReq, endpoint });
-      const response = await http.get(`${endpoint}${paramsNextReq}`);
-      return response.data;
+  async list({ nextReq, limit } = {}) {
+    const endpoint = '/sector/';
+    const paramsNextReq = getURLParams({ URL: nextReq, endpoint });
+    const params = { project: getProject(), limit };
+
+    let response;
+
+    if (nextReq && paramsNextReq) {
+      response = await http.get(`${endpoint}${paramsNextReq}`);
+    } else {
+      response = await http.get(endpoint, { params });
     }
-    const response = await http.get('/sector/', {
-      params: { project: getProject() },
-    });
+
     return response.data;
   },
 
@@ -38,7 +41,10 @@ export default {
   },
 
   async create(props) {
-    const response = await http.post('/sector/', { ...props, project: getProject() });
+    const response = await http.post('/sector/', {
+      ...props,
+      project: getProject(),
+    });
     return response.data;
   },
 
@@ -77,7 +83,9 @@ export default {
   },
 
   async tags(sectorUuid) {
-    const response = await http.get('/tag/', { params: { sector: sectorUuid } });
+    const response = await http.get('/tag/', {
+      params: { sector: sectorUuid },
+    });
     return response.data;
   },
 
