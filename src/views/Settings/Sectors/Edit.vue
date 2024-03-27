@@ -1,4 +1,3 @@
-<!-- eslint-disable -->
 <template>
   <section
     class="edit-sector"
@@ -238,8 +237,7 @@ export default {
 
   async beforeMount() {
     if (['sector', 'queues', 'messages', 'tags'].includes(this.tab))
-      this.currentTab = this.tab;
-
+    this.currentTab = this.tab;
     this.getSector();
     this.getManagers();
     this.listProjectManagers();
@@ -297,10 +295,7 @@ export default {
   }),
 
   computed: {
-    ...mapState({
-      quickMessagesShared: (state) =>
-        state.chats.quickMessagesShared.quickMessagesShared,
-    }),
+    ...mapState({ quickMessagesShared: (state) => state.chats.quickMessagesShared.quickMessagesShared, }),
   },
 
   methods: {
@@ -346,9 +341,7 @@ export default {
       }
     },
     async listProjectManagers() {
-      const managers = (await Project.managers()).results.concat(
-        (await Project.admins()).results,
-      );
+      const managers = (await Project.managers()).results.concat((await Project.admins()).results,);
       this.projectManagers = managers;
     },
     async createQueue({ name, default_message }) {
@@ -493,7 +486,6 @@ export default {
         this.resetTabsData();
         return;
       }
-
       this.$router.push({ name: 'sectors' });
     },
 
@@ -573,15 +565,10 @@ export default {
       this.resetTabsData();
     },
     removeManagerFromTheList(managerUuid) {
-      const manager = this.sector.managers.find(
-        (manager) => manager.uuid === managerUuid,
-      );
+      const manager = this.sector.managers.find((manager) => manager.uuid === managerUuid, );
       if (!manager) return;
-
       this.removedManagers.push(manager);
-      this.sector.managers = this.sector.managers.filter (
-        (manager) => manager.uuid !== managerUuid,
-      );
+      this.sector.managers = this.sector.managers.filter ( (manager) => manager.uuid !== managerUuid,);
     },
     updateQueryParams(currentTab) {
       const query = {};
@@ -623,8 +610,7 @@ export default {
         if (![null, undefined, ''].includes(this.queueInfo.default_message)) {
           this.description = this.queueInfo.default_message;
         } else {
-          this.description =
-            'Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando';
+          this.description = 'Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando';
         }
       } catch (error) {
         console.log(error);
@@ -662,7 +648,6 @@ export default {
 
     handleCrumbClick(queueCrumb) {
       if (queueCrumb.name === this.queueToEdit.name) return;
-
       this.queueToEdit = null;
     },
   },
