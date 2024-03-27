@@ -70,6 +70,7 @@
         :label="$t('chats.in_progress', { length: rooms.length })"
         :rooms="rooms"
         @open="openRoom"
+        withSelection
       />
       <CardGroup
         v-if="rooms_sent_flows.length"

@@ -40,14 +40,7 @@
           :viewedAgent="viewedAgent"
         />
 
-        <UnnnicButton
-          class="history-button"
-          :text="isHistoryView ? $t('back_to_chats') : $t('chats.see_history')"
-          :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : 'history'"
-          type="secondary"
-          size="small"
-          @click="navigate(isHistoryView ? 'home' : 'closed-rooms')"
-        />
+        <ChatsLayoutFooterButton class="footer-button" />
       </div>
     </slot>
 
@@ -94,6 +87,7 @@ import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import QuickMessages from '@/components/chats/QuickMessages';
 import TheCardGroups from './components/TheCardGroups';
 import LayoutFlowsTrigger from './components/FlowsTrigger';
+import ChatsLayoutFooterButton from './components/FooterButton';
 
 export default {
   name: 'ChatsLayout',
@@ -104,6 +98,7 @@ export default {
     SidebarLoading,
     LayoutFlowsTrigger,
     QuickMessages,
+    ChatsLayoutFooterButton,
   },
 
   props: {
@@ -178,11 +173,6 @@ export default {
     selectQuickMessage(quickMessage) {
       this.$emit('select-quick-message', quickMessage);
     },
-    navigate(name) {
-      this.$router.push({
-        name,
-      });
-    },
   },
 
   computed: {
@@ -200,9 +190,6 @@ export default {
     },
     quickMessagesVisible() {
       return !this.showFlowsTrigger && this.showQuickMessages;
-    },
-    isHistoryView() {
-      return this.$route.name === 'closed-rooms';
     },
     isViewMode() {
       return !!this.viewedAgent;
@@ -260,10 +247,6 @@ section.chats-layout {
       button {
         width: 100%;
       }
-    }
-
-    .history-button {
-      margin-right: $unnnic-spacing-xs;
     }
 
     .room-list {

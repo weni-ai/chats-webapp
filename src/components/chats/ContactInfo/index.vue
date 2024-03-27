@@ -132,7 +132,7 @@
         <DiscussionsSession v-if="isHistory" />
         <AsideSlotTemplateSection v-if="!isHistory">
           <p class="title-transfer-chat">
-            {{ $t('contact_info.transfer_contact') }}
+            {{ $tc('transfer_contact') }}
           </p>
           <section class="transfer-section">
             <section class="transfer__radios">
