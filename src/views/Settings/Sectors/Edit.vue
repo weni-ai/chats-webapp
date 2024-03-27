@@ -237,8 +237,7 @@ export default {
   },
 
   async beforeMount() {
-    if (['sector', 'queues', 'messages', 'tags'].includes(this.tab))
-    this.currentTab = this.tab;
+    if (['sector', 'queues', 'messages', 'tags'].includes(this.tab)) this.currentTab = this.tab;
     this.getSector();
     this.getManagers();
     this.listProjectManagers();
@@ -297,8 +296,7 @@ export default {
 
   computed: {
     ...mapState({
-      quickMessagesShared: (state) =>
-      state.chats.quickMessagesShared.quickMessagesShared,
+      quickMessagesShared: (state) => state.chats.quickMessagesShared.quickMessagesShared,
     }),
   },
 
@@ -345,9 +343,7 @@ export default {
       }
     },
     async listProjectManagers() {
-      const managers = (await Project.managers()).results.concat(
-        (await Project.admins()).results,
-      );
+      const managers = (await Project.managers()).results.concat((await Project.admins()).results);
       this.projectManagers = managers;
     },
     async createQueue({ name, default_message }) {
@@ -369,11 +365,7 @@ export default {
       try {
         let agents = [];
         if (queue.uuid) {
-          const response = await Queue.agents(
-            queue.uuid,
-            this.pageAgents * 100,
-            100,
-          );
+          const response = await Queue.agents(queue.uuid, this.pageAgents * 100, 100);
           this.pageAgents += 1;
           this.agentsList = response.results;
           agents = this.agentsList;
@@ -483,11 +475,9 @@ export default {
 
     async save() {
       if (this.currentTab === 'sector') await this.saveSector();
-      if (this.currentTab === 'queues' && this.queueToEdit)
-        await this.saveQueue();
+      if (this.currentTab === 'queues' && this.queueToEdit) await this.saveQueue();
       if (this.currentTab === 'messages') await this.messagesHandler('save');
       if (this.currentTab === 'tags') await this.saveTags();
-
       if (['queues', 'messages'].includes(this.currentTab)) {
         this.resetTabsData();
         return;
@@ -527,9 +517,7 @@ export default {
       const { uuid, toAddAgents, toRemoveAgents } = this.queueToEdit;
 
       await Promise.all([
-        ...toAddAgents.map((agentUuid) =>
-          this.addAgentToQueue(agentUuid, uuid),
-        ),
+        ...toAddAgents.map((agentUuid) => this.addAgentToQueue(agentUuid, uuid)),
         ...toRemoveAgents.map(this.removeAgentFromQueue),
       ]);
 
@@ -538,12 +526,8 @@ export default {
       this.getQueues();
     },
     async saveTags() {
-      const toAddTags = this.toAddTags.map((tag) =>
-        Sector.addTag(this.sector.uuid, tag.name),
-      );
-      const toRemoveTags = this.toRemoveTags.map((tagUuid) =>
-        Sector.removeTag(tagUuid),
-      );
+      const toAddTags = this.toAddTags.map((tag) => Sector.addTag(this.sector.uuid, tag.name));
+      const toRemoveTags = this.toRemoveTags.map((tagUuid) => Sector.removeTag(tagUuid));
       await Promise.all([...toAddTags, ...toRemoveTags]);
       this.showSuccessfullyUpdateSnackbar();
     },
@@ -564,21 +548,16 @@ export default {
     },
     async handleTabChange(currentTab) {
       if (currentTab === 'sector') return;
-      if (currentTab === 'queues' && this.queues.length === 0)
-      await this.getQueues();
+      if (currentTab === 'queues' && this.queues.length === 0) await this.getQueues();
       if (currentTab === 'tags' && this.tags.length === 0) await this.getTags();
 
       this.resetTabsData();
     },
     removeManagerFromTheList(managerUuid) {
-      const manager = this.sector.managers.find(
-        (manager) => manager.uuid === managerUuid,
-      );
+      const manager = this.sector.managers.find((manager) => manager.uuid === managerUuid);
       if (!manager) return;
       this.removedManagers.push(manager);
-      this.sector.managers = this.sector.managers.filter (
-        (manager) => manager.uuid !== managerUuid,
-      );
+      this.sector.managers = this.sector.managers.filter((manager) => manager.uuid !== managerUuid);
     },
     updateQueryParams(currentTab) {
       const query = {};
@@ -608,8 +587,7 @@ export default {
     },
 
     editDescription() {
-      if (this.queueInfo.default_message)
-      this.content = this.queueInfo.default_message;
+      if (this.queueInfo.default_message) this.content = this.queueInfo.default_message;
       this.editContent = true;
       this.focusTextEditor();
     },
@@ -620,7 +598,8 @@ export default {
         if (![null, undefined, ''].includes(this.queueInfo.default_message)) {
           this.description = this.queueInfo.default_message;
         } else {
-          this.description = 'Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando';
+          this.description =
+            'Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando';
         }
       } catch (error) {
         console.log(error);
@@ -652,8 +631,7 @@ export default {
 
     cancelEditDescription() {
       this.editContent = false;
-      if (!this.queueToEdit.default_message)
-      this.queueToEdit.default_message = '';
+      if (!this.queueToEdit.default_message) this.queueToEdit.default_message = '';
     },
 
     handleCrumbClick(queueCrumb) {
@@ -665,7 +643,6 @@ export default {
   watch: {
     currentTab(current) {
       if (this.$route.query.tab !== current) this.updateQueryParams(current);
-
       this.handleTabChange(current);
     },
   },
