@@ -34,8 +34,6 @@ export default {
         results: response.data.results,
       };
 
-      console.log(resultsResponse);
-
       return { data: resultsResponse, status: 'success' };
     } catch (error) {
       if (axios.isCancel(error)) {
