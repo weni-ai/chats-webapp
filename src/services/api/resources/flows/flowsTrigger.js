@@ -31,7 +31,7 @@ export default {
       });
 
       const resultsResponse = {
-        results: response.data.results,
+        results: response.data.results || response.data,
       };
 
       return { data: resultsResponse, status: 'success' };
