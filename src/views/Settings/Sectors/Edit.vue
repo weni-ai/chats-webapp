@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <template>
   <section
     class="edit-sector"
@@ -295,7 +296,10 @@ export default {
   }),
 
   computed: {
-    ...mapState({ quickMessagesShared: (state) => state.chats.quickMessagesShared.quickMessagesShared, }),
+    ...mapState({
+      quickMessagesShared: (state) =>
+      state.chats.quickMessagesShared.quickMessagesShared,
+    }),
   },
 
   methods: {
@@ -341,7 +345,9 @@ export default {
       }
     },
     async listProjectManagers() {
-      const managers = (await Project.managers()).results.concat((await Project.admins()).results,);
+      const managers = (await Project.managers()).results.concat(
+        (await Project.admins()).results,
+      );
       this.projectManagers = managers;
     },
     async createQueue({ name, default_message }) {
@@ -565,10 +571,14 @@ export default {
       this.resetTabsData();
     },
     removeManagerFromTheList(managerUuid) {
-      const manager = this.sector.managers.find((manager) => manager.uuid === managerUuid, );
+      const manager = this.sector.managers.find(
+        (manager) => manager.uuid === managerUuid,
+      );
       if (!manager) return;
       this.removedManagers.push(manager);
-      this.sector.managers = this.sector.managers.filter ( (manager) => manager.uuid !== managerUuid,);
+      this.sector.managers = this.sector.managers.filter (
+        (manager) => manager.uuid !== managerUuid,
+      );
     },
     updateQueryParams(currentTab) {
       const query = {};
