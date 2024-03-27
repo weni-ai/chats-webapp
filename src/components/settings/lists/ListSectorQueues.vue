@@ -17,7 +17,7 @@
 
           <template #visualize>
             <unnnic-button
-              :text="$t('queues.queue_edit')"
+              :text="$t('edit')"
               type="secondary"
               size="small"
               class="visualize-button"
@@ -60,10 +60,9 @@ export default {
         },
         {
           id: 'visualize',
-          text: this.$t('queues.visualize'),
+          text: this.$t('view'),
           flex: 2,
         },
-        // outros cabeçalhos de tabela...
       ],
     };
   },

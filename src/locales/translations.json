@@ -237,7 +237,7 @@
       "en": "Example: Financial",
       "es": "Ejemplo: Financiero"
     },
-    "save": {
+    "save_and_continue": {
       "pt-br": "Salvar e continuar",
       "en": "Guardar y continuar",
       "es": "Save and continue"
@@ -357,11 +357,6 @@
       "en": "Queues in",
       "es": "Cola en"
     },
-    "queue_edit": {
-      "pt-br": "Editar",
-      "en": "Edit",
-      "es": "Editar"
-    },
     "queue_table_name": {
       "pt-br": "Nome",
       "en": "Name",
@@ -371,11 +366,6 @@
       "pt-br": "Qtd de agentes",
       "en": "Number of agents",
       "es": "Cantidad de agentes"
-    },
-    "visualize": {
-      "pt-br": "Visualizar",
-      "en": "Visualize",
-      "es": "Para ver"
     }
   },
   "chats": {
@@ -933,11 +923,6 @@
         "pt-br": "Exemplo: Dúvidas",
         "en": "Example: Doubts",
         "es": "Ejemplo: Dudas"
-      },
-      "tag": {
-        "pt-br": "Adicionar",
-        "en": "Add",
-        "es": "Agregar"
       }
     },
     "already_added": {

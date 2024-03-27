@@ -44,7 +44,7 @@
     <div class="actions">
       <unnnic-button
         v-if="step !== Steps.Tags"
-        :text="$t('sector.save')"
+        :text="$t('sector.save_and_continue')"
         iconRight="arrow-right-1-1"
         type="secondary"
         :disabled="!isActiveFormValid"
