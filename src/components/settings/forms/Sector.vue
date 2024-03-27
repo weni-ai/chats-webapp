@@ -180,7 +180,7 @@
           />
         </section>
         <section class="form-section__handlers">
-          <unnnic-button
+          <UnnnicButton
             :text="$t('delete_sector')"
             type="warning"
             iconLeft="delete"
@@ -189,7 +189,7 @@
             v-if="isEditing"
           />
         </section>
-        <unnnic-modal-next
+        <UnnnicModalNext
           v-if="openModalDelete"
           type="alert"
           icon="alert-circle-1"
