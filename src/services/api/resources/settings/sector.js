@@ -58,7 +58,9 @@ export default {
 
   async deleteSector(sectorUuid) {
     const { me } = Profile.state;
-    const response = await http.delete(`/sector/${sectorUuid}/?user=${me?.email}`);
+    const response = await http.delete(
+      `/sector/${sectorUuid}/?user=${me?.email}`
+    );
     return response.data;
   },
 
