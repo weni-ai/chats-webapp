@@ -28,7 +28,7 @@ const module = {
     },
     deleteSector(state, sectorUuid) {
       state.sectors = state.sectors.filter(
-        (sector) => sector.uuid !== sectorUuid
+        (sector) => sector.uuid !== sectorUuid,
       );
     },
   },
