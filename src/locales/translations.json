@@ -328,6 +328,11 @@
           "en": "Disabled signature",
           "es": "Firma discapacitada"
         }
+      },
+      "bulk_transfer": {
+        "pt-br": "Permitir transferências para mais de um contato",
+        "en": "Allow transfers to more than one contact",
+        "es": "Permitir transferencias a más de un contacto"
       }
     }
   },
@@ -437,7 +442,7 @@
       },
       "agent_took_chat": {
         "pt-br": "Ops! O chat com contato {contact} foi assumido por outro agente",
-        "en-us": "Oops! The chat with the contact {contact} has already been taken over by another agent",
+        "en": "Oops! The contact chat {contact} was assumed by another agent",
         "es": "¡Ups! El chat con el contacto {contact} ha sido asumido por otro agente"
       }
     },
@@ -552,7 +557,7 @@
     },
     "get_chat_confirmation": {
       "pt-br": "Confirme se deseja realizar o atendimento de {contact}",
-      "en-us": "Confirm if you want to do the service of {contact}",
+      "en": "Confirm if you want to perform the service of {contact}",
       "es": "Confirma si deseas realizar el servicio de {contact}"
     },
     "you_got_chat": {

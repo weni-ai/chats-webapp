@@ -131,15 +131,23 @@ export default {
 
 <style lang="scss" scoped>
 .modal-bulk-transfer {
-  :deep(.unnnic-modal-container) {
+  :deep(.unnnic-modal-container-background) {
+    overflow: visible;
+
     .unnnic-modal-container-background-body {
       padding-top: $unnnic-spacing-giant;
 
       &-description-container {
         padding-bottom: 0;
       }
+
+      &-description,
+      &-description-container {
+        overflow: visible;
+      }
     }
   }
+
   &__select-destination {
     display: grid;
     gap: $unnnic-spacing-sm;
