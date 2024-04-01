@@ -65,6 +65,15 @@
       />
 
       <UnnnicButton
+        v-if="showFlowsTriggerButton"
+        :text="$t('flows')"
+        size="small"
+        type="secondary"
+        iconLeft="send"
+        @mousedown.prevent
+        @click="openFlowsTrigger"
+      />
+      <UnnnicButton
         @mousedown.prevent
         :text="$t('quick_messages.title')"
         iconLeft="bolt"
@@ -97,6 +106,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    showFlowsTriggerButton: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -121,6 +134,9 @@ export default {
       this.$router.push({
         name,
       });
+    },
+    openFlowsTrigger() {
+      this.$emit('open-flows-trigger');
     },
     openQuickMessage() {
       this.$emit('show-quick-messages');

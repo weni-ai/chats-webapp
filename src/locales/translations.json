@@ -1372,6 +1372,11 @@
     "en": "Quick messages",
     "es": "Mensajes rápidos"
   },
+  "flows": {
+    "pt-br": "Fluxos",
+    "en": "Flows",
+    "es": "Flujos"
+  },
   "flows_trigger": {
     "title": {
       "pt-br": "Disparo de fluxos",
