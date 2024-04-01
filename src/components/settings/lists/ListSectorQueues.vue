@@ -1,14 +1,19 @@
 <template>
   <section class="list-sector-queues">
-    <p v-if="sector" class="title">{{ $t('queues.queue_title') }} {{ sector }}</p>
+    <p
+      v-if="sector"
+      class="title"
+    >
+      {{ $t('queues.queue_title') }} {{ sector }}
+    </p>
 
-    <unnnic-table :items="queues">
+    <UnnnicTable :items="queues">
       <template #header>
-        <unnnic-table-row :headers="tableHeaders" />
+        <UnnnicTableRow :headers="tableHeaders" />
       </template>
 
       <template #item="{ item }">
-        <unnnic-table-row :headers="tableHeaders">
+        <UnnnicTableRow :headers="tableHeaders">
           <template #name>
             {{ item.name }}
           </template>
@@ -16,7 +21,7 @@
           <template #agents>{{ item.agents }}</template>
 
           <template #visualize>
-            <unnnic-button
+            <UnnnicButton
               :text="$t('edit')"
               type="secondary"
               size="small"
@@ -24,9 +29,9 @@
               @click="$emit('visualize', { ...item })"
             />
           </template>
-        </unnnic-table-row>
+        </UnnnicTableRow>
       </template>
-    </unnnic-table>
+    </UnnnicTable>
   </section>
 </template>
 

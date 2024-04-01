@@ -1,6 +1,9 @@
 <template>
   <section class="loading-bar__container">
-    <div class="loading-bar" :style="{ width: `${value * 100}%` }" />
+    <div
+      class="loading-bar"
+      :style="{ width: `${value * 100}%` }"
+    />
   </section>
 </template>
 
@@ -28,7 +31,10 @@ export default {
   width: 100%;
   height: $unnnic-border-width-thin;
 
-  background-color: rgba($unnnic-color-neutral-clean, $unnnic-opacity-level-light);
+  background-color: rgba(
+    $unnnic-color-neutral-clean,
+    $unnnic-opacity-level-light
+  );
 
   overflow: hidden;
 

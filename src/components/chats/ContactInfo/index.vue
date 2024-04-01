@@ -1,8 +1,8 @@
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
   <div class="contact-info__container">
-    <contact-infos-loading v-show="isLoading" />
-    <aside-slot-template
+    <ContactInfosLoading v-show="isLoading" />
+    <AsideSlotTemplate
       v-show="!isLoading"
       v-if="closedRoom || room"
       class="contact-info"
@@ -14,14 +14,14 @@
       :back="headerMobileBack"
     >
       <section class="scrollable">
-        <aside-slot-template-section>
+        <AsideSlotTemplateSection>
           <section class="infos">
             <header class="connection-info__header">
               <h1 class="username">
                 {{ (closedRoom || room).contact.name }}
               </h1>
 
-              <unnnic-button
+              <UnnnicButton
                 v-if="!isHistory"
                 iconCenter="sync"
                 type="tertiary"
@@ -35,7 +35,10 @@
               <p v-if="room?.contact.status === 'online'">
                 {{ $t('status.online') }}
               </p>
-              <p v-if="lastMessageFromContact?.created_on" style="margin-bottom: 12px">
+              <p
+                v-if="lastMessageFromContact?.created_on"
+                style="margin-bottom: 12px"
+              >
                 {{
                   $t('last_message_time.date', {
                     date: moment(lastMessageFromContact?.created_on).fromNow(),
@@ -48,28 +51,34 @@
                     <h3 class="title">{{ contactNumber.plataform }}:</h3>
                     <h4 class="description">{{ contactNumber.contactNum }}</h4>
                   </hgroup>
-                  <hgroup class="info" v-if="contactProtocol?.length > 0">
+                  <hgroup
+                    class="info"
+                    v-if="contactProtocol?.length > 0"
+                  >
                     <h3 class="title">{{ $t('protocol') }}:</h3>
                     <h4 class="description">{{ contactProtocol }}</h4>
                   </hgroup>
                 </section>
               </template>
               <template v-if="!!room.custom_fields">
-                <custom-field
+                <CustomField
                   v-for="(value, key) in customFields"
                   :key="key"
                   :title="key"
                   :description="value"
-                  :is-editable="!isHistory && room.can_edit_custom_fields"
-                  :is-current="isCurrentCustomField(key)"
+                  :isEditable="!isHistory && room.can_edit_custom_fields"
+                  :isCurrent="isCurrentCustomField(key)"
                   :value="currentCustomField?.[key]"
                   @update-current-custom-field="updateCurrentCustomField"
                   @save-value="saveCurrentCustomFieldValue"
                 />
               </template>
             </div>
-            <div v-if="!isLinkedToOtherAgent && !isViewMode && !isHistory" class="sync-contact">
-              <unnnicSwitch
+            <div
+              v-if="!isLinkedToOtherAgent && !isViewMode && !isHistory"
+              class="sync-contact"
+            >
+              <UnnnicSwitch
                 :value="isLinkedUser"
                 @input="addContactToAgent"
                 size="small"
@@ -79,17 +88,21 @@
                     : $t('contact_info.switch_associate_contact')
                 "
               />
-              <unnnic-tool-tip
+              <UnnnicToolTip
                 enabled
                 :text="$t('contact_info.switch_tooltip')"
                 side="bottom"
                 maxWidth="21rem"
               >
-                <unnnic-icon-svg icon="info" scheme="neutral-cloudy" size="sm" />
-              </unnnic-tool-tip>
+                <UnnnicIconSvg
+                  icon="info"
+                  scheme="neutral-cloudy"
+                  size="sm"
+                />
+              </UnnnicToolTip>
             </div>
             <nav class="infos__nav">
-              <unnnic-button
+              <UnnnicButton
                 v-if="!isHistory && !isViewMode"
                 :text="$t('contact_info.see_contact_history')"
                 iconLeft="history"
@@ -97,7 +110,7 @@
                 size="small"
                 @click="openHistory()"
               />
-              <unnnic-button
+              <UnnnicButton
                 v-if="!isViewMode && !isMobile"
                 :text="$t('discussions.start_discussion.title')"
                 iconLeft="forum"
@@ -114,24 +127,34 @@
               }}</span>
             </div>
           </section>
-        </aside-slot-template-section>
+        </AsideSlotTemplateSection>
 
-        <discussions-session v-if="isHistory" />
-        <aside-slot-template-section v-if="!isHistory">
+        <DiscussionsSession v-if="isHistory" />
+        <AsideSlotTemplateSection v-if="!isHistory">
           <p class="title-transfer-chat">
             {{ $t('contact_info.transfer_contact') }}
           </p>
           <section class="transfer-section">
             <section class="transfer__radios">
-              <unnnic-radio size="sm" v-model="transferRadio" value="agent" :disabled="isViewMode">
+              <UnnnicRadio
+                size="sm"
+                v-model="transferRadio"
+                value="agent"
+                :disabled="isViewMode"
+              >
                 {{ $t('agent') }}
-              </unnnic-radio>
+              </UnnnicRadio>
 
-              <unnnic-radio size="sm" v-model="transferRadio" value="queue" :disabled="isViewMode">
+              <UnnnicRadio
+                size="sm"
+                v-model="transferRadio"
+                value="queue"
+                :disabled="isViewMode"
+              >
                 {{ $t('queue') }}
-              </unnnic-radio>
+              </UnnnicRadio>
             </section>
-            <unnnic-select-smart
+            <UnnnicSelectSmart
               v-model="transferContactTo"
               :options="transferOptions"
               autocomplete
@@ -140,7 +163,7 @@
               :disabled="!!transferContactError || isViewMode"
             />
 
-            <unnnic-button
+            <UnnnicButton
               class="transfer__button"
               :text="$t('transfer')"
               type="primary"
@@ -149,31 +172,31 @@
               :disabled="transferContactTo.length === 0 || isViewMode"
             />
           </section>
-        </aside-slot-template-section>
+        </AsideSlotTemplateSection>
 
-        <aside-slot-template-section>
-          <contact-media
+        <AsideSlotTemplateSection>
+          <ContactMedia
             :room="room"
             @fullscreen="openFullScreen"
             :history="isHistory"
             :contactInfo="(closedRoom || room).contact"
             @loaded-medias="isLoading = false"
           />
-        </aside-slot-template-section>
+        </AsideSlotTemplateSection>
       </section>
 
-      <modal-start-discussion
+      <ModalStartDiscussion
         :showModal="isShowModalStartDiscussion"
         @close="handleModalStartDiscussion()"
       />
 
-      <modal-progress-bar-false
+      <ModalProgressBarFalse
         v-if="showTransferProgressBar"
         :title="$t('contact_info.transfering_chat')"
         type="secondary"
         @close="closeTransferProgressBar"
       />
-      <unnnic-modal
+      <UnnnicModal
         :text="$t('successfully_transferred_chat')"
         :description="
           $t('successfully_transferred_contact_to.line', {
@@ -185,7 +208,7 @@
         :showModal="showSuccessfulTransferModal"
         @close="(showSuccessfulTransferModal = false), navigate('home')"
       />
-      <fullscreen-preview
+      <FullscreenPreview
         v-if="isFullscreen"
         :downloadMediaUrl="currentMedia?.url"
         :downloadMediaName="currentMedia?.message"
@@ -193,7 +216,7 @@
         @next="nextMedia"
         @previous="previousMedia"
       >
-        <video-preview
+        <VideoPreview
           v-if="currentMedia.content_type.includes('mp4')"
           @keypress.enter="() => {}"
           @click.stop="() => {}"
@@ -206,8 +229,8 @@
           @keypress.enter="() => {}"
           @click.stop="() => {}"
         />
-      </fullscreen-preview>
-    </aside-slot-template>
+      </FullscreenPreview>
+    </AsideSlotTemplate>
   </div>
 </template>
 
@@ -318,7 +341,9 @@ export default {
 
     transferPersonSelected() {
       const selectedOptionValue = this.transferContactTo?.[0]?.value;
-      return this.transferOptions.find((option) => option.value === selectedOptionValue);
+      return this.transferOptions.find(
+        (option) => option.value === selectedOptionValue,
+      );
     },
 
     contactNumber() {
@@ -359,9 +384,9 @@ export default {
 
     try {
       const treatedAgents = [{ value: '', label: this.$t('select_agent') }];
-      const agents = (await Sector.agents({ sectorUuid: room.queue.sector })).filter(
-        (agent) => agent.email !== this.$store.state.profile.me.email,
-      );
+      const agents = (
+        await Sector.agents({ sectorUuid: room.queue.sector })
+      ).filter((agent) => agent.email !== this.$store.state.profile.me.email);
 
       agents.forEach(({ first_name, last_name, email }) => {
         treatedAgents.push({
@@ -372,7 +397,9 @@ export default {
       this.transferOptions = treatedAgents;
     } catch (error) {
       if (error?.response?.status === 403) {
-        this.transferContactError = this.$t('chats.transfer.does_not_have_permission');
+        this.transferContactError = this.$t(
+          'chats.transfer.does_not_have_permission',
+        );
       } else {
         throw error;
       }
@@ -384,7 +411,8 @@ export default {
     openHistory() {
       const { plataform, contactNum } = this.contactNumber;
       const protocol = this.contactProtocol;
-      const contactUrn = plataform === 'whatsapp' ? contactNum.replace('+', '') : contactNum;
+      const contactUrn =
+        plataform === 'whatsapp' ? contactNum.replace('+', '') : contactNum;
 
       const A_YEAR_AGO = moment().subtract(12, 'month').format('YYYY-MM-DD');
 
@@ -414,12 +442,14 @@ export default {
         this.page += 1;
 
         const treatedQueues = [{ value: '', label: this.$t('select_queue') }];
-        this.queues.concat(newQueues.results).forEach(({ name, sector_name, uuid }) => {
-          treatedQueues.push({
-            label: `${name} | ${this.$t('sector.title')} ${sector_name}`,
-            value: uuid,
+        this.queues
+          .concat(newQueues.results)
+          .forEach(({ name, sector_name, uuid }) => {
+            treatedQueues.push({
+              label: `${name} | ${this.$t('sector.title')} ${sector_name}`,
+              value: uuid,
+            });
           });
-        });
         this.transferOptions = treatedQueues;
 
         hasNext = newQueues.next;
@@ -435,7 +465,9 @@ export default {
 
     async listAgents() {
       try {
-        this.transferOptions = (await Sector.agents({ sectorUuid: this.room.queue.sector }))
+        this.transferOptions = (
+          await Sector.agents({ sectorUuid: this.room.queue.sector })
+        )
           .filter((agent) => agent.email !== this.$store.state.profile.me.email)
           .map(({ first_name, last_name, email }) => {
             return {
@@ -445,7 +477,9 @@ export default {
           });
       } catch (error) {
         if (error?.response?.status === 403) {
-          this.transferContactError = this.$t('chats.transfer.does_not_have_permission');
+          this.transferContactError = this.$t(
+            'chats.transfer.does_not_have_permission',
+          );
         } else {
           throw error;
         }
@@ -467,10 +501,13 @@ export default {
 
     saveCurrentCustomFieldValue() {
       const currentCustomFieldKey = this.getCurrentCustomFieldKey();
-      const currentCustomFieldValue = this.currentCustomField[currentCustomFieldKey];
+      const currentCustomFieldValue =
+        this.currentCustomField[currentCustomFieldKey];
 
       if (currentCustomFieldValue) {
-        if (currentCustomFieldValue !== this.customFields[currentCustomFieldKey]) {
+        if (
+          currentCustomFieldValue !== this.customFields[currentCustomFieldKey]
+        ) {
           Room.updateCustomFields(this.room.uuid, this.currentCustomField);
         }
 
@@ -487,14 +524,18 @@ export default {
     },
 
     nextMedia() {
-      const imageIndex = this.images.findIndex((el) => el.url === this.currentMedia.url);
+      const imageIndex = this.images.findIndex(
+        (el) => el.url === this.currentMedia.url,
+      );
       if (imageIndex + 1 < this.images.length) {
         this.currentMedia = this.images[imageIndex + 1];
       }
     },
 
     previousMedia() {
-      const imageIndex = this.images.findIndex((el) => el.url === this.currentMedia.url);
+      const imageIndex = this.images.findIndex(
+        (el) => el.url === this.currentMedia.url,
+      );
       if (imageIndex - 1 >= 0) {
         this.currentMedia = this.images[imageIndex - 1];
       }
@@ -591,7 +632,10 @@ export default {
     getLastTimeOnlineText(lastView) {
       const today = new Date();
       const lastViewDate = new Date(lastView);
-      const dateDifferenceInHours = this.getDatesDifferenceInHours(today, lastViewDate);
+      const dateDifferenceInHours = this.getDatesDifferenceInHours(
+        today,
+        lastViewDate,
+      );
 
       if (dateDifferenceInHours >= 24) {
         const formattedDate = Intl.DateTimeFormat(this.$i18n.locale, {
@@ -636,7 +680,11 @@ export default {
         await Room.take(this.room.uuid, this.transferPersonSelected.value);
       }
       if (this.transferRadio === 'queue') {
-        await Room.take(this.room.uuid, null, this.transferPersonSelected.value);
+        await Room.take(
+          this.room.uuid,
+          null,
+          this.transferPersonSelected.value,
+        );
       }
 
       if (this.isMobile) {
@@ -725,7 +773,10 @@ export default {
 
       width: 100%;
       min-height: 17.8125rem;
-      background: rgba($unnnic-color-brand-weni, $unnnic-opacity-level-extra-light);
+      background: rgba(
+        $unnnic-color-brand-weni,
+        $unnnic-opacity-level-extra-light
+      );
     }
 
     .username {

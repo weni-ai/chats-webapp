@@ -1,12 +1,16 @@
 <template>
   <main class="by-sector-dashboard">
     <section>
-      <general-metrics :metrics="generalMetrics" />
+      <GeneralMetrics :metrics="generalMetrics" />
     </section>
 
     <section class="by-sector-dashboard__metrics">
-      <card-group-metrics :metrics="queues" title="Filas" icon="hierarchy-3-2" />
-      <table-metrics
+      <CardGroupMetrics
+        :metrics="queues"
+        title="Filas"
+        icon="hierarchy-3-2"
+      />
+      <TableMetrics
         :headers="tableHeaders"
         :items="activeChats"
         title="Agentes online"
@@ -134,10 +138,15 @@ export default {
 
   methods: {
     initRealtimeSimulation() {
-      this.realtimeSimulationController = setInterval(this.updateRandomMetric, 5000);
+      this.realtimeSimulationController = setInterval(
+        this.updateRandomMetric,
+        5000,
+      );
     },
     updateRandomMetric() {
-      const randomMetricIndex = Math.floor(Math.random() * this.generalMetrics.length);
+      const randomMetricIndex = Math.floor(
+        Math.random() * this.generalMetrics.length,
+      );
       const metric = this.generalMetrics[randomMetricIndex];
 
       if (Math.random() > 0.2) {

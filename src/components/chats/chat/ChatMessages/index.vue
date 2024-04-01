@@ -2,7 +2,7 @@
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
   <div class="chat-messages__container">
-    <chat-messages-loading v-show="isSkeletonLoadingActive" />
+    <ChatMessagesLoading v-show="isSkeletonLoadingActive" />
     <section
       class="chat-messages"
       ref="chatMessages"
@@ -15,7 +15,7 @@
         :key="messagesByDate.date"
         class="chat-messages__container-date"
       >
-        <chat-messages-start-feedbacks
+        <ChatMessagesStartFeedbacks
           :dateFeedback="messagesByDate.date"
           :showWaitingFeedback="showWaitingFeedback"
           :isClosedChat="isClosedChat"
@@ -27,7 +27,7 @@
           :key="messagesByDate.date + messagesByMinute.minute"
         >
           <template v-for="message in messagesByMinute.messages">
-            <chat-feedback
+            <ChatFeedback
               v-if="isChatSeparatorFeedback(message.uuid) && showChatSeparator"
               :feedback="
                 startMessagesBy.agent === message.uuid
@@ -38,7 +38,7 @@
               :key="'feedback' + message.uuid"
               :title="messageFormatTitle(new Date(message.created_on))"
             />
-            <chat-messages-feedback-message
+            <ChatMessagesFeedbackMessage
               v-if="isFeedbackMessage(message)"
               :message="message"
               :scheme="isClosedChat ? 'gray' : 'blue'"
@@ -47,7 +47,7 @@
             />
 
             <template v-else>
-              <unnnic-chats-message
+              <UnnnicChatsMessage
                 v-if="message.text || isGeolocation(message.media[0])"
                 :type="messageType(message)"
                 :class="[
@@ -62,10 +62,14 @@
                 :title="messageFormatTitle(new Date(message.created_on))"
                 :signature="messageSignature(message)"
               >
-                {{ isGeolocation(message.media[0]) ? message.media[0]?.url : message.text }}
-              </unnnic-chats-message>
+                {{
+                  isGeolocation(message.media[0])
+                    ? message.media[0]?.url
+                    : message.text
+                }}
+              </UnnnicChatsMessage>
               <template v-for="media in message.media">
-                <unnnic-chats-message
+                <UnnnicChatsMessage
                   v-if="isMedia(media) && !isGeolocation(media)"
                   :key="media.created_on"
                   :ref="`message-${message.uuid}`"
@@ -75,7 +79,13 @@
                     messageType(message),
                     { 'different-user': isMessageByTwoDifferentUsers(message) },
                   ]"
-                  :mediaType="isImage(media) ? 'image' : isVideo(media) ? 'video' : 'audio'"
+                  :mediaType="
+                    isImage(media)
+                      ? 'image'
+                      : isVideo(media)
+                      ? 'video'
+                      : 'audio'
+                  "
                   :time="new Date(message.created_on)"
                   :status="messageStatus({ message })"
                   :title="messageFormatTitle(new Date(message.created_on))"
@@ -89,12 +99,12 @@
                     @click="openFullScreen(media.url)"
                     @keypress.enter="openFullScreen(media.url)"
                   />
-                  <video-player
+                  <VideoPlayer
                     v-else-if="isVideo(media)"
                     class="media"
                     :src="media.url || media.preview"
                   />
-                  <unnnic-audio-recorder
+                  <UnnnicAudioRecorder
                     v-else-if="isAudio(media)"
                     ref="audio-recorder"
                     class="media audio"
@@ -103,8 +113,8 @@
                     :reqStatus="messageStatus({ message, media })"
                     @failed-click="resendMedia({ message, media })"
                   />
-                </unnnic-chats-message>
-                <unnnic-chats-message
+                </UnnnicChatsMessage>
+                <UnnnicChatsMessage
                   v-else-if="!isGeolocation(media)"
                   :key="media.created_on"
                   :ref="`message-${message.uuid}`"
@@ -115,7 +125,9 @@
                     { 'different-user': isMessageByTwoDifferentUsers(message) },
                   ]"
                   :time="new Date(message.created_on)"
-                  :documentName="media.url?.split('/').at(-1) || media.file.name"
+                  :documentName="
+                    media.url?.split('/').at(-1) || media.file.name
+                  "
                   :status="messageStatus({ message })"
                   :title="messageFormatTitle(new Date(message.created_on))"
                   :signature="messageSignature(message)"
@@ -133,13 +145,17 @@
       :feedback="roomEndedChatFeedback(room)"
       scheme="purple"
     /> -->
-      <section v-if="tags.length > 0" v-show="!isSkeletonLoadingActive" class="chat-messages__tags">
+      <section
+        v-if="tags.length > 0"
+        v-show="!isSkeletonLoadingActive"
+        class="chat-messages__tags"
+      >
         <!-- <chat-feedback :feedback="roomEndedChatFeedback(room)" scheme="purple" ref="endChatElement" /> -->
-        <tag-group :tags="tags" />
+        <TagGroup :tags="tags" />
       </section>
 
       <!-- Media fullscreen -->
-      <fullscreen-preview
+      <FullscreenPreview
         v-if="isFullscreen && currentMedia"
         :downloadMediaUrl="currentMedia?.url"
         :downloadMediaName="currentMedia?.message"
@@ -162,7 +178,7 @@
           @keypress.enter="() => {}"
           @click.stop="() => {}"
         />
-      </fullscreen-preview>
+      </FullscreenPreview>
     </section>
   </div>
 </template>
@@ -358,7 +374,10 @@ export default {
 
             Media.download({ media: mediaToDownload, name: filename });
           } catch (error) {
-            console.error('An error occurred when trying to download the media:', error);
+            console.error(
+              'An error occurred when trying to download the media:',
+              error,
+            );
           }
         }
       }
@@ -416,7 +435,8 @@ export default {
         (message) => message.user && !this.isFeedbackMessage(message),
       )?.uuid;
       const newFirstMessageByBotUuid = this.messages.find(
-        (message) => !message.contact && !message.user && !this.isFeedbackMessage(message),
+        (message) =>
+          !message.contact && !message.user && !this.isFeedbackMessage(message),
       )?.uuid;
 
       if (newFirstMessageByAgentUuid) {
@@ -428,7 +448,9 @@ export default {
     },
 
     isChatSeparatorFeedback(messageUuid) {
-      return [this.startMessagesBy.bot, this.startMessagesBy.agent].includes(messageUuid);
+      return [this.startMessagesBy.bot, this.startMessagesBy.agent].includes(
+        messageUuid,
+      );
     },
 
     isMessageByBot(message) {
@@ -453,13 +475,17 @@ export default {
       this.isFullscreen = true;
     },
     nextMedia() {
-      const imageIndex = this.medias.findIndex((el) => el.url === this.currentMedia.url);
+      const imageIndex = this.medias.findIndex(
+        (el) => el.url === this.currentMedia.url,
+      );
       if (imageIndex + 1 < this.medias.length) {
         this.currentMedia = this.medias[imageIndex + 1];
       }
     },
     previousMedia() {
-      const imageIndex = this.medias.findIndex((el) => el.url === this.currentMedia.url);
+      const imageIndex = this.medias.findIndex(
+        (el) => el.url === this.currentMedia.url,
+      );
       if (imageIndex - 1 >= 0) {
         this.currentMedia = this.medias[imageIndex - 1];
       }
@@ -485,7 +511,8 @@ export default {
       const { chatMessages } = this.$refs;
       if (!chatMessages) return;
 
-      const { lastMessageUuidBeforePagination, prevChatUuid, messagesSorted } = this;
+      const { lastMessageUuidBeforePagination, prevChatUuid, messagesSorted } =
+        this;
 
       if (prevChatUuid !== this.chatUuid) {
         this.handleScroll();
@@ -499,7 +526,8 @@ export default {
         chatMessages.scrollTop === 0 &&
         (this.messagesNext || this.messagesPrevious)
       ) {
-        const elementToScroll = this.$refs[`message-${lastMessageUuidBeforePagination}`]?.[0]?.$el;
+        const elementToScroll =
+          this.$refs[`message-${lastMessageUuidBeforePagination}`]?.[0]?.$el;
         if (elementToScroll) {
           await elementToScroll.scrollIntoView({ block: 'start' });
           chatMessages.scrollTop += 1;
@@ -509,7 +537,8 @@ export default {
       }
 
       this.prevChatUuid = this.chatUuid;
-      this.lastMessageUuidBeforePagination = messagesSorted?.[0]?.minutes?.[0]?.messages?.[0]?.uuid;
+      this.lastMessageUuidBeforePagination =
+        messagesSorted?.[0]?.minutes?.[0]?.messages?.[0]?.uuid;
     },
 
     scrollToBottom() {

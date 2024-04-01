@@ -2,21 +2,29 @@
 <template>
   <div class="chat-header">
     <header class="header">
-      <unnnic-tool-tip enabled :text="$t('contact_information')" side="right">
+      <UnnnicToolTip
+        enabled
+        :text="$t('contact_information')"
+        side="right"
+      >
         <section class="info clickable">
-          <user-avatar
+          <UserAvatar
             :username="room.contact.name"
             size="2xl"
             clickable
-            :photo-url="usePhoto ? room.contact.photo_url : ''"
+            :photoUrl="usePhoto ? room.contact.photo_url : ''"
             @click="showContactInfo"
             :disabled="!room.is_active"
           />
-          <span class="username" @click="showContactInfo" @keypress.enter="showContactInfo">
+          <span
+            class="username"
+            @click="showContactInfo"
+            @keypress.enter="showContactInfo"
+          >
             {{ room.contact.name }}
           </span>
         </section>
-      </unnnic-tool-tip>
+      </UnnnicToolTip>
 
       <span
         class="clickable"
@@ -24,33 +32,54 @@
         @click="$emit('close')"
         @keypress.enter="$emit('close')"
       >
-        <unnnic-tool-tip enabled :text="closeButtonTooltip" side="left">
-          <unnnic-icon-svg icon="close-1" size="sm" />
-        </unnnic-tool-tip>
+        <UnnnicToolTip
+          enabled
+          :text="closeButtonTooltip"
+          side="left"
+        >
+          <UnnnicIconSvg
+            icon="close-1"
+            size="sm"
+          />
+        </UnnnicToolTip>
       </span>
     </header>
 
-    <section v-if="!room.is_active" class="header-info-message">
+    <section
+      v-if="!room.is_active"
+      class="header-info-message"
+    >
       <span class="message">{{
         $d(room.ended_at ? new Date(room.ended_at) : new Date(), 'long')
       }}</span>
     </section>
 
-    <section v-else-if="!room.user" class="header-info-message">
+    <section
+      v-else-if="!room.user"
+      class="header-info-message"
+    >
       <span class="message"
-        >Contato na fila {{ room.queue.name }} {{ moment(room?.created_on).fromNow() }}</span
+        >Contato na fila {{ room.queue.name }}
+        {{ moment(room?.created_on).fromNow() }}</span
       >
     </section>
-    <div class="no-internet-connection" style="display: flex" v-if="alertNetwork">
+    <div
+      class="no-internet-connection"
+      style="display: flex"
+      v-if="alertNetwork"
+    >
       <div class="c-loader">
-        <unnnic-icon-svg
+        <UnnnicIconSvg
           style="margin-right: 6px"
           icon="button-refresh-arrow-1"
           scheme="neutral-cloudy"
           size="sm"
         />
       </div>
-      <span @click="reconnect" class="alert-text" style="margin-right: 4px"
+      <span
+        @click="reconnect"
+        class="alert-text"
+        style="margin-right: 4px"
         ><b>{{ $t('alert_no_internet_connection.message') }}</b>
         {{ $t('alert_no_internet_connection.verify_connection') }}
         <b style="cursor: pointer"
@@ -58,19 +87,32 @@
         >
       </span>
     </div>
-    <div class="header-info-message" style="display: flex" v-if="alert">
-      <span @click="openSendFlow" class="alert-text" style="margin-right: 4px"
+    <div
+      class="header-info-message"
+      style="display: flex"
+      v-if="alert"
+    >
+      <span
+        @click="openSendFlow"
+        class="alert-text"
+        style="margin-right: 4px"
         >{{ $t('alert_last_message_date.message') }}
-        <u style="cursor: pointer">{{ $t('alert_last_message_date.message_send_flow') }}</u></span
+        <u style="cursor: pointer">{{
+          $t('alert_last_message_date.message_send_flow')
+        }}</u></span
       >
-      <unnnic-tool-tip
+      <UnnnicToolTip
         enabled
         :text="$t('alert_last_message_date.tip')"
         side="bottom"
         maxWidth="20rem"
       >
-        <unnnic-icon-svg icon="information-circle-4" scheme="neutral-cloudy" size="sm" />
-      </unnnic-tool-tip>
+        <UnnnicIconSvg
+          icon="information-circle-4"
+          scheme="neutral-cloudy"
+          size="sm"
+        />
+      </UnnnicToolTip>
     </div>
   </div>
 </template>

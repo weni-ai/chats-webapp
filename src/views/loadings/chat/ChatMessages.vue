@@ -1,18 +1,21 @@
 <template>
   <main class="chat-messages-loading">
     <div class="chat-messages-loading__messages">
-      <unnnic-skeleton-loading width="80px" height="23px" />
+      <UnnnicSkeletonLoading
+        width="80px"
+        height="23px"
+      />
       <div class="message">
-        <unnnic-skeleton-loading />
+        <UnnnicSkeletonLoading />
       </div>
       <div class="message">
-        <unnnic-skeleton-loading />
+        <UnnnicSkeletonLoading />
       </div>
       <div class="message">
-        <unnnic-skeleton-loading />
+        <UnnnicSkeletonLoading />
       </div>
       <div class="message">
-        <unnnic-skeleton-loading />
+        <UnnnicSkeletonLoading />
       </div>
     </div>
   </main>

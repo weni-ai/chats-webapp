@@ -3,23 +3,44 @@
     <!-- <p v-if="showInfoIcon" class="form-queue__description">{{ infoText }}</p> -->
     <p class="title">
       {{ label }}
-      <unnnic-tool-tip enabled side="right" :text="$t('new_sector.queues_tip')" maxWidth="23rem">
-        <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
-      </unnnic-tool-tip>
+      <UnnnicToolTip
+        enabled
+        side="right"
+        :text="$t('new_sector.queues_tip')"
+        maxWidth="23rem"
+      >
+        <UnnnicIconSvg
+          icon="information-circle-4"
+          scheme="neutral-soft"
+          size="sm"
+        />
+      </UnnnicToolTip>
     </p>
 
     <section class="controls">
-      <unnnic-input
+      <UnnnicInput
         v-model="queue.name"
         :label="$t('queues.queue_name')"
         :placeholder="$t('queues.queue_name_placeholder')"
         class="input"
       />
-      <unnnic-button v-if="isEditing" text="Salvar" type="secondary" @click="addQueue" />
+      <UnnnicButton
+        v-if="isEditing"
+        text="Salvar"
+        type="secondary"
+        @click="addQueue"
+      />
     </section>
 
-    <section v-if="isEditing" class="form-queue__queues">
-      <list-sector-queues :sector="sector.name" :queues="queues" @visualize="visualize" />
+    <section
+      v-if="isEditing"
+      class="form-queue__queues"
+    >
+      <ListSectorQueues
+        :sector="sector.name"
+        :queues="queues"
+        @visualize="visualize"
+      />
     </section>
   </section>
 </template>

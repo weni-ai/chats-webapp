@@ -15,7 +15,12 @@ export function getSupportedChatMediaFormats(type = 'all') {
  * @param {Function} payload.storeDispatch - Function to access the $store dispatch.
  * @param {Function} payload.progressCallback - Callback function to report progress.
  */
-export async function sendMediaMessage({ files, routeName, storeDispatch, progressCallback }) {
+export async function sendMediaMessage({
+  files,
+  routeName,
+  storeDispatch,
+  progressCallback,
+}) {
   try {
     const loadingFiles = {};
     const updateLoadingFiles = (messageUuid, progress) => {

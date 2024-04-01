@@ -1,13 +1,17 @@
 <template>
   <section class="new-sector">
     <div class="new-sector__indicator">
-      <unnnic-indicator :current-step="step" :number-of-steps="3" :titles="stepsTitles" />
+      <UnnnicIndicator
+        :currentStep="step"
+        :numberOfSteps="3"
+        :titles="stepsTitles"
+      />
     </div>
     <div class="new-sector__divider" />
 
     <section class="scrollable">
       <section class="new-sector__form">
-        <form-sector
+        <FormSector
           v-show="step === Steps.General"
           v-model="sector"
           :managers="projectManagers"
@@ -15,15 +19,15 @@
           @remove-manager="removeManager"
         />
 
-        <form-queue
+        <FormQueue
           v-show="step === Steps.Queues"
           v-model="sector.queue"
           label="Adicionar nova Fila"
-          show-info-icon
+          showInfoIcon
           :sector="sector"
           @validate="isQueuesFormValid = $event"
         />
-        <form-agent
+        <FormAgent
           v-show="step === Steps.Queues"
           v-model="sector.agents"
           :sector="sector"
@@ -32,7 +36,7 @@
           @remove="removeAgent"
           @validate="isAgentsFormValid = $event"
         />
-        <form-tags
+        <FormTags
           v-show="step === Steps.Tags"
           v-model="sector.tags"
           @add="addTag"
@@ -42,7 +46,7 @@
     </section>
 
     <div class="actions">
-      <unnnic-button
+      <UnnnicButton
         v-if="step !== Steps.Tags"
         :text="$t('sector.save_and_continue')"
         iconRight="arrow-right-1-1"
@@ -50,7 +54,7 @@
         :disabled="!isActiveFormValid"
         @click="nextStep"
       />
-      <unnnic-button
+      <UnnnicButton
         v-else
         :disabled="!isActiveFormValid"
         type="secondary"
@@ -140,12 +144,18 @@ export default {
 
   methods: {
     async listProjectManagers() {
-      const managers = (await Project.managers()).results.concat((await Project.admins()).results);
+      const managers = (await Project.managers()).results.concat(
+        (await Project.admins()).results,
+      );
       this.projectManagers = managers;
     },
     async listProjectAgents() {
-      const agents = (await Project.agents()).results.concat((await Project.admins()).results);
-      const uniqueAgents = [...new Map(agents.map((agent) => [agent.uuid, agent])).values()];
+      const agents = (await Project.agents()).results.concat(
+        (await Project.admins()).results,
+      );
+      const uniqueAgents = [
+        ...new Map(agents.map((agent) => [agent.uuid, agent])).values(),
+      ];
 
       this.projectAgents = uniqueAgents;
     },
@@ -232,7 +242,9 @@ export default {
       await Sector.addManager(this.sector.uuid, manager.uuid);
     },
     removeManager(managerUuid) {
-      const managers = this.sector.managers.filter((manager) => manager.uuid !== managerUuid);
+      const managers = this.sector.managers.filter(
+        (manager) => manager.uuid !== managerUuid,
+      );
       this.sector = {
         ...this.sector,
         managers,
@@ -242,7 +254,9 @@ export default {
       this.sector.agents.push(agent);
     },
     removeAgent(agentUuid) {
-      this.sector.agents = this.sector.agents.filter((agent) => agent.uuid !== agentUuid);
+      this.sector.agents = this.sector.agents.filter(
+        (agent) => agent.uuid !== agentUuid,
+      );
     },
   },
 };

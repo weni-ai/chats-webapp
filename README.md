@@ -1,12 +1,15 @@
 <div align="center">
 
-<img src="https://github.com/Ilhasoft/weni-platform/raw/main/images/logos/png/weni-396x129-color.png" width="100px" />
+<img src="https://github.com/Ilhasoft/weni-webapp/raw/main/src/assets/LogoWeniAnimada.svg" height="100" />
+
+[![Run Unit Tests, Lint Files and Build Project](https://github.com/weni-ai/chats-webapp/actions/workflows/test-and-build.yml/badge.svg?branch=main)](https://github.com/weni-ai/chats-webapp/actions/workflows/test-and-build.yml)
+[![codecov](https://codecov.io/gh/weni-ai/chats-webapp/graph/badge.svg?token=4G62T5ER2Z)](https://codecov.io/gh/weni-ai/chats-webapp)
 
 _This project is a module of [Weni](https://github.com/weni-ai) integrated inside [Weni WebApp (Connect)](https://github.com/weni-ai/weni-webapp)_
 
 <br/>
 
-# CHATS
+# Weni Chats
 
 Chats is the official human service module of the Weni platform.
 

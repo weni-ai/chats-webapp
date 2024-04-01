@@ -1,24 +1,30 @@
 <template>
-  <unnnic-modal @close="$emit('close')" :text="$t('preferences.title')" class="modal-preferences">
-    <unnnic-label label="Status" />
-    <unnnic-switch
+  <UnnnicModal
+    @close="$emit('close')"
+    :text="$t('preferences.title')"
+    class="modal-preferences"
+  >
+    <UnnnicLabel label="Status" />
+    <UnnnicSwitch
       :value="configStatus"
       @input="updateStatus"
       :disabled="loadingStatus"
-      :text-right="storeStatus === 'ONLINE' ? $t('status.online') : $t('status.offline')"
+      :textRight="
+        storeStatus === 'ONLINE' ? $t('status.online') : $t('status.offline')
+      "
       size="medium"
     />
 
-    <unnnic-label :label="$t('preferences.notifications.title')" />
-    <unnnic-switch
+    <UnnnicLabel :label="$t('preferences.notifications.title')" />
+    <UnnnicSwitch
       v-model="configSound"
       @input="updateSound"
-      :text-right="$t('preferences.notifications.sound')"
+      :textRight="$t('preferences.notifications.sound')"
       size="medium"
     />
 
-    <unnnic-label :label="$t('language')" />
-    <unnnic-language-select
+    <UnnnicLabel :label="$t('language')" />
+    <UnnnicLanguageSelect
       :value="$i18n.locale"
       @input="updateLanguage"
       :supportedLanguages="supportedLanguages"
@@ -26,14 +32,14 @@
     />
 
     <template #options>
-      <unnnic-button
+      <UnnnicButton
         :text="$t('quick_messages.title')"
         iconLeft="bolt"
         type="secondary"
         size="large"
         @click="$emit('open-quick-messages')"
       />
-      <unnnic-button
+      <UnnnicButton
         :text="$t('back_to_home_page')"
         iconLeft="arrow_back"
         type="tertiary"
@@ -41,7 +47,7 @@
         @click="$emit('back-to-home')"
       />
     </template>
-  </unnnic-modal>
+  </UnnnicModal>
 </template>
 
 <script>
@@ -84,7 +90,9 @@ export default {
       const { supportedLanguages } = this;
       if (!supportedLanguages.includes(language)) {
         throw new Error(
-          `Invalid selected language. Try any for these: ${supportedLanguages.join(', ')}`,
+          `Invalid selected language. Try any for these: ${supportedLanguages.join(
+            ', ',
+          )}`,
         );
       }
 

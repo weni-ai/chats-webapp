@@ -1,8 +1,8 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <div class="select-flow">
-    <unnnic-label :label="$t('flows_trigger.select')" />
-    <unnnic-select-smart
+    <UnnnicLabel :label="$t('flows_trigger.select')" />
+    <UnnnicSelectSmart
       v-model="flowUuid"
       :options="templates"
       autocomplete

@@ -1,5 +1,8 @@
 <template>
-  <section v-if="agent" class="edit-agent">
+  <section
+    v-if="agent"
+    class="edit-agent"
+  >
     <h2 class="name">{{ agent.name }}</h2>
 
     <section class="info-group">
@@ -7,7 +10,7 @@
         <p class="title">Selecionar filas para o agente</p>
 
         <section class="controls">
-          <unnnic-autocomplete
+          <UnnnicAutocomplete
             v-model="queueName"
             :data="filteredQueues"
             @keypress.enter="addQueue"
@@ -15,25 +18,32 @@
             placeholder="Pesquise pelo nome da fila"
             iconLeft="search-1"
             iconRight="keyboard-return-1"
-            open-with-focus
+            openWithFocus
             highlight
             class="input"
           />
-          <unnnic-button type="secondary" text="Adicionar fila" @click="addQueue" />
+          <UnnnicButton
+            type="secondary"
+            text="Adicionar fila"
+            @click="addQueue"
+          />
         </section>
       </section>
     </section>
 
-    <section v-if="selectedQueues.length !== 0" class="info-group">
-      <list-queues
+    <section
+      v-if="selectedQueues.length !== 0"
+      class="info-group"
+    >
+      <ListQueues
         title="Filas relacionadas ao agente"
         :agents="selectedQueues"
-        action-text="Remover"
+        actionText="Remover"
         @select="queueToRemove = $event"
       />
     </section>
 
-    <unnnic-modal
+    <UnnnicModal
       :showModal="!!queueToRemove.name"
       modalIcon="alert-circle-1"
       scheme="feedback-red"
@@ -42,12 +52,20 @@
       @close="queueToRemove = {}"
     >
       <template #options>
-        <unnnic-button type="tertiary" @click="queueToRemove = {}" text="Cancelar" />
-        <unnnic-button type="secondary" @click="removeQueue(queueToRemove)" text="Confirmar" />
+        <UnnnicButton
+          type="tertiary"
+          @click="queueToRemove = {}"
+          text="Cancelar"
+        />
+        <UnnnicButton
+          type="secondary"
+          @click="removeQueue(queueToRemove)"
+          text="Confirmar"
+        />
       </template>
-    </unnnic-modal>
+    </UnnnicModal>
 
-    <unnnic-modal
+    <UnnnicModal
       :showModal="isOpenRemoveQueueFeedbackModal"
       modalIcon="check-circle-1-1"
       scheme="feedback-green"
@@ -56,9 +74,12 @@
       @close="isOpenRemoveQueueFeedbackModal = false"
     >
       <template #options>
-        <unnnic-button @click="isOpenRemoveQueueFeedbackModal = false" text="Fechar" />
+        <UnnnicButton
+          @click="isOpenRemoveQueueFeedbackModal = false"
+          text="Fechar"
+        />
       </template>
-    </unnnic-modal>
+    </UnnnicModal>
   </section>
 </template>
 
@@ -122,7 +143,9 @@ export default {
       this.queueName = '';
     },
     removeQueue(queue) {
-      this.selectedQueues = this.selectedQueues.filter((q) => q.name !== queue.name);
+      this.selectedQueues = this.selectedQueues.filter(
+        (q) => q.name !== queue.name,
+      );
 
       this.queueToRemove = {};
       this.isOpenRemoveQueueFeedbackModal = true;

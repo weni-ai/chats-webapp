@@ -2,7 +2,11 @@
   <!-- unnnic-modal was not used due to its variation
    for mobile to be outside the design proposed here -->
   <section class="modal-progress-bar-false">
-    <unnnic-progress-bar v-model="progress" :type="type" :title="title" />
+    <UnnnicProgressBar
+      v-model="progress"
+      :type="type"
+      :title="title"
+    />
   </section>
 </template>
 

@@ -6,18 +6,22 @@
       class="rooms-list-loading__room-list"
     >
       <header>
-        <unnnic-skeleton-loading />
-        <unnnic-skeleton-loading height="22px" />
+        <UnnnicSkeletonLoading />
+        <UnnnicSkeletonLoading height="22px" />
       </header>
       <main>
         <ul class="rooms-list-loading__room-group">
-          <li v-for="room in 2" :key="`room-${room}`" class="rooms-list-loading__room">
-            <unnnic-skeleton-loading height="40px" />
+          <li
+            v-for="room in 2"
+            :key="`room-${room}`"
+            class="rooms-list-loading__room"
+          >
+            <UnnnicSkeletonLoading height="40px" />
             <div class="rooms-list-loading__room__infos">
-              <unnnic-skeleton-loading />
-              <unnnic-skeleton-loading />
+              <UnnnicSkeletonLoading />
+              <UnnnicSkeletonLoading />
             </div>
-            <unnnic-skeleton-loading height="20px" />
+            <UnnnicSkeletonLoading height="20px" />
           </li>
         </ul>
       </main>

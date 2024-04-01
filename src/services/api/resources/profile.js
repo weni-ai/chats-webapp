@@ -20,7 +20,9 @@ export default {
   },
 
   async onboard() {
-    await http.patch(`/permission/project/update_access/?project=${getProject()}`);
+    await http.patch(
+      `/permission/project/update_access/?project=${getProject()}`,
+    );
   },
 
   /**
@@ -29,9 +31,12 @@ export default {
    * }
    */
   status() {
-    return http.get(`/internal/permission/project/status/?project=${getProject()}`, {
-      headers: { Authorization: `Bearer ${getToken()}` },
-    });
+    return http.get(
+      `/internal/permission/project/status/?project=${getProject()}`,
+      {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      },
+    );
   },
 
   /**

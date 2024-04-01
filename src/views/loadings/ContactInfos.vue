@@ -1,36 +1,39 @@
 <template>
   <div class="contact-infos-loading">
     <header>
-      <unnnic-skeleton-loading tag="div" />
+      <UnnnicSkeletonLoading tag="div" />
     </header>
     <main>
       <section class="contact-infos-loading__infos">
-        <unnnic-skeleton-loading />
-        <unnnic-skeleton-loading />
+        <UnnnicSkeletonLoading />
+        <UnnnicSkeletonLoading />
         <div class="contact-infos-loading__infos__custom-fields">
-          <unnnic-skeleton-loading
+          <UnnnicSkeletonLoading
             v-for="custom_field in 4"
             :key="`custom_field-${custom_field}`"
           />
         </div>
-        <unnnic-skeleton-loading />
+        <UnnnicSkeletonLoading />
       </section>
       <section class="contact-infos-loading__transfers">
-        <unnnic-skeleton-loading />
+        <UnnnicSkeletonLoading />
         <div class="contact-infos-loading__transfers__radios">
-          <unnnic-skeleton-loading />
-          <unnnic-skeleton-loading />
+          <UnnnicSkeletonLoading />
+          <UnnnicSkeletonLoading />
         </div>
-        <unnnic-skeleton-loading />
-        <unnnic-skeleton-loading />
+        <UnnnicSkeletonLoading />
+        <UnnnicSkeletonLoading />
       </section>
       <section class="contact-infos-loading__attachments">
         <header>
-          <unnnic-skeleton-loading />
-          <unnnic-skeleton-loading />
+          <UnnnicSkeletonLoading />
+          <UnnnicSkeletonLoading />
         </header>
         <div class="contact-infos-loading__attachments__medias">
-          <unnnic-skeleton-loading v-for="media in 8" :key="`media-${media}`" />
+          <UnnnicSkeletonLoading
+            v-for="media in 8"
+            :key="`media-${media}`"
+          />
         </div>
       </section>
     </main>

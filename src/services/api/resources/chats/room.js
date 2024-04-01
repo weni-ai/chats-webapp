@@ -78,12 +78,17 @@ export default {
 
   async getQueueRoom(uuid) {
     const { me } = Profile.state;
-    const response = await http.patch(`/room/${uuid}/pick_queue_room/?user_email=${me?.email}`);
+    const response = await http.patch(
+      `/room/${uuid}/pick_queue_room/?user_email=${me?.email}`,
+    );
     return response.data;
   },
 
   async updateCustomFields(uuid, customFields = {}) {
-    const response = await http.patch(`/room/${uuid}/update_custom_fields/`, customFields);
+    const response = await http.patch(
+      `/room/${uuid}/update_custom_fields/`,
+      customFields,
+    );
     return response.data;
   },
 };

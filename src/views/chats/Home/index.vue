@@ -1,11 +1,15 @@
 <template>
-  <chats-layout
+  <ChatsLayout
     ref="chats-layout"
     :class="['home-chats-layout', { 'has-discussion': !!discussion }]"
-    @select-quick-message="(quickMessage) => updateTextBoxMessage(quickMessage.text)"
+    @select-quick-message="
+      (quickMessage) => updateTextBoxMessage(quickMessage.text)
+    "
   >
-    <chats-background v-if="!room?.uuid && !discussion?.uuid && !isChatSkeletonActive" />
-    <home-chat
+    <ChatsBackground
+      v-if="!room?.uuid && !discussion?.uuid && !isChatSkeletonActive"
+    />
+    <HomeChat
       v-show="room?.uuid || discussion?.uuid"
       ref="home-chat"
       @open-room-contact-info="openRoomContactInfo"
@@ -15,13 +19,13 @@
     />
 
     <template #aside>
-      <contact-info
+      <ContactInfo
         v-if="room && isRoomContactInfoOpen && !discussion"
         @close="closeRoomContactInfo"
       />
-      <discussion-sidebar v-if="discussion" />
+      <DiscussionSidebar v-if="discussion" />
     </template>
-  </chats-layout>
+  </ChatsLayout>
 </template>
 
 <script>
@@ -94,7 +98,9 @@ export default {
       this.$refs['chats-layout']?.handlerShowQuickMessages();
     },
     openFlowsTrigger() {
-      this.$refs['chats-layout']?.openFlowsTrigger({ contact: this.room?.contact });
+      this.$refs['chats-layout']?.openFlowsTrigger({
+        contact: this.room?.contact,
+      });
     },
     updateTextBoxMessage(message) {
       this.$refs['home-chat']?.updateTextBoxMessage(message);

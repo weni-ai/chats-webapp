@@ -4,7 +4,11 @@ import logo from '../assets/weni-logo.svg';
 
 iframessa.register('chats');
 
-export function sendWindowNotification({ title = 'Notification', message = '', image = '' }) {
+export function sendWindowNotification({
+  title = 'Notification',
+  message = '',
+  image = '',
+}) {
   const options = {
     silent: true,
     badge: logo,

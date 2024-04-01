@@ -1,32 +1,42 @@
 <template>
-  <unnnic-tab size="md" v-model="tab" :tabs="tabs">
+  <UnnnicTab
+    size="md"
+    v-model="tab"
+    :tabs="tabs"
+  >
     <template slot="tab-head-media">
-      <div class="media-tab" :class="{ active: isActiveTab('media') }">
+      <div
+        class="media-tab"
+        :class="{ active: isActiveTab('media') }"
+      >
         <span class="name">{{ $t('medias') }}</span>
       </div>
     </template>
 
     <template slot="tab-panel-media">
       <section class="medias__content">
-        <media-preview
+        <MediaPreview
           v-for="(media, index) in images"
           :key="media.created_on + index"
           :src="media.url"
-          :is-video="media.content_type.startsWith('video/')"
+          :isVideo="media.content_type.startsWith('video/')"
           @click="$emit('fullscreen', media.url, images)"
         />
       </section>
     </template>
 
     <template slot="tab-head-docs">
-      <div class="media-tab" :class="{ active: isActiveTab('docs') }">
+      <div
+        class="media-tab"
+        :class="{ active: isActiveTab('docs') }"
+      >
         <span class="name">{{ $t('docs') }}</span>
       </div>
     </template>
 
     <template slot="tab-panel-docs">
       <section class="documents__content">
-        <unnnic-chats-message
+        <UnnnicChatsMessage
           v-for="document in documents"
           :key="document.url"
           :time="new Date(document.created_on)"
@@ -36,30 +46,33 @@
       </section>
     </template>
     <template slot="tab-head-audio">
-      <div class="media-tab" :class="{ active: isActiveTab('audio') }">
+      <div
+        class="media-tab"
+        :class="{ active: isActiveTab('audio') }"
+      >
         <span class="name">{{ $t('audios') }}</span>
       </div>
     </template>
     <template slot="tab-panel-audio">
       <div class="scrollable">
         <section class="audios__content">
-          <unnnic-tool-tip
+          <UnnnicToolTip
             v-for="audio in audios"
             :key="audio.url"
             :text="audioTooltipText(audio)"
             side="top"
             enabled
           >
-            <unnnic-audio-recorder
+            <UnnnicAudioRecorder
               class="audios__content__audio"
               :src="audio.url"
               :canDiscard="false"
             />
-          </unnnic-tool-tip>
+          </UnnnicToolTip>
         </section>
       </div>
     </template>
-  </unnnic-tab>
+  </UnnnicTab>
 </template>
 
 <script>
@@ -113,14 +126,18 @@ export default {
     images() {
       return this.medias.filter(
         (media) =>
-          media.content_type.startsWith('image/') || media.content_type.startsWith('video/'),
+          media.content_type.startsWith('image/') ||
+          media.content_type.startsWith('video/'),
       );
     },
 
     documents() {
       return this.medias.filter(
         (media) =>
-          !(media.content_type.startsWith('image/') || media.content_type.startsWith('video/')),
+          !(
+            media.content_type.startsWith('image/') ||
+            media.content_type.startsWith('video/')
+          ),
       );
     },
   },
@@ -143,7 +160,9 @@ export default {
         return mediaName.split('/')?.at(-1);
       }
 
-      throw new Error('Pass as a parameter the name of the media you want to handle');
+      throw new Error(
+        'Pass as a parameter the name of the media you want to handle',
+      );
     },
 
     download(url) {
@@ -152,7 +171,10 @@ export default {
 
         Media.download({ media: url, name: mediaName });
       } catch (error) {
-        console.error('An error occurred when trying to download the media:', error);
+        console.error(
+          'An error occurred when trying to download the media:',
+          error,
+        );
       }
     },
 
@@ -183,7 +205,9 @@ export default {
           ),
       );
       this.medias = this.medias.concat(
-        response.results.filter((media) => !media.content_type.startsWith('audio/')),
+        response.results.filter(
+          (media) => !media.content_type.startsWith('audio/'),
+        ),
       );
 
       this.page += 1;
@@ -218,7 +242,9 @@ export default {
           ),
       );
       this.medias = this.medias.concat(
-        response.results.filter((media) => !media.content_type.startsWith('audio/')),
+        response.results.filter(
+          (media) => !media.content_type.startsWith('audio/'),
+        ),
       );
 
       this.page += 1;

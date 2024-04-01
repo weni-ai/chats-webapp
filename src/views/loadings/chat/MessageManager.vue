@@ -1,8 +1,8 @@
 <template>
   <div class="message-manager-loading">
-    <unnnic-skeleton-loading />
-    <unnnic-skeleton-loading />
-    <unnnic-skeleton-loading />
+    <UnnnicSkeletonLoading />
+    <UnnnicSkeletonLoading />
+    <UnnnicSkeletonLoading />
   </div>
 </template>
 

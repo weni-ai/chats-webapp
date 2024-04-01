@@ -1,17 +1,21 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
-  <unnnic-modal @close="$emit('close')" :text="$t('flows_trigger.send')" class="modal-send-flow">
-    <select-flow v-model="selectedFlow" />
+  <UnnnicModal
+    @close="$emit('close')"
+    :text="$t('flows_trigger.send')"
+    class="modal-send-flow"
+  >
+    <SelectFlow v-model="selectedFlow" />
 
     <template #options>
-      <send-flow-button
+      <SendFlowButton
         class="modal-send-flow__handler"
         :contacts="contacts"
         :selectedFlow="selectedFlow"
         @send-flow-finished="finishSendFlow"
       />
     </template>
-  </unnnic-modal>
+  </UnnnicModal>
 </template>
 
 <script>

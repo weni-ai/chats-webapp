@@ -1,14 +1,14 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
-  <unnnic-modal
+  <UnnnicModal
     class="modal-list-triggered-flows"
     :text="$t('flows_trigger.triggered_flows.title')"
     @close="$emit('close')"
   >
     <section class="modal-list-triggered-flows__handlers">
       <div class="modal-list-triggered-flows__handlers__input">
-        <unnnic-label :label="$t('filter.by_date')" />
-        <unnnic-input-date-picker
+        <UnnnicLabel :label="$t('filter.by_date')" />
+        <UnnnicInputDatePicker
           class="modal-list-triggered-flows__handlers__date-picker"
           v-model="filterDate"
           position="left"
@@ -17,18 +17,18 @@
       </div>
     </section>
 
-    <triggered-flows-loading v-if="isTableLoading" />
-    <unnnic-table
+    <TriggeredFlowsLoading v-if="isTableLoading" />
+    <UnnnicTable
       v-if="!isTableLoading && triggeredFlows.length > 0"
       :items="triggeredFlows"
       class="modal-list-triggered-flows__table"
     >
       <template #header>
-        <unnnic-table-row :headers="tableHeaders" />
+        <UnnnicTableRow :headers="tableHeaders" />
       </template>
 
       <template #item="{ item }">
-        <unnnic-table-row :headers="tableHeaders">
+        <UnnnicTableRow :headers="tableHeaders">
           <template #contactName>
             {{ item.contact_data?.name }}
           </template>
@@ -40,9 +40,9 @@
           <template #date>{{ $d(new Date(item.created_on)) }}</template>
 
           <template #time>{{ getTime(item.created_on) }}</template>
-        </unnnic-table-row>
+        </UnnnicTableRow>
       </template>
-    </unnnic-table>
+    </UnnnicTable>
     <p
       v-if="!isTableLoading && triggeredFlows.length === 0"
       class="modal-list-triggered-flows__table__no-results"
@@ -51,15 +51,15 @@
     </p>
 
     <div slot="options">
-      <table-pagination
+      <TablePagination
         v-model="triggeredFlowsCurrentPage"
         :count="triggeredFlowsCount"
         :countPages="triggeredFlowsCountPages"
         :limit="triggeredFlowsLimit"
-        :is-loading="isPagesLoading"
+        :isLoading="isPagesLoading"
       />
     </div>
-  </unnnic-modal>
+  </UnnnicModal>
 </template>
 
 <script>
@@ -138,7 +138,8 @@ export default {
       this.isTableLoading = true;
       this.isPagesLoading = true;
 
-      const { triggeredFlowsCurrentPage, triggeredFlowsLimit, filterDate } = this;
+      const { triggeredFlowsCurrentPage, triggeredFlowsLimit, filterDate } =
+        this;
 
       if (paginate !== true) {
         this.triggeredFlowsCurrentPage = 1;
@@ -155,7 +156,9 @@ export default {
         });
         this.triggeredFlows = response.results;
         this.triggeredFlowsCount = response.count;
-        this.triggeredFlowsCountPages = Math.ceil(response.count / triggeredFlowsLimit);
+        this.triggeredFlowsCountPages = Math.ceil(
+          response.count / triggeredFlowsLimit,
+        );
       } catch (error) {
         console.log(error);
       }

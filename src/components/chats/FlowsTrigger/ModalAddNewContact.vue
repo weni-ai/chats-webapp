@@ -1,17 +1,20 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
-  <unnnic-modal
+  <UnnnicModal
     @close="$emit('close')"
     :text="$t('flows_trigger.add_new_contact.title')"
     class="modal-add-new-contact"
   >
-    <form class="modal-add-new-contact__form" @submit.stop="">
-      <unnnic-input
+    <form
+      class="modal-add-new-contact__form"
+      @submit.stop=""
+    >
+      <UnnnicInput
         v-model="contact.name"
         :label="inputLabelContactName"
         :placeholder="inputPlaceholderContactName"
       />
-      <unnnic-input
+      <UnnnicInput
         v-model="contact.tel"
         :label="inputLabelContactTel"
         placeholder="+99 (99) 99999 9999"
@@ -20,13 +23,13 @@
     </form>
 
     <template #options>
-      <unnnic-button
+      <UnnnicButton
         v-if="!isMobile"
         :text="$t('cancel')"
         type="secondary"
         @click="$emit('close')"
       />
-      <unnnic-button
+      <UnnnicButton
         :text="$t('save')"
         type="primary"
         @click="saveNewContact"
@@ -34,7 +37,7 @@
         :loading="isLoading"
       />
     </template>
-  </unnnic-modal>
+  </UnnnicModal>
 </template>
 
 <script>
@@ -111,7 +114,9 @@ export default {
           const contact = [`${prepareTel}`];
           callUnnnicAlert({
             props: {
-              text: this.$t('flows_trigger.contact_already_exists', { contact }),
+              text: this.$t('flows_trigger.contact_already_exists', {
+                contact,
+              }),
               type: 'error',
             },
             seconds: 5,

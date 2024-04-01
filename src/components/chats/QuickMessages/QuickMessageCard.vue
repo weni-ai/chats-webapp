@@ -5,47 +5,67 @@
     class="quick-message-card__container"
     :class="{ clickable }"
   >
-    <unnnic-chat-text
+    <UnnnicChatText
       :title="quickMessage.title"
       titleColor="aux-purple-500"
       :info="quickMessageCardInfo"
       size="small"
       class="quick-message-card"
     >
-      <template slot="actions" v-if="withActions">
-        <unnnic-dropdown>
+      <template
+        slot="actions"
+        v-if="withActions"
+      >
+        <UnnnicDropdown>
           <template #trigger>
-            <unnnic-tool-tip
+            <UnnnicToolTip
               v-if="!isMobile"
               enabled
               :text="$t('quick_messages.delete_or_edit')"
               side="left"
             >
-              <unnnic-icon-svg icon="more_vert" size="sm" scheme="neutral-darkest" />
-            </unnnic-tool-tip>
-            <unnnic-icon-svg v-else icon="more_vert" size="sm" scheme="neutral-darkest" />
+              <UnnnicIconSvg
+                icon="more_vert"
+                size="sm"
+                scheme="neutral-darkest"
+              />
+            </UnnnicToolTip>
+            <UnnnicIconSvg
+              v-else
+              icon="more_vert"
+              size="sm"
+              scheme="neutral-darkest"
+            />
           </template>
 
-          <unnnic-dropdown-item @click="$emit('edit', quickMessage)">
+          <UnnnicDropdownItem @click="$emit('edit', quickMessage)">
             <div class="dropdown-item-content">
-              <unnnic-icon-svg class="icon" icon="edit_square" size="sm" />
+              <UnnnicIconSvg
+                class="icon"
+                icon="edit_square"
+                size="sm"
+              />
               <span> {{ $t('edit') }} </span>
             </div>
-          </unnnic-dropdown-item>
+          </UnnnicDropdownItem>
 
-          <unnnic-dropdown-item @click="$emit('delete', quickMessage)">
+          <UnnnicDropdownItem @click="$emit('delete', quickMessage)">
             <div class="dropdown-item-content">
-              <unnnic-icon-svg class="icon" icon="delete" size="sm" />
+              <UnnnicIconSvg
+                class="icon"
+                icon="delete"
+                size="sm"
+              />
               <span> {{ $t('exclude') }} </span>
             </div>
-          </unnnic-dropdown-item>
-        </unnnic-dropdown>
+          </UnnnicDropdownItem>
+        </UnnnicDropdown>
       </template>
 
       <template slot="description">
         {{ quickMessage.text }}
       </template>
-    </unnnic-chat-text>
+    </UnnnicChatText>
   </section>
 </template>
 

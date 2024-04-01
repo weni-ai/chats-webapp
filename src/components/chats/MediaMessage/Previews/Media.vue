@@ -2,7 +2,11 @@
 <template>
   <div class="media-preview">
     <template v-if="isVideo">
-      <unnnic-icon icon="button-play-1" size="md" class="media-preview__video-play-icon" />
+      <UnnnicIcon
+        icon="button-play-1"
+        size="md"
+        class="media-preview__video-play-icon"
+      />
       <video
         :src="src"
         :alt="alt"

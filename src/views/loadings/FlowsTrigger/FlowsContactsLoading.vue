@@ -1,16 +1,20 @@
 <template>
   <section class="flows-contacts-loading">
     <header>
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading height="22px" />
+      <UnnnicSkeletonLoading />
+      <UnnnicSkeletonLoading height="22px" />
     </header>
     <main>
       <ul class="flows-contacts-loading__room-group">
-        <li v-for="room in 4" :key="`room-${room}`" class="flows-contacts-loading__room">
-          <unnnic-skeleton-loading height="40px" />
+        <li
+          v-for="room in 4"
+          :key="`room-${room}`"
+          class="flows-contacts-loading__room"
+        >
+          <UnnnicSkeletonLoading height="40px" />
           <div class="flows-contacts-loading__room__infos">
-            <unnnic-skeleton-loading />
-            <unnnic-skeleton-loading />
+            <UnnnicSkeletonLoading />
+            <UnnnicSkeletonLoading />
           </div>
         </li>
       </ul>

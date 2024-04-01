@@ -1,16 +1,19 @@
 <template>
   <section class="quick-messages-list">
-    <p v-if="withoutQuickMessages" class="quick-messages-list__without">
+    <p
+      v-if="withoutQuickMessages"
+      class="quick-messages-list__without"
+    >
       {{ $t('quick_messages.without_messages') }}
     </p>
 
-    <unnnic-collapse
+    <UnnnicCollapse
       v-else
       class="quick-messages-list__personals"
       :title="$t('quick_messages.personal')"
       active
     >
-      <quick-message-card
+      <QuickMessageCard
         v-for="quickMessage in quickMessages"
         :key="quickMessage.uuid"
         :quickMessage="quickMessage"
@@ -20,14 +23,14 @@
         @edit="emitEditQuickMessage"
         @delete="emitDeleteQuickMessage"
       />
-    </unnnic-collapse>
-    <unnnic-collapse
+    </UnnnicCollapse>
+    <UnnnicCollapse
       v-if="quickMessagesShared.length > 0"
       class="quick-messages-list__shareds"
       :title="$t('quick_messages.shared')"
       active
     >
-      <quick-message-card
+      <QuickMessageCard
         v-for="quickMessage in quickMessagesShared"
         :key="quickMessage.uuid"
         :quickMessage="quickMessage"
@@ -35,7 +38,7 @@
         clickable
         @select="emitSelectQuickMessage"
       />
-    </unnnic-collapse>
+    </UnnnicCollapse>
   </section>
 </template>
 
@@ -64,11 +67,14 @@ export default {
   computed: {
     ...mapState({
       quickMessages: (state) => state.chats.quickMessages.quickMessages,
-      quickMessagesShared: (state) => state.chats.quickMessagesShared.quickMessagesShared,
+      quickMessagesShared: (state) =>
+        state.chats.quickMessagesShared.quickMessagesShared,
     }),
 
     withoutQuickMessages() {
-      return this.quickMessages.length === 0 && this.quickMessagesShared.length === 0;
+      return (
+        this.quickMessages.length === 0 && this.quickMessagesShared.length === 0
+      );
     },
   },
 

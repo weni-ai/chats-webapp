@@ -1,7 +1,7 @@
 <template>
   <section class="chat-classifier">
-    <chat-classifier-loading v-if="loading" />
-    <tag-group
+    <ChatClassifierLoading v-if="loading" />
+    <TagGroup
       v-else
       class="chat-classifier__tag-group"
       v-model="selected"

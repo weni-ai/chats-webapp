@@ -61,11 +61,14 @@ export default {
   },
 
   async updateBySector(quickMessageUuid, { title, text, shortcut = null }) {
-    const response = await http.patch(`/sector_quick_messages/${quickMessageUuid}/`, {
-      title,
-      text,
-      shortcut,
-    });
+    const response = await http.patch(
+      `/sector_quick_messages/${quickMessageUuid}/`,
+      {
+        title,
+        text,
+        shortcut,
+      },
+    );
 
     return response.data;
   },
@@ -76,7 +79,9 @@ export default {
   },
 
   async deleteBySector(quickMessageUuid) {
-    const response = await http.delete(`/sector_quick_messages/${quickMessageUuid}/`);
+    const response = await http.delete(
+      `/sector_quick_messages/${quickMessageUuid}/`,
+    );
     return response.data;
   },
 };

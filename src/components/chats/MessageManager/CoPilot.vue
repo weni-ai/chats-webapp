@@ -7,8 +7,15 @@
   >
     <header class="co-pilot__header">
       <div class="co-pilot__header__title">
-        <unnnic-icon v-if="isError" icon="alert-circle-1" />
-        <unnnic-icon v-else icon="wb_incandescent" class="co-pilot__header__title__light-icon" />
+        <UnnnicIcon
+          v-if="isError"
+          icon="alert-circle-1"
+        />
+        <UnnnicIcon
+          v-else
+          icon="wb_incandescent"
+          class="co-pilot__header__title__light-icon"
+        />
         <h1>
           {{
             isLoading
@@ -25,7 +32,11 @@
         @click="close"
         @keypress.esc="close"
       >
-        <unnnic-icon icon="close" size="xs" class="clickable" />
+        <UnnnicIcon
+          icon="close"
+          size="xs"
+          class="clickable"
+        />
       </button>
     </header>
     <section class="co-pilot__response">

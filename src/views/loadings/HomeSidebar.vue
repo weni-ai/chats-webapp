@@ -1,23 +1,23 @@
 <template>
   <div class="home-sidebar-loading">
     <header>
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading height="24px" />
+      <UnnnicSkeletonLoading />
+      <UnnnicSkeletonLoading height="24px" />
     </header>
     <section class="home-sidebar-loading__actions">
-      <unnnic-skeleton-loading />
-      <unnnic-skeleton-loading />
+      <UnnnicSkeletonLoading />
+      <UnnnicSkeletonLoading />
       <div class="home-sidebar-loading__actions__order-by">
-        <unnnic-skeleton-loading width="73px" />
+        <UnnnicSkeletonLoading width="73px" />
         <div class="home-sidebar-loading__actions__order-by__options">
-          <unnnic-skeleton-loading height="15px" />
-          <unnnic-skeleton-loading height="15px" />
+          <UnnnicSkeletonLoading height="15px" />
+          <UnnnicSkeletonLoading height="15px" />
         </div>
       </div>
     </section>
-    <rooms-list-loading />
+    <RoomsListLoading />
     <footer>
-      <unnnic-skeleton-loading />
+      <UnnnicSkeletonLoading />
     </footer>
   </div>
 </template>

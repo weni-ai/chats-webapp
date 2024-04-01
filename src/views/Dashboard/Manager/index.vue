@@ -1,20 +1,27 @@
 <template>
-  <dashboard-layout>
+  <DashboardLayout>
     <template #header> {{ header }}</template>
-    <template v-if="!this.showData" #status>
+    <template
+      v-if="!this.showData"
+      #status
+    >
       <div style="margin-right: 27px">
         <span class="card-status">
-          <unnnic-icon icon="indicator" scheme="feedback-green" style="margin-right: 12px" />
+          <UnnnicIcon
+            icon="indicator"
+            scheme="feedback-green"
+            style="margin-right: 12px"
+          />
           <span>Ao vivo</span>
         </span>
       </div>
     </template>
 
     <template #actions>
-      <dashboard-filters @filter="filters = $event" />
+      <DashboardFilters @filter="filters = $event" />
     </template>
 
-    <history-metrics-by-sector
+    <HistoryMetricsBySector
       :filter="filters"
       @historyFilter="event = $event"
       :headerTitle="filters?.sector ? 'Filas' : 'Setores'"
@@ -22,7 +29,7 @@
       :generalCardLabel="showData ? 'Quantidade de chats' : 'Em andamento'"
       :agentsLabel="showData ? 'Chats no período' : 'Em andamento'"
     />
-  </dashboard-layout>
+  </DashboardLayout>
 </template>
 
 <script>

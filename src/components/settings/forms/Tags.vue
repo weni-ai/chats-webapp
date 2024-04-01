@@ -5,25 +5,46 @@
     <section class="form-tags__section">
       <p class="form-tags__section__label">
         {{ $t('tags.add.title') }}
-        <unnnic-tool-tip enabled side="right" :text="$t('new_sector.tags_tip')" maxWidth="23rem">
-          <unnnic-icon-svg icon="information-circle-4" scheme="neutral-soft" size="sm" />
-        </unnnic-tool-tip>
+        <UnnnicToolTip
+          enabled
+          side="right"
+          :text="$t('new_sector.tags_tip')"
+          maxWidth="23rem"
+        >
+          <UnnnicIconSvg
+            icon="information-circle-4"
+            scheme="neutral-soft"
+            size="sm"
+          />
+        </UnnnicToolTip>
       </p>
       <section class="form-tags__section__input-group">
-        <unnnic-input
+        <UnnnicInput
           v-model="tag"
           @keypress.enter="addTag"
           class="form-tags__section__input-group__input"
           :label="$t('tags.add.label')"
           :placeholder="$t('tags.add.placeholder')"
         />
-        <unnnic-button type="secondary" :text="$t('add')" @click="addTag" />
+        <UnnnicButton
+          type="secondary"
+          :text="$t('add')"
+          @click="addTag"
+        />
       </section>
     </section>
 
-    <section v-if="tags.length > 0" class="form-tags__section">
+    <section
+      v-if="tags.length > 0"
+      class="form-tags__section"
+    >
       <p class="form-tags__section__label">{{ $t('tags.already_added') }}</p>
-      <tag-group :tags="tags" selectable has-close-icon @close="removeTag($event)" />
+      <TagGroup
+        :tags="tags"
+        selectable
+        hasCloseIcon
+        @close="removeTag($event)"
+      />
     </section>
   </section>
 </template>

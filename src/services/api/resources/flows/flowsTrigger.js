@@ -4,7 +4,12 @@ import { getProject, getToken } from '@/utils/config';
 
 const http = axios.create({
   baseURL: env('VUE_APP_FLOWS_API_URL'),
-  headers: { Authorization: `Bearer ${getToken()}` },
+});
+
+http.interceptors.request.use((config) => {
+  // eslint-disable-next-line no-param-reassign
+  config.headers.Authorization = `Bearer ${getToken()}`;
+  return config;
 });
 
 let cancelTokenSource = null;
@@ -29,7 +34,12 @@ export default {
         params,
         cancelToken: cancelTokenSource.token,
       });
-      return { data: response.data, status: 'success' };
+
+      const resultsResponse = {
+        results: response.data.results || response.data,
+      };
+
+      return { data: resultsResponse, status: 'success' };
     } catch (error) {
       if (axios.isCancel(error)) {
         return { status: 'canceled' };
