@@ -1,5 +1,5 @@
 import { mount, createLocalVue } from '@vue/test-utils';
-import { unnnicToolTip } from '@weni/unnnic-system';
+import { unnnicToolTip, unnnicButton } from '@weni/unnnic-system';
 import i18n from '@/plugins/i18n';
 
 import FormTags from '../Tags';
@@ -11,7 +11,8 @@ function createWrapper() {
   const wrapper = mount(FormTags, {
     propsData: defaultProps,
     stubs: {
-      unnnicToolTip,
+      UnnnicToolTip: true,
+      UnnnicButton: unnnicButton,
     },
     localVue,
     i18n,
@@ -29,7 +30,7 @@ describe('FormTags', () => {
 
   it('should render all section titles and tooltips', () => {
     const titles = wrapper.findAll('.form-tags__section__label');
-    const tooltips = wrapper.findAll('.unnnic-tooltip');
+    const tooltips = wrapper.findAllComponents(unnnicToolTip);
 
     expect(titles.at(0).text()).toMatch(/Adicionar tags/gi);
 
@@ -44,15 +45,15 @@ describe('FormTags', () => {
     expect(inputTag.props('placeholder')).toMatch(/Exemplo: Dúvidas/gi);
   });
 
-  it('should render a tag list when added by user', async () => {
+  it('should render a tag list when added by user and clear input', async () => {
     const inputTag = wrapper.find('input');
-    const buttonAddTag = wrapper.findComponent({ name: 'unnnic-button' });
+    const buttonAddTag = wrapper.findComponent(unnnicButton);
 
     await inputTag.setValue('Tag1');
     expect(wrapper.vm.$data.tag).toBe('Tag1');
 
     await buttonAddTag.trigger('click');
-    expect(wrapper.vm.$data.tag).toBe('');
+    expect(inputTag.element.value).toBe('');
 
     // TODO: Check if the tag group exists
   });
@@ -69,7 +70,7 @@ describe('FormTags', () => {
     expect(titles.at(1).text()).toMatch(/Tags adicionadas/gi);
     expect(titles.length).toBe(2);
 
-    const tagGroupSection = wrapper.find('.tag-group__container');
+    const tagGroupSection = wrapper.find('.tag-group__tags');
     expect(tagGroupSection.exists()).toBe(true);
   });
 });
