@@ -11,6 +11,12 @@
       :placeholder="$t('chats.search_contact')"
     ></UnnnicInput>
     <div class="order-by">
+      <UnnnicButton
+        iconCenter="filter_list"
+        type="secondary"
+        size="small"
+        @click="openModalQueue"
+      />
       <div>
         <span>{{ $t('chats.room_list.order_by') }}</span>
       </div>
@@ -42,7 +48,6 @@
         >
       </div>
     </div>
-
     <RoomsListLoading v-if="isLoadingRooms" />
     <section
       v-else
@@ -84,23 +89,52 @@
         {{ isSearching ? $t('without_results') : $t('without_chats') }}
       </p>
     </section>
+    <UnnnicModal
+      v-if="showModalQueue"
+      @close="closeModalQueue"
+      class="queue-modal"
+      text="Selecionar filas de atendimento"
+    >
+      <section class="queue-modal-form">
+        <div class="queue-modal-select">
+          <div class="queue-modal-input">
+            <UnnnicLabel label="Selecione as filas" />
+            <UnnnicSelectSmart
+              v-model="queueTags"
+              :options="queueTagsOptions"
+              multipleWithoutSelectsMessage=" "
+              multiple
+            />
+          </div>
+        </div>
+      </section>
+      <template #options>
+        <UnnnicButton
+          :text="$t('cancel')"
+          type="tertiary"
+          size="large"
+          @click="$emit('close')"
+        />
+        <UnnnicButton
+          :text="$t('save')"
+          type="primary"
+          size="large"
+          :disabled="!verifySelectedLength"
+        />
+      </template>
+    </UnnnicModal>
   </div>
 </template>
-
 <script>
 import { mapState, mapGetters } from 'vuex';
-
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup';
-
 export default {
   name: 'TheCardGroups',
-
   components: {
     RoomsListLoading,
     CardGroup,
   },
-
   props: {
     disabled: {
       type: Boolean,
@@ -123,13 +157,43 @@ export default {
     createdOnFilter: false,
     lastCreatedFilter: true,
     isSearching: false,
+    showModalQueue: false,
+    queueTags: [],
+    queueTagsOptions: [
+      {
+        value: '',
+        label: 'Selecione suas filas',
+      },
+      {
+        value: '1',
+        label: 'Option 1',
+      },
+      {
+        value: '2',
+        label: 'Option 2',
+      },
+      {
+        value: '3',
+        label: 'Option 3',
+      },
+      {
+        value: '4',
+        label: 'Option 4',
+      },
+      {
+        value: '5',
+        label: 'Option 5',
+      },
+      {
+        value: '6',
+        label: 'Option 6',
+      },
+    ],
   }),
-
   async mounted() {
     this.listRoom();
     this.listDiscussions();
   },
-
   computed: {
     ...mapGetters({
       rooms: 'chats/rooms/agentRooms',
@@ -140,7 +204,6 @@ export default {
       discussions: (state) => state.chats.discussions.discussions,
       listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
     }),
-
     totalUnreadMessages() {
       return this.rooms.reduce(
         (total, room) =>
@@ -150,7 +213,6 @@ export default {
         0,
       );
     },
-
     showNoResultsError() {
       return (
         !this.isLoadingRooms &&
@@ -160,8 +222,11 @@ export default {
         this.discussions.length === 0
       );
     },
+    verifySelectedLength() {
+      console.log(this.queueTags.length);
+      return this.queueTags.length > 0;
+    },
   },
-
   watch: {
     totalUnreadMessages: {
       immediate: true,
@@ -178,11 +243,9 @@ export default {
     nameOfContact: {
       handler(newNameOfContact) {
         const TIME_TO_WAIT_TYPING = 1300;
-
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
           this.listRoom(false);
-
           if (newNameOfContact) {
             this.isSearching = true;
           } else {
@@ -192,24 +255,20 @@ export default {
       },
     },
   },
-
   methods: {
     async openRoom(room) {
       await this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
       await this.$store.dispatch('chats/rooms/setActiveRoom', room);
     },
-
     async openDiscussion(discussion) {
       await this.$store.dispatch(
         'chats/discussions/setActiveDiscussion',
         discussion,
       );
     },
-
     clearField() {
       this.nameOfContact = '';
     },
-
     async listRoom(concat, order = '-last_interaction') {
       this.isLoadingRooms = true;
       const { viewedAgent } = this;
@@ -250,45 +309,73 @@ export default {
         this.searchForMoreRooms(true);
       }
     },
+    openModalQueue() {
+      this.showModalQueue = true;
+    },
+    closeModalQueue() {
+      this.showModalQueue = false;
+    },
   },
 };
 </script>
-
 <style lang="scss" scoped>
 .container {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-stack-xs;
-
   .chat-groups {
     flex: 1 1;
-
     display: flex;
     flex-direction: column;
-
     margin-top: $unnnic-spacing-sm;
     padding-right: $unnnic-spacing-xs;
     margin-right: -$unnnic-spacing-xs; // For the scrollbar to stick to the edge
     overflow-y: auto;
     overflow-x: hidden;
-
     :deep(.unnnic-collapse) {
       padding-bottom: $unnnic-spacing-sm;
     }
-
     .no-results {
       color: $unnnic-color-neutral-cloudy;
       font-size: $unnnic-font-size-body-gt;
     }
   }
-
   .order-by {
     display: flex;
     justify-content: space-between;
-
+    gap: $unnnic-spacing-xs;
+    align-items: center;
     font-size: $unnnic-font-size-body-md;
     color: $unnnic-color-neutral-cloudy;
+  }
+  .queue-modal {
+    .queue-modal-form {
+      display: grid;
+      gap: $unnnic-spacing-sm;
+      text-align: start;
+      .queue-modal-select {
+        display: flex;
+        gap: $unnnic-spacing-xs;
+        .queue-modal-input {
+          flex: 1;
+        }
+      }
+    }
+    :deep(.unnnic-modal-container) {
+      .unnnic-modal-container-background {
+        width: 50%;
+        &-body-description-container {
+          padding-bottom: 0;
+        }
+      }
+    }
+    :deep(.unnnic-select-smart) {
+      .dropdown-data {
+        position: fixed !important;
+        top: inherit !important;
+      }
+    }
   }
 }
 </style>
