@@ -13,6 +13,8 @@ import env from './utils/env';
 
 import './styles/global.scss';
 
+import './registerServiceWorker';
+
 const LOGROCKET_ID = env('LOGROCKET_ID');
 const LOGROCKET_PARENT_DOMAIN = env('LOGROCKET_PARENT_DOMAIN');
 
