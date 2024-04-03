@@ -18,21 +18,10 @@
         <PreferencesBar
           v-if="!isViewMode"
           @show-quick-messages="handlerShowQuickMessages"
+          @open-flows-trigger="openFlowsTrigger"
+          :showFlowsTriggerButton="canTriggerFlows"
           :dashboard="canAccessDashboard"
         />
-
-        <div
-          class="flows-trigger-button"
-          v-if="!isViewMode"
-        >
-          <UnnnicButton
-            v-if="canTriggerFlows"
-            size="small"
-            type="secondary"
-            iconCenter="send"
-            @click="openFlowsTrigger"
-          />
-        </div>
 
         <TheCardGroups
           class="room-list"
@@ -130,7 +119,7 @@ export default {
     handlerShowQuickMessages() {
       this.showQuickMessages = !this.showQuickMessages;
     },
-    openFlowsTrigger({ contact = null }) {
+    openFlowsTrigger({ contact = null } = {}) {
       if (contact) {
         this.flowsTriggerContact = contact;
       }
@@ -164,7 +153,8 @@ export default {
       try {
         const response = await FlowsTrigger.listAccess();
         this.accessList = response;
-        this.canTriggerFlows = this.accessList.can_trigger_flows;
+        this.canTriggerFlows =
+          this.accessList.can_trigger_flows && !this.isViewMode;
         this.canAccessDashboard = this.accessList.can_access_dashboard;
       } catch (error) {
         console.log(error);
@@ -242,12 +232,6 @@ section.chats-layout {
     padding: 0 0 $unnnic-spacing-xs $unnnic-spacing-xs;
 
     grid-column: 1;
-
-    .flows-trigger-button {
-      button {
-        width: 100%;
-      }
-    }
 
     .room-list {
       overflow-y: auto;
