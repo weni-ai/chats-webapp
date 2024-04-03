@@ -116,6 +116,7 @@ export default {
     },
     updateIsRoomSelected(uuid, isSelected) {
       if (isSelected) {
+        if (this.getIsRoomSelected(uuid)) return;
         this.setSelectedRoomsToTransfer([
           ...this.selectedRoomsToTransfer,
           uuid,
@@ -129,8 +130,8 @@ export default {
       }
     },
     updateSelectAllRooms(select) {
-      if (select) {
-        const roomsUuids = this.rooms.map((selectedRoom) => selectedRoom.uuid);
+      if (select && this.selectedRoomsToTransfer.length === 0) {
+        const roomsUuids = this.rooms.map((room) => room.uuid);
         this.setSelectedRoomsToTransfer(roomsUuids);
       } else {
         this.setSelectedRoomsToTransfer([]);
@@ -140,7 +141,12 @@ export default {
 
   watch: {
     selectedRoomsToTransfer(newSelectedRooms) {
-      this.collapseCheckboxValue = newSelectedRooms.length >= 1;
+      const hasSelectedRooms = newSelectedRooms.length >= 1;
+      const isAllRoomsSelected = newSelectedRooms.length === this.rooms?.length;
+
+      this.collapseCheckboxValue = hasSelectedRooms
+        ? isAllRoomsSelected || 'less'
+        : false;
     },
   },
 };
@@ -161,7 +167,7 @@ export default {
       // !important at fill is needed here because the
       // unnnicCollapse header is applying an unwanted style when hovering
       svg .primary {
-        fill: $unnnic-color-weni-500 !important;
+        fill: $unnnic-color-brand-weni !important;
       }
     }
   }
