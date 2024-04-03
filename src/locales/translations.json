@@ -239,8 +239,8 @@
     },
     "save_and_continue": {
       "pt-br": "Salvar e continuar",
-      "en": "Guardar y continuar",
-      "es": "Save and continue"
+      "en": "Save and continue",
+      "es": "Guardar y continuar"
     },
     "managers": {
       "title": {
@@ -427,7 +427,7 @@
       },
       "agent_took_chat": {
         "pt-br": "Ops! O chat com contato {contact} foi assumido por outro agente",
-        "en-us": "Oops! The chat with the contact {contact} has already been taken over by another agent",
+        "en": "Oops! The chat with the contact {contact} has already been taken over by another agent",
         "es": "¡Ups! El chat con el contacto {contact} ha sido asumido por otro agente"
       }
     },
@@ -542,7 +542,7 @@
     },
     "get_chat_confirmation": {
       "pt-br": "Confirme se deseja realizar o atendimento de {contact}",
-      "en-us": "Confirm if you want to do the service of {contact}",
+      "en": "Confirm if you want to do the service of {contact}",
       "es": "Confirma si deseas realizar el servicio de {contact}"
     },
     "you_got_chat": {
@@ -889,12 +889,12 @@
   },
   "name_or_phone_or_protocol": {
     "pt-br": "Nome, telefone ou procotolo",
-    "en-us": "Name, telephone or protocol",
+    "en": "Name, telephone or protocol",
     "es": "Nombre, teléfono o protocolo"
   },
   "protocol": {
     "pt-br": "Protocolo",
-    "en-us": "Protocol",
+    "en": "Protocol",
     "es": "Protocolo"
   },
   "tags": {
@@ -1335,27 +1335,27 @@
   },
   "delete_sector": {
     "pt-br": "Deletar setor",
-    "en-us": "Delete sector",
+    "en": "Delete sector",
     "es": "Eliminar sector"
   },
   "cant_revert": {
     "pt-br": "Essa opção não poderá ser revertida",
-    "en-us": "This option cannot be reversed",
+    "en": "This option cannot be reversed",
     "es": "Esta opción no se puede revertir"
   },
   "confirm_typing": {
     "pt-br": "Confirme digitando",
-    "en-us": "Confirm by typing",
+    "en": "Confirm by typing",
     "es": "Confirmar escribiendo"
   },
   "sector_deleted_success": {
     "pt-br": "Setor deletado com sucesso!",
-    "en-us": "Sector deleted successfully!",
+    "en": "Sector deleted successfully!",
     "es": "¡Sector eliminado con éxito!"
   },
   "sector_delete_error": {
     "pt-br": "Não foi possível deletar o setor, tente novamente mais tarde.",
-    "en-us": "Unable to delete sector, please try again later.",
+    "en": "Unable to delete sector, please try again later.",
     "es": "No se puede eliminar el sector. Vuelva a intentarlo más tarde."
   },
   "edit": {
@@ -1537,7 +1537,7 @@
     },
     "contact_already_exists": {
       "pt-br": "O número {contact} já está salvo em sua lista de contatos",
-      "en-us": "The number {contact} is already saved in your contact list",
+      "en": "The number {contact} is already saved in your contact list",
       "es": "El número {contact} ya está guardado en tu lista de contactos"
     }
   },
@@ -1811,8 +1811,8 @@
     },
     "new_sector": {
       "pt-br": "Novo setor",
-      "en": "Nuevo sector",
-      "es": "New sector"
+      "en": "New sector",
+      "es": "Nuevo sector"
     },
     "agent_title": {
       "pt-br": "Agentes",
