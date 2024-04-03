@@ -962,6 +962,11 @@
       "pt-br": "Contatos transferidos com sucesso para fila {queue}",
       "en": "Contacts successfully transferred to queue {queue}",
       "es": "Contactos transferidos con éxito a la cola {queue}"
+    },
+    "error": {
+      "pt-br": "Não foi possível transferir os contatos, tente novamente",
+      "en": "It was not possible to transfer the contacts, try again",
+      "es": "No fue posible transferir los contactos, intente nuevamente"
     }
   },
   "contact_info": {

@@ -101,7 +101,10 @@ export default {
       user_email: intended_agent,
     };
 
-    const response = await http.patch(`room/bulk_transfer/`, body, { params });
-    return response.data;
+    const response = await http
+      .patch(`room/bulk_transfer/`, body, { params })
+      .then((response) => response)
+      .catch((error) => error.response);
+    return response;
   },
 };

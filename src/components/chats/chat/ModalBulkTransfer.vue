@@ -44,6 +44,7 @@
         size="large"
         @click="bulkTransfer"
         :disabled="selectedDestination.length === 0"
+        :loading="isLoadingBulkTransfer"
       />
     </template>
   </UnnnicModal>
@@ -54,6 +55,7 @@ import Room from '@/services/api/resources/chats/room';
 import { mapState } from 'vuex';
 // import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 export default {
   name: 'ModalBulkTransfer',
@@ -65,6 +67,8 @@ export default {
       destinations: [],
       queues: null,
       agents: null,
+
+      isLoadingBulkTransfer: false,
     };
   },
 
@@ -88,6 +92,7 @@ export default {
         .concat(newQueues.results)
         .forEach(({ name, sector_name, uuid }) => {
           treatedQueues.push({
+            queue_name: name,
             label: `${name} | ${this.$t('sector.title')} ${sector_name}`,
             value: uuid,
           });
@@ -107,15 +112,52 @@ export default {
     //       };
     //     });
     // },
-    bulkTransfer() {
+    async bulkTransfer() {
       const { destinationType, selectedRoomsToTransfer } = this;
       const destination = this.selectedDestination?.[0]?.value;
       const destinationProperty =
         destinationType === 'queue' ? 'intended_queue' : 'intended_agent';
 
-      Room.bulkTranfer({
+      this.isLoadingBulkTransfer = true;
+
+      const response = await Room.bulkTranfer({
         rooms: selectedRoomsToTransfer,
         [destinationProperty]: destination,
+      });
+
+      response.status === 200 ? this.callSuccessAlert() : this.callErrorAlert();
+      this.isLoadingBulkTransfer = false;
+      this.$emit('close');
+    },
+
+    callSuccessAlert() {
+      const successTranslation = `bulk_transfer.${
+        this.destinationType === 'agent'
+          ? 'agent_transfer_success'
+          : 'queue_transfer_success'
+      }`;
+      const destination = this.selectedDestination?.[0].queue_name;
+
+      this.getAlert({
+        text: this.$t(successTranslation, {
+          queue: destination,
+          agent: destination,
+        }),
+        type: 'success',
+      });
+    },
+
+    callErrorAlert() {
+      this.getAlert({
+        text: this.$t('bulk_transfer.error'),
+        type: 'error',
+      });
+    },
+
+    getAlert({ text, type }) {
+      callUnnnicAlert({
+        props: { text, type },
+        seconds: 5,
       });
     },
   },
