@@ -20,8 +20,8 @@
     <section class="controls">
       <UnnnicInput
         v-model="queue.name"
-        label="Nome da fila"
-        placeholder="Exemplo: Pagamentos"
+        :label="$t('queues.queue_name')"
+        :placeholder="$t('queues.queue_name_placeholder')"
         class="input"
       />
       <UnnnicButton

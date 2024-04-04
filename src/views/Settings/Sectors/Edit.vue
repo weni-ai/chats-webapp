@@ -112,7 +112,7 @@
           :queues="queues"
           @visualize="visualizeQueue"
           @add-queue="createQueue"
-          label="Criar nova fila"
+          :label="$t('queues.create_queue')"
           isEditing
         />
       </template>
@@ -150,18 +150,20 @@
         @click="cancel"
         v-if="this.isQuickMessageEditing"
       />
-      <UnnnicButton
-        :text="$t('save')"
-        type="secondary"
-        @click="save"
-        :disabled="isQuickMessageEditing && !isQuickMessagesFormValid"
-        v-if="
-          this.currentTab === 'sector' ||
-          this.queueToEdit ||
-          this.isQuickMessageEditing ||
-          currentTab === 'tags'
-        "
-      />
+      <section class="button-action">
+        <UnnnicButton
+          :text="$t('save')"
+          type="secondary"
+          @click="save"
+          :disabled="isQuickMessageEditing && !isQuickMessagesFormValid"
+          v-if="
+            this.currentTab === 'sector' ||
+            this.queueToEdit ||
+            this.isQuickMessageEditing ||
+            currentTab === 'tags'
+          "
+        />
+      </section>
       <UnnnicButton
         v-if="this.currentTab === 'messages' && !isQuickMessageEditing"
         :text="$t('quick_messages.new')"
@@ -394,8 +396,7 @@ export default {
     async deleteQueue(queueUuid) {
       await Queue.delete(queueUuid);
       this.queues = this.queues.filter((queue) => queue.uuid !== queueUuid);
-      this.queueToEdit = null;
-      this.closeModalDeleteQueue();
+      this.openModalDelete = true;
     },
     async openModalDeleteQueue(queue) {
       this.selectedQueue = queue;
@@ -696,6 +697,12 @@ export default {
     & > * {
       width: 100%;
     }
+  }
+
+  .button-action {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-spacing-sm;
   }
 
   &__breadcrumb {

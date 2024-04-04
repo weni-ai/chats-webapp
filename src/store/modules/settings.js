@@ -1,4 +1,5 @@
 import cloneDeep from 'lodash.clonedeep';
+import Sector from '@/services/api/resources/settings/sector';
 
 const module = {
   namespaced: true,
@@ -25,6 +26,11 @@ const module = {
       const index = state.sectors.findIndex((s) => s.id === sector.id);
       state.sectors.splice(index, 1, sector);
     },
+    deleteSector(state, sectorUuid) {
+      state.sectors = state.sectors.filter(
+        (sector) => sector.uuid !== sectorUuid,
+      );
+    },
   },
 
   actions: {
@@ -35,6 +41,11 @@ const module = {
       if (!sector.id) dispatch('saveSector', sector);
 
       commit('updateSector', sector);
+    },
+    async deleteSector({ commit }, sectorUuid) {
+      await Sector.deleteSector(sectorUuid);
+
+      commit('deleteSector', sectorUuid);
     },
   },
 
