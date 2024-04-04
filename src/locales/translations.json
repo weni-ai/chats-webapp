@@ -328,11 +328,6 @@
           "en": "Disabled signature",
           "es": "Firma discapacitada"
         }
-      },
-      "bulk_transfer": {
-        "pt-br": "Permitir transferências para mais de um contato",
-        "en": "Allow transfers to more than one contact",
-        "es": "Permitir transferencias a más de un contacto"
       }
     }
   },
@@ -1362,27 +1357,27 @@
   },
   "delete_sector": {
     "pt-br": "Deletar setor",
-    "en-us": "Delete sector",
+    "en": "Delete sector",
     "es": "Eliminar sector"
   },
   "cant_revert": {
     "pt-br": "Essa opção não poderá ser revertida",
-    "en-us": "This option cannot be reversed",
+    "en": "This option cannot be reversed",
     "es": "Esta opción no se puede revertir"
   },
   "confirm_typing": {
     "pt-br": "Confirme digitando",
-    "en-us": "Confirm by typing",
+    "en": "Confirm typing",
     "es": "Confirmar escribiendo"
   },
   "sector_deleted_success": {
     "pt-br": "Setor deletado com sucesso!",
-    "en-us": "Sector deleted successfully!",
+    "en": "Successful deleted sector!",
     "es": "¡Sector eliminado con éxito!"
   },
   "sector_delete_error": {
     "pt-br": "Não foi possível deletar o setor, tente novamente mais tarde.",
-    "en-us": "Unable to delete sector, please try again later.",
+    "en": "It was not possible to delete the industry, try again later.",
     "es": "No se puede eliminar el sector. Vuelva a intentarlo más tarde."
   },
   "edit": {
@@ -1830,7 +1825,7 @@
       }
     }
   },
-  "config_chats" : {
+  "config_chats": {
     "manage_chats": {
       "pt-br": "Gerenciar Chats",
       "en": "Manage chats",
@@ -1840,6 +1835,25 @@
       "pt-br": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
       "en": "Add, view and manage sectors, queues, managers and agents within your organization.",
       "es": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización."
+    },
+    "project_configs": {
+      "bulk_transfer": {
+        "tooltip": {
+          "pt-br": "Essa função permite que agentes transfiram diversos contatos de uma vez para uma fila ou agente",
+          "en": "This function allows agents to transfer various contacts at once to a row or agent",
+          "es": "Esta función permite a los agentes transferir varios contactos a la vez a una fila o agente"
+        },
+        "switch_active": {
+          "pt-br": "Transferência de contatos em massa ativo",
+          "en": "Bulk contact transfer active",
+          "es": "Transferencia de contactos en masa activa"
+        },
+        "switch_inactive": {
+          "pt-br": "Transferência de contatos em massa desativado",
+          "en": "Bulk contact transfer disabled",
+          "es": "Transferencia de contactos en masa discapacitada"
+        }
+      }
     },
     "new_sector": {
       "pt-br": "Novo setor",
