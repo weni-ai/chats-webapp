@@ -55,4 +55,17 @@ export default {
     const response = await http.get(`/project/${projectUuid}/`);
     return response;
   },
+
+  async update(data) {
+    const projectUuid = getProject();
+    const body = {
+      config: JSON.stringify(data),
+    };
+
+    const response = await http
+      .patch(`/project/${projectUuid}/`, body)
+      .then((response) => response.data)
+      .catch((error) => error.response);
+    return response;
+  },
 };

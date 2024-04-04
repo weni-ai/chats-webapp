@@ -138,10 +138,6 @@
           v-model="sector.can_edit_custom_fields"
           :textRight="$t('sector.additional_options.edit_custom_fields')"
         />
-        <UnnnicSwitch
-          v-model="sector.config.can_use_bulk_transfer"
-          :textRight="$t('sector.additional_options.bulk_transfer')"
-        />
       </div>
       <div>
         <h2 class="title">{{ $t('sector.managers.working_day.title') }}</h2>

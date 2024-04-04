@@ -11,6 +11,27 @@
       </p>
     </header>
 
+    <section class="settings-chats__project-configs">
+      <section class="project-configs__config">
+        <UnnnicSwitch
+          v-model="projectConfig.bulkTransfer"
+          :textRight="configBulkTransferTranslation"
+        />
+        <UnnnicToolTip
+          enabled
+          :text="$t('config_chats.project_configs.bulk_transfer.tooltip')"
+          side="right"
+          maxWidth="20rem"
+        >
+          <UnnnicIcon
+            icon="information-circle-4"
+            scheme="neutral-soft"
+            size="sm"
+          />
+        </UnnnicToolTip>
+      </section>
+    </section>
+
     <section class="sectors">
       <div
         @click="navigate('sectors.new')"
@@ -61,6 +82,7 @@
 </template>
 
 <script>
+import Project from '@/services/api/resources/settings/project';
 import Sector from '@/services/api/resources/settings/sector';
 
 export default {
@@ -74,7 +96,20 @@ export default {
     sectors: [],
     isLoading: true,
     nextPage: null,
+
+    projectConfig: {},
   }),
+
+  computed: {
+    configBulkTransferTranslation() {
+      const canBulkTransfer = this.projectConfig.bulkTransfer;
+      return this.$t(
+        `config_chats.project_configs.bulk_transfer.switch_${
+          canBulkTransfer ? 'active' : 'inactive'
+        }`,
+      );
+    },
+  },
 
   methods: {
     navigate(name, params) {
@@ -83,6 +118,13 @@ export default {
         params,
       });
     },
+
+    async updateProjectConfig() {
+      Project.update({
+        can_use_bulk_transfer: this.projectConfig.bulkTransfer,
+      });
+    },
+
     async listSectors() {
       try {
         this.isLoading = true;
@@ -124,18 +166,43 @@ export default {
       }
     },
   },
+
+  watch: {
+    projectConfig: {
+      deep: true,
+      handler() {
+        this.updateProjectConfig();
+      },
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 .settings-chats {
+  padding-right: $unnnic-spacing-sm;
+
+  display: grid;
+  gap: $unnnic-spacing-sm;
+
   overflow-y: auto;
-  padding-right: 1rem;
-  // margin-right: 0.5rem;
+
+  &__project-configs {
+    display: grid;
+    gap: $unnnic-spacing-nano;
+
+    .project-configs__config {
+      display: flex;
+      gap: $unnnic-spacing-nano;
+      align-items: center;
+
+      .unnnic-tooltip {
+        display: flex;
+      }
+    }
+  }
 
   header {
-    margin-bottom: 1.5rem;
-
     .title {
       color: $unnnic-color-neutral-black;
       font-family: $unnnic-font-family-primary;
