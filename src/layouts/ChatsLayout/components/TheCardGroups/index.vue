@@ -127,6 +127,8 @@
 </template>
 <script>
 import { mapState, mapGetters } from 'vuex';
+import Room from '@/services/api/resources/chats/room';
+// import Profile from '@/services/api/resources/profile';
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup';
 export default {
@@ -193,6 +195,7 @@ export default {
   async mounted() {
     this.listRoom();
     this.listDiscussions();
+    // this.getListQueues();
   },
   computed: {
     ...mapGetters({
@@ -203,6 +206,7 @@ export default {
     ...mapState({
       discussions: (state) => state.chats.discussions.discussions,
       listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
+      me: (state) => state.profile.me,
     }),
     totalUnreadMessages() {
       return this.rooms.reduce(
@@ -253,6 +257,12 @@ export default {
           }
         }, TIME_TO_WAIT_TYPING);
       },
+    },
+
+    ['me.email'](newEmail) {
+      if (newEmail) {
+        this.getListQueues();
+      }
     },
   },
   methods: {
@@ -314,6 +324,19 @@ export default {
     },
     closeModalQueue() {
       this.showModalQueue = false;
+    },
+
+    async getListQueues() {
+      try {
+        let me = this.me.email;
+        const response = await Room.getListQueues(me);
+        console.log(response, 'response aqui');
+        console.log(me);
+      } catch (error) {
+        // let me = this.me.email;
+        // console.log(me);
+        console.error(error, 'erro aqui');
+      }
     },
   },
 };

@@ -91,4 +91,24 @@ export default {
     );
     return response.data;
   },
+
+  async getListQueues() {
+    const { me } = Profile.state;
+    const userEmail = me.email;
+    const project = getProject();
+
+    console.log(Profile.state);
+    console.log(Profile.state.me);
+    console.log(Profile.state.me.email);
+
+    const params = {
+      user_email: userEmail || 'teste',
+      project: project,
+    };
+
+    const response = await http.get('/queue/list_queue_permissions/', {
+      params,
+    });
+    return response.data;
+  },
 };
