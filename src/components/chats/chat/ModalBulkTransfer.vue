@@ -1,5 +1,6 @@
 <template>
   <UnnnicModal
+    data-testid="modal-bulk-transfer"
     :text="$t('bulk_transfer.transfer_selected_contacts')"
     class="modal-bulk-transfer"
     :closeIcon="false"
@@ -8,6 +9,7 @@
       <section class="select-destination__field">
         <UnnnicLabel :label="$t('queue')" />
         <UnnnicSelectSmart
+          data-testid="select-queue"
           v-model="selectedQueue"
           :options="queues"
           autocomplete
@@ -18,48 +20,27 @@
       <section class="select-destination__field">
         <UnnnicLabel :label="$t('agent')" />
         <UnnnicSelectSmart
+          data-testid="select-agent"
           v-model="selectedAgent"
-          :disabled="selectedQueue[0]?.value === '' || agents?.length < 2"
+          :disabled="isAgentsFieldDisabled"
           :options="agents"
           autocomplete
           autocompleteIconLeft
           autocompleteClearOnFocus
         />
       </section>
-      <!-- <section class="select-destination__radios">
-        <UnnnicRadio
-          size="md"
-          v-model="destinationType"
-          value="agent"
-        >
-          {{ $t('agent') }}
-        </UnnnicRadio>
-
-        <UnnnicRadio
-          size="md"
-          v-model="destinationType"
-          value="queue"
-        >
-          {{ $t('queue') }}
-        </UnnnicRadio>
-      </section>
-      <UnnnicSelectSmart
-        v-model="selectedDestination"
-        :options="destinations"
-        autocomplete
-        autocompleteIconLeft
-        autocompleteClearOnFocus
-      /> -->
     </main>
 
     <template #options>
       <UnnnicButton
+        data-testid="cancel-button"
         :text="$t('cancel')"
         type="tertiary"
         size="large"
         @click="$emit('close')"
       />
       <UnnnicButton
+        data-testid="transfer-button"
         :text="$t('transfer')"
         type="primary"
         size="large"
@@ -101,6 +82,10 @@ export default {
       selectedRoomsToTransfer: (state) =>
         state.chats.rooms.selectedRoomsToTransfer,
     }),
+
+    isAgentsFieldDisabled() {
+      return this.selectedQueue[0]?.value === '' || this.agents?.length < 2;
+    },
   },
 
   methods: {
