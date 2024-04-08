@@ -11,10 +11,13 @@
       </p>
     </header>
 
-    <section class="settings-chats__project-configs">
+    <section
+      class="settings-chats__project-configs"
+      v-if="projectConfig"
+    >
       <section class="project-configs__config">
         <UnnnicSwitch
-          v-model="projectConfig.bulkTransfer"
+          v-model="projectConfig.can_use_bulk_transfer"
           :textRight="configBulkTransferTranslation"
         />
         <UnnnicToolTip
@@ -82,6 +85,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import Project from '@/services/api/resources/settings/project';
 import Sector from '@/services/api/resources/settings/sector';
 
@@ -97,12 +102,17 @@ export default {
     isLoading: true,
     nextPage: null,
 
-    projectConfig: {},
+    projectConfig: {
+      can_use_bulk_transfer: false,
+    },
   }),
 
   computed: {
+    ...mapState({
+      project: (state) => state.config.project,
+    }),
     configBulkTransferTranslation() {
-      const canBulkTransfer = this.projectConfig.bulkTransfer;
+      const canBulkTransfer = this.projectConfig.can_use_bulk_transfer;
       return this.$t(
         `config_chats.project_configs.bulk_transfer.switch_${
           canBulkTransfer ? 'active' : 'inactive'
@@ -120,8 +130,9 @@ export default {
     },
 
     async updateProjectConfig() {
+      const { can_use_bulk_transfer } = this.projectConfig;
       Project.update({
-        can_use_bulk_transfer: this.projectConfig.bulkTransfer,
+        can_use_bulk_transfer,
       });
     },
 
@@ -168,6 +179,14 @@ export default {
   },
 
   watch: {
+    project: {
+      immediate: true,
+      handler(newProject) {
+        if (newProject) {
+          this.projectConfig = newProject.config;
+        }
+      },
+    },
     projectConfig: {
       deep: true,
       handler() {
