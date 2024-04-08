@@ -63,9 +63,9 @@ export default {
 
   data() {
     return {
-      queues: [{ value: '', label: this.$t('select_queue') }],
+      queues: [],
       selectedQueue: [],
-      agents: [{ value: '', label: this.$t('select_agent') }],
+      agents: [],
       selectedAgent: [],
 
       isLoadingBulkTransfer: false,
@@ -74,6 +74,8 @@ export default {
 
   created() {
     this.getQueues();
+    this.queues = this.queuesDefault;
+    this.agents = this.agentsDefault;
   },
 
   computed: {
@@ -81,6 +83,13 @@ export default {
       selectedRoomsToTransfer: (state) =>
         state.chats.rooms.selectedRoomsToTransfer,
     }),
+
+    queuesDefault() {
+      return [{ value: '', label: this.$t('select_queue') }];
+    },
+    agentsDefault() {
+      return [{ value: '', label: this.$t('select_agent') }];
+    },
 
     isAgentsFieldDisabled() {
       return this.selectedQueue[0]?.value === '' || this.agents?.length < 2;
@@ -99,7 +108,7 @@ export default {
         }),
       );
 
-      this.queues = [...this.queues, ...treatedQueues];
+      this.queues = [...this.queuesDefault, ...treatedQueues];
     },
 
     async getAgents(queueUuid) {
@@ -112,7 +121,7 @@ export default {
           value: email,
         }));
 
-      this.agents = [...this.agents, ...treatedAgents];
+      this.agents = [...this.agentsDefault, ...treatedAgents];
     },
     async bulkTransfer() {
       const { selectedRoomsToTransfer } = this;
