@@ -33,11 +33,12 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import DashboardLayout from '@/layouts/DashboardLayout';
 
 import DashboardFilters from '@/components/dashboard/Filters';
 import HistoryMetricsBySector from '@/components/dashboard/metrics/BySector/HistoryMetrics';
-import ProjectApi from '@/services/api/resources/settings/project';
 
 export default {
   name: 'DashboardManager',
@@ -51,20 +52,9 @@ export default {
   data: () => ({
     showData: '',
     agents: {},
-    project: [],
     filters: null,
   }),
 
-  mounted() {
-    this.projectInfo();
-  },
-
-  methods: {
-    async projectInfo() {
-      const project = await ProjectApi.getInfo();
-      this.project = project.data;
-    },
-  },
   watch: {
     visualization(newValue) {
       if (newValue) {
@@ -75,6 +65,9 @@ export default {
     },
   },
   computed: {
+    ...mapState({
+      project: (state) => state.config.project,
+    }),
     visualization() {
       const filter = this.filters;
       return filter;

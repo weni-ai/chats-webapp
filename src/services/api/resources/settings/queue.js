@@ -38,6 +38,11 @@ export default {
     await http.delete(`/queue/${queueUuid}/`);
   },
 
+  async agentsToTransfer(queueUuid) {
+    const response = await http.get(`queue/${queueUuid}/transfer_agents/`);
+    return response.data;
+  },
+
   async agents(queueUuid, offset, limit) {
     const response = await http.get('/authorization/queue/', {
       params: {
