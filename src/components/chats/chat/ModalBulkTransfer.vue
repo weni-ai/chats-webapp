@@ -55,7 +55,6 @@
 <script>
 import Room from '@/services/api/resources/chats/room';
 import { mapState } from 'vuex';
-// import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
@@ -92,31 +91,29 @@ export default {
     async getQueues() {
       const newQueues = await Queue.listByProject();
 
-      const treatedQueues = this.queues;
-      treatedQueues
-        .concat(newQueues.results)
-        .forEach(({ name, sector_name, uuid }) => {
-          treatedQueues.push({
-            queue_name: name,
-            label: `${name} | ${this.$t('sector.title')} ${sector_name}`,
-            value: uuid,
-          });
-        });
-      this.queues = treatedQueues;
+      const treatedQueues = newQueues.results.map(
+        ({ name, sector_name, uuid }) => ({
+          queue_name: name,
+          label: `${name} | ${this.$t('sector.title')} ${sector_name}`,
+          value: uuid,
+        }),
+      );
+
+      this.queues = [...this.queues, ...treatedQueues];
     },
 
-    // async listAgents() {
-    //   this.agents = (
-    //     await Sector.agents({ sectorUuid: this.room.queue.sector })
-    //   )
-    //     .filter((agent) => agent.email !== this.$store.state.profile.me.email)
-    //     .map(({ first_name, last_name, email }) => {
-    //       return {
-    //         name: [first_name, last_name].join(' ').trim() || email,
-    //         email,
-    //       };
-    //     });
-    // },
+    async getAgents(queueUuid) {
+      const newAgents = await Queue.agentsToTransfer(queueUuid);
+
+      const treatedAgents = newAgents
+        .filter((agent) => agent.email !== this.$store.state.profile.me.email)
+        .map(({ first_name, last_name, email }) => ({
+          label: [first_name, last_name].join(' ').trim() || email,
+          value: email,
+        }));
+
+      this.agents = [...this.agents, ...treatedAgents];
+    },
     async bulkTransfer() {
       const { selectedRoomsToTransfer } = this;
       const selectedQueue = this.selectedQueue?.[0]?.value;
@@ -163,6 +160,15 @@ export default {
         props: { text, type },
         seconds: 5,
       });
+    },
+  },
+
+  watch: {
+    selectedQueue(newSelectedQueue) {
+      const queue = newSelectedQueue[0]?.value;
+      if (queue) {
+        this.getAgents(queue);
+      }
     },
   },
 };
