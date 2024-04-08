@@ -9,6 +9,15 @@ import i18n from '@/plugins/i18n';
 
 import ModalBulkTransfer from '../chat/ModalBulkTransfer.vue';
 
+jest.mock('@/services/api/resources/settings/queue', () => ({
+  listByProject: jest.fn(() => ({
+    results: [
+      { name: 'Queue 1', sector_name: 'Sector 1', uuid: '1' },
+      { name: 'Queue 2', sector_name: 'Sector 2', uuid: '2' },
+    ],
+  })),
+}));
+
 function createWrapper() {
   const wrapper = mount(ModalBulkTransfer, {
     i18n,
@@ -39,7 +48,9 @@ describe('ModalBulkTransfer', () => {
   });
 
   describe('Data Loading', () => {
-    it('should load queues when created', () => {});
+    it('should load queues when created', async () => {
+      expect(wrapper.vm.queues.length).toBeGreaterThan(1);
+    });
   });
 
   describe('Field Behavior', () => {
