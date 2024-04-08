@@ -175,6 +175,7 @@
 
 <script>
 import isMobile from 'is-mobile';
+import { mapState } from 'vuex';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
@@ -189,7 +190,6 @@ import FlowsContactsLoading from '@/views/loadings/FlowsTrigger/FlowsContactsLoa
 
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import FlowsAPI from '@/services/api/resources/flows/flowsTrigger.js';
-import ProjectApi from '@/services/api/resources/settings/project';
 
 export default {
   name: 'FlowsTrigger',
@@ -207,7 +207,6 @@ export default {
   },
 
   created() {
-    this.projectInfo();
     this.contactList();
     this.groupList();
   },
@@ -222,7 +221,6 @@ export default {
   data: () => ({
     isContactsLoading: true,
 
-    projectName: '',
     search: '',
     searchUrn: '',
     timerId: 0,
@@ -244,6 +242,10 @@ export default {
   }),
 
   computed: {
+    ...mapState({
+      projectName: (state) => state.config.project.name,
+    }),
+
     letters() {
       const letters = {};
       this.listOfContacts
@@ -286,11 +288,6 @@ export default {
   },
 
   methods: {
-    async projectInfo() {
-      const project = await ProjectApi.getInfo();
-      this.projectName = project.data.name;
-    },
-
     setContacts(contact) {
       if (this.selected.some((search) => search.uuid === contact.uuid)) {
         this.selected = this.selected.filter((el) => el.uuid !== contact.uuid);
