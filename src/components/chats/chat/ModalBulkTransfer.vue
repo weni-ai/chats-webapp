@@ -142,7 +142,7 @@ export default {
     },
 
     callSuccessAlert() {
-      const selectedAgent = this.selectedAgent?.[0]?.value;
+      const selectedAgent = this.selectedAgent?.[0]?.label;
       const successTranslation = `bulk_transfer.${
         selectedAgent ? 'agent_transfer_success' : 'queue_transfer_success'
       }`;
