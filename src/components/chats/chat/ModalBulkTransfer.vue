@@ -54,7 +54,7 @@
 
 <script>
 import Room from '@/services/api/resources/chats/room';
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import Queue from '@/services/api/resources/settings/queue';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
@@ -97,6 +97,10 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      setSelectedRoomsToTransfer: 'chats/rooms/setSelectedRoomsToTransfer',
+    }),
+
     async getQueues() {
       const newQueues = await Queue.listByProject();
 
@@ -136,7 +140,12 @@ export default {
         intended_agent: selectedAgent,
       });
 
-      response.status === 200 ? this.callSuccessAlert() : this.callErrorAlert();
+      if (response.status === 200) {
+        this.setSelectedRoomsToTransfer([]);
+        this.callSuccessAlert();
+      } else {
+        this.callErrorAlert();
+      }
       this.isLoadingBulkTransfer = false;
       this.$emit('close');
     },
