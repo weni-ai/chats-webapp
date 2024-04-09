@@ -5,10 +5,9 @@
     @scroll="onScroll"
   >
     <header>
-      <h1 class="title">Gerenciar Chats</h1>
+      <h1 class="title">{{ $t('config_chats.manage_chats') }}</h1>
       <p class="description">
-        Adicione, visualize e gerencie os setores, filas, gestores e agentes
-        dentro da sua organização.
+        {{ $t('config_chats.manage_description') }}
       </p>
     </header>
 
@@ -19,7 +18,7 @@
       >
         <UnnnicCard
           type="blank"
-          text="Novo setor"
+          :text="$t('config_chats.new_sector')"
           icon="add"
           class="new-sector-card"
         />
@@ -29,18 +28,18 @@
         v-for="sector in sectors"
         class="sectors-list"
         :key="sector.id"
-        actionText="Abrir"
+        :actionText="$t('config_chats.open')"
         :name="sector.name"
         @action="navigate('sectors.edit', { uuid: sector.uuid })"
         :statuses="[
           {
-            title: 'Agentes',
+            title: $t('config_chats.agent_title'),
             icon: 'headphones',
             scheme: 'aux-purple',
             count: sector.agents,
           },
           {
-            title: 'Contatos',
+            title: $t('config_chats.contacts'),
             icon: 'person',
             scheme: 'aux-lemon',
             count: sector.contacts,

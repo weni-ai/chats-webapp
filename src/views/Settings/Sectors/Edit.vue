@@ -112,7 +112,7 @@
           :queues="queues"
           @visualize="visualizeQueue"
           @add-queue="createQueue"
-          label="Criar nova fila"
+          :label="$t('queues.create_queue')"
           isEditing
         />
       </template>

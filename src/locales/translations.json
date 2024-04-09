@@ -207,6 +207,46 @@
       "en": "Sector",
       "es": "Sector"
     },
+    "geral": {
+      "pt-br": "Geral",
+      "en": "General",
+      "es": "General"
+    },
+    "queues": {
+      "pt-br": "Filas",
+      "en": "Queues",
+      "es": "Colas"
+    },
+    "tags": {
+      "pt-br": "Tags",
+      "en": "Etiquetas",
+      "es": "Tags"
+    },
+    "add": {
+      "pt-br": "Adicionar novo setor",
+      "en": "Add new sector",
+      "es": "Agregar nuevo sector"
+    },
+    "add_queue": {
+      "pt-br": "Adicionar nova fila",
+      "en": "Add new queue",
+      "es": "Agregar nueva cola"
+    },
+    "name": {
+      "pt-br": "Nome do setor",
+      "en": "Sector name",
+      "es": "Nombre del sector"
+    },
+    "placeholder": {
+      "pt-br": "Exemplo: Financeiro",
+      "en": "Example: Financial",
+      "es": "Ejemplo: Financiero"
+    },
+    "save_and_continue": {
+      "pt-br": "Salvar e continuar",
+      "en": "Save and continue",
+      "es": "Guardar y continuar"
+    },
     "managers": {
       "title": {
         "pt-br": "Gerentes de atendimento",
@@ -301,6 +341,36 @@
       "pt-br": "Filas",
       "en": "Queues",
       "es": "Colas"
+    },
+    "create_queue": {
+      "pt-br": "Criar nova fila",
+      "en": "Create new queue",
+      "es": "Crear nueva cola"
+    },
+    "queue_name": {
+      "pt-br": "Nome da fila",
+      "en": "Queue name",
+      "es": "Nombre de cola"
+    },
+    "queue_name_placeholder": {
+      "pt-br": "Exemplo: Pagamentos",
+      "en": "Example: Payments",
+      "es": "Ejemplo: Pagos"
+    },
+    "queue_title": {
+      "pt-br": "Filas em",
+      "en": "Queues in",
+      "es": "Cola en"
+    },
+    "queue_table_name": {
+      "pt-br": "Nome",
+      "en": "Name",
+      "es": "Nombre"
+    },
+    "quantity_agents": {
+      "pt-br": "Qtd de agentes",
+      "en": "Number of agents",
+      "es": "Cantidad de agentes"
     }
   },
   "chats": {
@@ -362,7 +432,7 @@
       },
       "agent_took_chat": {
         "pt-br": "Ops! O chat com contato {contact} foi assumido por outro agente",
-        "en-us": "Oops! The chat with the contact {contact} has already been taken over by another agent",
+        "en": "Oops! The chat with the contact {contact} has already been taken over by another agent",
         "es": "¡Ups! El chat con el contacto {contact} ha sido asumido por otro agente"
       }
     },
@@ -477,7 +547,7 @@
     },
     "get_chat_confirmation": {
       "pt-br": "Confirme se deseja realizar o atendimento de {contact}",
-      "en-us": "Confirm if you want to do the service of {contact}",
+      "en": "Confirm if you want to do the service of {contact}",
       "es": "Confirma si deseas realizar el servicio de {contact}"
     },
     "you_got_chat": {
@@ -824,12 +894,12 @@
   },
   "name_or_phone_or_protocol": {
     "pt-br": "Nome, telefone ou procotolo",
-    "en-us": "Name, telephone or protocol",
+    "en": "Name, telephone or protocol",
     "es": "Nombre, teléfono o protocolo"
   },
   "protocol": {
     "pt-br": "Protocolo",
-    "en-us": "Protocol",
+    "en": "Protocol",
     "es": "Protocolo"
   },
   "tags": {
@@ -1270,27 +1340,27 @@
   },
   "delete_sector": {
     "pt-br": "Deletar setor",
-    "en-us": "Delete sector",
+    "en": "Delete sector",
     "es": "Eliminar sector"
   },
   "cant_revert": {
     "pt-br": "Essa opção não poderá ser revertida",
-    "en-us": "This option cannot be reversed",
+    "en": "This option cannot be reversed",
     "es": "Esta opción no se puede revertir"
   },
   "confirm_typing": {
     "pt-br": "Confirme digitando",
-    "en-us": "Confirm by typing",
+    "en": "Confirm by typing",
     "es": "Confirmar escribiendo"
   },
   "sector_deleted_success": {
     "pt-br": "Setor deletado com sucesso!",
-    "en-us": "Sector deleted successfully!",
+    "en": "Sector deleted successfully!",
     "es": "¡Sector eliminado con éxito!"
   },
   "sector_delete_error": {
     "pt-br": "Não foi possível deletar o setor, tente novamente mais tarde.",
-    "en-us": "Unable to delete sector, please try again later.",
+    "en": "Unable to delete sector, please try again later.",
     "es": "No se puede eliminar el sector. Vuelva a intentarlo más tarde."
   },
   "edit": {
@@ -1472,7 +1542,7 @@
     },
     "contact_already_exists": {
       "pt-br": "O número {contact} já está salvo em sua lista de contatos",
-      "en-us": "The number {contact} is already saved in your contact list",
+      "en": "The number {contact} is already saved in your contact list",
       "es": "El número {contact} ya está guardado en tu lista de contactos"
     }
   },
@@ -1731,6 +1801,38 @@
           }
         }
       }
+    }
+  },
+  "config_chats" : {
+    "manage_chats": {
+      "pt-br": "Gerenciar Chats",
+      "en": "Manage chats",
+      "es": "Gestionar chats"
+    },
+    "manage_description": {
+      "pt-br": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
+      "en": "Add, view and manage sectors, queues, managers and agents within your organization.",
+      "es": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización."
+    },
+    "new_sector": {
+      "pt-br": "Novo setor",
+      "en": "New sector",
+      "es": "Nuevo sector"
+    },
+    "agent_title": {
+      "pt-br": "Agentes",
+      "en": "Agents",
+      "es": "Agentes"
+    },
+    "contacts": {
+      "pt-br": "Contatos",
+      "en": "Contacts",
+      "es": "Contactos"
+    },
+    "open": {
+      "pt-br": "Abrir",
+      "en": "Open",
+      "es": "Abrir"
     }
   },
   "new_sector": {
