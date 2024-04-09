@@ -26,7 +26,7 @@
       />
       <UnnnicButton
         v-if="isEditing"
-        text="Salvar"
+        :text="$t('save')"
         type="secondary"
         @click="addQueue"
       />
