@@ -32,10 +32,7 @@
         />
       </section>
 
-      <ClosedChatsRoomsTable
-        v-else
-        :project="project"
-      />
+      <ClosedChatsRoomsTable v-else />
     </main>
   </div>
 </template>
@@ -44,7 +41,6 @@
 import isMobile from 'is-mobile';
 import { mapState } from 'vuex';
 
-import ProjectApi from '@/services/api/resources/settings/project';
 import History from '@/services/api/resources/chats/history';
 
 import RoomMessages from '@/components/chats/chat/RoomMessages';
@@ -83,14 +79,12 @@ export default {
         path: 'home',
       },
     ],
-    project: null,
 
     selectedRoom: null,
     selectedRoomsUuids: null,
   }),
 
   async created() {
-    this.projectInfo();
     this.crumbs.push({
       name: this.$t('chats.closed_chats.history'),
       path: 'closed-rooms',
@@ -100,6 +94,7 @@ export default {
   computed: {
     ...mapState({
       roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,
+      project: (state) => state.config.project,
     }),
 
     closedChatsHeaderSize() {
@@ -121,12 +116,6 @@ export default {
       this.crumbs = this.crumbs.slice(0, index + 1);
 
       this.$router.push({ name: crumb.path });
-    },
-
-    async projectInfo() {
-      const project = await ProjectApi.getInfo();
-      this.project = project.data;
-      this.isLoadingHeader = false;
     },
 
     async chatScrollTop() {
@@ -191,6 +180,14 @@ export default {
           this.selectedRoomsUuids = responseRoomUuids.results;
 
           this.isLoadingSelectedRoom = false;
+        }
+      },
+    },
+    project: {
+      immediate: true,
+      handler(newProject) {
+        if (newProject) {
+          this.isLoadingHeader = false;
         }
       },
     },

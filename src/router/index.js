@@ -38,8 +38,8 @@ router.afterEach(() => {
     store.dispatch('config/setToken', getToken());
   }
 
-  if (!store.state.config.project) {
-    store.dispatch('config/setProject', getProject());
+  if (!store.state.config.project.uuid) {
+    store.dispatch('config/setProjectUuid', getProject());
   }
 });
 

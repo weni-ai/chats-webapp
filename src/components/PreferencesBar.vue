@@ -65,6 +65,15 @@
       />
 
       <UnnnicButton
+        v-if="showFlowsTriggerButton"
+        :text="$t('flows')"
+        size="small"
+        type="secondary"
+        iconLeft="send"
+        @mousedown.prevent
+        @click="openFlowsTrigger"
+      />
+      <UnnnicButton
         @mousedown.prevent
         :text="$t('quick_messages.title')"
         iconLeft="bolt"
@@ -97,6 +106,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    showFlowsTriggerButton: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -122,6 +135,9 @@ export default {
         name,
       });
     },
+    openFlowsTrigger() {
+      this.$emit('open-flows-trigger');
+    },
     openQuickMessage() {
       this.$emit('show-quick-messages');
     },
@@ -131,7 +147,7 @@ export default {
       const {
         data: { connection_status },
       } = await Profile.updateStatus({
-        projectUuid: this.$store.state.config.project,
+        projectUuid: this.$store.state.config.project.uuid,
         status: online ? 'ONLINE' : 'OFFLINE',
       });
 
@@ -143,7 +159,7 @@ export default {
 
     async getStatus() {
       const response = await Profile.status({
-        projectUuid: this.$store.state.config.project,
+        projectUuid: this.$store.state.config.project.uuid,
       });
       this.$store.state.config.status = response.data.connection_status;
     },

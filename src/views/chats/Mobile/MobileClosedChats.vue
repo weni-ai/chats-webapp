@@ -35,7 +35,6 @@
 <script>
 import { mapState } from 'vuex';
 
-import ProjectApi from '@/services/api/resources/settings/project';
 import History from '@/services/api/resources/chats/history';
 
 import ClosedChatsRoomsTable from '@/views/chats/ClosedChats/RoomsTable';
@@ -55,14 +54,12 @@ export default {
     return {
       isLoadingHeader: false,
 
-      project: null,
       showRoomInfos: false,
     };
   },
 
   async created() {
     this.resetChat();
-    this.getProjectInfo();
   },
   async beforeDestroy() {
     this.resetChat();
@@ -71,6 +68,7 @@ export default {
   computed: {
     ...mapState({
       room: (state) => state.chats.rooms.activeRoom,
+      project: (state) => state.config.project,
     }),
 
     headerSubtitle() {
@@ -86,12 +84,6 @@ export default {
   },
 
   methods: {
-    async getProjectInfo() {
-      const project = await ProjectApi.getInfo();
-      this.project = project.data;
-      this.isLoadingHeader = false;
-    },
-
     emitClose() {
       this.$emit('close');
     },
@@ -130,6 +122,14 @@ export default {
           }
 
           this.handleRoom(responseRoom);
+        }
+      },
+    },
+    project: {
+      immediate: true,
+      handler(newProject) {
+        if (newProject) {
+          this.isLoadingHeader = false;
         }
       },
     },

@@ -18,21 +18,10 @@
         <PreferencesBar
           v-if="!isViewMode"
           @show-quick-messages="handlerShowQuickMessages"
+          @open-flows-trigger="openFlowsTrigger"
+          :showFlowsTriggerButton="canTriggerFlows"
           :dashboard="canAccessDashboard"
         />
-
-        <div
-          class="flows-trigger-button"
-          v-if="!isViewMode"
-        >
-          <UnnnicButton
-            v-if="canTriggerFlows"
-            size="small"
-            type="secondary"
-            iconCenter="send"
-            @click="openFlowsTrigger"
-          />
-        </div>
 
         <TheCardGroups
           class="room-list"
@@ -40,14 +29,7 @@
           :viewedAgent="viewedAgent"
         />
 
-        <UnnnicButton
-          class="history-button"
-          :text="isHistoryView ? $t('back_to_chats') : $t('chats.see_history')"
-          :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : 'history'"
-          type="secondary"
-          size="small"
-          @click="navigate(isHistoryView ? 'home' : 'closed-rooms')"
-        />
+        <ChatsLayoutFooterButton class="footer-button" />
       </div>
     </slot>
 
@@ -94,6 +76,7 @@ import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import QuickMessages from '@/components/chats/QuickMessages';
 import TheCardGroups from './components/TheCardGroups';
 import LayoutFlowsTrigger from './components/FlowsTrigger';
+import ChatsLayoutFooterButton from './components/FooterButton';
 
 export default {
   name: 'ChatsLayout',
@@ -104,6 +87,7 @@ export default {
     SidebarLoading,
     LayoutFlowsTrigger,
     QuickMessages,
+    ChatsLayoutFooterButton,
   },
 
   props: {
@@ -135,7 +119,7 @@ export default {
     handlerShowQuickMessages() {
       this.showQuickMessages = !this.showQuickMessages;
     },
-    openFlowsTrigger({ contact = null }) {
+    openFlowsTrigger({ contact = null } = {}) {
       if (contact) {
         this.flowsTriggerContact = contact;
       }
@@ -169,7 +153,8 @@ export default {
       try {
         const response = await FlowsTrigger.listAccess();
         this.accessList = response;
-        this.canTriggerFlows = this.accessList.can_trigger_flows;
+        this.canTriggerFlows =
+          this.accessList.can_trigger_flows && !this.isViewMode;
         this.canAccessDashboard = this.accessList.can_access_dashboard;
       } catch (error) {
         console.log(error);
@@ -177,11 +162,6 @@ export default {
     },
     selectQuickMessage(quickMessage) {
       this.$emit('select-quick-message', quickMessage);
-    },
-    navigate(name) {
-      this.$router.push({
-        name,
-      });
     },
   },
 
@@ -200,9 +180,6 @@ export default {
     },
     quickMessagesVisible() {
       return !this.showFlowsTrigger && this.showQuickMessages;
-    },
-    isHistoryView() {
-      return this.$route.name === 'closed-rooms';
     },
     isViewMode() {
       return !!this.viewedAgent;
@@ -255,16 +232,6 @@ section.chats-layout {
     padding: 0 0 $unnnic-spacing-xs $unnnic-spacing-xs;
 
     grid-column: 1;
-
-    .flows-trigger-button {
-      button {
-        width: 100%;
-      }
-    }
-
-    .history-button {
-      margin-right: $unnnic-spacing-xs;
-    }
 
     .room-list {
       overflow-y: auto;

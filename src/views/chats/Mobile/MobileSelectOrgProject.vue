@@ -74,7 +74,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('config', ['setProject']),
+    ...mapActions('config', ['setProjectUuid']),
     logout() {
       Keycloak.keycloak.logout();
     },
@@ -87,7 +87,7 @@ export default {
   },
   watch: {
     projectUuid(newProjectUuid) {
-      this.setProject(newProjectUuid || '');
+      this.setProjectUuid(newProjectUuid || '');
       if (newProjectUuid) {
         this.$router.push({ name: 'home' });
       }
