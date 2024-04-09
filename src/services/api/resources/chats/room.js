@@ -111,4 +111,20 @@ export default {
     });
     return response.data;
   },
+
+  async editListQueues({ queue, permission }) {
+    const queuesData = await this.getListQueues();
+    const uuid = queuesData.user_permissions[0].uuid;
+
+    const userPermissions = {
+      queueUuid: queue,
+      queuePermission: permission,
+    };
+
+    const response = await http.patch(
+      `/authorization/queue/${uuid}/`,
+      userPermissions,
+    );
+    return response.data;
+  },
 };

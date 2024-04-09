@@ -102,7 +102,7 @@
             <UnnnicSelectSmart
               v-model="queueTags"
               :options="queueTagsOptions"
-              multipleWithoutSelectsMessage=" "
+              multipleWithoutSelectsMessage="Nenhuma fila selecionada"
               multiple
             />
           </div>
@@ -113,13 +113,14 @@
           :text="$t('cancel')"
           type="tertiary"
           size="large"
-          @click="$emit('close')"
+          @click="closeModalQueue()"
         />
         <UnnnicButton
           :text="$t('save')"
           type="primary"
           size="large"
           :disabled="!verifySelectedLength"
+          @click="saveListQueues"
         />
       </template>
     </UnnnicModal>
@@ -166,31 +167,8 @@ export default {
         value: '',
         label: 'Selecione suas filas',
       },
-      {
-        value: '1',
-        label: 'Option 1',
-      },
-      {
-        value: '2',
-        label: 'Option 2',
-      },
-      {
-        value: '3',
-        label: 'Option 3',
-      },
-      {
-        value: '4',
-        label: 'Option 4',
-      },
-      {
-        value: '5',
-        label: 'Option 5',
-      },
-      {
-        value: '6',
-        label: 'Option 6',
-      },
     ],
+    globalRoleValue: 0,
   }),
   async mounted() {
     this.listRoom();
@@ -227,7 +205,7 @@ export default {
       );
     },
     verifySelectedLength() {
-      console.log(this.queueTags.length);
+      // console.log(this.queueTags.length);
       return this.queueTags.length > 0;
     },
   },
@@ -259,11 +237,11 @@ export default {
       },
     },
 
-    ['me.email'](newEmail) {
-      if (newEmail) {
-        this.getListQueues();
-      }
-    },
+    // ['me.email'](newEmail) {
+    //   if (newEmail) {
+    //     this.getListQueues();
+    //   }
+    // },
   },
   methods: {
     async openRoom(room) {
@@ -320,10 +298,16 @@ export default {
       }
     },
     openModalQueue() {
+      this.queueTagsOptions = [];
+      this.queueTags = [];
+
       this.showModalQueue = true;
+      this.getListQueues();
     },
+
     closeModalQueue() {
       this.showModalQueue = false;
+      this.queueTags = [];
     },
 
     async getListQueues() {
@@ -331,11 +315,54 @@ export default {
         let me = this.me.email;
         const response = await Room.getListQueues(me);
         console.log(response, 'response aqui');
-        console.log(me);
+        console.log(response.user_permissions.role, 'role aqui');
+        console.log(me, 'oi');
+
+        this.queueTags = [];
+        this.queueTagsOptions = [];
+
+        response.user_permissions.forEach((permission) => {
+          const isSelected = this.queueTags.includes(permission.uuid);
+
+          const roleValue = isSelected ? 1 : 2;
+
+          if (isSelected) {
+            this.queueTags.push(permission.uuid);
+          }
+
+          this.globalRoleValue = roleValue;
+
+          console.log(isSelected);
+          console.log('Valor do campo role:', roleValue);
+
+          this.queueTags.push({
+            value: permission.uuid,
+            label: permission.queue_name,
+          });
+
+          this.queueTagsOptions.push({
+            value: permission.uuid,
+            label: permission.queue_name,
+            role: roleValue,
+            selected: isSelected,
+          });
+        });
       } catch (error) {
-        // let me = this.me.email;
-        // console.log(me);
         console.error(error, 'erro aqui');
+      }
+    },
+
+    async saveListQueues(permission) {
+      const userPermissions = {
+        queue: permission.uuid,
+        queuePermission: permission.queue,
+      };
+
+      try {
+        const response = await Room.editListQueues(userPermissions);
+        console.log('Sucesso ao salvar:', response);
+      } catch (error) {
+        console.error(error, 'erro ao salvar');
       }
     },
   },
