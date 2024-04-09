@@ -5,12 +5,35 @@
     @scroll="onScroll"
   >
     <header>
-      <h1 class="title">Gerenciar Chats</h1>
+      <h1 class="title">{{ $t('config_chats.manage_chats') }}</h1>
       <p class="description">
-        Adicione, visualize e gerencie os setores, filas, gestores e agentes
-        dentro da sua organização.
+        {{ $t('config_chats.manage_description') }}
       </p>
     </header>
+
+    <section
+      class="settings-chats__project-configs"
+      v-if="projectConfig"
+    >
+      <section class="project-configs__config">
+        <UnnnicSwitch
+          v-model="projectConfig.can_use_bulk_transfer"
+          :textRight="configBulkTransferTranslation"
+        />
+        <UnnnicToolTip
+          enabled
+          :text="$t('config_chats.project_configs.bulk_transfer.tooltip')"
+          side="right"
+          maxWidth="20rem"
+        >
+          <UnnnicIcon
+            icon="information-circle-4"
+            scheme="neutral-soft"
+            size="sm"
+          />
+        </UnnnicToolTip>
+      </section>
+    </section>
 
     <section class="sectors">
       <div
@@ -19,7 +42,7 @@
       >
         <UnnnicCard
           type="blank"
-          text="Novo setor"
+          :text="$t('config_chats.new_sector')"
           icon="add"
           class="new-sector-card"
         />
@@ -29,18 +52,18 @@
         v-for="sector in sectors"
         class="sectors-list"
         :key="sector.id"
-        actionText="Abrir"
+        :actionText="$t('config_chats.open')"
         :name="sector.name"
         @action="navigate('sectors.edit', { uuid: sector.uuid })"
         :statuses="[
           {
-            title: 'Agentes',
+            title: $t('config_chats.agent_title'),
             icon: 'headphones',
             scheme: 'aux-purple',
             count: sector.agents,
           },
           {
-            title: 'Contatos',
+            title: $t('config_chats.contacts'),
             icon: 'person',
             scheme: 'aux-lemon',
             count: sector.contacts,
@@ -62,6 +85,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
+import Project from '@/services/api/resources/settings/project';
 import Sector from '@/services/api/resources/settings/sector';
 
 export default {
@@ -75,7 +101,25 @@ export default {
     sectors: [],
     isLoading: true,
     nextPage: null,
+
+    projectConfig: {
+      can_use_bulk_transfer: false,
+    },
   }),
+
+  computed: {
+    ...mapState({
+      project: (state) => state.config.project,
+    }),
+    configBulkTransferTranslation() {
+      const canBulkTransfer = this.projectConfig.can_use_bulk_transfer;
+      return this.$t(
+        `config_chats.project_configs.bulk_transfer.switch_${
+          canBulkTransfer ? 'active' : 'inactive'
+        }`,
+      );
+    },
+  },
 
   methods: {
     navigate(name, params) {
@@ -84,6 +128,14 @@ export default {
         params,
       });
     },
+
+    async updateProjectConfig() {
+      const { can_use_bulk_transfer } = this.projectConfig;
+      Project.update({
+        can_use_bulk_transfer,
+      });
+    },
+
     async listSectors() {
       try {
         this.isLoading = true;
@@ -125,18 +177,51 @@ export default {
       }
     },
   },
+
+  watch: {
+    project: {
+      immediate: true,
+      handler(newProject) {
+        if (newProject.config) {
+          this.projectConfig = newProject.config;
+        }
+      },
+    },
+    projectConfig: {
+      deep: true,
+      handler() {
+        this.updateProjectConfig();
+      },
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 .settings-chats {
+  padding-right: $unnnic-spacing-sm;
+
+  display: grid;
+  gap: $unnnic-spacing-sm;
+
   overflow-y: auto;
-  padding-right: 1rem;
-  // margin-right: 0.5rem;
+
+  &__project-configs {
+    display: grid;
+    gap: $unnnic-spacing-nano;
+
+    .project-configs__config {
+      display: flex;
+      gap: $unnnic-spacing-nano;
+      align-items: center;
+
+      .unnnic-tooltip {
+        display: flex;
+      }
+    }
+  }
 
   header {
-    margin-bottom: 1.5rem;
-
     .title {
       color: $unnnic-color-neutral-black;
       font-family: $unnnic-font-family-primary;

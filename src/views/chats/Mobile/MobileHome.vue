@@ -59,8 +59,6 @@
 <script>
 import { mapState } from 'vuex';
 
-import ProjectApi from '@/services/api/resources/settings/project';
-
 import TheCardGroups from '@/layouts/ChatsLayout/components/TheCardGroups';
 import FlowsTrigger from '@/layouts/ChatsLayout/components/FlowsTrigger';
 
@@ -91,14 +89,13 @@ export default {
       oldTab: '',
       isOpenedQuickMessages: false,
 
-      projectName: '',
       isCallingTransferAlert: false,
     };
   },
 
   computed: {
     ...mapState({
-      project: (state) => state.config.project,
+      projectName: (state) => state.config.project.name,
       room: (state) => state.chats.rooms.activeRoom,
       discussion: (state) => state.chats.discussions.activeDiscussion,
     }),
@@ -158,11 +155,6 @@ export default {
   methods: {
     homeBack() {
       this.$router.push({ name: 'orgs' });
-    },
-
-    async getProjectName() {
-      const project = await ProjectApi.getInfo();
-      this.projectName = project.data.name || '';
     },
 
     updateCurrentTab(tab) {
@@ -258,12 +250,6 @@ export default {
 
       if (oldTab === 'preferences') {
         this.closeQuickMessages();
-      }
-    },
-
-    project(newProject) {
-      if (newProject) {
-        this.getProjectName();
       }
     },
   },

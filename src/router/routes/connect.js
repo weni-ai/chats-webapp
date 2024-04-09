@@ -10,7 +10,7 @@ const routes = [
       token = token.replace('+', ' ').replace('Bearer ', '');
       const { projectUuid = '' } = to.query;
       await store.dispatch('config/setToken', token);
-      await store.dispatch('config/setProject', projectUuid);
+      await store.dispatch('config/setProjectUuid', projectUuid);
 
       if (to.query.next) {
         const parsedNext = to.query.next.replace(

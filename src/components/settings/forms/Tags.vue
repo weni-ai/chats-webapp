@@ -28,7 +28,7 @@
         />
         <UnnnicButton
           type="secondary"
-          text="Adicionar"
+          :text="$t('add')"
           @click="addTag"
         />
       </section>
