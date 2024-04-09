@@ -227,6 +227,11 @@
       "en": "Add new sector",
       "es": "Agregar nuevo sector"
     },
+    "add_queue": {
+      "pt-br": "Adicionar nova fila",
+      "en": "Add new queue",
+      "es": "Agregar nueva cola"
+    },
     "name": {
       "pt-br": "Nome do setor",
       "en": "Sector name",
