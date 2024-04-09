@@ -12,6 +12,8 @@ import Profile from '@/services/api/resources/profile';
 import Project from './services/api/resources/settings/project';
 import WS from '@/services/api/websocket/setup';
 
+import { getProject } from '@/utils/config';
+
 const moment = require('moment');
 
 export default {
@@ -112,7 +114,7 @@ export default {
       const { data: project } = await Project.getInfo();
       this.$store.dispatch('config/setProject', {
         ...project,
-        uuid: this.appProject,
+        uuid: this.appProject || getProject(),
       });
     },
 
