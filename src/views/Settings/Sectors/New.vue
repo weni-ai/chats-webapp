@@ -22,7 +22,7 @@
         <FormQueue
           v-show="step === Steps.Queues"
           v-model="sector.queue"
-          label="Adicionar nova Fila"
+          :label="$t('sector.add_queue')"
           showInfoIcon
           :sector="sector"
           @validate="isQueuesFormValid = $event"
@@ -58,7 +58,7 @@
         v-else
         :disabled="!isActiveFormValid"
         type="secondary"
-        text="Salvar"
+        :text="$t('save')"
         @click="nextStep"
       />
     </div>
@@ -124,7 +124,11 @@ export default {
       isOpenSectorConfirmationDialog: false,
       Steps,
       step: Steps.General,
-      stepsTitles: [this.$t('sector.geral'), this.$t('sector.queues'), this.$t('sector.tags')],
+      stepsTitles: [
+        this.$t('sector.geral'),
+        this.$t('sector.queues'),
+        this.$t('sector.tags'),
+      ],
     };
   },
 
