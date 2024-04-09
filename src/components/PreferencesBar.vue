@@ -147,7 +147,7 @@ export default {
       const {
         data: { connection_status },
       } = await Profile.updateStatus({
-        projectUuid: this.$store.state.config.project,
+        projectUuid: this.$store.state.config.project.uuid,
         status: online ? 'ONLINE' : 'OFFLINE',
       });
 
@@ -159,7 +159,7 @@ export default {
 
     async getStatus() {
       const response = await Profile.status({
-        projectUuid: this.$store.state.config.project,
+        projectUuid: this.$store.state.config.project.uuid,
       });
       this.$store.state.config.status = response.data.connection_status;
     },

@@ -333,11 +333,6 @@
           "en": "Disabled signature",
           "es": "Firma discapacitada"
         }
-      },
-      "bulk_transfer": {
-        "pt-br": "Permitir transferências para mais de um contato",
-        "en": "Allow transfers to more than one contact",
-        "es": "Permitir transferencias a más de un contacto"
       }
     }
   },
@@ -1835,7 +1830,7 @@
       }
     }
   },
-  "config_chats" : {
+  "config_chats": {
     "manage_chats": {
       "pt-br": "Gerenciar Chats",
       "en": "Manage chats",
@@ -1845,6 +1840,25 @@
       "pt-br": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
       "en": "Add, view and manage sectors, queues, managers and agents within your organization.",
       "es": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización."
+    },
+    "project_configs": {
+      "bulk_transfer": {
+        "tooltip": {
+          "pt-br": "Essa função permite que agentes transfiram diversos contatos de uma vez para uma fila ou agente",
+          "en": "This function allows agents to transfer various contacts at once to a row or agent",
+          "es": "Esta función permite a los agentes transferir varios contactos a la vez a una fila o agente"
+        },
+        "switch_active": {
+          "pt-br": "Transferência de contatos em massa ativo",
+          "en": "Bulk contact transfer active",
+          "es": "Transferencia de contactos en masa activa"
+        },
+        "switch_inactive": {
+          "pt-br": "Transferência de contatos em massa desativado",
+          "en": "Bulk contact transfer disabled",
+          "es": "Transferencia de contactos en masa discapacitada"
+        }
+      }
     },
     "new_sector": {
       "pt-br": "Novo setor",

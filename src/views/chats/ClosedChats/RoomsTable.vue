@@ -135,13 +135,6 @@ export default {
     ModalClosedChatsFilters,
   },
 
-  props: {
-    project: {
-      type: Object,
-      default: null,
-    },
-  },
-
   data: () => ({
     isMobile: isMobile(),
 

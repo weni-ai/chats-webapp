@@ -70,7 +70,7 @@
         :label="$t('chats.in_progress', { length: rooms.length })"
         :rooms="rooms"
         @open="openRoom"
-        withSelection
+        :withSelection="project.config.can_use_bulk_transfer"
       />
       <CardGroup
         v-if="rooms_sent_flows.length"
@@ -140,6 +140,7 @@ export default {
     ...mapState({
       discussions: (state) => state.chats.discussions.discussions,
       listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
+      project: (state) => state.config.project,
     }),
 
     totalUnreadMessages() {

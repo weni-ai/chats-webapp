@@ -1,5 +1,6 @@
 <template>
   <UnnnicModal
+    data-testid="modal-bulk-transfer"
     :text="$t('bulk_transfer.transfer_selected_contacts')"
     class="modal-bulk-transfer"
     :closeIcon="false"
@@ -8,6 +9,7 @@
       <section class="select-destination__field">
         <UnnnicLabel :label="$t('queue')" />
         <UnnnicSelectSmart
+          data-testid="select-queue"
           v-model="selectedQueue"
           :options="queues"
           autocomplete
@@ -18,48 +20,27 @@
       <section class="select-destination__field">
         <UnnnicLabel :label="$t('agent')" />
         <UnnnicSelectSmart
+          data-testid="select-agent"
           v-model="selectedAgent"
-          :disabled="selectedQueue[0]?.value === '' || agents?.length < 2"
+          :disabled="isAgentsFieldDisabled"
           :options="agents"
           autocomplete
           autocompleteIconLeft
           autocompleteClearOnFocus
         />
       </section>
-      <!-- <section class="select-destination__radios">
-        <UnnnicRadio
-          size="md"
-          v-model="destinationType"
-          value="agent"
-        >
-          {{ $t('agent') }}
-        </UnnnicRadio>
-
-        <UnnnicRadio
-          size="md"
-          v-model="destinationType"
-          value="queue"
-        >
-          {{ $t('queue') }}
-        </UnnnicRadio>
-      </section>
-      <UnnnicSelectSmart
-        v-model="selectedDestination"
-        :options="destinations"
-        autocomplete
-        autocompleteIconLeft
-        autocompleteClearOnFocus
-      /> -->
     </main>
 
     <template #options>
       <UnnnicButton
+        data-testid="cancel-button"
         :text="$t('cancel')"
         type="tertiary"
         size="large"
         @click="$emit('close')"
       />
       <UnnnicButton
+        data-testid="transfer-button"
         :text="$t('transfer')"
         type="primary"
         size="large"
@@ -74,7 +55,6 @@
 <script>
 import Room from '@/services/api/resources/chats/room';
 import { mapState } from 'vuex';
-// import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
@@ -83,9 +63,9 @@ export default {
 
   data() {
     return {
-      queues: [{ value: '', label: this.$t('select_queue') }],
+      queues: [],
       selectedQueue: [],
-      agents: [{ value: '', label: this.$t('select_agent') }],
+      agents: [],
       selectedAgent: [],
 
       isLoadingBulkTransfer: false,
@@ -94,6 +74,8 @@ export default {
 
   created() {
     this.getQueues();
+    this.queues = this.queuesDefault;
+    this.agents = this.agentsDefault;
   },
 
   computed: {
@@ -101,37 +83,46 @@ export default {
       selectedRoomsToTransfer: (state) =>
         state.chats.rooms.selectedRoomsToTransfer,
     }),
+
+    queuesDefault() {
+      return [{ value: '', label: this.$t('select_queue') }];
+    },
+    agentsDefault() {
+      return [{ value: '', label: this.$t('select_agent') }];
+    },
+
+    isAgentsFieldDisabled() {
+      return this.selectedQueue[0]?.value === '' || this.agents?.length < 2;
+    },
   },
 
   methods: {
     async getQueues() {
       const newQueues = await Queue.listByProject();
 
-      const treatedQueues = this.queues;
-      treatedQueues
-        .concat(newQueues.results)
-        .forEach(({ name, sector_name, uuid }) => {
-          treatedQueues.push({
-            queue_name: name,
-            label: `${name} | ${this.$t('sector.title')} ${sector_name}`,
-            value: uuid,
-          });
-        });
-      this.queues = treatedQueues;
+      const treatedQueues = newQueues.results.map(
+        ({ name, sector_name, uuid }) => ({
+          queue_name: name,
+          label: `${name} | ${this.$t('sector.title')} ${sector_name}`,
+          value: uuid,
+        }),
+      );
+
+      this.queues = [...this.queuesDefault, ...treatedQueues];
     },
 
-    // async listAgents() {
-    //   this.agents = (
-    //     await Sector.agents({ sectorUuid: this.room.queue.sector })
-    //   )
-    //     .filter((agent) => agent.email !== this.$store.state.profile.me.email)
-    //     .map(({ first_name, last_name, email }) => {
-    //       return {
-    //         name: [first_name, last_name].join(' ').trim() || email,
-    //         email,
-    //       };
-    //     });
-    // },
+    async getAgents(queueUuid) {
+      const newAgents = await Queue.agentsToTransfer(queueUuid);
+
+      const treatedAgents = newAgents
+        .filter((agent) => agent.email !== this.$store.state.profile.me.email)
+        .map(({ first_name, last_name, email }) => ({
+          label: [first_name, last_name].join(' ').trim() || email,
+          value: email,
+        }));
+
+      this.agents = [...this.agentsDefault, ...treatedAgents];
+    },
     async bulkTransfer() {
       const { selectedRoomsToTransfer } = this;
       const selectedQueue = this.selectedQueue?.[0]?.value;
@@ -151,7 +142,7 @@ export default {
     },
 
     callSuccessAlert() {
-      const selectedAgent = this.selectedAgent?.[0]?.value;
+      const selectedAgent = this.selectedAgent?.[0]?.label;
       const successTranslation = `bulk_transfer.${
         selectedAgent ? 'agent_transfer_success' : 'queue_transfer_success'
       }`;
@@ -178,6 +169,15 @@ export default {
         props: { text, type },
         seconds: 5,
       });
+    },
+  },
+
+  watch: {
+    selectedQueue(newSelectedQueue) {
+      const queue = newSelectedQueue[0]?.value;
+      if (queue) {
+        this.getAgents(queue);
+      }
     },
   },
 };
