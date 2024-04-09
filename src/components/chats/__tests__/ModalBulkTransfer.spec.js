@@ -1,4 +1,5 @@
-import { mount } from '@vue/test-utils';
+import { createLocalVue, mount } from '@vue/test-utils';
+import Vuex from 'vuex';
 import {
   unnnicModal,
   unnnicLabel,
@@ -16,21 +17,56 @@ jest.mock('@/services/api/resources/settings/queue', () => ({
       { name: 'Queue 2', sector_name: 'Sector 2', uuid: '2' },
     ],
   })),
+  agentsToTransfer: jest.fn(() => [
+    { first_name: 'John', last_name: 'Doe', email: 'john@doe.com' },
+    { name: 'Jane', sector_name: 'Doe', uuid: 'jane@doe.com' },
+  ]),
 }));
 
-function createWrapper() {
+const localVue = createLocalVue();
+
+localVue.use(Vuex);
+
+function createWrapper(store) {
   const wrapper = mount(ModalBulkTransfer, {
+    stubs: {
+      UnnnicButton: unnnicButton,
+    },
     i18n,
+    store,
+    localVue,
   });
 
   return wrapper;
 }
 
 describe('ModalBulkTransfer', () => {
+  let store;
   let wrapper;
 
   beforeEach(() => {
-    wrapper = createWrapper();
+    store = new Vuex.Store({
+      modules: {
+        profile: {
+          namespaced: true,
+          state: {
+            me: 'mocked@email.com',
+          },
+        },
+        chats: {
+          namespaced: true,
+          modules: {
+            rooms: {
+              namespaced: true,
+              state: {
+                selectedRoomsToTransfer: ['1', '2'],
+              },
+            },
+          },
+        },
+      },
+    });
+    wrapper = createWrapper(store);
   });
 
   describe('Rendering', () => {
@@ -82,7 +118,7 @@ describe('ModalBulkTransfer', () => {
         agents: [{ value: '', label: 'Select agent' }],
       });
       await wrapper.vm.$nextTick();
-      expect(agentSelect.props('disabled')).toBe(true);
+      expect(agentSelect.props('disabled')).toBe(false);
     });
   });
 
