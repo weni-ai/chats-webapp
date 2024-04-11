@@ -11,12 +11,18 @@
       :placeholder="$t('chats.search_contact')"
     ></UnnnicInput>
     <div class="order-by">
-      <UnnnicButton
-        iconCenter="filter_list"
-        type="secondary"
-        size="small"
-        @click="openModalQueue"
-      />
+      <UnnnicToolTip
+        enabled
+        text="Selecionar filas"
+        side="right"
+      >
+        <UnnnicButton
+          iconCenter="filter_list"
+          type="secondary"
+          size="small"
+          @click="openModalQueue"
+        />
+      </UnnnicToolTip>
       <div>
         <span>{{ $t('chats.room_list.order_by') }}</span>
       </div>
@@ -98,12 +104,21 @@
       <section class="queue-modal-form">
         <div class="queue-modal-select">
           <div class="queue-modal-input">
+            <div v-if="queueTags.length === 0">
+              <!-- <UnnnicIconSvg
+                icon="alert-circle-1"
+                scheme="neutral-white"
+                size="sm"
+              /> -->
+              <p>Selecione pelo menos uma fila para salvar alterações</p>
+            </div>
             <UnnnicLabel label="Selecione as filas" />
             <UnnnicSelectSmart
               v-model="queueTags"
               :options="queueTagsOptions"
               multipleWithoutSelectsMessage="Nenhuma fila selecionada"
               multiple
+              @change="handleQueuesOptions"
             />
           </div>
         </div>
@@ -166,9 +181,9 @@ export default {
       {
         value: '',
         label: 'Selecione suas filas',
+        role: '',
       },
     ],
-    globalRoleValue: 0,
   }),
   async mounted() {
     this.listRoom();
@@ -242,6 +257,25 @@ export default {
     //     this.getListQueues();
     //   }
     // },
+
+    queueTags: function (queueTags) {
+      this.handleQueuesOptions(queueTags);
+    },
+
+    queueTagsOptions: {
+      handler(newVal) {
+        if (newVal.length === 0) {
+          this.queueTagsOptions = [
+            {
+              uuid: null,
+              role: 0,
+              label: 'Selecione suas filas',
+            },
+          ];
+        }
+        console.log(newVal.length);
+      },
+    },
   },
   methods: {
     async openRoom(room) {
@@ -297,72 +331,77 @@ export default {
         this.searchForMoreRooms(true);
       }
     },
-    openModalQueue() {
-      this.queueTagsOptions = [];
-      this.queueTags = [];
 
+    openModalQueue() {
       this.showModalQueue = true;
       this.getListQueues();
+      this.queueTagsOptions = [];
+      this.queueTags = [];
     },
 
     closeModalQueue() {
       this.showModalQueue = false;
       this.queueTags = [];
+      this.queueTagsOptions = [];
     },
 
     async getListQueues() {
       try {
         let me = this.me.email;
         const response = await Room.getListQueues(me);
-        console.log(response, 'response aqui');
-        console.log(response.user_permissions.role, 'role aqui');
-        console.log(me, 'oi');
-
-        this.queueTags = [];
-        this.queueTagsOptions = [];
 
         response.user_permissions.forEach((permission) => {
-          const isSelected = this.queueTags.includes(permission.uuid);
-
-          const roleValue = isSelected ? 1 : 2;
-
-          if (isSelected) {
-            this.queueTags.push(permission.uuid);
+          if (permission.role === 1) {
+            this.queueTags.push({
+              value: permission.uuid,
+              label: permission.queue_name,
+              role: permission.role,
+            });
           }
-
-          this.globalRoleValue = roleValue;
-
-          console.log(isSelected);
-          console.log('Valor do campo role:', roleValue);
-
-          this.queueTags.push({
-            value: permission.uuid,
-            label: permission.queue_name,
-          });
 
           this.queueTagsOptions.push({
             value: permission.uuid,
             label: permission.queue_name,
-            role: roleValue,
-            selected: isSelected,
+            role: permission.role,
           });
         });
       } catch (error) {
-        console.error(error, 'erro aqui');
+        console.error(error);
       }
     },
 
-    async saveListQueues(permission) {
-      const userPermissions = {
-        queue: permission.uuid,
-        queuePermission: permission.queue,
-      };
-
+    async saveListQueues() {
       try {
-        const response = await Room.editListQueues(userPermissions);
-        console.log('Sucesso ao salvar:', response);
+        const options = this.queueTagsOptions.map((tag) => tag.value);
+        const optionsTags = this.queueTags.map((tag) => tag.value);
+        const filter = options.filter((tag) => !optionsTags.includes(tag));
+
+        const selectedTags = optionsTags.map((tag) => ({
+          uuid: tag,
+          role: 1,
+        }));
+
+        const unselectedTags = filter.map((tag) => ({
+          uuid: tag,
+          role: 2,
+        }));
+
+        const response = await Room.editListQueues(
+          selectedTags.concat(unselectedTags),
+        );
+
+        console.log(response, 'response save');
+
+        return response;
       } catch (error) {
-        console.error(error, 'erro ao salvar');
+        console.error(error);
+      }
+    },
+
+    handleQueuesOptions(selectedValues) {
+      console.log('Filas selecionadas:', selectedValues);
+      if (selectedValues.length === 0) {
+        console.log('zeroo');
       }
     },
   },

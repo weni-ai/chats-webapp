@@ -96,11 +96,6 @@ export default {
     const { me } = Profile.state;
     const userEmail = me.email;
     const project = getProject();
-
-    console.log(Profile.state);
-    console.log(Profile.state.me);
-    console.log(Profile.state.me.email);
-
     const params = {
       user_email: userEmail || 'teste',
       project: project,
@@ -112,19 +107,21 @@ export default {
     return response.data;
   },
 
-  async editListQueues({ queue, permission }) {
-    const queuesData = await this.getListQueues();
-    const uuid = queuesData.user_permissions[0].uuid;
+  async editListQueues(queues) {
+    const requests = queues.map((permission) => {
+      const uuid = permission.uuid;
+      const requestBody = {
+        role: permission.role,
+      };
 
-    const userPermissions = {
-      queueUuid: queue,
-      queuePermission: permission,
-    };
+      return http.patch(
+        `/authorization/queue/${uuid}/update_queue_permissions/`,
+        requestBody,
+      );
+    });
 
-    const response = await http.patch(
-      `/authorization/queue/${uuid}/`,
-      userPermissions,
-    );
-    return response.data;
+    const responses = await Promise.all(requests);
+
+    return responses.every((response) => response.status === 200);
   },
 };
