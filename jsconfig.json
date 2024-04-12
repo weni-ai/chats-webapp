@@ -15,5 +15,29 @@
       "dom.iterable",
       "scripthost"
     ]
+  },
+  "pwa": {
+    "name": "Weni Chats",
+    "short_name": "Weni Chats",
+    "description": "O Weni Chats é o módulo de atendimento humano dentro da Weni Plataforma. Crie, personalize, atenda e administre contatos e conversas. Comunique-se com integração no WhatsApp e outros canais da sua empresa em um espaço simples e completo. Comece agora Falar com a gente!",
+    "lang": "pt",
+    "id": "weni-chats",
+    "start_url": "https://chats.dev.cloud.weni.ai/rooms",
+    "scope": "https://chats.dev.cloud.weni.ai/rooms",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#00A49F",
+    "icons": [
+      {
+        "src": "/public/img/icons/weni-192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "/public/img/icons/weni-512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
   }
 }
