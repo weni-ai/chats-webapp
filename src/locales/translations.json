@@ -511,6 +511,46 @@
         "en": "Contact history",
         "es": "Historia del contacto"
       }
+    },
+    "select_queues": {
+      "pt-br": "Selecionar filas",
+      "en": "Select queues",
+      "es": "Seleccionar colas"
+    },
+    "select_services_queues": {
+      "pt-br": "Selecionar filas de atendimento",
+      "en": "Select service queues",
+      "es": "Seleccionar colas de atención"
+    },
+    "select_at_least": {
+      "pt-br": "Selecione pelo menos uma fila para salvar alterações",
+      "en": "Select at least one queue to save changes",
+      "es": "Seleccione al menos una cola para guardar los cambios"
+    },
+    "select_the_queues": {
+      "pt-br": "Selecione as filas",
+      "en": "Select queues",
+      "es": "Seleccionar colas"
+    },
+    "select_your_queues": {
+      "pt-br": "Selecione suas filas",
+      "en": "Select your queues",
+      "es": "Selecciona tus colas"
+    },
+    "no_queue_selected": {
+      "pt-br": "Nenhuma fila selecionada",
+      "en": "No queue selected",
+      "es": "Ninguna cola seleccionada"
+    },
+    "success_update_queues": {
+      "pt-br": "Suas filas de atendimento foram atualizadas",
+      "en": "Your service queues have been updated",
+      "es": "Tus colas de servicio han sido actualizadas"
+    },
+    "error_update_queues": {
+      "pt-br": "Não foi possível atualizar suas filas de atendimento",
+      "en": "Unable to update your service queues",
+      "es": "No se pueden actualizar sus colas de servicio"
     }
   },
   "dashboard": {

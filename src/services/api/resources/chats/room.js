@@ -108,7 +108,9 @@ export default {
   },
 
   async editListQueues(queues) {
-    const requests = queues.map((permission) => {
+    const validQueues = queues.filter((permission) => permission.uuid);
+
+    const requests = validQueues.map((permission) => {
       const uuid = permission.uuid;
       const requestBody = {
         role: permission.role,
@@ -121,7 +123,7 @@ export default {
     });
 
     const responses = await Promise.all(requests);
-
+    console.log(responses);
     return responses.every((response) => response.status === 200);
   },
 };

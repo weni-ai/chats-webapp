@@ -13,7 +13,7 @@
     <div class="order-by">
       <UnnnicToolTip
         enabled
-        text="Selecionar filas"
+        :text="$t('chats.select_queues')"
         side="right"
         v-if="!isMobile"
       >
@@ -100,7 +100,7 @@
       v-if="showModalQueue"
       @close="closeModalQueue"
       class="queue-modal"
-      text="Selecionar filas de atendimento"
+      :text="$t('chats.select_services_queues')"
     >
       <section class="queue-modal-form">
         <div
@@ -113,16 +113,16 @@
             size="md"
             scheme="feedback-yellow"
           />
-          <p>Selecione pelo menos uma fila para salvar alterações</p>
+          <p>{{ $t('chats.select_at_least') }}</p>
         </div>
         <div class="queue-modal-select">
           <div class="queue-modal-input">
-            <UnnnicLabel label="Selecione as filas" />
+            <UnnnicLabel :label="$t('chats.select_the_queues')" />
             <UnnnicSelectSmart
               v-model="permissionQueues"
-              :options="permissionQueuesOptions"
-              multipleWithoutSelectsMessage="Nenhuma fila selecionada"
               multiple
+              :options="permissionQueuesOptions"
+              :multipleWithoutSelectsMessage="$t('chats.no_queue_selected')"
             />
           </div>
         </div>
@@ -151,6 +151,7 @@ import isMobile from 'is-mobile';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 import Room from '@/services/api/resources/chats/room';
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
+import Queues from '@/services/api/resources/chats/queues';
 import CardGroup from './CardGroup';
 export default {
   name: 'TheCardGroups',
@@ -312,7 +313,7 @@ export default {
       this.permissionQueuesOptions = [
         {
           value: '',
-          label: 'Selecione suas filas',
+          label: this.$t('chats.select_your_queues'),
         },
       ];
       this.permissionQueues = [];
@@ -324,7 +325,7 @@ export default {
       this.permissionQueuesOptions = [
         {
           value: '',
-          label: 'Selecione suas filas',
+          label: this.$t('chats.select_your_queues'),
         },
       ];
     },
@@ -332,7 +333,7 @@ export default {
     async getListQueues() {
       try {
         let me = this.me.email;
-        const response = await Room.getListQueues(me);
+        const response = await Queues.getListQueues(me);
 
         response.user_permissions.forEach((permission) => {
           if (permission.role === 1) {
@@ -374,29 +375,27 @@ export default {
           selectedTags.concat(unselectedTags),
         );
 
-        console.log(response, 'response save');
-
         callUnnnicAlert({
           props: {
-            text: 'Suas filas de atendimento foram atualizadas',
+            text: this.$t('chats.success_update_queues'),
             type: 'success',
           },
           seconds: 5,
         });
 
-        this.closeModalQueue;
+        this.showModalQueue = false;
 
         return response;
       } catch (error) {
         console.error(error);
         callUnnnicAlert({
           props: {
-            text: 'Não foi possível atualizar suas filas de atendimento',
+            text: this.$t('chats.error_update_queues'),
             type: 'error',
           },
           seconds: 5,
         });
-        this.closeModalQueue;
+        this.showModalQueue = false;
       }
     },
   },
