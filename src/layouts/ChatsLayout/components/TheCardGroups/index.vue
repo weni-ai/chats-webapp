@@ -149,9 +149,8 @@
 import { mapState, mapGetters } from 'vuex';
 import isMobile from 'is-mobile';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
-import Room from '@/services/api/resources/chats/room';
-import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import Queues from '@/services/api/resources/chats/queues';
+import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup';
 export default {
   name: 'TheCardGroups',
@@ -371,7 +370,7 @@ export default {
           role: 2,
         }));
 
-        const response = await Room.editListQueues(
+        const response = await Queues.editListQueues(
           selectedTags.concat(unselectedTags),
         );
 
