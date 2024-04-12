@@ -15,6 +15,7 @@
         enabled
         text="Selecionar filas"
         side="right"
+        v-if="!isMobile"
       >
         <UnnnicButton
           iconCenter="filter_list"
@@ -102,23 +103,26 @@
       text="Selecionar filas de atendimento"
     >
       <section class="queue-modal-form">
+        <div
+          v-if="!verifySelectedLength"
+          class="queue-modal-disclaimer"
+        >
+          <UnnnicIconSvg
+            filled
+            icon="alert-circle-1"
+            size="md"
+            scheme="feedback-yellow"
+          />
+          <p>Selecione pelo menos uma fila para salvar alterações</p>
+        </div>
         <div class="queue-modal-select">
           <div class="queue-modal-input">
-            <div v-if="queueTags.length === 0">
-              <!-- <UnnnicIconSvg
-                icon="alert-circle-1"
-                scheme="neutral-white"
-                size="sm"
-              /> -->
-              <p>Selecione pelo menos uma fila para salvar alterações</p>
-            </div>
             <UnnnicLabel label="Selecione as filas" />
             <UnnnicSelectSmart
-              v-model="queueTags"
-              :options="queueTagsOptions"
+              v-model="permissionQueues"
+              :options="permissionQueuesOptions"
               multipleWithoutSelectsMessage="Nenhuma fila selecionada"
               multiple
-              @change="handleQueuesOptions"
             />
           </div>
         </div>
@@ -143,8 +147,9 @@
 </template>
 <script>
 import { mapState, mapGetters } from 'vuex';
+import isMobile from 'is-mobile';
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
 import Room from '@/services/api/resources/chats/room';
-// import Profile from '@/services/api/resources/profile';
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup';
 export default {
@@ -176,19 +181,14 @@ export default {
     lastCreatedFilter: true,
     isSearching: false,
     showModalQueue: false,
-    queueTags: [],
-    queueTagsOptions: [
-      {
-        value: '',
-        label: 'Selecione suas filas',
-        role: '',
-      },
-    ],
+    noQueueSelected: false,
+    isMobile: isMobile(),
+    permissionQueues: [],
+    permissionQueuesOptions: [],
   }),
   async mounted() {
     this.listRoom();
     this.listDiscussions();
-    // this.getListQueues();
   },
   computed: {
     ...mapGetters({
@@ -220,8 +220,7 @@ export default {
       );
     },
     verifySelectedLength() {
-      // console.log(this.queueTags.length);
-      return this.queueTags.length > 0;
+      return this.permissionQueues.length > 0;
     },
   },
   watch: {
@@ -249,31 +248,6 @@ export default {
             this.isSearching = false;
           }
         }, TIME_TO_WAIT_TYPING);
-      },
-    },
-
-    // ['me.email'](newEmail) {
-    //   if (newEmail) {
-    //     this.getListQueues();
-    //   }
-    // },
-
-    queueTags: function (queueTags) {
-      this.handleQueuesOptions(queueTags);
-    },
-
-    queueTagsOptions: {
-      handler(newVal) {
-        if (newVal.length === 0) {
-          this.queueTagsOptions = [
-            {
-              uuid: null,
-              role: 0,
-              label: 'Selecione suas filas',
-            },
-          ];
-        }
-        console.log(newVal.length);
       },
     },
   },
@@ -335,14 +309,24 @@ export default {
     openModalQueue() {
       this.showModalQueue = true;
       this.getListQueues();
-      this.queueTagsOptions = [];
-      this.queueTags = [];
+      this.permissionQueuesOptions = [
+        {
+          value: '',
+          label: 'Selecione suas filas',
+        },
+      ];
+      this.permissionQueues = [];
     },
 
     closeModalQueue() {
       this.showModalQueue = false;
-      this.queueTags = [];
-      this.queueTagsOptions = [];
+      this.permissionQueues = [];
+      this.permissionQueuesOptions = [
+        {
+          value: '',
+          label: 'Selecione suas filas',
+        },
+      ];
     },
 
     async getListQueues() {
@@ -352,14 +336,14 @@ export default {
 
         response.user_permissions.forEach((permission) => {
           if (permission.role === 1) {
-            this.queueTags.push({
+            this.permissionQueues.push({
               value: permission.uuid,
               label: permission.queue_name,
               role: permission.role,
             });
           }
 
-          this.queueTagsOptions.push({
+          this.permissionQueuesOptions.push({
             value: permission.uuid,
             label: permission.queue_name,
             role: permission.role,
@@ -372,8 +356,8 @@ export default {
 
     async saveListQueues() {
       try {
-        const options = this.queueTagsOptions.map((tag) => tag.value);
-        const optionsTags = this.queueTags.map((tag) => tag.value);
+        const options = this.permissionQueuesOptions.map((tag) => tag.value);
+        const optionsTags = this.permissionQueues.map((tag) => tag.value);
         const filter = options.filter((tag) => !optionsTags.includes(tag));
 
         const selectedTags = optionsTags.map((tag) => ({
@@ -392,16 +376,27 @@ export default {
 
         console.log(response, 'response save');
 
+        callUnnnicAlert({
+          props: {
+            text: 'Suas filas de atendimento foram atualizadas',
+            type: 'success',
+          },
+          seconds: 5,
+        });
+
+        this.closeModalQueue;
+
         return response;
       } catch (error) {
         console.error(error);
-      }
-    },
-
-    handleQueuesOptions(selectedValues) {
-      console.log('Filas selecionadas:', selectedValues);
-      if (selectedValues.length === 0) {
-        console.log('zeroo');
+        callUnnnicAlert({
+          props: {
+            text: 'Não foi possível atualizar suas filas de atendimento',
+            type: 'error',
+          },
+          seconds: 5,
+        });
+        this.closeModalQueue;
       }
     },
   },
@@ -443,6 +438,20 @@ export default {
       display: grid;
       gap: $unnnic-spacing-sm;
       text-align: start;
+      .queue-modal-disclaimer {
+        display: flex;
+        flex-direction: row;
+        gap: $unnnic-spacing-xs;
+        justify-content: center;
+
+        padding: $unnnic-spacing-sm;
+
+        font-size: $unnnic-font-size-body-gt;
+        color: $unnnic-color-neutral-dark;
+
+        border-radius: 4px;
+        border: $unnnic-border-width-thin solid $unnnic-color-neutral-soft;
+      }
       .queue-modal-select {
         display: flex;
         gap: $unnnic-spacing-xs;
