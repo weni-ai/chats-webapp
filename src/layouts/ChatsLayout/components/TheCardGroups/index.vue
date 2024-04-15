@@ -149,7 +149,6 @@
 <script>
 import isMobile from 'is-mobile';
 import { mapState, mapGetters } from 'vuex';
-import isMobile from 'is-mobile';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 import Queues from '@/services/api/resources/chats/queues';
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
