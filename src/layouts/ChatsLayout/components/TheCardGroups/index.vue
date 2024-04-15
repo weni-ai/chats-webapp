@@ -356,22 +356,26 @@ export default {
 
     async saveListQueues() {
       try {
-        const options = this.permissionQueuesOptions.map((tag) => tag.value);
-        const optionsTags = this.permissionQueues.map((tag) => tag.value);
-        const filter = options.filter((tag) => !optionsTags.includes(tag));
+        const options = this.permissionQueuesOptions.map(
+          (queue) => queue.value,
+        );
+        const optionsQueues = this.permissionQueues.map((queue) => queue.value);
+        const filter = options.filter(
+          (queue) => !optionsQueues.includes(queue),
+        );
 
-        const selectedTags = optionsTags.map((tag) => ({
-          uuid: tag,
+        const selectedQueues = optionsQueues.map((queueUuid) => ({
+          uuid: queueUuid,
           role: 1,
         }));
 
-        const unselectedTags = filter.map((tag) => ({
-          uuid: tag,
+        const unselectedQueues = filter.map((queueUuid) => ({
+          uuid: queueUuid,
           role: 2,
         }));
 
         const response = await Queues.editListQueues(
-          selectedTags.concat(unselectedTags),
+          selectedQueues.concat(unselectedQueues),
         );
 
         callUnnnicAlert({
