@@ -112,7 +112,7 @@
           :queues="queues"
           @visualize="visualizeQueue"
           @add-queue="createQueue"
-          label="Criar nova fila"
+          :label="$t('queues.create_queue')"
           isEditing
         />
       </template>
@@ -503,6 +503,7 @@ export default {
         name,
         can_trigger_flows,
         can_edit_custom_fields,
+        config,
         sign_messages,
         workingDay,
         maxSimultaneousChatsByAgent,
@@ -512,6 +513,7 @@ export default {
         name,
         can_trigger_flows,
         can_edit_custom_fields,
+        config,
         sign_messages,
         work_start: workingDay.start,
         work_end: workingDay.end,

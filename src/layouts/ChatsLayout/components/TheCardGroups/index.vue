@@ -82,6 +82,7 @@
         :label="$t('chats.in_progress', { length: rooms.length })"
         :rooms="rooms"
         @open="openRoom"
+        :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
       />
       <CardGroup
         v-if="rooms_sent_flows.length"
@@ -146,6 +147,7 @@
   </div>
 </template>
 <script>
+import isMobile from 'is-mobile';
 import { mapState, mapGetters } from 'vuex';
 import isMobile from 'is-mobile';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
@@ -180,9 +182,9 @@ export default {
     createdOnFilter: false,
     lastCreatedFilter: true,
     isSearching: false,
+    isMobile: isMobile(),
     showModalQueue: false,
     noQueueSelected: false,
-    isMobile: isMobile(),
     permissionQueues: [],
     permissionQueuesOptions: [],
   }),
@@ -199,6 +201,7 @@ export default {
     ...mapState({
       discussions: (state) => state.chats.discussions.discussions,
       listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
+      project: (state) => state.config.project,
       me: (state) => state.profile.me,
     }),
     totalUnreadMessages() {

@@ -16,7 +16,7 @@
     />
     <TableMetrics
       :headers="agentsLabel"
-      :items="this.agents.project_agents"
+      :items="this.agents"
       title="Chats por agente"
       icon="indicator"
       class="grid-3"
@@ -104,15 +104,30 @@ export default {
   },
 
   methods: {
+    orderAgents(agents) {
+      const onlineAgents = agents.filter(
+        (agent) => agent.agent_status === 'ONLINE',
+      );
+      const offlineAgents = agents.filter(
+        (agent) => agent.agent_status === 'OFFLINE',
+      );
+
+      onlineAgents.sort((a, b) => a.first_name.localeCompare(b.first_name));
+      offlineAgents.sort((a, b) => a.first_name.localeCompare(b.first_name));
+
+      return onlineAgents.concat(offlineAgents);
+    },
+
     async agentInfo() {
       try {
-        this.agents = await DashboardManagerApi.getAgentInfo(
+        const response = await DashboardManagerApi.getAgentInfo(
           this.filter.sector,
           this.filter.agent,
           this.filter.tags,
           this.filter.filterDate.start,
           this.filter.filterDate.end,
         );
+        this.agents = this.orderAgents(response.project_agents);
       } catch (error) {
         console.log(error);
       }

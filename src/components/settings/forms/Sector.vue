@@ -21,7 +21,7 @@
       class="form-section"
     >
       <h2 class="title">
-        Adicionar novo setor
+        {{ $t('sector.add') }}
         <UnnnicToolTip
           enabled
           :text="$t('new_sector.sector_tip')"
@@ -38,8 +38,8 @@
 
       <UnnnicInput
         v-model="sector.name"
-        label="Nome do setor"
-        placeholder="Exemplo: Financeiro"
+        :label="$t('sector.name')"
+        :placeholder="$t('sector.placeholder')"
       />
     </section>
 

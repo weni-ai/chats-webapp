@@ -9,6 +9,12 @@ const defaultProps = {
       start: '',
       end: '',
     },
+    config: {
+      can_input_context: false,
+      completion_context: '',
+      can_use_bulk_transfer: false,
+      can_use_chat_completion: false,
+    },
     agents: [],
     queue: {
       uuid: '',

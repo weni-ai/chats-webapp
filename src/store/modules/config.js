@@ -1,13 +1,14 @@
 import Profile from '@/services/api/resources/profile';
 import {
   setToken as setLocalToken,
-  setProject as setLocalProject,
+  setProject as setLocalProjectUuid,
   setStatus as setLocalStatus,
 } from '@/utils/config';
 
 const mutations = {
   SET_TOKEN: 'SET_TOKEN',
   SET_PROJECT: 'SET_PROJECT',
+  SET_PROJECT_UUID: 'SET_PROJECT_UUID',
   SET_STATUS: 'SET_STATUS',
   SET_COPILOT_ACTIVE: 'SET_COPILOT_ACTIVE',
   SET_COPILOT_CUSTOM_RULES_ACTIVE: 'SET_COPILOT_CUSTOM_RULES_ACTIVE',
@@ -18,7 +19,7 @@ export default {
   namespaced: true,
   state: {
     token: '',
-    project: '',
+    project: {},
     status: '',
     copilot: {
       active: false,
@@ -32,6 +33,9 @@ export default {
     },
     [mutations.SET_PROJECT](state, project) {
       state.project = project;
+    },
+    [mutations.SET_PROJECT_UUID](state, uuid) {
+      state.project.uuid = uuid;
     },
     [mutations.SET_STATUS](state, status) {
       state.status = status;
@@ -51,8 +55,11 @@ export default {
       setLocalToken(token);
       commit(mutations.SET_TOKEN, token);
     },
+    async setProjectUuid({ commit }, project) {
+      setLocalProjectUuid(project);
+      commit(mutations.SET_PROJECT_UUID, project);
+    },
     async setProject({ commit }, project) {
-      setLocalProject(project);
       commit(mutations.SET_PROJECT, project);
     },
     setStatus({ commit }, status) {

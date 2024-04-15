@@ -91,4 +91,21 @@ export default {
     );
     return response.data;
   },
+
+  async bulkTranfer({ rooms = [], intended_agent = '', intended_queue = '' }) {
+    const { email: user_email } = Profile.state.me;
+    const body = { rooms_list: rooms };
+    const params = {
+      user_request: user_email,
+      ...(intended_agent
+        ? { user_email: intended_agent }
+        : { queue_uuid: intended_queue }),
+    };
+
+    const response = await http
+      .patch(`room/bulk_transfer/`, body, { params })
+      .then((response) => response)
+      .catch((error) => error.response);
+    return response;
+  },
 };

@@ -9,7 +9,10 @@ import { mapState } from 'vuex';
 
 import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
+import Project from './services/api/resources/settings/project';
 import WS from '@/services/api/websocket/setup';
+
+import { getProject } from '@/utils/config';
 
 const moment = require('moment');
 
@@ -44,7 +47,7 @@ export default {
       nextQuickMessagesShared: (state) =>
         state.chats.quickMessagesShared.nextQuickMessagesShared,
       appToken: (state) => state.config.token,
-      appProject: (state) => state.config.project,
+      appProject: (state) => state.config.project.uuid,
     }),
 
     configsForInitializeWebSocket() {
@@ -60,6 +63,7 @@ export default {
       handler(newAppToken) {
         if (newAppToken) {
           this.getUser();
+          this.getProject();
         }
       },
     },
@@ -104,6 +108,14 @@ export default {
     async getUser() {
       const user = await Profile.me();
       this.$store.commit('profile/setMe', user);
+    },
+
+    async getProject() {
+      const { data: project } = await Project.getInfo();
+      this.$store.dispatch('config/setProject', {
+        ...project,
+        uuid: this.appProject || getProject(),
+      });
     },
 
     async loadQuickMessages() {
@@ -162,7 +174,7 @@ export default {
 
     async getUserStatus() {
       const userStatus = localStorage.getItem('statusAgent');
-      const projectUuid = this.$store.state.config.project;
+      const projectUuid = this.$store.state.config.project.uuid;
       const {
         data: { connection_status: responseStatus },
       } = await Profile.status({
@@ -181,7 +193,7 @@ export default {
       const {
         data: { connection_status },
       } = await Profile.updateStatus({
-        projectUuid: this.$store.state.config.project,
+        projectUuid: this.$store.state.config.project.uuid,
         status,
       });
       this.$store.state.config.status = connection_status;
