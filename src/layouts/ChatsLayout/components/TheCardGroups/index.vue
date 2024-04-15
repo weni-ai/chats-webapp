@@ -15,7 +15,7 @@
         enabled
         :text="$t('chats.select_queues')"
         side="right"
-        v-if="!isMobile"
+        v-if="!isMobile && project.config?.can_use_queue_prioritization"
       >
         <UnnnicButton
           iconCenter="filter_list"

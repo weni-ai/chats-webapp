@@ -1898,6 +1898,23 @@
           "en": "Bulk contact transfer disabled",
           "es": "Transferencia de contactos en masa discapacitada"
         }
+      },
+      "queue_prioritization": {
+        "tooltip": {
+          "pt-br": "Essa função permite que agentes possam escolher as filas que receberão contatos, dentro das previamente selecionadas no setor",
+          "en": "This function allows agents to choose the queues that will receive contacts, within those previously selected in the sector",
+          "es": "Esta función permite a los agentes elegir las colas que recibirán contactos, dentro de las previamente seleccionadas en el sector."
+        },
+        "switch_active": {
+          "pt-br": "Seleção de filas pelos agentes ativa",
+          "en": "Queue selection by agents active",
+          "es": "Selección de cola por agentes activo"
+        },
+        "switch_inactive": {
+          "pt-br": "Seleção de filas pelos agentes inativa",
+          "en": "Queue selection by agents inactive",
+          "es": "Selección de cola por agentes inactivo"
+        }
       }
     },
     "new_sector": {

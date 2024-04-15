@@ -33,6 +33,26 @@
           />
         </UnnnicToolTip>
       </section>
+      <section class="project-configs__config">
+        <UnnnicSwitch
+          v-model="projectConfig.can_use_queue_prioritization"
+          :textRight="configQueuePrioritizationTranslation"
+        />
+        <UnnnicToolTip
+          enabled
+          :text="
+            $t('config_chats.project_configs.queue_prioritization.tooltip')
+          "
+          side="right"
+          maxWidth="20rem"
+        >
+          <UnnnicIcon
+            icon="information-circle-4"
+            scheme="neutral-soft"
+            size="sm"
+          />
+        </UnnnicToolTip>
+      </section>
     </section>
 
     <section class="sectors">
@@ -104,6 +124,7 @@ export default {
 
     projectConfig: {
       can_use_bulk_transfer: false,
+      can_use_queue_prioritization: false,
     },
   }),
 
@@ -119,6 +140,15 @@ export default {
         }`,
       );
     },
+    configQueuePrioritizationTranslation() {
+      const canQueuePrioritization =
+        this.projectConfig.can_use_queue_prioritization;
+      return this.$t(
+        `config_chats.project_configs.queue_prioritization.switch_${
+          canQueuePrioritization ? 'active' : 'inactive'
+        }`,
+      );
+    },
   },
 
   methods: {
@@ -130,9 +160,11 @@ export default {
     },
 
     async updateProjectConfig() {
-      const { can_use_bulk_transfer } = this.projectConfig;
+      const { can_use_bulk_transfer, can_use_queue_prioritization } =
+        this.projectConfig;
       Project.update({
         can_use_bulk_transfer,
+        can_use_queue_prioritization,
       });
     },
 
