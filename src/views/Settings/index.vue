@@ -182,7 +182,7 @@ export default {
     project: {
       immediate: true,
       handler(newProject) {
-        if (newProject) {
+        if (newProject.config) {
           this.projectConfig = newProject.config;
         }
       },

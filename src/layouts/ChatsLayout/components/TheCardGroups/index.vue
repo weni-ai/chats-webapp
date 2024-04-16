@@ -70,7 +70,7 @@
         :label="$t('chats.in_progress', { length: rooms.length })"
         :rooms="rooms"
         @open="openRoom"
-        :withSelection="project.config.can_use_bulk_transfer"
+        :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
       />
       <CardGroup
         v-if="rooms_sent_flows.length"
@@ -89,6 +89,7 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
 import { mapState, mapGetters } from 'vuex';
 
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
@@ -124,6 +125,7 @@ export default {
     createdOnFilter: false,
     lastCreatedFilter: true,
     isSearching: false,
+    isMobile: isMobile(),
   }),
 
   async mounted() {
