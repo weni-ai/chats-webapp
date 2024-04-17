@@ -21,7 +21,7 @@
           iconCenter="filter_list"
           type="secondary"
           size="small"
-          @click="openModalQueue"
+          @click="handleModalQueuePriorization"
         />
       </UnnnicToolTip>
       <div>
@@ -97,53 +97,10 @@
         {{ isSearching ? $t('without_results') : $t('without_chats') }}
       </p>
     </section>
-    <UnnnicModal
+    <ModalQueuePriorizations
       v-if="showModalQueue"
-      @close="closeModalQueue"
-      class="queue-modal"
-      :text="$t('chats.select_services_queues')"
-    >
-      <section class="queue-modal-form">
-        <div
-          v-if="!verifySelectedLength"
-          class="queue-modal-disclaimer"
-        >
-          <UnnnicIconSvg
-            filled
-            icon="alert-circle-1"
-            size="md"
-            scheme="feedback-yellow"
-          />
-          <p>{{ $t('chats.select_at_least') }}</p>
-        </div>
-        <div class="queue-modal-select">
-          <div class="queue-modal-input">
-            <UnnnicLabel :label="$t('chats.select_the_queues')" />
-            <UnnnicSelectSmart
-              v-model="permissionQueues"
-              multiple
-              :options="permissionQueuesOptions"
-              :multipleWithoutSelectsMessage="$t('chats.no_queue_selected')"
-            />
-          </div>
-        </div>
-      </section>
-      <template #options>
-        <UnnnicButton
-          :text="$t('cancel')"
-          type="tertiary"
-          size="large"
-          @click="closeModalQueue()"
-        />
-        <UnnnicButton
-          :text="$t('save')"
-          type="primary"
-          size="large"
-          :disabled="!verifySelectedLength"
-          @click="saveListQueues"
-        />
-      </template>
-    </UnnnicModal>
+      @close="handleModalQueuePriorization"
+    />
   </div>
 </template>
 <script>
@@ -153,11 +110,13 @@ import callUnnnicAlert from '@/utils/callUnnnicAlert';
 import Queues from '@/services/api/resources/chats/queues';
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup';
+import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
 export default {
   name: 'TheCardGroups',
   components: {
     RoomsListLoading,
     CardGroup,
+    ModalQueuePriorizations,
   },
   props: {
     disabled: {
@@ -308,16 +267,8 @@ export default {
       }
     },
 
-    openModalQueue() {
-      this.showModalQueue = true;
-      this.getListQueues();
-      this.permissionQueuesOptions = [
-        {
-          value: '',
-          label: this.$t('chats.select_your_queues'),
-        },
-      ];
-      this.permissionQueues = [];
+    handleModalQueuePriorization() {
+      this.showModalQueue = !this.showModalQueue;
     },
 
     closeModalQueue() {
@@ -436,48 +387,6 @@ export default {
     align-items: center;
     font-size: $unnnic-font-size-body-md;
     color: $unnnic-color-neutral-cloudy;
-  }
-  .queue-modal {
-    .queue-modal-form {
-      display: grid;
-      gap: $unnnic-spacing-sm;
-      text-align: start;
-      .queue-modal-disclaimer {
-        display: flex;
-        flex-direction: row;
-        gap: $unnnic-spacing-xs;
-        justify-content: center;
-
-        padding: $unnnic-spacing-sm;
-
-        font-size: $unnnic-font-size-body-gt;
-        color: $unnnic-color-neutral-dark;
-
-        border-radius: 4px;
-        border: $unnnic-border-width-thin solid $unnnic-color-neutral-soft;
-      }
-      .queue-modal-select {
-        display: flex;
-        gap: $unnnic-spacing-xs;
-        .queue-modal-input {
-          flex: 1;
-        }
-      }
-    }
-    :deep(.unnnic-modal-container) {
-      .unnnic-modal-container-background {
-        width: 50%;
-        &-body-description-container {
-          padding-bottom: 0;
-        }
-      }
-    }
-    :deep(.unnnic-select-smart) {
-      .dropdown-data {
-        position: fixed !important;
-        top: inherit !important;
-      }
-    }
   }
 }
 </style>
