@@ -5,7 +5,7 @@
     @close="$emit('close')"
   >
     <section class="queue-modal-form">
-      <div
+      <section
         v-if="!verifySelectedLength"
         class="queue-modal-disclaimer"
       >
@@ -16,9 +16,9 @@
           scheme="feedback-yellow"
         />
         <p>{{ $t('chats.select_at_least') }}</p>
-      </div>
-      <div class="queue-modal-select">
-        <div class="queue-modal-input">
+      </section>
+      <section class="queue-modal-select">
+        <section class="queue-modal-input">
           <UnnnicLabel :label="$t('chats.select_the_queues')" />
           <UnnnicSelectSmart
             v-model="permissionQueues"
@@ -26,8 +26,8 @@
             :options="permissionQueuesOptions"
             :multipleWithoutSelectsMessage="$t('chats.no_queue_selected')"
           />
-        </div>
-      </div>
+        </section>
+      </section>
     </section>
     <template #options>
       <UnnnicButton
@@ -58,6 +58,8 @@ export default {
     return {
       permissionQueues: [],
       permissionQueuesOptions: [],
+      roleIdSelected: 1,
+      roleIdUnSelected: 2,
       showModalQueue: false,
       noQueueSelected: false,
     };
@@ -118,17 +120,14 @@ export default {
           (queue) => !queuesValue.includes(queue),
         );
 
-        const ROLE_ID_SELECTED = 1;
-        const ROLE_ID_UNSELECTED = 2;
-
         const selectedQueues = queuesValue.map((queueUuid) => ({
           uuid: queueUuid,
-          role: ROLE_ID_SELECTED,
+          role: this.roleIdSelected,
         }));
 
         const unselectedQueues = filteringQueues.map((queueUuid) => ({
           uuid: queueUuid,
-          role: ROLE_ID_UNSELECTED,
+          role: this.roleIdUnSelected,
         }));
 
         const response = await Queues.editListQueues(
@@ -162,10 +161,9 @@ export default {
 
     updateQueuesPlaceholder() {
       const queuesValue = this.permissionQueues.map((queue) => queue.value);
-      const ROLE_ID_SELECTED = 1;
       const selectedQueues = queuesValue.map((queueUuid) => ({
         uuid: queueUuid,
-        role: ROLE_ID_SELECTED,
+        role: this.roleIdSelected,
       }));
 
       if (selectedQueues.length < 1) {
