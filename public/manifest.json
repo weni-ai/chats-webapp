@@ -6,7 +6,7 @@
   "id": "weni-chats",
   "start_url": "https://chats.dev.cloud.weni.ai/rooms",
   "scope": "https://chats.dev.cloud.weni.ai/rooms",
-  "display": "fullscreen",
+  "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#00A49F",
   "icons": [
