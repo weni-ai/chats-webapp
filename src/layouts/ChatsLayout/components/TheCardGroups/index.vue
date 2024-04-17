@@ -21,7 +21,7 @@
           iconCenter="filter_list"
           type="secondary"
           size="small"
-          @click="openModalQueue"
+          @click="handleModalQueuePriorization"
         />
       </UnnnicToolTip>
       <div>
@@ -97,67 +97,24 @@
         {{ isSearching ? $t('without_results') : $t('without_chats') }}
       </p>
     </section>
-    <UnnnicModal
+    <ModalQueuePriorizations
       v-if="showModalQueue"
-      @close="closeModalQueue"
-      class="queue-modal"
-      :text="$t('chats.select_services_queues')"
-    >
-      <section class="queue-modal-form">
-        <div
-          v-if="!verifySelectedLength"
-          class="queue-modal-disclaimer"
-        >
-          <UnnnicIconSvg
-            filled
-            icon="alert-circle-1"
-            size="md"
-            scheme="feedback-yellow"
-          />
-          <p>{{ $t('chats.select_at_least') }}</p>
-        </div>
-        <div class="queue-modal-select">
-          <div class="queue-modal-input">
-            <UnnnicLabel :label="$t('chats.select_the_queues')" />
-            <UnnnicSelectSmart
-              v-model="permissionQueues"
-              multiple
-              :options="permissionQueuesOptions"
-              :multipleWithoutSelectsMessage="$t('chats.no_queue_selected')"
-            />
-          </div>
-        </div>
-      </section>
-      <template #options>
-        <UnnnicButton
-          :text="$t('cancel')"
-          type="tertiary"
-          size="large"
-          @click="closeModalQueue()"
-        />
-        <UnnnicButton
-          :text="$t('save')"
-          type="primary"
-          size="large"
-          :disabled="!verifySelectedLength"
-          @click="saveListQueues"
-        />
-      </template>
-    </UnnnicModal>
+      @close="handleModalQueuePriorization"
+    />
   </div>
 </template>
 <script>
 import isMobile from 'is-mobile';
 import { mapState, mapGetters } from 'vuex';
-import callUnnnicAlert from '@/utils/callUnnnicAlert';
-import Queues from '@/services/api/resources/chats/queues';
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup';
+import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
 export default {
   name: 'TheCardGroups',
   components: {
     RoomsListLoading,
     CardGroup,
+    ModalQueuePriorizations,
   },
   props: {
     disabled: {
@@ -184,8 +141,6 @@ export default {
     isMobile: isMobile(),
     showModalQueue: false,
     noQueueSelected: false,
-    permissionQueues: [],
-    permissionQueuesOptions: [],
   }),
   async mounted() {
     this.listRoom();
@@ -201,7 +156,6 @@ export default {
       discussions: (state) => state.chats.discussions.discussions,
       listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
       project: (state) => state.config.project,
-      me: (state) => state.profile.me,
     }),
     totalUnreadMessages() {
       return this.rooms.reduce(
@@ -220,9 +174,6 @@ export default {
         this.rooms_sent_flows.length === 0 &&
         this.discussions.length === 0
       );
-    },
-    verifySelectedLength() {
-      return this.permissionQueues.length > 0;
     },
   },
   watch: {
@@ -308,100 +259,8 @@ export default {
       }
     },
 
-    openModalQueue() {
-      this.showModalQueue = true;
-      this.getListQueues();
-      this.permissionQueuesOptions = [
-        {
-          value: '',
-          label: this.$t('chats.select_your_queues'),
-        },
-      ];
-      this.permissionQueues = [];
-    },
-
-    closeModalQueue() {
-      this.showModalQueue = false;
-      this.permissionQueues = [];
-      this.permissionQueuesOptions = [
-        {
-          value: '',
-          label: this.$t('chats.select_your_queues'),
-        },
-      ];
-    },
-
-    async getListQueues() {
-      try {
-        let me = this.me.email;
-        const response = await Queues.getListQueues(me);
-
-        response.user_permissions.forEach((permission) => {
-          if (permission.role === 1) {
-            this.permissionQueues.push({
-              value: permission.uuid,
-              label: permission.queue_name,
-              role: permission.role,
-            });
-          }
-
-          this.permissionQueuesOptions.push({
-            value: permission.uuid,
-            label: permission.queue_name,
-            role: permission.role,
-          });
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    },
-
-    async saveListQueues() {
-      try {
-        const options = this.permissionQueuesOptions.map(
-          (queue) => queue.value,
-        );
-        const optionsQueues = this.permissionQueues.map((queue) => queue.value);
-        const filter = options.filter(
-          (queue) => !optionsQueues.includes(queue),
-        );
-
-        const selectedQueues = optionsQueues.map((queueUuid) => ({
-          uuid: queueUuid,
-          role: 1,
-        }));
-
-        const unselectedQueues = filter.map((queueUuid) => ({
-          uuid: queueUuid,
-          role: 2,
-        }));
-
-        const response = await Queues.editListQueues(
-          selectedQueues.concat(unselectedQueues),
-        );
-
-        callUnnnicAlert({
-          props: {
-            text: this.$t('chats.success_update_queues'),
-            type: 'success',
-          },
-          seconds: 5,
-        });
-
-        this.showModalQueue = false;
-
-        return response;
-      } catch (error) {
-        console.error(error);
-        callUnnnicAlert({
-          props: {
-            text: this.$t('chats.error_update_queues'),
-            type: 'error',
-          },
-          seconds: 5,
-        });
-        this.showModalQueue = false;
-      }
+    handleModalQueuePriorization() {
+      this.showModalQueue = !this.showModalQueue;
     },
   },
 };
@@ -436,48 +295,6 @@ export default {
     align-items: center;
     font-size: $unnnic-font-size-body-md;
     color: $unnnic-color-neutral-cloudy;
-  }
-  .queue-modal {
-    .queue-modal-form {
-      display: grid;
-      gap: $unnnic-spacing-sm;
-      text-align: start;
-      .queue-modal-disclaimer {
-        display: flex;
-        flex-direction: row;
-        gap: $unnnic-spacing-xs;
-        justify-content: center;
-
-        padding: $unnnic-spacing-sm;
-
-        font-size: $unnnic-font-size-body-gt;
-        color: $unnnic-color-neutral-dark;
-
-        border-radius: 4px;
-        border: $unnnic-border-width-thin solid $unnnic-color-neutral-soft;
-      }
-      .queue-modal-select {
-        display: flex;
-        gap: $unnnic-spacing-xs;
-        .queue-modal-input {
-          flex: 1;
-        }
-      }
-    }
-    :deep(.unnnic-modal-container) {
-      .unnnic-modal-container-background {
-        width: 50%;
-        &-body-description-container {
-          padding-bottom: 0;
-        }
-      }
-    }
-    :deep(.unnnic-select-smart) {
-      .dropdown-data {
-        position: fixed !important;
-        top: inherit !important;
-      }
-    }
   }
 }
 </style>
