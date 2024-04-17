@@ -23,7 +23,7 @@
     "lang": "pt",
     "id": "weni-chats",
     "start_url": "https://chats.dev.cloud.weni.ai/rooms",
-    "scope": "https://weni.ai/",
+    "scope": ".weni.ai/",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#00A49F",
