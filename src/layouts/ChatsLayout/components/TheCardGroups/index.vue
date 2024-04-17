@@ -106,8 +106,6 @@
 <script>
 import isMobile from 'is-mobile';
 import { mapState, mapGetters } from 'vuex';
-import callUnnnicAlert from '@/utils/callUnnnicAlert';
-import Queues from '@/services/api/resources/chats/queues';
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup';
 import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
@@ -143,8 +141,6 @@ export default {
     isMobile: isMobile(),
     showModalQueue: false,
     noQueueSelected: false,
-    permissionQueues: [],
-    permissionQueuesOptions: [],
   }),
   async mounted() {
     this.listRoom();
@@ -160,7 +156,6 @@ export default {
       discussions: (state) => state.chats.discussions.discussions,
       listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
       project: (state) => state.config.project,
-      me: (state) => state.profile.me,
     }),
     totalUnreadMessages() {
       return this.rooms.reduce(
@@ -179,9 +174,6 @@ export default {
         this.rooms_sent_flows.length === 0 &&
         this.discussions.length === 0
       );
-    },
-    verifySelectedLength() {
-      return this.permissionQueues.length > 0;
     },
   },
   watch: {
@@ -269,90 +261,6 @@ export default {
 
     handleModalQueuePriorization() {
       this.showModalQueue = !this.showModalQueue;
-    },
-
-    closeModalQueue() {
-      this.showModalQueue = false;
-      this.permissionQueues = [];
-      this.permissionQueuesOptions = [
-        {
-          value: '',
-          label: this.$t('chats.select_your_queues'),
-        },
-      ];
-    },
-
-    async getListQueues() {
-      try {
-        let me = this.me.email;
-        const response = await Queues.getListQueues(me);
-
-        response.user_permissions.forEach((permission) => {
-          if (permission.role === 1) {
-            this.permissionQueues.push({
-              value: permission.uuid,
-              label: permission.queue_name,
-              role: permission.role,
-            });
-          }
-
-          this.permissionQueuesOptions.push({
-            value: permission.uuid,
-            label: permission.queue_name,
-            role: permission.role,
-          });
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    },
-
-    async saveListQueues() {
-      try {
-        const options = this.permissionQueuesOptions.map(
-          (queue) => queue.value,
-        );
-        const optionsQueues = this.permissionQueues.map((queue) => queue.value);
-        const filter = options.filter(
-          (queue) => !optionsQueues.includes(queue),
-        );
-
-        const selectedQueues = optionsQueues.map((queueUuid) => ({
-          uuid: queueUuid,
-          role: 1,
-        }));
-
-        const unselectedQueues = filter.map((queueUuid) => ({
-          uuid: queueUuid,
-          role: 2,
-        }));
-
-        const response = await Queues.editListQueues(
-          selectedQueues.concat(unselectedQueues),
-        );
-
-        callUnnnicAlert({
-          props: {
-            text: this.$t('chats.success_update_queues'),
-            type: 'success',
-          },
-          seconds: 5,
-        });
-
-        this.showModalQueue = false;
-
-        return response;
-      } catch (error) {
-        console.error(error);
-        callUnnnicAlert({
-          props: {
-            text: this.$t('chats.error_update_queues'),
-            type: 'error',
-          },
-          seconds: 5,
-        });
-        this.showModalQueue = false;
-      }
     },
   },
 };
