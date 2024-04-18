@@ -59,6 +59,7 @@ export default class WebSocketSetup {
   }
 
   reconnect() {
+    console.log(this.ws, 'wsss');
     this.ws.ws.close();
     this.connect();
 

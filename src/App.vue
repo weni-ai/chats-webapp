@@ -80,7 +80,7 @@ export default {
     },
     'viewedAgent.email': {
       handler() {
-        this.ws.reconnect();
+        this.wsReconnect();
       },
     },
 
@@ -198,6 +198,10 @@ export default {
       });
       this.$store.state.config.status = connection_status;
       localStorage.setItem('statusAgent', connection_status);
+    },
+
+    async wsReconnect() {
+      this.ws.reconnect();
     },
   },
 };
