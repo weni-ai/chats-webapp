@@ -53,7 +53,11 @@ import Queues from '@/services/api/resources/chats/queues';
 
 export default {
   name: 'ModalQueuePriorizations',
-
+  props: {
+    viewedAgent: {
+      type: String,
+    },
+  },
   data() {
     return {
       permissionQueues: [],
@@ -79,6 +83,7 @@ export default {
   computed: {
     ...mapState({
       me: (state) => state.profile.me,
+      rooms: (state) => state.chats.rooms,
     }),
 
     verifySelectedLength() {
@@ -96,6 +101,7 @@ export default {
               value: permission.uuid,
               label: permission.queue_name,
               role: permission.role,
+              queue: permission.queue,
             });
           }
 
@@ -103,6 +109,7 @@ export default {
             value: permission.uuid,
             label: permission.queue_name,
             role: permission.role,
+            queue: permission.queue,
           });
         });
       } catch (error) {
@@ -111,13 +118,24 @@ export default {
     },
 
     async saveListQueues() {
+      const { rooms } = this.rooms;
+
       try {
         const queuesOptions = this.permissionQueuesOptions.map(
           (queue) => queue.value,
         );
+        const queuesOptionsUnselected = this.permissionQueuesOptions.map(
+          (queue) => queue.queue,
+        );
         const queuesValue = this.permissionQueues.map((queue) => queue.value);
+        const queueUuid = this.permissionQueues.map((queue) => queue.queue);
+
         const filteringQueues = queuesOptions.filter(
           (queue) => !queuesValue.includes(queue),
+        );
+
+        const filteringUnselectedQueues = queuesOptionsUnselected.filter(
+          (queue) => !queueUuid.includes(queue),
         );
 
         const selectedQueues = queuesValue.map((queueUuid) => ({
@@ -129,6 +147,13 @@ export default {
           uuid: queueUuid,
           role: this.roleIdUnSelected,
         }));
+
+        const unselectedQueuesOptions = filteringUnselectedQueues.map(
+          (queueUuid) => ({
+            queue: queueUuid,
+            role: this.roleIdUnSelected,
+          }),
+        );
 
         const response = await Queues.editListQueues(
           selectedQueues.concat(unselectedQueues),
@@ -142,8 +167,29 @@ export default {
           seconds: 5,
         });
 
-        this.$emit('close');
+        console.log(unselectedQueuesOptions, 'opçoes nao selecionadas');
+        console.log(rooms, 'salas');
 
+        // const unselectedQueueUuids = new Set(
+        //   unselectedQueuesOptions.map(
+        //     (unselectedQueue) => unselectedQueue.queue,
+        //   ),
+        // );
+
+        // rooms.forEach((room) => {
+        //   const roomQueueUuid = room.queue.uuid;
+        //   console.log(roomQueueUuid, 'id da sala!');
+
+        //   if (unselectedQueueUuids.has(roomQueueUuid)) {
+        //     console.log(unselectedQueueUuids, 'salas');
+        //     this.$store.dispatch('chats/rooms/removeRoom', roomQueueUuid);
+        //   } else {
+        //     console.log('nao é igual');
+        //   }
+        // });
+
+        this.$emit('close');
+        this.$root.$children[0].ws.reconnect();
         return response;
       } catch (error) {
         console.error(error);
