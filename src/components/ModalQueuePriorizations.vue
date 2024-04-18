@@ -96,7 +96,7 @@ export default {
         let me = this.me.email;
         const response = await Queues.getListQueues(me);
         response.user_permissions.forEach((permission) => {
-          if (permission.role === 1) {
+          if (permission.role === this.roleIdSelected) {
             this.permissionQueues.push({
               value: permission.uuid,
               label: permission.queue_name,
