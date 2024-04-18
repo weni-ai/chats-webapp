@@ -189,7 +189,7 @@ export default {
         // });
 
         this.$emit('close');
-        this.$root.$children[0].ws.reconnect();
+        this.$root.$children[0].wsReconnect();
         return response;
       } catch (error) {
         console.error(error);
