@@ -5,7 +5,7 @@
     @close="$emit('close')"
   >
     <section class="queue-modal-form">
-      <div
+      <section
         v-if="!verifySelectedLength"
         class="queue-modal-disclaimer"
       >
@@ -16,9 +16,9 @@
           scheme="feedback-yellow"
         />
         <p>{{ $t('chats.select_at_least') }}</p>
-      </div>
-      <div class="queue-modal-select">
-        <div class="queue-modal-input">
+      </section>
+      <section class="queue-modal-select">
+        <section class="queue-modal-input">
           <UnnnicLabel :label="$t('chats.select_the_queues')" />
           <UnnnicSelectSmart
             v-model="permissionQueues"
@@ -26,8 +26,8 @@
             :options="permissionQueuesOptions"
             :multipleWithoutSelectsMessage="$t('chats.no_queue_selected')"
           />
-        </div>
-      </div>
+        </section>
+      </section>
     </section>
     <template #options>
       <UnnnicButton
@@ -53,11 +53,17 @@ import Queues from '@/services/api/resources/chats/queues';
 
 export default {
   name: 'ModalQueuePriorizations',
-
+  props: {
+    viewedAgent: {
+      type: String,
+    },
+  },
   data() {
     return {
       permissionQueues: [],
       permissionQueuesOptions: [],
+      roleIdSelected: 1,
+      roleIdUnSelected: 2,
       showModalQueue: false,
       noQueueSelected: false,
     };
@@ -77,6 +83,7 @@ export default {
   computed: {
     ...mapState({
       me: (state) => state.profile.me,
+      rooms: (state) => state.chats.rooms,
     }),
 
     verifySelectedLength() {
@@ -89,11 +96,12 @@ export default {
         let me = this.me.email;
         const response = await Queues.getListQueues(me);
         response.user_permissions.forEach((permission) => {
-          if (permission.role === 1) {
+          if (permission.role === this.roleIdSelected) {
             this.permissionQueues.push({
               value: permission.uuid,
               label: permission.queue_name,
               role: permission.role,
+              queue: permission.queue,
             });
           }
 
@@ -101,6 +109,7 @@ export default {
             value: permission.uuid,
             label: permission.queue_name,
             role: permission.role,
+            queue: permission.queue,
           });
         });
       } catch (error) {
@@ -109,27 +118,42 @@ export default {
     },
 
     async saveListQueues() {
+      const { rooms } = this.rooms;
+
       try {
         const queuesOptions = this.permissionQueuesOptions.map(
           (queue) => queue.value,
         );
+        const queuesOptionsUnselected = this.permissionQueuesOptions.map(
+          (queue) => queue.queue,
+        );
         const queuesValue = this.permissionQueues.map((queue) => queue.value);
+        const queueUuid = this.permissionQueues.map((queue) => queue.queue);
+
         const filteringQueues = queuesOptions.filter(
           (queue) => !queuesValue.includes(queue),
         );
 
-        const ROLE_ID_SELECTED = 1;
-        const ROLE_ID_UNSELECTED = 2;
+        const filteringUnselectedQueues = queuesOptionsUnselected.filter(
+          (queue) => !queueUuid.includes(queue),
+        );
 
         const selectedQueues = queuesValue.map((queueUuid) => ({
           uuid: queueUuid,
-          role: ROLE_ID_SELECTED,
+          role: this.roleIdSelected,
         }));
 
         const unselectedQueues = filteringQueues.map((queueUuid) => ({
           uuid: queueUuid,
-          role: ROLE_ID_UNSELECTED,
+          role: this.roleIdUnSelected,
         }));
+
+        const unselectedQueuesOptions = filteringUnselectedQueues.map(
+          (queueUuid) => ({
+            queue: queueUuid,
+            role: this.roleIdUnSelected,
+          }),
+        );
 
         const response = await Queues.editListQueues(
           selectedQueues.concat(unselectedQueues),
@@ -143,8 +167,29 @@ export default {
           seconds: 5,
         });
 
-        this.$emit('close');
+        console.log(unselectedQueuesOptions, 'opçoes nao selecionadas');
+        console.log(rooms, 'salas');
 
+        // const unselectedQueueUuids = new Set(
+        //   unselectedQueuesOptions.map(
+        //     (unselectedQueue) => unselectedQueue.queue,
+        //   ),
+        // );
+
+        // rooms.forEach((room) => {
+        //   const roomQueueUuid = room.queue.uuid;
+        //   console.log(roomQueueUuid, 'id da sala!');
+
+        //   if (unselectedQueueUuids.has(roomQueueUuid)) {
+        //     console.log(unselectedQueueUuids, 'salas');
+        //     this.$store.dispatch('chats/rooms/removeRoom', roomQueueUuid);
+        //   } else {
+        //     console.log('nao é igual');
+        //   }
+        // });
+
+        this.$emit('close');
+        this.$root.$children[0].ws.reconnect();
         return response;
       } catch (error) {
         console.error(error);
@@ -162,10 +207,9 @@ export default {
 
     updateQueuesPlaceholder() {
       const queuesValue = this.permissionQueues.map((queue) => queue.value);
-      const ROLE_ID_SELECTED = 1;
       const selectedQueues = queuesValue.map((queueUuid) => ({
         uuid: queueUuid,
-        role: ROLE_ID_SELECTED,
+        role: this.roleIdSelected,
       }));
 
       if (selectedQueues.length < 1) {
