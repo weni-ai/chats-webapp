@@ -173,9 +173,28 @@ describe('ModalBulkTransfer', () => {
   });
 
   describe('Button States', () => {
-    it('should disable transfer button when no queue is selected', () => {});
+    let transferButton;
 
-    it('should disable transfer button when loading bulk transfer', () => {});
+    beforeEach(() => {
+      transferButton = wrapper.find('[data-testid="transfer-button"]');
+    });
+
+    it('should disable transfer button when no queue is selected', () => {
+      wrapper.setData({
+        selectedQueue: [{ value: '', label: 'Select a queue' }],
+      });
+
+      expect(transferButton.props('disabled')).toBe(true);
+    });
+
+    it('should disable transfer button when loading bulk transfer', () => {
+      wrapper.setData({
+        selectedQueue: [{ value: 'queue_id', label: 'Queue' }],
+      });
+
+      transferButton.trigger('click');
+      expect(transferButton.props('disabled')).toBe(true);
+    });
   });
 
   describe('Modal Interaction', () => {
