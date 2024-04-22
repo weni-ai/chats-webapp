@@ -9,8 +9,7 @@ import router from './router';
 import store from './store';
 import env from './utils/env';
 
-// import './utils/nilo';
-
+import './registerServiceWorker';
 import './styles/global.scss';
 
 const LOGROCKET_ID = env('LOGROCKET_ID');

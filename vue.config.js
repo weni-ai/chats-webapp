@@ -19,4 +19,21 @@ module.exports = defineConfig({
       },
     },
   },
+  pwa: {
+    name: 'Weni Chats',
+    themeColor: '#00A49F',
+    msTileColor: '#ffffff',
+    workboxPluginMode: 'InjectManifest',
+    workboxOptions: {
+      swSrc: './src/service-worker.js',
+    },
+
+    iconPaths: {
+      favicon32: null,
+      favicon16: null,
+      appleTouchIcon: null,
+      maskIcon: null,
+      msTileImage: 'logos/weni-512.png',
+    },
+  },
 });
