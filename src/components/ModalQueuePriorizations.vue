@@ -61,7 +61,12 @@ export default {
   data() {
     return {
       permissionQueues: [],
-      permissionQueuesOptions: [],
+      permissionQueuesOptions: [
+        {
+          value: '',
+          label: this.$t('chats.select_your_queues'),
+        },
+      ],
       roleIdSelected: 1,
       roleIdUnSelected: 2,
       showModalQueue: false,

@@ -5,31 +5,11 @@
     class="modal-bulk-transfer"
     :closeIcon="false"
   >
-    <main class="modal-bulk-transfer__select-destination">
-      <section class="select-destination__field">
-        <UnnnicLabel :label="$t('queue')" />
-        <UnnnicSelectSmart
-          data-testid="select-queue"
-          v-model="selectedQueue"
-          :options="queues"
-          autocomplete
-          autocompleteIconLeft
-          autocompleteClearOnFocus
-        />
-      </section>
-      <section class="select-destination__field">
-        <UnnnicLabel :label="$t('agent')" />
-        <UnnnicSelectSmart
-          data-testid="select-agent"
-          v-model="selectedAgent"
-          :disabled="isAgentsFieldDisabled"
-          :options="agents"
-          autocomplete
-          autocompleteIconLeft
-          autocompleteClearOnFocus
-        />
-      </section>
-    </main>
+    <RoomsTransferFields
+      ref="roomsTransferFields"
+      :selectedQueue.sync="selectedQueue"
+      @transfer-complete="transferComplete"
+    />
 
     <template #options>
       <UnnnicButton
@@ -53,140 +33,33 @@
 </template>
 
 <script>
-import Room from '@/services/api/resources/chats/room';
-import { mapActions, mapState } from 'vuex';
-import Queue from '@/services/api/resources/settings/queue';
-import callUnnnicAlert from '@/utils/callUnnnicAlert';
+import RoomsTransferFields from '@/components/chats/RoomsTransferFields';
 
 export default {
   name: 'ModalBulkTransfer',
 
+  components: {
+    RoomsTransferFields,
+  },
+
   data() {
     return {
-      queues: [],
       selectedQueue: [],
-      agents: [],
-      selectedAgent: [],
 
       isLoadingBulkTransfer: false,
     };
   },
 
-  created() {
-    this.getQueues();
-    this.queues = this.queuesDefault;
-    this.agents = this.agentsDefault;
-  },
-
-  computed: {
-    ...mapState({
-      selectedRoomsToTransfer: (state) =>
-        state.chats.rooms.selectedRoomsToTransfer,
-    }),
-
-    queuesDefault() {
-      return [{ value: '', label: this.$t('select_queue') }];
-    },
-    agentsDefault() {
-      return [{ value: '', label: this.$t('select_agent') }];
-    },
-
-    isAgentsFieldDisabled() {
-      return this.selectedQueue[0]?.value === '' || this.agents?.length < 2;
-    },
-  },
-
   methods: {
-    ...mapActions({
-      setSelectedRoomsToTransfer: 'chats/rooms/setSelectedRoomsToTransfer',
-    }),
-
-    async getQueues() {
-      const newQueues = await Queue.listByProject();
-
-      const treatedQueues = newQueues.results.map(
-        ({ name, sector_name, uuid }) => ({
-          queue_name: name,
-          label: `${name} | ${this.$t('sector.title')} ${sector_name}`,
-          value: uuid,
-        }),
-      );
-
-      this.queues = [...this.queuesDefault, ...treatedQueues];
-    },
-
-    async getAgents(queueUuid) {
-      const newAgents = await Queue.agentsToTransfer(queueUuid);
-
-      const treatedAgents = newAgents
-        .filter((agent) => agent.email !== this.$store.state.profile.me.email)
-        .map(({ first_name, last_name, email }) => ({
-          label: [first_name, last_name].join(' ').trim() || email,
-          value: email,
-        }));
-
-      this.agents = [...this.agentsDefault, ...treatedAgents];
-    },
-    async bulkTransfer() {
-      const { selectedRoomsToTransfer } = this;
-      const selectedQueue = this.selectedQueue?.[0]?.value;
-      const selectedAgent = this.selectedAgent?.[0]?.value;
-
+    bulkTransfer() {
       this.isLoadingBulkTransfer = true;
 
-      const response = await Room.bulkTranfer({
-        rooms: selectedRoomsToTransfer,
-        intended_queue: selectedQueue,
-        intended_agent: selectedAgent,
-      });
+      this.$refs.roomsTransferFields.bulkTransfer();
+    },
 
-      if (response.status === 200) {
-        this.setSelectedRoomsToTransfer([]);
-        this.callSuccessAlert();
-      } else {
-        this.callErrorAlert();
-      }
+    transferComplete() {
       this.isLoadingBulkTransfer = false;
       this.$emit('close');
-    },
-
-    callSuccessAlert() {
-      const selectedAgent = this.selectedAgent?.[0]?.label;
-      const successTranslation = `bulk_transfer.${
-        selectedAgent ? 'agent_transfer_success' : 'queue_transfer_success'
-      }`;
-      const destination = selectedAgent || this.selectedQueue?.[0].queue_name;
-
-      this.getAlert({
-        text: this.$t(successTranslation, {
-          queue: destination,
-          agent: destination,
-        }),
-        type: 'success',
-      });
-    },
-
-    callErrorAlert() {
-      this.getAlert({
-        text: this.$t('bulk_transfer.error'),
-        type: 'error',
-      });
-    },
-
-    getAlert({ text, type }) {
-      callUnnnicAlert({
-        props: { text, type },
-        seconds: 5,
-      });
-    },
-  },
-
-  watch: {
-    selectedQueue(newSelectedQueue) {
-      const queue = newSelectedQueue[0]?.value;
-      if (queue) {
-        this.getAgents(queue);
-      }
     },
   },
 };
@@ -208,17 +81,6 @@ export default {
       &-description-container {
         overflow: visible;
       }
-    }
-  }
-
-  &__select-destination {
-    display: grid;
-    gap: $unnnic-spacing-sm;
-  }
-
-  .select-destination {
-    &__field {
-      text-align: initial;
     }
   }
 }
