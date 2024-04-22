@@ -11,6 +11,19 @@
       :placeholder="$t('chats.search_contact')"
     ></UnnnicInput>
     <div class="order-by">
+      <UnnnicToolTip
+        enabled
+        :text="$t('chats.select_queues')"
+        side="right"
+        v-if="!isMobile && project.config?.can_use_queue_prioritization"
+      >
+        <UnnnicButton
+          iconCenter="filter_list"
+          type="secondary"
+          size="small"
+          @click="handleModalQueuePriorization"
+        />
+      </UnnnicToolTip>
       <div>
         <span>{{ $t('chats.room_list.order_by') }}</span>
       </div>
@@ -42,7 +55,6 @@
         >
       </div>
     </div>
-
     <RoomsListLoading v-if="isLoadingRooms" />
     <section
       v-else
@@ -85,24 +97,25 @@
         {{ isSearching ? $t('without_results') : $t('without_chats') }}
       </p>
     </section>
+    <ModalQueuePriorizations
+      v-if="showModalQueue"
+      @close="handleModalQueuePriorization"
+    />
   </div>
 </template>
-
 <script>
 import isMobile from 'is-mobile';
 import { mapState, mapGetters } from 'vuex';
-
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup';
-
+import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
 export default {
   name: 'TheCardGroups',
-
   components: {
     RoomsListLoading,
     CardGroup,
+    ModalQueuePriorizations,
   },
-
   props: {
     disabled: {
       type: Boolean,
@@ -126,13 +139,13 @@ export default {
     lastCreatedFilter: true,
     isSearching: false,
     isMobile: isMobile(),
+    showModalQueue: false,
+    noQueueSelected: false,
   }),
-
   async mounted() {
     this.listRoom();
     this.listDiscussions();
   },
-
   computed: {
     ...mapGetters({
       rooms: 'chats/rooms/agentRooms',
@@ -144,7 +157,6 @@ export default {
       listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
       project: (state) => state.config.project,
     }),
-
     totalUnreadMessages() {
       return this.rooms.reduce(
         (total, room) =>
@@ -154,7 +166,6 @@ export default {
         0,
       );
     },
-
     showNoResultsError() {
       return (
         !this.isLoadingRooms &&
@@ -165,7 +176,6 @@ export default {
       );
     },
   },
-
   watch: {
     totalUnreadMessages: {
       immediate: true,
@@ -182,11 +192,9 @@ export default {
     nameOfContact: {
       handler(newNameOfContact) {
         const TIME_TO_WAIT_TYPING = 1300;
-
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
           this.listRoom(false);
-
           if (newNameOfContact) {
             this.isSearching = true;
           } else {
@@ -196,24 +204,20 @@ export default {
       },
     },
   },
-
   methods: {
     async openRoom(room) {
       await this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
       await this.$store.dispatch('chats/rooms/setActiveRoom', room);
     },
-
     async openDiscussion(discussion) {
       await this.$store.dispatch(
         'chats/discussions/setActiveDiscussion',
         discussion,
       );
     },
-
     clearField() {
       this.nameOfContact = '';
     },
-
     async listRoom(concat, order = '-last_interaction') {
       this.isLoadingRooms = true;
       const { viewedAgent } = this;
@@ -254,43 +258,41 @@ export default {
         this.searchForMoreRooms(true);
       }
     },
+
+    handleModalQueuePriorization() {
+      this.showModalQueue = !this.showModalQueue;
+    },
   },
 };
 </script>
-
 <style lang="scss" scoped>
 .container {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-stack-xs;
-
   .chat-groups {
     flex: 1 1;
-
     display: flex;
     flex-direction: column;
-
     margin-top: $unnnic-spacing-sm;
     padding-right: $unnnic-spacing-xs;
     margin-right: -$unnnic-spacing-xs; // For the scrollbar to stick to the edge
     overflow-y: auto;
     overflow-x: hidden;
-
     :deep(.unnnic-collapse) {
       padding-bottom: $unnnic-spacing-sm;
     }
-
     .no-results {
       color: $unnnic-color-neutral-cloudy;
       font-size: $unnnic-font-size-body-gt;
     }
   }
-
   .order-by {
     display: flex;
     justify-content: space-between;
-
+    gap: $unnnic-spacing-xs;
+    align-items: center;
     font-size: $unnnic-font-size-body-md;
     color: $unnnic-color-neutral-cloudy;
   }
