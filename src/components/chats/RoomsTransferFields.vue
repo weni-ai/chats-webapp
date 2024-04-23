@@ -1,21 +1,32 @@
 <template>
-  <main class="rooms-transfer__select-destination">
+  <main
+    class="rooms-transfer__select-destination"
+    :class="{ small: size === 'sm' }"
+  >
     <section class="select-destination__field">
-      <UnnnicLabel :label="$t('queue')" />
+      <UnnnicLabel
+        v-if="size !== 'sm'"
+        :label="$t('queue')"
+      />
       <UnnnicSelectSmart
         data-testid="select-queue"
         v-model="selectedQueue"
+        :size="size"
         :options="queues"
         autocomplete
-        autocompleteIconLeft
+        :autocompleteIconLeft="size !== 'sm'"
         autocompleteClearOnFocus
       />
     </section>
     <section class="select-destination__field">
-      <UnnnicLabel :label="$t('agent')" />
+      <UnnnicLabel
+        v-if="size !== 'sm'"
+        :label="$t('agent')"
+      />
       <UnnnicSelectSmart
         data-testid="select-agent"
         v-model="selectedAgent"
+        :size="size"
         :disabled="isAgentsFieldDisabled"
         :options="agents"
         autocomplete
@@ -27,6 +38,8 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
+
 import Room from '@/services/api/resources/chats/room';
 import { mapActions, mapState } from 'vuex';
 import Queue from '@/services/api/resources/settings/queue';
@@ -34,8 +47,24 @@ import callUnnnicAlert from '@/utils/callUnnnicAlert';
 export default {
   name: 'RoomsTransferFields',
 
+  props: {
+    size: {
+      type: String,
+      default: 'md',
+      validator(value) {
+        return ['sm', 'md'].includes(value);
+      },
+    },
+    bulkTransfer: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   data() {
     return {
+      isMobile: isMobile(),
+
       queues: [],
       selectedQueue: [],
       agents: [],
@@ -53,6 +82,7 @@ export default {
     ...mapState({
       selectedRoomsToTransfer: (state) =>
         state.chats.rooms.selectedRoomsToTransfer,
+      contactToTransfer: (state) => state.chats.rooms.contactToTransfer,
     }),
 
     queuesDefault() {
@@ -60,6 +90,11 @@ export default {
     },
     agentsDefault() {
       return [{ value: '', label: this.$t('select_agent') }];
+    },
+    roomsToTransfer() {
+      return this.bulkTransfer
+        ? this.selectedRoomsToTransfer
+        : [this.contactToTransfer];
     },
 
     isAgentsFieldDisabled() {
@@ -70,6 +105,7 @@ export default {
   methods: {
     ...mapActions({
       setSelectedRoomsToTransfer: 'chats/rooms/setSelectedRoomsToTransfer',
+      setContactToTransfer: 'chats/rooms/setContactToTransfer',
     }),
 
     async getQueues() {
@@ -105,21 +141,21 @@ export default {
      *
      * @returns {Promise<void>} A promise that resolves when the bulk transfer is complete.
      */
-    async bulkTransfer() {
-      const { selectedRoomsToTransfer } = this;
+    async transfer() {
+      const { roomsToTransfer } = this;
       const selectedQueue = this.selectedQueue?.[0]?.value;
       const selectedAgent = this.selectedAgent?.[0]?.value;
 
       try {
         const response = await Room.bulkTranfer({
-          rooms: selectedRoomsToTransfer,
+          rooms: roomsToTransfer,
           intended_queue: selectedQueue,
           intended_agent: selectedAgent,
         });
 
         if (response.status === 200) {
-          this.setSelectedRoomsToTransfer([]);
           this.transferSuccess();
+          this.resetRoomsToTransfer();
         } else {
           this.transferError();
         }
@@ -132,12 +168,17 @@ export default {
       }
     },
 
+    resetRoomsToTransfer() {
+      this.setSelectedRoomsToTransfer([]);
+      this.setContactToTransfer('');
+    },
+
     transferSuccess() {
-      this.$emit('transfer-finished', 'success');
+      this.$emit('transfer-complete', 'success');
       this.callSuccessAlert();
     },
     transferError() {
-      this.$emit('transfer-finished', 'error');
+      this.$emit('transfer-complete', 'error');
       this.callErrorAlert();
     },
 
@@ -149,7 +190,7 @@ export default {
       const destination = selectedAgent || this.selectedQueue?.[0].queue_name;
 
       this.getAlert({
-        text: this.$t(successTranslation, {
+        text: this.$tc(successTranslation, this.roomsToTransfer.length, {
           queue: destination,
           agent: destination,
         }),
@@ -165,10 +206,12 @@ export default {
     },
 
     getAlert({ text, type }) {
-      callUnnnicAlert({
-        props: { text, type },
-        seconds: 5,
-      });
+      if (!this.isMobile) {
+        callUnnnicAlert({
+          props: { text, type },
+          seconds: 5,
+        });
+      }
     },
   },
 
@@ -193,6 +236,10 @@ export default {
   &__select-destination {
     display: grid;
     gap: $unnnic-spacing-sm;
+
+    &.small {
+      gap: $unnnic-spacing-nano;
+    }
 
     .select-destination {
       &__field {

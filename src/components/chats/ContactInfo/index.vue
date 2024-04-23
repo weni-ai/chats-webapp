@@ -130,7 +130,10 @@
         </AsideSlotTemplateSection>
 
         <DiscussionsSession v-if="isHistory" />
-        <TransferSession v-if="!isHistory" />
+        <TransferSession
+          v-if="!isHistory"
+          @transferred-contact="$emit('transferred-contact')"
+        />
 
         <AsideSlotTemplateSection>
           <ContactMedia

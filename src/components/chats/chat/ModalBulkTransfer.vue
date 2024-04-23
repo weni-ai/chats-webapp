@@ -9,6 +9,7 @@
       ref="roomsTransferFields"
       :selectedQueue.sync="selectedQueue"
       @transfer-complete="transferComplete"
+      bulkTransfer
     />
 
     <template #options>
@@ -54,7 +55,7 @@ export default {
     bulkTransfer() {
       this.isLoadingBulkTransfer = true;
 
-      this.$refs.roomsTransferFields.bulkTransfer();
+      this.$refs.roomsTransferFields.transfer();
     },
 
     transferComplete() {
