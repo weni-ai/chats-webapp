@@ -89,8 +89,10 @@ export default {
 
       handler() {
         if (!this.configsForInitializeWebSocket.some((config) => !config)) {
-          this.ws = new WS({ app: this });
-          this.ws.connect();
+          if (!this.ws) {
+            this.ws = new WS({ app: this });
+            this.ws.connect();
+          }
         }
       },
     },
