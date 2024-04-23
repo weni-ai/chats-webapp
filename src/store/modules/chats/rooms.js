@@ -11,6 +11,7 @@ const mutations = {
   SET_COPILOT_SUGGESTION: 'SET_COPILOT_SUGGESTION',
   UPDATE_NEW_MESSAGES_BY_ROOM: 'UPDATE_NEW_MESSAGES_BY_ROOM',
   SET_SELECTED_ROOMS_TO_TRANFER: 'SET_SELECTED_ROOMS_TO_TRANFER',
+  SET_CONTACT_TO_TRANSFER: 'SET_CONTACT_TO_TRANSFER',
 };
 
 export default {
@@ -22,7 +23,9 @@ export default {
     hasNextRooms: true,
     canUseCopilot: false,
     copilotSuggestion: '',
+
     selectedRoomsToTransfer: [],
+    contactToTransfer: '',
   },
 
   mutations: {
@@ -62,6 +65,9 @@ export default {
     },
     [mutations.SET_SELECTED_ROOMS_TO_TRANFER](state, rooms) {
       state.selectedRoomsToTransfer = rooms;
+    },
+    [mutations.SET_CONTACT_TO_TRANSFER](state, boolean) {
+      state.contactToTransfer = boolean;
     },
   },
 
@@ -191,6 +197,9 @@ export default {
     },
     setSelectedRoomsToTransfer({ commit }, rooms) {
       commit(mutations.SET_SELECTED_ROOMS_TO_TRANFER, rooms);
+    },
+    setContactToTransfer({ commit }, boolean) {
+      commit(mutations.SET_CONTACT_TO_TRANSFER, boolean);
     },
   },
 
