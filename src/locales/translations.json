@@ -1059,14 +1059,14 @@
       "es": "Transferir contactos seleccionados"
     },
     "agent_transfer_success": {
-      "pt-br": "Contatos transferidos com sucesso para agente {agent}",
-      "en": "Contacts successfully transferred to agent {agent}",
-      "es": "Contactos transferidos con éxito al agente {agent}"
+      "pt-br": "Contato transferido com sucesso para agente {agent} | Contatos transferidos com sucesso para agente {agent}",
+      "en": "Contact successfully transferred to agent {agent} | Contacts successfully transferred to agent {agent}",
+      "es": "Contacto transferido con éxito al agente {agent} | Contactos transferidos con éxito al agente {agent}"
     },
     "queue_transfer_success": {
-      "pt-br": "Contatos transferidos com sucesso para fila {queue}",
-      "en": "Contacts successfully transferred to queue {queue}",
-      "es": "Contactos transferidos con éxito a la cola {queue}"
+      "pt-br": "Contato transferido com sucesso para fila {queue} | Contatos transferidos com sucesso para fila {queue}",
+      "en": "Contact successfully transferred to queue {queue} | Contacts successfully transferred to queue {queue}",
+      "es": "Contacto transferido con éxito a la cola {queue} | Contactos transferidos con éxito a la cola {queue}"
     },
     "error": {
       "pt-br": "Não foi possível transferir os contatos, tente novamente",
@@ -1458,12 +1458,12 @@
     }
   },
   "select_agent": {
-    "pt-br": "Selecione agente",
+    "pt-br": "Selecionar agente",
     "en": "Select agent",
     "es": "Seleccionar agente"
   },
   "select_queue": {
-    "pt-br": "Selecione fila",
+    "pt-br": "Selecionar fila",
     "en": "Select queue",
     "es": "Seleccionar cola"
   },
