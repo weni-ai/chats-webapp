@@ -21,9 +21,9 @@
         <section class="queue-modal-input">
           <UnnnicLabel :label="$t('chats.select_the_queues')" />
           <UnnnicSelectSmart
-            v-model="permissionQueues"
+            v-model="selectedQueues"
             multiple
-            :options="permissionQueuesOptions"
+            :options="queues"
             :multipleWithoutSelectsMessage="$t('chats.no_queue_selected')"
           />
         </section>
@@ -53,29 +53,25 @@ import Queues from '@/services/api/resources/chats/queues';
 
 export default {
   name: 'ModalQueuePriorizations',
-  props: {
-    viewedAgent: {
-      type: String,
-    },
-  },
+
   data() {
     return {
-      permissionQueues: [],
-      permissionQueuesOptions: [
+      selectedQueues: [],
+      queues: [
         {
           value: '',
           label: this.$t('chats.select_your_queues'),
         },
       ],
       roleIdSelected: 1,
-      roleIdUnSelected: 2,
+      roleIdUnselected: 2,
       showModalQueue: false,
       noQueueSelected: false,
     };
   },
 
   watch: {
-    permissionQueues: {
+    selectedQueues: {
       handler: 'updateQueuesPlaceholder',
       deep: true,
     },
@@ -88,11 +84,11 @@ export default {
   computed: {
     ...mapState({
       me: (state) => state.profile.me,
-      rooms: (state) => state.chats.rooms,
+      rooms: (state) => state.chats.rooms.rooms,
     }),
 
     verifySelectedLength() {
-      return this.permissionQueues.length > 0;
+      return this.selectedQueues.length > 0;
     },
   },
   methods: {
@@ -102,7 +98,7 @@ export default {
         const response = await Queues.getListQueues(me);
         response.user_permissions.forEach((permission) => {
           if (permission.role === this.roleIdSelected) {
-            this.permissionQueues.push({
+            this.selectedQueues.push({
               value: permission.uuid,
               label: permission.queue_name,
               role: permission.role,
@@ -110,7 +106,7 @@ export default {
             });
           }
 
-          this.permissionQueuesOptions.push({
+          this.queues.push({
             value: permission.uuid,
             label: permission.queue_name,
             role: permission.role,
@@ -123,45 +119,46 @@ export default {
     },
 
     async saveListQueues() {
-      const { rooms } = this.rooms;
+      const { rooms } = this;
 
       try {
-        const queuesOptions = this.permissionQueuesOptions.map(
+        const queuesValues = this.queues.map((queue) => queue.value);
+        const queuesUuids = this.queues.map((queue) => queue.queue);
+
+        const selectedQueuesValues = this.selectedQueues.map(
           (queue) => queue.value,
         );
-        const queuesOptionsUnselected = this.permissionQueuesOptions.map(
+        const selectedQueuesUuids = this.selectedQueues.map(
           (queue) => queue.queue,
         );
-        const queuesValue = this.permissionQueues.map((queue) => queue.value);
-        const queueUuid = this.permissionQueues.map((queue) => queue.queue);
 
-        const filteringQueues = queuesOptions.filter(
-          (queue) => !queuesValue.includes(queue),
+        const filteringQueues = queuesValues.filter(
+          (queue) => !selectedQueuesValues.includes(queue),
+        );
+        const filteringUnselectedQueues = queuesUuids.filter(
+          (queue) => !selectedQueuesUuids.includes(queue),
         );
 
-        const filteringUnselectedQueues = queuesOptionsUnselected.filter(
-          (queue) => !queueUuid.includes(queue),
-        );
-
-        const selectedQueues = queuesValue.map((queueUuid) => ({
+        const selectedQueues = selectedQueuesValues.map((queueUuid) => ({
           uuid: queueUuid,
           role: this.roleIdSelected,
         }));
-
         const unselectedQueues = filteringQueues.map((queueUuid) => ({
           uuid: queueUuid,
-          role: this.roleIdUnSelected,
+          role: this.roleIdUnselected,
         }));
 
-        const unselectedQueuesOptions = filteringUnselectedQueues.map(
-          (queueUuid) => ({
-            queue: queueUuid,
-            role: this.roleIdUnSelected,
-          }),
+        await Queues.editListQueues(selectedQueues.concat(unselectedQueues));
+
+        console.log({
+          filteringUnselectedQueues,
+        });
+        const roomsWithQueuesToRemove = rooms.filter((room) =>
+          filteringUnselectedQueues.includes(room.queue.uuid),
         );
 
-        const response = await Queues.editListQueues(
-          selectedQueues.concat(unselectedQueues),
+        roomsWithQueuesToRemove.forEach((room) =>
+          this.$store.dispatch('chats/rooms/removeRoom', room.uuid),
         );
 
         callUnnnicAlert({
@@ -172,30 +169,8 @@ export default {
           seconds: 5,
         });
 
-        console.log(unselectedQueuesOptions, 'opçoes nao selecionadas');
-        console.log(rooms, 'salas');
-
-        // const unselectedQueueUuids = new Set(
-        //   unselectedQueuesOptions.map(
-        //     (unselectedQueue) => unselectedQueue.queue,
-        //   ),
-        // );
-
-        // rooms.forEach((room) => {
-        //   const roomQueueUuid = room.queue.uuid;
-        //   console.log(roomQueueUuid, 'id da sala!');
-
-        //   if (unselectedQueueUuids.has(roomQueueUuid)) {
-        //     console.log(unselectedQueueUuids, 'salas');
-        //     this.$store.dispatch('chats/rooms/removeRoom', roomQueueUuid);
-        //   } else {
-        //     console.log('nao é igual');
-        //   }
-        // });
-
         this.$emit('close');
         this.$root.$children[0].wsReconnect();
-        return response;
       } catch (error) {
         console.error(error);
         callUnnnicAlert({
@@ -211,14 +186,14 @@ export default {
     },
 
     updateQueuesPlaceholder() {
-      const queuesValue = this.permissionQueues.map((queue) => queue.value);
+      const queuesValue = this.selectedQueues.map((queue) => queue.value);
       const selectedQueues = queuesValue.map((queueUuid) => ({
         uuid: queueUuid,
         role: this.roleIdSelected,
       }));
 
       if (selectedQueues.length < 1) {
-        this.permissionQueuesOptions.push({
+        this.queues.push({
           value: '',
           label: this.$t('chats.select_your_queues'),
         });
