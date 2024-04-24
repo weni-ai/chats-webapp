@@ -13,7 +13,7 @@
 
     <section
       class="settings-chats__project-configs"
-      v-if="projectConfig"
+      v-if="isUserAdmin && projectConfig"
     >
       <section class="project-configs__config">
         <UnnnicSwitch
@@ -131,6 +131,7 @@ export default {
   computed: {
     ...mapState({
       project: (state) => state.config.project,
+      me: (state) => state.profile.me,
     }),
     configBulkTransferTranslation() {
       const canBulkTransfer = this.projectConfig.can_use_bulk_transfer;
@@ -148,6 +149,10 @@ export default {
           canQueuePrioritization ? 'active' : 'inactive'
         }`,
       );
+    },
+    isUserAdmin() {
+      const ROLE_ADMIN = 1;
+      return this.me.project_permission_role === ROLE_ADMIN;
     },
   },
 
