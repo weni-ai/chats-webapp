@@ -150,16 +150,19 @@ export default {
 
         await Queues.editListQueues(selectedQueues.concat(unselectedQueues));
 
-        console.log({
-          filteringUnselectedQueues,
-        });
         const roomsWithQueuesToRemove = rooms.filter((room) =>
           filteringUnselectedQueues.includes(room.queue.uuid),
         );
-
         roomsWithQueuesToRemove.forEach((room) =>
           this.$store.dispatch('chats/rooms/removeRoom', room.uuid),
         );
+
+        const updatedRooms = await this.$store.dispatch('chats/rooms/getAll', {
+          limit: 100,
+        });
+        updatedRooms.forEach((room) => {
+          this.$store.dispatch('chats/rooms/addRoom', room.uuid);
+        });
 
         callUnnnicAlert({
           props: {
