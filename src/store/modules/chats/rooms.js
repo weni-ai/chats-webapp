@@ -33,7 +33,9 @@ export default {
       state.rooms = rooms;
     },
     [mutations.ADD_ROOM](state, room) {
-      state.rooms.unshift({ ...room });
+      if (room.uuid) {
+        state.rooms.unshift({ ...room });
+      }
     },
     [mutations.SET_ACTIVE_ROOM](state, room) {
       state.activeRoom = room;
