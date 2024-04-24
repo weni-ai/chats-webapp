@@ -10,7 +10,7 @@
       size="sm"
       :placeholder="$t('chats.search_contact')"
     ></UnnnicInput>
-    <div class="order-by">
+    <section class="chat-groups__header">
       <UnnnicToolTip
         enabled
         :text="$t('chats.select_queues')"
@@ -24,37 +24,39 @@
           @click="handleModalQueuePriorization"
         />
       </UnnnicToolTip>
-      <div>
-        <span>{{ $t('chats.room_list.order_by') }}</span>
+      <div class="order-by">
+        <div>
+          <span>{{ $t('chats.room_list.order_by') }}</span>
+        </div>
+        <div
+          class="apply-filter"
+          style="cursor: pointer"
+        >
+          <span
+            :style="{
+              fontWeight: lastCreatedFilter ? '700' : '400',
+            }"
+            @click="
+              listRoom(false, '-last_interaction'),
+                ((lastCreatedFilter = true), (createdOnFilter = false))
+            "
+            >{{ $t('chats.room_list.most_recent') }}</span
+          >
+          <span> | </span>
+          <span
+            :style="{
+              fontWeight: createdOnFilter ? '700' : '400',
+            }"
+            @click="
+              listRoom(false, 'last_interaction'),
+                ((createdOnFilter = true), (lastCreatedFilter = false))
+            "
+          >
+            {{ $t('chats.room_list.older') }}</span
+          >
+        </div>
       </div>
-      <div
-        class="apply-filter"
-        style="cursor: pointer"
-      >
-        <span
-          :style="{
-            fontWeight: lastCreatedFilter ? '700' : '400',
-          }"
-          @click="
-            listRoom(false, '-last_interaction'),
-              ((lastCreatedFilter = true), (createdOnFilter = false))
-          "
-          >{{ $t('chats.room_list.most_recent') }}</span
-        >
-        <span> | </span>
-        <span
-          :style="{
-            fontWeight: createdOnFilter ? '700' : '400',
-          }"
-          @click="
-            listRoom(false, 'last_interaction'),
-              ((createdOnFilter = true), (lastCreatedFilter = false))
-          "
-        >
-          {{ $t('chats.room_list.older') }}</span
-        >
-      </div>
-    </div>
+    </section>
     <RoomsListLoading v-if="isLoadingRooms" />
     <section
       v-else
@@ -271,6 +273,11 @@ export default {
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-stack-xs;
+  .chat-groups__header {
+    display: grid;
+    gap: $unnnic-spacing-xs;
+    grid-template-columns: auto 1fr;
+  }
   .chat-groups {
     flex: 1 1;
     display: flex;
