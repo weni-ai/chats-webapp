@@ -15,7 +15,11 @@
         enabled
         :text="$t('chats.select_queues')"
         side="right"
-        v-if="!isMobile && project.config?.can_use_queue_prioritization"
+        v-if="
+          !isMobile &&
+          !isUserAdmin &&
+          project.config?.can_use_queue_prioritization
+        "
       >
         <UnnnicButton
           iconCenter="filter_list"
@@ -158,7 +162,12 @@ export default {
       discussions: (state) => state.chats.discussions.discussions,
       listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
       project: (state) => state.config.project,
+      me: (state) => state.profile.me,
     }),
+    isUserAdmin() {
+      const ROLE_ADMIN = 1;
+      return this.me.project_permission_role === ROLE_ADMIN;
+    },
     totalUnreadMessages() {
       return this.rooms.reduce(
         (total, room) =>
