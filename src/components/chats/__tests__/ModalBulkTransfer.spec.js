@@ -10,6 +10,14 @@ import i18n from '@/plugins/i18n';
 
 import ModalBulkTransfer from '../chat/ModalBulkTransfer.vue';
 
+const mockBulkTranfer = jest.fn((status) => ({
+  status,
+}));
+
+jest.mock('@/services/api/resources/chats/room', () => ({
+  bulkTranfer: (status) => mockBulkTranfer(status),
+}));
+
 jest.mock('@/services/api/resources/settings/queue', () => ({
   listByProject: jest.fn(() => ({
     results: [
@@ -31,6 +39,7 @@ function createWrapper(store) {
   const wrapper = mount(ModalBulkTransfer, {
     stubs: {
       UnnnicButton: unnnicButton,
+      Alert: true,
     },
     i18n,
     store,
@@ -60,6 +69,9 @@ describe('ModalBulkTransfer', () => {
               namespaced: true,
               state: {
                 selectedRoomsToTransfer: ['1', '2'],
+              },
+              actions: {
+                setSelectedRoomsToTransfer: jest.fn(),
               },
             },
           },
@@ -123,19 +135,66 @@ describe('ModalBulkTransfer', () => {
   });
 
   describe('Bulk Transfer', () => {
-    it('should perform bulk transfer when transfer button is clicked', async () => {});
+    let transferButton;
 
-    it('should show success alert after successful bulk transfer', async () => {});
+    beforeEach(() => {
+      wrapper.setData({
+        selectedQueue: [
+          { value: 'queue_id', label: 'Queue', queue_name: 'Queue' },
+        ],
+      });
 
-    it('should show error alert if bulk transfer fails', async () => {});
+      transferButton = wrapper.find('[data-testid="transfer-button"]');
+    });
 
-    it('should close modal after successful bulk transfer', async () => {});
+    it('should perform bulk transfer when transfer button is clicked', async () => {
+      await transferButton.trigger('click');
+      expect(mockBulkTranfer).toHaveBeenCalledTimes(1);
+    });
+
+    it('should show success alert after successful bulk transfer', async () => {
+      mockBulkTranfer.mockResolvedValueOnce({ status: 200 });
+
+      await transferButton.trigger('click');
+      expect(document.querySelector('.alert')).not.toBeNull();
+    });
+
+    it('should show error alert if bulk transfer fails', async () => {
+      mockBulkTranfer.mockResolvedValueOnce({ status: 404 });
+
+      await transferButton.trigger('click');
+      expect(document.querySelector('.alert')).not.toBeNull();
+    });
+
+    it('should close modal after successful bulk transfer', async () => {
+      await transferButton.trigger('click');
+      expect(wrapper.emitted('close')).toBeTruthy();
+    });
   });
 
   describe('Button States', () => {
-    it('should disable transfer button when no queue is selected', () => {});
+    let transferButton;
 
-    it('should disable transfer button when loading bulk transfer', () => {});
+    beforeEach(() => {
+      transferButton = wrapper.find('[data-testid="transfer-button"]');
+    });
+
+    it('should disable transfer button when no queue is selected', () => {
+      wrapper.setData({
+        selectedQueue: [{ value: '', label: 'Select a queue' }],
+      });
+
+      expect(transferButton.props('disabled')).toBe(true);
+    });
+
+    it('should disable transfer button when loading bulk transfer', () => {
+      wrapper.setData({
+        selectedQueue: [{ value: 'queue_id', label: 'Queue' }],
+      });
+
+      transferButton.trigger('click');
+      expect(transferButton.props('disabled')).toBe(true);
+    });
   });
 
   describe('Modal Interaction', () => {
