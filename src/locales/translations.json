@@ -581,6 +581,46 @@
         "en": "Contact history",
         "es": "Historia del contacto"
       }
+    },
+    "select_queues": {
+      "pt-br": "Selecionar filas",
+      "en": "Select queues",
+      "es": "Seleccionar colas"
+    },
+    "select_services_queues": {
+      "pt-br": "Selecionar filas de atendimento",
+      "en": "Select service queues",
+      "es": "Seleccionar colas de atención"
+    },
+    "select_at_least": {
+      "pt-br": "Selecione pelo menos uma fila para salvar alterações",
+      "en": "Select at least one queue to save changes",
+      "es": "Seleccione al menos una cola para guardar los cambios"
+    },
+    "select_the_queues": {
+      "pt-br": "Selecione as filas",
+      "en": "Select queues",
+      "es": "Seleccionar colas"
+    },
+    "select_your_queues": {
+      "pt-br": "Selecione suas filas",
+      "en": "Select your queues",
+      "es": "Selecciona tus colas"
+    },
+    "no_queue_selected": {
+      "pt-br": "Nenhuma fila selecionada",
+      "en": "No queue selected",
+      "es": "Ninguna cola seleccionada"
+    },
+    "success_update_queues": {
+      "pt-br": "Suas filas de atendimento foram atualizadas",
+      "en": "Your service queues have been updated",
+      "es": "Tus colas de servicio han sido actualizadas"
+    },
+    "error_update_queues": {
+      "pt-br": "Não foi possível atualizar suas filas de atendimento",
+      "en": "Unable to update your service queues",
+      "es": "No se pueden actualizar sus colas de servicio"
     }
   },
   "dashboard": {
@@ -1019,14 +1059,14 @@
       "es": "Transferir contactos seleccionados"
     },
     "agent_transfer_success": {
-      "pt-br": "Contatos transferidos com sucesso para agente {agent}",
-      "en": "Contacts successfully transferred to agent {agent}",
-      "es": "Contactos transferidos con éxito al agente {agent}"
+      "pt-br": "Contato transferido com sucesso para agente {agent} | Contatos transferidos com sucesso para agente {agent}",
+      "en": "Contact successfully transferred to agent {agent} | Contacts successfully transferred to agent {agent}",
+      "es": "Contacto transferido con éxito al agente {agent} | Contactos transferidos con éxito al agente {agent}"
     },
     "queue_transfer_success": {
-      "pt-br": "Contatos transferidos com sucesso para fila {queue}",
-      "en": "Contacts successfully transferred to queue {queue}",
-      "es": "Contactos transferidos con éxito a la cola {queue}"
+      "pt-br": "Contato transferido com sucesso para fila {queue} | Contatos transferidos com sucesso para fila {queue}",
+      "en": "Contact successfully transferred to queue {queue} | Contacts successfully transferred to queue {queue}",
+      "es": "Contacto transferido con éxito a la cola {queue} | Contactos transferidos con éxito a la cola {queue}"
     },
     "error": {
       "pt-br": "Não foi possível transferir os contatos, tente novamente",
@@ -1418,12 +1458,12 @@
     }
   },
   "select_agent": {
-    "pt-br": "Selecione agente",
+    "pt-br": "Selecionar agente",
     "en": "Select agent",
     "es": "Seleccionar agente"
   },
   "select_queue": {
-    "pt-br": "Selecione fila",
+    "pt-br": "Selecionar fila",
     "en": "Select queue",
     "es": "Seleccionar cola"
   },
@@ -1857,6 +1897,23 @@
           "pt-br": "Transferência de contatos em massa desativado",
           "en": "Bulk contact transfer disabled",
           "es": "Transferencia de contactos en masa discapacitada"
+        }
+      },
+      "queue_prioritization": {
+        "tooltip": {
+          "pt-br": "Essa função permite que agentes possam escolher as filas que receberão contatos, dentro das previamente selecionadas no setor",
+          "en": "This function allows agents to choose the queues that will receive contacts, within those previously selected in the sector",
+          "es": "Esta función permite a los agentes elegir las colas que recibirán contactos, dentro de las previamente seleccionadas en el sector."
+        },
+        "switch_active": {
+          "pt-br": "Seleção de filas pelos agentes ativa",
+          "en": "Queue selection by agents active",
+          "es": "Selección de cola por agentes activo"
+        },
+        "switch_inactive": {
+          "pt-br": "Seleção de filas pelos agentes inativa",
+          "en": "Queue selection by agents inactive",
+          "es": "Selección de cola por agentes inactivo"
         }
       }
     },
