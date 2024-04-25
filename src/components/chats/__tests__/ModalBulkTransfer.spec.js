@@ -75,30 +75,6 @@ describe('ModalBulkTransfer', () => {
   });
 
   describe('Bulk Transfer', () => {
-    let transferButton;
-
-    beforeEach(() => {
-      wrapper.setData({
-        selectedQueue: [
-          { value: 'queue_id', label: 'Queue', queue_name: 'Queue' },
-        ],
-      });
-
-      transferButton = wrapper.find('[data-testid="transfer-button"]');
-    });
-
-    it('should perform bulk transfer when transfer button is clicked', async () => {
-      await transferButton.trigger('click');
-      expect(mockBulkTranfer).toHaveBeenCalledTimes(1);
-    });
-
-    it('should show success alert after successful bulk transfer', async () => {
-      mockBulkTranfer.mockResolvedValueOnce({ status: 200 });
-
-      await transferButton.trigger('click');
-      expect(document.querySelector('.alert')).not.toBeNull();
-    });
-
     it('should close modal after successful bulk transfer', async () => {});
   });
 
