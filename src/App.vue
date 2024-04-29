@@ -80,7 +80,7 @@ export default {
     },
     'viewedAgent.email': {
       handler() {
-        this.ws.reconnect();
+        this.wsReconnect();
       },
     },
 
@@ -89,8 +89,10 @@ export default {
 
       handler() {
         if (!this.configsForInitializeWebSocket.some((config) => !config)) {
-          this.ws = new WS({ app: this });
-          this.ws.connect();
+          if (!this.ws) {
+            this.ws = new WS({ app: this });
+            this.ws.connect();
+          }
         }
       },
     },
@@ -198,6 +200,10 @@ export default {
       });
       this.$store.state.config.status = connection_status;
       localStorage.setItem('statusAgent', connection_status);
+    },
+
+    async wsReconnect() {
+      this.ws.reconnect();
     },
   },
 };

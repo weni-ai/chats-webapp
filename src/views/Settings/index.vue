@@ -13,7 +13,7 @@
 
     <section
       class="settings-chats__project-configs"
-      v-if="projectConfig"
+      v-if="isUserAdmin && projectConfig"
     >
       <section class="project-configs__config">
         <UnnnicSwitch
@@ -23,6 +23,26 @@
         <UnnnicToolTip
           enabled
           :text="$t('config_chats.project_configs.bulk_transfer.tooltip')"
+          side="right"
+          maxWidth="20rem"
+        >
+          <UnnnicIcon
+            icon="information-circle-4"
+            scheme="neutral-soft"
+            size="sm"
+          />
+        </UnnnicToolTip>
+      </section>
+      <section class="project-configs__config">
+        <UnnnicSwitch
+          v-model="projectConfig.can_use_queue_prioritization"
+          :textRight="configQueuePrioritizationTranslation"
+        />
+        <UnnnicToolTip
+          enabled
+          :text="
+            $t('config_chats.project_configs.queue_prioritization.tooltip')
+          "
           side="right"
           maxWidth="20rem"
         >
@@ -104,12 +124,14 @@ export default {
 
     projectConfig: {
       can_use_bulk_transfer: false,
+      can_use_queue_prioritization: false,
     },
   }),
 
   computed: {
     ...mapState({
       project: (state) => state.config.project,
+      me: (state) => state.profile.me,
     }),
     configBulkTransferTranslation() {
       const canBulkTransfer = this.projectConfig.can_use_bulk_transfer;
@@ -118,6 +140,19 @@ export default {
           canBulkTransfer ? 'active' : 'inactive'
         }`,
       );
+    },
+    configQueuePrioritizationTranslation() {
+      const canQueuePrioritization =
+        this.projectConfig.can_use_queue_prioritization;
+      return this.$t(
+        `config_chats.project_configs.queue_prioritization.switch_${
+          canQueuePrioritization ? 'active' : 'inactive'
+        }`,
+      );
+    },
+    isUserAdmin() {
+      const ROLE_ADMIN = 1;
+      return this.me.project_permission_role === ROLE_ADMIN;
     },
   },
 
@@ -130,9 +165,11 @@ export default {
     },
 
     async updateProjectConfig() {
-      const { can_use_bulk_transfer } = this.projectConfig;
+      const { can_use_bulk_transfer, can_use_queue_prioritization } =
+        this.projectConfig;
       Project.update({
         can_use_bulk_transfer,
+        can_use_queue_prioritization,
       });
     },
 

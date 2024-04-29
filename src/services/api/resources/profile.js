@@ -3,7 +3,9 @@ import { getProject, getToken } from '@/utils/config';
 
 export default {
   async me() {
-    const response = await http.get('/accounts/profile/');
+    const response = await http.get('/accounts/profile/', {
+      params: { project_uuid: getProject() },
+    });
     return response.data;
   },
 

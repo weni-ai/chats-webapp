@@ -6,8 +6,8 @@ import Profile from '../store/modules/profile';
 
 export function isValidJson(message) {
   try {
-    JSON.parse(message);
-    return true;
+    const parsedObject = JSON.parse(message);
+    return typeof parsedObject === 'object' && parsedObject !== null;
   } catch {
     return false;
   }
