@@ -31,7 +31,6 @@
 <script>
 import { mapState } from 'vuex';
 
-import * as notifications from '@/utils/notifications';
 import { resetChats } from '@/utils/chats';
 
 import ChatsLayout from '@/layouts/ChatsLayout';
@@ -105,10 +104,6 @@ export default {
     updateTextBoxMessage(message) {
       this.$refs['home-chat']?.updateTextBoxMessage(message);
     },
-  },
-
-  mounted() {
-    notifications.requestPermission();
   },
 };
 </script>

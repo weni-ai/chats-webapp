@@ -11,6 +11,7 @@ import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
 import Project from './services/api/resources/settings/project';
 import WS from '@/services/api/websocket/setup';
+import * as notifications from '@/utils/notifications';
 
 import { getProject } from '@/utils/config';
 
@@ -18,7 +19,6 @@ const moment = require('moment');
 
 export default {
   name: 'App',
-
   beforeCreate() {
     http.interceptors.request.use((config) => {
       // eslint-disable-next-line no-param-reassign
@@ -29,6 +29,10 @@ export default {
 
   created() {
     this.handleLocale();
+  },
+
+  mounted() {
+    notifications.requestPermission();
   },
 
   data() {
