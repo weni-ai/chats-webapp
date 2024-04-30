@@ -1,23 +1,22 @@
 <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
-  <div class="custom-field">
+  <section class="custom-field">
     <component
       :is="isEditable && isCurrent ? 'label' : 'h3'"
       class="title"
       tabindex="0"
       >{{ title }}:
     </component>
-    <div
-      :class="['description', isEditable && 'editable', isCurrent && 'current']"
-    >
+    <section :class="descriptionClasses">
       <a
-        v-if="!isEditable && isAUrl"
+        v-if="showLink"
         :href="description"
         target="_blank"
         >{{ description }}</a
       >
+
       <UnnnicToolTip
-        v-show="!isCurrent && (isEditable || !isAUrl)"
+        v-show="showEditTooltip"
         class="tooltip"
         side="bottom"
         :enabled="isEditable"
@@ -26,35 +25,25 @@
       >
         <h4
           tabindex="0"
-          @click="
-            isEditable &&
-              updateCurrentCustomField({ key: title, value: description })
-          "
-          @keypress.enter="
-            isEditable &&
-              updateCurrentCustomField({ key: title, value: description })
-          "
+          @click="updateField"
+          @keypress.enter="updateField"
         >
           {{ description }}
         </h4>
       </UnnnicToolTip>
+
       <input
-        v-show="isEditable && isCurrent"
+        v-show="showInput"
         :ref="'custom_field_input_' + title"
         type="text"
         :value="value"
-        @input="
-          updateCurrentCustomField({
-            key: title,
-            value: $event.target.value || '',
-          })
-        "
+        @input="updateValue"
         @blur="saveValue"
         @keypress.enter="saveValue"
         maxlength="50"
       />
-    </div>
-  </div>
+    </section>
+  </section>
 </template>
 
 <script>
@@ -89,13 +78,44 @@ export default {
   },
 
   computed: {
-    isAUrl() {
+    isDescriptionAUrl() {
       const urlRegex = /(https?:\/\/[^\s]+)/g;
       return urlRegex.test(this.description);
+    },
+
+    descriptionClasses() {
+      return [
+        'description',
+        this.isEditable && 'editable',
+        this.isCurrent && 'current',
+      ];
+    },
+    showLink() {
+      return !this.isEditable && this.isDescriptionAUrl;
+    },
+    showEditTooltip() {
+      return !this.isCurrent && (this.isEditable || !this.isDescriptionAUrl);
+    },
+    showInput() {
+      return this.isEditable && this.isCurrent;
     },
   },
 
   methods: {
+    updateField() {
+      if (this.isEditable) {
+        this.updateCurrentCustomField({
+          key: this.title,
+          value: this.description,
+        });
+      }
+    },
+    updateValue(event) {
+      this.updateCurrentCustomField({
+        key: this.title,
+        value: event.target.value || '',
+      });
+    },
     updateCurrentCustomField(customField) {
       this.$emit('update-current-custom-field', customField);
     },
