@@ -6,9 +6,9 @@ import defaultProps from './mocks/customFieldMock.js';
 
 const localVue = createLocalVue();
 
-function createWrapper() {
+function createWrapper(propsData) {
   const wrapper = mount(CustomField, {
-    propsData: defaultProps,
+    propsData,
     stubs: {
       UnnnicToolTip: true,
     },
@@ -23,7 +23,7 @@ describe('CustomField', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = createWrapper();
+    wrapper = createWrapper(defaultProps);
   });
 
   it('should renders the title and description', () => {
@@ -31,6 +31,21 @@ describe('CustomField', () => {
     expect(wrapper.find('.description h4').text()).toBe(
       defaultProps.description,
     );
+  });
+
+  it('should show a anchor with target="_blank" if description is a url and is not editable', () => {
+    const newProps = { ...defaultProps };
+    newProps.description = 'https://example.com';
+    newProps.isEditable = false;
+
+    const wrapperWithURL = createWrapper(newProps);
+
+    const anchorElement = wrapperWithURL.find('.description a');
+    expect(anchorElement.exists()).toBe(true);
+    expect(anchorElement.attributes().href).toBe(newProps.description);
+    expect(anchorElement.attributes().target).toBe('_blank');
+
+    wrapper.destroy();
   });
 
   it('should shows the input field when isCurrent prop is true', async () => {
