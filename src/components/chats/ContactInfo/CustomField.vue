@@ -110,7 +110,6 @@ export default {
         this.$nextTick(() => {
           const inputRef = `custom_field_input_${this.title}`;
           const input = this.$refs[inputRef];
-          console.log(this.$refs[inputRef]);
 
           if (input) {
             input.focus();
