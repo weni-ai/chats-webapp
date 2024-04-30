@@ -23,13 +23,12 @@ export function sendWindowNotification({
     'serviceWorker' in navigator &&
     Notification.permission === 'granted'
   ) {
-    console.log('isMobileNotification');
-    const sw = navigator.serviceWorker.ready;
-    sw.registration.showNotification(title, options);
-    console.log('sending mobile notification');
+    navigator.serviceWorker.ready.then((registration) => {
+      registration.showNotification(title, options);
+    });
+
     return;
   }
-  console.log('not send mobile notification');
 
   iframessa.emit('notification', [title, options]);
 }
