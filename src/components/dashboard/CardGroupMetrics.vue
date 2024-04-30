@@ -19,19 +19,19 @@
             title: 'Em andamento',
             icon: 'mark_chat_unread',
             scheme: 'aux-blue',
-            count: 0,
+            count: metric.active_rooms || 0,
           },
           {
             title: 'Aguardando atendimento',
             icon: 'pending',
             scheme: 'feedback-blue',
-            count: 0,
+            count: metric.active_chats || 0,
           },
           {
             title: 'Encerrados',
             icon: 'check_circle',
             scheme: 'aux-purple',
-            count: 0,
+            count: metric.closed_rooms || 0,
           },
           {
             title: 'Tempo de espera',

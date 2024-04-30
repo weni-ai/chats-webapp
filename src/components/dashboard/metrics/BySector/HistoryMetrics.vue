@@ -149,26 +149,42 @@ export default {
 
     async sectorInfo() {
       try {
-        this.sectors = await DashboardManagerApi.getSectorInfo(
+        const response = await DashboardManagerApi.getSectorInfo(
           this.filter.sector,
           this.filter.agent,
           this.filter.tags,
           this.filter.filterDate.start,
           this.filter.filterDate.end,
         );
+
+        const treatedSectors = response;
+        treatedSectors.sectors = await Promise.all(
+          response.sectors?.map(async (sector) => {
+            const response = await this.rawDataInfo(sector.uuid);
+
+            return { ...sector, ...response?.raw_data[0] };
+          }),
+        );
+        this.sectors = treatedSectors;
       } catch (error) {
         console.log(error);
       }
     },
-    async rawDataInfo() {
+    async rawDataInfo(sector) {
       try {
-        this.rawInfo = await DashboardManagerApi.getRawInfo(
-          this.filter.sector,
+        const response = await DashboardManagerApi.getRawInfo(
+          this.filter.sector || sector,
           this.filter.agent,
           this.filter.tags,
           this.filter.filterDate.start,
           this.filter.filterDate.end,
         );
+
+        if (sector) {
+          return response;
+        }
+
+        this.rawInfo = response;
       } catch (error) {
         console.log(error);
       }
