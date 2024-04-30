@@ -15,39 +15,39 @@
         :key="metric.name"
         :name="metric.name"
         :statuses="[
-          // {
-          //   title: 'Em andamento',
-          //   icon: 'messages',
-          //   scheme: 'aux-blue',
-          //   count: 0,
-          // },
-          // {
-          //   title: 'Aguardando atendimento',
-          //   icon: 'synchronize-arrow-clock-4',
-          //   scheme: 'feedback-blue',
-          //   count: 0,
-          // },
-          // {
-          //   title: 'Encerrados',
-          //   icon: 'check-circle-1-1',
-          //   scheme: 'aux-purple',
-          //   count: 0,
-          // },
+          {
+            title: 'Em andamento',
+            icon: 'mark_chat_unread',
+            scheme: 'aux-blue',
+            count: 0,
+          },
+          {
+            title: 'Aguardando atendimento',
+            icon: 'pending',
+            scheme: 'feedback-blue',
+            count: 0,
+          },
+          {
+            title: 'Encerrados',
+            icon: 'check_circle',
+            scheme: 'aux-purple',
+            count: 0,
+          },
           {
             title: 'Tempo de espera',
-            icon: 'time-clock-circle-1',
+            icon: 'chronic',
             scheme: 'aux-orange',
             count: timeToString(metric.waiting_time) || 0,
           },
           {
             title: 'Tempo de resposta',
-            icon: 'response-time',
+            icon: 'acute',
             scheme: 'aux-pink',
             count: timeToString(metric.response_time) || 0,
           },
           {
             title: 'Tempo de interação',
-            icon: 'interaction-time',
+            icon: 'history_toggle_off',
             scheme: 'feedback-green',
             count: timeToString(metric.interact_time) || 0,
           },
