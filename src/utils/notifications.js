@@ -24,12 +24,19 @@ export function sendWindowNotification({
     Notification.permission === 'granted'
   ) {
     console.log('isMobileNotification');
-    const sw = navigator.serviceWorker.ready;
-    sw.registration.showNotification(title, options);
+    navigator.serviceWorker.ready.then((registration) => {
+      console.log(
+        'navigator.serviceWorker.ready',
+        navigator.serviceWorker.ready,
+      );
+      registration.showNotification(title, options);
+      console.log('registration', registration);
+    });
     console.log('sending mobile notification');
     return;
   }
   console.log('not send mobile notification');
+  new Notification('test');
 
   iframessa.emit('notification', [title, options]);
 }
