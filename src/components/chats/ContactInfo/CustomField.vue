@@ -10,8 +10,14 @@
     <div
       :class="['description', isEditable && 'editable', isCurrent && 'current']"
     >
+      <a
+        v-if="!isEditable && isAUrl"
+        :href="description"
+        target="_blank"
+        >{{ description }}</a
+      >
       <UnnnicToolTip
-        v-show="!isCurrent"
+        v-show="!isCurrent && (isEditable || !isAUrl)"
         class="tooltip"
         side="bottom"
         :enabled="isEditable"
@@ -79,6 +85,13 @@ export default {
       type: String,
       default: '',
       required: true,
+    },
+  },
+
+  computed: {
+    isAUrl() {
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      return urlRegex.test(this.description);
     },
   },
 
