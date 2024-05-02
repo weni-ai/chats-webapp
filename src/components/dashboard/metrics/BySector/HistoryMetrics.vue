@@ -147,6 +147,11 @@ export default {
       }
     },
 
+    async fetchSectorData(sector) {
+      const rawData = await this.rawDataInfo(sector.uuid);
+      return { ...sector, ...rawData?.raw_data[0] };
+    },
+
     async sectorInfo() {
       try {
         const response = await DashboardManagerApi.getSectorInfo(
@@ -157,14 +162,16 @@ export default {
           this.filter.filterDate.end,
         );
 
-        const treatedSectors = response;
-        treatedSectors.sectors = await Promise.all(
-          response.sectors?.map(async (sector) => {
-            const response = await this.rawDataInfo(sector.uuid);
+        if (this.filter.sector !== '') {
+          this.sectors = response;
+          return;
+        }
 
-            return { ...sector, ...response?.raw_data[0] };
-          }),
+        const treatedSectors = { ...response };
+        treatedSectors.sectors = await Promise.all(
+          response.sectors?.map(this.fetchSectorData),
         );
+
         this.sectors = treatedSectors;
       } catch (error) {
         console.log(error);

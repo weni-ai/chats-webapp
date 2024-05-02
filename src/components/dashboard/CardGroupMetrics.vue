@@ -15,24 +15,28 @@
         :key="metric.name"
         :name="metric.name"
         :statuses="[
-          {
-            title: 'Em andamento',
-            icon: 'mark_chat_unread',
-            scheme: 'aux-green-500',
-            count: metric.active_rooms || 0,
-          },
-          {
-            title: 'Aguardando atendimento',
-            icon: 'pending',
-            scheme: 'aux-blue-500',
-            count: metric.active_chats || 0,
-          },
-          {
-            title: 'Encerrados',
-            icon: 'check_circle',
-            scheme: 'aux-purple-500',
-            count: metric.closed_rooms || 0,
-          },
+          ...(showRoomMetrics(metric)
+            ? [
+                {
+                  title: 'Em andamento',
+                  icon: 'mark_chat_unread',
+                  scheme: 'aux-green-500',
+                  count: metric.active_rooms || 0,
+                },
+                {
+                  title: 'Aguardando atendimento',
+                  icon: 'pending',
+                  scheme: 'aux-blue-500',
+                  count: metric.active_chats || 0,
+                },
+                {
+                  title: 'Encerrados',
+                  icon: 'check_circle',
+                  scheme: 'aux-purple-500',
+                  count: metric.closed_rooms || 0,
+                },
+              ]
+            : []),
           {
             title: 'Tempo de espera',
             icon: 'chronic',
@@ -114,6 +118,10 @@ export default {
         return `${formatado.seconds}s`;
       }
       return `${hora}h${minuto}min ${segundo}s`;
+    },
+
+    showRoomMetrics({ active_rooms, active_chats, closed_rooms } = {}) {
+      return active_rooms || active_chats || closed_rooms;
     },
   },
 };
