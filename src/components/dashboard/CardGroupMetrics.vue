@@ -18,37 +18,37 @@
           {
             title: 'Em andamento',
             icon: 'mark_chat_unread',
-            scheme: 'aux-blue',
+            scheme: 'aux-green-500',
             count: metric.active_rooms || 0,
           },
           {
             title: 'Aguardando atendimento',
             icon: 'pending',
-            scheme: 'feedback-blue',
+            scheme: 'aux-blue-500',
             count: metric.active_chats || 0,
           },
           {
             title: 'Encerrados',
             icon: 'check_circle',
-            scheme: 'aux-purple',
+            scheme: 'aux-purple-500',
             count: metric.closed_rooms || 0,
           },
           {
             title: 'Tempo de espera',
             icon: 'chronic',
-            scheme: 'aux-orange',
+            scheme: 'aux-orange-500',
             count: timeToString(metric.waiting_time) || 0,
           },
           {
             title: 'Tempo de resposta',
             icon: 'acute',
-            scheme: 'aux-pink',
+            scheme: 'aux-red-500',
             count: timeToString(metric.response_time) || 0,
           },
           {
             title: 'Tempo de interação',
             icon: 'history_toggle_off',
-            scheme: 'feedback-green',
+            scheme: 'aux-yellow-500',
             count: timeToString(metric.interact_time) || 0,
           },
           // {
@@ -144,6 +144,15 @@ export default {
 
     &.columns-3 {
       grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    :deep(.unnnic-card-container) {
+      .statuses {
+        // !important at grid-template-columns is needed here because the
+        // unnnicCardInformation base uses inline styles
+        grid-template-columns: repeat(3, minmax(90px, 1fr)) !important;
+        gap: $unnnic-spacing-ant;
+      }
     }
   }
 }
