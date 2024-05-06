@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "ai.weni.chats.twa",
+    "sha256_cert_fingerprints": ["1F:45:62:A2:54:FE:D4:81:F8:E9:A0:15:01:EA:EE:D8:F8:2A:38:B7:EE:5B:A1:5B:48:30:F8:0F:9C:E4:0C:E2"]
+  }
+}]
