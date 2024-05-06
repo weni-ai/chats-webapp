@@ -123,6 +123,13 @@ import DashboardManagerApi from '@/services/api/resources/dashboard/dashboardMan
 export default {
   name: 'DashboardFilters',
 
+  props: {
+    sectors: {
+      type: Array,
+      default: () => [],
+    },
+  },
+
   data: () => ({
     sectorsToFilter: [],
     agentsToFilter: [],
@@ -140,8 +147,6 @@ export default {
     this.filterSector = [this.filterSectorsOptionAll];
     this.agentsToFilter = this.filterAgentDefault.concat(this.filterOptionNone);
     this.tagsToFilter = this.filterTagDefault.concat(this.filterOptionNone);
-
-    await this.getSectors();
   },
 
   computed: {
@@ -228,23 +233,23 @@ export default {
       }
     },
 
-    async getSectors() {
-      try {
-        const { results } = await Sector.list({ limit: 50 });
+    async treatSectors() {
+      const { sectors } = this;
 
+      try {
         const newSectors = [this.filterSectorsOptionAll];
-        results.forEach(({ uuid, name }) =>
+        sectors.forEach(({ uuid, name }) =>
           newSectors.push({ value: uuid, label: name }),
         );
         this.sectorsToFilter = newSectors;
 
-        if (results.length === 1) {
+        if (sectors.length === 1) {
           this.filterSector = [newSectors[1]];
         }
 
-        if (results.length > 0) {
-          this.getSectorAgents(results[0].uuid);
-          this.getSectorTags(results[0].uuid);
+        if (sectors.length > 0) {
+          this.getSectorAgents(sectors[0].uuid);
+          this.getSectorTags(sectors[0].uuid);
         }
       } catch (error) {
         console.error('The sectors could not be loaded at this time.', error);
@@ -331,6 +336,7 @@ export default {
   },
 
   watch: {
+    sectors: 'treatSectors',
     filterSector: 'sendFilter',
     filterAgent: 'sendFilter',
     filterTag: 'sendFilter',

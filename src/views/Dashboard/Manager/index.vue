@@ -18,10 +18,14 @@
     </template>
 
     <template #actions>
-      <DashboardFilters @filter="filters = $event" />
+      <DashboardFilters
+        @filter="filters = $event"
+        :sectors="sectors"
+      />
     </template>
 
     <HistoryMetricsBySector
+      :sectors="sectors"
       :filter="filters"
       @historyFilter="event = $event"
       :headerTitle="filters?.sector ? 'Filas' : 'Setores'"
@@ -33,6 +37,7 @@
 </template>
 
 <script>
+import Sector from '@/services/api/resources/settings/sector';
 import { mapState } from 'vuex';
 
 import DashboardLayout from '@/layouts/DashboardLayout';
@@ -53,7 +58,12 @@ export default {
     showData: '',
     agents: {},
     filters: null,
+    sectors: [],
   }),
+
+  async created() {
+    await this.getSectors();
+  },
 
   watch: {
     visualization(newValue) {
@@ -76,6 +86,17 @@ export default {
     header() {
       const projectName = this.project.name;
       return projectName;
+    },
+  },
+
+  methods: {
+    async getSectors() {
+      try {
+        const { results } = await Sector.list({ limit: 50 });
+        this.sectors = results;
+      } catch (error) {
+        console.error('The sectors could not be loaded at this time.', error);
+      }
     },
   },
 };
