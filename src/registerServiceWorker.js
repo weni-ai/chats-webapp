@@ -4,44 +4,27 @@ import { register } from 'register-service-worker';
 
 if (process.env.NODE_ENV === 'production') {
   register(`${process.env.BASE_URL}service-worker.js`, {
-    ready(e) {
+    ready() {
       console.info(
         'App is being served from cache by a service worker.\n' +
           'For more details, visit https://goo.gl/AFskqB',
-        e,
       );
     },
-    registered(e) {
-      console.info('Service worker has been registered.', e);
-
-      /* do our magic */
-      self.addEventListener('notificationclick', function (event) {
-        let notification = event.notification;
-        let action = event.action;
-
-        if (action === 'close') {
-          notification.close();
-        } else {
-          // eslint-disable-next-line no-undef
-          clients.openWindow('https://www.google.com');
-          notification.close();
-        }
-      });
-      console.info('Added Event Listener for Notification Click');
+    registered() {
+      console.info('Service worker has been registered.');
     },
-    cached(e) {
-      console.info('Content has been cached for offline use.', e);
+    cached() {
+      console.info('Content has been cached for offline use.');
     },
-    updatefound(e) {
-      console.info('New content is downloading.', e);
+    updatefound() {
+      console.info('New content is downloading.');
     },
-    updated(e) {
-      console.info('New content is available; please refresh.', e);
+    updated() {
+      console.info('New content is available; please refresh.');
     },
-    offline(e) {
+    offline() {
       console.info(
         'No internet connection found. App is running in offline mode.',
-        e,
       );
     },
     error(error) {
