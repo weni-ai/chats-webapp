@@ -36,4 +36,5 @@ module.exports = defineConfig({
       msTileImage: 'logos/weni-512.png',
     },
   },
+  publicPath: '/',
 });
