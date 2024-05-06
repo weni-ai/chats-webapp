@@ -185,6 +185,12 @@ export default {
         // unnnicCardInformation base uses inline styles
         grid-template-columns: repeat(3, minmax(90px, 1fr)) !important;
         gap: $unnnic-spacing-ant;
+
+        [class*='unnnic-icon'] {
+          font-size: $unnnic-font-size-title-sm;
+
+          margin: $unnnic-spacing-nano / 2; // Necessary for the icon box to reach 32px
+        }
       }
     }
   }
