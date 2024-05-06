@@ -275,6 +275,8 @@ export default {
     overflow: hidden;
 
     padding: $unnnic-spacing-xs $unnnic-spacing-sm 0;
+
+    height: 100%;
   }
 
   &__chats-list {

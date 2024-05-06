@@ -89,6 +89,13 @@ export default {
     projectUuid(newProjectUuid) {
       this.setProjectUuid(newProjectUuid || '');
       if (newProjectUuid) {
+        const app = this.$root.$children[0];
+        if (app.ws) {
+          app.wsReconnect();
+        } else {
+          app.wsConnect();
+        }
+
         this.$router.push({ name: 'home' });
       }
     },
