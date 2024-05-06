@@ -11,11 +11,11 @@
 
     <section class="card-group-metrics__metrics">
       <UnnnicCardInformation
-        v-for="metric in metrics.sectors"
+        v-for="metric in orderedMetrics"
         :key="metric.name"
         :name="metric.name"
         :statuses="[
-          ...(showRoomMetrics(metric)
+          ...(allMetrics
             ? [
                 {
                   title: 'Em andamento',
@@ -27,7 +27,7 @@
                   title: 'Aguardando atendimento',
                   icon: 'pending',
                   scheme: 'aux-blue-500',
-                  count: metric.active_chats || 0,
+                  count: metric.queue_rooms || 0,
                 },
                 {
                   title: 'Encerrados',
@@ -41,19 +41,19 @@
             title: 'Tempo de espera',
             icon: 'chronic',
             scheme: 'aux-orange-500',
-            count: timeToString(metric.waiting_time) || 0,
+            count: timeToString(metric.waiting_time || 0),
           },
           {
             title: 'Tempo de resposta',
             icon: 'acute',
             scheme: 'aux-red-500',
-            count: timeToString(metric.response_time) || 0,
+            count: timeToString(metric.response_time || 0),
           },
           {
             title: 'Tempo de interação',
             icon: 'history_toggle_off',
             scheme: 'aux-yellow-500',
-            count: timeToString(metric.interact_time) || 0,
+            count: timeToString(metric.interact_time || 0),
           },
           // {
           //   title: totalChatsLabel,
@@ -90,9 +90,34 @@ export default {
       type: String,
       default: '',
     },
+    allMetrics: {
+      type: Boolean,
+      default: false,
+    },
   },
-  mounted() {
-    // console.log(this.metrics.sectors);
+
+  computed: {
+    orderedMetrics() {
+      let orderedMetrics = this.metrics.sectors;
+      if (orderedMetrics?.length > 0) {
+        orderedMetrics.sort((a, b) => {
+          const priorityA =
+            a.active_rooms > 0 || a.active_chats > 0 || a.closed_rooms > 0;
+          const priorityB =
+            b.active_rooms > 0 || b.active_chats > 0 || b.closed_rooms > 0;
+
+          if (priorityA === priorityB) {
+            if (a.name < b.name) return -1;
+            if (a.name > b.name) return 1;
+            return 0;
+          }
+
+          return priorityB - priorityA;
+        });
+      }
+
+      return orderedMetrics;
+    },
   },
   methods: {
     timeToString(minutes) {

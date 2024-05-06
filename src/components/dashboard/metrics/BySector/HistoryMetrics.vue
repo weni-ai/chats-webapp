@@ -7,12 +7,13 @@
       class="grid-1"
     />
     <CardGroupMetrics
-      :metrics="sectors"
+      :metrics="treatedSectors"
       :rawData="rawInfo"
       :title="headerTitle"
       :totalChatsLabel="totalChatsLabel"
       icon="hierarchy-3-2"
       class="grid-2"
+      :allMetrics="headerTitle === 'Setores'"
     />
     <TableMetrics
       :headers="agentsLabel"
@@ -67,12 +68,16 @@ export default {
       type: String,
       default: '',
     },
+    sectors: {
+      type: Array,
+      default: () => [],
+    },
   },
 
   data: () => ({
     agents: {},
     generalMetrics: {},
-    sectors: {},
+    treatedSectors: {},
     rawInfo: {},
     tableHeaders: [
       {
@@ -162,17 +167,23 @@ export default {
           this.filter.filterDate.end,
         );
 
-        if (this.filter.sector !== '') {
-          this.sectors = response;
+        if (this.headerTitle === 'Filas') {
+          this.treatedSectors = response;
           return;
         }
 
-        const treatedSectors = { ...response };
-        treatedSectors.sectors = await Promise.all(
-          response.sectors?.map(this.fetchSectorData),
-        );
+        const newSectors = {
+          sectors: await Promise.all(this.sectors?.map(this.fetchSectorData)),
+        };
 
-        this.sectors = treatedSectors;
+        newSectors.sectors = newSectors.sectors.map((sector) => {
+          const equivalentResponseSector = response.sectors.find(
+            (responseSector) => responseSector.uuid === sector.uuid,
+          );
+          return { ...sector, ...equivalentResponseSector };
+        });
+
+        this.treatedSectors = newSectors;
       } catch (error) {
         console.log(error);
       }
