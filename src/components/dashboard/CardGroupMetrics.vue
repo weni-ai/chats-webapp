@@ -11,45 +11,49 @@
 
     <section class="card-group-metrics__metrics">
       <UnnnicCardInformation
-        v-for="metric in metrics.sectors"
+        v-for="metric in orderedMetrics"
         :key="metric.name"
         :name="metric.name"
         :statuses="[
-          // {
-          //   title: 'Em andamento',
-          //   icon: 'messages',
-          //   scheme: 'aux-blue',
-          //   count: 0,
-          // },
-          // {
-          //   title: 'Aguardando atendimento',
-          //   icon: 'synchronize-arrow-clock-4',
-          //   scheme: 'feedback-blue',
-          //   count: 0,
-          // },
-          // {
-          //   title: 'Encerrados',
-          //   icon: 'check-circle-1-1',
-          //   scheme: 'aux-purple',
-          //   count: 0,
-          // },
+          ...(allMetrics
+            ? [
+                {
+                  title: 'Em andamento',
+                  icon: 'mark_chat_unread',
+                  scheme: 'aux-green-500',
+                  count: metric.active_rooms || 0,
+                },
+                {
+                  title: 'Aguardando atendimento',
+                  icon: 'pending',
+                  scheme: 'aux-blue-500',
+                  count: metric.queue_rooms || 0,
+                },
+                {
+                  title: 'Encerrados',
+                  icon: 'check_circle',
+                  scheme: 'aux-purple-500',
+                  count: metric.closed_rooms || 0,
+                },
+              ]
+            : []),
           {
             title: 'Tempo de espera',
-            icon: 'time-clock-circle-1',
-            scheme: 'aux-orange',
-            count: timeToString(metric.waiting_time) || 0,
+            icon: 'chronic',
+            scheme: 'aux-orange-500',
+            count: timeToString(metric.waiting_time || 0),
           },
           {
             title: 'Tempo de resposta',
-            icon: 'response-time',
-            scheme: 'aux-pink',
-            count: timeToString(metric.response_time) || 0,
+            icon: 'acute',
+            scheme: 'aux-red-500',
+            count: timeToString(metric.response_time || 0),
           },
           {
             title: 'Tempo de interação',
-            icon: 'interaction-time',
-            scheme: 'feedback-green',
-            count: timeToString(metric.interact_time) || 0,
+            icon: 'history_toggle_off',
+            scheme: 'aux-yellow-500',
+            count: timeToString(metric.interact_time || 0),
           },
           // {
           //   title: totalChatsLabel,
@@ -86,9 +90,34 @@ export default {
       type: String,
       default: '',
     },
+    allMetrics: {
+      type: Boolean,
+      default: false,
+    },
   },
-  mounted() {
-    // console.log(this.metrics.sectors);
+
+  computed: {
+    orderedMetrics() {
+      let orderedMetrics = this.metrics.sectors;
+      if (orderedMetrics?.length > 0) {
+        orderedMetrics.sort((a, b) => {
+          const priorityA =
+            a.active_rooms > 0 || a.active_chats > 0 || a.closed_rooms > 0;
+          const priorityB =
+            b.active_rooms > 0 || b.active_chats > 0 || b.closed_rooms > 0;
+
+          if (priorityA === priorityB) {
+            if (a.name < b.name) return -1;
+            if (a.name > b.name) return 1;
+            return 0;
+          }
+
+          return priorityB - priorityA;
+        });
+      }
+
+      return orderedMetrics;
+    },
   },
   methods: {
     timeToString(minutes) {
@@ -114,6 +143,10 @@ export default {
         return `${formatado.seconds}s`;
       }
       return `${hora}h${minuto}min ${segundo}s`;
+    },
+
+    showRoomMetrics({ active_rooms, active_chats, closed_rooms } = {}) {
+      return active_rooms || active_chats || closed_rooms;
     },
   },
 };
@@ -144,6 +177,21 @@ export default {
 
     &.columns-3 {
       grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    :deep(.unnnic-card-container) {
+      .statuses {
+        // !important at grid-template-columns is needed here because the
+        // unnnicCardInformation base uses inline styles
+        grid-template-columns: repeat(3, minmax(90px, 1fr)) !important;
+        gap: $unnnic-spacing-ant;
+
+        [class*='unnnic-icon'] {
+          font-size: $unnnic-font-size-title-sm;
+
+          margin: $unnnic-spacing-nano / 2; // Necessary for the icon box to reach 32px
+        }
+      }
     }
   }
 }
