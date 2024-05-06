@@ -92,12 +92,7 @@ export default {
       immediate: true,
 
       handler() {
-        if (!this.configsForInitializeWebSocket.some((config) => !config)) {
-          if (!this.ws) {
-            this.ws = new WS({ app: this });
-            this.ws.connect();
-          }
-        }
+        this.wsConnect();
       },
     },
   },
@@ -204,6 +199,17 @@ export default {
       });
       this.$store.state.config.status = connection_status;
       localStorage.setItem('statusAgent', connection_status);
+    },
+
+    async wsConnect() {
+      const isWSConnectionValid =
+        !this.ws &&
+        !this.configsForInitializeWebSocket.some((config) => !config);
+
+      if (isWSConnectionValid) {
+        this.ws = new WS({ app: this });
+        this.ws.connect();
+      }
     },
 
     async wsReconnect() {
