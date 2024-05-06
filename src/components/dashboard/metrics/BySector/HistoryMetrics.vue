@@ -7,12 +7,13 @@
       class="grid-1"
     />
     <CardGroupMetrics
-      :metrics="sectors"
+      :metrics="treatedSectors"
       :rawData="rawInfo"
       :title="headerTitle"
       :totalChatsLabel="totalChatsLabel"
       icon="hierarchy-3-2"
       class="grid-2"
+      :allMetrics="headerTitle === 'Setores'"
     />
     <TableMetrics
       :headers="agentsLabel"
@@ -67,12 +68,16 @@ export default {
       type: String,
       default: '',
     },
+    sectors: {
+      type: Array,
+      default: () => [],
+    },
   },
 
   data: () => ({
     agents: {},
     generalMetrics: {},
-    sectors: {},
+    treatedSectors: {},
     rawInfo: {},
     tableHeaders: [
       {
@@ -147,28 +152,57 @@ export default {
       }
     },
 
+    async fetchSectorData(sector) {
+      const rawData = await this.rawDataInfo(sector.uuid);
+      return { ...sector, ...rawData?.raw_data[0] };
+    },
+
     async sectorInfo() {
       try {
-        this.sectors = await DashboardManagerApi.getSectorInfo(
+        const response = await DashboardManagerApi.getSectorInfo(
           this.filter.sector,
           this.filter.agent,
           this.filter.tags,
           this.filter.filterDate.start,
           this.filter.filterDate.end,
         );
+
+        if (this.headerTitle === 'Filas') {
+          this.treatedSectors = response;
+          return;
+        }
+
+        const newSectors = {
+          sectors: await Promise.all(this.sectors?.map(this.fetchSectorData)),
+        };
+
+        newSectors.sectors = newSectors.sectors.map((sector) => {
+          const equivalentResponseSector = response.sectors.find(
+            (responseSector) => responseSector.uuid === sector.uuid,
+          );
+          return { ...sector, ...equivalentResponseSector };
+        });
+
+        this.treatedSectors = newSectors;
       } catch (error) {
         console.log(error);
       }
     },
-    async rawDataInfo() {
+    async rawDataInfo(sector) {
       try {
-        this.rawInfo = await DashboardManagerApi.getRawInfo(
-          this.filter.sector,
+        const response = await DashboardManagerApi.getRawInfo(
+          this.filter.sector || sector,
           this.filter.agent,
           this.filter.tags,
           this.filter.filterDate.start,
           this.filter.filterDate.end,
         );
+
+        if (sector) {
+          return response;
+        }
+
+        this.rawInfo = response;
       } catch (error) {
         console.log(error);
       }
