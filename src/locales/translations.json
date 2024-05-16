@@ -134,6 +134,13 @@
     "en": "Record audio",
     "es": "Grabar audio"
   },
+  "audio_recorder": {
+    "discard_button" : {
+      "pt-br": "Descartar",
+      "en": "Discard",
+      "es": "Descartar"
+    }
+  },
   "attachment": {
     "pt-br": "Anexo",
     "en": "Attach",
