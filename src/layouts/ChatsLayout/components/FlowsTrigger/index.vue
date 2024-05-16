@@ -360,9 +360,10 @@ export default {
         this.isContactsLoading = true;
         try {
           const response = await FlowsAPI.getContacts(this.searchUrn);
-          this.listOfContacts = this.listOfContacts.concat(
-            response.data.results || [],
-          );
+          // Array filter to prevent 'null' or 'undefined' values in contact response
+          this.listOfContacts = this.listOfContacts
+            .concat(response.data.results || [])
+            .filter((contact) => contact);
           this.hasNext = response.next;
           this.listOfContacts.sort((a, b) => a.name?.localeCompare(b.name));
 
