@@ -103,27 +103,38 @@ export default {
     },
 
     async getChat() {
-      if (this.whenGetChat) this.whenGetChat();
-      let me = this.me.email;
+      try {
+        if (this.whenGetChat) this.whenGetChat();
+        let me = this.me.email;
 
-      if (!me) {
-        const response = await Profile.me();
-        me = response.email;
-        this.$store.commit('profile/setMe', response);
+        if (!me) {
+          const response = await Profile.me();
+          me = response.email;
+          this.$store.commit('profile/setMe', response);
+        }
+
+        if (this.viewedAgent.name === '') {
+          await Room.getQueueRoom(this.room.uuid, me);
+        } else {
+          await Room.take(this.room.uuid, me);
+        }
+
+        await this.setActiveRoom(this.room.uuid);
+        if (this.room.user) {
+          Room.updateReadMessages(this.room.uuid, true);
+        }
+
+        this.close();
+      } catch (error) {
+        this.close();
+        unnnicCallAlert({
+          props: {
+            text: error.response.data.detail,
+            type: 'error',
+          },
+          seconds: 5,
+        });
       }
-
-      if (this.viewedAgent.name === '') {
-        await Room.getQueueRoom(this.room.uuid, me);
-      } else {
-        await Room.take(this.room.uuid, me);
-      }
-
-      await this.setActiveRoom(this.room.uuid);
-      if (this.room.user) {
-        Room.updateReadMessages(this.room.uuid, true);
-      }
-
-      this.close();
     },
 
     async setActiveRoom(uuid) {
