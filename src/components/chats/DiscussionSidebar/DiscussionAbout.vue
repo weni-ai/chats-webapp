@@ -80,8 +80,8 @@ import moment from 'moment';
 
 import Project from '@/services/api/resources/settings/project';
 
-import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
-import SelectedMember from '@/components/settings/forms/SelectedMember';
+import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
+import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 import { mapState } from 'vuex';
 
 export default {

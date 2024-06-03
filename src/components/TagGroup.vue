@@ -226,7 +226,7 @@ $tag-size: 28px;
     line-height: 20px;
     margin-right: -16px;
 
-    top: $tag-size / 2;
+    top: calc($tag-size / 2);
     transform: translateY(-50%);
   }
 }

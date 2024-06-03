@@ -47,7 +47,7 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
-import RoomCard from './RoomCard';
+import RoomCard from './RoomCard.vue';
 
 export default {
   name: 'CardGroup',

@@ -38,7 +38,7 @@ import isMobile from 'is-mobile';
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
 
-import ChatClassifier from '@/components/chats/ChatClassifier';
+import ChatClassifier from '@/components/chats/ChatClassifier.vue';
 
 export default {
   components: {

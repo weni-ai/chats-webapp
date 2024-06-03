@@ -35,9 +35,9 @@
 import { mapActions, mapState } from 'vuex';
 import isMobile from 'is-mobile';
 
-import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
-import RoomsTransferFields from '@/components/chats/RoomsTransferFields';
-import ModalProgressBarFalse from '@/components/ModalProgressBarFalse';
+import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
+import RoomsTransferFields from '@/components/chats/RoomsTransferFields.vue';
+import ModalProgressBarFalse from '@/components/ModalProgressBarFalse.vue';
 
 export default {
   name: 'TransferSession',

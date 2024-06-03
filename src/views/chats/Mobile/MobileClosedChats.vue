@@ -37,9 +37,9 @@ import { mapState } from 'vuex';
 
 import History from '@/services/api/resources/chats/history';
 
-import ClosedChatsRoomsTable from '@/views/chats/ClosedChats/RoomsTable';
+import ClosedChatsRoomsTable from '@/views/chats/ClosedChats/RoomsTable.vue';
 import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
-import ContactInfo from '@/components/chats/ContactInfo';
+import ContactInfo from '@/components/chats/ContactInfo/index.vue';
 
 export default {
   name: 'MobileClosedChats',

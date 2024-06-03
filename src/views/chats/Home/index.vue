@@ -33,13 +33,13 @@ import { mapState } from 'vuex';
 
 import { resetChats } from '@/utils/chats';
 
-import ChatsLayout from '@/layouts/ChatsLayout';
-import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
+import ChatsLayout from '@/layouts/ChatsLayout/index.vue';
+import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground/index.vue';
 
-import DiscussionSidebar from '@/components/chats/DiscussionSidebar';
-import ContactInfo from '@/components/chats/ContactInfo';
+import DiscussionSidebar from '@/components/chats/DiscussionSidebar/index.vue';
+import ContactInfo from '@/components/chats/ContactInfo/index.vue';
 
-import HomeChat from './HomeChat';
+import HomeChat from './HomeChat.vue';
 
 export default {
   name: 'ViewHome',

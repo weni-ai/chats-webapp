@@ -2,7 +2,7 @@ const routes = [
   {
     path: '/profile/preferences',
     name: 'preferences',
-    component: () => import('@/views/profile/Preferences'),
+    component: () => import('@/views/profile/Preferences.vue'),
   },
 ];
 

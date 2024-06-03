@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import FullscreenControl from './FullscreenControl';
+import FullscreenControl from './FullscreenControl.vue';
 
 export default {
   name: 'FullscreenPreview',

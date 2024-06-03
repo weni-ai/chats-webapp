@@ -73,7 +73,7 @@ import isMobile from 'is-mobile';
 
 import Sector from '@/services/api/resources/settings/sector';
 
-import RoomsTableFiltersLoading from '@/views/loadings/ClosedChats/RoomsTableFiltersLoading';
+import RoomsTableFiltersLoading from '@/views/loadings/ClosedChats/RoomsTableFiltersLoading.vue';
 
 export default {
   name: 'ClosedChatsRoomsTableFilters',

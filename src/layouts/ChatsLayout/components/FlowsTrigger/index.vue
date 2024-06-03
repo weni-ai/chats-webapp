@@ -90,9 +90,9 @@
 
         <section v-show="!isContactsLoading">
           <template v-for="(element, letter) in letters">
+            <!-- eslint-disable-next-line vue/valid-v-for -->
             <UnnnicCollapse
               class="flows-trigger__groups__group"
-              :key="letter"
               :title="
                 $t('flows_trigger.letter_group', {
                   letter,
@@ -177,16 +177,16 @@
 import isMobile from 'is-mobile';
 import { mapState } from 'vuex';
 
-import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
+import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
 import ModalListTriggeredFlows from '@/components/chats/FlowsTrigger/ModalListTriggeredFlows.vue';
 import ModalAddNewContact from '@/components/chats/FlowsTrigger/ModalAddNewContact.vue';
 import ModalSendFlow from '@/components/chats/FlowsTrigger/ModalSendFlow.vue';
 import ModalRemoveSelectedContacts from '@/components/chats/FlowsTrigger/ModalRemoveSelectedContacts.vue';
 import SelectedContactsSection from '@/components/chats/FlowsTrigger/SelectedContactsSection.vue';
-import SendFlow from '@/components/chats/FlowsTrigger/SendFlow';
+import SendFlow from '@/components/chats/FlowsTrigger/SendFlow.vue';
 
-import FlowsContactsLoading from '@/views/loadings/FlowsTrigger/FlowsContactsLoading';
+import FlowsContactsLoading from '@/views/loadings/FlowsTrigger/FlowsContactsLoading.vue';
 
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import FlowsAPI from '@/services/api/resources/flows/flowsTrigger.js';

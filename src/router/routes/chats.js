@@ -1,7 +1,7 @@
 import isMobile from 'is-mobile';
 
-import DesktopHome from '@/views/chats/Home';
-import MobileHome from '@/views/chats/Mobile/MobileHome';
+import DesktopHome from '@/views/chats/Home/index.vue';
+import MobileHome from '@/views/chats/Mobile/MobileHome.vue';
 
 const Home = isMobile() ? MobileHome : DesktopHome;
 
@@ -46,7 +46,7 @@ const routes = [
   {
     path: '/closed-chats',
     name: 'closed-rooms',
-    component: () => import('@/views/chats/ClosedChats/index'),
+    component: () => import('@/views/chats/ClosedChats/index.vue'),
     props: (route) => ({
       contactUrn: route.query.contactUrn,
       sector: route.query.sector,
@@ -58,7 +58,7 @@ const routes = [
   {
     path: '/closed-chats/:roomId',
     name: 'closed-rooms.selected',
-    component: () => import('@/views/chats/ClosedChats/index'),
+    component: () => import('@/views/chats/ClosedChats/index.vue'),
     props: (route) => ({
       roomId: route.params.roomId,
     }),

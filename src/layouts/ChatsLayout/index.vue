@@ -69,14 +69,14 @@
 </template>
 
 <script>
-import SidebarLoading from '@/views/loadings/HomeSidebar';
+import SidebarLoading from '@/views/loadings/HomeSidebar.vue';
 import PreferencesBar from '@/components/PreferencesBar.vue';
 import Sector from '@/services/api/resources/settings/sector.js';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
-import QuickMessages from '@/components/chats/QuickMessages';
-import TheCardGroups from './components/TheCardGroups';
-import LayoutFlowsTrigger from './components/FlowsTrigger';
-import ChatsLayoutFooterButton from './components/FooterButton';
+import QuickMessages from '@/components/chats/QuickMessages/index.vue';
+import TheCardGroups from './components/TheCardGroups/index.vue';
+import LayoutFlowsTrigger from './components/FlowsTrigger/index.vue';
+import ChatsLayoutFooterButton from './components/FooterButton/index.vue';
 
 export default {
   name: 'ChatsLayout',

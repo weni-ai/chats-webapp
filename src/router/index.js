@@ -6,12 +6,13 @@ import { getProject, getToken } from '@/utils/config';
 import Keycloak from '@/services/keycloak';
 import routes from './routes';
 import afterEachMiddlewares from './middlewares/afterEach';
+import env from '@/utils/env';
 
 Vue.use(VueRouter);
 
 const router = new VueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
+  base: env('BASE_URL'),
   routes,
 });
 

@@ -190,14 +190,14 @@ import moment from 'moment';
 import { isMessageFromCurrentUser } from '@/utils/messages';
 import Media from '@/services/api/resources/chats/media';
 
-import ChatMessagesLoading from '@/views/loadings/chat/ChatMessages';
-import TagGroup from '@/components/TagGroup';
-import VideoPlayer from '@/components/chats/MediaMessage/Previews/Video';
-import FullscreenPreview from '@/components/chats/MediaMessage/Previews/Fullscreen';
+import ChatMessagesLoading from '@/views/loadings/chat/ChatMessages.vue';
+import TagGroup from '@/components/TagGroup.vue';
+import VideoPlayer from '@/components/chats/MediaMessage/Previews/Video.vue';
+import FullscreenPreview from '@/components/chats/MediaMessage/Previews/Fullscreen.vue';
 
-import ChatFeedback from '../ChatFeedback';
-import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks';
-import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage';
+import ChatFeedback from '../ChatFeedback.vue';
+import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
+import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
 
 export default {
   name: 'ChatMessages',

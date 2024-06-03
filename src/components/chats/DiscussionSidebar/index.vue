@@ -62,10 +62,10 @@
 <script>
 import { mapState } from 'vuex';
 
-import DiscussionSidebarLoading from '@/views/loadings/chat/DiscussionSidebar';
-import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
+import DiscussionSidebarLoading from '@/views/loadings/chat/DiscussionSidebar.vue';
+import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
 import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
-import DiscussionAbout from './DiscussionAbout';
+import DiscussionAbout from './DiscussionAbout.vue';
 
 export default {
   name: 'DiscussionSidebar',

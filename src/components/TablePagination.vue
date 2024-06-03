@@ -29,7 +29,7 @@
 <script>
 import isMobile from 'is-mobile';
 
-import TablePaginationLoading from '@/views/loadings/TablePaginationLoading';
+import TablePaginationLoading from '@/views/loadings/TablePaginationLoading.vue';
 
 export default {
   name: 'TablePagination',
