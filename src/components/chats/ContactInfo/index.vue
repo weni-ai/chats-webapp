@@ -189,7 +189,7 @@ import ContactInfosLoading from '@/views/loadings/ContactInfos.vue';
 import Room from '@/services/api/resources/chats/room';
 import LinkContact from '@/services/api/resources/chats/linkContact';
 
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import unnnic from '@weni/unnnic-system';
 
 import CustomField from './CustomField.vue';
 import ContactMedia from './Media.vue';
@@ -469,7 +469,7 @@ export default {
     },
 
     showAlert(text, type = 'success') {
-      unnnicCallAlert({
+      unnnic.unnnicCallAlert({
         props: {
           text,
           type,

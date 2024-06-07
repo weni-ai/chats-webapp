@@ -199,7 +199,7 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import unnnic from '@weni/unnnic-system';
 
 import FormAgent from '@/components/settings/forms/Agent';
 import FormSector from '@/components/settings/forms/Sector';
@@ -554,7 +554,7 @@ export default {
       await Queue.removeAgent(agentUuid);
     },
     showSuccessfullyUpdateSnackbar() {
-      unnnicCallAlert({
+      unnnic.unnnicCallAlert({
         props: {
           text: 'Alterações salvas',
           type: 'success',

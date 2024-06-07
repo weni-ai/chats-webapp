@@ -69,7 +69,7 @@
 import Discussion from '@/services/api/resources/chats/discussion';
 import Queue from '@/services/api/resources/settings/queue';
 
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import unnnic from '@weni/unnnic-system';
 
 export default {
   name: 'ModalStartDiscussion',
@@ -159,7 +159,7 @@ export default {
           break;
       }
 
-      unnnicCallAlert({
+      unnnic.unnnicCallAlert({
         props: {
           text: errorText,
           type: 'error',
