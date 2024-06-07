@@ -1,5 +1,4 @@
-import Vue from 'vue';
-import VueI18n from 'vue-i18n';
+import { createI18n } from 'vue-i18n';
 
 // eslint-disable-next-line camelcase
 import pt_br from '@/locales/pt_br.json';
@@ -13,15 +12,13 @@ import('moment/locale/es');
 
 moment.locale('pt-br');
 
-Vue.use(VueI18n);
-
 const messages = {
   'pt-br': pt_br,
   en,
   es,
 };
 
-const i18n = new VueI18n({
+const i18n = createI18n({
   locale: 'pt-br',
   fallbackLocale: 'pt-br',
   messages,

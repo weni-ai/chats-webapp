@@ -1,25 +1,12 @@
 import { fileURLToPath, URL } from 'node:url';
-import { defineConfig } from 'vite';
-import createVuePlugin from '@vitejs/plugin-vue';
 
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx';
+
+// https://vitejs.dev/config/
 export default defineConfig({
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-      vue: '@vue/compat',
-    },
-  },
-  plugins: [
-    createVuePlugin({
-      template: {
-        compilerOptions: {
-          compatConfig: {
-            MODE: 3,
-          },
-        },
-      },
-    }),
-  ],
+  plugins: [vue(), vueJsx()],
   css: {
     preprocessorOptions: {
       scss: {
@@ -30,11 +17,14 @@ export default defineConfig({
     },
   },
   server: {
+    port: 8080,
     fs: {
       cachedChecks: false,
     },
   },
-  build: {
-    commonjsOptions: { transformMixedEsModules: true }, // Change
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
   },
 });
