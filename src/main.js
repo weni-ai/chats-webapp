@@ -1,10 +1,10 @@
 import { createApp } from 'vue';
 import LogRocket from 'logrocket';
-// import VMask from 'v-mask';
 
 import App from './App.vue';
 import i18n from './plugins/i18n';
 import UnnnicSystem from './plugins/UnnnicSystem';
+import vMaskV3 from './plugins/vmask3';
 import router from './router';
 import store from './store';
 import env from './utils/env';
@@ -17,6 +17,8 @@ const LOGROCKET_ID = env('LOGROCKET_ID');
 const LOGROCKET_PARENT_DOMAIN = env('LOGROCKET_PARENT_DOMAIN');
 
 const app = createApp(App);
+
+app.directive(vMaskV3);
 
 console.info('LogRocket Config: ', LOGROCKET_ID, LOGROCKET_PARENT_DOMAIN);
 
