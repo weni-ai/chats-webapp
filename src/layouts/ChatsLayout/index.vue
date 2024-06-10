@@ -71,12 +71,12 @@
 <script>
 import SidebarLoading from '@/views/loadings/HomeSidebar.vue';
 import PreferencesBar from '@/components/PreferencesBar.vue';
-import Sector from '@/services/api/resources/settings/sector.js';
-import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import QuickMessages from '@/components/chats/QuickMessages/index.vue';
 import TheCardGroups from './components/TheCardGroups/index.vue';
 import LayoutFlowsTrigger from './components/FlowsTrigger/index.vue';
 import ChatsLayoutFooterButton from './components/FooterButton/index.vue';
+import Sector from '@/services/api/resources/settings/sector.js';
+import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 
 export default {
   name: 'ChatsLayout',
@@ -168,8 +168,8 @@ export default {
   computed: {
     isAsideVisible() {
       return (
-        !!this.$slots.aside &&
-        this.$slots.aside.filter((slot) => slot.componentOptions).length > 0
+        !!this.$slots.aside().length &&
+        this.$slots.aside().filter((slot) => slot.componentOptions).length > 0
       );
     },
     isRoomListVisible() {

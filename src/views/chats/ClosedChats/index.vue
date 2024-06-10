@@ -43,11 +43,11 @@ import { mapState } from 'vuex';
 
 import History from '@/services/api/resources/chats/history';
 
-import RoomMessages from '@/components/chats/chat/RoomMessages';
-import ContactInfo from '@/components/chats/ContactInfo';
+import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
+import ContactInfo from '@/components/chats/ContactInfo/index.vue';
 import ClosedChatsHeaderLoading from '@/views/loadings/ClosedChats/ClosedChatsHeader.vue';
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
-import ClosedChatsRoomsTable from './RoomsTable';
+import ClosedChatsRoomsTable from './RoomsTable.vue';
 
 export default {
   name: 'ClosedChats',
