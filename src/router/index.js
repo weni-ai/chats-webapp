@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-import store from '@/store';
 import { getProject, getToken } from '@/utils/config';
 import Keycloak from '@/services/keycloak';
 import routes from './routes';

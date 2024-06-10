@@ -1,65 +1,46 @@
+import { defineStore } from 'pinia';
+
 import Dasboard from '@/services/api/resources/dashboard/dashboardManager';
 
-const mutations = {
-  SET_VIEWED_AGENT: 'SET_VIEWED_AGENT',
-  SET_SHOW_MODAL_ASSUMED_CHAT: 'SET_SHOW_MODAL_ASSUMED_CHAT',
-  SET_ASSUMED_CHAT_CONTACT_NAME: 'SET_ASSUMED_CHAT_CONTACT_NAME',
-};
-
-export default {
-  namespaced: true,
-  state: {
+export const useDashboardStore = defineStore('dashboard', {
+  state: () => ({
     viewedAgent: {
       email: '',
       name: '',
     },
     showModalAssumedChat: false,
     assumedChatContactName: '',
-  },
-
-  mutations: {
-    [mutations.SET_VIEWED_AGENT](state, viewedAgent = { email: '', name: '' }) {
-      state.viewedAgent = viewedAgent;
-    },
-    [mutations.SET_SHOW_MODAL_ASSUMED_CHAT](state, isAssumedChat = false) {
-      state.showModalAssumedChat = isAssumedChat;
-    },
-    [mutations.SET_ASSUMED_CHAT_CONTACT_NAME](state, contactName = '') {
-      state.assumedChatContactName = contactName;
-    },
-  },
-
-  getters: {
-    getViewedAgent({ viewedAgent }) {
-      return viewedAgent;
-    },
-    getShowModalAssumedChat({ showModalAssumedChat }) {
-      return showModalAssumedChat;
-    },
-    getAssumedChatContactName({ assumedChatContactName }) {
-      return assumedChatContactName;
-    },
-  },
-
+  }),
   actions: {
-    setViewedAgent({ commit }, viewedAgent) {
-      commit(mutations.SET_VIEWED_AGENT, viewedAgent);
+    setViewedAgent(viewedAgent) {
+      this.viewedAgent = viewedAgent;
     },
-    setShowModalAssumedChat({ commit }, isAssumedChat) {
-      commit(mutations.SET_SHOW_MODAL_ASSUMED_CHAT, isAssumedChat);
+    setShowModalAssumedChat(isAssumedChat) {
+      this.showModalAssumedChat = isAssumedChat;
     },
-    async getViewedAgentData({ commit }, agentEmail) {
-      const response = await Dasboard.getViewedAgentData(agentEmail);
+    setAssumedChatContactName(contactName) {
+      this.assumedChatContactName = contactName;
+    },
 
-      const { first_name, last_name } = response;
+    async getViewedAgentData(agentEmail) {
+      const { first_name, last_name } = await Dasboard.getViewedAgentData(
+        agentEmail,
+      );
+
       const newViewedAgent = {
         name: `${first_name} ${last_name}`,
         email: agentEmail,
       };
 
-      commit(mutations.SET_VIEWED_AGENT, newViewedAgent);
+      this.viewedAgent = newViewedAgent;
 
       return newViewedAgent;
     },
   },
-};
+  getters: {
+    getViewedAgent: ({ viewedAgent }) => viewedAgent,
+    getShowModalAssumedChat: ({ showModalAssumedChat }) => showModalAssumedChat,
+    getAssumedChatContactName: ({ assumedChatContactName }) =>
+      assumedChatContactName,
+  },
+});
