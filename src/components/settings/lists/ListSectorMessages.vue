@@ -92,6 +92,7 @@ import Sector from '@/services/api/resources/settings/sector';
 import QuickMessageCard from '@/components/chats/QuickMessages/QuickMessageCard.vue';
 
 import { mapActions, mapState } from 'pinia';
+import { useConfig } from '@/store/modules/config';
 
 export default {
   name: 'ListSectorQuickMessages',
@@ -123,11 +124,10 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      copilotActive: (state) => state.config.copilot.active,
-      copilotCustomRulesActive: (state) =>
-        state.config.copilot.customRulesActive,
-      copilotCustomRules: (state) => state.config.copilot.customRules,
+    ...mapState(useConfig, {
+      copilotActive: (store) => store.copilot.active,
+      copilotCustomRulesActive: (store) => store.copilot.customRulesActive,
+      copilotCustomRules: (store) => store.copilot.customRules,
     }),
   },
 

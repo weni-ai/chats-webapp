@@ -136,8 +136,8 @@ export const useDiscussions = defineStore('discussions', {
     },
   },
   getters: {
-    getDiscussionById: (state) => (uuid) => {
-      return state.discussions.find((discussion) => discussion.uuid === uuid);
+    getDiscussionById: (store) => (uuid) => {
+      return store.discussions.find((discussion) => discussion.uuid === uuid);
     },
   },
 });
