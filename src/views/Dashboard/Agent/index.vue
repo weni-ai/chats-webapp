@@ -14,9 +14,9 @@
 </template>
 
 <script>
-import DashboardLayout from '@/layouts/DashboardLayout';
-import DashboardFilters from '@/components/dashboard/Filters';
-import HistoryMetricsByAgent from '@/components/dashboard/metrics/ByAgent/HistoryMetrics';
+import DashboardLayout from '@/layouts/DashboardLayout/index.vue';
+import DashboardFilters from '@/components/dashboard/Filters.vue';
+import HistoryMetricsByAgent from '@/components/dashboard/metrics/ByAgent/HistoryMetrics.vue';
 import DashboardAgent from '@/services/api/resources/dashboard/dashboardAgent';
 
 export default {
