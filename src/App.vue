@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { mapState } from 'pinia';
+import { mapActions, mapState } from 'pinia';
 
 import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
@@ -23,8 +23,6 @@ import { useDashboard } from './store/modules/dashboard';
 import { getProject } from '@/utils/config';
 
 import moment from 'moment';
-
-
 
 export default {
   name: 'App',
@@ -58,8 +56,10 @@ export default {
     ...mapState(useQuickMessages, ['nextQuickMessages']),
     ...mapState(useQuickMessageShared, ['nextQuickMessagesShared']),
     ...mapState(useConfig, {
+      userStatus: 'status',
+      project: 'project',
       appToken: 'token',
-      appProject: (store) => store.project.uuid
+      appProject: (store) => store.project.uuid,
     }),
 
     configsForInitializeWebSocket() {
@@ -106,36 +106,39 @@ export default {
   },
 
   methods: {
+    ...mapActions(useConfig, ['setStatus', 'setProject']),
+    ...mapActions(useProfile, ['setMe']),
+    ...mapActions(useQuickMessages, {
+      getAllQuickMessages: 'getAll',
+    }),
+    ...mapActions(useQuickMessageShared, {
+      getAllQuickMessagesShared: 'getAll',
+    }),
     restoreLocalStorageUserStatus() {
-      const configStore = useConfig()
       const userStatus = localStorage.getItem('statusAgent');
       if (!['OFFLINE', 'ONLINE'].includes(userStatus)) {
         localStorage.setItem('statusAgent', 'OFFLINE');
       }
-      configStore.setStatus(userStatus)
+      this.setStatus(userStatus);
     },
 
     async getUser() {
-      const profileStore = useProfile()
       const user = await Profile.me();
-      profileStore.setMe(user)
-  
+      this.setMe(user);
     },
 
     async getProject() {
-      const configStore = useConfig()
       const { data: project } = await Project.getInfo();
-      configStore.setProject({
+      this.setProject({
         ...project,
         uuid: this.appProject || getProject(),
-      })
+      });
     },
 
     async loadQuickMessages() {
-      const quickMessageStore = useQuickMessages()
       this.loading = true;
       try {
-        await quickMessageStore.getAll()
+        await this.getAllQuickMessages();
       } finally {
         this.loading = false;
       }
@@ -146,10 +149,9 @@ export default {
     },
 
     async loadQuickMessagesShared() {
-      const quickMessageSharedStore = useQuickMessageShared()
       this.loading = true;
       try {
-        await quickMessageSharedStore.getAll()
+        await this.getAllQuickMessagesShared();
       } finally {
         this.loading = false;
       }
@@ -188,9 +190,8 @@ export default {
     },
 
     async getUserStatus() {
-      const configStore = useConfig()
       const userStatus = localStorage.getItem('statusAgent');
-      const projectUuid = configStore.project.uuid;
+      const projectUuid = this.project.uuid;
       const {
         data: { connection_status: responseStatus },
       } = await Profile.status({
@@ -206,14 +207,13 @@ export default {
     },
 
     async updateUserStatus(status) {
-      const configStore = useConfig()
       const {
         data: { connection_status },
       } = await Profile.updateStatus({
-        projectUuid: configStore.project.uuid,
+        projectUuid: this.project.uuid,
         status,
       });
-      configStore.status = connection_status;
+      this.userStatus = connection_status;
       localStorage.setItem('statusAgent', connection_status);
     },
 
