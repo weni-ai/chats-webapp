@@ -202,12 +202,12 @@ import { useConfig } from '@/store/modules/config';
 
 import unnnic from '@weni/unnnic-system';
 
-import FormAgent from '@/components/settings/forms/Agent';
-import FormSector from '@/components/settings/forms/Sector';
-import FormQueue from '@/components/settings/forms/Queue';
-import FormMessages from '@/components/settings/forms/Messages';
-import FormTags from '@/components/settings/forms/Tags';
-import SectorTabs from '@/components/settings/SectorTabs';
+import FormAgent from '@/components/settings/forms/Agent.vue';
+import FormSector from '@/components/settings/forms/Sector.vue';
+import FormQueue from '@/components/settings/forms/Queue.vue';
+import FormMessages from '@/components/settings/forms/Messages.vue';
+import FormTags from '@/components/settings/forms/Tags.vue';
+import SectorTabs from '@/components/settings/SectorTabs.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';

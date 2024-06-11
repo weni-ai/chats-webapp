@@ -80,16 +80,16 @@ import { useDashboard } from '@/store/modules/dashboard';
 import { useProfile } from '@/store/modules/profile';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
-import ChatsLayout from '@/layouts/ChatsLayout';
+import ChatsLayout from '@/layouts/ChatsLayout/index.vue';
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
-import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
-import ContactInfo from '@/components/chats/ContactInfo';
-import RoomMessages from '@/components/chats/chat/RoomMessages';
-import DiscussionMessages from '@/components/chats/chat/DiscussionMessages';
-import ModalGetChat from '@/components/chats/chat/ModalGetChat';
-import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion';
+import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground/index.vue';
+import ContactInfo from '@/components/chats/ContactInfo/index.vue';
+import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
+import DiscussionMessages from '@/components/chats/chat/DiscussionMessages.vue';
+import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
+import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion.vue';
 
-import ViewModeHeader from './components/ViewModeHeader';
+import ViewModeHeader from './components/ViewModeHeader.vue';
 
 export default {
   name: 'ViewMode',
