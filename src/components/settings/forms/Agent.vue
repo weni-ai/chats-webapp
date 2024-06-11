@@ -26,7 +26,7 @@
             autocomplete
             autocompleteIconLeft
             autocompleteClearOnFocus
-            @input="chooseAgent"
+            @update:model-value="chooseAgent"
           />
         </div>
         <!-- <unnnic-button

@@ -8,7 +8,7 @@
       autocomplete
       autocompleteIconLeft
       autocompleteClearOnFocus
-      @input="getFlowTrigger(flowUuid?.[0].value)"
+      @update:model-value="getFlowTrigger(flowUuid?.[0].value)"
     />
   </div>
 </template>

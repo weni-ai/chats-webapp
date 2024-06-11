@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-mutating-props -->
 <template>
   <div class="table-pagination">
     <TablePaginationLoading v-show="isLoading" />
@@ -17,8 +18,8 @@
       </p>
 
       <UnnnicPagination
-        :value="value"
-        @input="$emit('input', $event)"
+        :modelValue="modelValue"
+        @update:model-value="$emit('update:model-value', $event)"
         :max="countPages"
         :show="limit"
       />
@@ -34,12 +35,14 @@ import TablePaginationLoading from '@/views/loadings/TablePaginationLoading.vue'
 export default {
   name: 'TablePagination',
 
+  emits: ['update:model-value'],
+
   components: {
     TablePaginationLoading,
   },
 
   props: {
-    value: {
+    modelValue: {
       type: Number,
       required: true,
     },

@@ -80,7 +80,7 @@
             >
               <UnnnicSwitch
                 :value="isLinkedUser"
-                @input="addContactToAgent"
+                @update:model-value="addContactToAgent"
                 size="small"
                 :textRight="
                   isLinkedUser

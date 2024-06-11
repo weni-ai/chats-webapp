@@ -57,6 +57,7 @@
         :countPages="triggeredFlowsCountPages"
         :limit="triggeredFlowsLimit"
         :isLoading="isPagesLoading"
+        @update:model-value="triggeredFlowsCurrentPage = $event"
       />
     </div>
   </UnnnicModal>

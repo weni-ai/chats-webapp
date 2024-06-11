@@ -42,14 +42,13 @@
 
     <div class="options-container">
       <div class="label">Status</div>
-
       <UnnnicSwitch
-        :value="status === 'ONLINE'"
+        v-model="statusSwitch"
         size="small"
         :textRight="
           status === 'ONLINE' ? $t('status.online') : $t('status.offline')
         "
-        @input="updateStatus"
+        @update:model-value="updateStatus"
         :disabled="loadingStatus"
       />
 
@@ -59,7 +58,7 @@
         v-model="sound"
         size="small"
         :textRight="$t('preferences.notifications.sound')"
-        @input="changeSound"
+        @update:model-value="changeSound"
       />
 
       <UnnnicButton
@@ -122,6 +121,14 @@ export default {
 
   computed: {
     ...mapState(useConfig, ['status', 'project']),
+    statusSwitch: {
+      get() {
+        return this.status === 'ONLINE';
+      },
+      set(value) {
+        useConfig().$patch({ status: value ? 'ONLINE' : 'OFFLINE' });
+      },
+    },
   },
 
   async created() {
@@ -164,7 +171,9 @@ export default {
       const response = await Profile.status({
         projectUuid: this.project.uuid,
       });
-      this.status = response.data.connection_status;
+      useConfig().$patch({
+        status: response.data.connection_status,
+      });
     },
 
     changeSound() {

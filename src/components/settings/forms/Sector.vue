@@ -69,7 +69,7 @@
             autocomplete
             autocompleteIconLeft
             autocompleteClearOnFocus
-            @input="selectManager"
+            @update:model-value="selectManager"
           />
         </div>
         <!-- <unnnic-button
