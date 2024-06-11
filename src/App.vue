@@ -213,7 +213,7 @@ export default {
         projectUuid: this.project.uuid,
         status,
       });
-      this.userStatus = connection_status;
+      useConfig().$patch({ status: connection_status });
       localStorage.setItem('statusAgent', connection_status);
     },
 

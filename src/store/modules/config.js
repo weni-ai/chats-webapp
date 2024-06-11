@@ -34,8 +34,8 @@ export const useConfig = defineStore('config', {
     setStatus(status) {
       this.status = status;
     },
-    getStatus(projectUuid) {
-      const { data } = Profile.status(projectUuid);
+    async getStatus(projectUuid) {
+      const { data } = await Profile.status(projectUuid);
       return data.connection_status;
     },
     updateStatus(status) {
