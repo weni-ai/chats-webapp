@@ -105,7 +105,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useConfig } from '@/store/modules/config';
+import { useProfile } from '@/store/modules/profile';
 
 import Project from '@/services/api/resources/settings/project';
 import Sector from '@/services/api/resources/settings/sector';
@@ -129,10 +131,8 @@ export default {
   }),
 
   computed: {
-    ...mapState({
-      project: (state) => state.config.project,
-      me: (state) => state.profile.me,
-    }),
+    ...mapState(useConfig, ['project']),
+    ...mapState(useProfile, ['me']),
     configBulkTransferTranslation() {
       const canBulkTransfer = this.projectConfig.can_use_bulk_transfer;
       return this.$t(

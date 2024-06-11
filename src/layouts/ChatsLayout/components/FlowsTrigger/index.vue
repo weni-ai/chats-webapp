@@ -175,7 +175,9 @@
 
 <script>
 import isMobile from 'is-mobile';
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+
+import { useConfig } from '@/store/modules/config';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
@@ -242,8 +244,8 @@ export default {
   }),
 
   computed: {
-    ...mapState({
-      projectName: (state) => state.config.project.name,
+    ...mapState(useConfig, {
+      projectName: (store) => store.project.name,
     }),
 
     letters() {

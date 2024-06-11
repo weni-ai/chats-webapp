@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState } from 'pinia';
 
 import Keycloak from '@/services/keycloak';
 

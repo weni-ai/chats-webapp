@@ -1,5 +1,7 @@
 import http from '@/services/api/http';
-import Profile from '@/store/modules/profile';
+
+import { useProfile } from '@/store/modules/profile';
+
 import { getProject } from '@/utils/config';
 
 function getURLParams({ URL, endpoint }) {
@@ -57,7 +59,8 @@ export default {
   },
 
   async deleteSector(sectorUuid) {
-    const { me } = Profile.state;
+    const profileStore = useProfile();
+    const { me } = profileStore;
     const response = await http.delete(
       `/sector/${sectorUuid}/?user=${me?.email}`,
     );

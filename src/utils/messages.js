@@ -1,8 +1,10 @@
 import moment from 'moment';
-import Rooms from '../store/modules/chats/rooms';
-import Discussions from '../store/modules/chats/discussions';
 
-import Profile from '../store/modules/profile';
+import { useRooms } from '../store/modules/chats/rooms';
+
+import { useDiscussions } from '../store/modules/chats/discussions';
+
+import { useProfile } from '../store/modules/profile';
 
 export function isValidJson(message) {
   try {
@@ -55,7 +57,8 @@ export function parseMessageToMessageWithSenderProp(message) {
 }
 
 export function isMessageFromCurrentUser(message) {
-  const { me } = Profile.state;
+  const profileStore = useProfile();
+  const { me } = profileStore;
   return message.user?.email === me?.email;
 }
 
@@ -72,6 +75,8 @@ export async function getMessages({ itemUuid, getItemMessages }) {
 
   async function fetchData() {
     try {
+      const roomsStore = useRooms();
+      const discussionStore = useDiscussions();
       const response = await getItemMessages();
 
       const {
@@ -83,8 +88,8 @@ export async function getMessages({ itemUuid, getItemMessages }) {
       const firstMessage = responseMessages?.[0];
 
       if (firstMessage) {
-        const activeRoomUUID = Rooms.state.activeRoom?.uuid;
-        const activeDiscussionUUID = Discussions.state.activeDiscussion?.uuid;
+        const activeRoomUUID = roomsStore.activeRoom?.uuid;
+        const activeDiscussionUUID = discussionStore.activeDiscussion?.uuid;
 
         if (firstMessage.room && firstMessage.room !== activeRoomUUID) {
           return;

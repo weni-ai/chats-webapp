@@ -197,7 +197,8 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState } from 'pinia';
+import { useConfig } from '@/store/modules/config';
 
 import unnnic from '@weni/unnnic-system';
 
@@ -300,11 +301,11 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      setCopilotActive: 'config/setCopilotActive',
-      setCopilotCustomRulesActive: 'config/setCopilotCustomRulesActive',
-      setCopilotCustomRules: 'config/setCopilotCustomRules',
-    }),
+    ...mapActions(useConfig, [
+      'setCopilotActive',
+      'setCopilotCustomRulesActive',
+      'setCopilotCustomRules',
+    ]),
 
     resetTabsData() {
       this.queueToEdit = null;
@@ -640,7 +641,7 @@ export default {
         this.editContent = false;
         this.searchDefaultMessage(this.queueInfo.uuid);
         this.getQueues();
-        unnnicCallAlert({
+        unnnic.unnnicCallAlert({
           props: {
             text: 'Atualizações salvas',
             type: 'success',

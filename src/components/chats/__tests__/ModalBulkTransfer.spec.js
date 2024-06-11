@@ -1,5 +1,5 @@
 import { createLocalVue, mount } from '@vue/test-utils';
-import Vuex from 'vuex';
+import Vuex from 'pinia';
 import {
   unnnicModal,
   unnnicLabel,

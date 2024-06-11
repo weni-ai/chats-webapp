@@ -38,7 +38,7 @@
 
 <script>
 import Sector from '@/services/api/resources/settings/sector';
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
 
 import DashboardLayout from '@/layouts/DashboardLayout';
 

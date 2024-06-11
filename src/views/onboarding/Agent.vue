@@ -77,6 +77,9 @@ import ChatsLayout from '@/layouts/ChatsLayout';
 
 import Profile from '@/services/api/resources/profile';
 
+import { mapState } from 'pinia';
+import { useProfile } from '@/store/modules/profile';
+
 // import { groupSequentialSentMessages, parseMessageToMessageWithSenderProp } from '@/utils/messages';
 
 export default {
@@ -97,6 +100,7 @@ export default {
   }),
 
   computed: {
+    ...mapState(useProfile, ['me']),
     room() {
       return {
         uuid: 'room-uuid',
@@ -106,9 +110,6 @@ export default {
         user: this.me,
         is_active: true,
       };
-    },
-    me() {
-      return this.$store.state.profile.me;
     },
     messagesWithSentTimeout() {
       const messages = [

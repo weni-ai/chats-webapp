@@ -1,5 +1,7 @@
 import http from '@/services/api/http';
-import Profile from '@/store/modules/profile';
+
+import { useProfile } from '@/store/modules/profile';
+
 import { getProject } from '@/utils/config';
 
 async function downloadFileXlsx(path, filename) {
@@ -103,9 +105,10 @@ export default {
     }
   },
   async downloadAllData(idSector, agent, tag, startDate, endDate, option) {
+    const profileStore = useProfile();
     const idProject = getProject();
     const downloadOption = option === 'all_xls' ? `?xls=on` : '';
-    const { me } = Profile.state;
+    const { me } = profileStore;
     const response = await http.get(
       `dashboard/${idProject}/export_dashboard/${downloadOption}`,
       {

@@ -1,8 +1,7 @@
 import { defineStore } from 'pinia';
 import Discussion from '@/services/api/resources/chats/discussion';
 
-import { useRoomsStore } from './rooms';
-const roomsStore = useRoomsStore();
+import { useRooms } from './rooms';
 
 export const useDiscussions = defineStore('discussions', {
   state: () => ({
@@ -47,6 +46,7 @@ export const useDiscussions = defineStore('discussions', {
     },
 
     async create({ queue, subject, initial_message }) {
+      const roomsStore = useRooms();
       const responseDiscussion = await Discussion.create({
         queue,
         subject,

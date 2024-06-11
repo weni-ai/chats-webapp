@@ -16,8 +16,11 @@
 </template>
 
 <script>
+import { mapState } from 'pinia';
 import CardGroupMetrics from '../../CardGroupMetrics';
 import GeneralMetrics from '../../GeneralMetrics';
+
+import { useSettings } from '@/store/modules/settings';
 
 export default {
   name: 'HistoryMetricsByAgent',
@@ -86,8 +89,9 @@ export default {
   }),
 
   computed: {
+    ...mapState(useSettings, ['sectors']),
     queues() {
-      const { queues } = this.$store.state.settings.sectors[0];
+      const { queues } = this.sectors[0];
 
       return queues.map((queue) => ({
         id: queue.id,

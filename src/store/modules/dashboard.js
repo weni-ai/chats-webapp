@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 
 import Dasboard from '@/services/api/resources/dashboard/dashboardManager';
 
-export const useDashboardStore = defineStore('dashboard', {
+export const useDashboard = defineStore('dashboard', {
   state: () => ({
     viewedAgent: {
       email: '',

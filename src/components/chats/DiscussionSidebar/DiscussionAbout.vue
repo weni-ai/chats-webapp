@@ -82,8 +82,11 @@ import Project from '@/services/api/resources/settings/project';
 
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
 import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
-import { mapState } from 'vuex';
 
+import { mapActions, mapState } from 'pinia';
+import { useDiscussions } from '@/store/modules/chats/discussions';
+
+import { useProfile } from '@/store/modules/profile';
 export default {
   name: 'DiscussionAbout',
 
@@ -110,9 +113,7 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      me: (state) => state.profile.me,
-    }),
+    ...mapState(useProfile, ['me']),
     discussionStartDate() {
       const { created_on } = this.details;
       const date = new Date(created_on);
@@ -122,6 +123,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(useDiscussions, ['addAgent', 'getDiscussionAgents']),
     getUserFullName(user) {
       const { first_name, last_name } = user;
       return `${first_name} ${last_name}`;
@@ -150,12 +152,9 @@ export default {
 
       try {
         this.addAgentLoading = true;
-        const responseAgent = await this.$store.dispatch(
-          'chats/discussions/addAgent',
-          {
-            user_email: newAgent.value,
-          },
-        );
+        const responseAgent = await this.addAgent({
+          user_email: newAgent.value,
+        });
 
         this.agentsInvolved.push(responseAgent);
 
@@ -199,9 +198,7 @@ export default {
     details: {
       immediate: true,
       async handler() {
-        const responseAgents = await this.$store.dispatch(
-          'chats/discussions/getDiscussionAgents',
-        );
+        const responseAgents = await this.getDiscussionAgents();
         if (responseAgents.results) {
           this.agentsInvolved = responseAgents.results;
         }

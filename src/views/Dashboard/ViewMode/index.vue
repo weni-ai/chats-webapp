@@ -73,7 +73,12 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useDashboard } from '@/store/modules/dashboard';
+import { useProfile } from '@/store/modules/profile';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 import ChatsLayout from '@/layouts/ChatsLayout';
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
@@ -108,32 +113,33 @@ export default {
   }),
 
   beforeMount() {
-    this.$store.dispatch('chats/rooms/setActiveRoom', null);
-    this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
+    this.setActiveRoom(null);
+    this.setActiveDiscussion(null);
   },
 
   mounted() {
-    this.$store.dispatch(
-      'dashboard/getViewedAgentData',
-      this.$route.params.viewedAgent,
-    );
+    this.getViewedAgentData(this.$route.params.viewedAgent);
   },
 
   beforeDestroy() {
-    this.$store.dispatch('dashboard/setViewedAgent', { name: '', email: '' });
+    this.setViewedAgent({ name: '', email: '' });
   },
 
   computed: {
-    ...mapState({
-      room: (state) => state.chats.rooms.activeRoom,
-      discussion: (state) => state.chats.discussions.activeDiscussion,
-      me: (state) => state.profile.me,
-      viewedAgent: (state) => state.dashboard.viewedAgent,
-      roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,
+    ...mapState(useRooms, { room: (store) => store.activeRoom }),
+    ...mapState(useDiscussions, {
+      discussion: (store) => store.activeDiscussion,
     }),
+    ...mapState(useProfile, ['me']),
+    ...mapState(useDashboard, ['viewedAgent']),
+    ...mapState(useRoomMessages, ['roomMessagesNext']),
   },
 
   methods: {
+    ...mapActions(useDiscussions, ['setActiveDiscussion']),
+    ...mapActions(useRooms, ['setActiveRoom']),
+    ...mapActions(useDashboard, ['getViewedAgentData', 'setViewedAgent']),
+
     handleModal(modalName, action) {
       const registeredModals = ['ContactInfo', 'AssumeChatConfirmation'];
 

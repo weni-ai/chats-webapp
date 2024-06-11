@@ -49,8 +49,11 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import isMobile from 'is-mobile';
+
+import { mapState } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDashboard } from '@/store/modules/dashboard';
 
 import FileUploader from '@/components/chats/MessageManager/FileUploader.vue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
@@ -86,12 +89,11 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      room: (state) => state.chats.rooms.activeRoom,
-      showModalAssumedChat: ({ dashboard }) => dashboard.showModalAssumedChat,
-      assumedChatContactName: ({ dashboard }) =>
-        dashboard.assumedChatContactName,
-    }),
+    ...mapState(useRooms, { room: (store) => store.activeRoom }),
+    ...mapState(useDashboard, [
+      'showModalAssumedChat',
+      'assumedChatContactName',
+    ]),
   },
 
   methods: {

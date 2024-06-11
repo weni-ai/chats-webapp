@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 
-import { useDashboardStore } from '../dashboard';
-const dashboardStore = useDashboardStore();
+import { useDashboard } from '../dashboard';
 
 import Room from '@/services/api/resources/chats/room';
 
@@ -97,6 +96,7 @@ export const useRooms = defineStore('rooms', {
     },
 
     updateRoom({ room, userEmail, routerReplace, viewedAgentEmail }) {
+      const dashboardStore = useDashboard();
       const filteredRooms = this.rooms
         .map((mappedRoom) =>
           mappedRoom.uuid === room.uuid ? { ...room } : mappedRoom,

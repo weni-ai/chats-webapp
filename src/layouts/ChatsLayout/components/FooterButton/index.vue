@@ -30,7 +30,10 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+
+import { useRooms } from '@/store/modules/chats/rooms';
+
 import ModalBulkTransfer from '@/components/chats/chat/ModalBulkTransfer.vue';
 export default {
   name: 'ChatsLayoutFooterButton',
@@ -46,10 +49,7 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      selectedRoomsToTransfer: (state) =>
-        state.chats.rooms.selectedRoomsToTransfer,
-    }),
+    ...mapState(useRooms, ['selectedRoomsToTransfer']),
   },
   methods: {
     handleModalBulkTransfer() {

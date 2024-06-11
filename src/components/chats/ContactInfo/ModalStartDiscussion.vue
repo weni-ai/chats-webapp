@@ -66,6 +66,9 @@
 </template>
 
 <script>
+import { mapActions } from 'pinia';
+import { useDiscussions } from '@/store/modules/chats/discussions';
+
 import Discussion from '@/services/api/resources/chats/discussion';
 import Queue from '@/services/api/resources/settings/queue';
 
@@ -117,20 +120,20 @@ export default {
   },
 
   methods: {
+    ...mapActions(useDiscussions, {
+      createDiscussion: 'create',
+    }),
     close() {
       this.$emit('close');
     },
 
     async startDiscussion() {
       this.startDiscussionLoading = true;
-      const responseDiscussion = await this.$store.dispatch(
-        'chats/discussions/create',
-        {
-          queue: this.queue[0].value || '',
-          subject: this.subject,
-          initial_message: this.message,
-        },
-      );
+      const responseDiscussion = await this.createDiscussion({
+        queue: this.queue[0].value || '',
+        subject: this.subject,
+        initial_message: this.message,
+      });
 
       if (this.$route.path !== 'discussion' && responseDiscussion.uuid) {
         this.$router.push({

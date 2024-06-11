@@ -47,7 +47,11 @@
   </UnnnicModal>
 </template>
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'pinia';
+
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useProfile } from '@/store/modules/profile';
+
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 import Queues from '@/services/api/resources/chats/queues';
 
@@ -82,16 +86,18 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      me: (state) => state.profile.me,
-      rooms: (state) => state.chats.rooms.rooms,
-    }),
+    ...mapState(useProfile, ['me']),
+    ...mapState(useRooms, ['rooms']),
 
     verifySelectedLength() {
       return this.selectedQueues.length > 0;
     },
   },
   methods: {
+    ...mapActions(useRooms, {
+      removeRoom: 'removeRoom',
+      getAllRooms: 'getAll',
+    }),
     async getListQueues() {
       try {
         let me = this.me.email;
@@ -155,12 +161,10 @@ export default {
         );
         roomsWithQueuesToRemove.forEach((room) => {
           if (room.uuid) {
-            this.$store.dispatch('chats/rooms/removeRoom', room.uuid);
+            this.removeRoom(room.uuid);
           }
         });
-        await this.$store.dispatch('chats/rooms/getAll', {
-          limit: 100,
-        });
+        await this.getAllRooms({ limit: 100 });
 
         callUnnnicAlert({
           props: {

@@ -91,7 +91,7 @@
 import Sector from '@/services/api/resources/settings/sector';
 import QuickMessageCard from '@/components/chats/QuickMessages/QuickMessageCard';
 
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState } from 'pinia';
 
 export default {
   name: 'ListSectorQuickMessages',

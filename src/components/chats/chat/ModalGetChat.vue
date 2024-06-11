@@ -25,7 +25,11 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'pinia';
+
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useProfile } from '@/store/modules/profile';
+import { useDashboard } from '@/store/modules/dashboard';
 
 import unnnic from '@weni/unnnic-system';
 
@@ -61,11 +65,12 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      room: (state) => state.chats.rooms.activeRoom,
-      me: (state) => state.profile.me,
-      viewedAgent: (state) => state.dashboard.viewedAgent,
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
+      getRoomById: 'getRoomById',
     }),
+    ...mapState(useProfile, ['me']),
+    ...mapState(useDashboard, ['viewedAgent']),
   },
 
   watch: {
@@ -90,6 +95,8 @@ export default {
   },
 
   methods: {
+    ...mapActions(useProfile, ['setMe']),
+    ...mapActions(useRooms, ['setActiveRoom']),
     close() {
       this.$emit('closeModal');
     },
@@ -109,7 +116,7 @@ export default {
       if (!me) {
         const response = await Profile.me();
         me = response.email;
-        this.$store.commit('profile/setMe', response);
+        this.setMe(response);
       }
 
       if (this.viewedAgent.name === '') {
@@ -127,8 +134,8 @@ export default {
     },
 
     async setActiveRoom(uuid) {
-      const room = this.$store.getters['chats/rooms/getRoomById'](uuid);
-      await this.$store.dispatch('chats/rooms/setActiveRoom', room);
+      const room = this.getRoomById(uuid);
+      await this.setActiveRoom(room);
     },
   },
 };

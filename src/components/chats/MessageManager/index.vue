@@ -133,7 +133,15 @@
 
 <script>
 import isMobile from 'is-mobile';
-import { mapState } from 'vuex';
+
+import { mapActions, mapState } from 'pinia';
+
+import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
+import { useQuickMessages } from '@/store/modules/chats/quickMessages';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 import MessageManagerLoading from '@/views/loadings/chat/MessageManager.vue';
 
@@ -185,12 +193,11 @@ export default {
   }),
 
   computed: {
-    ...mapState({
-      quickMessages: (state) => state.chats.quickMessages.quickMessages,
-      quickMessagesShared: (state) =>
-        state.chats.quickMessagesShared.quickMessagesShared,
-      canUseCopilot: (state) => state.chats.rooms.canUseCopilot,
-      discussionId: (state) => state.chats.discussions.activeDiscussion?.uuid,
+    ...mapState(useQuickMessageShared, ['quickMessagesShared']),
+    ...mapState(useQuickMessages, ['quickMessages']),
+    ...mapState(useRooms, ['canUseCopilot']),
+    ...mapState(useDiscussions, {
+      discussionId: (store) => store.activeDiscussion?.uuid,
     }),
 
     isMobile() {
@@ -261,6 +268,11 @@ export default {
   },
 
   methods: {
+    ...mapActions(useDiscussionMessages, [
+      'sendDiscussionMessage',
+      'sendDiscussionMedias',
+    ]),
+    ...mapActions(useRoomMessages, ['sendRoomMessage', 'sendRoomMedias']),
     openCopilot() {
       this.isCopilotOpen = true;
       this.clearTextBox();
@@ -356,12 +368,11 @@ export default {
       const message = this.textBoxMessage.trim();
       if (message) {
         this.clearTextBox();
-
-        const actionType = this.discussionId
-          ? 'chats/discussionMessages/sendDiscussionMessage'
-          : 'chats/roomMessages/sendRoomMessage';
-
-        await this.$store.dispatch(actionType, message);
+        if (this.discussionId) {
+          await this.sendDiscussionMessage(message);
+        } else {
+          await this.sendRoomMessage(message);
+        }
       }
     },
     async sendAudio() {
@@ -385,14 +396,16 @@ export default {
         type: 'audio/mpeg3',
       });
 
-      const actionType = this.discussionId
-        ? 'chats/discussionMessages/sendDiscussionMedias'
-        : 'chats/roomMessages/sendRoomMedias';
-
-      await this.$store.dispatch(actionType, {
+      const sendPayload = {
         files: [audio],
         updateLoadingFiles,
-      });
+      };
+
+      if (this.discussionId) {
+        await this.sendDiscussionMedias(sendPayload);
+      } else {
+        await this.sendRoomMedias(sendPayload);
+      }
 
       this.totalValue = undefined;
       this.clearAudio();

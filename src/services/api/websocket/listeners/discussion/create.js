@@ -1,15 +1,20 @@
 import SoundNotification from '@/services/api/websocket/soundNotification';
 
+import { useDiscussions } from '@/store/modules/chats/discussions';
+
 export default (discussion, { app }) => {
+  const discussionStore = useDiscussions();
   if (discussion.created_by && discussion.created_by === app.me.email) return;
 
-  const { discussions } = app.$store.state.chats.discussions;
+  const { discussions } = discussionStore;
   const existentDiscussion = discussions.find(
     (mappedDiscussion) => mappedDiscussion.uuid === discussion.uuid,
   );
+
   if (existentDiscussion) return;
 
-  app.$store.dispatch('chats/discussions/addDiscussion', discussion);
+  discussionStore.addDiscussion(discussion);
+
   const notification = new SoundNotification('achievement-confirmation');
   notification.notify();
 };

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import Sector from '@/services/api/resources/settings/sector';
 import cloneDeep from 'lodash.clonedeep';
 
-export const useSettingsStore = defineStore('settings', {
+export const useSettings = defineStore('settings', {
   state: () => ({ sectors: [], activeSectorId: null }),
   actions: {
     addSector(sector) {

@@ -17,7 +17,10 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState } from 'pinia';
+
+import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
 
 import ChatMessages from '@/components/chats/chat/ChatMessages/index.vue';
 
@@ -36,37 +39,33 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      discussion: (state) => state.chats.discussions.activeDiscussion,
-      discussionMessages: (state) =>
-        state.chats.discussionMessages.discussionMessages,
-      discussionMessagesNext: (state) =>
-        state.chats.discussionMessages.discussionMessagesNext,
-      discussionMessagesPrevious: (state) =>
-        state.chats.discussionMessages.discussionMessagesPrevious,
-      discussionMessagesSorted: (state) =>
-        state.chats.discussionMessages.discussionMessagesSorted,
-      discussionMessagesSendingUuids: (state) =>
-        state.chats.discussionMessages.discussionMessagesSendingUuids,
-      discussionMessagesFailedUuids: (state) =>
-        state.chats.discussionMessages.discussionMessagesFailedUuids,
+    ...mapState(useDiscussions, {
+      discussion: (store) => store.activeDiscussion,
     }),
+    ...mapState(useDiscussionMessages, [
+      'discussionMessages',
+      'discussionMessagesNext',
+      'discussionMessagesPrevious',
+      'discussionMessagesSorted',
+      'discussionMessagesSendingUuids',
+      'discussionMessagesFailedUuids',
+    ]),
   },
 
   methods: {
-    ...mapActions({
-      discussionResendMessages:
-        'chats/discussionMessages/resendDiscussionMessages',
-      discussionResendMedia: 'chats/discussionMessages/resendDiscussionMedia',
+    ...mapActions(useDiscussionMessages, {
+      discussionResendMessages: 'resendDiscussionMessages',
+      discussionResendMedia: 'resendDiscussionMedia',
+      getDiscussionMessages: 'getDiscussionMessages',
+      resetDiscussionMessages: 'resetDiscussionMessages',
     }),
 
-    async getDiscussionMessages() {
+    handlingGetDiscussionMessages() {
       this.isLoading = true;
-      await this.$store
-        .dispatch('chats/discussionMessages/getDiscussionMessages', {
-          offset: this.page * this.limit,
-          limit: this.limit,
-        })
+      this.getDiscussionMessages({
+        offset: this.page * this.limit,
+        limit: this.limit,
+      })
         .then(() => {
           this.isLoading = false;
         })
@@ -78,7 +77,7 @@ export default {
     searchForMoreMessages() {
       if (this.discussionMessagesNext) {
         this.page += 1;
-        this.getDiscussionMessages();
+        this.handlingGetDiscussionMessages();
       }
     },
   },
@@ -88,11 +87,9 @@ export default {
       immediate: true,
       async handler(discussionUuid) {
         if (discussionUuid) {
-          await this.$store.dispatch(
-            'chats/discussionMessages/resetDiscussionMessages',
-          );
+          await this.resetDiscussionMessages();
           this.page = 0;
-          this.getDiscussionMessages();
+          this.handlingGetDiscussionMessages();
         }
       },
     },

@@ -10,10 +10,8 @@ import {
 } from '@/utils/messages';
 
 import { useDiscussions } from './discussions';
-const discussionsStore = useDiscussions();
 
 import { useProfile } from '../profile';
-const profileStore = useProfile();
 
 import Message from '@/services/api/resources/chats/message';
 
@@ -78,6 +76,7 @@ export const useDiscussionMessages = defineStore('discussionMessages', {
     },
 
     isMessageInActiveDiscussion(message) {
+      const discussionsStore = useDiscussions();
       return message.discussion === discussionsStore.activeDiscussion?.uuid;
     },
 
@@ -124,6 +123,7 @@ export const useDiscussionMessages = defineStore('discussionMessages', {
     },
 
     async getDiscussionMessages({ offset, limit }) {
+      const discussionsStore = useDiscussions();
       const nextReq = this.discussionMessagesNext;
 
       await treatMessages({
@@ -169,6 +169,8 @@ export const useDiscussionMessages = defineStore('discussionMessages', {
     },
 
     async sendDiscussionMessage(text) {
+      const discussionsStore = useDiscussions();
+      const profileStore = useProfile();
       const { activeDiscussion } = discussionsStore;
       if (!activeDiscussion) return;
 
@@ -195,6 +197,8 @@ export const useDiscussionMessages = defineStore('discussionMessages', {
     },
 
     async sendDiscussionMedias({ files: medias, updateLoadingFiles }) {
+      const discussionsStore = useDiscussions();
+      const profileStore = useProfile();
       const { activeDiscussion } = discussionsStore;
       if (!activeDiscussion) return;
 
@@ -233,6 +237,7 @@ export const useDiscussionMessages = defineStore('discussionMessages', {
     },
 
     async resendDiscussionMessage({ message }) {
+      const discussionsStore = useDiscussions();
       const { activeDiscussion } = discussionsStore;
       if (!activeDiscussion) return;
 
@@ -255,6 +260,7 @@ export const useDiscussionMessages = defineStore('discussionMessages', {
     },
 
     async resendDiscussionMedia({ message, media }) {
+      const discussionsStore = useDiscussions();
       const { activeDiscussion } = discussionsStore;
       if (!activeDiscussion) return;
 

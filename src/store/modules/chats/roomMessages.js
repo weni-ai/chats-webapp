@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 
-import { useRoomsStore } from './rooms';
-const roomsStore = useRoomsStore();
+import { useRooms } from './rooms';
 
 import Message from '@/services/api/resources/chats/message';
 
@@ -72,6 +71,7 @@ export const useRoomMessages = defineStore('roomMessages', {
     },
 
     isMessageInActiveRoom(message) {
+      const roomsStore = useRooms();
       return message.room === roomsStore.activeRoom?.uuid;
     },
 
@@ -121,6 +121,7 @@ export const useRoomMessages = defineStore('roomMessages', {
     },
 
     async getRoomMessages({ offset = null, limit = null }) {
+      const roomsStore = useRooms();
       const nextReq = this.roomMessagesNext;
 
       await treatMessages({
@@ -157,6 +158,7 @@ export const useRoomMessages = defineStore('roomMessages', {
     },
 
     async sendRoomMessage(text) {
+      const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
       if (!activeRoom) return;
 
@@ -179,6 +181,7 @@ export const useRoomMessages = defineStore('roomMessages', {
     },
 
     async sendRoomMedias({ files: medias, updateLoadingFiles }) {
+      const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
       if (!activeRoom) return;
 
@@ -215,6 +218,7 @@ export const useRoomMessages = defineStore('roomMessages', {
     },
 
     async resendRoomMessage({ message }) {
+      const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
       if (!activeRoom) return;
 
@@ -236,6 +240,7 @@ export const useRoomMessages = defineStore('roomMessages', {
     },
 
     async resendRoomMedia({ message, media }) {
+      const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
       if (!activeRoom) return;
 

@@ -8,7 +8,7 @@ import {
 
 import Profile from '@/services/api/resources/profile';
 
-export const useConfigStore = defineStore('config', {
+export const useConfig = defineStore('config', {
   state: () => ({
     token: '',
     project: {},
