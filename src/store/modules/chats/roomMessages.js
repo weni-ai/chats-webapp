@@ -16,7 +16,7 @@ import {
   resendMessage,
 } from '@/utils/messages';
 
-export const useRoomMessagesStore = defineStore('roomMessages', {
+export const useRoomMessages = defineStore('roomMessages', {
   state: () => ({
     roomMessages: [],
     roomMessagesSorted: [],

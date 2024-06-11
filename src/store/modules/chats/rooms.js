@@ -5,7 +5,7 @@ const dashboardStore = useDashboardStore();
 
 import Room from '@/services/api/resources/chats/room';
 
-export const useRoomsStore = defineStore('rooms', {
+export const useRooms = defineStore('rooms', {
   state: () => ({
     rooms: [],
     activeRoom: null,
