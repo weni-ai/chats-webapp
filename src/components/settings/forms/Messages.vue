@@ -34,8 +34,8 @@ import { mapActions } from 'pinia';
 
 import unnnic from '@weni/unnnic-system';
 
-import ListSectorMessages from '@/components/settings/lists/ListSectorMessages';
-import QuickMessageForm from '@/components/chats/QuickMessages/QuickMessageForm';
+import ListSectorMessages from '@/components/settings/lists/ListSectorMessages.vue';
+import QuickMessageForm from '@/components/chats/QuickMessages/QuickMessageForm.vue';
 
 export default {
   name: 'FormMessages',

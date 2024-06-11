@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import SelectedMember from '@/components/settings/forms/SelectedMember';
+import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 
 export default {
   name: 'FormAgent',
