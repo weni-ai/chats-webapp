@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import ListSectorQueues from '@/components/settings/lists/ListSectorQueues';
+import ListSectorQueues from '@/components/settings/lists/ListSectorQueues.vue';
 
 export default {
   name: 'FormQueue',

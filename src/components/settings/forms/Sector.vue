@@ -212,7 +212,7 @@
 <script>
 import { mapActions } from 'vuex';
 import unnnic from '@weni/unnnic-system';
-import SelectedMember from '@/components/settings/forms/SelectedMember';
+import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 import Sector from '@/services/api/resources/settings/sector';
 
 export default {

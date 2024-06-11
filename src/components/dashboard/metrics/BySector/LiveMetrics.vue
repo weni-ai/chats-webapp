@@ -21,9 +21,9 @@
 </template>
 
 <script>
-import CardGroupMetrics from '../../CardGroupMetrics';
-import GeneralMetrics from '../../GeneralMetrics';
-import TableMetrics from '../../TableMetrics';
+import CardGroupMetrics from '../../CardGroupMetrics.vue';
+import GeneralMetrics from '../../GeneralMetrics.vue';
+import TableMetrics from '../../TableMetrics.vue';
 
 export default {
   name: 'LiveMetricsBySector',

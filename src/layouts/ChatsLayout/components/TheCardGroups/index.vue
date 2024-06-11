@@ -112,6 +112,7 @@
 <script>
 import isMobile from 'is-mobile';
 import { mapState, mapGetters } from 'vuex';
+
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup/index.vue';
 import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';

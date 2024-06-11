@@ -16,8 +16,8 @@
 </template>
 
 <script>
-import CardGroupMetrics from '../../CardGroupMetrics';
-import GeneralMetrics from '../../GeneralMetrics';
+import CardGroupMetrics from '../../CardGroupMetrics.vue';
+import GeneralMetrics from '../../GeneralMetrics.vue';
 
 export default {
   name: 'HistoryMetricsByAgent',

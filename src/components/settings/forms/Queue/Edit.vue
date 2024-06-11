@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import ListAgents from '@/components/settings/lists/Agents';
+import ListAgents from '@/components/settings/lists/Agents.vue';
 
 export default {
   name: 'FormEditQueue',
