@@ -96,7 +96,7 @@ import Profile from '@/services/api/resources/profile';
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 
 import unnnic from '@weni/unnnic-system';
-import { mapState } from 'pinia';
+import { mapState, mapActions } from 'pinia';
 import { useConfig } from '@/store/modules/config';
 export default {
   props: {
@@ -132,7 +132,7 @@ export default {
   },
 
   async created() {
-    this.getStatus();
+    await this.handlingGetStatus();
     this.sound = (localStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'yes';
     window.dispatchEvent(
       new CustomEvent(`${this.help ? 'show' : 'hide'}BottomRightOptions`),
@@ -140,6 +140,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(useConfig, ['getStatus']),
     navigate(name) {
       this.$router.push({
         name,
@@ -167,12 +168,10 @@ export default {
       this.showStatusAlert(connection_status.toLowerCase());
     },
 
-    async getStatus() {
-      const response = await Profile.status({
-        projectUuid: this.project.uuid,
-      });
+    async handlingGetStatus() {
+      const status = await this.getStatus(this.project.uuid);
       useConfig().$patch({
-        status: response.data.connection_status,
+        status,
       });
     },
 
