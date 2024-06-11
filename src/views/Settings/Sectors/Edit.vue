@@ -199,6 +199,7 @@
 <script>
 import { mapActions, mapState } from 'pinia';
 import { useConfig } from '@/store/modules/config';
+import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 
 import unnnic from '@weni/unnnic-system';
 
@@ -294,10 +295,7 @@ export default {
   }),
 
   computed: {
-    ...mapState({
-      quickMessagesShared: (state) =>
-        state.chats.quickMessagesShared.quickMessagesShared,
-    }),
+    ...mapState(useQuickMessageShared, ['quickMessagesShared']),
   },
 
   methods: {

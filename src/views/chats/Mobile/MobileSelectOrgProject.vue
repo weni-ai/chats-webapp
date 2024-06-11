@@ -39,7 +39,7 @@
 
 <script>
 import { mapActions, mapState } from 'pinia';
-
+import { useConfig } from '@/store/modules/config';
 import Keycloak from '@/services/keycloak';
 
 import weniChatsLogo from '@/assets/weni-chats-logo.svg';
@@ -63,8 +63,8 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      userToken: (state) => state.config.token,
+    ...mapState(useConfig, {
+      userToken: (store) => store.token,
     }),
 
     orgAndProjectSubtitle() {
@@ -74,7 +74,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('config', ['setProjectUuid']),
+    ...mapActions(useConfig, ['setProjectUuid']),
     logout() {
       Keycloak.keycloak.logout();
     },

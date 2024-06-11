@@ -175,19 +175,19 @@ export const useRooms = defineStore('rooms', {
   },
 
   getters: {
-    agentRooms(state) {
-      return state.rooms.filter(
+    agentRooms(store) {
+      return store.rooms.filter(
         (room) => !!room.user && room.is_waiting === false,
       );
     },
-    waitingQueue(state) {
-      return state.rooms.filter((room) => !room.user && !room.is_waiting);
+    waitingQueue(store) {
+      return store.rooms.filter((room) => !room.user && !room.is_waiting);
     },
-    waitingContactAnswer(state) {
-      return state.rooms.filter((room) => room.is_waiting === true);
+    waitingContactAnswer(store) {
+      return store.rooms.filter((room) => room.is_waiting === true);
     },
-    getRoomById: (state) => (uuid) => {
-      return state.rooms.find((room) => room.uuid === uuid);
+    getRoomById: (store) => (uuid) => {
+      return store.rooms.find((room) => room.uuid === uuid);
     },
   },
 });
