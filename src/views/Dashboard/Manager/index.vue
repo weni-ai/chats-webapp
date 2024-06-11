@@ -40,10 +40,10 @@
 import Sector from '@/services/api/resources/settings/sector';
 import { mapState } from 'pinia';
 
-import DashboardLayout from '@/layouts/DashboardLayout';
+import DashboardLayout from '@/layouts/DashboardLayout/index.vue';
 
-import DashboardFilters from '@/components/dashboard/Filters';
-import HistoryMetricsBySector from '@/components/dashboard/metrics/BySector/HistoryMetrics';
+import DashboardFilters from '@/components/dashboard/Filters.vue';
+import HistoryMetricsBySector from '@/components/dashboard/metrics/BySector/HistoryMetrics.vue';
 
 export default {
   name: 'DashboardManager',
