@@ -22,11 +22,11 @@
 
 <script>
 // import DashboardManagerApi from '@/services/api/resources/dashboard/dashboardManager';
-import CardGroupMetrics from '../../CardGroupMetrics';
-import GeneralMetrics from '../../GeneralMetrics';
-import TableMetrics from '../../TableMetrics';
 import { mapState } from 'pinia';
 import { useSettings } from '@/store/modules/settings';
+import CardGroupMetrics from '../../CardGroupMetrics.vue';
+import GeneralMetrics from '../../GeneralMetrics.vue';
+import TableMetrics from '../../TableMetrics.vue';
 
 export default {
   name: 'LiveMetricsByAgent',

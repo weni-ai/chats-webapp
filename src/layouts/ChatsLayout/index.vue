@@ -75,6 +75,7 @@ import QuickMessages from '@/components/chats/QuickMessages/index.vue';
 import TheCardGroups from './components/TheCardGroups/index.vue';
 import LayoutFlowsTrigger from './components/FlowsTrigger/index.vue';
 import ChatsLayoutFooterButton from './components/FooterButton/index.vue';
+
 import Sector from '@/services/api/resources/settings/sector.js';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 

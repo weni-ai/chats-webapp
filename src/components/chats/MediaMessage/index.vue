@@ -42,9 +42,9 @@ import mime from 'mime-types';
 import Media from '@/services/api/resources/chats/media';
 
 // import MediaControls from './Controls';
-import DocumentPreview from './Previews/Document';
-import ImagePreview from './Previews/Image';
-import VideoPreview from './Previews/Video';
+import DocumentPreview from './Previews/Document.vue';
+import ImagePreview from './Previews/Image.vue';
+import VideoPreview from './Previews/Video.vue';
 
 export default {
   name: 'MediaMessage',

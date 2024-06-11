@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import TagGroup from '@/components/TagGroup';
+import TagGroup from '@/components/TagGroup.vue';
 
 export default {
   name: 'FormTags',
