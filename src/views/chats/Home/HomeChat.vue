@@ -21,6 +21,7 @@
         :showSkeletonLoading="isChatSkeletonActive"
         @show-quick-messages="handleShowQuickMessages"
         @open-file-uploader="openModalFileUploader"
+        @update:modelValue="textBoxMessage = $event"
       />
     </ChatsDropzone>
 

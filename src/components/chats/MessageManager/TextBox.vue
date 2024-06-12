@@ -15,6 +15,7 @@
         scheme="neutral-dark"
         @click.stop="emitHandleQuickMessages"
       />
+
       <div
         v-else
         @click.stop="handleEmojiPicker"
@@ -27,18 +28,18 @@
         />
       </div>
 
-      <EmojiPicker
+      <UnnnicEmojiPicker
         v-show="isEmojiPickerOpen"
         @emojiSelected="handleTextarea"
         @close="closeEmojiPicker"
       />
 
       <textarea
-        :placeholder="$t('message')"
-        class="text-input"
         ref="textareaRef"
+        :value="modelValue"
+        :placeholder="$t('message')"
         :rows="currentTextAreaRows"
-        :value="value"
+        class="text-input"
         @input="handleTextarea"
         @keydown="keyDownTextarea"
         @paste="paste"
@@ -51,14 +52,15 @@
         class="more-actions"
         v-if="isMobile"
       >
-        <UnnnicButton
-          slot="trigger"
-          class="text-editor__mobile-button"
-          iconCenter="attachment"
-          type="tertiary"
-          scheme="neutral-dark"
-          next
-        />
+        <template #trigger>
+          <UnnnicButton
+            class="text-editor__mobile-button"
+            iconCenter="attachment"
+            type="tertiary"
+            scheme="neutral-dark"
+            next
+          />
+        </template>
 
         <div class="more-actions-container">
           <MoreActionsOption
@@ -92,7 +94,7 @@ export default {
   },
 
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: '',
     },
@@ -125,10 +127,10 @@ export default {
     handleTextarea(event) {
       if (typeof event === 'string') {
         this.message += event;
-        this.$emit('input', this.message);
+        this.$emit('update:modelValue', this.message);
       } else {
         this.message = event.target.value;
-        this.$emit('input', event.target.value);
+        this.$emit('update:modelValue', event.target.value);
       }
     },
 
@@ -194,7 +196,7 @@ export default {
   },
 
   watch: {
-    value(newValue) {
+    modelValue(newValue) {
       this.message = newValue;
       this.$emit('is-typing-handler', this.message.trim().length > 0);
       this.$nextTick(() => {
