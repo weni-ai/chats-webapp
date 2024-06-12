@@ -59,7 +59,7 @@ export default {
   name: 'QuickMessageForm',
 
   props: {
-    value: {
+    modelValue: {
       type: Object,
       default: null,
     },
@@ -96,10 +96,10 @@ export default {
     },
     quickMessage: {
       get() {
-        return this.value || {};
+        return this.modelValue || {};
       },
       set(quickMessage) {
-        this.$emit('input', quickMessage);
+        this.$emit('update:model-value', quickMessage);
       },
     },
   },
