@@ -219,7 +219,6 @@ export default {
       type: String,
       required: true,
     },
-
     messages: {
       type: Array,
       required: true,
@@ -553,11 +552,14 @@ export default {
   },
 
   watch: {
-    messages() {
-      this.setStartFeedbacks();
-      this.$nextTick(() => {
-        this.manageScrollForNewMessages();
-      });
+    messages: {
+      handler() {
+        this.setStartFeedbacks();
+        this.$nextTick(() => {
+          this.manageScrollForNewMessages();
+        });
+      },
+      deep: true,
     },
   },
 };
