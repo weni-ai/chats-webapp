@@ -4,12 +4,13 @@
     <UnnnicChatsHeader
       v-show="isShowingRoomHeader"
       :title="headerRoomTitle"
-      :avatarClick="() => emitOpenRoomContactInfo()"
-      :titleClick="() => emitOpenRoomContactInfo()"
+      :avatarClick="emitOpenRoomContactInfo"
+      :titleClick="emitOpenRoomContactInfo"
       :avatarName="headerRoomTitle"
       :close="emitOpenModalCloseChat"
       :back="isMobile ? emitBack : null"
     />
+
     <UnnnicChatsHeader
       v-show="isShowingDiscussionHeader"
       class="home-chat-headers__discussion"

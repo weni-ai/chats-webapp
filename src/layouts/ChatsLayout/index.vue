@@ -132,12 +132,6 @@ export default {
         this.flowsTriggerContact = null;
       }
     },
-    close() {
-      if (this.$slots.aside[0].componentOptions.listeners) {
-        this.$slots.aside[0].componentOptions.listeners.close();
-      }
-      this.showFlowsTrigger = false;
-    },
 
     async getCountSectors() {
       try {
@@ -168,9 +162,9 @@ export default {
 
   computed: {
     isAsideVisible() {
-      return (
-        !!this.$slots.aside().length &&
-        this.$slots.aside().filter((slot) => slot.componentOptions).length > 0
+      const asideSlot = this.$slots.aside ? this.$slots.aside() : [];
+      return asideSlot.some(
+        (slot) => slot.type && typeof slot.type === 'object',
       );
     },
     isRoomListVisible() {
