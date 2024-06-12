@@ -1,6 +1,5 @@
 <template>
   <UnnnicModal
-    v-if="showModal"
     @close="close"
     class="start-discussion-form__modal"
     :text="$t('discussions.start_discussion.title')"
@@ -76,13 +75,6 @@ import unnnic from '@weni/unnnic-system';
 
 export default {
   name: 'ModalStartDiscussion',
-
-  props: {
-    showModal: {
-      type: Boolean,
-      required: true,
-    },
-  },
 
   data: () => {
     return {
@@ -185,6 +177,7 @@ export default {
         results.forEach(({ uuid, name }) =>
           newSectors.push({ value: uuid, label: name }),
         );
+
         this.sectorsToSelect = newSectors;
       } catch (error) {
         console.error('The sectors could not be loaded at this time.', error);
