@@ -1,6 +1,6 @@
 <template>
   <UnnnicCollapse
-    active
+    v-model="isCollapseOpened"
     size="md"
   >
     <template #header>
