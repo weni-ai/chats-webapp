@@ -67,7 +67,7 @@
             type="primary"
             :disabled="!agentSelected[0]"
             :loading="addAgentLoading"
-            @click="addAgent"
+            @click="handlingAddAgent"
           />
         </template>
       </UnnnicModal>
@@ -151,7 +151,7 @@ export default {
       this.agentSelected = [];
     },
 
-    async addAgent() {
+    async handlingAddAgent() {
       const newAgent = this.agentSelected[0];
 
       if (!newAgent?.value) {
