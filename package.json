@@ -60,7 +60,6 @@
     "jest": "^27.0.5",
     "sass": "^1.69.7",
     "sass-loader": "^13.3.3",
-    "stylus": "^0.63.0",
     "unified-translations": "^1.1.1",
     "vite": "^5.2.12",
     "vue-eslint-parser": "^9.4.2"
