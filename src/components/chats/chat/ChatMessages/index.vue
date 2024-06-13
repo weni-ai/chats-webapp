@@ -48,7 +48,7 @@
 
             <template v-else>
               <UnnnicChatsMessage
-                v-if="message.text || isGeolocation(message.media[0])"
+                v-if="message.text || isGeolocation(message.media?.[0])"
                 :type="messageType(message)"
                 :class="[
                   'chat-messages__message',
@@ -63,8 +63,8 @@
                 :signature="messageSignature(message)"
               >
                 {{
-                  isGeolocation(message.media[0])
-                    ? message.media[0]?.url
+                  isGeolocation(message.media?.[0])
+                    ? message.media?.[0]?.url
                     : message.text
                 }}
               </UnnnicChatsMessage>
