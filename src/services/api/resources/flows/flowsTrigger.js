@@ -3,7 +3,7 @@ import env from '@/utils/env';
 import { getProject, getToken } from '@/utils/config';
 
 const http = axios.create({
-  baseURL: env('VUE_APP_FLOWS_API_URL'),
+  baseURL: env('FLOWS_API_URL'),
 });
 
 http.interceptors.request.use((config) => {
