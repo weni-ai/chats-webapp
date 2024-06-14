@@ -2,12 +2,12 @@
   <section v-if="isMobile && showUploadModal">
     <UnnnicModal
       class="modal-upload-confirm"
-      v-if="value.length > 0"
+      v-if="modelValue.length > 0"
       @close="closeFileUploadModal"
       :text="$t('confirm_send')"
     >
       <UnnnicImportCard
-        v-for="file in value"
+        v-for="file in modelValue"
         :key="file.name + file.lastModified"
         :title="file.name"
         :isImporting="false"
@@ -31,6 +31,7 @@
         v-bind="fileUploadModalProps"
         acceptMultiple
         :maximumUploads="maximumUploads"
+        @fileChange="files = $event"
         @cancel="closeFileUploadModal"
         @close="closeFileUploadModal"
         @action="upload"
@@ -52,7 +53,7 @@ export default {
   name: 'FileUploader',
 
   props: {
-    value: {
+    modelValue: {
       type: Array,
       default: () => [],
     },
@@ -70,7 +71,34 @@ export default {
     maximumUploads: 5,
   }),
 
+  computed: {
+    files: {
+      get() {
+        return this.validFiles(this.modelValue);
+      },
+      set(files) {
+        this.$emit('update:modelValue', this.validFiles(files));
+      },
+    },
+    fileUploadModalProps() {
+      const props = {
+        textTitle: this.$t('send_media'),
+        supportedFormats: getSupportedChatMediaFormats().join(),
+        subtitle: this.$t('upload_area.subtitle', {
+          exampleExtensions: '.PNG, .MP4, .PDF',
+        }),
+        textAction: this.$t('send'),
+      };
+
+      return props;
+    },
+  },
+
   methods: {
+    test(evt) {
+      this.$emit('file-change', evt);
+      console.log({ evt });
+    },
     // accessed by external components
     open() {
       this.showUploadModal = true;
@@ -80,8 +108,7 @@ export default {
       this.showUploadModal = false;
     },
     upload() {
-      const { value: files } = this;
-
+      const { modelValue: files } = this;
       sendMediaMessage({
         files,
         routeName: this.$route.name,
@@ -118,7 +145,7 @@ export default {
 
       if (validFiles.length === 0) this.closeFileUploadModal();
 
-      this.$emit('input', validFiles);
+      this.$emit('update:modelValue', validFiles);
     },
 
     removeSelectedFile(file) {
@@ -128,29 +155,6 @@ export default {
       if (this.files.length === 1) {
         this.closeFileUploadModal();
       }
-    },
-  },
-
-  computed: {
-    files: {
-      get() {
-        return this.validFiles(this.value);
-      },
-      set(files) {
-        this.$emit('input', this.validFiles(files));
-      },
-    },
-    fileUploadModalProps() {
-      const props = {
-        textTitle: this.$t('send_media'),
-        supportedFormats: getSupportedChatMediaFormats().join(),
-        subtitle: this.$t('upload_area.subtitle', {
-          exampleExtensions: '.PNG, .MP4, .PDF',
-        }),
-        textAction: this.$t('send'),
-      };
-
-      return props;
     },
   },
 

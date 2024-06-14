@@ -1,4 +1,4 @@
-import mime from 'mime-types';
+import mime from 'mime';
 
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
@@ -55,7 +55,7 @@ export function validateMediaFormat(files) {
     const fileExtension = `.${fileName.split('.').pop()}`;
 
     const isValidFileExtension = formats.includes(fileExtension);
-    const isValidFileType = fileType === mime.lookup(fileName);
+    const isValidFileType = fileType === mime.getType(fileName);
 
     return isValidFileExtension && isValidFileType;
   });
