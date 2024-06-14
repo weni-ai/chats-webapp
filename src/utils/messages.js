@@ -6,6 +6,8 @@ import { useDiscussions } from '../store/modules/chats/discussions';
 
 import { useProfile } from '../store/modules/profile';
 
+import { removeDuplicatedMessagesByUuid } from './chats';
+
 export function isValidJson(message) {
   try {
     const parsedObject = JSON.parse(message);
@@ -377,4 +379,8 @@ export function groupMessages(messagesReference, { message, addBefore }) {
   } else {
     currentMinuteEntry.messages.push(message);
   }
+
+  currentMinuteEntry.messages = removeDuplicatedMessagesByUuid(
+    currentMinuteEntry.messages,
+  );
 }
