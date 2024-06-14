@@ -27,7 +27,7 @@
   <section v-else-if="showUploadModal">
     <div class="modal-upload-container">
       <UnnnicModalUpload
-        v-model="files"
+        v-model:files="files"
         v-bind="fileUploadModalProps"
         acceptMultiple
         :maximumUploads="maximumUploads"
