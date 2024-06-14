@@ -95,10 +95,6 @@ export default {
   },
 
   methods: {
-    test(evt) {
-      this.$emit('file-change', evt);
-      console.log({ evt });
-    },
     // accessed by external components
     open() {
       this.showUploadModal = true;

@@ -191,6 +191,7 @@ export async function sendMessage({
     itemUser,
     message,
   });
+
   addMessage(temporaryMessage);
   addSortedMessage(temporaryMessage);
 
