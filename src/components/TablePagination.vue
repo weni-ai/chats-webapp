@@ -72,11 +72,10 @@ export default {
 
   computed: {
     tablePagination() {
-      const { value, limit, count } = this;
-
+      const { modelValue, limit, count } = this;
       return this.$t('pagination', {
-        from: count === 0 ? 0 : (value - 1) * limit + 1,
-        to: Math.min(value * limit, count),
+        from: count === 0 ? 0 : (modelValue - 1) * limit + 1,
+        to: Math.min(modelValue * limit, count),
         total: count,
       });
     },
