@@ -378,7 +378,8 @@ export default {
     width: 100%;
   }
 
-  &__date-picker {
+  // .dropdown class comes from the unnnic component and is used here to override its style
+  &__date-picker.dropdown {
     display: grid;
   }
 }

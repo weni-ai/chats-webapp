@@ -190,8 +190,11 @@ export default {
       justify-items: start;
     }
 
-    &__date-picker {
+    &__date-picker.dropdown {
       display: grid;
+      :deep(.input) {
+        min-width: 230px;
+      }
     }
   }
 
