@@ -4,10 +4,11 @@
     :class="{ 'room-card__container--with-selection': withSelection }"
   >
     <UnnnicCheckbox
-      size="sm"
       v-if="withSelection"
-      v-model="checkboxValue"
+      :modelValue="checkboxValue"
+      size="sm"
       class="room-card__checkbox"
+      @change="checkboxValue = $event"
     />
     <UnnnicChatsContact
       :title="room.contact.name"
