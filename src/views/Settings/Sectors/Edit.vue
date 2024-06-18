@@ -152,16 +152,16 @@
       />
       <section class="button-action">
         <UnnnicButton
-          :text="$t('save')"
-          type="secondary"
-          @click="save"
-          :disabled="isQuickMessageEditing && !isQuickMessagesFormValid"
           v-if="
             this.currentTab === 'sector' ||
             this.queueToEdit ||
             this.isQuickMessageEditing ||
             currentTab === 'tags'
           "
+          :text="$t('save')"
+          type="secondary"
+          :disabled="isQuickMessageEditing && !isQuickMessagesFormValid"
+          @click="save"
         />
       </section>
       <UnnnicButton
@@ -172,7 +172,7 @@
         @click="() => messagesHandler('create')"
       />
       <UnnnicModal
-        :showModal="openModal"
+        v-if="openModalDelete"
         modalIcon="alert-circle-1"
         scheme="feedback-red"
         :text="`Excluir a fila ${selectedQueue.name}`"
@@ -187,8 +187,8 @@
           />
           <UnnnicButton
             type="secondary"
-            @click="deleteQueue(selectedQueue.uuid)"
             :text="$t('confirm')"
+            @click="deleteQueue(selectedQueue.uuid)"
           />
         </template>
       </UnnnicModal>
@@ -245,7 +245,7 @@ export default {
 
   data: () => ({
     currentTab: '',
-    openModal: false,
+    openModalDelete: false,
     sector: {
       uuid: '',
       name: '',
@@ -395,14 +395,15 @@ export default {
     async deleteQueue(queueUuid) {
       await Queue.delete(queueUuid);
       this.queues = this.queues.filter((queue) => queue.uuid !== queueUuid);
-      this.openModalDelete = true;
+      this.queueToEdit = null;
+      this.openModalDelete = false;
     },
     async openModalDeleteQueue(queue) {
       this.selectedQueue = queue;
-      this.openModal = true;
+      this.openModalDelete = true;
     },
     async closeModalDeleteQueue() {
-      this.openModal = false;
+      this.openModalDelete = false;
     },
     async getSector() {
       const {
@@ -667,7 +668,6 @@ export default {
   watch: {
     currentTab(current) {
       if (this.$route.query.tab !== current) this.updateQueryParams(current);
-
       this.handleTabChange(current);
     },
   },

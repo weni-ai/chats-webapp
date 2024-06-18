@@ -69,7 +69,7 @@
             autocomplete
             autocompleteIconLeft
             autocompleteClearOnFocus
-            @update:model-value="selectManager"
+            @update:modelValue="selectManager"
           />
         </div>
         <!-- <unnnic-button
@@ -144,9 +144,9 @@
 
         <section class="form-section__inputs">
           <div>
-            <span class="label-working-day">{{
-              $t('sector.managers.working_day.start.label')
-            }}</span>
+            <span class="label-working-day">
+              {{ $t('sector.managers.working_day.start.label') }}
+            </span>
             <input
               class="input-time"
               type="time"
@@ -157,13 +157,14 @@
             <span
               v-show="!this.validHour"
               style="font-size: 12px; color: #ff4545"
-              >{{ this.message }}</span
             >
+              {{ this.message }}
+            </span>
           </div>
           <div>
-            <span class="label-working-day">{{
-              $t('sector.managers.working_day.end.label')
-            }}</span>
+            <span class="label-working-day">
+              {{ $t('sector.managers.working_day.end.label') }}
+            </span>
             <input
               class="input-time"
               type="time"

@@ -1,9 +1,10 @@
 <template>
   <UnnnicTab
-    v-model="tab"
+    v-model:activeTab="tab"
     :initialTab="tab || 'sector'"
     :tabs="tabs"
     class="sector-tabs"
+    @change="tab = $event"
   >
     <template #tab-head-sector>
       <div class="form-tab">
@@ -74,7 +75,7 @@ export default {
         return this.modelValue;
       },
       set(tab) {
-        this.$emit('update:modelValue', tab);
+        if (typeof tab === 'string') this.$emit('update:modelValue', tab);
       },
     },
   },
