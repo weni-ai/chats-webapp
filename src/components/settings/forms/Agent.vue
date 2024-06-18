@@ -74,7 +74,7 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    value: {
+    modelValue: {
       type: Array,
       default: () => [],
     },
@@ -111,10 +111,10 @@ export default {
     },
     selectedAgents: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(agents) {
-        this.$emit('input', agents);
+        this.$emit('update:modelValue', agents);
       },
     },
   },

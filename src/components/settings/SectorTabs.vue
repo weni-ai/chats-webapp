@@ -52,7 +52,7 @@ export default {
   name: 'SectorTabs',
 
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: '',
     },
@@ -71,10 +71,10 @@ export default {
   computed: {
     tab: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(tab) {
-        this.$emit('input', tab);
+        this.$emit('update:modelValue', tab);
       },
     },
   },
