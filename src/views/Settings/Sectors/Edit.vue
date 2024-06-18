@@ -35,7 +35,7 @@
             está aguardando atendimento, deixe em branco caso não queira
             nenhuma mensagem."
             >
-              <template slot="actions">
+              <template #actions>
                 <UnnnicButtonIcon
                   v-if="!editContent"
                   type="secondary"
@@ -44,7 +44,7 @@
                   @click="editDescription"
                 />
               </template>
-              <template slot="description">
+              <template #description>
                 <div
                   @focusout="saveEditDescription"
                   style="word-break: break-all"

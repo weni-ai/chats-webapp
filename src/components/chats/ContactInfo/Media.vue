@@ -4,7 +4,7 @@
     v-model="tab"
     :tabs="tabs"
   >
-    <template slot="tab-head-media">
+    <template #tab-head-media>
       <div
         class="media-tab"
         :class="{ active: isActiveTab('media') }"
@@ -13,7 +13,7 @@
       </div>
     </template>
 
-    <template slot="tab-panel-media">
+    <template #tab-panel-media>
       <section class="medias__content">
         <MediaPreview
           v-for="(media, index) in images"
@@ -25,7 +25,7 @@
       </section>
     </template>
 
-    <template slot="tab-head-docs">
+    <template #tab-head-docs>
       <div
         class="media-tab"
         :class="{ active: isActiveTab('docs') }"
@@ -34,7 +34,7 @@
       </div>
     </template>
 
-    <template slot="tab-panel-docs">
+    <template #tab-panel-docs>
       <section class="documents__content">
         <UnnnicChatsMessage
           v-for="document in documents"
@@ -45,7 +45,7 @@
         />
       </section>
     </template>
-    <template slot="tab-head-audio">
+    <template #tab-head-audio>
       <div
         class="media-tab"
         :class="{ active: isActiveTab('audio') }"
@@ -53,7 +53,7 @@
         <span class="name">{{ $t('audios') }}</span>
       </div>
     </template>
-    <template slot="tab-panel-audio">
+    <template #tab-panel-audio>
       <div class="scrollable">
         <section class="audios__content">
           <UnnnicToolTip
