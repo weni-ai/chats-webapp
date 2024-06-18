@@ -189,7 +189,9 @@ export default {
         [class*='unnnic-icon'] {
           font-size: $unnnic-font-size-title-sm;
 
-          margin: $unnnic-spacing-nano / 2; // Necessary for the icon box to reach 32px
+          margin: calc(
+            $unnnic-spacing-nano / 2
+          ); // Necessary for the icon box to reach 32px
         }
       }
     }

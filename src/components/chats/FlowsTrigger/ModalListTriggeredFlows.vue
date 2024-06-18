@@ -50,7 +50,7 @@
       {{ $t('without_results') }}
     </p>
 
-    <div slot="options">
+    <template #options>
       <TablePagination
         v-model="triggeredFlowsCurrentPage"
         :count="triggeredFlowsCount"
@@ -59,7 +59,7 @@
         :isLoading="isPagesLoading"
         @update:model-value="triggeredFlowsCurrentPage = $event"
       />
-    </div>
+    </template>
   </UnnnicModal>
 </template>
 
