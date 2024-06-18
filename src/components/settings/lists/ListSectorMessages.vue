@@ -132,10 +132,10 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      setCopilotActive: 'config/setCopilotActive',
-      setCopilotCustomRulesActive: 'config/setCopilotCustomRulesActive',
-      setCopilotCustomRules: 'config/setCopilotCustomRules',
+    ...mapActions(useConfig, {
+      setCopilotActive: 'setCopilotActive',
+      setCopilotCustomRulesActive: 'setCopilotCustomRulesActive',
+      setCopilotCustomRules: 'setCopilotCustomRules',
     }),
 
     handleCopilotActive(boolean) {

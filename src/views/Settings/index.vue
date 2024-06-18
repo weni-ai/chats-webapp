@@ -57,7 +57,7 @@
 
     <section class="sectors">
       <div
-        @click="navigate('sectors.new')"
+        @click.stop="navigate('sectors.new')"
         @keypress.enter="navigate('sectors.new')"
       >
         <UnnnicCard
@@ -74,7 +74,6 @@
         :key="sector.id"
         :actionText="$t('config_chats.open')"
         :name="sector.name"
-        @action="navigate('sectors.edit', { uuid: sector.uuid })"
         :statuses="[
           {
             title: $t('config_chats.agent_title'),
@@ -89,6 +88,7 @@
             count: sector.contacts,
           },
         ]"
+        @action="navigate('sectors.edit', { uuid: sector.uuid })"
       />
     </section>
     <div

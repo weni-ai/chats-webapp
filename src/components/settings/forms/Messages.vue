@@ -31,6 +31,7 @@
 
 <script>
 import { mapActions } from 'pinia';
+import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 
 import unnnic from '@weni/unnnic-system';
 
@@ -69,10 +70,10 @@ export default {
   }),
 
   methods: {
-    ...mapActions({
-      actionCreateQuickMessage: 'chats/quickMessagesShared/create',
-      actionUpdateQuickMessage: 'chats/quickMessagesShared/update',
-      actionDeleteQuickMessage: 'chats/quickMessagesShared/delete',
+    ...mapActions(useQuickMessageShared, {
+      actionCreateQuickMessage: 'create',
+      actionUpdateQuickMessage: 'update',
+      actionDeleteQuickMessage: 'delete',
     }),
 
     resetQuickMessageToUpdate() {

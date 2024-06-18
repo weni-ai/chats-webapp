@@ -211,6 +211,7 @@
 
 <script>
 import { mapActions } from 'pinia';
+import { useSettings } from '@/store/modules/settings';
 import unnnic from '@weni/unnnic-system';
 import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 import Sector from '@/services/api/resources/settings/sector';
@@ -230,7 +231,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    value: {
+    modelValue: {
       type: Object,
       default: () => ({}),
     },
@@ -269,17 +270,17 @@ export default {
 
     sector: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(sector) {
-        this.$emit('input', sector);
+        this.$emit('update:modelValue', sector);
       },
     },
   },
 
   methods: {
-    ...mapActions({
-      actionDeleteSector: 'settings/deleteSector',
+    ...mapActions(useSettings, {
+      actionDeleteSector: 'deleteSector',
     }),
 
     removeManager(managerUuid) {
