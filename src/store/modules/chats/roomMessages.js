@@ -120,7 +120,7 @@ export const useRoomMessages = defineStore('roomMessages', {
       this.removeMessageFromSendings(uuid);
     },
 
-    async getRoomMessages({ offset = null, limit = null }) {
+    async getRoomMessages({ offset = null, limit = null } = {}) {
       const roomsStore = useRooms();
       const nextReq = this.roomMessagesNext;
 

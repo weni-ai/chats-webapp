@@ -170,6 +170,7 @@ export default {
             name: responseRoom.contact.name,
             path: 'closed-rooms/:roomId',
           });
+
           this.selectedRoom = responseRoom;
           await this.setActiveRoom(this.selectedRoom);
           await this.getHistoryContactRoomMessages();
