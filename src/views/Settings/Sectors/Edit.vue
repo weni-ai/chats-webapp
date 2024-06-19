@@ -71,21 +71,7 @@
             v-model="queueToEdit.agents"
             :sector="sector"
             :agents="projectAgents"
-            @select="
-              (agent) => {
-                const alreadyInQueue = queueToEdit.currentAgents.some(
-                  (a) => a.uuid === agent.uuid,
-                );
-
-                if (!alreadyInQueue) {
-                  queueToEdit.toAddAgents.push(agent.uuid);
-                }
-                queueToEdit.agents.push(agent);
-                queueToEdit.toRemoveAgents = queueToEdit.toRemoveAgents.filter(
-                  (agentToRemoveUuid) => agentToRemoveUuid !== agent.uuid,
-                );
-              }
-            "
+            @select="handleSelectAgent"
             @remove="
               (agentUuid) => {
                 const alreadyInQueue = !!queueToEdit.currentAgents.find(
@@ -304,6 +290,26 @@ export default {
       'setCopilotCustomRulesActive',
       'setCopilotCustomRules',
     ]),
+
+    handleSelectAgent(agent) {
+      const { currentAgents, toAddAgents } = this.queueToEdit;
+
+      console.log({ currentAgents, toAddAgents, agent });
+
+      const alreadyInQueue = currentAgents.some((a) => a.uuid === agent.uuid);
+
+      const alreadyInToAddAgents = toAddAgents.some((a) => a === agent.uuid);
+
+      if (!alreadyInQueue && !alreadyInToAddAgents) {
+        this.queueToEdit.toAddAgents.push(agent.uuid);
+        this.queueToEdit.agents.push(agent);
+
+        this.queueToEdit.toRemoveAgents =
+          this.queueToEdit.toRemoveAgents.filter(
+            (agentToRemoveUuid) => agentToRemoveUuid !== agent.uuid,
+          );
+      }
+    },
 
     resetTabsData() {
       this.queueToEdit = null;
