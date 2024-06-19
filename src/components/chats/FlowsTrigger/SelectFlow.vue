@@ -8,7 +8,7 @@
       autocomplete
       autocompleteIconLeft
       autocompleteClearOnFocus
-      @update:model-value="getFlowTrigger(flowUuid?.[0].value)"
+      @update:modelValue="getFlowTrigger(flowUuid?.[0].value)"
     />
   </div>
 </template>
@@ -33,7 +33,7 @@ export default {
   },
 
   props: {
-    value: {
+    modelValue: {
       type: String,
     },
   },
@@ -68,7 +68,7 @@ export default {
     },
 
     async getFlowTrigger(uuid) {
-      this.$emit('input', uuid);
+      this.$emit('update:modelValue', uuid);
     },
   },
 };
