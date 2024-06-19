@@ -68,14 +68,17 @@
 </template>
 
 <script>
-import ChatHeader from '@/components/chats/chat/ChatHeader';
-import ChatMessages from '@/components/chats/chat/ChatMessages';
-import MessageManager from '@/components/chats/MessageManager';
-import CardGroup from '@/layouts/ChatsLayout/components/TheCardGroups/CardGroup';
+import ChatHeader from '@/components/chats/chat/ChatHeader.vue';
+import ChatMessages from '@/components/chats/chat/ChatMessages/index.vue';
+import MessageManager from '@/components/chats/MessageManager/index.vue';
+import CardGroup from '@/layouts/ChatsLayout/components/TheCardGroups/CardGroup/index.vue';
 
-import ChatsLayout from '@/layouts/ChatsLayout';
+import ChatsLayout from '@/layouts/ChatsLayout/index.vue';
 
 import Profile from '@/services/api/resources/profile';
+
+import { mapState } from 'pinia';
+import { useProfile } from '@/store/modules/profile';
 
 // import { groupSequentialSentMessages, parseMessageToMessageWithSenderProp } from '@/utils/messages';
 
@@ -97,6 +100,7 @@ export default {
   }),
 
   computed: {
+    ...mapState(useProfile, ['me']),
     room() {
       return {
         uuid: 'room-uuid',
@@ -106,9 +110,6 @@ export default {
         user: this.me,
         is_active: true,
       };
-    },
-    me() {
-      return this.$store.state.profile.me;
     },
     messagesWithSentTimeout() {
       const messages = [

@@ -56,7 +56,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    value: {
+    modelValue: {
       type: Array,
       default: () => [],
     },
@@ -96,10 +96,10 @@ export default {
   computed: {
     selected: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(tags) {
-        this.$emit('input', tags);
+        this.$emit('update:modelValue', tags);
       },
     },
     tagNames() {
@@ -226,7 +226,7 @@ $tag-size: 28px;
     line-height: 20px;
     margin-right: -16px;
 
-    top: $tag-size / 2;
+    top: calc($tag-size / 2);
     transform: translateY(-50%);
   }
 }

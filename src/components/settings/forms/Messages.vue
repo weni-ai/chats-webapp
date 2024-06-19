@@ -30,12 +30,13 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions } from 'pinia';
+import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import unnnic from '@weni/unnnic-system';
 
-import ListSectorMessages from '@/components/settings/lists/ListSectorMessages';
-import QuickMessageForm from '@/components/chats/QuickMessages/QuickMessageForm';
+import ListSectorMessages from '@/components/settings/lists/ListSectorMessages.vue';
+import QuickMessageForm from '@/components/chats/QuickMessages/QuickMessageForm.vue';
 
 export default {
   name: 'FormMessages',
@@ -69,10 +70,10 @@ export default {
   }),
 
   methods: {
-    ...mapActions({
-      actionCreateQuickMessage: 'chats/quickMessagesShared/create',
-      actionUpdateQuickMessage: 'chats/quickMessagesShared/update',
-      actionDeleteQuickMessage: 'chats/quickMessagesShared/delete',
+    ...mapActions(useQuickMessageShared, {
+      actionCreateQuickMessage: 'create',
+      actionUpdateQuickMessage: 'update',
+      actionDeleteQuickMessage: 'delete',
     }),
 
     resetQuickMessageToUpdate() {
@@ -101,7 +102,7 @@ export default {
         });
       }
 
-      unnnicCallAlert({
+      unnnic.unnnicCallAlert({
         props: {
           text: this.$t('quick_messages.successfully_added'),
           type: 'success',

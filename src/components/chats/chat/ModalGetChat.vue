@@ -25,9 +25,13 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'pinia';
 
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useProfile } from '@/store/modules/profile';
+import { useDashboard } from '@/store/modules/dashboard';
+
+import unnnic from '@weni/unnnic-system';
 
 import Profile from '@/services/api/resources/profile';
 import Room from '@/services/api/resources/chats/room';
@@ -61,11 +65,12 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      room: (state) => state.chats.rooms.activeRoom,
-      me: (state) => state.profile.me,
-      viewedAgent: (state) => state.dashboard.viewedAgent,
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
+      getRoomById: 'getRoomById',
     }),
+    ...mapState(useProfile, ['me']),
+    ...mapState(useDashboard, ['viewedAgent']),
   },
 
   watch: {
@@ -73,7 +78,7 @@ export default {
       handler(newRoom, oldRoom) {
         if (this.showModal === true && newRoom == null) {
           this.close();
-          unnnicCallAlert({
+          unnnic.unnnicCallAlert({
             props: {
               text: this.$t('chats.feedback.agent_took_chat', {
                 contact: oldRoom?.contact?.name,
@@ -90,6 +95,9 @@ export default {
   },
 
   methods: {
+    ...mapActions(useProfile, ['setMe']),
+    ...mapActions(useRooms, ['setActiveRoom']),
+
     close() {
       this.$emit('closeModal');
     },
@@ -109,7 +117,7 @@ export default {
       if (!me) {
         const response = await Profile.me();
         me = response.email;
-        this.$store.commit('profile/setMe', response);
+        this.setMe(response);
       }
 
       if (this.viewedAgent.name === '') {
@@ -118,7 +126,8 @@ export default {
         await Room.take(this.room.uuid, me);
       }
 
-      await this.setActiveRoom(this.room.uuid);
+      await this.handlingSetActiveRoom(this.room.uuid);
+
       if (this.room.user) {
         Room.updateReadMessages(this.room.uuid, true);
       }
@@ -126,9 +135,9 @@ export default {
       this.close();
     },
 
-    async setActiveRoom(uuid) {
-      const room = this.$store.getters['chats/rooms/getRoomById'](uuid);
-      await this.$store.dispatch('chats/rooms/setActiveRoom', room);
+    async handlingSetActiveRoom(uuid) {
+      const room = this.getRoomById(uuid);
+      await this.setActiveRoom(room);
     },
   },
 };

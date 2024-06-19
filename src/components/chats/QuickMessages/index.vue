@@ -32,7 +32,7 @@
       />
     </AsideSlotTemplateSection>
 
-    <template v-slot:modals>
+    <template #modals>
       <UnnnicModal
         class="quick-messages__modal-delete"
         :text="$t('quick_messages.delete')"
@@ -86,15 +86,17 @@
 
 <script>
 import isMobile from 'is-mobile';
-import { mapActions } from 'vuex';
+import { mapActions } from 'pinia';
 
-import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
-import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
+import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
+import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
 
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
-import QuickMessagesList from './QuickMessagesList';
-import QuickMessageForm from './QuickMessageForm';
+import QuickMessagesList from './QuickMessagesList.vue';
+import QuickMessageForm from './QuickMessageForm.vue';
+
+import { useQuickMessages } from '@/store/modules/chats/quickMessages';
 
 export default {
   name: 'QuickMessages',
@@ -141,10 +143,10 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      actionCreateQuickMessage: 'chats/quickMessages/create',
-      actionUpdateQuickMessage: 'chats/quickMessages/update',
-      actionDeleteQuickMessage: 'chats/quickMessages/delete',
+    ...mapActions(useQuickMessages, {
+      actionCreateQuickMessage: 'create',
+      actionUpdateQuickMessage: 'update',
+      actionDeleteQuickMessage: 'delete',
     }),
 
     async createQuickMessage({ title, text, shortcut }) {

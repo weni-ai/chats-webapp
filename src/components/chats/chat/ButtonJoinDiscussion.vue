@@ -9,8 +9,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-
+import { mapActions, mapState } from 'pinia';
+import { useProfile } from '@/store/modules/profile';
+import { useDiscussions } from '@/store/modules/chats/discussions';
 export default {
   name: 'ButtonJoinDiscussion',
   data() {
@@ -19,15 +20,14 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      me: (state) => state.profile.me,
-    }),
+    ...mapState(useProfile, ['me']),
   },
   methods: {
+    ...mapActions(useDiscussions, ['addAgent']),
     async joinDiscussion() {
       this.isLoading = true;
       try {
-        await this.$store.dispatch('chats/discussions/addAgent', {
+        await this.addAgent({
           user_email: this.me.email,
         });
         this.$emit('join');

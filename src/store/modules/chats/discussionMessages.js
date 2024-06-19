@@ -8,51 +8,17 @@ import {
   sendMessage,
   treatMessages,
 } from '@/utils/messages';
+
+import { useDiscussions } from './discussions';
+
+import { useProfile } from '../profile';
+
 import Message from '@/services/api/resources/chats/message';
-import Discussions from './discussions';
-import Profile from '../profile';
 
-const mutations = {
-  SET_DISCUSSION_MESSAGES: 'SET_DISCUSSION_MESSAGES',
-  ADD_DISCUSSION_MESSAGE: 'ADD_DISCUSSION_MESSAGE',
-  ADD_DISCUSSION_MESSAGE_SORTED: 'ADD_DISCUSSION_MESSAGE_SORTED',
-  RESET_DISCUSSION_MESSAGES_SORTED: 'RESET_DISCUSSION_MESSAGES_SORTED',
-  SET_DISCUSSION_MESSAGES_NEXT: 'SET_DISCUSSION_MESSAGES_NEXT',
-  RESET_DISCUSSION_MESSAGES_NEXT: 'RESET_DISCUSSION_MESSAGES_NEXT',
-  SET_DISCUSSION_MESSAGES_PREVIOUS: 'SET_DISCUSSION_MESSAGES_PREVIOUS',
-  RESET_DISCUSSION_MESSAGES_PREVIOUS: 'RESET_DISCUSSION_MESSAGES_PREVIOUS',
-  UPDATE_DISCUSSION_MESSAGE: 'UPDATE_DISCUSSION_MESSAGE',
-  ADD_FAILED_DISCUSSION_MESSAGE: 'ADD_FAILED_DISCUSSION_MESSAGE',
-};
+import { defineStore } from 'pinia';
 
-function isMessageInActiveDiscussion(message) {
-  const { activeDiscussion } = Discussions.state;
-  return message.discussion === activeDiscussion?.uuid;
-}
-
-function removeMessageFromSendings({ state }, messageUuid) {
-  state.discussionMessagesSendingUuids =
-    state.discussionMessagesSendingUuids.filter(
-      (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
-    );
-}
-
-function removeMessageFromFaileds({ state }, messageUuid) {
-  state.discussionMessagesFailedUuids =
-    state.discussionMessagesFailedUuids.filter(
-      (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
-    );
-}
-function removeMessageFromInPromise({ state }, messageUuid) {
-  state.discussionMessagesInPromiseUuids =
-    state.discussionMessagesInPromiseUuids.filter(
-      (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
-    );
-}
-
-export default {
-  namespaced: true,
-  state: {
+export const useDiscussionMessages = defineStore('discussionMessages', {
+  state: () => ({
     discussionMessages: [],
     discussionMessagesSorted: [],
     discussionMessagesSendingUuids: [],
@@ -60,59 +26,30 @@ export default {
     discussionMessagesFailedUuids: [],
     discussionMessagesNext: '',
     discussionMessagesPrevious: '',
-  },
-
-  mutations: {
-    [mutations.SET_DISCUSSION_MESSAGES](state, messages) {
-      state.discussionMessages = messages;
-    },
-    [mutations.SET_DISCUSSION_MESSAGES_NEXT](state, discussionMessagesNext) {
-      state.discussionMessagesNext = discussionMessagesNext;
-    },
-    [mutations.RESET_DISCUSSION_MESSAGES_NEXT](state) {
-      state.discussionMessagesNext = '';
-    },
-    [mutations.SET_DISCUSSION_MESSAGES_PREVIOUS](
-      state,
-      discussionMessagesPrevious,
-    ) {
-      state.discussionMessagesPrevious = discussionMessagesPrevious;
-    },
-    [mutations.RESET_DISCUSSION_MESSAGES_PREVIOUS](state) {
-      state.discussionMessagesPrevious = '';
+  }),
+  actions: {
+    addDiscussionMessageSorted({ message, addBefore }) {
+      groupMessages(this.discussionMessagesSorted, { message, addBefore });
     },
 
-    [mutations.ADD_DISCUSSION_MESSAGE](state, { message }) {
-      const { discussionMessages, discussionMessagesSendingUuids } = state;
-      const { uuid } = message;
-
-      if (isMessageInActiveDiscussion(message)) {
-        const messageWithSender = parseMessageToMessageWithSenderProp(message);
-
-        discussionMessages.push(messageWithSender);
-
-        if (isMessageFromCurrentUser(message)) {
-          discussionMessagesSendingUuids.push(uuid);
-        }
-      }
+    resetDiscussionMessagesSorted() {
+      this.discussionMessagesSorted = [];
     },
-    [mutations.ADD_FAILED_DISCUSSION_MESSAGE](state, { message }) {
-      const { discussionMessagesFailedUuids } = state;
-      const { uuid } = message;
 
-      if (isMessageInActiveDiscussion(message)) {
-        removeMessageFromSendings({ state }, uuid);
-
-        if (isMessageFromCurrentUser(message)) {
-          discussionMessagesFailedUuids.push(uuid);
-        }
-      }
+    removeMessageFromSendings(messageUuid) {
+      this.discussionMessagesSendingUuids =
+        this.discussionMessagesSendingUuids.filter(
+          (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
+        );
     },
-    [mutations.UPDATE_DISCUSSION_MESSAGE](
-      state,
-      { media, toUpdateMediaPreview, message, toUpdateMessageUuid = '' },
-    ) {
-      const { discussionMessages } = state;
+
+    updateDiscussionMessage({
+      media,
+      toUpdateMediaPreview,
+      message,
+      toUpdateMessageUuid = '',
+    }) {
+      const { discussionMessages } = this;
       const uuid = toUpdateMessageUuid || message.uuid;
       const treatedMessage = { ...message };
 
@@ -135,71 +72,108 @@ export default {
         discussionMessages[messageIndex] = updatedMessage;
       }
 
-      removeMessageFromSendings({ state }, uuid);
-    },
-    [mutations.ADD_DISCUSSION_MESSAGE_SORTED](state, { message, addBefore }) {
-      groupMessages(state.discussionMessagesSorted, { message, addBefore });
-    },
-    [mutations.RESET_DISCUSSION_MESSAGES_SORTED](state) {
-      state.discussionMessagesSorted = [];
-    },
-  },
-
-  actions: {
-    async getDiscussionMessages({ commit, state }, { offset, limit }) {
-      const nextReq = state.discussionMessagesNext;
-
-      await treatMessages({
-        itemUuid: Discussions.state.activeDiscussion?.uuid,
-        getItemMessages: () =>
-          Message.getByDiscussion(
-            { nextReq },
-            Discussions.state.activeDiscussion.uuid,
-            offset,
-            limit,
-          ),
-        oldMessages: state.discussionMessages,
-        nextReq,
-        addSortedMessage: ({ message, addBefore }) =>
-          commit(mutations.ADD_DISCUSSION_MESSAGE_SORTED, {
-            message,
-            addBefore,
-          }),
-        resetSortedMessages: () =>
-          commit(mutations.RESET_DISCUSSION_MESSAGES_SORTED),
-        setMessages: (messages) =>
-          commit(mutations.SET_DISCUSSION_MESSAGES, messages),
-        setMessagesNext: (next) =>
-          commit(mutations.SET_DISCUSSION_MESSAGES_NEXT, next),
-        setMessagesPrevious: (previous) =>
-          commit(mutations.SET_DISCUSSION_MESSAGES_PREVIOUS, previous),
-      });
+      this.removeMessageFromSendings(uuid);
     },
 
-    resetDiscussionMessages({ commit }) {
-      commit(mutations.RESET_DISCUSSION_MESSAGES_SORTED);
-      commit(mutations.RESET_DISCUSSION_MESSAGES_NEXT);
-      commit(mutations.RESET_DISCUSSION_MESSAGES_PREVIOUS);
+    isMessageInActiveDiscussion(message) {
+      const discussionsStore = useDiscussions();
+      return message.discussion === discussionsStore.activeDiscussion?.uuid;
     },
 
-    async addDiscussionMessage({ commit, state }, message) {
-      const messageAlreadyExists = state.discussionMessages.some(
-        (mappedMessage) => mappedMessage.uuid === message.uuid,
-      );
+    handlingAddDiscussionMessage({ message }) {
+      const { discussionMessages, discussionMessagesSendingUuids } = this;
+      const { uuid } = message;
+      if (this.isMessageInActiveDiscussion(message)) {
+        const messageWithSender = parseMessageToMessageWithSenderProp(message);
 
-      if (messageAlreadyExists)
-        commit(mutations.UPDATE_DISCUSSION_MESSAGE, { message });
-      else {
-        commit(mutations.ADD_DISCUSSION_MESSAGE, { message });
-        commit(mutations.ADD_DISCUSSION_MESSAGE_SORTED, { message });
+        discussionMessages.push(messageWithSender);
+
+        if (isMessageFromCurrentUser(message)) {
+          discussionMessagesSendingUuids.push(uuid);
+        }
       }
     },
 
-    async sendDiscussionMessage({ commit }, text) {
-      const { activeDiscussion } = Discussions.state;
+    addFailedDiscussionMessage({ message }) {
+      const { discussionMessagesFailedUuids } = this;
+      const { uuid } = message;
+
+      if (this.isMessageInActiveDiscussion(message)) {
+        this.removeMessageFromSendings(uuid);
+
+        if (isMessageFromCurrentUser(message)) {
+          discussionMessagesFailedUuids.push(uuid);
+        }
+      }
+    },
+
+    removeMessageFromInPromise(messageUuid) {
+      this.discussionMessagesInPromiseUuids =
+        this.discussionMessagesInPromiseUuids.filter(
+          (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
+        );
+    },
+
+    removeMessageFromFaileds(messageUuid) {
+      this.discussionMessagesFailedUuids =
+        this.discussionMessagesFailedUuids.filter(
+          (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
+        );
+    },
+
+    async getDiscussionMessages({ offset, limit }) {
+      const discussionsStore = useDiscussions();
+      const nextReq = this.discussionMessagesNext;
+
+      await treatMessages({
+        itemUuid: discussionsStore.activeDiscussion?.uuid,
+        getItemMessages: () =>
+          Message.getByDiscussion(
+            { nextReq },
+            discussionsStore.activeDiscussion.uuid,
+            offset,
+            limit,
+          ),
+        oldMessages: this.discussionMessages,
+        nextReq,
+        addSortedMessage: ({ message, addBefore }) =>
+          this.addDiscussionMessageSorted({
+            message,
+            addBefore,
+          }),
+        resetSortedMessages: () => this.resetDiscussionMessagesSorted(),
+        setMessages: (messages) => (this.discussionMessages = messages),
+        setMessagesNext: (next) => (this.discussionMessagesNext = next),
+        setMessagesPrevious: (previous) =>
+          (this.discussionMessagesPrevious = previous),
+      });
+    },
+
+    resetDiscussionMessages() {
+      this.resetDiscussionMessagesSorted();
+      this.discussionMessagesNext = '';
+      this.discussionMessagesPrevious = '';
+    },
+
+    async addDiscussionMessage({ message }) {
+      const messageAlreadyExists = this.discussionMessages.some(
+        (mappedMessage) => mappedMessage.uuid === message.uuid,
+      );
+
+      if (messageAlreadyExists) this.updateDiscussionMessage({ message });
+      else {
+        this.handlingAddDiscussionMessage({ message });
+        this.addDiscussionMessageSorted({ message });
+      }
+    },
+
+    async sendDiscussionMessage(text) {
+      const discussionsStore = useDiscussions();
+      const profileStore = useProfile();
+      const { activeDiscussion } = discussionsStore;
       if (!activeDiscussion) return;
 
-      const me = { ...Profile.state.me };
+      const me = { ...profileStore.me };
 
       await sendMessage({
         itemType: 'discussion',
@@ -210,26 +184,24 @@ export default {
           Message.sendDiscussionMessage(activeDiscussion.uuid, {
             text,
           }),
-        addMessage: (message) =>
-          commit(mutations.ADD_DISCUSSION_MESSAGE, { message }),
+        addMessage: (message) => this.addDiscussionMessage({ message }),
         addSortedMessage: (message) =>
-          commit(mutations.ADD_DISCUSSION_MESSAGE_SORTED, { message }),
+          this.addDiscussionMessageSorted({ message }),
         updateMessage: ({ message, toUpdateMessageUuid }) =>
-          commit(mutations.UPDATE_DISCUSSION_MESSAGE, {
+          this.updateDiscussionMessage({
             message,
             toUpdateMessageUuid,
           }),
       });
     },
 
-    async sendDiscussionMedias(
-      { commit },
-      { files: medias, updateLoadingFiles },
-    ) {
-      const { activeDiscussion } = Discussions.state;
+    async sendDiscussionMedias({ files: medias, updateLoadingFiles }) {
+      const discussionsStore = useDiscussions();
+      const profileStore = useProfile();
+      const { activeDiscussion } = discussionsStore;
       if (!activeDiscussion) return;
 
-      const me = { ...Profile.state.me };
+      const me = { ...profileStore.me };
 
       await sendMedias({
         itemType: 'discussion',
@@ -241,12 +213,11 @@ export default {
             media,
             updateLoadingFiles,
           }),
-        addMessage: (message) =>
-          commit(mutations.ADD_DISCUSSION_MESSAGE, { message }),
+        addMessage: (message) => this.addDiscussionMessage({ message }),
         addSortedMessage: (message) =>
-          commit(mutations.ADD_DISCUSSION_MESSAGE_SORTED, { message }),
+          this.addDiscussionMessageSorted({ message }),
         addFailedMessage: (message) =>
-          commit(mutations.ADD_FAILED_DISCUSSION_MESSAGE, {
+          this.addFailedDiscussionMessage({
             message,
           }),
         updateMessage: ({
@@ -255,7 +226,7 @@ export default {
           toUpdateMessageUuid,
           toUpdateMediaPreview,
         }) =>
-          commit(mutations.UPDATE_DISCUSSION_MESSAGE, {
+          this.updateDiscussionMessage({
             media,
             message,
             toUpdateMessageUuid,
@@ -264,8 +235,9 @@ export default {
       });
     },
 
-    async resendDiscussionMessage({ commit, state }, { message }) {
-      const { activeDiscussion } = Discussions.state;
+    async resendDiscussionMessage({ message }) {
+      const discussionsStore = useDiscussions();
+      const { activeDiscussion } = discussionsStore;
       if (!activeDiscussion) return;
 
       await resendMessage({
@@ -276,18 +248,19 @@ export default {
             text: message.text,
           }),
         updateMessage: ({ message, toUpdateMessageUuid }) =>
-          commit(mutations.UPDATE_DISCUSSION_MESSAGE, {
+          this.updateDiscussionMessage({
             message,
             toUpdateMessageUuid,
           }),
-        messagesInPromiseUuids: state.discussionMessagesInPromiseUuids,
+        messagesInPromiseUuids: this.discussionMessagesInPromiseUuids,
         removeInPromiseMessage: (message) =>
-          removeMessageFromInPromise({ state }, message),
+          this.removeMessageFromInPromise(message),
       });
     },
 
-    async resendDiscussionMedia({ commit, state }, { message, media }) {
-      const { activeDiscussion } = Discussions.state;
+    async resendDiscussionMedia({ message, media }) {
+      const discussionsStore = useDiscussions();
+      const { activeDiscussion } = discussionsStore;
       if (!activeDiscussion) return;
 
       await resendMedia({
@@ -299,20 +272,20 @@ export default {
             media: media.file,
           }),
         addFailedMessage: (message) =>
-          commit(mutations.ADD_FAILED_DISCUSSION_MESSAGE, {
+          this.addFailedDiscussionMessage({
             message,
           }),
         removeFailedMessage: (message) =>
-          removeMessageFromFaileds({ state }, message),
+          this.removeMessageFromFaileds(message),
         addSendingMessage: (message) =>
-          state.discussionMessagesSendingUuids.push(message),
+          this.discussionMessagesSendingUuids.push(message),
         updateMessage: ({
           media,
           message,
           toUpdateMessageUuid,
           toUpdateMediaPreview,
         }) =>
-          commit(mutations.UPDATE_DISCUSSION_MESSAGE, {
+          this.updateDiscussionMessage({
             media,
             message,
             toUpdateMessageUuid,
@@ -321,10 +294,9 @@ export default {
       });
     },
 
-    async resendDiscussionMessages({ state, dispatch }) {
-      const { discussionMessagesSendingUuids, discussionMessages } = state;
+    async resendDiscussionMessages() {
+      const { discussionMessagesSendingUuids, discussionMessages } = this;
       if (discussionMessagesSendingUuids.length > 0) {
-        // eslint-disable-next-line no-restricted-syntax
         for (const messageUuid of discussionMessagesSendingUuids) {
           /*
             As it is important that messages are sent in the same order in which they were
@@ -336,12 +308,11 @@ export default {
             (mappedMessage) => mappedMessage.uuid === messageUuid,
           );
 
-          // eslint-disable-next-line no-await-in-loop
-          await dispatch('resendDiscussionMessage', {
+          await this.resendDiscussionMessage({
             message: discussionMessages[messageIndex],
           });
         }
       }
     },
   },
-};
+});

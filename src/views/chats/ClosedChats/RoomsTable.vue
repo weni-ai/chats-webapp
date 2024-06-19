@@ -98,6 +98,7 @@
       :countPages="roomsCountPages"
       :limit="roomsLimitPagination"
       :isLoading="isPagesLoading"
+      @update:model-value="roomsCurrentPage = $event"
     />
 
     <UnnnicButton
@@ -117,8 +118,8 @@ import isMobile from 'is-mobile';
 
 import History from '@/services/api/resources/chats/history';
 
-import RoomsTableLoading from '@/views/loadings/ClosedChats/RoomsTableLoading';
-import TablePagination from '@/components/TablePagination';
+import RoomsTableLoading from '@/views/loadings/ClosedChats/RoomsTableLoading.vue';
+import TablePagination from '@/components/TablePagination.vue';
 import TagGroup from '@/components/TagGroup.vue';
 import ModalClosedChatsFilters from '@/components/chats/Mobile/ModalClosedChatsFilters.vue';
 

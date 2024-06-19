@@ -50,23 +50,24 @@
       {{ $t('without_results') }}
     </p>
 
-    <div slot="options">
+    <template #options>
       <TablePagination
         v-model="triggeredFlowsCurrentPage"
         :count="triggeredFlowsCount"
         :countPages="triggeredFlowsCountPages"
         :limit="triggeredFlowsLimit"
         :isLoading="isPagesLoading"
+        @update:model-value="triggeredFlowsCurrentPage = $event"
       />
-    </div>
+    </template>
   </UnnnicModal>
 </template>
 
 <script>
 import moment from 'moment';
 
-import TriggeredFlowsLoading from '@/views/loadings/FlowsTrigger/TriggeredFlowsLoading';
-import TablePagination from '@/components/TablePagination';
+import TriggeredFlowsLoading from '@/views/loadings/FlowsTrigger/TriggeredFlowsLoading.vue';
+import TablePagination from '@/components/TablePagination.vue';
 
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 
@@ -189,8 +190,11 @@ export default {
       justify-items: start;
     }
 
-    &__date-picker {
+    &__date-picker.dropdown {
       display: grid;
+      :deep(.input) {
+        min-width: 230px;
+      }
     }
   }
 

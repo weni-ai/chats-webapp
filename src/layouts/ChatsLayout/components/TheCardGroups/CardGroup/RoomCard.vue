@@ -4,10 +4,11 @@
     :class="{ 'room-card__container--with-selection': withSelection }"
   >
     <UnnnicCheckbox
-      size="sm"
       v-if="withSelection"
-      v-model="checkboxValue"
+      :modelValue="checkboxValue"
+      size="sm"
       class="room-card__checkbox"
+      @change="checkboxValue = $event"
     />
     <UnnnicChatsContact
       :title="room.contact.name"
@@ -24,7 +25,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+
+import { useRooms } from '@/store/modules/chats/rooms';
 
 const ONE_MINUTE_IN_MILLISECONDS = 60000;
 
@@ -73,11 +76,11 @@ export default {
   }),
 
   computed: {
-    ...mapState({
-      newMessages(state) {
-        return state.chats.rooms.newMessagesByRoom[this.room.uuid]?.messages;
+    ...mapState(useRooms, {
+      newMessages(store) {
+        return store.newMessagesByRoom[this.room.uuid]?.messages;
       },
-      activeRoomId: (state) => state.chats.rooms.activeRoom?.uuid,
+      activeRoomId: (store) => store.activeRoom?.uuid,
     }),
     lastMessage() {
       const { newMessages, room } = this;

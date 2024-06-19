@@ -48,7 +48,7 @@
 
             <template v-else>
               <UnnnicChatsMessage
-                v-if="message.text || isGeolocation(message.media[0])"
+                v-if="message.text || isGeolocation(message.media?.[0])"
                 :type="messageType(message)"
                 :class="[
                   'chat-messages__message',
@@ -63,8 +63,8 @@
                 :signature="messageSignature(message)"
               >
                 {{
-                  isGeolocation(message.media[0])
-                    ? message.media[0]?.url
+                  isGeolocation(message.media?.[0])
+                    ? message.media?.[0]?.url
                     : message.text
                 }}
               </UnnnicChatsMessage>
@@ -184,20 +184,22 @@
 </template>
 
 <script>
-// import { mapActions, mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useDashboard } from '@/store/modules/dashboard';
+
 import moment from 'moment';
 
 import { isMessageFromCurrentUser } from '@/utils/messages';
 import Media from '@/services/api/resources/chats/media';
 
-import ChatMessagesLoading from '@/views/loadings/chat/ChatMessages';
-import TagGroup from '@/components/TagGroup';
-import VideoPlayer from '@/components/chats/MediaMessage/Previews/Video';
-import FullscreenPreview from '@/components/chats/MediaMessage/Previews/Fullscreen';
+import ChatMessagesLoading from '@/views/loadings/chat/ChatMessages.vue';
+import TagGroup from '@/components/TagGroup.vue';
+import VideoPlayer from '@/components/chats/MediaMessage/Previews/Video.vue';
+import FullscreenPreview from '@/components/chats/MediaMessage/Previews/Fullscreen.vue';
 
-import ChatFeedback from '../ChatFeedback';
-import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks';
-import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage';
+import ChatFeedback from '../ChatFeedback.vue';
+import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
+import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
 
 export default {
   name: 'ChatMessages',
@@ -217,7 +219,6 @@ export default {
       type: String,
       required: true,
     },
-
     messages: {
       type: Array,
       required: true,
@@ -311,6 +312,7 @@ export default {
   },
 
   computed: {
+    ...mapState(useDashboard, ['viewedAgent']),
     medias() {
       return this.messages
         .map((el) => el.media)
@@ -393,7 +395,7 @@ export default {
       return isMessageFromCurrentUser(message) ||
         this.isMessageByBot(message) ||
         (!message.discussion && !message.contact) ||
-        message.user?.email === this.$store.state.dashboard.viewedAgent.email
+        message.user?.email === this.viewedAgent.email
         ? 'sent'
         : 'received';
     },
@@ -550,11 +552,14 @@ export default {
   },
 
   watch: {
-    messages() {
-      this.setStartFeedbacks();
-      this.$nextTick(() => {
-        this.manageScrollForNewMessages();
-      });
+    messages: {
+      handler() {
+        this.setStartFeedbacks();
+        this.$nextTick(() => {
+          this.manageScrollForNewMessages();
+        });
+      },
+      deep: true,
     },
   },
 };

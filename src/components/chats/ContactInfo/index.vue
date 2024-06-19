@@ -20,7 +20,6 @@
               <h1 class="username">
                 {{ (closedRoom || room).contact.name }}
               </h1>
-
               <UnnnicButton
                 v-if="!isHistory"
                 iconCenter="sync"
@@ -79,8 +78,8 @@
               class="sync-contact"
             >
               <UnnnicSwitch
-                :value="isLinkedUser"
-                @input="addContactToAgent"
+                v-model="isLinkedUser"
+                @update:model-value="addContactToAgent"
                 size="small"
                 :textRight="
                   isLinkedUser
@@ -130,6 +129,7 @@
         </AsideSlotTemplateSection>
 
         <DiscussionsSession v-if="isHistory" />
+
         <TransferSession
           v-if="!isHistory"
           @transferred-contact="$emit('transferred-contact')"
@@ -147,7 +147,7 @@
       </section>
 
       <ModalStartDiscussion
-        :showModal="isShowModalStartDiscussion"
+        v-if="isShowModalStartDiscussion"
         @close="handleModalStartDiscussion()"
       />
 
@@ -179,27 +179,30 @@
 
 <script>
 import isMobile from 'is-mobile';
-import { mapState } from 'vuex';
 
-import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
-import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
+import { mapActions, mapState } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+
+import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
+import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
 
 import ContactInfosLoading from '@/views/loadings/ContactInfos.vue';
 
 import Room from '@/services/api/resources/chats/room';
 import LinkContact from '@/services/api/resources/chats/linkContact';
 
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import unnnic from '@weni/unnnic-system';
 
-import CustomField from './CustomField';
-import ContactMedia from './Media';
-import VideoPreview from '../MediaMessage/Previews/Video';
+import CustomField from './CustomField.vue';
+import ContactMedia from './Media.vue';
+import VideoPreview from '../MediaMessage/Previews/Video.vue';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
-import TransferSession from './TransferSession';
-import ModalStartDiscussion from './ModalStartDiscussion';
-import DiscussionsSession from './DiscussionsSession';
+import TransferSession from './TransferSession.vue';
+import ModalStartDiscussion from './ModalStartDiscussion.vue';
+import DiscussionsSession from './DiscussionsSession.vue';
 
-const moment = require('moment');
+import moment from 'moment';
 
 export default {
   name: 'ContactInfo',
@@ -248,8 +251,8 @@ export default {
   }),
 
   computed: {
-    ...mapState({
-      room: (state) => state.chats.rooms.activeRoom,
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
     }),
 
     isMobile() {
@@ -267,7 +270,7 @@ export default {
     },
 
     lastMessageFromContact() {
-      const messages = this.$store.state.chats.roomMessages.roomMessages;
+      const messages = useRoomMessages().roomMessages;
       if (messages) {
         return messages.findLast((message) => message.contact);
       }
@@ -311,8 +314,13 @@ export default {
     }
   },
 
+  unmounted() {
+    this.emitClose();
+  },
+
   methods: {
     moment,
+    ...mapActions(useRooms, ['updateRoomContact']),
     openHistory() {
       const { plataform, contactNum } = this.contactNumber;
       const protocol = this.contactProtocol;
@@ -395,7 +403,7 @@ export default {
     },
 
     addContactToAgent() {
-      if (!this.isLinkedUser) {
+      if (this.isLinkedUser) {
         this.linkContact();
       } else {
         this.removeLinkedContact();
@@ -460,7 +468,7 @@ export default {
       const { uuid } = this.room;
 
       try {
-        await this.$store.dispatch('chats/rooms/updateRoomContact', { uuid });
+        await this.updateRoomContact({ uuid });
 
         this.showAlert('Informações atualizadas');
       } catch (error) {
@@ -469,7 +477,7 @@ export default {
     },
 
     showAlert(text, type = 'success') {
-      unnnicCallAlert({
+      unnnic.unnnicCallAlert({
         props: {
           text,
           type,

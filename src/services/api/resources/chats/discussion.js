@@ -1,12 +1,15 @@
 import http from '@/services/api/http';
-import Rooms from '@/store/modules/chats/rooms';
+
+import { useRooms } from '@/store/modules/chats/rooms';
+
 import { getProject } from '@/utils/config';
 
 export default {
   async create({ queue, subject, initial_message }) {
+    const roomsStore = useRooms();
     const response = await http
       .post(`discussion/`, {
-        room: Rooms.state.activeRoom.uuid || '',
+        room: roomsStore.activeRoom.uuid || '',
         queue,
         subject,
         initial_message,

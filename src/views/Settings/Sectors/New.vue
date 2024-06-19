@@ -66,10 +66,10 @@
 </template>
 
 <script>
-import FormAgent from '@/components/settings/forms/Agent';
-import FormQueue from '@/components/settings/forms/Queue';
-import FormSector from '@/components/settings/forms/Sector';
-import FormTags from '@/components/settings/forms/Tags';
+import FormAgent from '@/components/settings/forms/Agent.vue';
+import FormQueue from '@/components/settings/forms/Queue.vue';
+import FormSector from '@/components/settings/forms/Sector.vue';
+import FormTags from '@/components/settings/forms/Tags.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';

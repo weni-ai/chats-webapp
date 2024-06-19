@@ -111,9 +111,15 @@
 </template>
 <script>
 import isMobile from 'is-mobile';
-import { mapState, mapGetters } from 'vuex';
+import { mapActions, mapState } from 'pinia';
+
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useConfig } from '@/store/modules/config';
+import { useProfile } from '@/store/modules/profile';
+import { useDiscussions } from '@/store/modules/chats/discussions';
+
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
-import CardGroup from './CardGroup';
+import CardGroup from './CardGroup/index.vue';
 import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
 export default {
   name: 'TheCardGroups',
@@ -148,22 +154,22 @@ export default {
     showModalQueue: false,
     noQueueSelected: false,
   }),
-  async mounted() {
+  mounted() {
     this.listRoom();
     this.listDiscussions();
   },
   computed: {
-    ...mapGetters({
-      rooms: 'chats/rooms/agentRooms',
-      rooms_queue: 'chats/rooms/waitingQueue',
-      rooms_sent_flows: 'chats/rooms/waitingContactAnswer',
+    ...mapState(useRooms, {
+      rooms: 'agentRooms',
+      rooms_queue: 'waitingQueue',
+      rooms_sent_flows: 'waitingContactAnswer',
+      listRoomHasNext: 'hasNextRooms',
+      newMessagesByRoom: 'newMessagesByRoom',
     }),
-    ...mapState({
-      discussions: (state) => state.chats.discussions.discussions,
-      listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
-      project: (state) => state.config.project,
-      me: (state) => state.profile.me,
-    }),
+    ...mapState(useConfig, ['project']),
+    ...mapState(useProfile, ['me']),
+    ...mapState(useDiscussions, ['discussions']),
+
     isUserAdmin() {
       const ROLE_ADMIN = 1;
       return this.me.project_permission_role === ROLE_ADMIN;
@@ -171,9 +177,7 @@ export default {
     totalUnreadMessages() {
       return this.rooms.reduce(
         (total, room) =>
-          total +
-          (this.$store.state.chats.rooms.newMessagesByRoom[room.uuid]?.messages
-            ?.length || 0),
+          total + (this.newMessagesByRoom[room.uuid]?.messages?.length || 0),
         0,
       );
     },
@@ -216,15 +220,20 @@ export default {
     },
   },
   methods: {
+    ...mapActions(useRooms, {
+      setActiveRoom: 'setActiveRoom',
+      getAllRooms: 'getAll',
+    }),
+    ...mapActions(useDiscussions, {
+      setActiveDiscussion: 'setActiveDiscussion',
+      getAllDiscussion: 'getAll',
+    }),
     async openRoom(room) {
-      await this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
-      await this.$store.dispatch('chats/rooms/setActiveRoom', room);
+      await this.setActiveDiscussion(null);
+      await this.setActiveRoom(room);
     },
     async openDiscussion(discussion) {
-      await this.$store.dispatch(
-        'chats/discussions/setActiveDiscussion',
-        discussion,
-      );
+      await this.setActiveDiscussion(discussion);
     },
     clearField() {
       this.nameOfContact = '';
@@ -233,7 +242,7 @@ export default {
       this.isLoadingRooms = true;
       const { viewedAgent } = this;
       try {
-        await this.$store.dispatch('chats/rooms/getAll', {
+        await this.getAllRooms({
           offset: this.page * this.limit,
           concat,
           order,
@@ -256,7 +265,7 @@ export default {
     async listDiscussions() {
       try {
         const { viewedAgent } = this;
-        await this.$store.dispatch('chats/discussions/getAll', { viewedAgent });
+        await this.getAllDiscussion({ viewedAgent });
       } catch {
         console.error('Não foi possível listar as discussões');
       }

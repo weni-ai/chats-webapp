@@ -21,6 +21,7 @@
         :showSkeletonLoading="isChatSkeletonActive"
         @show-quick-messages="handleShowQuickMessages"
         @open-file-uploader="openModalFileUploader"
+        @update:modelValue="textBoxMessage = $event"
       />
     </ChatsDropzone>
 
@@ -49,14 +50,18 @@
 
 <script>
 import isMobile from 'is-mobile';
-import { mapState } from 'vuex';
 
-import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone';
+import { mapActions, mapState } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useProfile } from '@/store/modules/profile';
 
-import RoomMessages from '@/components/chats/chat/RoomMessages';
-import DiscussionMessages from '@/components/chats/chat/DiscussionMessages';
-import MessageManager from '@/components/chats/MessageManager';
-import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion';
+import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone/index.vue';
+
+import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
+import DiscussionMessages from '@/components/chats/chat/DiscussionMessages.vue';
+import MessageManager from '@/components/chats/MessageManager/index.vue';
+import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion.vue';
 
 import Room from '@/services/api/resources/chats/room';
 
@@ -89,12 +94,16 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      me: (state) => state.profile.me,
-      room: (state) => state.chats.rooms.activeRoom,
-      rooms: (state) => state.chats.rooms.rooms,
-      discussion: (state) => state.chats.discussions.activeDiscussion,
-      discussions: (state) => state.chats.discussions.discussions,
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
+      rooms: 'rooms',
+      getRoomById: 'getRoomById',
+    }),
+    ...mapState(useProfile, ['me']),
+    ...mapState(useDiscussions, {
+      discussion: (store) => store.activeDiscussion,
+      discussions: 'discussions',
+      getDiscussionById: 'getDiscussionById',
     }),
     isMessageManagerRoomVisible() {
       const { room } = this;
@@ -128,6 +137,15 @@ export default {
   },
 
   methods: {
+    ...mapActions(useRooms, [
+      'setActiveRoom',
+      'getCanUseCopilot',
+      'resetNewMessagesByRoom',
+    ]),
+    ...mapActions(useDiscussions, [
+      'setActiveDiscussion',
+      'resetNewMessagesByDiscussion',
+    ]),
     openModal(modalName) {
       this.$refs['home-chat-modals'].openModal(modalName);
     },
@@ -167,11 +185,11 @@ export default {
       this.uploadFilesProgress = progress;
     },
 
-    async setActiveRoom(uuid) {
+    async handlingSetActiveRoom(uuid) {
       if (this.pathRoomId !== this.room?.uuid) {
-        const room = this.$store.getters['chats/rooms/getRoomById'](uuid);
+        const room = this.getRoomById(uuid);
         if (room) {
-          await this.$store.dispatch('chats/rooms/setActiveRoom', room);
+          this.setActiveRoom(room);
         }
       }
     },
@@ -182,18 +200,14 @@ export default {
       }
     },
 
-    async setActiveDiscussion(uuid) {
+    async handlingSetActiveDiscussion(uuid) {
       if (
         this.pathDiscussionId &&
         this.pathDiscussionId !== this.discussion?.uuid
       ) {
-        const discussion =
-          this.$store.getters['chats/discussions/getDiscussionById'](uuid);
+        const discussion = this.getDiscussionById(uuid);
         if (discussion) {
-          await this.$store.dispatch(
-            'chats/discussions/setActiveDiscussion',
-            discussion,
-          );
+          await this.setActiveDiscussion(discussion);
         }
       }
     },
@@ -248,10 +262,8 @@ export default {
     },
 
     async clearActiveChats() {
-      const { dispatch } = this.$store;
-
-      await dispatch('chats/discussions/setActiveDiscussion', null);
-      await dispatch('chats/rooms/setActiveRoom', null);
+      await this.setActiveDiscussion(null);
+      await this.setActiveRoom(null);
     },
   },
 
@@ -279,7 +291,7 @@ export default {
             this.emitCloseRoomContactInfo();
 
             if (!this.pathDiscussionId) {
-              await this.$store.dispatch('chats/rooms/getCanUseCopilot');
+              await this.getCanUseCopilot();
               this.readMessages();
             }
 
@@ -290,18 +302,15 @@ export default {
             chatPathUuid: pathRoomId,
             activeChatUuid: room?.uuid,
             unreadMessages: rooms?.newMessagesByRoom,
-            resetUnreadMessages: this.$store.dispatch(
-              'chats/rooms/resetNewMessagesByRoom',
-              {
-                room: pathRoomId,
-              },
-            ),
+            resetUnreadMessages: this.resetNewMessagesByRoom({
+              room: pathRoomId,
+            }),
           });
         }
       },
     },
     async rooms() {
-      await this.setActiveRoom(this.pathRoomId);
+      await this.handlingSetActiveRoom(this.pathRoomId);
     },
     async discussion(newDiscussion) {
       const { discussion, pathDiscussionId, discussions } = this;
@@ -320,17 +329,14 @@ export default {
           chatPathUuid: pathDiscussionId,
           activeChatUuid: discussion?.uuid,
           unreadMessages: discussions?.newMessagesByDiscussion,
-          resetUnreadMessages: this.$store.dispatch(
-            'chats/discussions/resetNewMessagesByDiscussion',
-            {
-              discussion: pathDiscussionId,
-            },
-          ),
+          resetUnreadMessages: this.resetNewMessagesByDiscussion({
+            discussion: pathDiscussionId,
+          }),
         });
       }
     },
     async discussions() {
-      await this.setActiveDiscussion(this.pathDiscussionId);
+      await this.handlingSetActiveDiscussion(this.pathDiscussionId);
     },
   },
 };

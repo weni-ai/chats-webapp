@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import ListSectorQueues from '@/components/settings/lists/ListSectorQueues';
+import ListSectorQueues from '@/components/settings/lists/ListSectorQueues.vue';
 
 export default {
   name: 'FormQueue',
@@ -76,7 +76,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    value: {
+    modelValue: {
       type: Object,
       default: () => ({}),
     },
@@ -92,10 +92,10 @@ export default {
   computed: {
     queue: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(queue) {
-        this.$emit('input', queue);
+        this.$emit('update:modelValue', queue);
       },
     },
   },

@@ -20,13 +20,12 @@
         <div>
           <UnnnicLabel :label="$t('agents.add.select.label')" />
           <UnnnicSelectSmart
-            v-model="search"
-            class="input"
+            :modelValue="internalSelectedAgents"
             :options="agentsNames"
             autocomplete
             autocompleteIconLeft
             autocompleteClearOnFocus
-            @input="chooseAgent"
+            @update:modelValue="chooseAgent"
           />
         </div>
         <!-- <unnnic-button
@@ -56,7 +55,7 @@
 </template>
 
 <script>
-import SelectedMember from '@/components/settings/forms/SelectedMember';
+import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 
 export default {
   name: 'FormAgent',
@@ -74,14 +73,14 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    value: {
+    modelValue: {
       type: Array,
       default: () => [],
     },
   },
 
   data: () => ({
-    search: [],
+    internalSelectedAgents: [],
     selectAgent: null,
     agent: '',
   }),
@@ -111,10 +110,10 @@ export default {
     },
     selectedAgents: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(agents) {
-        this.$emit('input', agents);
+        this.$emit('update:modelValue', agents);
       },
     },
   },
@@ -124,20 +123,21 @@ export default {
       this.$emit('remove', agentUuid);
     },
     chooseAgent(selected) {
+      // prevent clean after select agent
+      if (!selected[0].value) return;
       this.selectAgent = selected;
       const agent = this.agents.find((agent) => {
         const { uuid } = agent;
-
         return uuid === selected[0].value;
       });
       this.agent = agent;
-      this.emitSelectedAgent();
-    },
-    emitSelectedAgent() {
-      if (!this.agent.uuid) return;
-
       this.$emit('select', this.agent);
-      this.search = [];
+      this.internalSelectedAgents = [
+        {
+          value: '',
+          label: this.$t('agents.add.select.placeholder'),
+        },
+      ];
     },
     validate() {
       return this.selectedAgents.length > 0;

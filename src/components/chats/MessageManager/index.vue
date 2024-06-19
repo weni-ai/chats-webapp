@@ -19,8 +19,9 @@
         <TextBox
           v-if="!isAudioRecorderVisible"
           ref="textBox"
-          v-model="textBoxMessage"
-          @keydown="onKeyDown"
+          :modelValue="textBoxMessage"
+          @update:modelValue="textBoxMessage = $event"
+          @keydown.stop="onKeyDown"
           @paste="handlePaste"
           @is-typing-handler="isTypingHandler"
           @is-focused-handler="isFocusedHandler"
@@ -68,12 +69,13 @@
           position="top-left"
           class="more-actions"
         >
-          <UnnnicButton
-            slot="trigger"
-            type="primary"
-            size="large"
-            iconCenter="add"
-          />
+          <template #trigger>
+            <UnnnicButton
+              type="primary"
+              size="large"
+              iconCenter="add"
+            />
+          </template>
 
           <div class="more-actions-container">
             <MoreActionsOption
@@ -133,15 +135,23 @@
 
 <script>
 import isMobile from 'is-mobile';
-import { mapState } from 'vuex';
 
-import MessageManagerLoading from '@/views/loadings/chat/MessageManager';
+import { mapActions, mapState } from 'pinia';
 
-import TextBox from './TextBox';
+import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
+import { useQuickMessages } from '@/store/modules/chats/quickMessages';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+
+import MessageManagerLoading from '@/views/loadings/chat/MessageManager.vue';
+
+import TextBox from './TextBox.vue';
 import MoreActionsOption from './MoreActionsOption.vue';
-import LoadingBar from './LoadingBar';
+import LoadingBar from './LoadingBar.vue';
 import SuggestionBox from './SuggestionBox.vue';
-import CoPilot from './CoPilot';
+import CoPilot from './CoPilot.vue';
 
 export default {
   name: 'MessageManager',
@@ -156,7 +166,7 @@ export default {
   },
 
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: '',
     },
@@ -185,12 +195,11 @@ export default {
   }),
 
   computed: {
-    ...mapState({
-      quickMessages: (state) => state.chats.quickMessages.quickMessages,
-      quickMessagesShared: (state) =>
-        state.chats.quickMessagesShared.quickMessagesShared,
-      canUseCopilot: (state) => state.chats.rooms.canUseCopilot,
-      discussionId: (state) => state.chats.discussions.activeDiscussion?.uuid,
+    ...mapState(useQuickMessageShared, ['quickMessagesShared']),
+    ...mapState(useQuickMessages, ['quickMessages']),
+    ...mapState(useRooms, ['canUseCopilot']),
+    ...mapState(useDiscussions, {
+      discussionId: (store) => store.activeDiscussion?.uuid,
     }),
 
     isMobile() {
@@ -199,10 +208,10 @@ export default {
 
     textBoxMessage: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(textBoxMessage) {
-        this.$emit('input', textBoxMessage);
+        this.$emit('update:modelValue', textBoxMessage);
       },
     },
     isAudioRecorderVisible() {
@@ -261,6 +270,11 @@ export default {
   },
 
   methods: {
+    ...mapActions(useDiscussionMessages, [
+      'sendDiscussionMessage',
+      'sendDiscussionMedias',
+    ]),
+    ...mapActions(useRoomMessages, ['sendRoomMessage', 'sendRoomMedias']),
     openCopilot() {
       this.isCopilotOpen = true;
       this.clearTextBox();
@@ -297,14 +311,12 @@ export default {
           this.closeSuggestionBox();
           return;
         }
-
         this.keyboardEvent = event;
         return;
       }
 
       if (event.key === 'Enter') {
         if (event.shiftKey) return;
-
         this.sendTextBoxMessage();
         event.preventDefault();
       }
@@ -356,12 +368,11 @@ export default {
       const message = this.textBoxMessage.trim();
       if (message) {
         this.clearTextBox();
-
-        const actionType = this.discussionId
-          ? 'chats/discussionMessages/sendDiscussionMessage'
-          : 'chats/roomMessages/sendRoomMessage';
-
-        await this.$store.dispatch(actionType, message);
+        if (this.discussionId) {
+          await this.sendDiscussionMessage(message);
+        } else {
+          await this.sendRoomMessage(message);
+        }
       }
     },
     async sendAudio() {
@@ -385,14 +396,16 @@ export default {
         type: 'audio/mpeg3',
       });
 
-      const actionType = this.discussionId
-        ? 'chats/discussionMessages/sendDiscussionMedias'
-        : 'chats/roomMessages/sendRoomMedias';
-
-      await this.$store.dispatch(actionType, {
+      const sendPayload = {
         files: [audio],
         updateLoadingFiles,
-      });
+      };
+
+      if (this.discussionId) {
+        await this.sendDiscussionMedias(sendPayload);
+      } else {
+        await this.sendRoomMedias(sendPayload);
+      }
 
       this.totalValue = undefined;
       this.clearAudio();

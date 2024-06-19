@@ -1,19 +1,16 @@
-import Vue from 'vue';
-import VueI18n from 'vue-i18n';
+import { createI18n } from 'vue-i18n';
 
 // eslint-disable-next-line camelcase
 import pt_br from '@/locales/pt_br.json';
 import en from '@/locales/en.json';
 import es from '@/locales/es.json';
 
-const moment = require('moment');
+import moment from 'moment';
 
-require('moment/locale/pt-br');
-require('moment/locale/es');
+import('moment/locale/pt-br');
+import('moment/locale/es');
 
 moment.locale('pt-br');
-
-Vue.use(VueI18n);
 
 const messages = {
   'pt-br': pt_br,
@@ -21,7 +18,7 @@ const messages = {
   es,
 };
 
-const i18n = new VueI18n({
+const i18n = createI18n({
   locale: 'pt-br',
   fallbackLocale: 'pt-br',
   messages,

@@ -1,4 +1,9 @@
-// import mime from 'mime-types';
+import { defineStore } from 'pinia';
+
+import { useRooms } from './rooms';
+
+import Message from '@/services/api/resources/chats/message';
+
 import {
   isMessageFromCurrentUser,
   groupMessages,
@@ -9,47 +14,9 @@ import {
   resendMedia,
   resendMessage,
 } from '@/utils/messages';
-import Message from '@/services/api/resources/chats/message';
-import Rooms from './rooms';
 
-const mutations = {
-  SET_ROOM_MESSAGES: 'SET_ROOM_MESSAGES',
-  ADD_ROOM_MESSAGE_SORTED: 'ADD_ROOM_MESSAGE_SORTED',
-  RESET_ROOM_MESSAGES_SORTED: 'RESET_ROOM_MESSAGES_SORTED',
-  SET_ROOM_MESSAGES_NEXT: 'SET_ROOM_MESSAGES_NEXT',
-  SET_ROOM_MESSAGES_PREVIOUS: 'SET_ROOM_MESSAGES_PREVIOUS',
-  RESET_ROOM_MESSAGES_NEXT: 'RESET_ROOM_MESSAGES_NEXT',
-  RESET_ROOM_MESSAGES_PREVIOUS: 'RESET_ROOM_MESSAGES_PREVIOUS',
-  ADD_MESSAGE: 'ADD_MESSAGE',
-  UPDATE_MESSAGE: 'UPDATE_MESSAGE',
-  ADD_FAILED_MESSAGE: 'ADD_FAILED_MESSAGE',
-};
-
-function isMessageInActiveRoom(message) {
-  const { activeRoom } = Rooms.state;
-  return message.room === activeRoom?.uuid;
-}
-
-function removeMessageFromSendings({ state }, messageUuid) {
-  state.roomMessagesSendingUuids = state.roomMessagesSendingUuids.filter(
-    (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
-  );
-}
-
-function removeMessageFromFaileds({ state }, messageUuid) {
-  state.roomMessagesFailedUuids = state.roomMessagesFailedUuids.filter(
-    (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
-  );
-}
-function removeMessageFromInPromise({ state }, messageUuid) {
-  state.roomMessagesInPromiseUuids = state.roomMessagesInPromiseUuids.filter(
-    (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
-  );
-}
-
-export default {
-  namespaced: true,
-  state: {
+export const useRoomMessages = defineStore('roomMessages', {
+  state: () => ({
     roomMessages: [],
     roomMessagesSorted: [],
     roomMessagesSendingUuids: [],
@@ -57,62 +24,77 @@ export default {
     roomMessagesFailedUuids: [],
     roomMessagesNext: '',
     roomMessagesPrevious: '',
-  },
-
-  mutations: {
-    [mutations.SET_ROOM_MESSAGES](state, messages) {
-      state.roomMessages = messages;
+  }),
+  actions: {
+    addRoomMessageSorted({ message, addBefore }) {
+      groupMessages(this.roomMessagesSorted, { message, addBefore });
     },
 
-    [mutations.ADD_ROOM_MESSAGE_SORTED](state, { message, addBefore }) {
-      groupMessages(state.roomMessagesSorted, { message, addBefore });
-    },
-    [mutations.RESET_ROOM_MESSAGES_SORTED](state) {
-      state.roomMessagesSorted = [];
-    },
-    [mutations.SET_ROOM_MESSAGES_NEXT](state, roomMessagesNext) {
-      state.roomMessagesNext = roomMessagesNext;
-    },
-    [mutations.RESET_ROOM_MESSAGES_NEXT](state) {
-      state.roomMessagesNext = '';
-    },
-    [mutations.SET_ROOM_MESSAGES_PREVIOUS](state, roomMessagesPrevious) {
-      state.roomMessagesPrevious = roomMessagesPrevious;
-    },
-    [mutations.RESET_ROOM_MESSAGES_PREVIOUS](state) {
-      state.roomMessagesPrevious = '';
-    },
-    [mutations.ADD_MESSAGE](state, { message }) {
-      const { roomMessages, roomMessagesSendingUuids } = state;
+    addFailedMessage({ message }) {
       const { uuid } = message;
 
-      if (isMessageInActiveRoom(message)) {
+      if (this.isMessageInActiveRoom(message)) {
+        this.removeMessageFromSendings(uuid);
+
+        if (isMessageFromCurrentUser(message)) {
+          this.roomMessagesFailedUuids.push(uuid);
+        }
+      }
+    },
+
+    resetRoomMessagesSorted() {
+      this.roomMessagesSorted = [];
+    },
+
+    resetRoomMessages() {
+      this.resetRoomMessagesSorted();
+      this.roomMessagesNext = '';
+      this.roomMessagesPrevious = '';
+    },
+
+    removeMessageFromSendings(messageUuid) {
+      this.roomMessagesSendingUuids = this.roomMessagesSendingUuids.filter(
+        (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
+      );
+    },
+
+    removeMessageFromInPromise(messageUuid) {
+      this.roomMessagesInPromiseUuids = this.roomMessagesInPromiseUuids.filter(
+        (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
+      );
+    },
+
+    removeMessageFromFaileds(messageUuid) {
+      this.roomMessagesFailedUuids = this.roomMessagesFailedUuids.filter(
+        (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
+      );
+    },
+
+    isMessageInActiveRoom(message) {
+      const roomsStore = useRooms();
+      return message.room === roomsStore.activeRoom?.uuid;
+    },
+
+    handlingAddMessage({ message }) {
+      const { uuid } = message;
+
+      if (this.isMessageInActiveRoom(message)) {
         const messageWithSender = parseMessageToMessageWithSenderProp(message);
 
-        roomMessages.push(messageWithSender);
+        this.roomMessages.push(messageWithSender);
 
         if (isMessageFromCurrentUser(message)) {
-          roomMessagesSendingUuids.push(uuid);
+          this.roomMessagesSendingUuids.push(uuid);
         }
       }
     },
-    [mutations.ADD_FAILED_MESSAGE](state, { message }) {
-      const { roomMessagesFailedUuids } = state;
-      const { uuid } = message;
 
-      if (isMessageInActiveRoom(message)) {
-        removeMessageFromSendings({ state }, uuid);
-
-        if (isMessageFromCurrentUser(message)) {
-          roomMessagesFailedUuids.push(uuid);
-        }
-      }
-    },
-    [mutations.UPDATE_MESSAGE](
-      state,
-      { media, toUpdateMediaPreview, message, toUpdateMessageUuid = '' },
-    ) {
-      const { roomMessages } = state;
+    updateMessage({
+      media,
+      toUpdateMediaPreview,
+      message,
+      toUpdateMessageUuid = '',
+    }) {
       const uuid = toUpdateMessageUuid || message.uuid;
       const treatedMessage = { ...message };
 
@@ -128,64 +110,56 @@ export default {
       const updatedMessage =
         parseMessageToMessageWithSenderProp(treatedMessage);
 
-      const messageIndex = roomMessages.findIndex(
+      const messageIndex = this.roomMessages.findIndex(
         (mappedMessage) => mappedMessage.uuid === uuid,
       );
       if (messageIndex !== -1) {
-        roomMessages[messageIndex] = updatedMessage;
+        this.roomMessages[messageIndex] = updatedMessage;
       }
 
-      removeMessageFromSendings({ state }, uuid);
+      this.removeMessageFromSendings(uuid);
     },
-  },
 
-  actions: {
-    async getRoomMessages({ commit, state }, { offset = null, limit = null }) {
-      const nextReq = state.roomMessagesNext;
+    async getRoomMessages({ offset = null, limit = null } = {}) {
+      const roomsStore = useRooms();
+      const nextReq = this.roomMessagesNext;
 
       await treatMessages({
-        itemUuid: Rooms.state.activeRoom?.uuid,
+        itemUuid: roomsStore.activeRoom?.uuid,
         getItemMessages: () =>
           Message.getByRoom(
             { nextReq },
-            Rooms.state.activeRoom?.uuid,
+            roomsStore.activeRoom?.uuid,
             offset,
             limit,
           ),
-        oldMessages: state.roomMessages,
+        oldMessages: this.roomMessages,
         nextReq,
         addSortedMessage: ({ message, addBefore }) =>
-          commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message, addBefore }),
-        resetSortedMessages: () => commit(mutations.RESET_ROOM_MESSAGES_SORTED),
-        setMessages: (messages) =>
-          commit(mutations.SET_ROOM_MESSAGES, messages),
-        setMessagesNext: (next) =>
-          commit(mutations.SET_ROOM_MESSAGES_NEXT, next),
-        setMessagesPrevious: (previous) =>
-          commit(mutations.SET_ROOM_MESSAGES_PREVIOUS, previous),
+          this.addRoomMessageSorted({ message, addBefore }),
+        resetSortedMessages: () => this.resetRoomMessagesSorted(),
+        setMessages: (messages) => (this.roomMessages = messages),
+        setMessagesNext: (nextMessage) => (this.roomMessagesNext = nextMessage),
+        setMessagesPrevious: (previousMessage) =>
+          (this.roomMessagesPrevious = previousMessage),
       });
     },
 
-    resetRoomMessages({ commit }) {
-      commit(mutations.RESET_ROOM_MESSAGES_SORTED);
-      commit(mutations.RESET_ROOM_MESSAGES_NEXT);
-      commit(mutations.RESET_ROOM_MESSAGES_PREVIOUS);
-    },
-
-    async addMessage({ commit, state }, message) {
-      const messageAlreadyExists = state.roomMessages.some(
+    async addMessage(message) {
+      const messageAlreadyExists = this.roomMessages.some(
         (mappedMessage) => mappedMessage.uuid === message.uuid,
       );
 
-      if (messageAlreadyExists) commit(mutations.UPDATE_MESSAGE, { message });
+      if (messageAlreadyExists) this.updateMessage({ message });
       else {
-        commit(mutations.ADD_MESSAGE, { message });
-        commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message });
+        this.handlingAddMessage({ message });
+        this.addRoomMessageSorted({ message });
       }
     },
 
-    async sendRoomMessage({ commit }, text) {
-      const { activeRoom } = Rooms.state;
+    async sendRoomMessage(text) {
+      const roomsStore = useRooms();
+      const { activeRoom } = roomsStore;
       if (!activeRoom) return;
 
       await sendMessage({
@@ -199,16 +173,16 @@ export default {
             user_email: activeRoom.user.email,
             seen: true,
           }),
-        addMessage: (message) => commit(mutations.ADD_MESSAGE, { message }),
-        addSortedMessage: (message) =>
-          commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message }),
+        addMessage: (message) => this.handlingAddMessage({ message }),
+        addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
         updateMessage: ({ message, toUpdateMessageUuid }) =>
-          commit(mutations.UPDATE_MESSAGE, { message, toUpdateMessageUuid }),
+          this.updateMessage({ message, toUpdateMessageUuid }),
       });
     },
 
-    async sendRoomMedias({ commit }, { files: medias, updateLoadingFiles }) {
-      const { activeRoom } = Rooms.state;
+    async sendRoomMedias({ files: medias, updateLoadingFiles }) {
+      const roomsStore = useRooms();
+      const { activeRoom } = roomsStore;
       if (!activeRoom) return;
 
       await sendMedias({
@@ -222,11 +196,10 @@ export default {
             media,
             updateLoadingFiles,
           }),
-        addMessage: (message) => commit(mutations.ADD_MESSAGE, { message }),
-        addSortedMessage: (message) =>
-          commit(mutations.ADD_ROOM_MESSAGE_SORTED, { message }),
+        addMessage: (message) => this.handlingAddMessage({ message }),
+        addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
         addFailedMessage: (message) =>
-          commit(mutations.ADD_FAILED_MESSAGE, {
+          this.addFailedMessage({
             message,
           }),
         updateMessage: ({
@@ -235,7 +208,7 @@ export default {
           toUpdateMessageUuid,
           toUpdateMediaPreview,
         }) =>
-          commit(mutations.UPDATE_MESSAGE, {
+          this.updateMessage({
             media,
             message,
             toUpdateMessageUuid,
@@ -244,8 +217,9 @@ export default {
       });
     },
 
-    async resendRoomMessage({ commit, state }, { message }) {
-      const { activeRoom } = Rooms.state;
+    async resendRoomMessage({ message }) {
+      const roomsStore = useRooms();
+      const { activeRoom } = roomsStore;
       if (!activeRoom) return;
 
       await resendMessage({
@@ -258,15 +232,16 @@ export default {
             seen: true,
           }),
         updateMessage: ({ message, toUpdateMessageUuid }) =>
-          commit(mutations.UPDATE_MESSAGE, { message, toUpdateMessageUuid }),
-        messagesInPromiseUuids: state.roomMessagesInPromiseUuids,
+          this.updateMessage({ message, toUpdateMessageUuid }),
+        messagesInPromiseUuids: this.roomMessagesInPromiseUuids,
         removeInPromiseMessage: (message) =>
-          removeMessageFromInPromise({ state }, message),
+          this.removeMessageFromInPromise(message),
       });
     },
 
-    async resendRoomMedia({ commit, state }, { message, media }) {
-      const { activeRoom } = Rooms.state;
+    async resendRoomMedia({ message, media }) {
+      const roomsStore = useRooms();
+      const { activeRoom } = roomsStore;
       if (!activeRoom) return;
 
       await resendMedia({
@@ -278,21 +253,18 @@ export default {
             user_email: activeRoom.user.email,
             media: media.file,
           }),
-        addFailedMessage: (message) =>
-          commit(mutations.ADD_FAILED_MESSAGE, {
-            message,
-          }),
+        addFailedMessage: (message) => this.addFailedMessage({ message }),
         removeFailedMessage: (message) =>
-          removeMessageFromFaileds({ state }, message),
+          this.removeMessageFromFaileds(message),
         addSendingMessage: (message) =>
-          state.roomMessagesSendingUuids.push(message),
+          this.roomMessagesSendingUuids.push(message),
         updateMessage: ({
           media,
           message,
           toUpdateMessageUuid,
           toUpdateMediaPreview,
         }) =>
-          commit(mutations.UPDATE_MESSAGE, {
+          this.updateMessage({
             media,
             message,
             toUpdateMessageUuid,
@@ -301,10 +273,9 @@ export default {
       });
     },
 
-    async resendRoomMessages({ state, dispatch }) {
-      const { roomMessagesSendingUuids, roomMessages } = state;
+    async resendRoomMessages() {
+      const { roomMessagesSendingUuids, roomMessages } = this;
       if (roomMessagesSendingUuids.length > 0) {
-        // eslint-disable-next-line no-restricted-syntax
         for (const messageUuid of roomMessagesSendingUuids) {
           /*
             As it is important that messages are sent in the same order in which they were
@@ -316,12 +287,9 @@ export default {
             (mappedMessage) => mappedMessage.uuid === messageUuid,
           );
 
-          // eslint-disable-next-line no-await-in-loop
-          await dispatch('resendRoomMessage', {
-            message: roomMessages[messageIndex],
-          });
+          await this.resendRoomMessage({ message: roomMessages[messageIndex] });
         }
       }
     },
   },
-};
+});

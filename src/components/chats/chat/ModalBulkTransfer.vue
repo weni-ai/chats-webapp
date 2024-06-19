@@ -7,7 +7,7 @@
   >
     <RoomsTransferFields
       ref="roomsTransferFields"
-      :selectedQueue.sync="selectedQueue"
+      v-model:selectedQueue="selectedQueue"
       @transfer-complete="transferComplete"
       bulkTransfer
     />
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import RoomsTransferFields from '@/components/chats/RoomsTransferFields';
+import RoomsTransferFields from '@/components/chats/RoomsTransferFields.vue';
 
 export default {
   name: 'ModalBulkTransfer',
@@ -46,7 +46,6 @@ export default {
   data() {
     return {
       selectedQueue: [],
-
       isLoadingBulkTransfer: false,
     };
   },

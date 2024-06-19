@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import ChatFeedback from '../ChatFeedback';
+import ChatFeedback from '../ChatFeedback.vue';
 
 export default {
   name: 'ChatMessagesFeedbackMessage',
