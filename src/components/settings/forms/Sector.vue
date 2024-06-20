@@ -182,12 +182,12 @@
         </section>
         <section class="form-section__handlers">
           <UnnnicButton
+            v-if="isEditing"
             :text="$t('delete_sector')"
             type="warning"
             iconLeft="delete"
             size="small"
-            @click="openModalDelete = true"
-            v-if="isEditing"
+            @click.stop="openModalDelete = true"
           />
         </section>
         <UnnnicModalNext
@@ -202,8 +202,8 @@
           :validateLabel="$t('confirm_typing') + ` &quot;${sector.name}&quot;`"
           :actionPrimaryLabel="$t('confirm')"
           :actionSecondaryLabel="$t('cancel')"
-          @click-action-primary="deleteSector(sector.uuid)"
-          @click-action-secondary="openModalDelete = false"
+          @clickActionPrimary="deleteSector(sector.uuid)"
+          @clickActionSecondary="openModalDelete = false"
         />
       </div>
     </section>

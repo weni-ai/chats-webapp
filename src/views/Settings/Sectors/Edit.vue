@@ -412,6 +412,7 @@ export default {
       this.openModalDelete = false;
     },
     async getSector() {
+      const sector = await Sector.find(this.uuid);
       const {
         name,
         can_trigger_flows,
@@ -422,7 +423,7 @@ export default {
         uuid,
         work_end,
         work_start,
-      } = await Sector.find(this.uuid);
+      } = sector;
       this.sector = {
         ...this.sector,
         uuid,
@@ -437,9 +438,9 @@ export default {
         },
         maxSimultaneousChatsByAgent: rooms_limit.toString(),
       };
-      this.setCopilotActive(this.sector.config.can_use_chat_completion);
-      this.setCopilotCustomRulesActive(this.sector.config.can_input_context);
-      this.setCopilotCustomRules(this.sector.config.completion_context);
+      this.setCopilotActive(this.sector.config?.can_use_chat_completion);
+      this.setCopilotCustomRulesActive(this.sector.config?.can_input_context);
+      this.setCopilotCustomRules(this.sector.config?.completion_context);
     },
     normalizeTime(time) {
       const timeFormat = /^(?<time>(\d\d):(\d\d))/;
