@@ -135,7 +135,7 @@
     "es": "Grabar audio"
   },
   "audio_recorder": {
-    "discard_button" : {
+    "discard_button": {
       "pt-br": "Descartar",
       "en": "Discard",
       "es": "Descartar"
@@ -1966,6 +1966,31 @@
       "en": "Add members to your project to be able to set as a manager",
       "es": "Agregue miembros a su proyecto para poder establecer como administrador"
     }
+  },
+  "your_orgs": {
+    "pt-br": "Suas organizações",
+    "en": "Your organizations",
+    "es": "Sus organizaciones"
+  },
+  "your_projects": {
+    "pt-br": "Seus projetos",
+    "en": "Your projects",
+    "es": "Tus proyectos"
+  },
+  "inteligences": {
+    "pt-br": "Inteligências",
+    "en": "Intelligences",
+    "es": "Inteligencias"
+  },
+  "enter": {
+    "pt-br": "Entrar",
+    "en": "Enter",
+    "es": "Entrar"
+  },
+  "no_matches_for_the_search": {
+    "pt-br": "Não há correspondências para a pesquisa",
+    "en": "There are no matches for the search",
+    "es": "No hay resultados para la encuesta"
   },
   "select_org": {
     "choose_one": {
