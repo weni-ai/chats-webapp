@@ -13,6 +13,9 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['logos/weni-512.png'],
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'service-worker.js',
       manifest: {
         name: 'Weni Chats',
         short_name: 'Weni',
@@ -24,12 +27,6 @@ export default defineConfig({
             type: 'image/png',
           },
         ],
-      },
-      workbox: {
-        swSrc: './src/service-worker.js',
-        injectManifest: {
-          swSrc: './src/service-worker.js',
-        },
       },
     }),
   ],
