@@ -67,8 +67,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'plyr/dist/plyr.css';
-
 .video-preview {
   display: inline-grid;
 
