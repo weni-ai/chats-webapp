@@ -5,10 +5,10 @@ import pt_br from '@/locales/pt_br.json';
 import en from '@/locales/en.json';
 import es from '@/locales/es.json';
 
-import moment from 'moment';
+import('moment/dist/locale/es.js');
+import('moment/dist/locale/pt-br.js');
 
-import('moment/locale/pt-br');
-import('moment/locale/es');
+import moment from 'moment';
 
 moment.locale('pt-br');
 

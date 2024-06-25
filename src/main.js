@@ -11,6 +11,7 @@ import router from './router';
 
 import env from './utils/env';
 import '@weni/unnnic-system/dist/style.css';
+import 'plyr/dist/plyr.css';
 
 import './registerServiceWorker';
 import './styles/global.scss';
