@@ -3525,9 +3525,9 @@
   integrity sha512-XRH2EFyg6ar8R37bNTtIBc/XYSdxWsqgmaLlZV4MAUR3lENRNhRdlqo89WwNVIx1SYDyU6aT6waVUP5dc7VDcg==
 
 "@weni/unnnic-system@^2":
-  version "2.0.28"
-  resolved "https://registry.yarnpkg.com/@weni/unnnic-system/-/unnnic-system-2.0.28.tgz#4264a3f51024767aa6387c1d9d9fa8d8f07618bf"
-  integrity sha512-3Uvs80pgtYhCzvoOyw0svRdtPIWv5o4FlPGNHK7BqYFSk2sEvj1vlBxWZ10EBbrmboKxsrftNDMvotNDeGaYsA==
+  version "2.0.29"
+  resolved "https://registry.yarnpkg.com/@weni/unnnic-system/-/unnnic-system-2.0.29.tgz#dbf2ec83bec4233208e8e631d30e10975641f7eb"
+  integrity sha512-sVGEm8hdEOHspD0xjTfwxbKgUFYa02mksVvl7rjKdnijnwjfnRtX39DBC7JVuAToFfK+qqOtuxRyhVDZXS2iUQ==
   dependencies:
     "@emoji-mart/data" "^1.1.2"
     "@vueuse/components" "^10.4.1"
