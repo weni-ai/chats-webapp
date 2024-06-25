@@ -401,7 +401,7 @@ export default {
       max-width: 100%;
       display: flex;
       justify-content: center;
-
+      aspect-ratio: 1/1;
       :deep(img, video) {
         max-height: 100%;
         max-width: 100%;
