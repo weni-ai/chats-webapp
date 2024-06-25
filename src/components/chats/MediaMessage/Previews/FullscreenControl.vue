@@ -1,7 +1,7 @@
 <template>
   <div
     class="fullscreen-control"
-    @click="$emit('click')"
+    @click.stop="$emit('click')"
     @keypress.enter="$emit('click')"
   >
     <UnnnicIcon
@@ -16,6 +16,7 @@ export default {
   props: {
     icon: String,
   },
+  emits: ['click'],
 };
 </script>
 <style lang="scss" scoped>
