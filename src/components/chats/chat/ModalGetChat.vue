@@ -96,7 +96,7 @@ export default {
 
   methods: {
     ...mapActions(useProfile, ['setMe']),
-    ...mapActions(useRooms, ['setActiveRoom']),
+    ...mapActions(useRooms, ['setActiveRoom', 'addRoom']),
 
     close() {
       this.$emit('closeModal');
@@ -124,6 +124,7 @@ export default {
         await Room.getQueueRoom(this.room.uuid, me);
       } else {
         await Room.take(this.room.uuid, me);
+        this.addRoom(this.room);
       }
 
       await this.handlingSetActiveRoom(this.room.uuid);
