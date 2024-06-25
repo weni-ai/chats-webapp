@@ -714,7 +714,7 @@ export default {
   &__breadcrumb {
     margin: $unnnic-spacing-inline-sm 0;
 
-    :deep(.unnnic-breadcrumb__container) {
+    :deep() .unnnic-breadcrumb__container {
       align-items: center;
 
       &__divider {

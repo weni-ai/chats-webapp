@@ -172,7 +172,7 @@ export default {
   &__breadcrumb {
     margin: 0 0 $unnnic-spacing-stack-md;
 
-    :deep(.unnnic-breadcrumb__container) {
+    :deep() .unnnic-breadcrumb__container {
       align-items: center;
 
       &__link {
