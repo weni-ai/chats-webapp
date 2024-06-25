@@ -17,7 +17,7 @@
         {{ label }}
       </label>
     </template>
-    <template v-if="rooms">
+    <template v-if="rooms && rooms.length">
       <RoomCard
         v-for="room in rooms"
         :key="room.uuid"
