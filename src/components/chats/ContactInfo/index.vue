@@ -536,7 +536,7 @@ export default {
   },
   watch: {
     room(newRoom) {
-      this.customFields = newRoom.custom_fields;
+      if (newRoom) this.customFields = newRoom.custom_fields;
     },
   },
 };
