@@ -37,6 +37,7 @@
       ref="fileUploader"
       @progress="emitFileUploaderProgress"
       @close="closeModal('fileUploader')"
+      @update:modelValue="modalFileUploaderFiles = $event"
       :mediasType="modalFileUploaderMediaType"
     />
 

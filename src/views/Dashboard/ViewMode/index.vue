@@ -1,75 +1,73 @@
 <template>
-  <div>
-    <ChatsLayout
-      v-if="viewedAgent.email"
-      :viewedAgent="this.viewedAgent.email"
+  <ChatsLayout
+    v-if="viewedAgent.email"
+    :viewedAgent="this.viewedAgent.email"
+  >
+    <ViewModeHeader :viewedAgent="viewedAgent.name" />
+
+    <ChatsBackground v-if="!room && !discussion && !isRoomSkeletonActive" />
+    <section
+      v-if="!!room || !!discussion"
+      v-show="!isRoomSkeletonActive"
+      class="view-mode__active-chat"
     >
-      <ViewModeHeader :viewedAgent="viewedAgent.name" />
-
-      <ChatsBackground v-if="!room && !discussion && !isRoomSkeletonActive" />
-      <section
-        v-if="!!room || !!discussion"
+      <ChatHeaderLoading v-show="isRoomSkeletonActive" />
+      <UnnnicChatsHeader
         v-show="!isRoomSkeletonActive"
-        class="view-mode__active-chat"
-      >
-        <ChatHeaderLoading v-show="isRoomSkeletonActive" />
-        <UnnnicChatsHeader
-          v-show="!isRoomSkeletonActive"
-          v-if="!!room && !discussion"
-          :title="room.contact.name || ''"
-          :avatarClick="() => handleModal('ContactInfo', 'open')"
-          :titleClick="() => handleModal('ContactInfo', 'open')"
-          :avatarName="room.contact.name"
-        />
-        <UnnnicChatsHeader
-          v-show="!isRoomSkeletonActive"
-          v-if="!!discussion"
-          class="discussion-header"
-          :title="discussion.subject"
-          :subtitle="`${$tc('discussions.title')} ${$t('about')} ${
-            discussion.contact
-          }`"
-          avatarIcon="forum"
-          size="small"
-        />
-
-        <RoomMessages v-if="!!room && !discussion" />
-        <DiscussionMessages v-if="!!discussion" />
-        <UnnnicButton
-          v-if="room && !discussion && room.user?.email !== me.email"
-          class="assume-chat"
-          :text="$t('dashboard.view-mode.assume_chat')"
-          type="secondary"
-          @click="handleModal('AssumeChatConfirmation', 'open')"
-        />
-        <ButtonJoinDiscussion
-          v-if="!!discussion"
-          @click="whenJoinDiscussion"
-        />
-      </section>
-
-      <ModalGetChat
-        :showModal="isAssumeChatConfirmationOpened"
-        @closeModal="handleModal('AssumeChatConfirmation', 'close')"
-        :title="$t('dashboard.view-mode.assume_chat_question')"
-        :description="
-          $t('dashboard.view-mode.assume_chat_confirmation', {
-            agent: viewedAgent.name,
-          })
-        "
-        :whenGetChat="whenGetChat"
+        v-if="!!room && !discussion"
+        :title="room.contact.name || ''"
+        :avatarClick="() => handleModal('ContactInfo', 'open')"
+        :titleClick="() => handleModal('ContactInfo', 'open')"
+        :avatarName="room.contact.name"
+      />
+      <UnnnicChatsHeader
+        v-show="!isRoomSkeletonActive"
+        v-if="!!discussion"
+        class="discussion-header"
+        :title="discussion.subject"
+        :subtitle="`${$tc('discussions.title')} ${$t('about')} ${
+          discussion.contact
+        }`"
+        avatarIcon="forum"
+        size="small"
       />
 
-      <template #aside>
-        <ContactInfo
-          v-if="isContactInfoOpened"
-          class="contact-info"
-          isViewMode
-          @close="handleModal('ContactInfo', 'close')"
-        />
-      </template>
-    </ChatsLayout>
-  </div>
+      <RoomMessages v-if="!!room && !discussion" />
+      <DiscussionMessages v-if="!!discussion" />
+      <UnnnicButton
+        v-if="room && !discussion && room.user?.email !== me.email"
+        class="assume-chat"
+        :text="$t('dashboard.view-mode.assume_chat')"
+        type="secondary"
+        @click="handleModal('AssumeChatConfirmation', 'open')"
+      />
+      <ButtonJoinDiscussion
+        v-if="!!discussion"
+        @click="whenJoinDiscussion"
+      />
+    </section>
+
+    <ModalGetChat
+      :showModal="isAssumeChatConfirmationOpened"
+      @closeModal="handleModal('AssumeChatConfirmation', 'close')"
+      :title="$t('dashboard.view-mode.assume_chat_question')"
+      :description="
+        $t('dashboard.view-mode.assume_chat_confirmation', {
+          agent: viewedAgent.name,
+        })
+      "
+      :whenGetChat="whenGetChat"
+    />
+
+    <template #aside>
+      <ContactInfo
+        v-if="isContactInfoOpened"
+        class="contact-info"
+        isViewMode
+        @close="handleModal('ContactInfo', 'close')"
+      />
+    </template>
+  </ChatsLayout>
 </template>
 
 <script>

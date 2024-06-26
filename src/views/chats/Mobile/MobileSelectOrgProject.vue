@@ -12,18 +12,18 @@
     </header>
 
     <main class="mobile-select-org-project__main">
-      <UnnnicConnectProjectSelector
+      <ProjectSelector
+        v-model:page="route"
+        v-model:organizationUuid="organizationUuid"
+        v-model:organizationsItems="organizations"
+        v-model:projectsItems="projects"
+        v-model:projectUuid="projectUuid"
         class="main__orgs-projects"
         :env="appEnviroment"
         :authorization="`Bearer ${userToken}`"
-        :page.sync="route"
-        :organizationUuid.sync="organizationUuid"
-        :organizationsItems.sync="organizations"
-        :projectsItems.sync="projects"
-        :projectUuid.sync="projectUuid"
       >
         <template #subtitle>{{ orgAndProjectSubtitle }}</template>
-      </UnnnicConnectProjectSelector>
+      </ProjectSelector>
 
       <UnnnicButton
         class="main__logout"
@@ -40,6 +40,9 @@
 <script>
 import { mapActions, mapState } from 'pinia';
 import { useConfig } from '@/store/modules/config';
+
+import ProjectSelector from '@/components/chats/Mobile/ProjectSelector.vue';
+
 import Keycloak from '@/services/keycloak';
 
 import weniChatsLogo from '@/assets/weni-chats-logo.svg';
@@ -48,10 +51,11 @@ import env from '@/utils/env';
 
 export default {
   name: 'MobileSelectOrgProject',
+  components: { ProjectSelector },
   data() {
     return {
       weniChatsLogo,
-      appEnviroment: env('VUE_APP_CHATS_ENVIRONMENT'),
+      appEnviroment: env('VITE_CHATS_ENVIRONMENT'),
       route: 'orgs',
       organizationUuid: '',
       organizations: [],
@@ -89,13 +93,12 @@ export default {
     projectUuid(newProjectUuid) {
       this.setProjectUuid(newProjectUuid || '');
       if (newProjectUuid) {
-        const app = this.$root.$children[0];
+        const app = this.$root;
         if (app.ws) {
           app.wsReconnect();
         } else {
           app.wsConnect();
         }
-
         this.$router.push({ name: 'home' });
       }
     },

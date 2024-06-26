@@ -96,7 +96,8 @@ export default {
 
   methods: {
     ...mapActions(useProfile, ['setMe']),
-    ...mapActions(useRooms, ['setActiveRoom']),
+    ...mapActions(useRooms, ['setActiveRoom', 'addRoom']),
+
     close() {
       this.$emit('closeModal');
     },
@@ -123,9 +124,11 @@ export default {
         await Room.getQueueRoom(this.room.uuid, me);
       } else {
         await Room.take(this.room.uuid, me);
+        this.addRoom(this.room);
       }
 
-      await this.setActiveRoom(this.room.uuid);
+      await this.handlingSetActiveRoom(this.room.uuid);
+
       if (this.room.user) {
         Room.updateReadMessages(this.room.uuid, true);
       }
@@ -133,7 +136,7 @@ export default {
       this.close();
     },
 
-    async setActiveRoom(uuid) {
+    async handlingSetActiveRoom(uuid) {
       const room = this.getRoomById(uuid);
       await this.setActiveRoom(room);
     },

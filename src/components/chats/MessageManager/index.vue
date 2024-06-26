@@ -19,8 +19,9 @@
         <TextBox
           v-if="!isAudioRecorderVisible"
           ref="textBox"
-          v-model="textBoxMessage"
-          @keydown="onKeyDown"
+          :modelValue="textBoxMessage"
+          @update:modelValue="textBoxMessage = $event"
+          @keydown.stop="onKeyDown"
           @paste="handlePaste"
           @is-typing-handler="isTypingHandler"
           @is-focused-handler="isFocusedHandler"
@@ -68,12 +69,13 @@
           position="top-left"
           class="more-actions"
         >
-          <UnnnicButton
-            slot="trigger"
-            type="primary"
-            size="large"
-            iconCenter="add"
-          />
+          <template #trigger>
+            <UnnnicButton
+              type="primary"
+              size="large"
+              iconCenter="add"
+            />
+          </template>
 
           <div class="more-actions-container">
             <MoreActionsOption
@@ -164,7 +166,7 @@ export default {
   },
 
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: '',
     },
@@ -206,10 +208,10 @@ export default {
 
     textBoxMessage: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(textBoxMessage) {
-        this.$emit('input', textBoxMessage);
+        this.$emit('update:modelValue', textBoxMessage);
       },
     },
     isAudioRecorderVisible() {
@@ -309,14 +311,12 @@ export default {
           this.closeSuggestionBox();
           return;
         }
-
         this.keyboardEvent = event;
         return;
       }
 
       if (event.key === 'Enter') {
         if (event.shiftKey) return;
-
         this.sendTextBoxMessage();
         event.preventDefault();
       }

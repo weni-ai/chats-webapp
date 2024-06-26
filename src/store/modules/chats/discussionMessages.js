@@ -83,7 +83,6 @@ export const useDiscussionMessages = defineStore('discussionMessages', {
     handlingAddDiscussionMessage({ message }) {
       const { discussionMessages, discussionMessagesSendingUuids } = this;
       const { uuid } = message;
-
       if (this.isMessageInActiveDiscussion(message)) {
         const messageWithSender = parseMessageToMessageWithSenderProp(message);
 
@@ -156,7 +155,7 @@ export const useDiscussionMessages = defineStore('discussionMessages', {
       this.discussionMessagesPrevious = '';
     },
 
-    async addDiscussionMessage(message) {
+    async addDiscussionMessage({ message }) {
       const messageAlreadyExists = this.discussionMessages.some(
         (mappedMessage) => mappedMessage.uuid === message.uuid,
       );

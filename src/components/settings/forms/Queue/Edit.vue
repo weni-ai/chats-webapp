@@ -95,7 +95,7 @@ export default {
   },
 
   props: {
-    value: {
+    modelValue: {
       type: Object,
       default: () => ({}),
     },
@@ -112,10 +112,10 @@ export default {
   computed: {
     queue: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(queue) {
-        this.$emit('input', queue);
+        this.$emit('update:modelValue', queue);
       },
     },
   },

@@ -92,6 +92,7 @@
           <template v-for="(element, letter) in letters">
             <!-- eslint-disable-next-line vue/valid-v-for -->
             <UnnnicCollapse
+              v-model="letterColapse[letter]"
               class="flows-trigger__groups__group"
               :title="
                 $t('flows_trigger.letter_group', {
@@ -99,7 +100,6 @@
                   length: element.length,
                 })
               "
-              active
             >
               <UnnnicChatsContact
                 v-for="item in element"
@@ -221,6 +221,8 @@ export default {
   },
 
   data: () => ({
+    letterColapse: {},
+
     isContactsLoading: true,
 
     search: '',
@@ -263,9 +265,13 @@ export default {
             .replace(/[\u0300-\u036f]/g, '');
           letters[removeAccent] = letters[removeAccent] || [];
           letters[removeAccent].push(element);
+          if (this.letterColapse[removeAccent] === undefined) {
+            this.letterColapse[removeAccent] = true;
+          }
         });
       return letters;
     },
+
     searchGroup() {
       return this.listOfGroups.filter((item) =>
         item.name.toUpperCase().includes(this.search.toUpperCase()),

@@ -50,15 +50,16 @@
       {{ $t('without_results') }}
     </p>
 
-    <div slot="options">
+    <template #options>
       <TablePagination
         v-model="triggeredFlowsCurrentPage"
         :count="triggeredFlowsCount"
         :countPages="triggeredFlowsCountPages"
         :limit="triggeredFlowsLimit"
         :isLoading="isPagesLoading"
+        @update:model-value="triggeredFlowsCurrentPage = $event"
       />
-    </div>
+    </template>
   </UnnnicModal>
 </template>
 
@@ -189,8 +190,11 @@ export default {
       justify-items: start;
     }
 
-    &__date-picker {
+    &__date-picker.dropdown {
       display: grid;
+      :deep(.input) {
+        min-width: 230px;
+      }
     }
   }
 

@@ -98,6 +98,7 @@
       :countPages="roomsCountPages"
       :limit="roomsLimitPagination"
       :isLoading="isPagesLoading"
+      @update:model-value="roomsCurrentPage = $event"
     />
 
     <UnnnicButton

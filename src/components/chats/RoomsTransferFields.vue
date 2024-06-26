@@ -9,8 +9,8 @@
         :label="$t('queue')"
       />
       <UnnnicSelectSmart
-        data-testid="select-queue"
         v-model="selectedQueue"
+        data-testid="select-queue"
         :size="size"
         :options="queues"
         autocomplete
@@ -24,8 +24,8 @@
         :label="$t('agent')"
       />
       <UnnnicSelectSmart
-        data-testid="select-agent"
         v-model="selectedAgent"
+        data-testid="select-agent"
         :size="size"
         :disabled="isAgentsFieldDisabled"
         :options="agents"
@@ -176,12 +176,12 @@ export default {
     },
 
     transferSuccess() {
-      this.$emit('transfer-complete', 'success');
       this.callSuccessAlert();
+      this.$emit('transfer-complete', 'success');
     },
     transferError() {
-      this.$emit('transfer-complete', 'error');
       this.callErrorAlert();
+      this.$emit('transfer-complete', 'error');
     },
 
     callSuccessAlert() {

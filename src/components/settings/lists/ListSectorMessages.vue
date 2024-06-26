@@ -9,7 +9,7 @@
       </p>
       <div class="list-sector-messages__copilot__integration">
         <UnnnicSwitch
-          :value="copilotActive"
+          v-model="copilotActive"
           size="small"
           :textRight="
             $t(
@@ -18,7 +18,7 @@
               }`,
             )
           "
-          @input="handleCopilotActive"
+          @update:model-value="handleCopilotActive"
         />
         <p
           v-if="copilotShowIntegrationsMessage"
@@ -32,7 +32,7 @@
         </p>
         <UnnnicSwitch
           v-if="copilotActive && !copilotShowIntegrationsMessage && !isLoading"
-          :value="copilotCustomRulesActive"
+          v-model="copilotCustomRulesActive"
           size="small"
           :textRight="
             $t(
@@ -41,12 +41,12 @@
               }`,
             )
           "
-          @input="handleCustomRulesActive"
+          @update:model-value="handleCustomRulesActive"
         />
         <UnnnicTextArea
           v-if="copilotActive && copilotCustomRulesActive && !isLoading"
-          :value="copilotCustomRules"
-          @input="handleCustomRules"
+          v-model="copilotCustomRules"
+          @update:model-value="handleCustomRules"
           :label="$t('settings.messages.copilot.custom_rules.title')"
           :placeholder="
             $t('settings.messages.copilot.custom_rules.explanation')
@@ -132,10 +132,10 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      setCopilotActive: 'config/setCopilotActive',
-      setCopilotCustomRulesActive: 'config/setCopilotCustomRulesActive',
-      setCopilotCustomRules: 'config/setCopilotCustomRules',
+    ...mapActions(useConfig, {
+      setCopilotActive: 'setCopilotActive',
+      setCopilotCustomRulesActive: 'setCopilotCustomRulesActive',
+      setCopilotCustomRules: 'setCopilotCustomRules',
     }),
 
     handleCopilotActive(boolean) {

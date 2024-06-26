@@ -1,6 +1,6 @@
 <template>
   <UnnnicCollapse
-    active
+    v-model="isCollapseOpened"
     size="md"
   >
     <template #header>
@@ -17,7 +17,7 @@
         {{ label }}
       </label>
     </template>
-    <template v-if="rooms">
+    <template v-if="rooms && rooms.length">
       <RoomCard
         v-for="room in rooms"
         :key="room.uuid"
@@ -164,7 +164,7 @@ export default {
     :deep(.unnnic-checkbox) {
       // !important at fill is needed here because the
       // unnnicCollapse header is applying an unwanted style when hovering
-      svg .primary {
+      .primary {
         fill: $unnnic-color-brand-weni !important;
       }
     }

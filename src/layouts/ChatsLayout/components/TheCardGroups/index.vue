@@ -154,7 +154,7 @@ export default {
     showModalQueue: false,
     noQueueSelected: false,
   }),
-  async mounted() {
+  mounted() {
     this.listRoom();
     this.listDiscussions();
   },

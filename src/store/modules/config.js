@@ -34,11 +34,11 @@ export const useConfig = defineStore('config', {
     setStatus(status) {
       this.status = status;
     },
-    getStatus({ state }) {
-      const { data } = Profile.status({ projectUuid: state.project });
+    async getStatus(projectUuid) {
+      const { data } = await Profile.status(projectUuid);
       return data.connection_status;
     },
-    updateStatus(status) {
+    async updateStatus(status) {
       const validStatus = ['online', 'offline'];
 
       if (typeof status !== 'string') {
@@ -50,8 +50,8 @@ export const useConfig = defineStore('config', {
         );
       }
 
-      const { data } = Profile.updateStatus({
-        projectUuid: this.project,
+      const { data } = await Profile.updateStatus({
+        projectUuid: this.project.uuid,
         status: status.toUpperCase(),
       });
       const newStatus = data.connection_status || 'OFFLINE';

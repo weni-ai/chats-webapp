@@ -7,7 +7,7 @@
   >
     <RoomsTransferFields
       ref="roomsTransferFields"
-      :selectedQueue.sync="selectedQueue"
+      v-model:selectedQueue="selectedQueue"
       @transfer-complete="transferComplete"
       bulkTransfer
     />
@@ -46,7 +46,6 @@ export default {
   data() {
     return {
       selectedQueue: [],
-
       isLoadingBulkTransfer: false,
     };
   },

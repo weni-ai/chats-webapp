@@ -50,11 +50,11 @@
           />
         </div>
         <SelectedMember
-          v-if="agentSelected[0]"
-          :name="agentSelected[0].label"
-          :email="agentSelected[0].description"
-          :photoUrl="agentSelected[0].photoUrl"
-          @remove="agentSelected = []"
+          v-if="agentSelected[0]?.description"
+          :name="agentSelected[0]?.label"
+          :email="agentSelected[0]?.description"
+          :photoUrl="agentSelected[0]?.photoUrl"
+          @remove="handlingRemoveAgent"
         />
         <template #options>
           <UnnnicButton
@@ -67,7 +67,7 @@
             type="primary"
             :disabled="!agentSelected[0]"
             :loading="addAgentLoading"
-            @click="addAgent"
+            @click="handlingAddAgent"
           />
         </template>
       </UnnnicModal>
@@ -102,7 +102,11 @@ export default {
     },
   },
 
-  data: () => {
+  unmounted() {
+    this.agentSelected = [];
+  },
+
+  data() {
     return {
       agentsInvolved: null,
 
@@ -112,6 +116,7 @@ export default {
       agentSelected: [],
     };
   },
+
   computed: {
     ...mapState(useProfile, ['me']),
     discussionStartDate() {
@@ -124,6 +129,9 @@ export default {
 
   methods: {
     ...mapActions(useDiscussions, ['addAgent', 'getDiscussionAgents']),
+    handlingRemoveAgent() {
+      this.agentSelected = [{ value: '', label: 'Pesquisar agente' }];
+    },
     getUserFullName(user) {
       const { first_name, last_name } = user;
       return `${first_name} ${last_name}`;
@@ -143,7 +151,7 @@ export default {
       this.agentSelected = [];
     },
 
-    async addAgent() {
+    async handlingAddAgent() {
       const newAgent = this.agentSelected[0];
 
       if (!newAgent?.value) {

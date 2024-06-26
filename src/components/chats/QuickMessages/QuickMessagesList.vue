@@ -11,7 +11,7 @@
       v-else
       class="quick-messages-list__personals"
       :title="$t('quick_messages.personal')"
-      active
+      v-model="openQuickMessages"
     >
       <QuickMessageCard
         v-for="quickMessage in quickMessages"
@@ -28,7 +28,7 @@
       v-if="quickMessagesShared.length > 0"
       class="quick-messages-list__shareds"
       :title="$t('quick_messages.shared')"
-      active
+      v-model="openQuickMessagesShared"
     >
       <QuickMessageCard
         v-for="quickMessage in quickMessagesShared"
@@ -61,6 +61,13 @@ export default {
     isEmpty: {
       type: Boolean,
     },
+  },
+
+  data() {
+    return {
+      openQuickMessages: true,
+      openQuickMessagesShared: true,
+    };
   },
 
   components: {

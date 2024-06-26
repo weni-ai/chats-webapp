@@ -32,7 +32,7 @@
       />
     </AsideSlotTemplateSection>
 
-    <template v-slot:modals>
+    <template #modals>
       <UnnnicModal
         class="quick-messages__modal-delete"
         :text="$t('quick_messages.delete')"

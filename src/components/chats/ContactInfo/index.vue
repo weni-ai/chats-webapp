@@ -20,7 +20,6 @@
               <h1 class="username">
                 {{ (closedRoom || room).contact.name }}
               </h1>
-
               <UnnnicButton
                 v-if="!isHistory"
                 iconCenter="sync"
@@ -79,8 +78,8 @@
               class="sync-contact"
             >
               <UnnnicSwitch
-                :value="isLinkedUser"
-                @input="addContactToAgent"
+                v-model="isLinkedUser"
+                @update:model-value="addContactToAgent"
                 size="small"
                 :textRight="
                   isLinkedUser
@@ -130,6 +129,7 @@
         </AsideSlotTemplateSection>
 
         <DiscussionsSession v-if="isHistory" />
+
         <TransferSession
           v-if="!isHistory"
           @transferred-contact="$emit('transferred-contact')"
@@ -147,7 +147,7 @@
       </section>
 
       <ModalStartDiscussion
-        :showModal="isShowModalStartDiscussion"
+        v-if="isShowModalStartDiscussion"
         @close="handleModalStartDiscussion()"
       />
 
@@ -314,6 +314,10 @@ export default {
     }
   },
 
+  unmounted() {
+    this.emitClose();
+  },
+
   methods: {
     moment,
     ...mapActions(useRooms, ['updateRoomContact']),
@@ -399,7 +403,7 @@ export default {
     },
 
     addContactToAgent() {
-      if (!this.isLinkedUser) {
+      if (this.isLinkedUser) {
         this.linkContact();
       } else {
         this.removeLinkedContact();

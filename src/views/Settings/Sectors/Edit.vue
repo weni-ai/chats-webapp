@@ -35,7 +35,7 @@
             está aguardando atendimento, deixe em branco caso não queira
             nenhuma mensagem."
             >
-              <template slot="actions">
+              <template #actions>
                 <UnnnicButtonIcon
                   v-if="!editContent"
                   type="secondary"
@@ -44,7 +44,7 @@
                   @click="editDescription"
                 />
               </template>
-              <template slot="description">
+              <template #description>
                 <div
                   @focusout="saveEditDescription"
                   style="word-break: break-all"
@@ -71,21 +71,7 @@
             v-model="queueToEdit.agents"
             :sector="sector"
             :agents="projectAgents"
-            @select="
-              (agent) => {
-                const alreadyInQueue = queueToEdit.currentAgents.some(
-                  (a) => a.uuid === agent.uuid,
-                );
-
-                if (!alreadyInQueue) {
-                  queueToEdit.toAddAgents.push(agent.uuid);
-                }
-                queueToEdit.agents.push(agent);
-                queueToEdit.toRemoveAgents = queueToEdit.toRemoveAgents.filter(
-                  (agentToRemoveUuid) => agentToRemoveUuid !== agent.uuid,
-                );
-              }
-            "
+            @select="handleSelectAgent"
             @remove="
               (agentUuid) => {
                 const alreadyInQueue = !!queueToEdit.currentAgents.find(
@@ -152,16 +138,16 @@
       />
       <section class="button-action">
         <UnnnicButton
-          :text="$t('save')"
-          type="secondary"
-          @click="save"
-          :disabled="isQuickMessageEditing && !isQuickMessagesFormValid"
           v-if="
             this.currentTab === 'sector' ||
             this.queueToEdit ||
             this.isQuickMessageEditing ||
             currentTab === 'tags'
           "
+          :text="$t('save')"
+          type="secondary"
+          :disabled="isQuickMessageEditing && !isQuickMessagesFormValid"
+          @click="save"
         />
       </section>
       <UnnnicButton
@@ -172,7 +158,7 @@
         @click="() => messagesHandler('create')"
       />
       <UnnnicModal
-        :showModal="openModal"
+        v-if="openModalDelete"
         modalIcon="alert-circle-1"
         scheme="feedback-red"
         :text="`Excluir a fila ${selectedQueue.name}`"
@@ -187,8 +173,8 @@
           />
           <UnnnicButton
             type="secondary"
-            @click="deleteQueue(selectedQueue.uuid)"
             :text="$t('confirm')"
+            @click="deleteQueue(selectedQueue.uuid)"
           />
         </template>
       </UnnnicModal>
@@ -245,7 +231,7 @@ export default {
 
   data: () => ({
     currentTab: '',
-    openModal: false,
+    openModalDelete: false,
     sector: {
       uuid: '',
       name: '',
@@ -304,6 +290,26 @@ export default {
       'setCopilotCustomRulesActive',
       'setCopilotCustomRules',
     ]),
+
+    handleSelectAgent(agent) {
+      const { currentAgents, toAddAgents } = this.queueToEdit;
+
+      console.log({ currentAgents, toAddAgents, agent });
+
+      const alreadyInQueue = currentAgents.some((a) => a.uuid === agent.uuid);
+
+      const alreadyInToAddAgents = toAddAgents.some((a) => a === agent.uuid);
+
+      if (!alreadyInQueue && !alreadyInToAddAgents) {
+        this.queueToEdit.toAddAgents.push(agent.uuid);
+        this.queueToEdit.agents.push(agent);
+
+        this.queueToEdit.toRemoveAgents =
+          this.queueToEdit.toRemoveAgents.filter(
+            (agentToRemoveUuid) => agentToRemoveUuid !== agent.uuid,
+          );
+      }
+    },
 
     resetTabsData() {
       this.queueToEdit = null;
@@ -395,16 +401,18 @@ export default {
     async deleteQueue(queueUuid) {
       await Queue.delete(queueUuid);
       this.queues = this.queues.filter((queue) => queue.uuid !== queueUuid);
-      this.openModalDelete = true;
+      this.queueToEdit = null;
+      this.openModalDelete = false;
     },
     async openModalDeleteQueue(queue) {
       this.selectedQueue = queue;
-      this.openModal = true;
+      this.openModalDelete = true;
     },
     async closeModalDeleteQueue() {
-      this.openModal = false;
+      this.openModalDelete = false;
     },
     async getSector() {
+      const sector = await Sector.find(this.uuid);
       const {
         name,
         can_trigger_flows,
@@ -415,7 +423,7 @@ export default {
         uuid,
         work_end,
         work_start,
-      } = await Sector.find(this.uuid);
+      } = sector;
       this.sector = {
         ...this.sector,
         uuid,
@@ -430,9 +438,9 @@ export default {
         },
         maxSimultaneousChatsByAgent: rooms_limit.toString(),
       };
-      this.setCopilotActive(this.sector.config.can_use_chat_completion);
-      this.setCopilotCustomRulesActive(this.sector.config.can_input_context);
-      this.setCopilotCustomRules(this.sector.config.completion_context);
+      this.setCopilotActive(this.sector.config?.can_use_chat_completion);
+      this.setCopilotCustomRulesActive(this.sector.config?.can_input_context);
+      this.setCopilotCustomRules(this.sector.config?.completion_context);
     },
     normalizeTime(time) {
       const timeFormat = /^(?<time>(\d\d):(\d\d))/;
@@ -667,7 +675,6 @@ export default {
   watch: {
     currentTab(current) {
       if (this.$route.query.tab !== current) this.updateQueryParams(current);
-
       this.handleTabChange(current);
     },
   },
@@ -707,7 +714,7 @@ export default {
   &__breadcrumb {
     margin: $unnnic-spacing-inline-sm 0;
 
-    ::v-deep .unnnic-breadcrumb__container {
+    :deep() .unnnic-breadcrumb__container {
       align-items: center;
 
       &__divider {

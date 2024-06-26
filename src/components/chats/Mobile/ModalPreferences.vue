@@ -6,8 +6,8 @@
   >
     <UnnnicLabel label="Status" />
     <UnnnicSwitch
-      :value="configStatus"
-      @input="updateStatus"
+      v-model="configStatus"
+      @update:model-value="updateStatus"
       :disabled="loadingStatus"
       :textRight="
         storeStatus === 'ONLINE' ? $t('status.online') : $t('status.offline')
@@ -18,15 +18,15 @@
     <UnnnicLabel :label="$t('preferences.notifications.title')" />
     <UnnnicSwitch
       v-model="configSound"
-      @input="updateSound"
+      @update:model-value="updateSound"
       :textRight="$t('preferences.notifications.sound')"
       size="medium"
     />
 
     <UnnnicLabel :label="$t('language')" />
     <UnnnicLanguageSelect
-      :value="$i18n.locale"
-      @input="updateLanguage"
+      v-model="$i18n.locale"
+      @update:model-value="updateLanguage"
       :supportedLanguages="supportedLanguages"
       position="top"
     />

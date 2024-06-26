@@ -48,7 +48,7 @@
 
             <template v-else>
               <UnnnicChatsMessage
-                v-if="message.text || isGeolocation(message.media[0])"
+                v-if="message.text || isGeolocation(message.media?.[0])"
                 :type="messageType(message)"
                 :class="[
                   'chat-messages__message',
@@ -63,8 +63,8 @@
                 :signature="messageSignature(message)"
               >
                 {{
-                  isGeolocation(message.media[0])
-                    ? message.media[0]?.url
+                  isGeolocation(message.media?.[0])
+                    ? message.media?.[0]?.url
                     : message.text
                 }}
               </UnnnicChatsMessage>
@@ -219,7 +219,6 @@ export default {
       type: String,
       required: true,
     },
-
     messages: {
       type: Array,
       required: true,
@@ -553,11 +552,14 @@ export default {
   },
 
   watch: {
-    messages() {
-      this.setStartFeedbacks();
-      this.$nextTick(() => {
-        this.manageScrollForNewMessages();
-      });
+    messages: {
+      handler() {
+        this.setStartFeedbacks();
+        this.$nextTick(() => {
+          this.manageScrollForNewMessages();
+        });
+      },
+      deep: true,
     },
   },
 };
