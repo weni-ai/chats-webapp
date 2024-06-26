@@ -32,10 +32,10 @@
 <script>
 import { mapActions } from 'vuex';
 
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import unnnic from '@weni/unnnic-system';
 
-import ListSectorMessages from '@/components/settings/lists/ListSectorMessages';
-import QuickMessageForm from '@/components/chats/QuickMessages/QuickMessageForm';
+import ListSectorMessages from '@/components/settings/lists/ListSectorMessages.vue';
+import QuickMessageForm from '@/components/chats/QuickMessages/QuickMessageForm.vue';
 
 export default {
   name: 'FormMessages',
@@ -101,7 +101,7 @@ export default {
         });
       }
 
-      unnnicCallAlert({
+      unnnic.unnnicCallAlert({
         props: {
           text: this.$t('quick_messages.successfully_added'),
           type: 'success',

@@ -135,13 +135,13 @@
 import isMobile from 'is-mobile';
 import { mapState } from 'vuex';
 
-import MessageManagerLoading from '@/views/loadings/chat/MessageManager';
+import MessageManagerLoading from '@/views/loadings/chat/MessageManager.vue';
 
-import TextBox from './TextBox';
+import TextBox from './TextBox.vue';
 import MoreActionsOption from './MoreActionsOption.vue';
-import LoadingBar from './LoadingBar';
+import LoadingBar from './LoadingBar.vue';
 import SuggestionBox from './SuggestionBox.vue';
-import CoPilot from './CoPilot';
+import CoPilot from './CoPilot.vue';
 
 export default {
   name: 'MessageManager',

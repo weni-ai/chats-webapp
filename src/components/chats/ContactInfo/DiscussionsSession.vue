@@ -35,8 +35,8 @@ import isMobile from 'is-mobile';
 import moment from 'moment';
 import { mapState } from 'vuex';
 
-import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
-import DiscussionMessages from '../chat/DiscussionMessages';
+import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
+import DiscussionMessages from '../chat/DiscussionMessages.vue';
 
 export default {
   name: 'DiscussionsSession',

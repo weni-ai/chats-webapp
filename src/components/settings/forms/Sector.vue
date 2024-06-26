@@ -211,8 +211,8 @@
 
 <script>
 import { mapActions } from 'vuex';
-import { unnnicCallAlert } from '@weni/unnnic-system';
-import SelectedMember from '@/components/settings/forms/SelectedMember';
+import unnnic from '@weni/unnnic-system';
+import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 import Sector from '@/services/api/resources/settings/sector';
 
 export default {
@@ -369,7 +369,7 @@ export default {
         await this.actionDeleteSector(sectorUuid);
         this.openModalDelete = false;
         this.$router.push({ name: 'sectors' });
-        unnnicCallAlert({
+        unnnic.unnnicCallAlert({
           props: {
             text: this.$t('sector_deleted_success'),
             type: 'success',
@@ -379,7 +379,7 @@ export default {
       } catch (error) {
         console.log(error);
         this.openModalDelete = false;
-        unnnicCallAlert({
+        unnnic.unnnicCallAlert({
           props: {
             text: this.$t('sector_delete_error'),
             type: 'error',

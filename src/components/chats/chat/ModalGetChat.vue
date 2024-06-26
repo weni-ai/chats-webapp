@@ -27,7 +27,7 @@
 <script>
 import { mapState } from 'vuex';
 
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import unnnic from '@weni/unnnic-system';
 
 import Profile from '@/services/api/resources/profile';
 import Room from '@/services/api/resources/chats/room';
@@ -73,7 +73,7 @@ export default {
       handler(newRoom, oldRoom) {
         if (this.showModal === true && newRoom == null) {
           this.close();
-          unnnicCallAlert({
+          unnnic.unnnicCallAlert({
             props: {
               text: this.$t('chats.feedback.agent_took_chat', {
                 contact: oldRoom?.contact?.name,

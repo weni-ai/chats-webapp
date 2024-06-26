@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import UserAvatar from '@/components/chats/UserAvatar';
+import UserAvatar from '@/components/chats/UserAvatar.vue';
 
 const moment = require('moment');
 

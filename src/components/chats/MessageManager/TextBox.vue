@@ -80,8 +80,8 @@
 <script>
 import isMobile from 'is-mobile';
 
-import EmojiPicker from './EmojiPicker';
-import MoreActionsOption from './MoreActionsOption';
+import EmojiPicker from './EmojiPicker.vue';
+import MoreActionsOption from './MoreActionsOption.vue';
 
 export default {
   name: 'TextBox',

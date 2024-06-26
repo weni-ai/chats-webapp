@@ -59,14 +59,14 @@
 <script>
 import { mapState } from 'vuex';
 
-import TheCardGroups from '@/layouts/ChatsLayout/components/TheCardGroups';
-import FlowsTrigger from '@/layouts/ChatsLayout/components/FlowsTrigger';
+import TheCardGroups from '@/layouts/ChatsLayout/components/TheCardGroups/index.vue';
+import FlowsTrigger from '@/layouts/ChatsLayout/components/FlowsTrigger/index.vue';
 
-import MobileChat from '@/views/chats/Mobile/MobileChat';
-import MobileClosedChats from '@/views/chats/Mobile/MobileClosedChats';
+import MobileChat from '@/views/chats/Mobile/MobileChat.vue';
+import MobileClosedChats from '@/views/chats/Mobile/MobileClosedChats.vue';
 
 import ModalPreferences from '@/components/chats/Mobile/ModalPreferences.vue';
-import QuickMessages from '@/components/chats/QuickMessages';
+import QuickMessages from '@/components/chats/QuickMessages/index.vue';
 
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 import { resetChats } from '@/utils/chats';

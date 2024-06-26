@@ -52,8 +52,8 @@
 import { mapState } from 'vuex';
 import isMobile from 'is-mobile';
 
-import FileUploader from '@/components/chats/MessageManager/FileUploader';
-import ModalGetChat from '@/components/chats/chat/ModalGetChat';
+import FileUploader from '@/components/chats/MessageManager/FileUploader.vue';
+import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
 import ModalQuickMessages from '@/components/chats/QuickMessages/ModalQuickMessages.vue';
 
 import ModalCloseChat from './ModalCloseChat.vue';

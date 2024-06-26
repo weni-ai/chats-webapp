@@ -45,7 +45,7 @@
 <script>
 import { mapState } from 'vuex';
 
-import QuickMessageCard from './QuickMessageCard';
+import QuickMessageCard from './QuickMessageCard.vue';
 
 export default {
   name: 'QuickMessagesList',

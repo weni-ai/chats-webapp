@@ -31,9 +31,9 @@
 import { mapState } from 'vuex';
 import isMobile from 'is-mobile';
 
-import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader';
+import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 
-import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow';
+import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow.vue';
 
 export default {
   name: 'HomeChatHeaders',

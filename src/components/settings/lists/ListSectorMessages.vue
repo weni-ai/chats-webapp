@@ -89,7 +89,7 @@
 
 <script>
 import Sector from '@/services/api/resources/settings/sector';
-import QuickMessageCard from '@/components/chats/QuickMessages/QuickMessageCard';
+import QuickMessageCard from '@/components/chats/QuickMessages/QuickMessageCard.vue';
 
 import { mapActions, mapState } from 'vuex';
 

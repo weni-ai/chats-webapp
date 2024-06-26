@@ -88,13 +88,13 @@
 import isMobile from 'is-mobile';
 import { mapActions } from 'vuex';
 
-import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
-import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
+import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
+import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
 
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
-import QuickMessagesList from './QuickMessagesList';
-import QuickMessageForm from './QuickMessageForm';
+import QuickMessagesList from './QuickMessagesList.vue';
+import QuickMessageForm from './QuickMessageForm.vue';
 
 export default {
   name: 'QuickMessages',

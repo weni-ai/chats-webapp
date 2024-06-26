@@ -51,12 +51,12 @@
 import isMobile from 'is-mobile';
 import { mapState } from 'vuex';
 
-import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone';
+import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone/index.vue';
 
-import RoomMessages from '@/components/chats/chat/RoomMessages';
-import DiscussionMessages from '@/components/chats/chat/DiscussionMessages';
-import MessageManager from '@/components/chats/MessageManager';
-import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion';
+import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
+import DiscussionMessages from '@/components/chats/chat/DiscussionMessages.vue';
+import MessageManager from '@/components/chats/MessageManager/index.vue';
+import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion.vue';
 
 import Room from '@/services/api/resources/chats/room';
 

@@ -77,7 +77,7 @@
 
 <script>
 import Media from '@/services/api/resources/chats/media';
-import MediaPreview from '@/components/chats/MediaMessage/Previews/Media';
+import MediaPreview from '@/components/chats/MediaMessage/Previews/Media.vue';
 import moment from 'moment';
 
 export default {

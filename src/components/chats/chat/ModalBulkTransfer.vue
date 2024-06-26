@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import RoomsTransferFields from '@/components/chats/RoomsTransferFields';
+import RoomsTransferFields from '@/components/chats/RoomsTransferFields.vue';
 
 export default {
   name: 'ModalBulkTransfer',

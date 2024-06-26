@@ -181,25 +181,25 @@
 import isMobile from 'is-mobile';
 import { mapState } from 'vuex';
 
-import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
-import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
+import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
+import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
 
 import ContactInfosLoading from '@/views/loadings/ContactInfos.vue';
 
 import Room from '@/services/api/resources/chats/room';
 import LinkContact from '@/services/api/resources/chats/linkContact';
 
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import unnnic from '@weni/unnnic-system';
 
-import CustomField from './CustomField';
-import ContactMedia from './Media';
-import VideoPreview from '../MediaMessage/Previews/Video';
+import CustomField from './CustomField.vue';
+import ContactMedia from './Media.vue';
+import VideoPreview from '../MediaMessage/Previews/Video.vue';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
-import TransferSession from './TransferSession';
-import ModalStartDiscussion from './ModalStartDiscussion';
-import DiscussionsSession from './DiscussionsSession';
+import TransferSession from './TransferSession.vue';
+import ModalStartDiscussion from './ModalStartDiscussion.vue';
+import DiscussionsSession from './DiscussionsSession.vue';
 
-const moment = require('moment');
+import moment from 'moment';
 
 export default {
   name: 'ContactInfo',
@@ -469,7 +469,7 @@ export default {
     },
 
     showAlert(text, type = 'success') {
-      unnnicCallAlert({
+      unnnic.unnnicCallAlert({
         props: {
           text,
           type,

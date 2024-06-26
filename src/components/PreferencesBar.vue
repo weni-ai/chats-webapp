@@ -98,7 +98,7 @@
 import Profile from '@/services/api/resources/profile';
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import unnnic from '@weni/unnnic-system';
 
 export default {
   props: {
@@ -169,7 +169,7 @@ export default {
     },
 
     showStatusAlert(connectionStatus) {
-      unnnicCallAlert({
+      unnnic.unnnicCallAlert({
         props: {
           text: `${this.$t('status_agent')} ${connectionStatus}`,
           icon: 'indicator',

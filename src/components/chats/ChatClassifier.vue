@@ -13,9 +13,9 @@
 </template>
 
 <script>
-import ChatClassifierLoading from '@/views/loadings/chat/ChatClassifier';
+import ChatClassifierLoading from '@/views/loadings/chat/ChatClassifier.vue';
 
-import TagGroup from '@/components/TagGroup';
+import TagGroup from '@/components/TagGroup.vue';
 
 export default {
   name: 'ChatClassifier',
