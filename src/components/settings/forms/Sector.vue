@@ -69,7 +69,7 @@
             autocomplete
             autocompleteIconLeft
             autocompleteClearOnFocus
-            @input="selectManager"
+            @update:modelValue="selectManager"
           />
         </div>
         <!-- <unnnic-button
@@ -144,9 +144,9 @@
 
         <section class="form-section__inputs">
           <div>
-            <span class="label-working-day">{{
-              $t('sector.managers.working_day.start.label')
-            }}</span>
+            <span class="label-working-day">
+              {{ $t('sector.managers.working_day.start.label') }}
+            </span>
             <input
               class="input-time"
               type="time"
@@ -157,13 +157,14 @@
             <span
               v-show="!this.validHour"
               style="font-size: 12px; color: #ff4545"
-              >{{ this.message }}</span
             >
+              {{ this.message }}
+            </span>
           </div>
           <div>
-            <span class="label-working-day">{{
-              $t('sector.managers.working_day.end.label')
-            }}</span>
+            <span class="label-working-day">
+              {{ $t('sector.managers.working_day.end.label') }}
+            </span>
             <input
               class="input-time"
               type="time"
@@ -181,12 +182,12 @@
         </section>
         <section class="form-section__handlers">
           <UnnnicButton
+            v-if="isEditing"
             :text="$t('delete_sector')"
             type="warning"
             iconLeft="delete"
             size="small"
-            @click="openModalDelete = true"
-            v-if="isEditing"
+            @click.stop="openModalDelete = true"
           />
         </section>
         <UnnnicModalNext
@@ -201,8 +202,8 @@
           :validateLabel="$t('confirm_typing') + ` &quot;${sector.name}&quot;`"
           :actionPrimaryLabel="$t('confirm')"
           :actionSecondaryLabel="$t('cancel')"
-          @click-action-primary="deleteSector(sector.uuid)"
-          @click-action-secondary="openModalDelete = false"
+          @clickActionPrimary="deleteSector(sector.uuid)"
+          @clickActionSecondary="openModalDelete = false"
         />
       </div>
     </section>
@@ -210,9 +211,10 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-import { unnnicCallAlert } from '@weni/unnnic-system';
-import SelectedMember from '@/components/settings/forms/SelectedMember';
+import { mapActions } from 'pinia';
+import { useSettings } from '@/store/modules/settings';
+import unnnic from '@weni/unnnic-system';
+import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 import Sector from '@/services/api/resources/settings/sector';
 
 export default {
@@ -230,7 +232,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    value: {
+    modelValue: {
       type: Object,
       default: () => ({}),
     },
@@ -269,17 +271,17 @@ export default {
 
     sector: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(sector) {
-        this.$emit('input', sector);
+        this.$emit('update:modelValue', sector);
       },
     },
   },
 
   methods: {
-    ...mapActions({
-      actionDeleteSector: 'settings/deleteSector',
+    ...mapActions(useSettings, {
+      actionDeleteSector: 'deleteSector',
     }),
 
     removeManager(managerUuid) {
@@ -369,7 +371,7 @@ export default {
         await this.actionDeleteSector(sectorUuid);
         this.openModalDelete = false;
         this.$router.push({ name: 'sectors' });
-        unnnicCallAlert({
+        unnnic.unnnicCallAlert({
           props: {
             text: this.$t('sector_deleted_success'),
             type: 'success',
@@ -379,7 +381,7 @@ export default {
       } catch (error) {
         console.log(error);
         this.openModalDelete = false;
-        unnnicCallAlert({
+        unnnic.unnnicCallAlert({
           props: {
             text: this.$t('sector_delete_error'),
             type: 'error',

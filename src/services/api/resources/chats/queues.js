@@ -1,10 +1,13 @@
 import http from '@/services/api/http';
+
 import { getProject } from '@/utils/config';
-import Profile from '@/store/modules/profile';
+
+import { useProfile } from '@/store/modules/profile';
 
 export default {
   async getListQueues() {
-    const { me } = Profile.state;
+    const profileStore = useProfile();
+    const { me } = profileStore;
     const userEmail = me.email;
     const project = getProject();
     const params = {

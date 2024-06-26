@@ -50,11 +50,11 @@
           />
         </div>
         <SelectedMember
-          v-if="agentSelected[0]"
-          :name="agentSelected[0].label"
-          :email="agentSelected[0].description"
-          :photoUrl="agentSelected[0].photoUrl"
-          @remove="agentSelected = []"
+          v-if="agentSelected[0]?.description"
+          :name="agentSelected[0]?.label"
+          :email="agentSelected[0]?.description"
+          :photoUrl="agentSelected[0]?.photoUrl"
+          @remove="handlingRemoveAgent"
         />
         <template #options>
           <UnnnicButton
@@ -67,7 +67,7 @@
             type="primary"
             :disabled="!agentSelected[0]"
             :loading="addAgentLoading"
-            @click="addAgent"
+            @click="handlingAddAgent"
           />
         </template>
       </UnnnicModal>
@@ -80,10 +80,13 @@ import moment from 'moment';
 
 import Project from '@/services/api/resources/settings/project';
 
-import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
-import SelectedMember from '@/components/settings/forms/SelectedMember';
-import { mapState } from 'vuex';
+import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
+import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 
+import { mapActions, mapState } from 'pinia';
+import { useDiscussions } from '@/store/modules/chats/discussions';
+
+import { useProfile } from '@/store/modules/profile';
 export default {
   name: 'DiscussionAbout',
 
@@ -99,7 +102,11 @@ export default {
     },
   },
 
-  data: () => {
+  unmounted() {
+    this.agentSelected = [];
+  },
+
+  data() {
     return {
       agentsInvolved: null,
 
@@ -109,10 +116,9 @@ export default {
       agentSelected: [],
     };
   },
+
   computed: {
-    ...mapState({
-      me: (state) => state.profile.me,
-    }),
+    ...mapState(useProfile, ['me']),
     discussionStartDate() {
       const { created_on } = this.details;
       const date = new Date(created_on);
@@ -122,6 +128,10 @@ export default {
   },
 
   methods: {
+    ...mapActions(useDiscussions, ['addAgent', 'getDiscussionAgents']),
+    handlingRemoveAgent() {
+      this.agentSelected = [{ value: '', label: 'Pesquisar agente' }];
+    },
     getUserFullName(user) {
       const { first_name, last_name } = user;
       return `${first_name} ${last_name}`;
@@ -141,7 +151,7 @@ export default {
       this.agentSelected = [];
     },
 
-    async addAgent() {
+    async handlingAddAgent() {
       const newAgent = this.agentSelected[0];
 
       if (!newAgent?.value) {
@@ -150,12 +160,9 @@ export default {
 
       try {
         this.addAgentLoading = true;
-        const responseAgent = await this.$store.dispatch(
-          'chats/discussions/addAgent',
-          {
-            user_email: newAgent.value,
-          },
-        );
+        const responseAgent = await this.addAgent({
+          user_email: newAgent.value,
+        });
 
         this.agentsInvolved.push(responseAgent);
 
@@ -199,9 +206,7 @@ export default {
     details: {
       immediate: true,
       async handler() {
-        const responseAgents = await this.$store.dispatch(
-          'chats/discussions/getDiscussionAgents',
-        );
+        const responseAgents = await this.getDiscussionAgents();
         if (responseAgents.results) {
           this.agentsInvolved = responseAgents.results;
         }

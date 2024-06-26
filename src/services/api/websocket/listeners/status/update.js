@@ -1,3 +1,5 @@
+import { useConfig } from '@/store/modules/config';
+
 export default (content, { app }) => {
   const localStorageStatus = localStorage.getItem('statusAgent');
   const { from, status } = content;
@@ -6,7 +8,8 @@ export default (content, { app }) => {
     if (from === 'system') {
       app.updateStatus(localStorageStatus);
     } else if (from === 'user') {
-      app.$store.dispatch('config/setStatus', status);
+      const configStore = useConfig();
+      configStore.setStatus(status);
       localStorage.setItem('statusAgent', status);
     }
   }

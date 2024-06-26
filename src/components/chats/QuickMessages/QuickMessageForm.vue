@@ -7,24 +7,24 @@
       {{ title }}
     </h1>
     <UnnnicInput
-      :value="quickMessage.title"
-      @input="quickMessage = { ...quickMessage, title: $event }"
+      v-model="quickMessage.title"
+      @update:model-value="quickMessage = { ...quickMessage, title: $event }"
       size="md"
       :label="$t('title')"
       :placeholder="$t('quick_messages.title_field_placeholder')"
     />
 
     <UnnnicInput
-      :value="quickMessage.shortcut"
-      @input="quickMessage = { ...quickMessage, shortcut: $event }"
+      v-model="quickMessage.shortcut"
+      @update:model-value="quickMessage = { ...quickMessage, shortcut: $event }"
       size="md"
       :placeholder="$t('quick_messages.shortcut_field_placeholder')"
       :label="$t('shortcut')"
     />
 
     <UnnnicTextArea
-      :value="quickMessage.text"
-      @input="quickMessage = { ...quickMessage, text: $event }"
+      v-model="quickMessage.text"
+      @update:model-value="quickMessage = { ...quickMessage, text: $event }"
       :label="$t('message')"
       :placeholder="$t('quick_messages.message_field_placeholder')"
       :maxLength="1000"
@@ -59,7 +59,7 @@ export default {
   name: 'QuickMessageForm',
 
   props: {
-    value: {
+    modelValue: {
       type: Object,
       default: null,
     },
@@ -96,10 +96,10 @@ export default {
     },
     quickMessage: {
       get() {
-        return this.value || {};
+        return this.modelValue || {};
       },
       set(quickMessage) {
-        this.$emit('input', quickMessage);
+        this.$emit('update:model-value', quickMessage);
       },
     },
   },

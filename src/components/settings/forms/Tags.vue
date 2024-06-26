@@ -50,13 +50,13 @@
 </template>
 
 <script>
-import TagGroup from '@/components/TagGroup';
+import TagGroup from '@/components/TagGroup.vue';
 
 export default {
   name: 'FormTags',
 
   props: {
-    value: {
+    modelValue: {
       type: Array,
       default: () => [],
     },
@@ -73,10 +73,10 @@ export default {
   computed: {
     tags: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(tags) {
-        this.$emit('input', tags);
+        this.$emit('update:modelValue', tags);
       },
     },
   },

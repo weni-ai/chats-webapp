@@ -13,7 +13,7 @@
       class="quick-message-card"
     >
       <template
-        slot="actions"
+        #actions
         v-if="withActions"
       >
         <UnnnicDropdown>
@@ -62,7 +62,7 @@
         </UnnnicDropdown>
       </template>
 
-      <template slot="description">
+      <template #description>
         {{ quickMessage.text }}
       </template>
     </UnnnicChatText>

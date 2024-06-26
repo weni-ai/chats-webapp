@@ -38,7 +38,10 @@ import isMobile from 'is-mobile';
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
 
-import ChatClassifier from '@/components/chats/ChatClassifier';
+import ChatClassifier from '@/components/chats/ChatClassifier.vue';
+
+import { mapActions } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
 
 export default {
   components: {
@@ -73,6 +76,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(useRooms, ['removeRoom']),
     async classifyRoom() {
       this.isLoadingTags = true;
       let hasNext = false;
@@ -100,7 +104,7 @@ export default {
 
       const tags = this.tags.map((tag) => tag.uuid);
       await Room.close(uuid, tags);
-      this.$store.dispatch('chats/rooms/removeRoom', uuid);
+      this.removeRoom(uuid);
 
       this.isLoadingCloseRoom = false;
 

@@ -57,16 +57,19 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useConfig } from '@/store/modules/config';
+import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useRooms } from '@/store/modules/chats/rooms';
 
-import TheCardGroups from '@/layouts/ChatsLayout/components/TheCardGroups';
-import FlowsTrigger from '@/layouts/ChatsLayout/components/FlowsTrigger';
+import TheCardGroups from '@/layouts/ChatsLayout/components/TheCardGroups/index.vue';
+import FlowsTrigger from '@/layouts/ChatsLayout/components/FlowsTrigger/index.vue';
 
-import MobileChat from '@/views/chats/Mobile/MobileChat';
-import MobileClosedChats from '@/views/chats/Mobile/MobileClosedChats';
+import MobileChat from '@/views/chats/Mobile/MobileChat.vue';
+import MobileClosedChats from '@/views/chats/Mobile/MobileClosedChats.vue';
 
 import ModalPreferences from '@/components/chats/Mobile/ModalPreferences.vue';
-import QuickMessages from '@/components/chats/QuickMessages';
+import QuickMessages from '@/components/chats/QuickMessages/index.vue';
 
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 import { resetChats } from '@/utils/chats';
@@ -94,10 +97,14 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      projectName: (state) => state.config.project.name,
-      room: (state) => state.chats.rooms.activeRoom,
-      discussion: (state) => state.chats.discussions.activeDiscussion,
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
+    }),
+    ...mapState(useConfig, {
+      projectName: (store) => store.project.name,
+    }),
+    ...mapState(useDiscussions, {
+      discussion: (store) => store.activeDiscussion,
     }),
 
     navs() {

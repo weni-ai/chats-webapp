@@ -33,13 +33,17 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'pinia';
+
+import { useConfig } from '@/store/modules/config';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDiscussions } from '@/store/modules/chats/discussions';
 
 import History from '@/services/api/resources/chats/history';
 
-import ClosedChatsRoomsTable from '@/views/chats/ClosedChats/RoomsTable';
+import ClosedChatsRoomsTable from '@/views/chats/ClosedChats/RoomsTable.vue';
 import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
-import ContactInfo from '@/components/chats/ContactInfo';
+import ContactInfo from '@/components/chats/ContactInfo/index.vue';
 
 export default {
   name: 'MobileClosedChats',
@@ -66,9 +70,9 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      room: (state) => state.chats.rooms.activeRoom,
-      project: (state) => state.config.project,
+    ...mapState(useConfig, ['project']),
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
     }),
 
     headerSubtitle() {
@@ -84,17 +88,20 @@ export default {
   },
 
   methods: {
+    ...mapActions(useRooms, ['setActiveRoom']),
+    ...mapActions(useDiscussions, ['setActiveDiscussion']),
+
     emitClose() {
       this.$emit('close');
     },
 
     async handleRoom(room) {
-      await this.$store.dispatch('chats/rooms/setActiveRoom', room);
+      await this.setActiveRoom(room);
     },
 
     async resetChat() {
       this.handleRoom(null);
-      await this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
+      await this.setActiveDiscussion(null);
     },
 
     closeHistory() {

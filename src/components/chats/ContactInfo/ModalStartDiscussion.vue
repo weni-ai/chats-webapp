@@ -1,6 +1,5 @@
 <template>
   <UnnnicModal
-    v-if="showModal"
     @close="close"
     class="start-discussion-form__modal"
     :text="$t('discussions.start_discussion.title')"
@@ -66,20 +65,16 @@
 </template>
 
 <script>
+import { mapActions } from 'pinia';
+import { useDiscussions } from '@/store/modules/chats/discussions';
+
 import Discussion from '@/services/api/resources/chats/discussion';
 import Queue from '@/services/api/resources/settings/queue';
 
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import unnnic from '@weni/unnnic-system';
 
 export default {
   name: 'ModalStartDiscussion',
-
-  props: {
-    showModal: {
-      type: Boolean,
-      required: true,
-    },
-  },
 
   data: () => {
     return {
@@ -117,20 +112,20 @@ export default {
   },
 
   methods: {
+    ...mapActions(useDiscussions, {
+      createDiscussion: 'create',
+    }),
     close() {
       this.$emit('close');
     },
 
     async startDiscussion() {
       this.startDiscussionLoading = true;
-      const responseDiscussion = await this.$store.dispatch(
-        'chats/discussions/create',
-        {
-          queue: this.queue[0].value || '',
-          subject: this.subject,
-          initial_message: this.message,
-        },
-      );
+      const responseDiscussion = await this.createDiscussion({
+        queue: this.queue[0].value || '',
+        subject: this.subject,
+        initial_message: this.message,
+      });
 
       if (this.$route.path !== 'discussion' && responseDiscussion.uuid) {
         this.$router.push({
@@ -159,7 +154,7 @@ export default {
           break;
       }
 
-      unnnicCallAlert({
+      unnnic.unnnicCallAlert({
         props: {
           text: errorText,
           type: 'error',
@@ -182,6 +177,7 @@ export default {
         results.forEach(({ uuid, name }) =>
           newSectors.push({ value: uuid, label: name }),
         );
+
         this.sectorsToSelect = newSectors;
       } catch (error) {
         console.error('The sectors could not be loaded at this time.', error);

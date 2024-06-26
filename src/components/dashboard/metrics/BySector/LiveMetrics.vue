@@ -21,9 +21,11 @@
 </template>
 
 <script>
-import CardGroupMetrics from '../../CardGroupMetrics';
-import GeneralMetrics from '../../GeneralMetrics';
-import TableMetrics from '../../TableMetrics';
+import { mapState } from 'pinia';
+import { useSettings } from '@/store/modules/settings';
+import CardGroupMetrics from '../../CardGroupMetrics.vue';
+import GeneralMetrics from '../../GeneralMetrics.vue';
+import TableMetrics from '../../TableMetrics.vue';
 
 export default {
   name: 'LiveMetricsBySector',
@@ -125,8 +127,9 @@ export default {
   }),
 
   computed: {
+    ...mapState(useSettings, ['sectors']),
     queues() {
-      const { queues } = this.$store.state.settings.sectors[0];
+      const { queues } = this.sectors[0];
 
       return queues.map((queue) => ({
         id: queue.id,

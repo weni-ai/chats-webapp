@@ -42,6 +42,6 @@ export default class Socket {
   }
 
   send(message) {
-    this.#ws.send(JSON.stringify(message));
+    this.ws.send(JSON.stringify(message));
   }
 }

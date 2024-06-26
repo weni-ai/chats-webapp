@@ -37,13 +37,15 @@
 </template>
 
 <script>
+import { mapState } from 'pinia';
+import { useConfig } from '@/store/modules/config';
+
 import Sector from '@/services/api/resources/settings/sector';
-import { mapState } from 'vuex';
 
-import DashboardLayout from '@/layouts/DashboardLayout';
+import DashboardLayout from '@/layouts/DashboardLayout/index.vue';
 
-import DashboardFilters from '@/components/dashboard/Filters';
-import HistoryMetricsBySector from '@/components/dashboard/metrics/BySector/HistoryMetrics';
+import DashboardFilters from '@/components/dashboard/Filters.vue';
+import HistoryMetricsBySector from '@/components/dashboard/metrics/BySector/HistoryMetrics.vue';
 
 export default {
   name: 'DashboardManager',
@@ -75,9 +77,7 @@ export default {
     },
   },
   computed: {
-    ...mapState({
-      project: (state) => state.config.project,
-    }),
+    ...mapState(useConfig, ['project']),
     visualization() {
       const filter = this.filters;
       return filter;

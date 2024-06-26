@@ -31,10 +31,10 @@
 <script>
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
-import ModalProgressBarFalse from '@/components/ModalProgressBarFalse';
+import ModalProgressBarFalse from '@/components/ModalProgressBarFalse.vue';
 
-import SelectFlow from './SelectFlow';
-import SendFlowButton from './SendFlowButton';
+import SelectFlow from './SelectFlow.vue';
+import SendFlowButton from './SendFlowButton.vue';
 
 export default {
   name: 'SendFlow',

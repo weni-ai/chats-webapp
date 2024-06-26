@@ -2,11 +2,15 @@ import SoundNotification from '@/services/api/websocket/soundNotification';
 import { sendWindowNotification } from '@/utils/notifications';
 import { isValidJson } from '@/utils/messages';
 
-export default async (message, { app }) => {
-  const { rooms, activeRoom } = app.$store.state.chats.rooms;
-  const findRoom = rooms.find((room) => room.uuid === message.room);
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
-  app.$store.dispatch('chats/rooms/bringRoomFront', findRoom);
+export default async (message, { app }) => {
+  const roomsStore = useRooms();
+  const roomMessagesStore = useRoomMessages();
+  const { rooms, activeRoom } = roomsStore;
+  const findRoom = rooms.find((room) => room.uuid === message.room);
+  roomsStore.bringRoomFront(findRoom);
   if (findRoom) {
     if (app.me.email === message.user?.email) {
       return;
@@ -29,12 +33,12 @@ export default async (message, { app }) => {
       app.$route.params.viewedAgent && activeRoom?.uuid === message.room;
 
     if (isCurrentRoom || isViewModeCurrentRoom) {
-      app.$store.dispatch('chats/roomMessages/addMessage', message);
+      roomMessagesStore.addMessage(message);
     }
 
     if (isValidJson(message.text)) return;
 
-    app.$store.dispatch('chats/rooms/addNewMessagesByRoom', {
+    roomsStore.addNewMessagesByRoom({
       room: message.room,
       message: {
         created_on: message.created_on,

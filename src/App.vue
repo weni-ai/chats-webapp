@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'pinia';
 
 import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
@@ -13,9 +13,16 @@ import Project from './services/api/resources/settings/project';
 import WS from '@/services/api/websocket/setup';
 import * as notifications from '@/utils/notifications';
 
+import { useConfig } from './store/modules/config';
+import { useProfile } from './store/modules/profile';
+import { useQuickMessages } from './store/modules/chats/quickMessages';
+import { useQuickMessageShared } from './store/modules/chats/quickMessagesShared';
+import { useRooms } from './store/modules/chats/rooms';
+import { useDashboard } from './store/modules/dashboard';
+
 import { getProject } from '@/utils/config';
 
-const moment = require('moment');
+import moment from 'moment';
 
 export default {
   name: 'App',
@@ -43,15 +50,16 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      activeRoom: (state) => state.chats.rooms.activeRoom,
-      me: (state) => state.profile.me,
-      viewedAgent: (state) => state.dashboard.viewedAgent,
-      nextQuickMessages: (state) => state.chats.quickMessages.nextQuickMessages,
-      nextQuickMessagesShared: (state) =>
-        state.chats.quickMessagesShared.nextQuickMessagesShared,
-      appToken: (state) => state.config.token,
-      appProject: (state) => state.config.project.uuid,
+    ...mapState(useRooms, ['activeRoom']),
+    ...mapState(useProfile, ['me']),
+    ...mapState(useDashboard, ['viewedAgent']),
+    ...mapState(useQuickMessages, ['nextQuickMessages']),
+    ...mapState(useQuickMessageShared, ['nextQuickMessagesShared']),
+    ...mapState(useConfig, {
+      userStatus: 'status',
+      project: 'project',
+      appToken: 'token',
+      appProject: (store) => store.project.uuid,
     }),
 
     configsForInitializeWebSocket() {
@@ -98,22 +106,30 @@ export default {
   },
 
   methods: {
+    ...mapActions(useConfig, ['setStatus', 'setProject']),
+    ...mapActions(useProfile, ['setMe']),
+    ...mapActions(useQuickMessages, {
+      getAllQuickMessages: 'getAll',
+    }),
+    ...mapActions(useQuickMessageShared, {
+      getAllQuickMessagesShared: 'getAll',
+    }),
     restoreLocalStorageUserStatus() {
       const userStatus = localStorage.getItem('statusAgent');
       if (!['OFFLINE', 'ONLINE'].includes(userStatus)) {
         localStorage.setItem('statusAgent', 'OFFLINE');
       }
-      this.$store.dispatch('config/setStatus', userStatus);
+      this.setStatus(userStatus);
     },
 
     async getUser() {
       const user = await Profile.me();
-      this.$store.commit('profile/setMe', user);
+      this.setMe(user);
     },
 
     async getProject() {
       const { data: project } = await Project.getInfo();
-      this.$store.dispatch('config/setProject', {
+      this.setProject({
         ...project,
         uuid: this.appProject || getProject(),
       });
@@ -122,7 +138,7 @@ export default {
     async loadQuickMessages() {
       this.loading = true;
       try {
-        await this.$store.dispatch('chats/quickMessages/getAll');
+        await this.getAllQuickMessages();
       } finally {
         this.loading = false;
       }
@@ -135,7 +151,7 @@ export default {
     async loadQuickMessagesShared() {
       this.loading = true;
       try {
-        await this.$store.dispatch('chats/quickMessagesShared/getAll');
+        await this.getAllQuickMessagesShared();
       } finally {
         this.loading = false;
       }
@@ -175,7 +191,7 @@ export default {
 
     async getUserStatus() {
       const userStatus = localStorage.getItem('statusAgent');
-      const projectUuid = this.$store.state.config.project.uuid;
+      const projectUuid = this.project.uuid;
       const {
         data: { connection_status: responseStatus },
       } = await Profile.status({
@@ -194,10 +210,10 @@ export default {
       const {
         data: { connection_status },
       } = await Profile.updateStatus({
-        projectUuid: this.$store.state.config.project.uuid,
+        projectUuid: this.project.uuid,
         status,
       });
-      this.$store.state.config.status = connection_status;
+      useConfig().$patch({ status: connection_status });
       localStorage.setItem('statusAgent', connection_status);
     },
 

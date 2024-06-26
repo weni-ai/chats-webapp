@@ -1,6 +1,6 @@
 <template>
   <UnnnicCollapse
-    active
+    v-model="isCollapseOpened"
     size="md"
   >
     <template #header>
@@ -17,7 +17,7 @@
         {{ label }}
       </label>
     </template>
-    <template v-if="rooms">
+    <template v-if="rooms && rooms.length">
       <RoomCard
         v-for="room in rooms"
         :key="room.uuid"
@@ -46,8 +46,12 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
-import RoomCard from './RoomCard';
+import { mapActions, mapState } from 'pinia';
+
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDiscussions } from '@/store/modules/chats/discussions';
+
+import RoomCard from './RoomCard.vue';
 
 export default {
   name: 'CardGroup',
@@ -87,21 +91,15 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      newMessagesByDiscussion(state) {
-        return state.chats.discussions.newMessagesByDiscussion;
-      },
-      activeDiscussionId: (state) =>
-        state.chats.discussions.activeDiscussion?.uuid,
-      selectedRoomsToTransfer: (state) =>
-        state.chats.rooms.selectedRoomsToTransfer,
+    ...mapState(useRooms, ['selectedRoomsToTransfer']),
+    ...mapState(useDiscussions, {
+      newMessagesByDiscussion: 'newMessagesByDiscussion',
+      activeDiscussionId: (store) => store.activeDiscussion?.uuid,
     }),
   },
 
   methods: {
-    ...mapActions({
-      setSelectedRoomsToTransfer: 'chats/rooms/setSelectedRoomsToTransfer',
-    }),
+    ...mapActions(useRooms, ['setSelectedRoomsToTransfer']),
     open(room) {
       this.$emit('open', room);
     },
@@ -166,7 +164,7 @@ export default {
     :deep(.unnnic-checkbox) {
       // !important at fill is needed here because the
       // unnnicCollapse header is applying an unwanted style when hovering
-      svg .primary {
+      .primary {
         fill: $unnnic-color-brand-weni !important;
       }
     }

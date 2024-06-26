@@ -90,16 +90,16 @@
 
         <section v-show="!isContactsLoading">
           <template v-for="(element, letter) in letters">
+            <!-- eslint-disable-next-line vue/valid-v-for -->
             <UnnnicCollapse
+              v-model="letterColapse[letter]"
               class="flows-trigger__groups__group"
-              :key="letter"
               :title="
                 $t('flows_trigger.letter_group', {
                   letter,
                   length: element.length,
                 })
               "
-              active
             >
               <UnnnicChatsContact
                 v-for="item in element"
@@ -175,18 +175,20 @@
 
 <script>
 import isMobile from 'is-mobile';
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
 
-import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
+import { useConfig } from '@/store/modules/config';
+
+import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
 import ModalListTriggeredFlows from '@/components/chats/FlowsTrigger/ModalListTriggeredFlows.vue';
 import ModalAddNewContact from '@/components/chats/FlowsTrigger/ModalAddNewContact.vue';
 import ModalSendFlow from '@/components/chats/FlowsTrigger/ModalSendFlow.vue';
 import ModalRemoveSelectedContacts from '@/components/chats/FlowsTrigger/ModalRemoveSelectedContacts.vue';
 import SelectedContactsSection from '@/components/chats/FlowsTrigger/SelectedContactsSection.vue';
-import SendFlow from '@/components/chats/FlowsTrigger/SendFlow';
+import SendFlow from '@/components/chats/FlowsTrigger/SendFlow.vue';
 
-import FlowsContactsLoading from '@/views/loadings/FlowsTrigger/FlowsContactsLoading';
+import FlowsContactsLoading from '@/views/loadings/FlowsTrigger/FlowsContactsLoading.vue';
 
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import FlowsAPI from '@/services/api/resources/flows/flowsTrigger.js';
@@ -219,6 +221,8 @@ export default {
   },
 
   data: () => ({
+    letterColapse: {},
+
     isContactsLoading: true,
 
     search: '',
@@ -242,8 +246,8 @@ export default {
   }),
 
   computed: {
-    ...mapState({
-      projectName: (state) => state.config.project.name,
+    ...mapState(useConfig, {
+      projectName: (store) => store.project.name,
     }),
 
     letters() {
@@ -261,9 +265,13 @@ export default {
             .replace(/[\u0300-\u036f]/g, '');
           letters[removeAccent] = letters[removeAccent] || [];
           letters[removeAccent].push(element);
+          if (this.letterColapse[removeAccent] === undefined) {
+            this.letterColapse[removeAccent] = true;
+          }
         });
       return letters;
     },
+
     searchGroup() {
       return this.listOfGroups.filter((item) =>
         item.name.toUpperCase().includes(this.search.toUpperCase()),

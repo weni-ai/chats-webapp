@@ -11,7 +11,8 @@
   />
 </template>
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
 
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger';
 
@@ -38,8 +39,8 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      room: (state) => state.chats.rooms.activeRoom,
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
     }),
   },
 

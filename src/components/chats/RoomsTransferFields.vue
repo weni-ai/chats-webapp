@@ -9,8 +9,8 @@
         :label="$t('queue')"
       />
       <UnnnicSelectSmart
-        data-testid="select-queue"
         v-model="selectedQueue"
+        data-testid="select-queue"
         :size="size"
         :options="queues"
         autocomplete
@@ -24,8 +24,8 @@
         :label="$t('agent')"
       />
       <UnnnicSelectSmart
-        data-testid="select-agent"
         v-model="selectedAgent"
+        data-testid="select-agent"
         :size="size"
         :disabled="isAgentsFieldDisabled"
         :options="agents"
@@ -41,7 +41,12 @@
 import isMobile from 'is-mobile';
 
 import Room from '@/services/api/resources/chats/room';
-import { mapActions, mapState } from 'vuex';
+
+import { mapActions, mapState } from 'pinia';
+
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useProfile } from '@/store/modules/profile';
+
 import Queue from '@/services/api/resources/settings/queue';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 export default {
@@ -79,11 +84,8 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      selectedRoomsToTransfer: (state) =>
-        state.chats.rooms.selectedRoomsToTransfer,
-      contactToTransfer: (state) => state.chats.rooms.contactToTransfer,
-    }),
+    ...mapState(useRooms, ['selectedRoomsToTransfer', 'contactToTransfer']),
+    ...mapState(useProfile, ['me']),
 
     queuesDefault() {
       return [{ value: '', label: this.$t('select_queue') }];
@@ -103,10 +105,10 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      setSelectedRoomsToTransfer: 'chats/rooms/setSelectedRoomsToTransfer',
-      setContactToTransfer: 'chats/rooms/setContactToTransfer',
-    }),
+    ...mapActions(useRooms, [
+      'setSelectedRoomsToTransfer',
+      'setContactToTransfer',
+    ]),
 
     async getQueues() {
       const newQueues = await Queue.listByProject();
@@ -126,7 +128,7 @@ export default {
       const newAgents = await Queue.agentsToTransfer(queueUuid);
 
       const treatedAgents = newAgents
-        .filter((agent) => agent.email !== this.$store.state.profile.me.email)
+        .filter((agent) => agent.email !== this.me.email)
         .map(({ first_name, last_name, email }) => ({
           label: [first_name, last_name].join(' ').trim() || email,
           value: email,
@@ -174,12 +176,12 @@ export default {
     },
 
     transferSuccess() {
-      this.$emit('transfer-complete', 'success');
       this.callSuccessAlert();
+      this.$emit('transfer-complete', 'success');
     },
     transferError() {
-      this.$emit('transfer-complete', 'error');
       this.callErrorAlert();
+      this.$emit('transfer-complete', 'error');
     },
 
     callSuccessAlert() {

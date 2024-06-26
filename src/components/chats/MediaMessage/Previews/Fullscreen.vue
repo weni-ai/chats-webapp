@@ -36,12 +36,13 @@
       @mousedown="startPan"
       @mousemove="pan"
       @mouseup="endPan"
+      @click.stop
     >
       <div
         class="media__wrapper"
         ref="mediaWrapper"
-        @click.stop
         :style="mediaStyle"
+        @click.stop
       >
         <slot />
       </div>
@@ -49,7 +50,7 @@
 
     <footer
       class="controls"
-      @click.stop
+      @click.prevent
     >
       <FullscreenControl
         @click="previous"
@@ -64,7 +65,7 @@
 </template>
 
 <script>
-import FullscreenControl from './FullscreenControl';
+import FullscreenControl from './FullscreenControl.vue';
 
 export default {
   name: 'FullscreenPreview',
@@ -398,15 +399,13 @@ export default {
     .media__wrapper {
       max-height: 100%;
       max-width: 100%;
-
       display: flex;
       justify-content: center;
-      img,
-      video {
+      aspect-ratio: 1/1;
+      :deep(img, video) {
         max-height: 100%;
         max-width: 100%;
         object-fit: contain;
-
         user-select: none;
         pointer-events: none;
         transition: transform 0.3s ease;

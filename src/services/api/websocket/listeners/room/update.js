@@ -1,12 +1,15 @@
 import SoundNotification from '@/services/api/websocket/soundNotification';
 
+import { useRooms } from '@/store/modules/chats/rooms';
+
 export default async (room, { app }) => {
-  const isExistingRoom = app.$store.state.chats.rooms.rooms.find(
+  const roomsStore = useRooms();
+  const isExistingRoom = roomsStore.rooms.find(
     (mappedRoom) => mappedRoom.uuid === room.uuid,
   );
 
   if (!isExistingRoom) {
-    app.$store.dispatch('chats/rooms/addRoom', room);
+    roomsStore.addRoom(room);
 
     if (room.transfer_history?.action === 'transfer') {
       const notification = new SoundNotification('achievement-confirmation');
@@ -17,8 +20,7 @@ export default async (room, { app }) => {
       notification.notify();
     }
   }
-
-  app.$store.dispatch('chats/rooms/updateRoom', {
+  roomsStore.updateRoom({
     room,
     userEmail: app.me.email,
     routerReplace: () => app.$router.replace({ name: 'home' }),
@@ -26,7 +28,7 @@ export default async (room, { app }) => {
   });
 
   if (room.unread_msgs === 0) {
-    app.$store.dispatch('chats/rooms/resetNewMessagesByRoom', {
+    roomsStore.resetNewMessagesByRoom({
       room: room.uuid,
     });
   }
