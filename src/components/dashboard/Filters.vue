@@ -52,6 +52,7 @@
         v-model="filterDate"
         position="right"
         :inputFormat="$t('date_format')"
+        class="dashboard-filters__input__date-picker"
       />
     </div>
 
@@ -367,7 +368,10 @@ export default {
     }
   }
 
-  &__date-picker {
+  &__input__date-picker {
+    :deep(.input) {
+      min-width: 230px;
+    }
     display: grid;
   }
 
