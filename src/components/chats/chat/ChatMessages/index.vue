@@ -184,7 +184,9 @@
 </template>
 
 <script>
-// import { mapActions, mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useDashboard } from '@/store/modules/dashboard';
+
 import moment from 'moment';
 
 import { isMessageFromCurrentUser } from '@/utils/messages';
@@ -311,6 +313,7 @@ export default {
   },
 
   computed: {
+    ...mapState(useDashboard, ['viewedAgent']),
     medias() {
       return this.messages
         .map((el) => el.media)
@@ -393,7 +396,7 @@ export default {
       return isMessageFromCurrentUser(message) ||
         this.isMessageByBot(message) ||
         (!message.discussion && !message.contact) ||
-        message.user?.email === this.$store.state.dashboard.viewedAgent.email
+        message.user?.email === this.viewedAgent.email
         ? 'sent'
         : 'received';
     },

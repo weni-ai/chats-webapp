@@ -46,7 +46,11 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState } from 'pinia';
+
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDiscussions } from '@/store/modules/chats/discussions';
+
 import RoomCard from './RoomCard.vue';
 
 export default {
@@ -87,21 +91,15 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      newMessagesByDiscussion(state) {
-        return state.chats.discussions.newMessagesByDiscussion;
-      },
-      activeDiscussionId: (state) =>
-        state.chats.discussions.activeDiscussion?.uuid,
-      selectedRoomsToTransfer: (state) =>
-        state.chats.rooms.selectedRoomsToTransfer,
+    ...mapState(useRooms, ['selectedRoomsToTransfer']),
+    ...mapState(useDiscussions, {
+      newMessagesByDiscussion: 'newMessagesByDiscussion',
+      activeDiscussionId: (store) => store.activeDiscussion?.uuid,
     }),
   },
 
   methods: {
-    ...mapActions({
-      setSelectedRoomsToTransfer: 'chats/rooms/setSelectedRoomsToTransfer',
-    }),
+    ...mapActions(useRooms, ['setSelectedRoomsToTransfer']),
     open(room) {
       this.$emit('open', room);
     },

@@ -59,7 +59,9 @@
 </template>
 <script>
 import vClickOutside from 'v-click-outside';
-import { mapActions, mapState } from 'vuex';
+
+import { mapActions, mapState } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
 
 export default {
   name: 'CoPilot',
@@ -89,18 +91,13 @@ export default {
     clickOutside: vClickOutside.directive,
   },
   computed: {
-    ...mapState({
-      copilotSuggestion: (state) => state.chats.rooms.copilotSuggestion,
-    }),
+    ...mapState(useRooms, ['copilotSuggestion']),
     isError() {
       return !this.isLoading && !this.copilotSuggestion;
     },
   },
   methods: {
-    ...mapActions({
-      getCopilotSuggestion: 'chats/rooms/getCopilotSuggestion',
-      clearCopilotSuggestion: 'chats/rooms/clearCopilotSuggestion',
-    }),
+    ...mapActions(useRooms, ['getCopilotSuggestion', 'clearCopilotSuggestion']),
     close() {
       this.$emit('close');
     },

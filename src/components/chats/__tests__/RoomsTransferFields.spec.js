@@ -1,5 +1,5 @@
 import { createLocalVue, mount } from '@vue/test-utils';
-import Vuex from 'vuex';
+import Vuex from 'pinia';
 import { unnnicLabel, unnnicSelectSmart } from '@weni/unnnic-system';
 import i18n from '@/plugins/i18n';
 

@@ -39,8 +39,11 @@
 
 <script>
 import isMobile from 'is-mobile';
-import { mapState } from 'vuex';
 
+import { mapActions, mapState } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useConfig } from '@/store/modules/config';
 import History from '@/services/api/resources/chats/history';
 
 import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
@@ -92,10 +95,8 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,
-      project: (state) => state.config.project,
-    }),
+    ...mapState(useConfig, ['project']),
+    ...mapState(useRoomMessages, ['roomMessagesNext']),
 
     closedChatsHeaderSize() {
       return this.isMobile ? 'small' : 'large';
@@ -103,6 +104,9 @@ export default {
   },
 
   methods: {
+    ...mapActions(useRooms, ['setActiveRoom']),
+    ...mapActions(useRoomMessages, ['getRoomMessages', 'resetRoomMessages']),
+
     backToHome() {
       this.$router.push({ name: 'home' });
     },
@@ -129,7 +133,7 @@ export default {
         //
         // if (previousRoom) {
         //   const responseRoom = await History.getHistoryContactRoom({ room: previousRoom.uuid });
-        //   await this.$store.dispatch('chats/rooms/setActiveRoom', responseRoom);
+        //   await this.setActiveRoom(responseRoom);
         //   this.getHistoryContactRoomMessages();
         //   this.selectedRoom = responseRoom;
         // }
@@ -137,9 +141,7 @@ export default {
     },
 
     async getHistoryContactRoomMessages() {
-      await this.$store.dispatch('chats/roomMessages/getRoomMessages', {
-        concat: true,
-      });
+      await this.getRoomMessages();
     },
   },
 
@@ -148,8 +150,8 @@ export default {
       immediate: true,
       async handler(roomId) {
         if (!roomId) {
-          await this.$store.dispatch('chats/rooms/setActiveRoom', null);
-          await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
+          await this.setActiveRoom(null);
+          await this.resetRoomMessages();
         }
         if (roomId) {
           this.isLoadingSelectedRoom = true;
@@ -169,10 +171,7 @@ export default {
             path: 'closed-rooms/:roomId',
           });
           this.selectedRoom = responseRoom;
-          await this.$store.dispatch(
-            'chats/rooms/setActiveRoom',
-            this.selectedRoom,
-          );
+          await this.setActiveRoom(this.selectedRoom);
           await this.getHistoryContactRoomMessages();
           const responseRoomUuids = await History.getHistoryContactRoomsUuids({
             external_id: responseRoom.contact.external_id,

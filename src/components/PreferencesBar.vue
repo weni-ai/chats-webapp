@@ -44,12 +44,10 @@
       <div class="label">Status</div>
 
       <UnnnicSwitch
-        :value="$store.state.config.status === 'ONLINE'"
+        :value="status === 'ONLINE'"
         size="small"
         :textRight="
-          $store.state.config.status === 'ONLINE'
-            ? $t('status.online')
-            : $t('status.offline')
+          status === 'ONLINE' ? $t('status.online') : $t('status.offline')
         "
         @input="updateStatus"
         :disabled="loadingStatus"
@@ -99,7 +97,8 @@ import Profile from '@/services/api/resources/profile';
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 
 import unnnic from '@weni/unnnic-system';
-
+import { mapState } from 'pinia';
+import { useConfig } from '@/store/modules/config';
 export default {
   props: {
     dashboard: {
@@ -119,6 +118,10 @@ export default {
       sound: false,
       statusAgent: localStorage.getItem('statusAgent'),
     };
+  },
+
+  computed: {
+    ...mapState(useConfig, ['status', 'project']),
   },
 
   async created() {
@@ -147,7 +150,7 @@ export default {
       const {
         data: { connection_status },
       } = await Profile.updateStatus({
-        projectUuid: this.$store.state.config.project.uuid,
+        projectUuid: this.project.uuid,
         status: online ? 'ONLINE' : 'OFFLINE',
       });
 
@@ -159,9 +162,9 @@ export default {
 
     async getStatus() {
       const response = await Profile.status({
-        projectUuid: this.$store.state.config.project.uuid,
+        projectUuid: this.project.uuid,
       });
-      this.$store.state.config.status = response.data.connection_status;
+      this.status = response.data.connection_status;
     },
 
     changeSound() {

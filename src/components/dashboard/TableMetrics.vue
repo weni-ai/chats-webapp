@@ -58,8 +58,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-
+import { mapState } from 'pinia';
+import { useProfile } from '@/store/modules/profile';
 export default {
   props: {
     headers: {
@@ -81,9 +81,7 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      me: (state) => state.profile.me,
-    }),
+    ...mapState(useProfile, ['me']),
   },
 
   methods: {

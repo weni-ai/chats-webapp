@@ -1,5 +1,8 @@
 import mime from 'mime-types';
 
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
+
 export function getSupportedChatMediaFormats(type = 'all') {
   const mediaFormatsMap = {
     image: ['.png', '.jpeg', '.jpg', '.mp4'],
@@ -12,15 +15,9 @@ export function getSupportedChatMediaFormats(type = 'all') {
  * Sends media to specific active chat and provides progress feedback.
  * @param {File[]} payload.files - Array of files to be sent.
  * @param {string} payload.routeName - Name of the route to determine the type of request ('room' or 'discussion').
- * @param {Function} payload.storeDispatch - Function to access the $store dispatch.
  * @param {Function} payload.progressCallback - Callback function to report progress.
  */
-export async function sendMediaMessage({
-  files,
-  routeName,
-  storeDispatch,
-  progressCallback,
-}) {
+export async function sendMediaMessage({ files, routeName, progressCallback }) {
   try {
     const loadingFiles = {};
     const updateLoadingFiles = (messageUuid, progress) => {
@@ -30,15 +27,18 @@ export async function sendMediaMessage({
         Object.keys(loadingFiles).length;
       progressCallback(totalProgress);
     };
-    const actionType =
-      routeName === 'discussion'
-        ? 'chats/discussionMessages/sendDiscussionMedias'
-        : 'chats/roomMessages/sendRoomMedias';
 
-    await storeDispatch(actionType, {
+    const mediaPayload = {
       files,
       updateLoadingFiles,
-    });
+    };
+
+    if (routeName === 'discussion') {
+      await useDiscussionMessages().sendDiscussionMedias(mediaPayload);
+    } else {
+      await useRoomMessages().sendRoomMedias(mediaPayload);
+    }
+
     progressCallback(undefined);
   } catch (error) {
     console.error('Error while sending file message:', error);

@@ -29,7 +29,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDiscussions } from '@/store/modules/chats/discussions';
 
 import { resetChats } from '@/utils/chats';
 
@@ -80,9 +82,11 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      room: (state) => state.chats.rooms.activeRoom,
-      discussion: (state) => state.chats.discussions.activeDiscussion,
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
+    }),
+    ...mapState(useDiscussions, {
+      discussion: (store) => store.activeDiscussion,
     }),
   },
 

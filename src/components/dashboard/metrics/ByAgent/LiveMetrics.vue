@@ -22,6 +22,8 @@
 
 <script>
 // import DashboardManagerApi from '@/services/api/resources/dashboard/dashboardManager';
+import { mapState } from 'pinia';
+import { useSettings } from '@/store/modules/settings';
 import CardGroupMetrics from '../../CardGroupMetrics.vue';
 import GeneralMetrics from '../../GeneralMetrics.vue';
 import TableMetrics from '../../TableMetrics.vue';
@@ -115,8 +117,9 @@ export default {
   }),
 
   computed: {
+    ...mapState(useSettings, ['sectors']),
     queues() {
-      const { queues } = this.$store.state.settings.sectors[0];
+      const { queues } = this.sectors[0];
 
       return queues.map((queue) => ({
         id: queue.id,

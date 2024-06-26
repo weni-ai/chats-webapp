@@ -43,9 +43,12 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
 
 import QuickMessageCard from './QuickMessageCard.vue';
+
+import { useQuickMessages } from '@/store/modules/chats/quickMessages';
+import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 
 export default {
   name: 'QuickMessagesList',
@@ -65,11 +68,8 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      quickMessages: (state) => state.chats.quickMessages.quickMessages,
-      quickMessagesShared: (state) =>
-        state.chats.quickMessagesShared.quickMessagesShared,
-    }),
+    ...mapState(useQuickMessages, ['quickMessages']),
+    ...mapState(useQuickMessageShared, ['quickMessagesShared']),
 
     withoutQuickMessages() {
       return (

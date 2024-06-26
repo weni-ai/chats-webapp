@@ -53,7 +53,8 @@
 <script>
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState } from 'pinia';
+import { useConfig } from '@/store/modules/config';
 
 export default {
   name: 'ModalPreferences',
@@ -75,15 +76,15 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      storeStatus: (state) => state.config.status,
+    ...mapState(useConfig, {
+      storeStatus: (store) => store.status,
     }),
   },
 
   methods: {
-    ...mapActions({
-      getStatus: 'config/getStatus',
-      storeUpdateStatus: 'config/updateStatus',
+    ...mapActions(useConfig, {
+      getStatus: 'getStatus',
+      storeUpdateStatus: 'updateStatus',
     }),
 
     updateLanguage(language) {

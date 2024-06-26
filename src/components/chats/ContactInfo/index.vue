@@ -179,7 +179,10 @@
 
 <script>
 import isMobile from 'is-mobile';
-import { mapState } from 'vuex';
+
+import { mapActions, mapState } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
@@ -248,8 +251,8 @@ export default {
   }),
 
   computed: {
-    ...mapState({
-      room: (state) => state.chats.rooms.activeRoom,
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
     }),
 
     isMobile() {
@@ -267,7 +270,7 @@ export default {
     },
 
     lastMessageFromContact() {
-      const messages = this.$store.state.chats.roomMessages.roomMessages;
+      const messages = useRoomMessages().roomMessages;
       if (messages) {
         return messages.findLast((message) => message.contact);
       }
@@ -313,6 +316,7 @@ export default {
 
   methods: {
     moment,
+    ...mapActions(useRooms, ['updateRoomContact']),
     openHistory() {
       const { plataform, contactNum } = this.contactNumber;
       const protocol = this.contactProtocol;
@@ -460,7 +464,7 @@ export default {
       const { uuid } = this.room;
 
       try {
-        await this.$store.dispatch('chats/rooms/updateRoomContact', { uuid });
+        await this.updateRoomContact({ uuid });
 
         this.showAlert('Informações atualizadas');
       } catch (error) {

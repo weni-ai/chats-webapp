@@ -29,6 +29,8 @@
   </header>
 </template>
 <script>
+import { mapActions } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
 export default {
   name: 'ViewModeHeader',
 
@@ -40,8 +42,9 @@ export default {
   },
 
   methods: {
+    ...mapActions(useRooms, ['setActiveRoom']),
     async closeViewMode() {
-      await this.$store.dispatch('chats/rooms/setActiveRoom', null);
+      await this.setActiveRoom(null);
       this.$router.push({ name: 'dashboard.manager' });
     },
   },

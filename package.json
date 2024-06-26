@@ -25,14 +25,14 @@
     "mime-types": "^2.1.35",
     "moment": "^2.29.4",
     "path-browserify": "^1.0.1",
+    "pinia": "^2.1.7",
     "plyr": "^3.7.8",
     "register-service-worker": "^1.7.2",
     "v-click-outside": "^3.2.0",
     "v-mask": "^2.3.0",
     "vue": "^3.1.0",
     "vue-i18n": "9",
-    "vue-router": "^4.2.5",
-    "vuex": "^4.1.0"
+    "vue-router": "^4.2.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
@@ -61,6 +61,7 @@
     "jest": "^27.0.5",
     "sass": "^1.69.7",
     "sass-loader": "^13.3.3",
+    "stylus": "^0.63.0",
     "unified-translations": "^1.1.1",
     "vite": "^5.2.12",
     "vue-eslint-parser": "^9.4.2"

@@ -37,8 +37,10 @@
 </template>
 
 <script>
+import { mapState } from 'pinia';
+import { useConfig } from '@/store/modules/config';
+
 import Sector from '@/services/api/resources/settings/sector';
-import { mapState } from 'vuex';
 
 import DashboardLayout from '@/layouts/DashboardLayout/index.vue';
 
@@ -75,9 +77,7 @@ export default {
     },
   },
   computed: {
-    ...mapState({
-      project: (state) => state.config.project,
-    }),
+    ...mapState(useConfig, ['project']),
     visualization() {
       const filter = this.filters;
       return filter;

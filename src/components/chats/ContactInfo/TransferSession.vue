@@ -32,7 +32,9 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
+
 import isMobile from 'is-mobile';
 
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
@@ -75,15 +77,13 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      room: (state) => state.chats.rooms.activeRoom,
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
     }),
   },
 
   methods: {
-    ...mapActions({
-      setContactToTransfer: 'chats/rooms/setContactToTransfer',
-    }),
+    ...mapActions(useRooms, ['setContactToTransfer', 'setActiveRoom']),
 
     async transferRooms() {
       this.isLoading = true;
@@ -104,7 +104,7 @@ export default {
     },
 
     resetActiveRoom() {
-      this.$store.dispatch('chats/rooms/setActiveRoom', null);
+      this.setActiveRoom(null);
     },
 
     async handleFalseTransferProgressBar() {

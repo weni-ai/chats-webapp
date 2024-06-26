@@ -33,7 +33,10 @@
 <script>
 import isMobile from 'is-mobile';
 import moment from 'moment';
-import { mapState } from 'vuex';
+
+import { mapState, mapActions } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDiscussions } from '@/store/modules/chats/discussions';
 
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
 import DiscussionMessages from '../chat/DiscussionMessages.vue';
@@ -54,7 +57,7 @@ export default {
   async created() {
     try {
       const { room } = this;
-      await this.$store.dispatch('chats/discussions/getAllClosed', {
+      await this.getAllClosed({
         roomId: room?.uuid,
       });
     } catch (error) {
@@ -62,12 +65,13 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      room: (state) => state.chats.rooms.activeRoom,
-      discussionsCloseds: (state) => state.chats.discussions.discussionsCloseds,
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
     }),
+    ...mapState(useDiscussions, ['discussionsCloseds']),
   },
   methods: {
+    ...mapActions(useDiscussions, ['setActiveDiscussion', 'getAllClosed']),
     getDiscussionStartedBy(discussion) {
       return `${moment(discussion.created_on).format('L')} | ${this.$t(
         'discussions.started_by',
@@ -77,7 +81,7 @@ export default {
       )}`;
     },
     async openDiscussionClosed(discussionUuid) {
-      await this.$store.dispatch('chats/discussions/setActiveDiscussion', {
+      await this.setActiveDiscussion({
         uuid: discussionUuid,
       });
       this.handleDiscussionClosedModal();
@@ -89,7 +93,7 @@ export default {
   watch: {
     showDiscussionClosedModal(newShowDiscussionClosedModal) {
       if (!newShowDiscussionClosedModal) {
-        this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
+        this.setActiveDiscussion(null);
       }
     },
   },

@@ -1,11 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-import store from '@/store';
 import { getProject, getToken } from '@/utils/config';
 import Keycloak from '@/services/keycloak';
 import routes from './routes';
 import afterEachMiddlewares from './middlewares/afterEach';
 import env from '@/utils/env';
+
+import { useConfig } from '@/store/modules/config';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,10 +18,11 @@ const router = createRouter({
 afterEachMiddlewares.forEach((middleware) => router.afterEach(middleware));
 
 router.beforeEach(async (to, from, next) => {
+  const configStore = useConfig();
   const authenticated = await Keycloak.isAuthenticated();
   if (authenticated) {
     const { token } = Keycloak.keycloak;
-    await store.dispatch('config/setToken', token);
+    await configStore.setToken(token);
 
     if (to.hash.startsWith('#state=')) {
       next({ ...to, hash: '' });
@@ -33,12 +35,13 @@ router.beforeEach(async (to, from, next) => {
 });
 
 router.afterEach(() => {
-  if (!store.state.config.token) {
-    store.dispatch('config/setToken', getToken());
+  const configStore = useConfig();
+  if (!configStore.token) {
+    configStore.setToken(getToken());
   }
 
-  if (!store.state.config.project.uuid) {
-    store.dispatch('config/setProjectUuid', getProject());
+  if (!configStore.project.uuid) {
+    configStore.setProjectUuid(getProject());
   }
 });
 

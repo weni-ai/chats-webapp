@@ -85,7 +85,6 @@ export default {
       sendMediaMessage({
         files,
         routeName: this.$route.name,
-        storeDispatch: this.$store.dispatch,
         progressCallback: (progress) => this.$emit('progress', progress),
       });
 

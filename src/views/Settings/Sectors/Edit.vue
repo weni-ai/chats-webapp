@@ -197,7 +197,9 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState } from 'pinia';
+import { useConfig } from '@/store/modules/config';
+import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 
 import unnnic from '@weni/unnnic-system';
 
@@ -293,18 +295,15 @@ export default {
   }),
 
   computed: {
-    ...mapState({
-      quickMessagesShared: (state) =>
-        state.chats.quickMessagesShared.quickMessagesShared,
-    }),
+    ...mapState(useQuickMessageShared, ['quickMessagesShared']),
   },
 
   methods: {
-    ...mapActions({
-      setCopilotActive: 'config/setCopilotActive',
-      setCopilotCustomRulesActive: 'config/setCopilotCustomRulesActive',
-      setCopilotCustomRules: 'config/setCopilotCustomRules',
-    }),
+    ...mapActions(useConfig, [
+      'setCopilotActive',
+      'setCopilotCustomRulesActive',
+      'setCopilotCustomRules',
+    ]),
 
     resetTabsData() {
       this.queueToEdit = null;
