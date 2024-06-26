@@ -41,7 +41,7 @@ export default (message, { app }) => {
       isCurrentDiscussion || isViewModeCurrentDiscussion;
 
     if (shouldAddDiscussionMessage) {
-      discussionMessagesStore.addDiscussionMessage(message);
+      discussionMessagesStore.addDiscussionMessage({ message });
     }
 
     const isJsonMessage = isValidJson(message.text);

@@ -186,23 +186,18 @@ export default {
 
     callSuccessAlert() {
       const selectedAgent = this.selectedAgent?.[0]?.label;
-      const successTranslation = `bulk_transfer.${
-        selectedAgent ? 'agent_transfer_success' : 'queue_transfer_success'
-      }`;
+
       const destination = selectedAgent || this.selectedQueue?.[0].queue_name;
 
       this.getAlert({
-        text: this.$tc(successTranslation, this.roomsToTransfer.length, {
-          queue: destination,
-          agent: destination,
-        }),
+        text: `Contato transferido com sucesso para ${destination}`,
         type: 'success',
       });
     },
 
     callErrorAlert() {
       this.getAlert({
-        text: this.$t('bulk_transfer.error'),
+        text: 'Falha ao transferir contato(s)',
         type: 'error',
       });
     },
