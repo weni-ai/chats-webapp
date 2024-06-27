@@ -72,7 +72,7 @@ export default {
     this.setContactToTransfer(this.room.uuid);
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.setContactToTransfer([]);
   },
 
