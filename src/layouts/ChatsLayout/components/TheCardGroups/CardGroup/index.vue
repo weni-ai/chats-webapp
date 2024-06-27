@@ -22,11 +22,11 @@
         v-for="room in rooms"
         :key="room.uuid"
         :room="room"
-        @click="open(room)"
         :active="!activeDiscussionId"
         :selected="getIsRoomSelected(room.uuid)"
-        @update-selected="updateIsRoomSelected(room.uuid, $event)"
         :withSelection="withSelection"
+        @click="open(room)"
+        @update-selected="updateIsRoomSelected(room.uuid, $event)"
       />
     </template>
     <template v-if="discussions">

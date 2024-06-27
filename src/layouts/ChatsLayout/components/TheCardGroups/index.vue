@@ -146,7 +146,7 @@ export default {
     limit: 100,
     nameOfContact: '',
     timerId: 0,
-    isLoadingRooms: true,
+    isLoadingRooms: false,
     createdOnFilter: false,
     lastCreatedFilter: true,
     isSearching: false,
@@ -239,7 +239,7 @@ export default {
       this.nameOfContact = '';
     },
     async listRoom(concat, order = '-last_interaction') {
-      this.isLoadingRooms = true;
+      this.isLoadingRooms = !concat;
       const { viewedAgent } = this;
       try {
         await this.getAllRooms({
@@ -250,10 +250,10 @@ export default {
           contact: this.nameOfContact,
           viewedAgent,
         });
-        this.isLoadingRooms = false;
       } catch {
-        this.isLoadingRooms = false;
         console.error('Não foi possível listar as salas');
+      } finally {
+        this.isLoadingRooms = false;
       }
     },
     searchForMoreRooms() {

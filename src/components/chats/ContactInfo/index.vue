@@ -44,7 +44,6 @@
                   })
                 }}
               </p>
-              <template>
                 <section class="infos">
                   <hgroup class="info">
                     <h3 class="title">{{ contactNumber.plataform }}:</h3>
@@ -58,7 +57,6 @@
                     <h4 class="description">{{ contactProtocol }}</h4>
                   </hgroup>
                 </section>
-              </template>
               <template v-if="!!room.custom_fields">
                 <CustomField
                   v-for="(value, key) in customFields"
