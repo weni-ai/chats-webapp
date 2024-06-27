@@ -1,19 +1,24 @@
+import { describe, it, expect, vi  } from 'vitest'
 import { mount } from '@vue/test-utils';
 import { unnnicButton } from '@weni/unnnic-system';
 import i18n from '@/plugins/i18n';
 import TextBox from '../TextBox.vue';
 
+
+
 function createWrapper(props = {}) {
   const wrapper = mount(TextBox, {
     propsData: {
-      send: jest.fn(),
-      onKeyDown: jest.fn(),
+      send: vi.fn(),
+      onKeyDown: vi.fn(),
       ...props,
     },
     stubs: {
       UnnnicButton: unnnicButton,
     },
-    i18n,
+    global: {
+      plugins: [i18n]
+    }
   });
 
   return wrapper;
@@ -42,8 +47,8 @@ describe('TextBox', () => {
     textarea.setValue('Hello');
     await wrapper.vm.$nextTick();
 
-    expect(wrapper.emitted('input')).toBeTruthy();
-    expect(wrapper.emitted('input')[0]).toEqual(['Hello']);
+    expect(wrapper.emitted('update:modelValue')).toBeTruthy();
+    expect(wrapper.emitted('update:modelValue')[0]).toEqual(['Hello']);
   });
 
   // TODO: fix TextBox import, functions in textarea are not working in tests above
