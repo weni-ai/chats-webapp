@@ -1,10 +1,11 @@
 <template>
   <UnnnicModal
+    v-if="queues.length > 1"
     class="queue-modal"
     :text="$t('chats.select_services_queues')"
     @close="$emit('close')"
   >
-    <section class="queue-modal-form">
+    <section  class="queue-modal-form">
       <section
         v-if="!verifySelectedLength"
         class="queue-modal-disclaimer"
@@ -22,9 +23,9 @@
           <UnnnicLabel :label="$t('chats.select_the_queues')" />
           <UnnnicSelectSmart
             v-model="selectedQueues"
-            multiple
             :options="queues"
             :multipleWithoutSelectsMessage="$t('chats.no_queue_selected')"
+            multiple
           />
         </section>
       </section>
@@ -76,7 +77,9 @@ export default {
 
   watch: {
     selectedQueues: {
-      handler: 'updateQueuesPlaceholder',
+      handler() {
+        this.updateQueuesPlaceholder()
+      }, 
       deep: true,
     },
   },
@@ -102,6 +105,7 @@ export default {
       try {
         let me = this.me.email;
         const response = await Queues.getListQueues(me);
+
         response.user_permissions.forEach((permission) => {
           if (permission.role === this.roleIdSelected) {
             this.selectedQueues.push({
@@ -111,7 +115,6 @@ export default {
               queue: permission.queue,
             });
           }
-
           this.queues.push({
             value: permission.uuid,
             label: permission.queue_name,
@@ -173,9 +176,8 @@ export default {
           },
           seconds: 5,
         });
-
+        this.$root.wsReconnect()
         this.$emit('close');
-        this.$root.$children[0].wsReconnect();
       } catch (error) {
         console.error(error);
         callUnnnicAlert({
@@ -192,6 +194,7 @@ export default {
 
     updateQueuesPlaceholder() {
       const queuesValue = this.selectedQueues.map((queue) => queue.value);
+      
       const selectedQueues = queuesValue.map((queueUuid) => ({
         uuid: queueUuid,
         role: this.roleIdSelected,
