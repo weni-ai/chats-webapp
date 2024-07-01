@@ -2,7 +2,7 @@ import { mount, createLocalVue } from '@vue/test-utils';
 import { unnnicToolTip, unnnicButton } from '@weni/unnnic-system';
 import i18n from '@/plugins/i18n';
 
-import FormTags from '../Tags';
+import FormTags from '../Tags.vue';
 import defaultProps from './mocks/tagsMock';
 
 const localVue = createLocalVue();

@@ -1,71 +1,49 @@
-import { createLocalVue, mount } from '@vue/test-utils';
-import Vuex from 'pinia';
-import { unnnicLabel, unnnicSelectSmart } from '@weni/unnnic-system';
+import { describe, expect, it, vi } from 'vitest'
+
+import { mount } from '@vue/test-utils';
+import { createTestingPinia  } from '@pinia/testing';
+import { unnnicLabel as UnnnicLabel, unnnicSelectSmart as UnnnicSelectSmart } from '@weni/unnnic-system';
 import i18n from '@/plugins/i18n';
 
 import RoomsTransferFields from '../RoomsTransferFields.vue';
 
-jest.mock('@/services/api/resources/settings/queue', () => ({
-  listByProject: jest.fn(() => ({
-    results: [
-      { name: 'Queue 1', sector_name: 'Sector 1', uuid: '1' },
-      { name: 'Queue 2', sector_name: 'Sector 2', uuid: '2' },
-    ],
-  })),
-  agentsToTransfer: jest.fn(() => [
-    { first_name: 'John', last_name: 'Doe', email: 'john@doe.com' },
-    { name: 'Jane', sector_name: 'Doe', uuid: 'jane@doe.com' },
-  ]),
+vi.mock('@/services/api/resources/settings/queue', () => ({
+  default: {
+    listByProject: vi.fn(() => ({
+      results: [
+        { name: 'Queue 1', sector_name: 'Sector 1', uuid: '1' },
+        { name: 'Queue 2', sector_name: 'Sector 2', uuid: '2' },
+      ],
+    })),
+    agentsToTransfer: vi.fn(() => [
+      { first_name: 'John', last_name: 'Doe', email: 'john@doe.com' },
+      { name: 'Jane', sector_name: 'Doe', uuid: 'jane@doe.com' },
+    ]),
+  }
 }));
 
-const localVue = createLocalVue();
-
-localVue.use(Vuex);
-
-function createWrapper(store) {
+function createWrapper() {
   const wrapper = mount(RoomsTransferFields, {
-    i18n,
-    store,
-    localVue,
+    global: {
+      plugins: [i18n, createTestingPinia()],
+      components: { UnnnicLabel, UnnnicSelectSmart },
+    },
   });
 
   return wrapper;
 }
 
 describe('RoomsTransferField', () => {
-  let store;
   let wrapper;
 
   beforeEach(() => {
-    store = new Vuex.Store({
-      modules: {
-        profile: {
-          namespaced: true,
-          state: {
-            me: 'mocked@email.com',
-          },
-        },
-        chats: {
-          namespaced: true,
-          modules: {
-            rooms: {
-              namespaced: true,
-              state: {
-                selectedRoomsToTransfer: ['1', '2'],
-              },
-            },
-          },
-        },
-      },
-    });
-    wrapper = createWrapper(store);
+    wrapper = createWrapper();
   });
 
   describe('Rendering', () => {
     it('should render with fields', () => {
-      const labels = wrapper.findAllComponents(unnnicLabel);
-      const selects = wrapper.findAllComponents(unnnicSelectSmart);
-
+      const labels = wrapper.findAll('unnniclabel');
+      const selects = wrapper.findAll('unnnicselectsmart');
       expect(labels).toHaveLength(2);
       expect(selects).toHaveLength(2);
     });
@@ -89,7 +67,7 @@ describe('RoomsTransferField', () => {
         ],
       });
       await wrapper.vm.$nextTick();
-      expect(agentSelect.props('disabled')).toBe(false);
+      expect(agentSelect.attributes('disabled')).toBe("false");
 
       wrapper.setData({
         selectedQueue: [{ value: '', label: 'Select queue' }],
@@ -99,14 +77,14 @@ describe('RoomsTransferField', () => {
         ],
       });
       await wrapper.vm.$nextTick();
-      expect(agentSelect.props('disabled')).toBe(true);
+      expect(agentSelect.attributes('disabled')).toBe("true");
 
       wrapper.setData({
         selectedQueue: [{ value: 'queue_id', label: 'Queue' }],
         agents: [{ value: '', label: 'Select agent' }],
       });
       await wrapper.vm.$nextTick();
-      expect(agentSelect.props('disabled')).toBe(false);
+      expect(agentSelect.attributes('disabled')).toBe("true");
     });
   });
 
