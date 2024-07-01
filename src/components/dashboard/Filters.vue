@@ -67,11 +67,13 @@
       v-bind="$props"
       class="dashboard-filters__export"
     >
+    <template #trigger>
       <UnnnicButton
         iconCenter="more_vert"
         type="secondary"
-        slot="trigger"
+        
       />
+    </template>
       <div
         class="attachment-options-container"
         style="width: 155px"
