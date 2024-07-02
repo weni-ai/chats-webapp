@@ -76,7 +76,13 @@
               filled
               scheme="feedback-yellow"
             />
-            {{ $t('flows_trigger.already_open_room', { contact }) }}
+            {{ $t('flows_trigger.already_open_room.open', { contact: contact.contactName }) }}
+            <template v-if="contact.agent">
+              {{ $t('flows_trigger.already_open_room.with_agent', { agent: contact.agent, queue: contact.queue }) }}
+            </template>
+            <template v-else>
+              {{ $t('flows_trigger.already_open_room.in_queue_awaiting', { queue: contact.queue }) }}
+            </template>
           </strong>
         </section>
 
@@ -302,7 +308,7 @@ export default {
 
         this.openedRoomsAlerts = this.openedRoomsAlerts.filter(
           (mappedContactName) => {
-            return mappedContactName !== contact.name;
+            return mappedContactName.contactName !== contact.name;
           },
         );
       } else {
@@ -310,7 +316,7 @@ export default {
         FlowsTrigger.checkContact(contact.uuid)
           .then((response) => {
             if (response.show_warning) {
-              this.openedRoomsAlerts.push(contact.name);
+              this.openedRoomsAlerts.push({ contactName: contact.name, queue: response.queue, agent: response.agent });
             }
           })
           .catch(
