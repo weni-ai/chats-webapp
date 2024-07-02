@@ -1585,9 +1585,21 @@
       }
     },
     "already_open_room": {
-      "pt-br": "{contact} já possui uma sala aberta",
-      "en": "{contact} already has an open room",
-      "es": "{contact} ya tiene sala abierta"
+      "open": {
+        "pt-br": "{contact} já possui um chat",
+        "en": "{contact} already have a chat",
+        "es": "{contact} ya tiene sala"
+      },
+      "with_agent": {
+        "pt-br": "em andamento com agente {agent} na fila {queue}",
+        "en": "in progress with agent {agent} in queue {queue}",
+        "es": "en progreso con el agente {agente} en fila {queue}"
+      },
+      "in_queue_awaiting": {
+        "pt-br": "aguardando na fila {queue}",
+        "en": "waiting in queue {queue}",
+        "es": "esperando en fila {queue}"
+      }
     },
     "send": {
       "pt-br": "Enviar fluxo",
