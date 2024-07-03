@@ -40,7 +40,7 @@
         @input="updateValue"
         @blur="saveValue"
         @keypress.enter="saveValue"
-        maxlength="50"
+        maxlength="500"
       />
     </section>
   </section>
