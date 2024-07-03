@@ -29,18 +29,19 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDiscussions } from '@/store/modules/chats/discussions';
 
-import * as notifications from '@/utils/notifications';
 import { resetChats } from '@/utils/chats';
 
-import ChatsLayout from '@/layouts/ChatsLayout';
-import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground';
+import ChatsLayout from '@/layouts/ChatsLayout/index.vue';
+import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground/index.vue';
 
-import DiscussionSidebar from '@/components/chats/DiscussionSidebar';
-import ContactInfo from '@/components/chats/ContactInfo';
+import DiscussionSidebar from '@/components/chats/DiscussionSidebar/index.vue';
+import ContactInfo from '@/components/chats/ContactInfo/index.vue';
 
-import HomeChat from './HomeChat';
+import HomeChat from './HomeChat.vue';
 
 export default {
   name: 'ViewHome',
@@ -81,9 +82,11 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      room: (state) => state.chats.rooms.activeRoom,
-      discussion: (state) => state.chats.discussions.activeDiscussion,
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
+    }),
+    ...mapState(useDiscussions, {
+      discussion: (store) => store.activeDiscussion,
     }),
   },
 
@@ -105,10 +108,6 @@ export default {
     updateTextBoxMessage(message) {
       this.$refs['home-chat']?.updateTextBoxMessage(message);
     },
-  },
-
-  mounted() {
-    notifications.requestPermission();
   },
 };
 </script>

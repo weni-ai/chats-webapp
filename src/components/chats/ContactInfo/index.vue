@@ -20,7 +20,6 @@
               <h1 class="username">
                 {{ (closedRoom || room).contact.name }}
               </h1>
-
               <UnnnicButton
                 v-if="!isHistory"
                 iconCenter="sync"
@@ -45,7 +44,6 @@
                   })
                 }}
               </p>
-              <template>
                 <section class="infos">
                   <hgroup class="info">
                     <h3 class="title">{{ contactNumber.plataform }}:</h3>
@@ -59,7 +57,6 @@
                     <h4 class="description">{{ contactProtocol }}</h4>
                   </hgroup>
                 </section>
-              </template>
               <template v-if="!!room.custom_fields">
                 <CustomField
                   v-for="(value, key) in customFields"
@@ -79,8 +76,8 @@
               class="sync-contact"
             >
               <UnnnicSwitch
-                :value="isLinkedUser"
-                @input="addContactToAgent"
+                v-model="isLinkedUser"
+                @update:model-value="addContactToAgent"
                 size="small"
                 :textRight="
                   isLinkedUser
@@ -130,49 +127,11 @@
         </AsideSlotTemplateSection>
 
         <DiscussionsSession v-if="isHistory" />
-        <AsideSlotTemplateSection v-if="!isHistory">
-          <p class="title-transfer-chat">
-            {{ $t('contact_info.transfer_contact') }}
-          </p>
-          <section class="transfer-section">
-            <section class="transfer__radios">
-              <UnnnicRadio
-                size="sm"
-                v-model="transferRadio"
-                value="agent"
-                :disabled="isViewMode"
-              >
-                {{ $t('agent') }}
-              </UnnnicRadio>
 
-              <UnnnicRadio
-                size="sm"
-                v-model="transferRadio"
-                value="queue"
-                :disabled="isViewMode"
-              >
-                {{ $t('queue') }}
-              </UnnnicRadio>
-            </section>
-            <UnnnicSelectSmart
-              v-model="transferContactTo"
-              :options="transferOptions"
-              autocomplete
-              autocompleteIconLeft
-              autocompleteClearOnFocus
-              :disabled="!!transferContactError || isViewMode"
-            />
-
-            <UnnnicButton
-              class="transfer__button"
-              :text="$t('transfer')"
-              type="primary"
-              size="small"
-              @click="transferContact"
-              :disabled="transferContactTo.length === 0 || isViewMode"
-            />
-          </section>
-        </AsideSlotTemplateSection>
+        <TransferSession
+          v-if="!isHistory"
+          @transferred-contact="$emit('transferred-contact')"
+        />
 
         <AsideSlotTemplateSection>
           <ContactMedia
@@ -186,28 +145,10 @@
       </section>
 
       <ModalStartDiscussion
-        :showModal="isShowModalStartDiscussion"
+        v-if="isShowModalStartDiscussion"
         @close="handleModalStartDiscussion()"
       />
 
-      <ModalProgressBarFalse
-        v-if="showTransferProgressBar"
-        :title="$t('contact_info.transfering_chat')"
-        type="secondary"
-        @close="closeTransferProgressBar"
-      />
-      <UnnnicModal
-        :text="$t('successfully_transferred_chat')"
-        :description="
-          $t('successfully_transferred_contact_to.line', {
-            name: transferContactTo?.[0]?.label || '',
-          })
-        "
-        modalIcon="check-circle-1-1"
-        scheme="feedback-green"
-        :showModal="showSuccessfulTransferModal"
-        @close="(showSuccessfulTransferModal = false), navigate('home')"
-      />
       <FullscreenPreview
         v-if="isFullscreen"
         :downloadMediaUrl="currentMedia?.url"
@@ -236,29 +177,30 @@
 
 <script>
 import isMobile from 'is-mobile';
-import { mapState } from 'vuex';
 
-import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
-import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section';
-import ModalProgressBarFalse from '@/components/ModalProgressBarFalse';
+import { mapActions, mapState } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+
+import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
+import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
 
 import ContactInfosLoading from '@/views/loadings/ContactInfos.vue';
 
 import Room from '@/services/api/resources/chats/room';
-import Sector from '@/services/api/resources/settings/sector';
 import LinkContact from '@/services/api/resources/chats/linkContact';
-import Queue from '@/services/api/resources/settings/queue';
 
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import unnnic from '@weni/unnnic-system';
 
-import CustomField from './CustomField';
-import ContactMedia from './Media';
-import VideoPreview from '../MediaMessage/Previews/Video';
+import CustomField from './CustomField.vue';
+import ContactMedia from './Media.vue';
+import VideoPreview from '../MediaMessage/Previews/Video.vue';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
-import ModalStartDiscussion from './ModalStartDiscussion';
-import DiscussionsSession from './DiscussionsSession';
+import TransferSession from './TransferSession.vue';
+import ModalStartDiscussion from './ModalStartDiscussion.vue';
+import DiscussionsSession from './DiscussionsSession.vue';
 
-const moment = require('moment');
+import moment from 'moment';
 
 export default {
   name: 'ContactInfo',
@@ -271,9 +213,9 @@ export default {
     ContactMedia,
     FullscreenPreview,
     VideoPreview,
+    TransferSession,
     ModalStartDiscussion,
     DiscussionsSession,
-    ModalProgressBarFalse,
   },
   props: {
     closedRoom: {
@@ -291,9 +233,6 @@ export default {
 
   data: () => ({
     isLoading: true,
-    transferOptions: [],
-    queues: [],
-    transferContactTo: [],
     transferContactError: '',
     showSuccessfulTransferModal: false,
     showTransferProgressBar: false,
@@ -302,9 +241,6 @@ export default {
     isFullscreen: false,
     currentMedia: {},
     images: [],
-    transferRadio: 'agent',
-    transferLabel: '',
-    page: 0,
     contactHaveHistory: false,
     customFields: [],
     currentCustomField: {},
@@ -313,8 +249,8 @@ export default {
   }),
 
   computed: {
-    ...mapState({
-      room: (state) => state.chats.rooms.activeRoom,
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
     }),
 
     isMobile() {
@@ -332,18 +268,11 @@ export default {
     },
 
     lastMessageFromContact() {
-      const messages = this.$store.state.chats.roomMessages.roomMessages;
+      const messages = useRoomMessages().roomMessages;
       if (messages) {
         return messages.findLast((message) => message.contact);
       }
       return '';
-    },
-
-    transferPersonSelected() {
-      const selectedOptionValue = this.transferContactTo?.[0]?.value;
-      return this.transferOptions.find(
-        (option) => option.value === selectedOptionValue,
-      );
     },
 
     contactNumber() {
@@ -376,38 +305,20 @@ export default {
     ) {
       this.contactHaveHistory = true;
     }
-    this.transferLabel = this.$t('select_agent');
+
     this.loadLinkedContact();
     if (!room.queue?.sector) {
       throw new Error(`There is no associated sector with room ${room.uuid}`);
     }
+  },
 
-    try {
-      const treatedAgents = [{ value: '', label: this.$t('select_agent') }];
-      const agents = (
-        await Sector.agents({ sectorUuid: room.queue.sector })
-      ).filter((agent) => agent.email !== this.$store.state.profile.me.email);
-
-      agents.forEach(({ first_name, last_name, email }) => {
-        treatedAgents.push({
-          label: [first_name, last_name].join(' ').trim() || email,
-          value: email,
-        });
-      });
-      this.transferOptions = treatedAgents;
-    } catch (error) {
-      if (error?.response?.status === 403) {
-        this.transferContactError = this.$t(
-          'chats.transfer.does_not_have_permission',
-        );
-      } else {
-        throw error;
-      }
-    }
+  unmounted() {
+    this.emitClose();
   },
 
   methods: {
     moment,
+    ...mapActions(useRooms, ['updateRoomContact']),
     openHistory() {
       const { plataform, contactNum } = this.contactNumber;
       const protocol = this.contactProtocol;
@@ -432,58 +343,6 @@ export default {
 
     handleModalStartDiscussion() {
       this.isShowModalStartDiscussion = !this.isShowModalStartDiscussion;
-    },
-
-    async getQueues() {
-      this.loading = true;
-      let hasNext = false;
-      try {
-        const newQueues = await Queue.listByProject(this.page * 10, 10);
-        this.page += 1;
-
-        const treatedQueues = [{ value: '', label: this.$t('select_queue') }];
-        this.queues
-          .concat(newQueues.results)
-          .forEach(({ name, sector_name, uuid }) => {
-            treatedQueues.push({
-              label: `${name} | ${this.$t('sector.title')} ${sector_name}`,
-              value: uuid,
-            });
-          });
-        this.transferOptions = treatedQueues;
-
-        hasNext = newQueues.next;
-
-        this.loading = false;
-      } finally {
-        this.loading = false;
-      }
-      if (hasNext) {
-        this.getQueues();
-      }
-    },
-
-    async listAgents() {
-      try {
-        this.transferOptions = (
-          await Sector.agents({ sectorUuid: this.room.queue.sector })
-        )
-          .filter((agent) => agent.email !== this.$store.state.profile.me.email)
-          .map(({ first_name, last_name, email }) => {
-            return {
-              name: [first_name, last_name].join(' ').trim() || email,
-              email,
-            };
-          });
-      } catch (error) {
-        if (error?.response?.status === 403) {
-          this.transferContactError = this.$t(
-            'chats.transfer.does_not_have_permission',
-          );
-        } else {
-          throw error;
-        }
-      }
     },
 
     getCurrentCustomFieldKey() {
@@ -542,7 +401,7 @@ export default {
     },
 
     addContactToAgent() {
-      if (!this.isLinkedUser) {
+      if (this.isLinkedUser) {
         this.linkContact();
       } else {
         this.removeLinkedContact();
@@ -607,7 +466,7 @@ export default {
       const { uuid } = this.room;
 
       try {
-        await this.$store.dispatch('chats/rooms/updateRoomContact', { uuid });
+        await this.updateRoomContact({ uuid });
 
         this.showAlert('Informações atualizadas');
       } catch (error) {
@@ -616,7 +475,7 @@ export default {
     },
 
     showAlert(text, type = 'success') {
-      unnnicCallAlert({
+      unnnic.unnnicCallAlert({
         props: {
           text,
           type,
@@ -672,68 +531,10 @@ export default {
     lowercase(value) {
       return value.toString().toLowerCase();
     },
-    async transferContact() {
-      if (this.isMobile) {
-        await this.handleFalseTransferProgressBar();
-      }
-      if (this.transferRadio === 'agent') {
-        await Room.take(this.room.uuid, this.transferPersonSelected.value);
-      }
-      if (this.transferRadio === 'queue') {
-        await Room.take(
-          this.room.uuid,
-          null,
-          this.transferPersonSelected.value,
-        );
-      }
-
-      if (this.isMobile) {
-        this.$store.dispatch('chats/rooms/setActiveRoom', null);
-        return;
-      }
-
-      this.showSuccessfulTransferModal = true;
-    },
-    async handleFalseTransferProgressBar() {
-      this.showTransferProgressBar = true;
-
-      return new Promise((resolve) => {
-        const waitForCloseTransferProgressBar = () => {
-          if (!this.showTransferProgressBar) {
-            resolve();
-          } else {
-            setTimeout(waitForCloseTransferProgressBar, 100);
-          }
-        };
-
-        waitForCloseTransferProgressBar();
-      }).then(() => {
-        this.$emit('transferred-contact');
-      });
-    },
-    closeTransferProgressBar() {
-      this.showTransferProgressBar = false;
-    },
   },
   watch: {
     room(newRoom) {
-      this.customFields = newRoom.custom_fields;
-    },
-    transferRadio: {
-      handler() {
-        if (this.transferRadio === 'queue') {
-          this.transferContactTo = [];
-          this.page = 0;
-          this.getQueues();
-        }
-        if (this.transferRadio === 'agent') {
-          this.transferContactTo = [];
-          this.listAgents();
-        }
-      },
-    },
-    transferContactError(error) {
-      this.showAlert(error, 'error');
+      if (newRoom) this.customFields = newRoom.custom_fields;
     },
   },
 };
@@ -841,23 +642,6 @@ export default {
     &__nav {
       display: grid;
       gap: $unnnic-spacing-xs;
-    }
-  }
-
-  .title-transfer-chat {
-    font-weight: $unnnic-font-weight-bold;
-    font-size: $unnnic-font-size-body-gt;
-    color: $unnnic-color-neutral-dark;
-  }
-
-  .transfer-section {
-    .transfer__radios {
-      margin-top: $unnnic-spacing-ant;
-      margin-bottom: $unnnic-spacing-xs;
-    }
-    .transfer__button {
-      margin-top: $unnnic-spacing-xs;
-      width: 100%;
     }
   }
 }

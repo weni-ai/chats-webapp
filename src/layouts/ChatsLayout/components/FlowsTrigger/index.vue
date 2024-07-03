@@ -76,7 +76,13 @@
               filled
               scheme="feedback-yellow"
             />
-            {{ $t('flows_trigger.already_open_room', { contact }) }}
+            {{ $t('flows_trigger.already_open_room.open', { contact: contact.contactName }) }}
+            <template v-if="contact.agent">
+              {{ $t('flows_trigger.already_open_room.with_agent', { agent: contact.agent, queue: contact.queue }) }}
+            </template>
+            <template v-else>
+              {{ $t('flows_trigger.already_open_room.in_queue_awaiting', { queue: contact.queue }) }}
+            </template>
           </strong>
         </section>
 
@@ -90,16 +96,16 @@
 
         <section v-show="!isContactsLoading">
           <template v-for="(element, letter) in letters">
+            <!-- eslint-disable-next-line vue/valid-v-for -->
             <UnnnicCollapse
+              v-model="letterColapse[letter]"
               class="flows-trigger__groups__group"
-              :key="letter"
               :title="
                 $t('flows_trigger.letter_group', {
                   letter,
                   length: element.length,
                 })
               "
-              active
             >
               <UnnnicChatsContact
                 v-for="item in element"
@@ -175,21 +181,23 @@
 
 <script>
 import isMobile from 'is-mobile';
+import { mapState } from 'pinia';
 
-import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate';
+import { useConfig } from '@/store/modules/config';
+
+import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
 import ModalListTriggeredFlows from '@/components/chats/FlowsTrigger/ModalListTriggeredFlows.vue';
 import ModalAddNewContact from '@/components/chats/FlowsTrigger/ModalAddNewContact.vue';
 import ModalSendFlow from '@/components/chats/FlowsTrigger/ModalSendFlow.vue';
 import ModalRemoveSelectedContacts from '@/components/chats/FlowsTrigger/ModalRemoveSelectedContacts.vue';
 import SelectedContactsSection from '@/components/chats/FlowsTrigger/SelectedContactsSection.vue';
-import SendFlow from '@/components/chats/FlowsTrigger/SendFlow';
+import SendFlow from '@/components/chats/FlowsTrigger/SendFlow.vue';
 
-import FlowsContactsLoading from '@/views/loadings/FlowsTrigger/FlowsContactsLoading';
+import FlowsContactsLoading from '@/views/loadings/FlowsTrigger/FlowsContactsLoading.vue';
 
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import FlowsAPI from '@/services/api/resources/flows/flowsTrigger.js';
-import ProjectApi from '@/services/api/resources/settings/project';
 
 export default {
   name: 'FlowsTrigger',
@@ -207,7 +215,6 @@ export default {
   },
 
   created() {
-    this.projectInfo();
     this.contactList();
     this.groupList();
   },
@@ -220,9 +227,10 @@ export default {
   },
 
   data: () => ({
+    letterColapse: {},
+
     isContactsLoading: true,
 
-    projectName: '',
     search: '',
     searchUrn: '',
     timerId: 0,
@@ -244,6 +252,10 @@ export default {
   }),
 
   computed: {
+    ...mapState(useConfig, {
+      projectName: (store) => store.project.name,
+    }),
+
     letters() {
       const letters = {};
       this.listOfContacts
@@ -259,9 +271,13 @@ export default {
             .replace(/[\u0300-\u036f]/g, '');
           letters[removeAccent] = letters[removeAccent] || [];
           letters[removeAccent].push(element);
+          if (this.letterColapse[removeAccent] === undefined) {
+            this.letterColapse[removeAccent] = true;
+          }
         });
       return letters;
     },
+
     searchGroup() {
       return this.listOfGroups.filter((item) =>
         item.name.toUpperCase().includes(this.search.toUpperCase()),
@@ -286,18 +302,13 @@ export default {
   },
 
   methods: {
-    async projectInfo() {
-      const project = await ProjectApi.getInfo();
-      this.projectName = project.data.name;
-    },
-
     setContacts(contact) {
       if (this.selected.some((search) => search.uuid === contact.uuid)) {
         this.selected = this.selected.filter((el) => el.uuid !== contact.uuid);
 
         this.openedRoomsAlerts = this.openedRoomsAlerts.filter(
           (mappedContactName) => {
-            return mappedContactName !== contact.name;
+            return mappedContactName.contactName !== contact.name;
           },
         );
       } else {
@@ -305,7 +316,7 @@ export default {
         FlowsTrigger.checkContact(contact.uuid)
           .then((response) => {
             if (response.show_warning) {
-              this.openedRoomsAlerts.push(contact.name);
+              this.openedRoomsAlerts.push({ contactName: contact.name, queue: response.queue, agent: response.agent });
             }
           })
           .catch(
@@ -363,7 +374,10 @@ export default {
         this.isContactsLoading = true;
         try {
           const response = await FlowsAPI.getContacts(this.searchUrn);
-          this.listOfContacts = this.listOfContacts.concat(response.data || []);
+          // Array filter to prevent 'null' or 'undefined' values in contact response
+          this.listOfContacts = this.listOfContacts
+            .concat(response.data.results || [])
+            .filter((contact) => contact);
           this.hasNext = response.next;
           this.listOfContacts.sort((a, b) => a.name?.localeCompare(b.name));
 

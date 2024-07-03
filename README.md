@@ -114,8 +114,8 @@ After that, it will be available at http://localhost:8080.
 | yarn translations:build              | Build translations for production                                                                                                                               |
 | yarn translations:suggest-from-pt-br | Build translations for production with suggestions. Add at least one language in the translations file so that suggestions in other languages can be generated. |
 | yarn lint                            | Show lint warnings and errors                                                                                                                                   |
-| yarn test:unit                       | Run all tests                                                                                                                                                   |
-| yarn test:unit --watch               | Run test in watch mode                                                                                                                                          |
+| yarn test                       | Run all tests                                                                                                                                                   |
+| yarn test --watch               | Run test in watch mode                                                                                                                                          |
 
 <br/>
 

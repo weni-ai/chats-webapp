@@ -1,30 +1,12 @@
+import { defineStore } from 'pinia';
+
 import QuickMessage from '@/services/api/resources/chats/quickMessage';
 
-const mutations = {
-  SET_QUICK_MESSAGES: 'SET_QUICK_MESSAGES',
-  ADD_QUICK_MESSAGE: 'ADD_QUICK_MESSAGE',
-  UPDATE_QUICK_MESSAGE: 'UPDATE_QUICK_MESSAGE',
-  DELETE_QUICK_MESSAGE: 'DELETE_QUICK_MESSAGE',
-  SET_NEXT_QUICK_MESSAGES: 'SET_NEXT_QUICK_MESSAGES',
-};
-
-export default {
-  namespaced: true,
-
-  state: {
-    quickMessages: [],
-    nextQuickMessages: '',
-  },
-
-  mutations: {
-    [mutations.SET_QUICK_MESSAGES](state, quickMessages) {
-      state.quickMessages = quickMessages;
-    },
-    [mutations.ADD_QUICK_MESSAGE](state, quickMessage) {
-      state.quickMessages.unshift(quickMessage);
-    },
-    [mutations.UPDATE_QUICK_MESSAGE](state, { uuid, title, text, shortcut }) {
-      const quickMessageToUpdate = state.quickMessages.find(
+export const useQuickMessages = defineStore('quickMessages', {
+  state: () => ({ quickMessages: [], nextQuickMessages: '' }),
+  actions: {
+    updateQuickMessage({ uuid, title, text, shortcut }) {
+      const quickMessageToUpdate = this.quickMessages.find(
         (quickMessage) => quickMessage.uuid === uuid,
       );
 
@@ -36,52 +18,42 @@ export default {
           shortcut,
         };
 
-        state.quickMessages = state.quickMessages.map((quickMessage) =>
+        this.quickMessages = this.quickMessages.map((quickMessage) =>
           quickMessage.uuid === uuid ? updatedQuickMessage : quickMessage,
         );
       }
     },
-    [mutations.DELETE_QUICK_MESSAGE](state, uuid) {
-      state.quickMessages = state.quickMessages.filter(
-        (quickMessage) => quickMessage.uuid !== uuid,
-      );
-    },
-    [mutations.SET_NEXT_QUICK_MESSAGES](state, nextQuickMessages) {
-      state.nextQuickMessages = nextQuickMessages;
-    },
-  },
-
-  actions: {
-    async getAll({ commit, state }) {
-      const { quickMessages, nextQuickMessages } = state;
+    async getAll() {
+      const { quickMessages, nextQuickMessages } = this;
 
       const response = await QuickMessage.getAll({ nextQuickMessages });
-      const responseNext = response.next;
+
       const newQuickMessages = [...quickMessages, ...response.results] || [];
 
-      commit(mutations.SET_NEXT_QUICK_MESSAGES, responseNext);
-      commit(mutations.SET_QUICK_MESSAGES, newQuickMessages);
+      this.nextQuickMessages = response.next;
+      this.quickMessages = newQuickMessages;
 
       return newQuickMessages;
     },
 
-    async create({ commit }, { title, text, shortcut }) {
+    async create({ title, text, shortcut }) {
       const newQuickMessage = { title, text, shortcut };
       const response = await QuickMessage.create(newQuickMessage);
-      commit(mutations.ADD_QUICK_MESSAGE, response);
+      this.quickMessages.unshift(response);
     },
 
-    async update({ commit }, { uuid, title, text, shortcut }) {
+    async update({ uuid, title, text, shortcut }) {
       const dataToUpdate = { title, text, shortcut };
       await QuickMessage.update(uuid, dataToUpdate);
-
-      commit(mutations.UPDATE_QUICK_MESSAGE, { uuid, ...dataToUpdate });
+      this.updateQuickMessage({ uuid, ...dataToUpdate });
     },
 
-    async delete({ commit }, uuid) {
+    async delete(uuid) {
       await QuickMessage.delete(uuid);
 
-      commit(mutations.DELETE_QUICK_MESSAGE, uuid);
+      this.quickMessages = this.quickMessages.filter(
+        (quickMessage) => quickMessage.uuid !== uuid,
+      );
     },
   },
-};
+});

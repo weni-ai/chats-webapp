@@ -1,68 +1,44 @@
-import Profile from '@/services/api/resources/profile';
+import { defineStore } from 'pinia';
+
 import {
   setToken as setLocalToken,
-  setProject as setLocalProject,
+  setProject as setLocalProjectUuid,
   setStatus as setLocalStatus,
 } from '@/utils/config';
 
-const mutations = {
-  SET_TOKEN: 'SET_TOKEN',
-  SET_PROJECT: 'SET_PROJECT',
-  SET_STATUS: 'SET_STATUS',
-  SET_COPILOT_ACTIVE: 'SET_COPILOT_ACTIVE',
-  SET_COPILOT_CUSTOM_RULES_ACTIVE: 'SET_COPILOT_CUSTOM_RULES_ACTIVE',
-  SET_COPILOT_CUSTOM_RULES: 'SET_COPILOT_CUSTOM_RULES',
-};
+import Profile from '@/services/api/resources/profile';
 
-export default {
-  namespaced: true,
-  state: {
+export const useConfig = defineStore('config', {
+  state: () => ({
     token: '',
-    project: '',
+    project: {},
     status: '',
     copilot: {
       active: false,
       customRulesActive: false,
       customRules: '',
     },
-  },
-  mutations: {
-    [mutations.SET_TOKEN](state, token) {
-      state.token = token;
-    },
-    [mutations.SET_PROJECT](state, project) {
-      state.project = project;
-    },
-    [mutations.SET_STATUS](state, status) {
-      state.status = status;
-    },
-    [mutations.SET_COPILOT_ACTIVE](state, active) {
-      state.copilot.active = active;
-    },
-    [mutations.SET_COPILOT_CUSTOM_RULES_ACTIVE](state, active) {
-      state.copilot.customRulesActive = active;
-    },
-    [mutations.SET_COPILOT_CUSTOM_RULES](state, customRules) {
-      state.copilot.customRules = customRules;
-    },
-  },
+  }),
   actions: {
-    async setToken({ commit }, token) {
+    async setToken(token) {
       setLocalToken(token);
-      commit(mutations.SET_TOKEN, token);
+      this.token = token;
     },
-    async setProject({ commit }, project) {
-      setLocalProject(project);
-      commit(mutations.SET_PROJECT, project);
+    async setProjectUuid(projectUuid) {
+      setLocalProjectUuid(projectUuid);
+      this.project.uuid = projectUuid;
     },
-    setStatus({ commit }, status) {
-      commit(mutations.SET_STATUS, status);
+    async setProject(project) {
+      this.project = project;
     },
-    getStatus({ state }) {
-      const response = Profile.status({ projectUuid: state.project });
-      return response?.data?.connection_status;
+    setStatus(status) {
+      this.status = status;
     },
-    updateStatus({ state, dispatch }, status) {
+    async getStatus(projectUuid) {
+      const { data } = await Profile.status(projectUuid);
+      return data.connection_status;
+    },
+    async updateStatus(status) {
       const validStatus = ['online', 'offline'];
 
       if (typeof status !== 'string') {
@@ -74,22 +50,22 @@ export default {
         );
       }
 
-      const response = Profile.updateStatus({
-        projectUuid: state.project,
+      const { data } = await Profile.updateStatus({
+        projectUuid: this.project.uuid,
         status: status.toUpperCase(),
       });
-      const newStatus = response?.data?.connection_status || 'OFFLINE';
-      dispatch('setStatus', newStatus);
+      const newStatus = data.connection_status || 'OFFLINE';
+      this.status = newStatus;
       setLocalStatus(newStatus);
     },
-    setCopilotActive({ commit }, active) {
-      commit(mutations.SET_COPILOT_ACTIVE, active);
+    setCopilotActive(active) {
+      this.copilot.active = active;
     },
-    setCopilotCustomRulesActive({ commit }, active) {
-      commit(mutations.SET_COPILOT_CUSTOM_RULES_ACTIVE, active);
+    setCopilotCustomRulesActive(active) {
+      this.copilot.customRulesActive = active;
     },
-    setCopilotCustomRules({ commit }, customRules) {
-      commit(mutations.SET_COPILOT_CUSTOM_RULES, customRules);
+    setCopilotCustomRules(customRules) {
+      this.copilot.customRules = customRules;
     },
   },
-};
+});

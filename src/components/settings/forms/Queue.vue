@@ -20,13 +20,13 @@
     <section class="controls">
       <UnnnicInput
         v-model="queue.name"
-        label="Nome da fila"
-        placeholder="Exemplo: Pagamentos"
+        :label="$t('queues.queue_name')"
+        :placeholder="$t('queues.queue_name_placeholder')"
         class="input"
       />
       <UnnnicButton
         v-if="isEditing"
-        text="Salvar"
+        :text="$t('save')"
         type="secondary"
         @click="addQueue"
       />
@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import ListSectorQueues from '@/components/settings/lists/ListSectorQueues';
+import ListSectorQueues from '@/components/settings/lists/ListSectorQueues.vue';
 
 export default {
   name: 'FormQueue',
@@ -76,7 +76,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    value: {
+    modelValue: {
       type: Object,
       default: () => ({}),
     },
@@ -92,10 +92,10 @@ export default {
   computed: {
     queue: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(queue) {
-        this.$emit('input', queue);
+        this.$emit('update:modelValue', queue);
       },
     },
   },

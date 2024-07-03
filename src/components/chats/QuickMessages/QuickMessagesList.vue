@@ -11,7 +11,7 @@
       v-else
       class="quick-messages-list__personals"
       :title="$t('quick_messages.personal')"
-      active
+      v-model="openQuickMessages"
     >
       <QuickMessageCard
         v-for="quickMessage in quickMessages"
@@ -28,7 +28,7 @@
       v-if="quickMessagesShared.length > 0"
       class="quick-messages-list__shareds"
       :title="$t('quick_messages.shared')"
-      active
+      v-model="openQuickMessagesShared"
     >
       <QuickMessageCard
         v-for="quickMessage in quickMessagesShared"
@@ -43,9 +43,12 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
 
-import QuickMessageCard from './QuickMessageCard';
+import QuickMessageCard from './QuickMessageCard.vue';
+
+import { useQuickMessages } from '@/store/modules/chats/quickMessages';
+import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 
 export default {
   name: 'QuickMessagesList',
@@ -60,16 +63,20 @@ export default {
     },
   },
 
+  data() {
+    return {
+      openQuickMessages: true,
+      openQuickMessagesShared: true,
+    };
+  },
+
   components: {
     QuickMessageCard,
   },
 
   computed: {
-    ...mapState({
-      quickMessages: (state) => state.chats.quickMessages.quickMessages,
-      quickMessagesShared: (state) =>
-        state.chats.quickMessagesShared.quickMessagesShared,
-    }),
+    ...mapState(useQuickMessages, ['quickMessages']),
+    ...mapState(useQuickMessageShared, ['quickMessagesShared']),
 
     withoutQuickMessages() {
       return (

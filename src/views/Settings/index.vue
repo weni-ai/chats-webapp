@@ -5,21 +5,64 @@
     @scroll="onScroll"
   >
     <header>
-      <h1 class="title">Gerenciar Chats</h1>
+      <h1 class="title">{{ $t('config_chats.manage_chats') }}</h1>
       <p class="description">
-        Adicione, visualize e gerencie os setores, filas, gestores e agentes
-        dentro da sua organização.
+        {{ $t('config_chats.manage_description') }}
       </p>
     </header>
 
+    <section
+      class="settings-chats__project-configs"
+      v-if="isUserAdmin && projectConfig"
+    >
+      <section class="project-configs__config">
+        <UnnnicSwitch
+          v-model="projectConfig.can_use_bulk_transfer"
+          :textRight="configBulkTransferTranslation"
+        />
+        <UnnnicToolTip
+          enabled
+          :text="$t('config_chats.project_configs.bulk_transfer.tooltip')"
+          side="right"
+          maxWidth="20rem"
+        >
+          <UnnnicIcon
+            icon="information-circle-4"
+            scheme="neutral-soft"
+            size="sm"
+          />
+        </UnnnicToolTip>
+      </section>
+      <section class="project-configs__config">
+        <UnnnicSwitch
+          v-model="projectConfig.can_use_queue_prioritization"
+          :textRight="configQueuePrioritizationTranslation"
+        />
+        <UnnnicToolTip
+          enabled
+          :text="
+            $t('config_chats.project_configs.queue_prioritization.tooltip')
+          "
+          side="right"
+          maxWidth="20rem"
+        >
+          <UnnnicIcon
+            icon="information-circle-4"
+            scheme="neutral-soft"
+            size="sm"
+          />
+        </UnnnicToolTip>
+      </section>
+    </section>
+
     <section class="sectors">
       <div
-        @click="navigate('sectors.new')"
+        @click.stop="navigate('sectors.new')"
         @keypress.enter="navigate('sectors.new')"
       >
         <UnnnicCard
           type="blank"
-          text="Novo setor"
+          :text="$t('config_chats.new_sector')"
           icon="add"
           class="new-sector-card"
         />
@@ -29,23 +72,23 @@
         v-for="sector in sectors"
         class="sectors-list"
         :key="sector.id"
-        actionText="Abrir"
+        :actionText="$t('config_chats.open')"
         :name="sector.name"
-        @action="navigate('sectors.edit', { uuid: sector.uuid })"
         :statuses="[
           {
-            title: 'Agentes',
+            title: $t('config_chats.agent_title'),
             icon: 'headphones',
             scheme: 'aux-purple',
             count: sector.agents,
           },
           {
-            title: 'Contatos',
+            title: $t('config_chats.contacts'),
             icon: 'person',
             scheme: 'aux-lemon',
             count: sector.contacts,
           },
         ]"
+        @action="navigate('sectors.edit', { uuid: sector.uuid })"
       />
     </section>
     <div
@@ -62,6 +105,11 @@
 </template>
 
 <script>
+import { mapState } from 'pinia';
+import { useConfig } from '@/store/modules/config';
+import { useProfile } from '@/store/modules/profile';
+
+import Project from '@/services/api/resources/settings/project';
 import Sector from '@/services/api/resources/settings/sector';
 
 export default {
@@ -75,7 +123,38 @@ export default {
     sectors: [],
     isLoading: true,
     nextPage: null,
+
+    projectConfig: {
+      can_use_bulk_transfer: false,
+      can_use_queue_prioritization: false,
+    },
   }),
+
+  computed: {
+    ...mapState(useConfig, ['project']),
+    ...mapState(useProfile, ['me']),
+    configBulkTransferTranslation() {
+      const canBulkTransfer = this.projectConfig.can_use_bulk_transfer;
+      return this.$t(
+        `config_chats.project_configs.bulk_transfer.switch_${
+          canBulkTransfer ? 'active' : 'inactive'
+        }`,
+      );
+    },
+    configQueuePrioritizationTranslation() {
+      const canQueuePrioritization =
+        this.projectConfig.can_use_queue_prioritization;
+      return this.$t(
+        `config_chats.project_configs.queue_prioritization.switch_${
+          canQueuePrioritization ? 'active' : 'inactive'
+        }`,
+      );
+    },
+    isUserAdmin() {
+      const ROLE_ADMIN = 1;
+      return this.me.project_permission_role === ROLE_ADMIN;
+    },
+  },
 
   methods: {
     navigate(name, params) {
@@ -84,6 +163,16 @@ export default {
         params,
       });
     },
+
+    async updateProjectConfig() {
+      const { can_use_bulk_transfer, can_use_queue_prioritization } =
+        this.projectConfig;
+      Project.update({
+        can_use_bulk_transfer,
+        can_use_queue_prioritization,
+      });
+    },
+
     async listSectors() {
       try {
         this.isLoading = true;
@@ -125,18 +214,51 @@ export default {
       }
     },
   },
+
+  watch: {
+    project: {
+      immediate: true,
+      handler(newProject) {
+        if (newProject.config) {
+          this.projectConfig = newProject.config;
+        }
+      },
+    },
+    projectConfig: {
+      deep: true,
+      handler() {
+        this.updateProjectConfig();
+      },
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 .settings-chats {
+  padding-right: $unnnic-spacing-sm;
+
+  display: grid;
+  gap: $unnnic-spacing-sm;
+
   overflow-y: auto;
-  padding-right: 1rem;
-  // margin-right: 0.5rem;
+
+  &__project-configs {
+    display: grid;
+    gap: $unnnic-spacing-nano;
+
+    .project-configs__config {
+      display: flex;
+      gap: $unnnic-spacing-nano;
+      align-items: center;
+
+      .unnnic-tooltip {
+        display: flex;
+      }
+    }
+  }
 
   header {
-    margin-bottom: 1.5rem;
-
     .title {
       color: $unnnic-color-neutral-black;
       font-family: $unnnic-font-family-primary;

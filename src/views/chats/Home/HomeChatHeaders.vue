@@ -4,12 +4,13 @@
     <UnnnicChatsHeader
       v-show="isShowingRoomHeader"
       :title="headerRoomTitle"
-      :avatarClick="() => emitOpenRoomContactInfo()"
-      :titleClick="() => emitOpenRoomContactInfo()"
+      :avatarClick="emitOpenRoomContactInfo"
+      :titleClick="emitOpenRoomContactInfo"
       :avatarName="headerRoomTitle"
       :close="emitOpenModalCloseChat"
       :back="isMobile ? emitBack : null"
     />
+
     <UnnnicChatsHeader
       v-show="isShowingDiscussionHeader"
       class="home-chat-headers__discussion"
@@ -28,12 +29,16 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDiscussions } from '@/store/modules/chats/discussions';
+
 import isMobile from 'is-mobile';
 
-import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader';
+import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 
-import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow';
+import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow.vue';
 
 export default {
   name: 'HomeChatHeaders',
@@ -51,9 +56,11 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      room: (state) => state.chats.rooms.activeRoom,
-      discussion: (state) => state.chats.discussions.activeDiscussion,
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
+    }),
+    ...mapState(useDiscussions, {
+      discussion: (store) => store.activeDiscussion,
     }),
 
     isMobile() {

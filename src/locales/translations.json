@@ -134,6 +134,13 @@
     "en": "Record audio",
     "es": "Grabar audio"
   },
+  "audio_recorder": {
+    "discard_button": {
+      "pt-br": "Descartar",
+      "en": "Discard",
+      "es": "Descartar"
+    }
+  },
   "attachment": {
     "pt-br": "Anexo",
     "en": "Attach",
@@ -206,6 +213,46 @@
       "pt-br": "Setor",
       "en": "Sector",
       "es": "Sector"
+    },
+    "geral": {
+      "pt-br": "Geral",
+      "en": "General",
+      "es": "General"
+    },
+    "queues": {
+      "pt-br": "Filas",
+      "en": "Queues",
+      "es": "Colas"
+    },
+    "tags": {
+      "pt-br": "Tags",
+      "en": "Etiquetas",
+      "es": "Tags"
+    },
+    "add": {
+      "pt-br": "Adicionar novo setor",
+      "en": "Add new sector",
+      "es": "Agregar nuevo sector"
+    },
+    "add_queue": {
+      "pt-br": "Adicionar nova fila",
+      "en": "Add new queue",
+      "es": "Agregar nueva cola"
+    },
+    "name": {
+      "pt-br": "Nome do setor",
+      "en": "Sector name",
+      "es": "Nombre del sector"
+    },
+    "placeholder": {
+      "pt-br": "Exemplo: Financeiro",
+      "en": "Example: Financial",
+      "es": "Ejemplo: Financiero"
+    },
+    "save_and_continue": {
+      "pt-br": "Salvar e continuar",
+      "en": "Save and continue",
+      "es": "Guardar y continuar"
     },
     "managers": {
       "title": {
@@ -301,6 +348,36 @@
       "pt-br": "Filas",
       "en": "Queues",
       "es": "Colas"
+    },
+    "create_queue": {
+      "pt-br": "Criar nova fila",
+      "en": "Create new queue",
+      "es": "Crear nueva cola"
+    },
+    "queue_name": {
+      "pt-br": "Nome da fila",
+      "en": "Queue name",
+      "es": "Nombre de cola"
+    },
+    "queue_name_placeholder": {
+      "pt-br": "Exemplo: Pagamentos",
+      "en": "Example: Payments",
+      "es": "Ejemplo: Pagos"
+    },
+    "queue_title": {
+      "pt-br": "Filas em",
+      "en": "Queues in",
+      "es": "Cola en"
+    },
+    "queue_table_name": {
+      "pt-br": "Nome",
+      "en": "Name",
+      "es": "Nombre"
+    },
+    "quantity_agents": {
+      "pt-br": "Qtd de agentes",
+      "en": "Number of agents",
+      "es": "Cantidad de agentes"
     }
   },
   "chats": {
@@ -362,7 +439,7 @@
       },
       "agent_took_chat": {
         "pt-br": "Ops! O chat com contato {contact} foi assumido por outro agente",
-        "en-us": "Oops! The chat with the contact {contact} has already been taken over by another agent",
+        "en": "Oops! The chat with the contact {contact} has already been taken over by another agent",
         "es": "¡Ups! El chat con el contacto {contact} ha sido asumido por otro agente"
       }
     },
@@ -477,7 +554,7 @@
     },
     "get_chat_confirmation": {
       "pt-br": "Confirme se deseja realizar o atendimento de {contact}",
-      "en-us": "Confirm if you want to do the service of {contact}",
+      "en": "Confirm if you want to do the service of {contact}",
       "es": "Confirma si deseas realizar el servicio de {contact}"
     },
     "you_got_chat": {
@@ -511,6 +588,46 @@
         "en": "Contact history",
         "es": "Historia del contacto"
       }
+    },
+    "select_queues": {
+      "pt-br": "Selecionar filas",
+      "en": "Select queues",
+      "es": "Seleccionar colas"
+    },
+    "select_services_queues": {
+      "pt-br": "Selecionar filas de atendimento",
+      "en": "Select service queues",
+      "es": "Seleccionar colas de atención"
+    },
+    "select_at_least": {
+      "pt-br": "Selecione pelo menos uma fila para salvar alterações",
+      "en": "Select at least one queue to save changes",
+      "es": "Seleccione al menos una cola para guardar los cambios"
+    },
+    "select_the_queues": {
+      "pt-br": "Selecione as filas",
+      "en": "Select queues",
+      "es": "Seleccionar colas"
+    },
+    "select_your_queues": {
+      "pt-br": "Selecione suas filas",
+      "en": "Select your queues",
+      "es": "Selecciona tus colas"
+    },
+    "no_queue_selected": {
+      "pt-br": "Nenhuma fila selecionada",
+      "en": "No queue selected",
+      "es": "Ninguna cola seleccionada"
+    },
+    "success_update_queues": {
+      "pt-br": "Suas filas de atendimento foram atualizadas",
+      "en": "Your service queues have been updated",
+      "es": "Tus colas de servicio han sido actualizadas"
+    },
+    "error_update_queues": {
+      "pt-br": "Não foi possível atualizar suas filas de atendimento",
+      "en": "Unable to update your service queues",
+      "es": "No se pueden actualizar sus colas de servicio"
     }
   },
   "dashboard": {
@@ -824,12 +941,12 @@
   },
   "name_or_phone_or_protocol": {
     "pt-br": "Nome, telefone ou procotolo",
-    "en-us": "Name, telephone or protocol",
+    "en": "Name, telephone or protocol",
     "es": "Nombre, teléfono o protocolo"
   },
   "protocol": {
     "pt-br": "Protocolo",
-    "en-us": "Protocol",
+    "en": "Protocol",
     "es": "Protocolo"
   },
   "tags": {
@@ -937,6 +1054,33 @@
       "es": "Chat cerrado por el agente"
     }
   },
+  "transfer_contact": {
+    "pt-br": "Transferir contato | Transferir contatos",
+    "en": "Transfer contact | Transfer contacts",
+    "es": "Transferir contacto | Transferir contacts"
+  },
+  "bulk_transfer": {
+    "transfer_selected_contacts": {
+      "pt-br": "Transferir contatos selecionados",
+      "en": "Transfer selected contacts",
+      "es": "Transferir contactos seleccionados"
+    },
+    "agent_transfer_success": {
+      "pt-br": "Contato transferido com sucesso para agente {agent} | Contatos transferidos com sucesso para agente {agent}",
+      "en": "Contact successfully transferred to agent {agent} | Contacts successfully transferred to agent {agent}",
+      "es": "Contacto transferido con éxito al agente {agent} | Contactos transferidos con éxito al agente {agent}"
+    },
+    "queue_transfer_success": {
+      "pt-br": "Contato transferido com sucesso para fila {queue} | Contatos transferidos com sucesso para fila {queue}",
+      "en": "Contact successfully transferred to queue {queue} | Contacts successfully transferred to queue {queue}",
+      "es": "Contacto transferido con éxito a la cola {queue} | Contactos transferidos con éxito a la cola {queue}"
+    },
+    "error": {
+      "pt-br": "Não foi possível transferir os contatos, tente novamente",
+      "en": "It was not possible to transfer the contacts, try again",
+      "es": "No fue posible transferir los contactos, intente nuevamente"
+    }
+  },
   "contact_info": {
     "title": {
       "pt-br": "Informações do contato",
@@ -977,11 +1121,6 @@
       "pt-br": "Ver histórico",
       "en": "View history",
       "es": "Ver historial"
-    },
-    "transfer_contact": {
-      "pt-br": "Transferir contato",
-      "en": "Transfer contact",
-      "es": "Transferir contacto"
     },
     "audio_tooltip": {
       "pt-br": "{agent} {date} às {time}",
@@ -1268,6 +1407,31 @@
     "en": "Save",
     "es": "Guardar"
   },
+  "delete_sector": {
+    "pt-br": "Deletar setor",
+    "en": "Delete sector",
+    "es": "Eliminar sector"
+  },
+  "cant_revert": {
+    "pt-br": "Essa opção não poderá ser revertida",
+    "en": "This option cannot be reversed",
+    "es": "Esta opción no se puede revertir"
+  },
+  "confirm_typing": {
+    "pt-br": "Confirme digitando",
+    "en": "Confirm by typing",
+    "es": "Confirmar escribiendo"
+  },
+  "sector_deleted_success": {
+    "pt-br": "Setor deletado com sucesso!",
+    "en": "Sector deleted successfully!",
+    "es": "¡Sector eliminado con éxito!"
+  },
+  "sector_delete_error": {
+    "pt-br": "Não foi possível deletar o setor, tente novamente mais tarde.",
+    "en": "Unable to delete sector, please try again later.",
+    "es": "No se puede eliminar el sector. Vuelva a intentarlo más tarde."
+  },
   "edit": {
     "pt-br": "Editar",
     "en": "Edit",
@@ -1301,12 +1465,12 @@
     }
   },
   "select_agent": {
-    "pt-br": "Selecione agente",
+    "pt-br": "Selecionar agente",
     "en": "Select agent",
     "es": "Seleccionar agente"
   },
   "select_queue": {
-    "pt-br": "Selecione fila",
+    "pt-br": "Selecionar fila",
     "en": "Select queue",
     "es": "Seleccionar cola"
   },
@@ -1349,6 +1513,11 @@
     "pt-br": "Mensagens rápidas",
     "en": "Quick messages",
     "es": "Mensajes rápidos"
+  },
+  "flows": {
+    "pt-br": "Fluxos",
+    "en": "Flows",
+    "es": "Flujos"
   },
   "flows_trigger": {
     "title": {
@@ -1416,9 +1585,21 @@
       }
     },
     "already_open_room": {
-      "pt-br": "{contact} já possui uma sala aberta",
-      "en": "{contact} already has an open room",
-      "es": "{contact} ya tiene sala abierta"
+      "open": {
+        "pt-br": "{contact} já possui um chat",
+        "en": "{contact} already have a chat",
+        "es": "{contact} ya tiene sala"
+      },
+      "with_agent": {
+        "pt-br": "em andamento com agente {agent} na fila {queue}",
+        "en": "in progress with agent {agent} in queue {queue}",
+        "es": "en progreso con el agente {agente} en fila {queue}"
+      },
+      "in_queue_awaiting": {
+        "pt-br": "aguardando na fila {queue}",
+        "en": "waiting in queue {queue}",
+        "es": "esperando en fila {queue}"
+      }
     },
     "send": {
       "pt-br": "Enviar fluxo",
@@ -1447,7 +1628,7 @@
     },
     "contact_already_exists": {
       "pt-br": "O número {contact} já está salvo em sua lista de contatos",
-      "en-us": "The number {contact} is already saved in your contact list",
+      "en": "The number {contact} is already saved in your contact list",
       "es": "El número {contact} ya está guardado en tu lista de contactos"
     }
   },
@@ -1708,6 +1889,74 @@
       }
     }
   },
+  "config_chats": {
+    "manage_chats": {
+      "pt-br": "Gerenciar Chats",
+      "en": "Manage chats",
+      "es": "Gestionar chats"
+    },
+    "manage_description": {
+      "pt-br": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
+      "en": "Add, view and manage sectors, queues, managers and agents within your organization.",
+      "es": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización."
+    },
+    "project_configs": {
+      "bulk_transfer": {
+        "tooltip": {
+          "pt-br": "Essa função permite que agentes transfiram diversos contatos de uma vez para uma fila ou agente",
+          "en": "This function allows agents to transfer various contacts at once to a row or agent",
+          "es": "Esta función permite a los agentes transferir varios contactos a la vez a una fila o agente"
+        },
+        "switch_active": {
+          "pt-br": "Transferência de contatos em massa ativo",
+          "en": "Bulk contact transfer active",
+          "es": "Transferencia de contactos en masa activa"
+        },
+        "switch_inactive": {
+          "pt-br": "Transferência de contatos em massa desativado",
+          "en": "Bulk contact transfer disabled",
+          "es": "Transferencia de contactos en masa discapacitada"
+        }
+      },
+      "queue_prioritization": {
+        "tooltip": {
+          "pt-br": "Essa função permite que agentes possam escolher as filas que receberão contatos, dentro das previamente selecionadas no setor",
+          "en": "This function allows agents to choose the queues that will receive contacts, within those previously selected in the sector",
+          "es": "Esta función permite a los agentes elegir las colas que recibirán contactos, dentro de las previamente seleccionadas en el sector."
+        },
+        "switch_active": {
+          "pt-br": "Seleção de filas pelos agentes ativa",
+          "en": "Queue selection by agents active",
+          "es": "Selección de cola por agentes activo"
+        },
+        "switch_inactive": {
+          "pt-br": "Seleção de filas pelos agentes inativa",
+          "en": "Queue selection by agents inactive",
+          "es": "Selección de cola por agentes inactivo"
+        }
+      }
+    },
+    "new_sector": {
+      "pt-br": "Novo setor",
+      "en": "New sector",
+      "es": "Nuevo sector"
+    },
+    "agent_title": {
+      "pt-br": "Agentes",
+      "en": "Agents",
+      "es": "Agentes"
+    },
+    "contacts": {
+      "pt-br": "Contatos",
+      "en": "Contacts",
+      "es": "Contactos"
+    },
+    "open": {
+      "pt-br": "Abrir",
+      "en": "Open",
+      "es": "Abrir"
+    }
+  },
   "new_sector": {
     "sector_tip": {
       "pt-br": "Crie um setor para gerenciar a operação de atendimento, adicionando gerentes, agentes e horário de funcionamento",
@@ -1729,6 +1978,31 @@
       "en": "Add members to your project to be able to set as a manager",
       "es": "Agregue miembros a su proyecto para poder establecer como administrador"
     }
+  },
+  "your_orgs": {
+    "pt-br": "Suas organizações",
+    "en": "Your organizations",
+    "es": "Sus organizaciones"
+  },
+  "your_projects": {
+    "pt-br": "Seus projetos",
+    "en": "Your projects",
+    "es": "Tus proyectos"
+  },
+  "inteligences": {
+    "pt-br": "Inteligências",
+    "en": "Intelligences",
+    "es": "Inteligencias"
+  },
+  "enter": {
+    "pt-br": "Entrar",
+    "en": "Enter",
+    "es": "Entrar"
+  },
+  "no_matches_for_the_search": {
+    "pt-br": "Não há correspondências para a pesquisa",
+    "en": "There are no matches for the search",
+    "es": "No hay resultados para la encuesta"
   },
   "select_org": {
     "choose_one": {

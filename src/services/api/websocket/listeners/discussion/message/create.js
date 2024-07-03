@@ -3,8 +3,13 @@ import SoundNotification from '@/services/api/websocket/soundNotification';
 import { sendWindowNotification } from '@/utils/notifications';
 import { isValidJson } from '@/utils/messages';
 
+import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
+
 export default (message, { app }) => {
-  const { discussions, activeDiscussion } = app.$store.state.chats.discussions;
+  const discussionStore = useDiscussions();
+  const discussionMessagesStore = useDiscussionMessages();
+  const { discussions, activeDiscussion } = discussionStore;
   const findDiscussion = discussions.find(
     (discussion) => discussion.uuid === message.discussion,
   );
@@ -36,18 +41,14 @@ export default (message, { app }) => {
       isCurrentDiscussion || isViewModeCurrentDiscussion;
 
     if (shouldAddDiscussionMessage) {
-      app.$store.dispatch(
-        'chats/discussionMessages/addDiscussionMessage',
-        message,
-      );
+      discussionMessagesStore.addDiscussionMessage({ message });
     }
 
     const isJsonMessage = isValidJson(message.text);
     if (shouldAddDiscussionMessage || isJsonMessage) {
       return;
     }
-
-    app.$store.dispatch('chats/discussions/addNewMessagesByDiscussion', {
+    discussionStore.addNewMessagesByDiscussion({
       discussion: message.discussion,
       message: {
         created_on: message.created_on,

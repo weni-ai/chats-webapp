@@ -6,7 +6,6 @@
     </header>
     <section class="home-sidebar-loading__actions">
       <UnnnicSkeletonLoading />
-      <UnnnicSkeletonLoading />
       <div class="home-sidebar-loading__actions__order-by">
         <UnnnicSkeletonLoading width="73px" />
         <div class="home-sidebar-loading__actions__order-by__options">
@@ -60,7 +59,7 @@ export default {
     margin: $unnnic-spacing-xs 0;
     display: grid;
     gap: $unnnic-spacing-xs;
-    grid-template-rows: 38px 36px 16px;
+    grid-template-rows: 38px 16px;
 
     & > * {
       display: flex;

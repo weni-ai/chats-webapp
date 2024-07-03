@@ -16,7 +16,10 @@
   />
 </template>
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState } from 'pinia';
+
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 import ChatMessages from '@/components/chats/chat/ChatMessages/index.vue';
 
@@ -34,34 +37,34 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      room: (state) => state.chats.rooms.activeRoom,
-      roomMessages: (state) => state.chats.roomMessages.roomMessages,
-      roomMessagesNext: (state) => state.chats.roomMessages.roomMessagesNext,
-      roomMessagesPrevious: (state) =>
-        state.chats.roomMessages.roomMessagesPrevious,
-      roomMessagesSorted: (state) =>
-        state.chats.roomMessages.roomMessagesSorted,
-      roomMessagesSendingUuids: (state) =>
-        state.chats.roomMessages.roomMessagesSendingUuids,
-      roomMessagesFailedUuids: (state) =>
-        state.chats.roomMessages.roomMessagesFailedUuids,
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
     }),
+    ...mapState(useRoomMessages, [
+      'roomMessages',
+      'roomMessagesNext',
+      'roomMessagesPrevious',
+      'roomMessagesSorted',
+      'roomMessagesSendingUuids',
+      'roomMessagesFailedUuids',
+    ]),
   },
 
   methods: {
-    ...mapActions({
-      roomResendMessages: 'chats/roomMessages/resendRoomMessages',
-      roomResendMedia: 'chats/roomMessages/resendRoomMedia',
+    ...mapActions(useRoomMessages, {
+      roomResendMessages: 'resendRoomMessages',
+      roomResendMedia: 'resendRoomMedia',
+      getRoomMessages: 'getRoomMessages',
+      resetRoomMessages: 'resetRoomMessages',
     }),
 
-    async getRoomMessages() {
+    async handlingGetRoomMessages() {
       this.isLoading = true;
-      await this.$store
-        .dispatch('chats/roomMessages/getRoomMessages', {
-          offset: this.page * this.limit,
-          limit: this.limit,
-        })
+
+      this.getRoomMessages({
+        offset: this.page * this.limit,
+        limit: this.limit,
+      })
         .then(() => {
           this.isLoading = false;
         })
@@ -73,7 +76,7 @@ export default {
     searchForMoreMessages() {
       if (this.roomMessagesNext) {
         this.page += 1;
-        this.getRoomMessages();
+        this.handlingGetRoomMessages();
       }
     },
   },
@@ -83,9 +86,9 @@ export default {
       immediate: true,
       async handler(roomUuid) {
         if (roomUuid) {
-          await this.$store.dispatch('chats/roomMessages/resetRoomMessages');
+          await this.resetRoomMessages();
           this.page = 0;
-          this.getRoomMessages();
+          this.handlingGetRoomMessages();
         }
       },
     },

@@ -1,4 +1,4 @@
-import store from '@/store';
+import { useConfig } from '@/store/modules/config';
 
 const routes = [
   {
@@ -9,9 +9,9 @@ const routes = [
       let { token = '' } = to.params;
       token = token.replace('+', ' ').replace('Bearer ', '');
       const { projectUuid = '' } = to.query;
-      await store.dispatch('config/setToken', token);
-      await store.dispatch('config/setProject', projectUuid);
-
+      const configStore = useConfig();
+      await configStore.setToken(token);
+      await configStore.setProjectUuid(projectUuid);
       if (to.query.next) {
         const parsedNext = to.query.next.replace(
           '/settings/chats',

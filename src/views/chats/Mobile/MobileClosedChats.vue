@@ -33,14 +33,17 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'pinia';
 
-import ProjectApi from '@/services/api/resources/settings/project';
+import { useConfig } from '@/store/modules/config';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDiscussions } from '@/store/modules/chats/discussions';
+
 import History from '@/services/api/resources/chats/history';
 
-import ClosedChatsRoomsTable from '@/views/chats/ClosedChats/RoomsTable';
+import ClosedChatsRoomsTable from '@/views/chats/ClosedChats/RoomsTable.vue';
 import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
-import ContactInfo from '@/components/chats/ContactInfo';
+import ContactInfo from '@/components/chats/ContactInfo/index.vue';
 
 export default {
   name: 'MobileClosedChats',
@@ -55,22 +58,21 @@ export default {
     return {
       isLoadingHeader: false,
 
-      project: null,
       showRoomInfos: false,
     };
   },
 
   async created() {
     this.resetChat();
-    this.getProjectInfo();
   },
   async beforeDestroy() {
     this.resetChat();
   },
 
   computed: {
-    ...mapState({
-      room: (state) => state.chats.rooms.activeRoom,
+    ...mapState(useConfig, ['project']),
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
     }),
 
     headerSubtitle() {
@@ -86,23 +88,20 @@ export default {
   },
 
   methods: {
-    async getProjectInfo() {
-      const project = await ProjectApi.getInfo();
-      this.project = project.data;
-      this.isLoadingHeader = false;
-    },
+    ...mapActions(useRooms, ['setActiveRoom']),
+    ...mapActions(useDiscussions, ['setActiveDiscussion']),
 
     emitClose() {
       this.$emit('close');
     },
 
     async handleRoom(room) {
-      await this.$store.dispatch('chats/rooms/setActiveRoom', room);
+      await this.setActiveRoom(room);
     },
 
     async resetChat() {
       this.handleRoom(null);
-      await this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
+      await this.setActiveDiscussion(null);
     },
 
     closeHistory() {
@@ -130,6 +129,14 @@ export default {
           }
 
           this.handleRoom(responseRoom);
+        }
+      },
+    },
+    project: {
+      immediate: true,
+      handler(newProject) {
+        if (newProject) {
+          this.isLoadingHeader = false;
         }
       },
     },

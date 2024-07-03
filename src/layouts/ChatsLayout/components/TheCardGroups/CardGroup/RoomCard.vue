@@ -1,20 +1,33 @@
 <template>
-  <UnnnicChatsContact
-    :title="room.contact.name"
-    :lastMessage="lastMessage"
-    :waitingTime="waitingTimeComputed"
-    :unreadMessages="unreadMessages"
-    :tabindex="0"
-    :selected="room.uuid === activeRoomId && !unselected"
-    :locale="locale"
-    @click="$emit('click')"
-    @keypress.enter="$emit('click')"
+  <section
+    class="room-card__container"
+    :class="{ 'room-card__container--with-selection': withSelection }"
   >
-  </UnnnicChatsContact>
+    <UnnnicCheckbox
+      v-if="withSelection"
+      :modelValue="checkboxValue"
+      size="sm"
+      class="room-card__checkbox"
+      @change="checkboxValue = $event"
+    />
+    <UnnnicChatsContact
+      :title="room.contact.name"
+      :lastMessage="lastMessage"
+      :waitingTime="waitingTimeComputed"
+      :unreadMessages="unreadMessages"
+      :tabindex="0"
+      :selected="room.uuid === activeRoomId && active"
+      :locale="locale"
+      @click="$emit('click')"
+      @keypress.enter="$emit('click')"
+    />
+  </section>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+
+import { useRooms } from '@/store/modules/chats/rooms';
 
 const ONE_MINUTE_IN_MILLISECONDS = 60000;
 
@@ -26,7 +39,15 @@ export default {
       type: Object,
       required: true,
     },
-    unselected: {
+    active: {
+      type: Boolean,
+      default: false,
+    },
+    selected: {
+      type: Boolean,
+      default: false,
+    },
+    withSelection: {
       type: Boolean,
       default: false,
     },
@@ -51,14 +72,15 @@ export default {
   data: () => ({
     waitingTime: 0,
     timer: null,
+    checkboxValue: false,
   }),
 
   computed: {
-    ...mapState({
-      newMessages(state) {
-        return state.chats.rooms.newMessagesByRoom[this.room.uuid]?.messages;
+    ...mapState(useRooms, {
+      newMessages(store) {
+        return store.newMessagesByRoom[this.room.uuid]?.messages;
       },
-      activeRoomId: (state) => state.chats.rooms.activeRoom?.uuid,
+      activeRoomId: (store) => store.activeRoom?.uuid,
     }),
     lastMessage() {
       const { newMessages, room } = this;
@@ -81,5 +103,30 @@ export default {
       return this.$i18n.locale;
     },
   },
+
+  watch: {
+    selected(newSelected) {
+      this.checkboxValue = newSelected;
+    },
+    checkboxValue(newCheckboxValue) {
+      this.$emit('update-selected', newCheckboxValue);
+    },
+  },
 };
 </script>
+
+<style lang="scss" scoped>
+.room-card__container {
+  display: grid;
+  align-items: center;
+
+  &--with-selection {
+    grid-template-columns: auto 1fr;
+  }
+}
+.room-card {
+  &__checkbox {
+    padding: $unnnic-spacing-nano;
+  }
+}
+</style>

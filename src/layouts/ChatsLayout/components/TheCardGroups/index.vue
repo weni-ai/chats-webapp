@@ -10,39 +10,57 @@
       size="sm"
       :placeholder="$t('chats.search_contact')"
     ></UnnnicInput>
-    <div class="order-by">
-      <div>
-        <span>{{ $t('chats.room_list.order_by') }}</span>
-      </div>
-      <div
-        class="apply-filter"
-        style="cursor: pointer"
+    <section class="chat-groups__header">
+      <UnnnicToolTip
+        enabled
+        :text="$t('chats.select_queues')"
+        side="right"
+        v-if="
+          !isMobile &&
+          !isUserAdmin &&
+          project.config?.can_use_queue_prioritization
+        "
       >
-        <span
-          :style="{
-            fontWeight: lastCreatedFilter ? '700' : '400',
-          }"
-          @click="
-            listRoom(false, '-last_interaction'),
-              ((lastCreatedFilter = true), (createdOnFilter = false))
-          "
-          >{{ $t('chats.room_list.most_recent') }}</span
+        <UnnnicButton
+          iconCenter="filter_list"
+          type="secondary"
+          size="small"
+          @click="handleModalQueuePriorization"
+        />
+      </UnnnicToolTip>
+      <div class="order-by">
+        <div>
+          <span>{{ $t('chats.room_list.order_by') }}</span>
+        </div>
+        <div
+          class="apply-filter"
+          style="cursor: pointer"
         >
-        <span> | </span>
-        <span
-          :style="{
-            fontWeight: createdOnFilter ? '700' : '400',
-          }"
-          @click="
-            listRoom(false, 'last_interaction'),
-              ((createdOnFilter = true), (lastCreatedFilter = false))
-          "
-        >
-          {{ $t('chats.room_list.older') }}</span
-        >
+          <span
+            :style="{
+              fontWeight: lastCreatedFilter ? '700' : '400',
+            }"
+            @click="
+              listRoom(false, '-last_interaction'),
+                ((lastCreatedFilter = true), (createdOnFilter = false))
+            "
+            >{{ $t('chats.room_list.most_recent') }}</span
+          >
+          <span> | </span>
+          <span
+            :style="{
+              fontWeight: createdOnFilter ? '700' : '400',
+            }"
+            @click="
+              listRoom(false, 'last_interaction'),
+                ((createdOnFilter = true), (lastCreatedFilter = false))
+            "
+          >
+            {{ $t('chats.room_list.older') }}</span
+          >
+        </div>
       </div>
-    </div>
-
+    </section>
     <RoomsListLoading v-if="isLoadingRooms" />
     <section
       v-else
@@ -70,6 +88,7 @@
         :label="$t('chats.in_progress', { length: rooms.length })"
         :rooms="rooms"
         @open="openRoom"
+        :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
       />
       <CardGroup
         v-if="rooms_sent_flows.length"
@@ -84,23 +103,31 @@
         {{ isSearching ? $t('without_results') : $t('without_chats') }}
       </p>
     </section>
+    <ModalQueuePriorizations
+      v-if="showModalQueue"
+      @close="handleModalQueuePriorization"
+    />
   </div>
 </template>
-
 <script>
-import { mapState, mapGetters } from 'vuex';
+import isMobile from 'is-mobile';
+import { mapActions, mapState } from 'pinia';
+
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useConfig } from '@/store/modules/config';
+import { useProfile } from '@/store/modules/profile';
+import { useDiscussions } from '@/store/modules/chats/discussions';
 
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
-import CardGroup from './CardGroup';
-
+import CardGroup from './CardGroup/index.vue';
+import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
 export default {
   name: 'TheCardGroups',
-
   components: {
     RoomsListLoading,
     CardGroup,
+    ModalQueuePriorizations,
   },
-
   props: {
     disabled: {
       type: Boolean,
@@ -119,38 +146,41 @@ export default {
     limit: 100,
     nameOfContact: '',
     timerId: 0,
-    isLoadingRooms: true,
+    isLoadingRooms: false,
     createdOnFilter: false,
     lastCreatedFilter: true,
     isSearching: false,
+    isMobile: isMobile(),
+    showModalQueue: false,
+    noQueueSelected: false,
   }),
-
-  async mounted() {
+  mounted() {
     this.listRoom();
     this.listDiscussions();
   },
-
   computed: {
-    ...mapGetters({
-      rooms: 'chats/rooms/agentRooms',
-      rooms_queue: 'chats/rooms/waitingQueue',
-      rooms_sent_flows: 'chats/rooms/waitingContactAnswer',
+    ...mapState(useRooms, {
+      rooms: 'agentRooms',
+      rooms_queue: 'waitingQueue',
+      rooms_sent_flows: 'waitingContactAnswer',
+      listRoomHasNext: 'hasNextRooms',
+      newMessagesByRoom: 'newMessagesByRoom',
     }),
-    ...mapState({
-      discussions: (state) => state.chats.discussions.discussions,
-      listRoomHasNext: (state) => state.chats.rooms.listRoomHasNext,
-    }),
+    ...mapState(useConfig, ['project']),
+    ...mapState(useProfile, ['me']),
+    ...mapState(useDiscussions, ['discussions']),
 
+    isUserAdmin() {
+      const ROLE_ADMIN = 1;
+      return this.me.project_permission_role === ROLE_ADMIN;
+    },
     totalUnreadMessages() {
       return this.rooms.reduce(
         (total, room) =>
-          total +
-          (this.$store.state.chats.rooms.newMessagesByRoom[room.uuid]?.messages
-            ?.length || 0),
+          total + (this.newMessagesByRoom[room.uuid]?.messages?.length || 0),
         0,
       );
     },
-
     showNoResultsError() {
       return (
         !this.isLoadingRooms &&
@@ -161,7 +191,6 @@ export default {
       );
     },
   },
-
   watch: {
     totalUnreadMessages: {
       immediate: true,
@@ -178,11 +207,9 @@ export default {
     nameOfContact: {
       handler(newNameOfContact) {
         const TIME_TO_WAIT_TYPING = 1300;
-
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
           this.listRoom(false);
-
           if (newNameOfContact) {
             this.isSearching = true;
           } else {
@@ -192,29 +219,30 @@ export default {
       },
     },
   },
-
   methods: {
+    ...mapActions(useRooms, {
+      setActiveRoom: 'setActiveRoom',
+      getAllRooms: 'getAll',
+    }),
+    ...mapActions(useDiscussions, {
+      setActiveDiscussion: 'setActiveDiscussion',
+      getAllDiscussion: 'getAll',
+    }),
     async openRoom(room) {
-      await this.$store.dispatch('chats/discussions/setActiveDiscussion', null);
-      await this.$store.dispatch('chats/rooms/setActiveRoom', room);
+      await this.setActiveDiscussion(null);
+      await this.setActiveRoom(room);
     },
-
     async openDiscussion(discussion) {
-      await this.$store.dispatch(
-        'chats/discussions/setActiveDiscussion',
-        discussion,
-      );
+      await this.setActiveDiscussion(discussion);
     },
-
     clearField() {
       this.nameOfContact = '';
     },
-
     async listRoom(concat, order = '-last_interaction') {
-      this.isLoadingRooms = true;
+      this.isLoadingRooms = !concat;
       const { viewedAgent } = this;
       try {
-        await this.$store.dispatch('chats/rooms/getAll', {
+        await this.getAllRooms({
           offset: this.page * this.limit,
           concat,
           order,
@@ -222,10 +250,10 @@ export default {
           contact: this.nameOfContact,
           viewedAgent,
         });
-        this.isLoadingRooms = false;
       } catch {
-        this.isLoadingRooms = false;
         console.error('Não foi possível listar as salas');
+      } finally {
+        this.isLoadingRooms = false;
       }
     },
     searchForMoreRooms() {
@@ -237,7 +265,7 @@ export default {
     async listDiscussions() {
       try {
         const { viewedAgent } = this;
-        await this.$store.dispatch('chats/discussions/getAll', { viewedAgent });
+        await this.getAllDiscussion({ viewedAgent });
       } catch {
         console.error('Não foi possível listar as discussões');
       }
@@ -250,43 +278,46 @@ export default {
         this.searchForMoreRooms(true);
       }
     },
+
+    handleModalQueuePriorization() {
+      this.showModalQueue = !this.showModalQueue;
+    },
   },
 };
 </script>
-
 <style lang="scss" scoped>
 .container {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-stack-xs;
-
+  .chat-groups__header {
+    display: grid;
+    gap: $unnnic-spacing-xs;
+    grid-template-columns: auto 1fr;
+  }
   .chat-groups {
     flex: 1 1;
-
     display: flex;
     flex-direction: column;
-
     margin-top: $unnnic-spacing-sm;
     padding-right: $unnnic-spacing-xs;
     margin-right: -$unnnic-spacing-xs; // For the scrollbar to stick to the edge
     overflow-y: auto;
     overflow-x: hidden;
-
     :deep(.unnnic-collapse) {
       padding-bottom: $unnnic-spacing-sm;
     }
-
     .no-results {
       color: $unnnic-color-neutral-cloudy;
       font-size: $unnnic-font-size-body-gt;
     }
   }
-
   .order-by {
     display: flex;
     justify-content: space-between;
-
+    gap: $unnnic-spacing-xs;
+    align-items: center;
     font-size: $unnnic-font-size-body-md;
     color: $unnnic-color-neutral-cloudy;
   }

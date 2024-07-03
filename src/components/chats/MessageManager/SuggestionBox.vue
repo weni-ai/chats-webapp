@@ -38,7 +38,7 @@
 
 <script>
 import vClickOutside from 'v-click-outside';
-import SuggestionBoxShortcut from './SuggestionBoxShortcut';
+import SuggestionBoxShortcut from './SuggestionBoxShortcut.vue';
 
 export default {
   name: 'SuggestionBox',

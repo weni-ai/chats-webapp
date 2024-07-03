@@ -18,21 +18,10 @@
         <PreferencesBar
           v-if="!isViewMode"
           @show-quick-messages="handlerShowQuickMessages"
+          @open-flows-trigger="openFlowsTrigger"
+          :showFlowsTriggerButton="canTriggerFlows"
           :dashboard="canAccessDashboard"
         />
-
-        <div
-          class="flows-trigger-button"
-          v-if="!isViewMode"
-        >
-          <UnnnicButton
-            v-if="canTriggerFlows"
-            size="small"
-            type="secondary"
-            iconCenter="send"
-            @click="openFlowsTrigger"
-          />
-        </div>
 
         <TheCardGroups
           class="room-list"
@@ -40,14 +29,7 @@
           :viewedAgent="viewedAgent"
         />
 
-        <UnnnicButton
-          class="history-button"
-          :text="isHistoryView ? $t('back_to_chats') : $t('chats.see_history')"
-          :iconLeft="isHistoryView ? 'keyboard-arrow-left-1' : 'history'"
-          type="secondary"
-          size="small"
-          @click="navigate(isHistoryView ? 'home' : 'closed-rooms')"
-        />
+        <ChatsLayoutFooterButton class="footer-button" />
       </div>
     </slot>
 
@@ -87,13 +69,15 @@
 </template>
 
 <script>
-import SidebarLoading from '@/views/loadings/HomeSidebar';
+import SidebarLoading from '@/views/loadings/HomeSidebar.vue';
 import PreferencesBar from '@/components/PreferencesBar.vue';
+import QuickMessages from '@/components/chats/QuickMessages/index.vue';
+import TheCardGroups from './components/TheCardGroups/index.vue';
+import LayoutFlowsTrigger from './components/FlowsTrigger/index.vue';
+import ChatsLayoutFooterButton from './components/FooterButton/index.vue';
+
 import Sector from '@/services/api/resources/settings/sector.js';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
-import QuickMessages from '@/components/chats/QuickMessages';
-import TheCardGroups from './components/TheCardGroups';
-import LayoutFlowsTrigger from './components/FlowsTrigger';
 
 export default {
   name: 'ChatsLayout',
@@ -104,6 +88,7 @@ export default {
     SidebarLoading,
     LayoutFlowsTrigger,
     QuickMessages,
+    ChatsLayoutFooterButton,
   },
 
   props: {
@@ -135,7 +120,7 @@ export default {
     handlerShowQuickMessages() {
       this.showQuickMessages = !this.showQuickMessages;
     },
-    openFlowsTrigger({ contact = null }) {
+    openFlowsTrigger({ contact = null } = {}) {
       if (contact) {
         this.flowsTriggerContact = contact;
       }
@@ -146,12 +131,6 @@ export default {
       if (this.flowsTriggerContact) {
         this.flowsTriggerContact = null;
       }
-    },
-    close() {
-      if (this.$slots.aside[0].componentOptions.listeners) {
-        this.$slots.aside[0].componentOptions.listeners.close();
-      }
-      this.showFlowsTrigger = false;
     },
 
     async getCountSectors() {
@@ -169,7 +148,8 @@ export default {
       try {
         const response = await FlowsTrigger.listAccess();
         this.accessList = response;
-        this.canTriggerFlows = this.accessList.can_trigger_flows;
+        this.canTriggerFlows =
+          this.accessList.can_trigger_flows && !this.isViewMode;
         this.canAccessDashboard = this.accessList.can_access_dashboard;
       } catch (error) {
         console.log(error);
@@ -178,18 +158,13 @@ export default {
     selectQuickMessage(quickMessage) {
       this.$emit('select-quick-message', quickMessage);
     },
-    navigate(name) {
-      this.$router.push({
-        name,
-      });
-    },
   },
 
   computed: {
     isAsideVisible() {
-      return (
-        !!this.$slots.aside &&
-        this.$slots.aside.filter((slot) => slot.componentOptions).length > 0
+      const asideSlot = this.$slots.aside ? this.$slots.aside() : [];
+      return asideSlot.some(
+        (slot) => slot.type && typeof slot.type === 'object',
       );
     },
     isRoomListVisible() {
@@ -200,9 +175,6 @@ export default {
     },
     quickMessagesVisible() {
       return !this.showFlowsTrigger && this.showQuickMessages;
-    },
-    isHistoryView() {
-      return this.$route.name === 'closed-rooms';
     },
     isViewMode() {
       return !!this.viewedAgent;
@@ -255,16 +227,6 @@ section.chats-layout {
     padding: 0 0 $unnnic-spacing-xs $unnnic-spacing-xs;
 
     grid-column: 1;
-
-    .flows-trigger-button {
-      button {
-        width: 100%;
-      }
-    }
-
-    .history-button {
-      margin-right: $unnnic-spacing-xs;
-    }
 
     .room-list {
       overflow-y: auto;

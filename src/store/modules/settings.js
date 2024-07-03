@@ -1,43 +1,40 @@
+import { defineStore } from 'pinia';
+import Sector from '@/services/api/resources/settings/sector';
 import cloneDeep from 'lodash.clonedeep';
 
-const module = {
-  namespaced: true,
-  state: {
-    sectors: [],
-    activeSectorId: null,
-  },
-
-  mutations: {
-    addSector(state, sector) {
-      const lastId = state.sectors.at(-1).id;
+export const useSettings = defineStore('settings', {
+  state: () => ({ sectors: [], activeSectorId: null }),
+  actions: {
+    addSector(sector) {
+      const lastId = this.sectors.at(-1).id;
       let queueId = 100;
-      state.sectors.push({
+      this.sectors.push({
         ...sector,
         id: lastId + 1,
-        // eslint-disable-next-line no-plusplus
         queues: sector.queues.map((q) => ({ ...q, id: queueId++ })),
       });
     },
-    setActiveSectorId(state, id) {
-      state.activeSectorId = id;
+
+    setActiveSectorId(id) {
+      this.activeSectorId = id;
     },
-    updateSector(state, sector) {
-      const index = state.sectors.findIndex((s) => s.id === sector.id);
-      state.sectors.splice(index, 1, sector);
+
+    saveSector(sector) {
+      this.addSector({ ...sector, contacts: { count: 0 } });
+    },
+
+    updateSector(sector) {
+      if (!sector.id) this.saveSector(sector);
+      const index = this.sectors.findIndex((s) => s.id === sector.id);
+      this.sectors.splice(index, 1, sector);
+    },
+    async deleteSector(sectorUuid) {
+      await Sector.deleteSector(sectorUuid);
+      this.sectors = this.sectors.filter(
+        (sector) => sector.uuid !== sectorUuid,
+      );
     },
   },
-
-  actions: {
-    saveSector({ commit }, sector) {
-      commit('addSector', { ...sector, contacts: { count: 0 } });
-    },
-    updateSector({ commit, dispatch }, sector) {
-      if (!sector.id) dispatch('saveSector', sector);
-
-      commit('updateSector', sector);
-    },
-  },
-
   getters: {
     getActiveSector({ sectors, activeSectorId }) {
       return sectors.find((sector) => sector.id === activeSectorId) || null;
@@ -49,6 +46,4 @@ const module = {
       };
     },
   },
-};
-
-export default module;
+});

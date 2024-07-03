@@ -1,6 +1,8 @@
 import http from '@/services/api/http';
+
 import { getProject } from '@/utils/config';
-import Profile from '@/store/modules/profile';
+
+import { useProfile } from '@/store/modules/profile';
 
 export default {
   async getAll(offset, limit, contact, order, viewedAgent) {
@@ -77,7 +79,8 @@ export default {
   },
 
   async getQueueRoom(uuid) {
-    const { me } = Profile.state;
+    const profileStore = useProfile();
+    const { me } = profileStore;
     const response = await http.patch(
       `/room/${uuid}/pick_queue_room/?user_email=${me?.email}`,
     );
@@ -90,5 +93,23 @@ export default {
       customFields,
     );
     return response.data;
+  },
+
+  async bulkTranfer({ rooms = [], intended_agent = '', intended_queue = '' }) {
+    const profileStore = useProfile();
+    const { email: user_email } = profileStore.me;
+    const body = { rooms_list: rooms };
+    const params = {
+      user_request: user_email,
+      ...(intended_agent
+        ? { user_email: intended_agent }
+        : { queue_uuid: intended_queue }),
+    };
+
+    const response = await http
+      .patch(`room/bulk_transfer/`, body, { params })
+      .then((response) => response)
+      .catch((error) => error.response);
+    return response;
   },
 };

@@ -1,8 +1,13 @@
+import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useRooms } from '@/store/modules/chats/rooms';
+
 export default (discussion, { app }) => {
-  app.$store.dispatch('chats/discussions/removeDiscussion', discussion.uuid);
+  const discussionStore = useDiscussions();
+  const roomsStore = useRooms();
+  discussionStore.removeDiscussion(discussion.uuid);
 
   if (app.$route.params.discussionId === discussion.uuid) {
-    app.$store.dispatch('chats/discussions/setActiveDiscussion', null);
-    app.$store.dispatch('chats/rooms/setActiveRoom', null);
+    discussionStore.setActiveDiscussion(null);
+    roomsStore.setActiveRoom(null);
   }
 };

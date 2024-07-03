@@ -1,64 +1,52 @@
+import { defineStore } from 'pinia';
 import Discussion from '@/services/api/resources/chats/discussion';
-import Rooms from './rooms';
 
-const mutations = {
-  SET_DISCUSSIONS: 'SET_DISCUSSIONS',
-  ADD_DISCUSSION: 'ADD_DISCUSSION',
-  SET_DISCUSSIONS_CLOSEDS: 'SET_DISCUSSIONS_CLOSEDS',
-  SET_ACTIVE_DISCUSSION: 'SET_ACTIVE_DISCUSSION',
-  UPDATE_NEW_MESSAGES_BY_DISCUSSION: 'UPDATE_NEW_MESSAGES_BY_DISCUSSION',
-};
+import { useRooms } from './rooms';
 
-export default {
-  namespaced: true,
-  state: {
+export const useDiscussions = defineStore('discussions', {
+  state: () => ({
     discussions: [],
     discussionsCloseds: [],
     activeDiscussion: null,
     newMessagesByDiscussion: {},
-  },
+  }),
+  actions: {
+    setDiscussions(discussions) {
+      this.discussions = discussions;
+    },
 
-  mutations: {
-    [mutations.SET_DISCUSSIONS](state, discussions) {
-      state.discussions = discussions;
+    addDiscussion(discussion) {
+      this.discussions.unshift({ ...discussion });
     },
-    [mutations.ADD_DISCUSSION](state, discussion) {
-      state.discussions.unshift({ ...discussion });
+
+    setActiveDiscussion(discussion) {
+      this.activeDiscussion = discussion;
     },
-    [mutations.SET_DISCUSSIONS_CLOSEDS](state, discussionsCloseds) {
-      state.discussionsCloseds = discussionsCloseds;
-    },
-    [mutations.SET_ACTIVE_DISCUSSION](state, room) {
-      state.activeDiscussion = room;
-    },
-    [mutations.UPDATE_NEW_MESSAGES_BY_DISCUSSION](
-      state,
-      { discussion, message, reset = false },
-    ) {
+
+    updateNewMessagesByDiscussion({ discussion, message, reset = false }) {
       const discussionMessages =
-        state.newMessagesByDiscussion[discussion]?.messages || [];
+        this.newMessagesByDiscussion[discussion]?.messages || [];
 
-      state.newMessagesByDiscussion = {
-        ...state.newMessagesByDiscussion,
+      this.newMessagesByDiscussion = {
+        ...this.newMessagesByDiscussion,
         [discussion]: {
           messages: reset ? [] : [...discussionMessages, message],
         },
       };
     },
-  },
 
-  actions: {
-    async getAll({ commit }, { viewedAgent }) {
+    async getAll({ viewedAgent }) {
       const newDiscussions = await Discussion.listAll({ viewedAgent });
-      commit(mutations.SET_DISCUSSIONS, newDiscussions?.results);
+      this.setDiscussions(newDiscussions?.results);
     },
 
-    async getAllClosed({ commit }, { roomId }) {
-      const newDiscussions = await Discussion.listCloseds({ roomId });
-      commit(mutations.SET_DISCUSSIONS_CLOSEDS, newDiscussions?.results);
+    async getAllClosed({ roomId }) {
+      const closedDiscussions = await Discussion.listCloseds({ roomId });
+      this.discussionsCloseds = closedDiscussions?.results;
     },
 
-    async create({ commit }, { queue, subject, initial_message }) {
+    async create({ queue, subject, initial_message }) {
+      const roomsStore = useRooms();
       const responseDiscussion = await Discussion.create({
         queue,
         subject,
@@ -71,71 +59,62 @@ export default {
       ) {
         const discussionWithContact = {
           ...responseDiscussion,
-          contact: Rooms.state.activeRoom?.contact.name,
+          contact: roomsStore.activeRoom?.contact.name,
         };
-        commit(mutations.ADD_DISCUSSION, discussionWithContact);
-        commit(mutations.SET_ACTIVE_DISCUSSION, discussionWithContact);
+        this.addDiscussion(discussionWithContact);
+        this.setActiveDiscussion(discussionWithContact);
       }
 
       return responseDiscussion;
     },
 
-    addDiscussion({ commit }, discussion) {
-      commit(mutations.ADD_DISCUSSION, discussion);
-    },
-
-    removeDiscussion({ state, commit }, discussionUuid) {
-      const discussions = state.discussions.filter(
+    removeDiscussion(discussionUuid) {
+      const discussions = this.discussions.filter(
         (discussion) => discussion.uuid !== discussionUuid,
       );
-      commit(mutations.SET_DISCUSSIONS, discussions);
+      this.setDiscussions(discussions);
 
       if (
-        state.activeDiscussion &&
-        state.activeDiscussion?.uuid === discussionUuid
+        this.activeDiscussion &&
+        this.activeDiscussion?.uuid === discussionUuid
       ) {
-        commit(mutations.SET_ACTIVE_DISCUSSION, null);
+        this.setActiveDiscussion(null);
       }
     },
 
-    addNewMessagesByDiscussion({ commit }, { discussion, message }) {
-      commit(mutations.UPDATE_NEW_MESSAGES_BY_DISCUSSION, {
+    addNewMessagesByDiscussion({ discussion, message }) {
+      this.updateNewMessagesByDiscussion({
         discussion,
         message,
       });
     },
 
-    resetNewMessagesByDiscussion({ commit }, { discussion }) {
-      commit(mutations.UPDATE_NEW_MESSAGES_BY_DISCUSSION, {
+    resetNewMessagesByDiscussion({ discussion }) {
+      this.updateNewMessagesByDiscussion({
         discussion,
         reset: true,
       });
     },
 
-    async addAgent({ state }, { user_email }) {
+    async addAgent({ user_email }) {
       const responseAgent = await Discussion.addAgent({
-        discussionUuid: state.activeDiscussion.uuid,
+        discussionUuid: this.activeDiscussion.uuid,
         user_email,
       });
 
       return responseAgent;
     },
 
-    setActiveDiscussion({ commit }, discussion) {
-      commit(mutations.SET_ACTIVE_DISCUSSION, discussion);
-    },
-
-    async delete({ state, commit }) {
+    async delete() {
       try {
-        const { activeDiscussion } = state;
+        const { activeDiscussion } = this;
         await Discussion.delete({ discussionUuid: activeDiscussion.uuid });
 
-        const discussions = state.discussions.filter(
+        const discussions = this.discussions.filter(
           (discussion) => discussion.uuid !== activeDiscussion.uuid,
         );
-
-        commit(mutations.SET_DISCUSSIONS, discussions);
-        commit(mutations.SET_ACTIVE_DISCUSSION, null);
+        this.setDiscussions(discussions);
+        this.setActiveDiscussion(null);
       } catch (error) {
         console.error(
           'An error occurred while deleting the discussion:',
@@ -144,22 +123,21 @@ export default {
       }
     },
 
-    getDiscussionDetails({ state }) {
+    getDiscussionDetails() {
       return Discussion.getDiscussionDetails({
-        discussionUuid: state.activeDiscussion.uuid,
+        discussionUuid: this.activeDiscussion.uuid,
       });
     },
 
-    getDiscussionAgents({ state }) {
+    getDiscussionAgents() {
       return Discussion.getDiscussionAgents({
-        discussionUuid: state.activeDiscussion.uuid,
+        discussionUuid: this.activeDiscussion.uuid,
       });
     },
   },
-
   getters: {
-    getDiscussionById: (state) => (uuid) => {
-      return state.discussions.find((discussion) => discussion.uuid === uuid);
+    getDiscussionById: (store) => (uuid) => {
+      return store.discussions.find((discussion) => discussion.uuid === uuid);
     },
   },
-};
+});

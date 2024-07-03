@@ -1,47 +1,48 @@
 <template>
   <UnnnicTab
-    v-model="tab"
+    v-model:activeTab="tab"
     :initialTab="tab || 'sector'"
     :tabs="tabs"
     class="sector-tabs"
+    @change="tab = $event"
   >
-    <template slot="tab-head-sector">
+    <template #tab-head-sector>
       <div class="form-tab">
         <span class="name">{{ $t('sector.title') }}</span>
       </div>
     </template>
 
-    <template slot="tab-head-queues">
+    <template #tab-head-queues>
       <div class="form-tab">
         <span class="name">{{ $t('queues.title') }}</span>
       </div>
     </template>
 
-    <template slot="tab-head-messages">
+    <template #tab-head-messages>
       <div class="form-tab">
         <span class="name">{{ $t('settings.messages.title') }}</span>
       </div>
     </template>
 
-    <template slot="tab-head-tags">
+    <template #tab-head-tags>
       <div class="form-tab">
         <span class="name">{{ $t('tags.title') }}</span>
       </div>
     </template>
 
-    <template slot="tab-panel-sector">
+    <template #tab-panel-sector>
       <slot name="sector" />
     </template>
 
-    <template slot="tab-panel-queues">
+    <template #tab-panel-queues>
       <slot name="queues" />
     </template>
 
-    <template slot="tab-panel-messages">
+    <template #tab-panel-messages>
       <slot name="messages" />
     </template>
 
-    <template slot="tab-panel-tags">
+    <template #tab-panel-tags>
       <slot name="tags" />
     </template>
   </UnnnicTab>
@@ -52,7 +53,7 @@ export default {
   name: 'SectorTabs',
 
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: '',
     },
@@ -71,10 +72,10 @@ export default {
   computed: {
     tab: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(tab) {
-        this.$emit('input', tab);
+        if (typeof tab === 'string') this.$emit('update:modelValue', tab);
       },
     },
   },

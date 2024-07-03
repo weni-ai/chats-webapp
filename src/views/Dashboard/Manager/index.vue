@@ -18,10 +18,14 @@
     </template>
 
     <template #actions>
-      <DashboardFilters @filter="filters = $event" />
+      <DashboardFilters
+        @filter="filters = $event"
+        :sectors="sectors"
+      />
     </template>
 
     <HistoryMetricsBySector
+      :sectors="sectors"
       :filter="filters"
       @historyFilter="event = $event"
       :headerTitle="filters?.sector ? 'Filas' : 'Setores'"
@@ -33,11 +37,15 @@
 </template>
 
 <script>
-import DashboardLayout from '@/layouts/DashboardLayout';
+import { mapState } from 'pinia';
+import { useConfig } from '@/store/modules/config';
 
-import DashboardFilters from '@/components/dashboard/Filters';
-import HistoryMetricsBySector from '@/components/dashboard/metrics/BySector/HistoryMetrics';
-import ProjectApi from '@/services/api/resources/settings/project';
+import Sector from '@/services/api/resources/settings/sector';
+
+import DashboardLayout from '@/layouts/DashboardLayout/index.vue';
+
+import DashboardFilters from '@/components/dashboard/Filters.vue';
+import HistoryMetricsBySector from '@/components/dashboard/metrics/BySector/HistoryMetrics.vue';
 
 export default {
   name: 'DashboardManager',
@@ -51,20 +59,14 @@ export default {
   data: () => ({
     showData: '',
     agents: {},
-    project: [],
     filters: null,
+    sectors: [],
   }),
 
-  mounted() {
-    this.projectInfo();
+  async created() {
+    await this.getSectors();
   },
 
-  methods: {
-    async projectInfo() {
-      const project = await ProjectApi.getInfo();
-      this.project = project.data;
-    },
-  },
   watch: {
     visualization(newValue) {
       if (newValue) {
@@ -75,6 +77,7 @@ export default {
     },
   },
   computed: {
+    ...mapState(useConfig, ['project']),
     visualization() {
       const filter = this.filters;
       return filter;
@@ -83,6 +86,17 @@ export default {
     header() {
       const projectName = this.project.name;
       return projectName;
+    },
+  },
+
+  methods: {
+    async getSectors() {
+      try {
+        const { results } = await Sector.list({ limit: 50 });
+        this.sectors = results;
+      } catch (error) {
+        console.error('The sectors could not be loaded at this time.', error);
+      }
     },
   },
 };

@@ -37,6 +37,7 @@
       ref="fileUploader"
       @progress="emitFileUploaderProgress"
       @close="closeModal('fileUploader')"
+      @update:modelValue="modalFileUploaderFiles = $event"
       :mediasType="modalFileUploaderMediaType"
     />
 
@@ -49,11 +50,14 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import isMobile from 'is-mobile';
 
-import FileUploader from '@/components/chats/MessageManager/FileUploader';
-import ModalGetChat from '@/components/chats/chat/ModalGetChat';
+import { mapState } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDashboard } from '@/store/modules/dashboard';
+
+import FileUploader from '@/components/chats/MessageManager/FileUploader.vue';
+import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
 import ModalQuickMessages from '@/components/chats/QuickMessages/ModalQuickMessages.vue';
 
 import ModalCloseChat from './ModalCloseChat.vue';
@@ -86,12 +90,11 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      room: (state) => state.chats.rooms.activeRoom,
-      showModalAssumedChat: ({ dashboard }) => dashboard.showModalAssumedChat,
-      assumedChatContactName: ({ dashboard }) =>
-        dashboard.assumedChatContactName,
-    }),
+    ...mapState(useRooms, { room: (store) => store.activeRoom }),
+    ...mapState(useDashboard, [
+      'showModalAssumedChat',
+      'assumedChatContactName',
+    ]),
   },
 
   methods: {

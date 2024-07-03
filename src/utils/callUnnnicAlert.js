@@ -1,9 +1,9 @@
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import unnnic from '@weni/unnnic-system';
 
 export default (props) => {
   const mobileMainElement = document.querySelector('.mobile-home__main');
 
-  unnnicCallAlert({
+  unnnic.unnnicCallAlert({
     ...props,
     containerRef: mobileMainElement,
   });

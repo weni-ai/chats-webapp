@@ -1,4 +1,7 @@
 import http from '@/services/api/http';
+
+import { useProfile } from '@/store/modules/profile';
+
 import { getProject } from '@/utils/config';
 
 function getURLParams({ URL, endpoint }) {
@@ -53,6 +56,15 @@ export default {
       .then((response) => response.data)
       .catch((error) => error.response);
     return response;
+  },
+
+  async deleteSector(sectorUuid) {
+    const profileStore = useProfile();
+    const { me } = profileStore;
+    const response = await http.delete(
+      `/sector/${sectorUuid}/?user=${me?.email}`,
+    );
+    return response.data;
   },
 
   async managers(sectorUuid) {

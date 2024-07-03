@@ -3,8 +3,8 @@
     <ChatClassifierLoading v-if="loading" />
     <TagGroup
       v-else
-      class="chat-classifier__tag-group"
       v-model="selected"
+      class="chat-classifier__tag-group"
       :tags="tags"
       scheme="aux-purple"
       selectable
@@ -13,9 +13,9 @@
 </template>
 
 <script>
-import ChatClassifierLoading from '@/views/loadings/chat/ChatClassifier';
+import ChatClassifierLoading from '@/views/loadings/chat/ChatClassifier.vue';
 
-import TagGroup from '@/components/TagGroup';
+import TagGroup from '@/components/TagGroup.vue';
 
 export default {
   name: 'ChatClassifier',
@@ -26,7 +26,7 @@ export default {
   },
 
   props: {
-    value: {
+    modelValue: {
       type: Array,
       default: () => [],
     },
@@ -53,10 +53,10 @@ export default {
   computed: {
     selected: {
       get() {
-        return this.value || [];
+        return this.modelValue || [];
       },
       set(selected) {
-        this.$emit('input', selected);
+        this.$emit('update:modelValue', selected);
       },
     },
   },

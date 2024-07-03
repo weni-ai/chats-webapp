@@ -1,6 +1,9 @@
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+
 export default async (message, { app }) => {
+  const roomMessagesStore = useRoomMessages();
   if (app.me.email === message.user?.email) {
     return;
   }
-  app.$store.dispatch('chats/roomMessages/addMessage', message);
+  roomMessagesStore.addMessage(message);
 };

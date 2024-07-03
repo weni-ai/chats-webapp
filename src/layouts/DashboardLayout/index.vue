@@ -6,15 +6,16 @@
         class="dashboard__header"
         style="justify-content: space-between"
       >
-        <div>
+        <section class="dashboard__header__container">
           <UnnnicAvatarIcon
+            class="dashboard__header__container__icon"
             icon="bar_chart_4_bars"
             scheme="aux-purple"
           />
-          <span class="title">
+          <span class="dashboard__header__container__title">
             <slot name="header" />
           </span>
-        </div>
+        </section>
         <div style="display: flex; padding: 12px">
           <slot name="status" />
           <div @click="close">
@@ -68,10 +69,14 @@ export default {
     padding-bottom: 1.5rem;
     margin-bottom: 1.5rem;
     border-bottom: solid 1px $unnnic-color-neutral-soft;
-
-    .title {
-      font-size: 1.5rem;
-      color: $unnnic-color-neutral-darkest;
+    &__container {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      &__title {
+        font-size: 1.5rem;
+        color: $unnnic-color-neutral-darkest;
+      }
     }
   }
 

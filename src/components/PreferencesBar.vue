@@ -42,16 +42,13 @@
 
     <div class="options-container">
       <div class="label">Status</div>
-
       <UnnnicSwitch
-        :value="$store.state.config.status === 'ONLINE'"
+        v-model="statusSwitch"
         size="small"
         :textRight="
-          $store.state.config.status === 'ONLINE'
-            ? $t('status.online')
-            : $t('status.offline')
+          status === 'ONLINE' ? $t('status.online') : $t('status.offline')
         "
-        @input="updateStatus"
+        @update:model-value="updateStatus"
         :disabled="loadingStatus"
       />
 
@@ -61,9 +58,18 @@
         v-model="sound"
         size="small"
         :textRight="$t('preferences.notifications.sound')"
-        @input="changeSound"
+        @update:model-value="changeSound"
       />
 
+      <UnnnicButton
+        v-if="showFlowsTriggerButton"
+        :text="$t('flows')"
+        size="small"
+        type="secondary"
+        iconLeft="send"
+        @mousedown.prevent
+        @click="openFlowsTrigger"
+      />
       <UnnnicButton
         @mousedown.prevent
         :text="$t('quick_messages.title')"
@@ -89,11 +95,16 @@
 import Profile from '@/services/api/resources/profile';
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 
-import { unnnicCallAlert } from '@weni/unnnic-system';
-
+import unnnic from '@weni/unnnic-system';
+import { mapState, mapActions } from 'pinia';
+import { useConfig } from '@/store/modules/config';
 export default {
   props: {
     dashboard: {
+      type: Boolean,
+      default: false,
+    },
+    showFlowsTriggerButton: {
       type: Boolean,
       default: false,
     },
@@ -108,8 +119,20 @@ export default {
     };
   },
 
+  computed: {
+    ...mapState(useConfig, ['status', 'project']),
+    statusSwitch: {
+      get() {
+        return this.status === 'ONLINE';
+      },
+      set(value) {
+        useConfig().$patch({ status: value ? 'ONLINE' : 'OFFLINE' });
+      },
+    },
+  },
+
   async created() {
-    this.getStatus();
+    await this.handlingGetStatus();
     this.sound = (localStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'yes';
     window.dispatchEvent(
       new CustomEvent(`${this.help ? 'show' : 'hide'}BottomRightOptions`),
@@ -117,10 +140,14 @@ export default {
   },
 
   methods: {
+    ...mapActions(useConfig, ['getStatus']),
     navigate(name) {
       this.$router.push({
         name,
       });
+    },
+    openFlowsTrigger() {
+      this.$emit('open-flows-trigger');
     },
     openQuickMessage() {
       this.$emit('show-quick-messages');
@@ -131,7 +158,7 @@ export default {
       const {
         data: { connection_status },
       } = await Profile.updateStatus({
-        projectUuid: this.$store.state.config.project,
+        projectUuid: this.project.uuid,
         status: online ? 'ONLINE' : 'OFFLINE',
       });
 
@@ -141,11 +168,11 @@ export default {
       this.showStatusAlert(connection_status.toLowerCase());
     },
 
-    async getStatus() {
-      const response = await Profile.status({
-        projectUuid: this.$store.state.config.project,
+    async handlingGetStatus() {
+      const status = await this.getStatus(this.project.uuid);
+      useConfig().$patch({
+        status,
       });
-      this.$store.state.config.status = response.data.connection_status;
     },
 
     changeSound() {
@@ -153,7 +180,7 @@ export default {
     },
 
     showStatusAlert(connectionStatus) {
-      unnnicCallAlert({
+      unnnic.unnnicCallAlert({
         props: {
           text: `${this.$t('status_agent')} ${connectionStatus}`,
           icon: 'indicator',

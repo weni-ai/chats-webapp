@@ -57,18 +57,19 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useConfig } from '@/store/modules/config';
+import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useRooms } from '@/store/modules/chats/rooms';
 
-import ProjectApi from '@/services/api/resources/settings/project';
+import TheCardGroups from '@/layouts/ChatsLayout/components/TheCardGroups/index.vue';
+import FlowsTrigger from '@/layouts/ChatsLayout/components/FlowsTrigger/index.vue';
 
-import TheCardGroups from '@/layouts/ChatsLayout/components/TheCardGroups';
-import FlowsTrigger from '@/layouts/ChatsLayout/components/FlowsTrigger';
-
-import MobileChat from '@/views/chats/Mobile/MobileChat';
-import MobileClosedChats from '@/views/chats/Mobile/MobileClosedChats';
+import MobileChat from '@/views/chats/Mobile/MobileChat.vue';
+import MobileClosedChats from '@/views/chats/Mobile/MobileClosedChats.vue';
 
 import ModalPreferences from '@/components/chats/Mobile/ModalPreferences.vue';
-import QuickMessages from '@/components/chats/QuickMessages';
+import QuickMessages from '@/components/chats/QuickMessages/index.vue';
 
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 import { resetChats } from '@/utils/chats';
@@ -91,16 +92,19 @@ export default {
       oldTab: '',
       isOpenedQuickMessages: false,
 
-      projectName: '',
       isCallingTransferAlert: false,
     };
   },
 
   computed: {
-    ...mapState({
-      project: (state) => state.config.project,
-      room: (state) => state.chats.rooms.activeRoom,
-      discussion: (state) => state.chats.discussions.activeDiscussion,
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
+    }),
+    ...mapState(useConfig, {
+      projectName: (store) => store.project.name,
+    }),
+    ...mapState(useDiscussions, {
+      discussion: (store) => store.activeDiscussion,
     }),
 
     navs() {
@@ -158,11 +162,6 @@ export default {
   methods: {
     homeBack() {
       this.$router.push({ name: 'orgs' });
-    },
-
-    async getProjectName() {
-      const project = await ProjectApi.getInfo();
-      this.projectName = project.data.name || '';
     },
 
     updateCurrentTab(tab) {
@@ -260,12 +259,6 @@ export default {
         this.closeQuickMessages();
       }
     },
-
-    project(newProject) {
-      if (newProject) {
-        this.getProjectName();
-      }
-    },
   },
 };
 </script>
@@ -289,6 +282,8 @@ export default {
     overflow: hidden;
 
     padding: $unnnic-spacing-xs $unnnic-spacing-sm 0;
+
+    height: 100%;
   }
 
   &__chats-list {

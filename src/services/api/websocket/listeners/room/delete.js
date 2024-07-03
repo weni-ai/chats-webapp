@@ -1,3 +1,6 @@
+import { useRooms } from '@/store/modules/chats/rooms';
+
 export default async (room, { app }) => {
-  app.$store.dispatch('chats/rooms/removeRoom', room.uuid);
+  const roomsStore = useRooms();
+  roomsStore.removeRoom(room.uuid);
 };

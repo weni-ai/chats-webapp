@@ -1,34 +1,12 @@
+import { defineStore } from 'pinia';
+
 import QuickMessage from '@/services/api/resources/chats/quickMessage';
 
-const mutations = {
-  SET_QUICK_MESSAGES_SHARED: 'SET_QUICK_MESSAGES_SHARED',
-  ADD_QUICK_MESSAGE_SHARED: 'ADD_QUICK_MESSAGE_SHARED',
-  UPDATE_QUICK_MESSAGE_SHARED: 'UPDATE_QUICK_MESSAGE_SHARED',
-  DELETE_QUICK_MESSAGE_SHARED: 'DELETE_QUICK_MESSAGE_SHARED',
-  SET_NEXT_QUICK_MESSAGES_SHARED: 'SET_NEXT_QUICK_MESSAGES_SHARED',
-};
-
-export default {
-  namespaced: true,
-
-  state: {
-    quickMessagesShared: [],
-    nextQuickMessagesShared: '',
-  },
-
-  mutations: {
-    [mutations.SET_QUICK_MESSAGES_SHARED](state, quickMessagesShared) {
-      state.quickMessagesShared = quickMessagesShared;
-    },
-    [mutations.ADD_QUICK_MESSAGE_SHARED](state, quickMessage) {
-      state.quickMessagesShared.unshift(quickMessage);
-      console.log();
-    },
-    [mutations.UPDATE_QUICK_MESSAGE_SHARED](
-      state,
-      { uuid, title, text, shortcut },
-    ) {
-      const quickMessageToUpdate = state.quickMessagesShared.find(
+export const useQuickMessageShared = defineStore('quickMessagesShared', {
+  state: () => ({ quickMessagesShared: [], nextQuickMessagesShared: '' }),
+  actions: {
+    updateQuickMessageShared({ uuid, title, text, shortcut }) {
+      const quickMessageToUpdate = this.quickMessagesShared.find(
         (quickMessage) => quickMessage.uuid === uuid,
       );
 
@@ -40,7 +18,7 @@ export default {
           shortcut,
         };
 
-        state.quickMessagesShared = state.quickMessagesShared.map(
+        this.quickMessagesShared = this.quickMessagesShared.map(
           (quickMessage) =>
             quickMessage.uuid === uuid
               ? updatedQuickMessageShared
@@ -48,19 +26,8 @@ export default {
         );
       }
     },
-    [mutations.DELETE_QUICK_MESSAGE_SHARED](state, uuid) {
-      state.quickMessagesShared = state.quickMessagesShared.filter(
-        (quickMessage) => quickMessage.uuid !== uuid,
-      );
-    },
-    [mutations.SET_NEXT_QUICK_MESSAGES_SHARED](state, nextQuickMessagesShared) {
-      state.nextQuickMessagesShared = nextQuickMessagesShared;
-    },
-  },
-
-  actions: {
-    async getAll({ commit, state }) {
-      const { quickMessagesShared, nextQuickMessagesShared } = state;
+    async getAll() {
+      const { quickMessagesShared, nextQuickMessagesShared } = this;
 
       const response = await QuickMessage.getAllBySector({
         nextQuickMessagesShared,
@@ -69,33 +36,33 @@ export default {
       const newQuickMessagesShared =
         [...quickMessagesShared, ...response.results] || [];
 
-      commit(mutations.SET_NEXT_QUICK_MESSAGES_SHARED, responseNext);
-      commit(mutations.SET_QUICK_MESSAGES_SHARED, newQuickMessagesShared);
+      this.nextQuickMessagesShared = responseNext;
+      this.quickMessagesShared = newQuickMessagesShared;
 
       return newQuickMessagesShared;
     },
 
-    async create({ commit }, { sectorUuid, title, text, shortcut }) {
+    async create({ sectorUuid, title, text, shortcut }) {
       const newQuickMessageShared = { sectorUuid, title, text, shortcut };
-      const response = await QuickMessage.createBySector(newQuickMessageShared);
-
-      commit(mutations.ADD_QUICK_MESSAGE_SHARED, response);
+      const message = await QuickMessage.createBySector(newQuickMessageShared);
+      this.quickMessagesShared.unshift(message);
     },
 
-    async update({ commit }, { quickMessageUuid, title, text, shortcut }) {
+    async update({ quickMessageUuid, title, text, shortcut }) {
       const dataToUpdate = { title, text, shortcut };
       await QuickMessage.updateBySector(quickMessageUuid, dataToUpdate);
 
-      commit(mutations.UPDATE_QUICK_MESSAGE_SHARED, {
+      this.updateQuickMessageShared({
         uuid: quickMessageUuid,
         ...dataToUpdate,
       });
     },
 
-    async delete({ commit }, quickMessageUuid) {
+    async delete(quickMessageUuid) {
       await QuickMessage.deleteBySector(quickMessageUuid);
-
-      commit(mutations.DELETE_QUICK_MESSAGE_SHARED, quickMessageUuid);
+      this.quickMessagesShared = this.quickMessagesShared.filter(
+        (quickMessage) => quickMessage.uuid !== quickMessageUuid,
+      );
     },
   },
-};
+});

@@ -1,12 +1,12 @@
-export default {
-  namespaced: true,
-  state: {
-    me: {},
-  },
+import { defineStore } from 'pinia';
 
-  mutations: {
-    setMe(state, user) {
-      state.me = user || {};
+export const useProfile = defineStore('profile', {
+  state: () => ({
+    me: {},
+  }),
+  actions: {
+    setMe(user) {
+      this.me = user || {};
     },
   },
-};
+});

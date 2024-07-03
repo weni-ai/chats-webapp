@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import HomeChat from '@/views/chats/Home/HomeChat';
-import ContactInfo from '@/components/chats/ContactInfo';
+import HomeChat from '@/views/chats/Home/HomeChat.vue';
+import ContactInfo from '@/components/chats/ContactInfo/index.vue';
 
 export default {
   name: 'MobileChat',

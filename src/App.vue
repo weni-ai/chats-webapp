@@ -5,17 +5,27 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'pinia';
 
 import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
+import Project from './services/api/resources/settings/project';
 import WS from '@/services/api/websocket/setup';
+import * as notifications from '@/utils/notifications';
 
-const moment = require('moment');
+import { useConfig } from './store/modules/config';
+import { useProfile } from './store/modules/profile';
+import { useQuickMessages } from './store/modules/chats/quickMessages';
+import { useQuickMessageShared } from './store/modules/chats/quickMessagesShared';
+import { useRooms } from './store/modules/chats/rooms';
+import { useDashboard } from './store/modules/dashboard';
+
+import { getProject } from '@/utils/config';
+
+import moment from 'moment';
 
 export default {
   name: 'App',
-
   beforeCreate() {
     http.interceptors.request.use((config) => {
       // eslint-disable-next-line no-param-reassign
@@ -28,6 +38,10 @@ export default {
     this.handleLocale();
   },
 
+  mounted() {
+    notifications.requestPermission();
+  },
+
   data() {
     return {
       ws: null,
@@ -36,15 +50,16 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      activeRoom: (state) => state.chats.rooms.activeRoom,
-      me: (state) => state.profile.me,
-      viewedAgent: (state) => state.dashboard.viewedAgent,
-      nextQuickMessages: (state) => state.chats.quickMessages.nextQuickMessages,
-      nextQuickMessagesShared: (state) =>
-        state.chats.quickMessagesShared.nextQuickMessagesShared,
-      appToken: (state) => state.config.token,
-      appProject: (state) => state.config.project,
+    ...mapState(useRooms, ['activeRoom']),
+    ...mapState(useProfile, ['me']),
+    ...mapState(useDashboard, ['viewedAgent']),
+    ...mapState(useQuickMessages, ['nextQuickMessages']),
+    ...mapState(useQuickMessageShared, ['nextQuickMessagesShared']),
+    ...mapState(useConfig, {
+      userStatus: 'status',
+      project: 'project',
+      appToken: 'token',
+      appProject: (store) => store.project.uuid,
     }),
 
     configsForInitializeWebSocket() {
@@ -60,6 +75,7 @@ export default {
       handler(newAppToken) {
         if (newAppToken) {
           this.getUser();
+          this.getProject();
         }
       },
     },
@@ -76,7 +92,7 @@ export default {
     },
     'viewedAgent.email': {
       handler() {
-        this.ws.reconnect();
+        this.wsReconnect();
       },
     },
 
@@ -84,32 +100,45 @@ export default {
       immediate: true,
 
       handler() {
-        if (!this.configsForInitializeWebSocket.some((config) => !config)) {
-          this.ws = new WS({ app: this });
-          this.ws.connect();
-        }
+        this.wsConnect();
       },
     },
   },
 
   methods: {
+    ...mapActions(useConfig, ['setStatus', 'setProject']),
+    ...mapActions(useProfile, ['setMe']),
+    ...mapActions(useQuickMessages, {
+      getAllQuickMessages: 'getAll',
+    }),
+    ...mapActions(useQuickMessageShared, {
+      getAllQuickMessagesShared: 'getAll',
+    }),
     restoreLocalStorageUserStatus() {
       const userStatus = localStorage.getItem('statusAgent');
       if (!['OFFLINE', 'ONLINE'].includes(userStatus)) {
         localStorage.setItem('statusAgent', 'OFFLINE');
       }
-      this.$store.dispatch('config/setStatus', userStatus);
+      this.setStatus(userStatus);
     },
 
     async getUser() {
       const user = await Profile.me();
-      this.$store.commit('profile/setMe', user);
+      this.setMe(user);
+    },
+
+    async getProject() {
+      const { data: project } = await Project.getInfo();
+      this.setProject({
+        ...project,
+        uuid: this.appProject || getProject(),
+      });
     },
 
     async loadQuickMessages() {
       this.loading = true;
       try {
-        await this.$store.dispatch('chats/quickMessages/getAll');
+        await this.getAllQuickMessages();
       } finally {
         this.loading = false;
       }
@@ -122,7 +151,7 @@ export default {
     async loadQuickMessagesShared() {
       this.loading = true;
       try {
-        await this.$store.dispatch('chats/quickMessagesShared/getAll');
+        await this.getAllQuickMessagesShared();
       } finally {
         this.loading = false;
       }
@@ -162,7 +191,7 @@ export default {
 
     async getUserStatus() {
       const userStatus = localStorage.getItem('statusAgent');
-      const projectUuid = this.$store.state.config.project;
+      const projectUuid = this.project.uuid;
       const {
         data: { connection_status: responseStatus },
       } = await Profile.status({
@@ -181,11 +210,26 @@ export default {
       const {
         data: { connection_status },
       } = await Profile.updateStatus({
-        projectUuid: this.$store.state.config.project,
+        projectUuid: this.project.uuid,
         status,
       });
-      this.$store.state.config.status = connection_status;
+      useConfig().$patch({ status: connection_status });
       localStorage.setItem('statusAgent', connection_status);
+    },
+
+    async wsConnect() {
+      const isWSConnectionValid =
+        !this.ws &&
+        !this.configsForInitializeWebSocket.some((config) => !config);
+
+      if (isWSConnectionValid) {
+        this.ws = new WS({ app: this });
+        this.ws.connect();
+      }
+    },
+
+    async wsReconnect() {
+      this.ws.reconnect();
     },
   },
 };

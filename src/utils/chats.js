@@ -1,8 +1,22 @@
-import store from '@/store';
+import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useRooms } from '@/store/modules/chats/rooms';
 
 export async function resetChats() {
-  await store.dispatch('chats/discussionMessages/resetDiscussionMessages');
-  await store.dispatch('chats/roomMessages/resetRoomMessages');
-  await store.dispatch('chats/discussions/setActiveDiscussion', null);
-  await store.dispatch('chats/rooms/setActiveRoom', null);
+  await useDiscussionMessages().resetDiscussionMessages();
+  await useRoomMessages().resetRoomMessages();
+  await useDiscussions().setActiveDiscussion(null);
+  await useRooms().setActiveRoom(null);
+}
+
+export function removeDuplicatedMessagesByUuid(arrayMessages) {
+  const itemsChecked = new Set();
+  return arrayMessages.filter((item) => {
+    if (itemsChecked.has(item.uuid)) {
+      return false;
+    }
+    itemsChecked.add(item.uuid);
+    return true;
+  });
 }

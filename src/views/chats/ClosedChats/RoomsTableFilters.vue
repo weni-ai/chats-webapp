@@ -73,7 +73,7 @@ import isMobile from 'is-mobile';
 
 import Sector from '@/services/api/resources/settings/sector';
 
-import RoomsTableFiltersLoading from '@/views/loadings/ClosedChats/RoomsTableFiltersLoading';
+import RoomsTableFiltersLoading from '@/views/loadings/ClosedChats/RoomsTableFiltersLoading.vue';
 
 export default {
   name: 'ClosedChatsRoomsTableFilters',
@@ -378,7 +378,8 @@ export default {
     width: 100%;
   }
 
-  &__date-picker {
+  // .dropdown class comes from the unnnic component and is used here to override its style
+  &__date-picker.dropdown {
     display: grid;
   }
 }

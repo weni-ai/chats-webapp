@@ -21,7 +21,7 @@
       class="form-section"
     >
       <h2 class="title">
-        Adicionar novo setor
+        {{ $t('sector.add') }}
         <UnnnicToolTip
           enabled
           :text="$t('new_sector.sector_tip')"
@@ -38,8 +38,8 @@
 
       <UnnnicInput
         v-model="sector.name"
-        label="Nome do setor"
-        placeholder="Exemplo: Financeiro"
+        :label="$t('sector.name')"
+        :placeholder="$t('sector.placeholder')"
       />
     </section>
 
@@ -69,7 +69,7 @@
             autocomplete
             autocompleteIconLeft
             autocompleteClearOnFocus
-            @input="selectManager"
+            @update:modelValue="selectManager"
           />
         </div>
         <!-- <unnnic-button
@@ -144,9 +144,9 @@
 
         <section class="form-section__inputs">
           <div>
-            <span class="label-working-day">{{
-              $t('sector.managers.working_day.start.label')
-            }}</span>
+            <span class="label-working-day">
+              {{ $t('sector.managers.working_day.start.label') }}
+            </span>
             <input
               class="input-time"
               type="time"
@@ -157,13 +157,14 @@
             <span
               v-show="!this.validHour"
               style="font-size: 12px; color: #ff4545"
-              >{{ this.message }}</span
             >
+              {{ this.message }}
+            </span>
           </div>
           <div>
-            <span class="label-working-day">{{
-              $t('sector.managers.working_day.end.label')
-            }}</span>
+            <span class="label-working-day">
+              {{ $t('sector.managers.working_day.end.label') }}
+            </span>
             <input
               class="input-time"
               type="time"
@@ -179,13 +180,41 @@
             class="form-section__inputs--fill-w"
           />
         </section>
+        <section class="form-section__handlers">
+          <UnnnicButton
+            v-if="isEditing"
+            :text="$t('delete_sector')"
+            type="warning"
+            iconLeft="delete"
+            size="small"
+            @click.stop="openModalDelete = true"
+          />
+        </section>
+        <UnnnicModalNext
+          v-if="openModalDelete"
+          type="alert"
+          icon="alert-circle-1"
+          scheme="feedback-red"
+          :title="$t('delete_sector') + ` ${sector.name}`"
+          :description="$t('cant_revert')"
+          :validate="`${sector.name}`"
+          :validatePlaceholder="`${sector.name}`"
+          :validateLabel="$t('confirm_typing') + ` &quot;${sector.name}&quot;`"
+          :actionPrimaryLabel="$t('confirm')"
+          :actionSecondaryLabel="$t('cancel')"
+          @clickActionPrimary="deleteSector(sector.uuid)"
+          @clickActionSecondary="openModalDelete = false"
+        />
       </div>
     </section>
   </form>
 </template>
 
 <script>
-import SelectedMember from '@/components/settings/forms/SelectedMember';
+import { mapActions } from 'pinia';
+import { useSettings } from '@/store/modules/settings';
+import unnnic from '@weni/unnnic-system';
+import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 import Sector from '@/services/api/resources/settings/sector';
 
 export default {
@@ -203,7 +232,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    value: {
+    modelValue: {
       type: Object,
       default: () => ({}),
     },
@@ -213,6 +242,7 @@ export default {
     selectedManager: [],
     message: '',
     validHour: false,
+    openModalDelete: false,
   }),
 
   computed: {
@@ -241,15 +271,19 @@ export default {
 
     sector: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(sector) {
-        this.$emit('input', sector);
+        this.$emit('update:modelValue', sector);
       },
     },
   },
 
   methods: {
+    ...mapActions(useSettings, {
+      actionDeleteSector: 'deleteSector',
+    }),
+
     removeManager(managerUuid) {
       this.$emit('remove-manager', managerUuid);
     },
@@ -331,6 +365,31 @@ export default {
         this.validHour = true;
       }
     },
+
+    async deleteSector(sectorUuid) {
+      try {
+        await this.actionDeleteSector(sectorUuid);
+        this.openModalDelete = false;
+        this.$router.push({ name: 'sectors' });
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('sector_deleted_success'),
+            type: 'success',
+          },
+          seconds: 5,
+        });
+      } catch (error) {
+        console.log(error);
+        this.openModalDelete = false;
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('sector_delete_error'),
+            type: 'error',
+          },
+          seconds: 5,
+        });
+      }
+    },
   },
   watch: {
     sector: {
@@ -395,6 +454,13 @@ export default {
 
     .unnnic-switch {
       align-items: center;
+    }
+
+    &__handlers {
+      margin-top: $unnnic-spacing-md;
+      button {
+        width: 100%;
+      }
     }
   }
 

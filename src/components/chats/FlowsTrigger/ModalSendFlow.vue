@@ -21,8 +21,8 @@
 <script>
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
-import SelectFlow from './SelectFlow';
-import SendFlowButton from './SendFlowButton';
+import SelectFlow from './SelectFlow.vue';
+import SendFlowButton from './SendFlowButton.vue';
 
 export default {
   name: 'ModalSendFlow',

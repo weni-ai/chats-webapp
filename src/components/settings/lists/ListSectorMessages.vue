@@ -9,7 +9,7 @@
       </p>
       <div class="list-sector-messages__copilot__integration">
         <UnnnicSwitch
-          :value="copilotActive"
+          v-model="copilotActive"
           size="small"
           :textRight="
             $t(
@@ -18,7 +18,7 @@
               }`,
             )
           "
-          @input="handleCopilotActive"
+          @update:model-value="handleCopilotActive"
         />
         <p
           v-if="copilotShowIntegrationsMessage"
@@ -32,7 +32,7 @@
         </p>
         <UnnnicSwitch
           v-if="copilotActive && !copilotShowIntegrationsMessage && !isLoading"
-          :value="copilotCustomRulesActive"
+          v-model="copilotCustomRulesActive"
           size="small"
           :textRight="
             $t(
@@ -41,12 +41,12 @@
               }`,
             )
           "
-          @input="handleCustomRulesActive"
+          @update:model-value="handleCustomRulesActive"
         />
         <UnnnicTextArea
           v-if="copilotActive && copilotCustomRulesActive && !isLoading"
-          :value="copilotCustomRules"
-          @input="handleCustomRules"
+          v-model="copilotCustomRules"
+          @update:model-value="handleCustomRules"
           :label="$t('settings.messages.copilot.custom_rules.title')"
           :placeholder="
             $t('settings.messages.copilot.custom_rules.explanation')
@@ -89,9 +89,10 @@
 
 <script>
 import Sector from '@/services/api/resources/settings/sector';
-import QuickMessageCard from '@/components/chats/QuickMessages/QuickMessageCard';
+import QuickMessageCard from '@/components/chats/QuickMessages/QuickMessageCard.vue';
 
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState } from 'pinia';
+import { useConfig } from '@/store/modules/config';
 
 export default {
   name: 'ListSectorQuickMessages',
@@ -123,19 +124,18 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      copilotActive: (state) => state.config.copilot.active,
-      copilotCustomRulesActive: (state) =>
-        state.config.copilot.customRulesActive,
-      copilotCustomRules: (state) => state.config.copilot.customRules,
+    ...mapState(useConfig, {
+      copilotActive: (store) => store.copilot.active,
+      copilotCustomRulesActive: (store) => store.copilot.customRulesActive,
+      copilotCustomRules: (store) => store.copilot.customRules,
     }),
   },
 
   methods: {
-    ...mapActions({
-      setCopilotActive: 'config/setCopilotActive',
-      setCopilotCustomRulesActive: 'config/setCopilotCustomRulesActive',
-      setCopilotCustomRules: 'config/setCopilotCustomRules',
+    ...mapActions(useConfig, {
+      setCopilotActive: 'setCopilotActive',
+      setCopilotCustomRulesActive: 'setCopilotCustomRulesActive',
+      setCopilotCustomRules: 'setCopilotCustomRules',
     }),
 
     handleCopilotActive(boolean) {

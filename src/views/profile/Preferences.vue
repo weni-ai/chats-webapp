@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import unnnic from '@weni/unnnic-system';
 
 export default {
   name: 'ProfilePreferences',
@@ -63,7 +63,7 @@ export default {
 
   methods: {
     showConfirmationAlert() {
-      unnnicCallAlert({
+      unnnic.unnnicCallAlert({
         props: {
           text: 'Alterações salvas',
           type: 'success',
