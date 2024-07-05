@@ -19,19 +19,19 @@ afterEachMiddlewares.forEach((middleware) => router.afterEach(middleware));
 
 router.beforeEach(async (to, from, next) => {
   const configStore = useConfig();
-  // const authenticated = await Keycloak.isAuthenticated();
-  // if (authenticated) {
-  //   // const { token } = Keycloak.keycloak;
-  //   await configStore.setToken(token);
+  const authenticated = await Keycloak.isAuthenticated();
+  if (authenticated) {
+    const { token } = Keycloak.keycloak;
+    await configStore.setToken(token);
 
-  if (to.hash.startsWith('#state=')) {
-    next({ ...to, hash: '' });
+    if (to.hash.startsWith('#state=')) {
+      next({ ...to, hash: '' });
+    } else {
+      next();
+    }
   } else {
-    next();
+    Keycloak.keycloak.login();
   }
-  // } else {
-  //   Keycloak.keycloak.login();
-  // }
 });
 
 router.afterEach(() => {
