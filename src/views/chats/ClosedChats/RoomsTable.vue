@@ -66,19 +66,17 @@
                   icon="open_in_new"
                 />
               </div>
-              <UnnnicButton
+              <a
                 v-else
-                class="closed-chats__rooms-table__table__visualize-button"
-                :text="$t('see')"
-                type="secondary"
-                size="small"
-                @click="
-                  $router.push({
-                    name: 'closed-rooms.selected',
-                    params: { roomId: item.uuid },
-                  })
-                "
-              />
+                :href="`/closed-chats/${item.uuid}`"
+              >
+                <UnnnicButton
+                  class="closed-chats__rooms-table__table__visualize-button"
+                  :text="$t('see')"
+                  type="secondary"
+                  size="small"
+                />
+              </a>
             </template>
           </UnnnicTableRow>
         </section>
