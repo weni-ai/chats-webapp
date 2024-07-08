@@ -8,8 +8,8 @@
         avatarIcon="history"
         :crumbs="crumbs"
         :close="backToHome"
-        @crumbClick="handlerCrumbClick"
         :size="closedChatsHeaderSize"
+        @crumb-click="handlerCrumbClick"
       />
       <ChatHeaderLoading v-show="roomId && isLoadingSelectedRoom" />
       <UnnnicChatsHeader

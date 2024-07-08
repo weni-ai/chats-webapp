@@ -1,11 +1,11 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <UnnnicModal
-    @close="$emit('close')"
+    ref="refModalRemoveSelectedContacts"
     :text="$t('flows_trigger.remove_selected_contacts')"
     class="modal-remove-selected-contacts"
-    ref="refModalRemoveSelectedContacts"
     :showModal="contacts.length > 0"
+    @close="$emit('close')"
   >
     <SelectedContactsSection
       :contacts="newContacts"

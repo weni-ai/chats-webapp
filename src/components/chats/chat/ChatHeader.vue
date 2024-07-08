@@ -13,8 +13,8 @@
             size="2xl"
             clickable
             :photoUrl="usePhoto ? room.contact.photo_url : ''"
-            @click="showContactInfo"
             :disabled="!room.is_active"
+            @click="showContactInfo"
           />
           <span
             class="username"
@@ -27,8 +27,8 @@
       </UnnnicToolTip>
 
       <span
-        class="clickable"
         v-if="room.user && !!closeButtonTooltip"
+        class="clickable"
         @click="$emit('close')"
         @keypress.enter="$emit('close')"
       >
@@ -64,9 +64,9 @@
       >
     </section>
     <div
+      v-if="alertNetwork"
       class="no-internet-connection"
       style="display: flex"
-      v-if="alertNetwork"
     >
       <div class="c-loader">
         <UnnnicIconSvg
@@ -77,9 +77,9 @@
         />
       </div>
       <span
-        @click="reconnect"
         class="alert-text"
         style="margin-right: 4px"
+        @click="reconnect"
         ><b>{{ $t('alert_no_internet_connection.message') }}</b>
         {{ $t('alert_no_internet_connection.verify_connection') }}
         <b style="cursor: pointer"
@@ -88,14 +88,14 @@
       </span>
     </div>
     <div
+      v-if="alert"
       class="header-info-message"
       style="display: flex"
-      v-if="alert"
     >
       <span
-        @click="openSendFlow"
         class="alert-text"
         style="margin-right: 4px"
+        @click="openSendFlow"
         >{{ $t('alert_last_message_date.message') }}
         <u style="cursor: pointer">{{
           $t('alert_last_message_date.message_send_flow')

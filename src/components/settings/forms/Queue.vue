@@ -100,6 +100,16 @@ export default {
     },
   },
 
+  watch: {
+    queue: {
+      deep: true,
+      immediate: true,
+      handler() {
+        this.$emit('validate', this.validate());
+      },
+    },
+  },
+
   methods: {
     focusTextEditor() {
       this.$nextTick(() => {
@@ -121,16 +131,6 @@ export default {
     },
     validate() {
       return !!this.queue.name;
-    },
-  },
-
-  watch: {
-    queue: {
-      deep: true,
-      immediate: true,
-      handler() {
-        this.$emit('validate', this.validate());
-      },
     },
   },
 };

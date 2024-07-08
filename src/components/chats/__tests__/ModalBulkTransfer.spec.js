@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { createTestingPinia  } from '@pinia/testing';
+import { createTestingPinia } from '@pinia/testing';
 import UnnnicSystem from '@/plugins/UnnnicSystem';
 import i18n from '@/plugins/i18n';
 
@@ -9,7 +9,7 @@ import ModalBulkTransfer from '../chat/ModalBulkTransfer.vue';
 function createWrapper(store) {
   const wrapper = mount(ModalBulkTransfer, {
     global: {
-      plugins: [i18n, store, UnnnicSystem]
+      plugins: [i18n, store, UnnnicSystem],
     },
   });
 
@@ -24,9 +24,9 @@ describe('ModalBulkTransfer', () => {
       initialState: {
         me: 'mocked@email.com',
         selectedRoomsToTransfer: ['1', '2'],
-        setSelectedRoomsToTransfer: vi.fn()
-      }
-    })
+        setSelectedRoomsToTransfer: vi.fn(),
+      },
+    });
     wrapper = createWrapper(store);
   });
 
@@ -34,7 +34,9 @@ describe('ModalBulkTransfer', () => {
     it('should render modal with select fields and buttons', () => {
       const modal = wrapper.findComponent({ name: 'unnnic-modal' });
       const labels = wrapper.findAllComponents({ name: 'unnnic-label' });
-      const selects = wrapper.findAllComponents({ name: 'unnnic-select-smart'});
+      const selects = wrapper.findAllComponents({
+        name: 'unnnic-select-smart',
+      });
       const buttons = wrapper.findAllComponents('.unnnic-button');
 
       expect(modal.exists()).toBe(true);

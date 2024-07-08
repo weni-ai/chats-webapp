@@ -1,10 +1,10 @@
 <template>
   <section v-if="isMobile && showUploadModal">
     <UnnnicModal
-      class="modal-upload-confirm"
       v-if="modelValue.length > 0"
-      @close="closeFileUploadModal"
+      class="modal-upload-confirm"
       :text="$t('confirm_send')"
+      @close="closeFileUploadModal"
     >
       <UnnnicImportCard
         v-for="file in modelValue"
@@ -31,7 +31,7 @@
         v-bind="fileUploadModalProps"
         acceptMultiple
         :maximumUploads="maximumUploads"
-        @fileChange="files = $event"
+        @file-change="files = $event"
         @cancel="closeFileUploadModal"
         @close="closeFileUploadModal"
         @action="upload"
@@ -94,6 +94,17 @@ export default {
     },
   },
 
+  watch: {
+    showUploadModal(newShowUploadModal) {
+      if (newShowUploadModal) {
+        if (this.isMobile) this.openFileSelector();
+        return;
+      }
+
+      this.files = [];
+    },
+  },
+
   methods: {
     // accessed by external components
     open() {
@@ -151,17 +162,6 @@ export default {
       if (this.files.length === 1) {
         this.closeFileUploadModal();
       }
-    },
-  },
-
-  watch: {
-    showUploadModal(newShowUploadModal) {
-      if (newShowUploadModal) {
-        if (this.isMobile) this.openFileSelector();
-        return;
-      }
-
-      this.files = [];
     },
   },
 };

@@ -8,8 +8,8 @@
     <RoomsTransferFields
       ref="roomsTransferFields"
       v-model:selectedQueue="selectedQueue"
-      @transfer-complete="transferComplete"
       bulkTransfer
+      @transfer-complete="transferComplete"
     />
 
     <template #options>
@@ -25,9 +25,9 @@
         :text="$t('transfer')"
         type="primary"
         size="large"
-        @click="bulkTransfer"
         :disabled="selectedQueue.length === 0"
         :loading="isLoadingBulkTransfer"
+        @click="bulkTransfer"
       />
     </template>
   </UnnnicModal>

@@ -1,7 +1,7 @@
 <template>
   <ChatsLayout
     v-if="viewedAgent.email"
-    :viewedAgent="this.viewedAgent.email"
+    :viewedAgent="viewedAgent.email"
   >
     <ViewModeHeader :viewedAgent="viewedAgent.name" />
 
@@ -49,7 +49,6 @@
 
     <ModalGetChat
       :showModal="isAssumeChatConfirmationOpened"
-      @closeModal="handleModal('AssumeChatConfirmation', 'close')"
       :title="$t('dashboard.view-mode.assume_chat_question')"
       :description="
         $t('dashboard.view-mode.assume_chat_confirmation', {
@@ -57,6 +56,7 @@
         })
       "
       :whenGetChat="whenGetChat"
+      @close-modal="handleModal('AssumeChatConfirmation', 'close')"
     />
 
     <template #aside>
@@ -119,7 +119,7 @@ export default {
     this.getViewedAgentData(this.$route.params.viewedAgent);
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.setViewedAgent({ name: '', email: '' });
   },
 

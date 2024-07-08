@@ -1,7 +1,7 @@
 <template>
   <UnnnicTab
-    size="md"
     v-model="tab"
+    size="md"
     :tabs="tabs"
   >
     <template #tab-head-media>
@@ -100,16 +100,6 @@ export default {
     },
   },
 
-  async created() {
-    if (!this.history) {
-      await this.loadNextMedias();
-    } else {
-      await this.loadNextMediasClosedRoom();
-    }
-
-    this.$emit('loaded-medias');
-  },
-
   data: () => ({
     tab: 'media',
     tabs: ['media', 'docs', 'audio'],
@@ -140,6 +130,16 @@ export default {
           ),
       );
     },
+  },
+
+  async created() {
+    if (!this.history) {
+      await this.loadNextMedias();
+    } else {
+      await this.loadNextMediasClosedRoom();
+    }
+
+    this.$emit('loaded-medias');
   },
 
   methods: {

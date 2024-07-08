@@ -2,7 +2,7 @@
   <DashboardLayout>
     <template #header> {{ header }}</template>
     <template
-      v-if="!this.showData"
+      v-if="!showData"
       #status
     >
       <div style="margin-right: 27px">
@@ -19,19 +19,19 @@
 
     <template #actions>
       <DashboardFilters
-        @filter="filters = $event"
         :sectors="sectors"
+        @filter="filters = $event"
       />
     </template>
 
     <HistoryMetricsBySector
       :sectors="sectors"
       :filter="filters"
-      @historyFilter="event = $event"
       :headerTitle="filters?.sector ? 'Filas' : 'Setores'"
       :totalChatsLabel="showData ? 'Quantidade de chats' : 'Agentes online'"
       :generalCardLabel="showData ? 'Quantidade de chats' : 'Em andamento'"
       :agentsLabel="showData ? 'Chats no período' : 'Em andamento'"
+      @history-filter="event = $event"
     />
   </DashboardLayout>
 </template>
@@ -63,10 +63,6 @@ export default {
     sectors: [],
   }),
 
-  async created() {
-    await this.getSectors();
-  },
-
   watch: {
     visualization(newValue) {
       if (newValue) {
@@ -75,6 +71,10 @@ export default {
         this.showData = !!this.filters?.filterDate.start;
       }
     },
+  },
+
+  async created() {
+    await this.getSectors();
   },
   computed: {
     ...mapState(useConfig, ['project']),

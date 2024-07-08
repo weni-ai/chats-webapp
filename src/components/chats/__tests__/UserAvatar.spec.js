@@ -11,8 +11,8 @@ describe('UserAvatar', () => {
         username,
       },
       global: {
-        plugins: [UnnnicSystem]
-      }
+        plugins: [UnnnicSystem],
+      },
     });
 
     expect(wrapper.text()).toContain(username.charAt(0));
@@ -27,8 +27,8 @@ describe('UserAvatar', () => {
         disabled: true,
       },
       global: {
-        plugins: [UnnnicSystem]
-      }
+        plugins: [UnnnicSystem],
+      },
     });
 
     const classes = wrapper.classes();
@@ -45,8 +45,8 @@ describe('UserAvatar', () => {
         size,
       },
       global: {
-        plugins: [UnnnicSystem]
-      }
+        plugins: [UnnnicSystem],
+      },
     });
 
     const classes = wrapper.classes().filter((c) => c.match(`\\b${size}\\b`));

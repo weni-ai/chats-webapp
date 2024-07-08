@@ -4,20 +4,20 @@
   <div class="media__content_audio__media__preview">
     <div @click="play">
       <UnnnicIcon
+        v-if="!isTimerPlaying"
         size="xs"
         icon="controls-play-1"
         clickable
         scheme="neutral-dark"
-        v-if="!isTimerPlaying"
       />
     </div>
     <div @click="pause">
       <UnnnicIcon
+        v-if="isTimerPlaying"
         size="xs"
         icon="controls-pause-1"
         clickable
         scheme="neutral-dark"
-        v-if="isTimerPlaying"
       />
     </div>
   </div>
@@ -27,15 +27,15 @@
 export default {
   name: 'MediaAudioPreview',
 
-  data: () => ({
-    isTimerPlaying: false,
-  }),
-
   props: {
     currentAudio: {
       type: String,
     },
   },
+
+  data: () => ({
+    isTimerPlaying: false,
+  }),
   methods: {
     play() {
       this.audio = new Audio(this.currentAudio);

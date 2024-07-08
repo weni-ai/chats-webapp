@@ -36,14 +36,6 @@ export default {
     TableMetrics,
   },
 
-  mounted() {
-    this.initRealtimeSimulation();
-  },
-
-  destroyed() {
-    clearInterval(this.realtimeSimulationController);
-  },
-
   data: () => ({
     generalMetrics: [
       {
@@ -125,6 +117,14 @@ export default {
 
     realtimeSimulationController: null,
   }),
+
+  mounted() {
+    this.initRealtimeSimulation();
+  },
+
+  unmounted() {
+    clearInterval(this.realtimeSimulationController);
+  },
 
   computed: {
     ...mapState(useSettings, ['sectors']),

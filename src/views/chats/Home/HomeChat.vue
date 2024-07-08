@@ -2,14 +2,14 @@
   <section class="home-chat">
     <HomeChatHeaders
       :isLoading="isChatSkeletonActive"
-      @openRoomContactInfo="emitOpenRoomContactInfo"
-      @openModalCloseChat="openModal('closeChat')"
-      @openFlowsTrigger="emitOpenFlowsTrigger"
+      @open-room-contact-info="emitOpenRoomContactInfo"
+      @open-modal-close-chat="openModal('closeChat')"
+      @open-flows-trigger="emitOpenFlowsTrigger"
       @back="clearActiveChats"
     />
     <ChatsDropzone
-      @open-file-uploader="openModalFileUploader"
       :show="(!!room && room.user && room.is_24h_valid) || !!discussion"
+      @open-file-uploader="openModalFileUploader"
     >
       <RoomMessages v-if="!!room && !discussion" />
       <DiscussionMessages v-if="!!discussion" />
@@ -21,7 +21,7 @@
         :showSkeletonLoading="isChatSkeletonActive"
         @show-quick-messages="handleShowQuickMessages"
         @open-file-uploader="openModalFileUploader"
-        @update:modelValue="textBoxMessage = $event"
+        @update:model-value="textBoxMessage = $event"
       />
     </ChatsDropzone>
 

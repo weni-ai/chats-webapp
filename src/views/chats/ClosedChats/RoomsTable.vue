@@ -15,7 +15,7 @@
 
     <RoomsTableLoading v-if="isTableLoading" />
     <UnnnicTable
-      v-if="!isTableLoading && this.rooms.length > 0"
+      v-if="!isTableLoading && rooms.length > 0"
       :items="rooms"
       class="closed-chats__rooms-table__table"
     >
@@ -32,8 +32,8 @@
             <template #contactName>
               <div class="closed-chats__rooms-table__table__contact">
                 <UnnnicChatsUserAvatar
-                  :username="item.contact.name"
                   v-if="!isMobile"
+                  :username="item.contact.name"
                 />
                 <p
                   class="closed-chats__rooms-table__table__contact__name"
@@ -83,7 +83,7 @@
       </template>
     </UnnnicTable>
     <p
-      v-if="!isTableLoading && this.rooms.length === 0"
+      v-if="!isTableLoading && rooms.length === 0"
       class="closed-chats__rooms-table__table__no-results"
     >
       {{ $t('without_results') }}
@@ -185,6 +185,18 @@ export default {
     },
   },
 
+  watch: {
+    roomsCurrentPage() {
+      this.getHistoryRooms(true);
+    },
+    filters: {
+      deep: true,
+      handler() {
+        this.getHistoryRooms();
+      },
+    },
+  },
+
   methods: {
     setFiltersByQueryParams() {
       const { contactUrn, startDate, endDate } = this.$route.query;
@@ -246,18 +258,6 @@ export default {
       if (this.isMobile) {
         this.$emit('open-room', room);
       }
-    },
-  },
-
-  watch: {
-    roomsCurrentPage() {
-      this.getHistoryRooms(true);
-    },
-    filters: {
-      deep: true,
-      handler() {
-        this.getHistoryRooms();
-      },
     },
   },
 };

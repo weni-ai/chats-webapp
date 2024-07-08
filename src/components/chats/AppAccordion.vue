@@ -3,7 +3,6 @@
   <div>
     <div
       class="app-accordion"
-      @click="toggleAccordion()"
       :aria-expanded="isOpen"
       :aria-controls="`collapse${_uid}`"
       style="
@@ -12,6 +11,7 @@
         justify-content: space-between;
         cursor: pointer;
       "
+      @click="toggleAccordion()"
     >
       <header>
         <h2>{{ title }}</h2>
@@ -34,14 +34,6 @@
 
 <script>
 export default {
-  created() {
-    this.isOpen = this.isDefaultOpen;
-  },
-  data() {
-    return {
-      isOpen: true,
-    };
-  },
   props: {
     title: {
       type: String,
@@ -51,6 +43,14 @@ export default {
       type: Boolean,
       default: true,
     },
+  },
+  data() {
+    return {
+      isOpen: true,
+    };
+  },
+  created() {
+    this.isOpen = this.isDefaultOpen;
   },
 
   methods: {

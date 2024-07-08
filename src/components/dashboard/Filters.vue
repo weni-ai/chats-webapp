@@ -7,8 +7,8 @@
       ]"
     >
       <div
-        class="dashboard-filters__input"
         v-if="sectorsToFilter.length > 2"
+        class="dashboard-filters__input"
       >
         <UnnnicLabel :label="$t('sector.title')" />
         <UnnnicSelectSmart
@@ -67,13 +67,12 @@
       v-bind="$props"
       class="dashboard-filters__export"
     >
-    <template #trigger>
-      <UnnnicButton
-        iconCenter="more_vert"
-        type="secondary"
-        
-      />
-    </template>
+      <template #trigger>
+        <UnnnicButton
+          iconCenter="more_vert"
+          type="secondary"
+        />
+      </template>
       <div
         class="attachment-options-container"
         style="width: 155px"
@@ -146,12 +145,6 @@ export default {
     },
   }),
 
-  async created() {
-    this.filterSector = [this.filterSectorsOptionAll];
-    this.agentsToFilter = this.filterAgentDefault.concat(this.filterOptionNone);
-    this.tagsToFilter = this.filterTagDefault.concat(this.filterOptionNone);
-  },
-
   computed: {
     filterSectorsOptionAll() {
       return { value: 'all', label: this.$t('all') };
@@ -197,6 +190,20 @@ export default {
 
       return false;
     },
+  },
+
+  watch: {
+    sectors: 'treatSectors',
+    filterSector: 'sendFilter',
+    filterAgent: 'sendFilter',
+    filterTag: 'sendFilter',
+    filterDate: 'sendFilter',
+  },
+
+  async created() {
+    this.filterSector = [this.filterSectorsOptionAll];
+    this.agentsToFilter = this.filterAgentDefault.concat(this.filterOptionNone);
+    this.tagsToFilter = this.filterTagDefault.concat(this.filterOptionNone);
   },
 
   methods: {
@@ -336,14 +343,6 @@ export default {
 
       this.sendFilter();
     },
-  },
-
-  watch: {
-    sectors: 'treatSectors',
-    filterSector: 'sendFilter',
-    filterAgent: 'sendFilter',
-    filterTag: 'sendFilter',
-    filterDate: 'sendFilter',
   },
 };
 </script>

@@ -8,9 +8,9 @@
         <section @click.stop>
           <UnnnicCheckbox
             v-if="withSelection"
+            v-model="collapseCheckboxValue"
             class="card-group__checkbox"
             size="sm"
-            v-model="collapseCheckboxValue"
             @change="updateSelectAllRooms($event)"
           />
         </section>
