@@ -1,25 +1,17 @@
-import { mount, createLocalVue } from '@vue/test-utils';
-import {
-  unnnicToolTip,
-  unnnicLabel,
-  unnnicSelectSmart,
-} from '@weni/unnnic-system';
+import { mount } from '@vue/test-utils';
 import i18n from '@/plugins/i18n';
-
+import UnnnicSystem from '@/plugins/UnnnicSystem' 
 import FormSector from '../Sector.vue';
 import defaultProps from './mocks/sectorMock';
 
-const localVue = createLocalVue();
+
 
 function createWrapper() {
   const wrapper = mount(FormSector, {
-    propsData: defaultProps,
-    stubs: {
-      UnnnicToolTip: true,
-      UnnnicSelectSmart: true,
+    props: defaultProps,
+    global: {
+      plugins: [i18n, UnnnicSystem]
     },
-    localVue,
-    i18n,
   });
 
   return wrapper;
@@ -34,7 +26,7 @@ describe('FormSector', () => {
 
   it('should render all section titles and tooltips', () => {
     const titles = wrapper.findAll('h2.title');
-    const tooltips = wrapper.findAllComponents(unnnicToolTip);
+    const tooltips = wrapper.findAllComponents({ name: 'unnnic-tooltip' });
 
     expect(titles.at(0).text()).toMatch(/Adicionar novo setor/gi);
     expect(titles.at(1).text()).toMatch(/Gerentes de atendimento/gi);
@@ -52,9 +44,8 @@ describe('FormSector', () => {
     expect(inputSector.exists()).toBe(true);
     expect(inputSector.props('label')).toMatch(/Nome do setor/gi);
     expect(inputSector.props('placeholder')).toMatch(/Exemplo: Financeiro/gi);
-
-    const selectManagerLabel = wrapper.findAllComponents(unnnicLabel).at(0);
-    const selects = wrapper.findAllComponents(unnnicSelectSmart);
+    const selectManagerLabel = wrapper.findAllComponents({ name: 'unnnic-label' }).at(0);
+    const selects = wrapper.findAllComponents({ name: 'unnnic-select-smart' });
 
     expect(selectManagerLabel.exists()).toBe(true);
     expect(selectManagerLabel.props('label')).toMatch(/Adicionar gerente/gi);
@@ -82,8 +73,8 @@ describe('FormSector', () => {
 
   it('should have a managers list rendered', async () => {
     await wrapper.setProps({
-      value: {
-        ...defaultProps.value,
+      modelValue: {
+        ...defaultProps.modelValue,
         managers: [
           {
             user: {

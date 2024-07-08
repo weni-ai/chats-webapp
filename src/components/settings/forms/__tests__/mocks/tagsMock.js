@@ -1,5 +1,5 @@
 const defaultProps = {
-  value: [],
+  modelValue: [],
 };
 
 export default defaultProps;

@@ -1,11 +1,12 @@
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import http from '@/services/api/http';
 import Sector from '../sector';
 
-jest.mock('@/services/api/http');
+vi.mock('@/services/api/http');
 
 describe('Sector', () => {
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   it('should return list of sectors', async () => {
