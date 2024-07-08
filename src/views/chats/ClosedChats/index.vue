@@ -21,7 +21,7 @@
     </header>
     <main>
       <section
-        v-if="roomId"
+        v-show="roomId"
         class="closed-chats__selected-chat"
       >
         <RoomMessages />
@@ -32,7 +32,7 @@
         />
       </section>
 
-      <ClosedChatsRoomsTable v-else />
+      <ClosedChatsRoomsTable v-show="!roomId" />
     </main>
   </div>
 </template>
