@@ -2,10 +2,10 @@
   <p v-if="isGeolocation">{{ media.url }}</p>
   <section v-else-if="isDocument">
     <DocumentPreview
-      @download="download"
       :fullFilename="fullFilename"
       highlight
       :url="media.url"
+      @download="download"
     />
   </section>
 

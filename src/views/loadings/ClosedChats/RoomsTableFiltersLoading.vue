@@ -4,9 +4,9 @@
     :class="{ 'rooms-table-filters-loading--vertically': vertically }"
   >
     <div
-      class="rooms-table-filters-loading__filter"
       v-for="filter in 4"
       :key="`filter-${filter}`"
+      class="rooms-table-filters-loading__filter"
     >
       <UnnnicSkeletonLoading />
       <UnnnicSkeletonLoading />

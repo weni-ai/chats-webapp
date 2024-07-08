@@ -48,8 +48,8 @@
         :textRight="
           status === 'ONLINE' ? $t('status.online') : $t('status.offline')
         "
-        @update:model-value="updateStatus"
         :disabled="loadingStatus"
+        @update:model-value="updateStatus"
       />
 
       <div class="label">{{ $t('preferences.notifications.title') }}</div>
@@ -71,20 +71,20 @@
         @click="openFlowsTrigger"
       />
       <UnnnicButton
-        @mousedown.prevent
         :text="$t('quick_messages.title')"
         iconLeft="bolt"
         type="secondary"
         size="small"
+        @mousedown.prevent
         @click="openQuickMessage"
       />
       <UnnnicButton
-        @mousedown.prevent
-        v-if="this.dashboard"
+        v-if="dashboard"
         text="Dashboard"
         iconLeft="bar_chart_4_bars"
         type="secondary"
         size="small"
+        @mousedown.prevent
         @click="navigate('dashboard.manager')"
       />
     </div>

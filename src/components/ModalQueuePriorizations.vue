@@ -5,7 +5,7 @@
     :text="$t('chats.select_services_queues')"
     @close="$emit('close')"
   >
-    <section  class="queue-modal-form">
+    <section class="queue-modal-form">
       <section
         v-if="!verifySelectedLength"
         class="queue-modal-disclaimer"
@@ -78,8 +78,8 @@ export default {
   watch: {
     selectedQueues: {
       handler() {
-        this.updateQueuesPlaceholder()
-      }, 
+        this.updateQueuesPlaceholder();
+      },
       deep: true,
     },
   },
@@ -176,7 +176,7 @@ export default {
           },
           seconds: 5,
         });
-        this.$root.wsReconnect()
+        this.$root.wsReconnect();
         this.$emit('close');
       } catch (error) {
         console.error(error);
@@ -194,7 +194,7 @@ export default {
 
     updateQueuesPlaceholder() {
       const queuesValue = this.selectedQueues.map((queue) => queue.value);
-      
+
       const selectedQueues = queuesValue.map((queueUuid) => ({
         uuid: queueUuid,
         role: this.roleIdSelected,

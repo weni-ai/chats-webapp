@@ -1,34 +1,34 @@
 <template>
   <UnnnicModal
-    @close="$emit('close')"
     :text="$t('preferences.title')"
     class="modal-preferences"
+    @close="$emit('close')"
   >
     <UnnnicLabel label="Status" />
     <UnnnicSwitch
       v-model="configStatus"
-      @update:model-value="updateStatus"
       :disabled="loadingStatus"
       :textRight="
         storeStatus === 'ONLINE' ? $t('status.online') : $t('status.offline')
       "
       size="medium"
+      @update:model-value="updateStatus"
     />
 
     <UnnnicLabel :label="$t('preferences.notifications.title')" />
     <UnnnicSwitch
       v-model="configSound"
-      @update:model-value="updateSound"
       :textRight="$t('preferences.notifications.sound')"
       size="medium"
+      @update:model-value="updateSound"
     />
 
     <UnnnicLabel :label="$t('language')" />
     <UnnnicLanguageSelect
       v-model="$i18n.locale"
-      @update:model-value="updateLanguage"
       :supportedLanguages="supportedLanguages"
       position="top"
+      @update:model-value="updateLanguage"
     />
 
     <template #options>

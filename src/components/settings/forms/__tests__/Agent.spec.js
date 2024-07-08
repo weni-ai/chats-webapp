@@ -9,7 +9,7 @@ function createWrapper() {
   const wrapper = mount(FormAgent, {
     props: defaultProps,
     global: {
-      plugins: [i18n, UnnnicSystem]
+      plugins: [i18n, UnnnicSystem],
     },
   });
 
@@ -25,7 +25,7 @@ describe('FormAgent', () => {
 
   it('should render all section titles and tooltips', () => {
     const titles = wrapper.findAll('.title');
-    const tooltips = wrapper.findAllComponents({ name: "unnnic-tooltip"});
+    const tooltips = wrapper.findAllComponents({ name: 'unnnic-tooltip' });
 
     expect(titles.at(0).text()).toMatch(/Adicionar agentes/gi);
 
@@ -34,8 +34,10 @@ describe('FormAgent', () => {
   });
 
   it('should render all inputs', () => {
-    const inputAgentsLabel = wrapper.findAllComponents({ name: "unnnic-label"}).at(0);
-    const selects = wrapper.findAllComponents({ name: "unnnic-select-smart"});
+    const inputAgentsLabel = wrapper
+      .findAllComponents({ name: 'unnnic-label' })
+      .at(0);
+    const selects = wrapper.findAllComponents({ name: 'unnnic-select-smart' });
 
     expect(inputAgentsLabel.exists()).toBe(true);
     expect(inputAgentsLabel.props('label')).toMatch(/Selecionar agente/gi);

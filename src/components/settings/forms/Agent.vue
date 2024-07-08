@@ -25,7 +25,7 @@
             autocomplete
             autocompleteIconLeft
             autocompleteClearOnFocus
-            @update:modelValue="chooseAgent"
+            @update:model-value="chooseAgent"
           />
         </div>
         <!-- <unnnic-button
@@ -47,8 +47,8 @@
         :name="agent.user.first_name + ' ' + agent.user.last_name"
         :email="agent.user.email"
         :avatarUrl="photo(agent.user.photo_url)"
-        @remove="remove(agent.uuid)"
         roleName="Agente"
+        @remove="remove(agent.uuid)"
       />
     </section>
   </section>
@@ -118,6 +118,16 @@ export default {
     },
   },
 
+  watch: {
+    selectedAgents: {
+      deep: true,
+      immediate: true,
+      handler() {
+        this.$emit('validate', this.validate());
+      },
+    },
+  },
+
   methods: {
     remove(agentUuid) {
       this.$emit('remove', agentUuid);
@@ -148,16 +158,6 @@ export default {
         return getOnlyPhoto;
       }
       return link;
-    },
-  },
-
-  watch: {
-    selectedAgents: {
-      deep: true,
-      immediate: true,
-      handler() {
-        this.$emit('validate', this.validate());
-      },
     },
   },
 };

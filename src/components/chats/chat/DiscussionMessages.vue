@@ -12,7 +12,7 @@
     :showChatSeparator="false"
     :isLoading="isLoading"
     signatures
-    @scrollTop="searchForMoreMessages"
+    @scroll-top="searchForMoreMessages"
   />
 </template>
 

@@ -91,11 +91,6 @@ export default {
     FormTags,
   },
 
-  beforeMount() {
-    this.listProjectManagers();
-    this.listProjectAgents();
-  },
-
   data() {
     return {
       sector: {
@@ -144,6 +139,11 @@ export default {
 
       return steps[this.step];
     },
+  },
+
+  beforeMount() {
+    this.listProjectManagers();
+    this.listProjectAgents();
   },
 
   methods: {

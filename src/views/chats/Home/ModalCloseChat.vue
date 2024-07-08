@@ -25,8 +25,8 @@
       <UnnnicButton
         :text="$t('end')"
         type="primary"
-        @click="closeRoom"
         :loading="isLoadingCloseRoom"
+        @click="closeRoom"
       />
     </template>
   </UnnnicModal>
@@ -65,14 +65,14 @@ export default {
       isLoadingCloseRoom: false,
     };
   },
-  mounted() {
-    this.classifyRoom();
-  },
 
   computed: {
     isMobile() {
       return isMobile();
     },
+  },
+  mounted() {
+    this.classifyRoom();
   },
 
   methods: {

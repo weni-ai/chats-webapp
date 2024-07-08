@@ -7,7 +7,7 @@ function createWrapper(props) {
   const wrapper = mount(TagGroup, {
     props,
     global: {
-      plugins: [UnnnicSystem]
+      plugins: [UnnnicSystem],
     },
   });
 
@@ -44,12 +44,14 @@ describe('TagGroup', () => {
       selectable: true,
     });
 
-    await wrapper.findComponent('[data-testid="tag__doubts"]').trigger('click');    
+    await wrapper.findComponent('[data-testid="tag__doubts"]').trigger('click');
     await wrapper
       .findComponent('[data-testid="tag__finance"]')
       .trigger('click');
 
-    const emittedInputEvent = wrapper.emitted('update:modelValue').flat(Infinity)
+    const emittedInputEvent = wrapper
+      .emitted('update:modelValue')
+      .flat(Infinity);
 
     expect(emittedInputEvent.length).toBe(2);
     expect(emittedInputEvent.find((e) => e.uuid === 'doubts')).toBeTruthy();

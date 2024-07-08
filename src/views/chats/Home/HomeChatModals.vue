@@ -5,12 +5,12 @@
   >
     <ModalGetChat
       :showModal="modalsShowing.getChat"
-      @closeModal="closeModal('getChat')"
       :title="$t('chats.get_chat_question')"
       :description="
         $t('chats.get_chat_confirmation', { contact: room?.contact?.name })
       "
       :whenGetChat="emitGotChat"
+      @close-modal="closeModal('getChat')"
     />
 
     <UnnnicModal
@@ -28,17 +28,17 @@
 
     <ModalCloseChat
       v-if="modalsShowing.closeChat"
-      @close="closeModal('closeChat')"
       :room="room"
+      @close="closeModal('closeChat')"
     />
 
     <FileUploader
-      v-model="modalFileUploaderFiles"
       ref="fileUploader"
+      v-model="modalFileUploaderFiles"
+      :mediasType="modalFileUploaderMediaType"
       @progress="emitFileUploaderProgress"
       @close="closeModal('fileUploader')"
-      @update:modelValue="modalFileUploaderFiles = $event"
-      :mediasType="modalFileUploaderMediaType"
+      @update:model-value="modalFileUploaderFiles = $event"
     />
 
     <ModalQuickMessages
@@ -97,6 +97,16 @@ export default {
     ]),
   },
 
+  watch: {
+    'modalsShowing.fileUploader': {
+      handler(newModalsShowingFileUploader) {
+        if (newModalsShowingFileUploader) {
+          this.$refs.fileUploader.open();
+        }
+      },
+    },
+  },
+
   methods: {
     toggleModal(modalName, action = 'close') {
       if (this.modalsShowing[modalName] === undefined) {
@@ -130,16 +140,6 @@ export default {
     emitSelectQuickMessage(quickMessage) {
       this.$emit('select-quick-message', quickMessage);
       this.closeModal('quickMessages');
-    },
-  },
-
-  watch: {
-    'modalsShowing.fileUploader': {
-      handler(newModalsShowingFileUploader) {
-        if (newModalsShowingFileUploader) {
-          this.$refs.fileUploader.open();
-        }
-      },
     },
   },
 };

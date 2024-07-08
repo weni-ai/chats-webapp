@@ -28,16 +28,16 @@
         :text="$t('discussions.about.add_agent')"
         iconLeft="add-1"
         type="secondary"
+        :disabled="agentsInvolved?.length >= 5"
         @click="handleAddAgentModal"
-        :disabled="this.agentsInvolved?.length >= 5"
       />
 
       <UnnnicModal
         v-if="isAddAgentModalOpen"
-        @close="handleAddAgentModal"
         class="add-agent-modal"
         :text="$t('discussions.add_agents.title')"
         :description="$t('discussions.add_agents.description')"
+        @close="handleAddAgentModal"
       >
         <div class="add-agent-modal__input">
           <UnnnicLabel :label="$t('discussions.add_agents.select_agent')" />
@@ -102,10 +102,6 @@ export default {
     },
   },
 
-  unmounted() {
-    this.agentSelected = [];
-  },
-
   data() {
     return {
       agentsInvolved: null,
@@ -115,6 +111,10 @@ export default {
       agentsToSelect: [],
       agentSelected: [],
     };
+  },
+
+  unmounted() {
+    this.agentSelected = [];
   },
 
   computed: {
