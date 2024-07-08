@@ -1,71 +1,41 @@
-import { createLocalVue, mount } from '@vue/test-utils';
-import Vuex from 'pinia';
-import {
-  unnnicModal,
-  unnnicLabel,
-  unnnicSelectSmart,
-  unnnicButton,
-} from '@weni/unnnic-system';
+import { vi } from 'vitest';
+import { mount } from '@vue/test-utils';
+import { createTestingPinia  } from '@pinia/testing';
+import UnnnicSystem from '@/plugins/UnnnicSystem';
 import i18n from '@/plugins/i18n';
 
 import ModalBulkTransfer from '../chat/ModalBulkTransfer.vue';
 
-const localVue = createLocalVue();
-
-localVue.use(Vuex);
-
 function createWrapper(store) {
   const wrapper = mount(ModalBulkTransfer, {
-    stubs: {
-      UnnnicButton: unnnicButton,
-      Alert: true,
+    global: {
+      plugins: [i18n, store, UnnnicSystem]
     },
-    i18n,
-    store,
-    localVue,
   });
 
   return wrapper;
 }
 
 describe('ModalBulkTransfer', () => {
-  let store;
   let wrapper;
 
   beforeEach(() => {
-    store = new Vuex.Store({
-      modules: {
-        profile: {
-          namespaced: true,
-          state: {
-            me: 'mocked@email.com',
-          },
-        },
-        chats: {
-          namespaced: true,
-          modules: {
-            rooms: {
-              namespaced: true,
-              state: {
-                selectedRoomsToTransfer: ['1', '2'],
-              },
-              actions: {
-                setSelectedRoomsToTransfer: jest.fn(),
-              },
-            },
-          },
-        },
-      },
-    });
+    const store = createTestingPinia({
+      initialState: {
+        me: 'mocked@email.com',
+        selectedRoomsToTransfer: ['1', '2'],
+        setSelectedRoomsToTransfer: vi.fn()
+      }
+    })
     wrapper = createWrapper(store);
   });
 
   describe('Rendering', () => {
     it('should render modal with select fields and buttons', () => {
-      const modal = wrapper.findComponent(unnnicModal);
-      const labels = wrapper.findAllComponents(unnnicLabel);
-      const selects = wrapper.findAllComponents(unnnicSelectSmart);
-      const buttons = wrapper.findAllComponents(unnnicButton);
+      const modal = wrapper.findComponent({ name: 'unnnic-modal' });
+      const labels = wrapper.findAllComponents({ name: 'unnnic-label' });
+      const selects = wrapper.findAllComponents({ name: 'unnnic-select-smart'});
+      const buttons = wrapper.findAllComponents('.unnnic-button');
 
       expect(modal.exists()).toBe(true);
       expect(labels).toHaveLength(2);
@@ -82,12 +52,12 @@ describe('ModalBulkTransfer', () => {
     let transferButton;
 
     beforeEach(() => {
-      transferButton = wrapper.find('[data-testid="transfer-button"]');
+      transferButton = wrapper.findComponent('[data-testid="transfer-button"]');
     });
 
-    it('should disable transfer button when no queue is selected', () => {
-      wrapper.setData({
-        selectedQueue: [{ value: '', label: 'Select a queue' }],
+    it('should disable transfer button when no queue is selected', async () => {
+      await wrapper.setData({
+        selectedQueue: [],
       });
 
       expect(transferButton.props('disabled')).toBe(true);

@@ -1,11 +1,12 @@
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import http from '@/services/api/http';
 import Project from '../project';
 
-jest.mock('@/services/api/http');
+vi.mock('@/services/api/http');
 
 describe('Project', () => {
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   it('should return admin list', async () => {

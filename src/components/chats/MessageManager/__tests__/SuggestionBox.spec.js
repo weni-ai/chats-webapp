@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils';
 import i18n from '@/plugins/i18n';
 
-import SuggestionBox from '../SuggestionBox';
+import SuggestionBox from '../SuggestionBox.vue';
 
 const suggestions = [
   {
@@ -20,11 +20,13 @@ const suggestions = [
 
 function createWrapper(props = {}) {
   const wrapper = mount(SuggestionBox, {
-    propsData: {
+    props: {
       suggestions,
       ...props,
     },
-    i18n,
+    global: {
+      plugins: [i18n]
+    },
   });
 
   return wrapper;
