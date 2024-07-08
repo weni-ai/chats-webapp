@@ -115,14 +115,6 @@ export default {
     this.setActiveDiscussion(null);
   },
 
-  mounted() {
-    this.getViewedAgentData(this.$route.params.viewedAgent);
-  },
-
-  beforeUnmount() {
-    this.setViewedAgent({ name: '', email: '' });
-  },
-
   computed: {
     ...mapState(useRooms, { room: (store) => store.activeRoom }),
     ...mapState(useDiscussions, {
@@ -177,6 +169,16 @@ export default {
     async room() {
       this.isContactInfoOpened = false;
     },
+    '$route.params.viewedAgent': {
+      immediate: true,
+      handler(newViewdAgentEmail) {
+      if (newViewdAgentEmail) {
+        this.getViewedAgentData(this.$route.params.viewedAgent);
+      } else {
+        this.setViewedAgent({ name: '', email: '' });
+      }
+    },
+    }
   },
 };
 </script>

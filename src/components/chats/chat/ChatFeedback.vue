@@ -52,6 +52,8 @@ $scheme-colors:
 .chat-feedback__container {
   margin-top: $unnnic-spacing-md;
 
+  overflow: hidden;
+
   display: flex;
 
   &.divisor {
@@ -63,11 +65,15 @@ $scheme-colors:
     margin: 0 auto;
     border-radius: $unnnic-border-radius-lg;
 
+    overflow: hidden;
+
     padding: $unnnic-spacing-nano $unnnic-spacing-sm;
 
     font-size: $unnnic-font-size-body-md;
     color: $unnnic-color-neutral-black;
     font-weight: $unnnic-font-weight-regular;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 
     @each $name, $color in $scheme-colors {
       &--#{$name} {

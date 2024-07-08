@@ -1,5 +1,7 @@
 <template>
-  <DashboardLayout>
+  <ViewMode v-show="viewedAgent?.email" />
+
+  <DashboardLayout v-show="!viewedAgent?.email">
     <template #header> {{ header }}</template>
     <template
       v-if="!showData"
@@ -39,10 +41,13 @@
 <script>
 import { mapState } from 'pinia';
 import { useConfig } from '@/store/modules/config';
+import { useDashboard } from '@/store/modules/dashboard';
 
 import Sector from '@/services/api/resources/settings/sector';
 
 import DashboardLayout from '@/layouts/DashboardLayout/index.vue';
+
+import ViewMode from '@/views/Dashboard/ViewMode/index.vue';
 
 import DashboardFilters from '@/components/dashboard/Filters.vue';
 import HistoryMetricsBySector from '@/components/dashboard/metrics/BySector/HistoryMetrics.vue';
@@ -54,6 +59,7 @@ export default {
     DashboardFilters,
     DashboardLayout,
     HistoryMetricsBySector,
+    ViewMode,
   },
 
   data: () => ({
@@ -78,6 +84,8 @@ export default {
   },
   computed: {
     ...mapState(useConfig, ['project']),
+    ...mapState(useDashboard, ['viewedAgent']),
+
     visualization() {
       const filter = this.filters;
       return filter;

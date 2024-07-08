@@ -69,6 +69,10 @@
               <a
                 v-else
                 :href="`/closed-chats/${item.uuid}`"
+                @click.prevent.stop="$router.push({
+                  name: 'closed-rooms.selected',
+                  params: { roomId: item.uuid },
+                })"
               >
                 <UnnnicButton
                   class="closed-chats__rooms-table__table__visualize-button"
