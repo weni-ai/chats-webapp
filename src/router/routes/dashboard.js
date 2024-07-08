@@ -12,7 +12,7 @@ const routes = [
   {
     path: '/dashboard/view-mode/:viewedAgent',
     name: 'dashboard.view-mode',
-    component: () => import('@/views/Dashboard/ViewMode/index.vue'),
+    component: () => import('@/views/Dashboard/Manager/index.vue'),
   },
 ];
 
