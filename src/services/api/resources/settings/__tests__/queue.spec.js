@@ -1,11 +1,12 @@
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import http from '@/services/api/http';
 import Queue from '../queue';
 
-jest.mock('@/services/api/http');
+vi.mock('@/services/api/http');
 
 describe('Queue', () => {
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   it('should create a queue', async () => {
