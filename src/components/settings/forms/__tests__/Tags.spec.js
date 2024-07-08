@@ -1,23 +1,16 @@
-import { mount, createLocalVue } from '@vue/test-utils';
-import { unnnicToolTip, unnnicButton } from '@weni/unnnic-system';
+import { mount } from '@vue/test-utils';
 import i18n from '@/plugins/i18n';
-
+import UnnnicSystem from '@/plugins/UnnnicSystem' 
 import FormTags from '../Tags.vue';
 import defaultProps from './mocks/tagsMock';
 
-const localVue = createLocalVue();
-
 function createWrapper() {
   const wrapper = mount(FormTags, {
-    propsData: defaultProps,
-    stubs: {
-      UnnnicToolTip: true,
-      UnnnicButton: unnnicButton,
+    props: defaultProps,
+    global: {
+      plugins: [i18n, UnnnicSystem],
     },
-    localVue,
-    i18n,
-  });
-
+  })
   return wrapper;
 }
 
@@ -30,7 +23,7 @@ describe('FormTags', () => {
 
   it('should render all section titles and tooltips', () => {
     const titles = wrapper.findAll('.form-tags__section__label');
-    const tooltips = wrapper.findAllComponents(unnnicToolTip);
+    const tooltips = wrapper.findAllComponents('.unnnic-tooltip');
 
     expect(titles.at(0).text()).toMatch(/Adicionar tags/gi);
 
@@ -47,7 +40,7 @@ describe('FormTags', () => {
 
   it('should render a tag list when added by user and clear input', async () => {
     const inputTag = wrapper.find('input');
-    const buttonAddTag = wrapper.findComponent(unnnicButton);
+    const buttonAddTag = wrapper.find('.unnnic-button');
 
     await inputTag.setValue('Tag1');
     expect(wrapper.vm.$data.tag).toBe('Tag1');
@@ -59,8 +52,9 @@ describe('FormTags', () => {
   });
 
   it('should have a tags list rendered', async () => {
+    
     await wrapper.setProps({
-      value: [
+      modelValue: [
         { uuid: '1685448788527', name: 'Tag1' },
         { uuid: '1685449403735', name: 'Tag2' },
       ],

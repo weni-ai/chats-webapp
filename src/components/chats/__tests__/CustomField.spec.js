@@ -1,19 +1,15 @@
-import { mount, createLocalVue } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import i18n from '@/plugins/i18n';
-
-import CustomField from '../ContactInfo/CustomField';
+import UnnnicSystem from '@/plugins/UnnnicSystem';
+import CustomField from '../ContactInfo/CustomField.vue';
 import defaultProps from './mocks/customFieldMock.js';
-
-const localVue = createLocalVue();
 
 function createWrapper(propsData) {
   const wrapper = mount(CustomField, {
     propsData,
-    stubs: {
-      UnnnicToolTip: true,
+    global: {
+      plugins: [i18n, UnnnicSystem]
     },
-    localVue,
-    i18n,
   });
 
   return wrapper;
@@ -45,7 +41,7 @@ describe('CustomField', () => {
     expect(anchorElement.attributes().href).toBe(newProps.description);
     expect(anchorElement.attributes().target).toBe('_blank');
 
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
   it('should shows the input field when isCurrent prop is true', async () => {

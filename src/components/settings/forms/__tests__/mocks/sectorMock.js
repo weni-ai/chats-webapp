@@ -1,5 +1,5 @@
 const defaultProps = {
-  value: {
+  modelValue: {
     uuid: '',
     name: '',
     can_trigger_flows: false,
