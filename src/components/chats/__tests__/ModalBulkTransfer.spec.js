@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createTestingPinia  } from '@pinia/testing';
 import UnnnicSystem from '@/plugins/UnnnicSystem';
@@ -8,7 +9,7 @@ import ModalBulkTransfer from '../chat/ModalBulkTransfer.vue';
 function createWrapper(store) {
   const wrapper = mount(ModalBulkTransfer, {
     global: {
-      plugins: [i18n, createTestingPinia(), UnnnicSystem]
+      plugins: [i18n, store, UnnnicSystem]
     },
   });
 
@@ -16,35 +17,17 @@ function createWrapper(store) {
 }
 
 describe('ModalBulkTransfer', () => {
-  let store;
   let wrapper;
 
   beforeEach(() => {
-    // store = new Vuex.Store({
-    //   modules: {
-    //     profile: {
-    //       namespaced: true,
-    //       state: {
-    //         me: 'mocked@email.com',
-    //       },
-    //     },
-    //     chats: {
-    //       namespaced: true,
-    //       modules: {
-    //         rooms: {
-    //           namespaced: true,
-    //           state: {
-    //             selectedRoomsToTransfer: ['1', '2'],
-    //           },
-    //           actions: {
-    //             setSelectedRoomsToTransfer: jest.fn(),
-    //           },
-    //         },
-    //       },
-    //     },
-    //   },
-    // });
-    wrapper = createWrapper();
+    const store = createTestingPinia({
+      initialState: {
+        me: 'mocked@email.com',
+        selectedRoomsToTransfer: ['1', '2'],
+        setSelectedRoomsToTransfer: vi.fn()
+      }
+    })
+    wrapper = createWrapper(store);
   });
 
   describe('Rendering', () => {
@@ -53,8 +36,6 @@ describe('ModalBulkTransfer', () => {
       const labels = wrapper.findAllComponents({ name: 'unnnic-label' });
       const selects = wrapper.findAllComponents({ name: 'unnnic-select-smart'});
       const buttons = wrapper.findAllComponents('.unnnic-button');
-
-      console.log(wrapper.html())
 
       expect(modal.exists()).toBe(true);
       expect(labels).toHaveLength(2);

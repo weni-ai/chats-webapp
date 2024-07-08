@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { mount } from '@vue/test-utils';
 import { createTestingPinia  } from '@pinia/testing';
-import { unnnicLabel as UnnnicLabel, unnnicSelectSmart as UnnnicSelectSmart } from '@weni/unnnic-system';
+import UnnnicSystem from '@/plugins/UnnnicSystem';
 import i18n from '@/plugins/i18n';
 
 import RoomsTransferFields from '../RoomsTransferFields.vue';
@@ -17,16 +17,22 @@ vi.mock('@/services/api/resources/settings/queue', () => ({
     })),
     agentsToTransfer: vi.fn(() => [
       { first_name: 'John', last_name: 'Doe', email: 'john@doe.com' },
-      { name: 'Jane', sector_name: 'Doe', uuid: 'jane@doe.com' },
+      { first_name: 'Jane', last_name: 'Doe', email: 'jane@doe.com' },
     ]),
   }
 }));
 
+const store = createTestingPinia({
+  initialState: {
+    me: "mock@email.com",
+    selectedRoomsToTransfer: ['1', '2'],
+  }
+})
+
 function createWrapper() {
   const wrapper = mount(RoomsTransferFields, {
     global: {
-      plugins: [i18n, createTestingPinia()],
-      components: { UnnnicLabel, UnnnicSelectSmart },
+      plugins: [i18n, store, UnnnicSystem],
     },
   });
 
@@ -42,8 +48,8 @@ describe('RoomsTransferField', () => {
 
   describe('Rendering', () => {
     it('should render with fields', () => {
-      const labels = wrapper.findAll('unnniclabel');
-      const selects = wrapper.findAll('unnnicselectsmart');
+      const labels = wrapper.findAllComponents({ name: 'unnnic-label'});
+      const selects = wrapper.findAllComponents({ name: "unnnic-select-smart" });
       expect(labels).toHaveLength(2);
       expect(selects).toHaveLength(2);
     });
@@ -57,34 +63,36 @@ describe('RoomsTransferField', () => {
 
   describe('Field Behavior', () => {
     it('should disable agent field when queue is not selected or do not have agents to select', async () => {
-      const agentSelect = wrapper.find('[data-testid="select-agent"]');
-
-      wrapper.setData({
+      const agentSelect = wrapper.findComponent('[data-testid="select-agent"]');
+      
+      await wrapper.setData({
         selectedQueue: [{ value: 'queue_id', label: 'Queue' }],
         agents: [
           { value: '', label: 'Select agent' },
           { value: 'agent2_id', label: 'Agent2' },
         ],
       });
-      await wrapper.vm.$nextTick();
-      expect(agentSelect.attributes('disabled')).toBe("false");
 
-      wrapper.setData({
+      await wrapper.vm.$nextTick();
+
+      expect(agentSelect.props('disabled')).toBe(false);
+      
+      await wrapper.setData({
+        agents: [{ value: '', label: 'Select agent' }],
+      });
+      await wrapper.vm.$nextTick();
+      expect(agentSelect.props('disabled')).toBe(true);
+
+      await wrapper.setData({
         selectedQueue: [{ value: '', label: 'Select queue' }],
         agents: [
           { value: '', label: 'Select agent' },
           { value: 'agent2_id', label: 'Agent2' },
         ],
       });
-      await wrapper.vm.$nextTick();
-      expect(agentSelect.attributes('disabled')).toBe("true");
 
-      wrapper.setData({
-        selectedQueue: [{ value: 'queue_id', label: 'Queue' }],
-        agents: [{ value: '', label: 'Select agent' }],
-      });
       await wrapper.vm.$nextTick();
-      expect(agentSelect.attributes('disabled')).toBe("true");
+      expect(agentSelect.props('disabled')).toBe(true);
     });
   });
 
