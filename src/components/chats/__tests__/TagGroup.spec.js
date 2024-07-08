@@ -1,13 +1,13 @@
 import { unnnicTag } from '@weni/unnnic-system';
-
+import UnnnicSystem from '@/plugins/UnnnicSystem';
 import { mount } from '@vue/test-utils';
-import TagGroup from '@/components/TagGroup';
+import TagGroup from '@/components/TagGroup.vue';
 
 function createWrapper(props) {
   const wrapper = mount(TagGroup, {
-    propsData: props,
-    stubs: {
-      UnnnicTag: unnnicTag,
+    props,
+    global: {
+      plugins: [UnnnicSystem]
     },
   });
 
@@ -44,11 +44,12 @@ describe('TagGroup', () => {
       selectable: true,
     });
 
-    await wrapper.findComponent('[data-testid="tag__doubts"]').trigger('click');
+    await wrapper.findComponent('[data-testid="tag__doubts"]').trigger('click');    
     await wrapper
       .findComponent('[data-testid="tag__finance"]')
       .trigger('click');
-    const emittedInputEvent = wrapper.emitted('input').flat(Infinity);
+
+    const emittedInputEvent = wrapper.emitted('update:modelValue').flat(Infinity)
 
     expect(emittedInputEvent.length).toBe(2);
     expect(emittedInputEvent.find((e) => e.uuid === 'doubts')).toBeTruthy();
@@ -67,6 +68,6 @@ describe('TagGroup', () => {
       .trigger('click');
     await wrapper.findComponent('[data-testid="tag__doubts"]').trigger('click');
 
-    expect(wrapper.emitted('input').length).toBe(3);
+    expect(wrapper.emitted('update:modelValue').length).toBe(3);
   });
 });

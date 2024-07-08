@@ -1,26 +1,16 @@
-import { mount, createLocalVue } from '@vue/test-utils';
-import {
-  unnnicToolTip,
-  unnnicLabel,
-  unnnicSelectSmart,
-} from '@weni/unnnic-system';
+import { mount } from '@vue/test-utils';
+import UnnnicSystem from '@/plugins/UnnnicSystem';
 import i18n from '@/plugins/i18n';
 
-import FormAgent from '../Agent';
+import FormAgent from '../Agent.vue';
 import defaultProps from './mocks/agentMock';
-
-const localVue = createLocalVue();
 
 function createWrapper() {
   const wrapper = mount(FormAgent, {
-    propsData: defaultProps,
-    stubs: {
-      UnnnicToolTip: true,
-      UnnnicLabel: true,
-      UnnnicSelectSmart: true,
+    props: defaultProps,
+    global: {
+      plugins: [i18n, UnnnicSystem]
     },
-    localVue,
-    i18n,
   });
 
   return wrapper;
@@ -35,7 +25,7 @@ describe('FormAgent', () => {
 
   it('should render all section titles and tooltips', () => {
     const titles = wrapper.findAll('.title');
-    const tooltips = wrapper.findAllComponents(unnnicToolTip);
+    const tooltips = wrapper.findAllComponents({ name: "unnnic-tooltip"});
 
     expect(titles.at(0).text()).toMatch(/Adicionar agentes/gi);
 
@@ -44,8 +34,8 @@ describe('FormAgent', () => {
   });
 
   it('should render all inputs', () => {
-    const inputAgentsLabel = wrapper.findAllComponents(unnnicLabel).at(0);
-    const selects = wrapper.findAllComponents(unnnicSelectSmart);
+    const inputAgentsLabel = wrapper.findAllComponents({ name: "unnnic-label"}).at(0);
+    const selects = wrapper.findAllComponents({ name: "unnnic-select-smart"});
 
     expect(inputAgentsLabel.exists()).toBe(true);
     expect(inputAgentsLabel.props('label')).toMatch(/Selecionar agente/gi);
@@ -54,7 +44,7 @@ describe('FormAgent', () => {
 
   it('should have a agents list rendered', async () => {
     await wrapper.setProps({
-      value: [
+      modelValue: [
         {
           user: {
             email: 'maria.silva@weni.ai',
