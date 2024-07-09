@@ -7,8 +7,8 @@
     ]"
   >
     <slot
-      name="room-list"
       v-if="isRoomListVisible"
+      name="room-list"
     >
       <SidebarLoading v-show="isLoadingSidebar" />
       <div
@@ -17,10 +17,10 @@
       >
         <PreferencesBar
           v-if="!isViewMode"
-          @show-quick-messages="handlerShowQuickMessages"
-          @open-flows-trigger="openFlowsTrigger"
           :showFlowsTriggerButton="canTriggerFlows"
           :dashboard="canAccessDashboard"
+          @show-quick-messages="handlerShowQuickMessages"
+          @open-flows-trigger="openFlowsTrigger"
         />
 
         <TheCardGroups
@@ -34,8 +34,8 @@
     </slot>
 
     <slot
-      name="flows-trigger"
       v-if="flowsTriggerVisible"
+      name="flows-trigger"
     >
       <LayoutFlowsTrigger
         class="room-list"
@@ -45,8 +45,8 @@
     </slot>
 
     <slot
-      name="quick-message"
       v-if="quickMessagesVisible"
+      name="quick-message"
     >
       <div class="quick-message">
         <QuickMessages
@@ -98,12 +98,6 @@ export default {
     },
   },
 
-  async mounted() {
-    await this.getCountSectors();
-    await this.getPermissionToSendFlowsTrigger();
-    this.isLoadingSidebar = false;
-  },
-
   data: () => ({
     sectors: {},
     isLoading: false,
@@ -115,6 +109,33 @@ export default {
     flowsTriggerContact: null,
     quickMessage: '',
   }),
+
+  computed: {
+    isAsideVisible() {
+      const asideSlot = this.$slots.aside ? this.$slots.aside() : [];
+      return asideSlot.some(
+        (slot) => slot.type && typeof slot.type === 'object',
+      );
+    },
+    isRoomListVisible() {
+      return !this.showFlowsTrigger && !this.showQuickMessages;
+    },
+    flowsTriggerVisible() {
+      return this.showFlowsTrigger && !this.showQuickMessages;
+    },
+    quickMessagesVisible() {
+      return !this.showFlowsTrigger && this.showQuickMessages;
+    },
+    isViewMode() {
+      return !!this.viewedAgent;
+    },
+  },
+
+  async mounted() {
+    await this.getCountSectors();
+    await this.getPermissionToSendFlowsTrigger();
+    this.isLoadingSidebar = false;
+  },
 
   methods: {
     handlerShowQuickMessages() {
@@ -157,27 +178,6 @@ export default {
     },
     selectQuickMessage(quickMessage) {
       this.$emit('select-quick-message', quickMessage);
-    },
-  },
-
-  computed: {
-    isAsideVisible() {
-      const asideSlot = this.$slots.aside ? this.$slots.aside() : [];
-      return asideSlot.some(
-        (slot) => slot.type && typeof slot.type === 'object',
-      );
-    },
-    isRoomListVisible() {
-      return !this.showFlowsTrigger && !this.showQuickMessages;
-    },
-    flowsTriggerVisible() {
-      return this.showFlowsTrigger && !this.showQuickMessages;
-    },
-    quickMessagesVisible() {
-      return !this.showFlowsTrigger && this.showQuickMessages;
-    },
-    isViewMode() {
-      return !!this.viewedAgent;
     },
   },
 };

@@ -4,11 +4,11 @@
   <div class="chat-messages__container">
     <ChatMessagesLoading v-show="isSkeletonLoadingActive" />
     <section
-      class="chat-messages"
-      ref="chatMessages"
-      @scroll="handleScroll"
       v-show="!isSkeletonLoadingActive"
       v-if="chatUuid && messagesSorted"
+      ref="chatMessages"
+      class="chat-messages"
+      @scroll="handleScroll"
     >
       <section
         v-for="messagesByDate in messagesSorted"
@@ -23,32 +23,34 @@
 
         <section
           v-for="messagesByMinute in messagesByDate.minutes"
-          class="chat-messages__container-minute"
           :key="messagesByDate.date + messagesByMinute.minute"
+          class="chat-messages__container-minute"
         >
           <template v-for="message in messagesByMinute.messages">
             <ChatFeedback
               v-if="isChatSeparatorFeedback(message.uuid) && showChatSeparator"
+              :key="'feedback' + message.uuid"
               :feedback="
                 startMessagesBy.agent === message.uuid
                   ? $t('chat_with.agent', { name: message?.user?.first_name })
                   : $t('chat_with.bot')
               "
               :scheme="isClosedChat ? 'gray' : 'blue'"
-              :key="'feedback' + message.uuid"
               :title="messageFormatTitle(new Date(message.created_on))"
             />
             <ChatMessagesFeedbackMessage
               v-if="isFeedbackMessage(message)"
+              :key="message.uuid"
               :message="message"
               :scheme="isClosedChat ? 'gray' : 'blue'"
-              :key="message.uuid"
               :title="messageFormatTitle(new Date(message.created_on))"
             />
 
             <template v-else>
               <UnnnicChatsMessage
                 v-if="message.text || isGeolocation(message.media?.[0])"
+                :key="message.uuid"
+                :ref="`message-${message.uuid}`"
                 :type="messageType(message)"
                 :class="[
                   'chat-messages__message',
@@ -57,8 +59,6 @@
                 ]"
                 :time="new Date(message.created_on)"
                 :status="messageStatus({ message })"
-                :key="message.uuid"
-                :ref="`message-${message.uuid}`"
                 :title="messageFormatTitle(new Date(message.created_on))"
                 :signature="messageSignature(message)"
               >
@@ -83,8 +83,8 @@
                     isImage(media)
                       ? 'image'
                       : isVideo(media)
-                      ? 'video'
-                      : 'audio'
+                        ? 'video'
+                        : 'audio'
                   "
                   :time="new Date(message.created_on)"
                   :status="messageStatus({ message })"

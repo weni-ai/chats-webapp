@@ -40,16 +40,6 @@ export default {
     },
   },
 
-  methods: {
-    handleSelectedTags(tag) {
-      const tags = this.selected.some((t) => t.uuid === tag.uuid)
-        ? this.selected.filter((t) => t.uuid !== tag.uuid)
-        : [...this.selected, { ...tag }];
-
-      this.selected = tags;
-    },
-  },
-
   computed: {
     selected: {
       get() {
@@ -58,6 +48,16 @@ export default {
       set(selected) {
         this.$emit('update:modelValue', selected);
       },
+    },
+  },
+
+  methods: {
+    handleSelectedTags(tag) {
+      const tags = this.selected.some((t) => t.uuid === tag.uuid)
+        ? this.selected.filter((t) => t.uuid !== tag.uuid)
+        : [...this.selected, { ...tag }];
+
+      this.selected = tags;
     },
   },
 };

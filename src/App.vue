@@ -26,6 +26,13 @@ import moment from 'moment';
 
 export default {
   name: 'App',
+
+  data() {
+    return {
+      ws: null,
+      loading: false,
+    };
+  },
   beforeCreate() {
     http.interceptors.request.use((config) => {
       // eslint-disable-next-line no-param-reassign
@@ -40,13 +47,6 @@ export default {
 
   mounted() {
     notifications.requestPermission();
-  },
-
-  data() {
-    return {
-      ws: null,
-      loading: false,
-    };
   },
 
   computed: {

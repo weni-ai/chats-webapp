@@ -43,16 +43,6 @@ export default {
     },
   },
 
-  methods: {
-    handleSelectedTags(tag) {
-      const tags = this.selected.includes(tag)
-        ? this.selected.filter((t) => t !== tag)
-        : [...this.selected, tag];
-
-      this.selected = tags;
-    },
-  },
-
   computed: {
     selected: {
       get() {
@@ -61,6 +51,16 @@ export default {
       set(selected) {
         this.$emit('input', selected);
       },
+    },
+  },
+
+  methods: {
+    handleSelectedTags(tag) {
+      const tags = this.selected.includes(tag)
+        ? this.selected.filter((t) => t !== tag)
+        : [...this.selected, tag];
+
+      this.selected = tags;
     },
   },
 };

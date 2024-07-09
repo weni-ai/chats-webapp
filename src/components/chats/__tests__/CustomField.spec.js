@@ -8,7 +8,7 @@ function createWrapper(propsData) {
   const wrapper = mount(CustomField, {
     propsData,
     global: {
-      plugins: [i18n, UnnnicSystem]
+      plugins: [i18n, UnnnicSystem],
     },
   });
 

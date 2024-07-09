@@ -9,8 +9,8 @@ function createWrapper() {
   const wrapper = mount(FormQueue, {
     props: defaultProps,
     global: {
-      plugins: [i18n, UnnnicSystem]
-    }
+      plugins: [i18n, UnnnicSystem],
+    },
   });
 
   return wrapper;
@@ -25,7 +25,7 @@ describe('FormQueue', () => {
 
   it('should render all section titles and tooltips', () => {
     const titles = wrapper.findAll('.title');
-    const tooltips = wrapper.findAllComponents({ name: "unnnic-tooltip"});
+    const tooltips = wrapper.findAllComponents({ name: 'unnnic-tooltip' });
 
     expect(titles.at(0).text()).toMatch(/Create new queue/gi);
     expect(titles.length).toBe(1);

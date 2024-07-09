@@ -8,32 +8,32 @@
     </h1>
     <UnnnicInput
       v-model="quickMessage.title"
-      @update:model-value="quickMessage = { ...quickMessage, title: $event }"
       size="md"
       :label="$t('title')"
       :placeholder="$t('quick_messages.title_field_placeholder')"
+      @update:model-value="quickMessage = { ...quickMessage, title: $event }"
     />
 
     <UnnnicInput
       v-model="quickMessage.shortcut"
-      @update:model-value="quickMessage = { ...quickMessage, shortcut: $event }"
       size="md"
       :placeholder="$t('quick_messages.shortcut_field_placeholder')"
       :label="$t('shortcut')"
+      @update:model-value="quickMessage = { ...quickMessage, shortcut: $event }"
     />
 
     <UnnnicTextArea
       v-model="quickMessage.text"
-      @update:model-value="quickMessage = { ...quickMessage, text: $event }"
       :label="$t('message')"
       :placeholder="$t('quick_messages.message_field_placeholder')"
       :maxLength="1000"
       size="md"
+      @update:model-value="quickMessage = { ...quickMessage, text: $event }"
     />
 
     <div
-      class="actions"
       v-if="!externalActions"
+      class="actions"
     >
       <UnnnicButton
         class="button"
@@ -47,8 +47,8 @@
         :text="$t('save')"
         type="primary"
         size="small"
-        @click="submit"
         :disabled="isSaveButtonDisabled"
+        @click="submit"
       />
     </div>
   </section>

@@ -13,8 +13,8 @@
             <CardGroup
               :label="$t('line')"
               :rooms="[room]"
-              @open="(roomOpen = true), startConversation()"
               usePhoto
+              @open="(roomOpen = true), startConversation()"
             />
           </UnnnicToolTip>
           <CardGroup
@@ -34,14 +34,14 @@
       <ChatHeader
         :room="room"
         :closeButtonTooltip="$t('chats.end')"
-        @close="close"
         usePhoto
+        @close="close"
       />
       <ChatMessages
+        ref="chatMessages"
         :room="room"
         :messages="messages"
         class="messages"
-        ref="chatMessages"
         usePhoto
       />
 
@@ -155,11 +155,14 @@ export default {
       for await (const [text, timeout] of messages) {
         const randomTimeoutInSeconds = Math.random() * (2 - 1) + 1;
         await new Promise((resolve) => {
-          setTimeout(() => {
-            const message = this.message(text);
-            this.sentMessages.push(message);
-            resolve();
-          }, timeout || randomTimeoutInSeconds * 1000);
+          setTimeout(
+            () => {
+              const message = this.message(text);
+              this.sentMessages.push(message);
+              resolve();
+            },
+            timeout || randomTimeoutInSeconds * 1000,
+          );
         });
       }
     },

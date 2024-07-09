@@ -4,8 +4,8 @@
     <SelectFlow v-model="selectedFlow" />
     <div v-if="showProgressBar">
       <ModalProgressBarFalse
-        @close="closeModalProgress"
         :title="$t('flows_trigger.sending')"
+        @close="closeModalProgress"
       />
     </div>
     <footer class="send-flow__handlers">
@@ -45,14 +45,6 @@ export default {
     ModalProgressBarFalse,
   },
 
-  data() {
-    return {
-      showProgressBar: false,
-
-      selectedFlow: '',
-    };
-  },
-
   props: {
     contacts: {
       type: Array,
@@ -60,6 +52,14 @@ export default {
     selectedContact: {
       type: Object,
     },
+  },
+
+  data() {
+    return {
+      showProgressBar: false,
+
+      selectedFlow: '',
+    };
   },
 
   methods: {

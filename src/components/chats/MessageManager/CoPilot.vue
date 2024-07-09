@@ -1,8 +1,8 @@
 <template>
   <div
+    v-click-outside="close"
     class="co-pilot"
     :class="{ loading: isLoading, error: isError }"
-    v-click-outside="close"
     @keydown.esc="close"
   >
     <header class="co-pilot__header">
@@ -21,14 +21,14 @@
             isLoading
               ? $t('copilot.loading')
               : copilotSuggestion
-              ? $t('copilot.suggestion')
-              : $t('copilot.error')
+                ? $t('copilot.suggestion')
+                : $t('copilot.error')
           }}
         </h1>
       </div>
       <button
-        class="co-pilot__header__close"
         ref="closeButton"
+        class="co-pilot__header__close"
         @click="close"
         @keypress.esc="close"
       >
@@ -48,9 +48,9 @@
       />
       <button
         v-else
+        ref="suggestion"
         class="co-pilot__response__suggestion clickable"
         @click="select(copilotSuggestion)"
-        ref="suggestion"
       >
         {{ copilotSuggestion || $t('copilot.try_again') }}
       </button>
@@ -65,6 +65,9 @@ import { useRooms } from '@/store/modules/chats/rooms';
 
 export default {
   name: 'CoPilot',
+  directives: {
+    clickOutside: vClickOutside.directive,
+  },
   data() {
     return {
       isLoading: true,
@@ -86,9 +89,6 @@ export default {
       clearInterval(this.suggestionTimeout);
       this.isLoading = false;
     }
-  },
-  directives: {
-    clickOutside: vClickOutside.directive,
   },
   computed: {
     ...mapState(useRooms, ['copilotSuggestion']),

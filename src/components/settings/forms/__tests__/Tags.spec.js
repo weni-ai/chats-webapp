@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils';
 import i18n from '@/plugins/i18n';
-import UnnnicSystem from '@/plugins/UnnnicSystem' 
+import UnnnicSystem from '@/plugins/UnnnicSystem';
 import FormTags from '../Tags.vue';
 import defaultProps from './mocks/tagsMock';
 
@@ -10,7 +10,7 @@ function createWrapper() {
     global: {
       plugins: [i18n, UnnnicSystem],
     },
-  })
+  });
   return wrapper;
 }
 
@@ -52,7 +52,6 @@ describe('FormTags', () => {
   });
 
   it('should have a tags list rendered', async () => {
-    
     await wrapper.setProps({
       modelValue: [
         { uuid: '1685448788527', name: 'Tag1' },

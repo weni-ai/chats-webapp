@@ -9,13 +9,13 @@
           <div class="content">
             <div class="on-boarding-chat">
               <div
-                class="slide"
                 ref="slide"
+                class="slide"
               >
                 <div
+                  ref="pages"
                   :style="{ width: `${100 * pages}%` }"
                   class="pages"
-                  ref="pages"
                   @focus="startAutoSkip"
                   @blur="cancelAutoSkip"
                   @mouseenter.self="cancelAutoSkip"
@@ -129,6 +129,10 @@ export default {
     this.startAutoSkip();
   },
 
+  beforeUnmount() {
+    this.cancelAutoSkip();
+  },
+
   methods: {
     open(src) {
       window.open(src);
@@ -182,10 +186,6 @@ export default {
         '*',
       );
     },
-  },
-
-  beforeDestroy() {
-    this.cancelAutoSkip();
   },
 };
 </script>

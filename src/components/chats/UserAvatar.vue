@@ -81,9 +81,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$avatar-sizes: '2xl' 3rem, 'xl' $unnnic-icon-size-xl, 'lg' $unnnic-icon-size-lg,
-  'md' $unnnic-icon-size-md, 'ant' $unnnic-icon-size-ant,
-  'sm' $unnnic-icon-size-sm, 'xs' $unnnic-icon-size-xs;
+$avatar-sizes:
+  '2xl' 3rem,
+  'xl' $unnnic-icon-size-xl,
+  'lg' $unnnic-icon-size-lg,
+  'md' $unnnic-icon-size-md,
+  'ant' $unnnic-icon-size-ant,
+  'sm' $unnnic-icon-size-sm,
+  'xs' $unnnic-icon-size-xs;
 
 .user-avatar {
   display: flex;

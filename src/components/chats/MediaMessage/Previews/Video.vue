@@ -5,8 +5,8 @@
     :class="{ 'is-fullscreen': isFullcreen }"
   >
     <video
-      class="video-preview__video"
       ref="player"
+      class="video-preview__video"
     >
       <source :src="src" />
     </video>

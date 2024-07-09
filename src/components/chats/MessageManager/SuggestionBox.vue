@@ -1,8 +1,8 @@
 <template>
   <section
     v-if="isSuggestionBoxOpen"
-    class="suggestion-box"
     v-click-outside="close"
+    class="suggestion-box"
     @keydown.esc="close"
   >
     <header class="suggestion-box__header">
@@ -18,8 +18,8 @@
       @keypress.enter="openCopilot"
     />
     <section
-      class="suggestion-box__shortcuts"
       ref="refShortcuts"
+      class="suggestion-box__shortcuts"
     >
       <SuggestionBoxShortcut
         v-for="(suggestion, index) in filteredSuggestions"
@@ -101,6 +101,32 @@ export default {
     },
   },
 
+  watch: {
+    keyboardEvent(event) {
+      const reactiveKey = this.reactiveKeys.find((k) => k.key === event.key);
+      if (!reactiveKey) return;
+
+      event.preventDefault();
+      reactiveKey.handler();
+
+      const scrollElement =
+        this.$refs.refShortcuts.childNodes[this.activeShortcutIndex];
+      scrollElement?.scrollIntoView({ block: 'nearest' });
+    },
+    isSuggestionBoxOpen(isOpen) {
+      this.$emit(isOpen ? 'open' : 'close');
+    },
+    search(newSearch) {
+      const searchHasValue = !!newSearch.replace('/', '');
+
+      if (!this.copilot || searchHasValue) {
+        this.resetActiveShortcutIndex();
+      } else {
+        this.activeShortcutIndex = null;
+      }
+    },
+  },
+
   methods: {
     select(suggestion) {
       this.$emit('select', suggestion);
@@ -155,32 +181,6 @@ export default {
     },
     isActiveShortcutIndexDefined() {
       return this.activeShortcutIndex !== -1;
-    },
-  },
-
-  watch: {
-    keyboardEvent(event) {
-      const reactiveKey = this.reactiveKeys.find((k) => k.key === event.key);
-      if (!reactiveKey) return;
-
-      event.preventDefault();
-      reactiveKey.handler();
-
-      const scrollElement =
-        this.$refs.refShortcuts.childNodes[this.activeShortcutIndex];
-      scrollElement?.scrollIntoView({ block: 'nearest' });
-    },
-    isSuggestionBoxOpen(isOpen) {
-      this.$emit(isOpen ? 'open' : 'close');
-    },
-    search(newSearch) {
-      const searchHasValue = !!newSearch.replace('/', '');
-
-      if (!this.copilot || searchHasValue) {
-        this.resetActiveShortcutIndex();
-      } else {
-        this.activeShortcutIndex = null;
-      }
     },
   },
 };

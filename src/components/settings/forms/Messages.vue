@@ -4,10 +4,10 @@
       <UnnnicBreadcrumb
         class="form-quick-messages__breadcrumb"
         :crumbs="quickMessagesBreadcrumb"
-        @crumbClick="
+        @crumb-click="
           () => {
-            this.handleIsQuickMessageEditing(false);
-            this.resetQuickMessageToUpdate();
+            handleIsQuickMessageEditing(false);
+            resetQuickMessageToUpdate();
           }
         "
       />
@@ -22,8 +22,8 @@
       v-else
       :sector="sector"
       :quickMessagesShared="quickMessagesShared"
-      @create-quick-message="this.create"
-      @edit-quick-message="this.update"
+      @create-quick-message="create"
+      @edit-quick-message="update"
       @delete-quick-message="this.delete"
     />
   </section>

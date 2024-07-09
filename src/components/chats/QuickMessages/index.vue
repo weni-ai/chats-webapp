@@ -40,8 +40,8 @@
         scheme="feedback-red"
         modalIcon="error"
         :closeIcon="isMobile"
-        @close="quickMessageToDelete = null"
         :showModal="!!quickMessageToDelete"
+        @close="quickMessageToDelete = null"
       >
         <template #options>
           <UnnnicButton

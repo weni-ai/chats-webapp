@@ -4,8 +4,8 @@
     @transferred-contact="handleChatTransfer"
   />
   <div
-    class="mobile-home"
     v-else
+    class="mobile-home"
   >
     <!-- callUnnnicAlert is using the class of this element below as containerRef -->
     <main class="mobile-home__main">
@@ -29,8 +29,8 @@
         sectionIconScheme="weni-600"
       />
       <section
-        class="mobile-home__tab__chats"
         v-if="showChats"
+        class="mobile-home__tab__chats"
       >
         <TheCardGroups class="mobile-home__chats-list" />
       </section>
@@ -159,6 +159,33 @@ export default {
     },
   },
 
+  watch: {
+    $route: {
+      immediate: true,
+      async handler(newRoute) {
+        if (
+          (!this.room?.uuid && !this.discussion?.uuid) ||
+          newRoute.name === 'home'
+        ) {
+          resetChats();
+        }
+
+        if (newRoute.query.newQuickMessage) {
+          await this.openTabPreferences();
+          await this.openQuickMessages();
+          await this.$refs.quickMessages?.openQuickMessageCreation();
+        }
+      },
+    },
+    currentTab(newTab, oldTab) {
+      this.oldTab = oldTab;
+
+      if (oldTab === 'preferences') {
+        this.closeQuickMessages();
+      }
+    },
+  },
+
   methods: {
     homeBack() {
       this.$router.push({ name: 'orgs' });
@@ -231,33 +258,6 @@ export default {
       setTimeout(() => {
         this.isCallingTransferAlert = false;
       }, 400);
-    },
-  },
-
-  watch: {
-    $route: {
-      immediate: true,
-      async handler(newRoute) {
-        if (
-          (!this.room?.uuid && !this.discussion?.uuid) ||
-          newRoute.name === 'home'
-        ) {
-          resetChats();
-        }
-
-        if (newRoute.query.newQuickMessage) {
-          await this.openTabPreferences();
-          await this.openQuickMessages();
-          await this.$refs.quickMessages?.openQuickMessageCreation();
-        }
-      },
-    },
-    currentTab(newTab, oldTab) {
-      this.oldTab = oldTab;
-
-      if (oldTab === 'preferences') {
-        this.closeQuickMessages();
-      }
     },
   },
 };
