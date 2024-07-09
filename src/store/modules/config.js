@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
 
 import {
-  setToken as setLocalToken,
-  setProject as setLocalProjectUuid,
-  setStatus as setLocalStatus,
+  setToken as setSessionToken,
+  setProject as setSessionProjectUuid,
+  setStatus as setSessionStatus,
 } from '@/utils/config';
 
 import Profile from '@/services/api/resources/profile';
@@ -21,11 +21,11 @@ export const useConfig = defineStore('config', {
   }),
   actions: {
     async setToken(token) {
-      setLocalToken(token);
+      setSessionToken(token);
       this.token = token;
     },
     async setProjectUuid(projectUuid) {
-      setLocalProjectUuid(projectUuid);
+      setSessionProjectUuid(projectUuid);
       this.project.uuid = projectUuid;
     },
     async setProject(project) {
@@ -56,7 +56,7 @@ export const useConfig = defineStore('config', {
       });
       const newStatus = data.connection_status || 'OFFLINE';
       this.status = newStatus;
-      setLocalStatus(newStatus);
+      setSessionStatus(newStatus);
     },
     setCopilotActive(active) {
       this.copilot.active = active;

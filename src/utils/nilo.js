@@ -20,7 +20,7 @@ function setNiloDisplay(value) {
     l.async = true;
     h.parentNode.insertBefore(l, k.nextSibling);
     l.onload = () => {
-      if ((localStorage.getItem(PREFERENCES_NILO) || 'yes') === 'no') {
+      if ((sessionStorage.getItem(PREFERENCES_NILO) || 'yes') === 'no') {
         setNiloDisplay('none');
       }
     };
