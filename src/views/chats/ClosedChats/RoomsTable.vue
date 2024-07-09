@@ -15,7 +15,7 @@
 
     <RoomsTableLoading v-if="isTableLoading" />
     <UnnnicTable
-      v-if="!isTableLoading && this.rooms.length > 0"
+      v-if="!isTableLoading && rooms.length > 0"
       :items="rooms"
       class="closed-chats__rooms-table__table"
     >
@@ -32,14 +32,14 @@
             <template #contactName>
               <div class="closed-chats__rooms-table__table__contact">
                 <UnnnicChatsUserAvatar
-                  :username="item.contact.name"
                   v-if="!isMobile"
+                  :username="item.contact.name"
                 />
                 <p
                   class="closed-chats__rooms-table__table__contact__name"
-                  :title="formatContactName(item)"
+                  :title="item.contact.name"
                 >
-                  {{ formatContactName(item) }}
+                  {{ item.contact.name }}
                 </p>
               </div>
             </template>
@@ -89,7 +89,7 @@
       </template>
     </UnnnicTable>
     <p
-      v-if="!isTableLoading && this.rooms.length === 0"
+      v-if="!isTableLoading && rooms.length === 0"
       class="closed-chats__rooms-table__table__no-results"
     >
       {{ $t('without_results') }}
@@ -128,7 +128,6 @@ import TagGroup from '@/components/TagGroup.vue';
 import ModalClosedChatsFilters from '@/components/chats/Mobile/ModalClosedChatsFilters.vue';
 
 import ClosedChatsRoomsTableFilters from './RoomsTableFilters.vue';
-import { formatContactName } from '@/utils/chats';
 
 export default {
   name: 'ClosedChatsRoomsTable',
@@ -140,9 +139,9 @@ export default {
     TablePagination,
     ModalClosedChatsFilters,
   },
+  emits: ['open-room'],
 
   data: () => ({
-    formatContactName,
     isMobile: isMobile(),
 
     isTableLoading: true,
@@ -190,6 +189,18 @@ export default {
     showTablePagination() {
       const { isMobile, roomsCountPages } = this;
       return !isMobile || (isMobile && roomsCountPages);
+    },
+  },
+
+  watch: {
+    roomsCurrentPage() {
+      this.getHistoryRooms(true);
+    },
+    filters: {
+      deep: true,
+      handler() {
+        this.getHistoryRooms();
+      },
     },
   },
 
@@ -254,18 +265,6 @@ export default {
       if (this.isMobile) {
         this.$emit('open-room', room);
       }
-    },
-  },
-
-  watch: {
-    roomsCurrentPage() {
-      this.getHistoryRooms(true);
-    },
-    filters: {
-      deep: true,
-      handler() {
-        this.getHistoryRooms();
-      },
     },
   },
 };
