@@ -6,6 +6,17 @@ import i18n from '@/plugins/i18n';
 
 import ModalBulkTransfer from '../chat/ModalBulkTransfer.vue';
 
+vi.mock('@/services/api/resources/chats/room', () => ({
+  default: {
+    bulkTranfer: vi.fn(async () => {
+      setTimeout(() => {
+        return { status: 200 };
+      }),
+        3000;
+    }),
+  },
+}));
+
 function createWrapper(store) {
   const wrapper = mount(ModalBulkTransfer, {
     global: {
