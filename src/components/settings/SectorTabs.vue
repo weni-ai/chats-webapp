@@ -58,6 +58,7 @@ export default {
       default: '',
     },
   },
+  emits: ['update:modelValue'],
 
   data: () => ({
     tabs: ['sector', 'queues', 'messages', 'tags'],

@@ -42,13 +42,15 @@
       class="form-agent__agents"
     >
       <SelectedMember
-        v-for="agent in selectedAgents"
-        :key="agent.uuid"
-        :name="agent.user.first_name + ' ' + agent.user.last_name"
-        :email="agent.user.email"
-        :avatarUrl="photo(agent.user.photo_url)"
+        v-for="selectedAgent in selectedAgents"
+        :key="selectedAgent.uuid"
+        :name="
+          selectedAgent.user.first_name + ' ' + selectedAgent.user.last_name
+        "
+        :email="selectedAgent.user.email"
+        :avatarUrl="photo(selectedAgent.user.photo_url)"
         roleName="Agente"
-        @remove="remove(agent.uuid)"
+        @remove="remove(selectedAgent.uuid)"
       />
     </section>
   </section>
@@ -78,6 +80,7 @@ export default {
       default: () => [],
     },
   },
+  emits: ['update:modelValue', 'validate', 'remove', 'select'],
 
   data: () => ({
     internalSelectedAgents: [],

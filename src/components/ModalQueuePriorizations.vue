@@ -58,6 +58,7 @@ import Queues from '@/services/api/resources/chats/queues';
 
 export default {
   name: 'ModalQueuePriorizations',
+  emits: ['close'],
 
   data() {
     return {
@@ -75,6 +76,15 @@ export default {
     };
   },
 
+  computed: {
+    ...mapState(useProfile, ['me']),
+    ...mapState(useRooms, ['rooms']),
+
+    verifySelectedLength() {
+      return this.selectedQueues.length > 0;
+    },
+  },
+
   watch: {
     selectedQueues: {
       handler() {
@@ -86,15 +96,6 @@ export default {
 
   created() {
     this.getListQueues();
-  },
-
-  computed: {
-    ...mapState(useProfile, ['me']),
-    ...mapState(useRooms, ['rooms']),
-
-    verifySelectedLength() {
-      return this.selectedQueues.length > 0;
-    },
   },
   methods: {
     ...mapActions(useRooms, {

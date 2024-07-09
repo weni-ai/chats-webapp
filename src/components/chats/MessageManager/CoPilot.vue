@@ -68,11 +68,33 @@ export default {
   directives: {
     clickOutside: vClickOutside.directive,
   },
+  emits: ['close', 'select'],
   data() {
     return {
       isLoading: true,
       suggestionTimeout: null,
     };
+  },
+  computed: {
+    ...mapState(useRooms, ['copilotSuggestion']),
+    isError() {
+      return !this.isLoading && !this.copilotSuggestion;
+    },
+  },
+  watch: {
+    isLoading(newIsLoading) {
+      if (newIsLoading === false) {
+        this.$nextTick(() => {
+          this.$refs.suggestion.focus();
+        });
+      }
+    },
+    copilotSuggestion(newValue) {
+      if (newValue) {
+        clearInterval(this.suggestionTimeout);
+        this.isLoading = false;
+      }
+    },
   },
   async mounted() {
     this.$nextTick(() => {
@@ -90,12 +112,6 @@ export default {
       this.isLoading = false;
     }
   },
-  computed: {
-    ...mapState(useRooms, ['copilotSuggestion']),
-    isError() {
-      return !this.isLoading && !this.copilotSuggestion;
-    },
-  },
   methods: {
     ...mapActions(useRooms, ['getCopilotSuggestion', 'clearCopilotSuggestion']),
     close() {
@@ -105,21 +121,6 @@ export default {
       this.$emit('select', suggestion);
       this.clearCopilotSuggestion();
       this.close();
-    },
-  },
-  watch: {
-    isLoading(newIsLoading) {
-      if (newIsLoading === false) {
-        this.$nextTick(() => {
-          this.$refs.suggestion.focus();
-        });
-      }
-    },
-    copilotSuggestion(newValue) {
-      if (newValue) {
-        clearInterval(this.suggestionTimeout);
-        this.isLoading = false;
-      }
     },
   },
 };

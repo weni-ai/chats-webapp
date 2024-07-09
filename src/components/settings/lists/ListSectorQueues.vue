@@ -49,6 +49,7 @@ export default {
       default: '',
     },
   },
+  emits: ['visualize'],
 
   data() {
     return {

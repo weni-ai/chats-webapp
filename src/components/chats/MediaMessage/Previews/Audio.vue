@@ -30,6 +30,7 @@ export default {
   props: {
     currentAudio: {
       type: String,
+      default: '',
     },
   },
 

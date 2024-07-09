@@ -230,9 +230,10 @@ export default {
   props: {
     selectedContact: {
       type: Object,
-      required: false,
+      default: () => {},
     },
   },
+  emits: ['close'],
 
   data: () => ({
     letterColapse: {},
@@ -258,11 +259,6 @@ export default {
 
     isMobile: isMobile(),
   }),
-
-  created() {
-    this.contactList();
-    this.groupList();
-  },
 
   computed: {
     ...mapState(useConfig, {
@@ -312,6 +308,29 @@ export default {
     showSendFlowStep() {
       return !this.isMobile && this.showSendFlow;
     },
+  },
+  watch: {
+    searchUrn: {
+      handler() {
+        if (this.timerId !== 0) clearTimeout(this.timerId);
+        this.timerId = setTimeout(() => {
+          this.contactList(null, true);
+        }, 500);
+      },
+    },
+    selectedContact: {
+      immediate: true,
+      handler(newSelectedContact) {
+        if (newSelectedContact) {
+          this.openSendFlow();
+        }
+      },
+    },
+  },
+
+  created() {
+    this.contactList();
+    this.groupList();
   },
 
   methods: {
@@ -469,24 +488,6 @@ export default {
     },
     closeRemoveSelectedContactsModal() {
       this.showRemoveSelectedContactsModal = false;
-    },
-  },
-  watch: {
-    searchUrn: {
-      handler() {
-        if (this.timerId !== 0) clearTimeout(this.timerId);
-        this.timerId = setTimeout(() => {
-          this.contactList(null, true);
-        }, 500);
-      },
-    },
-    selectedContact: {
-      immediate: true,
-      handler(newSelectedContact) {
-        if (newSelectedContact) {
-          this.openSendFlow();
-        }
-      },
     },
   },
 };

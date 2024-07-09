@@ -56,6 +56,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['update-is-quick-message-editing', 'validate'],
 
   data: () => ({
     quickMessageToUpdate: null,
@@ -68,6 +69,12 @@ export default {
       },
     ],
   }),
+
+  watch: {
+    quickMessageToUpdate() {
+      this.$emit('validate', this.validate());
+    },
+  },
 
   methods: {
     ...mapActions(useQuickMessageShared, {
@@ -126,14 +133,6 @@ export default {
 
       const { title, shortcut, text } = this.quickMessageToUpdate;
       return !!title && shortcut && text;
-    },
-  },
-
-  computed: {},
-
-  watch: {
-    quickMessageToUpdate() {
-      this.$emit('validate', this.validate());
     },
   },
 };

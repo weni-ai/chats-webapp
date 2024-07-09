@@ -109,6 +109,7 @@ export default {
       default: false,
     },
   },
+  emits: ['open-flows-trigger', 'show-quick-messages'],
   data() {
     return {
       canCloseOnHeaderClick: false,

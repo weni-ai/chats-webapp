@@ -38,6 +38,7 @@ export default {
       default: true,
     },
   },
+  emits: ['open-file-uploader'],
 
   data() {
     return {

@@ -151,6 +151,7 @@ export default {
       default: false,
     },
   },
+  emits: ['close', 'show-contact-info', 'open-send-flow', 'reconnect'],
 
   methods: {
     moment,

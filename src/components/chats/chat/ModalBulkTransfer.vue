@@ -42,6 +42,7 @@ export default {
   components: {
     RoomsTransferFields,
   },
+  emits: ['close'],
 
   data() {
     return {

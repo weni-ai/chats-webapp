@@ -46,7 +46,7 @@ export default {
     },
     count: {
       type: Number,
-      required: false,
+      default: 0,
     },
     countPages: {
       type: Number,

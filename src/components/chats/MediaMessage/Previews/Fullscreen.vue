@@ -81,8 +81,10 @@ export default {
     },
     downloadMediaName: {
       type: String,
+      default: '',
     },
   },
+  emits: ['close', 'next', 'previous'],
 
   data() {
     return {

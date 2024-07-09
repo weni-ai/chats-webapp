@@ -48,11 +48,14 @@ export default {
   props: {
     contacts: {
       type: Array,
+      default: () => [],
     },
     selectedContact: {
       type: Object,
+      default: () => {},
     },
   },
+  emits: ['back', 'close'],
 
   data() {
     return {

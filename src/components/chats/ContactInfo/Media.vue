@@ -90,15 +90,18 @@ export default {
   props: {
     room: {
       type: Object,
+      default: () => {},
     },
     contactInfo: {
       type: Object,
+      default: () => {},
     },
     history: {
       type: Boolean,
       default: false,
     },
   },
+  emits: ['fullscreen', 'loaded-medias'],
 
   data: () => ({
     tab: 'media',

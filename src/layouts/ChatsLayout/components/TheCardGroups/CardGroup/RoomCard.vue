@@ -52,28 +52,13 @@ export default {
       default: false,
     },
   },
+  emits: ['click', 'update-selected'],
 
   data: () => ({
     waitingTime: 0,
     timer: null,
     checkboxValue: false,
   }),
-
-  mounted() {
-    const randomPeriodInMilliseconds = Math.ceil(Math.random() * 30 + 1) * 1000;
-
-    if (this.room.waitingTime) {
-      this.waitingTime = this.room.waitingTime;
-      this.timer = setInterval(() => {
-        this.waitingTime += 1;
-        // ensures that all chats waiting times don't update at same time
-      }, ONE_MINUTE_IN_MILLISECONDS + randomPeriodInMilliseconds);
-    }
-  },
-
-  unmounted() {
-    clearInterval(this.timer);
-  },
 
   computed: {
     ...mapState(useRooms, {
@@ -111,6 +96,22 @@ export default {
     checkboxValue(newCheckboxValue) {
       this.$emit('update-selected', newCheckboxValue);
     },
+  },
+
+  mounted() {
+    const randomPeriodInMilliseconds = Math.ceil(Math.random() * 30 + 1) * 1000;
+
+    if (this.room.waitingTime) {
+      this.waitingTime = this.room.waitingTime;
+      this.timer = setInterval(() => {
+        this.waitingTime += 1;
+        // ensures that all chats waiting times don't update at same time
+      }, ONE_MINUTE_IN_MILLISECONDS + randomPeriodInMilliseconds);
+    }
+  },
+
+  unmounted() {
+    clearInterval(this.timer);
   },
 };
 </script>

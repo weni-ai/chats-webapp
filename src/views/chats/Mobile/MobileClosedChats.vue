@@ -53,6 +53,7 @@ export default {
     RoomMessages,
     ContactInfo,
   },
+  emits: ['close'],
 
   data() {
     return {
@@ -60,13 +61,6 @@ export default {
 
       showRoomInfos: false,
     };
-  },
-
-  async created() {
-    this.resetChat();
-  },
-  async beforeUnmount() {
-    this.resetChat();
   },
 
   computed: {
@@ -84,33 +78,6 @@ export default {
     },
     roomHeaderClick() {
       return this.room?.uuid ? () => this.handleShowRoomInfos() : null;
-    },
-  },
-
-  methods: {
-    ...mapActions(useRooms, ['setActiveRoom']),
-    ...mapActions(useDiscussions, ['setActiveDiscussion']),
-
-    emitClose() {
-      this.$emit('close');
-    },
-
-    async handleRoom(room) {
-      await this.setActiveRoom(room);
-    },
-
-    async resetChat() {
-      this.handleRoom(null);
-      await this.setActiveDiscussion(null);
-    },
-
-    closeHistory() {
-      this.resetChat();
-      this.emitClose();
-    },
-
-    handleShowRoomInfos() {
-      this.showRoomInfos = !this.showRoomInfos;
     },
   },
 
@@ -139,6 +106,40 @@ export default {
           this.isLoadingHeader = false;
         }
       },
+    },
+  },
+
+  async created() {
+    await this.resetChat();
+  },
+  async beforeUnmount() {
+    await this.resetChat();
+  },
+
+  methods: {
+    ...mapActions(useRooms, ['setActiveRoom']),
+    ...mapActions(useDiscussions, ['setActiveDiscussion']),
+
+    emitClose() {
+      this.$emit('close');
+    },
+
+    async handleRoom(room) {
+      await this.setActiveRoom(room);
+    },
+
+    async resetChat() {
+      this.handleRoom(null);
+      await this.setActiveDiscussion(null);
+    },
+
+    closeHistory() {
+      this.resetChat();
+      this.emitClose();
+    },
+
+    handleShowRoomInfos() {
+      this.showRoomInfos = !this.showRoomInfos;
     },
   },
 };

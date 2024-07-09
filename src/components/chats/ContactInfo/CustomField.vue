@@ -76,6 +76,7 @@ export default {
       required: true,
     },
   },
+  emits: ['save-value', 'update-current-custom-field'],
 
   computed: {
     isDescriptionAUrl() {

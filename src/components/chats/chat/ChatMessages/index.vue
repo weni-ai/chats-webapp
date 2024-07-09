@@ -71,7 +71,7 @@
               <template v-for="media in message.media">
                 <UnnnicChatsMessage
                   v-if="isMedia(media) && !isGeolocation(media)"
-                  :key="media.created_on"
+                  :key="media.message"
                   :ref="`message-${message.uuid}`"
                   :type="messageType(message)"
                   :class="[
@@ -229,7 +229,7 @@ export default {
     },
     messagesPrevious: {
       type: String,
-      required: false,
+      default: '',
     },
     messagesSorted: {
       type: Array,
@@ -283,6 +283,7 @@ export default {
       default: false,
     },
   },
+  emits: ['scrollTop'],
 
   data: () => ({
     messageToResend: null,
@@ -295,21 +296,6 @@ export default {
       agent: '',
     },
   }),
-
-  mounted() {
-    window.addEventListener('online', () => {
-      this.resendMessages();
-    });
-
-    // const observer = new IntersectionObserver((entries) => {
-    //   entries.forEach((entry) => {
-    //     console.log('intersecting', entry.isIntersecting);
-    //   });
-    // });
-    // const { endChatElement } = this.$refs;
-
-    // observer.observe(endChatElement.$el);
-  },
 
   computed: {
     ...mapState(useDashboard, ['viewedAgent']),
@@ -324,6 +310,33 @@ export default {
       const { isLoading, prevChatUuid, chatUuid } = this;
       return isLoading && prevChatUuid !== chatUuid;
     },
+  },
+
+  watch: {
+    messages: {
+      handler() {
+        this.setStartFeedbacks();
+        this.$nextTick(() => {
+          this.manageScrollForNewMessages();
+        });
+      },
+      deep: true,
+    },
+  },
+
+  mounted() {
+    window.addEventListener('online', () => {
+      this.resendMessages();
+    });
+
+    // const observer = new IntersectionObserver((entries) => {
+    //   entries.forEach((entry) => {
+    //     console.log('intersecting', entry.isIntersecting);
+    //   });
+    // });
+    // const { endChatElement } = this.$refs;
+
+    // observer.observe(endChatElement.$el);
   },
 
   methods: {
@@ -548,18 +561,6 @@ export default {
       if (!chatMessages) return;
 
       chatMessages.scrollTop = chatMessages.scrollHeight;
-    },
-  },
-
-  watch: {
-    messages: {
-      handler() {
-        this.setStartFeedbacks();
-        this.$nextTick(() => {
-          this.manageScrollForNewMessages();
-        });
-      },
-      deep: true,
     },
   },
 };

@@ -54,6 +54,19 @@ export default {
       showDiscussionClosedModal: false,
     };
   },
+  computed: {
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
+    }),
+    ...mapState(useDiscussions, ['discussionsCloseds']),
+  },
+  watch: {
+    showDiscussionClosedModal(newShowDiscussionClosedModal) {
+      if (!newShowDiscussionClosedModal) {
+        this.setActiveDiscussion(null);
+      }
+    },
+  },
   async created() {
     try {
       const { room } = this;
@@ -63,12 +76,6 @@ export default {
     } catch (error) {
       console.error('Error listing closed discussions', error);
     }
-  },
-  computed: {
-    ...mapState(useRooms, {
-      room: (store) => store.activeRoom,
-    }),
-    ...mapState(useDiscussions, ['discussionsCloseds']),
   },
   methods: {
     ...mapActions(useDiscussions, ['setActiveDiscussion', 'getAllClosed']),
@@ -88,13 +95,6 @@ export default {
     },
     handleDiscussionClosedModal() {
       this.showDiscussionClosedModal = !this.showDiscussionClosedModal;
-    },
-  },
-  watch: {
-    showDiscussionClosedModal(newShowDiscussionClosedModal) {
-      if (!newShowDiscussionClosedModal) {
-        this.setActiveDiscussion(null);
-      }
     },
   },
 };

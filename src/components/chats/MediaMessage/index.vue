@@ -61,6 +61,7 @@ export default {
       required: true,
     },
   },
+  emits: ['fullscreen'],
 
   computed: {
     fullFilename() {

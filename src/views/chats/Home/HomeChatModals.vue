@@ -71,6 +71,7 @@ export default {
     ModalQuickMessages,
     ModalCloseChat,
   },
+  emits: ['got-chat', 'file-uploader-progress', 'select-quick-message'],
 
   data() {
     return {

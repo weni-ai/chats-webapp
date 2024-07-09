@@ -33,21 +33,6 @@ export default {
       loading: false,
     };
   },
-  beforeCreate() {
-    http.interceptors.request.use((config) => {
-      // eslint-disable-next-line no-param-reassign
-      config.headers.Authorization = `Bearer ${this.appToken}`;
-      return config;
-    });
-  },
-
-  created() {
-    this.handleLocale();
-  },
-
-  mounted() {
-    notifications.requestPermission();
-  },
 
   computed: {
     ...mapState(useRooms, ['activeRoom']),
@@ -103,6 +88,22 @@ export default {
         this.wsConnect();
       },
     },
+  },
+
+  beforeCreate() {
+    http.interceptors.request.use((config) => {
+      // eslint-disable-next-line no-param-reassign
+      config.headers.Authorization = `Bearer ${this.appToken}`;
+      return config;
+    });
+  },
+
+  created() {
+    this.handleLocale();
+  },
+
+  mounted() {
+    notifications.requestPermission();
   },
 
   methods: {

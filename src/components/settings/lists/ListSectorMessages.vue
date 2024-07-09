@@ -111,6 +111,7 @@ export default {
       default: null,
     },
   },
+  emits: ['create-quick-message', 'edit-quick-message', 'delete-quick-message'],
 
   data: () => {
     return {
@@ -119,16 +120,16 @@ export default {
     };
   },
 
-  beforeUnmount() {
-    this.saveSector();
-  },
-
   computed: {
     ...mapState(useConfig, {
       copilotActive: (store) => store.copilot.active,
       copilotCustomRulesActive: (store) => store.copilot.customRulesActive,
       copilotCustomRules: (store) => store.copilot.customRules,
     }),
+  },
+
+  beforeUnmount() {
+    this.saveSector();
   },
 
   methods: {

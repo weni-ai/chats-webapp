@@ -113,10 +113,6 @@ export default {
     };
   },
 
-  unmounted() {
-    this.agentSelected = [];
-  },
-
   computed: {
     ...mapState(useProfile, ['me']),
     discussionStartDate() {
@@ -125,6 +121,50 @@ export default {
 
       return `${moment(date).format('HH:mm')} | ${moment(date).format('L')}`;
     },
+  },
+
+  watch: {
+    async isAddAgentModalOpen(newIsAddAgentModalOpen) {
+      if (newIsAddAgentModalOpen) {
+        const response = await Project.allUsers();
+        const { results } = response;
+
+        const agentsInvolvedNames = [
+          ...this.agentsInvolved.map((agent) => this.getUserFullName(agent)),
+        ];
+        const filteredAgents = results.filter(
+          (agent) => !agentsInvolvedNames.includes(this.getUserFullName(agent)),
+        );
+
+        const newAgents = [this.agentsToSelect[0]];
+
+        filteredAgents.forEach((agent) =>
+          newAgents.push({
+            value: agent.email,
+            label: this.getUserFullName(agent),
+            description: agent.email,
+            photoUrl: agent.photoUrl,
+          }),
+        );
+        this.agentsToSelect = newAgents;
+      }
+    },
+    details: {
+      immediate: true,
+      async handler() {
+        const responseAgents = await this.getDiscussionAgents();
+        if (responseAgents.results) {
+          this.agentsInvolved = responseAgents.results;
+        }
+        this.agentsToSelect = [
+          { value: '', label: this.$t('discussions.add_agents.search_agent') },
+        ];
+      },
+    },
+  },
+
+  unmounted() {
+    this.agentSelected = [];
   },
 
   methods: {
@@ -174,46 +214,6 @@ export default {
           error,
         );
       }
-    },
-  },
-
-  watch: {
-    async isAddAgentModalOpen(newIsAddAgentModalOpen) {
-      if (newIsAddAgentModalOpen) {
-        const response = await Project.allUsers();
-        const { results } = response;
-
-        const agentsInvolvedNames = [
-          ...this.agentsInvolved.map((agent) => this.getUserFullName(agent)),
-        ];
-        const filteredAgents = results.filter(
-          (agent) => !agentsInvolvedNames.includes(this.getUserFullName(agent)),
-        );
-
-        const newAgents = [this.agentsToSelect[0]];
-
-        filteredAgents.forEach((agent) =>
-          newAgents.push({
-            value: agent.email,
-            label: this.getUserFullName(agent),
-            description: agent.email,
-            photoUrl: agent.photoUrl,
-          }),
-        );
-        this.agentsToSelect = newAgents;
-      }
-    },
-    details: {
-      immediate: true,
-      async handler() {
-        const responseAgents = await this.getDiscussionAgents();
-        if (responseAgents.results) {
-          this.agentsInvolved = responseAgents.results;
-        }
-        this.agentsToSelect = [
-          { value: '', label: this.$t('discussions.add_agents.search_agent') },
-        ];
-      },
     },
   },
 };

@@ -59,9 +59,10 @@ export default {
     },
     mediasType: {
       type: String,
-      required: false,
+      default: '',
     },
   },
+  emits: ['update:modelValue', 'close', 'progress'],
 
   data: () => ({
     isMobile: isMobile(),

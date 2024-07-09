@@ -107,14 +107,6 @@ export default {
 
     realtimeSimulationController: null,
   }),
-  mounted() {
-    // this.initRealtimeSimulation();
-    console.log(this.agents, `agent`);
-  },
-
-  unmounted() {
-    clearInterval(this.realtimeSimulationController);
-  },
 
   computed: {
     ...mapState(useSettings, ['sectors']),
@@ -127,6 +119,14 @@ export default {
         statuses: this.getRandomMetrics(),
       }));
     },
+  },
+  mounted() {
+    // this.initRealtimeSimulation();
+    console.log(this.agents, `agent`);
+  },
+
+  unmounted() {
+    clearInterval(this.realtimeSimulationController);
   },
 
   methods: {

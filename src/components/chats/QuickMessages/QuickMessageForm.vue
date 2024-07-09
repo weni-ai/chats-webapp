@@ -73,9 +73,10 @@ export default {
     },
     title: {
       type: String,
-      require: false,
+      default: '',
     },
   },
+  emits: ['cancel', 'update:model-value', 'submit'],
 
   computed: {
     isSaveButtonDisabled() {
