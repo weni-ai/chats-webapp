@@ -115,7 +115,7 @@ export default {
       open: false,
       loadingStatus: false,
       sound: false,
-      statusAgent: localStorage.getItem('statusAgent'),
+      statusAgent: sessionStorage.getItem('statusAgent'),
     };
   },
 
@@ -133,7 +133,7 @@ export default {
 
   async created() {
     await this.handlingGetStatus();
-    this.sound = (localStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'yes';
+    this.sound = (sessionStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'yes';
     window.dispatchEvent(
       new CustomEvent(`${this.help ? 'show' : 'hide'}BottomRightOptions`),
     );
@@ -162,7 +162,7 @@ export default {
         status: online ? 'ONLINE' : 'OFFLINE',
       });
 
-      localStorage.setItem('statusAgent', connection_status);
+      sessionStorage.setItem('statusAgent', connection_status);
 
       this.loadingStatus = false;
       this.showStatusAlert(connection_status.toLowerCase());
@@ -176,7 +176,7 @@ export default {
     },
 
     changeSound() {
-      localStorage.setItem(PREFERENCES_SOUND, this.sound ? 'yes' : 'no');
+      sessionStorage.setItem(PREFERENCES_SOUND, this.sound ? 'yes' : 'no');
     },
 
     showStatusAlert(connectionStatus) {
