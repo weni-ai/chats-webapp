@@ -66,9 +66,11 @@ export default {
     },
     modelValue: {
       type: Array,
-      default: () => [],
+      required: true,
     },
   },
+
+  emits: ['update:model-value', 'update:selectedAgent', 'transfer-complete'],
 
   data() {
     return {
@@ -101,9 +103,10 @@ export default {
         return this.modelValue;
       },
       set(newSelectedQueue) {
-        this.$emit('update:selectedQueue', newSelectedQueue);
+        this.$emit('update:model-value', newSelectedQueue);
 
         const queue = newSelectedQueue[0]?.value;
+
         if (queue) {
           this.getAgents(queue);
         }
@@ -121,10 +124,10 @@ export default {
     },
   },
 
-  created() {
-    this.getQueues();
+  mounted() {
     this.queues = this.queuesDefault;
     this.agents = this.agentsDefault;
+    this.getQueues();
   },
 
   methods: {
@@ -168,6 +171,7 @@ export default {
      */
     async transfer() {
       const { roomsToTransfer } = this;
+
       const selectedQueue = this.selectedQueue?.[0]?.value;
       const selectedAgent = this.selectedAgent?.[0]?.value;
 
@@ -209,8 +213,12 @@ export default {
 
     callSuccessAlert() {
       const selectedAgent = this.selectedAgent?.[0]?.label;
+      const selectedQueueUuid = this.selectedQueue?.[0]?.value;
+      const selectedQueueName = this.queues.find(
+        (queue) => queue.value === selectedQueueUuid,
+      )?.queue_name;
 
-      const destination = selectedAgent || this.selectedQueue?.[0].queue_name;
+      const destination = selectedAgent || selectedQueueName;
 
       this.getAlert({
         text: `Contato transferido com sucesso para ${destination}`,

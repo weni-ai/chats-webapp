@@ -31,6 +31,9 @@ const store = createTestingPinia({
 
 function createWrapper() {
   const wrapper = mount(RoomsTransferFields, {
+    props: {
+      modelValue: [],
+    },
     global: {
       plugins: [i18n, store, UnnnicSystem],
     },

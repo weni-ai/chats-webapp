@@ -7,7 +7,7 @@
   >
     <RoomsTransferFields
       ref="roomsTransferFields"
-      v-model:selectedQueue="selectedQueue"
+      v-model="selectedQueue"
       bulkTransfer
       @transfer-complete="transferComplete"
     />
@@ -25,7 +25,7 @@
         :text="$t('transfer')"
         type="primary"
         size="large"
-        :disabled="selectedQueue.length === 0"
+        :disabled="disabledTransferButton"
         :loading="isLoadingBulkTransfer"
         @click="bulkTransfer"
       />
@@ -48,6 +48,14 @@ export default {
       selectedQueue: [],
       isLoadingBulkTransfer: false,
     };
+  },
+
+  computed: {
+    disabledTransferButton() {
+      return (
+        this.selectedQueue.length === 0 || this.selectedQueue[0]?.value === ''
+      );
+    },
   },
 
   methods: {
