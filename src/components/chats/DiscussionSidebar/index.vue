@@ -102,6 +102,15 @@ export default {
     }),
   },
 
+  watch: {
+    discussion: {
+      immediate: true,
+      async handler() {
+        await this.loadDiscussionDetails();
+      },
+    },
+  },
+
   methods: {
     ...mapActions(useDiscussions, {
       getDiscussionDetails: 'getDiscussionDetails',
@@ -145,15 +154,6 @@ export default {
       await this.setActiveRoom(null);
       await this.deleteDiscussion();
       this.handleEndDiscussionModal();
-    },
-  },
-
-  watch: {
-    discussion: {
-      immediate: true,
-      async handler() {
-        await this.loadDiscussionDetails();
-      },
     },
   },
 };

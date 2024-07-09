@@ -139,6 +139,7 @@ export default {
     },
     viewedAgent: {
       type: String,
+      default: '',
     },
   },
   data: () => ({
@@ -154,10 +155,6 @@ export default {
     showModalQueue: false,
     noQueueSelected: false,
   }),
-  mounted() {
-    this.listRoom();
-    this.listDiscussions();
-  },
   computed: {
     ...mapState(useRooms, {
       rooms: 'agentRooms',
@@ -218,6 +215,10 @@ export default {
         }, TIME_TO_WAIT_TYPING);
       },
     },
+  },
+  mounted() {
+    this.listRoom();
+    this.listDiscussions();
   },
   methods: {
     ...mapActions(useRooms, {

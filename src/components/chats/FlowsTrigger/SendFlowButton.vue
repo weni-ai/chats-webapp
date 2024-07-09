@@ -22,15 +22,18 @@ export default {
   props: {
     contacts: {
       type: Array,
+      default: () => [],
     },
     selectedContact: {
       type: Object,
+      default: () => {},
     },
     selectedFlow: {
       type: String,
       required: true,
     },
   },
+  emits: ['send-flow-started', 'send-flow-finished'],
 
   data() {
     return {

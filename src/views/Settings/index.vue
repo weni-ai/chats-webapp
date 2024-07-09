@@ -126,10 +126,6 @@ export default {
     },
   }),
 
-  beforeMount() {
-    this.listSectors();
-  },
-
   computed: {
     ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
@@ -154,6 +150,27 @@ export default {
       const ROLE_ADMIN = 1;
       return this.me.project_permission_role === ROLE_ADMIN;
     },
+  },
+
+  watch: {
+    project: {
+      immediate: true,
+      handler(newProject) {
+        if (newProject.config) {
+          this.projectConfig = newProject.config;
+        }
+      },
+    },
+    projectConfig: {
+      deep: true,
+      handler() {
+        this.updateProjectConfig();
+      },
+    },
+  },
+
+  beforeMount() {
+    this.listSectors();
   },
 
   methods: {
@@ -212,23 +229,6 @@ export default {
       if (isScrollInBottom) {
         this.listMoreSectors();
       }
-    },
-  },
-
-  watch: {
-    project: {
-      immediate: true,
-      handler(newProject) {
-        if (newProject.config) {
-          this.projectConfig = newProject.config;
-        }
-      },
-    },
-    projectConfig: {
-      deep: true,
-      handler() {
-        this.updateProjectConfig();
-      },
     },
   },
 };

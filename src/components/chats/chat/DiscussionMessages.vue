@@ -52,6 +52,19 @@ export default {
     ]),
   },
 
+  watch: {
+    'discussion.uuid': {
+      immediate: true,
+      async handler(discussionUuid) {
+        if (discussionUuid) {
+          this.resetDiscussionMessages();
+          this.page = 0;
+          await this.handlingGetDiscussionMessages();
+        }
+      },
+    },
+  },
+
   methods: {
     ...mapActions(useDiscussionMessages, {
       discussionResendMessages: 'resendDiscussionMessages',
@@ -79,19 +92,6 @@ export default {
         this.page += 1;
         this.handlingGetDiscussionMessages();
       }
-    },
-  },
-
-  watch: {
-    'discussion.uuid': {
-      immediate: true,
-      async handler(discussionUuid) {
-        if (discussionUuid) {
-          await this.resetDiscussionMessages();
-          this.page = 0;
-          this.handlingGetDiscussionMessages();
-        }
-      },
     },
   },
 };

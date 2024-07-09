@@ -78,6 +78,7 @@ export default {
     TriggeredFlowsLoading,
     TablePagination,
   },
+  emits: ['close'],
 
   data: () => ({
     isTableLoading: false,

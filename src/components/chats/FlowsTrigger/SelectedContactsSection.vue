@@ -26,6 +26,7 @@ export default {
       required: true,
     },
   },
+  emits: ['click', 'remove-contact'],
 };
 </script>
 

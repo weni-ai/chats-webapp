@@ -49,6 +49,7 @@ import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 export default {
   name: 'ModalAddNewContact',
+  emits: ['close'],
 
   data: () => ({
     contact: {

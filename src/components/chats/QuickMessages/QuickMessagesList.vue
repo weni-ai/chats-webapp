@@ -66,6 +66,12 @@ export default {
       type: Boolean,
     },
   },
+  emits: [
+    'update:isEmpty',
+    'select-quick-message',
+    'edit-quick-message',
+    'delete-quick-message',
+  ],
 
   data() {
     return {

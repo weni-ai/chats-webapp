@@ -153,18 +153,22 @@ export default {
   props: {
     organizationUuid: {
       type: String,
+      default: '',
     },
 
     organizationsItems: {
       type: Array,
+      default: () => [],
     },
 
     projectsItems: {
       type: Array,
+      default: () => [],
     },
 
     projectUuid: {
       type: String,
+      default: '',
     },
 
     env: {
@@ -208,6 +212,14 @@ export default {
       },
     },
   },
+  emits: [
+    'update:page',
+    'update:project-uuid',
+    'update:projectUuid',
+    'update:projectsItems',
+    'update:organizationUuid',
+    'update:organizationsItems',
+  ],
 
   data() {
     return {

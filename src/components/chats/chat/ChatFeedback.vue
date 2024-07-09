@@ -1,5 +1,6 @@
 <template>
   <div :class="{ 'chat-feedback__container': true, divisor }">
+    <!-- eslint-disable vue/no-v-html -->
     <strong
       :class="['chat-feedback', scheme ? `chat-feedback--${scheme}` : '']"
       v-html="treatedFeedback"

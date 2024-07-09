@@ -77,18 +77,6 @@ export default {
       );
     },
   },
-  methods: {
-    ...mapActions(useConfig, ['setProjectUuid']),
-    logout() {
-      Keycloak.keycloak.logout();
-    },
-    removeProject() {
-      if (this.route !== 'orgs') {
-        this.route = 'orgs';
-        this.projectUuid = '';
-      }
-    },
-  },
   watch: {
     projectUuid(newProjectUuid) {
       this.setProjectUuid(newProjectUuid || '');
@@ -110,6 +98,18 @@ export default {
     projects(newProjects) {
       if (this.skipSteps && newProjects.length === 1) {
         this.projectUuid = newProjects[0].uuid;
+      }
+    },
+  },
+  methods: {
+    ...mapActions(useConfig, ['setProjectUuid']),
+    logout() {
+      Keycloak.keycloak.logout();
+    },
+    removeProject() {
+      if (this.route !== 'orgs') {
+        this.route = 'orgs';
+        this.projectUuid = '';
       }
     },
   },

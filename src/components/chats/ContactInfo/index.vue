@@ -220,6 +220,7 @@ export default {
   props: {
     closedRoom: {
       type: Object,
+      default: () => {},
     },
     isHistory: {
       type: Boolean,
@@ -230,6 +231,7 @@ export default {
       default: false,
     },
   },
+  emits: ['transferred-contact', 'close'],
 
   data: () => ({
     isLoading: true,
@@ -287,6 +289,11 @@ export default {
     },
     contactProtocol() {
       return (this.closedRoom || this.room).protocol;
+    },
+  },
+  watch: {
+    room(newRoom) {
+      if (newRoom) this.customFields = newRoom.custom_fields;
     },
   },
 
@@ -530,11 +537,6 @@ export default {
     },
     lowercase(value) {
       return value.toString().toLowerCase();
-    },
-  },
-  watch: {
-    room(newRoom) {
-      if (newRoom) this.customFields = newRoom.custom_fields;
     },
   },
 };

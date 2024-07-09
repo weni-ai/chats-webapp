@@ -60,6 +60,8 @@ export default {
     },
   },
 
+  emits: ['remove'],
+
   methods: {
     remove() {
       this.$emit('remove');

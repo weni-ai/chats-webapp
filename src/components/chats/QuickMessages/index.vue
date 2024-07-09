@@ -107,6 +107,7 @@ export default {
     QuickMessagesList,
     QuickMessageForm,
   },
+  emits: ['close', 'select-quick-message'],
 
   data: () => ({
     isMobile: isMobile(),

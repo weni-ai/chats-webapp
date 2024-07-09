@@ -63,9 +63,11 @@ export default {
   props: {
     rooms: {
       type: Array,
+      default: () => [],
     },
     discussions: {
       type: Array,
+      default: () => [],
     },
     label: {
       type: String,
@@ -77,17 +79,13 @@ export default {
     },
   },
 
+  emits: ['open'],
+
   data() {
     return {
       isCollapseOpened: true,
       collapseCheckboxValue: false,
     };
-  },
-
-  created() {
-    if (!this.rooms && !this.discussions) {
-      throw new Error('Pass rooms and discussions as a prop!');
-    }
   },
 
   computed: {
@@ -96,6 +94,23 @@ export default {
       newMessagesByDiscussion: 'newMessagesByDiscussion',
       activeDiscussionId: (store) => store.activeDiscussion?.uuid,
     }),
+  },
+
+  watch: {
+    selectedRoomsToTransfer(newSelectedRooms) {
+      const hasSelectedRooms = newSelectedRooms.length >= 1;
+      const isAllRoomsSelected = newSelectedRooms.length === this.rooms?.length;
+
+      this.collapseCheckboxValue = hasSelectedRooms
+        ? isAllRoomsSelected || 'less'
+        : false;
+    },
+  },
+
+  created() {
+    if (!this.rooms && !this.discussions) {
+      throw new Error('Pass rooms and discussions as a prop!');
+    }
   },
 
   methods: {
@@ -134,17 +149,6 @@ export default {
       } else {
         this.setSelectedRoomsToTransfer([]);
       }
-    },
-  },
-
-  watch: {
-    selectedRoomsToTransfer(newSelectedRooms) {
-      const hasSelectedRooms = newSelectedRooms.length >= 1;
-      const isAllRoomsSelected = newSelectedRooms.length === this.rooms?.length;
-
-      this.collapseCheckboxValue = hasSelectedRooms
-        ? isAllRoomsSelected || 'less'
-        : false;
     },
   },
 };

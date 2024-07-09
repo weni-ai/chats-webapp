@@ -97,6 +97,15 @@ export default {
       default: '',
     },
   },
+  emits: [
+    'is-typing-handler',
+    'is-focused-handler',
+    'update:modelValue',
+    'handle-quick-messages',
+    'open-file-uploader',
+    'keydown',
+    'paste',
+  ],
 
   data: () => ({
     message: '',

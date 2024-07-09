@@ -100,6 +100,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['update:modelValue'],
 
   data: () => ({
     agent: {
