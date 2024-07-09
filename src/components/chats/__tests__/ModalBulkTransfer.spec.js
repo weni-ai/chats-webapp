@@ -65,13 +65,14 @@ describe('ModalBulkTransfer', () => {
       expect(transferButton.props('disabled')).toBe(true);
     });
 
-    it('should disable transfer button when loading bulk transfer', () => {
-      wrapper.setData({
+    it('should disable transfer button when loading bulk transfer', async () => {
+      await wrapper.setData({
         selectedQueue: [{ value: 'queue_id', label: 'Queue' }],
       });
 
-      transferButton.trigger('click');
-      expect(transferButton.props('disabled')).toBe(true);
+      await transferButton.trigger('click');
+
+      expect(transferButton.props('loading')).toBe(true);
     });
   });
 
