@@ -64,6 +64,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    modelValue: {
+      type: Array,
+      default: () => [],
+    },
   },
 
   data() {
@@ -71,16 +75,9 @@ export default {
       isMobile: isMobile(),
 
       queues: [],
-      selectedQueue: [],
       agents: [],
       selectedAgent: [],
     };
-  },
-
-  created() {
-    this.getQueues();
-    this.queues = this.queuesDefault;
-    this.agents = this.agentsDefault;
   },
 
   computed: {
@@ -99,9 +96,35 @@ export default {
         : [this.contactToTransfer];
     },
 
+    selectedQueue: {
+      get() {
+        return this.modelValue;
+      },
+      set(newSelectedQueue) {
+        this.$emit('update:selectedQueue', newSelectedQueue);
+
+        const queue = newSelectedQueue[0]?.value;
+        if (queue) {
+          this.getAgents(queue);
+        }
+      },
+    },
+
     isAgentsFieldDisabled() {
       return this.selectedQueue[0]?.value === '' || this.agents?.length < 2;
     },
+  },
+
+  watch: {
+    selectedAgent(newSelectedAgent) {
+      this.$emit('update:selectedAgent', newSelectedAgent);
+    },
+  },
+
+  created() {
+    this.getQueues();
+    this.queues = this.queuesDefault;
+    this.agents = this.agentsDefault;
   },
 
   methods: {
@@ -209,20 +232,6 @@ export default {
           seconds: 5,
         });
       }
-    },
-  },
-
-  watch: {
-    selectedQueue(newSelectedQueue) {
-      this.$emit('update:selectedQueue', newSelectedQueue);
-
-      const queue = newSelectedQueue[0]?.value;
-      if (queue) {
-        this.getAgents(queue);
-      }
-    },
-    selectedAgent(newSelectedAgent) {
-      this.$emit('update:selectedAgent', newSelectedAgent);
     },
   },
 };

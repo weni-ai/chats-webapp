@@ -11,8 +11,7 @@ vi.mock('@/services/api/resources/chats/room', () => ({
     bulkTranfer: vi.fn(async () => {
       setTimeout(() => {
         return { status: 200 };
-      }),
-        3000;
+      }, 5000);
     }),
   },
 }));
