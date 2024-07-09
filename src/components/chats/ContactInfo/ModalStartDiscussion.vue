@@ -75,6 +75,7 @@ import unnnic from '@weni/unnnic-system';
 
 export default {
   name: 'ModalStartDiscussion',
+  emits: ['close'],
 
   data: () => {
     return {
@@ -98,6 +99,17 @@ export default {
         !this.subject ||
         !this.message
       );
+    },
+  },
+
+  watch: {
+    sector(sector) {
+      if (sector[0].value) {
+        if (this.queuesToSelect[0]) {
+          this.queue = [this.queuesToSelect[0]];
+        }
+        this.getSectorQueues(sector[0].value);
+      }
     },
   },
 
@@ -208,17 +220,6 @@ export default {
           'The sector tags could not be loaded at this time.',
           error,
         );
-      }
-    },
-  },
-
-  watch: {
-    sector(sector) {
-      if (sector[0].value) {
-        if (this.queuesToSelect[0]) {
-          this.queue = [this.queuesToSelect[0]];
-        }
-        this.getSectorQueues(sector[0].value);
       }
     },
   },

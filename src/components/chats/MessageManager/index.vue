@@ -172,12 +172,14 @@ export default {
     },
     loadingFileValue: {
       type: Number,
+      default: 0,
     },
     showSkeletonLoading: {
       type: Boolean,
       default: false,
     },
   },
+  emits: ['update:modelValue', 'show-quick-messages', 'open-file-uploader'],
 
   data: () => ({
     keyboardEvent: null,

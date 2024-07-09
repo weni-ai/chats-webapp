@@ -14,6 +14,7 @@ import { useProfile } from '@/store/modules/profile';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 export default {
   name: 'ButtonJoinDiscussion',
+  emits: ['join', 'click'],
   data() {
     return {
       isLoading: false,

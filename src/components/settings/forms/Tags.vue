@@ -65,6 +65,7 @@ export default {
       default: () => [],
     },
   },
+  emits: ['update:modelValue', 'add', 'remove'],
 
   data: () => ({
     tag: '',

@@ -34,6 +34,7 @@ export default {
   components: {
     QuickMessagesList,
   },
+  emits: ['close', 'select-quick-message'],
 
   data() {
     return {

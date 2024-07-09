@@ -23,6 +23,7 @@ export default {
     HomeChat,
     ContactInfo,
   },
+  emits: ['transferred-contact'],
   data() {
     return {
       showRoomContactInfo: false,

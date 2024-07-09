@@ -89,6 +89,7 @@ export default {
       default: true,
     },
   },
+  emits: ['select', 'edit', 'delete'],
 
   data() {
     return {

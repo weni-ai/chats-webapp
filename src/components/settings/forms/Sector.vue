@@ -237,6 +237,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['update:modelValue', 'remove-manager', 'validate', 'submit'],
 
   data: () => ({
     selectedManager: [],
@@ -275,6 +276,15 @@ export default {
       },
       set(sector) {
         this.$emit('update:modelValue', sector);
+      },
+    },
+  },
+  watch: {
+    sector: {
+      deep: true,
+      immediate: true,
+      handler() {
+        this.$emit('validate', this.validate());
       },
     },
   },
@@ -389,15 +399,6 @@ export default {
           seconds: 5,
         });
       }
-    },
-  },
-  watch: {
-    sector: {
-      deep: true,
-      immediate: true,
-      handler() {
-        this.$emit('validate', this.validate());
-      },
     },
   },
 };

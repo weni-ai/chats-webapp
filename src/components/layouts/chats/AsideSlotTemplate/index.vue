@@ -36,11 +36,11 @@ export default {
     },
     subtitle: {
       type: String,
-      required: false,
+      default: '',
     },
     avatarName: {
       type: String,
-      required: false,
+      default: '',
     },
     back: {
       type: Function,

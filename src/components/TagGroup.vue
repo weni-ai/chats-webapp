@@ -61,6 +61,7 @@ export default {
       default: () => [],
     },
   },
+  emits: ['update:modelValue', 'close'],
 
   data: () => ({
     schemes: [

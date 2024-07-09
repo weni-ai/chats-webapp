@@ -61,6 +61,7 @@ export default {
     HistoryMetricsBySector,
     ViewMode,
   },
+  emits: ['historyFilter'],
 
   data: () => ({
     showData: '',
@@ -68,20 +69,6 @@ export default {
     filters: null,
     sectors: [],
   }),
-
-  watch: {
-    visualization(newValue) {
-      if (newValue) {
-        this.filters = newValue;
-        this.$emit('historyFilter', newValue);
-        this.showData = !!this.filters?.filterDate.start;
-      }
-    },
-  },
-
-  async created() {
-    await this.getSectors();
-  },
   computed: {
     ...mapState(useConfig, ['project']),
     ...mapState(useDashboard, ['viewedAgent']),
@@ -95,6 +82,20 @@ export default {
       const projectName = this.project.name;
       return projectName;
     },
+  },
+
+  watch: {
+    visualization(newValue) {
+      if (newValue) {
+        this.filters = newValue;
+        this.$emit('historyFilter', newValue);
+        this.showData = !!this.filters?.filterDate.start;
+      }
+    },
+  },
+
+  async created() {
+    await this.getSectors();
   },
 
   methods: {

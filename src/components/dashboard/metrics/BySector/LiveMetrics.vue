@@ -118,14 +118,6 @@ export default {
     realtimeSimulationController: null,
   }),
 
-  mounted() {
-    this.initRealtimeSimulation();
-  },
-
-  unmounted() {
-    clearInterval(this.realtimeSimulationController);
-  },
-
   computed: {
     ...mapState(useSettings, ['sectors']),
     queues() {
@@ -137,6 +129,14 @@ export default {
         statuses: this.getRandomMetrics(),
       }));
     },
+  },
+
+  mounted() {
+    this.initRealtimeSimulation();
+  },
+
+  unmounted() {
+    clearInterval(this.realtimeSimulationController);
   },
 
   methods: {

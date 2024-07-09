@@ -38,6 +38,7 @@ export default {
       required: true,
     },
   },
+  emits: ['close', 'send-flow-finished'],
 
   data() {
     return {

@@ -213,6 +213,7 @@ export default {
   },
 
   props: {
+    // eslint-disable-next-line vue/require-default-prop
     uuid: [String, Number],
     tab: {
       type: String,
@@ -271,6 +272,17 @@ export default {
     isQuickMessagesFormValid: false,
   }),
 
+  computed: {
+    ...mapState(useQuickMessageShared, ['quickMessagesShared']),
+  },
+
+  watch: {
+    currentTab(current) {
+      if (this.$route.query.tab !== current) this.updateQueryParams(current);
+      this.handleTabChange(current);
+    },
+  },
+
   async beforeMount() {
     if (['sector', 'queues', 'messages', 'tags'].includes(this.tab))
       this.currentTab = this.tab;
@@ -278,10 +290,6 @@ export default {
     this.getSector();
     this.getManagers();
     this.listProjectManagers();
-  },
-
-  computed: {
-    ...mapState(useQuickMessageShared, ['quickMessagesShared']),
   },
 
   methods: {
@@ -669,13 +677,6 @@ export default {
       if (queueCrumb.name === this.queueToEdit.name) return;
 
       this.queueToEdit = null;
-    },
-  },
-
-  watch: {
-    currentTab(current) {
-      if (this.$route.query.tab !== current) this.updateQueryParams(current);
-      this.handleTabChange(current);
     },
   },
 };

@@ -97,6 +97,7 @@ export default {
       default: '',
     },
   },
+  emits: ['select-quick-message'],
 
   data: () => ({
     sectors: {},

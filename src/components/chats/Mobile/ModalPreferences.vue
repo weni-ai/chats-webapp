@@ -58,6 +58,7 @@ import { useConfig } from '@/store/modules/config';
 
 export default {
   name: 'ModalPreferences',
+  emits: ['close', 'open-quick-messages', 'back-to-home'],
 
   data() {
     return {
@@ -68,17 +69,17 @@ export default {
     };
   },
 
+  computed: {
+    ...mapState(useConfig, {
+      storeStatus: (store) => store.status,
+    }),
+  },
+
   async created() {
     this.getStatus();
 
     this.configStatus = this.storeStatus === 'ONLINE';
     this.configSound = localStorage.getItem(PREFERENCES_SOUND) === 'yes';
-  },
-
-  computed: {
-    ...mapState(useConfig, {
-      storeStatus: (store) => store.status,
-    }),
   },
 
   methods: {

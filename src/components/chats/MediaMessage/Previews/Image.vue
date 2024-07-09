@@ -50,6 +50,7 @@ export default {
       default: 'Visualizar em tela cheia',
     },
   },
+  emits: ['click'],
 
   data: () => ({
     isFullscreenByUserClick: false,

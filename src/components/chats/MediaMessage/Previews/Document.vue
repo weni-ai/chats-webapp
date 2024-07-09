@@ -64,8 +64,10 @@ export default {
     },
     type: {
       type: String,
+      default: '',
     },
   },
+  emits: ['download'],
 
   computed: {
     pathname() {

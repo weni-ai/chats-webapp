@@ -70,6 +70,7 @@ export default {
       default: false,
     },
   },
+  emits: ['select', 'close', 'open-copilot'],
 
   data: () => ({
     activeShortcutIndex: null,

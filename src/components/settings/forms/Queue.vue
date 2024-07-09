@@ -82,6 +82,8 @@ export default {
     },
   },
 
+  emits: ['update:modelValue', 'validate', 'visualize', 'add-queue'],
+
   data: () => ({
     description:
       'Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando',

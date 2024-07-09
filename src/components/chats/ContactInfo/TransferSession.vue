@@ -56,6 +56,7 @@ export default {
       default: false,
     },
   },
+  emits: ['transferred-contact'],
 
   data() {
     return {
@@ -68,18 +69,18 @@ export default {
     };
   },
 
+  computed: {
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
+    }),
+  },
+
   created() {
     this.setContactToTransfer(this.room.uuid);
   },
 
   beforeUnmount() {
     this.setContactToTransfer([]);
-  },
-
-  computed: {
-    ...mapState(useRooms, {
-      room: (store) => store.activeRoom,
-    }),
   },
 
   methods: {

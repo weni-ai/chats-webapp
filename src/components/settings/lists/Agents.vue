@@ -52,6 +52,7 @@ export default {
       default: '',
     },
   },
+  emits: ['select'],
 
   data: () => ({
     tableHeaders: [

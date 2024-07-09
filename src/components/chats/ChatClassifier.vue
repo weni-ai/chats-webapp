@@ -39,6 +39,7 @@ export default {
       default: true,
     },
   },
+  emits: ['update:modelValue'],
 
   computed: {
     selected: {
