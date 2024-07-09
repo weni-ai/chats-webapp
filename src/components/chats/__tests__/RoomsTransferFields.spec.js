@@ -31,6 +31,9 @@ const store = createTestingPinia({
 
 function createWrapper() {
   const wrapper = mount(RoomsTransferFields, {
+    props: {
+      modelValue: [],
+    },
     global: {
       plugins: [i18n, store, UnnnicSystem],
     },
@@ -66,9 +69,10 @@ describe('RoomsTransferField', () => {
   describe('Field Behavior', () => {
     it('should disable agent field when queue is not selected or do not have agents to select', async () => {
       const agentSelect = wrapper.findComponent('[data-testid="select-agent"]');
-
+      await wrapper.setProps({
+        modelValue: [{ value: 'queue_id', label: 'Queue' }],
+      });
       await wrapper.setData({
-        selectedQueue: [{ value: 'queue_id', label: 'Queue' }],
         agents: [
           { value: '', label: 'Select agent' },
           { value: 'agent2_id', label: 'Agent2' },
@@ -84,9 +88,10 @@ describe('RoomsTransferField', () => {
       });
       await wrapper.vm.$nextTick();
       expect(agentSelect.props('disabled')).toBe(true);
-
+      await wrapper.setProps({
+        modelValue: [{ value: '', label: 'Select queue' }],
+      });
       await wrapper.setData({
-        selectedQueue: [{ value: '', label: 'Select queue' }],
         agents: [
           { value: '', label: 'Select agent' },
           { value: 'agent2_id', label: 'Agent2' },

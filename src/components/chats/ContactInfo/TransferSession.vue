@@ -13,7 +13,7 @@
     <section class="transfer-section">
       <RoomsTransferFields
         ref="roomsTransferFields"
-        v-model:selectedQueue="selectedQueue"
+        v-model="selectedQueue"
         size="sm"
         @transfer-complete="transferComplete"
       />

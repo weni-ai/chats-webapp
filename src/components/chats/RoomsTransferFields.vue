@@ -64,23 +64,22 @@ export default {
       type: Boolean,
       default: false,
     },
+    modelValue: {
+      type: Array,
+      required: true,
+    },
   },
+
+  emits: ['update:model-value', 'update:selectedAgent', 'transfer-complete'],
 
   data() {
     return {
       isMobile: isMobile(),
 
       queues: [],
-      selectedQueue: [],
       agents: [],
       selectedAgent: [],
     };
-  },
-
-  created() {
-    this.getQueues();
-    this.queues = this.queuesDefault;
-    this.agents = this.agentsDefault;
   },
 
   computed: {
@@ -99,9 +98,36 @@ export default {
         : [this.contactToTransfer];
     },
 
+    selectedQueue: {
+      get() {
+        return this.modelValue;
+      },
+      set(newSelectedQueue) {
+        this.$emit('update:model-value', newSelectedQueue);
+
+        const queue = newSelectedQueue[0]?.value;
+
+        if (queue) {
+          this.getAgents(queue);
+        }
+      },
+    },
+
     isAgentsFieldDisabled() {
       return this.selectedQueue[0]?.value === '' || this.agents?.length < 2;
     },
+  },
+
+  watch: {
+    selectedAgent(newSelectedAgent) {
+      this.$emit('update:selectedAgent', newSelectedAgent);
+    },
+  },
+
+  mounted() {
+    this.queues = this.queuesDefault;
+    this.agents = this.agentsDefault;
+    this.getQueues();
   },
 
   methods: {
@@ -145,6 +171,7 @@ export default {
      */
     async transfer() {
       const { roomsToTransfer } = this;
+
       const selectedQueue = this.selectedQueue?.[0]?.value;
       const selectedAgent = this.selectedAgent?.[0]?.value;
 
@@ -186,8 +213,12 @@ export default {
 
     callSuccessAlert() {
       const selectedAgent = this.selectedAgent?.[0]?.label;
+      const selectedQueueUuid = this.selectedQueue?.[0]?.value;
+      const selectedQueueName = this.queues.find(
+        (queue) => queue.value === selectedQueueUuid,
+      )?.queue_name;
 
-      const destination = selectedAgent || this.selectedQueue?.[0].queue_name;
+      const destination = selectedAgent || selectedQueueName;
 
       this.getAlert({
         text: `Contato transferido com sucesso para ${destination}`,
@@ -209,20 +240,6 @@ export default {
           seconds: 5,
         });
       }
-    },
-  },
-
-  watch: {
-    selectedQueue(newSelectedQueue) {
-      this.$emit('update:selectedQueue', newSelectedQueue);
-
-      const queue = newSelectedQueue[0]?.value;
-      if (queue) {
-        this.getAgents(queue);
-      }
-    },
-    selectedAgent(newSelectedAgent) {
-      this.$emit('update:selectedAgent', newSelectedAgent);
     },
   },
 };
