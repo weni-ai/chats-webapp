@@ -949,6 +949,11 @@
     "en": "Protocol",
     "es": "Protocolo"
   },
+  "service": {
+    "pt-br": "Serviço",
+    "en": "Service",
+    "es": "Servicio"
+  },
   "tags": {
     "title": {
       "pt-br": "Tags",
