@@ -15,7 +15,7 @@
       <UnnnicChatsHeader
         v-show="!isLoadingSelectedRoom"
         v-if="selectedRoom"
-        :title="selectedRoom.contact.name"
+        :title="formattedContactName"
         :avatarName="selectedRoom.contact.name"
       />
     </header>
@@ -52,6 +52,8 @@ import ClosedChatsHeaderLoading from '@/views/loadings/ClosedChats/ClosedChatsHe
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 import ClosedChatsRoomsTable from './RoomsTable.vue';
 
+import { formatContactName } from '@/utils/chats';
+
 export default {
   name: 'ClosedChats',
 
@@ -71,6 +73,7 @@ export default {
   },
 
   data: () => ({
+    formatContactName,
     isMobile: isMobile(),
 
     isLoadingHeader: true,
@@ -100,6 +103,9 @@ export default {
 
     closedChatsHeaderSize() {
       return this.isMobile ? 'small' : 'large';
+    },
+    formattedContactName() {
+      return this.formatContactName(this.selectedRoom);
     },
   },
 
