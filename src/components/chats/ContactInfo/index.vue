@@ -25,8 +25,8 @@
                 iconCenter="sync"
                 type="tertiary"
                 size="small"
-                @click="refreshContactInfos"
                 :disabled="isRefreshContactDisabled"
+                @click="refreshContactInfos"
               />
             </header>
 
@@ -44,19 +44,19 @@
                   })
                 }}
               </p>
-                <section class="infos">
-                  <hgroup class="info">
-                    <h3 class="title">{{ contactNumber.plataform }}:</h3>
-                    <h4 class="description">{{ contactNumber.contactNum }}</h4>
-                  </hgroup>
-                  <hgroup
-                    class="info"
-                    v-if="contactProtocol?.length > 0"
-                  >
-                    <h3 class="title">{{ $t('protocol') }}:</h3>
-                    <h4 class="description">{{ contactProtocol }}</h4>
-                  </hgroup>
-                </section>
+              <section class="infos">
+                <hgroup class="info">
+                  <h3 class="title">{{ contactNumber.plataform }}:</h3>
+                  <h4 class="description">{{ contactNumber.contactNum }}</h4>
+                </hgroup>
+                <hgroup
+                  v-if="contactProtocol?.length > 0"
+                  class="info"
+                >
+                  <h3 class="title">{{ $t('protocol') }}:</h3>
+                  <h4 class="description">{{ contactProtocol }}</h4>
+                </hgroup>
+              </section>
               <template v-if="!!room.custom_fields">
                 <CustomField
                   v-for="(value, key) in customFields"
@@ -77,13 +77,13 @@
             >
               <UnnnicSwitch
                 v-model="isLinkedUser"
-                @update:model-value="addContactToAgent"
                 size="small"
                 :textRight="
                   isLinkedUser
                     ? $t('contact_info.switch_disassociate_contact')
                     : $t('contact_info.switch_associate_contact')
                 "
+                @update:model-value="addContactToAgent"
               />
               <UnnnicToolTip
                 enabled
@@ -119,7 +119,7 @@
             <div v-if="isLinkedToOtherAgent">
               <span>{{
                 $t('contact_info.linked_contact', {
-                  name: this.room.linked_user,
+                  name: room.linked_user,
                 })
               }}</span>
             </div>
@@ -136,9 +136,9 @@
         <AsideSlotTemplateSection>
           <ContactMedia
             :room="room"
-            @fullscreen="openFullScreen"
             :history="isHistory"
             :contactInfo="(closedRoom || room).contact"
+            @fullscreen="openFullScreen"
             @loaded-medias="isLoading = false"
           />
         </AsideSlotTemplateSection>
@@ -159,9 +159,9 @@
       >
         <VideoPreview
           v-if="currentMedia.content_type.includes('mp4')"
+          :src="currentMedia.url"
           @keypress.enter="() => {}"
           @click.stop="() => {}"
-          :src="currentMedia.url"
         />
         <img
           v-else

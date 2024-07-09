@@ -14,7 +14,7 @@
     />
     <TableMetrics
       :headers="agentsLabel"
-      :items="this.agents.project_agents"
+      :items="agents.project_agents"
       rawData="rawInfo"
       title="Agentes online"
       icon="indicator"
@@ -49,13 +49,6 @@ export default {
     },
   },
 
-  mounted() {
-    this.roomInfo();
-    this.agentInfo();
-    this.sectorInfo();
-    this.rawDataInfo();
-  },
-
   data: () => ({
     agents: {},
     generalMetrics: {},
@@ -72,6 +65,13 @@ export default {
       },
     ],
   }),
+
+  mounted() {
+    this.roomInfo();
+    this.agentInfo();
+    this.sectorInfo();
+    this.rawDataInfo();
+  },
 
   methods: {
     async agentInfo() {

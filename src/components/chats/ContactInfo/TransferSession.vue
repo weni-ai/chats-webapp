@@ -13,9 +13,9 @@
     <section class="transfer-section">
       <RoomsTransferFields
         ref="roomsTransferFields"
-        v-model:selectedQueue="selectedQueue"
-        @transfer-complete="transferComplete"
+        v-model="selectedQueue"
         size="sm"
+        @transfer-complete="transferComplete"
       />
 
       <UnnnicButton
@@ -23,9 +23,9 @@
         :text="$t('transfer')"
         type="primary"
         size="small"
-        @click="transferRooms"
         :disabled="selectedQueue.length === 0 || isViewMode"
         :loading="isLoading"
+        @click="transferRooms"
       />
     </section>
   </AsideSlotTemplateSection>

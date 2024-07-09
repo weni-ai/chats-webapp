@@ -2,8 +2,8 @@
   <section>
     <MessageManagerLoading v-show="showSkeletonLoading" />
     <div
-      class="message-manager"
       v-show="!showSkeletonLoading"
+      class="message-manager"
     >
       <div
         :class="[
@@ -20,7 +20,7 @@
           v-if="!isAudioRecorderVisible"
           ref="textBox"
           :modelValue="textBoxMessage"
-          @update:modelValue="textBoxMessage = $event"
+          @update:model-value="textBoxMessage = $event"
           @keydown.stop="onKeyDown"
           @paste="handlePaste"
           @is-typing-handler="isTypingHandler"
@@ -29,10 +29,10 @@
           @open-file-uploader="openFileUploader"
         />
         <UnnnicAudioRecorder
-          ref="audioRecorder"
-          class="message-manager__audio-recorder"
           v-show="isAudioRecorderVisible && !isFileLoadingValueValid"
+          ref="audioRecorder"
           v-model="audioMessage"
+          class="message-manager__audio-recorder"
           @status="updateAudioRecorderStatus"
         />
       </div>
@@ -41,27 +41,27 @@
           v-if="
             canUseCopilot && !isCopilotOpen && showActionButton && !discussionId
           "
-          @click="openCopilot"
           type="secondary"
           size="large"
           iconCenter="wb_incandescent"
           class="message-manager__actions__co-pilot"
+          @click="openCopilot"
         />
         <UnnnicButton
           v-if="(!canUseCopilot || discussionId) && showActionButton"
-          @click="record"
           type="secondary"
           size="large"
           iconCenter="mic"
+          @click="record"
         />
 
         <UnnnicButton
           v-if="discussionId && showActionButton"
-          @click="openFileUploader"
           type="secondary"
           size="large"
           iconCenter="attachment"
           next
+          @click="openFileUploader"
         />
 
         <UnnnicDropdown
@@ -99,17 +99,17 @@
 
         <UnnnicButton
           v-if="showSendMessageButton"
-          @click="send"
           type="primary"
           size="large"
           iconCenter="send"
+          @click="send"
         />
         <UnnnicButton
           v-else-if="isMobile"
-          @click="record"
           type="primary"
           size="large"
           iconCenter="mic"
+          @click="record"
         />
       </div>
       <SuggestionBox

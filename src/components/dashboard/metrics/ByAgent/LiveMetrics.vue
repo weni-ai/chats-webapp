@@ -42,14 +42,6 @@ export default {
       default: {},
     },
   },
-  mounted() {
-    // this.initRealtimeSimulation();
-    console.log(this.agents, `agent`);
-  },
-
-  destroyed() {
-    clearInterval(this.realtimeSimulationController);
-  },
 
   data: () => ({
     generalMetrics: [
@@ -115,6 +107,14 @@ export default {
 
     realtimeSimulationController: null,
   }),
+  mounted() {
+    // this.initRealtimeSimulation();
+    console.log(this.agents, `agent`);
+  },
+
+  unmounted() {
+    clearInterval(this.realtimeSimulationController);
+  },
 
   computed: {
     ...mapState(useSettings, ['sectors']),

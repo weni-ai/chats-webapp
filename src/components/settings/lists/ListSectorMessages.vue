@@ -46,12 +46,12 @@
         <UnnnicTextArea
           v-if="copilotActive && copilotCustomRulesActive && !isLoading"
           v-model="copilotCustomRules"
-          @update:model-value="handleCustomRules"
           :label="$t('settings.messages.copilot.custom_rules.title')"
           :placeholder="
             $t('settings.messages.copilot.custom_rules.explanation')
           "
           :maxLength="1500"
+          @update:model-value="handleCustomRules"
         />
       </div>
     </section>
@@ -119,7 +119,7 @@ export default {
     };
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.saveSector();
   },
 

@@ -18,8 +18,8 @@
       @open-room="handleRoom"
     />
     <section
-      class="mobile-closed-chats__room"
       v-else
+      class="mobile-closed-chats__room"
     >
       <ContactInfo
         v-if="showRoomInfos"
@@ -65,7 +65,7 @@ export default {
   async created() {
     this.resetChat();
   },
-  async beforeDestroy() {
+  async beforeUnmount() {
     this.resetChat();
   },
 

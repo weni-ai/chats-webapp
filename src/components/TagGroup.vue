@@ -2,30 +2,30 @@
   <section :class="{ 'tag-group': true, flex }">
     <div
       v-if="tags.length > 0"
-      class="tag-group__tags"
       ref="container"
+      class="tag-group__tags"
     >
       <UnnnicTag
         v-for="(tag, i) in tags"
         :key="tag.uuid"
+        :ref="tag.uuid"
         :clickable="selectable"
         :text="tag.name"
         :data-testid="`tag__${tag.uuid}`"
         :hasCloseIcon="showCloseIcon(tag)"
-        @click="select(tag)"
-        @close="close(tag)"
         :disabled="
           !scheme && !hasCloseIcon && selectable && !isSelectedTag(tag)
         "
         :class="{ 'tag-group__tags__tag--selected': isSelectedTag(tag) }"
         :scheme="scheme || schemes[i % schemes.length]"
-        :ref="tag.uuid"
+        @click="select(tag)"
+        @close="close(tag)"
       />
       <p
         v-if="remainingTags > 0"
-        :title="this.tagNames.join(', ')"
-        class="tag-group__remaining-children"
         ref="remainingTagsRef"
+        :title="tagNames.join(', ')"
+        class="tag-group__remaining-children"
       >
         +{{ remainingTags }}
       </p>
@@ -77,6 +77,20 @@ export default {
     remainingTags: 0,
   }),
 
+  computed: {
+    selected: {
+      get() {
+        return this.modelValue;
+      },
+      set(tags) {
+        this.$emit('update:modelValue', tags);
+      },
+    },
+    tagNames() {
+      return this.tags.map((tag) => tag.name);
+    },
+  },
+
   mounted() {
     if (this.flex) {
       return;
@@ -91,20 +105,6 @@ export default {
 
       observer.observe(tagElement);
     });
-  },
-
-  computed: {
-    selected: {
-      get() {
-        return this.modelValue;
-      },
-      set(tags) {
-        this.$emit('update:modelValue', tags);
-      },
-    },
-    tagNames() {
-      return this.tags.map((tag) => tag.name);
-    },
   },
 
   methods: {

@@ -2,11 +2,11 @@
   <section>
     <UnnnicModal
       :showModal="showModal"
-      @close="close"
       :text="title"
       :description="description"
       modalIcon="forum"
       scheme="neutral-darkest"
+      @close="close"
     >
       <template #options>
         <UnnnicButton

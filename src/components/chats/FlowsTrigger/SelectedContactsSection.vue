@@ -1,14 +1,14 @@
 <template>
   <section
-    class="selected-contacts-section"
     v-if="contacts.length > 0"
+    class="selected-contacts-section"
     @click="$emit('click')"
     @keypress.enter="$emit('click')"
   >
     <UnnnicTag
-      type="default"
       v-for="contact in contacts"
       :key="contact.uuid"
+      type="default"
       :text="contact.name"
       hasCloseIcon
       scheme="background-snow"

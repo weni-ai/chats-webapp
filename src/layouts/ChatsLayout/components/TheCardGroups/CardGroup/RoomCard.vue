@@ -53,6 +53,12 @@ export default {
     },
   },
 
+  data: () => ({
+    waitingTime: 0,
+    timer: null,
+    checkboxValue: false,
+  }),
+
   mounted() {
     const randomPeriodInMilliseconds = Math.ceil(Math.random() * 30 + 1) * 1000;
 
@@ -65,15 +71,9 @@ export default {
     }
   },
 
-  destroyed() {
+  unmounted() {
     clearInterval(this.timer);
   },
-
-  data: () => ({
-    waitingTime: 0,
-    timer: null,
-    checkboxValue: false,
-  }),
 
   computed: {
     ...mapState(useRooms, {

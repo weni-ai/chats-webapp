@@ -18,8 +18,8 @@
         />
       </div>
       <div
-        class="rooms-table-filters__input"
         v-if="sectorsToFilter.length > 2"
+        class="rooms-table-filters__input"
       >
         <UnnnicLabel :label="$t('sector.title')" />
         <UnnnicSelectSmart
@@ -49,8 +49,8 @@
         />
         <UnnnicInputDatePicker
           v-else
-          class="rooms-table-filters__date-picker"
           v-model="filterDate"
+          class="rooms-table-filters__date-picker"
           position="right"
           :inputFormat="$t('date_format')"
         />
@@ -109,22 +109,6 @@ export default {
       filterTag: [],
       filterDate: null,
     };
-  },
-
-  async created() {
-    this.isFiltersLoading = true;
-
-    this.datesToFilter = this.datesToFilterOptions;
-    this.filterSector = [this.filterSectorsOptionAll];
-    this.filterDate = this.filterDateDefault;
-    this.tagsToFilter = [this.filterTagDefault];
-
-    this.setFiltersByQueryParams();
-    this.updateFiltersByValue();
-
-    await this.getSectors();
-
-    this.isFiltersLoading = false;
   },
 
   computed: {
@@ -187,6 +171,46 @@ export default {
     clearFiltersType() {
       return this.isMobile ? 'tertiary' : 'secondary';
     },
+  },
+
+  watch: {
+    filterContact() {
+      const TIME_TO_WAIT_TYPING = 800;
+
+      if (isMobile) {
+        this.emitUpdateFilters();
+      }
+
+      if (this.filterContactTimeout !== 0)
+        clearTimeout(this.filterContactTimeout);
+      this.filterContactTimeout = setTimeout(() => {
+        this.emitUpdateFilters();
+      }, TIME_TO_WAIT_TYPING);
+    },
+    filterSector(newFilterSector) {
+      const sectorValue = newFilterSector?.[0].value;
+      if (sectorValue !== 'all') {
+        this.getSectorTags(sectorValue);
+      }
+    },
+    filterTag: 'emitUpdateFilters',
+    filterDate: 'emitUpdateFilters',
+  },
+
+  async created() {
+    this.isFiltersLoading = true;
+
+    this.datesToFilter = this.datesToFilterOptions;
+    this.filterSector = [this.filterSectorsOptionAll];
+    this.filterDate = this.filterDateDefault;
+    this.tagsToFilter = [this.filterTagDefault];
+
+    this.setFiltersByQueryParams();
+    this.updateFiltersByValue();
+
+    await this.getSectors();
+
+    this.isFiltersLoading = false;
   },
 
   methods: {
@@ -316,30 +340,6 @@ export default {
         this.filterDate = [matchingDate];
       }
     },
-  },
-
-  watch: {
-    filterContact() {
-      const TIME_TO_WAIT_TYPING = 800;
-
-      if (isMobile) {
-        this.emitUpdateFilters();
-      }
-
-      if (this.filterContactTimeout !== 0)
-        clearTimeout(this.filterContactTimeout);
-      this.filterContactTimeout = setTimeout(() => {
-        this.emitUpdateFilters();
-      }, TIME_TO_WAIT_TYPING);
-    },
-    filterSector(newFilterSector) {
-      const sectorValue = newFilterSector?.[0].value;
-      if (sectorValue !== 'all') {
-        this.getSectorTags(sectorValue);
-      }
-    },
-    filterTag: 'emitUpdateFilters',
-    filterDate: 'emitUpdateFilters',
   },
 };
 </script>

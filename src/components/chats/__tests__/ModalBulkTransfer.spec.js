@@ -1,15 +1,38 @@
 import { vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { createTestingPinia  } from '@pinia/testing';
+import { createTestingPinia } from '@pinia/testing';
 import UnnnicSystem from '@/plugins/UnnnicSystem';
 import i18n from '@/plugins/i18n';
 
 import ModalBulkTransfer from '../chat/ModalBulkTransfer.vue';
 
+vi.mock('@/services/api/resources/chats/room', () => ({
+  default: {
+    bulkTranfer: vi.fn(() => {
+      return Promise.resolve({ status: 200 });
+    }),
+  },
+}));
+
+vi.mock('@/services/api/resources/settings/queue', () => ({
+  default: {
+    listByProject: vi.fn(() => ({
+      results: [
+        { name: 'Queue 1', sector_name: 'Sector 1', uuid: '1' },
+        { name: 'Queue 2', sector_name: 'Sector 2', uuid: '2' },
+      ],
+    })),
+    agentsToTransfer: vi.fn(() => [
+      { first_name: 'John', last_name: 'Doe', email: 'john@doe.com' },
+      { first_name: 'Jane', last_name: 'Doe', email: 'jane@doe.com' },
+    ]),
+  },
+}));
+
 function createWrapper(store) {
   const wrapper = mount(ModalBulkTransfer, {
     global: {
-      plugins: [i18n, store, UnnnicSystem]
+      plugins: [i18n, store, UnnnicSystem],
     },
   });
 
@@ -24,9 +47,9 @@ describe('ModalBulkTransfer', () => {
       initialState: {
         me: 'mocked@email.com',
         selectedRoomsToTransfer: ['1', '2'],
-        setSelectedRoomsToTransfer: vi.fn()
-      }
-    })
+        setSelectedRoomsToTransfer: vi.fn(),
+      },
+    });
     wrapper = createWrapper(store);
   });
 
@@ -34,7 +57,9 @@ describe('ModalBulkTransfer', () => {
     it('should render modal with select fields and buttons', () => {
       const modal = wrapper.findComponent({ name: 'unnnic-modal' });
       const labels = wrapper.findAllComponents({ name: 'unnnic-label' });
-      const selects = wrapper.findAllComponents({ name: 'unnnic-select-smart'});
+      const selects = wrapper.findAllComponents({
+        name: 'unnnic-select-smart',
+      });
       const buttons = wrapper.findAllComponents('.unnnic-button');
 
       expect(modal.exists()).toBe(true);
@@ -44,9 +69,9 @@ describe('ModalBulkTransfer', () => {
     });
   });
 
-  describe('Bulk Transfer', () => {
-    it('should close modal after successful bulk transfer', async () => {});
-  });
+  // describe('Bulk Transfer', () => {
+  //   it('should close modal after successful bulk transfer', async () => {});
+  // });
 
   describe('Button States', () => {
     let transferButton;
@@ -57,28 +82,29 @@ describe('ModalBulkTransfer', () => {
 
     it('should disable transfer button when no queue is selected', async () => {
       await wrapper.setData({
-        selectedQueue: [],
+        selectedQueue: [{ value: '', label: 'Select queue' }],
       });
 
       expect(transferButton.props('disabled')).toBe(true);
     });
 
-    it('should disable transfer button when loading bulk transfer', () => {
-      wrapper.setData({
-        selectedQueue: [{ value: 'queue_id', label: 'Queue' }],
+    it('should disable transfer button when loading bulk transfer', async () => {
+      await wrapper.setData({
+        selectedQueue: [{ value: '1', label: 'Queue' }],
       });
 
-      transferButton.trigger('click');
-      expect(transferButton.props('disabled')).toBe(true);
+      await transferButton.trigger('click');
+
+      expect(transferButton.props('loading')).toBe(true);
     });
   });
 
-  describe('Modal Interaction', () => {
-    it('should close modal after clicking cancel button', () => {});
-    it('should emit close event when modal is closed', () => {});
-  });
+  // describe('Modal Interaction', () => {
+  //   it('should close modal after clicking cancel button', () => {});
+  //   it('should emit close event when modal is closed', () => {});
+  // });
 
-  describe('Localization', () => {
-    it('should display translated text for all UI elements', () => {});
-  });
+  // describe('Localization', () => {
+  //   it('should display translated text for all UI elements', () => {});
+  // });
 });

@@ -16,7 +16,7 @@
           class="header table-col"
           style="text-align: center"
         >
-          {{ this.headers }}
+          {{ headers }}
         </span>
         <span class="header table-col"> Encerrados </span>
       </header>
@@ -25,9 +25,9 @@
         <section
           v-for="item in items"
           :key="item.email"
+          class="item table-row"
           @click="goToViewMode(item.email)"
           @keypress.enter="goToViewMode(item.email)"
-          class="item table-row"
         >
           <span class="table-col agent">
             <UnnnicIcon

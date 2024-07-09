@@ -1,7 +1,7 @@
 <template>
   <main
-    class="settings-chats"
     ref="sectorsSection"
+    class="settings-chats"
     @scroll="onScroll"
   >
     <header>
@@ -12,8 +12,8 @@
     </header>
 
     <section
-      class="settings-chats__project-configs"
       v-if="isUserAdmin && projectConfig"
+      class="settings-chats__project-configs"
     >
       <section class="project-configs__config">
         <UnnnicSwitch
@@ -70,8 +70,8 @@
 
       <UnnnicCardProject
         v-for="sector in sectors"
-        class="sectors-list"
         :key="sector.id"
+        class="sectors-list"
         :actionText="$t('config_chats.open')"
         :name="sector.name"
         :statuses="[
@@ -115,10 +115,6 @@ import Sector from '@/services/api/resources/settings/sector';
 export default {
   name: 'SettingsChats',
 
-  beforeMount() {
-    this.listSectors();
-  },
-
   data: () => ({
     sectors: [],
     isLoading: true,
@@ -129,6 +125,10 @@ export default {
       can_use_queue_prioritization: false,
     },
   }),
+
+  beforeMount() {
+    this.listSectors();
+  },
 
   computed: {
     ...mapState(useConfig, ['project']),

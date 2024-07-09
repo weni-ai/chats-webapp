@@ -1,16 +1,14 @@
 import { mount } from '@vue/test-utils';
 import i18n from '@/plugins/i18n';
-import UnnnicSystem from '@/plugins/UnnnicSystem' 
+import UnnnicSystem from '@/plugins/UnnnicSystem';
 import FormSector from '../Sector.vue';
 import defaultProps from './mocks/sectorMock';
-
-
 
 function createWrapper() {
   const wrapper = mount(FormSector, {
     props: defaultProps,
     global: {
-      plugins: [i18n, UnnnicSystem]
+      plugins: [i18n, UnnnicSystem],
     },
   });
 
@@ -44,7 +42,9 @@ describe('FormSector', () => {
     expect(inputSector.exists()).toBe(true);
     expect(inputSector.props('label')).toMatch(/Nome do setor/gi);
     expect(inputSector.props('placeholder')).toMatch(/Exemplo: Financeiro/gi);
-    const selectManagerLabel = wrapper.findAllComponents({ name: 'unnnic-label' }).at(0);
+    const selectManagerLabel = wrapper
+      .findAllComponents({ name: 'unnnic-label' })
+      .at(0);
     const selects = wrapper.findAllComponents({ name: 'unnnic-select-smart' });
 
     expect(selectManagerLabel.exists()).toBe(true);

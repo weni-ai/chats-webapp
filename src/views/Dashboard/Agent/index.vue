@@ -4,8 +4,8 @@
 
     <template #actions>
       <DashboardFilters
-        @filter="filters = $event"
         :tags="tags"
+        @filter="filters = $event"
       />
     </template>
 
