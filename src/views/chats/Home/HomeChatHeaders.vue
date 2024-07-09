@@ -6,7 +6,7 @@
       :title="headerRoomTitle"
       :avatarClick="emitOpenRoomContactInfo"
       :titleClick="emitOpenRoomContactInfo"
-      :avatarName="headerRoomTitle"
+      :avatarName="room?.contact.name"
       :close="emitOpenModalCloseChat"
       :back="isMobile ? emitBack : null"
     />
@@ -39,6 +39,7 @@ import isMobile from 'is-mobile';
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow.vue';
+import { formatContactName } from '@/utils/chats';
 
 export default {
   name: 'HomeChatHeaders',
@@ -87,8 +88,7 @@ export default {
     },
 
     headerRoomTitle() {
-      const { room } = this;
-      return room?.contact?.name || '';
+      return formatContactName(this.room);
     },
     headerDiscussionTitle() {
       const { discussion } = this;
