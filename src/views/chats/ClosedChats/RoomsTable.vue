@@ -37,9 +37,9 @@
                 />
                 <p
                   class="closed-chats__rooms-table__table__contact__name"
-                  :title="formatContactName(item)"
+                  :title="item.contact.name"
                 >
-                  {{ formatContactName(item) }}
+                  {{ item.contact.name }}
                 </p>
               </div>
             </template>
@@ -128,7 +128,6 @@ import TagGroup from '@/components/TagGroup.vue';
 import ModalClosedChatsFilters from '@/components/chats/Mobile/ModalClosedChatsFilters.vue';
 
 import ClosedChatsRoomsTableFilters from './RoomsTableFilters.vue';
-import { formatContactName } from '@/utils/chats';
 
 export default {
   name: 'ClosedChatsRoomsTable',
@@ -143,7 +142,6 @@ export default {
   emits: ['open-room'],
 
   data: () => ({
-    formatContactName,
     isMobile: isMobile(),
 
     isTableLoading: true,

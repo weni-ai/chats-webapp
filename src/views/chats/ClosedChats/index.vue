@@ -15,7 +15,7 @@
       <UnnnicChatsHeader
         v-show="!isLoadingSelectedRoom"
         v-if="selectedRoom"
-        :title="formattedContactName"
+        :title="selectedRoom.contact.name"
         :avatarName="selectedRoom.contact.name"
       />
     </header>
@@ -52,8 +52,6 @@ import ClosedChatsHeaderLoading from '@/views/loadings/ClosedChats/ClosedChatsHe
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 import ClosedChatsRoomsTable from './RoomsTable.vue';
 
-import { formatContactName } from '@/utils/chats';
-
 export default {
   name: 'ClosedChats',
 
@@ -73,7 +71,6 @@ export default {
   },
 
   data: () => ({
-    formatContactName,
     isMobile: isMobile(),
 
     isLoadingHeader: true,
@@ -97,9 +94,61 @@ export default {
     closedChatsHeaderSize() {
       return this.isMobile ? 'small' : 'large';
     },
-    formattedContactName() {
-      return this.formatContactName(this.selectedRoom);
+  },
+
+  watch: {
+    roomId: {
+      immediate: true,
+      async handler(roomId) {
+        if (!roomId) {
+          this.setActiveRoom(null);
+          this.resetRoomMessages();
+        }
+        if (roomId) {
+          this.isLoadingSelectedRoom = true;
+
+          const responseRoom = await History.getHistoryContactRoom({
+            room: roomId,
+          });
+
+          const STATUS_NOT_FOUND = 404;
+          if (responseRoom.status === STATUS_NOT_FOUND) {
+            this.$router.push({ name: 'closed-rooms' });
+            return;
+          }
+
+          this.crumbs.push({
+            name: responseRoom.contact.name,
+            path: 'closed-rooms/:roomId',
+          });
+
+          this.selectedRoom = responseRoom;
+          this.setActiveRoom(this.selectedRoom);
+          await this.getHistoryContactRoomMessages();
+          const responseRoomUuids = await History.getHistoryContactRoomsUuids({
+            external_id: responseRoom.contact.external_id,
+          });
+          this.selectedRoomsUuids = responseRoomUuids.results;
+
+          this.isLoadingSelectedRoom = false;
+        }
+      },
     },
+    project: {
+      immediate: true,
+      handler(newProject) {
+        if (newProject) {
+          this.isLoadingHeader = false;
+        }
+      },
+    },
+  },
+
+  async created() {
+    this.crumbs.push({
+      name: this.$t('chats.closed_chats.history'),
+      path: 'closed-rooms',
+    });
   },
 
   watch: {
