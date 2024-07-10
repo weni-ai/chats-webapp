@@ -44,19 +44,26 @@
                   })
                 }}
               </p>
-                <section class="infos">
-                  <hgroup class="info">
-                    <h3 class="title">{{ contactNumber.plataform }}:</h3>
-                    <h4 class="description">{{ contactNumber.contactNum }}</h4>
-                  </hgroup>
-                  <hgroup
-                    class="info"
-                    v-if="contactProtocol?.length > 0"
-                  >
-                    <h3 class="title">{{ $t('protocol') }}:</h3>
-                    <h4 class="description">{{ contactProtocol }}</h4>
-                  </hgroup>
-                </section>
+              <section class="infos">
+                <hgroup class="info">
+                  <h3 class="title">{{ contactNumber.plataform }}:</h3>
+                  <h4 class="description">{{ contactNumber.contactNum }}</h4>
+                </hgroup>
+                <hgroup
+                  v-if="contactService?.length > 0"
+                  class="info"
+                >
+                  <h3 class="title">{{ $t('service') }}:</h3>
+                  <h4 class="description">{{ contactService }}</h4>
+                </hgroup>
+                <hgroup
+                  v-if="contactProtocol?.length > 0"
+                  class="info"
+                >
+                  <h3 class="title">{{ $t('protocol') }}:</h3>
+                  <h4 class="description">{{ contactProtocol }}</h4>
+                </hgroup>
+              </section>
               <template v-if="!!room.custom_fields">
                 <CustomField
                   v-for="(value, key) in customFields"
@@ -287,6 +294,9 @@ export default {
     },
     contactProtocol() {
       return (this.closedRoom || this.room).protocol;
+    },
+    contactService() {
+      return (this.closedRoom || this.room).service_chat;
     },
   },
 

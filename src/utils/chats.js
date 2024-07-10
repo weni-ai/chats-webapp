@@ -20,3 +20,14 @@ export function removeDuplicatedMessagesByUuid(arrayMessages) {
     return true;
   });
 }
+
+export function formatContactName(room) {
+  let contactName = '';
+  if (room?.service_chat) {
+    contactName += `${room.service_chat} | `;
+  }
+  if (room?.protocol) {
+    contactName += `${room.protocol} | `;
+  }
+  return (contactName + room?.contact.name).trim();
+}
