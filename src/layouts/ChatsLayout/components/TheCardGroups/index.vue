@@ -6,20 +6,20 @@
       iconLeft="search-1"
       :iconRight="nameOfContact ? 'close-1' : ''"
       :iconRightClickable="true"
-      @icon-right-click="nameOfContact = ''"
       size="sm"
       :placeholder="$t('chats.search_contact')"
+      @icon-right-click="nameOfContact = ''"
     ></UnnnicInput>
     <section class="chat-groups__header">
       <UnnnicToolTip
-        enabled
-        :text="$t('chats.select_queues')"
-        side="right"
         v-if="
           !isMobile &&
           !isUserAdmin &&
           project.config?.can_use_queue_prioritization
         "
+        enabled
+        :text="$t('chats.select_queues')"
+        side="right"
       >
         <UnnnicButton
           iconCenter="filter_list"
@@ -87,8 +87,8 @@
         v-if="rooms.length"
         :label="$t('chats.in_progress', { length: rooms.length })"
         :rooms="rooms"
-        @open="openRoom"
         :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
+        @open="openRoom"
       />
       <CardGroup
         v-if="rooms_sent_flows.length"
@@ -139,6 +139,7 @@ export default {
     },
     viewedAgent: {
       type: String,
+      default: '',
     },
   },
   data: () => ({
@@ -154,10 +155,6 @@ export default {
     showModalQueue: false,
     noQueueSelected: false,
   }),
-  mounted() {
-    this.listRoom();
-    this.listDiscussions();
-  },
   computed: {
     ...mapState(useRooms, {
       rooms: 'agentRooms',
@@ -218,6 +215,10 @@ export default {
         }, TIME_TO_WAIT_TYPING);
       },
     },
+  },
+  mounted() {
+    this.listRoom();
+    this.listDiscussions();
   },
   methods: {
     ...mapActions(useRooms, {

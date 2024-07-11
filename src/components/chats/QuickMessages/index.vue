@@ -40,8 +40,8 @@
         scheme="feedback-red"
         modalIcon="error"
         :closeIcon="isMobile"
-        @close="quickMessageToDelete = null"
         :showModal="!!quickMessageToDelete"
+        @close="quickMessageToDelete = null"
       >
         <template #options>
           <UnnnicButton
@@ -107,6 +107,7 @@ export default {
     QuickMessagesList,
     QuickMessageForm,
   },
+  emits: ['close', 'select-quick-message'],
 
   data: () => ({
     isMobile: isMobile(),

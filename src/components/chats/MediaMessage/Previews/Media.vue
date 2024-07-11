@@ -8,11 +8,11 @@
         class="media-preview__video-play-icon"
       />
       <video
+        ref="video"
         :src="src"
         :alt="alt"
         class="media-preview__media"
         muted
-        ref="video"
         @click="handleClick"
         @keypress.enter="handleClick"
       />
@@ -47,6 +47,7 @@ export default {
       default: false,
     },
   },
+  emits: ['click'],
 
   methods: {
     handleClick() {

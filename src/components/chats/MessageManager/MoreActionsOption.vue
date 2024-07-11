@@ -25,10 +25,10 @@ export default {
     action: { type: Function, required: true },
     inputType: {
       type: String,
-      required: false,
       validator(value) {
         return ['image', 'doc'].includes(value);
       },
+      default: '',
     },
   },
 };

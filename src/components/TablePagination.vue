@@ -11,17 +11,17 @@
       }"
     >
       <p
-        class="table-pagination__count"
         v-if="showCount"
+        class="table-pagination__count"
       >
         {{ tablePagination }}
       </p>
 
       <UnnnicPagination
         :modelValue="modelValue"
-        @update:model-value="$emit('update:model-value', $event)"
         :max="countPages"
         :show="limit"
+        @update:model-value="$emit('update:model-value', $event)"
       />
     </section>
   </div>
@@ -35,8 +35,6 @@ import TablePaginationLoading from '@/views/loadings/TablePaginationLoading.vue'
 export default {
   name: 'TablePagination',
 
-  emits: ['update:model-value'],
-
   components: {
     TablePaginationLoading,
   },
@@ -48,7 +46,7 @@ export default {
     },
     count: {
       type: Number,
-      required: false,
+      default: 0,
     },
     countPages: {
       type: Number,
@@ -63,6 +61,8 @@ export default {
       required: false,
     },
   },
+
+  emits: ['update:model-value'],
 
   data() {
     return {

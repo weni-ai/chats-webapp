@@ -9,9 +9,9 @@
 
     <UnnnicCollapse
       v-else
+      v-model="openQuickMessages"
       class="quick-messages-list__personals"
       :title="$t('quick_messages.personal')"
-      v-model="openQuickMessages"
     >
       <QuickMessageCard
         v-for="quickMessage in quickMessages"
@@ -26,9 +26,9 @@
     </UnnnicCollapse>
     <UnnnicCollapse
       v-if="quickMessagesShared.length > 0"
+      v-model="openQuickMessagesShared"
       class="quick-messages-list__shareds"
       :title="$t('quick_messages.shared')"
-      v-model="openQuickMessagesShared"
     >
       <QuickMessageCard
         v-for="quickMessage in quickMessagesShared"
@@ -53,6 +53,10 @@ import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared
 export default {
   name: 'QuickMessagesList',
 
+  components: {
+    QuickMessageCard,
+  },
+
   props: {
     withHandlers: {
       type: Boolean,
@@ -62,16 +66,18 @@ export default {
       type: Boolean,
     },
   },
+  emits: [
+    'update:isEmpty',
+    'select-quick-message',
+    'edit-quick-message',
+    'delete-quick-message',
+  ],
 
   data() {
     return {
       openQuickMessages: true,
       openQuickMessagesShared: true,
     };
-  },
-
-  components: {
-    QuickMessageCard,
   },
 
   computed: {
@@ -84,6 +90,14 @@ export default {
       );
     },
   },
+  watch: {
+    withoutQuickMessages: {
+      immediate: true,
+      handler(newWithoutQuickMessages) {
+        this.$emit('update:isEmpty', newWithoutQuickMessages);
+      },
+    },
+  },
 
   methods: {
     emitSelectQuickMessage(quickMessage) {
@@ -94,14 +108,6 @@ export default {
     },
     emitDeleteQuickMessage(quickMessage) {
       this.$emit('delete-quick-message', quickMessage);
-    },
-  },
-  watch: {
-    withoutQuickMessages: {
-      immediate: true,
-      handler(newWithoutQuickMessages) {
-        this.$emit('update:isEmpty', newWithoutQuickMessages);
-      },
     },
   },
 };

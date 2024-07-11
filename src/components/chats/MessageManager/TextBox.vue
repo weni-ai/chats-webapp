@@ -30,7 +30,7 @@
 
       <UnnnicEmojiPicker
         v-show="isEmojiPickerOpen"
-        @emojiSelected="handleTextarea"
+        @emoji-selected="handleTextarea"
         @close="closeEmojiPicker"
       />
 
@@ -48,9 +48,9 @@
       />
 
       <UnnnicDropdown
+        v-if="isMobile"
         position="top-left"
         class="more-actions"
-        v-if="isMobile"
       >
         <template #trigger>
           <UnnnicButton
@@ -97,6 +97,15 @@ export default {
       default: '',
     },
   },
+  emits: [
+    'is-typing-handler',
+    'is-focused-handler',
+    'update:modelValue',
+    'handle-quick-messages',
+    'open-file-uploader',
+    'keydown',
+    'paste',
+  ],
 
   data: () => ({
     message: '',
@@ -109,6 +118,24 @@ export default {
   computed: {
     isMobile() {
       return isMobile();
+    },
+  },
+
+  watch: {
+    modelValue(newValue) {
+      this.message = newValue;
+      this.$emit('is-typing-handler', this.message.trim().length > 0);
+      this.$nextTick(() => {
+        this.adjustTextareaHeight();
+      });
+    },
+
+    isEmojiPickerOpen(newValue) {
+      if (newValue) {
+        this.setIsFocused(true);
+      } else if (this.$refs.textareaRef !== document.activeElement) {
+        this.setIsFocused(false);
+      }
     },
   },
 
@@ -190,24 +217,6 @@ export default {
 
       textarea.style.overflowY =
         textarea.scrollHeight > maxHeight ? 'scroll' : 'hidden';
-    },
-  },
-
-  watch: {
-    modelValue(newValue) {
-      this.message = newValue;
-      this.$emit('is-typing-handler', this.message.trim().length > 0);
-      this.$nextTick(() => {
-        this.adjustTextareaHeight();
-      });
-    },
-
-    isEmojiPickerOpen(newValue) {
-      if (newValue) {
-        this.setIsFocused(true);
-      } else if (this.$refs.textareaRef !== document.activeElement) {
-        this.setIsFocused(false);
-      }
     },
   },
 };

@@ -28,6 +28,7 @@ export default {
       default: 'primary',
     },
   },
+  emits: ['close'],
 
   data() {
     return {

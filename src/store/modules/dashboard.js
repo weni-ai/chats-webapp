@@ -23,9 +23,8 @@ export const useDashboard = defineStore('dashboard', {
     },
 
     async getViewedAgentData(agentEmail) {
-      const { first_name, last_name } = await Dasboard.getViewedAgentData(
-        agentEmail,
-      );
+      const { first_name, last_name } =
+        await Dasboard.getViewedAgentData(agentEmail);
 
       const newViewedAgent = {
         name: `${first_name} ${last_name}`,

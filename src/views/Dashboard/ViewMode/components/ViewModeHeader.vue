@@ -1,7 +1,7 @@
 <template>
   <header
-    class="view-mode__header"
     v-if="viewedAgent"
+    class="view-mode__header"
   >
     <h1 class="title">
       <UnnnicIcon

@@ -55,6 +55,12 @@ export default {
       default: false,
     },
   },
+  emits: [
+    'openRoomContactInfo',
+    'openModalCloseChat',
+    'openFlowsTrigger',
+    'back',
+  ],
 
   computed: {
     ...mapState(useRooms, {

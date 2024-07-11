@@ -58,12 +58,7 @@ export default {
       default: '',
     },
   },
-
-  mounted() {
-    const { tab } = this.$route.query;
-
-    if (this.tabs.includes(tab)) this.tab = tab;
-  },
+  emits: ['update:modelValue'],
 
   data: () => ({
     tabs: ['sector', 'queues', 'messages', 'tags'],
@@ -78,6 +73,12 @@ export default {
         if (typeof tab === 'string') this.$emit('update:modelValue', tab);
       },
     },
+  },
+
+  mounted() {
+    const { tab } = this.$route.query;
+
+    if (this.tabs.includes(tab)) this.tab = tab;
   },
 };
 </script>

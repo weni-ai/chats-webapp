@@ -8,7 +8,7 @@
       autocomplete
       autocompleteIconLeft
       autocompleteClearOnFocus
-      @update:modelValue="getFlowTrigger(flowUuid?.[0].value)"
+      @update:model-value="getFlowTrigger(flowUuid?.[0].value)"
     />
   </div>
 </template>
@@ -18,6 +18,14 @@ import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 
 export default {
   name: 'SelectFlow',
+
+  props: {
+    modelValue: {
+      type: String,
+      required: true,
+    },
+  },
+  emits: ['update:modelValue'],
 
   data() {
     return {
@@ -30,12 +38,6 @@ export default {
 
   mounted() {
     this.getFlows();
-  },
-
-  props: {
-    modelValue: {
-      type: String,
-    },
   },
 
   methods: {
@@ -67,7 +69,7 @@ export default {
       }
     },
 
-    async getFlowTrigger(uuid) {
+    getFlowTrigger(uuid) {
       this.$emit('update:modelValue', uuid);
     },
   },

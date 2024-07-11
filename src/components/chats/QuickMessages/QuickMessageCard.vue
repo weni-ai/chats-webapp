@@ -1,9 +1,9 @@
 <template>
   <section
-    @click="$emit('select', quickMessage)"
-    @keypress.enter="$emit('select', quickMessage)"
     class="quick-message-card__container"
     :class="{ clickable }"
+    @click="$emit('select', quickMessage)"
+    @keypress.enter="$emit('select', quickMessage)"
   >
     <UnnnicChatText
       :title="quickMessage.title"
@@ -13,8 +13,8 @@
       class="quick-message-card"
     >
       <template
-        #actions
         v-if="withActions"
+        #actions
       >
         <UnnnicDropdown>
           <template #trigger>
@@ -89,6 +89,7 @@ export default {
       default: true,
     },
   },
+  emits: ['select', 'edit', 'delete'],
 
   data() {
     return {

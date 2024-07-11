@@ -5,8 +5,8 @@
     @transferred-contact="emitTransferredContact"
   />
   <HomeChat
-    class="mobile-chat"
     v-else
+    class="mobile-chat"
     @open-room-contact-info="openRoomContactInfo"
     @close-room-contact-info="closeRoomContactInfo"
     @handle-show-quick-messages="handleQuickMessagesModal"
@@ -23,6 +23,7 @@ export default {
     HomeChat,
     ContactInfo,
   },
+  emits: ['transferred-contact'],
   data() {
     return {
       showRoomContactInfo: false,

@@ -37,10 +37,10 @@
         :ref="'custom_field_input_' + title"
         type="text"
         :value="value"
+        maxlength="500"
         @input="updateValue"
         @blur="saveValue"
         @keypress.enter="saveValue"
-        maxlength="500"
       />
     </section>
   </section>
@@ -76,6 +76,7 @@ export default {
       required: true,
     },
   },
+  emits: ['save-value', 'update-current-custom-field'],
 
   computed: {
     isDescriptionAUrl() {
@@ -101,6 +102,21 @@ export default {
     },
   },
 
+  watch: {
+    isCurrent(isCurrent) {
+      if (isCurrent) {
+        this.$nextTick(() => {
+          const inputRef = `custom_field_input_${this.title}`;
+          const input = this.$refs[inputRef];
+
+          if (input) {
+            input.focus();
+          }
+        });
+      }
+    },
+  },
+
   methods: {
     updateField() {
       if (this.isEditable) {
@@ -121,21 +137,6 @@ export default {
     },
     saveValue() {
       this.$emit('save-value');
-    },
-  },
-
-  watch: {
-    isCurrent(isCurrent) {
-      if (isCurrent) {
-        this.$nextTick(() => {
-          const inputRef = `custom_field_input_${this.title}`;
-          const input = this.$refs[inputRef];
-
-          if (input) {
-            input.focus();
-          }
-        });
-      }
     },
   },
 };

@@ -4,10 +4,10 @@
       <UnnnicBreadcrumb
         class="form-quick-messages__breadcrumb"
         :crumbs="quickMessagesBreadcrumb"
-        @crumbClick="
+        @crumb-click="
           () => {
-            this.handleIsQuickMessageEditing(false);
-            this.resetQuickMessageToUpdate();
+            handleIsQuickMessageEditing(false);
+            resetQuickMessageToUpdate();
           }
         "
       />
@@ -22,8 +22,8 @@
       v-else
       :sector="sector"
       :quickMessagesShared="quickMessagesShared"
-      @create-quick-message="this.create"
-      @edit-quick-message="this.update"
+      @create-quick-message="create"
+      @edit-quick-message="update"
       @delete-quick-message="this.delete"
     />
   </section>
@@ -56,6 +56,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['update-is-quick-message-editing', 'validate'],
 
   data: () => ({
     quickMessageToUpdate: null,
@@ -68,6 +69,12 @@ export default {
       },
     ],
   }),
+
+  watch: {
+    quickMessageToUpdate() {
+      this.$emit('validate', this.validate());
+    },
+  },
 
   methods: {
     ...mapActions(useQuickMessageShared, {
@@ -126,14 +133,6 @@ export default {
 
       const { title, shortcut, text } = this.quickMessageToUpdate;
       return !!title && shortcut && text;
-    },
-  },
-
-  computed: {},
-
-  watch: {
-    quickMessageToUpdate() {
-      this.$emit('validate', this.validate());
     },
   },
 };

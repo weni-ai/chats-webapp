@@ -7,8 +7,8 @@
       @close="$emit('close')"
     >
       <QuickMessagesList
+        v-model:isEmpty="isQuickMessagesEmpty"
         :withHandlers="false"
-        :isEmpty.sync="isQuickMessagesEmpty"
         @select-quick-message="emitSelectQuickMessage"
       />
       <template #options>
@@ -34,6 +34,7 @@ export default {
   components: {
     QuickMessagesList,
   },
+  emits: ['close', 'select-quick-message'],
 
   data() {
     return {

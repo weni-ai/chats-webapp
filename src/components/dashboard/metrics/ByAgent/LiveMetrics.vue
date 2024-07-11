@@ -42,14 +42,6 @@ export default {
       default: {},
     },
   },
-  mounted() {
-    // this.initRealtimeSimulation();
-    console.log(this.agents, `agent`);
-  },
-
-  destroyed() {
-    clearInterval(this.realtimeSimulationController);
-  },
 
   data: () => ({
     generalMetrics: [
@@ -127,6 +119,14 @@ export default {
         statuses: this.getRandomMetrics(),
       }));
     },
+  },
+  mounted() {
+    // this.initRealtimeSimulation();
+    console.log(this.agents, `agent`);
+  },
+
+  unmounted() {
+    clearInterval(this.realtimeSimulationController);
   },
 
   methods: {

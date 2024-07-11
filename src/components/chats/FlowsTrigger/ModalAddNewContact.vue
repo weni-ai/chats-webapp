@@ -1,9 +1,9 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <UnnnicModal
-    @close="$emit('close')"
     :text="$t('flows_trigger.add_new_contact.title')"
     class="modal-add-new-contact"
+    @close="$emit('close')"
   >
     <form
       class="modal-add-new-contact__form"
@@ -32,9 +32,9 @@
       <UnnnicButton
         :text="$t('save')"
         type="primary"
-        @click="saveNewContact"
         :disabled="!isValidForm"
         :loading="isLoading"
+        @click="saveNewContact"
       />
     </template>
   </UnnnicModal>
@@ -49,6 +49,7 @@ import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 export default {
   name: 'ModalAddNewContact',
+  emits: ['close'],
 
   data: () => ({
     contact: {

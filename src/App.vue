@@ -26,21 +26,6 @@ import moment from 'moment';
 
 export default {
   name: 'App',
-  beforeCreate() {
-    http.interceptors.request.use((config) => {
-      // eslint-disable-next-line no-param-reassign
-      config.headers.Authorization = `Bearer ${this.appToken}`;
-      return config;
-    });
-  },
-
-  created() {
-    this.handleLocale();
-  },
-
-  mounted() {
-    notifications.requestPermission();
-  },
 
   data() {
     return {
@@ -103,6 +88,22 @@ export default {
         this.wsConnect();
       },
     },
+  },
+
+  beforeCreate() {
+    http.interceptors.request.use((config) => {
+      // eslint-disable-next-line no-param-reassign
+      config.headers.Authorization = `Bearer ${this.appToken}`;
+      return config;
+    });
+  },
+
+  created() {
+    this.handleLocale();
+  },
+
+  mounted() {
+    notifications.requestPermission();
   },
 
   methods: {

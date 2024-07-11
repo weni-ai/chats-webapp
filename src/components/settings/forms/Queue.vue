@@ -82,6 +82,8 @@ export default {
     },
   },
 
+  emits: ['update:modelValue', 'validate', 'visualize', 'add-queue'],
+
   data: () => ({
     description:
       'Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando',
@@ -96,6 +98,16 @@ export default {
       },
       set(queue) {
         this.$emit('update:modelValue', queue);
+      },
+    },
+  },
+
+  watch: {
+    queue: {
+      deep: true,
+      immediate: true,
+      handler() {
+        this.$emit('validate', this.validate());
       },
     },
   },
@@ -121,16 +133,6 @@ export default {
     },
     validate() {
       return !!this.queue.name;
-    },
-  },
-
-  watch: {
-    queue: {
-      deep: true,
-      immediate: true,
-      handler() {
-        this.$emit('validate', this.validate());
-      },
     },
   },
 };

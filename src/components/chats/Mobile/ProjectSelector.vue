@@ -14,22 +14,22 @@
 
     <template v-if="!organizationUuid">
       <UnnnicInput
+        v-model="organizationsSearch"
         size="sm"
         iconLeft="search-1"
         :placeholder="$t('search')"
         class="search-input"
-        v-model="organizationsSearch"
       />
 
       <div class="organizations-list">
         <UnnnicCardCompany
           v-for="org in orgsFiltered"
-          oldVersion
           :key="org.uuid"
+          oldVersion
           :name="org.name"
           :description="org.description"
           :actionText="$t('enter')"
-          @click.native="selectOrg(org)"
+          @click="selectOrg(org)"
         />
 
         <div v-if="organizations.status === 'loading'">
@@ -80,11 +80,11 @@
 
     <template v-else>
       <UnnnicInput
+        v-model="projectsSearch"
         size="sm"
         iconLeft="search-1"
         :placeholder="$t('search')"
         class="search-input"
-        v-model="projectsSearch"
       />
 
       <div class="projects-list">
@@ -113,7 +113,7 @@
             },
           ]"
           :actionText="$t('enter')"
-          @click.native="selectProject(project)"
+          @click="selectProject(project)"
         />
 
         <div v-if="projects[organizationUuid].status === 'loading'">
@@ -153,18 +153,22 @@ export default {
   props: {
     organizationUuid: {
       type: String,
+      default: '',
     },
 
     organizationsItems: {
       type: Array,
+      default: () => [],
     },
 
     projectsItems: {
       type: Array,
+      default: () => [],
     },
 
     projectUuid: {
       type: String,
+      default: '',
     },
 
     env: {
@@ -208,6 +212,14 @@ export default {
       },
     },
   },
+  emits: [
+    'update:page',
+    'update:project-uuid',
+    'update:projectUuid',
+    'update:projectsItems',
+    'update:organizationUuid',
+    'update:organizationsItems',
+  ],
 
   data() {
     return {

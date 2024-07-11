@@ -2,14 +2,14 @@
   <section class="home-chat">
     <HomeChatHeaders
       :isLoading="isChatSkeletonActive"
-      @openRoomContactInfo="emitOpenRoomContactInfo"
-      @openModalCloseChat="openModal('closeChat')"
-      @openFlowsTrigger="emitOpenFlowsTrigger"
+      @open-room-contact-info="emitOpenRoomContactInfo"
+      @open-modal-close-chat="openModal('closeChat')"
+      @open-flows-trigger="emitOpenFlowsTrigger"
       @back="clearActiveChats"
     />
     <ChatsDropzone
-      @open-file-uploader="openModalFileUploader"
       :show="(!!room && room.user && room.is_24h_valid) || !!discussion"
+      @open-file-uploader="openModalFileUploader"
     >
       <RoomMessages v-if="!!room && !discussion" />
       <DiscussionMessages v-if="!!discussion" />
@@ -21,7 +21,7 @@
         :showSkeletonLoading="isChatSkeletonActive"
         @show-quick-messages="handleShowQuickMessages"
         @open-file-uploader="openModalFileUploader"
-        @update:modelValue="textBoxMessage = $event"
+        @update:model-value="textBoxMessage = $event"
       />
     </ChatsDropzone>
 
@@ -80,6 +80,12 @@ export default {
     ButtonJoinDiscussion,
     HomeChatModals,
   },
+  emits: [
+    'open-room-contact-info',
+    'close-room-contact-info',
+    'handle-show-quick-messages',
+    'open-flows-trigger',
+  ],
 
   data() {
     return {
@@ -133,6 +139,79 @@ export default {
     },
     pathDiscussionId() {
       return this.$route.params.discussionId;
+    },
+  },
+
+  watch: {
+    room: {
+      immediate: true,
+      async handler(newRoom, oldRoom) {
+        const { room, pathRoomId, rooms } = this;
+        if (rooms.length > 0) {
+          if (await this.shouldRedirect(newRoom)) return;
+
+          if (!this.pathDiscussionId) {
+            this.redirectToActiveChat({
+              routeName: 'room',
+              paramName: 'roomId',
+              activeChatUuid: newRoom.uuid,
+              pathChatUuid: this.pathRoomId,
+            });
+          }
+
+          if (newRoom.uuid !== oldRoom?.uuid) {
+            this.isChatSkeletonActive = true;
+
+            this.updateTextBoxMessage('');
+            this.emitCloseRoomContactInfo();
+
+            if (!this.pathDiscussionId) {
+              await this.getCanUseCopilot();
+              this.readMessages();
+            }
+
+            this.isChatSkeletonActive = false;
+          }
+
+          this.resetActiveChatUnreadMessages({
+            chatPathUuid: pathRoomId,
+            activeChatUuid: room?.uuid,
+            unreadMessages: rooms?.newMessagesByRoom,
+            resetUnreadMessages: this.resetNewMessagesByRoom({
+              room: pathRoomId,
+            }),
+          });
+        }
+      },
+    },
+    async rooms() {
+      await this.handlingSetActiveRoom(this.pathRoomId);
+    },
+    async discussion(newDiscussion) {
+      const { discussion, pathDiscussionId, discussions } = this;
+
+      if (this.discussions.length > 0) {
+        if (await this.shouldRedirect(newDiscussion)) return;
+
+        this.redirectToActiveChat({
+          routeName: 'discussion',
+          paramName: 'discussionId',
+          activeChatUuid: newDiscussion.uuid,
+          pathChatUuid: this.pathDiscussionId,
+        });
+
+        this.resetActiveChatUnreadMessages({
+          chatPathUuid: pathDiscussionId,
+          activeChatUuid: discussion?.uuid,
+          unreadMessages: discussions?.newMessagesByDiscussion,
+          resetUnreadMessages: this.resetNewMessagesByDiscussion({
+            discussion: pathDiscussionId,
+          }),
+        });
+      }
+    },
+    async discussions() {
+      await this.handlingSetActiveDiscussion(this.pathDiscussionId);
     },
   },
 
@@ -264,79 +343,6 @@ export default {
     async clearActiveChats() {
       await this.setActiveDiscussion(null);
       await this.setActiveRoom(null);
-    },
-  },
-
-  watch: {
-    room: {
-      immediate: true,
-      async handler(newRoom, oldRoom) {
-        const { room, pathRoomId, rooms } = this;
-        if (rooms.length > 0) {
-          if (await this.shouldRedirect(newRoom)) return;
-
-          if (!this.pathDiscussionId) {
-            this.redirectToActiveChat({
-              routeName: 'room',
-              paramName: 'roomId',
-              activeChatUuid: newRoom.uuid,
-              pathChatUuid: this.pathRoomId,
-            });
-          }
-
-          if (newRoom.uuid !== oldRoom?.uuid) {
-            this.isChatSkeletonActive = true;
-
-            this.updateTextBoxMessage('');
-            this.emitCloseRoomContactInfo();
-
-            if (!this.pathDiscussionId) {
-              await this.getCanUseCopilot();
-              this.readMessages();
-            }
-
-            this.isChatSkeletonActive = false;
-          }
-
-          this.resetActiveChatUnreadMessages({
-            chatPathUuid: pathRoomId,
-            activeChatUuid: room?.uuid,
-            unreadMessages: rooms?.newMessagesByRoom,
-            resetUnreadMessages: this.resetNewMessagesByRoom({
-              room: pathRoomId,
-            }),
-          });
-        }
-      },
-    },
-    async rooms() {
-      await this.handlingSetActiveRoom(this.pathRoomId);
-    },
-    async discussion(newDiscussion) {
-      const { discussion, pathDiscussionId, discussions } = this;
-
-      if (this.discussions.length > 0) {
-        if (await this.shouldRedirect(newDiscussion)) return;
-
-        this.redirectToActiveChat({
-          routeName: 'discussion',
-          paramName: 'discussionId',
-          activeChatUuid: newDiscussion.uuid,
-          pathChatUuid: this.pathDiscussionId,
-        });
-
-        this.resetActiveChatUnreadMessages({
-          chatPathUuid: pathDiscussionId,
-          activeChatUuid: discussion?.uuid,
-          unreadMessages: discussions?.newMessagesByDiscussion,
-          resetUnreadMessages: this.resetNewMessagesByDiscussion({
-            discussion: pathDiscussionId,
-          }),
-        });
-      }
-    },
-    async discussions() {
-      await this.handlingSetActiveDiscussion(this.pathDiscussionId);
     },
   },
 };

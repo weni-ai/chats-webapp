@@ -1,7 +1,7 @@
 <template>
   <ChatsLayout
     v-if="viewedAgent.email"
-    :viewedAgent="this.viewedAgent.email"
+    :viewedAgent="viewedAgent.email"
   >
     <ViewModeHeader :viewedAgent="viewedAgent.name" />
 
@@ -49,7 +49,6 @@
 
     <ModalGetChat
       :showModal="isAssumeChatConfirmationOpened"
-      @closeModal="handleModal('AssumeChatConfirmation', 'close')"
       :title="$t('dashboard.view-mode.assume_chat_question')"
       :description="
         $t('dashboard.view-mode.assume_chat_confirmation', {
@@ -57,6 +56,7 @@
         })
       "
       :whenGetChat="whenGetChat"
+      @close-modal="handleModal('AssumeChatConfirmation', 'close')"
     />
 
     <template #aside>
@@ -110,11 +110,6 @@ export default {
     isAssumeChatConfirmationOpened: false,
   }),
 
-  beforeMount() {
-    this.setActiveRoom(null);
-    this.setActiveDiscussion(null);
-  },
-
   computed: {
     ...mapState(useRooms, { room: (store) => store.activeRoom }),
     ...mapState(useDiscussions, {
@@ -123,6 +118,27 @@ export default {
     ...mapState(useProfile, ['me']),
     ...mapState(useDashboard, ['viewedAgent']),
     ...mapState(useRoomMessages, ['roomMessagesNext']),
+  },
+
+  watch: {
+    async room() {
+      this.isContactInfoOpened = false;
+    },
+    '$route.params.viewedAgent': {
+      immediate: true,
+      handler(newViewdAgentEmail) {
+        if (newViewdAgentEmail) {
+          this.getViewedAgentData(this.$route.params.viewedAgent);
+        } else {
+          this.setViewedAgent({ name: '', email: '' });
+        }
+      },
+    },
+  },
+
+  beforeMount() {
+    this.setActiveRoom(null);
+    this.setActiveDiscussion(null);
   },
 
   methods: {
@@ -163,22 +179,6 @@ export default {
     whenGetChat() {
       this.$router.push({ name: 'room', params: { roomId: this.room.uuid } });
     },
-  },
-
-  watch: {
-    async room() {
-      this.isContactInfoOpened = false;
-    },
-    '$route.params.viewedAgent': {
-      immediate: true,
-      handler(newViewdAgentEmail) {
-      if (newViewdAgentEmail) {
-        this.getViewedAgentData(this.$route.params.viewedAgent);
-      } else {
-        this.setViewedAgent({ name: '', email: '' });
-      }
-    },
-    }
   },
 };
 </script>

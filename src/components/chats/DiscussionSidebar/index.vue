@@ -2,8 +2,8 @@
   <div class="discussion-sidebar__container">
     <DiscussionSidebarLoading v-show="isSidebarLoading" />
     <AsideSlotTemplate
-      class="discussion-sidebar"
       v-show="!isSidebarLoading"
+      class="discussion-sidebar"
       :title="
         isOwnDiscussion
           ? $t('discussions.about.title')
@@ -34,12 +34,12 @@
 
       <UnnnicModal
         v-if="isEndDiscussionModalOpen"
-        @close="handleEndDiscussionModal"
         :text="$t('discussions.close.title')"
         :description="$t('discussions.close.description')"
         modalIcon="error"
         scheme="feedback-yellow"
         class="discussion-sidebar__end-modal"
+        @close="handleEndDiscussionModal"
       >
         <template #options>
           <UnnnicButton
@@ -50,8 +50,8 @@
           <UnnnicButton
             :text="$t('end')"
             type="primary"
-            @click="endDiscussion"
             :loading="isEndDiscussionLoading"
+            @click="endDiscussion"
           />
         </template>
       </UnnnicModal>
@@ -102,6 +102,15 @@ export default {
     }),
   },
 
+  watch: {
+    discussion: {
+      immediate: true,
+      async handler() {
+        await this.loadDiscussionDetails();
+      },
+    },
+  },
+
   methods: {
     ...mapActions(useDiscussions, {
       getDiscussionDetails: 'getDiscussionDetails',
@@ -145,15 +154,6 @@ export default {
       await this.setActiveRoom(null);
       await this.deleteDiscussion();
       this.handleEndDiscussionModal();
-    },
-  },
-
-  watch: {
-    discussion: {
-      immediate: true,
-      async handler() {
-        await this.loadDiscussionDetails();
-      },
     },
   },
 };

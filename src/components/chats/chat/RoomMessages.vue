@@ -12,7 +12,7 @@
     :tags="room?.tags"
     :isLoading="isLoading"
     :isClosedChat="!!room?.ended_at"
-    @scrollTop="searchForMoreMessages"
+    @scroll-top="searchForMoreMessages"
   />
 </template>
 <script>
@@ -50,6 +50,19 @@ export default {
     ]),
   },
 
+  watch: {
+    'room.uuid': {
+      immediate: true,
+      async handler(roomUuid) {
+        if (roomUuid) {
+          this.resetRoomMessages();
+          this.page = 0;
+          await this.handlingGetRoomMessages();
+        }
+      },
+    },
+  },
+
   methods: {
     ...mapActions(useRoomMessages, {
       roomResendMessages: 'resendRoomMessages',
@@ -78,19 +91,6 @@ export default {
         this.page += 1;
         this.handlingGetRoomMessages();
       }
-    },
-  },
-
-  watch: {
-    'room.uuid': {
-      immediate: true,
-      async handler(roomUuid) {
-        if (roomUuid) {
-          await this.resetRoomMessages();
-          this.page = 0;
-          this.handlingGetRoomMessages();
-        }
-      },
     },
   },
 };

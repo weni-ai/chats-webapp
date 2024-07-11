@@ -36,14 +36,6 @@ export default {
     TableMetrics,
   },
 
-  mounted() {
-    this.initRealtimeSimulation();
-  },
-
-  destroyed() {
-    clearInterval(this.realtimeSimulationController);
-  },
-
   data: () => ({
     generalMetrics: [
       {
@@ -137,6 +129,14 @@ export default {
         statuses: this.getRandomMetrics(),
       }));
     },
+  },
+
+  mounted() {
+    this.initRealtimeSimulation();
+  },
+
+  unmounted() {
+    clearInterval(this.realtimeSimulationController);
   },
 
   methods: {
