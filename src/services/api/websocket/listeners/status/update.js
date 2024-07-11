@@ -1,16 +1,16 @@
 import { useConfig } from '@/store/modules/config';
 
 export default (content, { app }) => {
-  const localStorageStatus = localStorage.getItem('statusAgent');
+  const sessionStorageStatus = sessionStorage.getItem('statusAgent');
   const { from, status } = content;
 
-  if (localStorageStatus !== status) {
+  if (sessionStorageStatus !== status) {
     if (from === 'system') {
-      app.updateStatus(localStorageStatus);
+      app.updateStatus(sessionStorageStatus);
     } else if (from === 'user') {
       const configStore = useConfig();
       configStore.setStatus(status);
-      localStorage.setItem('statusAgent', status);
+      sessionStorage.setItem('statusAgent', status);
     }
   }
 };

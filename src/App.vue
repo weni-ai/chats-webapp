@@ -83,7 +83,7 @@ export default {
       immediate: true,
       handler(newAppProject) {
         if (newAppProject && this.appToken) {
-          this.restoreLocalStorageUserStatus();
+          this.restoreSessionStorageUserStatus();
           this.getUserStatus();
           this.loadQuickMessages();
           this.loadQuickMessagesShared();
@@ -114,10 +114,10 @@ export default {
     ...mapActions(useQuickMessageShared, {
       getAllQuickMessagesShared: 'getAll',
     }),
-    restoreLocalStorageUserStatus() {
-      const userStatus = localStorage.getItem('statusAgent');
+    restoreSessionStorageUserStatus() {
+      const userStatus = sessionStorage.getItem('statusAgent');
       if (!['OFFLINE', 'ONLINE'].includes(userStatus)) {
-        localStorage.setItem('statusAgent', 'OFFLINE');
+        sessionStorage.setItem('statusAgent', 'OFFLINE');
       }
       this.setStatus(userStatus);
     },
@@ -179,10 +179,10 @@ export default {
 
     async onboarding() {
       const onboarded =
-        localStorage.getItem('CHATS_USER_ONBOARDED') ||
+        sessionStorage.getItem('CHATS_USER_ONBOARDED') ||
         (await Profile.onboarded());
       if (onboarded) {
-        localStorage.setItem('CHATS_USER_ONBOARDED', true);
+        sessionStorage.setItem('CHATS_USER_ONBOARDED', true);
         return;
       }
 
@@ -190,7 +190,7 @@ export default {
     },
 
     async getUserStatus() {
-      const userStatus = localStorage.getItem('statusAgent');
+      const userStatus = sessionStorage.getItem('statusAgent');
       const projectUuid = this.project.uuid;
       const {
         data: { connection_status: responseStatus },
@@ -214,7 +214,7 @@ export default {
         status,
       });
       useConfig().$patch({ status: connection_status });
-      localStorage.setItem('statusAgent', connection_status);
+      sessionStorage.setItem('statusAgent', connection_status);
     },
 
     async wsConnect() {

@@ -11,7 +11,7 @@ export default class SoundNotification {
   }
 
   notify() {
-    const soundPreference = localStorage.getItem(PREFERENCES_SOUND);
+    const soundPreference = sessionStorage.getItem(PREFERENCES_SOUND);
     if (soundPreference === 'no') {
       return;
     }

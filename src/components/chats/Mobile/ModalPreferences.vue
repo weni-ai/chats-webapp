@@ -72,7 +72,7 @@ export default {
     this.getStatus();
 
     this.configStatus = this.storeStatus === 'ONLINE';
-    this.configSound = localStorage.getItem(PREFERENCES_SOUND) === 'yes';
+    this.configSound = sessionStorage.getItem(PREFERENCES_SOUND) === 'yes';
   },
 
   computed: {
@@ -101,7 +101,7 @@ export default {
     },
 
     updateSound() {
-      localStorage.setItem(PREFERENCES_SOUND, this.configSound ? 'yes' : 'no');
+      sessionStorage.setItem(PREFERENCES_SOUND, this.configSound ? 'yes' : 'no');
     },
 
     async updateStatus(status) {
