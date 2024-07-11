@@ -62,7 +62,7 @@ export default class WebSocketSetup {
     this.ws.ws.close();
     this.connect();
 
-    const localStorageStatus = localStorage.getItem('statusAgent');
-    this.app.updateUserStatus(localStorageStatus);
+    const sessionStorageStatus = sessionStorage.getItem('statusAgent');
+    this.app.updateUserStatus(sessionStorageStatus);
   }
 }
