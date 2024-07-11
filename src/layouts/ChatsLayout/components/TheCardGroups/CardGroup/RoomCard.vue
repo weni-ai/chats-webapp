@@ -11,7 +11,7 @@
       @change="checkboxValue = $event"
     />
     <UnnnicChatsContact
-      :title="room.contact.name"
+      :title="formattedContactName"
       :lastMessage="lastMessage"
       :waitingTime="waitingTimeComputed"
       :unreadMessages="unreadMessages"
@@ -28,6 +28,7 @@
 import { mapState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
+import { formatContactName } from '@/utils/chats';
 
 const ONE_MINUTE_IN_MILLISECONDS = 60000;
 
@@ -55,6 +56,7 @@ export default {
   emits: ['click', 'update-selected'],
 
   data: () => ({
+    formatContactName,
     waitingTime: 0,
     timer: null,
     checkboxValue: false,
@@ -86,6 +88,9 @@ export default {
     },
     locale() {
       return this.$i18n.locale;
+    },
+    formattedContactName() {
+      return formatContactName(this.room);
     },
   },
 

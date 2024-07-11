@@ -50,6 +50,13 @@
                   <h4 class="description">{{ contactNumber.contactNum }}</h4>
                 </hgroup>
                 <hgroup
+                  v-if="contactService?.length > 0"
+                  class="info"
+                >
+                  <h3 class="title">{{ $t('service') }}:</h3>
+                  <h4 class="description">{{ contactService }}</h4>
+                </hgroup>
+                <hgroup
                   v-if="contactProtocol?.length > 0"
                   class="info"
                 >
@@ -289,6 +296,9 @@ export default {
     },
     contactProtocol() {
       return (this.closedRoom || this.room).protocol;
+    },
+    contactService() {
+      return (this.closedRoom || this.room).service_chat;
     },
   },
   watch: {

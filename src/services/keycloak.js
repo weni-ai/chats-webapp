@@ -8,7 +8,7 @@ const keycloak = new Keycloak({
 });
 
 keycloak.logout = () => {
-  localStorage.removeItem('keycloak:user');
+  sessionStorage.removeItem('keycloak:user');
   window.location.replace(
     `${keycloak.createLogoutUrl()}&client_id=${encodeURIComponent(
       getEnv('KEYCLOAK_CLIENT_ID'),
@@ -41,7 +41,7 @@ export default {
     let savedKeycloakUser = {};
 
     try {
-      savedKeycloakUser = JSON.parse(localStorage.getItem('keycloak:user'));
+      savedKeycloakUser = JSON.parse(sessionStorage.getItem('keycloak:user'));
     } catch (error) {
       console.log(error);
     }
@@ -55,7 +55,7 @@ export default {
       ...toInsert,
     });
 
-    localStorage.setItem('keycloak:user', JSON.stringify(keycloak));
+    sessionStorage.setItem('keycloak:user', JSON.stringify(keycloak));
 
     hasInitialized = true;
 

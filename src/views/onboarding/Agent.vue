@@ -167,7 +167,7 @@ export default {
       }
     },
     async close() {
-      localStorage.setItem('CHATS_USER_ONBOARDED', true);
+      sessionStorage.setItem('CHATS_USER_ONBOARDED', true);
       await Profile.onboard();
       this.$router.push({ name: 'home' });
     },
