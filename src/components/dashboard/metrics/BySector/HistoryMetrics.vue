@@ -26,7 +26,14 @@
 </template>
 
 <script>
+import { mapState } from 'pinia';
+
+import { useConfig } from '@/store/modules/config';
+
+import env from '@/utils/env';
+
 import DashboardManagerApi from '@/services/api/resources/dashboard/dashboardManager';
+
 import CardGroupMetrics from '../../CardGroupMetrics.vue';
 import GeneralMetrics from '../../GeneralMetrics.vue';
 import TableMetrics from '../../TableMetrics.vue';
@@ -89,6 +96,9 @@ export default {
     updateFilter() {
       return this.filter;
     },
+    ...mapState(useConfig, {
+      project: 'project',
+    }),
   },
 
   watch: {
@@ -96,7 +106,16 @@ export default {
       if (newValue) {
         this.agentInfo();
         this.requestMetrics();
-        this.startMetricsTimer();
+
+        const PROJECT_DASHBOARD_TIMER_REFRESH = env(
+          'CHATS_PROJECTS_DASHBOARD_TIMER_REFRESH',
+        )?.split(', ');
+        const isTimerMetricsRefreshEnabled =
+          PROJECT_DASHBOARD_TIMER_REFRESH.includes(this.project?.uuid);
+
+        if (isTimerMetricsRefreshEnabled) {
+          this.startMetricsTimer();
+        }
       }
     },
   },
