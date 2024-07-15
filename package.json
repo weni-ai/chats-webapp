@@ -19,7 +19,6 @@
     "is-mobile": "^4.0.0",
     "keycloak-js": "^23.0.7",
     "lodash.clonedeep": "^4.5.0",
-    "logrocket": "^3.0.1",
     "mime": "^4.0.3",
     "moment": "^2.29.4",
     "path-browserify": "^1.0.1",
