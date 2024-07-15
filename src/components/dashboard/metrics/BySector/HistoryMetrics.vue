@@ -224,8 +224,8 @@ export default {
         clearInterval(this.metricsTimer);
       }
 
-      const TWO_MINUTES = 1000 * 60 * 2;
-      this.metricsTimer = setInterval(() => this.requestMetrics(), TWO_MINUTES);
+      const ONE_MINUTE = 1000 * 60 * 1;
+      this.metricsTimer = setInterval(() => this.requestMetrics(), ONE_MINUTE);
     },
 
     requestMetrics() {
