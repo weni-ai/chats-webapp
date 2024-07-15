@@ -82,6 +82,7 @@ export default {
         value: 'chats',
       },
     ],
+    metricsTimer: null,
   }),
 
   computed: {
@@ -94,18 +95,15 @@ export default {
     updateFilter(newValue) {
       if (newValue) {
         this.agentInfo();
-        this.roomInfo();
-        this.sectorInfo();
-        this.rawDataInfo();
+        this.requestMetrics();
+        this.startMetricsTimer();
       }
     },
   },
 
   mounted() {
+    this.requestMetrics();
     this.agentInfo();
-    this.roomInfo();
-    this.sectorInfo();
-    this.rawDataInfo();
   },
 
   methods: {
@@ -219,6 +217,21 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+
+    startMetricsTimer() {
+      if (this.metricsTimer) {
+        clearInterval(this.metricsTimer);
+      }
+
+      const TWO_MINUTES = 1000 * 60 * 2;
+      this.metricsTimer = setInterval(() => this.requestMetrics(), TWO_MINUTES);
+    },
+
+    requestMetrics() {
+      this.roomInfo();
+      this.sectorInfo();
+      this.rawDataInfo();
     },
   },
 };
