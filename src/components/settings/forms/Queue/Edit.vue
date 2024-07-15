@@ -12,8 +12,6 @@
         <UnnnicAutocomplete
           v-model="agent.name"
           :data="[]"
-          @choose="agent.name = $event"
-          @keypress.enter="addAgent"
           label="Selecionar agente"
           placeholder="Pesquise pelo nome"
           iconLeft="search-1"
@@ -21,6 +19,8 @@
           openWithFocus
           highlight
           class="input"
+          @choose="agent.name = $event"
+          @keypress.enter="addAgent"
         />
         <UnnnicButton
           type="secondary"
@@ -53,13 +53,13 @@
       <template #options>
         <UnnnicButton
           type="tertiary"
-          @click="agentToRemove = {}"
           text="Cancelar"
+          @click="agentToRemove = {}"
         />
         <UnnnicButton
           type="secondary"
-          @click="removeAgent(agentToRemove)"
           text="Confirmar"
+          @click="removeAgent(agentToRemove)"
         />
       </template>
     </UnnnicModal>
@@ -74,10 +74,10 @@
     >
       <template #options>
         <UnnnicButton
+          text="Fechar"
           @click="
             (isOpenRemoveAgentFeedbackModal = false), (agentToRemove = {})
           "
-          text="Fechar"
         />
       </template>
     </UnnnicModal>
@@ -100,6 +100,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['update:modelValue'],
 
   data: () => ({
     agent: {

@@ -76,7 +76,7 @@ export default {
     },
     metrics: {
       type: Object,
-      // default: () => [],
+      default: () => {},
     },
     scheme: {
       type: String,

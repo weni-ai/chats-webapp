@@ -14,7 +14,10 @@
 export default {
   name: 'FullscreenControl',
   props: {
-    icon: String,
+    icon: {
+      type: String,
+      required: true,
+    },
   },
   emits: ['click'],
 };

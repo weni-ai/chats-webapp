@@ -21,10 +21,10 @@
       <section class="form-tags__section__input-group">
         <UnnnicInput
           v-model="tag"
-          @keypress.enter="addTag"
           class="form-tags__section__input-group__input"
           :label="$t('tags.add.label')"
           :placeholder="$t('tags.add.placeholder')"
+          @keypress.enter="addTag"
         />
         <UnnnicButton
           type="secondary"
@@ -55,16 +55,17 @@ import TagGroup from '@/components/TagGroup.vue';
 export default {
   name: 'FormTags',
 
+  components: {
+    TagGroup,
+  },
+
   props: {
     modelValue: {
       type: Array,
       default: () => [],
     },
   },
-
-  components: {
-    TagGroup,
-  },
+  emits: ['update:modelValue', 'add', 'remove'],
 
   data: () => ({
     tag: '',

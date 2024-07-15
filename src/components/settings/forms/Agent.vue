@@ -25,7 +25,7 @@
             autocomplete
             autocompleteIconLeft
             autocompleteClearOnFocus
-            @update:modelValue="chooseAgent"
+            @update:model-value="chooseAgent"
           />
         </div>
         <!-- <unnnic-button
@@ -42,13 +42,15 @@
       class="form-agent__agents"
     >
       <SelectedMember
-        v-for="agent in selectedAgents"
-        :key="agent.uuid"
-        :name="agent.user.first_name + ' ' + agent.user.last_name"
-        :email="agent.user.email"
-        :avatarUrl="photo(agent.user.photo_url)"
-        @remove="remove(agent.uuid)"
+        v-for="selectedAgent in selectedAgents"
+        :key="selectedAgent.uuid"
+        :name="
+          selectedAgent.user.first_name + ' ' + selectedAgent.user.last_name
+        "
+        :email="selectedAgent.user.email"
+        :avatarUrl="photo(selectedAgent.user.photo_url)"
         roleName="Agente"
+        @remove="remove(selectedAgent.uuid)"
       />
     </section>
   </section>
@@ -78,6 +80,7 @@ export default {
       default: () => [],
     },
   },
+  emits: ['update:modelValue', 'validate', 'remove', 'select'],
 
   data: () => ({
     internalSelectedAgents: [],
@@ -118,6 +121,16 @@ export default {
     },
   },
 
+  watch: {
+    selectedAgents: {
+      deep: true,
+      immediate: true,
+      handler() {
+        this.$emit('validate', this.validate());
+      },
+    },
+  },
+
   methods: {
     remove(agentUuid) {
       this.$emit('remove', agentUuid);
@@ -148,16 +161,6 @@ export default {
         return getOnlyPhoto;
       }
       return link;
-    },
-  },
-
-  watch: {
-    selectedAgents: {
-      deep: true,
-      immediate: true,
-      handler() {
-        this.$emit('validate', this.validate());
-      },
     },
   },
 };

@@ -25,8 +25,8 @@
                 iconCenter="sync"
                 type="tertiary"
                 size="small"
-                @click="refreshContactInfos"
                 :disabled="isRefreshContactDisabled"
+                @click="refreshContactInfos"
               />
             </header>
 
@@ -84,13 +84,13 @@
             >
               <UnnnicSwitch
                 v-model="isLinkedUser"
-                @update:model-value="addContactToAgent"
                 size="small"
                 :textRight="
                   isLinkedUser
                     ? $t('contact_info.switch_disassociate_contact')
                     : $t('contact_info.switch_associate_contact')
                 "
+                @update:model-value="addContactToAgent"
               />
               <UnnnicToolTip
                 enabled
@@ -126,7 +126,7 @@
             <div v-if="isLinkedToOtherAgent">
               <span>{{
                 $t('contact_info.linked_contact', {
-                  name: this.room.linked_user,
+                  name: room.linked_user,
                 })
               }}</span>
             </div>
@@ -143,9 +143,9 @@
         <AsideSlotTemplateSection>
           <ContactMedia
             :room="room"
-            @fullscreen="openFullScreen"
             :history="isHistory"
             :contactInfo="(closedRoom || room).contact"
+            @fullscreen="openFullScreen"
             @loaded-medias="isLoading = false"
           />
         </AsideSlotTemplateSection>
@@ -166,9 +166,9 @@
       >
         <VideoPreview
           v-if="currentMedia.content_type.includes('mp4')"
+          :src="currentMedia.url"
           @keypress.enter="() => {}"
           @click.stop="() => {}"
-          :src="currentMedia.url"
         />
         <img
           v-else
@@ -227,6 +227,7 @@ export default {
   props: {
     closedRoom: {
       type: Object,
+      default: () => {},
     },
     isHistory: {
       type: Boolean,
@@ -237,6 +238,7 @@ export default {
       default: false,
     },
   },
+  emits: ['transferred-contact', 'close'],
 
   data: () => ({
     isLoading: true,
@@ -297,6 +299,11 @@ export default {
     },
     contactService() {
       return (this.closedRoom || this.room).service_chat;
+    },
+  },
+  watch: {
+    room(newRoom) {
+      if (newRoom) this.customFields = newRoom.custom_fields;
     },
   },
 
@@ -540,11 +547,6 @@ export default {
     },
     lowercase(value) {
       return value.toString().toLowerCase();
-    },
-  },
-  watch: {
-    room(newRoom) {
-      if (newRoom) this.customFields = newRoom.custom_fields;
     },
   },
 };

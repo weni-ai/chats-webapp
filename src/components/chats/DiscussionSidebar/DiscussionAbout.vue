@@ -28,16 +28,16 @@
         :text="$t('discussions.about.add_agent')"
         iconLeft="add-1"
         type="secondary"
+        :disabled="agentsInvolved?.length >= 5"
         @click="handleAddAgentModal"
-        :disabled="this.agentsInvolved?.length >= 5"
       />
 
       <UnnnicModal
         v-if="isAddAgentModalOpen"
-        @close="handleAddAgentModal"
         class="add-agent-modal"
         :text="$t('discussions.add_agents.title')"
         :description="$t('discussions.add_agents.description')"
+        @close="handleAddAgentModal"
       >
         <div class="add-agent-modal__input">
           <UnnnicLabel :label="$t('discussions.add_agents.select_agent')" />
@@ -102,10 +102,6 @@ export default {
     },
   },
 
-  unmounted() {
-    this.agentSelected = [];
-  },
-
   data() {
     return {
       agentsInvolved: null,
@@ -125,6 +121,50 @@ export default {
 
       return `${moment(date).format('HH:mm')} | ${moment(date).format('L')}`;
     },
+  },
+
+  watch: {
+    async isAddAgentModalOpen(newIsAddAgentModalOpen) {
+      if (newIsAddAgentModalOpen) {
+        const response = await Project.allUsers();
+        const { results } = response;
+
+        const agentsInvolvedNames = [
+          ...this.agentsInvolved.map((agent) => this.getUserFullName(agent)),
+        ];
+        const filteredAgents = results.filter(
+          (agent) => !agentsInvolvedNames.includes(this.getUserFullName(agent)),
+        );
+
+        const newAgents = [this.agentsToSelect[0]];
+
+        filteredAgents.forEach((agent) =>
+          newAgents.push({
+            value: agent.email,
+            label: this.getUserFullName(agent),
+            description: agent.email,
+            photoUrl: agent.photoUrl,
+          }),
+        );
+        this.agentsToSelect = newAgents;
+      }
+    },
+    details: {
+      immediate: true,
+      async handler() {
+        const responseAgents = await this.getDiscussionAgents();
+        if (responseAgents.results) {
+          this.agentsInvolved = responseAgents.results;
+        }
+        this.agentsToSelect = [
+          { value: '', label: this.$t('discussions.add_agents.search_agent') },
+        ];
+      },
+    },
+  },
+
+  unmounted() {
+    this.agentSelected = [];
   },
 
   methods: {
@@ -174,46 +214,6 @@ export default {
           error,
         );
       }
-    },
-  },
-
-  watch: {
-    async isAddAgentModalOpen(newIsAddAgentModalOpen) {
-      if (newIsAddAgentModalOpen) {
-        const response = await Project.allUsers();
-        const { results } = response;
-
-        const agentsInvolvedNames = [
-          ...this.agentsInvolved.map((agent) => this.getUserFullName(agent)),
-        ];
-        const filteredAgents = results.filter(
-          (agent) => !agentsInvolvedNames.includes(this.getUserFullName(agent)),
-        );
-
-        const newAgents = [this.agentsToSelect[0]];
-
-        filteredAgents.forEach((agent) =>
-          newAgents.push({
-            value: agent.email,
-            label: this.getUserFullName(agent),
-            description: agent.email,
-            photoUrl: agent.photoUrl,
-          }),
-        );
-        this.agentsToSelect = newAgents;
-      }
-    },
-    details: {
-      immediate: true,
-      async handler() {
-        const responseAgents = await this.getDiscussionAgents();
-        if (responseAgents.results) {
-          this.agentsInvolved = responseAgents.results;
-        }
-        this.agentsToSelect = [
-          { value: '', label: this.$t('discussions.add_agents.search_agent') },
-        ];
-      },
     },
   },
 };

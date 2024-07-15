@@ -1,8 +1,8 @@
 <template>
   <UnnnicModal
-    @close="close"
     class="start-discussion-form__modal"
     :text="$t('discussions.start_discussion.title')"
+    @close="close"
   >
     <section class="start-discussion-form">
       <div class="start-discussion-form__selects">
@@ -56,9 +56,9 @@
       <UnnnicButton
         :text="$t('confirm')"
         type="primary"
-        @click="startDiscussion"
         :disabled="isConfirmButtonDisabled"
         :loading="startDiscussionLoading"
+        @click="startDiscussion"
       />
     </template>
   </UnnnicModal>
@@ -75,6 +75,7 @@ import unnnic from '@weni/unnnic-system';
 
 export default {
   name: 'ModalStartDiscussion',
+  emits: ['close'],
 
   data: () => {
     return {
@@ -90,16 +91,6 @@ export default {
     };
   },
 
-  async created() {
-    await this.getSectors();
-    this.queuesToSelect = [
-      {
-        value: '',
-        label: this.$t('discussions.start_discussion.form.search_queue'),
-      },
-    ];
-  },
-
   computed: {
     isConfirmButtonDisabled() {
       return (
@@ -109,6 +100,27 @@ export default {
         !this.message
       );
     },
+  },
+
+  watch: {
+    sector(sector) {
+      if (sector[0].value) {
+        if (this.queuesToSelect[0]) {
+          this.queue = [this.queuesToSelect[0]];
+        }
+        this.getSectorQueues(sector[0].value);
+      }
+    },
+  },
+
+  async created() {
+    await this.getSectors();
+    this.queuesToSelect = [
+      {
+        value: '',
+        label: this.$t('discussions.start_discussion.form.search_queue'),
+      },
+    ];
   },
 
   methods: {
@@ -208,17 +220,6 @@ export default {
           'The sector tags could not be loaded at this time.',
           error,
         );
-      }
-    },
-  },
-
-  watch: {
-    sector(sector) {
-      if (sector[0].value) {
-        if (this.queuesToSelect[0]) {
-          this.queue = [this.queuesToSelect[0]];
-        }
-        this.getSectorQueues(sector[0].value);
       }
     },
   },

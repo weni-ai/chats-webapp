@@ -15,7 +15,7 @@
         :title="generalLabel"
         icon="mark_chat_unread"
         scheme="aux-green-500"
-        :value="this.rawData.raw_data?.[0].active_rooms || 0"
+        :value="rawData.raw_data?.[0].active_rooms || 0"
         :percent="0"
         :invertedPercentage="false"
       />
@@ -31,7 +31,7 @@
         title="Aguardando atendimento"
         icon="pending"
         scheme="aux-blue-500"
-        :value="this.rawData.raw_data?.[0].queue_rooms || 0"
+        :value="rawData.raw_data?.[0].queue_rooms || 0"
         :percent="0"
         :invertedPercentage="false"
       />
@@ -47,7 +47,7 @@
         title="Encerrados"
         icon="check_circle"
         scheme="aux-purple-500"
-        :value="this.rawData.raw_data?.[0].closed_rooms || 0"
+        :value="rawData.raw_data?.[0].closed_rooms || 0"
         :percent="0"
         :invertedPercentage="false"
       />
@@ -63,7 +63,7 @@
         title="Tempo de espera"
         icon="chronic"
         scheme="aux-orange-500"
-        :value="timeToString(this.metrics.rooms_data?.[0].waiting_time)"
+        :value="timeToString(metrics.rooms_data?.[0].waiting_time)"
         :percent="0"
         :invertedPercentage="false"
       />
@@ -79,7 +79,7 @@
         title="Tempo de resposta"
         icon="acute"
         scheme="aux-red-500"
-        :value="timeToString(this.metrics.rooms_data?.[0].response_time)"
+        :value="timeToString(metrics.rooms_data?.[0].response_time)"
         :percent="0"
         :invertedPercentage="false"
       />
@@ -95,7 +95,7 @@
         title="Tempo de interação"
         icon="history_toggle_off"
         scheme="aux-yellow-500"
-        :value="timeToString(this.metrics.rooms_data?.[0].interact_time)"
+        :value="timeToString(metrics.rooms_data?.[0].interact_time)"
         :percent="0"
         :invertedPercentage="false"
       />

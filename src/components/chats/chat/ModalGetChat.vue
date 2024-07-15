@@ -2,11 +2,11 @@
   <section>
     <UnnnicModal
       :showModal="showModal"
-      @close="close"
       :text="title"
       :description="description"
       modalIcon="forum"
       scheme="neutral-darkest"
+      @close="close"
     >
       <template #options>
         <UnnnicButton
@@ -46,7 +46,7 @@ export default {
     },
     title: {
       type: String,
-      required: false,
+      default: '',
     },
     description: {
       type: String,
@@ -54,9 +54,10 @@ export default {
     },
     whenGetChat: {
       type: Function,
-      required: false,
+      default: () => {},
     },
   },
+  emits: ['closeModal'],
 
   data() {
     return {

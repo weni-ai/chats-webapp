@@ -7,20 +7,20 @@
     :close="() => $emit('close')"
   >
     <AsideSlotTemplateSection
-      class="flows-trigger"
       v-if="showSendFlowStep"
+      class="flows-trigger"
     >
       <SendFlow
-        @back="closeSendFlow"
-        @close="$emit('close')"
         :contacts="selected"
         :groups="selectedGroup"
         :selectedContact="selectedContact"
+        @back="closeSendFlow"
+        @close="$emit('close')"
       />
     </AsideSlotTemplateSection>
     <AsideSlotTemplateSection
-      class="flows-trigger"
       v-else
+      class="flows-trigger"
     >
       <header class="flows-trigger__header">
         <UnnnicButton
@@ -62,8 +62,8 @@
         "
       >
         <section
-          class="flows-trigger__contact-alerts"
           v-if="openedRoomsAlerts.length > 0"
+          class="flows-trigger__contact-alerts"
         >
           <strong
             v-for="contact in openedRoomsAlerts"
@@ -76,12 +76,25 @@
               filled
               scheme="feedback-yellow"
             />
-            {{ $t('flows_trigger.already_open_room.open', { contact: contact.contactName }) }}
+            {{
+              $t('flows_trigger.already_open_room.open', {
+                contact: contact.contactName,
+              })
+            }}
             <template v-if="contact.agent">
-              {{ $t('flows_trigger.already_open_room.with_agent', { agent: contact.agent, queue: contact.queue }) }}
+              {{
+                $t('flows_trigger.already_open_room.with_agent', {
+                  agent: contact.agent,
+                  queue: contact.queue,
+                })
+              }}
             </template>
             <template v-else>
-              {{ $t('flows_trigger.already_open_room.in_queue_awaiting', { queue: contact.queue }) }}
+              {{
+                $t('flows_trigger.already_open_room.in_queue_awaiting', {
+                  queue: contact.queue,
+                })
+              }}
             </template>
           </strong>
         </section>
@@ -109,8 +122,8 @@
             >
               <UnnnicChatsContact
                 v-for="item in element"
-                class="flows-trigger__groups__group__contact"
                 :key="item.uuid"
+                class="flows-trigger__groups__group__contact"
                 :title="item.name"
                 :lastMessage="getContactUrn(item)"
                 :tabindex="0"
@@ -134,8 +147,8 @@
         @click="openSendFlow"
       />
       <section
-        class="flows-trigger__handlers"
         v-else-if="!isMobile && !showSendFlow"
+        class="flows-trigger__handlers"
       >
         <UnnnicButton
           size="small"
@@ -145,7 +158,7 @@
           @click="openNewContactModal"
         />
         <UnnnicButton
-          :disabled="this.listOfGroupAndContactsSelected.length === 0"
+          :disabled="listOfGroupAndContactsSelected.length === 0"
           :text="$t('continue')"
           type="primary"
           size="small"
@@ -154,7 +167,7 @@
       </section>
     </AsideSlotTemplateSection>
 
-    <template v-slot:modals>
+    <template #modals>
       <ModalListTriggeredFlows
         v-if="showTriggeredFlowsModal"
         @close="showTriggeredFlowsModal = false"
@@ -214,17 +227,13 @@ export default {
     SendFlow,
   },
 
-  created() {
-    this.contactList();
-    this.groupList();
-  },
-
   props: {
     selectedContact: {
       type: Object,
-      required: false,
+      default: () => {},
     },
   },
+  emits: ['close'],
 
   data: () => ({
     letterColapse: {},
@@ -300,6 +309,29 @@ export default {
       return !this.isMobile && this.showSendFlow;
     },
   },
+  watch: {
+    searchUrn: {
+      handler() {
+        if (this.timerId !== 0) clearTimeout(this.timerId);
+        this.timerId = setTimeout(() => {
+          this.contactList(null, true);
+        }, 500);
+      },
+    },
+    selectedContact: {
+      immediate: true,
+      handler(newSelectedContact) {
+        if (newSelectedContact) {
+          this.openSendFlow();
+        }
+      },
+    },
+  },
+
+  created() {
+    this.contactList();
+    this.groupList();
+  },
 
   methods: {
     setContacts(contact) {
@@ -316,7 +348,11 @@ export default {
         FlowsTrigger.checkContact(contact.uuid)
           .then((response) => {
             if (response.show_warning) {
-              this.openedRoomsAlerts.push({ contactName: contact.name, queue: response.queue, agent: response.agent });
+              this.openedRoomsAlerts.push({
+                contactName: contact.name,
+                queue: response.queue,
+                agent: response.agent,
+              });
             }
           })
           .catch(
@@ -452,24 +488,6 @@ export default {
     },
     closeRemoveSelectedContactsModal() {
       this.showRemoveSelectedContactsModal = false;
-    },
-  },
-  watch: {
-    searchUrn: {
-      handler() {
-        if (this.timerId !== 0) clearTimeout(this.timerId);
-        this.timerId = setTimeout(() => {
-          this.contactList(null, true);
-        }, 500);
-      },
-    },
-    selectedContact: {
-      immediate: true,
-      handler(newSelectedContact) {
-        if (newSelectedContact) {
-          this.openSendFlow();
-        }
-      },
     },
   },
 };

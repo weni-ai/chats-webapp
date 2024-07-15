@@ -1,8 +1,8 @@
 <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
   <form
-    @submit.prevent="$emit('submit')"
     class="form-sector"
+    @submit.prevent="$emit('submit')"
   >
     <section
       v-if="isEditing"
@@ -69,7 +69,7 @@
             autocomplete
             autocompleteIconLeft
             autocompleteClearOnFocus
-            @update:modelValue="selectManager"
+            @update:model-value="selectManager"
           />
         </div>
         <!-- <unnnic-button
@@ -90,8 +90,8 @@
           :name="`${manager.user.first_name} ${manager.user.last_name}`"
           :email="manager.user.email"
           :avatarUrl="photo(manager.user.photo_url)"
-          @remove="removeManager(manager.uuid)"
           roleName="Gerente"
+          @remove="removeManager(manager.uuid)"
         />
       </section>
     </section>
@@ -148,17 +148,17 @@
               {{ $t('sector.managers.working_day.start.label') }}
             </span>
             <input
+              v-model="sector.workingDay.start"
               class="input-time"
               type="time"
-              v-model="sector.workingDay.start"
               min="00:00"
               max="23:00"
             />
             <span
-              v-show="!this.validHour"
+              v-show="!validHour"
               style="font-size: 12px; color: #ff4545"
             >
-              {{ this.message }}
+              {{ message }}
             </span>
           </div>
           <div>
@@ -166,9 +166,9 @@
               {{ $t('sector.managers.working_day.end.label') }}
             </span>
             <input
+              v-model="sector.workingDay.end"
               class="input-time"
               type="time"
-              v-model="sector.workingDay.end"
               min="00:01"
               max="23:59"
             />
@@ -202,8 +202,8 @@
           :validateLabel="$t('confirm_typing') + ` &quot;${sector.name}&quot;`"
           :actionPrimaryLabel="$t('confirm')"
           :actionSecondaryLabel="$t('cancel')"
-          @clickActionPrimary="deleteSector(sector.uuid)"
-          @clickActionSecondary="openModalDelete = false"
+          @click-action-primary="deleteSector(sector.uuid)"
+          @click-action-secondary="openModalDelete = false"
         />
       </div>
     </section>
@@ -237,6 +237,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['update:modelValue', 'remove-manager', 'validate', 'submit'],
 
   data: () => ({
     selectedManager: [],
@@ -275,6 +276,15 @@ export default {
       },
       set(sector) {
         this.$emit('update:modelValue', sector);
+      },
+    },
+  },
+  watch: {
+    sector: {
+      deep: true,
+      immediate: true,
+      handler() {
+        this.$emit('validate', this.validate());
       },
     },
   },
@@ -389,15 +399,6 @@ export default {
           seconds: 5,
         });
       }
-    },
-  },
-  watch: {
-    sector: {
-      deep: true,
-      immediate: true,
-      handler() {
-        this.$emit('validate', this.validate());
-      },
     },
   },
 };

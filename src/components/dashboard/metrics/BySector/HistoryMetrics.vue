@@ -17,7 +17,7 @@
     />
     <TableMetrics
       :headers="agentsLabel"
-      :items="this.agents"
+      :items="agents"
       title="Chats por agente"
       icon="indicator"
       class="grid-3"
@@ -38,13 +38,6 @@ export default {
     CardGroupMetrics,
     GeneralMetrics,
     TableMetrics,
-  },
-
-  mounted() {
-    this.agentInfo();
-    this.roomInfo();
-    this.sectorInfo();
-    this.rawDataInfo();
   },
 
   props: {
@@ -106,6 +99,13 @@ export default {
         this.rawDataInfo();
       }
     },
+  },
+
+  mounted() {
+    this.agentInfo();
+    this.roomInfo();
+    this.sectorInfo();
+    this.rawDataInfo();
   },
 
   methods: {

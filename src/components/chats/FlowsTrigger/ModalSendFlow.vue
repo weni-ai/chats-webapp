@@ -1,9 +1,9 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <UnnnicModal
-    @close="$emit('close')"
     :text="$t('flows_trigger.send')"
     class="modal-send-flow"
+    @close="$emit('close')"
   >
     <SelectFlow v-model="selectedFlow" />
 
@@ -38,6 +38,7 @@ export default {
       required: true,
     },
   },
+  emits: ['close', 'send-flow-finished'],
 
   data() {
     return {

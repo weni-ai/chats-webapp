@@ -7,9 +7,9 @@
   >
     <RoomsTransferFields
       ref="roomsTransferFields"
-      v-model:selectedQueue="selectedQueue"
-      @transfer-complete="transferComplete"
+      v-model="selectedQueue"
       bulkTransfer
+      @transfer-complete="transferComplete"
     />
 
     <template #options>
@@ -25,9 +25,9 @@
         :text="$t('transfer')"
         type="primary"
         size="large"
-        @click="bulkTransfer"
-        :disabled="selectedQueue.length === 0"
+        :disabled="disabledTransferButton"
         :loading="isLoadingBulkTransfer"
+        @click="bulkTransfer"
       />
     </template>
   </UnnnicModal>
@@ -42,12 +42,21 @@ export default {
   components: {
     RoomsTransferFields,
   },
+  emits: ['close'],
 
   data() {
     return {
       selectedQueue: [],
       isLoadingBulkTransfer: false,
     };
+  },
+
+  computed: {
+    disabledTransferButton() {
+      return (
+        this.selectedQueue.length === 0 || this.selectedQueue[0]?.value === ''
+      );
+    },
   },
 
   methods: {

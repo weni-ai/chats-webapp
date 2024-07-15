@@ -5,7 +5,7 @@
     :text="$t('chats.select_services_queues')"
     @close="$emit('close')"
   >
-    <section  class="queue-modal-form">
+    <section class="queue-modal-form">
       <section
         v-if="!verifySelectedLength"
         class="queue-modal-disclaimer"
@@ -58,6 +58,7 @@ import Queues from '@/services/api/resources/chats/queues';
 
 export default {
   name: 'ModalQueuePriorizations',
+  emits: ['close'],
 
   data() {
     return {
@@ -75,19 +76,6 @@ export default {
     };
   },
 
-  watch: {
-    selectedQueues: {
-      handler() {
-        this.updateQueuesPlaceholder()
-      }, 
-      deep: true,
-    },
-  },
-
-  created() {
-    this.getListQueues();
-  },
-
   computed: {
     ...mapState(useProfile, ['me']),
     ...mapState(useRooms, ['rooms']),
@@ -95,6 +83,19 @@ export default {
     verifySelectedLength() {
       return this.selectedQueues.length > 0;
     },
+  },
+
+  watch: {
+    selectedQueues: {
+      handler() {
+        this.updateQueuesPlaceholder();
+      },
+      deep: true,
+    },
+  },
+
+  created() {
+    this.getListQueues();
   },
   methods: {
     ...mapActions(useRooms, {
@@ -176,7 +177,7 @@ export default {
           },
           seconds: 5,
         });
-        this.$root.wsReconnect()
+        this.$root.wsReconnect();
         this.$emit('close');
       } catch (error) {
         console.error(error);
@@ -194,7 +195,7 @@ export default {
 
     updateQueuesPlaceholder() {
       const queuesValue = this.selectedQueues.map((queue) => queue.value);
-      
+
       const selectedQueues = queuesValue.map((queueUuid) => ({
         uuid: queueUuid,
         role: this.roleIdSelected,

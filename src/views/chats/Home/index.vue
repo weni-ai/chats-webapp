@@ -75,12 +75,6 @@ export default {
     };
   },
 
-  async created() {
-    if (this.$route.name === 'home') {
-      resetChats();
-    }
-  },
-
   computed: {
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
@@ -88,6 +82,12 @@ export default {
     ...mapState(useDiscussions, {
       discussion: (store) => store.activeDiscussion,
     }),
+  },
+
+  async created() {
+    if (this.$route.name === 'home') {
+      resetChats();
+    }
   },
 
   methods: {

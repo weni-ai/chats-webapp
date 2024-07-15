@@ -9,8 +9,8 @@
         <FormSector
           v-model="sector"
           isEditing
-          @remove-manager="removeManager"
           :managers="projectManagers"
+          @remove-manager="removeManager"
         />
       </template>
 
@@ -22,7 +22,7 @@
           <UnnnicBreadcrumb
             class="edit-sector__breadcrumb"
             :crumbs="queueBreadcrumb"
-            @crumbClick="handleCrumbClick"
+            @crumb-click="handleCrumbClick"
           />
           <h2 class="edit-sector__title">{{ queueToEdit.name }}</h2>
           <div style="margin-bottom: 24px">
@@ -46,8 +46,8 @@
               </template>
               <template #description>
                 <div
-                  @focusout="saveEditDescription"
                   style="word-break: break-all"
+                  @focusout="saveEditDescription"
                 >
                   <span v-show="!editContent">{{ description }}</span>
                   <div
@@ -55,12 +55,12 @@
                     @focusout="saveEditDescription"
                   >
                     <UnnnicTextArea
-                      @focus="focusTextEditor"
+                      ref="textEditor"
+                      v-model="content"
                       :maxLength="250"
                       size="sm"
                       placeholder="Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando"
-                      v-model="content"
-                      ref="textEditor"
+                      @focus="focusTextEditor"
                     />
                   </div>
                 </div>
@@ -96,10 +96,10 @@
           v-model="queue"
           :sector="sector"
           :queues="queues"
-          @visualize="visualizeQueue"
-          @add-queue="createQueue"
           :label="$t('queues.create_queue')"
           isEditing
+          @visualize="visualizeQueue"
+          @add-queue="createQueue"
         />
       </template>
 
@@ -124,24 +124,24 @@
 
     <section class="actions">
       <UnnnicButton
-        v-if="!!queueToEdit && this.currentTab === 'queues'"
+        v-if="!!queueToEdit && currentTab === 'queues'"
         text="Excluir fila"
         iconLeft="delete-1"
         type="tertiary"
         @click="openModalDeleteQueue(queueToEdit)"
       />
       <UnnnicButton
+        v-if="isQuickMessageEditing"
         :text="$t('cancel')"
         type="tertiary"
         @click="cancel"
-        v-if="this.isQuickMessageEditing"
       />
       <section class="button-action">
         <UnnnicButton
           v-if="
-            this.currentTab === 'sector' ||
-            this.queueToEdit ||
-            this.isQuickMessageEditing ||
+            currentTab === 'sector' ||
+            queueToEdit ||
+            isQuickMessageEditing ||
             currentTab === 'tags'
           "
           :text="$t('save')"
@@ -151,7 +151,7 @@
         />
       </section>
       <UnnnicButton
-        v-if="this.currentTab === 'messages' && !isQuickMessageEditing"
+        v-if="currentTab === 'messages' && !isQuickMessageEditing"
         :text="$t('quick_messages.new')"
         iconLeft="add"
         type="secondary"
@@ -168,8 +168,8 @@
         <template #options>
           <UnnnicButton
             type="tertiary"
-            @click="closeModalDeleteQueue"
             :text="$t('cancel')"
+            @click="closeModalDeleteQueue"
           />
           <UnnnicButton
             type="secondary"
@@ -213,20 +213,12 @@ export default {
   },
 
   props: {
+    // eslint-disable-next-line vue/require-default-prop
     uuid: [String, Number],
     tab: {
       type: String,
       default: '',
     },
-  },
-
-  async beforeMount() {
-    if (['sector', 'queues', 'messages', 'tags'].includes(this.tab))
-      this.currentTab = this.tab;
-
-    this.getSector();
-    this.getManagers();
-    this.listProjectManagers();
   },
 
   data: () => ({
@@ -282,6 +274,22 @@ export default {
 
   computed: {
     ...mapState(useQuickMessageShared, ['quickMessagesShared']),
+  },
+
+  watch: {
+    currentTab(current) {
+      if (this.$route.query.tab !== current) this.updateQueryParams(current);
+      this.handleTabChange(current);
+    },
+  },
+
+  async beforeMount() {
+    if (['sector', 'queues', 'messages', 'tags'].includes(this.tab))
+      this.currentTab = this.tab;
+
+    this.getSector();
+    this.getManagers();
+    this.listProjectManagers();
   },
 
   methods: {
@@ -669,13 +677,6 @@ export default {
       if (queueCrumb.name === this.queueToEdit.name) return;
 
       this.queueToEdit = null;
-    },
-  },
-
-  watch: {
-    currentTab(current) {
-      if (this.$route.query.tab !== current) this.updateQueryParams(current);
-      this.handleTabChange(current);
     },
   },
 };

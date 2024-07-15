@@ -9,8 +9,8 @@
       <div class="modal-list-triggered-flows__handlers__input">
         <UnnnicLabel :label="$t('filter.by_date')" />
         <UnnnicInputDatePicker
-          class="modal-list-triggered-flows__handlers__date-picker"
           v-model="filterDate"
+          class="modal-list-triggered-flows__handlers__date-picker"
           position="left"
           :inputFormat="$t('date_format')"
         />
@@ -78,6 +78,7 @@ export default {
     TriggeredFlowsLoading,
     TablePagination,
   },
+  emits: ['close'],
 
   data: () => ({
     isTableLoading: false,
@@ -94,10 +95,6 @@ export default {
     triggeredFlowsCurrentPage: 1,
     triggeredFlowsLimit: 5,
   }),
-
-  async mounted() {
-    this.getListFlowsStart();
-  },
 
   computed: {
     tableHeaders() {
@@ -129,6 +126,16 @@ export default {
         },
       ];
     },
+  },
+  watch: {
+    triggeredFlowsCurrentPage() {
+      this.getListFlowsStart(true);
+    },
+    filterDate: 'getListFlowsStart',
+  },
+
+  async mounted() {
+    this.getListFlowsStart();
   },
 
   methods: {
@@ -167,12 +174,6 @@ export default {
       this.isTableLoading = false;
       this.isPagesLoading = false;
     },
-  },
-  watch: {
-    triggeredFlowsCurrentPage() {
-      this.getListFlowsStart(true);
-    },
-    filterDate: 'getListFlowsStart',
   },
 };
 </script>

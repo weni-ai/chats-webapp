@@ -9,38 +9,38 @@
       @click.stop
     >
       <FullscreenControl
-        @click="rotate('left')"
         icon="rotate_left"
+        @click="rotate('left')"
       />
       <FullscreenControl
-        @click="rotate('right')"
         icon="rotate_right"
+        @click="rotate('right')"
       />
       <FullscreenControl
-        @click="zoomHandler"
         :icon="isZoomed ? 'zoom_out' : 'zoom_in'"
+        @click="zoomHandler"
       />
       <FullscreenControl
-        @click="download"
         icon="download"
+        @click="download"
       />
       <FullscreenControl
-        @click="close"
         icon="close"
+        @click="close"
       />
     </header>
 
     <div
-      class="media__container"
       ref="mediaContainer"
+      class="media__container"
       @mousedown="startPan"
       @mousemove="pan"
       @mouseup="endPan"
       @click.stop
     >
       <div
-        class="media__wrapper"
         ref="mediaWrapper"
+        class="media__wrapper"
         :style="mediaStyle"
         @click.stop
       >
@@ -53,12 +53,12 @@
       @click.prevent
     >
       <FullscreenControl
-        @click="previous"
         icon="chevron_left"
+        @click="previous"
       />
       <FullscreenControl
-        @click="next"
         icon="chevron_right"
+        @click="next"
       />
     </footer>
   </div>
@@ -81,8 +81,10 @@ export default {
     },
     downloadMediaName: {
       type: String,
+      default: '',
     },
   },
+  emits: ['close', 'next', 'previous'],
 
   data() {
     return {
@@ -99,6 +101,37 @@ export default {
       prevPanOffsetX: 0,
       prevPanOffsetY: 0,
     };
+  },
+
+  computed: {
+    rotateDirection() {
+      const isVertical = [90, 270].includes(Math.abs(this.rotatedDeg));
+      return isVertical ? 'vertical' : 'horizontal';
+    },
+
+    mediaStyle() {
+      const { containerHeight } = this.getMediaDimensions();
+      return {
+        transform: `translate(${this.panOffsetX}px, ${
+          this.panOffsetY
+        }px) scale(${this.isZoomed ? this.zoomScale : 1}) rotate(${
+          this.rotatedDeg
+        }deg)`,
+        cursor: this.isZoomed && this.isAbleToPlan ? 'grab' : 'auto',
+        transition: this.isPanning ? 'none' : 'all 0.3s ease',
+        width:
+          this.rotateDirection === 'vertical' ? `${containerHeight}px` : '100%',
+      };
+    },
+  },
+
+  watch: {
+    zoomScale() {
+      this.checkIsAbleToPan();
+    },
+    rotatedDeg() {
+      this.checkIsAbleToPan();
+    },
   },
 
   methods: {
@@ -310,37 +343,6 @@ export default {
       if (!this.isAbleToPlan) {
         this.resetPan();
       }
-    },
-  },
-
-  computed: {
-    rotateDirection() {
-      const isVertical = [90, 270].includes(Math.abs(this.rotatedDeg));
-      return isVertical ? 'vertical' : 'horizontal';
-    },
-
-    mediaStyle() {
-      const { containerHeight } = this.getMediaDimensions();
-      return {
-        transform: `translate(${this.panOffsetX}px, ${
-          this.panOffsetY
-        }px) scale(${this.isZoomed ? this.zoomScale : 1}) rotate(${
-          this.rotatedDeg
-        }deg)`,
-        cursor: this.isZoomed && this.isAbleToPlan ? 'grab' : 'auto',
-        transition: this.isPanning ? 'none' : 'all 0.3s ease',
-        width:
-          this.rotateDirection === 'vertical' ? `${containerHeight}px` : '100%',
-      };
-    },
-  },
-
-  watch: {
-    zoomScale() {
-      this.checkIsAbleToPan();
-    },
-    rotatedDeg() {
-      this.checkIsAbleToPan();
     },
   },
 };

@@ -4,7 +4,7 @@
   <DashboardLayout v-show="!viewedAgent?.email">
     <template #header> {{ header }}</template>
     <template
-      v-if="!this.showData"
+      v-if="!showData"
       #status
     >
       <div style="margin-right: 27px">
@@ -21,19 +21,19 @@
 
     <template #actions>
       <DashboardFilters
-        @filter="filters = $event"
         :sectors="sectors"
+        @filter="filters = $event"
       />
     </template>
 
     <HistoryMetricsBySector
       :sectors="sectors"
       :filter="filters"
-      @historyFilter="event = $event"
       :headerTitle="filters?.sector ? 'Filas' : 'Setores'"
       :totalChatsLabel="showData ? 'Quantidade de chats' : 'Agentes online'"
       :generalCardLabel="showData ? 'Quantidade de chats' : 'Em andamento'"
       :agentsLabel="showData ? 'Chats no período' : 'Em andamento'"
+      @history-filter="event = $event"
     />
   </DashboardLayout>
 </template>
@@ -61,6 +61,7 @@ export default {
     HistoryMetricsBySector,
     ViewMode,
   },
+  emits: ['historyFilter'],
 
   data: () => ({
     showData: '',
@@ -68,20 +69,6 @@ export default {
     filters: null,
     sectors: [],
   }),
-
-  async created() {
-    await this.getSectors();
-  },
-
-  watch: {
-    visualization(newValue) {
-      if (newValue) {
-        this.filters = newValue;
-        this.$emit('historyFilter', newValue);
-        this.showData = !!this.filters?.filterDate.start;
-      }
-    },
-  },
   computed: {
     ...mapState(useConfig, ['project']),
     ...mapState(useDashboard, ['viewedAgent']),
@@ -95,6 +82,20 @@ export default {
       const projectName = this.project.name;
       return projectName;
     },
+  },
+
+  watch: {
+    visualization(newValue) {
+      if (newValue) {
+        this.filters = newValue;
+        this.$emit('historyFilter', newValue);
+        this.showData = !!this.filters?.filterDate.start;
+      }
+    },
+  },
+
+  async created() {
+    await this.getSectors();
   },
 
   methods: {

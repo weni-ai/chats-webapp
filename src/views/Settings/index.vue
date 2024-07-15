@@ -1,7 +1,7 @@
 <template>
   <main
-    class="settings-chats"
     ref="sectorsSection"
+    class="settings-chats"
     @scroll="onScroll"
   >
     <header>
@@ -12,8 +12,8 @@
     </header>
 
     <section
-      class="settings-chats__project-configs"
       v-if="isUserAdmin && projectConfig"
+      class="settings-chats__project-configs"
     >
       <section class="project-configs__config">
         <UnnnicSwitch
@@ -70,8 +70,8 @@
 
       <UnnnicCardProject
         v-for="sector in sectors"
-        class="sectors-list"
         :key="sector.id"
+        class="sectors-list"
         :actionText="$t('config_chats.open')"
         :name="sector.name"
         :statuses="[
@@ -115,10 +115,6 @@ import Sector from '@/services/api/resources/settings/sector';
 export default {
   name: 'SettingsChats',
 
-  beforeMount() {
-    this.listSectors();
-  },
-
   data: () => ({
     sectors: [],
     isLoading: true,
@@ -154,6 +150,27 @@ export default {
       const ROLE_ADMIN = 1;
       return this.me.project_permission_role === ROLE_ADMIN;
     },
+  },
+
+  watch: {
+    project: {
+      immediate: true,
+      handler(newProject) {
+        if (newProject.config) {
+          this.projectConfig = newProject.config;
+        }
+      },
+    },
+    projectConfig: {
+      deep: true,
+      handler() {
+        this.updateProjectConfig();
+      },
+    },
+  },
+
+  beforeMount() {
+    this.listSectors();
   },
 
   methods: {
@@ -212,23 +229,6 @@ export default {
       if (isScrollInBottom) {
         this.listMoreSectors();
       }
-    },
-  },
-
-  watch: {
-    project: {
-      immediate: true,
-      handler(newProject) {
-        if (newProject.config) {
-          this.projectConfig = newProject.config;
-        }
-      },
-    },
-    projectConfig: {
-      deep: true,
-      handler() {
-        this.updateProjectConfig();
-      },
     },
   },
 };

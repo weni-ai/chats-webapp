@@ -1,7 +1,7 @@
 <template>
   <UnnnicTab
-    size="md"
     v-model="tab"
+    size="md"
     :tabs="tabs"
   >
     <template #tab-head-media>
@@ -90,25 +90,18 @@ export default {
   props: {
     room: {
       type: Object,
+      default: () => {},
     },
     contactInfo: {
       type: Object,
+      default: () => {},
     },
     history: {
       type: Boolean,
       default: false,
     },
   },
-
-  async created() {
-    if (!this.history) {
-      await this.loadNextMedias();
-    } else {
-      await this.loadNextMediasClosedRoom();
-    }
-
-    this.$emit('loaded-medias');
-  },
+  emits: ['fullscreen', 'loaded-medias'],
 
   data: () => ({
     tab: 'media',
@@ -140,6 +133,16 @@ export default {
           ),
       );
     },
+  },
+
+  async created() {
+    if (!this.history) {
+      await this.loadNextMedias();
+    } else {
+      await this.loadNextMediasClosedRoom();
+    }
+
+    this.$emit('loaded-medias');
   },
 
   methods: {

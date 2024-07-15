@@ -39,6 +39,7 @@ export default {
       type: Boolean,
     },
   },
+  emits: ['close', 'input'],
 
   data() {
     return {

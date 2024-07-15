@@ -1,12 +1,12 @@
 <template>
   <section
+    class="document-preview clickable"
+    :class="[{ highlight }, size]"
     @click="
       $emit('download');
       openFile(url);
     "
     @keypress.enter="$emit('download')"
-    class="document-preview clickable"
-    :class="[{ highlight }, size]"
   >
     <UnnnicIconSvg
       :icon="icon"
@@ -64,8 +64,10 @@ export default {
     },
     type: {
       type: String,
+      default: '',
     },
   },
+  emits: ['download'],
 
   computed: {
     pathname() {
