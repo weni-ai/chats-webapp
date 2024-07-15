@@ -134,7 +134,7 @@ export default {
 
   async created() {
     await this.handlingGetStatus();
-    this.sound = (sessionStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'yes';
+    this.sound = (localStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'yes';
     window.dispatchEvent(
       new CustomEvent(`${this.help ? 'show' : 'hide'}BottomRightOptions`),
     );
@@ -177,7 +177,7 @@ export default {
     },
 
     changeSound() {
-      sessionStorage.setItem(PREFERENCES_SOUND, this.sound ? 'yes' : 'no');
+      localStorage.setItem(PREFERENCES_SOUND, this.sound ? 'yes' : 'no');
     },
 
     showStatusAlert(connectionStatus) {
