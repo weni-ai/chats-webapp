@@ -26,7 +26,14 @@
 </template>
 
 <script>
+import { mapState } from 'pinia';
+
+import { useConfig } from '@/store/modules/config';
+
+import env from '@/utils/env';
+
 import DashboardManagerApi from '@/services/api/resources/dashboard/dashboardManager';
+
 import CardGroupMetrics from '../../CardGroupMetrics.vue';
 import GeneralMetrics from '../../GeneralMetrics.vue';
 import TableMetrics from '../../TableMetrics.vue';
@@ -82,30 +89,40 @@ export default {
         value: 'chats',
       },
     ],
+    metricsTimer: null,
   }),
 
   computed: {
     updateFilter() {
       return this.filter;
     },
+    ...mapState(useConfig, {
+      project: 'project',
+    }),
   },
 
   watch: {
     updateFilter(newValue) {
       if (newValue) {
         this.agentInfo();
-        this.roomInfo();
-        this.sectorInfo();
-        this.rawDataInfo();
+        this.requestMetrics();
+
+        const PROJECT_DASHBOARD_TIMER_REFRESH = env(
+          'CHATS_PROJECTS_DASHBOARD_TIMER_REFRESH',
+        )?.split(', ');
+        const isTimerMetricsRefreshEnabled =
+          PROJECT_DASHBOARD_TIMER_REFRESH?.includes(this.project?.uuid);
+
+        if (isTimerMetricsRefreshEnabled) {
+          this.startMetricsTimer();
+        }
       }
     },
   },
 
   mounted() {
+    this.requestMetrics();
     this.agentInfo();
-    this.roomInfo();
-    this.sectorInfo();
-    this.rawDataInfo();
   },
 
   methods: {
@@ -219,6 +236,21 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+
+    startMetricsTimer() {
+      if (this.metricsTimer) {
+        clearInterval(this.metricsTimer);
+      }
+
+      const ONE_MINUTE = 1000 * 60 * 1;
+      this.metricsTimer = setInterval(() => this.requestMetrics(), ONE_MINUTE);
+    },
+
+    requestMetrics() {
+      this.roomInfo();
+      this.sectorInfo();
+      this.rawDataInfo();
     },
   },
 };
