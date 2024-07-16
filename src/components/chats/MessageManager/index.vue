@@ -171,8 +171,10 @@ export default {
       default: '',
     },
     loadingFileValue: {
-      type: Number,
-      default: 0,
+      validator: (value) => {
+        return value === null || typeof value === 'number';
+      },
+      default: null,
     },
     showSkeletonLoading: {
       type: Boolean,
