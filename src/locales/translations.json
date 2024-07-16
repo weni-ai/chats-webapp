@@ -1939,6 +1939,18 @@
           "en": "Queue selection by agents inactive",
           "es": "Selección de cola por agentes inactivo"
         }
+      },
+      "block_transfer_to_off_agents": {
+        "switch_active": {
+          "pt-br": "Bloquear transferências para agentes offline",
+          "en": "Block transfers to offline agents",
+          "es": "Bloquear transferencias a agentes offline"
+        },
+        "switch_inactive": {
+          "pt-br": "Permitir transferências para agentes offline",
+          "en": "Allow transfers to offline agents",
+          "es": "Permitir transferencias a agentes offline"
+        }
       }
     },
     "new_sector": {
