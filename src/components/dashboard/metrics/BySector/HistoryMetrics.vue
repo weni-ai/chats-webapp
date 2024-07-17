@@ -111,7 +111,7 @@ export default {
           'CHATS_PROJECTS_DASHBOARD_TIMER_REFRESH',
         )?.split(', ');
         const isTimerMetricsRefreshEnabled =
-          PROJECT_DASHBOARD_TIMER_REFRESH.includes(this.project?.uuid);
+          PROJECT_DASHBOARD_TIMER_REFRESH?.includes(this.project?.uuid);
 
         if (isTimerMetricsRefreshEnabled) {
           this.startMetricsTimer();

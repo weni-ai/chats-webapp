@@ -1,9 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
-
 import { mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
+
 import UnnnicSystem from '@/plugins/UnnnicSystem';
 import i18n from '@/plugins/i18n';
+
+import QueueService from '@/services/api/resources/settings/queue';
 
 import RoomsTransferFields from '../RoomsTransferFields.vue';
 
@@ -100,6 +102,48 @@ describe('RoomsTransferField', () => {
 
       await wrapper.vm.$nextTick();
       expect(agentSelect.props('disabled')).toBe(true);
+    });
+
+    it('should show a disclaimer if no agent is found', async () => {
+      vi.mocked(QueueService.agentsToTransfer).mockImplementationOnce(() => []);
+
+      await wrapper.setProps({
+        modelValue: [{ value: 'queue_id', label: 'Queue' }],
+      });
+
+      await wrapper.vm.$nextTick();
+
+      const transferDisclaimer = wrapper.findComponent(
+        '[data-testid="transfer-disclaimer"]',
+      );
+
+      expect(transferDisclaimer.exists()).toBe(true);
+    });
+
+    it('should show a disclaimer if agent selected is offline', async () => {
+      vi.mocked(QueueService.agentsToTransfer).mockImplementationOnce(() => [
+        {
+          first_name: 'John',
+          last_name: 'Doe',
+          email: 'john@doe.com',
+          status: 'offline',
+        },
+      ]);
+
+      await wrapper.setProps({
+        modelValue: [{ value: 'queue_id', label: 'Queue' }],
+      });
+      await wrapper.setData({
+        selectedAgent: [
+          { label: 'John Doe', value: 'john@doe.com', status: 'offline' },
+        ],
+      });
+
+      const transferDisclaimer = wrapper.findComponent(
+        '[data-testid="transfer-disclaimer"]',
+      );
+
+      expect(transferDisclaimer.exists()).toBe(true);
     });
   });
 

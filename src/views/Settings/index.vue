@@ -53,6 +53,12 @@
           />
         </UnnnicToolTip>
       </section>
+      <section class="project-configs__config">
+        <UnnnicSwitch
+          v-model="projectConfig.filter_offline_agents"
+          :textRight="configBlockTransferToOffAgentsTranslation"
+        />
+      </section>
     </section>
 
     <section class="sectors">
@@ -123,6 +129,7 @@ export default {
     projectConfig: {
       can_use_bulk_transfer: false,
       can_use_queue_prioritization: false,
+      filter_offline_agents: false,
     },
   }),
 
@@ -143,6 +150,14 @@ export default {
       return this.$t(
         `config_chats.project_configs.queue_prioritization.switch_${
           canQueuePrioritization ? 'active' : 'inactive'
+        }`,
+      );
+    },
+    configBlockTransferToOffAgentsTranslation() {
+      const canBulkTransfer = this.projectConfig.filter_offline_agents;
+      return this.$t(
+        `config_chats.project_configs.block_transfer_to_off_agents.switch_${
+          canBulkTransfer ? 'active' : 'inactive'
         }`,
       );
     },
@@ -182,11 +197,15 @@ export default {
     },
 
     async updateProjectConfig() {
-      const { can_use_bulk_transfer, can_use_queue_prioritization } =
-        this.projectConfig;
+      const {
+        can_use_bulk_transfer,
+        can_use_queue_prioritization,
+        filter_offline_agents,
+      } = this.projectConfig;
       Project.update({
         can_use_bulk_transfer,
         can_use_queue_prioritization,
+        filter_offline_agents,
       });
     },
 
