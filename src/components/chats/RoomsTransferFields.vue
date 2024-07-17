@@ -6,6 +6,7 @@
     <section class="select-destination__field">
       <UnnnicLabel
         v-if="size !== 'sm'"
+        class="field__label"
         :label="$t('queue')"
       />
       <UnnnicSelectSmart
@@ -21,6 +22,7 @@
     <section class="select-destination__field">
       <UnnnicLabel
         v-if="size !== 'sm'"
+        class="field__label"
         :label="$t('agent')"
       />
       <UnnnicSelectSmart
@@ -34,6 +36,17 @@
         autocompleteClearOnFocus
       />
     </section>
+    <UnnnicDisclaimer
+      v-if="showTransferDisclaimer"
+      data-testid="transfer-disclaimer"
+      :class="[
+        'select-destination__disclaimer',
+        { 'select-destination__disclaimer--small': size === 'sm' },
+      ]"
+      :text="transferDisclaimerText"
+      icon="error"
+      iconColor="aux-red-500"
+    />
   </main>
 </template>
 
@@ -79,6 +92,8 @@ export default {
       queues: [],
       agents: [],
       selectedAgent: [],
+
+      showTransferDisclaimer: false,
     };
   },
 
@@ -116,11 +131,37 @@ export default {
     isAgentsFieldDisabled() {
       return this.selectedQueue[0]?.value === '' || this.agents?.length < 2;
     },
+
+    isSelectedAgentOffline() {
+      return (
+        this.selectedAgent[0]?.value &&
+        this.selectedAgent[0]?.status === 'offline'
+      );
+    },
+    haveSelectedQueue() {
+      return !!this.selectedQueue?.[0]?.value;
+    },
+    isAgentsListEmpty() {
+      return this.haveSelectedQueue && this.agents?.length < 2;
+    },
+
+    transferDisclaimerText() {
+      if (this.isSelectedAgentOffline) {
+        return this.$t('bulk_transfer.disclaimer.selected_agent_offline');
+      }
+
+      if (this.isAgentsListEmpty) {
+        return this.$t('bulk_transfer.disclaimer.without_online_agents');
+      }
+      return '';
+    },
   },
 
   watch: {
     selectedAgent(newSelectedAgent) {
       this.$emit('update:selectedAgent', newSelectedAgent);
+
+      this.showTransferDisclaimer = newSelectedAgent[0]?.status === 'offline';
     },
   },
 
@@ -151,14 +192,21 @@ export default {
     },
 
     async getAgents(queueUuid) {
+      this.showTransferDisclaimer = false;
+
       const newAgents = await Queue.agentsToTransfer(queueUuid);
 
       const treatedAgents = newAgents
         .filter((agent) => agent.email !== this.me.email)
-        .map(({ first_name, last_name, email }) => ({
+        .map(({ first_name, last_name, email, status }) => ({
           label: [first_name, last_name].join(' ').trim() || email,
           value: email,
+          status,
         }));
+
+      if (treatedAgents.length === 0) {
+        this.showTransferDisclaimer = true;
+      }
 
       this.agents = [...this.agentsDefault, ...treatedAgents];
     },
@@ -258,6 +306,18 @@ export default {
     .select-destination {
       &__field {
         text-align: left;
+
+        .field__label {
+          margin: 0 0 $unnnic-spacing-xs;
+        }
+      }
+
+      &__disclaimer {
+        margin-top: -$unnnic-spacing-nano;
+
+        &--small {
+          margin-top: $unnnic-spacing-xs;
+        }
       }
     }
   }
