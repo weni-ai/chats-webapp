@@ -1084,6 +1084,18 @@
       "pt-br": "Não foi possível transferir os contatos, tente novamente",
       "en": "It was not possible to transfer the contacts, try again",
       "es": "No fue posible transferir los contactos, intente nuevamente"
+    },
+    "disclaimer": {
+      "selected_agent_offline": {
+        "pt-br": "O agente selecionado está offline no momento",
+        "en": "The selected agent is offline at the moment",
+        "es": "El agente seleccionado está actualmente desconectado"
+      },
+      "without_online_agents": {
+        "pt-br": "Nenhum agente online no momento",
+        "en": "No online agent at the moment",
+        "es": "No hay agentes en línea en este momento"
+      }
     }
   },
   "contact_info": {
@@ -1949,7 +1961,7 @@
         "switch_inactive": {
           "pt-br": "Permitir transferências para agentes offline",
           "en": "Allow transfers to offline agents",
-          "es": "Permitir transferencias a agentes offline"
+          "es": "Permitir transferencias a agentes fuera de línea"
         }
       }
     },
