@@ -111,6 +111,8 @@ describe('RoomsTransferField', () => {
         modelValue: [{ value: 'queue_id', label: 'Queue' }],
       });
 
+      await wrapper.vm.$nextTick();
+
       const transferDisclaimer = wrapper.findComponent(
         '[data-testid="transfer-disclaimer"]',
       );
@@ -133,12 +135,7 @@ describe('RoomsTransferField', () => {
       });
       await wrapper.setData({
         selectedAgent: [
-          {
-            first_name: 'John',
-            last_name: 'Doe',
-            email: 'john@doe.com',
-            status: 'offline',
-          },
+          { label: 'John Doe', value: 'john@doe.com', status: 'offline' },
         ],
       });
 
