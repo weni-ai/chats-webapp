@@ -310,6 +310,13 @@ export default {
     &__table {
       overflow: hidden;
 
+      :deep(.table-row) {
+        $rowSpacing: $unnnic-spacing-lg;
+
+        display: grid;
+        grid-template-columns: 1fr $rowSpacing 0.5fr $rowSpacing 0.8fr $rowSpacing 0.4fr $rowSpacing 0.3fr;
+      }
+
       &__no-results {
         color: $unnnic-color-neutral-cloudy;
         font-size: $unnnic-font-size-body-gt;
