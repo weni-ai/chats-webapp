@@ -1954,14 +1954,14 @@
       },
       "block_transfer_to_off_agents": {
         "switch_active": {
-          "pt-br": "Bloquear transferências para agentes offline",
-          "en": "Block transfers to offline agents",
-          "es": "Bloquear transferencias a agentes offline"
+          "pt-br": "Bloqueio de transferências para agentes offline ativo",
+          "en": "Blocking transfers to offline agents active",
+          "es": "Bloqueo de transferencias a agentes fuera de línea activo"
         },
         "switch_inactive": {
-          "pt-br": "Permitir transferências para agentes offline",
-          "en": "Allow transfers to offline agents",
-          "es": "Permitir transferencias a agentes fuera de línea"
+          "pt-br": "Bloqueio de transferências para agentes offline inativo",
+          "en": "Blocking transfers to offline agents inactive",
+          "es": "Bloqueo de transferencias a agentes fuera de línea inactivo"
         }
       }
     },
