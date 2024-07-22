@@ -12,6 +12,7 @@ import '@weni/unnnic-system/dist/style.css';
 import 'plyr/dist/plyr.css';
 
 import './registerServiceWorker';
+import './plugins/Hotjar.js';
 import './styles/global.scss';
 
 const app = createApp(App);
