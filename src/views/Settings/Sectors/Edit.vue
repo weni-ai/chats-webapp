@@ -106,7 +106,7 @@
       <template #messages>
         <FormMessages
           ref="formMessages"
-          :quickMessagesShared="quickMessagesShared"
+          :quickMessagesShared="sectorQuickMessagesShared"
           :sector="sector"
           @update-is-quick-message-editing="handleIsQuickMessageEditing"
           @validate="isQuickMessagesFormValid = $event"
@@ -274,6 +274,11 @@ export default {
 
   computed: {
     ...mapState(useQuickMessageShared, ['quickMessagesShared']),
+    sectorQuickMessagesShared() {
+      return this.quickMessagesShared.filter(
+        (message) => message.sector === this.sector.uuid,
+      );
+    },
   },
 
   watch: {
