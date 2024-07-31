@@ -17,7 +17,7 @@ import './styles/global.scss';
 
 const app = createApp(App);
 const pinia = createPinia();
-console.log('Remove this before merge at main');
+
 app.directive(vMaskV3);
 
 app.config.productionTip = false;
