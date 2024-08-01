@@ -175,6 +175,7 @@ export default {
     ...mapActions(useRooms, [
       'setSelectedRoomsToTransfer',
       'setContactToTransfer',
+      'removeRoom',
     ]),
 
     async getQueues() {

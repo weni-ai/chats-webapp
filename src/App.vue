@@ -23,7 +23,7 @@ import { useDashboard } from './store/modules/dashboard';
 import { getProject } from '@/utils/config';
 
 import moment from 'moment';
-
+import Queues from '@/services/api/resources/chats/queues';
 export default {
   name: 'App',
 
@@ -75,6 +75,9 @@ export default {
         }
       },
     },
+    'me.email'() {
+      this.getMeQueues();
+    },
     'viewedAgent.email': {
       handler() {
         this.wsReconnect();
@@ -108,7 +111,7 @@ export default {
 
   methods: {
     ...mapActions(useConfig, ['setStatus', 'setProject']),
-    ...mapActions(useProfile, ['setMe']),
+    ...mapActions(useProfile, ['setMe', 'getMeQueues']),
     ...mapActions(useQuickMessages, {
       getAllQuickMessages: 'getAll',
     }),
