@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 import { useDashboard } from '../dashboard';
 
 import Room from '@/services/api/resources/chats/room';
+import { useProfile } from '../profile';
 
 export const useRooms = defineStore('rooms', {
   state: () => ({
@@ -97,16 +98,22 @@ export const useRooms = defineStore('rooms', {
 
     updateRoom({ room, userEmail, routerReplace, viewedAgentEmail }) {
       const dashboardStore = useDashboard();
+      const profileStore = useProfile();
       const filteredRooms = this.rooms
         .map((mappedRoom) =>
           mappedRoom.uuid === room.uuid ? { ...room } : mappedRoom,
         )
         .filter((filteredRoom) => {
-          if (!filteredRoom.user) return filteredRoom;
+          const userHasRoomQueue = profileStore.me.queues?.find(
+            (queue) => queue.queue === filteredRoom.queue.uuid,
+          );
+
+          if (!filteredRoom.user && userHasRoomQueue) return filteredRoom;
           if (viewedAgentEmail) {
-            return filteredRoom.user.email === viewedAgentEmail;
+            return filteredRoom.user?.email === viewedAgentEmail;
           }
-          return filteredRoom.user.email === userEmail;
+
+          return filteredRoom.user?.email === userEmail;
         });
 
       this.rooms = filteredRooms;
