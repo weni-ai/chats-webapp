@@ -107,19 +107,11 @@ export const useRooms = defineStore('rooms', {
           const userHasRoomQueue = profileStore.me.queues?.find(
             (queue) => queue.queue === filteredRoom.queue.uuid,
           );
-          console.log(
-            'userHasRoomQueue e filteredRoom.user',
-            !filteredRoom.user && userHasRoomQueue,
-          );
+
           if (!filteredRoom.user && userHasRoomQueue) return filteredRoom;
-
-          console.log('viewedAgentEmail', { viewedAgentEmail });
-
           if (viewedAgentEmail) {
             return filteredRoom.user?.email === viewedAgentEmail;
           }
-
-          console.log('ultima', filteredRoom.user?.email === userEmail);
 
           return filteredRoom.user?.email === userEmail;
         });
@@ -166,7 +158,7 @@ export const useRooms = defineStore('rooms', {
     removeRoom(roomUuid) {
       const filteredRooms = this.rooms.filter((r) => r.uuid !== roomUuid);
       this.rooms = filteredRooms;
-      console.log('removeu');
+
       if (this.activeRoom && this.activeRoom?.uuid === roomUuid) {
         this.setActiveRoom(null);
       }
