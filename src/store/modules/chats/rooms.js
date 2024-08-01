@@ -104,11 +104,8 @@ export const useRooms = defineStore('rooms', {
           mappedRoom.uuid === room.uuid ? { ...room } : mappedRoom,
         )
         .filter((filteredRoom) => {
-          const userHasRoomQueue = profileStore.me.queues?.find(
-            (queue) => queue.queue === filteredRoom.queue.uuid,
-          );
+          if (!filteredRoom.user) return filteredRoom;
 
-          if (!filteredRoom.user && userHasRoomQueue) return filteredRoom;
           if (viewedAgentEmail) {
             return filteredRoom.user?.email === viewedAgentEmail;
           }
@@ -116,7 +113,14 @@ export const useRooms = defineStore('rooms', {
           return filteredRoom.user?.email === userEmail;
         });
 
-      this.rooms = filteredRooms;
+      console.log(filteredRooms);
+
+      this.rooms = filteredRooms.filter((filteredRoom) => {
+        const userHasRoomQueue = profileStore.me.queues?.find(
+          (queue) => queue.queue === filteredRoom.queue.uuid,
+        );
+        return !!userHasRoomQueue;
+      });
 
       const isTransferedToOtherUser =
         room.user && room.user.email !== userEmail;
