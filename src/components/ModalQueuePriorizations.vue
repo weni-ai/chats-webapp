@@ -93,8 +93,8 @@ export default {
       deep: true,
     },
     'me.queues': {
-      handler(_newQueues, oldQueues) {
-        if (!oldQueues) this.handlerQueues();
+      async handler(_newQueues, oldQueues) {
+        if (!oldQueues) await this.handlerQueues();
       },
       immediate: true,
       deep: true,
@@ -106,7 +106,11 @@ export default {
       removeRoom: 'removeRoom',
       getAllRooms: 'getAll',
     }),
-    handlerQueues() {
+    ...mapActions(useProfile, ['getMeQueues']),
+    async handlerQueues() {
+      if (!this.me.queues?.length) {
+        await this.getMeQueues();
+      }
       this.me.queues?.forEach((permission) => {
         if (permission.role === this.roleIdSelected) {
           this.selectedQueues.push({
