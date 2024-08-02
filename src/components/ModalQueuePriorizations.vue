@@ -93,8 +93,8 @@ export default {
       deep: true,
     },
     'me.queues': {
-      handler() {
-        this.handlerQueues();
+      handler(_newQueues, oldQueues) {
+        if (!oldQueues) this.handlerQueues();
       },
       immediate: true,
       deep: true,
