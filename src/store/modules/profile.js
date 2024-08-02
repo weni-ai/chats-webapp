@@ -6,8 +6,9 @@ export const useProfile = defineStore('profile', {
     me: {},
   }),
   actions: {
-    setMe(user) {
+    async setMe(user) {
       this.me = user || {};
+      await this.getMeQueues();
     },
     async getMeQueues() {
       const { user_permissions } = await Queues.getListQueues();
