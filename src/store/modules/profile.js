@@ -11,6 +11,7 @@ export const useProfile = defineStore('profile', {
     },
     async getMeQueues() {
       const { user_permissions } = await Queues.getListQueues();
+      debugger;
       this.me.queues = user_permissions;
     },
   },
