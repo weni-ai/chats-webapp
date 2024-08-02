@@ -115,7 +115,9 @@ export const useRooms = defineStore('rooms', {
 
       this.rooms = filteredRooms.filter((filteredRoom) => {
         const userHasRoomQueue = profileStore.me.queues?.find(
-          (queue) => queue.queue === filteredRoom.queue.uuid,
+          (permission) =>
+            permission.queue === filteredRoom.queue.uuid &&
+            permission.role === 1,
         );
         return !!userHasRoomQueue;
       });
