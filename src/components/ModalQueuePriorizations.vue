@@ -92,18 +92,22 @@ export default {
       },
       deep: true,
     },
+    'me.queues': {
+      handler() {
+        this.handlerQueues();
+      },
+      immediate: true,
+      deep: true,
+    },
   },
 
-  mounted() {
-    this.handlerQueues();
-  },
   methods: {
     ...mapActions(useRooms, {
       removeRoom: 'removeRoom',
       getAllRooms: 'getAll',
     }),
     handlerQueues() {
-      this.me.queues.forEach((permission) => {
+      this.me.queues?.forEach((permission) => {
         if (permission.role === this.roleIdSelected) {
           this.selectedQueues.push({
             value: permission.uuid,
