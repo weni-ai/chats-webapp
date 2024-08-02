@@ -74,8 +74,10 @@ export default {
         }
       },
     },
-    'me.email'() {
-      this.getMeQueues();
+    'me.email': {
+      async handler() {
+        await this.getMeQueues();
+      },
     },
     'viewedAgent.email': {
       handler() {

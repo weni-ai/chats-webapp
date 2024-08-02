@@ -92,7 +92,7 @@ export default {
       deep: true,
     },
     'me.queues': {
-      async handler(_newQueues, oldQueues) {
+      handler(_newQueues, oldQueues) {
         if (!oldQueues) this.handlerQueues();
       },
       immediate: true,
@@ -107,8 +107,6 @@ export default {
     }),
     ...mapActions(useProfile, ['getMeQueues']),
     handlerQueues() {
-      debugger;
-      console.log(this.me.queues);
       this.me.queues?.forEach((permission) => {
         if (permission.role === this.roleIdSelected) {
           this.selectedQueues.push({
