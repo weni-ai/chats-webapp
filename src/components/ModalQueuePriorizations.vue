@@ -48,7 +48,7 @@
   </UnnnicModal>
 </template>
 <script>
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useProfile } from '@/store/modules/profile';
@@ -77,7 +77,7 @@ export default {
   },
 
   computed: {
-    ...mapState(useProfile, ['me']),
+    ...mapWritableState(useProfile, ['me']),
     ...mapState(useRooms, ['rooms']),
 
     verifySelectedLength() {
@@ -94,38 +94,31 @@ export default {
     },
   },
 
-  created() {
-    this.getListQueues();
+  mounted() {
+    this.handlerQueues();
   },
   methods: {
     ...mapActions(useRooms, {
       removeRoom: 'removeRoom',
       getAllRooms: 'getAll',
     }),
-    async getListQueues() {
-      try {
-        let me = this.me.email;
-        const response = await Queues.getListQueues(me);
-
-        response.user_permissions.forEach((permission) => {
-          if (permission.role === this.roleIdSelected) {
-            this.selectedQueues.push({
-              value: permission.uuid,
-              label: permission.queue_name,
-              role: permission.role,
-              queue: permission.queue,
-            });
-          }
-          this.queues.push({
+    handlerQueues() {
+      this.me.queues.forEach((permission) => {
+        if (permission.role === this.roleIdSelected) {
+          this.selectedQueues.push({
             value: permission.uuid,
             label: permission.queue_name,
             role: permission.role,
             queue: permission.queue,
           });
+        }
+        this.queues.push({
+          value: permission.uuid,
+          label: permission.queue_name,
+          role: permission.role,
+          queue: permission.queue,
         });
-      } catch (error) {
-        console.error(error);
-      }
+      });
     },
 
     async saveListQueues() {
@@ -158,7 +151,19 @@ export default {
           role: this.roleIdUnselected,
         }));
 
-        await Queues.editListQueues(selectedQueues.concat(unselectedQueues));
+        const concatedQueuesRoles = selectedQueues.concat(unselectedQueues);
+
+        await Queues.editListQueues(concatedQueuesRoles);
+
+        concatedQueuesRoles.forEach((permission) => {
+          if (!permission.uuid) return;
+          const meQueuePermissionIndex = this.me.queues.findIndex(
+            (mePermission) => mePermission.uuid === permission.uuid,
+          );
+
+          if (meQueuePermissionIndex > -1)
+            this.me.queues[meQueuePermissionIndex].role = permission.role;
+        });
 
         const roomsWithQueuesToRemove = rooms.filter((room) =>
           filteringUnselectedQueues.includes(room.queue?.uuid),
