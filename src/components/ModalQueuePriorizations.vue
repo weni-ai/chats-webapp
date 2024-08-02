@@ -1,6 +1,5 @@
 <template>
   <UnnnicModal
-    v-if="queues.length > 1"
     class="queue-modal"
     :text="$t('chats.select_services_queues')"
     @close="$emit('close')"
@@ -94,7 +93,7 @@ export default {
     },
     'me.queues': {
       async handler(_newQueues, oldQueues) {
-        if (!oldQueues) await this.handlerQueues();
+        if (!oldQueues) this.handlerQueues();
       },
       immediate: true,
       deep: true,
@@ -107,10 +106,9 @@ export default {
       getAllRooms: 'getAll',
     }),
     ...mapActions(useProfile, ['getMeQueues']),
-    async handlerQueues() {
-      if (!this.me.queues?.length) {
-        await this.getMeQueues();
-      }
+    handlerQueues() {
+      debugger;
+      console.log(this.me.queues);
       this.me.queues?.forEach((permission) => {
         if (permission.role === this.roleIdSelected) {
           this.selectedQueues.push({
