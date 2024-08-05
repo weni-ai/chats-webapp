@@ -104,11 +104,18 @@ export const useRooms = defineStore('rooms', {
           mappedRoom.uuid === room.uuid ? { ...room } : mappedRoom,
         )
         .filter((filteredRoom) => {
+          const isProjectAdmin = profileStore.me.project_permission_role === 1;
+
+          if (isProjectAdmin) return true;
+
           const userHasRoomQueue = profileStore.me.queues?.find(
-            (queue) => queue.queue === filteredRoom.queue.uuid,
+            (permission) =>
+              permission.queue === filteredRoom.queue.uuid &&
+              permission.role === 1,
           );
 
-          if (!filteredRoom.user && userHasRoomQueue) return filteredRoom;
+          if (!filteredRoom.user && userHasRoomQueue) return true;
+
           if (viewedAgentEmail) {
             return filteredRoom.user?.email === viewedAgentEmail;
           }
