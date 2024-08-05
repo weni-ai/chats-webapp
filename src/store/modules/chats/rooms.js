@@ -106,7 +106,7 @@ export const useRooms = defineStore('rooms', {
         .filter((filteredRoom) => {
           const isProjectAdmin = profileStore.me.project_permission_role === 1;
 
-          if (isProjectAdmin) return true;
+          if (isProjectAdmin && !filteredRoom.user) return true;
 
           const userHasRoomQueue = profileStore.me.queues?.find(
             (permission) =>
