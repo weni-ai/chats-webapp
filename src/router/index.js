@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import isMobile from 'is-mobile';
 
 import { getProject, getToken } from '@/utils/config';
 import Keycloak from '@/services/keycloak';
@@ -18,8 +19,14 @@ const router = createRouter({
 afterEachMiddlewares.forEach((middleware) => router.afterEach(middleware));
 
 router.beforeEach(async (to, from, next) => {
+  if (!isMobile()) {
+    next();
+    return;
+  }
+
   const configStore = useConfig();
   const authenticated = await Keycloak.isAuthenticated();
+
   if (authenticated) {
     const { token } = Keycloak.keycloak;
     await configStore.setToken(token);
