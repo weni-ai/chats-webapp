@@ -279,11 +279,24 @@ export default {
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '');
           letters[removeAccent] = letters[removeAccent] || [];
-          letters[removeAccent].push(element);
+
+          const contactAlreadyExist = letters[removeAccent].some(
+            (pushedContact) =>
+              pushedContact.urns.some((pushedUrn) =>
+                element.urns.some(
+                  (elementUrn) =>
+                    elementUrn.scheme === pushedUrn.scheme &&
+                    elementUrn.path === pushedUrn.path,
+                ),
+              ),
+          );
+
+          if (!contactAlreadyExist) letters[removeAccent].push(element);
           if (this.letterColapse[removeAccent] === undefined) {
             this.letterColapse[removeAccent] = true;
           }
         });
+
       return letters;
     },
 
@@ -415,6 +428,7 @@ export default {
             .concat(response.data.results || [])
             .filter((contact) => contact);
           this.hasNext = response.next;
+
           this.listOfContacts.sort((a, b) => a.name?.localeCompare(b.name));
 
           if (response.status !== 'canceled') {
