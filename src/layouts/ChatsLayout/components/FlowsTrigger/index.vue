@@ -423,7 +423,6 @@ export default {
         this.isContactsLoading = true;
         try {
           const response = await FlowsAPI.getContacts(this.searchUrn);
-          console.log(response);
           // Array filter to prevent 'null' or 'undefined' values in contact response
           this.listOfContacts = this.listOfContacts
             .concat(response.data.results || [])
