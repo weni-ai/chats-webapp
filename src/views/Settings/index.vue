@@ -243,8 +243,8 @@ export default {
     onScroll() {
       const sectorSection = this.$refs.sectorsSection;
       const isScrollInBottom =
-        sectorSection.scrollTop + sectorSection.clientHeight >=
-        sectorSection.scrollHeight;
+        Math.round(sectorSection.scrollTop) + sectorSection.clientHeight >=
+        sectorSection.scrollHeight - 100;
       if (isScrollInBottom) {
         this.listMoreSectors();
       }
