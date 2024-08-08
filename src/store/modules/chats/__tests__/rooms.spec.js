@@ -71,6 +71,24 @@ describe('State Rooms', () => {
       );
       expect(existRoomByUuid(adminRoomsStore, '3')).eq(true);
     });
+
+    it('should dont show the room because it was transferred by the viewing agent ', async () => {
+      adminRoomsStore.$patch({ activeRoom: adminRoomsStore.rooms[0] });
+      await updateRoom(
+        {
+          ...adminRoomsStore.rooms[0],
+          user: null,
+          transferred_by: 'testing@weni.ai',
+        },
+        {
+          app: {
+            ...adminProfileStore,
+            viewedAgent: { email: 'testing@weni.ai' },
+          },
+        },
+      );
+      expect(adminRoomsStore.activeRoom).eq(null);
+    });
   });
 
   describe('Human Service User', () => {
