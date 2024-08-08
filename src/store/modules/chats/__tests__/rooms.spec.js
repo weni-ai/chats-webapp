@@ -16,6 +16,16 @@ const pinia = createPinia();
 app.use(pinia);
 setActivePinia(pinia);
 
+const mocks = vi.hoisted(() => {
+  return {
+    useProfile: vi.fn(),
+  };
+});
+
+vi.mock('@/store/modules/profile', () => ({
+  useProfile: mocks.useProfile,
+}));
+
 describe('State Rooms', () => {
   const findRoomByUuid = (roomsStore, uuid) => {
     return !!roomsStore.rooms.find((room) => room.uuid === uuid);
@@ -25,12 +35,10 @@ describe('State Rooms', () => {
     let adminRoomsStore = useRooms();
     let adminProfileStore;
     let viewedAgent;
-    vi.mock('@/store/modules/profile', () => ({
-      useProfile: () => ({
-        ...mockProfileAdminState,
-      }),
-    }));
+
     beforeEach(() => {
+      mocks.useProfile.mockReturnValue(mockProfileAdminState);
+
       adminProfileStore = JSON.parse(JSON.stringify(useProfile()));
       adminRoomsStore.$patch({
         rooms: JSON.parse(JSON.stringify(roomsMock)),
@@ -39,9 +47,8 @@ describe('State Rooms', () => {
     });
 
     it('should view room because user not in queue but is admin user', async () => {
-      console.log(adminProfileStore);
       await updateRoom(
-        { uuid: '3', queue: { uuid: '3' } },
+        { uuid: '3', queue: { uuid: '1' } },
         { app: { ...adminProfileStore, viewedAgent } },
       );
       expect(findRoomByUuid(adminRoomsStore, '3')).eq(true);
@@ -50,14 +57,13 @@ describe('State Rooms', () => {
 
   describe('Human Service User', () => {
     let humanServiceRoomsStore = useRooms();
-    let humanServiceProfileStore = useProfile();
+    let humanServiceProfileStore;
     let viewedAgent;
-    vi.mock('@/store/modules/profile', () => ({
-      useProfile: () => ({
-        ...mockProfileHumanServiceState,
-      }),
-    }));
+
     beforeEach(() => {
+      mocks.useProfile.mockReturnValue(mockProfileHumanServiceState);
+
+      humanServiceProfileStore = useProfile();
       humanServiceRoomsStore.$patch({
         rooms: JSON.parse(JSON.stringify(roomsMock)),
       });
@@ -80,6 +86,14 @@ describe('State Rooms', () => {
         { app: { ...humanServiceProfileStore, viewedAgent } },
       );
       expect(findRoomByUuid(humanServiceRoomsStore, '3')).eq(true);
+    });
+
+    it('should not view room because i dont have an active queue', async () => {
+      await updateRoom(
+        { uuid: '3', queue: { uuid: '2' } },
+        { app: { ...humanServiceProfileStore, viewedAgent } },
+      );
+      expect(findRoomByUuid(humanServiceRoomsStore, '3')).eq(false);
     });
   });
 });

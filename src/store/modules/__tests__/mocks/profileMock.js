@@ -25,7 +25,7 @@ export const mockProfileHumanServiceState = {
         queue_name: 'FILA 2',
         created_on: '2024-08-02T07:19:30.593781-03:00',
         modified_on: '2024-08-05T19:13:20.428562-03:00',
-        role: 1,
+        role: 2,
         queue: '2',
         permission: 'bf85fc6f-a51a-437b-bf1b-b9a043afbe7a',
       },
