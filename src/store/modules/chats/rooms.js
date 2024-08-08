@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
 
 import { useDashboard } from '../dashboard';
+import { useProfile } from '../profile';
 
 import Room from '@/services/api/resources/chats/room';
-import { useProfile } from '../profile';
 
 export const useRooms = defineStore('rooms', {
   state: () => ({
@@ -54,7 +54,7 @@ export const useRooms = defineStore('rooms', {
 
       if (isProjectAdmin && !room.user) return true;
 
-      const userHasRoomQueue = profileStore.me.queues?.find(
+      const userHasRoomQueue = !!profileStore.me.queues?.find(
         (permission) =>
           permission.queue === room.queue.uuid && permission.role === 1,
       );
@@ -118,7 +118,6 @@ export const useRooms = defineStore('rooms', {
 
     updateRoom({ room, userEmail, routerReplace, viewedAgentEmail }) {
       const dashboardStore = useDashboard();
-
       const filteredRooms = this.rooms
         .map((mappedRoom) =>
           mappedRoom.uuid === room.uuid ? { ...room } : mappedRoom,
