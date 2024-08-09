@@ -4,6 +4,7 @@ import { setActivePinia, createPinia } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useProfile } from '@/store/modules/profile';
+import { useDashboard } from '@/store/modules/dashboard';
 
 import { roomsMock } from './mocks/roomsMock';
 
@@ -35,7 +36,7 @@ describe('State Rooms', () => {
   describe('Admin User', () => {
     let adminRoomsStore = useRooms();
     let adminProfileStore;
-    let viewedAgent;
+    let dashboardStore;
 
     beforeEach(() => {
       mocks.useProfile.mockReturnValue(mockProfileAdminState);
@@ -44,18 +45,26 @@ describe('State Rooms', () => {
       adminRoomsStore.$patch({
         rooms: JSON.parse(JSON.stringify(roomsMock)),
       });
-      viewedAgent = { name: '', email: '' };
+      dashboardStore = useDashboard();
     });
 
     it('should view room because user not in queue but is admin user', async () => {
       await updateRoom(
         { uuid: '3', queue: { uuid: '1' } },
-        { app: { ...adminProfileStore, viewedAgent } },
+        {
+          app: {
+            ...adminProfileStore,
+            viewedAgent: dashboardStore.viewedAgent,
+          },
+        },
       );
       expect(existRoomByUuid(adminRoomsStore, '3')).eq(true);
     });
 
     it('should view room because is seeing an agent of room', async () => {
+      dashboardStore.$patch({
+        viewedAgent: { email: 'testing@weni.ai' },
+      });
       await updateRoom(
         {
           uuid: '3',
@@ -65,7 +74,7 @@ describe('State Rooms', () => {
         {
           app: {
             ...adminProfileStore,
-            viewedAgent: { email: 'testing@weni.ai' },
+            viewedAgent: dashboardStore.viewedAgent,
           },
         },
       );
@@ -73,6 +82,9 @@ describe('State Rooms', () => {
     });
 
     it('should dont show the room because it was transferred by the viewing agent ', async () => {
+      dashboardStore.$patch({
+        viewedAgent: { email: 'testing@weni.ai' },
+      });
       adminRoomsStore.$patch({ activeRoom: adminRoomsStore.rooms[0] });
       await updateRoom(
         {
@@ -94,7 +106,7 @@ describe('State Rooms', () => {
   describe('Human Service User', () => {
     let humanServiceRoomsStore = useRooms();
     let humanServiceProfileStore;
-    let viewedAgent;
+    let dashboardStore;
 
     beforeEach(() => {
       mocks.useProfile.mockReturnValue(mockProfileHumanServiceState);
@@ -103,14 +115,20 @@ describe('State Rooms', () => {
       humanServiceRoomsStore.$patch({
         rooms: JSON.parse(JSON.stringify(roomsMock)),
       });
-      viewedAgent = { name: '', email: '' };
+
+      dashboardStore = useDashboard();
     });
 
     it('should remove room because user not in queue', async () => {
       expect(existRoomByUuid(humanServiceRoomsStore, '1')).eq(true);
       await updateRoom(
         { uuid: '1', queue: { uuid: '3' } },
-        { app: { ...humanServiceProfileStore, viewedAgent } },
+        {
+          app: {
+            ...humanServiceProfileStore,
+            viewedAgent: dashboardStore.viewedAgent,
+          },
+        },
       );
       expect(existRoomByUuid(humanServiceRoomsStore, '1')).eq(false);
     });
@@ -123,7 +141,12 @@ describe('State Rooms', () => {
           queue: { uuid: '3' },
           user: { email: 'testing@weni.ai' },
         },
-        { app: { ...humanServiceProfileStore, viewedAgent } },
+        {
+          app: {
+            ...humanServiceProfileStore,
+            viewedAgent: dashboardStore.viewedAgent,
+          },
+        },
       );
       expect(existRoomByUuid(humanServiceRoomsStore, '3')).eq(true);
     });
@@ -131,12 +154,21 @@ describe('State Rooms', () => {
     it('should not view room because i dont have an active queue', async () => {
       await updateRoom(
         { uuid: '3', queue: { uuid: '2' } },
-        { app: { ...humanServiceProfileStore, viewedAgent } },
+        {
+          app: {
+            ...humanServiceProfileStore,
+            viewedAgent: dashboardStore.viewedAgent,
+          },
+        },
       );
       expect(existRoomByUuid(humanServiceRoomsStore, '3')).eq(false);
     });
 
     it('should transfer active room to other user', async () => {
+      dashboardStore.$patch({
+        viewedAgent: { email: '' },
+      });
+
       const routerReplace = vi.fn();
 
       humanServiceRoomsStore.$patch({
@@ -153,7 +185,7 @@ describe('State Rooms', () => {
         {
           app: {
             ...humanServiceProfileStore,
-            viewedAgent,
+            viewedAgent: dashboardStore.viewedAgent,
             $router: { replace: routerReplace },
           },
         },
