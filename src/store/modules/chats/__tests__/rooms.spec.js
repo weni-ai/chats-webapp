@@ -45,7 +45,7 @@ describe('State Rooms', () => {
       adminRoomsStore.$patch({
         rooms: JSON.parse(JSON.stringify(roomsMock)),
       });
-      dashboardStore = useDashboard();
+      dashboardStore = dashboardStore?.$reset() || useDashboard();
     });
 
     it('should view room because user not in queue but is admin user', async () => {
@@ -116,7 +116,7 @@ describe('State Rooms', () => {
         rooms: JSON.parse(JSON.stringify(roomsMock)),
       });
 
-      dashboardStore = useDashboard();
+      dashboardStore = dashboardStore?.$reset() || useDashboard();
     });
 
     it('should remove room because user not in queue', async () => {
@@ -165,10 +165,6 @@ describe('State Rooms', () => {
     });
 
     it('should transfer active room to other user', async () => {
-      dashboardStore.$patch({
-        viewedAgent: { email: '' },
-      });
-
       const routerReplace = vi.fn();
 
       humanServiceRoomsStore.$patch({
