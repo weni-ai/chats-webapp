@@ -41,9 +41,9 @@ describe('State Rooms', () => {
     beforeEach(() => {
       mocks.useProfile.mockReturnValue(mockProfileAdminState);
 
-      adminProfileStore = JSON.parse(JSON.stringify(useProfile()));
+      adminProfileStore = useProfile();
       adminRoomsStore.$patch({
-        rooms: JSON.parse(JSON.stringify(roomsMock)),
+        rooms: [...roomsMock],
       });
       dashboardStore = dashboardStore?.$reset() || useDashboard();
     });
@@ -113,7 +113,7 @@ describe('State Rooms', () => {
 
       humanServiceProfileStore = useProfile();
       humanServiceRoomsStore.$patch({
-        rooms: JSON.parse(JSON.stringify(roomsMock)),
+        rooms: [...roomsMock],
       });
 
       dashboardStore = dashboardStore?.$reset() || useDashboard();
