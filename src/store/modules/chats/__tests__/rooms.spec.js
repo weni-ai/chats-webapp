@@ -191,5 +191,25 @@ describe('State Rooms', () => {
       expect(routerReplace).toHaveBeenCalled();
       expect(existRoomByUuid(humanServiceRoomsStore, roomUuid)).eq(false);
     });
+
+    it('should show modal assumed chat', async () => {
+      await updateRoom(
+        {
+          id: '5',
+          user: { email: 'testing-adm@weni.ai' },
+          transfer_history: { from: { type: 'user' } },
+          contact: { name: 'Cliente 1' },
+        },
+        {
+          app: {
+            ...humanServiceProfileStore,
+            viewedAgent: dashboardStore.viewedAgent,
+          },
+        },
+      );
+
+      expect(dashboardStore.showModalAssumedChat).eq(true);
+      expect(dashboardStore.assumedChatContactName).eq('Cliente 1');
+    });
   });
 });
