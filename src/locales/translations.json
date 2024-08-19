@@ -1907,10 +1907,10 @@
     }
   },
   "config_chats": {
-    "manage_chats": {
-      "pt-br": "Gerenciar Chats",
-      "en": "Manage chats",
-      "es": "Gestionar chats"
+    "title": {
+      "pt-br": "Configurações de Chats",
+      "en": "Chat Settings",
+      "es": "Configuración de chat"
     },
     "manage_description": {
       "pt-br": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
