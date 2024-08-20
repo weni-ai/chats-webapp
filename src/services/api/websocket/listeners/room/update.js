@@ -20,6 +20,7 @@ export default async (room, { app }) => {
       notification.notify();
     }
   }
+
   roomsStore.updateRoom({
     room,
     userEmail: app.me.email,

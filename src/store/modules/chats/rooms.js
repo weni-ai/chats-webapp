@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
 
 import { useDashboard } from '../dashboard';
+import { useProfile } from '../profile';
 
 import Room from '@/services/api/resources/chats/room';
-import { useProfile } from '../profile';
 
 export const useRooms = defineStore('rooms', {
   state: () => ({
@@ -46,6 +46,26 @@ export const useRooms = defineStore('rooms', {
 
     setCopilotSuggestion(suggestion) {
       this.copilotSuggestion = suggestion;
+    },
+
+    checkUserSeenRoom({ room, userEmail, viewedAgentEmail }) {
+      const profileStore = useProfile();
+      const isProjectAdmin = profileStore.me.project_permission_role === 1;
+
+      if (isProjectAdmin && !room.user) return true;
+
+      const userHasRoomQueue = !!profileStore.me.queues?.find(
+        (permission) =>
+          permission.queue === room.queue.uuid && permission.role === 1,
+      );
+
+      if (!room.user && userHasRoomQueue) return true;
+
+      if (viewedAgentEmail) {
+        return room.user?.email === viewedAgentEmail;
+      }
+
+      return room.user?.email === userEmail;
     },
 
     async getAll({ offset, concat, limit, contact, order, viewedAgent }) {
@@ -98,29 +118,16 @@ export const useRooms = defineStore('rooms', {
 
     updateRoom({ room, userEmail, routerReplace, viewedAgentEmail }) {
       const dashboardStore = useDashboard();
-      const profileStore = useProfile();
       const filteredRooms = this.rooms
         .map((mappedRoom) =>
           mappedRoom.uuid === room.uuid ? { ...room } : mappedRoom,
         )
         .filter((filteredRoom) => {
-          const isProjectAdmin = profileStore.me.project_permission_role === 1;
-
-          if (isProjectAdmin && !filteredRoom.user) return true;
-
-          const userHasRoomQueue = profileStore.me.queues?.find(
-            (permission) =>
-              permission.queue === filteredRoom.queue.uuid &&
-              permission.role === 1,
-          );
-
-          if (!filteredRoom.user && userHasRoomQueue) return true;
-
-          if (viewedAgentEmail) {
-            return filteredRoom.user?.email === viewedAgentEmail;
-          }
-
-          return filteredRoom.user?.email === userEmail;
+          return this.checkUserSeenRoom({
+            room: filteredRoom,
+            viewedAgentEmail,
+            userEmail,
+          });
         });
 
       this.rooms = filteredRooms;
