@@ -1,5 +1,4 @@
 import { mount } from '@vue/test-utils';
-import i18n from '@/plugins/i18n';
 
 import SuggestionBox from '../SuggestionBox.vue';
 
@@ -23,9 +22,6 @@ function createWrapper(props = {}) {
     props: {
       suggestions,
       ...props,
-    },
-    global: {
-      plugins: [i18n],
     },
   });
 

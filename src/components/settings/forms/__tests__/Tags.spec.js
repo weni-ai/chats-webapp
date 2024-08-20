@@ -1,15 +1,10 @@
 import { mount } from '@vue/test-utils';
-import i18n from '@/plugins/i18n';
-import UnnnicSystem from '@/plugins/UnnnicSystem';
 import FormTags from '../Tags.vue';
 import defaultProps from './mocks/tagsMock';
 
 function createWrapper() {
   const wrapper = mount(FormTags, {
     props: defaultProps,
-    global: {
-      plugins: [i18n, UnnnicSystem],
-    },
   });
   return wrapper;
 }
