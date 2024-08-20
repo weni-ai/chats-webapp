@@ -1,0 +1,201 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SettingsHeader.vue > should match the snapshot 1`] = `
+<div
+  data-v-app=""
+>
+  
+  <header
+    class="settings-view__section-header"
+    data-testid="settings-sectors-header"
+    data-v-1088b44f=""
+    data-v-f23b63f9=""
+  >
+    <p
+      class="section-header__title"
+      data-v-f23b63f9=""
+    >
+      Setores em Project 1
+    </p>
+    <p
+      class="section-header__subtitle"
+      data-v-f23b63f9=""
+    >
+      Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.
+    </p>
+  </header>
+  <section
+    class="settings-view__sectors"
+    data-v-1088b44f=""
+  >
+    <unnnic-card-stub
+      buttonaction="[Function]"
+      class="sectors__new-sector-card"
+      clickable="false"
+      data-testid="settings-sectors-blank-card"
+      data-v-1088b44f=""
+      enabled="true"
+      hasinformationicon="true"
+      icon="add"
+      infoposition="right"
+      invertedpercentage="false"
+      percent="0"
+      rating="0"
+      scheme="aux-blue"
+      text="Novo setor"
+      type="blank"
+    />
+    
+    <div
+      class="unnnic-card-container unnnic-card-project sectors__card"
+      data-testid="settings-sectors-sector-card"
+      data-v-1088b44f=""
+      data-v-47cf77d6=""
+      data-v-d9408675=""
+    >
+      <div
+        class="header"
+        data-v-47cf77d6=""
+      >
+        <div
+          class="title"
+          data-v-47cf77d6=""
+        >
+          <span
+            class="name"
+            data-v-47cf77d6=""
+          >
+            Sector 1
+          </span>
+          <!---->
+        </div>
+        
+        <div
+          class="buttons"
+          data-v-d9408675=""
+        >
+          <div
+            class="unnnic-tag
+        unnnic-tag-scheme--aux-blue
+        unnnic-tag--clickable unnnic-tag-content action action"
+            count="0"
+            data-v-5a2abba9=""
+            data-v-d9408675=""
+            enabletooltip="false"
+            hasbackbutton="false"
+          >
+            <span
+              class="unnnic-tag__label"
+              data-v-5a2abba9=""
+            >
+              Abrir
+            </span>
+            <!---->
+          </div>
+          <!---->
+        </div>
+        
+      </div>
+      <!---->
+      <!---->
+      <div
+        class="separator"
+        data-v-47cf77d6=""
+      />
+      
+      
+      <div
+        class="statuses"
+        data-v-47cf77d6=""
+        style="grid-template-columns: repeat(auto-fit, minmax(90, 1fr));"
+      >
+        
+        <div
+          class="status"
+          data-v-47cf77d6=""
+        >
+          <div
+            class="title"
+            data-v-47cf77d6=""
+          >
+            Agentes
+          </div>
+          <div
+            class="content"
+            data-v-47cf77d6=""
+          >
+            <div
+              class="unnnic-avatar-icon aux-purple xs"
+              data-v-47cf77d6=""
+              data-v-ecaaa6f3=""
+            >
+              <span
+                class="material-symbols-rounded unnnic-icon-scheme--aux-purple unnnic-icon-size--sm"
+                data-v-930380cc=""
+                data-v-ecaaa6f3=""
+              >
+                headphones
+              </span>
+            </div>
+            <div
+              class="number"
+              data-v-47cf77d6=""
+            >
+              10
+            </div>
+          </div>
+        </div>
+        <div
+          class="status"
+          data-v-47cf77d6=""
+        >
+          <div
+            class="title"
+            data-v-47cf77d6=""
+          >
+            Contatos
+          </div>
+          <div
+            class="content"
+            data-v-47cf77d6=""
+          >
+            <div
+              class="unnnic-avatar-icon aux-lemon xs"
+              data-v-47cf77d6=""
+              data-v-ecaaa6f3=""
+            >
+              <span
+                class="material-symbols-rounded unnnic-icon-scheme--aux-lemon unnnic-icon-size--sm"
+                data-v-930380cc=""
+                data-v-ecaaa6f3=""
+              >
+                person
+              </span>
+            </div>
+            <div
+              class="number"
+              data-v-47cf77d6=""
+            >
+              50
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    
+  </section>
+  <section
+    class="settings-view__loading-sectors"
+    data-testid="settings-sectors-loading-section"
+    data-v-1088b44f=""
+  >
+    <img
+      data-v-1088b44f=""
+      src="/src/assets/LogoWeniAnimada4.svg"
+      width="40"
+    />
+  </section>
+  
+</div>
+`;
