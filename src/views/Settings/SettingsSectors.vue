@@ -1,4 +1,8 @@
 <template>
+  <SettingsSectionHeader
+    :title="$t('config_chats.section_sectors_title', { project: projectName })"
+    :subtitle="$t('config_chats.section_sectors_subtitle')"
+  />
   <section class="settings-view__sectors">
     <UnnnicCard
       type="blank"
@@ -45,12 +49,23 @@
 
 <script>
 import { mapState } from 'pinia';
+
+import { useConfig } from '@/store/modules/config';
 import { useSettings } from '@/store/modules/settings';
+
+import SettingsSectionHeader from './SettingsSectionHeader.vue';
 
 export default {
   name: 'SettingsSectors',
 
+  components: {
+    SettingsSectionHeader,
+  },
+
   computed: {
+    ...mapState(useConfig, {
+      projectName: (store) => store.project.name,
+    }),
     ...mapState(useSettings, ['sectors', 'isLoadingSectors']),
   },
 

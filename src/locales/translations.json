@@ -1912,12 +1912,22 @@
       "en": "Chat Settings",
       "es": "Configuración de chat"
     },
-    "manage_description": {
+    "section_sectors_title": {
+      "pt-br": "Setores em {project}",
+      "en": "Sectors in {project}",
+      "es": "Sectores en {project}"
+    },
+    "section_sectors_subtitle": {
       "pt-br": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
       "en": "Add, view and manage sectors, queues, managers and agents within your organization.",
       "es": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización."
     },
     "project_configs": {
+      "title": {
+        "pt-br": "Ajustes do projeto",
+        "en": "Project Adjustments",
+        "es": "Ajustes de proyectos"
+      },
       "bulk_transfer": {
         "tooltip": {
           "pt-br": "Essa função permite que agentes transfiram diversos contatos de uma vez para uma fila ou agente",

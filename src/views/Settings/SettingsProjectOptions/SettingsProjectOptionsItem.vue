@@ -1,5 +1,5 @@
 <template>
-  <section class="project-options__config">
+  <section class="project-options__item">
     <UnnnicSwitch
       :modelValue="modelValue"
       :textRight="name"
@@ -21,6 +21,7 @@
     </UnnnicToolTip>
   </section>
 </template>
+
 <script>
 export default {
   name: 'SettingsProjectOptionsItem',
@@ -43,4 +44,15 @@ export default {
   emits: ['update:model-value'],
 };
 </script>
-<style lang=""></style>
+
+<style lang="scss" scoped>
+.project-options__item {
+  display: flex;
+  gap: $unnnic-spacing-nano;
+  align-items: center;
+
+  .unnnic-tooltip {
+    display: flex;
+  }
+}
+</style>

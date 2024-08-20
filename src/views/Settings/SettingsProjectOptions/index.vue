@@ -3,22 +3,29 @@
     v-if="isUserManager && projectConfig"
     class="settings-view__project-options"
   >
-    <SettingsProjectOptionsItem
-      v-model="projectConfig.can_use_bulk_transfer"
-      :name="configBulkTransferTranslation"
-      :tooltip="$t('config_chats.project_configs.bulk_transfer.tooltip')"
-    />
-    <SettingsProjectOptionsItem
-      v-model="projectConfig.can_use_queue_prioritization"
-      :name="configQueuePrioritizationTranslation"
-      :tooltip="$t('config_chats.project_configs.queue_prioritization.tooltip')"
-    />
-    <SettingsProjectOptionsItem
-      v-model="projectConfig.filter_offline_agents"
-      :name="configBlockTransferToOffAgentsTranslation"
-    />
+    <SettingsSectionHeader :title="$t('config_chats.project_configs.title')" />
+
+    <section class="project-options__items">
+      <SettingsProjectOptionsItem
+        v-model="projectConfig.can_use_bulk_transfer"
+        :name="configBulkTransferTranslation"
+        :tooltip="$t('config_chats.project_configs.bulk_transfer.tooltip')"
+      />
+      <SettingsProjectOptionsItem
+        v-model="projectConfig.can_use_queue_prioritization"
+        :name="configQueuePrioritizationTranslation"
+        :tooltip="
+          $t('config_chats.project_configs.queue_prioritization.tooltip')
+        "
+      />
+      <SettingsProjectOptionsItem
+        v-model="projectConfig.filter_offline_agents"
+        :name="configBlockTransferToOffAgentsTranslation"
+      />
+    </section>
   </section>
 </template>
+
 <script>
 import { mapState } from 'pinia';
 
@@ -28,11 +35,13 @@ import { useProfile } from '@/store/modules/profile';
 import Project from '@/services/api/resources/settings/project';
 
 import SettingsProjectOptionsItem from './SettingsProjectOptionsItem.vue';
+import SettingsSectionHeader from '../SettingsSectionHeader.vue';
 
 export default {
   name: 'SettingsProjectOptions',
 
   components: {
+    SettingsSectionHeader,
     SettingsProjectOptionsItem,
   },
 
@@ -120,16 +129,11 @@ export default {
 <style lang="scss">
 .settings-view__project-options {
   display: grid;
-  gap: $unnnic-spacing-nano;
+  gap: $unnnic-spacing-ant;
 
-  .project-options__config {
-    display: flex;
+  .project-options__items {
+    display: grid;
     gap: $unnnic-spacing-nano;
-    align-items: center;
-
-    .unnnic-tooltip {
-      display: flex;
-    }
   }
 }
 </style>
