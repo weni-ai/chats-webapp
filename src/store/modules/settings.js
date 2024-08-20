@@ -3,8 +3,36 @@ import Sector from '@/services/api/resources/settings/sector';
 import cloneDeep from 'lodash.clonedeep';
 
 export const useSettings = defineStore('settings', {
-  state: () => ({ sectors: [], activeSectorId: null }),
+  state: () => ({
+    sectors: [],
+    isLoadingSectors: false,
+    nextSectors: '',
+    previousSectors: '',
+    activeSectorId: null,
+  }),
+
   actions: {
+    async getSectors() {
+      const isInLastPage = !this.nextSectors && this.previousSectors;
+      if (this.isLoadingSectors || isInLastPage) {
+        return;
+      }
+
+      try {
+        this.isLoadingSectors = true;
+        const { results, next, previous } = await Sector.list({
+          nextReq: this.nextSectors,
+        });
+        this.sectors = [...this.sectors, ...results];
+        this.nextSectors = next;
+        this.previousSectors = previous;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.isLoadingSectors = false;
+      }
+    },
+
     addSector(sector) {
       const lastId = this.sectors.at(-1).id;
       let queueId = 100;
@@ -28,6 +56,7 @@ export const useSettings = defineStore('settings', {
       const index = this.sectors.findIndex((s) => s.id === sector.id);
       this.sectors.splice(index, 1, sector);
     },
+
     async deleteSector(sectorUuid) {
       await Sector.deleteSector(sectorUuid);
       this.sectors = this.sectors.filter(
@@ -35,6 +64,7 @@ export const useSettings = defineStore('settings', {
       );
     },
   },
+
   getters: {
     getActiveSector({ sectors, activeSectorId }) {
       return sectors.find((sector) => sector.id === activeSectorId) || null;

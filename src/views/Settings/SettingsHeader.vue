@@ -2,7 +2,6 @@
   <header class="settings-view__header">
     <UnnnicAvatarIcon
       icon="settings"
-      size="md"
       scheme="weni-600"
     />
     <h1 class="header__title">{{ $t('config_chats.title') }}</h1>
