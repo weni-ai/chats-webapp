@@ -1,18 +1,21 @@
 <template>
   <section class="project-options__item">
     <UnnnicSwitch
+      data-testid="settings-project-option-switch"
       :modelValue="modelValue"
       :textRight="name"
       @update:model-value="$emit('update:model-value', $event)"
     />
     <UnnnicToolTip
       v-if="tooltip"
+      data-testid="settings-project-option-tooltip"
       enabled
       :text="tooltip"
       side="right"
       maxWidth="20rem"
     >
       <UnnnicIcon
+        data-testid="settings-project-option-tooltip-icon"
         icon="info"
         scheme="neutral-soft"
         filled
