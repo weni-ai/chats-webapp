@@ -1,6 +1,7 @@
 <template>
   <section
     ref="settingsView"
+    data-testid="settings-view"
     class="settings-view"
     @scroll="onScroll"
   >
