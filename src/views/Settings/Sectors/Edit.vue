@@ -11,6 +11,7 @@
           isEditing
           :managers="projectManagers"
           @remove-manager="removeManager"
+          @validate="isSectorFormValid = $event"
         />
       </template>
 
@@ -146,7 +147,7 @@
           "
           :text="$t('save')"
           type="secondary"
-          :disabled="isQuickMessageEditing && !isQuickMessagesFormValid"
+          :disabled="disabledSaveButton"
           @click="save"
         />
       </section>
@@ -224,6 +225,8 @@ export default {
   data: () => ({
     currentTab: '',
     openModalDelete: false,
+    isSectorFormValid: false,
+    initialSectorEdit: null,
     sector: {
       uuid: '',
       name: '',
@@ -279,6 +282,24 @@ export default {
         (message) => message.sector === this.sector.uuid,
       );
     },
+    disabledSaveButton() {
+      if (
+        this.isQuickMessageEditing &&
+        !this.isQuickMessagesFormValid &&
+        this.currentTab === 'messages'
+      ) {
+        return true;
+      }
+
+      if (
+        JSON.stringify(this.sector) === this.initialSectorEdit ||
+        (!this.isSectorFormValid && this.currentTab === 'sector')
+      ) {
+        return true;
+      }
+
+      return false;
+    },
   },
 
   watch: {
@@ -293,7 +314,9 @@ export default {
       this.currentTab = this.tab;
 
     this.getSector();
-    this.getManagers();
+    this.getManagers().then(() => {
+      this.initialSectorEdit = JSON.stringify(this.sector);
+    });
     this.listProjectManagers();
   },
 
@@ -306,8 +329,6 @@ export default {
 
     handleSelectAgent(agent) {
       const { currentAgents, toAddAgents } = this.queueToEdit;
-
-      console.log({ currentAgents, toAddAgents, agent });
 
       const alreadyInQueue = currentAgents.some((a) => a.uuid === agent.uuid);
 
