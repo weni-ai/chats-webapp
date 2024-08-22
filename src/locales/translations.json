@@ -1975,6 +1975,13 @@
         }
       }
     },
+    "edit_sector": {
+      "description": {
+        "pt-br": "Determine configurações gerais da equipe e jornada de trabalho",
+        "en": "Determine General Team Settings and Workday",
+        "es": "Determinar la configuración del equipo general y la jornada laboral"
+      }
+    },
     "new_sector": {
       "pt-br": "Novo setor",
       "en": "New sector",
