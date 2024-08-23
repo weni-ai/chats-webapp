@@ -1,0 +1,23 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SectorEditHeader.vue > Should match the snapshot 1`] = `
+<header
+  class="sector-edit-view__header"
+  data-v-573bd910=""
+>
+  <h1
+    class="header__title"
+    data-testid="header-title"
+    data-v-573bd910=""
+  >
+    Setor Sector 1
+  </h1>
+  <p
+    class="header__description"
+    data-testid="header-description"
+    data-v-573bd910=""
+  >
+    Determine configurações gerais da equipe e jornada de trabalho
+  </p>
+</header>
+`;

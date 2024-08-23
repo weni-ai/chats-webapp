@@ -1,9 +1,15 @@
 <template>
   <header class="sector-edit-view__header">
-    <h1 class="header__title">
+    <h1
+      class="header__title"
+      data-testid="header-title"
+    >
       {{ `${$t('sector.title')} ${sectorName}` }}
     </h1>
-    <p class="header__description">
+    <p
+      class="header__description"
+      data-testid="header-description"
+    >
       {{ $t('config_chats.edit_sector.description') }}
     </p>
   </header>
