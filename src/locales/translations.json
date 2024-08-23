@@ -214,10 +214,15 @@
       "en": "Sector",
       "es": "Sector"
     },
-    "geral": {
+    "general": {
       "pt-br": "Geral",
       "en": "General",
       "es": "General"
+    },
+    "extra_options": {
+      "pt-br": "Opções extras",
+      "en": "Extra options",
+      "es": "Opciones adicionales"
     },
     "queues": {
       "pt-br": "Filas",

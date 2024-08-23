@@ -18,10 +18,6 @@ const routes = [
         path: 'sectors/:uuid',
         name: 'sectors.edit',
         component: () => import('@/views/Settings/Sectors/Edit/index.vue'),
-        props: (route) => ({
-          uuid: route.params.uuid,
-          tab: route.query.tab,
-        }),
       },
     ],
   },
