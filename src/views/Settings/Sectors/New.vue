@@ -120,7 +120,7 @@ export default {
       Steps,
       step: Steps.General,
       stepsTitles: [
-        this.$t('sector.geral'),
+        this.$t('sector.general'),
         this.$t('sector.queues'),
         this.$t('sector.tags'),
       ],
