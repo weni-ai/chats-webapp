@@ -401,6 +401,7 @@ export default {
             },
             seconds: 5,
           });
+          this.$router.push('/settings');
         })
         .catch((error) => {
           console.log(error);
@@ -437,27 +438,14 @@ export default {
 
   .form-section {
     & + .form-section {
-      margin-top: 1.5rem;
+      margin-top: $unnnic-spacing-md;
     }
 
     &__title {
-      &--lg {
-        font-size: $unnnic-font-size-title-sm;
-      }
-
       font-weight: $unnnic-font-weight-bold;
       color: $unnnic-color-neutral-dark;
       font-size: $unnnic-font-size-body-lg;
-      line-height: 1.5rem;
-    }
-
-    &__switch__container {
-      display: flex;
-      align-items: center;
-
-      .unnnic-tooltip {
-        display: flex;
-      }
+      line-height: $unnnic-line-height-large * 1.5;
     }
 
     &__inputs {
@@ -470,14 +458,10 @@ export default {
         padding: 0;
         margin: 0;
         & .error-message {
-          font-size: 12px;
+          font-size: $unnnic-font-size-body-md;
           color: $unnnic-color-feedback-red;
         }
       }
-    }
-
-    .unnnic-switch {
-      align-items: center;
     }
 
     &__handlers {
@@ -502,6 +486,7 @@ export default {
     padding: 0.75rem 1rem;
     cursor: text;
   }
+
   .label-working-day {
     font-weight: 400;
     line-height: 1.375rem;
@@ -521,6 +506,7 @@ export default {
     flex-direction: column;
     gap: $unnnic-spacing-stack-xs;
   }
+
   ::placeholder {
     color: #d1d4da;
   }

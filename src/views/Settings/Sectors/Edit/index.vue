@@ -135,6 +135,7 @@ export default {
       const timeFormat = /^(?<time>(\d\d):(\d\d))/;
       return time.match(timeFormat)?.groups?.time || time;
     },
+
     async getSector() {
       const sectorUuid = this.$route.params.uuid;
       const sector = await Sector.find(sectorUuid);
