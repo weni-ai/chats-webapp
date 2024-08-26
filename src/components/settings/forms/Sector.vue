@@ -1,11 +1,12 @@
 <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
-  <form
-    class="form-sector-container"
-    @submit.prevent="$emit('submit')"
-  >
-    <!-- TODO NEW SECTOR  -->
-    <!-- <section class="form-section">
+  <section class="form-wrapper">
+    <form
+      class="form-sector-container"
+      @submit.prevent="$emit('submit')"
+    >
+      <!-- TODO NEW SECTOR  -->
+      <!-- <section class="form-section">
       <h2 class="title">
         {{ $t('sector.add') }}
         <UnnnicToolTip
@@ -29,112 +30,121 @@
       />
     </section> -->
 
-    <section class="form-section">
-      <h2 class="form-section__title">
-        {{ $t('sector.managers.title') }}
-      </h2>
+      <section class="form-section">
+        <h2 class="form-section__title">
+          {{ $t('sector.managers.title') }}
+        </h2>
 
-      <section class="form-section__select-managers">
-        <UnnnicLabel :label="$t('sector.managers.add.label')" />
-        <UnnnicSelectSmart
-          v-model="selectedManager"
-          :options="managersNames"
-          autocomplete
-          autocompleteIconLeft
-          autocompleteClearOnFocus
-          @update:model-value="selectManager"
-        />
+        <section class="form-section__select-managers">
+          <UnnnicLabel :label="$t('sector.managers.add.label')" />
+          <UnnnicSelectSmart
+            v-model="selectedManager"
+            :options="managersNames"
+            autocomplete
+            autocompleteIconLeft
+            autocompleteClearOnFocus
+            @update:model-value="selectManager"
+          />
+        </section>
+
+        <section
+          v-if="sector.managers.length > 0"
+          class="form-sector-container__managers"
+        >
+          <SelectedMember
+            v-for="manager in sector.managers"
+            :key="manager.uuid"
+            :name="`${manager.user.first_name} ${manager.user.last_name}`"
+            :email="manager.user.email"
+            :avatarUrl="photo(manager.user.photo_url)"
+            roleName="Gerente"
+            @remove="removeManager(manager.uuid)"
+          />
+        </section>
       </section>
 
-      <section
-        v-if="sector.managers.length > 0"
-        class="form-sector-container__managers"
-      >
-        <SelectedMember
-          v-for="manager in sector.managers"
-          :key="manager.uuid"
-          :name="`${manager.user.first_name} ${manager.user.last_name}`"
-          :email="manager.user.email"
-          :avatarUrl="photo(manager.user.photo_url)"
-          roleName="Gerente"
-          @remove="removeManager(manager.uuid)"
-        />
-      </section>
-    </section>
+      <section class="form-section">
+        <h2 class="form-section__title">
+          {{ $t('sector.managers.working_day.title') }}
+        </h2>
+        <section class="form-section__inputs">
+          <fieldset>
+            <p class="label-working-day">
+              {{ $t('sector.managers.working_day.start.label') }}
+            </p>
+            <input
+              v-model="sector.workingDay.start"
+              class="input-time"
+              type="time"
+              min="00:00"
+              max="23:00"
+            />
+            <span
+              v-show="!validHour"
+              class="error-message"
+            >
+              {{ message }}
+            </span>
+          </fieldset>
+          <fieldset>
+            <p class="label-working-day">
+              {{ $t('sector.managers.working_day.end.label') }}
+            </p>
+            <input
+              v-model="sector.workingDay.end"
+              class="input-time"
+              type="time"
+              min="00:01"
+              max="23:59"
+            />
+          </fieldset>
 
-    <section class="form-section">
-      <h2 class="form-section__title">
-        {{ $t('sector.managers.working_day.title') }}
-      </h2>
-      <section class="form-section__inputs">
-        <div>
-          <p class="label-working-day">
-            {{ $t('sector.managers.working_day.start.label') }}
-          </p>
-          <input
-            v-model="sector.workingDay.start"
-            class="input-time"
-            type="time"
-            min="00:00"
-            max="23:00"
-          />
-          <span
-            v-show="!validHour"
-            style="font-size: 12px; color: #ff4545"
-          >
-            {{ message }}
-          </span>
-        </div>
+          <!-- New field will be inserted here -->
+          <fieldset></fieldset>
 
-        <div>
-          <p class="label-working-day">
-            {{ $t('sector.managers.working_day.end.label') }}
-          </p>
-          <input
-            v-model="sector.workingDay.end"
-            class="input-time"
-            type="time"
-            min="00:01"
-            max="23:59"
-          />
-        </div>
-        <div></div>
-        <div>
           <UnnnicInput
             v-model="sector.maxSimultaneousChatsByAgent"
             :label="$t('sector.managers.working_day.limit_agents.label')"
             placeholder="4"
             class="form-section__inputs--fill-w"
           />
-        </div>
-      </section>
-      <section class="form-section__handlers">
-        <UnnnicButton
-          v-if="isEditing"
-          :text="$t('delete_sector')"
-          type="tertiary"
-          iconLeft="delete"
-          size="small"
-          @click.stop="openModalDelete = true"
+        </section>
+        <section class="form-section__handlers">
+          <UnnnicButton
+            v-if="isEditing"
+            :text="$t('delete_sector')"
+            type="tertiary"
+            iconLeft="delete"
+            size="small"
+            @click.stop="openModalDelete = true"
+          />
+        </section>
+        <UnnnicModalNext
+          v-if="openModalDelete"
+          type="alert"
+          icon="alert-circle-1"
+          scheme="feedback-red"
+          :title="$t('delete_sector') + ` ${sector.name}`"
+          :description="$t('cant_revert')"
+          :validate="`${sector.name}`"
+          :validatePlaceholder="`${sector.name}`"
+          :validateLabel="$t('confirm_typing') + ` &quot;${sector.name}&quot;`"
+          :actionPrimaryLabel="$t('confirm')"
+          :actionSecondaryLabel="$t('cancel')"
+          @click-action-primary="deleteSector(sector.uuid)"
+          @click-action-secondary="openModalDelete = false"
         />
       </section>
-      <UnnnicModalNext
-        v-if="openModalDelete"
-        type="alert"
-        icon="alert-circle-1"
-        scheme="feedback-red"
-        :title="$t('delete_sector') + ` ${sector.name}`"
-        :description="$t('cant_revert')"
-        :validate="`${sector.name}`"
-        :validatePlaceholder="`${sector.name}`"
-        :validateLabel="$t('confirm_typing') + ` &quot;${sector.name}&quot;`"
-        :actionPrimaryLabel="$t('confirm')"
-        :actionSecondaryLabel="$t('cancel')"
-        @click-action-primary="deleteSector(sector.uuid)"
-        @click-action-secondary="openModalDelete = false"
+    </form>
+    <section class="form-actions">
+      <UnnnicButton
+        text="Cancelar"
+        type="tertiary"
+        @click.stop="$router.push('/settings')"
       />
+      <UnnnicButton text="Salvar" />
     </section>
-  </form>
+  </section>
 </template>
 
 <script>
@@ -332,7 +342,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+
+  gap: $unnnic-spacing-sm;
+
+  > * {
+    flex: 1;
+  }
+}
 .form-sector-container {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 80px;
+
   .form-section {
     & + .form-section {
       margin-top: 1.5rem;
@@ -360,11 +393,17 @@ export default {
 
     &__inputs {
       display: grid;
-      gap: $unnnic-spacing-stack-sm;
+      gap: $unnnic-spacing-ant $unnnic-spacing-stack-sm;
       grid-template-columns: 1fr 1fr;
 
-      &--fill-w {
-        grid-column: span 2;
+      > fieldset {
+        border: none;
+        padding: 0;
+        margin: 0;
+        & .error-message {
+          font-size: 12px;
+          color: $unnnic-color-feedback-red;
+        }
       }
     }
 
