@@ -424,6 +424,8 @@ export default {
   right: 0;
   display: flex;
   justify-content: space-between;
+  background-color: white;
+  padding-top: $unnnic-spacing-md;
 
   gap: $unnnic-spacing-sm;
 
@@ -434,7 +436,7 @@ export default {
 .form-sector-container {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 80px;
+  padding-bottom: 80px; // This padding is to prevent the content from being hidden
 
   .form-section {
     & + .form-section {
