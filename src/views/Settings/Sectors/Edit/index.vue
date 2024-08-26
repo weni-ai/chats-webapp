@@ -24,11 +24,9 @@
 
       <template #tab-panel-general>
         <FormSector
+          v-if="sector.uuid"
           v-model="sector"
           isEditing
-          :managers="projectManagers"
-          @remove-manager="removeManager"
-          @validate="isSectorFormValid = $event"
         />
       </template>
       <template #tab-panel-extra_options> </template>
@@ -49,7 +47,6 @@ import FormSector from '@/components/settings/forms/Sector.vue';
 import { useConfig } from '@/store/modules/config';
 
 import Sector from '@/services/api/resources/settings/sector';
-import Project from '@/services/api/resources/settings/project';
 
 export default {
   name: 'EditSector',
@@ -76,8 +73,6 @@ export default {
         managers: [],
         maxSimultaneousChatsByAgent: '',
       },
-      projectManagers: [],
-      removedManagers: [],
     };
   },
 
@@ -94,28 +89,19 @@ export default {
       ];
     },
 
-    tabNames() {
-      return this.tabs.map((tab) => tab.name);
-    },
     tabIds() {
       return this.tabs.map((tab) => tab.id);
     },
   },
 
-  created() {
+  async created() {
     const { params, query } = this.$route;
 
     this.getCurrentSector(params.uuid);
     this.updateTab(query.tab);
 
-    this.getSector();
-    this.getManagers().then(() => {
-      this.initialSectorEdit = JSON.stringify(this.sector);
-    });
-    this.listProjectManagers();
+    await this.getSector();
   },
-
-  beforeMount() {},
 
   methods: {
     ...mapActions(useSettings, ['getCurrentSector']),
@@ -127,7 +113,6 @@ export default {
     ]),
 
     updateTab(newTab) {
-      // Click chegando aqui quando o select ta aberto
       const newActiveTab = this.tabs.find((tab) =>
         [tab.name, tab.id].includes(newTab),
       );
@@ -149,37 +134,6 @@ export default {
     normalizeTime(time) {
       const timeFormat = /^(?<time>(\d\d):(\d\d))/;
       return time.match(timeFormat)?.groups?.time || time;
-    },
-
-    async getManagers() {
-      const sectorUuid = this.$route.params.uuid;
-      const managers = await Sector.managers(sectorUuid);
-      this.sector.managers = managers.results.map((manager) => ({
-        ...manager,
-        removed: false,
-      }));
-    },
-
-    async listProjectManagers() {
-      const managers = (await Project.managers()).results.concat(
-        (await Project.admins()).results,
-      );
-      this.projectManagers = managers;
-    },
-    async removeManager(managerUuid) {
-      await Sector.removeManager(managerUuid);
-      this.removeManagerFromTheList(managerUuid);
-    },
-    removeManagerFromTheList(managerUuid) {
-      const manager = this.sector.managers.find(
-        (manager) => manager.uuid === managerUuid,
-      );
-      if (!manager) return;
-
-      this.removedManagers.push(manager);
-      this.sector.managers = this.sector.managers.filter(
-        (manager) => manager.uuid !== managerUuid,
-      );
     },
     async getSector() {
       const sectorUuid = this.$route.params.uuid;

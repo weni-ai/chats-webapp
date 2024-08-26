@@ -5,30 +5,32 @@
       class="form-sector-container"
       @submit.prevent="$emit('submit')"
     >
-      <!-- TODO NEW SECTOR  -->
-      <!-- <section class="form-section">
-      <h2 class="title">
-        {{ $t('sector.add') }}
-        <UnnnicToolTip
-          enabled
-          :text="$t('new_sector.sector_tip')"
-          side="right"
-          maxWidth="21rem"
-        >
-          <UnnnicIconSvg
-            icon="information-circle-4"
-            scheme="neutral-soft"
-            size="sm"
-          />
-        </UnnnicToolTip>
-      </h2>
+      <section
+        v-if="!isEditing"
+        class="form-section"
+      >
+        <h2 class="title">
+          {{ $t('sector.add') }}
+          <UnnnicToolTip
+            enabled
+            :text="$t('new_sector.sector_tip')"
+            side="right"
+            maxWidth="21rem"
+          >
+            <UnnnicIconSvg
+              icon="information-circle-4"
+              scheme="neutral-soft"
+              size="sm"
+            />
+          </UnnnicToolTip>
+        </h2>
 
-      <UnnnicInput
-        v-model="sector.name"
-        :label="$t('sector.name')"
-        :placeholder="$t('sector.placeholder')"
-      />
-    </section> -->
+        <UnnnicInput
+          v-model="sector.name"
+          :label="$t('sector.name')"
+          :placeholder="$t('sector.placeholder')"
+        />
+      </section>
 
       <section class="form-section">
         <h2 class="form-section__title">
@@ -57,7 +59,7 @@
             :name="`${manager.user.first_name} ${manager.user.last_name}`"
             :email="manager.user.email"
             :avatarUrl="photo(manager.user.photo_url)"
-            roleName="Gerente"
+            :roleName="$t('manager')"
             @remove="removeManager(manager.uuid)"
           />
         </section>
@@ -77,7 +79,7 @@
               class="input-time"
               type="time"
               min="00:00"
-              max="23:00"
+              max="23:59"
             />
             <span
               v-show="!validHour"
@@ -94,7 +96,7 @@
               v-model="sector.workingDay.end"
               class="input-time"
               type="time"
-              min="00:01"
+              min="00:00"
               max="23:59"
             />
           </fieldset>
@@ -138,11 +140,15 @@
     </form>
     <section class="form-actions">
       <UnnnicButton
-        text="Cancelar"
+        :text="$t('cancel')"
         type="tertiary"
         @click.stop="$router.push('/settings')"
       />
-      <UnnnicButton text="Salvar" />
+      <UnnnicButton
+        :text="$t('save')"
+        :disabled="!validForm"
+        @click.stop="saveSector"
+      />
     </section>
   </section>
 </template>
@@ -153,6 +159,7 @@ import { useSettings } from '@/store/modules/settings';
 import unnnic from '@weni/unnnic-system';
 import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 import Sector from '@/services/api/resources/settings/sector';
+import Project from '@/services/api/resources/settings/project';
 
 export default {
   name: 'FormSector',
@@ -165,23 +172,23 @@ export default {
       type: Boolean,
       default: false,
     },
-    managers: {
-      type: Array,
-      default: () => [],
-    },
     modelValue: {
       type: Object,
       default: () => ({}),
     },
   },
-  emits: ['update:modelValue', 'remove-manager', 'validate', 'submit'],
+  emits: ['update:modelValue', 'submit'],
 
-  data: () => ({
-    selectedManager: [],
-    message: '',
-    validHour: false,
-    openModalDelete: false,
-  }),
+  data() {
+    return {
+      selectedManager: [],
+      removedManagers: [],
+      message: '',
+      managers: [],
+      validHour: false,
+      openModalDelete: false,
+    };
+  },
 
   computed: {
     managersNames() {
@@ -215,15 +222,30 @@ export default {
         this.$emit('update:modelValue', sector);
       },
     },
-  },
-  watch: {
-    sector: {
-      deep: true,
-      immediate: true,
-      handler() {
-        this.$emit('validate', this.validate());
-      },
+
+    validForm() {
+      const { name, managers, workingDay, maxSimultaneousChatsByAgent } =
+        this.sector;
+
+      this.hourValidate(workingDay);
+
+      return !!(
+        name.trim() &&
+        managers.length > 0 &&
+        workingDay?.start &&
+        workingDay?.end &&
+        this.validHour &&
+        maxSimultaneousChatsByAgent
+      );
     },
+  },
+
+  mounted() {
+    if (this.isEditing) {
+      this.getSectorManagers();
+    }
+
+    this.listProjectManagers();
   },
 
   methods: {
@@ -231,8 +253,22 @@ export default {
       actionDeleteSector: 'deleteSector',
     }),
 
-    removeManager(managerUuid) {
-      this.$emit('remove-manager', managerUuid);
+    async removeManager(managerUuid) {
+      await Sector.removeManager(managerUuid);
+      this.removeManagerFromTheList(managerUuid);
+    },
+
+    removeManagerFromTheList(managerUuid) {
+      const manager = this.sector.managers.find(
+        (manager) => manager.uuid === managerUuid,
+      );
+
+      if (!manager) return;
+
+      this.removedManagers.push(manager);
+      this.sector.managers = this.sector.managers.filter(
+        (manager) => manager.uuid !== managerUuid,
+      );
     },
 
     selectManager(selectedManager) {
@@ -273,10 +309,10 @@ export default {
 
     async addManager(manager) {
       await Sector.addManager(this.sector.uuid, manager.uuid);
-      this.getManagers();
+      this.getSectorManagers();
     },
 
-    async getManagers() {
+    async getSectorManagers() {
       const managers = await Sector.managers(this.sector.uuid);
       this.sector.managers = managers.results.map((manager) => ({
         ...manager,
@@ -284,30 +320,25 @@ export default {
       }));
     },
 
-    validate() {
-      return this.areAllFieldsFilled();
-    },
+    async listProjectManagers() {
+      // Currently these requests return the same data because of their disabled filters
 
-    areAllFieldsFilled() {
-      const { name, managers, workingDay, maxSimultaneousChatsByAgent } =
-        this.sector;
-      this.hourValidate(workingDay);
-      return !!(
-        name.trim() &&
-        managers.length > 0 &&
-        workingDay?.start &&
-        workingDay?.end &&
-        this.validHour &&
-        maxSimultaneousChatsByAgent
-      );
+      // const managers = (await Project.managers()).results.concat(
+      //   (await Project.admins()).results,
+      // );
+
+      const managers = await Project.managers();
+
+      this.managers = managers.results;
     },
 
     hourValidate(hour) {
       const inicialHour = hour.start;
       const finalHour = hour.end;
-      if (inicialHour > finalHour) {
+      if (inicialHour >= finalHour) {
         this.validHour = false;
-        this.message = 'Horário de início não pode ser maior que horário final';
+        this.message =
+          'Horário de início não pode ser maior/igual que horário final';
       } else {
         this.validHour = true;
       }
@@ -336,6 +367,44 @@ export default {
           seconds: 5,
         });
       }
+    },
+
+    async saveSector() {
+      const {
+        uuid,
+        name,
+        can_trigger_flows,
+        can_edit_custom_fields,
+        config,
+        sign_messages,
+        workingDay,
+        maxSimultaneousChatsByAgent,
+      } = this.sector;
+
+      const sector = {
+        name,
+        can_trigger_flows,
+        can_edit_custom_fields,
+        config,
+        sign_messages,
+        work_start: workingDay.start,
+        work_end: workingDay.end,
+        rooms_limit: maxSimultaneousChatsByAgent,
+      };
+
+      Sector.update(uuid, sector)
+        .then(() => {
+          unnnic.unnnicCallAlert({
+            props: {
+              text: 'Alterações salvas',
+              type: 'success',
+            },
+            seconds: 5,
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
 };
