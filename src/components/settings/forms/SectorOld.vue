@@ -1,11 +1,25 @@
 <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
   <form
-    class="form-sector-container"
+    class="form-sector"
     @submit.prevent="$emit('submit')"
   >
-    <!-- TODO NEW SECTOR  -->
-    <!-- <section class="form-section">
+    <section
+      v-if="isEditing"
+      class="form-section"
+    >
+      <h2
+        v-if="sector.name"
+        class="title--lg"
+      >
+        {{ sector.name }}
+      </h2>
+    </section>
+
+    <section
+      v-else
+      class="form-section"
+    >
       <h2 class="title">
         {{ $t('sector.add') }}
         <UnnnicToolTip
@@ -27,28 +41,48 @@
         :label="$t('sector.name')"
         :placeholder="$t('sector.placeholder')"
       />
-    </section> -->
+    </section>
 
     <section class="form-section">
-      <h2 class="form-section__title">
+      <h2 class="title">
         {{ $t('sector.managers.title') }}
+        <UnnnicToolTip
+          enabled
+          :text="$t('new_sector.agent_tip')"
+          side="right"
+          maxWidth="15rem"
+        >
+          <UnnnicIconSvg
+            icon="information-circle-4"
+            scheme="neutral-soft"
+            size="sm"
+          />
+        </UnnnicToolTip>
       </h2>
 
-      <section class="form-section__select-managers">
-        <UnnnicLabel :label="$t('sector.managers.add.label')" />
-        <UnnnicSelectSmart
-          v-model="selectedManager"
-          :options="managersNames"
-          autocomplete
-          autocompleteIconLeft
-          autocompleteClearOnFocus
-          @update:model-value="selectManager"
-        />
-      </section>
+      <div class="inline-input-and-button">
+        <div>
+          <UnnnicLabel :label="$t('sector.managers.add.label')" />
+          <UnnnicSelectSmart
+            v-model="selectedManager"
+            :options="managersNames"
+            autocomplete
+            autocompleteIconLeft
+            autocompleteClearOnFocus
+            @update:model-value="selectManager"
+          />
+        </div>
+        <!-- <unnnic-button
+            text="Selecionar"
+            type="secondary"
+            @click="addSectorManager"
+            :disabled="!selectedManager"
+          /> -->
+      </div>
 
       <section
         v-if="sector.managers.length > 0"
-        class="form-sector-container__managers"
+        class="form-sector__managers"
       >
         <SelectedMember
           v-for="manager in sector.managers"
@@ -63,76 +97,115 @@
     </section>
 
     <section class="form-section">
-      <h2 class="form-section__title">
-        {{ $t('sector.managers.working_day.title') }}
-      </h2>
-      <section class="form-section__inputs">
-        <div>
-          <p class="label-working-day">
-            {{ $t('sector.managers.working_day.start.label') }}
-          </p>
-          <input
-            v-model="sector.workingDay.start"
-            class="input-time"
-            type="time"
-            min="00:00"
-            max="23:00"
+      <div style="margin-bottom: 29px">
+        <h2 class="title">
+          {{ $t('sector.additional_options.title') }}
+        </h2>
+        <UnnnicSwitch
+          v-model="sector.can_trigger_flows"
+          :textRight="
+            sector.can_trigger_flows
+              ? $t('sector.additional_options.template_message.switch_active')
+              : $t('sector.additional_options.template_message.switch_disabled')
+          "
+        />
+        <div class="form-section__switch__container">
+          <UnnnicSwitch
+            v-model="sector.sign_messages"
+            :textRight="
+              sector.sign_messages
+                ? $t('sector.additional_options.agents_signature.switch_active')
+                : $t(
+                    'sector.additional_options.agents_signature.switch_disabled',
+                  )
+            "
           />
-          <span
-            v-show="!validHour"
-            style="font-size: 12px; color: #ff4545"
+          <UnnnicToolTip
+            enabled
+            :text="$t('sector.additional_options.agents_signature.tooltip')"
+            side="right"
+            maxWidth="15rem"
           >
-            {{ message }}
-          </span>
+            <UnnnicIconSvg
+              icon="information-circle-4"
+              scheme="neutral-soft"
+              size="sm"
+            />
+          </UnnnicToolTip>
         </div>
 
-        <div>
-          <p class="label-working-day">
-            {{ $t('sector.managers.working_day.end.label') }}
-          </p>
-          <input
-            v-model="sector.workingDay.end"
-            class="input-time"
-            type="time"
-            min="00:01"
-            max="23:59"
-          />
-        </div>
-        <div></div>
-        <div>
+        <UnnnicSwitch
+          v-model="sector.can_edit_custom_fields"
+          :textRight="$t('sector.additional_options.edit_custom_fields')"
+        />
+      </div>
+      <div>
+        <h2 class="title">{{ $t('sector.managers.working_day.title') }}</h2>
+
+        <section class="form-section__inputs">
+          <div>
+            <span class="label-working-day">
+              {{ $t('sector.managers.working_day.start.label') }}
+            </span>
+            <input
+              v-model="sector.workingDay.start"
+              class="input-time"
+              type="time"
+              min="00:00"
+              max="23:00"
+            />
+            <span
+              v-show="!validHour"
+              style="font-size: 12px; color: #ff4545"
+            >
+              {{ message }}
+            </span>
+          </div>
+          <div>
+            <span class="label-working-day">
+              {{ $t('sector.managers.working_day.end.label') }}
+            </span>
+            <input
+              v-model="sector.workingDay.end"
+              class="input-time"
+              type="time"
+              min="00:01"
+              max="23:59"
+            />
+          </div>
           <UnnnicInput
             v-model="sector.maxSimultaneousChatsByAgent"
             :label="$t('sector.managers.working_day.limit_agents.label')"
             placeholder="4"
             class="form-section__inputs--fill-w"
           />
-        </div>
-      </section>
-      <section class="form-section__handlers">
-        <UnnnicButton
-          v-if="isEditing"
-          :text="$t('delete_sector')"
-          type="tertiary"
-          iconLeft="delete"
-          size="small"
-          @click.stop="openModalDelete = true"
+        </section>
+        <section class="form-section__handlers">
+          <UnnnicButton
+            v-if="isEditing"
+            :text="$t('delete_sector')"
+            type="warning"
+            iconLeft="delete"
+            size="small"
+            @click.stop="openModalDelete = true"
+          />
+        </section>
+        <UnnnicModalNext
+          v-if="openModalDelete"
+          type="alert"
+          icon="alert-circle-1"
+          scheme="feedback-red"
+          :title="$t('delete_sector') + ` ${sector.name}`"
+          :description="$t('cant_revert')"
+          :validate="`${sector.name}`"
+          :validatePlaceholder="`${sector.name}`"
+          :validateLabel="$t('confirm_typing') + ` &quot;${sector.name}&quot;`"
+          :actionPrimaryLabel="$t('confirm')"
+          :actionSecondaryLabel="$t('cancel')"
+          @click-action-primary="deleteSector(sector.uuid)"
+          @click-action-secondary="openModalDelete = false"
         />
-      </section>
-      <UnnnicModalNext
-        v-if="openModalDelete"
-        type="alert"
-        icon="alert-circle-1"
-        scheme="feedback-red"
-        :title="$t('delete_sector') + ` ${sector.name}`"
-        :description="$t('cant_revert')"
-        :validate="`${sector.name}`"
-        :validatePlaceholder="`${sector.name}`"
-        :validateLabel="$t('confirm_typing') + ` &quot;${sector.name}&quot;`"
-        :actionPrimaryLabel="$t('confirm')"
-        :actionSecondaryLabel="$t('cancel')"
-        @click-action-primary="deleteSector(sector.uuid)"
-        @click-action-secondary="openModalDelete = false"
-      />
+      </div>
     </section>
   </form>
 </template>
@@ -332,13 +405,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.form-sector-container {
+.form-sector {
   .form-section {
     & + .form-section {
       margin-top: 1.5rem;
     }
 
-    &__title {
+    & .inline-input-and-button {
+      & *:first-child {
+        flex: 1 1;
+      }
+
+      display: flex;
+      gap: $unnnic-spacing-stack-sm;
+      align-items: flex-end;
+    }
+
+    .title {
       &--lg {
         font-size: $unnnic-font-size-title-sm;
       }
@@ -347,6 +430,8 @@ export default {
       color: $unnnic-color-neutral-dark;
       font-size: $unnnic-font-size-body-lg;
       line-height: 1.5rem;
+
+      margin-bottom: 1rem;
     }
 
     &__switch__container {
