@@ -1,6 +1,4 @@
 import { mount } from '@vue/test-utils';
-import UnnnicSystem from '@/plugins/UnnnicSystem';
-import i18n from '@/plugins/i18n';
 
 import FormAgent from '../Agent.vue';
 import defaultProps from './mocks/agentMock';
@@ -8,9 +6,6 @@ import defaultProps from './mocks/agentMock';
 function createWrapper() {
   const wrapper = mount(FormAgent, {
     props: defaultProps,
-    global: {
-      plugins: [i18n, UnnnicSystem],
-    },
   });
 
   return wrapper;

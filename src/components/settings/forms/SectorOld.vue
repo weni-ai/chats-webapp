@@ -1,43 +1,67 @@
 <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
-  <section class="form-wrapper">
-    <form
-      class="form-sector-container"
-      @submit.prevent="$emit('submit')"
+  <form
+    class="form-sector"
+    @submit.prevent="$emit('submit')"
+  >
+    <section
+      v-if="isEditing"
+      class="form-section"
     >
-      <section
-        v-if="!isEditing"
-        class="form-section"
+      <h2
+        v-if="sector.name"
+        class="title--lg"
       >
-        <h2 class="title">
-          {{ $t('sector.add') }}
-          <UnnnicToolTip
-            enabled
-            :text="$t('new_sector.sector_tip')"
-            side="right"
-            maxWidth="21rem"
-          >
-            <UnnnicIconSvg
-              icon="information-circle-4"
-              scheme="neutral-soft"
-              size="sm"
-            />
-          </UnnnicToolTip>
-        </h2>
+        {{ sector.name }}
+      </h2>
+    </section>
 
-        <UnnnicInput
-          v-model="sector.name"
-          :label="$t('sector.name')"
-          :placeholder="$t('sector.placeholder')"
-        />
-      </section>
+    <section
+      v-else
+      class="form-section"
+    >
+      <h2 class="title">
+        {{ $t('sector.add') }}
+        <UnnnicToolTip
+          enabled
+          :text="$t('new_sector.sector_tip')"
+          side="right"
+          maxWidth="21rem"
+        >
+          <UnnnicIconSvg
+            icon="information-circle-4"
+            scheme="neutral-soft"
+            size="sm"
+          />
+        </UnnnicToolTip>
+      </h2>
 
-      <section class="form-section">
-        <h2 class="form-section__title">
-          {{ $t('sector.managers.title') }}
-        </h2>
+      <UnnnicInput
+        v-model="sector.name"
+        :label="$t('sector.name')"
+        :placeholder="$t('sector.placeholder')"
+      />
+    </section>
 
-        <section class="form-section__select-managers">
+    <section class="form-section">
+      <h2 class="title">
+        {{ $t('sector.managers.title') }}
+        <UnnnicToolTip
+          enabled
+          :text="$t('new_sector.agent_tip')"
+          side="right"
+          maxWidth="15rem"
+        >
+          <UnnnicIconSvg
+            icon="information-circle-4"
+            scheme="neutral-soft"
+            size="sm"
+          />
+        </UnnnicToolTip>
+      </h2>
+
+      <div class="inline-input-and-button">
+        <div>
           <UnnnicLabel :label="$t('sector.managers.add.label')" />
           <UnnnicSelectSmart
             v-model="selectedManager"
@@ -47,63 +71,108 @@
             autocompleteClearOnFocus
             @update:model-value="selectManager"
           />
-        </section>
+        </div>
+        <!-- <unnnic-button
+            text="Selecionar"
+            type="secondary"
+            @click="addSectorManager"
+            :disabled="!selectedManager"
+          /> -->
+      </div>
 
-        <section
-          v-if="sector.managers.length > 0"
-          class="form-sector-container__managers"
-        >
-          <SelectedMember
-            v-for="manager in sector.managers"
-            :key="manager.uuid"
-            :name="`${manager.user.first_name} ${manager.user.last_name}`"
-            :email="manager.user.email"
-            :avatarUrl="photo(manager.user.photo_url)"
-            :roleName="$t('manager')"
-            @remove="removeManager(manager.uuid)"
-          />
-        </section>
+      <section
+        v-if="sector.managers.length > 0"
+        class="form-sector__managers"
+      >
+        <SelectedMember
+          v-for="manager in sector.managers"
+          :key="manager.uuid"
+          :name="`${manager.user.first_name} ${manager.user.last_name}`"
+          :email="manager.user.email"
+          :avatarUrl="photo(manager.user.photo_url)"
+          roleName="Gerente"
+          @remove="removeManager(manager.uuid)"
+        />
       </section>
+    </section>
 
-      <section class="form-section">
-        <h2 class="form-section__title">
-          {{ $t('sector.managers.working_day.title') }}
+    <section class="form-section">
+      <div style="margin-bottom: 29px">
+        <h2 class="title">
+          {{ $t('sector.additional_options.title') }}
         </h2>
+        <UnnnicSwitch
+          v-model="sector.can_trigger_flows"
+          :textRight="
+            sector.can_trigger_flows
+              ? $t('sector.additional_options.template_message.switch_active')
+              : $t('sector.additional_options.template_message.switch_disabled')
+          "
+        />
+        <div class="form-section__switch__container">
+          <UnnnicSwitch
+            v-model="sector.sign_messages"
+            :textRight="
+              sector.sign_messages
+                ? $t('sector.additional_options.agents_signature.switch_active')
+                : $t(
+                    'sector.additional_options.agents_signature.switch_disabled',
+                  )
+            "
+          />
+          <UnnnicToolTip
+            enabled
+            :text="$t('sector.additional_options.agents_signature.tooltip')"
+            side="right"
+            maxWidth="15rem"
+          >
+            <UnnnicIconSvg
+              icon="information-circle-4"
+              scheme="neutral-soft"
+              size="sm"
+            />
+          </UnnnicToolTip>
+        </div>
+
+        <UnnnicSwitch
+          v-model="sector.can_edit_custom_fields"
+          :textRight="$t('sector.additional_options.edit_custom_fields')"
+        />
+      </div>
+      <div>
+        <h2 class="title">{{ $t('sector.managers.working_day.title') }}</h2>
+
         <section class="form-section__inputs">
-          <fieldset>
-            <p class="label-working-day">
+          <div>
+            <span class="label-working-day">
               {{ $t('sector.managers.working_day.start.label') }}
-            </p>
+            </span>
             <input
               v-model="sector.workingDay.start"
               class="input-time"
               type="time"
               min="00:00"
-              max="23:59"
+              max="23:00"
             />
             <span
               v-show="!validHour"
-              class="error-message"
+              style="font-size: 12px; color: #ff4545"
             >
               {{ message }}
             </span>
-          </fieldset>
-          <fieldset>
-            <p class="label-working-day">
+          </div>
+          <div>
+            <span class="label-working-day">
               {{ $t('sector.managers.working_day.end.label') }}
-            </p>
+            </span>
             <input
               v-model="sector.workingDay.end"
               class="input-time"
               type="time"
-              min="00:00"
+              min="00:01"
               max="23:59"
             />
-          </fieldset>
-
-          <!-- New field will be inserted here -->
-          <fieldset></fieldset>
-
+          </div>
           <UnnnicInput
             v-model="sector.maxSimultaneousChatsByAgent"
             :label="$t('sector.managers.working_day.limit_agents.label')"
@@ -115,7 +184,7 @@
           <UnnnicButton
             v-if="isEditing"
             :text="$t('delete_sector')"
-            type="tertiary"
+            type="warning"
             iconLeft="delete"
             size="small"
             @click.stop="openModalDelete = true"
@@ -136,21 +205,9 @@
           @click-action-primary="deleteSector(sector.uuid)"
           @click-action-secondary="openModalDelete = false"
         />
-      </section>
-    </form>
-    <section class="form-actions">
-      <UnnnicButton
-        :text="$t('cancel')"
-        type="tertiary"
-        @click.stop="$router.push('/settings')"
-      />
-      <UnnnicButton
-        :text="$t('save')"
-        :disabled="!validForm"
-        @click.stop="saveSector"
-      />
+      </div>
     </section>
-  </section>
+  </form>
 </template>
 
 <script>
@@ -159,7 +216,6 @@ import { useSettings } from '@/store/modules/settings';
 import unnnic from '@weni/unnnic-system';
 import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 import Sector from '@/services/api/resources/settings/sector';
-import Project from '@/services/api/resources/settings/project';
 
 export default {
   name: 'FormSector',
@@ -172,23 +228,23 @@ export default {
       type: Boolean,
       default: false,
     },
+    managers: {
+      type: Array,
+      default: () => [],
+    },
     modelValue: {
       type: Object,
       default: () => ({}),
     },
   },
-  emits: ['update:modelValue', 'submit'],
+  emits: ['update:modelValue', 'remove-manager', 'validate', 'submit'],
 
-  data() {
-    return {
-      selectedManager: [],
-      removedManagers: [],
-      message: '',
-      managers: [],
-      validHour: false,
-      openModalDelete: false,
-    };
-  },
+  data: () => ({
+    selectedManager: [],
+    message: '',
+    validHour: false,
+    openModalDelete: false,
+  }),
 
   computed: {
     managersNames() {
@@ -222,30 +278,15 @@ export default {
         this.$emit('update:modelValue', sector);
       },
     },
-
-    validForm() {
-      const { name, managers, workingDay, maxSimultaneousChatsByAgent } =
-        this.sector;
-
-      this.hourValidate(workingDay);
-
-      return !!(
-        name.trim() &&
-        managers.length > 0 &&
-        workingDay?.start &&
-        workingDay?.end &&
-        this.validHour &&
-        maxSimultaneousChatsByAgent
-      );
-    },
   },
-
-  mounted() {
-    if (this.isEditing) {
-      this.getSectorManagers();
-    }
-
-    this.listProjectManagers();
+  watch: {
+    sector: {
+      deep: true,
+      immediate: true,
+      handler() {
+        this.$emit('validate', this.validate());
+      },
+    },
   },
 
   methods: {
@@ -253,22 +294,8 @@ export default {
       actionDeleteSector: 'deleteSector',
     }),
 
-    async removeManager(managerUuid) {
-      await Sector.removeManager(managerUuid);
-      this.removeManagerFromTheList(managerUuid);
-    },
-
-    removeManagerFromTheList(managerUuid) {
-      const manager = this.sector.managers.find(
-        (manager) => manager.uuid === managerUuid,
-      );
-
-      if (!manager) return;
-
-      this.removedManagers.push(manager);
-      this.sector.managers = this.sector.managers.filter(
-        (manager) => manager.uuid !== managerUuid,
-      );
+    removeManager(managerUuid) {
+      this.$emit('remove-manager', managerUuid);
     },
 
     selectManager(selectedManager) {
@@ -309,10 +336,10 @@ export default {
 
     async addManager(manager) {
       await Sector.addManager(this.sector.uuid, manager.uuid);
-      this.getSectorManagers();
+      this.getManagers();
     },
 
-    async getSectorManagers() {
+    async getManagers() {
       const managers = await Sector.managers(this.sector.uuid);
       this.sector.managers = managers.results.map((manager) => ({
         ...manager,
@@ -320,25 +347,30 @@ export default {
       }));
     },
 
-    async listProjectManagers() {
-      // Currently these requests return the same data because of their disabled filters
+    validate() {
+      return this.areAllFieldsFilled();
+    },
 
-      // const managers = (await Project.managers()).results.concat(
-      //   (await Project.admins()).results,
-      // );
-
-      const managers = await Project.managers();
-
-      this.managers = managers.results;
+    areAllFieldsFilled() {
+      const { name, managers, workingDay, maxSimultaneousChatsByAgent } =
+        this.sector;
+      this.hourValidate(workingDay);
+      return !!(
+        name.trim() &&
+        managers.length > 0 &&
+        workingDay?.start &&
+        workingDay?.end &&
+        this.validHour &&
+        maxSimultaneousChatsByAgent
+      );
     },
 
     hourValidate(hour) {
       const inicialHour = hour.start;
       const finalHour = hour.end;
-      if (inicialHour >= finalHour) {
+      if (inicialHour > finalHour) {
         this.validHour = false;
-        this.message =
-          'Horário de início não pode ser maior/igual que horário final';
+        this.message = 'Horário de início não pode ser maior que horário final';
       } else {
         this.validHour = true;
       }
@@ -368,100 +400,61 @@ export default {
         });
       }
     },
-
-    async saveSector() {
-      const {
-        uuid,
-        name,
-        can_trigger_flows,
-        can_edit_custom_fields,
-        config,
-        sign_messages,
-        workingDay,
-        maxSimultaneousChatsByAgent,
-      } = this.sector;
-
-      const sector = {
-        name,
-        can_trigger_flows,
-        can_edit_custom_fields,
-        config,
-        sign_messages,
-        work_start: workingDay.start,
-        work_end: workingDay.end,
-        rooms_limit: maxSimultaneousChatsByAgent,
-      };
-
-      Sector.update(uuid, sector)
-        .then(() => {
-          unnnic.unnnicCallAlert({
-            props: {
-              text: 'Alterações salvas',
-              type: 'success',
-            },
-            seconds: 5,
-          });
-          this.$router.push('/settings');
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.form-wrapper {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-actions {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-between;
-
-  gap: $unnnic-spacing-sm;
-
-  > * {
-    flex: 1;
-  }
-}
-.form-sector-container {
-  flex: 1;
-  overflow-y: auto;
-  padding-bottom: 80px;
-
+.form-sector {
   .form-section {
     & + .form-section {
-      margin-top: $unnnic-spacing-md;
+      margin-top: 1.5rem;
     }
 
-    &__title {
+    & .inline-input-and-button {
+      & *:first-child {
+        flex: 1 1;
+      }
+
+      display: flex;
+      gap: $unnnic-spacing-stack-sm;
+      align-items: flex-end;
+    }
+
+    .title {
+      &--lg {
+        font-size: $unnnic-font-size-title-sm;
+      }
+
       font-weight: $unnnic-font-weight-bold;
       color: $unnnic-color-neutral-dark;
       font-size: $unnnic-font-size-body-lg;
-      line-height: $unnnic-line-height-large * 1.5;
+      line-height: 1.5rem;
+
+      margin-bottom: 1rem;
+    }
+
+    &__switch__container {
+      display: flex;
+      align-items: center;
+
+      .unnnic-tooltip {
+        display: flex;
+      }
     }
 
     &__inputs {
       display: grid;
-      gap: $unnnic-spacing-ant $unnnic-spacing-stack-sm;
+      gap: $unnnic-spacing-stack-sm;
       grid-template-columns: 1fr 1fr;
 
-      > fieldset {
-        border: none;
-        padding: 0;
-        margin: 0;
-        & .error-message {
-          font-size: $unnnic-font-size-body-md;
-          color: $unnnic-color-feedback-red;
-        }
+      &--fill-w {
+        grid-column: span 2;
       }
+    }
+
+    .unnnic-switch {
+      align-items: center;
     }
 
     &__handlers {
@@ -486,7 +479,6 @@ export default {
     padding: 0.75rem 1rem;
     cursor: text;
   }
-
   .label-working-day {
     font-weight: 400;
     line-height: 1.375rem;
@@ -506,7 +498,6 @@ export default {
     flex-direction: column;
     gap: $unnnic-spacing-stack-xs;
   }
-
   ::placeholder {
     color: #d1d4da;
   }

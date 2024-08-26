@@ -1,0 +1,98 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SettingView.vue > should match the snapshot 1`] = `
+<section
+  class="settings-view"
+  data-testid="settings-view"
+  data-v-002f92b9=""
+>
+  <header
+    class="settings-view__header"
+    data-v-002f92b9=""
+    data-v-a59c663f=""
+  >
+    <div
+      class="unnnic-avatar-icon weni-600 sm"
+      data-testid="settings-view-header-icon"
+      data-v-a59c663f=""
+      data-v-ecaaa6f3=""
+    >
+      <span
+        class="material-symbols-rounded unnnic-icon-scheme--weni-600 unnnic-icon-size--md"
+        data-v-930380cc=""
+        data-v-ecaaa6f3=""
+      >
+        settings
+      </span>
+    </div>
+    <h1
+      class="header__title"
+      data-testid="settings-view-header-title"
+      data-v-a59c663f=""
+    >
+      Configurações de Chats
+    </h1>
+  </header>
+  <!--v-if-->
+  
+  <header
+    class="settings-view__section-header"
+    data-testid="settings-sectors-header"
+    data-v-1088b44f=""
+    data-v-f23b63f9=""
+  >
+    <p
+      class="section-header__title"
+      data-testid="section-header-title"
+      data-v-f23b63f9=""
+    >
+      Setores em 
+    </p>
+    <p
+      class="section-header__subtitle"
+      data-testid="section-header-subtitle"
+      data-v-f23b63f9=""
+    >
+      Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.
+    </p>
+  </header>
+  <section
+    class="settings-view__sectors"
+    data-v-1088b44f=""
+  >
+    <div
+      buttonaction="() => {
+      }"
+      class="unnnic-card-blank unnnic-card-component sectors__new-sector-card sectors__new-sector-card"
+      data-testid="settings-sectors-blank-card"
+      data-v-1088b44f=""
+      enabled="true"
+      hasinformationicon="true"
+      infoposition="right"
+      percent="0"
+      rating="0"
+      scheme="aux-blue"
+    >
+      <div
+        class="unnnic-card-blank__content"
+      >
+        <span
+          class="material-symbols-rounded unnnic-icon-scheme--neutral-clean unnnic-icon-size--xl unnnic-card-blank__content__icon"
+          data-v-930380cc=""
+        >
+          add
+        </span>
+        <div
+          class="unnnic-card-blank__content__text"
+        >
+          Novo setor
+        </div>
+      </div>
+    </div>
+    
+    
+  </section>
+  <!--v-if-->
+  
+</section>
+`;

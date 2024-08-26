@@ -6,7 +6,7 @@
       class="scrollable"
     >
       <template #sector>
-        <FormSector
+        <FormSectorOld
           v-model="sector"
           isEditing
           :managers="projectManagers"
@@ -33,8 +33,8 @@
               size="small"
               title="Mensagem automática"
               info="Defina uma resposta automática para ser enviada ao contato enquanto
-            está aguardando atendimento, deixe em branco caso não queira
-            nenhuma mensagem."
+              está aguardando atendimento, deixe em branco caso não queira
+              nenhuma mensagem."
             >
               <template #actions>
                 <UnnnicButtonIcon
@@ -191,7 +191,7 @@ import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared
 import unnnic from '@weni/unnnic-system';
 
 import FormAgent from '@/components/settings/forms/Agent.vue';
-import FormSector from '@/components/settings/forms/Sector.vue';
+import FormSectorOld from '@/components/settings/forms/SectorOld.vue';
 import FormQueue from '@/components/settings/forms/Queue.vue';
 import FormMessages from '@/components/settings/forms/Messages.vue';
 import FormTags from '@/components/settings/forms/Tags.vue';
@@ -207,7 +207,7 @@ export default {
   components: {
     FormAgent,
     FormQueue,
-    FormSector,
+    FormSectorOld,
     FormMessages,
     FormTags,
     SectorTabs,

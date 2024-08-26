@@ -1,15 +1,10 @@
 import { mount } from '@vue/test-utils';
-import i18n from '@/plugins/i18n';
-import UnnnicSystem from '@/plugins/UnnnicSystem';
-import FormSector from '../Sector.vue';
+import FormSector from '../SectorOld.vue';
 import defaultProps from './mocks/sectorMock';
 
 function createWrapper() {
   const wrapper = mount(FormSector, {
     props: defaultProps,
-    global: {
-      plugins: [i18n, UnnnicSystem],
-    },
   });
 
   return wrapper;

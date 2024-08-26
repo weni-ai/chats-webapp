@@ -1,12 +1,19 @@
 <template>
   <header class="settings-view__header">
     <UnnnicAvatarIcon
+      data-testid="settings-view-header-icon"
       icon="settings"
       scheme="weni-600"
     />
-    <h1 class="header__title">{{ $t('config_chats.title') }}</h1>
+    <h1
+      class="header__title"
+      data-testid="settings-view-header-title"
+    >
+      {{ $t('config_chats.title') }}
+    </h1>
   </header>
 </template>
+
 <script>
 export default {
   name: 'SettingsHeader',

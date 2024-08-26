@@ -1,10 +1,12 @@
 <template>
   <SettingsSectionHeader
+    data-testid="settings-sectors-header"
     :title="$t('config_chats.section_sectors_title', { project: projectName })"
     :subtitle="$t('config_chats.section_sectors_subtitle')"
   />
   <section class="settings-view__sectors">
     <UnnnicCard
+      data-testid="settings-sectors-blank-card"
       type="blank"
       :text="$t('config_chats.new_sector')"
       icon="add"
@@ -15,6 +17,7 @@
     <UnnnicCardProject
       v-for="sector in sectors"
       :key="sector.id"
+      data-testid="settings-sectors-sector-card"
       class="sectors__card"
       :actionText="$t('config_chats.open')"
       :name="sector.name"
@@ -38,6 +41,7 @@
 
   <section
     v-if="isLoadingSectors"
+    data-testid="settings-sectors-loading-section"
     class="settings-view__loading-sectors"
   >
     <img

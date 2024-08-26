@@ -1,8 +1,14 @@
 <template>
   <header class="settings-view__section-header">
-    <p class="section-header__title">{{ title }}</p>
+    <p
+      data-testid="section-header-title"
+      class="section-header__title"
+    >
+      {{ title }}
+    </p>
     <p
       v-if="subtitle"
+      data-testid="section-header-subtitle"
       class="section-header__subtitle"
     >
       {{ subtitle }}

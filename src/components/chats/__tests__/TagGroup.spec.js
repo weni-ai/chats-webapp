@@ -1,14 +1,10 @@
 import { unnnicTag } from '@weni/unnnic-system';
-import UnnnicSystem from '@/plugins/UnnnicSystem';
 import { mount } from '@vue/test-utils';
 import TagGroup from '@/components/TagGroup.vue';
 
 function createWrapper(props) {
   const wrapper = mount(TagGroup, {
     props,
-    global: {
-      plugins: [UnnnicSystem],
-    },
   });
 
   return wrapper;

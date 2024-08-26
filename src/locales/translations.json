@@ -214,10 +214,15 @@
       "en": "Sector",
       "es": "Sector"
     },
-    "geral": {
+    "general": {
       "pt-br": "Geral",
       "en": "General",
       "es": "General"
+    },
+    "extra_options": {
+      "pt-br": "Opções extras",
+      "en": "Extra options",
+      "es": "Opciones adicionales"
     },
     "queues": {
       "pt-br": "Filas",
@@ -894,7 +899,7 @@
     "es": "Agente"
   },
   "manager": {
-    "pt-br": "Gestor",
+    "pt-br": "Gerente",
     "en": "Manager",
     "es": "Gerente"
   },
@@ -1973,6 +1978,13 @@
           "en": "Blocking transfers to offline agents inactive",
           "es": "Bloqueo de transferencias a agentes fuera de línea inactivo"
         }
+      }
+    },
+    "edit_sector": {
+      "description": {
+        "pt-br": "Determine configurações gerais da equipe e jornada de trabalho",
+        "en": "Determine General Team Settings and Workday",
+        "es": "Determinar la configuración del equipo general y la jornada laboral"
       }
     },
     "new_sector": {
