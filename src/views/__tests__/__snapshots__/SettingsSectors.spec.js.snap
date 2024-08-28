@@ -16,14 +16,14 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
       data-testid="section-header-title"
       data-v-f23b63f9=""
     >
-      Setores em Project 1
+      config_chats.section_sectors_title
     </p>
     <p
       class="section-header__subtitle"
       data-testid="section-header-subtitle"
       data-v-f23b63f9=""
     >
-      Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.
+      config_chats.section_sectors_subtitle
     </p>
   </header>
   <section
