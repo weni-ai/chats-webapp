@@ -4,6 +4,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import routes from '@/router/routes/settings';
 import { createTestingPinia } from '@pinia/testing';
 import SectorEdit from '@/views/Settings/Sectors/Edit/index.vue';
+import i18n from '@/plugins/i18n.js';
+import UnnnicSystemPlugin from '@/plugins/UnnnicSystem';
 
 const mockSector1 = {
   id: 1,
@@ -35,7 +37,7 @@ const createWrapper = (props) => {
   return mount(SectorEdit, {
     props,
     global: {
-      plugins: [router, store],
+      plugins: [router, store, UnnnicSystemPlugin, i18n],
       stubs: {
         UnnnicTab: true,
       },
