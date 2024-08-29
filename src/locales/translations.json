@@ -1449,6 +1449,16 @@
     "en": "Sector deleted successfully!",
     "es": "¡Sector eliminado con éxito!"
   },
+  "sector_update_success": {
+    "pt-br": "Alterações salvas com sucesso",
+    "en": "Changes saved successfully",
+    "es": "Los cambios se guardaron correctamente"
+  },
+  "sector_update_error": {
+    "pt-br": "Não foi possível salvar as alterações, tente novamente mais tarde.",
+    "en": "Unable to save changes, please try again later.",
+    "es": "No se pueden guardar los cambios. Vuelve a intentarlo más tarde."
+  },
   "sector_delete_error": {
     "pt-br": "Não foi possível deletar o setor, tente novamente mais tarde.",
     "en": "Unable to delete sector, please try again later.",

@@ -396,7 +396,7 @@ export default {
         .then(() => {
           unnnic.unnnicCallAlert({
             props: {
-              text: 'Alterações salvas',
+              text: this.$t('sector_update_success'),
               type: 'success',
             },
             seconds: 5,
@@ -404,6 +404,13 @@ export default {
           this.$router.push('/settings');
         })
         .catch((error) => {
+          unnnic.unnnicCallAlert({
+            props: {
+              text: this.$t('sector_update_error'),
+              type: 'error',
+            },
+            seconds: 5,
+          });
           console.log(error);
         });
     },
