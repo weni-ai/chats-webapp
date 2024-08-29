@@ -23,7 +23,7 @@ exports[`EditSector.vue > Should match the snapshot 1`] = `
       data-testid="header-description"
       data-v-573bd910=""
     >
-      config_chats.edit_sector.description
+      Determine configurações gerais da equipe e jornada de trabalho
     </p>
   </header>
   <div
@@ -46,7 +46,7 @@ exports[`EditSector.vue > Should match the snapshot 1`] = `
           data-v-1389f531=""
         >
           
-          sector.general
+          Geral
           
           <!---->
         </li>
@@ -55,7 +55,7 @@ exports[`EditSector.vue > Should match the snapshot 1`] = `
           data-v-1389f531=""
         >
           
-          sector.extra_options
+          Opções extras
           
           <!---->
         </li>
