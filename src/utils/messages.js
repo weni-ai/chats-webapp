@@ -6,7 +6,7 @@ import { useDiscussions } from '../store/modules/chats/discussions';
 
 import { useProfile } from '../store/modules/profile';
 
-import { removeDuplicatedMessagesByUuid } from './chats';
+import { removeDuplicatedItems } from './array';
 
 export function isValidJson(message) {
   try {
@@ -380,7 +380,7 @@ export function groupMessages(messagesReference, { message, addBefore }) {
     currentMinuteEntry.messages.push(message);
   }
 
-  currentMinuteEntry.messages = removeDuplicatedMessagesByUuid(
+  currentMinuteEntry.messages = removeDuplicatedItems(
     currentMinuteEntry.messages,
   );
 }

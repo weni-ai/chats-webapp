@@ -56,7 +56,7 @@ export default {
 
 <style lang="scss" scoped>
 .settings-view {
-  overflow-y: scroll;
+  overflow-y: auto;
 
   display: grid;
   gap: $unnnic-spacing-sm;
