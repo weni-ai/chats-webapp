@@ -20,6 +20,7 @@ import { useQuickMessageShared } from './store/modules/chats/quickMessagesShared
 import { useRooms } from './store/modules/chats/rooms';
 import { useDashboard } from './store/modules/dashboard';
 
+import initHotjar from '@/plugins/Hotjar';
 import { getProject } from '@/utils/config';
 
 import moment from 'moment';
@@ -77,6 +78,7 @@ export default {
     'me.email': {
       async handler() {
         await this.getMeQueues();
+        initHotjar(this.me.email);
       },
     },
     'viewedAgent.email': {
