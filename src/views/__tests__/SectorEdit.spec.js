@@ -4,8 +4,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 import routes from '@/router/routes/settings';
 import { createTestingPinia } from '@pinia/testing';
 import SectorEdit from '@/views/Settings/Sectors/Edit/index.vue';
-import i18n from '@/plugins/i18n.js';
-import UnnnicSystemPlugin from '@/plugins/UnnnicSystem';
 
 const mockSector1 = {
   id: 1,
@@ -37,7 +35,7 @@ const createWrapper = (props) => {
   return mount(SectorEdit, {
     props,
     global: {
-      plugins: [router, store, UnnnicSystemPlugin, i18n],
+      plugins: [router, store],
       stubs: {
         UnnnicTab: true,
       },
@@ -67,7 +65,7 @@ describe('EditSector.vue', () => {
     expect(viewHeader.props('sectorName')).toBe('Sector 1');
   });
 
-  it('should render UnnnicTab with the correct tabs', () => {
+  it('should render UnnnicTab with the correct tabs', async () => {
     const unnnicTab = wrapper.findComponent(
       '[data-testid=sector-edit-view-tab-list]',
     );
@@ -78,7 +76,6 @@ describe('EditSector.vue', () => {
     const unnnicTab = wrapper.findComponent(
       '[data-testid=sector-edit-view-tab-list]',
     );
-
     const spyRouterReplace = vi.spyOn(wrapper.vm.$router, 'replace');
     await unnnicTab.vm.$emit('change', 'extra_options');
 
