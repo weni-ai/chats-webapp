@@ -65,7 +65,7 @@ describe('EditSector.vue', () => {
     expect(viewHeader.props('sectorName')).toBe('Sector 1');
   });
 
-  it('should render UnnnicTab with the correct tabs', async () => {
+  it('should render UnnnicTab with the correct tabs', () => {
     const unnnicTab = wrapper.findComponent(
       '[data-testid=sector-edit-view-tab-list]',
     );
@@ -76,6 +76,7 @@ describe('EditSector.vue', () => {
     const unnnicTab = wrapper.findComponent(
       '[data-testid=sector-edit-view-tab-list]',
     );
+
     const spyRouterReplace = vi.spyOn(wrapper.vm.$router, 'replace');
     await unnnicTab.vm.$emit('change', 'extra_options');
 
