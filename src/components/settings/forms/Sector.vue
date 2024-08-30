@@ -1,4 +1,3 @@
-<!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
   <section class="form-wrapper">
     <form
