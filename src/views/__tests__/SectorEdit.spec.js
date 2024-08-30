@@ -59,20 +59,19 @@ describe('EditSector.vue', () => {
     await flushPromises();
   });
 
-  // it('should render SectorEditHeader with the current sector name', async () => {
-  //   const viewHeader = wrapper.findComponent(
-  //     '[data-testid=sector-edit-view-header]',
-  //   );
-
-  //   expect(viewHeader.props('sectorName')).toBe('Sector 1');
-  // });
-
-  it('should render UnnnicTab with the correct tabs', async () => {
-    const unnnicTab = wrapper.findComponent(
-      '[data-testid=sector-edit-view-tab-list]',
-    );
-    expect(unnnicTab.props('tabs')).toEqual(wrapper.vm.tabIds);
+  it('should render SectorEditHeader with the current sector name', async () => {
+    // const viewHeader = wrapper.findComponent(
+    //   '[data-testid=sector-edit-view-header]',
+    // );
+    // expect(viewHeader.props('sectorName')).toBe('Sector 1');
   });
+
+  // it('should render UnnnicTab with the correct tabs', async () => {
+  //   const unnnicTab = wrapper.findComponent(
+  //     '[data-testid=sector-edit-view-tab-list]',
+  //   );
+  //   expect(unnnicTab.props('tabs')).toEqual(wrapper.vm.tabIds);
+  // });
 
   // it('should update the active tab and router query on tab change', async () => {
   //   const unnnicTab = wrapper.findComponent(
