@@ -92,10 +92,17 @@ export default {
     },
   },
 
+  watch: {
+    currentSector(sector) {
+      if (sector) this.handlerSectorData();
+    },
+  },
+
   async created() {
     const { params, query } = this.$route;
 
-    this.getCurrentSector(params.uuid).then(() => this.handlerSectorData());
+    await this.getCurrentSector(params.uuid);
+
     this.updateTab(query.tab);
   },
 
