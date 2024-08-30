@@ -46,8 +46,6 @@ import FormSector from '@/components/settings/forms/Sector.vue';
 
 import { useConfig } from '@/store/modules/config';
 
-import Sector from '@/services/api/resources/settings/sector';
-
 export default {
   name: 'EditSector',
 
@@ -97,10 +95,12 @@ export default {
   async created() {
     const { params, query } = this.$route;
 
-    this.getCurrentSector(params.uuid);
+    this.getCurrentSector(params.uuid).then(() => this.handlerSectorData());
     this.updateTab(query.tab);
+  },
 
-    await this.getSector();
+  unmounted() {
+    useSettings().$patch({ currentSector: null });
   },
 
   methods: {
@@ -136,9 +136,7 @@ export default {
       return time.match(timeFormat)?.groups?.time || time;
     },
 
-    async getSector() {
-      const sectorUuid = this.$route.params.uuid;
-      const sector = await Sector.find(sectorUuid);
+    handlerSectorData() {
       const {
         name,
         can_trigger_flows,
@@ -149,7 +147,7 @@ export default {
         uuid,
         work_end,
         work_start,
-      } = sector;
+      } = this.currentSector;
       this.sector = {
         ...this.sector,
         uuid,
