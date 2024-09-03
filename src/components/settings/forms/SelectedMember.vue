@@ -31,6 +31,7 @@
         icon="cancel"
         scheme="neutral-darkest"
         size="sm"
+        data-testid="remove-member-button"
         clickable
       />
     </div>

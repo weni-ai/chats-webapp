@@ -7,6 +7,7 @@
       <section
         v-if="!isEditing"
         class="form-section"
+        data-testid="sector-name-section"
       >
         <h2 class="title">
           {{ $t('sector.add') }}
@@ -117,6 +118,7 @@
             type="tertiary"
             iconLeft="delete"
             size="small"
+            data-testid="open-modal-delete-button"
             @click.stop="openModalDelete = true"
           />
         </section>
@@ -132,6 +134,7 @@
           :validateLabel="$t('confirm_typing') + ` &quot;${sector.name}&quot;`"
           :actionPrimaryLabel="$t('confirm')"
           :actionSecondaryLabel="$t('cancel')"
+          data-testid="modal-delete-sector"
           @click-action-primary="deleteSector(sector.uuid)"
           @click-action-secondary="openModalDelete = false"
         />
@@ -146,7 +149,8 @@
       <UnnnicButton
         :text="$t('save')"
         :disabled="!validForm"
-        @click.stop="saveSector"
+        data-testid="save-button"
+        @click.stop="saveSector()"
       />
     </section>
   </section>
@@ -241,6 +245,7 @@ export default {
 
   mounted() {
     if (this.isEditing) {
+      console.log('aq');
       this.getSectorManagers();
     }
 
@@ -251,6 +256,14 @@ export default {
     ...mapActions(useSettings, {
       actionDeleteSector: 'deleteSector',
     }),
+
+    async getSectorManagers() {
+      const managers = await Sector.managers(this.sector.uuid);
+      this.sector.managers = managers.results.map((manager) => ({
+        ...manager,
+        removed: false,
+      }));
+    },
 
     async removeManager(managerUuid) {
       await Sector.removeManager(managerUuid);
@@ -311,14 +324,6 @@ export default {
       this.getSectorManagers();
     },
 
-    async getSectorManagers() {
-      const managers = await Sector.managers(this.sector.uuid);
-      this.sector.managers = managers.results.map((manager) => ({
-        ...manager,
-        removed: false,
-      }));
-    },
-
     async listProjectManagers() {
       // Currently these requests return the same data because of their disabled filters
 
@@ -368,7 +373,7 @@ export default {
       }
     },
 
-    async saveSector() {
+    saveSector() {
       const {
         uuid,
         name,
