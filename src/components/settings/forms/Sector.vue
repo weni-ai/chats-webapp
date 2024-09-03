@@ -442,7 +442,7 @@ export default {
 .form-sector-container {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 80px; // This padding is to prevent the content from being hidden
+  padding-bottom: $unnnic-spacing-awesome; // This padding is to prevent the content from being hidden
 
   .form-section {
     & + .form-section {
@@ -482,30 +482,27 @@ export default {
 
   .input-time {
     background: #fff;
-    border: 0.0625rem solid #e2e6ed;
-    border-radius: 0.25rem;
-    color: #4e5666;
-    font-weight: 400;
-    font-family: Lato;
+    border: 1px solid $unnnic-color-neutral-soft;
+    border-radius: $unnnic-border-radius-sm;
+    color: $unnnic-color-neutral-dark;
     box-sizing: border-box;
     width: 100%;
-    font-size: 0.875rem;
-    line-height: 1.375rem;
-    padding: 0.75rem 1rem;
+    font-size: $unnnic-font-size-body-gt;
+    line-height: $unnnic-line-height-large * 1.375;
+    padding: $unnnic-spacing-ant $unnnic-spacing-sm;
     cursor: text;
   }
 
   .label-working-day {
-    font-weight: 400;
-    line-height: 1.375rem;
-    font-size: 0.875rem;
-    color: #67738b;
-    margin: 0.5rem 0;
+    line-height: $unnnic-line-height-large * 1.375;
+    font-size: $unnnic-font-size-body-gt;
+    color: $unnnic-color-neutral-cloudy;
+    margin: $unnnic-spacing-xs 0;
   }
 
   input:focus {
-    outline-color: #9caccc;
-    outline: 1px solid #9caccc;
+    outline-color: $unnnic-color-neutral-clean;
+    outline: 1px solid $unnnic-color-neutral-clean;
   }
 
   &__managers {
