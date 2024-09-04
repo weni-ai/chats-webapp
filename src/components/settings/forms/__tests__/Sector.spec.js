@@ -134,7 +134,7 @@ describe('FormSector', () => {
     const errorMessage = wrapper.find('.error-message');
     expect(errorMessage.exists()).toBe(true);
     expect(errorMessage.text()).toBe(
-      'Horário de início não pode ser maior/igual que horário final',
+      wrapper.vm.$t('edit_sector.invalid_hours'),
     );
   });
 
