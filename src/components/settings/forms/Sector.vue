@@ -1,4 +1,3 @@
-<!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
   <section class="form-wrapper">
     <form
@@ -8,6 +7,7 @@
       <section
         v-if="!isEditing"
         class="form-section"
+        data-testid="sector-name-section"
       >
         <h2 class="title">
           {{ $t('sector.add') }}
@@ -118,6 +118,7 @@
             type="tertiary"
             iconLeft="delete"
             size="small"
+            data-testid="open-modal-delete-button"
             @click.stop="openModalDelete = true"
           />
         </section>
@@ -133,6 +134,7 @@
           :validateLabel="$t('confirm_typing') + ` &quot;${sector.name}&quot;`"
           :actionPrimaryLabel="$t('confirm')"
           :actionSecondaryLabel="$t('cancel')"
+          data-testid="modal-delete-sector"
           @click-action-primary="deleteSector(sector.uuid)"
           @click-action-secondary="openModalDelete = false"
         />
@@ -147,7 +149,8 @@
       <UnnnicButton
         :text="$t('save')"
         :disabled="!validForm"
-        @click.stop="saveSector"
+        data-testid="save-button"
+        @click.stop="saveSector()"
       />
     </section>
   </section>
@@ -160,6 +163,7 @@ import unnnic from '@weni/unnnic-system';
 import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 import Sector from '@/services/api/resources/settings/sector';
 import Project from '@/services/api/resources/settings/project';
+import { removeDuplicatedItems } from '@/utils/array';
 
 export default {
   name: 'FormSector',
@@ -174,7 +178,7 @@ export default {
     },
     modelValue: {
       type: Object,
-      default: () => ({}),
+      required: true,
     },
   },
   emits: ['update:modelValue', 'submit'],
@@ -253,6 +257,14 @@ export default {
       actionDeleteSector: 'deleteSector',
     }),
 
+    async getSectorManagers() {
+      const managers = await Sector.managers(this.sector.uuid);
+      this.sector.managers = managers.results.map((manager) => ({
+        ...manager,
+        removed: false,
+      }));
+    },
+
     async removeManager(managerUuid) {
       await Sector.removeManager(managerUuid);
       this.removeManagerFromTheList(managerUuid);
@@ -292,16 +304,13 @@ export default {
 
     addSectorManager(manager) {
       if (manager) {
-        const managers = this.sector.managers.some(
-          (mappedManager) => mappedManager.user.email === manager.user.email,
-        )
-          ? this.sector.managers
-          : [...this.sector.managers, manager];
+        const managers = removeDuplicatedItems(
+          [...this.sector.managers, manager],
+          'uuid',
+        );
 
-        this.sector = {
-          ...this.sector,
-          managers,
-        };
+        this.sector.managers = managers;
+
         if (this.isEditing) this.addManager(manager);
         this.selectedManager = [this.managersNames[0]];
       }
@@ -310,14 +319,6 @@ export default {
     async addManager(manager) {
       await Sector.addManager(this.sector.uuid, manager.uuid);
       this.getSectorManagers();
-    },
-
-    async getSectorManagers() {
-      const managers = await Sector.managers(this.sector.uuid);
-      this.sector.managers = managers.results.map((manager) => ({
-        ...manager,
-        removed: false,
-      }));
     },
 
     async listProjectManagers() {
@@ -369,7 +370,7 @@ export default {
       }
     },
 
-    async saveSector() {
+    saveSector() {
       const {
         uuid,
         name,
@@ -443,7 +444,7 @@ export default {
 .form-sector-container {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 80px; // This padding is to prevent the content from being hidden
+  padding-bottom: $unnnic-spacing-awesome; // This padding is to prevent the content from being hidden
 
   .form-section {
     & + .form-section {
@@ -483,30 +484,27 @@ export default {
 
   .input-time {
     background: #fff;
-    border: 0.0625rem solid #e2e6ed;
-    border-radius: 0.25rem;
-    color: #4e5666;
-    font-weight: 400;
-    font-family: Lato;
+    border: 1px solid $unnnic-color-neutral-soft;
+    border-radius: $unnnic-border-radius-sm;
+    color: $unnnic-color-neutral-dark;
     box-sizing: border-box;
     width: 100%;
-    font-size: 0.875rem;
-    line-height: 1.375rem;
-    padding: 0.75rem 1rem;
+    font-size: $unnnic-font-size-body-gt;
+    line-height: $unnnic-line-height-large * 1.375;
+    padding: $unnnic-spacing-ant $unnnic-spacing-sm;
     cursor: text;
   }
 
   .label-working-day {
-    font-weight: 400;
-    line-height: 1.375rem;
-    font-size: 0.875rem;
-    color: #67738b;
-    margin: 0.5rem 0;
+    line-height: $unnnic-line-height-large * 1.375;
+    font-size: $unnnic-font-size-body-gt;
+    color: $unnnic-color-neutral-cloudy;
+    margin: $unnnic-spacing-xs 0;
   }
 
   input:focus {
-    outline-color: #9caccc;
-    outline: 1px solid #9caccc;
+    outline-color: $unnnic-color-neutral-clean;
+    outline: 1px solid $unnnic-color-neutral-clean;
   }
 
   &__managers {
