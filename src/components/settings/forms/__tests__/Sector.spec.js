@@ -9,6 +9,7 @@ import FormSector from '../Sector.vue';
 import defaultProps from './mocks/sectorMock';
 
 import Sector from '@/services/api/resources/settings/sector';
+import Project from '@/services/api/resources/settings/project';
 
 const pinia = createTestingPinia({
   initialState: {
@@ -16,12 +17,32 @@ const pinia = createTestingPinia({
   },
 });
 
+vi.spyOn(Project, 'managers').mockResolvedValue({
+  results: [
+    {
+      uuid: '2',
+      sector: '1',
+      role: 1,
+      user: {
+        first_name: 'Test',
+        last_name: 'Test',
+        email: 'tests@weni.ai',
+        status: '',
+      },
+    },
+  ],
+});
+
 vi.mock('@/services/api/resources/settings/sector', () => ({
   default: {
     update: vi.fn(() => Promise.resolve()),
     removeManager: vi.fn(() => Promise.resolve()),
     addManager: vi.fn(() => Promise.resolve()),
-    managers: vi.fn(() => Promise.resolve({ results: [] })),
+    managers: vi.fn(() =>
+      Promise.resolve({
+        results: [],
+      }),
+    ),
   },
 }));
 
@@ -54,6 +75,11 @@ describe('FormSector', () => {
     wrapper = createWrapper();
   });
 
+  it('should emit update:modelValue on change sector value', async () => {
+    wrapper.vm.sector = {};
+    expect(wrapper.emitted()['update:modelValue']).toBeTruthy();
+  });
+
   it('should trigger getSectorManagers on mounted if isEditing is true and listProjectManagers', async () => {
     const getSectorManagersSpy = vi.spyOn(
       FormSector.methods,
@@ -63,6 +89,7 @@ describe('FormSector', () => {
       FormSector.methods,
       'listProjectManagers',
     );
+
     createWrapper({ isEditing: true });
 
     expect(getSectorManagersSpy).toHaveBeenCalled();
@@ -357,5 +384,18 @@ describe('FormSector', () => {
     expect(wrapper.vm.openModalDelete).eq(false);
 
     deleteSectorActionMock.mockClear();
+  });
+
+  it('should format managers to object format with value and label', async () => {
+    wrapper.vm.managersNames.forEach((item) => {
+      expect(item).toHaveProperty('label');
+      expect(item).toHaveProperty('value');
+    });
+  });
+
+  it('should add a manager in the sector', async () => {
+    const addSectorManagerSpy = vi.spyOn(wrapper.vm, 'addSectorManager');
+    wrapper.vm.selectManager([{ uuid: '1' }]);
+    expect(addSectorManagerSpy).toHaveBeenCalled();
   });
 });

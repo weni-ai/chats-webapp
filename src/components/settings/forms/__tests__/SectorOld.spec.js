@@ -10,7 +10,7 @@ function createWrapper() {
   return wrapper;
 }
 
-describe('FormSector', () => {
+describe('FormSectorOld', () => {
   let wrapper;
 
   beforeEach(() => {

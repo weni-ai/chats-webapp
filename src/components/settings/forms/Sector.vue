@@ -177,7 +177,7 @@ export default {
     },
     modelValue: {
       type: Object,
-      default: () => ({}),
+      required: true,
     },
   },
   emits: ['update:modelValue', 'submit'],
@@ -245,7 +245,6 @@ export default {
 
   mounted() {
     if (this.isEditing) {
-      console.log('aq');
       this.getSectorManagers();
     }
 
