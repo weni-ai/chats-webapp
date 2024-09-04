@@ -62,13 +62,13 @@
           class="tags-form__input"
           :label="$t('tags.add.label')"
           :placeholder="$t('tags.add.placeholder')"
-          @keypress.enter="addTag"
+          @keypress.enter="addTag(tagName)"
         />
         <UnnnicButton
           type="secondary"
           :text="$t('add')"
           :disabled="!tagName.trim()"
-          @click="addTag"
+          @click="addTag(tagName)"
         />
       </section>
 
@@ -107,10 +107,18 @@ const props = defineProps({
 
 const sector = defineModel({ type: [Object] });
 const tagName = ref('');
+const toAddTags = reactive([]);
 const tags = reactive([]);
 
-const addTag = () => {
-  console.log('addTag');
+const addTag = (tagNameToAdd) => {
+  const tag = {
+    name: tagNameToAdd,
+    uuid: Date.now().toString(),
+  };
+  toAddTags.push(tag);
+  tags.push(tag);
+
+  tagName.value = '';
 };
 </script>
 
