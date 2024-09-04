@@ -308,9 +308,9 @@
     },
     "additional_options": {
       "title": {
-        "pt-br": "Opções adicionais",
-        "en": "Additional options",
-        "es": "Opciones adicionales"
+        "pt-br": "Opções extras",
+        "en": "Extras options",
+        "es": "Opciones extras"
       },
       "template_message": {
         "switch_active": {

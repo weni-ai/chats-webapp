@@ -29,7 +29,12 @@
           isEditing
         />
       </template>
-      <template #tab-panel-extra_options> </template>
+      <template #tab-panel-extra_options>
+        <FormSectorExtraOptions
+          v-model="sector"
+          isEditing
+        />
+      </template>
       <template #tab-panel-queues> </template>
       <template #tab-panel-quick_messages> </template>
     </UnnnicTab>
@@ -42,7 +47,9 @@ import { mapActions, mapState } from 'pinia';
 import { useSettings } from '@/store/modules/settings';
 
 import SectorEditHeader from './SectorEditHeader.vue';
+
 import FormSectorGeneral from '@/components/settings/forms/General.vue';
+import FormSectorExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
 
 import { useConfig } from '@/store/modules/config';
 
@@ -52,6 +59,7 @@ export default {
   components: {
     SectorEditHeader,
     FormSectorGeneral,
+    FormSectorExtraOptions,
   },
 
   data() {
