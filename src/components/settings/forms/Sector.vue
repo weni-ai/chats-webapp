@@ -304,10 +304,11 @@ export default {
 
     addSectorManager(manager) {
       if (manager) {
-        const managers = removeDuplicatedItems(
-          [...this.sector.managers, manager],
-          'uuid',
-        );
+        const managers = this.sector.managers.some(
+          (mappedManager) => mappedManager.user.email === manager.user.email,
+        )
+          ? this.sector.managers
+          : [...this.sector.managers, manager];
 
         this.sector.managers = managers;
 
