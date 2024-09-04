@@ -1,5 +1,5 @@
 import { expect, describe, it, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 
 import { createMemoryHistory, createRouter } from 'vue-router';
 import { createTestingPinia } from '@pinia/testing';
@@ -17,20 +17,21 @@ const pinia = createTestingPinia({
   },
 });
 
+const managerMock = {
+  uuid: '2',
+  sector: '1',
+  role: 1,
+  user: {
+    first_name: 'Test',
+    last_name: 'Test',
+    email: 'tests@weni.ai',
+    status: '',
+    photo_url: 'http://photo.link',
+  },
+};
+
 vi.spyOn(Project, 'managers').mockResolvedValue({
-  results: [
-    {
-      uuid: '2',
-      sector: '1',
-      role: 1,
-      user: {
-        first_name: 'Test',
-        last_name: 'Test',
-        email: 'tests@weni.ai',
-        status: '',
-      },
-    },
-  ],
+  results: [managerMock],
 });
 
 vi.mock('@/services/api/resources/settings/sector', () => ({
@@ -40,7 +41,7 @@ vi.mock('@/services/api/resources/settings/sector', () => ({
     addManager: vi.fn(() => Promise.resolve()),
     managers: vi.fn(() =>
       Promise.resolve({
-        results: [],
+        results: [{ ...managerMock, uuid: '1' }],
       }),
     ),
   },
@@ -90,10 +91,18 @@ describe('FormSector', () => {
       'listProjectManagers',
     );
 
-    createWrapper({ isEditing: true });
+    const wrapper = createWrapper({ isEditing: true });
 
     expect(getSectorManagersSpy).toHaveBeenCalled();
     expect(listProjectManagersSpy).toHaveBeenCalled();
+
+    await wrapper.vm.$nextTick();
+    await wrapper.vm.$nextTick();
+    await wrapper.vm.$nextTick();
+
+    wrapper.vm.sector.managers.forEach((manager) => {
+      expect(manager.removed).toBe(false);
+    });
   });
 
   it('should not render sector name input isEditing is true', async () => {
@@ -164,17 +173,7 @@ describe('FormSector', () => {
     await wrapper.setProps({
       modelValue: {
         ...defaultProps.modelValue,
-        managers: [
-          {
-            uuid: '1',
-            user: {
-              email: 'test@weni.ai',
-              first_name: 'Teste',
-              last_name: 'Teste',
-              photo_url: null,
-            },
-          },
-        ],
+        managers: [managerMock],
       },
     });
 
@@ -187,7 +186,7 @@ describe('FormSector', () => {
       '[data-testid="remove-member-button"]',
     );
     await removeSelectedManagerButton.trigger('click');
-    expect(removeManagerSpy).toHaveBeenCalledWith('1');
+    expect(removeManagerSpy).toHaveBeenCalledWith('2');
   });
 
   it('should disable the save button if form is invalid', async () => {
@@ -394,8 +393,15 @@ describe('FormSector', () => {
   });
 
   it('should add a manager in the sector', async () => {
+    const wrapper = createWrapper({ isEditing: true });
+    await flushPromises();
+
     const addSectorManagerSpy = vi.spyOn(wrapper.vm, 'addSectorManager');
-    wrapper.vm.selectManager([{ uuid: '1' }]);
-    expect(addSectorManagerSpy).toHaveBeenCalled();
+    const addManagerSpy = vi.spyOn(wrapper.vm, 'addManager');
+
+    wrapper.vm.selectManager([{ value: '2' }]);
+
+    expect(addSectorManagerSpy).toHaveBeenCalledWith(managerMock);
+    expect(addManagerSpy).toHaveBeenCalledWith(managerMock);
   });
 });

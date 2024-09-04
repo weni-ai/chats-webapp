@@ -163,6 +163,7 @@ import unnnic from '@weni/unnnic-system';
 import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 import Sector from '@/services/api/resources/settings/sector';
 import Project from '@/services/api/resources/settings/project';
+import { removeDuplicatedItems } from '@/utils/array';
 
 export default {
   name: 'FormSector',
@@ -303,16 +304,13 @@ export default {
 
     addSectorManager(manager) {
       if (manager) {
-        const managers = this.sector.managers.some(
-          (mappedManager) => mappedManager.user.email === manager.user.email,
-        )
-          ? this.sector.managers
-          : [...this.sector.managers, manager];
+        const managers = removeDuplicatedItems(
+          [...this.sector.managers, manager],
+          'uuid',
+        );
 
-        this.sector = {
-          ...this.sector,
-          managers,
-        };
+        this.sector.managers = managers;
+
         if (this.isEditing) this.addManager(manager);
         this.selectedManager = [this.managersNames[0]];
       }
