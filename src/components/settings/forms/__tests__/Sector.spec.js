@@ -96,9 +96,7 @@ describe('FormSector', () => {
     expect(getSectorManagersSpy).toHaveBeenCalled();
     expect(listProjectManagersSpy).toHaveBeenCalled();
 
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
+    await flushPromises();
 
     wrapper.vm.sector.managers.forEach((manager) => {
       expect(manager.removed).toBe(false);
@@ -134,7 +132,7 @@ describe('FormSector', () => {
     const errorMessage = wrapper.find('.error-message');
     expect(errorMessage.exists()).toBe(true);
     expect(errorMessage.text()).toBe(
-      wrapper.vm.$t('edit_sector.invalid_hours'),
+      wrapper.vm.$t('config_chats.edit_sector.invalid_hours'),
     );
   });
 

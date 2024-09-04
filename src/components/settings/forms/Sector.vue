@@ -338,7 +338,7 @@ export default {
       const finalHour = hour.end;
       if (inicialHour >= finalHour) {
         this.validHour = false;
-        this.message = this.$t('edit_sector.invalid_hours');
+        this.message = this.$t('config_chats.edit_sector.invalid_hours');
       } else {
         this.validHour = true;
       }
