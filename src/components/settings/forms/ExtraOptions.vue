@@ -115,6 +115,7 @@ export default {
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
+
 import unnnic from '@weni/unnnic-system';
 
 import TagGroup from '@/components/TagGroup.vue';
