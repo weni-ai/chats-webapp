@@ -1,9 +1,32 @@
 import { fileURLToPath, URL } from 'node:url';
+import { createHash } from 'crypto';
+import fs from 'fs';
+import path from 'path';
 
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import { VitePWA } from 'vite-plugin-pwa';
+
+const htmlTransform = () => ({
+  name: 'html-transform',
+  apply: 'build',
+  closeBundle() {
+    const indexPath = path.resolve(__dirname, 'dist', 'index.html');
+
+    const hash = createHash('md5')
+      .update(Date.now().toString())
+      .digest('hex')
+      .substring(0, 8);
+
+    let html = fs.readFileSync(indexPath, 'utf-8');
+
+    // Added the query string ?v=[hash] for CSS and JS only
+    html = html.replace(/(\/assets\/chats\.(js|css))/g, `$1?v=${hash}`);
+
+    fs.writeFileSync(indexPath, html);
+  },
+});
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -29,6 +52,7 @@ export default defineConfig({
         ],
       },
     }),
+    htmlTransform(),
   ],
   test: {
     globals: true,
@@ -56,6 +80,21 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        // Define o nome dos arquivos sem hash
+        entryFileNames: 'assets/chats.js',
+        chunkFileNames: 'assets/chats.js', // Caso tenha chunks, também aplica o nome fixo
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name.endsWith('.css')) {
+            return 'assets/chats.css'; // Define o nome do arquivo CSS sem hash
+          }
+          return 'assets/' + assetInfo.name;
+        },
+      },
     },
   },
 });
