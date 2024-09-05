@@ -62,7 +62,7 @@
           class="tags-form__input"
           :label="$t('tags.add.label')"
           :placeholder="$t('tags.add.placeholder')"
-          @keypress.enter="addTag(tagName)"
+          @keypress.enter.stop="addTag(tagName)"
         />
         <UnnnicButton
           type="secondary"
@@ -76,7 +76,6 @@
         v-if="tags.length > 0"
         class="form-tags__section"
       >
-        <p class="form-tags__section__label">{{ $t('tags.already_added') }}</p>
         <TagGroup
           :tags="tags"
           selectable
@@ -96,7 +95,8 @@ export default {
 
 <script setup>
 import TagGroup from '@/components/TagGroup.vue';
-import { reactive, ref } from 'vue';
+import unnnic from '@weni/unnnic-system';
+import { onMounted, reactive, ref } from 'vue';
 
 const props = defineProps({
   isEditing: {
@@ -110,14 +110,26 @@ const tagName = ref('');
 const toAddTags = reactive([]);
 const tags = reactive([]);
 
+onMounted(() => {
+  const { isEditing } = props;
+  console.log(isEditing);
+});
+
 const addTag = (tagNameToAdd) => {
+  const tagsName = tags.map((tag) => tag.name);
+
+  if (tagsName.includes(tagNameToAdd)) {
+    unnnic.unnnicCallAlert({
+      props: { text: 'Já existe uma tag com esse nome', type: 'warning' },
+    });
+    return;
+  }
   const tag = {
     name: tagNameToAdd,
     uuid: Date.now().toString(),
   };
   toAddTags.push(tag);
   tags.push(tag);
-
   tagName.value = '';
 };
 </script>
