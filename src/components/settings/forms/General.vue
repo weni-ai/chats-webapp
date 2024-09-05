@@ -163,7 +163,6 @@ import unnnic from '@weni/unnnic-system';
 import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 import Sector from '@/services/api/resources/settings/sector';
 import Project from '@/services/api/resources/settings/project';
-import { removeDuplicatedItems } from '@/utils/array';
 
 export default {
   name: 'FormSector',
@@ -339,8 +338,7 @@ export default {
       const finalHour = hour.end;
       if (inicialHour >= finalHour) {
         this.validHour = false;
-        this.message =
-          'Horário de início não pode ser maior/igual que horário final';
+        this.message = this.$t('config_chats.edit_sector.invalid_hours');
       } else {
         this.validHour = true;
       }

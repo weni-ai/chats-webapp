@@ -5,7 +5,7 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 import { createTestingPinia } from '@pinia/testing';
 import unnnic from '@weni/unnnic-system';
 
-import FormSector from '../Sector.vue';
+import FormSectorGeneral from '../General.vue';
 import defaultProps from './mocks/sectorMock';
 
 import Sector from '@/services/api/resources/settings/sector';
@@ -56,7 +56,7 @@ const router = createRouter({
 router.push = vi.fn();
 
 function createWrapper(props) {
-  const wrapper = mount(FormSector, {
+  const wrapper = mount(FormSectorGeneral, {
     props: { modelValue: defaultProps.modelValue, ...props },
     global: {
       plugins: [router, pinia],
@@ -69,7 +69,7 @@ function createWrapper(props) {
   return wrapper;
 }
 
-describe('FormSector', () => {
+describe('FormSectorGeneral', () => {
   let wrapper;
 
   beforeEach(() => {
@@ -83,11 +83,11 @@ describe('FormSector', () => {
 
   it('should trigger getSectorManagers on mounted if isEditing is true and listProjectManagers', async () => {
     const getSectorManagersSpy = vi.spyOn(
-      FormSector.methods,
+      FormSectorGeneral.methods,
       'getSectorManagers',
     );
     const listProjectManagersSpy = vi.spyOn(
-      FormSector.methods,
+      FormSectorGeneral.methods,
       'listProjectManagers',
     );
 
@@ -96,9 +96,7 @@ describe('FormSector', () => {
     expect(getSectorManagersSpy).toHaveBeenCalled();
     expect(listProjectManagersSpy).toHaveBeenCalled();
 
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
+    await flushPromises();
 
     wrapper.vm.sector.managers.forEach((manager) => {
       expect(manager.removed).toBe(false);
@@ -134,7 +132,7 @@ describe('FormSector', () => {
     const errorMessage = wrapper.find('.error-message');
     expect(errorMessage.exists()).toBe(true);
     expect(errorMessage.text()).toBe(
-      'Horário de início não pode ser maior/igual que horário final',
+      wrapper.vm.$t('config_chats.edit_sector.invalid_hours'),
     );
   });
 

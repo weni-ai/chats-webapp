@@ -640,6 +640,7 @@ export default {
       this.tags = this.tags.filter((tag) => tag.uuid !== tagUuid);
       this.toAddTags = this.toAddTags.filter((tag) => tag.uuid !== tagUuid);
     },
+
     addTagToAddList(tagName) {
       const tag = {
         name: tagName,
