@@ -89,7 +89,7 @@ export default {
 
   async tags(sectorUuid) {
     const response = await http.get('/tag/', {
-      params: { sector: sectorUuid },
+      params: { sector: sectorUuid, limit: 9999 },
     });
     return response.data;
   },

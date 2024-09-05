@@ -62,7 +62,7 @@
           class="tags-form__input"
           :label="$t('tags.add.label')"
           :placeholder="$t('tags.add.placeholder')"
-          @keypress.enter.stop="addTag(tagName)"
+          @keypress.enter.stop="!!tagName.trim() && addTag(tagName)"
         />
         <UnnnicButton
           type="secondary"
@@ -84,6 +84,25 @@
         />
       </section>
     </section>
+
+    <section
+      v-if="isEditing"
+      class="actions"
+    >
+      <UnnnicButton
+        :text="$t('cancel')"
+        type="tertiary"
+        :disabled="isLoading"
+        @click.stop="$router.push('/settings')"
+      />
+      <UnnnicButton
+        :text="$t('save')"
+        :disabled="!validForm"
+        :loading="isLoading"
+        data-testid="save-button"
+        @click.stop="save()"
+      />
+    </section>
   </section>
 </template>
 
@@ -94,9 +113,15 @@ export default {
 </script>
 
 <script setup>
-import TagGroup from '@/components/TagGroup.vue';
+import { computed, onMounted, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import unnnic from '@weni/unnnic-system';
-import { onMounted, reactive, ref } from 'vue';
+
+import TagGroup from '@/components/TagGroup.vue';
+
+import Sector from '@/services/api/resources/settings/sector';
+
+const router = useRouter();
 
 const props = defineProps({
   isEditing: {
@@ -107,20 +132,36 @@ const props = defineProps({
 
 const sector = defineModel({ type: [Object] });
 const tagName = ref('');
-const toAddTags = reactive([]);
-const tags = reactive([]);
+
+let currentTags = [];
+
+const toAddTags = ref([]);
+let toRemoveTags = reactive([]);
+const tags = ref([]);
+const isLoading = ref(false);
 
 onMounted(() => {
   const { isEditing } = props;
-  console.log(isEditing);
+  if (isEditing) {
+    getTags();
+  }
 });
 
+const validForm = computed(() => {
+  return !!tags.value.length;
+});
+
+const getTags = async () => {
+  const sectorCurrentTags = await Sector.tags(sector.value.uuid);
+  currentTags = tags.value = sectorCurrentTags.results;
+};
+
 const addTag = (tagNameToAdd) => {
-  const tagsName = tags.map((tag) => tag.name);
+  const tagsName = tags.value.map((tag) => tag.name);
 
   if (tagsName.includes(tagNameToAdd)) {
     unnnic.unnnicCallAlert({
-      props: { text: 'Já existe uma tag com esse nome', type: 'warning' },
+      props: { text: 'Já existe uma tag com esse nome', type: 'error' },
     });
     return;
   }
@@ -128,9 +169,68 @@ const addTag = (tagNameToAdd) => {
     name: tagNameToAdd,
     uuid: Date.now().toString(),
   };
-  toAddTags.push(tag);
-  tags.push(tag);
+  toAddTags.value.push(tag);
+  tags.value.push(tag);
   tagName.value = '';
+};
+
+const removeTag = (tag) => {
+  toRemoveTags.push(tag);
+  toAddTags.value = toAddTags.value.filter(
+    (toAddTag) => toAddTag.uuid !== tag.uuid,
+  );
+  tags.value = tags.value.filter((addedTag) => addedTag.uuid !== tag.uuid);
+};
+
+const updateSectorExtraConfigs = () => {
+  const { can_trigger_flows, can_edit_custom_fields, sign_messages } =
+    sector.value;
+
+  const fieldsToUpdate = {
+    can_trigger_flows,
+    can_edit_custom_fields,
+    sign_messages,
+  };
+
+  return Sector.update(sector.value.uuid, fieldsToUpdate);
+};
+
+const updateSectorTags = () => {
+  const currentTagsUuid = currentTags.map((tag) => tag.uuid);
+
+  const checkedToRemoveTags = toRemoveTags.filter((tag) =>
+    currentTagsUuid.includes(tag.uuid),
+  );
+
+  console.log(checkedToRemoveTags);
+
+  const removePromises = checkedToRemoveTags.map(({ uuid }) =>
+    Sector.removeTag(uuid),
+  );
+
+  const addPromises = toAddTags.value.map(({ name }) =>
+    Sector.addTag(sector.value.uuid, name),
+  );
+
+  return Promise.all([...addPromises, ...removePromises]);
+};
+
+const save = async () => {
+  isLoading.value = true;
+  Promise.all([
+    await updateSectorTags(),
+    await updateSectorExtraConfigs(),
+  ]).then(() => {
+    unnnic.unnnicCallAlert({
+      props: {
+        text: 'Alterações salvas',
+        type: 'success',
+      },
+      seconds: 5,
+    });
+    isLoading.value = false;
+    router.push('/settings');
+  });
 };
 </script>
 
@@ -171,6 +271,23 @@ const addTag = (tagNameToAdd) => {
       &__input {
         flex: 1 1;
       }
+    }
+  }
+
+  & .actions {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    padding-top: $unnnic-spacing-md;
+
+    gap: $unnnic-spacing-sm;
+
+    > * {
+      flex: 1;
     }
   }
 }
