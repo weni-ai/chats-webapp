@@ -1996,6 +1996,11 @@
         "en": "Determine General Team Settings and Workday",
         "es": "Determinar la configuración del equipo general y la jornada laboral"
       },
+      "tag_already_exists": {
+        "pt-br": "Já existe uma tag com esse nome",
+        "en": "A tag with that name already exists",
+        "es": "Ya existe una etiqueta con ese nombre"
+      },
       "invalid_hours": {
         "pt-br": "Horário de início não pode ser maior/igual que horário final",
         "en": "Start time cannot be greater/equal to end time",

@@ -6,20 +6,12 @@
       </h2>
       <UnnnicSwitch
         v-model="sector.can_trigger_flows"
-        :textRight="
-          sector.can_trigger_flows
-            ? $t('sector.additional_options.template_message.switch_active')
-            : $t('sector.additional_options.template_message.switch_disabled')
-        "
+        :textRight="translationTriggerFlows"
       />
       <section class="switchs__container">
         <UnnnicSwitch
           v-model="sector.sign_messages"
-          :textRight="
-            sector.sign_messages
-              ? $t('sector.additional_options.agents_signature.switch_active')
-              : $t('sector.additional_options.agents_signature.switch_disabled')
-          "
+          :textRight="translationSignMessages"
         />
         <UnnnicToolTip
           enabled
@@ -164,7 +156,10 @@ const addTag = (tagNameToAdd) => {
 
   if (tagsName.includes(tagNameToAdd)) {
     unnnic.unnnicCallAlert({
-      props: { text: 'Já existe uma tag com esse nome', type: 'error' },
+      props: {
+        text: i18n.global.t('edit_sector.tag_already_exists'),
+        type: 'error',
+      },
     });
     return;
   }
@@ -185,6 +180,22 @@ const removeTag = (tag) => {
   tags.value = tags.value.filter((addedTag) => addedTag.uuid !== tag.uuid);
 };
 
+const translationTriggerFlows = computed(() => {
+  return sector.value.can_trigger_flows
+    ? i18n.global.t('sector.additional_options.template_message.switch_active')
+    : i18n.global.t(
+        'sector.additional_options.template_message.switch_disabled',
+      );
+});
+
+const translationSignMessages = computed(() => {
+  return sector.value.sign_messages
+    ? i18n.global.t('sector.additional_options.agents_signature.switch_active')
+    : i18n.global.t(
+        'sector.additional_options.agents_signature.switch_disabled',
+      );
+});
+
 const updateSectorExtraConfigs = () => {
   const { can_trigger_flows, can_edit_custom_fields, sign_messages } =
     sector.value;
@@ -204,8 +215,6 @@ const updateSectorTags = () => {
   const checkedToRemoveTags = toRemoveTags.filter((tag) =>
     currentTagsUuid.includes(tag.uuid),
   );
-
-  console.log(checkedToRemoveTags);
 
   const removePromises = checkedToRemoveTags.map(({ uuid }) =>
     Sector.removeTag(uuid),
