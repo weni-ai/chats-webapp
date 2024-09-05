@@ -115,11 +115,14 @@ export default {
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
+
 import unnnic from '@weni/unnnic-system';
 
 import TagGroup from '@/components/TagGroup.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
+
+import i18n from '@/plugins/i18n';
 
 const router = useRouter();
 
@@ -217,20 +220,30 @@ const updateSectorTags = () => {
 
 const save = async () => {
   isLoading.value = true;
-  Promise.all([
-    await updateSectorTags(),
-    await updateSectorExtraConfigs(),
-  ]).then(() => {
-    unnnic.unnnicCallAlert({
-      props: {
-        text: 'Alterações salvas',
-        type: 'success',
-      },
-      seconds: 5,
+  Promise.all([await updateSectorTags(), await updateSectorExtraConfigs()])
+    .then(() => {
+      unnnic.unnnicCallAlert({
+        props: {
+          text: i18n.global.t('sector_update_success'),
+          type: 'success',
+        },
+        seconds: 5,
+      });
+
+      router.push('/settings');
+    })
+    .catch(() => {
+      unnnic.unnnicCallAlert({
+        props: {
+          text: i18n.global.t('sector_update_error'),
+          type: 'error',
+        },
+        seconds: 5,
+      });
+    })
+    .finally(() => {
+      isLoading.value = false;
     });
-    isLoading.value = false;
-    router.push('/settings');
-  });
 };
 </script>
 

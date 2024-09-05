@@ -31,6 +31,7 @@
       </template>
       <template #tab-panel-extra_options>
         <FormSectorExtraOptions
+          v-if="sector.uuid"
           v-model="sector"
           isEditing
         />
