@@ -38,6 +38,7 @@ const createWrapper = (props) => {
       plugins: [router, store],
       stubs: {
         UnnnicTab: true,
+        FormSectorExtraOptions: true,
       },
       mocks: {
         $router: {
@@ -83,6 +84,18 @@ describe('EditSector.vue', () => {
     expect(spyRouterReplace).toHaveBeenCalledWith({
       query: { tab: 'extra_options' },
     });
+  });
+
+  it('should render extra options form if active tab equals extra_options', async () => {
+    await wrapper.setData({ sector: mockSector1 });
+    const unnnicTab = wrapper.findComponent(
+      '[data-testid=sector-edit-view-tab-list]',
+    );
+
+    await unnnicTab.vm.$emit('change', 'extra_options');
+
+    const extraOptionsForm = wrapper.find('[data-testid="extra-options-form"]');
+    expect(extraOptionsForm.exists()).toBe(true);
   });
 
   it('Should match the snapshot', () => {

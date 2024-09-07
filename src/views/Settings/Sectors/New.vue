@@ -69,7 +69,7 @@
 import FormAgent from '@/components/settings/forms/Agent.vue';
 import FormQueue from '@/components/settings/forms/Queue.vue';
 import FormSectorOld from '@/components/settings/forms/SectorOld.vue';
-import FormTags from '@/components/settings/forms/Tags.vue';
+import FormTags from '@/components/settings/forms/TagsOld.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';

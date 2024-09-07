@@ -1,17 +1,22 @@
 <template>
   <section class="sector-extra-options-form">
     <section class="switchs">
-      <h2 class="switchs__title">
+      <h2
+        class="switchs__title"
+        data-testid="switchs-title"
+      >
         {{ $t('sector.additional_options.title') }}
       </h2>
       <UnnnicSwitch
         v-model="sector.can_trigger_flows"
         :textRight="translationTriggerFlows"
+        data-testid="config-switch"
       />
       <section class="switchs__container">
         <UnnnicSwitch
           v-model="sector.sign_messages"
           :textRight="translationSignMessages"
+          data-testid="config-switch"
         />
         <UnnnicToolTip
           enabled
@@ -29,10 +34,14 @@
       <UnnnicSwitch
         v-model="sector.can_edit_custom_fields"
         :textRight="$t('sector.additional_options.edit_custom_fields')"
+        data-testid="config-switch"
       />
     </section>
     <section class="tags">
-      <h2 class="tags__title">
+      <h2
+        class="tags__title"
+        data-testid="tags-title"
+      >
         {{ $t('tags.add.title') }}
         <UnnnicToolTip
           enabled
@@ -54,12 +63,14 @@
           class="tags-form__input"
           :label="$t('tags.add.label')"
           :placeholder="$t('tags.add.placeholder')"
+          data-testid="tags-input-tag-name"
           @keypress.enter.stop="!!tagName.trim() && addTag(tagName)"
         />
         <UnnnicButton
           type="secondary"
           :text="$t('add')"
           :disabled="!tagName.trim()"
+          data-testid="tags-add-tag-button"
           @click="addTag(tagName)"
         />
       </section>
@@ -67,9 +78,11 @@
       <section
         v-if="tags.length > 0"
         class="form-tags__section"
+        data-testid="tags-group-section"
       >
         <TagGroup
           :tags="tags"
+          data-testid="sector-tag-group"
           selectable
           hasCloseIcon
           @close="removeTag($event)"
@@ -79,6 +92,7 @@
 
     <section
       v-if="isEditing"
+      data-testid="sector-extra-options-actions"
       class="actions"
     >
       <UnnnicButton
@@ -99,160 +113,154 @@
 </template>
 
 <script>
-export default {
-  name: 'SectorExtraOptionsForm',
-};
-</script>
-
-<script setup>
-import { computed, onMounted, reactive, ref } from 'vue';
-import { useRouter } from 'vue-router';
-
 import unnnic from '@weni/unnnic-system';
 
 import TagGroup from '@/components/TagGroup.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
 
-import i18n from '@/plugins/i18n';
-
-const router = useRouter();
-
-const props = defineProps({
-  isEditing: {
-    type: Boolean,
-    default: false,
+export default {
+  name: 'SectorExtraOptionsForm',
+  components: {
+    TagGroup,
   },
-});
-
-const sector = defineModel({ type: [Object] });
-const tagName = ref('');
-
-let currentTags = [];
-
-const toAddTags = ref([]);
-let toRemoveTags = reactive([]);
-const tags = ref([]);
-const isLoading = ref(false);
-
-onMounted(() => {
-  const { isEditing } = props;
-  if (isEditing) {
-    getTags();
-  }
-});
-
-const validForm = computed(() => {
-  return !!tags.value.length;
-});
-
-const getTags = async () => {
-  const sectorCurrentTags = await Sector.tags(sector.value.uuid);
-  currentTags = tags.value = sectorCurrentTags.results;
-};
-
-const addTag = (tagNameToAdd) => {
-  const tagsName = tags.value.map((tag) => tag.name);
-
-  if (tagsName.includes(tagNameToAdd)) {
-    unnnic.unnnicCallAlert({
-      props: {
-        text: i18n.global.t('edit_sector.tag_already_exists'),
-        type: 'error',
+  props: {
+    modelValue: {
+      type: Object,
+      default: () => ({}),
+    },
+    isEditing: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: ['update:modelValue'],
+  data() {
+    return {
+      tagName: '',
+      currentTags: [],
+      toAddTags: [],
+      toRemoveTags: [],
+      tags: [],
+      isLoading: false,
+    };
+  },
+  computed: {
+    sector: {
+      get() {
+        return this.modelValue;
       },
-    });
-    return;
-  }
-  const tag = {
-    name: tagNameToAdd,
-    uuid: Date.now().toString(),
-  };
-  toAddTags.value.push(tag);
-  tags.value.push(tag);
-  tagName.value = '';
-};
+      set(val) {
+        this.$emit('update:modelValue', val);
+      },
+    },
+    translationTriggerFlows() {
+      return this.sector.can_trigger_flows
+        ? this.$t('sector.additional_options.template_message.switch_active')
+        : this.$t('sector.additional_options.template_message.switch_disabled');
+    },
+    translationSignMessages() {
+      return this.sector.sign_messages
+        ? this.$t('sector.additional_options.agents_signature.switch_active')
+        : this.$t('sector.additional_options.agents_signature.switch_disabled');
+    },
+    validForm() {
+      return !!this.tags.length;
+    },
+  },
+  mounted() {
+    if (this.isEditing) this.getTags();
+  },
+  methods: {
+    async getTags() {
+      const sectorCurrentTags = await Sector.tags(this.sector.uuid);
+      this.currentTags = this.tags = sectorCurrentTags.results;
+    },
+    addTag(tagNameToAdd) {
+      const tagsName = this.tags.map((tag) => tag.name);
 
-const removeTag = (tag) => {
-  toRemoveTags.push(tag);
-  toAddTags.value = toAddTags.value.filter(
-    (toAddTag) => toAddTag.uuid !== tag.uuid,
-  );
-  tags.value = tags.value.filter((addedTag) => addedTag.uuid !== tag.uuid);
-};
-
-const translationTriggerFlows = computed(() => {
-  return sector.value.can_trigger_flows
-    ? i18n.global.t('sector.additional_options.template_message.switch_active')
-    : i18n.global.t(
-        'sector.additional_options.template_message.switch_disabled',
+      if (tagsName.includes(tagNameToAdd)) {
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('edit_sector.tag_already_exists'),
+            type: 'error',
+          },
+        });
+        return;
+      }
+      const tag = {
+        name: tagNameToAdd,
+        uuid: Date.now().toString(),
+      };
+      this.toAddTags.push(tag);
+      this.tags.push(tag);
+      this.tagName = '';
+    },
+    removeTag(tag) {
+      this.toRemoveTags.push(tag);
+      this.toAddTags = this.toAddTags.filter(
+        (toAddTag) => toAddTag.uuid !== tag.uuid,
       );
-});
+      this.tags = this.tags.filter((addedTag) => addedTag.uuid !== tag.uuid);
+    },
+    updateSectorExtraConfigs() {
+      const { can_trigger_flows, can_edit_custom_fields, sign_messages } =
+        this.sector;
 
-const translationSignMessages = computed(() => {
-  return sector.value.sign_messages
-    ? i18n.global.t('sector.additional_options.agents_signature.switch_active')
-    : i18n.global.t(
-        'sector.additional_options.agents_signature.switch_disabled',
+      const fieldsToUpdate = {
+        can_trigger_flows,
+        can_edit_custom_fields,
+        sign_messages,
+      };
+
+      return Sector.update(this.sector.uuid, fieldsToUpdate);
+    },
+    updateSectorTags() {
+      const currentTagsUuid = this.currentTags.map((tag) => tag.uuid);
+
+      const checkedToRemoveTags = this.toRemoveTags.filter((tag) =>
+        currentTagsUuid.includes(tag.uuid),
       );
-});
 
-const updateSectorExtraConfigs = () => {
-  const { can_trigger_flows, can_edit_custom_fields, sign_messages } =
-    sector.value;
+      const removePromises = checkedToRemoveTags.map(({ uuid }) =>
+        Sector.removeTag(uuid),
+      );
 
-  const fieldsToUpdate = {
-    can_trigger_flows,
-    can_edit_custom_fields,
-    sign_messages,
-  };
+      const addPromises = this.toAddTags.map(({ name }) =>
+        Sector.addTag(this.sector.uuid, name),
+      );
 
-  return Sector.update(sector.value.uuid, fieldsToUpdate);
-};
+      return Promise.all([...addPromises, ...removePromises]);
+    },
+    async save() {
+      this.isLoading = true;
+      try {
+        await Promise.all([
+          this.updateSectorTags(),
+          this.updateSectorExtraConfigs(),
+        ]).then(() => {
+          unnnic.unnnicCallAlert({
+            props: {
+              text: this.$t('sector_update_success'),
+              type: 'success',
+            },
+            seconds: 5,
+          });
 
-const updateSectorTags = () => {
-  const currentTagsUuid = currentTags.map((tag) => tag.uuid);
-
-  const checkedToRemoveTags = toRemoveTags.filter((tag) =>
-    currentTagsUuid.includes(tag.uuid),
-  );
-
-  const removePromises = checkedToRemoveTags.map(({ uuid }) =>
-    Sector.removeTag(uuid),
-  );
-
-  const addPromises = toAddTags.value.map(({ name }) =>
-    Sector.addTag(sector.value.uuid, name),
-  );
-
-  return Promise.all([...addPromises, ...removePromises]);
-};
-
-const save = async () => {
-  isLoading.value = true;
-  Promise.all([await updateSectorTags(), await updateSectorExtraConfigs()])
-    .then(() => {
-      unnnic.unnnicCallAlert({
-        props: {
-          text: i18n.global.t('sector_update_success'),
-          type: 'success',
-        },
-        seconds: 5,
-      });
-
-      router.push('/settings');
-    })
-    .catch(() => {
-      unnnic.unnnicCallAlert({
-        props: {
-          text: i18n.global.t('sector_update_error'),
-          type: 'error',
-        },
-        seconds: 5,
-      });
-    })
-    .finally(() => {
-      isLoading.value = false;
-    });
+          this.$router.push('/settings');
+        });
+      } catch (error) {
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('sector_update_error'),
+            type: 'error',
+          },
+          seconds: 5,
+        });
+      }
+      this.isLoading = false;
+    },
+  },
 };
 </script>
 

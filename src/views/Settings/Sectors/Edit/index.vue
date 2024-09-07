@@ -33,6 +33,7 @@
         <FormSectorExtraOptions
           v-if="sector.uuid"
           v-model="sector"
+          data-testid="extra-options-form"
           isEditing
         />
       </template>
