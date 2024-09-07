@@ -5,6 +5,16 @@ import routes from '@/router/routes/settings';
 import { createTestingPinia } from '@pinia/testing';
 import SectorEdit from '@/views/Settings/Sectors/Edit/index.vue';
 
+vi.mock('@/services/api/resources/settings/sector', () => ({
+  default: {
+    tags: () => Promise.resolve({ results: [] }),
+    update: () => Promise.resolve(),
+    addTag: vi.fn(),
+    removeTag: vi.fn(),
+    managers: () => Promise.resolve({ results: [] }),
+  },
+}));
+
 const mockSector1 = {
   id: 1,
   uuid: '123',
