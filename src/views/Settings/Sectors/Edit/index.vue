@@ -108,7 +108,7 @@ export default {
     },
   },
 
-  async created() {
+  async mounted() {
     const { params, query } = this.$route;
 
     await this.getCurrentSector(params.uuid);

@@ -42,7 +42,7 @@ const router = createRouter({
   routes,
 });
 
-const createWrapper = (props) => {
+const createWrapper = (props = {}) => {
   return mount(SectorEdit, {
     props,
     global: {
@@ -65,7 +65,7 @@ describe('EditSector.vue', () => {
 
   beforeEach(async () => {
     router.push('/settings/sectors/1?tab=general');
-    wrapper = createWrapper({});
+    wrapper = createWrapper();
     await flushPromises();
   });
 
@@ -110,6 +110,6 @@ describe('EditSector.vue', () => {
   });
 
   it('Should match the snapshot', () => {
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper.html()).toMatchSnapshot();
   });
 });
