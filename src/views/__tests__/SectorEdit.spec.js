@@ -24,6 +24,12 @@ vi.mock('@/services/api/resources/settings/sector', () => ({
   },
 }));
 
+vi.mock('@/services/api/resources/settings/project', () => ({
+  default: {
+    managers: () => Promise.resolve({ results: [] }),
+  },
+}));
+
 const store = createTestingPinia({
   initialState: {
     config: {
