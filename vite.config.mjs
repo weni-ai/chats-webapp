@@ -85,12 +85,11 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        // Define o nome dos arquivos sem hash
         entryFileNames: 'assets/chats.js',
-        chunkFileNames: 'assets/chats.js', // Caso tenha chunks, também aplica o nome fixo
+        chunkFileNames: 'assets/chats.js',
         assetFileNames: (assetInfo) => {
           if (assetInfo.name.endsWith('.css')) {
-            return 'assets/chats.css'; // Define o nome do arquivo CSS sem hash
+            return 'assets/chats.css';
           }
           return 'assets/' + assetInfo.name;
         },
