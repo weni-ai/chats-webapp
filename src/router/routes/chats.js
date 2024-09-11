@@ -2,6 +2,7 @@ import isMobile from 'is-mobile';
 
 import DesktopHome from '@/views/chats/Home/index.vue';
 import MobileHome from '@/views/chats/Mobile/MobileHome.vue';
+import FlowsTrigger from '@/views/FlowsTrigger.vue';
 
 const Home = isMobile() ? MobileHome : DesktopHome;
 
@@ -18,6 +19,11 @@ const routes = [
         }
       } else next(to.path);
     },
+  },
+  {
+    path: '/flows-trigger',
+    name: 'flows-trigger',
+    component: FlowsTrigger,
   },
   {
     path: '/rooms',
