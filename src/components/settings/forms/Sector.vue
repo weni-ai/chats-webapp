@@ -90,7 +90,7 @@
           :name="`${manager.user.first_name} ${manager.user.last_name}`"
           :email="manager.user.email"
           :avatarUrl="photo(manager.user.photo_url)"
-          roleName="Gerente"
+          :roleName="$t('manager')"
           @remove="removeManager(manager.uuid)"
         />
       </section>
@@ -370,7 +370,7 @@ export default {
       const finalHour = hour.end;
       if (inicialHour > finalHour) {
         this.validHour = false;
-        this.message = 'Horário de início não pode ser maior que horário final';
+        this.message = this.$t('sector_invalid_work_hour');
       } else {
         this.validHour = true;
       }

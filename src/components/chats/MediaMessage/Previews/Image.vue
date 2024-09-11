@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import i18n from '@/plugins/i18n';
 export default {
   name: 'MediaImagePreview',
 
@@ -47,7 +48,7 @@ export default {
     },
     tooltip: {
       type: String,
-      default: 'Visualizar em tela cheia',
+      default: i18n.global.t('fullscreen_view'),
     },
   },
   emits: ['click'],

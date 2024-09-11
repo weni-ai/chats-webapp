@@ -7,7 +7,7 @@
     <section class="agent-history-metrics__metrics">
       <CardGroupMetrics
         :metrics="queues"
-        :title="`${agentName} em filas`"
+        :title="`${agentName} ${$t('in_queues')}`"
         icon="hierarchy-3-2"
         columns="3"
       />
@@ -22,6 +22,8 @@ import CardGroupMetrics from '../../CardGroupMetrics.vue';
 import GeneralMetrics from '../../GeneralMetrics.vue';
 
 import { useSettings } from '@/store/modules/settings';
+
+import i18n from '@/plugins/i18n';
 
 export default {
   name: 'HistoryMetricsByAgent',
@@ -41,7 +43,7 @@ export default {
   data: () => ({
     generalMetrics: [
       {
-        title: 'Quantidade de chats',
+        title: i18n.global.t('number_chats'),
         icon: 'indicator',
         scheme: 'aux-blue',
         value: 434,
@@ -49,7 +51,7 @@ export default {
         invertedPercentage: true,
       },
       {
-        title: 'Tempo de espera',
+        title: i18n.global.t('wait_time'),
         icon: 'time-clock-circle-1',
         type: 'time',
         scheme: 'aux-orange',
@@ -59,10 +61,10 @@ export default {
         },
         percent: -5,
         invertedPercentage: true,
-        tooltip: 'É tempo médio que o contato aguarda para ser atendido',
+        tooltip: i18n.global.t('wait_time_tooltip'),
       },
       {
-        title: 'Tempo de resposta',
+        title: i18n.global.t('response_time'),
         icon: 'messaging-we-chat-3',
         scheme: 'aux-purple',
         type: 'time',
@@ -72,10 +74,10 @@ export default {
         },
         percent: 5,
         invertedPercentage: true,
-        tooltip: 'É o tempo médio de resposta ao contato',
+        tooltip: i18n.global.t('average_response_time'),
       },
       {
-        title: 'Tempo de interação',
+        title: i18n.global.t('interaction_time'),
         icon: 'messages-bubble-1',
         scheme: 'aux-lemon',
         type: 'time',
@@ -106,26 +108,26 @@ export default {
     getRandomMetrics() {
       const metrics = [
         {
-          title: 'Tempo de espera',
+          title: i18n.global.t('wait_time'),
           icon: 'time-clock-circle-1',
           scheme: 'aux-orange',
           count: this.timeToString(this.getRandomTime(1, 5)),
         },
         {
-          title: 'Tempo de resposta',
+          title: i18n.global.t('response_time'),
           icon: 'messaging-we-chat-3',
           scheme: 'aux-purple',
           count: this.timeToString(this.getRandomTime(2, 3)),
         },
         {
-          title: 'Tempo de interação',
-          tooltip: 'É o tempo médio de duração de um chat',
+          title: i18n.global.t('interaction_time'),
+          tooltip: i18n.global.t('average_interaction_time'),
           icon: 'messages-bubble-1',
           scheme: 'aux-lemon',
           count: this.timeToString(this.getRandomTime(2, 3)),
         },
         {
-          title: 'Agentes online',
+          title: i18n.global.t('agents_online'),
           icon: 'headphones-customer-support-human-1-1',
           scheme: 'aux-blue',
           count: Math.round(Math.random() * (5 - 3) + 3), // random number between 3 and 5
