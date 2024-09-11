@@ -4,13 +4,14 @@
 
     <main>
       <header class="profile-preferences__header">
-        <h1 class="profile-preferences__title">Notificações do WeniChats</h1>
+        <h1 class="profile-preferences__title">
+          {{ $t('chats_notifications.title') }}
+        </h1>
       </header>
 
       <section class="profile-preferences__content">
         <p class="profile-preferences__label">
-          Para seu conforto, habilite e desabilite as notificações sonoras do
-          WeniChats
+          {{ $t('chats_notifications.label') }}
         </p>
 
         <section class="profile-preferences__options">
@@ -25,7 +26,7 @@
     </main>
 
     <UnnnicButton
-      text="Salvar alterações"
+      :text="$t('save')"
       type="secondary"
       @click="showConfirmationAlert"
     />
@@ -34,6 +35,7 @@
 
 <script>
 import unnnic from '@weni/unnnic-system';
+import i18n from '@/plugins/i18n';
 
 export default {
   name: 'ProfilePreferences',
@@ -41,21 +43,20 @@ export default {
   data: () => ({
     breadcrumb: [
       {
-        name: 'Preferências',
+        name: i18n.global.t('preferences.title'),
       },
     ],
     options: [
       {
-        label:
-          'Som de novas mensagens de contatos que estão aguardando na fila',
+        label: i18n.global.t('new_messages_song.queue'),
         value: true,
       },
       {
-        label: 'Som de novas mensagens de chats em andamento',
+        label: i18n.global.t('new_messages_song.in_progress'),
         value: true,
       },
       {
-        label: 'Som de confirmação de ações',
+        label: i18n.global.t('new_messages_song.actions'),
         value: true,
       },
     ],
@@ -65,7 +66,7 @@ export default {
     showConfirmationAlert() {
       unnnic.unnnicCallAlert({
         props: {
-          text: 'Alterações salvas',
+          text: this.$t('updates_saved'),
           type: 'success',
         },
         seconds: 15,

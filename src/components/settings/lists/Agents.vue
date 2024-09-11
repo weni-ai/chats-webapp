@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import i18n from '@/plugins/i18n';
 export default {
   name: 'ListAgents',
 
@@ -45,7 +46,7 @@ export default {
     },
     actionText: {
       type: String,
-      default: 'Detalhes',
+      default: i18n.global.t('details'),
     },
     title: {
       type: String,
@@ -58,17 +59,17 @@ export default {
     tableHeaders: [
       {
         id: 'name',
-        text: 'Nome',
+        text: i18n.global.t('name'),
         flex: 3,
       },
       {
         id: 'additionDate',
-        text: 'Data de adição',
+        text: i18n.global.t('addition_date'),
         flex: 3,
       },
       {
         id: 'visualize',
-        text: 'Visualizar',
+        text: i18n.global.t('view'),
         flex: 2,
       },
     ],

@@ -189,7 +189,7 @@ export default {
             connectionStatus === 'online'
               ? 'feedback-green'
               : '$unnnic-color-neutral-black',
-          closeText: 'Fechar',
+          closeText: this.$t('close'),
           position: 'bottom-right',
         },
         seconds: 15,
