@@ -19,8 +19,10 @@ import DashboardFilters from '@/components/dashboard/Filters.vue';
 import HistoryMetricsByAgent from '@/components/dashboard/metrics/ByAgent/HistoryMetrics.vue';
 import DashboardAgent from '@/services/api/resources/dashboard/dashboardAgent';
 
+import i18n from '@/plugins/i18n';
+
 export default {
-  name: 'DashboardManager',
+  name: 'DashboardAgent',
 
   components: {
     DashboardFilters,
@@ -40,9 +42,9 @@ export default {
       },
     },
     tags: [
-      { text: 'Dúvidas', value: 'doubts' },
-      { text: 'Financeiro', value: 'finance' },
-      { text: 'Ajuda', value: 'help' },
+      { text: i18n.global.t('doubts'), value: 'doubts' },
+      { text: i18n.global.t('finance'), value: 'finance' },
+      { text: i18n.global.t('help.label'), value: 'help' },
     ],
   }),
 

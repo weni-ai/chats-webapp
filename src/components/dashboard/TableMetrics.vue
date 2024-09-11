@@ -11,14 +11,14 @@
 
     <section class="table-metrics__table">
       <header class="headers table-row">
-        <span class="header table-col"> Agente </span>
+        <span class="header table-col"> {{ $t('agent') }} </span>
         <span
           class="header table-col"
           style="text-align: center"
         >
           {{ headers }}
         </span>
-        <span class="header table-col"> Encerrados </span>
+        <span class="header table-col"> {{ $t('closed') }} </span>
       </header>
 
       <section class="items">

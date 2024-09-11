@@ -47,6 +47,7 @@
 
 <script>
 import ListSectorQueues from '@/components/settings/lists/ListSectorQueues.vue';
+import i18n from '@/plugins/i18n';
 
 export default {
   name: 'FormQueue',
@@ -85,8 +86,7 @@ export default {
   emits: ['update:modelValue', 'validate', 'visualize', 'add-queue'],
 
   data: () => ({
-    description:
-      'Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando',
+    description: i18n.global.t('automatic_message.placeholder'),
     editContent: false,
     content: '',
   }),
