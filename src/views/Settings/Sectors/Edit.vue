@@ -223,55 +223,57 @@ export default {
     },
   },
 
-  data: () => ({
-    currentTab: '',
-    openModalDelete: false,
-    sector: {
-      uuid: '',
-      name: '',
-      can_trigger_flows: '',
-      can_edit_custom_fields: '',
-      sign_messages: '',
-      workingDay: {
-        start: '',
-        end: '',
-        dayOfWeek: 'week-days',
+  data() {
+    return {
+      currentTab: '',
+      openModalDelete: false,
+      sector: {
+        uuid: '',
+        name: '',
+        can_trigger_flows: '',
+        can_edit_custom_fields: '',
+        sign_messages: '',
+        workingDay: {
+          start: '',
+          end: '',
+          dayOfWeek: 'week-days',
+        },
+        managers: [],
+        maxSimultaneousChatsByAgent: '',
       },
-      managers: [],
-      maxSimultaneousChatsByAgent: '',
-    },
-    queue: {
-      name: '',
-    },
-    queueToEdit: null,
-    queueBreadcrumb: [
-      {
-        name: i18n.global.t('sector.queues'),
-      },
-      {
+      queue: {
         name: '',
       },
-    ],
-    removedManagers: [],
-    queues: [],
-    agents: [],
-    projectAgents: [],
-    projectManagers: [],
-    tags: [],
-    currentTags: [],
-    toAddTags: [],
-    toRemoveTags: [],
-    selectedQueue: [],
-    page: 0,
-    pageAgents: 0,
-    hasNextAgents: false,
-    agentsList: [],
-    description: () => this.$t('automatic_message.placeholder'),
-    editContent: false,
-    content: '',
-    isQuickMessageEditing: false,
-    isQuickMessagesFormValid: false,
-  }),
+      queueToEdit: null,
+      queueBreadcrumb: [
+        {
+          name: this.$t('sector.queues'),
+        },
+        {
+          name: '',
+        },
+      ],
+      removedManagers: [],
+      queues: [],
+      agents: [],
+      projectAgents: [],
+      projectManagers: [],
+      tags: [],
+      currentTags: [],
+      toAddTags: [],
+      toRemoveTags: [],
+      selectedQueue: [],
+      page: 0,
+      pageAgents: 0,
+      hasNextAgents: false,
+      agentsList: [],
+      description: () => this.$t('automatic_message.placeholder'),
+      editContent: false,
+      content: '',
+      isQuickMessageEditing: false,
+      isQuickMessagesFormValid: false,
+    };
+  },
 
   computed: {
     ...mapState(useQuickMessageShared, ['quickMessagesShared']),

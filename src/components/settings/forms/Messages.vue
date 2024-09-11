@@ -38,8 +38,6 @@ import unnnic from '@weni/unnnic-system';
 import ListSectorMessages from '@/components/settings/lists/ListSectorMessages.vue';
 import QuickMessageForm from '@/components/chats/QuickMessages/QuickMessageForm.vue';
 
-import i18n from '@/plugins/i18n';
-
 export default {
   name: 'FormMessages',
 
@@ -62,15 +60,20 @@ export default {
 
   data: () => ({
     quickMessageToUpdate: null,
-    quickMessagesBreadcrumb: [
-      {
-        name: i18n.global.t('settings.messages.title'),
-      },
-      {
-        name: i18n.global.t('quick_messages.add'),
-      },
-    ],
   }),
+
+  computed: {
+    quickMessagesBreadcrumb() {
+      return [
+        {
+          name: this.$t('settings.messages.title'),
+        },
+        {
+          name: this.$t('quick_messages.add'),
+        },
+      ];
+    },
+  },
 
   watch: {
     quickMessageToUpdate() {

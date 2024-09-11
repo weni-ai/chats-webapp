@@ -35,32 +35,35 @@
 
 <script>
 import unnnic from '@weni/unnnic-system';
-import i18n from '@/plugins/i18n';
 
 export default {
   name: 'ProfilePreferences',
 
-  data: () => ({
-    breadcrumb: [
-      {
-        name: i18n.global.t('preferences.title'),
-      },
-    ],
-    options: [
-      {
-        label: i18n.global.t('new_messages_song.queue'),
-        value: true,
-      },
-      {
-        label: i18n.global.t('new_messages_song.in_progress'),
-        value: true,
-      },
-      {
-        label: i18n.global.t('new_messages_song.actions'),
-        value: true,
-      },
-    ],
-  }),
+  computed: {
+    breadcrumb() {
+      return [
+        {
+          name: this.$t('preferences.title'),
+        },
+      ];
+    },
+    options() {
+      return [
+        {
+          label: this.$t('new_messages_song.queue'),
+          value: true,
+        },
+        {
+          label: this.$t('new_messages_song.in_progress'),
+          value: true,
+        },
+        {
+          label: this.$t('new_messages_song.actions'),
+          value: true,
+        },
+      ];
+    },
+  },
 
   methods: {
     showConfirmationAlert() {
