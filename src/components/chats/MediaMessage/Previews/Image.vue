@@ -3,7 +3,7 @@
     <UnnnicToolTip
       class="image-preview__tooltip"
       enabled
-      :text="tooltip"
+      :text="tooltip || $t('fullscreen_view')"
       side="right"
     >
       <img
@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import i18n from '@/plugins/i18n';
 export default {
   name: 'MediaImagePreview',
 
@@ -48,7 +47,7 @@ export default {
     },
     tooltip: {
       type: String,
-      default: i18n.global.t('fullscreen_view'),
+      default: '',
     },
   },
   emits: ['click'],

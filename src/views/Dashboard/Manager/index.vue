@@ -26,7 +26,7 @@
       />
     </template>
 
-    <HistoryMetricsBySector
+    <!-- <HistoryMetricsBySector
       :sectors="sectors"
       :filter="filters"
       :headerTitle="filters?.sector ? $t('queues.title') : $t('sectors')"
@@ -34,7 +34,7 @@
       :generalCardLabel="showData ? $t('number_chats') : $t('in_progress')"
       :agentsLabel="showData ? $t('chats_in_the_period') : $t('in_progress')"
       @history-filter="event = $event"
-    />
+    /> -->
   </DashboardLayout>
 </template>
 
@@ -50,7 +50,7 @@ import DashboardLayout from '@/layouts/DashboardLayout/index.vue';
 import ViewMode from '@/views/Dashboard/ViewMode/index.vue';
 
 import DashboardFilters from '@/components/dashboard/Filters.vue';
-import HistoryMetricsBySector from '@/components/dashboard/metrics/BySector/HistoryMetrics.vue';
+// import HistoryMetricsBySector from '@/components/dashboard/metrics/BySector/HistoryMetrics.vue';
 
 export default {
   name: 'DashboardManager',
@@ -58,7 +58,7 @@ export default {
   components: {
     DashboardFilters,
     DashboardLayout,
-    HistoryMetricsBySector,
+    // HistoryMetricsBySector,
     ViewMode,
   },
   emits: ['historyFilter'],
