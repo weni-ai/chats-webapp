@@ -200,8 +200,6 @@ import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
 import Project from '@/services/api/resources/settings/project';
 
-import i18n from '@/plugins/i18n';
-
 export default {
   name: 'EditSector',
 
