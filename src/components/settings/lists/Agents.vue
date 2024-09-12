@@ -21,7 +21,7 @@
 
           <template #visualize>
             <UnnnicButton
-              :text="actionText"
+              :text="actionText || $t('details')"
               type="secondary"
               size="small"
               class="action-button"
@@ -35,7 +35,6 @@
 </template>
 
 <script>
-import i18n from '@/plugins/i18n';
 export default {
   name: 'ListAgents',
 
@@ -46,7 +45,7 @@ export default {
     },
     actionText: {
       type: String,
-      default: i18n.global.t('details'),
+      default: '',
     },
     title: {
       type: String,
@@ -55,25 +54,27 @@ export default {
   },
   emits: ['select'],
 
-  data: () => ({
-    tableHeaders: [
-      {
-        id: 'name',
-        text: i18n.global.t('name'),
-        flex: 3,
-      },
-      {
-        id: 'additionDate',
-        text: i18n.global.t('addition_date'),
-        flex: 3,
-      },
-      {
-        id: 'visualize',
-        text: i18n.global.t('view'),
-        flex: 2,
-      },
-    ],
-  }),
+  computed: {
+    tableHeaders() {
+      return [
+        {
+          id: 'name',
+          text: this.$t('name'),
+          flex: 3,
+        },
+        {
+          id: 'additionDate',
+          text: this.$t('addition_date'),
+          flex: 3,
+        },
+        {
+          id: 'visualize',
+          text: this.$t('view'),
+          flex: 2,
+        },
+      ];
+    },
+  },
 };
 </script>
 
