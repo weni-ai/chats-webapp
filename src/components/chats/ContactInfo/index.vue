@@ -485,7 +485,7 @@ export default {
       try {
         await this.updateRoomContact({ uuid });
 
-        this.showAlert('Informações atualizadas');
+        this.showAlert(this.$t('updated_info'));
       } catch (error) {
         console.error('Erro ao atualizar as informações do contato.', error);
       }
