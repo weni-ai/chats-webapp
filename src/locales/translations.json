@@ -163,6 +163,21 @@
     "en": "Updates saved",
     "es": "Actualizaciones guardadas"
   },
+  "updated_info": {
+    "pt-br": "Informações atualizadas",
+    "en": "Updated information",
+    "es": "Información actualizada"
+  },
+  "active_chats": {
+    "pt-br": "Chats ativos",
+    "en": "Active chats",
+    "es": "Chats activos"
+  },
+  "active_chats_tooltip": {
+    "pt-br": "Quantidade de chats em andamento",
+    "en": "Number of ongoing chats",
+    "es": "Cantidad de chats en curso"
+  },
   "date_format": {
     "pt-br": "DD/MM/YYYY",
     "en": "MM/DD/YYYY",
@@ -1095,6 +1110,11 @@
     "pt-br": "Contato",
     "en": "Contact",
     "es": "Contacto"
+  },
+  "contact_await_for_you": {
+    "pt-br": "Um contato está esperando por você!",
+    "en": "A contact is waiting for you!",
+    "es": "¡Un contacto está esperando por ti!"
   },
   "agent": {
     "pt-br": "Agente",
