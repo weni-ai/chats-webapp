@@ -124,6 +124,11 @@
     "en": "Chats in the period",
     "es": "Chats en el período"
   },
+  "chats_per_agents": {
+    "pt-br": "Chats por agente",
+    "en": "Chats per agent",
+    "es": "Chats por agente"
+  },
   "new_messages_song": {
     "queue": {
       "pt-br": "Som de novas mensagens de contatos que estão aguardando na fila",
