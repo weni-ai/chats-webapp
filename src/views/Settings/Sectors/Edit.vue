@@ -308,8 +308,6 @@ export default {
     handleSelectAgent(agent) {
       const { currentAgents, toAddAgents } = this.queueToEdit;
 
-      console.log({ currentAgents, toAddAgents, agent });
-
       const alreadyInQueue = currentAgents.some((a) => a.uuid === agent.uuid);
 
       const alreadyInToAddAgents = toAddAgents.some((a) => a === agent.uuid);
