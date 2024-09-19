@@ -14,7 +14,7 @@
             scheme="feedback-green"
             style="margin-right: 12px"
           />
-          <span>Ao vivo</span>
+          <span>{{ $t('live') }}</span>
         </span>
       </div>
     </template>
@@ -29,10 +29,10 @@
     <HistoryMetricsBySector
       :sectors="sectors"
       :filter="filters"
-      :headerTitle="filters?.sector ? 'Filas' : 'Setores'"
-      :totalChatsLabel="showData ? 'Quantidade de chats' : 'Agentes online'"
-      :generalCardLabel="showData ? 'Quantidade de chats' : 'Em andamento'"
-      :agentsLabel="showData ? 'Chats no período' : 'Em andamento'"
+      :headerTitle="filters?.sector ? $t('queues.title') : $t('sectors')"
+      :totalChatsLabel="showData ? $t('number_chats') : $t('agents_online')"
+      :generalCardLabel="showData ? $t('number_chats') : $t('in_progress')"
+      :agentsLabel="showData ? $t('chats_in_the_period') : $t('in_progress')"
       @history-filter="event = $event"
     />
   </DashboardLayout>

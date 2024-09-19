@@ -3,7 +3,7 @@
     <UnnnicToolTip
       class="image-preview__tooltip"
       enabled
-      :text="tooltip"
+      :text="tooltip || $t('fullscreen_view')"
       side="right"
     >
       <img
@@ -47,7 +47,7 @@ export default {
     },
     tooltip: {
       type: String,
-      default: 'Visualizar em tela cheia',
+      default: '',
     },
   },
   emits: ['click'],
