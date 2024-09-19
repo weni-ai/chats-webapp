@@ -23,7 +23,7 @@ describe('FormSectorOld', () => {
 
     expect(titles.at(0).text()).toMatch(/Adicionar novo setor/gi);
     expect(titles.at(1).text()).toMatch(/Gerentes de atendimento/gi);
-    expect(titles.at(2).text()).toMatch(/Opções extras/gi);
+    expect(titles.at(2).text()).toMatch(/Opções adicionais/gi);
     expect(titles.at(3).text()).toMatch(/Definições da jornada de trabalho/gi);
 
     expect(titles.length).toBe(4);
