@@ -65,6 +65,7 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
+        api: 'modern',
         additionalData: `
           @import '@weni/unnnic-system/src/assets/scss/unnnic.scss';
         `,
