@@ -4,13 +4,14 @@
 
     <main>
       <header class="profile-preferences__header">
-        <h1 class="profile-preferences__title">Notificações do WeniChats</h1>
+        <h1 class="profile-preferences__title">
+          {{ $t('chats_notifications.title') }}
+        </h1>
       </header>
 
       <section class="profile-preferences__content">
         <p class="profile-preferences__label">
-          Para seu conforto, habilite e desabilite as notificações sonoras do
-          WeniChats
+          {{ $t('chats_notifications.label') }}
         </p>
 
         <section class="profile-preferences__options">
@@ -25,7 +26,7 @@
     </main>
 
     <UnnnicButton
-      text="Salvar alterações"
+      :text="$t('save')"
       type="secondary"
       @click="showConfirmationAlert"
     />
@@ -38,34 +39,37 @@ import unnnic from '@weni/unnnic-system';
 export default {
   name: 'ProfilePreferences',
 
-  data: () => ({
-    breadcrumb: [
-      {
-        name: 'Preferências',
-      },
-    ],
-    options: [
-      {
-        label:
-          'Som de novas mensagens de contatos que estão aguardando na fila',
-        value: true,
-      },
-      {
-        label: 'Som de novas mensagens de chats em andamento',
-        value: true,
-      },
-      {
-        label: 'Som de confirmação de ações',
-        value: true,
-      },
-    ],
-  }),
+  computed: {
+    breadcrumb() {
+      return [
+        {
+          name: this.$t('preferences.title'),
+        },
+      ];
+    },
+    options() {
+      return [
+        {
+          label: this.$t('new_messages_song.queue'),
+          value: true,
+        },
+        {
+          label: this.$t('new_messages_song.in_progress'),
+          value: true,
+        },
+        {
+          label: this.$t('new_messages_song.actions'),
+          value: true,
+        },
+      ];
+    },
+  },
 
   methods: {
     showConfirmationAlert() {
       unnnic.unnnicCallAlert({
         props: {
-          text: 'Alterações salvas',
+          text: this.$t('updates_saved'),
           type: 'success',
         },
         seconds: 15,

@@ -58,10 +58,10 @@
       v-else-if="!room.user"
       class="header-info-message"
     >
-      <span class="message"
-        >Contato na fila {{ room.queue.name }}
-        {{ moment(room?.created_on).fromNow() }}</span
-      >
+      <span class="message">
+        {{ $t('contact_in_queue') }} {{ room.queue.name }}
+        {{ moment(room?.created_on).fromNow() }}
+      </span>
     </section>
     <div
       v-if="alertNetwork"

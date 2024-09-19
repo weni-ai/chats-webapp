@@ -7,13 +7,13 @@
     <section class="by-agent-dashboard__metrics">
       <CardGroupMetrics
         :metrics="queues"
-        title="Filas"
+        :title="$t('queues.title')"
         icon="hierarchy-3-2"
       />
       <TableMetrics
         :headers="tableHeaders"
         :items="activeChats"
-        title="Chats ativos"
+        :title="$t('active_chats')"
         icon="indicator"
       />
     </section>
@@ -43,70 +43,72 @@ export default {
     },
   },
 
-  data: () => ({
-    generalMetrics: [
-      {
-        title: 'Chats ativos',
-        icon: 'indicator',
-        tooltip: 'É o tempo médio de duração de um chat',
-        scheme: 'aux-blue',
-        value: 5,
-        percent: -5,
-        invertedPercentage: true,
-      },
-      {
-        title: 'Tempo de espera',
-        icon: 'time-clock-circle-1',
-        type: 'time',
-        scheme: 'aux-orange',
-        value: {
-          minutes: 3,
-          seconds: 2,
+  data() {
+    return {
+      generalMetrics: [
+        {
+          title: this.$t('active_chats'),
+          icon: 'indicator',
+          tooltip: this.$t('average_interaction_time'),
+          scheme: 'aux-blue',
+          value: 5,
+          percent: -5,
+          invertedPercentage: true,
         },
-        percent: -5,
-        invertedPercentage: true,
-        tooltip: 'É tempo médio que o contato aguarda para ser atendido',
-      },
-      {
-        title: 'Tempo de resposta',
-        icon: 'messaging-we-chat-3',
-        scheme: 'aux-purple',
-        type: 'time',
-        value: {
-          minutes: 4,
-          seconds: 24,
+        {
+          title: this.$t('wait_time'),
+          icon: 'time-clock-circle-1',
+          type: 'time',
+          scheme: 'aux-orange',
+          value: {
+            minutes: 3,
+            seconds: 2,
+          },
+          percent: -5,
+          invertedPercentage: true,
+          tooltip: this.$t('wait_time_tooltip'),
         },
-        percent: 5,
-        invertedPercentage: true,
-        tooltip: 'É o tempo médio de resposta ao contato',
-      },
-      {
-        title: 'Tempo de interação',
-        tooltip: 'É o tempo médio de duração de um chat',
-        icon: 'messages-bubble-1',
-        scheme: 'aux-lemon',
-        type: 'time',
-        value: {
-          minutes: 46,
-          seconds: 12,
+        {
+          title: this.$t('response_time'),
+          icon: 'messaging-we-chat-3',
+          scheme: 'aux-purple',
+          type: 'time',
+          value: {
+            minutes: 4,
+            seconds: 24,
+          },
+          percent: 5,
+          invertedPercentage: true,
+          tooltip: this.$t('average_response_time'),
         },
-        percent: -5,
-        invertedPercentage: true,
-      },
-    ],
-    tableHeaders: [
-      {
-        text: 'Contato',
-        value: 'contact',
-      },
-      {
-        text: 'Tempo de interação',
-        value: 'interactionTime',
-      },
-    ],
+        {
+          title: this.$t('interaction_time'),
+          tooltip: this.$t('average_interaction_time'),
+          icon: 'messages-bubble-1',
+          scheme: 'aux-lemon',
+          type: 'time',
+          value: {
+            minutes: 46,
+            seconds: 12,
+          },
+          percent: -5,
+          invertedPercentage: true,
+        },
+      ],
+      tableHeaders: [
+        {
+          text: this.$t('contact'),
+          value: 'contact',
+        },
+        {
+          text: this.$t('interaction_time'),
+          value: 'interactionTime',
+        },
+      ],
 
-    realtimeSimulationController: null,
-  }),
+      realtimeSimulationController: null,
+    };
+  },
 
   computed: {
     ...mapState(useSettings, ['sectors']),
@@ -169,26 +171,26 @@ export default {
     getRandomMetrics() {
       const metrics = [
         {
-          title: 'Tempo de espera',
+          title: this.$t('wait_time'),
           icon: 'time-clock-circle-1',
           scheme: 'aux-orange',
           count: this.timeToString(this.getRandomTime(1, 5)),
         },
         {
-          title: 'Tempo de resposta',
+          title: this.$t('response_time'),
           icon: 'messaging-we-chat-3',
           scheme: 'aux-purple',
           count: this.timeToString(this.getRandomTime(2, 3)),
         },
         {
-          title: 'Tempo de interação',
+          title: this.$t('interaction_time'),
           icon: 'messages-bubble-1',
-          tooltip: 'É o tempo médio de duração de um chat',
+          tooltip: this.$t('average_interaction_time'),
           scheme: 'aux-lemon',
           count: this.timeToString(this.getRandomTime(2, 3)),
         },
         {
-          title: 'Agentes online',
+          title: this.$t('agents_online'),
           icon: 'headphones-customer-support-human-1-1',
           scheme: 'aux-blue',
           count: Math.round(Math.random() * (5 - 3) + 3), // random number between 3 and 5
