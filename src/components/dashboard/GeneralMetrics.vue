@@ -3,9 +3,9 @@
     <UnnnicToolTip
       enabled
       :text="
-        generalLabel === `Em andamento`
-          ? `Quantidade de chats que já estão sendo atendidos por um agente`
-          : `Quantidade de chats que foram atendidos por um agente `
+        generalLabel === $t('in_progress')
+          ? $t('in_progress_tooltip')
+          : $t('in_progress_tooltip_filtered')
       "
       side="bottom"
       maxWidth="15rem"
@@ -22,13 +22,13 @@
     </UnnnicToolTip>
     <UnnnicToolTip
       enabled
-      text="Quantidade de contatos aguardando o início do atendimento"
+      :text="$t('wait_assistance_tooltip')"
       side="bottom"
       maxWidth="15rem"
     >
       <UnnnicCard
         type="dash"
-        title="Aguardando atendimento"
+        :title="$t('chats.waiting_assistance')"
         icon="pending"
         scheme="aux-blue-500"
         :value="rawData.raw_data?.[0].queue_rooms || 0"
@@ -38,13 +38,13 @@
     </UnnnicToolTip>
     <UnnnicToolTip
       enabled
-      text="Quantidade de chats encerrados"
+      :text="$t('qtd_closed_tooltip')"
       side="bottom"
       maxWidth="15rem"
     >
       <UnnnicCard
         type="dash"
-        title="Encerrados"
+        :title="$t('closed')"
         icon="check_circle"
         scheme="aux-purple-500"
         :value="rawData.raw_data?.[0].closed_rooms || 0"
@@ -54,13 +54,13 @@
     </UnnnicToolTip>
     <UnnnicToolTip
       enabled
-      text="Média de tempo que os contatos aguardam até serem atendidos"
+      :text="$t('average_time_to_assistance_tooltip')"
       side="bottom"
       maxWidth="15rem"
     >
       <UnnnicCard
         type="dash"
-        title="Tempo de espera"
+        :title="$t('wait_time')"
         icon="chronic"
         scheme="aux-orange-500"
         :value="timeToString(metrics.rooms_data?.[0].waiting_time)"
@@ -70,13 +70,13 @@
     </UnnnicToolTip>
     <UnnnicToolTip
       enabled
-      text="Média de tempo que o contato aguarda para ser respondido"
+      :text="$t('average_time_to_response_tooltip')"
       side="bottom"
       maxWidth="15rem"
     >
       <UnnnicCard
         type="dash"
-        title="Tempo de resposta"
+        :title="$t('response_time')"
         icon="acute"
         scheme="aux-red-500"
         :value="timeToString(metrics.rooms_data?.[0].response_time)"
@@ -86,13 +86,13 @@
     </UnnnicToolTip>
     <UnnnicToolTip
       enabled
-      text="Média de tempo que um atendimento completo demora"
+      :text="$t('average_time_to_complete_assistence_tooltip')"
       side="bottom"
       maxWidth="15rem"
     >
       <UnnnicCard
         type="dash"
-        title="Tempo de interação"
+        :title="$t('interaction_time')"
         icon="history_toggle_off"
         scheme="aux-yellow-500"
         :value="timeToString(metrics.rooms_data?.[0].interact_time)"
