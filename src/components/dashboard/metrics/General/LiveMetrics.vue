@@ -16,7 +16,7 @@
       :headers="agentsLabel"
       :items="agents.project_agents"
       rawData="rawInfo"
-      title="Agentes online"
+      :title="$t('agents_online')"
       icon="indicator"
       class="grid-3"
     />
@@ -49,22 +49,24 @@ export default {
     },
   },
 
-  data: () => ({
-    agents: {},
-    generalMetrics: {},
-    sectors: {},
-    rawInfo: {},
-    tableHeaders: [
-      {
-        text: 'Agente',
-        value: 'name',
-      },
-      {
-        text: 'Chats ativos',
-        value: 'chats',
-      },
-    ],
-  }),
+  data() {
+    return {
+      agents: {},
+      generalMetrics: {},
+      sectors: {},
+      rawInfo: {},
+      tableHeaders: [
+        {
+          text: this.$t('agent'),
+          value: 'name',
+        },
+        {
+          text: this.$t('active_chats'),
+          value: 'chats',
+        },
+      ],
+    };
+  },
 
   mounted() {
     this.roomInfo();

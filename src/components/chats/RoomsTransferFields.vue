@@ -269,15 +269,19 @@ export default {
 
       const destination = selectedAgent || selectedQueueName;
 
+      const toDestination = selectedAgent ? 'agent' : 'queue';
+
       this.getAlert({
-        text: `Contato transferido com sucesso para ${destination}`,
+        text: this.$t(`contact_transferred_to_${toDestination}`, {
+          [toDestination]: destination,
+        }),
         type: 'success',
       });
     },
 
     callErrorAlert() {
       this.getAlert({
-        text: 'Falha ao transferir contato(s)',
+        text: this.$t('contact_transferred_error'),
         type: 'error',
       });
     },

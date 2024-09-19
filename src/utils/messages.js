@@ -362,6 +362,7 @@ export function groupMessages(messagesReference, { message, addBefore }) {
   }
 
   const currentDateEntry = messagesReference[dateIndex];
+
   let minuteIndex = currentDateEntry.minutes.findIndex(
     (obj) => obj.minute === messageMinute,
   );
@@ -382,5 +383,11 @@ export function groupMessages(messagesReference, { message, addBefore }) {
 
   currentMinuteEntry.messages = removeDuplicatedItems(
     currentMinuteEntry.messages,
+  );
+
+  currentDateEntry.minutes.sort((a, b) => a.minute - b.minute);
+
+  currentMinuteEntry.messages.sort(
+    (a, b) => moment(a.created_on).unix() - moment(b.created_on).unix(),
   );
 }
