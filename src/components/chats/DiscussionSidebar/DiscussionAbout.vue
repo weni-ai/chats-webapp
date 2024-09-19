@@ -170,7 +170,9 @@ export default {
   methods: {
     ...mapActions(useDiscussions, ['addAgent', 'getDiscussionAgents']),
     handlingRemoveAgent() {
-      this.agentSelected = [{ value: '', label: 'Pesquisar agente' }];
+      this.agentSelected = [
+        { value: '', label: this.$t('discussions.add_agents.search_agent') },
+      ];
     },
     getUserFullName(user) {
       const { first_name, last_name } = user;

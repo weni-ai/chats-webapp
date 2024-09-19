@@ -60,15 +60,20 @@ export default {
 
   data: () => ({
     quickMessageToUpdate: null,
-    quickMessagesBreadcrumb: [
-      {
-        name: 'Mensagens',
-      },
-      {
-        name: 'Adicionar nova mensagem',
-      },
-    ],
   }),
+
+  computed: {
+    quickMessagesBreadcrumb() {
+      return [
+        {
+          name: this.$t('settings.messages.title'),
+        },
+        {
+          name: this.$t('quick_messages.add'),
+        },
+      ];
+    },
+  },
 
   watch: {
     quickMessageToUpdate() {

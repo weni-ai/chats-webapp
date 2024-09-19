@@ -49,7 +49,7 @@
         "
         :email="selectedAgent.user.email"
         :avatarUrl="photo(selectedAgent.user.photo_url)"
-        roleName="Agente"
+        :roleName="$t('agent')"
         @remove="remove(selectedAgent.uuid)"
       />
     </section>
