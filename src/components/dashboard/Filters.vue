@@ -83,7 +83,7 @@
             @click="downloadMetric('metrics_csv')"
             @keypress.enter="downloadMetric('metrics_csv')"
           >
-            <span> Exportar métricas em CSV </span>
+            <span> {{ $t('export.metrics', { filetype: 'CSV' }) }} </span>
           </span>
         </UnnnicDropdownItem>
         <UnnnicDropdownItem class="option">
@@ -92,7 +92,7 @@
             @click="downloadDashboardData('all_csv')"
             @keypress.enter="downloadDashboardData('all_csv')"
           >
-            <span> Exportar tudo em CSV </span>
+            <span> {{ $t('export.all', { filetype: 'CSV' }) }} </span>
           </span>
         </UnnnicDropdownItem>
         <UnnnicDropdownItem class="option">
@@ -101,7 +101,7 @@
             @click="downloadMetric('metrics_xls')"
             @keypress.enter="downloadMetric('metrics_xls')"
           >
-            <span> Exportar métricas em XLS </span>
+            <span> {{ $t('export.metrics', { filetype: 'XLS' }) }} </span>
           </span>
         </UnnnicDropdownItem>
         <UnnnicDropdownItem class="option">
@@ -110,7 +110,7 @@
             @click="downloadDashboardData('all_xls')"
             @keypress.enter="downloadDashboardData('all_xls')"
           >
-            <span> Exportar tudo em XLS </span>
+            <span> {{ $t('export.all', { filetype: 'XLS' }) }} </span>
           </span>
         </UnnnicDropdownItem>
       </div>

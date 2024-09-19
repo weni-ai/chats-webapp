@@ -21,7 +21,7 @@
 
           <template #visualize>
             <UnnnicButton
-              :text="actionText"
+              :text="actionText || $t('details')"
               type="secondary"
               size="small"
               class="action-button"
@@ -45,7 +45,7 @@ export default {
     },
     actionText: {
       type: String,
-      default: 'Detalhes',
+      default: '',
     },
     title: {
       type: String,
@@ -54,25 +54,27 @@ export default {
   },
   emits: ['select'],
 
-  data: () => ({
-    tableHeaders: [
-      {
-        id: 'name',
-        text: 'Nome',
-        flex: 3,
-      },
-      {
-        id: 'additionDate',
-        text: 'Data de adição',
-        flex: 3,
-      },
-      {
-        id: 'visualize',
-        text: 'Visualizar',
-        flex: 2,
-      },
-    ],
-  }),
+  computed: {
+    tableHeaders() {
+      return [
+        {
+          id: 'name',
+          text: this.$t('name'),
+          flex: 3,
+        },
+        {
+          id: 'additionDate',
+          text: this.$t('addition_date'),
+          flex: 3,
+        },
+        {
+          id: 'visualize',
+          text: this.$t('view'),
+          flex: 2,
+        },
+      ];
+    },
+  },
 };
 </script>
 

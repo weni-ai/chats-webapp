@@ -20,7 +20,7 @@ import HistoryMetricsByAgent from '@/components/dashboard/metrics/ByAgent/Histor
 import DashboardAgent from '@/services/api/resources/dashboard/dashboardAgent';
 
 export default {
-  name: 'DashboardManager',
+  name: 'DashboardAgent',
 
   components: {
     DashboardFilters,
@@ -39,12 +39,17 @@ export default {
         end: '',
       },
     },
-    tags: [
-      { text: 'Dúvidas', value: 'doubts' },
-      { text: 'Financeiro', value: 'finance' },
-      { text: 'Ajuda', value: 'help' },
-    ],
   }),
+
+  computed: {
+    tags() {
+      return [
+        { text: this.$t('doubts'), value: 'doubts' },
+        { text: this.$t('finance'), value: 'finance' },
+        { text: this.$t('help.label'), value: 'help' },
+      ];
+    },
+  },
 
   mounted() {
     this.agentInfo();

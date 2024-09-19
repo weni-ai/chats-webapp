@@ -30,10 +30,8 @@
               style="max-width: 100%; max-height: 100%"
               titleColor="neutral-dark"
               size="small"
-              title="Mensagem automática"
-              info="Defina uma resposta automática para ser enviada ao contato enquanto
-            está aguardando atendimento, deixe em branco caso não queira
-            nenhuma mensagem."
+              :title="$t('automatic_message.title')"
+              :info="$t('automatic_message.info')"
             >
               <template #actions>
                 <UnnnicButtonIcon
@@ -59,7 +57,7 @@
                       v-model="content"
                       :maxLength="250"
                       size="sm"
-                      placeholder="Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando"
+                      :placeholder="$t('automatic_message.placeholder')"
                       @focus="focusTextEditor"
                     />
                   </div>
@@ -125,7 +123,7 @@
     <section class="actions">
       <UnnnicButton
         v-if="!!queueToEdit && currentTab === 'queues'"
-        text="Excluir fila"
+        :text="$t('delete_queue')"
         iconLeft="delete-1"
         type="tertiary"
         @click="openModalDeleteQueue(queueToEdit)"
@@ -161,8 +159,10 @@
         v-if="openModalDelete"
         modalIcon="alert-circle-1"
         scheme="feedback-red"
-        :text="`Excluir a fila ${selectedQueue.name}`"
-        :description="`A fila ${selectedQueue.name} será permanentemente excluída`"
+        :text="$t('delete_queue_modal.text', { queue: selectedQueue.name })"
+        :description="
+          $t('delete_queue_modal.description', { queue: selectedQueue.name })
+        "
         @close="closeModalDeleteQueue"
       >
         <template #options>
@@ -221,56 +221,57 @@ export default {
     },
   },
 
-  data: () => ({
-    currentTab: '',
-    openModalDelete: false,
-    sector: {
-      uuid: '',
-      name: '',
-      can_trigger_flows: '',
-      can_edit_custom_fields: '',
-      sign_messages: '',
-      workingDay: {
-        start: '',
-        end: '',
-        dayOfWeek: 'week-days',
+  data() {
+    return {
+      currentTab: '',
+      openModalDelete: false,
+      sector: {
+        uuid: '',
+        name: '',
+        can_trigger_flows: '',
+        can_edit_custom_fields: '',
+        sign_messages: '',
+        workingDay: {
+          start: '',
+          end: '',
+          dayOfWeek: 'week-days',
+        },
+        managers: [],
+        maxSimultaneousChatsByAgent: '',
       },
-      managers: [],
-      maxSimultaneousChatsByAgent: '',
-    },
-    queue: {
-      name: '',
-    },
-    queueToEdit: null,
-    queueBreadcrumb: [
-      {
-        name: 'Filas',
-      },
-      {
+      queue: {
         name: '',
       },
-    ],
-    removedManagers: [],
-    queues: [],
-    agents: [],
-    projectAgents: [],
-    projectManagers: [],
-    tags: [],
-    currentTags: [],
-    toAddTags: [],
-    toRemoveTags: [],
-    selectedQueue: [],
-    page: 0,
-    pageAgents: 0,
-    hasNextAgents: false,
-    agentsList: [],
-    description:
-      'Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando',
-    editContent: false,
-    content: '',
-    isQuickMessageEditing: false,
-    isQuickMessagesFormValid: false,
-  }),
+      queueToEdit: null,
+      queueBreadcrumb: [
+        {
+          name: this.$t('sector.queues'),
+        },
+        {
+          name: '',
+        },
+      ],
+      removedManagers: [],
+      queues: [],
+      agents: [],
+      projectAgents: [],
+      projectManagers: [],
+      tags: [],
+      currentTags: [],
+      toAddTags: [],
+      toRemoveTags: [],
+      selectedQueue: [],
+      page: 0,
+      pageAgents: 0,
+      hasNextAgents: false,
+      agentsList: [],
+      description: () => this.$t('automatic_message.placeholder'),
+      editContent: false,
+      content: '',
+      isQuickMessageEditing: false,
+      isQuickMessagesFormValid: false,
+    };
+  },
 
   computed: {
     ...mapState(useQuickMessageShared, ['quickMessagesShared']),
@@ -306,8 +307,6 @@ export default {
 
     handleSelectAgent(agent) {
       const { currentAgents, toAddAgents } = this.queueToEdit;
-
-      console.log({ currentAgents, toAddAgents, agent });
 
       const alreadyInQueue = currentAgents.some((a) => a.uuid === agent.uuid);
 
@@ -576,7 +575,7 @@ export default {
     showSuccessfullyUpdateSnackbar() {
       unnnic.unnnicCallAlert({
         props: {
-          text: 'Alterações salvas',
+          text: this.$t('updates_saved'),
           type: 'success',
         },
         seconds: 5,
@@ -641,8 +640,7 @@ export default {
         if (![null, undefined, ''].includes(this.queueInfo.default_message)) {
           this.description = this.queueInfo.default_message;
         } else {
-          this.description =
-            'Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando';
+          this.description = this.$t('automatic_message.placeholder');
         }
       } catch (error) {
         console.log(error);
@@ -662,7 +660,7 @@ export default {
         this.getQueues();
         unnnic.unnnicCallAlert({
           props: {
-            text: 'Atualizações salvas',
+            text: this.$t('updates_saved'),
             type: 'success',
           },
           seconds: 5,
