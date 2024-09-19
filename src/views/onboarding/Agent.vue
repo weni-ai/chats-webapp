@@ -6,7 +6,7 @@
           <UnnnicToolTip
             v-if="!roomOpen"
             enabled
-            text="Um contato está esperando por você!"
+            :text="$t('contact_await_for_you')"
             side="right"
             forceOpen
           >

@@ -30,6 +30,11 @@
       }
     },
     "help": {
+      "label": {
+        "pt-br": "Ajuda",
+        "en": "Help",
+        "es": "Ayuda"
+      },
       "title": {
         "pt-br": "Menu ajuda",
         "en": "Help menu",
@@ -99,10 +104,99 @@
       "es": "Esperando por un minuto | Esperando por {n} minutos"
     }
   },
+  "details": {
+    "pt-br": "Detalhes",
+    "en": "Details",
+    "es": "Details"
+  },
+  "doubts": {
+    "pt-br": "Dúvidas",
+    "en": "Doubts",
+    "es": "Dudas"
+  },
+  "finance": {
+    "pt-br": "Financeiro",
+    "en": "Finance",
+    "es": "Financiero"
+  },
+  "chats_in_the_period": {
+    "pt-br": "Chats no período",
+    "en": "Chats in the period",
+    "es": "Chats en el período"
+  },
+  "chats_per_agents": {
+    "pt-br": "Chats por agente",
+    "en": "Chats per agent",
+    "es": "Chats por agente"
+  },
+  "new_messages_song": {
+    "queue": {
+      "pt-br": "Som de novas mensagens de contatos que estão aguardando na fila",
+      "en": "Sound for new messages from contacts waiting in the queue",
+      "es": "Sonido de nuevos mensajes de contactos que están esperando en la fila"
+    },
+    "in_progress": {
+      "pt-br": "Som de novas mensagens de chats em andamento",
+      "en": "Sound for new messages in ongoing chats",
+      "es": "Sonido de nuevos mensajes en chats en curso"
+    },
+    "actions": {
+      "pt-br": "Som de confirmação de ações",
+      "en": "Action confirmation sound",
+      "es": "Sonido de confirmación de acciones"
+    }
+  },
+  "automatic_message": {
+    "title": {
+      "pt-br": "Mensagem automática",
+      "en": "Automatic message",
+      "es": "Mensaje automático"
+    },
+    "info": {
+      "pt-br": "Defina uma resposta automática para ser enviada ao contato enquanto está aguardando atendimento, deixe em branco caso não queira nenhuma mensagem.",
+      "en": "Define an automatic response to be sent to the contact while they are waiting for assistance, leave it blank if you don’t want any message.",
+      "es": "Define una respuesta automática para enviar al contacto mientras espera asistencia, déjalo en blanco si no deseas ningún mensaje."
+    },
+    "placeholder": {
+      "pt-br": "Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando",
+      "en": "You haven't set an automatic message yet. Please define a message for your contacts who are waiting.",
+      "es": "Aún no has definido un mensaje automático. Por favor, define un mensaje para tus contactos que están esperando."
+    }
+  },
+  "updates_saved": {
+    "pt-br": "Atualizações salvas",
+    "en": "Updates saved",
+    "es": "Actualizaciones guardadas"
+  },
+  "updated_info": {
+    "pt-br": "Informações atualizadas",
+    "en": "Updated information",
+    "es": "Información actualizada"
+  },
+  "active_chats": {
+    "pt-br": "Chats ativos",
+    "en": "Active chats",
+    "es": "Chats activos"
+  },
+  "active_chats_tooltip": {
+    "pt-br": "Quantidade de chats em andamento",
+    "en": "Number of ongoing chats",
+    "es": "Cantidad de chats en curso"
+  },
   "date_format": {
     "pt-br": "DD/MM/YYYY",
     "en": "MM/DD/YYYY",
     "es": "DD/MM/YYYY"
+  },
+  "live": {
+    "pt-br": "Ao Vivo",
+    "en": "Live",
+    "es": "En Vivo"
+  },
+  "number_chats": {
+    "pt-br": "Quantidade de chats",
+    "en": "Number of chats",
+    "es": "Cantidad de chats"
   },
   "language": {
     "pt-br": "Idioma",
@@ -207,6 +301,16 @@
       "en": "No option selected",
       "es": "Ninguna opción seleccionada"
     }
+  },
+  "agents_online": {
+    "pt-br": "Agentes online",
+    "en": "Online agents",
+    "es": "Agentes online"
+  },
+  "sectors": {
+    "pt-br": "Setores",
+    "en": "Sectors",
+    "es": "Sectores"
   },
   "sector": {
     "title": {
@@ -385,6 +489,108 @@
       "es": "Cantidad de agentes"
     }
   },
+  "export": {
+    "metrics": {
+      "pt-br": "Exportar métricas em {filetype}",
+      "en": "Export metrics as {filetype}",
+      "es": "Exportar métricas en {filetype}"
+    },
+    "all": {
+      "pt-br": "Exportar tudo em {filetype}",
+      "en": "Export everything as {filetype}",
+      "es": "Exportar todo en {filetype}"
+    }
+  },
+  "name": {
+    "pt-br": "Nome",
+    "en": "Name",
+    "es": "Nombre"
+  },
+  "addition_date": {
+    "pt-br": "Data de Adição",
+    "en": "Date of addition",
+    "es": "Fecha de adición"
+  },
+  "in_queues": {
+    "pt-br": "em filas",
+    "en": "in queues",
+    "es": "en colas"
+  },
+  "in_progress": {
+    "pt-br": "Em andamento",
+    "en": "In progress",
+    "es": "En progreso"
+  },
+  "in_progress_tooltip": {
+    "pt-br": "Quantidade de chats que já estão sendo atendidos por um agente",
+    "en": "Number of chats that are already being handled by an agent",
+    "es": "Cantidad de chats que ya están siendo atendidos por un agente"
+  },
+  "in_progress_tooltip_filtered": {
+    "pt-br": "Quantidade de chats que foram atendidos por um agente",
+    "en": "Number of chats that have been handled by an agent",
+    "es": "Cantidad de chats que han sido atendidos por un agente"
+  },
+  "closed": {
+    "pt-br": "Encerrados",
+    "en": "Closed",
+    "es": "Cerrados"
+  },
+  "qtd_closed_tooltip": {
+    "pt-br": "Quantidade de chats encerrados",
+    "en": "Number of closed chats",
+    "es": "Cantidad de chats cerrados"
+  },
+  "wait_time": {
+    "pt-br": "Tempo de espera",
+    "en": "Wait time",
+    "es": "Tiempo de espera"
+  },
+  "wait_time_tooltip": {
+    "pt-br": "É tempo médio que o contato aguarda para ser atendido",
+    "en": "It is the average time the contact waits to be assisted",
+    "es": "Es el tiempo promedio que el contacto espera para ser atendido"
+  },
+  "wait_assistance_tooltip": {
+    "pt-br": "Quantidade de contatos aguardando o início do atendimento",
+    "en": "Number of contacts waiting to start assistance",
+    "es": "Cantidad de contactos esperando para comenzar la asistencia"
+  },
+  "average_time_to_assistance_tooltip": {
+    "pt-br": "Média de tempo que os contatos aguardam até serem atendidos",
+    "en": "Average time contacts wait before being assisted",
+    "es": "Tiempo promedio que los contactos esperan antes de ser atendidos"
+  },
+  "average_time_to_response_tooltip": {
+    "pt-br": "Média de tempo que o contato aguarda para ser respondido",
+    "en": "Average time the contact waits to be responded to",
+    "es": "Tiempo promedio que el contacto espera para ser respondido"
+  },
+  "average_time_to_complete_assistence_tooltip": {
+    "pt-br": "Média de tempo que um atendimento completo demora",
+    "en": "Average time for a complete assistance",
+    "es": "Tiempo promedio de un atendimento completo"
+  },
+  "response_time": {
+    "pt-br": "Tempo de resposta",
+    "en": "Response time",
+    "es": "Tiempo de respuesta"
+  },
+  "average_response_time": {
+    "pt-br": "É o tempo médio de resposta ao contato",
+    "en": "It is the average response time to the contact",
+    "es": "Es el tiempo promedio de respuesta al contacto"
+  },
+  "interaction_time": {
+    "pt-br": "Tempo de interação",
+    "en": "Interaction time",
+    "es": "Tiempo de interacción"
+  },
+  "average_interaction_time": {
+    "pt-br": "É o tempo médio de duração de um chat",
+    "en": "It is the average duration of a chat",
+    "es": "Es el tiempo promedio de duración de un chat"
+  },
   "chats": {
     "feedback": {
       "forwarded_to_agent": {
@@ -484,6 +690,11 @@
       "pt-br": "Aguardando ({length})",
       "en": "Waiting ({length})",
       "es": "Esperando ({length})"
+    },
+    "waiting_assistance": {
+      "pt-br": "Aguardando atendimento",
+      "en": "Waiting for assistance",
+      "es": "Esperando asistencia"
     },
     "in_progress": {
       "pt-br": "Em andamento ({length})",
@@ -633,6 +844,18 @@
       "pt-br": "Não foi possível atualizar suas filas de atendimento",
       "en": "Unable to update your service queues",
       "es": "No se pueden actualizar sus colas de servicio"
+    }
+  },
+  "chats_notifications": {
+    "title": {
+      "pt-br": "Notificações do WeniChats",
+      "en": "WeniChats Notifications",
+      "es": "Notificaciones de WeniChats"
+    },
+    "label": {
+      "pt-br": "Para seu conforto, habilite e desabilite as notificações sonoras do WeniChats",
+      "en": "For your convenience, enable or disable WeniChats sound notifications.",
+      "es": "Para tu comodidad, habilita o deshabilita las notificaciones sonoras de WeniChats."
     }
   },
   "dashboard": {
@@ -893,13 +1116,18 @@
     "en": "Contact",
     "es": "Contacto"
   },
+  "contact_await_for_you": {
+    "pt-br": "Um contato está esperando por você!",
+    "en": "A contact is waiting for you!",
+    "es": "¡Un contacto está esperando por ti!"
+  },
   "agent": {
     "pt-br": "Agente",
     "en": "Agent",
     "es": "Agente"
   },
   "manager": {
-    "pt-br": "Gestor",
+    "pt-br": "Gerente",
     "en": "Manager",
     "es": "Gerente"
   },
@@ -938,6 +1166,21 @@
         "es": "Seleccione"
       }
     }
+  },
+  "sector_update_success": {
+    "pt-br": "Alterações salvas com sucesso",
+    "en": "Changes saved successfully",
+    "es": "Los cambios se guardaron correctamente"
+  },
+  "sector_update_error": {
+    "pt-br": "Não foi possível salvar as alterações, tente novamente mais tarde.",
+    "en": "Unable to save changes, please try again later.",
+    "es": "No se pueden guardar los cambios. Vuelve a intentarlo más tarde."
+  },
+  "sector_invalid_work_hour": {
+    "pt-br": "Horário de início não pode ser maior que horário final",
+    "en": "Start time cannot be later than end time",
+    "es": "La hora de inicio no puede ser mayor que la hora de finalización"
   },
   "name_or_phone": {
     "pt-br": "Nome ou telefone",
@@ -1003,6 +1246,11 @@
     "en": "Date",
     "es": "Fecha"
   },
+  "fullscreen_view": {
+    "pt-br": "Ver em tela cheia ",
+    "en": "View in fullscreen",
+    "es": "Ver en pantalla completa"
+  },
   "view": {
     "pt-br": "Visualizar",
     "en": "View",
@@ -1047,6 +1295,11 @@
     "en": "Contact transferred to queue {queue}",
     "es": "Contacto transferido a la cola {queue}"
   },
+  "contact_transferred_error": {
+    "pt-br": "Falha ao transferir contato(s)",
+    "en": "Failed to transfer contact(s)",
+    "es": "No se pudieron transferir los contactos"
+  },
   "contact_transferred_to_agent": {
     "pt-br": "Contato transferido para agente {agent}",
     "en": "Contact transferred to agent {agent}",
@@ -1056,6 +1309,11 @@
     "pt-br": "{agent} pegou da fila {queue}",
     "en": "{agent} took from queue {queue}",
     "es": "{agent} tomó de la cola {queue}"
+  },
+  "contact_in_queue": {
+    "pt-br": "Contato na fila",
+    "en": "Contact in the queue",
+    "es": "Contacto en la cola"
   },
   "chat_closed_by": {
     "agent": {
@@ -1433,6 +1691,23 @@
     "pt-br": "Deletar setor",
     "en": "Delete sector",
     "es": "Eliminar sector"
+  },
+  "delete_queue": {
+    "pt-br": "Excluir fila",
+    "en": "Delete queue",
+    "es": "Eliminar fila"
+  },
+  "delete_queue_modal": {
+    "text": {
+      "pt-br": "Excluir a fila {queue}",
+      "en": "Delete the queue {queue}",
+      "es": "Eliminar la fila {queue}"
+    },
+    "description": {
+      "pt-br": "A fila {queue} será permanentemente excluída",
+      "en": "The queue {queue} will be permanently deleted.",
+      "es": "La fila {queue} será eliminada permanentemente."
+    }
   },
   "cant_revert": {
     "pt-br": "Essa opção não poderá ser revertida",

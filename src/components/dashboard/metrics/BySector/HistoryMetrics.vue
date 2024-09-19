@@ -18,7 +18,7 @@
     <TableMetrics
       :headers="agentsLabel"
       :items="agents"
-      title="Chats por agente"
+      :title="$t('chats_per_agents')"
       icon="indicator"
       class="grid-3"
     />
@@ -74,23 +74,25 @@ export default {
     },
   },
 
-  data: () => ({
-    agents: {},
-    generalMetrics: {},
-    treatedSectors: {},
-    rawInfo: {},
-    tableHeaders: [
-      {
-        text: 'Agente',
-        value: 'name',
-      },
-      {
-        text: 'Chats no período',
-        value: 'chats',
-      },
-    ],
-    metricsTimer: null,
-  }),
+  data() {
+    return {
+      agents: {},
+      generalMetrics: {},
+      treatedSectors: {},
+      rawInfo: {},
+      tableHeaders: [
+        {
+          text: this.$t('agent'),
+          value: 'name',
+        },
+        {
+          text: this.$t('chats_in_the_period'),
+          value: 'chats',
+        },
+      ],
+      metricsTimer: null,
+    };
+  },
 
   computed: {
     updateFilter() {

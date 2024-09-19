@@ -52,12 +52,10 @@ export default {
   props: {
     title: {
       type: String,
-      default: 'Custom',
       required: true,
     },
     description: {
       type: String,
-      default: '',
       required: true,
     },
     isEditable: {
@@ -72,7 +70,6 @@ export default {
     },
     value: {
       type: String,
-      default: '',
       required: true,
     },
   },

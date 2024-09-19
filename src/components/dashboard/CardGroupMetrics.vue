@@ -18,19 +18,19 @@
           ...(allMetrics
             ? [
                 {
-                  title: 'Em andamento',
+                  title: $t('in_progress'),
                   icon: 'mark_chat_unread',
                   scheme: 'aux-green-500',
                   count: metric.active_rooms || 0,
                 },
                 {
-                  title: 'Aguardando atendimento',
+                  title: $t('waiting_assistance'),
                   icon: 'pending',
                   scheme: 'aux-blue-500',
                   count: metric.queue_rooms || 0,
                 },
                 {
-                  title: 'Encerrados',
+                  title: $t('closed'),
                   icon: 'check_circle',
                   scheme: 'aux-purple-500',
                   count: metric.closed_rooms || 0,
@@ -38,19 +38,19 @@
               ]
             : []),
           {
-            title: 'Tempo de espera',
+            title: $t('wait_time'),
             icon: 'chronic',
             scheme: 'aux-orange-500',
             count: timeToString(metric.waiting_time || 0),
           },
           {
-            title: 'Tempo de resposta',
+            title: $t('response_time'),
             icon: 'acute',
             scheme: 'aux-red-500',
             count: timeToString(metric.response_time || 0),
           },
           {
-            title: 'Tempo de interação',
+            title: $t('interaction_time'),
             icon: 'history_toggle_off',
             scheme: 'aux-yellow-500',
             count: timeToString(metric.interact_time || 0),
