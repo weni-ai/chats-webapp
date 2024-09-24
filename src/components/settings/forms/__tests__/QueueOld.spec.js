@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils';
 
-import FormQueue from '../Queue.vue';
+import FormQueue from '../QueueOld.vue';
 import defaultProps from './mocks/queueMock';
 
 function createWrapper() {

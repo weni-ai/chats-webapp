@@ -37,7 +37,12 @@
           isEditing
         />
       </template>
-      <template #tab-panel-queues> </template>
+      <template #tab-panel-queues>
+        <FormeSectorQueues
+          v-if="sector.uuid"
+          :sector="sector"
+        />
+      </template>
       <template #tab-panel-quick_messages> </template>
     </UnnnicTab>
   </section>
@@ -52,6 +57,7 @@ import SectorEditHeader from './SectorEditHeader.vue';
 
 import FormSectorGeneral from '@/components/settings/forms/General.vue';
 import FormSectorExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
+import FormeSectorQueues from '@/components/settings/forms/Queue.vue';
 
 import { useConfig } from '@/store/modules/config';
 
@@ -62,6 +68,7 @@ export default {
     SectorEditHeader,
     FormSectorGeneral,
     FormSectorExtraOptions,
+    FormeSectorQueues,
   },
 
   data() {

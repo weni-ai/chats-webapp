@@ -1,170 +1,100 @@
 <template>
-  <section class="form-queue">
-    <!-- <p v-if="showInfoIcon" class="form-queue__description">{{ infoText }}</p> -->
-    <p class="title">
-      {{ label }}
-      <UnnnicToolTip
-        enabled
-        side="right"
-        :text="$t('new_sector.queues_tip')"
-        maxWidth="23rem"
+  <section class="sector-queues-form">
+    <p class="sector-queues-form__info">{{ $t('config_chats.queues.info') }}</p>
+
+    <section class="sector-queues-form-grid">
+      <!-- TODO ajustar hover e click do componente -->
+      <UnnnicCard
+        class="sector-queues-form-grid__new-queue"
+        type="blank"
+        :text="$t('config_chats.queues.new')"
+        icon="add"
+      />
+      <UnnnicSimpleCard
+        v-for="queue in queues"
+        :key="queue.uuid"
+        :title="queue.name"
+        clickable
+        class="sector-queues-form-grid__sector-card"
       >
-        <UnnnicIconSvg
-          icon="information-circle-4"
-          scheme="neutral-soft"
-          size="sm"
-        />
-      </UnnnicToolTip>
-    </p>
-
-    <section class="controls">
-      <UnnnicInput
-        v-model="queue.name"
-        :label="$t('queues.queue_name')"
-        :placeholder="$t('queues.queue_name_placeholder')"
-        class="input"
-      />
-      <UnnnicButton
-        v-if="isEditing"
-        :text="$t('save')"
-        type="secondary"
-        @click="addQueue"
-      />
-    </section>
-
-    <section
-      v-if="isEditing"
-      class="form-queue__queues"
-    >
-      <ListSectorQueues
-        :sector="sector.name"
-        :queues="queues"
-        @visualize="visualize"
-      />
+        <template #headerSlot>
+          <p>{{ $t('config_chats.open') }}</p>
+        </template>
+        <template #footer>
+          <p>{{ queue.agents }} {{ $t('config_chats.agent_title') }}</p>
+        </template>
+      </UnnnicSimpleCard>
     </section>
   </section>
 </template>
 
 <script>
-import ListSectorQueues from '@/components/settings/lists/ListSectorQueues.vue';
+import Queue from '@/services/api/resources/settings/queue';
 
 export default {
   name: 'FormQueue',
-
-  components: {
-    ListSectorQueues,
-  },
-
   props: {
-    isEditing: {
-      type: Boolean,
-      default: false,
-    },
-    queues: {
-      type: Array,
-      default: () => [],
-    },
-    label: {
-      type: String,
-      default: '',
-    },
     sector: {
       type: Object,
-      default: () => ({}),
-    },
-    showInfoIcon: {
-      type: Boolean,
-      default: false,
-    },
-    modelValue: {
-      type: Object,
-      default: () => ({}),
+      required: true,
     },
   },
-
-  emits: ['update:modelValue', 'validate', 'visualize', 'add-queue'],
-
   data() {
     return {
-      description: this.$t('automatic_message.placeholder'),
-      editContent: false,
-      content: '',
+      queues: [],
+      page: 0,
     };
   },
-  computed: {
-    queue: {
-      get() {
-        return this.modelValue;
-      },
-      set(queue) {
-        this.$emit('update:modelValue', queue);
-      },
-    },
-  },
 
-  watch: {
-    queue: {
-      deep: true,
-      immediate: true,
-      handler() {
-        this.$emit('validate', this.validate());
-      },
-    },
+  mounted() {
+    this.getQueues();
   },
-
   methods: {
-    focusTextEditor() {
-      this.$nextTick(() => {
-        this.$refs.textEditor?.focus();
-      });
-    },
-    editDescription() {
-      this.editContent = true;
-      // this.focusTextEditor();
-    },
-    cancelEditDescription() {
-      this.editContent = false;
-    },
-    visualize(queue) {
-      this.$emit('visualize', queue);
-    },
-    addQueue() {
-      this.$emit('add-queue', this.queue);
-    },
-    validate() {
-      return !!this.queue.name;
+    async getQueues() {
+      this.loading = true;
+      let hasNext = false;
+      try {
+        const queues = await Queue.list(this.sector.uuid, this.page * 10, 10);
+        this.page += 1;
+        this.queues = this.queues.concat(queues.results);
+
+        hasNext = queues.next;
+
+        this.loading = false;
+      } finally {
+        this.loading = false;
+      }
+      if (hasNext) {
+        this.getQueues();
+      }
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.form-queue {
-  &__description {
-    font-size: $unnnic-font-size-body-md;
-    color: $unnnic-color-neutral-cloudy;
-    margin: $unnnic-spacing-inline-xs 0 $unnnic-spacing-inline-md;
-  }
+.sector-queues-form {
+  display: grid;
+  gap: $unnnic-spacing-ant;
 
-  .title {
-    font-weight: $unnnic-font-weight-bold;
+  &__info {
     color: $unnnic-color-neutral-dark;
-    font-size: $unnnic-font-size-body-lg;
-    line-height: 1.5rem;
-
-    margin-bottom: 1rem;
+    font-size: $unnnic-font-size-body-gt;
+    line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
   }
 
-  .controls {
-    display: flex;
-    align-items: flex-end;
-    gap: $unnnic-spacing-stack-sm;
-    margin-bottom: 1.5rem;
+  &-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $unnnic-spacing-xs;
 
-    .input {
-      flex: 1 1;
-
-      margin-top: -0.5rem;
+    &__new-queue {
+      :deep(.unnnic-card-blank__content) {
+        flex-direction: row;
+      }
+      :deep(.unnnic-card-blank__content__icon) {
+        font-size: 24px;
+      }
     }
   }
 }
