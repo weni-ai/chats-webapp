@@ -133,7 +133,8 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
             >
               <span
                 class="material-symbols-rounded unnnic-icon-scheme--aux-purple unnnic-icon-size--sm"
-                data-v-930380cc=""
+                data-testid="material-icon"
+                data-v-1a90efc1=""
                 data-v-ecaaa6f3=""
               >
                 headphones
@@ -168,7 +169,8 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
             >
               <span
                 class="material-symbols-rounded unnnic-icon-scheme--aux-lemon unnnic-icon-size--sm"
-                data-v-930380cc=""
+                data-testid="material-icon"
+                data-v-1a90efc1=""
                 data-v-ecaaa6f3=""
               >
                 person
