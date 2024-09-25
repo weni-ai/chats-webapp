@@ -6,6 +6,7 @@ import FormQueue from '../Queue.vue';
 import Queue from '@/services/api/resources/settings/queue';
 
 vi.spyOn(Queue, 'list')
+  .mockResolvedValue({ results: [], next: false })
   .mockResolvedValueOnce({
     results: [{ uuid: 'queue-1', name: 'Queue 1', agents: 5 }],
     next: true,
@@ -21,14 +22,12 @@ const createWrapper = (props = {}) => {
 
 describe('Queue.vue', () => {
   let wrapper;
-  beforeEach(() => {
+  beforeEach(async () => {
     wrapper = createWrapper({ sector: { uuid: '1' } });
+    await flushPromises();
   });
 
   it('should load paginated queues correctly', async () => {
-    // Wait for the Promise to resolve
-    await flushPromises();
-
     expect(wrapper.vm.queues).toHaveLength(2);
 
     expect(wrapper.vm.queues).toEqual([
