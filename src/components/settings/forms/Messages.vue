@@ -61,14 +61,75 @@
         data-testid="create=sector-card"
         @click.stop="openNewQueueDrawer()"
       />
+      <UnnnicSimpleCard
+        v-for="message in sectorQuickMessagesShared"
+        :key="message.uuid"
+        class="sector-messages-form__quick-message-card"
+        type="blank"
+        :title="message.title"
+        :text="message.text"
+        :titleTooltip="
+          !isMobile() &&
+          $t('quick_messages.shortcut_tooltip', {
+            shortcut: message.shortcut || message.title.toLowerCase(),
+          })
+        "
+      >
+        <template #headerSlot>
+          <UnnnicDropdown>
+            <template #trigger>
+              <UnnnicToolTip
+                v-if="!isMobile()"
+                enabled
+                :text="$t('quick_messages.delete_or_edit')"
+                side="left"
+              >
+                <UnnnicButton
+                  iconCenter="more_vert"
+                  type="secondary"
+                />
+              </UnnnicToolTip>
+              <UnnnicButton
+                v-else
+                iconCenter="more_vert"
+                type="secondary"
+              />
+            </template>
+
+            <UnnnicDropdownItem @click="$emit('edit', quickMessage)">
+              <div class="dropdown-item-content">
+                <UnnnicIconSvg
+                  class="icon"
+                  icon="edit_square"
+                  size="sm"
+                />
+                <span> {{ $t('edit') }} </span>
+              </div>
+            </UnnnicDropdownItem>
+
+            <UnnnicDropdownItem @click="$emit('delete', quickMessage)">
+              <div class="dropdown-item-content">
+                <UnnnicIconSvg
+                  class="icon"
+                  icon="delete"
+                  size="sm"
+                />
+                <span> {{ $t('exclude') }} </span>
+              </div>
+            </UnnnicDropdownItem>
+          </UnnnicDropdown>
+        </template>
+      </UnnnicSimpleCard>
     </section>
   </section>
 </template>
 
 <script>
 import Sector from '@/services/api/resources/settings/sector';
+import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 import { useConfig } from '@/store/modules/config';
 import { mapActions, mapState } from 'pinia';
+import isMobile from 'is-mobile';
 
 export default {
   name: 'MessagesForm',
@@ -82,6 +143,7 @@ export default {
     return {
       isLoading: false,
       copilotShowIntegrationsMessage: false,
+      isMobile,
     };
   },
   computed: {
@@ -90,6 +152,12 @@ export default {
       copilotCustomRulesActive: (store) => store.copilot.customRulesActive,
       copilotCustomRules: (store) => store.copilot.customRules,
     }),
+    ...mapState(useQuickMessageShared, ['quickMessagesShared']),
+    sectorQuickMessagesShared() {
+      return this.quickMessagesShared.filter(
+        (message) => message.sector === this.sector.uuid,
+      );
+    },
   },
   beforeUnmount() {
     this.saveSector();
@@ -171,6 +239,7 @@ export default {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: $unnnic-spacing-sm;
+    margin-top: $unnnic-spacing-md;
   }
 
   &__new-message {
