@@ -62,6 +62,8 @@ import { useProfile } from '@/store/modules/profile';
 
 import Queue from '@/services/api/resources/settings/queue';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
+
+import i18n from '@/plugins/i18n';
 export default {
   name: 'RoomsTransferFields',
 
@@ -272,7 +274,7 @@ export default {
       const toDestination = selectedAgent ? 'agent' : 'queue';
 
       this.getAlert({
-        text: this.$t(`contact_transferred_to_${toDestination}`, {
+        text: i18n.global.t(`contact_transferred_to_${toDestination}`, {
           [toDestination]: destination,
         }),
         type: 'success',
