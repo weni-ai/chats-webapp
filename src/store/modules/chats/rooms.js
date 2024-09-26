@@ -31,7 +31,12 @@ export const useRooms = defineStore('rooms', {
     },
 
     async setActiveRoom(room) {
-      if (room && !room.hasDetailInfo) {
+      if (!room) {
+        this.activeRoom = null;
+        return;
+      }
+
+      if (!room.hasDetailInfo) {
         room = { ...(await Room.getByUuid(room)), hasDetailInfo: true };
       }
       const roomIndex = this.rooms.findIndex(
