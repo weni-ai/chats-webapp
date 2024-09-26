@@ -177,7 +177,7 @@ export default {
     ...mapActions(useRooms, [
       'setSelectedRoomsToTransfer',
       'setContactToTransfer',
-      'removeRoom',
+      'setActiveRoom',
     ]),
 
     async getQueues() {
@@ -236,6 +236,7 @@ export default {
         if (response.status === 200) {
           this.transferSuccess();
           this.resetRoomsToTransfer();
+          this.setActiveRoom(null);
         } else {
           this.transferError();
         }
