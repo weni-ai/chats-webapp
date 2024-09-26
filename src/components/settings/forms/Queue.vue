@@ -140,7 +140,7 @@ export default {
         flex-direction: row;
       }
       :deep(.unnnic-card-blank__content__icon) {
-        font-size: 24px;
+        font-size: $unnnic-font-size-title-md;
       }
     }
   }
