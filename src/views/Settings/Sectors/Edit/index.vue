@@ -43,7 +43,12 @@
           :sector="sector"
         />
       </template>
-      <template #tab-panel-quick_messages> </template>
+      <template #tab-panel-quick_messages>
+        <FormSectorMessages
+          v-if="sector.uuid"
+          :sector="sector"
+        />
+      </template>
     </UnnnicTab>
   </section>
 </template>
@@ -58,6 +63,7 @@ import SectorEditHeader from './SectorEditHeader.vue';
 import FormSectorGeneral from '@/components/settings/forms/General.vue';
 import FormSectorExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
 import FormSectorQueues from '@/components/settings/forms/Queue.vue';
+import FormSectorMessages from '@/components/settings/forms/Messages.vue';
 
 import { useConfig } from '@/store/modules/config';
 
@@ -69,6 +75,7 @@ export default {
     FormSectorGeneral,
     FormSectorExtraOptions,
     FormSectorQueues,
+    FormSectorMessages,
   },
 
   data() {
