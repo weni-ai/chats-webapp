@@ -150,7 +150,7 @@ export default {
     async listProjectManagersAndAgents() {
       let hasNext = false;
       try {
-        const offset = this.managersPage * 10;
+        const offset = this.managersPage * 20;
         const { results, next } = await Project.managers(offset);
         this.managersPage += 1;
         this.projectManagers = this.projectManagers.concat(results);
