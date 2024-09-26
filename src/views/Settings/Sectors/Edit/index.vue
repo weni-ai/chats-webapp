@@ -38,7 +38,7 @@
         />
       </template>
       <template #tab-panel-queues>
-        <FormeSectorQueues
+        <FormSectorQueues
           v-if="sector.uuid"
           :sector="sector"
         />
@@ -57,7 +57,7 @@ import SectorEditHeader from './SectorEditHeader.vue';
 
 import FormSectorGeneral from '@/components/settings/forms/General.vue';
 import FormSectorExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
-import FormeSectorQueues from '@/components/settings/forms/Queue.vue';
+import FormSectorQueues from '@/components/settings/forms/Queue.vue';
 
 import { useConfig } from '@/store/modules/config';
 
@@ -68,7 +68,7 @@ export default {
     SectorEditHeader,
     FormSectorGeneral,
     FormSectorExtraOptions,
-    FormeSectorQueues,
+    FormSectorQueues,
   },
 
   data() {
