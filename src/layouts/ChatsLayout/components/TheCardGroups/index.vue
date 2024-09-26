@@ -121,6 +121,9 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup/index.vue';
 import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
+
+import Room from '@/services/api/resources/chats/room';
+
 export default {
   name: 'TheCardGroups',
   components: {
@@ -217,10 +220,17 @@ export default {
       },
     },
   },
-  mounted() {
-    this.listRoom();
+  created() {
+    this.listRoom().then(async () => {
+      if (this.$route.name === 'room' && this.$route.params.roomId) {
+        const room = await Room.getByUuid({ uuid: this.$route.params.roomId });
+        this.setActiveRoom({ ...room, hasDetailInfo: true });
+      }
+    });
     this.listDiscussions();
+    this.$nextTick(async () => {});
   },
+
   methods: {
     ...mapActions(useRooms, {
       setActiveRoom: 'setActiveRoom',

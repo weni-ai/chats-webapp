@@ -33,11 +33,14 @@ export const useRooms = defineStore('rooms', {
     async setActiveRoom(room) {
       if (room && !room.hasDetailInfo) {
         room = { ...(await Room.getByUuid(room)), hasDetailInfo: true };
-        const roomIndex = this.rooms.findIndex(
-          (loadedRoom) => loadedRoom.uuid === room.uuid,
-        );
-        this.rooms[roomIndex] = room;
       }
+      const roomIndex = this.rooms.findIndex(
+        (loadedRoom) => loadedRoom.uuid === room.uuid,
+      );
+
+      if (roomIndex === -1) this.rooms.unshift({ ...room });
+      else this.rooms[roomIndex] = room;
+
       this.activeRoom = room;
     },
 
