@@ -8,6 +8,22 @@ import { useConfig } from '@/store/modules/config';
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 
 import Sector from '@/services/api/resources/settings/sector';
+import QuickMessage from '@/services/api/resources/chats/quickMessage';
+
+vi.spyOn(Sector, 'update')
+  .mockResolvedValue(
+    Promise.resolve({
+      status: 200,
+      can_use_chat_completion: true,
+      can_input_context: true,
+      completion_context: true,
+    }),
+  )
+  .mockResolvedValueOnce(
+    Promise.resolve({ status: 400, can_use_chat_completion: undefined }),
+  );
+
+vi.spyOn(QuickMessage, 'delete').mockResolvedValue(Promise.resolve({}));
 
 const createWrapper = (props = {}) => {
   return mount(MessagesForm, {
@@ -140,5 +156,47 @@ describe('SectorMessages', () => {
     expect(openMessageToEdit).toHaveBeenCalledWith(
       quickMessageStore.quickMessagesShared[0],
     );
+  });
+  it('should call deleteMessage on click delete message button', async () => {
+    const deleteMessage = vi.spyOn(wrapper.vm, 'deleteMessage');
+
+    quickMessageStore.quickMessagesShared = [
+      { uuid: '1', title: 'Message 1', text: 'Text 1', sector: '1' },
+      { uuid: '2', title: 'Message 2', text: 'Text 2', sector: '1' },
+    ];
+
+    await wrapper.vm.$nextTick();
+
+    const quickMessageCards = wrapper.findAllComponents(
+      '[data-testid="quick-message-card"]',
+    );
+
+    expect(quickMessageCards.length).toBe(2);
+
+    const dropdownMenuButton = quickMessageCards[0].findComponent(
+      '[data-testid="open-dropdown-menu-button"]',
+    );
+
+    await dropdownMenuButton.trigger('click');
+
+    const excludeButton = quickMessageCards[0].findComponent(
+      '[data-testid="dropdown-delete"]',
+    );
+
+    await excludeButton.trigger('click');
+
+    expect(deleteMessage).toBeCalledWith(
+      quickMessageStore.quickMessagesShared[0],
+    );
+
+    await wrapper.vm.$nextTick();
+
+    console.log(quickMessageStore.quickMessagesShared);
+  });
+
+  it('shold call save sector on unmounted component', async () => {
+    const saveSector = vi.spyOn(wrapper.vm, 'saveSector');
+    wrapper.unmount();
+    expect(saveSector).toHaveBeenCalled();
   });
 });

@@ -93,6 +93,7 @@
                 <UnnnicButton
                   iconCenter="more_vert"
                   type="secondary"
+                  data-testid="open-dropdown-menu-button"
                 />
               </UnnnicToolTip>
               <UnnnicButton
@@ -102,7 +103,10 @@
               />
             </template>
 
-            <UnnnicDropdownItem @click="openMessageToEdit(message)">
+            <UnnnicDropdownItem
+              data-testid="dropdown-edit"
+              @click="openMessageToEdit(message)"
+            >
               <section class="dropdown-item-content">
                 <UnnnicIconSvg
                   class="icon"
@@ -113,7 +117,10 @@
               </section>
             </UnnnicDropdownItem>
 
-            <UnnnicDropdownItem @click="deleteMessage(message)">
+            <UnnnicDropdownItem
+              data-testid="dropdown-delete"
+              @click="deleteMessage(message)"
+            >
               <section class="dropdown-item-content">
                 <UnnnicIconSvg
                   class="icon"
