@@ -15,7 +15,8 @@
               }`,
             )
           "
-          @update:model-value="handleCopilotActive"
+          data-testid="copilot-switch"
+          @update:model-value="handleCopilotActive($event)"
         />
         <p
           v-if="copilotShowIntegrationsMessage"
@@ -38,7 +39,8 @@
               }`,
             )
           "
-          @update:model-value="handleCustomRulesActive"
+          data-testid="copilot-custom-rules-switch"
+          @update:model-value="handleCustomRulesActive($event)"
         />
         <UnnnicTextArea
           v-if="copilotActive && copilotCustomRulesActive && !isLoading"
@@ -48,7 +50,8 @@
             $t('settings.messages.copilot.custom_rules.explanation')
           "
           :maxLength="1500"
-          @update:model-value="handleCustomRules"
+          data-testid="copilot-custom-rules-textarea"
+          @update:model-value="handleCustomRules($event)"
         />
       </div>
     </section>
@@ -58,7 +61,7 @@
         type="blank"
         :text="$t('quick_messages.new')"
         icon="add"
-        data-testid="create=sector-card"
+        data-testid="create-quick-message-card"
         @click.stop="openMessageCreate()"
       />
       <UnnnicSimpleCard
@@ -75,6 +78,7 @@
           })
         "
         clickable
+        data-testid="quick-message-card"
         @click="openMessageToEdit(message)"
       >
         <template #headerSlot>
@@ -175,8 +179,8 @@ export default {
       deleteQuickMessage: 'delete',
     }),
 
-    handleCopilotActive(boolean) {
-      this.setCopilotActive(boolean);
+    handleCopilotActive(copilotStatus) {
+      this.setCopilotActive(copilotStatus);
       this.saveSector();
     },
 
