@@ -59,7 +59,7 @@
         :text="$t('quick_messages.new')"
         icon="add"
         data-testid="create=sector-card"
-        @click.stop="openNewQueueDrawer()"
+        @click.stop="openMessageCreate()"
       />
       <UnnnicSimpleCard
         v-for="message in sectorQuickMessagesShared"
@@ -74,6 +74,8 @@
             shortcut: message.shortcut || message.title.toLowerCase(),
           })
         "
+        clickable
+        @click="openMessageToEdit(message)"
       >
         <template #headerSlot>
           <UnnnicDropdown>
@@ -96,26 +98,26 @@
               />
             </template>
 
-            <UnnnicDropdownItem @click="$emit('edit', quickMessage)">
-              <div class="dropdown-item-content">
+            <UnnnicDropdownItem @click="openMessageToEdit(message)">
+              <section class="dropdown-item-content">
                 <UnnnicIconSvg
                   class="icon"
                   icon="edit_square"
                   size="sm"
                 />
-                <span> {{ $t('edit') }} </span>
-              </div>
+                <p>{{ $t('edit') }}</p>
+              </section>
             </UnnnicDropdownItem>
 
-            <UnnnicDropdownItem @click="$emit('delete', quickMessage)">
-              <div class="dropdown-item-content">
+            <UnnnicDropdownItem @click="deleteMessage(message)">
+              <section class="dropdown-item-content">
                 <UnnnicIconSvg
                   class="icon"
                   icon="delete"
                   size="sm"
                 />
-                <span> {{ $t('exclude') }} </span>
-              </div>
+                <p>{{ $t('exclude') }}</p>
+              </section>
             </UnnnicDropdownItem>
           </UnnnicDropdown>
         </template>
@@ -169,6 +171,10 @@ export default {
       setCopilotCustomRules: 'setCopilotCustomRules',
     }),
 
+    ...mapActions(useQuickMessageShared, {
+      deleteQuickMessage: 'delete',
+    }),
+
     handleCopilotActive(boolean) {
       this.setCopilotActive(boolean);
       this.saveSector();
@@ -219,6 +225,18 @@ export default {
 
       this.isLoading = false;
     },
+
+    openMessageToEdit(message) {
+      // TODO
+    },
+
+    openMessageCreate() {
+      // TODO
+    },
+
+    async deleteMessage(message) {
+      this.deleteQuickMessage(message.uuid);
+    },
   },
 };
 </script>
@@ -242,6 +260,13 @@ export default {
     margin-top: $unnnic-spacing-md;
   }
 
+  &__new-message:hover {
+    box-shadow: $unnnic-shadow-level-far;
+  }
+  &__new-message:active {
+    border: 1px solid $unnnic-color-neutral-cleanest;
+  }
+
   &__new-message {
     min-height: 140px;
     :deep(.unnnic-card-blank__content) {
@@ -250,6 +275,13 @@ export default {
     :deep(.unnnic-card-blank__content__icon) {
       font-size: $unnnic-font-size-title-md;
     }
+  }
+  .dropdown-item-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    white-space: nowrap;
   }
 }
 </style>
