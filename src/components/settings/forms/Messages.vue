@@ -252,6 +252,34 @@ export default {
     padding: $unnnic-spacing-sm;
     display: grid;
     gap: $unnnic-spacing-sm;
+    &__integration {
+      display: grid;
+      gap: $unnnic-spacing-sm;
+    }
+    .title {
+      font-weight: $unnnic-font-weight-bold;
+      color: $unnnic-color-neutral-dark;
+      font-size: $unnnic-font-size-body-lg;
+      line-height: 1.5rem;
+    }
+    .without-messages {
+      font-size: $unnnic-font-size-body-gt;
+      color: $unnnic-color-neutral-dark;
+
+      margin-top: $unnnic-spacing-sm;
+
+      button {
+        background: none;
+        border: none;
+        padding: 0;
+
+        text-decoration: underline;
+        font-weight: $unnnic-font-weight-bold;
+        color: $unnnic-color-neutral-dark;
+
+        cursor: pointer;
+      }
+    }
   }
   &-grid {
     display: grid;
