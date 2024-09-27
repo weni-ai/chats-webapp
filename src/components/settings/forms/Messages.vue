@@ -216,7 +216,7 @@ export default {
 
       if (
         response.status === 400 ||
-        response.config.can_use_chat_completion === undefined
+        response.config?.can_use_chat_completion === undefined
       ) {
         this.copilotShowIntegrationsMessage = true;
         this.setCopilotActive(false);
