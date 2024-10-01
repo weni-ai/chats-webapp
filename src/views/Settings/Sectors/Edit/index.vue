@@ -38,13 +38,13 @@
         />
       </template>
       <template #tab-panel-queues>
-        <FormSectorQueues
+        <ListSectorQueues
           v-if="sector.uuid"
           :sector="sector"
         />
       </template>
       <template #tab-panel-quick_messages>
-        <FormSectorMessages
+        <ListSectorMessages
           v-if="sector.uuid"
           :sector="sector"
         />
@@ -62,8 +62,8 @@ import SectorEditHeader from './SectorEditHeader.vue';
 
 import FormSectorGeneral from '@/components/settings/forms/General.vue';
 import FormSectorExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
-import FormSectorQueues from '@/components/settings/forms/Queue.vue';
-import FormSectorMessages from '@/components/settings/forms/Messages.vue';
+import ListSectorQueues from '@/components/settings/lists/ListSectorQueues.vue';
+import ListSectorMessages from '@/components/settings/lists/ListSectorMessages.vue';
 
 import { useConfig } from '@/store/modules/config';
 
@@ -74,8 +74,8 @@ export default {
     SectorEditHeader,
     FormSectorGeneral,
     FormSectorExtraOptions,
-    FormSectorQueues,
-    FormSectorMessages,
+    ListSectorQueues,
+    ListSectorMessages,
   },
 
   data() {

@@ -2,7 +2,7 @@ import { expect, describe, it, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 
-import MessagesForm from '../Messages.vue';
+import MessagesForm from '../ListSectorMessages.vue';
 
 import { useConfig } from '@/store/modules/config';
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
@@ -47,7 +47,7 @@ const createWrapper = (props = {}) => {
   });
 };
 
-describe('SectorMessages', () => {
+describe('ListSectorMessages', () => {
   let wrapper;
   let configStore;
   let quickMessageStore;

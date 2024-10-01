@@ -1,7 +1,7 @@
 import { expect, describe, it, vi, beforeEach } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 
-import FormQueue from '../Queue.vue';
+import FormQueue from '../ListSectorQueues.vue';
 
 import Queue from '@/services/api/resources/settings/queue';
 
@@ -20,7 +20,7 @@ const createWrapper = (props = {}) => {
   return mount(FormQueue, { props });
 };
 
-describe('Queue.vue', () => {
+describe('ListSectorQueues.vue', () => {
   let wrapper;
   beforeEach(async () => {
     wrapper = createWrapper({ sector: { uuid: '1' } });
