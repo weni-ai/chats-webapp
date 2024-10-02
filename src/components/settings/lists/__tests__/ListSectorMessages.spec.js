@@ -188,10 +188,6 @@ describe('ListSectorMessages', () => {
     expect(deleteMessage).toBeCalledWith(
       quickMessageStore.quickMessagesShared[0],
     );
-
-    await wrapper.vm.$nextTick();
-
-    console.log(quickMessageStore.quickMessagesShared);
   });
 
   it('shold call save sector on unmounted component', async () => {
