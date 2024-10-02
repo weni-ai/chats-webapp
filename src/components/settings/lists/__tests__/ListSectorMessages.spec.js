@@ -11,19 +11,15 @@ import Sector from '@/services/api/resources/settings/sector';
 import QuickMessage from '@/services/api/resources/chats/quickMessage';
 
 vi.spyOn(Sector, 'update')
-  .mockResolvedValue(
-    Promise.resolve({
-      status: 200,
-      can_use_chat_completion: true,
-      can_input_context: true,
-      completion_context: true,
-    }),
-  )
-  .mockResolvedValueOnce(
-    Promise.resolve({ status: 400, can_use_chat_completion: undefined }),
-  );
+  .mockResolvedValue({
+    status: 200,
+    can_use_chat_completion: true,
+    can_input_context: true,
+    completion_context: true,
+  })
+  .mockResolvedValueOnce({ status: 400, can_use_chat_completion: undefined });
 
-vi.spyOn(QuickMessage, 'delete').mockResolvedValue(Promise.resolve({}));
+vi.spyOn(QuickMessage, 'delete').mockResolvedValue({});
 
 const createWrapper = (props = {}) => {
   return mount(MessagesForm, {
