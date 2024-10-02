@@ -4,6 +4,24 @@ import { flushPromises, mount } from '@vue/test-utils';
 import QueueForm from '../Queue.vue';
 
 import Queue from '@/services/api/resources/settings/queue';
+import Project from '@/services/api/resources/settings/project';
+
+vi.mock('@/services/api/resources/settings/queue', () => ({
+  default: {
+    getQueueInformation: vi.fn(),
+    agents: vi.fn(),
+    addAgent: vi.fn(),
+    removeAgent: vi.fn(),
+  },
+}));
+
+vi.mock('@/services/api/resources/settings/project', () => ({
+  default: {
+    agents: vi.fn(),
+  },
+}));
+
+vi.spyOn(Project, 'agents').mockResolvedValue({ results: [] });
 
 vi.spyOn(Queue, 'getQueueInformation').mockResolvedValue({});
 

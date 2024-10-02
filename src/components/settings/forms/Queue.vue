@@ -62,8 +62,9 @@
 </template>
 
 <script>
-import Queue from '@/services/api/resources/settings/queue';
 import AgentsForm from './Agent.vue';
+
+import Queue from '@/services/api/resources/settings/queue';
 import Project from '@/services/api/resources/settings/project';
 
 export default {
