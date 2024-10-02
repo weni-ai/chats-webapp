@@ -55,7 +55,7 @@ export default {
   },
 
   async addAgent(queueUuid, agentUuid) {
-    await http.post('/authorization/queue/', {
+    return await http.post('/authorization/queue/', {
       queue: queueUuid,
       permission: agentUuid,
     });

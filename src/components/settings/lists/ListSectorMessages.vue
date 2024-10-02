@@ -145,7 +145,7 @@ import { mapActions, mapState } from 'pinia';
 import isMobile from 'is-mobile';
 
 export default {
-  name: 'MessagesForm',
+  name: 'ListSectorMessages',
   props: {
     sector: {
       type: Object,

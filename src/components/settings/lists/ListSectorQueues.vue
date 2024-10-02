@@ -9,7 +9,7 @@
         :text="$t('config_chats.queues.new')"
         icon="add"
         data-testid="create=sector-card"
-        @click.stop="openNewQueueDrawer()"
+        @click.stop="openConfigQueueDrawer()"
       />
       <UnnnicSimpleCard
         v-for="queue in queues"
@@ -18,7 +18,7 @@
         clickable
         class="sector-queues-form-grid-sector-card"
         data-testid="queue-card"
-        @click="openEditQueueDrawer(queue)"
+        @click="openConfigQueueDrawer(queue)"
       >
         <template #headerSlot>
           <p class="sector-queues-form-grid-sector-card__open-label">
@@ -38,13 +38,33 @@
       </UnnnicSimpleCard>
     </section>
   </section>
+  <UnnnicDrawer
+    :modelValue="showQueueDrawer"
+    :title="
+      queueToConfig.uuid ? queueToConfig.name : $t('config_chats.queues.new')
+    "
+    :description="'Fila no setor ' + sector.name"
+    size="lg"
+    @close="closeQueueConfigDrawer()"
+  >
+    <template #content>
+      <FormQueue
+        v-model="queueToConfig"
+        :sector="sector"
+      />
+    </template>
+  </UnnnicDrawer>
 </template>
 
 <script>
+import FormQueue from '../forms/Queue.vue';
 import Queue from '@/services/api/resources/settings/queue';
 
 export default {
-  name: 'FormQueue',
+  name: 'ListSectorQueues',
+  components: {
+    FormQueue,
+  },
   props: {
     sector: {
       type: Object,
@@ -55,6 +75,8 @@ export default {
     return {
       queues: [],
       page: 0,
+      showQueueDrawer: false,
+      queueToConfig: {},
     };
   },
 
@@ -62,11 +84,13 @@ export default {
     this.getQueues();
   },
   methods: {
-    openNewQueueDrawer() {
-      // TODO
+    openConfigQueueDrawer(queue = {}) {
+      this.showQueueDrawer = true;
+      this.queueToConfig = queue;
     },
-    openEditQueueDrawer(queue) {
-      // TODO
+    closeQueueConfigDrawer() {
+      this.showQueueDrawer = false;
+      this.queueToConfig = {};
     },
     async getQueues() {
       let hasNext = false;
