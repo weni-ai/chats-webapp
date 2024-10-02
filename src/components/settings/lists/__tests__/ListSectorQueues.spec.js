@@ -43,7 +43,14 @@ vi.spyOn(Queue, 'agents').mockResolvedValue({
 });
 
 const createWrapper = (props = {}) => {
-  return mount(FormQueue, { props });
+  return mount(FormQueue, {
+    props,
+    global: {
+      mocks: {
+        FormQueue: true,
+      },
+    },
+  });
 };
 
 describe('ListSectorQueues.vue', () => {
