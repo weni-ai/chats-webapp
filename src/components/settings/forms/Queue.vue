@@ -8,6 +8,7 @@
       v-model="queue.name"
       :label="$t('queues.queue_name')"
       :placeholder="$t('queues.queue_name_placeholder')"
+      data-testid="queue-name-input"
       class="input"
     />
     <UnnnicChatText
@@ -23,6 +24,7 @@
           type="secondary"
           iconCenter="edit"
           style="width: 38px; height: 38px"
+          data-testid="edit-automatic-message-button"
           @click="handlerEditAutomaticMessage()"
         />
       </template>
@@ -35,11 +37,15 @@
           :maxLength="250"
           size="sm"
           :placeholder="$t('automatic_message.placeholder')"
+          data-testid="automatic-message-textarea"
           @focus="focusTextEditor"
           @focusout="editingAutomaticMessage = false"
         />
 
-        <p v-else>
+        <p
+          v-else
+          data-testid="queue-default-message"
+        >
           {{ queue.default_message || $t('automatic_message.placeholder') }}
         </p>
       </template>
@@ -102,6 +108,7 @@ export default {
         ...(await Queue.getQueueInformation(this.queue.uuid)),
         agents: this.queue.agents,
       };
+
       await this.listQueueAgents();
     } else {
       this.queue = { ...this.queue, default_message: '', currentAgents: [] };
