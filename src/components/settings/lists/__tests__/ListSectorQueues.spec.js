@@ -41,13 +41,13 @@ describe('ListSectorQueues.vue', () => {
   });
 
   it('should open the new queue drawer when clicking the add button', async () => {
-    const openNewQueueDrawerSpy = vi.spyOn(wrapper.vm, 'openNewQueueDrawer');
+    const openConfigQueueDrawer = vi.spyOn(wrapper.vm, 'openConfigQueueDrawer');
 
     const createSectorCard = wrapper.find('[data-testid="create=sector-card"]');
 
     await createSectorCard.trigger('click');
 
-    expect(openNewQueueDrawerSpy).toHaveBeenCalled();
+    expect(openConfigQueueDrawer).toHaveBeenCalled();
   });
 
   it('should open the edit modal when clicking on an existing queue', async () => {
@@ -55,11 +55,11 @@ describe('ListSectorQueues.vue', () => {
       queues: [{ uuid: 'queue-1', name: 'Queue 1', agents: 5 }],
     });
 
-    const openNewQueueDrawerSpy = vi.spyOn(wrapper.vm, 'openEditQueueDrawer');
+    const openConfigQueueDrawer = vi.spyOn(wrapper.vm, 'openConfigQueueDrawer');
 
     await wrapper.find('[data-testid="queue-card"]').trigger('click');
 
-    expect(openNewQueueDrawerSpy).toHaveBeenCalledWith({
+    expect(openConfigQueueDrawer).toHaveBeenCalledWith({
       uuid: 'queue-1',
       name: 'Queue 1',
       agents: 5,
