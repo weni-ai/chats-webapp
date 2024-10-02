@@ -74,6 +74,8 @@ describe('FormQueue', () => {
     );
     await editMessageBtn.trigger('click');
 
+    expect(wrapper.vm.editingAutomaticMessage).toBe(true);
+
     const automaticMessageTextArea = wrapper.find(
       '[data-testid="automatic-message-textarea"]',
     );

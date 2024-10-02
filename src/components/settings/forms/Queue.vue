@@ -137,17 +137,13 @@ export default {
       this.queue.currentAgents = response.results;
     },
     async handlerRemoveAgent(agentUuid) {
-      try {
-        if (this.isEditing) await Queue.removeAgent(agentUuid);
-        this.queue.currentAgents = this.queue.currentAgents.filter(
-          (agent) => agent.uuid !== agentUuid,
-        );
+      if (this.isEditing) await Queue.removeAgent(agentUuid);
+      this.queue.currentAgents = this.queue.currentAgents.filter(
+        (agent) => agent.uuid !== agentUuid,
+      );
 
-        this.queue.agents--;
-        this.$emit('update-queue-agents-count', this.queue);
-      } catch (error) {
-        console.log(error);
-      }
+      this.queue.agents--;
+      this.$emit('update-queue-agents-count', this.queue);
     },
 
     async handlerAddAgent(agent) {
@@ -156,18 +152,14 @@ export default {
       const alreadyInQueue = currentAgents.some((a) => a.uuid === agent.uuid);
 
       if (!alreadyInQueue & this.isEditing) {
-        try {
-          const { data } = await Queue.addAgent(this.queue.uuid, agent.uuid);
+        const { data } = await Queue.addAgent(this.queue.uuid, agent.uuid);
 
-          this.queue.currentAgents.push({
-            ...agent,
-            uuid: data.uuid,
-          });
-          this.queue.agents++;
-          this.$emit('update-queue-agents-count', this.queue);
-        } catch (error) {
-          console.log(error);
-        }
+        this.queue.currentAgents.push({
+          ...agent,
+          uuid: data.uuid,
+        });
+        this.queue.agents++;
+        this.$emit('update-queue-agents-count', this.queue);
       } else {
         this.queue.currentAgents.push(agent);
       }

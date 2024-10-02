@@ -5,6 +5,15 @@ import FormQueue from '../ListSectorQueues.vue';
 
 import Queue from '@/services/api/resources/settings/queue';
 
+vi.mock('@/services/api/resources/settings/queue', () => ({
+  default: {
+    list: vi.fn(),
+    editQueue: vi.fn(),
+    getQueueInformation: vi.fn(),
+    agents: vi.fn(),
+  },
+}));
+
 vi.spyOn(Queue, 'list')
   .mockResolvedValue({ results: [], next: false })
   .mockResolvedValueOnce({
@@ -17,6 +26,21 @@ vi.spyOn(Queue, 'list')
   });
 
 vi.spyOn(Queue, 'editQueue').mockResolvedValue();
+
+vi.spyOn(Queue, 'agents').mockResolvedValue({
+  results: [
+    {
+      uuid: '1',
+      queue: '1',
+      role: 1,
+      user: {
+        first_name: 'Agent',
+        last_name: 'Mock',
+        email: 'agent.mock@test.com',
+      },
+    },
+  ],
+});
 
 const createWrapper = (props = {}) => {
   return mount(FormQueue, { props });
