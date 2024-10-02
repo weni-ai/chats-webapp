@@ -4,12 +4,19 @@ import { flushPromises, mount } from '@vue/test-utils';
 import FormQueue from '../ListSectorQueues.vue';
 
 import Queue from '@/services/api/resources/settings/queue';
+import Project from '@/services/api/resources/settings/project';
 
 vi.mock('@/services/api/resources/settings/queue', () => ({
   default: {
     list: vi.fn(),
     editQueue: vi.fn(),
     getQueueInformation: vi.fn(),
+    agents: vi.fn(),
+  },
+}));
+
+vi.mock('@/services/api/resources/settings/project', () => ({
+  default: {
     agents: vi.fn(),
   },
 }));
@@ -27,7 +34,7 @@ vi.spyOn(Queue, 'list')
 
 vi.spyOn(Queue, 'editQueue').mockResolvedValue();
 
-vi.spyOn(Queue, 'agents').mockResolvedValue({
+vi.spyOn(Project, 'agents').mockResolvedValue({
   results: [
     {
       uuid: '1',
@@ -46,7 +53,7 @@ const createWrapper = (props = {}) => {
   return mount(FormQueue, {
     props,
     global: {
-      mocks: {
+      stubs: {
         FormQueue: true,
       },
     },
