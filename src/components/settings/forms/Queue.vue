@@ -18,11 +18,10 @@
       :info="$t('automatic_message.info')"
     >
       <template #actions>
-        <UnnnicButtonIcon
+        <UnnnicButton
           v-if="!editingAutomaticMessage"
           type="secondary"
-          size="small"
-          icon="edit"
+          iconCenter="edit"
           style="width: 38px; height: 38px"
           @click="handlerEditAutomaticMessage()"
         />
@@ -72,7 +71,7 @@ export default {
     sector: { type: Object, required: true },
   },
 
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'update-queue-agents-count'],
 
   data() {
     return {
@@ -99,7 +98,10 @@ export default {
   async mounted() {
     this.loadingInfo = true;
     if (this.isEditing) {
-      this.queue = await Queue.getQueueInformation(this.queue.uuid);
+      this.queue = {
+        ...(await Queue.getQueueInformation(this.queue.uuid)),
+        agents: this.queue.agents,
+      };
       await this.listQueueAgents();
     } else {
       this.queue = { ...this.queue, default_message: '', currentAgents: [] };
@@ -132,6 +134,9 @@ export default {
         this.queue.currentAgents = this.queue.currentAgents.filter(
           (agent) => agent.uuid !== agentUuid,
         );
+
+        this.queue.agents--;
+        this.$emit('update-queue-agents-count', this.queue);
       } catch (error) {
         console.log(error);
       }
@@ -151,6 +156,7 @@ export default {
             uuid: data.uuid,
           });
           this.queue.agents++;
+          this.$emit('update-queue-agents-count', this.queue);
         } catch (error) {
           console.log(error);
         }

@@ -39,24 +39,35 @@
     </section>
   </section>
   <UnnnicDrawer
+    ref="queueDrawer"
     :modelValue="showQueueDrawer"
     :title="
       queueToConfig.uuid ? queueToConfig.name : $t('config_chats.queues.new')
     "
-    :description="'Fila no setor ' + sector.name"
+    :description="$t('config_chats.queues.in_sector', { sector: sector.name })"
     size="lg"
+    :primaryButtonText="$t('save')"
+    :disabledPrimaryButton="!queueToConfig.currentAgents?.length"
+    :loadingPrimaryButton="loadingQueueConfig"
+    :secondaryButtonText="$t('cancel')"
+    :disabledSecondaryButton="loadingQueueConfig"
     @close="closeQueueConfigDrawer()"
+    @primary-button-click="handlerSetConfigQueue()"
+    @secondary-button-click="$refs.queueDrawer.close()"
   >
     <template #content>
       <FormQueue
         v-model="queueToConfig"
         :sector="sector"
+        @update-queue-agents-count="updateAgentsCount($event)"
       />
     </template>
   </UnnnicDrawer>
 </template>
 
 <script>
+import unnnic from '@weni/unnnic-system';
+
 import FormQueue from '../forms/Queue.vue';
 import Queue from '@/services/api/resources/settings/queue';
 
@@ -77,6 +88,7 @@ export default {
       page: 0,
       showQueueDrawer: false,
       queueToConfig: {},
+      loadingQueueConfig: false,
     };
   },
 
@@ -105,6 +117,57 @@ export default {
           this.getQueues();
         }
       }
+    },
+    async handlerSetConfigQueue() {
+      try {
+        this.loadingQueueConfig = true;
+        const { name, default_message } = this.queueToConfig;
+        if (this.queueToConfig.uuid) {
+          await Queue.editQueue(this.queueToConfig);
+          unnnic.unnnicCallAlert({
+            props: {
+              text: this.$t('config_chats.queues.message.update'),
+              type: 'success',
+            },
+          });
+        } else {
+          const createdQueue = await Queue.create({
+            name,
+            default_message,
+            sectorUuid: this.sector.uuid,
+          });
+          await Promise.all(
+            this.queueToConfig.currentAgents.map((agent) => {
+              Queue.addAgent(createdQueue.uuid, agent.uuid);
+            }),
+          );
+          this.queues.push({
+            ...createdQueue,
+            agents: this.queueToConfig.currentAgents?.length || 0,
+          });
+          unnnic.unnnicCallAlert({
+            props: {
+              text: this.$t('config_chats.queues.message.create'),
+              type: 'success',
+            },
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('config_chats.queues.message.error'),
+            type: 'error',
+          },
+        });
+      } finally {
+        this.loadingQueueConfig = false;
+        this.closeQueueConfigDrawer();
+      }
+    },
+    updateAgentsCount(queue) {
+      const queueIndex = this.queues.findIndex((q) => q.uuid === queue.uuid);
+      if (queueIndex > -1) this.queues[queueIndex] = queue;
     },
   },
 };
