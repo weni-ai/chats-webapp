@@ -16,6 +16,8 @@ vi.spyOn(Queue, 'list')
     next: false,
   });
 
+vi.spyOn(Queue, 'editQueue').mockResolvedValue();
+
 const createWrapper = (props = {}) => {
   return mount(FormQueue, { props });
 };
