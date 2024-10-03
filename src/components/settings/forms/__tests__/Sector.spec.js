@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import FormSector from '../Sector.vue';
+import FormSector from '../SectorOld.vue';
 import defaultProps from './mocks/sectorMock';
 
 function createWrapper() {

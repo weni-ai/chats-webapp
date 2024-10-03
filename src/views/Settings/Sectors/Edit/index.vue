@@ -10,16 +10,25 @@
 
     <UnnnicTab
       data-testid="sector-edit-view-tab-list"
-      :tabs="tabNames"
-      :activeTab="activeTab?.name"
+      :tabs="tabIds"
+      :activeTab="activeTab?.id"
       @change="updateTab"
     >
       <template
         v-for="tab in tabs"
         #[`tab-head-${tab.id}`]
         :key="`tab-head-${tab.id}`"
-      />
-      <template #tab-panel-general> </template>
+      >
+        {{ tab.name }}
+      </template>
+
+      <template #tab-panel-general>
+        <FormSector
+          v-if="sector.uuid"
+          v-model="sector"
+          isEditing
+        />
+      </template>
       <template #tab-panel-extra_options> </template>
       <template #tab-panel-queues> </template>
       <template #tab-panel-quick_messages> </template>
@@ -33,17 +42,35 @@ import { mapActions, mapState } from 'pinia';
 import { useSettings } from '@/store/modules/settings';
 
 import SectorEditHeader from './SectorEditHeader.vue';
+import FormSector from '@/components/settings/forms/Sector.vue';
+
+import { useConfig } from '@/store/modules/config';
 
 export default {
   name: 'EditSector',
 
   components: {
     SectorEditHeader,
+    FormSector,
   },
 
   data() {
     return {
       activeTab: '',
+      sector: {
+        uuid: '',
+        name: '',
+        can_trigger_flows: '',
+        can_edit_custom_fields: '',
+        sign_messages: '',
+        workingDay: {
+          start: '',
+          end: '',
+          dayOfWeek: 'week-days',
+        },
+        managers: [],
+        maxSimultaneousChatsByAgent: '',
+      },
     };
   },
 
@@ -60,25 +87,46 @@ export default {
       ];
     },
 
-    tabNames() {
-      return this.tabs.map((tab) => tab.name);
+    tabIds() {
+      return this.tabs.map((tab) => tab.id);
     },
   },
 
-  created() {
+  watch: {
+    currentSector(sector) {
+      if (sector) this.handlerSectorData();
+    },
+  },
+
+  async created() {
     const { params, query } = this.$route;
 
-    this.getCurrentSector(params.uuid);
+    await this.getCurrentSector(params.uuid);
+
     this.updateTab(query.tab);
+  },
+
+  unmounted() {
+    useSettings().$patch({ currentSector: null });
   },
 
   methods: {
     ...mapActions(useSettings, ['getCurrentSector']),
 
+    ...mapActions(useConfig, [
+      'setCopilotActive',
+      'setCopilotCustomRulesActive',
+      'setCopilotCustomRules',
+    ]),
+
     updateTab(newTab) {
-      this.activeTab = this.tabs.find((tab) =>
+      const newActiveTab = this.tabs.find((tab) =>
         [tab.name, tab.id].includes(newTab),
       );
+
+      if (!newActiveTab) return;
+
+      this.activeTab = newActiveTab;
 
       if (this.activeTab) {
         this.$router.replace({
@@ -88,6 +136,42 @@ export default {
           },
         });
       }
+    },
+
+    normalizeTime(time) {
+      const timeFormat = /^(?<time>(\d\d):(\d\d))/;
+      return time.match(timeFormat)?.groups?.time || time;
+    },
+
+    handlerSectorData() {
+      const {
+        name,
+        can_trigger_flows,
+        can_edit_custom_fields,
+        config,
+        sign_messages,
+        rooms_limit,
+        uuid,
+        work_end,
+        work_start,
+      } = this.currentSector;
+      this.sector = {
+        ...this.sector,
+        uuid,
+        name,
+        can_trigger_flows,
+        can_edit_custom_fields,
+        config,
+        sign_messages,
+        workingDay: {
+          start: this.normalizeTime(work_start),
+          end: this.normalizeTime(work_end),
+        },
+        maxSimultaneousChatsByAgent: rooms_limit.toString(),
+      };
+      this.setCopilotActive(this.sector.config?.can_use_chat_completion);
+      this.setCopilotCustomRulesActive(this.sector.config?.can_input_context);
+      this.setCopilotCustomRules(this.sector.config?.completion_context);
     },
   },
 };

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import Sector from '@/services/api/resources/settings/sector';
 import cloneDeep from 'lodash.clonedeep';
+import { removeDuplicatedItems } from '@/utils/array';
 
 export const useSettings = defineStore('settings', {
   state: () => ({
@@ -23,7 +24,7 @@ export const useSettings = defineStore('settings', {
         const { results, next, previous } = await Sector.list({
           nextReq: this.nextSectors,
         });
-        this.sectors = [...this.sectors, ...results];
+        this.sectors = removeDuplicatedItems([...this.sectors, ...results]);
         this.nextSectors = next;
         this.previousSectors = previous;
       } catch (error) {

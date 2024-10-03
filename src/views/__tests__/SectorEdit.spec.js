@@ -69,7 +69,7 @@ describe('EditSector.vue', () => {
     const unnnicTab = wrapper.findComponent(
       '[data-testid=sector-edit-view-tab-list]',
     );
-    expect(unnnicTab.props('tabs')).toEqual(wrapper.vm.tabNames);
+    expect(unnnicTab.props('tabs')).toEqual(wrapper.vm.tabIds);
   });
 
   it('should update the active tab and router query on tab change', async () => {
