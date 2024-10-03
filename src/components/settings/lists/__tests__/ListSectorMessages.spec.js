@@ -135,7 +135,10 @@ describe('ListSectorMessages', () => {
   });
 
   it('should render the UnnnicCard and call openMessageCreate on click', async () => {
-    const openMessageCreate = vi.spyOn(wrapper.vm, 'openMessageCreate');
+    const openConfigMessageDrawer = vi.spyOn(
+      wrapper.vm,
+      'openConfigMessageDrawer',
+    );
 
     const createQuickMessagCard = wrapper.findComponent(
       '[data-testid="create-quick-message-card"]',
@@ -144,7 +147,7 @@ describe('ListSectorMessages', () => {
 
     await createQuickMessagCard.trigger('click');
 
-    expect(openMessageCreate).toHaveBeenCalled();
+    expect(openConfigMessageDrawer).toHaveBeenCalled();
   });
 
   it('should render UnnnicSimpleCard for each quick message and call openMessageToEdit on click', async () => {
@@ -160,10 +163,13 @@ describe('ListSectorMessages', () => {
     );
     expect(quickMessageCards.length).toBe(2);
 
-    const openMessageToEdit = vi.spyOn(wrapper.vm, 'openMessageToEdit');
+    const openConfigMessageDrawer = vi.spyOn(
+      wrapper.vm,
+      'openConfigMessageDrawer',
+    );
     await quickMessageCards[0].trigger('click');
 
-    expect(openMessageToEdit).toHaveBeenCalledWith(
+    expect(openConfigMessageDrawer).toHaveBeenCalledWith(
       quickMessageStore.quickMessagesShared[0],
     );
   });

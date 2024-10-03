@@ -62,7 +62,7 @@
         :text="$t('quick_messages.new')"
         icon="add"
         data-testid="create-quick-message-card"
-        @click.stop="openMessageCreate()"
+        @click.stop="openConfigMessageDrawer()"
       />
       <UnnnicSimpleCard
         v-for="message in sectorQuickMessagesShared"
@@ -79,7 +79,7 @@
         "
         clickable
         data-testid="quick-message-card"
-        @click="openMessageToEdit(message)"
+        @click="openConfigMessageDrawer(message)"
       >
         <template #headerSlot>
           <UnnnicDropdown>
@@ -105,7 +105,7 @@
 
             <UnnnicDropdownItem
               data-testid="dropdown-edit"
-              @click="openMessageToEdit(message)"
+              @click="openConfigMessageDrawer(message)"
             >
               <section class="dropdown-item-content">
                 <UnnnicIconSvg
@@ -134,18 +134,50 @@
         </template>
       </UnnnicSimpleCard>
     </section>
+    <UnnnicDrawer
+      ref="quickMessageDrawer"
+      :modelValue="showQuickMessageDrawer"
+      :title="
+        quickMessageToEdit.uuid
+          ? $t('quick_messages.edit')
+          : $t('quick_messages.new')
+      "
+      size="lg"
+      :primaryButtonText="$t('save')"
+      :disabledPrimaryButton="!validQuickMessage"
+      :loadingPrimaryButton="isLoadingQuickMessage"
+      :secondaryButtonText="$t('cancel')"
+      :disabledSecondaryButton="isLoadingQuickMessage"
+      data-testid="quick-message-config-drawer"
+      @close="closeConfigMessageDrawer()"
+      @primary-button-click="
+        quickMessageToEdit.uuid
+          ? handlerUpdateQuickMessage()
+          : handlerCreateQuickMessage()
+      "
+      @secondary-button-click="$refs.quickMessageDrawer.close()"
+    >
+      <template #content>
+        <MessageForm v-model="quickMessageToEdit" />
+      </template>
+    </UnnnicDrawer>
   </section>
 </template>
 
 <script>
 import Sector from '@/services/api/resources/settings/sector';
+import MessageForm from '../forms/Messages.vue';
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 import { useConfig } from '@/store/modules/config';
 import { mapActions, mapState } from 'pinia';
+import unnnic from '@weni/unnnic-system';
 import isMobile from 'is-mobile';
 
 export default {
   name: 'ListSectorMessages',
+  components: {
+    MessageForm,
+  },
   props: {
     sector: {
       type: Object,
@@ -157,6 +189,9 @@ export default {
       isLoading: false,
       copilotShowIntegrationsMessage: false,
       isMobile,
+      quickMessageToEdit: { title: '', text: '', shortcut: '' },
+      showQuickMessageDrawer: false,
+      isLoadingQuickMessage: false,
     };
   },
   computed: {
@@ -171,6 +206,10 @@ export default {
         (message) => message.sector === this.sector.uuid,
       );
     },
+    validQuickMessage() {
+      const { shortcut, title, text } = this.quickMessageToEdit;
+      return !!(shortcut && title && text);
+    },
   },
   beforeUnmount() {
     this.saveSector();
@@ -184,6 +223,8 @@ export default {
 
     ...mapActions(useQuickMessageShared, {
       deleteQuickMessage: 'delete',
+      createQuickMessage: 'create',
+      updateQuickMessage: 'update',
     }),
 
     handleCopilotActive(copilotStatus) {
@@ -237,12 +278,74 @@ export default {
       this.isLoading = false;
     },
 
-    openMessageToEdit(message) {
-      // TODO
+    openConfigMessageDrawer(message = { title: '', text: '', shortcut: '' }) {
+      this.showQuickMessageDrawer = true;
+      this.quickMessageToEdit = { ...message };
     },
 
-    openMessageCreate() {
-      // TODO
+    closeConfigMessageDrawer() {
+      this.showQuickMessageDrawer = false;
+      this.quickMessageToEdit = { title: '', text: '', shortcut: '' };
+    },
+
+    async handlerCreateQuickMessage() {
+      try {
+        this.isLoadingQuickMessage = true;
+        const { shortcut, title, text } = this.quickMessageToEdit;
+        await this.createQuickMessage({
+          sectorUuid: this.sector.uuid,
+          text,
+          title,
+          shortcut,
+        });
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('quick_messages.successfully_added'),
+            type: 'success',
+          },
+        });
+      } catch (error) {
+        console.log(error);
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('quick_messages.error'),
+            type: 'error',
+          },
+        });
+      } finally {
+        this.isLoadingQuickMessage = false;
+        this.closeConfigMessageDrawer();
+      }
+    },
+
+    async handlerUpdateQuickMessage() {
+      try {
+        this.isLoadingQuickMessage = true;
+        const { uuid, shortcut, title, text } = this.quickMessageToEdit;
+        await this.updateQuickMessage({
+          quickMessageUuid: uuid,
+          shortcut,
+          title,
+          text,
+        });
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('quick_messages.successfully_updated'),
+            type: 'success',
+          },
+        });
+      } catch (error) {
+        console.log(error);
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('quick_messages.error'),
+            type: 'error',
+          },
+        });
+      } finally {
+        this.isLoadingQuickMessage = false;
+        this.closeConfigMessageDrawer();
+      }
     },
 
     async deleteMessage(message) {
