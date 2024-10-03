@@ -115,6 +115,21 @@ describe('EditSector.vue', () => {
     expect(extraOptionsForm.exists()).toBe(true);
   });
 
+  it('should render queues list if active tab equals queues', async () => {
+    await wrapper.setData({ sector: mockSector1 });
+    const unnnicTab = wrapper.findComponent(
+      '[data-testid=sector-edit-view-tab-list]',
+    );
+
+    await unnnicTab.vm.$emit('change', 'queues');
+
+    console.log(wrapper.html());
+
+    const queuesList = wrapper.find('[data-testid="list-sector-queues"]');
+
+    expect(queuesList.exists()).toBe(true);
+  });
+
   it('Should match the snapshot', () => {
     expect(wrapper.html()).toMatchSnapshot();
   });

@@ -8,7 +8,7 @@
         type="blank"
         :text="$t('config_chats.queues.new')"
         icon="add"
-        data-testid="create=sector-card"
+        data-testid="create-sector-card"
         @click.stop="openConfigQueueDrawer()"
       />
       <UnnnicSimpleCard
@@ -51,6 +51,7 @@
     :loadingPrimaryButton="loadingQueueConfig"
     :secondaryButtonText="$t('cancel')"
     :disabledSecondaryButton="loadingQueueConfig"
+    data-testid="queue-config-drawer"
     @close="closeQueueConfigDrawer()"
     @primary-button-click="handlerSetConfigQueue()"
     @secondary-button-click="$refs.queueDrawer.close()"
@@ -59,6 +60,7 @@
       <FormQueue
         v-model="queueToConfig"
         :sector="sector"
+        data-testid="queue-config-form"
         @update-queue-agents-count="updateAgentsCount($event)"
       />
     </template>

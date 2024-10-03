@@ -40,6 +40,7 @@
       <template #tab-panel-queues>
         <ListSectorQueues
           v-if="sector.uuid"
+          data-testid="list-sector-queues"
           :sector="sector"
         />
       </template>

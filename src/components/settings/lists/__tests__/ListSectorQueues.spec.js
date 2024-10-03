@@ -34,7 +34,24 @@ vi.spyOn(Queue, 'list')
 
 vi.spyOn(Queue, 'editQueue').mockResolvedValue();
 
+vi.spyOn(Queue, 'getQueueInformation').mockResolvedValue({ uuid: 'queue-1' });
+
 vi.spyOn(Project, 'agents').mockResolvedValue({
+  results: [
+    {
+      uuid: '1',
+      queue: '1',
+      role: 1,
+      user: {
+        first_name: 'Agent',
+        last_name: 'Mock',
+        email: 'agent.mock@test.com',
+      },
+    },
+  ],
+});
+
+vi.spyOn(Queue, 'agents').mockResolvedValue({
   results: [
     {
       uuid: '1',
@@ -52,11 +69,6 @@ vi.spyOn(Project, 'agents').mockResolvedValue({
 const createWrapper = (props = {}) => {
   return mount(FormQueue, {
     props,
-    global: {
-      stubs: {
-        FormQueue: true,
-      },
-    },
   });
 };
 
@@ -83,14 +95,27 @@ describe('ListSectorQueues.vue', () => {
   it('should open the new queue drawer when clicking the add button', async () => {
     const openConfigQueueDrawer = vi.spyOn(wrapper.vm, 'openConfigQueueDrawer');
 
-    const createSectorCard = wrapper.find('[data-testid="create=sector-card"]');
+    const createQueueCard = wrapper.find('[data-testid="create-sector-card"]');
 
-    await createSectorCard.trigger('click');
+    await createQueueCard.trigger('click');
 
     expect(openConfigQueueDrawer).toHaveBeenCalled();
+
+    const queueConfigDrawer = wrapper.find(
+      '[data-testid="queue-config-drawer"]',
+    );
+
+    const queueForm = wrapper.findComponent(
+      '[data-testid="queue-config-form"]',
+    );
+
+    expect(queueConfigDrawer.exists()).toBe(true);
+    expect(queueForm.exists()).toBe(true);
+    expect(queueForm.props().sector.uuid).toBe(wrapper.props().sector.uuid);
+    expect(queueForm.props().modelValue.uuid).toBe(undefined);
   });
 
-  it('should open the edit modal when clicking on an existing queue', async () => {
+  it('should open the edit drawer when clicking on an existing queue', async () => {
     await wrapper.setData({
       queues: [{ uuid: 'queue-1', name: 'Queue 1', agents: 5 }],
     });
@@ -104,5 +129,26 @@ describe('ListSectorQueues.vue', () => {
       name: 'Queue 1',
       agents: 5,
     });
+
+    await flushPromises();
+
+    const queueConfigDrawer = wrapper.findComponent(
+      '[data-testid="queue-config-drawer"]',
+    );
+
+    const queueSectorForm = wrapper.findComponent(
+      '[data-testid="queue-config-form"]',
+    );
+
+    expect(queueConfigDrawer.exists()).toBe(true);
+    expect(queueSectorForm.exists()).toBe(true);
+
+    expect(queueSectorForm.props().sector.uuid).toBe(
+      wrapper.props().sector.uuid,
+    );
+
+    expect(queueSectorForm.props().modelValue.uuid).toBe(
+      wrapper.vm.$data.queues[0].uuid,
+    );
   });
 });
