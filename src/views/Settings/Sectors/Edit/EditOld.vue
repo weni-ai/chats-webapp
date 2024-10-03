@@ -193,7 +193,7 @@ import unnnic from '@weni/unnnic-system';
 import FormAgent from '@/components/settings/forms/Agent.vue';
 import FormSectorOld from '@/components/settings/forms/SectorOld.vue';
 import FormQueue from '@/components/settings/forms/QueueOld.vue';
-import FormMessages from '@/components/settings/forms/Messages.vue';
+import FormMessages from '@/components/settings/forms/MessagesOld.vue';
 import FormTags from '@/components/settings/forms/TagsOld.vue';
 import SectorTabs from '@/components/settings/SectorTabs.vue';
 
