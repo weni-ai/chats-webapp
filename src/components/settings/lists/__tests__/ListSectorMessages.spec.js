@@ -15,7 +15,13 @@ vi.mock('@/services/api/resources/settings/sector', () => ({
 }));
 
 vi.mock('@/services/api/resources/chats/quickMessage', () => ({
-  default: { delete: vi.fn() },
+  default: {
+    delete: vi.fn(),
+    deleteBySector: vi.fn(),
+    updateBySector: vi.fn(),
+    createBySector: vi.fn(),
+    getAllBySector: vi.fn(),
+  },
 }));
 
 vi.spyOn(Sector, 'update')
@@ -169,6 +175,8 @@ describe('ListSectorMessages', () => {
       { uuid: '2', title: 'Message 2', text: 'Text 2', sector: '1' },
     ];
 
+    const deletedMessage = quickMessageStore.quickMessagesShared[0];
+
     await wrapper.vm.$nextTick();
 
     const quickMessageCards = wrapper.findAllComponents(
@@ -189,9 +197,7 @@ describe('ListSectorMessages', () => {
 
     await excludeButton.trigger('click');
 
-    expect(deleteMessage).toBeCalledWith(
-      quickMessageStore.quickMessagesShared[0],
-    );
+    expect(deleteMessage).toBeCalledWith(deletedMessage);
   });
 
   it('shold call save sector on unmounted component', async () => {
