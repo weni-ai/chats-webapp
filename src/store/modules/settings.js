@@ -8,7 +8,7 @@ export const useSettings = defineStore('settings', {
     isLoadingSectors: false,
     nextSectors: '',
     previousSectors: '',
-    activeSectorId: null,
+    currentSector: null,
   }),
 
   actions: {
@@ -43,8 +43,8 @@ export const useSettings = defineStore('settings', {
       });
     },
 
-    setActiveSectorId(id) {
-      this.activeSectorId = id;
+    async getCurrentSector(uuid) {
+      this.currentSector = await Sector.find(uuid);
     },
 
     saveSector(sector) {
@@ -66,9 +66,6 @@ export const useSettings = defineStore('settings', {
   },
 
   getters: {
-    getActiveSector({ sectors, activeSectorId }) {
-      return sectors.find((sector) => sector.id === activeSectorId) || null;
-    },
     getSectorById({ sectors }) {
       return (id) => {
         const sector = sectors.find((sector) => sector.id === id);
