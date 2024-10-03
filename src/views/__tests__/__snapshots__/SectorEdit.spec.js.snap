@@ -1,97 +1,31 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`EditSector.vue > Should match the snapshot 1`] = `
-<section
-  class="sector-edit-view"
-  data-v-ac9ddd5b=""
->
-  <header
-    class="sector-edit-view__header"
-    data-testid="sector-edit-view-header"
-    data-v-573bd910=""
-    data-v-ac9ddd5b=""
-  >
-    <h1
-      class="header__title"
-      data-testid="header-title"
-      data-v-573bd910=""
-    >
-      Setor Sector 1
-    </h1>
-    <p
-      class="header__description"
-      data-testid="header-description"
-      data-v-573bd910=""
-    >
-      Determine configurações gerais da equipe e jornada de trabalho
-    </p>
+"<section data-v-ac9ddd5b="" class="sector-edit-view">
+  <header data-v-573bd910="" data-v-ac9ddd5b="" class="sector-edit-view__header" data-testid="sector-edit-view-header">
+    <h1 data-v-573bd910="" class="header__title" data-testid="header-title">Setor Sector 1</h1>
+    <p data-v-573bd910="" class="header__description" data-testid="header-description">Determine configurações gerais da equipe e jornada de trabalho</p>
   </header>
-  <div
-    class="tab size-md"
-    data-testid="sector-edit-view-tab-list"
-    data-v-1389f531=""
-    data-v-ac9ddd5b=""
-  >
-    <header
-      class="tab-header"
-      data-v-1389f531=""
-    >
-      <ul
-        class="tab-content"
-        data-v-1389f531=""
-      >
-        
-        <li
-          class="tab-head tab-head--active"
-          data-v-1389f531=""
-        >
-          
-          Geral
-          
+  <div data-v-1389f531="" data-v-ac9ddd5b="" class="tab size-md" data-testid="sector-edit-view-tab-list">
+    <header data-v-1389f531="" class="tab-header">
+      <ul data-v-1389f531="" class="tab-content">
+        <li data-v-1389f531="" class="tab-head tab-head--active">Geral
           <!---->
         </li>
-        <li
-          class="tab-head"
-          data-v-1389f531=""
-        >
-          
-          Opções extras
-          
+        <li data-v-1389f531="" class="tab-head">Opções extras
           <!---->
         </li>
-        <li
-          class="tab-head"
-          data-v-1389f531=""
-        >
-          
-          Filas
-          
+        <li data-v-1389f531="" class="tab-head">Filas
           <!---->
         </li>
-        <li
-          class="tab-head"
-          data-v-1389f531=""
-        >
-          
-          Mensagens rápidas
-          
+        <li data-v-1389f531="" class="tab-head">Mensagens rápidas
           <!---->
         </li>
-        
       </ul>
     </header>
-    <main
-      class="tab-body"
-      data-v-1389f531=""
-    >
-      <div
-        class="tab-panel"
-        data-v-1389f531=""
-      >
-        
-        
-      </div>
+    <main data-v-1389f531="" class="tab-body">
+      <div data-v-1389f531="" class="tab-panel"></div>
     </main>
   </div>
-</section>
+</section>"
 `;

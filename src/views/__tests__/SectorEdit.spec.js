@@ -13,6 +13,23 @@ const mockSector1 = {
   contacts: 50,
 };
 
+vi.mock('@/services/api/resources/settings/sector', () => ({
+  default: {
+    tags: () => Promise.resolve({ results: [] }),
+    update: () => Promise.resolve(),
+    addTag: vi.fn(),
+    removeTag: vi.fn(),
+    managers: () => Promise.resolve({ results: [] }),
+    find: () => Promise.resolve(mockSector1),
+  },
+}));
+
+vi.mock('@/services/api/resources/settings/project', () => ({
+  default: {
+    managers: () => Promise.resolve({ results: [] }),
+  },
+}));
+
 const store = createTestingPinia({
   initialState: {
     config: {
@@ -31,13 +48,14 @@ const router = createRouter({
   routes,
 });
 
-const createWrapper = (props) => {
+const createWrapper = (props = {}) => {
   return mount(SectorEdit, {
     props,
     global: {
       plugins: [router, store],
       stubs: {
         UnnnicTab: true,
+        FormSectorExtraOptions: true,
       },
       mocks: {
         $router: {
@@ -53,7 +71,7 @@ describe('EditSector.vue', () => {
 
   beforeEach(async () => {
     router.push('/settings/sectors/1?tab=general');
-    wrapper = createWrapper({});
+    wrapper = createWrapper();
     await flushPromises();
   });
 
@@ -85,7 +103,19 @@ describe('EditSector.vue', () => {
     });
   });
 
+  it('should render extra options form if active tab equals extra_options', async () => {
+    await wrapper.setData({ sector: mockSector1 });
+    const unnnicTab = wrapper.findComponent(
+      '[data-testid=sector-edit-view-tab-list]',
+    );
+
+    await unnnicTab.vm.$emit('change', 'extra_options');
+
+    const extraOptionsForm = wrapper.find('[data-testid="extra-options-form"]');
+    expect(extraOptionsForm.exists()).toBe(true);
+  });
+
   it('Should match the snapshot', () => {
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper.html()).toMatchSnapshot();
   });
 });

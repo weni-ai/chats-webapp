@@ -412,9 +412,9 @@
     },
     "additional_options": {
       "title": {
-        "pt-br": "Opções adicionais",
-        "en": "Additional options",
-        "es": "Opciones adicionales"
+        "pt-br": "Opções extras",
+        "en": "Extras options",
+        "es": "Opciones extras"
       },
       "template_message": {
         "switch_active": {
@@ -2270,6 +2270,11 @@
         "pt-br": "Determine configurações gerais da equipe e jornada de trabalho",
         "en": "Determine General Team Settings and Workday",
         "es": "Determinar la configuración del equipo general y la jornada laboral"
+      },
+      "tag_already_exists": {
+        "pt-br": "Já existe uma tag com esse nome",
+        "en": "A tag with that name already exists",
+        "es": "Ya existe una etiqueta con ese nombre"
       },
       "invalid_hours": {
         "pt-br": "Horário de início não pode ser maior/igual que horário final",

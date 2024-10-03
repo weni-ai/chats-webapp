@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import FormTags from '../Tags.vue';
+import FormTags from '../TagsOld.vue';
 import defaultProps from './mocks/tagsMock';
 
 function createWrapper() {

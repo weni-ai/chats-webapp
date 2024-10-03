@@ -141,7 +141,7 @@ describe('Sector', () => {
     const result = await Sector.tags(sectorUuid);
 
     expect(http.get).toHaveBeenCalledWith('/tag/', {
-      params: { sector: sectorUuid },
+      params: { sector: sectorUuid, limit: 9999 },
     });
 
     expect(result).toEqual(expectedData);

@@ -1,6 +1,7 @@
 import { unnnicTag } from '@weni/unnnic-system';
 import { mount } from '@vue/test-utils';
 import TagGroup from '@/components/TagGroup.vue';
+import { expect, vi } from 'vitest';
 
 function createWrapper(props) {
   const wrapper = mount(TagGroup, {
@@ -25,6 +26,28 @@ describe('TagGroup', () => {
     expect(wrapper.html()).toContain('Financeiro');
     expect(wrapper.html()).toContain('Dúvidas');
     expect(wrapper.html()).toContain('Ajuda');
+  });
+
+  it('should return an array with the tag names', () => {
+    const wrapper = createWrapper({ tags });
+    wrapper.vm.tagNames.forEach((tagName) => {
+      expect(['Financeiro', 'Dúvidas', 'Ajuda'].includes(tagName)).toBe(true);
+    });
+  });
+
+  it('should emit close on UnnnicTag have emitted close', async () => {
+    const closeSpy = vi.spyOn(TagGroup.methods, 'close');
+
+    const wrapper = createWrapper({
+      tags,
+    });
+
+    const unnnicTags = wrapper.findAllComponents({ name: 'UnnnicTag' });
+
+    await unnnicTags[0].trigger('close');
+
+    expect(closeSpy).toHaveBeenCalledWith(tags[0]);
+    expect(wrapper.emitted().close).toBeTruthy();
   });
 
   it('should not render when `tags` prop is not passed', () => {
