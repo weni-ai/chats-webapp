@@ -23,7 +23,7 @@
       </template>
 
       <template #tab-panel-general>
-        <FormSector
+        <FormSectorGeneral
           v-if="sector.uuid"
           v-model="sector"
           isEditing
@@ -42,7 +42,7 @@ import { mapActions, mapState } from 'pinia';
 import { useSettings } from '@/store/modules/settings';
 
 import SectorEditHeader from './SectorEditHeader.vue';
-import FormSector from '@/components/settings/forms/Sector.vue';
+import FormSectorGeneral from '@/components/settings/forms/General.vue';
 
 import { useConfig } from '@/store/modules/config';
 
@@ -51,7 +51,7 @@ export default {
 
   components: {
     SectorEditHeader,
-    FormSector,
+    FormSectorGeneral,
   },
 
   data() {

@@ -7,6 +7,7 @@
       <section
         v-if="!isEditing"
         class="form-section"
+        data-testid="sector-name-section"
       >
         <h2 class="title">
           {{ $t('sector.add') }}
@@ -117,6 +118,7 @@
             type="tertiary"
             iconLeft="delete"
             size="small"
+            data-testid="open-modal-delete-button"
             @click.stop="openModalDelete = true"
           />
         </section>
@@ -132,6 +134,7 @@
           :validateLabel="$t('confirm_typing') + ` &quot;${sector.name}&quot;`"
           :actionPrimaryLabel="$t('confirm')"
           :actionSecondaryLabel="$t('cancel')"
+          data-testid="modal-delete-sector"
           @click-action-primary="deleteSector(sector.uuid)"
           @click-action-secondary="openModalDelete = false"
         />
@@ -146,7 +149,8 @@
       <UnnnicButton
         :text="$t('save')"
         :disabled="!validForm"
-        @click.stop="saveSector"
+        data-testid="save-button"
+        @click.stop="saveSector()"
       />
     </section>
   </section>
@@ -173,7 +177,7 @@ export default {
     },
     modelValue: {
       type: Object,
-      default: () => ({}),
+      required: true,
     },
   },
   emits: ['update:modelValue', 'submit'],
@@ -252,6 +256,14 @@ export default {
       actionDeleteSector: 'deleteSector',
     }),
 
+    async getSectorManagers() {
+      const managers = await Sector.managers(this.sector.uuid);
+      this.sector.managers = managers.results.map((manager) => ({
+        ...manager,
+        removed: false,
+      }));
+    },
+
     async removeManager(managerUuid) {
       await Sector.removeManager(managerUuid);
       this.removeManagerFromTheList(managerUuid);
@@ -297,10 +309,8 @@ export default {
           ? this.sector.managers
           : [...this.sector.managers, manager];
 
-        this.sector = {
-          ...this.sector,
-          managers,
-        };
+        this.sector.managers = managers;
+
         if (this.isEditing) this.addManager(manager);
         this.selectedManager = [this.managersNames[0]];
       }
@@ -309,14 +319,6 @@ export default {
     async addManager(manager) {
       await Sector.addManager(this.sector.uuid, manager.uuid);
       this.getSectorManagers();
-    },
-
-    async getSectorManagers() {
-      const managers = await Sector.managers(this.sector.uuid);
-      this.sector.managers = managers.results.map((manager) => ({
-        ...manager,
-        removed: false,
-      }));
     },
 
     async listProjectManagers() {
@@ -336,7 +338,7 @@ export default {
       const finalHour = hour.end;
       if (inicialHour >= finalHour) {
         this.validHour = false;
-        this.message = this.$t('sector_invalid_work_hour');
+        this.message = this.$t('config_chats.edit_sector.invalid_hours');
       } else {
         this.validHour = true;
       }
@@ -367,7 +369,7 @@ export default {
       }
     },
 
-    async saveSector() {
+    saveSector() {
       const {
         uuid,
         name,
