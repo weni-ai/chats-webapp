@@ -10,6 +10,14 @@ import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared
 import Sector from '@/services/api/resources/settings/sector';
 import QuickMessage from '@/services/api/resources/chats/quickMessage';
 
+vi.mock('@/services/api/resources/settings/sector', () => ({
+  default: { update: vi.fn() },
+}));
+
+vi.mock('@/services/api/resources/chats/quickMessage', () => ({
+  default: { delete: vi.fn() },
+}));
+
 vi.spyOn(Sector, 'update')
   .mockResolvedValue({
     status: 200,
