@@ -21,10 +21,11 @@
       <template #actions>
         <UnnnicButton
           v-if="!editingAutomaticMessage"
+          class="sector-queues-form__automatic-message-button"
           type="secondary"
           iconCenter="edit"
-          style="width: 38px; height: 38px"
           data-testid="edit-automatic-message-button"
+          size="small"
           @click="handlerEditAutomaticMessage()"
         />
       </template>
@@ -33,7 +34,7 @@
           v-if="editingAutomaticMessage"
           ref="textEditor"
           v-model="queue.default_message"
-          style="word-break: break-all"
+          class="sector-queues-form__automatic-message-textarea"
           :maxLength="250"
           size="sm"
           :placeholder="$t('automatic_message.placeholder')"
@@ -175,6 +176,15 @@ export default {
   &__automatic-message {
     max-width: 100% !important;
     max-height: 100% !important;
+
+    &-button {
+      :deep(.unnnic-icon-size--sm) {
+        font-size: $unnnic-font-size-title-sm;
+      }
+    }
+    &-textarea {
+      word-break: break-all;
+    }
   }
 
   :deep(.unnnic-form__label) {
