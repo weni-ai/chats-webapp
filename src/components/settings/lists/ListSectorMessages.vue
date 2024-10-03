@@ -271,7 +271,7 @@ export default {
       font-weight: $unnnic-font-weight-bold;
       color: $unnnic-color-neutral-dark;
       font-size: $unnnic-font-size-body-lg;
-      line-height: 1.5rem;
+      line-height: $unnnic-line-height-large + $unnnic-line-height-md;
     }
     .without-messages {
       font-size: $unnnic-font-size-body-gt;
@@ -318,7 +318,7 @@ export default {
   .dropdown-item-content {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: $unnnic-spacing-xs;
 
     white-space: nowrap;
   }
