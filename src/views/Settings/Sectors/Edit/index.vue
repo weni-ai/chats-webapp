@@ -27,6 +27,7 @@
           v-if="sector.uuid"
           v-model="sector"
           isEditing
+          data-testid="general-form"
         />
       </template>
       <template #tab-panel-extra_options>
@@ -40,7 +41,7 @@
       <template #tab-panel-queues>
         <ListSectorQueues
           v-if="sector.uuid"
-          data-testid="list-sector-queues"
+          data-testid="sector-queues-list"
           :sector="sector"
         />
       </template>
