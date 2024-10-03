@@ -2282,6 +2282,18 @@
         "es": "La hora de inicio no puede ser mayor o igual a la hora de finalización."
       }
     },
+    "queues": {
+      "new": {
+        "pt-br": "Nova fila",
+        "en": "New queue",
+        "es": "Nueva cola"
+      },
+      "info": {
+        "pt-br": "As filas são grupos de atendimento dentro de um setor, é possível direcionar contatos de um fluxo para uma fila específica",
+        "en": "Queues are support groups within a sector; it is possible to direct contacts from a flow to a specific queue",
+        "es": "Las colas son grupos de atención dentro de un sector; es posible dirigir contactos de un flujo a una cola específica"
+      }
+    },
     "new_sector": {
       "pt-br": "Novo setor",
       "en": "New sector",
