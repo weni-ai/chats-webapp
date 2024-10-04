@@ -1,10 +1,7 @@
 <template>
-  <section class="list-sector-messages">
-    <section class="list-sector-messages__copilot">
-      <p
-        v-if="sector"
-        class="title"
-      >
+  <section class="sector-messages-form">
+    <section class="sector-messages-form__copilot">
+      <p class="title">
         {{ $t('copilot.name') }}
       </p>
       <div class="list-sector-messages__copilot__integration">
@@ -18,7 +15,8 @@
               }`,
             )
           "
-          @update:model-value="handleCopilotActive"
+          data-testid="copilot-switch"
+          @update:model-value="handleCopilotActive($event)"
         />
         <p
           v-if="copilotShowIntegrationsMessage"
@@ -41,7 +39,8 @@
               }`,
             )
           "
-          @update:model-value="handleCustomRulesActive"
+          data-testid="copilot-custom-rules-switch"
+          @update:model-value="handleCustomRulesActive($event)"
         />
         <UnnnicTextArea
           v-if="copilotActive && copilotCustomRulesActive && !isLoading"
@@ -51,87 +50,131 @@
             $t('settings.messages.copilot.custom_rules.explanation')
           "
           :maxLength="1500"
-          @update:model-value="handleCustomRules"
+          data-testid="copilot-custom-rules-textarea"
+          @update:model-value="handleCustomRules($event)"
         />
       </div>
     </section>
-
-    <section>
-      <p
-        v-if="sector"
-        class="title"
-      >
-        {{ $t('quick_messages.title_by_sector', { sector: sector.name }) }}
-      </p>
-      <p
-        v-if="quickMessagesShared.length === 0"
-        class="without-messages"
-      >
-        {{ $t('quick_messages.without_messages_shared.start') }}
-        <button @click="$emit('create-quick-message')">
-          {{ $t('quick_messages.without_messages_shared.middle') }}
-        </button>
-        {{ $t('quick_messages.without_messages_shared.end') }}
-      </p>
-
-      <QuickMessageCard
-        v-for="message in quickMessagesShared"
-        :key="message.uuid"
-        :quickMessage="message"
-        clickable
-        @select="$emit('edit-quick-message', message)"
-        @edit="$emit('edit-quick-message', message)"
-        @delete="$emit('delete-quick-message', message.uuid)"
+    <section class="sector-messages-form-grid">
+      <UnnnicCard
+        class="sector-messages-form__new-message"
+        type="blank"
+        :text="$t('quick_messages.new')"
+        icon="add"
+        data-testid="create-quick-message-card"
+        @click.stop="openMessageCreate()"
       />
+      <UnnnicSimpleCard
+        v-for="message in sectorQuickMessagesShared"
+        :key="message.uuid"
+        class="sector-messages-form__quick-message-card"
+        type="blank"
+        :title="message.title"
+        :text="message.text"
+        :titleTooltip="
+          !isMobile() &&
+          $t('quick_messages.shortcut_tooltip', {
+            shortcut: message.shortcut || message.title.toLowerCase(),
+          })
+        "
+        clickable
+        data-testid="quick-message-card"
+        @click="openMessageToEdit(message)"
+      >
+        <template #headerSlot>
+          <UnnnicDropdown>
+            <template #trigger>
+              <UnnnicToolTip
+                v-if="!isMobile()"
+                enabled
+                :text="$t('quick_messages.delete_or_edit')"
+                side="left"
+              >
+                <UnnnicButton
+                  iconCenter="more_vert"
+                  type="secondary"
+                  data-testid="open-dropdown-menu-button"
+                />
+              </UnnnicToolTip>
+              <UnnnicButton
+                v-else
+                iconCenter="more_vert"
+                type="secondary"
+              />
+            </template>
+
+            <UnnnicDropdownItem
+              data-testid="dropdown-edit"
+              @click="openMessageToEdit(message)"
+            >
+              <section class="dropdown-item-content">
+                <UnnnicIconSvg
+                  class="icon"
+                  icon="edit_square"
+                  size="sm"
+                />
+                <p>{{ $t('edit') }}</p>
+              </section>
+            </UnnnicDropdownItem>
+
+            <UnnnicDropdownItem
+              data-testid="dropdown-delete"
+              @click="deleteMessage(message)"
+            >
+              <section class="dropdown-item-content">
+                <UnnnicIconSvg
+                  class="icon"
+                  icon="delete"
+                  size="sm"
+                />
+                <p>{{ $t('exclude') }}</p>
+              </section>
+            </UnnnicDropdownItem>
+          </UnnnicDropdown>
+        </template>
+      </UnnnicSimpleCard>
     </section>
   </section>
 </template>
 
 <script>
 import Sector from '@/services/api/resources/settings/sector';
-import QuickMessageCard from '@/components/chats/QuickMessages/QuickMessageCard.vue';
-
-import { mapActions, mapState } from 'pinia';
+import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 import { useConfig } from '@/store/modules/config';
+import { mapActions, mapState } from 'pinia';
+import isMobile from 'is-mobile';
 
 export default {
-  name: 'ListSectorQuickMessages',
-
-  components: {
-    QuickMessageCard,
-  },
-
+  name: 'ListSectorMessages',
   props: {
-    quickMessagesShared: {
-      type: Array,
-      default: () => [],
-    },
     sector: {
       type: Object,
-      default: null,
+      required: true,
     },
   },
-  emits: ['create-quick-message', 'edit-quick-message', 'delete-quick-message'],
-
   data: () => {
     return {
       isLoading: false,
       copilotShowIntegrationsMessage: false,
+      isMobile,
     };
   },
-
   computed: {
     ...mapState(useConfig, {
       copilotActive: (store) => store.copilot.active,
       copilotCustomRulesActive: (store) => store.copilot.customRulesActive,
       copilotCustomRules: (store) => store.copilot.customRules,
     }),
+    ...mapState(useQuickMessageShared, ['quickMessagesShared']),
+    sectorQuickMessagesShared() {
+      return this.quickMessagesShared.filter(
+        (message) => message.sector === this.sector.uuid,
+      );
+    },
   },
-
   beforeUnmount() {
     this.saveSector();
   },
-
   methods: {
     ...mapActions(useConfig, {
       setCopilotActive: 'setCopilotActive',
@@ -139,8 +182,12 @@ export default {
       setCopilotCustomRules: 'setCopilotCustomRules',
     }),
 
-    handleCopilotActive(boolean) {
-      this.setCopilotActive(boolean);
+    ...mapActions(useQuickMessageShared, {
+      deleteQuickMessage: 'delete',
+    }),
+
+    handleCopilotActive(copilotStatus) {
+      this.setCopilotActive(copilotStatus);
       this.saveSector();
     },
 
@@ -176,7 +223,7 @@ export default {
 
       if (
         response.status === 400 ||
-        response.config.can_use_chat_completion === undefined
+        response.config?.can_use_chat_completion === undefined
       ) {
         this.copilotShowIntegrationsMessage = true;
         this.setCopilotActive(false);
@@ -189,53 +236,91 @@ export default {
 
       this.isLoading = false;
     },
+
+    openMessageToEdit(message) {
+      // TODO
+    },
+
+    openMessageCreate() {
+      // TODO
+    },
+
+    async deleteMessage(message) {
+      this.deleteQuickMessage(message.uuid);
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.list-sector-messages {
-  display: flex;
-  flex-direction: column;
-  gap: $unnnic-spacing-md;
-
+.sector-messages-form {
+  &__copilot:hover {
+    box-shadow: $unnnic-shadow-level-far;
+  }
   &__copilot {
+    border: 1px solid $unnnic-color-neutral-soft;
+    border-radius: $unnnic-border-radius-md;
+    padding: $unnnic-spacing-sm;
+    display: grid;
+    gap: $unnnic-spacing-sm;
     &__integration {
       display: grid;
       gap: $unnnic-spacing-sm;
     }
-  }
-
-  .title {
-    font-weight: $unnnic-font-weight-bold;
-    color: $unnnic-color-neutral-dark;
-    font-size: $unnnic-font-size-body-lg;
-    line-height: 1.5rem;
-
-    margin-bottom: 1rem;
-  }
-
-  .without-messages {
-    font-size: $unnnic-font-size-body-gt;
-    color: $unnnic-color-neutral-dark;
-
-    button {
-      background: none;
-      border: none;
-      padding: 0;
-
-      text-decoration: underline;
+    .title {
       font-weight: $unnnic-font-weight-bold;
       color: $unnnic-color-neutral-dark;
+      font-size: $unnnic-font-size-body-lg;
+      line-height: $unnnic-line-height-large + $unnnic-line-height-md;
+    }
+    .without-messages {
+      font-size: $unnnic-font-size-body-gt;
+      color: $unnnic-color-neutral-dark;
 
-      cursor: pointer;
+      margin-top: $unnnic-spacing-sm;
+
+      button {
+        background: none;
+        border: none;
+        padding: 0;
+
+        text-decoration: underline;
+        font-weight: $unnnic-font-weight-bold;
+        color: $unnnic-color-neutral-dark;
+
+        cursor: pointer;
+      }
     }
   }
+  &-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $unnnic-spacing-sm;
+    margin-top: $unnnic-spacing-md;
+  }
 
-  :deep(.quick-message-card) {
-    max-width: 100%;
+  &__new-message:hover {
+    box-shadow: $unnnic-shadow-level-far;
+  }
+  &__new-message:active {
+    border: 1px solid $unnnic-color-neutral-cleanest;
+  }
 
-    margin-top: $unnnic-spacing-stack-sm;
+  &__new-message {
+    min-height: 140px;
+    :deep(.unnnic-card-blank__content) {
+      flex-direction: row;
+    }
+    :deep(.unnnic-card-blank__content__icon) {
+      font-size: $unnnic-font-size-title-md;
+    }
+  }
+  .dropdown-item-content {
+    display: flex;
+    align-items: center;
+    gap: $unnnic-spacing-xs;
+
+    white-space: nowrap;
   }
 }
 </style>

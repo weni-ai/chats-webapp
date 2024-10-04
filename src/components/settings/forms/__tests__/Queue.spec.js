@@ -1,68 +1,192 @@
 import { expect, describe, it, vi, beforeEach } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 
-import FormQueue from '../Queue.vue';
+import QueueForm from '../Queue.vue';
 
 import Queue from '@/services/api/resources/settings/queue';
+import Project from '@/services/api/resources/settings/project';
 
-vi.spyOn(Queue, 'list')
-  .mockResolvedValue({ results: [], next: false })
-  .mockResolvedValueOnce({
-    results: [{ uuid: 'queue-1', name: 'Queue 1', agents: 5 }],
-    next: true,
-  })
-  .mockResolvedValueOnce({
-    results: [{ uuid: 'queue-2', name: 'Queue 2', agents: 3 }],
-    next: false,
-  });
+vi.mock('@/services/api/resources/settings/queue', () => ({
+  default: {
+    getQueueInformation: vi.fn(),
+    agents: vi.fn(),
+    addAgent: vi.fn(),
+    removeAgent: vi.fn(),
+  },
+}));
+
+vi.mock('@/services/api/resources/settings/project', () => ({
+  default: {
+    agents: vi.fn(),
+  },
+}));
+
+vi.spyOn(Project, 'agents').mockResolvedValue({ results: [] });
+
+vi.spyOn(Queue, 'getQueueInformation').mockResolvedValue({});
+
+vi.spyOn(Queue, 'agents').mockResolvedValue({
+  results: [
+    {
+      uuid: '1',
+      queue: '1',
+      role: 1,
+      user: {
+        first_name: 'Agent',
+        last_name: 'Mock',
+        email: 'agent.mock@test.com',
+      },
+    },
+  ],
+});
+
+vi.spyOn(Queue, 'addAgent').mockResolvedValue({ data: { uuid: '2' } });
+
+vi.spyOn(Queue, 'removeAgent').mockResolvedValue();
 
 const createWrapper = (props = {}) => {
-  return mount(FormQueue, { props });
+  return mount(QueueForm, {
+    props: {
+      modelValue: { default_message: '', currentAgents: [] },
+      sector: { uuid: '1', name: 'Sector Mock' },
+      ...props,
+    },
+  });
 };
 
-describe('Queue.vue', () => {
+describe('FormQueue', () => {
   let wrapper;
-  beforeEach(async () => {
-    wrapper = createWrapper({ sector: { uuid: '1' } });
+  beforeEach(() => {
+    wrapper = createWrapper();
+  });
+
+  it('should not display queue name input when in edit mode', async () => {
+    await wrapper.setProps({ modelValue: { uuid: '1' } });
+
+    const inputQueueName = wrapper.find('[data-testid="queue-name-input"]');
+
+    expect(inputQueueName.exists()).toBe(false);
+  });
+
+  it('should display textarea when editing the automatic message', async () => {
+    const editMessageBtn = wrapper.find(
+      '[data-testid="edit-automatic-message-button"]',
+    );
+    await editMessageBtn.trigger('click');
+
+    expect(wrapper.vm.editingAutomaticMessage).toBe(true);
+
+    const automaticMessageTextArea = wrapper.find(
+      '[data-testid="automatic-message-textarea"]',
+    );
+
+    expect(automaticMessageTextArea.exists()).toBe(true);
+  });
+
+  it('should list queue agents on editing mode', async () => {
+    const listQueueAgents = vi.spyOn(QueueForm.methods, 'listQueueAgents');
+
+    createWrapper({
+      modelValue: { uuid: '1', default_message: '' },
+    });
+
     await flushPromises();
+
+    expect(listQueueAgents).toHaveBeenCalled();
   });
 
-  it('should load paginated queues correctly', async () => {
-    expect(wrapper.vm.queues).toHaveLength(2);
-
-    expect(wrapper.vm.queues).toEqual([
-      { uuid: 'queue-1', name: 'Queue 1', agents: 5 },
-      { uuid: 'queue-2', name: 'Queue 2', agents: 3 },
-    ]);
-
-    expect(Queue.list).toHaveBeenCalledTimes(2);
-    expect(Queue.list).toHaveBeenCalledWith('1', 0, 10);
-    expect(Queue.list).toHaveBeenCalledWith('1', 10, 10);
-  });
-
-  it('should open the new queue drawer when clicking the add button', async () => {
-    const openNewQueueDrawerSpy = vi.spyOn(wrapper.vm, 'openNewQueueDrawer');
-
-    const createSectorCard = wrapper.find('[data-testid="create=sector-card"]');
-
-    await createSectorCard.trigger('click');
-
-    expect(openNewQueueDrawerSpy).toHaveBeenCalled();
-  });
-
-  it('should open the edit modal when clicking on an existing queue', async () => {
-    await wrapper.setData({
-      queues: [{ uuid: 'queue-1', name: 'Queue 1', agents: 5 }],
+  it('displays the automatic message in view mode when not editing', async () => {
+    await wrapper.setProps({
+      modelValue: { default_message: 'Test automatic message' },
     });
 
-    const openNewQueueDrawerSpy = vi.spyOn(wrapper.vm, 'openEditQueueDrawer');
+    await wrapper.setData({ editingAutomaticMessage: false });
 
-    await wrapper.find('[data-testid="queue-card"]').trigger('click');
+    expect(wrapper.find('[data-testid="queue-default-message"]').text()).toBe(
+      'Test automatic message',
+    );
+  });
 
-    expect(openNewQueueDrawerSpy).toHaveBeenCalledWith({
-      uuid: 'queue-1',
-      name: 'Queue 1',
-      agents: 5,
+  it('should add an agent to the create queue correctly', async () => {
+    const agent = {
+      uuid: '2',
+      user: {
+        first_name: 'Agent',
+        last_name: 'Mock',
+        email: 'agent.mock@test.com',
+      },
+    };
+
+    await wrapper.vm.handlerAddAgent(agent);
+
+    expect(wrapper.vm.queue.currentAgents).toEqual([agent]);
+  });
+
+  it('should add an agent to the editing queue correctly', async () => {
+    await wrapper.setProps({
+      modelValue: { uuid: '1', default_message: '', currentAgents: [] },
     });
+
+    const agent = {
+      uuid: '2',
+      user: {
+        first_name: 'Agent',
+        last_name: 'Mock',
+        email: 'agent.mock@test.com',
+      },
+    };
+
+    await wrapper.vm.handlerAddAgent(agent);
+
+    expect(wrapper.vm.queue.currentAgents).toEqual([agent]);
+  });
+
+  it('should removes an agent from the queue correctly (create)', async () => {
+    await wrapper.setProps({
+      modelValue: {
+        currentAgents: [
+          {
+            uuid: '1',
+            user: {
+              first_name: 'Agent',
+              last_name: 'Mock',
+              email: 'agent.mock@test.com',
+            },
+          },
+        ],
+      },
+    });
+
+    await wrapper.vm.handlerRemoveAgent('1');
+
+    expect(wrapper.vm.queue.currentAgents.length).toBe(0);
+  });
+
+  it('should removes an agent from the queue correctly (editing)', async () => {
+    await wrapper.setProps({
+      modelValue: {
+        uuid: '1',
+        currentAgents: [
+          {
+            uuid: '1',
+            user: {
+              first_name: 'Agent',
+              last_name: 'Mock',
+              email: 'agent.mock@test.com',
+            },
+          },
+        ],
+      },
+    });
+
+    await wrapper.vm.handlerRemoveAgent('1');
+
+    expect(wrapper.vm.queue.currentAgents.length).toBe(0);
+  });
+
+  it('should render on finish loadingInfo', async () => {
+    await wrapper.setData({ loadingInfo: false });
+
+    expect(wrapper.find('.sector-queues-form').exists()).toBe(true);
   });
 });

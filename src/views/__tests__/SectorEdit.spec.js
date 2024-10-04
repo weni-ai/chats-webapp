@@ -56,6 +56,7 @@ const createWrapper = (props = {}) => {
       stubs: {
         UnnnicTab: true,
         FormSectorExtraOptions: true,
+        ListSectorQueues: true,
       },
       mocks: {
         $router: {
@@ -101,6 +102,40 @@ describe('EditSector.vue', () => {
     expect(spyRouterReplace).toHaveBeenCalledWith({
       query: { tab: 'extra_options' },
     });
+  });
+
+  it('should render queues list if active tab equals queues', async () => {
+    await wrapper.setData({ sector: mockSector1 });
+
+    const unnnicTab = wrapper.findComponent(
+      '[data-testid=sector-edit-view-tab-list]',
+    );
+
+    await unnnicTab.vm.$emit('change', 'queues');
+
+    await wrapper.vm.$nextTick();
+
+    const queuesList = wrapper.findComponent(
+      '[data-testid="sector-queues-list"]',
+    );
+
+    expect(queuesList.exists()).toBe(true);
+  });
+
+  it('should render general form if active tab equals general', async () => {
+    await wrapper.setData({ sector: mockSector1 });
+
+    const unnnicTab = wrapper.findComponent(
+      '[data-testid=sector-edit-view-tab-list]',
+    );
+
+    await unnnicTab.vm.$emit('change', 'general');
+
+    await flushPromises();
+
+    const queuesList = wrapper.findComponent('[data-testid="general-form"]');
+
+    expect(queuesList.exists()).toBe(true);
   });
 
   it('should render extra options form if active tab equals extra_options', async () => {

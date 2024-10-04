@@ -2283,6 +2283,11 @@
       }
     },
     "queues": {
+      "in_sector": {
+        "pt-br": "Fila no setor {sector}",
+        "en": "Queue in sector {sector}",
+        "es": "Fila en el sector {sector}"
+      },
       "new": {
         "pt-br": "Nova fila",
         "en": "New queue",
@@ -2292,6 +2297,23 @@
         "pt-br": "As filas são grupos de atendimento dentro de um setor, é possível direcionar contatos de um fluxo para uma fila específica",
         "en": "Queues are support groups within a sector; it is possible to direct contacts from a flow to a specific queue",
         "es": "Las colas son grupos de atención dentro de un sector; es posible dirigir contactos de un flujo a una cola específica"
+      },
+      "message": {
+        "create": {
+          "pt-br": "Fila criada com sucesso",
+          "en": "Queue successfully created",
+          "es": "Fila creada con éxito"
+        },
+        "update": {
+          "pt-br": "Fila atualizada com sucesso",
+          "en": "Queue successfully updated",
+          "es": "Fila actualizada con éxito"
+        },
+        "error": {
+          "pt-br": "Falha ao definir configurações da fila",
+          "en": "Failed to set queue settings",
+          "es": "Error al configurar los ajustes de la fila"
+        }
       }
     },
     "new_sector": {

@@ -2,7 +2,7 @@ import { expect, describe, it, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 
-import MessagesForm from '../Messages.vue';
+import MessagesForm from '../ListSectorMessages.vue';
 
 import { useConfig } from '@/store/modules/config';
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
@@ -10,20 +10,30 @@ import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared
 import Sector from '@/services/api/resources/settings/sector';
 import QuickMessage from '@/services/api/resources/chats/quickMessage';
 
-vi.spyOn(Sector, 'update')
-  .mockResolvedValue(
-    Promise.resolve({
-      status: 200,
-      can_use_chat_completion: true,
-      can_input_context: true,
-      completion_context: true,
-    }),
-  )
-  .mockResolvedValueOnce(
-    Promise.resolve({ status: 400, can_use_chat_completion: undefined }),
-  );
+vi.mock('@/services/api/resources/settings/sector', () => ({
+  default: { update: vi.fn() },
+}));
 
-vi.spyOn(QuickMessage, 'delete').mockResolvedValue(Promise.resolve({}));
+vi.mock('@/services/api/resources/chats/quickMessage', () => ({
+  default: {
+    delete: vi.fn(),
+    deleteBySector: vi.fn(),
+    updateBySector: vi.fn(),
+    createBySector: vi.fn(),
+    getAllBySector: vi.fn(),
+  },
+}));
+
+vi.spyOn(Sector, 'update')
+  .mockResolvedValue({
+    status: 200,
+    can_use_chat_completion: true,
+    can_input_context: true,
+    completion_context: true,
+  })
+  .mockResolvedValueOnce({ status: 400, can_use_chat_completion: undefined });
+
+vi.spyOn(QuickMessage, 'delete').mockResolvedValue({});
 
 const createWrapper = (props = {}) => {
   return mount(MessagesForm, {
@@ -47,7 +57,7 @@ const createWrapper = (props = {}) => {
   });
 };
 
-describe('SectorMessages', () => {
+describe('ListSectorMessages', () => {
   let wrapper;
   let configStore;
   let quickMessageStore;
@@ -165,6 +175,8 @@ describe('SectorMessages', () => {
       { uuid: '2', title: 'Message 2', text: 'Text 2', sector: '1' },
     ];
 
+    const deletedMessage = quickMessageStore.quickMessagesShared[0];
+
     await wrapper.vm.$nextTick();
 
     const quickMessageCards = wrapper.findAllComponents(
@@ -185,13 +197,7 @@ describe('SectorMessages', () => {
 
     await excludeButton.trigger('click');
 
-    expect(deleteMessage).toBeCalledWith(
-      quickMessageStore.quickMessagesShared[0],
-    );
-
-    await wrapper.vm.$nextTick();
-
-    console.log(quickMessageStore.quickMessagesShared);
+    expect(deleteMessage).toBeCalledWith(deletedMessage);
   });
 
   it('shold call save sector on unmounted component', async () => {

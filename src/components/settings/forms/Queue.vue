@@ -1,85 +1,168 @@
 <template>
-  <section class="sector-queues-form">
-    <p class="sector-queues-form__info">{{ $t('config_chats.queues.info') }}</p>
+  <section
+    v-if="!loadingInfo"
+    class="sector-queues-form"
+  >
+    <UnnnicInput
+      v-if="!isEditing"
+      v-model="queue.name"
+      :label="$t('queues.queue_name')"
+      :placeholder="$t('queues.queue_name_placeholder')"
+      data-testid="queue-name-input"
+      class="input"
+    />
+    <UnnnicChatText
+      class="sector-queues-form__automatic-message"
+      titleColor="neutral-dark"
+      size="small"
+      :title="$t('automatic_message.title')"
+      :info="$t('automatic_message.info')"
+    >
+      <template #actions>
+        <UnnnicButton
+          v-if="!editingAutomaticMessage"
+          class="sector-queues-form__automatic-message-button"
+          type="secondary"
+          iconCenter="edit"
+          data-testid="edit-automatic-message-button"
+          size="small"
+          @click="handlerEditAutomaticMessage()"
+        />
+      </template>
+      <template #description>
+        <UnnnicTextArea
+          v-if="editingAutomaticMessage"
+          ref="textEditor"
+          v-model="queue.default_message"
+          class="sector-queues-form__automatic-message-textarea"
+          :maxLength="250"
+          size="sm"
+          :placeholder="$t('automatic_message.placeholder')"
+          data-testid="automatic-message-textarea"
+          @focus="focusTextEditor"
+          @focusout="editingAutomaticMessage = false"
+        />
 
-    <section class="sector-queues-form-grid">
-      <UnnnicCard
-        class="sector-queues-form-grid__new-queue"
-        type="blank"
-        :text="$t('config_chats.queues.new')"
-        icon="add"
-        data-testid="create=sector-card"
-        @click.stop="openNewQueueDrawer()"
-      />
-      <UnnnicSimpleCard
-        v-for="queue in queues"
-        :key="queue.uuid"
-        :title="queue.name"
-        clickable
-        class="sector-queues-form-grid-sector-card"
-        data-testid="queue-card"
-        @click="openEditQueueDrawer(queue)"
-      >
-        <template #headerSlot>
-          <p class="sector-queues-form-grid-sector-card__open-label">
-            {{ $t('config_chats.open') }}
-          </p>
-        </template>
-        <template #footer>
-          <section class="sector-queues-form-grid-sector-card-footer">
-            <b class="sector-queues-form-grid-sector-card-footer__agent-count">
-              {{ queue.agents }}
-            </b>
-            <p class="sector-queues-form-grid-sector-card-footer__agent-label">
-              {{ $t('config_chats.agent_title') }}
-            </p>
-          </section>
-        </template>
-      </UnnnicSimpleCard>
-    </section>
+        <p
+          v-else
+          data-testid="queue-default-message"
+        >
+          {{ queue.default_message || $t('automatic_message.placeholder') }}
+        </p>
+      </template>
+    </UnnnicChatText>
+
+    <AgentsForm
+      v-model="queue.currentAgents"
+      :sector="sector"
+      :agents="agentsOptions"
+      @remove="handlerRemoveAgent($event)"
+      @select="handlerAddAgent($event)"
+    />
   </section>
 </template>
 
 <script>
+import AgentsForm from './Agent.vue';
+
 import Queue from '@/services/api/resources/settings/queue';
+import Project from '@/services/api/resources/settings/project';
 
 export default {
   name: 'FormQueue',
+  components: { AgentsForm },
   props: {
-    sector: {
+    modelValue: {
       type: Object,
       required: true,
     },
+    sector: { type: Object, required: true },
   },
+
+  emits: ['update:modelValue', 'update-queue-agents-count'],
+
   data() {
     return {
-      queues: [],
-      page: 0,
+      editingAutomaticMessage: false,
+      loadingInfo: false,
+      agentsOptions: [],
     };
   },
 
-  mounted() {
-    this.getQueues();
+  computed: {
+    isEditing() {
+      return !!this.queue.uuid;
+    },
+    queue: {
+      get() {
+        return this.modelValue;
+      },
+      set(value) {
+        this.$emit('update:modelValue', value);
+      },
+    },
+  },
+
+  async mounted() {
+    this.loadingInfo = true;
+    if (this.isEditing) {
+      this.queue = {
+        ...(await Queue.getQueueInformation(this.queue.uuid)),
+        agents: this.queue.agents,
+      };
+
+      await this.listQueueAgents();
+    } else {
+      this.queue = { ...this.queue, default_message: '', currentAgents: [] };
+    }
+
+    this.listProjectAgents();
+
+    this.loadingInfo = false;
   },
   methods: {
-    openNewQueueDrawer() {
-      // TODO
+    handlerEditAutomaticMessage() {
+      this.editingAutomaticMessage = true;
+      this.focusTextEditor();
     },
-    openEditQueueDrawer(queue) {
-      // TODO
+    focusTextEditor() {
+      this.$nextTick(() => {
+        this.$refs.textEditor?.focus();
+      });
     },
-    async getQueues() {
-      let hasNext = false;
-      try {
-        const queues = await Queue.list(this.sector.uuid, this.page * 10, 10);
-        this.page += 1;
-        this.queues = this.queues.concat(queues.results);
+    async listProjectAgents() {
+      this.agentsOptions = (await Project.agents()).results;
+    },
+    async listQueueAgents() {
+      const response = await Queue.agents(this.queue.uuid, 0, 9999);
+      this.queue.currentAgents = response.results;
+    },
+    async handlerRemoveAgent(agentUuid) {
+      if (this.isEditing) await Queue.removeAgent(agentUuid);
+      this.queue.currentAgents = this.queue.currentAgents.filter(
+        (agent) => agent.uuid !== agentUuid,
+      );
 
-        hasNext = queues.next;
-      } finally {
-        if (hasNext) {
-          this.getQueues();
-        }
+      this.queue.agents--;
+      this.$emit('update-queue-agents-count', this.queue);
+    },
+
+    async handlerAddAgent(agent) {
+      const { currentAgents } = this.queue;
+
+      const alreadyInQueue = currentAgents.some((a) => a.uuid === agent.uuid);
+
+      if (!alreadyInQueue & this.isEditing) {
+        const { data } = await Queue.addAgent(this.queue.uuid, agent.uuid);
+
+        this.queue.currentAgents.push({
+          ...agent,
+          uuid: data.uuid,
+        });
+        this.queue.agents++;
+        this.$emit('update-queue-agents-count', this.queue);
+      } else {
+        this.queue.currentAgents.push(agent);
       }
     },
   },
@@ -89,60 +172,23 @@ export default {
 <style lang="scss" scoped>
 .sector-queues-form {
   display: grid;
-  gap: $unnnic-spacing-ant;
 
-  &__info {
-    color: $unnnic-color-neutral-dark;
-    font-size: $unnnic-font-size-body-gt;
-    line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
+  &__automatic-message {
+    max-width: 100% !important;
+    max-height: 100% !important;
+
+    &-button {
+      :deep(.unnnic-icon-size--sm) {
+        font-size: $unnnic-font-size-title-sm;
+      }
+    }
+    &-textarea {
+      word-break: break-all;
+    }
   }
 
-  &-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: $unnnic-spacing-xs;
-
-    &-sector-card {
-      &__open-label {
-        color: $unnnic-color-neutral-dark;
-        font-family: $unnnic-font-family-secondary;
-        font-size: $unnnic-font-size-body-gt;
-        line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
-      }
-      &-footer {
-        display: flex;
-        gap: $unnnic-spacing-nano;
-        &__agent-count {
-          color: $unnnic-color-neutral-dark;
-          font-family: $unnnic-font-family-secondary;
-          font-size: $unnnic-font-size-body-gt;
-          font-weight: $unnnic-font-weight-bold;
-          line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
-        }
-        &__agent-label {
-          color: $unnnic-color-neutral-cloudy;
-          font-family: $unnnic-font-family-secondary;
-          font-size: $unnnic-font-size-body-gt;
-          line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
-        }
-      }
-    }
-
-    &__new-queue:hover {
-      box-shadow: $unnnic-shadow-level-far;
-    }
-    &__new-queue:active {
-      border: 1px solid $unnnic-color-neutral-cleanest;
-    }
-    &__new-queue {
-      min-height: 120px;
-      :deep(.unnnic-card-blank__content) {
-        flex-direction: row;
-      }
-      :deep(.unnnic-card-blank__content__icon) {
-        font-size: $unnnic-font-size-title-md;
-      }
-    }
+  :deep(.unnnic-form__label) {
+    margin-top: 0;
   }
 }
 </style>
