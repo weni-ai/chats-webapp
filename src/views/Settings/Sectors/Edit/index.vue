@@ -48,6 +48,7 @@
       <template #tab-panel-quick_messages>
         <ListSectorMessages
           v-if="sector.uuid"
+          data-testid="sector-quick-messages-list"
           :sector="sector"
         />
       </template>

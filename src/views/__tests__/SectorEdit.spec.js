@@ -150,6 +150,24 @@ describe('EditSector.vue', () => {
     expect(extraOptionsForm.exists()).toBe(true);
   });
 
+  it('should render quick messages list if active tab equals quick_messages', async () => {
+    await wrapper.setData({ sector: mockSector1 });
+
+    const unnnicTab = wrapper.findComponent(
+      '[data-testid=sector-edit-view-tab-list]',
+    );
+
+    await unnnicTab.vm.$emit('change', 'quick_messages');
+
+    await wrapper.vm.$nextTick();
+
+    const queuesList = wrapper.findComponent(
+      '[data-testid="sector-quick-messages-list"]',
+    );
+
+    expect(queuesList.exists()).toBe(true);
+  });
+
   it('Should match the snapshot', () => {
     expect(wrapper.html()).toMatchSnapshot();
   });

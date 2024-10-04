@@ -2051,6 +2051,11 @@
       "pt-br": "Mensagem rápida atualizada",
       "en": "Quick message updated",
       "es": "Mensaje rápido actualizado"
+    },
+    "error": {
+      "pt-br": "Falha ao definir mensagem rápida",
+      "en": "Failed to set quick message",
+      "es": "Error al configurar el mensaje rápido"
     }
   },
   "discard": {
