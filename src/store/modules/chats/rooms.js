@@ -71,7 +71,7 @@ export const useRooms = defineStore('rooms', {
 
       const userHasRoomQueue = !!profileStore.me.queues?.find(
         (permission) =>
-          permission.queue === room.queue.uuid && permission.role === 1,
+          permission.queue === room.queue?.uuid && permission.role === 1,
       );
 
       if (!room.user && userHasRoomQueue) return true;
