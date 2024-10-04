@@ -1,8 +1,8 @@
 import { expect, describe, it, vi, beforeEach } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 
-import MessagesForm from '../ListSectorMessages.vue';
+import QuickMessageList from '../ListSectorMessages.vue';
 
 import { useConfig } from '@/store/modules/config';
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
@@ -35,8 +35,26 @@ vi.spyOn(Sector, 'update')
 
 vi.spyOn(QuickMessage, 'delete').mockResolvedValue({});
 
+const createdMessageMock = {
+  sector: '1',
+  title: 'Message Title',
+  text: 'Message Text',
+  shortcut: 'SRT',
+};
+
+const updatedMessageMock = {
+  uuid: '1',
+  sector: '1',
+  title: 'Message Updated',
+  text: 'Message Updated',
+  shortcut: 'upd',
+};
+
+vi.spyOn(QuickMessage, 'createBySector').mockResolvedValue(createdMessageMock);
+vi.spyOn(QuickMessage, 'updateBySector').mockResolvedValue(updatedMessageMock);
+
 const createWrapper = (props = {}) => {
-  return mount(MessagesForm, {
+  return mount(QuickMessageList, {
     props: {
       sector: {
         uuid: '1',
@@ -148,6 +166,90 @@ describe('ListSectorMessages', () => {
     await createQuickMessagCard.trigger('click');
 
     expect(openConfigMessageDrawer).toHaveBeenCalled();
+
+    const createQuickMessageDrawer = wrapper.findComponent(
+      '[data-testid="quick-message-config-drawer"]',
+    );
+
+    expect(createQuickMessageDrawer.exists()).toBe(true);
+
+    const quickMessageForm = wrapper.findComponent(
+      '[data-testid="quick-message-form"]',
+    );
+    expect(quickMessageForm.exists()).toBe(true);
+    expect(quickMessageForm.props().modelValue).toEqual({
+      title: '',
+      text: '',
+      shortcut: '',
+    });
+  });
+
+  it('should create a new quick message shared', async () => {
+    const handlerCreateQuickMessage = vi.spyOn(
+      wrapper.vm,
+      'handlerCreateQuickMessage',
+    );
+    const createQuickMessagCard = wrapper.findComponent(
+      '[data-testid="create-quick-message-card"]',
+    );
+    await createQuickMessagCard.trigger('click');
+
+    const createQuickMessageDrawer = wrapper.findComponent(
+      '[data-testid="quick-message-config-drawer"]',
+    );
+
+    const quickMessageForm = wrapper.findComponent(
+      '[data-testid="quick-message-form"]',
+    );
+    quickMessageForm.vm.$emit('update:model-value', createdMessageMock);
+    await wrapper.vm.$nextTick();
+
+    await createQuickMessageDrawer.vm.$emit('primary-button-click');
+    expect(handlerCreateQuickMessage).toHaveBeenCalled();
+
+    await flushPromises();
+
+    expect(wrapper.vm.quickMessagesShared.length).toEqual(1);
+    expect(wrapper.vm.quickMessagesShared[0]).toEqual(createdMessageMock);
+  });
+
+  it('should update a existing quick message shared', async () => {
+    quickMessageStore.quickMessagesShared = [
+      { uuid: '1', title: 'Message 1', text: 'Text 1', sector: '1' },
+      { uuid: '2', title: 'Message 2', text: 'Text 2', sector: '1' },
+    ];
+
+    await wrapper.vm.$nextTick();
+
+    const handlerUpdateQuickMessage = vi.spyOn(
+      wrapper.vm,
+      'handlerUpdateQuickMessage',
+    );
+    const quickMessageCards = wrapper.findAllComponents(
+      '[data-testid="quick-message-card"]',
+    );
+
+    await quickMessageCards[0].trigger('click');
+
+    const updateQuickMessageDrawer = wrapper.findComponent(
+      '[data-testid="quick-message-config-drawer"]',
+    );
+
+    const quickMessageForm = wrapper.findComponent(
+      '[data-testid="quick-message-form"]',
+    );
+
+    quickMessageForm.vm.$emit('update:model-value', updatedMessageMock);
+
+    await wrapper.vm.$nextTick();
+
+    await updateQuickMessageDrawer.vm.$emit('primary-button-click');
+    expect(handlerUpdateQuickMessage).toHaveBeenCalled();
+
+    await flushPromises();
+
+    expect(wrapper.vm.quickMessagesShared.length).toEqual(2);
+    expect(wrapper.vm.quickMessagesShared[0]).toEqual(updatedMessageMock);
   });
 
   it('should render UnnnicSimpleCard for each quick message and call openMessageToEdit on click', async () => {
@@ -172,7 +274,22 @@ describe('ListSectorMessages', () => {
     expect(openConfigMessageDrawer).toHaveBeenCalledWith(
       quickMessageStore.quickMessagesShared[0],
     );
+
+    const editQuickMessageDrawer = wrapper.findComponent(
+      '[data-testid="quick-message-config-drawer"]',
+    );
+
+    expect(editQuickMessageDrawer.exists()).toBe(true);
+
+    const quickMessageForm = wrapper.findComponent(
+      '[data-testid="quick-message-form"]',
+    );
+    expect(quickMessageForm.exists()).toBe(true);
+    expect(quickMessageForm.props().modelValue).toEqual(
+      quickMessageStore.quickMessagesShared[0],
+    );
   });
+
   it('should call deleteMessage on click delete message button', async () => {
     const deleteMessage = vi.spyOn(wrapper.vm, 'deleteMessage');
 

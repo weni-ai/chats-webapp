@@ -158,7 +158,10 @@
       @secondary-button-click="$refs.quickMessageDrawer.close()"
     >
       <template #content>
-        <MessageForm v-model="quickMessageToEdit" />
+        <MessageForm
+          v-model="quickMessageToEdit"
+          data-testid="quick-message-form"
+        />
       </template>
     </UnnnicDrawer>
   </section>
@@ -184,7 +187,7 @@ export default {
       required: true,
     },
   },
-  data: () => {
+  data() {
     return {
       isLoading: false,
       copilotShowIntegrationsMessage: false,
