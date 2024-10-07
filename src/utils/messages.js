@@ -384,10 +384,4 @@ export function groupMessages(messagesReference, { message, addBefore }) {
   currentMinuteEntry.messages = removeDuplicatedMessagesByUuid(
     currentMinuteEntry.messages,
   );
-
-  currentDateEntry.minutes.sort((a, b) => a.minute - b.minute);
-
-  currentMinuteEntry.messages.sort(
-    (a, b) => moment(a.created_on).unix() - moment(b.created_on).unix(),
-  );
 }
