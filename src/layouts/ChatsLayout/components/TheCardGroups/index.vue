@@ -121,9 +121,6 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup/index.vue';
 import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
-
-import Room from '@/services/api/resources/chats/room';
-
 export default {
   name: 'TheCardGroups',
   components: {
@@ -147,7 +144,7 @@ export default {
   },
   data: () => ({
     page: 0,
-    limit: 20,
+    limit: 100,
     nameOfContact: '',
     timerId: 0,
     isLoadingRooms: false,
@@ -209,7 +206,6 @@ export default {
         const TIME_TO_WAIT_TYPING = 1300;
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
-          this.page = 0;
           this.listRoom(false);
           if (newNameOfContact) {
             this.isSearching = true;
@@ -220,17 +216,10 @@ export default {
       },
     },
   },
-  created() {
-    this.listRoom().then(async () => {
-      if (this.$route.name === 'room' && this.$route.params.roomId) {
-        const room = await Room.getByUuid({ uuid: this.$route.params.roomId });
-        this.setActiveRoom({ ...room, hasDetailInfo: true });
-      }
-    });
+  mounted() {
+    this.listRoom();
     this.listDiscussions();
-    this.$nextTick(async () => {});
   },
-
   methods: {
     ...mapActions(useRooms, {
       setActiveRoom: 'setActiveRoom',
