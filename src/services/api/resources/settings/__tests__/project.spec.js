@@ -36,7 +36,7 @@ describe('Project', () => {
     expect(http.get).toHaveBeenCalledWith('/permission/project/', {
       params: {
         project: expect.anything(),
-        limit: 10,
+        limit: 9999,
       },
     });
 

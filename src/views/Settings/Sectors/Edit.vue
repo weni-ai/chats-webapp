@@ -223,7 +223,6 @@ export default {
 
   data() {
     return {
-      managersPage: 0,
       currentTab: '',
       openModalDelete: false,
       sector: {
@@ -360,19 +359,10 @@ export default {
       }
     },
     async listProjectManagers() {
-      let hasNext = false;
-      try {
-        const offset = this.managersPage * 20;
-        const { results, next } = await Project.managers(offset);
-        this.managersPage += 1;
-        this.projectManagers = this.projectManagers.concat(results);
-
-        hasNext = next;
-      } finally {
-        if (hasNext) {
-          this.listProjectManagers();
-        }
-      }
+      const managers = (await Project.managers()).results.concat(
+        (await Project.admins()).results,
+      );
+      this.projectManagers = managers;
     },
     async createQueue({ name, default_message }) {
       try {
