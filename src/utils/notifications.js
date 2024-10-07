@@ -14,7 +14,7 @@ export function sendWindowNotification({
     silent: true,
     badge: logo,
     icon: logo,
-    body: image ? `${i18n.t('media')}\n${message}` : message,
+    body: image ? `${i18n.global.t('media')}\n${message}` : message,
     tag: title,
   };
 

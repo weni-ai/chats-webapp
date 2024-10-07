@@ -177,7 +177,8 @@ export default {
             this.removeRoom(room.uuid);
           }
         });
-        await this.getAllRooms({ limit: 100 });
+
+        await this.getAllRooms({ limit: 20 });
 
         callUnnnicAlert({
           props: {

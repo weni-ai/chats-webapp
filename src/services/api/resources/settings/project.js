@@ -19,12 +19,13 @@ export default {
     return response.data;
   },
 
-  async managers() {
+  async managers(offset, limit = 10) {
     const response = await http.get(`/permission/project/`, {
       params: {
         project: getProject(),
+        offset,
         // role: Permissions.Manager,
-        limit: 9999,
+        limit,
       },
     });
     return response.data;
