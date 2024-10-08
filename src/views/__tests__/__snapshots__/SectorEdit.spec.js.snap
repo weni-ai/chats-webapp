@@ -4,15 +4,15 @@ exports[`EditSector.vue > Should match the snapshot 1`] = `
 "<section data-v-ac9ddd5b="" class="sector-edit-view">
   <header data-v-573bd910="" data-v-ac9ddd5b="" class="sector-edit-view__header" data-testid="sector-edit-view-header">
     <h1 data-v-573bd910="" class="header__title" data-testid="header-title">Setor Sector 1</h1>
-    <p data-v-573bd910="" class="header__description" data-testid="header-description">config_chats.edit_sector.description</p>
+    <p data-v-573bd910="" class="header__description" data-testid="header-description">Determine configurações gerais da equipe e jornada de trabalho</p>
   </header>
   <div data-v-b18efda3="" data-v-ac9ddd5b="" class="tab size-md" data-testid="sector-edit-view-tab-list">
     <header data-v-b18efda3="" class="tab-header">
       <ul data-v-b18efda3="" class="tab-content">
-        <li data-v-b18efda3="" class="tab-head tab-head--active">sector.general
+        <li data-v-b18efda3="" class="tab-head tab-head--active">Geral
           <!---->
         </li>
-        <li data-v-b18efda3="" class="tab-head">sector.extra_options
+        <li data-v-b18efda3="" class="tab-head">Opções extras
           <!---->
         </li>
         <li data-v-b18efda3="" class="tab-head">Filas

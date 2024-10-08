@@ -31,7 +31,7 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
       data-testid="settings-view-header-title"
       data-v-a59c663f=""
     >
-      config_chats.title
+      Configurações de Chats
     </h1>
   </header>
   <!--v-if-->
@@ -47,14 +47,14 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
       data-testid="section-header-title"
       data-v-f23b63f9=""
     >
-      config_chats.section_sectors_title
+      Setores em 
     </p>
     <p
       class="section-header__subtitle"
       data-testid="section-header-subtitle"
       data-v-f23b63f9=""
     >
-      config_chats.section_sectors_subtitle
+      Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.
     </p>
   </header>
   <section
