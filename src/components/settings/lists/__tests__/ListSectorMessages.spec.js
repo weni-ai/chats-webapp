@@ -198,10 +198,20 @@ describe('ListSectorMessages', () => {
       '[data-testid="quick-message-config-drawer"]',
     );
 
-    const quickMessageForm = wrapper.findComponent(
-      '[data-testid="quick-message-form"]',
+    const titleInput = wrapper.findComponent(
+      '[data-testid="quick-message-title-input"]',
     );
-    quickMessageForm.vm.$emit('update:model-value', createdMessageMock);
+    const shortcutInput = wrapper.findComponent(
+      '[data-testid="quick-message-shortcut-input"]',
+    );
+    const textInput = wrapper.findComponent(
+      '[data-testid="quick-message-text-input"]',
+    );
+
+    titleInput.setValue(createdMessageMock.title);
+    shortcutInput.setValue(createdMessageMock.shortcut);
+    textInput.setValue(createdMessageMock.text);
+
     await wrapper.vm.$nextTick();
 
     await createQuickMessageDrawer.vm.$emit('primary-button-click');
@@ -239,7 +249,7 @@ describe('ListSectorMessages', () => {
       '[data-testid="quick-message-form"]',
     );
 
-    quickMessageForm.vm.$emit('update:model-value', updatedMessageMock);
+    quickMessageForm.vm.quickMessage = updatedMessageMock;
 
     await wrapper.vm.$nextTick();
 

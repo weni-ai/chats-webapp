@@ -3,6 +3,8 @@ import { flushPromises, mount } from '@vue/test-utils';
 
 import FormQueue from '../ListSectorQueues.vue';
 
+import unnnic from '@weni/unnnic-system';
+
 import Queue from '@/services/api/resources/settings/queue';
 import Project from '@/services/api/resources/settings/project';
 
@@ -32,7 +34,7 @@ vi.spyOn(Queue, 'list')
     next: false,
   });
 
-vi.spyOn(Queue, 'editQueue').mockResolvedValue();
+vi.spyOn(Queue, 'editQueue').mockResolvedValue({});
 
 vi.spyOn(Queue, 'getQueueInformation').mockResolvedValue({ uuid: 'queue-1' });
 
@@ -95,13 +97,15 @@ describe('ListSectorQueues.vue', () => {
   it('should open the new queue drawer when clicking the add button', async () => {
     const openConfigQueueDrawer = vi.spyOn(wrapper.vm, 'openConfigQueueDrawer');
 
+    const callAlert = vi.spyOn(unnnic, 'unnnicCallAlert');
+
     const createQueueCard = wrapper.find('[data-testid="create-sector-card"]');
 
     await createQueueCard.trigger('click');
 
     expect(openConfigQueueDrawer).toHaveBeenCalled();
 
-    const queueConfigDrawer = wrapper.find(
+    const queueConfigDrawer = wrapper.findComponent(
       '[data-testid="queue-config-drawer"]',
     );
 
@@ -113,6 +117,10 @@ describe('ListSectorQueues.vue', () => {
     expect(queueForm.exists()).toBe(true);
     expect(queueForm.props().sector.uuid).toBe(wrapper.props().sector.uuid);
     expect(queueForm.props().modelValue.uuid).toBe(undefined);
+
+    queueConfigDrawer.vm.$emit('primary-button-click');
+
+    expect(callAlert).toHaveBeenCalled();
   });
 
   it('should open the edit drawer when clicking on an existing queue', async () => {
@@ -121,6 +129,11 @@ describe('ListSectorQueues.vue', () => {
     });
 
     const openConfigQueueDrawer = vi.spyOn(wrapper.vm, 'openConfigQueueDrawer');
+
+    const closeConfigQueueDrawer = vi.spyOn(
+      wrapper.vm,
+      'closeQueueConfigDrawer',
+    );
 
     await wrapper.find('[data-testid="queue-card"]').trigger('click');
 
@@ -150,5 +163,9 @@ describe('ListSectorQueues.vue', () => {
     expect(queueSectorForm.props().modelValue.uuid).toBe(
       wrapper.vm.$data.queues[0].uuid,
     );
+
+    await queueConfigDrawer.vm.$emit('close');
+
+    expect(closeConfigQueueDrawer).toHaveBeenCalled();
   });
 });

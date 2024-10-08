@@ -5,12 +5,14 @@
       size="md"
       :label="$t('title')"
       :placeholder="$t('quick_messages.title_field_placeholder')"
+      data-testid="quick-message-title-input"
     />
     <UnnnicInput
       v-model="quickMessage.shortcut"
       size="md"
       :placeholder="$t('quick_messages.shortcut_field_placeholder')"
       :label="$t('shortcut')"
+      data-testid="quick-message-shortcut-input"
     />
     <UnnnicTextArea
       v-model="quickMessage.text"
@@ -18,6 +20,7 @@
       :placeholder="$t('quick_messages.message_field_placeholder')"
       :maxLength="1000"
       size="md"
+      data-testid="quick-message-text-input"
     />
   </section>
 </template>
