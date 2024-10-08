@@ -147,7 +147,7 @@ export default {
   },
   data: () => ({
     page: 0,
-    limit: 20,
+    limit: 100,
     nameOfContact: '',
     timerId: 0,
     isLoadingRooms: false,
