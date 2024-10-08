@@ -9,9 +9,11 @@ export default async (message, { app }) => {
   const roomsStore = useRooms();
   const roomMessagesStore = useRoomMessages();
   const { rooms, activeRoom } = roomsStore;
-  const findRoom = rooms.find((room) => room.uuid === message.room);
-  roomsStore.bringRoomFront(findRoom);
-  if (findRoom) {
+  const findedRoom = rooms.find((room) => room.uuid === message.room);
+  roomsStore.bringRoomFront(findedRoom);
+
+  if (findedRoom) {
+    findedRoom.last_message = message.text;
     if (app.me.email === message.user?.email) {
       return;
     }
