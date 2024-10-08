@@ -17,7 +17,7 @@ const routes = [
       {
         path: 'sectors/:uuid',
         name: 'sectors.edit',
-        component: () => import('@/views/Settings/Sectors/Edit/Wrapper.vue'),
+        component: () => import('@/views/Settings/Sectors/Edit/index.vue'),
       },
     ],
   },
