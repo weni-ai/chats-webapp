@@ -150,7 +150,7 @@ export async function treatMessages({
   });
   let newMessages = messages;
 
-  if (!newMessages.length) {
+  if (!newMessages?.length) {
     return;
   }
 

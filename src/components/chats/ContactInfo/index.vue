@@ -64,7 +64,7 @@
                   <h4 class="description">{{ contactProtocol }}</h4>
                 </hgroup>
               </section>
-              <template v-if="!!room.custom_fields">
+              <template v-if="!!room?.custom_fields">
                 <CustomField
                   v-for="(value, key) in customFields"
                   :key="key"
