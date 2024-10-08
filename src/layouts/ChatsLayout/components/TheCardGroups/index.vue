@@ -228,7 +228,6 @@ export default {
       }
     });
     this.listDiscussions();
-    this.$nextTick(async () => {});
   },
 
   methods: {
