@@ -4,7 +4,6 @@ import { register } from 'register-service-worker';
 import env from './utils/env';
 
 if (['production', 'staging'].includes(env('VITE_CHATS_ENVIRONMENT'))) {
-  let reloadCount = 0;
   register('/service-worker.js', {
     ready() {
       console.info(
@@ -23,11 +22,11 @@ if (['production', 'staging'].includes(env('VITE_CHATS_ENVIRONMENT'))) {
     },
     updated() {
       console.info('New content is available; please refresh.');
-      if (reloadCount < 1) {
-        reloadCount++;
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+      const hasReloaded = localStorage.getItem('hasReloaded');
+      if (!hasReloaded) {
+        localStorage.setItem('hasReloaded', 'true');
+
+        window.location.reload();
       }
     },
     offline() {
@@ -38,5 +37,8 @@ if (['production', 'staging'].includes(env('VITE_CHATS_ENVIRONMENT'))) {
     error(error) {
       console.error('Error during service worker registration:', error);
     },
+  });
+  window.addEventListener('load', () => {
+    localStorage.removeItem('hasReloaded');
   });
 }
