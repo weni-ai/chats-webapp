@@ -29,7 +29,7 @@ if (['production', 'staging'].includes(env('VITE_CHATS_ENVIRONMENT'))) {
         () => {
           registration.update();
         },
-        1000 * 60 * 60,
+        1000 * 60,
       );
     },
     cached() {
