@@ -1,8 +1,9 @@
 /* eslint-disable no-console */
 
 import { register } from 'register-service-worker';
+import env from './utils/env';
 
-if (process.env.NODE_ENV === 'production') {
+if (['production', 'staging'].includes(env('VITE_CHATS_ENVIRONMENT'))) {
   register('/service-worker.js', {
     ready() {
       console.info(
@@ -21,6 +22,7 @@ if (process.env.NODE_ENV === 'production') {
     },
     updated() {
       console.info('New content is available; please refresh.');
+      window.location.reload();
     },
     offline() {
       console.info(
