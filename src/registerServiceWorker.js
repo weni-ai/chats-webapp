@@ -4,6 +4,16 @@ import { register } from 'register-service-worker';
 import env from './utils/env';
 
 if (['production', 'staging'].includes(env('VITE_CHATS_ENVIRONMENT'))) {
+  let refreshing = false;
+
+  // Listen for controlling service worker changing and reload the page
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!refreshing) {
+      refreshing = true;
+      window.location.reload();
+    }
+  });
+
   register('/service-worker.js', {
     ready() {
       console.info(
@@ -11,8 +21,16 @@ if (['production', 'staging'].includes(env('VITE_CHATS_ENVIRONMENT'))) {
           'For more details, visit https://goo.gl/AFskqB',
       );
     },
-    registered() {
+    registered(registration) {
       console.info('Service worker has been registered.');
+
+      // Check for updates every hour
+      setInterval(
+        () => {
+          registration.update();
+        },
+        1000 * 60 * 60,
+      );
     },
     cached() {
       console.info('Content has been cached for offline use.');
@@ -20,13 +38,11 @@ if (['production', 'staging'].includes(env('VITE_CHATS_ENVIRONMENT'))) {
     updatefound() {
       console.info('New content is downloading.');
     },
-    updated() {
-      console.info('New content is available; please refresh.');
-      const hasReloaded = localStorage.getItem('hasReloaded');
-      if (!hasReloaded) {
-        localStorage.setItem('hasReloaded', 'true');
-
-        window.location.reload();
+    updated(registration) {
+      console.info('New content is available; update in progress.');
+      if (registration.waiting) {
+        // When the update is ready, tell the new service worker to take control
+        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
       }
     },
     offline() {
@@ -37,8 +53,5 @@ if (['production', 'staging'].includes(env('VITE_CHATS_ENVIRONMENT'))) {
     error(error) {
       console.error('Error during service worker registration:', error);
     },
-  });
-  window.addEventListener('load', () => {
-    localStorage.removeItem('hasReloaded');
   });
 }
