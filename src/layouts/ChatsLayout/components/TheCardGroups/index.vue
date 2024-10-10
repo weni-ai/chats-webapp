@@ -231,7 +231,7 @@ export default {
           viewedAgentEmail: this.viewedAgent.email,
           userEmail: this.me.email,
         });
-        if (!viewRoom) this.$router.push('/rooms');
+        if (!viewRoom || !room.is_active) this.$router.push('/rooms');
         else this.setActiveRoom({ ...room, hasDetailInfo: true });
       }
     });
