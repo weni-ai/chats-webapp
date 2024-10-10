@@ -13,7 +13,7 @@ export default async (message, { app }) => {
   roomsStore.bringRoomFront(findedRoom);
 
   if (findedRoom) {
-    findedRoom.last_message = message.text;
+    if (message.text) findedRoom.last_message = message.text;
     if (app.me.email === message.user?.email) {
       return;
     }
