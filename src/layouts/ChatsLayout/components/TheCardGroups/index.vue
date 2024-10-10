@@ -123,6 +123,7 @@ import CardGroup from './CardGroup/index.vue';
 import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
 
 import Room from '@/services/api/resources/chats/room';
+import { useDashboard } from '@/store/modules/dashboard';
 
 export default {
   name: 'TheCardGroups',
@@ -169,6 +170,7 @@ export default {
     ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
+    ...mapState(useDashboard, ['viewedAgent']),
 
     isUserAdmin() {
       const ROLE_ADMIN = 1;
@@ -224,7 +226,13 @@ export default {
     this.listRoom().then(async () => {
       if (this.$route.name === 'room' && this.$route.params.roomId) {
         const room = await Room.getByUuid({ uuid: this.$route.params.roomId });
-        this.setActiveRoom({ ...room, hasDetailInfo: true });
+        const viewRoom = this.checkUserSeenRoom({
+          room,
+          viewedAgentEmail: this.viewedAgent.email,
+          userEmail: this.me.email,
+        });
+        if (!viewRoom) this.$router.push('/rooms');
+        else this.setActiveRoom({ ...room, hasDetailInfo: true });
       }
     });
     this.listDiscussions();
@@ -234,6 +242,7 @@ export default {
     ...mapActions(useRooms, {
       setActiveRoom: 'setActiveRoom',
       getAllRooms: 'getAll',
+      checkUserSeenRoom: 'checkUserSeenRoom',
     }),
     ...mapActions(useDiscussions, {
       setActiveDiscussion: 'setActiveDiscussion',
