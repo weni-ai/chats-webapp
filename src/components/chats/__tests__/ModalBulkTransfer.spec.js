@@ -1,8 +1,6 @@
 import { vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
-import UnnnicSystem from '@/plugins/UnnnicSystem';
-import i18n from '@/plugins/i18n';
 
 import ModalBulkTransfer from '../chat/ModalBulkTransfer.vue';
 
@@ -32,7 +30,7 @@ vi.mock('@/services/api/resources/settings/queue', () => ({
 function createWrapper(store) {
   const wrapper = mount(ModalBulkTransfer, {
     global: {
-      plugins: [i18n, store, UnnnicSystem],
+      plugins: [store],
     },
   });
 

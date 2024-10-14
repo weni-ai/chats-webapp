@@ -1,15 +1,11 @@
 import { mount } from '@vue/test-utils';
-import i18n from '@/plugins/i18n';
-import UnnnicSystem from '@/plugins/UnnnicSystem';
+
 import CustomField from '../ContactInfo/CustomField.vue';
 import defaultProps from './mocks/customFieldMock.js';
 
 function createWrapper(propsData) {
   const wrapper = mount(CustomField, {
     propsData,
-    global: {
-      plugins: [i18n, UnnnicSystem],
-    },
   });
 
   return wrapper;

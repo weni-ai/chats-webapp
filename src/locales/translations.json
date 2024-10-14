@@ -318,10 +318,15 @@
       "en": "Sector",
       "es": "Sector"
     },
-    "geral": {
+    "general": {
       "pt-br": "Geral",
       "en": "General",
       "es": "General"
+    },
+    "extra_options": {
+      "pt-br": "Opções extras",
+      "en": "Extra options",
+      "es": "Opciones adicionales"
     },
     "queues": {
       "pt-br": "Filas",
@@ -407,9 +412,9 @@
     },
     "additional_options": {
       "title": {
-        "pt-br": "Opções adicionais",
-        "en": "Additional options",
-        "es": "Opciones adicionales"
+        "pt-br": "Opções extras",
+        "en": "Extras options",
+        "es": "Opciones extras"
       },
       "template_message": {
         "switch_active": {
@@ -1719,6 +1724,16 @@
     "en": "Sector deleted successfully!",
     "es": "¡Sector eliminado con éxito!"
   },
+  "sector_update_success": {
+    "pt-br": "Alterações salvas com sucesso",
+    "en": "Changes saved successfully",
+    "es": "Los cambios se guardaron correctamente"
+  },
+  "sector_update_error": {
+    "pt-br": "Não foi possível salvar as alterações, tente novamente mais tarde.",
+    "en": "Unable to save changes, please try again later.",
+    "es": "No se pueden guardar los cambios. Vuelve a intentarlo más tarde."
+  },
   "sector_delete_error": {
     "pt-br": "Não foi possível deletar o setor, tente novamente mais tarde.",
     "en": "Unable to delete sector, please try again later.",
@@ -2036,6 +2051,11 @@
       "pt-br": "Mensagem rápida atualizada",
       "en": "Quick message updated",
       "es": "Mensaje rápido actualizado"
+    },
+    "error": {
+      "pt-br": "Falha ao definir mensagem rápida",
+      "en": "Failed to set quick message",
+      "es": "Error al configurar el mensaje rápido"
     }
   },
   "discard": {
@@ -2182,17 +2202,27 @@
     }
   },
   "config_chats": {
-    "manage_chats": {
-      "pt-br": "Gerenciar Chats",
-      "en": "Manage chats",
-      "es": "Gestionar chats"
+    "title": {
+      "pt-br": "Configurações de Chats",
+      "en": "Chat Settings",
+      "es": "Configuración de chat"
     },
-    "manage_description": {
+    "section_sectors_title": {
+      "pt-br": "Setores em {project}",
+      "en": "Sectors in {project}",
+      "es": "Sectores en {project}"
+    },
+    "section_sectors_subtitle": {
       "pt-br": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
       "en": "Add, view and manage sectors, queues, managers and agents within your organization.",
       "es": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización."
     },
     "project_configs": {
+      "title": {
+        "pt-br": "Ajustes do projeto",
+        "en": "Project Adjustments",
+        "es": "Ajustes de proyectos"
+      },
       "bulk_transfer": {
         "tooltip": {
           "pt-br": "Essa função permite que agentes transfiram diversos contatos de uma vez para uma fila ou agente",
@@ -2237,6 +2267,57 @@
           "pt-br": "Bloqueio de transferências para agentes offline inativo",
           "en": "Blocking transfers to offline agents inactive",
           "es": "Bloqueo de transferencias a agentes fuera de línea inactivo"
+        }
+      }
+    },
+    "edit_sector": {
+      "description": {
+        "pt-br": "Determine configurações gerais da equipe e jornada de trabalho",
+        "en": "Determine General Team Settings and Workday",
+        "es": "Determinar la configuración del equipo general y la jornada laboral"
+      },
+      "tag_already_exists": {
+        "pt-br": "Já existe uma tag com esse nome",
+        "en": "A tag with that name already exists",
+        "es": "Ya existe una etiqueta con ese nombre"
+      },
+      "invalid_hours": {
+        "pt-br": "Horário de início não pode ser maior/igual que horário final",
+        "en": "Start time cannot be greater/equal to end time",
+        "es": "La hora de inicio no puede ser mayor o igual a la hora de finalización."
+      }
+    },
+    "queues": {
+      "in_sector": {
+        "pt-br": "Fila no setor {sector}",
+        "en": "Queue in sector {sector}",
+        "es": "Fila en el sector {sector}"
+      },
+      "new": {
+        "pt-br": "Nova fila",
+        "en": "New queue",
+        "es": "Nueva cola"
+      },
+      "info": {
+        "pt-br": "As filas são grupos de atendimento dentro de um setor, é possível direcionar contatos de um fluxo para uma fila específica",
+        "en": "Queues are support groups within a sector; it is possible to direct contacts from a flow to a specific queue",
+        "es": "Las colas son grupos de atención dentro de un sector; es posible dirigir contactos de un flujo a una cola específica"
+      },
+      "message": {
+        "create": {
+          "pt-br": "Fila criada com sucesso",
+          "en": "Queue successfully created",
+          "es": "Fila creada con éxito"
+        },
+        "update": {
+          "pt-br": "Fila atualizada com sucesso",
+          "en": "Queue successfully updated",
+          "es": "Fila actualizada con éxito"
+        },
+        "error": {
+          "pt-br": "Falha ao definir configurações da fila",
+          "en": "Failed to set queue settings",
+          "es": "Error al configurar los ajustes de la fila"
         }
       }
     },
