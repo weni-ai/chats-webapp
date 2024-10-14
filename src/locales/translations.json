@@ -1817,6 +1817,11 @@
       "en": "Flows trigger",
       "es": "Activación de flujo"
     },
+    "fire": {
+      "pt-br": "Disparar fluxo",
+      "en": "Fire flow",
+      "es": "Disparar flujo"
+    },
     "subtitle": {
       "pt-br": "Contatos de {project}",
       "en": "Contacts of {project}",
