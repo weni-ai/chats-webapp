@@ -9,11 +9,9 @@ export default async (message, { app }) => {
   const roomsStore = useRooms();
   const roomMessagesStore = useRoomMessages();
   const { rooms, activeRoom } = roomsStore;
-  const findedRoom = rooms.find((room) => room.uuid === message.room);
-  roomsStore.bringRoomFront(findedRoom);
-
-  if (findedRoom) {
-    findedRoom.last_message = message.text;
+  const findRoom = rooms.find((room) => room.uuid === message.room);
+  roomsStore.bringRoomFront(findRoom);
+  if (findRoom) {
     if (app.me.email === message.user?.email) {
       return;
     }
@@ -23,7 +21,7 @@ export default async (message, { app }) => {
 
     if (document.hidden) {
       sendWindowNotification({
-        title: message.contact?.name || '',
+        title: message.contact.name,
         message: message.text,
         image: message.media?.[0]?.url,
       });
