@@ -211,7 +211,6 @@ export default {
         const TIME_TO_WAIT_TYPING = 1300;
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
-          this.page = 0;
           this.listRoom(false);
           if (newNameOfContact) {
             this.isSearching = true;
@@ -237,7 +236,6 @@ export default {
     });
     this.listDiscussions();
   },
-
   methods: {
     ...mapActions(useRooms, {
       setActiveRoom: 'setActiveRoom',

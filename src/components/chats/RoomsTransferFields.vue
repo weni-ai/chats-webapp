@@ -62,8 +62,6 @@ import { useProfile } from '@/store/modules/profile';
 
 import Queue from '@/services/api/resources/settings/queue';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
-
-import i18n from '@/plugins/i18n';
 export default {
   name: 'RoomsTransferFields',
 
@@ -177,7 +175,7 @@ export default {
     ...mapActions(useRooms, [
       'setSelectedRoomsToTransfer',
       'setContactToTransfer',
-      'setActiveRoom',
+      'removeRoom',
     ]),
 
     async getQueues() {
@@ -236,7 +234,6 @@ export default {
         if (response.status === 200) {
           this.transferSuccess();
           this.resetRoomsToTransfer();
-          this.setActiveRoom(null);
         } else {
           this.transferError();
         }
@@ -275,7 +272,7 @@ export default {
       const toDestination = selectedAgent ? 'agent' : 'queue';
 
       this.getAlert({
-        text: i18n.global.t(`contact_transferred_to_${toDestination}`, {
+        text: this.$t(`contact_transferred_to_${toDestination}`, {
           [toDestination]: destination,
         }),
         type: 'success',
