@@ -1,0 +1,601 @@
+{
+  "status": {
+    "online": "Online",
+    "offline": "Offline"
+  },
+  "preferences": {
+    "title": "Preferences",
+    "notifications": {
+      "title": "Notifications",
+      "sound": "Sound"
+    },
+    "help": {
+      "label": "Help",
+      "title": "Help menu",
+      "nilo": {
+        "active": "Nile active",
+        "disabled": "Nile deactivated"
+      }
+    }
+  },
+  "upload_area": {
+    "title": {
+      "text": "Drag your file here, or",
+      "highlight": "search for it"
+    },
+    "invalid": {
+      "text": ", try again",
+      "highlight": "Invalid file",
+      "subtitle": "The file is not supported."
+    },
+    "subtitle": "Supported formats: {exampleExtensions} and others"
+  },
+  "dropzone": {
+    "description": "Drop your file here to send"
+  },
+  "waiting_for": {
+    "minutes": "1 minute waiting | {n} minutes waiting"
+  },
+  "details": "Details",
+  "doubts": "Doubts",
+  "finance": "Finance",
+  "chats_in_the_period": "Chats in the period",
+  "chats_per_agents": "Chats per agent",
+  "new_messages_song": {
+    "queue": "Sound for new messages from contacts waiting in the queue",
+    "in_progress": "Sound for new messages in ongoing chats",
+    "actions": "Action confirmation sound"
+  },
+  "automatic_message": {
+    "title": "Automatic message",
+    "info": "Define an automatic response to be sent to the contact while they are waiting for assistance, leave it blank if you don’t want any message.",
+    "placeholder": "You haven't set an automatic message yet. Please define a message for your contacts who are waiting."
+  },
+  "updates_saved": "Updates saved",
+  "updated_info": "Updated information",
+  "active_chats": "Active chats",
+  "active_chats_tooltip": "Number of ongoing chats",
+  "date_format": "MM/DD/YYYY",
+  "live": "Live",
+  "number_chats": "Number of chats",
+  "language": "Language",
+  "search": "Search",
+  "date_format_variable": "{month}/{day}/{year}",
+  "undo": "Undo",
+  "redo": "Redo",
+  "record_audio": "Record audio",
+  "audio_recorder": {
+    "discard_button": "Discard"
+  },
+  "attachment": "Attach",
+  "bold": "Bold",
+  "italic": "Italic",
+  "underline": "Underline",
+  "list": "List",
+  "left": "Left",
+  "right": "Right",
+  "center": "Center",
+  "justify": "Justify",
+  "without_results": "No matching results",
+  "without_chats": "Oops! It looks like there are no chats at the moment :)",
+  "select_smart": {
+    "without_results": "No results found",
+    "without_multiple_selected": "No option selected"
+  },
+  "agents_online": "Online agents",
+  "sectors": "Sectors",
+  "sector": {
+    "title": "Sector",
+    "geral": "General",
+    "queues": "Queues",
+    "tags": "Tags",
+    "add": "Add new sector",
+    "add_queue": "Add new queue",
+    "name": "Sector name",
+    "placeholder": "Example: Financial",
+    "save_and_continue": "Save and continue",
+    "managers": {
+      "title": "Service managers",
+      "add": {
+        "label": "Add manager",
+        "placeholder": "Search for the name or email"
+      },
+      "working_day": {
+        "title": "Definitions of the workday",
+        "start": {
+          "label": "Start time"
+        },
+        "end": {
+          "label": "Closing time"
+        },
+        "limit_agents": {
+          "label": "Limit on the number of simultaneous calls per agent"
+        }
+      }
+    },
+    "additional_options": {
+      "title": "Additional options",
+      "template_message": {
+        "switch_active": "Triggering message templates active",
+        "switch_disabled": "Triggering message templates disabled"
+      },
+      "edit_custom_fields": "Allow agents to edit Custom Fields",
+      "agents_signature": {
+        "tooltip": "Each message exchanged will have the name of the agent who is answering",
+        "switch_active": "Active signature",
+        "switch_disabled": "Disabled signature"
+      }
+    }
+  },
+  "queues": {
+    "title": "Queues",
+    "create_queue": "Create new queue",
+    "queue_name": "Queue name",
+    "queue_name_placeholder": "Example: Payments",
+    "queue_title": "Queues in",
+    "queue_table_name": "Name",
+    "quantity_agents": "Number of agents"
+  },
+  "export": {
+    "metrics": "Export metrics as {filetype}",
+    "all": "Export everything as {filetype}"
+  },
+  "name": "Name",
+  "addition_date": "Date of addition",
+  "in_queues": "in queues",
+  "in_progress": "In progress",
+  "in_progress_tooltip": "Number of chats that are already being handled by an agent",
+  "in_progress_tooltip_filtered": "Number of chats that have been handled by an agent",
+  "closed": "Closed",
+  "qtd_closed_tooltip": "Number of closed chats",
+  "wait_time": "Wait time",
+  "wait_time_tooltip": "It is the average time the contact waits to be assisted",
+  "wait_assistance_tooltip": "Number of contacts waiting to start assistance",
+  "average_time_to_assistance_tooltip": "Average time contacts wait before being assisted",
+  "average_time_to_response_tooltip": "Average time the contact waits to be responded to",
+  "average_time_to_complete_assistence_tooltip": "Average time for a complete assistance",
+  "response_time": "Response time",
+  "average_response_time": "It is the average response time to the contact",
+  "interaction_time": "Interaction time",
+  "average_interaction_time": "It is the average duration of a chat",
+  "chats": {
+    "feedback": {
+      "forwarded_to_agent": "Contact forwarded to agent {agent}",
+      "forwarded_to_queue": "Contact forwarded to queue {queue}",
+      "transfer_to_agent": "{agent1} transferred to {agent2}",
+      "transfer_to_queue": "{agent} transferred to queue {queue}",
+      "transfer_from_queue_to_queue": "Was transferred from queue {queue1} to queue {queue2}",
+      "transfer_from_queue_to_agent": "Was transferred from queue {queue} to {agent}",
+      "pick_of_queue": "{agent} got it from the queue {queue}",
+      "pick_of_agent": "{manager} has taken over {agent}'s chat",
+      "edit_custom_field": "edited custom field",
+      "discussion_created": "{agent} started discussion with queue {queue}",
+      "discussion_joined": "{agent} joined the discussion",
+      "agent_took_chat": "Oops! The chat with the contact {contact} has already been taken over by another agent"
+    },
+    "room_list": {
+      "order_by": "Order by:",
+      "most_recent": "Most recent",
+      "older": "Older"
+    },
+    "search_contact": "Search contact",
+    "tags": "Chat tags",
+    "discussions": "Discussions ({length})",
+    "waiting": "Waiting ({length})",
+    "waiting_assistance": "Waiting for assistance",
+    "in_progress": "Chats in progress ({length})",
+    "sent_flows": "Sent flows ({length})",
+    "to_end_rate_the_chat": "To close, rate the chat",
+    "tags_help": "Tags help you locate chats and also generate good reports",
+    "chat_with_contact_ended": "Chat with {contact} closed",
+    "see_history": "Chats history",
+    "tag_request": "@:please tag the chat",
+    "closed_in": "Chat closed in",
+    "closed": "Closed chat",
+    "transfer": {
+      "title": "Transfer chat",
+      "does_not_have_permission": "You do not have permission to transfer this chat"
+    },
+    "open_chat": "Open chat",
+    "get_chat": "Get chat",
+    "get_chat_question": "Get chat?",
+    "get_chat_confirmation": "Confirm if you want to do the service of {contact}",
+    "you_got_chat": "You got the chat",
+    "your_chat_assumed": "Chat with {contact} has been transferred",
+    "your_chat_assumed_description": "Your chat with {contact} has been taken over by another agent",
+    "closed_chats": {
+      "history": "History",
+      "project_history": "Project history",
+      "contact_history": "Contact history"
+    },
+    "select_queues": "Select queues",
+    "select_services_queues": "Select service queues",
+    "select_at_least": "Select at least one queue to save changes",
+    "select_the_queues": "Select queues",
+    "select_your_queues": "Select your queues",
+    "no_queue_selected": "No queue selected",
+    "success_update_queues": "Your service queues have been updated",
+    "error_update_queues": "Unable to update your service queues"
+  },
+  "chats_notifications": {
+    "title": "WeniChats Notifications",
+    "label": "For your convenience, enable or disable WeniChats sound notifications."
+  },
+  "dashboard": {
+    "view-mode": {
+      "title": "Agent {viewedAgent} live view mode",
+      "close": "End visualization",
+      "assume_chat": "Take Chat",
+      "assume_chat_question": "Take Chat?",
+      "assume_chat_confirmation": "When confirming you will remove the Chat from agent {viewedAgent} and will be responsible for Chat"
+    }
+  },
+  "history": "History",
+  "close_view": "Close view",
+  "logout": "Logout",
+  "flow": "Flow",
+  "sent": "sent",
+  "from": "from",
+  "to": "to",
+  "about": "about",
+  "today": "Today",
+  "transfer": "Transfer",
+  "suggested_answers": "Suggested Answers",
+  "attach": "Attach",
+  "send": "Send",
+  "confirm_send": "Confirm submission",
+  "update": "Update",
+  "click_to_resend": "Click to resend",
+  "action_cannot_be_reversed": "This action cannot be reversed",
+  "end": "End",
+  "cancel": "Cancel",
+  "add": "Add",
+  "proceed": "Proceed",
+  "continue": "Continue",
+  "please": "Please",
+  "confirm": "Confirm",
+  "back": "Back",
+  "back_to_home_page": "Back to home page",
+  "clear": "Clear",
+  "none": "None",
+  "access_history_to_see_closed_chats": "Go to the chats history to see closed chats",
+  "close": "Close",
+  "all": "All",
+  "back_to_chats": "@:back to chats",
+  "filter": {
+    "by_tag": "Filter by tag",
+    "by_tags": "Filter by tags",
+    "by_agent": "Filter by agent",
+    "by_date": "Filter by @.lower:date",
+    "clear_all": "Clear filters",
+    "dates": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "last_7_days": "Last 7 days",
+      "last_30_days": "Last 30 days",
+      "current_month": "Current month",
+      "last_12_months": "Last 12 months"
+    }
+  },
+  "pagination": "{from} - {to} of {total}",
+  "contact": "Contact",
+  "contact_await_for_you": "A contact is waiting for you!",
+  "agent": "Agent",
+  "manager": "Manager",
+  "you": "You",
+  "queue": "Queue",
+  "agents": {
+    "add": {
+      "title": "Add agents",
+      "select": {
+        "label": "Select agent",
+        "placeholder": "Search for the name or email"
+      },
+      "button": "Select"
+    }
+  },
+  "sector_update_success": "Changes saved successfully",
+  "sector_update_error": "Unable to save changes, please try again later.",
+  "sector_invalid_work_hour": "Start time cannot be later than end time",
+  "name_or_phone": "Name or telephone",
+  "name_or_phone_or_protocol": "Name, telephone or protocol",
+  "protocol": "Protocol",
+  "service": "Service",
+  "tags": {
+    "title": "Tags",
+    "description": "Tags are used to classify service characteristics and enable chat search and filtering from them, define tags that are relevant to their context.",
+    "add": {
+      "title": "Add tags",
+      "label": "Tag name",
+      "placeholder": "Example: Doubts"
+    },
+    "already_added": "Added Tags"
+  },
+  "tag": "Tag",
+  "date": "Date",
+  "fullscreen_view": "View in fullscreen",
+  "view": "View",
+  "see": "See",
+  "chat_with": {
+    "bot": "Chat with bot",
+    "agent": "Chat with agent {name}"
+  },
+  "waiting_answer": {
+    "send_template": "You sent a message template",
+    "waiting_cliente_answer": "Awaiting response from Contact"
+  },
+  "contact_transferred_with_success": "Contact successfully transferred",
+  "contact_transferred_to_queue": "Contact transferred to queue {queue}",
+  "contact_transferred_error": "Failed to transfer contact(s)",
+  "contact_transferred_to_agent": "Contact transferred to agent {agent}",
+  "agent_took_from_queue": "{agent} took from queue {queue}",
+  "contact_in_queue": "Contact in the queue",
+  "chat_closed_by": {
+    "agent": "Chat closed by agent"
+  },
+  "transfer_contact": "Transfer contact | Transfer contacts",
+  "bulk_transfer": {
+    "transfer_selected_contacts": "Transfer selected contacts",
+    "agent_transfer_success": "Contact successfully transferred to agent {agent} | Contacts successfully transferred to agent {agent}",
+    "queue_transfer_success": "Contact successfully transferred to queue {queue} | Contacts successfully transferred to queue {queue}",
+    "error": "It was not possible to transfer the contacts, try again",
+    "disclaimer": {
+      "selected_agent_offline": "The selected agent is offline at the moment",
+      "without_online_agents": "No online agent at the moment"
+    }
+  },
+  "contact_info": {
+    "title": "Contact information",
+    "switch_associate_contact": "Unlinked contact",
+    "switch_disassociate_contact": "Linked contact",
+    "switch_tooltip": "Enable if you want the contact to always be directly assigned to you",
+    "alert_linked": "Linked contact",
+    "alert_detached": "Unlinked contact",
+    "linked_contact": "Contact linked to agent {name}",
+    "see_contact_history": "View history",
+    "audio_tooltip": "{agent} {date} at {time}",
+    "transfering_chat": "Transferring the chat 📬"
+  },
+  "discussions": {
+    "title": "Discussion | Discussions",
+    "start_discussion": {
+      "title": "Start discussion",
+      "form": {
+        "select_sector": "Select Sector",
+        "select_queue": "Select queue",
+        "search_sector": "Search Sector",
+        "search_queue": "Search queue",
+        "subject": "Subject",
+        "discussion_reason": "Reason for the discussion",
+        "explain_situation": "Explain the situation"
+      }
+    },
+    "about": {
+      "title": "About the discussion",
+      "started_in": "Started in",
+      "agents_involved": "Agents involved",
+      "add_agent": "Add Agent"
+    },
+    "close": {
+      "title": "Arrange",
+      "description": "You can no longer exchange messages in this discussion"
+    },
+    "add_agents": {
+      "title": "Add Agents",
+      "description": "When adding an agent in the discussion it will not be possible to remove later",
+      "select_agent": "Select agent",
+      "search_agent": "Search agent"
+    },
+    "history": "Discussion history",
+    "started_by": "Discussion started by {name}",
+    "notification_new": "New discussion received",
+    "join": "Get into the discussion",
+    "errors": {
+      "already_open": "Error starting discussion, check if there is already another discussion open",
+      "permission": "Error starting discussion, check your permission",
+      "generic": "Error starting discussion"
+    }
+  },
+  "last_online_time": {
+    "minutes": "Online {minutes} minutes ago",
+    "hours": "Online {hours} hours ago",
+    "date": "Last seen {time} {date}"
+  },
+  "last_message_time": {
+    "minutes": "Last message {minutes} minutes ago",
+    "hours": "Last message {hours} hours ago",
+    "date": "Last message {date}"
+  },
+  "alert_last_message_date": {
+    "message": "No response from the contact for more than 24 hours, to resume the conversation",
+    "message_send_flow": "send a flow",
+    "tip": "WhatsApp privacy policy does not allow sending a message with a contact that does not respond for more than 24 hours."
+  },
+  "alert_no_internet_connection": {
+    "message": "Waiting for connection...",
+    "verify_connection": "check your internet",
+    "reconnect": "Reconnect"
+  },
+  "video_player": {
+    "speed": "Speed"
+  },
+  "media": "Media",
+  "medias": "Medias",
+  "audio": "Audio",
+  "audios": "Audios",
+  "docs": "Docs",
+  "download": "Download",
+  "text_editor_placeholder": "Enter a new message or use a /shortcut",
+  "title": "Title",
+  "shortcut": "Shortcut",
+  "message": "Message",
+  "save": "Save",
+  "delete_sector": "Delete sector",
+  "delete_queue": "Delete queue",
+  "delete_queue_modal": {
+    "text": "Delete the queue {queue}",
+    "description": "The queue {queue} will be permanently deleted."
+  },
+  "cant_revert": "This option cannot be reversed",
+  "confirm_typing": "Confirm by typing",
+  "sector_deleted_success": "Sector deleted successfully!",
+  "sector_delete_error": "Unable to delete sector, please try again later.",
+  "edit": "Edit",
+  "exclude": "Exclude",
+  "delete": "Delete",
+  "search_or_select": "Search or select",
+  "successfully_transferred_chat": "Chat transferred successfully!",
+  "successfully_transferred_contact_to": {
+    "line": "The contact was forwarded to the {name} line"
+  },
+  "select_agent": "Select agent",
+  "select_queue": "Select queue",
+  "select_sector": "Select sector",
+  "send_media": "Send media",
+  "send_photo_or_video": "Send photo or video",
+  "photo_or_video": "Photo or video",
+  "send_docs": "Send doc | Send doc | Send docs",
+  "doc": "Doc",
+  "send_images": "Send image | Send image | Send images",
+  "quick_message": "Quick messages",
+  "flows": "Flows",
+  "flows_trigger": {
+    "title": "Flows trigger",
+    "subtitle": "Contacts of {project}",
+    "triggered_flows": {
+      "title": "Triggered flows",
+      "single": "Triggered flow",
+      "trigger_time": "Trigger time"
+    },
+    "groups": "Groups ({length})",
+    "group_contacts": "{n} contact | {n} contacts",
+    "letter_group": "{letter} ({length})",
+    "add_contact": "Add contact",
+    "remove_selected_contacts": "Remove selected contacts",
+    "add_new_contact": {
+      "title": "Add new contact",
+      "contact_name": "Contact name"
+    },
+    "already_open_room": {
+      "open": "{contact} already have a chat",
+      "with_agent": "in progress with agent {agent} in queue {queue}",
+      "in_queue_awaiting": "waiting in queue {queue}"
+    },
+    "send": "Send flow",
+    "select": "Select flow",
+    "sending": "Sending flow",
+    "successfully_triggered": "Flow triggered successfully",
+    "successfully_add_contact": "Contact added successfully",
+    "contact_already_exists": "The number {contact} is already saved in your contact list"
+  },
+  "quick_messages": {
+    "title": "Quick messages",
+    "title_by_sector": "Quick messages in {sector}",
+    "without_messages": "For now you do not have quick messages, add one :)",
+    "without_messages_shared": {
+      "start": "For now there are no quick messages in this sector,",
+      "middle": "add a message",
+      "end": "for agents in this sector to use."
+    },
+    "personal": "Your quick messages",
+    "shared": "Shared quick messages",
+    "delete": "Delete quick message",
+    "delete_confirm": "Are you sure you'd like to delete quick message?",
+    "delete_or_edit": "Delete or edit",
+    "shortcut_tooltip": "Type /{shortcut} to use",
+    "new": "New quick message",
+    "add": "Add new message",
+    "edit": "Edit message",
+    "available_shortcuts": "Available shortcuts",
+    "copilot": "Now ChatGPT is your CoPilot! Use the answers suggested by Artificial Intelligence to speed up your calls!",
+    "title_field_placeholder": "Ex: Welcome",
+    "shortcut_field_placeholder": "Ex: Hi",
+    "message_field_placeholder": "Type what you want",
+    "successfully_added": "Quick message added",
+    "successfully_updated": "Quick message updated"
+  },
+  "discard": "Delete",
+  "on_boarding": {
+    "title": "Getting started with Chats",
+    "title_sector": "Configure your support team!",
+    "description_sector": "Create a sector to manage a service team, you can create as many sectors as you want, so you can manage your service groups by departments, products or services.",
+    "title_queues": "Queues",
+    "description_queues": "Use queues to segment your calls by subject or products, if you don't want to, just create a queue.",
+    "title_tags": "Tags",
+    "description_tags": "Create tags to classify chats, tags can be used to generate reports, filter calls in the history and much more!",
+    "tooltip": "Chats is Weni's human service module, check out the step by step to get started"
+  },
+  "status_agent": "You are",
+  "copilot": {
+    "name": "CoPilot",
+    "loading": "The CoPilot is typing",
+    "error": "CoPilot is not responding",
+    "try_again": "Try again in a few moments, if it persists, notify the project administrator.",
+    "suggestion": "Answer suggested by CoPilot"
+  },
+  "settings": {
+    "messages": {
+      "title": "Messages",
+      "copilot": {
+        "status": {
+          "on": "Active",
+          "off": "Inactive"
+        },
+        "custom_rules": {
+          "title": "CoPilot rules",
+          "status": {
+            "on": "Use custom rules",
+            "off": "Do not use custom rules"
+          },
+          "explanation": "Write here instructions for the CoPilot as for example “use an emoji in the answer”"
+        },
+        "integration": {
+          "start": "To use, integrate with ChatGPT by ",
+          "middle": "clicking here, ",
+          "end": "the CoPilot offers prompt responses based on the contact's service history."
+        }
+      }
+    }
+  },
+  "config_chats": {
+    "manage_chats": "Manage chats",
+    "manage_description": "Add, view and manage sectors, queues, managers and agents within your organization.",
+    "project_configs": {
+      "bulk_transfer": {
+        "tooltip": "This function allows agents to transfer various contacts at once to a row or agent",
+        "switch_active": "Bulk contact transfer active",
+        "switch_inactive": "Bulk contact transfer disabled"
+      },
+      "queue_prioritization": {
+        "tooltip": "This function allows agents to choose the queues that will receive contacts, within those previously selected in the sector",
+        "switch_active": "Queue selection by agents active",
+        "switch_inactive": "Queue selection by agents inactive"
+      },
+      "block_transfer_to_off_agents": {
+        "switch_active": "Blocking transfers to offline agents active",
+        "switch_inactive": "Blocking transfers to offline agents inactive"
+      }
+    },
+    "new_sector": "New sector",
+    "agent_title": "Agents",
+    "contacts": "Contacts",
+    "open": "Open"
+  },
+  "new_sector": {
+    "sector_tip": "Create a sector to manage the fulfillment operation, including roles, agents and management hours",
+    "queues_tip": "The queues serve to organize the types of service within a sector, through the queues it is possible to create service groups, create at least one queue to manage a team of agents",
+    "tags_tip": "Tags are used to classify service characteristics and make it possible to search and filter chats from them, define tags that are relevant to your context",
+    "agent_tip": "Add members to your project to be able to set as a manager"
+  },
+  "your_orgs": "Your organizations",
+  "your_projects": "Your projects",
+  "inteligences": "Intelligences",
+  "enter": "Enter",
+  "no_matches_for_the_search": "There are no matches for the search",
+  "select_org": {
+    "choose_one": "Choose one to access Weni Chats"
+  },
+  "select_project": {
+    "choose_one": "Choose one to access Weni Chats"
+  }
+}
