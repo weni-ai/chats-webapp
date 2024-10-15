@@ -17,7 +17,6 @@ import { useConfig } from './store/modules/config';
 import { useProfile } from './store/modules/profile';
 import { useQuickMessages } from './store/modules/chats/quickMessages';
 import { useQuickMessageShared } from './store/modules/chats/quickMessagesShared';
-import { useRooms } from './store/modules/chats/rooms';
 import { useDashboard } from './store/modules/dashboard';
 
 import initHotjar from '@/plugins/Hotjar';
@@ -35,7 +34,6 @@ export default {
   },
 
   computed: {
-    ...mapState(useRooms, ['activeRoom']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDashboard, ['viewedAgent']),
     ...mapState(useQuickMessages, ['nextQuickMessages']),

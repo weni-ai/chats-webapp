@@ -30,7 +30,22 @@ export const useRooms = defineStore('rooms', {
       };
     },
 
-    setActiveRoom(room) {
+    async setActiveRoom(room) {
+      if (!room) {
+        this.activeRoom = null;
+        return;
+      }
+
+      if (!room.hasDetailInfo) {
+        room = { ...(await Room.getByUuid(room)), hasDetailInfo: true };
+      }
+      const roomIndex = this.rooms.findIndex(
+        (loadedRoom) => loadedRoom.uuid === room.uuid,
+      );
+
+      if (roomIndex === -1) this.rooms.unshift({ ...room });
+      else this.rooms[roomIndex] = room;
+
       this.activeRoom = room;
     },
 
@@ -56,7 +71,7 @@ export const useRooms = defineStore('rooms', {
 
       const userHasRoomQueue = !!profileStore.me.queues?.find(
         (permission) =>
-          permission.queue === room.queue.uuid && permission.role === 1,
+          permission.queue === room.queue?.uuid && permission.role === 1,
       );
 
       if (!room.user && userHasRoomQueue) return true;
