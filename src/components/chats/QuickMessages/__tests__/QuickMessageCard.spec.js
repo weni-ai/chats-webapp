@@ -5,8 +5,6 @@ import QuickMessageCard from '../QuickMessageCard.vue';
 
 import unnnic from '@/plugins/UnnnicSystem';
 
-import isMobile from 'is-mobile';
-
 const quickMessage = {
   title: 'Test Message',
   text: 'This is a test quick message',
@@ -119,7 +117,6 @@ describe('QuickMessageCard.vue', () => {
   });
 
   it('displays the correct tooltip when not on mobile', async () => {
-    wrapper.vm.isMobile = false;
     await wrapper.vm.$nextTick();
     expect(wrapper.vm.quickMessageCardInfo).toBe(
       wrapper.vm.$t('quick_messages.shortcut_tooltip', {
