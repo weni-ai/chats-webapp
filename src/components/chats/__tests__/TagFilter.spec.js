@@ -57,4 +57,11 @@ describe('TagFilter.vue', () => {
     expect(wrapper.emitted('input')).toBeTruthy();
     expect(wrapper.emitted('input')[0][0]).toEqual([]);
   });
+
+  it('emits "input" event with updated value when a tag is selected via space key', async () => {
+    const tagElement = wrapper.findAll('.tags span').at(0);
+    await tagElement.trigger('keypress.space');
+    expect(wrapper.emitted('input')).toBeTruthy();
+    expect(wrapper.emitted('input')[0][0]).toEqual(['tag1']);
+  });
 });

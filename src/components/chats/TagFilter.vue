@@ -41,7 +41,7 @@ export default {
     },
     tags: {
       type: Array,
-      default: () => [],
+      required: true,
     },
   },
   emits: ['input'],
