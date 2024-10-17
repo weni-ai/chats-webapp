@@ -3,6 +3,7 @@
     <p
       v-if="!!label"
       class="label"
+      data-testid="tag-filter-label"
     >
       {{ label }}
     </p>
@@ -18,6 +19,7 @@
           :textRight="tag.name"
           size="sm"
           :value="selected.includes(tag.uuid)"
+          data-testid="tag-checkbox"
         />
       </span>
     </section>
