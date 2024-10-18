@@ -51,6 +51,7 @@
   </section>
   <NewSectorModal
     v-model="showNewSectorModal"
+    data-testid="new-sector-modal"
     @close="showNewSectorModal = false"
   />
 </template>
