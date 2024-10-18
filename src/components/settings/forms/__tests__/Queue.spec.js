@@ -37,7 +37,7 @@ describe('FormQueue', () => {
       .findAllComponents({ name: 'unnnic-input' })
       .at(0);
     expect(inputQueue.exists()).toBe(true);
-    expect(inputQueue.props('label')).toMatch(/Nome da fila/gi);
-    expect(inputQueue.props('placeholder')).toMatch(/Exemplo: Pagamentos/gi);
+    expect(inputQueue.props('label')).toMatch(/Queue name/gi);
+    expect(inputQueue.props('placeholder')).toMatch(/Example: Payments/gi);
   });
 });

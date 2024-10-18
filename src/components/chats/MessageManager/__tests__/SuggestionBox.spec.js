@@ -39,7 +39,7 @@ describe('SuggestionBox', () => {
         search: '/',
       });
 
-      expect(wrapper.text()).toContain('Atalhos disponíveis');
+      expect(wrapper.text()).toContain('Available shortcuts');
     });
 
     it('should not open when user do not typed', () => {
@@ -64,7 +64,7 @@ describe('SuggestionBox', () => {
         search: '@fake-search',
       });
 
-      expect(wrapper.text()).toContain('Atalhos disponíveis');
+      expect(wrapper.text()).toContain('Available shortcuts');
     });
   });
 
