@@ -18,6 +18,7 @@
           />
           <span
             class="username"
+            data-testid="contact-username"
             @click="showContactInfo"
             @keypress.enter="showContactInfo"
           >
@@ -29,6 +30,7 @@
       <span
         v-if="room.user && !!closeButtonTooltip"
         class="clickable"
+        data-testid="close"
         @click="$emit('close')"
         @keypress.enter="$emit('close')"
       >
@@ -49,9 +51,9 @@
       v-if="!room.is_active"
       class="header-info-message"
     >
-      <span class="message">{{
-        $d(room.ended_at ? new Date(room.ended_at) : new Date(), 'long')
-      }}</span>
+      <span class="message">
+        {{ $d(room.ended_at ? new Date(room.ended_at) : new Date(), 'long') }}
+      </span>
     </section>
 
     <section
@@ -66,6 +68,7 @@
     <div
       v-if="alertNetwork"
       class="no-internet-connection"
+      data-testid="no-internet-connection"
       style="display: flex"
     >
       <div class="c-loader">
@@ -79,27 +82,32 @@
       <span
         class="alert-text"
         style="margin-right: 4px"
+        data-testid="reconnect"
         @click="reconnect"
-        ><b>{{ $t('alert_no_internet_connection.message') }}</b>
+      >
+        <b>{{ $t('alert_no_internet_connection.message') }}</b>
         {{ $t('alert_no_internet_connection.verify_connection') }}
-        <b style="cursor: pointer"
-          ><u>{{ $t('alert_no_internet_connection.reconnect') }}</u></b
-        >
+        <b style="cursor: pointer">
+          <u>{{ $t('alert_no_internet_connection.reconnect') }}</u>
+        </b>
       </span>
     </div>
     <div
       v-if="alert"
       class="header-info-message"
+      data-testid="header-info-message"
       style="display: flex"
     >
       <span
         class="alert-text"
+        data-testid="alert-text"
         style="margin-right: 4px"
         @click="openSendFlow"
-        >{{ $t('alert_last_message_date.message') }}
-        <u style="cursor: pointer">{{
-          $t('alert_last_message_date.message_send_flow')
-        }}</u></span
+      >
+        {{ $t('alert_last_message_date.message') }}
+        <u style="cursor: pointer">
+          {{ $t('alert_last_message_date.message_send_flow') }}
+        </u></span
       >
       <UnnnicToolTip
         enabled

@@ -60,7 +60,7 @@ describe('SuggestionBox', () => {
         search: '@fake-search',
       });
 
-      expect(wrapper.text()).toContain('Available shortcut');
+      expect(wrapper.text()).toContain('Available shortcuts');
     });
   });
 

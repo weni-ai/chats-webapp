@@ -3,6 +3,7 @@
     <!-- eslint-disable vue/no-v-html -->
     <strong
       :class="['chat-feedback', scheme ? `chat-feedback--${scheme}` : '']"
+      data-testid="chat-feedback"
       v-html="treatedFeedback"
     />
   </div>
