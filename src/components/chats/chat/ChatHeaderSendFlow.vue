@@ -1,9 +1,10 @@
 <template>
   <div class="chat-header-send-flow">
-    <p>
+    <p data-testid="send-flow-text">
       {{ $t('alert_last_message_date.message') }}
       <a
         class="chat-header-send-flow__trigger"
+        data-testid="send-flow-trigger"
         @click="$emit('send-flow')"
         @keypress.enter="$emit('send-flow')"
       >
@@ -15,6 +16,7 @@
       :text="$t('alert_last_message_date.tip')"
       side="bottom"
       maxWidth="20rem"
+      data-testid="tooltip"
     >
       <UnnnicIconSvg
         icon="alert-circle-1-1"

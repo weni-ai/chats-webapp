@@ -1,6 +1,9 @@
 <template>
   <section class="chat-classifier">
-    <ChatClassifierLoading v-if="loading" />
+    <ChatClassifierLoading
+      v-if="loading"
+      data-testid="chat-classifier-loading"
+    />
     <TagGroup
       v-else
       v-model="selected"
@@ -8,6 +11,7 @@
       :tags="tags"
       scheme="aux-purple"
       selectable
+      data-testid="tag-group"
     />
   </section>
 </template>
