@@ -27,7 +27,7 @@ describe('FormSectorOld', () => {
     expect(titles.at(1).text()).toMatch(
       /Service managers Add members to your project to be able to set as a manager/gi,
     );
-    expect(titles.at(2).text()).toMatch(/Additional options/gi);
+    expect(titles.at(2).text()).toMatch(/Extras options/gi);
     expect(titles.at(3).text()).toMatch(/Definitions of the workday/gi);
 
     expect(titles.length).toBe(4);
