@@ -19,8 +19,8 @@ const messages = {
 };
 
 const i18n = createI18n({
-  locale: 'pt-br',
-  fallbackLocale: 'pt-br',
+  locale: 'en',
+  fallbackLocale: 'en',
   messages,
   dateTimeFormats: {
     'pt-br': {
