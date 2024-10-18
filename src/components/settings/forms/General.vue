@@ -184,6 +184,7 @@ export default {
 
   data() {
     return {
+      managersPage: 0,
       selectedManager: [],
       removedManagers: [],
       message: '',
@@ -322,15 +323,19 @@ export default {
     },
 
     async listProjectManagers() {
-      // Currently these requests return the same data because of their disabled filters
+      let hasNext = false;
+      try {
+        const offset = this.managersPage * 20;
+        const { results, next } = await Project.managers(offset);
+        this.managersPage += 1;
+        this.managers = this.managers.concat(results);
 
-      // const managers = (await Project.managers()).results.concat(
-      //   (await Project.admins()).results,
-      // );
-
-      const managers = await Project.managers();
-
-      this.managers = managers.results;
+        hasNext = next;
+      } finally {
+        if (hasNext) {
+          this.listProjectManagers();
+        }
+      }
     },
 
     hourValidate(hour) {

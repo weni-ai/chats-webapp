@@ -83,6 +83,7 @@ export default {
 
   data() {
     return {
+      agentsPage: 0,
       editingAutomaticMessage: false,
       loadingInfo: false,
       agentsOptions: [],
@@ -131,7 +132,19 @@ export default {
       });
     },
     async listProjectAgents() {
-      this.agentsOptions = (await Project.agents()).results;
+      let hasNext = false;
+      try {
+        const offset = this.agentsPage * 20;
+        const { results, next } = await Project.agents(offset);
+        this.agentsPage += 1;
+        this.agentsOptions = this.agentsOptions.concat(results);
+
+        hasNext = next;
+      } finally {
+        if (hasNext) {
+          this.listProjectAgents();
+        }
+      }
     },
     async listQueueAgents() {
       const response = await Queue.agents(this.queue.uuid, 0, 9999);
