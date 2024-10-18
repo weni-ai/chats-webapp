@@ -11,7 +11,7 @@
       :text="$t('config_chats.new_sector')"
       icon="add"
       class="sectors__new-sector-card"
-      @click="navigate('sectors.new')"
+      @click="showNewSectorModal = true"
     />
 
     <UnnnicCardProject
@@ -49,6 +49,11 @@
       width="40"
     />
   </section>
+  <NewSectorModal
+    v-model="showNewSectorModal"
+    data-testid="new-sector-modal"
+    @close="showNewSectorModal = false"
+  />
 </template>
 
 <script>
@@ -59,11 +64,20 @@ import { useSettings } from '@/store/modules/settings';
 
 import SettingsSectionHeader from './SettingsSectionHeader.vue';
 
+import NewSectorModal from './Sectors/New/NewSectorModal.vue';
+
 export default {
   name: 'SettingsSectors',
 
   components: {
     SettingsSectionHeader,
+    NewSectorModal,
+  },
+
+  data() {
+    return {
+      showNewSectorModal: false,
+    };
   },
 
   computed: {

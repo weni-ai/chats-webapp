@@ -70,7 +70,7 @@ describe('SettingsHeader.vue', () => {
     );
   });
 
-  it('should render the card for creating a new sector', () => {
+  it('should render the card for creating a new sector', async () => {
     const newSectorCard = wrapper.findComponent(
       '[data-testid=settings-sectors-blank-card]',
     );
@@ -82,9 +82,11 @@ describe('SettingsHeader.vue', () => {
     expect(newSectorCard.props('icon')).toBe('add');
 
     newSectorCard.trigger('click');
-    expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
-      name: 'sectors.new',
-    });
+
+    await wrapper.vm.$nextTick();
+
+    const newSectorModal = wrapper.find('[data-testid="new-sector-modal"]');
+    expect(newSectorModal.exists()).toBe(true);
   });
 
   it('should render the correct number of card components', () => {
