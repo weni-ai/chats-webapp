@@ -23,6 +23,6 @@ pnpm-debug.log*
 *.sw?
 
 # Locales files
-**/locales/*.json
-!**/locales/translations.json
+# **/locales/*.json
+# !**/locales/translations.json
 
