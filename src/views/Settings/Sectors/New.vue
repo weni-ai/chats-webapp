@@ -93,6 +93,7 @@ export default {
 
   data() {
     return {
+      managersPage: 0,
       sector: {
         uuid: '',
         name: '',
@@ -142,27 +143,26 @@ export default {
   },
 
   beforeMount() {
-    this.listProjectManagers();
-    this.listProjectAgents();
+    this.listProjectManagersAndAgents();
   },
 
   methods: {
-    async listProjectManagers() {
-      const managers = (await Project.managers()).results.concat(
-        (await Project.admins()).results,
-      );
-      this.projectManagers = managers;
+    async listProjectManagersAndAgents() {
+      let hasNext = false;
+      try {
+        const offset = this.managersPage * 20;
+        const { results, next } = await Project.managers(offset);
+        this.managersPage += 1;
+        this.projectManagers = this.projectManagers.concat(results);
+        this.projectAgents = this.projectAgents.concat(results);
+        hasNext = next;
+      } finally {
+        if (hasNext) {
+          this.listProjectManagersAndAgents();
+        }
+      }
     },
-    async listProjectAgents() {
-      const agents = (await Project.agents()).results.concat(
-        (await Project.admins()).results,
-      );
-      const uniqueAgents = [
-        ...new Map(agents.map((agent) => [agent.uuid, agent])).values(),
-      ];
 
-      this.projectAgents = uniqueAgents;
-    },
     async nextStep() {
       const steps = {
         [Steps.General]: this.handleGeneralNextStep,
