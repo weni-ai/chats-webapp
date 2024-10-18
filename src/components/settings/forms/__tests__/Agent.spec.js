@@ -22,7 +22,9 @@ describe('FormAgent', () => {
     const titles = wrapper.findAll('.title');
     const tooltips = wrapper.findAllComponents({ name: 'unnnic-tooltip' });
 
-    expect(titles.at(0).text()).toMatch(/Adicionar agentes/gi);
+    expect(titles.at(0).text()).toMatch(
+      /Add agents Add members to your project to be able to set as a manager/gi,
+    );
 
     expect(titles.length).toBe(1);
     expect(tooltips.length).toBe(1);
@@ -35,7 +37,7 @@ describe('FormAgent', () => {
     const selects = wrapper.findAllComponents({ name: 'unnnic-select-smart' });
 
     expect(inputAgentsLabel.exists()).toBe(true);
-    expect(inputAgentsLabel.props('label')).toMatch(/Selecionar agente/gi);
+    expect(inputAgentsLabel.props('label')).toMatch(/Select agent/gi);
     expect(selects.length).toBe(1);
   });
 

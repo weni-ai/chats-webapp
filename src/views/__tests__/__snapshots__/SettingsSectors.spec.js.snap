@@ -44,7 +44,7 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
       percent="0"
       rating="0"
       scheme="aux-blue"
-      text="Novo setor"
+      text="New sector"
       type="blank"
     />
     
@@ -90,7 +90,7 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
               class="unnnic-tag__label"
               data-v-5a2abba9=""
             >
-              Abrir
+              Open
             </span>
             <!---->
           </div>
@@ -120,7 +120,7 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
             class="title"
             data-v-47cf77d6=""
           >
-            Agentes
+            Agents
           </div>
           <div
             class="content"
@@ -156,7 +156,7 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
             class="title"
             data-v-47cf77d6=""
           >
-            Contatos
+            Contacts
           </div>
           <div
             class="content"

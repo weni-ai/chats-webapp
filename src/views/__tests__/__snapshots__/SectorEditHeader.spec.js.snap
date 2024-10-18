@@ -10,7 +10,7 @@ exports[`SectorEditHeader.vue > Should match the snapshot 1`] = `
     data-testid="header-title"
     data-v-573bd910=""
   >
-    Setor Sector 1
+    Sector Sector 1
   </h1>
   <p
     class="header__description"

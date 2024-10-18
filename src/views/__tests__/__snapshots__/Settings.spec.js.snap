@@ -87,7 +87,7 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
         <div
           class="unnnic-card-blank__content__text"
         >
-          Novo setor
+          New sector
         </div>
       </div>
     </div>
