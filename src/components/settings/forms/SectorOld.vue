@@ -73,11 +73,11 @@
           />
         </div>
         <!-- <unnnic-button
-          text="Selecionar"
-          type="secondary"
-          @click="addSectorManager"
-          :disabled="!selectedManager"
-        /> -->
+            text="Selecionar"
+            type="secondary"
+            @click="addSectorManager"
+            :disabled="!selectedManager"
+          /> -->
       </div>
 
       <section
@@ -90,7 +90,7 @@
           :name="`${manager.user.first_name} ${manager.user.last_name}`"
           :email="manager.user.email"
           :avatarUrl="photo(manager.user.photo_url)"
-          :roleName="$t('manager')"
+          roleName="Gerente"
           @remove="removeManager(manager.uuid)"
         />
       </section>
@@ -370,7 +370,7 @@ export default {
       const finalHour = hour.end;
       if (inicialHour > finalHour) {
         this.validHour = false;
-        this.message = this.$t('sector_invalid_work_hour');
+        this.message = 'Horário de início não pode ser maior que horário final';
       } else {
         this.validHour = true;
       }

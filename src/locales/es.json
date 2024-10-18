@@ -86,7 +86,8 @@
   "sectors": "Sectores",
   "sector": {
     "title": "Sector",
-    "geral": "General",
+    "general": "General",
+    "extra_options": "Opciones adicionales",
     "queues": "Colas",
     "tags": "Etiquetas",
     "add": "Agregar nuevo sector",
@@ -114,7 +115,7 @@
       }
     },
     "additional_options": {
-      "title": "Opciones adicionales",
+      "title": "Opciones extras",
       "template_message": {
         "switch_active": "Activación de plantillas de mensajes activos",
         "switch_disabled": "Activación de plantillas de mensajes deshabilitada"
@@ -512,7 +513,8 @@
     "shortcut_field_placeholder": "Ej: Hola",
     "message_field_placeholder": "Introduzca lo que quiere",
     "successfully_added": "Mensaje rápido agregado",
-    "successfully_updated": "Mensaje rápido actualizado"
+    "successfully_updated": "Mensaje rápido actualizado",
+    "error": "Error al configurar el mensaje rápido"
   },
   "discard": "Descartar",
   "on_boarding": {
@@ -558,9 +560,11 @@
     }
   },
   "config_chats": {
-    "manage_chats": "Gestionar chats",
-    "manage_description": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización.",
+    "title": "Configuración de chat",
+    "section_sectors_title": "Sectores en {project}",
+    "section_sectors_subtitle": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización.",
     "project_configs": {
+      "title": "Ajustes de proyectos",
       "bulk_transfer": {
         "tooltip": "Esta función permite a los agentes transferir varios contactos a la vez a una fila o agente",
         "switch_active": "Transferencia de contactos en masa activa",
@@ -574,6 +578,21 @@
       "block_transfer_to_off_agents": {
         "switch_active": "Bloqueo de transferencias a agentes fuera de línea activo",
         "switch_inactive": "Bloqueo de transferencias a agentes fuera de línea inactivo"
+      }
+    },
+    "edit_sector": {
+      "description": "Determinar la configuración del equipo general y la jornada laboral",
+      "tag_already_exists": "Ya existe una etiqueta con ese nombre",
+      "invalid_hours": "La hora de inicio no puede ser mayor o igual a la hora de finalización."
+    },
+    "queues": {
+      "in_sector": "Fila en el sector {sector}",
+      "new": "Nueva cola",
+      "info": "Las colas son grupos de atención dentro de un sector; es posible dirigir contactos de un flujo a una cola específica",
+      "message": {
+        "create": "Fila creada con éxito",
+        "update": "Fila actualizada con éxito",
+        "error": "Error al configurar los ajustes de la fila"
       }
     },
     "new_sector": "Nuevo sector",
