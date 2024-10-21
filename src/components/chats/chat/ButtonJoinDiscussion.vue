@@ -4,7 +4,7 @@
     :text="$t('discussions.join')"
     type="primary"
     :loading="isLoading"
-    @click="joinDiscussion"
+    @click="joinDiscussion()"
   />
 </template>
 
