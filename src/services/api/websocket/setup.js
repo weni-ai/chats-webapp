@@ -2,6 +2,7 @@ import WS from '@/services/api/websocket/socket';
 import env from '@/utils/env';
 
 import listeners from './listeners';
+import { useDashboard } from '@/store/modules/dashboard';
 
 export default class WebSocketSetup {
   THIRTY_SECONDS = 30000;
@@ -12,15 +13,17 @@ export default class WebSocketSetup {
   }
 
   buildUrl() {
+    const dashboardStore = useDashboard();
     const { appToken, appProject } = this.app;
-    const { viewedAgent } = this.app.$route.params;
+
+    const { viewedAgent } = dashboardStore;
 
     const baseUrl = env('CHATS_WEBSOCKET_URL');
     const commonParams = `Token=${appToken}&project=${appProject}`;
-    const agentWSUrl = `${baseUrl}/manager/rooms?${commonParams}&user_email=${viewedAgent}`;
+    const agentWSUrl = `${baseUrl}/manager/rooms?${commonParams}&user_email=${viewedAgent.email}`;
     const managerWSUrl = `${baseUrl}/agent/rooms?${commonParams}`;
 
-    return viewedAgent ? agentWSUrl : managerWSUrl;
+    return viewedAgent.email ? agentWSUrl : managerWSUrl;
   }
 
   connect() {
