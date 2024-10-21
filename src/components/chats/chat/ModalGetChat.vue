@@ -113,7 +113,6 @@ export default {
     },
 
     async getChat() {
-      if (this.whenGetChat) this.whenGetChat();
       let me = this.me.email;
 
       if (!me) {
@@ -135,10 +134,7 @@ export default {
         Room.updateReadMessages(this.room.uuid, true);
       }
 
-      this.setViewedAgent({
-        email: '',
-        name: '',
-      });
+      if (this.whenGetChat) this.whenGetChat();
 
       this.close();
     },

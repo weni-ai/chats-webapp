@@ -177,6 +177,10 @@ export default {
       });
     },
     whenGetChat() {
+      this.setViewedAgent({
+        email: '',
+        name: '',
+      });
       this.$router.push({ name: 'room', params: { roomId: this.room.uuid } });
     },
   },
