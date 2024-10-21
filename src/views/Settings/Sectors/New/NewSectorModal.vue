@@ -23,12 +23,22 @@
         :pages="newSectorPages"
         :activePage="activePage"
       />
+      <General
+        v-show="activePage === $t('sector.general')"
+        v-model="sector"
+        class="general-form"
+      />
     </template>
   </UnnnicDrawer>
 </template>
 
 <script>
+import General from '@/components/settings/forms/General.vue';
 export default {
+  name: 'NewSectorModal',
+  components: {
+    General,
+  },
   props: {
     modelValue: {
       type: Boolean,
@@ -45,6 +55,20 @@ export default {
         this.$t('sector.queues'),
         this.$t('quick_messages.title'),
       ],
+      sector: {
+        uuid: '',
+        name: '',
+        can_trigger_flows: '',
+        can_edit_custom_fields: '',
+        sign_messages: '',
+        workingDay: {
+          start: '',
+          end: '',
+          dayOfWeek: 'week-days',
+        },
+        managers: [],
+        maxSimultaneousChatsByAgent: '',
+      },
     };
   },
   computed: {
@@ -62,6 +86,9 @@ export default {
 
 <style lang="scss" scoped>
 .new-sector-drawer {
+  :deep(.form-sector-container) {
+    margin-top: $unnnic-spacing-sm;
+  }
   :deep(.unnnic-navigator-pages__page) {
     max-width: 100%;
   }

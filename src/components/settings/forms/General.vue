@@ -9,7 +9,7 @@
         class="form-section"
         data-testid="sector-name-section"
       >
-        <h2 class="title">
+        <h2 class="form-section__title">
           {{ $t('sector.add') }}
           <UnnnicToolTip
             enabled
@@ -140,7 +140,10 @@
         />
       </section>
     </form>
-    <section class="form-actions">
+    <section
+      v-if="isEditing"
+      class="form-actions"
+    >
       <UnnnicButton
         :text="$t('cancel')"
         type="tertiary"
@@ -266,7 +269,7 @@ export default {
     },
 
     async removeManager(managerUuid) {
-      await Sector.removeManager(managerUuid);
+      if (this.isEditing) await Sector.removeManager(managerUuid);
       this.removeManagerFromTheList(managerUuid);
     },
 
