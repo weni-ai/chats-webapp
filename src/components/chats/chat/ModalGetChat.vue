@@ -98,6 +98,7 @@ export default {
   methods: {
     ...mapActions(useProfile, ['setMe']),
     ...mapActions(useRooms, ['setActiveRoom', 'addRoom']),
+    ...mapActions(useDashboard, ['setViewedAgent']),
 
     close() {
       this.$emit('closeModal');
@@ -133,6 +134,11 @@ export default {
       if (this.room.user) {
         Room.updateReadMessages(this.room.uuid, true);
       }
+
+      this.setViewedAgent({
+        email: '',
+        name: '',
+      });
 
       this.close();
     },
