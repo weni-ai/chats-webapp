@@ -59,7 +59,9 @@ export default defineConfig({
     setupFiles: './setupVitest.js',
     environment: 'jsdom',
     coverage: {
+      provider: 'istanbul',
       reporter: ['text', 'json', 'html'],
+      reportsDirectory: './coverage',
     },
   },
   css: {

@@ -34,6 +34,7 @@ describe('DiscussionSession.vue', () => {
     discussionsStore.discussionsCloseds = [
       { uuid: '1', created_on: '2024-10-10', created_by: 'John' },
     ];
+
     wrapper.vm.$data.isMobileFlag = true;
 
     await wrapper.vm.$nextTick();
