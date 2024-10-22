@@ -91,6 +91,7 @@
 import General from '@/components/settings/forms/General.vue';
 import ExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
 import Queue from '@/components/settings/forms/Queue.vue';
+import Sector from '@/services/api/resources/settings/sector';
 
 import isMobile from 'is-mobile';
 
@@ -121,9 +122,9 @@ export default {
       sector: {
         uuid: '',
         name: '',
-        can_trigger_flows: false,
-        can_edit_custom_fields: false,
-        sign_messages: false,
+        can_trigger_flows: true,
+        can_edit_custom_fields: true,
+        sign_messages: true,
         workingDay: {
           start: '',
           end: '',
@@ -144,7 +145,35 @@ export default {
     },
   },
   methods: {
-    finish() {
+    async finish() {
+      const {
+        can_edit_custom_fields,
+        can_trigger_flows,
+        sign_messages,
+        name,
+        workingDay,
+        maxSimultaneousChatsByAgent,
+        managers,
+      } = this.sector;
+
+      const createSectorBody = {
+        can_edit_custom_fields,
+        can_trigger_flows,
+        sign_messages,
+        name,
+        work_start: workingDay.start,
+        work_end: workingDay.end,
+        rooms_limit: maxSimultaneousChatsByAgent,
+      };
+
+      const createdSector = await Sector.create(createSectorBody);
+
+      await Promise.all(
+        managers.map((manager) => {
+          return Sector.addManager(createdSector.uuid, manager.uuid);
+        }),
+      );
+
       this.$refs.newSectorDrawer.close();
     },
   },
