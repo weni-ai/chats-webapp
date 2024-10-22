@@ -39,6 +39,9 @@ export default defineConfig({
       strategies: 'injectManifest',
       srcDir: 'src',
       filename: 'service-worker.js',
+      injectManifest: {
+        maximumFileSizeToCacheInBytes: 10000000,
+      },
       manifest: {
         name: 'Weni Chats',
         short_name: 'Weni',
