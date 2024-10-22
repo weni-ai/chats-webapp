@@ -88,6 +88,7 @@ describe('ModalBulkTransfer', () => {
 
     it('should disable transfer button when loading bulk transfer', async () => {
       await wrapper.setData({
+        isLoadingBulkTransfer: true,
         selectedQueue: [{ value: '1', label: 'Queue' }],
       });
 

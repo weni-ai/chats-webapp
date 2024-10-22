@@ -185,6 +185,7 @@ export default {
 <style lang="scss" scoped>
 .sector-queues-form {
   display: grid;
+  gap: $unnnic-spacing-sm;
 
   &__automatic-message {
     max-width: 100% !important;

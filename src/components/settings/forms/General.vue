@@ -152,7 +152,7 @@
       <UnnnicButton
         :text="$t('save')"
         :disabled="!validForm"
-        data-testid="save-button"
+        data-testid="general-save-button"
         @click.stop="saveSector()"
       />
     </section>

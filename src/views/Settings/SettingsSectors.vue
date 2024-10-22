@@ -50,6 +50,7 @@
     />
   </section>
   <NewSectorModal
+    v-if="showNewSectorModal"
     v-model="showNewSectorModal"
     data-testid="new-sector-modal"
     @close="showNewSectorModal = false"
