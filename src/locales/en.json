@@ -589,11 +589,16 @@
       "in_sector": "Queue in sector {sector}",
       "new": "New queue",
       "info": "Queues are support groups within a sector; it is possible to direct contacts from a flow to a specific queue",
+      "hint": "Queues are support groups within the sector; you can create new queues or edit them whenever you want.",
+      "queue_definitions": "Queue settings",
       "message": {
         "create": "Queue successfully created",
         "update": "Queue successfully updated",
         "error": "Failed to set queue settings"
       }
+    },
+    "copilot": {
+      "hint": "The Co-pilot is your agent's intelligent assistant; it can be activated later."
     },
     "new_sector": "New sector",
     "agent_title": "Agents",

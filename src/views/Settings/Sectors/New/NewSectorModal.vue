@@ -29,22 +29,59 @@
           v-model="sector"
           class="general-form"
         />
-        <ExtraOptions v-show="activePage === $t('sector.extra_options')" />
+        <ExtraOptions
+          v-show="activePage === $t('sector.extra_options')"
+          v-model="sector"
+        />
         <section
           v-show="activePage === $t('sector.queues')"
           class="forms__queue"
         >
           <p class="forms__hint">
-            As filas são grupos de atendimento dentro do setor, você poderá
-            criar novas filas ou editar quando quiser.
+            {{ $t('config_chats.queues.hint') }}
           </p>
-          <h1 class="forms__title">Definições da fila</h1>
-          <Queue v-model="sector" />
+          <h1 class="forms__title">
+            {{ $t('config_chats.queues.queue_definitions') }}
+          </h1>
+          <Queue
+            v-model="sectorQueue"
+            :sector="sector"
+          />
         </section>
-        <ListSectorMessages
+
+        <section
           v-show="activePage === $t('quick_messages.title')"
-          :sector="sector"
-        />
+          class="forms__quick-message"
+        >
+          <section class="forms__quick-message__copilot">
+            <p class="forms__title">
+              {{ $t('copilot.name') }}
+            </p>
+            <UnnnicSwitch
+              :modelValue="false"
+              size="small"
+              :textRight="$t(`settings.messages.copilot.status.off`)"
+              data-testid="copilot-switch"
+              disabled
+            />
+            <p class="forms__hint">
+              {{ $t('config_chats.copilot.hint') }}
+            </p>
+          </section>
+          <section class="forms__quick-message__container">
+            <h1 class="forms__title">
+              {{ $t('quick_messages.title') }}
+            </h1>
+            <UnnnicSimpleCard
+              class="forms__quick-message__card"
+              :title="`Mensagem de exemplo`"
+              :text="`As mensagens rápidas são textos prontos que facilitam a padronização de atendimento, todos os agentes deste setor poderão utilizar as mensagens, você poderá cadastrar novas mensagens a seguir.`"
+              clickable
+              data-testid="quick-message-card"
+            >
+            </UnnnicSimpleCard>
+          </section>
+        </section>
       </section>
     </template>
   </UnnnicDrawer>
@@ -54,14 +91,15 @@
 import General from '@/components/settings/forms/General.vue';
 import ExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
 import Queue from '@/components/settings/forms/Queue.vue';
-import ListSectorMessages from '@/components/settings/lists/ListSectorMessages.vue';
+
+import isMobile from 'is-mobile';
+
 export default {
   name: 'NewSectorModal',
   components: {
     General,
     ExtraOptions,
     Queue,
-    ListSectorMessages,
   },
   props: {
     modelValue: {
@@ -72,6 +110,7 @@ export default {
   emits: ['close'],
   data() {
     return {
+      isMobile,
       activePageIndex: 0,
       newSectorPages: [
         this.$t('sector.general'),
@@ -82,9 +121,9 @@ export default {
       sector: {
         uuid: '',
         name: '',
-        can_trigger_flows: '',
-        can_edit_custom_fields: '',
-        sign_messages: '',
+        can_trigger_flows: false,
+        can_edit_custom_fields: false,
+        sign_messages: false,
         workingDay: {
           start: '',
           end: '',
@@ -92,6 +131,10 @@ export default {
         },
         managers: [],
         maxSimultaneousChatsByAgent: '',
+      },
+      sectorQueue: {
+        currentAgents: [],
+        agents: 0,
       },
     };
   },
@@ -113,16 +156,45 @@ export default {
   .forms {
     margin-top: $unnnic-spacing-sm;
 
-    &__queue {
-      display: grid;
-      gap: 16px;
-    }
-
     &__title {
       font-weight: $unnnic-font-weight-bold;
       color: $unnnic-color-neutral-dark;
       font-size: $unnnic-font-size-body-lg;
       line-height: $unnnic-line-height-large * 1.5;
+    }
+
+    &__hint {
+      font-size: $unnnic-font-size-body-gt;
+      line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
+    }
+
+    &__queue {
+      display: grid;
+      gap: $unnnic-spacing-sm;
+    }
+
+    &__quick-message {
+      display: grid;
+      gap: $unnnic-spacing-sm;
+
+      &__copilot {
+        border: 1px solid $unnnic-color-neutral-soft;
+        border-radius: $unnnic-border-radius-md;
+        padding: $unnnic-spacing-sm;
+        display: grid;
+        gap: $unnnic-spacing-sm;
+      }
+
+      &__container {
+        display: grid;
+        gap: $unnnic-spacing-sm;
+      }
+
+      :deep(.forms__quick-message__card) {
+        .unnnic-simple-card-header-container__title {
+          color: $unnnic-color-neutral-darkest;
+        }
+      }
     }
   }
   :deep(.unnnic-navigator-pages__page) {

@@ -589,11 +589,16 @@
       "in_sector": "Fila no setor {sector}",
       "new": "Nova fila",
       "info": "As filas são grupos de atendimento dentro de um setor, é possível direcionar contatos de um fluxo para uma fila específica",
+      "hint": "As filas são grupos de atendimento dentro do setor, você poderá criar novas filas ou editar quando quiser",
+      "queue_definitions": "Definições da fila",
       "message": {
         "create": "Fila criada com sucesso",
         "update": "Fila atualizada com sucesso",
         "error": "Falha ao definir configurações da fila"
       }
+    },
+    "copilot": {
+      "hint": "O Co-pilot é o assistente inteligente do seu agente, ele poderá ser ativo mais tarde."
     },
     "new_sector": "Novo setor",
     "agent_title": "Agentes",
