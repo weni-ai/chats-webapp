@@ -17,12 +17,15 @@ jobs:
             if grep -qs -e '^.*.*-develop' <<< "${TAG}" ; then
               echo "Found environment: DEVELOP - ${TAG}"
               echo "MANIFESTS_ENVIRONMENT=develop" | tee "${GITHUB_ENV}"
+              export "MANIFESTS_ENVIRONMENT=develop"
             elif grep -qs -e '^.*.*-staging' <<< "${TAG}" ; then
               echo "Found environment: STAGING - ${TAG}"
               echo "MANIFESTS_ENVIRONMENT=staging" | tee -a "${GITHUB_ENV}"
+              export "MANIFESTS_ENVIRONMENT=staging"
             elif grep -qs -e '^.*.*' <<< "${TAG}" ; then
               echo "No environment found, assuming: PRODUCTION - ${TAG}"
               echo "MANIFESTS_ENVIRONMENT=production" | tee -a "${GITHUB_ENV}"
+              export "MANIFESTS_ENVIRONMENT=production"
             else
               echo 'Not a valid tag. Skipping...'
               exit 1
