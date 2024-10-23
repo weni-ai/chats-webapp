@@ -28,7 +28,8 @@ FROM ${OLD_IMAGE} AS old_css
 #    && cp /usr/share/nginx/html/chats/assets/*.css /tmp/old_css
 
 FROM nginxinc/nginx-unprivileged:1.25-alpine
-ARG OLD_IMAGE=$OLD_IMAGE
+ARG OLD_IMAGE=${OLD_IMAGE}
+ARG KEEP_DAYS=${KEEP_DAYS}
 
 COPY --chown=nginx:nginx docker/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY --from=builder --chown=nginx:nginx /app/dist /usr/share/nginx/html/chats/
