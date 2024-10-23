@@ -40,7 +40,7 @@ COPY docker-entrypoint.sh /
 RUN mv /usr/share/nginx/html/chats/index.html /usr/share/nginx/html/chats/index.html.tmpl \
     && cd /usr/share/nginx/html/chats/ \
     && ln -s /tmp/index.html \
-    && find "/usr/share/nginx/html/chats/assets/" -maxdepth 1 -mtime +${KEEP_DAYS} -name "*.css" -exec rm -rf '{}' ';'
+    && find "/usr/share/nginx/html/chats/assets/" -maxdepth 1 -mtime +30 -name "*.css" -exec rm -rf '{}' ';'
 
 EXPOSE 8080
 ENTRYPOINT ["/docker-entrypoint.sh"]
