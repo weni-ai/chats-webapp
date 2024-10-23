@@ -498,6 +498,8 @@
       "middle": "add a message",
       "end": "for agents in this sector to use."
     },
+    "example_message": "Example message",
+    "example_message_description": " Quick messages are ready-made texts that help standardize customer service. All agents in this sector will be able to use these messages, and you can register new messages below.",
     "personal": "Your quick messages",
     "shared": "Shared quick messages",
     "delete": "Delete quick message",

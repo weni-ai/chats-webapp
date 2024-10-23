@@ -26,11 +26,13 @@
       <section class="forms">
         <General
           v-show="activePage === $t('sector.general')"
+          ref="sectorGeneral"
           v-model="sector"
           class="general-form"
         />
         <ExtraOptions
           v-show="activePage === $t('sector.extra_options')"
+          ref="sectorExtraOptions"
           v-model="sector"
         />
         <section
@@ -43,7 +45,8 @@
           <h1 class="forms__title">
             {{ $t('config_chats.queues.queue_definitions') }}
           </h1>
-          <Queue
+          <FormQueue
+            ref="sectorQueue"
             v-model="sectorQueue"
             :sector="sector"
           />
@@ -74,8 +77,8 @@
             </h1>
             <UnnnicSimpleCard
               class="forms__quick-message__card"
-              :title="`Mensagem de exemplo`"
-              :text="`As mensagens rápidas são textos prontos que facilitam a padronização de atendimento, todos os agentes deste setor poderão utilizar as mensagens, você poderá cadastrar novas mensagens a seguir.`"
+              :title="$t('quick_messages.example_message')"
+              :text="$t('quick_messages.example_message_description')"
               clickable
               data-testid="quick-message-card"
             >
@@ -90,8 +93,9 @@
 <script>
 import General from '@/components/settings/forms/General.vue';
 import ExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
-import Queue from '@/components/settings/forms/Queue.vue';
+import FormQueue from '@/components/settings/forms/Queue.vue';
 import Sector from '@/services/api/resources/settings/sector';
+import Queue from '@/services/api/resources/settings/queue';
 
 import isMobile from 'is-mobile';
 
@@ -100,7 +104,7 @@ export default {
   components: {
     General,
     ExtraOptions,
-    Queue,
+    FormQueue,
   },
   props: {
     modelValue: {
@@ -134,6 +138,7 @@ export default {
         maxSimultaneousChatsByAgent: '',
       },
       sectorQueue: {
+        name: '',
         currentAgents: [],
         agents: 0,
       },
@@ -168,9 +173,27 @@ export default {
 
       const createdSector = await Sector.create(createSectorBody);
 
+      this.sector = { ...this.sector, ...createdSector };
+
+      await this.$nextTick();
+
       await Promise.all(
         managers.map((manager) => {
-          return Sector.addManager(createdSector.uuid, manager.uuid);
+          return Sector.addManager(this.sector.uuid, manager.uuid);
+        }),
+      );
+
+      await this.$refs.sectorExtraOptions.save();
+
+      const createdQueue = await Queue.create({
+        name: this.sectorQueue.name,
+        default_message: '',
+        sectorUuid: this.sector.uuid,
+      });
+
+      await Promise.all(
+        this.sectorQueue.currentAgents.map((agent) => {
+          Queue.addAgent(createdQueue.uuid, agent.uuid);
         }),
       );
 
