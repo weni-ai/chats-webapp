@@ -9,7 +9,21 @@
       size="sm"
       :placeholder="$t('chats.search_contact')"
       @icon-right-click="nameOfContact = ''"
-    ></UnnnicInput>
+    />
+    <section class="filter-tags__container">
+      <template
+        v-for="tab in tabs"
+        :key="tab"
+      >
+        <FilterTag
+          :label="tab"
+          count="3"
+          :active="activeTab === tab"
+          @click="activeTab = $event"
+        />
+      </template>
+    </section>
+
     <section class="chat-groups__header">
       <UnnnicToolTip
         v-if="
@@ -72,26 +86,26 @@
       "
     >
       <CardGroup
-        v-if="discussions.length"
+        v-if="discussions.length && activeTab === $t('discussion')"
         :label="$t('chats.discussions', { length: discussions.length })"
         :discussions="discussions"
         @open="openDiscussion"
       />
       <CardGroup
-        v-if="rooms_queue.length"
+        v-if="rooms_queue.length && activeTab === $t('waiting')"
         :label="$t('chats.waiting', { length: rooms_queue.length })"
         :rooms="rooms_queue"
         @open="openRoom"
       />
       <CardGroup
-        v-if="rooms.length"
+        v-if="rooms.length && activeTab === $t('in_progress')"
         :label="$t('chats.in_progress', { length: rooms.length })"
         :rooms="rooms"
         :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
         @open="openRoom"
       />
       <CardGroup
-        v-if="rooms_sent_flows.length"
+        v-if="rooms_sent_flows.length && activeTab === $t('sent_flows')"
         :label="$t('chats.sent_flows', { length: rooms_sent_flows.length })"
         :rooms="rooms_sent_flows"
         @open="openRoom"
@@ -121,6 +135,7 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup/index.vue';
 import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
+import FilterTag from './Tag.vue';
 
 import Room from '@/services/api/resources/chats/room';
 import { useDashboard } from '@/store/modules/dashboard';
@@ -131,6 +146,7 @@ export default {
     RoomsListLoading,
     CardGroup,
     ModalQueuePriorizations,
+    FilterTag,
   },
   props: {
     disabled: {
@@ -146,19 +162,29 @@ export default {
       default: '',
     },
   },
-  data: () => ({
-    page: 0,
-    limit: 100,
-    nameOfContact: '',
-    timerId: 0,
-    isLoadingRooms: false,
-    createdOnFilter: false,
-    lastCreatedFilter: true,
-    isSearching: false,
-    isMobile: isMobile(),
-    showModalQueue: false,
-    noQueueSelected: false,
-  }),
+
+  data() {
+    return {
+      page: 0,
+      limit: 100,
+      nameOfContact: '',
+      timerId: 0,
+      isLoadingRooms: false,
+      createdOnFilter: false,
+      lastCreatedFilter: true,
+      isSearching: false,
+      isMobile: isMobile(),
+      showModalQueue: false,
+      noQueueSelected: false,
+      tabs: [
+        this.$t('in_progress'),
+        this.$t('waiting'),
+        this.$t('sent_flows'),
+        this.$t('discussion'),
+      ],
+      activeTab: this.$t('in_progress'),
+    };
+  },
   computed: {
     ...mapState(useRooms, {
       rooms: 'agentRooms',
@@ -310,11 +336,12 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: $unnnic-spacing-stack-xs;
-  .chat-groups__header {
-    display: grid;
-    gap: $unnnic-spacing-xs;
-    grid-template-columns: auto 1fr;
+  gap: $unnnic-spacing-ant;
+  .filter-tags {
+    &__container {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
   }
   .chat-groups {
     flex: 1 1;
@@ -340,6 +367,10 @@ export default {
     align-items: center;
     font-size: $unnnic-font-size-body-md;
     color: $unnnic-color-neutral-cloudy;
+    width: 100%;
+    .apply-filter {
+      margin-left: auto;
+    }
   }
 }
 </style>
