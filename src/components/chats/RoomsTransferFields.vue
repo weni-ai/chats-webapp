@@ -64,6 +64,7 @@ import Queue from '@/services/api/resources/settings/queue';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 import i18n from '@/plugins/i18n';
+
 export default {
   name: 'RoomsTransferFields',
 
@@ -284,7 +285,7 @@ export default {
 
     callErrorAlert() {
       this.getAlert({
-        text: this.$t('contact_transferred_error'),
+        text: i18n.global.t('contact_transferred_error'),
         type: 'error',
       });
     },
