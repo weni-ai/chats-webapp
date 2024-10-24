@@ -1,5 +1,4 @@
 import { mount } from '@vue/test-utils';
-import UnnnicSystem from '@/plugins/UnnnicSystem';
 
 import UserAvatar from '../UserAvatar.vue';
 
@@ -9,9 +8,6 @@ describe('UserAvatar', () => {
     const wrapper = mount(UserAvatar, {
       props: {
         username,
-      },
-      global: {
-        plugins: [UnnnicSystem],
       },
     });
 
@@ -25,9 +21,6 @@ describe('UserAvatar', () => {
         active: true,
         clickable: true,
         disabled: true,
-      },
-      global: {
-        plugins: [UnnnicSystem],
       },
     });
 
@@ -43,9 +36,6 @@ describe('UserAvatar', () => {
       props: {
         username: 'Fake Contact',
         size,
-      },
-      global: {
-        plugins: [UnnnicSystem],
       },
     });
 

@@ -3,8 +3,6 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 import QuickMessageCard from '../QuickMessageCard.vue';
 
-import unnnic from '@/plugins/UnnnicSystem';
-
 const quickMessage = {
   title: 'Test Message',
   text: 'This is a test quick message',
@@ -18,12 +16,6 @@ vi.mock('is-mobile', () => ({
 const createWrapper = (props = {}) => {
   return mount(QuickMessageCard, {
     props: { clickable: true, quickMessage, ...props },
-    global: {
-      mocks: {
-        $t: (msg) => msg,
-      },
-      plugins: [unnnic],
-    },
   });
 };
 

@@ -2,18 +2,25 @@
   <AsideSlotTemplateSection
     v-if="discussionsCloseds?.length > 0"
     class="contact-info__discussions"
-    :class="{ 'contact-info__discussions--mobile': isMobile }"
+    :class="{ 'contact-info__discussions--mobile': isMobileFlag }"
   >
-    <h2 class="contact-info__discussions__title">
+    <h2
+      class="contact-info__discussions__title"
+      data-testid="contact-info-discussion-title"
+    >
       {{ $tc('discussions.title', 2) }}
     </h2>
-    <ul class="contact-info__discussions__list">
+    <ul
+      class="contact-info__discussions__list"
+      data-testid="contact-info-discussion-list"
+    >
       <li
         v-for="discussionClosed in discussionsCloseds"
         :key="discussionClosed.uuid"
       >
         <button
           class="contact-info__discussions__list-item"
+          data-testid="contact-info-discussion-list-item"
           @click="openDiscussionClosed(discussionClosed.uuid)"
         >
           {{ getDiscussionStartedBy(discussionClosed) }}
@@ -49,7 +56,7 @@ export default {
   },
   data() {
     return {
-      isMobile: isMobile(),
+      isMobileFlag: isMobile(),
 
       showDiscussionClosedModal: false,
     };

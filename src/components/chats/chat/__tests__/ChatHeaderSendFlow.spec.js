@@ -2,12 +2,10 @@ import { mount } from '@vue/test-utils';
 import { describe, it, expect, beforeEach } from 'vitest';
 
 import ChatHeaderSendFlow from '../ChatHeaderSendFlow.vue';
-import UnnnicSystem from '@/plugins/UnnnicSystem';
-import i18n from '@/plugins/i18n';
 
 const createWrapper = () => {
   return mount(ChatHeaderSendFlow, {
-    global: { plugins: [UnnnicSystem, i18n], stubs: { UnnnicToolTip: true } },
+    global: { stubs: { UnnnicToolTip: true } },
   });
 };
 

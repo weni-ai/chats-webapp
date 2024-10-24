@@ -1,8 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { unnnicButton as UnnnicButton } from '@weni/unnnic-system';
-import i18n from '@/plugins/i18n';
-import UnnnicSystem from '@/plugins/UnnnicSystem';
+
 import TextBox from '../TextBox.vue';
 
 function createWrapper(props = {}) {
@@ -14,9 +13,6 @@ function createWrapper(props = {}) {
     },
     stubs: {
       UnnnicButton,
-    },
-    global: {
-      plugins: [i18n, UnnnicSystem],
     },
   });
 
