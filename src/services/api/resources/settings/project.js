@@ -31,12 +31,13 @@ export default {
     return response.data;
   },
 
-  async agents() {
+  async agents(offset, limit = 20) {
     const response = await http.get(`/permission/project/`, {
       params: {
         project: getProject(),
+        offset,
         // role: Permissions.Agent,
-        limit: 9999,
+        limit,
       },
     });
     return response.data;

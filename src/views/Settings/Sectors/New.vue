@@ -11,7 +11,7 @@
 
     <section class="scrollable">
       <section class="new-sector__form">
-        <FormSector
+        <FormSectorOld
           v-show="step === Steps.General"
           v-model="sector"
           :managers="projectManagers"
@@ -67,9 +67,9 @@
 
 <script>
 import FormAgent from '@/components/settings/forms/Agent.vue';
-import FormQueue from '@/components/settings/forms/Queue.vue';
-import FormSector from '@/components/settings/forms/Sector.vue';
-import FormTags from '@/components/settings/forms/Tags.vue';
+import FormQueue from '@/components/settings/forms/QueueOld.vue';
+import FormSectorOld from '@/components/settings/forms/SectorOld.vue';
+import FormTags from '@/components/settings/forms/TagsOld.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
@@ -87,7 +87,7 @@ export default {
   components: {
     FormAgent,
     FormQueue,
-    FormSector,
+    FormSectorOld,
     FormTags,
   },
 
@@ -121,7 +121,7 @@ export default {
       Steps,
       step: Steps.General,
       stepsTitles: [
-        this.$t('sector.geral'),
+        this.$t('sector.general'),
         this.$t('sector.queues'),
         this.$t('sector.tags'),
       ],
