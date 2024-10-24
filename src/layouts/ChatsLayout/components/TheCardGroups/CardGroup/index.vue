@@ -105,6 +105,10 @@ export default {
     }
   },
 
+  unmounted() {
+    this.setSelectedRoomsToTransfer([]);
+  },
+
   methods: {
     ...mapActions(useRooms, ['setSelectedRoomsToTransfer']),
     open(room) {
