@@ -16,8 +16,17 @@
         :key="tab"
       >
         <FilterTag
+          v-if="
+            (tab === $t('discussion')
+              ? discussions.length > 0
+              : roomsCount[tabsKeyMapper[tab]] > 0) && !nameOfContact
+          "
           :label="tab"
-          count="3"
+          :count="
+            tab === $t('discussion')
+              ? discussions.length
+              : roomsCount[tabsKeyMapper[tab]]
+          "
           :active="activeTab === tab"
           @click="activeTab = $event"
         />
@@ -165,8 +174,14 @@ export default {
 
   data() {
     return {
-      page: 0,
-      limit: 100,
+      page: {
+        in_progress: 0,
+        waiting: 0,
+        sent_flows: 0,
+        discussion: 0,
+        search: 0,
+      },
+      limit: 20,
       nameOfContact: '',
       timerId: 0,
       isLoadingRooms: false,
@@ -192,12 +207,21 @@ export default {
       rooms_sent_flows: 'waitingContactAnswer',
       listRoomHasNext: 'hasNextRooms',
       newMessagesByRoom: 'newMessagesByRoom',
+      roomsCount: 'roomsCount',
     }),
     ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
     ...mapState(useDashboard, ['viewedAgent']),
 
+    tabsKeyMapper() {
+      return {
+        [this.$t('in_progress')]: 'in_progress',
+        [this.$t('waiting')]: 'waiting',
+        [this.$t('sent_flows')]: 'sent_flows',
+        [this.$t('discussion')]: 'discussion',
+      };
+    },
     isUserAdmin() {
       const ROLE_ADMIN = 1;
       return this.me.project_permission_role === ROLE_ADMIN;
@@ -237,7 +261,7 @@ export default {
         const TIME_TO_WAIT_TYPING = 1300;
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
-          this.page = 0;
+          this.page.search = 0;
           this.listRoom(false);
           if (newNameOfContact) {
             this.isSearching = true;
@@ -248,20 +272,25 @@ export default {
       },
     },
   },
-  created() {
-    this.listRoom().then(async () => {
-      if (this.$route.name === 'room' && this.$route.params.roomId) {
-        const room = await Room.getByUuid({ uuid: this.$route.params.roomId });
-        const viewRoom = this.checkUserSeenRoom({
-          room,
-          viewedAgentEmail: this.viewedAgent.email,
-          userEmail: this.me.email,
-        });
-        if (!viewRoom || !room.is_active) this.$router.push('/rooms');
-        else this.setActiveRoom({ ...room, hasDetailInfo: true });
-      }
-    });
+  async created() {
+    this.listRoom(true, '-last_interaction', 'waiting');
+
+    this.listRoom(true, '-last_interaction', 'in_progress');
+
+    this.listRoom(true, '-last_interaction', 'sent_flows');
+
     this.listDiscussions();
+
+    if (this.$route.name === 'room' && this.$route.params.roomId) {
+      const room = await Room.getByUuid({ uuid: this.$route.params.roomId });
+      const viewRoom = this.checkUserSeenRoom({
+        room,
+        viewedAgentEmail: this.viewedAgent.email,
+        userEmail: this.me.email,
+      });
+      if (!viewRoom || !room.is_active) this.$router.push('/rooms');
+      else this.setActiveRoom({ ...room, hasDetailInfo: true });
+    }
   },
 
   methods: {
@@ -284,17 +313,21 @@ export default {
     clearField() {
       this.nameOfContact = '';
     },
-    async listRoom(concat, order = '-last_interaction') {
+    async listRoom(concat, order = '-last_interaction', filterFlag = '') {
       this.isLoadingRooms = !concat;
       const { viewedAgent } = this;
+      const activeTabKey = this.tabsKeyMapper[this.activeTab];
       try {
         await this.getAllRooms({
-          offset: this.page * this.limit,
+          offset:
+            (filterFlag ? this.page[activeTabKey] : this.page.search) *
+            this.limit,
           concat,
           order,
           limit: this.limit,
           contact: this.nameOfContact,
           viewedAgent,
+          filterFlag,
         });
       } catch {
         console.error('Não foi possível listar as salas');
@@ -303,9 +336,17 @@ export default {
       }
     },
     searchForMoreRooms() {
-      if (this.listRoomHasNext) {
-        this.page += 1;
-        this.listRoom(true);
+      const activeTabKey = this.tabsKeyMapper[this.activeTab];
+      if (this.listRoomHasNext[activeTabKey]) {
+        this.page[activeTabKey] += 1;
+        this.listRoom(
+          true,
+          '-last_interaction',
+          this.tabsKeyMapper[this.activeTab],
+        );
+      } else if (this.nameOfContact) {
+        this.page.search += 1;
+        this.listRoom(true, '-last_interaction');
       }
     },
     async listDiscussions() {

@@ -4,16 +4,21 @@ import { useDashboard } from '../dashboard';
 import { useProfile } from '../profile';
 
 import Room from '@/services/api/resources/chats/room';
+import { removeDuplicatedItems } from '@/utils/array';
 
 export const useRooms = defineStore('rooms', {
   state: () => ({
     rooms: [],
     activeRoom: null,
     newMessagesByRoom: {},
-    hasNextRooms: true,
+    hasNextRooms: { waiting: false, in_progress: false, sent_flows: false },
     canUseCopilot: false,
     copilotSuggestion: '',
-
+    roomsCount: {
+      waiting: 0,
+      in_progress: 0,
+      sent_flows: 0,
+    },
     selectedRoomsToTransfer: [],
     contactToTransfer: '',
   }),
@@ -83,21 +88,49 @@ export const useRooms = defineStore('rooms', {
       return room.user?.email === userEmail;
     },
 
-    async getAll({ offset, concat, limit, contact, order, viewedAgent }) {
+    async getAll({
+      offset,
+      concat,
+      limit,
+      contact,
+      order,
+      viewedAgent,
+      filterFlag,
+    }) {
+      const filtersMapper = {
+        waiting: {
+          is_waiting: false,
+          attending: false,
+        },
+        in_progress: {
+          is_waiting: false,
+          attending: true,
+        },
+        sent_flows: {
+          is_waiting: true,
+        },
+      };
+
       const response = await Room.getAll(
         offset,
         limit,
         contact,
         order,
         viewedAgent,
+        filtersMapper[filterFlag] || {},
       );
       let gettedRooms = response.results || [];
+
       const listRoomHasNext = response.next;
+
       if (concat) {
         gettedRooms = this.rooms.concat(response.results);
       }
-      this.hasNextRooms = listRoomHasNext;
-      this.rooms = gettedRooms;
+      this.hasNextRooms[filterFlag] = listRoomHasNext;
+
+      this.rooms = removeDuplicatedItems(gettedRooms, 'uuid');
+
+      this.roomsCount[filterFlag] = response.count;
 
       return gettedRooms;
     },

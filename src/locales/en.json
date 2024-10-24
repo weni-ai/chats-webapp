@@ -64,6 +64,7 @@
   "undo": "Undo",
   "redo": "Redo",
   "record_audio": "Record audio",
+  "select_all": "Select all",
   "audio_recorder": {
     "discard_button": "Discard"
   },

@@ -64,6 +64,7 @@
   "undo": "Desfazer",
   "redo": "Refazer",
   "record_audio": "Gravar áudio",
+  "select_all": "Selecionar todos",
   "audio_recorder": {
     "discard_button": "Descartar"
   },
