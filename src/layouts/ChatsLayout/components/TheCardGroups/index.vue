@@ -19,7 +19,7 @@
           v-if="
             (tab === $t('discussion')
               ? discussions.length > 0
-              : roomsCount[tabsKeyMapper[tab]] > 0) && !nameOfContact
+              : roomsCount[tabsKeyMapper[tab]] > 0) && !isSearching
           "
           :label="tab"
           :count="
@@ -95,32 +95,17 @@
       "
     >
       <CardGroup
-        v-if="discussions.length && activeTab === $t('discussion')"
-        :label="$t('chats.discussions', { length: discussions.length })"
+        v-if="activeTab === $t('discussion')"
         :discussions="discussions"
         @open="openDiscussion"
       />
       <CardGroup
-        v-if="rooms_queue.length && activeTab === $t('waiting')"
-        :label="$t('chats.waiting', { length: rooms_queue.length })"
-        :rooms="rooms_queue"
-        @open="openRoom"
-      />
-      <CardGroup
-        v-if="rooms.length && activeTab === $t('in_progress')"
-        :label="$t('chats.in_progress', { length: rooms.length })"
-        :rooms="rooms"
-        :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
-        @open="openRoom"
-      />
-      <CardGroup
-        v-if="rooms_sent_flows.length && activeTab === $t('sent_flows')"
-        :label="$t('chats.sent_flows', { length: rooms_sent_flows.length })"
-        :rooms="rooms_sent_flows"
+        v-else-if="activeRooms.length"
+        :rooms="activeRooms"
         @open="openRoom"
       />
       <p
-        v-if="showNoResultsError"
+        v-else
         class="no-results"
       >
         {{ isSearching ? $t('without_results') : $t('without_chats') }}
@@ -202,7 +187,8 @@ export default {
   },
   computed: {
     ...mapState(useRooms, {
-      rooms: 'agentRooms',
+      rooms: 'rooms',
+      rooms_in_progress: 'agentRooms',
       rooms_queue: 'waitingQueue',
       rooms_sent_flows: 'waitingContactAnswer',
       listRoomHasNext: 'hasNextRooms',
@@ -222,12 +208,28 @@ export default {
         [this.$t('discussion')]: 'discussion',
       };
     },
+
+    activeTabKey() {
+      return this.tabsKeyMapper[this.activeTab] || '';
+    },
+
+    activeRooms() {
+      if (this.isSearching) return this.rooms;
+
+      const mapper = {
+        in_progress: this.rooms_in_progress,
+        waiting: this.rooms_queue,
+        sent_flows: this.rooms_sent_flows,
+      };
+
+      return mapper[this.activeTabKey] || [];
+    },
     isUserAdmin() {
       const ROLE_ADMIN = 1;
       return this.me.project_permission_role === ROLE_ADMIN;
     },
     totalUnreadMessages() {
-      return this.rooms.reduce(
+      return this.rooms_in_progress.reduce(
         (total, room) =>
           total + (this.newMessagesByRoom[room.uuid]?.messages?.length || 0),
         0,
@@ -236,7 +238,7 @@ export default {
     showNoResultsError() {
       return (
         !this.isLoadingRooms &&
-        this.rooms.length === 0 &&
+        this.rooms_in_progress.length === 0 &&
         this.rooms_queue.length === 0 &&
         this.rooms_sent_flows.length === 0 &&
         this.discussions.length === 0
@@ -258,7 +260,7 @@ export default {
     },
     nameOfContact: {
       handler(newNameOfContact) {
-        const TIME_TO_WAIT_TYPING = 1300;
+        const TIME_TO_WAIT_TYPING = 800;
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
           this.page.search = 0;
