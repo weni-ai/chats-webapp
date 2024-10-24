@@ -52,7 +52,7 @@
     "eslint-plugin-vuejs-accessibility": "^1.1.0",
     "jest": "^27.0.5",
     "prettier": "^3.3.2",
-    "sass": "^1.69.7",
+    "sass": "1.69.7",
     "sass-loader": "^13.3.3",
     "vite": "^5.2.12",
     "vitest": "^2.0.5",
