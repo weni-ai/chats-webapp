@@ -95,7 +95,7 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
     
   </section>
   <!--v-if-->
-  <!---->
+  <!--v-if-->
   
 </section>
 `;

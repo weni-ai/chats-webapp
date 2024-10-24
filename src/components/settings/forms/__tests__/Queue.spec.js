@@ -69,6 +69,10 @@ describe('FormQueue', () => {
   });
 
   it('should display textarea when editing the automatic message', async () => {
+    await wrapper.setProps({
+      modelValue: { uuid: '1', default_message: '' },
+    });
+
     const editMessageBtn = wrapper.find(
       '[data-testid="edit-automatic-message-button"]',
     );
@@ -97,7 +101,7 @@ describe('FormQueue', () => {
 
   it('displays the automatic message in view mode when not editing', async () => {
     await wrapper.setProps({
-      modelValue: { default_message: 'Test automatic message' },
+      modelValue: { uuid: '1', default_message: 'Test automatic message' },
     });
 
     await wrapper.setData({ editingAutomaticMessage: false });

@@ -119,6 +119,7 @@ describe('FormSectorGeneral', () => {
 
   it('should display error message when working hours are invalid', async () => {
     await wrapper.setProps({
+      isEditing: true,
       modelValue: {
         name: 'Sector Name',
         managers: [],
@@ -126,9 +127,7 @@ describe('FormSectorGeneral', () => {
         maxSimultaneousChatsByAgent: '2',
       },
     });
-
     await wrapper.vm.$nextTick();
-
     const errorMessage = wrapper.find('.error-message');
     expect(errorMessage.exists()).toBe(true);
     expect(errorMessage.text()).toBe(
@@ -188,7 +187,10 @@ describe('FormSectorGeneral', () => {
   });
 
   it('should disable the save button if form is invalid', async () => {
-    const saveButton = wrapper.findComponent('[data-testid="save-button"]');
+    await wrapper.setProps({ isEditing: true });
+    const saveButton = wrapper.findComponent(
+      '[data-testid="general-save-button"]',
+    );
     expect(saveButton.attributes('disabled')).toBeDefined();
   });
 
@@ -222,7 +224,9 @@ describe('FormSectorGeneral', () => {
     const saveSectorSpy = vi.spyOn(wrapper.vm, 'saveSector');
     const unnnicAlertSpy = vi.spyOn(unnnic, 'unnnicCallAlert');
 
-    await wrapper.findComponent('[data-testid="save-button"]').trigger('click');
+    await wrapper
+      .findComponent('[data-testid="general-save-button"]')
+      .trigger('click');
 
     expect(saveSectorSpy).toHaveBeenCalled();
 
@@ -269,7 +273,9 @@ describe('FormSectorGeneral', () => {
       .spyOn(Sector, 'update')
       .mockRejectedValue(new Error());
 
-    await wrapper.findComponent('[data-testid="save-button"]').trigger('click');
+    await wrapper
+      .findComponent('[data-testid="general-save-button"]')
+      .trigger('click');
 
     expect(sectorUpdateMock).toHaveBeenCalled();
 

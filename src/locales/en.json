@@ -498,6 +498,8 @@
       "middle": "add a message",
       "end": "for agents in this sector to use."
     },
+    "example_message": "Example message",
+    "example_message_description": " Quick messages are ready-made texts that help standardize customer service. All agents in this sector will be able to use these messages, and you can register new messages below.",
     "personal": "Your quick messages",
     "shared": "Shared quick messages",
     "delete": "Delete quick message",
@@ -589,11 +591,16 @@
       "in_sector": "Queue in sector {sector}",
       "new": "New queue",
       "info": "Queues are support groups within a sector; it is possible to direct contacts from a flow to a specific queue",
+      "hint": "Queues are support groups within the sector; you can create new queues or edit them whenever you want.",
+      "queue_definitions": "Queue settings",
       "message": {
         "create": "Queue successfully created",
         "update": "Queue successfully updated",
         "error": "Failed to set queue settings"
       }
+    },
+    "copilot": {
+      "hint": "The Co-pilot is your agent's intelligent assistant; it can be activated later."
     },
     "new_sector": "New sector",
     "agent_title": "Agents",

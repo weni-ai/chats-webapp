@@ -498,6 +498,8 @@
       "middle": "añade un mensaje",
       "end": "para los agentes en este sector los usan."
     },
+    "example_message": "Mensaje de ejemplo",
+    "example_message_description": "Los mensajes rápidos son textos predefinidos que facilitan la estandarización del servicio. Todos los agentes de este sector podrán utilizar los mensajes, y podrás registrar nuevos mensajes a continuación.",
     "personal": "Tus mensajes rápidos",
     "shared": "Mensajes rápidos compartidos",
     "delete": "Eliminar mensaje rápido",
@@ -589,11 +591,16 @@
       "in_sector": "Fila en el sector {sector}",
       "new": "Nueva cola",
       "info": "Las colas son grupos de atención dentro de un sector; es posible dirigir contactos de un flujo a una cola específica",
+      "hint": "Las colas son grupos de atención dentro de un sector; podrás crear nuevas filas o editarlas cuando desees.",
+      "queue_definitions": "Configuraciones de la cola",
       "message": {
         "create": "Fila creada con éxito",
         "update": "Fila actualizada con éxito",
         "error": "Error al configurar los ajustes de la fila"
       }
+    },
+    "copilot": {
+      "hint": "El Co-pilot es el asistente inteligente de tu agente; se podrá activar más tarde."
     },
     "new_sector": "Nuevo sector",
     "agent_title": "Agentes",

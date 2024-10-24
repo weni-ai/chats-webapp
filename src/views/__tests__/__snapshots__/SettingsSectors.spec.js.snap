@@ -200,7 +200,7 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
       width="40"
     />
   </section>
-  <!---->
+  <!--v-if-->
   
 </div>
 `;

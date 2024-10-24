@@ -12,6 +12,7 @@
       class="input"
     />
     <UnnnicChatText
+      v-if="isEditing"
       class="sector-queues-form__automatic-message"
       titleColor="neutral-dark"
       size="small"
@@ -152,6 +153,7 @@ export default {
     },
     async handlerRemoveAgent(agentUuid) {
       if (this.isEditing) await Queue.removeAgent(agentUuid);
+
       this.queue.currentAgents = this.queue.currentAgents.filter(
         (agent) => agent.uuid !== agentUuid,
       );
@@ -175,7 +177,10 @@ export default {
         this.queue.agents++;
         this.$emit('update-queue-agents-count', this.queue);
       } else {
-        this.queue.currentAgents.push(agent);
+        if (!alreadyInQueue) {
+          this.queue.currentAgents.push(agent);
+          this.queue.agents++;
+        }
       }
     },
   },
@@ -185,6 +190,7 @@ export default {
 <style lang="scss" scoped>
 .sector-queues-form {
   display: grid;
+  gap: $unnnic-spacing-sm;
 
   &__automatic-message {
     max-width: 100% !important;
