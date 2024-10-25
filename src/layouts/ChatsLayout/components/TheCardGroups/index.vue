@@ -105,6 +105,11 @@
       <CardGroup
         v-else-if="activeRooms.length"
         :rooms="activeRooms"
+        :withSelection="
+          !isMobile &&
+          project.config?.can_use_bulk_transfer &&
+          activeTab === $t('in_progress')
+        "
         @open="openRoom"
       />
       <p
@@ -330,8 +335,6 @@ export default {
       if (!viewRoom || !room.is_active) this.$router.push('/rooms');
       else this.setActiveRoom({ ...room, hasDetailInfo: true });
     }
-
-    if (!this.rooms_in_progress.length) this.activeTab = this.$t('waiting');
 
     this.initialLoaded = true;
   },
