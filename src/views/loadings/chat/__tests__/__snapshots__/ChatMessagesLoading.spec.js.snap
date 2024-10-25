@@ -1,16 +1,5 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ChatHeaderLoading.vue > to match snapshot 1`] = `
-"<main data-v-e8870554="" class="chat-messages-loading">
-  <div data-v-e8870554="" class="chat-messages-loading__messages"><span data-v-e8870554=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; width: 80px; height: 23px;"> ‌ </span></span>
-    <div data-v-e8870554="" class="message"><span data-v-e8870554=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span></div>
-    <div data-v-e8870554="" class="message"><span data-v-e8870554=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span></div>
-    <div data-v-e8870554="" class="message"><span data-v-e8870554=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span></div>
-    <div data-v-e8870554="" class="message"><span data-v-e8870554=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span></div>
-  </div>
-</main>"
-`;
-
 exports[`ChatMessagesLoading.vue > to match snapshot 1`] = `
 "<main data-v-e8870554="" class="chat-messages-loading">
   <div data-v-e8870554="" class="chat-messages-loading__messages"><span data-v-e8870554=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; width: 80px; height: 23px;"> ‌ </span></span>
