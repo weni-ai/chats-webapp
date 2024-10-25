@@ -1,5 +1,8 @@
 <template>
-  <section class="card-group">
+  <section
+    class="card-group"
+    @click.stop
+  >
     <UnnnicCheckbox
       v-if="withSelection"
       v-model="collapseCheckboxValue"
@@ -7,7 +10,6 @@
       size="sm"
       :textRight="$t('select_all')"
       @change="updateSelectAllRooms($event)"
-      @click.stop
     />
     <template v-if="rooms && rooms.length">
       <RoomCard
