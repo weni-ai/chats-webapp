@@ -1,0 +1,35 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ChatsLoading.vue > to match snapshot 1`] = `
+"<div data-v-4307415e="" class="side-bar">
+  <div data-v-4307415e="" class="unnnic-grid-giant" style="padding: 12px 24px;">
+    <div data-v-4307415e="" class="unnnic-grid-span-12" style="display: flex;">
+      <div data-v-4307415e="" style="margin-right: 285px; margin-top: 26px;"><span data-v-4307415e=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; width: 90px; height: 20px;"> ‌ </span></span></div>
+      <div data-v-4307415e="" style="margin-right: 25px;"><span data-v-4307415e=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; width: 550px; height: 45px;"> ‌ </span></span></div>
+    </div>
+  </div>
+  <div data-v-4307415e="" class="unnnic-grid-giant" style="padding: 12px 24px;">
+    <div data-v-4307415e="" class="unnnic-grid-span-12" style="display: flex;">
+      <div data-v-4307415e="" style="margin-right: 25px;"><span data-v-4307415e=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; width: 350px; height: 45px;"> ‌ </span></span></div>
+      <div data-v-4307415e="" style="margin-right: 25px;"><span data-v-4307415e=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; width: 150px; height: 45px;"> ‌ </span></span></div>
+      <div data-v-4307415e="" style="margin-right: 25px;"><span data-v-4307415e=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; width: 150px; height: 45px;"> ‌ </span></span></div>
+      <div data-v-4307415e="" style="margin-right: 25px;"><span data-v-4307415e=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; width: 150px; height: 45px;"> ‌ </span></span></div>
+      <div data-v-4307415e="" style="margin-right: 25px;"><span data-v-4307415e=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; width: 150px; height: 45px;"> ‌ </span></span></div>
+    </div>
+  </div>
+  <div data-v-4307415e="" class="unnnic-grid-giant">
+    <div data-v-4307415e="" class="unnnic-grid-span-1" style="display: flex; flex-direction: column;">
+      <div data-v-4307415e="" class="skeleton-line"><span data-v-4307415e=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; width: 350px; height: 45px;"> ‌ </span></span></div>
+      <div data-v-4307415e="" class="skeleton-line"><span data-v-4307415e=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; width: 350px; height: 45px;"> ‌ </span></span></div>
+      <div data-v-4307415e="" class="skeleton-line"><span data-v-4307415e=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; width: 90px; height: 20px;"> ‌ </span></span></div>
+      <div data-v-4307415e="" class="skeleton-line"><span data-v-4307415e=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; width: 350px; height: 45px;"> ‌ </span></span></div>
+      <div data-v-4307415e="" class="skeleton-line"><span data-v-4307415e=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; width: 350px; height: 45px;"> ‌ </span></span></div>
+      <div data-v-4307415e="" class="skeleton-line"><span data-v-4307415e=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; width: 350px; height: 45px;"> ‌ </span></span></div>
+      <div data-v-4307415e="" class="skeleton-line"><span data-v-4307415e=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; width: 350px; height: 45px;"> ‌ </span></span></div>
+      <div data-v-4307415e="" class="skeleton-line"><span data-v-4307415e=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; width: 350px; height: 45px;"> ‌ </span></span></div>
+      <div data-v-4307415e="" class="skeleton-line"><span data-v-4307415e=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; width: 350px; height: 45px;"> ‌ </span></span></div>
+    </div>
+  </div>
+  <div data-v-4307415e="" class="page"></div>
+</div>"
+`;

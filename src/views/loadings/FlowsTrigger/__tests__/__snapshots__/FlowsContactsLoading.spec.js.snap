@@ -1,0 +1,23 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FlowsContactsLoading.vue > to match snapshot 1`] = `
+"<section data-v-2da6e388="" class="flows-contacts-loading">
+  <header data-v-2da6e388=""><span data-v-2da6e388=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span><span data-v-2da6e388=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; height: 22px;"> ‌ </span></span></header>
+  <main data-v-2da6e388="">
+    <ul data-v-2da6e388="" class="flows-contacts-loading__room-group">
+      <li data-v-2da6e388="" class="flows-contacts-loading__room"><span data-v-2da6e388=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; height: 40px;"> ‌ </span></span>
+        <div data-v-2da6e388="" class="flows-contacts-loading__room__infos"><span data-v-2da6e388=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span><span data-v-2da6e388=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span></div>
+      </li>
+      <li data-v-2da6e388="" class="flows-contacts-loading__room"><span data-v-2da6e388=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; height: 40px;"> ‌ </span></span>
+        <div data-v-2da6e388="" class="flows-contacts-loading__room__infos"><span data-v-2da6e388=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span><span data-v-2da6e388=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span></div>
+      </li>
+      <li data-v-2da6e388="" class="flows-contacts-loading__room"><span data-v-2da6e388=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; height: 40px;"> ‌ </span></span>
+        <div data-v-2da6e388="" class="flows-contacts-loading__room__infos"><span data-v-2da6e388=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span><span data-v-2da6e388=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span></div>
+      </li>
+      <li data-v-2da6e388="" class="flows-contacts-loading__room"><span data-v-2da6e388=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite; height: 40px;"> ‌ </span></span>
+        <div data-v-2da6e388="" class="flows-contacts-loading__room__infos"><span data-v-2da6e388=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span><span data-v-2da6e388=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span></div>
+      </li>
+    </ul>
+  </main>
+</section>"
+`;
