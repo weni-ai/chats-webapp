@@ -315,13 +315,12 @@ export default {
     },
   },
   async created() {
-    this.listRoom(true, '-last_interaction', 'waiting');
-
-    this.listRoom(true, '-last_interaction', 'in_progress');
-
-    this.listRoom(true, '-last_interaction', 'sent_flows');
-
-    this.listDiscussions();
+    await Promise.all([
+      this.listRoom(true, '-last_interaction', 'waiting'),
+      this.listRoom(true, '-last_interaction', 'in_progress'),
+      this.listRoom(true, '-last_interaction', 'sent_flows'),
+      this.listDiscussions(),
+    ]);
 
     if (this.$route.name === 'room' && this.$route.params.roomId) {
       const room = await Room.getByUuid({ uuid: this.$route.params.roomId });
