@@ -2,6 +2,7 @@
   <section
     class="quick-message-card__container"
     :class="{ clickable }"
+    data-testid="quick-message-card-container"
     @click="$emit('select', quickMessage)"
     @keypress.enter="$emit('select', quickMessage)"
   >
@@ -11,6 +12,7 @@
       :info="quickMessageCardInfo"
       size="small"
       class="quick-message-card"
+      data-testid="quick-message-card"
     >
       <template
         v-if="withActions"
@@ -28,6 +30,7 @@
                 icon="more_vert"
                 size="sm"
                 scheme="neutral-darkest"
+                data-testid="dropdown-trigger-icon"
               />
             </UnnnicToolTip>
             <UnnnicIconSvg
@@ -38,7 +41,10 @@
             />
           </template>
 
-          <UnnnicDropdownItem @click="$emit('edit', quickMessage)">
+          <UnnnicDropdownItem
+            data-testid="dropdown-edit"
+            @click="$emit('edit', quickMessage)"
+          >
             <div class="dropdown-item-content">
               <UnnnicIconSvg
                 class="icon"
@@ -49,7 +55,10 @@
             </div>
           </UnnnicDropdownItem>
 
-          <UnnnicDropdownItem @click="$emit('delete', quickMessage)">
+          <UnnnicDropdownItem
+            data-testid="dropdown-delete"
+            @click="$emit('delete', quickMessage)"
+          >
             <div class="dropdown-item-content">
               <UnnnicIconSvg
                 class="icon"

@@ -25,7 +25,7 @@ describe('TextBox', () => {
   });
 
   it('should displays the placeholder text in the textarea', () => {
-    const placeholder = 'Mensagem';
+    const placeholder = 'Message';
     const wrapper = createWrapper({
       value: '',
     });

@@ -150,7 +150,7 @@ export async function treatMessages({
   });
   let newMessages = messages;
 
-  if (!newMessages.length) {
+  if (!newMessages?.length) {
     return;
   }
 
@@ -383,11 +383,5 @@ export function groupMessages(messagesReference, { message, addBefore }) {
 
   currentMinuteEntry.messages = removeDuplicatedItems(
     currentMinuteEntry.messages,
-  );
-
-  currentDateEntry.minutes.sort((a, b) => a.minute - b.minute);
-
-  currentMinuteEntry.messages.sort(
-    (a, b) => moment(a.created_on).unix() - moment(b.created_on).unix(),
   );
 }

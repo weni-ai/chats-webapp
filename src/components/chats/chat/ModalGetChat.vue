@@ -98,6 +98,7 @@ export default {
   methods: {
     ...mapActions(useProfile, ['setMe']),
     ...mapActions(useRooms, ['setActiveRoom', 'addRoom']),
+    ...mapActions(useDashboard, ['setViewedAgent']),
 
     close() {
       this.$emit('closeModal');
@@ -112,7 +113,6 @@ export default {
     },
 
     async getChat() {
-      if (this.whenGetChat) this.whenGetChat();
       let me = this.me.email;
 
       if (!me) {
@@ -133,6 +133,8 @@ export default {
       if (this.room.user) {
         Room.updateReadMessages(this.room.uuid, true);
       }
+
+      if (this.whenGetChat) this.whenGetChat();
 
       this.close();
     },
