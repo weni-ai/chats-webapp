@@ -101,7 +101,11 @@ export default {
   },
 
   computed: {
-    ...mapState(useRooms, ['selectedRoomsToTransfer', 'contactToTransfer']),
+    ...mapState(useRooms, [
+      'selectedRoomsToTransfer',
+      'contactToTransfer',
+      'activeRoom',
+    ]),
     ...mapState(useProfile, ['me']),
 
     queuesDefault() {
@@ -226,8 +230,10 @@ export default {
 
       const selectedQueue = this.selectedQueue?.[0]?.value;
       const selectedAgent = this.selectedAgent?.[0]?.value;
-
+      const activeRoom = { ...this.activeRoom };
       try {
+        await this.setActiveRoom(null);
+
         const response = await Room.bulkTranfer({
           rooms: roomsToTransfer,
           intended_queue: selectedQueue,
@@ -235,13 +241,13 @@ export default {
         });
 
         if (response.status === 200) {
-          this.transferSuccess();
           this.resetRoomsToTransfer();
-          this.setActiveRoom(null);
+          this.transferSuccess();
         } else {
           this.transferError();
         }
       } catch (error) {
+        await this.setActiveRoom(activeRoom);
         console.error(
           'An error occurred while performing the mass transfer:',
           error,

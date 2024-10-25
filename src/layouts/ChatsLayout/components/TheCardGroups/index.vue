@@ -140,7 +140,6 @@ import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
 import FilterTag from './Tag.vue';
 
 import Room from '@/services/api/resources/chats/room';
-import { useDashboard } from '@/store/modules/dashboard';
 
 export default {
   name: 'TheCardGroups',
@@ -207,7 +206,6 @@ export default {
     ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
-    ...mapState(useDashboard, ['viewedAgent']),
 
     tabsKeyMapper() {
       return {
