@@ -1,6 +1,9 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
-  <div class="container">
+  <div
+    ref="cardGroup"
+    class="container"
+  >
     <UnnnicInput
       v-model="nameOfContact"
       iconLeft="search-1"
@@ -327,6 +330,8 @@ export default {
       if (!viewRoom || !room.is_active) this.$router.push('/rooms');
       else this.setActiveRoom({ ...room, hasDetailInfo: true });
     }
+
+    if (!this.rooms_in_progress.length) this.activeTab = this.$t('waiting');
 
     this.initialLoaded = true;
   },
