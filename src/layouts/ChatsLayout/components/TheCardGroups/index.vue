@@ -15,7 +15,7 @@
     />
     <section class="filter-tags__container">
       <template
-        v-for="tab in tabs"
+        v-for="(tab, tabIndex) in tabs"
         :key="tab"
       >
         <FilterTag
@@ -31,7 +31,7 @@
               : roomsCount[tabsKeyMapper[tab]]
           "
           :active="activeTab === tab"
-          @click="activeTab = $event"
+          @click="activeTabIndex = tabIndex"
         />
       </template>
     </section>
@@ -183,13 +183,7 @@ export default {
       isMobile: isMobile(),
       showModalQueue: false,
       noQueueSelected: false,
-      tabs: [
-        this.$t('in_progress'),
-        this.$t('waiting'),
-        this.$t('sent_flows'),
-        this.$t('discussion'),
-      ],
-      activeTab: this.$t('in_progress'),
+      activeTabIndex: 0,
       initialLoaded: false,
     };
   },
@@ -206,6 +200,19 @@ export default {
     ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
+
+    tabs() {
+      return [
+        this.$t('in_progress'),
+        this.$t('waiting'),
+        this.$t('sent_flows'),
+        this.$t('discussion'),
+      ];
+    },
+
+    activeTab() {
+      return this.tabs[this.activeTabIndex];
+    },
 
     tabsKeyMapper() {
       return {
