@@ -119,7 +119,7 @@
 </template>
 <script>
 import isMobile from 'is-mobile';
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
@@ -183,6 +183,7 @@ export default {
         this.$t('discussion'),
       ],
       activeTab: this.$t('in_progress'),
+      initialLoaded: false,
     };
   },
   computed: {
@@ -193,8 +194,8 @@ export default {
       rooms_sent_flows: 'waitingContactAnswer',
       listRoomHasNext: 'hasNextRooms',
       newMessagesByRoom: 'newMessagesByRoom',
-      roomsCount: 'roomsCount',
     }),
+    ...mapWritableState(useRooms, ['roomsCount']),
     ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
@@ -246,6 +247,39 @@ export default {
     },
   },
   watch: {
+    rooms_in_progress: {
+      deep: true,
+      handler(newRooms, oldRooms) {
+        const newSize = newRooms.length;
+        const oldSize = oldRooms.length;
+        if (newSize === oldSize || !this.initialLoaded) return;
+        newSize > oldSize
+          ? this.roomsCount.in_progress++
+          : this.roomsCount.in_progress--;
+      },
+    },
+    rooms_queue: {
+      deep: true,
+      handler(newRooms, oldRooms) {
+        const newSize = newRooms.length;
+        const oldSize = oldRooms.length;
+        if (newSize === oldSize || !this.initialLoaded) return;
+        newSize > oldSize
+          ? this.roomsCount.waiting++
+          : this.roomsCount.waiting--;
+      },
+    },
+    rooms_sent_flows: {
+      deep: true,
+      handler(newRooms, oldRooms) {
+        const newSize = newRooms.length;
+        const oldSize = oldRooms.length;
+        if (newSize === oldSize || !this.initialLoaded) return;
+        newSize > oldSize
+          ? this.roomsCount.sent_flows++
+          : this.roomsCount.sent_flows--;
+      },
+    },
     totalUnreadMessages: {
       immediate: true,
       handler() {
@@ -293,6 +327,8 @@ export default {
       if (!viewRoom || !room.is_active) this.$router.push('/rooms');
       else this.setActiveRoom({ ...room, hasDetailInfo: true });
     }
+
+    this.initialLoaded = true;
   },
 
   methods: {
@@ -384,6 +420,16 @@ export default {
     &__container {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr 1fr;
+
+      @media (max-width: 1300px) {
+        gap: $unnnic-spacing-nano;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      @media (max-width: 700px) {
+        gap: $unnnic-spacing-nano;
+        grid-template-columns: 1fr;
+      }
     }
   }
   .chat-groups {
