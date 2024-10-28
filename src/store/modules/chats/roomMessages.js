@@ -162,6 +162,8 @@ export const useRoomMessages = defineStore('roomMessages', {
       const { activeRoom } = roomsStore;
       if (!activeRoom) return;
 
+      if (text) activeRoom.last_message = text;
+
       await sendMessage({
         itemType: 'room',
         itemUuid: activeRoom.uuid,

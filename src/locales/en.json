@@ -64,6 +64,7 @@
   "undo": "Undo",
   "redo": "Redo",
   "record_audio": "Record audio",
+  "select_all": "Select all",
   "audio_recorder": {
     "discard_button": "Discard"
   },
@@ -144,6 +145,9 @@
   "addition_date": "Date of addition",
   "in_queues": "in queues",
   "in_progress": "In progress",
+  "waiting": "Waiting",
+  "sent_flows": "Sent flows",
+  "discussion": "Discussions",
   "in_progress_tooltip": "Number of chats that are already being handled by an agent",
   "in_progress_tooltip_filtered": "Number of chats that have been handled by an agent",
   "closed": "Closed",
