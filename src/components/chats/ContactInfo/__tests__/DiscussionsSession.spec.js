@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 import { createTestingPinia } from '@pinia/testing';
-import { useRooms } from '@/store/modules/chats/rooms';
+
 import { useDiscussions } from '@/store/modules/chats/discussions';
 
 import DiscussionsSession from '../DiscussionsSession.vue';
