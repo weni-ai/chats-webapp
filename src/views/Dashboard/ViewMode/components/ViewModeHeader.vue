@@ -41,11 +41,31 @@ export default {
     },
   },
 
+  data() {
+    return {
+      isInsight: false,
+    };
+  },
+
+  mounted() {
+    window.addEventListener('message', this.routeWasInsights);
+  },
+
+  beforeUnmount() {
+    window.removeEventListener('message', this.routeWasInsights);
+  },
+
   methods: {
     ...mapActions(useRooms, ['setActiveRoom']),
     async closeViewMode() {
       await this.setActiveRoom(null);
       this.$router.push({ name: 'dashboard.manager' });
+    },
+    routeWasInsights(event) {
+      if (event.data?.event === 'redirect') {
+        console.log('routeWasInsights - redirect', event.data);
+        this.isInsight = JSON.parse(event.data.query.from) === 'insights';
+      }
     },
   },
 };
