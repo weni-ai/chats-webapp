@@ -264,43 +264,19 @@ export default {
     rooms_in_progress: {
       deep: true,
       handler(newRooms, oldRooms) {
-        const newSize = newRooms.length;
-        const oldSize = oldRooms.length;
-
-        if (newSize === oldSize || !this.initialLoaded || this.isLoadingRooms)
-          return;
-
-        newSize > oldSize
-          ? this.roomsCount.in_progress++
-          : this.roomsCount.in_progress--;
+        this.updateRoomsCount(newRooms, oldRooms, 'in_progress');
       },
     },
     rooms_queue: {
       deep: true,
       handler(newRooms, oldRooms) {
-        const newSize = newRooms.length;
-        const oldSize = oldRooms.length;
-
-        if (newSize === oldSize || !this.initialLoaded || this.isLoadingRooms)
-          return;
-
-        newSize > oldSize
-          ? this.roomsCount.waiting++
-          : this.roomsCount.waiting--;
+        this.updateRoomsCount(newRooms, oldRooms, 'waiting');
       },
     },
     rooms_sent_flows: {
       deep: true,
       handler(newRooms, oldRooms) {
-        const newSize = newRooms.length;
-        const oldSize = oldRooms.length;
-
-        if (newSize === oldSize || !this.initialLoaded || this.isLoadingRooms)
-          return;
-
-        newSize > oldSize
-          ? this.roomsCount.sent_flows++
-          : this.roomsCount.sent_flows--;
+        this.updateRoomsCount(newRooms, oldRooms, 'sent_flows');
       },
     },
     totalUnreadMessages: {
@@ -376,6 +352,15 @@ export default {
     },
     clearField() {
       this.nameOfContact = '';
+    },
+    updateRoomsCount(newRooms, oldRooms, key) {
+      const newSize = newRooms.length;
+      const oldSize = oldRooms.length;
+
+      if (newSize === oldSize || !this.initialLoaded || this.isLoadingRooms)
+        return;
+
+      newSize > oldSize ? this.roomsCount[key]++ : this.roomsCount[key]--;
     },
     async listRoom(concat, order = '-last_interaction', filterFlag = '') {
       this.showLoadingRooms = !concat;
