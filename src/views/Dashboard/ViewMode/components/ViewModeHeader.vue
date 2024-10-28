@@ -31,6 +31,8 @@
 <script>
 import { mapActions } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
+import { getProject } from '@/utils/config';
+
 export default {
   name: 'ViewModeHeader',
 
@@ -58,8 +60,14 @@ export default {
   methods: {
     ...mapActions(useRooms, ['setActiveRoom']),
     async closeViewMode() {
+      const projectUuid = getProject();
+      console.log('closeViewMode - isInsight', this.isInsight, projectUuid);
+      if (this.isInsight)
+        return this.$router.push({
+          path: `/projects/${projectUuid}/insights/init`,
+        });
       await this.setActiveRoom(null);
-      this.$router.push({ name: 'dashboard.manager' });
+      return this.$router.push({ name: 'dashboard.manager' });
     },
     routeWasInsights(event) {
       if (event.data?.event === 'redirect') {
