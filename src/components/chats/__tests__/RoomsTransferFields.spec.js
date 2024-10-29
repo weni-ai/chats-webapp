@@ -2,9 +2,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 
-import UnnnicSystem from '@/plugins/UnnnicSystem';
-import i18n from '@/plugins/i18n';
-
 import QueueService from '@/services/api/resources/settings/queue';
 
 import RoomsTransferFields from '../RoomsTransferFields.vue';
@@ -37,7 +34,7 @@ function createWrapper() {
       modelValue: [],
     },
     global: {
-      plugins: [i18n, store, UnnnicSystem],
+      plugins: [store],
     },
   });
 

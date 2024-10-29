@@ -1,0 +1,10 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DiscussionSidebarLoading.vue > to match snapshot 1`] = `
+"<div data-v-89c6dd73="" class="discussion-sidebar-loading">
+  <header data-v-89c6dd73="">
+    <div data-v-89c6dd73=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></div>
+  </header>
+  <main data-v-89c6dd73=""><span data-v-89c6dd73=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span><span data-v-89c6dd73=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span><span data-v-89c6dd73=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span><span data-v-89c6dd73=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span><span data-v-89c6dd73=""><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span><span data-v-89c6dd73="" class="item-last"><span class="unnnic-skeleton" style="background-color: rgb(232, 244, 244); animation: SkeletonLoading 1.5s ease-in-out infinite;"> ‌ </span></span></main>
+</div>"
+`;
