@@ -34,6 +34,7 @@ const createWrapper = (props) => {
       stubs: {
         UnnnicCard: true,
         UnnnicCardProject: true,
+        NewSectorModal: true,
       },
       mocks: {
         $router: {

@@ -582,10 +582,20 @@
         "switch_inactive": "Blocking transfers to offline agents inactive"
       }
     },
+    "custom_sector": "Customize new sector (recommended)",
+    "default_sector": {
+      "title": "Create default sector (faster)",
+      "name": "Default sector"
+    },
     "edit_sector": {
       "description": "Determine General Team Settings and Workday",
       "tag_already_exists": "A tag with that name already exists",
       "invalid_hours": "Start time cannot be greater/equal to end time"
+    },
+    "custom_queue": "Create a custom queue",
+    "default_queue": {
+      "title": "Create default queue (faster)",
+      "name": "Default queue"
     },
     "queues": {
       "in_sector": "Queue in sector {sector}",

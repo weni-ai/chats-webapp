@@ -35,23 +35,15 @@
           ref="sectorExtraOptions"
           v-model="sector"
         />
-        <section
-          v-show="activePage === $t('sector.queues')"
-          class="forms__queue"
-        >
-          <p class="forms__hint">
-            {{ $t('config_chats.queues.hint') }}
-          </p>
-          <h1 class="forms__title">
-            {{ $t('config_chats.queues.queue_definitions') }}
-          </h1>
+        <section class="forms__queue">
           <FormQueue
+            v-show="activePage === $t('sector.queues')"
             ref="sectorQueue"
             v-model="sectorQueue"
             :sector="sector"
+            showHelpers
           />
         </section>
-
         <section
           v-show="activePage === $t('quick_messages.title')"
           class="forms__quick-message"
@@ -94,6 +86,7 @@
 import General from '@/components/settings/forms/General.vue';
 import ExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
 import FormQueue from '@/components/settings/forms/Queue.vue';
+
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
 
@@ -142,6 +135,7 @@ export default {
         currentAgents: [],
         agents: 0,
       },
+      useDefaultSectorQueue: 0,
     };
   },
   computed: {
@@ -218,11 +212,6 @@ export default {
     &__hint {
       font-size: $unnnic-font-size-body-gt;
       line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
-    }
-
-    &__queue {
-      display: grid;
-      gap: $unnnic-spacing-sm;
     }
 
     &__quick-message {

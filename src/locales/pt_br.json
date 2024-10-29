@@ -582,10 +582,20 @@
         "switch_inactive": "Bloqueio de transferências para agentes offline inativo"
       }
     },
+    "custom_sector": "Personalizar novo setor (recomendado)",
+    "default_sector": {
+      "title": "Criar setor padrão (mais rápido)",
+      "name": "Setor padrão"
+    },
     "edit_sector": {
       "description": "Determine configurações gerais da equipe e jornada de trabalho",
       "tag_already_exists": "Já existe uma tag com esse nome",
       "invalid_hours": "Horário de início não pode ser maior/igual que horário final"
+    },
+    "custom_queue": "Criar uma fila personalizada",
+    "default_queue": {
+      "title": "Criar fila padrão (mais rápido)",
+      "name": "Fila padrão"
     },
     "queues": {
       "in_sector": "Fila no setor {sector}",

@@ -1,5 +1,27 @@
 <template>
   <section class="form-wrapper">
+    <section
+      v-if="!isEditing"
+      class="form-wrapper__radios"
+    >
+      <UnnnicRadio
+        size="sm"
+        :modelValue="useDefaultSector"
+        :value="0"
+        @update:model-value="updateDefaultSectorValue"
+      >
+        {{ $t('config_chats.custom_sector') }}
+      </UnnnicRadio>
+      <UnnnicRadio
+        :modelValue="useDefaultSector"
+        size="sm"
+        :value="1"
+        @update:model-value="updateDefaultSectorValue"
+      >
+        {{ $t('config_chats.default_sector.title') }}
+      </UnnnicRadio>
+    </section>
+
     <form
       class="form-sector-container"
       @submit.prevent="$emit('submit')"
@@ -141,7 +163,7 @@
       </section>
     </form>
     <section
-      v-if="isEditing"
+      v-show="isEditing"
       class="form-actions"
     >
       <UnnnicButton
@@ -160,12 +182,13 @@
 </template>
 
 <script>
-import { mapActions } from 'pinia';
+import { mapActions, mapState } from 'pinia';
 import { useSettings } from '@/store/modules/settings';
 import unnnic from '@weni/unnnic-system';
 import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 import Sector from '@/services/api/resources/settings/sector';
 import Project from '@/services/api/resources/settings/project';
+import { useProfile } from '@/store/modules/profile';
 
 export default {
   name: 'FormSector',
@@ -187,6 +210,7 @@ export default {
 
   data() {
     return {
+      useDefaultSector: 0,
       managersPage: 0,
       selectedManager: [],
       removedManagers: [],
@@ -198,6 +222,7 @@ export default {
   },
 
   computed: {
+    ...mapState(useProfile, ['me']),
     managersNames() {
       const managersNames = [
         {
@@ -260,6 +285,38 @@ export default {
       actionDeleteSector: 'deleteSector',
     }),
 
+    updateDefaultSectorValue(activate) {
+      this.useDefaultSector = activate;
+      if (activate) {
+        const meManager = this.managers.find(
+          (manager) => manager.user.email === this.me.email,
+        );
+        this.sector = {
+          ...this.sector,
+          name: this.$t('config_chats.default_sector.name'),
+          workingDay: {
+            start: '08:00',
+            end: '18:00',
+            dayOfWeek: 'week-days',
+          },
+          maxSimultaneousChatsByAgent: '4',
+          managers: [meManager],
+        };
+      } else {
+        this.sector = {
+          ...this.sector,
+          name: '',
+          workingDay: {
+            start: '',
+            end: '',
+            dayOfWeek: '',
+          },
+          maxSimultaneousChatsByAgent: '',
+          managers: [],
+        };
+      }
+    },
+
     async getSectorManagers() {
       const managers = await Sector.managers(this.sector.uuid);
       this.sector.managers = managers.results.map((manager) => ({
@@ -316,6 +373,7 @@ export default {
         this.sector.managers = managers;
 
         if (this.isEditing) this.addManager(manager);
+
         this.selectedManager = [this.managersNames[0]];
       }
     },
@@ -344,9 +402,13 @@ export default {
     hourValidate(hour) {
       const inicialHour = hour.start;
       const finalHour = hour.end;
+
       if (inicialHour >= finalHour) {
         this.validHour = false;
-        this.message = this.$t('config_chats.edit_sector.invalid_hours');
+        this.message =
+          !inicialHour && !finalHour
+            ? ''
+            : this.$t('config_chats.edit_sector.invalid_hours');
       } else {
         this.validHour = true;
       }
@@ -430,6 +492,12 @@ export default {
 .form-wrapper {
   display: flex;
   flex-direction: column;
+
+  &__radios {
+    display: flex;
+    gap: $unnnic-spacing-sm;
+    margin-bottom: $unnnic-spacing-sm;
+  }
 }
 
 .form-actions {
