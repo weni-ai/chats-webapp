@@ -1,69 +1,11 @@
-import { expect, describe, it, vi } from 'vitest';
-import { flushPromises, mount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 
-import { createMemoryHistory, createRouter } from 'vue-router';
-import { createTestingPinia } from '@pinia/testing';
-import unnnic from '@weni/unnnic-system';
-
-import FormSectorGeneral from '../General.vue';
+import FormSector from '../Sector.vue';
 import defaultProps from './mocks/sectorMock';
 
-import Sector from '@/services/api/resources/settings/sector';
-import Project from '@/services/api/resources/settings/project';
-
-const pinia = createTestingPinia({
-  initialState: {
-    actionDeleteSector: vi.fn(),
-  },
-});
-
-const managerMock = {
-  uuid: '2',
-  sector: '1',
-  role: 1,
-  user: {
-    first_name: 'Test',
-    last_name: 'Test',
-    email: 'tests@weni.ai',
-    status: '',
-    photo_url: 'http://photo.link',
-  },
-};
-
-vi.spyOn(Project, 'managers').mockResolvedValue({
-  results: [managerMock],
-});
-
-vi.mock('@/services/api/resources/settings/sector', () => ({
-  default: {
-    update: vi.fn(() => Promise.resolve()),
-    removeManager: vi.fn(() => Promise.resolve()),
-    addManager: vi.fn(() => Promise.resolve()),
-    managers: vi.fn(() =>
-      Promise.resolve({
-        results: [{ ...managerMock, uuid: '1' }],
-      }),
-    ),
-  },
-}));
-
-const routes = [{ path: '/settings', name: 'settings' }];
-const router = createRouter({
-  history: createMemoryHistory(),
-  routes,
-});
-
-router.push = vi.fn();
-
-function createWrapper(props) {
-  const wrapper = mount(FormSectorGeneral, {
-    props: { modelValue: defaultProps.modelValue, ...props },
-    global: {
-      plugins: [router, pinia],
-      stubs: {
-        UnnnicModalNext: true,
-      },
-    },
+function createWrapper() {
+  const wrapper = mount(FormSector, {
+    props: defaultProps,
   });
 
   return wrapper;

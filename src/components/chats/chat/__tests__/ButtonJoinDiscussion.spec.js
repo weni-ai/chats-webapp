@@ -6,8 +6,6 @@ import ButtonJoinDiscussion from '../ButtonJoinDiscussion.vue';
 import { createTestingPinia } from '@pinia/testing';
 
 import { useDiscussions } from '@/store/modules/chats/discussions';
-import i18n from '@/plugins/i18n';
-import UnnnicSystem from '@/plugins/UnnnicSystem';
 
 vi.mock('@/services/api/resources/chats/discussion', () => ({
   default: {
@@ -19,8 +17,6 @@ const createWrapper = () => {
   return mount(ButtonJoinDiscussion, {
     global: {
       plugins: [
-        UnnnicSystem,
-        i18n,
         createTestingPinia({
           createSpy: vi.fn,
           initialState: {
