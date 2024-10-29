@@ -51,7 +51,6 @@
             :sector="sector"
           />
         </section>
-
         <section
           v-show="activePage === $t('quick_messages.title')"
           class="forms__quick-message"

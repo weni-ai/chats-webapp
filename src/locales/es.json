@@ -582,6 +582,11 @@
         "switch_inactive": "Bloqueo de transferencias a agentes fuera de línea inactivo"
       }
     },
+    "custom_sector": "Personalizar nuevo sector (recomendado)",
+    "default_sector": {
+      "title": "Crear sector predeterminado (más rápido)",
+      "name": "Sector predeterminado"
+    },
     "edit_sector": {
       "description": "Determinar la configuración del equipo general y la jornada laboral",
       "tag_already_exists": "Ya existe una etiqueta con ese nombre",
