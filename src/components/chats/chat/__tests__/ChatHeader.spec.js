@@ -2,8 +2,6 @@ import { mount } from '@vue/test-utils';
 import { describe, it, expect, beforeEach } from 'vitest';
 
 import ChatHeader from '../ChatHeader.vue';
-import i18n from '@/plugins/i18n';
-import UnnnicSystem from '@/plugins/UnnnicSystem';
 
 const room = {
   contact: {
@@ -21,12 +19,6 @@ const room = {
 
 const createWrapper = () => {
   return mount(ChatHeader, {
-    global: {
-      plugins: [i18n, UnnnicSystem],
-      mocks: {
-        $t: (msg) => msg,
-      },
-    },
     props: {
       closeButtonTooltip: 'Close Chat',
       room,
