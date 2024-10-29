@@ -230,7 +230,7 @@ export default {
       } catch (error) {
         Unnnic.unnnicCallAlert({
           props: {
-            text: this.$t('sector_update_success'),
+            text: this.$t('new_sector.alert.create_error'),
             type: 'error',
           },
           seconds: 5,
