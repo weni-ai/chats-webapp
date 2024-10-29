@@ -592,6 +592,11 @@
       "tag_already_exists": "A tag with that name already exists",
       "invalid_hours": "Start time cannot be greater/equal to end time"
     },
+    "custom_queue": "Create a custom queue",
+    "default_queue": {
+      "title": "Create default queue (faster)",
+      "name": "Default queue"
+    },
     "queues": {
       "in_sector": "Queue in sector {sector}",
       "new": "New queue",

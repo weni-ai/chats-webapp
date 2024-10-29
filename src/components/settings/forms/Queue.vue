@@ -1,65 +1,94 @@
 <template>
-  <section
-    v-if="!loadingInfo"
-    class="sector-queues-form"
-  >
-    <UnnnicInput
+  <section class="queue-form">
+    <section
       v-if="!isEditing"
-      v-model="queue.name"
-      :label="$t('queues.queue_name')"
-      :placeholder="$t('queues.queue_name_placeholder')"
-      data-testid="queue-name-input"
-      class="input"
-    />
-    <UnnnicChatText
-      v-if="isEditing"
-      class="sector-queues-form__automatic-message"
-      titleColor="neutral-dark"
-      size="small"
-      :title="$t('automatic_message.title')"
-      :info="$t('automatic_message.info')"
+      class="form-wrapper__radios"
     >
-      <template #actions>
-        <UnnnicButton
-          v-if="!editingAutomaticMessage"
-          class="sector-queues-form__automatic-message-button"
-          type="secondary"
-          iconCenter="edit"
-          data-testid="edit-automatic-message-button"
-          size="small"
-          @click="handlerEditAutomaticMessage()"
-        />
-      </template>
-      <template #description>
-        <UnnnicTextArea
-          v-if="editingAutomaticMessage"
-          ref="textEditor"
-          v-model="queue.default_message"
-          class="sector-queues-form__automatic-message-textarea"
-          :maxLength="250"
-          size="sm"
-          :placeholder="$t('automatic_message.placeholder')"
-          data-testid="automatic-message-textarea"
-          @focus="focusTextEditor"
-          @focusout="editingAutomaticMessage = false"
-        />
+      <UnnnicRadio
+        size="sm"
+        :modelValue="useDefaultSectorQueue"
+        :value="0"
+        @update:model-value="updateDefaultSectorQueueValue"
+      >
+        {{ $t('config_chats.custom_queue') }}
+      </UnnnicRadio>
+      <UnnnicRadio
+        :modelValue="useDefaultSectorQueue"
+        size="sm"
+        :value="1"
+        @update:model-value="updateDefaultSectorQueueValue"
+      >
+        {{ $t('config_chats.default_queue.title') }}
+      </UnnnicRadio>
+    </section>
+    <p class="forms__hint">
+      {{ $t('config_chats.queues.hint') }}
+    </p>
+    <h1 class="forms__title">
+      {{ $t('config_chats.queues.queue_definitions') }}
+    </h1>
+    <section
+      v-if="!loadingInfo"
+      class="sector-queues-form"
+    >
+      <UnnnicInput
+        v-if="!isEditing"
+        v-model="queue.name"
+        :label="$t('queues.queue_name')"
+        :placeholder="$t('queues.queue_name_placeholder')"
+        data-testid="queue-name-input"
+        class="input"
+      />
+      <UnnnicChatText
+        v-if="isEditing"
+        class="sector-queues-form__automatic-message"
+        titleColor="neutral-dark"
+        size="small"
+        :title="$t('automatic_message.title')"
+        :info="$t('automatic_message.info')"
+      >
+        <template #actions>
+          <UnnnicButton
+            v-if="!editingAutomaticMessage"
+            class="sector-queues-form__automatic-message-button"
+            type="secondary"
+            iconCenter="edit"
+            data-testid="edit-automatic-message-button"
+            size="small"
+            @click="handlerEditAutomaticMessage()"
+          />
+        </template>
+        <template #description>
+          <UnnnicTextArea
+            v-if="editingAutomaticMessage"
+            ref="textEditor"
+            v-model="queue.default_message"
+            class="sector-queues-form__automatic-message-textarea"
+            :maxLength="250"
+            size="sm"
+            :placeholder="$t('automatic_message.placeholder')"
+            data-testid="automatic-message-textarea"
+            @focus="focusTextEditor"
+            @focusout="editingAutomaticMessage = false"
+          />
 
-        <p
-          v-else
-          data-testid="queue-default-message"
-        >
-          {{ queue.default_message || $t('automatic_message.placeholder') }}
-        </p>
-      </template>
-    </UnnnicChatText>
+          <p
+            v-else
+            data-testid="queue-default-message"
+          >
+            {{ queue.default_message || $t('automatic_message.placeholder') }}
+          </p>
+        </template>
+      </UnnnicChatText>
 
-    <AgentsForm
-      v-model="queue.currentAgents"
-      :sector="sector"
-      :agents="agentsOptions"
-      @remove="handlerRemoveAgent($event)"
-      @select="handlerAddAgent($event)"
-    />
+      <AgentsForm
+        v-model="queue.currentAgents"
+        :sector="sector"
+        :agents="agentsOptions"
+        @remove="handlerRemoveAgent($event)"
+        @select="handlerAddAgent($event)"
+      />
+    </section>
   </section>
 </template>
 
@@ -68,6 +97,8 @@ import AgentsForm from './Agent.vue';
 
 import Queue from '@/services/api/resources/settings/queue';
 import Project from '@/services/api/resources/settings/project';
+import { mapState } from 'pinia';
+import { useProfile } from '@/store/modules/profile';
 
 export default {
   name: 'FormQueue',
@@ -88,10 +119,12 @@ export default {
       editingAutomaticMessage: false,
       loadingInfo: false,
       agentsOptions: [],
+      useDefaultSectorQueue: 0,
     };
   },
 
   computed: {
+    ...mapState(useProfile, ['me']),
     isEditing() {
       return !!this.queue.uuid;
     },
@@ -123,6 +156,25 @@ export default {
     this.loadingInfo = false;
   },
   methods: {
+    updateDefaultSectorQueueValue(activate) {
+      this.useDefaultSectorQueue = activate;
+      if (activate) {
+        const meAgent = this.agentsOptions.find(
+          (agent) => agent.user.email === this.me.email,
+        );
+        this.queue = {
+          ...this.queue,
+          name: this.$t('config_chats.default_queue.name'),
+          currentAgents: [meAgent],
+        };
+      } else {
+        this.queue = {
+          ...this.queue,
+          name: '',
+          currentAgents: [],
+        };
+      }
+    },
     handlerEditAutomaticMessage() {
       this.editingAutomaticMessage = true;
       this.focusTextEditor();
@@ -188,6 +240,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.queue-form {
+  display: grid;
+  gap: $unnnic-spacing-sm;
+}
+.forms {
+  &__title {
+    font-weight: $unnnic-font-weight-bold;
+    color: $unnnic-color-neutral-dark;
+    font-size: $unnnic-font-size-body-lg;
+    line-height: $unnnic-line-height-large * 1.5;
+  }
+
+  &__hint {
+    font-size: $unnnic-font-size-body-gt;
+    line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
+  }
+}
 .sector-queues-form {
   display: grid;
   gap: $unnnic-spacing-sm;

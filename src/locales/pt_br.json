@@ -592,6 +592,11 @@
       "tag_already_exists": "Já existe uma tag com esse nome",
       "invalid_hours": "Horário de início não pode ser maior/igual que horário final"
     },
+    "custom_queue": "Criar uma fila personalizada",
+    "default_queue": {
+      "title": "Criar fila padrão (mais rápido)",
+      "name": "Fila padrão"
+    },
     "queues": {
       "in_sector": "Fila no setor {sector}",
       "new": "Nova fila",
