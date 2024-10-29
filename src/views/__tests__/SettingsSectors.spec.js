@@ -6,14 +6,6 @@ import SettingsSectors from '@/views/Settings/SettingsSectors.vue';
 import { createTestingPinia } from '@pinia/testing';
 import { useSettings } from '@/store/modules/settings';
 
-vi.mock('@/services/api/resources/settings/sector', () => ({
-  default: {},
-}));
-
-vi.mock('@/services/api/resources/settings/queue', () => ({
-  default: {},
-}));
-
 const store = createTestingPinia({
   initialState: {
     config: {
