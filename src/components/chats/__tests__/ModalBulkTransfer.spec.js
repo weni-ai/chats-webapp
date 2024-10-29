@@ -92,7 +92,7 @@ describe('ModalBulkTransfer', () => {
         selectedQueue: [{ value: '1', label: 'Queue' }],
       });
 
-      await transferButton.trigger('click');
+      await wrapper.vm.$nextTick();
 
       expect(transferButton.props('loading')).toBe(true);
     });

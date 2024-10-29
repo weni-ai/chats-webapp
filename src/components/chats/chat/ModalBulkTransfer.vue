@@ -27,7 +27,7 @@
         size="large"
         :disabled="disabledTransferButton"
         :loading="isLoadingBulkTransfer"
-        @click="bulkTransfer"
+        @click="bulkTransfer()"
       />
     </template>
   </UnnnicModal>
