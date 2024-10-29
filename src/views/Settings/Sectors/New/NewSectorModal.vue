@@ -41,6 +41,7 @@
             ref="sectorQueue"
             v-model="sectorQueue"
             :sector="sector"
+            showHelpers
           />
         </section>
         <section

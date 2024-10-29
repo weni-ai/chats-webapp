@@ -1,7 +1,7 @@
 <template>
   <section class="queue-form">
     <section
-      v-if="!isEditing"
+      v-if="showHelpers"
       class="form-wrapper__radios"
     >
       <UnnnicRadio
@@ -21,10 +21,16 @@
         {{ $t('config_chats.default_queue.title') }}
       </UnnnicRadio>
     </section>
-    <p class="forms__hint">
+    <p
+      v-if="showHelpers"
+      class="forms__hint"
+    >
       {{ $t('config_chats.queues.hint') }}
     </p>
-    <h1 class="forms__title">
+    <h1
+      v-if="showHelpers"
+      class="forms__title"
+    >
       {{ $t('config_chats.queues.queue_definitions') }}
     </h1>
     <section
@@ -109,6 +115,10 @@ export default {
       required: true,
     },
     sector: { type: Object, required: true },
+    showHelpers: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   emits: ['update:modelValue', 'update-queue-agents-count'],
