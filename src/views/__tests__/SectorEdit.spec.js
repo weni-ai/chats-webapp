@@ -56,6 +56,7 @@ const createWrapper = (props = {}) => {
       stubs: {
         UnnnicTab: true,
         FormSectorExtraOptions: true,
+        ListSectorQueues: true,
       },
       mocks: {
         $router: {
@@ -103,6 +104,40 @@ describe('EditSector.vue', () => {
     });
   });
 
+  it('should render queues list if active tab equals queues', async () => {
+    await wrapper.setData({ sector: mockSector1 });
+
+    const unnnicTab = wrapper.findComponent(
+      '[data-testid=sector-edit-view-tab-list]',
+    );
+
+    await unnnicTab.vm.$emit('change', 'queues');
+
+    await wrapper.vm.$nextTick();
+
+    const queuesList = wrapper.findComponent(
+      '[data-testid="sector-queues-list"]',
+    );
+
+    expect(queuesList.exists()).toBe(true);
+  });
+
+  it('should render general form if active tab equals general', async () => {
+    await wrapper.setData({ sector: mockSector1 });
+
+    const unnnicTab = wrapper.findComponent(
+      '[data-testid=sector-edit-view-tab-list]',
+    );
+
+    await unnnicTab.vm.$emit('change', 'general');
+
+    await flushPromises();
+
+    const queuesList = wrapper.findComponent('[data-testid="general-form"]');
+
+    expect(queuesList.exists()).toBe(true);
+  });
+
   it('should render extra options form if active tab equals extra_options', async () => {
     await wrapper.setData({ sector: mockSector1 });
     const unnnicTab = wrapper.findComponent(
@@ -113,6 +148,24 @@ describe('EditSector.vue', () => {
 
     const extraOptionsForm = wrapper.find('[data-testid="extra-options-form"]');
     expect(extraOptionsForm.exists()).toBe(true);
+  });
+
+  it('should render quick messages list if active tab equals quick_messages', async () => {
+    await wrapper.setData({ sector: mockSector1 });
+
+    const unnnicTab = wrapper.findComponent(
+      '[data-testid=sector-edit-view-tab-list]',
+    );
+
+    await unnnicTab.vm.$emit('change', 'quick_messages');
+
+    await wrapper.vm.$nextTick();
+
+    const queuesList = wrapper.findComponent(
+      '[data-testid="sector-quick-messages-list"]',
+    );
+
+    expect(queuesList.exists()).toBe(true);
   });
 
   it('Should match the snapshot', () => {

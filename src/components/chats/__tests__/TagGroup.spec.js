@@ -91,4 +91,12 @@ describe('TagGroup', () => {
 
     expect(wrapper.emitted('update:modelValue').length).toBe(3);
   });
+
+  it('should emit close with tag', async () => {
+    const wrapper = createWrapper({ tags });
+    const tag = wrapper.findComponent('[data-testid="tag__finance"]');
+    await tag.trigger('close');
+
+    expect(wrapper.emitted('close')[0][0]).toEqual(tags[0]);
+  });
 });

@@ -1,5 +1,27 @@
 <template>
   <section class="form-wrapper">
+    <section
+      v-if="!isEditing"
+      class="form-wrapper__radios"
+    >
+      <UnnnicRadio
+        size="sm"
+        :modelValue="useDefaultSector"
+        :value="0"
+        @update:model-value="updateDefaultSectorValue"
+      >
+        {{ $t('config_chats.custom_sector') }}
+      </UnnnicRadio>
+      <UnnnicRadio
+        :modelValue="useDefaultSector"
+        size="sm"
+        :value="1"
+        @update:model-value="updateDefaultSectorValue"
+      >
+        {{ $t('config_chats.default_sector.title') }}
+      </UnnnicRadio>
+    </section>
+
     <form
       class="form-sector-container"
       @submit.prevent="$emit('submit')"
@@ -9,7 +31,7 @@
         class="form-section"
         data-testid="sector-name-section"
       >
-        <h2 class="title">
+        <h2 class="form-section__title">
           {{ $t('sector.add') }}
           <UnnnicToolTip
             enabled
@@ -140,7 +162,10 @@
         />
       </section>
     </form>
-    <section class="form-actions">
+    <section
+      v-show="isEditing"
+      class="form-actions"
+    >
       <UnnnicButton
         :text="$t('cancel')"
         type="tertiary"
@@ -149,7 +174,7 @@
       <UnnnicButton
         :text="$t('save')"
         :disabled="!validForm"
-        data-testid="save-button"
+        data-testid="general-save-button"
         @click.stop="saveSector()"
       />
     </section>
@@ -157,12 +182,13 @@
 </template>
 
 <script>
-import { mapActions } from 'pinia';
+import { mapActions, mapState } from 'pinia';
 import { useSettings } from '@/store/modules/settings';
 import unnnic from '@weni/unnnic-system';
 import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 import Sector from '@/services/api/resources/settings/sector';
 import Project from '@/services/api/resources/settings/project';
+import { useProfile } from '@/store/modules/profile';
 
 export default {
   name: 'FormSector',
@@ -184,6 +210,8 @@ export default {
 
   data() {
     return {
+      useDefaultSector: 0,
+      managersPage: 0,
       selectedManager: [],
       removedManagers: [],
       message: '',
@@ -194,6 +222,7 @@ export default {
   },
 
   computed: {
+    ...mapState(useProfile, ['me']),
     managersNames() {
       const managersNames = [
         {
@@ -256,6 +285,38 @@ export default {
       actionDeleteSector: 'deleteSector',
     }),
 
+    updateDefaultSectorValue(activate) {
+      this.useDefaultSector = activate;
+      if (activate) {
+        const meManager = this.managers.find(
+          (manager) => manager.user.email === this.me.email,
+        );
+        this.sector = {
+          ...this.sector,
+          name: this.$t('config_chats.default_sector.name'),
+          workingDay: {
+            start: '08:00',
+            end: '18:00',
+            dayOfWeek: 'week-days',
+          },
+          maxSimultaneousChatsByAgent: '4',
+          managers: [meManager],
+        };
+      } else {
+        this.sector = {
+          ...this.sector,
+          name: '',
+          workingDay: {
+            start: '',
+            end: '',
+            dayOfWeek: '',
+          },
+          maxSimultaneousChatsByAgent: '',
+          managers: [],
+        };
+      }
+    },
+
     async getSectorManagers() {
       const managers = await Sector.managers(this.sector.uuid);
       this.sector.managers = managers.results.map((manager) => ({
@@ -265,7 +326,7 @@ export default {
     },
 
     async removeManager(managerUuid) {
-      await Sector.removeManager(managerUuid);
+      if (this.isEditing) await Sector.removeManager(managerUuid);
       this.removeManagerFromTheList(managerUuid);
     },
 
@@ -312,6 +373,7 @@ export default {
         this.sector.managers = managers;
 
         if (this.isEditing) this.addManager(manager);
+
         this.selectedManager = [this.managersNames[0]];
       }
     },
@@ -322,23 +384,31 @@ export default {
     },
 
     async listProjectManagers() {
-      // Currently these requests return the same data because of their disabled filters
+      let hasNext = false;
+      try {
+        const offset = this.managersPage * 20;
+        const { results, next } = await Project.managers(offset);
+        this.managersPage += 1;
+        this.managers = this.managers.concat(results);
 
-      // const managers = (await Project.managers()).results.concat(
-      //   (await Project.admins()).results,
-      // );
-
-      const managers = await Project.managers();
-
-      this.managers = managers.results;
+        hasNext = next;
+      } finally {
+        if (hasNext) {
+          this.listProjectManagers();
+        }
+      }
     },
 
     hourValidate(hour) {
       const inicialHour = hour.start;
       const finalHour = hour.end;
+
       if (inicialHour >= finalHour) {
         this.validHour = false;
-        this.message = this.$t('config_chats.edit_sector.invalid_hours');
+        this.message =
+          !inicialHour && !finalHour
+            ? ''
+            : this.$t('config_chats.edit_sector.invalid_hours');
       } else {
         this.validHour = true;
       }
@@ -422,6 +492,12 @@ export default {
 .form-wrapper {
   display: flex;
   flex-direction: column;
+
+  &__radios {
+    display: flex;
+    gap: $unnnic-spacing-sm;
+    margin-bottom: $unnnic-spacing-sm;
+  }
 }
 
 .form-actions {

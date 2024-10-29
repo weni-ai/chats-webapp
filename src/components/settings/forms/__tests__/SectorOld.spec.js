@@ -21,10 +21,14 @@ describe('FormSectorOld', () => {
     const titles = wrapper.findAll('h2.title');
     const tooltips = wrapper.findAllComponents({ name: 'unnnic-tooltip' });
 
-    expect(titles.at(0).text()).toMatch(/Adicionar novo setor/gi);
-    expect(titles.at(1).text()).toMatch(/Gerentes de atendimento/gi);
-    expect(titles.at(2).text()).toMatch(/Opções extras/gi);
-    expect(titles.at(3).text()).toMatch(/Definições da jornada de trabalho/gi);
+    expect(titles.at(0).text()).toMatch(
+      /Add new sector Create a sector to manage the fulfillment operation, including roles, agents and management hours/gi,
+    );
+    expect(titles.at(1).text()).toMatch(
+      /Service managers Add members to your project to be able to set as a manager/gi,
+    );
+    expect(titles.at(2).text()).toMatch(/Extras options/gi);
+    expect(titles.at(3).text()).toMatch(/Definitions of the workday/gi);
 
     expect(titles.length).toBe(4);
     expect(tooltips.length).toBe(3);
@@ -35,22 +39,22 @@ describe('FormSectorOld', () => {
       .findAllComponents({ name: 'unnnic-input' })
       .at(0);
     expect(inputSector.exists()).toBe(true);
-    expect(inputSector.props('label')).toMatch(/Nome do setor/gi);
-    expect(inputSector.props('placeholder')).toMatch(/Exemplo: Financeiro/gi);
+    expect(inputSector.props('label')).toMatch(/Sector name/gi);
+    expect(inputSector.props('placeholder')).toMatch(/Example: Financial/gi);
     const selectManagerLabel = wrapper
       .findAllComponents({ name: 'unnnic-label' })
       .at(0);
     const selects = wrapper.findAllComponents({ name: 'unnnic-select-smart' });
 
     expect(selectManagerLabel.exists()).toBe(true);
-    expect(selectManagerLabel.props('label')).toMatch(/Adicionar gerente/gi);
+    expect(selectManagerLabel.props('label')).toMatch(/Add manager/gi);
     expect(selects.length).toBe(1);
 
     const inputTrigger = wrapper.find('.unnnic-switch');
     const inputTriggerLabel = wrapper.find('.unnnic-switch__label');
     expect(inputTrigger.exists()).toBe(true);
     expect(inputTriggerLabel.text()).toMatch(
-      /Disparo de modelos de mensagens desativado/gi,
+      /Triggering message templates disabled/gi,
     );
 
     const inputsTime = wrapper.findAll('input[type="time"]');
@@ -61,7 +65,7 @@ describe('FormSectorOld', () => {
       .at(-1);
     expect(inputLimitSimultaneousChats.exists()).toBe(true);
     expect(inputLimitSimultaneousChats.props('label')).toMatch(
-      /Limite de quantidade de atendimentos simultâneos por agente/gi,
+      /Limit on the number of simultaneous calls per agent/gi,
     );
     expect(inputLimitSimultaneousChats.props('placeholder')).toMatch(/4/gi);
   });

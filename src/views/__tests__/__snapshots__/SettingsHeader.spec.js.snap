@@ -13,7 +13,8 @@ exports[`SettingsHeader.vue > Should match the snapshot 1`] = `
   >
     <span
       class="material-symbols-rounded unnnic-icon-scheme--weni-600 unnnic-icon-size--md"
-      data-v-930380cc=""
+      data-testid="material-icon"
+      data-v-1a90efc1=""
       data-v-ecaaa6f3=""
     >
       settings
@@ -24,7 +25,7 @@ exports[`SettingsHeader.vue > Should match the snapshot 1`] = `
     data-testid="settings-view-header-title"
     data-v-a59c663f=""
   >
-    Configurações de Chats
+    Chat Settings
   </h1>
 </header>
 `;

@@ -67,7 +67,7 @@
 
 <script>
 import FormAgent from '@/components/settings/forms/Agent.vue';
-import FormQueue from '@/components/settings/forms/Queue.vue';
+import FormQueue from '@/components/settings/forms/QueueOld.vue';
 import FormSectorOld from '@/components/settings/forms/SectorOld.vue';
 import FormTags from '@/components/settings/forms/TagsOld.vue';
 
