@@ -97,6 +97,8 @@ import Queue from '@/services/api/resources/settings/queue';
 
 import isMobile from 'is-mobile';
 
+import Unnnic from '@weni/unnnic-system';
+
 export default {
   name: 'NewSectorModal',
   components: {
@@ -215,7 +217,24 @@ export default {
         );
 
         this.$refs.newSectorDrawer.close();
+
+        Unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('new_sector.alert.create_success', {
+              sectorName: createdSector.name,
+            }),
+            type: 'success',
+          },
+          seconds: 5,
+        });
       } catch (error) {
+        Unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('sector_update_success'),
+            type: 'error',
+          },
+          seconds: 5,
+        });
         console.log(error);
       } finally {
         this.isLoadingCreate = false;
