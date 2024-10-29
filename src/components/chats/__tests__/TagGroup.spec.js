@@ -1,14 +1,11 @@
 import { unnnicTag } from '@weni/unnnic-system';
-import UnnnicSystem from '@/plugins/UnnnicSystem';
+
 import { mount } from '@vue/test-utils';
 import TagGroup from '@/components/TagGroup.vue';
 
 function createWrapper(props) {
   const wrapper = mount(TagGroup, {
     props,
-    global: {
-      plugins: [UnnnicSystem],
-    },
   });
 
   return wrapper;
@@ -71,5 +68,13 @@ describe('TagGroup', () => {
     await wrapper.findComponent('[data-testid="tag__doubts"]').trigger('click');
 
     expect(wrapper.emitted('update:modelValue').length).toBe(3);
+  });
+
+  it('should emit close with tag', async () => {
+    const wrapper = createWrapper({ tags });
+    const tag = wrapper.findComponent('[data-testid="tag__finance"]');
+    await tag.trigger('close');
+
+    expect(wrapper.emitted('close')[0][0]).toEqual(tags[0]);
   });
 });
