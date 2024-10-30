@@ -143,10 +143,12 @@ export default {
         return this.modelValue;
       },
       set(value) {
-        this.$emit(
-          'changeIsValid',
-          !!value.name && !!value.currentAgents.length,
-        );
+        if (!this.isEditing) {
+          this.$emit(
+            'changeIsValid',
+            !!value.name && !!value.currentAgents.length,
+          );
+        }
         this.$emit('update:modelValue', value);
       },
     },
@@ -158,6 +160,9 @@ export default {
       this.queue = {
         ...(await Queue.getQueueInformation(this.queue.uuid)),
         agents: this.queue.agents,
+        default_message: this.queue.default_message
+          ? this.queue.default_message
+          : '',
       };
 
       await this.listQueueAgents();
