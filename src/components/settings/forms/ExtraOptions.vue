@@ -91,7 +91,7 @@
     </section>
 
     <section
-      v-if="isEditing"
+      v-show="isEditing"
       data-testid="sector-extra-options-actions"
       class="actions"
     >
@@ -134,7 +134,7 @@ export default {
       default: false,
     },
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'changeIsValid'],
   data() {
     return {
       tagName: '',
@@ -165,7 +165,9 @@ export default {
         : this.$t('sector.additional_options.agents_signature.switch_disabled');
     },
     validForm() {
-      return !!this.tags.length;
+      const valid = !!this.tags.length;
+      this.$emit('changeIsValid', valid);
+      return valid;
     },
   },
   mounted() {

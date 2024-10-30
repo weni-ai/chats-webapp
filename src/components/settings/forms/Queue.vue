@@ -121,7 +121,7 @@ export default {
     },
   },
 
-  emits: ['update:modelValue', 'update-queue-agents-count'],
+  emits: ['update:modelValue', 'update-queue-agents-count', 'changeIsValid'],
 
   data() {
     return {
@@ -143,6 +143,10 @@ export default {
         return this.modelValue;
       },
       set(value) {
+        this.$emit(
+          'changeIsValid',
+          !!value.name && !!value.currentAgents.length,
+        );
         this.$emit('update:modelValue', value);
       },
     },

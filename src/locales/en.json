@@ -621,7 +621,11 @@
     "sector_tip": "Create a sector to manage the fulfillment operation, including roles, agents and management hours",
     "queues_tip": "The queues serve to organize the types of service within a sector, through the queues it is possible to create service groups, create at least one queue to manage a team of agents",
     "tags_tip": "Tags are used to classify service characteristics and make it possible to search and filter chats from them, define tags that are relevant to your context",
-    "agent_tip": "Add members to your project to be able to set as a manager"
+    "agent_tip": "Add members to your project to be able to set as a manager",
+    "alert": {
+      "create_success": "New sector {sectorName} created!",
+      "create_error": "Failed to create sector"
+    }
   },
   "your_orgs": "Your organizations",
   "your_projects": "Your projects",

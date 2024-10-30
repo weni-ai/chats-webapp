@@ -621,7 +621,11 @@
     "sector_tip": "Cree un sector para administrar la operación de cumplimiento, incluidos roles, agentes y horas de administración",
     "queues_tip": "Las colas sirven para organizar los tipos de servicio dentro de un sector, a través de las colas es posible crear grupos de servicios, crear al menos una cola para gestionar un equipo de agentes",
     "tags_tip": "Las etiquetas se utilizan para clasificar las características de los servicios y permiten buscar y filtrar chats a partir de ellos, definir etiquetas que sean relevantes para su contexto",
-    "agent_tip": "Agregue miembros a su proyecto para poder establecer como administrador"
+    "agent_tip": "Agregue miembros a su proyecto para poder establecer como administrador",
+    "alert": {
+      "create_success": "¡Nuevo sector {sectorName} creado!",
+      "create_error": "Error al crear el sector"
+    }
   },
   "your_orgs": "Sus organizaciones",
   "your_projects": "Tus proyectos",

@@ -8,6 +8,8 @@
     :title="$t('config_chats.new_sector')"
     :primaryButtonText="activePageIndex === 3 ? $t('save') : $t('continue')"
     :secondaryButtonText="activePageIndex === 0 ? $t('cancel') : $t('back')"
+    :disabledPrimaryButton="!isValid[activePageKey]"
+    :loadingPrimaryButton="isLoadingCreate"
     @primary-button-click="
       activePageIndex === 3 ? finish() : (activePageIndex = activePageIndex + 1)
     "
@@ -29,11 +31,13 @@
           ref="sectorGeneral"
           v-model="sector"
           class="general-form"
+          @change-is-valid="updateIsValid($event, 'general')"
         />
         <ExtraOptions
           v-show="activePage === $t('sector.extra_options')"
           ref="sectorExtraOptions"
           v-model="sector"
+          @change-is-valid="updateIsValid($event, 'extraOptions')"
         />
         <section class="forms__queue">
           <FormQueue
@@ -42,6 +46,7 @@
             v-model="sectorQueue"
             :sector="sector"
             showHelpers
+            @change-is-valid="updateIsValid($event, 'queue')"
           />
         </section>
         <section
@@ -92,6 +97,8 @@ import Queue from '@/services/api/resources/settings/queue';
 
 import isMobile from 'is-mobile';
 
+import Unnnic from '@weni/unnnic-system';
+
 export default {
   name: 'NewSectorModal',
   components: {
@@ -136,62 +143,105 @@ export default {
         agents: 0,
       },
       useDefaultSectorQueue: 0,
+      isValid: {
+        general: false,
+        extraOptions: false,
+        queue: false,
+        quick_messages: true,
+      },
+      isLoadingCreate: false,
     };
   },
   computed: {
+    activePageKey() {
+      const mapper = {
+        0: 'general',
+        1: 'extraOptions',
+        2: 'queue',
+        3: 'quick_messages',
+      };
+      return mapper[this.activePageIndex];
+    },
     activePage() {
       return this.newSectorPages[this.activePageIndex];
     },
   },
   methods: {
     async finish() {
-      const {
-        can_edit_custom_fields,
-        can_trigger_flows,
-        sign_messages,
-        name,
-        workingDay,
-        maxSimultaneousChatsByAgent,
-        managers,
-      } = this.sector;
+      try {
+        this.isLoadingCreate = true;
+        const {
+          can_edit_custom_fields,
+          can_trigger_flows,
+          sign_messages,
+          name,
+          workingDay,
+          maxSimultaneousChatsByAgent,
+          managers,
+        } = this.sector;
 
-      const createSectorBody = {
-        can_edit_custom_fields,
-        can_trigger_flows,
-        sign_messages,
-        name,
-        work_start: workingDay.start,
-        work_end: workingDay.end,
-        rooms_limit: maxSimultaneousChatsByAgent,
-      };
+        const createSectorBody = {
+          can_edit_custom_fields,
+          can_trigger_flows,
+          sign_messages,
+          name,
+          work_start: workingDay.start,
+          work_end: workingDay.end,
+          rooms_limit: maxSimultaneousChatsByAgent,
+        };
 
-      const createdSector = await Sector.create(createSectorBody);
+        const createdSector = await Sector.create(createSectorBody);
 
-      this.sector = { ...this.sector, ...createdSector };
+        this.sector = { ...this.sector, ...createdSector };
 
-      await this.$nextTick();
+        await this.$nextTick();
 
-      await Promise.all(
-        managers.map((manager) => {
-          return Sector.addManager(this.sector.uuid, manager.uuid);
-        }),
-      );
+        await Promise.all(
+          managers.map((manager) => {
+            return Sector.addManager(this.sector.uuid, manager.uuid);
+          }),
+        );
 
-      await this.$refs.sectorExtraOptions.save();
+        await this.$refs.sectorExtraOptions.save();
 
-      const createdQueue = await Queue.create({
-        name: this.sectorQueue.name,
-        default_message: '',
-        sectorUuid: this.sector.uuid,
-      });
+        const createdQueue = await Queue.create({
+          name: this.sectorQueue.name,
+          default_message: '',
+          sectorUuid: this.sector.uuid,
+        });
 
-      await Promise.all(
-        this.sectorQueue.currentAgents.map((agent) => {
-          Queue.addAgent(createdQueue.uuid, agent.uuid);
-        }),
-      );
+        await Promise.all(
+          this.sectorQueue.currentAgents.map((agent) => {
+            Queue.addAgent(createdQueue.uuid, agent.uuid);
+          }),
+        );
 
-      this.$refs.newSectorDrawer.close();
+        this.$refs.newSectorDrawer.close();
+
+        Unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('new_sector.alert.create_success', {
+              sectorName: createdSector.name,
+            }),
+            type: 'success',
+          },
+          seconds: 5,
+        });
+      } catch (error) {
+        Unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('new_sector.alert.create_error'),
+            type: 'error',
+          },
+          seconds: 5,
+        });
+        console.log(error);
+      } finally {
+        this.isLoadingCreate = false;
+      }
+    },
+    updateIsValid(valid, key) {
+      this.isValid[key] = valid;
     },
   },
 };

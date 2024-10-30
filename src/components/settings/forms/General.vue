@@ -206,7 +206,7 @@ export default {
       required: true,
     },
   },
-  emits: ['update:modelValue', 'submit'],
+  emits: ['update:modelValue', 'submit', 'changeIsValid'],
 
   data() {
     return {
@@ -261,7 +261,7 @@ export default {
 
       this.hourValidate(workingDay);
 
-      return !!(
+      const valid = !!(
         name.trim() &&
         managers.length > 0 &&
         workingDay?.start &&
@@ -269,6 +269,10 @@ export default {
         this.validHour &&
         maxSimultaneousChatsByAgent
       );
+
+      this.$emit('changeIsValid', valid);
+
+      return valid;
     },
   },
 
