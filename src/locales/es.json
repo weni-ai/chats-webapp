@@ -629,6 +629,11 @@
     "alert": {
       "create_success": "¡Nuevo sector {sectorName} creado!",
       "create_error": "Error al crear el sector"
+    },
+    "discart": {
+      "title": "Descartar cambios",
+      "hint": "La creación del nuevo sector se descartará al confirmar esta acción. ¿Deseas descartar los cambios realizados hasta ahora?",
+      "confirm": "Descartar"
     }
   },
   "your_orgs": "Sus organizaciones",

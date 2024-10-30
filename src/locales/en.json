@@ -629,6 +629,11 @@
     "alert": {
       "create_success": "New sector {sectorName} created!",
       "create_error": "Failed to create sector"
+    },
+    "discart": {
+      "title": "Discard changes",
+      "hint": "The creation of the new sector will be discarded upon confirming this action. Do you want to discard the changes made so far?",
+      "confirm": "Discart"
     }
   },
   "your_orgs": "Your organizations",

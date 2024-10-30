@@ -279,6 +279,10 @@ export default {
   mounted() {
     if (this.isEditing) {
       this.getSectorManagers();
+    } else if (
+      this.sector.name === this.$t('config_chats.default_sector.name')
+    ) {
+      this.useDefaultSector = 1;
     }
 
     this.listProjectManagers();
