@@ -625,7 +625,11 @@
     "sector_tip": "Crie um setor para gerenciar a operação de atendimento, adicionando gerentes, agentes e horário de funcionamento",
     "queues_tip": "As filas servem para organizar os tipos de atendimento dentro de um setor, através das filas é possível criar grupos de atendimento, crie pelo menos uma fila para gerenciar uma equipe de agentes",
     "tags_tip": "As tags são usadas para classificar características do atendimento e possibilitar a pesquisa de filtragem dos chats a partir delas, defina tags que sejam relevantes para o seu contexto",
-    "agent_tip": "Adicione membros no seu projeto para poder definir como gerente"
+    "agent_tip": "Adicione membros no seu projeto para poder definir como gerente",
+    "alert": {
+      "create_success": "Novo setor {sectorName} criado!",
+      "create_error": "Falha ao criar setor"
+    }
   },
   "your_orgs": "Suas organizações",
   "your_projects": "Seus projetos",
