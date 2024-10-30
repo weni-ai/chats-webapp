@@ -49,10 +49,10 @@
       width="40"
     />
   </section>
-  <NewSectorModal
+  <NewSectorDrawer
     v-if="showNewSectorModal"
     v-model="showNewSectorModal"
-    data-testid="new-sector-modal"
+    data-testid="new-sector-drawer"
     @close="showNewSectorModal = false"
   />
 </template>
@@ -65,14 +65,14 @@ import { useSettings } from '@/store/modules/settings';
 
 import SettingsSectionHeader from './SettingsSectionHeader.vue';
 
-import NewSectorModal from './Sectors/New/NewSectorModal.vue';
+import NewSectorDrawer from './Sectors/New/NewSectorDrawer.vue';
 
 export default {
   name: 'SettingsSectors',
 
   components: {
     SettingsSectionHeader,
-    NewSectorModal,
+    NewSectorDrawer,
   },
 
   data() {

@@ -34,7 +34,7 @@ const createWrapper = (props) => {
       stubs: {
         UnnnicCard: true,
         UnnnicCardProject: true,
-        NewSectorModal: true,
+        NewSectorDrawer: true,
       },
       mocks: {
         $router: {
@@ -86,7 +86,7 @@ describe('SettingsHeader.vue', () => {
 
     await wrapper.vm.$nextTick();
 
-    const newSectorModal = wrapper.find('[data-testid="new-sector-modal"]');
+    const newSectorModal = wrapper.find('[data-testid="new-sector-drawer"]');
     expect(newSectorModal.exists()).toBe(true);
   });
 

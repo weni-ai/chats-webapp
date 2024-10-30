@@ -19,7 +19,7 @@
         ? $refs.newSectorDrawer.close()
         : (activePageIndex = activePageIndex - 1)
     "
-    @close="$emit('close')"
+    @close="handleCloseNewSectorDrawer()"
   >
     <template #content>
       <UnnnicNavigator
@@ -86,7 +86,11 @@
       </section>
     </template>
   </UnnnicDrawer>
-  <DiscartChangesModal :showModal="showConfirmDiscartChangesModal" />
+  <DiscartChangesModal
+    :showModal="showConfirmDiscartChangesModal"
+    @secondary-button-click="showConfirmDiscartChangesModal = false"
+    @primary-button-click="$emit('close')"
+  />
 </template>
 
 <script>
@@ -103,7 +107,7 @@ import isMobile from 'is-mobile';
 import Unnnic from '@weni/unnnic-system';
 
 export default {
-  name: 'NewSectorModal',
+  name: 'NewSectorDrawer',
   components: {
     General,
     ExtraOptions,
@@ -158,6 +162,18 @@ export default {
     };
   },
   computed: {
+    showDiscartQuestion() {
+      const { name, workingDay, maxSimultaneousChatsByAgent, managers } =
+        this.sector;
+
+      return !!(
+        name ||
+        workingDay.start ||
+        workingDay.end ||
+        Number(maxSimultaneousChatsByAgent || 0) ||
+        managers.length
+      );
+    },
     activePageKey() {
       const mapper = {
         0: 'general',
@@ -247,6 +263,13 @@ export default {
     },
     updateIsValid(valid, key) {
       this.isValid[key] = valid;
+    },
+    handleCloseNewSectorDrawer() {
+      if (this.showDiscartQuestion) {
+        this.showConfirmDiscartChangesModal = true;
+      } else {
+        this.$emit('close');
+      }
     },
   },
 };
