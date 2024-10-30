@@ -423,20 +423,19 @@ export default {
         this.isContactsLoading = true;
         try {
           const response = await FlowsAPI.getContacts(this.searchUrn);
+
           // Array filter to prevent 'null' or 'undefined' values in contact response
           this.listOfContacts = this.listOfContacts
-            .concat(response.data.results || [])
+            .concat(response.data?.results || [])
             .filter((contact) => contact);
+
           this.hasNext = response.next;
 
           this.listOfContacts.sort((a, b) => a.name?.localeCompare(b.name));
-
-          if (response.status !== 'canceled') {
-            this.isContactsLoading = false;
-          }
         } catch (error) {
-          this.isContactsLoading = false;
           console.log(error);
+        } finally {
+          this.isContactsLoading = false;
         }
       }
     },
