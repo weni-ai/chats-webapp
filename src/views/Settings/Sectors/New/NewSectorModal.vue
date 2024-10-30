@@ -1,5 +1,6 @@
 <template>
   <UnnnicDrawer
+    v-show="!showConfirmDiscartChangesModal"
     ref="newSectorDrawer"
     class="new-sector-drawer"
     :modelValue="modelValue"
@@ -85,12 +86,14 @@
       </section>
     </template>
   </UnnnicDrawer>
+  <DiscartChangesModal :showModal="showConfirmDiscartChangesModal" />
 </template>
 
 <script>
 import General from '@/components/settings/forms/General.vue';
 import ExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
 import FormQueue from '@/components/settings/forms/Queue.vue';
+import DiscartChangesModal from './DiscartChangesModal.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
@@ -105,6 +108,7 @@ export default {
     General,
     ExtraOptions,
     FormQueue,
+    DiscartChangesModal,
   },
   props: {
     modelValue: {
@@ -150,6 +154,7 @@ export default {
         quick_messages: true,
       },
       isLoadingCreate: false,
+      showConfirmDiscartChangesModal: false,
     };
   },
   computed: {

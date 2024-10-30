@@ -625,6 +625,11 @@
     "alert": {
       "create_success": "Novo setor {sectorName} criado!",
       "create_error": "Falha ao criar setor"
+    },
+    "discart": {
+      "title": "Descartar alterações",
+      "hint": "A criação do novo setor será descartada ao confirmar essa ação, deseja descartar as alterações feitas até agora?",
+      "confirm": "Descartar"
     }
   },
   "your_orgs": "Suas organizações",
