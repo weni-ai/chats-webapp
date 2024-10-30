@@ -234,20 +234,21 @@ export default {
 
       return Promise.all([...addPromises, ...removePromises]);
     },
-    async save() {
+    async save(silent = false) {
       this.isLoading = true;
       try {
         await Promise.all([
           this.updateSectorTags(),
           this.updateSectorExtraConfigs(),
         ]).then(() => {
-          unnnic.unnnicCallAlert({
-            props: {
-              text: this.$t('sector_update_success'),
-              type: 'success',
-            },
-            seconds: 5,
-          });
+          if (!silent)
+            unnnic.unnnicCallAlert({
+              props: {
+                text: this.$t('sector_update_success'),
+                type: 'success',
+              },
+              seconds: 5,
+            });
 
           this.$router.push('/settings');
         });
