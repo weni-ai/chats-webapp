@@ -214,6 +214,9 @@ export default {
       return !!(shortcut && title && text);
     },
   },
+  mounted() {
+    this.listenConnect();
+  },
   beforeUnmount() {
     this.saveSector();
   },
@@ -229,6 +232,16 @@ export default {
       createQuickMessage: 'create',
       updateQuickMessage: 'update',
     }),
+
+    handleConnectOverlay(active) {
+      window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
+    },
+    listenConnect() {
+      window.addEventListener('message', (message) => {
+        const { event } = message.data;
+        if (event === 'close') this.$refs.queueDrawer?.close();
+      });
+    },
 
     handleCopilotActive(copilotStatus) {
       this.setCopilotActive(copilotStatus);
@@ -282,12 +295,24 @@ export default {
     },
 
     openConfigMessageDrawer(message = { title: '', text: '', shortcut: '' }) {
-      this.showQuickMessageDrawer = true;
+      // use setTimeout to prevent connect overlay flick
+      setTimeout(() => {
+        this.showQuickMessageDrawer = true;
+      }, 1);
+
+      this.handleConnectOverlay(true);
+
       this.quickMessageToEdit = { ...message };
     },
 
     closeConfigMessageDrawer() {
-      this.showQuickMessageDrawer = false;
+      // use setTimeout to prevent connect overlay flick
+      setTimeout(() => {
+        this.showQuickMessageDrawer = false;
+      }, 1);
+
+      this.handleConnectOverlay(false);
+
       this.quickMessageToEdit = { title: '', text: '', shortcut: '' };
     },
 
