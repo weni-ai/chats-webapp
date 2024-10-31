@@ -86,8 +86,8 @@ describe('SettingsHeader.vue', () => {
 
     await wrapper.vm.$nextTick();
 
-    const newSectorModal = wrapper.find('[data-testid="new-sector-drawer"]');
-    expect(newSectorModal.exists()).toBe(true);
+    const newSectorDrawer = wrapper.find('[data-testid="new-sector-drawer"]');
+    expect(newSectorDrawer.exists()).toBe(true);
   });
 
   it('should render the correct number of card components', () => {
