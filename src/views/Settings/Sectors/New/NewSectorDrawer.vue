@@ -187,7 +187,16 @@ export default {
       return this.newSectorPages[this.activePageIndex];
     },
   },
+  mounted() {
+    this.listenConnect();
+  },
   methods: {
+    listenConnect() {
+      window.addEventListener('message', (message) => {
+        const { event } = message.data;
+        if (event === 'close') this.$refs.newSectorDrawer?.close();
+      });
+    },
     async finish() {
       try {
         this.isLoadingCreate = true;

@@ -11,7 +11,7 @@
       :text="$t('config_chats.new_sector')"
       icon="add"
       class="sectors__new-sector-card"
-      @click="showNewSectorModal = true"
+      @click="openNewSectorModal()"
     />
 
     <UnnnicCardProject
@@ -53,7 +53,7 @@
     v-if="showNewSectorModal"
     v-model="showNewSectorModal"
     data-testid="new-sector-drawer"
-    @close="showNewSectorModal = false"
+    @close="closeNewSectorModal()"
   />
 </template>
 
@@ -89,6 +89,17 @@ export default {
   },
 
   methods: {
+    handleConnectOverlay(active) {
+      window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
+    },
+    openNewSectorModal() {
+      this.handleConnectOverlay(true);
+      this.showNewSectorModal = true;
+    },
+    closeNewSectorModal() {
+      this.handleConnectOverlay(false);
+      this.showNewSectorModal = false;
+    },
     navigate(name, params) {
       this.$router.push({
         name,
