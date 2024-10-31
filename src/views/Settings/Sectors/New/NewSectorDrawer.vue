@@ -19,7 +19,7 @@
         ? $refs.newSectorDrawer.close()
         : (activePageIndex = activePageIndex - 1)
     "
-    @close="handleCloseNewSectorDrawer()"
+    @close="handleCloseNewSectorDrawer"
   >
     <template #content>
       <UnnnicNavigator
@@ -223,7 +223,7 @@ export default {
           }),
         );
 
-        await this.$refs.sectorExtraOptions.save();
+        await this.$refs.sectorExtraOptions.save(true);
 
         const createdQueue = await Queue.create({
           name: this.sectorQueue.name,
@@ -236,8 +236,6 @@ export default {
             Queue.addAgent(createdQueue.uuid, agent.uuid);
           }),
         );
-
-        this.$refs.newSectorDrawer.close();
 
         Unnnic.unnnicCallAlert({
           props: {
@@ -259,13 +257,14 @@ export default {
         console.log(error);
       } finally {
         this.isLoadingCreate = false;
+        this.handleCloseNewSectorDrawer(true);
       }
     },
     updateIsValid(valid, key) {
       this.isValid[key] = valid;
     },
-    handleCloseNewSectorDrawer() {
-      if (this.showDiscartQuestion) {
+    handleCloseNewSectorDrawer(forceClose) {
+      if (this.showDiscartQuestion && !forceClose) {
         this.showConfirmDiscartChangesModal = true;
       } else {
         this.$emit('close');

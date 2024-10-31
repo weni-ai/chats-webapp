@@ -6,6 +6,7 @@
     :primaryButtonProps="{ text: $t('new_sector.discart.confirm') }"
     :secondaryButtonProps="{ text: $t('back') }"
     class="discart-changes-modal"
+    data-testid="discart-changes-modal"
   >
     <p class="discart-changes-modal__text">
       {{ $t('new_sector.discart.hint') }}
