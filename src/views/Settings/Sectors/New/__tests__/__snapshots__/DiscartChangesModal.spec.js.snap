@@ -1,0 +1,33 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DiscartChangesModal.vue > to match snapshot 1`] = `
+"<section data-v-dd6107e2="" data-v-a8c0dafd="" class="unnnic-modal-dialog discart-changes-modal" data-testid="discart-changes-modal">
+  <section data-v-dd6107e2="" class="unnnic-modal-dialog__overlay"></section>
+  <section data-v-dd6107e2="" class="unnnic-modal-dialog__container unnnic-modal-dialog__container--sm">
+    <!---->
+    <section data-v-dd6107e2="" class="unnnic-modal-dialog__container__body">
+      <header data-v-dd6107e2="" class="unnnic-modal-dialog__container__header">
+        <section data-v-dd6107e2="" class="unnnic-modal-dialog__container__title-container">
+          <!---->
+          <h1 data-v-dd6107e2="" class="unnnic-modal-dialog__container__title-text">Discard changes</h1>
+        </section>
+        <!---->
+      </header>
+      <section data-v-dd6107e2="" class="unnnic-modal-dialog__container__content">
+        <p data-v-a8c0dafd="" class="discart-changes-modal__text">The creation of the new sector will be discarded upon confirming this action. Do you want to discard the changes made so far?</p>
+      </section>
+      <section data-v-dd6107e2="" class="unnnic-modal-dialog__container__actions"><button data-v-ed84dbab="" data-v-dd6107e2="" class="unnnic-modal-dialog__container__actions__secondary-button unnnic-button unnnic-button--size-large unnnic-button--tertiary unnnic-modal-dialog__container__actions__secondary-button">
+          <!---->
+          <!---->
+          <!----><span data-v-ed84dbab="" class="unnnic-button__label" data-testid="button-label"> Back</span>
+          <!---->
+        </button><button data-v-ed84dbab="" data-v-dd6107e2="" class="unnnic-modal-dialog__container__actions__primary-button unnnic-button unnnic-button--size-large unnnic-button--primary unnnic-modal-dialog__container__actions__primary-button">
+          <!---->
+          <!---->
+          <!----><span data-v-ed84dbab="" class="unnnic-button__label" data-testid="button-label"> Discart</span>
+          <!---->
+        </button></section>
+    </section>
+  </section>
+</section>"
+`;

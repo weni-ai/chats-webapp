@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import routes from '@/router/routes/settings';
 import { createTestingPinia } from '@pinia/testing';
 import SectorEdit from '@/views/Settings/Sectors/Edit/index.vue';
+import { useSettings } from '@/store/modules/settings';
 
 const mockSector1 = {
   id: 1,
@@ -11,6 +12,9 @@ const mockSector1 = {
   name: 'Sector 1',
   agents: 10,
   contacts: 50,
+  work_start: '00:00',
+  work_end: '12:00',
+  rooms_limit: 3,
 };
 
 vi.mock('@/services/api/resources/settings/sector', () => ({
@@ -31,6 +35,7 @@ vi.mock('@/services/api/resources/settings/project', () => ({
 }));
 
 const store = createTestingPinia({
+  stubActions: false,
   initialState: {
     config: {
       project: { name: 'Project 1' },
@@ -166,6 +171,33 @@ describe('EditSector.vue', () => {
     );
 
     expect(queuesList.exists()).toBe(true);
+  });
+
+  it('should call handlerSectorData on change currentSector', async () => {
+    const localWrapper = createWrapper();
+    const settingsStore = useSettings();
+
+    const handlerSectorDataSpy = vi.spyOn(localWrapper.vm, 'handlerSectorData');
+
+    settingsStore.currentSector = {
+      ...mockSector1,
+    };
+
+    await localWrapper.vm.$nextTick();
+
+    expect(handlerSectorDataSpy).toHaveBeenCalled();
+  });
+
+  it('should set currentSector to null on unmounted', async () => {
+    const localWrapper = createWrapper();
+
+    const settingsStore = useSettings();
+    const patchMock = vi.fn();
+    settingsStore.$patch = patchMock;
+
+    localWrapper.unmount();
+    await wrapper.vm.$nextTick();
+    expect(patchMock).toHaveBeenCalledWith({ currentSector: null });
   });
 
   it('Should match the snapshot', () => {

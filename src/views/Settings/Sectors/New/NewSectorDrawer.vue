@@ -1,5 +1,6 @@
 <template>
   <UnnnicDrawer
+    v-show="!showConfirmDiscartChangesModal"
     ref="newSectorDrawer"
     class="new-sector-drawer"
     :modelValue="modelValue"
@@ -18,7 +19,7 @@
         ? $refs.newSectorDrawer.close()
         : (activePageIndex = activePageIndex - 1)
     "
-    @close="$emit('close')"
+    @close="handleCloseNewSectorDrawer"
   >
     <template #content>
       <UnnnicNavigator
@@ -85,12 +86,18 @@
       </section>
     </template>
   </UnnnicDrawer>
+  <DiscartChangesModal
+    :showModal="showConfirmDiscartChangesModal"
+    @secondary-button-click="showConfirmDiscartChangesModal = false"
+    @primary-button-click="$emit('close')"
+  />
 </template>
 
 <script>
 import General from '@/components/settings/forms/General.vue';
 import ExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
 import FormQueue from '@/components/settings/forms/Queue.vue';
+import DiscartChangesModal from './DiscartChangesModal.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
@@ -100,11 +107,12 @@ import isMobile from 'is-mobile';
 import Unnnic from '@weni/unnnic-system';
 
 export default {
-  name: 'NewSectorModal',
+  name: 'NewSectorDrawer',
   components: {
     General,
     ExtraOptions,
     FormQueue,
+    DiscartChangesModal,
   },
   props: {
     modelValue: {
@@ -150,9 +158,22 @@ export default {
         quick_messages: true,
       },
       isLoadingCreate: false,
+      showConfirmDiscartChangesModal: false,
     };
   },
   computed: {
+    showDiscartQuestion() {
+      const { name, workingDay, maxSimultaneousChatsByAgent, managers } =
+        this.sector;
+
+      return !!(
+        name ||
+        workingDay.start ||
+        workingDay.end ||
+        Number(maxSimultaneousChatsByAgent || 0) ||
+        managers.length
+      );
+    },
     activePageKey() {
       const mapper = {
         0: 'general',
@@ -202,7 +223,7 @@ export default {
           }),
         );
 
-        await this.$refs.sectorExtraOptions.save();
+        await this.$refs.sectorExtraOptions.save(true);
 
         const createdQueue = await Queue.create({
           name: this.sectorQueue.name,
@@ -215,8 +236,6 @@ export default {
             Queue.addAgent(createdQueue.uuid, agent.uuid);
           }),
         );
-
-        this.$refs.newSectorDrawer.close();
 
         Unnnic.unnnicCallAlert({
           props: {
@@ -238,10 +257,18 @@ export default {
         console.log(error);
       } finally {
         this.isLoadingCreate = false;
+        this.handleCloseNewSectorDrawer(true);
       }
     },
     updateIsValid(valid, key) {
       this.isValid[key] = valid;
+    },
+    handleCloseNewSectorDrawer(forceClose) {
+      if (this.showDiscartQuestion && !forceClose) {
+        this.showConfirmDiscartChangesModal = true;
+      } else {
+        this.$emit('close');
+      }
     },
   },
 };
