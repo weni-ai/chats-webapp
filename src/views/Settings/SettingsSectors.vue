@@ -93,11 +93,15 @@ export default {
       window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
     },
     openNewSectorModal() {
-      this.handleConnectOverlay(true);
+      setTimeout(() => {
+        this.handleConnectOverlay(true);
+      }, 1);
       this.showNewSectorModal = true;
     },
     closeNewSectorModal() {
-      this.handleConnectOverlay(false);
+      setTimeout(() => {
+        this.handleConnectOverlay(false);
+      }, 1);
       this.showNewSectorModal = false;
     },
     navigate(name, params) {

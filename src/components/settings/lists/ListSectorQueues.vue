@@ -95,15 +95,35 @@ export default {
   },
 
   mounted() {
+    this.listenConnect();
     this.getQueues();
   },
   methods: {
+    handleConnectOverlay(active) {
+      window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
+    },
+    listenConnect() {
+      window.addEventListener('message', (message) => {
+        const { event } = message.data;
+        if (event === 'close') this.$refs.queueDrawer?.close();
+      });
+    },
     openConfigQueueDrawer(queue = {}) {
-      this.showQueueDrawer = true;
+      // use setTimeout to prevent connect overlay flick
+      setTimeout(() => {
+        this.showQueueDrawer = true;
+      }, 1);
+
+      this.handleConnectOverlay(true);
       this.queueToConfig = queue;
     },
     closeQueueConfigDrawer() {
-      this.showQueueDrawer = false;
+      // use setTimeout to prevent connect overlay flick
+      setTimeout(() => {
+        this.showQueueDrawer = false;
+      }, 1);
+
+      this.handleConnectOverlay(false);
       this.queueToConfig = {};
     },
     async getQueues() {
