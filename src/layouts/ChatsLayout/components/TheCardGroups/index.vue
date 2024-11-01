@@ -31,7 +31,7 @@
               : roomsCount[tabsKeyMapper[tab]]
           "
           :active="activeTab === tab"
-          @click="activeTabIndex = tabIndex"
+          @click="handleChangeActiveTab(tabIndex)"
         />
       </template>
     </section>
@@ -87,7 +87,7 @@
         </div>
       </div>
     </section>
-    <RoomsListLoading v-if="isLoadingRooms" />
+    <RoomsListLoading v-if="showLoadingRooms" />
     <section
       v-else
       class="chat-groups"
@@ -176,6 +176,7 @@ export default {
       limit: 20,
       nameOfContact: '',
       timerId: 0,
+      showLoadingRooms: false,
       isLoadingRooms: false,
       createdOnFilter: false,
       lastCreatedFilter: true,
@@ -196,7 +197,7 @@ export default {
       listRoomHasNext: 'hasNextRooms',
       newMessagesByRoom: 'newMessagesByRoom',
     }),
-    ...mapWritableState(useRooms, ['roomsCount']),
+    ...mapWritableState(useRooms, ['roomsCount', 'selectedRoomsToTransfer']),
     ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
@@ -251,7 +252,7 @@ export default {
     },
     showNoResultsError() {
       return (
-        !this.isLoadingRooms &&
+        !this.showLoadingRooms &&
         this.rooms_in_progress.length === 0 &&
         this.rooms_queue.length === 0 &&
         this.rooms_sent_flows.length === 0 &&
@@ -263,34 +264,19 @@ export default {
     rooms_in_progress: {
       deep: true,
       handler(newRooms, oldRooms) {
-        const newSize = newRooms.length;
-        const oldSize = oldRooms.length;
-        if (newSize === oldSize || !this.initialLoaded) return;
-        newSize > oldSize
-          ? this.roomsCount.in_progress++
-          : this.roomsCount.in_progress--;
+        this.updateRoomsCount(newRooms, oldRooms, 'in_progress');
       },
     },
     rooms_queue: {
       deep: true,
       handler(newRooms, oldRooms) {
-        const newSize = newRooms.length;
-        const oldSize = oldRooms.length;
-        if (newSize === oldSize || !this.initialLoaded) return;
-        newSize > oldSize
-          ? this.roomsCount.waiting++
-          : this.roomsCount.waiting--;
+        this.updateRoomsCount(newRooms, oldRooms, 'waiting');
       },
     },
     rooms_sent_flows: {
       deep: true,
       handler(newRooms, oldRooms) {
-        const newSize = newRooms.length;
-        const oldSize = oldRooms.length;
-        if (newSize === oldSize || !this.initialLoaded) return;
-        newSize > oldSize
-          ? this.roomsCount.sent_flows++
-          : this.roomsCount.sent_flows--;
+        this.updateRoomsCount(newRooms, oldRooms, 'sent_flows');
       },
     },
     totalUnreadMessages: {
@@ -353,6 +339,10 @@ export default {
       setActiveDiscussion: 'setActiveDiscussion',
       getAllDiscussion: 'getAll',
     }),
+    handleChangeActiveTab(tabIndex) {
+      if (this.activeTabIndex !== tabIndex) this.selectedRoomsToTransfer = [];
+      this.activeTabIndex = tabIndex;
+    },
     async openRoom(room) {
       await this.setActiveDiscussion(null);
       await this.setActiveRoom(room);
@@ -363,11 +353,21 @@ export default {
     clearField() {
       this.nameOfContact = '';
     },
+    updateRoomsCount(newRooms, oldRooms, key) {
+      const newSize = newRooms.length;
+      const oldSize = oldRooms.length;
+
+      if (newSize === oldSize || !this.initialLoaded || this.isLoadingRooms)
+        return;
+
+      newSize > oldSize ? this.roomsCount[key]++ : this.roomsCount[key]--;
+    },
     async listRoom(concat, order = '-last_interaction', filterFlag = '') {
-      this.isLoadingRooms = !concat;
+      this.showLoadingRooms = !concat;
       const { viewedAgent } = this;
       const activeTabKey = this.tabsKeyMapper[this.activeTab];
       try {
+        this.isLoadingRooms = true;
         await this.getAllRooms({
           offset:
             (filterFlag ? this.page[activeTabKey] : this.page.search) *
@@ -382,6 +382,7 @@ export default {
       } catch {
         console.error('Não foi possível listar as salas');
       } finally {
+        this.showLoadingRooms = false;
         this.isLoadingRooms = false;
       }
     },
