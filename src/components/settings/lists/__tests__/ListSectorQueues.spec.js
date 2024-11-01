@@ -103,6 +103,8 @@ describe('ListSectorQueues.vue', () => {
 
     await createQueueCard.trigger('click');
 
+    await new Promise((resolve) => setTimeout(resolve, 1));
+
     expect(openConfigQueueDrawer).toHaveBeenCalled();
 
     const queueConfigDrawer = wrapper.findComponent(
