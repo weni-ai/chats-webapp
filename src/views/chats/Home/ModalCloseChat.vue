@@ -20,11 +20,13 @@
       <UnnnicButton
         :text="$t('cancel')"
         type="tertiary"
+        data-testid="cancel-button"
         @click="closeModal"
       />
       <UnnnicButton
         :text="$t('end')"
         type="primary"
+        data-testid="confirm-button"
         :loading="isLoadingCloseRoom"
         @click="closeRoom"
       />
@@ -51,7 +53,7 @@ export default {
   props: {
     room: {
       type: Object,
-      default: () => {},
+      required: true,
     },
   },
   emits: ['close'],
