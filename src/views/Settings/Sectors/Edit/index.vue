@@ -208,5 +208,7 @@ export default {
 .sector-edit-view {
   display: grid;
   gap: $unnnic-spacing-sm;
+  margin-top: $unnnic-spacing-xs;
+  padding: 0 $unnnic-spacing-sm;
 }
 </style>

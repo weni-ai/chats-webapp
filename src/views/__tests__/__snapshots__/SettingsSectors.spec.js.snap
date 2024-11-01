@@ -76,24 +76,25 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
           class="buttons"
           data-v-d9408675=""
         >
-          <div
+          <section
             class="unnnic-tag
         unnnic-tag-scheme--aux-blue
         unnnic-tag--clickable unnnic-tag-content action action"
             count="0"
-            data-v-5a2abba9=""
+            data-v-d8570543=""
             data-v-d9408675=""
             enabletooltip="false"
             hasbackbutton="false"
           >
+            <!---->
             <span
               class="unnnic-tag__label"
-              data-v-5a2abba9=""
+              data-v-d8570543=""
             >
               Open
             </span>
             <!---->
-          </div>
+          </section>
           <!---->
         </div>
         
@@ -134,8 +135,9 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
               <span
                 class="material-symbols-rounded unnnic-icon-scheme--aux-purple unnnic-icon-size--sm"
                 data-testid="material-icon"
-                data-v-1a90efc1=""
+                data-v-76ceda5d=""
                 data-v-ecaaa6f3=""
+                translate="no"
               >
                 headphones
               </span>
@@ -170,8 +172,9 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
               <span
                 class="material-symbols-rounded unnnic-icon-scheme--aux-lemon unnnic-icon-size--sm"
                 data-testid="material-icon"
-                data-v-1a90efc1=""
+                data-v-76ceda5d=""
                 data-v-ecaaa6f3=""
+                translate="no"
               >
                 person
               </span>
