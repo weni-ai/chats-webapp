@@ -1,6 +1,9 @@
 <template>
   <section class="home-chat-headers">
-    <ChatHeaderLoading v-show="isLoading" />
+    <ChatHeaderLoading
+      v-show="isLoading"
+      data-testid="chat-header-loading"
+    />
     <UnnnicChatsHeader
       v-show="isShowingRoomHeader"
       :title="headerRoomTitle"
@@ -9,6 +12,7 @@
       :avatarName="room?.contact.name"
       :close="emitOpenModalCloseChat"
       :back="isMobile ? emitBack : null"
+      data-testid="chat-header"
     />
 
     <UnnnicChatsHeader
@@ -19,10 +23,12 @@
       avatarIcon="forum"
       size="small"
       :back="isMobile ? emitBack : null"
+      data-testid="discussion-header"
     />
 
     <ChatHeaderSendFlow
       v-if="isShowingSendFlowHeader"
+      data-testid="chat-header-send-flow"
       @send-flow="emitOpenFlowsTrigger"
     />
   </section>

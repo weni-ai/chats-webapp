@@ -65,6 +65,16 @@ export default defineConfig({
       provider: 'istanbul',
       reporter: ['text', 'json', 'html'],
       reportsDirectory: './coverage',
+      include: [
+        'src/components/**',
+        'src/layouts/**',
+        'src/plugins/**',
+        'src/service/**',
+        'src/store/**',
+        'src/utils/**',
+        'src/views/**',
+        'src/App.vue',
+      ],
     },
   },
   css: {
