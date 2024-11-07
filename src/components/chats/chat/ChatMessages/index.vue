@@ -126,7 +126,7 @@
                   ]"
                   :time="new Date(message.created_on)"
                   :documentName="
-                    media.url?.split('/').at(-1) || media.file.name
+                    media.url?.split('/').at(-1) || media.file?.name
                   "
                   :status="messageStatus({ message })"
                   :title="messageFormatTitle(new Date(message.created_on))"
@@ -385,7 +385,7 @@ export default {
         } else {
           try {
             const mediaToDownload = media.url || media.preview;
-            const filename = media.url?.split('/').at(-1) || media.file.name;
+            const filename = media.url?.split('/').at(-1) || media.file?.name;
 
             Media.download({ media: mediaToDownload, name: filename });
           } catch (error) {
