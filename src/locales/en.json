@@ -90,7 +90,7 @@
     "extra_options": "Extra options",
     "queues": "Queues",
     "tags": "Tags",
-    "add": "Add new sector",
+    "add": "Define sector",
     "add_queue": "Add new queue",
     "name": "Sector name",
     "placeholder": "Example: Financial",
