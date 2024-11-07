@@ -20,7 +20,7 @@
       :title="sector.name"
       clickable
       class="sectors__card"
-      data-testid="sector-card"
+      data-testid="settings-sectors-sector-card"
       @click="navigate('sectors.edit', { uuid: sector.uuid })"
     >
       <template #headerSlot>
