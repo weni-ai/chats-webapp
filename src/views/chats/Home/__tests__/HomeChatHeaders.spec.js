@@ -14,6 +14,8 @@ const createWrapper = ({ store }) => {
 describe('HomeChatHeaders.vue', () => {
   let store;
   let wrapper;
+  let roomStore;
+  let discussionStore;
 
   beforeEach(() => {
     store = createTestingPinia({
@@ -27,6 +29,8 @@ describe('HomeChatHeaders.vue', () => {
       },
     });
     wrapper = createWrapper({ store });
+    roomStore = useRooms();
+    discussionStore = useDiscussions();
   });
 
   it('renders loading state correctly', async () => {
@@ -42,15 +46,11 @@ describe('HomeChatHeaders.vue', () => {
   });
 
   it('renders room header when room is active and discussion is inactive', async () => {
-    const roomStore = useRooms();
     roomStore.activeRoom = {
       id: '1',
       contact: { name: 'John Doe' },
       is_24h_valid: true,
     };
-
-    const discussionStore = useDiscussions();
-    discussionStore.activeDiscussion = null;
 
     await wrapper.vm.$nextTick();
 
@@ -68,7 +68,6 @@ describe('HomeChatHeaders.vue', () => {
   });
 
   it('renders discussion header when discussion is active', async () => {
-    const discussionStore = useDiscussions();
     discussionStore.activeDiscussion = {
       subject: 'Chat Discussion',
       contact: 'Contact Name',
@@ -80,7 +79,6 @@ describe('HomeChatHeaders.vue', () => {
   });
 
   it('renders send flow header when room is active and not a discussion', async () => {
-    const roomStore = useRooms();
     roomStore.activeRoom = {
       is_24h_valid: false,
       contact: { name: 'John Doe' },
@@ -94,7 +92,6 @@ describe('HomeChatHeaders.vue', () => {
   });
 
   it('emits openRoomContactInfo event when avatar or title is clicked', async () => {
-    const roomStore = useRooms();
     roomStore.activeRoom = { contact: { name: 'John Doe' } };
 
     await wrapper.vm.$nextTick();
@@ -107,7 +104,6 @@ describe('HomeChatHeaders.vue', () => {
   });
 
   it('emits openModalCloseChat event when close button is clicked', async () => {
-    const roomStore = useRooms();
     roomStore.activeRoom = { contact: { name: 'John Doe' } };
     await wrapper.vm.$nextTick();
 
@@ -116,7 +112,6 @@ describe('HomeChatHeaders.vue', () => {
   });
 
   it('emits openFlowsTrigger event when send flow is triggered', async () => {
-    const roomStore = useRooms();
     roomStore.activeRoom = { contact: { name: 'John Doe' } };
     await wrapper.vm.$nextTick();
 
