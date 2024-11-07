@@ -3,9 +3,6 @@ import { createTestingPinia } from '@pinia/testing';
 
 import HomeChatModals from '../HomeChatModals.vue';
 
-import { useRooms } from '@/store/modules/chats/rooms';
-import { useDashboard } from '@/store/modules/dashboard';
-
 import { beforeEach, describe } from 'vitest';
 
 const createWrapper = ({ store }) => {
