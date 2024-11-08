@@ -26,49 +26,28 @@
       class="form-sector-container"
       @submit.prevent="$emit('submit')"
     >
-      <section
-        v-if="!isEditing"
-        class="form-section"
-        data-testid="sector-name-section"
-      >
-        <h2 class="form-section__title">
-          {{ $t('sector.add') }}
-          <UnnnicToolTip
-            enabled
-            :text="$t('new_sector.sector_tip')"
-            side="right"
-            maxWidth="21rem"
-          >
-            <UnnnicIconSvg
-              icon="information-circle-4"
-              scheme="neutral-soft"
-              size="sm"
-            />
-          </UnnnicToolTip>
-        </h2>
-
-        <UnnnicInput
-          v-model="sector.name"
-          :label="$t('sector.name')"
-          :placeholder="$t('sector.placeholder')"
-        />
-      </section>
-
       <section class="form-section">
         <h2 class="form-section__title">
-          {{ $t('sector.managers.title') }}
+          {{ isEditing ? $t('sector.managers.title') : $t('sector.add') }}
         </h2>
-
         <section class="form-section__select-managers">
-          <UnnnicLabel :label="$t('sector.managers.add.label')" />
-          <UnnnicSelectSmart
-            v-model="selectedManager"
-            :options="managersNames"
-            autocomplete
-            autocompleteIconLeft
-            autocompleteClearOnFocus
-            @update:model-value="selectManager"
+          <UnnnicInput
+            v-if="!isEditing"
+            v-model="sector.name"
+            :label="$t('sector.name')"
+            :placeholder="$t('sector.placeholder')"
           />
+          <fieldset>
+            <UnnnicLabel :label="$t('sector.managers.add.label')" />
+            <UnnnicSelectSmart
+              v-model="selectedManager"
+              :options="managersNames"
+              autocomplete
+              autocompleteIconLeft
+              autocompleteClearOnFocus
+              @update:model-value="selectManager"
+            />
+          </fieldset>
         </section>
 
         <section
@@ -497,6 +476,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
 .form-wrapper {
   display: flex;
   flex-direction: column;
@@ -532,6 +516,12 @@ export default {
   .form-section {
     & + .form-section {
       margin-top: $unnnic-spacing-md;
+    }
+
+    &__select-managers {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: $unnnic-spacing-sm;
     }
 
     &__title {

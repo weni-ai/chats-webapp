@@ -90,7 +90,7 @@
     "extra_options": "Opções extras",
     "queues": "Filas",
     "tags": "Etiquetas",
-    "add": "Adicionar novo setor",
+    "add": "Definir setor",
     "add_queue": "Adicionar nova fila",
     "name": "Nome do setor",
     "placeholder": "Exemplo: Financeiro",
