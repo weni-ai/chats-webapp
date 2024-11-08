@@ -73,15 +73,15 @@ export default {
     justify-content: center;
     align-items: center;
     background-color: $unnnic-color-neutral-lightest;
-    gap: 10px;
-    border-radius: 4px;
+    gap: 10px; // not exists in unnnic tokens
+    border-radius: $unnnic-spacing-nano;
 
     &-name {
       color: $unnnic-color-neutral-darkest;
       font-family: $unnnic-font-family-secondary;
       font-weight: $unnnic-font-weight-bold;
-      font-size: 14px;
-      line-height: 22px; /* 157.143% */
+      font-size: $unnnic-font-size-body-gt;
+      line-height: 22px;
     }
   }
 
