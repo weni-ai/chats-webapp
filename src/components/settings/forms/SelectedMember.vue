@@ -81,7 +81,7 @@ export default {
       font-family: $unnnic-font-family-secondary;
       font-weight: $unnnic-font-weight-bold;
       font-size: $unnnic-font-size-body-gt;
-      line-height: 22px;
+      line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
     }
   }
 
