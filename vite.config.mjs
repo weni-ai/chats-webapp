@@ -44,7 +44,6 @@ export default defineConfig({
       include: [
         'src/components/**',
         'src/layouts/**',
-        'src/plugins/**',
         'src/services/**',
         'src/store/**',
         'src/utils/**',
