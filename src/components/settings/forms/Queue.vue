@@ -143,13 +143,21 @@ export default {
         return this.modelValue;
       },
       set(value) {
+        this.$emit('update:modelValue', value);
+      },
+    },
+  },
+
+  watch: {
+    queue: {
+      deep: true,
+      handler(value) {
         if (!this.isEditing) {
           this.$emit(
             'changeIsValid',
             !!value.name && !!value.currentAgents.length,
           );
         }
-        this.$emit('update:modelValue', value);
       },
     },
   },
