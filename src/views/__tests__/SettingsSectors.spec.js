@@ -98,9 +98,10 @@ describe('SettingsHeader.vue', () => {
     expect(sectorCards.length).toBe(1);
 
     const sectorCard = sectorCards[0];
-    expect(sectorCard.props('name')).toBe('Sector 1');
 
-    sectorCard.trigger('action');
+    expect(sectorCard.props('title')).toBe('Sector 1');
+
+    sectorCard.trigger('click');
     expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
       name: 'sectors.edit',
       params: { uuid: '123' },

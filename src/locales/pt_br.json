@@ -91,7 +91,7 @@
     "extra_options": "Opções extras",
     "queues": "Filas",
     "tags": "Etiquetas",
-    "add": "Adicionar novo setor",
+    "add": "Definir setor",
     "add_queue": "Adicionar nova fila",
     "name": "Nome do setor",
     "placeholder": "Exemplo: Financeiro",
@@ -628,7 +628,7 @@
     "agent_tip": "Adicione membros no seu projeto para poder definir como gerente",
     "alert": {
       "create_success": "Novo setor {sectorName} criado!",
-      "create_error": "Falha ao criar setor"
+      "create_error": "Falha ao configurar algumas etapas do setor! Verifique os detalhes e tente novamente caso identifique alguma configuração faltante"
     },
     "discart": {
       "title": "Descartar alterações",

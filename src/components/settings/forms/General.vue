@@ -26,49 +26,28 @@
       class="form-sector-container"
       @submit.prevent="$emit('submit')"
     >
-      <section
-        v-if="!isEditing"
-        class="form-section"
-        data-testid="sector-name-section"
-      >
-        <h2 class="form-section__title">
-          {{ $t('sector.add') }}
-          <UnnnicToolTip
-            enabled
-            :text="$t('new_sector.sector_tip')"
-            side="right"
-            maxWidth="21rem"
-          >
-            <UnnnicIconSvg
-              icon="information-circle-4"
-              scheme="neutral-soft"
-              size="sm"
-            />
-          </UnnnicToolTip>
-        </h2>
-
-        <UnnnicInput
-          v-model="sector.name"
-          :label="$t('sector.name')"
-          :placeholder="$t('sector.placeholder')"
-        />
-      </section>
-
       <section class="form-section">
         <h2 class="form-section__title">
-          {{ $t('sector.managers.title') }}
+          {{ isEditing ? $t('sector.managers.title') : $t('sector.add') }}
         </h2>
-
         <section class="form-section__select-managers">
-          <UnnnicLabel :label="$t('sector.managers.add.label')" />
-          <UnnnicSelectSmart
-            v-model="selectedManager"
-            :options="managersNames"
-            autocomplete
-            autocompleteIconLeft
-            autocompleteClearOnFocus
-            @update:model-value="selectManager"
+          <UnnnicInput
+            v-if="!isEditing"
+            v-model="sector.name"
+            :label="$t('sector.name')"
+            :placeholder="$t('sector.placeholder')"
           />
+          <fieldset>
+            <UnnnicLabel :label="$t('sector.managers.add.label')" />
+            <UnnnicSelectSmart
+              v-model="selectedManager"
+              :options="managersNames"
+              autocomplete
+              autocompleteIconLeft
+              autocompleteClearOnFocus
+              @update:model-value="selectManager"
+            />
+          </fieldset>
         </section>
 
         <section
@@ -133,7 +112,7 @@
             class="form-section__inputs--fill-w"
           />
         </section>
-        <section class="form-section__handlers">
+        <!-- <section class="form-section__handlers">
           <UnnnicButton
             v-if="isEditing"
             :text="$t('delete_sector')"
@@ -141,9 +120,9 @@
             iconLeft="delete"
             size="small"
             data-testid="open-modal-delete-button"
-            @click.stop="openModalDelete = true"
+            @click.stop="handlerOpenModalDelete()"
           />
-        </section>
+        </section> -->
         <UnnnicModalNext
           v-if="openModalDelete"
           type="alert"
@@ -158,7 +137,7 @@
           :actionSecondaryLabel="$t('cancel')"
           data-testid="modal-delete-sector"
           @click-action-primary="deleteSector(sector.uuid)"
-          @click-action-secondary="openModalDelete = false"
+          @click-action-secondary="handlerCloseModalDelete()"
         />
       </section>
     </form>
@@ -292,7 +271,14 @@ export default {
     ...mapActions(useSettings, {
       actionDeleteSector: 'deleteSector',
     }),
-
+    handlerOpenModalDelete() {
+      this.openModalDelete = true;
+      this.handleConnectOverlay(true);
+    },
+    handlerCloseModalDelete() {
+      this.openModalDelete = false;
+      this.handleConnectOverlay(false);
+    },
     updateDefaultSectorValue(activate) {
       this.useDefaultSector = activate;
       if (activate) {
@@ -422,10 +408,14 @@ export default {
       }
     },
 
+    handleConnectOverlay(active) {
+      window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
+    },
+
     async deleteSector(sectorUuid) {
       try {
         await this.actionDeleteSector(sectorUuid);
-        this.openModalDelete = false;
+
         this.$router.push({ name: 'sectors' });
         unnnic.unnnicCallAlert({
           props: {
@@ -434,9 +424,13 @@ export default {
           },
           seconds: 5,
         });
+        window.parent.postMessage(
+          { event: 'deleteSectorUuid', data: sectorUuid },
+          '*',
+        );
       } catch (error) {
         console.log(error);
-        this.openModalDelete = false;
+
         unnnic.unnnicCallAlert({
           props: {
             text: this.$t('sector_delete_error'),
@@ -444,6 +438,8 @@ export default {
           },
           seconds: 5,
         });
+      } finally {
+        this.handlerCloseModalDelete();
       }
     },
 
@@ -497,6 +493,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
 .form-wrapper {
   display: flex;
   flex-direction: column;
@@ -532,6 +533,12 @@ export default {
   .form-section {
     & + .form-section {
       margin-top: $unnnic-spacing-md;
+    }
+
+    &__select-managers {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: $unnnic-spacing-sm;
     }
 
     &__title {
@@ -591,10 +598,10 @@ export default {
   }
 
   &__managers {
-    margin-top: $unnnic-spacing-inline-md;
+    margin-top: $unnnic-spacing-nano;
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-stack-xs;
+    gap: $unnnic-spacing-nano;
   }
 
   ::placeholder {

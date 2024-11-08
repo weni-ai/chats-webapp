@@ -161,11 +161,14 @@ describe('ListSectorMessages', () => {
     const createQuickMessagCard = wrapper.findComponent(
       '[data-testid="create-quick-message-card"]',
     );
+
     expect(createQuickMessagCard.exists()).toBe(true);
 
     await createQuickMessagCard.trigger('click');
 
     expect(openConfigMessageDrawer).toHaveBeenCalled();
+
+    await new Promise((resolve) => setTimeout(resolve, 1));
 
     const createQuickMessageDrawer = wrapper.findComponent(
       '[data-testid="quick-message-config-drawer"]',
@@ -193,6 +196,8 @@ describe('ListSectorMessages', () => {
       '[data-testid="create-quick-message-card"]',
     );
     await createQuickMessagCard.trigger('click');
+
+    await new Promise((resolve) => setTimeout(resolve, 1));
 
     const createQuickMessageDrawer = wrapper.findComponent(
       '[data-testid="quick-message-config-drawer"]',
@@ -241,6 +246,8 @@ describe('ListSectorMessages', () => {
 
     await quickMessageCards[0].trigger('click');
 
+    await new Promise((resolve) => setTimeout(resolve, 1));
+
     const updateQuickMessageDrawer = wrapper.findComponent(
       '[data-testid="quick-message-config-drawer"]',
     );
@@ -279,11 +286,16 @@ describe('ListSectorMessages', () => {
       wrapper.vm,
       'openConfigMessageDrawer',
     );
+
     await quickMessageCards[0].trigger('click');
+
+    await wrapper.vm.$nextTick();
 
     expect(openConfigMessageDrawer).toHaveBeenCalledWith(
       quickMessageStore.quickMessagesShared[0],
     );
+
+    await new Promise((resolve) => setTimeout(resolve, 1));
 
     const editQuickMessageDrawer = wrapper.findComponent(
       '[data-testid="quick-message-config-drawer"]',

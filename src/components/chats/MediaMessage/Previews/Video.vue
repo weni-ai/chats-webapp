@@ -7,6 +7,7 @@
     <video
       ref="player"
       class="video-preview__video"
+      data-testid="video-preview"
     >
       <source :src="src" />
     </video>

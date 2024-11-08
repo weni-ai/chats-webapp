@@ -91,7 +91,7 @@
     "extra_options": "Opciones adicionales",
     "queues": "Colas",
     "tags": "Etiquetas",
-    "add": "Agregar nuevo sector",
+    "add": "Definir sector",
     "add_queue": "Agregar nueva cola",
     "name": "Nombre del sector",
     "placeholder": "Ejemplo: Financiero",
@@ -628,7 +628,7 @@
     "agent_tip": "Agregue miembros a su proyecto para poder establecer como administrador",
     "alert": {
       "create_success": "¡Nuevo sector {sectorName} creado!",
-      "create_error": "Error al crear el sector"
+      "create_error": "¡Error al configurar algunas etapas del sector! Verifica los detalles e intenta nuevamente si identificas alguna configuración faltante."
     },
     "discart": {
       "title": "Descartar cambios",
