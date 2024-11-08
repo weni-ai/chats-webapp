@@ -581,10 +581,10 @@ fieldset {
   }
 
   &__managers {
-    margin-top: $unnnic-spacing-inline-md;
+    margin-top: $unnnic-spacing-nano;
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-stack-xs;
+    gap: $unnnic-spacing-nano;
   }
 
   ::placeholder {

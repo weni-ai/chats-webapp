@@ -14,29 +14,62 @@
       @click="openNewSectorModal()"
     />
 
-    <UnnnicCardProject
+    <UnnnicSimpleCard
       v-for="sector in sectors"
       :key="sector.id"
-      data-testid="settings-sectors-sector-card"
+      :title="sector.name"
+      clickable
       class="sectors__card"
-      :actionText="$t('config_chats.open')"
-      :name="sector.name"
-      :statuses="[
-        {
-          title: $t('config_chats.agent_title'),
-          icon: 'headphones',
-          scheme: 'aux-purple',
-          count: sector.agents,
-        },
-        {
-          title: $t('config_chats.contacts'),
-          icon: 'person',
-          scheme: 'aux-lemon',
-          count: sector.contacts,
-        },
-      ]"
-      @action="navigate('sectors.edit', { uuid: sector.uuid })"
-    />
+      data-testid="settings-sectors-sector-card"
+      @click="navigate('sectors.edit', { uuid: sector.uuid })"
+    >
+      <template #headerSlot>
+        <UnnnicDropdown position="top-left">
+          <template #trigger>
+            <UnnnicToolTip
+              enabled
+              :text="$t('quick_messages.delete_or_edit')"
+              side="left"
+            >
+              <UnnnicButton
+                iconCenter="more_vert"
+                type="tertiary"
+                data-testid="open-dropdown-menu-button"
+              />
+            </UnnnicToolTip>
+          </template>
+          <UnnnicDropdownItem
+            data-testid="dropdown-edit"
+            @click="navigate('sectors.edit', { uuid: sector.uuid })"
+          >
+            <section class="dropdown-item-content">
+              <UnnnicIconSvg
+                class="icon"
+                icon="edit_square"
+                size="sm"
+              />
+              <p>{{ $t('edit') }}</p>
+            </section>
+          </UnnnicDropdownItem>
+          <UnnnicDropdownItem
+            data-testid="dropdown-delete"
+            @click.stop="handlerOpenDeleteSectorModal(sector)"
+          >
+            <section
+              class="dropdown-item-content dropdown-item-content__delete"
+            >
+              <UnnnicIconSvg
+                class="icon"
+                icon="delete"
+                size="sm"
+                scheme="danger"
+              />
+              <p>{{ $t('exclude') }}</p>
+            </section>
+          </UnnnicDropdownItem>
+        </UnnnicDropdown>
+      </template>
+    </UnnnicSimpleCard>
   </section>
 
   <section
@@ -55,10 +88,29 @@
     data-testid="new-sector-drawer"
     @close="closeNewSectorModal()"
   />
+  <UnnnicModalNext
+    v-if="showDeleteSectorModal"
+    type="alert"
+    icon="alert-circle-1"
+    scheme="feedback-red"
+    :title="$t('delete_sector') + ` ${toDeleteSector.name}`"
+    :description="$t('cant_revert')"
+    :validate="`${toDeleteSector.name}`"
+    :validatePlaceholder="`${toDeleteSector.name}`"
+    :validateLabel="
+      $t('confirm_typing') + ` &quot;${toDeleteSector.name}&quot;`
+    "
+    :actionPrimaryLabel="$t('confirm')"
+    :actionSecondaryLabel="$t('cancel')"
+    data-testid="modal-delete-sector"
+    @click-action-primary="deleteSector(toDeleteSector.uuid)"
+    @click-action-secondary="showDeleteSectorModal = false"
+  />
 </template>
 
 <script>
-import { mapState } from 'pinia';
+import unnnic from '@weni/unnnic-system';
+import { mapActions, mapState } from 'pinia';
 
 import { useConfig } from '@/store/modules/config';
 import { useSettings } from '@/store/modules/settings';
@@ -78,6 +130,9 @@ export default {
   data() {
     return {
       showNewSectorModal: false,
+      showDeleteSectorModal: false,
+
+      toDeleteSector: {},
     };
   },
 
@@ -89,6 +144,38 @@ export default {
   },
 
   methods: {
+    ...mapActions(useSettings, {
+      actionDeleteSector: 'deleteSector',
+    }),
+    handlerOpenDeleteSectorModal(sector) {
+      this.toDeleteSector = sector;
+      this.showDeleteSectorModal = true;
+    },
+
+    async deleteSector(sectorUuid) {
+      try {
+        await this.actionDeleteSector(sectorUuid);
+        this.$router.push({ name: 'sectors' });
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('sector_deleted_success'),
+            type: 'success',
+          },
+          seconds: 5,
+        });
+      } catch (error) {
+        console.log(error);
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('sector_delete_error'),
+            type: 'error',
+          },
+          seconds: 5,
+        });
+      } finally {
+        this.showDeleteSectorModal = false;
+      }
+    },
     handleConnectOverlay(active) {
       window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
     },
@@ -118,14 +205,39 @@ export default {
 .settings-view {
   &__sectors {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: $unnnic-spacing-sm;
 
-    .sectors__new-sector-card {
-      height: 100%;
-    }
     .sectors__card {
-      background-color: $unnnic-color-background-carpet;
+      min-height: 120px;
+    }
+  }
+
+  .sectors__new-sector-card:hover {
+    box-shadow: $unnnic-shadow-level-far;
+  }
+  .sectors__new-sector-card:active {
+    border: 1px solid $unnnic-color-neutral-cleanest;
+  }
+  .sectors__new-sector-card {
+    min-height: 120px;
+    :deep(.unnnic-card-blank__content) {
+      flex-direction: row;
+    }
+    :deep(.unnnic-card-blank__content__icon) {
+      font-size: $unnnic-font-size-title-md;
+    }
+  }
+
+  .dropdown-item-content {
+    display: flex;
+    align-items: center;
+    gap: $unnnic-spacing-xs;
+
+    white-space: nowrap;
+
+    &__delete {
+      color: red;
     }
   }
 
