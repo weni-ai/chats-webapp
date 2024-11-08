@@ -69,7 +69,7 @@ export default defineConfig({
         'src/components/**',
         'src/layouts/**',
         'src/plugins/**',
-        'src/service/**',
+        'src/services/**',
         'src/store/**',
         'src/utils/**',
         'src/views/**',
