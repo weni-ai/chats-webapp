@@ -1,12 +1,11 @@
 import { vi } from 'vitest';
 import Socket from '@/services/api/websocket/socket.js';
 
-// Mock do WebSocket
 vi.stubGlobal(
   'WebSocket',
   vi.fn().mockImplementation((url) => ({
     url,
-    readyState: WebSocket.OPEN, // Simula WebSocket em estado OPEN
+    readyState: WebSocket.OPEN,
     OPEN: WebSocket.OPEN,
     send: vi.fn(),
     onmessage: null,
