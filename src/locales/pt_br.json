@@ -624,7 +624,7 @@
     "agent_tip": "Adicione membros no seu projeto para poder definir como gerente",
     "alert": {
       "create_success": "Novo setor {sectorName} criado!",
-      "create_error": "Falha ao criar setor"
+      "create_error": "Falha ao configurar algumas etapas do setor! Verifique os detalhes e tente novamente caso identifique alguma configuração faltante"
     },
     "discart": {
       "title": "Descartar alterações",

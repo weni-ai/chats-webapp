@@ -624,7 +624,7 @@
     "agent_tip": "Agregue miembros a su proyecto para poder establecer como administrador",
     "alert": {
       "create_success": "¡Nuevo sector {sectorName} creado!",
-      "create_error": "Error al crear el sector"
+      "create_error": "¡Error al configurar algunas etapas del sector! Verifica los detalles e intenta nuevamente si identificas alguna configuración faltante."
     },
     "discart": {
       "title": "Descartar cambios",

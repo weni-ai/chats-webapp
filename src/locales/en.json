@@ -624,7 +624,7 @@
     "agent_tip": "Add members to your project to be able to set as a manager",
     "alert": {
       "create_success": "New sector {sectorName} created!",
-      "create_error": "Failed to create sector"
+      "create_error": "Failed to configure some steps in the sector! Check the details and try again if you identify any missing configurations."
     },
     "discart": {
       "title": "Discard changes",
