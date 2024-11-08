@@ -112,7 +112,7 @@
             class="form-section__inputs--fill-w"
           />
         </section>
-        <section class="form-section__handlers">
+        <!-- <section class="form-section__handlers">
           <UnnnicButton
             v-if="isEditing"
             :text="$t('delete_sector')"
@@ -120,9 +120,9 @@
             iconLeft="delete"
             size="small"
             data-testid="open-modal-delete-button"
-            @click.stop="openModalDelete = true"
+            @click.stop="handlerOpenModalDelete()"
           />
-        </section>
+        </section> -->
         <UnnnicModalNext
           v-if="openModalDelete"
           type="alert"
@@ -137,7 +137,7 @@
           :actionSecondaryLabel="$t('cancel')"
           data-testid="modal-delete-sector"
           @click-action-primary="deleteSector(sector.uuid)"
-          @click-action-secondary="openModalDelete = false"
+          @click-action-secondary="handlerCloseModalDelete()"
         />
       </section>
     </form>
@@ -271,7 +271,14 @@ export default {
     ...mapActions(useSettings, {
       actionDeleteSector: 'deleteSector',
     }),
-
+    handlerOpenModalDelete() {
+      this.openModalDelete = true;
+      this.handleConnectOverlay(true);
+    },
+    handlerCloseModalDelete() {
+      this.openModalDelete = false;
+      this.handleConnectOverlay(false);
+    },
     updateDefaultSectorValue(activate) {
       this.useDefaultSector = activate;
       if (activate) {
@@ -401,10 +408,14 @@ export default {
       }
     },
 
+    handleConnectOverlay(active) {
+      window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
+    },
+
     async deleteSector(sectorUuid) {
       try {
         await this.actionDeleteSector(sectorUuid);
-        this.openModalDelete = false;
+
         this.$router.push({ name: 'sectors' });
         unnnic.unnnicCallAlert({
           props: {
@@ -413,9 +424,13 @@ export default {
           },
           seconds: 5,
         });
+        window.parent.postMessage(
+          { event: 'deleteSectorUuid', data: sectorUuid },
+          '*',
+        );
       } catch (error) {
         console.log(error);
-        this.openModalDelete = false;
+
         unnnic.unnnicCallAlert({
           props: {
             text: this.$t('sector_delete_error'),
@@ -423,6 +438,8 @@ export default {
           },
           seconds: 5,
         });
+      } finally {
+        this.handlerCloseModalDelete();
       }
     },
 

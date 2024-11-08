@@ -102,9 +102,12 @@ import DiscartChangesModal from './DiscartChangesModal.vue';
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
 
+import { useSettings } from '@/store/modules/settings';
+
 import isMobile from 'is-mobile';
 
 import Unnnic from '@weni/unnnic-system';
+import { mapWritableState } from 'pinia';
 
 export default {
   name: 'NewSectorDrawer',
@@ -162,6 +165,7 @@ export default {
     };
   },
   computed: {
+    ...mapWritableState(useSettings, ['sectors']),
     showDiscartQuestion() {
       const { name, workingDay, maxSimultaneousChatsByAgent, managers } =
         this.sector;
@@ -222,6 +226,13 @@ export default {
 
         const createdSector = await Sector.create(createSectorBody);
 
+        this.sectors.unshift(createdSector);
+
+        window.parent.postMessage(
+          { event: 'addSector', data: createdSector },
+          '*',
+        );
+
         this.sector = { ...this.sector, ...createdSector };
 
         await this.$nextTick();
@@ -266,6 +277,7 @@ export default {
         console.log(error);
       } finally {
         this.isLoadingCreate = false;
+        window.parent.postMessage({ event: 'changeOverlay', data: false }, '*');
         this.handleCloseNewSectorDrawer(true);
       }
     },

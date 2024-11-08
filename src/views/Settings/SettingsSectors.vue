@@ -104,7 +104,7 @@
     :actionSecondaryLabel="$t('cancel')"
     data-testid="modal-delete-sector"
     @click-action-primary="deleteSector(toDeleteSector.uuid)"
-    @click-action-secondary="showDeleteSectorModal = false"
+    @click-action-secondary="handlerCloseDeleteSectorModal()"
   />
 </template>
 
@@ -149,12 +149,20 @@ export default {
     }),
     handlerOpenDeleteSectorModal(sector) {
       this.toDeleteSector = sector;
+      this.handleConnectOverlay(true);
       this.showDeleteSectorModal = true;
+    },
+
+    handlerCloseDeleteSectorModal() {
+      this.toDeleteSector = {};
+      this.handleConnectOverlay(false);
+      this.showDeleteSectorModal = false;
     },
 
     async deleteSector(sectorUuid) {
       try {
         await this.actionDeleteSector(sectorUuid);
+
         this.$router.push({ name: 'sectors' });
         unnnic.unnnicCallAlert({
           props: {
@@ -174,6 +182,7 @@ export default {
         });
       } finally {
         this.showDeleteSectorModal = false;
+        this.handleConnectOverlay(false);
       }
     },
     handleConnectOverlay(active) {
