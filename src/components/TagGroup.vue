@@ -182,18 +182,22 @@ $tag-size: 28px;
   display: flex;
   overflow-y: hidden;
   align-items: center;
+  margin-top: $unnnic-spacing-xs;
 
   &:not(.flex) {
     height: $tag-size;
   }
 
   &__tags {
+    position: relative;
     display: flex;
+    flex: 1;
     justify-content: flex-start;
     flex-wrap: wrap;
     gap: $unnnic-spacing-sm;
     user-select: none;
-    overflow: auto;
+    overflow: hidden;
+    align-self: flex-start;
 
     :deep(.unnnic-tag) {
       width: min-content;
