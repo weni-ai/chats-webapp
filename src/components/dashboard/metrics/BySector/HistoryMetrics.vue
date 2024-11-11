@@ -13,7 +13,7 @@
       :totalChatsLabel="totalChatsLabel"
       icon="hierarchy-3-2"
       class="grid-2"
-      :allMetrics="headerTitle === 'Setores'"
+      :allMetrics="headerTitle === $t('sectors')"
     />
     <TableMetrics
       :headers="agentsLabel"
