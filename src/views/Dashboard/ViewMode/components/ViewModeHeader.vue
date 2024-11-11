@@ -31,6 +31,7 @@
 <script>
 import { mapActions } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
+
 export default {
   name: 'ViewModeHeader',
 
@@ -41,11 +42,26 @@ export default {
     },
   },
 
+  data() {
+    return {
+      isInsight: false,
+    };
+  },
+
   methods: {
     ...mapActions(useRooms, ['setActiveRoom']),
     async closeViewMode() {
       await this.setActiveRoom(null);
       this.$router.push({ name: 'dashboard.manager' });
+
+      if (this.$route.params.oldModule === 'insights')
+        return window.parent.postMessage(
+          {
+            event: 'redirect',
+            path: 'insights:init',
+          },
+          '*',
+        );
     },
   },
 };
