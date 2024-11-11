@@ -7,8 +7,7 @@
     :primaryButtonProps="{ text: $t('end'), loading: isLoadingCloseRoom }"
     data-testid="chat-classifier-modal"
     @primary-button-click="closeRoom()"
-    @secondary-button-click="closeModal()"
-    @close="closeModal()"
+    @update:model-value="closeModal()"
   >
     <ChatClassifier
       v-model="tags"
