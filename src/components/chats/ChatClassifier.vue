@@ -71,9 +71,5 @@ export default {
 <style lang="scss" scoped>
 .chat-classifier {
   width: 100%;
-
-  :deep(.tag-group__tags) {
-    justify-content: center;
-  }
 }
 </style>

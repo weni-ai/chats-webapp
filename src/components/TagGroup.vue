@@ -1,6 +1,6 @@
 <template>
   <section :class="{ 'tag-group': true, flex }">
-    <div
+    <section
       v-if="tags.length > 0"
       ref="container"
       class="tag-group__tags"
@@ -29,7 +29,7 @@
       >
         +{{ remainingTags }}
       </p>
-    </div>
+    </section>
   </section>
 </template>
 
@@ -189,16 +189,12 @@ $tag-size: 28px;
   }
 
   &__tags {
-    position: relative;
     display: flex;
+    justify-content: flex-start;
     flex-wrap: wrap;
-    gap: $unnnic-spacing-xs;
-    flex: 1;
-    padding: $unnnic-spacing-xs;
-
-    align-self: flex-start;
+    gap: $unnnic-spacing-sm;
     user-select: none;
-    overflow: hidden;
+    overflow: auto;
 
     :deep(.unnnic-tag) {
       width: min-content;
