@@ -24,7 +24,7 @@
                   count: metric.active_rooms || 0,
                 },
                 {
-                  title: $t('waiting_assistance'),
+                  title: $t('chats.waiting_assistance'),
                   icon: 'pending',
                   scheme: 'aux-blue-500',
                   count: metric.queue_rooms || 0,
