@@ -103,7 +103,7 @@
           </fieldset>
 
           <!-- New field will be inserted here -->
-          <fieldset></fieldset>
+          <!-- <fieldset></fieldset> -->
 
           <UnnnicInput
             v-model="sector.maxSimultaneousChatsByAgent"
@@ -517,7 +517,7 @@ fieldset {
   display: flex;
   justify-content: space-between;
   background-color: white;
-  padding-top: $unnnic-spacing-md;
+  padding: $unnnic-spacing-sm;
 
   gap: $unnnic-spacing-sm;
 
@@ -551,7 +551,12 @@ fieldset {
     &__inputs {
       display: grid;
       gap: $unnnic-spacing-ant $unnnic-spacing-stack-sm;
+      grid-template-rows: auto;
       grid-template-columns: 1fr 1fr;
+
+      &--fill-w {
+        grid-column: span 2;
+      }
 
       > fieldset {
         border: none;

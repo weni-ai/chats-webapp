@@ -315,7 +315,7 @@ export default {
     display: flex;
     justify-content: space-between;
     background-color: white;
-    padding-top: $unnnic-spacing-md;
+    padding: $unnnic-spacing-sm;
 
     gap: $unnnic-spacing-sm;
 
