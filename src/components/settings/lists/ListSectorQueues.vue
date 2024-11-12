@@ -58,6 +58,7 @@
   >
     <template #content>
       <FormQueue
+        ref="formQueue"
         v-model="queueToConfig"
         :sector="sector"
         data-testid="queue-config-form"
@@ -145,7 +146,15 @@ export default {
         this.loadingQueueConfig = true;
         const { name, default_message } = this.queueToConfig;
         if (this.queueToConfig.uuid) {
-          await Queue.editQueue(this.queueToConfig);
+          await Promise.all([
+            ...this.$refs.formQueue.toAddAgentsUuids.map((agentUuid) =>
+              Queue.addAgent(this.queueToConfig.uuid, agentUuid),
+            ),
+            ...this.$refs.formQueue.toRemoveAgentsUuids.map((agentUuid) =>
+              Queue.removeAgent(agentUuid),
+            ),
+          ]);
+
           unnnic.unnnicCallAlert({
             props: {
               text: this.$t('config_chats.queues.message.update'),
