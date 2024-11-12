@@ -5,8 +5,10 @@
     :showCloseIcon="!isMobile"
     :title="$t('chats.to_end_rate_the_chat')"
     :primaryButtonProps="{ text: $t('end'), loading: isLoadingCloseRoom }"
+    size="lg"
     data-testid="chat-classifier-modal"
     @primary-button-click="closeRoom()"
+    @secondary-button-click="closeModal()"
     @update:model-value="closeModal()"
   >
     <ChatClassifier
