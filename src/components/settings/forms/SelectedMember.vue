@@ -42,10 +42,6 @@ export default {
       type: String,
       default: '',
     },
-    avatarUrl: {
-      type: String,
-      default: '',
-    },
   },
 
   emits: ['remove'],

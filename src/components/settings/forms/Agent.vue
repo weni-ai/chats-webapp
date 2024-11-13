@@ -48,7 +48,6 @@
           selectedAgent.user.first_name + ' ' + selectedAgent.user.last_name
         "
         :email="selectedAgent.user.email"
-        :avatarUrl="photo(selectedAgent.user.photo_url)"
         :roleName="$t('agent')"
         @remove="remove(selectedAgent.uuid)"
       />

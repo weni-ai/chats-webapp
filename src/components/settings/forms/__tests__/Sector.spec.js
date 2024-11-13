@@ -13,6 +13,7 @@ import Project from '@/services/api/resources/settings/project';
 
 const pinia = createTestingPinia({
   initialState: {
+    profile: { me: { email: 'tests@weni.ai' } },
     actionDeleteSector: vi.fn(),
   },
 });
@@ -74,6 +75,7 @@ describe('FormSectorGeneral', () => {
 
   beforeEach(() => {
     wrapper = createWrapper();
+    vi.clearAllMocks();
   });
 
   it('should emit update:modelValue on change sector value', async () => {
@@ -282,113 +284,6 @@ describe('FormSectorGeneral', () => {
     sectorUpdateMock.mockClear();
   });
 
-  it('should hidden delete sector modal on cancel click', async () => {
-    await wrapper.setProps({
-      isEditing: true,
-      modelValue: {
-        uuid: '1',
-        name: 'Sector Name',
-        managers: [],
-        workingDay: { start: '12:00', end: '11:00' },
-        maxSimultaneousChatsByAgent: '2',
-      },
-    });
-    wrapper.vm.openModalDelete = true;
-    await wrapper.vm.$nextTick();
-
-    const deleteModal = wrapper.findComponent(
-      '[data-testid="modal-delete-sector"]',
-    );
-
-    await deleteModal.trigger('click-action-secondary');
-    expect(wrapper.vm.openModalDelete).eq(false);
-  });
-
-  // it('should delete sector modal and trigger deleteSector method', async () => {
-  //   await wrapper.setProps({
-  //     isEditing: true,
-  //     modelValue: {
-  //       uuid: '1',
-  //       name: 'Sector Name',
-  //       managers: [],
-  //       workingDay: { start: '12:00', end: '11:00' },
-  //       maxSimultaneousChatsByAgent: '2',
-  //     },
-  //   });
-
-  //   const deleteSectorSpy = vi.spyOn(wrapper.vm, 'deleteSector');
-
-  //   const deleteSecterButton = wrapper.findComponent(
-  //     '[data-testid="open-modal-delete-button"]',
-  //   );
-
-  //   await deleteSecterButton.trigger('click');
-
-  //   expect(wrapper.vm.openModalDelete).eq(true);
-
-  //   await wrapper.vm.$nextTick();
-
-  //   const deleteModal = wrapper.findComponent(
-  //     '[data-testid="modal-delete-sector"]',
-  //   );
-
-  //   await deleteModal.trigger('click-action-primary');
-
-  //   expect(deleteSectorSpy).toHaveBeenCalledWith(wrapper.vm.sector.uuid);
-  //   expect(wrapper.vm.openModalDelete).eq(false);
-  // });
-
-  // it('should handle erros in deleteSector method', async () => {
-  //   await wrapper.setProps({
-  //     isEditing: true,
-  //     modelValue: {
-  //       uuid: '1',
-  //       name: 'Sector Name',
-  //       managers: [],
-  //       workingDay: { start: '12:00', end: '11:00' },
-  //       maxSimultaneousChatsByAgent: '2',
-  //     },
-  //   });
-
-  //   const deleteSectorSpy = vi.spyOn(wrapper.vm, 'deleteSector');
-  //   const unnnicAlertSpy = vi.spyOn(unnnic, 'unnnicCallAlert');
-
-  //   const deleteSectorButton = wrapper.findComponent(
-  //     '[data-testid="open-modal-delete-button"]',
-  //   );
-
-  //   await deleteSectorButton.trigger('click');
-
-  //   expect(wrapper.vm.openModalDelete).eq(true);
-
-  //   await wrapper.vm.$nextTick();
-
-  //   const deleteModal = wrapper.findComponent(
-  //     '[data-testid="modal-delete-sector"]',
-  //   );
-
-  //   const deleteSectorActionMock = vi
-  //     .spyOn(wrapper.vm, 'actionDeleteSector')
-  //     .mockRejectedValue();
-
-  //   await deleteModal.trigger('click-action-primary');
-
-  //   expect(deleteSectorSpy).toHaveBeenCalledWith(wrapper.vm.sector.uuid);
-  //   expect(deleteSectorActionMock).toHaveBeenCalled();
-
-  //   expect(unnnicAlertSpy).toHaveBeenCalledWith({
-  //     props: {
-  //       text: wrapper.vm.$t('sector_delete_error'),
-  //       type: 'error',
-  //     },
-  //     seconds: 5,
-  //   });
-
-  //   expect(wrapper.vm.openModalDelete).eq(false);
-
-  //   deleteSectorActionMock.mockClear();
-  // });
-
   it('should format managers to object format with value and label', async () => {
     wrapper.vm.managersNames.forEach((item) => {
       expect(item).toHaveProperty('label');
@@ -407,5 +302,74 @@ describe('FormSectorGeneral', () => {
 
     expect(addSectorManagerSpy).toHaveBeenCalledWith(managerMock);
     expect(addManagerSpy).toHaveBeenCalledWith(managerMock);
+  });
+
+  it('should router push to settings on cancel', async () => {
+    const pushSpy = vi.spyOn(router, 'push');
+    await wrapper.setProps({ isEditing: true });
+    await wrapper.find('[data-testid="cancel-button"]').trigger('click');
+    expect(pushSpy).toHaveBeenCalledWith('/settings');
+  });
+
+  it('should emit update model value with default sector config', async () => {
+    const enableDefaultConfigRadio = wrapper.find(
+      '[data-testid="enable-default-sector-config"]',
+    );
+    await enableDefaultConfigRadio.trigger('click');
+
+    expect(wrapper.emitted('update:modelValue')[0][0])
+      .haveOwnProperty('name')
+      .eq(wrapper.vm.$t('config_chats.default_sector.name'));
+
+    expect(wrapper.emitted('update:modelValue')[0][0])
+      .haveOwnProperty('workingDay')
+      .eql({
+        start: '08:00',
+        end: '18:00',
+        dayOfWeek: 'week-days',
+      });
+
+    expect(wrapper.emitted('update:modelValue')[0][0])
+      .haveOwnProperty('maxSimultaneousChatsByAgent')
+      .eq('4');
+
+    expect(wrapper.emitted('update:modelValue')[0][0])
+      .haveOwnProperty('managers')
+      .eql([managerMock]);
+  });
+
+  it('should update model value with blank sector config', async () => {
+    await wrapper.setData({ useDefaultSector: 1 });
+    const disableDefaultConfigRadio = wrapper.find(
+      '[data-testid="disable-default-sector-config"]',
+    );
+    await disableDefaultConfigRadio.trigger('click');
+
+    expect(wrapper.emitted('update:modelValue')[0][0])
+      .haveOwnProperty('name')
+      .eq('');
+
+    expect(wrapper.emitted('update:modelValue')[0][0])
+      .haveOwnProperty('workingDay')
+      .eql({
+        start: '',
+        end: '',
+        dayOfWeek: '',
+      });
+
+    expect(wrapper.emitted('update:modelValue')[0][0])
+      .haveOwnProperty('maxSimultaneousChatsByAgent')
+      .eq('');
+
+    expect(wrapper.emitted('update:modelValue')[0][0])
+      .haveOwnProperty('managers')
+      .eql([]);
+  });
+
+  it('call service to removeManager if isEditing = true', async () => {
+    const removeManagerSpy = vi.spyOn(Sector, 'removeManager');
+    await wrapper.setProps({ isEditing: true });
+    await wrapper.vm.removeManager('1');
+    expect(removeManagerSpy).toHaveBeenCalledWith('1');
   });
 });
