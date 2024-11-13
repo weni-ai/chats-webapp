@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
 
@@ -7,9 +7,10 @@ import NewSectorDrawer from '../NewSectorDrawer.vue';
 import Unnnic from '@weni/unnnic-system';
 import General from '@/components/settings/forms/General.vue';
 import ExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
-import Queue from '@/components/settings/forms/Queue.vue';
+import FormQueue from '@/components/settings/forms/Queue.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
+import Queue from '@/services/api/resources/settings/queue';
 
 const managerMock = {
   uuid: '2',
@@ -40,6 +41,9 @@ vi.mock('@/services/api/resources/settings/sector', () => ({
       }),
     ),
     addManager: vi.fn(),
+    update: vi.fn(),
+    removeTag: vi.fn(),
+    addTag: vi.fn(),
   },
 }));
 
@@ -68,7 +72,7 @@ describe('NewSectorDrawer', () => {
         components: {
           General,
           ExtraOptions,
-          Queue,
+          FormQueue,
         },
       },
     });
@@ -116,6 +120,13 @@ describe('NewSectorDrawer', () => {
 
     await wrapper.find('[data-testid="secondary-button"]').trigger('click');
     expect(wrapper.vm.activePageIndex).toBe(1);
+  });
+
+  it('close drawer on secondary-button-click if activePageIndex = 0', async () => {
+    const closeSpy = vi.spyOn(wrapper.vm.$refs.newSectorDrawer, 'close');
+    await wrapper.find('[data-testid="secondary-button"]').trigger('click');
+
+    expect(closeSpy).toHaveBeenCalledOnce();
   });
 
   it('displays DiscartChangesModal if there are unsaved changes and close button is clicked', async () => {
@@ -197,6 +208,75 @@ describe('NewSectorDrawer', () => {
     expect(closeSpy).toHaveBeenCalledOnce();
   });
 
+  it('should create a sector, add managers, create a queue, and show a success alert', async () => {
+    const createdSectorMock = { uuid: 'sector-uuid', name: 'Test Sector' };
+    const createdQueueMock = { uuid: 'queue-uuid' };
+
+    vi.spyOn(Sector, 'create').mockResolvedValue(createdSectorMock);
+    vi.spyOn(Queue, 'create').mockResolvedValue(createdQueueMock);
+    vi.spyOn(Sector, 'addManager').mockResolvedValue(true);
+    vi.spyOn(Queue, 'addAgent').mockResolvedValue(true);
+
+    const unnnicAlertSpy = vi.spyOn(Unnnic, 'unnnicCallAlert');
+    const finishSpy = vi.spyOn(wrapper.vm, 'finish');
+
+    await wrapper.setData({
+      sector: {
+        name: 'Test Sector',
+        workingDay: { start: '08:00', end: '17:00' },
+        managers: [managerMock],
+        maxSimultaneousChatsByAgent: '5',
+      },
+      sectorQueue: {
+        name: 'Test Queue',
+        currentAgents: [managerMock],
+      },
+    });
+
+    const extraOptionsForm = wrapper.findComponent(
+      '[data-testid="extra-options-form"]',
+    );
+
+    const mockTag = { name: 'Tag Mock', uuid: '1' };
+
+    await extraOptionsForm.setData({
+      toAddTags: [mockTag],
+      tags: [mockTag],
+      currentTags: [mockTag],
+    });
+
+    expect(wrapper.vm.isValid.general).toBe(true);
+    expect(wrapper.vm.isValid.extraOptions).toBe(true);
+
+    await wrapper.find('[data-testid="primary-button"]').trigger('click');
+
+    expect(wrapper.vm.activePageIndex).toBe(1);
+
+    await wrapper.find('[data-testid="primary-button"]').trigger('click');
+
+    expect(wrapper.vm.activePageIndex).toBe(2);
+
+    await wrapper.find('[data-testid="primary-button"]').trigger('click');
+
+    expect(wrapper.vm.activePageIndex).toBe(3);
+
+    await wrapper.find('[data-testid="primary-button"]').trigger('click');
+
+    expect(finishSpy).toHaveBeenCalled();
+
+    await flushPromises();
+
+    expect(unnnicAlertSpy).toHaveBeenCalledWith({
+      props: {
+        text: wrapper.vm.$t('new_sector.alert.create_success', {
+          sectorName: createdSectorMock.name,
+        }),
+        type: 'success',
+      },
+      seconds: 5,
+    });
+  });
+
   it('calls error alert on sector creation failure', async () => {
     const errorAlertSpy = vi.spyOn(Unnnic, 'unnnicCallAlert');
 
@@ -216,20 +296,4 @@ describe('NewSectorDrawer', () => {
       });
     }
   });
-
-  //   it('shows success message on successful sector creation', async () => {
-  //     const unnnicAlertSpy = vi.spyOn(Unnnic, 'unnnicCallAlert');
-
-  //     await wrapper.vm.finish();
-
-  //     expect(unnnicAlertSpy).toHaveBeenCalledWith({
-  //       props: {
-  //         text: wrapper.vm.$t('new_sector.alert.create_success', {
-  //           sectorName: '',
-  //         }),
-  //         type: 'success',
-  //       },
-  //       seconds: 5,
-  //     });
-  //   });
 });
