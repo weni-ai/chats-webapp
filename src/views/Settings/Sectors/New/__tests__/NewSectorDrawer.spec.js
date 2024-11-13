@@ -4,10 +4,12 @@ import { createTestingPinia } from '@pinia/testing';
 
 import NewSectorDrawer from '../NewSectorDrawer.vue';
 
-// import Unnnic from '@weni/unnnic-system';
+import Unnnic from '@weni/unnnic-system';
 import General from '@/components/settings/forms/General.vue';
 import ExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
 import Queue from '@/components/settings/forms/Queue.vue';
+
+import Sector from '@/services/api/resources/settings/sector';
 
 const managerMock = {
   uuid: '2',
@@ -31,6 +33,7 @@ vi.mock('@/services/api/resources/settings/queue', () => ({
 
 vi.mock('@/services/api/resources/settings/sector', () => ({
   default: {
+    create: vi.fn(),
     managers: vi.fn(() =>
       Promise.resolve({
         results: [managerMock],
@@ -69,9 +72,10 @@ describe('NewSectorDrawer', () => {
         },
       },
     });
+    vi.clearAllMocks();
   });
 
-  it('renders with the correct title and buttons based on activePageIndex', () => {
+  it('renders with the correct title and buttons based on activePageIndex', async () => {
     expect(wrapper.find('[data-testid="new-sector-drawer"]').exists()).toBe(
       true,
     );
@@ -80,6 +84,15 @@ describe('NewSectorDrawer', () => {
     );
     expect(wrapper.find('[data-testid="secondary-button"]').text()).toBe(
       wrapper.vm.$t('cancel'),
+    );
+
+    await wrapper.setData({ activePageIndex: 3 });
+
+    expect(wrapper.find('[data-testid="primary-button"]').text()).toBe(
+      wrapper.vm.$t('save'),
+    );
+    expect(wrapper.find('[data-testid="secondary-button"]').text()).toBe(
+      wrapper.vm.$t('back'),
     );
   });
 
@@ -116,6 +129,46 @@ describe('NewSectorDrawer', () => {
     ).toBe(true);
   });
 
+  it('emit close on confirm discart changes', async () => {
+    await wrapper.setData({ showDiscartQuestion: true });
+
+    const discartModal = wrapper.findComponent(
+      '[data-testid="discart-changes-modal"]',
+    );
+
+    discartModal.vm.$emit('primary-button-click');
+
+    expect(wrapper.emitted('close')).toBeTruthy();
+  });
+
+  it('preserve data on cancel discart', async () => {
+    await wrapper.setData({
+      showDiscartQuestion: true,
+      sector: {
+        uuid: '',
+        name: 'Sector Mock',
+        can_trigger_flows: true,
+        can_edit_custom_fields: true,
+        sign_messages: true,
+        workingDay: {
+          start: '',
+          end: '',
+          dayOfWeek: 'week-days',
+        },
+        managers: [],
+        maxSimultaneousChatsByAgent: '4',
+      },
+    });
+
+    const discartModal = wrapper.findComponent(
+      '[data-testid="discart-changes-modal"]',
+    );
+
+    discartModal.vm.$emit('secondary-button-click');
+
+    expect(wrapper.vm.showConfirmDiscartChangesModal).toBe(false);
+  });
+
   it('calls finish method on primary button click if last page', async () => {
     await wrapper.setData({ activePageIndex: 3 });
 
@@ -130,6 +183,38 @@ describe('NewSectorDrawer', () => {
   it('emits close event when close icon is clicked and no unsaved changes', async () => {
     await wrapper.vm.handleCloseNewSectorDrawer(true);
     expect(wrapper.emitted('close')).toBeTruthy();
+  });
+
+  it('call drawer close when parent emit event close', async () => {
+    const closeSpy = vi.spyOn(wrapper.vm.$refs.newSectorDrawer, 'close');
+
+    window.dispatchEvent(
+      new MessageEvent('message', {
+        data: { event: 'close' },
+      }),
+    );
+
+    expect(closeSpy).toHaveBeenCalledOnce();
+  });
+
+  it('calls error alert on sector creation failure', async () => {
+    const errorAlertSpy = vi.spyOn(Unnnic, 'unnnicCallAlert');
+
+    vi.spyOn(Sector, 'create').mockRejectedValue(
+      new Error('Error on create sector mock'),
+    );
+
+    try {
+      await wrapper.vm.finish();
+    } catch (error) {
+      expect(errorAlertSpy).toHaveBeenCalledWith({
+        props: {
+          text: wrapper.vm.$t('new_sector.alert.create_error'),
+          type: 'error',
+        },
+        seconds: 5,
+      });
+    }
   });
 
   //   it('shows success message on successful sector creation', async () => {
