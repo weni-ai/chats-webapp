@@ -29,6 +29,7 @@ vi.mock('@/services/api/resources/settings/queue', () => ({
   default: {
     create: vi.fn(),
     addAgent: vi.fn(),
+    editQueue: vi.fn(),
   },
 }));
 
