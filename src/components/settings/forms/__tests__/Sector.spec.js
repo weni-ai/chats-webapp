@@ -311,7 +311,7 @@ describe('FormSectorGeneral', () => {
     expect(pushSpy).toHaveBeenCalledWith('/settings');
   });
 
-  it('shold emit update model value with default sector config', async () => {
+  it('should emit update model value with default sector config', async () => {
     const enableDefaultConfigRadio = wrapper.find(
       '[data-testid="enable-default-sector-config"]',
     );
@@ -338,7 +338,7 @@ describe('FormSectorGeneral', () => {
       .eql([managerMock]);
   });
 
-  it('shold update model value with blank sector config', async () => {
+  it('should update model value with blank sector config', async () => {
     await wrapper.setData({ useDefaultSector: 1 });
     const disableDefaultConfigRadio = wrapper.find(
       '[data-testid="disable-default-sector-config"]',
