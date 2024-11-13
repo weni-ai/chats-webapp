@@ -8,6 +8,7 @@
         size="sm"
         :modelValue="useDefaultSector"
         :value="0"
+        data-testid="disable-default-sector-config"
         @update:model-value="updateDefaultSectorValue"
       >
         {{ $t('config_chats.custom_sector') }}
@@ -16,6 +17,7 @@
         :modelValue="useDefaultSector"
         size="sm"
         :value="1"
+        data-testid="enable-default-sector-config"
         @update:model-value="updateDefaultSectorValue"
       >
         {{ $t('config_chats.default_sector.title') }}
@@ -112,33 +114,6 @@
             class="form-section__inputs--fill-w"
           />
         </section>
-        <!-- <section class="form-section__handlers">
-          <UnnnicButton
-            v-if="isEditing"
-            :text="$t('delete_sector')"
-            type="tertiary"
-            iconLeft="delete"
-            size="small"
-            data-testid="open-modal-delete-button"
-            @click.stop="handlerOpenModalDelete()"
-          />
-        </section> -->
-        <UnnnicModalNext
-          v-if="openModalDelete"
-          type="alert"
-          icon="alert-circle-1"
-          scheme="feedback-red"
-          :title="$t('delete_sector') + ` ${sector.name}`"
-          :description="$t('cant_revert')"
-          :validate="`${sector.name}`"
-          :validatePlaceholder="`${sector.name}`"
-          :validateLabel="$t('confirm_typing') + ` &quot;${sector.name}&quot;`"
-          :actionPrimaryLabel="$t('confirm')"
-          :actionSecondaryLabel="$t('cancel')"
-          data-testid="modal-delete-sector"
-          @click-action-primary="deleteSector(sector.uuid)"
-          @click-action-secondary="handlerCloseModalDelete()"
-        />
       </section>
     </form>
     <section
@@ -148,6 +123,7 @@
       <UnnnicButton
         :text="$t('cancel')"
         type="tertiary"
+        data-testid="cancel-button"
         @click.stop="$router.push('/settings')"
       />
       <UnnnicButton
@@ -271,14 +247,6 @@ export default {
     ...mapActions(useSettings, {
       actionDeleteSector: 'deleteSector',
     }),
-    handlerOpenModalDelete() {
-      this.openModalDelete = true;
-      this.handleConnectOverlay(true);
-    },
-    handlerCloseModalDelete() {
-      this.openModalDelete = false;
-      this.handleConnectOverlay(false);
-    },
     updateDefaultSectorValue(activate) {
       this.useDefaultSector = activate;
       if (activate) {
@@ -328,8 +296,6 @@ export default {
       const manager = this.sector.managers.find(
         (manager) => manager.uuid === managerUuid,
       );
-
-      if (!manager) return;
 
       this.removedManagers.push(manager);
       this.sector.managers = this.sector.managers.filter(
@@ -405,41 +371,6 @@ export default {
             : this.$t('config_chats.edit_sector.invalid_hours');
       } else {
         this.validHour = true;
-      }
-    },
-
-    handleConnectOverlay(active) {
-      window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
-    },
-
-    async deleteSector(sectorUuid) {
-      try {
-        await this.actionDeleteSector(sectorUuid);
-
-        this.$router.push({ name: 'sectors' });
-        unnnic.unnnicCallAlert({
-          props: {
-            text: this.$t('sector_deleted_success'),
-            type: 'success',
-          },
-          seconds: 5,
-        });
-        window.parent.postMessage(
-          { event: 'deleteSectorUuid', data: sectorUuid },
-          '*',
-        );
-      } catch (error) {
-        console.log(error);
-
-        unnnic.unnnicCallAlert({
-          props: {
-            text: this.$t('sector_delete_error'),
-            type: 'error',
-          },
-          seconds: 5,
-        });
-      } finally {
-        this.handlerCloseModalDelete();
       }
     },
 
