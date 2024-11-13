@@ -1,12 +1,26 @@
 import { mount } from '@vue/test-utils';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { createTestingPinia } from '@pinia/testing';
 
 import NewSectorDrawer from '../NewSectorDrawer.vue';
 
-import Unnnic from '@weni/unnnic-system';
+// import Unnnic from '@weni/unnnic-system';
 import General from '@/components/settings/forms/General.vue';
 import ExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
 import Queue from '@/components/settings/forms/Queue.vue';
+
+const managerMock = {
+  uuid: '2',
+  sector: '1',
+  role: 1,
+  user: {
+    first_name: 'Test',
+    last_name: 'Test',
+    email: 'tests@weni.ai',
+    status: '',
+    photo_url: 'http://photo.link',
+  },
+};
 
 vi.mock('@/services/api/resources/settings/queue', () => ({
   default: {
@@ -17,7 +31,19 @@ vi.mock('@/services/api/resources/settings/queue', () => ({
 
 vi.mock('@/services/api/resources/settings/sector', () => ({
   default: {
+    managers: vi.fn(() =>
+      Promise.resolve({
+        results: [managerMock],
+      }),
+    ),
     addManager: vi.fn(),
+  },
+}));
+
+vi.mock('@/services/api/resources/settings/project', () => ({
+  default: {
+    managers: () => ({ results: [managerMock] }),
+    agents: () => ({ results: [managerMock] }),
   },
 }));
 
@@ -28,6 +54,11 @@ describe('NewSectorDrawer', () => {
     wrapper = mount(NewSectorDrawer, {
       props: { modelValue: true },
       global: {
+        plugins: [
+          createTestingPinia({
+            initialState: { profile: { me: { email: 'tests@weni.ai' } } },
+          }),
+        ],
         stubs: {
           DiscartChangesModal: true,
         },
