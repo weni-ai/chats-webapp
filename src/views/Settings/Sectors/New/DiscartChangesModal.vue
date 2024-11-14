@@ -28,6 +28,11 @@ export default {
 
 <style lang="scss" scoped>
 .discart-changes-modal {
+  :deep(.unnnic-modal-dialog__container) {
+    // use to centralize modal in connect iframe
+    right: calc(55% - 200px);
+    margin-top: -64px;
+  }
   &__text {
     text-align: left;
     font-size: $unnnic-font-size-body-gt;
