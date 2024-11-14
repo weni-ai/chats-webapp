@@ -96,12 +96,8 @@ export default {
       this.$refs.roomsTransferFields.transfer();
     },
 
-    transferComplete(status) {
+    transferComplete() {
       this.isLoading = false;
-
-      if (status === 'success') {
-        this.resetActiveRoom();
-      }
     },
 
     resetActiveRoom() {

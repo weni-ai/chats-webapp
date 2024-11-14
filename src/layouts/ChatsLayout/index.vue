@@ -194,7 +194,7 @@ section.chats-layout {
   max-width: 100vw;
 
   display: grid;
-  grid-template-columns: 3fr 9fr;
+  grid-template-columns: 3fr 7fr;
   grid-template-rows: 100vh;
 
   overflow: hidden;
