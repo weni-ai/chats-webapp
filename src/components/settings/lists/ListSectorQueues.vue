@@ -58,6 +58,7 @@
   >
     <template #content>
       <FormQueue
+        ref="formQueue"
         v-model="queueToConfig"
         :sector="sector"
         data-testid="queue-config-form"
@@ -109,21 +110,13 @@ export default {
       });
     },
     openConfigQueueDrawer(queue = {}) {
-      // use setTimeout to prevent connect overlay flick
-      setTimeout(() => {
-        this.showQueueDrawer = true;
-      }, 1);
-
       this.handleConnectOverlay(true);
+      this.showQueueDrawer = true;
       this.queueToConfig = queue;
     },
     closeQueueConfigDrawer() {
-      // use setTimeout to prevent connect overlay flick
-      setTimeout(() => {
-        this.showQueueDrawer = false;
-      }, 1);
-
       this.handleConnectOverlay(false);
+      this.showQueueDrawer = false;
       this.queueToConfig = {};
     },
     async getQueues() {
@@ -145,7 +138,15 @@ export default {
         this.loadingQueueConfig = true;
         const { name, default_message } = this.queueToConfig;
         if (this.queueToConfig.uuid) {
-          await Queue.editQueue(this.queueToConfig);
+          await Promise.all([
+            ...this.$refs.formQueue.toAddAgentsUuids.map((agentUuid) =>
+              Queue.addAgent(this.queueToConfig.uuid, agentUuid),
+            ),
+            ...this.$refs.formQueue.toRemoveAgentsUuids.map((agentUuid) =>
+              Queue.removeAgent(agentUuid),
+            ),
+          ]);
+
           unnnic.unnnicCallAlert({
             props: {
               text: this.$t('config_chats.queues.message.update'),

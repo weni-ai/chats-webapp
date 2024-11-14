@@ -133,6 +133,8 @@ export default {
       loadingInfo: false,
       agentsOptions: [],
       useDefaultSectorQueue: 0,
+      toAddAgentsUuids: [],
+      toRemoveAgentsUuids: [],
     };
   },
 
@@ -234,7 +236,10 @@ export default {
       this.queue.currentAgents = response.results;
     },
     async handlerRemoveAgent(agentUuid) {
-      if (this.isEditing) await Queue.removeAgent(agentUuid);
+      if (this.isEditing) {
+        this.toRemoveAgentsUuids.push(agentUuid);
+        this.toRemoveAgentsUuids = [...new Set(this.toRemoveAgentsUuids)];
+      }
 
       this.queue.currentAgents = this.queue.currentAgents.filter(
         (agent) => agent.uuid !== agentUuid,
@@ -250,11 +255,11 @@ export default {
       const alreadyInQueue = currentAgents.some((a) => a.uuid === agent.uuid);
 
       if (!alreadyInQueue & this.isEditing) {
-        const { data } = await Queue.addAgent(this.queue.uuid, agent.uuid);
+        this.toAddAgentsUuids.push(agent.uuid);
+        this.toAddAgentsUuids = [...new Set(this.toAddAgentsUuids)];
 
         this.queue.currentAgents.push({
           ...agent,
-          uuid: data.uuid,
         });
         this.queue.agents++;
         this.$emit('update-queue-agents-count', this.queue);
