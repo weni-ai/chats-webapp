@@ -110,21 +110,13 @@ export default {
       });
     },
     openConfigQueueDrawer(queue = {}) {
-      // use setTimeout to prevent connect overlay flick
-      setTimeout(() => {
-        this.showQueueDrawer = true;
-      }, 1);
-
       this.handleConnectOverlay(true);
+      this.showQueueDrawer = true;
       this.queueToConfig = queue;
     },
     closeQueueConfigDrawer() {
-      // use setTimeout to prevent connect overlay flick
-      setTimeout(() => {
-        this.showQueueDrawer = false;
-      }, 1);
-
       this.handleConnectOverlay(false);
+      this.showQueueDrawer = false;
       this.queueToConfig = {};
     },
     async getQueues() {
