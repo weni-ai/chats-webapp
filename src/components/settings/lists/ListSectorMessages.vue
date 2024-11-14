@@ -295,23 +295,15 @@ export default {
     },
 
     openConfigMessageDrawer(message = { title: '', text: '', shortcut: '' }) {
-      // use setTimeout to prevent connect overlay flick
-      setTimeout(() => {
-        this.showQuickMessageDrawer = true;
-      }, 1);
-
       this.handleConnectOverlay(true);
+      this.showQuickMessageDrawer = true;
 
       this.quickMessageToEdit = { ...message };
     },
 
     closeConfigMessageDrawer() {
-      // use setTimeout to prevent connect overlay flick
-      setTimeout(() => {
-        this.showQuickMessageDrawer = false;
-      }, 1);
-
       this.handleConnectOverlay(false);
+      this.showQuickMessageDrawer = false;
 
       this.quickMessageToEdit = { title: '', text: '', shortcut: '' };
     },
