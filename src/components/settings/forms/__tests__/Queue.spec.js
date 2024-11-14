@@ -1,5 +1,6 @@
 import { expect, describe, it, vi, beforeEach } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
+import { createTestingPinia } from '@pinia/testing';
 
 import QueueForm from '../Queue.vue';
 
@@ -46,8 +47,15 @@ vi.spyOn(Queue, 'removeAgent').mockResolvedValue();
 
 const createWrapper = (props = {}) => {
   return mount(QueueForm, {
+    global: {
+      plugins: [
+        createTestingPinia({
+          initialState: { profile: { me: { email: 'agent.mock@test.com' } } },
+        }),
+      ],
+    },
     props: {
-      modelValue: { default_message: '', currentAgents: [] },
+      modelValue: { default_message: '', currentAgents: [], name: '' },
       sector: { uuid: '1', name: 'Sector Mock' },
       ...props,
     },
@@ -66,6 +74,11 @@ describe('FormQueue', () => {
     const inputQueueName = wrapper.find('[data-testid="queue-name-input"]');
 
     expect(inputQueueName.exists()).toBe(false);
+  });
+
+  it('should text helpers if showHelpers = true', async () => {
+    await wrapper.setProps({ showHelpers: true });
+    expect(wrapper.find('[data-testid="hint"]').exists()).toBe(true);
   });
 
   it('should display textarea when editing the automatic message', async () => {
@@ -201,5 +214,24 @@ describe('FormQueue', () => {
     expect(inputQueue.exists()).toBe(true);
     expect(inputQueue.props('label')).toMatch(/Queue name/gi);
     expect(inputQueue.props('placeholder')).toMatch(/Example: Payments/gi);
+  });
+
+  it('should update model value with blank queue config', async () => {
+    await wrapper.setProps({ showHelpers: true });
+    await wrapper.setData({ useDefaultSectorQueue: 1 });
+
+    const enableDefaultConfigRadio = wrapper.find(
+      '[data-testid="disable-default-queue-config"]',
+    );
+
+    await enableDefaultConfigRadio.trigger('click');
+
+    expect(wrapper.emitted('update:modelValue')[0][0])
+      .haveOwnProperty('name')
+      .eq('');
+
+    expect(wrapper.emitted('update:modelValue')[0][0])
+      .haveOwnProperty('currentAgents')
+      .eql([]);
   });
 });

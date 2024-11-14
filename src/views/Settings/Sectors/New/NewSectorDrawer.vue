@@ -11,6 +11,7 @@
     :secondaryButtonText="activePageIndex === 0 ? $t('cancel') : $t('back')"
     :disabledPrimaryButton="!isValid[activePageKey]"
     :loadingPrimaryButton="isLoadingCreate"
+    data-testid="new-sector-drawer"
     @primary-button-click="
       activePageIndex === 3 ? finish() : (activePageIndex = activePageIndex + 1)
     "
@@ -32,12 +33,14 @@
           ref="sectorGeneral"
           v-model="sector"
           class="general-form"
+          data-testid="general-form"
           @change-is-valid="updateIsValid($event, 'general')"
         />
         <ExtraOptions
           v-show="activePage === $t('sector.extra_options')"
           ref="sectorExtraOptions"
           v-model="sector"
+          data-testid="extra-options-form"
           @change-is-valid="updateIsValid($event, 'extraOptions')"
         />
         <section class="forms__queue">
@@ -47,6 +50,7 @@
             v-model="sectorQueue"
             :sector="sector"
             showHelpers
+            data-testid="queue-form"
             @change-is-valid="updateIsValid($event, 'queue')"
           />
         </section>
@@ -88,6 +92,7 @@
   </UnnnicDrawer>
   <DiscartChangesModal
     :showModal="showConfirmDiscartChangesModal"
+    data-testid="discart-changes-modal"
     @secondary-button-click="showConfirmDiscartChangesModal = false"
     @primary-button-click="$emit('close')"
   />

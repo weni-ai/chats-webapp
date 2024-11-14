@@ -8,6 +8,7 @@
         size="sm"
         :modelValue="useDefaultSectorQueue"
         :value="0"
+        data-testid="disable-default-queue-config"
         @update:model-value="updateDefaultSectorQueueValue"
       >
         {{ $t('config_chats.custom_queue') }}
@@ -16,6 +17,7 @@
         :modelValue="useDefaultSectorQueue"
         size="sm"
         :value="1"
+        data-testid="enable-default-queue-config"
         @update:model-value="updateDefaultSectorQueueValue"
       >
         {{ $t('config_chats.default_queue.title') }}
@@ -24,6 +26,7 @@
     <p
       v-if="showHelpers"
       class="forms__hint"
+      data-testid="hint"
     >
       {{ $t('config_chats.queues.hint') }}
     </p>
