@@ -10,17 +10,6 @@ export async function resetChats() {
   await useRooms().setActiveRoom(null);
 }
 
-export function removeDuplicatedMessagesByUuid(arrayMessages) {
-  const itemsChecked = new Set();
-  return arrayMessages.filter((item) => {
-    if (itemsChecked.has(item.uuid)) {
-      return false;
-    }
-    itemsChecked.add(item.uuid);
-    return true;
-  });
-}
-
 export function formatContactName(room) {
   let contactName = '';
   if (room?.service_chat) {
