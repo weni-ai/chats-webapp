@@ -213,6 +213,9 @@ export default {
     gap: $unnnic-spacing-xs;
 
     &-sector-card {
+      :deep(.unnnic-simple-card-header-container__title) {
+        color: $unnnic-color-neutral-darkest;
+      }
       &__open-label {
         color: $unnnic-color-neutral-dark;
         font-family: $unnnic-font-family-secondary;
