@@ -252,7 +252,9 @@ export default {
     async handlerAddAgent(agent) {
       const { currentAgents } = this.queue;
 
-      const alreadyInQueue = currentAgents.some((a) => a.uuid === agent.uuid);
+      const alreadyInQueue = currentAgents.some(
+        (a) => a.uuid === agent.uuid || a.user.email === agent.user.email,
+      );
 
       if (!alreadyInQueue & this.isEditing) {
         this.toAddAgentsUuids.push(agent.uuid);

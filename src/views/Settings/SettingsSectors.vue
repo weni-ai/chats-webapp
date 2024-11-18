@@ -219,6 +219,10 @@ export default {
 
     .sectors__card {
       min-height: 120px;
+
+      :deep(.unnnic-simple-card-header-container__title) {
+        color: $unnnic-color-neutral-darkest;
+      }
     }
   }
 

@@ -380,22 +380,26 @@ export default {
   &__copilot:hover {
     box-shadow: $unnnic-shadow-level-far;
   }
+
   &__copilot {
     border: 1px solid $unnnic-color-neutral-soft;
     border-radius: $unnnic-border-radius-md;
     padding: $unnnic-spacing-sm;
     display: grid;
     gap: $unnnic-spacing-sm;
+
     &__integration {
       display: grid;
       gap: $unnnic-spacing-sm;
     }
+
     .title {
       font-weight: $unnnic-font-weight-bold;
       color: $unnnic-color-neutral-dark;
       font-size: $unnnic-font-size-body-lg;
       line-height: $unnnic-line-height-large + $unnnic-line-height-md;
     }
+
     .without-messages {
       font-size: $unnnic-font-size-body-gt;
       color: $unnnic-color-neutral-dark;
@@ -415,11 +419,18 @@ export default {
       }
     }
   }
+
   &-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: $unnnic-spacing-sm;
     margin-top: $unnnic-spacing-md;
+  }
+
+  &__quick-message-card {
+    :deep(.unnnic-simple-card-header-container__title) {
+      color: $unnnic-color-neutral-darkest;
+    }
   }
 
   &__new-message:hover {
