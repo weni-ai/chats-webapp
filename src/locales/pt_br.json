@@ -64,6 +64,7 @@
   "undo": "Desfazer",
   "redo": "Refazer",
   "record_audio": "Gravar áudio",
+  "select_all": "Selecionar todos",
   "audio_recorder": {
     "discard_button": "Descartar"
   },
@@ -86,7 +87,8 @@
   "sectors": "Setores",
   "sector": {
     "title": "Setor",
-    "geral": "Geral",
+    "general": "Geral",
+    "extra_options": "Opções extras",
     "queues": "Filas",
     "tags": "Etiquetas",
     "add": "Adicionar novo setor",
@@ -114,7 +116,7 @@
       }
     },
     "additional_options": {
-      "title": "Opções adicionais",
+      "title": "Opções extras",
       "template_message": {
         "switch_active": "Disparo de modelos de mensagens ativo",
         "switch_disabled": "Disparo de modelos de mensagens desativado"
@@ -144,6 +146,9 @@
   "addition_date": "Data de Adição",
   "in_queues": "em filas",
   "in_progress": "Em andamento",
+  "waiting": "Aguardando",
+  "sent_flows": "Fluxos enviados",
+  "discussion": "Discussões",
   "in_progress_tooltip": "Quantidade de chats que já estão sendo atendidos por um agente",
   "in_progress_tooltip_filtered": "Quantidade de chats que foram atendidos por um agente",
   "closed": "Encerrados",
@@ -497,6 +502,8 @@
       "middle": "adicione uma mensagem",
       "end": "para os agentes deste setor utilizarem."
     },
+    "example_message": "Mensagem de exemplo",
+    "example_message_description": "As mensagens rápidas são textos prontos que facilitam a padronização de atendimento, todos os agentes deste setor poderão utilizar as mensagens, você poderá cadastrar novas mensagens a seguir.",
     "personal": "Suas mensagens rápidas",
     "shared": "Mensagens rápidas compartilhadas",
     "delete": "Deletar mensagem rápida",
@@ -512,7 +519,8 @@
     "shortcut_field_placeholder": "Ex: Oi",
     "message_field_placeholder": "Digite o que você deseja",
     "successfully_added": "Mensagem rápida adicionada",
-    "successfully_updated": "Mensagem rápida atualizada"
+    "successfully_updated": "Mensagem rápida atualizada",
+    "error": "Falha ao definir mensagem rápida"
   },
   "discard": "Descartar",
   "on_boarding": {
@@ -558,9 +566,11 @@
     }
   },
   "config_chats": {
-    "manage_chats": "Gerenciar Chats",
-    "manage_description": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
+    "title": "Configurações de Chats",
+    "section_sectors_title": "Setores em {project}",
+    "section_sectors_subtitle": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
     "project_configs": {
+      "title": "Ajustes do projeto",
       "bulk_transfer": {
         "tooltip": "Essa função permite que agentes transfiram diversos contatos de uma vez para uma fila ou agente",
         "switch_active": "Transferência de contatos em massa ativo",
@@ -576,6 +586,36 @@
         "switch_inactive": "Bloqueio de transferências para agentes offline inativo"
       }
     },
+    "custom_sector": "Personalizar novo setor (recomendado)",
+    "default_sector": {
+      "title": "Criar setor padrão (mais rápido)",
+      "name": "Setor padrão"
+    },
+    "edit_sector": {
+      "description": "Determine configurações gerais da equipe e jornada de trabalho",
+      "tag_already_exists": "Já existe uma tag com esse nome",
+      "invalid_hours": "Horário de início não pode ser maior/igual que horário final"
+    },
+    "custom_queue": "Criar uma fila personalizada",
+    "default_queue": {
+      "title": "Criar fila padrão (mais rápido)",
+      "name": "Fila padrão"
+    },
+    "queues": {
+      "in_sector": "Fila no setor {sector}",
+      "new": "Nova fila",
+      "info": "As filas são grupos de atendimento dentro de um setor, é possível direcionar contatos de um fluxo para uma fila específica",
+      "hint": "As filas são grupos de atendimento dentro do setor, você poderá criar novas filas ou editar quando quiser",
+      "queue_definitions": "Definições da fila",
+      "message": {
+        "create": "Fila criada com sucesso",
+        "update": "Fila atualizada com sucesso",
+        "error": "Falha ao definir configurações da fila"
+      }
+    },
+    "copilot": {
+      "hint": "O Co-pilot é o assistente inteligente do seu agente, ele poderá ser ativo mais tarde."
+    },
     "new_sector": "Novo setor",
     "agent_title": "Agentes",
     "contacts": "Contatos",
@@ -585,7 +625,16 @@
     "sector_tip": "Crie um setor para gerenciar a operação de atendimento, adicionando gerentes, agentes e horário de funcionamento",
     "queues_tip": "As filas servem para organizar os tipos de atendimento dentro de um setor, através das filas é possível criar grupos de atendimento, crie pelo menos uma fila para gerenciar uma equipe de agentes",
     "tags_tip": "As tags são usadas para classificar características do atendimento e possibilitar a pesquisa de filtragem dos chats a partir delas, defina tags que sejam relevantes para o seu contexto",
-    "agent_tip": "Adicione membros no seu projeto para poder definir como gerente"
+    "agent_tip": "Adicione membros no seu projeto para poder definir como gerente",
+    "alert": {
+      "create_success": "Novo setor {sectorName} criado!",
+      "create_error": "Falha ao criar setor"
+    },
+    "discart": {
+      "title": "Descartar alterações",
+      "hint": "A criação do novo setor será descartada ao confirmar essa ação, deseja descartar as alterações feitas até agora?",
+      "confirm": "Descartar"
+    }
   },
   "your_orgs": "Suas organizações",
   "your_projects": "Seus projetos",
