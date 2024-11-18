@@ -64,6 +64,7 @@
   "undo": "Deshacer",
   "redo": "Rehacer",
   "record_audio": "Grabar audio",
+  "select_all": "Seleccionar todo",
   "audio_recorder": {
     "discard_button": "Descartar"
   },
@@ -145,6 +146,9 @@
   "addition_date": "Fecha de adición",
   "in_queues": "en colas",
   "in_progress": "En progreso",
+  "waiting": "Esperando",
+  "sent_flows": "Flujos enviados",
+  "discussion": "Discusiones",
   "in_progress_tooltip": "Cantidad de chats que ya están siendo atendidos por un agente",
   "in_progress_tooltip_filtered": "Cantidad de chats que han sido atendidos por un agente",
   "closed": "Cerrados",
