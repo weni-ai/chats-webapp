@@ -7,8 +7,11 @@ import i18n from '@/plugins/i18n';
 import Unnnic from '@weni/unnnic-system';
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 
-vi.mock('@/api/Profile', () => ({
-  updateStatus: vi.fn(),
+vi.mock('@/services/api/resources/profile', () => ({
+  default: {
+    updateStatus: vi.fn({ data: {} }),
+    status: vi.fn(),
+  },
 }));
 
 describe('PreferencesBar Component', () => {
