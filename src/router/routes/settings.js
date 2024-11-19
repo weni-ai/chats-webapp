@@ -8,20 +8,10 @@ const routes = [
         name: 'sectors',
         component: () => import('@/views/Settings/index.vue'),
       },
-
-      {
-        path: 'sectors/new',
-        name: 'sectors.new',
-        component: () => import('@/views/Settings/Sectors/New.vue'),
-      },
       {
         path: 'sectors/:uuid',
         name: 'sectors.edit',
-        component: () => import('@/views/Settings/Sectors/Edit.vue'),
-        props: (route) => ({
-          uuid: route.params.uuid,
-          tab: route.query.tab,
-        }),
+        component: () => import('@/views/Settings/Sectors/Edit/index.vue'),
       },
     ],
   },

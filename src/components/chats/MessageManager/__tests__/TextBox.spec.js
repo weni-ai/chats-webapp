@@ -1,7 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { unnnicButton as UnnnicButton } from '@weni/unnnic-system';
-
 import TextBox from '../TextBox.vue';
 
 function createWrapper(props = {}) {
