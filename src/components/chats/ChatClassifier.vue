@@ -9,7 +9,6 @@
       v-model="selected"
       class="chat-classifier__tag-group"
       :tags="tags"
-      scheme="aux-purple"
       selectable
       data-testid="tag-group"
     />

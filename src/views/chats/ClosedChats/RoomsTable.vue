@@ -310,6 +310,10 @@ export default {
     &__table {
       overflow: hidden;
 
+      :deep(.unnnic-brand-tag__icon) {
+        display: none;
+      }
+
       :deep(.table-row) {
         $rowSpacing: $unnnic-spacing-lg;
 
