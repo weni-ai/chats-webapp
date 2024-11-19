@@ -27,6 +27,7 @@
           type="primary"
           iconLeft="refresh"
           size="small"
+          data-testid="update-room-messages-button"
           :loading="isMessagesRoomLoading"
           @click="updateRoomMessages"
         />
@@ -106,7 +107,7 @@ export default {
     discussion: {
       immediate: true,
       async handler() {
-        await this.loadDiscussionDetails();
+        if (this.discussion) await this.loadDiscussionDetails();
       },
     },
   },
@@ -123,6 +124,7 @@ export default {
       this.isSidebarLoading = true;
 
       this.details = await this.getDiscussionDetails();
+
       this.isOwnDiscussion = this.me.email === this.details.created_by?.email;
       await this.setActiveRoom({
         uuid: this.details.room,
