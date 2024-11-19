@@ -86,10 +86,11 @@
   "sectors": "Sectors",
   "sector": {
     "title": "Sector",
-    "geral": "General",
+    "general": "General",
+    "extra_options": "Extra options",
     "queues": "Queues",
     "tags": "Tags",
-    "add": "Add new sector",
+    "add": "Define sector",
     "add_queue": "Add new queue",
     "name": "Sector name",
     "placeholder": "Example: Financial",
@@ -114,7 +115,7 @@
       }
     },
     "additional_options": {
-      "title": "Additional options",
+      "title": "Extras options",
       "template_message": {
         "switch_active": "Triggering message templates active",
         "switch_disabled": "Triggering message templates disabled"
@@ -497,6 +498,8 @@
       "middle": "add a message",
       "end": "for agents in this sector to use."
     },
+    "example_message": "Example message",
+    "example_message_description": " Quick messages are ready-made texts that help standardize customer service. All agents in this sector will be able to use these messages, and you can register new messages below.",
     "personal": "Your quick messages",
     "shared": "Shared quick messages",
     "delete": "Delete quick message",
@@ -512,7 +515,8 @@
     "shortcut_field_placeholder": "Ex: Hi",
     "message_field_placeholder": "Type what you want",
     "successfully_added": "Quick message added",
-    "successfully_updated": "Quick message updated"
+    "successfully_updated": "Quick message updated",
+    "error": "Failed to set quick message"
   },
   "discard": "Delete",
   "on_boarding": {
@@ -558,9 +562,11 @@
     }
   },
   "config_chats": {
-    "manage_chats": "Manage chats",
-    "manage_description": "Add, view and manage sectors, queues, managers and agents within your organization.",
+    "title": "Chat Settings",
+    "section_sectors_title": "Sectors in {project}",
+    "section_sectors_subtitle": "Add, view and manage sectors, queues, managers and agents within your organization.",
     "project_configs": {
+      "title": "Project Adjustments",
       "bulk_transfer": {
         "tooltip": "This function allows agents to transfer various contacts at once to a row or agent",
         "switch_active": "Bulk contact transfer active",
@@ -576,6 +582,36 @@
         "switch_inactive": "Blocking transfers to offline agents inactive"
       }
     },
+    "custom_sector": "Customize new sector (recommended)",
+    "default_sector": {
+      "title": "Create default sector (faster)",
+      "name": "Default sector"
+    },
+    "edit_sector": {
+      "description": "Determine General Team Settings and Workday",
+      "tag_already_exists": "A tag with that name already exists",
+      "invalid_hours": "Start time cannot be greater/equal to end time"
+    },
+    "custom_queue": "Create a custom queue",
+    "default_queue": {
+      "title": "Create default queue (faster)",
+      "name": "Default queue"
+    },
+    "queues": {
+      "in_sector": "Queue in sector {sector}",
+      "new": "New queue",
+      "info": "Queues are support groups within a sector; it is possible to direct contacts from a flow to a specific queue",
+      "hint": "Queues are support groups within the sector; you can create new queues or edit them whenever you want.",
+      "queue_definitions": "Queue settings",
+      "message": {
+        "create": "Queue successfully created",
+        "update": "Queue successfully updated",
+        "error": "Failed to set queue settings"
+      }
+    },
+    "copilot": {
+      "hint": "The Co-pilot is your agent's intelligent assistant; it can be activated later."
+    },
     "new_sector": "New sector",
     "agent_title": "Agents",
     "contacts": "Contacts",
@@ -585,7 +621,16 @@
     "sector_tip": "Create a sector to manage the fulfillment operation, including roles, agents and management hours",
     "queues_tip": "The queues serve to organize the types of service within a sector, through the queues it is possible to create service groups, create at least one queue to manage a team of agents",
     "tags_tip": "Tags are used to classify service characteristics and make it possible to search and filter chats from them, define tags that are relevant to your context",
-    "agent_tip": "Add members to your project to be able to set as a manager"
+    "agent_tip": "Add members to your project to be able to set as a manager",
+    "alert": {
+      "create_success": "New sector {sectorName} created!",
+      "create_error": "Failed to configure some steps in the sector! Check the details and try again if you identify any missing configurations."
+    },
+    "discart": {
+      "title": "Discard changes",
+      "hint": "The creation of the new sector will be discarded upon confirming this action. Do you want to discard the changes made so far?",
+      "confirm": "Discart"
+    }
   },
   "your_orgs": "Your organizations",
   "your_projects": "Your projects",

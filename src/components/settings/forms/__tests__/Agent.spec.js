@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils';
 
 import FormAgent from '../Agent.vue';
 import defaultProps from './mocks/agentMock';
+import { expect, it } from 'vitest';
 
 function createWrapper() {
   const wrapper = mount(FormAgent, {
@@ -67,5 +68,10 @@ describe('FormAgent', () => {
       name: 'selected-member',
     });
     expect(selectedMemberCards.length).toBe(2);
+  });
+
+  it('should emit remove on remove method trigger', async () => {
+    wrapper.vm.remove('1');
+    expect(wrapper.emitted('remove')[0][0]).toBe('1');
   });
 });
