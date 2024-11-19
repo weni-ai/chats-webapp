@@ -298,6 +298,7 @@ export default {
         this.timerId = setTimeout(() => {
           this.page.search = 0;
           this.listRoom(false);
+          this.listDiscussions();
           if (newNameOfContact) {
             this.isSearching = true;
           } else {
@@ -403,7 +404,10 @@ export default {
     async listDiscussions() {
       try {
         const { viewedAgent } = this;
-        await this.getAllDiscussion({ viewedAgent });
+        await this.getAllDiscussion({
+          viewedAgent,
+          filters: { search: this.nameOfContact },
+        });
       } catch {
         console.error('Não foi possível listar as discussões');
       }
