@@ -64,6 +64,7 @@
   "undo": "Deshacer",
   "redo": "Rehacer",
   "record_audio": "Grabar audio",
+  "select_all": "Seleccionar todo",
   "audio_recorder": {
     "discard_button": "Descartar"
   },
@@ -86,10 +87,11 @@
   "sectors": "Sectores",
   "sector": {
     "title": "Sector",
-    "geral": "General",
+    "general": "General",
+    "extra_options": "Opciones adicionales",
     "queues": "Colas",
     "tags": "Etiquetas",
-    "add": "Agregar nuevo sector",
+    "add": "Definir sector",
     "add_queue": "Agregar nueva cola",
     "name": "Nombre del sector",
     "placeholder": "Ejemplo: Financiero",
@@ -114,7 +116,7 @@
       }
     },
     "additional_options": {
-      "title": "Opciones adicionales",
+      "title": "Opciones extras",
       "template_message": {
         "switch_active": "Activación de plantillas de mensajes activos",
         "switch_disabled": "Activación de plantillas de mensajes deshabilitada"
@@ -144,6 +146,9 @@
   "addition_date": "Fecha de adición",
   "in_queues": "en colas",
   "in_progress": "En progreso",
+  "waiting": "Esperando",
+  "sent_flows": "Flujos enviados",
+  "discussion": "Discusiones",
   "in_progress_tooltip": "Cantidad de chats que ya están siendo atendidos por un agente",
   "in_progress_tooltip_filtered": "Cantidad de chats que han sido atendidos por un agente",
   "closed": "Cerrados",
@@ -497,6 +502,8 @@
       "middle": "añade un mensaje",
       "end": "para los agentes en este sector los usan."
     },
+    "example_message": "Mensaje de ejemplo",
+    "example_message_description": "Los mensajes rápidos son textos predefinidos que facilitan la estandarización del servicio. Todos los agentes de este sector podrán utilizar los mensajes, y podrás registrar nuevos mensajes a continuación.",
     "personal": "Tus mensajes rápidos",
     "shared": "Mensajes rápidos compartidos",
     "delete": "Eliminar mensaje rápido",
@@ -512,7 +519,8 @@
     "shortcut_field_placeholder": "Ej: Hola",
     "message_field_placeholder": "Introduzca lo que quiere",
     "successfully_added": "Mensaje rápido agregado",
-    "successfully_updated": "Mensaje rápido actualizado"
+    "successfully_updated": "Mensaje rápido actualizado",
+    "error": "Error al configurar el mensaje rápido"
   },
   "discard": "Descartar",
   "on_boarding": {
@@ -558,9 +566,11 @@
     }
   },
   "config_chats": {
-    "manage_chats": "Gestionar chats",
-    "manage_description": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización.",
+    "title": "Configuración de chat",
+    "section_sectors_title": "Sectores en {project}",
+    "section_sectors_subtitle": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización.",
     "project_configs": {
+      "title": "Ajustes de proyectos",
       "bulk_transfer": {
         "tooltip": "Esta función permite a los agentes transferir varios contactos a la vez a una fila o agente",
         "switch_active": "Transferencia de contactos en masa activa",
@@ -576,6 +586,36 @@
         "switch_inactive": "Bloqueo de transferencias a agentes fuera de línea inactivo"
       }
     },
+    "custom_sector": "Personalizar nuevo sector (recomendado)",
+    "default_sector": {
+      "title": "Crear sector predeterminado (más rápido)",
+      "name": "Sector predeterminado"
+    },
+    "edit_sector": {
+      "description": "Determinar la configuración del equipo general y la jornada laboral",
+      "tag_already_exists": "Ya existe una etiqueta con ese nombre",
+      "invalid_hours": "La hora de inicio no puede ser mayor o igual a la hora de finalización."
+    },
+    "custom_queue": "Crear una fila personalizada",
+    "default_queue": {
+      "title": "Crear fila predeterminada (más rápido)",
+      "name": "Fila predeterminada"
+    },
+    "queues": {
+      "in_sector": "Fila en el sector {sector}",
+      "new": "Nueva cola",
+      "info": "Las colas son grupos de atención dentro de un sector; es posible dirigir contactos de un flujo a una cola específica",
+      "hint": "Las colas son grupos de atención dentro de un sector; podrás crear nuevas filas o editarlas cuando desees.",
+      "queue_definitions": "Configuraciones de la cola",
+      "message": {
+        "create": "Fila creada con éxito",
+        "update": "Fila actualizada con éxito",
+        "error": "Error al configurar los ajustes de la fila"
+      }
+    },
+    "copilot": {
+      "hint": "El Co-pilot es el asistente inteligente de tu agente; se podrá activar más tarde."
+    },
     "new_sector": "Nuevo sector",
     "agent_title": "Agentes",
     "contacts": "Contactos",
@@ -585,7 +625,16 @@
     "sector_tip": "Cree un sector para administrar la operación de cumplimiento, incluidos roles, agentes y horas de administración",
     "queues_tip": "Las colas sirven para organizar los tipos de servicio dentro de un sector, a través de las colas es posible crear grupos de servicios, crear al menos una cola para gestionar un equipo de agentes",
     "tags_tip": "Las etiquetas se utilizan para clasificar las características de los servicios y permiten buscar y filtrar chats a partir de ellos, definir etiquetas que sean relevantes para su contexto",
-    "agent_tip": "Agregue miembros a su proyecto para poder establecer como administrador"
+    "agent_tip": "Agregue miembros a su proyecto para poder establecer como administrador",
+    "alert": {
+      "create_success": "¡Nuevo sector {sectorName} creado!",
+      "create_error": "¡Error al configurar algunas etapas del sector! Verifica los detalles e intenta nuevamente si identificas alguna configuración faltante."
+    },
+    "discart": {
+      "title": "Descartar cambios",
+      "hint": "La creación del nuevo sector se descartará al confirmar esta acción. ¿Deseas descartar los cambios realizados hasta ahora?",
+      "confirm": "Descartar"
+    }
   },
   "your_orgs": "Sus organizaciones",
   "your_projects": "Tus proyectos",

@@ -52,6 +52,7 @@ export default {
     const params = {
       project: getProject() || '',
       is_active: true,
+      limit: 9999,
       ...filters,
     };
 

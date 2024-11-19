@@ -1,40 +1,28 @@
 <template>
-  <div class="selected-member">
-    <div class="selected-member__avatar">
-      <img
-        :src="avatarUrl || '/avatar/default.svg'"
-        :alt="`${name}'s avatar`"
-      />
-    </div>
+  <section class="selected-member">
+    <section class="selected-member__role">
+      <p class="selected-member__role-name">
+        {{ roleName }}
+      </p>
+    </section>
     <div class="selected-member__info">
       <span class="selected-member__name">{{ name }}</span>
       <span class="selected-member__email">{{ email }}</span>
     </div>
-
-    <div
-      v-if="!!roleName"
-      class="selected-member__role"
-    >
-      <UnnnicButton
-        disabled
-        :text="roleName"
-        size="small"
-      />
-    </div>
-
     <div
       class="selected-member__remove-button"
       @click="remove"
       @keypress.enter="remove"
     >
       <UnnnicIcon
-        icon="cancel"
+        icon="close"
         scheme="neutral-darkest"
         size="sm"
+        data-testid="remove-member-button"
         clickable
       />
     </div>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -54,10 +42,6 @@ export default {
       type: String,
       default: '',
     },
-    avatarUrl: {
-      type: String,
-      default: '',
-    },
   },
 
   emits: ['remove'],
@@ -74,31 +58,33 @@ export default {
 .selected-member {
   display: flex;
   align-items: center;
-  gap: $unnnic-spacing-stack-xs;
+  gap: $unnnic-spacing-sm;
+  padding-top: $unnnic-spacing-nano;
 
   text-align: start;
 
-  &__avatar {
-    border-radius: 50%;
+  &__role {
+    display: flex;
+    padding: $unnnic-spacing-nano $unnnic-spacing-xs;
+    justify-content: center;
+    align-items: center;
+    background-color: $unnnic-color-neutral-lightest;
+    gap: 10px; // not exists in unnnic tokens
+    border-radius: $unnnic-spacing-nano;
 
-    overflow: hidden;
-
-    width: $unnnic-avatar-size-sm;
-    height: $unnnic-avatar-size-sm;
-
-    & > img {
-      width: 100%;
-      height: 100%;
-
-      object-fit: cover;
+    &-name {
+      color: $unnnic-color-neutral-darkest;
+      font-family: $unnnic-font-family-secondary;
+      font-weight: $unnnic-font-weight-bold;
+      font-size: $unnnic-font-size-body-gt;
+      line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
     }
   }
 
   &__info {
     flex: 1 1;
     display: flex;
-    justify-content: space-between;
-    flex-direction: column;
+    gap: $unnnic-spacing-sm;
   }
 
   &__name {

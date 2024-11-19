@@ -182,6 +182,7 @@ $tag-size: 28px;
   display: flex;
   overflow-y: hidden;
   align-items: center;
+  margin-top: $unnnic-spacing-xs;
 
   &:not(.flex) {
     height: $tag-size;
@@ -193,6 +194,7 @@ $tag-size: 28px;
     flex-wrap: wrap;
     gap: $unnnic-spacing-xs;
     flex: 1;
+    padding: $unnnic-spacing-xs;
 
     align-self: flex-start;
     user-select: none;
