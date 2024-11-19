@@ -270,7 +270,7 @@ export default {
         const { viewedAgent } = this;
         await this.getAllDiscussion({
           viewedAgent,
-          filters: { contact: this.nameOfContact },
+          filters: { search: this.nameOfContact },
         });
       } catch {
         console.error('Não foi possível listar as discussões');
