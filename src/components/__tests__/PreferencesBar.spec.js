@@ -7,7 +7,7 @@ import i18n from '@/plugins/i18n';
 import Unnnic from '@weni/unnnic-system';
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 
-vi.mock('@/services/api/resources/Profile', () => ({
+vi.mock('@/services/api/resources/profile', () => ({
   default: {
     updateStatus: vi.fn(() => {
       return Promise.resolve({ data: { connection_status: 'OFFLINE' } });
