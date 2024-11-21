@@ -22,7 +22,7 @@ describe('callUnnnicAlert', () => {
     });
   });
 
-  it('should handle missing .mobile-home__main gracefully', () => {
+  it('should handle missing .mobile-home__main normally', () => {
     document.querySelector('.mobile-home__main').remove();
 
     const props = { type: 'error', message: 'Another alert' };
