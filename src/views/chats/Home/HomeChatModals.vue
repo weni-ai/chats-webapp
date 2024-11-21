@@ -28,6 +28,7 @@
 
     <ModalCloseChat
       v-if="modalsShowing.closeChat"
+      v-model="modalsShowing.closeChat"
       :room="room"
       @close="closeModal('closeChat')"
     />

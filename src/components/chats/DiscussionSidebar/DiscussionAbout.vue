@@ -29,12 +29,14 @@
         iconLeft="add-1"
         type="secondary"
         :disabled="agentsInvolved?.length >= 5"
+        data-testid="add-agent-button"
         @click="handleAddAgentModal"
       />
 
       <UnnnicModal
         v-if="isAddAgentModalOpen"
         class="add-agent-modal"
+        data-testid="add-agent-modal"
         :text="$t('discussions.add_agents.title')"
         :description="$t('discussions.add_agents.description')"
         @close="handleAddAgentModal"
@@ -60,6 +62,7 @@
           <UnnnicButton
             :text="$t('cancel')"
             type="secondary"
+            data-testid="cancel-add-agent-modal-button"
             @click="handleAddAgentModal"
           />
           <UnnnicButton

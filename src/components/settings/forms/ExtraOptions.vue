@@ -81,10 +81,10 @@
         data-testid="tags-group-section"
       >
         <TagGroup
+          v-model="tags"
           :tags="tags"
           data-testid="sector-tag-group"
-          selectable
-          hasCloseIcon
+          disabledTag
           @close="removeTag($event)"
         />
       </section>
@@ -184,7 +184,7 @@ export default {
       if (tagsName.includes(tagNameToAdd)) {
         unnnic.unnnicCallAlert({
           props: {
-            text: this.$t('edit_sector.tag_already_exists'),
+            text: this.$t('config_chats.edit_sector.tag_already_exists'),
             type: 'error',
           },
         });
@@ -290,6 +290,14 @@ export default {
 
   & .tags {
     margin-top: $unnnic-spacing-sm;
+    :deep(.unnnic-brand-tag) {
+      color: $unnnic-color-weni-700;
+      background-color: white;
+      svg > path {
+        fill: $unnnic-color-weni-700;
+      }
+    }
+
     &__title {
       font-weight: $unnnic-font-weight-bold;
       color: $unnnic-color-neutral-dark;
