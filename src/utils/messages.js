@@ -17,7 +17,7 @@ export function isValidJson(message) {
   }
 }
 
-function createTemporaryMessage({
+export function createTemporaryMessage({
   itemType = '',
   itemUuid = '',
   itemUser = {},
