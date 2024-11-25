@@ -4,6 +4,7 @@
     :class="{ 'home-chat-modals--mobile': isMobile }"
   >
     <ModalGetChat
+      data-testid="modal-get-chat"
       :showModal="modalsShowing.getChat"
       :title="$t('chats.get_chat_question')"
       :description="
@@ -14,6 +15,7 @@
     />
 
     <UnnnicModal
+      data-testid="modal-assume-chat"
       :text="$t('chats.your_chat_assumed', { contact: assumedChatContactName })"
       :description="
         $t('chats.your_chat_assumed_description', {
@@ -29,6 +31,7 @@
     <ModalCloseChat
       v-if="modalsShowing.closeChat"
       v-model="modalsShowing.closeChat"
+      data-testid="modal-close-chat"
       :room="room"
       @close="closeModal('closeChat')"
     />
@@ -44,6 +47,7 @@
 
     <ModalQuickMessages
       v-if="modalsShowing.quickMessages"
+      data-testid="quick-messages-modal"
       @close="closeModal('quickMessages')"
       @select-quick-message="emitSelectQuickMessage"
     />

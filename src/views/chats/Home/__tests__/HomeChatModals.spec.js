@@ -7,7 +7,15 @@ import { beforeEach, describe } from 'vitest';
 
 const createWrapper = ({ store }) => {
   return mount(HomeChatModals, {
-    global: { plugins: [store], stubs: { UnnnicModal: true } },
+    global: {
+      plugins: [store],
+      stubs: {
+        ModalCloseChat: true,
+        ModalGetChat: true,
+        UnnnicModal: true,
+        ModalQuickMessages: true,
+      },
+    },
   });
 };
 
@@ -19,6 +27,7 @@ describe('HomeChatModals.vue', () => {
       initialState: {
         rooms: {
           activeRoom: {
+            uuid: '123',
             contact: {
               name: 'John Doe',
             },
@@ -41,9 +50,43 @@ describe('HomeChatModals.vue', () => {
   it('closes ModalGetChat when closeModal is called', async () => {
     wrapper.vm.openModal('getChat');
     expect(wrapper.vm.modalsShowing.getChat).toBe(true);
-
-    await wrapper.vm.closeModal('getChat');
+    const getChatModal = wrapper.findComponent(
+      '[data-testid="modal-get-chat"]',
+    );
+    getChatModal.vm.$emit('close-modal');
     expect(wrapper.vm.modalsShowing.getChat).toBe(false);
+  });
+
+  it('closes assumedChat when close is called', async () => {
+    wrapper.vm.openModal('assumedChat');
+    expect(wrapper.vm.modalsShowing.assumedChat).toBe(true);
+    const assumeChatModal = wrapper.findComponent(
+      '[data-testid="modal-assume-chat"]',
+    );
+    assumeChatModal.vm.$emit('close');
+    expect(wrapper.vm.modalsShowing.assumedChat).toBe(false);
+  });
+
+  it('closes closeChat when close is called', async () => {
+    wrapper.vm.openModal('closeChat');
+    await wrapper.vm.$nextTick();
+    expect(wrapper.vm.modalsShowing.closeChat).toBe(true);
+    const assumeChatModal = wrapper.findComponent(
+      '[data-testid="modal-close-chat"]',
+    );
+    assumeChatModal.vm.$emit('close');
+    expect(wrapper.vm.modalsShowing.assumedChat).toBe(false);
+  });
+
+  it('closes quickMessages when close is called', async () => {
+    wrapper.vm.openModal('quickMessages');
+    await wrapper.vm.$nextTick();
+    expect(wrapper.vm.modalsShowing.quickMessages).toBe(true);
+    const assumeChatModal = wrapper.findComponent(
+      '[data-testid="quick-messages-modal"]',
+    );
+    assumeChatModal.vm.$emit('close');
+    expect(wrapper.vm.modalsShowing.quickMessages).toBe(false);
   });
 
   it('renders FileUploader and opens it when modalsShowing.fileUploader is true', async () => {
