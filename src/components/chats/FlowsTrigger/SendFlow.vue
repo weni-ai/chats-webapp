@@ -1,7 +1,12 @@
-<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
-  <section class="send-flow">
-    <SelectFlow v-model="selectedFlow" />
+  <section
+    class="send-flow"
+    data-testid="send-flow-container"
+  >
+    <SelectFlow
+      v-model="selectedFlow"
+      data-testid="select-flow"
+    />
     <div v-if="showProgressBar">
       <ModalProgressBarFalse
         :title="$t('flows_trigger.sending')"
@@ -14,6 +19,7 @@
         :text="$t('back')"
         size="small"
         type="tertiary"
+        data-testid="back-button"
         @click="$emit('back')"
       />
       <SendFlowButton
@@ -21,6 +27,7 @@
         :contacts="contacts"
         :selectedContact="selectedContact"
         :selectedFlow="selectedFlow"
+        data-testid="send-flow-button"
         @send-flow-started="openModalProgress"
         @send-flow-finished="closeModalProgress"
       />
