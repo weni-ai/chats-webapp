@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { expect, describe, it, beforeEach, vi } from 'vitest';
+import { expect, describe, it, beforeEach } from 'vitest';
 
 import ModalRemoveSelectedContacts from '../ModalRemoveSelectedContacts.vue';
 
