@@ -32,6 +32,7 @@ ARG OLD_IMAGE=${OLD_IMAGE}
 ARG KEEP_DAYS=${KEEP_DAYS}
 
 COPY --chown=nginx:nginx docker/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY --chown=nginx:nginx docker/nginx/headers /usr/share/nginx/html/headers
 COPY --from=builder --chown=nginx:nginx /app/dist /usr/share/nginx/html/chats/
 COPY --from=old_css --chown=nginx:nginx /usr/share/nginx/html/chats/assets/*.css /usr/share/nginx/html/chats/assets/
 #COPY --from=old_css --chown=nginx:nginx /tmp/old_css/*.css /usr/share/nginx/html/chats/assets/
