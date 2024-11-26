@@ -1,4 +1,4 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import { expect, describe, it, beforeEach, vi } from 'vitest';
 
 import ModalAddNewContact from '../ModalAddNewContact.vue';
