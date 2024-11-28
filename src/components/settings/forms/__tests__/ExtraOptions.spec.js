@@ -142,7 +142,7 @@ describe('SectorExtraOptions', () => {
     wrapper.vm.addTag('Financeiro');
     expect(unnnicAlertSpy).toBeCalledWith({
       props: {
-        text: wrapper.vm.$t('edit_sector.tag_already_exists'),
+        text: wrapper.vm.$t('config_chats.edit_sector.tag_already_exists'),
         type: 'error',
       },
     });

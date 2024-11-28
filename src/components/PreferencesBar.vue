@@ -3,12 +3,14 @@
   <div
     ref="preferences-bar"
     class="preferences-bar"
+    data-testid="preferences-bar"
     tabindex="0"
     @focus="open = true"
     @blur="open = false"
   >
     <div
       ref="header"
+      data-testid="header"
       class="header"
       @mousedown.prevent
       @click.stop="
@@ -20,18 +22,23 @@
       <div class="label">
         <div class="icon">
           <UnnnicIcon
+            data-testid="header-icon"
             size="md"
             icon="tune"
             scheme="neutral-cloudy"
           />
         </div>
 
-        <div class="text">
+        <div
+          class="text"
+          data-testid="header-title"
+        >
           {{ $t('preferences.title') }}
         </div>
 
         <div class="status-icon">
           <UnnnicIcon
+            data-testid="header-icon-expand"
             size="md"
             :icon="open ? 'expand_less' : 'expand_more'"
             scheme="neutral-darkest"
@@ -44,6 +51,7 @@
       <div class="label">Status</div>
       <UnnnicSwitch
         v-model="statusSwitch"
+        data-testid="switch-status"
         size="small"
         :textRight="
           status === 'ONLINE' ? $t('status.online') : $t('status.offline')
@@ -56,6 +64,7 @@
 
       <UnnnicSwitch
         v-model="sound"
+        data-testid="switch-sound"
         size="small"
         :textRight="$t('preferences.notifications.sound')"
         @update:model-value="changeSound"
@@ -63,6 +72,7 @@
 
       <UnnnicButton
         v-if="showFlowsTriggerButton"
+        data-testid="show-flows-trigger"
         :text="$t('flows')"
         size="small"
         type="secondary"
@@ -71,6 +81,7 @@
         @click="openFlowsTrigger"
       />
       <UnnnicButton
+        data-testid="show-quick-messages"
         :text="$t('quick_messages.title')"
         iconLeft="bolt"
         type="secondary"
@@ -80,6 +91,7 @@
       />
       <UnnnicButton
         v-if="dashboard"
+        data-testid="show-dashboard"
         text="Dashboard"
         iconLeft="bar_chart_4_bars"
         type="secondary"

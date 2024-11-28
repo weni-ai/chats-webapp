@@ -184,7 +184,7 @@ export default {
       if (tagsName.includes(tagNameToAdd)) {
         unnnic.unnnicCallAlert({
           props: {
-            text: this.$t('edit_sector.tag_already_exists'),
+            text: this.$t('config_chats.edit_sector.tag_already_exists'),
             type: 'error',
           },
         });
