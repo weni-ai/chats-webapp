@@ -18,5 +18,5 @@ export function formatContactName(room) {
   if (room?.protocol) {
     contactName += `${room.protocol} | `;
   }
-  return (contactName + room?.contact.name).trim();
+  return room?.contact.name ? (contactName + room?.contact.name).trim() : '';
 }
