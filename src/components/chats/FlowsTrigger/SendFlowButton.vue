@@ -7,6 +7,7 @@
     size="small"
     type="primary"
     iconLeft="send"
+    data-testid="send-flow-button"
     @click="sendFlow"
   />
 </template>

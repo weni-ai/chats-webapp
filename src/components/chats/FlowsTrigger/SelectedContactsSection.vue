@@ -2,6 +2,7 @@
   <section
     v-if="contacts.length > 0"
     class="selected-contacts-section"
+    data-testid="selected-contacts-section"
     @click="$emit('click')"
     @keypress.enter="$emit('click')"
   >
@@ -12,6 +13,7 @@
       :text="contact.name"
       hasCloseIcon
       scheme="background-snow"
+      data-testid="contact-tag"
       @close="$emit('remove-contact', contact)"
     />
   </section>

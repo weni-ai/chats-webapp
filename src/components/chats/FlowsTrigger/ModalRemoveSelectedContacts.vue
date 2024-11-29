@@ -5,10 +5,12 @@
     :text="$t('flows_trigger.remove_selected_contacts')"
     class="modal-remove-selected-contacts"
     :showModal="contacts.length > 0"
+    data-testid="modal-remove-selected-contacts"
     @close="$emit('close')"
   >
     <SelectedContactsSection
       :contacts="newContacts"
+      data-testid="selected-contacts-section"
       @remove-contact="removeModalContact($event)"
     />
     <template #options>
@@ -16,12 +18,14 @@
         :text="$t('cancel')"
         type="secondary"
         size="large"
+        data-testid="cancel-button"
         @click="closeModalInternally"
       />
       <UnnnicButton
         :text="$t('confirm')"
         type="primary"
         size="large"
+        data-testid="confirm-button"
         @click="emitRemoveContacts"
       />
     </template>
