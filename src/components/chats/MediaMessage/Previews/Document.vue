@@ -9,10 +9,12 @@
     @keypress.enter="$emit('download')"
   >
     <UnnnicIconSvg
+      data-testid="icon"
       :icon="icon"
       :scheme="highlight ? 'weni-600' : 'neutral-darkest'"
     />
     <span
+      data-testid="filename"
       class="filename"
       style="white-space: nowrap"
     >

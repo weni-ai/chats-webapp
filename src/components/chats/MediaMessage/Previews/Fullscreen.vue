@@ -6,33 +6,40 @@
   >
     <header
       class="toolbar"
+      data-testid="toolbar"
       @click.stop
     >
       <FullscreenControl
         icon="rotate_left"
+        data-testid="rotate-left-button"
         @click="rotate('left')"
       />
       <FullscreenControl
         icon="rotate_right"
+        data-testid="rotate-right-button"
         @click="rotate('right')"
       />
       <FullscreenControl
         :icon="isZoomed ? 'zoom_out' : 'zoom_in'"
+        data-testid="zoom-button"
         @click="zoomHandler"
       />
       <FullscreenControl
         icon="download"
-        @click="download"
+        data-testid="download-button"
+        @click="download()"
       />
       <FullscreenControl
         icon="close"
-        @click="close"
+        data-testid="close-button"
+        @click="close()"
       />
     </header>
 
     <div
       ref="mediaContainer"
       class="media__container"
+      data-testid="media-container"
       @mousedown="startPan"
       @mousemove="pan"
       @mouseup="endPan"
@@ -54,10 +61,12 @@
     >
       <FullscreenControl
         icon="chevron_left"
+        data-testid="previous-button"
         @click="previous"
       />
       <FullscreenControl
         icon="chevron_right"
+        data-testid="next-button"
         @click="next"
       />
     </footer>

@@ -3,15 +3,20 @@
   <UnnnicModal
     :text="$t('flows_trigger.send')"
     class="modal-send-flow"
+    data-testid="modal-send-flow"
     @close="$emit('close')"
   >
-    <SelectFlow v-model="selectedFlow" />
+    <SelectFlow
+      v-model="selectedFlow"
+      data-testid="select-flow"
+    />
 
     <template #options>
       <SendFlowButton
         class="modal-send-flow__handler"
         :contacts="contacts"
         :selectedFlow="selectedFlow"
+        data-testid="send-flow-button"
         @send-flow-finished="finishSendFlow"
       />
     </template>

@@ -2,22 +2,30 @@
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
   <div class="media__content_audio__media__preview">
-    <div @click="play">
+    <div
+      data-testid="play"
+      @click="play"
+    >
       <UnnnicIcon
         v-if="!isTimerPlaying"
         size="xs"
         icon="controls-play-1"
         clickable
         scheme="neutral-dark"
+        data-testid="play-icon"
       />
     </div>
-    <div @click="pause">
+    <div
+      data-testid="pause"
+      @click="pause"
+    >
       <UnnnicIcon
         v-if="isTimerPlaying"
         size="xs"
         icon="controls-pause-1"
         clickable
         scheme="neutral-dark"
+        data-testid="pause-icon"
       />
     </div>
   </div>
@@ -34,9 +42,13 @@ export default {
     },
   },
 
-  data: () => ({
-    isTimerPlaying: false,
-  }),
+  data() {
+    return {
+      isTimerPlaying: false,
+      audio: null,
+    };
+  },
+
   methods: {
     play() {
       this.audio = new Audio(this.currentAudio);

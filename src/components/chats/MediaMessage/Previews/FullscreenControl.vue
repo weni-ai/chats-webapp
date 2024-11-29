@@ -7,6 +7,7 @@
     <UnnnicIcon
       :icon="icon"
       scheme="neutral-snow"
+      data-testid="control-icon"
     />
   </div>
 </template>
