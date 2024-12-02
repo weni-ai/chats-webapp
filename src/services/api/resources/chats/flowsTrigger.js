@@ -62,7 +62,7 @@ export default {
   },
 
   async listAccess() {
-    const response = await http.get(`/project/${getProject()}/list_access`);
+    const response = await http.get(`/project/${getProject()}/list_access/`);
     return response.data;
   },
 
