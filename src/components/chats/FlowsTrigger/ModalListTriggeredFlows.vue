@@ -1,8 +1,8 @@
-<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <UnnnicModal
     class="modal-list-triggered-flows"
     :text="$t('flows_trigger.triggered_flows.title')"
+    data-testid="modal-list-triggered-flows"
     @close="$emit('close')"
   >
     <section class="modal-list-triggered-flows__handlers">
@@ -22,6 +22,7 @@
       v-if="!isTableLoading && triggeredFlows.length > 0"
       :items="triggeredFlows"
       class="modal-list-triggered-flows__table"
+      data-testid="modal-list-triggered-flows-table"
     >
       <template #header>
         <UnnnicTableRow :headers="tableHeaders" />
@@ -46,6 +47,7 @@
     <p
       v-if="!isTableLoading && triggeredFlows.length === 0"
       class="modal-list-triggered-flows__table__no-results"
+      data-testid="no-results-text"
     >
       {{ $t('without_results') }}
     </p>
@@ -57,6 +59,7 @@
         :countPages="triggeredFlowsCountPages"
         :limit="triggeredFlowsLimit"
         :isLoading="isPagesLoading"
+        data-testid="modal-list-triggered-flows-table-pagination"
         @update:model-value="triggeredFlowsCurrentPage = $event"
       />
     </template>
@@ -131,7 +134,12 @@ export default {
     triggeredFlowsCurrentPage() {
       this.getListFlowsStart(true);
     },
-    filterDate: 'getListFlowsStart',
+    filterDate: {
+      deep: true,
+      handler() {
+        this.getListFlowsStart();
+      },
+    },
   },
 
   async mounted() {

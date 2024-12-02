@@ -5,12 +5,14 @@
       enabled
       :text="tooltip || $t('fullscreen_view')"
       side="right"
+      data-testid="image-preview-tooltip"
     >
       <img
         :src="url"
         :alt="alt"
         :style="{ 'object-fit': objectFit }"
         class="clickable image-preview__image"
+        data-testid="image-preview"
         @click="handleImageClick"
         @keypress.enter="handleImageClick"
       />

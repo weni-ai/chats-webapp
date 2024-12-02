@@ -10,40 +10,40 @@ import {
 let mockSessionStorage;
 let mockLocalStorage;
 
-beforeEach(() => {
-  mockSessionStorage = {};
-  mockLocalStorage = {};
-
-  vi.stubGlobal('sessionStorage', {
-    getItem: vi.fn((key) => mockSessionStorage[key] || null),
-    setItem: vi.fn((key, value) => {
-      mockSessionStorage[key] = value;
-    }),
-    clear: vi.fn(() => {
-      Object.keys(mockSessionStorage).forEach(
-        (key) => delete mockSessionStorage[key],
-      );
-    }),
-  });
-
-  vi.stubGlobal('localStorage', {
-    getItem: vi.fn((key) => mockLocalStorage[key] || null),
-    setItem: vi.fn((key, value) => {
-      mockLocalStorage[key] = value;
-    }),
-    clear: vi.fn(() => {
-      Object.keys(mockLocalStorage).forEach(
-        (key) => delete mockLocalStorage[key],
-      );
-    }),
-  });
-});
-
-afterEach(() => {
-  vi.restoreAllMocks();
-});
-
 describe('Config storage', () => {
+  beforeEach(() => {
+    mockSessionStorage = {};
+    mockLocalStorage = {};
+
+    vi.stubGlobal('sessionStorage', {
+      getItem: vi.fn((key) => mockSessionStorage[key] || null),
+      setItem: vi.fn((key, value) => {
+        mockSessionStorage[key] = value;
+      }),
+      clear: vi.fn(() => {
+        Object.keys(mockSessionStorage).forEach(
+          (key) => delete mockSessionStorage[key],
+        );
+      }),
+    });
+
+    vi.stubGlobal('localStorage', {
+      getItem: vi.fn((key) => mockLocalStorage[key] || null),
+      setItem: vi.fn((key, value) => {
+        mockLocalStorage[key] = value;
+      }),
+      clear: vi.fn(() => {
+        Object.keys(mockLocalStorage).forEach(
+          (key) => delete mockLocalStorage[key],
+        );
+      }),
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   describe('Token', () => {
     it('should get the token from sessionStorage first, then localStorage', () => {
       mockSessionStorage['WENICHATS_API_TOKEN'] = 'session-token';
@@ -93,6 +93,7 @@ describe('Config storage', () => {
       expect(mockLocalStorage['WENICHATS_API_TOKEN']).toBe(token);
     });
   });
+
   describe('Project', () => {
     it('should get the project from sessionStorage first, then localStorage', () => {
       mockSessionStorage['WENICHATS_PROJECT_UUID'] = 'session-project';

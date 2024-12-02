@@ -6,6 +6,7 @@
         icon="button-play-1"
         size="md"
         class="media-preview__video-play-icon"
+        data-testid="play-button"
       />
       <video
         ref="video"
@@ -13,6 +14,7 @@
         :alt="alt"
         class="media-preview__media"
         muted
+        data-testid="media-video"
         @click="handleClick"
         @keypress.enter="handleClick"
       />
@@ -23,6 +25,7 @@
       :src="src"
       :alt="alt"
       class="media-preview__media"
+      data-testid="media-image"
       @click="handleClick"
       @keypress.enter="handleClick"
     />
