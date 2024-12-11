@@ -23,9 +23,16 @@ import { useDashboard } from './store/modules/dashboard';
 import initHotjar from '@/plugins/Hotjar';
 import { getProject } from '@/utils/config';
 
+import { setProject as setProjectLocalStorage } from '@/utils/config';
+
 import moment from 'moment';
 export default {
   name: 'App',
+
+  setup() {
+    const projectUuid = window.location.href.split('projectUuid=')[1];
+    if (projectUuid) setProjectLocalStorage(projectUuid);
+  },
 
   data() {
     return {
@@ -136,6 +143,7 @@ export default {
 
     async getProject() {
       const { data: project } = await Project.getInfo();
+      console.log(project);
       this.setProject({
         ...project,
         uuid: this.appProject || getProject(),
