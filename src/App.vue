@@ -22,9 +22,16 @@ import { useDashboard } from './store/modules/dashboard';
 import initHotjar from '@/plugins/Hotjar';
 import { getProject } from '@/utils/config';
 
+import { setProject as setProjectLocalStorage } from '@/utils/config';
+
 import moment from 'moment';
 export default {
   name: 'App',
+
+  setup() {
+    const projectUuid = window.location.href.split('projectUuid=')[1];
+    if (projectUuid) setProjectLocalStorage(projectUuid);
+  },
 
   data() {
     return {
