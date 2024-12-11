@@ -11,12 +11,12 @@ vi.mock('@/utils/config', () => ({
 describe('Link Contact Service', () => {
   const uuid = getProject();
 
+  const contact = { id: 'contact-id' };
+
   describe('getLinketContact', () => {
     it('should make a GET request to /project/{uuid}/retrieve_linked_contact/ with correct params', async () => {
       const mockResponse = { data: { linkedContact: true } };
       http.get.mockResolvedValue(mockResponse);
-
-      const contact = { id: 'contact-id' };
 
       const result = await linkContact.getLinketContact(contact);
 
@@ -35,8 +35,6 @@ describe('Link Contact Service', () => {
       const mockResponse = { data: { success: true } };
       http.post.mockResolvedValue(mockResponse);
 
-      const contact = { id: 'contact-id' };
-
       const result = await linkContact.linkContactToAgent(contact);
 
       expect(http.post).toHaveBeenCalledWith(
@@ -51,8 +49,6 @@ describe('Link Contact Service', () => {
     it('should make a DELETE request to /project/{uuid}/delete_linked_contact with correct params', async () => {
       const mockResponse = { data: { success: true } };
       http.delete.mockResolvedValue(mockResponse);
-
-      const contact = { id: 'contact-id' };
 
       const result = await linkContact.removeContactFromAgent(contact);
 
@@ -70,8 +66,6 @@ describe('Link Contact Service', () => {
     const mockError = { response: { status: 404, data: 'Not Found' } };
     http.get.mockRejectedValue(mockError);
 
-    const contact = { id: 'contact-id' };
-
     linkContact.getLinketContact(contact).catch((err) => {
       expect(err.response).toEqual(mockError.response);
     });
@@ -81,8 +75,6 @@ describe('Link Contact Service', () => {
     const mockError = { response: { status: 400, data: 'Bad Request' } };
     http.post.mockRejectedValue(mockError);
 
-    const contact = { id: 'contact-id' };
-
     linkContact.linkContactToAgent(contact).catch((err) => {
       expect(err.response).toEqual(mockError.response);
     });
@@ -91,8 +83,6 @@ describe('Link Contact Service', () => {
   it('should handle error on DELETE request in removeContactFromAgent', async () => {
     const mockError = { response: { status: 500, data: 'Server Error' } };
     http.delete.mockRejectedValue(mockError);
-
-    const contact = { id: 'contact-id' };
 
     linkContact.removeContactFromAgent(contact).catch((err) => {
       expect(err.response).toEqual(mockError.response);
