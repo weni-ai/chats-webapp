@@ -143,7 +143,6 @@ export default {
 
     async getProject() {
       const { data: project } = await Project.getInfo();
-      console.log(project);
       this.setProject({
         ...project,
         uuid: this.appProject || getProject(),
