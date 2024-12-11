@@ -1,12 +1,12 @@
 import { beforeEach, describe, vi } from 'vitest';
-import apiService from '../profile';
+import profileApi from '../profile';
 import http from '@/services/api/http';
 import { getProject, getToken } from '@/utils/config';
 
 vi.mock('@/services/api/http');
 vi.mock('@/utils/config');
 
-describe('apiService', () => {
+describe('Profile services', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -17,7 +17,7 @@ describe('apiService', () => {
       http.get.mockResolvedValue(mockResponse);
       getProject.mockReturnValue('project-uuid');
 
-      const result = await apiService.me();
+      const result = await profileApi.me();
 
       expect(http.get).toHaveBeenCalledWith('/accounts/profile/', {
         params: { project_uuid: 'project-uuid' },
@@ -32,7 +32,7 @@ describe('apiService', () => {
       http.get.mockResolvedValue(mockResponse);
       getProject.mockReturnValue('project-uuid');
 
-      const result = await apiService.onboarded();
+      const result = await profileApi.onboarded();
 
       expect(http.get).toHaveBeenCalledWith(
         '/permission/project/verify_access/',
@@ -47,7 +47,7 @@ describe('apiService', () => {
       getProject.mockReturnValue('project-uuid');
       http.patch.mockResolvedValue();
 
-      await apiService.onboard();
+      await profileApi.onboard();
 
       expect(http.patch).toHaveBeenCalledWith(
         '/permission/project/update_access/?project=project-uuid',
@@ -62,7 +62,7 @@ describe('apiService', () => {
       getProject.mockReturnValue('project-uuid');
       getToken.mockReturnValue('fake-token');
 
-      const result = await apiService.status();
+      const result = await profileApi.status();
 
       expect(http.get).toHaveBeenCalledWith(
         '/internal/permission/project/status/?project=project-uuid',
@@ -79,7 +79,7 @@ describe('apiService', () => {
       const payload = { projectUuid: 'project-uuid', status: 'offline' };
       http.post.mockResolvedValue();
 
-      await apiService.updateStatus(payload);
+      await profileApi.updateStatus(payload);
 
       expect(http.post).toHaveBeenCalledWith(
         '/internal/permission/project/status/',

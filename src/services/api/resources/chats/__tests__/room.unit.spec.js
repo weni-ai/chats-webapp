@@ -11,7 +11,7 @@ vi.mock('@/utils/config', () => ({
 
 vi.mock('@/store/modules/profile');
 
-describe('roomService', () => {
+describe('Room service', () => {
   describe('getAll', () => {
     it('should make a GET request with correct params and return the response data', async () => {
       const mockResponse = { data: [] };

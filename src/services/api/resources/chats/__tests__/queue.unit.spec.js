@@ -11,7 +11,7 @@ vi.mock('@/utils/config', () => ({
   getProject: vi.fn(() => 'mocked-project-id'),
 }));
 
-describe('queueService', () => {
+describe('Queue service', () => {
   describe('getListQueues', () => {
     it('should make a GET request with correct params and return the response data', async () => {
       const mockResponse = { data: [] };

@@ -11,7 +11,7 @@ beforeEach(() => {
   getProject.mockReturnValue('mock-project-uuid');
 });
 
-describe('FlowsTringger', () => {
+describe('FlowsTringger service', () => {
   it('should get a list of contacts', async () => {
     const mockResponse = { results: [], next: null };
     http.get.mockResolvedValue({ data: mockResponse });

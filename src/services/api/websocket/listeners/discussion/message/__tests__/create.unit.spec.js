@@ -28,7 +28,7 @@ vi.mock('@/store/modules/chats/discussionMessages', () => ({
   useDiscussionMessages: vi.fn(),
 }));
 
-describe('handleMessage', () => {
+describe('Create discussion message service', () => {
   let mockDiscussionStore,
     mockDiscussionMessagesStore,
     mockApp,
