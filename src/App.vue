@@ -21,9 +21,10 @@ import { useRooms } from './store/modules/chats/rooms';
 import { useDashboard } from './store/modules/dashboard';
 
 import initHotjar from '@/plugins/Hotjar';
-import { getProject } from '@/utils/config';
-
-import { setProject as setProjectLocalStorage } from '@/utils/config';
+import {
+  getProject,
+  setProject as setProjectLocalStorage,
+} from '@/utils/config';
 
 import moment from 'moment';
 export default {
