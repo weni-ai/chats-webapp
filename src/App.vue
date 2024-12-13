@@ -29,7 +29,12 @@ export default {
   name: 'App',
 
   setup() {
-    const projectUuid = window.location.href.split('projectUuid=')[1];
+    const queryString = window.location.href.split('?')[1];
+
+    const { projectUuid } = Object.fromEntries(
+      new URLSearchParams(queryString).entries(),
+    );
+
     if (projectUuid) setProjectLocalStorage(projectUuid);
   },
 
