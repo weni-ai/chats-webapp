@@ -21,11 +21,24 @@ import { useRooms } from './store/modules/chats/rooms';
 import { useDashboard } from './store/modules/dashboard';
 
 import initHotjar from '@/plugins/Hotjar';
-import { getProject } from '@/utils/config';
+import {
+  getProject,
+  setProject as setProjectLocalStorage,
+} from '@/utils/config';
 
 import moment from 'moment';
 export default {
   name: 'App',
+
+  setup() {
+    const queryString = window.location.href.split('?')[1];
+
+    const { projectUuid } = Object.fromEntries(
+      new URLSearchParams(queryString).entries(),
+    );
+
+    if (projectUuid) setProjectLocalStorage(projectUuid);
+  },
 
   data() {
     return {
