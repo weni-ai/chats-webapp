@@ -38,6 +38,7 @@
               :scheme="isClosedChat ? 'gray' : 'blue'"
               :title="messageFormatTitle(new Date(message.created_on))"
             />
+
             <ChatMessagesFeedbackMessage
               v-if="isFeedbackMessage(message)"
               :key="message.uuid"
@@ -138,19 +139,12 @@
           </template>
         </section>
       </section>
-      <!-- Closed chat tags  -->
-      <!-- <chat-feedback
-      v-for="room in rooms"
-      :key="room.uuid"
-      :feedback="roomEndedChatFeedback(room)"
-      scheme="purple"
-    /> -->
+
       <section
         v-if="tags.length > 0"
         v-show="!isSkeletonLoadingActive"
         class="chat-messages__tags"
       >
-        <!-- <chat-feedback :feedback="roomEndedChatFeedback(room)" scheme="purple" ref="endChatElement" /> -->
         <TagGroup :tags="tags" />
       </section>
 
@@ -370,6 +364,9 @@ export default {
         if (this.messagesFailedUuids.includes(message.uuid)) {
           return 'failed';
         }
+
+        if (message.status) return message.status;
+
         if (media && this.isAudio(media)) {
           return 'default';
         }

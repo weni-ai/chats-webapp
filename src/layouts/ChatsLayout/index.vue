@@ -243,7 +243,7 @@ section.chats-layout {
 
     height: 100%;
 
-    background-color: $unnnic-color-background-carpet;
+    background-color: #fdf5e9;
   }
 
   .quick-message {
