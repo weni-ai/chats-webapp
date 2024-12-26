@@ -111,7 +111,10 @@ export default {
   }),
 
   computed: {
-    ...mapState(useRooms, { room: (store) => store.activeRoom }),
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
+      rooms: (store) => store.rooms,
+    }),
     ...mapState(useDiscussions, {
       discussion: (store) => store.activeDiscussion,
     }),
@@ -131,6 +134,19 @@ export default {
           this.getViewedAgentData(this.$route.params.viewedAgent);
         } else {
           this.setViewedAgent({ name: '', email: '' });
+        }
+      },
+    },
+    rooms: {
+      once: true,
+      async handler() {
+        const { room_uuid } = this.$route.query;
+        if (room_uuid) {
+          const activeRoom = this.rooms.find((room) => room.uuid === room_uuid);
+
+          if (activeRoom) await this.setActiveRoom(activeRoom);
+
+          this.$router.replace({ query: {} });
         }
       },
     },
