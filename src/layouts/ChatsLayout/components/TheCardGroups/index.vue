@@ -10,7 +10,7 @@
       :placeholder="$t('chats.search_contact')"
       class="chat-groups__search-contact-input"
       @icon-right-click="nameOfContact = ''"
-    />
+    ></UnnnicInput>
     <section class="chat-groups__header">
       <UnnnicToolTip
         v-if="
