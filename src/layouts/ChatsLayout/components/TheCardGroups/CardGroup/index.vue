@@ -23,17 +23,21 @@
           v-for="(room, index) in rooms"
           :key="room.uuid"
           :room="room"
-          :active="!activeDiscussionId"
+          :active="!activeDiscussionId && activeRoom?.uuid === room?.uuid"
           :selected="getIsRoomSelected(room.uuid)"
           :withSelection="withSelection"
           :class="{
             'room-card': true,
             'room-card--without-border': activeRoomIndex === index - 1,
+            'room-card--hover': roomHoverIndex === index,
+            'room-card--selected': activeRoom?.uuid === room?.uuid,
           }"
           @click="open(room)"
           @update-selected="updateIsRoomSelected(room.uuid, $event)"
           @mousedown="activeRoomIndex = index"
           @mouseup="activeRoomIndex = null"
+          @mouseover="roomHoverIndex = index"
+          @mouseleave="roomHoverIndex = null"
         />
       </section>
     </template>
@@ -103,13 +107,14 @@ export default {
     return {
       isCollapseOpened: true,
       collapseCheckboxValue: false,
+      roomHoverIndex: null,
       activeRoomIndex: null,
       activeDiscussionIndex: null,
     };
   },
 
   computed: {
-    ...mapState(useRooms, ['selectedRoomsToTransfer']),
+    ...mapState(useRooms, ['selectedRoomsToTransfer', 'activeRoom']),
     ...mapState(useDiscussions, {
       newMessagesByDiscussion: 'newMessagesByDiscussion',
       activeDiscussionId: (store) => store.activeDiscussion?.uuid,
@@ -187,6 +192,13 @@ export default {
   }
   &--without-border {
     border: none;
+  }
+  &--hover {
+    background-color: $unnnic-color-neutral-lightest;
+  }
+
+  &--selected {
+    background-color: $unnnic-color-neutral-light;
   }
 }
 

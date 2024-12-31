@@ -1,7 +1,10 @@
 <template>
   <section
     class="room-card__container"
-    :class="{ 'room-card__container--with-selection': withSelection }"
+    :class="{
+      'room-card__container--with-selection': withSelection,
+      'room-card__container--selected': room.uuid === activeRoomId && active,
+    }"
   >
     <UnnnicCheckbox
       v-if="withSelection"
@@ -64,7 +67,6 @@ export default {
     formatContactName,
     waitingTime: 0,
     timer: null,
-    checkboxValue: false,
   }),
 
   computed: {
@@ -131,8 +133,6 @@ export default {
   display: grid;
   align-items: center;
 
-  padding-left: $unnnic-spacing-xs;
-
   :deep(.room-card__contact) {
     border: none;
   }
@@ -159,7 +159,7 @@ export default {
 
 .room-card {
   &__checkbox {
-    padding: $unnnic-spacing-nano;
+    padding: $unnnic-spacing-nano $unnnic-spacing-nano $unnnic-spacing-nano 12px;
   }
 }
 </style>
