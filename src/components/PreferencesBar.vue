@@ -214,7 +214,7 @@ export default {
 <style lang="scss" scoped>
 .preferences-bar {
   position: relative;
-  padding: $unnnic-spacing-sm 0;
+  padding: $unnnic-spacing-sm 0 $unnnic-spacing-sm $unnnic-spacing-xs;
   margin-left: -$unnnic-spacing-xs;
 
   .header .label {
