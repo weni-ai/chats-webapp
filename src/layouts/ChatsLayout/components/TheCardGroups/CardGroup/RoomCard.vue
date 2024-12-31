@@ -131,6 +131,8 @@ export default {
   display: grid;
   align-items: center;
 
+  padding-left: $unnnic-spacing-xs;
+
   :deep(.room-card__contact) {
     border: none;
   }

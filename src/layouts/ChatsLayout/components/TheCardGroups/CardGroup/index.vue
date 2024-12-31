@@ -18,25 +18,27 @@
       </label>
     </template>
     <template v-if="rooms && rooms.length">
-      <RoomCard
-        v-for="(room, index) in rooms"
-        :key="room.uuid"
-        :room="room"
-        :active="!activeDiscussionId"
-        :selected="getIsRoomSelected(room.uuid)"
-        :withSelection="withSelection"
-        :class="{
-          'room-card': true,
-          'room-card--without-border': activeRoomIndex === index - 1,
-        }"
-        @click="open(room)"
-        @update-selected="updateIsRoomSelected(room.uuid, $event)"
-        @mousedown="activeRoomIndex = index"
-        @mouseup="activeRoomIndex = null"
-      />
+      <section class="room-container">
+        <RoomCard
+          v-for="(room, index) in rooms"
+          :key="room.uuid"
+          :room="room"
+          :active="!activeDiscussionId"
+          :selected="getIsRoomSelected(room.uuid)"
+          :withSelection="withSelection"
+          :class="{
+            'room-card': true,
+            'room-card--without-border': activeRoomIndex === index - 1,
+          }"
+          @click="open(room)"
+          @update-selected="updateIsRoomSelected(room.uuid, $event)"
+          @mousedown="activeRoomIndex = index"
+          @mouseup="activeRoomIndex = null"
+        />
+      </section>
     </template>
     <template v-if="discussions">
-      <div class="discussion-container">
+      <section class="discussion-container">
         <UnnnicChatsContact
           v-for="(discussion, index) in discussions"
           :key="discussion.uuid"
@@ -56,7 +58,7 @@
           @mousedown="activeDiscussionIndex = index"
           @mouseup="activeDiscussionIndex = null"
         />
-      </div>
+      </section>
     </template>
   </UnnnicCollapse>
 </template>
@@ -175,6 +177,7 @@ export default {
 <style lang="scss" scoped>
 .room-card {
   border-top: 1px solid $unnnic-color-neutral-soft;
+
   &:last-child {
     border-bottom: 1px solid $unnnic-color-neutral-soft;
   }
