@@ -66,6 +66,7 @@ export default {
 
 <style lang="scss" scoped>
 .chats-layout-footer-button {
+  padding-left: $unnnic-spacing-xs;
   &__button {
     width: 100%;
   }

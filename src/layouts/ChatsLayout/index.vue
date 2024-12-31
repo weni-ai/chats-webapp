@@ -225,7 +225,7 @@ section.chats-layout {
 
     height: 100%;
 
-    padding: 0 0 $unnnic-spacing-xs $unnnic-spacing-xs;
+    padding: 0 0 $unnnic-spacing-xs 0;
 
     grid-column: 1;
 
