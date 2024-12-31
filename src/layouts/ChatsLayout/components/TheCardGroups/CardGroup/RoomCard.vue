@@ -11,6 +11,10 @@
       @change="checkboxValue = $event"
     />
     <UnnnicChatsContact
+      :class="{
+        'room-card__contact': true,
+        'room-card__contact--selected': room.uuid === activeRoomId && active,
+      }"
       :title="formattedContactName"
       :lastMessage="lastMessage"
       :waitingTime="waitingTimeComputed"
@@ -129,6 +133,12 @@ export default {
 
   &--with-selection {
     grid-template-columns: auto 1fr;
+  }
+  .room-card__contact--selected {
+    :deep(.chats-contact__infos__unread-messages-container) {
+      justify-content: flex-start;
+      margin-top: $unnnic-spacing-nano;
+    }
   }
 }
 .room-card {
