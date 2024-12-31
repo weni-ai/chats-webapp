@@ -18,6 +18,7 @@
       :tabindex="0"
       :selected="room.uuid === activeRoomId && active"
       :locale="locale"
+      :lastInteractionTime="room.last_interaction"
       @click="$emit('click')"
       @keypress.enter="$emit('click')"
     />
