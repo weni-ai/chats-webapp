@@ -316,6 +316,7 @@ export default {
     }
     :deep(.unnnic-collapse__header) {
       padding-left: $unnnic-spacing-xs;
+      padding-right: $unnnic-spacing-xs;
     }
     .no-results {
       color: $unnnic-color-neutral-cloudy;
