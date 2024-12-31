@@ -19,28 +19,44 @@
     </template>
     <template v-if="rooms && rooms.length">
       <RoomCard
-        v-for="room in rooms"
+        v-for="(room, index) in rooms"
         :key="room.uuid"
         :room="room"
         :active="!activeDiscussionId"
         :selected="getIsRoomSelected(room.uuid)"
         :withSelection="withSelection"
+        :class="{
+          'room-card': true,
+          'room-card--without-border': activeRoomIndex === index - 1,
+        }"
         @click="open(room)"
         @update-selected="updateIsRoomSelected(room.uuid, $event)"
+        @mousedown="activeRoomIndex = index"
+        @mouseup="activeRoomIndex = null"
       />
     </template>
     <template v-if="discussions">
-      <UnnnicChatsContact
-        v-for="discussion in discussions"
-        :key="discussion.uuid"
-        :title="discussion.subject"
-        :discussionGoal="discussion.contact"
-        :tabindex="0"
-        :selected="discussion.uuid === activeDiscussionId"
-        :unreadMessages="unreadMessages(discussion.uuid)"
-        @click="open(discussion)"
-        @keypress.enter="open(discussion)"
-      />
+      <div class="discussion-container">
+        <UnnnicChatsContact
+          v-for="(discussion, index) in discussions"
+          :key="discussion.uuid"
+          :class="{
+            'discussion-card': true,
+            'discussion-card--without-border':
+              activeDiscussionIndex === index - 1,
+          }"
+          :active="activeDiscussionId"
+          :title="discussion.subject"
+          :discussionGoal="discussion.contact"
+          :tabindex="0"
+          :selected="discussion.uuid === activeDiscussionId"
+          :unreadMessages="unreadMessages(discussion.uuid)"
+          @click="open(discussion)"
+          @keypress.enter="open(discussion)"
+          @mousedown="activeDiscussionIndex = index"
+          @mouseup="activeDiscussionIndex = null"
+        />
+      </div>
     </template>
   </UnnnicCollapse>
 </template>
@@ -85,6 +101,8 @@ export default {
     return {
       isCollapseOpened: true,
       collapseCheckboxValue: false,
+      activeRoomIndex: null,
+      activeDiscussionIndex: null,
     };
   },
 
@@ -155,6 +173,43 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.room-card {
+  border-top: 1px solid $unnnic-color-neutral-soft;
+  &:last-child {
+    border-bottom: 1px solid $unnnic-color-neutral-soft;
+  }
+  &:active {
+    border-top: 1px solid $unnnic-color-neutral-cleanest;
+    border-bottom: 1px solid $unnnic-color-neutral-cleanest;
+  }
+  &--without-border {
+    border: none;
+  }
+}
+
+.discussion-container {
+  :deep(.discussion-card) {
+    border-top: 1px solid $unnnic-color-neutral-soft !important;
+    border-bottom: none !important;
+
+    &:active {
+      border-top: 1px solid $unnnic-color-neutral-cleanest !important;
+      border-bottom: 1px solid $unnnic-color-neutral-cleanest !important;
+    }
+  }
+
+  :deep(.discussion-card:last-child) {
+    border-bottom: 1px solid $unnnic-color-neutral-soft !important;
+    &:active {
+      border-bottom: 1px solid $unnnic-color-neutral-cleanest !important;
+    }
+  }
+
+  :deep(.discussion-card--without-border) {
+    border-top: none !important;
+  }
+}
+
 .card-group {
   &__header {
     display: grid;

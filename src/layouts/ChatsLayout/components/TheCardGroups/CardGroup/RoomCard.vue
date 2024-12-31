@@ -131,9 +131,22 @@ export default {
   display: grid;
   align-items: center;
 
+  :deep(.room-card__contact) {
+    border: none;
+  }
+
+  :deep(.room-card__contact:active) {
+    border: none;
+  }
+
+  :deep(.room-card__contact--selected) {
+    border: none !important;
+  }
+
   &--with-selection {
     grid-template-columns: auto 1fr;
   }
+
   .room-card__contact--selected {
     :deep(.chats-contact__infos__unread-messages-container) {
       justify-content: flex-start;
@@ -141,6 +154,7 @@ export default {
     }
   }
 }
+
 .room-card {
   &__checkbox {
     padding: $unnnic-spacing-nano;
