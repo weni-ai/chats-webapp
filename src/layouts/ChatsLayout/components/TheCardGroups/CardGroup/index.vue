@@ -203,20 +203,20 @@ export default {
 }
 
 .discussion-container {
-  :deep(.discussion-card) {
-    border-top: 1px solid $unnnic-color-neutral-soft !important;
-    border-bottom: none !important;
+  :deep(.discussion-card:not(:last-child)) {
+    border-top: 1px solid $unnnic-color-neutral-soft;
+    border-bottom: none;
 
     &:active {
-      border-top: 1px solid $unnnic-color-neutral-cleanest !important;
-      border-bottom: 1px solid $unnnic-color-neutral-cleanest !important;
+      border-top: 1px solid $unnnic-color-neutral-cleanest;
+      border-bottom: 1px solid $unnnic-color-neutral-cleanest;
     }
   }
 
   :deep(.discussion-card:last-child) {
-    border-bottom: 1px solid $unnnic-color-neutral-soft !important;
     &:active {
-      border-bottom: 1px solid $unnnic-color-neutral-cleanest !important;
+      border-top: 1px solid $unnnic-color-neutral-cleanest;
+      border-bottom: 1px solid $unnnic-color-neutral-cleanest;
     }
   }
 
