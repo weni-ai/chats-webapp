@@ -10,7 +10,9 @@ export default async (message, { app }) => {
   const roomMessagesStore = useRoomMessages();
   const { rooms, activeRoom } = roomsStore;
   const findRoom = rooms.find((room) => room.uuid === message.room);
+
   roomsStore.bringRoomFront(findRoom);
+
   if (findRoom) {
     if (app.me.email === message.user?.email) {
       return;
