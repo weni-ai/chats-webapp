@@ -138,19 +138,11 @@
           </template>
         </section>
       </section>
-      <!-- Closed chat tags  -->
-      <!-- <chat-feedback
-      v-for="room in rooms"
-      :key="room.uuid"
-      :feedback="roomEndedChatFeedback(room)"
-      scheme="purple"
-    /> -->
       <section
         v-if="tags.length > 0"
         v-show="!isSkeletonLoadingActive"
         class="chat-messages__tags"
       >
-        <!-- <chat-feedback :feedback="roomEndedChatFeedback(room)" scheme="purple" ref="endChatElement" /> -->
         <TagGroup :tags="tags" />
       </section>
 
@@ -645,6 +637,10 @@ export default {
 
     display: grid;
     gap: $unnnic-spacing-md;
+
+    :deep(.unnnic-brand-tag__icon) {
+      display: none;
+    }
 
     :deep(.tag-group__tags) {
       justify-content: center;
