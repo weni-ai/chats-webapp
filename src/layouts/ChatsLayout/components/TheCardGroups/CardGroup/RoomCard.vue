@@ -159,7 +159,8 @@ export default {
 
 .room-card {
   &__checkbox {
-    padding: $unnnic-spacing-nano $unnnic-spacing-nano $unnnic-spacing-nano 12px;
+    padding: $unnnic-spacing-nano $unnnic-spacing-nano $unnnic-spacing-nano
+      $unnnic-spacing-ant;
   }
 }
 </style>
