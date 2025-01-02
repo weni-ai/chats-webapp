@@ -1,7 +1,10 @@
 <template>
   <section
     class="room-card__container"
-    :class="{ 'room-card__container--with-selection': withSelection }"
+    :class="{
+      'room-card__container--with-selection': withSelection,
+      'room-card__container--selected': room.uuid === activeRoomId && active,
+    }"
   >
     <UnnnicCheckbox
       v-if="withSelection"
@@ -11,6 +14,10 @@
       @change="checkboxValue = $event"
     />
     <UnnnicChatsContact
+      :class="{
+        'room-card__contact': true,
+        'room-card__contact--selected': room.uuid === activeRoomId && active,
+      }"
       :title="formattedContactName"
       :lastMessage="lastMessage"
       :waitingTime="waitingTimeComputed"
@@ -18,6 +25,7 @@
       :tabindex="0"
       :selected="room.uuid === activeRoomId && active"
       :locale="locale"
+      :lastInteractionTime="room.last_interaction"
       @click="$emit('click')"
       @keypress.enter="$emit('click')"
     />
@@ -59,7 +67,6 @@ export default {
     formatContactName,
     waitingTime: 0,
     timer: null,
-    checkboxValue: false,
   }),
 
   computed: {
@@ -126,13 +133,34 @@ export default {
   display: grid;
   align-items: center;
 
+  :deep(.room-card__contact) {
+    border: none;
+  }
+
+  :deep(.room-card__contact:active) {
+    border: none;
+  }
+
+  :deep(.room-card__contact--selected) {
+    border: none !important;
+  }
+
   &--with-selection {
     grid-template-columns: auto 1fr;
   }
+
+  .room-card__contact--selected {
+    :deep(.chats-contact__infos__unread-messages-container) {
+      justify-content: flex-start;
+      margin-top: $unnnic-spacing-nano;
+    }
+  }
 }
+
 .room-card {
   &__checkbox {
-    padding: $unnnic-spacing-nano;
+    padding: $unnnic-spacing-nano $unnnic-spacing-nano $unnnic-spacing-nano
+      $unnnic-spacing-ant;
   }
 }
 </style>

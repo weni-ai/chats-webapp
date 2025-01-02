@@ -8,6 +8,7 @@
       :iconRightClickable="true"
       size="sm"
       :placeholder="$t('chats.search_contact')"
+      class="chat-groups__search-contact-input"
       @icon-right-click="nameOfContact = ''"
     ></UnnnicInput>
     <section class="chat-groups__header">
@@ -307,16 +308,26 @@ export default {
     display: flex;
     flex-direction: column;
     margin-top: $unnnic-spacing-sm;
-    padding-right: $unnnic-spacing-xs;
     margin-right: -$unnnic-spacing-xs; // For the scrollbar to stick to the edge
     overflow-y: auto;
     overflow-x: hidden;
     :deep(.unnnic-collapse) {
       padding-bottom: $unnnic-spacing-sm;
     }
+    :deep(.unnnic-collapse__header) {
+      padding-left: $unnnic-spacing-xs;
+      padding-right: $unnnic-spacing-xs;
+    }
     .no-results {
+      padding-left: $unnnic-spacing-xs;
       color: $unnnic-color-neutral-cloudy;
       font-size: $unnnic-font-size-body-gt;
+    }
+    &__header {
+      padding-left: $unnnic-spacing-xs;
+    }
+    &__search-contact-input {
+      padding-left: $unnnic-spacing-xs;
     }
   }
   .order-by {
