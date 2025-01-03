@@ -45,7 +45,6 @@
               :scheme="isClosedChat ? 'gray' : 'blue'"
               :title="messageFormatTitle(new Date(message.created_on))"
             />
-
             <template v-else>
               <UnnnicChatsMessage
                 v-if="message.text || isGeolocation(message.media?.[0])"
@@ -136,6 +135,20 @@
               </template>
             </template>
           </template>
+        </section>
+
+        <section class="chat-messages__typing">
+          <span class="chat-messages__typing-dot">.</span>
+          <span class="chat-messages__typing-dot">.</span>
+          <span class="chat-messages__typing-dot">.</span>
+        </section>
+        <section class="chat-messages__recording">
+          <UnnnicIcon
+            class="chat-messages__recording-icon"
+            icon="mic"
+            size="avatar-nano"
+            scheme="neutral-dark"
+          />
         </section>
       </section>
       <section
@@ -580,6 +593,66 @@ export default {
 
   &__container-minute {
     display: grid;
+  }
+
+  &__typing {
+    width: fit-content;
+    margin-top: $unnnic-spacing-nano;
+    border-radius: $unnnic-border-radius-md;
+    padding: $unnnic-spacing-xs $unnnic-spacing-ant;
+    background-color: $unnnic-color-neutral-white;
+    color: $unnnic-color-neutral-dark;
+    font-family: $unnnic-font-family-secondary;
+    font-size: 14px;
+    line-height: 22px;
+
+    @keyframes bounce {
+      0%,
+      20%,
+      100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-4px);
+      }
+    }
+
+    &-dot {
+      display: inline-block;
+      animation: bounce 1.6s infinite ease-in-out;
+    }
+
+    &-dot:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    &-dot:nth-child(3) {
+      animation-delay: 0.6s;
+    }
+  }
+
+  &__recording {
+    width: fit-content;
+    min-width: 32px;
+    margin-top: $unnnic-spacing-nano;
+    display: flex;
+    justify-content: center;
+    border-radius: $unnnic-border-radius-md;
+    padding: $unnnic-spacing-xs $unnnic-spacing-nano;
+    background-color: $unnnic-color-neutral-white;
+
+    @keyframes colorFade {
+      0% {
+        color: $unnnic-color-neutral-dark;
+      }
+      100% {
+        color: $unnnic-color-neutral-clean;
+      }
+    }
+
+    :deep(.chat-messages__recording-icon) {
+      animation: colorFade 1s infinite alternate ease-in-out;
+    }
   }
 
   &__message {
