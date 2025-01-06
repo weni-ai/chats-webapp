@@ -188,7 +188,10 @@ export default {
     listenConnect() {
       window.addEventListener('message', (message) => {
         const { event } = message.data;
-        if (event === 'close') this.$refs.queueDrawer?.close();
+        if (event === 'close') {
+          this.handlerCloseDeleteQueueModal();
+          this.$refs.queueDrawer?.close();
+        }
       });
     },
     openConfigQueueDrawer(queue = {}) {
