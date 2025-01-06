@@ -603,6 +603,7 @@
     },
     "queues": {
       "in_sector": "Fila no setor {sector}",
+      "delete_or_edit": "Excluir ou editar",
       "new": "Nova fila",
       "info": "As filas são grupos de atendimento dentro de um setor, é possível direcionar contatos de um fluxo para uma fila específica",
       "hint": "As filas são grupos de atendimento dentro do setor, você poderá criar novas filas ou editar quando quiser",
@@ -610,7 +611,9 @@
       "message": {
         "create": "Fila criada com sucesso",
         "update": "Fila atualizada com sucesso",
-        "error": "Falha ao definir configurações da fila"
+        "error": "Falha ao definir configurações da fila",
+        "delete_success": "Fila excluída com sucesso",
+        "delete_error": "Falha ao excluir a fila"
       }
     },
     "copilot": {
