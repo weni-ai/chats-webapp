@@ -173,10 +173,12 @@ export default {
       }
     },
     handlerCloseDeleteQueueModal() {
+      this.handleConnectOverlay(false);
       this.queueToDelete = {};
       this.showDeleteQueueModal = false;
     },
     handlerOpenDeleteQueueModal(queue) {
+      this.handleConnectOverlay(true);
       this.queueToDelete = queue;
       this.showDeleteQueueModal = true;
     },
