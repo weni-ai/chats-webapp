@@ -4,7 +4,10 @@
     :class="{
       'room-card__container--with-selection': withSelection,
       'room-card__container--selected': room.uuid === activeRoomId && active,
+      'room-card__container--hover': hover,
     }"
+    @mouseenter="hover = true"
+    @mouseleave="hover = false"
   >
     <UnnnicCheckbox
       v-if="withSelection"
@@ -17,6 +20,7 @@
       :class="{
         'room-card__contact': true,
         'room-card__contact--selected': room.uuid === activeRoomId && active,
+        'room-card__contact--hover': hover,
       }"
       :title="formattedContactName"
       :lastMessage="lastMessage"
@@ -67,6 +71,8 @@ export default {
     formatContactName,
     waitingTime: 0,
     timer: null,
+    checkboxValue: false,
+    hover: false,
   }),
 
   computed: {
@@ -143,6 +149,14 @@ export default {
 
   :deep(.room-card__contact--selected) {
     border: none !important;
+  }
+
+  &--hover {
+    background-color: $unnnic-color-neutral-lightest !important;
+
+    :deep(.room-card__contact) {
+      background-color: $unnnic-color-neutral-lightest !important;
+    }
   }
 
   &--with-selection {

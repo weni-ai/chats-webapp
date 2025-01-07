@@ -29,15 +29,12 @@
           :class="{
             'room-card': true,
             'room-card--without-border': activeRoomIndex === index - 1,
-            'room-card--hover': roomHoverIndex === index,
             'room-card--selected': activeRoom?.uuid === room?.uuid,
           }"
           @click="open(room)"
           @update-selected="updateIsRoomSelected(room.uuid, $event)"
           @mousedown="activeRoomIndex = index"
           @mouseup="activeRoomIndex = null"
-          @mouseover="roomHoverIndex = index"
-          @mouseleave="roomHoverIndex = null"
         />
       </section>
     </template>
