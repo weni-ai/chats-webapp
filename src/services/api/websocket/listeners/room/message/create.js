@@ -22,11 +22,15 @@ export default async (message, { app }) => {
     notification.notify();
 
     if (document.hidden) {
-      sendWindowNotification({
-        title: message.contact.name,
-        message: message.text,
-        image: message.media?.[0]?.url,
-      });
+      try {
+        sendWindowNotification({
+          title: message.contact.name,
+          message: message.text,
+          image: message.media?.[0]?.url,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     const isCurrentRoom =
