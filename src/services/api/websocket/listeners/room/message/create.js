@@ -9,11 +9,11 @@ export default async (message, { app }) => {
   const roomsStore = useRooms();
   const roomMessagesStore = useRoomMessages();
   const { rooms, activeRoom } = roomsStore;
-  const findedRoom = rooms.find((room) => room.uuid === message.room);
-  roomsStore.bringRoomFront(findedRoom);
+  const findRoom = rooms.find((room) => room.uuid === message.room);
 
-  if (findedRoom) {
-    if (message.text) findedRoom.last_message = message.text;
+  roomsStore.bringRoomFront(findRoom);
+
+  if (findRoom) {
     if (app.me.email === message.user?.email) {
       return;
     }
@@ -22,11 +22,15 @@ export default async (message, { app }) => {
     notification.notify();
 
     if (document.hidden) {
-      sendWindowNotification({
-        title: message.contact?.name || '',
-        message: message.text,
-        image: message.media?.[0]?.url,
-      });
+      try {
+        sendWindowNotification({
+          title: message.contact.name,
+          message: message.text,
+          image: message.media?.[0]?.url,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     const isCurrentRoom =

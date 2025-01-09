@@ -28,11 +28,15 @@ export default (message, { app }) => {
 
     if (document.hidden) {
       const { first_name, last_name } = message.user;
-      sendWindowNotification({
-        title: `${first_name} ${last_name}`,
-        message: message.text,
-        image: message.media?.[0]?.url,
-      });
+      try {
+        sendWindowNotification({
+          title: `${first_name} ${last_name}`,
+          message: message.text,
+          image: message.media?.[0]?.url,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     const isCurrentDiscussion = activeDiscussion?.uuid === message.discussion;

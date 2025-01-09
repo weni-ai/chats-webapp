@@ -139,7 +139,6 @@
           </template>
         </section>
       </section>
-
       <section
         v-if="tags.length > 0"
         v-show="!isSkeletonLoadingActive"
@@ -642,6 +641,10 @@ export default {
 
     display: grid;
     gap: $unnnic-spacing-md;
+
+    :deep(.unnnic-brand-tag__icon) {
+      display: none;
+    }
 
     :deep(.tag-group__tags) {
       justify-content: center;

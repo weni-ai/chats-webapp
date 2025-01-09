@@ -78,17 +78,17 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
           <div
             class="unnnic-dropdown"
             data-v-1088b44f=""
-            data-v-1fb8c82b=""
+            data-v-5ab1e453=""
           >
             <div
               class="unnnic-dropdown__trigger"
-              data-v-1fb8c82b=""
+              data-v-5ab1e453=""
             >
               
               <div
                 class="unnnic-tooltip"
+                data-v-011692bb=""
                 data-v-1088b44f=""
-                data-v-5b8c172b=""
               >
                 
                 <button
@@ -123,14 +123,14 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
                 <span
                   class="unnnic-tooltip-label unnnic-tooltip-label-left"
                   data-testid="tooltip-label"
-                  data-v-5b8c172b=""
+                  data-v-011692bb=""
                   style="left: -8px; top: 0px;"
                 >
                   
                   
                   Delete or edit 
                   <br
-                    data-v-5b8c172b=""
+                    data-v-011692bb=""
                   />
                   
                   

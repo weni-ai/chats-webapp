@@ -24,6 +24,13 @@ export const useRooms = defineStore('rooms', {
   }),
 
   actions: {
+    updateLastInteraction({ room, lastInteraction }) {
+      const findedRoomIndex = this.rooms.findIndex(({ uuid }) => uuid === room);
+      this.rooms[findedRoomIndex] = {
+        ...this.rooms[findedRoomIndex],
+        last_interaction: lastInteraction,
+      };
+    },
     updateMessagesByRoom({ room, message, reset = false }) {
       const roomMessages = this.newMessagesByRoom[room]?.messages || [];
 
@@ -33,6 +40,12 @@ export const useRooms = defineStore('rooms', {
           messages: reset ? [] : [...roomMessages, message],
         },
       };
+
+      if (message)
+        this.updateLastInteraction({
+          room,
+          lastInteraction: message.created_on,
+        });
     },
 
     async setActiveRoom(room) {
