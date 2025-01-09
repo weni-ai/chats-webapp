@@ -6,7 +6,7 @@ import isMobile from 'is-mobile';
 
 vi.mock('@/plugins/i18n', () => ({
   default: {
-    t: vi.fn((key) => key),
+    global: { t: vi.fn((key) => key) },
   },
 }));
 
@@ -98,7 +98,7 @@ describe('sendWindowNotification', () => {
       image: 'Test Image',
     });
 
-    expect(i18n.t).toHaveBeenCalledWith('media');
+    expect(i18n.global.t).toHaveBeenCalledWith('media');
     expect(iframessa.emit).toHaveBeenCalledWith('notification', [
       'Test Title',
       {
