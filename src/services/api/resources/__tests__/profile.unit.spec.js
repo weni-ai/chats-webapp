@@ -9,13 +9,13 @@ vi.mock('@/utils/config');
 describe('Profile services', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    getProject.mockReturnValue('project-uuid');
   });
 
   describe('me', () => {
     it('should call the correct endpoint and return user data', async () => {
       const mockResponse = { data: { name: 'Test User' } };
       http.get.mockResolvedValue(mockResponse);
-      getProject.mockReturnValue('project-uuid');
 
       const result = await profileApi.me();
 
@@ -30,7 +30,6 @@ describe('Profile services', () => {
     it('should verify user onboarding status', async () => {
       const mockResponse = { data: { first_access: false } };
       http.get.mockResolvedValue(mockResponse);
-      getProject.mockReturnValue('project-uuid');
 
       const result = await profileApi.onboarded();
 
@@ -44,7 +43,6 @@ describe('Profile services', () => {
 
   describe('onboard', () => {
     it('should call the correct endpoint to onboard user', async () => {
-      getProject.mockReturnValue('project-uuid');
       http.patch.mockResolvedValue();
 
       await profileApi.onboard();
@@ -59,7 +57,7 @@ describe('Profile services', () => {
     it('should fetch the project connection status', async () => {
       const mockResponse = { data: { connection_status: 'online' } };
       http.get.mockResolvedValue(mockResponse);
-      getProject.mockReturnValue('project-uuid');
+
       getToken.mockReturnValue('fake-token');
 
       const result = await profileApi.status();
