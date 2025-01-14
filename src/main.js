@@ -30,6 +30,8 @@ app.use(pinia);
 app.use(router);
 app.use(i18n);
 
+console.log(env('SENTRY_DSN'));
+
 Sentry.init({
   app,
   dsn: env('SENTRY_DSN'),
