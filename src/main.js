@@ -42,6 +42,7 @@ Sentry.init({
   tracesSampleRate: env('CHATS_ENVIRONMENT') === 'production' ? 1.0 : 0.5,
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
+  environment: env('CHATS_ENVIRONMENT'),
 });
 
 app.mount('#app');
