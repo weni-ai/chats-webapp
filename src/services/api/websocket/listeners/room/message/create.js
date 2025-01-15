@@ -4,6 +4,7 @@ import { isValidJson } from '@/utils/messages';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import moment from 'moment';
 
 export default async (message, { app }) => {
   const roomsStore = useRooms();
@@ -18,8 +19,25 @@ export default async (message, { app }) => {
       return;
     }
 
-    const notification = new SoundNotification('ping-bing');
-    notification.notify();
+    const { lastRoomMessageNotification } = roomMessagesStore;
+
+    const momentLastMessageNotification = moment(
+      lastRoomMessageNotification[message.room],
+    );
+
+    const momentMessageCreatedOn = moment(message.created_on);
+
+    const secondsDiff = momentMessageCreatedOn.diff(
+      momentLastMessageNotification,
+      'seconds',
+    );
+
+    if (!lastRoomMessageNotification[message.room] || secondsDiff >= 3) {
+      const notification = new SoundNotification('ping-bing');
+      notification.notify();
+
+      lastRoomMessageNotification[message.room] = message.created_on;
+    }
 
     if (document.hidden) {
       try {
