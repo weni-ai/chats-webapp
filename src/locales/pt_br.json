@@ -65,6 +65,9 @@
   "redo": "Refazer",
   "record_audio": "Gravar áudio",
   "select_all": "Selecionar todos",
+  "image": "Imagem",
+  "video": "Vídeo",
+  "audio_message": "Mensagem de áudio",
   "audio_recorder": {
     "discard_button": "Descartar"
   },

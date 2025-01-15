@@ -24,6 +24,7 @@ export const useRoomMessages = defineStore('roomMessages', {
     roomMessagesFailedUuids: [],
     roomMessagesNext: '',
     roomMessagesPrevious: '',
+    replyMessage: null,
   }),
   actions: {
     addRoomMessageSorted({ message, addBefore }) {

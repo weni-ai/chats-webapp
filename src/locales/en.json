@@ -64,6 +64,10 @@
   "undo": "Undo",
   "redo": "Redo",
   "record_audio": "Record audio",
+  "select_all": "Select all",
+  "image": "Image",
+  "video": "Video",
+  "audio_message": "Audio message",
   "audio_recorder": {
     "discard_button": "Discard"
   },
