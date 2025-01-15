@@ -42,7 +42,7 @@ export default async (message, { app }) => {
     if (document.hidden) {
       try {
         sendWindowNotification({
-          title: message.contact.name,
+          title: message.contact?.name,
           message: message.text,
           image: message.media?.[0]?.url,
         });
