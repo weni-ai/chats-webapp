@@ -110,16 +110,20 @@ const hasPreview = computed(() =>
 onUpdated(() => {
   const audio = document.getElementById(props.replyMessage?.uuid);
   if (audio)
-    audio.addEventListener('loadedmetadata', () => {
-      const duration = Math.round(audio.duration);
+    audio.addEventListener(
+      'loadedmetadata',
+      () => {
+        const duration = Math.round(audio.duration);
 
-      const minutes = Math.floor(duration / 60);
-      const seconds = Math.floor(duration % 60);
+        const minutes = Math.floor(duration / 60);
+        const seconds = Math.floor(duration % 60);
 
-      const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
-      audioDuration.value = formattedTime;
-    });
+        audioDuration.value = formattedTime;
+      },
+      { once: true },
+    );
 });
 </script>
 
