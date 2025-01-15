@@ -30,17 +30,19 @@ app.use(pinia);
 app.use(router);
 app.use(i18n);
 
-Sentry.init({
-  app,
-  dsn: env('SENTRY_DSN'),
-  integrations: [
-    Sentry.browserTracingIntegration({ router }),
-    Sentry.replayIntegration(),
-  ],
-  tracesSampleRate: env('CHATS_ENVIRONMENT') === 'production' ? 1.0 : 0.5,
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1.0,
-  environment: env('CHATS_ENVIRONMENT'),
-});
+if (env('CHATS_ENVIRONMENT') === 'production') {
+  Sentry.init({
+    app,
+    dsn: env('SENTRY_DSN'),
+    integrations: [
+      Sentry.browserTracingIntegration({ router }),
+      Sentry.replayIntegration(),
+    ],
+    tracesSampleRate: 1.0,
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1.0,
+    environment: env('CHATS_ENVIRONMENT'),
+  });
+}
 
 app.mount('#app');
