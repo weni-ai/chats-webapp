@@ -12,7 +12,7 @@
     :tags="room?.tags"
     :isLoading="isLoading"
     :isClosedChat="!!room?.ended_at"
-    enableReply
+    :enableReply="room?.is_active"
     @scroll-top="searchForMoreMessages"
   />
 </template>

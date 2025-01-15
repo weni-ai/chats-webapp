@@ -287,6 +287,10 @@ export default {
     },
   },
 
+  mounted() {
+    this.clearReplyMessage();
+  },
+
   methods: {
     ...mapActions(useDiscussionMessages, [
       'sendDiscussionMessage',
