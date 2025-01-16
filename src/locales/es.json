@@ -36,6 +36,14 @@
   "waiting_for": {
     "minutes": "Esperando por un minuto | Esperando por {n} minutos"
   },
+  "chat_message": {
+    "reply_message": {
+      "you": "Tú",
+      "video": "Vídeo",
+      "image": "Imagen",
+      "audio": "Mensaje de audio"
+    }
+  },
   "details": "Details",
   "doubts": "Dudas",
   "finance": "Financiero",
