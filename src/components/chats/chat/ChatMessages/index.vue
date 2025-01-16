@@ -62,6 +62,10 @@
                 :status="messageStatus({ message })"
                 :title="messageFormatTitle(new Date(message.created_on))"
                 :signature="messageSignature(message)"
+                :enableReply="enableReply"
+                @reply="
+                  handlerMessageReply({ ...message, content_type: 'text' })
+                "
               >
                 {{
                   isGeolocation(message.media?.[0])
@@ -91,6 +95,17 @@
                   :status="messageStatus({ message })"
                   :title="messageFormatTitle(new Date(message.created_on))"
                   :signature="messageSignature(message)"
+                  :enableReply="enableReply"
+                  @reply="
+                    handlerMessageReply({
+                      ...message,
+                      content_type: isImage(media)
+                        ? 'image'
+                        : isVideo(media)
+                          ? 'video'
+                          : 'audio',
+                    })
+                  "
                   @click="resendMedia({ message, media })"
                 >
                   <img
@@ -132,6 +147,13 @@
                   :status="messageStatus({ message })"
                   :title="messageFormatTitle(new Date(message.created_on))"
                   :signature="messageSignature(message)"
+                  :enableReply="enableReply"
+                  @reply="
+                    handlerMessageReply({
+                      ...message,
+                      content_type: 'attachment',
+                    })
+                  "
                   @click="documentClickHandler({ message, media })"
                 />
               </template>
@@ -177,7 +199,7 @@
 </template>
 
 <script>
-import { mapState } from 'pinia';
+import { mapState, mapWritableState } from 'pinia';
 import { useDashboard } from '@/store/modules/dashboard';
 
 import moment from 'moment';
@@ -193,6 +215,7 @@ import FullscreenPreview from '@/components/chats/MediaMessage/Previews/Fullscre
 import ChatFeedback from '../ChatFeedback.vue';
 import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
 import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 export default {
   name: 'ChatMessages',
@@ -215,6 +238,10 @@ export default {
     messages: {
       type: Array,
       required: true,
+    },
+    enableReply: {
+      type: Boolean,
+      default: false,
     },
     messagesNext: {
       type: String,
@@ -292,6 +319,7 @@ export default {
 
   computed: {
     ...mapState(useDashboard, ['viewedAgent']),
+    ...mapWritableState(useRoomMessages, ['replyMessage']),
     medias() {
       return this.messages
         .map((el) => el.media)
@@ -333,6 +361,9 @@ export default {
   },
 
   methods: {
+    handlerMessageReply(message) {
+      this.replyMessage = message;
+    },
     isMediaOfType(media, type) {
       return media && media.content_type?.includes(type);
     },
