@@ -6,6 +6,7 @@
     <section class="reply-message__message-container">
       <p
         :class="`reply-message__contact-name reply-message__contact-name--${props.replyMessage.user ? 'you' : 'contact'}`"
+        data-testid="contact-name"
       >
         {{
           props.replyMessage.user ? $t('you') : props.replyMessage.contact.name
@@ -15,6 +16,7 @@
         <p
           v-if="props.replyMessage.content_type === 'text'"
           class="reply-message__content-text"
+          data-testid="content-text"
         >
           {{ props.replyMessage.text }}
         </p>
@@ -23,8 +25,9 @@
           <UnnnicIcon
             icon="article"
             size="avatar-nano"
+            data-testid="content-attachment-icon"
           />
-          <p>
+          <p data-testid="content-attachment">
             {{
               props.replyMessage.media[0]?.url?.split('/').at(-1) ||
               props.replyMessage.media[0]?.file?.name
@@ -35,8 +38,9 @@
           <UnnnicIcon
             icon="image"
             size="avatar-nano"
+            data-testid="content-image-icon"
           />
-          <p>
+          <p data-testid="content-image">
             {{ $t('image') }}
           </p>
         </template>
@@ -44,8 +48,9 @@
           <UnnnicIcon
             icon="videocam"
             size="avatar-nano"
+            data-testid="content-video-icon"
           />
-          <p>
+          <p data-testid="content-video">
             {{ $t('video') }}
           </p>
         </template>
@@ -53,40 +58,50 @@
           <UnnnicIcon
             icon="mic"
             size="avatar-nano"
+            data-testid="content-audio-icon"
           />
-          <p>{{ $t('audio_message') }} {{ audioDuration }}</p>
+          <p data-testid="content-audio">
+            {{ $t('audio_message') }} {{ audioDuration }}
+          </p>
           <audio
             :id="props.replyMessage.uuid"
             :src="props.replyMessage.media[0].url"
             preload="metadata"
-          ></audio>
+            data-testid="content-audio-media"
+          />
         </template>
       </section>
     </section>
     <section
       v-if="hasPreview"
-      :class="{ 'reply-message__media-preview': true, right: hasPreview }"
+      :class="{
+        'reply-message__media-preview-container': true,
+        right: hasPreview,
+      }"
     >
       <img
         v-if="props.replyMessage.content_type === 'image'"
         :src="props.replyMessage.media[0].url"
-        style="object-fit: contain"
+        class="reply-message__media-preview"
         width="100%"
         height="100%"
+        data-testid="preview-image"
       />
       <video
         v-if="props.replyMessage.content_type === 'video'"
         :src="props.replyMessage.media[0].url"
+        class="reply-message__media-preview"
         preload="metadata"
-        style="object-fit: contain"
         width="100%"
         height="100%"
+        data-testid="preview-video"
       />
     </section>
     <UnnnicIcon
       :class="{ right: !hasPreview }"
       icon="close"
       clickable
+      data-testid="close-icon"
       @click="$emit('close')"
     />
   </section>
@@ -109,6 +124,7 @@ const hasPreview = computed(() =>
 
 onUpdated(() => {
   const audio = document.getElementById(props.replyMessage?.uuid);
+
   if (audio)
     audio.addEventListener(
       'loadedmetadata',
@@ -183,8 +199,13 @@ onUpdated(() => {
   }
 
   &__media-preview {
-    width: 50px;
-    height: 50px;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    &-container {
+      width: 50px;
+      height: 50px;
+    }
   }
 }
 </style>

@@ -16,7 +16,7 @@
           v-if="isFileLoadingValueValid"
           :value="loadingFileValue"
         />
-        <ReplyMessage
+        <ReplyMessageBox
           :replyMessage="replyMessage"
           @close="clearReplyMessage()"
         />
@@ -157,7 +157,7 @@ import MoreActionsOption from './MoreActionsOption.vue';
 import LoadingBar from './LoadingBar.vue';
 import SuggestionBox from './SuggestionBox.vue';
 import CoPilot from './CoPilot.vue';
-import ReplyMessage from './ReplyMessage.vue';
+import ReplyMessageBox from './ReplyMessageBox.vue';
 
 export default {
   name: 'MessageManager',
@@ -169,7 +169,7 @@ export default {
     SuggestionBox,
     MoreActionsOption,
     CoPilot,
-    ReplyMessage,
+    ReplyMessageBox,
   },
 
   props: {
