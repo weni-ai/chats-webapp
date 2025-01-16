@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { mount, config, flushPromises } from '@vue/test-utils';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { mount, config } from '@vue/test-utils';
 import UnnnicSystem from '@/plugins/UnnnicSystem';
 
 import { createI18n } from 'vue-i18n';
@@ -16,7 +16,6 @@ const i18n = createI18n({
 config.global.plugins = [i18n, UnnnicSystem];
 
 import ReplyMessageBox from '../ReplyMessageBox.vue';
-import { nextTick } from 'vue';
 
 const messageTextMock = {
   uuid: '1',
