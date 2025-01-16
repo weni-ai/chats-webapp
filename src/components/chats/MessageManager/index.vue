@@ -21,6 +21,7 @@
           class="message-manager__reply-message"
           :replyMessage="replyMessage"
           showClose
+          messageType="received"
           @close="clearReplyMessage()"
         />
         <TextBox
