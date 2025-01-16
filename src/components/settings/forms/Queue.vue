@@ -135,6 +135,7 @@ export default {
       useDefaultSectorQueue: 0,
       toAddAgentsUuids: [],
       toRemoveAgentsUuids: [],
+      agentsLimitPerPage: 50,
     };
   },
 
@@ -219,8 +220,11 @@ export default {
     async listProjectAgents() {
       let hasNext = false;
       try {
-        const offset = this.agentsPage * 20;
-        const { results, next } = await Project.agents(offset);
+        const offset = this.agentsPage * this.agentsLimitPerPage;
+        const { results, next } = await Project.agents(
+          offset,
+          this.agentsLimitPerPage,
+        );
         this.agentsPage += 1;
         this.agentsOptions = this.agentsOptions.concat(results);
 
