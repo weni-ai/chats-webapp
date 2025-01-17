@@ -36,6 +36,14 @@
   "waiting_for": {
     "minutes": "1 minute waiting | {n} minutes waiting"
   },
+  "chat_message": {
+    "reply_message": {
+      "you": "You",
+      "video": "Video",
+      "image": "Image",
+      "audio": "Audio message"
+    }
+  },
   "details": "Details",
   "doubts": "Doubts",
   "finance": "Finance",
@@ -64,6 +72,10 @@
   "undo": "Undo",
   "redo": "Redo",
   "record_audio": "Record audio",
+  "select_all": "Select all",
+  "image": "Image",
+  "video": "Video",
+  "audio_message": "Audio message",
   "audio_recorder": {
     "discard_button": "Discard"
   },

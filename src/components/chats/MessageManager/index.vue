@@ -16,9 +16,18 @@
           v-if="isFileLoadingValueValid"
           :value="loadingFileValue"
         />
+        <UnnnicReplyMessage
+          v-if="replyMessage"
+          class="message-manager__reply-message"
+          :replyMessage="replyMessage"
+          showClose
+          messageType="received"
+          @close="clearReplyMessage()"
+        />
         <TextBox
           v-if="!isAudioRecorderVisible"
           ref="textBox"
+          class="message-manager-box__text-box"
           :modelValue="textBoxMessage"
           @update:model-value="textBoxMessage = $event"
           @keydown.stop="onKeyDown"
@@ -136,7 +145,7 @@
 <script>
 import isMobile from 'is-mobile';
 
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 import { useQuickMessages } from '@/store/modules/chats/quickMessages';
@@ -201,10 +210,11 @@ export default {
   computed: {
     ...mapState(useQuickMessageShared, ['quickMessagesShared']),
     ...mapState(useQuickMessages, ['quickMessages']),
-    ...mapState(useRooms, ['canUseCopilot']),
+    ...mapState(useRooms, ['canUseCopilot', 'activeRoom']),
     ...mapState(useDiscussions, {
       discussionId: (store) => store.activeDiscussion?.uuid,
     }),
+    ...mapWritableState(useRoomMessages, ['replyMessage']),
 
     isMobile() {
       return isMobile();
@@ -273,6 +283,16 @@ export default {
     },
   },
 
+  watch: {
+    'activeRoom.uuid'() {
+      this.clearReplyMessage();
+    },
+  },
+
+  mounted() {
+    this.clearReplyMessage();
+  },
+
   methods: {
     ...mapActions(useDiscussionMessages, [
       'sendDiscussionMessage',
@@ -291,6 +311,9 @@ export default {
       this.$nextTick(() => {
         this.$refs.textBox.focus();
       });
+    },
+    clearReplyMessage() {
+      this.replyMessage = null;
     },
     clearAudio() {
       this.$refs.audioRecorder?.discard();
@@ -425,6 +448,7 @@ export default {
     },
     updateAudioRecorderStatus(status) {
       this.audioRecorderStatus = status;
+      console.log(this.audioRecorderStatus);
     },
   },
 };
@@ -439,21 +463,36 @@ export default {
   gap: $unnnic-spacing-stack-xs;
   align-items: end;
 
-  &-box__container {
-    position: relative;
+  &-box {
+    &__container {
+      position: relative;
 
-    border: $unnnic-border-width-thinner solid $unnnic-color-neutral-cleanest;
-    border-radius: $unnnic-border-radius-sm;
-    background-color: $unnnic-color-neutral-snow;
+      height: 100%;
 
-    height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: $unnnic-spacing-nano;
 
-    &.focused {
-      border-color: $unnnic-color-neutral-clean;
+      &.focused {
+        border-color: $unnnic-color-neutral-clean;
+      }
+
+      &.loading {
+        border-radius: 0 0 $unnnic-border-radius-sm $unnnic-border-radius-sm;
+      }
+
+      &.recording {
+        border: $unnnic-border-width-thinner solid
+          $unnnic-color-neutral-cleanest;
+        border-radius: $unnnic-border-radius-sm;
+        background-color: $unnnic-color-neutral-snow;
+      }
     }
 
-    &.loading {
-      border-radius: 0 0 $unnnic-border-radius-sm $unnnic-border-radius-sm;
+    &__text-box {
+      border: $unnnic-border-width-thinner solid $unnnic-color-neutral-cleanest;
+      border-radius: $unnnic-border-radius-sm;
+      background-color: $unnnic-color-neutral-snow;
     }
   }
 
@@ -480,7 +519,11 @@ export default {
 
     justify-content: flex-end;
 
-    padding-right: $unnnic-spacing-stack-sm;
+    padding: 10px;
+
+    border: $unnnic-border-width-thinner solid $unnnic-color-neutral-cleanest;
+    border-radius: $unnnic-border-radius-sm;
+    background-color: $unnnic-color-neutral-snow;
 
     :deep(.audio-player) {
       width: auto;
