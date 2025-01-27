@@ -63,6 +63,7 @@
                 :title="messageFormatTitle(new Date(message.created_on))"
                 :signature="messageSignature(message)"
                 :enableReply="enableReply"
+                :replyMessage="message.replied_message"
                 @reply="
                   handlerMessageReply({ ...message, content_type: 'text' })
                 "
@@ -96,6 +97,7 @@
                   :title="messageFormatTitle(new Date(message.created_on))"
                   :signature="messageSignature(message)"
                   :enableReply="enableReply"
+                  :replyMessage="message.replied_message"
                   @reply="
                     handlerMessageReply({
                       ...message,
@@ -148,6 +150,7 @@
                   :title="messageFormatTitle(new Date(message.created_on))"
                   :signature="messageSignature(message)"
                   :enableReply="enableReply"
+                  :replyMessage="message.replied_message"
                   @reply="
                     handlerMessageReply({
                       ...message,
