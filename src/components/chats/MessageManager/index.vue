@@ -287,6 +287,9 @@ export default {
     'activeRoom.uuid'() {
       this.clearReplyMessage();
     },
+    replyMessage(newReplyMessage) {
+      if (newReplyMessage) this.$refs.textBox.focus();
+    },
   },
 
   mounted() {
@@ -462,6 +465,10 @@ export default {
   grid-template-columns: 1fr auto;
   gap: $unnnic-spacing-stack-xs;
   align-items: end;
+
+  :deep(.reply-message) {
+    box-shadow: 0px 2px 5px -1px rgba(0, 0, 0, 0.1);
+  }
 
   &-box {
     &__container {
