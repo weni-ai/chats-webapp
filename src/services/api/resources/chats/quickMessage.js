@@ -17,7 +17,7 @@ export default {
   },
 
   async getAllBySector({ nextQuickMessagesShared = '' }) {
-    const projectUuid = getProject();
+    const projectUuid = await getProject();
     const endpoint = `/sector_quick_messages/`;
     const params = getURLParams({ URL: nextQuickMessagesShared, endpoint });
 

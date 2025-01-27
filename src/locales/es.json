@@ -607,10 +607,13 @@
       "info": "Las colas son grupos de atención dentro de un sector; es posible dirigir contactos de un flujo a una cola específica",
       "hint": "Las colas son grupos de atención dentro de un sector; podrás crear nuevas filas o editarlas cuando desees.",
       "queue_definitions": "Configuraciones de la cola",
+      "delete_or_edit": "Eliminar o editar",
       "message": {
         "create": "Fila creada con éxito",
         "update": "Fila actualizada con éxito",
-        "error": "Error al configurar los ajustes de la fila"
+        "error": "Error al configurar los ajustes de la fila",
+        "delete_success": "Cola eliminada exitosamente",
+        "delete_error": "No se pudo eliminar la cola"
       }
     },
     "copilot": {

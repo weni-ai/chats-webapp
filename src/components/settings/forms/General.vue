@@ -173,6 +173,7 @@ export default {
       managers: [],
       validHour: false,
       openModalDelete: false,
+      agentsLimitPerPage: 50,
     };
   },
 
@@ -346,8 +347,11 @@ export default {
     async listProjectManagers() {
       let hasNext = false;
       try {
-        const offset = this.managersPage * 20;
-        const { results, next } = await Project.managers(offset);
+        const offset = this.managersPage * this.agentsLimitPerPage;
+        const { results, next } = await Project.managers(
+          offset,
+          this.agentsLimitPerPage,
+        );
         this.managersPage += 1;
         this.managers = this.managers.concat(results);
 

@@ -5,34 +5,36 @@
       :fullFilename="fullFilename"
       highlight
       :url="media.url"
+      data-testid="document-preview"
       @download="download"
     />
   </section>
-
   <section
     v-else
     class="media-message"
+    data-testid="media-message"
   >
     <section class="media-message__preview">
       <ImagePreview
         v-if="isImage"
         :url="media.url"
         fullscreenOnClick
+        data-testid="image-preview"
         @download="download"
         @click="$emit('fullscreen')"
       />
       <VideoPreview
         v-else-if="isVideo"
+        data-testid="video-preview"
         :src="media.url"
       />
       <UnnnicAudioRecorder
         v-else-if="isAudio"
         :src="media.url"
         :canDiscard="false"
+        data-testid="audio-preview"
       />
     </section>
-
-    <!-- <media-controls v-if="!isAudio" @download="download" /> -->
   </section>
 </template>
 
@@ -41,7 +43,6 @@ import mime from 'mime-types';
 
 import Media from '@/services/api/resources/chats/media';
 
-// import MediaControls from './Controls';
 import DocumentPreview from './Previews/Document.vue';
 import ImagePreview from './Previews/Image.vue';
 import VideoPreview from './Previews/Video.vue';
