@@ -603,10 +603,13 @@
       "info": "Queues are support groups within a sector; it is possible to direct contacts from a flow to a specific queue",
       "hint": "Queues are support groups within the sector; you can create new queues or edit them whenever you want.",
       "queue_definitions": "Queue settings",
+      "delete_or_edit": "Delete or edit",
       "message": {
         "create": "Queue successfully created",
         "update": "Queue successfully updated",
-        "error": "Failed to set queue settings"
+        "error": "Failed to set queue settings",
+        "delete_success": "Queue deleted successfully",
+        "delete_error": "Failed to delete queue"
       }
     },
     "copilot": {
