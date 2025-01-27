@@ -161,6 +161,7 @@
           </template>
         </section>
       </section>
+
       <section
         v-if="tags.length > 0"
         v-show="!isSkeletonLoadingActive"
