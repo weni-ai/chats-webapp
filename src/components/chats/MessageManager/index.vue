@@ -347,7 +347,7 @@ export default {
 
       if (event.key === 'Enter') {
         if (event.shiftKey) return;
-        this.sendTextBoxMessage();
+        this.send();
         event.preventDefault();
       }
     },
@@ -389,10 +389,11 @@ export default {
     stopRecord() {
       this.$refs.audioRecorder?.stop();
     },
-    send() {
+    async send() {
       this.$refs.textBox?.clearTextarea();
-      this.sendTextBoxMessage();
-      this.sendAudio();
+      await this.sendTextBoxMessage();
+      await this.sendAudio();
+      // this.replyMessage = null;
     },
     async sendTextBoxMessage() {
       const message = this.textBoxMessage.trim();
