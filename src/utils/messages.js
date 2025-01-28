@@ -23,6 +23,7 @@ export function createTemporaryMessage({
   itemUser = {},
   message = '',
   medias = [],
+  repliedMessage = null,
 }) {
   return {
     uuid: Date.now().toString(),
@@ -32,6 +33,7 @@ export function createTemporaryMessage({
     [itemType]: itemUuid,
     seen: true,
     user: itemUser,
+    replied_message: repliedMessage,
   };
 }
 
@@ -177,6 +179,7 @@ export async function sendMessage({
   itemUuid,
   itemUser,
   message,
+  repliedMessage,
   sendItemMessage,
   addMessage,
   addSortedMessage,
@@ -192,6 +195,7 @@ export async function sendMessage({
     itemUuid,
     itemUser,
     message,
+    repliedMessage,
   });
 
   addMessage(temporaryMessage);
@@ -241,6 +245,7 @@ export async function sendMedias({
   itemUuid,
   itemUser,
   medias,
+  repliedMessage,
   sendItemMedia,
   addMessage,
   addFailedMessage,
@@ -261,6 +266,7 @@ export async function sendMedias({
         itemType,
         itemUuid,
         itemUser,
+        repliedMessage,
         medias: [
           { preview: mediaPreview, file: media, content_type: media.type },
         ],
