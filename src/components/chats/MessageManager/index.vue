@@ -347,7 +347,7 @@ export default {
 
       if (event.key === 'Enter') {
         if (event.shiftKey) return;
-        this.sendTextBoxMessage();
+        this.send();
         event.preventDefault();
       }
     },
@@ -389,23 +389,28 @@ export default {
     stopRecord() {
       this.$refs.audioRecorder?.stop();
     },
-    send() {
+    async send() {
+      let repliedMessage = null;
+      if (this.replyMessage) {
+        repliedMessage = { ...this.replyMessage };
+        this.replyMessage = null;
+      }
       this.$refs.textBox?.clearTextarea();
-      this.sendTextBoxMessage();
-      this.sendAudio();
+      await this.sendTextBoxMessage(repliedMessage);
+      await this.sendAudio(repliedMessage);
     },
-    async sendTextBoxMessage() {
+    async sendTextBoxMessage(repliedMessage) {
       const message = this.textBoxMessage.trim();
       if (message) {
         this.clearTextBox();
         if (this.discussionId) {
           await this.sendDiscussionMessage(message);
         } else {
-          await this.sendRoomMessage(message);
+          await this.sendRoomMessage(message, repliedMessage);
         }
       }
     },
-    async sendAudio() {
+    async sendAudio(repliedMessage) {
       if (this.audioRecorderStatus === 'recording') {
         await this.stopRecord();
       }
@@ -429,6 +434,7 @@ export default {
       const sendPayload = {
         files: [audio],
         updateLoadingFiles,
+        repliedMessage,
       };
 
       if (this.discussionId) {
