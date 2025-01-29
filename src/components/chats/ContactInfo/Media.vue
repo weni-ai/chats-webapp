@@ -8,6 +8,7 @@
       <div
         class="media-tab"
         :class="{ active: isActiveTab('media') }"
+        data-testid="media-tab-medias"
       >
         <span class="name">{{ $t('medias') }}</span>
       </div>
@@ -29,6 +30,7 @@
       <div
         class="media-tab"
         :class="{ active: isActiveTab('docs') }"
+        data-testid="media-tab-docs"
       >
         <span class="name">{{ $t('docs') }}</span>
       </div>
@@ -49,6 +51,7 @@
       <div
         class="media-tab"
         :class="{ active: isActiveTab('audio') }"
+        data-testid="media-tab-audios"
       >
         <span class="name">{{ $t('audios') }}</span>
       </div>
@@ -64,6 +67,7 @@
             enabled
           >
             <UnnnicAudioRecorder
+              data-testid="audio"
               class="audios__content__audio"
               :src="audio.url"
               :canDiscard="false"
@@ -103,17 +107,19 @@ export default {
   },
   emits: ['fullscreen', 'loaded-medias'],
 
-  data: () => ({
-    tab: 'media',
-    tabs: ['media', 'docs', 'audio'],
-    page: 1,
+  data() {
+    return {
+      tab: 'media',
+      tabs: ['media', 'docs', 'audio'],
+      page: 1,
 
-    medias: [],
-    audios: [],
-    audioWithDuration: [],
-    currentAudio: null,
-    audioDuration: null,
-  }),
+      medias: [],
+      audios: [],
+      audioWithDuration: [],
+      currentAudio: null,
+      audioDuration: null,
+    };
+  },
 
   computed: {
     images() {
