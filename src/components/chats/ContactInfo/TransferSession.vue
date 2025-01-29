@@ -7,7 +7,10 @@
       @close="closeTransferProgressBar"
     />
 
-    <p class="transfer-session__title">
+    <p
+      class="transfer-session__title"
+      data-testid="transfer-session-title"
+    >
       {{ $tc('transfer_contact') }}
     </p>
     <section class="transfer-section">
@@ -15,6 +18,7 @@
         ref="roomsTransferFields"
         v-model="selectedQueue"
         size="sm"
+        data-testid="transfer-fields"
         @transfer-complete="transferComplete"
       />
 
@@ -25,6 +29,7 @@
         size="small"
         :disabled="selectedQueue.length === 0 || isViewMode"
         :loading="isLoading"
+        data-testid="transfer-button"
         @click="transferRooms"
       />
     </section>
