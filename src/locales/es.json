@@ -36,6 +36,14 @@
   "waiting_for": {
     "minutes": "Esperando por un minuto | Esperando por {n} minutos"
   },
+  "chat_message": {
+    "reply_message": {
+      "you": "Tú",
+      "video": "Vídeo",
+      "image": "Imagen",
+      "audio": "Mensaje de audio"
+    }
+  },
   "details": "Details",
   "doubts": "Dudas",
   "finance": "Financiero",
@@ -65,6 +73,9 @@
   "redo": "Rehacer",
   "record_audio": "Grabar audio",
   "select_all": "Seleccionar todo",
+  "image": "Imagen",
+  "video": "Vídeo",
+  "audio_message": "Mensaje de audio",
   "audio_recorder": {
     "discard_button": "Descartar"
   },
