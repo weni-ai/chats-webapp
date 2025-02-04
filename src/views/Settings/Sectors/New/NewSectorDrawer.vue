@@ -5,7 +5,7 @@
     class="new-sector-drawer"
     :modelValue="modelValue"
     closeIcon="arrow_back"
-    size="xl"
+    size="gt"
     :title="$t('config_chats.new_sector')"
     :primaryButtonText="activePageIndex === 3 ? $t('save') : $t('continue')"
     :secondaryButtonText="activePageIndex === 0 ? $t('cancel') : $t('back')"

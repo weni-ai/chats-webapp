@@ -536,7 +536,7 @@ export default {
         const elementToScroll =
           this.$refs[`message-${lastMessageUuidBeforePagination}`]?.[0]?.$el;
         if (elementToScroll) {
-          await elementToScroll.scrollIntoView({ block: 'start' });
+          await elementToScroll?.scrollIntoView({ block: 'start' });
           chatMessages.scrollTop += 1;
         }
       } else {
