@@ -150,6 +150,9 @@ export default {
 
 <style lang="scss" scoped>
 .modal-get-chat {
+  :deep(.unnnic-modal-dialog__container) {
+    width: 500px;
+  }
   &__content {
     display: flex;
     flex-direction: column;
