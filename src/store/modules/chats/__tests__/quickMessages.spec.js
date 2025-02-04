@@ -13,18 +13,18 @@ vi.mock('@/services/api/resources/chats/quickMessage', () => ({
 }));
 
 describe('useQuickMessages Store', () => {
+  let quickMessageStore;
   beforeEach(() => {
     setActivePinia(createPinia());
+    quickMessageStore = useQuickMessages();
   });
 
   it('should initialize with correct state', () => {
-    const store = useQuickMessages();
-    expect(store.quickMessages).toEqual([]);
-    expect(store.nextQuickMessages).toBe('');
+    expect(quickMessageStore.quickMessages).toEqual([]);
+    expect(quickMessageStore.nextQuickMessages).toBe('');
   });
 
   it('should fetch quick messages', async () => {
-    const store = useQuickMessages();
     const mockMessages = [
       { uuid: '1', title: 'Test', text: 'Message', shortcut: 't' },
     ];
@@ -33,13 +33,12 @@ describe('useQuickMessages Store', () => {
       next: 'next-url',
     });
 
-    await store.getAll();
-    expect(store.quickMessages).toEqual(mockMessages);
-    expect(store.nextQuickMessages).toBe('next-url');
+    await quickMessageStore.getAll();
+    expect(quickMessageStore.quickMessages).toEqual(mockMessages);
+    expect(quickMessageStore.nextQuickMessages).toBe('next-url');
   });
 
   it('should create a new quick message', async () => {
-    const store = useQuickMessages();
     const newMessage = {
       uuid: '2',
       title: 'New',
@@ -48,13 +47,12 @@ describe('useQuickMessages Store', () => {
     };
     QuickMessage.create.mockResolvedValue(newMessage);
 
-    await store.create(newMessage);
-    expect(store.quickMessages[0]).toEqual(newMessage);
+    await quickMessageStore.create(newMessage);
+    expect(quickMessageStore.quickMessages[0]).toEqual(newMessage);
   });
 
   it('should update a quick message', async () => {
-    const store = useQuickMessages();
-    store.quickMessages = [
+    quickMessageStore.quickMessages = [
       { uuid: '1', title: 'Old', text: 'Text', shortcut: 'o' },
     ];
 
@@ -66,18 +64,17 @@ describe('useQuickMessages Store', () => {
     };
     QuickMessage.update.mockResolvedValue();
 
-    await store.update(updatedMessage);
-    expect(store.quickMessages[0]).toEqual(updatedMessage);
+    await quickMessageStore.update(updatedMessage);
+    expect(quickMessageStore.quickMessages[0]).toEqual(updatedMessage);
   });
 
   it('should delete a quick message', async () => {
-    const store = useQuickMessages();
-    store.quickMessages = [
+    quickMessageStore.quickMessages = [
       { uuid: '1', title: 'Test', text: 'Message', shortcut: 't' },
     ];
     QuickMessage.delete.mockResolvedValue();
 
-    await store.delete('1');
-    expect(store.quickMessages).toEqual([]);
+    await quickMessageStore.delete('1');
+    expect(quickMessageStore.quickMessages).toEqual([]);
   });
 });

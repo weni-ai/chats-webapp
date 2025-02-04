@@ -13,8 +13,10 @@ vi.mock('@/services/api/resources/chats/quickMessage', () => ({
 }));
 
 describe('useQuickMessageShared Store', () => {
+  let quickMessageSharedStore;
   beforeEach(() => {
     setActivePinia(createPinia());
+    quickMessageSharedStore = useQuickMessageShared();
   });
 
   it('should fetch all shared quick messages', async () => {
@@ -23,13 +25,12 @@ describe('useQuickMessageShared Store', () => {
       next: 'next-page',
     });
 
-    const store = useQuickMessageShared();
-    const messages = await store.getAll();
+    const messages = await quickMessageSharedStore.getAll();
 
     expect(QuickMessage.getAllBySector).toHaveBeenCalled();
-    expect(store.quickMessagesShared).toHaveLength(1);
-    expect(store.quickMessagesShared[0].uuid).toBe('1');
-    expect(store.nextQuickMessagesShared).toBe('next-page');
+    expect(quickMessageSharedStore.quickMessagesShared).toHaveLength(1);
+    expect(quickMessageSharedStore.quickMessagesShared[0].uuid).toBe('1');
+    expect(quickMessageSharedStore.nextQuickMessagesShared).toBe('next-page');
     expect(messages).toHaveLength(1);
   });
 
@@ -41,10 +42,10 @@ describe('useQuickMessageShared Store', () => {
       text: 'Test',
       shortcut: '/n',
     };
+
     QuickMessage.createBySector.mockResolvedValue(newMessage);
 
-    const store = useQuickMessageShared();
-    await store.create({
+    await quickMessageSharedStore.create({
       sectorUuid: '123',
       title: 'New',
       text: 'Test',
@@ -57,17 +58,16 @@ describe('useQuickMessageShared Store', () => {
       text: 'Test',
       shortcut: '/n',
     });
-    expect(store.quickMessagesShared[0]).toEqual(newMessage);
+    expect(quickMessageSharedStore.quickMessagesShared[0]).toEqual(newMessage);
   });
 
   it('should update a shared quick message', async () => {
-    const store = useQuickMessageShared();
-    store.quickMessagesShared = [
+    quickMessageSharedStore.quickMessagesShared = [
       { uuid: '1', title: 'Old', text: 'Test', shortcut: '/o' },
     ];
     QuickMessage.updateBySector.mockResolvedValue();
 
-    await store.update({
+    await quickMessageSharedStore.update({
       quickMessageUuid: '1',
       title: 'Updated',
       text: 'New Text',
@@ -79,7 +79,7 @@ describe('useQuickMessageShared Store', () => {
       text: 'New Text',
       shortcut: '/u',
     });
-    expect(store.quickMessagesShared[0]).toEqual({
+    expect(quickMessageSharedStore.quickMessagesShared[0]).toEqual({
       uuid: '1',
       title: 'Updated',
       text: 'New Text',
@@ -88,15 +88,14 @@ describe('useQuickMessageShared Store', () => {
   });
 
   it('should delete a shared quick message', async () => {
-    const store = useQuickMessageShared();
-    store.quickMessagesShared = [
+    quickMessageSharedStore.quickMessagesShared = [
       { uuid: '1', title: 'Delete Me', text: 'Bye', shortcut: '/d' },
     ];
     QuickMessage.deleteBySector.mockResolvedValue();
 
-    await store.delete('1');
+    await quickMessageSharedStore.delete('1');
 
     expect(QuickMessage.deleteBySector).toHaveBeenCalledWith('1');
-    expect(store.quickMessagesShared).toHaveLength(0);
+    expect(quickMessageSharedStore.quickMessagesShared).toHaveLength(0);
   });
 });
