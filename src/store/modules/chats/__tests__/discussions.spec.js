@@ -166,4 +166,60 @@ describe('useDiscussions Store', () => {
 
     expect(result).toEqual({ uuid: '123', subject: 'Find Me' });
   });
+
+  it('should return add agent', async () => {
+    discussions.activeDiscussion = { uuid: '1' };
+    const newAgent = { uuid: 'agent-123', name: 'Agent Smith' };
+
+    Discussion.addAgent = vi.fn().mockResolvedValue(newAgent);
+
+    const addAgentSpy = vi.spyOn(discussions, 'addAgent');
+
+    await discussions.addAgent(newAgent);
+
+    expect(addAgentSpy).toHaveReturned(newAgent);
+  });
+
+  it('should reset new messages count for a specific discussion', () => {
+    discussions.discussions = [
+      { uuid: 'discussion-1' },
+      { uuid: 'discussion-2' },
+    ];
+
+    discussions.newMessagesByDiscussion = {
+      'discussion-1': { messages: [{}, {}, {}, {}, {}] },
+      'discussion-2': { messages: [{}, {}] },
+    };
+
+    discussions.resetNewMessagesByDiscussion({ discussion: 'discussion-1' });
+
+    expect(
+      discussions.newMessagesByDiscussion['discussion-1'].messages.length,
+    ).toBe(0);
+
+    expect(
+      discussions.newMessagesByDiscussion['discussion-2'].messages.length,
+    ).toBe(2);
+  });
+
+  it('should add new messages by discussion', () => {
+    discussions.discussions = [{ uuid: 'discussion-1' }];
+
+    discussions.newMessagesByDiscussion = {
+      'discussion-1': { messages: [] },
+    };
+
+    discussions.addNewMessagesByDiscussion({
+      discussion: 'discussion-1',
+      message: { uuid: '1' },
+    });
+
+    expect(
+      discussions.newMessagesByDiscussion['discussion-1'].messages.length,
+    ).toBe(1);
+
+    expect(
+      discussions.newMessagesByDiscussion['discussion-1'].messages[0].uuid,
+    ).toBe('1');
+  });
 });
