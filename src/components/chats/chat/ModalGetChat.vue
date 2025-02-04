@@ -155,7 +155,7 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: $unnnic-spacing-md;
+    gap: $unnnic-icon-size-ant;
   }
 
   &__title {
