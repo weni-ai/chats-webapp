@@ -1,27 +1,20 @@
 <template>
-  <section>
-    <UnnnicModal
-      :showModal="showModal"
-      :text="title"
-      :description="description"
-      modalIcon="forum"
-      scheme="neutral-darkest"
-      @close="close"
-    >
-      <template #options>
-        <UnnnicButton
-          :text="$t('cancel')"
-          type="tertiary"
-          @click="close"
-        />
-        <UnnnicButton
-          :text="$t('confirm')"
-          type="primary"
-          @click="getChat"
-        />
-      </template>
-    </UnnnicModal>
-  </section>
+  <UnnnicModalDialog
+    class="modal-get-chat"
+    :modelValue="showModal"
+    :primaryButtonProps="{ text: $t('confirm'), loading: loadingGetChat }"
+    @primary-button-click="getChat()"
+    @update:model-value="close()"
+  >
+    <section class="modal-get-chat__content">
+      <UnnnicIcon
+        icon="forum"
+        size="xl"
+      />
+      <h2 class="modal-get-chat__title">{{ title }}</h2>
+      <p class="modal-get-chat__description">{{ description }}</p>
+    </section>
+  </UnnnicModalDialog>
 </template>
 
 <script>
@@ -62,6 +55,7 @@ export default {
   data() {
     return {
       showModalCaughtChat: false,
+      loadingGetChat: false,
     };
   },
 
@@ -113,30 +107,37 @@ export default {
     },
 
     async getChat() {
-      let me = this.me.email;
+      try {
+        this.loadingGetChat = true;
+        let me = this.me.email;
 
-      if (!me) {
-        const response = await Profile.me();
-        me = response.email;
-        this.setMe(response);
+        if (!me) {
+          const response = await Profile.me();
+          me = response.email;
+          this.setMe(response);
+        }
+
+        if (this.viewedAgent.name === '') {
+          await Room.getQueueRoom(this.room.uuid, me);
+        } else {
+          await Room.take(this.room.uuid, me);
+          this.addRoom(this.room);
+        }
+
+        await this.handlingSetActiveRoom(this.room.uuid);
+
+        if (this.room.user) {
+          Room.updateReadMessages(this.room.uuid, true);
+        }
+
+        if (this.whenGetChat) this.whenGetChat();
+
+        this.close();
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.loadingGetChat = false;
       }
-
-      if (this.viewedAgent.name === '') {
-        await Room.getQueueRoom(this.room.uuid, me);
-      } else {
-        await Room.take(this.room.uuid, me);
-        this.addRoom(this.room);
-      }
-
-      await this.handlingSetActiveRoom(this.room.uuid);
-
-      if (this.room.user) {
-        Room.updateReadMessages(this.room.uuid, true);
-      }
-
-      if (this.whenGetChat) this.whenGetChat();
-
-      this.close();
     },
 
     async handlingSetActiveRoom(uuid) {
@@ -146,3 +147,23 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.modal-get-chat {
+  &__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: $unnnic-spacing-md;
+  }
+
+  &__title {
+    font-family: $unnnic-font-family-secondary;
+    color: $unnnic-color-neutral-darkest;
+    font-weight: $unnnic-font-weight-bold;
+    font-size: $unnnic-font-size-title-sm;
+    line-height: ($unnnic-font-size-title-sm + $unnnic-line-height-medium);
+  }
+}
+</style>
