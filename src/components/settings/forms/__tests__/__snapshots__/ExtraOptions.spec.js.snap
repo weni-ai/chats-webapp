@@ -26,24 +26,24 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
           <!---->
         </div>
         <!---->
-      </div><button data-v-ed84dbab="" data-v-85728205="" data-testid="tags-add-tag-button" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--secondary">
+      </div><button data-v-27a31b8d="" data-v-85728205="" data-testid="tags-add-tag-button" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--secondary">
         <!---->
         <!---->
-        <!----><span data-v-ed84dbab="" class="unnnic-button__label" data-testid="button-label"> Add</span>
+        <!----><span data-v-27a31b8d="" class="unnnic-button__label" data-testid="button-label"> Add</span>
         <!---->
       </button>
     </section>
     <!--v-if-->
   </section>
-  <section data-v-85728205="" data-testid="sector-extra-options-actions" class="actions" style="display: none;"><button data-v-ed84dbab="" data-v-85728205="" class="unnnic-button unnnic-button--size-large unnnic-button--tertiary">
+  <section data-v-85728205="" data-testid="sector-extra-options-actions" class="actions" style="display: none;"><button data-v-27a31b8d="" data-v-85728205="" class="unnnic-button unnnic-button--size-large unnnic-button--tertiary">
       <!---->
       <!---->
-      <!----><span data-v-ed84dbab="" class="unnnic-button__label" data-testid="button-label"> Cancel</span>
+      <!----><span data-v-27a31b8d="" class="unnnic-button__label" data-testid="button-label"> Cancel</span>
       <!---->
-    </button><button data-v-ed84dbab="" data-v-85728205="" data-testid="save-button" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
+    </button><button data-v-27a31b8d="" data-v-85728205="" data-testid="save-button" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
       <!---->
       <!---->
-      <!----><span data-v-ed84dbab="" class="unnnic-button__label" data-testid="button-label"> Save</span>
+      <!----><span data-v-27a31b8d="" class="unnnic-button__label" data-testid="button-label"> Save</span>
       <!---->
     </button></section>
 </section>"
