@@ -93,7 +93,7 @@ jobs:
           #   ${{env.IMAGE_TAG}}
           #   ${{env.OLD_IMAGE}}
           # no-cache: true
-          outputs: type=image,name=${{ secrets.ECR_SHARED }}/chats,push-by-digest=true,name-canonical=true,push=true
+          outputs: type=image,name=${{ secrets.ECR }}/chats,push-by-digest=true,name-canonical=true,push=true
       
       - name: Export digest
         run: |
@@ -119,13 +119,16 @@ jobs:
             TAG="$( echo "${GITHUB_REF}" | cut -d'/' -f3 )"
             if grep -qs -e '^.*.*-develop' <<< "${TAG}" ; then
               echo "Found environment: DEVELOP - ${TAG}"
-              echo "MANIFESTS_ENVIRONMENT=develop" | tee -a "${GITHUB_ENV}"
+              echo "MANIFESTS_ENVIRONMENT=develop" | tee "${GITHUB_ENV}"
+              export "MANIFESTS_ENVIRONMENT=develop"
             elif grep -qs -e '^.*.*-staging' <<< "${TAG}" ; then
               echo "Found environment: STAGING - ${TAG}"
               echo "MANIFESTS_ENVIRONMENT=staging" | tee -a "${GITHUB_ENV}"
+              export "MANIFESTS_ENVIRONMENT=staging"
             elif grep -qs -e '^.*.*' <<< "${TAG}" ; then
               echo "No environment found, assuming: PRODUCTION - ${TAG}"
               echo "MANIFESTS_ENVIRONMENT=production" | tee -a "${GITHUB_ENV}"
+              export "MANIFESTS_ENVIRONMENT=production"
             else
               echo 'Not a valid tag. Skipping...'
               exit 1
@@ -134,10 +137,14 @@ jobs:
             VERSION="${TAG}"
             echo "VERSION=${VERSION}" | tee -a "${GITHUB_ENV}"
             echo "COMMIT_SHA=$GITHUB_SHA" | tee -a "${GITHUB_ENV}"
-            echo "IMAGE_TAG=${{ secrets.ECR_SHARED }}/chats:$TAG" | tee -a "${GITHUB_ENV}"
-            echo "MANIFESTS_REPOSITORY=weni-ai/kubernetes-manifests-platform" | tee -a "${GITHUB_ENV}"
-            echo "MANIFESTS_APPLICATION=weni-flows/chats" | tee -a "${GITHUB_ENV}"
+            echo "IMAGE_TAG=${{ secrets.ECR }}/chats:webapp-${TAG}" | tee -a "${GITHUB_ENV}"
+            echo "OLD_IMAGE=${{ secrets.ECR }}/chats:webapp-${MANIFESTS_ENVIRONMENT}" | tee -a "${GITHUB_ENV}"
+            echo "IMAGE_SOURCE_URL=https://github.com/weni-ai/chats-webapp" | tee -a "${GITHUB_ENV}"
+            echo "MANIFESTS_REPOSITORY=weni-ai/kubernetes-manifests-chats" | tee -a "${GITHUB_ENV}"
+            echo "MANIFESTS_APPLICATION=chats-webapp" | tee -a "${GITHUB_ENV}"
             echo "MANIFESTS_PATCH_TARGET=deployment.json" | tee -a "${GITHUB_ENV}"
+            platform=${{ matrix.platform }}
+            echo "PLATFORM_PAIR=${platform//\//-}" | tee -a "${GITHUB_ENV}"
       
       - name: Download digests
         uses: actions/download-artifact@v4
@@ -153,7 +160,7 @@ jobs:
         uses: docker/login-action@v3
         if: github.event_name != 'pull_request'
         with:
-          registry: ${{ secrets.ECR_SHARED }}
+          registry: ${{ secrets.ECR }}
           username: ${{ secrets.AWS_ACCESS_KEY_ID_SHARED }}
           password: ${{ secrets.AWS_SECRET_ACCESS_KEY_SHARED }}
 
@@ -161,7 +168,7 @@ jobs:
         working-directory: /tmp/digests
         run: |
           docker buildx imagetools create -t "${{ env.IMAGE_TAG }}" \
-            $(printf '${{ secrets.ECR_SHARED }}/chats@sha256:%s ' *)
+            $(printf '${{ secrets.ECR }}/chats@sha256:%s ' *)
 
       - name: Check out Kubernetes Manifests
         # Now, checkout in kubernetes manifests to update image in deployments patches
