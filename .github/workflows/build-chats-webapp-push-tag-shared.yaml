@@ -88,11 +88,11 @@ jobs:
             OLD_IMAGE=${{env.OLD_IMAGE}}
           file: docker/Dockerfile
           platforms: ${{ matrix.platform }}
-          push: true
-          tags: |
-            ${{env.IMAGE_TAG}}
-            ${{env.OLD_IMAGE}}
-          no-cache: true
+          # push: true
+          # tags: |
+          #   ${{env.IMAGE_TAG}}
+          #   ${{env.OLD_IMAGE}}
+          # no-cache: true
           outputs: type=image,name=${{ secrets.ECR_SHARED }}/chats,push-by-digest=true,name-canonical=true,push=true
       
       - name: Export digest
