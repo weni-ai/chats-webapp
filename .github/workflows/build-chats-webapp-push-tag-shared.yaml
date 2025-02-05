@@ -88,7 +88,7 @@ jobs:
             OLD_IMAGE=${{env.OLD_IMAGE}}
           file: docker/Dockerfile
           platforms: ${{ matrix.platform }}
-          #push: true
+          push: true
           tags: |
             ${{env.IMAGE_TAG}}
             ${{env.OLD_IMAGE}}
