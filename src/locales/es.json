@@ -584,6 +584,10 @@
       "block_transfer_to_off_agents": {
         "switch_active": "Bloqueo de transferencias a agentes fuera de línea activo",
         "switch_inactive": "Bloqueo de transferencias a agentes fuera de línea inactivo"
+      },
+      "show_agent_status_count_timer": {
+        "switch_active": "Mostrar temporizador de recuento de estado del agente",
+        "switch_inactive": "Ocultar temporizador de recuento de estado del agente"
       }
     },
     "custom_sector": "Personalizar nuevo sector (recomendado)",
