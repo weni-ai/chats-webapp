@@ -23,6 +23,10 @@
           v-model="projectConfig.filter_offline_agents"
           :name="configBlockTransferToOffAgentsTranslation"
         />
+        <SettingsProjectOptionsItem
+          v-model="projectConfig.can_see_timer"
+          :name="configShowAgentStatusCountTimer"
+        />
       </section>
       <section class="project-options__items__custom-breaks">
         <CustomBreakOption />
@@ -58,6 +62,7 @@ export default {
         can_use_bulk_transfer: false,
         can_use_queue_prioritization: false,
         filter_offline_agents: false,
+        can_see_timer: false,
       },
     };
   },
@@ -96,6 +101,14 @@ export default {
         }`,
       );
     },
+    configShowAgentStatusCountTimer() {
+      const showAgentStatusCountTimer = this.projectConfig.can_see_timer;
+      return this.$t(
+        `config_chats.project_configs.show_agent_status_count_timer.switch_${
+          showAgentStatusCountTimer ? 'active' : 'inactive'
+        }`,
+      );
+    },
   },
 
   watch: {
@@ -121,12 +134,14 @@ export default {
         can_use_bulk_transfer,
         can_use_queue_prioritization,
         filter_offline_agents,
+        can_see_timer,
       } = this.projectConfig;
 
       Project.update({
         can_use_bulk_transfer,
         can_use_queue_prioritization,
         filter_offline_agents,
+        can_see_timer,
       });
     },
   },
