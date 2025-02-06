@@ -604,6 +604,10 @@
       "block_transfer_to_off_agents": {
         "switch_active": "Blocking transfers to offline agents active",
         "switch_inactive": "Blocking transfers to offline agents inactive"
+      },
+      "show_agent_status_count_timer": {
+        "switch_active": "Show agent status count timer",
+        "switch_inactive": "Hide agent status count timer"
       }
     },
     "custom_sector": "Customize new sector (recommended)",
