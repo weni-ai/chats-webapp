@@ -17,6 +17,7 @@
     "@weni/unnnic-system": "^2.22.0",
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
+    "date-fns": "^4.1.0",
     "iframessa": "^2.0.0",
     "is-mobile": "^4.0.0",
     "keycloak-js": "^23.0.7",
