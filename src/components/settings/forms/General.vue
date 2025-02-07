@@ -39,7 +39,7 @@
             :label="$t('sector.name')"
             :placeholder="$t('sector.placeholder')"
           />
-          <fieldset>
+          <fieldset v-if="!enableGroupsMode">
             <UnnnicLabel :label="$t('sector.managers.add.label')" />
             <UnnnicSelectSmart
               v-model="selectedManager"
@@ -104,10 +104,26 @@
             />
           </fieldset>
 
-          <!-- New field will be inserted here -->
-          <!-- <fieldset></fieldset> -->
+          <h2 class="form-section__title">
+            {{ $t('sector.link.title') }}
+          </h2>
+          <fieldset
+            v-if="enableGroupsMode"
+            class="form-section__inputs--fill-w"
+          >
+            <UnnnicLabel :label="$t('sector.link.label')" />
+            <UnnnicSelectSmart
+              v-model="selectedProject"
+              :options="[]"
+              autocomplete
+              autocompleteIconLeft
+              autocompleteClearOnFocus
+              @update:model-value="selectProject"
+            />
+          </fieldset>
 
           <UnnnicInput
+            v-else
             v-model="sector.maxSimultaneousChatsByAgent"
             :label="$t('sector.managers.working_day.limit_agents.label')"
             placeholder="4"
@@ -144,6 +160,7 @@ import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 import Sector from '@/services/api/resources/settings/sector';
 import Project from '@/services/api/resources/settings/project';
 import { useProfile } from '@/store/modules/profile';
+import { useConfig } from '@/store/modules/config';
 
 export default {
   name: 'FormSector',
@@ -168,6 +185,7 @@ export default {
       useDefaultSector: 0,
       managersPage: 0,
       selectedManager: [],
+      selectedProject: [],
       removedManagers: [],
       message: '',
       managers: [],
@@ -179,6 +197,7 @@ export default {
 
   computed: {
     ...mapState(useProfile, ['me']),
+    ...mapState(useConfig, ['enableGroupsMode']),
     managersNames() {
       const managersNames = [
         {
@@ -302,6 +321,10 @@ export default {
       this.sector.managers = this.sector.managers.filter(
         (manager) => manager.uuid !== managerUuid,
       );
+    },
+
+    selectProject(selectedProject) {
+      // TODO
     },
 
     selectManager(selectedManager) {
@@ -436,6 +459,7 @@ fieldset {
 .form-wrapper {
   display: flex;
   flex-direction: column;
+  min-height: 600px;
 
   &__radios {
     display: flex;

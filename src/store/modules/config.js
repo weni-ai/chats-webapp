@@ -68,4 +68,15 @@ export const useConfig = defineStore('config', {
       this.copilot.customRules = customRules;
     },
   },
+  getters: {
+    enableGroupsMode: ({ project }) => {
+      return !!(project.config?.its_principal || project.config?.its_secondary);
+    },
+    isPrimaryProject: ({ project }) => {
+      return !!project.config?.its_principal;
+    },
+    isSecondaryProject: ({ project }) => {
+      return !!project.config?.its_secondary;
+    },
+  },
 });

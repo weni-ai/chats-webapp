@@ -96,6 +96,10 @@
     "name": "Nome do setor",
     "placeholder": "Exemplo: Financeiro",
     "save_and_continue": "Salvar e continuar",
+    "link": {
+      "title": "Vínculo",
+      "label": "Vincular a um projeto existente"
+    },
     "managers": {
       "title": "Gerentes de atendimento",
       "add": {
@@ -569,6 +573,10 @@
     "title": "Configurações de Chats",
     "section_sectors_title": "Setores em {project}",
     "section_sectors_subtitle": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
+    "tabs": {
+      "settings": "Ajustes",
+      "groups": "Grupos de projetos"
+    },
     "project_configs": {
       "title": "Ajustes do projeto",
       "bulk_transfer": {
