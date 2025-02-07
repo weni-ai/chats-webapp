@@ -588,6 +588,7 @@
         "placeholder": "Ejemplo: Almuerzo"
       },
       "status_exceeded_limit": "Límite de estado alcanzado, borrar para añadir nuevo estado",
+      "status_duplicate_name": "Estado ya comunicado",
       "status_success": "Estado añadido con éxito",
       "status_error": "Ups, desafortunadamente los cambios no se han guardado, inténtalo de nuevo"
     },

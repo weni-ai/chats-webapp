@@ -584,6 +584,7 @@
         "placeholder": "Example: Lunch"
       },
       "status_exceeded_limit": "Status limit reached, delete to add new status",
+      "status_duplicate_name": "Status already exists",
       "status_success": "Status added successfully",
       "status_error": "Oops, unfortunately the changes were not saved, please try again"
     },
