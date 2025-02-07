@@ -96,6 +96,10 @@
     "name": "Nombre del sector",
     "placeholder": "Ejemplo: Financiero",
     "save_and_continue": "Guardar y continuar",
+    "link": {
+      "title": "Vínculo",
+      "label": "Enlace a un proyecto existente"
+    },
     "managers": {
       "title": "Gerentes de servicio",
       "add": {

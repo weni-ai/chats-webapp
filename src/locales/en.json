@@ -95,6 +95,10 @@
     "name": "Sector name",
     "placeholder": "Example: Financial",
     "save_and_continue": "Save and continue",
+    "link": {
+      "title": "Link",
+      "label": "Link to an existing project"
+    },
     "managers": {
       "title": "Service managers",
       "add": {
