@@ -565,6 +565,10 @@
     "title": "Chat Settings",
     "section_sectors_title": "Sectors in {project}",
     "section_sectors_subtitle": "Add, view and manage sectors, queues, managers and agents within your organization.",
+    "tabs": {
+      "settings": "Settings",
+      "groups": "Projects groups"
+    },
     "project_configs": {
       "title": "Project Adjustments",
       "bulk_transfer": {

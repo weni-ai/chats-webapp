@@ -569,6 +569,10 @@
     "title": "Configuración de chat",
     "section_sectors_title": "Sectores en {project}",
     "section_sectors_subtitle": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización.",
+    "tabs": {
+      "settings": "Ajustes",
+      "groups": "Grupos de proyectos"
+    },
     "project_configs": {
       "title": "Ajustes de proyectos",
       "bulk_transfer": {

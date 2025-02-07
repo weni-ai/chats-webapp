@@ -569,6 +569,10 @@
     "title": "Configurações de Chats",
     "section_sectors_title": "Setores em {project}",
     "section_sectors_subtitle": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
+    "tabs": {
+      "settings": "Ajustes",
+      "groups": "Grupos de projetos"
+    },
     "project_configs": {
       "title": "Ajustes do projeto",
       "bulk_transfer": {
