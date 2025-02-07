@@ -15,6 +15,7 @@
         v-show="!isLoadingSidebar"
         class="sidebar"
       >
+        <StatusBar />
         <PreferencesBar
           v-if="!isViewMode"
           :showFlowsTriggerButton="canTriggerFlows"
@@ -87,6 +88,7 @@ import ViewOptions from './components/ViewOptions/index.vue';
 
 import Sector from '@/services/api/resources/settings/sector.js';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
+import StatusBar from '@/components/StatusBar.vue';
 
 export default {
   name: 'ChatsLayout',
@@ -99,6 +101,7 @@ export default {
     QuickMessages,
     ChatsLayoutFooterButton,
     ViewOptions,
+    StatusBar,
   },
 
   props: {
