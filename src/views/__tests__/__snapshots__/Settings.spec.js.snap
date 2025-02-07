@@ -35,6 +35,7 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
       Chat Settings
     </h1>
   </header>
+  
   <!--v-if-->
   
   <header
@@ -99,6 +100,7 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
   <!--v-if-->
   <!--v-if-->
   <!--v-if-->
+  
   
 </section>
 `;
