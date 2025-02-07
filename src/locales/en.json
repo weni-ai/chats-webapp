@@ -1,7 +1,8 @@
 {
   "status": {
     "online": "Online",
-    "offline": "Offline"
+    "offline": "Offline",
+    "set_status": "Set status"
   },
   "view-option": "View Options",
   "preferences": {
