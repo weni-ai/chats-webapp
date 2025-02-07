@@ -580,6 +580,17 @@
       "settings": "Ajustes",
       "groups": "Grupos de proyectos"
     },
+    "custom_breaks": {
+      "title": "Pausas personalizadas",
+      "description": "Añadir nuevas pausas personalizadas, que tendrán el mismo comportamiento que las pausas sin conexión, es decir, el agente no recibirá contactos mientras utilice estas pausas personalizadas.",
+      "fields": {
+        "name": "Nuevo estado",
+        "placeholder": "Ejemplo: Almuerzo"
+      },
+      "status_exceeded_limit": "Límite de estado alcanzado, borrar para añadir nuevo estado",
+      "status_success": "Estado añadido con éxito",
+      "status_error": "Ups, desafortunadamente los cambios no se han guardado, inténtalo de nuevo"
+    },
     "project_configs": {
       "title": "Ajustes de proyectos",
       "bulk_transfer": {

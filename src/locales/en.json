@@ -576,6 +576,17 @@
       "settings": "Settings",
       "groups": "Projects groups"
     },
+    "custom_breaks": {
+      "title": "Custom breaks",
+      "description": "Add new custom breaks, all of which will have the same behavior as offline, i.e. the agent will not receive contacts while using these custom breaks.",
+      "fields": {
+        "name": "New status",
+        "placeholder": "Example: Lunch"
+      },
+      "status_exceeded_limit": "Status limit reached, delete to add new status",
+      "status_success": "Status added successfully",
+      "status_error": "Oops, unfortunately the changes were not saved, please try again"
+    },
     "project_configs": {
       "title": "Project Adjustments",
       "bulk_transfer": {
