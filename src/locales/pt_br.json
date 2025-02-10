@@ -570,6 +570,18 @@
     "title": "Configurações de Chats",
     "section_sectors_title": "Setores em {project}",
     "section_sectors_subtitle": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
+    "custom_breaks": {
+      "title": "Pausas personalizadas",
+      "description": "Adicione novas pausas personalizadas, que terão o mesmo comportamento que as off-line, ou seja, o agente não receberá contatos enquanto estiver usando essas pausas personalizadas.",
+      "fields": {
+        "name": "Novo status",
+        "placeholder": "Exemplo: Almoço"
+      },
+      "status_exceeded_limit": "Limite de status atingido, excluir para adicionar novo status",
+      "status_duplicate_name": "Status já informado",
+      "status_success": "Status adicionado com sucesso",
+      "status_error": "Ops, infelizmente as alterações não foram salvas, tente novamente"
+    },
     "project_configs": {
       "title": "Ajustes do projeto",
       "bulk_transfer": {
