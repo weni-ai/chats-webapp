@@ -98,7 +98,8 @@
     "save_and_continue": "Guardar y continuar",
     "link": {
       "title": "Vínculo",
-      "label": "Enlace a un proyecto existente"
+      "label": "Enlace a un proyecto existente",
+      "editing_disclaimer": "No es posible editar el proyecto vinculado, si desea editar el enlace debe crear un nuevo sector y seleccionar el proyecto deseado."
     },
     "managers": {
       "title": "Gerentes de servicio",

@@ -28,7 +28,10 @@
       class="form-sector-container"
       @submit.prevent="$emit('submit')"
     >
-      <section class="form-section">
+      <section
+        v-if="!enableGroupsMode"
+        class="form-section"
+      >
         <h2 class="form-section__title">
           {{ isEditing ? $t('sector.managers.title') : $t('sector.add') }}
         </h2>
@@ -67,7 +70,6 @@
           />
         </section>
       </section>
-
       <section class="form-section">
         <h2 class="form-section__title">
           {{ $t('sector.managers.working_day.title') }}
@@ -103,24 +105,32 @@
               max="23:59"
             />
           </fieldset>
-
-          <h2 class="form-section__title">
-            {{ $t('sector.link.title') }}
-          </h2>
-          <fieldset
+          <section
             v-if="enableGroupsMode"
             class="form-section__inputs--fill-w"
           >
-            <UnnnicLabel :label="$t('sector.link.label')" />
-            <UnnnicSelectSmart
-              v-model="selectedProject"
-              :options="[]"
-              autocomplete
-              autocompleteIconLeft
-              autocompleteClearOnFocus
-              @update:model-value="selectProject"
+            <h2 class="form-section__title">
+              {{ $t('sector.link.title') }}
+            </h2>
+            <fieldset>
+              <UnnnicLabel :label="$t('sector.link.label')" />
+              <UnnnicSelectSmart
+                v-model="selectedProject"
+                :options="[]"
+                autocomplete
+                autocompleteIconLeft
+                autocompleteClearOnFocus
+                :disabled="isEditing"
+                @update:model-value="selectProject"
+              />
+            </fieldset>
+            <UnnnicDisclaimer
+              v-if="isEditing"
+              class="link-project-disclaimer"
+              :text="$t('sector.link.editing_disclaimer')"
+              iconColor="feedback-yellow"
             />
-          </fieldset>
+          </section>
 
           <UnnnicInput
             v-else
@@ -236,14 +246,22 @@ export default {
 
       this.hourValidate(workingDay);
 
-      const valid = !!(
+      const commonValid = !!(
         name.trim() &&
-        managers.length > 0 &&
         workingDay?.start &&
         workingDay?.end &&
-        this.validHour &&
-        maxSimultaneousChatsByAgent
+        this.validHour
       );
+
+      const groupValid = !!this.selectedProject.length;
+
+      const singleValid = !!(
+        managers.length > 0 && maxSimultaneousChatsByAgent
+      );
+
+      const valid = this.enableGroupsMode
+        ? commonValid && groupValid
+        : commonValid && singleValid;
 
       this.$emit('changeIsValid', valid);
 
@@ -253,14 +271,13 @@ export default {
 
   mounted() {
     if (this.isEditing) {
-      this.getSectorManagers();
+      if (!this.enableGroupsMode) this.getSectorManagers();
     } else if (
       this.sector.name === this.$t('config_chats.default_sector.name')
     ) {
       this.useDefaultSector = 1;
     }
-
-    this.listProjectManagers();
+    if (!this.enableGroupsMode) this.listProjectManagers();
   },
 
   methods: {
@@ -282,7 +299,7 @@ export default {
             dayOfWeek: 'week-days',
           },
           maxSimultaneousChatsByAgent: '4',
-          managers: [meManager],
+          managers: this.enableGroupsMode ? [] : [meManager],
         };
       } else {
         this.sector = {
@@ -575,6 +592,11 @@ fieldset {
   input::-webkit-datetime-edit {
     min-width: 100%;
     width: 100%;
+  }
+
+  .link-project-disclaimer {
+    display: flex;
+    margin-top: $unnnic-spacing-ant;
   }
 }
 </style>
