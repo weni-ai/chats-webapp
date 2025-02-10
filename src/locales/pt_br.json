@@ -1,7 +1,8 @@
 {
   "status": {
     "online": "Online",
-    "offline": "Offline"
+    "offline": "Offline",
+    "set_status": "Definir status"
   },
   "preferences": {
     "title": "Preferências",
@@ -596,6 +597,10 @@
       "block_transfer_to_off_agents": {
         "switch_active": "Bloqueio de transferências para agentes offline ativo",
         "switch_inactive": "Bloqueio de transferências para agentes offline inativo"
+      },
+      "show_agent_status_count_timer": {
+        "switch_active": "Mostrar timer de contagem do status do agente",
+        "switch_inactive": "Esconder timer de contagem do status do agente"
       }
     },
     "custom_sector": "Personalizar novo setor (recomendado)",
