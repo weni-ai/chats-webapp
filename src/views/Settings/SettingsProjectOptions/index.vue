@@ -4,28 +4,29 @@
     class="settings-view__project-options"
   >
     <SettingsSectionHeader :title="$t('config_chats.project_configs.title')" />
-
     <section class="project-options__items">
-      <SettingsProjectOptionsItem
-        v-model="projectConfig.can_use_bulk_transfer"
-        :name="configBulkTransferTranslation"
-        :tooltip="$t('config_chats.project_configs.bulk_transfer.tooltip')"
-      />
-      <SettingsProjectOptionsItem
-        v-model="projectConfig.can_use_queue_prioritization"
-        :name="configQueuePrioritizationTranslation"
-        :tooltip="
-          $t('config_chats.project_configs.queue_prioritization.tooltip')
-        "
-      />
-      <SettingsProjectOptionsItem
-        v-model="projectConfig.filter_offline_agents"
-        :name="configBlockTransferToOffAgentsTranslation"
-      />
-      <SettingsProjectOptionsItem
-        v-model="projectConfig.can_see_timer"
-        :name="configShowAgentStatusCountTimer"
-      />
+      <section>
+        <SettingsProjectOptionsItem
+          v-model="projectConfig.can_use_bulk_transfer"
+          :name="configBulkTransferTranslation"
+          :tooltip="$t('config_chats.project_configs.bulk_transfer.tooltip')"
+        />
+        <SettingsProjectOptionsItem
+          v-model="projectConfig.can_use_queue_prioritization"
+          :name="configQueuePrioritizationTranslation"
+          :tooltip="
+            $t('config_chats.project_configs.queue_prioritization.tooltip')
+          "
+        />
+        <SettingsProjectOptionsItem
+          v-model="projectConfig.filter_offline_agents"
+          :name="configBlockTransferToOffAgentsTranslation"
+        />
+        <SettingsProjectOptionsItem
+          v-model="projectConfig.can_see_timer"
+          :name="configShowAgentStatusCountTimer"
+        />
+      </section>
       <section class="project-options__items__custom-breaks">
         <CustomBreakOption />
       </section>

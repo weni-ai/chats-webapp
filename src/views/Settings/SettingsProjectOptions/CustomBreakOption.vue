@@ -89,6 +89,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import i18n from '@/plugins/i18n';
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 const showModal = ref(false);
 const isLoadingCloseRoom = ref(false);
@@ -157,6 +158,13 @@ const saveStatus = async () => {
   setTimeout(() => {
     originalBreaks.value = [...customBreaks.value];
     isLoadingCloseRoom.value = false;
+    callUnnnicAlert({
+      props: {
+        text: i18n.global.t('config_chats.custom_breaks.status_success'),
+        type: 'success',
+      },
+      seconds: 5,
+    });s
     closeModal();
   }, 1000);
 };
