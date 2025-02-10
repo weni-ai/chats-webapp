@@ -26,6 +26,9 @@
         v-model="projectConfig.can_see_timer"
         :name="configShowAgentStatusCountTimer"
       />
+      <section class="project-options__items__custom-breaks">
+        <CustomBreakOption />
+      </section>
     </section>
   </section>
 </template>
@@ -40,6 +43,7 @@ import Project from '@/services/api/resources/settings/project';
 
 import SettingsProjectOptionsItem from './SettingsProjectOptionsItem.vue';
 import SettingsSectionHeader from '../SettingsSectionHeader.vue';
+import CustomBreakOption from './CustomBreakOption.vue';
 
 export default {
   name: 'SettingsProjectOptions',
@@ -47,6 +51,7 @@ export default {
   components: {
     SettingsSectionHeader,
     SettingsProjectOptionsItem,
+    CustomBreakOption,
   },
 
   data() {
@@ -147,8 +152,14 @@ export default {
   gap: $unnnic-spacing-ant;
 
   .project-options__items {
-    display: grid;
+    display: flex;
+    justify-content: space-between;
     gap: $unnnic-spacing-nano;
+
+    &__custom-breaks {
+      display: flex;
+      min-width: 236px;
+    }
   }
 }
 </style>
