@@ -164,7 +164,7 @@ const saveStatus = async () => {
         type: 'success',
       },
       seconds: 5,
-    });s
+    });
     closeModal();
   }, 1000);
 };
