@@ -76,7 +76,12 @@
           />
         </section>
       </section>
-      <section class="form-section">
+      <section
+        :class="{
+          'form-section': true,
+          'group-mode': enableGroupsMode && isEditing,
+        }"
+      >
         <h2 class="form-section__title">
           {{ $t('sector.managers.working_day.title') }}
         </h2>
@@ -515,6 +520,10 @@ fieldset {
   .form-section {
     & + .form-section {
       margin-top: $unnnic-spacing-md;
+    }
+
+    &.group-mode {
+      margin-top: 0px;
     }
 
     &__select-managers {
