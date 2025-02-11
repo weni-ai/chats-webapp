@@ -618,7 +618,8 @@
         "update": "Queue successfully updated",
         "error": "Failed to set queue settings",
         "delete_success": "Queue deleted successfully",
-        "delete_error": "Failed to delete queue"
+        "delete_error": "Failed to delete queue",
+        "config_agents_group": "Add or remove agents through groups by going to <b>Chat Settings > Groups</b>"
       }
     },
     "copilot": {

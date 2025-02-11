@@ -622,7 +622,8 @@
         "update": "Fila atualizada com sucesso",
         "error": "Falha ao definir configurações da fila",
         "delete_success": "Fila excluída com sucesso",
-        "delete_error": "Falha ao excluir a fila"
+        "delete_error": "Falha ao excluir a fila",
+        "config_agents_group": "Adicione ou remova agentes através de grupos acessando <b>Configurações de Chats > Grupos</b>"
       }
     },
     "copilot": {

@@ -28,12 +28,18 @@
       class="form-sector-container"
       @submit.prevent="$emit('submit')"
     >
-      <section
-        v-if="!enableGroupsMode"
-        class="form-section"
-      >
-        <h2 class="form-section__title">
-          {{ isEditing ? $t('sector.managers.title') : $t('sector.add') }}
+      <section class="form-section">
+        <h2
+          v-if="!isEditing"
+          class="form-section__title"
+        >
+          {{ $t('sector.add') }}
+        </h2>
+        <h2
+          v-else-if="!enableGroupsMode && isEditing"
+          class="form-section__title"
+        >
+          {{ $t('sector.managers.title') }}
         </h2>
         <section class="form-section__select-managers">
           <UnnnicInput
@@ -298,7 +304,7 @@ export default {
             end: '18:00',
             dayOfWeek: 'week-days',
           },
-          maxSimultaneousChatsByAgent: '4',
+          maxSimultaneousChatsByAgent: this.enableGroupsMode ? '' : '4',
           managers: this.enableGroupsMode ? [] : [meManager],
         };
       } else {
