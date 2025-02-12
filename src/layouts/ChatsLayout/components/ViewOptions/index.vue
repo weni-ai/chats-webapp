@@ -23,6 +23,7 @@
       <section class="chats-layout-drawer__options">
         <section class="chats-layout-drawer__option">
           <UnnnicSwitch
+            v-if="!isViewMode"
             v-model="sound"
             data-testid="switch-sound"
             size="small"
@@ -33,7 +34,7 @@
 
         <section class="chats-layout-drawer__option">
           <UnnnicButton
-            v-if="showFlowsTriggerButton"
+            v-if="showFlowsTriggerButton || !isViewMode"
             data-testid="show-flows-trigger"
             :text="$t('flows')"
             size="small"
@@ -45,6 +46,7 @@
         </section>
         <section class="chats-layout-drawer__option">
           <UnnnicButton
+            v-if="!isViewMode"
             data-testid="show-quick-messages"
             :text="$t('quick_messages.title')"
             iconLeft="bolt"
@@ -56,7 +58,7 @@
         </section>
         <section class="chats-layout-drawer__option">
           <UnnnicButton
-            v-if="dashboard"
+            v-if="dashboard || !isViewMode"
             data-testid="show-dashboard"
             text="Dashboard"
             iconLeft="bar_chart_4_bars"
@@ -93,6 +95,10 @@ defineProps({
     default: false,
   },
   dashboard: {
+    type: Boolean,
+    default: false,
+  },
+  isViewMode: {
     type: Boolean,
     default: false,
   },
