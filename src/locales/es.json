@@ -98,7 +98,8 @@
     "save_and_continue": "Guardar y continuar",
     "link": {
       "title": "Vínculo",
-      "label": "Enlace a un proyecto existente"
+      "label": "Enlace a un proyecto existente",
+      "editing_disclaimer": "No es posible editar el proyecto vinculado, si desea editar el enlace debe crear un nuevo sector y seleccionar el proyecto deseado."
     },
     "managers": {
       "title": "Gerentes de servicio",
@@ -621,7 +622,8 @@
         "update": "Fila actualizada con éxito",
         "error": "Error al configurar los ajustes de la fila",
         "delete_success": "Cola eliminada exitosamente",
-        "delete_error": "No se pudo eliminar la cola"
+        "delete_error": "No se pudo eliminar la cola",
+        "config_agents_group": "Agregue o elimine agentes a través de grupos yendo a <b>Configuración de chat > Grupos</b>"
       }
     },
     "copilot": {

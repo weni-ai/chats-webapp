@@ -97,7 +97,8 @@
     "save_and_continue": "Save and continue",
     "link": {
       "title": "Link",
-      "label": "Link to an existing project"
+      "label": "Link to an existing project",
+      "editing_disclaimer": "It is not possible to edit the linked project, if you wish to edit the link you must create a new sector and select the desired project."
     },
     "managers": {
       "title": "Service managers",
@@ -617,7 +618,8 @@
         "update": "Queue successfully updated",
         "error": "Failed to set queue settings",
         "delete_success": "Queue deleted successfully",
-        "delete_error": "Failed to delete queue"
+        "delete_error": "Failed to delete queue",
+        "config_agents_group": "Add or remove agents through groups by going to <b>Chat Settings > Groups</b>"
       }
     },
     "copilot": {

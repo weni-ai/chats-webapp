@@ -29,8 +29,17 @@
       @submit.prevent="$emit('submit')"
     >
       <section class="form-section">
-        <h2 class="form-section__title">
-          {{ isEditing ? $t('sector.managers.title') : $t('sector.add') }}
+        <h2
+          v-if="!isEditing"
+          class="form-section__title"
+        >
+          {{ $t('sector.add') }}
+        </h2>
+        <h2
+          v-else-if="!enableGroupsMode && isEditing"
+          class="form-section__title"
+        >
+          {{ $t('sector.managers.title') }}
         </h2>
         <section class="form-section__select-managers">
           <UnnnicInput
@@ -67,8 +76,12 @@
           />
         </section>
       </section>
-
-      <section class="form-section">
+      <section
+        :class="{
+          'form-section': true,
+          'group-mode': enableGroupsMode && isEditing,
+        }"
+      >
         <h2 class="form-section__title">
           {{ $t('sector.managers.working_day.title') }}
         </h2>
@@ -103,24 +116,32 @@
               max="23:59"
             />
           </fieldset>
-
-          <h2 class="form-section__title">
-            {{ $t('sector.link.title') }}
-          </h2>
-          <fieldset
+          <section
             v-if="enableGroupsMode"
             class="form-section__inputs--fill-w"
           >
-            <UnnnicLabel :label="$t('sector.link.label')" />
-            <UnnnicSelectSmart
-              v-model="selectedProject"
-              :options="[]"
-              autocomplete
-              autocompleteIconLeft
-              autocompleteClearOnFocus
-              @update:model-value="selectProject"
+            <h2 class="form-section__title">
+              {{ $t('sector.link.title') }}
+            </h2>
+            <fieldset>
+              <UnnnicLabel :label="$t('sector.link.label')" />
+              <UnnnicSelectSmart
+                v-model="selectedProject"
+                :options="[]"
+                autocomplete
+                autocompleteIconLeft
+                autocompleteClearOnFocus
+                :disabled="isEditing"
+                @update:model-value="selectProject"
+              />
+            </fieldset>
+            <UnnnicDisclaimer
+              v-if="isEditing"
+              class="link-project-disclaimer"
+              :text="$t('sector.link.editing_disclaimer')"
+              iconColor="feedback-yellow"
             />
-          </fieldset>
+          </section>
 
           <UnnnicInput
             v-else
@@ -236,14 +257,22 @@ export default {
 
       this.hourValidate(workingDay);
 
-      const valid = !!(
+      const commonValid = !!(
         name.trim() &&
-        managers.length > 0 &&
         workingDay?.start &&
         workingDay?.end &&
-        this.validHour &&
-        maxSimultaneousChatsByAgent
+        this.validHour
       );
+
+      const groupValid = !!this.selectedProject.length;
+
+      const singleValid = !!(
+        managers.length > 0 && maxSimultaneousChatsByAgent
+      );
+
+      const valid = this.enableGroupsMode
+        ? commonValid && groupValid
+        : commonValid && singleValid;
 
       this.$emit('changeIsValid', valid);
 
@@ -253,14 +282,13 @@ export default {
 
   mounted() {
     if (this.isEditing) {
-      this.getSectorManagers();
+      if (!this.enableGroupsMode) this.getSectorManagers();
     } else if (
       this.sector.name === this.$t('config_chats.default_sector.name')
     ) {
       this.useDefaultSector = 1;
     }
-
-    this.listProjectManagers();
+    if (!this.enableGroupsMode) this.listProjectManagers();
   },
 
   methods: {
@@ -281,8 +309,8 @@ export default {
             end: '18:00',
             dayOfWeek: 'week-days',
           },
-          maxSimultaneousChatsByAgent: '4',
-          managers: [meManager],
+          maxSimultaneousChatsByAgent: this.enableGroupsMode ? '' : '4',
+          managers: this.enableGroupsMode ? [] : [meManager],
         };
       } else {
         this.sector = {
@@ -494,6 +522,10 @@ fieldset {
       margin-top: $unnnic-spacing-md;
     }
 
+    &.group-mode {
+      margin-top: 0px;
+    }
+
     &__select-managers {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -575,6 +607,11 @@ fieldset {
   input::-webkit-datetime-edit {
     min-width: 100%;
     width: 100%;
+  }
+
+  .link-project-disclaimer {
+    display: flex;
+    margin-top: $unnnic-spacing-ant;
   }
 }
 </style>
