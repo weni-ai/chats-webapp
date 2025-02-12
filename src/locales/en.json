@@ -626,6 +626,20 @@
       "new": {
         "title": "New project group"
       },
+      "general_form": {
+        "title": "General definitions",
+        "service_managers": "Service managers",
+        "field": {
+          "name": {
+            "label": "Group name",
+            "placeholder": "Example: Sales"
+          },
+          "manager": {
+            "label": "Add managers",
+            "placeholder": "Search for the name or email"
+          }
+        }
+      },
       "general": "General",
       "projects": "Projects",
       "agents": "Agents",

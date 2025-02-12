@@ -5,6 +5,7 @@
     :title="$t('config_chats.groups.new.title')"
     :primaryButtonText="activePageIndex === 2 ? $t('save') : $t('continue')"
     :secondaryButtonText="activePageIndex === 0 ? $t('cancel') : $t('back')"
+    :disabledPrimaryButton="!isValid[activePageKey]"
     size="xl"
     @primary-button-click="
       activePageIndex === 2 ? finish() : (activePageIndex = activePageIndex + 1)
@@ -22,7 +23,11 @@
         :activePage="activePage"
       />
       <section class="form">
-        <General v-show="activePage === $t('config_chats.groups.general')" />
+        <General
+          v-show="activePage === $t('config_chats.groups.general')"
+          v-model="group"
+          @change-valid="updateIsValid('general', $event)"
+        />
         <Projects v-show="activePage === $t('config_chats.groups.projects')" />
         <Agents v-show="activePage === $t('config_chats.groups.agents')" />
       </section>
@@ -51,20 +56,41 @@ export default {
   emits: ['close'],
   data() {
     return {
+      group: {
+        name: '',
+        managers: [],
+        maxSimultaneousChatsByAgent: '',
+      },
       activePageIndex: 0,
       newGroupsPages: [
         this.$t('config_chats.groups.general'),
         this.$t('config_chats.groups.projects'),
         this.$t('config_chats.groups.agents'),
       ],
+      isValid: {
+        general: false,
+        projects: false,
+        agents: false,
+      },
     };
   },
   computed: {
     activePage() {
       return this.newGroupsPages[this.activePageIndex];
     },
+    activePageKey() {
+      const mapper = {
+        0: 'general',
+        1: 'projects',
+        2: 'agents',
+      };
+      return mapper[this.activePageIndex];
+    },
   },
   methods: {
+    updateIsValid(key, value) {
+      this.isValid[key] = value;
+    },
     finish() {},
   },
 };

@@ -64,6 +64,7 @@
       @close="closeNewGroupDrawer()"
     />
     <EditGroupDrawer
+      v-if="showEditGroupDrawer"
       :projectGroup="editGroup"
       :show="showEditGroupDrawer"
       @close="closeEditGroupModal()"

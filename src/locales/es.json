@@ -630,6 +630,20 @@
       "new": {
         "title": "Nuevo grupo de proyecto"
       },
+      "general_form": {
+        "title": "Definiciones generales",
+        "service_managers": "Gerentes de servicio",
+        "field": {
+          "name": {
+            "label": "Nombre del grupo",
+            "placeholder": "Ejemplo: Ventas"
+          },
+          "manager": {
+            "label": "Agregar gerentes",
+            "placeholder": "Buscar por nombre o email"
+          }
+        }
+      },
       "general": "General",
       "projects": "Proyectos",
       "agents": "Agentes",

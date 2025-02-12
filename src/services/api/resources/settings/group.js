@@ -67,4 +67,11 @@ export default {
 
     return response.data;
   },
+  async deleteAuthorization({ permissionUuid }) {
+    const endpoint = `/authorization/group_sector/${permissionUuid}`;
+
+    const response = await http.delete(endpoint);
+
+    return response.data;
+  },
 };
