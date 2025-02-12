@@ -51,6 +51,7 @@
             type="tertiary"
             size="small"
             @mousedown.prevent
+            @click="openQuickMessage"
           />
         </section>
         <section class="chats-layout-drawer__option">
@@ -108,6 +109,10 @@ const changeSound = () => {
 
 const openFlowsTrigger = () => {
   emit('open-flows-trigger');
+};
+
+const openQuickMessage = () => {
+  emit('show-quick-messages');
 };
 
 onBeforeMount(() => {
