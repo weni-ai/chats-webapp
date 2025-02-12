@@ -4,21 +4,28 @@
       v-if="!isOpen"
       :handleClick="openDrawer"
       :expandedMore="isOpen"
+      data-testid="view-btn"
     />
   </footer>
-  <Teleport to="body">
-    <div
+  <Teleport
+    to="body"
+    data-testid="teleport-body"
+  >
+    <section
       v-if="isOpen"
       class="chats-layout-drawer__overlay"
+      data-testid="drawer-overlay"
       @click="closeDrawer"
-    ></div>
-    <div
+    ></section>
+    <section
       class="chats-layout-drawer"
       :class="{ 'chats-layout-drawer--open': isOpen }"
+      data-testid="drawer"
     >
       <ViewButton
         :handleClick="closeDrawer"
         :expandedMore="isOpen"
+        data-testid="view-btn-drawer"
       />
       <section class="chats-layout-drawer__options">
         <section class="chats-layout-drawer__option">
@@ -79,7 +86,7 @@
           />
         </section>
       </section>
-    </div>
+    </section>
   </Teleport>
 </template>
 
