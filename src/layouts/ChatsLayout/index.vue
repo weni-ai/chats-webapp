@@ -30,7 +30,14 @@
         />
 
         <ChatsLayoutFooterButton class="footer-button" />
-        <ViewOptions />
+
+        <ViewOptions
+          :isViewMode="isViewMode"
+          :dashboard="canAccessDashboard"
+          :showFlowsTriggerButton="canTriggerFlows"
+          @open-flows-trigger="openFlowsTrigger"
+          @show-quick-messages="handlerShowQuickMessages"
+        />
       </div>
     </slot>
 
