@@ -30,6 +30,7 @@
         />
 
         <ChatsLayoutFooterButton class="footer-button" />
+        <ViewOptions />
       </div>
     </slot>
 
@@ -75,6 +76,7 @@ import QuickMessages from '@/components/chats/QuickMessages/index.vue';
 import TheCardGroups from './components/TheCardGroups/index.vue';
 import LayoutFlowsTrigger from './components/FlowsTrigger/index.vue';
 import ChatsLayoutFooterButton from './components/FooterButton/index.vue';
+import ViewOptions from './components/ViewOptions/index.vue';
 
 import Sector from '@/services/api/resources/settings/sector.js';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
@@ -89,6 +91,7 @@ export default {
     LayoutFlowsTrigger,
     QuickMessages,
     ChatsLayoutFooterButton,
+    ViewOptions,
   },
 
   props: {
@@ -225,7 +228,7 @@ section.chats-layout {
 
     height: 100%;
 
-    padding: 0 0 $unnnic-spacing-xs 0;
+    padding: 0;
 
     grid-column: 1;
 
