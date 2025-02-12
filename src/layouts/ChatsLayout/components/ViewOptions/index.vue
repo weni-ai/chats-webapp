@@ -33,12 +33,14 @@
 
         <section class="chats-layout-drawer__option">
           <UnnnicButton
+            v-if="showFlowsTriggerButton"
             data-testid="show-flows-trigger"
             :text="$t('flows')"
             size="small"
             type="tertiary"
             iconLeft="send"
             @mousedown.prevent
+            @click="openFlowsTrigger"
           />
         </section>
         <section class="chats-layout-drawer__option">
@@ -76,9 +78,18 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount } from 'vue';
+import { ref, onBeforeMount, defineEmits } from 'vue';
 import ViewButton from './ViewButton.vue';
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
+
+defineProps({
+  showFlowsTriggerButton: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const emit = defineEmits(['open-flows-trigger', 'show-quick-messages']);
 
 const isOpen = ref(false);
 const sound = ref(false);
@@ -93,6 +104,10 @@ const openDrawer = () => {
 
 const changeSound = () => {
   localStorage.setItem(PREFERENCES_SOUND, sound.value ? 'yes' : 'no');
+};
+
+const openFlowsTrigger = () => {
+  emit('open-flows-trigger');
 };
 
 onBeforeMount(() => {
