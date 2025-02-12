@@ -10,6 +10,12 @@ export const useSettings = defineStore('settings', {
     nextSectors: '',
     previousSectors: '',
     currentSector: null,
+
+    groups: [],
+    isLoadingGroups: false,
+    nextGroups: '',
+    previousGroups: '',
+    currentGroup: null,
   }),
 
   actions: {
@@ -31,6 +37,26 @@ export const useSettings = defineStore('settings', {
         console.error(error);
       } finally {
         this.isLoadingSectors = false;
+      }
+    },
+
+    async getGroups() {
+      const isInLastPage = !this.nextGroups && this.previousGroups;
+
+      if (this.isLoadingGroups || isInLastPage) return;
+
+      try {
+        this.isLoadingGroups = true;
+        const { results, next, previous } = await Sector.list({
+          nextReq: this.nextGroups,
+        });
+        this.groups = removeDuplicatedItems([...this.groups, ...results]);
+        this.nextGroups = next;
+        this.previousGroups = previous;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.isLoadingGroups = false;
       }
     },
 
