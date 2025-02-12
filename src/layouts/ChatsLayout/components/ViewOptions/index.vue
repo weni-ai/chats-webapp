@@ -56,12 +56,14 @@
         </section>
         <section class="chats-layout-drawer__option">
           <UnnnicButton
+            v-if="dashboard"
             data-testid="show-dashboard"
             text="Dashboard"
             iconLeft="bar_chart_4_bars"
             type="tertiary"
             size="small"
             @mousedown.prevent
+            @click="navigate('dashboard.manager')"
           />
         </section>
         <section class="chats-layout-drawer__option">
@@ -82,15 +84,22 @@
 import { ref, onBeforeMount, defineEmits } from 'vue';
 import ViewButton from './ViewButton.vue';
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
+import { useRouter } from 'vue-router';
 
 defineProps({
   showFlowsTriggerButton: {
     type: Boolean,
     default: false,
   },
+  dashboard: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['open-flows-trigger', 'show-quick-messages']);
+
+const { push } = useRouter();
 
 const isOpen = ref(false);
 const sound = ref(false);
@@ -113,6 +122,12 @@ const openFlowsTrigger = () => {
 
 const openQuickMessage = () => {
   emit('show-quick-messages');
+};
+
+const navigate = (name) => {
+  push({
+    name,
+  });
 };
 
 onBeforeMount(() => {
