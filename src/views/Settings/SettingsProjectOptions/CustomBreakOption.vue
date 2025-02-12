@@ -98,7 +98,7 @@ const customBreaks = ref([]);
 const originalBreaks = ref([]);
 const isDuplicate = ref(false);
 
-const MAX_STATUS = 6;
+const MAX_STATUS = 10;
 
 const fetchCustomBreaks = async () => {
   return new Promise((resolve) => {
