@@ -73,6 +73,7 @@
             iconLeft="history"
             type="tertiary"
             size="small"
+            @click="navigate('closed-rooms')"
           />
         </section>
       </section>
