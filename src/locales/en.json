@@ -622,10 +622,14 @@
         "config_agents_group": "Add or remove agents through groups by going to <b>Chat Settings > Groups</b>"
       }
     },
+    "groups": {
+      "delete_or_edit": "Delete or edit"
+    },
     "copilot": {
       "hint": "The Co-pilot is your agent's intelligent assistant; it can be activated later."
     },
     "new_sector": "New sector",
+    "new_group": "New group",
     "agent_title": "Agents",
     "contacts": "Contacts",
     "open": "Open"

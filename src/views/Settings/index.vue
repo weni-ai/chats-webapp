@@ -29,6 +29,9 @@
           <SettingsSectors />
         </section>
       </template>
+      <template #tab-panel-groups>
+        <SettingsGroups />
+      </template>
     </UnnnicTab>
 
     <template v-else>
@@ -48,6 +51,7 @@ import SettingsHeader from './SettingsHeader.vue';
 import SettingsProjectOptions from './SettingsProjectOptions/index.vue';
 import SettingsSectors from './SettingsSectors.vue';
 import { useConfig } from '@/store/modules/config';
+import SettingsGroups from './SettingsGroups.vue';
 
 export default {
   name: 'SettingView',
@@ -56,6 +60,7 @@ export default {
     SettingsHeader,
     SettingsProjectOptions,
     SettingsSectors,
+    SettingsGroups,
   },
 
   data() {
@@ -83,22 +88,28 @@ export default {
   },
 
   mounted() {
-    if (this.showSettings) this.getSectors();
+    if (this.showSettings) {
+      this.getSectors();
+      this.getGroups();
+    }
   },
 
   methods: {
     ...mapActions(useSettings, {
       getSectors: 'getSectors',
+      getGroups: 'getGroups',
     }),
 
     onScroll() {
       const settingsView = this.$refs.settingsView;
+
       const isScrollInBottom =
         Math.round(settingsView.scrollTop) + settingsView.clientHeight >=
         settingsView.scrollHeight - 100;
 
       if (isScrollInBottom) {
-        this.getSectors();
+        if (this.activeTab.id === 'general') this.getSectors();
+        if (this.activeTab.id === 'groups') this.getGroups();
       }
     },
 
