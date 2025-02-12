@@ -62,6 +62,7 @@ const statuses = ref([
   { value: 'active', label: 'Online', color: 'green' },
   { value: 'inactive', label: 'Offline', color: 'gray' },
   { value: 'pending', label: 'Almoço', color: 'orange' },
+  { value: 'lunch', label: 'Lanche', color: 'brown' },
 ]);
 
 const configStore = useConfig();
