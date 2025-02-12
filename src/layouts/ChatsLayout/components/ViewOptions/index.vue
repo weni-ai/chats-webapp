@@ -1,5 +1,5 @@
 <template>
-  <footer class="footer">
+  <footer class="chats-layout-footer">
     <ViewButton
       v-if="!isOpen"
       :handleClick="openDrawer"
@@ -9,27 +9,29 @@
   <Teleport to="body">
     <div
       v-if="isOpen"
-      class="drawer-overlay"
+      class="chats-layout-drawer__overlay"
       @click="closeDrawer"
     ></div>
     <div
-      class="drawer"
-      :class="{ open: isOpen }"
+      class="chats-layout-drawer"
+      :class="{ 'chats-layout-drawer--open': isOpen }"
     >
       <ViewButton
         :handleClick="closeDrawer"
         :expandedMore="isOpen"
       />
-      <section class="drawer__options">
-        <section class="drawer__option">
+      <section class="chats-layout-drawer__options">
+        <section class="chats-layout-drawer__option">
           <UnnnicSwitch
+            v-model="sound"
             data-testid="switch-sound"
             size="small"
             :textRight="$t('preferences.notifications.sound')"
+            @update:model-value="changeSound"
           />
         </section>
 
-        <section class="drawer__option">
+        <section class="chats-layout-drawer__option">
           <UnnnicButton
             data-testid="show-flows-trigger"
             :text="$t('flows')"
@@ -39,7 +41,7 @@
             @mousedown.prevent
           />
         </section>
-        <section class="drawer__option">
+        <section class="chats-layout-drawer__option">
           <UnnnicButton
             data-testid="show-quick-messages"
             :text="$t('quick_messages.title')"
@@ -49,7 +51,7 @@
             @mousedown.prevent
           />
         </section>
-        <section class="drawer__option">
+        <section class="chats-layout-drawer__option">
           <UnnnicButton
             data-testid="show-dashboard"
             text="Dashboard"
@@ -59,9 +61,9 @@
             @mousedown.prevent
           />
         </section>
-        <section class="drawer__option">
+        <section class="chats-layout-drawer__option">
           <UnnnicButton
-            class="chats-layout-footer-button__button"
+            class="chats-layout-drawer__button"
             :text="$t('chats.see_history')"
             iconLeft="history"
             type="tertiary"
@@ -74,10 +76,12 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onBeforeMount } from 'vue';
 import ViewButton from './ViewButton.vue';
+import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 
 const isOpen = ref(false);
+const sound = ref(false);
 
 const closeDrawer = () => {
   isOpen.value = false;
@@ -86,14 +90,18 @@ const closeDrawer = () => {
 const openDrawer = () => {
   isOpen.value = true;
 };
+
+const changeSound = () => {
+  localStorage.setItem(PREFERENCES_SOUND, sound.value ? 'yes' : 'no');
+};
+
+onBeforeMount(() => {
+  sound.value = (localStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'yes';
+});
 </script>
 
 <style lang="scss" scoped>
-section.chats-layout .sidebar .footer {
-  padding-right: 0;
-}
-
-.drawer-overlay {
+.chats-layout-drawer__overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -103,7 +111,7 @@ section.chats-layout .sidebar .footer {
   z-index: 999;
 }
 
-.drawer {
+.chats-layout-drawer {
   position: fixed;
   bottom: -(calc(100vw * (3 / 12)));
   width: calc(100vw * (3 / 12));
@@ -115,20 +123,26 @@ section.chats-layout .sidebar .footer {
   border-left: 1px solid $unnnic-color-neutral-soft;
   background-color: $unnnic-color-neutral-lightest;
 
+  &--open {
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
   &__option {
     width: 100%;
-    :hover {
+
+    &:hover {
       background-color: $unnnic-color-neutral-light;
     }
+
     :deep(.unnnic-switch) {
       padding: $unnnic-spacing-nano + 1px $unnnic-spacing-sm;
       width: 100%;
-      cursor: pointer;
     }
 
     :deep(.unnnic-switch__label__small) {
       color: $unnnic-color-neutral-cloudy;
-
       font-family: $unnnic-font-family-secondary;
       font-size: $unnnic-font-size-body-gt;
       font-style: normal;
@@ -155,10 +169,7 @@ section.chats-layout .sidebar .footer {
   }
 }
 
-.drawer.open {
-  bottom: 0;
-
-  display: flex;
-  flex-direction: column;
+section.chats-layout .sidebar .chats-layout-footer {
+  padding-right: 0;
 }
 </style>
