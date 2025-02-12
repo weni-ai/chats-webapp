@@ -5,7 +5,7 @@
       :text="$t('config_chats.new_group')"
       icon="add"
       class="groups__new-card"
-      @click="openNewGroupModal()"
+      @click="openNewGroupDrawer()"
     />
     <UnnnicSimpleCard
       v-for="group in groups"
@@ -59,22 +59,65 @@
         </UnnnicDropdown>
       </template>
     </UnnnicSimpleCard>
+    <NewGroupDrawer
+      :show="showNewGroupDrawer"
+      @close="closeNewGroupDrawer()"
+    />
+    <EditGroupDrawer
+      :projectGroup="editGroup"
+      :show="showEditGroupDrawer"
+      @close="closeEditGroupModal()"
+    />
   </section>
 </template>
 
 <script>
 import { useSettings } from '@/store/modules/settings';
 import { mapState } from 'pinia';
+import NewGroupDrawer from './Groups/New.vue';
+import EditGroupDrawer from './Groups/Edit.vue';
 export default {
   name: 'SettingsGroups',
+
+  components: {
+    NewGroupDrawer,
+    EditGroupDrawer,
+  },
+
+  data() {
+    return {
+      showNewGroupDrawer: false,
+      showEditGroupDrawer: false,
+      editGroup: null,
+    };
+  },
 
   computed: {
     ...mapState(useSettings, ['groups']),
   },
 
   methods: {
-    openNewGroupModal() {},
-    openEditGroupModal(group) {},
+    handleConnectOverlay(active) {
+      window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
+    },
+    openNewGroupDrawer() {
+      this.handleConnectOverlay(true);
+      this.showNewGroupDrawer = true;
+    },
+    closeNewGroupDrawer() {
+      this.handleConnectOverlay(false);
+      this.showNewGroupDrawer = false;
+    },
+    openEditGroupModal(group) {
+      this.editGroup = group;
+      this.handleConnectOverlay(true);
+      this.showEditGroupDrawer = true;
+    },
+    closeEditGroupModal() {
+      this.handleConnectOverlay(false);
+      this.showEditGroupDrawer = false;
+      this.editGroup = null;
+    },
   },
 };
 </script>

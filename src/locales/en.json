@@ -623,6 +623,12 @@
       }
     },
     "groups": {
+      "new": {
+        "title": "New project group"
+      },
+      "general": "General",
+      "projects": "Projects",
+      "agents": "Agents",
       "delete_or_edit": "Delete or edit"
     },
     "copilot": {

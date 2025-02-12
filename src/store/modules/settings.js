@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia';
 import Sector from '@/services/api/resources/settings/sector';
+import Group from '@/services/api/resources/settings/group';
+
 import cloneDeep from 'lodash.clonedeep';
 import { removeDuplicatedItems } from '@/utils/array';
 
@@ -47,7 +49,7 @@ export const useSettings = defineStore('settings', {
 
       try {
         this.isLoadingGroups = true;
-        const { results, next, previous } = await Sector.list({
+        const { results, next, previous } = await Group.list({
           nextReq: this.nextGroups,
         });
         this.groups = removeDuplicatedItems([...this.groups, ...results]);

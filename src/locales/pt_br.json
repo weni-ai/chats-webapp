@@ -627,6 +627,12 @@
       }
     },
     "groups": {
+      "new": {
+        "title": "Novo grupo de projetos"
+      },
+      "general": "Geral",
+      "projects": "Projetos",
+      "agents": "Agentes",
       "delete_or_edit": "Excluir ou editar"
     },
     "copilot": {

@@ -1,12 +1,18 @@
 import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 
+function getURLParams({ URL }) {
+  return Object.fromEntries(new URLSearchParams(URL?.split('?')?.[1]));
+}
+
 export default {
-  async list(params = {}) {
+  async list({ nextReq }) {
     const endpoint = '/group_sector/';
 
+    const paramsNextReq = getURLParams({ URL: nextReq });
+
     const response = await http.get(endpoint, {
-      params: { ...params, project: getProject() },
+      params: { ...paramsNextReq, project: getProject() },
     });
 
     return response.data;
