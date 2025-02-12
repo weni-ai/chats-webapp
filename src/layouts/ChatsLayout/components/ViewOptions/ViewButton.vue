@@ -4,9 +4,15 @@
       size="large"
       type="tertiary"
       class="view-button"
+      data-testid="header-btn"
       @click="handleClick"
     >
-      <p class="view-button__text">{{ $t('view-option') }}</p>
+      <p
+        class="view-button__text"
+        data-testid="header-text"
+      >
+        {{ $t('view-option') }}
+      </p>
       <UnnnicIcon
         data-testid="header-icon-expand"
         size="md"
