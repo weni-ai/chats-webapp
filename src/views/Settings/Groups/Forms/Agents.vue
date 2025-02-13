@@ -37,6 +37,7 @@
 import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 
 import Group from '@/services/api/resources/settings/group';
+import Project from '@/services/api/resources/settings/project';
 
 export default {
   name: 'ProjectGroupAgentsForm',
@@ -70,6 +71,8 @@ export default {
       ],
       toAddAgents: [],
       toRemoveAgents: [],
+      agentsPage: 0,
+      agentsLimitPerPage: 50,
     };
   },
   computed: {
@@ -120,7 +123,25 @@ export default {
   },
 
   methods: {
-    listAgents() {},
+    async listAgents() {
+      let hasNext = false;
+      try {
+        const offset = this.agentsPage * this.agentsLimitPerPage;
+        const { results, next } = await Project.agents(
+          offset,
+          this.agentsLimitPerPage,
+        );
+        this.agentsPage += 1;
+        this.agents = this.agents.concat(results);
+
+        hasNext = next;
+      } finally {
+        if (hasNext) {
+          this.listAgents();
+        }
+      }
+    },
+
     listGroupAgents() {},
 
     selectAgent(selectedAgent) {
