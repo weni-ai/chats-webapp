@@ -31,7 +31,7 @@
           <Projects v-model="editingProjectGroup" />
         </template>
         <template #tab-panel-agents>
-          <Agents />
+          <Agents v-model="editingProjectGroup" />
         </template>
       </UnnnicTab>
     </template>

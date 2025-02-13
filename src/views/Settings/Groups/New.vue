@@ -33,7 +33,11 @@
           v-model="group"
           @change-valid="updateIsValid('projects', $event)"
         />
-        <Agents v-show="activePage === $t('config_chats.groups.agents')" />
+        <Agents
+          v-show="activePage === $t('config_chats.groups.agents')"
+          v-model="group"
+          @change-valid="updateIsValid('agents', $event)"
+        />
       </section>
     </template>
   </UnnnicDrawer>
@@ -65,6 +69,7 @@ export default {
         managers: [],
         maxSimultaneousChatsByAgent: '',
         sectors: [],
+        agents: [],
       },
       activePageIndex: 0,
       newGroupsPages: [

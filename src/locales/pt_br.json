@@ -653,6 +653,15 @@
           }
         }
       },
+      "agents_form": {
+        "title": "Adicionar agentes",
+        "field": {
+          "agents": {
+            "label": "Adicionar agente",
+            "placeholder": "Buscar pelo nome ou e-mail"
+          }
+        }
+      },
       "general": "Geral",
       "projects": "Projetos",
       "agents": "Agentes",
