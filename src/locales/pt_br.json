@@ -644,6 +644,15 @@
           }
         }
       },
+      "projects_form": {
+        "title": "Adicionar projetos",
+        "field": {
+          "project": {
+            "label": "Adicionar projeto",
+            "placeholder": "Buscar pelo nome do projeto"
+          }
+        }
+      },
       "general": "Geral",
       "projects": "Projetos",
       "agents": "Agentes",

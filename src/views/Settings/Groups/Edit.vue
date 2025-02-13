@@ -25,10 +25,10 @@
         </template>
 
         <template #tab-panel-general>
-          <General />
+          <General v-model="editingProjectGroup" />
         </template>
         <template #tab-panel-projects>
-          <Projects />
+          <Projects v-model="editingProjectGroup" />
         </template>
         <template #tab-panel-agents>
           <Agents />
@@ -64,6 +64,7 @@ export default {
   data() {
     return {
       activeTab: { id: 'general' },
+      editingProjectGroup: {},
     };
   },
   computed: {
@@ -77,6 +78,9 @@ export default {
     tabsIds() {
       return this.tabs.map((tab) => tab.id);
     },
+  },
+  mounted() {
+    this.editingProjectGroup = { ...this.projectGroup };
   },
   methods: {
     updateTab(newTab) {

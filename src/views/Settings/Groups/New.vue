@@ -28,7 +28,11 @@
           v-model="group"
           @change-valid="updateIsValid('general', $event)"
         />
-        <Projects v-show="activePage === $t('config_chats.groups.projects')" />
+        <Projects
+          v-show="activePage === $t('config_chats.groups.projects')"
+          v-model="group"
+          @change-valid="updateIsValid('projects', $event)"
+        />
         <Agents v-show="activePage === $t('config_chats.groups.agents')" />
       </section>
     </template>
@@ -60,6 +64,7 @@ export default {
         name: '',
         managers: [],
         maxSimultaneousChatsByAgent: '',
+        sectors: [],
       },
       activePageIndex: 0,
       newGroupsPages: [
