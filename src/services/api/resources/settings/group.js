@@ -32,6 +32,24 @@ export default {
     return response.data;
   },
 
+  async listProjects({ limit, offset }) {
+    return {
+      results: [
+        {
+          name: 'Project 1',
+          uuid: '5f5a96b1-eb12-46ee-b91d-90e09d4a2206',
+          has_linked_sector: false,
+        },
+        {
+          name: 'Project 2',
+          uuid: '2',
+          has_linked_sector: true,
+        },
+      ],
+      next: null,
+    };
+  },
+
   async addSector({ groupUuid, sectorUuid }) {
     const endpoint = `/group_sector/${groupUuid}/add_sector/`;
     const response = await http.post(endpoint, { sector: sectorUuid });

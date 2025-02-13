@@ -127,7 +127,7 @@
               <UnnnicLabel :label="$t('sector.link.label')" />
               <UnnnicSelectSmart
                 v-model="selectedProject"
-                :options="[]"
+                :options="projectsNames"
                 autocomplete
                 autocompleteIconLeft
                 autocompleteClearOnFocus
@@ -176,13 +176,16 @@
 <script>
 import { mapActions, mapState } from 'pinia';
 import { useSettings } from '@/store/modules/settings';
-import unnnic from '@weni/unnnic-system';
+
 import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 import Sector from '@/services/api/resources/settings/sector';
 import Project from '@/services/api/resources/settings/project';
+import Group from '@/services/api/resources/settings/group';
+
 import { useProfile } from '@/store/modules/profile';
 import { useConfig } from '@/store/modules/config';
 
+import unnnic from '@weni/unnnic-system';
 export default {
   name: 'FormSector',
 
@@ -204,21 +207,25 @@ export default {
   data() {
     return {
       useDefaultSector: 0,
-      managersPage: 0,
       selectedManager: [],
       selectedProject: [],
       removedManagers: [],
       message: '',
       managers: [],
+      projects: [],
       validHour: false,
       openModalDelete: false,
-      agentsLimitPerPage: 50,
+      managersPage: 0,
+      managersLimitPerPage: 50,
+      secondaryProjectsPage: 0,
+      secondaryProjectsLimitPerPage: 50,
     };
   },
 
   computed: {
     ...mapState(useProfile, ['me']),
     ...mapState(useConfig, ['enableGroupsMode']),
+
     managersNames() {
       const managersNames = [
         {
@@ -240,6 +247,22 @@ export default {
       });
 
       return managersNames;
+    },
+
+    projectsNames() {
+      const projectsNames = [
+        {
+          value: '',
+          label: this.$t('sector.managers.add.placeholder'),
+        },
+      ];
+
+      this.projects.forEach((project) => {
+        const { name, uuid } = project;
+        projectsNames.push({ value: uuid, label: name });
+      });
+
+      return projectsNames;
     },
 
     sector: {
@@ -281,20 +304,34 @@ export default {
   },
 
   mounted() {
-    if (this.isEditing) {
-      if (!this.enableGroupsMode) this.getSectorManagers();
-    } else if (
-      this.sector.name === this.$t('config_chats.default_sector.name')
-    ) {
+    const isDefaultSector =
+      this.sector.name === this.$t('config_chats.default_sector.name');
+
+    if (this.isEditing && !this.enableGroupsMode) {
+      this.getSectorManagers();
+    } else if (isDefaultSector) {
       this.useDefaultSector = 1;
     }
+
     if (!this.enableGroupsMode) this.listProjectManagers();
+    else {
+      this.listSecondaryProjects().then(() => {
+        if (this.isEditing) {
+          const secondaryProjectUuid = this.sector.config?.integration_token;
+          const selectedProject = this.projectsNames.find(
+            (project) => project.value === secondaryProjectUuid,
+          );
+          if (selectedProject) this.selectedProject = [selectedProject];
+        }
+      });
+    }
   },
 
   methods: {
     ...mapActions(useSettings, {
       actionDeleteSector: 'deleteSector',
     }),
+
     updateDefaultSectorValue(activate) {
       this.useDefaultSector = activate;
       if (activate) {
@@ -351,10 +388,6 @@ export default {
       );
     },
 
-    selectProject(selectedProject) {
-      // TODO
-    },
-
     selectManager(selectedManager) {
       if (selectedManager.length > 0) {
         const manager = this.managers.find((manager) => {
@@ -364,6 +397,10 @@ export default {
         });
         this.addSectorManager(manager);
       }
+    },
+
+    selectProject(selectedProject) {
+      this.sector.config.integration_token = selectedProject[0].value;
     },
 
     photo(link) {
@@ -398,10 +435,10 @@ export default {
     async listProjectManagers() {
       let hasNext = false;
       try {
-        const offset = this.managersPage * this.agentsLimitPerPage;
+        const offset = this.managersPage * this.managersLimitPerPage;
         const { results, next } = await Project.managers(
           offset,
-          this.agentsLimitPerPage,
+          this.managersLimitPerPage,
         );
         this.managersPage += 1;
         this.managers = this.managers.concat(results);
@@ -410,6 +447,29 @@ export default {
       } finally {
         if (hasNext) {
           this.listProjectManagers();
+        }
+      }
+    },
+
+    async listSecondaryProjects() {
+      let hasNext = false;
+      try {
+        const offset =
+          this.secondaryProjectsPage * this.secondaryProjectsLimitPerPage;
+        const { results, next } = await Group.listProjects({
+          limit: this.secondaryProjectsLimitPerPage,
+          offset,
+        });
+
+        this.secondaryProjectsPage += 1;
+        this.projects = this.projects.concat(results);
+
+        hasNext = next;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        if (hasNext) {
+          this.listSecondaryProjects();
         }
       }
     },

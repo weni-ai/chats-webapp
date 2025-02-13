@@ -112,7 +112,8 @@ import { useSettings } from '@/store/modules/settings';
 import isMobile from 'is-mobile';
 
 import Unnnic from '@weni/unnnic-system';
-import { mapWritableState } from 'pinia';
+import { mapState, mapWritableState } from 'pinia';
+import { useConfig } from '@/store/modules/config';
 
 export default {
   name: 'NewSectorDrawer',
@@ -145,6 +146,9 @@ export default {
         can_trigger_flows: true,
         can_edit_custom_fields: true,
         sign_messages: true,
+        config: {
+          integration_token: '',
+        },
         workingDay: {
           start: '',
           end: '',
@@ -171,6 +175,7 @@ export default {
   },
   computed: {
     ...mapWritableState(useSettings, ['sectors']),
+    ...mapState(useConfig, ['enableGroupsMode']),
     showDiscartQuestion() {
       const { name, workingDay, maxSimultaneousChatsByAgent, managers } =
         this.sector;
@@ -217,6 +222,7 @@ export default {
           workingDay,
           maxSimultaneousChatsByAgent,
           managers,
+          config,
         } = this.sector;
 
         const createSectorBody = {
@@ -226,7 +232,10 @@ export default {
           name,
           work_start: workingDay.start,
           work_end: workingDay.end,
-          rooms_limit: maxSimultaneousChatsByAgent,
+          rooms_limit: this.enableGroupsMode
+            ? '0'
+            : maxSimultaneousChatsByAgent,
+          config,
         };
 
         const createdSector = await Sector.create(createSectorBody);
