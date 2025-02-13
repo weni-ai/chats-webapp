@@ -70,7 +70,8 @@ describe('ViewOptions', () => {
             template: '<input type="checkbox" data-testid="switch-sound" />',
           },
           UnnnicButton: {
-            template: '<button><slot /></button>',
+            template: '<button @click="handleClick"><slot /></button>',
+            props: ['handleClick', 'expandedMore'],
           },
           teleport: true,
         },
@@ -265,6 +266,61 @@ describe('ViewOptions', () => {
     it('should match the snapshot', () => {
       wrapper = createWrapper();
       expect(wrapper.element).toMatchSnapshot();
+    });
+  });
+
+  describe('Button Event Handlers', () => {
+    it('should prevent mousedown default on flows trigger button', async () => {
+      wrapper = createWrapper({ showFlowsTriggerButton: true });
+      const button = wrapper.find('[data-testid="show-flows-trigger"]');
+      const preventDefault = vi.fn();
+
+      await button.trigger('mousedown', { preventDefault });
+      expect(preventDefault).toHaveBeenCalled();
+    });
+
+    it('should prevent mousedown default on quick messages button', async () => {
+      wrapper = createWrapper({ isViewMode: false });
+      const button = wrapper.find('[data-testid="show-quick-messages"]');
+      const preventDefault = vi.fn();
+
+      await button.trigger('mousedown', { preventDefault });
+      expect(preventDefault).toHaveBeenCalled();
+    });
+
+    it('should prevent mousedown default on dashboard button', async () => {
+      wrapper = createWrapper({ dashboard: true });
+      const button = wrapper.find('[data-testid="show-dashboard"]');
+      const preventDefault = vi.fn();
+
+      await button.trigger('mousedown', { preventDefault });
+      expect(preventDefault).toHaveBeenCalled();
+    });
+  });
+
+  describe('Sound Switch Complete Interactions', () => {
+    it('should handle full sound switch lifecycle', async () => {
+      wrapper = createWrapper({ isViewMode: false });
+
+      await wrapper
+        .findComponent('[data-testid="switch-sound"]')
+        .setValue(false);
+      expect(wrapper.vm.sound).toBe(false);
+
+      const switchComponent = wrapper.findComponent(
+        '[data-testid="switch-sound"]',
+      );
+      await switchComponent.setValue(true);
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.sound).toBe(true);
+      expect(localStorageMock.setItem).toHaveBeenCalledWith(
+        PREFERENCES_SOUND,
+        'yes',
+      );
+
+      await switchComponent.trigger('update:model-value', true);
+      expect(wrapper.vm.sound).toBe(true);
     });
   });
 });
