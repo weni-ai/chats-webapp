@@ -25,7 +25,7 @@
         :key="sector.uuid"
         class="groups-projects-form__list-item"
       >
-        <p>{{ sector.project?.name || sector.name }}</p>
+        <p class="list-item-name">{{ sector.project?.name || sector.name }}</p>
         <UnnnicIcon
           icon="close"
           clickable
@@ -53,7 +53,7 @@ export default {
   data() {
     return {
       selectedSector: [],
-      sectors: [],
+      sectors: [{ name: 'Project A', uuid: '1' }],
       toAddProjects: [],
       toRemoveSectors: [],
     };
@@ -154,6 +154,7 @@ export default {
   gap: $unnnic-spacing-sm;
 
   &__title {
+    font-family: $unnnic-font-family-secondary;
     margin-top: $unnnic-spacing-sm;
     font-weight: $unnnic-font-weight-bold;
     color: $unnnic-color-neutral-dark;
@@ -170,6 +171,13 @@ export default {
       width: 100%;
       padding-bottom: $unnnic-spacing-xs;
       border-bottom: 1px solid $unnnic-color-neutral-light;
+      .list-item-name {
+        font-family: $unnnic-font-family-secondary;
+        color: $unnnic-color-neutral-dark;
+        font-weight: $unnnic-font-weight-bold;
+        font-size: $unnnic-font-size-body-gt;
+        line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
+      }
     }
   }
 
