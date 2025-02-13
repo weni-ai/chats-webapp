@@ -60,6 +60,7 @@
       </template>
     </UnnnicSimpleCard>
     <NewGroupDrawer
+      v-if="showNewGroupDrawer"
       :show="showNewGroupDrawer"
       @close="closeNewGroupDrawer()"
     />
