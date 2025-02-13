@@ -82,6 +82,7 @@
             iconLeft="history"
             type="tertiary"
             size="small"
+            data-testid="show-see_history"
             @click="navigate('closed-rooms')"
           />
         </section>

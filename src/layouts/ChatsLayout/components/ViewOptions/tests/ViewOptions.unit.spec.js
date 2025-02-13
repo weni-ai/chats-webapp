@@ -1,14 +1,27 @@
-import { beforeAll, afterAll, describe, expect, it, vi } from 'vitest';
+import {
+  beforeAll,
+  afterAll,
+  describe,
+  expect,
+  it,
+  vi,
+  beforeEach,
+} from 'vitest';
 import { mount, config } from '@vue/test-utils';
 import ViewOptions from '@/layouts/ChatsLayout/components/ViewOptions/index.vue';
 import ViewButton from '@/layouts/ChatsLayout/components/ViewOptions/ViewButton.vue';
 import i18n from '@/plugins/i18n';
+import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 
 const mockPush = vi.fn();
 vi.mock('vue-router', () => ({
   useRouter: () => ({
     push: mockPush,
   }),
+}));
+
+vi.mock('@/services/api/websocket/soundNotification.js', () => ({
+  PREFERENCES_SOUND: 'WENICHATS_PREFERENCES_SOUND',
 }));
 
 beforeAll(() => {
@@ -25,6 +38,25 @@ afterAll(() => {
 
 describe('ViewOptions', () => {
   let wrapper;
+  let localStorageMock;
+
+  beforeEach(() => {
+    localStorageMock = {
+      storage: {},
+      getItem: vi.fn((key) => localStorageMock.storage[key]),
+      setItem: vi.fn((key, value) => {
+        localStorageMock.storage[key] = value;
+      }),
+      clear: vi.fn(() => {
+        localStorageMock.storage = {};
+      }),
+    };
+
+    Object.defineProperty(window, 'localStorage', {
+      value: localStorageMock,
+    });
+  });
+
   const createWrapper = (props = {}) => {
     return mount(ViewOptions, {
       props,
@@ -78,6 +110,64 @@ describe('ViewOptions', () => {
         true,
       );
     });
+
+    it('should render UnnnicSwitch when isViewMode is false', () => {
+      wrapper = createWrapper({ isViewMode: false });
+      expect(wrapper.find('[data-testid="switch-sound"]').exists()).toBe(true);
+    });
+
+    it('should not render UnnnicSwitch when isViewMode is true', () => {
+      wrapper = createWrapper({ isViewMode: true });
+      expect(wrapper.find('[data-testid="switch-sound"]').exists()).toBe(false);
+    });
+
+    it('should update localStorage when changeSound is called', async () => {
+      wrapper = createWrapper();
+
+      wrapper.vm.sound = true;
+      await wrapper.vm.changeSound();
+      expect(localStorageMock.setItem).toHaveBeenCalledWith(
+        PREFERENCES_SOUND,
+        'yes',
+      );
+      expect(localStorageMock.getItem(PREFERENCES_SOUND)).toBe('yes');
+      expect(wrapper.vm.sound).toBe(true);
+
+      wrapper.vm.sound = false;
+      await wrapper.vm.changeSound();
+      expect(localStorageMock.setItem).toHaveBeenCalledWith(
+        PREFERENCES_SOUND,
+        'no',
+      );
+      expect(localStorageMock.getItem(PREFERENCES_SOUND)).toBe('no');
+      expect(wrapper.vm.sound).toBe(false);
+    });
+
+    it('should pass the correct value to UnnnicSwitch v-model', () => {
+      wrapper = createWrapper({ isViewMode: false, sound: true });
+      expect(
+        wrapper.find('[data-testid="switch-sound"]').attributes('modelvalue'),
+      ).toBe('true');
+    });
+
+    it('should update sound when UnnnicSwitch is toggled', async () => {
+      wrapper = createWrapper({ isViewMode: false, sound: false });
+      const switchComponent = wrapper.findComponent(
+        '[data-testid="switch-sound"]',
+      );
+
+      await switchComponent.setValue(true);
+      expect(wrapper.vm.sound).toBe(true);
+    });
+    it('should update sound when UnnnicSwitch is toggled', async () => {
+      wrapper = createWrapper({ isViewMode: false, sound: true });
+      const switchComponent = wrapper.findComponent(
+        '[data-testid="switch-sound"]',
+      );
+
+      await switchComponent.setValue(false);
+      expect(wrapper.vm.sound).toBe(false);
+    });
   });
 
   describe('Events', () => {
@@ -91,6 +181,18 @@ describe('ViewOptions', () => {
       wrapper = createWrapper();
       await wrapper.vm.openDrawer();
       await wrapper.find('[data-testid="drawer-overlay"]').trigger('click');
+      expect(wrapper.find('[data-testid="drawer-overlay"]').exists()).toBe(
+        false,
+      );
+    });
+
+    it('should close drawer when function is called', async () => {
+      wrapper = createWrapper();
+      await wrapper.vm.openDrawer();
+      expect(wrapper.find('[data-testid="drawer-overlay"]').exists()).toBe(
+        true,
+      );
+      await wrapper.vm.closeDrawer();
       expect(wrapper.find('[data-testid="drawer-overlay"]').exists()).toBe(
         false,
       );
@@ -117,6 +219,45 @@ describe('ViewOptions', () => {
       expect(mockPush).toHaveBeenCalledWith({
         name: 'dashboard.manager',
       });
+    });
+    it('should render dashboard button when dashboard is true', () => {
+      wrapper = createWrapper({ dashboard: true });
+      expect(wrapper.find('[data-testid="show-dashboard"]').exists()).toBe(
+        true,
+      );
+    });
+
+    it('should render dashboard button when isViewMode is false', () => {
+      wrapper = createWrapper({ isViewMode: false });
+      expect(wrapper.find('[data-testid="show-dashboard"]').exists()).toBe(
+        true,
+      );
+    });
+
+    it('should not render dashboard button when dashboard is false and isViewMode is true', () => {
+      wrapper = createWrapper({ dashboard: false, isViewMode: true });
+      expect(wrapper.find('[data-testid="show-dashboard"]').exists()).toBe(
+        false,
+      );
+    });
+
+    it('should call navigate when dashboard button is clicked', async () => {
+      wrapper = createWrapper({ dashboard: true });
+      await wrapper.find('[data-testid="show-dashboard"]').trigger('click');
+      expect(mockPush).toHaveBeenCalledWith({ name: 'dashboard.manager' });
+    });
+
+    it('should render the see history button', () => {
+      wrapper = createWrapper();
+      expect(wrapper.find('[data-testid="show-see_history"]').exists()).toBe(
+        true,
+      );
+    });
+
+    it('should call navigate when see history button is clicked', async () => {
+      wrapper = createWrapper();
+      await wrapper.find('[data-testid="show-see_history"]').trigger('click');
+      expect(mockPush).toHaveBeenCalledWith({ name: 'closed-rooms' });
     });
   });
 
