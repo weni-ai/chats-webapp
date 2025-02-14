@@ -1,20 +1,31 @@
 <template>
-  <header class="status-bar">
+  <header
+    class="status-bar"
+    data-testid="status-bar"
+  >
     <section
       class="status-bar__selected"
+      data-testid="status-bar-selected"
       @click="toggleDropdown"
     >
       <section class="status-bar__content">
         <section
           class="status-bar__icon"
+          data-testid="status-bar-icon"
           :style="{ backgroundColor: selectedStatus.color }"
         ></section>
-        <p class="status-bar__label">{{ selectedStatus.label }}</p>
+        <p
+          class="status-bar__label"
+          data-testid="selected-status-label"
+        >
+          {{ selectedStatus.label }}
+        </p>
         <section
           v-if="
             project.config?.can_see_timer && selectedStatus.value !== 'inactive'
           "
           class="status-bar__timer"
+          data-testid="status-bar-timer"
         >
           {{ formattedTime }}
         </section>
@@ -35,18 +46,30 @@
     <ul
       v-if="isOpen"
       class="status-bar__list status-bar__list--open"
+      data-testid="status-bar-list-open"
     >
       <li
         v-for="status in statuses"
         :key="status.value"
         class="status-bar__item"
+        data-testid="status-bar-item"
         @click="selectStatus(status)"
       >
         <section
           class="status-bar__icon"
-          :style="{ backgroundColor: status.color }"
+          data-testid="status-bar-icon-inside"
+          :class="{
+            'status-bar--active': status.label === 'Online',
+            'status-bar--inactive': status.label === 'Offline',
+            'status-bar--custom': !['Online', 'Offline'].includes(status.label),
+          }"
         ></section>
-        <p class="status-bar__item-label">{{ status.label }}</p>
+        <p
+          class="status-bar__item-label"
+          data-testid="status-bar-item-label"
+        >
+          {{ status.label }}
+        </p>
       </li>
     </ul>
   </header>
@@ -131,7 +154,7 @@ const selectStatus = async (newStatus) => {
 };
 
 onMounted(() => {
-  if (!startDate.value && project.value) {
+  if (!startDate.value && project) {
     startDate.value = getLocaleDate();
   }
 
@@ -179,6 +202,19 @@ const toggleDropdown = () => {
     width: $unnnic-spacing-xs;
     height: $unnnic-spacing-xs;
     border-radius: 50%;
+    background-color: $unnnic-color-neutral-cleanest;
+  }
+
+  &--active {
+    background-color: $unnnic-color-aux-green-300;
+  }
+
+  &--inactive {
+    background-color: $unnnic-color-neutral-cleanest;
+  }
+
+  &--custom {
+    background-color: $unnnic-color-aux-orange-500;
   }
 
   &__timer {
