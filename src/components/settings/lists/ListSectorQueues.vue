@@ -102,6 +102,7 @@
     type="alert"
     icon="alert-circle-1"
     scheme="feedback-red"
+    data-testid="delete-queue-modal"
     :title="$t('delete_queue_modal.text', { queue: queueToDelete.name })"
     :description="$t('cant_revert')"
     :validate="`${queueToDelete.name}`"
