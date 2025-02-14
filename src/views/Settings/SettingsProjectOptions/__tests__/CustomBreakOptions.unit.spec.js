@@ -13,7 +13,6 @@ import i18n from '@/plugins/i18n';
 import customStatus from '@/services/api/resources/chats/pauseStatus';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
-// Mock external dependencies
 vi.mock('@/services/api/resources/chats/pauseStatus', () => ({
   default: {
     getCustomStatusTypeList: vi.fn(),
