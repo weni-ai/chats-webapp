@@ -12,7 +12,7 @@
     :title="$t('config_chats.custom_breaks.title')"
     :primaryButtonProps="{
       text: $t('save'),
-      loading: isLoadingCloseRoom,
+      loading: isLoadingSaveStatus,
       disabled: !canSave,
     }"
     :secondaryButtonProps="{ text: $t('cancel') }"
@@ -66,21 +66,32 @@
         </p>
       </section>
 
-      <section class="custom-breaks-modal__list">
+      <section
+        v-if="!isLoadingStatusData"
+        class="custom-breaks-modal__list"
+      >
         <div
           v-for="(status, index) in customBreaks"
           :key="index"
           class="custom-breaks-modal__item"
         >
-          <p class="custom-breaks-modal__list__status">{{ status }}</p>
+          <p class="custom-breaks-modal__list__status">{{ status.name }}</p>
           <UnnnicButtonIcon
+            v-if="!isLoadingRemoveStatus"
             icon="close"
             size="sm"
             class="delete-icon"
             type="tertiary"
             @click.prevent.stop="removeStatus(index)"
           />
+          <UnnnicIconLoading v-else />
         </div>
+      </section>
+      <section
+        v-else
+        class="custom-breaks-modal__loading"
+      >
+        <UnnnicIconLoading />
       </section>
     </section>
   </UnnnicModalDialog>
@@ -90,9 +101,15 @@
 import { ref, computed } from 'vue';
 import i18n from '@/plugins/i18n';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
+import customStatus from '@/services/api/resources/chats/pauseStatus';
+import { useConfig } from '@/store/modules/config';
+
+const config = useConfig();
 
 const showModal = ref(false);
-const isLoadingCloseRoom = ref(false);
+const isLoadingSaveStatus = ref(false);
+const isLoadingStatusData = ref(false);
+const isLoadingRemoveStatus = ref(false);
 const customBreakName = ref('');
 const customBreaks = ref([]);
 const originalBreaks = ref([]);
@@ -100,15 +117,16 @@ const isDuplicate = ref(false);
 
 const MAX_STATUS = 10;
 
-const fetchCustomBreaks = async () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const fakeData = ['Em pausa', 'Em reunião'];
-      originalBreaks.value = [...fakeData];
-      customBreaks.value = [...fakeData];
-      resolve(fakeData);
-    }, 500);
-  });
+const getStatus = async () => {
+  isLoadingStatusData.value = true;
+  try {
+    const data = await customStatus.getCustomStatusTypeList();
+    customBreaks.value = data.results;
+  } catch (error) {
+    console.error('error get status', error);
+  } finally {
+    isLoadingStatusData.value = false;
+  }
 };
 
 const isLimitReached = computed(() => customBreaks.value.length >= MAX_STATUS);
@@ -131,7 +149,7 @@ const errorMessage = computed(() => {
 const validateInput = () => {
   const lowerCaseName = customBreakName.value.trim().toLowerCase();
   isDuplicate.value = customBreaks.value.some(
-    (status) => status.toLowerCase() === lowerCaseName,
+    (status) => status.name.toLowerCase() === lowerCaseName,
   );
 };
 
@@ -141,23 +159,51 @@ const addStatus = () => {
     customBreakName.value.trim() &&
     !isDuplicate.value
   ) {
-    customBreaks.value.push(customBreakName.value.trim());
+    customBreaks.value.push({
+      name: customBreakName.value.trim(),
+    });
     customBreakName.value = '';
     isDuplicate.value = false;
   }
 };
 
-const removeStatus = (index) => {
-  customBreaks.value.splice(index, 1);
+const removeStatus = async (index) => {
+  const currentStatus = customBreaks.value[index];
+  if (currentStatus.uuid) {
+    isLoadingRemoveStatus.value = true;
+    try {
+      await customStatus.deleteCustomStatusType({
+        statusUuid: currentStatus.uuid,
+      });
+      customBreaks.value.splice(index, 1);
+    } catch (error) {
+      callUnnnicAlert({
+        props: {
+          text: i18n.global.t('config_chats.custom_breaks.status_error'),
+          type: 'error',
+        },
+        seconds: 5,
+      });
+    } finally {
+      isLoadingRemoveStatus.value = false;
+    }
+  } else customBreaks.value.splice(index, 1);
 };
 
 const saveStatus = async () => {
   if (!canSave.value) return;
 
-  isLoadingCloseRoom.value = true;
-  setTimeout(() => {
-    originalBreaks.value = [...customBreaks.value];
-    isLoadingCloseRoom.value = false;
+  isLoadingSaveStatus.value = true;
+  try {
+    const dataStatus = customBreaks.value.map((item) => ({
+      name: item.name,
+      project: config.project.uuid,
+    }));
+
+    await customStatus.createCustomStatusType({
+      status: dataStatus,
+    });
+
     callUnnnicAlert({
       props: {
         text: i18n.global.t('config_chats.custom_breaks.status_success'),
@@ -166,12 +212,24 @@ const saveStatus = async () => {
       seconds: 5,
     });
     closeModal();
-  }, 1000);
+  } catch (error) {
+    console.error('error create custom status', error);
+
+    callUnnnicAlert({
+      props: {
+        text: i18n.global.t('config_chats.custom_breaks.status_error'),
+        type: 'error',
+      },
+      seconds: 5,
+    });
+  } finally {
+    isLoadingSaveStatus.value = false;
+  }
 };
 
 const openModal = async () => {
   showModal.value = true;
-  await fetchCustomBreaks();
+  await getStatus();
 };
 
 const closeModal = () => {
@@ -242,6 +300,13 @@ const closeModal = () => {
       font-weight: $unnnic-font-weight-bold;
       line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
     }
+  }
+
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: $unnnic-spacing-sm;
   }
 
   &__item {
