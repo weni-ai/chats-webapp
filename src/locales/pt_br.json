@@ -4,6 +4,7 @@
     "offline": "Offline",
     "set_status": "Definir status"
   },
+  "view-option": "Opções", 
   "preferences": {
     "title": "Preferências",
     "notifications": {

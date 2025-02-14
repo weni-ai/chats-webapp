@@ -4,6 +4,7 @@
     "offline": "Desconectada",
     "set_status": "Establecer estado"
   },
+  "view-option": "Opciones",
   "preferences": {
     "title": "Preferencias",
     "notifications": {
