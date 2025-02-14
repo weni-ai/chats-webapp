@@ -84,7 +84,10 @@
             type="tertiary"
             @click.prevent.stop="removeStatus(index)"
           />
-          <UnnnicIconLoading v-else />
+          <UnnnicIconLoading
+            v-else
+            size="sm"
+          />
         </div>
       </section>
       <section
