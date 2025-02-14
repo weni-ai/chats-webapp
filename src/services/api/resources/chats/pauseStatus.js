@@ -1,23 +1,26 @@
 import http from '@/services/api/http';
 
 export default {
-  async createCustomStatusType({ name, projectUuid }) {
+  async createCustomStatusType({ status }) {
     const response = await http
       .post(`custom_status_type/`, {
-        name,
-        project: projectUuid,
+        status,
       })
-      .then((response) => response.data)
-      .catch((error) => error.response);
+      .then((response) => response.data);
     return response;
   },
   async deleteCustomStatusType({ statusUuid }) {
-    const response = http.delete(`custom_status_type/${statusUuid}/`);
-    return response.data;
+    const response = http
+      .delete(`custom_status_type/${statusUuid}/`)
+      .then((response) => response.data);
+    return response;
   },
   async getCustomStatusTypeList() {
-    const response = await http.get(`custom_status_type`);
-    return response.data;
+    const response = await http
+      .get(`custom_status_type`)
+      .then((response) => response.data);
+
+    return response || [];
   },
   async getCustomStatusType({ statusUuid }) {
     const response = await http.get(`custom_status_type/${statusUuid}/`);
@@ -33,7 +36,7 @@ export default {
       .catch((error) => error.response);
     return response;
   },
-  async CloseCustomStatus({ statusUuid, endTime }) {
+  async closeCustomStatus({ statusUuid, endTime }) {
     const response = http
       .post(`custom_status/${statusUuid}/close_status`, {
         end_time: endTime,
