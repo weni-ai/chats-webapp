@@ -419,4 +419,32 @@ describe('FormSectorGeneral', () => {
       wrapper.vm.projectsNames[1].value,
     );
   });
+
+  it('should call required methods when enableGroupsMode is true and isEditing is true', async () => {
+    const listSecondaryProjects = vi.spyOn(
+      FormSectorGeneral.methods,
+      'listSecondaryProjects',
+    );
+
+    mount(FormSectorGeneral, {
+      global: {
+        plugins: [
+          router,
+          createTestingPinia({
+            initialState: {
+              config: { project: { config: { its_principal: true } } },
+            },
+          }),
+        ],
+      },
+      props: {
+        modelValue: { ...defaultProps.modelValue },
+        isEditing: true,
+      },
+    });
+
+    await flushPromises();
+
+    expect(listSecondaryProjects).toHaveBeenCalled();
+  });
 });
