@@ -124,7 +124,11 @@ const getStatus = async () => {
   isLoadingStatusData.value = true;
   try {
     const data = await customStatus.getCustomBreakStatusTypeList();
-    customBreaks.value = data.results;
+    const dataStatus = data.results.map((item) => ({
+      ...item,
+      hasSaved: true,
+    }));
+    customBreaks.value = dataStatus;
   } catch (error) {
     console.error('error get status', error);
   } finally {
@@ -200,10 +204,12 @@ const saveStatus = async () => {
 
   isLoadingSaveStatus.value = true;
   try {
-    const dataStatus = customBreaks.value.map((item) => ({
-      name: item.name,
-      project: config.project.uuid,
-    }));
+    const dataStatus = customBreaks.value
+      .filter((item) => !item.hasSaved)
+      .map((item) => ({
+        name: item.name,
+        project: config.project.uuid,
+      }));
 
     await customStatus.createCustomStatusType({
       status: dataStatus,
