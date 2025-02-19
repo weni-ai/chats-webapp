@@ -9,7 +9,7 @@ export default {
   async createCustomStatusType({ status }) {
     const response = await http
       .post(`custom_status_type/`, {
-        status,
+        ...status[0],
       })
       .then((response) => response.data);
     return response;
@@ -19,6 +19,11 @@ export default {
       .delete(`custom_status_type/${statusUuid}/`)
       .then((response) => response.data);
     return response;
+  },
+
+  async getCustomBreakStatusTypeList() {
+    const response = await http.get(`custom_status_type`);
+    return response.data;
   },
 
   async getCustomStatusTypeList() {
