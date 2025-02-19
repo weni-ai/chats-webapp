@@ -139,7 +139,7 @@ describe('CustomBreakOption', () => {
 
   describe('Status Management', () => {
     it('should load status list on modal open', async () => {
-      const mockStatuses = [{ name: 'Break 1', uuid: '123' }];
+      const mockStatuses = [{ name: 'Break 1', uuid: '123', hasSaved: true }];
       customStatus.getCustomBreakStatusTypeList.mockResolvedValueOnce({
         results: mockStatuses,
       });
