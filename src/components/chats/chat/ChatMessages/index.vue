@@ -61,6 +61,7 @@
                 :status="messageStatus({ message })"
                 :title="messageFormatTitle(new Date(message.created_on))"
                 :signature="messageSignature(message)"
+                :mediaType="isGeolocation(message.media?.[0]) ? 'geo' : ''"
               >
                 {{
                   isGeolocation(message.media?.[0])
