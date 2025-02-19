@@ -94,12 +94,12 @@ export default {
         },
       ];
 
-      this.agents.forEach((sector) => {
-        const { name, uuid, project } = sector;
+      this.agents.forEach((agent) => {
+        const { name, uuid, user } = agent;
 
         agentsNames.push({
           value: uuid,
-          label: project?.name || name, // show project name or sector name
+          label: name || user.email,
         });
       });
 
