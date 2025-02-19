@@ -149,7 +149,7 @@ export default {
         can_edit_custom_fields: true,
         sign_messages: true,
         config: {
-          integration_token: '',
+          secondary_project: '',
         },
         workingDay: {
           start: '',

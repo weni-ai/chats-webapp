@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`DiscartChangesModal.vue > to match snapshot 1`] = `
-"<section data-v-7be60943="" data-v-a8c0dafd="" class="unnnic-modal-dialog discart-changes-modal" data-testid="discart-changes-modal">
+"<section data-v-7be60943="" data-v-7a1d255d="" class="unnnic-modal-dialog discart-changes-modal" data-testid="discart-changes-modal">
   <section data-v-7be60943="" class="unnnic-modal-dialog__overlay" data-testid="modal-overlay"></section>
   <section data-v-7be60943="" class="unnnic-modal-dialog__container unnnic-modal-dialog__container--sm" data-testid="modal-container">
     <!---->
@@ -9,12 +9,12 @@ exports[`DiscartChangesModal.vue > to match snapshot 1`] = `
       <header data-v-7be60943="" class="unnnic-modal-dialog__container__header">
         <section data-v-7be60943="" class="unnnic-modal-dialog__container__title-container">
           <!---->
-          <h1 data-v-7be60943="" class="unnnic-modal-dialog__container__title-text" data-testid="title-text">Discard changes</h1>
+          <h1 data-v-7be60943="" class="unnnic-modal-dialog__container__title-text" data-testid="title-text">Title</h1>
         </section>
         <!---->
       </header>
       <section data-v-7be60943="" class="unnnic-modal-dialog__container__content">
-        <p data-v-a8c0dafd="" class="discart-changes-modal__text">The creation of the new sector will be discarded upon confirming this action. Do you want to discard the changes made so far?</p>
+        <p data-v-7a1d255d="" class="discart-changes-modal__text">Text</p>
       </section>
       <section data-v-7be60943="" data-testid="actions-section" class="unnnic-modal-dialog__container__actions"><button data-v-27a31b8d="" data-v-7be60943="" data-testid="secondary-button" class="unnnic-modal-dialog__container__actions__secondary-button unnnic-button unnnic-button--size-large unnnic-button--tertiary unnnic-modal-dialog__container__actions__secondary-button">
           <!---->

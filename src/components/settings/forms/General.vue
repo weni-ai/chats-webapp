@@ -232,7 +232,7 @@ export default {
 
   computed: {
     ...mapState(useProfile, ['me']),
-    ...mapState(useConfig, ['enableGroupsMode']),
+    ...mapState(useConfig, ['enableGroupsMode', 'project']),
 
     selectedProjectHasSectorIntegration() {
       if (this.selectedProject?.[0]?.value) {
@@ -338,7 +338,7 @@ export default {
     else {
       this.listSecondaryProjects().then(() => {
         if (this.isEditing) {
-          const secondaryProjectUuid = this.sector.config?.integration_token;
+          const secondaryProjectUuid = this.sector.config?.secondary_project;
           const selectedProject = this.projectsNames.find(
             (project) => project.value === secondaryProjectUuid,
           );
@@ -421,7 +421,7 @@ export default {
     },
 
     selectProject(selectedProject) {
-      this.sector.config.integration_token = selectedProject[0].value;
+      this.sector.config.secondary_project = selectedProject[0].value;
     },
 
     photo(link) {
@@ -477,9 +477,12 @@ export default {
       try {
         const offset =
           this.secondaryProjectsPage * this.secondaryProjectsLimitPerPage;
+
         const { results, next } = await Group.listProjects({
+          orgUuid: this.project.org,
           limit: this.secondaryProjectsLimitPerPage,
           offset,
+          params: { its_principal: false },
         });
 
         this.secondaryProjectsPage += 1;

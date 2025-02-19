@@ -1,10 +1,12 @@
+import { beforeEach, describe } from 'vitest';
 import { mount } from '@vue/test-utils';
 
-import DiscartChangesModal from '../DiscartChangesModal.vue';
-import { beforeEach, describe } from 'vitest';
+import DiscartChangesModal from '@/views/Settings/DiscartChangesModal.vue';
 
 const createWrapper = () => {
-  return mount(DiscartChangesModal, { props: { showModal: true } });
+  return mount(DiscartChangesModal, {
+    props: { showModal: true, title: 'Title', text: 'Text' },
+  });
 };
 
 describe('DiscartChangesModal.vue', () => {
@@ -14,13 +16,13 @@ describe('DiscartChangesModal.vue', () => {
     wrapper = createWrapper();
   });
 
-  it('should display the modal title', () => {
+  it('should display the modal title', async () => {
     const title = wrapper.find('[data-testid="discart-changes-modal"]');
-    expect(title.text()).toContain(wrapper.vm.$t('new_sector.discart.title'));
+    expect(title.text()).toContain('Title');
   });
   it('should display the modal hint', () => {
     const title = wrapper.find('[data-testid="discart-changes-modal"]');
-    expect(title.text()).toContain(wrapper.vm.$t('new_sector.discart.hint'));
+    expect(title.text()).toContain('Text');
   });
   it('to match snapshot', () => {
     expect(wrapper.html()).toMatchSnapshot();

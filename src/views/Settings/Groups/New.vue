@@ -7,6 +7,7 @@
     :primaryButtonText="activePageIndex === 2 ? $t('save') : $t('continue')"
     :secondaryButtonText="activePageIndex === 0 ? $t('cancel') : $t('back')"
     :disabledPrimaryButton="!isValid[activePageKey]"
+    :loadingPrimaryButton="isLoadingCreate"
     size="xl"
     @primary-button-click="
       activePageIndex === 2 ? finish() : (activePageIndex = activePageIndex + 1)
@@ -60,6 +61,10 @@ import Agents from './Forms/Agents.vue';
 
 import DiscartChangesModal from '@/views/Settings/DiscartChangesModal.vue';
 
+import Group from '@/services/api/resources/settings/group';
+
+import Unnnic from '@weni/unnnic-system';
+
 export default {
   name: 'NewProjectGroupDrawer',
   components: {
@@ -78,6 +83,7 @@ export default {
   data() {
     return {
       group: {
+        uuid: '',
         name: '',
         managers: [],
         maxSimultaneousChatsByAgent: '',
@@ -96,6 +102,7 @@ export default {
         agents: false,
       },
       showConfirmDiscartChangesModal: false,
+      isLoadingCreate: false,
     };
   },
   computed: {
@@ -123,7 +130,16 @@ export default {
       );
     },
   },
+  mounted() {
+    this.listenConnect();
+  },
   methods: {
+    listenConnect() {
+      window.addEventListener('message', (message) => {
+        const { event } = message.data;
+        if (event === 'close') this.$refs.newProjectGroupDrawer?.close();
+      });
+    },
     updateIsValid(key, value) {
       this.isValid[key] = value;
     },
@@ -134,7 +150,73 @@ export default {
         this.$emit('close');
       }
     },
-    finish() {},
+    async finish() {
+      try {
+        this.isLoadingCreate = true;
+        const createGroupBody = {
+          name: this.group.name,
+          rooms_limit: this.group.maxSimultaneousChatsByAgent,
+        };
+
+        const createdGroup = await Group.create(createGroupBody);
+
+        this.group.uuid = createdGroup.uuid;
+
+        await this.$nextTick();
+
+        await Promise.all(
+          this.group.managers.map((manager) =>
+            Group.addAuthorization({
+              groupSectorUuid: this.group.uuid,
+              permissionUuid: manager.uuid,
+              role: 1,
+            }),
+          ),
+        );
+
+        await Promise.all(
+          this.group.sectors.map((sector) =>
+            Group.addSector({
+              groupUuid: this.group.uuid,
+              sectorUuid: sector.uuid,
+            }),
+          ),
+        );
+
+        await Promise.all(
+          this.group.agents.map((agent) =>
+            Group.addAuthorization({
+              groupSectorUuid: this.group.uuid,
+              permissionUuid: agent.uuid,
+              role: 2,
+            }),
+          ),
+        );
+
+        Unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('new_sector.alert.create_success', {
+              sectorName: this.group.name,
+            }),
+            type: 'success',
+          },
+          seconds: 5,
+        });
+      } catch (error) {
+        Unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('new_sector.alert.create_error'),
+            type: 'error',
+          },
+          seconds: 5,
+        });
+
+        console.log(error);
+      } finally {
+        this.isLoadingCreate = false;
+        this.closeDrawer(true);
+      }
+    },
   },
 };
 </script>

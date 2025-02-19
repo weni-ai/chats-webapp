@@ -415,7 +415,7 @@ describe('FormSectorGeneral', () => {
 
     await wrapper.vm.$nextTick();
 
-    expect(wrapper.vm.sector.config.integration_token).toBe(
+    expect(wrapper.vm.sector.config.secondary_project).toBe(
       wrapper.vm.projectsNames[1].value,
     );
   });

@@ -27,27 +27,22 @@ export default {
 
   async update({ groupUuid, body }) {
     const endpoint = `/group_sector/${groupUuid}/`;
-    const response = await http.patch(endpoint, body);
+    const response = await http.patch(endpoint, {
+      ...body,
+      project: getProject(),
+    });
 
     return response.data;
   },
 
-  async listProjects({ limit, offset }) {
-    return {
-      results: [
-        {
-          name: 'Project 1',
-          uuid: '5f5a96b1-eb12-46ee-b91d-90e09d4a2206',
-          has_sector_integration: false,
-        },
-        {
-          name: 'Project 2',
-          uuid: '2',
-          has_sector_integration: true,
-        },
-      ],
-      next: null,
-    };
+  async listProjects({ limit, offset, orgUuid, params }) {
+    const endpoint = `/org/${orgUuid}/projects/`;
+
+    const response = await http.get(endpoint, {
+      params: { ...params, limit, offset },
+    });
+
+    return response.data;
   },
 
   async addSector({ groupUuid, sectorUuid }) {

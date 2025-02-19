@@ -37,6 +37,10 @@
 </template>
 
 <script>
+import { useSettings } from '@/store/modules/settings';
+import { mapState } from 'pinia';
+import unnnic from '@weni/unnnic-system';
+
 export default {
   name: 'ProjectGroupProjectsForm',
   props: {
@@ -53,12 +57,12 @@ export default {
   data() {
     return {
       selectedSector: [],
-      sectors: [{ name: 'Project A', uuid: '1' }],
       toAddProjects: [],
       toRemoveSectors: [],
     };
   },
   computed: {
+    ...mapState(useSettings, ['sectors']),
     group: {
       get() {
         return this.modelValue;
@@ -78,11 +82,11 @@ export default {
       ];
 
       this.sectors.forEach((sector) => {
-        const { name, uuid, project } = sector;
+        const { name, uuid } = sector;
 
         projectsSectorsNames.push({
           value: uuid,
-          label: project?.name || name, // show project name or sector name
+          label: name,
         });
       });
 
@@ -116,7 +120,15 @@ export default {
 
           return uuid === selectedSector[0].value;
         });
-        this.addGroupSector(sector);
+        if (sector?.has_group) {
+          unnnic.unnnicCallAlert({
+            props: {
+              text: 'Unable to add project pName, this project is already being used in another group',
+              type: 'error',
+            },
+          });
+          this.selectedSector = [this.sectorProjectsNames[0]];
+        } else this.addGroupSector(sector);
       }
     },
     addGroupSector(sector) {
@@ -164,6 +176,7 @@ export default {
 
   &__list {
     display: flex;
+    flex-direction: column;
     gap: $unnnic-spacing-xs;
     &-item {
       display: flex;

@@ -58,17 +58,7 @@ export default {
   data() {
     return {
       selectedAgent: [],
-      agents: [
-        {
-          name: 'Agent A',
-          uuid: '1',
-          user: {
-            first_name: 'Agent',
-            last_name: 'Doe',
-            email: 'agentdoe@email.com',
-          },
-        },
-      ],
+      agents: [],
       toAddAgents: [],
       toRemoveAgents: [],
       agentsPage: 0,
