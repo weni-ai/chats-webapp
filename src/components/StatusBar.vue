@@ -119,7 +119,7 @@ const updateActiveStatus = async (isActive) => {
   const {
     data: { connection_status },
   } = await Profile.updateStatus({
-    projectUuid: this.project.uuid,
+    projectUuid: configStore.project.uuid,
     status: isActive ? 'ONLINE' : 'OFFLINE',
   });
 
@@ -222,7 +222,7 @@ const handleCloseCustomStatus = async (status, isActive) => {
   const closeStatus = (value) =>
     api.closeCustomStatus({
       statusUuid: value,
-      endTime: new Date().toISOString(),
+      endTime: new Date().toISOString().replace('Z', '+00:00'),
       isActive,
     });
 
