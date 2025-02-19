@@ -15,7 +15,7 @@ import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 vi.mock('@/services/api/resources/chats/pauseStatus', () => ({
   default: {
-    getCustomStatusTypeList: vi.fn(),
+    getCustomBreakStatusTypeList: vi.fn(),
     deleteCustomStatusType: vi.fn(),
     createCustomStatusType: vi.fn(),
   },
@@ -118,13 +118,13 @@ describe('CustomBreakOption', () => {
   describe('Modal Interactions', () => {
     it('should open modal when clicking the button', async () => {
       wrapper = createWrapper();
-      customStatus.getCustomStatusTypeList.mockResolvedValueOnce({
+      customStatus.getCustomBreakStatusTypeList.mockResolvedValueOnce({
         results: [],
       });
 
       await wrapper.find('button').trigger('click');
       expect(wrapper.vm.showModal).toBe(true);
-      expect(customStatus.getCustomStatusTypeList).toHaveBeenCalled();
+      expect(customStatus.getCustomBreakStatusTypeList).toHaveBeenCalled();
     });
 
     it('should close modal when clicking cancel', async () => {
@@ -140,7 +140,7 @@ describe('CustomBreakOption', () => {
   describe('Status Management', () => {
     it('should load status list on modal open', async () => {
       const mockStatuses = [{ name: 'Break 1', uuid: '123' }];
-      customStatus.getCustomStatusTypeList.mockResolvedValueOnce({
+      customStatus.getCustomBreakStatusTypeList.mockResolvedValueOnce({
         results: mockStatuses,
       });
 
@@ -155,7 +155,7 @@ describe('CustomBreakOption', () => {
       const consoleError = vi
         .spyOn(console, 'error')
         .mockImplementation(() => {});
-      customStatus.getCustomStatusTypeList.mockRejectedValueOnce(
+      customStatus.getCustomBreakStatusTypeList.mockRejectedValueOnce(
         new Error('API Error'),
       );
 
