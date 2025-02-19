@@ -133,12 +133,15 @@ const selectStatus = async (newStatus) => {
     await handleCreateCustomStatus(newStatus);
     startTimer();
   } else if (!isActiveOrInactive && isCustomStatus) {
-    await handleCloseCustomStatus(selectedStatus.value);
+    await handleCloseCustomStatus(selectedStatus.value, false);
     stopTimer();
     await handleCreateCustomStatus(newStatus);
     startTimer();
   } else if (!isActiveOrInactive && !isCustomStatus) {
-    await handleCloseCustomStatus(selectedStatus.value);
+    await handleCloseCustomStatus(
+      selectedStatus.value,
+      selectedStatus.value.value === 'active',
+    );
     stopTimer();
   }
   selectedStatus.value = newStatus;
@@ -178,11 +181,12 @@ const getActiveCustomStatusAndActiveTimer = async () => {
   }
 };
 
-const handleCloseCustomStatus = async (status) => {
+const handleCloseCustomStatus = async (status, isActive) => {
   const closeStatus = (value) =>
     api.closeCustomStatus({
       statusUuid: value,
       endTime: new Date().toISOString(),
+      isActive,
     });
 
   if (!status.statusUuid) {
