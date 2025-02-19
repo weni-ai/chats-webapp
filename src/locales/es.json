@@ -665,7 +665,11 @@
       "general": "General",
       "projects": "Proyectos",
       "agents": "Agentes",
-      "delete_or_edit": "Eliminar o editar"
+      "delete_or_edit": "Eliminar o editar",
+      "discart": {
+        "title": "Descartar cambios",
+        "text": "La creación del nuevo grupo se descartará al confirmar esta acción. ¿Deseas descartar los cambios realizados hasta ahora?"
+      }
     },
     "copilot": {
       "hint": "El Co-pilot es el asistente inteligente de tu agente; se podrá activar más tarde."
@@ -687,8 +691,7 @@
     },
     "discart": {
       "title": "Descartar cambios",
-      "hint": "La creación del nuevo sector se descartará al confirmar esta acción. ¿Deseas descartar los cambios realizados hasta ahora?",
-      "confirm": "Descartar"
+      "hint": "La creación del nuevo sector se descartará al confirmar esta acción. ¿Deseas descartar los cambios realizados hasta ahora?"
     }
   },
   "your_orgs": "Sus organizaciones",
@@ -701,5 +704,6 @@
   },
   "select_project": {
     "choose_one": "Elija uno para acceder a los chats de Weni"
-  }
+  },
+  "discart": "Descartar"
 }

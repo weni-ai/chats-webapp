@@ -1,5 +1,6 @@
 <template>
   <UnnnicDrawer
+    v-show="!showConfirmDiscartChangesModal"
     ref="newProjectGroupDrawer"
     :modelValue="show"
     :title="$t('config_chats.groups.new.title')"
@@ -15,7 +16,7 @@
         ? $refs.newProjectGroupDrawer.close()
         : (activePageIndex = activePageIndex - 1)
     "
-    @close="$emit('close')"
+    @close="closeDrawer"
   >
     <template #content>
       <UnnnicNavigator
@@ -41,6 +42,15 @@
       </section>
     </template>
   </UnnnicDrawer>
+
+  <DiscartChangesModal
+    :showModal="showConfirmDiscartChangesModal"
+    :title="$t('config_chats.groups.discart.title')"
+    :text="$t('config_chats.groups.discart.text')"
+    data-testid="discart-changes-modal"
+    @secondary-button-click="showConfirmDiscartChangesModal = false"
+    @primary-button-click="$emit('close')"
+  />
 </template>
 
 <script>
@@ -48,12 +58,15 @@ import General from './Forms/General.vue';
 import Projects from './Forms/Projects.vue';
 import Agents from './Forms/Agents.vue';
 
+import DiscartChangesModal from '@/views/Settings/DiscartChangesModal.vue';
+
 export default {
   name: 'NewProjectGroupDrawer',
   components: {
     General,
     Projects,
     Agents,
+    DiscartChangesModal,
   },
   props: {
     show: {
@@ -82,6 +95,7 @@ export default {
         projects: false,
         agents: false,
       },
+      showConfirmDiscartChangesModal: false,
     };
   },
   computed: {
@@ -96,10 +110,29 @@ export default {
       };
       return mapper[this.activePageIndex];
     },
+    showDiscartQuestion() {
+      const { name, managers, maxSimultaneousChatsByAgent, sectors, agents } =
+        this.group;
+
+      return !!(
+        name ||
+        sectors.length ||
+        agents.length ||
+        Number(maxSimultaneousChatsByAgent || 0) ||
+        managers.length
+      );
+    },
   },
   methods: {
     updateIsValid(key, value) {
       this.isValid[key] = value;
+    },
+    closeDrawer(forceClose) {
+      if (this.showDiscartQuestion && !forceClose) {
+        this.showConfirmDiscartChangesModal = true;
+      } else {
+        this.$emit('close');
+      }
     },
     finish() {},
   },

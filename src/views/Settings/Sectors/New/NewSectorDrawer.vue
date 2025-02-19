@@ -92,6 +92,8 @@
   </UnnnicDrawer>
   <DiscartChangesModal
     :showModal="showConfirmDiscartChangesModal"
+    :title="$t('new_sector.discart.title')"
+    :text="$t('new_sector.discart.hint')"
     data-testid="discart-changes-modal"
     @secondary-button-click="showConfirmDiscartChangesModal = false"
     @primary-button-click="$emit('close')"
@@ -102,7 +104,7 @@
 import General from '@/components/settings/forms/General.vue';
 import ExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
 import FormQueue from '@/components/settings/forms/Queue.vue';
-import DiscartChangesModal from './DiscartChangesModal.vue';
+import DiscartChangesModal from '@/views/Settings/DiscartChangesModal.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
