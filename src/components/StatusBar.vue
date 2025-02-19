@@ -12,7 +12,7 @@
         <section
           class="status-bar__icon"
           data-testid="status-bar-icon"
-          :style="{ backgroundColor: selectedStatus.color }"
+          :class="`status-bar--${selectedStatus.color}`"
         ></section>
         <p
           class="status-bar__label"
@@ -22,7 +22,8 @@
         </p>
         <section
           v-if="
-            project.config?.can_see_timer && selectedStatus.value !== 'inactive'
+            project.config?.can_see_timer &&
+            !['inactive', 'active'].includes(selectedStatus.value)
           "
           class="status-bar__timer"
           data-testid="status-bar-timer"
@@ -58,11 +59,7 @@
         <section
           class="status-bar__icon"
           data-testid="status-bar-icon-inside"
-          :class="{
-            'status-bar--active': status.label === 'Online',
-            'status-bar--inactive': status.label === 'Offline',
-            'status-bar--custom': !['Online', 'Offline'].includes(status.label),
-          }"
+          :class="`status-bar--${status.color}`"
         ></section>
         <p
           class="status-bar__item-label"
@@ -78,33 +75,27 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useConfig } from '@/store/modules/config';
+import { useProfile } from '@/store/modules/profile';
 import { format, intervalToDuration, parseISO } from 'date-fns';
+import api from '@/services/api/resources/chats/pauseStatus';
 import i18n from '@/plugins/i18n';
 
 const statuses = ref([
   { value: 'active', label: 'Online', color: 'green' },
   { value: 'inactive', label: 'Offline', color: 'gray' },
-  { value: 'pending', label: 'Almoço', color: 'orange' },
-  { value: 'lunch', label: 'Lanche', color: 'brown' },
 ]);
-
-const configStore = useConfig();
-const project = computed(() => configStore.project);
-
 const selectedStatus = ref(statuses.value[1]);
 const isOpen = ref(false);
 const startDate = ref(null);
 const elapsedTime = ref(0);
 let intervalId = null;
+const configStore = useConfig();
+const profileStore = useProfile();
+const project = computed(() => configStore.project);
 
-const mockApiRequest = (url, data) => {
-  console.log(`📡 Mock API Request to: ${url}`, data);
-  return new Promise((resolve) => setTimeout(resolve, 500));
-};
-
-const getLocaleDate = () => {
-  const locale = i18n.global.locale ?? 'en-US';
-  if (locale) return format(new Date(), "yyyy-MM-dd'T'HH:mm:ssxxx");
+const fetchCustomStatuses = async () => {
+  const response = await api.getCustomStatusTypeList();
+  statuses.value = response;
 };
 
 const startTimer = () => {
@@ -130,37 +121,33 @@ const formattedTime = computed(() => {
 });
 
 const selectStatus = async (newStatus) => {
-  if (newStatus.value !== 'inactive') {
-    if (selectedStatus.value.value !== 'inactive') {
-      await mockApiRequest('/api/status/end', {
-        status_id: selectedStatus.value.value,
-        end_date: getLocaleDate(),
-      });
-    }
+  if (newStatus.value === selectedStatus.value.value) return;
 
-    startDate.value = getLocaleDate();
-    await mockApiRequest('/api/status/start', {
-      status_id: newStatus.value,
-      start_date: startDate.value,
-    });
+  const isActiveOrInactive = ['active', 'inactive'].includes(
+    selectedStatus.value.value,
+  );
+  const isCustomStatus = !['active', 'inactive'].includes(newStatus.value);
 
+  if (isActiveOrInactive && isCustomStatus) {
+    startDate.value = new Date().toISOString();
+    await handleCreateCustomStatus(newStatus);
     startTimer();
-  } else {
+  } else if (!isActiveOrInactive && isCustomStatus) {
+    await handleCloseCustomStatus(selectedStatus.value);
+    stopTimer();
+    await handleCreateCustomStatus(newStatus);
+    startTimer();
+  } else if (!isActiveOrInactive && !isCustomStatus) {
+    await handleCloseCustomStatus(selectedStatus.value);
     stopTimer();
   }
-
   selectedStatus.value = newStatus;
   isOpen.value = false;
 };
 
-onMounted(() => {
-  if (!startDate.value && project) {
-    startDate.value = getLocaleDate();
-  }
-
-  if (selectedStatus.value.value !== 'inactive') {
-    startTimer();
-  }
+onMounted(async () => {
+  await fetchCustomStatuses();
+  await getActiveCustomStatusAndActiveTimer();
 });
 
 onUnmounted(() => {
@@ -169,6 +156,68 @@ onUnmounted(() => {
 
 const toggleDropdown = () => {
   isOpen.value = !isOpen.value;
+};
+
+const getActiveCustomStatusAndActiveTimer = async () => {
+  const activeStatus = await api.getActiveCustomStatus();
+
+  if (activeStatus?.status_type && activeStatus.is_active) {
+    statuses.value = statuses.value.map((status) => ({
+      ...status,
+      statusUuid:
+        status.value === activeStatus.status_type ? activeStatus.uuid : null,
+    }));
+
+    selectedStatus.value =
+      statuses.value.find(
+        (status) => status.value === activeStatus.status_type,
+      ) || selectedStatus.value;
+
+    startDate.value = activeStatus.created_at;
+    startTimer();
+  }
+};
+
+const handleCloseCustomStatus = async (status) => {
+  const closeStatus = (value) =>
+    api.closeCustomStatus({
+      statusUuid: value,
+      endTime: new Date().toISOString(),
+    });
+
+  if (!status.statusUuid) {
+    const activeStatus = await api.getActiveCustomStatus();
+    if (status.value === activeStatus.status_type) {
+      statuses.value = statuses.value.map((state) => ({
+        ...state,
+        statusUuid:
+          state.value === activeStatus.status_type ? activeStatus.uuid : null,
+      }));
+
+      return closeStatus(activeStatus.uuid);
+    }
+  }
+
+  return closeStatus(status.statusUuid);
+};
+
+const handleCreateCustomStatus = async (status) => {
+  const createStatus = (value) =>
+    api.createCustomStatus({
+      email: profileStore.me.email,
+      statusType: value,
+    });
+
+  const response = await createStatus(status.value);
+
+  if (!status.statusUuid) {
+    statuses.value = statuses.value.map((state) => ({
+      ...state,
+      statusUuid: state.value === response.status_type ? response.uuid : null,
+    }));
+  }
+
+  return response;
 };
 </script>
 
@@ -205,15 +254,15 @@ const toggleDropdown = () => {
     background-color: $unnnic-color-neutral-cleanest;
   }
 
-  &--active {
+  &--green {
     background-color: $unnnic-color-aux-green-300;
   }
 
-  &--inactive {
+  &--gray {
     background-color: $unnnic-color-neutral-cleanest;
   }
 
-  &--custom {
+  &--brown {
     background-color: $unnnic-color-aux-orange-500;
   }
 
