@@ -12,7 +12,7 @@ describe('Status update', () => {
 
   beforeEach(() => {
     appMock = {
-      updateStatus: vi.fn(),
+      updateUserStatus: vi.fn(),
     };
 
     configStoreMock = {
@@ -30,7 +30,7 @@ describe('Status update', () => {
 
     handleStatus(content, { app: appMock });
 
-    expect(appMock.updateStatus).toHaveBeenCalledWith('offline');
+    expect(appMock.updateUserStatus).toHaveBeenCalledWith('offline');
     expect(configStoreMock.setStatus).not.toHaveBeenCalled();
   });
 
@@ -40,7 +40,7 @@ describe('Status update', () => {
 
     handleStatus(content, { app: appMock });
 
-    expect(appMock.updateStatus).not.toHaveBeenCalled();
+    expect(appMock.updateUserStatus).not.toHaveBeenCalled();
     expect(configStoreMock.setStatus).toHaveBeenCalledWith('online');
     expect(sessionStorage.getItem('statusAgent')).toBe('online');
   });
@@ -51,7 +51,7 @@ describe('Status update', () => {
 
     handleStatus(content, { app: appMock });
 
-    expect(appMock.updateStatus).not.toHaveBeenCalled();
+    expect(appMock.updateUserStatus).not.toHaveBeenCalled();
     expect(configStoreMock.setStatus).not.toHaveBeenCalled();
   });
 
