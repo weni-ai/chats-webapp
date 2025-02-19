@@ -123,7 +123,7 @@ const MAX_STATUS = 10;
 const getStatus = async () => {
   isLoadingStatusData.value = true;
   try {
-    const data = await customStatus.getCustomStatusTypeList();
+    const data = await customStatus.getCustomBreakStatusTypeList();
     customBreaks.value = data.results;
   } catch (error) {
     console.error('error get status', error);
@@ -132,13 +132,15 @@ const getStatus = async () => {
   }
 };
 
-const isLimitReached = computed(() => customBreaks.value.length >= MAX_STATUS);
+const isLimitReached = computed(
+  () => customBreaks?.value?.length >= MAX_STATUS,
+);
 
 const canSave = computed(() => {
-  const hasNewStatus = customBreaks.value.some(
-    (status) => !originalBreaks.value.includes(status),
+  const hasNewStatus = customBreaks?.value?.some(
+    (status) => !originalBreaks?.value?.includes(status),
   );
-  return customBreaks.value.length > 0 && hasNewStatus;
+  return customBreaks?.value?.length > 0 && hasNewStatus;
 });
 
 const errorMessage = computed(() => {
@@ -151,7 +153,7 @@ const errorMessage = computed(() => {
 
 const validateInput = () => {
   const lowerCaseName = customBreakName.value.trim().toLowerCase();
-  isDuplicate.value = customBreaks.value.some(
+  isDuplicate.value = customBreaks?.value?.some(
     (status) => status.name.toLowerCase() === lowerCaseName,
   );
 };
