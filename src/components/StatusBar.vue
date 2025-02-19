@@ -165,13 +165,13 @@ const selectStatus = async (newStatus) => {
     startTimer();
   } else if (!isActiveOrInactive && isCustomStatus) {
     await handleCloseCustomStatus(selectedStatus.value, false);
-    stopTimer();
     await handleCreateCustomStatus(newStatus);
+    startDate.value = new Date().toISOString();
     startTimer();
   } else if (!isActiveOrInactive && !isCustomStatus) {
     await handleCloseCustomStatus(
       selectedStatus.value,
-      selectedStatus.value.value === 'active',
+      newStatus.value === 'active',
     );
     stopTimer();
   }
