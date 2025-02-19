@@ -99,7 +99,8 @@
     "link": {
       "title": "Vínculo",
       "label": "Vincular a um projeto existente",
-      "editing_disclaimer": "Não é possível editar o projeto vinculado, caso deseje editar o vínculo é necessário criar um novo setor e selecionar o projeto desejado."
+      "editing_disclaimer": "Não é possível editar o projeto vinculado, caso deseje editar o vínculo é necessário criar um novo setor e selecionar o projeto desejado.",
+      "has_linked_project": "O projeto selecionado já está associado a outro setor, selecione outro projeto para continuar."
     },
     "managers": {
       "title": "Gerentes de atendimento",

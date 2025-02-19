@@ -141,6 +141,14 @@
               :text="$t('sector.link.editing_disclaimer')"
               iconColor="feedback-yellow"
             />
+            <UnnnicDisclaimer
+              v-else-if="
+                selectedProject.length && selectedProjectHasSectorIntegration
+              "
+              class="link-project-disclaimer"
+              :text="$t('sector.link.has_linked_project')"
+              iconColor="feedback-yellow"
+            />
           </section>
 
           <UnnnicInput
@@ -226,6 +234,17 @@ export default {
     ...mapState(useProfile, ['me']),
     ...mapState(useConfig, ['enableGroupsMode']),
 
+    selectedProjectHasSectorIntegration() {
+      if (this.selectedProject?.[0]?.value) {
+        const project = this.projects.find(
+          (project) => this.selectedProject[0].value === project.uuid,
+        );
+
+        return !!project?.has_sector_integration;
+      }
+      return false;
+    },
+
     managersNames() {
       const managersNames = [
         {
@@ -287,7 +306,9 @@ export default {
         this.validHour
       );
 
-      const groupValid = !!this.selectedProject.length;
+      const groupValid =
+        !!this.selectedProject.length &&
+        !this.selectedProjectHasSectorIntegration;
 
       const singleValid = !!(
         managers.length > 0 && maxSimultaneousChatsByAgent

@@ -38,12 +38,12 @@ export default {
         {
           name: 'Project 1',
           uuid: '5f5a96b1-eb12-46ee-b91d-90e09d4a2206',
-          has_linked_sector: false,
+          has_sector_integration: false,
         },
         {
           name: 'Project 2',
           uuid: '2',
-          has_linked_sector: true,
+          has_sector_integration: true,
         },
       ],
       next: null,

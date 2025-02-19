@@ -98,7 +98,8 @@
     "link": {
       "title": "Link",
       "label": "Link to an existing project",
-      "editing_disclaimer": "It is not possible to edit the linked project, if you wish to edit the link you must create a new sector and select the desired project."
+      "editing_disclaimer": "It is not possible to edit the linked project, if you wish to edit the link you must create a new sector and select the desired project.",
+      "has_linked_project": "The selected project is already associated with another sector, select another project to continue."
     },
     "managers": {
       "title": "Service managers",
