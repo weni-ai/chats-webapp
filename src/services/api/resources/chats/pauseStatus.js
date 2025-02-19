@@ -8,9 +8,7 @@ const DEFAULT_STATUSES = [
 export default {
   async createCustomStatusType({ status }) {
     const response = await http
-      .post(`custom_status_type/`, {
-        ...status[0],
-      })
+      .post(`custom_status_type/`, status)
       .then((response) => response.data);
     return response;
   },
