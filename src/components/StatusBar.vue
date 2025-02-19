@@ -76,15 +76,22 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
-import { format, intervalToDuration, parseISO } from 'date-fns';
+import { intervalToDuration, parseISO } from 'date-fns';
 import api from '@/services/api/resources/chats/pauseStatus';
+import Profile from '@/services/api/resources/profile';
+import unnnic from '@weni/unnnic-system';
 import i18n from '@/plugins/i18n';
 
 const statuses = ref([
   { value: 'active', label: 'Online', color: 'green' },
   { value: 'inactive', label: 'Offline', color: 'gray' },
 ]);
-const selectedStatus = ref(statuses.value[1]);
+
+const selectedStatus = ref(
+  sessionStorage.getItem('statusAgent') === 'ONLINE'
+    ? statuses.value[0]
+    : statuses.value[1],
+);
 const isOpen = ref(false);
 const startDate = ref(null);
 const elapsedTime = ref(0);
@@ -92,10 +99,34 @@ let intervalId = null;
 const configStore = useConfig();
 const profileStore = useProfile();
 const project = computed(() => configStore.project);
+const loadingActiveStatus = ref(false);
 
 const fetchCustomStatuses = async () => {
   const response = await api.getCustomStatusTypeList();
   statuses.value = response;
+};
+
+const handleGetActiveStatus = async () => {
+  const activeStatus = await configStore.getStatus(configStore.project.uuid);
+  configStore.$patch({
+    status: activeStatus,
+  });
+};
+
+const updateActiveStatus = async (isActive) => {
+  loadingActiveStatus.value = true;
+
+  const {
+    data: { connection_status },
+  } = await Profile.updateStatus({
+    projectUuid: this.project.uuid,
+    status: isActive ? 'ONLINE' : 'OFFLINE',
+  });
+
+  sessionStorage.setItem('statusAgent', connection_status);
+
+  loadingActiveStatus.value = false;
+  showStatusAlert(connection_status.toLowerCase());
 };
 
 const startTimer = () => {
@@ -144,11 +175,17 @@ const selectStatus = async (newStatus) => {
     );
     stopTimer();
   }
+
+  if (newStatus.value === 'active' || newStatus.value === 'inactive') {
+    updateActiveStatus(newStatus.value === 'active');
+  }
+
   selectedStatus.value = newStatus;
   isOpen.value = false;
 };
 
 onMounted(async () => {
+  await handleGetActiveStatus();
   await fetchCustomStatuses();
   await getActiveCustomStatusAndActiveTimer();
 });
@@ -222,6 +259,22 @@ const handleCreateCustomStatus = async (status) => {
   }
 
   return response;
+};
+
+const showStatusAlert = (connectionStatus) => {
+  unnnic.unnnicCallAlert({
+    props: {
+      text: `${i18n.global.t('status_agent')} ${connectionStatus}`,
+      icon: 'indicator',
+      scheme:
+        connectionStatus === 'online'
+          ? 'feedback-green'
+          : '$unnnic-color-neutral-black',
+      closeText: i18n.global.t('close'),
+      position: 'bottom-right',
+    },
+    seconds: 15,
+  });
 };
 </script>
 
