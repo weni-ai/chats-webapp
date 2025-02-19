@@ -213,7 +213,7 @@ const getActiveCustomStatusAndActiveTimer = async () => {
         (status) => status.value === activeStatus.status_type,
       ) || selectedStatus.value;
 
-    startDate.value = activeStatus.created_at;
+    startDate.value = activeStatus.created_on;
     startTimer();
   }
 };
