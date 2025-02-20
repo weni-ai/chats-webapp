@@ -123,7 +123,9 @@ const MAX_STATUS = 10;
 const getStatus = async () => {
   isLoadingStatusData.value = true;
   try {
-    const data = await customStatus.getCustomBreakStatusTypeList();
+    const data = await customStatus.getCustomBreakStatusTypeList({
+      projectUuid: config.project.uuid,
+    });
     const dataStatus = data.results.map((item) => ({
       ...item,
       hasSaved: true,
