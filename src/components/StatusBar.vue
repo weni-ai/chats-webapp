@@ -102,7 +102,9 @@ const project = computed(() => configStore.project);
 const loadingActiveStatus = ref(false);
 
 const fetchCustomStatuses = async () => {
-  const response = await api.getCustomStatusTypeList();
+  const response = await api.getCustomStatusTypeList({
+    projectUuid: configStore.project.uuid,
+  });
   statuses.value = response;
 };
 
@@ -113,20 +115,31 @@ const handleGetActiveStatus = async () => {
   });
 };
 
-const updateActiveStatus = async (isActive) => {
+const updateActiveStatus = async ({ isActive, skipRequest }) => {
   loadingActiveStatus.value = true;
+  try {
+    let connection_status = null;
 
-  const {
-    data: { connection_status },
-  } = await Profile.updateStatus({
-    projectUuid: configStore.project.uuid,
-    status: isActive ? 'ONLINE' : 'OFFLINE',
-  });
+    if (!skipRequest) {
+      const {
+        data: { connection_status: connection },
+      } = await Profile.updateStatus({
+        projectUuid: configStore.project.uuid,
+        status: isActive ? 'ONLINE' : 'OFFLINE',
+      });
 
-  sessionStorage.setItem('statusAgent', connection_status);
+      sessionStorage.setItem('statusAgent', connection);
+      connection_status = connection.toLowerCase();
+    } else {
+      connection_status = isActive ? 'online' : 'offline';
+    }
 
-  loadingActiveStatus.value = false;
-  showStatusAlert(connection_status.toLowerCase());
+    showStatusAlert(connection_status);
+  } catch (e) {
+    console.error('Erro ao atualizar status', e);
+  } finally {
+    loadingActiveStatus.value = false;
+  }
 };
 
 const startTimer = () => {
@@ -154,21 +167,21 @@ const formattedTime = computed(() => {
 const selectStatus = async (newStatus) => {
   if (newStatus.value === selectedStatus.value.value) return;
 
-  const isActiveOrInactive = ['active', 'inactive'].includes(
+  const isOldStatusActiveOrInactive = ['active', 'inactive'].includes(
     selectedStatus.value.value,
   );
   const isCustomStatus = !['active', 'inactive'].includes(newStatus.value);
 
-  if (isActiveOrInactive && isCustomStatus) {
+  if (isOldStatusActiveOrInactive && isCustomStatus) {
     startDate.value = new Date().toISOString();
     await handleCreateCustomStatus(newStatus);
     startTimer();
-  } else if (!isActiveOrInactive && isCustomStatus) {
+  } else if (!isOldStatusActiveOrInactive && isCustomStatus) {
     await handleCloseCustomStatus(selectedStatus.value, false);
     await handleCreateCustomStatus(newStatus);
     startDate.value = new Date().toISOString();
     startTimer();
-  } else if (!isActiveOrInactive && !isCustomStatus) {
+  } else if (!isOldStatusActiveOrInactive && !isCustomStatus) {
     await handleCloseCustomStatus(
       selectedStatus.value,
       newStatus.value === 'active',
@@ -177,7 +190,10 @@ const selectStatus = async (newStatus) => {
   }
 
   if (newStatus.value === 'active' || newStatus.value === 'inactive') {
-    updateActiveStatus(newStatus.value === 'active');
+    updateActiveStatus({
+      isActive: newStatus.value === 'active',
+      skipRequest: !['active', 'inactive'].includes(selectedStatus.value.value),
+    });
   }
 
   selectedStatus.value = newStatus;
