@@ -668,7 +668,9 @@
         "text": "The creation of the new group will be discarded upon confirming this action. Do you want to discard the changes made so far?"
       },
       "create_success": "New group {groupName} created!",
-      "create_error": "Failed to configure some steps in the group! Check the details and try again if you identify any missing configurations."
+      "create_error": "Failed to configure some steps in the group! Check the details and try again if you identify any missing configurations.",
+      "update_success": "Group updated successfully!",
+      "update_error": "We had problems updating some data. Check the information and try again if anything is missing."
     },
     "copilot": {
       "hint": "The Co-pilot is your agent's intelligent assistant; it can be activated later."

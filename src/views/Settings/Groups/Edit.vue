@@ -5,6 +5,7 @@
     :title="editingProjectGroup.name"
     :primaryButtonText="$t('save')"
     :secondaryButtonText="$t('cancel')"
+    :loadingPrimaryButton="isLoadingRequest"
     size="xl"
     @primary-button-click="finish()"
     @secondary-button-click="$refs.editProjectGroupDrawer.close()"
@@ -57,6 +58,8 @@ import Agents from './Forms/Agents.vue';
 
 import Group from '@/services/api/resources/settings/group';
 
+import Unnnic from '@weni/unnnic-system';
+
 export default {
   name: 'EditProjectGroupDrawer',
   components: {
@@ -89,6 +92,7 @@ export default {
       toRemoveSectors: [],
       toRemoveManagers: [],
       toRemoveAgents: [],
+      isLoadingRequest: false,
     };
   },
   computed: {
@@ -141,10 +145,32 @@ export default {
     },
 
     async finish() {
-      await this.updateGroup();
-      await this.updateManagers();
-      await this.updateAgents();
-      await this.updateSectors();
+      try {
+        this.isLoadingRequest = true;
+        await this.updateGroup();
+        await this.updateManagers();
+        await this.updateAgents();
+        await this.updateSectors();
+        Unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('config_chats.groups.update_success'),
+            type: 'success',
+          },
+          seconds: 5,
+        });
+      } catch (error) {
+        Unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('config_chats.groups.update_error'),
+            type: 'error',
+          },
+          seconds: 5,
+        });
+        console.error(error);
+      } finally {
+        this.isLoadingRequest = false;
+        this.closeDrawer(true);
+      }
     },
 
     async updateGroup() {
