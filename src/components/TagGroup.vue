@@ -100,11 +100,14 @@ export default {
     this.remainingTags = this.tags.length;
 
     const observer = new IntersectionObserver(this.handleIntersection);
-    this.tags.forEach((child) => {
-      const tagElement = this.$refs[child.uuid]?.[0].$el;
-      tagElement.setAttribute('data-ref-name', child.uuid);
 
-      observer.observe(tagElement);
+    this.tags.forEach((child) => {
+      const tagElement = this.$refs[child.uuid]?.[0]?.$el;
+      if (tagElement) {
+        tagElement.setAttribute('data-ref-name', child.uuid);
+
+        observer.observe(tagElement);
+      }
     });
   },
 

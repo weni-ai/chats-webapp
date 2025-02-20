@@ -6,7 +6,7 @@ export default (content, { app }) => {
 
   if (sessionStorageStatus !== status) {
     if (from === 'system') {
-      app.updateStatus(sessionStorageStatus);
+      app.updateUserStatus(sessionStorageStatus);
     } else if (from === 'user') {
       const configStore = useConfig();
       configStore.setStatus(status);
