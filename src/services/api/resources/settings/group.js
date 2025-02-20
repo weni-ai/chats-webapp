@@ -18,9 +18,20 @@ export default {
     return response.data;
   },
 
-  async create({ body }) {
+  async create(body) {
     const endpoint = `/group_sector/`;
-    const response = await http.post(endpoint, body);
+    const response = await http.post(endpoint, {
+      ...body,
+      project: getProject(),
+    });
+
+    return response.data;
+  },
+
+  async show(groupUuid) {
+    const endpoint = `/group_sector/${groupUuid}/`;
+
+    const response = await http.get(endpoint);
 
     return response.data;
   },
@@ -61,7 +72,7 @@ export default {
 
   async listAuthorization({ groupSectorUuid, role }) {
     const endpoint = `/authorization/group_sector/`;
-    const params = { group_sector: groupSectorUuid, role };
+    const params = { group_sector: groupSectorUuid, role, limit: 9999 };
 
     const response = await http.get(endpoint, { params });
 

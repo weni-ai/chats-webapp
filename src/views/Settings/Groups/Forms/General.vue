@@ -1,5 +1,5 @@
 <template>
-  <section class="groups-general-form">
+  <section :class="{ 'groups-general-form': true, 'is-editing': isEditing }">
     <h2 class="groups-general-form__title">
       {{
         isEditing
@@ -17,6 +17,7 @@
     />
     <fieldset>
       <UnnnicLabel
+        style="margin-top: 0"
         :label="$t('config_chats.groups.general_form.field.manager.label')"
       />
       <UnnnicSelectSmart
@@ -29,15 +30,19 @@
       />
     </fieldset>
     <section
-      v-if="group.managers.length > 0"
+      v-if="group.managers?.length > 0"
       class="form-sector-container__managers"
     >
       <SelectedMember
         v-for="manager in group.managers"
         :key="manager.uuid"
-        :name="`${manager.user.first_name} ${manager.user.last_name}`"
-        :email="manager.user.email"
-        :avatarUrl="photo(manager.user.photo_url)"
+        :name="
+          manager.user
+            ? `${manager.user.first_name} ${manager.user.last_name}`
+            : manager.user_name
+        "
+        :email="manager.user?.email || manager.user_email"
+        :avatarUrl="photo(manager.user?.photo_url)"
         :roleName="$t('manager')"
         @remove="removeManager(manager.uuid)"
       />
@@ -120,7 +125,7 @@ export default {
     valid() {
       const { name, managers, maxSimultaneousChatsByAgent } = this.group;
       const valid =
-        !!name.trim() &&
+        !!name?.trim() &&
         Number(maxSimultaneousChatsByAgent || 0) >= 1 &&
         !!managers.length;
       return valid;
@@ -174,6 +179,7 @@ export default {
 
           return uuid === selectedManager[0].value;
         });
+
         this.addGroupManager(manager);
       }
     },
@@ -181,7 +187,9 @@ export default {
     addGroupManager(manager) {
       if (manager) {
         const managers = this.group.managers.some(
-          (mappedManager) => mappedManager.user.email === manager.user.email,
+          (mappedManager) =>
+            (mappedManager.user?.email || mappedManager.user_email) ===
+            manager.user.email,
         )
           ? this.group.managers
           : [...this.group.managers, { ...manager, role: 1, new: true }];
@@ -221,6 +229,10 @@ export default {
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-sm;
+
+  &.is-editing {
+    margin-top: -$unnnic-spacing-sm;
+  }
 
   &__title {
     margin-top: $unnnic-spacing-sm;

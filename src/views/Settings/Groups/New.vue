@@ -65,6 +65,9 @@ import Group from '@/services/api/resources/settings/group';
 
 import Unnnic from '@weni/unnnic-system';
 
+import { mapState } from 'pinia';
+import { useSettings } from '@/store/modules/settings';
+
 export default {
   name: 'NewProjectGroupDrawer',
   components: {
@@ -106,6 +109,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(useSettings, ['groups']),
     activePage() {
       return this.newGroupsPages[this.activePageIndex];
     },
@@ -164,6 +168,8 @@ export default {
 
         await this.$nextTick();
 
+        this.groups.unshift(this.group);
+
         await Promise.all(
           this.group.managers.map((manager) =>
             Group.addAuthorization({
@@ -195,8 +201,8 @@ export default {
 
         Unnnic.unnnicCallAlert({
           props: {
-            text: this.$t('new_sector.alert.create_success', {
-              sectorName: this.group.name,
+            text: this.$t('config_chats.groups.create_success', {
+              groupName: this.group.name,
             }),
             type: 'success',
           },
@@ -205,7 +211,7 @@ export default {
       } catch (error) {
         Unnnic.unnnicCallAlert({
           props: {
-            text: this.$t('new_sector.alert.create_error'),
+            text: this.$t('config_chats.groups.create_error'),
             type: 'error',
           },
           seconds: 5,

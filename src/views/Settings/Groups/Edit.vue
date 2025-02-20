@@ -2,13 +2,13 @@
   <UnnnicDrawer
     ref="editProjectGroupDrawer"
     :modelValue="show"
-    :title="$t('config_chats.groups.new.title')"
+    :title="editingProjectGroup.name"
     :primaryButtonText="$t('save')"
     :secondaryButtonText="$t('cancel')"
     size="xl"
     @primary-button-click="finish()"
     @secondary-button-click="$refs.editProjectGroupDrawer.close()"
-    @close="$emit('close')"
+    @close="closeDrawer"
   >
     <template #content>
       <UnnnicTab
@@ -25,13 +25,22 @@
         </template>
 
         <template #tab-panel-general>
-          <General v-model="editingProjectGroup" />
+          <General
+            v-model="editingProjectGroup"
+            isEditing
+          />
         </template>
         <template #tab-panel-projects>
-          <Projects v-model="editingProjectGroup" />
+          <Projects
+            v-model="editingProjectGroup"
+            isEditing
+          />
         </template>
         <template #tab-panel-agents>
-          <Agents v-model="editingProjectGroup" />
+          <Agents
+            v-model="editingProjectGroup"
+            isEditing
+          />
         </template>
       </UnnnicTab>
     </template>
@@ -42,6 +51,7 @@
 import General from './Forms/General.vue';
 import Projects from './Forms/Projects.vue';
 import Agents from './Forms/Agents.vue';
+import Group from '@/services/api/resources/settings/group';
 
 export default {
   name: 'EditProjectGroupDrawer',
@@ -64,7 +74,14 @@ export default {
   data() {
     return {
       activeTab: { id: 'general' },
-      editingProjectGroup: {},
+      editingProjectGroup: {
+        uuid: '',
+        name: '',
+        managers: [],
+        maxSimultaneousChatsByAgent: '',
+        sectors: [],
+        agents: [],
+      },
     };
   },
   computed: {
@@ -79,8 +96,23 @@ export default {
       return this.tabs.map((tab) => tab.id);
     },
   },
-  mounted() {
-    this.editingProjectGroup = { ...this.projectGroup };
+  async created() {
+    const group = await Group.show(this.projectGroup.uuid);
+
+    const authorizations = await Group.listAuthorization({
+      groupSectorUuid: this.projectGroup.uuid,
+    });
+
+    this.editingProjectGroup = {
+      ...group,
+      maxSimultaneousChatsByAgent: String(group.rooms_limit),
+      managers: authorizations.results.filter(
+        (authorization) => authorization.role === 1,
+      ),
+      agents: authorizations.results.filter(
+        (authorization) => authorization.role === 2,
+      ),
+    };
   },
   methods: {
     updateTab(newTab) {
@@ -91,6 +123,13 @@ export default {
       if (!newActiveTab) return;
 
       this.activeTab = newActiveTab;
+    },
+    closeDrawer(forceClose) {
+      if (this.showDiscartQuestion && !forceClose) {
+        this.showConfirmDiscartChangesModal = true;
+      } else {
+        this.$emit('close');
+      }
     },
     finish() {},
   },

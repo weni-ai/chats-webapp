@@ -1,5 +1,5 @@
 <template>
-  <section class="groups-agents-form">
+  <section :class="{ 'groups-agents-form': true, 'is-editing': isEditing }">
     <h2 class="groups-agents-form__title">
       {{ $t('config_chats.groups.agents_form.title') }}
     </h2>
@@ -17,14 +17,18 @@
       />
     </fieldset>
     <section
-      v-if="group.agents.length"
+      v-if="group.agents?.length"
       class="groups-agents-form__agents"
     >
       <SelectedMember
         v-for="agent in group.agents"
         :key="agent.uuid"
-        :name="`${agent.user?.first_name} ${agent.user?.last_name}`"
-        :email="agent.user?.email"
+        :name="
+          agent.user
+            ? `${agent.user?.first_name} ${agent.user?.last_name}`
+            : agent.user_name
+        "
+        :email="agent.user?.email || agent.user_email"
         :avatarUrl="photo(agent.user?.photo_url)"
         :roleName="$t('agent')"
         @remove="removeAgent(agent.uuid)"
@@ -182,6 +186,10 @@ export default {
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-sm;
+
+  &.is-editing {
+    margin-top: -$unnnic-spacing-sm;
+  }
 
   &__title {
     font-family: $unnnic-font-family-secondary;

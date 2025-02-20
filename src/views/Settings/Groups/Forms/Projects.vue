@@ -1,5 +1,5 @@
 <template>
-  <section class="groups-projects-form">
+  <section :class="{ 'groups-projects-form': true, 'is-editing': isEditing }">
     <h2 class="groups-projects-form__title">
       {{ $t('config_chats.groups.projects_form.title') }}
     </h2>
@@ -17,7 +17,7 @@
       />
     </fieldset>
     <section
-      v-if="group.sectors.length"
+      v-if="group.sectors?.length"
       class="groups-projects-form__list"
     >
       <section
@@ -164,6 +164,10 @@ export default {
   display: flex;
   flex-direction: column;
   gap: $unnnic-spacing-sm;
+
+  &.is-editing {
+    margin-top: -$unnnic-spacing-sm;
+  }
 
   &__title {
     font-family: $unnnic-font-family-secondary;

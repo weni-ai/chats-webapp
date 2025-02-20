@@ -13,7 +13,7 @@
       :title="group.name"
       clickable
       class="groups__card"
-      @click="openEditGroupModal"
+      @click="openEditGroupModal(group)"
     >
       <template #headerSlot>
         <UnnnicDropdown position="top-left">

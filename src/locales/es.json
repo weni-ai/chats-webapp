@@ -670,7 +670,9 @@
       "discart": {
         "title": "Descartar cambios",
         "text": "La creación del nuevo grupo se descartará al confirmar esta acción. ¿Deseas descartar los cambios realizados hasta ahora?"
-      }
+      },
+      "create_success": "¡Nuevo grupo {groupName} creado!",
+      "create_error": "¡Error al configurar algunas etapas del grupo! Verifica los detalles e intenta nuevamente si identificas alguna configuración faltante."
     },
     "copilot": {
       "hint": "El Co-pilot es el asistente inteligente de tu agente; se podrá activar más tarde."
