@@ -19,13 +19,17 @@ export default {
     return response;
   },
 
-  async getCustomBreakStatusTypeList() {
-    const response = await http.get(`custom_status_type`);
+  async getCustomBreakStatusTypeList({ projectUuid }) {
+    const response = await http.get(
+      `custom_status_type/?project=${projectUuid}`,
+    );
     return response.data;
   },
 
-  async getCustomStatusTypeList() {
-    const response = await http.get(`custom_status_type`);
+  async getCustomStatusTypeList({ projectUuid }) {
+    const response = await http.get(
+      `custom_status_type/?project=${projectUuid}`,
+    );
     const customStatuses =
       response.data?.results.map((status) => ({
         value: status.uuid,
