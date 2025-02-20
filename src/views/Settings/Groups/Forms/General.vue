@@ -77,7 +77,7 @@ export default {
     },
   },
 
-  emits: ['update:modelValue', 'changeValid'],
+  emits: ['update:modelValue', 'changeValid', 'remove-manager'],
 
   data() {
     return {
@@ -139,8 +139,6 @@ export default {
   },
 
   mounted() {
-    if (this.isEditing) this.listGroupManagers();
-
     this.listProjectManagers();
   },
 
@@ -187,27 +185,26 @@ export default {
     addGroupManager(manager) {
       if (manager) {
         const managers = this.group.managers.some(
-          (mappedManager) =>
-            (mappedManager.user?.email || mappedManager.user_email) ===
-            manager.user.email,
+          (mappedManager) => mappedManager.permission === manager.uuid,
         )
           ? this.group.managers
           : [...this.group.managers, { ...manager, role: 1, new: true }];
 
         this.group.managers = managers;
 
-        // if (this.isEditing) this.addManager(manager);
         this.selectedManager = [this.managersNames[0]];
       }
     },
 
     async removeManager(managerUuid) {
-      // if (this.isEditing) await Sector.removeManager(managerUuid);
       const manager = this.group.managers.find(
         (manager) => manager.uuid === managerUuid,
       );
 
-      this.removedManagers.push(manager);
+      if (this.isEditing && !manager?.new) {
+        this.$emit('remove-manager', manager);
+      }
+
       this.group.managers = this.group.managers.filter(
         (manager) => manager.uuid !== managerUuid,
       );
