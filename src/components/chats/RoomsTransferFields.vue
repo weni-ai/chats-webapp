@@ -187,7 +187,7 @@ export default {
       const treatedQueues = newQueues.results.map(
         ({ name, sector_name, uuid }) => ({
           queue_name: name,
-          label: `${name} | ${this.$t('sector.title')} ${sector_name}`,
+          label: `${name} | ${i18n.global.t('sector.title')} ${sector_name}`,
           value: uuid,
         }),
       );

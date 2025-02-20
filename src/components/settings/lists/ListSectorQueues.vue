@@ -224,9 +224,9 @@ export default {
     async handlerSetConfigQueue() {
       try {
         this.loadingQueueConfig = true;
-        const { name, default_message, uuid } = this.queueToConfig;
+        const { name, default_message, uuid = '' } = this.queueToConfig;
 
-        if (uuid) {
+        if (this.queueToConfig.uuid) {
           await Promise.all([
             ...this.$refs.formQueue.toAddAgentsUuids.map((agentUuid) =>
               Queue.addAgent(this.queueToConfig.uuid, agentUuid),
@@ -236,7 +236,7 @@ export default {
             ),
           ]);
 
-          await Queue.editQueue({ default_message, uuid });
+          await Queue.editQueue({ uuid, default_message });
 
           unnnic.unnnicCallAlert({
             props: {

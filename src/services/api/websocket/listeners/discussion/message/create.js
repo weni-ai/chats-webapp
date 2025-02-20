@@ -27,7 +27,7 @@ export default (message, { app }) => {
     notification.notify();
 
     if (document.hidden) {
-      const { first_name, last_name } = message.user;
+      const { first_name = '', last_name = '' } = message.user;
       try {
         sendWindowNotification({
           title: `${first_name} ${last_name}`,
