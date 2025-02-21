@@ -223,7 +223,6 @@ section.chats-layout {
   .sidebar {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-ant;
 
     height: 100%;
 
