@@ -43,32 +43,33 @@
         />
       </section>
     </section>
-
-    <ul
-      v-if="isOpen"
-      class="status-bar__list status-bar__list--open"
-      data-testid="status-bar-list-open"
-    >
-      <li
-        v-for="status in statuses"
-        :key="status.value"
-        class="status-bar__item"
-        data-testid="status-bar-item"
-        @click="selectStatus(status)"
+    <Transition name="expand">
+      <ul
+        v-if="isOpen"
+        class="status-bar__list status-bar__list--open"
+        data-testid="status-bar-list-open"
       >
-        <section
-          class="status-bar__icon"
-          data-testid="status-bar-icon-inside"
-          :class="`status-bar--${status.color}`"
-        ></section>
-        <p
-          class="status-bar__item-label"
-          data-testid="status-bar-item-label"
+        <li
+          v-for="status in statuses"
+          :key="status.value"
+          class="status-bar__item"
+          data-testid="status-bar-item"
+          @click="selectStatus(status)"
         >
-          {{ status.label }}
-        </p>
-      </li>
-    </ul>
+          <section
+            class="status-bar__icon"
+            data-testid="status-bar-icon-inside"
+            :class="`status-bar--${status.color}`"
+          ></section>
+          <p
+            class="status-bar__item-label"
+            data-testid="status-bar-item-label"
+          >
+            {{ status.label }}
+          </p>
+        </li>
+      </ul>
+    </Transition>
   </header>
 </template>
 
@@ -295,6 +296,26 @@ const showStatusAlert = (connectionStatus) => {
 </script>
 
 <style lang="scss" scoped>
+.expand-enter-active,
+.expand-leave-active {
+  transition: all 0.3s ease-out;
+  max-height: 300px;
+}
+
+.expand-enter-from,
+.expand-leave-to {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.expand-enter-to,
+.expand-leave-from {
+  max-height: 300px;
+  opacity: 1;
+  overflow: hidden;
+}
+
 .status-bar {
   position: relative;
   display: flex;
@@ -311,7 +332,6 @@ const showStatusAlert = (connectionStatus) => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: $unnnic-spacing-xs;
   }
 
   &__content {
@@ -389,6 +409,9 @@ const showStatusAlert = (connectionStatus) => {
     top: 100%;
     left: 0;
     z-index: 9999999;
+    box-shadow: 0px $unnnic-spacing-nano $unnnic-spacing-xs 0px
+      rgba(0, 0, 0, 0.1);
+    border-radius: 0rem 0rem $unnnic-border-radius-sm $unnnic-border-radius-sm;
 
     &--open {
       display: block;
