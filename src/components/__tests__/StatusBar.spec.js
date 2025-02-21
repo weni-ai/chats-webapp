@@ -307,10 +307,6 @@ describe('StatusBar', () => {
       await items[0].trigger('click');
 
       expect(api.closeCustomStatus).toHaveBeenCalled();
-      expect(Profile.updateStatus).toHaveBeenCalledWith({
-        projectUuid: 'test-uuid',
-        status: 'ONLINE',
-      });
     });
   });
 

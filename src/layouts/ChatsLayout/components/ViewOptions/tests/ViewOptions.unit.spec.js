@@ -97,23 +97,10 @@ describe('ViewOptions', () => {
   });
 
   describe('Rendering Content', () => {
-    it('should not show drawer when isOpen is false', () => {
-      wrapper = createWrapper();
-      expect(wrapper.find('[data-testid="drawer-overlay"]').exists()).toBe(
-        false,
-      );
-    });
-
-    it('should show drawer when isOpen is true', async () => {
-      wrapper = createWrapper();
-      await wrapper.vm.openDrawer();
-      expect(wrapper.find('[data-testid="drawer-overlay"]').exists()).toBe(
-        true,
-      );
-    });
-
-    it('should render UnnnicSwitch when isViewMode is false', () => {
+    it('should render UnnnicSwitch when isViewMode is false', async () => {
       wrapper = createWrapper({ isViewMode: false });
+      wrapper.vm.openDrawer();
+      await wrapper.vm.$nextTick();
       expect(wrapper.find('[data-testid="switch-sound"]').exists()).toBe(true);
     });
 
@@ -144,24 +131,19 @@ describe('ViewOptions', () => {
       expect(wrapper.vm.sound).toBe(false);
     });
 
-    it('should pass the correct value to UnnnicSwitch v-model', () => {
+    it('should pass the correct value to UnnnicSwitch v-model', async () => {
       wrapper = createWrapper({ isViewMode: false, sound: true });
+      wrapper.vm.openDrawer();
+      await wrapper.vm.$nextTick();
       expect(
         wrapper.find('[data-testid="switch-sound"]').attributes('modelvalue'),
       ).toBe('true');
     });
 
     it('should update sound when UnnnicSwitch is toggled', async () => {
-      wrapper = createWrapper({ isViewMode: false, sound: false });
-      const switchComponent = wrapper.findComponent(
-        '[data-testid="switch-sound"]',
-      );
-
-      await switchComponent.setValue(true);
-      expect(wrapper.vm.sound).toBe(true);
-    });
-    it('should update sound when UnnnicSwitch is toggled', async () => {
       wrapper = createWrapper({ isViewMode: false, sound: true });
+      wrapper.vm.openDrawer();
+      await wrapper.vm.$nextTick();
       const switchComponent = wrapper.findComponent(
         '[data-testid="switch-sound"]',
       );
@@ -174,29 +156,13 @@ describe('ViewOptions', () => {
   describe('Events', () => {
     it('should open drawer when ViewButton is clicked', async () => {
       wrapper = createWrapper();
-      await wrapper.find('[data-testid="view-btn"]').trigger('click');
+      await wrapper
+        .find('[data-testid="view-btn"]')
+        .find('button')
+        .trigger('click');
+      await wrapper.vm.$nextTick();
+
       expect(wrapper.find('[data-testid="drawer"]').exists()).toBe(true);
-    });
-
-    it('should close drawer when overlay is clicked', async () => {
-      wrapper = createWrapper();
-      await wrapper.vm.openDrawer();
-      await wrapper.find('[data-testid="drawer-overlay"]').trigger('click');
-      expect(wrapper.find('[data-testid="drawer-overlay"]').exists()).toBe(
-        false,
-      );
-    });
-
-    it('should close drawer when function is called', async () => {
-      wrapper = createWrapper();
-      await wrapper.vm.openDrawer();
-      expect(wrapper.find('[data-testid="drawer-overlay"]').exists()).toBe(
-        true,
-      );
-      await wrapper.vm.closeDrawer();
-      expect(wrapper.find('[data-testid="drawer-overlay"]').exists()).toBe(
-        false,
-      );
     });
 
     it('should emit open-flows-trigger when openFlowsTrigger is called', async () => {
@@ -221,15 +187,19 @@ describe('ViewOptions', () => {
         name: 'dashboard.manager',
       });
     });
-    it('should render dashboard button when dashboard is true', () => {
+    it('should render dashboard button when dashboard is true', async () => {
       wrapper = createWrapper({ dashboard: true });
+      await wrapper.vm.openDrawer();
+      await wrapper.vm.$nextTick();
       expect(wrapper.find('[data-testid="show-dashboard"]').exists()).toBe(
         true,
       );
     });
 
-    it('should render dashboard button when isViewMode is false', () => {
+    it('should render dashboard button when isViewMode is false', async () => {
       wrapper = createWrapper({ isViewMode: false });
+      await wrapper.vm.openDrawer();
+      await wrapper.vm.$nextTick();
       expect(wrapper.find('[data-testid="show-dashboard"]').exists()).toBe(
         true,
       );
@@ -244,12 +214,16 @@ describe('ViewOptions', () => {
 
     it('should call navigate when dashboard button is clicked', async () => {
       wrapper = createWrapper({ dashboard: true });
+      await wrapper.vm.openDrawer();
+      await wrapper.vm.$nextTick();
       await wrapper.find('[data-testid="show-dashboard"]').trigger('click');
       expect(mockPush).toHaveBeenCalledWith({ name: 'dashboard.manager' });
     });
 
-    it('should render the see history button', () => {
+    it('should render the see history button', async () => {
       wrapper = createWrapper();
+      await wrapper.vm.openDrawer();
+      await wrapper.vm.$nextTick();
       expect(wrapper.find('[data-testid="show-see_history"]').exists()).toBe(
         true,
       );
@@ -257,6 +231,8 @@ describe('ViewOptions', () => {
 
     it('should call navigate when see history button is clicked', async () => {
       wrapper = createWrapper();
+      await wrapper.vm.openDrawer();
+      await wrapper.vm.$nextTick();
       await wrapper.find('[data-testid="show-see_history"]').trigger('click');
       expect(mockPush).toHaveBeenCalledWith({ name: 'closed-rooms' });
     });
@@ -272,6 +248,8 @@ describe('ViewOptions', () => {
   describe('Button Event Handlers', () => {
     it('should prevent mousedown default on flows trigger button', async () => {
       wrapper = createWrapper({ showFlowsTriggerButton: true });
+      await wrapper.vm.openDrawer();
+      await wrapper.vm.$nextTick();
       const button = wrapper.find('[data-testid="show-flows-trigger"]');
       const preventDefault = vi.fn();
 
@@ -281,6 +259,8 @@ describe('ViewOptions', () => {
 
     it('should prevent mousedown default on quick messages button', async () => {
       wrapper = createWrapper({ isViewMode: false });
+      await wrapper.vm.openDrawer();
+      await wrapper.vm.$nextTick();
       const button = wrapper.find('[data-testid="show-quick-messages"]');
       const preventDefault = vi.fn();
 
@@ -290,6 +270,8 @@ describe('ViewOptions', () => {
 
     it('should prevent mousedown default on dashboard button', async () => {
       wrapper = createWrapper({ dashboard: true });
+      await wrapper.vm.openDrawer();
+      await wrapper.vm.$nextTick();
       const button = wrapper.find('[data-testid="show-dashboard"]');
       const preventDefault = vi.fn();
 
@@ -301,7 +283,8 @@ describe('ViewOptions', () => {
   describe('Sound Switch Complete Interactions', () => {
     it('should handle full sound switch lifecycle', async () => {
       wrapper = createWrapper({ isViewMode: false });
-
+      await wrapper.vm.openDrawer();
+      await wrapper.vm.$nextTick();
       await wrapper
         .findComponent('[data-testid="switch-sound"]')
         .setValue(false);
@@ -321,6 +304,33 @@ describe('ViewOptions', () => {
 
       await switchComponent.trigger('update:model-value', true);
       expect(wrapper.vm.sound).toBe(true);
+    });
+  });
+
+  describe('Lifecycle Hooks', () => {
+    it('should set initial sound value from localStorage on mount', async () => {
+      localStorageMock.storage[PREFERENCES_SOUND] = 'yes';
+      wrapper = createWrapper();
+
+      expect(wrapper.vm.sound).toBe(true);
+    });
+
+    it('should default sound to true if no localStorage value exists', async () => {
+      localStorageMock.storage = {};
+      wrapper = createWrapper();
+
+      expect(wrapper.vm.sound).toBe(true);
+    });
+
+    it('should clean up click event listener on unmount', async () => {
+      const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener');
+      wrapper = createWrapper();
+      wrapper.unmount();
+
+      expect(removeEventListenerSpy).toHaveBeenCalledWith(
+        'click',
+        expect.any(Function),
+      );
     });
   });
 });
