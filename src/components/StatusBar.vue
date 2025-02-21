@@ -102,6 +102,13 @@ const profileStore = useProfile();
 const project = computed(() => configStore.project);
 const loadingActiveStatus = ref(false);
 
+const handleClickOutside = (event) => {
+  const statusBar = event.target.closest('[class="status-bar"]');
+  if (!statusBar && isOpen.value) {
+    isOpen.value = false;
+  }
+};
+
 const fetchCustomStatuses = async () => {
   const response = await api.getCustomStatusTypeList({
     projectUuid: configStore.project.uuid,
@@ -205,10 +212,12 @@ onMounted(async () => {
   await handleGetActiveStatus();
   await fetchCustomStatuses();
   await getActiveCustomStatusAndActiveTimer();
+  document.addEventListener('click', handleClickOutside);
 });
 
 onUnmounted(() => {
   stopTimer();
+  document.removeEventListener('click', handleClickOutside);
 });
 
 const toggleDropdown = () => {
@@ -326,6 +335,7 @@ const showStatusAlert = (connectionStatus) => {
   border-left: 1px solid $unnnic-color-neutral-soft;
   background: $unnnic-color-neutral-white;
   cursor: pointer;
+  margin-bottom: $unnnic-spacing-ant;
 
   &__selected {
     width: 100%;
