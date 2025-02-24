@@ -674,7 +674,11 @@
       "create_success": "Novo grupo {groupName} criado!",
       "create_error": "Falha ao configurar algumas etapas do grupo! Verifique os detalhes e tente novamente caso identifique alguma configuração faltante.",
       "update_success": "Grupo atualizado com sucesso!",
-      "update_error": "Tivemos problemas em atualizar alguns dados. Verifique as informações e tente novamente caso falte alguma."
+      "update_error": "Tivemos problemas em atualizar alguns dados. Verifique as informações e tente novamente caso falte alguma.",
+      "delete": {
+        "title": "Deletar {groupName}",
+        "notice": "Esta ação será irreversível. Para confirmar a ação, digite o nome do grupo"
+      }
     },
     "copilot": {
       "hint": "O Co-pilot é o assistente inteligente do seu agente, ele poderá ser ativo mais tarde."
@@ -710,5 +714,6 @@
   "select_project": {
     "choose_one": "Escolha um para acessar o Weni Chats"
   },
-  "discart": "Descartar"
+  "discart": "Descartar",
+  "confirmation": "Confirmação"
 }

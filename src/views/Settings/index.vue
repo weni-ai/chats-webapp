@@ -46,11 +46,11 @@
 import { mapActions, mapState } from 'pinia';
 
 import { useSettings } from '@/store/modules/settings';
+import { useConfig } from '@/store/modules/config';
 
 import SettingsHeader from './SettingsHeader.vue';
 import SettingsProjectOptions from './SettingsProjectOptions/index.vue';
 import SettingsSectors from './SettingsSectors.vue';
-import { useConfig } from '@/store/modules/config';
 import SettingsGroups from './SettingsGroups.vue';
 
 export default {
