@@ -38,7 +38,7 @@
 
 <script>
 import { useSettings } from '@/store/modules/settings';
-import { mapState } from 'pinia';
+import { mapActions, mapState } from 'pinia';
 import unnnic from '@weni/unnnic-system';
 
 export default {
@@ -53,16 +53,14 @@ export default {
       required: true,
     },
   },
-  emits: ['update:modelValue', 'changeValid'],
+  emits: ['update:modelValue', 'changeValid', 'remove-sector'],
   data() {
     return {
       selectedSector: [],
-      toAddProjects: [],
-      toRemoveSectors: [],
     };
   },
   computed: {
-    ...mapState(useSettings, ['sectors']),
+    ...mapState(useSettings, ['sectors', 'nextSectors']),
     group: {
       get() {
         return this.modelValue;
@@ -104,14 +102,17 @@ export default {
   },
 
   mounted() {
-    this.listProjects();
-
-    if (this.isEditing) this.listGroupProjects();
+    this.listAllSectors();
   },
 
   methods: {
-    listProjects() {},
-    listGroupProjects() {},
+    ...mapActions(useSettings, ['getSectors']),
+
+    listAllSectors() {
+      this.getSectors().finally(() => {
+        if (this.nextSectors) this.listAllSectors();
+      });
+    },
 
     selectSector(selectedSector) {
       if (selectedSector.length > 0) {
@@ -120,10 +121,13 @@ export default {
 
           return uuid === selectedSector[0].value;
         });
-        if (sector?.has_group) {
+        if (sector?.has_group_sector) {
           unnnic.unnnicCallAlert({
             props: {
-              text: 'Unable to add project pName, this project is already being used in another group',
+              text: this.$t(
+                'config_chats.groups.projects_form.message.has_group_sector',
+                { sectorName: sector.name },
+              ),
               type: 'error',
             },
           });
@@ -141,16 +145,15 @@ export default {
 
       this.group.sectors = sectors;
 
-      // if (this.isEditing)
       this.selectedSector = [this.sectorProjectsNames[0]];
     },
     removeSector(sectorUuid) {
-      // if (this.isEditing)
       const sector = this.group.sectors.find(
         (sector) => sector.uuid === sectorUuid,
       );
 
-      this.toRemoveSectors.push(sector);
+      if (this.isEditing && !sector?.new) this.$emit('remove-sector', sector);
+
       this.group.sectors = this.group.sectors.filter(
         (sector) => sector.uuid !== sectorUuid,
       );

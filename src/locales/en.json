@@ -648,6 +648,9 @@
             "label": "Add project",
             "placeholder": "Search by project name"
           }
+        },
+        "message": {
+          "has_group_sector": "Unable to add project {sectorName}. This project is already being used in another group."
         }
       },
       "agents_form": {
@@ -668,7 +671,13 @@
         "text": "The creation of the new group will be discarded upon confirming this action. Do you want to discard the changes made so far?"
       },
       "create_success": "New group {groupName} created!",
-      "create_error": "Failed to configure some steps in the group! Check the details and try again if you identify any missing configurations."
+      "create_error": "Failed to configure some steps in the group! Check the details and try again if you identify any missing configurations.",
+      "update_success": "Group updated successfully!",
+      "update_error": "We had problems updating some data. Check the information and try again if anything is missing.",
+      "delete": {
+        "title": "Delete {groupName}",
+        "notice": "This action will be irreversible. To confirm the action, please type the name of the group"
+      }
     },
     "copilot": {
       "hint": "The Co-pilot is your agent's intelligent assistant; it can be activated later."
@@ -704,5 +713,6 @@
   "select_project": {
     "choose_one": "Choose one to access Weni Chats"
   },
-  "discart": "Discart"
+  "discart": "Discart",
+  "confirmation": "Confirmation"
 }

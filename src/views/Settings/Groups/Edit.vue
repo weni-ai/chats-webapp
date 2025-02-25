@@ -5,6 +5,7 @@
     :title="editingProjectGroup.name"
     :primaryButtonText="$t('save')"
     :secondaryButtonText="$t('cancel')"
+    :loadingPrimaryButton="isLoadingRequest"
     size="xl"
     @primary-button-click="finish()"
     @secondary-button-click="$refs.editProjectGroupDrawer.close()"
@@ -28,18 +29,21 @@
           <General
             v-model="editingProjectGroup"
             isEditing
+            @remove-manager="toRemoveManagers.push($event)"
           />
         </template>
         <template #tab-panel-projects>
           <Projects
             v-model="editingProjectGroup"
             isEditing
+            @remove-sector="toRemoveSectors.push($event)"
           />
         </template>
         <template #tab-panel-agents>
           <Agents
             v-model="editingProjectGroup"
             isEditing
+            @remove-agent="toRemoveAgents.push($event)"
           />
         </template>
       </UnnnicTab>
@@ -51,7 +55,10 @@
 import General from './Forms/General.vue';
 import Projects from './Forms/Projects.vue';
 import Agents from './Forms/Agents.vue';
+
 import Group from '@/services/api/resources/settings/group';
+
+import Unnnic from '@weni/unnnic-system';
 
 export default {
   name: 'EditProjectGroupDrawer',
@@ -82,6 +89,10 @@ export default {
         sectors: [],
         agents: [],
       },
+      toRemoveSectors: [],
+      toRemoveManagers: [],
+      toRemoveAgents: [],
+      isLoadingRequest: false,
     };
   },
   computed: {
@@ -124,6 +135,7 @@ export default {
 
       this.activeTab = newActiveTab;
     },
+
     closeDrawer(forceClose) {
       if (this.showDiscartQuestion && !forceClose) {
         this.showConfirmDiscartChangesModal = true;
@@ -131,7 +143,120 @@ export default {
         this.$emit('close');
       }
     },
-    finish() {},
+
+    async finish() {
+      try {
+        this.isLoadingRequest = true;
+        await this.updateGroup();
+        await this.updateManagers();
+        await this.updateAgents();
+        await this.updateSectors();
+        Unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('config_chats.groups.update_success'),
+            type: 'success',
+          },
+          seconds: 5,
+        });
+      } catch (error) {
+        Unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('config_chats.groups.update_error'),
+            type: 'error',
+          },
+          seconds: 5,
+        });
+        console.error(error);
+      } finally {
+        this.isLoadingRequest = false;
+        this.closeDrawer(true);
+      }
+    },
+
+    async updateGroup() {
+      const updateGroupBody = {
+        rooms_limit: this.editingProjectGroup.maxSimultaneousChatsByAgent,
+      };
+
+      await Group.update({
+        groupUuid: this.projectGroup.uuid,
+        body: updateGroupBody,
+      });
+    },
+
+    async updateManagers() {
+      const toRemoveManagersUuids = this.toRemoveManagers.map(
+        (agent) => agent.uuid,
+      );
+
+      const toAddManagersUuids = this.editingProjectGroup.managers
+        .filter((manager) => manager.new)
+        .map((manager) => manager.uuid);
+
+      await Promise.all(
+        toRemoveManagersUuids.map((permissionUuid) =>
+          Group.deleteAuthorization({ permissionUuid }),
+        ),
+      );
+
+      await Promise.all(
+        toAddManagersUuids.map((permissionUuid) =>
+          Group.addAuthorization({
+            groupSectorUuid: this.projectGroup.uuid,
+            role: 1,
+            permissionUuid,
+          }),
+        ),
+      );
+    },
+
+    async updateSectors() {
+      const toRemoveSectorsUuids = this.toRemoveSectors.map(
+        (sector) => sector.uuid,
+      );
+
+      const toAddSectorsUuids = this.editingProjectGroup.sectors
+        .filter((sector) => sector.new)
+        .map((sector) => sector.uuid);
+
+      await Promise.all(
+        toRemoveSectorsUuids.map((sectorUuid) =>
+          Group.removeSector({ groupUuid: this.projectGroup.uuid, sectorUuid }),
+        ),
+      );
+
+      await Promise.all(
+        toAddSectorsUuids.map((sectorUuid) =>
+          Group.addSector({ groupUuid: this.projectGroup.uuid, sectorUuid }),
+        ),
+      );
+    },
+
+    async updateAgents() {
+      const toRemoveAgentsUuids = this.toRemoveAgents.map(
+        (agent) => agent.uuid,
+      );
+
+      const toAddAgentsUuids = this.editingProjectGroup.agents
+        .filter((agent) => agent.new)
+        .map((agent) => agent.uuid);
+
+      await Promise.all(
+        toRemoveAgentsUuids.map((permissionUuid) =>
+          Group.deleteAuthorization({ permissionUuid }),
+        ),
+      );
+
+      await Promise.all(
+        toAddAgentsUuids.map((permissionUuid) =>
+          Group.addAuthorization({
+            groupSectorUuid: this.projectGroup.uuid,
+            role: 2,
+            permissionUuid,
+          }),
+        ),
+      );
+    },
   },
 };
 </script>

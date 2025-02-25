@@ -42,7 +42,7 @@
           </UnnnicDropdownItem>
           <UnnnicDropdownItem
             data-testid="dropdown-delete"
-            @click.stop="() => {}"
+            @click.stop="openDeleteGroupModal(group)"
           >
             <section
               class="dropdown-item-content dropdown-item-content__delete"
@@ -70,6 +70,11 @@
       :show="showEditGroupDrawer"
       @close="closeEditGroupModal()"
     />
+    <DeleteGroupModal
+      v-if="showDeleteGroupModal"
+      :group="deleteGroup"
+      @close="closeDeleteGroupModal"
+    />
   </section>
 </template>
 
@@ -78,18 +83,22 @@ import { useSettings } from '@/store/modules/settings';
 import { mapState } from 'pinia';
 import NewGroupDrawer from './Groups/New.vue';
 import EditGroupDrawer from './Groups/Edit.vue';
+import DeleteGroupModal from './Groups/DeleteGroupModal.vue';
 export default {
   name: 'SettingsGroups',
 
   components: {
     NewGroupDrawer,
     EditGroupDrawer,
+    DeleteGroupModal,
   },
 
   data() {
     return {
       showNewGroupDrawer: false,
       showEditGroupDrawer: false,
+      showDeleteGroupModal: false,
+      deleteGroup: null,
       editGroup: null,
     };
   },
@@ -119,6 +128,16 @@ export default {
       this.handleConnectOverlay(false);
       this.showEditGroupDrawer = false;
       this.editGroup = null;
+    },
+    openDeleteGroupModal(group) {
+      this.handleConnectOverlay(true);
+      this.deleteGroup = group;
+      this.showDeleteGroupModal = true;
+    },
+    closeDeleteGroupModal() {
+      this.handleConnectOverlay(false);
+      this.deleteGroup = null;
+      this.showDeleteGroupModal = false;
     },
   },
 };

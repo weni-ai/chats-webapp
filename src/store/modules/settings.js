@@ -23,6 +23,7 @@ export const useSettings = defineStore('settings', {
   actions: {
     async getSectors() {
       const isInLastPage = !this.nextSectors && this.previousSectors;
+
       if (this.isLoadingSectors || isInLastPage) {
         return;
       }

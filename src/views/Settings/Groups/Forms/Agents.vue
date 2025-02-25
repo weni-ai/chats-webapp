@@ -40,7 +40,6 @@
 <script>
 import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 
-import Group from '@/services/api/resources/settings/group';
 import Project from '@/services/api/resources/settings/project';
 
 export default {
@@ -58,13 +57,11 @@ export default {
       required: true,
     },
   },
-  emits: ['update:modelValue', 'changeValid'],
+  emits: ['update:modelValue', 'changeValid', 'remove-agent'],
   data() {
     return {
       selectedAgent: [],
       agents: [],
-      toAddAgents: [],
-      toRemoveAgents: [],
       agentsPage: 0,
       agentsLimitPerPage: 50,
     };
@@ -89,11 +86,14 @@ export default {
       ];
 
       this.agents.forEach((agent) => {
-        const { name, uuid, user } = agent;
+        const { uuid, user } = agent;
 
         agentsNames.push({
           value: uuid,
-          label: name || user.email,
+          label:
+            user.first_name || user.last_name
+              ? `${user.first_name} ${user.last_name}`
+              : user.email,
         });
       });
 
@@ -112,8 +112,6 @@ export default {
 
   mounted() {
     this.listAgents();
-
-    if (this.isEditing) this.listGroupAgents();
   },
 
   methods: {
@@ -136,8 +134,6 @@ export default {
       }
     },
 
-    listGroupAgents() {},
-
     selectAgent(selectedAgent) {
       if (selectedAgent.length > 0) {
         const agent = this.agents.find((agent) => {
@@ -148,24 +144,24 @@ export default {
         this.addAgent(agent);
       }
     },
+
     addAgent(agent) {
       if (!agent) return;
       const agents = this.group.agents.some(
-        (mappedAgent) => mappedAgent.uuid === agent.uuid,
+        (mappedAgent) => mappedAgent.permission === agent.uuid,
       )
         ? this.group.agents
         : [{ ...agent, new: true }, ...this.group.agents];
 
       this.group.agents = agents;
 
-      // if (this.isEditing)
       this.selectedAgent = [this.agentsNames[0]];
     },
     removeAgent(agentUuid) {
-      // if (this.isEditing)
       const agent = this.group.agents.find((agent) => agent.uuid === agentUuid);
 
-      this.toRemoveAgents.push(agent);
+      if (this.isEditing && !agent?.new) this.$emit('remove-agent', agent);
+
       this.group.agents = this.group.agents.filter(
         (sector) => sector.uuid !== agentUuid,
       );
