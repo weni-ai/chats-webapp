@@ -179,13 +179,14 @@ export default {
 
   async mounted() {
     this.loadingInfo = true;
+
     if (this.isEditing) {
       this.queue = {
-        ...(await Queue.getQueueInformation(this.queue.uuid)),
-        agents: this.queue.agents,
         default_message: this.queue.default_message
           ? this.queue.default_message
           : '',
+        ...(await Queue.getQueueInformation(this.queue.uuid)),
+        agents: this.queue.agents,
       };
 
       if (!this.enableGroupsMode) await this.listQueueAgents();
