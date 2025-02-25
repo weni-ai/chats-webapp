@@ -50,8 +50,7 @@ export default {
         status_type: statusType,
         break_time: 0,
       })
-      .then((response) => response.data)
-      .catch((error) => error.response);
+      .then((response) => response.data);
     return response;
   },
   async closeCustomStatus({ statusUuid, endTime, isActive }) {
@@ -60,8 +59,7 @@ export default {
         end_time: endTime,
         is_active: isActive,
       })
-      .then((response) => response.data)
-      .catch((error) => error.response);
+      .then((response) => response.data);
 
     return response;
   },
