@@ -648,6 +648,9 @@
             "label": "Add project",
             "placeholder": "Search by project name"
           }
+        },
+        "message": {
+          "has_group_sector": "Unable to add project {sectorName}. This project is already being used in another group."
         }
       },
       "agents_form": {

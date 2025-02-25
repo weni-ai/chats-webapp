@@ -121,10 +121,13 @@ export default {
 
           return uuid === selectedSector[0].value;
         });
-        if (sector?.has_group) {
+        if (sector?.has_group_sector) {
           unnnic.unnnicCallAlert({
             props: {
-              text: 'Unable to add project pName, this project is already being used in another group',
+              text: this.$t(
+                'config_chats.groups.projects_form.message.has_group_sector',
+                { sectorName: sector.name },
+              ),
               type: 'error',
             },
           });

@@ -652,6 +652,9 @@
             "label": "Adicionar projeto",
             "placeholder": "Buscar pelo nome do projeto"
           }
+        },
+        "message": {
+          "has_group_sector": "Não é possível adicionar o projeto {sectorName}. Este projeto já está sendo utilizado em outro grupo."
         }
       },
       "agents_form": {
