@@ -15,14 +15,7 @@
         v-show="!isLoadingSidebar"
         class="sidebar"
       >
-        <StatusBar />
-        <PreferencesBar
-          v-if="!isViewMode"
-          :showFlowsTriggerButton="canTriggerFlows"
-          :dashboard="canAccessDashboard"
-          @show-quick-messages="handlerShowQuickMessages"
-          @open-flows-trigger="openFlowsTrigger"
-        />
+        <StatusBar v-if="!isViewMode" />
 
         <TheCardGroups
           class="room-list"
@@ -79,7 +72,6 @@
 
 <script>
 import SidebarLoading from '@/views/loadings/HomeSidebar.vue';
-import PreferencesBar from '@/components/PreferencesBar.vue';
 import QuickMessages from '@/components/chats/QuickMessages/index.vue';
 import TheCardGroups from './components/TheCardGroups/index.vue';
 import LayoutFlowsTrigger from './components/FlowsTrigger/index.vue';
@@ -94,7 +86,6 @@ export default {
   name: 'ChatsLayout',
 
   components: {
-    PreferencesBar,
     TheCardGroups,
     SidebarLoading,
     LayoutFlowsTrigger,
@@ -216,8 +207,6 @@ section.chats-layout {
     border-right: 1px solid $unnnic-color-neutral-soft;
   }
 
-  overflow: hidden;
-
   &.has-aside {
     grid-template-columns: 3fr 6fr 3fr;
   }
@@ -234,7 +223,6 @@ section.chats-layout {
   .sidebar {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-stack-xs;
 
     height: 100%;
 

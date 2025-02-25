@@ -123,8 +123,14 @@ const MAX_STATUS = 10;
 const getStatus = async () => {
   isLoadingStatusData.value = true;
   try {
-    const data = await customStatus.getCustomStatusTypeList();
-    customBreaks.value = data.results;
+    const data = await customStatus.getCustomBreakStatusTypeList({
+      projectUuid: config.project.uuid,
+    });
+    const dataStatus = data.results.map((item) => ({
+      ...item,
+      hasSaved: true,
+    }));
+    customBreaks.value = dataStatus;
   } catch (error) {
     console.error('error get status', error);
   } finally {
@@ -132,13 +138,15 @@ const getStatus = async () => {
   }
 };
 
-const isLimitReached = computed(() => customBreaks.value.length >= MAX_STATUS);
+const isLimitReached = computed(
+  () => customBreaks?.value?.length >= MAX_STATUS,
+);
 
 const canSave = computed(() => {
-  const hasNewStatus = customBreaks.value.some(
-    (status) => !originalBreaks.value.includes(status),
+  const hasNewStatus = customBreaks?.value?.some(
+    (status) => !originalBreaks?.value?.includes(status),
   );
-  return customBreaks.value.length > 0 && hasNewStatus;
+  return customBreaks?.value?.length > 0 && hasNewStatus;
 });
 
 const errorMessage = computed(() => {
@@ -151,7 +159,7 @@ const errorMessage = computed(() => {
 
 const validateInput = () => {
   const lowerCaseName = customBreakName.value.trim().toLowerCase();
-  isDuplicate.value = customBreaks.value.some(
+  isDuplicate.value = customBreaks?.value?.some(
     (status) => status.name.toLowerCase() === lowerCaseName,
   );
 };
@@ -198,10 +206,12 @@ const saveStatus = async () => {
 
   isLoadingSaveStatus.value = true;
   try {
-    const dataStatus = customBreaks.value.map((item) => ({
-      name: item.name,
-      project: config.project.uuid,
-    }));
+    const dataStatus = customBreaks.value
+      .filter((item) => !item.hasSaved)
+      .map((item) => ({
+        name: item.name,
+        project: config.project.uuid,
+      }));
 
     await customStatus.createCustomStatusType({
       status: dataStatus,

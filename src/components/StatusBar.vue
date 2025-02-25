@@ -12,7 +12,7 @@
         <section
           class="status-bar__icon"
           data-testid="status-bar-icon"
-          :style="{ backgroundColor: selectedStatus.color }"
+          :class="`status-bar--${selectedStatus.color}`"
         ></section>
         <p
           class="status-bar__label"
@@ -22,7 +22,8 @@
         </p>
         <section
           v-if="
-            project.config?.can_see_timer && selectedStatus.value !== 'inactive'
+            project.config?.can_see_timer &&
+            !['inactive', 'active'].includes(selectedStatus.value)
           "
           class="status-bar__timer"
           data-testid="status-bar-timer"
@@ -42,69 +43,111 @@
         />
       </section>
     </section>
-
-    <ul
-      v-if="isOpen"
-      class="status-bar__list status-bar__list--open"
-      data-testid="status-bar-list-open"
-    >
-      <li
-        v-for="status in statuses"
-        :key="status.value"
-        class="status-bar__item"
-        data-testid="status-bar-item"
-        @click="selectStatus(status)"
+    <Transition name="expand">
+      <ul
+        v-if="isOpen"
+        class="status-bar__list status-bar__list--open"
+        data-testid="status-bar-list-open"
       >
-        <section
-          class="status-bar__icon"
-          data-testid="status-bar-icon-inside"
-          :class="{
-            'status-bar--active': status.label === 'Online',
-            'status-bar--inactive': status.label === 'Offline',
-            'status-bar--custom': !['Online', 'Offline'].includes(status.label),
-          }"
-        ></section>
-        <p
-          class="status-bar__item-label"
-          data-testid="status-bar-item-label"
+        <li
+          v-for="status in statuses"
+          :key="status.value"
+          class="status-bar__item"
+          data-testid="status-bar-item"
+          @click="selectStatus(status)"
         >
-          {{ status.label }}
-        </p>
-      </li>
-    </ul>
+          <section
+            class="status-bar__icon"
+            data-testid="status-bar-icon-inside"
+            :class="`status-bar--${status.color}`"
+          ></section>
+          <p
+            class="status-bar__item-label"
+            data-testid="status-bar-item-label"
+          >
+            {{ status.label }}
+          </p>
+        </li>
+      </ul>
+    </Transition>
   </header>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useConfig } from '@/store/modules/config';
-import { format, intervalToDuration, parseISO } from 'date-fns';
+import { useProfile } from '@/store/modules/profile';
+import { intervalToDuration, parseISO } from 'date-fns';
+import api from '@/services/api/resources/chats/pauseStatus';
+import Profile from '@/services/api/resources/profile';
+import unnnic from '@weni/unnnic-system';
 import i18n from '@/plugins/i18n';
 
 const statuses = ref([
   { value: 'active', label: 'Online', color: 'green' },
   { value: 'inactive', label: 'Offline', color: 'gray' },
-  { value: 'pending', label: 'Almoço', color: 'orange' },
-  { value: 'lunch', label: 'Lanche', color: 'brown' },
 ]);
 
-const configStore = useConfig();
-const project = computed(() => configStore.project);
-
-const selectedStatus = ref(statuses.value[1]);
+const selectedStatus = ref(
+  sessionStorage.getItem('statusAgent') === 'ONLINE'
+    ? statuses.value[0]
+    : statuses.value[1],
+);
 const isOpen = ref(false);
 const startDate = ref(null);
 const elapsedTime = ref(0);
 let intervalId = null;
+const configStore = useConfig();
+const profileStore = useProfile();
+const project = computed(() => configStore.project);
+const loadingActiveStatus = ref(false);
 
-const mockApiRequest = (url, data) => {
-  console.log(`📡 Mock API Request to: ${url}`, data);
-  return new Promise((resolve) => setTimeout(resolve, 500));
+const handleClickOutside = (event) => {
+  const statusBar = event.target.closest('[class="status-bar"]');
+  if (!statusBar && isOpen.value) {
+    isOpen.value = false;
+  }
 };
 
-const getLocaleDate = () => {
-  const locale = i18n.global.locale ?? 'en-US';
-  if (locale) return format(new Date(), "yyyy-MM-dd'T'HH:mm:ssxxx");
+const fetchCustomStatuses = async () => {
+  const response = await api.getCustomStatusTypeList({
+    projectUuid: configStore.project.uuid,
+  });
+  statuses.value = response;
+};
+
+const handleGetActiveStatus = async () => {
+  const activeStatus = await configStore.getStatus(configStore.project.uuid);
+  configStore.$patch({
+    status: activeStatus,
+  });
+};
+
+const updateActiveStatus = async ({ isActive, skipRequest }) => {
+  loadingActiveStatus.value = true;
+  try {
+    let connection_status = null;
+
+    if (!skipRequest) {
+      const {
+        data: { connection_status: connection },
+      } = await Profile.updateStatus({
+        projectUuid: configStore.project.uuid,
+        status: isActive ? 'ONLINE' : 'OFFLINE',
+      });
+
+      sessionStorage.setItem('statusAgent', connection);
+      connection_status = connection.toLowerCase();
+    } else {
+      connection_status = isActive ? 'online' : 'offline';
+    }
+
+    showStatusAlert(connection_status);
+  } catch (e) {
+    console.error('Erro ao atualizar status', e);
+  } finally {
+    loadingActiveStatus.value = false;
+  }
 };
 
 const startTimer = () => {
@@ -130,49 +173,158 @@ const formattedTime = computed(() => {
 });
 
 const selectStatus = async (newStatus) => {
-  if (newStatus.value !== 'inactive') {
-    if (selectedStatus.value.value !== 'inactive') {
-      await mockApiRequest('/api/status/end', {
-        status_id: selectedStatus.value.value,
-        end_date: getLocaleDate(),
-      });
-    }
+  if (newStatus.value === selectedStatus.value.value) return;
 
-    startDate.value = getLocaleDate();
-    await mockApiRequest('/api/status/start', {
-      status_id: newStatus.value,
-      start_date: startDate.value,
-    });
+  const isOldStatusActiveOrInactive = ['active', 'inactive'].includes(
+    selectedStatus.value.value,
+  );
+  const isCustomStatus = !['active', 'inactive'].includes(newStatus.value);
 
+  if (isOldStatusActiveOrInactive && isCustomStatus) {
+    startDate.value = new Date().toISOString();
+    await handleCreateCustomStatus(newStatus);
     startTimer();
-  } else {
+  } else if (!isOldStatusActiveOrInactive && isCustomStatus) {
+    await handleCloseCustomStatus(selectedStatus.value, false);
+    await handleCreateCustomStatus(newStatus);
+    startDate.value = new Date().toISOString();
+    startTimer();
+  } else if (!isOldStatusActiveOrInactive && !isCustomStatus) {
+    await handleCloseCustomStatus(
+      selectedStatus.value,
+      newStatus.value === 'active',
+    );
     stopTimer();
+  }
+
+  if (newStatus.value === 'active' || newStatus.value === 'inactive') {
+    updateActiveStatus({
+      isActive: newStatus.value === 'active',
+      skipRequest: !['active', 'inactive'].includes(selectedStatus.value.value),
+    });
   }
 
   selectedStatus.value = newStatus;
   isOpen.value = false;
 };
 
-onMounted(() => {
-  if (!startDate.value && project) {
-    startDate.value = getLocaleDate();
-  }
-
-  if (selectedStatus.value.value !== 'inactive') {
-    startTimer();
-  }
+onMounted(async () => {
+  await handleGetActiveStatus();
+  await fetchCustomStatuses();
+  await getActiveCustomStatusAndActiveTimer();
+  document.addEventListener('click', handleClickOutside);
 });
 
 onUnmounted(() => {
   stopTimer();
+  document.removeEventListener('click', handleClickOutside);
 });
 
 const toggleDropdown = () => {
   isOpen.value = !isOpen.value;
 };
+
+const getActiveCustomStatusAndActiveTimer = async () => {
+  const activeStatus = await api.getActiveCustomStatus();
+
+  if (activeStatus?.status_type && activeStatus.is_active) {
+    statuses.value = statuses.value.map((status) => ({
+      ...status,
+      statusUuid:
+        status.value === activeStatus.status_type ? activeStatus.uuid : null,
+    }));
+
+    selectedStatus.value =
+      statuses.value.find(
+        (status) => status.value === activeStatus.status_type,
+      ) || selectedStatus.value;
+
+    startDate.value = activeStatus.created_on;
+    startTimer();
+  }
+};
+
+const handleCloseCustomStatus = async (status, isActive) => {
+  const closeStatus = (value) =>
+    api.closeCustomStatus({
+      statusUuid: value,
+      endTime: new Date().toISOString().replace('Z', '+00:00'),
+      isActive,
+    });
+
+  if (!status.statusUuid) {
+    const activeStatus = await api.getActiveCustomStatus();
+    if (status.value === activeStatus.status_type) {
+      statuses.value = statuses.value.map((state) => ({
+        ...state,
+        statusUuid:
+          state.value === activeStatus.status_type ? activeStatus.uuid : null,
+      }));
+
+      return closeStatus(activeStatus.uuid);
+    }
+  }
+
+  return closeStatus(status.statusUuid);
+};
+
+const handleCreateCustomStatus = async (status) => {
+  const createStatus = (value) =>
+    api.createCustomStatus({
+      email: profileStore.me.email,
+      statusType: value,
+    });
+
+  const response = await createStatus(status.value);
+
+  if (!status.statusUuid) {
+    statuses.value = statuses.value.map((state) => ({
+      ...state,
+      statusUuid: state.value === response.status_type ? response.uuid : null,
+    }));
+  }
+
+  return response;
+};
+
+const showStatusAlert = (connectionStatus) => {
+  unnnic.unnnicCallAlert({
+    props: {
+      text: `${i18n.global.t('status_agent')} ${connectionStatus}`,
+      icon: 'indicator',
+      scheme:
+        connectionStatus === 'online'
+          ? 'feedback-green'
+          : '$unnnic-color-neutral-black',
+      closeText: i18n.global.t('close'),
+      position: 'bottom-right',
+    },
+    seconds: 15,
+  });
+};
 </script>
 
 <style lang="scss" scoped>
+.expand-enter-active,
+.expand-leave-active {
+  transition: all 0.3s ease-out;
+  max-height: 300px;
+}
+
+.expand-enter-from,
+.expand-leave-to {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.expand-enter-to,
+.expand-leave-from {
+  max-height: 300px;
+  opacity: 1;
+  overflow: hidden;
+}
+
 .status-bar {
   position: relative;
   display: flex;
@@ -183,13 +335,13 @@ const toggleDropdown = () => {
   border-left: 1px solid $unnnic-color-neutral-soft;
   background: $unnnic-color-neutral-white;
   cursor: pointer;
+  margin-bottom: $unnnic-spacing-ant;
 
   &__selected {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: $unnnic-spacing-xs;
   }
 
   &__content {
@@ -205,15 +357,15 @@ const toggleDropdown = () => {
     background-color: $unnnic-color-neutral-cleanest;
   }
 
-  &--active {
+  &--green {
     background-color: $unnnic-color-aux-green-300;
   }
 
-  &--inactive {
+  &--gray {
     background-color: $unnnic-color-neutral-cleanest;
   }
 
-  &--custom {
+  &--brown {
     background-color: $unnnic-color-aux-orange-500;
   }
 
@@ -267,6 +419,9 @@ const toggleDropdown = () => {
     top: 100%;
     left: 0;
     z-index: 9999999;
+    box-shadow: 0px $unnnic-spacing-nano $unnnic-spacing-xs 0px
+      rgba(0, 0, 0, 0.1);
+    border-radius: 0rem 0rem $unnnic-border-radius-sm $unnnic-border-radius-sm;
 
     &--open {
       display: block;
