@@ -4,6 +4,10 @@
     "offline": "Desconectada",
     "set_status": "Establecer estado"
   },
+  "status-bar": {
+    "success": "Estado actualizado a {status}",
+    "error": "No se puede actualizar el estado, por favor, inténtelo de nuevo"
+  },
   "view-option": "Opciones",
   "preferences": {
     "title": "Preferencias",
