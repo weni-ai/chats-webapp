@@ -167,7 +167,7 @@ export default {
       useDefaultSectorQueue: 0,
       isValid: {
         general: false,
-        extraOptions: false,
+        extraOptions: true,
         queue: false,
         quick_messages: true,
       },

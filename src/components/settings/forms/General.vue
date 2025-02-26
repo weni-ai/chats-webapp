@@ -272,7 +272,7 @@ export default {
       const projectsNames = [
         {
           value: '',
-          label: this.$t('sector.managers.add.placeholder'),
+          label: this.$t('sector.link.project_placeholder'),
         },
       ];
 

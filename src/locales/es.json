@@ -100,7 +100,8 @@
       "title": "Vínculo",
       "label": "Enlace a un proyecto existente",
       "editing_disclaimer": "No es posible editar el proyecto vinculado, si desea editar el enlace debe crear un nuevo sector y seleccionar el proyecto deseado.",
-      "has_linked_project": "El proyecto seleccionado ya está asociado a otro sector, seleccione otro proyecto para continuar."
+      "has_linked_project": "El proyecto seleccionado ya está asociado a otro sector, seleccione otro proyecto para continuar.",
+      "project_placeholder": "Buscar por nombre del proyecto"
     },
     "managers": {
       "title": "Gerentes de servicio",

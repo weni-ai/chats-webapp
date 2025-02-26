@@ -93,7 +93,7 @@
       <UnnnicDisclaimer
         v-if="enableGroupsMode"
         :text="$t('config_chats.queues.message.config_agents_group')"
-        iconColor="feedback-blue"
+        iconColor="neutral-dark"
       />
 
       <AgentsForm
