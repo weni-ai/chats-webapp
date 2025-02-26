@@ -352,7 +352,89 @@ describe('StatusBar', () => {
   });
 
   describe('Status Alerts', () => {
-    it('should show status alert when changing status', async () => {
+    it('should show success alert when changing to online status', async () => {
+      wrapper = createWrapper();
+      await wrapper.vm.$nextTick();
+
+      const onlineStatus = { value: 'active', label: 'Online', color: 'green' };
+      wrapper.vm.showStatusAlert(onlineStatus, true);
+
+      expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
+        props: {
+          text: 'Status updated to Online',
+          icon: 'indicator',
+          scheme: 'feedback-green',
+          closeText: 'Close',
+          position: 'bottom-right',
+        },
+        seconds: 15,
+      });
+    });
+
+    it('should show success alert when changing to offline status', async () => {
+      wrapper = createWrapper();
+      await wrapper.vm.$nextTick();
+
+      const offlineStatus = {
+        value: 'inactive',
+        label: 'Offline',
+        color: 'gray',
+      };
+      wrapper.vm.showStatusAlert(offlineStatus, true);
+
+      expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
+        props: {
+          text: 'Status updated to Offline',
+          icon: 'indicator',
+          scheme: '$unnnic-color-neutral-black',
+          closeText: 'Close',
+          position: 'bottom-right',
+        },
+        seconds: 15,
+      });
+    });
+
+    it('should show success alert when changing to custom status', async () => {
+      wrapper = createWrapper();
+      await wrapper.vm.$nextTick();
+
+      const customStatus = { value: 'lunch', label: 'Lunch', color: 'brown' };
+      wrapper.vm.showStatusAlert(customStatus, true);
+
+      expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
+        props: {
+          text: 'Status updated to Lunch',
+          icon: 'indicator',
+          scheme: 'feedback-green',
+          closeText: 'Close',
+          position: 'bottom-right',
+        },
+        seconds: 15,
+      });
+    });
+
+    it('should show error alert when status update fails', async () => {
+      wrapper = createWrapper();
+      await wrapper.vm.$nextTick();
+
+      const status = { value: 'active', label: 'Online', color: 'green' };
+      wrapper.vm.showStatusAlert(status, false);
+
+      expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
+        props: {
+          text: 'Unable to update status, please try again.',
+          icon: 'indicator',
+          scheme: 'feedback-red',
+          closeText: 'Close',
+          position: 'bottom-right',
+        },
+        seconds: 15,
+      });
+    });
+
+    it('should show error alert when API request fails', async () => {
+      Profile.updateStatus.mockRejectedValueOnce(new Error('API Error'));
+
       wrapper = createWrapper();
       await wrapper.vm.$nextTick();
 
@@ -361,12 +443,37 @@ describe('StatusBar', () => {
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
       await items[0].trigger('click');
+      await flushPromises();
 
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
         props: {
-          text: 'You are online',
+          text: 'Unable to update status, please try again.',
           icon: 'indicator',
-          scheme: 'feedback-green',
+          scheme: 'feedback-red',
+          closeText: 'Close',
+          position: 'bottom-right',
+        },
+        seconds: 15,
+      });
+    });
+
+    it('should show error alert when custom status creation fails', async () => {
+      api.createCustomStatus.mockRejectedValueOnce(new Error('API Error'));
+
+      wrapper = createWrapper();
+      await wrapper.vm.fetchCustomStatuses();
+      wrapper.vm.toggleDropdown();
+      await wrapper.vm.$nextTick();
+
+      const items = wrapper.findAll('[data-testid="status-bar-item"]');
+      await items[2].trigger('click');
+      await flushPromises();
+
+      expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
+        props: {
+          text: 'Unable to update status, please try again.',
+          icon: 'indicator',
+          scheme: 'feedback-red',
           closeText: 'Close',
           position: 'bottom-right',
         },
