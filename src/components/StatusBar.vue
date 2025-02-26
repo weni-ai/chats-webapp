@@ -142,9 +142,14 @@ const updateActiveStatus = async ({ isActive, skipRequest }) => {
       connection_status = isActive ? 'online' : 'offline';
     }
 
-    showStatusAlert(connection_status);
+    const status = statuses.value.find(
+      (s) =>
+        s.value === (connection_status === 'online' ? 'active' : 'inactive'),
+    );
+    showStatusAlert(status, true);
   } catch (e) {
-    console.error('Erro ao atualizar status', e);
+    console.error('Error to update active/inactive status', e);
+    showStatusAlert(selectedStatus.value, false);
   } finally {
     loadingActiveStatus.value = false;
   }
@@ -180,32 +185,41 @@ const selectStatus = async (newStatus) => {
   );
   const isCustomStatus = !['active', 'inactive'].includes(newStatus.value);
 
-  if (isOldStatusActiveOrInactive && isCustomStatus) {
-    startDate.value = new Date().toISOString();
-    await handleCreateCustomStatus(newStatus);
-    startTimer();
-  } else if (!isOldStatusActiveOrInactive && isCustomStatus) {
-    await handleCloseCustomStatus(selectedStatus.value, false);
-    await handleCreateCustomStatus(newStatus);
-    startDate.value = new Date().toISOString();
-    startTimer();
-  } else if (!isOldStatusActiveOrInactive && !isCustomStatus) {
-    await handleCloseCustomStatus(
-      selectedStatus.value,
-      newStatus.value === 'active',
-    );
-    stopTimer();
-  }
+  try {
+    if (isOldStatusActiveOrInactive && isCustomStatus) {
+      startDate.value = new Date().toISOString();
+      await handleCreateCustomStatus(newStatus);
+      startTimer();
+    } else if (!isOldStatusActiveOrInactive && isCustomStatus) {
+      await handleCloseCustomStatus(selectedStatus.value, false);
+      await handleCreateCustomStatus(newStatus);
+      startDate.value = new Date().toISOString();
+      startTimer();
+    } else if (!isOldStatusActiveOrInactive && !isCustomStatus) {
+      await handleCloseCustomStatus(
+        selectedStatus.value,
+        newStatus.value === 'active',
+      );
+      stopTimer();
+    }
 
-  if (newStatus.value === 'active' || newStatus.value === 'inactive') {
-    updateActiveStatus({
-      isActive: newStatus.value === 'active',
-      skipRequest: !['active', 'inactive'].includes(selectedStatus.value.value),
-    });
-  }
+    if (newStatus.value === 'active' || newStatus.value === 'inactive') {
+      updateActiveStatus({
+        isActive: newStatus.value === 'active',
+        skipRequest: !['active', 'inactive'].includes(
+          selectedStatus.value.value,
+        ),
+      });
+    } else {
+      showStatusAlert(newStatus, true);
+    }
 
-  selectedStatus.value = newStatus;
-  isOpen.value = false;
+    selectedStatus.value = newStatus;
+    isOpen.value = false;
+  } catch (e) {
+    console.error('Error updating status:', e);
+    showStatusAlert(selectedStatus.value, false);
+  }
 };
 
 onMounted(async () => {
@@ -287,15 +301,24 @@ const handleCreateCustomStatus = async (status) => {
   return response;
 };
 
-const showStatusAlert = (connectionStatus) => {
+const showStatusAlert = (status, isSuccess = true) => {
+  const scheme = {
+    inactive: '$unnnic-color-neutral-black',
+    error: 'feedback-red',
+    default: 'feedback-green',
+  };
+
+  const schemeStatus = isSuccess
+    ? scheme[status.value] || scheme.default
+    : scheme.error;
+
   unnnic.unnnicCallAlert({
     props: {
-      text: `${i18n.global.t('status_agent')} ${connectionStatus}`,
+      text: isSuccess
+        ? i18n.global.t('status-bar.success', { status: status.label })
+        : i18n.global.t('status-bar.error'),
       icon: 'indicator',
-      scheme:
-        connectionStatus === 'online'
-          ? 'feedback-green'
-          : '$unnnic-color-neutral-black',
+      scheme: schemeStatus,
       closeText: i18n.global.t('close'),
       position: 'bottom-right',
     },
