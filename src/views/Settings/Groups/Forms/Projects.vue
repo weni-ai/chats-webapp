@@ -38,8 +38,11 @@
 
 <script>
 import { useSettings } from '@/store/modules/settings';
-import { mapActions, mapState } from 'pinia';
+import { mapActions } from 'pinia';
 import unnnic from '@weni/unnnic-system';
+
+import Sector from '@/services/api/resources/settings/sector';
+import { removeDuplicatedItems } from '@/utils/array';
 
 export default {
   name: 'ProjectGroupProjectsForm',
@@ -57,10 +60,12 @@ export default {
   data() {
     return {
       selectedSector: [],
+      sectors: [],
+      sectorPage: 0,
+      sectorRequestResultsLimit: 20,
     };
   },
   computed: {
-    ...mapState(useSettings, ['sectors', 'nextSectors']),
     group: {
       get() {
         return this.modelValue;
@@ -108,10 +113,21 @@ export default {
   methods: {
     ...mapActions(useSettings, ['getSectors']),
 
-    listAllSectors() {
-      this.getSectors().finally(() => {
-        if (this.nextSectors) this.listAllSectors();
-      });
+    async listAllSectors() {
+      let hasNext = false;
+      try {
+        const { results, next } = await Sector.list({
+          limit: this.sectorRequestResultsLimit,
+          offset: this.sectorPage * this.sectorRequestResultsLimit,
+        });
+        this.sectors = removeDuplicatedItems([...this.sectors, ...results]);
+        hasNext = next;
+        this.sectorPage += 1;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        if (hasNext) this.listAllSectors();
+      }
     },
 
     selectSector(selectedSector) {
