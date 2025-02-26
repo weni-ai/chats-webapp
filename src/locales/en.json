@@ -4,6 +4,10 @@
     "offline": "Offline",
     "set_status": "Set status"
   },
+  "status-bar": {
+    "success": "Status updated to {status}",
+    "error": "Unable to update status, please try again."
+  },
   "view-option": "View Options",
   "preferences": {
     "title": "Preferences",

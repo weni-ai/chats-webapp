@@ -4,6 +4,10 @@
     "offline": "Offline",
     "set_status": "Definir status"
   },
+  "status-bar": {
+    "success": "Status atualizado para {status}",
+    "error": "Não foi possível atualizar o seu status, por favor tente novamente"
+  },
   "view-option": "Opções", 
   "preferences": {
     "title": "Preferências",
