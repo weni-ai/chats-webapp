@@ -95,6 +95,13 @@
     "name": "Sector name",
     "placeholder": "Example: Financial",
     "save_and_continue": "Save and continue",
+    "link": {
+      "title": "Link",
+      "label": "Link to an existing project",
+      "editing_disclaimer": "It is not possible to edit the linked project, if you wish to edit the link you must create a new sector and select the desired project.",
+      "has_linked_project": "The selected project is already associated with another sector, select another project to continue.",
+      "project_placeholder": "Search by project name"
+    },
     "managers": {
       "title": "Service managers",
       "add": {
@@ -565,6 +572,10 @@
     "title": "Chat Settings",
     "section_sectors_title": "Sectors in {project}",
     "section_sectors_subtitle": "Add, view and manage sectors, queues, managers and agents within your organization.",
+    "tabs": {
+      "settings": "Settings",
+      "groups": "Projects groups"
+    },
     "project_configs": {
       "title": "Project Adjustments",
       "bulk_transfer": {
@@ -609,13 +620,73 @@
         "update": "Queue successfully updated",
         "error": "Failed to set queue settings",
         "delete_success": "Queue deleted successfully",
-        "delete_error": "Failed to delete queue"
+        "delete_error": "Failed to delete queue",
+        "config_agents_group": "Add or remove agents through groups by going to <b>Chat Settings > Groups</b>"
+      }
+    },
+    "groups": {
+      "new": {
+        "title": "New project group"
+      },
+      "general_form": {
+        "title": "General definitions",
+        "service_managers": "Service managers",
+        "field": {
+          "name": {
+            "label": "Group name",
+            "placeholder": "Example: Sales"
+          },
+          "manager": {
+            "label": "Add managers",
+            "placeholder": "Search for the name or email"
+          }
+        }
+      },
+      "projects_form": {
+        "title": "Add projects",
+        "field": {
+          "project": {
+            "label": "Add project",
+            "placeholder": "Search by project name"
+          }
+        },
+        "message": {
+          "has_group_sector": "Unable to add project {sectorName}. This project is already being used in another group."
+        }
+      },
+      "agents_form": {
+        "title": "Add agents",
+        "field": {
+          "agents": {
+            "label": "Add agent",
+            "placeholder": "Search by the name or email"
+          }
+        }
+      },
+      "general": "General",
+      "projects": "Projects",
+      "agents": "Agents",
+      "delete_or_edit": "Delete or edit",
+      "discart": {
+        "title": "Discard changes",
+        "text": "The creation of the new group will be discarded upon confirming this action. Do you want to discard the changes made so far?"
+      },
+      "create_success": "New group {groupName} created!",
+      "create_error": "Failed to configure some steps in the group! Check the details and try again if you identify any missing configurations.",
+      "update_success": "Group updated successfully!",
+      "update_error": "We had problems updating some data. Check the information and try again if anything is missing.",
+      "delete": {
+        "title": "Delete {groupName}",
+        "notice": "This action will be irreversible. To confirm the action, please type the name of the group",
+        "success": "Group {groupName} successfully deleted!",
+        "error": "Failed to delete group. Please try again."
       }
     },
     "copilot": {
       "hint": "The Co-pilot is your agent's intelligent assistant; it can be activated later."
     },
     "new_sector": "New sector",
+    "new_group": "New group",
     "agent_title": "Agents",
     "contacts": "Contacts",
     "open": "Open"
@@ -631,8 +702,7 @@
     },
     "discart": {
       "title": "Discard changes",
-      "hint": "The creation of the new sector will be discarded upon confirming this action. Do you want to discard the changes made so far?",
-      "confirm": "Discart"
+      "hint": "The creation of the new sector will be discarded upon confirming this action. Do you want to discard the changes made so far?"
     }
   },
   "your_orgs": "Your organizations",
@@ -645,5 +715,7 @@
   },
   "select_project": {
     "choose_one": "Choose one to access Weni Chats"
-  }
+  },
+  "discart": "Discart",
+  "confirmation": "Confirmation"
 }

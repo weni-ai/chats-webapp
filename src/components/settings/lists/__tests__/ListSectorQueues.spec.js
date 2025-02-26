@@ -8,6 +8,8 @@ import unnnic from '@weni/unnnic-system';
 import Queue from '@/services/api/resources/settings/queue';
 import Project from '@/services/api/resources/settings/project';
 
+import { createTestingPinia } from '@pinia/testing';
+
 vi.mock('@/services/api/resources/settings/queue', () => ({
   default: {
     list: vi.fn(),
@@ -71,6 +73,7 @@ vi.spyOn(Queue, 'agents').mockResolvedValue({
 
 const createWrapper = (props = {}) => {
   return mount(FormQueue, {
+    global: { plugins: [createTestingPinia()] },
     props,
   });
 };

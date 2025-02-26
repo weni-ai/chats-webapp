@@ -103,7 +103,6 @@
       />
       <UnnnicButton
         :text="$t('save')"
-        :disabled="!validForm"
         :loading="isLoading"
         data-testid="save-button"
         @click.stop="save()"
@@ -163,11 +162,6 @@ export default {
       return this.sector.sign_messages
         ? this.$t('sector.additional_options.agents_signature.switch_active')
         : this.$t('sector.additional_options.agents_signature.switch_disabled');
-    },
-    validForm() {
-      const valid = !!this.tags.length;
-      this.$emit('changeIsValid', valid);
-      return valid;
     },
   },
   mounted() {
@@ -311,6 +305,10 @@ export default {
       gap: $unnnic-spacing-stack-sm;
       &__input {
         flex: 1 1;
+
+        :deep(.unnnic-form__label) {
+          margin: 0px 0px $unnnic-spacing-xs 0px;
+        }
       }
     }
   }

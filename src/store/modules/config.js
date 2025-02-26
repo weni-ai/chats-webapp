@@ -11,7 +11,9 @@ import Profile from '@/services/api/resources/profile';
 export const useConfig = defineStore('config', {
   state: () => ({
     token: '',
-    project: {},
+    project: {
+      config: {},
+    },
     status: '',
     copilot: {
       active: false,
@@ -66,6 +68,17 @@ export const useConfig = defineStore('config', {
     },
     setCopilotCustomRules(customRules) {
       this.copilot.customRules = customRules;
+    },
+  },
+  getters: {
+    enableGroupsMode: ({ project }) => {
+      return 'its_principal' in project?.config;
+    },
+    isPrimaryProject: ({ project }) => {
+      return !!project.config?.its_principal;
+    },
+    isSecondaryProject: ({ project }) => {
+      return !!project.config?.its_principal === false;
     },
   },
 });
