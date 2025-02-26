@@ -13,7 +13,7 @@
       :title="group.name"
       clickable
       class="groups__card"
-      @click="openEditGroupModal(group)"
+      @click="openEditGroupDrawer(group)"
     >
       <template #headerSlot>
         <UnnnicDropdown position="top-left">
@@ -30,7 +30,7 @@
               />
             </UnnnicToolTip>
           </template>
-          <UnnnicDropdownItem @click="openEditGroupModal">
+          <UnnnicDropdownItem @click="openEditGroupDrawer(group)">
             <section class="dropdown-item-content">
               <UnnnicIconSvg
                 class="icon"
@@ -68,7 +68,7 @@
       v-if="showEditGroupDrawer"
       :projectGroup="editGroup"
       :show="showEditGroupDrawer"
-      @close="closeEditGroupModal()"
+      @close="closeEditGroupDrawer()"
     />
     <DeleteGroupModal
       v-if="showDeleteGroupModal"
@@ -119,12 +119,12 @@ export default {
       this.handleConnectOverlay(false);
       this.showNewGroupDrawer = false;
     },
-    openEditGroupModal(group) {
+    openEditGroupDrawer(group) {
       this.editGroup = group;
       this.handleConnectOverlay(true);
       this.showEditGroupDrawer = true;
     },
-    closeEditGroupModal() {
+    closeEditGroupDrawer() {
       this.handleConnectOverlay(false);
       this.showEditGroupDrawer = false;
       this.editGroup = null;
