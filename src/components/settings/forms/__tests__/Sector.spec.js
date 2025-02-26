@@ -397,7 +397,7 @@ describe('FormSectorGeneral', () => {
     const result = wrapper.vm.projectsNames;
 
     expect(result).toEqual([
-      { value: '', label: wrapper.vm.$t('sector.managers.add.placeholder') },
+      { value: '', label: wrapper.vm.$t('sector.link.project_placeholder') },
       { value: '1', label: 'Project One' },
       { value: '2', label: 'Project Two' },
     ]);
