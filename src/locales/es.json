@@ -680,7 +680,9 @@
       "update_error": "Tuvimos problemas para actualizar algunos datos. Verifique la información y vuelva a intentarlo si falta algo.",
       "delete": {
         "title": "Borrar {groupName}",
-        "notice": "Esta acción será irreversible. Para confirmar la acción, por favor escribe el nombre del grupo."
+        "notice": "Esta acción será irreversible. Para confirmar la acción, por favor escribe el nombre del grupo.",
+        "success": "¡Grupo {groupName} eliminado con éxito!",
+        "error": "No se pudo eliminar el grupo. Por favor, inténtalo de nuevo."
       }
     },
     "copilot": {

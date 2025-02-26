@@ -676,7 +676,9 @@
       "update_error": "We had problems updating some data. Check the information and try again if anything is missing.",
       "delete": {
         "title": "Delete {groupName}",
-        "notice": "This action will be irreversible. To confirm the action, please type the name of the group"
+        "notice": "This action will be irreversible. To confirm the action, please type the name of the group",
+        "success": "Group {groupName} successfully deleted!",
+        "error": "Failed to delete group. Please try again."
       }
     },
     "copilot": {

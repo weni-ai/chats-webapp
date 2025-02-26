@@ -46,6 +46,13 @@ export default {
     return response.data;
   },
 
+  async delete(groupUuid) {
+    const endpoint = `/group_sector/${groupUuid}/`;
+    const response = await http.delete(endpoint);
+
+    return response.data;
+  },
+
   async listProjects({ limit, offset, orgUuid, params }) {
     const endpoint = `/org/${orgUuid}/projects/`;
 

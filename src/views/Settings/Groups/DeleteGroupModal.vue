@@ -5,9 +5,9 @@
     :primaryButtonProps="{
       text: $t('delete'),
       disabled: !validGroupName,
-      loading: loadingRequest,
+      loading: isLoadingRequest,
     }"
-    :secondaryButtonProps="{ disabled: loadingRequest }"
+    :secondaryButtonProps="{ disabled: isLoadingRequest }"
     showActionsDivider
     showCloseIcon
     size="sm"
@@ -31,6 +31,11 @@
 </template>
 
 <script>
+import Group from '@/services/api/resources/settings/group';
+import { useSettings } from '@/store/modules/settings';
+import Unnnic from '@weni/unnnic-system';
+import { mapWritableState } from 'pinia';
+
 export default {
   name: 'DeleteGroupModal',
   props: {
@@ -43,17 +48,43 @@ export default {
   data() {
     return {
       groupName: '',
-      loadingRequest: false,
+      isLoadingRequest: false,
     };
   },
   computed: {
+    ...mapWritableState(useSettings, ['groups']),
     validGroupName() {
       return this.groupName === this.group.name;
     },
   },
   methods: {
-    deleteGroup() {
-      // TODO
+    async deleteGroup() {
+      try {
+        this.isLoadingRequest = true;
+        await Group.delete(this.group.uuid);
+        this.groups = this.groups.filter(
+          ({ uuid }) => uuid !== this.group.uuid,
+        );
+        Unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('config_chats.groups.delete.success'),
+            type: 'success',
+          },
+          seconds: 5,
+        });
+      } catch (error) {
+        Unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('config_chats.groups.delete.error'),
+            type: 'success',
+          },
+          seconds: 5,
+        });
+        console.log(error);
+      } finally {
+        this.isLoadingRequest = false;
+        this.$emit('close');
+      }
     },
   },
 };
