@@ -308,7 +308,7 @@ export default {
 
       const groupValid =
         !!this.selectedProject.length &&
-        !this.selectedProjectHasSectorIntegration;
+        (this.isEditing || !this.selectedProjectHasSectorIntegration);
 
       const singleValid = !!(
         managers.length > 0 && maxSimultaneousChatsByAgent
