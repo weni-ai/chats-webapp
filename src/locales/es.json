@@ -1,8 +1,14 @@
 {
   "status": {
     "online": "En línea",
-    "offline": "Desconectada"
+    "offline": "Desconectada",
+    "set_status": "Establecer estado"
   },
+  "status-bar": {
+    "success": "Estado actualizado a {status}",
+    "error": "No se puede actualizar el estado, por favor, inténtelo de nuevo"
+  },
+  "view-option": "Opciones",
   "preferences": {
     "title": "Preferencias",
     "notifications": {
@@ -580,6 +586,18 @@
       "settings": "Ajustes",
       "groups": "Grupos de proyectos"
     },
+    "custom_breaks": {
+      "title": "Pausas personalizadas",
+      "description": "Añadir nuevas pausas personalizadas, que tendrán el mismo comportamiento que las pausas sin conexión, es decir, el agente no recibirá contactos mientras utilice estas pausas personalizadas.",
+      "fields": {
+        "name": "Nuevo estado",
+        "placeholder": "Ejemplo: Almuerzo"
+      },
+      "status_exceeded_limit": "Límite de estado alcanzado, borrar para añadir nuevo estado",
+      "status_duplicate_name": "Estado ya comunicado",
+      "status_success": "Estado añadido con éxito",
+      "status_error": "Ups, desafortunadamente los cambios no se han guardado, inténtalo de nuevo"
+    },
     "project_configs": {
       "title": "Ajustes de proyectos",
       "bulk_transfer": {
@@ -595,6 +613,10 @@
       "block_transfer_to_off_agents": {
         "switch_active": "Bloqueo de transferencias a agentes fuera de línea activo",
         "switch_inactive": "Bloqueo de transferencias a agentes fuera de línea inactivo"
+      },
+      "show_agent_status_count_timer": {
+        "switch_active": "Mostrar temporizador de recuento de estado del agente",
+        "switch_inactive": "Ocultar temporizador de recuento de estado del agente"
       }
     },
     "custom_sector": "Personalizar nuevo sector (recomendado)",

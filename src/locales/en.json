@@ -1,8 +1,14 @@
 {
   "status": {
     "online": "Online",
-    "offline": "Offline"
+    "offline": "Offline",
+    "set_status": "Set status"
   },
+  "status-bar": {
+    "success": "Status updated to {status}",
+    "error": "Unable to update status, please try again."
+  },
+  "view-option": "View Options",
   "preferences": {
     "title": "Preferences",
     "notifications": {
@@ -576,6 +582,18 @@
       "settings": "Settings",
       "groups": "Projects groups"
     },
+    "custom_breaks": {
+      "title": "Custom breaks",
+      "description": "Add new custom breaks, all of which will have the same behavior as offline, i.e. the agent will not receive contacts while using these custom breaks.",
+      "fields": {
+        "name": "New status",
+        "placeholder": "Example: Lunch"
+      },
+      "status_exceeded_limit": "Status limit reached, delete to add new status",
+      "status_duplicate_name": "Status already exists",
+      "status_success": "Status added successfully",
+      "status_error": "Oops, unfortunately the changes were not saved, please try again"
+    },
     "project_configs": {
       "title": "Project Adjustments",
       "bulk_transfer": {
@@ -591,6 +609,10 @@
       "block_transfer_to_off_agents": {
         "switch_active": "Blocking transfers to offline agents active",
         "switch_inactive": "Blocking transfers to offline agents inactive"
+      },
+      "show_agent_status_count_timer": {
+        "switch_active": "Show agent status count timer",
+        "switch_inactive": "Hide agent status count timer"
       }
     },
     "custom_sector": "Customize new sector (recommended)",

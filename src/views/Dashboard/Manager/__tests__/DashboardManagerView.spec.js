@@ -21,6 +21,11 @@ import HistoryMetricsBySector from '@/components/dashboard/metrics/BySector/Hist
 const createWrapper = () => {
   return mount(DashboardManager, {
     global: {
+      stubs: {
+        ViewOptions: {
+          template: '<div>ViewOptions</div>',
+        },
+      },
       components: {
         DashboardLayout,
         ViewMode,

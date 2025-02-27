@@ -1,8 +1,14 @@
 {
   "status": {
     "online": "Online",
-    "offline": "Offline"
+    "offline": "Offline",
+    "set_status": "Definir status"
   },
+  "status-bar": {
+    "success": "Status atualizado para {status}",
+    "error": "Não foi possível atualizar o seu status, por favor tente novamente"
+  },
+  "view-option": "Opções", 
   "preferences": {
     "title": "Preferências",
     "notifications": {
@@ -580,6 +586,18 @@
       "settings": "Ajustes",
       "groups": "Grupos de projetos"
     },
+    "custom_breaks": {
+      "title": "Pausas personalizadas",
+      "description": "Adicione novas pausas personalizadas, que terão o mesmo comportamento que as off-line, ou seja, o agente não receberá contatos enquanto estiver usando essas pausas personalizadas.",
+      "fields": {
+        "name": "Novo status",
+        "placeholder": "Exemplo: Almoço"
+      },
+      "status_exceeded_limit": "Limite de status atingido, excluir para adicionar novo status",
+      "status_duplicate_name": "Status já informado",
+      "status_success": "Status adicionado com sucesso",
+      "status_error": "Ops, infelizmente as alterações não foram salvas, tente novamente"
+    },
     "project_configs": {
       "title": "Ajustes do projeto",
       "bulk_transfer": {
@@ -595,6 +613,10 @@
       "block_transfer_to_off_agents": {
         "switch_active": "Bloqueio de transferências para agentes offline ativo",
         "switch_inactive": "Bloqueio de transferências para agentes offline inativo"
+      },
+      "show_agent_status_count_timer": {
+        "switch_active": "Mostrar timer de contagem do status do agente",
+        "switch_inactive": "Esconder timer de contagem do status do agente"
       }
     },
     "custom_sector": "Personalizar novo setor (recomendado)",
