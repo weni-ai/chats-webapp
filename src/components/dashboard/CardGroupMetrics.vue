@@ -14,6 +14,7 @@
         v-for="metric in orderedMetrics"
         :key="metric.name"
         :name="metric.name"
+        data-testid="metric-card"
         :statuses="[
           ...(allMetrics
             ? [
@@ -98,7 +99,7 @@ export default {
 
   computed: {
     orderedMetrics() {
-      let orderedMetrics = this.metrics.sectors;
+      let orderedMetrics = this.metrics?.sectors;
       if (orderedMetrics?.length > 0) {
         orderedMetrics.sort((a, b) => {
           const priorityA =
@@ -146,7 +147,7 @@ export default {
     },
 
     showRoomMetrics({ active_rooms, active_chats, closed_rooms } = {}) {
-      return active_rooms || active_chats || closed_rooms;
+      return !!(active_rooms || active_chats || closed_rooms);
     },
   },
 };
