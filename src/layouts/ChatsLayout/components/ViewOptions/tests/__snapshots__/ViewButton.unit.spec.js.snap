@@ -23,8 +23,8 @@ exports[`ViewButton > Snapshot > should match the snapshot 1`] = `
     <span
       class="material-symbols-rounded unnnic-icon-scheme--neutral-darkest unnnic-icon-size--md"
       data-testid="header-icon-expand"
-      data-v-76ceda5d=""
       data-v-905ee5f6=""
+      data-v-9846e6db=""
       translate="no"
     >
       expand_more
