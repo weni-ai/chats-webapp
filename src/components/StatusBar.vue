@@ -267,15 +267,8 @@ const handleCloseCustomStatus = async (status, isActive) => {
     });
 
   const activeStatus = await api.getActiveCustomStatus();
-  if (status.value === activeStatus.status_type) {
-    statuses.value = statuses.value.map((state) => ({
-      ...state,
-      statusUuid:
-        state.value === activeStatus.status_type ? activeStatus.uuid : null,
-    }));
 
-    return closeStatus(activeStatus.uuid);
-  }
+  return closeStatus(activeStatus.uuid);
 };
 
 const handleCreateCustomStatus = async (status) => {
