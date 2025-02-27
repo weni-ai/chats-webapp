@@ -90,7 +90,14 @@
         </template>
       </UnnnicChatText>
 
+      <UnnnicDisclaimer
+        v-if="enableGroupsMode"
+        :text="$t('config_chats.queues.message.config_agents_group')"
+        iconColor="neutral-dark"
+      />
+
       <AgentsForm
+        v-else
         v-model="queue.currentAgents"
         :sector="sector"
         :agents="agentsOptions"
@@ -108,6 +115,7 @@ import Queue from '@/services/api/resources/settings/queue';
 import Project from '@/services/api/resources/settings/project';
 import { mapState } from 'pinia';
 import { useProfile } from '@/store/modules/profile';
+import { useConfig } from '@/store/modules/config';
 
 export default {
   name: 'FormQueue',
@@ -141,6 +149,7 @@ export default {
 
   computed: {
     ...mapState(useProfile, ['me']),
+    ...mapState(useConfig, ['enableGroupsMode']),
     isEditing() {
       return !!this.queue.uuid;
     },
@@ -157,13 +166,13 @@ export default {
   watch: {
     queue: {
       deep: true,
+      immediate: true,
       handler(value) {
-        if (!this.isEditing) {
-          this.$emit(
-            'changeIsValid',
-            !!value.name && !!value.currentAgents.length,
-          );
-        }
+        const valid = this.enableGroupsMode
+          ? !!value.name?.trim()
+          : !!value.name?.trim() && !!value.currentAgents?.length;
+
+        this.$emit('changeIsValid', valid);
       },
     },
   },
@@ -180,12 +189,12 @@ export default {
         agents: this.queue.agents,
       };
 
-      await this.listQueueAgents();
+      if (!this.enableGroupsMode) await this.listQueueAgents();
     } else {
       this.queue = { ...this.queue, default_message: '', currentAgents: [] };
     }
 
-    this.listProjectAgents();
+    if (!this.enableGroupsMode) this.listProjectAgents();
 
     this.loadingInfo = false;
   },
@@ -199,7 +208,7 @@ export default {
         this.queue = {
           ...this.queue,
           name: this.$t('config_chats.default_queue.name'),
-          currentAgents: [meAgent],
+          currentAgents: this.enableGroupsMode ? [] : [meAgent],
         };
       } else {
         this.queue = {

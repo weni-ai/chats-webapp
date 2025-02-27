@@ -260,3 +260,10 @@ export default {
   height: 100vh;
 }
 </style>
+
+<style>
+/* This is necessary to prevent the alert from being behind some screen items such as svgs */
+.alert-container {
+  z-index: 99999999;
+}
+</style>

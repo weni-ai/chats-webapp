@@ -9,10 +9,10 @@ function getURLParams({ URL, endpoint }) {
 }
 
 export default {
-  async list({ nextReq, limit } = {}) {
+  async list({ nextReq, limit, offset } = {}) {
     const endpoint = '/sector/';
     const paramsNextReq = getURLParams({ URL: nextReq, endpoint });
-    const params = { project: getProject(), limit };
+    const params = { project: getProject(), limit, offset };
 
     let response;
 

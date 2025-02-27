@@ -78,7 +78,7 @@
     :description="$t('config_chats.queues.in_sector', { sector: sector.name })"
     size="lg"
     :primaryButtonText="$t('save')"
-    :disabledPrimaryButton="!queueToConfig.currentAgents?.length"
+    :disabledPrimaryButton="!validForm"
     :loadingPrimaryButton="loadingQueueConfig"
     :secondaryButtonText="$t('cancel')"
     :disabledSecondaryButton="loadingQueueConfig"
@@ -94,6 +94,7 @@
         :sector="sector"
         data-testid="queue-config-form"
         @update-queue-agents-count="updateAgentsCount($event)"
+        @change-is-valid="validForm = $event"
       />
     </template>
   </UnnnicDrawer>
@@ -141,6 +142,7 @@ export default {
       loadingQueueConfig: false,
       showDeleteQueueModal: false,
       queueToDelete: {},
+      validForm: false,
     };
   },
 

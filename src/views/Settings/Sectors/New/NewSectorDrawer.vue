@@ -92,6 +92,8 @@
   </UnnnicDrawer>
   <DiscartChangesModal
     :showModal="showConfirmDiscartChangesModal"
+    :title="$t('new_sector.discart.title')"
+    :text="$t('new_sector.discart.hint')"
     data-testid="discart-changes-modal"
     @secondary-button-click="showConfirmDiscartChangesModal = false"
     @primary-button-click="$emit('close')"
@@ -102,7 +104,7 @@
 import General from '@/components/settings/forms/General.vue';
 import ExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
 import FormQueue from '@/components/settings/forms/Queue.vue';
-import DiscartChangesModal from './DiscartChangesModal.vue';
+import DiscartChangesModal from '@/views/Settings/DiscartChangesModal.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
@@ -112,7 +114,8 @@ import { useSettings } from '@/store/modules/settings';
 import isMobile from 'is-mobile';
 
 import Unnnic from '@weni/unnnic-system';
-import { mapWritableState } from 'pinia';
+import { mapState, mapWritableState } from 'pinia';
+import { useConfig } from '@/store/modules/config';
 
 export default {
   name: 'NewSectorDrawer',
@@ -145,6 +148,9 @@ export default {
         can_trigger_flows: true,
         can_edit_custom_fields: true,
         sign_messages: true,
+        config: {
+          secondary_project: '',
+        },
         workingDay: {
           start: '',
           end: '',
@@ -161,7 +167,7 @@ export default {
       useDefaultSectorQueue: 0,
       isValid: {
         general: false,
-        extraOptions: false,
+        extraOptions: true,
         queue: false,
         quick_messages: true,
       },
@@ -171,6 +177,7 @@ export default {
   },
   computed: {
     ...mapWritableState(useSettings, ['sectors']),
+    ...mapState(useConfig, ['enableGroupsMode']),
     showDiscartQuestion() {
       const { name, workingDay, maxSimultaneousChatsByAgent, managers } =
         this.sector;
@@ -217,6 +224,7 @@ export default {
           workingDay,
           maxSimultaneousChatsByAgent,
           managers,
+          config,
         } = this.sector;
 
         const createSectorBody = {
@@ -226,7 +234,10 @@ export default {
           name,
           work_start: workingDay.start,
           work_end: workingDay.end,
-          rooms_limit: maxSimultaneousChatsByAgent,
+          rooms_limit: this.enableGroupsMode
+            ? '0'
+            : maxSimultaneousChatsByAgent,
+          config,
         };
 
         const createdSector = await Sector.create(createSectorBody);
