@@ -105,7 +105,7 @@ export default {
       const showAgentStatusCountTimer = this.projectConfig.can_see_timer;
       return this.$t(
         `config_chats.project_configs.show_agent_status_count_timer.switch_${
-          showAgentStatusCountTimer ? 'active' : 'inactive'
+          showAgentStatusCountTimer ? 'inactive' : 'active'
         }`,
       );
     },
