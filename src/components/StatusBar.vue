@@ -173,8 +173,13 @@ const stopTimer = () => {
 
 const formattedTime = computed(() => {
   if (!elapsedTime.value) return '00:00:00';
-  const { hours = 0, minutes = 0, seconds = 0 } = elapsedTime.value;
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+  const { days = 0, hours = 0, minutes = 0, seconds = 0 } = elapsedTime.value;
+
+  // Convert days to hours and add to existing hours
+  const totalHours = days * 24 + hours;
+
+  return `${String(totalHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 });
 
 const selectStatus = async (newStatus) => {
