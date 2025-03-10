@@ -71,7 +71,7 @@ export default {
       resetRoomMessages: 'resetRoomMessages',
     }),
 
-    async handlingGetRoomMessages() {
+    handlingGetRoomMessages() {
       this.isLoading = true;
 
       this.getRoomMessages({

@@ -1,6 +1,7 @@
 <template>
   <section class="home-chat">
     <HomeChatHeaders
+      data-testid="home-chat-headers"
       :isLoading="isChatSkeletonActive"
       @open-room-contact-info="emitOpenRoomContactInfo"
       @open-modal-close-chat="openModal('closeChat')"
@@ -41,6 +42,7 @@
 
     <HomeChatModals
       ref="home-chat-modals"
+      data-testid="home-chat-modals"
       @got-chat="emitCloseRoomContactInfo"
       @file-uploader-progress="setUploadFilesProgress"
       @select-quick-message="updateTextBoxMessage($event?.text)"
@@ -244,9 +246,6 @@ export default {
     },
     emitOpenFlowsTrigger() {
       this.$emit('open-flows-trigger');
-    },
-    handleShowModalQuickMessages() {
-      this.showModalQuickMessages = !this.showModalQuickMessages;
     },
     handleShowQuickMessages() {
       if (this.isMobile) {
