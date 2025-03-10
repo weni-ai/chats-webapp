@@ -72,7 +72,7 @@ export const useConfig = defineStore('config', {
   },
   getters: {
     enableGroupsMode: ({ project }) => {
-      return 'its_principal' in project?.config;
+      return 'its_principal' in (project?.config || {});
     },
     isPrimaryProject: ({ project }) => {
       return !!project.config?.its_principal;
