@@ -579,34 +579,37 @@ describe('StatusBar', () => {
     });
   });
 
-  describe('Message Event Handling', () => {
-    it('should not refresh data for unrelated messages', async () => {
+  describe('LocalStorage Settings Update Handling', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+      Storage.prototype.getItem = vi.fn();
+      Storage.prototype.setItem = vi.fn();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+      vi.restoreAllMocks();
+    });
+
+    it('should not refresh data when localStorage settingsUpdated remains the same', async () => {
+      const getItemMock = vi.fn().mockImplementation((key) => {
+        if (key === 'settingsUpdated') return '1234567890';
+        if (key === 'lastSettingsUpdate') return '1234567890';
+        return null;
+      });
+
+      Storage.prototype.getItem = getItemMock;
+
       wrapper = createWrapper();
       await flushPromises();
 
       const refreshDataSpy = vi.spyOn(wrapper.vm, 'refreshData');
+      refreshDataSpy.mockClear();
 
-      window.dispatchEvent(
-        new MessageEvent('message', {
-          data: { event: 'unrelatedEvent', data: true },
-        }),
-      );
-
+      vi.advanceTimersByTime(1000);
       await flushPromises();
 
       expect(refreshDataSpy).not.toHaveBeenCalled();
-    });
-
-    it('should properly clean up event listeners on unmount', () => {
-      const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
-
-      wrapper = createWrapper();
-      wrapper.unmount();
-
-      expect(removeEventListenerSpy).toHaveBeenCalledWith(
-        'message',
-        expect.any(Function),
-      );
     });
   });
 });

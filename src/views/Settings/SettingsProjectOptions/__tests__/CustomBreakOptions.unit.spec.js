@@ -329,32 +329,30 @@ describe('CustomBreakOption', () => {
     });
   });
 
-  describe('PostMessage Functionality', () => {
-    let originalPostMessage;
-
+  describe('LocalStorage Functionality', () => {
     beforeEach(() => {
-      originalPostMessage = window.parent.postMessage;
-      window.parent.postMessage = vi.fn();
+      // Mock localStorage
+      Storage.prototype.setItem = vi.fn();
     });
 
     afterEach(() => {
-      window.parent.postMessage = originalPostMessage;
+      vi.restoreAllMocks();
     });
 
-    it('should send settingsUpdated message when status is saved', async () => {
+    it('should update localStorage when status is saved', async () => {
       wrapper = createWrapper();
       wrapper.vm.customBreaks = [{ name: 'New Break' }];
 
       customStatus.createCustomStatusType.mockResolvedValueOnce({});
       await wrapper.vm.saveStatus();
 
-      expect(window.parent.postMessage).toHaveBeenCalledWith(
-        { event: 'settingsUpdated', data: true },
-        '*',
+      expect(localStorage.setItem).toHaveBeenCalledWith(
+        'settingsUpdated',
+        expect.any(String),
       );
     });
 
-    it('should send settingsUpdated message when status is removed', async () => {
+    it('should update localStorage when status is removed', async () => {
       const mockStatus = { name: 'Break 1', uuid: '123' };
       wrapper = createWrapper();
       wrapper.vm.customBreaks = [mockStatus];
@@ -362,9 +360,9 @@ describe('CustomBreakOption', () => {
       customStatus.deleteCustomStatusType.mockResolvedValueOnce({});
       await wrapper.vm.removeStatus(0);
 
-      expect(window.parent.postMessage).toHaveBeenCalledWith(
-        { event: 'settingsUpdated', data: true },
-        '*',
+      expect(localStorage.setItem).toHaveBeenCalledWith(
+        'settingsUpdated',
+        expect.any(String),
       );
     });
   });

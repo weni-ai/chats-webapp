@@ -233,9 +233,21 @@ const refreshData = async () => {
   await getActiveCustomStatusAndActiveTimer();
 };
 
-const handleMessage = (event) => {
-  console.log('event', event.data);
-  if (event.data && event.data.event === 'settingsUpdated') {
+// Replace message event handler with localStorage watcher
+let settingsCheckInterval = null;
+
+const checkSettingsUpdates = () => {
+  console.log('Checking for settings updates...');
+  const currentSettingsUpdate = localStorage.getItem('settingsUpdated');
+  const lastSettingsUpdate =
+    sessionStorage.getItem('lastSettingsUpdate') || '0';
+
+  console.log('Current settings update:', currentSettingsUpdate);
+  console.log('Last settings update:', lastSettingsUpdate);
+
+  if (currentSettingsUpdate && currentSettingsUpdate !== lastSettingsUpdate) {
+    console.log('Settings updated, refreshing data');
+    sessionStorage.setItem('lastSettingsUpdate', currentSettingsUpdate);
     refreshData();
   }
 };
@@ -244,14 +256,24 @@ onMounted(async () => {
   await refreshData();
   document.addEventListener('click', handleClickOutside);
 
-  window.addEventListener('message', handleMessage);
+  // Store initial value
+  const initialValue = localStorage.getItem('settingsUpdated') || '0';
+  sessionStorage.setItem('lastSettingsUpdate', initialValue);
+  console.log('Initial settings value:', initialValue);
+
+  // Set up interval to check for settings updates
+  settingsCheckInterval = setInterval(checkSettingsUpdates, 1000);
+  console.log('Interval set up for settings updates');
 });
 
 onUnmounted(() => {
   stopTimer();
   document.removeEventListener('click', handleClickOutside);
 
-  window.removeEventListener('message', handleMessage);
+  // Clear the interval
+  if (settingsCheckInterval) {
+    clearInterval(settingsCheckInterval);
+  }
 });
 
 const toggleDropdown = () => {
