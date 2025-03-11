@@ -5,20 +5,14 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
-import { useProfile } from '@/store/modules/profile';
+
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
 
 import HomeChat from '../HomeChat.vue';
 import HomeChatModals from '../HomeChatModals.vue';
 import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
-import DiscussionMessages from '@/components/chats/chat/DiscussionMessages.vue';
-import MessageManager from '@/components/chats/MessageManager/index.vue';
-import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion.vue';
 
-import Message from '@/services/api/resources/chats/message';
-import Room from '@/services/api/resources/chats/room';
-import Queue from '@/services/api/resources/settings/queue';
 import { setActivePinia } from 'pinia';
 
 vi.mock('@/services/api/resources/chats/message');
