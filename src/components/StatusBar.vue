@@ -1,5 +1,6 @@
 <template>
   <header
+    ref="statusBarRef"
     class="status-bar"
     data-testid="status-bar"
   >
@@ -101,6 +102,8 @@ const configStore = useConfig();
 const profileStore = useProfile();
 const project = computed(() => configStore.project);
 const loadingActiveStatus = ref(false);
+const statusBarRef = ref(null);
+let observer = null;
 
 const handleClickOutside = (event) => {
   const statusBar = event.target.closest('[class="status-bar"]');
@@ -227,16 +230,45 @@ const selectStatus = async (newStatus) => {
   }
 };
 
-onMounted(async () => {
+const refreshData = async () => {
   await handleGetActiveStatus();
   await fetchCustomStatuses();
   await getActiveCustomStatusAndActiveTimer();
+};
+
+onMounted(async () => {
+  await refreshData();
   document.addEventListener('click', handleClickOutside);
+
+  // Set up Intersection Observer to detect when the component is visible
+  observer = new IntersectionObserver(
+    (entries) => {
+      const [entry] = entries;
+      console.log('entry', entry);
+      if (entry.isIntersecting) {
+        console.log('isIntersecting');
+        refreshData();
+      }
+    },
+    { threshold: 0.1 },
+  );
+
+  if (statusBarRef.value) {
+    console.log('statusBarRef.value', statusBarRef.value);
+    observer.observe(statusBarRef.value);
+  }
 });
 
 onUnmounted(() => {
   stopTimer();
   document.removeEventListener('click', handleClickOutside);
+
+  // Clean up the observer
+  if (observer && statusBarRef.value) {
+    console.log('unobserve');
+    observer.unobserve(statusBarRef.value);
+    observer = null;
+  }
 });
 
 const toggleDropdown = () => {
