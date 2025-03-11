@@ -1,6 +1,5 @@
 <template>
   <header
-    ref="statusBarRef"
     class="status-bar"
     data-testid="status-bar"
   >
@@ -102,8 +101,6 @@ const configStore = useConfig();
 const profileStore = useProfile();
 const project = computed(() => configStore.project);
 const loadingActiveStatus = ref(false);
-const statusBarRef = ref(null);
-let observer = null;
 
 const handleClickOutside = (event) => {
   const statusBar = event.target.closest('[class="status-bar"]');
@@ -236,39 +233,54 @@ const refreshData = async () => {
   await getActiveCustomStatusAndActiveTimer();
 };
 
+// Handle visibility change events
+const handleVisibilityChange = () => {
+  console.log('document.visibilityState', document.visibilityState);
+  if (document.visibilityState === 'visible') {
+    console.log('refreshData');
+    refreshData();
+  }
+};
+
+// Custom event to refresh data when navigating between pages/iframes
+const handleRefreshEvent = () => {
+  console.log('handleRefreshEvent');
+  refreshData();
+};
+
 onMounted(async () => {
   await refreshData();
   document.addEventListener('click', handleClickOutside);
 
-  // Set up Intersection Observer to detect when the component is visible
-  observer = new IntersectionObserver(
-    (entries) => {
-      const [entry] = entries;
-      console.log('entry', entry);
-      if (entry.isIntersecting) {
-        console.log('isIntersecting');
-        refreshData();
-      }
-    },
-    { threshold: 0.1 },
-  );
+  // Add visibility change listener
+  document.addEventListener('visibilitychange', handleVisibilityChange);
 
-  if (statusBarRef.value) {
-    console.log('statusBarRef.value', statusBarRef.value);
-    observer.observe(statusBarRef.value);
+  // Add custom event listener for iframe navigation
+  window.addEventListener('focus', handleRefreshEvent);
+
+  // Create a MutationObserver to detect DOM changes that might indicate iframe navigation
+  const observer = new MutationObserver(() => {
+    refreshData();
+  });
+
+  // Start observing the parent element that contains the iframe
+  const parentElement = document.querySelector('.status-bar')?.parentElement;
+  if (parentElement) {
+    console.log('parentElement', parentElement);
+    observer.observe(parentElement, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['src', 'style', 'class'],
+    });
   }
 });
 
 onUnmounted(() => {
   stopTimer();
   document.removeEventListener('click', handleClickOutside);
-
-  // Clean up the observer
-  if (observer && statusBarRef.value) {
-    console.log('unobserve');
-    observer.unobserve(statusBarRef.value);
-    observer = null;
-  }
+  document.removeEventListener('visibilitychange', handleVisibilityChange);
+  window.removeEventListener('focus', handleRefreshEvent);
 });
 
 const toggleDropdown = () => {
