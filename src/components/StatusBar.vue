@@ -234,6 +234,7 @@ const refreshData = async () => {
 };
 
 const handleMessage = (event) => {
+  console.log('event', event.data);
   if (event.data && event.data.event === 'settingsUpdated') {
     refreshData();
   }
