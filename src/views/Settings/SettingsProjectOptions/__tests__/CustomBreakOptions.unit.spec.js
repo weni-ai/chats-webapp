@@ -328,4 +328,44 @@ describe('CustomBreakOption', () => {
       expect(wrapper.vm.isDuplicate).toBe(true);
     });
   });
+
+  describe('PostMessage Functionality', () => {
+    let originalPostMessage;
+
+    beforeEach(() => {
+      originalPostMessage = window.parent.postMessage;
+      window.parent.postMessage = vi.fn();
+    });
+
+    afterEach(() => {
+      window.parent.postMessage = originalPostMessage;
+    });
+
+    it('should send settingsUpdated message when status is saved', async () => {
+      wrapper = createWrapper();
+      wrapper.vm.customBreaks = [{ name: 'New Break' }];
+
+      customStatus.createCustomStatusType.mockResolvedValueOnce({});
+      await wrapper.vm.saveStatus();
+
+      expect(window.parent.postMessage).toHaveBeenCalledWith(
+        { event: 'settingsUpdated', data: true },
+        '*',
+      );
+    });
+
+    it('should send settingsUpdated message when status is removed', async () => {
+      const mockStatus = { name: 'Break 1', uuid: '123' };
+      wrapper = createWrapper();
+      wrapper.vm.customBreaks = [mockStatus];
+
+      customStatus.deleteCustomStatusType.mockResolvedValueOnce({});
+      await wrapper.vm.removeStatus(0);
+
+      expect(window.parent.postMessage).toHaveBeenCalledWith(
+        { event: 'settingsUpdated', data: true },
+        '*',
+      );
+    });
+  });
 });

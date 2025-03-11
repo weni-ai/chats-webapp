@@ -578,4 +578,35 @@ describe('StatusBar', () => {
       expect(statusIcon.classes()).toContain('status-bar--brown');
     });
   });
+
+  describe('Message Event Handling', () => {
+    it('should not refresh data for unrelated messages', async () => {
+      wrapper = createWrapper();
+      await flushPromises();
+
+      const refreshDataSpy = vi.spyOn(wrapper.vm, 'refreshData');
+
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: { event: 'unrelatedEvent', data: true },
+        }),
+      );
+
+      await flushPromises();
+
+      expect(refreshDataSpy).not.toHaveBeenCalled();
+    });
+
+    it('should properly clean up event listeners on unmount', () => {
+      const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
+
+      wrapper = createWrapper();
+      wrapper.unmount();
+
+      expect(removeEventListenerSpy).toHaveBeenCalledWith(
+        'message',
+        expect.any(Function),
+      );
+    });
+  });
 });

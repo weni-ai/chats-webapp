@@ -233,54 +233,24 @@ const refreshData = async () => {
   await getActiveCustomStatusAndActiveTimer();
 };
 
-// Handle visibility change events
-const handleVisibilityChange = () => {
-  console.log('document.visibilityState', document.visibilityState);
-  if (document.visibilityState === 'visible') {
-    console.log('refreshData');
+const handleMessage = (event) => {
+  if (event.data && event.data.event === 'settingsUpdated') {
     refreshData();
   }
-};
-
-// Custom event to refresh data when navigating between pages/iframes
-const handleRefreshEvent = () => {
-  console.log('handleRefreshEvent');
-  refreshData();
 };
 
 onMounted(async () => {
   await refreshData();
   document.addEventListener('click', handleClickOutside);
 
-  // Add visibility change listener
-  document.addEventListener('visibilitychange', handleVisibilityChange);
-
-  // Add custom event listener for iframe navigation
-  window.addEventListener('focus', handleRefreshEvent);
-
-  // Create a MutationObserver to detect DOM changes that might indicate iframe navigation
-  const observer = new MutationObserver(() => {
-    refreshData();
-  });
-
-  // Start observing the parent element that contains the iframe
-  const parentElement = document.querySelector('.status-bar')?.parentElement;
-  if (parentElement) {
-    console.log('parentElement', parentElement);
-    observer.observe(parentElement, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['src', 'style', 'class'],
-    });
-  }
+  window.addEventListener('message', handleMessage);
 });
 
 onUnmounted(() => {
   stopTimer();
   document.removeEventListener('click', handleClickOutside);
-  document.removeEventListener('visibilitychange', handleVisibilityChange);
-  window.removeEventListener('focus', handleRefreshEvent);
+
+  window.removeEventListener('message', handleMessage);
 });
 
 const toggleDropdown = () => {

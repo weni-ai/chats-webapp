@@ -187,6 +187,7 @@ const removeStatus = async (index) => {
         statusUuid: currentStatus.uuid,
       });
       customBreaks.value.splice(index, 1);
+      windowSettingsUpdated();
     } catch (error) {
       callUnnnicAlert({
         props: {
@@ -225,6 +226,7 @@ const saveStatus = async () => {
       seconds: 5,
     });
     closeModal();
+    windowSettingsUpdated();
   } catch (error) {
     console.error('error create custom status', error);
 
@@ -247,6 +249,16 @@ const openModal = async () => {
 
 const closeModal = () => {
   showModal.value = false;
+};
+
+const windowSettingsUpdated = () => {
+  window.parent.postMessage(
+    {
+      event: 'settingsUpdated',
+      data: true,
+    },
+    '*',
+  );
 };
 </script>
 
