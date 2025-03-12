@@ -331,7 +331,6 @@ describe('CustomBreakOption', () => {
 
   describe('LocalStorage Functionality', () => {
     beforeEach(() => {
-      // Mock localStorage
       Storage.prototype.setItem = vi.fn();
     });
 
