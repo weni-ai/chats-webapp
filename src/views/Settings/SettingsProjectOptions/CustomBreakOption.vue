@@ -252,16 +252,14 @@ const closeModal = () => {
 };
 
 const windowSettingsUpdated = () => {
-  const timestamp = Date.now().toString();
-  console.log(
-    'Setting settingsUpdated in localStorage with timestamp:',
-    timestamp,
+  console.log('Sending settingsUpdated message');
+  window.parent.postMessage(
+    {
+      type: 'settingsUpdated',
+      timestamp: Date.now(),
+    },
+    '*',
   );
-  localStorage.setItem('settingsUpdated', timestamp);
-
-  // Verify the value was set correctly
-  const storedValue = localStorage.getItem('settingsUpdated');
-  console.log('Verified stored value:', storedValue);
 };
 </script>
 

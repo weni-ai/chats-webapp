@@ -89,7 +89,7 @@ const statuses = ref([
 ]);
 
 const selectedStatus = ref(
-  sessionStorage.getItem('statusAgent') === 'ONLINE'
+  localStorage.getItem('statusAgent') === 'ONLINE'
     ? statuses.value[0]
     : statuses.value[1],
 );
@@ -136,7 +136,7 @@ const updateActiveStatus = async ({ isActive, skipRequest }) => {
         status: isActive ? 'ONLINE' : 'OFFLINE',
       });
 
-      sessionStorage.setItem('statusAgent', connection);
+      localStorage.setItem('statusAgent', connection);
       connection_status = connection.toLowerCase();
     } else {
       connection_status = isActive ? 'online' : 'offline';
@@ -228,52 +228,37 @@ const selectStatus = async (newStatus) => {
 };
 
 const refreshData = async () => {
+  console.log('Refreshing data...');
   await handleGetActiveStatus();
   await fetchCustomStatuses();
   await getActiveCustomStatusAndActiveTimer();
 };
 
-// Replace message event handler with localStorage watcher
-let settingsCheckInterval = null;
+const handleSettingsUpdatesDirectly = () => {
+  console.log('Handling settings updates directly');
+  refreshData();
+};
 
-const checkSettingsUpdates = () => {
-  console.log('Checking for settings updates...');
-  const currentSettingsUpdate = localStorage.getItem('settingsUpdated');
-  const lastSettingsUpdate =
-    sessionStorage.getItem('lastSettingsUpdate') || '0';
-
-  console.log('Current settings update:', currentSettingsUpdate);
-  console.log('Last settings update:', lastSettingsUpdate);
-
-  if (currentSettingsUpdate && currentSettingsUpdate !== lastSettingsUpdate) {
+const handleSettingsUpdated = (event) => {
+  console.log('Received message event:', event.data);
+  if (event.data && event.data.type === 'settingsUpdated') {
     console.log('Settings updated, refreshing data');
-    sessionStorage.setItem('lastSettingsUpdate', currentSettingsUpdate);
-    refreshData();
+    handleSettingsUpdatesDirectly();
   }
 };
 
-onMounted(async () => {
-  await refreshData();
+onMounted(() => {
+  console.log('StatusBar component mounted');
+  window.addEventListener('message', handleSettingsUpdated);
   document.addEventListener('click', handleClickOutside);
-
-  // Store initial value
-  const initialValue = localStorage.getItem('settingsUpdated') || '0';
-  sessionStorage.setItem('lastSettingsUpdate', initialValue);
-  console.log('Initial settings value:', initialValue);
-
-  // Set up interval to check for settings updates
-  settingsCheckInterval = setInterval(checkSettingsUpdates, 1000);
-  console.log('Interval set up for settings updates');
+  refreshData();
 });
 
 onUnmounted(() => {
-  stopTimer();
+  console.log('StatusBar component unmounted');
+  window.removeEventListener('message', handleSettingsUpdated);
   document.removeEventListener('click', handleClickOutside);
-
-  // Clear the interval
-  if (settingsCheckInterval) {
-    clearInterval(settingsCheckInterval);
-  }
+  stopTimer();
 });
 
 const toggleDropdown = () => {

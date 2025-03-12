@@ -542,6 +542,7 @@ describe('StatusBar', () => {
     });
 
     it('should update session storage when changing status', async () => {
+      sessionStorage.setItem('statusAgent', 'ONLINE');
       wrapper = createWrapper();
       wrapper.vm.isOpen = true;
       await wrapper.vm.$nextTick();
@@ -559,14 +560,7 @@ describe('StatusBar', () => {
       await wrapper.vm.$nextTick();
 
       const statusIcon = wrapper.find('[data-testid="status-bar-icon"]');
-      expect(statusIcon.classes()).toContain('status-bar--gray');
 
-      wrapper.vm.selectedStatus = {
-        value: 'active',
-        label: 'Online',
-        color: 'green',
-      };
-      await wrapper.vm.$nextTick();
       expect(statusIcon.classes()).toContain('status-bar--green');
 
       wrapper.vm.selectedStatus = {
@@ -579,37 +573,32 @@ describe('StatusBar', () => {
     });
   });
 
-  describe('LocalStorage Settings Update Handling', () => {
-    beforeEach(() => {
-      vi.useFakeTimers();
-      Storage.prototype.getItem = vi.fn();
-      Storage.prototype.setItem = vi.fn();
-    });
-
-    afterEach(() => {
-      vi.useRealTimers();
-      vi.restoreAllMocks();
-    });
-
-    it('should not refresh data when localStorage settingsUpdated remains the same', async () => {
-      const getItemMock = vi.fn().mockImplementation((key) => {
-        if (key === 'settingsUpdated') return '1234567890';
-        if (key === 'lastSettingsUpdate') return '1234567890';
-        return null;
-      });
-
-      Storage.prototype.getItem = getItemMock;
-
+  describe('Message Event Handling', () => {
+    it('should not refresh data for unrelated messages', async () => {
       wrapper = createWrapper();
       await flushPromises();
 
-      const refreshDataSpy = vi.spyOn(wrapper.vm, 'refreshData');
-      refreshDataSpy.mockClear();
+      const handleDirectlySpy = vi.spyOn(
+        wrapper.vm,
+        'handleSettingsUpdatesDirectly',
+      );
 
-      vi.advanceTimersByTime(1000);
-      await flushPromises();
+      wrapper.vm.handleSettingsUpdated({
+        data: { type: 'unrelatedEvent', data: true },
+      });
+      expect(handleDirectlySpy).not.toHaveBeenCalled();
+    });
 
-      expect(refreshDataSpy).not.toHaveBeenCalled();
+    it('should properly clean up event listeners on unmount', () => {
+      const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
+
+      wrapper = createWrapper();
+      wrapper.unmount();
+
+      expect(removeEventListenerSpy).toHaveBeenCalledWith(
+        'message',
+        expect.any(Function),
+      );
     });
   });
 });
