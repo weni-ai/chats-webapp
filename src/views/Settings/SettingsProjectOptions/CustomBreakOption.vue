@@ -188,6 +188,18 @@ const removeStatus = async (index) => {
       });
       customBreaks.value.splice(index, 1);
       windowSettingsUpdated();
+      callUnnnicAlert({
+        props: {
+          text: i18n.global.t(
+            'config_chats.custom_breaks.status_remove_success',
+            {
+              status: currentStatus.name,
+            },
+          ),
+          scheme: '$unnnic-color-neutral-black',
+        },
+        seconds: 3,
+      });
     } catch (error) {
       callUnnnicAlert({
         props: {
