@@ -227,16 +227,42 @@ const selectStatus = async (newStatus) => {
   }
 };
 
-onMounted(async () => {
+const refreshData = async () => {
   await handleGetActiveStatus();
   await fetchCustomStatuses();
   await getActiveCustomStatusAndActiveTimer();
+};
+
+let settingsCheckInterval = null;
+
+const checkSettingsUpdates = () => {
+  const currentSettingsUpdate = localStorage.getItem('settingsUpdated');
+  const lastSettingsUpdate =
+    sessionStorage.getItem('lastSettingsUpdate') || '0';
+
+  if (currentSettingsUpdate && currentSettingsUpdate !== lastSettingsUpdate) {
+    sessionStorage.setItem('lastSettingsUpdate', currentSettingsUpdate);
+    refreshData();
+  }
+};
+
+onMounted(() => {
+  refreshData();
   document.addEventListener('click', handleClickOutside);
+
+  const initialValue = localStorage.getItem('settingsUpdated') || '0';
+  sessionStorage.setItem('lastSettingsUpdate', initialValue);
+  settingsCheckInterval = setInterval(checkSettingsUpdates, 1000);
 });
 
 onUnmounted(() => {
   stopTimer();
   document.removeEventListener('click', handleClickOutside);
+
+  // Clear the interval
+  if (settingsCheckInterval) {
+    clearInterval(settingsCheckInterval);
+  }
 });
 
 const toggleDropdown = () => {

@@ -578,4 +578,38 @@ describe('StatusBar', () => {
       expect(statusIcon.classes()).toContain('status-bar--brown');
     });
   });
+
+  describe('LocalStorage Settings Update Handling', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+      Storage.prototype.getItem = vi.fn();
+      Storage.prototype.setItem = vi.fn();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+      vi.restoreAllMocks();
+    });
+
+    it('should not refresh data when localStorage settingsUpdated remains the same', async () => {
+      const getItemMock = vi.fn().mockImplementation((key) => {
+        if (key === 'settingsUpdated') return '1234567890';
+        if (key === 'lastSettingsUpdate') return '1234567890';
+        return null;
+      });
+
+      Storage.prototype.getItem = getItemMock;
+
+      wrapper = createWrapper();
+      await flushPromises();
+
+      const refreshDataSpy = vi.spyOn(wrapper.vm, 'refreshData');
+      refreshDataSpy.mockClear();
+
+      vi.advanceTimersByTime(1000);
+      await flushPromises();
+
+      expect(refreshDataSpy).not.toHaveBeenCalled();
+    });
+  });
 });

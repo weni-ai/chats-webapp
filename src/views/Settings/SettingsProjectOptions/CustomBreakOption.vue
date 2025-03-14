@@ -187,6 +187,19 @@ const removeStatus = async (index) => {
         statusUuid: currentStatus.uuid,
       });
       customBreaks.value.splice(index, 1);
+      windowSettingsUpdated();
+      callUnnnicAlert({
+        props: {
+          text: i18n.global.t(
+            'config_chats.custom_breaks.status_remove_success',
+            {
+              status: currentStatus.name,
+            },
+          ),
+          scheme: '$unnnic-color-neutral-black',
+        },
+        seconds: 3,
+      });
     } catch (error) {
       callUnnnicAlert({
         props: {
@@ -225,6 +238,7 @@ const saveStatus = async () => {
       seconds: 5,
     });
     closeModal();
+    windowSettingsUpdated();
   } catch (error) {
     console.error('error create custom status', error);
 
@@ -247,6 +261,11 @@ const openModal = async () => {
 
 const closeModal = () => {
   showModal.value = false;
+};
+
+const windowSettingsUpdated = () => {
+  const timestamp = Date.now().toString();
+  localStorage.setItem('settingsUpdated', timestamp);
 };
 </script>
 

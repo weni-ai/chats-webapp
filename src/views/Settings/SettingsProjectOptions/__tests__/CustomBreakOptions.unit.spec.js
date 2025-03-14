@@ -328,4 +328,41 @@ describe('CustomBreakOption', () => {
       expect(wrapper.vm.isDuplicate).toBe(true);
     });
   });
+
+  describe('LocalStorage Functionality', () => {
+    beforeEach(() => {
+      Storage.prototype.setItem = vi.fn();
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('should update localStorage when status is saved', async () => {
+      wrapper = createWrapper();
+      wrapper.vm.customBreaks = [{ name: 'New Break' }];
+
+      customStatus.createCustomStatusType.mockResolvedValueOnce({});
+      await wrapper.vm.saveStatus();
+
+      expect(localStorage.setItem).toHaveBeenCalledWith(
+        'settingsUpdated',
+        expect.any(String),
+      );
+    });
+
+    it('should update localStorage when status is removed', async () => {
+      const mockStatus = { name: 'Break 1', uuid: '123' };
+      wrapper = createWrapper();
+      wrapper.vm.customBreaks = [mockStatus];
+
+      customStatus.deleteCustomStatusType.mockResolvedValueOnce({});
+      await wrapper.vm.removeStatus(0);
+
+      expect(localStorage.setItem).toHaveBeenCalledWith(
+        'settingsUpdated',
+        expect.any(String),
+      );
+    });
+  });
 });

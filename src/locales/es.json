@@ -596,6 +596,7 @@
       "status_exceeded_limit": "Límite de estado alcanzado, borrar para añadir nuevo estado",
       "status_duplicate_name": "Estado ya comunicado",
       "status_success": "Estado añadido con éxito",
+      "status_remove_success": "Estado {status} eliminado",
       "status_error": "Ups, desafortunadamente los cambios no se han guardado, inténtalo de nuevo"
     },
     "project_configs": {

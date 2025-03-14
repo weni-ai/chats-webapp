@@ -596,6 +596,7 @@
       "status_exceeded_limit": "Limite de status atingido, excluir para adicionar novo status",
       "status_duplicate_name": "Status já informado",
       "status_success": "Status adicionado com sucesso",
+      "status_remove_success": "Status {status} removido",
       "status_error": "Ops, infelizmente as alterações não foram salvas, tente novamente"
     },
     "project_configs": {
