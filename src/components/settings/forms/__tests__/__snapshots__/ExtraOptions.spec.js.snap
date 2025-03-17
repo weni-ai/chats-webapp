@@ -35,16 +35,5 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
     </section>
     <!--v-if-->
   </section>
-  <section data-v-85728205="" data-testid="sector-extra-options-actions" class="actions" style="display: none;"><button data-v-d127031e="" data-v-85728205="" class="unnnic-button unnnic-button--size-large unnnic-button--tertiary">
-      <!---->
-      <!---->
-      <!----><span data-v-d127031e="" class="unnnic-button__label" data-testid="button-label"> Cancel</span>
-      <!---->
-    </button><button data-v-d127031e="" data-v-85728205="" data-testid="save-button" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
-      <!---->
-      <!---->
-      <!----><span data-v-d127031e="" class="unnnic-button__label" data-testid="button-label"> Save</span>
-      <!---->
-    </button></section>
 </section>"
 `;
