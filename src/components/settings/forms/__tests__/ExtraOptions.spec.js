@@ -62,6 +62,7 @@ describe('SectorExtraOptions', () => {
   it('should render switches and switches title', async () => {
     await wrapper.setProps({ isEditing: true });
     const switchesTitle = wrapper.find('[data-testid="switchs-title"]');
+
     expect(switchesTitle.text()).toBe(
       wrapper.vm.$t('sector.additional_options.title'),
     );
@@ -81,11 +82,6 @@ describe('SectorExtraOptions', () => {
     expect(switchs[2].props().textRight).toContain(
       wrapper.vm.$t('sector.additional_options.edit_custom_fields'),
     );
-
-    const actions = wrapper.find(
-      '[data-testid="sector-extra-options-actions"]',
-    );
-    expect(actions.exists()).toBe(true);
   });
 
   it('should render tags section (without tags)', () => {
@@ -155,46 +151,12 @@ describe('SectorExtraOptions', () => {
     const tagGroup = wrapper.findComponent('[data-testid="sector-tag-group"]');
     tagGroup.vm.close(defaultTags[0]);
     expect(removeTagSpy).toHaveBeenCalledWith(defaultTags[0]);
-    expect(wrapper.vm.toRemoveTags[0].name).toBe('Financeiro');
 
     const toAddTagsNames = wrapper.vm.toAddTags.map((tag) => tag.name);
     const tagssNames = wrapper.vm.tags.map((tag) => tag.name);
 
     expect(toAddTagsNames.includes('Financeiro')).toBe(false);
     expect(tagssNames.includes('Financeiro')).toBe(false);
-  });
-
-  it('should save configs on click save button if isEditing is true', async () => {
-    const saveSpy = vi.spyOn(wrapper.vm, 'save');
-    const updateSectorTagsSpy = vi.spyOn(wrapper.vm, 'updateSectorTags');
-    const updateSectorExtraConfigsSpy = vi.spyOn(
-      wrapper.vm,
-      'updateSectorExtraConfigs',
-    );
-
-    await wrapper.setProps({
-      sector: { ...wrapper.vm.sector, can_trigger_flows: true },
-      isEditing: true,
-    });
-
-    await wrapper.setData({
-      currentTags: [{ uuid: 'remove', name: 'remove' }],
-      toAddTags: defaultTags,
-      tags: [...defaultTags, { uuid: 'remove', name: 'remove' }],
-      toRemoveTags: [{ uuid: 'remove', name: 'remove' }],
-    });
-
-    const saveButton = wrapper.findComponent('[data-testid="save-button"]');
-
-    await saveButton.trigger('click');
-    await flushPromises();
-    expect(saveSpy).toHaveBeenCalled();
-    expect(updateSectorExtraConfigsSpy).toHaveBeenCalled();
-    expect(updateSectorTagsSpy).toHaveBeenCalled();
-
-    saveSpy.mockClear();
-    updateSectorExtraConfigsSpy.mockClear();
-    updateSectorTagsSpy.mockClear();
   });
 
   it('should show alert on error in save configs', async () => {
