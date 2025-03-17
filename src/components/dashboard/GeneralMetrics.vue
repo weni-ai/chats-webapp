@@ -18,6 +18,7 @@
         :value="rawData.raw_data?.[0].active_rooms || 0"
         :percent="0"
         :invertedPercentage="false"
+        data-testid="general-metric-card"
       />
     </UnnnicToolTip>
     <UnnnicToolTip
@@ -34,6 +35,7 @@
         :value="rawData.raw_data?.[0].queue_rooms || 0"
         :percent="0"
         :invertedPercentage="false"
+        data-testid="general-metric-card"
       />
     </UnnnicToolTip>
     <UnnnicToolTip
@@ -50,6 +52,7 @@
         :value="rawData.raw_data?.[0].closed_rooms || 0"
         :percent="0"
         :invertedPercentage="false"
+        data-testid="general-metric-card"
       />
     </UnnnicToolTip>
     <UnnnicToolTip
@@ -66,6 +69,7 @@
         :value="timeToString(metrics.rooms_data?.[0].waiting_time)"
         :percent="0"
         :invertedPercentage="false"
+        data-testid="general-metric-card"
       />
     </UnnnicToolTip>
     <UnnnicToolTip
@@ -82,6 +86,7 @@
         :value="timeToString(metrics.rooms_data?.[0].response_time)"
         :percent="0"
         :invertedPercentage="false"
+        data-testid="general-metric-card"
       />
     </UnnnicToolTip>
     <UnnnicToolTip
@@ -98,6 +103,7 @@
         :value="timeToString(metrics.rooms_data?.[0].interact_time)"
         :percent="0"
         :invertedPercentage="false"
+        data-testid="general-metric-card"
       />
     </UnnnicToolTip>
   </section>

@@ -15,13 +15,13 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
       class="unnnic-avatar-icon weni-600 sm"
       data-testid="settings-view-header-icon"
       data-v-a59c663f=""
-      data-v-ecaaa6f3=""
+      data-v-d0742329=""
     >
       <span
         class="material-symbols-rounded unnnic-icon-scheme--weni-600 unnnic-icon-size--md"
         data-testid="material-icon"
-        data-v-76ceda5d=""
-        data-v-ecaaa6f3=""
+        data-v-9846e6db=""
+        data-v-d0742329=""
         translate="no"
       >
         settings
@@ -35,6 +35,7 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
       Chat Settings
     </h1>
   </header>
+  
   <!--v-if-->
   
   <header
@@ -81,7 +82,7 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
         <span
           class="material-symbols-rounded unnnic-icon-scheme--neutral-clean unnnic-icon-size--xl unnnic-card-blank__content__icon"
           data-testid="material-icon"
-          data-v-76ceda5d=""
+          data-v-9846e6db=""
           translate="no"
         >
           add
@@ -99,6 +100,7 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
   <!--v-if-->
   <!--v-if-->
   <!--v-if-->
+  
   
 </section>
 `;

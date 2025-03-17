@@ -10,6 +10,7 @@ import defaultProps from './mocks/sectorMock';
 
 import Sector from '@/services/api/resources/settings/sector';
 import Project from '@/services/api/resources/settings/project';
+import Group from '@/services/api/resources/settings/group';
 
 const pinia = createTestingPinia({
   initialState: {
@@ -31,9 +32,21 @@ const managerMock = {
   },
 };
 
+const projectMock = { uuid: '1', name: 'projectMock' };
+
 vi.spyOn(Project, 'managers').mockResolvedValue({
   results: [managerMock],
 });
+
+vi.spyOn(Group, 'listProjects').mockResolvedValue({
+  results: [projectMock],
+});
+
+vi.mock('@/services/api/resources/settings/group', () => ({
+  default: {
+    listProjects: vi.fn(),
+  },
+}));
 
 vi.mock('@/services/api/resources/settings/sector', () => ({
   default: {
@@ -371,5 +384,67 @@ describe('FormSectorGeneral', () => {
     await wrapper.setProps({ isEditing: true });
     await wrapper.vm.removeManager('1');
     expect(removeManagerSpy).toHaveBeenCalledWith('1');
+  });
+
+  it('should return the list of project names', async () => {
+    await wrapper.setData({
+      projects: [
+        { uuid: '1', name: 'Project One' },
+        { uuid: '2', name: 'Project Two' },
+      ],
+    });
+
+    const result = wrapper.vm.projectsNames;
+
+    expect(result).toEqual([
+      { value: '', label: wrapper.vm.$t('sector.link.project_placeholder') },
+      { value: '1', label: 'Project One' },
+      { value: '2', label: 'Project Two' },
+    ]);
+  });
+
+  it('should return the list of secondary projects', async () => {
+    await wrapper.vm.listSecondaryProjects();
+    expect(wrapper.vm.projects).toEqual([projectMock]);
+  });
+
+  it('should set selected project and clear secondary projects', async () => {
+    await wrapper.vm.listSecondaryProjects();
+
+    wrapper.vm.selectProject([wrapper.vm.projectsNames[1]]);
+
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.sector.config.secondary_project).toBe(
+      wrapper.vm.projectsNames[1].value,
+    );
+  });
+
+  it('should call required methods when enableGroupsMode is true and isEditing is true', async () => {
+    const listSecondaryProjects = vi.spyOn(
+      FormSectorGeneral.methods,
+      'listSecondaryProjects',
+    );
+
+    mount(FormSectorGeneral, {
+      global: {
+        plugins: [
+          router,
+          createTestingPinia({
+            initialState: {
+              config: { project: { config: { its_principal: true } } },
+            },
+          }),
+        ],
+      },
+      props: {
+        modelValue: { ...defaultProps.modelValue },
+        isEditing: true,
+      },
+    });
+
+    await flushPromises();
+
+    expect(listSecondaryProjects).toHaveBeenCalled();
   });
 });

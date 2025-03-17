@@ -78,7 +78,7 @@
     :description="$t('config_chats.queues.in_sector', { sector: sector.name })"
     size="lg"
     :primaryButtonText="$t('save')"
-    :disabledPrimaryButton="!queueToConfig.currentAgents?.length"
+    :disabledPrimaryButton="!validForm"
     :loadingPrimaryButton="loadingQueueConfig"
     :secondaryButtonText="$t('cancel')"
     :disabledSecondaryButton="loadingQueueConfig"
@@ -94,6 +94,7 @@
         :sector="sector"
         data-testid="queue-config-form"
         @update-queue-agents-count="updateAgentsCount($event)"
+        @change-is-valid="validForm = $event"
       />
     </template>
   </UnnnicDrawer>
@@ -102,6 +103,7 @@
     type="alert"
     icon="alert-circle-1"
     scheme="feedback-red"
+    data-testid="delete-queue-modal"
     :title="$t('delete_queue_modal.text', { queue: queueToDelete.name })"
     :description="$t('cant_revert')"
     :validate="`${queueToDelete.name}`"
@@ -140,6 +142,7 @@ export default {
       loadingQueueConfig: false,
       showDeleteQueueModal: false,
       queueToDelete: {},
+      validForm: false,
     };
   },
 
@@ -221,7 +224,8 @@ export default {
     async handlerSetConfigQueue() {
       try {
         this.loadingQueueConfig = true;
-        const { name, default_message } = this.queueToConfig;
+        const { name, default_message, uuid = '' } = this.queueToConfig;
+
         if (this.queueToConfig.uuid) {
           await Promise.all([
             ...this.$refs.formQueue.toAddAgentsUuids.map((agentUuid) =>
@@ -231,6 +235,8 @@ export default {
               Queue.removeAgent(agentUuid),
             ),
           ]);
+
+          await Queue.editQueue({ uuid, default_message });
 
           unnnic.unnnicCallAlert({
             props: {

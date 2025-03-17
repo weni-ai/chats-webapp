@@ -150,6 +150,7 @@ export const useDiscussionMessages = defineStore('discussionMessages', {
     },
 
     resetDiscussionMessages() {
+      this.discussionMessages = [];
       this.resetDiscussionMessagesSorted();
       this.discussionMessagesNext = '';
       this.discussionMessagesPrevious = '';

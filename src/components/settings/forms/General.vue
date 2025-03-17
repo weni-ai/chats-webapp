@@ -29,8 +29,17 @@
       @submit.prevent="$emit('submit')"
     >
       <section class="form-section">
-        <h2 class="form-section__title">
-          {{ isEditing ? $t('sector.managers.title') : $t('sector.add') }}
+        <h2
+          v-if="!isEditing"
+          class="form-section__title"
+        >
+          {{ $t('sector.add') }}
+        </h2>
+        <h2
+          v-else-if="!enableGroupsMode && isEditing"
+          class="form-section__title"
+        >
+          {{ $t('sector.managers.title') }}
         </h2>
         <section class="form-section__select-managers">
           <UnnnicInput
@@ -39,7 +48,7 @@
             :label="$t('sector.name')"
             :placeholder="$t('sector.placeholder')"
           />
-          <fieldset>
+          <fieldset v-if="!enableGroupsMode">
             <UnnnicLabel :label="$t('sector.managers.add.label')" />
             <UnnnicSelectSmart
               v-model="selectedManager"
@@ -67,8 +76,12 @@
           />
         </section>
       </section>
-
-      <section class="form-section">
+      <section
+        :class="{
+          'form-section': true,
+          'group-mode': enableGroupsMode && isEditing,
+        }"
+      >
         <h2 class="form-section__title">
           {{ $t('sector.managers.working_day.title') }}
         </h2>
@@ -103,11 +116,43 @@
               max="23:59"
             />
           </fieldset>
-
-          <!-- New field will be inserted here -->
-          <!-- <fieldset></fieldset> -->
+          <section
+            v-if="enableGroupsMode"
+            class="form-section__inputs--fill-w"
+          >
+            <h2 class="form-section__title">
+              {{ $t('sector.link.title') }}
+            </h2>
+            <fieldset>
+              <UnnnicLabel :label="$t('sector.link.label')" />
+              <UnnnicSelectSmart
+                v-model="selectedProject"
+                :options="projectsNames"
+                autocomplete
+                autocompleteIconLeft
+                autocompleteClearOnFocus
+                :disabled="isEditing"
+                @update:model-value="selectProject"
+              />
+            </fieldset>
+            <UnnnicDisclaimer
+              v-if="isEditing"
+              class="link-project-disclaimer"
+              :text="$t('sector.link.editing_disclaimer')"
+              iconColor="feedback-yellow"
+            />
+            <UnnnicDisclaimer
+              v-else-if="
+                selectedProject.length && selectedProjectHasSectorIntegration
+              "
+              class="link-project-disclaimer"
+              :text="$t('sector.link.has_linked_project')"
+              iconColor="feedback-yellow"
+            />
+          </section>
 
           <UnnnicInput
+            v-else
             v-model="sector.maxSimultaneousChatsByAgent"
             :label="$t('sector.managers.working_day.limit_agents.label')"
             placeholder="4"
@@ -139,12 +184,16 @@
 <script>
 import { mapActions, mapState } from 'pinia';
 import { useSettings } from '@/store/modules/settings';
-import unnnic from '@weni/unnnic-system';
+
 import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 import Sector from '@/services/api/resources/settings/sector';
 import Project from '@/services/api/resources/settings/project';
-import { useProfile } from '@/store/modules/profile';
+import Group from '@/services/api/resources/settings/group';
 
+import { useProfile } from '@/store/modules/profile';
+import { useConfig } from '@/store/modules/config';
+
+import unnnic from '@weni/unnnic-system';
 export default {
   name: 'FormSector',
 
@@ -166,19 +215,36 @@ export default {
   data() {
     return {
       useDefaultSector: 0,
-      managersPage: 0,
       selectedManager: [],
+      selectedProject: [],
       removedManagers: [],
       message: '',
       managers: [],
+      projects: [],
       validHour: false,
       openModalDelete: false,
-      agentsLimitPerPage: 50,
+      managersPage: 0,
+      managersLimitPerPage: 50,
+      secondaryProjectsPage: 0,
+      secondaryProjectsLimitPerPage: 50,
     };
   },
 
   computed: {
     ...mapState(useProfile, ['me']),
+    ...mapState(useConfig, ['enableGroupsMode', 'project']),
+
+    selectedProjectHasSectorIntegration() {
+      if (this.selectedProject?.[0]?.value) {
+        const project = this.projects.find(
+          (project) => this.selectedProject[0].value === project.uuid,
+        );
+
+        return !!project?.has_sector_integration;
+      }
+      return false;
+    },
+
     managersNames() {
       const managersNames = [
         {
@@ -202,6 +268,22 @@ export default {
       return managersNames;
     },
 
+    projectsNames() {
+      const projectsNames = [
+        {
+          value: '',
+          label: this.$t('sector.link.project_placeholder'),
+        },
+      ];
+
+      this.projects.forEach((project) => {
+        const { name, uuid } = project;
+        projectsNames.push({ value: uuid, label: name });
+      });
+
+      return projectsNames;
+    },
+
     sector: {
       get() {
         return this.modelValue;
@@ -217,14 +299,24 @@ export default {
 
       this.hourValidate(workingDay);
 
-      const valid = !!(
+      const commonValid = !!(
         name.trim() &&
-        managers.length > 0 &&
         workingDay?.start &&
         workingDay?.end &&
-        this.validHour &&
-        maxSimultaneousChatsByAgent
+        this.validHour
       );
+
+      const groupValid =
+        !!this.selectedProject.length &&
+        (this.isEditing || !this.selectedProjectHasSectorIntegration);
+
+      const singleValid = !!(
+        managers.length > 0 && maxSimultaneousChatsByAgent
+      );
+
+      const valid = this.enableGroupsMode
+        ? commonValid && groupValid
+        : commonValid && singleValid;
 
       this.$emit('changeIsValid', valid);
 
@@ -233,21 +325,34 @@ export default {
   },
 
   mounted() {
-    if (this.isEditing) {
+    const isDefaultSector =
+      this.sector.name === this.$t('config_chats.default_sector.name');
+
+    if (this.isEditing && !this.enableGroupsMode) {
       this.getSectorManagers();
-    } else if (
-      this.sector.name === this.$t('config_chats.default_sector.name')
-    ) {
+    } else if (isDefaultSector) {
       this.useDefaultSector = 1;
     }
 
-    this.listProjectManagers();
+    if (!this.enableGroupsMode) this.listProjectManagers();
+    else {
+      this.listSecondaryProjects().then(() => {
+        if (this.isEditing) {
+          const secondaryProjectUuid = this.sector.config?.secondary_project;
+          const selectedProject = this.projectsNames.find(
+            (project) => project.value === secondaryProjectUuid,
+          );
+          if (selectedProject) this.selectedProject = [selectedProject];
+        }
+      });
+    }
   },
 
   methods: {
     ...mapActions(useSettings, {
       actionDeleteSector: 'deleteSector',
     }),
+
     updateDefaultSectorValue(activate) {
       this.useDefaultSector = activate;
       if (activate) {
@@ -262,8 +367,8 @@ export default {
             end: '18:00',
             dayOfWeek: 'week-days',
           },
-          maxSimultaneousChatsByAgent: '4',
-          managers: [meManager],
+          maxSimultaneousChatsByAgent: this.enableGroupsMode ? '' : '4',
+          managers: this.enableGroupsMode ? [] : [meManager],
         };
       } else {
         this.sector = {
@@ -315,6 +420,10 @@ export default {
       }
     },
 
+    selectProject(selectedProject) {
+      this.sector.config.secondary_project = selectedProject[0].value;
+    },
+
     photo(link) {
       if (![null, undefined, ''].includes(link)) {
         const getOnlyPhoto = link.split('?')[0];
@@ -347,10 +456,10 @@ export default {
     async listProjectManagers() {
       let hasNext = false;
       try {
-        const offset = this.managersPage * this.agentsLimitPerPage;
+        const offset = this.managersPage * this.managersLimitPerPage;
         const { results, next } = await Project.managers(
           offset,
-          this.agentsLimitPerPage,
+          this.managersLimitPerPage,
         );
         this.managersPage += 1;
         this.managers = this.managers.concat(results);
@@ -359,6 +468,32 @@ export default {
       } finally {
         if (hasNext) {
           this.listProjectManagers();
+        }
+      }
+    },
+
+    async listSecondaryProjects() {
+      let hasNext = false;
+      try {
+        const offset =
+          this.secondaryProjectsPage * this.secondaryProjectsLimitPerPage;
+
+        const { results, next } = await Group.listProjects({
+          orgUuid: this.project.org,
+          limit: this.secondaryProjectsLimitPerPage,
+          offset,
+          params: { its_principal: false },
+        });
+
+        this.secondaryProjectsPage += 1;
+        this.projects = this.projects.concat(results);
+
+        hasNext = next;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        if (hasNext) {
+          this.listSecondaryProjects();
         }
       }
     },
@@ -436,6 +571,7 @@ fieldset {
 .form-wrapper {
   display: flex;
   flex-direction: column;
+  min-height: 600px;
 
   &__radios {
     display: flex;
@@ -468,6 +604,10 @@ fieldset {
   .form-section {
     & + .form-section {
       margin-top: $unnnic-spacing-md;
+    }
+
+    &.group-mode {
+      margin-top: 0px;
     }
 
     &__select-managers {
@@ -551,6 +691,11 @@ fieldset {
   input::-webkit-datetime-edit {
     min-width: 100%;
     width: 100%;
+  }
+
+  .link-project-disclaimer {
+    display: flex;
+    margin-top: $unnnic-spacing-ant;
   }
 }
 </style>

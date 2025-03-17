@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia';
 import Sector from '@/services/api/resources/settings/sector';
+import Group from '@/services/api/resources/settings/group';
+
 import cloneDeep from 'lodash.clonedeep';
 import { removeDuplicatedItems } from '@/utils/array';
 
@@ -10,11 +12,18 @@ export const useSettings = defineStore('settings', {
     nextSectors: '',
     previousSectors: '',
     currentSector: null,
+
+    groups: [],
+    isLoadingGroups: false,
+    nextGroups: '',
+    previousGroups: '',
+    currentGroup: null,
   }),
 
   actions: {
     async getSectors() {
       const isInLastPage = !this.nextSectors && this.previousSectors;
+
       if (this.isLoadingSectors || isInLastPage) {
         return;
       }
@@ -31,6 +40,26 @@ export const useSettings = defineStore('settings', {
         console.error(error);
       } finally {
         this.isLoadingSectors = false;
+      }
+    },
+
+    async getGroups() {
+      const isInLastPage = !this.nextGroups && this.previousGroups;
+
+      if (this.isLoadingGroups || isInLastPage) return;
+
+      try {
+        this.isLoadingGroups = true;
+        const { results, next, previous } = await Group.list({
+          nextReq: this.nextGroups,
+        });
+        this.groups = removeDuplicatedItems([...this.groups, ...results]);
+        this.nextGroups = next;
+        this.previousGroups = previous;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.isLoadingGroups = false;
       }
     },
 

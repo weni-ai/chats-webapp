@@ -126,7 +126,7 @@ describe('Queue', () => {
     await Queue.removeAgent(agentUuid);
 
     expect(http.delete).toHaveBeenCalledWith(
-      `/authorization/queue/${agentUuid}`,
+      `/authorization/queue/${agentUuid}/`,
     );
   });
 
@@ -138,7 +138,7 @@ describe('Queue', () => {
 
     const result = await Queue.editQueue(queueInfo);
 
-    expect(http.patch).toHaveBeenCalledWith(`/queue/${queueInfo.uuid}`, {
+    expect(http.patch).toHaveBeenCalledWith(`/queue/${queueInfo.uuid}/`, {
       default_message: queueInfo.default_message,
     });
 
@@ -153,7 +153,7 @@ describe('Queue', () => {
 
     const result = await Queue.getQueueInformation(queueUuid);
 
-    expect(http.get).toHaveBeenCalledWith(`/queue/${queueUuid}`);
+    expect(http.get).toHaveBeenCalledWith(`/queue/${queueUuid}/`);
 
     expect(result).toEqual(expectedData);
   });

@@ -2,14 +2,14 @@
   <UnnnicModalDialog
     :modelValue="showModal"
     size="sm"
-    :title="$t('new_sector.discart.title')"
-    :primaryButtonProps="{ text: $t('new_sector.discart.confirm') }"
+    :title="title"
+    :primaryButtonProps="{ text: $t('discart') }"
     :secondaryButtonProps="{ text: $t('back') }"
     class="discart-changes-modal"
     data-testid="discart-changes-modal"
   >
     <p class="discart-changes-modal__text">
-      {{ $t('new_sector.discart.hint') }}
+      {{ text }}
     </p>
   </UnnnicModalDialog>
 </template>
@@ -21,6 +21,14 @@ export default {
     showModal: {
       type: Boolean,
       required: true,
+    },
+    title: {
+      type: String,
+      default: '',
+    },
+    text: {
+      type: String,
+      default: '',
     },
   },
 };

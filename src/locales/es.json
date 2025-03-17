@@ -1,8 +1,14 @@
 {
   "status": {
     "online": "En línea",
-    "offline": "Desconectada"
+    "offline": "Desconectada",
+    "set_status": "Establecer estado"
   },
+  "status-bar": {
+    "success": "Estado actualizado a {status}",
+    "error": "No se puede actualizar el estado, por favor, inténtelo de nuevo"
+  },
+  "view-option": "Opciones",
   "preferences": {
     "title": "Preferencias",
     "notifications": {
@@ -107,6 +113,13 @@
     "name": "Nombre del sector",
     "placeholder": "Ejemplo: Financiero",
     "save_and_continue": "Guardar y continuar",
+    "link": {
+      "title": "Vínculo",
+      "label": "Enlace a un proyecto existente",
+      "editing_disclaimer": "No es posible editar el proyecto vinculado, si desea editar el enlace debe crear un nuevo sector y seleccionar el proyecto deseado.",
+      "has_linked_project": "El proyecto seleccionado ya está asociado a otro sector, seleccione otro proyecto para continuar.",
+      "project_placeholder": "Buscar por nombre del proyecto"
+    },
     "managers": {
       "title": "Gerentes de servicio",
       "add": {
@@ -580,6 +593,23 @@
     "title": "Configuración de chat",
     "section_sectors_title": "Sectores en {project}",
     "section_sectors_subtitle": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización.",
+    "tabs": {
+      "settings": "Ajustes",
+      "groups": "Grupos de proyectos"
+    },
+    "custom_breaks": {
+      "title": "Pausas personalizadas",
+      "description": "Añadir nuevas pausas personalizadas, que tendrán el mismo comportamiento que las pausas sin conexión, es decir, el agente no recibirá contactos mientras utilice estas pausas personalizadas.",
+      "fields": {
+        "name": "Nuevo estado",
+        "placeholder": "Ejemplo: Almuerzo"
+      },
+      "status_exceeded_limit": "Límite de estado alcanzado, borrar para añadir nuevo estado",
+      "status_duplicate_name": "Estado ya comunicado",
+      "status_success": "Estado añadido con éxito",
+      "status_remove_success": "Estado {status} eliminado",
+      "status_error": "Ups, desafortunadamente los cambios no se han guardado, inténtalo de nuevo"
+    },
     "project_configs": {
       "title": "Ajustes de proyectos",
       "bulk_transfer": {
@@ -595,6 +625,10 @@
       "block_transfer_to_off_agents": {
         "switch_active": "Bloqueo de transferencias a agentes fuera de línea activo",
         "switch_inactive": "Bloqueo de transferencias a agentes fuera de línea inactivo"
+      },
+      "show_agent_status_count_timer": {
+        "switch_active": "Mostrar temporizador de recuento de estado del agente",
+        "switch_inactive": "Ocultar temporizador de recuento de estado del agente"
       }
     },
     "custom_sector": "Personalizar nuevo sector (recomendado)",
@@ -624,13 +658,73 @@
         "update": "Fila actualizada con éxito",
         "error": "Error al configurar los ajustes de la fila",
         "delete_success": "Cola eliminada exitosamente",
-        "delete_error": "No se pudo eliminar la cola"
+        "delete_error": "No se pudo eliminar la cola",
+        "config_agents_group": "Agregue o elimine agentes a través de grupos yendo a <b>Configuración de chat > Grupos</b>"
+      }
+    },
+    "groups": {
+      "new": {
+        "title": "Nuevo grupo de proyecto"
+      },
+      "general_form": {
+        "title": "Definiciones generales",
+        "service_managers": "Gerentes de servicio",
+        "field": {
+          "name": {
+            "label": "Nombre del grupo",
+            "placeholder": "Ejemplo: Ventas"
+          },
+          "manager": {
+            "label": "Agregar gerentes",
+            "placeholder": "Buscar por nombre o email"
+          }
+        }
+      },
+      "projects_form": {
+        "title": "Agregar proyectos",
+        "field": {
+          "project": {
+            "label": "Agregar proyecto",
+            "placeholder": "Buscar por nombre del proyecto"
+          }
+        },
+        "message": {
+          "has_group_sector": "No se puede agregar el proyecto {sectorName}. Este proyecto ya está siendo utilizado en otro grupo."
+        }
+      },
+      "agents_form": {
+        "title": "Agregar agentes",
+        "field": {
+          "agents": {
+            "label": "Agregar agente",
+            "placeholder": "Buscar por nombre o email"
+          }
+        }
+      },
+      "general": "General",
+      "projects": "Proyectos",
+      "agents": "Agentes",
+      "delete_or_edit": "Eliminar o editar",
+      "discart": {
+        "title": "Descartar cambios",
+        "text": "La creación del nuevo grupo se descartará al confirmar esta acción. ¿Deseas descartar los cambios realizados hasta ahora?"
+      },
+      "create_success": "¡Nuevo grupo {groupName} creado!",
+      "create_error": "¡Error al configurar algunas etapas del grupo! Verifica los detalles e intenta nuevamente si identificas alguna configuración faltante.",
+      "update_success": "¡Grupo actualizado exitosamente!",
+      "update_error": "Tuvimos problemas para actualizar algunos datos. Verifique la información y vuelva a intentarlo si falta algo.",
+      "delete": {
+        "title": "Borrar {groupName}",
+        "notice": "Esta acción será irreversible. Para confirmar la acción, por favor escribe el nombre del grupo.",
+        "success": "¡Grupo {groupName} eliminado con éxito!",
+        "error": "No se pudo eliminar el grupo. Por favor, inténtalo de nuevo."
       }
     },
     "copilot": {
       "hint": "El Co-pilot es el asistente inteligente de tu agente; se podrá activar más tarde."
     },
     "new_sector": "Nuevo sector",
+    "new_group": "Nuevo grupo",
     "agent_title": "Agentes",
     "contacts": "Contactos",
     "open": "Abrir"
@@ -646,8 +740,7 @@
     },
     "discart": {
       "title": "Descartar cambios",
-      "hint": "La creación del nuevo sector se descartará al confirmar esta acción. ¿Deseas descartar los cambios realizados hasta ahora?",
-      "confirm": "Descartar"
+      "hint": "La creación del nuevo sector se descartará al confirmar esta acción. ¿Deseas descartar los cambios realizados hasta ahora?"
     }
   },
   "your_orgs": "Sus organizaciones",
@@ -660,5 +753,7 @@
   },
   "select_project": {
     "choose_one": "Elija uno para acceder a los chats de Weni"
-  }
+  },
+  "discart": "Descartar",
+  "confirmation": "Confirmación"
 }

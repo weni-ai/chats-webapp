@@ -52,19 +52,19 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
       class="unnnic-simple-card unnnic-simple-card--clickable sectors__card"
       data-testid="settings-sectors-sector-card"
       data-v-1088b44f=""
-      data-v-795e3941=""
+      data-v-80dbbab7=""
     >
       <section
         class="unnnic-simple-card__header"
-        data-v-795e3941=""
+        data-v-80dbbab7=""
       >
         <section
           class="unnnic-simple-card-header-container"
-          data-v-795e3941=""
+          data-v-80dbbab7=""
         >
           <h1
             class="unnnic-simple-card-header-container__title"
-            data-v-795e3941=""
+            data-v-80dbbab7=""
           >
             Sector 1
           </h1>
@@ -72,38 +72,38 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
         </section>
         <section
           class="unnnic-simple-card__header-slot"
-          data-v-795e3941=""
+          data-v-80dbbab7=""
         >
           
           <div
             class="unnnic-dropdown"
             data-v-1088b44f=""
-            data-v-5ab1e453=""
+            data-v-36eb394f=""
           >
             <div
               class="unnnic-dropdown__trigger"
-              data-v-5ab1e453=""
+              data-v-36eb394f=""
             >
               
               <div
                 class="unnnic-tooltip"
-                data-v-011692bb=""
                 data-v-1088b44f=""
+                data-v-8c61d974=""
               >
                 
                 <button
                   class="unnnic-button unnnic-button--size-large unnnic-button--tertiary unnnic-button--icon-on-center"
                   data-testid="open-dropdown-menu-button"
                   data-v-1088b44f=""
-                  data-v-ed84dbab=""
+                  data-v-d127031e=""
                 >
                   <!---->
                   <!---->
                   <span
                     class="material-symbols-rounded unnnic-icon-scheme--neutral-dark unnnic-icon-size--md"
                     data-testid="icon-center"
-                    data-v-76ceda5d=""
-                    data-v-ed84dbab=""
+                    data-v-9846e6db=""
+                    data-v-d127031e=""
                     translate="no"
                   >
                     more_vert
@@ -111,7 +111,7 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
                   <span
                     class="unnnic-button__label"
                     data-testid="button-label"
-                    data-v-ed84dbab=""
+                    data-v-d127031e=""
                   >
                     
                     
@@ -123,14 +123,14 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
                 <span
                   class="unnnic-tooltip-label unnnic-tooltip-label-left"
                   data-testid="tooltip-label"
-                  data-v-011692bb=""
+                  data-v-8c61d974=""
                   style="left: -8px; top: 0px;"
                 >
                   
                   
                   Delete or edit 
                   <br
-                    data-v-011692bb=""
+                    data-v-8c61d974=""
                   />
                   
                   
