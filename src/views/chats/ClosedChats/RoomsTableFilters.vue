@@ -26,6 +26,7 @@
           v-model="filterSector"
           :options="sectorsToFilter"
           orderedByIndex
+          :locale="$i18n.locale"
         />
       </div>
       <div class="rooms-table-filters__input">
@@ -36,6 +37,7 @@
             filterSector[0]?.value === 'all' || tagsToFilter.length < 2
           "
           :options="tagsToFilter"
+          :locale="$i18n.locale"
           multiple
         />
       </div>
