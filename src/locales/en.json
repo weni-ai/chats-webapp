@@ -289,6 +289,7 @@
   "all": "All",
   "back_to_chats": "@:back to chats",
   "filter": {
+    "empty_tags": "No tags available",
     "by_tag": "Filter by tag",
     "by_tags": "Filter by tags",
     "by_agent": "Filter by agent",

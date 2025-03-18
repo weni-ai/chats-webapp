@@ -8,7 +8,7 @@
     "success": "Status atualizado para {status}",
     "error": "Não foi possível atualizar o seu status, por favor tente novamente"
   },
-  "view-option": "Opções", 
+  "view-option": "Opções",
   "preferences": {
     "title": "Preferências",
     "notifications": {
@@ -292,6 +292,7 @@
   "all": "Todos",
   "back_to_chats": "@:back para chats",
   "filter": {
+    "empty_tags": "Nenhuma tag disponível",
     "by_tag": "Filtrar por tag",
     "by_tags": "Filtrar por tags",
     "by_agent": "Filtrar por agente",
