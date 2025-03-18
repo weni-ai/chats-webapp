@@ -26,6 +26,7 @@
           v-model="filterSector"
           :options="sectorsToFilter"
           orderedByIndex
+          :locale="$i18n.locale"
         />
       </div>
       <div class="rooms-table-filters__input">
@@ -36,6 +37,7 @@
             filterSector[0]?.value === 'all' || tagsToFilter.length < 2
           "
           :options="tagsToFilter"
+          :locale="$i18n.locale"
           multiple
         />
       </div>
@@ -117,6 +119,10 @@ export default {
       return { value: 'all', label: this.$t('all') };
     },
 
+    filterTagEmpty() {
+      return { value: '', label: this.$t('filter.empty_tags') };
+    },
+
     filterTagDefault() {
       return { value: '', label: this.$t('filter.by_tags') };
     },
@@ -192,6 +198,9 @@ export default {
       const sectorValue = newFilterSector?.[0].value;
       if (sectorValue !== 'all') {
         this.getSectorTags(sectorValue);
+      } else {
+        this.tagsToFilter = [this.filterTagDefault];
+        this.filterTag = [];
       }
     },
     filterTag: 'emitUpdateFilters',
@@ -244,7 +253,12 @@ export default {
       try {
         const { results } = await Sector.tags(sectorUuid);
 
-        const newTags = [this.filterTagDefault];
+        const filterTagPlaceholder = results.length
+          ? this.filterTagDefault
+          : this.filterTagEmpty;
+
+        const newTags = [filterTagPlaceholder];
+
         results.forEach(({ uuid, name }) =>
           newTags.push({ value: uuid, label: name }),
         );
@@ -299,6 +313,7 @@ export default {
 
     emitUpdateFilters() {
       const { filterContact, filterDate, filterSector, filterTag } = this;
+
       const dateStart = this.getRelativeDate(filterDate[0]?.value, 'digit');
       const dateEnd = this.getRelativeDate('today', 'digit');
 
