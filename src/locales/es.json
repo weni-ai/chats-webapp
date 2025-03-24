@@ -149,7 +149,7 @@
       "agents_signature": {
         "tooltip": "Cada mensaje intercambiado tendrá el nombre del agente que responde",
         "switch_active": "Firma activa",
-        "switch_disabled": "Firma discapacitada"
+        "switch_disabled": "Firma desactivada"
       }
     }
   },
@@ -616,7 +616,7 @@
       "bulk_transfer": {
         "tooltip": "Esta función permite a los agentes transferir varios contactos a la vez a una fila o agente",
         "switch_active": "Transferencia de contactos en masa activa",
-        "switch_inactive": "Transferencia de contactos en masa discapacitada"
+        "switch_inactive": "Transferencia de contactos en masa desactivada"
       },
       "queue_prioritization": {
         "tooltip": "Esta función permite a los agentes elegir las colas que recibirán contactos, dentro de las previamente seleccionadas en el sector.",
@@ -756,5 +756,13 @@
     "choose_one": "Elija uno para acceder a los chats de Weni"
   },
   "discart": "Descartar",
-  "confirmation": "Confirmación"
+  "confirmation": "Confirmación",
+  "order_by": {
+    "label": "Ordenar por",
+    "option": {
+      "alphabetical": "Alfabético",
+      "newer": "Más reciente",
+      "older": "Más antiguo"
+    }
+  }
 }
