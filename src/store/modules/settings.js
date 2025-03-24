@@ -21,12 +21,10 @@ export const useSettings = defineStore('settings', {
   }),
 
   actions: {
-    async getSectors() {
+    async getSectors(getAll = false) {
       const isInLastPage = !this.nextSectors && this.previousSectors;
 
-      if (this.isLoadingSectors || isInLastPage) {
-        return;
-      }
+      if (isInLastPage) return;
 
       try {
         this.isLoadingSectors = true;
@@ -39,7 +37,8 @@ export const useSettings = defineStore('settings', {
       } catch (error) {
         console.error(error);
       } finally {
-        this.isLoadingSectors = false;
+        if (getAll && this.nextSectors) this.getSectors(true);
+        else this.isLoadingSectors = false;
       }
     },
 
