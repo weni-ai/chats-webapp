@@ -741,5 +741,13 @@
     "choose_one": "Choose one to access Weni Chats"
   },
   "discart": "Discart",
-  "confirmation": "Confirmation"
+  "confirmation": "Confirmation",
+  "order_by": {
+    "label": "Order by",
+    "option": {
+      "alphabetical": "Alphabetical",
+      "newer": "Newer",
+      "older": "Older"
+    }
+  }
 }

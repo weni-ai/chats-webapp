@@ -745,5 +745,13 @@
     "choose_one": "Elija uno para acceder a los chats de Weni"
   },
   "discart": "Descartar",
-  "confirmation": "Confirmación"
+  "confirmation": "Confirmación",
+  "order_by": {
+    "label": "Ordenar por",
+    "option": {
+      "alphabetical": "Alfabético",
+      "newer": "Más reciente",
+      "older": "Más antiguo"
+    }
+  }
 }

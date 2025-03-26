@@ -89,7 +89,7 @@ export default {
 
   mounted() {
     if (this.showSettings) {
-      this.getSectors();
+      this.getSectors(true);
       this.getGroups();
     }
   },
