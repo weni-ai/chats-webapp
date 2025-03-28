@@ -70,7 +70,7 @@ jobs:
       build_args: |
         OLD_IMAGE=869898323958.dkr.ecr.us-east-1.amazonaws.com/chats:webapp-${{ needs.setup.outputs.image_tag_latest }}
         ${{ needs.setup.outputs.extra_build_args }}
-      target_repository: weni-ai/kubernetes-manifests-platform
+      target_repository: weni-ai/kubernetes-manifests-chats
       target_repository_branch: main
       target_application: chats-webapp
       target_patch_file: deployment.json
