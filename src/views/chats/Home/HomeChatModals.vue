@@ -40,6 +40,7 @@
       ref="fileUploader"
       v-model="modalFileUploaderFiles"
       :mediasType="modalFileUploaderMediaType"
+      data-testid="modal-file-uploader"
       @progress="emitFileUploaderProgress"
       @close="closeModal('fileUploader')"
       @update:model-value="modalFileUploaderFiles = $event"
