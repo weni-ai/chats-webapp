@@ -20,9 +20,9 @@
         v-model="textBoxMessage"
         :loadingFileValue="uploadFilesProgress"
         :showSkeletonLoading="isChatSkeletonActive"
+        data-testid="message-manager"
         @show-quick-messages="handleShowQuickMessages"
         @open-file-uploader="openModalFileUploader"
-        @update:model-value="textBoxMessage = $event"
       />
     </ChatsDropzone>
 

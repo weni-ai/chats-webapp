@@ -12,6 +12,7 @@ import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages'
 import HomeChat from '../HomeChat.vue';
 import HomeChatModals from '../HomeChatModals.vue';
 import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
+import MessageManager from '@/components/chats/MessageManager/index.vue';
 
 import { setActivePinia } from 'pinia';
 
@@ -78,7 +79,7 @@ describe('HomeChat.vue', () => {
     return mount(HomeChat, {
       global: {
         plugins: [router, pinia],
-        components: { RoomMessages, HomeChatModals },
+        components: { RoomMessages, HomeChatModals, MessageManager },
       },
     });
   };
@@ -205,5 +206,19 @@ describe('HomeChat.vue', () => {
 
     expect(roomsStore.activeRoom).toBe(null);
     expect(discussionsStore.activeDiscussion).toBe(null);
+  });
+
+  it('should show MessageManager on open valid room', async () => {
+    const roomsStore = useRooms();
+    roomsStore.activeRoom = { ...roomMock, is_24h_valid: true };
+    const roomMessagesStore = useRoomMessages();
+    roomMessagesStore.getRoomMessages = vi.fn().mockResolvedValue([]);
+
+    const wrapper = createWrapper();
+
+    await wrapper.vm.$nextTick();
+    const manager = wrapper.findComponent('[data-testid="message-manager"]');
+
+    expect(manager.exists()).toBe(true);
   });
 });
