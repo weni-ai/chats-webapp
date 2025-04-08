@@ -4,6 +4,19 @@
     :title="$t('config_chats.section_sectors_title', { project: projectName })"
     :subtitle="$t('config_chats.section_sectors_subtitle')"
   />
+  <section class="settings-sectors__filters">
+    <UnnnicInput
+      v-model="sectorNameFilter"
+      iconLeft="search-1"
+      size="md"
+      :placeholder="$t('search')"
+    />
+    <ListOrdinator
+      v-model="sectorOrder"
+      :label="$t('order_by.label')"
+    />
+  </section>
+
   <section class="settings-view__sectors">
     <UnnnicCard
       data-testid="settings-sectors-blank-card"
@@ -15,7 +28,7 @@
     />
 
     <UnnnicSimpleCard
-      v-for="sector in sectors"
+      v-for="sector in sectorsOrdered"
       :key="sector.id"
       :title="sector.name"
       clickable
@@ -118,6 +131,7 @@ import { useSettings } from '@/store/modules/settings';
 import SettingsSectionHeader from './SettingsSectionHeader.vue';
 
 import NewSectorDrawer from './Sectors/New/NewSectorDrawer.vue';
+import ListOrdinator from '@/components/settings/ListOrdinator.vue';
 
 export default {
   name: 'SettingsSectors',
@@ -125,13 +139,15 @@ export default {
   components: {
     SettingsSectionHeader,
     NewSectorDrawer,
+    ListOrdinator,
   },
 
   data() {
     return {
       showNewSectorModal: false,
       showDeleteSectorModal: false,
-
+      sectorNameFilter: '',
+      sectorOrder: 'alphabetical',
       toDeleteSector: {},
     };
   },
@@ -141,6 +157,34 @@ export default {
       projectName: (store) => store.project.name,
     }),
     ...mapState(useSettings, ['sectors', 'isLoadingSectors']),
+
+    sectorsOrdered() {
+      let sectorsOrdered = this.sectors.slice().sort((a, b) => {
+        let first = null;
+        let second = null;
+
+        if (this.sectorOrder === 'alphabetical') {
+          first = a.name.toLowerCase();
+          second = b.name.toLowerCase();
+        } else if (this.sectorOrder === 'newer') {
+          first = new Date(b.created_on).getTime();
+          second = new Date(a.created_on).getTime();
+        } else if (this.sectorOrder === 'older') {
+          first = new Date(a.created_on).getTime();
+          second = new Date(b.created_on).getTime();
+        }
+
+        return first === second ? 0 : first > second ? 1 : -1;
+      });
+
+      return this.sectorNameFilter.trim()
+        ? sectorsOrdered.filter(({ name }) =>
+            name
+              .toLowerCase()
+              .includes(this.sectorNameFilter.trim().toLowerCase()),
+          )
+        : sectorsOrdered;
+    },
   },
 
   methods: {
@@ -211,6 +255,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.settings-sectors {
+  &__filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $unnnic-spacing-stack-sm $unnnic-spacing-inline-md;
+
+    .unnnic-form {
+      flex: 1;
+    }
+  }
+}
 .settings-view {
   &__sectors {
     display: grid;
