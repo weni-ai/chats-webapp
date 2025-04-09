@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
 import { createRouter, createWebHistory } from 'vue-router';
@@ -13,6 +13,7 @@ import HomeChat from '../HomeChat.vue';
 import HomeChatModals from '../HomeChatModals.vue';
 import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
 import MessageManager from '@/components/chats/MessageManager/index.vue';
+import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone/index.vue';
 
 import { setActivePinia } from 'pinia';
 
@@ -78,8 +79,25 @@ describe('HomeChat.vue', () => {
   const createWrapper = () => {
     return mount(HomeChat, {
       global: {
+        mocks: {
+          $route: {
+            params: {
+              roomId: 'uuid-123',
+              discussionId: null,
+            },
+          },
+          $router: {
+            replace: vi.fn(),
+            push: vi.fn(),
+          },
+        },
         plugins: [router, pinia],
-        components: { RoomMessages, HomeChatModals, MessageManager },
+        components: {
+          RoomMessages,
+          HomeChatModals,
+          MessageManager,
+          ChatsDropzone,
+        },
       },
     });
   };
@@ -220,5 +238,106 @@ describe('HomeChat.vue', () => {
     const manager = wrapper.findComponent('[data-testid="message-manager"]');
 
     expect(manager.exists()).toBe(true);
+  });
+
+  it('calls resetRoomNewMessages on change activeRoom', async () => {
+    const roomMessagesStore = useRoomMessages();
+    roomMessagesStore.getRoomMessages = vi.fn().mockResolvedValue([]);
+
+    const roomsStore = useRooms();
+
+    roomsStore.activeRoom = { ...roomMock };
+
+    roomsStore.resetRoomNewMessages = vi.fn();
+
+    const resetSpy = vi.spyOn(roomsStore, 'resetRoomNewMessages');
+
+    await wrapper.vm.resetActiveChatUnreadMessages({
+      chatPathUuid: '1',
+      activeChatUuid: '1',
+      unreadMessages: { 1: true },
+      resetUnreadMessages: roomsStore.resetRoomNewMessages,
+    });
+
+    expect(resetSpy).toHaveBeenCalled();
+  });
+
+  it('calls openModal with "quickMessages" if isMobile is true', async () => {
+    wrapper.vm.isMobile = true;
+
+    const openModalSpy = vi.spyOn(wrapper.vm, 'openModal');
+
+    await wrapper.vm.handleShowQuickMessages();
+
+    expect(openModalSpy).toHaveBeenCalledWith('quickMessages');
+  });
+
+  it('calls emitHandleShowQuickMessages if isMobile is false', async () => {
+    const emitHandleShowQuickMessagesMock = vi.fn();
+
+    wrapper.vm.isMobile = false;
+    wrapper.vm.emitHandleShowQuickMessages = emitHandleShowQuickMessagesMock;
+
+    await wrapper.vm.handleShowQuickMessages();
+
+    expect(emitHandleShowQuickMessagesMock).toHaveBeenCalled();
+  });
+
+  it('updates textBoxMessage with the given value', () => {
+    wrapper.vm.updateTextBoxMessage('Hello world');
+
+    expect(wrapper.vm.textBoxMessage).toBe('Hello world');
+  });
+
+  it('updates uploadFilesProgress  with the given value', () => {
+    wrapper.vm.setUploadFilesProgress('100');
+
+    expect(wrapper.vm.uploadFilesProgress).toBe('100');
+  });
+
+  it('returns the uuid when activeChat has a uuid', () => {
+    expect(wrapper.vm.isValidChat({ uuid: 'abc-123' })).toBe('abc-123');
+    expect(wrapper.vm.isValidChat({})).toBe(undefined);
+  });
+
+  it('should handle full watch logic for room change', async () => {
+    const roomsStore = useRooms();
+    roomsStore.rooms = [
+      { uuid: 'uuid-123', user: { email: 'user@email.com' } },
+    ];
+
+    roomsStore.newMessagesByRoom = { 'uuid-123': 5 };
+
+    const mockRoom = {
+      uuid: 'uuid-123',
+      user: { email: 'user@email.com' },
+      is_24h_valid: true,
+    };
+
+    wrapper.vm.getCanUseCopilot = vi.fn();
+    wrapper.vm.readMessages = vi.fn();
+    wrapper.vm.shouldRedirect = vi.fn().mockResolvedValue(false);
+    wrapper.vm.resetNewMessagesByRoom = vi.fn(() => vi.fn());
+    wrapper.vm.redirectToActiveChat = vi.fn();
+
+    const oldRoom = { uuid: 'old-room' };
+    await wrapper.vm.$options.watch.room.handler.call(
+      wrapper.vm,
+      mockRoom,
+      oldRoom,
+    );
+    await flushPromises();
+
+    expect(wrapper.vm.shouldRedirect).toHaveBeenCalledWith(mockRoom);
+    expect(wrapper.vm.redirectToActiveChat).toHaveBeenCalledWith({
+      routeName: 'room',
+      paramName: 'roomId',
+      activeChatUuid: mockRoom.uuid,
+      pathChatUuid: 'uuid-123',
+    });
+    expect(wrapper.vm.getCanUseCopilot).toHaveBeenCalled();
+    expect(wrapper.vm.readMessages).toHaveBeenCalled();
+    expect(wrapper.vm.isChatSkeletonActive).toBe(false);
+    expect(wrapper.vm.textBoxMessage).toBe('');
   });
 });
