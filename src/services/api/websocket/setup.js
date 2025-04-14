@@ -32,6 +32,7 @@ export default class WebSocketSetup {
 
     this.ws = ws;
     this.ws.ws.onclose = () => {
+      if (this.ws.ws.readyState === this.ws.ws.OPEN) return;
       const timestamp = new Date().toISOString();
       console.warn(
         timestamp,
