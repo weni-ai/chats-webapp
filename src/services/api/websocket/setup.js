@@ -32,7 +32,9 @@ export default class WebSocketSetup {
 
     this.ws = ws;
     this.ws.ws.onclose = () => {
+      const timestamp = new Date().toISOString();
       console.warn(
+        timestamp,
         '[WebSocket] Connection closed, reconnecting immediately...',
       );
       this.reconnect();
