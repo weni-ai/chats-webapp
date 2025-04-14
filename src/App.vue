@@ -100,7 +100,6 @@ export default {
 
     configsForInitializeWebSocket: {
       immediate: true,
-
       handler() {
         this.wsConnect();
       },
