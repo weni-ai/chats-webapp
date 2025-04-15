@@ -6,6 +6,7 @@ import { useDashboard } from '@/store/modules/dashboard';
 
 export default class WebSocketSetup {
   THIRTY_SECONDS = 30000;
+  FIVE_SECONDS = 5000;
 
   constructor({ app }) {
     this.app = app;
@@ -32,12 +33,15 @@ export default class WebSocketSetup {
 
     this.ws = ws;
     this.ws.ws.onclose = () => {
-      const timestamp = new Date().toISOString();
-      console.warn(
-        timestamp,
-        '[WebSocket] Connection closed, reconnecting immediately...',
-      );
-      this.reconnect();
+      if (this.ws.ws.readyState === this.ws.ws.OPEN) return;
+      setTimeout(() => {
+        const timestamp = new Date().toISOString();
+        console.warn(
+          timestamp,
+          '[WebSocket] Connection closed, reconnecting immediately...',
+        );
+        this.reconnect();
+      }, this.FIVE_SECONDS);
     };
     listeners({ ws, app: this.app });
     this.setupPingInterval();
