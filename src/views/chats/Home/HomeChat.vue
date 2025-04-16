@@ -31,19 +31,21 @@
       class="get-chat-button"
       :text="$t('chats.get_chat')"
       type="primary"
+      data-testid="get-chat-button"
       @click="openModal('getChat')"
     />
 
     <ButtonJoinDiscussion
       v-if="discussion"
       v-show="!isMessageManagerDiscussionVisible"
+      data-testid="join-discussion"
       @join="whenJoinDiscussion"
     />
 
     <HomeChatModals
       ref="home-chat-modals"
       data-testid="home-chat-modals"
-      @got-chat="emitCloseRoomContactInfo"
+      @got-chat="emitCloseRoomContactInfo()"
       @file-uploader-progress="setUploadFilesProgress"
       @select-quick-message="updateTextBoxMessage($event?.text)"
     />
@@ -193,7 +195,9 @@ export default {
       const { discussion, pathDiscussionId, discussions } = this;
 
       if (this.discussions.length > 0) {
-        if (await this.shouldRedirect(newDiscussion)) return;
+        if (await this.shouldRedirect(newDiscussion)) {
+          return;
+        }
 
         this.redirectToActiveChat({
           routeName: 'discussion',
@@ -299,7 +303,7 @@ export default {
 
     async redirectIfNoChat(activeChat) {
       if (this.$route.name !== 'home' && !activeChat) {
-        this.$router.replace({ name: 'home' });
+        await this.$router.replace({ name: 'home' });
         return true;
       }
       return false;
