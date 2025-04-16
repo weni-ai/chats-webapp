@@ -3,7 +3,7 @@ import { createTestingPinia } from '@pinia/testing';
 
 import HomeChatModals from '../HomeChatModals.vue';
 
-import { beforeEach, describe } from 'vitest';
+import { beforeEach, describe, expect, vi } from 'vitest';
 
 const createWrapper = ({ store }) => {
   return mount(HomeChatModals, {
@@ -145,5 +145,13 @@ describe('HomeChatModals.vue', () => {
     await wrapper.vm.emitSelectQuickMessage(quickMessage);
     expect(wrapper.emitted('select-quick-message')).toBeTruthy();
     expect(wrapper.emitted('select-quick-message')[0]).toEqual([quickMessage]);
+  });
+
+  it('log error on toggle undefined modal', () => {
+    const spyLogError = vi.spyOn(console, 'error');
+    wrapper.vm.toggleModal('undefined modal');
+    expect(spyLogError).toHaveBeenCalledWith(
+      `Modal 'undefined modal' does not exist.`,
+    );
   });
 });
