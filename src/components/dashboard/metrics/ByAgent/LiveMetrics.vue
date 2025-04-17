@@ -124,7 +124,6 @@ export default {
   },
   mounted() {
     // this.initRealtimeSimulation();
-    console.log(this.agents, `agent`);
   },
 
   unmounted() {

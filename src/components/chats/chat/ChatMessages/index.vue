@@ -38,6 +38,7 @@
               :scheme="isClosedChat ? 'gray' : 'blue'"
               :title="messageFormatTitle(new Date(message.created_on))"
             />
+
             <ChatMessagesFeedbackMessage
               v-if="isFeedbackMessage(message)"
               :key="message.uuid"
@@ -61,7 +62,12 @@
                 :status="messageStatus({ message })"
                 :title="messageFormatTitle(new Date(message.created_on))"
                 :signature="messageSignature(message)"
+                :enableReply="enableReply"
+                :replyMessage="message.replied_message"
                 :mediaType="isGeolocation(message.media?.[0]) ? 'geo' : ''"
+                @reply="
+                  handlerMessageReply({ ...message, content_type: 'text' })
+                "
               >
                 {{
                   isGeolocation(message.media?.[0])
@@ -91,6 +97,18 @@
                   :status="messageStatus({ message })"
                   :title="messageFormatTitle(new Date(message.created_on))"
                   :signature="messageSignature(message)"
+                  :enableReply="enableReply"
+                  :replyMessage="message.replied_message"
+                  @reply="
+                    handlerMessageReply({
+                      ...message,
+                      content_type: isImage(media)
+                        ? 'image'
+                        : isVideo(media)
+                          ? 'video'
+                          : 'audio',
+                    })
+                  "
                   @click="resendMedia({ message, media })"
                 >
                   <img
@@ -132,6 +150,14 @@
                   :status="messageStatus({ message })"
                   :title="messageFormatTitle(new Date(message.created_on))"
                   :signature="messageSignature(message)"
+                  :enableReply="enableReply"
+                  :replyMessage="message.replied_message"
+                  @reply="
+                    handlerMessageReply({
+                      ...message,
+                      content_type: 'attachment',
+                    })
+                  "
                   @click="documentClickHandler({ message, media })"
                 />
               </template>
@@ -139,6 +165,7 @@
           </template>
         </section>
       </section>
+
       <section
         v-if="tags.length > 0"
         v-show="!isSkeletonLoadingActive"
@@ -177,7 +204,7 @@
 </template>
 
 <script>
-import { mapState } from 'pinia';
+import { mapState, mapWritableState } from 'pinia';
 import { useDashboard } from '@/store/modules/dashboard';
 
 import moment from 'moment';
@@ -193,6 +220,7 @@ import FullscreenPreview from '@/components/chats/MediaMessage/Previews/Fullscre
 import ChatFeedback from '../ChatFeedback.vue';
 import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
 import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 export default {
   name: 'ChatMessages',
@@ -215,6 +243,10 @@ export default {
     messages: {
       type: Array,
       required: true,
+    },
+    enableReply: {
+      type: Boolean,
+      default: false,
     },
     messagesNext: {
       type: String,
@@ -292,6 +324,7 @@ export default {
 
   computed: {
     ...mapState(useDashboard, ['viewedAgent']),
+    ...mapWritableState(useRoomMessages, ['replyMessage']),
     medias() {
       return this.messages
         .map((el) => el.media)
@@ -333,6 +366,9 @@ export default {
   },
 
   methods: {
+    handlerMessageReply(message) {
+      this.replyMessage = message;
+    },
     isMediaOfType(media, type) {
       return media && media.content_type?.includes(type);
     },
@@ -363,6 +399,9 @@ export default {
         if (this.messagesFailedUuids.includes(message.uuid)) {
           return 'failed';
         }
+
+        if (message.status) return message.status;
+
         if (media && this.isAudio(media)) {
           return 'default';
         }

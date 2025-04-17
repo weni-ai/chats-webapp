@@ -82,6 +82,7 @@ describe('Messages utils', () => {
         type1: 'uuid1',
         user: 'user1',
         text: 'Test message',
+        replied_message: null,
         media: [],
         seen: true,
         created_on: expect.any(String),

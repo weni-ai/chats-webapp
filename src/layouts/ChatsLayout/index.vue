@@ -198,7 +198,7 @@ section.chats-layout {
   max-width: 100vw;
 
   display: grid;
-  grid-template-columns: 3fr 9fr;
+  grid-template-columns: 3fr 7fr;
   grid-template-rows: 100vh;
 
   overflow: hidden;
@@ -244,7 +244,7 @@ section.chats-layout {
 
     height: 100%;
 
-    background-color: $unnnic-color-background-carpet;
+    background-color: rgba(253, 245, 233, 0.25);
   }
 
   .quick-message {

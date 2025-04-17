@@ -8,6 +8,7 @@
       @open-flows-trigger="emitOpenFlowsTrigger"
       @back="clearActiveChats"
     />
+
     <ChatsDropzone
       :show="(!!room && room.user && room.is_24h_valid) || !!discussion"
       @open-file-uploader="openModalFileUploader"
@@ -122,8 +123,7 @@ export default {
         room.user &&
         room.is_active &&
         room.is_24h_valid &&
-        !room.is_waiting &&
-        !room.wating_answer
+        !room.is_waiting
       );
     },
     isMessageManagerDiscussionVisible() {

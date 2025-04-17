@@ -69,12 +69,13 @@ export default {
     return response.data;
   },
 
-  async sendRoomMessage(roomId, { text, user_email, seen }) {
+  async sendRoomMessage(roomId, { text, user_email, seen, repliedMessageId }) {
     const response = await http.post('/msg/', {
       room: roomId,
       text,
       user_email,
       seen,
+      replied_message_id: repliedMessageId,
     });
     return response.data;
   },
@@ -89,7 +90,10 @@ export default {
     return response.data;
   },
 
-  async sendRoomMedia(roomId, { user_email, media, updateLoadingFiles }) {
+  async sendRoomMedia(
+    roomId,
+    { user_email, media, updateLoadingFiles, repliedMessageId },
+  ) {
     const msg = await this.sendRoomMessage(roomId, {
       text: '',
       user_email,
@@ -102,6 +106,7 @@ export default {
         content_type: media.type,
         message: msg.uuid,
         media_file: media,
+        replied_message_id: repliedMessageId,
       },
       {
         onUploadProgress: (event) => {
