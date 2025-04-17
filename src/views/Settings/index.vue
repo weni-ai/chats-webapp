@@ -108,7 +108,6 @@ export default {
         settingsView.scrollHeight - 100;
 
       if (isScrollInBottom) {
-        if (this.activeTab.id === 'general') this.getSectors();
         if (this.activeTab.id === 'groups') this.getGroups();
       }
     },

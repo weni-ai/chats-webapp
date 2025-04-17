@@ -80,7 +80,6 @@ export default {
           20,
         );
         this.page += 1;
-        // this.sectorTags = response.results;
         this.sectorTags = this.sectorTags.concat(response.results);
         hasNext = response.next;
         this.isLoadingTags = false;
