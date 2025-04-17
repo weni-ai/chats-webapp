@@ -80,6 +80,19 @@ describe('ModalCloseChats.vue', () => {
     expect(closeModal).toHaveBeenCalled();
   });
 
+  it('should call closeModal on update:modelValue', async () => {
+    const closeModal = vi.spyOn(wrapper.vm, 'closeModal');
+
+    const modal = wrapper.findComponent(
+      '[data-testid="chat-classifier-modal"]',
+    );
+
+    await modal.vm.$emit('update:model-value');
+    expect(closeModal).toHaveBeenCalled();
+
+    expect(wrapper.emitted()).toHaveProperty('close');
+  });
+
   it('calls Room.close and emits "close" event when closeRoom is called', async () => {
     wrapper.vm.tags = [{ uuid: 'tag1' }];
 

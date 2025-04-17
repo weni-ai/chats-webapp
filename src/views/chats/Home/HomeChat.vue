@@ -1,6 +1,7 @@
 <template>
   <section class="home-chat">
     <HomeChatHeaders
+      data-testid="home-chat-headers"
       :isLoading="isChatSkeletonActive"
       @open-room-contact-info="emitOpenRoomContactInfo"
       @open-modal-close-chat="openModal('closeChat')"
@@ -19,9 +20,9 @@
         v-model="textBoxMessage"
         :loadingFileValue="uploadFilesProgress"
         :showSkeletonLoading="isChatSkeletonActive"
+        data-testid="message-manager"
         @show-quick-messages="handleShowQuickMessages"
         @open-file-uploader="openModalFileUploader"
-        @update:model-value="textBoxMessage = $event"
       />
     </ChatsDropzone>
 
@@ -30,18 +31,21 @@
       class="get-chat-button"
       :text="$t('chats.get_chat')"
       type="primary"
+      data-testid="get-chat-button"
       @click="openModal('getChat')"
     />
 
     <ButtonJoinDiscussion
       v-if="discussion"
       v-show="!isMessageManagerDiscussionVisible"
+      data-testid="join-discussion"
       @join="whenJoinDiscussion"
     />
 
     <HomeChatModals
       ref="home-chat-modals"
-      @got-chat="emitCloseRoomContactInfo"
+      data-testid="home-chat-modals"
+      @got-chat="emitCloseRoomContactInfo()"
       @file-uploader-progress="setUploadFilesProgress"
       @select-quick-message="updateTextBoxMessage($event?.text)"
     />
@@ -191,7 +195,9 @@ export default {
       const { discussion, pathDiscussionId, discussions } = this;
 
       if (this.discussions.length > 0) {
-        if (await this.shouldRedirect(newDiscussion)) return;
+        if (await this.shouldRedirect(newDiscussion)) {
+          return;
+        }
 
         this.redirectToActiveChat({
           routeName: 'discussion',
@@ -245,9 +251,6 @@ export default {
     emitOpenFlowsTrigger() {
       this.$emit('open-flows-trigger');
     },
-    handleShowModalQuickMessages() {
-      this.showModalQuickMessages = !this.showModalQuickMessages;
-    },
     handleShowQuickMessages() {
       if (this.isMobile) {
         this.openModal('quickMessages');
@@ -300,7 +303,7 @@ export default {
 
     async redirectIfNoChat(activeChat) {
       if (this.$route.name !== 'home' && !activeChat) {
-        this.$router.replace({ name: 'home' });
+        await this.$router.replace({ name: 'home' });
         return true;
       }
       return false;
