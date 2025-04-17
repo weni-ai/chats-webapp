@@ -97,6 +97,7 @@ export default {
 
       const tags = this.tags.map((tag) => tag.uuid);
       await Room.close(uuid, tags);
+
       this.removeRoom(uuid);
 
       this.isLoadingCloseRoom = false;
