@@ -14,7 +14,10 @@ const routes = [
         if (isMobile()) {
           next({ name: 'orgs', replace: true });
         } else {
-          next({ name: 'home', replace: true });
+          if (from.query.next) {
+            const isGeneralSettings = from.query.next === '/settings/chats';
+            next({ path: isGeneralSettings ? '/settings' : from.query.next });
+          } else next({ name: 'home', replace: true });
         }
       } else next(to.path);
     },
