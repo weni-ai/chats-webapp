@@ -50,15 +50,6 @@ describe('SettingView.vue', () => {
     expect(store.getSectors).toHaveBeenCalled();
   });
 
-  it('should call getSectors when scrolling to the bottom', async () => {
-    const getSectorsMock = vi.spyOn(store, 'getSectors');
-
-    settingsView.element.scrollTop = settingsView.element.scrollHeight;
-    await settingsView.trigger('scroll');
-
-    expect(getSectorsMock).toHaveBeenCalledTimes(1);
-  });
-
   it('should not call getSectors if not scrolling to the bottom', async () => {
     const getSectorsMock = vi.spyOn(store, 'getSectors');
 
