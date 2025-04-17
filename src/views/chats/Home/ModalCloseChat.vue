@@ -80,7 +80,6 @@ export default {
           20,
         );
         this.page += 1;
-        // this.sectorTags = response.results;
         this.sectorTags = this.sectorTags.concat(response.results);
         hasNext = response.next;
         this.isLoadingTags = false;
@@ -97,6 +96,7 @@ export default {
 
       const tags = this.tags.map((tag) => tag.uuid);
       await Room.close(uuid, tags);
+
       this.removeRoom(uuid);
 
       this.isLoadingCloseRoom = false;

@@ -3,7 +3,7 @@ import { createTestingPinia } from '@pinia/testing';
 
 import HomeChatModals from '../HomeChatModals.vue';
 
-import { beforeEach, describe } from 'vitest';
+import { beforeEach, describe, expect, vi } from 'vitest';
 
 const createWrapper = ({ store }) => {
   return mount(HomeChatModals, {
@@ -89,6 +89,19 @@ describe('HomeChatModals.vue', () => {
     expect(wrapper.vm.modalsShowing.quickMessages).toBe(false);
   });
 
+  it('closes fileUploader when close is called', async () => {
+    wrapper.vm.openModal('fileUploader');
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.modalsShowing.fileUploader).toBe(true);
+
+    const fileUploadModal = wrapper.findComponent(
+      '[data-testid="modal-file-uploader"]',
+    );
+    fileUploadModal.vm.$emit('close');
+    expect(wrapper.vm.modalsShowing.fileUploader).toBe(false);
+  });
+
   it('renders FileUploader and opens it when modalsShowing.fileUploader is true', async () => {
     wrapper.vm.openModal('fileUploader');
 
@@ -97,6 +110,22 @@ describe('HomeChatModals.vue', () => {
     await wrapper.vm.$nextTick();
 
     expect(wrapper.findComponent({ name: 'FileUploader' }).exists()).toBe(true);
+  });
+
+  it('update modalFileUploaderFiles on update v-model', async () => {
+    wrapper.vm.openModal('fileUploader');
+    await wrapper.vm.$nextTick();
+    const fileUploadModal = wrapper.findComponent(
+      '[data-testid="modal-file-uploader"]',
+    );
+
+    fileUploadModal.vm.$emit('update:model-value', [
+      { name: 'file.pdf', type: 'application/pdf' },
+    ]);
+
+    expect(wrapper.vm.modalFileUploaderFiles).toStrictEqual([
+      { name: 'file.pdf', type: 'application/pdf' },
+    ]);
   });
 
   it('emits got-chat when emitGotChat is called', async () => {
@@ -116,5 +145,13 @@ describe('HomeChatModals.vue', () => {
     await wrapper.vm.emitSelectQuickMessage(quickMessage);
     expect(wrapper.emitted('select-quick-message')).toBeTruthy();
     expect(wrapper.emitted('select-quick-message')[0]).toEqual([quickMessage]);
+  });
+
+  it('log error on toggle undefined modal', () => {
+    const spyLogError = vi.spyOn(console, 'error');
+    wrapper.vm.toggleModal('undefined modal');
+    expect(spyLogError).toHaveBeenCalledWith(
+      `Modal 'undefined modal' does not exist.`,
+    );
   });
 });

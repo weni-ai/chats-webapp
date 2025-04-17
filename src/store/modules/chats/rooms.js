@@ -184,7 +184,12 @@ export const useRooms = defineStore('rooms', {
 
     removeRoom(roomUuid) {
       const filteredRooms = this.rooms.filter((r) => r.uuid !== roomUuid);
+
       this.rooms = filteredRooms;
+
+      this.selectedRoomsToTransfer = this.selectedRoomsToTransfer.filter(
+        (room) => room !== roomUuid,
+      );
 
       if (this.activeRoom && this.activeRoom?.uuid === roomUuid) {
         this.setActiveRoom(null);
