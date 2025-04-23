@@ -14,6 +14,8 @@ export default async (message, { app }) => {
   roomsStore.bringRoomFront(findRoom);
 
   if (findRoom) {
+    findRoom.last_message = message;
+
     if (app.me.email === message.user?.email) {
       return;
     }
