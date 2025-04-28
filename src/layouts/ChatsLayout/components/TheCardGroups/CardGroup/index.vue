@@ -19,6 +19,12 @@
     </template>
     <template v-if="rooms && rooms.length">
       <section class="room-container">
+        <UnnnicDisclaimer
+          v-if="roomsType === 'waiting' && enableAutomaticRoomRouting"
+          class="room-container__chats-router-info"
+          :text="$t('chats.queue_priority_disclaimer')"
+          iconColor="neutral-dark"
+        />
         <RoomCard
           v-for="(room, index) in rooms"
           :key="room.uuid"
@@ -71,6 +77,7 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 
 import RoomCard from './RoomCard.vue';
+import { useConfig } from '@/store/modules/config';
 
 export default {
   name: 'CardGroup',
@@ -96,6 +103,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    roomsType: {
+      type: String,
+      default: '',
+    },
   },
 
   emits: ['open'],
@@ -116,6 +127,7 @@ export default {
       newMessagesByDiscussion: 'newMessagesByDiscussion',
       activeDiscussionId: (store) => store.activeDiscussion?.uuid,
     }),
+    ...mapState(useConfig, ['enableAutomaticRoomRouting']),
   },
 
   watch: {
@@ -177,6 +189,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.room-container {
+  &__chats-router-info {
+    display: grid;
+    margin: $unnnic-spacing-nano 0;
+  }
+}
 .room-card {
   border-top: 1px solid $unnnic-color-neutral-soft;
 

@@ -185,7 +185,8 @@
       "edit_custom_field": "edited custom field",
       "discussion_created": "{agent} started discussion with queue {queue}",
       "discussion_joined": "{agent} joined the discussion",
-      "agent_took_chat": "Oops! The chat with the contact {contact} has already been taken over by another agent"
+      "agent_took_chat": "Oops! The chat with the contact {contact} has already been taken over by another agent",
+      "automatic_transfer_from_queue": "Room assigned to {agent} by automatic queue distribution."
     },
     "room_list": {
       "order_by": "Order by:",
@@ -229,7 +230,8 @@
     "select_your_queues": "Select your queues",
     "no_queue_selected": "No queue selected",
     "success_update_queues": "Your service queues have been updated",
-    "error_update_queues": "Unable to update your service queues"
+    "error_update_queues": "Unable to update your service queues",
+    "queue_priority_disclaimer": "Queue chats are now automatically assigned. No need to pick them manually anymore"
   },
   "chats_notifications": {
     "title": "WeniChats Notifications",
