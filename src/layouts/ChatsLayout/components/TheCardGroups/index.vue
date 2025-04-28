@@ -10,7 +10,7 @@
       :placeholder="$t('chats.search_contact')"
       class="chat-groups__search-contact-input"
       @icon-right-click="nameOfContact = ''"
-    ></UnnnicInput>
+    />
     <section class="chat-groups__header">
       <UnnnicToolTip
         v-if="
@@ -42,8 +42,8 @@
               fontWeight: lastCreatedFilter ? '700' : '400',
             }"
             @click="
-              listRoom(false, '-last_interaction'),
-                ((lastCreatedFilter = true), (createdOnFilter = false))
+              (listRoom(false, '-last_interaction'),
+              ((lastCreatedFilter = true), (createdOnFilter = false)))
             "
             >{{ $t('chats.room_list.most_recent') }}</span
           >
@@ -53,8 +53,8 @@
               fontWeight: createdOnFilter ? '700' : '400',
             }"
             @click="
-              listRoom(false, 'last_interaction'),
-                ((createdOnFilter = true), (lastCreatedFilter = false))
+              (listRoom(false, 'last_interaction'),
+              ((createdOnFilter = true), (lastCreatedFilter = false)))
             "
           >
             {{ $t('chats.room_list.older') }}</span
@@ -82,6 +82,7 @@
         v-if="rooms_queue.length"
         :label="$t('chats.waiting', { length: rooms_queue.length })"
         :rooms="rooms_queue"
+        roomsType="waiting"
         @open="openRoom"
       />
       <CardGroup
@@ -164,7 +165,7 @@ export default {
       listRoomHasNext: 'hasNextRooms',
       newMessagesByRoom: 'newMessagesByRoom',
     }),
-    ...mapState(useConfig, ['project']),
+    ...mapState(useConfig, ['project', 'enableAutomaticRoomRouting']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
 
@@ -233,6 +234,13 @@ export default {
       getAllDiscussion: 'getAll',
     }),
     async openRoom(room) {
+      if (
+        this.enableAutomaticRoomRouting &&
+        room.user?.email !== this.me?.email
+      ) {
+        return;
+      }
+
       await this.setActiveDiscussion(null);
       await this.setActiveRoom(room);
     },
