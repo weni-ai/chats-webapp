@@ -147,7 +147,7 @@ describe('Queue', () => {
 
   it('should get queue information', async () => {
     const queueUuid = '456';
-    const expectedData = { id: '456', name: 'Queue 1' };
+    const expectedData = { id: '456', name: 'Queue 1', default_message: '' };
 
     http.get.mockResolvedValue({ data: expectedData });
 
