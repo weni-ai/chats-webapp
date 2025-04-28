@@ -4,6 +4,9 @@ import { expect, describe, it, vi, beforeEach } from 'vitest';
 import SendFlow from '../SendFlow.vue';
 import SelectFlow from '../SelectFlow.vue';
 import SendFlowButton from '../SendFlowButton.vue';
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
+
+vi.mock('@/utils/callUnnnicAlert');
 
 vi.mock('@/services/api/resources/chats/flowsTrigger', () => ({
   default: {
@@ -21,6 +24,7 @@ describe('SendFlow', () => {
       global: { components: { SelectFlow, SendFlowButton } },
       props: { contacts: [], selectedContact: {} },
     });
+    vi.clearAllMocks();
   });
 
   it('renders correctly with initial state', async () => {
@@ -40,15 +44,50 @@ describe('SendFlow', () => {
     expect(wrapper.vm.selectedFlow).toBe('flow-1');
   });
 
-  it('shows and hides progress modal during flow sending process', async () => {
+  it('shows progress modal when send-flow-started is emitted', async () => {
     const sendFlowButton = wrapper.findComponent(
       '[data-testid="send-flow-button"]',
     );
     await sendFlowButton.vm.$emit('send-flow-started');
     expect(wrapper.vm.showProgressBar).toBe(true);
+  });
 
-    await sendFlowButton.vm.$emit('send-flow-finished');
+  it('hides progress modal and shows success alert when send-flow-finished is emitted without errors', async () => {
+    const sendFlowButton = wrapper.findComponent(
+      '[data-testid="send-flow-button"]',
+    );
+    wrapper.vm.showProgressBar = true;
+
+    await sendFlowButton.vm.$emit('send-flow-finished', { hasError: false });
+
     expect(wrapper.vm.showProgressBar).toBe(false);
+    expect(callUnnnicAlert).toHaveBeenCalledWith({
+      props: {
+        text: wrapper.vm.$t('flows_trigger.successfully_triggered'),
+        type: 'success',
+      },
+      seconds: 5,
+    });
+    expect(wrapper.emitted('close')).toHaveLength(1);
+  });
+
+  it('hides progress modal and shows error alert when send-flow-finished is emitted with errors', async () => {
+    const sendFlowButton = wrapper.findComponent(
+      '[data-testid="send-flow-button"]',
+    );
+    wrapper.vm.showProgressBar = true;
+
+    await sendFlowButton.vm.$emit('send-flow-finished', { hasError: true });
+
+    expect(wrapper.vm.showProgressBar).toBe(false);
+    expect(callUnnnicAlert).toHaveBeenCalledWith({
+      props: {
+        text: wrapper.vm.$t('flows_trigger.error_triggering'),
+        type: 'error',
+      },
+      seconds: 5,
+    });
+    expect(wrapper.emitted('close')).toHaveLength(1);
   });
 
   it('emits back event when back button is clicked', async () => {

@@ -500,6 +500,7 @@
     "select": "Select flow",
     "sending": "Sending flow",
     "successfully_triggered": "Flow triggered successfully",
+    "error_triggering": "Error triggering flow",
     "successfully_add_contact": "Contact added successfully",
     "contact_already_exists": "The number {contact} is already saved in your contact list"
   },
