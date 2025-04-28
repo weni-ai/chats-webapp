@@ -57,6 +57,8 @@ export default {
         ? [this.selectedContact]
         : this.contacts;
 
+      let hasError = false;
+
       const sendFlowToContact = async (contact) => {
         const prepareObj = {
           flow: this.selectedFlow,
@@ -69,13 +71,14 @@ export default {
           await FlowsTrigger.sendFlow(prepareObj);
         } catch (error) {
           console.error(error);
+          hasError = true;
         }
       };
 
       try {
         await Promise.all(contactsToSendFlow.map(sendFlowToContact));
       } finally {
-        this.$emit('send-flow-finished');
+        this.$emit('send-flow-finished', { hasError });
         this.isLoading = false;
       }
     },
