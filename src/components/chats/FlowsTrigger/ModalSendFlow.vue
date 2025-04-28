@@ -52,11 +52,13 @@ export default {
   },
 
   methods: {
-    finishSendFlow() {
+    finishSendFlow({ hasError }) {
       callUnnnicAlert({
         props: {
-          text: this.$t('flows_trigger.successfully_triggered'),
-          type: 'success',
+          text: hasError
+            ? this.$t('flows_trigger.error_triggering')
+            : this.$t('flows_trigger.successfully_triggered'),
+          type: hasError ? 'error' : 'success',
         },
         seconds: 5,
       });

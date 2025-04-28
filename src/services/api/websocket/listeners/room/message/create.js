@@ -52,5 +52,7 @@ export default async (message, { app }) => {
         text: message.text,
       },
     });
+
+    findRoom.last_message = message;
   }
 };

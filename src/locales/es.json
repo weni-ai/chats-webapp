@@ -504,6 +504,7 @@
     "select": "Seleccionar flujo",
     "sending": "Enviando flujo",
     "successfully_triggered": "Flujo disparado exitosamente",
+    "error_triggering": "Error al disparar el flujo",
     "successfully_add_contact": "Contacto agregado exitosamente",
     "contact_already_exists": "El número {contact} ya está guardado en tu lista de contactos"
   },
