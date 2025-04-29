@@ -30,6 +30,7 @@
       :selected="room.uuid === activeRoomId && active"
       :locale="locale"
       :lastInteractionTime="room.last_interaction"
+      :projectName="room.config?.name"
       @click="$emit('click')"
       @keypress.enter="$emit('click')"
     />
