@@ -25,11 +25,11 @@
       :title="formattedContactName"
       :lastMessage="hideContactMessageInfo ? '' : room.last_message"
       :waitingTime="waitingTimeComputed"
-      :unreadMessages="hideContactMessageInfo ? 0 : unreadMessages"
+      :unreadMessages="unreadMessages"
       :tabindex="0"
       :selected="room.uuid === activeRoomId && active"
       :locale="locale"
-      :lastInteractionTime="hideContactMessageInfo ? '' : room.last_interaction"
+      :lastInteractionTime="room.last_interaction"
       @click="$emit('click')"
       @keypress.enter="$emit('click')"
     />
