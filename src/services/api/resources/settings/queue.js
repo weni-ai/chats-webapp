@@ -75,7 +75,10 @@ export default {
 
   async getQueueInformation(queueUuid) {
     const response = await http.get(`/queue/${queueUuid}/`);
-    return response.data;
+    return {
+      ...(response.data || {}),
+      default_message: response.data?.default_message || '',
+    };
   },
 
   async tags(queueUuid, offset, limit) {
