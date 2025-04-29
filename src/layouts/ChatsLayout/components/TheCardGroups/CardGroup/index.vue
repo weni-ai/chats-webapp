@@ -32,6 +32,7 @@
           :active="!activeDiscussionId && activeRoom?.uuid === room?.uuid"
           :selected="getIsRoomSelected(room.uuid)"
           :withSelection="withSelection"
+          :roomType="roomsType"
           :class="{
             'room-card': true,
             'room-card--without-border': activeRoomIndex === index - 1,
