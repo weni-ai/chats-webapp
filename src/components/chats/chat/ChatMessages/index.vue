@@ -61,6 +61,7 @@
                 :status="messageStatus({ message })"
                 :title="messageFormatTitle(new Date(message.created_on))"
                 :signature="messageSignature(message)"
+                :mediaType="isGeolocation(message.media?.[0]) ? 'geo' : ''"
                 :enableReply="enableReply"
                 :replyMessage="message.replied_message"
                 @reply="
@@ -570,7 +571,7 @@ export default {
         const elementToScroll =
           this.$refs[`message-${lastMessageUuidBeforePagination}`]?.[0]?.$el;
         if (elementToScroll) {
-          await elementToScroll.scrollIntoView({ block: 'start' });
+          await elementToScroll?.scrollIntoView({ block: 'start' });
           chatMessages.scrollTop += 1;
         }
       } else {

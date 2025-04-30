@@ -3,6 +3,7 @@
     <p
       v-if="withoutQuickMessages"
       class="quick-messages-list__without"
+      data-testid="quick-messages-list-without"
     >
       {{ $t('quick_messages.without_messages') }}
     </p>
@@ -11,6 +12,7 @@
       v-else
       v-model="openQuickMessages"
       class="quick-messages-list__personals"
+      data-testid="quick-messages-lits-personals"
       :title="$t('quick_messages.personal')"
     >
       <QuickMessageCard
@@ -19,6 +21,7 @@
         :quickMessage="quickMessage"
         :withActions="withHandlers"
         clickable
+        data-testid="quick-message-personal-card"
         @select="emitSelectQuickMessage"
         @edit="emitEditQuickMessage"
         @delete="emitDeleteQuickMessage"
@@ -28,6 +31,7 @@
       v-if="quickMessagesShared.length > 0"
       v-model="openQuickMessagesShared"
       class="quick-messages-list__shareds"
+      data-testid="quick-messages-lits-shared"
       :title="$t('quick_messages.shared')"
     >
       <QuickMessageCard
@@ -36,6 +40,7 @@
         :quickMessage="quickMessage"
         :withActions="false"
         clickable
+        data-testid="quick-message-shared-card"
         @select="emitSelectQuickMessage"
       />
     </UnnnicCollapse>

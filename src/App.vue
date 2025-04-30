@@ -102,7 +102,6 @@ export default {
 
     configsForInitializeWebSocket: {
       immediate: true,
-
       handler() {
         this.wsConnect();
       },
@@ -258,5 +257,12 @@ export default {
 <style lang="scss" scoped>
 #app {
   height: 100vh;
+}
+</style>
+
+<style>
+/* This is necessary to prevent the alert from being behind some screen items such as svgs */
+.alert-container {
+  z-index: 99999999;
 }
 </style>

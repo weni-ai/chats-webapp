@@ -1,7 +1,18 @@
 <template>
   <section class="sector-queues-form">
     <p class="sector-queues-form__info">{{ $t('config_chats.queues.info') }}</p>
-
+    <section class="sector-queues-form__filters">
+      <UnnnicInput
+        v-model="queueNameFilter"
+        iconLeft="search-1"
+        size="md"
+        :placeholder="$t('search')"
+      />
+      <ListOrdinator
+        v-model="queueOrder"
+        :label="$t('order_by.label')"
+      />
+    </section>
     <section class="sector-queues-form-grid">
       <UnnnicCard
         class="sector-queues-form-grid__new-queue"
@@ -12,7 +23,7 @@
         @click.stop="openConfigQueueDrawer()"
       />
       <UnnnicSimpleCard
-        v-for="queue in queues"
+        v-for="queue in queuesOrdered"
         :key="queue.uuid"
         :title="queue.name"
         clickable
@@ -78,7 +89,7 @@
     :description="$t('config_chats.queues.in_sector', { sector: sector.name })"
     size="lg"
     :primaryButtonText="$t('save')"
-    :disabledPrimaryButton="!queueToConfig.currentAgents?.length"
+    :disabledPrimaryButton="!validForm"
     :loadingPrimaryButton="loadingQueueConfig"
     :secondaryButtonText="$t('cancel')"
     :disabledSecondaryButton="loadingQueueConfig"
@@ -94,6 +105,7 @@
         :sector="sector"
         data-testid="queue-config-form"
         @update-queue-agents-count="updateAgentsCount($event)"
+        @change-is-valid="validForm = $event"
       />
     </template>
   </UnnnicDrawer>
@@ -102,6 +114,7 @@
     type="alert"
     icon="alert-circle-1"
     scheme="feedback-red"
+    data-testid="delete-queue-modal"
     :title="$t('delete_queue_modal.text', { queue: queueToDelete.name })"
     :description="$t('cant_revert')"
     :validate="`${queueToDelete.name}`"
@@ -118,12 +131,14 @@
 import unnnic from '@weni/unnnic-system';
 
 import FormQueue from '../forms/Queue.vue';
+import ListOrdinator from '@/components/settings/ListOrdinator.vue';
 import Queue from '@/services/api/resources/settings/queue';
 
 export default {
   name: 'ListSectorQueues',
   components: {
     FormQueue,
+    ListOrdinator,
   },
   props: {
     sector: {
@@ -140,7 +155,40 @@ export default {
       loadingQueueConfig: false,
       showDeleteQueueModal: false,
       queueToDelete: {},
+      validForm: false,
+      queueNameFilter: '',
+      queueOrder: 'alphabetical',
     };
+  },
+
+  computed: {
+    queuesOrdered() {
+      let queuesOrdered = this.queues.slice().sort((a, b) => {
+        let first = null;
+        let second = null;
+
+        if (this.queueOrder === 'alphabetical') {
+          first = a.name.toLowerCase();
+          second = b.name.toLowerCase();
+        } else if (this.queueOrder === 'newer') {
+          first = new Date(b.created_on).getTime();
+          second = new Date(a.created_on).getTime();
+        } else if (this.queueOrder === 'older') {
+          first = new Date(a.created_on).getTime();
+          second = new Date(b.created_on).getTime();
+        }
+
+        return first === second ? 0 : first > second ? 1 : -1;
+      });
+
+      return this.queueNameFilter.trim()
+        ? queuesOrdered.filter(({ name }) =>
+            name
+              .toLowerCase()
+              .includes(this.queueNameFilter.trim().toLowerCase()),
+          )
+        : queuesOrdered;
+    },
   },
 
   mounted() {
@@ -221,7 +269,8 @@ export default {
     async handlerSetConfigQueue() {
       try {
         this.loadingQueueConfig = true;
-        const { name, default_message } = this.queueToConfig;
+        const { name, default_message, uuid = '' } = this.queueToConfig;
+
         if (this.queueToConfig.uuid) {
           await Promise.all([
             ...this.$refs.formQueue.toAddAgentsUuids.map((agentUuid) =>
@@ -231,6 +280,8 @@ export default {
               Queue.removeAgent(agentUuid),
             ),
           ]);
+
+          await Queue.editQueue({ uuid, default_message });
 
           unnnic.unnnicCallAlert({
             props: {
@@ -298,6 +349,16 @@ export default {
     }
   }
 
+  &__filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $unnnic-spacing-stack-sm $unnnic-spacing-inline-md;
+
+    .unnnic-form {
+      flex: 1;
+    }
+  }
   &__info {
     color: $unnnic-color-neutral-dark;
     font-size: $unnnic-font-size-body-gt;
@@ -310,6 +371,7 @@ export default {
     gap: $unnnic-spacing-xs;
 
     &-sector-card {
+      min-height: 120px;
       :deep(.unnnic-simple-card-header-container__title) {
         color: $unnnic-color-neutral-darkest;
       }

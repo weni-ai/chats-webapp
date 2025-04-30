@@ -89,26 +89,6 @@
         />
       </section>
     </section>
-
-    <section
-      v-show="isEditing"
-      data-testid="sector-extra-options-actions"
-      class="actions"
-    >
-      <UnnnicButton
-        :text="$t('cancel')"
-        type="tertiary"
-        :disabled="isLoading"
-        @click.stop="$router.push('/settings')"
-      />
-      <UnnnicButton
-        :text="$t('save')"
-        :disabled="!validForm"
-        :loading="isLoading"
-        data-testid="save-button"
-        @click.stop="save()"
-      />
-    </section>
   </section>
 </template>
 
@@ -140,7 +120,6 @@ export default {
       tagName: '',
       currentTags: [],
       toAddTags: [],
-      toRemoveTags: [],
       tags: [],
       isLoading: false,
     };
@@ -164,11 +143,6 @@ export default {
         ? this.$t('sector.additional_options.agents_signature.switch_active')
         : this.$t('sector.additional_options.agents_signature.switch_disabled');
     },
-    validForm() {
-      const valid = !!this.tags.length;
-      this.$emit('changeIsValid', valid);
-      return valid;
-    },
   },
   mounted() {
     if (this.isEditing) this.getTags();
@@ -178,7 +152,7 @@ export default {
       const sectorCurrentTags = await Sector.tags(this.sector.uuid);
       this.currentTags = this.tags = sectorCurrentTags.results;
     },
-    addTag(tagNameToAdd) {
+    async addTag(tagNameToAdd) {
       const tagsName = this.tags.map((tag) => tag.name);
 
       if (tagsName.includes(tagNameToAdd)) {
@@ -190,19 +164,29 @@ export default {
         });
         return;
       }
-      const tag = {
+
+      let tag = {
         name: tagNameToAdd,
         uuid: Date.now().toString(),
       };
-      this.toAddTags.push(tag);
+
+      if (this.isEditing) {
+        tag = await Sector.addTag(this.sector.uuid, tagNameToAdd);
+      } else {
+        this.toAddTags.push(tag);
+      }
+
       this.tags.push(tag);
       this.tagName = '';
     },
-    removeTag(tag) {
-      this.toRemoveTags.push(tag);
-      this.toAddTags = this.toAddTags.filter(
-        (toAddTag) => toAddTag.uuid !== tag.uuid,
-      );
+    async removeTag(tag) {
+      if (this.isEditing) await Sector.removeTag(tag.uuid);
+      else {
+        this.toAddTags = this.toAddTags.filter(
+          (toAddTag) => toAddTag.uuid !== tag.uuid,
+        );
+      }
+
       this.tags = this.tags.filter((addedTag) => addedTag.uuid !== tag.uuid);
     },
     updateSectorExtraConfigs() {
@@ -218,21 +202,11 @@ export default {
       return Sector.update(this.sector.uuid, fieldsToUpdate);
     },
     updateSectorTags() {
-      const currentTagsUuid = this.currentTags.map((tag) => tag.uuid);
-
-      const checkedToRemoveTags = this.toRemoveTags.filter((tag) =>
-        currentTagsUuid.includes(tag.uuid),
-      );
-
-      const removePromises = checkedToRemoveTags.map(({ uuid }) =>
-        Sector.removeTag(uuid),
-      );
-
       const addPromises = this.toAddTags.map(({ name }) =>
         Sector.addTag(this.sector.uuid, name),
       );
 
-      return Promise.all([...addPromises, ...removePromises]);
+      return Promise.all([...addPromises]);
     },
     async save(silent = false) {
       this.isLoading = true;
@@ -311,6 +285,10 @@ export default {
       gap: $unnnic-spacing-stack-sm;
       &__input {
         flex: 1 1;
+
+        :deep(.unnnic-form__label) {
+          margin: 0px 0px $unnnic-spacing-xs 0px;
+        }
       }
     }
   }

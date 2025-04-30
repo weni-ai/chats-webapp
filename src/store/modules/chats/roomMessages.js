@@ -48,6 +48,7 @@ export const useRoomMessages = defineStore('roomMessages', {
     },
 
     resetRoomMessages() {
+      this.roomMessages = [];
       this.resetRoomMessagesSorted();
       this.roomMessagesNext = '';
       this.roomMessagesPrevious = '';
@@ -123,6 +124,7 @@ export const useRoomMessages = defineStore('roomMessages', {
 
     async getRoomMessages({ offset = null, limit = null } = {}) {
       const roomsStore = useRooms();
+
       const nextReq = this.roomMessagesNext;
 
       await treatMessages({
@@ -161,6 +163,7 @@ export const useRoomMessages = defineStore('roomMessages', {
     async sendRoomMessage(text, repliedMessage) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
+
       if (!activeRoom) return;
 
       await sendMessage({

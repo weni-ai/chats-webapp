@@ -29,7 +29,7 @@
         :selectedFlow="selectedFlow"
         data-testid="send-flow-button"
         @send-flow-started="openModalProgress"
-        @send-flow-finished="closeModalProgress"
+        @send-flow-finished="closeModalProgressWithResult"
       />
     </footer>
   </section>
@@ -80,10 +80,18 @@ export default {
     closeModalProgress() {
       this.showProgressBar = false;
 
+      this.$emit('close');
+    },
+
+    closeModalProgressWithResult({ hasError }) {
+      this.showProgressBar = false;
+
       callUnnnicAlert({
         props: {
-          text: this.$t('flows_trigger.successfully_triggered'),
-          type: 'success',
+          text: hasError
+            ? this.$t('flows_trigger.error_triggering')
+            : this.$t('flows_trigger.successfully_triggered'),
+          type: hasError ? 'error' : 'success',
         },
         seconds: 5,
       });

@@ -23,13 +23,14 @@
         'room-card__contact--hover': hover,
       }"
       :title="formattedContactName"
-      :lastMessage="lastMessage"
+      :lastMessage="room.last_message"
       :waitingTime="waitingTimeComputed"
       :unreadMessages="unreadMessages"
       :tabindex="0"
       :selected="room.uuid === activeRoomId && active"
       :locale="locale"
       :lastInteractionTime="room.last_interaction"
+      :projectName="room.config?.name"
       @click="$emit('click')"
       @keypress.enter="$emit('click')"
     />
@@ -82,12 +83,6 @@ export default {
       },
       activeRoomId: (store) => store.activeRoom?.uuid,
     }),
-    lastMessage() {
-      const { newMessages, room } = this;
-      return (
-        newMessages?.[newMessages.length - 1]?.text || room?.last_message || ''
-      );
-    },
     waitingTimeComputed() {
       const { waitingTime } = this;
       if (waitingTime !== 0) {

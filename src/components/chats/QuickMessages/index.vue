@@ -19,8 +19,10 @@
         type="primary"
         iconCenter="add"
         size="extra-large"
+        data-testid="quick-message-new-button-mobile"
         @click="openQuickMessageCreation"
       />
+
       <UnnnicButton
         v-else
         iconLeft="add"
@@ -28,6 +30,7 @@
         type="secondary"
         size="small"
         class="fill-w"
+        data-testid="quick-message-new-button"
         @click="openQuickMessageCreation"
       />
     </AsideSlotTemplateSection>
@@ -72,6 +75,7 @@
         <QuickMessageForm
           v-model="quickMessageToEdit"
           class="quick-messages-form__form"
+          data-testid="quick-messages-form"
           @submit="
             !!quickMessageToEdit.uuid
               ? updateQuickMessage(quickMessageToEdit)
@@ -109,13 +113,14 @@ export default {
   },
   emits: ['close', 'select-quick-message'],
 
-  data: () => ({
-    isMobile: isMobile(),
+  data() {
+    return {
+      isMobile: isMobile(),
 
-    quickMessageToDelete: null,
-    quickMessageToEdit: null,
-  }),
-
+      quickMessageToDelete: null,
+      quickMessageToEdit: null,
+    };
+  },
   computed: {
     isEditing() {
       const { quickMessageToEdit } = this;

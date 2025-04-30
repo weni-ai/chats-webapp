@@ -9,6 +9,7 @@ export default async (message, { app }) => {
   const roomsStore = useRooms();
   const roomMessagesStore = useRoomMessages();
   const { rooms, activeRoom } = roomsStore;
+
   const findRoom = rooms.find((room) => room.uuid === message.room);
 
   roomsStore.bringRoomFront(findRoom);
@@ -24,7 +25,7 @@ export default async (message, { app }) => {
     if (document.hidden) {
       try {
         sendWindowNotification({
-          title: message.contact.name,
+          title: message.contact?.name,
           message: message.text,
           image: message.media?.[0]?.url,
         });
@@ -42,15 +43,16 @@ export default async (message, { app }) => {
       roomMessagesStore.addMessage(message);
     }
 
-    if (isValidJson(message.text)) return;
-
-    roomsStore.addNewMessagesByRoom({
-      room: message.room,
-      message: {
-        created_on: message.created_on,
-        uuid: message.uuid,
-        text: message.text,
-      },
-    });
+    if (!isValidJson(message.text)) {
+      findRoom.last_message = message;
+      roomsStore.addNewMessagesByRoom({
+        room: message.room,
+        message: {
+          created_on: message.created_on,
+          uuid: message.uuid,
+          text: message.text,
+        },
+      });
+    }
   }
 };

@@ -3,6 +3,7 @@
     <p
       v-if="title"
       class="title"
+      data-testid="title"
     >
       {{ title }}
     </p>
