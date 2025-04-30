@@ -457,7 +457,6 @@ export default {
     },
     updateAudioRecorderStatus(status) {
       this.audioRecorderStatus = status;
-      console.log(this.audioRecorderStatus);
     },
   },
 };
