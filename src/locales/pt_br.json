@@ -190,7 +190,7 @@
       "discussion_created": "{agent} iniciou a discussão com fila {queue}",
       "discussion_joined": "{agent} entrou na discussão",
       "agent_took_chat": "Ops! O chat com contato {contact} foi assumido por outro agente",
-      "automatic_transfer_from_queue": "Sala atribuída a {agente} por distribuição automática da fila."
+      "automatic_transfer_from_queue": "Sala atribuída a {agent} por distribuição automática da fila."
     },
     "room_list": {
       "order_by": "Ordenar por:",
