@@ -59,6 +59,7 @@ import { mapActions, mapState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useProfile } from '@/store/modules/profile';
+import { useConfig } from '@/store/modules/config';
 
 import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone/index.vue';
 
@@ -115,6 +116,7 @@ export default {
       discussions: 'discussions',
       getDiscussionById: 'getDiscussionById',
     }),
+    ...mapState(useConfig, ['enableAutomaticRoomRouting']),
     isMessageManagerRoomVisible() {
       const { room } = this;
       return (
@@ -270,9 +272,12 @@ export default {
     async handlingSetActiveRoom(uuid) {
       if (this.pathRoomId !== this.room?.uuid) {
         const room = this.getRoomById(uuid);
-        if (room) {
+        if (
+          (room && !this.enableAutomaticRoomRouting) ||
+          (room && room.user?.email === this.me?.email)
+        ) {
           this.setActiveRoom(room);
-        }
+        } else this.$router.replace('/rooms');
       }
     },
     async readMessages() {

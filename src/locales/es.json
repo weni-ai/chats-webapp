@@ -189,7 +189,8 @@
       "edit_custom_field": "editado el custom field",
       "discussion_created": "{agent} inició la discusión con la cola {queue}",
       "discussion_joined": "{agent} se unió a la discusión",
-      "agent_took_chat": "¡Ups! El chat con el contacto {contact} ha sido asumido por otro agente"
+      "agent_took_chat": "¡Ups! El chat con el contacto {contact} ha sido asumido por otro agente",
+      "automatic_transfer_from_queue": "Sala asignada a {agent} por distribución automática de la cola."
     },
     "room_list": {
       "order_by": "Ordenar por:",
@@ -233,7 +234,8 @@
     "select_your_queues": "Selecciona tus colas",
     "no_queue_selected": "Ninguna cola seleccionada",
     "success_update_queues": "Tus colas de servicio han sido actualizadas",
-    "error_update_queues": "No se pueden actualizar sus colas de servicio"
+    "error_update_queues": "No se pueden actualizar sus colas de servicio",
+    "queue_priority_disclaimer": "Los chats en la cola ahora se asignan automáticamente. Ya no es necesario seleccionarlos manualmente."
   },
   "chats_notifications": {
     "title": "Notificaciones de WeniChats",

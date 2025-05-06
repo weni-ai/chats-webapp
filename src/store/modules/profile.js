@@ -14,4 +14,7 @@ export const useProfile = defineStore('profile', {
       this.me.queues = user_permissions;
     },
   },
+  getters: {
+    isHumanServiceProfile: (state) => state.me?.project_permission_role === 2,
+  },
 });
