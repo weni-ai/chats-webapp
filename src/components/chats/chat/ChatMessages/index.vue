@@ -365,8 +365,19 @@ export default {
         if (this.messagesFailedUuids.includes(message.uuid)) {
           return 'failed';
         }
+        const messageStatusMapper = {
+          P: 'sending',
+          Q: 'default',
+          S: 'sent',
+          W: 'default',
+          E: 'default',
+          D: 'received',
+          F: 'default',
+          V: 'read',
+        };
 
-        if (message.status) return message.status;
+        if (message.status)
+          return messageStatusMapper[message.status] || 'default';
 
         if (media && this.isAudio(media)) {
           return 'default';
