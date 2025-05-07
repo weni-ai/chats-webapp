@@ -25,6 +25,16 @@ export const useRoomMessages = defineStore('roomMessages', {
     roomMessagesNext: '',
     roomMessagesPrevious: '',
     replyMessage: null,
+    roomMessagesStatusMapper: {
+      P: 'sending', // Pending
+      Q: 'default', // Queued
+      S: 'sent', // Sent
+      W: 'default', // Wired
+      E: 'default', // Errored
+      D: 'received', // Delivered
+      F: 'default', // Failed
+      V: 'read', // Read
+    },
   }),
   actions: {
     addRoomMessageSorted({ message, addBefore }) {
@@ -115,8 +125,22 @@ export const useRoomMessages = defineStore('roomMessages', {
       const messageIndex = this.roomMessages.findIndex(
         (mappedMessage) => mappedMessage.uuid === uuid,
       );
+
       if (messageIndex !== -1) {
         this.roomMessages[messageIndex] = updatedMessage;
+
+        // update message in roomMessagesSorted
+        for (const date of this.roomMessagesSorted) {
+          for (const minute of date.minutes) {
+            const messageIndex = minute.messages.findIndex(
+              (msg) => msg.uuid === uuid,
+            );
+            if (messageIndex !== -1) {
+              minute.messages[messageIndex] = updatedMessage;
+              return;
+            }
+          }
+        }
       }
 
       this.removeMessageFromSendings(uuid);

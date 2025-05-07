@@ -38,6 +38,7 @@
               :scheme="isClosedChat ? 'gray' : 'blue'"
               :title="messageFormatTitle(new Date(message.created_on))"
             />
+
             <ChatMessagesFeedbackMessage
               v-if="isFeedbackMessage(message)"
               :key="message.uuid"
@@ -164,6 +165,7 @@
           </template>
         </section>
       </section>
+
       <section
         v-if="tags.length > 0"
         v-show="!isSkeletonLoadingActive"
@@ -204,6 +206,7 @@
 <script>
 import { mapState, mapWritableState } from 'pinia';
 import { useDashboard } from '@/store/modules/dashboard';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 import moment from 'moment';
 
@@ -323,6 +326,7 @@ export default {
   computed: {
     ...mapState(useDashboard, ['viewedAgent']),
     ...mapWritableState(useRoomMessages, ['replyMessage']),
+    ...mapState(useRoomMessages, ['roomMessagesStatusMapper']),
     medias() {
       return this.messages
         .map((el) => el.media)
@@ -397,6 +401,10 @@ export default {
         if (this.messagesFailedUuids.includes(message.uuid)) {
           return 'failed';
         }
+
+        if (message.status)
+          return this.roomMessagesStatusMapper[message.status] || 'default';
+
         if (media && this.isAudio(media)) {
           return 'default';
         }
