@@ -64,7 +64,7 @@ export default {
     return response;
   },
   async getActiveCustomStatus() {
-    const response = await http.get(`custom_status/last_status`);
+    const response = await http.get(`custom_status/last_status/`);
     return response.data;
   },
 };

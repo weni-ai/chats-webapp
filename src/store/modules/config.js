@@ -7,6 +7,7 @@ import {
 } from '@/utils/config';
 
 import Profile from '@/services/api/resources/profile';
+import { useProfile } from './profile';
 
 export const useConfig = defineStore('config', {
   state: () => ({
@@ -71,6 +72,14 @@ export const useConfig = defineStore('config', {
     },
   },
   getters: {
+    enableAutomaticRoomRouting: ({ project }) => {
+      const { isHumanServiceProfile } = useProfile();
+
+      const isAutomaticRoutingQueueProject =
+        project.room_routing_type === 'QUEUE_PRIORITY';
+
+      return isHumanServiceProfile && isAutomaticRoutingQueueProject;
+    },
     enableGroupsMode: ({ project }) => {
       return 'its_principal' in (project?.config || {});
     },

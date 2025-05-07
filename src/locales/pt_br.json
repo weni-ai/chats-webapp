@@ -189,7 +189,8 @@
       "edit_custom_field": "editou o custom field",
       "discussion_created": "{agent} iniciou a discussão com fila {queue}",
       "discussion_joined": "{agent} entrou na discussão",
-      "agent_took_chat": "Ops! O chat com contato {contact} foi assumido por outro agente"
+      "agent_took_chat": "Ops! O chat com contato {contact} foi assumido por outro agente",
+      "automatic_transfer_from_queue": "Sala atribuída a {agent} por distribuição automática da fila."
     },
     "room_list": {
       "order_by": "Ordenar por:",
@@ -233,7 +234,8 @@
     "select_your_queues": "Selecione suas filas",
     "no_queue_selected": "Nenhuma fila selecionada",
     "success_update_queues": "Suas filas de atendimento foram atualizadas",
-    "error_update_queues": "Não foi possível atualizar suas filas de atendimento"
+    "error_update_queues": "Não foi possível atualizar suas filas de atendimento",
+    "queue_priority_disclaimer": "Salas da fila agora são atribuídas automaticamente. Não é mais preciso pegá-las manualmente."
   },
   "chats_notifications": {
     "title": "Notificações do WeniChats",
