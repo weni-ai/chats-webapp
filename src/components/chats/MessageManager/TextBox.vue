@@ -13,6 +13,7 @@
         iconCenter="bolt"
         type="tertiary"
         scheme="neutral-dark"
+        data-testid="mobile-button-quick-message"
         @click.stop="emitHandleQuickMessages"
       />
 
@@ -24,6 +25,7 @@
           icon="add_reaction"
           scheme="neutral-clean"
           :class="['emoji-button', 'clickable']"
+          data-testid="emoji-button"
           size="ant"
         />
       </div>
@@ -40,6 +42,7 @@
         :placeholder="$t('message')"
         :rows="currentTextAreaRows"
         class="text-input"
+        data-testid="text-area"
         @input="handleTextarea"
         @keydown="keyDownTextarea"
         @paste="paste"
@@ -59,6 +62,7 @@
             type="tertiary"
             scheme="neutral-dark"
             next
+            data-testid="mobile-button-attachment"
           />
         </template>
 

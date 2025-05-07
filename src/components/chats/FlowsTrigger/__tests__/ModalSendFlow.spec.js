@@ -21,6 +21,7 @@ describe('ModalSendFlow', () => {
     wrapper = mount(ModalSendFlow, {
       props: { contacts: [{ uuid: '1', name: 'Contact 1' }] },
     });
+    vi.clearAllMocks();
   });
 
   it('renders correctly', () => {
@@ -51,16 +52,33 @@ describe('ModalSendFlow', () => {
     expect(wrapper.vm.selectedFlow).toBe('flow-uuid-123');
   });
 
-  it('shows success alert and emits send-flow-finished after sending flow', async () => {
+  it('shows success alert and emits send-flow-finished when no errors occur', async () => {
     const sendFlowButton = wrapper.findComponent(
       '[data-testid="send-flow-button"]',
     );
-    await sendFlowButton.vm.$emit('send-flow-finished');
+    await sendFlowButton.vm.$emit('send-flow-finished', { hasError: false });
 
     expect(callUnnnicAlert).toHaveBeenCalledWith({
       props: {
         text: wrapper.vm.$t('flows_trigger.successfully_triggered'),
         type: 'success',
+      },
+      seconds: 5,
+    });
+
+    expect(wrapper.emitted('send-flow-finished')).toHaveLength(1);
+  });
+
+  it('shows error alert and emits send-flow-finished when errors occur', async () => {
+    const sendFlowButton = wrapper.findComponent(
+      '[data-testid="send-flow-button"]',
+    );
+    await sendFlowButton.vm.$emit('send-flow-finished', { hasError: true });
+
+    expect(callUnnnicAlert).toHaveBeenCalledWith({
+      props: {
+        text: wrapper.vm.$t('flows_trigger.error_triggering'),
+        type: 'error',
       },
       seconds: 5,
     });

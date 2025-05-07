@@ -305,6 +305,12 @@ export default {
     room(newRoom) {
       if (newRoom) this.customFields = newRoom.custom_fields;
     },
+    '$i18n.locale': {
+      immediate: true,
+      handler(locale) {
+        moment.locale(locale || 'en');
+      },
+    },
   },
 
   async created() {

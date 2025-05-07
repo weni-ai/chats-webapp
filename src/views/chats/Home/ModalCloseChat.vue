@@ -5,6 +5,7 @@
     :showCloseIcon="!isMobile"
     :title="$t('chats.to_end_rate_the_chat')"
     :primaryButtonProps="{ text: $t('end'), loading: isLoadingCloseRoom }"
+    :secondaryButtonProps="{ text: $t('cancel') }"
     size="lg"
     data-testid="chat-classifier-modal"
     @primary-button-click="closeRoom()"
@@ -79,7 +80,6 @@ export default {
           20,
         );
         this.page += 1;
-        // this.sectorTags = response.results;
         this.sectorTags = this.sectorTags.concat(response.results);
         hasNext = response.next;
         this.isLoadingTags = false;
@@ -96,6 +96,7 @@ export default {
 
       const tags = this.tags.map((tag) => tag.uuid);
       await Room.close(uuid, tags);
+
       this.removeRoom(uuid);
 
       this.isLoadingCloseRoom = false;

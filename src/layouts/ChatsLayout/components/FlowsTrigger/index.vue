@@ -125,7 +125,7 @@
                 :key="item.uuid"
                 class="flows-trigger__groups__group__contact"
                 :title="item.name"
-                :lastMessage="getContactUrn(item)"
+                :lastMessage="{ text: getContactUrn(item) }"
                 :tabindex="0"
                 checkboxWhenSelect
                 :selected="selected.some((search) => search.uuid === item.uuid)"

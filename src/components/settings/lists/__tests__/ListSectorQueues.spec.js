@@ -8,12 +8,15 @@ import unnnic from '@weni/unnnic-system';
 import Queue from '@/services/api/resources/settings/queue';
 import Project from '@/services/api/resources/settings/project';
 
+import { createTestingPinia } from '@pinia/testing';
+
 vi.mock('@/services/api/resources/settings/queue', () => ({
   default: {
     list: vi.fn(),
     editQueue: vi.fn(),
     getQueueInformation: vi.fn(),
     agents: vi.fn(),
+    delete: vi.fn(),
   },
 }));
 
@@ -70,6 +73,7 @@ vi.spyOn(Queue, 'agents').mockResolvedValue({
 
 const createWrapper = (props = {}) => {
   return mount(FormQueue, {
+    global: { plugins: [createTestingPinia()] },
     props,
   });
 };
@@ -169,5 +173,70 @@ describe('ListSectorQueues.vue', () => {
     await queueConfigDrawer.vm.$emit('close');
 
     expect(closeConfigQueueDrawer).toHaveBeenCalled();
+  });
+
+  it('should display the delete modal when handlerOpenDeleteQueueModal is called', async () => {
+    await wrapper.vm.handlerOpenDeleteQueueModal({
+      uuid: 'queue-uuid',
+      name: 'Queue A',
+    });
+
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.showDeleteQueueModal).toBe(true);
+    expect(wrapper.find('[data-testid="delete-queue-modal"]').exists()).toBe(
+      true,
+    );
+  });
+
+  it('should call deleteQueue method when confirming deletion', async () => {
+    const deleteQueueSpy = vi
+      .spyOn(wrapper.vm, 'deleteQueue')
+      .mockImplementation();
+
+    await wrapper.setData({
+      queues: [
+        { uuid: 'queue-a', name: 'Queue A' },
+        { uuid: 'queue-b', name: 'Queue B' },
+      ],
+    });
+
+    await wrapper.vm.handlerOpenDeleteQueueModal({
+      uuid: 'queue-a',
+      name: 'Queue A',
+    });
+
+    await wrapper.vm.$nextTick();
+
+    const deleteModal = wrapper.findComponent(
+      '[data-testid="delete-queue-modal"]',
+    );
+
+    await deleteModal.vm.$emit('click-action-primary');
+
+    expect(deleteQueueSpy).toHaveBeenCalledTimes(1);
+
+    expect(wrapper.vm.queues.length).toBe(1);
+    expect(wrapper.vm.queues).toStrictEqual([
+      { uuid: 'queue-b', name: 'Queue B' },
+    ]);
+  });
+
+  it('should close delete queue modal on cancel', async () => {
+    await wrapper.vm.handlerOpenDeleteQueueModal({
+      uuid: 'queue-uuid',
+      name: 'Queue A',
+    });
+
+    await wrapper.vm.$nextTick();
+
+    const deleteModal = wrapper.findComponent(
+      '[data-testid="delete-queue-modal"]',
+    );
+
+    await deleteModal.vm.$emit('click-action-secondary');
+
+    expect(wrapper.vm.showQueueDrawer).toBe(false);
+    expect(wrapper.vm.queueToConfig).toStrictEqual({});
   });
 });

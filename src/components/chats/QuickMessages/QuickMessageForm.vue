@@ -11,6 +11,7 @@
       size="md"
       :label="$t('title')"
       :placeholder="$t('quick_messages.title_field_placeholder')"
+      data-testid="title-input"
       @update:model-value="quickMessage = { ...quickMessage, title: $event }"
     />
 
@@ -19,6 +20,7 @@
       size="md"
       :placeholder="$t('quick_messages.shortcut_field_placeholder')"
       :label="$t('shortcut')"
+      data-testid="shortcut-input"
       @update:model-value="quickMessage = { ...quickMessage, shortcut: $event }"
     />
 
@@ -28,6 +30,7 @@
       :placeholder="$t('quick_messages.message_field_placeholder')"
       :maxLength="1000"
       size="md"
+      data-testid="message-input"
       @update:model-value="quickMessage = { ...quickMessage, text: $event }"
     />
 
@@ -40,6 +43,7 @@
         :text="$t('cancel')"
         type="tertiary"
         size="small"
+        data-testid="cancel-button"
         @click="$emit('cancel')"
       />
       <UnnnicButton
@@ -48,6 +52,7 @@
         type="primary"
         size="small"
         :disabled="isSaveButtonDisabled"
+        data-testid="save-button"
         @click="submit"
       />
     </div>

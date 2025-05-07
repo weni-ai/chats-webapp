@@ -23,13 +23,14 @@
         'room-card__contact--hover': hover,
       }"
       :title="formattedContactName"
-      :lastMessage="lastMessage"
+      :lastMessage="hideContactMessageInfo ? '' : room.last_message"
       :waitingTime="waitingTimeComputed"
       :unreadMessages="unreadMessages"
       :tabindex="0"
       :selected="room.uuid === activeRoomId && active"
       :locale="locale"
       :lastInteractionTime="room.last_interaction"
+      :projectName="room.config?.name"
       @click="$emit('click')"
       @keypress.enter="$emit('click')"
     />
@@ -40,6 +41,7 @@
 import { mapState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
+import { useConfig } from '@/store/modules/config';
 import { formatContactName } from '@/utils/chats';
 
 const ONE_MINUTE_IN_MILLISECONDS = 60000;
@@ -64,6 +66,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    roomType: {
+      type: String,
+      default: '',
+    },
   },
   emits: ['click', 'update-selected'],
 
@@ -76,17 +82,15 @@ export default {
   }),
 
   computed: {
+    ...mapState(useConfig, ['enableAutomaticRoomRouting']),
     ...mapState(useRooms, {
       newMessages(store) {
         return store.newMessagesByRoom[this.room.uuid]?.messages;
       },
       activeRoomId: (store) => store.activeRoom?.uuid,
     }),
-    lastMessage() {
-      const { newMessages, room } = this;
-      return (
-        newMessages?.[newMessages.length - 1]?.text || room?.last_message || ''
-      );
+    hideContactMessageInfo() {
+      return this.roomType === 'waiting' && this.enableAutomaticRoomRouting;
     },
     waitingTimeComputed() {
       const { waitingTime } = this;
