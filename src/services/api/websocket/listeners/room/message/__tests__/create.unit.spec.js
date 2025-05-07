@@ -5,6 +5,7 @@ import SoundNotification from '@/services/api/websocket/soundNotification';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { isValidJson } from '@/utils/messages';
 import { sendWindowNotification } from '@/utils/notifications';
+import { useConfig } from '@/store/modules/config';
 
 vi.mock('@/services/api/websocket/soundNotification', () => ({
   default: vi.fn().mockImplementation(() => ({
@@ -23,12 +24,16 @@ vi.mock('@/store/modules/chats/rooms', () => ({
 vi.mock('@/store/modules/chats/roomMessages', () => ({
   useRoomMessages: vi.fn(),
 }));
+vi.mock('@/store/modules/config', () => ({
+  useConfig: vi.fn(),
+}));
 
 describe('Room message create', () => {
   let message;
   let appMock;
   let roomsStoreMock;
   let roomMessagesStoreMock;
+  let configStoreMock;
   let soundNotificationMock;
 
   beforeEach(() => {
@@ -60,8 +65,10 @@ describe('Room message create', () => {
       addNewMessagesByRoom: vi.fn(),
     };
 
+    configStoreMock = {};
     soundNotificationMock = new SoundNotification('ping-bing');
     SoundNotification.mockReturnValue(soundNotificationMock);
+    useConfig.mockReturnValue(configStoreMock);
     useRooms.mockReturnValue(roomsStoreMock);
     useRoomMessages.mockReturnValue(roomMessagesStoreMock);
 
