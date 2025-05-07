@@ -221,7 +221,6 @@ import FullscreenPreview from '@/components/chats/MediaMessage/Previews/Fullscre
 import ChatFeedback from '../ChatFeedback.vue';
 import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
 import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
-import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 export default {
   name: 'ChatMessages',
