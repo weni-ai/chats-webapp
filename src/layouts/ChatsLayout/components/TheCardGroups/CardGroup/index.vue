@@ -18,29 +18,55 @@
       </label>
     </template>
     <template v-if="rooms && rooms.length">
-      <RoomCard
-        v-for="room in rooms"
-        :key="room.uuid"
-        :room="room"
-        :active="!activeDiscussionId"
-        :selected="getIsRoomSelected(room.uuid)"
-        :withSelection="withSelection"
-        @click="open(room)"
-        @update-selected="updateIsRoomSelected(room.uuid, $event)"
-      />
+      <section class="room-container">
+        <UnnnicDisclaimer
+          v-if="roomsType === 'waiting' && enableAutomaticRoomRouting"
+          class="room-container__chats-router-info"
+          :text="$t('chats.queue_priority_disclaimer')"
+          iconColor="neutral-dark"
+        />
+        <RoomCard
+          v-for="(room, index) in rooms"
+          :key="room.uuid"
+          :room="room"
+          :active="!activeDiscussionId && activeRoom?.uuid === room?.uuid"
+          :selected="getIsRoomSelected(room.uuid)"
+          :withSelection="withSelection"
+          :roomType="roomsType"
+          :class="{
+            'room-card': true,
+            'room-card--without-border': activeRoomIndex === index - 1,
+            'room-card--selected': activeRoom?.uuid === room?.uuid,
+          }"
+          @click="open(room)"
+          @update-selected="updateIsRoomSelected(room.uuid, $event)"
+          @mousedown="activeRoomIndex = index"
+          @mouseup="activeRoomIndex = null"
+        />
+      </section>
     </template>
     <template v-if="discussions">
-      <UnnnicChatsContact
-        v-for="discussion in discussions"
-        :key="discussion.uuid"
-        :title="discussion.subject"
-        :discussionGoal="discussion.contact"
-        :tabindex="0"
-        :selected="discussion.uuid === activeDiscussionId"
-        :unreadMessages="unreadMessages(discussion.uuid)"
-        @click="open(discussion)"
-        @keypress.enter="open(discussion)"
-      />
+      <section class="discussion-container">
+        <UnnnicChatsContact
+          v-for="(discussion, index) in discussions"
+          :key="discussion.uuid"
+          :class="{
+            'discussion-card': true,
+            'discussion-card--without-border':
+              activeDiscussionIndex === index - 1,
+          }"
+          :active="activeDiscussionId"
+          :title="discussion.subject"
+          :discussionGoal="discussion.contact"
+          :tabindex="0"
+          :selected="discussion.uuid === activeDiscussionId"
+          :unreadMessages="unreadMessages(discussion.uuid)"
+          @click="open(discussion)"
+          @keypress.enter="open(discussion)"
+          @mousedown="activeDiscussionIndex = index"
+          @mouseup="activeDiscussionIndex = null"
+        />
+      </section>
     </template>
   </UnnnicCollapse>
 </template>
@@ -52,6 +78,7 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 
 import RoomCard from './RoomCard.vue';
+import { useConfig } from '@/store/modules/config';
 
 export default {
   name: 'CardGroup',
@@ -77,6 +104,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    roomsType: {
+      type: String,
+      default: '',
+    },
   },
 
   emits: ['open'],
@@ -85,15 +116,19 @@ export default {
     return {
       isCollapseOpened: true,
       collapseCheckboxValue: false,
+      roomHoverIndex: null,
+      activeRoomIndex: null,
+      activeDiscussionIndex: null,
     };
   },
 
   computed: {
-    ...mapState(useRooms, ['selectedRoomsToTransfer']),
+    ...mapState(useRooms, ['selectedRoomsToTransfer', 'activeRoom']),
     ...mapState(useDiscussions, {
       newMessagesByDiscussion: 'newMessagesByDiscussion',
       activeDiscussionId: (store) => store.activeDiscussion?.uuid,
     }),
+    ...mapState(useConfig, ['enableAutomaticRoomRouting']),
   },
 
   watch: {
@@ -155,6 +190,57 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.room-container {
+  &__chats-router-info {
+    display: grid;
+    margin: $unnnic-spacing-nano 0;
+  }
+}
+.room-card {
+  border-top: 1px solid $unnnic-color-neutral-soft;
+
+  &:last-child {
+    border-bottom: 1px solid $unnnic-color-neutral-soft;
+  }
+  &:active {
+    border-top: 1px solid $unnnic-color-neutral-cleanest;
+    border-bottom: 1px solid $unnnic-color-neutral-cleanest;
+  }
+  &--without-border {
+    border: none;
+  }
+  &--hover {
+    background-color: $unnnic-color-neutral-lightest;
+  }
+
+  &--selected {
+    background-color: $unnnic-color-neutral-light;
+  }
+}
+
+.discussion-container {
+  :deep(.discussion-card:not(:last-child)) {
+    border-top: 1px solid $unnnic-color-neutral-soft;
+    border-bottom: none;
+
+    &:active {
+      border-top: 1px solid $unnnic-color-neutral-cleanest;
+      border-bottom: 1px solid $unnnic-color-neutral-cleanest;
+    }
+  }
+
+  :deep(.discussion-card:last-child) {
+    &:active {
+      border-top: 1px solid $unnnic-color-neutral-cleanest;
+      border-bottom: 1px solid $unnnic-color-neutral-cleanest;
+    }
+  }
+
+  :deep(.discussion-card--without-border) {
+    border-top: none !important;
+  }
+}
+
 .card-group {
   &__header {
     display: grid;

@@ -71,6 +71,7 @@
         <UnnnicButton
           iconCenter="more_vert"
           type="secondary"
+          data-testid="download-dropdown-button"
         />
       </template>
       <div
@@ -80,6 +81,7 @@
         <UnnnicDropdownItem class="option">
           <span
             class="upload-dropdown-option"
+            data-testid="download-metric-csv"
             @click="downloadMetric('metrics_csv')"
             @keypress.enter="downloadMetric('metrics_csv')"
           >
@@ -89,6 +91,7 @@
         <UnnnicDropdownItem class="option">
           <span
             class="upload-dropdown-option"
+            data-testid="download-all-csv"
             @click="downloadDashboardData('all_csv')"
             @keypress.enter="downloadDashboardData('all_csv')"
           >
@@ -98,6 +101,7 @@
         <UnnnicDropdownItem class="option">
           <span
             class="upload-dropdown-option"
+            data-testid="download-metric-xls"
             @click="downloadMetric('metrics_xls')"
             @keypress.enter="downloadMetric('metrics_xls')"
           >
@@ -107,6 +111,7 @@
         <UnnnicDropdownItem class="option">
           <span
             class="upload-dropdown-option"
+            data-testid="download-all-xls"
             @click="downloadDashboardData('all_xls')"
             @keypress.enter="downloadDashboardData('all_xls')"
           >

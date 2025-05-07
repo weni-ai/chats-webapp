@@ -17,6 +17,7 @@ describe('SendFlowButton', () => {
       global: { plugins: [createTestingPinia()] },
       props: { selectedFlow: '' },
     });
+    vi.clearAllMocks();
   });
 
   it('renders with the correct initial state', () => {
@@ -33,7 +34,9 @@ describe('SendFlowButton', () => {
     expect(button.attributes('disabled')).toBeUndefined();
   });
 
-  it('emits events when sendFlow is called', async () => {
+  it('emits events with hasError=false when sendFlow succeeds', async () => {
+    FlowsTrigger.sendFlow.mockResolvedValue({});
+
     await wrapper.setProps({
       selectedFlow: 'flow-uuid',
       contacts: [{ external_id: 'contact-1' }],
@@ -42,8 +45,10 @@ describe('SendFlowButton', () => {
     await wrapper.find('[data-testid="send-flow-button"]').trigger('click');
 
     expect(wrapper.emitted('send-flow-started')).toHaveLength(1);
-
     expect(wrapper.emitted('send-flow-finished')).toHaveLength(1);
+    expect(wrapper.emitted('send-flow-finished')[0][0]).toEqual({
+      hasError: false,
+    });
   });
 
   it('calls FlowsTrigger.sendFlow with correct parameters', async () => {
@@ -71,7 +76,7 @@ describe('SendFlowButton', () => {
     });
   });
 
-  it('handles errors gracefully during flow sending', async () => {
+  it('emits events with hasError=true when sendFlow fails', async () => {
     await wrapper.setProps({
       selectedFlow: 'flow-uuid',
       contacts: [{ external_id: 'contact-1' }],
@@ -87,5 +92,8 @@ describe('SendFlowButton', () => {
     expect(consoleError).toHaveBeenCalledWith(new Error('API error'));
 
     expect(wrapper.emitted('send-flow-finished')).toHaveLength(1);
+    expect(wrapper.emitted('send-flow-finished')[0][0]).toEqual({
+      hasError: true,
+    });
   });
 });

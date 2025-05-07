@@ -8,8 +8,9 @@
       :iconRightClickable="true"
       size="sm"
       :placeholder="$t('chats.search_contact')"
+      class="chat-groups__search-contact-input"
       @icon-right-click="nameOfContact = ''"
-    ></UnnnicInput>
+    />
     <section class="chat-groups__header">
       <UnnnicToolTip
         v-if="
@@ -41,8 +42,8 @@
               fontWeight: lastCreatedFilter ? '700' : '400',
             }"
             @click="
-              listRoom(false, '-last_interaction'),
-                ((lastCreatedFilter = true), (createdOnFilter = false))
+              (listRoom(false, '-last_interaction'),
+              ((lastCreatedFilter = true), (createdOnFilter = false)))
             "
             >{{ $t('chats.room_list.most_recent') }}</span
           >
@@ -52,8 +53,8 @@
               fontWeight: createdOnFilter ? '700' : '400',
             }"
             @click="
-              listRoom(false, 'last_interaction'),
-                ((createdOnFilter = true), (lastCreatedFilter = false))
+              (listRoom(false, 'last_interaction'),
+              ((createdOnFilter = true), (lastCreatedFilter = false)))
             "
           >
             {{ $t('chats.room_list.older') }}</span
@@ -81,6 +82,7 @@
         v-if="rooms_queue.length"
         :label="$t('chats.waiting', { length: rooms_queue.length })"
         :rooms="rooms_queue"
+        roomsType="waiting"
         @open="openRoom"
       />
       <CardGroup
@@ -163,7 +165,7 @@ export default {
       listRoomHasNext: 'hasNextRooms',
       newMessagesByRoom: 'newMessagesByRoom',
     }),
-    ...mapState(useConfig, ['project']),
+    ...mapState(useConfig, ['project', 'enableAutomaticRoomRouting']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
 
@@ -232,6 +234,13 @@ export default {
       getAllDiscussion: 'getAll',
     }),
     async openRoom(room) {
+      if (
+        this.enableAutomaticRoomRouting &&
+        room.user?.email !== this.me?.email
+      ) {
+        return;
+      }
+
       await this.setActiveDiscussion(null);
       await this.setActiveRoom(room);
     },
@@ -307,16 +316,26 @@ export default {
     display: flex;
     flex-direction: column;
     margin-top: $unnnic-spacing-sm;
-    padding-right: $unnnic-spacing-xs;
     margin-right: -$unnnic-spacing-xs; // For the scrollbar to stick to the edge
     overflow-y: auto;
     overflow-x: hidden;
     :deep(.unnnic-collapse) {
       padding-bottom: $unnnic-spacing-sm;
     }
+    :deep(.unnnic-collapse__header) {
+      padding-left: $unnnic-spacing-xs;
+      padding-right: $unnnic-spacing-xs;
+    }
     .no-results {
+      padding-left: $unnnic-spacing-xs;
       color: $unnnic-color-neutral-cloudy;
       font-size: $unnnic-font-size-body-gt;
+    }
+    &__header {
+      padding-left: $unnnic-spacing-xs;
+    }
+    &__search-contact-input {
+      padding-left: $unnnic-spacing-xs;
     }
   }
   .order-by {

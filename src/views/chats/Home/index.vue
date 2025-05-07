@@ -2,28 +2,36 @@
   <ChatsLayout
     ref="chats-layout"
     :class="['home-chats-layout', { 'has-discussion': !!discussion }]"
+    data-testid="chats-layout"
     @select-quick-message="
       (quickMessage) => updateTextBoxMessage(quickMessage.text)
     "
   >
     <ChatsBackground
       v-if="!room?.uuid && !discussion?.uuid && !isChatSkeletonActive"
+      data-testid="chats-background"
     />
+
     <HomeChat
       v-show="room?.uuid || discussion?.uuid"
       ref="home-chat"
+      data-testid="home-chat"
       @open-room-contact-info="openRoomContactInfo"
       @close-room-contact-info="closeRoomContactInfo"
-      @handle-show-quick-messages="handlerShowQuickMessages"
-      @open-flows-trigger="openFlowsTrigger"
+      @handle-show-quick-messages="handlerShowQuickMessages()"
+      @open-flows-trigger="openFlowsTrigger()"
     />
 
     <template #aside>
       <ContactInfo
         v-if="room && isRoomContactInfoOpen && !discussion"
+        data-testid="contact-info"
         @close="closeRoomContactInfo"
       />
-      <DiscussionSidebar v-if="discussion" />
+      <DiscussionSidebar
+        v-if="discussion"
+        data-testid="discussion-sidebar"
+      />
     </template>
   </ChatsLayout>
 </template>

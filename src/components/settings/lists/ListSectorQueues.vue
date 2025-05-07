@@ -1,7 +1,18 @@
 <template>
   <section class="sector-queues-form">
     <p class="sector-queues-form__info">{{ $t('config_chats.queues.info') }}</p>
-
+    <section class="sector-queues-form__filters">
+      <UnnnicInput
+        v-model="queueNameFilter"
+        iconLeft="search-1"
+        size="md"
+        :placeholder="$t('search')"
+      />
+      <ListOrdinator
+        v-model="queueOrder"
+        :label="$t('order_by.label')"
+      />
+    </section>
     <section class="sector-queues-form-grid">
       <UnnnicCard
         class="sector-queues-form-grid__new-queue"
@@ -12,7 +23,7 @@
         @click.stop="openConfigQueueDrawer()"
       />
       <UnnnicSimpleCard
-        v-for="queue in queues"
+        v-for="queue in queuesOrdered"
         :key="queue.uuid"
         :title="queue.name"
         clickable
@@ -21,19 +32,50 @@
         @click="openConfigQueueDrawer(queue)"
       >
         <template #headerSlot>
-          <p class="sector-queues-form-grid-sector-card__open-label">
-            {{ $t('config_chats.open') }}
-          </p>
-        </template>
-        <template #footer>
-          <section class="sector-queues-form-grid-sector-card-footer">
-            <b class="sector-queues-form-grid-sector-card-footer__agent-count">
-              {{ queue.agents }}
-            </b>
-            <p class="sector-queues-form-grid-sector-card-footer__agent-label">
-              {{ $t('config_chats.agent_title') }}
-            </p>
-          </section>
+          <UnnnicDropdown position="top-left">
+            <template #trigger>
+              <UnnnicToolTip
+                enabled
+                :text="$t('config_chats.queues.delete_or_edit')"
+                side="left"
+              >
+                <UnnnicButton
+                  iconCenter="more_vert"
+                  type="tertiary"
+                  data-testid="open-dropdown-menu-button"
+                />
+              </UnnnicToolTip>
+            </template>
+            <UnnnicDropdownItem
+              data-testid="dropdown-edit"
+              @click="openConfigQueueDrawer(queue)"
+            >
+              <section class="dropdown-item-content">
+                <UnnnicIconSvg
+                  class="icon"
+                  icon="edit_square"
+                  size="sm"
+                />
+                <p>{{ $t('edit') }}</p>
+              </section>
+            </UnnnicDropdownItem>
+            <UnnnicDropdownItem
+              data-testid="dropdown-delete"
+              @click.stop="handlerOpenDeleteQueueModal(queue)"
+            >
+              <section
+                class="dropdown-item-content dropdown-item-content__delete"
+              >
+                <UnnnicIconSvg
+                  class="icon"
+                  icon="delete"
+                  size="sm"
+                  scheme="danger"
+                />
+                <p>{{ $t('exclude') }}</p>
+              </section>
+            </UnnnicDropdownItem>
+          </UnnnicDropdown>
         </template>
       </UnnnicSimpleCard>
     </section>
@@ -47,7 +89,7 @@
     :description="$t('config_chats.queues.in_sector', { sector: sector.name })"
     size="lg"
     :primaryButtonText="$t('save')"
-    :disabledPrimaryButton="!queueToConfig.currentAgents?.length"
+    :disabledPrimaryButton="!validForm"
     :loadingPrimaryButton="loadingQueueConfig"
     :secondaryButtonText="$t('cancel')"
     :disabledSecondaryButton="loadingQueueConfig"
@@ -63,21 +105,40 @@
         :sector="sector"
         data-testid="queue-config-form"
         @update-queue-agents-count="updateAgentsCount($event)"
+        @change-is-valid="validForm = $event"
       />
     </template>
   </UnnnicDrawer>
+  <UnnnicModalNext
+    v-if="showDeleteQueueModal"
+    type="alert"
+    icon="alert-circle-1"
+    scheme="feedback-red"
+    data-testid="delete-queue-modal"
+    :title="$t('delete_queue_modal.text', { queue: queueToDelete.name })"
+    :description="$t('cant_revert')"
+    :validate="`${queueToDelete.name}`"
+    :validatePlaceholder="`${queueToDelete.name}`"
+    :validateLabel="$t('confirm_typing') + ` &quot;${queueToDelete.name}&quot;`"
+    :actionPrimaryLabel="$t('confirm')"
+    :actionSecondaryLabel="$t('cancel')"
+    @click-action-primary="deleteQueue()"
+    @click-action-secondary="handlerCloseDeleteQueueModal()"
+  />
 </template>
 
 <script>
 import unnnic from '@weni/unnnic-system';
 
 import FormQueue from '../forms/Queue.vue';
+import ListOrdinator from '@/components/settings/ListOrdinator.vue';
 import Queue from '@/services/api/resources/settings/queue';
 
 export default {
   name: 'ListSectorQueues',
   components: {
     FormQueue,
+    ListOrdinator,
   },
   props: {
     sector: {
@@ -92,7 +153,42 @@ export default {
       showQueueDrawer: false,
       queueToConfig: {},
       loadingQueueConfig: false,
+      showDeleteQueueModal: false,
+      queueToDelete: {},
+      validForm: false,
+      queueNameFilter: '',
+      queueOrder: 'alphabetical',
     };
+  },
+
+  computed: {
+    queuesOrdered() {
+      let queuesOrdered = this.queues.slice().sort((a, b) => {
+        let first = null;
+        let second = null;
+
+        if (this.queueOrder === 'alphabetical') {
+          first = a.name.toLowerCase();
+          second = b.name.toLowerCase();
+        } else if (this.queueOrder === 'newer') {
+          first = new Date(b.created_on).getTime();
+          second = new Date(a.created_on).getTime();
+        } else if (this.queueOrder === 'older') {
+          first = new Date(a.created_on).getTime();
+          second = new Date(b.created_on).getTime();
+        }
+
+        return first === second ? 0 : first > second ? 1 : -1;
+      });
+
+      return this.queueNameFilter.trim()
+        ? queuesOrdered.filter(({ name }) =>
+            name
+              .toLowerCase()
+              .includes(this.queueNameFilter.trim().toLowerCase()),
+          )
+        : queuesOrdered;
+    },
   },
 
   mounted() {
@@ -100,13 +196,50 @@ export default {
     this.getQueues();
   },
   methods: {
+    async deleteQueue() {
+      try {
+        await Queue.delete(this.queueToDelete.uuid);
+        this.queues = this.queues.filter(
+          (queue) => queue.uuid !== this.queueToDelete.uuid,
+        );
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('config_chats.queues.message.delete_success'),
+            type: 'success',
+          },
+        });
+      } catch (error) {
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('config_chats.queues.message.delete_error'),
+            type: 'error',
+          },
+        });
+        console.log(error);
+      } finally {
+        this.handlerCloseDeleteQueueModal();
+      }
+    },
+    handlerCloseDeleteQueueModal() {
+      this.handleConnectOverlay(false);
+      this.queueToDelete = {};
+      this.showDeleteQueueModal = false;
+    },
+    handlerOpenDeleteQueueModal(queue) {
+      this.handleConnectOverlay(true);
+      this.queueToDelete = queue;
+      this.showDeleteQueueModal = true;
+    },
     handleConnectOverlay(active) {
       window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
     },
     listenConnect() {
       window.addEventListener('message', (message) => {
         const { event } = message.data;
-        if (event === 'close') this.$refs.queueDrawer?.close();
+        if (event === 'close') {
+          this.handlerCloseDeleteQueueModal();
+          this.$refs.queueDrawer?.close();
+        }
       });
     },
     openConfigQueueDrawer(queue = {}) {
@@ -136,7 +269,8 @@ export default {
     async handlerSetConfigQueue() {
       try {
         this.loadingQueueConfig = true;
-        const { name, default_message } = this.queueToConfig;
+        const { name, default_message, uuid = '' } = this.queueToConfig;
+
         if (this.queueToConfig.uuid) {
           await Promise.all([
             ...this.$refs.formQueue.toAddAgentsUuids.map((agentUuid) =>
@@ -146,6 +280,8 @@ export default {
               Queue.removeAgent(agentUuid),
             ),
           ]);
+
+          await Queue.editQueue({ uuid, default_message });
 
           unnnic.unnnicCallAlert({
             props: {
@@ -201,6 +337,28 @@ export default {
   display: grid;
   gap: $unnnic-spacing-ant;
 
+  .dropdown-item-content {
+    display: flex;
+    align-items: center;
+    gap: $unnnic-spacing-xs;
+
+    white-space: nowrap;
+
+    &__delete {
+      color: red;
+    }
+  }
+
+  &__filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $unnnic-spacing-stack-sm $unnnic-spacing-inline-md;
+
+    .unnnic-form {
+      flex: 1;
+    }
+  }
   &__info {
     color: $unnnic-color-neutral-dark;
     font-size: $unnnic-font-size-body-gt;
@@ -213,6 +371,7 @@ export default {
     gap: $unnnic-spacing-xs;
 
     &-sector-card {
+      min-height: 120px;
       :deep(.unnnic-simple-card-header-container__title) {
         color: $unnnic-color-neutral-darkest;
       }

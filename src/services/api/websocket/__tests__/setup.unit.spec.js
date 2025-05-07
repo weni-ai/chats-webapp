@@ -4,11 +4,28 @@ import WS from '@/services/api/websocket/socket';
 import listeners from '@/services/api/websocket/listeners';
 import { useDashboard } from '@/store/modules/dashboard';
 
-vi.mock('@/services/api/websocket/socket');
+vi.mock('@/services/api/websocket/socket', () => {
+  return {
+    __esModule: true,
+    default: vi.fn(() => ({
+      ws: {
+        readyState: 1,
+        OPEN: 1,
+        close: vi.fn(),
+        send: vi.fn(),
+        onclose: null,
+      },
+      send: vi.fn(),
+      on: vi.fn(),
+    })),
+  };
+});
+
 vi.mock('@/services/api/websocket/listeners');
 vi.mock('@/utils/env', () => ({
   default: vi.fn(() => 'ws://mock-url'),
 }));
+
 vi.mock('@/store/modules/dashboard');
 
 describe('WebSocketSetup', () => {
@@ -33,6 +50,7 @@ describe('WebSocketSetup', () => {
         OPEN: 1,
         close: vi.fn(),
         send: vi.fn(),
+        onclose: vi.fn(),
       },
     };
   });

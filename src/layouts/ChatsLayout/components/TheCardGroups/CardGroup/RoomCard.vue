@@ -1,7 +1,13 @@
 <template>
   <section
     class="room-card__container"
-    :class="{ 'room-card__container--with-selection': withSelection }"
+    :class="{
+      'room-card__container--with-selection': withSelection,
+      'room-card__container--selected': room.uuid === activeRoomId && active,
+      'room-card__container--hover': hover,
+    }"
+    @mouseenter="hover = true"
+    @mouseleave="hover = false"
   >
     <UnnnicCheckbox
       v-if="withSelection"
@@ -11,13 +17,20 @@
       @change="checkboxValue = $event"
     />
     <UnnnicChatsContact
+      :class="{
+        'room-card__contact': true,
+        'room-card__contact--selected': room.uuid === activeRoomId && active,
+        'room-card__contact--hover': hover,
+      }"
       :title="formattedContactName"
-      :lastMessage="lastMessage"
+      :lastMessage="hideContactMessageInfo ? '' : room.last_message"
       :waitingTime="waitingTimeComputed"
       :unreadMessages="unreadMessages"
       :tabindex="0"
       :selected="room.uuid === activeRoomId && active"
       :locale="locale"
+      :lastInteractionTime="room.last_interaction"
+      :projectName="room.config?.name"
       @click="$emit('click')"
       @keypress.enter="$emit('click')"
     />
@@ -28,6 +41,7 @@
 import { mapState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
+import { useConfig } from '@/store/modules/config';
 import { formatContactName } from '@/utils/chats';
 
 const ONE_MINUTE_IN_MILLISECONDS = 60000;
@@ -52,6 +66,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    roomType: {
+      type: String,
+      default: '',
+    },
   },
   emits: ['click', 'update-selected'],
 
@@ -60,20 +78,19 @@ export default {
     waitingTime: 0,
     timer: null,
     checkboxValue: false,
+    hover: false,
   }),
 
   computed: {
+    ...mapState(useConfig, ['enableAutomaticRoomRouting']),
     ...mapState(useRooms, {
       newMessages(store) {
         return store.newMessagesByRoom[this.room.uuid]?.messages;
       },
       activeRoomId: (store) => store.activeRoom?.uuid,
     }),
-    lastMessage() {
-      const { newMessages, room } = this;
-      return (
-        newMessages?.[newMessages.length - 1]?.text || room?.last_message || ''
-      );
+    hideContactMessageInfo() {
+      return this.roomType === 'waiting' && this.enableAutomaticRoomRouting;
     },
     waitingTimeComputed() {
       const { waitingTime } = this;
@@ -126,13 +143,42 @@ export default {
   display: grid;
   align-items: center;
 
+  :deep(.room-card__contact) {
+    border: none;
+  }
+
+  :deep(.room-card__contact:active) {
+    border: none;
+  }
+
+  :deep(.room-card__contact--selected) {
+    border: none !important;
+  }
+
+  &--hover {
+    background-color: $unnnic-color-neutral-lightest !important;
+
+    :deep(.room-card__contact) {
+      background-color: $unnnic-color-neutral-lightest !important;
+    }
+  }
+
   &--with-selection {
     grid-template-columns: auto 1fr;
   }
+
+  .room-card__contact--selected {
+    :deep(.chats-contact__infos__unread-messages-container) {
+      justify-content: flex-start;
+      margin-top: $unnnic-spacing-nano;
+    }
+  }
 }
+
 .room-card {
   &__checkbox {
-    padding: $unnnic-spacing-nano;
+    padding: $unnnic-spacing-nano $unnnic-spacing-nano $unnnic-spacing-nano
+      $unnnic-spacing-ant;
   }
 }
 </style>

@@ -4,27 +4,40 @@ import { isValidJson } from '@/utils/messages';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useConfig } from '@/store/modules/config';
 
 export default async (message, { app }) => {
   const roomsStore = useRooms();
   const roomMessagesStore = useRoomMessages();
+  const configStore = useConfig();
   const { rooms, activeRoom } = roomsStore;
+
   const findRoom = rooms.find((room) => room.uuid === message.room);
+
   roomsStore.bringRoomFront(findRoom);
+
   if (findRoom) {
     if (app.me.email === message.user?.email) {
       return;
     }
 
-    const notification = new SoundNotification('ping-bing');
-    notification.notify();
+    const { enableAutomaticRoomRouting } = configStore;
 
-    if (document.hidden) {
-      sendWindowNotification({
-        title: message.contact.name,
-        message: message.text,
-        image: message.media?.[0]?.url,
-      });
+    if (!enableAutomaticRoomRouting || findRoom?.user?.email === app.me.email) {
+      const notification = new SoundNotification('ping-bing');
+      notification.notify();
+
+      if (document.hidden) {
+        try {
+          sendWindowNotification({
+            title: message.contact?.name,
+            message: message.text,
+            image: message.media?.[0]?.url,
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      }
     }
 
     const isCurrentRoom =
@@ -36,15 +49,16 @@ export default async (message, { app }) => {
       roomMessagesStore.addMessage(message);
     }
 
-    if (isValidJson(message.text)) return;
-
-    roomsStore.addNewMessagesByRoom({
-      room: message.room,
-      message: {
-        created_on: message.created_on,
-        uuid: message.uuid,
-        text: message.text,
-      },
-    });
+    if (!isValidJson(message.text)) {
+      findRoom.last_message = message;
+      roomsStore.addNewMessagesByRoom({
+        room: message.room,
+        message: {
+          created_on: message.created_on,
+          uuid: message.uuid,
+          text: message.text,
+        },
+      });
+    }
   }
 };

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
+import { useDashboard } from '@/store/modules/dashboard';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
 
@@ -28,13 +29,19 @@ vi.mock('@/store/modules/chats/discussionMessages', () => ({
   useDiscussionMessages: vi.fn(),
 }));
 
+vi.mock('@/store/modules/dashboard', () => ({
+  useDashboard: vi.fn(),
+}));
+
 describe('Create discussion message service', () => {
   let mockDiscussionStore,
     mockDiscussionMessagesStore,
+    mockDashboardStore,
     mockApp,
     soundNotificationMock;
 
   beforeEach(() => {
+    mockDashboardStore = { viewedAgent: { email: '' } };
     mockDiscussionStore = {
       discussions: [{ uuid: '123', name: 'Test Discussion' }],
       activeDiscussion: { uuid: '123' },
@@ -58,6 +65,7 @@ describe('Create discussion message service', () => {
     soundNotificationMock = new SoundNotification('ping-bing');
     SoundNotification.mockReturnValue(soundNotificationMock);
 
+    useDashboard.mockReturnValue(mockDashboardStore);
     useDiscussions.mockReturnValue(mockDiscussionStore);
     useDiscussionMessages.mockReturnValue(mockDiscussionMessagesStore);
   });

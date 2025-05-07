@@ -61,6 +61,7 @@
                 :status="messageStatus({ message })"
                 :title="messageFormatTitle(new Date(message.created_on))"
                 :signature="messageSignature(message)"
+                :mediaType="isGeolocation(message.media?.[0]) ? 'geo' : ''"
               >
                 {{
                   isGeolocation(message.media?.[0])
@@ -138,19 +139,11 @@
           </template>
         </section>
       </section>
-      <!-- Closed chat tags  -->
-      <!-- <chat-feedback
-      v-for="room in rooms"
-      :key="room.uuid"
-      :feedback="roomEndedChatFeedback(room)"
-      scheme="purple"
-    /> -->
       <section
         v-if="tags.length > 0"
         v-show="!isSkeletonLoadingActive"
         class="chat-messages__tags"
       >
-        <!-- <chat-feedback :feedback="roomEndedChatFeedback(room)" scheme="purple" ref="endChatElement" /> -->
         <TagGroup :tags="tags" />
       </section>
 
@@ -544,7 +537,7 @@ export default {
         const elementToScroll =
           this.$refs[`message-${lastMessageUuidBeforePagination}`]?.[0]?.$el;
         if (elementToScroll) {
-          await elementToScroll.scrollIntoView({ block: 'start' });
+          await elementToScroll?.scrollIntoView({ block: 'start' });
           chatMessages.scrollTop += 1;
         }
       } else {
@@ -645,6 +638,10 @@ export default {
 
     display: grid;
     gap: $unnnic-spacing-md;
+
+    :deep(.unnnic-brand-tag__icon) {
+      display: none;
+    }
 
     :deep(.tag-group__tags) {
       justify-content: center;

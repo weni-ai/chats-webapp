@@ -1,5 +1,5 @@
 <template>
-  <div class="image-preview">
+  <section class="image-preview">
     <UnnnicToolTip
       class="image-preview__tooltip"
       enabled
@@ -17,7 +17,7 @@
         @keypress.enter="handleImageClick"
       />
     </UnnnicToolTip>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -69,7 +69,6 @@ export default {
       if (this.fullscreenOnClick) {
         this.isFullscreenByUserClick = true;
       }
-
       this.$emit('click');
     },
   },

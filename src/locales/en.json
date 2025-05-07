@@ -1,8 +1,14 @@
 {
   "status": {
     "online": "Online",
-    "offline": "Offline"
+    "offline": "Offline",
+    "set_status": "Set status"
   },
+  "status-bar": {
+    "success": "Status updated to {status}",
+    "error": "Unable to update status, please try again."
+  },
+  "view-option": "View Options",
   "preferences": {
     "title": "Preferences",
     "notifications": {
@@ -95,6 +101,13 @@
     "name": "Sector name",
     "placeholder": "Example: Financial",
     "save_and_continue": "Save and continue",
+    "link": {
+      "title": "Link",
+      "label": "Link to an existing project",
+      "editing_disclaimer": "It is not possible to edit the linked project, if you wish to edit the link you must create a new sector and select the desired project.",
+      "has_linked_project": "The selected project is already associated with another sector, select another project to continue.",
+      "project_placeholder": "Search by project name"
+    },
     "managers": {
       "title": "Service managers",
       "add": {
@@ -172,7 +185,8 @@
       "edit_custom_field": "edited custom field",
       "discussion_created": "{agent} started discussion with queue {queue}",
       "discussion_joined": "{agent} joined the discussion",
-      "agent_took_chat": "Oops! The chat with the contact {contact} has already been taken over by another agent"
+      "agent_took_chat": "Oops! The chat with the contact {contact} has already been taken over by another agent",
+      "automatic_transfer_from_queue": "Room assigned to {agent} by automatic queue distribution."
     },
     "room_list": {
       "order_by": "Order by:",
@@ -216,7 +230,8 @@
     "select_your_queues": "Select your queues",
     "no_queue_selected": "No queue selected",
     "success_update_queues": "Your service queues have been updated",
-    "error_update_queues": "Unable to update your service queues"
+    "error_update_queues": "Unable to update your service queues",
+    "queue_priority_disclaimer": "Queue chats are now automatically assigned. No need to pick them manually anymore"
   },
   "chats_notifications": {
     "title": "WeniChats Notifications",
@@ -264,6 +279,7 @@
   "all": "All",
   "back_to_chats": "@:back to chats",
   "filter": {
+    "empty_tags": "No tags available",
     "by_tag": "Filter by tag",
     "by_tags": "Filter by tags",
     "by_agent": "Filter by agent",
@@ -486,6 +502,7 @@
     "select": "Select flow",
     "sending": "Sending flow",
     "successfully_triggered": "Flow triggered successfully",
+    "error_triggering": "Error triggering flow",
     "successfully_add_contact": "Contact added successfully",
     "contact_already_exists": "The number {contact} is already saved in your contact list"
   },
@@ -565,6 +582,23 @@
     "title": "Chat Settings",
     "section_sectors_title": "Sectors in {project}",
     "section_sectors_subtitle": "Add, view and manage sectors, queues, managers and agents within your organization.",
+    "tabs": {
+      "settings": "Settings",
+      "groups": "Projects groups"
+    },
+    "custom_breaks": {
+      "title": "Custom breaks",
+      "description": "Add new custom breaks, all of which will have the same behavior as offline, i.e. the agent will not receive contacts while using these custom breaks.",
+      "fields": {
+        "name": "New status",
+        "placeholder": "Example: Lunch"
+      },
+      "status_exceeded_limit": "Status limit reached, delete to add new status",
+      "status_duplicate_name": "Status already exists",
+      "status_success": "Status added successfully",
+      "status_remove_success": "Status {status} removed",
+      "status_error": "Oops, unfortunately the changes were not saved, please try again"
+    },
     "project_configs": {
       "title": "Project Adjustments",
       "bulk_transfer": {
@@ -580,6 +614,10 @@
       "block_transfer_to_off_agents": {
         "switch_active": "Blocking transfers to offline agents active",
         "switch_inactive": "Blocking transfers to offline agents inactive"
+      },
+      "show_agent_status_count_timer": {
+        "switch_active": "Show agent status count timer",
+        "switch_inactive": "Hide agent status count timer"
       }
     },
     "custom_sector": "Customize new sector (recommended)",
@@ -603,16 +641,79 @@
       "info": "Queues are support groups within a sector; it is possible to direct contacts from a flow to a specific queue",
       "hint": "Queues are support groups within the sector; you can create new queues or edit them whenever you want.",
       "queue_definitions": "Queue settings",
+      "delete_or_edit": "Delete or edit",
       "message": {
         "create": "Queue successfully created",
         "update": "Queue successfully updated",
-        "error": "Failed to set queue settings"
+        "error": "Failed to set queue settings",
+        "delete_success": "Queue deleted successfully",
+        "delete_error": "Failed to delete queue",
+        "config_agents_group": "Add or remove agents through groups by going to <b>Chat Settings > Groups</b>"
+      }
+    },
+    "groups": {
+      "new": {
+        "title": "New project group"
+      },
+      "general_form": {
+        "title": "General definitions",
+        "service_managers": "Service managers",
+        "field": {
+          "name": {
+            "label": "Group name",
+            "placeholder": "Example: Sales"
+          },
+          "manager": {
+            "label": "Add managers",
+            "placeholder": "Search for the name or email"
+          }
+        }
+      },
+      "projects_form": {
+        "title": "Add projects",
+        "field": {
+          "project": {
+            "label": "Add project",
+            "placeholder": "Search by project name"
+          }
+        },
+        "message": {
+          "has_group_sector": "Unable to add project {sectorName}. This project is already being used in another group."
+        }
+      },
+      "agents_form": {
+        "title": "Add agents",
+        "field": {
+          "agents": {
+            "label": "Add agent",
+            "placeholder": "Search by the name or email"
+          }
+        }
+      },
+      "general": "General",
+      "projects": "Projects",
+      "agents": "Agents",
+      "delete_or_edit": "Delete or edit",
+      "discart": {
+        "title": "Discard changes",
+        "text": "The creation of the new group will be discarded upon confirming this action. Do you want to discard the changes made so far?"
+      },
+      "create_success": "New group {groupName} created!",
+      "create_error": "Failed to configure some steps in the group! Check the details and try again if you identify any missing configurations.",
+      "update_success": "Group updated successfully!",
+      "update_error": "We had problems updating some data. Check the information and try again if anything is missing.",
+      "delete": {
+        "title": "Delete {groupName}",
+        "notice": "This action will be irreversible. To confirm the action, please type the name of the group",
+        "success": "Group {groupName} successfully deleted!",
+        "error": "Failed to delete group. Please try again."
       }
     },
     "copilot": {
       "hint": "The Co-pilot is your agent's intelligent assistant; it can be activated later."
     },
     "new_sector": "New sector",
+    "new_group": "New group",
     "agent_title": "Agents",
     "contacts": "Contacts",
     "open": "Open"
@@ -628,8 +729,7 @@
     },
     "discart": {
       "title": "Discard changes",
-      "hint": "The creation of the new sector will be discarded upon confirming this action. Do you want to discard the changes made so far?",
-      "confirm": "Discart"
+      "hint": "The creation of the new sector will be discarded upon confirming this action. Do you want to discard the changes made so far?"
     }
   },
   "your_orgs": "Your organizations",
@@ -642,5 +742,15 @@
   },
   "select_project": {
     "choose_one": "Choose one to access Weni Chats"
+  },
+  "discart": "Discart",
+  "confirmation": "Confirmation",
+  "order_by": {
+    "label": "Order by",
+    "option": {
+      "alphabetical": "Alphabetical",
+      "newer": "Newer",
+      "older": "Older"
+    }
   }
 }

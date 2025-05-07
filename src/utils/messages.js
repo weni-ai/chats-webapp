@@ -148,6 +148,7 @@ export async function treatMessages({
     itemUuid,
     getItemMessages,
   });
+
   let newMessages = messages;
 
   if (!newMessages?.length) {
