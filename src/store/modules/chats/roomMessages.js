@@ -24,6 +24,16 @@ export const useRoomMessages = defineStore('roomMessages', {
     roomMessagesFailedUuids: [],
     roomMessagesNext: '',
     roomMessagesPrevious: '',
+    roomMessagesStatusMapper: {
+      P: 'sending', // Pending
+      Q: 'default', // Queued
+      S: 'sent', // Sent
+      W: 'default', // Wired
+      E: 'default', // Errored
+      D: 'received', // Delivered
+      F: 'default', // Failed
+      V: 'read', // Read
+    },
   }),
   actions: {
     addRoomMessageSorted({ message, addBefore }) {
