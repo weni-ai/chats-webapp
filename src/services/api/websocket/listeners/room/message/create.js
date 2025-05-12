@@ -27,7 +27,7 @@ export default async (message, { app }) => {
       const notification = new SoundNotification('ping-bing');
       notification.notify();
 
-      if (document.hidden) {
+      if (document.hidden && !isValidJson(message.text)) {
         try {
           sendWindowNotification({
             title: message.contact?.name,
