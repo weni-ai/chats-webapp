@@ -84,7 +84,7 @@ export default {
     });
   },
   async removeManager(managerUuid) {
-    await http.delete(`/authorization/sector/${managerUuid}`);
+    await http.delete(`/authorization/sector/${managerUuid}/`);
   },
 
   async tags(sectorUuid) {
