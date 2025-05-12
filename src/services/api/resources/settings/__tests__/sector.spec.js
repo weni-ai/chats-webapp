@@ -128,7 +128,7 @@ describe('Sector', () => {
     await Sector.removeManager(managerUuid);
 
     expect(http.delete).toHaveBeenCalledWith(
-      `/authorization/sector/${managerUuid}`,
+      `/authorization/sector/${managerUuid}/`,
     );
   });
 
