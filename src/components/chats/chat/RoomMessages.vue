@@ -116,7 +116,7 @@ export default {
     handlingGetRoomSummary() {
       this.roomSummary = '';
       this.isLoadingSummary = true;
-      this.getRoomSummaryInterval = setInterval(this.getRoomSummary(), 3000);
+      this.getRoomSummaryInterval = setInterval(this.getRoomSummary, 3000);
     },
 
     searchForMoreMessages() {
