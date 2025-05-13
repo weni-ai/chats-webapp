@@ -6,6 +6,10 @@ vi.mock('@/store/modules/chats/roomMessages', () => ({
   useRoomMessages: vi.fn(),
 }));
 
+vi.mock('@/store/modules/chats/rooms', () => ({
+  useRooms: vi.fn(() => ({ rooms: [] })),
+}));
+
 describe('Room message update', () => {
   let appMock;
   let addMessageMock;
