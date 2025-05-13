@@ -25,6 +25,7 @@
             autocomplete
             autocompleteIconLeft
             autocompleteClearOnFocus
+            enableSearchByValue
             @update:model-value="chooseAgent"
           />
         </div>
@@ -103,7 +104,8 @@ export default {
         } = agent;
 
         agentsNames.push({
-          value: uuid,
+          uuid,
+          value: email,
           label: first_name || last_name ? `${first_name} ${last_name}` : email,
         });
       });
@@ -140,7 +142,7 @@ export default {
       this.selectAgent = selected;
       const agent = this.agents.find((agent) => {
         const { uuid } = agent;
-        return uuid === selected[0].value;
+        return uuid === selected[0].uuid;
       });
       this.agent = agent;
       this.$emit('select', this.agent);
