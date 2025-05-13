@@ -7,6 +7,7 @@
       v-show="!isMobile"
       @input="filters = $event"
     />
+
     <ModalClosedChatsFilters
       v-if="isMobile && showModalFilters"
       v-model="filters"
