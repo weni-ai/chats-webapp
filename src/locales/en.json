@@ -175,7 +175,8 @@
   "chats": {
     "summary": {
       "reading_and_summarizing": "Reading and summarizing",
-      "by_ai": "Summary by AI"
+      "by_ai": "Summary by AI",
+      "error": "Failed to generate summary."
     },
     "feedback": {
       "forwarded_to_agent": "Contact forwarded to agent {agent}",

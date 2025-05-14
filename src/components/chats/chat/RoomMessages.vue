@@ -135,8 +135,9 @@ export default {
           this.setSummaryText(text);
         }
       } catch (error) {
-        this.setSummaryText('Falha ao gerar resumo');
         console.log(error);
+        const errorText = this.$t('chats.summary.error');
+        this.setSummaryText(errorText);
       }
     },
 

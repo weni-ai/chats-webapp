@@ -179,7 +179,8 @@
   "chats": {
     "summary": {
       "reading_and_summarizing": "Lectura y resumen",
-      "by_ai": "Resumen por IA"
+      "by_ai": "Resumen por IA",
+      "error": "No se pudo generar el resumen."
     },
     "feedback": {
       "forwarded_to_agent": "Contacto reenviado al agente {agent}",
