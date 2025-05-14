@@ -5,7 +5,7 @@
         v-if="isGeneratingSummary"
         class="chat-summary__generate-text"
       >
-        <span>Reading and summarizing</span>
+        <span>{{ $t('chats.summary.reading_and_summarizing') }}</span>
         <span
           v-for="dot of 3"
           :key="dot"
@@ -14,7 +14,10 @@
       </section>
       <p
         v-else
-        class="chat-summary__text"
+        :class="{
+          'chat-summary__text': true,
+          'is-typing': isTyping && !hideClose,
+        }"
       >
         {{ animatedText }}
       </p>
@@ -27,12 +30,9 @@
         @click="$emit('close')"
       />
     </section>
-    <section
-      v-if="summaryByPosition === 'bottom'"
-      class="chat-summary__by-ai-label__bottom"
-    >
+    <section class="chat-summary__by-ai-label__bottom">
       <img :src="StarsIcon" />
-      <p>Summary by AI</p>
+      <p>{{ $t('chats.summary.by_ai') }}</p>
     </section>
   </section>
 </template>
@@ -54,10 +54,6 @@ export default {
       type: String,
       default: '',
     },
-    summaryByPosition: {
-      type: String,
-      default: 'bottom',
-    },
     hideClose: {
       type: Boolean,
       default: false,
@@ -73,7 +69,7 @@ export default {
   },
   watch: {
     summaryText() {
-      this.typeWriter(this.summaryText, 5);
+      this.typeWriter(this.summaryText, 10);
     },
   },
   methods: {
@@ -124,16 +120,20 @@ export default {
       border-radius: 50%;
       margin-right: 2px;
       background-color: $unnnic-color-neutral-clean;
-      animation: wave 1.3s linear infinite;
+      animation: wave 1.5s linear infinite;
 
       &:nth-child(2) {
-        animation-delay: -1.1s;
+        animation-delay: 0.9s;
       }
 
       &:nth-child(3) {
-        animation-delay: -0.9s;
+        animation-delay: 1.2s;
       }
     }
+  }
+
+  &__text.is-typing {
+    padding-right: 2 * $unnnic-spacing-md;
   }
 
   &__content {

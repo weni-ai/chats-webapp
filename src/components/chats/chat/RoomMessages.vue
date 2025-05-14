@@ -35,6 +35,8 @@ import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import ChatMessages from '@/components/chats/chat/ChatMessages/index.vue';
 import ChatSummary from '@/layouts/ChatsLayout/components/ChatSummary/index.vue';
 
+import RoomService from '@/services/api/resources/chats/room';
+
 export default {
   name: 'RoomMessages',
 
@@ -118,19 +120,30 @@ export default {
         });
     },
 
-    getRoomSummary() {
-      setTimeout(() => {
-        this.isLoadingActiveRoomSummary = false;
-        this.activeRoomSummary =
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In nulla ex, mollis eget magna in, lacinia hendrerit erat. Aliquam erat volutpat. Nulla quis dui felis. Integer pulvinar neque sit amet suscipit efficitur. Sed accumsan metus a feugiat mattis. Nunc pellentesque massa in lorem pulvinar maximus. Morbi tempor imperdiet nisl, ut cursus risus leo.';
-        clearInterval(this.getRoomSummaryInterval);
-      }, 2000);
+    setSummaryText(text) {
+      this.isLoadingActiveRoomSummary = false;
+      this.activeRoomSummary = text;
+      clearInterval(this.getRoomSummaryInterval);
+    },
+
+    async getRoomSummary() {
+      try {
+        const { status, text } = await RoomService.getSummary({
+          roomUuid: this.room.uuid,
+        });
+        if (status === 'DONE') {
+          this.setSummaryText(text);
+        }
+      } catch (error) {
+        this.setSummaryText('Falha ao gerar resumo');
+        console.log(error);
+      }
     },
 
     handlingGetRoomSummary() {
       this.activeRoomSummary = '';
       this.isLoadingActiveRoomSummary = true;
-      this.getRoomSummaryInterval = setInterval(this.getRoomSummary, 3000);
+      this.getRoomSummaryInterval = setInterval(this.getRoomSummary, 5000);
     },
 
     searchForMoreMessages() {
@@ -149,7 +162,7 @@ export default {
   // min-width: 100%;
   // min-height: 130px;
   /* position: absolute; */
-  margin-left: -16px;
+  margin-left: -$unnnic-spacing-sm;
   z-index: 3;
 }
 </style>
