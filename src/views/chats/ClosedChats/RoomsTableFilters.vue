@@ -184,7 +184,7 @@ export default {
     filterContact() {
       const TIME_TO_WAIT_TYPING = 800;
 
-      if (isMobile) {
+      if (this.isMobile) {
         this.emitUpdateFilters();
       }
 
