@@ -1,9 +1,13 @@
 <template>
   <ChatSummary
-    v-if="(!isLoadingMessages || silentLoadingMessages) && showChatSummary"
+    v-if="
+      (!isLoadingMessages || silentLoadingMessages) &&
+      showChatSummary &&
+      showRoomSummary
+    "
     class="chat-summary"
-    :isGeneratingSummary="isLoadingSummary"
-    :summaryText="roomSummary"
+    :isGeneratingSummary="isLoadingActiveRoomSummary"
+    :summaryText="activeRoomSummary"
     @close="showChatSummary = false"
   />
   <ChatMessages
@@ -24,7 +28,7 @@
   />
 </template>
 <script>
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
@@ -36,6 +40,13 @@ export default {
   name: 'RoomMessages',
 
   components: { ChatMessages, ChatSummary },
+
+  props: {
+    showRoomSummary: {
+      type: Boolean,
+      default: false,
+    },
+  },
 
   data: () => {
     return {
@@ -51,6 +62,10 @@ export default {
   },
 
   computed: {
+    ...mapWritableState(useRooms, [
+      'activeRoomSummary',
+      'isLoadingActiveRoomSummary',
+    ]),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
     }),
@@ -106,16 +121,16 @@ export default {
 
     getRoomSummary() {
       setTimeout(() => {
-        this.isLoadingSummary = false;
-        this.roomSummary =
+        this.isLoadingActiveRoomSummary = false;
+        this.activeRoomSummary =
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In nulla ex, mollis eget magna in, lacinia hendrerit erat. Aliquam erat volutpat. Nulla quis dui felis. Integer pulvinar neque sit amet suscipit efficitur. Sed accumsan metus a feugiat mattis. Nunc pellentesque massa in lorem pulvinar maximus. Morbi tempor imperdiet nisl, ut cursus risus leo.';
         clearInterval(this.getRoomSummaryInterval);
       }, 2000);
     },
 
     handlingGetRoomSummary() {
-      this.roomSummary = '';
-      this.isLoadingSummary = true;
+      this.activeRoomSummary = '';
+      this.isLoadingActiveRoomSummary = true;
       this.getRoomSummaryInterval = setInterval(this.getRoomSummary, 3000);
     },
 
@@ -132,8 +147,8 @@ export default {
 
 <style lang="scss" scoped>
 .chat-summary {
-  min-width: 100%;
-  min-height: 130px;
+  // min-width: 100%;
+  // min-height: 130px;
   /* position: absolute; */
   margin-left: -16px;
   z-index: 3;

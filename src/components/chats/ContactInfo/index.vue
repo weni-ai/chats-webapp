@@ -105,6 +105,13 @@
                 />
               </UnnnicToolTip>
             </div>
+            <ChatSummary
+              v-if="showRoomSummary"
+              class="chat-summary"
+              :summaryText="activeRoomSummary"
+              :isGeneratingSummary="isLoadingActiveRoomSummary"
+              hideClose
+            />
             <nav class="infos__nav">
               <UnnnicButton
                 v-if="!isHistory && !isViewMode"
@@ -206,6 +213,7 @@ import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
 import TransferSession from './TransferSession.vue';
 import ModalStartDiscussion from './ModalStartDiscussion.vue';
 import DiscussionsSession from './DiscussionsSession.vue';
+import ChatSummary from '@/layouts/ChatsLayout/components/ChatSummary/index.vue';
 
 import moment from 'moment';
 
@@ -223,6 +231,7 @@ export default {
     TransferSession,
     ModalStartDiscussion,
     DiscussionsSession,
+    ChatSummary,
   },
   props: {
     closedRoom: {
@@ -234,6 +243,10 @@ export default {
       default: false,
     },
     isViewMode: {
+      type: Boolean,
+      default: false,
+    },
+    showRoomSummary: {
       type: Boolean,
       default: false,
     },
@@ -260,6 +273,8 @@ export default {
   computed: {
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
+      activeRoomSummary: 'activeRoomSummary',
+      isLoadingActiveRoomSummary: 'isLoadingActiveRoomSummary',
     }),
 
     isMobile() {
@@ -559,6 +574,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.chat-summary {
+  // min-height: 250px;
+  margin: 0px (-$unnnic-spacing-xs) 0px (-$unnnic-spacing-xs);
+}
 .contact-info__container {
   height: 100%;
 
