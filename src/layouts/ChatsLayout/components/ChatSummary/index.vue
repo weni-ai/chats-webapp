@@ -19,7 +19,7 @@
         {{ animatedText }}
       </p>
       <UnnnicIcon
-        v-if="!isGeneratingSummary && !isTyping"
+        v-if="!isGeneratingSummary && !isTyping && !hideClose"
         icon="close"
         size="ant"
         clickable
@@ -57,6 +57,10 @@ export default {
     summaryByPosition: {
       type: String,
       default: 'bottom',
+    },
+    hideClose: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: ['close'],

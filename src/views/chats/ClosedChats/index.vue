@@ -28,6 +28,7 @@
         <ContactInfo
           isHistory
           :closedRoom="selectedRoom"
+          showRoomSummary
           @close="() => {}"
         />
       </section>
