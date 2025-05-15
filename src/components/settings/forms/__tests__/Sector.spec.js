@@ -311,7 +311,7 @@ describe('FormSectorGeneral', () => {
     const addSectorManagerSpy = vi.spyOn(wrapper.vm, 'addSectorManager');
     const addManagerSpy = vi.spyOn(wrapper.vm, 'addManager');
 
-    wrapper.vm.selectManager([{ value: '2' }]);
+    wrapper.vm.selectManager([{ uuid: '2' }]);
 
     expect(addSectorManagerSpy).toHaveBeenCalledWith(managerMock);
     expect(addManagerSpy).toHaveBeenCalledWith(managerMock);

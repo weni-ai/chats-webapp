@@ -6,6 +6,23 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useConfig } from '@/store/modules/config';
 
+const checkAndUpdateRoomLastMessage = (room, message) => {
+  const itsMessageSystem = !message.contact && !message.user;
+  const itsEmptyMessage = !message.text?.trim() && !message.media?.length;
+
+  if (itsMessageSystem) return;
+
+  // Empty messages are generated when media is sent
+  // You need to mark the id here to update in the msg.update listen
+  if (itsEmptyMessage) {
+    room.last_message.uuid = message.uuid;
+
+    return;
+  }
+
+  room.last_message = message;
+};
+
 export default async (message, { app }) => {
   const roomsStore = useRooms();
   const roomMessagesStore = useRoomMessages();
@@ -18,6 +35,7 @@ export default async (message, { app }) => {
 
   if (findRoom) {
     if (app.me.email === message.user?.email) {
+      checkAndUpdateRoomLastMessage(findRoom, message);
       return;
     }
 
@@ -27,7 +45,7 @@ export default async (message, { app }) => {
       const notification = new SoundNotification('ping-bing');
       notification.notify();
 
-      if (document.hidden) {
+      if (document.hidden && !isValidJson(message.text)) {
         try {
           sendWindowNotification({
             title: message.contact?.name,
@@ -50,7 +68,7 @@ export default async (message, { app }) => {
     }
 
     if (!isValidJson(message.text)) {
-      findRoom.last_message = message;
+      checkAndUpdateRoomLastMessage(findRoom, message);
       roomsStore.addNewMessagesByRoom({
         room: message.room,
         message: {
