@@ -244,7 +244,7 @@ section.chats-layout {
 
     height: 100%;
 
-    background-color: $unnnic-color-background-carpet;
+    background-color: rgba(253, 245, 233, 0.25);
   }
 
   .quick-message {
