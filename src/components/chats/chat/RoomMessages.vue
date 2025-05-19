@@ -2,13 +2,14 @@
   <ChatSummary
     v-if="
       (!isLoadingMessages || silentLoadingMessages) &&
-      showChatSummary &&
-      showRoomSummary
+      openChatSummary &&
+      showRoomSummary &&
+      enableRoomSummary
     "
     class="chat-summary"
     :isGeneratingSummary="isLoadingActiveRoomSummary"
     :summaryText="activeRoomSummary"
-    @close="showChatSummary = false"
+    @close="openChatSummary = false"
   />
   <ChatMessages
     :chatUuid="room?.uuid || ''"
@@ -37,6 +38,7 @@ import ChatMessages from '@/components/chats/chat/ChatMessages/index.vue';
 import ChatSummary from '@/layouts/ChatsLayout/components/ChatSummary/index.vue';
 
 import RoomService from '@/services/api/resources/chats/room';
+import { useConfig } from '@/store/modules/config';
 
 export default {
   name: 'RoomMessages',
@@ -57,7 +59,7 @@ export default {
       isLoadingMessages: true,
       silentLoadingMessages: false,
       isLoadingSummary: false,
-      showChatSummary: true,
+      openChatSummary: true,
       getRoomSummaryInterval: null,
       roomSummary: '',
     };
@@ -79,6 +81,9 @@ export default {
       'roomMessagesSendingUuids',
       'roomMessagesFailedUuids',
     ]),
+    ...mapState(useConfig, {
+      enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
+    }),
   },
 
   watch: {
@@ -86,11 +91,14 @@ export default {
       immediate: true,
       async handler(roomUuid) {
         if (roomUuid) {
-          this.showChatSummary = true;
           this.resetRoomMessages();
           this.page = 0;
-          this.handlingGetRoomSummary();
           await this.handlingGetRoomMessages();
+          if (this.enableRoomSummary) {
+            clearInterval(this.getRoomSummaryInterval);
+            this.openChatSummary = true;
+            this.handlingGetRoomSummary();
+          }
         }
       },
     },
@@ -135,6 +143,10 @@ export default {
         if (status === 'DONE') {
           this.setSummaryText(text);
         }
+        if (status === 'UNAVAILABLE') {
+          const unavailableText = this.$t('chats.summary.unavailable');
+          this.setSummaryText(unavailableText);
+        }
       } catch (error) {
         console.log(error);
         const errorText = this.$t('chats.summary.error');
@@ -161,9 +173,6 @@ export default {
 
 <style lang="scss" scoped>
 .chat-summary {
-  // min-width: 100%;
-  // min-height: 130px;
-  /* position: absolute; */
   margin-left: -$unnnic-spacing-sm;
   z-index: 3;
 }

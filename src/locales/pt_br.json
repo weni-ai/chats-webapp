@@ -191,7 +191,8 @@
     "summary": {
       "reading_and_summarizing": "Lendo e fazendo resumo",
       "by_ai": "Resumo feito por IA",
-      "error": "Falha ao gerar resumo."
+      "error": "Falha ao gerar resumo.",
+      "unavailable": "Não há resumo disponível"
     },
     "feedback": {
       "forwarded_to_agent": "Contato encaminhado para agente {agent}",
