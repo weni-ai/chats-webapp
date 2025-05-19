@@ -137,11 +137,11 @@ export default {
 
     async getRoomSummary() {
       try {
-        const { status, text } = await RoomService.getSummary({
+        const { status, summary } = await RoomService.getSummary({
           roomUuid: this.room.uuid,
         });
         if (status === 'DONE') {
-          this.setSummaryText(text);
+          this.setSummaryText(summary);
         }
         if (status === 'UNAVAILABLE') {
           const unavailableText = this.$t('chats.summary.unavailable');
