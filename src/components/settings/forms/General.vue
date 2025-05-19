@@ -447,7 +447,7 @@ export default {
 
         if (this.isEditing) this.addManager(manager);
 
-        this.selectedManager = [this.managersNames[0]];
+        this.selectedManager = [];
       }
     },
 
