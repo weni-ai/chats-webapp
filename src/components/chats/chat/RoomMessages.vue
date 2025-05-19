@@ -94,6 +94,7 @@ export default {
           this.page = 0;
           await this.handlingGetRoomMessages();
           if (this.enableRoomSummary) {
+            clearInterval(this.getRoomSummaryInterval);
             this.openChatSummary = true;
             this.handlingGetRoomSummary();
           }
@@ -141,6 +142,10 @@ export default {
         if (status === 'DONE') {
           this.setSummaryText(text);
         }
+        if (status === 'UNAVAILABLE') {
+          const unavailableText = this.$t('chats.summary.unavailable');
+          this.setSummaryText(unavailableText);
+        }
       } catch (error) {
         console.log(error);
         const errorText = this.$t('chats.summary.error');
@@ -167,9 +172,6 @@ export default {
 
 <style lang="scss" scoped>
 .chat-summary {
-  // min-width: 100%;
-  // min-height: 130px;
-  /* position: absolute; */
   margin-left: -$unnnic-spacing-sm;
   z-index: 3;
 }
