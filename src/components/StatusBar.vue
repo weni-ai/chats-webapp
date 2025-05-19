@@ -101,8 +101,11 @@ const configStore = useConfig();
 const profileStore = useProfile();
 const project = computed(() => configStore.project);
 const loadingActiveStatus = ref(false);
+const isToggling = ref(false);
 
 const handleClickOutside = (event) => {
+  if (isToggling.value) return;
+
   const statusBar = event.target.closest('[class="status-bar"]');
   if (!statusBar && isOpen.value) {
     isOpen.value = false;
@@ -259,14 +262,25 @@ onUnmounted(() => {
   stopTimer();
   document.removeEventListener('click', handleClickOutside);
 
-  // Clear the interval
   if (settingsCheckInterval) {
     clearInterval(settingsCheckInterval);
   }
 });
 
-const toggleDropdown = () => {
+const toggleDropdown = (event) => {
+  if (isToggling.value) return;
+
+  if (event) {
+    event.stopPropagation();
+  }
+
+  isToggling.value = true;
+
   isOpen.value = !isOpen.value;
+
+  setTimeout(() => {
+    isToggling.value = false;
+  }, 200);
 };
 
 const getActiveCustomStatusAndActiveTimer = async () => {
