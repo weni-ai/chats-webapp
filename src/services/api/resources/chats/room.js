@@ -4,8 +4,6 @@ import { getProject } from '@/utils/config';
 
 import { useProfile } from '@/store/modules/profile';
 
-import { asyncTimeout } from '@/utils/time';
-
 export default {
   async getAll(offset, limit, contact, order, viewedAgent) {
     const params = {
@@ -37,16 +35,8 @@ export default {
   },
 
   async getSummary({ roomUuid }) {
-    const url = `/room/${roomUuid}/chats-summary`;
-    // const response = await http.get(url);
-    const response = {
-      data: {
-        status: 'DONE',
-        text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In nulla ex, mollis eget magna in, lacinia hendrerit erat. Aliquam erat volutpat. Nulla quis dui felis. Integer pulvinar neque sit amet suscipit efficitur. Sed accumsan metus a feugiat mattis. Nunc pellentesque massa in lorem pulvinar maximus. Morbi tempor imperdiet nisl, ut cursus risus leo.',
-      },
-    };
-
-    await asyncTimeout(3000);
+    const url = `/room/${roomUuid}/chats-summary/`;
+    const response = await http.get(url);
 
     return response.data;
   },
