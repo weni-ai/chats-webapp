@@ -2,13 +2,14 @@
   <ChatSummary
     v-if="
       (!isLoadingMessages || silentLoadingMessages) &&
-      showChatSummary &&
-      showRoomSummary
+      openChatSummary &&
+      showRoomSummary &&
+      enableRoomSummary
     "
     class="chat-summary"
     :isGeneratingSummary="isLoadingActiveRoomSummary"
     :summaryText="activeRoomSummary"
-    @close="showChatSummary = false"
+    @close="openChatSummary = false"
   />
   <ChatMessages
     :chatUuid="room?.uuid || ''"
@@ -36,6 +37,7 @@ import ChatMessages from '@/components/chats/chat/ChatMessages/index.vue';
 import ChatSummary from '@/layouts/ChatsLayout/components/ChatSummary/index.vue';
 
 import RoomService from '@/services/api/resources/chats/room';
+import { useConfig } from '@/store/modules/config';
 
 export default {
   name: 'RoomMessages',
@@ -56,7 +58,7 @@ export default {
       isLoadingMessages: true,
       silentLoadingMessages: false,
       isLoadingSummary: false,
-      showChatSummary: true,
+      openChatSummary: true,
       getRoomSummaryInterval: null,
       roomSummary: '',
     };
@@ -78,6 +80,9 @@ export default {
       'roomMessagesSendingUuids',
       'roomMessagesFailedUuids',
     ]),
+    ...mapState(useConfig, {
+      enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
+    }),
   },
 
   watch: {
@@ -85,11 +90,13 @@ export default {
       immediate: true,
       async handler(roomUuid) {
         if (roomUuid) {
-          this.showChatSummary = true;
           this.resetRoomMessages();
           this.page = 0;
-          this.handlingGetRoomSummary();
           await this.handlingGetRoomMessages();
+          if (this.enableRoomSummary) {
+            this.openChatSummary = true;
+            this.handlingGetRoomSummary();
+          }
         }
       },
     },

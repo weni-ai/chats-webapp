@@ -106,7 +106,7 @@
               </UnnnicToolTip>
             </div>
             <ChatSummary
-              v-if="showRoomSummary"
+              v-if="showRoomSummary && enableRoomSummary"
               class="chat-summary"
               :summaryText="activeRoomSummary"
               :isGeneratingSummary="isLoadingActiveRoomSummary"
@@ -216,6 +216,7 @@ import DiscussionsSession from './DiscussionsSession.vue';
 import ChatSummary from '@/layouts/ChatsLayout/components/ChatSummary/index.vue';
 
 import moment from 'moment';
+import { useConfig } from '@/store/modules/config';
 
 export default {
   name: 'ContactInfo',
@@ -271,6 +272,9 @@ export default {
   }),
 
   computed: {
+    ...mapState(useConfig, {
+      enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
+    }),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
       activeRoomSummary: 'activeRoomSummary',
