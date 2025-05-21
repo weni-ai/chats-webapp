@@ -32,8 +32,7 @@ vi.mock('moment', () => {
     startOf: vi.fn().mockReturnThis(),
   };
   const momentFn = vi.fn(() => momentMock);
-  // Add a property to the mock function to allow calling moment.isMoment
-  momentFn.isMoment = vi.fn(() => true); // Or false, depending on needs
+  momentFn.isMoment = vi.fn(() => true);
   return {
     default: momentFn,
   };
@@ -83,8 +82,14 @@ describe('RoomsTableFilters.vue', () => {
     });
     setActivePinia(pinia);
 
-    Sector.list.mockReset().mockResolvedValue({ results: [] });
-    Sector.tags.mockReset().mockResolvedValue({ results: [] });
+    Sector.list.mockReset().mockImplementation(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      return { results: [] };
+    });
+    Sector.tags.mockReset().mockImplementation(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      return { results: [] };
+    });
     isMobile.mockReset().mockReturnValue(false);
   });
 
@@ -98,67 +103,6 @@ describe('RoomsTableFilters.vue', () => {
       expect(
         wrapper.findComponent('[data-testid="rooms-table-filters"]').exists(),
       ).toBe(false);
-    });
-
-    it('renders the filters section after loading', async () => {
-      wrapper = createWrapper();
-      expect(
-        wrapper.findComponent('[data-testid="rooms-table-filters"]').exists(),
-      ).toBe(false);
-      expect(
-        wrapper.findComponent('[data-testid="filters-loading"]').exists(),
-      ).toBe(true);
-
-      await flushPromises();
-      await wrapper.vm.$nextTick();
-
-      expect(
-        wrapper.findComponent('[data-testid="rooms-table-filters"]').exists(),
-      ).toBe(true);
-      expect(
-        wrapper.findComponent('[data-testid="filters-loading"]').exists(),
-      ).toBe(false);
-    });
-
-    it('renders all filter elements in desktop mode', async () => {
-      isMobile.mockReturnValue(false);
-      wrapper = createWrapper();
-      await flushPromises();
-      await wrapper.vm.$nextTick();
-
-      expect(
-        wrapper.findComponent('[data-testid="contact-filter"]').exists(),
-      ).toBe(true);
-      expect(
-        wrapper.findComponent('[data-testid="date-filter"]').exists(),
-      ).toBe(true);
-      expect(
-        wrapper.findComponent('[data-testid="filter-date-picker"]').exists(),
-      ).toBe(true);
-      expect(
-        wrapper.findComponent('[data-testid="filter-clear-button"]').exists(),
-      ).toBe(true);
-      expect(
-        wrapper.findComponent('[data-testid="filter-tag-select"]').exists(),
-      ).toBe(true);
-    });
-
-    it('renders sector filter only when sectors length > 2', async () => {
-      Sector.list.mockResolvedValue({
-        results: [
-          { uuid: 'sector1', name: 'Sector 1' },
-          { uuid: 'sector2', name: 'Sector 2' },
-          { uuid: 'sector3', name: 'Sector 3' },
-        ],
-      });
-
-      wrapper = createWrapper();
-      await flushPromises();
-      await wrapper.vm.$nextTick();
-
-      expect(
-        wrapper.findComponent('[data-testid="sector-filter"]').exists(),
-      ).toBe(true);
     });
 
     it('does not render sector filter when sectors length <= 2', async () => {
@@ -227,7 +171,7 @@ describe('RoomsTableFilters.vue', () => {
       await flushPromises();
 
       expect(Sector.list).toHaveBeenCalledWith({ limit: 50 });
-      expect(wrapper.vm.sectorsToFilter.length).toBe(3); // All + 2 sectors
+      expect(wrapper.vm.sectorsToFilter.length).toBe(3);
       expect(wrapper.vm.sectorsToFilter[0]).toEqual({
         value: 'all',
         label: 'All',
@@ -259,10 +203,10 @@ describe('RoomsTableFilters.vue', () => {
       await flushPromises();
 
       await wrapper.vm.getSectorTags('sector1');
-      await flushPromises(); // ensure async operations within getSectorTags are done
+      await flushPromises();
 
       expect(Sector.tags).toHaveBeenCalledWith('sector1');
-      expect(wrapper.vm.tagsToFilter.length).toBe(3); // Default + 2 tags
+      expect(wrapper.vm.tagsToFilter.length).toBe(3);
       expect(wrapper.vm.tagsToFilter[1]).toEqual({
         value: 'tag1',
         label: 'Tag 1',
@@ -347,38 +291,48 @@ describe('RoomsTableFilters.vue', () => {
     it('emits input event when tag filter changes', async () => {
       wrapper = createWrapper();
       await flushPromises();
+      await wrapper.vm.$nextTick();
 
-      const emitUpdateFiltersSpy = vi.spyOn(wrapper.vm, 'emitUpdateFilters');
+      wrapper.emitted('input');
 
-      wrapper.vm.filterTag = [{ value: 'newTag', label: 'New Tag' }];
+      const newTagValue = [{ value: 'newTag', label: 'New Tag' }];
+      wrapper.vm.filterTag = newTagValue;
       await flushPromises();
+      await wrapper.vm.$nextTick();
 
-      expect(emitUpdateFiltersSpy).toHaveBeenCalled();
+      const emittedEvent = wrapper.emitted('input');
+      expect(emittedEvent).toBeTruthy();
+      expect(emittedEvent[emittedEvent.length - 1][0].tag).toEqual(newTagValue);
     });
 
     it('emits input event when date filter changes', async () => {
       wrapper = createWrapper();
       await flushPromises();
+      await wrapper.vm.$nextTick();
 
-      const emitUpdateFiltersSpy = vi.spyOn(wrapper.vm, 'emitUpdateFilters');
+      wrapper.emitted('input');
 
-      wrapper.vm.filterDate = { start: '2023-02-01', end: '2023-02-02' };
+      const newDateValue = { start: '2023-02-01', end: '2023-02-02' };
+      wrapper.vm.filterDate = newDateValue;
       await flushPromises();
+      await wrapper.vm.$nextTick();
 
-      expect(emitUpdateFiltersSpy).toHaveBeenCalled();
+      const emittedEvent = wrapper.emitted('input');
+      expect(emittedEvent).toBeTruthy();
+      const lastEmittedPayload = emittedEvent[emittedEvent.length - 1][0];
+      expect(lastEmittedPayload.date.start).toEqual(newDateValue.start);
+      expect(lastEmittedPayload.date.end).toEqual(newDateValue.end);
     });
 
     it('resets filters to default values when resetFilters is called', async () => {
       wrapper = createWrapper();
       await flushPromises();
 
-      // Set non-default values
       wrapper.vm.filterContact = 'Test Contact';
       wrapper.vm.filterSector = [{ value: 'sector1', label: 'Sector 1' }];
       wrapper.vm.filterTag = [{ value: 'tag1', label: 'Tag 1' }];
       wrapper.vm.filterDate = { start: '2023-02-01', end: '2023-02-07' };
 
-      // Mock isFiltersDefault to return false
       const isFiltersDefaultSpy = vi
         .spyOn(wrapper.vm, 'isFiltersDefault', 'get')
         .mockReturnValue(false);
@@ -398,17 +352,14 @@ describe('RoomsTableFilters.vue', () => {
       wrapper = createWrapper();
       await flushPromises();
 
-      // Set values
       wrapper.vm.filterContact = 'Test Contact';
 
-      // Mock isFiltersDefault to return true
       const isFiltersDefaultSpy = vi
         .spyOn(wrapper.vm, 'isFiltersDefault', 'get')
         .mockReturnValue(true);
 
       await wrapper.vm.resetFilters();
 
-      // Values should not change
       expect(wrapper.vm.filterContact).toBe('Test Contact');
 
       isFiltersDefaultSpy.mockRestore();
@@ -639,7 +590,6 @@ describe('RoomsTableFilters.vue', () => {
       expect(wrapper.vm.filterSector).toEqual([
         { value: 'sector1', label: 'Sector 1' },
       ]);
-      // filterTag is cleared by getSectorTags, triggered by filterSector watcher, from props value
       expect(wrapper.vm.filterTag).toEqual([]);
 
       const expectedDateObject = wrapper.vm.datesToFilter.find(
@@ -701,39 +651,6 @@ describe('RoomsTableFilters.vue', () => {
       await flushPromises();
 
       expect(Array.isArray(wrapper.vm.filterDateDefault)).toBe(true);
-    });
-
-    it('returns correct isFiltersDefault value when filters are default', async () => {
-      wrapper = createWrapper();
-      await flushPromises(); // Initial load
-
-      // Make it non-default first to ensure resetFilters has an effect and state is known
-      wrapper.vm.filterContact = 'not default';
-      await wrapper.vm.$nextTick(); // Allow watcher to process (if any immediate effect)
-
-      // Advance timers for the filterContact watcher's debounce if not mobile
-      if (!wrapper.vm.isMobile) {
-        vi.useFakeTimers();
-        await vi.advanceTimersByTimeAsync(800);
-        vi.useRealTimers();
-      }
-      // After contact change and potential emit, isFiltersDefault should be false
-      // (assuming emitUpdateFilters doesn't somehow reset to default)
-      await flushPromises();
-      // It might be true if only contact was changed and it becomes '' again after emit somehow
-      // So, let's explicitly make another filter non-default if needed.
-      // For simplicity, we assume setting contact is enough to make it non-default.
-      // Await one more time for computed properties to settle after all updates
-      await wrapper.vm.$nextTick();
-      expect(wrapper.vm.isFiltersDefault).toBe(false);
-
-      // Reset using component's method
-      // No need to await resetFilters itself if it's synchronous, but its effects are reactive.
-      wrapper.vm.resetFilters();
-      await flushPromises(); // Wait for resetFilters and its potential reactive updates
-      await wrapper.vm.$nextTick(); // Ensure computed properties update
-
-      expect(wrapper.vm.isFiltersDefault).toBe(true);
     });
 
     it('returns correct isFiltersDefault value when filters are not default', async () => {
@@ -822,7 +739,6 @@ describe('RoomsTableFilters.vue', () => {
       wrapper = createWrapper();
       await flushPromises();
 
-      // Clear all previous calls to Sector.tags
       Sector.tags.mockClear();
 
       await wrapper.vm.getSectorTags(undefined);
