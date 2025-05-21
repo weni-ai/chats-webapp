@@ -156,6 +156,7 @@ export default {
     handlingGetRoomSummary() {
       this.activeRoomSummary = '';
       this.isLoadingActiveRoomSummary = true;
+      this.getRoomSummary();
       this.getRoomSummaryInterval = setInterval(this.getRoomSummary, 5000);
     },
 
