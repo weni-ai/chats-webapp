@@ -1,25 +1,35 @@
 <template>
-  <div class="rooms-table-filters__container">
+  <div
+    class="rooms-table-filters__container"
+    data-testid="rooms-table-filters-container"
+  >
     <RoomsTableFiltersLoading
       v-if="isFiltersLoading"
       :vertically="vertically"
+      data-testid="filters-loading"
     />
     <section
       v-else
       class="rooms-table-filters"
       :class="{ 'rooms-table-filters--vertically': vertically }"
+      data-testid="rooms-table-filters"
     >
-      <div class="rooms-table-filters__input">
+      <div
+        class="rooms-table-filters__input"
+        data-testid="contact-filter"
+      >
         <UnnnicLabel :label="$t('chats.search_contact')" />
         <UnnnicInput
           v-model="filterContact"
           iconLeft="search-1"
           :placeholder="$t('name_or_phone')"
+          data-testid="filter-contact-input"
         />
       </div>
       <div
         v-if="sectorsToFilter.length > 2"
         class="rooms-table-filters__input"
+        data-testid="sector-filter"
       >
         <UnnnicLabel :label="$t('sector.title')" />
         <UnnnicSelectSmart
@@ -27,9 +37,13 @@
           :options="sectorsToFilter"
           orderedByIndex
           :locale="$i18n.locale"
+          data-testid="filter-sector-select"
         />
       </div>
-      <div class="rooms-table-filters__input">
+      <div
+        class="rooms-table-filters__input"
+        data-testid="tag-filter"
+      >
         <UnnnicLabel :label="$t('tags.title')" />
         <UnnnicSelectSmart
           v-model="filterTag"
@@ -39,15 +53,20 @@
           :options="tagsToFilter"
           :locale="$i18n.locale"
           multiple
+          data-testid="filter-tag-select"
         />
       </div>
-      <div class="rooms-table-filters__input">
+      <div
+        class="rooms-table-filters__input"
+        data-testid="date-filter"
+      >
         <UnnnicLabel :label="$t('date')" />
         <UnnnicSelectSmart
           v-if="isMobile"
           v-model="filterDate"
           :options="datesToFilter"
           orderedByIndex
+          data-testid="filter-date-mobile-select"
         />
         <UnnnicInputDatePicker
           v-else
@@ -58,6 +77,7 @@
           :inputFormat="$t('date_format')"
           :minDate="datePickerMinDate"
           :maxDate="datePickerMaxDate"
+          data-testid="filter-date-picker"
           @select-date="handleDateSelect"
           @update:model-value="updateFilterDate"
         />
@@ -68,6 +88,7 @@
         :text="$t('clear')"
         :disabled="isFiltersDefault"
         :type="clearFiltersType"
+        data-testid="filter-clear-button"
         @click="resetFilters"
       />
     </section>
