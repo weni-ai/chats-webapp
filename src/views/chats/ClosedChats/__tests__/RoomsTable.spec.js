@@ -644,4 +644,131 @@ describe('RoomsTable.vue', () => {
       expect(wrapper.vm.filterDate.end).toBe('initial-end');
     });
   });
+
+  describe('Initial Data Properties', () => {
+    it('initializes with correct default values', () => {
+      wrapper = createWrapper();
+
+      expect(wrapper.vm.isTableLoading).toBe(true);
+      expect(wrapper.vm.isPagesLoading).toBe(true);
+      expect(wrapper.vm.showModalFilters).toBe(false);
+
+      expect(wrapper.vm.rooms).toEqual([]);
+      expect(wrapper.vm.roomsCount).toBe(0);
+      expect(wrapper.vm.roomsCountPages).toBe(0);
+      expect(wrapper.vm.roomsCurrentPage).toBe(1);
+      expect(wrapper.vm.roomsLimitPagination).toBe(5);
+    });
+
+    it('sets correct roomsLimit based on device type for desktop', () => {
+      isMobile.mockReturnValue(false);
+      wrapper = createWrapper();
+
+      wrapper.vm.roomsLimit = isMobile() ? 10 : 5;
+
+      expect(wrapper.vm.roomsLimit).toBe(5);
+    });
+
+    it('sets correct roomsLimit based on device type for mobile', () => {
+      isMobile.mockReturnValue(true);
+      wrapper = createWrapper();
+
+      expect(wrapper.vm.roomsLimit).toBe(10);
+    });
+
+    it('initializes filters with default empty values', () => {
+      wrapper = createWrapper();
+
+      expect(wrapper.vm.filters).toEqual({
+        contact: '',
+        sector: [],
+        tag: [],
+        date: null,
+      });
+    });
+  });
+
+  describe('Computed Properties', () => {
+    describe('tableHeaders', () => {
+      it('returns all headers for desktop view', () => {
+        isMobile.mockReturnValue(false);
+        wrapper = createWrapper();
+
+        const headers = wrapper.vm.tableHeaders;
+
+        expect(headers.length).toBe(5);
+        expect(headers[0].id).toBe('contactName');
+        expect(headers[1].id).toBe('agentName');
+        expect(headers[2].id).toBe('tags');
+        expect(headers[3].id).toBe('date');
+        expect(headers[4].id).toBe('visualize');
+
+        headers.forEach((header) => {
+          expect(header).toHaveProperty('text');
+          expect(header).toHaveProperty('flex', 1);
+        });
+      });
+
+      it('excludes agentName and tags headers in mobile view', () => {
+        isMobile.mockReturnValue(true);
+        wrapper = createWrapper();
+
+        const headers = wrapper.vm.tableHeaders;
+
+        expect(headers.length).toBe(3);
+        expect(headers[0].id).toBe('contactName');
+        expect(headers[1].id).toBe('date');
+        expect(headers[2].id).toBe('visualize');
+
+        expect(headers.some((h) => h.id === 'agentName')).toBe(false);
+        expect(headers.some((h) => h.id === 'tags')).toBe(false);
+      });
+
+      it('applies translation to header text', () => {
+        wrapper = createWrapper();
+
+        const mockTranslation = vi.spyOn(wrapper.vm, '$t');
+        mockTranslation.mockImplementation((key) => `translated-${key}`);
+
+        wrapper.vm.tableHeaders.forEach((header) => {
+          expect(header.text).toContain('translated-');
+        });
+
+        mockTranslation.mockRestore();
+      });
+    });
+
+    describe('showTablePagination', () => {
+      it('always shows pagination on desktop regardless of page count', () => {
+        isMobile.mockReturnValue(false);
+        wrapper = createWrapper();
+
+        wrapper.vm.roomsCountPages = 0;
+        expect(wrapper.vm.showTablePagination).toBe(true);
+
+        wrapper.vm.roomsCountPages = 1;
+        expect(wrapper.vm.showTablePagination).toBe(true);
+
+        wrapper.vm.roomsCountPages = 5;
+        expect(wrapper.vm.showTablePagination).toBe(true);
+      });
+
+      it('only shows pagination on mobile when roomsCountPages is truthy', () => {
+        isMobile.mockReturnValue(true);
+        wrapper = createWrapper();
+
+        wrapper.vm.roomsCountPages = 0;
+        expect(wrapper.vm.showTablePagination).toBeFalsy();
+
+        wrapper.vm.roomsCountPages = null;
+        expect(wrapper.vm.showTablePagination).toBeFalsy();
+
+        wrapper.vm.roomsCountPages = 1;
+        expect(wrapper.vm.showTablePagination).toBe(1);
+
+        wrapper.vm.roomsCountPages = 5;
+        expect(wrapper.vm.showTablePagination).toBe(5);
+      });
+    });
+  });
 });
