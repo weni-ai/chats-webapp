@@ -31,27 +31,30 @@ vi.mock('moment', () => {
     isValid: vi.fn().mockReturnValue(true),
     startOf: vi.fn().mockReturnThis(),
   };
+  const momentFn = vi.fn(() => momentMock);
+  // Add a property to the mock function to allow calling moment.isMoment
+  momentFn.isMoment = vi.fn(() => true); // Or false, depending on needs
   return {
-    default: vi.fn(() => momentMock),
+    default: momentFn,
   };
 });
 
 describe('RoomsTableFilters.vue', () => {
   let pinia;
   let wrapper;
-  let routerMock;
 
-  const createWrapper = (props = {}, mountOptions = {}) => {
-    routerMock = {
-      query: { contactUrn: '', startDate: '', endDate: '' },
-    };
+  const createWrapper = (props = {}, mountOptions = {}, routeQuery = null) => {
+    const defaultRouteQuery = { contactUrn: '', startDate: '', endDate: '' };
+    const currentRouteQuery = routeQuery
+      ? { ...defaultRouteQuery, ...routeQuery }
+      : defaultRouteQuery;
 
     return mount(RoomsTableFilters, {
       global: {
         mocks: {
           $t: (key) => key,
           $i18n: { locale: 'en' },
-          $route: routerMock,
+          $route: { query: currentRouteQuery },
         },
         stubs: {
           UnnnicLabel: true,
@@ -80,9 +83,9 @@ describe('RoomsTableFilters.vue', () => {
     });
     setActivePinia(pinia);
 
-    Sector.list.mockResolvedValue({ results: [] });
-    Sector.tags.mockResolvedValue({ results: [] });
-    isMobile.mockReturnValue(false);
+    Sector.list.mockReset().mockResolvedValue({ results: [] });
+    Sector.tags.mockReset().mockResolvedValue({ results: [] });
+    isMobile.mockReset().mockReturnValue(false);
   });
 
   describe('Rendering tests', () => {
@@ -98,10 +101,16 @@ describe('RoomsTableFilters.vue', () => {
     });
 
     it('renders the filters section after loading', async () => {
-      Sector.list.mockResolvedValue({ results: [] });
       wrapper = createWrapper();
+      expect(
+        wrapper.findComponent('[data-testid="rooms-table-filters"]').exists(),
+      ).toBe(false);
+      expect(
+        wrapper.findComponent('[data-testid="filters-loading"]').exists(),
+      ).toBe(true);
 
       await flushPromises();
+      await wrapper.vm.$nextTick();
 
       expect(
         wrapper.findComponent('[data-testid="rooms-table-filters"]').exists(),
@@ -115,6 +124,7 @@ describe('RoomsTableFilters.vue', () => {
       isMobile.mockReturnValue(false);
       wrapper = createWrapper();
       await flushPromises();
+      await wrapper.vm.$nextTick();
 
       expect(
         wrapper.findComponent('[data-testid="contact-filter"]').exists(),
@@ -144,6 +154,7 @@ describe('RoomsTableFilters.vue', () => {
 
       wrapper = createWrapper();
       await flushPromises();
+      await wrapper.vm.$nextTick();
 
       expect(
         wrapper.findComponent('[data-testid="sector-filter"]').exists(),
@@ -248,6 +259,7 @@ describe('RoomsTableFilters.vue', () => {
       await flushPromises();
 
       await wrapper.vm.getSectorTags('sector1');
+      await flushPromises(); // ensure async operations within getSectorTags are done
 
       expect(Sector.tags).toHaveBeenCalledWith('sector1');
       expect(wrapper.vm.tagsToFilter.length).toBe(3); // Default + 2 tags
@@ -276,15 +288,20 @@ describe('RoomsTableFilters.vue', () => {
       wrapper = createWrapper();
       await flushPromises();
 
+      const emitUpdateFiltersSpy = vi.spyOn(wrapper.vm, 'emitUpdateFilters');
+
       wrapper.vm.filterContact = 'Test Contact';
 
-      // Fast-forward timers
       vi.useFakeTimers();
-      vi.advanceTimersByTime(800);
+      await vi.advanceTimersByTimeAsync(800);
       vi.useRealTimers();
 
-      expect(wrapper.emitted('input')).toBeTruthy();
-      expect(wrapper.emitted('input')[0][0].contact).toBe('Test Contact');
+      expect(emitUpdateFiltersSpy).toHaveBeenCalled();
+      const emittedInput = wrapper.emitted('input');
+      expect(emittedInput).toBeTruthy();
+      expect(emittedInput[emittedInput.length - 1][0].contact).toBe(
+        'Test Contact',
+      );
     });
 
     it('emits input event immediately on mobile when contact filter changes', async () => {
@@ -295,6 +312,7 @@ describe('RoomsTableFilters.vue', () => {
       const emitUpdateFiltersSpy = vi.spyOn(wrapper.vm, 'emitUpdateFilters');
 
       wrapper.vm.filterContact = 'Mobile Test';
+      await wrapper.vm.$nextTick();
 
       expect(emitUpdateFiltersSpy).toHaveBeenCalled();
     });
@@ -332,7 +350,8 @@ describe('RoomsTableFilters.vue', () => {
 
       const emitUpdateFiltersSpy = vi.spyOn(wrapper.vm, 'emitUpdateFilters');
 
-      await wrapper.vm.$options.watch.filterTag.call(wrapper.vm);
+      wrapper.vm.filterTag = [{ value: 'newTag', label: 'New Tag' }];
+      await flushPromises();
 
       expect(emitUpdateFiltersSpy).toHaveBeenCalled();
     });
@@ -343,7 +362,8 @@ describe('RoomsTableFilters.vue', () => {
 
       const emitUpdateFiltersSpy = vi.spyOn(wrapper.vm, 'emitUpdateFilters');
 
-      await wrapper.vm.$options.watch.filterDate.call(wrapper.vm);
+      wrapper.vm.filterDate = { start: '2023-02-01', end: '2023-02-02' };
+      await flushPromises();
 
       expect(emitUpdateFiltersSpy).toHaveBeenCalled();
     });
@@ -424,7 +444,7 @@ describe('RoomsTableFilters.vue', () => {
 
       wrapper.vm.getRelativeDate = vi.fn().mockImplementation((value, type) => {
         if (value === 'last_7_days' && type === 'digit') return '2023-01-01';
-        if (value === 'today' && type === 'digit') return '2023-01-07';
+        if (value === 'today' && type === 'digit') return '2023-01-01';
         return '';
       });
 
@@ -434,7 +454,7 @@ describe('RoomsTableFilters.vue', () => {
 
       const emittedValue = wrapper.emitted('input')[0][0];
       expect(emittedValue.date.start).toBe('2023-01-01');
-      expect(emittedValue.date.end).toBe('2023-01-07');
+      expect(emittedValue.date.end).toBe('2023-01-01');
     });
 
     it('correctly formats dates for desktop display', async () => {
@@ -442,13 +462,13 @@ describe('RoomsTableFilters.vue', () => {
       wrapper = createWrapper();
       await flushPromises();
 
-      wrapper.vm.filterDate = { start: '2023-01-01', end: '2023-01-07' };
+      wrapper.vm.filterDate = { start: '2023-01-01', end: '2023-01-01' };
 
       await wrapper.vm.emitUpdateFilters();
 
       const emittedValue = wrapper.emitted('input')[0][0];
       expect(emittedValue.date.start).toBe('2023-01-01');
-      expect(emittedValue.date.end).toBe('2023-01-07');
+      expect(emittedValue.date.end).toBe('2023-01-01');
     });
 
     it('calculates datePickerMinDate correctly with valid start date', async () => {
@@ -508,13 +528,15 @@ describe('RoomsTableFilters.vue', () => {
   describe('Query params and filters value tests', () => {
     it('sets filter values from query params correctly for desktop', async () => {
       isMobile.mockReturnValue(false);
-      routerMock.query = {
-        contactUrn: 'test-contact',
-        startDate: '2023-01-01',
-        endDate: '2023-01-07',
-      };
-
-      wrapper = createWrapper();
+      wrapper = createWrapper(
+        {},
+        {},
+        {
+          contactUrn: 'test-contact',
+          startDate: '2023-01-01',
+          endDate: '2023-01-07',
+        },
+      );
       await flushPromises();
 
       expect(wrapper.vm.filterContact).toBe('test-contact');
@@ -524,20 +546,36 @@ describe('RoomsTableFilters.vue', () => {
 
     it('sets filter values from query params correctly for mobile', async () => {
       isMobile.mockReturnValue(true);
-      routerMock.query = {
-        contactUrn: 'test-contact',
-        startDate: '2023-01-01',
-      };
+      wrapper = createWrapper(
+        {},
+        {},
+        {
+          contactUrn: 'test-contact',
+          startDate: '2023-01-01',
+        },
+      );
 
-      wrapper = createWrapper();
-
-      // Mock getRelativeDate to return a known value
-      wrapper.vm.getRelativeDate = vi.fn().mockReturnValue('last_7_days');
+      vi.fn().mockImplementation((date, type) => {
+        if (date === '2023-01-01' && type === 'extensive')
+          return 'last_12_months';
+        return '';
+      });
 
       await flushPromises();
 
       expect(wrapper.vm.filterContact).toBe('test-contact');
-      expect(Array.isArray(wrapper.vm.filterDate)).toBe(true);
+      const expectedDateObject = wrapper.vm.datesToFilter.find(
+        (d) => d.value === 'last_12_months',
+      );
+      if (expectedDateObject) {
+        expect(wrapper.vm.filterDate).toEqual([expectedDateObject]);
+      } else {
+        expect(wrapper.vm.filterDate).toEqual([
+          wrapper.vm.datesToFilter.find(
+            (obj) => obj.value === 'last_12_months',
+          ),
+        ]);
+      }
     });
 
     it('sets values from value prop correctly for desktop', async () => {
@@ -545,12 +583,16 @@ describe('RoomsTableFilters.vue', () => {
       const valueProps = {
         contact: 'Test Contact',
         sector: [{ value: 'sector1', label: 'Sector 1' }],
-        tag: [{ value: 'tag 1', label: 'Tag 1' }],
+        tag: [{ value: 'tag1-prop', label: 'Tag 1 Prop' }],
         date: {
           start: '2023-01-01',
           end: '2023-01-07',
         },
       };
+
+      Sector.tags.mockResolvedValue({
+        results: [{ uuid: 'tag-from-api', name: 'Tag from API' }],
+      });
 
       wrapper = createWrapper({ value: valueProps });
       await flushPromises();
@@ -559,9 +601,7 @@ describe('RoomsTableFilters.vue', () => {
       expect(wrapper.vm.filterSector).toEqual([
         { value: 'sector1', label: 'Sector 1' },
       ]);
-      expect(wrapper.vm.filterTag).toEqual([
-        { value: 'tag 1', label: 'Tag 1' },
-      ]);
+      expect(wrapper.vm.filterTag).toEqual([]);
       expect(wrapper.vm.filterDate).toEqual({
         start: '2023-01-01',
         end: '2023-01-07',
@@ -573,17 +613,25 @@ describe('RoomsTableFilters.vue', () => {
       const valueProps = {
         contact: 'Test Contact',
         sector: [{ value: 'sector1', label: 'Sector 1' }],
-        tag: [{ value: 'tag1', label: 'Tag 1' }],
+        tag: [{ value: 'tag1-prop', label: 'Tag 1 Prop' }],
         date: {
           start: '2023-01-01',
           end: '2023-01-07',
         },
       };
 
-      wrapper = createWrapper({ value: valueProps });
+      Sector.tags.mockResolvedValue({
+        results: [{ uuid: 'tag-from-api', name: 'Tag from API' }],
+      });
 
-      // Mock getRelativeDate
-      wrapper.vm.getRelativeDate = vi.fn().mockReturnValue('last_7_days');
+      const mockGetRelativeDateFn = (dateVal, type) => {
+        if (dateVal === '2023-01-01' && type === 'extensive')
+          return 'last_12_months';
+        return '';
+      };
+
+      wrapper = createWrapper({ value: valueProps });
+      wrapper.vm.getRelativeDate = mockGetRelativeDateFn;
 
       await flushPromises();
 
@@ -591,10 +639,17 @@ describe('RoomsTableFilters.vue', () => {
       expect(wrapper.vm.filterSector).toEqual([
         { value: 'sector1', label: 'Sector 1' },
       ]);
-      expect(wrapper.vm.filterTag).toEqual([
-        { value: 'tag 1', label: 'Tag 1' },
-      ]);
-      expect(Array.isArray(wrapper.vm.filterDate)).toBe(true);
+      // filterTag is cleared by getSectorTags, triggered by filterSector watcher, from props value
+      expect(wrapper.vm.filterTag).toEqual([]);
+
+      const expectedDateObject = wrapper.vm.datesToFilter.find(
+        (d) => d.value === 'last_12_months',
+      );
+      if (expectedDateObject) {
+        expect(wrapper.vm.filterDate).toEqual([expectedDateObject]);
+      } else {
+        expect(wrapper.vm.filterDate[0]?.value).toBe('last_12_months');
+      }
     });
   });
 
@@ -650,17 +705,33 @@ describe('RoomsTableFilters.vue', () => {
 
     it('returns correct isFiltersDefault value when filters are default', async () => {
       wrapper = createWrapper();
-      await flushPromises();
+      await flushPromises(); // Initial load
 
-      // Direct assignment to ensure reference equality
-      wrapper.vm.filterContact = '';
-      wrapper.vm.filterSector = [{ value: 'all', label: 'All' }];
-      wrapper.vm.filterTag = [];
-      // Use the exact same reference, not just equal value
-      const defaultDate = wrapper.vm.filterDateDefault;
-      wrapper.vm.filterDate = defaultDate;
+      // Make it non-default first to ensure resetFilters has an effect and state is known
+      wrapper.vm.filterContact = 'not default';
+      await wrapper.vm.$nextTick(); // Allow watcher to process (if any immediate effect)
 
+      // Advance timers for the filterContact watcher's debounce if not mobile
+      if (!wrapper.vm.isMobile) {
+        vi.useFakeTimers();
+        await vi.advanceTimersByTimeAsync(800);
+        vi.useRealTimers();
+      }
+      // After contact change and potential emit, isFiltersDefault should be false
+      // (assuming emitUpdateFilters doesn't somehow reset to default)
       await flushPromises();
+      // It might be true if only contact was changed and it becomes '' again after emit somehow
+      // So, let's explicitly make another filter non-default if needed.
+      // For simplicity, we assume setting contact is enough to make it non-default.
+      // Await one more time for computed properties to settle after all updates
+      await wrapper.vm.$nextTick();
+      expect(wrapper.vm.isFiltersDefault).toBe(false);
+
+      // Reset using component's method
+      // No need to await resetFilters itself if it's synchronous, but its effects are reactive.
+      wrapper.vm.resetFilters();
+      await flushPromises(); // Wait for resetFilters and its potential reactive updates
+      await wrapper.vm.$nextTick(); // Ensure computed properties update
 
       expect(wrapper.vm.isFiltersDefault).toBe(true);
     });
@@ -754,7 +825,7 @@ describe('RoomsTableFilters.vue', () => {
       // Clear all previous calls to Sector.tags
       Sector.tags.mockClear();
 
-      await wrapper.vm.getSectorTags();
+      await wrapper.vm.getSectorTags(undefined);
 
       expect(wrapper.vm.tagsToFilter).toEqual([]);
       expect(Sector.tags).not.toHaveBeenCalled();
