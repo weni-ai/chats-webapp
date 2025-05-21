@@ -304,7 +304,10 @@
       "today": "Hoje",
       "yesterday": "Ontem",
       "last_7_days": "Últimos 7 dias",
+      "last_14_days": "Últimos 14 dias",
       "last_30_days": "Últimos 30 dias",
+      "last_45_days": "Últimos 45 dias",
+      "last_90_days": "Últimos 90 dias",
       "current_month": "Mês atual",
       "last_12_months": "Últimos 12 meses"
     }
