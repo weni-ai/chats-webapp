@@ -68,8 +68,11 @@ export default {
     };
   },
   watch: {
-    summaryText() {
-      this.typeWriter(this.summaryText, 10);
+    summaryText: {
+      immediate: true,
+      handler() {
+        this.typeWriter(this.summaryText, 10);
+      },
     },
   },
   methods: {
