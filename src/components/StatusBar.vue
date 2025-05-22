@@ -313,6 +313,11 @@ const handleCloseCustomStatus = async (status, isActive) => {
 
   const activeStatus = await api.getActiveCustomStatus();
 
+  if (!activeStatus) {
+    // No active status found, nothing to close
+    return null;
+  }
+
   return closeStatus(activeStatus.uuid);
 };
 
