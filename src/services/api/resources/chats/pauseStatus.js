@@ -64,7 +64,16 @@ export default {
     return response;
   },
   async getActiveCustomStatus() {
-    const response = await http.get(`custom_status/last_status/`);
-    return response.data;
+    try {
+      const response = await http.get(`custom_status/last_status/`);
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        // Silently handle 404 error (no active status) without propagating to Sentry
+        return null;
+      }
+      // For other errors, rethrow to be caught by global handlers
+      throw error;
+    }
   },
 };
