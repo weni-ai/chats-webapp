@@ -174,12 +174,69 @@ describe('StatusBar', () => {
         wrapper.find('[data-testid="status-bar-list-open"]').exists(),
       ).toBe(true);
 
+      vi.advanceTimersByTime(300);
+      await wrapper.vm.$nextTick();
+
       await wrapper
         .find('[data-testid="status-bar-selected"]')
         .trigger('click');
       expect(
         wrapper.find('[data-testid="status-bar-list-open"]').exists(),
       ).toBe(false);
+    });
+
+    it('should prevent immediate outside clicks from closing dropdown', async () => {
+      wrapper = createWrapper();
+
+      await wrapper
+        .find('[data-testid="status-bar-selected"]')
+        .trigger('click');
+      expect(wrapper.vm.isOpen).toBe(true);
+      expect(wrapper.vm.isToggling).toBe(true);
+
+      const mockEvent = {
+        target: {
+          closest: () => null,
+        },
+      };
+
+      wrapper.vm.handleClickOutside(mockEvent);
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.isOpen).toBe(true);
+
+      vi.advanceTimersByTime(300);
+      await wrapper.vm.$nextTick();
+
+      wrapper.vm.handleClickOutside(mockEvent);
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.isOpen).toBe(false);
+    });
+
+    it('should ignore rapid successive clicks', async () => {
+      wrapper = createWrapper();
+
+      await wrapper
+        .find('[data-testid="status-bar-selected"]')
+        .trigger('click');
+      expect(wrapper.vm.isOpen).toBe(true);
+      expect(wrapper.vm.isToggling).toBe(true);
+
+      await wrapper
+        .find('[data-testid="status-bar-selected"]')
+        .trigger('click');
+      expect(wrapper.vm.isOpen).toBe(true);
+
+      vi.advanceTimersByTime(300);
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.isToggling).toBe(false);
+
+      await wrapper
+        .find('[data-testid="status-bar-selected"]')
+        .trigger('click');
+      expect(wrapper.vm.isOpen).toBe(false);
     });
   });
 

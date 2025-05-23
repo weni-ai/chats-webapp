@@ -1,6 +1,9 @@
 <template>
   <div class="closed-chats">
-    <ClosedChatsHeaderLoading v-if="isLoadingHeader" />
+    <ClosedChatsHeaderLoading
+      v-if="isLoadingHeader"
+      data-testid="closed-chats-header-loading"
+    />
     <header v-if="!isLoadingHeader && project">
       <UnnnicChatsHeader
         :title="project.name"
@@ -11,7 +14,10 @@
         :size="closedChatsHeaderSize"
         @crumb-click="handlerCrumbClick"
       />
-      <ChatHeaderLoading v-show="roomId && isLoadingSelectedRoom" />
+      <ChatHeaderLoading
+        v-show="roomId && isLoadingSelectedRoom"
+        data-testid="chat-header-loading"
+      />
       <UnnnicChatsHeader
         v-show="!isLoadingSelectedRoom"
         v-if="selectedRoom"
@@ -23,17 +29,22 @@
       <section
         v-show="roomId"
         class="closed-chats__selected-chat"
+        data-testid="closed-chats-selected-chat"
       >
-        <RoomMessages />
+        <RoomMessages data-testid="room-messages" />
         <ContactInfo
           isHistory
           :closedRoom="selectedRoom"
           showRoomSummary
+          data-testid="contact-info"
           @close="() => {}"
         />
       </section>
 
-      <ClosedChatsRoomsTable v-show="!roomId" />
+      <ClosedChatsRoomsTable
+        v-show="!roomId"
+        data-testid="closed-chats-rooms-table"
+      />
     </main>
   </div>
 </template>
@@ -174,18 +185,6 @@ export default {
     async chatScrollTop() {
       if (this.roomMessagesNext) {
         this.getHistoryContactRoomMessages();
-      } else {
-        // const roomUuidIndex = this.selectedRoomsUuids?.findIndex(
-        //   (room) => room.uuid === this.roomId,
-        // );
-        // const previousRoom = this.selectedRoomsUuids[roomUuidIndex - 1];
-        //
-        // if (previousRoom) {
-        //   const responseRoom = await History.getHistoryContactRoom({ room: previousRoom.uuid });
-        //   await this.setActiveRoom(responseRoom);
-        //   this.getHistoryContactRoomMessages();
-        //   this.selectedRoom = responseRoom;
-        // }
       }
     },
 

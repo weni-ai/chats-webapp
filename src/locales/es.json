@@ -42,6 +42,14 @@
   "waiting_for": {
     "minutes": "Esperando por un minuto | Esperando por {n} minutos"
   },
+  "chat_message": {
+    "reply_message": {
+      "you": "Tú",
+      "video": "Vídeo",
+      "image": "Imagen",
+      "audio": "Mensaje de audio"
+    }
+  },
   "details": "Details",
   "doubts": "Dudas",
   "finance": "Financiero",
@@ -71,6 +79,9 @@
   "redo": "Rehacer",
   "record_audio": "Grabar audio",
   "select_all": "Seleccionar todo",
+  "image": "Imagen",
+  "video": "Vídeo",
+  "audio_message": "Mensaje de audio",
   "audio_recorder": {
     "discard_button": "Descartar"
   },
@@ -299,7 +310,10 @@
       "today": "Hoy",
       "yesterday": "Ayer",
       "last_7_days": "Últimos 7 días",
+      "last_14_days": "Últimos 14 días",
       "last_30_days": "Últimos 30 días",
+      "last_45_days": "Últimos 45 días",
+      "last_90_days": "Últimos 90 días",
       "current_month": "Mes actual",
       "last_12_months": "Últimos 12 meses"
     }

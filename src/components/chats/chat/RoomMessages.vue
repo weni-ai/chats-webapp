@@ -24,6 +24,7 @@
     :tags="room?.tags"
     :isLoading="isLoadingMessages"
     :isClosedChat="!!room?.ended_at"
+    :enableReply="false"
     @scroll-top="searchForMoreMessages"
   />
 </template>
