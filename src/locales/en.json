@@ -42,6 +42,14 @@
   "waiting_for": {
     "minutes": "1 minute waiting | {n} minutes waiting"
   },
+  "chat_message": {
+    "reply_message": {
+      "you": "You",
+      "video": "Video",
+      "image": "Image",
+      "audio": "Audio message"
+    }
+  },
   "details": "Details",
   "doubts": "Doubts",
   "finance": "Finance",
@@ -70,6 +78,10 @@
   "undo": "Undo",
   "redo": "Redo",
   "record_audio": "Record audio",
+  "select_all": "Select all",
+  "image": "Image",
+  "video": "Video",
+  "audio_message": "Audio message",
   "audio_recorder": {
     "discard_button": "Discard"
   },
@@ -289,7 +301,10 @@
       "today": "Today",
       "yesterday": "Yesterday",
       "last_7_days": "Last 7 days",
+      "last_14_days": "Last 14 days",
       "last_30_days": "Last 30 days",
+      "last_45_days": "Last 45 days",
+      "last_90_days": "Last 90 days",
       "current_month": "Current month",
       "last_12_months": "Last 12 months"
     }

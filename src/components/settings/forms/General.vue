@@ -56,6 +56,7 @@
               autocomplete
               autocompleteIconLeft
               autocompleteClearOnFocus
+              :enableSearchByValue="true"
               @update:model-value="selectManager"
             />
           </fieldset>
@@ -260,7 +261,8 @@ export default {
         } = manager;
 
         managersNames.push({
-          value: uuid,
+          uuid,
+          value: email,
           label: first_name || last_name ? `${first_name} ${last_name}` : email,
         });
       });
@@ -395,6 +397,7 @@ export default {
 
     async removeManager(managerUuid) {
       if (this.isEditing) await Sector.removeManager(managerUuid);
+
       this.removeManagerFromTheList(managerUuid);
     },
 
@@ -414,7 +417,7 @@ export default {
         const manager = this.managers.find((manager) => {
           const { uuid } = manager;
 
-          return uuid === selectedManager[0].value;
+          return uuid === selectedManager[0].uuid;
         });
         this.addSectorManager(manager);
       }
@@ -444,7 +447,7 @@ export default {
 
         if (this.isEditing) this.addManager(manager);
 
-        this.selectedManager = [this.managersNames[0]];
+        this.selectedManager = [];
       }
     },
 

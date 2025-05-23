@@ -2,29 +2,41 @@
   <section
     class="closed-chats__rooms-table"
     :class="{ mobile: isMobile }"
+    data-testid="rooms-table-section"
   >
     <ClosedChatsRoomsTableFilters
       v-show="!isMobile"
+      data-testid="desktop-filters"
       @input="filters = $event"
     />
+
     <ModalClosedChatsFilters
       v-if="isMobile && showModalFilters"
       v-model="filters"
+      data-testid="mobile-filters-modal"
       @close="handleShowModalFilters"
     />
 
-    <RoomsTableLoading v-if="isTableLoading" />
+    <RoomsTableLoading
+      v-if="isTableLoading"
+      data-testid="table-loading-state"
+    />
     <UnnnicTable
       v-if="!isTableLoading && rooms.length > 0"
       :items="rooms"
       class="closed-chats__rooms-table__table"
+      data-testid="rooms-data-table"
     >
       <template #header>
-        <UnnnicTableRow :headers="tableHeaders" />
+        <UnnnicTableRow
+          :headers="tableHeaders"
+          data-testid="table-header-row"
+        />
       </template>
 
       <template #item="{ item }">
         <section
+          :data-testid="`room-item-${item.uuid}`"
           @click="emitOpenRoom(item)"
           @keypress.enter="emitOpenRoom(item)"
         >
@@ -34,30 +46,42 @@
                 <UnnnicChatsUserAvatar
                   v-if="!isMobile"
                   :username="item.contact.name"
+                  data-testid="room-item-avatar"
                 />
                 <p
                   class="closed-chats__rooms-table__table__contact__name"
                   :title="item.contact.name"
+                  data-testid="room-item-contact-name"
                 >
                   {{ item.contact.name }}
                 </p>
               </div>
             </template>
 
-            <template #agentName>{{ item.user?.first_name }}</template>
+            <template #agentName>
+              <span data-testid="room-item-agent-name">{{
+                item.user?.first_name
+              }}</span>
+            </template>
 
             <template #tags>
               <TagGroup
                 :tags="item.tags || []"
                 :flex="false"
+                data-testid="room-item-tags"
               />
             </template>
 
-            <template #date>{{ $d(new Date(item.ended_at)) }}</template>
+            <template #date>
+              <span data-testid="room-item-date">{{
+                $d(new Date(item.ended_at))
+              }}</span>
+            </template>
 
             <template #visualize>
               <div
                 v-if="isMobile"
+                :data-testid="`room-item-visualize-icon-${item.uuid}`"
                 @click="emitOpenRoom(item)"
                 @keypress.enter="emitOpenRoom(item)"
               >
@@ -69,6 +93,7 @@
               <a
                 v-else
                 :href="`/closed-chats/${item.uuid}`"
+                :data-testid="`room-item-visualize-button-link-${item.uuid}`"
                 @click.prevent.stop="
                   $router.push({
                     name: 'closed-rooms.selected',
@@ -81,6 +106,7 @@
                   :text="$t('see')"
                   type="secondary"
                   size="small"
+                  :data-testid="`room-item-visualize-button-${item.uuid}`"
                 />
               </a>
             </template>
@@ -91,6 +117,7 @@
     <p
       v-if="!isTableLoading && rooms.length === 0"
       class="closed-chats__rooms-table__table__no-results"
+      data-testid="no-results-message"
     >
       {{ $t('without_results') }}
     </p>
@@ -102,6 +129,7 @@
       :countPages="roomsCountPages"
       :limit="roomsLimitPagination"
       :isLoading="isPagesLoading"
+      data-testid="table-pagination"
       @update:model-value="roomsCurrentPage = $event"
     />
 
@@ -112,6 +140,7 @@
       :text="$t('search')"
       type="primary"
       size="large"
+      data-testid="mobile-filters-button"
       @click="handleShowModalFilters"
     />
   </section>
@@ -241,8 +270,8 @@ export default {
         const response = await History.getHistoryRooms({
           offset,
           limit: roomsLimit,
-          ended_at_before: date.end,
-          ended_at_after: date.start,
+          ended_at_before: date?.end,
+          ended_at_after: date?.start,
           search: contact,
           sector: sectionToReq,
           tag: tagsToReq,

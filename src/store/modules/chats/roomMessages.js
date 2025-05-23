@@ -34,6 +34,7 @@ export const useRoomMessages = defineStore('roomMessages', {
       F: 'default', // Failed
       V: 'read', // Read
     },
+    replyMessage: null,
   }),
   actions: {
     addRoomMessageSorted({ message, addBefore }) {
@@ -183,7 +184,7 @@ export const useRoomMessages = defineStore('roomMessages', {
       }
     },
 
-    async sendRoomMessage(text) {
+    async sendRoomMessage(text, repliedMessage) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
 
@@ -194,11 +195,13 @@ export const useRoomMessages = defineStore('roomMessages', {
         itemUuid: activeRoom.uuid,
         itemUser: activeRoom.user,
         message: text,
+        repliedMessage: repliedMessage,
         sendItemMessage: () =>
           Message.sendRoomMessage(activeRoom.uuid, {
             text,
             user_email: activeRoom.user.email,
             seen: true,
+            repliedMessageId: repliedMessage?.uuid,
           }),
         addMessage: (message) => this.handlingAddMessage({ message }),
         addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
@@ -207,7 +210,11 @@ export const useRoomMessages = defineStore('roomMessages', {
       });
     },
 
-    async sendRoomMedias({ files: medias, updateLoadingFiles }) {
+    async sendRoomMedias({
+      files: medias,
+      updateLoadingFiles,
+      repliedMessage,
+    }) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
       if (!activeRoom) return;
@@ -217,11 +224,13 @@ export const useRoomMessages = defineStore('roomMessages', {
         itemUuid: activeRoom.uuid,
         itemUser: activeRoom.user,
         medias,
+        repliedMessage: repliedMessage,
         sendItemMedia: (media) =>
           Message.sendRoomMedia(activeRoom.uuid, {
             user_email: activeRoom.user.email,
             media,
             updateLoadingFiles,
+            repliedMessageId: repliedMessage?.uuid,
           }),
         addMessage: (message) => this.handlingAddMessage({ message }),
         addSortedMessage: (message) => this.addRoomMessageSorted({ message }),

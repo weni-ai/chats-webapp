@@ -1,25 +1,35 @@
 <template>
-  <div class="rooms-table-filters__container">
+  <div
+    class="rooms-table-filters__container"
+    data-testid="rooms-table-filters-container"
+  >
     <RoomsTableFiltersLoading
       v-if="isFiltersLoading"
       :vertically="vertically"
+      data-testid="filters-loading"
     />
     <section
       v-else
       class="rooms-table-filters"
       :class="{ 'rooms-table-filters--vertically': vertically }"
+      data-testid="rooms-table-filters"
     >
-      <div class="rooms-table-filters__input">
+      <div
+        class="rooms-table-filters__input"
+        data-testid="contact-filter"
+      >
         <UnnnicLabel :label="$t('chats.search_contact')" />
         <UnnnicInput
           v-model="filterContact"
           iconLeft="search-1"
           :placeholder="$t('name_or_phone')"
+          data-testid="filter-contact-input"
         />
       </div>
       <div
         v-if="sectorsToFilter.length > 2"
         class="rooms-table-filters__input"
+        data-testid="sector-filter"
       >
         <UnnnicLabel :label="$t('sector.title')" />
         <UnnnicSelectSmart
@@ -27,9 +37,13 @@
           :options="sectorsToFilter"
           orderedByIndex
           :locale="$i18n.locale"
+          data-testid="filter-sector-select"
         />
       </div>
-      <div class="rooms-table-filters__input">
+      <div
+        class="rooms-table-filters__input"
+        data-testid="tag-filter"
+      >
         <UnnnicLabel :label="$t('tags.title')" />
         <UnnnicSelectSmart
           v-model="filterTag"
@@ -39,22 +53,33 @@
           :options="tagsToFilter"
           :locale="$i18n.locale"
           multiple
+          data-testid="filter-tag-select"
         />
       </div>
-      <div class="rooms-table-filters__input">
+      <div
+        class="rooms-table-filters__input"
+        data-testid="date-filter"
+      >
         <UnnnicLabel :label="$t('date')" />
         <UnnnicSelectSmart
           v-if="isMobile"
           v-model="filterDate"
           :options="datesToFilter"
           orderedByIndex
+          data-testid="filter-date-mobile-select"
         />
         <UnnnicInputDatePicker
           v-else
           v-model="filterDate"
+          :options="filterDateOptions"
           class="rooms-table-filters__date-picker"
           position="right"
           :inputFormat="$t('date_format')"
+          :minDate="datePickerMinDate"
+          :maxDate="datePickerMaxDate"
+          data-testid="filter-date-picker"
+          @select-date="handleDateSelect"
+          @update:model-value="updateFilterDate"
         />
       </div>
       <UnnnicButton
@@ -63,6 +88,7 @@
         :text="$t('clear')"
         :disabled="isFiltersDefault"
         :type="clearFiltersType"
+        data-testid="filter-clear-button"
         @click="resetFilters"
       />
     </section>
@@ -111,6 +137,7 @@ export default {
       filterSector: [],
       filterTag: [],
       filterDate: null,
+      selectedDatesInternal: { start: null, end: null },
     };
   },
 
@@ -135,6 +162,31 @@ export default {
         start: moment().subtract(1, 'week').format('YYYY-MM-DD'),
         end: moment().format('YYYY-MM-DD'),
       };
+    },
+
+    filterDateOptions() {
+      return [
+        {
+          name: this.$t('filter.dates.last_7_days'),
+          id: 'last-7-days',
+        },
+        {
+          name: this.$t('filter.dates.last_14_days'),
+          id: 'last-14-days',
+        },
+        {
+          name: this.$t('filter.dates.last_30_days'),
+          id: 'last-30-days',
+        },
+        {
+          name: this.$t('filter.dates.last_45_days'),
+          id: 'last-45-days',
+        },
+        {
+          name: this.$t('filter.dates.last_90_days'),
+          id: 'last-90-days',
+        },
+      ];
     },
     datesToFilterOptions() {
       return [
@@ -178,13 +230,75 @@ export default {
     clearFiltersType() {
       return this.isMobile ? 'tertiary' : 'secondary';
     },
+
+    datePickerMinDate() {
+      const currentSelection = this.selectedDatesInternal;
+      const defaultMin = moment().subtract(89, 'days').format('YYYY-MM-DD');
+
+      if (!currentSelection || !currentSelection.start || this.isMobile) {
+        return defaultMin;
+      }
+
+      const momentStart = moment(currentSelection.start);
+
+      if (
+        momentStart.isValid() &&
+        (!currentSelection.end ||
+          currentSelection.start === currentSelection.end)
+      ) {
+        const calculatedMin = momentStart
+          .clone()
+          .subtract(89, 'days')
+          .format('YYYY-MM-DD');
+        return moment(calculatedMin).isValid() ? calculatedMin : defaultMin;
+      }
+
+      if (!momentStart.isValid()) {
+        return null;
+      }
+
+      if (
+        momentStart.isValid() &&
+        defaultMin !== momentStart.format('YYYY-MM-DD')
+      ) {
+        return momentStart.clone().subtract(89, 'days').format('YYYY-MM-DD');
+      }
+
+      return defaultMin;
+    },
+
+    datePickerMaxDate() {
+      const today = moment();
+      const currentSelection = this.selectedDatesInternal;
+      const defaultMax = today.format('YYYY-MM-DD');
+
+      if (!currentSelection || !currentSelection.start || this.isMobile) {
+        return defaultMax;
+      }
+
+      const momentStart = moment(currentSelection.start);
+
+      if (
+        momentStart.isValid() &&
+        (!currentSelection.end ||
+          currentSelection.start === currentSelection.end)
+      ) {
+        const calculatedMax = momentStart.clone().add(89, 'days');
+        if (calculatedMax.isAfter(today)) {
+          return defaultMax;
+        }
+        return calculatedMax.format('YYYY-MM-DD');
+      }
+
+      return defaultMax;
+    },
   },
 
   watch: {
     filterContact() {
       const TIME_TO_WAIT_TYPING = 800;
 
-      if (isMobile) {
+      if (this.isMobile) {
         this.emitUpdateFilters();
       }
 
@@ -213,6 +327,9 @@ export default {
     this.datesToFilter = this.datesToFilterOptions;
     this.filterSector = [this.filterSectorsOptionAll];
     this.filterDate = this.filterDateDefault;
+    if (!this.isMobile && this.filterDate) {
+      this.selectedDatesInternal = { ...this.filterDate };
+    }
     this.tagsToFilter = [this.filterTagDefault];
 
     this.setFiltersByQueryParams();
@@ -271,6 +388,16 @@ export default {
       }
     },
 
+    handleDateSelect(payload) {
+      if (!this.isMobile) {
+        this.selectedDatesInternal = payload;
+      }
+    },
+
+    updateFilterDate(payload) {
+      this.filterDate = payload;
+    },
+
     resetFilters() {
       if (this.isFiltersDefault) {
         return;
@@ -282,6 +409,11 @@ export default {
       }
       this.filterTag = [];
       this.filterDate = this.filterDateDefault;
+      if (!this.isMobile && this.filterDate) {
+        this.selectedDatesInternal = { ...this.filterDate };
+      } else if (this.isMobile) {
+        this.selectedDatesInternal = { start: null, end: null };
+      }
     },
 
     getRelativeDate(date, type = 'extensive') {
@@ -314,16 +446,23 @@ export default {
     emitUpdateFilters() {
       const { filterContact, filterDate, filterSector, filterTag } = this;
 
-      const dateStart = this.getRelativeDate(filterDate[0]?.value, 'digit');
-      const dateEnd = this.getRelativeDate('today', 'digit');
+      let dateStart, dateEnd;
+
+      if (this.isMobile) {
+        dateStart = this.getRelativeDate(filterDate[0]?.value, 'digit');
+        dateEnd = this.getRelativeDate('today', 'digit');
+      } else {
+        dateStart = filterDate?.start;
+        dateEnd = filterDate?.end;
+      }
 
       this.$emit('input', {
         contact: filterContact,
         sector: filterSector,
         tag: filterTag,
         date: {
-          start: filterDate.start || dateStart,
-          end: filterDate.end || dateEnd,
+          start: dateStart,
+          end: dateEnd,
         },
       });
     },
@@ -333,27 +472,59 @@ export default {
 
       this.filterContact = contactUrn || '';
 
-      if (startDate) {
-        this.filterDate.start = startDate;
-      }
-
-      if (endDate) {
-        this.filterDate.end = endDate;
+      if (!this.isMobile) {
+        if (typeof this.filterDate !== 'object' || this.filterDate === null) {
+          this.filterDate = { start: null, end: null };
+        }
+        if (startDate) {
+          this.filterDate.start = startDate;
+        }
+        if (endDate) {
+          this.filterDate.end = endDate;
+        }
+        this.selectedDatesInternal = { ...this.filterDate };
+      } else {
+        if (startDate) {
+          const dateStartExtensive = this.getRelativeDate(
+            startDate,
+            'extensive',
+          );
+          const matchingDate = this.datesToFilter.find(
+            (d) => d.value === dateStartExtensive,
+          );
+          if (matchingDate) this.filterDate = [matchingDate];
+          else {
+            this.filterDate = [
+              this.datesToFilter.find((obj) => obj.value === 'last_7_days'),
+            ];
+          }
+        }
       }
     },
 
     updateFiltersByValue() {
       if (this.value) {
         const { contact, sector, tag, date } = this.value;
-        const dateStart = this.getRelativeDate(date.start, 'extensive');
-        const matchingDate = this.datesToFilter.find(
-          (date) => date.value === dateStart,
-        );
 
         this.filterContact = contact;
         this.filterSector = sector;
         this.filterTag = tag;
-        this.filterDate = [matchingDate];
+
+        if (this.isMobile) {
+          const dateStartExtensive = this.getRelativeDate(
+            date.start,
+            'extensive',
+          );
+          const matchingDate = this.datesToFilter.find(
+            (d) => d.value === dateStartExtensive,
+          );
+          this.filterDate = matchingDate
+            ? [matchingDate]
+            : [this.datesToFilter.find((obj) => obj.value === 'last_7_days')];
+        } else {
+          this.filterDate = { start: date.start, end: date.end };
+          this.selectedDatesInternal = { ...this.filterDate };
+        }
       }
     },
   },
