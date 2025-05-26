@@ -56,6 +56,7 @@
                   'chat-messages__message',
                   messageType(message),
                   { 'different-user': isMessageByTwoDifferentUsers(message) },
+                  { highlighted: highlightedMessageUuid === message.uuid },
                 ]"
                 :time="new Date(message.created_on)"
                 :status="messageStatus({ message })"
@@ -312,6 +313,7 @@ export default {
   emits: ['scrollTop'],
 
   data: () => ({
+    highlightedMessageUuid: null,
     messageToResend: null,
     isFullscreen: false,
     currentMedia: {},
@@ -372,7 +374,18 @@ export default {
     },
     handlerClickReplyMessage(message) {
       const repliedMessageEl = this.$refs[`message-${message.uuid}`]?.[0]?.$el;
-      console.log(repliedMessageEl);
+      if (repliedMessageEl) {
+        repliedMessageEl.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+
+        this.highlightedMessageUuid = message.uuid;
+
+        setTimeout(() => {
+          this.highlightedMessageUuid = null;
+        }, 1000);
+      }
     },
     isMediaOfType(media, type) {
       return media && media.content_type?.includes(type);
@@ -601,6 +614,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@keyframes highlight-message {
+  0% {
+    filter: brightness(1) saturate(1);
+    -webkit-filter: brightness(1) saturate(1);
+  }
+  50% {
+    filter: brightness(0.8) saturate(1.1);
+    -webkit-filter: brightness(0.8) saturate(1.1);
+  }
+  100% {
+    filter: brightness(1) saturate(1);
+    -webkit-filter: brightness(1) saturate(1);
+  }
+}
+
 .chat-messages__container {
   overflow: hidden;
 
@@ -626,6 +654,10 @@ export default {
 
   &__message {
     margin-top: $unnnic-spacing-md;
+
+    &.highlighted {
+      animation: highlight-message 1s ease-in-out;
+    }
 
     &.sent {
       justify-self: flex-end;
