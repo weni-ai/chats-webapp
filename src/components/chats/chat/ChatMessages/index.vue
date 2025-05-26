@@ -64,6 +64,9 @@
                 :mediaType="isGeolocation(message.media?.[0]) ? 'geo' : ''"
                 :enableReply="enableReply"
                 :replyMessage="message.replied_message"
+                @click-reply-message="
+                  handlerClickReplyMessage(message.replied_message)
+                "
                 @reply="
                   handlerMessageReply({ ...message, content_type: 'text' })
                 "
@@ -366,6 +369,10 @@ export default {
   methods: {
     handlerMessageReply(message) {
       this.replyMessage = message;
+    },
+    handlerClickReplyMessage(message) {
+      const repliedMessageEl = this.$refs[`message-${message.uuid}`]?.[0]?.$el;
+      console.log(repliedMessageEl);
     },
     isMediaOfType(media, type) {
       return media && media.content_type?.includes(type);
