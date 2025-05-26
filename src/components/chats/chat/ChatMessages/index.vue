@@ -1,13 +1,17 @@
 <!-- eslint-disable vuejs-accessibility/alt-text -->
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
-  <div class="chat-messages__container">
+  <div
+    class="chat-messages__container"
+    data-testid="chat-messages-container"
+  >
     <ChatMessagesLoading v-show="isSkeletonLoadingActive" />
     <section
       v-show="!isSkeletonLoadingActive"
       v-if="chatUuid && messagesSorted"
       ref="chatMessages"
       class="chat-messages"
+      data-testid="chat-messages"
       @scroll="handleScroll"
     >
       <section
@@ -65,6 +69,7 @@
                 :mediaType="isGeolocation(message.media?.[0]) ? 'geo' : ''"
                 :enableReply="enableReply"
                 :replyMessage="message.replied_message"
+                data-testid="chat-message"
                 @click-reply-message="
                   handlerClickReplyMessage(message.replied_message)
                 "
@@ -88,6 +93,7 @@
                     'chat-messages__message',
                     messageType(message),
                     { 'different-user': isMessageByTwoDifferentUsers(message) },
+                    { highlighted: highlightedMessageUuid === message.uuid },
                   ]"
                   :mediaType="
                     isImage(media)
@@ -102,6 +108,10 @@
                   :signature="messageSignature(message)"
                   :enableReply="enableReply"
                   :replyMessage="message.replied_message"
+                  data-testid="chat-message"
+                  @click-reply-message="
+                    handlerClickReplyMessage(message.replied_message)
+                  "
                   @reply="
                     handlerMessageReply({
                       ...message,
@@ -145,6 +155,7 @@
                     'chat-messages__message',
                     messageType(message),
                     { 'different-user': isMessageByTwoDifferentUsers(message) },
+                    { highlighted: highlightedMessageUuid === message.uuid },
                   ]"
                   :time="new Date(message.created_on)"
                   :documentName="
@@ -155,6 +166,10 @@
                   :signature="messageSignature(message)"
                   :enableReply="enableReply"
                   :replyMessage="message.replied_message"
+                  data-testid="chat-message"
+                  @click-reply-message="
+                    handlerClickReplyMessage(message.replied_message)
+                  "
                   @reply="
                     handlerMessageReply({
                       ...message,
