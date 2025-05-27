@@ -38,7 +38,10 @@
 </template>
 
 <script>
+import { mapWritableState } from 'pinia';
 import StarsIcon from './stars.svg';
+import { useRooms } from '@/store/modules/chats/rooms';
+
 export default {
   name: 'ChatSummary',
   props: {
@@ -67,13 +70,20 @@ export default {
       isTyping: false,
     };
   },
+  computed: {
+    ...mapWritableState(useRooms, ['activeRoomSummary']),
+  },
   watch: {
     summaryText: {
       immediate: true,
-      handler() {
-        this.typeWriter(this.summaryText, 10);
+      async handler() {
+        await this.typeWriter(this.summaryText, 10);
       },
     },
+  },
+  unmounted() {
+    this.activeRoomSummary = '';
+    this.animatedText = '';
   },
   methods: {
     async typeWriter(text, speed) {
