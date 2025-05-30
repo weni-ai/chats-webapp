@@ -7,6 +7,10 @@ vi.mock('@/store/modules/chats/rooms', () => ({
   useRooms: vi.fn(),
 }));
 
+vi.mock('@/store/modules/config', () => ({
+  useConfig: vi.fn(() => ({})),
+}));
+
 vi.mock('@/services/api/websocket/soundNotification', () => ({
   default: vi.fn().mockImplementation(() => ({
     notify: vi.fn(),

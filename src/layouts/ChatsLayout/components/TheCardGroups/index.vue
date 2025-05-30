@@ -72,6 +72,12 @@
         }
       "
     >
+      <UnnnicDisclaimer
+        v-if="enableAutomaticRoomRouting"
+        class="room-container__chats-router-info"
+        :text="$t('chats.queue_priority_disclaimer')"
+        iconColor="neutral-dark"
+      />
       <CardGroup
         v-if="discussions.length"
         :label="$t('chats.discussions', { length: discussions.length })"
@@ -79,7 +85,7 @@
         @open="openDiscussion"
       />
       <CardGroup
-        v-if="rooms_queue.length"
+        v-if="rooms_queue.length && !enableAutomaticRoomRouting"
         :label="$t('chats.waiting', { length: rooms_queue.length })"
         :rooms="rooms_queue"
         roomsType="waiting"
