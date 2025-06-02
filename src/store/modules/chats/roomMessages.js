@@ -13,6 +13,7 @@ import {
   sendMedias,
   resendMedia,
   resendMessage,
+  removeFromGroupedMessages,
 } from '@/utils/messages';
 
 export const useRoomMessages = defineStore('roomMessages', {
@@ -112,11 +113,20 @@ export const useRoomMessages = defineStore('roomMessages', {
       const updatedMessage =
         parseMessageToMessageWithSenderProp(treatedMessage);
 
+      const toUpdatedMessage = this.roomMessages.find(
+        (mappedMessage) => mappedMessage.uuid === uuid,
+      );
+
       const messageIndex = this.roomMessages.findIndex(
         (mappedMessage) => mappedMessage.uuid === uuid,
       );
+
       if (messageIndex !== -1) {
         this.roomMessages[messageIndex] = updatedMessage;
+        removeFromGroupedMessages(this.roomMessagesSorted, {
+          message: toUpdatedMessage,
+        });
+        this.addRoomMessageSorted({ message: updatedMessage });
       }
 
       this.removeMessageFromSendings(uuid);
