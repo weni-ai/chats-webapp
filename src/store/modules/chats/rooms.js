@@ -51,6 +51,10 @@ export const useRooms = defineStore('rooms', {
 
     addRoom(room) {
       if (room.uuid) {
+        const isRoomAlreadyInList = this.rooms.some(
+          (mappedRoom) => mappedRoom.uuid === room.uuid,
+        );
+        if (isRoomAlreadyInList) return;
         this.rooms.unshift({ ...room });
       }
     },
