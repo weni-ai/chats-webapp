@@ -31,7 +31,7 @@ export default {
       `custom_status_type/?project=${projectUuid}`,
     );
     const customStatuses =
-      response.data?.results.map((status) => ({
+      response.data?.results?.map((status) => ({
         value: status.uuid,
         label: status.name,
         color: 'brown',

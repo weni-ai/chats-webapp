@@ -392,3 +392,37 @@ export function groupMessages(messagesReference, { message, addBefore }) {
     currentMinuteEntry.messages,
   );
 }
+
+export function removeFromGroupedMessages(messagesReference, { message }) {
+  const messageTimestamp = moment(message.created_on);
+  const messageDate = messageTimestamp.format('L');
+  const messageMinute = messageTimestamp.format('LT');
+
+  const dateIndex = messagesReference.findIndex(
+    (obj) => obj.date === messageDate,
+  );
+
+  if (dateIndex === -1) {
+    return;
+  }
+
+  const currentDateEntry = messagesReference[dateIndex];
+
+  const minuteIndex = currentDateEntry.minutes.findIndex(
+    (obj) => obj.minute === messageMinute,
+  );
+
+  if (minuteIndex === -1) {
+    return;
+  }
+
+  const currentMinuteEntry = currentDateEntry.minutes[minuteIndex];
+
+  currentMinuteEntry.messages = currentMinuteEntry.messages.filter(
+    (obj) => obj.uuid !== message.uuid,
+  );
+
+  if (!currentMinuteEntry.messages.length) {
+    currentDateEntry.minutes.splice(minuteIndex, 1);
+  }
+}
