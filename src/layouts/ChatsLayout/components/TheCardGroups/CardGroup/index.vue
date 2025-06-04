@@ -39,6 +39,7 @@
             'room-card--selected': activeRoom?.uuid === room?.uuid,
           }"
           @click="open(room)"
+          @click-pin="handlePin(room, $event)"
           @update-selected="updateIsRoomSelected(room.uuid, $event)"
           @mousedown="activeRoomIndex = index"
           @mouseup="activeRoomIndex = null"
@@ -110,7 +111,7 @@ export default {
     },
   },
 
-  emits: ['open'],
+  emits: ['open', 'pin'],
 
   data() {
     return {
@@ -152,6 +153,9 @@ export default {
     ...mapActions(useRooms, ['setSelectedRoomsToTransfer']),
     open(room) {
       this.$emit('open', room);
+    },
+    handlePin(room, type) {
+      this.$emit('pin', room, type);
     },
     unreadMessages(discussionId) {
       const { newMessagesByDiscussion } = this;
