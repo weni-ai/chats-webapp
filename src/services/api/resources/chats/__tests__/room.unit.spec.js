@@ -166,4 +166,47 @@ describe('Room service', () => {
       expect(result).toEqual(mockResponse);
     });
   });
+
+  describe('pinRoom', () => {
+    it('should make a POST request to pin a room with default status true', async () => {
+      const mockResponse = { data: { success: true } };
+      http.post.mockResolvedValue(mockResponse);
+      const uuid = 'mocked-uuid';
+
+      const result = await roomService.pinRoom({ uuid });
+
+      expect(http.post).toHaveBeenCalledWith(`/room/${uuid}/pin/`, {
+        status: true,
+      });
+      expect(result).toEqual(mockResponse.data);
+    });
+
+    it('should make a POST request to pin a room with explicit status true', async () => {
+      const mockResponse = { data: { success: true } };
+      http.post.mockResolvedValue(mockResponse);
+      const uuid = 'mocked-uuid';
+      const status = true;
+
+      const result = await roomService.pinRoom({ uuid, status });
+
+      expect(http.post).toHaveBeenCalledWith(`/room/${uuid}/pin/`, {
+        status: true,
+      });
+      expect(result).toEqual(mockResponse.data);
+    });
+
+    it('should make a POST request to unpin a room with status false', async () => {
+      const mockResponse = { data: { success: true } };
+      http.post.mockResolvedValue(mockResponse);
+      const uuid = 'mocked-uuid';
+      const status = false;
+
+      const result = await roomService.pinRoom({ uuid, status });
+
+      expect(http.post).toHaveBeenCalledWith(`/room/${uuid}/pin/`, {
+        status: false,
+      });
+      expect(result).toEqual(mockResponse.data);
+    });
+  });
 });
