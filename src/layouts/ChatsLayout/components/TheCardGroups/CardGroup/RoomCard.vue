@@ -27,11 +27,15 @@
       :waitingTime="waitingTimeComputed"
       :unreadMessages="unreadMessages"
       :tabindex="0"
+      :activePin="isProgressRoom ? true : false"
+      :pinned="room.is_pinned"
+      :schemePin="handleSchemePin"
       :selected="room.uuid === activeRoomId && active"
       :locale="locale"
       :lastInteractionTime="room.last_interaction"
       :projectName="room.config?.name"
       @click="$emit('click')"
+      @click-pin="$emit('clickPin', $event)"
       @keypress.enter="$emit('click')"
     />
   </section>
@@ -71,7 +75,7 @@ export default {
       default: '',
     },
   },
-  emits: ['click', 'update-selected'],
+  emits: ['click', 'update-selected', 'clickPin'],
 
   data: () => ({
     formatContactName,
@@ -88,6 +92,8 @@ export default {
         return store.newMessagesByRoom[this.room.uuid]?.messages;
       },
       activeRoomId: (store) => store.activeRoom?.uuid,
+      rooms: 'agentRooms',
+      maxPinLimit: 'maxPinLimit',
     }),
     hideContactMessageInfo() {
       return this.roomType === 'waiting' && this.enableAutomaticRoomRouting;
@@ -108,6 +114,18 @@ export default {
     },
     formattedContactName() {
       return formatContactName(this.room);
+    },
+    totalPinnedRooms() {
+      return this.rooms.filter((room) => room.is_pinned).length || 0;
+    },
+    handleSchemePin() {
+      if (this.totalPinnedRooms === this.maxPinLimit && !this.room.is_pinned) {
+        return 'neutral-cleanest';
+      }
+      return 'neutral-cloudy';
+    },
+    isProgressRoom() {
+      return this.roomType === 'in_progress';
     },
   },
 
