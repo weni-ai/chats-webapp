@@ -205,6 +205,16 @@
       "most_recent": "Most recent",
       "older": "Older"
     },
+    "room_pin": {
+      "success_pin": "Chat pinned with success",
+      "success_unpin": "Unpinned chat",
+      "error_pin_limit": "You can pin up to {max_pin_limit} chats",
+      "error_404": "The room doesn't exist",
+      "error_403": "Is not a room user"
+    },
+    "errors": {
+      "401": "Authentication error"
+    },
     "search_contact": "Search contact",
     "tags": "Chat tags",
     "discussions": "Discussions ({length})",

@@ -208,6 +208,16 @@
       "most_recent": "Mais recente",
       "older": "Más antiguo"
     },
+    "room_pin": {
+      "success_pin": "Chat fijado con éxito",
+      "success_unpin": "Chat desfijado",
+      "error_pin_limit": "Puedes fijar hasta {max_pin_limit} chats",
+      "error_404": "La sala no existe",
+      "error_403": "No es un usuario de la sala"
+    },
+    "errors": {
+      "401": "Error de autenticación"
+    },
     "search_contact": "Buscar contacto",
     "tags": "Etiquetas de chat",
     "discussions": "Discusiones ({length})",
