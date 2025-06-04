@@ -9,6 +9,7 @@ export const useRooms = defineStore('rooms', {
   state: () => ({
     rooms: [],
     activeRoom: null,
+    maxPinLimit: 0,
     newMessagesByRoom: {},
     hasNextRooms: true,
     canUseCopilot: false,
@@ -96,6 +97,7 @@ export const useRooms = defineStore('rooms', {
       }
       this.hasNextRooms = listRoomHasNext;
       this.rooms = gettedRooms;
+      this.maxPinLimit = response.max_pin_limit || 0;
 
       return gettedRooms;
     },
