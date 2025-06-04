@@ -90,7 +90,9 @@
         :label="$t('chats.in_progress', { length: rooms.length })"
         :rooms="rooms"
         :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
+        roomsType="in_progress"
         @open="openRoom"
+        @pin="handlePinRoom"
       />
       <CardGroup
         v-if="rooms_sent_flows.length"
@@ -114,6 +116,7 @@
 <script>
 import isMobile from 'is-mobile';
 import { mapActions, mapState } from 'pinia';
+import unnnic from '@weni/unnnic-system';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
@@ -123,6 +126,8 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup/index.vue';
 import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
+import Room from '@/services/api/resources/chats/room';
+
 export default {
   name: 'TheCardGroups',
   components: {
@@ -156,6 +161,10 @@ export default {
     isMobile: isMobile(),
     showModalQueue: false,
     noQueueSelected: false,
+    pinRoomLoading: {
+      status: false,
+      uuid: '',
+    },
   }),
   computed: {
     ...mapState(useRooms, {
@@ -164,6 +173,7 @@ export default {
       rooms_sent_flows: 'waitingContactAnswer',
       listRoomHasNext: 'hasNextRooms',
       newMessagesByRoom: 'newMessagesByRoom',
+      maxPinLimit: 'maxPinLimit',
     }),
     ...mapState(useConfig, ['project', 'enableAutomaticRoomRouting']),
     ...mapState(useProfile, ['me']),
@@ -188,6 +198,9 @@ export default {
         this.rooms_sent_flows.length === 0 &&
         this.discussions.length === 0
       );
+    },
+    totalPinnedRooms() {
+      return this.rooms.filter((room) => room.is_pinned).length || 0;
     },
   },
   watch: {
@@ -250,8 +263,8 @@ export default {
     clearField() {
       this.nameOfContact = '';
     },
-    async listRoom(concat, order = '-last_interaction') {
-      this.isLoadingRooms = !concat;
+    async listRoom(concat, order = '-last_interaction', noLoading = false) {
+      this.isLoadingRooms = !noLoading;
       const { viewedAgent } = this;
       try {
         await this.getAllRooms({
@@ -262,8 +275,8 @@ export default {
           contact: this.nameOfContact,
           viewedAgent,
         });
-      } catch {
-        console.error('Não foi possível listar as salas');
+      } catch (error) {
+        console.error('Error listing rooms', error);
       } finally {
         this.isLoadingRooms = false;
       }
@@ -271,7 +284,7 @@ export default {
     searchForMoreRooms() {
       if (this.listRoomHasNext) {
         this.page += 1;
-        this.listRoom(true);
+        this.listRoom(true, '-last_interaction', true);
       }
     },
     async listDiscussions() {
@@ -281,8 +294,8 @@ export default {
           viewedAgent,
           filters: { search: this.nameOfContact },
         });
-      } catch {
-        console.error('Não foi possível listar as discussões');
+      } catch (error) {
+        console.error('Error listing discussions', error);
       }
     },
     handleScroll(target) {
@@ -296,6 +309,90 @@ export default {
 
     handleModalQueuePriorization() {
       this.showModalQueue = !this.showModalQueue;
+    },
+
+    async handlePinRoom(room, type) {
+      const isLoadingSamePinRoom =
+        this.pinRoomLoading.status && this.pinRoomLoading.uuid === room.uuid;
+
+      if (
+        (room.is_pinned && type === 'pin') ||
+        (!room.is_pinned && type === 'unpin') ||
+        isLoadingSamePinRoom
+      ) {
+        return;
+      }
+
+      const types = {
+        pin: {
+          request: () => Room.pinRoom({ uuid: room.uuid, status: true }),
+          successMessage: this.$t('chats.room_pin.success_pin'),
+        },
+        unpin: {
+          request: () => Room.pinRoom({ uuid: room.uuid, status: false }),
+          successMessage: this.$t('chats.room_pin.success_unpin'),
+        },
+      };
+
+      if (this.maxPinLimit === this.totalPinnedRooms && type === 'pin') {
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('chats.room_pin.error_pin_limit', {
+              max_pin_limit: this.maxPinLimit,
+            }),
+            type: 'default',
+          },
+          seconds: 5,
+        });
+
+        return;
+      }
+
+      try {
+        this.pinRoomLoading = {
+          status: true,
+          uuid: room.uuid,
+        };
+        await types[type].request();
+        await this.listRoom(false, '-last_interaction', true);
+        unnnic.unnnicCallAlert({
+          props: {
+            text: types[type].successMessage,
+            type: 'success',
+          },
+          seconds: 5,
+        });
+      } catch (error) {
+        console.error('Pin room error', error);
+        let errorText = '';
+
+        if (error.response.status === 401) {
+          errorText = this.$t('chats.errors.401');
+        } else if (error.response.status === 403) {
+          errorText = this.$t('chats.room_pin.error_403');
+        } else if (error.response.status === 404) {
+          errorText = this.$t('chats.room_pin.error_404');
+        } else if (error.response.status === 400) {
+          errorText = this.$t('chats.room_pin.error_pin_limit', {
+            max_pin_limit: this.maxPinLimit,
+          });
+        } else {
+          errorText = this.$t('chats.errors.default');
+        }
+
+        unnnic.unnnicCallAlert({
+          props: {
+            text: errorText,
+            type: 'error',
+          },
+          seconds: 5,
+        });
+      } finally {
+        this.pinRoomLoading = {
+          status: false,
+          uuid: '',
+        };
+      }
     },
   },
 };
