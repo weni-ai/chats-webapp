@@ -132,10 +132,14 @@ export const useRooms = defineStore('rooms', {
     },
 
     updateRoom({ room, userEmail, routerReplace, viewedAgentEmail }) {
+      console.log('updateRoom', room);
       const dashboardStore = useDashboard();
-      const filteredRooms = this.rooms
+      const rooms = this.rooms;
+      const filteredRooms = rooms
         .map((mappedRoom) =>
-          mappedRoom.uuid === room.uuid ? { ...room } : mappedRoom,
+          mappedRoom.uuid === room.uuid
+            ? { is_pinned: mappedRoom?.is_pinned, ...room }
+            : mappedRoom,
         )
         .filter((filteredRoom) => {
           return this.checkUserSeenRoom({
