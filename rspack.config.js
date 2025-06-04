@@ -14,7 +14,6 @@ const targets = ['chrome >= 87', 'edge >= 88', 'firefox >= 78', 'safari >= 14'];
 module.exports = defineConfig({
   context: __dirname,
   devServer: {
-    port: process.env.PORT || 3000,
     historyApiFallback: true,
     hot: true,
     liveReload: false,
@@ -22,7 +21,7 @@ module.exports = defineConfig({
   },
   output: {
     path: path.resolve(__dirname, './dist'),
-    publicPath: `${process.env.PUBLIC_PATH_URL}:${process.env.PORT}/`,
+    publicPath: `${process.env.PUBLIC_PATH_URL}`,
     filename: 'assets/js/[name]-[contenthash].js',
     chunkFilename: 'assets/js/[name]-[contenthash].js',
     assetModuleFilename: 'assets/[name]-[hash][ext]',
