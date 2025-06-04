@@ -59,6 +59,13 @@ module.exports = defineConfig({
           filename: 'assets/images/[name]-[hash][ext]',
         },
       },
+      {
+        test: /\.(wav|mp3)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'assets/sounds/[name]-[hash][ext]',
+        },
+      },
     ],
   },
   plugins: [
