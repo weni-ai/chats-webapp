@@ -132,7 +132,6 @@ export const useRooms = defineStore('rooms', {
     },
 
     updateRoom({ room, userEmail, routerReplace, viewedAgentEmail }) {
-      console.log('updateRoom', room);
       const dashboardStore = useDashboard();
       const rooms = this.rooms;
       const filteredRooms = rooms
