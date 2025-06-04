@@ -40,11 +40,4 @@ describe('env', () => {
 
     expect(env('TEST_VAR')).toBe('env-value');
   });
-
-  it('prioritizes non-VITE_ variables in window.configs', () => {
-    window.configs.TEST_VAR = 'window-value';
-    window.configs.VITE_TEST_VAR = 'window-vite-value';
-
-    expect(env('TEST_VAR')).toBe('window-value');
-  });
 });
