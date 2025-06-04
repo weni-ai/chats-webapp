@@ -216,7 +216,8 @@
       "error_403": "No es un usuario de la sala"
     },
     "errors": {
-      "401": "Error de autenticación"
+      "401": "Error de autenticación",
+      "default": "Ocurrió un error, por favor, inténtelo de nuevo más tarde"
     },
     "search_contact": "Buscar contacto",
     "tags": "Etiquetas de chat",

@@ -213,7 +213,8 @@
       "error_403": "Is not a room user"
     },
     "errors": {
-      "401": "Authentication error"
+      "401": "Authentication error",
+      "default": "An error occurred, please try again later"
     },
     "search_contact": "Search contact",
     "tags": "Chat tags",
