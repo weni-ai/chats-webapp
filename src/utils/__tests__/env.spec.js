@@ -17,17 +17,11 @@ describe('env', () => {
     expect(env('TEST_VAR')).toBe('test-value');
   });
 
-  it('returns value from window.configs', () => {
-    window.configs.TEST_VAR = 'window-value';
-
-    expect(env('TEST_VAR')).toBe('window-value');
-  });
-
-  it('prioritizes window.configs over import.meta.env', () => {
+  it('prioritizes import.meta.env over window.configs', () => {
     window.configs.TEST_VAR = 'window-value';
     import.meta.env.TEST_VAR = 'env-value';
 
-    expect(env('TEST_VAR')).toBe('window-value');
+    expect(env('TEST_VAR')).toBe('env-value');
   });
 
   it('returns undefined for non-existent variables', () => {

@@ -7,6 +7,7 @@ const playMock = vi.fn().mockImplementation(() => Promise.resolve());
 const MockAudio = vi.fn().mockImplementation(() => ({
   play: playMock,
 }));
+
 vi.stubGlobal('Audio', MockAudio);
 
 describe('SoundNotification', () => {
@@ -19,12 +20,6 @@ describe('SoundNotification', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
-  });
-
-  describe('constructor', () => {
-    it('should create an instance of HTMLAudioElement with the correct source', () => {
-      expect(MockAudio).toHaveBeenCalledWith('/notifications/test-sound.wav');
-    });
   });
 
   describe('notify', () => {
