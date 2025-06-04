@@ -33,29 +33,16 @@
         <div>
           <span>{{ $t('chats.room_list.order_by') }}</span>
         </div>
-        <div
-          class="apply-filter"
-          style="cursor: pointer"
-        >
+        <div class="apply-filter">
           <span
-            :style="{
-              fontWeight: lastCreatedFilter ? '700' : '400',
-            }"
-            @click="
-              (listRoom(false, '-last_interaction'),
-              ((lastCreatedFilter = true), (createdOnFilter = false)))
-            "
+            :class="{ 'filter-active': lastCreatedFilter }"
+            @click="handleMostRecentFilter"
             >{{ $t('chats.room_list.most_recent') }}</span
           >
           <span> | </span>
           <span
-            :style="{
-              fontWeight: createdOnFilter ? '700' : '400',
-            }"
-            @click="
-              (listRoom(false, 'last_interaction'),
-              ((createdOnFilter = true), (lastCreatedFilter = false)))
-            "
+            :class="{ 'filter-active': createdOnFilter }"
+            @click="handleOlderFilter"
           >
             {{ $t('chats.room_list.older') }}</span
           >
@@ -165,6 +152,7 @@ export default {
       status: false,
       uuid: '',
     },
+    orderBy: '-last_interaction',
   }),
   computed: {
     ...mapState(useRooms, {
@@ -263,7 +251,7 @@ export default {
     clearField() {
       this.nameOfContact = '';
     },
-    async listRoom(concat, order = '-last_interaction', noLoading = false) {
+    async listRoom(concat, order = this.orderBy, noLoading = false) {
       this.isLoadingRooms = !noLoading;
       const { viewedAgent } = this;
       try {
@@ -284,7 +272,7 @@ export default {
     searchForMoreRooms() {
       if (this.listRoomHasNext) {
         this.page += 1;
-        this.listRoom(true, '-last_interaction', true);
+        this.listRoom(true, this.orderBy, true);
       }
     },
     async listDiscussions() {
@@ -354,7 +342,7 @@ export default {
           uuid: room.uuid,
         };
         await types[type].request();
-        await this.listRoom(false, '-last_interaction', true);
+        await this.listRoom(false, this.orderBy, true);
         unnnic.unnnicCallAlert({
           props: {
             text: types[type].successMessage,
@@ -393,6 +381,18 @@ export default {
           uuid: '',
         };
       }
+    },
+    handleMostRecentFilter() {
+      this.orderBy = '-last_interaction';
+      this.listRoom(false, this.orderBy, true);
+      this.createdOnFilter = false;
+      this.lastCreatedFilter = true;
+    },
+    handleOlderFilter() {
+      this.orderBy = 'last_interaction';
+      this.listRoom(false, this.orderBy, true);
+      this.createdOnFilter = true;
+      this.lastCreatedFilter = false;
     },
   },
 };
@@ -442,6 +442,14 @@ export default {
     align-items: center;
     font-size: $unnnic-font-size-body-md;
     color: $unnnic-color-neutral-cloudy;
+
+    .apply-filter {
+      cursor: pointer;
+    }
+
+    .filter-active {
+      font-weight: 700;
+    }
   }
 }
 </style>
