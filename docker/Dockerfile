@@ -33,14 +33,14 @@ ENV CHATS_PROJECTS_DASHBOARD_TIMER_REFRESH=${CHATS_PROJECTS_DASHBOARD_TIMER_REFR
 
 RUN apk --no-cache add git
 
-COPY package.json yarn.lock ./
+COPY package.json package-lock.json ./
 
-RUN --mount=type=cache,target=/root/.yarn \
-    YARN_CACHE_FOLDER=/root/.yarn yarn install
+RUN --mount=type=cache,target=/root/.npm \
+    NPM_CONFIG_CACHE=/root/.npm npm install
 
 COPY . ./
 
-RUN yarn build
+RUN npm run build
 
 FROM ${OLD_IMAGE} AS old_css
 #FROM ${OLD_IMAGE} AS old_css
