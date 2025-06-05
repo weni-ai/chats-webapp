@@ -150,6 +150,12 @@ export const useRooms = defineStore('rooms', {
             viewedAgentEmail,
             userEmail,
           });
+        })
+        .sort((a, b) => {
+          if (a.is_pinned !== undefined && b.is_pinned !== undefined) {
+            return b.is_pinned - a.is_pinned;
+          }
+          return 0;
         });
 
       this.rooms = filteredRooms;
