@@ -9,6 +9,7 @@ export const useRooms = defineStore('rooms', {
   state: () => ({
     rooms: [],
     activeRoom: null,
+    maxPinLimit: 0,
     newMessagesByRoom: {},
     hasNextRooms: true,
     canUseCopilot: false,
@@ -100,6 +101,7 @@ export const useRooms = defineStore('rooms', {
       }
       this.hasNextRooms = listRoomHasNext;
       this.rooms = gettedRooms;
+      this.maxPinLimit = response.max_pin_limit || 0;
 
       return gettedRooms;
     },
@@ -135,9 +137,12 @@ export const useRooms = defineStore('rooms', {
 
     updateRoom({ room, userEmail, routerReplace, viewedAgentEmail }) {
       const dashboardStore = useDashboard();
-      const filteredRooms = this.rooms
+      const rooms = this.rooms;
+      const filteredRooms = rooms
         .map((mappedRoom) =>
-          mappedRoom.uuid === room.uuid ? { ...room } : mappedRoom,
+          mappedRoom.uuid === room.uuid
+            ? { is_pinned: mappedRoom?.is_pinned, ...room }
+            : mappedRoom,
         )
         .filter((filteredRoom) => {
           return this.checkUserSeenRoom({
