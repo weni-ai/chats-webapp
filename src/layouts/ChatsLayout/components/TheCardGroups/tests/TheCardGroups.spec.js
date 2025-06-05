@@ -571,7 +571,7 @@ describe('TheCardGroups.vue', () => {
           text: 'Chat pinned with success',
           type: 'success',
         },
-        seconds: 5,
+        seconds: 2,
       });
     });
 
@@ -595,7 +595,7 @@ describe('TheCardGroups.vue', () => {
           text: 'Unpinned chat',
           type: 'success',
         },
-        seconds: 5,
+        seconds: 2,
       });
     });
 
@@ -621,7 +621,7 @@ describe('TheCardGroups.vue', () => {
           text: 'You can pin up to 5 chats',
           type: 'default',
         },
-        seconds: 5,
+        seconds: 2,
       });
     });
 
@@ -643,7 +643,7 @@ describe('TheCardGroups.vue', () => {
           text: 'Is not a room user',
           type: 'error',
         },
-        seconds: 5,
+        seconds: 2,
       });
     });
 
