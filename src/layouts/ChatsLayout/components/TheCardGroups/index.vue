@@ -369,7 +369,7 @@ export default {
             }),
             type: 'default',
           },
-          seconds: 5,
+          seconds: 2,
         });
 
         return;
@@ -387,7 +387,7 @@ export default {
             text: types[type].successMessage,
             type: 'success',
           },
-          seconds: 5,
+          seconds: 2,
         });
       } catch (error) {
         console.error('Pin room error', error);
@@ -412,7 +412,7 @@ export default {
             text: errorText,
             type: 'error',
           },
-          seconds: 5,
+          seconds: 2,
         });
       } finally {
         this.pinRoomLoading = {
