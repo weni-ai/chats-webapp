@@ -1,6 +1,9 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
-  <div class="container">
+  <div
+    class="container"
+    data-testid="card-groups-container"
+  >
     <UnnnicInput
       v-model="nameOfContact"
       iconLeft="search-1"
@@ -9,9 +12,13 @@
       size="sm"
       :placeholder="$t('chats.search_contact')"
       class="chat-groups__search-contact-input"
+      data-testid="search-contact-input"
       @icon-right-click="nameOfContact = ''"
     />
-    <section class="chat-groups__header">
+    <section
+      class="chat-groups__header"
+      data-testid="chat-groups-header"
+    >
       <UnnnicToolTip
         v-if="
           !isMobile &&
@@ -21,27 +28,39 @@
         enabled
         :text="$t('chats.select_queues')"
         side="right"
+        data-testid="queue-prioritization-tooltip"
       >
         <UnnnicButton
           iconCenter="filter_list"
           type="secondary"
           size="small"
+          data-testid="queue-prioritization-button"
           @click="handleModalQueuePriorization"
         />
       </UnnnicToolTip>
-      <div class="order-by">
+      <div
+        class="order-by"
+        data-testid="order-by-section"
+      >
         <div>
-          <span>{{ $t('chats.room_list.order_by') }}</span>
+          <span data-testid="order-by-label">{{
+            $t('chats.room_list.order_by')
+          }}</span>
         </div>
-        <div class="apply-filter">
+        <div
+          class="apply-filter"
+          data-testid="filter-controls"
+        >
           <span
             :class="{ 'filter-active': lastCreatedFilter }"
+            data-testid="most-recent-filter"
             @click="handleMostRecentFilter"
             >{{ $t('chats.room_list.most_recent') }}</span
           >
           <span> | </span>
           <span
             :class="{ 'filter-active': createdOnFilter }"
+            data-testid="older-filter"
             @click="handleOlderFilter"
           >
             {{ $t('chats.room_list.older') }}</span
@@ -49,10 +68,14 @@
         </div>
       </div>
     </section>
-    <RoomsListLoading v-if="isLoadingRooms" />
+    <RoomsListLoading
+      v-if="isLoadingRooms"
+      data-testid="rooms-loading"
+    />
     <section
       v-else
       class="chat-groups"
+      data-testid="chat-groups-content"
       @scroll="
         (event) => {
           handleScroll(event.srcElement);
@@ -64,11 +87,13 @@
         class="room-container__chats-router-info"
         :text="$t('chats.queue_priority_disclaimer')"
         iconColor="neutral-dark"
+        data-testid="router-disclaimer"
       />
       <CardGroup
         v-if="discussions.length"
         :label="$t('chats.discussions', { length: discussions.length })"
         :discussions="discussions"
+        data-testid="discussions-card-group"
         @open="openDiscussion"
       />
       <CardGroup
@@ -76,6 +101,7 @@
         :label="$t('chats.waiting', { length: rooms_queue.length })"
         :rooms="rooms_queue"
         roomsType="waiting"
+        data-testid="waiting-rooms-card-group"
         @open="openRoom"
       />
       <CardGroup
@@ -84,6 +110,7 @@
         :rooms="rooms"
         :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
         roomsType="in_progress"
+        data-testid="in-progress-rooms-card-group"
         @open="openRoom"
         @pin="handlePinRoom"
       />
@@ -91,17 +118,20 @@
         v-if="rooms_sent_flows.length"
         :label="$t('chats.sent_flows', { length: rooms_sent_flows.length })"
         :rooms="rooms_sent_flows"
+        data-testid="sent-flows-card-group"
         @open="openRoom"
       />
       <p
         v-if="showNoResultsError"
         class="no-results"
+        data-testid="no-results-message"
       >
         {{ isSearching ? $t('without_results') : $t('without_chats') }}
       </p>
     </section>
     <ModalQueuePriorizations
       v-if="showModalQueue"
+      data-testid="queue-prioritization-modal"
       @close="handleModalQueuePriorization"
     />
   </div>
@@ -178,6 +208,9 @@ export default {
       return this.me.project_permission_role === ROLE_ADMIN;
     },
     totalUnreadMessages() {
+      if (!this.newMessagesByRoom) {
+        return 0;
+      }
       return this.rooms.reduce(
         (total, room) =>
           total + (this.newMessagesByRoom[room.uuid]?.messages?.length || 0),
