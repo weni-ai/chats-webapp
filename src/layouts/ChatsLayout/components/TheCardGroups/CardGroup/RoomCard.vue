@@ -6,6 +6,7 @@
       'room-card__container--selected': room.uuid === activeRoomId && active,
       'room-card__container--hover': hover,
     }"
+    data-testid="room-card-container"
     @mouseenter="hover = true"
     @mouseleave="hover = false"
   >
@@ -14,6 +15,7 @@
       :modelValue="checkboxValue"
       size="sm"
       class="room-card__checkbox"
+      data-testid="room-card-checkbox"
       @change="checkboxValue = $event"
     />
     <UnnnicChatsContact
@@ -23,7 +25,7 @@
         'room-card__contact--hover': hover,
       }"
       :title="formattedContactName"
-      :lastMessage="hideContactMessageInfo ? '' : room.last_message"
+      :lastMessage="hideContactMessageInfo ? null : room.last_message"
       :waitingTime="waitingTimeComputed"
       :unreadMessages="unreadMessages"
       :tabindex="0"
@@ -34,6 +36,7 @@
       :locale="locale"
       :lastInteractionTime="room.last_interaction"
       :projectName="room.config?.name"
+      data-testid="room-card-contact"
       @click="$emit('click')"
       @click-pin="$emit('clickPin', $event)"
       @keypress.enter="$emit('click')"
