@@ -389,7 +389,8 @@
     "linked_contact": "Contato vinculado ao agente {name}",
     "see_contact_history": "Ver histórico",
     "audio_tooltip": "{agent} {date} às {time}",
-    "transfering_chat": "Transferindo o chat ​📬"
+    "transfering_chat": "Transferindo o chat ​📬",
+    "external_history": "Ver histórico externo"
   },
   "discussions": {
     "title": "Discussão | Discussões",

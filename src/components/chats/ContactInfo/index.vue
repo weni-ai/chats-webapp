@@ -49,6 +49,17 @@
                   <h3 class="title">{{ contactNumber.plataform }}:</h3>
                   <h4 class="description">{{ contactNumber.contactNum }}</h4>
                 </hgroup>
+
+                <a
+                  v-if="closedRoom?.external_history_link"
+                  class="external-history-link"
+                  :href="closedRoom?.external_history_link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {{ $t('contact_info.external_history') }}
+                </a>
+
                 <hgroup
                   v-if="contactService?.length > 0"
                   class="info"
@@ -238,6 +249,7 @@ export default {
       default: false,
     },
   },
+
   emits: ['transferred-contact', 'close'],
 
   data: () => ({
@@ -583,6 +595,21 @@ export default {
     display: flex;
     flex-direction: column;
     gap: $unnnic-spacing-stack-sm;
+
+    .external-history-link {
+      color: $unnnic-color-neutral-dark;
+      margin-top: $unnnic-spacing-sm;
+      font-size: $unnnic-font-size-body-gt;
+      font-family: $unnnic-font-family-secondary;
+      font-weight: $unnnic-font-weight-bold;
+      line-height: $unnnic-line-height-medium + $unnnic-font-size-body-lg;
+      text-decoration-line: underline;
+      text-decoration-style: solid;
+      text-decoration-skip-ink: none;
+      text-decoration-thickness: auto;
+      text-underline-offset: auto;
+      text-underline-position: from-font;
+    }
 
     .avatar {
       display: flex;
