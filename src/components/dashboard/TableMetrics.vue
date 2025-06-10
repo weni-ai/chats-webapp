@@ -37,7 +37,9 @@
                 item.agent_status?.toLowerCase() === 'online' ? 'green' : 'grey'
               }`"
             />
-            <p>{{ item.first_name }}</p>
+            <p :title="`${item.first_name} ${item.last_name}`">
+              {{ item.first_name }} {{ item.last_name }}
+            </p>
           </span>
           <span
             class="table-col"
@@ -127,7 +129,6 @@ export default {
         flex: 1 1;
 
         &:last-of-type {
-          flex: 0 1 40%;
           text-align: center;
         }
       }

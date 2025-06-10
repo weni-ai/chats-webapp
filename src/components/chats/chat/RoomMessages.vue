@@ -12,6 +12,7 @@
     :tags="room?.tags"
     :isLoading="isLoading"
     :isClosedChat="!!room?.ended_at"
+    :enableReply="false"
     @scroll-top="searchForMoreMessages"
   />
 </template>
@@ -71,7 +72,7 @@ export default {
       resetRoomMessages: 'resetRoomMessages',
     }),
 
-    async handlingGetRoomMessages() {
+    handlingGetRoomMessages() {
       this.isLoading = true;
 
       this.getRoomMessages({

@@ -17,15 +17,6 @@
         @close="handleModalBulkTransfer"
       />
     </section>
-    <UnnnicButton
-      v-else
-      class="chats-layout-footer-button__button"
-      :text="$t('chats.see_history')"
-      iconLeft="history"
-      type="secondary"
-      size="small"
-      @click="navigate('closed-rooms')"
-    />
   </section>
 </template>
 
@@ -55,17 +46,13 @@ export default {
     handleModalBulkTransfer() {
       this.isModalBulkTransferOpened = !this.isModalBulkTransferOpened;
     },
-    navigate(name) {
-      this.$router.push({
-        name,
-      });
-    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .chats-layout-footer-button {
+  padding-left: $unnnic-spacing-xs;
   &__button {
     width: 100%;
   }

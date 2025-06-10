@@ -15,13 +15,7 @@
         v-show="!isLoadingSidebar"
         class="sidebar"
       >
-        <PreferencesBar
-          v-if="!isViewMode"
-          :showFlowsTriggerButton="canTriggerFlows"
-          :dashboard="canAccessDashboard"
-          @show-quick-messages="handlerShowQuickMessages"
-          @open-flows-trigger="openFlowsTrigger"
-        />
+        <StatusBar v-if="!isViewMode" />
 
         <TheCardGroups
           class="room-list"
@@ -30,6 +24,14 @@
         />
 
         <ChatsLayoutFooterButton class="footer-button" />
+
+        <ViewOptions
+          :isViewMode="isViewMode"
+          :dashboard="canAccessDashboard"
+          :showFlowsTriggerButton="canTriggerFlows"
+          @open-flows-trigger="openFlowsTrigger"
+          @show-quick-messages="handlerShowQuickMessages"
+        />
       </div>
     </slot>
 
@@ -70,25 +72,27 @@
 
 <script>
 import SidebarLoading from '@/views/loadings/HomeSidebar.vue';
-import PreferencesBar from '@/components/PreferencesBar.vue';
 import QuickMessages from '@/components/chats/QuickMessages/index.vue';
 import TheCardGroups from './components/TheCardGroups/index.vue';
 import LayoutFlowsTrigger from './components/FlowsTrigger/index.vue';
 import ChatsLayoutFooterButton from './components/FooterButton/index.vue';
+import ViewOptions from './components/ViewOptions/index.vue';
 
 import Sector from '@/services/api/resources/settings/sector.js';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
+import StatusBar from '@/components/StatusBar.vue';
 
 export default {
   name: 'ChatsLayout',
 
   components: {
-    PreferencesBar,
     TheCardGroups,
     SidebarLoading,
     LayoutFlowsTrigger,
     QuickMessages,
     ChatsLayoutFooterButton,
+    ViewOptions,
+    StatusBar,
   },
 
   props: {
@@ -203,8 +207,6 @@ section.chats-layout {
     border-right: 1px solid $unnnic-color-neutral-soft;
   }
 
-  overflow: hidden;
-
   &.has-aside {
     grid-template-columns: 3fr 6fr 3fr;
   }
@@ -221,11 +223,10 @@ section.chats-layout {
   .sidebar {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-stack-xs;
 
     height: 100%;
 
-    padding: 0 0 $unnnic-spacing-xs $unnnic-spacing-xs;
+    padding: 0;
 
     grid-column: 1;
 
@@ -243,7 +244,7 @@ section.chats-layout {
 
     height: 100%;
 
-    background-color: $unnnic-color-background-carpet;
+    background-color: rgba(253, 245, 233, 0.25);
   }
 
   .quick-message {

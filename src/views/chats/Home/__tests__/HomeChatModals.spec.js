@@ -3,11 +3,19 @@ import { createTestingPinia } from '@pinia/testing';
 
 import HomeChatModals from '../HomeChatModals.vue';
 
-import { beforeEach, describe } from 'vitest';
+import { beforeEach, describe, expect, vi } from 'vitest';
 
 const createWrapper = ({ store }) => {
   return mount(HomeChatModals, {
-    global: { plugins: [store], stubs: { UnnnicModal: true } },
+    global: {
+      plugins: [store],
+      stubs: {
+        ModalCloseChat: true,
+        ModalGetChat: true,
+        UnnnicModal: true,
+        ModalQuickMessages: true,
+      },
+    },
   });
 };
 
@@ -19,6 +27,7 @@ describe('HomeChatModals.vue', () => {
       initialState: {
         rooms: {
           activeRoom: {
+            uuid: '123',
             contact: {
               name: 'John Doe',
             },
@@ -41,9 +50,56 @@ describe('HomeChatModals.vue', () => {
   it('closes ModalGetChat when closeModal is called', async () => {
     wrapper.vm.openModal('getChat');
     expect(wrapper.vm.modalsShowing.getChat).toBe(true);
-
-    await wrapper.vm.closeModal('getChat');
+    const getChatModal = wrapper.findComponent(
+      '[data-testid="modal-get-chat"]',
+    );
+    getChatModal.vm.$emit('close-modal');
     expect(wrapper.vm.modalsShowing.getChat).toBe(false);
+  });
+
+  it('closes assumedChat when close is called', async () => {
+    wrapper.vm.openModal('assumedChat');
+    expect(wrapper.vm.modalsShowing.assumedChat).toBe(true);
+    const assumeChatModal = wrapper.findComponent(
+      '[data-testid="modal-assume-chat"]',
+    );
+    assumeChatModal.vm.$emit('close');
+    expect(wrapper.vm.modalsShowing.assumedChat).toBe(false);
+  });
+
+  it('closes closeChat when close is called', async () => {
+    wrapper.vm.openModal('closeChat');
+    await wrapper.vm.$nextTick();
+    expect(wrapper.vm.modalsShowing.closeChat).toBe(true);
+    const assumeChatModal = wrapper.findComponent(
+      '[data-testid="modal-close-chat"]',
+    );
+    assumeChatModal.vm.$emit('close');
+    expect(wrapper.vm.modalsShowing.assumedChat).toBe(false);
+  });
+
+  it('closes quickMessages when close is called', async () => {
+    wrapper.vm.openModal('quickMessages');
+    await wrapper.vm.$nextTick();
+    expect(wrapper.vm.modalsShowing.quickMessages).toBe(true);
+    const assumeChatModal = wrapper.findComponent(
+      '[data-testid="quick-messages-modal"]',
+    );
+    assumeChatModal.vm.$emit('close');
+    expect(wrapper.vm.modalsShowing.quickMessages).toBe(false);
+  });
+
+  it('closes fileUploader when close is called', async () => {
+    wrapper.vm.openModal('fileUploader');
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.modalsShowing.fileUploader).toBe(true);
+
+    const fileUploadModal = wrapper.findComponent(
+      '[data-testid="modal-file-uploader"]',
+    );
+    fileUploadModal.vm.$emit('close');
+    expect(wrapper.vm.modalsShowing.fileUploader).toBe(false);
   });
 
   it('renders FileUploader and opens it when modalsShowing.fileUploader is true', async () => {
@@ -54,6 +110,22 @@ describe('HomeChatModals.vue', () => {
     await wrapper.vm.$nextTick();
 
     expect(wrapper.findComponent({ name: 'FileUploader' }).exists()).toBe(true);
+  });
+
+  it('update modalFileUploaderFiles on update v-model', async () => {
+    wrapper.vm.openModal('fileUploader');
+    await wrapper.vm.$nextTick();
+    const fileUploadModal = wrapper.findComponent(
+      '[data-testid="modal-file-uploader"]',
+    );
+
+    fileUploadModal.vm.$emit('update:model-value', [
+      { name: 'file.pdf', type: 'application/pdf' },
+    ]);
+
+    expect(wrapper.vm.modalFileUploaderFiles).toStrictEqual([
+      { name: 'file.pdf', type: 'application/pdf' },
+    ]);
   });
 
   it('emits got-chat when emitGotChat is called', async () => {
@@ -73,5 +145,13 @@ describe('HomeChatModals.vue', () => {
     await wrapper.vm.emitSelectQuickMessage(quickMessage);
     expect(wrapper.emitted('select-quick-message')).toBeTruthy();
     expect(wrapper.emitted('select-quick-message')[0]).toEqual([quickMessage]);
+  });
+
+  it('log error on toggle undefined modal', () => {
+    const spyLogError = vi.spyOn(console, 'error');
+    wrapper.vm.toggleModal('undefined modal');
+    expect(spyLogError).toHaveBeenCalledWith(
+      `Modal 'undefined modal' does not exist.`,
+    );
   });
 });

@@ -1,13 +1,17 @@
 <!-- eslint-disable vuejs-accessibility/alt-text -->
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
-  <div class="chat-messages__container">
+  <div
+    class="chat-messages__container"
+    data-testid="chat-messages-container"
+  >
     <ChatMessagesLoading v-show="isSkeletonLoadingActive" />
     <section
       v-show="!isSkeletonLoadingActive"
       v-if="chatUuid && messagesSorted"
       ref="chatMessages"
       class="chat-messages"
+      data-testid="chat-messages"
       @scroll="handleScroll"
     >
       <section
@@ -56,11 +60,22 @@
                   'chat-messages__message',
                   messageType(message),
                   { 'different-user': isMessageByTwoDifferentUsers(message) },
+                  { highlighted: highlightedMessageUuid === message.uuid },
                 ]"
                 :time="new Date(message.created_on)"
                 :status="messageStatus({ message })"
                 :title="messageFormatTitle(new Date(message.created_on))"
                 :signature="messageSignature(message)"
+                :mediaType="isGeolocation(message.media?.[0]) ? 'geo' : ''"
+                :enableReply="enableReply"
+                :replyMessage="message.replied_message"
+                data-testid="chat-message"
+                @click-reply-message="
+                  handlerClickReplyMessage(message.replied_message)
+                "
+                @reply="
+                  handlerMessageReply({ ...message, content_type: 'text' })
+                "
               >
                 {{
                   isGeolocation(message.media?.[0])
@@ -78,6 +93,7 @@
                     'chat-messages__message',
                     messageType(message),
                     { 'different-user': isMessageByTwoDifferentUsers(message) },
+                    { highlighted: highlightedMessageUuid === message.uuid },
                   ]"
                   :mediaType="
                     isImage(media)
@@ -90,6 +106,22 @@
                   :status="messageStatus({ message })"
                   :title="messageFormatTitle(new Date(message.created_on))"
                   :signature="messageSignature(message)"
+                  :enableReply="enableReply"
+                  :replyMessage="message.replied_message"
+                  data-testid="chat-message"
+                  @click-reply-message="
+                    handlerClickReplyMessage(message.replied_message)
+                  "
+                  @reply="
+                    handlerMessageReply({
+                      ...message,
+                      content_type: isImage(media)
+                        ? 'image'
+                        : isVideo(media)
+                          ? 'video'
+                          : 'audio',
+                    })
+                  "
                   @click="resendMedia({ message, media })"
                 >
                   <img
@@ -123,6 +155,7 @@
                     'chat-messages__message',
                     messageType(message),
                     { 'different-user': isMessageByTwoDifferentUsers(message) },
+                    { highlighted: highlightedMessageUuid === message.uuid },
                   ]"
                   :time="new Date(message.created_on)"
                   :documentName="
@@ -131,6 +164,18 @@
                   :status="messageStatus({ message })"
                   :title="messageFormatTitle(new Date(message.created_on))"
                   :signature="messageSignature(message)"
+                  :enableReply="enableReply"
+                  :replyMessage="message.replied_message"
+                  data-testid="chat-message"
+                  @click-reply-message="
+                    handlerClickReplyMessage(message.replied_message)
+                  "
+                  @reply="
+                    handlerMessageReply({
+                      ...message,
+                      content_type: 'attachment',
+                    })
+                  "
                   @click="documentClickHandler({ message, media })"
                 />
               </template>
@@ -138,19 +183,11 @@
           </template>
         </section>
       </section>
-      <!-- Closed chat tags  -->
-      <!-- <chat-feedback
-      v-for="room in rooms"
-      :key="room.uuid"
-      :feedback="roomEndedChatFeedback(room)"
-      scheme="purple"
-    /> -->
       <section
         v-if="tags.length > 0"
         v-show="!isSkeletonLoadingActive"
         class="chat-messages__tags"
       >
-        <!-- <chat-feedback :feedback="roomEndedChatFeedback(room)" scheme="purple" ref="endChatElement" /> -->
         <TagGroup :tags="tags" />
       </section>
 
@@ -184,7 +221,7 @@
 </template>
 
 <script>
-import { mapState } from 'pinia';
+import { mapState, mapWritableState } from 'pinia';
 import { useDashboard } from '@/store/modules/dashboard';
 
 import moment from 'moment';
@@ -200,6 +237,7 @@ import FullscreenPreview from '@/components/chats/MediaMessage/Previews/Fullscre
 import ChatFeedback from '../ChatFeedback.vue';
 import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
 import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 export default {
   name: 'ChatMessages',
@@ -222,6 +260,10 @@ export default {
     messages: {
       type: Array,
       required: true,
+    },
+    enableReply: {
+      type: Boolean,
+      default: false,
     },
     messagesNext: {
       type: String,
@@ -286,6 +328,7 @@ export default {
   emits: ['scrollTop'],
 
   data: () => ({
+    highlightedMessageUuid: null,
     messageToResend: null,
     isFullscreen: false,
     currentMedia: {},
@@ -299,6 +342,7 @@ export default {
 
   computed: {
     ...mapState(useDashboard, ['viewedAgent']),
+    ...mapWritableState(useRoomMessages, ['replyMessage']),
     medias() {
       return this.messages
         .map((el) => el.media)
@@ -340,6 +384,24 @@ export default {
   },
 
   methods: {
+    handlerMessageReply(message) {
+      this.replyMessage = message;
+    },
+    handlerClickReplyMessage(message) {
+      const repliedMessageEl = this.$refs[`message-${message.uuid}`]?.[0]?.$el;
+      if (repliedMessageEl) {
+        repliedMessageEl.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+
+        this.highlightedMessageUuid = message.uuid;
+
+        setTimeout(() => {
+          this.highlightedMessageUuid = null;
+        }, 1000);
+      }
+    },
     isMediaOfType(media, type) {
       return media && media.content_type?.includes(type);
     },
@@ -544,7 +606,7 @@ export default {
         const elementToScroll =
           this.$refs[`message-${lastMessageUuidBeforePagination}`]?.[0]?.$el;
         if (elementToScroll) {
-          await elementToScroll.scrollIntoView({ block: 'start' });
+          await elementToScroll?.scrollIntoView({ block: 'start' });
           chatMessages.scrollTop += 1;
         }
       } else {
@@ -567,6 +629,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@keyframes highlight-message {
+  0% {
+    filter: brightness(1) saturate(1);
+    -webkit-filter: brightness(1) saturate(1);
+  }
+  50% {
+    filter: brightness(0.8) saturate(1.1);
+    -webkit-filter: brightness(0.8) saturate(1.1);
+  }
+  100% {
+    filter: brightness(1) saturate(1);
+    -webkit-filter: brightness(1) saturate(1);
+  }
+}
+
 .chat-messages__container {
   overflow: hidden;
 
@@ -592,6 +669,10 @@ export default {
 
   &__message {
     margin-top: $unnnic-spacing-md;
+
+    &.highlighted {
+      animation: highlight-message 1s ease-in-out;
+    }
 
     &.sent {
       justify-self: flex-end;
@@ -645,6 +726,10 @@ export default {
 
     display: grid;
     gap: $unnnic-spacing-md;
+
+    :deep(.unnnic-brand-tag__icon) {
+      display: none;
+    }
 
     :deep(.tag-group__tags) {
       justify-content: center;

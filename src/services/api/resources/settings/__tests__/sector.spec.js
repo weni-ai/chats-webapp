@@ -128,7 +128,7 @@ describe('Sector', () => {
     await Sector.removeManager(managerUuid);
 
     expect(http.delete).toHaveBeenCalledWith(
-      `/authorization/sector/${managerUuid}`,
+      `/authorization/sector/${managerUuid}/`,
     );
   });
 
@@ -141,7 +141,7 @@ describe('Sector', () => {
     const result = await Sector.tags(sectorUuid);
 
     expect(http.get).toHaveBeenCalledWith('/tag/', {
-      params: { sector: sectorUuid },
+      params: { sector: sectorUuid, limit: 9999 },
     });
 
     expect(result).toEqual(expectedData);

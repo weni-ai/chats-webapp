@@ -7,11 +7,14 @@ import {
 } from '@/utils/config';
 
 import Profile from '@/services/api/resources/profile';
+import { useProfile } from './profile';
 
 export const useConfig = defineStore('config', {
   state: () => ({
     token: '',
-    project: {},
+    project: {
+      config: {},
+    },
     status: '',
     copilot: {
       active: false,
@@ -66,6 +69,25 @@ export const useConfig = defineStore('config', {
     },
     setCopilotCustomRules(customRules) {
       this.copilot.customRules = customRules;
+    },
+  },
+  getters: {
+    enableAutomaticRoomRouting: ({ project }) => {
+      const { isHumanServiceProfile } = useProfile();
+
+      const isAutomaticRoutingQueueProject =
+        project.room_routing_type === 'QUEUE_PRIORITY';
+
+      return isHumanServiceProfile && isAutomaticRoutingQueueProject;
+    },
+    enableGroupsMode: ({ project }) => {
+      return 'its_principal' in (project?.config || {});
+    },
+    isPrimaryProject: ({ project }) => {
+      return !!project.config?.its_principal;
+    },
+    isSecondaryProject: ({ project }) => {
+      return !!project.config?.its_principal === false;
     },
   },
 });

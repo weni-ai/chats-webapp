@@ -3,6 +3,7 @@
   <UnnnicModal
     :text="$t('flows_trigger.add_new_contact.title')"
     class="modal-add-new-contact"
+    data-testid="modal-add-new-contact"
     @close="$emit('close')"
   >
     <form
@@ -13,12 +14,14 @@
         v-model="contact.name"
         :label="inputLabelContactName"
         :placeholder="inputPlaceholderContactName"
+        data-testid="input-contact-name"
       />
       <UnnnicInput
         v-model="contact.tel"
         :label="inputLabelContactTel"
         placeholder="+99 (99) 99999 9999"
         :mask="Object.values(telMask)"
+        data-testid="input-contact-tel"
       />
     </form>
 
@@ -27,6 +30,7 @@
         v-if="!isMobile"
         :text="$t('cancel')"
         type="secondary"
+        data-testid="cancel-button"
         @click="$emit('close')"
       />
       <UnnnicButton
@@ -34,6 +38,7 @@
         type="primary"
         :disabled="!isValidForm"
         :loading="isLoading"
+        data-testid="save-button"
         @click="saveNewContact"
       />
     </template>
@@ -68,7 +73,7 @@ export default {
     isValidForm() {
       const { contact, telMask } = this;
 
-      return (
+      return !!(
         contact.name &&
         (contact.tel.length === telMask.telephone.length ||
           contact.tel.length === telMask.cellphone.length)

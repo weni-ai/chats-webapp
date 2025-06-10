@@ -4,7 +4,10 @@
     :text="$t('discussions.start_discussion.title')"
     @close="close"
   >
-    <section class="start-discussion-form">
+    <section
+      class="start-discussion-form"
+      data-testid="start-discussion-form"
+    >
       <div class="start-discussion-form__selects">
         <div class="start-discussion-form__selects__input">
           <UnnnicLabel
@@ -16,6 +19,7 @@
             autocomplete
             autocompleteIconLeft
             autocompleteClearOnFocus
+            data-testid="select-sector"
           />
         </div>
         <div class="start-discussion-form__selects__input">
@@ -29,6 +33,7 @@
             autocomplete
             autocompleteIconLeft
             autocompleteClearOnFocus
+            data-testid="select-queue"
           />
         </div>
       </div>
@@ -38,6 +43,7 @@
         :maxlength="50"
         :placeholder="$t('discussions.start_discussion.form.discussion_reason')"
         :label="$t('discussions.start_discussion.form.subject')"
+        data-testid="input-subject"
       />
 
       <UnnnicTextArea
@@ -45,19 +51,22 @@
         :label="$t('message')"
         :placeholder="$t('discussions.start_discussion.form.explain_situation')"
         :maxLength="300"
+        data-testid="input-explain-situation"
       />
     </section>
     <template #options>
       <UnnnicButton
         :text="$t('cancel')"
         type="secondary"
-        @click="close"
+        data-testid="cancel-button"
+        @click="close()"
       />
       <UnnnicButton
         :text="$t('confirm')"
         type="primary"
         :disabled="isConfirmButtonDisabled"
         :loading="startDiscussionLoading"
+        data-testid="confirm-button"
         @click="startDiscussion"
       />
     </template>

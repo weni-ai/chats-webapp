@@ -1,8 +1,14 @@
 {
   "status": {
     "online": "En línea",
-    "offline": "Desconectada"
+    "offline": "Desconectada",
+    "set_status": "Establecer estado"
   },
+  "status-bar": {
+    "success": "Estado actualizado a {status}",
+    "error": "No se puede actualizar el estado, por favor, inténtelo de nuevo"
+  },
+  "view-option": "Opciones",
   "preferences": {
     "title": "Preferencias",
     "notifications": {
@@ -36,6 +42,14 @@
   "waiting_for": {
     "minutes": "Esperando por un minuto | Esperando por {n} minutos"
   },
+  "chat_message": {
+    "reply_message": {
+      "you": "Tú",
+      "video": "Vídeo",
+      "image": "Imagen",
+      "audio": "Mensaje de audio"
+    }
+  },
   "details": "Details",
   "doubts": "Dudas",
   "finance": "Financiero",
@@ -65,6 +79,9 @@
   "redo": "Rehacer",
   "record_audio": "Grabar audio",
   "select_all": "Seleccionar todo",
+  "image": "Imagen",
+  "video": "Vídeo",
+  "audio_message": "Mensaje de audio",
   "audio_recorder": {
     "discard_button": "Descartar"
   },
@@ -87,14 +104,22 @@
   "sectors": "Sectores",
   "sector": {
     "title": "Sector",
-    "geral": "General",
+    "general": "General",
+    "extra_options": "Opciones adicionales",
     "queues": "Colas",
     "tags": "Etiquetas",
-    "add": "Agregar nuevo sector",
+    "add": "Definir sector",
     "add_queue": "Agregar nueva cola",
     "name": "Nombre del sector",
     "placeholder": "Ejemplo: Financiero",
     "save_and_continue": "Guardar y continuar",
+    "link": {
+      "title": "Vínculo",
+      "label": "Enlace a un proyecto existente",
+      "editing_disclaimer": "No es posible editar el proyecto vinculado, si desea editar el enlace debe crear un nuevo sector y seleccionar el proyecto deseado.",
+      "has_linked_project": "El proyecto seleccionado ya está asociado a otro sector, seleccione otro proyecto para continuar.",
+      "project_placeholder": "Buscar por nombre del proyecto"
+    },
     "managers": {
       "title": "Gerentes de servicio",
       "add": {
@@ -115,7 +140,7 @@
       }
     },
     "additional_options": {
-      "title": "Opciones adicionales",
+      "title": "Opciones extras",
       "template_message": {
         "switch_active": "Activación de plantillas de mensajes activos",
         "switch_disabled": "Activación de plantillas de mensajes deshabilitada"
@@ -124,7 +149,7 @@
       "agents_signature": {
         "tooltip": "Cada mensaje intercambiado tendrá el nombre del agente que responde",
         "switch_active": "Firma activa",
-        "switch_disabled": "Firma discapacitada"
+        "switch_disabled": "Firma desactivada"
       }
     }
   },
@@ -175,7 +200,8 @@
       "edit_custom_field": "editado el custom field",
       "discussion_created": "{agent} inició la discusión con la cola {queue}",
       "discussion_joined": "{agent} se unió a la discusión",
-      "agent_took_chat": "¡Ups! El chat con el contacto {contact} ha sido asumido por otro agente"
+      "agent_took_chat": "¡Ups! El chat con el contacto {contact} ha sido asumido por otro agente",
+      "automatic_transfer_from_queue": "Sala asignada a {agent} por distribución automática de la cola."
     },
     "room_list": {
       "order_by": "Ordenar por:",
@@ -219,7 +245,8 @@
     "select_your_queues": "Selecciona tus colas",
     "no_queue_selected": "Ninguna cola seleccionada",
     "success_update_queues": "Tus colas de servicio han sido actualizadas",
-    "error_update_queues": "No se pueden actualizar sus colas de servicio"
+    "error_update_queues": "No se pueden actualizar sus colas de servicio",
+    "queue_priority_disclaimer": "Los chats en la cola ahora se asignan automáticamente. Ya no es necesario seleccionarlos manualmente."
   },
   "chats_notifications": {
     "title": "Notificaciones de WeniChats",
@@ -267,6 +294,7 @@
   "all": "Todos",
   "back_to_chats": "@:back a los chats",
   "filter": {
+    "empty_tags": "No hay etiquetas disponibles",
     "by_tag": "Filtrar por tag",
     "by_tags": "Filtrar por tags",
     "by_agent": "Filtrar por agente",
@@ -276,7 +304,10 @@
       "today": "Hoy",
       "yesterday": "Ayer",
       "last_7_days": "Últimos 7 días",
+      "last_14_days": "Últimos 14 días",
       "last_30_days": "Últimos 30 días",
+      "last_45_days": "Últimos 45 días",
+      "last_90_days": "Últimos 90 días",
       "current_month": "Mes actual",
       "last_12_months": "Últimos 12 meses"
     }
@@ -489,6 +520,7 @@
     "select": "Seleccionar flujo",
     "sending": "Enviando flujo",
     "successfully_triggered": "Flujo disparado exitosamente",
+    "error_triggering": "Error al disparar el flujo",
     "successfully_add_contact": "Contacto agregado exitosamente",
     "contact_already_exists": "El número {contact} ya está guardado en tu lista de contactos"
   },
@@ -501,6 +533,8 @@
       "middle": "añade un mensaje",
       "end": "para los agentes en este sector los usan."
     },
+    "example_message": "Mensaje de ejemplo",
+    "example_message_description": "Los mensajes rápidos son textos predefinidos que facilitan la estandarización del servicio. Todos los agentes de este sector podrán utilizar los mensajes, y podrás registrar nuevos mensajes a continuación.",
     "personal": "Tus mensajes rápidos",
     "shared": "Mensajes rápidos compartidos",
     "delete": "Eliminar mensaje rápido",
@@ -516,7 +550,8 @@
     "shortcut_field_placeholder": "Ej: Hola",
     "message_field_placeholder": "Introduzca lo que quiere",
     "successfully_added": "Mensaje rápido agregado",
-    "successfully_updated": "Mensaje rápido actualizado"
+    "successfully_updated": "Mensaje rápido actualizado",
+    "error": "Error al configurar el mensaje rápido"
   },
   "discard": "Descartar",
   "on_boarding": {
@@ -562,13 +597,32 @@
     }
   },
   "config_chats": {
-    "manage_chats": "Gestionar chats",
-    "manage_description": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización.",
+    "title": "Configuración de chat",
+    "section_sectors_title": "Sectores en {project}",
+    "section_sectors_subtitle": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización.",
+    "tabs": {
+      "settings": "Ajustes",
+      "groups": "Grupos de proyectos"
+    },
+    "custom_breaks": {
+      "title": "Pausas personalizadas",
+      "description": "Añadir nuevas pausas personalizadas, que tendrán el mismo comportamiento que las pausas sin conexión, es decir, el agente no recibirá contactos mientras utilice estas pausas personalizadas.",
+      "fields": {
+        "name": "Nuevo estado",
+        "placeholder": "Ejemplo: Almuerzo"
+      },
+      "status_exceeded_limit": "Límite de estado alcanzado, borrar para añadir nuevo estado",
+      "status_duplicate_name": "Estado ya comunicado",
+      "status_success": "Estado añadido con éxito",
+      "status_remove_success": "Estado {status} eliminado",
+      "status_error": "Ups, desafortunadamente los cambios no se han guardado, inténtalo de nuevo"
+    },
     "project_configs": {
+      "title": "Ajustes de proyectos",
       "bulk_transfer": {
         "tooltip": "Esta función permite a los agentes transferir varios contactos a la vez a una fila o agente",
         "switch_active": "Transferencia de contactos en masa activa",
-        "switch_inactive": "Transferencia de contactos en masa discapacitada"
+        "switch_inactive": "Transferencia de contactos en masa desactivada"
       },
       "queue_prioritization": {
         "tooltip": "Esta función permite a los agentes elegir las colas que recibirán contactos, dentro de las previamente seleccionadas en el sector.",
@@ -578,9 +632,106 @@
       "block_transfer_to_off_agents": {
         "switch_active": "Bloqueo de transferencias a agentes fuera de línea activo",
         "switch_inactive": "Bloqueo de transferencias a agentes fuera de línea inactivo"
+      },
+      "show_agent_status_count_timer": {
+        "switch_active": "Mostrar temporizador de recuento de estado del agente",
+        "switch_inactive": "Ocultar temporizador de recuento de estado del agente"
       }
     },
+    "custom_sector": "Personalizar nuevo sector (recomendado)",
+    "default_sector": {
+      "title": "Crear sector predeterminado (más rápido)",
+      "name": "Sector predeterminado"
+    },
+    "edit_sector": {
+      "description": "Determinar la configuración del equipo general y la jornada laboral",
+      "tag_already_exists": "Ya existe una etiqueta con ese nombre",
+      "invalid_hours": "La hora de inicio no puede ser mayor o igual a la hora de finalización."
+    },
+    "custom_queue": "Crear una fila personalizada",
+    "default_queue": {
+      "title": "Crear fila predeterminada (más rápido)",
+      "name": "Fila predeterminada"
+    },
+    "queues": {
+      "in_sector": "Fila en el sector {sector}",
+      "new": "Nueva cola",
+      "info": "Las colas son grupos de atención dentro de un sector; es posible dirigir contactos de un flujo a una cola específica",
+      "hint": "Las colas son grupos de atención dentro de un sector; podrás crear nuevas filas o editarlas cuando desees.",
+      "queue_definitions": "Configuraciones de la cola",
+      "delete_or_edit": "Eliminar o editar",
+      "message": {
+        "create": "Fila creada con éxito",
+        "update": "Fila actualizada con éxito",
+        "error": "Error al configurar los ajustes de la fila",
+        "delete_success": "Cola eliminada exitosamente",
+        "delete_error": "No se pudo eliminar la cola",
+        "config_agents_group": "Agregue o elimine agentes a través de grupos yendo a <b>Configuración de chat > Grupos</b>"
+      }
+    },
+    "groups": {
+      "new": {
+        "title": "Nuevo grupo de proyecto"
+      },
+      "general_form": {
+        "title": "Definiciones generales",
+        "service_managers": "Gerentes de servicio",
+        "field": {
+          "name": {
+            "label": "Nombre del grupo",
+            "placeholder": "Ejemplo: Ventas"
+          },
+          "manager": {
+            "label": "Agregar gerentes",
+            "placeholder": "Buscar por nombre o email"
+          }
+        }
+      },
+      "projects_form": {
+        "title": "Agregar proyectos",
+        "field": {
+          "project": {
+            "label": "Agregar proyecto",
+            "placeholder": "Buscar por nombre del proyecto"
+          }
+        },
+        "message": {
+          "has_group_sector": "No se puede agregar el proyecto {sectorName}. Este proyecto ya está siendo utilizado en otro grupo."
+        }
+      },
+      "agents_form": {
+        "title": "Agregar agentes",
+        "field": {
+          "agents": {
+            "label": "Agregar agente",
+            "placeholder": "Buscar por nombre o email"
+          }
+        }
+      },
+      "general": "General",
+      "projects": "Proyectos",
+      "agents": "Agentes",
+      "delete_or_edit": "Eliminar o editar",
+      "discart": {
+        "title": "Descartar cambios",
+        "text": "La creación del nuevo grupo se descartará al confirmar esta acción. ¿Deseas descartar los cambios realizados hasta ahora?"
+      },
+      "create_success": "¡Nuevo grupo {groupName} creado!",
+      "create_error": "¡Error al configurar algunas etapas del grupo! Verifica los detalles e intenta nuevamente si identificas alguna configuración faltante.",
+      "update_success": "¡Grupo actualizado exitosamente!",
+      "update_error": "Tuvimos problemas para actualizar algunos datos. Verifique la información y vuelva a intentarlo si falta algo.",
+      "delete": {
+        "title": "Borrar {groupName}",
+        "notice": "Esta acción será irreversible. Para confirmar la acción, por favor escribe el nombre del grupo.",
+        "success": "¡Grupo {groupName} eliminado con éxito!",
+        "error": "No se pudo eliminar el grupo. Por favor, inténtalo de nuevo."
+      }
+    },
+    "copilot": {
+      "hint": "El Co-pilot es el asistente inteligente de tu agente; se podrá activar más tarde."
+    },
     "new_sector": "Nuevo sector",
+    "new_group": "Nuevo grupo",
     "agent_title": "Agentes",
     "contacts": "Contactos",
     "open": "Abrir"
@@ -589,7 +740,15 @@
     "sector_tip": "Cree un sector para administrar la operación de cumplimiento, incluidos roles, agentes y horas de administración",
     "queues_tip": "Las colas sirven para organizar los tipos de servicio dentro de un sector, a través de las colas es posible crear grupos de servicios, crear al menos una cola para gestionar un equipo de agentes",
     "tags_tip": "Las etiquetas se utilizan para clasificar las características de los servicios y permiten buscar y filtrar chats a partir de ellos, definir etiquetas que sean relevantes para su contexto",
-    "agent_tip": "Agregue miembros a su proyecto para poder establecer como administrador"
+    "agent_tip": "Agregue miembros a su proyecto para poder establecer como administrador",
+    "alert": {
+      "create_success": "¡Nuevo sector {sectorName} creado!",
+      "create_error": "¡Error al configurar algunas etapas del sector! Verifica los detalles e intenta nuevamente si identificas alguna configuración faltante."
+    },
+    "discart": {
+      "title": "Descartar cambios",
+      "hint": "La creación del nuevo sector se descartará al confirmar esta acción. ¿Deseas descartar los cambios realizados hasta ahora?"
+    }
   },
   "your_orgs": "Sus organizaciones",
   "your_projects": "Tus proyectos",
@@ -601,5 +760,15 @@
   },
   "select_project": {
     "choose_one": "Elija uno para acceder a los chats de Weni"
+  },
+  "discart": "Descartar",
+  "confirmation": "Confirmación",
+  "order_by": {
+    "label": "Ordenar por",
+    "option": {
+      "alphabetical": "Alfabético",
+      "newer": "Más reciente",
+      "older": "Más antiguo"
+    }
   }
 }

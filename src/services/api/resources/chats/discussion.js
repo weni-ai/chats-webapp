@@ -48,10 +48,12 @@ export default {
     );
     return response.data;
   },
-  async listAll({ viewedAgent }) {
+  async listAll({ viewedAgent, filters = {} }) {
     const params = {
       project: getProject() || '',
       is_active: true,
+      limit: 9999,
+      ...filters,
     };
 
     if (viewedAgent) {

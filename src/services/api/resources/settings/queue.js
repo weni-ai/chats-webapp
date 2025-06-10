@@ -23,6 +23,7 @@ export default {
     });
     return response.data;
   },
+
   async listByProject() {
     const response = await http.get('/queue/', {
       params: {
@@ -55,26 +56,29 @@ export default {
   },
 
   async addAgent(queueUuid, agentUuid) {
-    await http.post('/authorization/queue/', {
+    return http.post('/authorization/queue/', {
       queue: queueUuid,
       permission: agentUuid,
     });
   },
 
   async removeAgent(agentUuid) {
-    await http.delete(`/authorization/queue/${agentUuid}`);
+    await http.delete(`/authorization/queue/${agentUuid}/`);
   },
 
   async editQueue(queueInfo) {
-    const response = await http.patch(`/queue/${queueInfo.uuid}`, {
+    const response = await http.patch(`/queue/${queueInfo.uuid}/`, {
       default_message: queueInfo.default_message,
     });
     return response;
   },
 
   async getQueueInformation(queueUuid) {
-    const response = await http.get(`/queue/${queueUuid}`);
-    return response.data;
+    const response = await http.get(`/queue/${queueUuid}/`);
+    return {
+      ...(response.data || {}),
+      default_message: response.data?.default_message || '',
+    };
   },
 
   async tags(queueUuid, offset, limit) {

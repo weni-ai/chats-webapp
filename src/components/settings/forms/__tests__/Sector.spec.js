@@ -1,74 +1,153 @@
-import { mount } from '@vue/test-utils';
+import { expect, describe, it, vi } from 'vitest';
+import { flushPromises, mount } from '@vue/test-utils';
 
-import FormSector from '../Sector.vue';
+import { createMemoryHistory, createRouter } from 'vue-router';
+import { createTestingPinia } from '@pinia/testing';
+import unnnic from '@weni/unnnic-system';
+
+import FormSectorGeneral from '../General.vue';
 import defaultProps from './mocks/sectorMock';
 
-function createWrapper() {
-  const wrapper = mount(FormSector, {
-    props: defaultProps,
+import Sector from '@/services/api/resources/settings/sector';
+import Project from '@/services/api/resources/settings/project';
+import Group from '@/services/api/resources/settings/group';
+
+const pinia = createTestingPinia({
+  initialState: {
+    profile: { me: { email: 'tests@weni.ai' } },
+    actionDeleteSector: vi.fn(),
+  },
+});
+
+const managerMock = {
+  uuid: '2',
+  sector: '1',
+  role: 1,
+  user: {
+    first_name: 'Test',
+    last_name: 'Test',
+    email: 'tests@weni.ai',
+    status: '',
+    photo_url: 'http://photo.link',
+  },
+};
+
+const projectMock = { uuid: '1', name: 'projectMock' };
+
+vi.spyOn(Project, 'managers').mockResolvedValue({
+  results: [managerMock],
+});
+
+vi.spyOn(Group, 'listProjects').mockResolvedValue({
+  results: [projectMock],
+});
+
+vi.mock('@/services/api/resources/settings/group', () => ({
+  default: {
+    listProjects: vi.fn(),
+  },
+}));
+
+vi.mock('@/services/api/resources/settings/sector', () => ({
+  default: {
+    update: vi.fn(() => Promise.resolve()),
+    removeManager: vi.fn(() => Promise.resolve()),
+    addManager: vi.fn(() => Promise.resolve()),
+    managers: vi.fn(() =>
+      Promise.resolve({
+        results: [{ ...managerMock, uuid: '1' }],
+      }),
+    ),
+  },
+}));
+
+const routes = [{ path: '/settings', name: 'settings' }];
+const router = createRouter({
+  history: createMemoryHistory(),
+  routes,
+});
+
+router.push = vi.fn();
+
+function createWrapper(props) {
+  const wrapper = mount(FormSectorGeneral, {
+    props: { modelValue: defaultProps.modelValue, ...props },
+    global: {
+      plugins: [router, pinia],
+      stubs: {
+        UnnnicModalNext: true,
+      },
+    },
   });
 
   return wrapper;
 }
 
-describe('FormSector', () => {
+describe('FormSectorGeneral', () => {
   let wrapper;
 
   beforeEach(() => {
     wrapper = createWrapper();
+    vi.clearAllMocks();
   });
 
-  it('should render all section titles and tooltips', () => {
-    const titles = wrapper.findAll('h2.title');
-    const tooltips = wrapper.findAllComponents({ name: 'unnnic-tooltip' });
-
-    expect(titles.at(0).text()).toMatch(
-      /Add new sector Create a sector to manage the fulfillment operation, including roles, agents and management hours/gi,
-    );
-    expect(titles.at(1).text()).toMatch(
-      /Service managers Add members to your project to be able to set as a manager/gi,
-    );
-    expect(titles.at(2).text()).toMatch(/Additional options/gi);
-    expect(titles.at(3).text()).toMatch(/Definitions of the workday/gi);
-
-    expect(titles.length).toBe(4);
-    expect(tooltips.length).toBe(3);
+  it('should emit update:modelValue on change sector value', async () => {
+    wrapper.vm.sector = {};
+    expect(wrapper.emitted()['update:modelValue']).toBeTruthy();
   });
 
-  it('should render all inputs', () => {
-    const inputSector = wrapper
-      .findAllComponents({ name: 'unnnic-input' })
-      .at(0);
-    expect(inputSector.exists()).toBe(true);
-    expect(inputSector.props('label')).toMatch(/Sector name/gi);
-    expect(inputSector.props('placeholder')).toMatch(/Example: Financial/gi);
-    const selectManagerLabel = wrapper
-      .findAllComponents({ name: 'unnnic-label' })
-      .at(0);
-    const selects = wrapper.findAllComponents({ name: 'unnnic-select-smart' });
-
-    expect(selectManagerLabel.exists()).toBe(true);
-    expect(selectManagerLabel.props('label')).toMatch(/Add manager/gi);
-    expect(selects.length).toBe(1);
-
-    const inputTrigger = wrapper.find('.unnnic-switch');
-    const inputTriggerLabel = wrapper.find('.unnnic-switch__label');
-    expect(inputTrigger.exists()).toBe(true);
-    expect(inputTriggerLabel.text()).toMatch(
-      /Triggering message templates disabled/gi,
+  it('should trigger getSectorManagers on mounted if isEditing is true and listProjectManagers', async () => {
+    const getSectorManagersSpy = vi.spyOn(
+      FormSectorGeneral.methods,
+      'getSectorManagers',
+    );
+    const listProjectManagersSpy = vi.spyOn(
+      FormSectorGeneral.methods,
+      'listProjectManagers',
     );
 
-    const inputsTime = wrapper.findAll('input[type="time"]');
-    expect(inputsTime.length).toBe(2);
+    const wrapper = createWrapper({ isEditing: true });
 
-    const inputLimitSimultaneousChats = wrapper
-      .findAllComponents({ name: 'unnnic-input' })
-      .at(-1);
-    expect(inputLimitSimultaneousChats.exists()).toBe(true);
-    expect(inputLimitSimultaneousChats.props('label')).toMatch(
-      /Limit on the number of simultaneous calls per agent/gi,
+    expect(getSectorManagersSpy).toHaveBeenCalled();
+    expect(listProjectManagersSpy).toHaveBeenCalled();
+
+    await flushPromises();
+
+    wrapper.vm.sector.managers.forEach((manager) => {
+      expect(manager.removed).toBe(false);
+    });
+  });
+
+  it('should not render sector name input isEditing is true', async () => {
+    await wrapper.setProps({ isEditing: true });
+    const nameInputSection = wrapper.find(
+      '[data-testid="sector-name-section"]',
     );
-    expect(inputLimitSimultaneousChats.props('placeholder')).toMatch(/4/gi);
+
+    expect(nameInputSection.exists()).toBe(false);
+  });
+
+  it('should emit submit event on form submit', async () => {
+    await wrapper.find('form').trigger('submit.prevent');
+    expect(wrapper.emitted().submit).toBeTruthy();
+  });
+
+  it('should display error message when working hours are invalid', async () => {
+    await wrapper.setProps({
+      isEditing: true,
+      modelValue: {
+        name: 'Sector Name',
+        managers: [],
+        workingDay: { start: '12:00', end: '11:00' },
+        maxSimultaneousChatsByAgent: '2',
+      },
+    });
+    await wrapper.vm.$nextTick();
+    const errorMessage = wrapper.find('.error-message');
+    expect(errorMessage.exists()).toBe(true);
+    expect(errorMessage.text()).toBe(
+      wrapper.vm.$t('config_chats.edit_sector.invalid_hours'),
+    );
   });
 
   it('should have a managers list rendered', async () => {
@@ -100,5 +179,272 @@ describe('FormSector', () => {
       name: 'selected-member',
     });
     expect(selectedMemberCards.length).toBe(2);
+  });
+
+  it('should remove managers from the project on click remove manager button', async () => {
+    await wrapper.setProps({
+      modelValue: {
+        ...defaultProps.modelValue,
+        managers: [managerMock],
+      },
+    });
+
+    const removeManagerSpy = vi.spyOn(wrapper.vm, 'removeManager');
+
+    const selectedManager = wrapper.findComponent({
+      name: 'selected-member',
+    });
+    const removeSelectedManagerButton = selectedManager.find(
+      '[data-testid="remove-member-button"]',
+    );
+    await removeSelectedManagerButton.trigger('click');
+    expect(removeManagerSpy).toHaveBeenCalledWith('2');
+  });
+
+  it('should disable the save button if form is invalid', async () => {
+    await wrapper.setProps({ isEditing: true });
+    const saveButton = wrapper.findComponent(
+      '[data-testid="general-save-button"]',
+    );
+    expect(saveButton.attributes('disabled')).toBeDefined();
+  });
+
+  it('should call saveSector method on save button click', async () => {
+    await wrapper.setProps({
+      isEditing: true,
+      modelValue: {
+        uuid: '1',
+        name: 'Test 1',
+        workingDay: {
+          start: '08:00',
+          end: '18:00',
+        },
+        managers: [
+          {
+            uuid: '1',
+            sector: '1',
+            role: 1,
+            user: {
+              first_name: 'Test',
+              last_name: 'Test',
+              email: 'test@test.com',
+              status: '',
+            },
+          },
+        ],
+        maxSimultaneousChatsByAgent: '2',
+      },
+    });
+
+    const saveSectorSpy = vi.spyOn(wrapper.vm, 'saveSector');
+    const unnnicAlertSpy = vi.spyOn(unnnic, 'unnnicCallAlert');
+
+    await wrapper
+      .findComponent('[data-testid="general-save-button"]')
+      .trigger('click');
+
+    expect(saveSectorSpy).toHaveBeenCalled();
+
+    expect(unnnicAlertSpy).toHaveBeenCalledWith({
+      props: {
+        text: wrapper.vm.$t('sector_update_success'),
+        type: 'success',
+      },
+      seconds: 5,
+    });
+
+    expect(router.push).toHaveBeenCalledWith('/settings');
+    unnnicAlertSpy.mockClear();
+  });
+
+  it('should handle errors in saveSector method', async () => {
+    await wrapper.setProps({
+      isEditing: true,
+      modelValue: {
+        uuid: '1',
+        name: 'Test 1',
+        workingDay: {
+          start: '08:00',
+          end: '18:00',
+        },
+        managers: [
+          {
+            uuid: '1',
+            sector: '1',
+            role: 1,
+            user: {
+              first_name: 'Test',
+              last_name: 'Test',
+              email: 'test@test.com',
+              status: '',
+            },
+          },
+        ],
+        maxSimultaneousChatsByAgent: '2',
+      },
+    });
+
+    const sectorUpdateMock = vi
+      .spyOn(Sector, 'update')
+      .mockRejectedValue(new Error());
+
+    await wrapper
+      .findComponent('[data-testid="general-save-button"]')
+      .trigger('click');
+
+    expect(sectorUpdateMock).toHaveBeenCalled();
+
+    sectorUpdateMock.mockClear();
+  });
+
+  it('should format managers to object format with value and label', async () => {
+    wrapper.vm.managersNames.forEach((item) => {
+      expect(item).toHaveProperty('label');
+      expect(item).toHaveProperty('value');
+    });
+  });
+
+  it('should add a manager in the sector', async () => {
+    const wrapper = createWrapper({ isEditing: true });
+    await flushPromises();
+
+    const addSectorManagerSpy = vi.spyOn(wrapper.vm, 'addSectorManager');
+    const addManagerSpy = vi.spyOn(wrapper.vm, 'addManager');
+
+    wrapper.vm.selectManager([{ uuid: '2' }]);
+
+    expect(addSectorManagerSpy).toHaveBeenCalledWith(managerMock);
+    expect(addManagerSpy).toHaveBeenCalledWith(managerMock);
+  });
+
+  it('should router push to settings on cancel', async () => {
+    const pushSpy = vi.spyOn(router, 'push');
+    await wrapper.setProps({ isEditing: true });
+    await wrapper.find('[data-testid="cancel-button"]').trigger('click');
+    expect(pushSpy).toHaveBeenCalledWith('/settings');
+  });
+
+  it('should emit update model value with default sector config', async () => {
+    const enableDefaultConfigRadio = wrapper.find(
+      '[data-testid="enable-default-sector-config"]',
+    );
+    await enableDefaultConfigRadio.trigger('click');
+
+    expect(wrapper.emitted('update:modelValue')[0][0])
+      .haveOwnProperty('name')
+      .eq(wrapper.vm.$t('config_chats.default_sector.name'));
+
+    expect(wrapper.emitted('update:modelValue')[0][0])
+      .haveOwnProperty('workingDay')
+      .eql({
+        start: '08:00',
+        end: '18:00',
+        dayOfWeek: 'week-days',
+      });
+
+    expect(wrapper.emitted('update:modelValue')[0][0])
+      .haveOwnProperty('maxSimultaneousChatsByAgent')
+      .eq('4');
+
+    expect(wrapper.emitted('update:modelValue')[0][0])
+      .haveOwnProperty('managers')
+      .eql([managerMock]);
+  });
+
+  it('should update model value with blank sector config', async () => {
+    await wrapper.setData({ useDefaultSector: 1 });
+    const disableDefaultConfigRadio = wrapper.find(
+      '[data-testid="disable-default-sector-config"]',
+    );
+    await disableDefaultConfigRadio.trigger('click');
+
+    expect(wrapper.emitted('update:modelValue')[0][0])
+      .haveOwnProperty('name')
+      .eq('');
+
+    expect(wrapper.emitted('update:modelValue')[0][0])
+      .haveOwnProperty('workingDay')
+      .eql({
+        start: '',
+        end: '',
+        dayOfWeek: '',
+      });
+
+    expect(wrapper.emitted('update:modelValue')[0][0])
+      .haveOwnProperty('maxSimultaneousChatsByAgent')
+      .eq('');
+
+    expect(wrapper.emitted('update:modelValue')[0][0])
+      .haveOwnProperty('managers')
+      .eql([]);
+  });
+
+  it('call service to removeManager if isEditing = true', async () => {
+    const removeManagerSpy = vi.spyOn(Sector, 'removeManager');
+    await wrapper.setProps({ isEditing: true });
+    await wrapper.vm.removeManager('1');
+    expect(removeManagerSpy).toHaveBeenCalledWith('1');
+  });
+
+  it('should return the list of project names', async () => {
+    await wrapper.setData({
+      projects: [
+        { uuid: '1', name: 'Project One' },
+        { uuid: '2', name: 'Project Two' },
+      ],
+    });
+
+    const result = wrapper.vm.projectsNames;
+
+    expect(result).toEqual([
+      { value: '', label: wrapper.vm.$t('sector.link.project_placeholder') },
+      { value: '1', label: 'Project One' },
+      { value: '2', label: 'Project Two' },
+    ]);
+  });
+
+  it('should return the list of secondary projects', async () => {
+    await wrapper.vm.listSecondaryProjects();
+    expect(wrapper.vm.projects).toEqual([projectMock]);
+  });
+
+  it('should set selected project and clear secondary projects', async () => {
+    await wrapper.vm.listSecondaryProjects();
+
+    wrapper.vm.selectProject([wrapper.vm.projectsNames[1]]);
+
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.sector.config.secondary_project).toBe(
+      wrapper.vm.projectsNames[1].value,
+    );
+  });
+
+  it('should call required methods when enableGroupsMode is true and isEditing is true', async () => {
+    const listSecondaryProjects = vi.spyOn(
+      FormSectorGeneral.methods,
+      'listSecondaryProjects',
+    );
+
+    mount(FormSectorGeneral, {
+      global: {
+        plugins: [
+          router,
+          createTestingPinia({
+            initialState: {
+              config: { project: { config: { its_principal: true } } },
+            },
+          }),
+        ],
+      },
+      props: {
+        modelValue: { ...defaultProps.modelValue },
+        isEditing: true,
+      },
+    });
+
+    await flushPromises();
+
+    expect(listSecondaryProjects).toHaveBeenCalled();
   });
 });

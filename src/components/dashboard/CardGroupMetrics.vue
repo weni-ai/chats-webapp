@@ -14,6 +14,7 @@
         v-for="metric in orderedMetrics"
         :key="metric.name"
         :name="metric.name"
+        data-testid="metric-card"
         :statuses="[
           ...(allMetrics
             ? [
@@ -24,7 +25,7 @@
                   count: metric.active_rooms || 0,
                 },
                 {
-                  title: $t('waiting_assistance'),
+                  title: $t('chats.waiting_assistance'),
                   icon: 'pending',
                   scheme: 'aux-blue-500',
                   count: metric.queue_rooms || 0,
@@ -98,7 +99,7 @@ export default {
 
   computed: {
     orderedMetrics() {
-      let orderedMetrics = this.metrics.sectors;
+      let orderedMetrics = this.metrics?.sectors;
       if (orderedMetrics?.length > 0) {
         orderedMetrics.sort((a, b) => {
           const priorityA =
@@ -146,7 +147,7 @@ export default {
     },
 
     showRoomMetrics({ active_rooms, active_chats, closed_rooms } = {}) {
-      return active_rooms || active_chats || closed_rooms;
+      return !!(active_rooms || active_chats || closed_rooms);
     },
   },
 };

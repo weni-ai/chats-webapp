@@ -6,7 +6,7 @@ import { useDiscussions } from '../store/modules/chats/discussions';
 
 import { useProfile } from '../store/modules/profile';
 
-import { removeDuplicatedMessagesByUuid } from './chats';
+import { removeDuplicatedItems } from './array';
 
 export function isValidJson(message) {
   try {
@@ -17,12 +17,13 @@ export function isValidJson(message) {
   }
 }
 
-function createTemporaryMessage({
+export function createTemporaryMessage({
   itemType = '',
   itemUuid = '',
   itemUser = {},
   message = '',
   medias = [],
+  repliedMessage = null,
 }) {
   return {
     uuid: Date.now().toString(),
@@ -32,6 +33,7 @@ function createTemporaryMessage({
     [itemType]: itemUuid,
     seen: true,
     user: itemUser,
+    replied_message: repliedMessage,
   };
 }
 
@@ -148,6 +150,7 @@ export async function treatMessages({
     itemUuid,
     getItemMessages,
   });
+
   let newMessages = messages;
 
   if (!newMessages?.length) {
@@ -177,6 +180,7 @@ export async function sendMessage({
   itemUuid,
   itemUser,
   message,
+  repliedMessage,
   sendItemMessage,
   addMessage,
   addSortedMessage,
@@ -192,6 +196,7 @@ export async function sendMessage({
     itemUuid,
     itemUser,
     message,
+    repliedMessage,
   });
 
   addMessage(temporaryMessage);
@@ -241,6 +246,7 @@ export async function sendMedias({
   itemUuid,
   itemUser,
   medias,
+  repliedMessage,
   sendItemMedia,
   addMessage,
   addFailedMessage,
@@ -261,6 +267,7 @@ export async function sendMedias({
         itemType,
         itemUuid,
         itemUser,
+        repliedMessage,
         medias: [
           { preview: mediaPreview, file: media, content_type: media.type },
         ],
@@ -381,7 +388,41 @@ export function groupMessages(messagesReference, { message, addBefore }) {
     currentMinuteEntry.messages.push(message);
   }
 
-  currentMinuteEntry.messages = removeDuplicatedMessagesByUuid(
+  currentMinuteEntry.messages = removeDuplicatedItems(
     currentMinuteEntry.messages,
   );
+}
+
+export function removeFromGroupedMessages(messagesReference, { message }) {
+  const messageTimestamp = moment(message.created_on);
+  const messageDate = messageTimestamp.format('L');
+  const messageMinute = messageTimestamp.format('LT');
+
+  const dateIndex = messagesReference.findIndex(
+    (obj) => obj.date === messageDate,
+  );
+
+  if (dateIndex === -1) {
+    return;
+  }
+
+  const currentDateEntry = messagesReference[dateIndex];
+
+  const minuteIndex = currentDateEntry.minutes.findIndex(
+    (obj) => obj.minute === messageMinute,
+  );
+
+  if (minuteIndex === -1) {
+    return;
+  }
+
+  const currentMinuteEntry = currentDateEntry.minutes[minuteIndex];
+
+  currentMinuteEntry.messages = currentMinuteEntry.messages.filter(
+    (obj) => obj.uuid !== message.uuid,
+  );
+
+  if (!currentMinuteEntry.messages.length) {
+    currentDateEntry.minutes.splice(minuteIndex, 1);
+  }
 }

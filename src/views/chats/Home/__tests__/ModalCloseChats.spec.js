@@ -35,8 +35,11 @@ Queue.tags
 
 const createWrapper = () => {
   return mount(ModalCloseChat, {
-    props: { room: roomMock },
-    global: { plugins: [createTestingPinia()] },
+    props: { room: roomMock, modelValue: true },
+    global: {
+      plugins: [createTestingPinia()],
+      stubs: { UnnnicModalDialog: true },
+    },
   });
 };
 
@@ -63,17 +66,41 @@ describe('ModalCloseChats.vue', () => {
     expect(localWrapper.vm.isLoadingTags).toBe(false);
   });
 
-  it('should emits "close" event when cancel button is clicked', async () => {
-    await wrapper.find('[data-testid="cancel-button"]').trigger('click');
+  it('should emits "close" event when fire secondaryButtonClick event', async () => {
+    const closeModal = vi.spyOn(wrapper.vm, 'closeModal');
+
+    const modal = wrapper.findComponent(
+      '[data-testid="chat-classifier-modal"]',
+    );
+
+    await modal.vm.$emit('secondaryButtonClick');
+
+    expect(wrapper.emitted()).toHaveProperty('close');
+
+    expect(closeModal).toHaveBeenCalled();
+  });
+
+  it('should call closeModal on update:modelValue', async () => {
+    const closeModal = vi.spyOn(wrapper.vm, 'closeModal');
+
+    const modal = wrapper.findComponent(
+      '[data-testid="chat-classifier-modal"]',
+    );
+
+    await modal.vm.$emit('update:model-value');
+    expect(closeModal).toHaveBeenCalled();
+
     expect(wrapper.emitted()).toHaveProperty('close');
   });
 
   it('calls Room.close and emits "close" event when closeRoom is called', async () => {
     wrapper.vm.tags = [{ uuid: 'tag1' }];
 
-    const confirmButton = wrapper.find('[data-testid="confirm-button"]');
+    const modal = wrapper.findComponent(
+      '[data-testid="chat-classifier-modal"]',
+    );
 
-    await confirmButton.trigger('click');
+    await modal.vm.$emit('primaryButtonClick');
 
     expect(Room.close).toHaveBeenCalledWith('123', ['tag1']);
     expect(wrapper.emitted()).toHaveProperty('close');

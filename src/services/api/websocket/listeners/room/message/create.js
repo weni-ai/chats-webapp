@@ -4,29 +4,58 @@ import { isValidJson } from '@/utils/messages';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useConfig } from '@/store/modules/config';
+
+const checkAndUpdateRoomLastMessage = (room, message) => {
+  const itsMessageSystem = !message.contact && !message.user;
+  const itsEmptyMessage = !message.text?.trim() && !message.media?.length;
+
+  if (itsMessageSystem) return;
+
+  // Empty messages are generated when media is sent
+  // You need to mark the id here to update in the msg.update listen
+  if (itsEmptyMessage) {
+    room.last_message.uuid = message.uuid;
+
+    return;
+  }
+
+  room.last_message = message;
+};
 
 export default async (message, { app }) => {
   const roomsStore = useRooms();
   const roomMessagesStore = useRoomMessages();
+  const configStore = useConfig();
   const { rooms, activeRoom } = roomsStore;
-  const findedRoom = rooms.find((room) => room.uuid === message.room);
-  roomsStore.bringRoomFront(findedRoom);
 
-  if (findedRoom) {
-    if (message.text) findedRoom.last_message = message.text;
+  const findRoom = rooms.find((room) => room.uuid === message.room);
+
+  roomsStore.bringRoomFront(findRoom);
+
+  if (findRoom) {
     if (app.me.email === message.user?.email) {
+      checkAndUpdateRoomLastMessage(findRoom, message);
       return;
     }
 
-    const notification = new SoundNotification('ping-bing');
-    notification.notify();
+    const { enableAutomaticRoomRouting } = configStore;
 
-    if (document.hidden) {
-      sendWindowNotification({
-        title: message.contact?.name || '',
-        message: message.text,
-        image: message.media?.[0]?.url,
-      });
+    if (!enableAutomaticRoomRouting || findRoom?.user?.email === app.me.email) {
+      const notification = new SoundNotification('ping-bing');
+      notification.notify();
+
+      if (document.hidden && !isValidJson(message.text)) {
+        try {
+          sendWindowNotification({
+            title: message.contact?.name,
+            message: message.text,
+            image: message.media?.[0]?.url,
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      }
     }
 
     const isCurrentRoom =
@@ -38,15 +67,16 @@ export default async (message, { app }) => {
       roomMessagesStore.addMessage(message);
     }
 
-    if (isValidJson(message.text)) return;
-
-    roomsStore.addNewMessagesByRoom({
-      room: message.room,
-      message: {
-        created_on: message.created_on,
-        uuid: message.uuid,
-        text: message.text,
-      },
-    });
+    if (!isValidJson(message.text)) {
+      checkAndUpdateRoomLastMessage(findRoom, message);
+      roomsStore.addNewMessagesByRoom({
+        room: message.room,
+        message: {
+          created_on: message.created_on,
+          uuid: message.uuid,
+          text: message.text,
+        },
+      });
+    }
   }
 };

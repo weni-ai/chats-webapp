@@ -1,21 +1,23 @@
 <template>
-  <div class="image-preview">
+  <section class="image-preview">
     <UnnnicToolTip
       class="image-preview__tooltip"
       enabled
       :text="tooltip || $t('fullscreen_view')"
       side="right"
+      data-testid="image-preview-tooltip"
     >
       <img
         :src="url"
         :alt="alt"
         :style="{ 'object-fit': objectFit }"
         class="clickable image-preview__image"
+        data-testid="image-preview"
         @click="handleImageClick"
         @keypress.enter="handleImageClick"
       />
     </UnnnicToolTip>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -67,7 +69,6 @@ export default {
       if (this.fullscreenOnClick) {
         this.isFullscreenByUserClick = true;
       }
-
       this.$emit('click');
     },
   },

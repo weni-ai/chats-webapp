@@ -1,37 +1,23 @@
 <template>
-  <UnnnicModal
-    class="modal-close-chat"
-    :class="{ 'modal-close-chat--mobile': isMobile }"
-    scheme="neutral-darkest"
-    :text="$t('chats.to_end_rate_the_chat')"
-    :description="$t('chats.tags_help')"
-    :closeIcon="isMobile"
-    @close="closeModal"
+  <UnnnicModalDialog
+    :modelValue="modelValue"
+    :class="{ 'modal-close-chat--mobile': isMobile, 'modal-close-chat': true }"
+    :showCloseIcon="!isMobile"
+    :title="$t('chats.to_end_rate_the_chat')"
+    :primaryButtonProps="{ text: $t('end'), loading: isLoadingCloseRoom }"
+    :secondaryButtonProps="{ text: $t('cancel') }"
+    size="lg"
+    data-testid="chat-classifier-modal"
+    @primary-button-click="closeRoom()"
+    @secondary-button-click="closeModal()"
+    @update:model-value="closeModal()"
   >
-    <section class="modal-close-chat__tags-list">
-      <ChatClassifier
-        v-model="tags"
-        :tags="sectorTags"
-        :loading="isLoadingTags"
-      />
-    </section>
-
-    <template #options>
-      <UnnnicButton
-        :text="$t('cancel')"
-        type="tertiary"
-        data-testid="cancel-button"
-        @click="closeModal"
-      />
-      <UnnnicButton
-        :text="$t('end')"
-        type="primary"
-        data-testid="confirm-button"
-        :loading="isLoadingCloseRoom"
-        @click="closeRoom"
-      />
-    </template>
-  </UnnnicModal>
+    <ChatClassifier
+      v-model="tags"
+      :tags="sectorTags"
+      :loading="isLoadingTags"
+    />
+  </UnnnicModalDialog>
 </template>
 
 <script>
@@ -53,6 +39,10 @@ export default {
   props: {
     room: {
       type: Object,
+      required: true,
+    },
+    modelValue: {
+      type: Boolean,
       required: true,
     },
   },
@@ -90,7 +80,6 @@ export default {
           20,
         );
         this.page += 1;
-        // this.sectorTags = response.results;
         this.sectorTags = this.sectorTags.concat(response.results);
         hasNext = response.next;
         this.isLoadingTags = false;
@@ -107,6 +96,7 @@ export default {
 
       const tags = this.tags.map((tag) => tag.uuid);
       await Room.close(uuid, tags);
+
       this.removeRoom(uuid);
 
       this.isLoadingCloseRoom = false;
@@ -122,41 +112,9 @@ export default {
 
 <style lang="scss" scoped>
 .modal-close-chat {
-  /*
-     These "deep" properties and their following code are being applied temporarily while
-     the unnnic modal does not undergo refactoring. They adjust the style of the modal
-     and its parts to ensure a consistent experience during this transition period.
-   */
-  :deep(.unnnic-modal-container) .unnnic-modal-container-background-body {
-    &-title {
-      padding: $unnnic-spacing-nano;
-    }
-
-    &-description {
-      padding: 0;
-
-      &-container {
-        padding-bottom: 0;
-      }
-    }
-  }
-
   &--mobile {
-    :deep(.unnnic-modal-container) .unnnic-modal-container-background {
-      &-body {
-        padding: $unnnic-spacing-sm;
-
-        &-description-container {
-          padding: 0 $unnnic-spacing-sm;
-        }
-      }
-      &-button {
-        padding: $unnnic-spacing-md $unnnic-spacing-sm;
-
-        :first-child {
-          margin-right: $unnnic-spacing-xs;
-        }
-      }
+    :deep(.unnnic-modal-dialog__container) {
+      width: 100%;
     }
   }
 

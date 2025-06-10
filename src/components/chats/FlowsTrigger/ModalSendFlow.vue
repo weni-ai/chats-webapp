@@ -3,15 +3,20 @@
   <UnnnicModal
     :text="$t('flows_trigger.send')"
     class="modal-send-flow"
+    data-testid="modal-send-flow"
     @close="$emit('close')"
   >
-    <SelectFlow v-model="selectedFlow" />
+    <SelectFlow
+      v-model="selectedFlow"
+      data-testid="select-flow"
+    />
 
     <template #options>
       <SendFlowButton
         class="modal-send-flow__handler"
         :contacts="contacts"
         :selectedFlow="selectedFlow"
+        data-testid="send-flow-button"
         @send-flow-finished="finishSendFlow"
       />
     </template>
@@ -47,11 +52,13 @@ export default {
   },
 
   methods: {
-    finishSendFlow() {
+    finishSendFlow({ hasError }) {
       callUnnnicAlert({
         props: {
-          text: this.$t('flows_trigger.successfully_triggered'),
-          type: 'success',
+          text: hasError
+            ? this.$t('flows_trigger.error_triggering')
+            : this.$t('flows_trigger.successfully_triggered'),
+          type: hasError ? 'error' : 'success',
         },
         seconds: 5,
       });

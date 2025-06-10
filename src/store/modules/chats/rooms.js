@@ -24,6 +24,13 @@ export const useRooms = defineStore('rooms', {
   }),
 
   actions: {
+    updateLastInteraction({ room, lastInteraction }) {
+      const findedRoomIndex = this.rooms.findIndex(({ uuid }) => uuid === room);
+      this.rooms[findedRoomIndex] = {
+        ...this.rooms[findedRoomIndex],
+        last_interaction: lastInteraction,
+      };
+    },
     updateMessagesByRoom({ room, message, reset = false }) {
       const roomMessages = this.newMessagesByRoom[room]?.messages || [];
 
@@ -33,6 +40,12 @@ export const useRooms = defineStore('rooms', {
           messages: reset ? [] : [...roomMessages, message],
         },
       };
+
+      if (message)
+        this.updateLastInteraction({
+          room,
+          lastInteraction: message.created_on,
+        });
     },
 
     async setActiveRoom(room) {
@@ -56,6 +69,10 @@ export const useRooms = defineStore('rooms', {
 
     addRoom(room) {
       if (room.uuid) {
+        const isRoomAlreadyInList = this.rooms.some(
+          (mappedRoom) => mappedRoom.uuid === room.uuid,
+        );
+        if (isRoomAlreadyInList) return;
         this.rooms.unshift({ ...room });
       }
     },
@@ -219,7 +236,12 @@ export const useRooms = defineStore('rooms', {
 
     removeRoom(roomUuid) {
       const filteredRooms = this.rooms.filter((r) => r.uuid !== roomUuid);
+
       this.rooms = filteredRooms;
+
+      this.selectedRoomsToTransfer = this.selectedRoomsToTransfer.filter(
+        (room) => room !== roomUuid,
+      );
 
       if (this.activeRoom && this.activeRoom?.uuid === roomUuid) {
         this.setActiveRoom(null);

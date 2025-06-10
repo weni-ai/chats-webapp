@@ -1,4 +1,4 @@
-export function removeDuplicatedItems(array, key) {
+export function removeDuplicatedItems(array, key = 'uuid') {
   const itemsChecked = new Set();
   return array.filter((item) => {
     if (itemsChecked.has(item[key])) {

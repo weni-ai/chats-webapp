@@ -13,6 +13,7 @@ import {
   sendMedias,
   resendMedia,
   resendMessage,
+  removeFromGroupedMessages,
 } from '@/utils/messages';
 
 export const useRoomMessages = defineStore('roomMessages', {
@@ -24,6 +25,7 @@ export const useRoomMessages = defineStore('roomMessages', {
     roomMessagesFailedUuids: [],
     roomMessagesNext: '',
     roomMessagesPrevious: '',
+    replyMessage: null,
   }),
   actions: {
     addRoomMessageSorted({ message, addBefore }) {
@@ -47,6 +49,7 @@ export const useRoomMessages = defineStore('roomMessages', {
     },
 
     resetRoomMessages() {
+      this.roomMessages = [];
       this.resetRoomMessagesSorted();
       this.roomMessagesNext = '';
       this.roomMessagesPrevious = '';
@@ -110,11 +113,20 @@ export const useRoomMessages = defineStore('roomMessages', {
       const updatedMessage =
         parseMessageToMessageWithSenderProp(treatedMessage);
 
+      const toUpdatedMessage = this.roomMessages.find(
+        (mappedMessage) => mappedMessage.uuid === uuid,
+      );
+
       const messageIndex = this.roomMessages.findIndex(
         (mappedMessage) => mappedMessage.uuid === uuid,
       );
+
       if (messageIndex !== -1) {
         this.roomMessages[messageIndex] = updatedMessage;
+        removeFromGroupedMessages(this.roomMessagesSorted, {
+          message: toUpdatedMessage,
+        });
+        this.addRoomMessageSorted({ message: updatedMessage });
       }
 
       this.removeMessageFromSendings(uuid);
@@ -122,6 +134,7 @@ export const useRoomMessages = defineStore('roomMessages', {
 
     async getRoomMessages({ offset = null, limit = null } = {}) {
       const roomsStore = useRooms();
+
       const nextReq = this.roomMessagesNext;
 
       await treatMessages({
@@ -157,9 +170,10 @@ export const useRoomMessages = defineStore('roomMessages', {
       }
     },
 
-    async sendRoomMessage(text) {
+    async sendRoomMessage(text, repliedMessage) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
+
       if (!activeRoom) return;
 
       if (text) activeRoom.last_message = text;
@@ -169,11 +183,13 @@ export const useRoomMessages = defineStore('roomMessages', {
         itemUuid: activeRoom.uuid,
         itemUser: activeRoom.user,
         message: text,
+        repliedMessage: repliedMessage,
         sendItemMessage: () =>
           Message.sendRoomMessage(activeRoom.uuid, {
             text,
             user_email: activeRoom.user.email,
             seen: true,
+            repliedMessageId: repliedMessage?.uuid,
           }),
         addMessage: (message) => this.handlingAddMessage({ message }),
         addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
@@ -182,7 +198,11 @@ export const useRoomMessages = defineStore('roomMessages', {
       });
     },
 
-    async sendRoomMedias({ files: medias, updateLoadingFiles }) {
+    async sendRoomMedias({
+      files: medias,
+      updateLoadingFiles,
+      repliedMessage,
+    }) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
       if (!activeRoom) return;
@@ -192,11 +212,13 @@ export const useRoomMessages = defineStore('roomMessages', {
         itemUuid: activeRoom.uuid,
         itemUser: activeRoom.user,
         medias,
+        repliedMessage: repliedMessage,
         sendItemMedia: (media) =>
           Message.sendRoomMedia(activeRoom.uuid, {
             user_email: activeRoom.user.email,
             media,
             updateLoadingFiles,
+            repliedMessageId: repliedMessage?.uuid,
           }),
         addMessage: (message) => this.handlingAddMessage({ message }),
         addSortedMessage: (message) => this.addRoomMessageSorted({ message }),

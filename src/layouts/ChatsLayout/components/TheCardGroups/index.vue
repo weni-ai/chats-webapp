@@ -11,6 +11,7 @@
       :iconRightClickable="true"
       size="sm"
       :placeholder="$t('chats.search_contact')"
+      class="chat-groups__search-contact-input"
       @icon-right-click="nameOfContact = ''"
     />
     <section class="filter-tags__container">
@@ -67,8 +68,8 @@
               fontWeight: lastCreatedFilter ? '700' : '400',
             }"
             @click="
-              listRoom(false, '-last_interaction'),
-                ((lastCreatedFilter = true), (createdOnFilter = false))
+              (listRoom(false, '-last_interaction'),
+              ((lastCreatedFilter = true), (createdOnFilter = false)))
             "
             >{{ $t('chats.room_list.most_recent') }}</span
           >
@@ -78,8 +79,8 @@
               fontWeight: createdOnFilter ? '700' : '400',
             }"
             @click="
-              listRoom(false, 'last_interaction'),
-                ((createdOnFilter = true), (lastCreatedFilter = false))
+              (listRoom(false, 'last_interaction'),
+              ((createdOnFilter = true), (lastCreatedFilter = false)))
             "
           >
             {{ $t('chats.room_list.older') }}</span
@@ -97,19 +98,35 @@
         }
       "
     >
+      <UnnnicDisclaimer
+        v-if="enableAutomaticRoomRouting"
+        class="room-container__chats-router-info"
+        :text="$t('chats.queue_priority_disclaimer')"
+        iconColor="neutral-dark"
+      />
       <CardGroup
         v-if="activeTab === $t('discussion')"
         :discussions="discussions"
         @open="openDiscussion"
       />
       <CardGroup
-        v-else-if="activeRooms.length"
-        :rooms="activeRooms"
-        :withSelection="
-          !isMobile &&
-          project.config?.can_use_bulk_transfer &&
-          activeTab === $t('in_progress')
-        "
+        v-if="rooms_queue.length && !enableAutomaticRoomRouting"
+        :label="$t('chats.waiting', { length: rooms_queue.length })"
+        :rooms="rooms_queue"
+        roomsType="waiting"
+        @open="openRoom"
+      />
+      <CardGroup
+        v-if="rooms.length"
+        :label="$t('chats.in_progress', { length: rooms.length })"
+        :rooms="rooms"
+        :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
+        @open="openRoom"
+      />
+      <CardGroup
+        v-if="rooms_sent_flows.length"
+        :label="$t('chats.sent_flows', { length: rooms_sent_flows.length })"
+        :rooms="rooms_sent_flows"
         @open="openRoom"
       />
       <p
@@ -198,7 +215,7 @@ export default {
       newMessagesByRoom: 'newMessagesByRoom',
     }),
     ...mapWritableState(useRooms, ['roomsCount', 'selectedRoomsToTransfer']),
-    ...mapState(useConfig, ['project']),
+    ...mapState(useConfig, ['project', 'enableAutomaticRoomRouting']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
 
@@ -298,6 +315,7 @@ export default {
         this.timerId = setTimeout(() => {
           this.page.search = 0;
           this.listRoom(false);
+          this.listDiscussions();
           if (newNameOfContact) {
             this.isSearching = true;
           } else {
@@ -344,6 +362,13 @@ export default {
       this.activeTabIndex = tabIndex;
     },
     async openRoom(room) {
+      if (
+        this.enableAutomaticRoomRouting &&
+        room.user?.email !== this.me?.email
+      ) {
+        return;
+      }
+
       await this.setActiveDiscussion(null);
       await this.setActiveRoom(room);
     },
@@ -403,7 +428,10 @@ export default {
     async listDiscussions() {
       try {
         const { viewedAgent } = this;
-        await this.getAllDiscussion({ viewedAgent });
+        await this.getAllDiscussion({
+          viewedAgent,
+          filters: { search: this.nameOfContact },
+        });
       } catch {
         console.error('Não foi possível listar as discussões');
       }
@@ -450,16 +478,26 @@ export default {
     display: flex;
     flex-direction: column;
     margin-top: $unnnic-spacing-sm;
-    padding-right: $unnnic-spacing-xs;
     margin-right: -$unnnic-spacing-xs; // For the scrollbar to stick to the edge
     overflow-y: auto;
     overflow-x: hidden;
     :deep(.unnnic-collapse) {
       padding-bottom: $unnnic-spacing-sm;
     }
+    :deep(.unnnic-collapse__header) {
+      padding-left: $unnnic-spacing-xs;
+      padding-right: $unnnic-spacing-xs;
+    }
     .no-results {
+      padding-left: $unnnic-spacing-xs;
       color: $unnnic-color-neutral-cloudy;
       font-size: $unnnic-font-size-body-gt;
+    }
+    &__header {
+      padding-left: $unnnic-spacing-xs;
+    }
+    &__search-contact-input {
+      padding-left: $unnnic-spacing-xs;
     }
   }
   .order-by {

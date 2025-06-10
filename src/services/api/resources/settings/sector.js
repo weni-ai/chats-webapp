@@ -9,10 +9,10 @@ function getURLParams({ URL, endpoint }) {
 }
 
 export default {
-  async list({ nextReq, limit } = {}) {
+  async list({ nextReq, limit, offset } = {}) {
     const endpoint = '/sector/';
     const paramsNextReq = getURLParams({ URL: nextReq, endpoint });
-    const params = { project: getProject(), limit };
+    const params = { project: getProject(), limit, offset };
 
     let response;
 
@@ -84,12 +84,12 @@ export default {
     });
   },
   async removeManager(managerUuid) {
-    await http.delete(`/authorization/sector/${managerUuid}`);
+    await http.delete(`/authorization/sector/${managerUuid}/`);
   },
 
   async tags(sectorUuid) {
     const response = await http.get('/tag/', {
-      params: { sector: sectorUuid },
+      params: { sector: sectorUuid, limit: 9999 },
     });
     return response.data;
   },

@@ -20,11 +20,24 @@ import { useQuickMessageShared } from './store/modules/chats/quickMessagesShared
 import { useDashboard } from './store/modules/dashboard';
 
 import initHotjar from '@/plugins/Hotjar';
-import { getProject } from '@/utils/config';
+import {
+  getProject,
+  setProject as setProjectLocalStorage,
+} from '@/utils/config';
 
 import moment from 'moment';
 export default {
   name: 'App',
+
+  setup() {
+    const queryString = window.location.href.split('?')[1];
+
+    const { projectUuid } = Object.fromEntries(
+      new URLSearchParams(queryString).entries(),
+    );
+
+    if (projectUuid) setProjectLocalStorage(projectUuid);
+  },
 
   data() {
     return {
@@ -87,7 +100,6 @@ export default {
 
     configsForInitializeWebSocket: {
       immediate: true,
-
       handler() {
         this.wsConnect();
       },
@@ -243,5 +255,12 @@ export default {
 <style lang="scss" scoped>
 #app {
   height: 100vh;
+}
+</style>
+
+<style>
+/* This is necessary to prevent the alert from being behind some screen items such as svgs */
+.alert-container {
+  z-index: 99999999;
 }
 </style>

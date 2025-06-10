@@ -109,11 +109,22 @@ export default {
         return '';
       }
 
+      const getAutoAssignFromQueueLabel = (action, from, to) => {
+        if (action === 'auto_assign_from_queue') {
+          return t('chats.feedback.automatic_transfer_from_queue', {
+            agent: to.name,
+          });
+        }
+
+        return '';
+      };
+
       const feedbackLabels = {
         rt:
           getPickLabel(content.action, content.from, content.to) ||
           getTransferLabel(content.action, content.from, content.to) ||
-          getForwardLabel(content.action, content.to),
+          getForwardLabel(content.action, content.to) ||
+          getAutoAssignFromQueueLabel(content.action, content.from, content.to),
         fs: `${t('flow')} <i>${content.name}</i> ${t('sent')}`,
         ecf: `${content.user} ${t('chats.feedback.edit_custom_field')} <i>${
           content.custom_field_name

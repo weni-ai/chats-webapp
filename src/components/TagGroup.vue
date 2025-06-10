@@ -1,12 +1,12 @@
 <template>
   <section :class="{ 'tag-group': true, flex }">
-    <div
+    <section
       v-if="tags.length > 0"
       ref="container"
       class="tag-group__tags"
     >
       <UnnnicTag
-        v-for="(tag, i) in tags"
+        v-for="tag in tags"
         :key="tag.uuid"
         :ref="tag.uuid"
         :clickable="selectable"
@@ -14,10 +14,10 @@
         :data-testid="`tag__${tag.uuid}`"
         :hasCloseIcon="showCloseIcon(tag)"
         :disabled="
-          !scheme && !hasCloseIcon && selectable && !isSelectedTag(tag)
+          (!hasCloseIcon && selectable && isSelectedTag(tag)) || disabledTag
         "
         :class="{ 'tag-group__tags__tag--selected': isSelectedTag(tag) }"
-        :scheme="scheme || schemes[i % schemes.length]"
+        type="brand"
         @click="select(tag)"
         @close="close(tag)"
       />
@@ -29,13 +29,17 @@
       >
         +{{ remainingTags }}
       </p>
-    </div>
+    </section>
   </section>
 </template>
 
 <script>
 export default {
   props: {
+    disabledTag: {
+      type: Boolean,
+      default: false,
+    },
     hasCloseIcon: {
       type: Boolean,
       default: false,
@@ -47,10 +51,6 @@ export default {
     flex: {
       type: Boolean,
       default: true,
-    },
-    scheme: {
-      type: String,
-      default: '',
     },
     tags: {
       type: Array,
@@ -100,16 +100,23 @@ export default {
     this.remainingTags = this.tags.length;
 
     const observer = new IntersectionObserver(this.handleIntersection);
-    this.tags.forEach((child) => {
-      const tagElement = this.$refs[child.uuid]?.[0].$el;
-      tagElement.setAttribute('data-ref-name', child.uuid);
 
-      observer.observe(tagElement);
+    this.tags.forEach((child) => {
+      const tagElement = this.$refs[child.uuid]?.[0]?.$el;
+      if (tagElement) {
+        tagElement.setAttribute('data-ref-name', child.uuid);
+
+        observer.observe(tagElement);
+      }
     });
   },
 
   methods: {
     select(tag) {
+      if (this.disabledTag) {
+        this.$emit('close', tag);
+        return;
+      }
       const tags = this.isSelectedTag(tag)
         ? this.selected.filter((t) => t.uuid !== tag.uuid)
         : [...this.selected, tag];
@@ -132,21 +139,17 @@ export default {
       entries.forEach((entry) => {
         const { remainingTagsRef, container } = this.$refs;
         let remainingTagsPos = '';
-
         if (entry.isIntersecting) {
           this.remainingTags -= 1;
           remainingTagsPos =
             entry.target.offsetLeft + entry.boundingClientRect.width;
         } else {
           this.remainingTags += 1;
-
           const refName = entry.target.getAttribute('data-ref-name');
           const tagIndex = this.tags.findIndex((tag) => tag.uuid === refName);
-
           if (tagIndex > 0) {
             const lastChildUuid = this.tags[tagIndex - 1].uuid;
             const lastElement = this.$refs[lastChildUuid]?.[0].$el;
-
             if (lastElement) {
               const lastElementBoundingRect =
                 lastElement.getBoundingClientRect();
@@ -155,11 +158,9 @@ export default {
             }
           }
         }
-
         function addPx(string) {
           return `${string}px`;
         }
-
         if (remainingTagsRef) {
           const remainingTagsPaddingLeft = parseFloat(
             getComputedStyle(remainingTagsRef).paddingLeft,
@@ -167,7 +168,6 @@ export default {
           container.style.paddingRight = addPx(
             remainingTagsRef.offsetWidth + remainingTagsPaddingLeft,
           );
-
           remainingTagsRef.style.left = addPx(remainingTagsPos);
         }
       });
@@ -177,11 +177,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$tag-size: 28px;
+$tag-size: 32px;
 .tag-group {
   display: flex;
   overflow-y: hidden;
   align-items: center;
+  margin-top: $unnnic-spacing-xs;
+  min-height: $tag-size;
 
   &:not(.flex) {
     height: $tag-size;
@@ -190,13 +192,13 @@ $tag-size: 28px;
   &__tags {
     position: relative;
     display: flex;
-    flex-wrap: wrap;
-    gap: $unnnic-spacing-xs;
     flex: 1;
-
-    align-self: flex-start;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: $unnnic-spacing-sm;
     user-select: none;
     overflow: hidden;
+    align-self: flex-start;
 
     :deep(.unnnic-tag) {
       width: min-content;
