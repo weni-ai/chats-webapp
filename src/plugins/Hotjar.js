@@ -23,7 +23,7 @@ export default function (
     r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
     a.appendChild(r);
 
-    var userId = userEmail;
+    var userId = userEmail || 'anonymous';
     window.hj('identify', userId, {});
   }
 }

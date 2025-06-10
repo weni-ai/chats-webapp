@@ -34,6 +34,9 @@ getJwtToken().then(() => {
   app.use(router);
   app.use(i18n);
 
+  console.log('Hotjar', Hotjar);
+  console.log('env', env('HOTJAR_ID'));
+
   Hotjar();
 
   if (env('CHATS_ENVIRONMENT') === 'production') {
