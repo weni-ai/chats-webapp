@@ -1,22 +1,16 @@
 <template>
-  <UnnnicCollapse
-    v-model="isCollapseOpened"
-    size="md"
+  <section
+    class="card-group"
+    @click.stop
   >
-    <template #header>
-      <label class="card-group__header">
-        <section @click.stop>
-          <UnnnicCheckbox
-            v-if="withSelection"
-            v-model="collapseCheckboxValue"
-            class="card-group__checkbox"
-            size="sm"
-            @change="updateSelectAllRooms($event)"
-          />
-        </section>
-        {{ label }}
-      </label>
-    </template>
+    <UnnnicCheckbox
+      v-if="withSelection"
+      v-model="collapseCheckboxValue"
+      class="card-group__checkbox"
+      size="sm"
+      :textRight="$t('select_all')"
+      @change="updateSelectAllRooms($event)"
+    />
     <template v-if="rooms && rooms.length">
       <section class="room-container">
         <UnnnicDisclaimer
@@ -68,7 +62,7 @@
         />
       </section>
     </template>
-  </UnnnicCollapse>
+  </section>
 </template>
 
 <script>
@@ -146,6 +140,10 @@ export default {
     if (!this.rooms && !this.discussions) {
       throw new Error('Pass rooms and discussions as a prop!');
     }
+  },
+
+  unmounted() {
+    this.setSelectedRoomsToTransfer([]);
   },
 
   methods: {
@@ -248,9 +246,8 @@ export default {
     align-items: flex-start;
     gap: $unnnic-spacing-nano;
   }
-  &__checkbox {
-    padding: $unnnic-spacing-nano;
 
+  &__checkbox {
     :deep(.unnnic-checkbox) {
       // !important at fill is needed here because the
       // unnnicCollapse header is applying an unwanted style when hovering
@@ -259,5 +256,12 @@ export default {
       }
     }
   }
+}
+
+.card-group .card-group__checkbox {
+  display: flex;
+  align-items: center;
+  padding: $unnnic-spacing-nano;
+  margin-bottom: $unnnic-spacing-sm;
 }
 </style>

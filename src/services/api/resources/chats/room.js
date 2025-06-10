@@ -5,7 +5,7 @@ import { getProject } from '@/utils/config';
 import { useProfile } from '@/store/modules/profile';
 
 export default {
-  async getAll(offset, limit, contact, order, viewedAgent) {
+  async getAll(offset, limit, contact, order, viewedAgent, filters = {}) {
     const params = {
       is_active: true,
       project: getProject(),
@@ -13,6 +13,7 @@ export default {
       limit,
       ordering: `user,${order}`,
       search: contact,
+      ...filters,
     };
 
     if (viewedAgent) {
