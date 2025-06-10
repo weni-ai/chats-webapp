@@ -15,10 +15,7 @@ import '@weni/unnnic-system/dist/style.css';
 import 'plyr/dist/plyr.css';
 
 import './registerServiceWorker';
-import './plugins/Hotjar.js';
 import './styles/global.scss';
-
-import Hotjar from './plugins/Hotjar.js';
 
 getJwtToken().then(() => {
   const app = createApp(App);
@@ -33,11 +30,6 @@ getJwtToken().then(() => {
   app.use(pinia);
   app.use(router);
   app.use(i18n);
-
-  console.log('Hotjar', Hotjar);
-  console.log('env', env('HOTJAR_ID'));
-
-  Hotjar();
 
   if (env('CHATS_ENVIRONMENT') === 'production') {
     Sentry.init({
