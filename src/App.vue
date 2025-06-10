@@ -92,6 +92,7 @@ export default {
       async handler() {
         await this.getMeQueues();
         initHotjar(this.me.email);
+        console.log('me.email', this.me.email);
       },
     },
     'viewedAgent.email': {
