@@ -18,6 +18,8 @@ import './registerServiceWorker';
 import './plugins/Hotjar.js';
 import './styles/global.scss';
 
+import Hotjar from './plugins/Hotjar.js';
+
 getJwtToken().then(() => {
   const app = createApp(App);
   const pinia = createPinia();
@@ -31,6 +33,8 @@ getJwtToken().then(() => {
   app.use(pinia);
   app.use(router);
   app.use(i18n);
+
+  Hotjar();
 
   if (env('CHATS_ENVIRONMENT') === 'production') {
     Sentry.init({
