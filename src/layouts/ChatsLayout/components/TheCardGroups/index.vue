@@ -29,7 +29,29 @@
           @click="handleModalQueuePriorization"
         />
       </UnnnicToolTip>
-      <div class="order-by">
+    </section>
+    <RoomsListLoading v-if="isLoadingRooms" />
+    <section
+      v-else
+      class="chat-groups"
+      @scroll="
+        (event) => {
+          handleScroll(event.srcElement);
+        }
+      "
+    >
+      <section class="chat-groups__tabs">
+        <TabChip
+          v-for="tab in roomsTabs"
+          :key="tab.key"
+          :label="tab.label"
+          :count="tab.count"
+          :active="activeTab === tab.key"
+          @click="activeTab = tab.key"
+        />
+      </section>
+
+      <section class="order-by">
         <div>
           <span>{{ $t('chats.room_list.order_by') }}</span>
         </div>
@@ -45,8 +67,9 @@
               (listRoom(false, '-last_interaction'),
               ((lastCreatedFilter = true), (createdOnFilter = false)))
             "
-            >{{ $t('chats.room_list.most_recent') }}</span
           >
+            {{ $t('chats.room_list.most_recent') }}
+          </span>
           <span> | </span>
           <span
             :style="{
@@ -60,56 +83,37 @@
             {{ $t('chats.room_list.older') }}</span
           >
         </div>
-      </div>
-    </section>
-    <RoomsListLoading v-if="isLoadingRooms" />
-    <section
-      v-else
-      class="chat-groups"
-      @scroll="
-        (event) => {
-          handleScroll(event.srcElement);
-        }
-      "
-    >
-      <UnnnicDisclaimer
-        v-if="enableAutomaticRoomRouting"
-        class="room-container__chats-router-info"
-        :text="$t('chats.queue_priority_disclaimer')"
-        iconColor="neutral-dark"
-      />
-      <CardGroup
-        v-if="discussions.length"
-        :label="$t('chats.discussions', { length: discussions.length })"
-        :discussions="discussions"
-        @open="openDiscussion"
-      />
-      <CardGroup
-        v-if="rooms_queue.length && !enableAutomaticRoomRouting"
-        :label="$t('chats.waiting', { length: rooms_queue.length })"
-        :rooms="rooms_queue"
-        roomsType="waiting"
-        @open="openRoom"
-      />
-      <CardGroup
-        v-if="rooms.length"
-        :label="$t('chats.in_progress', { length: rooms.length })"
-        :rooms="rooms"
-        :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
-        @open="openRoom"
-      />
-      <CardGroup
-        v-if="rooms_sent_flows.length"
-        :label="$t('chats.sent_flows', { length: rooms_sent_flows.length })"
-        :rooms="rooms_sent_flows"
-        @open="openRoom"
-      />
-      <p
-        v-if="showNoResultsError"
-        class="no-results"
-      >
-        {{ isSearching ? $t('without_results') : $t('without_chats') }}
-      </p>
+      </section>
+      <section>
+        <UnnnicDisclaimer
+          v-if="enableAutomaticRoomRouting"
+          class="room-container__chats-router-info"
+          :text="$t('chats.queue_priority_disclaimer')"
+          iconColor="neutral-dark"
+        />
+        <CardGroup
+          v-if="activeTab === 'discussions'"
+          :discussions="discussions"
+          @open="openDiscussion"
+        />
+        <CardGroup
+          v-if="activeTab === 'waiting' && !enableAutomaticRoomRouting"
+          :rooms="rooms_queue"
+          roomsType="waiting"
+          @open="openRoom"
+        />
+        <CardGroup
+          v-if="activeTab === 'ongoing'"
+          :rooms="rooms"
+          :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
+          @open="openRoom"
+        />
+        <CardGroup
+          v-if="activeTab === 'sent_flows'"
+          :rooms="rooms_sent_flows"
+          @open="openRoom"
+        />
+      </section>
     </section>
     <ModalQueuePriorizations
       v-if="showModalQueue"
@@ -128,13 +132,16 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup/index.vue';
+import TabChip from './TabChip.vue';
 import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
+
 export default {
   name: 'TheCardGroups',
   components: {
     RoomsListLoading,
     CardGroup,
     ModalQueuePriorizations,
+    TabChip,
   },
   props: {
     disabled: {
@@ -150,19 +157,23 @@ export default {
       default: '',
     },
   },
-  data: () => ({
-    page: 0,
-    limit: 100,
-    nameOfContact: '',
-    timerId: 0,
-    isLoadingRooms: false,
-    createdOnFilter: false,
-    lastCreatedFilter: true,
-    isSearching: false,
-    isMobile: isMobile(),
-    showModalQueue: false,
-    noQueueSelected: false,
-  }),
+  data() {
+    return {
+      page: 0,
+      limit: 100,
+      nameOfContact: '',
+      timerId: 0,
+      isLoadingRooms: false,
+      createdOnFilter: false,
+      lastCreatedFilter: true,
+      isSearching: false,
+      isMobile: isMobile(),
+      showModalQueue: false,
+      noQueueSelected: false,
+      activeTab: 'ongoing',
+    };
+  },
+
   computed: {
     ...mapState(useRooms, {
       rooms: 'agentRooms',
@@ -174,6 +185,22 @@ export default {
     ...mapState(useConfig, ['project', 'enableAutomaticRoomRouting']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
+
+    roomsTabs() {
+      const tabs = [
+        { key: 'ongoing', label: this.$t('chats.in_progress') },
+        { key: 'waiting', label: this.$t('chats.waiting') },
+      ];
+
+      if (this.discussions.length) {
+        tabs.push({ key: 'discussions', label: this.$t('chats.discussions') });
+      }
+      if (this.rooms_sent_flows.length) {
+        tabs.push({ key: 'sent_flows', label: this.$t('chats.sent_flows') });
+      }
+
+      return tabs;
+    },
 
     isUserAdmin() {
       const ROLE_ADMIN = 1;
@@ -311,7 +338,6 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: $unnnic-spacing-stack-xs;
   .chat-groups__header {
     display: grid;
     gap: $unnnic-spacing-xs;
@@ -343,9 +369,17 @@ export default {
     &__search-contact-input {
       padding-left: $unnnic-spacing-xs;
     }
+    &__tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: $unnnic-spacing-xs;
+      padding-left: $unnnic-spacing-xs;
+      padding-right: $unnnic-spacing-xs;
+    }
   }
   .order-by {
     display: flex;
+    padding: $unnnic-spacing-ant $unnnic-spacing-xs;
     justify-content: space-between;
     gap: $unnnic-spacing-xs;
     align-items: center;
