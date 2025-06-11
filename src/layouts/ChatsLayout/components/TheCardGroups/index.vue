@@ -1,6 +1,9 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
-  <div class="container">
+  <div
+    class="container"
+    data-testid="card-groups-container"
+  >
     <UnnnicInput
       v-model="nameOfContact"
       iconLeft="search-1"
@@ -9,9 +12,13 @@
       size="sm"
       :placeholder="$t('chats.search_contact')"
       class="chat-groups__search-contact-input"
+      data-testid="search-contact-input"
       @icon-right-click="nameOfContact = ''"
     />
-    <section class="chat-groups__header">
+    <section
+      class="chat-groups__header"
+      data-testid="chat-groups-header"
+    >
       <UnnnicToolTip
         v-if="
           !isMobile &&
@@ -21,11 +28,13 @@
         enabled
         :text="$t('chats.select_queues')"
         side="right"
+        data-testid="queue-prioritization-tooltip"
       >
         <UnnnicButton
           iconCenter="filter_list"
           type="secondary"
           size="small"
+          data-testid="queue-prioritization-button"
           @click="handleModalQueuePriorization"
         />
       </UnnnicToolTip>
@@ -50,76 +59,102 @@
           @click="activeTab = tab.key"
         />
       </section>
-
-      <section
-        v-if="showOrderBy"
+      <div
         class="order-by"
+        data-testid="order-by-section"
       >
         <div>
-          <span>{{ $t('chats.room_list.order_by') }}</span>
+          <span data-testid="order-by-label">{{
+            $t('chats.room_list.order_by')
+          }}</span>
         </div>
         <div
           class="apply-filter"
-          style="cursor: pointer"
+          data-testid="filter-controls"
         >
           <span
-            :style="{
-              fontWeight: lastCreatedFilter ? '700' : '400',
-            }"
-            @click="
-              (listRoom(false, '-last_interaction'),
-              ((lastCreatedFilter = true), (createdOnFilter = false)))
-            "
+            :class="{ 'filter-active': lastCreatedFilter }"
+            data-testid="most-recent-filter"
+            @click="handleMostRecentFilter"
           >
             {{ $t('chats.room_list.most_recent') }}
           </span>
+
           <span> | </span>
           <span
-            :style="{
-              fontWeight: createdOnFilter ? '700' : '400',
-            }"
-            @click="
-              (listRoom(false, 'last_interaction'),
-              ((createdOnFilter = true), (lastCreatedFilter = false)))
-            "
+            :class="{ 'filter-active': createdOnFilter }"
+            data-testid="older-filter"
+            @click="handleOlderFilter"
           >
             {{ $t('chats.room_list.older') }}
           </span>
         </div>
-      </section>
-      <section>
-        <UnnnicDisclaimer
-          v-if="enableAutomaticRoomRouting"
-          class="room-container__chats-router-info"
-          :text="$t('chats.queue_priority_disclaimer')"
-          iconColor="neutral-dark"
-        />
-        <CardGroup
-          v-if="activeTab === 'discussions'"
-          :discussions="discussions"
-          @open="openDiscussion"
-        />
-        <CardGroup
-          v-if="activeTab === 'waiting' && !enableAutomaticRoomRouting"
-          :rooms="rooms_queue"
-          roomsType="waiting"
-          @open="openRoom"
-        />
-        <CardGroup
-          v-if="activeTab === 'ongoing'"
-          :rooms="rooms"
-          :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
-          @open="openRoom"
-        />
-        <CardGroup
-          v-if="activeTab === 'sent_flows'"
-          :rooms="rooms_sent_flows"
-          @open="openRoom"
-        />
-      </section>
+      </div>
+    </section>
+    <RoomsListLoading
+      v-if="isLoadingRooms"
+      data-testid="rooms-loading"
+    />
+    <section
+      v-else
+      class="chat-groups"
+      data-testid="chat-groups-content"
+      @scroll="
+        (event) => {
+          handleScroll(event.srcElement);
+        }
+      "
+    >
+      <UnnnicDisclaimer
+        v-if="enableAutomaticRoomRouting"
+        class="room-container__chats-router-info"
+        :text="$t('chats.queue_priority_disclaimer')"
+        iconColor="neutral-dark"
+        data-testid="router-disclaimer"
+      />
+      <CardGroup
+        v-if="discussions.length"
+        :label="$t('chats.discussions', { length: discussions.length })"
+        :discussions="discussions"
+        data-testid="discussions-card-group"
+        @open="openDiscussion"
+      />
+      <CardGroup
+        v-if="rooms_queue.length && !enableAutomaticRoomRouting"
+        :label="$t('chats.waiting', { length: rooms_queue.length })"
+        :rooms="rooms_queue"
+        roomsType="waiting"
+        data-testid="waiting-rooms-card-group"
+        @open="openRoom"
+      />
+      <CardGroup
+        v-if="rooms.length"
+        :label="$t('chats.in_progress', { length: rooms.length })"
+        :rooms="rooms"
+        :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
+        roomsType="in_progress"
+        data-testid="in-progress-rooms-card-group"
+        @open="openRoom"
+        @pin="handlePinRoom"
+      />
+      <CardGroup
+        v-if="rooms_sent_flows.length"
+        :label="$t('chats.sent_flows', { length: rooms_sent_flows.length })"
+        :rooms="rooms_sent_flows"
+        data-testid="sent-flows-card-group"
+        @open="openRoom"
+      />
+      <p
+        v-if="showNoResultsError"
+        class="no-results"
+        data-testid="no-results-message"
+      >
+        {{ isSearching ? $t('without_results') : $t('without_chats') }}
+      </p>
     </section>
     <ModalQueuePriorizations
       v-if="showModalQueue"
+      data-testid="queue-prioritization-modal"
       @close="handleModalQueuePriorization"
     />
   </div>
@@ -127,6 +162,7 @@
 <script>
 import isMobile from 'is-mobile';
 import { mapActions, mapState } from 'pinia';
+import unnnic from '@weni/unnnic-system';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
@@ -137,6 +173,7 @@ import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup/index.vue';
 import TabChip from './TabChip.vue';
 import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
+import Room from '@/services/api/resources/chats/room';
 
 export default {
   name: 'TheCardGroups',
@@ -174,9 +211,13 @@ export default {
       showModalQueue: false,
       noQueueSelected: false,
       activeTab: 'ongoing',
+      pinRoomLoading: {
+        status: false,
+        uuid: '',
+      },
+      orderBy: '-last_interaction',
     };
   },
-
   computed: {
     ...mapState(useRooms, {
       rooms: 'agentRooms',
@@ -184,6 +225,7 @@ export default {
       rooms_sent_flows: 'waitingContactAnswer',
       listRoomHasNext: 'hasNextRooms',
       newMessagesByRoom: 'newMessagesByRoom',
+      maxPinLimit: 'maxPinLimit',
     }),
     ...mapState(useConfig, ['project', 'enableAutomaticRoomRouting']),
     ...mapState(useProfile, ['me']),
@@ -221,6 +263,9 @@ export default {
       return this.me.project_permission_role === ROLE_ADMIN;
     },
     totalUnreadMessages() {
+      if (!this.newMessagesByRoom) {
+        return 0;
+      }
       return this.rooms.reduce(
         (total, room) =>
           total + (this.newMessagesByRoom[room.uuid]?.messages?.length || 0),
@@ -235,6 +280,9 @@ export default {
         this.rooms_sent_flows.length === 0 &&
         this.discussions.length === 0
       );
+    },
+    totalPinnedRooms() {
+      return this.rooms.filter((room) => room.is_pinned).length || 0;
     },
   },
   watch: {
@@ -297,8 +345,8 @@ export default {
     clearField() {
       this.nameOfContact = '';
     },
-    async listRoom(concat, order = '-last_interaction') {
-      this.isLoadingRooms = !concat;
+    async listRoom(concat, order = this.orderBy, noLoading = false) {
+      this.isLoadingRooms = !noLoading;
       const { viewedAgent } = this;
       try {
         await this.getAllRooms({
@@ -309,8 +357,8 @@ export default {
           contact: this.nameOfContact,
           viewedAgent,
         });
-      } catch {
-        console.error('Não foi possível listar as salas');
+      } catch (error) {
+        console.error('Error listing rooms', error);
       } finally {
         this.isLoadingRooms = false;
       }
@@ -318,7 +366,7 @@ export default {
     searchForMoreRooms() {
       if (this.listRoomHasNext) {
         this.page += 1;
-        this.listRoom(true);
+        this.listRoom(true, this.orderBy, true);
       }
     },
     async listDiscussions() {
@@ -328,8 +376,8 @@ export default {
           viewedAgent,
           filters: { search: this.nameOfContact },
         });
-      } catch {
-        console.error('Não foi possível listar as discussões');
+      } catch (error) {
+        console.error('Error listing discussions', error);
       }
     },
     handleScroll(target) {
@@ -343,6 +391,102 @@ export default {
 
     handleModalQueuePriorization() {
       this.showModalQueue = !this.showModalQueue;
+    },
+
+    async handlePinRoom(room, type) {
+      const isLoadingSamePinRoom =
+        this.pinRoomLoading.status && this.pinRoomLoading.uuid === room.uuid;
+
+      if (
+        (room.is_pinned && type === 'pin') ||
+        (!room.is_pinned && type === 'unpin') ||
+        isLoadingSamePinRoom
+      ) {
+        return;
+      }
+
+      const types = {
+        pin: {
+          request: () => Room.pinRoom({ uuid: room.uuid, status: true }),
+          successMessage: this.$t('chats.room_pin.success_pin'),
+        },
+        unpin: {
+          request: () => Room.pinRoom({ uuid: room.uuid, status: false }),
+          successMessage: this.$t('chats.room_pin.success_unpin'),
+        },
+      };
+
+      if (this.maxPinLimit === this.totalPinnedRooms && type === 'pin') {
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('chats.room_pin.error_pin_limit', {
+              max_pin_limit: this.maxPinLimit,
+            }),
+            type: 'default',
+          },
+          seconds: 2,
+        });
+
+        return;
+      }
+
+      try {
+        this.pinRoomLoading = {
+          status: true,
+          uuid: room.uuid,
+        };
+        await types[type].request();
+        await this.listRoom(false, this.orderBy, true);
+        unnnic.unnnicCallAlert({
+          props: {
+            text: types[type].successMessage,
+            type: 'success',
+          },
+          seconds: 2,
+        });
+      } catch (error) {
+        console.error('Pin room error', error);
+        let errorText = '';
+
+        if (error.response.status === 401) {
+          errorText = this.$t('chats.errors.401');
+        } else if (error.response.status === 403) {
+          errorText = this.$t('chats.room_pin.error_403');
+        } else if (error.response.status === 404) {
+          errorText = this.$t('chats.room_pin.error_404');
+        } else if (error.response.status === 400) {
+          errorText = this.$t('chats.room_pin.error_pin_limit', {
+            max_pin_limit: this.maxPinLimit,
+          });
+        } else {
+          errorText = this.$t('chats.errors.default');
+        }
+
+        unnnic.unnnicCallAlert({
+          props: {
+            text: errorText,
+            type: 'error',
+          },
+          seconds: 2,
+        });
+      } finally {
+        this.pinRoomLoading = {
+          status: false,
+          uuid: '',
+        };
+      }
+    },
+    handleMostRecentFilter() {
+      this.orderBy = '-last_interaction';
+      this.listRoom(false, this.orderBy, true);
+      this.createdOnFilter = false;
+      this.lastCreatedFilter = true;
+    },
+    handleOlderFilter() {
+      this.orderBy = 'last_interaction';
+      this.listRoom(false, this.orderBy, true);
+      this.createdOnFilter = true;
+      this.lastCreatedFilter = false;
     },
   },
 };
@@ -399,6 +543,14 @@ export default {
     align-items: center;
     font-size: $unnnic-font-size-body-md;
     color: $unnnic-color-neutral-cloudy;
+
+    .apply-filter {
+      cursor: pointer;
+    }
+
+    .filter-active {
+      font-weight: 700;
+    }
   }
 }
 </style>

@@ -1,9 +1,13 @@
 <template>
   <template v-if="rooms && rooms.length">
-    <section class="room-container">
+    <section
+      class="room-container"
+      data-testid="room-container"
+    >
       <UnnnicDisclaimer
         v-if="roomsType === 'waiting' && enableAutomaticRoomRouting"
         class="room-container__chats-router-info"
+        data-testid="chats-router-disclaimer"
         :text="$t('chats.queue_priority_disclaimer')"
         iconColor="neutral-dark"
       />
@@ -20,7 +24,9 @@
           'room-card--without-border': activeRoomIndex === index - 1,
           'room-card--selected': activeRoom?.uuid === room?.uuid,
         }"
+        :data-testid="`room-card-${index}`"
         @click="open(room)"
+        @click-pin="handlePin(room, $event)"
         @update-selected="updateIsRoomSelected(room.uuid, $event)"
         @mousedown="activeRoomIndex = index"
         @mouseup="activeRoomIndex = null"
@@ -28,7 +34,10 @@
     </section>
   </template>
   <template v-else-if="discussions && discussions.length">
-    <section class="discussion-container">
+    <section
+      class="discussion-container"
+      data-testid="discussion-container"
+    >
       <UnnnicChatsContact
         v-for="(discussion, index) in discussions"
         :key="discussion.uuid"
@@ -43,6 +52,7 @@
         :tabindex="0"
         :selected="discussion.uuid === activeDiscussionId"
         :unreadMessages="unreadMessages(discussion.uuid)"
+        :data-testid="`discussion-card-${index}`"
         @click="open(discussion)"
         @keypress.enter="open(discussion)"
         @mousedown="activeDiscussionIndex = index"
@@ -93,7 +103,7 @@ export default {
     },
   },
 
-  emits: ['open'],
+  emits: ['open', 'pin'],
 
   data() {
     return {
@@ -135,6 +145,9 @@ export default {
     ...mapActions(useRooms, ['setSelectedRoomsToTransfer']),
     open(room) {
       this.$emit('open', room);
+    },
+    handlePin(room, type) {
+      this.$emit('pin', room, type);
     },
     unreadMessages(discussionId) {
       const { newMessagesByDiscussion } = this;
