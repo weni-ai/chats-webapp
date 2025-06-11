@@ -1,16 +1,21 @@
 <template>
-  <main class="general-dashboard">
+  <main
+    class="general-dashboard"
+    data-testid="general-dashboard"
+  >
     <GeneralMetrics
       :metrics="generalMetrics"
       :rawData="rawInfo"
       :generalLabel="generalCardLabel"
       class="grid-1"
+      data-testid="general-metrics"
     />
     <CardGroupMetrics
       :metrics="sectors"
       :title="headerTitle"
       icon="hierarchy-3-2"
       class="grid-2"
+      data-testid="card-group-metrics"
     />
     <TableMetrics
       :headers="agentsLabel"
@@ -19,6 +24,7 @@
       :title="$t('agents_online')"
       icon="indicator"
       class="grid-3"
+      data-testid="table-metrics"
     />
   </main>
 </template>

@@ -15,12 +15,16 @@
     </template>
 
     <template #tab-panel-media>
-      <section class="medias__content">
+      <section
+        class="medias__content"
+        data-testid="medias-content"
+      >
         <MediaPreview
           v-for="(media, index) in images"
           :key="media.created_on + index"
           :src="media.url"
           :isVideo="media.content_type.startsWith('video/')"
+          data-testid="media-preview"
           @click="$emit('fullscreen', media.url, images)"
         />
       </section>
@@ -37,12 +41,16 @@
     </template>
 
     <template #tab-panel-docs>
-      <section class="documents__content">
+      <section
+        class="documents__content"
+        data-testid="documents-content"
+      >
         <UnnnicChatsMessage
           v-for="document in documents"
           :key="document.url"
           :time="new Date(document.created_on)"
           :documentName="treatedMediaName(document.url)"
+          data-testid="document-message"
           @click="download(document.url)"
         />
       </section>
@@ -57,17 +65,24 @@
       </div>
     </template>
     <template #tab-panel-audio>
-      <div class="scrollable">
-        <section class="audios__content">
+      <div
+        class="scrollable"
+        data-testid="audios-scrollable"
+      >
+        <section
+          class="audios__content"
+          data-testid="audios-content"
+        >
           <UnnnicToolTip
             v-for="audio in audios"
             :key="audio.url"
             :text="audioTooltipText(audio)"
             side="top"
             enabled
+            data-testid="audio-tooltip"
           >
             <UnnnicAudioRecorder
-              data-testid="audio"
+              data-testid="audio-recorder"
               class="audios__content__audio"
               :src="audio.url"
               :canDiscard="false"

@@ -1,20 +1,31 @@
 <template>
-  <main class="by-sector-dashboard">
-    <section>
-      <GeneralMetrics :metrics="generalMetrics" />
+  <main
+    class="by-sector-dashboard"
+    data-testid="by-sector-dashboard"
+  >
+    <section data-testid="general-metrics-section">
+      <GeneralMetrics
+        :metrics="generalMetrics"
+        data-testid="general-metrics"
+      />
     </section>
 
-    <section class="by-sector-dashboard__metrics">
+    <section
+      class="by-sector-dashboard__metrics"
+      data-testid="metrics-section"
+    >
       <CardGroupMetrics
         :metrics="queues"
         :title="$t('queues.title')"
         icon="hierarchy-3-2"
+        data-testid="card-group-metrics"
       />
       <TableMetrics
         :headers="tableHeaders"
         :items="activeChats"
         :title="$t('agents_online')"
         icon="indicator"
+        data-testid="table-metrics"
       />
     </section>
   </main>
