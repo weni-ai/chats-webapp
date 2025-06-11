@@ -51,7 +51,10 @@
         />
       </section>
 
-      <section class="order-by">
+      <section
+        v-if="showOrderBy"
+        class="order-by"
+      >
         <div>
           <span>{{ $t('chats.room_list.order_by') }}</span>
         </div>
@@ -80,8 +83,8 @@
               ((createdOnFilter = true), (lastCreatedFilter = false)))
             "
           >
-            {{ $t('chats.room_list.older') }}</span
-          >
+            {{ $t('chats.room_list.older') }}
+          </span>
         </div>
       </section>
       <section>
@@ -200,6 +203,17 @@ export default {
       }
 
       return tabs;
+    },
+
+    showOrderBy() {
+      const countRooms = {
+        ongoing: this.rooms.length,
+        waiting: this.rooms_queue.length,
+        discussions: this.discussions.length,
+        sent_flows: this.rooms_sent_flows.length,
+      };
+
+      return countRooms[this.activeTab] > 0;
     },
 
     isUserAdmin() {

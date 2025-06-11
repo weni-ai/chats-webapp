@@ -243,4 +243,7 @@ export default {
     }
   }
 }
+.no-results {
+  margin-top: $unnnic-spacing-ant;
+}
 </style>
