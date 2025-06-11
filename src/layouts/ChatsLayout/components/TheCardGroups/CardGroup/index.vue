@@ -1,5 +1,5 @@
 <template>
-  <template v-if="rooms && rooms.length">
+  <template v-if="rooms && !!rooms.length">
     <section
       class="room-container"
       data-testid="room-container"
@@ -33,7 +33,7 @@
       />
     </section>
   </template>
-  <template v-else-if="discussions && discussions.length">
+  <template v-else-if="discussions && !!discussions.length">
     <section
       class="discussion-container"
       data-testid="discussion-container"
@@ -63,6 +63,7 @@
   <p
     v-else
     class="no-results"
+    data-testid="no-results-message"
   >
     {{ $t('without_chats') }}
   </p>

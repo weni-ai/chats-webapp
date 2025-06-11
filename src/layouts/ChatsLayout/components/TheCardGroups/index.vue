@@ -39,7 +39,10 @@
         />
       </UnnnicToolTip>
     </section>
-    <RoomsListLoading v-if="isLoadingRooms" />
+    <RoomsListLoading
+      v-if="isLoadingRooms"
+      data-testid="rooms-loading"
+    />
     <section
       v-else
       class="chat-groups"
@@ -348,7 +351,7 @@ export default {
     searchForMoreRooms() {
       if (this.listRoomHasNext) {
         this.page += 1;
-        this.listRoom(true, this.orderBy, true);
+        this.listRoom(true, this.orderBy[this.activeTab], true);
       }
     },
     async listDiscussions() {
