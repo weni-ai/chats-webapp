@@ -74,7 +74,7 @@
           data-testid="filter-controls"
         >
           <span
-            :class="{ 'filter-active': lastCreatedFilter }"
+            :class="{ 'filter-active': orderBy[activeTab].includes('-') }"
             data-testid="most-recent-filter"
             @click="handleMostRecentFilter"
           >
@@ -83,7 +83,7 @@
 
           <span> | </span>
           <span
-            :class="{ 'filter-active': createdOnFilter }"
+            :class="{ 'filter-active': !orderBy[activeTab].includes('-') }"
             data-testid="older-filter"
             @click="handleOlderFilter"
           >
@@ -179,8 +179,6 @@ export default {
       nameOfContact: '',
       timerId: 0,
       isLoadingRooms: false,
-      createdOnFilter: false,
-      lastCreatedFilter: true,
       isSearching: false,
       isMobile: isMobile(),
       showModalQueue: false,
@@ -190,7 +188,12 @@ export default {
         status: false,
         uuid: '',
       },
-      orderBy: '-last_interaction',
+      orderBy: {
+        ongoing: '-last_interaction',
+        discussions: '-last_interaction',
+        sent_flows: '-last_interaction',
+        waiting: 'created_at',
+      },
     };
   },
   computed: {
@@ -320,7 +323,11 @@ export default {
     clearField() {
       this.nameOfContact = '';
     },
-    async listRoom(concat, order = this.orderBy, noLoading = false) {
+    async listRoom(
+      concat,
+      order = this.orderBy[this.activeTab],
+      noLoading = false,
+    ) {
       this.isLoadingRooms = !noLoading;
       const { viewedAgent } = this;
       try {
@@ -452,16 +459,20 @@ export default {
       }
     },
     handleMostRecentFilter() {
-      this.orderBy = '-last_interaction';
-      this.listRoom(false, this.orderBy, true);
-      this.createdOnFilter = false;
-      this.lastCreatedFilter = true;
+      const orderByValue =
+        this.activeTab === 'waiting' ? '-created_at' : '-last_interaction';
+
+      this.orderBy[this.activeTab] = orderByValue;
+
+      this.listRoom(false, this.orderBy[this.activeTab], true);
     },
     handleOlderFilter() {
-      this.orderBy = 'last_interaction';
-      this.listRoom(false, this.orderBy, true);
-      this.createdOnFilter = true;
-      this.lastCreatedFilter = false;
+      const orderByValue =
+        this.activeTab === 'waiting' ? 'created_at' : 'last_interaction';
+
+      this.orderBy[this.activeTab] = orderByValue;
+
+      this.listRoom(false, this.orderBy[this.activeTab], true);
     },
   },
 };
