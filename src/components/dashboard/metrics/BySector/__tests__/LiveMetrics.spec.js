@@ -263,6 +263,38 @@ describe('LiveMetricsBySector Component', () => {
       expect(wrapper.vm.generalMetrics[0].percent).toBe(initialPercent + 1);
       mathRandomSpy.mockRestore();
     });
+
+    it('should handle seconds overflow (> 59) in time updates', () => {
+      wrapper.vm.generalMetrics[1].value.seconds = 60;
+
+      const mathRandomSpy = vi
+        .spyOn(Math, 'random')
+        .mockReturnValueOnce(0.25)
+        .mockReturnValueOnce(0.8)
+        .mockReturnValueOnce(0.4)
+        .mockReturnValueOnce(0.6);
+
+      wrapper.vm.updateRandomMetric();
+
+      expect(wrapper.vm.generalMetrics[1].value.seconds).toBe(0);
+      mathRandomSpy.mockRestore();
+    });
+
+    it('should prevent non-time metric values from going below 1', () => {
+      wrapper.vm.generalMetrics[0].value = 1;
+
+      const mathRandomSpy = vi
+        .spyOn(Math, 'random')
+        .mockReturnValueOnce(0.0)
+        .mockReturnValueOnce(0.8)
+        .mockReturnValueOnce(0.4)
+        .mockReturnValueOnce(0.4);
+
+      wrapper.vm.updateRandomMetric();
+
+      expect(wrapper.vm.generalMetrics[0].value).toBe(1);
+      mathRandomSpy.mockRestore();
+    });
   });
 
   describe('Utility Methods', () => {
