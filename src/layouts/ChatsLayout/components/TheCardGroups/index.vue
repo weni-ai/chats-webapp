@@ -60,6 +60,7 @@
         />
       </section>
       <div
+        v-if="showOrderBy"
         class="order-by"
         data-testid="order-by-section"
       >
@@ -90,21 +91,6 @@
           </span>
         </div>
       </div>
-    </section>
-    <RoomsListLoading
-      v-if="isLoadingRooms"
-      data-testid="rooms-loading"
-    />
-    <section
-      v-else
-      class="chat-groups"
-      data-testid="chat-groups-content"
-      @scroll="
-        (event) => {
-          handleScroll(event.srcElement);
-        }
-      "
-    >
       <UnnnicDisclaimer
         v-if="enableAutomaticRoomRouting"
         class="room-container__chats-router-info"
@@ -113,23 +99,20 @@
         data-testid="router-disclaimer"
       />
       <CardGroup
-        v-if="discussions.length"
-        :label="$t('chats.discussions', { length: discussions.length })"
+        v-if="activeTab === 'discussions'"
         :discussions="discussions"
         data-testid="discussions-card-group"
         @open="openDiscussion"
       />
       <CardGroup
-        v-if="rooms_queue.length && !enableAutomaticRoomRouting"
-        :label="$t('chats.waiting', { length: rooms_queue.length })"
+        v-if="activeTab === 'waiting' && !enableAutomaticRoomRouting"
         :rooms="rooms_queue"
         roomsType="waiting"
         data-testid="waiting-rooms-card-group"
         @open="openRoom"
       />
       <CardGroup
-        v-if="rooms.length"
-        :label="$t('chats.in_progress', { length: rooms.length })"
+        v-if="activeTab === 'ongoing'"
         :rooms="rooms"
         :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
         roomsType="in_progress"
@@ -138,19 +121,11 @@
         @pin="handlePinRoom"
       />
       <CardGroup
-        v-if="rooms_sent_flows.length"
-        :label="$t('chats.sent_flows', { length: rooms_sent_flows.length })"
+        v-if="activeTab === 'sent_flows'"
         :rooms="rooms_sent_flows"
         data-testid="sent-flows-card-group"
         @open="openRoom"
       />
-      <p
-        v-if="showNoResultsError"
-        class="no-results"
-        data-testid="no-results-message"
-      >
-        {{ isSearching ? $t('without_results') : $t('without_chats') }}
-      </p>
     </section>
     <ModalQueuePriorizations
       v-if="showModalQueue"
@@ -502,7 +477,6 @@ export default {
     grid-template-columns: auto 1fr;
   }
   .chat-groups {
-    flex: 1 1;
     display: flex;
     flex-direction: column;
     margin-top: $unnnic-spacing-sm;
@@ -549,7 +523,7 @@ export default {
     }
 
     .filter-active {
-      font-weight: 700;
+      font-weight: $unnnic-font-weight-bold;
     }
   }
 }
