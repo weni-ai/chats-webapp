@@ -421,7 +421,7 @@ export default {
           uuid: room.uuid,
         };
         await types[type].request();
-        await this.listRoom(false, this.orderBy, true);
+        await this.listRoom(false, this.orderBy[this.activeTab], true);
         unnnic.unnnicCallAlert({
           props: {
             text: types[type].successMessage,
