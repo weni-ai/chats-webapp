@@ -12,7 +12,10 @@
       :show="(!!room && room.user && room.is_24h_valid) || !!discussion"
       @open-file-uploader="openModalFileUploader"
     >
-      <RoomMessages v-if="!!room && !discussion" />
+      <RoomMessages
+        v-if="!!room && !discussion"
+        showRoomSummary
+      />
       <DiscussionMessages v-if="!!discussion" />
 
       <MessageManager

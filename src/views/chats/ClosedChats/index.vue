@@ -35,6 +35,7 @@
         <ContactInfo
           isHistory
           :closedRoom="selectedRoom"
+          showRoomSummary
           data-testid="contact-info"
           @close="() => {}"
         />

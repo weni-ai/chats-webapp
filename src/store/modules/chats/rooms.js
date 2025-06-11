@@ -9,6 +9,8 @@ export const useRooms = defineStore('rooms', {
   state: () => ({
     rooms: [],
     activeRoom: null,
+    activeRoomSummary: '',
+    isLoadingActiveRoomSummary: false,
     newMessagesByRoom: {},
     hasNextRooms: true,
     canUseCopilot: false,
