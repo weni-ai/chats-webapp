@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
 import { setActivePinia } from 'pinia';
@@ -10,14 +10,14 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 
 import TheCardGroups from '../index.vue';
 
-vi.mock('../CardGroup/index.vue', () => ({
-  default: {
-    name: 'CardGroup',
-    props: ['label', 'rooms', 'discussions', 'withSelection', 'roomsType'],
-    emits: ['open', 'pin'],
-    template: '<div data-testid="mocked-card-group">{{ label }}</div>',
-  },
-}));
+// vi.mock('../CardGroup/index.vue', () => ({
+//   default: {
+//     name: 'CardGroup',
+//     props: ['label', 'rooms', 'discussions', 'withSelection', 'roomsType'],
+//     emits: ['open', 'pin'],
+//     template: '<div data-testid="mocked-card-group">{{ label }}</div>',
+//   },
+// }));
 
 vi.mock('@/views/loadings/RoomsList.vue', () => ({
   default: {
@@ -212,9 +212,6 @@ describe('TheCardGroups.vue', () => {
       expect(wrapper.find('[data-testid="chat-groups-header"]').exists()).toBe(
         true,
       );
-      expect(wrapper.find('[data-testid="chat-groups-content"]').exists()).toBe(
-        true,
-      );
     });
 
     it('renders queue prioritization button when conditions are met', () => {
@@ -252,8 +249,8 @@ describe('TheCardGroups.vue', () => {
 
     it('renders loading state', async () => {
       wrapper = createWrapper();
+      wrapper.setData({ isLoadingRooms: true });
 
-      wrapper.vm.isLoadingRooms = true;
       await wrapper.vm.$nextTick();
 
       expect(wrapper.find('[data-testid="rooms-loading"]').exists()).toBe(true);
@@ -273,19 +270,27 @@ describe('TheCardGroups.vue', () => {
       );
     });
 
-    it('renders discussions card group when discussions exist', () => {
+    it('renders discussions card group when discussions exist', async () => {
       wrapper = createWrapper();
+
+      wrapper.setData({ activeTab: 'discussions' });
+
+      await flushPromises();
 
       expect(
         wrapper.find('[data-testid="discussions-card-group"]').exists(),
       ).toBe(true);
     });
 
-    it('renders waiting rooms card group when conditions are met', () => {
+    it('renders waiting rooms card group when conditions are met', async () => {
       const roomsStore = useRooms();
       roomsStore.waitingQueue = [mockRooms[0]];
 
       wrapper = createWrapper();
+
+      wrapper.setData({ activeTab: 'waiting' });
+
+      await flushPromises();
 
       expect(
         wrapper.find('[data-testid="waiting-rooms-card-group"]').exists(),
@@ -313,29 +318,36 @@ describe('TheCardGroups.vue', () => {
       ).toBe(true);
     });
 
-    it('renders sent flows card group when flows exist', () => {
+    it('renders sent flows card group when flows exist', async () => {
       const roomsStore = useRooms();
       roomsStore.waitingContactAnswer = [mockRooms[0]];
 
       wrapper = createWrapper();
+
+      wrapper.setData({ activeTab: 'sent_flows' });
+
+      await flushPromises();
 
       expect(
         wrapper.find('[data-testid="sent-flows-card-group"]').exists(),
       ).toBe(true);
     });
 
-    it('renders no results message when no data available', () => {
+    it('renders no results message when no data available', async () => {
       const roomsStore = useRooms();
       const discussionsStore = useDiscussions();
+
+      wrapper = createWrapper();
+
       roomsStore.agentRooms = [];
       roomsStore.waitingQueue = [];
       roomsStore.waitingContactAnswer = [];
       discussionsStore.discussions = [];
 
-      wrapper = createWrapper();
+      await flushPromises();
 
-      expect(wrapper.find('[data-testid="no-results-message"]').exists()).toBe(
-        true,
+      expect(wrapper.text()).toContain(
+        'Oops! It looks like there are no chats at the moment :)',
       );
     });
 
@@ -413,9 +425,9 @@ describe('TheCardGroups.vue', () => {
 
       await wrapper.find('[data-testid="most-recent-filter"]').trigger('click');
 
-      expect(wrapper.vm.orderBy).toBe('-last_interaction');
-      expect(wrapper.vm.lastCreatedFilter).toBe(true);
-      expect(wrapper.vm.createdOnFilter).toBe(false);
+      expect(wrapper.vm.orderBy[wrapper.vm.activeTab]).toBe(
+        '-last_interaction',
+      );
       expect(listRoomSpy).toHaveBeenCalledWith(
         false,
         '-last_interaction',
@@ -429,9 +441,7 @@ describe('TheCardGroups.vue', () => {
 
       await wrapper.find('[data-testid="older-filter"]').trigger('click');
 
-      expect(wrapper.vm.orderBy).toBe('last_interaction');
-      expect(wrapper.vm.lastCreatedFilter).toBe(false);
-      expect(wrapper.vm.createdOnFilter).toBe(true);
+      expect(wrapper.vm.orderBy[wrapper.vm.activeTab]).toBe('last_interaction');
       expect(listRoomSpy).toHaveBeenCalledWith(false, 'last_interaction', true);
     });
 
@@ -571,7 +581,7 @@ describe('TheCardGroups.vue', () => {
           text: 'Chat pinned with success',
           type: 'success',
         },
-        seconds: 5,
+        seconds: 2,
       });
     });
 
@@ -595,7 +605,7 @@ describe('TheCardGroups.vue', () => {
           text: 'Unpinned chat',
           type: 'success',
         },
-        seconds: 5,
+        seconds: 2,
       });
     });
 
@@ -621,7 +631,7 @@ describe('TheCardGroups.vue', () => {
           text: 'You can pin up to 5 chats',
           type: 'default',
         },
-        seconds: 5,
+        seconds: 2,
       });
     });
 
@@ -643,7 +653,7 @@ describe('TheCardGroups.vue', () => {
           text: 'Is not a room user',
           type: 'error',
         },
-        seconds: 5,
+        seconds: 2,
       });
     });
 

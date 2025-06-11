@@ -30,7 +30,7 @@
       :unreadMessages="unreadMessages"
       :tabindex="0"
       :activePin="isProgressRoom ? true : false"
-      :pinned="room.is_pinned"
+      :pinned="isProgressRoom ? room.is_pinned : false"
       :schemePin="handleSchemePin"
       :selected="room.uuid === activeRoomId && active"
       :locale="locale"
