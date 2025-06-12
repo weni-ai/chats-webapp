@@ -17,6 +17,12 @@ export const useRooms = defineStore('rooms', {
 
     selectedRoomsToTransfer: [],
     contactToTransfer: '',
+    orderBy: {
+      ongoing: '-last_interaction',
+      discussions: '-last_interaction',
+      sent_flows: '-last_interaction',
+      waiting: 'created_at',
+    },
   }),
 
   actions: {

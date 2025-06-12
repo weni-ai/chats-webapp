@@ -139,7 +139,7 @@
 </template>
 <script>
 import isMobile from 'is-mobile';
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 import unnnic from '@weni/unnnic-system';
 
 import { useRooms } from '@/store/modules/chats/rooms';
@@ -191,12 +191,6 @@ export default {
         status: false,
         uuid: '',
       },
-      orderBy: {
-        ongoing: '-last_interaction',
-        discussions: '-last_interaction',
-        sent_flows: '-last_interaction',
-        waiting: 'created_at',
-      },
     };
   },
   computed: {
@@ -211,6 +205,7 @@ export default {
     ...mapState(useConfig, ['project', 'enableAutomaticRoomRouting']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
+    ...mapWritableState(useRooms, ['orderBy']),
 
     roomsTabs() {
       const tabs = [
