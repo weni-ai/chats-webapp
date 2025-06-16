@@ -10,6 +10,7 @@ export const useDashboard = defineStore('dashboard', {
     },
     showModalAssumedChat: false,
     assumedChatContactName: '',
+    isLoadingViewedAgent: false,
   }),
   actions: {
     setViewedAgent(viewedAgent) {
@@ -23,17 +24,25 @@ export const useDashboard = defineStore('dashboard', {
     },
 
     async getViewedAgentData(agentEmail) {
-      const { first_name, last_name } =
-        await Dasboard.getViewedAgentData(agentEmail);
+      try {
+        this.isLoadingViewedAgent = true;
 
-      const newViewedAgent = {
-        name: `${first_name} ${last_name}`,
-        email: agentEmail,
-      };
+        const { first_name, last_name } =
+          await Dasboard.getViewedAgentData(agentEmail);
 
-      this.viewedAgent = newViewedAgent;
+        const newViewedAgent = {
+          name: `${first_name} ${last_name}`,
+          email: agentEmail,
+        };
 
-      return newViewedAgent;
+        this.viewedAgent = newViewedAgent;
+
+        return newViewedAgent;
+      } catch (error) {
+        console.error('Error getting viewed agent data', error);
+      } finally {
+        this.isLoadingViewedAgent = false;
+      }
     },
   },
   getters: {
