@@ -230,9 +230,17 @@ export const useRooms = defineStore('rooms', {
 
   getters: {
     agentRooms(store) {
-      return store.rooms.filter(
-        (room) => !!room.user && room.is_waiting === false,
-      );
+      return store.rooms
+        .filter((room) => !!room.user && room.is_waiting === false)
+        .sort((a, b) => {
+          const aPinned = a.is_pinned || false;
+          const bPinned = b.is_pinned || false;
+
+          if (aPinned && !bPinned) return -1;
+          if (!aPinned && bPinned) return 1;
+
+          return 0;
+        });
     },
     waitingQueue(store) {
       return store.rooms.filter((room) => !room.user && !room.is_waiting);
