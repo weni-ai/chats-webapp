@@ -1,6 +1,6 @@
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
-export default async (message, { app }) => {
+export default async (message) => {
   const roomMessagesStore = useRoomMessages();
 
   const findedMessage = roomMessagesStore.roomMessages.find(
@@ -8,7 +8,7 @@ export default async (message, { app }) => {
   );
 
   if (findedMessage) {
-    roomMessagesStore.updateMessage({
+    roomMessagesStore.updateMessageStatus({
       message: { ...findedMessage, status: message.status },
     });
   }
