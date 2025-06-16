@@ -9,7 +9,8 @@ export default async (message) => {
 
   if (findedMessage) {
     roomMessagesStore.updateMessageStatus({
-      message: { ...findedMessage, status: message.status },
+      message: findedMessage,
+      status: message.status,
     });
   }
 };
