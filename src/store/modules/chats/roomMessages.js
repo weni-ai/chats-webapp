@@ -25,6 +25,10 @@ export const useRoomMessages = defineStore('roomMessages', {
     roomMessagesFailedUuids: [],
     roomMessagesNext: '',
     roomMessagesPrevious: '',
+    roomMessagesStatusMapper: {
+      delivered: 'received',
+      read: 'read',
+    },
     replyMessage: null,
   }),
   actions: {
