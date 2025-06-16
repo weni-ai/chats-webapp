@@ -1,10 +1,14 @@
 <template>
-  <main class="history-metrics">
+  <main
+    class="history-metrics"
+    data-testid="history-metrics-dashboard"
+  >
     <GeneralMetrics
       :metrics="generalMetrics"
       :rawData="rawInfo"
       :generalLabel="generalCardLabel"
       class="grid-1"
+      data-testid="general-metrics"
     />
     <CardGroupMetrics
       :metrics="treatedSectors"
@@ -14,6 +18,7 @@
       icon="hierarchy-3-2"
       class="grid-2"
       :allMetrics="headerTitle === $t('sectors')"
+      data-testid="card-group-metrics"
     />
     <TableMetrics
       :headers="agentsLabel"
@@ -21,6 +26,7 @@
       :title="$t('chats_per_agents')"
       icon="indicator"
       class="grid-3"
+      data-testid="table-metrics"
     />
   </main>
 </template>
