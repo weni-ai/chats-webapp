@@ -8,6 +8,7 @@
       @open-flows-trigger="emitOpenFlowsTrigger"
       @back="clearActiveChats"
     />
+
     <ChatsDropzone
       :show="(!!room && room.user && room.is_24h_valid) || !!discussion"
       @open-file-uploader="openModalFileUploader"
