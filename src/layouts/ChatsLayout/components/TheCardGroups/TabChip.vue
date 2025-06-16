@@ -1,8 +1,5 @@
 <template>
-  <section
-    :class="['tab-chip', { 'tab-chip--active': active }]"
-    @click="handleClick"
-  >
+  <section :class="['tab-chip', { 'tab-chip--active': active }]">
     <p :class="['tab-chip__text', { 'tab-chip__text--active': active }]">
       {{ label }}
     </p>
@@ -45,11 +42,6 @@ export default {
     active: {
       type: Boolean,
       default: false,
-    },
-  },
-  methods: {
-    handleClick() {
-      console.log('click');
     },
   },
 };
