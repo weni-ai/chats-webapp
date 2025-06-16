@@ -1,15 +1,25 @@
 <template>
-  <main class="agent-history-metrics">
-    <section>
-      <GeneralMetrics :metrics="generalMetrics" />
+  <main
+    class="agent-history-metrics"
+    data-testid="agent-history-dashboard"
+  >
+    <section data-testid="general-metrics-section">
+      <GeneralMetrics
+        :metrics="generalMetrics"
+        data-testid="general-metrics"
+      />
     </section>
 
-    <section class="agent-history-metrics__metrics">
+    <section
+      class="agent-history-metrics__metrics"
+      data-testid="metrics-section"
+    >
       <CardGroupMetrics
         :metrics="queues"
         :title="`${agentName} ${$t('in_queues')}`"
         icon="hierarchy-3-2"
         columns="3"
+        data-testid="card-group-metrics"
       />
     </section>
   </main>
