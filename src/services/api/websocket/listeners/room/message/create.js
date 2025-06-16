@@ -4,7 +4,6 @@ import { isValidJson } from '@/utils/messages';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
-import { useConfig } from '@/store/modules/config';
 
 const checkAndUpdateRoomLastMessage = (room, message) => {
   const itsMessageSystem = !message.contact && !message.user;
@@ -26,7 +25,6 @@ const checkAndUpdateRoomLastMessage = (room, message) => {
 export default async (message, { app }) => {
   const roomsStore = useRooms();
   const roomMessagesStore = useRoomMessages();
-  const configStore = useConfig();
   const { rooms, activeRoom } = roomsStore;
 
   const findRoom = rooms.find((room) => room.uuid === message.room);
@@ -39,22 +37,18 @@ export default async (message, { app }) => {
       return;
     }
 
-    const { enableAutomaticRoomRouting } = configStore;
+    const notification = new SoundNotification('ping-bing');
+    notification.notify();
 
-    if (!enableAutomaticRoomRouting || findRoom?.user?.email === app.me.email) {
-      const notification = new SoundNotification('ping-bing');
-      notification.notify();
-
-      if (document.hidden && !isValidJson(message.text)) {
-        try {
-          sendWindowNotification({
-            title: message.contact?.name,
-            message: message.text,
-            image: message.media?.[0]?.url,
-          });
-        } catch (error) {
-          console.log(error);
-        }
+    if (document.hidden && !isValidJson(message.text)) {
+      try {
+        sendWindowNotification({
+          title: message.contact?.name,
+          message: message.text,
+          image: message.media?.[0]?.url,
+        });
+      } catch (error) {
+        console.log(error);
       }
     }
 

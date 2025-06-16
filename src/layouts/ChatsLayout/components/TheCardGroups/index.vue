@@ -85,7 +85,7 @@
         @open="openDiscussion"
       />
       <CardGroup
-        v-if="rooms_queue.length && !enableAutomaticRoomRouting"
+        v-if="rooms_queue.length"
         :label="$t('chats.waiting', { length: rooms_queue.length })"
         :rooms="rooms_queue"
         roomsType="waiting"
@@ -240,13 +240,6 @@ export default {
       getAllDiscussion: 'getAll',
     }),
     async openRoom(room) {
-      if (
-        this.enableAutomaticRoomRouting &&
-        room.user?.email !== this.me?.email
-      ) {
-        return;
-      }
-
       await this.setActiveDiscussion(null);
       await this.setActiveRoom(room);
     },

@@ -19,12 +19,6 @@
     </template>
     <template v-if="rooms && rooms.length">
       <section class="room-container">
-        <UnnnicDisclaimer
-          v-if="roomsType === 'waiting' && enableAutomaticRoomRouting"
-          class="room-container__chats-router-info"
-          :text="$t('chats.queue_priority_disclaimer')"
-          iconColor="neutral-dark"
-        />
         <RoomCard
           v-for="(room, index) in rooms"
           :key="room.uuid"
