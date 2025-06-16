@@ -354,10 +354,12 @@ export default {
         pin: {
           request: () => Room.pinRoom({ uuid: room.uuid, status: true }),
           successMessage: this.$t('chats.room_pin.success_pin'),
+          type: 'success',
         },
         unpin: {
           request: () => Room.pinRoom({ uuid: room.uuid, status: false }),
           successMessage: this.$t('chats.room_pin.success_unpin'),
+          type: 'default',
         },
       };
 
@@ -385,7 +387,7 @@ export default {
         unnnic.unnnicCallAlert({
           props: {
             text: types[type].successMessage,
-            type: 'success',
+            type: types[type].type,
           },
           seconds: 2,
         });
