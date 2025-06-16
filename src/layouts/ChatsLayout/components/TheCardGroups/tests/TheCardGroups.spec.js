@@ -112,9 +112,10 @@ describe('TheCardGroups.vue', () => {
               'chats.room_pin.success_unpin': 'Unpinned chat',
               'chats.room_pin.error_pin_limit': `You can pin up to ${params?.max_pin_limit} chats`,
               'chats.room_pin.error_403': 'Is not a room user',
-              'chats.room_pin.error_404': 'Room not found',
-              'chats.errors.401': 'Unauthorized',
-              'chats.errors.default': 'An error occurred',
+              'chats.room_pin.error_404': "The room doesn't exist",
+              'chats.errors.401': 'Authentication error',
+              'chats.errors.default':
+                'An error occurred, please try again later',
             };
             return translations[key] || key;
           },
@@ -593,7 +594,7 @@ describe('TheCardGroups.vue', () => {
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
         props: {
           text: 'Unpinned chat',
-          type: 'success',
+          type: 'default',
         },
         seconds: 2,
       });
@@ -641,6 +642,79 @@ describe('TheCardGroups.vue', () => {
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
         props: {
           text: 'Is not a room user',
+          type: 'error',
+        },
+        seconds: 2,
+      });
+    });
+
+    it('handles network errors without response object', async () => {
+      const { default: Room } = await import(
+        '@/services/api/resources/chats/room'
+      );
+      const { default: unnnic } = await import('@weni/unnnic-system');
+      const networkError = new Error('Network error');
+
+      Room.pinRoom.mockRejectedValue(networkError);
+
+      wrapper = createWrapper();
+
+      await wrapper.vm.handlePinRoom(mockRooms[0], 'pin');
+
+      expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
+        props: {
+          text: 'An error occurred, please try again later',
+          type: 'error',
+        },
+        seconds: 2,
+      });
+    });
+
+    it('handles different HTTP error status codes', async () => {
+      const { default: Room } = await import(
+        '@/services/api/resources/chats/room'
+      );
+      const { default: unnnic } = await import('@weni/unnnic-system');
+
+      wrapper = createWrapper();
+
+      const error401 = new Error('Authentication error');
+      error401.response = { status: 401 };
+      Room.pinRoom.mockRejectedValue(error401);
+
+      await wrapper.vm.handlePinRoom(mockRooms[0], 'pin');
+
+      expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
+        props: {
+          text: 'Authentication error',
+          type: 'error',
+        },
+        seconds: 2,
+      });
+
+      const error404 = new Error('Not found');
+      error404.response = { status: 404 };
+      Room.pinRoom.mockRejectedValue(error404);
+
+      await wrapper.vm.handlePinRoom(mockRooms[0], 'pin');
+
+      expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
+        props: {
+          text: "The room doesn't exist",
+          type: 'error',
+        },
+        seconds: 2,
+      });
+
+      const error400 = new Error('Bad request');
+      error400.response = { status: 400 };
+      Room.pinRoom.mockRejectedValue(error400);
+
+      await wrapper.vm.handlePinRoom(mockRooms[0], 'pin');
+
+      expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
+        props: {
+          text: 'You can pin up to 5 chats',
           type: 'error',
         },
         seconds: 2,
