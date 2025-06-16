@@ -1,13 +1,17 @@
 <!-- eslint-disable vuejs-accessibility/alt-text -->
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
-  <div class="chat-messages__container">
+  <div
+    class="chat-messages__container"
+    data-testid="chat-messages-container"
+  >
     <ChatMessagesLoading v-show="isSkeletonLoadingActive" />
     <section
       v-show="!isSkeletonLoadingActive"
       v-if="chatUuid && messagesSorted"
       ref="chatMessages"
       class="chat-messages"
+      data-testid="chat-messages"
       @scroll="handleScroll"
     >
       <section
@@ -57,6 +61,7 @@
                   'chat-messages__message',
                   messageType(message),
                   { 'different-user': isMessageByTwoDifferentUsers(message) },
+                  { highlighted: highlightedMessageUuid === message.uuid },
                 ]"
                 :time="new Date(message.created_on)"
                 :status="messageStatus({ message })"
@@ -65,6 +70,10 @@
                 :mediaType="isGeolocation(message.media?.[0]) ? 'geo' : ''"
                 :enableReply="enableReply"
                 :replyMessage="message.replied_message"
+                data-testid="chat-message"
+                @click-reply-message="
+                  handlerClickReplyMessage(message.replied_message)
+                "
                 @reply="
                   handlerMessageReply({ ...message, content_type: 'text' })
                 "
@@ -85,6 +94,7 @@
                     'chat-messages__message',
                     messageType(message),
                     { 'different-user': isMessageByTwoDifferentUsers(message) },
+                    { highlighted: highlightedMessageUuid === message.uuid },
                   ]"
                   :mediaType="
                     isImage(media)
@@ -99,6 +109,10 @@
                   :signature="messageSignature(message)"
                   :enableReply="enableReply"
                   :replyMessage="message.replied_message"
+                  data-testid="chat-message"
+                  @click-reply-message="
+                    handlerClickReplyMessage(message.replied_message)
+                  "
                   @reply="
                     handlerMessageReply({
                       ...message,
@@ -142,6 +156,7 @@
                     'chat-messages__message',
                     messageType(message),
                     { 'different-user': isMessageByTwoDifferentUsers(message) },
+                    { highlighted: highlightedMessageUuid === message.uuid },
                   ]"
                   :time="new Date(message.created_on)"
                   :documentName="
@@ -152,6 +167,10 @@
                   :signature="messageSignature(message)"
                   :enableReply="enableReply"
                   :replyMessage="message.replied_message"
+                  data-testid="chat-message"
+                  @click-reply-message="
+                    handlerClickReplyMessage(message.replied_message)
+                  "
                   @reply="
                     handlerMessageReply({
                       ...message,
@@ -311,6 +330,7 @@ export default {
   emits: ['scrollTop'],
 
   data: () => ({
+    highlightedMessageUuid: null,
     messageToResend: null,
     isFullscreen: false,
     currentMedia: {},
@@ -369,6 +389,21 @@ export default {
   methods: {
     handlerMessageReply(message) {
       this.replyMessage = message;
+    },
+    handlerClickReplyMessage(message) {
+      const repliedMessageEl = this.$refs[`message-${message.uuid}`]?.[0]?.$el;
+      if (repliedMessageEl) {
+        repliedMessageEl.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+
+        this.highlightedMessageUuid = message.uuid;
+
+        setTimeout(() => {
+          this.highlightedMessageUuid = null;
+        }, 1000);
+      }
     },
     isMediaOfType(media, type) {
       return media && media.content_type?.includes(type);
@@ -601,6 +636,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@keyframes highlight-message {
+  0% {
+    filter: brightness(1) saturate(1);
+    -webkit-filter: brightness(1) saturate(1);
+  }
+  50% {
+    filter: brightness(0.8) saturate(1.1);
+    -webkit-filter: brightness(0.8) saturate(1.1);
+  }
+  100% {
+    filter: brightness(1) saturate(1);
+    -webkit-filter: brightness(1) saturate(1);
+  }
+}
+
 .chat-messages__container {
   overflow: hidden;
 
@@ -626,6 +676,10 @@ export default {
 
   &__message {
     margin-top: $unnnic-spacing-md;
+
+    &.highlighted {
+      animation: highlight-message 1s ease-in-out;
+    }
 
     &.sent {
       justify-self: flex-end;
