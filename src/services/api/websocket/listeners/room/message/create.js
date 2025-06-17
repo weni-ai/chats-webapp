@@ -14,7 +14,7 @@ const checkAndUpdateRoomLastMessage = (room, message) => {
   // Empty messages are generated when media is sent
   // You need to mark the id here to update in the msg.update listen
   if (itsEmptyMessage) {
-    room.last_message.uuid = message.uuid;
+    room.last_message.uuid = message?.uuid;
 
     return;
   }

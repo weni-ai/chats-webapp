@@ -115,7 +115,8 @@ export default {
         },
       },
     );
-    return response.data;
+
+    return { message_response: msg, media_response: response.data };
   },
 
   async sendDiscussionMedia(discussionUuid, { media, updateLoadingFiles }) {
