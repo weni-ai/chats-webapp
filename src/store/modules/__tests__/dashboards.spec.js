@@ -18,6 +18,7 @@ describe('useDashboard Store', () => {
     expect(dashboard.viewedAgent).toEqual({ email: '', name: '' });
     expect(dashboard.showModalAssumedChat).toBe(false);
     expect(dashboard.assumedChatContactName).toBe('');
+    expect(dashboard.isLoadingViewedAgent).toBe(false);
   });
 
   it('should set viewed agent', () => {
@@ -89,5 +90,75 @@ describe('useDashboard Store', () => {
     dashboard.assumedChatContactName = 'Alice';
 
     expect(dashboard.getAssumedChatContactName).toBe('Alice');
+  });
+
+  describe('isLoadingViewedAgent', () => {
+    it('should start with isLoadingViewedAgent as false', () => {
+      const dashboard = useDashboard();
+
+      expect(dashboard.isLoadingViewedAgent).toBe(false);
+    });
+
+    it('should set isLoadingViewedAgent to true during getViewedAgentData call', async () => {
+      const dashboard = useDashboard();
+
+      let resolvePromise;
+      const promise = new Promise((resolve) => {
+        resolvePromise = resolve;
+      });
+
+      Dasboard.getViewedAgentData.mockReturnValue(promise);
+
+      const resultPromise = dashboard.getViewedAgentData('test@example.com');
+
+      expect(dashboard.isLoadingViewedAgent).toBe(true);
+
+      resolvePromise({ first_name: 'John', last_name: 'Doe' });
+
+      await resultPromise;
+
+      expect(dashboard.isLoadingViewedAgent).toBe(false);
+    });
+
+    it('should set isLoadingViewedAgent to false after successful getViewedAgentData', async () => {
+      const dashboard = useDashboard();
+
+      Dasboard.getViewedAgentData.mockResolvedValue({
+        first_name: 'Jane',
+        last_name: 'Smith',
+      });
+
+      await dashboard.getViewedAgentData('jane.smith@example.com');
+
+      expect(dashboard.isLoadingViewedAgent).toBe(false);
+    });
+
+    it('should set isLoadingViewedAgent to false after failed getViewedAgentData', async () => {
+      const dashboard = useDashboard();
+
+      Dasboard.getViewedAgentData.mockRejectedValue(new Error('API Error'));
+
+      await dashboard.getViewedAgentData('error@example.com');
+
+      expect(dashboard.isLoadingViewedAgent).toBe(false);
+    });
+
+    it('should handle multiple concurrent getViewedAgentData calls', async () => {
+      const dashboard = useDashboard();
+
+      Dasboard.getViewedAgentData.mockResolvedValue({
+        first_name: 'Test',
+        last_name: 'User',
+      });
+
+      const promise1 = dashboard.getViewedAgentData('user1@example.com');
+      const promise2 = dashboard.getViewedAgentData('user2@example.com');
+
+      expect(dashboard.isLoadingViewedAgent).toBe(true);
+
+      await Promise.all([promise1, promise2]);
+
+      expect(dashboard.isLoadingViewedAgent).toBe(false);
+    });
   });
 });

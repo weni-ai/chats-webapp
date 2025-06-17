@@ -127,16 +127,6 @@ export default {
     async room() {
       this.isContactInfoOpened = false;
     },
-    '$route.params.viewedAgent': {
-      immediate: true,
-      handler(newViewdAgentEmail) {
-        if (newViewdAgentEmail) {
-          this.getViewedAgentData(this.$route.params.viewedAgent);
-        } else {
-          this.setViewedAgent({ name: '', email: '' });
-        }
-      },
-    },
     rooms: {
       once: true,
       async handler() {
@@ -160,7 +150,7 @@ export default {
   methods: {
     ...mapActions(useDiscussions, ['setActiveDiscussion']),
     ...mapActions(useRooms, ['setActiveRoom']),
-    ...mapActions(useDashboard, ['getViewedAgentData', 'setViewedAgent']),
+    ...mapActions(useDashboard, ['setViewedAgent']),
 
     handleModal(modalName, action) {
       const registeredModals = ['ContactInfo', 'AssumeChatConfirmation'];
