@@ -125,8 +125,12 @@ export const useRoomMessages = defineStore('roomMessages', {
         const mediaIndex = treatedMessage.media.findIndex(
           (mappedMessage) => mappedMessage.preview === toUpdateMediaPreview,
         );
+
         if (mediaIndex !== -1) {
           treatedMessage.media[mediaIndex] = media;
+        }
+        if (mediaIndex === -1 && treatedMessage.media.length === 0) {
+          treatedMessage.media.push(media);
         }
       }
 
