@@ -14,6 +14,7 @@ import {
   resendMedia,
   resendMessage,
   removeFromGroupedMessages,
+  updateMessageStatusInGroupedMessages,
 } from '@/utils/messages';
 
 export const useRoomMessages = defineStore('roomMessages', {
@@ -93,6 +94,21 @@ export const useRoomMessages = defineStore('roomMessages', {
         if (isMessageFromCurrentUser(message)) {
           this.roomMessagesSendingUuids.push(uuid);
         }
+      }
+    },
+
+    updateMessageStatus({ message, status }) {
+      const findedMessage = this.roomMessages.find(
+        (mappedMessage) => mappedMessage.uuid === message.uuid,
+      );
+
+      if (findedMessage.status === 'read') return;
+
+      if (findedMessage) {
+        updateMessageStatusInGroupedMessages(this.roomMessagesSorted, {
+          message,
+          status,
+        });
       }
     },
 

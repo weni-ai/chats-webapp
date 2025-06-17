@@ -2,15 +2,23 @@
   <UnnnicCollapse
     v-model="isCollapseOpened"
     size="md"
+    data-testid="card-group-collapse"
   >
     <template #header>
-      <label class="card-group__header">
-        <section @click.stop>
+      <label
+        class="card-group__header"
+        data-testid="card-group-header"
+      >
+        <section
+          data-testid="card-group-checkbox-section"
+          @click.stop
+        >
           <UnnnicCheckbox
             v-if="withSelection"
             v-model="collapseCheckboxValue"
             class="card-group__checkbox"
             size="sm"
+            data-testid="card-group-checkbox"
             @change="updateSelectAllRooms($event)"
           />
         </section>
@@ -18,7 +26,10 @@
       </label>
     </template>
     <template v-if="rooms && rooms.length">
-      <section class="room-container">
+      <section
+        class="room-container"
+        data-testid="room-container"
+      >
         <RoomCard
           v-for="(room, index) in rooms"
           :key="room.uuid"
@@ -32,7 +43,9 @@
             'room-card--without-border': activeRoomIndex === index - 1,
             'room-card--selected': activeRoom?.uuid === room?.uuid,
           }"
+          :data-testid="`room-card-${index}`"
           @click="open(room)"
+          @click-pin="handlePin(room, $event)"
           @update-selected="updateIsRoomSelected(room.uuid, $event)"
           @mousedown="activeRoomIndex = index"
           @mouseup="activeRoomIndex = null"
@@ -40,7 +53,10 @@
       </section>
     </template>
     <template v-if="discussions">
-      <section class="discussion-container">
+      <section
+        class="discussion-container"
+        data-testid="discussion-container"
+      >
         <UnnnicChatsContact
           v-for="(discussion, index) in discussions"
           :key="discussion.uuid"
@@ -55,6 +71,7 @@
           :tabindex="0"
           :selected="discussion.uuid === activeDiscussionId"
           :unreadMessages="unreadMessages(discussion.uuid)"
+          :data-testid="`discussion-card-${index}`"
           @click="open(discussion)"
           @keypress.enter="open(discussion)"
           @mousedown="activeDiscussionIndex = index"
@@ -104,7 +121,7 @@ export default {
     },
   },
 
-  emits: ['open'],
+  emits: ['open', 'pin'],
 
   data() {
     return {
@@ -146,6 +163,9 @@ export default {
     ...mapActions(useRooms, ['setSelectedRoomsToTransfer']),
     open(room) {
       this.$emit('open', room);
+    },
+    handlePin(room, type) {
+      this.$emit('pin', room, type);
     },
     unreadMessages(discussionId) {
       const { newMessagesByDiscussion } = this;
