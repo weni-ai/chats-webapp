@@ -30,13 +30,6 @@
         class="room-container"
         data-testid="room-container"
       >
-        <UnnnicDisclaimer
-          v-if="roomsType === 'waiting' && enableAutomaticRoomRouting"
-          class="room-container__chats-router-info"
-          data-testid="chats-router-disclaimer"
-          :text="$t('chats.queue_priority_disclaimer')"
-          iconColor="neutral-dark"
-        />
         <RoomCard
           v-for="(room, index) in rooms"
           :key="room.uuid"

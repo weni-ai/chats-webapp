@@ -273,12 +273,9 @@ export default {
     async handlingSetActiveRoom(uuid) {
       if (this.pathRoomId !== this.room?.uuid) {
         const room = this.getRoomById(uuid);
-        if (
-          (room && !this.enableAutomaticRoomRouting) ||
-          (room && room.user?.email === this.me?.email)
-        ) {
+        if (room) {
           this.setActiveRoom(room);
-        } else this.$router.replace('/rooms');
+        }
       }
     },
     async readMessages() {

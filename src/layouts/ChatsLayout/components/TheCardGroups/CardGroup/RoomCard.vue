@@ -25,7 +25,7 @@
         'room-card__contact--hover': hover,
       }"
       :title="formattedContactName"
-      :lastMessage="hideContactMessageInfo ? null : room.last_message"
+      :lastMessage="room.last_message"
       :waitingTime="waitingTimeComputed"
       :unreadMessages="unreadMessages"
       :tabindex="0"

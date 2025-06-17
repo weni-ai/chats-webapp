@@ -24,8 +24,6 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
-
 defineProps({
   expandedMore: Boolean,
   handleClick: {
