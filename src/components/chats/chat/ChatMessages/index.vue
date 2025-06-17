@@ -42,6 +42,7 @@
               :scheme="isClosedChat ? 'gray' : 'blue'"
               :title="messageFormatTitle(new Date(message.created_on))"
             />
+
             <ChatMessagesFeedbackMessage
               v-if="isFeedbackMessage(message)"
               :key="message.uuid"
@@ -183,6 +184,7 @@
           </template>
         </section>
       </section>
+
       <section
         v-if="tags.length > 0"
         v-show="!isSkeletonLoadingActive"
@@ -223,6 +225,7 @@
 <script>
 import { mapState, mapWritableState } from 'pinia';
 import { useDashboard } from '@/store/modules/dashboard';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 import moment from 'moment';
 
@@ -237,7 +240,6 @@ import FullscreenPreview from '@/components/chats/MediaMessage/Previews/Fullscre
 import ChatFeedback from '../ChatFeedback.vue';
 import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
 import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
-import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 export default {
   name: 'ChatMessages',
@@ -342,6 +344,7 @@ export default {
 
   computed: {
     ...mapState(useDashboard, ['viewedAgent']),
+    ...mapState(useRoomMessages, ['roomMessagesStatusMapper']),
     ...mapWritableState(useRoomMessages, ['replyMessage']),
     medias() {
       return this.messages
@@ -432,6 +435,10 @@ export default {
         if (this.messagesFailedUuids.includes(message.uuid)) {
           return 'failed';
         }
+
+        if (message.status)
+          return this.roomMessagesStatusMapper[message.status] || 'default';
+
         if (media && this.isAudio(media)) {
           return 'default';
         }

@@ -389,10 +389,12 @@ export default {
         pin: {
           request: () => Room.pinRoom({ uuid: room.uuid, status: true }),
           successMessage: this.$t('chats.room_pin.success_pin'),
+          type: 'success',
         },
         unpin: {
           request: () => Room.pinRoom({ uuid: room.uuid, status: false }),
           successMessage: this.$t('chats.room_pin.success_unpin'),
+          type: 'default',
         },
       };
 
@@ -420,7 +422,7 @@ export default {
         unnnic.unnnicCallAlert({
           props: {
             text: types[type].successMessage,
-            type: 'success',
+            type: types[type].type,
           },
           seconds: 2,
         });
@@ -428,13 +430,13 @@ export default {
         console.error('Pin room error', error);
         let errorText = '';
 
-        if (error.response.status === 401) {
+        if (error.response?.status === 401) {
           errorText = this.$t('chats.errors.401');
-        } else if (error.response.status === 403) {
+        } else if (error.response?.status === 403) {
           errorText = this.$t('chats.room_pin.error_403');
-        } else if (error.response.status === 404) {
+        } else if (error.response?.status === 404) {
           errorText = this.$t('chats.room_pin.error_404');
-        } else if (error.response.status === 400) {
+        } else if (error.response?.status === 400) {
           errorText = this.$t('chats.room_pin.error_pin_limit', {
             max_pin_limit: this.maxPinLimit,
           });
