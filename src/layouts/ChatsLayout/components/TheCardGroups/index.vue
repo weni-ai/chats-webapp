@@ -40,7 +40,7 @@
       </UnnnicToolTip>
     </section>
     <RoomsListLoading
-      v-if="isLoadingRooms"
+      v-if="showLoadingRooms"
       data-testid="rooms-loading"
     />
     <section
@@ -57,7 +57,9 @@
           v-for="tab in roomsTabs"
           :key="tab.key"
           :label="tab.label"
-          :count="tab.count"
+          :count="
+            tab.key === 'discussions' ? discussionsCount : roomsCount[tab.key]
+          "
           :active="activeTab === tab.key"
           @click="activeTab = tab.key"
         />
@@ -116,7 +118,7 @@
       />
       <CardGroup
         v-if="activeTab === 'ongoing'"
-        :rooms="rooms"
+        :rooms="rooms_ongoing"
         :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
         roomsType="in_progress"
         data-testid="in-progress-rooms-card-group"
@@ -177,10 +179,17 @@ export default {
   },
   data() {
     return {
-      page: 0,
+      page: {
+        ongoing: 0,
+        waiting: 0,
+        sent_flows: 0,
+        discussion: 0,
+        search: 0,
+      },
       limit: 100,
       nameOfContact: '',
       timerId: 0,
+      showLoadingRooms: false,
       isLoadingRooms: false,
       isSearching: false,
       isMobile: isMobile(),
@@ -191,11 +200,12 @@ export default {
         status: false,
         uuid: '',
       },
+      initialLoaded: false,
     };
   },
   computed: {
     ...mapState(useRooms, {
-      rooms: 'agentRooms',
+      rooms_ongoing: 'agentRooms',
       rooms_queue: 'waitingQueue',
       rooms_sent_flows: 'waitingContactAnswer',
       listRoomHasNext: 'hasNextRooms',
@@ -205,7 +215,8 @@ export default {
     ...mapState(useConfig, ['project', 'enableAutomaticRoomRouting']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
-    ...mapWritableState(useRooms, ['orderBy']),
+    ...mapWritableState(useRooms, ['orderBy', 'roomsCount']),
+    ...mapState(useDiscussions, ['discussionsCount']),
 
     roomsTabs() {
       const tabs = [
@@ -225,7 +236,7 @@ export default {
 
     showOrderBy() {
       const countRooms = {
-        ongoing: this.rooms.length,
+        ongoing: this.rooms_ongoing.length,
         waiting: this.rooms_queue.length,
         discussions: this.discussions.length,
         sent_flows: this.rooms_sent_flows.length,
@@ -242,7 +253,7 @@ export default {
       if (!this.newMessagesByRoom) {
         return 0;
       }
-      return this.rooms.reduce(
+      return this.rooms_ongoing.reduce(
         (total, room) =>
           total + (this.newMessagesByRoom[room.uuid]?.messages?.length || 0),
         0,
@@ -250,18 +261,36 @@ export default {
     },
     showNoResultsError() {
       return (
-        !this.isLoadingRooms &&
-        this.rooms.length === 0 &&
+        !this.showLoadingRooms &&
+        this.rooms_ongoing.length === 0 &&
         this.rooms_queue.length === 0 &&
         this.rooms_sent_flows.length === 0 &&
         this.discussions.length === 0
       );
     },
     totalPinnedRooms() {
-      return this.rooms.filter((room) => room.is_pinned).length || 0;
+      return this.rooms_ongoing.filter((room) => room.is_pinned).length || 0;
     },
   },
   watch: {
+    rooms_ongoing: {
+      deep: true,
+      handler(newRooms, oldRooms) {
+        this.updateRoomsCount(newRooms.length, oldRooms.length, 'ongoing');
+      },
+    },
+    rooms_queue: {
+      deep: true,
+      handler(newRooms, oldRooms) {
+        this.updateRoomsCount(newRooms.length, oldRooms.length, 'waiting');
+      },
+    },
+    rooms_sent_flows: {
+      deep: true,
+      handler(newRooms, oldRooms) {
+        this.updateRoomsCount(newRooms.length, oldRooms.length, 'sent_flows');
+      },
+    },
     totalUnreadMessages: {
       immediate: true,
       handler() {
@@ -279,7 +308,7 @@ export default {
         const TIME_TO_WAIT_TYPING = 1300;
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
-          this.page = 0;
+          this.page.search = 0;
           this.listRoom(false);
           this.listDiscussions();
           if (newNameOfContact) {
@@ -291,10 +320,19 @@ export default {
       },
     },
   },
-  mounted() {
-    this.listRoom();
-    this.listDiscussions();
+  async created() {
+    await Promise.all([
+      this.listRoom(true, this.orderBy.waiting, 'waiting'),
+      this.listRoom(true, this.orderBy.ongoing, 'ongoing'),
+      this.listRoom(true, this.orderBy.sent_flows, 'sent_flows'),
+      this.listDiscussions(),
+    ]);
+    this.initialLoaded = true;
   },
+  // mounted() {
+  //   this.listRoom();
+  //   this.listDiscussions();
+  // },
   methods: {
     ...mapActions(useRooms, {
       setActiveRoom: 'setActiveRoom',
@@ -304,6 +342,12 @@ export default {
       setActiveDiscussion: 'setActiveDiscussion',
       getAllDiscussion: 'getAll',
     }),
+    updateRoomsCount(newSize, oldSize, key) {
+      if (newSize === oldSize || !this.initialLoaded || this.isLoadingRooms)
+        return;
+
+      newSize > oldSize ? this.roomsCount[key]++ : this.roomsCount[key]--;
+    },
     async openRoom(room) {
       if (
         this.enableAutomaticRoomRouting &&
@@ -324,29 +368,38 @@ export default {
     async listRoom(
       concat,
       order = this.orderBy[this.activeTab],
-      noLoading = false,
+      roomsType = '',
     ) {
-      this.isLoadingRooms = !noLoading;
+      this.showLoadingRooms = !concat;
       const { viewedAgent } = this;
       try {
+        this.isLoadingRooms = true;
+        const offset =
+          (roomsType ? this.page[roomsType] : this.page.search) * this.limit;
+
         await this.getAllRooms({
-          offset: this.page * this.limit,
+          offset: offset,
           concat,
           order,
           limit: this.limit,
           contact: this.nameOfContact,
           viewedAgent,
+          roomsType,
         });
       } catch (error) {
         console.error('Error listing rooms', error);
       } finally {
+        this.showLoadingRooms = false;
         this.isLoadingRooms = false;
       }
     },
     searchForMoreRooms() {
-      if (this.listRoomHasNext) {
-        this.page += 1;
-        this.listRoom(true, this.orderBy[this.activeTab], true);
+      if (this.listRoomHasNext[this.activeTab]) {
+        this.page[this.activeTab] += 1;
+        this.listRoom(true, this.orderBy[this.activeTab], this.activeTab);
+      } else if (this.nameOfContact) {
+        this.page.search += 1;
+        this.listRoom(true, this.orderBy[this.activeTab]);
       }
     },
     async listDiscussions() {
@@ -368,11 +421,9 @@ export default {
         this.searchForMoreRooms(true);
       }
     },
-
     handleModalQueuePriorization() {
       this.showModalQueue = !this.showModalQueue;
     },
-
     async handlePinRoom(room, type) {
       const isLoadingSamePinRoom =
         this.pinRoomLoading.status && this.pinRoomLoading.uuid === room.uuid;

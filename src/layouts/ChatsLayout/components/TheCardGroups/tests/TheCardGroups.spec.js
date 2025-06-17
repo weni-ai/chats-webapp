@@ -250,7 +250,8 @@ describe('TheCardGroups.vue', () => {
 
     it('renders loading state', async () => {
       wrapper = createWrapper();
-      wrapper.setData({ isLoadingRooms: true });
+      await flushPromises();
+      wrapper.setData({ showLoadingRooms: true });
 
       await wrapper.vm.$nextTick();
 
@@ -806,15 +807,23 @@ describe('TheCardGroups.vue', () => {
 
     it('loads more rooms when hasNext is true', () => {
       const roomsStore = useRooms();
-      roomsStore.hasNextRooms = true;
+      roomsStore.hasNextRooms = {
+        waiting: true,
+        ongoing: true,
+        sent_flows: true,
+      };
 
       wrapper = createWrapper();
       const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
 
       wrapper.vm.searchForMoreRooms();
 
-      expect(wrapper.vm.page).toBe(1);
-      expect(listRoomSpy).toHaveBeenCalledWith(true, '-last_interaction', true);
+      expect(wrapper.vm.page.ongoing).toBe(1);
+      expect(listRoomSpy).toHaveBeenCalledWith(
+        true,
+        '-last_interaction',
+        'ongoing',
+      );
     });
 
     it('does not load more rooms when hasNext is false', () => {
@@ -925,6 +934,7 @@ describe('TheCardGroups.vue', () => {
         limit: 100,
         contact: '',
         viewedAgent: 'test-agent',
+        roomsType: '',
       });
 
       expect(discussionsStore.getAll).toHaveBeenCalledWith({

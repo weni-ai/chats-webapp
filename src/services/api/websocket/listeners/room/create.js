@@ -16,7 +16,6 @@ export default async (room, { app }) => {
     const { enableAutomaticRoomRouting } = useConfig();
     if (isWaitingQueueRoom && enableAutomaticRoomRouting) return;
     const roomType = getRoomType(room);
-
     const addAfter = !roomsStore.orderBy[roomType].includes('-');
 
     roomsStore.addRoom(room, { after: addAfter });
