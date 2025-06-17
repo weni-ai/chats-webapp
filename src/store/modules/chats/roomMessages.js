@@ -105,6 +105,7 @@ export const useRoomMessages = defineStore('roomMessages', {
       if (findedMessage.status === 'read') return;
 
       if (findedMessage) {
+        findedMessage.status = status;
         updateMessageStatusInGroupedMessages(this.roomMessagesSorted, {
           message,
           status,
