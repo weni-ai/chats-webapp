@@ -129,9 +129,6 @@ export const useRoomMessages = defineStore('roomMessages', {
         if (mediaIndex !== -1) {
           treatedMessage.media[mediaIndex] = media;
         }
-        if (mediaIndex === -1 && treatedMessage.media.length === 0) {
-          treatedMessage.media.push(media);
-        }
       }
 
       const updatedMessage =

@@ -282,6 +282,8 @@ export async function sendMedias({
         const { media_response: sentMedia, message_response: sentMessage } =
           await sendItemMedia(media);
 
+        sentMessage.media.push(sentMedia);
+
         updateMessage({
           media: sentMedia,
           message: sentMessage,
