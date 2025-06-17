@@ -9,6 +9,7 @@ export const useDiscussions = defineStore('discussions', {
     discussionsCloseds: [],
     activeDiscussion: null,
     newMessagesByDiscussion: {},
+    discussionsCount: 0,
   }),
   actions: {
     setDiscussions(discussions) {
@@ -38,6 +39,7 @@ export const useDiscussions = defineStore('discussions', {
     async getAll({ viewedAgent, filters }) {
       const newDiscussions = await Discussion.listAll({ viewedAgent, filters });
       this.setDiscussions(newDiscussions?.results);
+      this.discussionsCount = newDiscussions?.count;
     },
 
     async getAllClosed({ roomId }) {

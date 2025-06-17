@@ -4,6 +4,7 @@ import { useDashboard } from '../dashboard';
 import { useProfile } from '../profile';
 
 import Room from '@/services/api/resources/chats/room';
+import { removeDuplicatedItems } from '@/utils/array';
 
 export const useRooms = defineStore('rooms', {
   state: () => ({
@@ -11,12 +12,22 @@ export const useRooms = defineStore('rooms', {
     activeRoom: null,
     maxPinLimit: 0,
     newMessagesByRoom: {},
-    hasNextRooms: true,
+    hasNextRooms: { waiting: false, in_progress: false, sent_flows: false },
     canUseCopilot: false,
     copilotSuggestion: '',
-
     selectedRoomsToTransfer: [],
     contactToTransfer: '',
+    orderBy: {
+      ongoing: '-last_interaction',
+      discussions: '-last_interaction',
+      sent_flows: '-last_interaction',
+      waiting: 'created_on',
+    },
+    roomsCount: {
+      waiting: 0,
+      ongoing: 0,
+      sent_flows: 0,
+    },
   }),
 
   actions: {
@@ -48,13 +59,18 @@ export const useRooms = defineStore('rooms', {
       this.activeRoom = room;
     },
 
-    addRoom(room) {
+    addRoom(room, { after = false } = {}) {
       if (room.uuid) {
         const isRoomAlreadyInList = this.rooms.some(
           (mappedRoom) => mappedRoom.uuid === room.uuid,
         );
         if (isRoomAlreadyInList) return;
-        this.rooms.unshift({ ...room });
+
+        if (after) {
+          this.rooms.push({ ...room });
+        } else {
+          this.rooms.unshift({ ...room });
+        }
       }
     },
 
@@ -86,21 +102,37 @@ export const useRooms = defineStore('rooms', {
       return room.user?.email === userEmail;
     },
 
-    async getAll({ offset, concat, limit, contact, order, viewedAgent }) {
+    async getAll({
+      offset,
+      concat,
+      limit,
+      contact,
+      order,
+      viewedAgent,
+      roomsType,
+    }) {
       const response = await Room.getAll(
         offset,
         limit,
         contact,
         order,
         viewedAgent,
+        roomsType,
       );
       let gettedRooms = response.results || [];
       const listRoomHasNext = response.next;
+
       if (concat) {
         gettedRooms = this.rooms.concat(response.results);
       }
-      this.hasNextRooms = listRoomHasNext;
-      this.rooms = gettedRooms;
+
+      this.rooms = removeDuplicatedItems(gettedRooms, 'uuid');
+
+      if (roomsType) {
+        this.hasNextRooms[roomsType] = listRoomHasNext;
+        this.roomsCount[roomsType] = response.count;
+      }
+
       this.maxPinLimit = response.max_pin_limit || 0;
 
       return gettedRooms;
