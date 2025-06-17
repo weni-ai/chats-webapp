@@ -89,7 +89,7 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount, defineEmits, onMounted, onUnmounted } from 'vue';
+import { ref, onBeforeMount, onMounted, onUnmounted } from 'vue';
 import ViewButton from './ViewButton.vue';
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 import { useRouter } from 'vue-router';

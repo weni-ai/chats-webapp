@@ -64,12 +64,34 @@ describe('Messages utils', () => {
       });
       const media2 = new File(['content2'], 'file2.png', { type: 'image/png' });
 
+      const sentMessage1 = {
+        uuid: 'uuid1',
+        user: 'user1',
+        text: '',
+        media: [],
+        seen: true,
+      };
+
+      const sentMessage2 = {
+        uuid: 'uuid2',
+        user: 'user1',
+        text: '',
+        media: [],
+        seen: true,
+      };
+
       const sentMedia1 = { url: 'url1', type: 'image/jpeg' };
       const sentMedia2 = { url: 'url2', type: 'image/png' };
 
       mockSendItemMedia
-        .mockResolvedValueOnce(sentMedia1)
-        .mockResolvedValueOnce(sentMedia2);
+        .mockResolvedValueOnce({
+          media_response: sentMedia1,
+          message_response: sentMessage1,
+        })
+        .mockResolvedValueOnce({
+          media_response: sentMedia2,
+          message_response: sentMessage2,
+        });
 
       await sendMedias({
         itemType: 'type1',
