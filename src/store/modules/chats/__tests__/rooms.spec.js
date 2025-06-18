@@ -146,6 +146,46 @@ describe('State Rooms', () => {
 
         expect(roomsStore.rooms[0].last_interaction).toBe('new-date');
       });
+
+      it('should not update last interaction for pinned rooms', () => {
+        const roomsStore = getRoomsStore();
+        roomsStore.rooms = [
+          { uuid: 'room1', last_interaction: 'old-date', is_pinned: true },
+          { uuid: 'room2', last_interaction: 'old-date', is_pinned: false },
+        ];
+
+        roomsStore.updateLastInteraction({
+          room: 'room1',
+          lastInteraction: 'new-date',
+        });
+
+        expect(roomsStore.rooms[0].last_interaction).toBe('old-date');
+
+        roomsStore.updateLastInteraction({
+          room: 'room2',
+          lastInteraction: 'new-date',
+        });
+
+        expect(roomsStore.rooms[1].last_interaction).toBe('new-date');
+      });
+
+      it('should bring room to front only if not pinned', () => {
+        const roomsStore = getRoomsStore();
+        roomsStore.rooms = [
+          { uuid: 'room1', is_pinned: false },
+          { uuid: 'room2', is_pinned: true },
+          { uuid: 'room3', is_pinned: false },
+        ];
+
+        roomsStore.bringRoomFront(roomsStore.rooms[1]);
+        expect(roomsStore.rooms[0].uuid).toBe('room1');
+        expect(roomsStore.rooms[1].uuid).toBe('room2');
+
+        roomsStore.bringRoomFront(roomsStore.rooms[2]);
+        expect(roomsStore.rooms[0].uuid).toBe('room3');
+        expect(roomsStore.rooms[1].uuid).toBe('room1');
+        expect(roomsStore.rooms[2].uuid).toBe('room2');
+      });
     });
   };
 

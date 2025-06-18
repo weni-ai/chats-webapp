@@ -15,7 +15,7 @@ const checkAndUpdateRoomLastMessage = (room, message) => {
   // Empty messages are generated when media is sent
   // You need to mark the id here to update in the msg.update listen
   if (itsEmptyMessage) {
-    room.last_message.uuid = message.uuid;
+    room.last_message.uuid = message?.uuid;
 
     return;
   }
@@ -30,14 +30,18 @@ export default async (message, { app }) => {
 
   const findRoom = rooms.find((room) => room.uuid === message.room);
 
-  const roomType = getRoomType(findRoom);
-
-  if (roomType !== 'waiting') roomsStore.bringRoomFront(findRoom);
-
   if (findRoom) {
+    const roomType = getRoomType(findRoom);
+
+    if (roomType !== 'waiting') roomsStore.bringRoomFront(findRoom);
+
     if (app.me.email === message.user?.email) {
       checkAndUpdateRoomLastMessage(findRoom, message);
       return;
+    }
+
+    if (roomType === 'ongoing' && roomsStore.activeTab !== 'ongoing') {
+      roomsStore.showOngoingDot = true;
     }
 
     const notification = new SoundNotification('ping-bing');

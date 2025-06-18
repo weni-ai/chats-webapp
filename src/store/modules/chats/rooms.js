@@ -8,6 +8,7 @@ import { removeDuplicatedItems } from '@/utils/array';
 
 export const useRooms = defineStore('rooms', {
   state: () => ({
+    activeTab: 'ongoing',
     rooms: [],
     activeRoom: null,
     maxPinLimit: 0,
@@ -23,6 +24,7 @@ export const useRooms = defineStore('rooms', {
       sent_flows: '-last_interaction',
       waiting: 'created_on',
     },
+    showOngoingDot: false,
     roomsCount: {
       waiting: 0,
       ongoing: 0,
@@ -33,10 +35,13 @@ export const useRooms = defineStore('rooms', {
   actions: {
     updateLastInteraction({ room, lastInteraction }) {
       const findedRoomIndex = this.rooms.findIndex(({ uuid }) => uuid === room);
-      this.rooms[findedRoomIndex] = {
-        ...this.rooms[findedRoomIndex],
-        last_interaction: lastInteraction,
-      };
+
+      if (!this.rooms[findedRoomIndex]?.is_pinned) {
+        this.rooms[findedRoomIndex] = {
+          ...this.rooms[findedRoomIndex],
+          last_interaction: lastInteraction,
+        };
+      }
     },
     updateMessagesByRoom({ room, message, reset = false }) {
       const roomMessages = this.newMessagesByRoom[room]?.messages || [];
@@ -75,7 +80,9 @@ export const useRooms = defineStore('rooms', {
     },
 
     bringRoomFront(room) {
-      this.rooms.sort((x) => (x === room ? -1 : 0));
+      if (!room?.is_pinned) {
+        this.rooms.sort((x) => (x === room ? -1 : 0));
+      }
     },
 
     setCopilotSuggestion(suggestion) {
@@ -123,7 +130,7 @@ export const useRooms = defineStore('rooms', {
       const listRoomHasNext = response.next;
 
       if (concat) {
-        gettedRooms = this.rooms.concat(response.results);
+        gettedRooms = gettedRooms.concat(this.rooms);
       }
 
       this.rooms = removeDuplicatedItems(gettedRooms, 'uuid');
@@ -140,7 +147,6 @@ export const useRooms = defineStore('rooms', {
 
     async updateRoomContact({ uuid }) {
       const newRoom = await Room.getByUuid({ uuid });
-
       this.activeRoom = newRoom;
     },
 

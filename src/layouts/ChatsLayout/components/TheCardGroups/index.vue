@@ -60,6 +60,13 @@
           :count="
             tab.key === 'discussions' ? discussionsCount : roomsCount[tab.key]
           "
+          :showDot="
+            tab.key === 'ongoing'
+              ? showOngoingDot
+              : tab.key === 'discussions'
+                ? showDiscussionsDot
+                : false
+          "
           :active="activeTab === tab.key"
           @click="activeTab = tab.key"
         />
@@ -110,8 +117,7 @@
         @open="openDiscussion"
       />
       <CardGroup
-        v-if="rooms_queue.length"
-        :label="$t('chats.waiting', { length: rooms_queue.length })"
+        v-if="activeTab === 'waiting'"
         :rooms="rooms_queue"
         roomsType="waiting"
         data-testid="waiting-rooms-card-group"
@@ -196,7 +202,6 @@ export default {
       isMobile: isMobile(),
       showModalQueue: false,
       noQueueSelected: false,
-      activeTab: 'ongoing',
       pinRoomLoading: {
         status: false,
         uuid: '',
@@ -216,8 +221,16 @@ export default {
     ...mapState(useConfig, ['project', 'enableAutomaticRoomRouting']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
-    ...mapWritableState(useRooms, ['orderBy', 'roomsCount']),
-    ...mapState(useDiscussions, ['discussionsCount']),
+    ...mapWritableState(useRooms, [
+      'orderBy',
+      'roomsCount',
+      'activeTab',
+      'showOngoingDot',
+    ]),
+    ...mapWritableState(useDiscussions, [
+      'discussionsCount',
+      'showDiscussionsDot',
+    ]),
 
     roomsTabs() {
       const tabs = [
@@ -274,6 +287,16 @@ export default {
     },
   },
   watch: {
+    activeTab: {
+      handler(newActiveTab) {
+        if (newActiveTab === 'ongoing') {
+          this.showOngoingDot = false;
+        }
+        if (newActiveTab === 'discussions') {
+          this.showDiscussionsDot = false;
+        }
+      },
+    },
     rooms_ongoing: {
       deep: true,
       handler(newRooms, oldRooms) {
@@ -330,10 +353,6 @@ export default {
     ]);
     this.initialLoaded = true;
   },
-  // mounted() {
-  //   this.listRoom();
-  //   this.listDiscussions();
-  // },
   methods: {
     ...mapActions(useRooms, {
       setActiveRoom: 'setActiveRoom',
@@ -363,8 +382,9 @@ export default {
       concat,
       order = this.orderBy[this.activeTab],
       roomsType = '',
+      silent = false,
     ) {
-      this.showLoadingRooms = !concat;
+      this.showLoadingRooms = silent ? false : !concat;
       const { viewedAgent } = this;
       try {
         this.isLoadingRooms = true;
@@ -463,7 +483,12 @@ export default {
           uuid: room.uuid,
         };
         await types[type].request();
-        await this.listRoom(false, this.orderBy[this.activeTab], true);
+        await this.listRoom(
+          false,
+          this.orderBy[this.activeTab],
+          'ongoing',
+          true,
+        );
         unnnic.unnnicCallAlert({
           props: {
             text: types[type].successMessage,

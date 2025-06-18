@@ -10,6 +10,7 @@ export const useDiscussions = defineStore('discussions', {
     activeDiscussion: null,
     newMessagesByDiscussion: {},
     discussionsCount: 0,
+    showDiscussionsDot: false,
   }),
   actions: {
     setDiscussions(discussions) {
