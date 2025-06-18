@@ -13,6 +13,8 @@ import {
   sendMedias,
   resendMedia,
   resendMessage,
+  removeFromGroupedMessages,
+  updateMessageStatusInGroupedMessages,
 } from '@/utils/messages';
 
 export const useRoomMessages = defineStore('roomMessages', {
@@ -24,6 +26,10 @@ export const useRoomMessages = defineStore('roomMessages', {
     roomMessagesFailedUuids: [],
     roomMessagesNext: '',
     roomMessagesPrevious: '',
+    roomMessagesStatusMapper: {
+      delivered: 'received',
+      read: 'read',
+    },
     replyMessage: null,
   }),
   actions: {
@@ -91,6 +97,22 @@ export const useRoomMessages = defineStore('roomMessages', {
       }
     },
 
+    updateMessageStatus({ message, status }) {
+      const findedMessage = this.roomMessages.find(
+        (mappedMessage) => mappedMessage.uuid === message.uuid,
+      );
+
+      if (findedMessage.status === 'read') return;
+
+      if (findedMessage) {
+        findedMessage.status = status;
+        updateMessageStatusInGroupedMessages(this.roomMessagesSorted, {
+          message,
+          status,
+        });
+      }
+    },
+
     updateMessage({
       media,
       toUpdateMediaPreview,
@@ -104,6 +126,7 @@ export const useRoomMessages = defineStore('roomMessages', {
         const mediaIndex = treatedMessage.media.findIndex(
           (mappedMessage) => mappedMessage.preview === toUpdateMediaPreview,
         );
+
         if (mediaIndex !== -1) {
           treatedMessage.media[mediaIndex] = media;
         }
@@ -112,11 +135,20 @@ export const useRoomMessages = defineStore('roomMessages', {
       const updatedMessage =
         parseMessageToMessageWithSenderProp(treatedMessage);
 
+      const toUpdatedMessage = this.roomMessages.find(
+        (mappedMessage) => mappedMessage.uuid === uuid,
+      );
+
       const messageIndex = this.roomMessages.findIndex(
         (mappedMessage) => mappedMessage.uuid === uuid,
       );
+
       if (messageIndex !== -1) {
         this.roomMessages[messageIndex] = updatedMessage;
+        removeFromGroupedMessages(this.roomMessagesSorted, {
+          message: toUpdatedMessage,
+        });
+        this.addRoomMessageSorted({ message: updatedMessage });
       }
 
       this.removeMessageFromSendings(uuid);
