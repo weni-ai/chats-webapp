@@ -332,7 +332,10 @@ describe('Message service', () => {
         },
       );
 
-      expect(result).toEqual(mockMediaResponse.data);
+      expect(result).toEqual({
+        message_response: mockMessageResponse.data,
+        media_response: mockMediaResponse.data,
+      });
     });
 
     it('should handle progress updates during media upload', async () => {
@@ -386,7 +389,10 @@ describe('Message service', () => {
 
       const result = await messageService.sendRoomMedia('room-789', mediaData);
 
-      expect(result).toEqual(mockMediaResponse.data);
+      expect(result).toEqual({
+        message_response: mockMessageResponse.data,
+        media_response: mockMediaResponse.data,
+      });
     });
 
     it('should handle errors during message creation', async () => {

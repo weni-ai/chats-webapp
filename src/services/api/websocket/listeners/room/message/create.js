@@ -16,7 +16,7 @@ const checkAndUpdateRoomLastMessage = (room, message) => {
   // Empty messages are generated when media is sent
   // You need to mark the id here to update in the msg.update listen
   if (itsEmptyMessage) {
-    room.last_message.uuid = message.uuid;
+    room.last_message.uuid = message?.uuid;
 
     return;
   }
@@ -27,7 +27,6 @@ const checkAndUpdateRoomLastMessage = (room, message) => {
 export default async (message, { app }) => {
   const roomsStore = useRooms();
   const roomMessagesStore = useRoomMessages();
-  const configStore = useConfig();
   const { rooms, activeRoom } = roomsStore;
 
   const findRoom = rooms.find((room) => room.uuid === message.room);
@@ -42,22 +41,18 @@ export default async (message, { app }) => {
       return;
     }
 
-    const { enableAutomaticRoomRouting } = configStore;
+    const notification = new SoundNotification('ping-bing');
+    notification.notify();
 
-    if (!enableAutomaticRoomRouting || findRoom?.user?.email === app.me.email) {
-      const notification = new SoundNotification('ping-bing');
-      notification.notify();
-
-      if (document.hidden && !isValidJson(message.text)) {
-        try {
-          sendWindowNotification({
-            title: message.contact?.name,
-            message: message.text,
-            image: message.media?.[0]?.url,
-          });
-        } catch (error) {
-          console.log(error);
-        }
+    if (document.hidden && !isValidJson(message.text)) {
+      try {
+        sendWindowNotification({
+          title: message.contact?.name,
+          message: message.text,
+          image: message.media?.[0]?.url,
+        });
+      } catch (error) {
+        console.log(error);
       }
     }
 

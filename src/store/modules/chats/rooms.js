@@ -33,10 +33,13 @@ export const useRooms = defineStore('rooms', {
   actions: {
     updateLastInteraction({ room, lastInteraction }) {
       const findedRoomIndex = this.rooms.findIndex(({ uuid }) => uuid === room);
-      this.rooms[findedRoomIndex] = {
-        ...this.rooms[findedRoomIndex],
-        last_interaction: lastInteraction,
-      };
+
+      if (!this.rooms[findedRoomIndex]?.is_pinned) {
+        this.rooms[findedRoomIndex] = {
+          ...this.rooms[findedRoomIndex],
+          last_interaction: lastInteraction,
+        };
+      }
     },
     updateMessagesByRoom({ room, message, reset = false }) {
       const roomMessages = this.newMessagesByRoom[room]?.messages || [];
@@ -75,7 +78,9 @@ export const useRooms = defineStore('rooms', {
     },
 
     bringRoomFront(room) {
-      this.rooms.sort((x) => (x === room ? -1 : 0));
+      if (!room?.is_pinned) {
+        this.rooms.sort((x) => (x === room ? -1 : 0));
+      }
     },
 
     setCopilotSuggestion(suggestion) {
@@ -140,7 +145,6 @@ export const useRooms = defineStore('rooms', {
 
     async updateRoomContact({ uuid }) {
       const newRoom = await Room.getByUuid({ uuid });
-
       this.activeRoom = newRoom;
     },
 

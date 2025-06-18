@@ -299,19 +299,6 @@ describe('TheCardGroups.vue', () => {
       ).toBe(true);
     });
 
-    it('hides waiting rooms when automatic routing enabled', () => {
-      const roomsStore = useRooms();
-      const configStore = useConfig();
-      roomsStore.waitingQueue = [mockRooms[0]];
-      configStore.enableAutomaticRoomRouting = true;
-
-      wrapper = createWrapper();
-
-      expect(
-        wrapper.find('[data-testid="waiting-rooms-card-group"]').exists(),
-      ).toBe(false);
-    });
-
     it('renders in-progress rooms card group', () => {
       wrapper = createWrapper();
 
@@ -529,23 +516,6 @@ describe('TheCardGroups.vue', () => {
 
       expect(discussionsStore.setActiveDiscussion).toHaveBeenCalledWith(null);
       expect(roomsStore.setActiveRoom).toHaveBeenCalledWith(mockRooms[0]);
-    });
-
-    it('prevents opening room with automatic routing for different user', async () => {
-      const configStore = useConfig();
-      configStore.enableAutomaticRoomRouting = true;
-      const roomsStore = useRooms();
-
-      wrapper = createWrapper();
-
-      const roomWithDifferentUser = {
-        ...mockRooms[0],
-        user: { email: 'different@test.com' },
-      };
-
-      await wrapper.vm.openRoom(roomWithDifferentUser);
-
-      expect(roomsStore.setActiveRoom).not.toHaveBeenCalled();
     });
 
     it('opens discussion correctly', async () => {

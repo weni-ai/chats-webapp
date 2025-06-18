@@ -263,6 +263,7 @@ export async function sendMedias({
     medias.map(async (media) => {
       // Create a temporary message to display while sending
       const mediaPreview = URL.createObjectURL(media);
+
       const temporaryMessage = createTemporaryMessage({
         itemType,
         itemUuid,
@@ -272,15 +273,20 @@ export async function sendMedias({
           { preview: mediaPreview, file: media, content_type: media.type },
         ],
       });
+
       addMessage(temporaryMessage);
       addSortedMessage(temporaryMessage);
 
       // Send the message and update it with the actual message data
       try {
-        const sentMedia = await sendItemMedia(media);
+        const { media_response: sentMedia, message_response: sentMessage } =
+          await sendItemMedia(media);
+
+        sentMessage.media.push(sentMedia);
+
         updateMessage({
           media: sentMedia,
-          message: temporaryMessage,
+          message: sentMessage,
           toUpdateMediaPreview: mediaPreview,
           toUpdateMessageUuid: temporaryMessage.uuid,
         });

@@ -110,7 +110,7 @@
         @open="openDiscussion"
       />
       <CardGroup
-        v-if="activeTab === 'waiting' && !enableAutomaticRoomRouting"
+        v-if="activeTab === 'waiting'"
         :rooms="rooms_queue"
         roomsType="waiting"
         data-testid="waiting-rooms-card-group"
@@ -349,13 +349,6 @@ export default {
       newSize > oldSize ? this.roomsCount[key]++ : this.roomsCount[key]--;
     },
     async openRoom(room) {
-      if (
-        this.enableAutomaticRoomRouting &&
-        room.user?.email !== this.me?.email
-      ) {
-        return;
-      }
-
       await this.setActiveDiscussion(null);
       await this.setActiveRoom(room);
     },
@@ -369,8 +362,9 @@ export default {
       concat,
       order = this.orderBy[this.activeTab],
       roomsType = '',
+      silent = false,
     ) {
-      this.showLoadingRooms = !concat;
+      this.showLoadingRooms = silent ? false : !concat;
       const { viewedAgent } = this;
       try {
         this.isLoadingRooms = true;
@@ -469,7 +463,12 @@ export default {
           uuid: room.uuid,
         };
         await types[type].request();
-        await this.listRoom(false, this.orderBy[this.activeTab], true);
+        await this.listRoom(
+          false,
+          this.orderBy[this.activeTab],
+          'ongoing',
+          true,
+        );
         unnnic.unnnicCallAlert({
           props: {
             text: types[type].successMessage,
