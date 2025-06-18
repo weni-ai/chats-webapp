@@ -1,0 +1,33 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FooterButton > Snapshot > should match snapshot 1`] = `
+<section
+  class="chats-layout-footer-button"
+  data-testid="footer-button-container"
+  data-v-944d9ccc=""
+>
+  <section
+    class="chats-layout-footer-button__bulk-transfer"
+    data-testid="bulk-transfer-section"
+    data-v-944d9ccc=""
+  >
+    <unnnic-button-stub
+      class="chats-layout-footer-button__button"
+      data-testid="transfer-button"
+      data-v-944d9ccc=""
+      disabled="false"
+      float="false"
+      iconcenter=""
+      iconleft="read_more"
+      iconright=""
+      iconsfilled="false"
+      loading="false"
+      next="false"
+      size="small"
+      text="transfer_contact_2"
+      type="primary"
+    />
+    <!--v-if-->
+  </section>
+</section>
+`;

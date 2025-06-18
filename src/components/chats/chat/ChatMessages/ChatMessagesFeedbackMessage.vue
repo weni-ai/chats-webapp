@@ -2,6 +2,7 @@
   <ChatFeedback
     :feedback="createFeedbackLabel(message)"
     :scheme="scheme"
+    data-testid="chat-feedback"
   />
 </template>
 

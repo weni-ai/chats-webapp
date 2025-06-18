@@ -6,6 +6,7 @@
       dropzone: true,
       dragging: show && isDragging,
     }"
+    data-testid="dropzone-container"
     @dragenter.stop.prevent="dragenter"
     @dragover.stop.prevent="dragover"
     @dragleave.stop.prevent="dragleave"
@@ -14,14 +15,16 @@
     <div
       v-if="show && isDragging"
       class="dropzone__description"
+      data-testid="dropzone-description"
     >
       <UnnnicIconSvg
         class="unnnic-upload-area__dropzone__icon"
         icon="upload-bottom-1"
         scheme="brand-weni"
         size="xl"
+        data-testid="dropzone-icon"
       />
-      <h1>{{ $t('dropzone.description') }}</h1>
+      <h1 data-testid="dropzone-title">{{ $t('dropzone.description') }}</h1>
     </div>
 
     <slot />
