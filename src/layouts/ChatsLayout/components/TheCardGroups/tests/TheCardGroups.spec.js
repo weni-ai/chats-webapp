@@ -10,15 +10,6 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 
 import TheCardGroups from '../index.vue';
 
-// vi.mock('../CardGroup/index.vue', () => ({
-//   default: {
-//     name: 'CardGroup',
-//     props: ['label', 'rooms', 'discussions', 'withSelection', 'roomsType'],
-//     emits: ['open', 'pin'],
-//     template: '<div data-testid="mocked-card-group">{{ label }}</div>',
-//   },
-// }));
-
 vi.mock('@/views/loadings/RoomsList.vue', () => ({
   default: {
     name: 'RoomsListLoading',
@@ -273,9 +264,10 @@ describe('TheCardGroups.vue', () => {
     });
 
     it('renders discussions card group when discussions exist', async () => {
-      wrapper = createWrapper();
+      const roomsStore = useRooms();
+      roomsStore.activeTab = 'discussions';
 
-      wrapper.setData({ activeTab: 'discussions' });
+      wrapper = createWrapper();
 
       await flushPromises();
 
@@ -286,11 +278,10 @@ describe('TheCardGroups.vue', () => {
 
     it('renders waiting rooms card group when conditions are met', async () => {
       const roomsStore = useRooms();
+      roomsStore.activeTab = 'waiting';
       roomsStore.waitingQueue = [mockRooms[0]];
 
       wrapper = createWrapper();
-
-      wrapper.setData({ activeTab: 'waiting' });
 
       await flushPromises();
 
@@ -309,11 +300,10 @@ describe('TheCardGroups.vue', () => {
 
     it('renders sent flows card group when flows exist', async () => {
       const roomsStore = useRooms();
+      roomsStore.activeTab = 'sent_flows';
       roomsStore.waitingContactAnswer = [mockRooms[0]];
 
       wrapper = createWrapper();
-
-      wrapper.setData({ activeTab: 'sent_flows' });
 
       await flushPromises();
 
