@@ -60,6 +60,13 @@
           :count="
             tab.key === 'discussions' ? discussionsCount : roomsCount[tab.key]
           "
+          :showDot="
+            tab.key === 'ongoing'
+              ? showOngoingDot
+              : tab.key === 'discussions'
+                ? showDiscussionsDot
+                : false
+          "
           :active="activeTab === tab.key"
           @click="activeTab = tab.key"
         />
@@ -195,7 +202,6 @@ export default {
       isMobile: isMobile(),
       showModalQueue: false,
       noQueueSelected: false,
-      activeTab: 'ongoing',
       pinRoomLoading: {
         status: false,
         uuid: '',
@@ -215,8 +221,16 @@ export default {
     ...mapState(useConfig, ['project', 'enableAutomaticRoomRouting']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
-    ...mapWritableState(useRooms, ['orderBy', 'roomsCount']),
-    ...mapState(useDiscussions, ['discussionsCount']),
+    ...mapWritableState(useRooms, [
+      'orderBy',
+      'roomsCount',
+      'activeTab',
+      'showOngoingDot',
+    ]),
+    ...mapWritableState(useDiscussions, [
+      'discussionsCount',
+      'showDiscussionsDot',
+    ]),
 
     roomsTabs() {
       const tabs = [
@@ -273,6 +287,16 @@ export default {
     },
   },
   watch: {
+    activeTab: {
+      handler(newActiveTab) {
+        if (newActiveTab === 'ongoing') {
+          this.showOngoingDot = false;
+        }
+        if (newActiveTab === 'discussions') {
+          this.showDiscussionsDot = false;
+        }
+      },
+    },
     rooms_ongoing: {
       deep: true,
       handler(newRooms, oldRooms) {
@@ -329,10 +353,6 @@ export default {
     ]);
     this.initialLoaded = true;
   },
-  // mounted() {
-  //   this.listRoom();
-  //   this.listDiscussions();
-  // },
   methods: {
     ...mapActions(useRooms, {
       setActiveRoom: 'setActiveRoom',

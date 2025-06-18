@@ -8,6 +8,7 @@ import { removeDuplicatedItems } from '@/utils/array';
 
 export const useRooms = defineStore('rooms', {
   state: () => ({
+    activeTab: 'ongoing',
     rooms: [],
     activeRoom: null,
     maxPinLimit: 0,
@@ -23,6 +24,7 @@ export const useRooms = defineStore('rooms', {
       sent_flows: '-last_interaction',
       waiting: 'created_on',
     },
+    showOngoingDot: false,
     roomsCount: {
       waiting: 0,
       ongoing: 0,
