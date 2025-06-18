@@ -128,7 +128,7 @@ export const useRooms = defineStore('rooms', {
       const listRoomHasNext = response.next;
 
       if (concat) {
-        gettedRooms = this.rooms.concat(response.results);
+        gettedRooms = gettedRooms.concat(this.rooms);
       }
 
       this.rooms = removeDuplicatedItems(gettedRooms, 'uuid');
