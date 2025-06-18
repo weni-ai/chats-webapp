@@ -5,6 +5,7 @@ const { VueLoaderPlugin } = require('vue-loader');
 const { resolve } = require('path');
 const path = require('path');
 const dotenv = require('dotenv');
+const { dependencies } = require('./package.json');
 
 dotenv.config();
 
@@ -88,6 +89,24 @@ module.exports = defineConfig({
       }),
     }),
     new VueLoaderPlugin(),
+    new rspack.container.ModuleFederationPlugin({
+      name: 'chats',
+      filename: 'remoteEntry.js',
+      exposes: {},
+      remotes: {},
+      shared: {
+        vue: {
+          singleton: true,
+          requiredVersion: '^3.0.0',
+          eager: true,
+        },
+        'vue-i18n': {
+          singleton: true,
+          requiredVersion: dependencies['vue-i18n'],
+          eager: true,
+        },
+      },
+    }),
   ],
   optimization: {
     minimizer: [
