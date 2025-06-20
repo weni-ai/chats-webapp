@@ -136,23 +136,8 @@ describe('CardGroup.vue', () => {
       const wrapper = createWrapper();
 
       expect(wrapper.exists()).toBe(true);
-      expect(wrapper.find('[data-testid="card-group-collapse"]').exists()).toBe(
-        true,
-      );
-      expect(wrapper.find('[data-testid="card-group-header"]').exists()).toBe(
-        true,
-      );
+
       expect(wrapper.find('[data-testid="room-container"]').exists()).toBe(
-        true,
-      );
-
-      wrapper.unmount();
-    });
-
-    it('renders checkbox when withSelection is true', () => {
-      const wrapper = createWrapper({ withSelection: true });
-
-      expect(wrapper.find('[data-testid="card-group-checkbox"]').exists()).toBe(
         true,
       );
 
@@ -226,14 +211,12 @@ describe('CardGroup.vue', () => {
       const wrapper = createWrapper({
         rooms: [],
         discussions: [],
-        label: '',
         withSelection: false,
         roomsType: '',
       });
 
       expect(wrapper.props('rooms')).toEqual([]);
       expect(wrapper.props('discussions')).toEqual([]);
-      expect(wrapper.props('label')).toBe('');
       expect(wrapper.props('withSelection')).toBe(false);
       expect(wrapper.props('roomsType')).toBe('');
 
@@ -244,7 +227,6 @@ describe('CardGroup.vue', () => {
       const customProps = {
         rooms: mockRooms,
         discussions: mockDiscussions,
-        label: 'Custom Label',
         withSelection: true,
         roomsType: 'waiting',
       };
@@ -253,7 +235,6 @@ describe('CardGroup.vue', () => {
 
       expect(wrapper.props('rooms')).toEqual(mockRooms);
       expect(wrapper.props('discussions')).toEqual(mockDiscussions);
-      expect(wrapper.props('label')).toBe('Custom Label');
       expect(wrapper.props('withSelection')).toBe(true);
       expect(wrapper.props('roomsType')).toBe('waiting');
 
@@ -511,10 +492,7 @@ describe('CardGroup.vue', () => {
 
       expect(
         wrapper.find('[data-testid="discussion-container"]').exists(),
-      ).toBe(true);
-      expect(wrapper.findAll('[data-testid^="discussion-card-"]')).toHaveLength(
-        0,
-      );
+      ).toBe(false);
 
       wrapper.unmount();
     });

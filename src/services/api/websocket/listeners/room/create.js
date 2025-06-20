@@ -1,6 +1,7 @@
 import SoundNotification from '@/services/api/websocket/soundNotification';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
+import { getRoomType } from '@/utils/room';
 
 export default async (room, { app }) => {
   const roomsStore = useRooms();
@@ -11,10 +12,19 @@ export default async (room, { app }) => {
   );
 
   if (!isExistingRoom) {
-    const isWaitingQueueRoom = !room?.user && !room.is_waiting;
     const { enableAutomaticRoomRouting } = useConfig();
-    if (isWaitingQueueRoom && enableAutomaticRoomRouting) return;
-    roomsStore.addRoom(room);
+    const roomType = getRoomType(room);
+
+    if (roomType === 'waiting' && enableAutomaticRoomRouting) return;
+
+    const addAfter = !roomsStore.orderBy[roomType].includes('-');
+
+    roomsStore.addRoom(room, { after: addAfter });
+
+    if (roomType === 'ongoing' && roomsStore.activeTab !== 'ongoing') {
+      roomsStore.showOngoingDot = true;
+    }
+
     const notification = new SoundNotification('select-sound');
     notification.notify();
   }

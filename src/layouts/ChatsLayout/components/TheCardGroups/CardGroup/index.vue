@@ -1,85 +1,72 @@
 <template>
-  <UnnnicCollapse
-    v-model="isCollapseOpened"
-    size="md"
-    data-testid="card-group-collapse"
+  <template v-if="rooms && !!rooms.length">
+    <section
+      class="room-container"
+      data-testid="room-container"
+    >
+      <UnnnicDisclaimer
+        v-if="roomsType === 'waiting' && enableAutomaticRoomRouting"
+        class="room-container__chats-router-info"
+        data-testid="chats-router-disclaimer"
+        :text="$t('chats.queue_priority_disclaimer')"
+        iconColor="neutral-dark"
+      />
+      <RoomCard
+        v-for="(room, index) in rooms"
+        :key="room.uuid"
+        :room="room"
+        :active="!activeDiscussionId && activeRoom?.uuid === room?.uuid"
+        :selected="getIsRoomSelected(room.uuid)"
+        :withSelection="withSelection"
+        :roomType="roomsType"
+        :class="{
+          'room-card': true,
+          'room-card--without-border': activeRoomIndex === index - 1,
+          'room-card--selected': activeRoom?.uuid === room?.uuid,
+        }"
+        :data-testid="`room-card-${index}`"
+        @click="open(room)"
+        @click-pin="handlePin(room, $event)"
+        @update-selected="updateIsRoomSelected(room.uuid, $event)"
+        @mousedown="activeRoomIndex = index"
+        @mouseup="activeRoomIndex = null"
+      />
+    </section>
+  </template>
+  <template v-else-if="discussions && !!discussions.length">
+    <section
+      class="discussion-container"
+      data-testid="discussion-container"
+    >
+      <UnnnicChatsContact
+        v-for="(discussion, index) in discussions"
+        :key="discussion.uuid"
+        :class="{
+          'discussion-card': true,
+          'discussion-card--without-border':
+            activeDiscussionIndex === index - 1,
+        }"
+        :active="activeDiscussionId"
+        :title="discussion.subject"
+        :discussionGoal="discussion.contact"
+        :tabindex="0"
+        :selected="discussion.uuid === activeDiscussionId"
+        :unreadMessages="unreadMessages(discussion.uuid)"
+        :data-testid="`discussion-card-${index}`"
+        @click="open(discussion)"
+        @keypress.enter="open(discussion)"
+        @mousedown="activeDiscussionIndex = index"
+        @mouseup="activeDiscussionIndex = null"
+      />
+    </section>
+  </template>
+  <p
+    v-else
+    class="no-results"
+    data-testid="no-results-message"
   >
-    <template #header>
-      <label
-        class="card-group__header"
-        data-testid="card-group-header"
-      >
-        <section
-          data-testid="card-group-checkbox-section"
-          @click.stop
-        >
-          <UnnnicCheckbox
-            v-if="withSelection"
-            v-model="collapseCheckboxValue"
-            class="card-group__checkbox"
-            size="sm"
-            data-testid="card-group-checkbox"
-            @change="updateSelectAllRooms($event)"
-          />
-        </section>
-        {{ label }}
-      </label>
-    </template>
-    <template v-if="rooms && rooms.length">
-      <section
-        class="room-container"
-        data-testid="room-container"
-      >
-        <RoomCard
-          v-for="(room, index) in rooms"
-          :key="room.uuid"
-          :room="room"
-          :active="!activeDiscussionId && activeRoom?.uuid === room?.uuid"
-          :selected="getIsRoomSelected(room.uuid)"
-          :withSelection="withSelection"
-          :roomType="roomsType"
-          :class="{
-            'room-card': true,
-            'room-card--without-border': activeRoomIndex === index - 1,
-            'room-card--selected': activeRoom?.uuid === room?.uuid,
-          }"
-          :data-testid="`room-card-${index}`"
-          @click="open(room)"
-          @click-pin="handlePin(room, $event)"
-          @update-selected="updateIsRoomSelected(room.uuid, $event)"
-          @mousedown="activeRoomIndex = index"
-          @mouseup="activeRoomIndex = null"
-        />
-      </section>
-    </template>
-    <template v-if="discussions">
-      <section
-        class="discussion-container"
-        data-testid="discussion-container"
-      >
-        <UnnnicChatsContact
-          v-for="(discussion, index) in discussions"
-          :key="discussion.uuid"
-          :class="{
-            'discussion-card': true,
-            'discussion-card--without-border':
-              activeDiscussionIndex === index - 1,
-          }"
-          :active="activeDiscussionId"
-          :title="discussion.subject"
-          :discussionGoal="discussion.contact"
-          :tabindex="0"
-          :selected="discussion.uuid === activeDiscussionId"
-          :unreadMessages="unreadMessages(discussion.uuid)"
-          :data-testid="`discussion-card-${index}`"
-          @click="open(discussion)"
-          @keypress.enter="open(discussion)"
-          @mousedown="activeDiscussionIndex = index"
-          @mouseup="activeDiscussionIndex = null"
-        />
-      </section>
-    </template>
-  </UnnnicCollapse>
+    {{ $t('without_chats') }}
+  </p>
 </template>
 
 <script>
@@ -106,10 +93,6 @@ export default {
     discussions: {
       type: Array,
       default: () => [],
-    },
-    label: {
-      type: String,
-      default: '',
     },
     withSelection: {
       type: Boolean,
@@ -273,5 +256,8 @@ export default {
       }
     }
   }
+}
+.no-results {
+  margin-top: $unnnic-spacing-ant;
 }
 </style>
