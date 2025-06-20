@@ -111,20 +111,20 @@
         data-testid="router-disclaimer"
       />
       <CardGroup
-        v-if="activeTab === 'discussions'"
+        v-show="activeTab === 'discussions'"
         :discussions="discussions"
         data-testid="discussions-card-group"
         @open="openDiscussion"
       />
       <CardGroup
-        v-if="activeTab === 'waiting'"
+        v-show="activeTab === 'waiting'"
         :rooms="rooms_queue"
         roomsType="waiting"
         data-testid="waiting-rooms-card-group"
         @open="openRoom"
       />
       <CardGroup
-        v-if="activeTab === 'ongoing'"
+        v-show="activeTab === 'ongoing'"
         :rooms="rooms_ongoing"
         :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
         roomsType="in_progress"
@@ -133,7 +133,7 @@
         @pin="handlePinRoom"
       />
       <CardGroup
-        v-if="activeTab === 'flow_start'"
+        v-show="activeTab === 'flow_start'"
         :rooms="rooms_flow_start"
         data-testid="sent-flows-card-group"
         @open="openRoom"
