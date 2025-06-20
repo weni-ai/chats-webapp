@@ -34,7 +34,7 @@ describe('Room create', () => {
       orderBy: {
         waiting: '-last_interaction',
         ongoing: '-last_interaction',
-        sent_flows: '-last_interaction',
+        flow_start: '-last_interaction',
       },
       addRoom: vi.fn(),
     };

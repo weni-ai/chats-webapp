@@ -13,7 +13,7 @@ export default {
       limit,
       ordering: `user,${order}`,
       search: contact,
-      rooms_status: roomsType,
+      room_status: roomsType,
     };
 
     if (viewedAgent) {
