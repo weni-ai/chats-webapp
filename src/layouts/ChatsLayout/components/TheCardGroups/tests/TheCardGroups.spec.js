@@ -300,7 +300,7 @@ describe('TheCardGroups.vue', () => {
 
     it('renders sent flows card group when flows exist', async () => {
       const roomsStore = useRooms();
-      roomsStore.activeTab = 'sent_flows';
+      roomsStore.activeTab = 'flow_start';
       roomsStore.waitingContactAnswer = [mockRooms[0]];
 
       wrapper = createWrapper();
@@ -770,7 +770,7 @@ describe('TheCardGroups.vue', () => {
       roomsStore.hasNextRooms = {
         waiting: true,
         ongoing: true,
-        sent_flows: true,
+        flow_start: true,
       };
 
       wrapper = createWrapper();

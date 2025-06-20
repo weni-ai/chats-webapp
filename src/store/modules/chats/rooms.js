@@ -13,7 +13,7 @@ export const useRooms = defineStore('rooms', {
     activeRoom: null,
     maxPinLimit: 0,
     newMessagesByRoom: {},
-    hasNextRooms: { waiting: false, in_progress: false, sent_flows: false },
+    hasNextRooms: { waiting: false, in_progress: false, flow_start: false },
     canUseCopilot: false,
     copilotSuggestion: '',
     selectedRoomsToTransfer: [],
@@ -21,14 +21,14 @@ export const useRooms = defineStore('rooms', {
     orderBy: {
       ongoing: '-last_interaction',
       discussions: '-last_interaction',
-      sent_flows: '-last_interaction',
+      flow_start: '-last_interaction',
       waiting: 'created_on',
     },
     showOngoingDot: false,
     roomsCount: {
       waiting: 0,
       ongoing: 0,
-      sent_flows: 0,
+      flow_start: 0,
     },
   }),
 

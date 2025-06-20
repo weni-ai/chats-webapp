@@ -133,8 +133,8 @@
         @pin="handlePinRoom"
       />
       <CardGroup
-        v-if="activeTab === 'sent_flows'"
-        :rooms="rooms_sent_flows"
+        v-if="activeTab === 'flow_start'"
+        :rooms="rooms_flow_start"
         data-testid="sent-flows-card-group"
         @open="openRoom"
       />
@@ -189,7 +189,7 @@ export default {
       page: {
         ongoing: 0,
         waiting: 0,
-        sent_flows: 0,
+        flow_start: 0,
         discussion: 0,
         search: 0,
       },
@@ -213,7 +213,7 @@ export default {
     ...mapState(useRooms, {
       rooms_ongoing: 'agentRooms',
       rooms_queue: 'waitingQueue',
-      rooms_sent_flows: 'waitingContactAnswer',
+      rooms_flow_start: 'waitingContactAnswer',
       listRoomHasNext: 'hasNextRooms',
       newMessagesByRoom: 'newMessagesByRoom',
       maxPinLimit: 'maxPinLimit',
@@ -241,8 +241,8 @@ export default {
       if (this.discussions.length) {
         tabs.push({ key: 'discussions', label: this.$t('chats.discussions') });
       }
-      if (this.rooms_sent_flows.length) {
-        tabs.push({ key: 'sent_flows', label: this.$t('chats.sent_flows') });
+      if (this.rooms_flow_start.length) {
+        tabs.push({ key: 'flow_start', label: this.$t('chats.sent_flows') });
       }
 
       return tabs;
@@ -253,7 +253,7 @@ export default {
         ongoing: this.rooms_ongoing.length,
         waiting: this.rooms_queue.length,
         discussions: this.discussions.length,
-        sent_flows: this.rooms_sent_flows.length,
+        flow_start: this.rooms_flow_start.length,
       };
 
       return countRooms[this.activeTab] > 0;
@@ -278,7 +278,7 @@ export default {
         !this.showLoadingRooms &&
         this.rooms_ongoing.length === 0 &&
         this.rooms_queue.length === 0 &&
-        this.rooms_sent_flows.length === 0 &&
+        this.rooms_flow_start.length === 0 &&
         this.discussions.length === 0
       );
     },
@@ -309,10 +309,10 @@ export default {
         this.updateRoomsCount(newRooms.length, oldRooms.length, 'waiting');
       },
     },
-    rooms_sent_flows: {
+    rooms_flow_start: {
       deep: true,
       handler(newRooms, oldRooms) {
-        this.updateRoomsCount(newRooms.length, oldRooms.length, 'sent_flows');
+        this.updateRoomsCount(newRooms.length, oldRooms.length, 'flow_start');
       },
     },
     totalUnreadMessages: {
@@ -348,7 +348,7 @@ export default {
     await Promise.all([
       this.listRoom(true, this.orderBy.waiting, 'waiting'),
       this.listRoom(true, this.orderBy.ongoing, 'ongoing'),
-      this.listRoom(true, this.orderBy.sent_flows, 'sent_flows'),
+      this.listRoom(true, this.orderBy.flow_start, 'flow_start'),
       this.listDiscussions(),
     ]);
     this.initialLoaded = true;
