@@ -93,7 +93,9 @@ module.exports = defineConfig({
       name: 'chats',
       filename: 'remoteEntry.js',
       exposes: {},
-      remotes: {},
+      remotes: {
+        connect: `connect@${process.env.MODULE_FEDERATION_CONNECT_URL}/remoteEntry.js`,
+      },
       shared: {
         vue: {
           singleton: true,
