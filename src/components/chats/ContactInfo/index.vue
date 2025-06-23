@@ -106,7 +106,7 @@
               </UnnnicToolTip>
             </div>
             <ChatSummary
-              v-if="showRoomSummary && enableRoomSummary"
+              v-if="showRoomSummary && enableRoomSummary && room"
               class="chat-summary"
               :summaryText="activeRoomSummary"
               :isGeneratingSummary="isLoadingActiveRoomSummary"

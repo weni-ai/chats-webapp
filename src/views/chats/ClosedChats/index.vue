@@ -52,7 +52,7 @@
 <script>
 import isMobile from 'is-mobile';
 
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useConfig } from '@/store/modules/config';
@@ -102,6 +102,7 @@ export default {
   computed: {
     ...mapState(useConfig, ['project']),
     ...mapState(useRoomMessages, ['roomMessagesNext']),
+    ...mapWritableState(useRooms, ['activeRoomSummary']),
 
     closedChatsHeaderSize() {
       return this.isMobile ? 'small' : 'large';
@@ -112,6 +113,7 @@ export default {
     roomId: {
       immediate: true,
       async handler(roomId) {
+        this.activeRoomSummary = '';
         if (!roomId) {
           this.setActiveRoom(null);
           this.resetRoomMessages();

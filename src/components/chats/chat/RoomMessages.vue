@@ -4,7 +4,8 @@
       (!isLoadingMessages || silentLoadingMessages) &&
       openChatSummary &&
       showRoomSummary &&
-      enableRoomSummary
+      enableRoomSummary &&
+      room
     "
     class="chat-summary"
     :isGeneratingSummary="isLoadingActiveRoomSummary"
