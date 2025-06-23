@@ -120,4 +120,12 @@ export default {
       .catch((error) => error.response);
     return response;
   },
+
+  async pinRoom({ uuid, status = true }) {
+    const response = await http.post(`/room/${uuid}/pin/`, {
+      status,
+    });
+
+    return response.data;
+  },
 };

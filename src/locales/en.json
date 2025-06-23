@@ -211,6 +211,17 @@
       "most_recent": "Most recent",
       "older": "Older"
     },
+    "room_pin": {
+      "success_pin": "Chat pinned with success",
+      "success_unpin": "Unpinned chat",
+      "error_pin_limit": "You can pin up to {max_pin_limit} chats",
+      "error_404": "The room doesn't exist",
+      "error_403": "Is not a room user"
+    },
+    "errors": {
+      "401": "Authentication error",
+      "default": "An error occurred, please try again later"
+    },
     "search_contact": "Search contact",
     "tags": "Chat tags",
     "discussions": "Discussions ({length})",
@@ -249,7 +260,7 @@
     "no_queue_selected": "No queue selected",
     "success_update_queues": "Your service queues have been updated",
     "error_update_queues": "Unable to update your service queues",
-    "queue_priority_disclaimer": "Queue chats are now automatically assigned. No need to pick them manually anymore"
+    "queue_priority_disclaimer": "Queue chats are now automatically assigned."
   },
   "chats_notifications": {
     "title": "WeniChats Notifications",

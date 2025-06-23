@@ -214,6 +214,17 @@
       "most_recent": "Mais recentes",
       "older": "Mais antigos"
     },
+    "room_pin": {
+      "success_pin": "Chat fixado com sucesso",
+      "success_unpin": "Chat desfixado",
+      "error_pin_limit": "Você pode fixar até {max_pin_limit} chats",
+      "error_404": "A sala não existe",
+      "error_403": "Não é um usuário da sala"
+    },
+    "errors": {
+      "401": "Erro de autenticação",
+      "default": "Ocorreu um erro, por favor, tente novamente mais tarde"
+    },
     "search_contact": "Pesquisar contato",
     "tags": "Tags do chat",
     "discussions": "Discussões ({length})",
@@ -252,7 +263,7 @@
     "no_queue_selected": "Nenhuma fila selecionada",
     "success_update_queues": "Suas filas de atendimento foram atualizadas",
     "error_update_queues": "Não foi possível atualizar suas filas de atendimento",
-    "queue_priority_disclaimer": "Salas da fila agora são atribuídas automaticamente. Não é mais preciso pegá-las manualmente."
+    "queue_priority_disclaimer": "Salas da fila agora são atribuídas automaticamente."
   },
   "chats_notifications": {
     "title": "Notificações do WeniChats",
