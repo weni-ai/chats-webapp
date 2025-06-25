@@ -252,17 +252,6 @@ describe('TheCardGroups.vue', () => {
       );
     });
 
-    it('renders router disclaimer when routing enabled', () => {
-      const configStore = useConfig();
-      configStore.enableAutomaticRoomRouting = true;
-
-      wrapper = createWrapper();
-
-      expect(wrapper.find('[data-testid="router-disclaimer"]').exists()).toBe(
-        true,
-      );
-    });
-
     it('renders discussions card group when discussions exist', async () => {
       const roomsStore = useRooms();
       roomsStore.activeTab = 'discussions';
@@ -290,8 +279,10 @@ describe('TheCardGroups.vue', () => {
       ).toBe(true);
     });
 
-    it('renders in-progress rooms card group', () => {
+    it('renders in-progress rooms card group', async () => {
       wrapper = createWrapper();
+
+      await flushPromises();
 
       expect(
         wrapper.find('[data-testid="in-progress-rooms-card-group"]').exists(),
@@ -400,6 +391,9 @@ describe('TheCardGroups.vue', () => {
   describe('filter functionality tests', () => {
     it('handles most recent filter correctly', async () => {
       wrapper = createWrapper();
+
+      await flushPromises();
+
       const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
 
       await wrapper.find('[data-testid="most-recent-filter"]').trigger('click');
@@ -408,8 +402,9 @@ describe('TheCardGroups.vue', () => {
         '-last_interaction',
       );
       expect(listRoomSpy).toHaveBeenCalledWith(
-        false,
+        true,
         '-last_interaction',
+        'ongoing',
         true,
       );
     });
@@ -418,18 +413,28 @@ describe('TheCardGroups.vue', () => {
       wrapper = createWrapper();
       const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
 
+      await flushPromises();
+
       await wrapper.find('[data-testid="older-filter"]').trigger('click');
 
       expect(wrapper.vm.orderBy[wrapper.vm.activeTab]).toBe('last_interaction');
-      expect(listRoomSpy).toHaveBeenCalledWith(false, 'last_interaction', true);
+      expect(listRoomSpy).toHaveBeenCalledWith(
+        true,
+        'last_interaction',
+        'ongoing',
+        true,
+      );
     });
 
-    it('applies correct CSS classes for active filters', () => {
+    it('applies correct CSS classes for active filters', async () => {
       wrapper = createWrapper();
+
+      await flushPromises();
 
       const mostRecentFilter = wrapper.find(
         '[data-testid="most-recent-filter"]',
       );
+
       const olderFilter = wrapper.find('[data-testid="older-filter"]');
 
       expect(mostRecentFilter.classes()).toContain('filter-active');

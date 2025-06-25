@@ -40,7 +40,7 @@
       </UnnnicToolTip>
     </section>
     <RoomsListLoading
-      v-if="showLoadingRooms"
+      v-if="showLoadingRooms || !initialLoaded"
       data-testid="rooms-loading"
     />
     <section
@@ -77,9 +77,9 @@
         data-testid="order-by-section"
       >
         <div>
-          <span data-testid="order-by-label">{{
-            $t('chats.room_list.order_by')
-          }}</span>
+          <span data-testid="order-by-label">
+            {{ $t('chats.room_list.order_by') }}
+          </span>
         </div>
         <div
           class="apply-filter"
@@ -350,8 +350,9 @@ export default {
       this.listRoom(true, this.orderBy.ongoing, 'ongoing'),
       this.listRoom(true, this.orderBy.flow_start, 'flow_start'),
       this.listDiscussions(),
-    ]);
-    this.initialLoaded = true;
+    ]).then(() => {
+      this.initialLoaded = true;
+    });
   },
   methods: {
     ...mapActions(useRooms, {
@@ -530,19 +531,19 @@ export default {
     },
     handleMostRecentFilter() {
       const orderByValue =
-        this.activeTab === 'waiting' ? '-created_at' : '-last_interaction';
+        this.activeTab === 'waiting' ? '-created_on' : '-last_interaction';
 
       this.orderBy[this.activeTab] = orderByValue;
 
-      this.listRoom(false, this.orderBy[this.activeTab], true);
+      this.listRoom(true, this.orderBy[this.activeTab], this.activeTab, true);
     },
     handleOlderFilter() {
       const orderByValue =
-        this.activeTab === 'waiting' ? 'created_at' : 'last_interaction';
+        this.activeTab === 'waiting' ? 'created_on' : 'last_interaction';
 
       this.orderBy[this.activeTab] = orderByValue;
 
-      this.listRoom(false, this.orderBy[this.activeTab], true);
+      this.listRoom(true, this.orderBy[this.activeTab], this.activeTab, true);
     },
   },
 };
