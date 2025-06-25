@@ -154,19 +154,6 @@ describe('CardGroup.vue', () => {
       wrapper.unmount();
     });
 
-    it('renders disclaimer when roomsType is waiting and routing is enabled', () => {
-      const configStore = useConfig();
-      configStore.enableAutomaticRoomRouting = true;
-
-      const wrapper = createWrapper({ roomsType: 'waiting' });
-
-      expect(
-        wrapper.find('[data-testid="chats-router-disclaimer"]').exists(),
-      ).toBe(true);
-
-      wrapper.unmount();
-    });
-
     it('does not render disclaimer when conditions are not met', () => {
       const wrapper = createWrapper({ roomsType: 'in_progress' });
 

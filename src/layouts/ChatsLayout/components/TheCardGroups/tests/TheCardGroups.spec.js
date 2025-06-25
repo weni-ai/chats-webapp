@@ -10,15 +10,6 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 
 import TheCardGroups from '../index.vue';
 
-// vi.mock('../CardGroup/index.vue', () => ({
-//   default: {
-//     name: 'CardGroup',
-//     props: ['label', 'rooms', 'discussions', 'withSelection', 'roomsType'],
-//     emits: ['open', 'pin'],
-//     template: '<div data-testid="mocked-card-group">{{ label }}</div>',
-//   },
-// }));
-
 vi.mock('@/views/loadings/RoomsList.vue', () => ({
   default: {
     name: 'RoomsListLoading',
@@ -250,7 +241,8 @@ describe('TheCardGroups.vue', () => {
 
     it('renders loading state', async () => {
       wrapper = createWrapper();
-      wrapper.setData({ isLoadingRooms: true });
+      await flushPromises();
+      wrapper.setData({ showLoadingRooms: true });
 
       await wrapper.vm.$nextTick();
 
@@ -260,21 +252,11 @@ describe('TheCardGroups.vue', () => {
       );
     });
 
-    it('renders router disclaimer when routing enabled', () => {
-      const configStore = useConfig();
-      configStore.enableAutomaticRoomRouting = true;
-
-      wrapper = createWrapper();
-
-      expect(wrapper.find('[data-testid="router-disclaimer"]').exists()).toBe(
-        true,
-      );
-    });
-
     it('renders discussions card group when discussions exist', async () => {
-      wrapper = createWrapper();
+      const roomsStore = useRooms();
+      roomsStore.activeTab = 'discussions';
 
-      wrapper.setData({ activeTab: 'discussions' });
+      wrapper = createWrapper();
 
       await flushPromises();
 
@@ -285,11 +267,10 @@ describe('TheCardGroups.vue', () => {
 
     it('renders waiting rooms card group when conditions are met', async () => {
       const roomsStore = useRooms();
+      roomsStore.activeTab = 'waiting';
       roomsStore.waitingQueue = [mockRooms[0]];
 
       wrapper = createWrapper();
-
-      wrapper.setData({ activeTab: 'waiting' });
 
       await flushPromises();
 
@@ -298,21 +279,10 @@ describe('TheCardGroups.vue', () => {
       ).toBe(true);
     });
 
-    it('hides waiting rooms when automatic routing enabled', () => {
-      const roomsStore = useRooms();
-      const configStore = useConfig();
-      roomsStore.waitingQueue = [mockRooms[0]];
-      configStore.enableAutomaticRoomRouting = true;
-
+    it('renders in-progress rooms card group', async () => {
       wrapper = createWrapper();
 
-      expect(
-        wrapper.find('[data-testid="waiting-rooms-card-group"]').exists(),
-      ).toBe(false);
-    });
-
-    it('renders in-progress rooms card group', () => {
-      wrapper = createWrapper();
+      await flushPromises();
 
       expect(
         wrapper.find('[data-testid="in-progress-rooms-card-group"]').exists(),
@@ -321,11 +291,10 @@ describe('TheCardGroups.vue', () => {
 
     it('renders sent flows card group when flows exist', async () => {
       const roomsStore = useRooms();
+      roomsStore.activeTab = 'flow_start';
       roomsStore.waitingContactAnswer = [mockRooms[0]];
 
       wrapper = createWrapper();
-
-      wrapper.setData({ activeTab: 'sent_flows' });
 
       await flushPromises();
 
@@ -422,6 +391,9 @@ describe('TheCardGroups.vue', () => {
   describe('filter functionality tests', () => {
     it('handles most recent filter correctly', async () => {
       wrapper = createWrapper();
+
+      await flushPromises();
+
       const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
 
       await wrapper.find('[data-testid="most-recent-filter"]').trigger('click');
@@ -430,8 +402,9 @@ describe('TheCardGroups.vue', () => {
         '-last_interaction',
       );
       expect(listRoomSpy).toHaveBeenCalledWith(
-        false,
+        true,
         '-last_interaction',
+        'ongoing',
         true,
       );
     });
@@ -440,18 +413,28 @@ describe('TheCardGroups.vue', () => {
       wrapper = createWrapper();
       const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
 
+      await flushPromises();
+
       await wrapper.find('[data-testid="older-filter"]').trigger('click');
 
       expect(wrapper.vm.orderBy[wrapper.vm.activeTab]).toBe('last_interaction');
-      expect(listRoomSpy).toHaveBeenCalledWith(false, 'last_interaction', true);
+      expect(listRoomSpy).toHaveBeenCalledWith(
+        true,
+        'last_interaction',
+        'ongoing',
+        true,
+      );
     });
 
-    it('applies correct CSS classes for active filters', () => {
+    it('applies correct CSS classes for active filters', async () => {
       wrapper = createWrapper();
+
+      await flushPromises();
 
       const mostRecentFilter = wrapper.find(
         '[data-testid="most-recent-filter"]',
       );
+
       const olderFilter = wrapper.find('[data-testid="older-filter"]');
 
       expect(mostRecentFilter.classes()).toContain('filter-active');
@@ -528,23 +511,6 @@ describe('TheCardGroups.vue', () => {
 
       expect(discussionsStore.setActiveDiscussion).toHaveBeenCalledWith(null);
       expect(roomsStore.setActiveRoom).toHaveBeenCalledWith(mockRooms[0]);
-    });
-
-    it('prevents opening room with automatic routing for different user', async () => {
-      const configStore = useConfig();
-      configStore.enableAutomaticRoomRouting = true;
-      const roomsStore = useRooms();
-
-      wrapper = createWrapper();
-
-      const roomWithDifferentUser = {
-        ...mockRooms[0],
-        user: { email: 'different@test.com' },
-      };
-
-      await wrapper.vm.openRoom(roomWithDifferentUser);
-
-      expect(roomsStore.setActiveRoom).not.toHaveBeenCalled();
     });
 
     it('opens discussion correctly', async () => {
@@ -806,15 +772,23 @@ describe('TheCardGroups.vue', () => {
 
     it('loads more rooms when hasNext is true', () => {
       const roomsStore = useRooms();
-      roomsStore.hasNextRooms = true;
+      roomsStore.hasNextRooms = {
+        waiting: true,
+        ongoing: true,
+        flow_start: true,
+      };
 
       wrapper = createWrapper();
       const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
 
       wrapper.vm.searchForMoreRooms();
 
-      expect(wrapper.vm.page).toBe(1);
-      expect(listRoomSpy).toHaveBeenCalledWith(true, '-last_interaction', true);
+      expect(wrapper.vm.page.ongoing).toBe(1);
+      expect(listRoomSpy).toHaveBeenCalledWith(
+        true,
+        '-last_interaction',
+        'ongoing',
+      );
     });
 
     it('does not load more rooms when hasNext is false', () => {
@@ -925,6 +899,7 @@ describe('TheCardGroups.vue', () => {
         limit: 100,
         contact: '',
         viewedAgent: 'test-agent',
+        roomsType: '',
       });
 
       expect(discussionsStore.getAll).toHaveBeenCalledWith({

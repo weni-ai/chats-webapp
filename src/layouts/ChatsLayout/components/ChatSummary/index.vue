@@ -76,8 +76,8 @@ export default {
   watch: {
     summaryText: {
       immediate: true,
-      async handler() {
-        await this.typeWriter(this.summaryText, 10);
+      async handler(value) {
+        if (value) await this.typeWriter(this.summaryText, 10);
       },
     },
   },
@@ -90,9 +90,13 @@ export default {
       this.isTyping = true;
       this.animatedText = '';
 
-      for (let i = 0; i < text.length; i++) {
-        this.animatedText += text.charAt(i);
-        await new Promise((resolve) => setTimeout(resolve, speed));
+      for await (const char of text) {
+        await new Promise((resolve) => {
+          setTimeout(() => {
+            this.animatedText += char;
+            resolve();
+          }, speed);
+        });
       }
 
       this.isTyping = false;

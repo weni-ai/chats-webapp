@@ -40,7 +40,7 @@
       </UnnnicToolTip>
     </section>
     <RoomsListLoading
-      v-if="isLoadingRooms"
+      v-if="showLoadingRooms || !initialLoaded"
       data-testid="rooms-loading"
     />
     <section
@@ -57,7 +57,16 @@
           v-for="tab in roomsTabs"
           :key="tab.key"
           :label="tab.label"
-          :count="tab.count"
+          :count="
+            tab.key === 'discussions' ? discussionsCount : roomsCount[tab.key]
+          "
+          :showDot="
+            tab.key === 'ongoing'
+              ? showOngoingDot
+              : tab.key === 'discussions'
+                ? showDiscussionsDot
+                : false
+          "
           :active="activeTab === tab.key"
           @click="activeTab = tab.key"
         />
@@ -68,9 +77,9 @@
         data-testid="order-by-section"
       >
         <div>
-          <span data-testid="order-by-label">{{
-            $t('chats.room_list.order_by')
-          }}</span>
+          <span data-testid="order-by-label">
+            {{ $t('chats.room_list.order_by') }}
+          </span>
         </div>
         <div
           class="apply-filter"
@@ -102,21 +111,21 @@
         data-testid="router-disclaimer"
       />
       <CardGroup
-        v-if="activeTab === 'discussions'"
+        v-show="activeTab === 'discussions'"
         :discussions="discussions"
         data-testid="discussions-card-group"
         @open="openDiscussion"
       />
       <CardGroup
-        v-if="activeTab === 'waiting' && !enableAutomaticRoomRouting"
+        v-show="activeTab === 'waiting'"
         :rooms="rooms_queue"
         roomsType="waiting"
         data-testid="waiting-rooms-card-group"
         @open="openRoom"
       />
       <CardGroup
-        v-if="activeTab === 'ongoing'"
-        :rooms="rooms"
+        v-show="activeTab === 'ongoing'"
+        :rooms="rooms_ongoing"
         :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
         roomsType="in_progress"
         data-testid="in-progress-rooms-card-group"
@@ -124,8 +133,8 @@
         @pin="handlePinRoom"
       />
       <CardGroup
-        v-if="activeTab === 'sent_flows'"
-        :rooms="rooms_sent_flows"
+        v-show="activeTab === 'flow_start'"
+        :rooms="rooms_flow_start"
         data-testid="sent-flows-card-group"
         @open="openRoom"
       />
@@ -139,7 +148,7 @@
 </template>
 <script>
 import isMobile from 'is-mobile';
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 import unnnic from '@weni/unnnic-system';
 
 import { useRooms } from '@/store/modules/chats/rooms';
@@ -177,33 +186,34 @@ export default {
   },
   data() {
     return {
-      page: 0,
+      page: {
+        ongoing: 0,
+        waiting: 0,
+        flow_start: 0,
+        discussion: 0,
+        search: 0,
+      },
       limit: 100,
       nameOfContact: '',
       timerId: 0,
+      showLoadingRooms: false,
       isLoadingRooms: false,
       isSearching: false,
       isMobile: isMobile(),
       showModalQueue: false,
       noQueueSelected: false,
-      activeTab: 'ongoing',
       pinRoomLoading: {
         status: false,
         uuid: '',
       },
-      orderBy: {
-        ongoing: '-last_interaction',
-        discussions: '-last_interaction',
-        sent_flows: '-last_interaction',
-        waiting: 'created_at',
-      },
+      initialLoaded: false,
     };
   },
   computed: {
     ...mapState(useRooms, {
-      rooms: 'agentRooms',
+      rooms_ongoing: 'agentRooms',
       rooms_queue: 'waitingQueue',
-      rooms_sent_flows: 'waitingContactAnswer',
+      rooms_flow_start: 'waitingContactAnswer',
       listRoomHasNext: 'hasNextRooms',
       newMessagesByRoom: 'newMessagesByRoom',
       maxPinLimit: 'maxPinLimit',
@@ -211,6 +221,16 @@ export default {
     ...mapState(useConfig, ['project', 'enableAutomaticRoomRouting']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
+    ...mapWritableState(useRooms, [
+      'orderBy',
+      'roomsCount',
+      'activeTab',
+      'showOngoingDot',
+    ]),
+    ...mapWritableState(useDiscussions, [
+      'discussionsCount',
+      'showDiscussionsDot',
+    ]),
 
     roomsTabs() {
       const tabs = [
@@ -221,8 +241,8 @@ export default {
       if (this.discussions.length) {
         tabs.push({ key: 'discussions', label: this.$t('chats.discussions') });
       }
-      if (this.rooms_sent_flows.length) {
-        tabs.push({ key: 'sent_flows', label: this.$t('chats.sent_flows') });
+      if (this.rooms_flow_start.length) {
+        tabs.push({ key: 'flow_start', label: this.$t('chats.sent_flows') });
       }
 
       return tabs;
@@ -230,10 +250,10 @@ export default {
 
     showOrderBy() {
       const countRooms = {
-        ongoing: this.rooms.length,
+        ongoing: this.rooms_ongoing.length,
         waiting: this.rooms_queue.length,
         discussions: this.discussions.length,
-        sent_flows: this.rooms_sent_flows.length,
+        flow_start: this.rooms_flow_start.length,
       };
 
       return countRooms[this.activeTab] > 0;
@@ -247,7 +267,7 @@ export default {
       if (!this.newMessagesByRoom) {
         return 0;
       }
-      return this.rooms.reduce(
+      return this.rooms_ongoing.reduce(
         (total, room) =>
           total + (this.newMessagesByRoom[room.uuid]?.messages?.length || 0),
         0,
@@ -255,18 +275,46 @@ export default {
     },
     showNoResultsError() {
       return (
-        !this.isLoadingRooms &&
-        this.rooms.length === 0 &&
+        !this.showLoadingRooms &&
+        this.rooms_ongoing.length === 0 &&
         this.rooms_queue.length === 0 &&
-        this.rooms_sent_flows.length === 0 &&
+        this.rooms_flow_start.length === 0 &&
         this.discussions.length === 0
       );
     },
     totalPinnedRooms() {
-      return this.rooms.filter((room) => room.is_pinned).length || 0;
+      return this.rooms_ongoing.filter((room) => room.is_pinned).length || 0;
     },
   },
   watch: {
+    activeTab: {
+      handler(newActiveTab) {
+        if (newActiveTab === 'ongoing') {
+          this.showOngoingDot = false;
+        }
+        if (newActiveTab === 'discussions') {
+          this.showDiscussionsDot = false;
+        }
+      },
+    },
+    rooms_ongoing: {
+      deep: true,
+      handler(newRooms, oldRooms) {
+        this.updateRoomsCount(newRooms.length, oldRooms.length, 'ongoing');
+      },
+    },
+    rooms_queue: {
+      deep: true,
+      handler(newRooms, oldRooms) {
+        this.updateRoomsCount(newRooms.length, oldRooms.length, 'waiting');
+      },
+    },
+    rooms_flow_start: {
+      deep: true,
+      handler(newRooms, oldRooms) {
+        this.updateRoomsCount(newRooms.length, oldRooms.length, 'flow_start');
+      },
+    },
     totalUnreadMessages: {
       immediate: true,
       handler() {
@@ -284,7 +332,7 @@ export default {
         const TIME_TO_WAIT_TYPING = 1300;
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
-          this.page = 0;
+          this.page.search = 0;
           this.listRoom(false);
           this.listDiscussions();
           if (newNameOfContact) {
@@ -296,9 +344,15 @@ export default {
       },
     },
   },
-  mounted() {
-    this.listRoom();
-    this.listDiscussions();
+  async created() {
+    await Promise.all([
+      this.listRoom(true, this.orderBy.waiting, 'waiting'),
+      this.listRoom(true, this.orderBy.ongoing, 'ongoing'),
+      this.listRoom(true, this.orderBy.flow_start, 'flow_start'),
+      this.listDiscussions(),
+    ]).then(() => {
+      this.initialLoaded = true;
+    });
   },
   methods: {
     ...mapActions(useRooms, {
@@ -309,14 +363,13 @@ export default {
       setActiveDiscussion: 'setActiveDiscussion',
       getAllDiscussion: 'getAll',
     }),
-    async openRoom(room) {
-      if (
-        this.enableAutomaticRoomRouting &&
-        room.user?.email !== this.me?.email
-      ) {
+    updateRoomsCount(newSize, oldSize, key) {
+      if (newSize === oldSize || !this.initialLoaded || this.isLoadingRooms)
         return;
-      }
 
+      newSize > oldSize ? this.roomsCount[key]++ : this.roomsCount[key]--;
+    },
+    async openRoom(room) {
       await this.setActiveDiscussion(null);
       await this.setActiveRoom(room);
     },
@@ -329,29 +382,39 @@ export default {
     async listRoom(
       concat,
       order = this.orderBy[this.activeTab],
-      noLoading = false,
+      roomsType = '',
+      silent = false,
     ) {
-      this.isLoadingRooms = !noLoading;
+      this.showLoadingRooms = silent ? false : !concat;
       const { viewedAgent } = this;
       try {
+        this.isLoadingRooms = true;
+        const offset =
+          (roomsType ? this.page[roomsType] : this.page.search) * this.limit;
+
         await this.getAllRooms({
-          offset: this.page * this.limit,
+          offset: offset,
           concat,
           order,
           limit: this.limit,
           contact: this.nameOfContact,
           viewedAgent,
+          roomsType,
         });
       } catch (error) {
         console.error('Error listing rooms', error);
       } finally {
+        this.showLoadingRooms = false;
         this.isLoadingRooms = false;
       }
     },
     searchForMoreRooms() {
-      if (this.listRoomHasNext) {
-        this.page += 1;
-        this.listRoom(true, this.orderBy[this.activeTab], true);
+      if (this.listRoomHasNext[this.activeTab]) {
+        this.page[this.activeTab] += 1;
+        this.listRoom(true, this.orderBy[this.activeTab], this.activeTab);
+      } else if (this.nameOfContact) {
+        this.page.search += 1;
+        this.listRoom(true, this.orderBy[this.activeTab]);
       }
     },
     async listDiscussions() {
@@ -373,11 +436,9 @@ export default {
         this.searchForMoreRooms(true);
       }
     },
-
     handleModalQueuePriorization() {
       this.showModalQueue = !this.showModalQueue;
     },
-
     async handlePinRoom(room, type) {
       const isLoadingSamePinRoom =
         this.pinRoomLoading.status && this.pinRoomLoading.uuid === room.uuid;
@@ -423,7 +484,12 @@ export default {
           uuid: room.uuid,
         };
         await types[type].request();
-        await this.listRoom(false, this.orderBy[this.activeTab], true);
+        await this.listRoom(
+          false,
+          this.orderBy[this.activeTab],
+          'ongoing',
+          true,
+        );
         unnnic.unnnicCallAlert({
           props: {
             text: types[type].successMessage,
@@ -465,19 +531,19 @@ export default {
     },
     handleMostRecentFilter() {
       const orderByValue =
-        this.activeTab === 'waiting' ? '-created_at' : '-last_interaction';
+        this.activeTab === 'waiting' ? '-created_on' : '-last_interaction';
 
       this.orderBy[this.activeTab] = orderByValue;
 
-      this.listRoom(false, this.orderBy[this.activeTab], true);
+      this.listRoom(true, this.orderBy[this.activeTab], this.activeTab, true);
     },
     handleOlderFilter() {
       const orderByValue =
-        this.activeTab === 'waiting' ? 'created_at' : 'last_interaction';
+        this.activeTab === 'waiting' ? 'created_on' : 'last_interaction';
 
       this.orderBy[this.activeTab] = orderByValue;
 
-      this.listRoom(false, this.orderBy[this.activeTab], true);
+      this.listRoom(true, this.orderBy[this.activeTab], this.activeTab, true);
     },
   },
 };

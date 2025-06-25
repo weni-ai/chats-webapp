@@ -4,30 +4,46 @@ import { useDashboard } from '../dashboard';
 import { useProfile } from '../profile';
 
 import Room from '@/services/api/resources/chats/room';
+import { removeDuplicatedItems } from '@/utils/array';
 
 export const useRooms = defineStore('rooms', {
   state: () => ({
+    activeTab: 'ongoing',
     rooms: [],
     activeRoom: null,
     maxPinLimit: 0,
     activeRoomSummary: '',
     isLoadingActiveRoomSummary: false,
     newMessagesByRoom: {},
-    hasNextRooms: true,
+    hasNextRooms: { waiting: false, in_progress: false, flow_start: false },
     canUseCopilot: false,
     copilotSuggestion: '',
-
     selectedRoomsToTransfer: [],
     contactToTransfer: '',
+    orderBy: {
+      ongoing: '-last_interaction',
+      discussions: '-last_interaction',
+      flow_start: '-last_interaction',
+      waiting: 'created_on',
+    },
+    showOngoingDot: false,
+    roomsCount: {
+      waiting: 0,
+      ongoing: 0,
+      flow_start: 0,
+    },
   }),
 
   actions: {
     updateLastInteraction({ room, lastInteraction }) {
       const findedRoomIndex = this.rooms.findIndex(({ uuid }) => uuid === room);
-      this.rooms[findedRoomIndex] = {
-        ...this.rooms[findedRoomIndex],
-        last_interaction: lastInteraction,
-      };
+
+      if (!this.rooms[findedRoomIndex]?.is_pinned) {
+        this.rooms[findedRoomIndex] = {
+          ...this.rooms[findedRoomIndex],
+          last_interaction: lastInteraction,
+        };
+      }
     },
     updateMessagesByRoom({ room, message, reset = false }) {
       const roomMessages = this.newMessagesByRoom[room]?.messages || [];
@@ -50,18 +66,25 @@ export const useRooms = defineStore('rooms', {
       this.activeRoom = room;
     },
 
-    addRoom(room) {
+    addRoom(room, { after = false } = {}) {
       if (room.uuid) {
         const isRoomAlreadyInList = this.rooms.some(
           (mappedRoom) => mappedRoom.uuid === room.uuid,
         );
         if (isRoomAlreadyInList) return;
-        this.rooms.unshift({ ...room });
+
+        if (after) {
+          this.rooms.push({ ...room });
+        } else {
+          this.rooms.unshift({ ...room });
+        }
       }
     },
 
     bringRoomFront(room) {
-      this.rooms.sort((x) => (x === room ? -1 : 0));
+      if (!room?.is_pinned) {
+        this.rooms.sort((x) => (x === room ? -1 : 0));
+      }
     },
 
     setCopilotSuggestion(suggestion) {
@@ -88,21 +111,37 @@ export const useRooms = defineStore('rooms', {
       return room.user?.email === userEmail;
     },
 
-    async getAll({ offset, concat, limit, contact, order, viewedAgent }) {
+    async getAll({
+      offset,
+      concat,
+      limit,
+      contact,
+      order,
+      viewedAgent,
+      roomsType,
+    }) {
       const response = await Room.getAll(
         offset,
         limit,
         contact,
         order,
         viewedAgent,
+        roomsType,
       );
       let gettedRooms = response.results || [];
       const listRoomHasNext = response.next;
+
       if (concat) {
-        gettedRooms = this.rooms.concat(response.results);
+        gettedRooms = gettedRooms.concat(this.rooms);
       }
-      this.hasNextRooms = listRoomHasNext;
-      this.rooms = gettedRooms;
+
+      this.rooms = removeDuplicatedItems(gettedRooms, 'uuid');
+
+      if (roomsType) {
+        this.hasNextRooms[roomsType] = listRoomHasNext;
+        this.roomsCount[roomsType] = response.count;
+      }
+
       this.maxPinLimit = response.max_pin_limit || 0;
 
       return gettedRooms;
@@ -110,7 +149,6 @@ export const useRooms = defineStore('rooms', {
 
     async updateRoomContact({ uuid }) {
       const newRoom = await Room.getByUuid({ uuid });
-
       this.activeRoom = newRoom;
     },
 
@@ -232,9 +270,17 @@ export const useRooms = defineStore('rooms', {
 
   getters: {
     agentRooms(store) {
-      return store.rooms.filter(
-        (room) => !!room.user && room.is_waiting === false,
-      );
+      return store.rooms
+        .filter((room) => !!room.user && room.is_waiting === false)
+        .sort((a, b) => {
+          const aPinned = a.is_pinned || false;
+          const bPinned = b.is_pinned || false;
+
+          if (aPinned && !bPinned) return -1;
+          if (!aPinned && bPinned) return 1;
+
+          return 0;
+        });
     },
     waitingQueue(store) {
       return store.rooms.filter((room) => !room.user && !room.is_waiting);

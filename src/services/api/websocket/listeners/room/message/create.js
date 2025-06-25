@@ -4,7 +4,7 @@ import { isValidJson } from '@/utils/messages';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
-import { useConfig } from '@/store/modules/config';
+import { getRoomType } from '@/utils/room';
 
 const checkAndUpdateRoomLastMessage = (room, message) => {
   const itsMessageSystem = !message.contact && !message.user;
@@ -15,7 +15,7 @@ const checkAndUpdateRoomLastMessage = (room, message) => {
   // Empty messages are generated when media is sent
   // You need to mark the id here to update in the msg.update listen
   if (itsEmptyMessage) {
-    room.last_message.uuid = message.uuid;
+    room.last_message.uuid = message?.uuid;
 
     return;
   }
@@ -26,35 +26,36 @@ const checkAndUpdateRoomLastMessage = (room, message) => {
 export default async (message, { app }) => {
   const roomsStore = useRooms();
   const roomMessagesStore = useRoomMessages();
-  const configStore = useConfig();
   const { rooms, activeRoom } = roomsStore;
 
   const findRoom = rooms.find((room) => room.uuid === message.room);
 
-  roomsStore.bringRoomFront(findRoom);
-
   if (findRoom) {
+    const roomType = getRoomType(findRoom);
+
+    if (roomType !== 'waiting') roomsStore.bringRoomFront(findRoom);
+
     if (app.me.email === message.user?.email) {
       checkAndUpdateRoomLastMessage(findRoom, message);
       return;
     }
 
-    const { enableAutomaticRoomRouting } = configStore;
+    if (roomType === 'ongoing' && roomsStore.activeTab !== 'ongoing') {
+      roomsStore.showOngoingDot = true;
+    }
 
-    if (!enableAutomaticRoomRouting || findRoom?.user?.email === app.me.email) {
-      const notification = new SoundNotification('ping-bing');
-      notification.notify();
+    const notification = new SoundNotification('ping-bing');
+    notification.notify();
 
-      if (document.hidden && !isValidJson(message.text)) {
-        try {
-          sendWindowNotification({
-            title: message.contact?.name,
-            message: message.text,
-            image: message.media?.[0]?.url,
-          });
-        } catch (error) {
-          console.log(error);
-        }
+    if (document.hidden && !isValidJson(message.text)) {
+      try {
+        sendWindowNotification({
+          title: message.contact?.name,
+          message: message.text,
+          image: message.media?.[0]?.url,
+        });
+      } catch (error) {
+        console.log(error);
       }
     }
 
