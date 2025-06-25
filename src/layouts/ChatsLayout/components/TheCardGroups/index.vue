@@ -531,19 +531,19 @@ export default {
     },
     handleMostRecentFilter() {
       const orderByValue =
-        this.activeTab === 'waiting' ? '-created_at' : '-last_interaction';
+        this.activeTab === 'waiting' ? '-created_on' : '-last_interaction';
 
       this.orderBy[this.activeTab] = orderByValue;
 
-      this.listRoom(false, this.orderBy[this.activeTab], true);
+      this.listRoom(true, this.orderBy[this.activeTab], this.activeTab, true);
     },
     handleOlderFilter() {
       const orderByValue =
-        this.activeTab === 'waiting' ? 'created_at' : 'last_interaction';
+        this.activeTab === 'waiting' ? 'created_on' : 'last_interaction';
 
       this.orderBy[this.activeTab] = orderByValue;
 
-      this.listRoom(false, this.orderBy[this.activeTab], true);
+      this.listRoom(true, this.orderBy[this.activeTab], this.activeTab, true);
     },
   },
 };

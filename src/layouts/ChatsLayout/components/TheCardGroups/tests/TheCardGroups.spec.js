@@ -402,8 +402,9 @@ describe('TheCardGroups.vue', () => {
         '-last_interaction',
       );
       expect(listRoomSpy).toHaveBeenCalledWith(
-        false,
+        true,
         '-last_interaction',
+        'ongoing',
         true,
       );
     });
@@ -417,7 +418,12 @@ describe('TheCardGroups.vue', () => {
       await wrapper.find('[data-testid="older-filter"]').trigger('click');
 
       expect(wrapper.vm.orderBy[wrapper.vm.activeTab]).toBe('last_interaction');
-      expect(listRoomSpy).toHaveBeenCalledWith(false, 'last_interaction', true);
+      expect(listRoomSpy).toHaveBeenCalledWith(
+        true,
+        'last_interaction',
+        'ongoing',
+        true,
+      );
     });
 
     it('applies correct CSS classes for active filters', async () => {
