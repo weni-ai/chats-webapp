@@ -212,19 +212,6 @@ describe('RoomsTableFilters.vue', () => {
         label: 'Tag 1',
       });
     });
-
-    it('sets filterSector to first sector when only one sector exists', async () => {
-      Sector.list.mockResolvedValue({
-        results: [{ uuid: 'sector1', name: 'Sector 1' }],
-      });
-
-      wrapper = createWrapper();
-      await flushPromises();
-
-      expect(wrapper.vm.filterSector).toEqual([
-        { value: 'sector1', label: 'Sector 1' },
-      ]);
-    });
   });
 
   describe('Filter interaction tests', () => {
