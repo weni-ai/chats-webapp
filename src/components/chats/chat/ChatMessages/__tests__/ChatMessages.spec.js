@@ -117,11 +117,6 @@ describe('ChatMessages', () => {
 
     // Mock store state
     dashboardStore.viewedAgent = { email: 'agent@example.com' };
-    roomMessagesStore.roomMessagesStatusMapper = {
-      sent: 'sent',
-      delivered: 'delivered',
-      read: 'read',
-    };
 
     wrapper = mount(ChatMessages, {
       props: defaultProps,
