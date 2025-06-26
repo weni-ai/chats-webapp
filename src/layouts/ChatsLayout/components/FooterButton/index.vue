@@ -1,8 +1,12 @@
 <template>
-  <section class="chats-layout-footer-button">
+  <section
+    class="chats-layout-footer-button"
+    data-testid="footer-button-container"
+  >
     <section
       v-if="selectedRoomsToTransfer.length >= 1"
       class="chats-layout-footer-button__bulk-transfer"
+      data-testid="bulk-transfer-section"
     >
       <UnnnicButton
         class="chats-layout-footer-button__button"
@@ -10,10 +14,12 @@
         iconLeft="read_more"
         type="primary"
         size="small"
+        data-testid="transfer-button"
         @click="handleModalBulkTransfer"
       />
       <ModalBulkTransfer
         v-if="isModalBulkTransferOpened"
+        data-testid="bulk-transfer-modal"
         @close="handleModalBulkTransfer"
       />
     </section>
