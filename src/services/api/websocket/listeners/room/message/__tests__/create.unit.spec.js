@@ -59,7 +59,10 @@ describe('Room message create', () => {
       addMessage: vi.fn(),
     };
     roomsStoreMock = {
-      rooms: [{ uuid: 'room-123', contact: { name: 'John Doe' } }],
+      rooms: [
+        { uuid: 'room-123', contact: { name: 'John Doe' }, user: {} },
+        { uuid: 'room-456', contact: { name: 'Jane Doe' } },
+      ],
       activeRoom: { uuid: 'room-123' },
       bringRoomFront: vi.fn(),
       addNewMessagesByRoom: vi.fn(),
@@ -75,12 +78,21 @@ describe('Room message create', () => {
     vi.clearAllMocks();
   });
 
-  it('should bring the room to the front when a valid room is found', async () => {
+  it('should bring the room to the front when a valid ongoing room is found', async () => {
     await wsRoomMessageCreate(message, { app: appMock });
 
     expect(roomsStoreMock.bringRoomFront).toHaveBeenCalledWith(
       roomsStoreMock.rooms[0],
     );
+  });
+
+  it('should not bring the room to the front when a valid waiting room is found', async () => {
+    await wsRoomMessageCreate(
+      { ...message, room: 'room-456' },
+      { app: appMock },
+    );
+
+    expect(roomsStoreMock.bringRoomFront).not.toHaveBeenCalled();
   });
 
   it('should not notify or add a message if the sender is the current user', async () => {

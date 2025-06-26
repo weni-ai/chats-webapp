@@ -31,6 +31,11 @@ describe('Room create', () => {
 
     roomsStoreMock = {
       rooms: [],
+      orderBy: {
+        waiting: '-last_interaction',
+        ongoing: '-last_interaction',
+        flow_start: '-last_interaction',
+      },
       addRoom: vi.fn(),
     };
 
@@ -59,7 +64,7 @@ describe('Room create', () => {
 
     wsRoomCreate(room, { app: appMock });
 
-    expect(roomsStoreMock.addRoom).toHaveBeenCalledWith(room);
+    expect(roomsStoreMock.addRoom).toHaveBeenCalledWith(room, { after: false });
     expect(soundNotificationMock.notify).toHaveBeenCalled();
   });
 
