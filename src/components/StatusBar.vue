@@ -130,19 +130,21 @@ const updateActiveStatus = async ({ isActive, skipRequest }) => {
   loadingActiveStatus.value = true;
   try {
     let connection_status = null;
+    const statusAgent = isActive ? 'ONLINE' : 'OFFLINE';
 
     if (!skipRequest) {
       const {
         data: { connection_status: connection },
       } = await Profile.updateStatus({
         projectUuid: configStore.project.uuid,
-        status: isActive ? 'ONLINE' : 'OFFLINE',
+        status: statusAgent,
       });
 
       sessionStorage.setItem('statusAgent', connection);
       connection_status = connection.toLowerCase();
     } else {
-      connection_status = isActive ? 'online' : 'offline';
+      connection_status = statusAgent.toLowerCase();
+      sessionStorage.setItem('statusAgent', statusAgent);
     }
 
     const status = statuses.value.find(
