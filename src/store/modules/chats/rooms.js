@@ -9,6 +9,7 @@ export const useRooms = defineStore('rooms', {
   state: () => ({
     rooms: [],
     activeRoom: null,
+    maxPinLimit: 0,
     newMessagesByRoom: {},
     hasNextRooms: true,
     canUseCopilot: false,
@@ -21,10 +22,13 @@ export const useRooms = defineStore('rooms', {
   actions: {
     updateLastInteraction({ room, lastInteraction }) {
       const findedRoomIndex = this.rooms.findIndex(({ uuid }) => uuid === room);
-      this.rooms[findedRoomIndex] = {
-        ...this.rooms[findedRoomIndex],
-        last_interaction: lastInteraction,
-      };
+
+      if (!this.rooms[findedRoomIndex]?.is_pinned) {
+        this.rooms[findedRoomIndex] = {
+          ...this.rooms[findedRoomIndex],
+          last_interaction: lastInteraction,
+        };
+      }
     },
     updateMessagesByRoom({ room, message, reset = false }) {
       const roomMessages = this.newMessagesByRoom[room]?.messages || [];
@@ -58,7 +62,9 @@ export const useRooms = defineStore('rooms', {
     },
 
     bringRoomFront(room) {
-      this.rooms.sort((x) => (x === room ? -1 : 0));
+      if (!room?.is_pinned) {
+        this.rooms.sort((x) => (x === room ? -1 : 0));
+      }
     },
 
     setCopilotSuggestion(suggestion) {
@@ -100,13 +106,13 @@ export const useRooms = defineStore('rooms', {
       }
       this.hasNextRooms = listRoomHasNext;
       this.rooms = gettedRooms;
+      this.maxPinLimit = response.max_pin_limit || 0;
 
       return gettedRooms;
     },
 
     async updateRoomContact({ uuid }) {
       const newRoom = await Room.getByUuid({ uuid });
-
       this.activeRoom = newRoom;
     },
 
@@ -135,9 +141,12 @@ export const useRooms = defineStore('rooms', {
 
     updateRoom({ room, userEmail, routerReplace, viewedAgentEmail }) {
       const dashboardStore = useDashboard();
-      const filteredRooms = this.rooms
+      const rooms = this.rooms;
+      const filteredRooms = rooms
         .map((mappedRoom) =>
-          mappedRoom.uuid === room.uuid ? { ...room } : mappedRoom,
+          mappedRoom.uuid === room.uuid
+            ? { is_pinned: mappedRoom?.is_pinned, ...room }
+            : mappedRoom,
         )
         .filter((filteredRoom) => {
           return this.checkUserSeenRoom({
@@ -145,6 +154,12 @@ export const useRooms = defineStore('rooms', {
             viewedAgentEmail,
             userEmail,
           });
+        })
+        .sort((a, b) => {
+          if (a.is_pinned !== undefined && b.is_pinned !== undefined) {
+            return b.is_pinned - a.is_pinned;
+          }
+          return 0;
         });
 
       this.rooms = filteredRooms;
@@ -219,9 +234,17 @@ export const useRooms = defineStore('rooms', {
 
   getters: {
     agentRooms(store) {
-      return store.rooms.filter(
-        (room) => !!room.user && room.is_waiting === false,
-      );
+      return store.rooms
+        .filter((room) => !!room.user && room.is_waiting === false)
+        .sort((a, b) => {
+          const aPinned = a.is_pinned || false;
+          const bPinned = b.is_pinned || false;
+
+          if (aPinned && !bPinned) return -1;
+          if (!aPinned && bPinned) return 1;
+
+          return 0;
+        });
     },
     waitingQueue(store) {
       return store.rooms.filter((room) => !room.user && !room.is_waiting);

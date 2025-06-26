@@ -2,16 +2,27 @@
   <ChatsLayout
     v-if="viewedAgent.email"
     :viewedAgent="viewedAgent.email"
+    data-testid="chats-layout"
   >
-    <ViewModeHeader :viewedAgent="viewedAgent.name" />
+    <ViewModeHeader
+      :viewedAgent="viewedAgent.name"
+      data-testid="view-mode-header"
+    />
 
-    <ChatsBackground v-if="!room && !discussion && !isRoomSkeletonActive" />
+    <ChatsBackground
+      v-if="!room && !discussion && !isRoomSkeletonActive"
+      data-testid="chats-background"
+    />
     <section
       v-if="!!room || !!discussion"
       v-show="!isRoomSkeletonActive"
       class="view-mode__active-chat"
+      data-testid="active-chat-section"
     >
-      <ChatHeaderLoading v-show="isRoomSkeletonActive" />
+      <ChatHeaderLoading
+        v-show="isRoomSkeletonActive"
+        data-testid="chat-header-loading"
+      />
       <UnnnicChatsHeader
         v-show="!isRoomSkeletonActive"
         v-if="!!room && !discussion"
@@ -19,6 +30,7 @@
         :avatarClick="() => handleModal('ContactInfo', 'open')"
         :titleClick="() => handleModal('ContactInfo', 'open')"
         :avatarName="room.contact.name"
+        data-testid="room-chat-header"
       />
       <UnnnicChatsHeader
         v-show="!isRoomSkeletonActive"
@@ -30,19 +42,28 @@
         }`"
         avatarIcon="forum"
         size="small"
+        data-testid="discussion-chat-header"
       />
 
-      <RoomMessages v-if="!!room && !discussion" />
-      <DiscussionMessages v-if="!!discussion" />
+      <RoomMessages
+        v-if="!!room && !discussion"
+        data-testid="room-messages"
+      />
+      <DiscussionMessages
+        v-if="!!discussion"
+        data-testid="discussion-messages"
+      />
       <UnnnicButton
         v-if="room && !discussion && room.user?.email !== me.email"
         class="assume-chat"
         :text="$t('dashboard.view-mode.assume_chat')"
         type="secondary"
+        data-testid="assume-chat-button"
         @click="handleModal('AssumeChatConfirmation', 'open')"
       />
       <ButtonJoinDiscussion
         v-if="!!discussion"
+        data-testid="join-discussion-button"
         @click="whenJoinDiscussion"
       />
     </section>
@@ -56,6 +77,7 @@
         })
       "
       :whenGetChat="whenGetChat"
+      data-testid="modal-get-chat"
       @close-modal="handleModal('AssumeChatConfirmation', 'close')"
     />
 
@@ -64,6 +86,7 @@
         v-if="isContactInfoOpened"
         class="contact-info"
         isViewMode
+        data-testid="contact-info"
         @close="handleModal('ContactInfo', 'close')"
       />
     </template>
@@ -127,16 +150,6 @@ export default {
     async room() {
       this.isContactInfoOpened = false;
     },
-    '$route.params.viewedAgent': {
-      immediate: true,
-      handler(newViewdAgentEmail) {
-        if (newViewdAgentEmail) {
-          this.getViewedAgentData(this.$route.params.viewedAgent);
-        } else {
-          this.setViewedAgent({ name: '', email: '' });
-        }
-      },
-    },
     rooms: {
       once: true,
       async handler() {
@@ -160,7 +173,7 @@ export default {
   methods: {
     ...mapActions(useDiscussions, ['setActiveDiscussion']),
     ...mapActions(useRooms, ['setActiveRoom']),
-    ...mapActions(useDashboard, ['getViewedAgentData', 'setViewedAgent']),
+    ...mapActions(useDashboard, ['setViewedAgent']),
 
     handleModal(modalName, action) {
       const registeredModals = ['ContactInfo', 'AssumeChatConfirmation'];

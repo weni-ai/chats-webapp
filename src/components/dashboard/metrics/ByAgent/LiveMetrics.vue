@@ -1,20 +1,31 @@
 <template>
-  <main class="by-agent-dashboard">
-    <section>
-      <GeneralMetrics :metrics="generalMetrics" />
+  <main
+    class="by-agent-dashboard"
+    data-testid="by-agent-dashboard"
+  >
+    <section data-testid="general-metrics-section">
+      <GeneralMetrics
+        :metrics="generalMetrics"
+        data-testid="general-metrics"
+      />
     </section>
 
-    <section class="by-agent-dashboard__metrics">
+    <section
+      class="by-agent-dashboard__metrics"
+      data-testid="metrics-section"
+    >
       <CardGroupMetrics
         :metrics="queues"
         :title="$t('queues.title')"
         icon="hierarchy-3-2"
+        data-testid="card-group-metrics"
       />
       <TableMetrics
         :headers="tableHeaders"
         :items="activeChats"
         :title="$t('active_chats')"
         icon="indicator"
+        data-testid="table-metrics"
       />
     </section>
   </main>
@@ -103,6 +114,24 @@ export default {
         {
           text: this.$t('interaction_time'),
           value: 'interactionTime',
+        },
+      ],
+
+      activeChats: [
+        {
+          id: 1,
+          contact: 'John Doe',
+          interactionTime: '5min 30s',
+        },
+        {
+          id: 2,
+          contact: 'Jane Smith',
+          interactionTime: '3min 15s',
+        },
+        {
+          id: 3,
+          contact: 'Mike Johnson',
+          interactionTime: '7min 45s',
         },
       ],
 

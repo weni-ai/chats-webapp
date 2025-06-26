@@ -14,6 +14,7 @@ import {
   resendMedia,
   resendMessage,
   removeFromGroupedMessages,
+  updateMessageStatusInGroupedMessages,
 } from '@/utils/messages';
 
 export const useRoomMessages = defineStore('roomMessages', {
@@ -25,6 +26,10 @@ export const useRoomMessages = defineStore('roomMessages', {
     roomMessagesFailedUuids: [],
     roomMessagesNext: '',
     roomMessagesPrevious: '',
+    roomMessagesStatusMapper: {
+      delivered: 'received',
+      read: 'read',
+    },
     replyMessage: null,
   }),
   actions: {
@@ -92,6 +97,22 @@ export const useRoomMessages = defineStore('roomMessages', {
       }
     },
 
+    updateMessageStatus({ message, status }) {
+      const findedMessage = this.roomMessages.find(
+        (mappedMessage) => mappedMessage.uuid === message.uuid,
+      );
+
+      if (findedMessage.status === 'read') return;
+
+      if (findedMessage) {
+        findedMessage.status = status;
+        updateMessageStatusInGroupedMessages(this.roomMessagesSorted, {
+          message,
+          status,
+        });
+      }
+    },
+
     updateMessage({
       media,
       toUpdateMediaPreview,
@@ -105,6 +126,7 @@ export const useRoomMessages = defineStore('roomMessages', {
         const mediaIndex = treatedMessage.media.findIndex(
           (mappedMessage) => mappedMessage.preview === toUpdateMediaPreview,
         );
+
         if (mediaIndex !== -1) {
           treatedMessage.media[mediaIndex] = media;
         }
