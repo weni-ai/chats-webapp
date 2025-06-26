@@ -10,6 +10,8 @@ export const useRooms = defineStore('rooms', {
     rooms: [],
     activeRoom: null,
     maxPinLimit: 0,
+    activeRoomSummary: '',
+    isLoadingActiveRoomSummary: false,
     newMessagesByRoom: {},
     hasNextRooms: true,
     canUseCopilot: false,

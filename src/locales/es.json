@@ -188,6 +188,12 @@
   "interaction_time": "Tiempo de interacción",
   "average_interaction_time": "Es el tiempo promedio de duración de un chat",
   "chats": {
+    "summary": {
+      "reading_and_summarizing": "Lectura y resumen",
+      "by_ai": "Resumen por IA",
+      "error": "No se pudo generar el resumen.",
+      "unavailable": "No hay resumen disponible"
+    },
     "feedback": {
       "forwarded_to_agent": "Contacto reenviado al agente {agent}",
       "forwarded_to_queue": "Contacto reenviado a la cola {queue}",
