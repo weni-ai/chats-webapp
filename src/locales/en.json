@@ -397,7 +397,8 @@
     "linked_contact": "Contact linked to agent {name}",
     "see_contact_history": "View history",
     "audio_tooltip": "{agent} {date} at {time}",
-    "transfering_chat": "Transferring the chat 📬"
+    "transfering_chat": "Transferring the chat 📬",
+    "external_history": "View external history"
   },
   "discussions": {
     "title": "Discussion | Discussions",
