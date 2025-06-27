@@ -2,12 +2,12 @@
   <section class="chats-background">
     <img
       class="illustration__doodles"
-      src="/homepage-illustration/doodles.svg"
+      src="@/assets/homepage-illustration/doodles.svg"
       alt=""
     />
     <img
       class="illustration__background"
-      src="/homepage-illustration/background.svg"
+      src="@/assets/homepage-illustration/background.svg"
       alt=""
     />
   </section>

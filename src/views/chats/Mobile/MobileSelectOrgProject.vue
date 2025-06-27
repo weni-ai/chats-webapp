@@ -55,7 +55,7 @@ export default {
   data() {
     return {
       weniChatsLogo,
-      appEnviroment: env('VITE_CHATS_ENVIRONMENT'),
+      appEnviroment: env('CHATS_ENVIRONMENT'),
       route: 'orgs',
       organizationUuid: '',
       organizations: [],
