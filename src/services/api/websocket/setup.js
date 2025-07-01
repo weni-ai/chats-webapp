@@ -77,7 +77,9 @@ export default class WebSocketSetup {
     this.ws.ws.close();
     this.connect();
 
-    const sessionStorageStatus = sessionStorage.getItem('statusAgent');
+    const sessionStorageStatus = sessionStorage.getItem(
+      `statusAgent-${this.app.appProject}`,
+    );
     this.app.updateUserStatus(sessionStorageStatus);
   }
 }
