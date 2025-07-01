@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import { mapActions } from 'pinia';
+import { mapActions, mapState } from 'pinia';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 
 import Discussion from '@/services/api/resources/chats/discussion';
@@ -101,6 +101,7 @@ export default {
   },
 
   computed: {
+    ...mapState(useDiscussions, ['discussionsCount']),
     isConfirmButtonDisabled() {
       return (
         !this.sector[0] ||
@@ -135,6 +136,7 @@ export default {
   methods: {
     ...mapActions(useDiscussions, {
       createDiscussion: 'create',
+      setDiscussionsCount: 'setDiscussionsCount',
     }),
     close() {
       this.$emit('close');
@@ -149,6 +151,7 @@ export default {
       });
 
       if (this.$route.path !== 'discussion' && responseDiscussion.uuid) {
+        this.setDiscussionsCount(this.discussionsCount + 1);
         this.$router.push({
           name: 'discussion',
           params: { discussionId: responseDiscussion.uuid },
