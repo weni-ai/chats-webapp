@@ -147,16 +147,19 @@ describe('Config storage', () => {
   });
 
   describe('Status', () => {
-    it('should set the status in sessionStorage only', async () => {
+    it('should set the status in sessionStorage with project UUID', async () => {
       const status = 'online';
+      const projectUuid = 'test-project-uuid';
+
+      mockSessionStorage['WENICHATS_PROJECT_UUID'] = projectUuid;
 
       await setStatus(status);
 
       expect(sessionStorage.setItem).toHaveBeenCalledWith(
-        'statusAgent',
+        `statusAgent-${projectUuid}`,
         status,
       );
-      expect(mockSessionStorage['statusAgent']).toBe(status);
+      expect(mockSessionStorage[`statusAgent-${projectUuid}`]).toBe(status);
     });
   });
 });
