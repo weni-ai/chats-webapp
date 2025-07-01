@@ -245,9 +245,13 @@ describe('PauseStatus service', () => {
       };
       http.get.mockResolvedValue(mockResponse);
 
-      const result = await pauseStatusService.getActiveCustomStatus();
+      const result = await pauseStatusService.getActiveCustomStatus({
+        projectUuid: 'project-123',
+      });
 
-      expect(http.get).toHaveBeenCalledWith('custom_status/last_status/');
+      expect(http.get).toHaveBeenCalledWith(
+        'custom_status/last_status/?project_uuid=project-123',
+      );
       expect(result).toEqual(mockResponse.data);
     });
 
@@ -259,9 +263,13 @@ describe('PauseStatus service', () => {
       };
       http.get.mockRejectedValue(error);
 
-      const result = await pauseStatusService.getActiveCustomStatus();
+      const result = await pauseStatusService.getActiveCustomStatus({
+        projectUuid: 'project-123',
+      });
 
-      expect(http.get).toHaveBeenCalledWith('custom_status/last_status/');
+      expect(http.get).toHaveBeenCalledWith(
+        'custom_status/last_status/?project_uuid=project-123',
+      );
       expect(result).toBeNull();
     });
 
@@ -274,19 +282,25 @@ describe('PauseStatus service', () => {
       http.get.mockRejectedValue(error);
 
       await expect(
-        pauseStatusService.getActiveCustomStatus(),
+        pauseStatusService.getActiveCustomStatus({
+          projectUuid: 'project-123',
+        }),
       ).rejects.toThrow();
 
-      expect(http.get).toHaveBeenCalledWith('custom_status/last_status/');
+      expect(http.get).toHaveBeenCalledWith(
+        'custom_status/last_status/?project_uuid=project-123',
+      );
     });
 
     it('should throw error when no response object', async () => {
       const error = new Error('Network error');
       http.get.mockRejectedValue(error);
 
-      await expect(pauseStatusService.getActiveCustomStatus()).rejects.toThrow(
-        'Network error',
-      );
+      await expect(
+        pauseStatusService.getActiveCustomStatus({
+          projectUuid: 'project-123',
+        }),
+      ).rejects.toThrow('Network error');
     });
   });
 });
