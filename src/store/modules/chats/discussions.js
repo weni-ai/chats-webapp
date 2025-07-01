@@ -137,6 +137,10 @@ export const useDiscussions = defineStore('discussions', {
         discussionUuid: this.activeDiscussion.uuid,
       });
     },
+
+    setDiscussionsCount(count) {
+      this.discussionsCount = count;
+    },
   },
   getters: {
     getDiscussionById: (store) => (uuid) => {
