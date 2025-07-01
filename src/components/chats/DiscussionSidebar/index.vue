@@ -100,6 +100,7 @@ export default {
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, {
       discussion: (store) => store.activeDiscussion,
+      discussionsCount: (store) => store.discussionsCount,
     }),
   },
 
@@ -116,6 +117,7 @@ export default {
     ...mapActions(useDiscussions, {
       getDiscussionDetails: 'getDiscussionDetails',
       deleteDiscussion: 'delete',
+      setDiscussionsCount: 'setDiscussionsCount',
     }),
     ...mapActions(useRooms, ['setActiveRoom', 'setActiveRoom']),
     ...mapActions(useRoomMessages, ['getRoomMessages']),
@@ -156,6 +158,7 @@ export default {
       await this.setActiveRoom(null);
       await this.deleteDiscussion();
       this.handleEndDiscussionModal();
+      this.setDiscussionsCount(this.discussionsCount - 1);
     },
   },
 };
