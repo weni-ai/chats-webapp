@@ -286,7 +286,9 @@ const toggleDropdown = (event) => {
 };
 
 const getActiveCustomStatusAndActiveTimer = async () => {
-  const activeStatus = await api.getActiveCustomStatus();
+  const activeStatus = await api.getActiveCustomStatus({
+    projectUuid: configStore.project.uuid,
+  });
 
   if (activeStatus?.status_type && activeStatus.is_active) {
     statuses.value = statuses.value.map((status) => ({
@@ -313,7 +315,9 @@ const handleCloseCustomStatus = async (status, isActive) => {
       isActive,
     });
 
-  const activeStatus = await api.getActiveCustomStatus();
+  const activeStatus = await api.getActiveCustomStatus({
+    projectUuid: configStore.project.uuid,
+  });
 
   if (!activeStatus) {
     // No active status found, nothing to close
