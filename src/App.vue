@@ -81,7 +81,9 @@ export default {
       immediate: true,
       handler(newAppProject) {
         if (newAppProject && this.appToken) {
-          this.restoreSessionStorageUserStatus();
+          this.restoreSessionStorageUserStatus({
+            projectUuid: newAppProject,
+          });
           this.getUserStatus();
           this.loadQuickMessages();
           this.loadQuickMessagesShared();
@@ -133,10 +135,10 @@ export default {
     ...mapActions(useQuickMessageShared, {
       getAllQuickMessagesShared: 'getAll',
     }),
-    restoreSessionStorageUserStatus() {
-      const userStatus = sessionStorage.getItem('statusAgent');
+    restoreSessionStorageUserStatus({ projectUuid }) {
+      const userStatus = sessionStorage.getItem(`statusAgent-${projectUuid}`);
       if (!['OFFLINE', 'ONLINE'].includes(userStatus)) {
-        sessionStorage.setItem('statusAgent', 'OFFLINE');
+        sessionStorage.setItem(`statusAgent-${projectUuid}`, 'OFFLINE');
       }
       this.setStatus(userStatus);
     },
@@ -209,8 +211,10 @@ export default {
     },
 
     async getUserStatus() {
-      const userStatus = sessionStorage.getItem('statusAgent');
       const projectUuid = this.project.uuid;
+
+      const userStatus = sessionStorage.getItem(`statusAgent-${projectUuid}`);
+
       const {
         data: { connection_status: responseStatus },
       } = await Profile.status({
@@ -233,7 +237,10 @@ export default {
         status,
       });
       useConfig().$patch({ status: connection_status });
-      sessionStorage.setItem('statusAgent', connection_status);
+      sessionStorage.setItem(
+        `statusAgent-${this.project.uuid}`,
+        connection_status,
+      );
     },
 
     async wsConnect() {

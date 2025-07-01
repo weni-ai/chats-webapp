@@ -591,7 +591,7 @@ describe('StatusBar', () => {
 
   describe('Session Storage Management', () => {
     it('should initialize status from session storage', async () => {
-      sessionStorage.setItem('statusAgent', 'ONLINE');
+      sessionStorage.setItem('statusAgent-test-uuid', 'ONLINE');
       wrapper = createWrapper();
       await wrapper.vm.$nextTick();
 
@@ -606,7 +606,7 @@ describe('StatusBar', () => {
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
       await items[0].trigger('click');
 
-      expect(sessionStorage.getItem('statusAgent')).toBe('ONLINE');
+      expect(sessionStorage.getItem('statusAgent-test-uuid')).toBe('ONLINE');
     });
   });
 
