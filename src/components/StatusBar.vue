@@ -216,6 +216,12 @@ const selectStatus = async (newStatus) => {
         selectedStatus.value,
         newStatus.value === 'active',
       );
+      if (newStatus.value === 'active') {
+        updateActiveStatus({
+          isActive: true,
+          skipRequest: false,
+        });
+      }
       stopTimer();
     }
 
