@@ -12,7 +12,7 @@ export default {
     const paramsNextReq = getURLParams({ URL: nextReq });
 
     const response = await http.get(endpoint, {
-      params: { ...paramsNextReq, project: getProject() },
+      params: { ...paramsNextReq, project: getProject(), limit: 20 },
     });
 
     return response.data;
