@@ -69,7 +69,6 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 
 import RoomCard from './RoomCard.vue';
-import { useConfig } from '@/store/modules/config';
 
 export default {
   name: 'CardGroup',
@@ -115,7 +114,6 @@ export default {
       newMessagesByDiscussion: 'newMessagesByDiscussion',
       activeDiscussionId: (store) => store.activeDiscussion?.uuid,
     }),
-    ...mapState(useConfig, ['enableAutomaticRoomRouting']),
   },
 
   watch: {
