@@ -86,7 +86,7 @@
         :placeholder="$t('search')"
         class="search-input"
       />
-
+      <h1>HI</h1>
       <div class="projects-list">
         <UnnnicCardProject
           v-for="project in projectsFiltered"
@@ -113,6 +113,7 @@
             },
           ]"
           :actionText="$t('enter')"
+          clickable="true"
           @click="selectProject(project)"
         />
 
@@ -333,6 +334,7 @@ export default {
     },
 
     selectProject(project) {
+      console.log('selectProject', project);
       this.$emit('update:projectUuid', project.uuid);
     },
 
