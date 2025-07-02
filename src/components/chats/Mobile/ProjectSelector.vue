@@ -86,7 +86,6 @@
         :placeholder="$t('search')"
         class="search-input"
       />
-      <h1>HI</h1>
       <div class="projects-list">
         <UnnnicCardProject
           v-for="project in projectsFiltered"
