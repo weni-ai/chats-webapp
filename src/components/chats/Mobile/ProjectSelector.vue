@@ -333,7 +333,6 @@ export default {
     },
 
     selectProject(project) {
-      console.log('selectProject', project);
       this.$emit('update:projectUuid', project.uuid);
     },
 
