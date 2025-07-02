@@ -89,7 +89,6 @@ export default {
   }),
 
   computed: {
-    ...mapState(useConfig, ['enableAutomaticRoomRouting']),
     ...mapState(useRooms, {
       newMessages(store) {
         return store.newMessagesByRoom[this.room.uuid]?.messages;
@@ -97,6 +96,9 @@ export default {
       activeRoomId: (store) => store.activeRoom?.uuid,
       rooms: 'agentRooms',
       maxPinLimit: 'maxPinLimit',
+    }),
+    ...mapState(useConfig, {
+      enableAutomaticRoomRouting: 'enableAutomaticRoomRouting',
     }),
     hideContactMessageInfo() {
       return this.roomType === 'waiting' && this.enableAutomaticRoomRouting;
