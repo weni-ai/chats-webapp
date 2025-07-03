@@ -400,7 +400,8 @@
     "linked_contact": "Contacto vinculado a agente {name}",
     "see_contact_history": "Ver historial",
     "audio_tooltip": "{agent} {date} a las {time}",
-    "transfering_chat": "Transfiriendo el chat 📬"
+    "transfering_chat": "Transfiriendo el chat 📬",
+    "external_history": "Ver historial externo"
   },
   "discussions": {
     "title": "Discusión | Discusiones",
