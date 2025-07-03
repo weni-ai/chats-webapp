@@ -485,7 +485,7 @@ export default {
         };
         await types[type].request();
         await this.listRoom(
-          false,
+          true,
           this.orderBy[this.activeTab],
           'ongoing',
           true,
