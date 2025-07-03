@@ -22,7 +22,7 @@
         <UnnnicInput
           v-model="filterContact"
           iconLeft="search-1"
-          :placeholder="$t('name_or_phone')"
+          :placeholder="$t('name_or_phone_or_protocol')"
           data-testid="filter-contact-input"
         />
       </div>
