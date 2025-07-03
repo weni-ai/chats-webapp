@@ -10,7 +10,7 @@
       :iconRight="nameOfContact ? 'close-1' : ''"
       :iconRightClickable="true"
       size="sm"
-      :placeholder="$t('chats.search_contact')"
+      :placeholder="$t('chats.search_contact_placeholder')"
       class="chat-groups__search-contact-input"
       data-testid="search-contact-input"
       @icon-right-click="nameOfContact = ''"

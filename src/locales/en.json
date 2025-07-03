@@ -223,6 +223,7 @@
       "default": "An error occurred, please try again later"
     },
     "search_contact": "Search contact",
+    "search_contact_placeholder": "Search contact (name, phone or ticket ID)",
     "tags": "Chat tags",
     "discussions": "Discussions",
     "waiting": "Waiting",
@@ -347,8 +348,7 @@
   "sector_update_error": "Unable to save changes, please try again later.",
   "sector_invalid_work_hour": "Start time cannot be later than end time",
   "name_or_phone": "Name or telephone",
-  "name_or_phone_or_protocol": "Name, telephone or protocol",
-  "protocol": "Protocol",
+  "name_or_phone_or_protocol": "Name, telephone or ticket ID",
   "service": "Service",
   "tags": {
     "title": "Tags",
@@ -403,7 +403,10 @@
     "linked_contact": "Contact linked to agent {name}",
     "see_contact_history": "View history",
     "audio_tooltip": "{agent} {date} at {time}",
-    "transfering_chat": "Transferring the chat 📬"
+    "transfering_chat": "Transferring the chat 📬",
+    "ticket": "Ticket ID",
+    "copy_protocol": "Click to copy the Ticket ID",
+    "protocol_copied": "Ticket ID copied to clipboard!"
   },
   "discussions": {
     "title": "Discussion | Discussions",

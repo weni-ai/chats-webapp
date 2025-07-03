@@ -226,6 +226,7 @@
       "default": "Ocurrió un error, por favor, inténtelo de nuevo más tarde"
     },
     "search_contact": "Buscar contacto",
+    "search_contact_placeholder": "Buscar contacto (nombre, teléfono o ticket ID)",
     "tags": "Etiquetas de chat",
     "discussions": "Discusiones",
     "waiting": "Esperando",
@@ -350,8 +351,7 @@
   "sector_update_error": "No se pueden guardar los cambios. Vuelve a intentarlo más tarde.",
   "sector_invalid_work_hour": "La hora de inicio no puede ser mayor que la hora de finalización",
   "name_or_phone": "Nombre o teléfono",
-  "name_or_phone_or_protocol": "Nombre, teléfono o protocolo",
-  "protocol": "Protocolo",
+  "name_or_phone_or_protocol": "Nombre, teléfono o Ticket ID",
   "service": "Servicio",
   "tags": {
     "title": "Tags",
@@ -406,7 +406,10 @@
     "linked_contact": "Contacto vinculado a agente {name}",
     "see_contact_history": "Ver historial",
     "audio_tooltip": "{agent} {date} a las {time}",
-    "transfering_chat": "Transfiriendo el chat 📬"
+    "transfering_chat": "Transfiriendo el chat 📬",
+    "ticket": "Ticket ID",
+    "copy_protocol": "Haga clic para copiar el Ticket ID",
+    "protocol_copied": "¡Ticket ID copiado al portapapeles!"
   },
   "discussions": {
     "title": "Discusión | Discusiones",
