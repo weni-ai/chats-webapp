@@ -73,12 +73,10 @@ export const useConfig = defineStore('config', {
   },
   getters: {
     enableAutomaticRoomRouting: ({ project }) => {
-      const { isHumanServiceProfile } = useProfile();
-
       const isAutomaticRoutingQueueProject =
         project.room_routing_type === 'QUEUE_PRIORITY';
 
-      return isHumanServiceProfile && isAutomaticRoutingQueueProject;
+      return isAutomaticRoutingQueueProject;
     },
     enableGroupsMode: ({ project }) => {
       return 'its_principal' in (project?.config || {});
