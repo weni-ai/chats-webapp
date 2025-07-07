@@ -35,7 +35,7 @@
             >
               <UnnnicToolTip
                 enabled
-                :text="$t('contact_info.copy_protocol')"
+                :text="tooltipProtocolText"
                 side="left"
                 class="connection-info__ticket"
               >
@@ -43,7 +43,7 @@
                   {{ $t('contact_info.ticket') }}
                 </p>
                 <p class="connection-info__ticket-value">
-                  [{{ contactProtocol }}]
+                  {{ contactProtocol }}
                 </p>
                 <UnnnicIconSvg
                   icon="content_copy"
@@ -270,6 +270,7 @@ export default {
     currentCustomField: {},
     isRefreshContactDisabled: false,
     isShowModalStartDiscussion: false,
+    isCopyProtocol: false,
   }),
 
   computed: {
@@ -314,6 +315,11 @@ export default {
     },
     contactService() {
       return (this.closedRoom || this.room).service_chat;
+    },
+    tooltipProtocolText() {
+      return this.isCopyProtocol
+        ? this.$t('contact_info.protocol_copied')
+        : this.$t('contact_info.copy_protocol');
     },
   },
   watch: {
@@ -574,7 +580,10 @@ export default {
       navigator.clipboard
         .writeText(protocolValue)
         .then(() => {
-          this.showAlert(this.$t('contact_info.protocol_copied'));
+          this.isCopyProtocol = true;
+          setTimeout(() => {
+            this.isCopyProtocol = false;
+          }, 3000);
         })
         .catch((err) => {
           console.error('Failed to copy protocol:', err);
