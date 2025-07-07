@@ -198,7 +198,7 @@
       "discussion_created": "{agent} started discussion with queue {queue}",
       "discussion_joined": "{agent} joined the discussion",
       "agent_took_chat": "Oops! The chat with the contact {contact} has already been taken over by another agent",
-      "automatic_transfer_from_queue": "Room assigned to {agent} by automatic queue distribution."
+      "automatic_transfer_from_queue": "Room assigned to {agent}."
     },
     "room_list": {
       "order_by": "Order by:",
@@ -360,8 +360,7 @@
   "view": "View",
   "see": "See",
   "chat_with": {
-    "bot": "Chat with bot",
-    "agent": "Chat with agent {name}"
+    "bot": "Chat with bot"
   },
   "waiting_answer": {
     "send_template": "You sent a message template",
