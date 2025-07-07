@@ -8,12 +8,12 @@
       enabled
       :text="tooltipProtocolText"
       side="left"
-      class="connection-info__ticket"
+      class="protocol-text__ticket"
     >
-      <p class="connection-info__ticket-title">
+      <p class="protocol-text__ticket-title">
         {{ $t('contact_info.ticket') }}
       </p>
-      <p class="connection-info__ticket-value">
+      <p class="protocol-text__ticket-value">
         {{ protocol }}
       </p>
       <UnnnicIconSvg
@@ -62,7 +62,7 @@ const copyProtocol = (): void => {
 
 <style lang="scss" scoped>
 .protocol-text {
-  .connection-info__ticket {
+  .protocol-text__ticket {
     display: flex;
     align-items: center;
     gap: $unnnic-spacing-nano;
