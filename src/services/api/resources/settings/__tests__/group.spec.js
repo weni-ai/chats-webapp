@@ -33,7 +33,7 @@ describe('Group', () => {
       expect(http.get).toHaveBeenCalledWith('/group_sector/', {
         params: {
           page: '2',
-          limit: '10',
+          limit: 20,
           project: mockProject,
         },
       });
@@ -48,7 +48,7 @@ describe('Group', () => {
       const result = await Group.list({});
 
       expect(http.get).toHaveBeenCalledWith('/group_sector/', {
-        params: { project: mockProject },
+        params: { project: mockProject, limit: 20 },
       });
       expect(result).toEqual(expectedData);
     });

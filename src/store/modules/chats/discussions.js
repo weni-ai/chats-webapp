@@ -9,6 +9,8 @@ export const useDiscussions = defineStore('discussions', {
     discussionsCloseds: [],
     activeDiscussion: null,
     newMessagesByDiscussion: {},
+    discussionsCount: 0,
+    showDiscussionsDot: false,
   }),
   actions: {
     setDiscussions(discussions) {
@@ -38,6 +40,7 @@ export const useDiscussions = defineStore('discussions', {
     async getAll({ viewedAgent, filters }) {
       const newDiscussions = await Discussion.listAll({ viewedAgent, filters });
       this.setDiscussions(newDiscussions?.results);
+      this.discussionsCount = newDiscussions?.count;
     },
 
     async getAllClosed({ roomId }) {
@@ -133,6 +136,10 @@ export const useDiscussions = defineStore('discussions', {
       return Discussion.getDiscussionAgents({
         discussionUuid: this.activeDiscussion.uuid,
       });
+    },
+
+    setDiscussionsCount(count) {
+      this.discussionsCount = count;
     },
   },
   getters: {

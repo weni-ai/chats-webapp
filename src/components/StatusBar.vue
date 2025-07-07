@@ -88,16 +88,22 @@ const statuses = ref([
   { value: 'inactive', label: 'Offline', color: 'gray' },
 ]);
 
-const selectedStatus = ref(
-  sessionStorage.getItem('statusAgent') === 'ONLINE'
-    ? statuses.value[0]
-    : statuses.value[1],
-);
 const isOpen = ref(false);
 const startDate = ref(null);
 const elapsedTime = ref(0);
 let intervalId = null;
 const configStore = useConfig();
+
+const statusAgentKey = configStore.project.uuid
+  ? `statusAgent-${configStore.project.uuid}`
+  : `statusAgent-${sessionStorage.getItem('WENICHATS_PROJECT_UUID')}`;
+
+const selectedStatus = ref(
+  sessionStorage.getItem(statusAgentKey) === 'ONLINE'
+    ? statuses.value[0]
+    : statuses.value[1],
+);
+
 const profileStore = useProfile();
 const project = computed(() => configStore.project);
 const loadingActiveStatus = ref(false);
@@ -140,11 +146,11 @@ const updateActiveStatus = async ({ isActive, skipRequest }) => {
         status: statusAgent,
       });
 
-      sessionStorage.setItem('statusAgent', connection);
+      sessionStorage.setItem(statusAgentKey, connection);
       connection_status = connection.toLowerCase();
     } else {
       connection_status = statusAgent.toLowerCase();
-      sessionStorage.setItem('statusAgent', statusAgent);
+      sessionStorage.setItem(statusAgentKey, statusAgent);
     }
 
     const status = statuses.value.find(
@@ -210,6 +216,12 @@ const selectStatus = async (newStatus) => {
         selectedStatus.value,
         newStatus.value === 'active',
       );
+      if (newStatus.value === 'active') {
+        updateActiveStatus({
+          isActive: true,
+          skipRequest: false,
+        });
+      }
       stopTimer();
     }
 
@@ -286,7 +298,9 @@ const toggleDropdown = (event) => {
 };
 
 const getActiveCustomStatusAndActiveTimer = async () => {
-  const activeStatus = await api.getActiveCustomStatus();
+  const activeStatus = await api.getActiveCustomStatus({
+    projectUuid: configStore.project.uuid,
+  });
 
   if (activeStatus?.status_type && activeStatus.is_active) {
     statuses.value = statuses.value.map((status) => ({
@@ -313,7 +327,9 @@ const handleCloseCustomStatus = async (status, isActive) => {
       isActive,
     });
 
-  const activeStatus = await api.getActiveCustomStatus();
+  const activeStatus = await api.getActiveCustomStatus({
+    projectUuid: configStore.project.uuid,
+  });
 
   if (!activeStatus) {
     // No active status found, nothing to close

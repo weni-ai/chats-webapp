@@ -4,6 +4,7 @@ import { isValidJson } from '@/utils/messages';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { getRoomType } from '@/utils/room';
 
 const checkAndUpdateRoomLastMessage = (room, message) => {
   const itsMessageSystem = !message.contact && !message.user;
@@ -29,12 +30,18 @@ export default async (message, { app }) => {
 
   const findRoom = rooms.find((room) => room.uuid === message.room);
 
-  roomsStore.bringRoomFront(findRoom);
-
   if (findRoom) {
+    const roomType = getRoomType(findRoom);
+
+    if (roomType !== 'waiting') roomsStore.bringRoomFront(findRoom);
+
     if (app.me.email === message.user?.email) {
       checkAndUpdateRoomLastMessage(findRoom, message);
       return;
+    }
+
+    if (roomType === 'ongoing' && roomsStore.activeTab !== 'ongoing') {
+      roomsStore.showOngoingDot = true;
     }
 
     const notification = new SoundNotification('ping-bing');

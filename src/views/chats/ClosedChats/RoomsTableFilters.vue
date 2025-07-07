@@ -22,12 +22,11 @@
         <UnnnicInput
           v-model="filterContact"
           iconLeft="search-1"
-          :placeholder="$t('name_or_phone')"
+          :placeholder="$t('name_or_phone_or_protocol')"
           data-testid="filter-contact-input"
         />
       </div>
       <div
-        v-if="sectorsToFilter.length > 2"
         class="rooms-table-filters__input"
         data-testid="sector-filter"
       >
@@ -350,10 +349,6 @@ export default {
           newSectors.push({ value: uuid, label: name }),
         );
         this.sectorsToFilter = newSectors;
-
-        if (results.length === 1) {
-          this.filterSector = [newSectors[1]];
-        }
       } catch (error) {
         console.error('The sectors could not be loaded at this time.', error);
       }
@@ -404,9 +399,9 @@ export default {
       }
 
       this.filterContact = '';
-      if (this.sectorsToFilter.length > 2) {
-        this.filterSector = [this.filterSectorsOptionAll];
-      }
+
+      this.filterSector = [this.filterSectorsOptionAll];
+
       this.filterTag = [];
       this.filterDate = this.filterDateDefault;
       if (!this.isMobile && this.filterDate) {
