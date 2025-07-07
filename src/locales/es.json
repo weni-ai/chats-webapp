@@ -201,7 +201,7 @@
       "discussion_created": "{agent} inició la discusión con la cola {queue}",
       "discussion_joined": "{agent} se unió a la discusión",
       "agent_took_chat": "¡Ups! El chat con el contacto {contact} ha sido asumido por otro agente",
-      "automatic_transfer_from_queue": "Sala asignada a {agent} por distribución automática de la cola."
+      "automatic_transfer_from_queue": "Sala asignada a {agent}."
     },
     "room_list": {
       "order_by": "Ordenar por:",
@@ -363,8 +363,7 @@
   "view": "Ver",
   "see": "Ver",
   "chat_with": {
-    "bot": "Chat con bot",
-    "agent": "Chat con agente {name}"
+    "bot": "Chat con bot"
   },
   "waiting_answer": {
     "send_template": "Enviaste una plantilla de mensaje",
