@@ -34,11 +34,7 @@
             <ChatFeedback
               v-if="isChatSeparatorFeedback(message.uuid) && showChatSeparator"
               :key="'feedback' + message.uuid"
-              :feedback="
-                startMessagesBy.agent === message.uuid
-                  ? $t('chat_with.agent', { name: message?.user?.first_name })
-                  : $t('chat_with.bot')
-              "
+              :feedback="$t('chat_with.bot')"
               :scheme="isClosedChat ? 'gray' : 'blue'"
               :title="messageFormatTitle(new Date(message.created_on))"
             />
@@ -532,9 +528,7 @@ export default {
     },
 
     isChatSeparatorFeedback(messageUuid) {
-      return [this.startMessagesBy.bot, this.startMessagesBy.agent].includes(
-        messageUuid,
-      );
+      return [this.startMessagesBy.bot].includes(messageUuid);
     },
 
     isMessageByBot(message) {
