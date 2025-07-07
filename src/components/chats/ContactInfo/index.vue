@@ -29,7 +29,7 @@
                 @click="refreshContactInfos"
               />
             </header>
-
+            <ProtocolText :protocol="contactProtocol" />
             <div class="connection-info">
               <p v-if="room?.contact.status === 'online'">
                 {{ $t('status.online') }}
@@ -55,13 +55,6 @@
                 >
                   <h3 class="title">{{ $t('service') }}:</h3>
                   <h4 class="description">{{ contactService }}</h4>
-                </hgroup>
-                <hgroup
-                  v-if="contactProtocol?.length > 0"
-                  class="info"
-                >
-                  <h3 class="title">{{ $t('protocol') }}:</h3>
-                  <h4 class="description">{{ contactProtocol }}</h4>
                 </hgroup>
               </section>
               <template v-if="!!room?.custom_fields">
@@ -206,6 +199,7 @@ import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
 import TransferSession from './TransferSession.vue';
 import ModalStartDiscussion from './ModalStartDiscussion.vue';
 import DiscussionsSession from './DiscussionsSession.vue';
+import ProtocolText from './ProtocolText.vue';
 
 import moment from 'moment';
 
@@ -223,6 +217,7 @@ export default {
     TransferSession,
     ModalStartDiscussion,
     DiscussionsSession,
+    ProtocolText,
   },
   props: {
     closedRoom: {
