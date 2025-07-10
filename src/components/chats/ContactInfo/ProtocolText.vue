@@ -25,17 +25,18 @@
   </section>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, computed } from 'vue';
 import i18n from '@/plugins/i18n';
 
-interface Props {
-  protocol: string;
-}
+const props = defineProps({
+  protocol: {
+    type: String,
+    required: true,
+  },
+});
 
-const props = defineProps<Props>();
-
-const isCopyProtocol = ref<boolean>(false);
+const isCopyProtocol = ref(false);
 
 const tooltipProtocolText = computed(() => {
   return isCopyProtocol.value
@@ -43,7 +44,7 @@ const tooltipProtocolText = computed(() => {
     : i18n.global.t('contact_info.copy_protocol');
 });
 
-const copyProtocol = (): void => {
+const copyProtocol = () => {
   if (!props.protocol) return;
 
   navigator.clipboard
