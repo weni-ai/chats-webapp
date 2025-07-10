@@ -6,8 +6,10 @@ import { isValidJson } from '@/utils/messages';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
 import { useDashboard } from '@/store/modules/dashboard';
+import { useRooms } from '@/store/modules/chats/rooms';
 
 export default (message, { app }) => {
+  const roomsStore = useRooms();
   const discussionStore = useDiscussions();
   const discussionMessagesStore = useDiscussionMessages();
   const dashboardStore = useDashboard();
@@ -21,6 +23,10 @@ export default (message, { app }) => {
   if (findDiscussion) {
     if (app.me.email === message.user?.email) {
       return;
+    }
+
+    if (roomsStore.activeTab !== 'discussions') {
+      discussionStore.showDiscussionsDot = true;
     }
 
     const notification = new SoundNotification('ping-bing');

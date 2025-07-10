@@ -188,6 +188,12 @@
   "interaction_time": "Tiempo de interacción",
   "average_interaction_time": "Es el tiempo promedio de duración de un chat",
   "chats": {
+    "summary": {
+      "reading_and_summarizing": "Lectura y resumen",
+      "by_ai": "Resumen por IA",
+      "error": "No se pudo generar el resumen.",
+      "unavailable": "No hay resumen disponible"
+    },
     "feedback": {
       "forwarded_to_agent": "Contacto reenviado al agente {agent}",
       "forwarded_to_queue": "Contacto reenviado a la cola {queue}",
@@ -201,7 +207,7 @@
       "discussion_created": "{agent} inició la discusión con la cola {queue}",
       "discussion_joined": "{agent} se unió a la discusión",
       "agent_took_chat": "¡Ups! El chat con el contacto {contact} ha sido asumido por otro agente",
-      "automatic_transfer_from_queue": "Sala asignada a {agent} por distribución automática de la cola."
+      "automatic_transfer_from_queue": "Sala asignada a {agent}."
     },
     "room_list": {
       "order_by": "Ordenar por:",
@@ -220,12 +226,13 @@
       "default": "Ocurrió un error, por favor, inténtelo de nuevo más tarde"
     },
     "search_contact": "Buscar contacto",
+    "search_contact_placeholder": "Buscar contacto (nombre, teléfono o ticket ID)",
     "tags": "Etiquetas de chat",
-    "discussions": "Discusiones ({length})",
-    "waiting": "Esperando ({length})",
+    "discussions": "Discusiones",
+    "waiting": "Esperando",
     "waiting_assistance": "Esperando asistencia",
-    "in_progress": "Chats en curso ({length})",
-    "sent_flows": "Flujos enviados ({length})",
+    "in_progress": "En curso",
+    "sent_flows": "Flujos enviados",
     "to_end_rate_the_chat": "Para cerrar califica el chat",
     "tags_help": "Las etiquetas te ayudan a localizar chats y también a generar buenos informes.",
     "chat_with_contact_ended": "Chat con {contact} cerrado",
@@ -344,8 +351,7 @@
   "sector_update_error": "No se pueden guardar los cambios. Vuelve a intentarlo más tarde.",
   "sector_invalid_work_hour": "La hora de inicio no puede ser mayor que la hora de finalización",
   "name_or_phone": "Nombre o teléfono",
-  "name_or_phone_or_protocol": "Nombre, teléfono o protocolo",
-  "protocol": "Protocolo",
+  "name_or_phone_or_protocol": "Nombre, teléfono o Ticket ID",
   "service": "Servicio",
   "tags": {
     "title": "Tags",
@@ -363,8 +369,7 @@
   "view": "Ver",
   "see": "Ver",
   "chat_with": {
-    "bot": "Chat con bot",
-    "agent": "Chat con agente {name}"
+    "bot": "Chat con bot"
   },
   "waiting_answer": {
     "send_template": "Enviaste una plantilla de mensaje",
@@ -400,7 +405,10 @@
     "linked_contact": "Contacto vinculado a agente {name}",
     "see_contact_history": "Ver historial",
     "audio_tooltip": "{agent} {date} a las {time}",
-    "transfering_chat": "Transfiriendo el chat 📬"
+    "transfering_chat": "Transfiriendo el chat 📬",
+    "ticket": "Ticket ID",
+    "copy_protocol": "Haga clic para copiar el Ticket ID",
+    "protocol_copied": "¡Ticket ID copiado al portapapeles!"
   },
   "discussions": {
     "title": "Discusión | Discusiones",

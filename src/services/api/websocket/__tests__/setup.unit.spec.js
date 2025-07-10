@@ -156,7 +156,7 @@ describe('WebSocketSetup', () => {
     });
 
     it('should update user status from sessionStorage', () => {
-      sessionStorage.setItem('statusAgent', 'mockStatus');
+      sessionStorage.setItem('statusAgent-mockProject', 'mockStatus');
 
       webSocketSetup.reconnect();
 

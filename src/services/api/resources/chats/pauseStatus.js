@@ -63,9 +63,11 @@ export default {
 
     return response;
   },
-  async getActiveCustomStatus() {
+  async getActiveCustomStatus({ projectUuid }) {
     try {
-      const response = await http.get(`custom_status/last_status/`);
+      const response = await http.get(
+        `custom_status/last_status/?project_uuid=${projectUuid}`,
+      );
       return response.data;
     } catch (error) {
       if (error.response && error.response.status === 404) {

@@ -13,7 +13,10 @@
       :show="(!!room && room.user && room.is_24h_valid) || !!discussion"
       @open-file-uploader="openModalFileUploader"
     >
-      <RoomMessages v-if="!!room && !discussion" />
+      <RoomMessages
+        v-if="!!room && !discussion"
+        showRoomSummary
+      />
       <DiscussionMessages v-if="!!discussion" />
 
       <MessageManager
@@ -60,7 +63,6 @@ import { mapActions, mapState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useProfile } from '@/store/modules/profile';
-import { useConfig } from '@/store/modules/config';
 
 import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone/index.vue';
 
@@ -117,7 +119,6 @@ export default {
       discussions: 'discussions',
       getDiscussionById: 'getDiscussionById',
     }),
-    ...mapState(useConfig, ['enableAutomaticRoomRouting']),
     isMessageManagerRoomVisible() {
       const { room } = this;
       return (

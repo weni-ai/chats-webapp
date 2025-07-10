@@ -188,6 +188,12 @@
   "interaction_time": "Tempo de interação",
   "average_interaction_time": "É o tempo médio de duração de um chat",
   "chats": {
+    "summary": {
+      "reading_and_summarizing": "Lendo e fazendo resumo",
+      "by_ai": "Resumo feito por IA",
+      "error": "Falha ao gerar resumo.",
+      "unavailable": "Não há resumo disponível"
+    },
     "feedback": {
       "forwarded_to_agent": "Contato encaminhado para agente {agent}",
       "forwarded_to_queue": "Contato encaminhado para fila {queue}",
@@ -201,7 +207,7 @@
       "discussion_created": "{agent} iniciou a discussão com fila {queue}",
       "discussion_joined": "{agent} entrou na discussão",
       "agent_took_chat": "Ops! O chat com contato {contact} foi assumido por outro agente",
-      "automatic_transfer_from_queue": "Sala atribuída a {agent} por distribuição automática da fila."
+      "automatic_transfer_from_queue": "Sala atribuída ao {agent}."
     },
     "room_list": {
       "order_by": "Ordenar por:",
@@ -220,12 +226,13 @@
       "default": "Ocorreu um erro, por favor, tente novamente mais tarde"
     },
     "search_contact": "Pesquisar contato",
+    "search_contact_placeholder": "Pesquisar contato (nome, telefone ou protocolo)",
     "tags": "Tags do chat",
-    "discussions": "Discussões ({length})",
-    "waiting": "Aguardando ({length})",
+    "discussions": "Discussões",
+    "waiting": "Aguardando",
     "waiting_assistance": "Aguardando atendimento",
-    "in_progress": "Em andamento ({length})",
-    "sent_flows": "Fluxos enviados ({length})",
+    "in_progress": "Em andamento",
+    "sent_flows": "Fluxos enviados",
     "to_end_rate_the_chat": "Para encerrar, classifique o chat",
     "tags_help": "As tags ajudam a localizar os chats e também gerar bons relatórios",
     "chat_with_contact_ended": "Chat com {contact} encerrado",
@@ -344,8 +351,7 @@
   "sector_update_error": "Não foi possível salvar as alterações, tente novamente mais tarde.",
   "sector_invalid_work_hour": "Horário de início não pode ser maior que horário final",
   "name_or_phone": "Nome ou telefone",
-  "name_or_phone_or_protocol": "Nome, telefone ou procotolo",
-  "protocol": "Protocolo",
+  "name_or_phone_or_protocol": "Nome, telefone ou protocolo",
   "service": "Serviço",
   "tags": {
     "title": "Tags",
@@ -363,8 +369,7 @@
   "view": "Visualizar",
   "see": "Ver",
   "chat_with": {
-    "bot": "Chat com bot",
-    "agent": "Chat com agente {name}"
+    "bot": "Chat com bot"
   },
   "waiting_answer": {
     "send_template": "Você enviou um modelo de mensagem",
@@ -400,7 +405,10 @@
     "linked_contact": "Contato vinculado ao agente {name}",
     "see_contact_history": "Ver histórico",
     "audio_tooltip": "{agent} {date} às {time}",
-    "transfering_chat": "Transferindo o chat ​📬"
+    "transfering_chat": "Transferindo o chat ​📬",
+    "ticket": "Protocolo",
+    "copy_protocol": "Clique para copiar o protocolo",
+    "protocol_copied": "Protocolo copiado para a área de transferência!"
   },
   "discussions": {
     "title": "Discussão | Discussões",

@@ -1,6 +1,5 @@
 const TOKEN_ITEM_LOCAL_STORAGE = 'WENICHATS_API_TOKEN';
 const PROJECT_ITEM_LOCAL_STORAGE = 'WENICHATS_PROJECT_UUID';
-const STATUS_AGENT = 'statusAgent';
 
 export function getToken() {
   const token =
@@ -29,5 +28,6 @@ export async function setProject(projectUuid) {
 }
 
 export async function setStatus(status) {
-  sessionStorage.setItem(STATUS_AGENT, status);
+  const projectUuid = getProject();
+  sessionStorage.setItem(`statusAgent-${projectUuid}`, status);
 }

@@ -5,7 +5,7 @@ import { getProject } from '@/utils/config';
 import { useProfile } from '@/store/modules/profile';
 
 export default {
-  async getAll(offset, limit, contact, order, viewedAgent) {
+  async getAll(offset, limit, contact, order, viewedAgent, roomsType) {
     const params = {
       is_active: true,
       project: getProject(),
@@ -13,6 +13,7 @@ export default {
       limit,
       ordering: `user,${order}`,
       search: contact,
+      room_status: roomsType,
     };
 
     if (viewedAgent) {
@@ -32,6 +33,13 @@ export default {
     }
 
     return console.error('"Uuid" necessário para requisição.');
+  },
+
+  async getSummary({ roomUuid }) {
+    const url = `/room/${roomUuid}/chats-summary/`;
+    const response = await http.get(url);
+
+    return response.data;
   },
 
   async getCanUseCopilot({ uuid }) {
@@ -64,6 +72,7 @@ export default {
     const response = await http.put(`/room/${uuid}/close/`, { tags });
     return response.data;
   },
+
   async updateReadMessages(uuid, read) {
     await http.patch(`/room/${uuid}/bulk_update_msgs/`, {
       seen: read,
