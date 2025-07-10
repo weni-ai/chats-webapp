@@ -401,7 +401,7 @@ export function groupMessages(messagesReference, { message, addBefore }) {
 
 export function updateMessageStatusInGroupedMessages(
   messagesReference,
-  { message, status },
+  { message },
 ) {
   const messageTimestamp = moment(message.created_on);
   const messageDate = messageTimestamp.format('L');
@@ -428,7 +428,13 @@ export function updateMessageStatusInGroupedMessages(
   const currentMinuteEntry = currentDateEntry.minutes[minuteIndex];
 
   currentMinuteEntry.messages = currentMinuteEntry.messages.map((obj) =>
-    obj.uuid === message.uuid ? { ...obj, status } : obj,
+    obj.uuid === message.uuid
+      ? {
+          ...obj,
+          is_read: message.is_read,
+          is_delivered: message.is_delivered,
+        }
+      : obj,
   );
 }
 
