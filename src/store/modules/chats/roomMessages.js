@@ -26,10 +26,6 @@ export const useRoomMessages = defineStore('roomMessages', {
     roomMessagesFailedUuids: [],
     roomMessagesNext: '',
     roomMessagesPrevious: '',
-    roomMessagesStatusMapper: {
-      delivered: 'received',
-      read: 'read',
-    },
     replyMessage: null,
   }),
   actions: {
@@ -97,20 +93,24 @@ export const useRoomMessages = defineStore('roomMessages', {
       }
     },
 
-    updateMessageStatus({ message, status }) {
+    updateMessageStatus({ messageUuid, status }) {
       const findedMessage = this.roomMessages.find(
-        (mappedMessage) => mappedMessage.uuid === message.uuid,
+        (mappedMessage) => mappedMessage.uuid === messageUuid,
       );
 
-      if (findedMessage.status === 'read') return;
+      if (!findedMessage) return;
 
-      if (findedMessage) {
-        findedMessage.status = status;
-        updateMessageStatusInGroupedMessages(this.roomMessagesSorted, {
-          message,
-          status,
-        });
+      if (status === 'delivered') {
+        findedMessage.is_delivered = true;
       }
+
+      if (status === 'read') {
+        findedMessage.is_read = true;
+      }
+
+      updateMessageStatusInGroupedMessages(this.roomMessagesSorted, {
+        message: findedMessage,
+      });
     },
 
     updateMessage({

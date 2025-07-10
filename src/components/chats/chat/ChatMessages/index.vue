@@ -340,7 +340,6 @@ export default {
 
   computed: {
     ...mapState(useDashboard, ['viewedAgent']),
-    ...mapState(useRoomMessages, ['roomMessagesStatusMapper']),
     ...mapWritableState(useRoomMessages, ['replyMessage']),
     medias() {
       return this.messages
@@ -428,12 +427,18 @@ export default {
         if (this.messagesSendingUuids.includes(message.uuid)) {
           return 'sending';
         }
+
         if (this.messagesFailedUuids.includes(message.uuid)) {
           return 'failed';
         }
 
-        if (message.status)
-          return this.roomMessagesStatusMapper[message.status] || 'default';
+        if (message.is_read) {
+          return 'read';
+        }
+
+        if (message.is_delivered) {
+          return 'received';
+        }
 
         if (media && this.isAudio(media)) {
           return 'default';
