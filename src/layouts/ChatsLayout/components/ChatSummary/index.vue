@@ -1,5 +1,19 @@
 <template>
   <section class="chat-summary">
+    <section class="chat-summary__header">
+      <section class="chat-summary__by-ai-label">
+        <img :src="StarsIcon" />
+        <p>{{ $t('chats.summary.by_ai') }}</p>
+      </section>
+      <UnnnicIcon
+        v-if="!isGeneratingSummary && !isTyping && !hideClose"
+        icon="close"
+        size="ant"
+        clickable
+        scheme="neutral-dark"
+        @click="$emit('close')"
+      />
+    </section>
     <section class="chat-summary__content">
       <section
         v-if="isGeneratingSummary"
@@ -21,18 +35,24 @@
       >
         {{ animatedText }}
       </p>
+    </section>
+    <section class="chat-summary__footer">
       <UnnnicIcon
-        v-if="!isGeneratingSummary && !isTyping && !hideClose"
-        icon="close"
+        icon="thumb_up"
+        :filled="feedback.liked === true"
         size="ant"
         clickable
         scheme="neutral-dark"
-        @click="$emit('close')"
+        @click="handleThumbUp"
       />
-    </section>
-    <section class="chat-summary__by-ai-label__bottom">
-      <img :src="StarsIcon" />
-      <p>{{ $t('chats.summary.by_ai') }}</p>
+      <UnnnicIcon
+        icon="thumb_down"
+        :filled="feedback.liked === false"
+        size="ant"
+        clickable
+        scheme="neutral-dark"
+        @click="handleThumbDown"
+      />
     </section>
   </section>
 </template>
@@ -61,8 +81,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    feedback: {
+      type: Object,
+      default: () => ({
+        liked: null,
+      }),
+    },
   },
-  emits: ['close'],
+  emits: ['close', 'feedback'],
   data() {
     return {
       StarsIcon,
@@ -86,6 +112,14 @@ export default {
     this.animatedText = '';
   },
   methods: {
+    handleThumbUp() {
+      this.$emit('feedback', { liked: true });
+      console.log('thumb up');
+    },
+    handleThumbDown() {
+      this.$emit('feedback', { liked: false });
+      console.log('thumb down');
+    },
     async typeWriter(text, speed) {
       this.isTyping = true;
       this.animatedText = '';
@@ -153,6 +187,12 @@ export default {
     padding-right: 2 * $unnnic-spacing-md;
   }
 
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   &__content {
     display: flex;
     gap: $unnnic-spacing-md;
@@ -164,18 +204,22 @@ export default {
     line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
   }
 
-  &__by-ai-label {
-    &__bottom {
-      display: flex;
-      align-self: end;
-      gap: $unnnic-spacing-nano;
+  &__footer {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: $unnnic-spacing-sm;
+  }
 
-      color: $unnnic-color-neutral-dark;
-      font-family: $unnnic-font-family-secondary;
-      font-size: $unnnic-font-size-body-md;
-      line-height: $unnnic-font-size-body-md + $unnnic-line-height-md;
-      font-weight: $unnnic-font-weight-black;
-    }
+  &__by-ai-label {
+    display: flex;
+    gap: $unnnic-spacing-nano;
+
+    color: $unnnic-color-neutral-dark;
+    font-family: $unnnic-font-family-secondary;
+    font-size: $unnnic-font-size-body-md;
+    line-height: $unnnic-font-size-body-md + $unnnic-line-height-md;
+    font-weight: $unnnic-font-weight-black;
   }
 }
 </style>
