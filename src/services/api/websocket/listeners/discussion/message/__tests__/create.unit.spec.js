@@ -21,6 +21,12 @@ vi.mock('@/services/api/websocket/soundNotification', () => ({
 
 vi.mock('@/services/api/websocket/soundNotification');
 
+vi.mock('@/store/modules/chats/rooms', () => ({
+  useRooms: vi.fn(() => ({
+    activeTab: 'discussions',
+  })),
+}));
+
 vi.mock('@/store/modules/chats/discussions', () => ({
   useDiscussions: vi.fn(),
 }));

@@ -1,0 +1,13 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ChatsDropzone > Snapshot > should match snapshot 1`] = `
+<div
+  class="dropzone dropzone"
+  data-testid="dropzone-container"
+  data-v-b64070c4=""
+>
+  <!--v-if-->
+  
+  
+</div>
+`;

@@ -204,7 +204,7 @@
       "discussion_created": "{agent} started discussion with queue {queue}",
       "discussion_joined": "{agent} joined the discussion",
       "agent_took_chat": "Oops! The chat with the contact {contact} has already been taken over by another agent",
-      "automatic_transfer_from_queue": "Room assigned to {agent} by automatic queue distribution."
+      "automatic_transfer_from_queue": "Room assigned to {agent}."
     },
     "room_list": {
       "order_by": "Order by:",
@@ -223,12 +223,13 @@
       "default": "An error occurred, please try again later"
     },
     "search_contact": "Search contact",
+    "search_contact_placeholder": "Search contact (name, phone or ticket ID)",
     "tags": "Chat tags",
-    "discussions": "Discussions ({length})",
-    "waiting": "Waiting ({length})",
+    "discussions": "Discussions",
+    "waiting": "Waiting",
     "waiting_assistance": "Waiting for assistance",
-    "in_progress": "Chats in progress ({length})",
-    "sent_flows": "Sent flows ({length})",
+    "in_progress": "Ongoing",
+    "sent_flows": "Sent flows",
     "to_end_rate_the_chat": "To close, rate the chat",
     "tags_help": "Tags help you locate chats and also generate good reports",
     "chat_with_contact_ended": "Chat with {contact} closed",
@@ -347,8 +348,7 @@
   "sector_update_error": "Unable to save changes, please try again later.",
   "sector_invalid_work_hour": "Start time cannot be later than end time",
   "name_or_phone": "Name or telephone",
-  "name_or_phone_or_protocol": "Name, telephone or protocol",
-  "protocol": "Protocol",
+  "name_or_phone_or_protocol": "Name, telephone or ticket ID",
   "service": "Service",
   "tags": {
     "title": "Tags",
@@ -366,8 +366,7 @@
   "view": "View",
   "see": "See",
   "chat_with": {
-    "bot": "Chat with bot",
-    "agent": "Chat with agent {name}"
+    "bot": "Chat with bot"
   },
   "waiting_answer": {
     "send_template": "You sent a message template",
@@ -403,7 +402,10 @@
     "linked_contact": "Contact linked to agent {name}",
     "see_contact_history": "View history",
     "audio_tooltip": "{agent} {date} at {time}",
-    "transfering_chat": "Transferring the chat 📬"
+    "transfering_chat": "Transferring the chat 📬",
+    "ticket": "Ticket ID",
+    "copy_protocol": "Click to copy the Ticket ID",
+    "protocol_copied": "Ticket ID copied to clipboard!"
   },
   "discussions": {
     "title": "Discussion | Discussions",

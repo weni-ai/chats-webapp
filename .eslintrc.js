@@ -22,7 +22,12 @@ module.exports = {
     },
   ],
   parserOptions: {
-    parser: 'babel-eslint',
+    parser: '@babel/eslint-parser',
     ecmaVersion: 2020,
+    requireConfigFile: false,
+    sourceType: 'module',
+    babelOptions: {
+      presets: ['@babel/preset-env'],
+    },
   },
 };

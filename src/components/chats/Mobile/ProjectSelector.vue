@@ -86,7 +86,6 @@
         :placeholder="$t('search')"
         class="search-input"
       />
-
       <div class="projects-list">
         <UnnnicCardProject
           v-for="project in projectsFiltered"
@@ -113,6 +112,7 @@
             },
           ]"
           :actionText="$t('enter')"
+          clickable="true"
           @click="selectProject(project)"
         />
 

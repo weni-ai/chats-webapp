@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useProfile } from '@/store/modules/profile';
@@ -64,6 +64,7 @@ export default {
       room: (store) => store.activeRoom,
       getRoomById: 'getRoomById',
     }),
+    ...mapWritableState(useRooms, ['activeTab']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDashboard, ['viewedAgent']),
   },
@@ -123,6 +124,8 @@ export default {
           await Room.take(this.room.uuid, me);
           this.addRoom(this.room);
         }
+
+        this.activeTab = 'ongoing';
 
         await this.handlingSetActiveRoom(this.room.uuid);
 
