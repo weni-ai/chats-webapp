@@ -7,9 +7,9 @@
       enableRoomSummary &&
       room
     "
-    class="chat-summary"
     :isGeneratingSummary="isLoadingActiveRoomSummary"
-    :summaryText="activeRoomSummary"
+    :summaryText="activeRoomSummary.summary"
+    :feedback="activeRoomSummary.feedback"
     @close="openChatSummary = false"
   />
   <ChatMessages
@@ -30,19 +30,19 @@
   />
 </template>
 <script>
-import { mapActions, mapState, mapWritableState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from "pinia";
 
-import { useRooms } from '@/store/modules/chats/rooms';
-import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useRooms } from "@/store/modules/chats/rooms";
+import { useRoomMessages } from "@/store/modules/chats/roomMessages";
 
-import ChatMessages from '@/components/chats/chat/ChatMessages/index.vue';
-import ChatSummary from '@/layouts/ChatsLayout/components/ChatSummary/index.vue';
+import ChatMessages from "@/components/chats/chat/ChatMessages/index.vue";
+import ChatSummary from "@/layouts/ChatsLayout/components/ChatSummary/index.vue";
 
-import RoomService from '@/services/api/resources/chats/room';
-import { useConfig } from '@/store/modules/config';
+import RoomService from "@/services/api/resources/chats/room";
+import { useConfig } from "@/store/modules/config";
 
 export default {
-  name: 'RoomMessages',
+  name: "RoomMessages",
 
   components: { ChatMessages, ChatSummary },
 
@@ -62,25 +62,24 @@ export default {
       isLoadingSummary: false,
       openChatSummary: true,
       getRoomSummaryInterval: null,
-      roomSummary: '',
     };
   },
 
   computed: {
     ...mapWritableState(useRooms, [
-      'activeRoomSummary',
-      'isLoadingActiveRoomSummary',
+      "activeRoomSummary",
+      "isLoadingActiveRoomSummary",
     ]),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
     }),
     ...mapState(useRoomMessages, [
-      'roomMessages',
-      'roomMessagesNext',
-      'roomMessagesPrevious',
-      'roomMessagesSorted',
-      'roomMessagesSendingUuids',
-      'roomMessagesFailedUuids',
+      "roomMessages",
+      "roomMessagesNext",
+      "roomMessagesPrevious",
+      "roomMessagesSorted",
+      "roomMessagesSendingUuids",
+      "roomMessagesFailedUuids",
     ]),
     ...mapState(useConfig, {
       enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
@@ -88,7 +87,7 @@ export default {
   },
 
   watch: {
-    'room.uuid': {
+    "room.uuid": {
       immediate: true,
       async handler(roomUuid) {
         if (roomUuid) {
@@ -107,10 +106,10 @@ export default {
 
   methods: {
     ...mapActions(useRoomMessages, {
-      roomResendMessages: 'resendRoomMessages',
-      roomResendMedia: 'resendRoomMedia',
-      getRoomMessages: 'getRoomMessages',
-      resetRoomMessages: 'resetRoomMessages',
+      roomResendMessages: "resendRoomMessages",
+      roomResendMedia: "resendRoomMedia",
+      getRoomMessages: "getRoomMessages",
+      resetRoomMessages: "resetRoomMessages",
     }),
 
     handlingGetRoomMessages() {
@@ -132,7 +131,7 @@ export default {
 
     setSummaryText(text) {
       this.isLoadingActiveRoomSummary = false;
-      this.activeRoomSummary = text;
+      this.activeRoomSummary.summary = text;
       clearInterval(this.getRoomSummaryInterval);
     },
 
@@ -141,22 +140,22 @@ export default {
         const { status, summary } = await RoomService.getSummary({
           roomUuid: this.room.uuid,
         });
-        if (status === 'DONE') {
+        if (status === "DONE") {
           this.setSummaryText(summary);
         }
-        if (status === 'UNAVAILABLE') {
-          const unavailableText = this.$t('chats.summary.unavailable');
+        if (status === "UNAVAILABLE") {
+          const unavailableText = this.$t("chats.summary.unavailable");
           this.setSummaryText(unavailableText);
         }
       } catch (error) {
         console.log(error);
-        const errorText = this.$t('chats.summary.error');
+        const errorText = this.$t("chats.summary.error");
         this.setSummaryText(errorText);
       }
     },
 
     handlingGetRoomSummary() {
-      this.activeRoomSummary = '';
+      this.activeRoomSummary.summary = "";
       this.isLoadingActiveRoomSummary = true;
       this.getRoomSummary();
       this.getRoomSummaryInterval = setInterval(this.getRoomSummary, 5000);
@@ -172,10 +171,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.chat-summary {
-  margin-left: -$unnnic-spacing-sm;
-  z-index: 3;
-}
-</style>

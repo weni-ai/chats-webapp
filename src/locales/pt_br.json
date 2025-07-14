@@ -192,7 +192,15 @@
       "reading_and_summarizing": "Lendo e fazendo resumo",
       "by_ai": "Resumo feito por IA",
       "error": "Falha ao gerar resumo.",
-      "unavailable": "Não há resumo disponível"
+      "unavailable": "Não há resumo disponível",
+      "feedback": {
+        "title": "Feedback",
+        "needs_improvement_text": "Agradecemos sua opinião. Por favor, compartilhe qualquer comentário ou sugestão que você tenha para nos ajudar a melhorar.",
+        "empty_rating": "Você se importaria em nos dar sua opinião sobre este resumo?",
+        "positive": "Útil",
+        "negative": "Precisa de melhorias",
+        "placeholder": "Por favor, compartilhe sua opinião ou sugestões para ajudar-nos a melhorar"
+      }
     },
     "feedback": {
       "forwarded_to_agent": "Contato encaminhado para agente {agent}",

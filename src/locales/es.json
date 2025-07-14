@@ -192,7 +192,15 @@
       "reading_and_summarizing": "Lectura y resumen",
       "by_ai": "Resumen por IA",
       "error": "No se pudo generar el resumen.",
-      "unavailable": "No hay resumen disponible"
+      "unavailable": "No hay resumen disponible",
+      "feedback": {
+        "title": "Feedback",
+        "needs_improvement_text": "Agradecemos tu opinión. Por favor, comparte cualquier comentario o sugerencia que tengas para ayudarnos a mejorar.",
+        "empty_rating": "¿Te importaría darnos tu opinión sobre este resumen?",
+        "positive": "Útil",
+        "negative": "Necesita mejoras",
+        "placeholder": "Por favor, comparte tu opinión o sugerencias para ayudarnos a mejorar aquí"
+      }
     },
     "feedback": {
       "forwarded_to_agent": "Contacto reenviado al agente {agent}",

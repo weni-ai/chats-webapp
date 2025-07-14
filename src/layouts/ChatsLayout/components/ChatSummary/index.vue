@@ -1,9 +1,9 @@
 <template>
-  <section class="chat-summary">
+  <section class="chat-summary" :class="{ 'chat-summary--open': !activeRoom.ended_at }">
     <section class="chat-summary__header">
       <section class="chat-summary__by-ai-label">
         <img :src="StarsIcon" />
-        <p>{{ $t('chats.summary.by_ai') }}</p>
+        <p>{{ $t("chats.summary.by_ai") }}</p>
       </section>
       <UnnnicIcon
         v-if="!isGeneratingSummary && !isTyping && !hideClose"
@@ -11,20 +11,13 @@
         size="ant"
         clickable
         scheme="neutral-dark"
-        @click="$emit('close')"
+        @click="handleCloseSummary"
       />
     </section>
     <section class="chat-summary__content">
-      <section
-        v-if="isGeneratingSummary"
-        class="chat-summary__generate-text"
-      >
-        <span>{{ $t('chats.summary.reading_and_summarizing') }}</span>
-        <span
-          v-for="dot of 3"
-          :key="dot"
-          class="generating__dot"
-        />
+      <section v-if="isGeneratingSummary" class="chat-summary__generate-text">
+        <span>{{ $t("chats.summary.reading_and_summarizing") }}</span>
+        <span v-for="dot of 3" :key="dot" class="generating__dot" />
       </section>
       <p
         v-else
@@ -36,46 +29,63 @@
         {{ animatedText }}
       </p>
     </section>
-    <section class="chat-summary__footer">
-      <UnnnicIcon
-        icon="thumb_up"
-        :filled="feedback.liked === true"
-        size="ant"
-        clickable
-        scheme="neutral-dark"
-        @click="handleThumbUp"
-      />
-      <UnnnicIcon
-        icon="thumb_down"
-        :filled="feedback.liked === false"
-        size="ant"
-        clickable
-        scheme="neutral-dark"
-        @click="handleThumbDown"
-      />
+    <section v-if="!activeRoom.ended_at" class="chat-summary__footer">
+      <UnnnicToolTip
+        enabled
+        :text="$t('chats.summary.feedback.positive')"
+        side="left"
+      >
+        <UnnnicIcon
+          icon="thumb_up"
+          :filled="feedback.liked === true"
+          size="ant"
+          clickable
+          scheme="neutral-dark"
+          @click="handleThumbUp"
+        />
+      </UnnnicToolTip>
+      <UnnnicToolTip
+        enabled
+        :text="$t('chats.summary.feedback.negative')"
+        side="left"
+      >
+        <UnnnicIcon
+          icon="thumb_down"
+          :filled="feedback.liked === false"
+          size="ant"
+          clickable
+          scheme="neutral-dark"
+          @click="handleThumbDown"
+        />
+      </UnnnicToolTip>
     </section>
   </section>
+  <FeedbackModal
+    v-if="showFeedbackModal"
+    :hasFeedback="hasFeedback"
+    @close="handleCloseFeedbackModal"
+  />
 </template>
 
 <script>
-import { mapWritableState } from 'pinia';
-import StarsIcon from './stars.svg';
-import { useRooms } from '@/store/modules/chats/rooms';
+import { mapWritableState } from "pinia";
+import StarsIcon from "./stars.svg";
+import { useRooms } from "@/store/modules/chats/rooms";
+import FeedbackModal from "./FeedbackModal.vue";
 
 export default {
-  name: 'ChatSummary',
+  name: "ChatSummary",
+  components: {
+    FeedbackModal,
+  },
   props: {
-    room: {
-      type: Object,
-      required: true,
-    },
     isGeneratingSummary: {
       type: Boolean,
       default: false,
     },
     summaryText: {
       type: String,
-      default: '',
+      default: "",
     },
     hideClose: {
       type: Boolean,
@@ -87,42 +97,58 @@ export default {
         liked: null,
       }),
     },
+    skipAnimation: {
+      type: Boolean,
+      default: false,
+    },
   },
-  emits: ['close', 'feedback'],
+  emits: ["close", "feedback"],
   data() {
     return {
       StarsIcon,
-      animatedText: '',
+      animatedText: "",
       isTyping: false,
+      showFeedbackModal: false,
+      liked: null,
+      hasFeedback: false
     };
   },
   computed: {
-    ...mapWritableState(useRooms, ['activeRoomSummary']),
+    ...mapWritableState(useRooms, ["activeRoomSummary", 'activeRoom']),
   },
   watch: {
     summaryText: {
       immediate: true,
       async handler(value) {
-        if (value) await this.typeWriter(this.summaryText, 10);
+        if (value && !this.skipAnimation) {
+          await this.typeWriter(this.summaryText, 10);
+        } else {
+          this.animatedText = this.summaryText;
+        }
       },
     },
   },
   unmounted() {
-    this.activeRoomSummary = '';
-    this.animatedText = '';
+    this.activeRoomSummary.summary = "";
+    this.activeRoomSummary.feedback.liked = null;
+    this.animatedText = "";
   },
   methods: {
+    handleCloseFeedbackModal() {
+      this.showFeedbackModal = false;
+      this.hasFeedback = false
+    },
     handleThumbUp() {
-      this.$emit('feedback', { liked: true });
-      console.log('thumb up');
+      this.activeRoomSummary.feedback.liked = true;
     },
     handleThumbDown() {
-      this.$emit('feedback', { liked: false });
-      console.log('thumb down');
+      this.activeRoomSummary.feedback.liked = false;
+      this.hasFeedback = true
+      this.showFeedbackModal = true;
     },
     async typeWriter(text, speed) {
       this.isTyping = true;
-      this.animatedText = '';
+      this.animatedText = "";
 
       for await (const char of text) {
         await new Promise((resolve) => {
@@ -134,6 +160,11 @@ export default {
       }
 
       this.isTyping = false;
+    },
+    handleCloseSummary() {
+      if (!this.feedback.liked) {
+        this.showFeedbackModal = true;
+      } else this.$emit("close");
     },
   },
 };
@@ -148,6 +179,10 @@ export default {
   box-shadow: $unnnic-shadow-level-far;
   padding: $unnnic-spacing-sm;
   gap: $unnnic-spacing-nano;
+
+  &--open {
+    margin-left: -$unnnic-spacing-md;
+  }
 
   &__generate-text {
     color: $unnnic-color-neutral-clean;
