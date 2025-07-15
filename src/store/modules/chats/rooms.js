@@ -12,7 +12,7 @@ export const useRooms = defineStore('rooms', {
     rooms: [],
     activeRoom: null,
     maxPinLimit: 0,
-    activeRoomSummary: { feedback: { liked: null, }, summary: '', status: '' },
+    roomsSummary: {},
     isLoadingActiveRoomSummary: false,
     newMessagesByRoom: {},
     hasNextRooms: { waiting: false, in_progress: false, flow_start: false },
@@ -290,6 +290,15 @@ export const useRooms = defineStore('rooms', {
     },
     getRoomById: (store) => (uuid) => {
       return store.rooms.find((room) => room.uuid === uuid);
+    },
+    activeRoomSummary(store) {
+      return (
+        store.roomsSummary[store.activeRoom?.uuid] || {
+          feedback: { liked: null },
+          summary: '',
+          status: '',
+        }
+      );
     },
   },
 });

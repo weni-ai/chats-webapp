@@ -10,6 +10,7 @@
     :isGeneratingSummary="isLoadingActiveRoomSummary"
     :summaryText="activeRoomSummary.summary"
     :feedback="activeRoomSummary.feedback"
+    :skipAnimation="skipSummaryAnimation"
     @close="openChatSummary = false"
   />
   <ChatMessages
@@ -62,6 +63,7 @@ export default {
       isLoadingSummary: false,
       openChatSummary: true,
       getRoomSummaryInterval: null,
+      skipSummaryAnimation: false,
     };
   },
 
@@ -69,6 +71,7 @@ export default {
     ...mapWritableState(useRooms, [
       'activeRoomSummary',
       'isLoadingActiveRoomSummary',
+      'roomsSummary',
     ]),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
@@ -95,6 +98,7 @@ export default {
           this.page = 0;
           await this.handlingGetRoomMessages();
           if (this.enableRoomSummary) {
+            this.skipSummaryAnimation = false;
             clearInterval(this.getRoomSummaryInterval);
             this.openChatSummary = true;
             this.handlingGetRoomSummary();
@@ -129,12 +133,13 @@ export default {
         });
     },
 
-    setRoomSummary(text, feedback) {
+    setRoomSummary(text, feedback, status) {
       this.isLoadingActiveRoomSummary = false;
-      this.activeRoomSummary.summary = text;
-      if (feedback) {
-        this.activeRoomSummary.feedback = feedback;
-      }
+      this.roomsSummary[this.room.uuid] = {
+        summary: text,
+        feedback,
+        status,
+      };
       clearInterval(this.getRoomSummaryInterval);
     },
 
@@ -143,13 +148,13 @@ export default {
         const { status, summary, feedback } = await RoomService.getSummary({
           roomUuid: this.room.uuid,
         });
-        this.activeRoomSummary.status = status;
-        if (status === 'DONE') {
-          this.setRoomSummary(summary, feedback);
-        }
-        if (status === 'UNAVAILABLE') {
+        if (['DONE', 'UNAVAILABLE'].includes(status)) {
           const unavailableText = this.$t('chats.summary.unavailable');
-          this.setRoomSummary(unavailableText);
+          this.setRoomSummary(
+            status === 'UNAVAILABLE' ? unavailableText : summary,
+            feedback,
+            status,
+          );
         }
       } catch (error) {
         console.log(error);
@@ -159,10 +164,13 @@ export default {
     },
 
     handlingGetRoomSummary() {
-      this.activeRoomSummary.summary = '';
-      this.isLoadingActiveRoomSummary = true;
-      this.getRoomSummary();
-      this.getRoomSummaryInterval = setInterval(this.getRoomSummary, 5000);
+      if (!this.roomsSummary[this.room?.uuid]) {
+        this.isLoadingActiveRoomSummary = true;
+        this.getRoomSummary();
+        this.getRoomSummaryInterval = setInterval(this.getRoomSummary, 5000);
+      } else {
+        this.skipSummaryAnimation = true;
+      }
     },
 
     searchForMoreMessages() {
