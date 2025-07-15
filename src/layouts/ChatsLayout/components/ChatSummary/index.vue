@@ -1,9 +1,12 @@
 <template>
-  <section class="chat-summary" :class="{ 'chat-summary--open': !activeRoom.ended_at }">
+  <section
+    class="chat-summary"
+    :class="{ 'chat-summary--open': !activeRoom.ended_at }"
+  >
     <section class="chat-summary__header">
       <section class="chat-summary__by-ai-label">
         <img :src="StarsIcon" />
-        <p>{{ $t("chats.summary.by_ai") }}</p>
+        <p>{{ $t('chats.summary.by_ai') }}</p>
       </section>
       <UnnnicIcon
         v-if="!isGeneratingSummary && !isTyping && !hideClose"
@@ -15,9 +18,16 @@
       />
     </section>
     <section class="chat-summary__content">
-      <section v-if="isGeneratingSummary" class="chat-summary__generate-text">
-        <span>{{ $t("chats.summary.reading_and_summarizing") }}</span>
-        <span v-for="dot of 3" :key="dot" class="generating__dot" />
+      <section
+        v-if="isGeneratingSummary"
+        class="chat-summary__generate-text"
+      >
+        <span>{{ $t('chats.summary.reading_and_summarizing') }}</span>
+        <span
+          v-for="dot of 3"
+          :key="dot"
+          class="generating__dot"
+        />
       </section>
       <p
         v-else
@@ -29,7 +39,10 @@
         {{ animatedText }}
       </p>
     </section>
-    <section v-if="!activeRoom.ended_at" class="chat-summary__footer">
+    <section
+      v-if="me?.email === activeRoom?.user?.email"
+      class="chat-summary__footer"
+    >
       <UnnnicToolTip
         enabled
         :text="$t('chats.summary.feedback.positive')"
@@ -68,13 +81,15 @@
 </template>
 
 <script>
-import { mapWritableState } from "pinia";
-import StarsIcon from "./stars.svg";
-import { useRooms } from "@/store/modules/chats/rooms";
-import FeedbackModal from "./FeedbackModal.vue";
+import { mapState, mapWritableState } from 'pinia';
+import StarsIcon from './stars.svg';
+import { useRooms } from '@/store/modules/chats/rooms';
+import FeedbackModal from './FeedbackModal.vue';
+import Room from '@/services/api/resources/chats/room';
+import { useProfile } from '@/store/modules/profile';
 
 export default {
-  name: "ChatSummary",
+  name: 'ChatSummary',
   components: {
     FeedbackModal,
   },
@@ -85,7 +100,7 @@ export default {
     },
     summaryText: {
       type: String,
-      default: "",
+      default: '',
     },
     hideClose: {
       type: Boolean,
@@ -102,19 +117,20 @@ export default {
       default: false,
     },
   },
-  emits: ["close", "feedback"],
+  emits: ['close', 'feedback'],
   data() {
     return {
       StarsIcon,
-      animatedText: "",
+      animatedText: '',
       isTyping: false,
       showFeedbackModal: false,
       liked: null,
-      hasFeedback: false
+      hasFeedback: false,
     };
   },
   computed: {
-    ...mapWritableState(useRooms, ["activeRoomSummary", 'activeRoom']),
+    ...mapWritableState(useRooms, ['activeRoomSummary', 'activeRoom']),
+    ...mapState(useProfile, ['me']),
   },
   watch: {
     summaryText: {
@@ -129,26 +145,27 @@ export default {
     },
   },
   unmounted() {
-    this.activeRoomSummary.summary = "";
+    this.activeRoomSummary.summary = '';
     this.activeRoomSummary.feedback.liked = null;
-    this.animatedText = "";
+    this.animatedText = '';
   },
   methods: {
     handleCloseFeedbackModal() {
       this.showFeedbackModal = false;
-      this.hasFeedback = false
+      this.hasFeedback = false;
     },
     handleThumbUp() {
       this.activeRoomSummary.feedback.liked = true;
+      Room.sendSummaryFeedback({ roomUuid: this.activeRoom.uuid, liked: true });
     },
     handleThumbDown() {
       this.activeRoomSummary.feedback.liked = false;
-      this.hasFeedback = true
+      this.hasFeedback = true;
       this.showFeedbackModal = true;
     },
     async typeWriter(text, speed) {
       this.isTyping = true;
-      this.animatedText = "";
+      this.animatedText = '';
 
       for await (const char of text) {
         await new Promise((resolve) => {
@@ -164,7 +181,7 @@ export default {
     handleCloseSummary() {
       if (!this.feedback.liked) {
         this.showFeedbackModal = true;
-      } else this.$emit("close");
+      } else this.$emit('close');
     },
   },
 };
@@ -181,7 +198,7 @@ export default {
   gap: $unnnic-spacing-nano;
 
   &--open {
-    margin-left: -$unnnic-spacing-md;
+    margin-left: -$unnnic-spacing-sm;
   }
 
   &__generate-text {

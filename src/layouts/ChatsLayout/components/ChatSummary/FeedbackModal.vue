@@ -11,11 +11,14 @@
       <p class="summary-feedback-modal__text">
         {{
           hasFeedback
-            ? $t("chats.summary.feedback.needs_improvement_text")
-            : $t("chats.summary.feedback.empty_rating")
+            ? $t('chats.summary.feedback.needs_improvement_text')
+            : $t('chats.summary.feedback.empty_rating')
         }}
       </p>
-      <section v-if="!hasFeedback" class="summary-feedback-modal__rating">
+      <section
+        v-if="!hasFeedback"
+        class="summary-feedback-modal__rating"
+      >
         <UnnnicToolTip
           enabled
           :text="$t('chats.summary.feedback.positive')"
@@ -57,33 +60,41 @@
 </template>
 
 <script>
-import { mapWritableState } from "pinia";
-import { useRooms } from "@/store/modules/chats/rooms";
+import { mapWritableState } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
 
 export default {
-  name: "FeedbackModal",
+  name: 'FeedbackModal',
   props: {
     hasFeedback: {
       type: Boolean,
       default: false,
     },
   },
+  emits: ['close'],
   data() {
     return {
-      liked: null,
-      feedbackText: "",
+      feedbackText: '',
+      initialFeedback: null,
     };
   },
   computed: {
-    ...mapWritableState(useRooms, ["activeRoomSummary"]),
+    ...mapWritableState(useRooms, ['activeRoomSummary']),
+  },
+  mounted() {
+    this.initialFeedback = JSON.parse(JSON.stringify(this.activeRoomSummary));
   },
   methods: {
     handleLike(liked) {
       this.activeRoomSummary.feedback.liked = liked;
     },
     handleCancel() {
-      this.activeRoomSummary.feedback.liked = null;
-      this.$emit("close");
+      this.activeRoomSummary = this.initialFeedback;
+      this.$emit('close');
+    },
+    handleSubmit() {
+      console.log('submit');
+      // this.$emit('close');
     },
   },
 };

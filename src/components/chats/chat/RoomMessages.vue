@@ -30,19 +30,19 @@
   />
 </template>
 <script>
-import { mapActions, mapState, mapWritableState } from "pinia";
+import { mapActions, mapState, mapWritableState } from 'pinia';
 
-import { useRooms } from "@/store/modules/chats/rooms";
-import { useRoomMessages } from "@/store/modules/chats/roomMessages";
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
-import ChatMessages from "@/components/chats/chat/ChatMessages/index.vue";
-import ChatSummary from "@/layouts/ChatsLayout/components/ChatSummary/index.vue";
+import ChatMessages from '@/components/chats/chat/ChatMessages/index.vue';
+import ChatSummary from '@/layouts/ChatsLayout/components/ChatSummary/index.vue';
 
-import RoomService from "@/services/api/resources/chats/room";
-import { useConfig } from "@/store/modules/config";
+import RoomService from '@/services/api/resources/chats/room';
+import { useConfig } from '@/store/modules/config';
 
 export default {
-  name: "RoomMessages",
+  name: 'RoomMessages',
 
   components: { ChatMessages, ChatSummary },
 
@@ -67,19 +67,19 @@ export default {
 
   computed: {
     ...mapWritableState(useRooms, [
-      "activeRoomSummary",
-      "isLoadingActiveRoomSummary",
+      'activeRoomSummary',
+      'isLoadingActiveRoomSummary',
     ]),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
     }),
     ...mapState(useRoomMessages, [
-      "roomMessages",
-      "roomMessagesNext",
-      "roomMessagesPrevious",
-      "roomMessagesSorted",
-      "roomMessagesSendingUuids",
-      "roomMessagesFailedUuids",
+      'roomMessages',
+      'roomMessagesNext',
+      'roomMessagesPrevious',
+      'roomMessagesSorted',
+      'roomMessagesSendingUuids',
+      'roomMessagesFailedUuids',
     ]),
     ...mapState(useConfig, {
       enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
@@ -87,7 +87,7 @@ export default {
   },
 
   watch: {
-    "room.uuid": {
+    'room.uuid': {
       immediate: true,
       async handler(roomUuid) {
         if (roomUuid) {
@@ -106,10 +106,10 @@ export default {
 
   methods: {
     ...mapActions(useRoomMessages, {
-      roomResendMessages: "resendRoomMessages",
-      roomResendMedia: "resendRoomMedia",
-      getRoomMessages: "getRoomMessages",
-      resetRoomMessages: "resetRoomMessages",
+      roomResendMessages: 'resendRoomMessages',
+      roomResendMedia: 'resendRoomMedia',
+      getRoomMessages: 'getRoomMessages',
+      resetRoomMessages: 'resetRoomMessages',
     }),
 
     handlingGetRoomMessages() {
@@ -129,33 +129,37 @@ export default {
         });
     },
 
-    setSummaryText(text) {
+    setRoomSummary(text, feedback) {
       this.isLoadingActiveRoomSummary = false;
       this.activeRoomSummary.summary = text;
+      if (feedback) {
+        this.activeRoomSummary.feedback = feedback;
+      }
       clearInterval(this.getRoomSummaryInterval);
     },
 
     async getRoomSummary() {
       try {
-        const { status, summary } = await RoomService.getSummary({
+        const { status, summary, feedback } = await RoomService.getSummary({
           roomUuid: this.room.uuid,
         });
-        if (status === "DONE") {
-          this.setSummaryText(summary);
+        this.activeRoomSummary.status = status;
+        if (status === 'DONE') {
+          this.setRoomSummary(summary, feedback);
         }
-        if (status === "UNAVAILABLE") {
-          const unavailableText = this.$t("chats.summary.unavailable");
-          this.setSummaryText(unavailableText);
+        if (status === 'UNAVAILABLE') {
+          const unavailableText = this.$t('chats.summary.unavailable');
+          this.setRoomSummary(unavailableText);
         }
       } catch (error) {
         console.log(error);
-        const errorText = this.$t("chats.summary.error");
-        this.setSummaryText(errorText);
+        const errorText = this.$t('chats.summary.error');
+        this.setRoomSummary(errorText);
       }
     },
 
     handlingGetRoomSummary() {
-      this.activeRoomSummary.summary = "";
+      this.activeRoomSummary.summary = '';
       this.isLoadingActiveRoomSummary = true;
       this.getRoomSummary();
       this.getRoomSummaryInterval = setInterval(this.getRoomSummary, 5000);

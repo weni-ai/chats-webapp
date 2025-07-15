@@ -50,22 +50,22 @@
 </template>
 
 <script>
-import isMobile from "is-mobile";
+import isMobile from 'is-mobile';
 
-import { mapActions, mapState, mapWritableState } from "pinia";
-import { useRooms } from "@/store/modules/chats/rooms";
-import { useRoomMessages } from "@/store/modules/chats/roomMessages";
-import { useConfig } from "@/store/modules/config";
-import History from "@/services/api/resources/chats/history";
+import { mapActions, mapState, mapWritableState } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useConfig } from '@/store/modules/config';
+import History from '@/services/api/resources/chats/history';
 
-import RoomMessages from "@/components/chats/chat/RoomMessages.vue";
-import ContactInfo from "@/components/chats/ContactInfo/index.vue";
-import ClosedChatsHeaderLoading from "@/views/loadings/ClosedChats/ClosedChatsHeader.vue";
-import ChatHeaderLoading from "@/views/loadings/chat/ChatHeader.vue";
-import ClosedChatsRoomsTable from "./RoomsTable.vue";
+import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
+import ContactInfo from '@/components/chats/ContactInfo/index.vue';
+import ClosedChatsHeaderLoading from '@/views/loadings/ClosedChats/ClosedChatsHeader.vue';
+import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
+import ClosedChatsRoomsTable from './RoomsTable.vue';
 
 export default {
-  name: "ClosedChats",
+  name: 'ClosedChats',
 
   components: {
     ClosedChatsHeaderLoading,
@@ -78,7 +78,7 @@ export default {
   props: {
     roomId: {
       type: String,
-      default: "",
+      default: '',
     },
   },
 
@@ -90,8 +90,8 @@ export default {
 
     crumbs: [
       {
-        name: "Chats",
-        path: "home",
+        name: 'Chats',
+        path: 'home',
       },
     ],
 
@@ -100,12 +100,12 @@ export default {
   }),
 
   computed: {
-    ...mapState(useConfig, ["project"]),
-    ...mapState(useRoomMessages, ["roomMessagesNext"]),
-    ...mapWritableState(useRooms, ["activeRoomSummary"]),
+    ...mapState(useConfig, ['project']),
+    ...mapState(useRoomMessages, ['roomMessagesNext']),
+    ...mapWritableState(useRooms, ['activeRoomSummary']),
 
     closedChatsHeaderSize() {
-      return this.isMobile ? "small" : "large";
+      return this.isMobile ? 'small' : 'large';
     },
   },
 
@@ -113,7 +113,7 @@ export default {
     roomId: {
       immediate: true,
       async handler(roomId) {
-        this.activeRoomSummary.summary = "";
+        this.activeRoomSummary.summary = '';
         this.activeRoomSummary.feedback.liked = null;
         if (!roomId) {
           this.setActiveRoom(null);
@@ -128,13 +128,13 @@ export default {
 
           const STATUS_NOT_FOUND = 404;
           if (responseRoom.status === STATUS_NOT_FOUND) {
-            this.$router.push({ name: "closed-rooms" });
+            this.$router.push({ name: 'closed-rooms' });
             return;
           }
 
           this.crumbs.push({
             name: responseRoom.contact.name,
-            path: "closed-rooms/:roomId",
+            path: 'closed-rooms/:roomId',
           });
 
           this.selectedRoom = responseRoom;
@@ -161,17 +161,17 @@ export default {
 
   async created() {
     this.crumbs.push({
-      name: this.$t("chats.closed_chats.history"),
-      path: "closed-rooms",
+      name: this.$t('chats.closed_chats.history'),
+      path: 'closed-rooms',
     });
   },
 
   methods: {
-    ...mapActions(useRooms, ["setActiveRoom"]),
-    ...mapActions(useRoomMessages, ["getRoomMessages", "resetRoomMessages"]),
+    ...mapActions(useRooms, ['setActiveRoom']),
+    ...mapActions(useRoomMessages, ['getRoomMessages', 'resetRoomMessages']),
 
     backToHome() {
-      this.$router.push({ name: "home" });
+      this.$router.push({ name: 'home' });
     },
 
     handlerCrumbClick(crumb) {
