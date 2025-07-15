@@ -210,6 +210,7 @@ export default {
     };
   },
   computed: {
+    ...mapWritableState(useRooms, { allRooms: 'rooms' }),
     ...mapState(useRooms, {
       rooms_ongoing: 'agentRooms',
       rooms_queue: 'waitingQueue',
@@ -345,6 +346,7 @@ export default {
     },
   },
   async created() {
+    this.allRooms = [];
     await Promise.all([
       this.listRoom(true, this.orderBy.waiting, 'waiting'),
       this.listRoom(true, this.orderBy.ongoing, 'ongoing'),
