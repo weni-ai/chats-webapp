@@ -40,7 +40,10 @@
       </p>
     </section>
     <section
-      v-if="me?.email === activeRoom?.user?.email"
+      v-if="
+        me?.email === activeRoom?.user?.email &&
+        activeRoomSummary.status === 'DONE'
+      "
       class="chat-summary__footer"
     >
       <UnnnicToolTip
@@ -139,15 +142,13 @@ export default {
       async handler(value) {
         if (value && !this.skipAnimation) {
           await this.typeWriter(this.summaryText, 10);
-        } else {
+        } else if (value) {
           this.animatedText = this.summaryText;
         }
       },
     },
   },
   unmounted() {
-    this.activeRoomSummary.summary = '';
-    this.activeRoomSummary.feedback.liked = null;
     this.animatedText = '';
   },
   methods: {
@@ -180,7 +181,7 @@ export default {
       this.isTyping = false;
     },
     handleCloseSummary() {
-      if (!this.feedback.liked) {
+      if (!this.feedback.liked && this.activeRoomSummary.status === 'DONE') {
         this.showFeedbackModal = true;
       } else this.$emit('close');
     },
