@@ -76,6 +76,7 @@
   <FeedbackModal
     v-if="showFeedbackModal"
     :hasFeedback="hasFeedback"
+    :roomUuid="activeRoom.uuid"
     @close="handleCloseFeedbackModal"
   />
 </template>

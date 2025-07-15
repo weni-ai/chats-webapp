@@ -4,7 +4,8 @@
     :modelValue="true"
     :title="$t('chats.summary.feedback.title')"
     showCloseIcon
-    :primaryButtonProps="{ text: 'Submit' }"
+    :primaryButtonProps="{ text: $t('submit'), loading: isLoading }"
+    @primary-button-click="handleSubmit"
     @update:model-value="handleCancel"
   >
     <section class="summary-feedback-modal__content">
@@ -62,6 +63,7 @@
 <script>
 import { mapWritableState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
+import Room from '@/services/api/resources/chats/room';
 
 export default {
   name: 'FeedbackModal',
@@ -70,12 +72,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    roomUuid: {
+      type: String,
+      required: true,
+    },
   },
   emits: ['close'],
   data() {
     return {
       feedbackText: '',
       initialFeedback: null,
+      isLoading: false,
     };
   },
   computed: {
@@ -92,9 +99,20 @@ export default {
       this.activeRoomSummary = this.initialFeedback;
       this.$emit('close');
     },
-    handleSubmit() {
-      console.log('submit');
-      // this.$emit('close');
+    async handleSubmit() {
+      this.isLoading = true;
+      try {
+        await Room.sendSummaryFeedback({
+          roomUuid: this.roomUuid,
+          liked: this.activeRoomSummary.feedback.liked,
+          text: this.feedbackText,
+        });
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.isLoading = false;
+        this.$emit('close');
+      }
     },
   },
 };
