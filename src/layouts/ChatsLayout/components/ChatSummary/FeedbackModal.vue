@@ -86,7 +86,11 @@ export default {
     };
   },
   computed: {
-    ...mapWritableState(useRooms, ['activeRoomSummary']),
+    ...mapWritableState(useRooms, [
+      'activeRoomSummary',
+      'roomsSummary',
+      'activeRoom',
+    ]),
   },
   mounted() {
     this.initialFeedback = JSON.parse(JSON.stringify(this.activeRoomSummary));
@@ -96,7 +100,7 @@ export default {
       this.activeRoomSummary.feedback.liked = liked;
     },
     handleCancel() {
-      this.activeRoomSummary = this.initialFeedback;
+      this.roomsSummary[this.activeRoom.uuid] = this.initialFeedback;
       this.$emit('close');
     },
     async handleSubmit() {
