@@ -1,5 +1,22 @@
 <template>
-  <section class="chat-summary">
+  <section
+    class="chat-summary"
+    :class="{ 'chat-summary--open': !activeRoom.ended_at }"
+  >
+    <section class="chat-summary__header">
+      <section class="chat-summary__by-ai-label">
+        <img :src="StarsIcon" />
+        <p>{{ $t('chats.summary.by_ai') }}</p>
+      </section>
+      <UnnnicIcon
+        v-if="!isGeneratingSummary && !isTyping && !hideClose"
+        icon="close"
+        size="ant"
+        clickable
+        scheme="neutral-dark"
+        @click="handleCloseSummary"
+      />
+    </section>
     <section class="chat-summary__content">
       <section
         v-if="isGeneratingSummary"
@@ -21,34 +38,63 @@
       >
         {{ animatedText }}
       </p>
-      <UnnnicIcon
-        v-if="!isGeneratingSummary && !isTyping && !hideClose"
-        icon="close"
-        size="ant"
-        clickable
-        scheme="neutral-dark"
-        @click="$emit('close')"
-      />
     </section>
-    <section class="chat-summary__by-ai-label__bottom">
-      <img :src="StarsIcon" />
-      <p>{{ $t('chats.summary.by_ai') }}</p>
+    <section
+      v-if="me?.email === activeRoom?.user?.email"
+      class="chat-summary__footer"
+    >
+      <UnnnicToolTip
+        enabled
+        :text="$t('chats.summary.feedback.positive')"
+        side="left"
+      >
+        <UnnnicIcon
+          icon="thumb_up"
+          :filled="feedback.liked === true"
+          size="ant"
+          clickable
+          scheme="neutral-dark"
+          @click="handleThumbUp"
+        />
+      </UnnnicToolTip>
+      <UnnnicToolTip
+        enabled
+        :text="$t('chats.summary.feedback.negative')"
+        side="left"
+      >
+        <UnnnicIcon
+          icon="thumb_down"
+          :filled="feedback.liked === false"
+          size="ant"
+          clickable
+          scheme="neutral-dark"
+          @click="handleThumbDown"
+        />
+      </UnnnicToolTip>
     </section>
   </section>
+  <FeedbackModal
+    v-if="showFeedbackModal"
+    :hasFeedback="hasFeedback"
+    :roomUuid="activeRoom.uuid"
+    @close="handleCloseFeedbackModal"
+  />
 </template>
 
 <script>
-import { mapWritableState } from 'pinia';
+import { mapState, mapWritableState } from 'pinia';
 import StarsIcon from './stars.svg';
 import { useRooms } from '@/store/modules/chats/rooms';
+import FeedbackModal from './FeedbackModal.vue';
+import Room from '@/services/api/resources/chats/room';
+import { useProfile } from '@/store/modules/profile';
 
 export default {
   name: 'ChatSummary',
+  components: {
+    FeedbackModal,
+  },
   props: {
-    room: {
-      type: Object,
-      required: true,
-    },
     isGeneratingSummary: {
       type: Boolean,
       default: false,
@@ -61,31 +107,63 @@ export default {
       type: Boolean,
       default: false,
     },
+    feedback: {
+      type: Object,
+      default: () => ({
+        liked: null,
+      }),
+    },
+    skipAnimation: {
+      type: Boolean,
+      default: false,
+    },
   },
-  emits: ['close'],
+  emits: ['close', 'feedback'],
   data() {
     return {
       StarsIcon,
       animatedText: '',
       isTyping: false,
+      showFeedbackModal: false,
+      liked: null,
+      hasFeedback: false,
     };
   },
   computed: {
-    ...mapWritableState(useRooms, ['activeRoomSummary']),
+    ...mapWritableState(useRooms, ['activeRoomSummary', 'activeRoom']),
+    ...mapState(useProfile, ['me']),
   },
   watch: {
     summaryText: {
       immediate: true,
       async handler(value) {
-        if (value) await this.typeWriter(this.summaryText, 10);
+        if (value && !this.skipAnimation) {
+          await this.typeWriter(this.summaryText, 10);
+        } else {
+          this.animatedText = this.summaryText;
+        }
       },
     },
   },
   unmounted() {
-    this.activeRoomSummary = '';
+    this.activeRoomSummary.summary = '';
+    this.activeRoomSummary.feedback.liked = null;
     this.animatedText = '';
   },
   methods: {
+    handleCloseFeedbackModal() {
+      this.showFeedbackModal = false;
+      this.hasFeedback = false;
+    },
+    handleThumbUp() {
+      this.activeRoomSummary.feedback.liked = true;
+      Room.sendSummaryFeedback({ roomUuid: this.activeRoom.uuid, liked: true });
+    },
+    handleThumbDown() {
+      this.activeRoomSummary.feedback.liked = false;
+      this.hasFeedback = true;
+      this.showFeedbackModal = true;
+    },
     async typeWriter(text, speed) {
       this.isTyping = true;
       this.animatedText = '';
@@ -101,6 +179,11 @@ export default {
 
       this.isTyping = false;
     },
+    handleCloseSummary() {
+      if (!this.feedback.liked) {
+        this.showFeedbackModal = true;
+      } else this.$emit('close');
+    },
   },
 };
 </script>
@@ -114,6 +197,10 @@ export default {
   box-shadow: $unnnic-shadow-level-far;
   padding: $unnnic-spacing-sm;
   gap: $unnnic-spacing-nano;
+
+  &--open {
+    margin-left: -$unnnic-spacing-sm;
+  }
 
   &__generate-text {
     color: $unnnic-color-neutral-clean;
@@ -153,6 +240,12 @@ export default {
     padding-right: 2 * $unnnic-spacing-md;
   }
 
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   &__content {
     display: flex;
     gap: $unnnic-spacing-md;
@@ -164,18 +257,22 @@ export default {
     line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
   }
 
-  &__by-ai-label {
-    &__bottom {
-      display: flex;
-      align-self: end;
-      gap: $unnnic-spacing-nano;
+  &__footer {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: $unnnic-spacing-sm;
+  }
 
-      color: $unnnic-color-neutral-dark;
-      font-family: $unnnic-font-family-secondary;
-      font-size: $unnnic-font-size-body-md;
-      line-height: $unnnic-font-size-body-md + $unnnic-line-height-md;
-      font-weight: $unnnic-font-weight-black;
-    }
+  &__by-ai-label {
+    display: flex;
+    gap: $unnnic-spacing-nano;
+
+    color: $unnnic-color-neutral-dark;
+    font-family: $unnnic-font-family-secondary;
+    font-size: $unnnic-font-size-body-md;
+    line-height: $unnnic-font-size-body-md + $unnnic-line-height-md;
+    font-weight: $unnnic-font-weight-black;
   }
 }
 </style>

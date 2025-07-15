@@ -7,9 +7,9 @@
       enableRoomSummary &&
       room
     "
-    class="chat-summary"
     :isGeneratingSummary="isLoadingActiveRoomSummary"
-    :summaryText="activeRoomSummary"
+    :summaryText="activeRoomSummary.summary"
+    :feedback="activeRoomSummary.feedback"
     @close="openChatSummary = false"
   />
   <ChatMessages
@@ -62,7 +62,6 @@ export default {
       isLoadingSummary: false,
       openChatSummary: true,
       getRoomSummaryInterval: null,
-      roomSummary: '',
     };
   },
 
@@ -130,33 +129,37 @@ export default {
         });
     },
 
-    setSummaryText(text) {
+    setRoomSummary(text, feedback) {
       this.isLoadingActiveRoomSummary = false;
-      this.activeRoomSummary = text;
+      this.activeRoomSummary.summary = text;
+      if (feedback) {
+        this.activeRoomSummary.feedback = feedback;
+      }
       clearInterval(this.getRoomSummaryInterval);
     },
 
     async getRoomSummary() {
       try {
-        const { status, summary } = await RoomService.getSummary({
+        const { status, summary, feedback } = await RoomService.getSummary({
           roomUuid: this.room.uuid,
         });
+        this.activeRoomSummary.status = status;
         if (status === 'DONE') {
-          this.setSummaryText(summary);
+          this.setRoomSummary(summary, feedback);
         }
         if (status === 'UNAVAILABLE') {
           const unavailableText = this.$t('chats.summary.unavailable');
-          this.setSummaryText(unavailableText);
+          this.setRoomSummary(unavailableText);
         }
       } catch (error) {
         console.log(error);
         const errorText = this.$t('chats.summary.error');
-        this.setSummaryText(errorText);
+        this.setRoomSummary(errorText);
       }
     },
 
     handlingGetRoomSummary() {
-      this.activeRoomSummary = '';
+      this.activeRoomSummary.summary = '';
       this.isLoadingActiveRoomSummary = true;
       this.getRoomSummary();
       this.getRoomSummaryInterval = setInterval(this.getRoomSummary, 5000);
@@ -172,10 +175,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.chat-summary {
-  margin-left: -$unnnic-spacing-sm;
-  z-index: 3;
-}
-</style>

@@ -29,29 +29,7 @@
                 @click="refreshContactInfos"
               />
             </header>
-            <section
-              v-if="contactProtocol?.length > 0"
-              @click="copyProtocol"
-            >
-              <UnnnicToolTip
-                enabled
-                :text="tooltipProtocolText"
-                side="left"
-                class="connection-info__ticket"
-              >
-                <p class="connection-info__ticket-title">
-                  {{ $t('contact_info.ticket') }}
-                </p>
-                <p class="connection-info__ticket-value">
-                  {{ contactProtocol }}
-                </p>
-                <UnnnicIconSvg
-                  icon="content_copy"
-                  scheme="neutral-cloudy"
-                  size="sm"
-                />
-              </UnnnicToolTip>
-            </section>
+            <ProtocolText :protocol="contactProtocol" />
             <div class="connection-info">
               <p v-if="room?.contact.status === 'online'">
                 {{ $t('status.online') }}
@@ -122,8 +100,7 @@
             </div>
             <ChatSummary
               v-if="showRoomSummary && enableRoomSummary && room"
-              class="chat-summary"
-              :summaryText="activeRoomSummary"
+              :summaryText="activeRoomSummary.summary"
               :isGeneratingSummary="isLoadingActiveRoomSummary"
               hideClose
             />
@@ -229,6 +206,7 @@ import TransferSession from './TransferSession.vue';
 import ModalStartDiscussion from './ModalStartDiscussion.vue';
 import DiscussionsSession from './DiscussionsSession.vue';
 import ChatSummary from '@/layouts/ChatsLayout/components/ChatSummary/index.vue';
+import ProtocolText from './ProtocolText.vue';
 
 import moment from 'moment';
 import { useConfig } from '@/store/modules/config';
@@ -248,6 +226,7 @@ export default {
     ModalStartDiscussion,
     DiscussionsSession,
     ChatSummary,
+    ProtocolText,
   },
   props: {
     closedRoom: {
@@ -284,7 +263,6 @@ export default {
     currentCustomField: {},
     isRefreshContactDisabled: false,
     isShowModalStartDiscussion: false,
-    isCopyProtocol: false,
   }),
 
   computed: {
@@ -334,11 +312,6 @@ export default {
     },
     contactService() {
       return (this.closedRoom || this.room).service_chat;
-    },
-    tooltipProtocolText() {
-      return this.isCopyProtocol
-        ? this.$t('contact_info.protocol_copied')
-        : this.$t('contact_info.copy_protocol');
     },
   },
   watch: {
@@ -594,29 +567,11 @@ export default {
     lowercase(value) {
       return value.toString().toLowerCase();
     },
-    copyProtocol() {
-      const protocolValue = this.contactProtocol;
-      navigator.clipboard
-        .writeText(protocolValue)
-        .then(() => {
-          this.isCopyProtocol = true;
-          setTimeout(() => {
-            this.isCopyProtocol = false;
-          }, 3000);
-        })
-        .catch((err) => {
-          console.error('Failed to copy protocol:', err);
-        });
-    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.chat-summary {
-  // min-height: 250px;
-  margin: 0px (-$unnnic-spacing-xs) 0px (-$unnnic-spacing-xs);
-}
 .contact-info__container {
   height: 100%;
 
@@ -674,31 +629,6 @@ export default {
         display: flex;
         align-items: center;
         justify-content: space-between;
-      }
-
-      &__ticket {
-        display: flex;
-        align-items: center;
-        gap: $unnnic-spacing-nano;
-        cursor: pointer;
-
-        &-title {
-          font-weight: $unnnic-font-weight-bold;
-          color: $unnnic-color-neutral-dark;
-          font-family: $unnnic-font-family-secondary;
-          font-size: $unnnic-font-size-body-lg;
-          font-weight: $unnnic-font-weight-bold;
-          line-height: $unnnic-font-size-body-lg + $unnnic-line-height-md;
-        }
-
-        &-value {
-          font-weight: $unnnic-font-weight-bold;
-          color: $unnnic-color-neutral-dark;
-          font-family: $unnnic-font-family-secondary;
-          font-size: $unnnic-font-size-body-lg;
-          font-weight: $unnnic-font-weight-regular;
-          line-height: $unnnic-font-size-body-lg + $unnnic-line-height-md;
-        }
       }
 
       .infos {

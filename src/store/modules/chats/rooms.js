@@ -12,7 +12,7 @@ export const useRooms = defineStore('rooms', {
     rooms: [],
     activeRoom: null,
     maxPinLimit: 0,
-    activeRoomSummary: '',
+    activeRoomSummary: { feedback: { liked: null, }, summary: '', status: '' },
     isLoadingActiveRoomSummary: false,
     newMessagesByRoom: {},
     hasNextRooms: { waiting: false, in_progress: false, flow_start: false },
