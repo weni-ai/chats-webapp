@@ -15,6 +15,8 @@ describe('Discussion delete', () => {
 
   beforeEach(() => {
     mockDiscussionStore = {
+      discussions: [],
+      discussionsCount: 0,
       removeDiscussion: vi.fn(),
       setActiveDiscussion: vi.fn(),
     };
@@ -37,6 +39,7 @@ describe('Discussion delete', () => {
   });
 
   it('removes a discussion that is not active', () => {
+    mockDiscussionStore.discussions = [{ uuid: '456' }];
     const discussion = { uuid: '456' };
 
     wsDiscussionDelete(discussion, { app: mockApp });
@@ -47,6 +50,7 @@ describe('Discussion delete', () => {
   });
 
   it('removes the active discussion and resets active states', () => {
+    mockDiscussionStore.discussions = [{ uuid: '123' }];
     const discussion = { uuid: '123' };
 
     wsDiscussionDelete(discussion, { app: mockApp });
