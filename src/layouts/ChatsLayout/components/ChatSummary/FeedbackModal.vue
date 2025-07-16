@@ -4,7 +4,11 @@
     :modelValue="true"
     :title="$t('chats.summary.feedback.title')"
     showCloseIcon
-    :primaryButtonProps="{ text: $t('submit'), loading: isLoading }"
+    :primaryButtonProps="{
+      text: $t('submit'),
+      loading: isLoading,
+      disabled: activeRoomSummary.feedback.liked === null,
+    }"
     @primary-button-click="handleSubmit"
     @update:model-value="handleCancel"
   >
@@ -100,7 +104,12 @@ export default {
       this.activeRoomSummary.feedback.liked = liked;
     },
     handleCancel() {
-      this.roomsSummary[this.activeRoom.uuid] = this.initialFeedback;
+      this.roomsSummary[this.activeRoom.uuid] = {
+        ...this.initialFeedback,
+        feedback: {
+          liked: null,
+        },
+      };
       this.$emit('close');
     },
     async handleSubmit() {
