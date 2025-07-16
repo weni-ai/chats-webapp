@@ -181,7 +181,10 @@ export default {
       this.isTyping = false;
     },
     handleCloseSummary() {
-      if (!this.feedback.liked && this.activeRoomSummary.status === 'DONE') {
+      if (
+        this.feedback.liked === null &&
+        this.activeRoomSummary.status === 'DONE'
+      ) {
         this.showFeedbackModal = true;
       } else this.$emit('close');
     },
