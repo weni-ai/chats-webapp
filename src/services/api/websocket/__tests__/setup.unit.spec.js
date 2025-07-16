@@ -3,6 +3,8 @@ import WebSocketSetup from '@/services/api/websocket/setup';
 import WS from '@/services/api/websocket/socket';
 import listeners from '@/services/api/websocket/listeners';
 import { useDashboard } from '@/store/modules/dashboard';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDiscussions } from '@/store/modules/chats/discussions';
 
 vi.mock('@/services/api/websocket/socket', () => {
   return {
@@ -27,6 +29,8 @@ vi.mock('@/utils/env', () => ({
 }));
 
 vi.mock('@/store/modules/dashboard');
+vi.mock('@/store/modules/chats/rooms');
+vi.mock('@/store/modules/chats/discussions');
 
 describe('WebSocketSetup', () => {
   let webSocketSetup;
@@ -36,12 +40,26 @@ describe('WebSocketSetup', () => {
     updateUserStatus: vi.fn(),
   };
   let dashboardStore;
-
+  let roomsStore;
+  let discussionsStore;
   beforeEach(() => {
     dashboardStore = {
       viewedAgent: null,
     };
+    roomsStore = {
+      getAll: vi.fn(),
+      orderBy: {
+        ongoing: 'ongoing',
+        waiting: 'waiting',
+        flow_start: 'flow_start',
+      },
+    };
+    discussionsStore = {
+      getAll: vi.fn(),
+    };
     useDashboard.mockReturnValue(dashboardStore);
+    useRooms.mockReturnValue(roomsStore);
+    useDiscussions.mockReturnValue(discussionsStore);
     webSocketSetup = new WebSocketSetup({ app: mockApp });
     webSocketSetup.ws = {
       send: vi.fn(),
