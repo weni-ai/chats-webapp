@@ -69,7 +69,6 @@ export default class WebSocketSetup {
     const ws = new WS(url);
 
     this.ws = ws;
-    this.app.ws = ws;
     this.ws.ws.onclose = () => {
       if (this.ws.ws.readyState === this.ws.ws.OPEN) return;
 
