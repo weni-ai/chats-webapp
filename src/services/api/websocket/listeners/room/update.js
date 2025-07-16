@@ -11,13 +11,11 @@ export default async (room, { app }) => {
   );
 
   const roomType = getRoomType(room);
+  const isOngoingTab = roomsStore.activeTab === 'ongoing';
+  const isRoomForMe = room.user?.email === app.me.email;
 
   if (!isExistingRoom) {
     roomsStore.addRoom(room);
-
-    if (roomType === 'ongoing' && roomsStore.activeTab !== 'ongoing') {
-      roomsStore.showOngoingDot = true;
-    }
 
     if (room.transfer_history?.action === 'transfer') {
       const notification = new SoundNotification('achievement-confirmation');
@@ -29,7 +27,7 @@ export default async (room, { app }) => {
     }
   }
 
-  if (!isExistingRoom?.user && roomType === 'ongoing') {
+  if (roomType === 'ongoing' && !isOngoingTab && isRoomForMe) {
     roomsStore.showOngoingDot = true;
   }
 
