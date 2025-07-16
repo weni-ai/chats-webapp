@@ -125,8 +125,6 @@ export default {
           this.addRoom(this.room);
         }
 
-        this.activeTab = 'ongoing';
-
         await this.handlingSetActiveRoom(this.room.uuid);
 
         if (this.room.user) {
