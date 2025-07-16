@@ -153,7 +153,7 @@ export default {
     rooms: {
       once: true,
       async handler() {
-        const { room_uuid } = this.$route.query;
+        const { room_uuid } = this.$route.query || {};
         if (room_uuid) {
           const activeRoom = this.rooms.find((room) => room.uuid === room_uuid);
 
