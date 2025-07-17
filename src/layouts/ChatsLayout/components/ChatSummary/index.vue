@@ -152,9 +152,10 @@ export default {
     this.animatedText = '';
   },
   methods: {
-    handleCloseFeedbackModal() {
+    handleCloseFeedbackModal({ closeSummary } = {}) {
       this.showFeedbackModal = false;
       this.hasFeedback = false;
+      if (closeSummary) this.$emit('close');
     },
     handleThumbUp() {
       this.activeRoomSummary.feedback.liked = true;
