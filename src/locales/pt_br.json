@@ -196,11 +196,11 @@
       "unavailable": "Não há resumo disponível",
       "feedback": {
         "title": "Feedback",
-        "needs_improvement_text": "Agradecemos sua opinião. Por favor, compartilhe qualquer comentário ou sugestão que você tenha para nos ajudar a melhorar.",
-        "empty_rating": "Você se importaria em nos dar sua opinião sobre este resumo?",
+        "needs_improvement_text": "Ajude a melhorar os resumos. Sua opinião sobre esse resumo nos ajuda a torná-lo mais claro e útil.",
+        "empty_rating": "Esse resumo foi útil para você?",
         "positive": "Útil",
         "negative": "Precisa de melhorias",
-        "placeholder": "Por favor, compartilhe sua opinião ou sugestões para ajudar-nos a melhorar"
+        "placeholder": "Compartilhe seu feedback para que possamos melhorar a funcionalidade."
       }
     },
     "feedback": {
