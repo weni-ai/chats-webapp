@@ -7,9 +7,10 @@
       enableRoomSummary &&
       room
     "
-    class="chat-summary"
     :isGeneratingSummary="isLoadingActiveRoomSummary"
-    :summaryText="activeRoomSummary"
+    :summaryText="activeRoomSummary.summary"
+    :feedback="activeRoomSummary.feedback"
+    :skipAnimation="skipSummaryAnimation"
     @close="openChatSummary = false"
   />
   <ChatMessages
@@ -62,7 +63,7 @@ export default {
       isLoadingSummary: false,
       openChatSummary: true,
       getRoomSummaryInterval: null,
-      roomSummary: '',
+      skipSummaryAnimation: false,
     };
   },
 
@@ -70,6 +71,7 @@ export default {
     ...mapWritableState(useRooms, [
       'activeRoomSummary',
       'isLoadingActiveRoomSummary',
+      'roomsSummary',
     ]),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
@@ -96,6 +98,7 @@ export default {
           this.page = 0;
           await this.handlingGetRoomMessages();
           if (this.enableRoomSummary) {
+            this.skipSummaryAnimation = false;
             clearInterval(this.getRoomSummaryInterval);
             this.openChatSummary = true;
             this.handlingGetRoomSummary();
@@ -130,36 +133,44 @@ export default {
         });
     },
 
-    setSummaryText(text) {
+    setRoomSummary(text, feedback, status) {
       this.isLoadingActiveRoomSummary = false;
-      this.activeRoomSummary = text;
+      this.roomsSummary[this.room.uuid] = {
+        summary: text,
+        feedback,
+        status,
+      };
       clearInterval(this.getRoomSummaryInterval);
     },
 
     async getRoomSummary() {
       try {
-        const { status, summary } = await RoomService.getSummary({
+        const { status, summary, feedback } = await RoomService.getSummary({
           roomUuid: this.room.uuid,
         });
-        if (status === 'DONE') {
-          this.setSummaryText(summary);
-        }
-        if (status === 'UNAVAILABLE') {
+        if (['DONE', 'UNAVAILABLE'].includes(status)) {
           const unavailableText = this.$t('chats.summary.unavailable');
-          this.setSummaryText(unavailableText);
+          this.setRoomSummary(
+            status === 'UNAVAILABLE' ? unavailableText : summary,
+            feedback,
+            status,
+          );
         }
       } catch (error) {
         console.log(error);
         const errorText = this.$t('chats.summary.error');
-        this.setSummaryText(errorText);
+        this.setRoomSummary(errorText);
       }
     },
 
     handlingGetRoomSummary() {
-      this.activeRoomSummary = '';
-      this.isLoadingActiveRoomSummary = true;
-      this.getRoomSummary();
-      this.getRoomSummaryInterval = setInterval(this.getRoomSummary, 5000);
+      if (!this.roomsSummary[this.room?.uuid]) {
+        this.isLoadingActiveRoomSummary = true;
+        this.getRoomSummary();
+        this.getRoomSummaryInterval = setInterval(this.getRoomSummary, 5000);
+      } else {
+        this.skipSummaryAnimation = true;
+      }
     },
 
     searchForMoreMessages() {
@@ -172,10 +183,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.chat-summary {
-  margin-left: -$unnnic-spacing-sm;
-  z-index: 3;
-}
-</style>

@@ -50,6 +50,7 @@
       "audio": "Mensaje de audio"
     }
   },
+  "submit": "Enviar",
   "details": "Details",
   "doubts": "Dudas",
   "finance": "Financiero",
@@ -192,7 +193,15 @@
       "reading_and_summarizing": "Lectura y resumen",
       "by_ai": "Resumen por IA",
       "error": "No se pudo generar el resumen.",
-      "unavailable": "No hay resumen disponible"
+      "unavailable": "No hay resumen disponible",
+      "feedback": {
+        "title": "Feedback",
+        "needs_improvement_text": "Ayuda a mejorar los resumenes. Tu opinión sobre este resumen nos ayuda a hacerlo más claro y útil.",
+        "empty_rating": "¿Este resumen fue útil para ti?",
+        "positive": "Útil",
+        "negative": "Necesita mejoras",
+        "placeholder": "Comparte tu feedback para que podamos mejorar la funcionalidad."
+      }
     },
     "feedback": {
       "forwarded_to_agent": "Contacto reenviado al agente {agent}",

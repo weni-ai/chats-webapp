@@ -35,6 +35,14 @@ export default {
     return console.error('"Uuid" necessário para requisição.');
   },
 
+  async sendSummaryFeedback({ roomUuid, liked, text }) {
+    const response = await http.post(
+      `/room/${roomUuid}/chats-summary/feedback/`,
+      { liked, text },
+    );
+    return response.data;
+  },
+
   async getSummary({ roomUuid }) {
     const url = `/room/${roomUuid}/chats-summary/`;
     const response = await http.get(url);

@@ -100,8 +100,7 @@
             </div>
             <ChatSummary
               v-if="showRoomSummary && enableRoomSummary && room"
-              class="chat-summary"
-              :summaryText="activeRoomSummary"
+              :summaryText="activeRoomSummary.summary"
               :isGeneratingSummary="isLoadingActiveRoomSummary"
               hideClose
             />
@@ -573,10 +572,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.chat-summary {
-  // min-height: 250px;
-  margin: 0px (-$unnnic-spacing-xs) 0px (-$unnnic-spacing-xs);
-}
 .contact-info__container {
   height: 100%;
 

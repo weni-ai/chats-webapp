@@ -70,6 +70,14 @@ describe('ClosedChats.vue', () => {
     resetRoomMessagesSpy = vi.fn();
 
     useRooms.mockReturnValue({
+      activeRoomSummary: {
+        summary: '',
+        status: '',
+        feedback: {
+          liked: null,
+          text: null,
+        },
+      },
       setActiveRoom: setActiveRoomSpy,
       activeRoom: null,
     });

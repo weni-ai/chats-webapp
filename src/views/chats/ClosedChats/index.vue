@@ -113,7 +113,8 @@ export default {
     roomId: {
       immediate: true,
       async handler(roomId) {
-        this.activeRoomSummary = '';
+        this.activeRoomSummary.summary = '';
+        this.activeRoomSummary.feedback.liked = null;
         if (!roomId) {
           this.setActiveRoom(null);
           this.resetRoomMessages();
