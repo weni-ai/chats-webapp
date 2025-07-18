@@ -44,6 +44,7 @@
           'chat-summary__text': true,
           'is-typing': isTyping && !hideClose,
         }"
+        data-testid="chat-summary-text"
       >
         {{ animatedText }}
       </p>
@@ -54,6 +55,7 @@
         activeRoomSummary.status === 'DONE'
       "
       class="chat-summary__footer"
+      data-testid="chat-summary-footer"
     >
       <UnnnicToolTip
         enabled

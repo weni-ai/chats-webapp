@@ -185,25 +185,25 @@ describe('ChatSummary', () => {
     it('should apply is-typing class when typing', async () => {
       wrapper = createWrapper({
         isGeneratingSummary: false,
-        summaryText: 'Texto de teste',
+        summaryText: 'test text',
         hideClose: false,
       });
 
       await wrapper.setData({ isTyping: true });
 
-      const textElement = wrapper.find('.chat-summary__text');
+      const textElement = wrapper.find('[data-testid="chat-summary-text"]');
       expect(textElement.classes()).toContain('is-typing');
     });
 
     it('should use skipAnimation when provided', () => {
-      const summaryText = 'Texto de teste';
+      const summaryText = 'test text';
       wrapper = createWrapper({
         isGeneratingSummary: false,
         summaryText,
         skipAnimation: true,
       });
 
-      const textElement = wrapper.find('.chat-summary__text');
+      const textElement = wrapper.find('[data-testid="chat-summary-text"]');
       expect(textElement.text()).toBe(summaryText);
     });
   });
@@ -242,7 +242,7 @@ describe('ChatSummary', () => {
         },
       );
 
-      const footer = wrapper.find('.chat-summary__footer');
+      const footer = wrapper.find('[data-testid="chat-summary-footer"]');
       expect(footer.exists()).toBe(false);
     });
 
@@ -279,7 +279,7 @@ describe('ChatSummary', () => {
         },
       );
 
-      const footer = wrapper.find('.chat-summary__footer');
+      const footer = wrapper.find('[data-testid="chat-summary-footer"]');
       expect(footer.exists()).toBe(false);
     });
   });
