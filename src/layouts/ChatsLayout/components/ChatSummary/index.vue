@@ -2,9 +2,16 @@
   <section
     class="chat-summary"
     :class="{ 'chat-summary--open': !activeRoom.ended_at }"
+    data-testid="chat-summary"
   >
-    <section class="chat-summary__header">
-      <section class="chat-summary__by-ai-label">
+    <section
+      class="chat-summary__header"
+      data-testid="chat-summary-header"
+    >
+      <section
+        class="chat-summary__by-ai-label"
+        data-testid="chat-summary-by-ai-label"
+      >
         <img :src="StarsIcon" />
         <p>{{ $t('chats.summary.by_ai') }}</p>
       </section>
@@ -14,6 +21,7 @@
         size="ant"
         clickable
         scheme="neutral-dark"
+        data-testid="chat-summary-close-button"
         @click="handleCloseSummary"
       />
     </section>
@@ -26,6 +34,7 @@
         <span
           v-for="dot of 3"
           :key="dot"
+          data-testid="chat-summary-generating-dot"
           class="generating__dot"
         />
       </section>
