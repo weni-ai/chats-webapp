@@ -4,24 +4,6 @@ import { createPinia, setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
 import ChatSummary from '../index.vue';
 
-vi.mock('@/components/UnnnicIcon', () => ({
-  default: {
-    name: 'UnnnicIcon',
-    template:
-      '<div class="unnnic-icon" @click="$emit(\'click\')"><slot /></div>',
-    props: ['icon', 'size', 'clickable', 'scheme', 'filled'],
-    emits: ['click'],
-  },
-}));
-
-vi.mock('@/components/UnnnicToolTip', () => ({
-  default: {
-    name: 'UnnnicToolTip',
-    template: '<div class="unnnic-tooltip"><slot /></div>',
-    props: ['enabled', 'text', 'side'],
-  },
-}));
-
 vi.mock('../stars.svg', () => ({
   default: 'mocked-stars-icon',
 }));
