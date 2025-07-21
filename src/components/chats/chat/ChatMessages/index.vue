@@ -215,6 +215,14 @@
         />
       </FullscreenPreview>
     </section>
+    <UnnnicButton
+      v-if="showScrollButton"
+      class="chat-messages__scroll-button"
+      data-testid="scroll-to-bottom-button"
+      iconCenter="keyboard-arrow-down-1"
+      type="secondary"
+      @click="scrollToBottom"
+    />
   </div>
 </template>
 
@@ -336,6 +344,7 @@ export default {
       bot: '',
       agent: '',
     },
+    showScrollButton: false,
   }),
 
   computed: {
@@ -360,6 +369,7 @@ export default {
         this.setStartFeedbacks();
         this.$nextTick(() => {
           this.manageScrollForNewMessages();
+          this.checkScrollPosition();
         });
       },
       deep: true,
@@ -574,9 +584,21 @@ export default {
       }
     },
 
+    checkScrollPosition() {
+      const { chatMessages } = this.$refs;
+      if (!chatMessages) return;
+
+      const { scrollTop, scrollHeight, clientHeight } = chatMessages;
+      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 20;
+
+      this.showScrollButton = !isAtBottom;
+    },
+
     handleScroll() {
       const { chatMessages } = this.$refs;
       if (!chatMessages) return;
+
+      this.checkScrollPosition();
 
       // if (this.isEdgeRoomMessage(this.messagesSorted[0].minutes)) {
       //   this.$router.replace({
@@ -629,6 +651,10 @@ export default {
       if (!chatMessages) return;
 
       chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      this.$nextTick(() => {
+        this.showScrollButton = false;
+      });
     },
   },
 };
@@ -650,9 +676,16 @@ export default {
   }
 }
 
+:deep(.chat-messages__scroll-button) {
+  position: fixed !important;
+  bottom: 100px;
+  right: $unnnic-spacing-md;
+  z-index: 1000;
+}
+
 .chat-messages__container {
   overflow: hidden;
-
+  position: relative;
   height: 100%;
 }
 

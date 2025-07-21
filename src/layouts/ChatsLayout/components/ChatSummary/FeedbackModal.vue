@@ -124,7 +124,7 @@ export default {
         console.error(error);
       } finally {
         this.isLoading = false;
-        this.$emit('close', { closeSummary: true });
+        this.$emit('close', { closeSummary: !this.hasFeedback });
       }
     },
   },
