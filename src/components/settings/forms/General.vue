@@ -87,36 +87,32 @@
           {{ $t('sector.managers.working_day.title') }}
         </h2>
         <section class="form-section__inputs">
-          <fieldset>
-            <p class="label-working-day">
-              {{ $t('sector.managers.working_day.start.label') }}
-            </p>
-            <input
-              v-model="sector.workingDay.start"
-              class="input-time"
-              type="time"
-              min="00:00"
-              max="23:59"
+          <section class="form-section__inputs__workday-copy">
+            <UnnnicSwitch
+              v-model="copyWorkday"
+              :textRight="'Copy the workday of an already configured sector'"
             />
-            <span
-              v-show="!validHour"
-              class="error-message"
-            >
-              {{ message }}
-            </span>
-          </fieldset>
-          <fieldset>
-            <p class="label-working-day">
-              {{ $t('sector.managers.working_day.end.label') }}
-            </p>
-            <input
-              v-model="sector.workingDay.end"
-              class="input-time"
-              type="time"
-              min="00:00"
-              max="23:59"
+            <UnnnicSelectSmart
+              v-if="copyWorkday"
+              v-model="copyWorkdaySector"
+              :options="[]"
             />
-          </fieldset>
+            <section class="form-section__inputs__workday-config">
+              <p>Select the days of the working week.</p>
+              <section style="display: flex; gap: 8px">
+                <UnnnicTag
+                  v-for="day in workdayDays"
+                  :key="day.value"
+                  type="brand"
+                  clickable
+                  :text="day.label"
+                  :disabled="selectedWorkdayDays[day.value]"
+                  @click="selectWorkdayDay(day.value)"
+                />
+              </section>
+            </section>
+          </section>
+
           <section
             v-if="enableGroupsMode"
             class="form-section__inputs--fill-w"
@@ -228,12 +224,71 @@ export default {
       managersLimitPerPage: 50,
       secondaryProjectsPage: 0,
       secondaryProjectsLimitPerPage: 50,
+      copyWorkday: false,
+      copyWorkdaySector: [],
+      selectedWorkdayDays: {
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+      },
+      selectedWorkdayDaysTime: {
+        monday: {
+          start: '',
+          end: '',
+        },
+        tuesday: {
+          start: '',
+          end: '',
+        },
+        wednesday: {
+          start: '',
+          end: '',
+        },
+        thursday: {
+          start: '',
+          end: '',
+        },
+        friday: {
+          start: '',
+          end: '',
+        },
+        saturday: {
+          start: '',
+          end: '',
+        },
+        sunday: {
+          start: '',
+          end: '',
+        },
+      },
     };
   },
 
   computed: {
     ...mapState(useProfile, ['me']),
     ...mapState(useConfig, ['enableGroupsMode', 'project']),
+
+    workdayDays() {
+      return [
+        { label: this.$t('week_days.monday.short'), value: 'monday' },
+        { label: this.$t('week_days.tuesday.short'), value: 'tuesday' },
+        { label: this.$t('week_days.wednesday.short'), value: 'wednesday' },
+        { label: this.$t('week_days.thursday.short'), value: 'thursday' },
+        { label: this.$t('week_days.friday.short'), value: 'friday' },
+        { label: this.$t('week_days.saturday.short'), value: 'saturday' },
+        { label: this.$t('week_days.sunday.short'), value: 'sunday' },
+      ];
+    },
+
+    workdayDaysTimeOptions() {
+      return Object.entries(this.selectedWorkdayDays)
+        .filter(([_key, value]) => !!value)
+        .map(([key, _value]) => key);
+    },
 
     selectedProjectHasSectorIntegration() {
       if (this.selectedProject?.[0]?.value) {
@@ -561,6 +616,10 @@ export default {
           console.log(error);
         });
     },
+
+    selectWorkdayDay(day) {
+      this.selectedWorkdayDays[day] = !this.selectedWorkdayDays[day];
+    },
   },
 };
 </script>
@@ -631,6 +690,13 @@ fieldset {
       gap: $unnnic-spacing-ant $unnnic-spacing-stack-sm;
       grid-template-rows: auto;
       grid-template-columns: 1fr 1fr;
+
+      &__workday-copy {
+        display: flex;
+        flex-direction: column;
+        gap: $unnnic-spacing-sm;
+        margin-top: $unnnic-spacing-sm;
+      }
 
       &--fill-w {
         grid-column: span 2;
