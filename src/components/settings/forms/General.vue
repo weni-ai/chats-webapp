@@ -97,8 +97,8 @@
               v-model="copyWorkdaySector"
               :options="[]"
             />
+            <p>Select the days of the working week.</p>
             <section class="form-section__inputs__workday-config">
-              <p>Select the days of the working week.</p>
               <section style="display: flex; gap: 8px">
                 <UnnnicTag
                   v-for="day in workdayDays"
@@ -111,6 +111,86 @@
                 />
               </section>
             </section>
+            <p v-if="workdayDaysTimeOptions.length">
+              Set the hours worked for each day.
+            </p>
+            <section
+              class="form-section__inputs__workday-time-config"
+              style="display: flex; flex-direction: column; gap: 16px"
+            >
+              <section
+                v-for="day in workdayDaysTimeOptions"
+                :key="day"
+                style="display: flex; align-items: baseline; gap: 8px"
+              >
+                <p style="min-width: 100px">
+                  {{ $t(`week_days.${day}.full`) }}
+                </p>
+                <section
+                  style="
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 8px;
+                  "
+                >
+                  <section
+                    v-for="(_time, index) in selectedWorkdayDaysTime[day]"
+                    :key="`${day}-${index}`"
+                    style="
+                      display: flex;
+                      align-items: center;
+                      gap: 8px;
+                      justify-content: space-between;
+                    "
+                  >
+                    <UnnnicInput
+                      v-model="selectedWorkdayDaysTime[day][index].start"
+                      style="width: 100px"
+                      type="time"
+                    />
+                    <p>to</p>
+                    <UnnnicInput
+                      v-model="selectedWorkdayDaysTime[day][index].end"
+                      style="width: 100px"
+                      type="time"
+                    />
+                    <UnnnicButton
+                      v-if="index === 0"
+                      iconCenter="add-1"
+                      type="secondary"
+                      :disabled="selectedWorkdayDaysTime[day].length === 2"
+                      @click="
+                        selectedWorkdayDaysTime[day]?.push({
+                          start: '',
+                          end: '',
+                        })
+                      "
+                    />
+                    <UnnnicButton
+                      v-if="index === 1"
+                      iconCenter="subtract-1"
+                      type="secondary"
+                      @click="selectedWorkdayDaysTime[day]?.pop()"
+                    />
+                  </section>
+                </section>
+              </section>
+            </section>
+            <p>Add holidays and specific non-working dates.</p>
+            <section style="display: flex; align-items: center; gap: 8px">
+              <UnnnicCheckbox :textRight="'Holidays in Brazil'" />
+              <UnnnicButton
+                type="tertiary"
+                :text="'See all holidays'"
+              />
+            </section>
+            <UnnnicButton
+              type="alternative"
+              iconLeft="add-1"
+              :text="'Add specific dates'"
+              style="max-width: 200px"
+            />
           </section>
 
           <section
@@ -236,34 +316,48 @@ export default {
         sunday: false,
       },
       selectedWorkdayDaysTime: {
-        monday: {
-          start: '',
-          end: '',
-        },
-        tuesday: {
-          start: '',
-          end: '',
-        },
-        wednesday: {
-          start: '',
-          end: '',
-        },
-        thursday: {
-          start: '',
-          end: '',
-        },
-        friday: {
-          start: '',
-          end: '',
-        },
-        saturday: {
-          start: '',
-          end: '',
-        },
-        sunday: {
-          start: '',
-          end: '',
-        },
+        monday: [
+          {
+            start: '',
+            end: '',
+          },
+        ],
+        tuesday: [
+          {
+            start: '',
+            end: '',
+          },
+        ],
+        wednesday: [
+          {
+            start: '',
+            end: '',
+          },
+        ],
+        thursday: [
+          {
+            start: '',
+            end: '',
+          },
+        ],
+        friday: [
+          {
+            start: '',
+            end: '',
+          },
+        ],
+        saturday: [
+          {
+            start: '',
+            end: '',
+          },
+        ],
+        sunday: [
+          {
+            start: '',
+            end: '',
+          },
+        ],
       },
     };
   },
