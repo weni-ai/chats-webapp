@@ -678,7 +678,7 @@ export default {
 
 :deep(.chat-messages__scroll-button) {
   position: fixed !important;
-  bottom: 88px;
+  bottom: 80px;
   right: $unnnic-spacing-sm;
   z-index: 1000;
 }
