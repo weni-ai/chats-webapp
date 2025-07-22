@@ -678,8 +678,8 @@ export default {
 
 :deep(.chat-messages__scroll-button) {
   position: fixed !important;
-  bottom: 100px;
-  right: $unnnic-spacing-md;
+  bottom: 88px;
+  right: $unnnic-spacing-sm;
   z-index: 1000;
 }
 
