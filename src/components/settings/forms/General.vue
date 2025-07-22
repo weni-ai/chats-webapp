@@ -185,12 +185,19 @@
                 :text="'See all holidays'"
               />
             </section>
-            <UnnnicButton
-              type="alternative"
-              iconLeft="add-1"
-              :text="'Add specific dates'"
-              style="max-width: 200px"
-            />
+            <section style="display: flex; align-items: center; gap: 8px">
+              <UnnnicButton
+                type="alternative"
+                iconLeft="add-1"
+                :text="'Add specific dates'"
+                style="max-width: 200px"
+              />
+              <UnnnicButton
+                type="tertiary"
+                :text="'See all specific dates'"
+                style="max-width: 200px"
+              />
+            </section>
           </section>
 
           <section
