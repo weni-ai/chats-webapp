@@ -259,12 +259,6 @@ export default {
       const disableOrderByProjects =
         env('DISABLE_ORDER_BY_PROJECTS')?.split(',') || [];
 
-      console.log(
-        'disableOrderByProjects',
-        env('DISABLE_ORDER_BY_PROJECTS'),
-        env('DISABLE_ORDER_BY_PROJECTS')?.split(','),
-      );
-
       if (
         isHumanServiceProfile &&
         disableOrderByProjects.includes(this.project.uuid)
