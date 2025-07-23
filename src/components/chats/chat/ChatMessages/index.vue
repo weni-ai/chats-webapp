@@ -215,14 +215,18 @@
         />
       </FullscreenPreview>
     </section>
-    <UnnnicButton
+    <section
       v-if="showScrollButton"
-      class="chat-messages__scroll-button"
-      data-testid="scroll-to-bottom-button"
-      iconCenter="keyboard-arrow-down-1"
-      type="secondary"
-      @click="scrollToBottom"
-    />
+      class="chat-messages__scroll-button-container"
+    >
+      <UnnnicButton
+        class="chat-messages__scroll-button"
+        data-testid="scroll-to-bottom-button"
+        iconCenter="keyboard-arrow-down-1"
+        type="secondary"
+        @click="scrollToBottom"
+      />
+    </section>
   </div>
 </template>
 
@@ -676,8 +680,8 @@ export default {
   }
 }
 
-:deep(.chat-messages__scroll-button) {
-  position: fixed !important;
+.chat-messages__scroll-button-container {
+  position: fixed;
   bottom: 80px;
   right: $unnnic-spacing-sm;
   z-index: 1000;
