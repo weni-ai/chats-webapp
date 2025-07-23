@@ -3,6 +3,7 @@
     :modelValue="true"
     :title="$t('custom_holidays.title')"
     showCloseIcon
+    :primaryButtonProps="{ text: $t('save') }"
     @update:model-value="$emit('close')"
   >
     <section class="custom-holidays-modal__body">

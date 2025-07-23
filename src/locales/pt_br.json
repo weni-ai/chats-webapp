@@ -1,23 +1,23 @@
 {
   "week_days": {
     "monday": {
-      "full": "Segunda-feira",
+      "full": "Segunda",
       "short": "Seg"
     },
     "tuesday": {
-      "full": "Terça-feira",
+      "full": "Terça",
       "short": "Ter"
     },
     "wednesday": {
-      "full": "Quarta-feira",
+      "full": "Quarta",
       "short": "Qua"
     },
     "thursday": {
-      "full": "Quinta-feira",
+      "full": "Quinta",
       "short": "Qui"
     },
     "friday": {
-      "full": "Sexta-feira",
+      "full": "Sexta",
       "short": "Sex"
     },
     "saturday": {

@@ -97,7 +97,9 @@
               v-model="copyWorkdaySector"
               :options="[]"
             />
-            <p>{{ $t('sector.managers.working_day.select_days') }}</p>
+            <p class="form-section__subtitle">
+              {{ $t('sector.managers.working_day.select_days') }}
+            </p>
             <section class="form-section__inputs__workday-config">
               <section class="form-section__inputs__workday-tags">
                 <UnnnicTag
@@ -111,7 +113,10 @@
                 />
               </section>
             </section>
-            <p v-if="workdayDaysTimeOptions.length">
+            <p
+              v-if="workdayDaysTimeOptions.length"
+              class="form-section__subtitle"
+            >
               {{ $t('sector.managers.working_day.set_hours') }}
             </p>
             <section class="form-section__inputs__workday-time-config">
@@ -138,7 +143,11 @@
                       class="form-section__inputs__workday-time-config__day__time__input"
                       type="time"
                     />
-                    <p>{{ $t('to') }}</p>
+                    <p
+                      class="form-section__inputs__workday-time-config__day__time__to"
+                    >
+                      {{ $t('to') }}
+                    </p>
                     <UnnnicInput
                       v-model="selectedWorkdayDaysTime[day][index].end"
                       class="form-section__inputs__workday-time-config__day__time__input"
@@ -166,7 +175,9 @@
                 </section>
               </section>
             </section>
-            <p>{{ $t('sector.managers.working_day.add_holidays') }}</p>
+            <p class="form-section__subtitle">
+              {{ $t('sector.managers.working_day.add_holidays') }}
+            </p>
             <section
               class="form-section__inputs__workday-time-config__holidays-container"
             >
@@ -197,7 +208,6 @@
               />
             </section>
           </section>
-
           <section
             v-if="enableGroupsMode"
             class="form-section__inputs--fill-w"
@@ -801,6 +811,13 @@ fieldset {
       line-height: $unnnic-line-height-large * 1.5;
     }
 
+    &__subtitle {
+      font-weight: $unnnic-font-weight-regular;
+      color: $unnnic-color-neutral-dark;
+      line-height: $unnnic-line-height-large * 1.5;
+      font-family: $unnnic-font-family-secondary;
+    }
+
     &__inputs {
       display: grid;
       gap: $unnnic-spacing-ant $unnnic-spacing-stack-sm;
@@ -845,10 +862,22 @@ fieldset {
             &__input {
               width: 100px;
             }
+
+            &__to {
+              font-family: $unnnic-font-family-secondary;
+              font-size: $unnnic-font-size-body-md;
+              line-height: $unnnic-font-size-body-md +
+                $unnnic-line-height-medium;
+              color: $unnnic-color-neutral-cloudy;
+            }
           }
 
           &__title {
-            min-width: 100px;
+            font-family: $unnnic-font-family-secondary;
+            font-size: $unnnic-font-size-body-md;
+            line-height: $unnnic-font-size-body-md + $unnnic-line-height-medium;
+            color: $unnnic-color-neutral-cloudy;
+            min-width: 80px;
           }
         }
 
