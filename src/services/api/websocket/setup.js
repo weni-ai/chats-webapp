@@ -3,6 +3,8 @@ import env from '@/utils/env';
 
 import listeners from './listeners';
 import { useDashboard } from '@/store/modules/dashboard';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDiscussions } from '@/store/modules/chats/discussions';
 
 export default class WebSocketSetup {
   THIRTY_SECONDS = 30000;
@@ -11,6 +13,41 @@ export default class WebSocketSetup {
   constructor({ app }) {
     this.app = app;
     this.pingIntervalId = null;
+    this.isFirstReconnectAttempt = true;
+  }
+
+  reloadRoomsAndDiscussions() {
+    const roomsStore = useRooms();
+    const discussionsStore = useDiscussions();
+    const dashboardStore = useDashboard();
+    const { viewedAgent } = dashboardStore;
+    roomsStore.getAll({
+      offset: 0,
+      concat: true,
+      limit: 100,
+      roomsType: 'ongoing',
+      order: roomsStore.orderBy.ongoing,
+      viewedAgent: viewedAgent?.email,
+    });
+    roomsStore.getAll({
+      offset: 0,
+      concat: true,
+      limit: 100,
+      roomsType: 'waiting',
+      order: roomsStore.orderBy.waiting,
+      viewedAgent: viewedAgent?.email,
+    });
+    roomsStore.getAll({
+      offset: 0,
+      concat: true,
+      limit: 100,
+      roomsType: 'flow_start',
+      order: roomsStore.orderBy.flow_start,
+      viewedAgent: viewedAgent?.email,
+    });
+    discussionsStore.getAll({
+      viewedAgent: viewedAgent?.email,
+    });
   }
 
   buildUrl() {
@@ -34,15 +71,27 @@ export default class WebSocketSetup {
     this.ws = ws;
     this.ws.ws.onclose = () => {
       if (this.ws.ws.readyState === this.ws.ws.OPEN) return;
-      setTimeout(() => {
-        const timestamp = new Date().toISOString();
-        console.warn(
-          timestamp,
-          '[WebSocket] Connection closed, reconnecting immediately...',
-        );
+
+      const timestamp = new Date().toISOString();
+      console.warn(
+        timestamp,
+        '[WebSocket] Connection closed, attempting to reconnect...',
+      );
+
+      if (this.isFirstReconnectAttempt) {
+        this.isFirstReconnectAttempt = false;
         this.reconnect();
-      }, this.FIVE_SECONDS);
+      } else {
+        setTimeout(() => {
+          this.reconnect();
+        }, this.FIVE_SECONDS);
+      }
     };
+
+    this.ws.ws.onopen = () => {
+      this.isFirstReconnectAttempt = true;
+    };
+
     listeners({ ws, app: this.app });
     this.setupPingInterval();
   }
@@ -74,8 +123,13 @@ export default class WebSocketSetup {
   }
 
   reconnect() {
-    this.ws.ws.close();
+    if (this.ws && this.ws.ws.readyState !== this.ws.ws.CLOSED) {
+      this.ws.ws.close();
+    }
+
     this.connect();
+
+    this.reloadRoomsAndDiscussions();
 
     const sessionStorageStatus = sessionStorage.getItem(
       `statusAgent-${this.app.appProject}`,

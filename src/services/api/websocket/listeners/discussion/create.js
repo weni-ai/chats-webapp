@@ -14,6 +14,7 @@ export default (discussion, { app }) => {
   if (existentDiscussion) return;
 
   discussionStore.addDiscussion(discussion);
+  discussionStore.discussionsCount++;
 
   const notification = new SoundNotification('achievement-confirmation');
   notification.notify();
