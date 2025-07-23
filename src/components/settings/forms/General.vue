@@ -183,6 +183,7 @@
               <UnnnicButton
                 type="tertiary"
                 :text="'See all holidays'"
+                @click="showCountryHolidaysModal = true"
               />
             </section>
             <section style="display: flex; align-items: center; gap: 8px">
@@ -196,6 +197,7 @@
                 type="tertiary"
                 :text="'See all specific dates'"
                 style="max-width: 200px"
+                @click="showCustomHolidaysModal = true"
               />
             </section>
           </section>
@@ -263,6 +265,14 @@
       />
     </section>
   </section>
+  <CountryHolidaysModal
+    v-if="showCountryHolidaysModal"
+    @close="showCountryHolidaysModal = false"
+  />
+  <CustomHolidaysModal
+    v-if="showCustomHolidaysModal"
+    @close="showCustomHolidaysModal = false"
+  />
 </template>
 
 <script>
@@ -274,15 +284,21 @@ import Sector from '@/services/api/resources/settings/sector';
 import Project from '@/services/api/resources/settings/project';
 import Group from '@/services/api/resources/settings/group';
 
+import CountryHolidaysModal from './modals/CountryHolidaysModal.vue';
+import CustomHolidaysModal from './modals/CustomHolidaysModal.vue';
+
 import { useProfile } from '@/store/modules/profile';
 import { useConfig } from '@/store/modules/config';
 
 import unnnic from '@weni/unnnic-system';
+
 export default {
   name: 'FormSector',
 
   components: {
     SelectedMember,
+    CountryHolidaysModal,
+    CustomHolidaysModal,
   },
   props: {
     isEditing: {
@@ -366,6 +382,8 @@ export default {
           },
         ],
       },
+      showCountryHolidaysModal: false,
+      showCustomHolidaysModal: false,
     };
   },
 

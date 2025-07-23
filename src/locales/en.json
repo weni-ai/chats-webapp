@@ -29,6 +29,10 @@
       "short": "Sun"
     }
   },
+  "country_holidays": {
+    "title": "Holidays in {country}",
+    "description": "If necessary, you can disable each of the holidays and they will be considered as a business day."
+  },
   "status": {
     "online": "Online",
     "offline": "Offline",
