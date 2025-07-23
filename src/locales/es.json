@@ -1,4 +1,43 @@
 {
+  "week_days": {
+    "monday": {
+      "full": "Lunes",
+      "short": "Lun"
+    },
+    "tuesday": {
+      "full": "Martes",
+      "short": "Mar"
+    },
+    "wednesday": {
+      "full": "Miércoles",
+      "short": "Mié"
+    },
+    "thursday": {
+      "full": "Jueves",
+      "short": "Jue"
+    },
+    "friday": {
+      "full": "Viernes",
+      "short": "Vie"
+    },
+    "saturday": {
+      "full": "Sábado",
+      "short": "Sáb"
+    },
+    "sunday": {
+      "full": "Domingo",
+      "short": "Dom"
+    }
+  },
+  "country_holidays": {
+    "title": "Feriados en {country}",
+    "description": "Si es necesario, puede deshabilitar cada uno de los feriados y serán considerados como día laboral."
+  },
+  "custom_holidays": {
+    "title": "Fechas Específicas No Laborables",
+    "description": "Si es necesario, puede eliminar cada una de las fechas o períodos y serán considerados como día laboral.",
+    "disclaimer": "Eliminar fechas o períodos no se puede deshacer. Haga clic en el botón Guardar Cambios para confirmar la acción."
+  },
   "status": {
     "online": "En línea",
     "offline": "Desconectada",
@@ -129,6 +168,13 @@
       },
       "working_day": {
         "title": "Definiciones de la jornada laboral",
+        "copy_workday": "Copiar la jornada laboral de un sector ya configurado",
+        "select_days": "Seleccione los días de la semana laboral.",
+        "set_hours": "Establezca las horas trabajadas para cada día.",
+        "add_holidays": "Agregue feriados y fechas específicas no laborables.",
+        "see_all_holidays": "Ver todos los feriados",
+        "add_specific_dates": "Agregar fechas específicas",
+        "see_all_specific_dates": "Ver todas las fechas específicas",
         "start": {
           "label": "Hora de inicio"
         },

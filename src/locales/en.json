@@ -33,6 +33,11 @@
     "title": "Holidays in {country}",
     "description": "If necessary, you can disable each of the holidays and they will be considered as a business day."
   },
+  "custom_holidays": {
+    "title": "Specific Non-working Dates",
+    "description": "If necessary, you can delete each of the dates or periods and they will be considered as a business day.",
+    "disclaimer": "Deleting dates or periods cannot be undone. Click the Save Changes button to confirm the action."
+  },
   "status": {
     "online": "Online",
     "offline": "Offline",
@@ -163,6 +168,13 @@
       },
       "working_day": {
         "title": "Definitions of the workday",
+        "copy_workday": "Copy the workday of an already configured sector",
+        "select_days": "Select the days of the working week.",
+        "set_hours": "Set the hours worked for each day.",
+        "add_holidays": "Add holidays and specific non-working dates.",
+        "see_all_holidays": "See all holidays",
+        "add_specific_dates": "Add specific dates",
+        "see_all_specific_dates": "See all specific dates",
         "start": {
           "label": "Start time"
         },

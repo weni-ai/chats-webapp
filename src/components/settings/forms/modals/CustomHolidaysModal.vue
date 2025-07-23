@@ -1,18 +1,15 @@
 <template>
   <UnnnicModalDialog
     :modelValue="true"
-    :title="'Specific Non-working Dates'"
+    :title="$t('custom_holidays.title')"
     showCloseIcon
     @update:model-value="$emit('close')"
   >
     <section class="custom-holidays-modal__body">
-      <p>
-        If necessary, you can delete each of the dates or periods and they will
-        be considered as a business day.
-      </p>
+      <p>{{ $t('custom_holidays.description') }}</p>
       <UnnnicDisclaimer
         iconColor="feedback-yellow"
-        :text="'Deleting dates or periods cannot be undone. Click the Save Changes button to confirm the action.'"
+        :text="$t('custom_holidays.disclaimer')"
       />
       <section class="custom-holidays-modal__day"></section>
     </section>
@@ -31,7 +28,7 @@ export default {
   &__body {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: $unnnic-spacing-sm;
   }
 }
 </style>

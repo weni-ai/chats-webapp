@@ -90,16 +90,16 @@
           <section class="form-section__inputs__workday-copy">
             <UnnnicSwitch
               v-model="copyWorkday"
-              :textRight="'Copy the workday of an already configured sector'"
+              :textRight="$t('sector.managers.working_day.copy_workday')"
             />
             <UnnnicSelectSmart
               v-if="copyWorkday"
               v-model="copyWorkdaySector"
               :options="[]"
             />
-            <p>Select the days of the working week.</p>
+            <p>{{ $t('sector.managers.working_day.select_days') }}</p>
             <section class="form-section__inputs__workday-config">
-              <section style="display: flex; gap: 8px">
+              <section class="form-section__inputs__workday-tags">
                 <UnnnicTag
                   v-for="day in workdayDays"
                   :key="day.value"
@@ -112,47 +112,36 @@
               </section>
             </section>
             <p v-if="workdayDaysTimeOptions.length">
-              Set the hours worked for each day.
+              {{ $t('sector.managers.working_day.set_hours') }}
             </p>
-            <section
-              class="form-section__inputs__workday-time-config"
-              style="display: flex; flex-direction: column; gap: 16px"
-            >
+            <section class="form-section__inputs__workday-time-config">
               <section
                 v-for="day in workdayDaysTimeOptions"
                 :key="day"
-                style="display: flex; align-items: baseline; gap: 8px"
+                class="form-section__inputs__workday-time-config__day"
               >
-                <p style="min-width: 100px">
+                <p
+                  class="form-section__inputs__workday-time-config__day__title"
+                >
                   {{ $t(`week_days.${day}.full`) }}
                 </p>
                 <section
-                  style="
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 8px;
-                  "
+                  class="form-section__inputs__workday-time-config__day__time"
                 >
                   <section
                     v-for="(_time, index) in selectedWorkdayDaysTime[day]"
                     :key="`${day}-${index}`"
-                    style="
-                      display: flex;
-                      align-items: center;
-                      gap: 8px;
-                      justify-content: space-between;
-                    "
+                    class="form-section__inputs__workday-time-config__day__time__container"
                   >
                     <UnnnicInput
                       v-model="selectedWorkdayDaysTime[day][index].start"
-                      style="width: 100px"
+                      class="form-section__inputs__workday-time-config__day__time__input"
                       type="time"
                     />
-                    <p>to</p>
+                    <p>{{ $t('to') }}</p>
                     <UnnnicInput
                       v-model="selectedWorkdayDaysTime[day][index].end"
-                      style="width: 100px"
+                      class="form-section__inputs__workday-time-config__day__time__input"
                       type="time"
                     />
                     <UnnnicButton
@@ -177,26 +166,33 @@
                 </section>
               </section>
             </section>
-            <p>Add holidays and specific non-working dates.</p>
-            <section style="display: flex; align-items: center; gap: 8px">
-              <UnnnicCheckbox :textRight="'Holidays in Brazil'" />
+            <p>{{ $t('sector.managers.working_day.add_holidays') }}</p>
+            <section
+              class="form-section__inputs__workday-time-config__holidays-container"
+            >
+              <UnnnicCheckbox
+                :textRight="$t('country_holidays.title', { country: 'Brazil' })"
+              />
               <UnnnicButton
                 type="tertiary"
-                :text="'See all holidays'"
+                :text="$t('sector.managers.working_day.see_all_holidays')"
                 @click="showCountryHolidaysModal = true"
               />
             </section>
-            <section style="display: flex; align-items: center; gap: 8px">
+            <section
+              class="form-section__inputs__workday-time-config__holidays-container"
+            >
               <UnnnicButton
+                class="form-section__inputs__workday-time-config__holidays-container__button"
                 type="alternative"
                 iconLeft="add-1"
-                :text="'Add specific dates'"
-                style="max-width: 200px"
+                :text="$t('sector.managers.working_day.add_specific_dates')"
+                @click="showAddCustomHolidaysModal = true"
               />
               <UnnnicButton
+                class="form-section__inputs__workday-time-config__holidays-container__button"
                 type="tertiary"
-                :text="'See all specific dates'"
-                style="max-width: 200px"
+                :text="$t('sector.managers.working_day.see_all_specific_dates')"
                 @click="showCustomHolidaysModal = true"
               />
             </section>
@@ -384,6 +380,7 @@ export default {
       },
       showCountryHolidaysModal: false,
       showCustomHolidaysModal: false,
+      showAddCustomHolidaysModal: false,
     };
   },
 
@@ -815,6 +812,55 @@ fieldset {
         flex-direction: column;
         gap: $unnnic-spacing-sm;
         margin-top: $unnnic-spacing-sm;
+      }
+
+      &__workday-tags {
+        display: flex;
+        gap: $unnnic-spacing-xs;
+      }
+
+      &__workday-time-config {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        &__day {
+          display: flex;
+          align-items: baseline;
+          gap: $unnnic-spacing-xs;
+
+          &__time {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: $unnnic-spacing-xs;
+
+            &__container {
+              display: flex;
+              align-items: center;
+              gap: $unnnic-spacing-xs;
+              justify-content: space-between;
+            }
+
+            &__input {
+              width: 100px;
+            }
+          }
+
+          &__title {
+            min-width: 100px;
+          }
+        }
+
+        &__holidays-container {
+          display: flex;
+          align-items: center;
+          gap: $unnnic-spacing-xs;
+
+          &__button {
+            max-width: 200px;
+          }
+        }
       }
 
       &--fill-w {
