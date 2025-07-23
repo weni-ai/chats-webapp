@@ -105,7 +105,11 @@
       </div>
       <UnnnicDisclaimer
         v-if="enableAutomaticRoomRouting"
-        class="room-container__chats-router-info"
+        :class="
+          showOrderBy
+            ? 'room-container__chats'
+            : 'room-container__chats-margin-y'
+        "
         :text="$t('chats.queue_priority_disclaimer')"
         iconColor="neutral-dark"
         data-testid="router-disclaimer"
@@ -253,7 +257,13 @@ export default {
     showOrderBy() {
       const { isHumanServiceProfile } = useProfile();
       const disableOrderByProjects =
-        env('DISABLE_ORDER_BY_PROJECTS')?.split(', ') || [];
+        env('DISABLE_ORDER_BY_PROJECTS')?.split(',') || [];
+
+      console.log(
+        'disableOrderByProjects',
+        env('DISABLE_ORDER_BY_PROJECTS'),
+        env('DISABLE_ORDER_BY_PROJECTS')?.split(','),
+      );
 
       if (
         isHumanServiceProfile &&
@@ -622,5 +632,8 @@ export default {
       font-weight: $unnnic-font-weight-bold;
     }
   }
+}
+.room-container__chats-margin-y {
+  margin: $unnnic-spacing-xs 0;
 }
 </style>
