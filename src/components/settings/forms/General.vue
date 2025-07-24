@@ -138,20 +138,18 @@
                     :key="`${day}-${index}`"
                     class="form-section__inputs__workday-time-config__day__time__container"
                   >
-                    <UnnnicInput
+                    <UnnnicSelectTime
                       v-model="selectedWorkdayDaysTime[day][index].start"
                       class="form-section__inputs__workday-time-config__day__time__input"
-                      type="time"
                     />
                     <p
                       class="form-section__inputs__workday-time-config__day__time__to"
                     >
                       {{ $t('to') }}
                     </p>
-                    <UnnnicInput
+                    <UnnnicSelectTime
                       v-model="selectedWorkdayDaysTime[day][index].end"
                       class="form-section__inputs__workday-time-config__day__time__input"
-                      type="time"
                     />
                     <UnnnicButton
                       v-if="index === 0"
