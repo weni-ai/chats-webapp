@@ -87,36 +87,125 @@
           {{ $t('sector.managers.working_day.title') }}
         </h2>
         <section class="form-section__inputs">
-          <fieldset>
-            <p class="label-working-day">
-              {{ $t('sector.managers.working_day.start.label') }}
-            </p>
-            <input
-              v-model="sector.workingDay.start"
-              class="input-time"
-              type="time"
-              min="00:00"
-              max="23:59"
+          <section class="form-section__inputs__workday-copy">
+            <UnnnicSwitch
+              v-model="copyWorkday"
+              :textRight="$t('sector.managers.working_day.copy_workday')"
             />
-            <span
-              v-show="!validHour"
-              class="error-message"
+            <UnnnicSelectSmart
+              v-if="copyWorkday"
+              v-model="copyWorkdaySector"
+              :options="[]"
+            />
+            <p class="form-section__subtitle">
+              {{ $t('sector.managers.working_day.select_days') }}
+            </p>
+            <section class="form-section__inputs__workday-config">
+              <section class="form-section__inputs__workday-tags">
+                <UnnnicTag
+                  v-for="day in workdayDays"
+                  :key="day.value"
+                  type="brand"
+                  clickable
+                  :text="day.label"
+                  :disabled="selectedWorkdayDays[day.value]"
+                  @click="selectWorkdayDay(day.value)"
+                />
+              </section>
+            </section>
+            <p
+              v-if="workdayDaysTimeOptions.length"
+              class="form-section__subtitle"
             >
-              {{ message }}
-            </span>
-          </fieldset>
-          <fieldset>
-            <p class="label-working-day">
-              {{ $t('sector.managers.working_day.end.label') }}
+              {{ $t('sector.managers.working_day.set_hours') }}
             </p>
-            <input
-              v-model="sector.workingDay.end"
-              class="input-time"
-              type="time"
-              min="00:00"
-              max="23:59"
-            />
-          </fieldset>
+            <section class="form-section__inputs__workday-time-config">
+              <section
+                v-for="day in workdayDaysTimeOptions"
+                :key="day"
+                class="form-section__inputs__workday-time-config__day"
+              >
+                <p
+                  class="form-section__inputs__workday-time-config__day__title"
+                >
+                  {{ $t(`week_days.${day}.full`) }}
+                </p>
+                <section
+                  class="form-section__inputs__workday-time-config__day__time"
+                >
+                  <section
+                    v-for="(_time, index) in selectedWorkdayDaysTime[day]"
+                    :key="`${day}-${index}`"
+                    class="form-section__inputs__workday-time-config__day__time__container"
+                  >
+                    <UnnnicSelectTime
+                      v-model="selectedWorkdayDaysTime[day][index].start"
+                      class="form-section__inputs__workday-time-config__day__time__input"
+                    />
+                    <p
+                      class="form-section__inputs__workday-time-config__day__time__to"
+                    >
+                      {{ $t('to') }}
+                    </p>
+                    <UnnnicSelectTime
+                      v-model="selectedWorkdayDaysTime[day][index].end"
+                      class="form-section__inputs__workday-time-config__day__time__input"
+                    />
+                    <UnnnicButton
+                      v-if="index === 0"
+                      iconCenter="add-1"
+                      type="secondary"
+                      :disabled="selectedWorkdayDaysTime[day].length === 2"
+                      @click="
+                        selectedWorkdayDaysTime[day]?.push({
+                          start: '',
+                          end: '',
+                        })
+                      "
+                    />
+                    <UnnnicButton
+                      v-if="index === 1"
+                      iconCenter="subtract-1"
+                      type="secondary"
+                      @click="selectedWorkdayDaysTime[day]?.pop()"
+                    />
+                  </section>
+                </section>
+              </section>
+            </section>
+            <p class="form-section__subtitle">
+              {{ $t('sector.managers.working_day.add_holidays') }}
+            </p>
+            <section
+              class="form-section__inputs__workday-time-config__holidays-container"
+            >
+              <UnnnicCheckbox
+                :textRight="$t('country_holidays.title', { country: 'Brazil' })"
+              />
+              <UnnnicButton
+                type="tertiary"
+                :text="$t('sector.managers.working_day.see_all_holidays')"
+                @click="showCountryHolidaysModal = true"
+              />
+            </section>
+            <section
+              class="form-section__inputs__workday-time-config__holidays-container"
+            >
+              <UnnnicButton
+                class="form-section__inputs__workday-time-config__holidays-container__button"
+                type="alternative"
+                iconLeft="add-1"
+                :text="$t('sector.managers.working_day.add_specific_dates')"
+                @click="showAddCustomHolidaysModal = true"
+              />
+              <UnnnicButton
+                class="form-section__inputs__workday-time-config__holidays-container__button"
+                type="tertiary"
+                :text="$t('sector.managers.working_day.see_all_specific_dates')"
+                @click="showCustomHolidaysModal = true"
+              />
+            </section>
+          </section>
           <section
             v-if="enableGroupsMode"
             class="form-section__inputs--fill-w"
@@ -180,6 +269,14 @@
       />
     </section>
   </section>
+  <CountryHolidaysModal
+    v-if="showCountryHolidaysModal"
+    @close="showCountryHolidaysModal = false"
+  />
+  <CustomHolidaysModal
+    v-if="showCustomHolidaysModal"
+    @close="showCustomHolidaysModal = false"
+  />
 </template>
 
 <script>
@@ -191,15 +288,21 @@ import Sector from '@/services/api/resources/settings/sector';
 import Project from '@/services/api/resources/settings/project';
 import Group from '@/services/api/resources/settings/group';
 
+import CountryHolidaysModal from './modals/CountryHolidaysModal.vue';
+import CustomHolidaysModal from './modals/CustomHolidaysModal.vue';
+
 import { useProfile } from '@/store/modules/profile';
 import { useConfig } from '@/store/modules/config';
 
 import unnnic from '@weni/unnnic-system';
+
 export default {
   name: 'FormSector',
 
   components: {
     SelectedMember,
+    CountryHolidaysModal,
+    CustomHolidaysModal,
   },
   props: {
     isEditing: {
@@ -228,12 +331,88 @@ export default {
       managersLimitPerPage: 50,
       secondaryProjectsPage: 0,
       secondaryProjectsLimitPerPage: 50,
+      copyWorkday: false,
+      copyWorkdaySector: [],
+      selectedWorkdayDays: {
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+      },
+      selectedWorkdayDaysTime: {
+        monday: [
+          {
+            start: '',
+            end: '',
+          },
+        ],
+        tuesday: [
+          {
+            start: '',
+            end: '',
+          },
+        ],
+        wednesday: [
+          {
+            start: '',
+            end: '',
+          },
+        ],
+        thursday: [
+          {
+            start: '',
+            end: '',
+          },
+        ],
+        friday: [
+          {
+            start: '',
+            end: '',
+          },
+        ],
+        saturday: [
+          {
+            start: '',
+            end: '',
+          },
+        ],
+        sunday: [
+          {
+            start: '',
+            end: '',
+          },
+        ],
+      },
+      showCountryHolidaysModal: false,
+      showCustomHolidaysModal: false,
+      showAddCustomHolidaysModal: false,
     };
   },
 
   computed: {
     ...mapState(useProfile, ['me']),
     ...mapState(useConfig, ['enableGroupsMode', 'project']),
+
+    workdayDays() {
+      return [
+        { label: this.$t('week_days.monday.short'), value: 'monday' },
+        { label: this.$t('week_days.tuesday.short'), value: 'tuesday' },
+        { label: this.$t('week_days.wednesday.short'), value: 'wednesday' },
+        { label: this.$t('week_days.thursday.short'), value: 'thursday' },
+        { label: this.$t('week_days.friday.short'), value: 'friday' },
+        { label: this.$t('week_days.saturday.short'), value: 'saturday' },
+        { label: this.$t('week_days.sunday.short'), value: 'sunday' },
+      ];
+    },
+
+    workdayDaysTimeOptions() {
+      return Object.entries(this.selectedWorkdayDays)
+        .filter(([_key, value]) => !!value)
+        .map(([key, _value]) => key);
+    },
 
     selectedProjectHasSectorIntegration() {
       if (this.selectedProject?.[0]?.value) {
@@ -561,6 +740,10 @@ export default {
           console.log(error);
         });
     },
+
+    selectWorkdayDay(day) {
+      this.selectedWorkdayDays[day] = !this.selectedWorkdayDays[day];
+    },
   },
 };
 </script>
@@ -626,11 +809,86 @@ fieldset {
       line-height: $unnnic-line-height-large * 1.5;
     }
 
+    &__subtitle {
+      font-weight: $unnnic-font-weight-regular;
+      color: $unnnic-color-neutral-dark;
+      line-height: $unnnic-line-height-large * 1.5;
+      font-family: $unnnic-font-family-secondary;
+    }
+
     &__inputs {
       display: grid;
       gap: $unnnic-spacing-ant $unnnic-spacing-stack-sm;
       grid-template-rows: auto;
       grid-template-columns: 1fr 1fr;
+
+      &__workday-copy {
+        display: flex;
+        flex-direction: column;
+        gap: $unnnic-spacing-sm;
+        margin-top: $unnnic-spacing-sm;
+      }
+
+      &__workday-tags {
+        display: flex;
+        gap: $unnnic-spacing-xs;
+      }
+
+      &__workday-time-config {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        &__day {
+          display: flex;
+          align-items: baseline;
+          gap: $unnnic-spacing-xs;
+
+          &__time {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: $unnnic-spacing-xs;
+
+            &__container {
+              display: flex;
+              align-items: center;
+              gap: $unnnic-spacing-xs;
+              justify-content: space-between;
+            }
+
+            &__input {
+              width: 100px;
+            }
+
+            &__to {
+              font-family: $unnnic-font-family-secondary;
+              font-size: $unnnic-font-size-body-md;
+              line-height: $unnnic-font-size-body-md +
+                $unnnic-line-height-medium;
+              color: $unnnic-color-neutral-cloudy;
+            }
+          }
+
+          &__title {
+            font-family: $unnnic-font-family-secondary;
+            font-size: $unnnic-font-size-body-md;
+            line-height: $unnnic-font-size-body-md + $unnnic-line-height-medium;
+            color: $unnnic-color-neutral-cloudy;
+            min-width: 80px;
+          }
+        }
+
+        &__holidays-container {
+          display: flex;
+          align-items: center;
+          gap: $unnnic-spacing-xs;
+
+          &__button {
+            max-width: 200px;
+          }
+        }
+      }
 
       &--fill-w {
         grid-column: span 2;
