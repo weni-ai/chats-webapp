@@ -94,8 +94,12 @@
             />
             <UnnnicSelectSmart
               v-if="copyWorkday"
-              v-model="copyWorkdaySector"
-              :options="[]"
+              :modelValue="copyWorkdaySector"
+              :options="sectorsOptions"
+              autocomplete
+              autocompleteIconLeft
+              autocompleteClearOnFocus
+              @update:model-value="selectCopyWorkdaySector"
             />
             <p class="form-section__subtitle">
               {{ $t('sector.managers.working_day.select_days') }}
@@ -141,6 +145,9 @@
                     <UnnnicSelectTime
                       v-model="selectedWorkdayDaysTime[day][index].start"
                       class="form-section__inputs__workday-time-config__day__time__input"
+                      @update:model-value="
+                        () => (copyWorkdaySector = [sectorPlaceholder])
+                      "
                     />
                     <p
                       class="form-section__inputs__workday-time-config__day__time__to"
@@ -150,6 +157,9 @@
                     <UnnnicSelectTime
                       v-model="selectedWorkdayDaysTime[day][index].end"
                       class="form-section__inputs__workday-time-config__day__time__input"
+                      @update:model-value="
+                        () => (copyWorkdaySector = [sectorPlaceholder])
+                      "
                     />
                     <UnnnicButton
                       v-if="index === 0"
@@ -268,15 +278,15 @@
         @click.stop="saveSector()"
       />
     </section>
+    <CountryHolidaysModal
+      v-if="showCountryHolidaysModal"
+      @close="showCountryHolidaysModal = false"
+    />
+    <CustomHolidaysModal
+      v-if="showCustomHolidaysModal"
+      @close="showCustomHolidaysModal = false"
+    />
   </section>
-  <CountryHolidaysModal
-    v-if="showCountryHolidaysModal"
-    @close="showCountryHolidaysModal = false"
-  />
-  <CustomHolidaysModal
-    v-if="showCustomHolidaysModal"
-    @close="showCustomHolidaysModal = false"
-  />
 </template>
 
 <script>
@@ -395,6 +405,24 @@ export default {
   computed: {
     ...mapState(useProfile, ['me']),
     ...mapState(useConfig, ['enableGroupsMode', 'project']),
+    ...mapState(useSettings, ['sectors']),
+
+    sectorPlaceholder() {
+      return {
+        value: '',
+        label: this.$t('sector.managers.working_day.select_sector'),
+      };
+    },
+
+    sectorsOptions() {
+      return [
+        this.sectorPlaceholder,
+        ...this.sectors.map((sector) => ({
+          value: sector.uuid,
+          label: sector.name,
+        })),
+      ];
+    },
 
     workdayDays() {
       return [
@@ -505,6 +533,40 @@ export default {
     },
   },
 
+  watch: {
+    // copyWorkdaySector: {
+    //   deep: true,
+    //   handler([selectedWorkdaySector]) {
+    //     if (selectedWorkdaySector?.value === '') {
+    //       this.copyWorkday = false;
+    //     }
+    //   },
+    // },
+    copyWorkday(value) {
+      this.copyWorkdaySector = [];
+      if (!value && this.copyWorkdaySector[0]?.value) {
+        this.selectedWorkdayDays = {
+          monday: false,
+          tuesday: false,
+          wednesday: false,
+          thursday: false,
+          friday: false,
+        };
+        const defaultValue = {
+          start: '',
+          end: '',
+        };
+        this.selectedWorkdayDaysTime = {
+          monday: [defaultValue],
+          tuesday: [defaultValue],
+          wednesday: [defaultValue],
+          thursday: [defaultValue],
+          friday: [defaultValue],
+        };
+      }
+    },
+  },
+
   mounted() {
     const isDefaultSector =
       this.sector.name === this.$t('config_chats.default_sector.name');
@@ -572,6 +634,31 @@ export default {
         ...manager,
         removed: false,
       }));
+    },
+
+    async selectCopyWorkdaySector([selectedSector]) {
+      if (
+        selectedSector.value &&
+        selectedSector.value !== this.copyWorkdaySector?.[0]?.value
+      ) {
+        this.copyWorkdaySector = [selectedSector];
+        const copySectorWorktimes = await Sector.getWorkingTimes(
+          selectedSector.value,
+        );
+        const schedules = copySectorWorktimes?.working_hours?.schedules;
+
+        if (schedules) {
+          Object.keys(schedules).forEach((day) => {
+            if (!schedules[day]) {
+              this.selectedWorkdayDays[day] = false;
+              this.selectedWorkdayDaysTime[day] = [{ start: '', end: '' }];
+            } else {
+              this.selectedWorkdayDays[day] = true;
+              this.selectedWorkdayDaysTime[day] = schedules[day];
+            }
+          });
+        }
+      }
     },
 
     async removeManager(managerUuid) {

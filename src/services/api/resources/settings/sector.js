@@ -3,6 +3,7 @@ import http from '@/services/api/http';
 import { useProfile } from '@/store/modules/profile';
 
 import { getProject } from '@/utils/config';
+import { asyncTimeout } from '@/utils/time';
 
 function getURLParams({ URL, endpoint }) {
   return URL?.split(endpoint)?.[1];
@@ -105,5 +106,28 @@ export default {
 
   async removeTag(tagUuid) {
     await http.delete(`/tag/${tagUuid}/`);
+  },
+
+  async getWorkingTimes(sectorUuid) {
+    // const response = await http.get(`/sector/${sectorUuid}/worktime/`);
+
+    const response = {
+      data: {
+        working_hours: {
+          schedules: {
+            monday: [
+              { start: '08:00', end: '12:00' },
+              { start: '14:00', end: '18:00' },
+            ],
+            tuesday: [{ start: '08:00', end: '12:00' }],
+            sunday: null,
+          },
+        },
+      },
+    };
+
+    await asyncTimeout(1000);
+
+    return response.data;
   },
 };
