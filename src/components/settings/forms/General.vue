@@ -195,6 +195,7 @@ import { useProfile } from '@/store/modules/profile';
 import { useConfig } from '@/store/modules/config';
 
 import unnnic from '@weni/unnnic-system';
+import { removeDuplicatedItems } from '@/utils/array';
 export default {
   name: 'FormSector',
 
@@ -225,7 +226,9 @@ export default {
       validHour: false,
       openModalDelete: false,
       managersPage: 0,
-      managersLimitPerPage: 50,
+      managersLimitPerPage: 20,
+      projectUsersPage: 0,
+      projectUsersPerPage: 50,
       secondaryProjectsPage: 0,
       secondaryProjectsLimitPerPage: 50,
     };
@@ -388,11 +391,28 @@ export default {
     },
 
     async getSectorManagers() {
-      const managers = await Sector.managers(this.sector.uuid);
-      this.sector.managers = managers.results.map((manager) => ({
-        ...manager,
-        removed: false,
-      }));
+      let hasNext = false;
+      try {
+        const offset = this.managersPage * this.managersLimitPerPage;
+        const { next, results } = await Sector.managers(
+          this.sector.uuid,
+          offset,
+          this.managersLimitPerPage,
+        );
+        hasNext = next;
+        this.managersPage += 1;
+        const concatManagers = this.sector.managers.concat(
+          results.map((manager) => ({
+            ...manager,
+            removed: false,
+          })),
+        );
+        this.sector.managers = removeDuplicatedItems(concatManagers, 'uuid');
+      } finally {
+        if (hasNext) {
+          this.getSectorManagers();
+        }
+      }
     },
 
     async removeManager(managerUuid) {
@@ -459,12 +479,12 @@ export default {
     async listProjectManagers() {
       let hasNext = false;
       try {
-        const offset = this.managersPage * this.managersLimitPerPage;
+        const offset = this.projectUsersPage * this.projectUsersPerPage;
         const { results, next } = await Project.managers(
           offset,
-          this.managersLimitPerPage,
+          this.projectUsersPerPage,
         );
-        this.managersPage += 1;
+        this.projectUsersPage += 1;
         this.managers = this.managers.concat(results);
 
         hasNext = next;
@@ -685,6 +705,8 @@ fieldset {
     display: flex;
     flex-direction: column;
     gap: $unnnic-spacing-nano;
+    max-height: 250px;
+    overflow-y: auto;
   }
 
   ::placeholder {
