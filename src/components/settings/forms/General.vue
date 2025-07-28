@@ -113,7 +113,12 @@
                   clickable
                   :text="day.label"
                   :disabled="selectedWorkdayDays[day.value]"
-                  @click="selectWorkdayDay(day.value)"
+                  @click="
+                    () => {
+                      selectWorkdayDay(day.value);
+                      resetSelectedCopySector();
+                    }
+                  "
                 />
               </section>
             </section>
@@ -145,9 +150,7 @@
                     <UnnnicSelectTime
                       v-model="selectedWorkdayDaysTime[day][index].start"
                       class="form-section__inputs__workday-time-config__day__time__input"
-                      @update:model-value="
-                        () => (copyWorkdaySector = [sectorPlaceholder])
-                      "
+                      @update:model-value="resetSelectedCopySector"
                     />
                     <p
                       class="form-section__inputs__workday-time-config__day__time__to"
@@ -157,9 +160,7 @@
                     <UnnnicSelectTime
                       v-model="selectedWorkdayDaysTime[day][index].end"
                       class="form-section__inputs__workday-time-config__day__time__input"
-                      @update:model-value="
-                        () => (copyWorkdaySector = [sectorPlaceholder])
-                      "
+                      @update:model-value="resetSelectedCopySector"
                     />
                     <UnnnicButton
                       v-if="index === 0"
@@ -167,17 +168,25 @@
                       type="secondary"
                       :disabled="selectedWorkdayDaysTime[day].length === 2"
                       @click="
-                        selectedWorkdayDaysTime[day]?.push({
-                          start: '',
-                          end: '',
-                        })
+                        () => {
+                          selectedWorkdayDaysTime[day]?.push({
+                            start: '',
+                            end: '',
+                          });
+                          resetSelectedCopySector();
+                        }
                       "
                     />
                     <UnnnicButton
                       v-if="index === 1"
                       iconCenter="subtract-1"
                       type="secondary"
-                      @click="selectedWorkdayDaysTime[day]?.pop()"
+                      @click="
+                        () => {
+                          selectedWorkdayDaysTime[day]?.pop();
+                          resetSelectedCopySector();
+                        }
+                      "
                     />
                   </section>
                 </section>
@@ -595,6 +604,10 @@ export default {
     ...mapActions(useSettings, {
       actionDeleteSector: 'deleteSector',
     }),
+
+    resetSelectedCopySector() {
+      this.copyWorkdaySector = [this.sectorPlaceholder];
+    },
 
     updateDefaultSectorValue(activate) {
       this.useDefaultSector = activate;
