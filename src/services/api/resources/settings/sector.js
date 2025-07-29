@@ -130,4 +130,46 @@ export default {
 
     return response.data;
   },
+
+  async getCountryHolidays() {
+    // const response = await http.get('/sector_holidays/official_holidays/');
+    const response = {
+      data: {
+        country_code: 'BR',
+        year: 2025,
+        holidays: [
+          {
+            date: '2024-01-01',
+            name: 'Confraternização Universal',
+            country_code: 'BR',
+          },
+          {
+            date: '2024-04-21',
+            name: 'Tiradentes',
+            country_code: 'BR',
+          },
+        ],
+      },
+    };
+    await asyncTimeout(1000);
+    return response.data;
+  },
+
+  async createCountryHolidays(sector, holidays) {
+    const response = await http.post(
+      '/sector_holiday/import_official_holidays/',
+      { enabled_holidays: holidays },
+      { params: { sector } },
+    );
+    return response.data;
+  },
+
+  async setSectorWorkingDays(sector, workingDays) {
+    const response = await http.post(`/sector/${sector}/worktime/`, {
+      working_hours: {
+        schedules: workingDays,
+      },
+    });
+    return response.data;
+  },
 };

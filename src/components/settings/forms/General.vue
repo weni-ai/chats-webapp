@@ -199,7 +199,13 @@
               class="form-section__inputs__workday-time-config__holidays-container"
             >
               <UnnnicCheckbox
-                :textRight="$t('country_holidays.title', { country: 'Brazil' })"
+                :modelValue="selectAllCountryHolidays"
+                :textRight="
+                  $t('country_holidays.title', {
+                    country: $t(`country.${countryCode || 'label'}`),
+                  })
+                "
+                @update:model-value="handleSelectAllCountryHolidays"
               />
               <UnnnicButton
                 type="tertiary"
@@ -289,6 +295,10 @@
     </section>
     <CountryHolidaysModal
       v-if="showCountryHolidaysModal"
+      :holidays="allCountryHolidays"
+      :enableHolidays="enableCountryHolidays"
+      :isEditing="isEditing"
+      @update:enable-holidays="enableCountryHolidays = $event"
       @close="showCountryHolidaysModal = false"
     />
     <CustomHolidaysModal
@@ -408,6 +418,10 @@ export default {
       showCountryHolidaysModal: false,
       showCustomHolidaysModal: false,
       showAddCustomHolidaysModal: false,
+      countryCode: '',
+      selectAllCountryHolidays: false,
+      allCountryHolidays: [],
+      enableCountryHolidays: [],
     };
   },
 
@@ -419,7 +433,7 @@ export default {
     sectorPlaceholder() {
       return {
         value: '',
-        label: this.$t('sector.managers.working_day.select_sector'),
+        label: this.$t('sector.managers.working_day.select_sector_to_copy'),
       };
     },
 
@@ -553,7 +567,7 @@ export default {
     // },
     copyWorkday(value) {
       this.copyWorkdaySector = [];
-      if (!value && this.copyWorkdaySector[0]?.value) {
+      if (!value && !this.copyWorkdaySector[0]?.value) {
         this.selectedWorkdayDays = {
           monday: false,
           tuesday: false,
@@ -574,9 +588,32 @@ export default {
         };
       }
     },
+    enableCountryHolidays: {
+      deep: true,
+      handler(value) {
+        const enableCountryHolidaysLength = value.length;
+        const allCountryHolidaysLength = this.allCountryHolidays.length;
+        if (
+          enableCountryHolidaysLength > 0 &&
+          enableCountryHolidaysLength < allCountryHolidaysLength
+        ) {
+          this.selectAllCountryHolidays = 'less';
+        }
+
+        if (enableCountryHolidaysLength === allCountryHolidaysLength) {
+          this.selectAllCountryHolidays = true;
+        }
+
+        if (enableCountryHolidaysLength === 0) {
+          this.selectAllCountryHolidays = false;
+        }
+      },
+    },
   },
 
   mounted() {
+    this.getCountryHolidays();
+
     const isDefaultSector =
       this.sector.name === this.$t('config_chats.default_sector.name');
 
@@ -604,6 +641,23 @@ export default {
     ...mapActions(useSettings, {
       actionDeleteSector: 'deleteSector',
     }),
+
+    handleSelectAllCountryHolidays(value) {
+      this.selectAllCountryHolidays = value;
+      if (value) {
+        this.enableCountryHolidays = this.allCountryHolidays.map(
+          (holiday) => holiday.date,
+        );
+      } else {
+        this.enableCountryHolidays = [];
+      }
+    },
+
+    async getCountryHolidays() {
+      const { holidays, country_code } = await Sector.getCountryHolidays();
+      this.countryCode = country_code;
+      this.allCountryHolidays = holidays;
+    },
 
     resetSelectedCopySector() {
       this.copyWorkdaySector = [this.sectorPlaceholder];
@@ -839,6 +893,18 @@ export default {
           });
           console.log(error);
         });
+    },
+
+    async saveWorkingDays() {
+      const requestBody = {};
+
+      Object.keys(this.selectedWorkdayDaysTime).forEach((day) => {
+        requestBody[day] = this.selectedWorkdayDays[day]
+          ? this.selectedWorkdayDaysTime[day]
+          : null;
+      });
+
+      await Sector.setSectorWorkingDays(this.sector.uuid, requestBody);
     },
 
     selectWorkdayDay(day) {

@@ -4,14 +4,17 @@
     :title="$t('country_holidays.title', { country: 'Brazil' })"
     showCloseIcon
     :primaryButtonProps="{ text: $t('save') }"
+    @primary-button-click="handleSave"
     @update:model-value="$emit('close')"
   >
     <section class="country-holidays-modal__body">
       <p>{{ $t('country_holidays.description') }}</p>
       <UnnnicSwitch
         v-for="holiday in holidays"
-        :key="holiday.id"
+        :key="holiday.date"
+        :modelValue="enableHolidays.includes(holiday.date)"
         :textRight="formatHolidayLabel(holiday)"
+        @update:model-value="handleClickSelectHoliday(holiday)"
       />
     </section>
   </UnnnicModalDialog>
@@ -22,24 +25,49 @@ import moment from 'moment';
 
 export default {
   name: 'CountryHolidays',
-  emits: ['close'],
+  props: {
+    holidays: {
+      type: Array,
+      required: true,
+    },
+    enableHolidays: {
+      type: Array,
+      required: true,
+    },
+    isEditing: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: ['close', 'update:enable-holidays'],
   data() {
     return {
-      holidays: [
-        { id: 1, name: 'New Year', start: '2025-01-01', end: '2025-01-01' },
-        { id: 2, name: 'Christmas', start: '2025-12-25', end: '2025-12-27' },
-      ],
+      internalEnableHolidays: this.enableHolidays,
     };
   },
   methods: {
     formatHolidayLabel(holiday) {
-      if (!holiday.start) return holiday.name;
-      const start = moment(holiday.start).format('L');
-      const end = moment(holiday.end).format('L');
-      if (start !== end) {
-        return `${start} ${this.$t('to')} ${end} - ${holiday.name}`;
+      if (!holiday.date) return holiday.name;
+      const date = moment(holiday.date).format('L');
+
+      return `${date} - ${holiday.name}`;
+    },
+    handleClickSelectHoliday(holiday) {
+      const hasDate = this.internalEnableHolidays.includes(holiday.date);
+      if (hasDate) {
+        this.internalEnableHolidays = this.internalEnableHolidays.filter(
+          (date) => date !== holiday.date,
+        );
+      } else {
+        this.internalEnableHolidays = [
+          ...this.internalEnableHolidays,
+          holiday.date,
+        ];
       }
-      return `${start} - ${holiday.name}`;
+    },
+    handleSave() {
+      this.$emit('update:enable-holidays', this.internalEnableHolidays);
+      this.$emit('close');
     },
   },
 };

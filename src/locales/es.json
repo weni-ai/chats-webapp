@@ -1,4 +1,8 @@
 {
+  "country": {
+    "label": "País",
+    "BR": "Brasil"
+  },
   "week_days": {
     "monday": {
       "full": "Lunes",
