@@ -150,6 +150,11 @@ export default {
             name: 'Tiradentes',
             country_code: 'BR',
           },
+          {
+            date: '2024-02-13',
+            name: 'Carnaval',
+            country_code: 'BR',
+          },
         ],
       },
     };

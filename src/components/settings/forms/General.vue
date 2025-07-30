@@ -145,49 +145,77 @@
                   <section
                     v-for="(_time, index) in selectedWorkdayDaysTime[day]"
                     :key="`${day}-${index}`"
-                    class="form-section__inputs__workday-time-config__day__time__container"
                   >
-                    <UnnnicSelectTime
-                      v-model="selectedWorkdayDaysTime[day][index].start"
-                      class="form-section__inputs__workday-time-config__day__time__input"
-                      @update:model-value="resetSelectedCopySector"
-                    />
-                    <p
-                      class="form-section__inputs__workday-time-config__day__time__to"
+                    <section
+                      class="form-section__inputs__workday-time-config__day__time__container"
                     >
-                      {{ $t('to') }}
-                    </p>
-                    <UnnnicSelectTime
-                      v-model="selectedWorkdayDaysTime[day][index].end"
-                      class="form-section__inputs__workday-time-config__day__time__input"
-                      @update:model-value="resetSelectedCopySector"
-                    />
-                    <UnnnicButton
-                      v-if="index === 0"
-                      iconCenter="add-1"
-                      type="secondary"
-                      :disabled="selectedWorkdayDaysTime[day].length === 2"
-                      @click="
-                        () => {
-                          selectedWorkdayDaysTime[day]?.push({
-                            start: '',
-                            end: '',
-                          });
-                          resetSelectedCopySector();
-                        }
-                      "
-                    />
-                    <UnnnicButton
-                      v-if="index === 1"
-                      iconCenter="subtract-1"
-                      type="secondary"
-                      @click="
-                        () => {
-                          selectedWorkdayDaysTime[day]?.pop();
-                          resetSelectedCopySector();
-                        }
-                      "
-                    />
+                      <section
+                        class="form-section__inputs__workday-time-config__day__time__container-item"
+                      >
+                        <UnnnicSelectTime
+                          v-model="selectedWorkdayDaysTime[day][index].start"
+                          class="form-section__inputs__workday-time-config__day__time__input"
+                          @update:model-value="
+                            () => {
+                              resetSelectedCopySector();
+                              validateWorkdayTime(day, index);
+                            }
+                          "
+                        />
+                        <p
+                          class="form-section__inputs__workday-time-config__day__time__to"
+                        >
+                          {{ $t('to') }}
+                        </p>
+                        <UnnnicSelectTime
+                          v-model="selectedWorkdayDaysTime[day][index].end"
+                          class="form-section__inputs__workday-time-config__day__time__input"
+                          @update:model-value="
+                            () => {
+                              resetSelectedCopySector();
+                              validateWorkdayTime(day, index);
+                            }
+                          "
+                        />
+                        <UnnnicButton
+                          v-if="index === 0"
+                          iconCenter="add-1"
+                          type="secondary"
+                          :disabled="selectedWorkdayDaysTime[day].length === 2"
+                          @click="
+                            () => {
+                              selectedWorkdayDaysTime[day]?.push({
+                                start: '',
+                                end: '',
+                                valid: false,
+                              });
+                              resetSelectedCopySector();
+                            }
+                          "
+                        />
+                        <UnnnicButton
+                          v-if="index === 1"
+                          iconCenter="subtract-1"
+                          type="secondary"
+                          @click="
+                            () => {
+                              selectedWorkdayDaysTime[day]?.pop();
+                              resetSelectedCopySector();
+                            }
+                          "
+                        />
+                      </section>
+                      <p
+                        v-if="
+                          !selectedWorkdayDaysTime[day][index].valid &&
+                          selectedWorkdayDaysTime[day][index].start &&
+                          selectedWorkdayDaysTime[day][index].end
+                        "
+                        class="error-message"
+                      >
+                        {{ $t('config_chats.edit_sector.invalid_hours') }}
+                      </p>
+                    </section>
                   </section>
                 </section>
               </section>
@@ -386,44 +414,45 @@ export default {
           {
             start: '',
             end: '',
+            valid: false,
           },
         ],
         tuesday: [
           {
             start: '',
             end: '',
+            valid: false,
           },
         ],
         wednesday: [
           {
             start: '',
             end: '',
+            valid: false,
           },
         ],
         thursday: [
           {
             start: '',
             end: '',
+            valid: false,
           },
         ],
         friday: [
           {
             start: '',
             end: '',
+            valid: false,
           },
         ],
         saturday: [
           {
             start: '',
             end: '',
+            valid: false,
           },
         ],
-        sunday: [
-          {
-            start: '',
-            end: '',
-          },
-        ],
+        sunday: [{ start: '', end: '', valid: false }],
       },
       showCountryHolidaysModal: false,
       showCustomHolidaysModal: false,
@@ -540,7 +569,20 @@ export default {
     validForm() {
       const { name, managers, maxSimultaneousChatsByAgent } = this.sector;
 
-      const commonValid = !!name.trim();
+      const selectedDaysWorkdayTimes = Object.keys(this.selectedWorkdayDaysTime)
+        .map((day) => {
+          if (this.selectedWorkdayDays[day]) {
+            return this.selectedWorkdayDaysTime[day];
+          }
+          return [];
+        })
+        .flat();
+
+      const validAllWorkdayTime = selectedDaysWorkdayTimes.every(
+        (time) => time.valid,
+      );
+
+      const commonValid = !!(name.trim() && validAllWorkdayTime);
 
       const groupValid =
         !!this.selectedProject.length &&
@@ -561,14 +603,6 @@ export default {
   },
 
   watch: {
-    // copyWorkdaySector: {
-    //   deep: true,
-    //   handler([selectedWorkdaySector]) {
-    //     if (selectedWorkdaySector?.value === '') {
-    //       this.copyWorkday = false;
-    //     }
-    //   },
-    // },
     copyWorkday(value) {
       this.copyWorkdaySector = [];
       if (!value && !this.copyWorkdaySector[0]?.value) {
@@ -870,6 +904,15 @@ export default {
       }
     },
 
+    validateWorkdayTime(day, index) {
+      const { start, end } = this.selectedWorkdayDaysTime[day][index];
+      if (start >= end) {
+        this.selectedWorkdayDaysTime[day][index].valid = false;
+      } else {
+        this.selectedWorkdayDaysTime[day][index].valid = true;
+      }
+    },
+
     hourValidate(hour) {
       const inicialHour = hour.start;
       const finalHour = hour.end;
@@ -983,6 +1026,7 @@ fieldset {
   padding: 0;
   margin: 0;
 }
+
 .form-wrapper {
   display: flex;
   flex-direction: column;
@@ -1011,6 +1055,12 @@ fieldset {
     flex: 1;
   }
 }
+
+.error-message {
+  font-size: $unnnic-font-size-body-md;
+  color: $unnnic-color-feedback-red;
+}
+
 .form-sector-container {
   flex: 1;
   overflow-y: auto;
@@ -1076,14 +1126,19 @@ fieldset {
           &__time {
             display: flex;
             flex-direction: column;
-            align-items: center;
             gap: $unnnic-spacing-xs;
 
             &__container {
               display: flex;
-              align-items: center;
+              flex-direction: column;
               gap: $unnnic-spacing-xs;
               justify-content: space-between;
+
+              &-item {
+                display: flex;
+                align-items: center;
+                gap: $unnnic-spacing-xs;
+              }
             }
 
             &__input {
@@ -1127,10 +1182,6 @@ fieldset {
         border: none;
         padding: 0;
         margin: 0;
-        & .error-message {
-          font-size: $unnnic-font-size-body-md;
-          color: $unnnic-color-feedback-red;
-        }
       }
     }
 
@@ -1142,29 +1193,11 @@ fieldset {
     }
   }
 
-  .input-time {
-    background: #fff;
-    border: 1px solid $unnnic-color-neutral-soft;
-    border-radius: $unnnic-border-radius-sm;
-    color: $unnnic-color-neutral-dark;
-    box-sizing: border-box;
-    width: 100%;
-    font-size: $unnnic-font-size-body-gt;
-    line-height: $unnnic-line-height-large * 1.375;
-    padding: $unnnic-spacing-ant $unnnic-spacing-sm;
-    cursor: text;
-  }
-
   .label-working-day {
     line-height: $unnnic-line-height-large * 1.375;
     font-size: $unnnic-font-size-body-gt;
     color: $unnnic-color-neutral-cloudy;
     margin: $unnnic-spacing-xs 0;
-  }
-
-  input:focus {
-    outline-color: $unnnic-color-neutral-clean;
-    outline: 1px solid $unnnic-color-neutral-clean;
   }
 
   &__managers {
@@ -1174,15 +1207,6 @@ fieldset {
     gap: $unnnic-spacing-nano;
     max-height: 250px;
     overflow-y: auto;
-  }
-
-  ::placeholder {
-    color: #d1d4da;
-  }
-
-  input::-webkit-datetime-edit {
-    min-width: 100%;
-    width: 100%;
   }
 
   .link-project-disclaimer {
