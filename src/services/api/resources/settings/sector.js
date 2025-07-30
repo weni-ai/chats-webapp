@@ -68,10 +68,12 @@ export default {
     return response.data;
   },
 
-  async managers(sectorUuid) {
+  async managers(sectorUuid, offset, limit) {
     const response = await http.get('/authorization/sector/', {
       params: {
         sector: sectorUuid,
+        limit,
+        offset,
       },
     });
     return response.data;
