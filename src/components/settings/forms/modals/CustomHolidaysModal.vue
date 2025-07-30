@@ -4,6 +4,7 @@
     :title="$t('custom_holidays.title')"
     showCloseIcon
     :primaryButtonProps="{ text: $t('save') }"
+    @primary-button-click="save"
     @update:model-value="$emit('close')"
   >
     <section class="custom-holidays-modal__body">
@@ -13,19 +14,47 @@
         :text="$t('custom_holidays.disclaimer')"
       />
       <section
-        v-for="date in holidays"
-        :key="date.id"
+        v-for="holiday in holidays"
+        :key="holiday.uuid"
         class="custom-holidays-modal__holiday"
       >
-        <p class="custom-holidays-modal__holidays-container__title">
-          {{ getDateFormattedLabel(date) }}
+        <p
+          :class="{
+            'custom-holidays-modal__holiday__title': true,
+            'custom-holidays-modal__holiday__title--deleted':
+              toDeleteIds.includes(holiday.uuid),
+          }"
+        >
+          {{ getDateFormattedLabel(holiday) }}
         </p>
-        <UnnnicIcon
-          icon="delete"
-          clickable
-          scheme="feedback-red"
-          size="ant"
-        />
+        <UnnnicToolTip
+          v-if="!toDeleteIds.includes(holiday.uuid)"
+          enabled
+          side="left"
+          :text="$t('delete')"
+        >
+          <UnnnicIcon
+            icon="delete"
+            clickable
+            scheme="feedback-red"
+            size="ant"
+            @click="toDeleteIds.push(holiday.uuid)"
+          />
+        </UnnnicToolTip>
+        <UnnnicToolTip
+          v-else
+          enabled
+          side="left"
+          :text="$t('undo')"
+        >
+          <UnnnicIcon
+            icon="undo"
+            clickable
+            scheme="neutral-dark"
+            size="ant"
+            @click="toDeleteIds.splice(toDeleteIds.indexOf(holiday.uuid), 1)"
+          />
+        </UnnnicToolTip>
       </section>
     </section>
   </UnnnicModalDialog>
@@ -36,24 +65,36 @@ import moment from 'moment';
 
 export default {
   name: 'CustomHolidaysModal',
-  emits: ['close'],
+  props: {
+    holidays: {
+      type: Array,
+      required: true,
+    },
+  },
+  emits: ['close', 'save'],
   data() {
     return {
-      holidays: [
-        { id: 1, name: 'New Year', start: '2025-01-01', end: '2025-01-01' },
-        { id: 2, name: 'Christmas', start: '2025-12-25', end: '2025-12-27' },
-      ],
+      toDeleteIds: [],
     };
   },
   methods: {
-    getDateFormattedLabel(date) {
-      if (!date.start) return date.name;
-      const start = moment(date.start).format('L');
-      const end = moment(date.end).format('L');
+    getDateFormattedLabel(holiday) {
+      const start = moment(holiday.date.start).format('L');
+      const end = moment(holiday.date.end).format('L');
       if (start !== end) {
-        return `${start} ${this.$t('to')} ${end} - ${date.name}`;
+        return `${start} ${this.$t('to')} ${end} ${holiday.repeat ? `- ${this.$t('sector.managers.working_day.repeat_annually')}` : ''}`;
       }
-      return `${start} - ${date.name}`;
+      return `${start} ${holiday.repeat ? `- ${this.$t('sector.managers.working_day.repeat_annually')}` : ''}`;
+    },
+    save() {
+      const filterHolidays = this.holidays.filter(
+        (holiday) => !this.toDeleteIds.includes(holiday.uuid),
+      );
+      this.$emit('save', {
+        holidays: filterHolidays,
+        toRemove: this.toDeleteIds,
+      });
+      this.$emit('close');
     },
   },
 };
@@ -72,6 +113,11 @@ export default {
     justify-content: space-between;
     align-items: center;
     gap: $unnnic-spacing-sm;
+    &__title {
+      &--deleted {
+        text-decoration: line-through;
+      }
+    }
   }
 }
 </style>

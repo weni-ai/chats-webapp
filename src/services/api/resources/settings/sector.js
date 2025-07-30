@@ -155,12 +155,66 @@ export default {
     return response.data;
   },
 
+  async getAllSectorHolidays(sector) {
+    // const response = await http.get('/sector_holiday/', {
+    //   params: {
+    //     sector,
+    //   },
+    // });
+
+    const response = {
+      data: [
+        {
+          uuid: 'uuid-do-feriado-1',
+          date: '2024-01-01',
+          day_type: 'closed',
+          start_time: null,
+          end_time: null,
+          description: 'feriado na minha rua',
+          its_custom: true,
+        },
+        {
+          uuid: 'uuid-do-feriado-2',
+          date: '2024-02-13',
+          day_type: 'custom_hours',
+          start_time: '08:00:00',
+          end_time: '12:00:00',
+          description: 'Carnaval - Horário Reduzido',
+          its_custom: false,
+          disabled_open_room: true,
+        },
+      ],
+    };
+    await asyncTimeout(1000);
+    return response.data;
+  },
+
   async createCountryHolidays(sector, holidays) {
     const response = await http.post(
       '/sector_holiday/import_official_holidays/',
       { enabled_holidays: holidays },
       { params: { sector } },
     );
+    return response.data;
+  },
+
+  async createSectorHoliday(sector, holiday) {
+    const body = {
+      ...holiday,
+      sector,
+      day_type: 'closed',
+      start_time: null,
+      end_time: null,
+      description: '',
+    };
+    const response = await http.post('/sector_holiday/', body);
+    return response.data;
+  },
+
+  async deleteSectorHoliday(sector, holidayId) {
+    const response = await http.delete(`/sector_holiday/${holidayId}/`, {
+      params: { sector },
+    });
     return response.data;
   },
 

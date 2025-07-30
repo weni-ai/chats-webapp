@@ -221,12 +221,13 @@
                 type="alternative"
                 iconLeft="add-1"
                 :text="$t('sector.managers.working_day.add_specific_dates')"
-                @click="showAddCustomHolidaysModal = true"
+                @click="showCreateCustomHolidayModal = true"
               />
               <UnnnicButton
                 class="form-section__inputs__workday-time-config__holidays-container__button"
                 type="tertiary"
                 :text="$t('sector.managers.working_day.see_all_specific_dates')"
+                :disabled="!enableCustomHolidays.length"
                 @click="showCustomHolidaysModal = true"
               />
             </section>
@@ -303,7 +304,14 @@
     />
     <CustomHolidaysModal
       v-if="showCustomHolidaysModal"
+      :holidays="enableCustomHolidays"
+      @save="handleSaveCustomHolidays"
       @close="showCustomHolidaysModal = false"
+    />
+    <CreateCustomHolidayModal
+      v-if="showCreateCustomHolidayModal"
+      @close="showCreateCustomHolidayModal = false"
+      @add-custom-holidays="addCustomHolidays"
     />
   </section>
 </template>
@@ -319,6 +327,7 @@ import Group from '@/services/api/resources/settings/group';
 
 import CountryHolidaysModal from './modals/CountryHolidaysModal.vue';
 import CustomHolidaysModal from './modals/CustomHolidaysModal.vue';
+import CreateCustomHolidayModal from './modals/CreateCustomHolidayModal.vue';
 
 import { useProfile } from '@/store/modules/profile';
 import { useConfig } from '@/store/modules/config';
@@ -332,6 +341,7 @@ export default {
     SelectedMember,
     CountryHolidaysModal,
     CustomHolidaysModal,
+    CreateCustomHolidayModal,
   },
   props: {
     isEditing: {
@@ -351,10 +361,8 @@ export default {
       selectedManager: [],
       selectedProject: [],
       removedManagers: [],
-      message: '',
       managers: [],
       projects: [],
-      validHour: false,
       openModalDelete: false,
       managersPage: 0,
       managersLimitPerPage: 50,
@@ -422,6 +430,8 @@ export default {
       selectAllCountryHolidays: false,
       allCountryHolidays: [],
       enableCountryHolidays: [],
+      enableCustomHolidays: [],
+      showCreateCustomHolidayModal: false,
     };
   },
 
@@ -526,17 +536,9 @@ export default {
     },
 
     validForm() {
-      const { name, managers, workingDay, maxSimultaneousChatsByAgent } =
-        this.sector;
+      const { name, managers, maxSimultaneousChatsByAgent } = this.sector;
 
-      this.hourValidate(workingDay);
-
-      const commonValid = !!(
-        name.trim() &&
-        workingDay?.start &&
-        workingDay?.end &&
-        this.validHour
-      );
+      const commonValid = !!name.trim();
 
       const groupValid =
         !!this.selectedProject.length &&
@@ -619,6 +621,7 @@ export default {
 
     if (this.isEditing && !this.enableGroupsMode) {
       this.getSectorManagers();
+      this.getSectorAllHolidays();
     } else if (isDefaultSector) {
       this.useDefaultSector = 1;
     }
@@ -672,11 +675,6 @@ export default {
         this.sector = {
           ...this.sector,
           name: this.$t('config_chats.default_sector.name'),
-          workingDay: {
-            start: '08:00',
-            end: '18:00',
-            dayOfWeek: 'week-days',
-          },
           maxSimultaneousChatsByAgent: this.enableGroupsMode ? '' : '4',
           managers: this.enableGroupsMode ? [] : [meManager],
         };
@@ -684,14 +682,33 @@ export default {
         this.sector = {
           ...this.sector,
           name: '',
-          workingDay: {
-            start: '',
-            end: '',
-            dayOfWeek: '',
-          },
           maxSimultaneousChatsByAgent: '',
           managers: [],
         };
+      }
+    },
+
+    async getSectorAllHolidays() {
+      try {
+        const allHolidays = await Sector.getAllSectorHolidays(this.sector.uuid);
+
+        const activeCountryHolidays = allHolidays.filter(
+          (holiday) => !holiday.its_custom && holiday.disabled_open_room,
+        );
+
+        const customHolidays = allHolidays.filter(
+          (holiday) => holiday.its_custom,
+        );
+
+        // handle active country holidays
+        this.enableCountryHolidays = activeCountryHolidays.map(
+          (holiday) => holiday.date,
+        );
+
+        // handle custom holidays
+        this.enableCustomHolidays = customHolidays;
+      } catch (error) {
+        console.log(error);
       }
     },
 
@@ -849,7 +866,7 @@ export default {
       }
     },
 
-    saveSector() {
+    async saveSector() {
       const {
         uuid,
         name,
@@ -857,7 +874,6 @@ export default {
         can_edit_custom_fields,
         config,
         sign_messages,
-        workingDay,
         maxSimultaneousChatsByAgent,
       } = this.sector;
 
@@ -867,32 +883,30 @@ export default {
         can_edit_custom_fields,
         config,
         sign_messages,
-        work_start: workingDay.start,
-        work_end: workingDay.end,
         rooms_limit: maxSimultaneousChatsByAgent,
       };
 
-      Sector.update(uuid, sector)
-        .then(() => {
-          unnnic.unnnicCallAlert({
-            props: {
-              text: this.$t('sector_update_success'),
-              type: 'success',
-            },
-            seconds: 5,
-          });
-          this.$router.push('/settings');
-        })
-        .catch((error) => {
-          unnnic.unnnicCallAlert({
-            props: {
-              text: this.$t('sector_update_error'),
-              type: 'error',
-            },
-            seconds: 5,
-          });
-          console.log(error);
+      try {
+        await Sector.update(uuid, sector);
+        await this.saveWorkingDays();
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('sector_update_success'),
+            type: 'success',
+          },
+          seconds: 5,
         });
+        this.$router.push('/settings');
+      } catch (error) {
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('sector_update_error'),
+            type: 'error',
+          },
+          seconds: 5,
+        });
+        console.log(error);
+      }
     },
 
     async saveWorkingDays() {
@@ -909,6 +923,36 @@ export default {
 
     selectWorkdayDay(day) {
       this.selectedWorkdayDays[day] = !this.selectedWorkdayDays[day];
+      if (!this.selectedWorkdayDays[day]) {
+        this.selectedWorkdayDaysTime[day] = [{ start: '', end: '' }];
+      }
+    },
+
+    async addCustomHolidays(holidays) {
+      holidays.forEach((holiday) => {
+        this.enableCustomHolidays.push({
+          uuid: `${new Date().getTime()}-${holiday.date.start}-${holiday.date.end}`,
+          ...holiday,
+        });
+      });
+    },
+
+    async handleSaveCustomHolidays({ holidays, toRemove }) {
+      this.enableCustomHolidays = holidays;
+    },
+
+    async createCustomHolidays() {
+      const promises = this.enableCustomHolidays.map((holiday) =>
+        Sector.createSectorHoliday(this.sector.uuid, {
+          ...holiday,
+          uuid: undefined,
+        }),
+      );
+      await Promise.all(promises);
+    },
+
+    async deleteCustomHoliday(holidayId) {
+      await Sector.deleteSectorHoliday(this.sector.uuid, holidayId);
     },
   },
 };
@@ -1003,7 +1047,7 @@ fieldset {
       &__workday-time-config {
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: $unnnic-spacing-sm;
 
         &__day {
           display: flex;
