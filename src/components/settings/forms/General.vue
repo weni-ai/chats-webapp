@@ -616,6 +616,7 @@ export default {
         const defaultValue = {
           start: '',
           end: '',
+          valid: false,
         };
         this.selectedWorkdayDaysTime = {
           monday: [defaultValue],
@@ -788,10 +789,14 @@ export default {
           Object.keys(schedules).forEach((day) => {
             if (!schedules[day]) {
               this.selectedWorkdayDays[day] = false;
-              this.selectedWorkdayDaysTime[day] = [{ start: '', end: '' }];
+              this.selectedWorkdayDaysTime[day] = [
+                { start: '', end: '', valid: false },
+              ];
             } else {
               this.selectedWorkdayDays[day] = true;
-              this.selectedWorkdayDaysTime[day] = schedules[day];
+              this.selectedWorkdayDaysTime[day] = schedules[day].map(
+                (time) => ({ ...time, valid: true }),
+              );
             }
           });
         }
