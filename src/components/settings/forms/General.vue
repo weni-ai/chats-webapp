@@ -1029,14 +1029,22 @@ export default {
       this.enableCustomHolidays = holidays;
     },
 
-    async createCustomHolidays() {
-      const promises = this.enableCustomHolidays.map((holiday) =>
-        Sector.createSectorHoliday(this.sector.uuid, {
-          ...holiday,
-          uuid: undefined,
-        }),
+    async initCountryHolidays() {
+      await Sector.createCountryHolidays(
+        this.sector.uuid,
+        this.enableCountryHolidays,
       );
-      await Promise.all(promises);
+    },
+
+    async createCustomHolidays() {
+      const promisesCreateSectorHoliday = this.enableCustomHolidays.map(
+        (holiday) =>
+          Sector.createSectorHoliday(this.sector.uuid, {
+            ...holiday,
+            uuid: undefined,
+          }),
+      );
+      await Promise.all(promisesCreateSectorHoliday);
     },
 
     async deleteCustomHoliday(holidayId) {

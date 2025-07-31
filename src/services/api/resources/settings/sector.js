@@ -205,6 +205,17 @@ export default {
     return response.data;
   },
 
+  async updateCountryHoliday({ sector, holiday, active }) {
+    const response = await http.patch(
+      `/sector_holiday/${holiday}/`,
+      {
+        disabled_open_room: active,
+      },
+      { params: { sector } },
+    );
+    return response.data;
+  },
+
   async createSectorHoliday(sector, holiday) {
     const body = {
       ...holiday,

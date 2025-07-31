@@ -244,10 +244,9 @@ export default {
 
         await this.$refs.sectorGeneral.saveWorkingDays();
 
-        await Sector.createCountryHolidays(
-          createdSector.uuid,
-          this.$refs.sectorGeneral.enableCountryHolidays,
-        );
+        await this.$refs.sectorGeneral.initCountryHolidays();
+
+        await this.$refs.sectorGeneral.createCustomHolidays();
 
         await Promise.all(
           managers.map((manager) => {
