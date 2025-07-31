@@ -184,6 +184,7 @@
         "see_all_holidays": "Ver todos os feriados",
         "add_specific_dates": "Adicionar datas específicas",
         "see_all_specific_dates": "Ver todas as datas específicas",
+        "copy_to_all": "Copiar para todos os dias",
         "start": {
           "label": "Horário de início"
         },

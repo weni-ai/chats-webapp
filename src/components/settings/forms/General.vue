@@ -130,7 +130,7 @@
             </p>
             <section class="form-section__inputs__workday-time-config">
               <section
-                v-for="day in workdayDaysTimeOptions"
+                v-for="(day, dayIndex) in workdayDaysTimeOptions"
                 :key="day"
                 class="form-section__inputs__workday-time-config__day"
               >
@@ -143,8 +143,8 @@
                   class="form-section__inputs__workday-time-config__day__time"
                 >
                   <section
-                    v-for="(_time, index) in selectedWorkdayDaysTime[day]"
-                    :key="`${day}-${index}`"
+                    v-for="(time, timeIndex) in selectedWorkdayDaysTime[day]"
+                    :key="`${day}-${timeIndex}`"
                   >
                     <section
                       class="form-section__inputs__workday-time-config__day__time__container"
@@ -153,7 +153,9 @@
                         class="form-section__inputs__workday-time-config__day__time__container-item"
                       >
                         <UnnnicSelectTime
-                          v-model="selectedWorkdayDaysTime[day][index].start"
+                          v-model="
+                            selectedWorkdayDaysTime[day][timeIndex].start
+                          "
                           class="form-section__inputs__workday-time-config__day__time__input"
                           @update:model-value="resetSelectedCopySector"
                         />
@@ -163,12 +165,12 @@
                           {{ $t('to') }}
                         </p>
                         <UnnnicSelectTime
-                          v-model="selectedWorkdayDaysTime[day][index].end"
+                          v-model="selectedWorkdayDaysTime[day][timeIndex].end"
                           class="form-section__inputs__workday-time-config__day__time__input"
                           @update:model-value="resetSelectedCopySector"
                         />
                         <UnnnicButton
-                          v-if="index === 0"
+                          v-if="timeIndex === 0"
                           iconCenter="add-1"
                           type="secondary"
                           :disabled="selectedWorkdayDaysTime[day].length === 2"
@@ -183,8 +185,9 @@
                             }
                           "
                         />
+
                         <UnnnicButton
-                          v-if="index === 1"
+                          v-else-if="timeIndex === 1"
                           iconCenter="subtract-1"
                           type="secondary"
                           @click="
@@ -194,17 +197,30 @@
                             }
                           "
                         />
+                        <UnnnicButton
+                          v-if="
+                            dayIndex === 0 &&
+                            timeIndex === 0 &&
+                            selectedWorkdayDaysTime[day][0].start &&
+                            selectedWorkdayDaysTime[day][0].end &&
+                            workdayDaysTimeOptions.length > 1
+                          "
+                          :text="$t('sector.managers.working_day.copy_to_all')"
+                          iconLeft="copy-paste-1"
+                          type="tertiary"
+                          @click="copyToAllDays(day)"
+                        />
                       </section>
                       <p
                         v-if="
-                          !selectedWorkdayDaysTime[day][index].valid &&
-                          selectedWorkdayDaysTime[day][index].start &&
-                          selectedWorkdayDaysTime[day][index].end
+                          !selectedWorkdayDaysTime[day][timeIndex].valid &&
+                          selectedWorkdayDaysTime[day][timeIndex].start &&
+                          selectedWorkdayDaysTime[day][timeIndex].end
                         "
                         class="error-message"
                       >
                         {{
-                          selectedWorkdayDaysTime[day][index].start <
+                          selectedWorkdayDaysTime[day][timeIndex].start <
                           selectedWorkdayDaysTime[day][0]?.end
                             ? $t(
                                 'config_chats.edit_sector.invalid_start_second_hour',
@@ -566,11 +582,9 @@ export default {
     validForm() {
       const { name, managers, maxSimultaneousChatsByAgent } = this.sector;
 
-      const hasWorkday = Object.values(this.selectedWorkdayDays).some(
-        (active) => active,
-      );
+      const hasWorkday = this.workdayDaysTimeOptions.length >= 1;
 
-      const selectedDaysWorkdayTimes = Object.keys(this.selectedWorkdayDaysTime)
+      const selectedDaysWorkdayTimes = this.workdayDaysTimeOptions
         .map((day) => {
           if (this.selectedWorkdayDays[day]) {
             return this.selectedWorkdayDaysTime[day];
@@ -624,19 +638,25 @@ export default {
           wednesday: false,
           thursday: false,
           friday: false,
+          saturday: false,
+          sunday: false,
         };
         const defaultValue = {
           start: '',
           end: '',
           valid: false,
         };
-        this.selectedWorkdayDaysTime = {
-          monday: [defaultValue],
-          tuesday: [defaultValue],
-          wednesday: [defaultValue],
-          thursday: [defaultValue],
-          friday: [defaultValue],
-        };
+        this.selectedWorkdayDaysTime = JSON.parse(
+          JSON.stringify({
+            monday: [defaultValue],
+            tuesday: [defaultValue],
+            wednesday: [defaultValue],
+            thursday: [defaultValue],
+            friday: [defaultValue],
+            saturday: [defaultValue],
+            sunday: [defaultValue],
+          }),
+        );
       }
     },
     enableCountryHolidays: {
@@ -813,6 +833,15 @@ export default {
           });
         }
       }
+    },
+
+    copyToAllDays(day) {
+      const dayValues = this.selectedWorkdayDaysTime[day];
+      this.workdayDaysTimeOptions.forEach((day) => {
+        this.selectedWorkdayDaysTime[day] = JSON.parse(
+          JSON.stringify(dayValues),
+        );
+      });
     },
 
     async removeManager(managerUuid) {
