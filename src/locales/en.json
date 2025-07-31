@@ -727,7 +727,8 @@
     "edit_sector": {
       "description": "Determine General Team Settings and Workday",
       "tag_already_exists": "A tag with that name already exists",
-      "invalid_hours": "Start time cannot be greater/equal to end time"
+      "invalid_hours": "Start time cannot be greater/equal to end time",
+      "invalid_start_second_hour": "Start time of the second period must be greater than or equal to end time of the first period."
     },
     "custom_queue": "Create a custom queue",
     "default_queue": {

@@ -729,7 +729,8 @@
     "edit_sector": {
       "description": "Determine configurações gerais da equipe e jornada de trabalho",
       "tag_already_exists": "Já existe uma tag com esse nome",
-      "invalid_hours": "Horário de início não pode ser maior/igual que horário final"
+      "invalid_hours": "Horário de início não pode ser maior/igual que horário final",
+      "invalid_start_second_hour": "O horário de início do segundo período deve ser maior ou igual ao horário de término do primeiro período."
     },
     "custom_queue": "Criar uma fila personalizada",
     "default_queue": {

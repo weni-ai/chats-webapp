@@ -155,12 +155,7 @@
                         <UnnnicSelectTime
                           v-model="selectedWorkdayDaysTime[day][index].start"
                           class="form-section__inputs__workday-time-config__day__time__input"
-                          @update:model-value="
-                            () => {
-                              resetSelectedCopySector();
-                              validateWorkdayTime(day, index);
-                            }
-                          "
+                          @update:model-value="resetSelectedCopySector"
                         />
                         <p
                           class="form-section__inputs__workday-time-config__day__time__to"
@@ -170,12 +165,7 @@
                         <UnnnicSelectTime
                           v-model="selectedWorkdayDaysTime[day][index].end"
                           class="form-section__inputs__workday-time-config__day__time__input"
-                          @update:model-value="
-                            () => {
-                              resetSelectedCopySector();
-                              validateWorkdayTime(day, index);
-                            }
-                          "
+                          @update:model-value="resetSelectedCopySector"
                         />
                         <UnnnicButton
                           v-if="index === 0"
@@ -213,7 +203,14 @@
                         "
                         class="error-message"
                       >
-                        {{ $t('config_chats.edit_sector.invalid_hours') }}
+                        {{
+                          selectedWorkdayDaysTime[day][index].start <
+                          selectedWorkdayDaysTime[day][0]?.end
+                            ? $t(
+                                'config_chats.edit_sector.invalid_start_second_hour',
+                              )
+                            : $t('config_chats.edit_sector.invalid_hours')
+                        }}
                       </p>
                     </section>
                   </section>
@@ -603,6 +600,17 @@ export default {
   },
 
   watch: {
+    selectedWorkdayDaysTime: {
+      deep: true,
+      handler() {
+        const daysTimes = Object.entries(this.selectedWorkdayDaysTime);
+        daysTimes.forEach(([day, timesConfig]) => {
+          timesConfig.forEach((_timeConfig, index) => {
+            this.validateWorkdayTime(day, index);
+          });
+        });
+      },
+    },
     copyWorkday(value) {
       this.copyWorkdaySector = [];
       if (!value && !this.copyWorkdaySector[0]?.value) {
@@ -911,6 +919,15 @@ export default {
 
     validateWorkdayTime(day, index) {
       const { start, end } = this.selectedWorkdayDaysTime[day][index];
+
+      if (index === 1) {
+        const firstTime = this.selectedWorkdayDaysTime[day][0];
+        if (start < firstTime.end) {
+          this.selectedWorkdayDaysTime[day][index].valid = false;
+          return;
+        }
+      }
+
       if (start >= end) {
         this.selectedWorkdayDaysTime[day][index].valid = false;
       } else {
