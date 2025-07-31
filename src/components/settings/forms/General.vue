@@ -566,6 +566,10 @@ export default {
     validForm() {
       const { name, managers, maxSimultaneousChatsByAgent } = this.sector;
 
+      const hasWorkday = Object.values(this.selectedWorkdayDays).some(
+        (active) => active,
+      );
+
       const selectedDaysWorkdayTimes = Object.keys(this.selectedWorkdayDaysTime)
         .map((day) => {
           if (this.selectedWorkdayDays[day]) {
@@ -579,7 +583,7 @@ export default {
         (time) => time.valid,
       );
 
-      const commonValid = !!(name.trim() && validAllWorkdayTime);
+      const commonValid = !!(name.trim() && validAllWorkdayTime && hasWorkday);
 
       const groupValid =
         !!this.selectedProject.length &&
