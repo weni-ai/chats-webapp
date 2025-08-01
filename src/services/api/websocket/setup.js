@@ -159,7 +159,8 @@ export default class WebSocketSetup {
 
     this.connect();
 
-    this.reloadRoomsAndDiscussions();
+    // temporarily disabled to avoid reloading rooms and discussions
+    // this.reloadRoomsAndDiscussions();
 
     const sessionStorageStatus = sessionStorage.getItem(
       `statusAgent-${this.app.appProject}`,
