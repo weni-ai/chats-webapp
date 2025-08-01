@@ -7,7 +7,7 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 
 export default class WebSocketSetup {
-  FIVE_SECONDS = 5000;
+  THIRTY_SECONDS = 30000;
   BASE_RECONNECT_DELAY = 5000; // 5 seconds
   MAX_RECONNECT_DELAY = 60000; // 60 seconds
 
@@ -129,7 +129,7 @@ export default class WebSocketSetup {
 
     this.pingIntervalId = setInterval(() => {
       this.ping();
-    }, this.FIVE_SECONDS);
+    }, this.THIRTY_SECONDS);
   }
 
   clearPingInterval() {
