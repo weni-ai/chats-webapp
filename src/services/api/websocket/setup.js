@@ -8,12 +8,14 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 
 export default class WebSocketSetup {
   THIRTY_SECONDS = 30000;
-  FIVE_SECONDS = 5000;
+  BASE_RECONNECT_DELAY = 5000; // 5 seconds
+  MAX_RECONNECT_DELAY = 60000; // 60 seconds
 
   constructor({ app }) {
     this.app = app;
     this.pingIntervalId = null;
     this.isFirstReconnectAttempt = true;
+    this.reconnectAttempts = 0;
   }
 
   reloadRoomsAndDiscussions() {
@@ -50,6 +52,20 @@ export default class WebSocketSetup {
     });
   }
 
+  calculateReconnectDelay() {
+    // Exponential backoff: delay = baseDelay * (2 ^ attempts) + random jitter
+    const exponentialDelay =
+      this.BASE_RECONNECT_DELAY * Math.pow(2, this.reconnectAttempts);
+
+    // Add random jitter (0-1000ms) to prevent thundering herd
+    const jitter = Math.random() * 1000;
+
+    // Cap at maximum delay
+    const delay = Math.min(exponentialDelay + jitter, this.MAX_RECONNECT_DELAY);
+
+    return Math.floor(delay);
+  }
+
   buildUrl() {
     const dashboardStore = useDashboard();
     const { appToken, appProject } = this.app;
@@ -82,14 +98,26 @@ export default class WebSocketSetup {
         this.isFirstReconnectAttempt = false;
         this.reconnect();
       } else {
+        const delay = this.calculateReconnectDelay();
+        this.reconnectAttempts++;
+
+        console.warn(
+          timestamp,
+          `[WebSocket] Reconnect attempt ${this.reconnectAttempts}, waiting ${delay}ms...`,
+        );
+
         setTimeout(() => {
           this.reconnect();
-        }, this.FIVE_SECONDS);
+        }, delay);
       }
     };
 
     this.ws.ws.onopen = () => {
       this.isFirstReconnectAttempt = true;
+      this.reconnectAttempts = 0; // Reset attempts counter on successful connection
+
+      const timestamp = new Date().toISOString();
+      console.log(timestamp, '[WebSocket] Connection established successfully');
     };
 
     listeners({ ws, app: this.app });
@@ -118,6 +146,8 @@ export default class WebSocketSetup {
         message: {},
       });
     } else {
+      // Reset first attempt flag so exponential backoff applies
+      this.isFirstReconnectAttempt = false;
       this.reconnect();
     }
   }
@@ -129,7 +159,8 @@ export default class WebSocketSetup {
 
     this.connect();
 
-    this.reloadRoomsAndDiscussions();
+    // temporarily disabled to avoid reloading rooms and discussions
+    // this.reloadRoomsAndDiscussions();
 
     const sessionStorageStatus = sessionStorage.getItem(
       `statusAgent-${this.app.appProject}`,
