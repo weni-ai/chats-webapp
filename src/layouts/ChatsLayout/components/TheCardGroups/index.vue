@@ -198,7 +198,7 @@ export default {
         discussion: 0,
         search: 0,
       },
-      limit: 100,
+      limit: 30,
       nameOfContact: '',
       timerId: 0,
       showLoadingRooms: false,
