@@ -896,7 +896,7 @@ describe('TheCardGroups.vue', () => {
         offset: 0,
         concat: undefined,
         order: '-last_interaction',
-        limit: 100,
+        limit: 30,
         contact: '',
         viewedAgent: 'test-agent',
         roomsType: '',
