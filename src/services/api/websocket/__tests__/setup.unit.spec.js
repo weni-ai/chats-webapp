@@ -92,21 +92,94 @@ describe('WebSocketSetup', () => {
   });
 
   describe('connect', () => {
-    it('should initialize WS with the correct URL and call listeners', () => {
+    it('should initialize WS with the correct URL and call listeners', async () => {
       const spySetupPingInterval = vi.spyOn(
         webSocketSetup,
         'setupPingInterval',
       );
       webSocketSetup.buildUrl = vi.fn().mockReturnValue('mockUrl');
 
-      webSocketSetup.connect();
+      // Mock the WebSocket to trigger onopen immediately
+      const mockWS = {
+        ws: {
+          readyState: 1,
+          OPEN: 1,
+          CLOSED: 3,
+          close: vi.fn(),
+          send: vi.fn(),
+          onclose: null,
+          onopen: null,
+          onerror: null,
+        },
+        send: vi.fn(),
+        on: vi.fn(),
+      };
 
+      WS.mockReturnValue(mockWS);
+
+      const connectPromise = webSocketSetup.connect();
+
+      // Simulate successful connection
+      if (mockWS.ws.onopen) {
+        mockWS.ws.onopen();
+      }
+
+      const result = await connectPromise;
+
+      expect(result).toBe(true);
       expect(WS).toHaveBeenCalledWith('mockUrl');
       expect(listeners).toHaveBeenCalledWith({
         ws: webSocketSetup.ws,
         app: mockApp,
       });
       expect(spySetupPingInterval).toHaveBeenCalled();
+    });
+
+    it('should return false on connection timeout', async () => {
+      vi.useFakeTimers();
+      webSocketSetup.buildUrl = vi.fn().mockReturnValue('mockUrl');
+
+      const connectPromise = webSocketSetup.connect();
+
+      // Fast-forward past the timeout
+      vi.advanceTimersByTime(10000);
+
+      const result = await connectPromise;
+
+      expect(result).toBe(false);
+      vi.useRealTimers();
+    });
+
+    it('should return false on connection error', async () => {
+      webSocketSetup.buildUrl = vi.fn().mockReturnValue('mockUrl');
+
+      const mockWS = {
+        ws: {
+          readyState: 1,
+          OPEN: 1,
+          CLOSED: 3,
+          close: vi.fn(),
+          send: vi.fn(),
+          onclose: null,
+          onopen: null,
+          onerror: null,
+        },
+        send: vi.fn(),
+        on: vi.fn(),
+      };
+
+      WS.mockReturnValue(mockWS);
+
+      const connectPromise = webSocketSetup.connect();
+
+      // Simulate connection error
+      if (mockWS.ws.onerror) {
+        mockWS.ws.onerror(new Error('Connection failed'));
+      }
+
+      const result = await connectPromise;
+
+      expect(result).toBe(false);
     });
   });
 
@@ -163,22 +236,37 @@ describe('WebSocketSetup', () => {
   });
 
   describe('reconnect', () => {
-    it('should close the current WebSocket and call connect', () => {
-      const spyConnect = vi.spyOn(webSocketSetup, 'connect');
+    it('should close the current WebSocket and call connect', async () => {
+      const spyConnect = vi
+        .spyOn(webSocketSetup, 'connect')
+        .mockResolvedValue(true);
       const spyClose = vi.spyOn(webSocketSetup.ws.ws, 'close');
 
-      webSocketSetup.reconnect();
+      const result = await webSocketSetup.reconnect();
 
       expect(spyClose).toHaveBeenCalled();
       expect(spyConnect).toHaveBeenCalled();
+      expect(result).toBe(true);
     });
 
-    it('should update user status from sessionStorage', () => {
+    it('should update user status from sessionStorage on successful connection', async () => {
       sessionStorage.setItem('statusAgent-mockProject', 'mockStatus');
+      vi.spyOn(webSocketSetup, 'connect').mockResolvedValue(true);
 
-      webSocketSetup.reconnect();
+      await webSocketSetup.reconnect();
 
       expect(mockApp.updateUserStatus).toHaveBeenCalledWith('mockStatus');
+    });
+
+    it('should not update user status on failed connection', async () => {
+      // Reset the mock to clear any previous calls
+      mockApp.updateUserStatus.mockClear();
+      sessionStorage.setItem('statusAgent-mockProject', 'mockStatus');
+      vi.spyOn(webSocketSetup, 'connect').mockResolvedValue(false);
+
+      await webSocketSetup.reconnect();
+
+      expect(mockApp.updateUserStatus).not.toHaveBeenCalled();
     });
   });
 });
