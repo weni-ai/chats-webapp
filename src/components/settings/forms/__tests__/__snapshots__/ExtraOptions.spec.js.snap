@@ -19,9 +19,9 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
         </svg><span data-v-8c61d974="" class="unnnic-tooltip-label unnnic-tooltip-label-right" style="max-width: 23rem; left: 8px; top: 0px;" data-testid="tooltip-label">Tags are used to classify service characteristics and make it possible to search and filter chats from them, define tags that are relevant to your context <br data-v-8c61d974=""><!----></span></div>
     </h2>
     <section data-v-85728205="" class="tags-form">
-      <div data-v-24f2d284="" data-v-85728205="" class="unnnic-form md tags-form__input" data-testid="tags-input-tag-name">
-        <p data-v-24f2d284="" class="unnnic-form__label">Tag name</p>
-        <div data-v-c1401a33="" data-v-24f2d284="" class="text-input size--md text-input--icon-right-size-sm tags-form__input unnnic-form-input" data-testid="tags-input-tag-name" mask=""><input data-v-0caa2ccb="" data-v-c1401a33="" class="tags-form__input unnnic-form-input input-itself input size-md normal tags-form__input unnnic-form-input input-itself" data-testid="tags-input-tag-name" placeholder="Example: Doubts" iconrightsize="sm" hascloudycolor="false" type="text" value="">
+      <div data-v-fefd47bc="" data-v-85728205="" class="unnnic-form md tags-form__input" data-testid="tags-input-tag-name">
+        <p data-v-fefd47bc="" class="unnnic-form__label">Tag name</p>
+        <div data-v-c1401a33="" data-v-fefd47bc="" class="text-input size--md text-input--icon-right-size-sm tags-form__input unnnic-form-input" data-testid="tags-input-tag-name" mask=""><input data-v-0caa2ccb="" data-v-c1401a33="" class="tags-form__input unnnic-form-input input-itself input size-md normal tags-form__input unnnic-form-input input-itself" data-testid="tags-input-tag-name" placeholder="Example: Doubts" iconrightsize="sm" hascloudycolor="false" type="text" value="">
           <!---->
           <!---->
         </div>
