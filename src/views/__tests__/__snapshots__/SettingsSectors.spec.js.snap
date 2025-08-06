@@ -33,13 +33,13 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
     <div
       class="unnnic-form md"
       data-v-1088b44f=""
-      data-v-24f2d284=""
+      data-v-fefd47bc=""
     >
       <!---->
       <div
         class="text-input size--md text-input--icon-right-size-sm unnnic-form-input"
-        data-v-24f2d284=""
         data-v-c1401a33=""
+        data-v-fefd47bc=""
         mask=""
       >
         <input

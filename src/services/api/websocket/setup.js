@@ -10,6 +10,7 @@ export default class WebSocketSetup {
   THIRTY_SECONDS = 30000;
   BASE_RECONNECT_DELAY = 5000; // 5 seconds
   MAX_RECONNECT_DELAY = 60000; // 60 seconds
+  MAX_RECONNECT_ATTEMPTS = 5;
 
   constructor({ app }) {
     this.app = app;
@@ -23,10 +24,12 @@ export default class WebSocketSetup {
     const discussionsStore = useDiscussions();
     const dashboardStore = useDashboard();
     const { viewedAgent } = dashboardStore;
+    const limit = 30;
+
     roomsStore.getAll({
       offset: 0,
       concat: true,
-      limit: 100,
+      limit,
       roomsType: 'ongoing',
       order: roomsStore.orderBy.ongoing,
       viewedAgent: viewedAgent?.email,
@@ -34,7 +37,7 @@ export default class WebSocketSetup {
     roomsStore.getAll({
       offset: 0,
       concat: true,
-      limit: 100,
+      limit,
       roomsType: 'waiting',
       order: roomsStore.orderBy.waiting,
       viewedAgent: viewedAgent?.email,
@@ -42,7 +45,7 @@ export default class WebSocketSetup {
     roomsStore.getAll({
       offset: 0,
       concat: true,
-      limit: 100,
+      limit,
       roomsType: 'flow_start',
       order: roomsStore.orderBy.flow_start,
       viewedAgent: viewedAgent?.email,
@@ -96,12 +99,12 @@ export default class WebSocketSetup {
         if (this.ws.ws.readyState === this.ws.ws.OPEN) return;
 
         const timestamp = new Date().toISOString();
-        console.warn(
-          timestamp,
-          '[WebSocket] Connection closed, attempting to reconnect...',
-        );
 
         if (this.isFirstReconnectAttempt) {
+          console.warn(
+            timestamp,
+            '[WebSocket] Connection closed, attempting to reconnect...',
+          );
           this.isFirstReconnectAttempt = false;
           await this.reconnect();
         } else {
@@ -122,7 +125,7 @@ export default class WebSocketSetup {
       this.ws.ws.onopen = () => {
         clearTimeout(connectionTimeout);
         this.isFirstReconnectAttempt = true;
-        this.reconnectAttempts = 0;
+        this.reconnectAttempts = 0; // Reset attempts counter on successful connection
 
         const timestamp = new Date().toISOString();
         console.log(
@@ -173,6 +176,13 @@ export default class WebSocketSetup {
   }
 
   async reconnect() {
+    if (this.reconnectAttempts >= this.MAX_RECONNECT_ATTEMPTS) {
+      console.warn(
+        '[WebSocket] Max reconnect attempts reached, stopping reconnect attempts',
+      );
+      return;
+    }
+
     if (this.ws && this.ws.ws.readyState !== this.ws.ws.CLOSED) {
       this.ws.ws.close();
     }
@@ -181,8 +191,7 @@ export default class WebSocketSetup {
 
     if (connected) {
       // Only execute these operations if connection was successful
-      // temporarily disabled to avoid reloading rooms and discussions
-      // this.reloadRoomsAndDiscussions();
+      this.reloadRoomsAndDiscussions();
 
       const sessionStorageStatus = sessionStorage.getItem(
         `statusAgent-${this.app.appProject}`,
