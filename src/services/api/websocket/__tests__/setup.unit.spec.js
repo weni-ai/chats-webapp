@@ -99,7 +99,6 @@ describe('WebSocketSetup', () => {
       );
       webSocketSetup.buildUrl = vi.fn().mockReturnValue('mockUrl');
 
-      // Mock the WebSocket to trigger onopen immediately
       const mockWS = {
         ws: {
           readyState: 1,
@@ -119,7 +118,6 @@ describe('WebSocketSetup', () => {
 
       const connectPromise = webSocketSetup.connect();
 
-      // Simulate successful connection
       if (mockWS.ws.onopen) {
         mockWS.ws.onopen();
       }
@@ -133,6 +131,8 @@ describe('WebSocketSetup', () => {
         app: mockApp,
       });
       expect(spySetupPingInterval).toHaveBeenCalled();
+      expect(webSocketSetup.isFirstReconnectAttempt).toBe(true);
+      expect(webSocketSetup.reconnectAttempts).toBe(0);
     });
 
     it('should return false on connection timeout', async () => {
@@ -141,7 +141,6 @@ describe('WebSocketSetup', () => {
 
       const connectPromise = webSocketSetup.connect();
 
-      // Fast-forward past the timeout
       vi.advanceTimersByTime(10000);
 
       const result = await connectPromise;
@@ -172,7 +171,6 @@ describe('WebSocketSetup', () => {
 
       const connectPromise = webSocketSetup.connect();
 
-      // Simulate connection error
       if (mockWS.ws.onerror) {
         mockWS.ws.onerror(new Error('Connection failed'));
       }
@@ -199,18 +197,38 @@ describe('WebSocketSetup', () => {
   });
 
   describe('ping', () => {
-    it('should call reconnect if WebSocket is not open', () => {
-      const spyReconnect = vi.spyOn(webSocketSetup, 'reconnect');
+    it('should send ping message when WebSocket is open', async () => {
       webSocketSetup.ws = {
+        send: vi.fn(),
         ws: {
-          readyState: WebSocket.CLOSED,
-          CLOSED: WebSocket.CLOSED,
-          close: vi.fn(),
+          readyState: 1,
+          OPEN: 1,
         },
       };
 
-      webSocketSetup.ping();
+      await webSocketSetup.ping();
 
+      expect(webSocketSetup.ws.send).toHaveBeenCalledWith({
+        type: 'ping',
+        message: {},
+      });
+    });
+
+    it('should call reconnect if WebSocket is not open', async () => {
+      const spyReconnect = vi
+        .spyOn(webSocketSetup, 'reconnect')
+        .mockResolvedValue(true);
+      webSocketSetup.ws = {
+        ws: {
+          readyState: 3,
+          OPEN: 1,
+          CLOSED: 3,
+        },
+      };
+
+      await webSocketSetup.ping();
+
+      expect(webSocketSetup.isFirstReconnectAttempt).toBe(false);
       expect(spyReconnect).toHaveBeenCalled();
     });
   });
@@ -241,17 +259,23 @@ describe('WebSocketSetup', () => {
         .spyOn(webSocketSetup, 'connect')
         .mockResolvedValue(true);
       const spyClose = vi.spyOn(webSocketSetup.ws.ws, 'close');
+      const spyReloadRoomsAndDiscussions = vi.spyOn(
+        webSocketSetup,
+        'reloadRoomsAndDiscussions',
+      );
 
       const result = await webSocketSetup.reconnect();
 
       expect(spyClose).toHaveBeenCalled();
       expect(spyConnect).toHaveBeenCalled();
+      expect(spyReloadRoomsAndDiscussions).toHaveBeenCalled();
       expect(result).toBe(true);
     });
 
     it('should update user status from sessionStorage on successful connection', async () => {
       sessionStorage.setItem('statusAgent-mockProject', 'mockStatus');
       vi.spyOn(webSocketSetup, 'connect').mockResolvedValue(true);
+      vi.spyOn(webSocketSetup, 'reloadRoomsAndDiscussions');
 
       await webSocketSetup.reconnect();
 
@@ -259,14 +283,198 @@ describe('WebSocketSetup', () => {
     });
 
     it('should not update user status on failed connection', async () => {
-      // Reset the mock to clear any previous calls
       mockApp.updateUserStatus.mockClear();
       sessionStorage.setItem('statusAgent-mockProject', 'mockStatus');
       vi.spyOn(webSocketSetup, 'connect').mockResolvedValue(false);
+      const spyReloadRoomsAndDiscussions = vi.spyOn(
+        webSocketSetup,
+        'reloadRoomsAndDiscussions',
+      );
 
       await webSocketSetup.reconnect();
 
       expect(mockApp.updateUserStatus).not.toHaveBeenCalled();
+      expect(spyReloadRoomsAndDiscussions).not.toHaveBeenCalled();
+    });
+
+    it('should return early if max reconnect attempts reached', async () => {
+      webSocketSetup.reconnectAttempts = 5;
+      const spyConnect = vi.spyOn(webSocketSetup, 'connect');
+      const consoleWarnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {});
+
+      const result = await webSocketSetup.reconnect();
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        '[WebSocket] Max reconnect attempts reached, stopping reconnect attempts',
+      );
+      expect(spyConnect).not.toHaveBeenCalled();
+      expect(result).toBeUndefined();
+
+      consoleWarnSpy.mockRestore();
+    });
+
+    it('should not close WebSocket if already closed', async () => {
+      webSocketSetup.ws.ws.readyState = 3;
+      webSocketSetup.ws.ws.CLOSED = 3;
+      const spyClose = vi.spyOn(webSocketSetup.ws.ws, 'close');
+      vi.spyOn(webSocketSetup, 'connect').mockResolvedValue(true);
+
+      await webSocketSetup.reconnect();
+
+      expect(spyClose).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('calculateReconnectDelay', () => {
+    it('should calculate exponential backoff delay', () => {
+      webSocketSetup.reconnectAttempts = 1;
+      const delay = webSocketSetup.calculateReconnectDelay();
+
+      expect(delay).toBeGreaterThanOrEqual(10000);
+      expect(delay).toBeLessThanOrEqual(11000);
+    });
+
+    it('should cap delay at maximum value', () => {
+      webSocketSetup.reconnectAttempts = 10;
+      const delay = webSocketSetup.calculateReconnectDelay();
+
+      expect(delay).toBeLessThanOrEqual(webSocketSetup.MAX_RECONNECT_DELAY);
+    });
+
+    it('should add random jitter', () => {
+      webSocketSetup.reconnectAttempts = 0;
+      const delay1 = webSocketSetup.calculateReconnectDelay();
+      const delay2 = webSocketSetup.calculateReconnectDelay();
+
+      expect(delay1).toBeGreaterThanOrEqual(
+        webSocketSetup.BASE_RECONNECT_DELAY,
+      );
+      expect(delay2).toBeGreaterThanOrEqual(
+        webSocketSetup.BASE_RECONNECT_DELAY,
+      );
+    });
+  });
+
+  describe('reloadRoomsAndDiscussions', () => {
+    it('should reload rooms and discussions with correct parameters', () => {
+      dashboardStore.viewedAgent = { email: 'test@example.com' };
+
+      webSocketSetup.reloadRoomsAndDiscussions();
+
+      expect(roomsStore.getAll).toHaveBeenCalledTimes(3);
+      expect(roomsStore.getAll).toHaveBeenCalledWith({
+        offset: 0,
+        concat: true,
+        limit: 30,
+        roomsType: 'ongoing',
+        order: roomsStore.orderBy.ongoing,
+        viewedAgent: 'test@example.com',
+      });
+      expect(roomsStore.getAll).toHaveBeenCalledWith({
+        offset: 0,
+        concat: true,
+        limit: 30,
+        roomsType: 'waiting',
+        order: roomsStore.orderBy.waiting,
+        viewedAgent: 'test@example.com',
+      });
+      expect(roomsStore.getAll).toHaveBeenCalledWith({
+        offset: 0,
+        concat: true,
+        limit: 30,
+        roomsType: 'flow_start',
+        order: roomsStore.orderBy.flow_start,
+        viewedAgent: 'test@example.com',
+      });
+      expect(discussionsStore.getAll).toHaveBeenCalledWith({
+        viewedAgent: 'test@example.com',
+      });
+    });
+  });
+
+  describe('onclose handler', () => {
+    it('should handle first reconnect attempt without delay', async () => {
+      webSocketSetup.buildUrl = vi.fn().mockReturnValue('mockUrl');
+      const spyReconnect = vi
+        .spyOn(webSocketSetup, 'reconnect')
+        .mockResolvedValue(true);
+
+      const mockWS = {
+        ws: {
+          readyState: 3,
+          OPEN: 1,
+          CLOSED: 3,
+          close: vi.fn(),
+          send: vi.fn(),
+          onclose: null,
+          onopen: null,
+          onerror: null,
+        },
+        send: vi.fn(),
+        on: vi.fn(),
+      };
+
+      WS.mockReturnValue(mockWS);
+      webSocketSetup.isFirstReconnectAttempt = true;
+
+      webSocketSetup.connect();
+
+      expect(mockWS.ws.onclose).toBeDefined();
+      await mockWS.ws.onclose();
+
+      expect(webSocketSetup.isFirstReconnectAttempt).toBe(false);
+      expect(spyReconnect).toHaveBeenCalled();
+    });
+
+    it('should handle subsequent reconnect attempts with delay', async () => {
+      vi.useFakeTimers();
+      webSocketSetup.buildUrl = vi.fn().mockReturnValue('mockUrl');
+      const spyReconnect = vi
+        .spyOn(webSocketSetup, 'reconnect')
+        .mockResolvedValue(true);
+      const consoleWarnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {});
+
+      const mockWS = {
+        ws: {
+          readyState: 3,
+          OPEN: 1,
+          CLOSED: 3,
+          close: vi.fn(),
+          send: vi.fn(),
+          onclose: null,
+          onopen: null,
+          onerror: null,
+        },
+        send: vi.fn(),
+        on: vi.fn(),
+      };
+
+      WS.mockReturnValue(mockWS);
+      webSocketSetup.isFirstReconnectAttempt = false;
+      webSocketSetup.reconnectAttempts = 0;
+
+      webSocketSetup.connect();
+
+      if (mockWS.ws.onclose) {
+        await mockWS.ws.onclose();
+      }
+
+      expect(webSocketSetup.reconnectAttempts).toBe(1);
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.stringContaining('[WebSocket] Reconnect attempt 1, waiting'),
+      );
+
+      vi.advanceTimersByTime(6000);
+
+      expect(spyReconnect).toHaveBeenCalled();
+
+      consoleWarnSpy.mockRestore();
+      vi.useRealTimers();
     });
   });
 });
