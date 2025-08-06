@@ -737,7 +737,34 @@ export default {
 
     updateDefaultSectorValue(activate) {
       this.useDefaultSector = activate;
+      const defaultWorkTime = { start: '08:00', end: '18:00', valid: true };
+      const emptyWorkTime = {
+        start: '',
+        end: '',
+        valid: false,
+      };
       if (activate) {
+        this.selectedWorkdayDays = {
+          monday: true,
+          tuesday: true,
+          wednesday: true,
+          thursday: true,
+          friday: true,
+          saturday: false,
+          sunday: false,
+        };
+        this.selectedWorkdayDaysTime = JSON.parse(
+          JSON.stringify({
+            monday: [defaultWorkTime],
+            tuesday: [defaultWorkTime],
+            wednesday: [defaultWorkTime],
+            thursday: [defaultWorkTime],
+            friday: [defaultWorkTime],
+            saturday: [emptyWorkTime],
+            sunday: [emptyWorkTime],
+          }),
+        );
+        this.handleSelectAllCountryHolidays(true);
         const meManager = this.managers.find(
           (manager) => manager.user.email === this.me.email,
         );
@@ -748,6 +775,27 @@ export default {
           managers: this.enableGroupsMode ? [] : [meManager],
         };
       } else {
+        this.selectedWorkdayDays = {
+          monday: false,
+          tuesday: false,
+          wednesday: false,
+          thursday: false,
+          friday: false,
+          saturday: false,
+          sunday: false,
+        };
+        this.selectedWorkdayDaysTime = JSON.parse(
+          JSON.stringify({
+            monday: [emptyWorkTime],
+            tuesday: [emptyWorkTime],
+            wednesday: [emptyWorkTime],
+            thursday: [emptyWorkTime],
+            friday: [emptyWorkTime],
+            saturday: [emptyWorkTime],
+            sunday: [emptyWorkTime],
+          }),
+        );
+        this.handleSelectAllCountryHolidays(false);
         this.sector = {
           ...this.sector,
           name: '',
