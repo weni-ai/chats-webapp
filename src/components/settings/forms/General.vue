@@ -819,13 +819,24 @@ export default {
       try {
         const allHolidays = await Sector.getAllSectorHolidays(this.sector.uuid);
 
-        const activeCountryHolidays = allHolidays.filter(
-          (holiday) => !holiday.its_custom && holiday.disabled_open_room,
+        const activeCountryHolidays = [];
+        const inactiveCountryHolidays = [];
+
+        const countryHolidays = allHolidays.filter(
+          (holiday) => !holiday.its_custom,
         );
 
-        const inactiveCountryHolidays = allHolidays.filter(
-          (holiday) => !holiday.its_custom && !holiday.disabled_open_room,
-        );
+        this.allCountryHolidays = countryHolidays.map((holiday) => ({
+          uuid: holiday.uuid,
+          name: holiday.description,
+          date: holiday.date,
+        }));
+
+        countryHolidays.forEach((sectorCountryHoliday) => {
+          return sectorCountryHoliday.disabled_open_room
+            ? activeCountryHolidays.push(sectorCountryHoliday)
+            : inactiveCountryHolidays.push(sectorCountryHoliday);
+        });
 
         const customHolidays = allHolidays.filter(
           (holiday) => holiday.its_custom,

@@ -45,6 +45,14 @@ export default {
       internalEnableHolidays: this.enableHolidays,
     };
   },
+  computed: {
+    key() {
+      return this.isEditing ? 'uuid' : 'date';
+    },
+  },
+  mounted() {
+    console.log(this.holidays);
+  },
   methods: {
     formatHolidayLabel(holiday) {
       if (!holiday.date) return holiday.name;
