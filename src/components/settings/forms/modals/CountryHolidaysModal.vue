@@ -39,7 +39,7 @@ export default {
       default: false,
     },
   },
-  emits: ['close', 'update:enable-holidays'],
+  emits: ['close', 'update:enable-holidays', 'update:disabled-holidays'],
   data() {
     return {
       internalEnableHolidays: this.enableHolidays,
@@ -67,6 +67,12 @@ export default {
     },
     handleSave() {
       this.$emit('update:enable-holidays', this.internalEnableHolidays);
+      this.$emit(
+        'update:disabled-holidays',
+        this.holidays.filter(
+          (holiday) => !this.internalEnableHolidays.includes(holiday.date),
+        ),
+      );
       this.$emit('close');
     },
   },

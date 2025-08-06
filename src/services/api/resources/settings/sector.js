@@ -196,20 +196,21 @@ export default {
     return response.data;
   },
 
-  async createCountryHolidays(sector, holidays) {
+  async createCountryHolidays(sector, { enabled_holidays, disabled_holidays }) {
     const response = await http.post(
       '/sector_holiday/import_official_holidays/',
-      { enabled_holidays: holidays },
+      { enabled_holidays, disabled_holidays },
       { params: { sector } },
     );
     return response.data;
   },
 
-  async updateCountryHoliday({ sector, holiday, active }) {
+  async updateCountryHoliday(sector, { enabled_holidays, disabled_holidays }) {
     const response = await http.patch(
-      `/sector_holiday/${holiday}/`,
+      `/sector_holiday/official_holidays/`,
       {
-        disabled_open_room: active,
+        enabled_holidays,
+        disabled_holidays,
       },
       { params: { sector } },
     );

@@ -341,6 +341,7 @@
       :enableHolidays="enableCountryHolidays"
       :isEditing="isEditing"
       @update:enable-holidays="enableCountryHolidays = $event"
+      @update:disabled-holidays="disabledCountryHolidays = $event"
       @close="showCountryHolidaysModal = false"
     />
     <CustomHolidaysModal
@@ -474,6 +475,7 @@ export default {
       selectAllCountryHolidays: false,
       allCountryHolidays: [],
       enableCountryHolidays: [],
+      disabledCountryHolidays: [],
       enableCustomHolidays: [],
       showCreateCustomHolidayModal: false,
     };
@@ -683,7 +685,11 @@ export default {
   },
 
   mounted() {
-    this.getCountryHolidays();
+    this.getCountryHolidays().then(() => {
+      if (!this.isEditing) {
+        this.handleSelectAllCountryHolidays(true);
+      }
+    });
 
     const isDefaultSector =
       this.sector.name === this.$t('config_chats.default_sector.name');
@@ -720,8 +726,12 @@ export default {
         this.enableCountryHolidays = this.allCountryHolidays.map(
           (holiday) => holiday.date,
         );
+        this.disabledCountryHolidays = [];
       } else {
         this.enableCountryHolidays = [];
+        this.disabledCountryHolidays = this.allCountryHolidays.map(
+          (holiday) => holiday.date,
+        );
       }
     },
 
@@ -813,12 +823,19 @@ export default {
           (holiday) => !holiday.its_custom && holiday.disabled_open_room,
         );
 
+        const inactiveCountryHolidays = allHolidays.filter(
+          (holiday) => !holiday.its_custom && !holiday.disabled_open_room,
+        );
+
         const customHolidays = allHolidays.filter(
           (holiday) => holiday.its_custom,
         );
 
-        // handle active country holidays
+        // handle  country holidays
         this.enableCountryHolidays = activeCountryHolidays.map(
+          (holiday) => holiday.date,
+        );
+        this.disabledCountryHolidays = inactiveCountryHolidays.map(
           (holiday) => holiday.date,
         );
 
@@ -1107,10 +1124,10 @@ export default {
     },
 
     async initCountryHolidays() {
-      await Sector.createCountryHolidays(
-        this.sector.uuid,
-        this.enableCountryHolidays,
-      );
+      await Sector.createCountryHolidays(this.sector.uuid, {
+        enabled_holidays: this.enableCountryHolidays,
+        disabled_holidays: this.disabledCountryHolidays,
+      });
     },
 
     async createCustomHolidays() {
