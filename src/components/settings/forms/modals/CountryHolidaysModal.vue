@@ -50,9 +50,6 @@ export default {
       return this.isEditing ? 'uuid' : 'date';
     },
   },
-  mounted() {
-    console.log(this.holidays);
-  },
   methods: {
     formatHolidayLabel(holiday) {
       if (!holiday.date) return holiday.name;
@@ -75,12 +72,14 @@ export default {
     },
     handleSave() {
       this.$emit('update:enable-holidays', this.internalEnableHolidays);
-      this.$emit(
-        'update:disabled-holidays',
-        this.holidays.filter(
+
+      const disabledHolidays = this.holidays
+        .filter(
           (holiday) => !this.internalEnableHolidays.includes(holiday.date),
-        ),
-      );
+        )
+        .map((holiday) => holiday.date);
+
+      this.$emit('update:disabled-holidays', disabledHolidays);
       this.$emit('close');
     },
   },
