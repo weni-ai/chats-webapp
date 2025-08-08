@@ -95,17 +95,17 @@ export default {
     return response.data;
   },
 
-  async createContact(contact) {
+  async createContact(contact, projectUuid) {
     const response = await http.post(
-      `/project/${getProject()}/create_contacts/`,
+      `/project/${projectUuid || getProject()}/create_contacts/`,
       contact,
     );
     return response.data;
   },
 
-  async sendFlow(object) {
+  async sendFlow(object, projectUuid) {
     const response = await http.post(
-      `/project/${getProject()}/start_flow/`,
+      `/project/${projectUuid || getProject()}/start_flow/`,
       object,
     );
     return response.data;
