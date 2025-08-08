@@ -411,7 +411,7 @@ export default {
         );
       } else {
         this.selected.push(contact);
-        FlowsTrigger.checkContact(contact.uuid)
+        FlowsTrigger.checkContact(contact.uuid, this.projectUuidFlow)
           .then((response) => {
             if (response.show_warning) {
               this.openedRoomsAlerts.push({
@@ -551,7 +551,9 @@ export default {
 
     async groupList() {
       try {
-        const response = await FlowsTrigger.getListOfGroups();
+        const response = await FlowsTrigger.getListOfGroups(
+          this.projectUuidFlow,
+        );
         this.listOfGroups = response.results.filter(
           (el) => ![null, undefined].includes(el.name),
         );
