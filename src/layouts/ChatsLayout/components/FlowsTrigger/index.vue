@@ -7,7 +7,7 @@
     :close="() => $emit('close')"
   >
     <AsideSlotTemplateSection
-      v-if="showSendFlowStep"
+      v-if="showSendFlowStep && !isLoadingCheckProjectPrincipal"
       class="flows-trigger"
     >
       <SendFlow
@@ -22,7 +22,7 @@
       />
     </AsideSlotTemplateSection>
     <AsideSlotTemplateSection
-      v-else
+      v-if="!showSendFlowStep && !isLoadingCheckProjectPrincipal"
       class="flows-trigger"
     >
       <header class="flows-trigger__header">
@@ -169,6 +169,15 @@
         />
       </section>
     </AsideSlotTemplateSection>
+    <AsideSlotTemplateSection
+      v-if="isLoadingCheckProjectPrincipal"
+      class="flows-trigger"
+    >
+      <UnnnicSkeletonLoading
+        width="100%"
+        height="500px"
+      />
+    </AsideSlotTemplateSection>
 
     <template #modals>
       <ModalListTriggeredFlows
@@ -278,6 +287,7 @@ export default {
     isSendFlowStarted: false,
     isSendFlowFinished: false,
     isLoadingSendFlow: false,
+    isLoadingCheckProjectPrincipal: false,
   }),
 
   computed: {
@@ -472,6 +482,7 @@ export default {
 
     async projectPrincipalCheck() {
       try {
+        this.isLoadingCheckProjectPrincipal = true;
         const response = await Group.listProjects({
           orgUuid: this.project.org,
           limit: 1,
@@ -496,6 +507,8 @@ export default {
       } catch (error) {
         console.error('projectPrincipalCheck', error);
         this.isProjectPrincipal = false;
+      } finally {
+        this.isLoadingCheckProjectPrincipal = false;
       }
     },
 
