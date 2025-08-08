@@ -177,6 +177,7 @@
       />
       <ModalAddNewContact
         v-if="showNewContactModal"
+        :projectUuidFlow="projectUuidFlow"
         @close="closeNewContactModal"
       />
       <ModalSendFlow
@@ -604,7 +605,7 @@ export default {
         };
 
         try {
-          await FlowsTrigger.sendFlow(prepareObj);
+          await FlowsTrigger.sendFlow(prepareObj, this.projectUuidFlow);
         } catch (error) {
           console.error('sendFlowToContact', error);
           hasError = true;
