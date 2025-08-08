@@ -135,7 +135,13 @@ export default {
 
         this.close();
       } catch (error) {
-        console.log(error);
+        console.error('error to get chat', error);
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('chats.get_chat_error'),
+            type: 'error',
+          },
+        });
       } finally {
         this.loadingGetChat = false;
       }
