@@ -681,8 +681,8 @@ export default {
 }
 
 .chat-messages__scroll-button-container {
-  position: fixed;
-  bottom: 80px;
+  position: absolute;
+  bottom: $unnnic-spacing-md;
   right: $unnnic-spacing-sm;
   z-index: 1000;
 }
