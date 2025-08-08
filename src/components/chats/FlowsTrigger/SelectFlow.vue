@@ -32,13 +32,14 @@ export default {
       required: true,
     },
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'update:projectUuidFlow'],
 
   data() {
     return {
       flowUuid: [],
       templates: [{ value: '', label: this.$t('search_or_select') }],
       selectedFlow: '',
+      projectUuidFlows: [],
       loadingFlows: false,
     };
   },
@@ -59,16 +60,24 @@ export default {
             label: this.$t('search_or_select'),
           },
         ];
+        const projectUuidFlows = [];
         response.forEach((flow) => {
-          const { name, uuid } = flow;
+          const { name, uuid, results } = flow;
 
           treatedTemplates.push({
             value: uuid,
             label: name,
           });
+
+          if (results?.length > 0) {
+            projectUuidFlows.push({
+              flowUuid: uuid,
+              projectUuidFlow: results[0].node_uuids[0],
+            });
+          }
         });
         this.templates = treatedTemplates;
-
+        this.projectUuidFlows = projectUuidFlows;
         this.loadingFlows = false;
       } catch (error) {
         this.loadingFlows = false;
@@ -78,6 +87,14 @@ export default {
 
     getFlowTrigger(uuid) {
       this.$emit('update:modelValue', uuid);
+      if (this.projectUuidFlows.length > 0) {
+        const projectUuidFlow = this.projectUuidFlows.find(
+          (projectUuidFlow) => projectUuidFlow.flowUuid === uuid,
+        );
+        if (projectUuidFlow) {
+          this.$emit('update:projectUuidFlow', projectUuidFlow.projectUuidFlow);
+        }
+      }
     },
   },
 };

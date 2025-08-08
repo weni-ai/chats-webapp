@@ -14,8 +14,10 @@ export default {
     return response.data;
   },
 
-  async getListOfGroups() {
-    const response = await http.get(`/project/${getProject()}/list_groups/`);
+  async getListOfGroups(projectUuid) {
+    const response = await http.get(
+      `/project/${projectUuid || getProject()}/list_groups/`,
+    );
     return response.data;
   },
 
@@ -66,23 +68,21 @@ export default {
     return response.data;
   },
 
-  async checkContact(contact) {
+  async checkContact(contact, projectUuid) {
     const response = await http.get(`project/retrieve_flow_warning/`, {
       params: {
-        project: getProject(),
+        project: projectUuid || getProject(),
         contact,
       },
     });
     return response.data;
   },
-  async listFlowsStart({
-    offset = 0,
-    limit = 5,
-    created_on_before = '',
-    created_on_after = '',
-  }) {
+  async listFlowsStart(
+    { offset = 0, limit = 5, created_on_before = '', created_on_after = '' },
+    projectUuid,
+  ) {
     const response = await http.get(
-      `/project/${getProject()}/list_flows_start/`,
+      `/project/${projectUuid || getProject()}/list_flows_start/`,
       {
         params: {
           offset,
@@ -95,17 +95,17 @@ export default {
     return response.data;
   },
 
-  async createContact(contact) {
+  async createContact(contact, projectUuid) {
     const response = await http.post(
-      `/project/${getProject()}/create_contacts/`,
+      `/project/${projectUuid || getProject()}/create_contacts/`,
       contact,
     );
     return response.data;
   },
 
-  async sendFlow(object) {
+  async sendFlow(object, projectUuid) {
     const response = await http.post(
-      `/project/${getProject()}/start_flow/`,
+      `/project/${projectUuid || getProject()}/start_flow/`,
       object,
     );
     return response.data;

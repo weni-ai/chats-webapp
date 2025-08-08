@@ -3,12 +3,12 @@
     class="send-flow__handlers__button"
     :disabled="selectedFlow === ''"
     :loading="isLoading"
-    :text="$t('send')"
+    :text="noHasContacts ? $t('continue') : $t('send')"
     size="small"
     type="primary"
-    iconLeft="send"
+    :iconLeft="noHasContacts ? '' : 'send'"
     data-testid="send-flow-button"
-    @click="sendFlow"
+    @click="noHasContacts ? backToContactList() : sendFlow()"
   />
 </template>
 <script>
@@ -34,7 +34,7 @@ export default {
       required: true,
     },
   },
-  emits: ['send-flow-started', 'send-flow-finished'],
+  emits: ['send-flow-started', 'send-flow-finished', 'back-to-contact-list'],
 
   data() {
     return {
@@ -46,9 +46,15 @@ export default {
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
     }),
+    noHasContacts() {
+      return !this.selectedContact && this.contacts.length === 0;
+    },
   },
 
   methods: {
+    backToContactList() {
+      this.$emit('back-to-contact-list');
+    },
     async sendFlow() {
       this.isLoading = true;
       this.$emit('send-flow-started');
