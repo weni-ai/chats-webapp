@@ -250,12 +250,18 @@ export default {
 
       if (isWSConnectionValid) {
         this.ws = new WS({ app: this });
-        this.ws.connect();
+        const connected = await this.ws.connect();
+        if (!connected) {
+          console.warn('[App] Failed to establish WebSocket connection');
+        }
       }
     },
 
     async wsReconnect() {
-      this.ws.reconnect();
+      const connected = await this.ws.reconnect();
+      if (!connected) {
+        console.warn('[App] Failed to reconnect WebSocket');
+      }
     },
   },
 };
