@@ -66,10 +66,13 @@ describe('ModalAddNewContact', () => {
 
     await saveButton.trigger('click');
 
-    expect(createContactSpy).toHaveBeenCalledWith({
-      name: 'John Doe',
-      urns: ['whatsapp:5511912345678'],
-    });
+    expect(createContactSpy).toHaveBeenCalledWith(
+      {
+        name: 'John Doe',
+        urns: ['whatsapp:5511912345678'],
+      },
+      '',
+    );
 
     expect(callUnnnicAlert).toHaveBeenCalledWith({
       props: {

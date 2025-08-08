@@ -54,6 +54,14 @@ import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 export default {
   name: 'ModalAddNewContact',
+
+  props: {
+    projectUuidFlow: {
+      type: String,
+      required: false,
+      default: '',
+    },
+  },
   emits: ['close'],
 
   data: () => ({
@@ -101,7 +109,10 @@ export default {
           name: this.contact.name,
           urns: [`whatsapp:${prepareTel}`],
         };
-        const response = await FlowsTrigger.createContact(newContact);
+        const response = await FlowsTrigger.createContact(
+          newContact,
+          this.projectUuidFlow,
+        );
 
         callUnnnicAlert({
           props: {

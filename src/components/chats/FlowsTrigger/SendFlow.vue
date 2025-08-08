@@ -6,6 +6,7 @@
     <SelectFlow
       v-model="selectedFlow"
       data-testid="select-flow"
+      @update:project-uuid-flow="updateProjectUuidFlow"
     />
     <div v-if="showProgressBar">
       <ModalProgressBarFalse
@@ -20,7 +21,7 @@
         size="small"
         type="tertiary"
         data-testid="back-button"
-        @click="$emit('back')"
+        @click="noHasContacts ? $emit('close') : $emit('back')"
       />
       <SendFlowButton
         class="send-flow__handlers__button"
@@ -28,6 +29,7 @@
         :selectedContact="selectedContact"
         :selectedFlow="selectedFlow"
         data-testid="send-flow-button"
+        @back-to-contact-list="backToContactList"
         @send-flow-started="openModalProgress"
         @send-flow-finished="closeModalProgressWithResult"
       />
@@ -61,15 +63,32 @@ export default {
       type: Object,
       default: () => {},
     },
+    isProjectPrincipal: {
+      type: Boolean,
+      default: false,
+    },
   },
-  emits: ['back', 'close'],
+  emits: ['back', 'close', 'update:projectUuidFlow', 'update:selectedFlow'],
 
   data() {
     return {
       showProgressBar: false,
 
       selectedFlow: '',
+      projectUuidFlow: '',
     };
+  },
+
+  computed: {
+    noHasContacts() {
+      return !this.selectedContact && this.contacts.length === 0;
+    },
+  },
+
+  watch: {
+    selectedFlow(newSelectedFlow) {
+      this.$emit('update:selectedFlow', newSelectedFlow);
+    },
   },
 
   methods: {
@@ -97,6 +116,15 @@ export default {
       });
 
       this.$emit('close');
+    },
+
+    updateProjectUuidFlow(projectUuidFlow) {
+      this.projectUuidFlow = projectUuidFlow;
+      this.$emit('update:projectUuidFlow', projectUuidFlow);
+    },
+
+    backToContactList() {
+      this.$emit('back');
     },
   },
 };

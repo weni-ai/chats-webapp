@@ -7,19 +7,22 @@
     :close="() => $emit('close')"
   >
     <AsideSlotTemplateSection
-      v-if="showSendFlowStep"
+      v-if="showSendFlowStep && !isLoadingCheckProjectPrincipal"
       class="flows-trigger"
     >
       <SendFlow
         :contacts="selected"
         :groups="selectedGroup"
         :selectedContact="selectedContact"
+        :isProjectPrincipal="isProjectPrincipal"
+        @update:selected-flow="updateSelectedFlow"
+        @update:project-uuid-flow="updateProjectUuidFlow"
         @back="closeSendFlow"
         @close="$emit('close')"
       />
     </AsideSlotTemplateSection>
     <AsideSlotTemplateSection
-      v-else
+      v-if="!showSendFlowStep && !isLoadingCheckProjectPrincipal"
       class="flows-trigger"
     >
       <header class="flows-trigger__header">
@@ -159,12 +162,21 @@
         />
         <UnnnicButton
           :disabled="listOfGroupAndContactsSelected.length === 0"
-          :text="$t('continue')"
+          :text="selectedFlow ? $t('send') : $t('continue')"
           type="primary"
           size="small"
-          @click="openSendFlow"
+          @click="selectedFlow ? sendFlowToContacts() : openSendFlow()"
         />
       </section>
+    </AsideSlotTemplateSection>
+    <AsideSlotTemplateSection
+      v-if="isLoadingCheckProjectPrincipal"
+      class="flows-trigger"
+    >
+      <UnnnicSkeletonLoading
+        width="100%"
+        height="500px"
+      />
     </AsideSlotTemplateSection>
 
     <template #modals>
@@ -174,6 +186,7 @@
       />
       <ModalAddNewContact
         v-if="showNewContactModal"
+        :projectUuidFlow="projectUuidFlow"
         @close="closeNewContactModal"
       />
       <ModalSendFlow
@@ -187,6 +200,10 @@
         :contacts="selected"
         @remove-contacts="removeContactsByModal"
         @close="closeRemoveSelectedContactsModal"
+      />
+      <ModalProgressBarFalse
+        v-if="showModalProgressBar"
+        :title="$t('flows_trigger.sending')"
       />
     </template>
   </AsideSlotTemplate>
@@ -206,11 +223,15 @@ import ModalSendFlow from '@/components/chats/FlowsTrigger/ModalSendFlow.vue';
 import ModalRemoveSelectedContacts from '@/components/chats/FlowsTrigger/ModalRemoveSelectedContacts.vue';
 import SelectedContactsSection from '@/components/chats/FlowsTrigger/SelectedContactsSection.vue';
 import SendFlow from '@/components/chats/FlowsTrigger/SendFlow.vue';
+import ModalProgressBarFalse from '@/components/ModalProgressBarFalse.vue';
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
+import Group from '@/services/api/resources/settings/group.js';
 
 import FlowsContactsLoading from '@/views/loadings/FlowsTrigger/FlowsContactsLoading.vue';
 
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import FlowsAPI from '@/services/api/resources/flows/flowsTrigger.js';
+import { useRooms } from '@/store/modules/chats/rooms';
 
 export default {
   name: 'FlowsTrigger',
@@ -225,6 +246,7 @@ export default {
     ModalRemoveSelectedContacts,
     SelectedContactsSection,
     SendFlow,
+    ModalProgressBarFalse,
   },
 
   props: {
@@ -258,11 +280,23 @@ export default {
     page: 0,
 
     isMobile: isMobile(),
+    isProjectPrincipal: null,
+
+    projectUuidFlow: '',
+    selectedFlow: '',
+    isSendFlowStarted: false,
+    isSendFlowFinished: false,
+    isLoadingSendFlow: false,
+    isLoadingCheckProjectPrincipal: false,
   }),
 
   computed: {
     ...mapState(useConfig, {
       projectName: (store) => store.project.name,
+      project: (store) => store.project,
+    }),
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
     }),
 
     letters() {
@@ -321,6 +355,9 @@ export default {
     showSendFlowStep() {
       return !this.isMobile && this.showSendFlow;
     },
+    showModalProgressBar() {
+      return this.isLoadingSendFlow;
+    },
   },
   watch: {
     searchUrn: {
@@ -339,14 +376,40 @@ export default {
         }
       },
     },
+    isProjectPrincipal: {
+      handler(newIsProjectPrincipal) {
+        if (newIsProjectPrincipal) {
+          this.openSendFlow();
+        } else {
+          this.contactList();
+          this.groupList();
+        }
+      },
+    },
+    projectUuidFlow: {
+      immediate: true,
+      handler(newProjectUuidFlow) {
+        if (newProjectUuidFlow) {
+          this.contactList();
+          this.groupList();
+        }
+      },
+    },
   },
 
   created() {
-    this.contactList();
-    this.groupList();
+    this.projectPrincipalCheck();
   },
 
   methods: {
+    updateSelectedFlow(selectedFlow) {
+      this.selectedFlow = selectedFlow;
+    },
+
+    updateProjectUuidFlow(projectUuidFlow) {
+      this.projectUuidFlow = projectUuidFlow;
+    },
+
     setContacts(contact) {
       if (this.selected.some((search) => search.uuid === contact.uuid)) {
         this.selected = this.selected.filter((el) => el.uuid !== contact.uuid);
@@ -358,7 +421,7 @@ export default {
         );
       } else {
         this.selected.push(contact);
-        FlowsTrigger.checkContact(contact.uuid)
+        FlowsTrigger.checkContact(contact.uuid, this.projectUuidFlow)
           .then((response) => {
             if (response.show_warning) {
               this.openedRoomsAlerts.push({
@@ -417,12 +480,47 @@ export default {
       );
     },
 
+    async projectPrincipalCheck() {
+      try {
+        this.isLoadingCheckProjectPrincipal = true;
+        const response = await Group.listProjects({
+          orgUuid: this.project.org,
+          limit: 1,
+          offset: 0,
+          params: { its_principal: true },
+        });
+
+        if (response?.results?.length > 0) {
+          const projectPrincipal = response.results.find(
+            (project) =>
+              project.uuid.toLowerCase() === this.project.uuid.toLowerCase(),
+          );
+
+          if (projectPrincipal) {
+            this.isProjectPrincipal = true;
+          } else {
+            this.isProjectPrincipal = false;
+          }
+        } else {
+          this.isProjectPrincipal = false;
+        }
+      } catch (error) {
+        console.error('projectPrincipalCheck', error);
+        this.isProjectPrincipal = false;
+      } finally {
+        this.isLoadingCheckProjectPrincipal = false;
+      }
+    },
+
     async contactList(next, cleanList = false) {
       if (!this.searchUrn || this.searchUrn.length >= 3) {
         if (cleanList) this.listOfContacts = [];
         this.isContactsLoading = true;
         try {
-          const response = await FlowsAPI.getContacts(this.searchUrn);
+          const response = await FlowsAPI.getContacts(
+            this.searchUrn,
+            this.projectUuidFlow,
+          );
 
           // Array filter to prevent 'null' or 'undefined' values in contact response
           this.listOfContacts = this.listOfContacts
@@ -433,7 +531,7 @@ export default {
 
           this.listOfContacts.sort((a, b) => a.name?.localeCompare(b.name));
         } catch (error) {
-          console.log(error);
+          console.error('contactList', error);
         } finally {
           this.isContactsLoading = false;
         }
@@ -466,13 +564,15 @@ export default {
 
     async groupList() {
       try {
-        const response = await FlowsTrigger.getListOfGroups();
+        const response = await FlowsTrigger.getListOfGroups(
+          this.projectUuidFlow,
+        );
         this.listOfGroups = response.results.filter(
           (el) => ![null, undefined].includes(el.name),
         );
         this.listOfGroups.sort((a, b) => a.name.localeCompare(b.name));
       } catch (error) {
-        console.log(error);
+        console.error('groupList', error);
       }
     },
 
@@ -501,6 +601,51 @@ export default {
     },
     closeRemoveSelectedContactsModal() {
       this.showRemoveSelectedContactsModal = false;
+    },
+
+    async sendFlowToContacts() {
+      let hasError = false;
+
+      this.isLoadingSendFlow = true;
+      const contactsToSendFlow = this.selectedContact
+        ? [this.selectedContact]
+        : this.selected;
+
+      const sendFlowToContact = async (contact) => {
+        const prepareObj = {
+          flow: this.selectedFlow,
+          contacts: [contact.external_id || contact.uuid],
+          room: this.room?.uuid || '',
+          contact_name: contact.name,
+        };
+
+        try {
+          await FlowsTrigger.sendFlow(prepareObj, this.projectUuidFlow);
+        } catch (error) {
+          console.error('sendFlowToContact', error);
+          hasError = true;
+        }
+      };
+
+      try {
+        await Promise.all(contactsToSendFlow.map(sendFlowToContact));
+        hasError = false;
+      } catch (error) {
+        console.error('sendFlowToContacts', error);
+        hasError = true;
+      } finally {
+        this.isLoadingSendFlow = false;
+        callUnnnicAlert({
+          props: {
+            text: hasError
+              ? this.$t('flows_trigger.error_triggering')
+              : this.$t('flows_trigger.successfully_triggered'),
+            type: hasError ? 'error' : 'success',
+          },
+          seconds: 5,
+        });
+        this.$emit('close');
+      }
     },
   },
 };

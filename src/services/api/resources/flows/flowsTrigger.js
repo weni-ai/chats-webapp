@@ -15,7 +15,7 @@ http.interceptors.request.use((config) => {
 let cancelTokenSource = null;
 
 export default {
-  async getContacts(search) {
+  async getContacts(search, currentProject) {
     if (cancelTokenSource) {
       cancelTokenSource.cancel();
     }
@@ -24,7 +24,7 @@ export default {
 
     const searchStartsWithNumber = /^[0-9]/.test(search);
     const params = {
-      project_uuid: getProject(),
+      project_uuid: currentProject || getProject(),
       ...(searchStartsWithNumber ? { number: search } : { name: search }),
       page_size: search ? 10 : 100,
     };
