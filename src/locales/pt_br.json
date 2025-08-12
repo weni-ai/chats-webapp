@@ -546,6 +546,7 @@
     },
     "send": "Enviar fluxo",
     "select": "Selecionar fluxo",
+    "select_project": "Selecionar projeto",
     "sending": "Enviando fluxo",
     "successfully_triggered": "Fluxo disparado com sucesso",
     "error_triggering": "Erro ao disparar fluxo",
