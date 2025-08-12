@@ -43,6 +43,7 @@
           <Agents
             v-model="editingProjectGroup"
             isEditing
+            :queuesOptions="queuesOptions"
             @remove-agent="toRemoveAgents.push($event)"
           />
         </template>
@@ -89,6 +90,22 @@ export default {
         sectors: [],
         agents: [],
       },
+      queuesOptions: [
+        { name: 'teste', uuid: '1' },
+        { name: 'teste2', uuid: '2' },
+        { name: 'teste', uuid: '1' },
+        { name: 'teste2', uuid: '2' },
+        { name: 'teste', uuid: '1' },
+        { name: 'teste2', uuid: '2' },
+        { name: 'teste', uuid: '1' },
+        { name: 'teste2', uuid: '2' },
+        { name: 'teste', uuid: '1' },
+        { name: 'teste2', uuid: '2' },
+        { name: 'teste', uuid: '1' },
+        { name: 'teste2', uuid: '2' },
+        { name: 'teste', uuid: '1' },
+        { name: 'teste2', uuid: '2' },
+      ],
       toRemoveSectors: [],
       toRemoveManagers: [],
       toRemoveAgents: [],
@@ -114,15 +131,22 @@ export default {
       groupSectorUuid: this.projectGroup.uuid,
     });
 
+    // TODO: list queues from group.sectors
+
+    // TODO: list agents queues
+
     this.editingProjectGroup = {
       ...group,
       maxSimultaneousChatsByAgent: String(group.rooms_limit),
       managers: authorizations.results.filter(
         (authorization) => authorization.role === 1,
       ),
-      agents: authorizations.results.filter(
-        (authorization) => authorization.role === 2,
-      ),
+      agents: authorizations.results
+        .filter((authorization) => authorization.role === 2)
+        .map((agent) => ({
+          ...agent,
+          queues: [],
+        })),
     };
   },
   methods: {

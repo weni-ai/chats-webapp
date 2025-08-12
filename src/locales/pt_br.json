@@ -734,7 +734,8 @@
             "label": "Adicionar agente",
             "placeholder": "Buscar pelo nome ou e-mail"
           }
-        }
+        },
+        "define_queues": "Defina quais filas {agentName} atenderá."
       },
       "general": "Geral",
       "projects": "Projetos",
