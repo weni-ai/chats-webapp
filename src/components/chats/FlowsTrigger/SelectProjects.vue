@@ -24,6 +24,7 @@
 import { ref, onMounted } from 'vue';
 import Group from '@/services/api/resources/settings/group.js';
 import { useConfig } from '@/store/modules/config';
+import { makeRequestWithRetry } from '@/utils/requests';
 
 const configStore = useConfig();
 
@@ -32,24 +33,36 @@ const isLoading = ref(false);
 
 const projectUuid = ref([]);
 
+defineProps({
+  modelValue: {
+    type: String,
+    required: false,
+    default: '',
+  },
+});
+
+const emit = defineEmits(['update:modelValue']);
+
 const getAllProjects = async () => {
   isLoading.value = true;
   const allProjects = [];
   let offset = 0;
-  const limit = 5;
+  const limit = 20;
   let hasMore = true;
 
   try {
     while (hasMore) {
-      const response = await Group.listProjects({
-        orgUuid: configStore.project?.org,
-        limit,
-        offset,
-        params: {
-          its_principal: false,
-        },
-      });
-      console.log('allProjects get', response);
+      const response = await makeRequestWithRetry(() =>
+        Group.listProjects({
+          orgUuid: configStore.project?.org,
+          limit,
+          offset,
+          params: {
+            its_principal: false,
+          },
+        }),
+      );
+
       allProjects.push(...response.results);
 
       hasMore = !!response.next;
@@ -70,7 +83,7 @@ const getAllProjects = async () => {
 
 const getProjects = async (selectedProjectUuid) => {
   if (selectedProjectUuid) {
-    console.log('Selected project:', selectedProjectUuid);
+    emit('update:modelValue', selectedProjectUuid);
   }
 };
 
