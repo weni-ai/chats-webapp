@@ -56,7 +56,7 @@ describe('SelectFlow', () => {
 
   it('handles API errors gracefully', async () => {
     FlowsTrigger.getFlows.mockRejectedValueOnce(new Error('API Error'));
-    const consoleLogSpy = vi.spyOn(console, 'log');
+    const consoleLogSpy = vi.spyOn(console, 'error');
 
     const wrapper = mount(SelectFlow, {
       props: { modelValue: '' },
@@ -69,6 +69,9 @@ describe('SelectFlow', () => {
     expect(wrapper.vm.templates).toEqual([
       { value: '', label: wrapper.vm.$t('search_or_select') },
     ]);
-    expect(consoleLogSpy).toHaveBeenCalledWith(new Error('API Error'));
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      'Error getting flows',
+      new Error('API Error'),
+    );
   });
 });
