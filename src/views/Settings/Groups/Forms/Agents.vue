@@ -116,14 +116,14 @@ export default {
   },
 
   mounted() {
-    this.listAgents();
+    this.listAgentsOptions();
   },
 
   methods: {
     async listQueues() {
       // TODO
     },
-    async listAgents() {
+    async listAgentsOptions() {
       let hasNext = false;
       try {
         const offset = this.agentsPage * this.agentsLimitPerPage;
@@ -131,13 +131,17 @@ export default {
           offset,
           this.agentsLimitPerPage,
         );
+        const agentsWithQueues = results.map((agent) => ({
+          ...agent,
+          queues: [],
+        }));
         this.agentsPage += 1;
-        this.agents = this.agents.concat(results);
+        this.agents = this.agents.concat(agentsWithQueues);
 
         hasNext = next;
       } finally {
         if (hasNext) {
-          this.listAgents();
+          this.listAgentsOptions();
         }
       }
     },
@@ -155,8 +159,12 @@ export default {
 
     addAgent(agent) {
       if (!agent) return;
+      agent.queues = this.queuesOptions;
       const agents = this.group.agents.some(
-        (mappedAgent) => mappedAgent.permission === agent.uuid,
+        (mappedAgent) =>
+          mappedAgent.permission === agent.uuid ||
+          agent.user.email ===
+            (mappedAgent.user_email || mappedAgent.user.email),
       )
         ? this.group.agents
         : [{ ...agent, new: true }, ...this.group.agents];

@@ -43,7 +43,7 @@
           <Agents
             v-model="editingProjectGroup"
             isEditing
-            :queuesOptions="queuesOptions"
+            :queuesOptions="avaliableSectorQueues"
             @remove-agent="toRemoveAgents.push($event)"
           />
         </template>
@@ -90,26 +90,12 @@ export default {
         sectors: [],
         agents: [],
       },
-      queuesOptions: [
-        { name: 'teste', uuid: '1' },
-        { name: 'teste2', uuid: '2' },
-        { name: 'teste', uuid: '1' },
-        { name: 'teste2', uuid: '2' },
-        { name: 'teste', uuid: '1' },
-        { name: 'teste2', uuid: '2' },
-        { name: 'teste', uuid: '1' },
-        { name: 'teste2', uuid: '2' },
-        { name: 'teste', uuid: '1' },
-        { name: 'teste2', uuid: '2' },
-        { name: 'teste', uuid: '1' },
-        { name: 'teste2', uuid: '2' },
-        { name: 'teste', uuid: '1' },
-        { name: 'teste2', uuid: '2' },
-      ],
+      avaliableSectorQueues: [],
       toRemoveSectors: [],
       toRemoveManagers: [],
       toRemoveAgents: [],
       isLoadingRequest: false,
+      firstLoaded: false,
     };
   },
   computed: {
@@ -124,14 +110,44 @@ export default {
       return this.tabs.map((tab) => tab.id);
     },
   },
-  async created() {
+
+  watch: {
+    'editingProjectGroup.sectors': {
+      deep: true,
+      handler(sectors, oldSectors) {
+        const sectorsUuids = sectors.map((sector) => sector.uuid);
+        const oldSectorsUuids = oldSectors.map((sector) => sector.uuid);
+
+        const toAddQueuesSector = this.firstLoaded
+          ? sectorsUuids.filter(
+              (sectorUuid) => !oldSectorsUuids.includes(sectorUuid),
+            )[0]
+          : undefined;
+
+        const toRemoveQueuesSector = this.firstLoaded
+          ? oldSectorsUuids.filter(
+              (sectorUuid) => !sectorsUuids.includes(sectorUuid),
+            )[0]
+          : undefined;
+
+        if (sectors.length) {
+          this.listSectorsQueues({ toAddQueuesSector, toRemoveQueuesSector });
+        } else {
+          this.avaliableSectorQueues = [];
+          this.editingProjectGroup.agents.forEach((agent) => {
+            agent.queues = [];
+          });
+        }
+      },
+    },
+  },
+
+  async mounted() {
     const group = await Group.show(this.projectGroup.uuid);
 
     const authorizations = await Group.listAuthorization({
       groupSectorUuid: this.projectGroup.uuid,
     });
-
-    // TODO: list queues from group.sectors
 
     // TODO: list agents queues
 
@@ -148,6 +164,9 @@ export default {
           queues: [],
         })),
     };
+    this.$nextTick(() => {
+      this.firstLoaded = true;
+    });
   },
   methods: {
     updateTab(newTab) {
@@ -165,6 +184,39 @@ export default {
         this.showConfirmDiscartChangesModal = true;
       } else {
         this.$emit('close');
+      }
+    },
+
+    async listSectorsQueues({ toAddQueuesSector, toRemoveQueuesSector }) {
+      const sectorsQueues = await Group.listSectorsQueues(
+        this.editingProjectGroup.sectors,
+      );
+
+      this.avaliableSectorQueues = Object.entries(sectorsQueues)
+        .map(([sectorUuid, data]) => {
+          return data.queues.map((queue) => ({
+            sectorUuid,
+            name: `${data.sector_name} | ${queue.queue_name}`,
+            uuid: queue.uuid,
+          }));
+        })
+        .flat();
+
+      if (toAddQueuesSector) {
+        this.editingProjectGroup.agents.forEach((agent) => {
+          const sectorQueues = this.avaliableSectorQueues.filter(
+            (queue) => queue.sectorUuid === toAddQueuesSector,
+          );
+          agent.queues = agent.queues.concat(sectorQueues);
+        });
+      }
+
+      if (toRemoveQueuesSector) {
+        this.editingProjectGroup.agents.forEach((agent) => {
+          agent.queues = agent.queues.filter(
+            (queue) => queue.sectorUuid !== toRemoveQueuesSector,
+          );
+        });
       }
     },
 
@@ -261,10 +313,6 @@ export default {
         (agent) => agent.uuid,
       );
 
-      const toAddAgentsUuids = this.editingProjectGroup.agents
-        .filter((agent) => agent.new)
-        .map((agent) => agent.uuid);
-
       await Promise.all(
         toRemoveAgentsUuids.map((permissionUuid) =>
           Group.deleteAuthorization({ permissionUuid }),
@@ -272,13 +320,19 @@ export default {
       );
 
       await Promise.all(
-        toAddAgentsUuids.map((permissionUuid) =>
-          Group.addAuthorization({
+        this.editingProjectGroup.agents.map((agent) => {
+          const enabledQueuesUuids = agent.queues.map((queue) => queue.uuid);
+          const disabledQueuesUuids = this.avaliableSectorQueues
+            .filter((queue) => !enabledQueuesUuids.includes(queue.uuid))
+            .map((queue) => queue.uuid);
+          return Group.addAuthorization({
             groupSectorUuid: this.projectGroup.uuid,
             role: 2,
-            permissionUuid,
-          }),
-        ),
+            permissionUuid: agent.uuid,
+            enabledQueues: enabledQueuesUuids,
+            disabledQueues: disabledQueuesUuids,
+          });
+        }),
       );
     },
   },
