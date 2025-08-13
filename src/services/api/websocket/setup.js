@@ -121,6 +121,13 @@ export default class WebSocketSetup {
 
       const timestamp = new Date().toISOString();
       console.log(timestamp, '[WebSocket] Connection established successfully');
+
+      this.reloadRoomsAndDiscussions();
+
+      const sessionStorageStatus = sessionStorage.getItem(
+        `statusAgent-${this.app.appProject}`,
+      );
+      this.app.updateUserStatus(sessionStorageStatus);
     };
 
     listeners({ ws, app: this.app });
@@ -168,12 +175,5 @@ export default class WebSocketSetup {
     }
 
     this.connect();
-
-    this.reloadRoomsAndDiscussions();
-
-    const sessionStorageStatus = sessionStorage.getItem(
-      `statusAgent-${this.app.appProject}`,
-    );
-    this.app.updateUserStatus(sessionStorageStatus);
   }
 }
