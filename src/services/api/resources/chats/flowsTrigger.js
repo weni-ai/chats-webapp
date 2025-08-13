@@ -21,16 +21,19 @@ export default {
     return response.data;
   },
 
-  async getFlows() {
+  async getFlows(projectUuidFlow) {
     let nextCursor;
     let flows = [];
     let loopCount = 0;
     const maxLoopCount = 10;
 
     async function fetchData(cursor) {
-      const response = await http.get(`/project/${getProject()}/list_flows/`, {
-        params: { cursor },
-      });
+      const response = await http.get(
+        `/project/${projectUuidFlow || getProject()}/list_flows/`,
+        {
+          params: { cursor },
+        },
+      );
       return response.data;
     }
 

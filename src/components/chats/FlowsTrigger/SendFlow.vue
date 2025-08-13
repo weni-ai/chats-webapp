@@ -3,11 +3,19 @@
     class="send-flow"
     data-testid="send-flow-container"
   >
-    <SelectFlow
-      v-model="selectedFlow"
-      data-testid="select-flow"
-      @update:project-uuid-flow="updateProjectUuidFlow"
-    />
+    <section>
+      <SelectProjects
+        v-if="isProjectPrincipal"
+        v-model="projectUuidFlow"
+      />
+      <SelectFlow
+        v-model="selectedFlow"
+        data-testid="select-flow"
+        :isDisabled="isProjectPrincipal && !projectUuidFlow"
+        :projectUuidFlow="projectUuidFlow"
+      />
+    </section>
+
     <div v-if="showProgressBar">
       <ModalProgressBarFalse
         :title="$t('flows_trigger.sending')"
@@ -44,6 +52,7 @@ import ModalProgressBarFalse from '@/components/ModalProgressBarFalse.vue';
 
 import SelectFlow from './SelectFlow.vue';
 import SendFlowButton from './SendFlowButton.vue';
+import SelectProjects from './SelectProjects.vue';
 
 export default {
   name: 'SendFlow',
@@ -52,6 +61,7 @@ export default {
     SelectFlow,
     SendFlowButton,
     ModalProgressBarFalse,
+    SelectProjects,
   },
 
   props: {
@@ -89,6 +99,9 @@ export default {
     selectedFlow(newSelectedFlow) {
       this.$emit('update:selectedFlow', newSelectedFlow);
     },
+    projectUuidFlow(newProjectUuidFlow) {
+      this.$emit('update:projectUuidFlow', newProjectUuidFlow);
+    },
   },
 
   methods: {
@@ -116,11 +129,6 @@ export default {
       });
 
       this.$emit('close');
-    },
-
-    updateProjectUuidFlow(projectUuidFlow) {
-      this.projectUuidFlow = projectUuidFlow;
-      this.$emit('update:projectUuidFlow', projectUuidFlow);
     },
 
     backToContactList() {

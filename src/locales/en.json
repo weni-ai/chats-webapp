@@ -543,6 +543,7 @@
     },
     "send": "Send flow",
     "select": "Select flow",
+    "select_project": "Select project",
     "sending": "Sending flow",
     "successfully_triggered": "Flow triggered successfully",
     "error_triggering": "Error triggering flow",
