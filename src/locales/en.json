@@ -731,7 +731,8 @@
             "label": "Add agent",
             "placeholder": "Search by the name or email"
           }
-        }
+        },
+        "define_queues": "Define which queues {agentName} will attend."
       },
       "general": "General",
       "projects": "Projects",

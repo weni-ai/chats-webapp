@@ -734,7 +734,8 @@
             "label": "Agregar agente",
             "placeholder": "Buscar por nombre o email"
           }
-        }
+        },
+        "define_queues": "Define las colas que {agentName} atenderá."
       },
       "general": "General",
       "projects": "Proyectos",

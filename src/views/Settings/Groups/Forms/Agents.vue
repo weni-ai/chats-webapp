@@ -20,32 +20,33 @@
       v-if="group.agents?.length"
       class="groups-agents-form__agents"
     >
-      <SelectedMember
+      <SelectedMemberExpanded
         v-for="agent in group.agents"
         :key="agent.uuid"
-        :name="
+        :agentName="
           agent.user
             ? `${agent.user?.first_name} ${agent.user?.last_name}`
             : agent.user_name
         "
-        :email="agent.user?.email || agent.user_email"
-        :avatarUrl="photo(agent.user?.photo_url)"
-        :roleName="$t('agent')"
+        :agentEmail="agent.user?.email || agent.user_email"
+        :queuesOptions="queuesOptions"
+        :agentQueues="agent.queues"
         @remove="removeAgent(agent.uuid)"
+        @update:agent-queues="agent.queues = $event"
       />
     </section>
   </section>
 </template>
 
 <script>
-import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
+import SelectedMemberExpanded from '@/components/settings/forms/SelectedMemberExpanded.vue';
 
 import Project from '@/services/api/resources/settings/project';
 
 export default {
   name: 'ProjectGroupAgentsForm',
   components: {
-    SelectedMember,
+    SelectedMemberExpanded,
   },
   props: {
     isEditing: {
@@ -55,6 +56,10 @@ export default {
     modelValue: {
       type: Object,
       required: true,
+    },
+    queuesOptions: {
+      type: Array,
+      default: () => [],
     },
   },
   emits: ['update:modelValue', 'changeValid', 'remove-agent'],
@@ -111,11 +116,14 @@ export default {
   },
 
   mounted() {
-    this.listAgents();
+    this.listAgentsOptions();
   },
 
   methods: {
-    async listAgents() {
+    async listQueues() {
+      // TODO
+    },
+    async listAgentsOptions() {
       let hasNext = false;
       try {
         const offset = this.agentsPage * this.agentsLimitPerPage;
@@ -123,13 +131,17 @@ export default {
           offset,
           this.agentsLimitPerPage,
         );
+        const agentsWithQueues = results.map((agent) => ({
+          ...agent,
+          queues: [],
+        }));
         this.agentsPage += 1;
-        this.agents = this.agents.concat(results);
+        this.agents = this.agents.concat(agentsWithQueues);
 
         hasNext = next;
       } finally {
         if (hasNext) {
-          this.listAgents();
+          this.listAgentsOptions();
         }
       }
     },
@@ -147,8 +159,12 @@ export default {
 
     addAgent(agent) {
       if (!agent) return;
+      agent.queues = this.queuesOptions;
       const agents = this.group.agents.some(
-        (mappedAgent) => mappedAgent.permission === agent.uuid,
+        (mappedAgent) =>
+          mappedAgent.permission === agent.uuid ||
+          agent.user.email ===
+            (mappedAgent.user_email || mappedAgent.user.email),
       )
         ? this.group.agents
         : [{ ...agent, new: true }, ...this.group.agents];
@@ -185,6 +201,12 @@ export default {
 
   &.is-editing {
     margin-top: -$unnnic-spacing-sm;
+  }
+
+  &__agents {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-spacing-sm;
   }
 
   &__title {
