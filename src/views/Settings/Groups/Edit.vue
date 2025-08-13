@@ -250,8 +250,8 @@ export default {
         this.isLoadingRequest = true;
         await this.updateGroup();
         await this.updateManagers();
-        await this.updateAgents();
         await this.updateSectors();
+        await this.updateAgents();
         Unnnic.unnnicCallAlert({
           props: {
             text: this.$t('config_chats.groups.update_success'),
