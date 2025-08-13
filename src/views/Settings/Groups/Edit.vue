@@ -114,24 +114,25 @@ export default {
   watch: {
     'editingProjectGroup.sectors': {
       deep: true,
-      handler(sectors, oldSectors) {
+      async handler(sectors, oldSectors) {
+        if (!this.firstLoaded) return;
+
         const sectorsUuids = sectors.map((sector) => sector.uuid);
         const oldSectorsUuids = oldSectors.map((sector) => sector.uuid);
 
-        const toAddQueuesSector = this.firstLoaded
-          ? sectorsUuids.filter(
-              (sectorUuid) => !oldSectorsUuids.includes(sectorUuid),
-            )[0]
-          : undefined;
+        const toAddQueuesSector = sectorsUuids.filter(
+          (sectorUuid) => !oldSectorsUuids.includes(sectorUuid),
+        )[0];
 
-        const toRemoveQueuesSector = this.firstLoaded
-          ? oldSectorsUuids.filter(
-              (sectorUuid) => !sectorsUuids.includes(sectorUuid),
-            )[0]
-          : undefined;
+        const toRemoveQueuesSector = oldSectorsUuids.filter(
+          (sectorUuid) => !sectorsUuids.includes(sectorUuid),
+        )[0];
 
         if (sectors.length) {
-          this.listSectorsQueues({ toAddQueuesSector, toRemoveQueuesSector });
+          await this.listSectorsQueues({
+            toAddQueuesSector,
+            toRemoveQueuesSector,
+          });
         } else {
           this.avaliableSectorQueues = [];
           this.editingProjectGroup.agents.forEach((agent) => {
@@ -149,8 +150,6 @@ export default {
       groupSectorUuid: this.projectGroup.uuid,
     });
 
-    // TODO: list agents queues
-
     this.editingProjectGroup = {
       ...group,
       maxSimultaneousChatsByAgent: String(group.rooms_limit),
@@ -164,7 +163,9 @@ export default {
           queues: [],
         })),
     };
-    this.$nextTick(() => {
+    this.$nextTick(async () => {
+      await this.listSectorsQueues({});
+      await this.loadAgentsQueuesPermissions();
       this.firstLoaded = true;
     });
   },
@@ -189,7 +190,7 @@ export default {
 
     async listSectorsQueues({ toAddQueuesSector, toRemoveQueuesSector }) {
       const sectorsQueues = await Group.listSectorsQueues(
-        this.editingProjectGroup.sectors,
+        this.editingProjectGroup.sectors.map((sector) => sector.uuid),
       );
 
       this.avaliableSectorQueues = Object.entries(sectorsQueues)
@@ -218,6 +219,30 @@ export default {
           );
         });
       }
+    },
+
+    async loadAgentsQueuesPermissions() {
+      const agentsPermissions = await Group.listAgentsQueuesPermissions(
+        this.editingProjectGroup.sectors.map((sector) => sector.uuid),
+      );
+
+      Object.keys(agentsPermissions).forEach((agentEmail) => {
+        const findedAgent = this.editingProjectGroup.agents.find(
+          (agent) => agent.user_email === agentEmail,
+        );
+
+        if (!findedAgent) return;
+
+        const agentsQueuesPermissions = Object.entries(
+          agentsPermissions[agentEmail],
+        )
+          .map(([, { permissions }]) => permissions || [])
+          .flat();
+
+        findedAgent.queues = this.avaliableSectorQueues.filter((queue) =>
+          agentsQueuesPermissions.includes(queue.uuid),
+        );
+      });
     },
 
     async finish() {
@@ -313,26 +338,32 @@ export default {
         (agent) => agent.uuid,
       );
 
+      const agentsWithoutQueuesUuids = this.editingProjectGroup.agents
+        .filter((agent) => !agent.queues.length)
+        .map((agent) => agent.uuid);
+
       await Promise.all(
-        toRemoveAgentsUuids.map((permissionUuid) =>
-          Group.deleteAuthorization({ permissionUuid }),
+        [...toRemoveAgentsUuids, ...agentsWithoutQueuesUuids].map(
+          (permissionUuid) => Group.deleteAuthorization({ permissionUuid }),
         ),
       );
 
       await Promise.all(
-        this.editingProjectGroup.agents.map((agent) => {
-          const enabledQueuesUuids = agent.queues.map((queue) => queue.uuid);
-          const disabledQueuesUuids = this.avaliableSectorQueues
-            .filter((queue) => !enabledQueuesUuids.includes(queue.uuid))
-            .map((queue) => queue.uuid);
-          return Group.addAuthorization({
-            groupSectorUuid: this.projectGroup.uuid,
-            role: 2,
-            permissionUuid: agent.uuid,
-            enabledQueues: enabledQueuesUuids,
-            disabledQueues: disabledQueuesUuids,
-          });
-        }),
+        this.editingProjectGroup.agents
+          .filter((agent) => agent.queues.length)
+          .map((agent) => {
+            const enabledQueuesUuids = agent.queues.map((queue) => queue.uuid);
+            const disabledQueuesUuids = this.avaliableSectorQueues
+              .filter((queue) => !enabledQueuesUuids.includes(queue.uuid))
+              .map((queue) => queue.uuid);
+            return Group.addAuthorization({
+              groupSectorUuid: this.projectGroup.uuid,
+              role: 2,
+              permissionUuid: agent.new ? agent.uuid : agent.permission,
+              enabledQueues: enabledQueuesUuids,
+              disabledQueues: disabledQueuesUuids,
+            });
+          }),
       );
     },
   },
