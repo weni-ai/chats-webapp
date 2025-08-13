@@ -17,7 +17,7 @@
       autocompleteIconLeft
       autocompleteClearOnFocus
       data-testid="select-flow-input"
-      @update:model-value="getFlowTrigger(flowUuid?.[0].value)"
+      @update:model-value="getFlowTrigger(flowUuid?.[0]?.value)"
     />
   </div>
 </template>
@@ -57,6 +57,8 @@ export default {
 
   watch: {
     projectUuidFlow(newProjectUuidFlow) {
+      this.flowUuid = [{ value: '', label: this.$t('search_or_select') }];
+      this.$emit('update:modelValue', '');
       this.getFlows(newProjectUuidFlow);
     },
   },
@@ -70,15 +72,15 @@ export default {
   methods: {
     async getFlows(projectUuidFlow) {
       this.loadingFlows = true;
+
+      const defaultOption = { value: '', label: this.$t('search_or_select') };
+      this.flowUuid = [defaultOption];
+      this.$emit('update:modelValue', '');
+
       try {
         const response = await FlowsTrigger.getFlows(projectUuidFlow);
 
-        const treatedTemplates = [
-          {
-            value: '',
-            label: this.$t('search_or_select'),
-          },
-        ];
+        const treatedTemplates = [defaultOption];
 
         response.forEach((flow) => {
           const { name, uuid } = flow;
@@ -91,7 +93,7 @@ export default {
 
         this.templates = treatedTemplates;
       } catch (error) {
-        this.templates = [{ value: '', label: this.$t('search_or_select') }];
+        this.templates = [defaultOption];
         console.error('Error getting flows', error);
       } finally {
         this.loadingFlows = false;
