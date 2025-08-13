@@ -694,7 +694,8 @@
         "error": "Error al configurar los ajustes de la fila",
         "delete_success": "Cola eliminada exitosamente",
         "delete_error": "No se pudo eliminar la cola",
-        "config_agents_group": "Agregue o elimine agentes a través de grupos yendo a <b>Configuración de chat > Grupos</b>"
+        "add_new_queue": "Esta nueva fila se agregará para todos los agentes. Puede eliminarla accediendo a <b>Configuración de chats > Grupos > Agentes</b>",
+        "config_agents_group": "Agrega o quita esta fila por agentes a través de grupos accediendo a <b>Configuración de chats > Grupos > Agentes</b>"
       }
     },
     "groups": {
