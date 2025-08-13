@@ -254,6 +254,7 @@
     "get_chat": "Get chat",
     "get_chat_question": "Get chat?",
     "get_chat_confirmation": "Confirm if you want to do the service of {contact}",
+    "get_chat_error": "Error when trying to get the room",
     "you_got_chat": "You got the chat",
     "your_chat_assumed": "Chat with {contact} has been transferred",
     "your_chat_assumed_description": "Your chat with {contact} has been taken over by another agent",
