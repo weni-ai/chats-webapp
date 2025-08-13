@@ -120,9 +120,6 @@ export default {
   },
 
   methods: {
-    async listQueues() {
-      // TODO
-    },
     async listAgentsOptions() {
       let hasNext = false;
       try {
