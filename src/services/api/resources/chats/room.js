@@ -11,7 +11,7 @@ export default {
       project: getProject(),
       offset,
       limit,
-      ordering: `user,${order}`,
+      ordering: order,
       search: contact,
       room_status: roomsType,
     };

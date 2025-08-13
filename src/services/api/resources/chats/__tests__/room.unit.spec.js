@@ -39,7 +39,7 @@ describe('Room service', () => {
           project: 'mocked-project-id',
           offset: params.offset,
           limit: params.limit,
-          ordering: `user,${params.order}`,
+          ordering: params.order,
           search: params.contact,
           email: params.viewedAgent,
         },
@@ -510,7 +510,7 @@ describe('Room service', () => {
           project: 'mocked-project-id',
           offset: 0,
           limit: 10,
-          ordering: 'user,desc',
+          ordering: 'desc',
           search: 'contact',
         },
       });
@@ -529,7 +529,7 @@ describe('Room service', () => {
           project: 'mocked-project-id',
           offset: 0,
           limit: 10,
-          ordering: 'user,asc',
+          ordering: 'asc',
           search: null,
         },
       });
@@ -557,7 +557,7 @@ describe('Room service', () => {
           project: 'mocked-project-id',
           offset: 0,
           limit: 0,
-          ordering: 'user,asc',
+          ordering: 'asc',
           search: '',
         },
       });

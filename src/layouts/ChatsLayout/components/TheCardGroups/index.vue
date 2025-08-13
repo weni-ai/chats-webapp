@@ -549,7 +549,9 @@ export default {
     },
     handleMostRecentFilter() {
       const orderByValue =
-        this.activeTab === 'waiting' ? '-created_on' : '-last_interaction';
+        this.activeTab === 'waiting'
+          ? '-added_to_queue_at'
+          : '-last_interaction';
 
       this.orderBy[this.activeTab] = orderByValue;
 
@@ -557,7 +559,7 @@ export default {
     },
     handleOlderFilter() {
       const orderByValue =
-        this.activeTab === 'waiting' ? 'created_on' : 'last_interaction';
+        this.activeTab === 'waiting' ? 'added_to_queue_at' : 'last_interaction';
 
       this.orderBy[this.activeTab] = orderByValue;
 
