@@ -694,7 +694,8 @@
         "error": "Falha ao definir configurações da fila",
         "delete_success": "Fila excluída com sucesso",
         "delete_error": "Falha ao excluir a fila",
-        "config_agents_group": "Adicione ou remova agentes através de grupos acessando <b>Configurações de Chats > Grupos</b>"
+        "add_new_queue": "Esta nova fila será adicionada para todos os agentes. Você poderá removê-la acessando <b>Configurações do Chat > Grupos > Agentes</b>",
+        "config_agents_group": "Adicione ou remova esta fila pelos agentes através dos grupos acessando <b>Configurações do Chat > Grupos > Agentes</b>"
       }
     },
     "groups": {
