@@ -51,7 +51,8 @@ describe('SelectFlow', () => {
 
     await wrapper.vm.getFlowTrigger('flow-1');
 
-    expect(wrapper.emitted('update:modelValue')[0]).toEqual(['flow-1']);
+    expect(wrapper.emitted('update:modelValue')[0]).toEqual(['']);
+    expect(wrapper.emitted('update:modelValue')[3]).toEqual(['flow-1']);
   });
 
   it('handles API errors gracefully', async () => {
