@@ -91,6 +91,7 @@ export default {
 
         this.templates = treatedTemplates;
       } catch (error) {
+        this.templates = [{ value: '', label: this.$t('search_or_select') }];
         console.error('Error getting flows', error);
       } finally {
         this.loadingFlows = false;
