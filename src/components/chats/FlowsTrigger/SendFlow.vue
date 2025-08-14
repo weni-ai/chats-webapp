@@ -3,10 +3,19 @@
     class="send-flow"
     data-testid="send-flow-container"
   >
-    <SelectFlow
-      v-model="selectedFlow"
-      data-testid="select-flow"
-    />
+    <section>
+      <SelectProjects
+        v-if="isProjectPrincipal"
+        v-model="projectUuidFlow"
+      />
+      <SelectFlow
+        v-model="selectedFlow"
+        data-testid="select-flow"
+        :isDisabled="isProjectPrincipal && !projectUuidFlow"
+        :projectUuidFlow="projectUuidFlow"
+      />
+    </section>
+
     <div v-if="showProgressBar">
       <ModalProgressBarFalse
         :title="$t('flows_trigger.sending')"
@@ -20,7 +29,7 @@
         size="small"
         type="tertiary"
         data-testid="back-button"
-        @click="$emit('back')"
+        @click="noHasContacts ? $emit('close') : $emit('back')"
       />
       <SendFlowButton
         class="send-flow__handlers__button"
@@ -28,6 +37,7 @@
         :selectedContact="selectedContact"
         :selectedFlow="selectedFlow"
         data-testid="send-flow-button"
+        @back-to-contact-list="backToContactList"
         @send-flow-started="openModalProgress"
         @send-flow-finished="closeModalProgressWithResult"
       />
@@ -42,6 +52,7 @@ import ModalProgressBarFalse from '@/components/ModalProgressBarFalse.vue';
 
 import SelectFlow from './SelectFlow.vue';
 import SendFlowButton from './SendFlowButton.vue';
+import SelectProjects from './SelectProjects.vue';
 
 export default {
   name: 'SendFlow',
@@ -50,6 +61,7 @@ export default {
     SelectFlow,
     SendFlowButton,
     ModalProgressBarFalse,
+    SelectProjects,
   },
 
   props: {
@@ -61,15 +73,35 @@ export default {
       type: Object,
       default: () => {},
     },
+    isProjectPrincipal: {
+      type: Boolean,
+      default: false,
+    },
   },
-  emits: ['back', 'close'],
+  emits: ['back', 'close', 'update:projectUuidFlow', 'update:selectedFlow'],
 
   data() {
     return {
       showProgressBar: false,
 
       selectedFlow: '',
+      projectUuidFlow: '',
     };
+  },
+
+  computed: {
+    noHasContacts() {
+      return !this.selectedContact && this.contacts.length === 0;
+    },
+  },
+
+  watch: {
+    selectedFlow(newSelectedFlow) {
+      this.$emit('update:selectedFlow', newSelectedFlow);
+    },
+    projectUuidFlow(newProjectUuidFlow) {
+      this.$emit('update:projectUuidFlow', newProjectUuidFlow);
+    },
   },
 
   methods: {
@@ -97,6 +129,10 @@ export default {
       });
 
       this.$emit('close');
+    },
+
+    backToContactList() {
+      this.$emit('back');
     },
   },
 };
