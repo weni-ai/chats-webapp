@@ -7,10 +7,10 @@ import {
 } from '@/utils/config';
 
 import Profile from '@/services/api/resources/profile';
-import { useProfile } from './profile';
 
 export const useConfig = defineStore('config', {
   state: () => ({
+    socketStatus: '',
     token: '',
     project: {
       config: {},
