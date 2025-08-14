@@ -34,7 +34,7 @@
         }}
       </p>
       <TagGroup
-        style="margin-top: 16px"
+        class="selected-member-expanded__queues"
         :modelValue="agentQueues"
         :tags="queuesOptions"
         selectable
@@ -146,6 +146,10 @@ export default {
       font-weight: $unnnic-font-weight-regular;
       color: $unnnic-color-neutral-darkest;
     }
+  }
+
+  &__queues {
+    margin-top: $unnnic-spacing-sm;
   }
 }
 </style>

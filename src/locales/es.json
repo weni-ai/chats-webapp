@@ -805,7 +805,7 @@
   },
   "socket_alert_banner": {
     "closed": {
-      "title": "Estás desconectado. Por favor",
+      "title": "Estás desconectado. Por favor ",
       "refresh": "refresca",
       "to_continue": " para continuar ayudando."
     },
