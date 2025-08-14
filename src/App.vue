@@ -1,11 +1,18 @@
 <template>
   <div id="app">
+    <SocketAlertBanner
+      v-if="
+        ['closed', 'connecting'].includes(socketStatus) && socketRetryCount >= 5
+      "
+    />
     <RouterView />
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'pinia';
+
+import SocketAlertBanner from './layouts/ChatsLayout/components/SocketAlertBanner.vue';
 
 import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
@@ -27,9 +34,12 @@ import {
 } from '@/utils/config';
 
 import moment from 'moment';
+
 export default {
   name: 'App',
-
+  components: {
+    SocketAlertBanner,
+  },
   setup() {
     const queryString = window.location.href.split('?')[1];
 
@@ -58,7 +68,12 @@ export default {
       project: 'project',
       appToken: 'token',
       appProject: (store) => store.project.uuid,
+      socketStatus: 'socketStatus',
     }),
+
+    socketRetryCount() {
+      return this.ws?.reconnectAttempts || 0;
+    },
 
     configsForInitializeWebSocket() {
       const { appToken, appProject } = this;
@@ -254,8 +269,8 @@ export default {
       }
     },
 
-    async wsReconnect() {
-      this.ws.reconnect();
+    async wsReconnect({ ignoreRetryCount } = {}) {
+      this.ws.reconnect({ ignoreRetryCount });
     },
   },
 };

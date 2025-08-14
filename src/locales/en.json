@@ -797,5 +797,14 @@
       "newer": "Newer",
       "older": "Older"
     }
+  },
+  "socket_alert_banner": {
+    "closed": {
+      "title": "You are disconnected. Please ",
+      "refresh": "refresh",
+      "to_continue": " to continue assisting."
+    },
+    "connecting": "Loading...",
+    "connected": "Update completed successfully! You can continue your support."
   }
 }

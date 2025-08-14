@@ -800,5 +800,14 @@
       "newer": "Más reciente",
       "older": "Más antiguo"
     }
+  },
+  "socket_alert_banner": {
+    "closed": {
+      "title": "Estás desconectado. Por favor",
+      "refresh": "refresca",
+      "to_continue": " para continuar ayudando."
+    },
+    "connecting": "Cargando...",
+    "connected": "Actualización completada con éxito! Puedes continuar con tu soporte."
   }
 }
