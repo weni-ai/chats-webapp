@@ -84,47 +84,67 @@ export default class WebSocketSetup {
   }
 
   connect() {
-    const url = this.buildUrl();
-    const ws = new WS(url);
+    return new Promise((resolve) => {
+      const url = this.buildUrl();
+      const ws = new WS(url);
 
-    this.ws = ws;
-    this.ws.ws.onclose = () => {
-      if (this.ws.ws.readyState === this.ws.ws.OPEN) return;
+      this.ws = ws;
 
-      const timestamp = new Date().toISOString();
+      const connectionTimeout = setTimeout(() => {
+        console.warn('[WebSocket] Connection timeout');
+        resolve(false);
+      }, 10000);
 
-      if (this.isFirstReconnectAttempt) {
-        console.warn(
+      this.ws.ws.onclose = async () => {
+        if (this.ws.ws.readyState === this.ws.ws.OPEN) return;
+
+        const timestamp = new Date().toISOString();
+
+        if (this.isFirstReconnectAttempt) {
+          console.warn(
+            timestamp,
+            '[WebSocket] Connection closed, attempting to reconnect...',
+          );
+          this.isFirstReconnectAttempt = false;
+          await this.reconnect();
+        } else {
+          const delay = this.calculateReconnectDelay();
+          this.reconnectAttempts++;
+
+          console.warn(
+            timestamp,
+            `[WebSocket] Reconnect attempt ${this.reconnectAttempts}, waiting ${delay}ms...`,
+          );
+
+          setTimeout(async () => {
+            await this.reconnect();
+          }, delay);
+        }
+      };
+
+      this.ws.ws.onopen = () => {
+        clearTimeout(connectionTimeout);
+        this.isFirstReconnectAttempt = true;
+        this.reconnectAttempts = 0; // Reset attempts counter on successful connection
+
+        const timestamp = new Date().toISOString();
+        console.log(
           timestamp,
-          '[WebSocket] Connection closed, attempting to reconnect...',
-        );
-        this.isFirstReconnectAttempt = false;
-        this.reconnect();
-      } else {
-        const delay = this.calculateReconnectDelay();
-        this.reconnectAttempts++;
-
-        console.warn(
-          timestamp,
-          `[WebSocket] Reconnect attempt ${this.reconnectAttempts}, waiting ${delay}ms...`,
+          '[WebSocket] Connection established successfully',
         );
 
-        setTimeout(() => {
-          this.reconnect();
-        }, delay);
-      }
-    };
+        resolve(true);
+      };
 
-    this.ws.ws.onopen = () => {
-      this.isFirstReconnectAttempt = true;
-      this.reconnectAttempts = 0; // Reset attempts counter on successful connection
+      this.ws.ws.onerror = (error) => {
+        clearTimeout(connectionTimeout);
+        console.error('[WebSocket] Connection error:', error);
+        resolve(false);
+      };
 
-      const timestamp = new Date().toISOString();
-      console.log(timestamp, '[WebSocket] Connection established successfully');
-    };
-
-    listeners({ ws, app: this.app });
-    this.setupPingInterval();
+      listeners({ ws, app: this.app });
+      this.setupPingInterval();
+    });
   }
 
   setupPingInterval() {
@@ -141,7 +161,7 @@ export default class WebSocketSetup {
     }
   }
 
-  ping() {
+  async ping() {
     const isWebSocketOpen = this.ws.ws.readyState === this.ws.ws.OPEN;
     if (isWebSocketOpen) {
       this.ws.send({
@@ -151,11 +171,11 @@ export default class WebSocketSetup {
     } else {
       // Reset first attempt flag so exponential backoff applies
       this.isFirstReconnectAttempt = false;
-      this.reconnect();
+      await this.reconnect();
     }
   }
 
-  reconnect() {
+  async reconnect() {
     if (this.reconnectAttempts >= this.MAX_RECONNECT_ATTEMPTS) {
       console.warn(
         '[WebSocket] Max reconnect attempts reached, stopping reconnect attempts',
@@ -167,13 +187,18 @@ export default class WebSocketSetup {
       this.ws.ws.close();
     }
 
-    this.connect();
+    const connected = await this.connect();
 
-    this.reloadRoomsAndDiscussions();
+    if (connected) {
+      // Only execute these operations if connection was successful
+      this.reloadRoomsAndDiscussions();
 
-    const sessionStorageStatus = sessionStorage.getItem(
-      `statusAgent-${this.app.appProject}`,
-    );
-    this.app.updateUserStatus(sessionStorageStatus);
+      const sessionStorageStatus = sessionStorage.getItem(
+        `statusAgent-${this.app.appProject}`,
+      );
+      this.app.updateUserStatus(sessionStorageStatus);
+    }
+
+    return connected;
   }
 }
