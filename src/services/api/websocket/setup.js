@@ -58,7 +58,7 @@ export default class WebSocketSetup {
   calculateReconnectDelay() {
     // Exponential backoff: delay = baseDelay * (2 ^ attempts) + random jitter
     const exponentialDelay =
-      this.BASE_RECONNECT_DELAY * Math.pow(2, this.reconnectAttempts);
+      this.BASE_RECONNECT_DELAY * Math.pow(2, this.reconnectAttempts - 1);
 
     // Add random jitter (0-1000ms) to prevent thundering herd
     const jitter = Math.random() * 1000;
@@ -102,7 +102,6 @@ export default class WebSocketSetup {
         this.reconnect();
       } else {
         const delay = this.calculateReconnectDelay();
-        this.reconnectAttempts++;
 
         console.warn(
           timestamp,
@@ -116,18 +115,20 @@ export default class WebSocketSetup {
     };
 
     this.ws.ws.onopen = () => {
+      if (this.reconnectAttempts > 0) {
+        this.reloadRoomsAndDiscussions();
+      }
+
       this.isFirstReconnectAttempt = true;
       this.reconnectAttempts = 0; // Reset attempts counter on successful connection
-
-      const timestamp = new Date().toISOString();
-      console.log(timestamp, '[WebSocket] Connection established successfully');
-
-      this.reloadRoomsAndDiscussions();
 
       const sessionStorageStatus = sessionStorage.getItem(
         `statusAgent-${this.app.appProject}`,
       );
       this.app.updateUserStatus(sessionStorageStatus);
+
+      const timestamp = new Date().toISOString();
+      console.log(timestamp, '[WebSocket] Connection established successfully');
     };
 
     listeners({ ws, app: this.app });
@@ -169,6 +170,8 @@ export default class WebSocketSetup {
       );
       return;
     }
+
+    this.reconnectAttempts++;
 
     if (this.ws && this.ws.ws.readyState !== this.ws.ws.CLOSED) {
       this.ws.ws.close();
