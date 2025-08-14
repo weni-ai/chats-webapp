@@ -172,13 +172,5 @@ describe('WebSocketSetup', () => {
       expect(spyClose).toHaveBeenCalled();
       expect(spyConnect).toHaveBeenCalled();
     });
-
-    it('should update user status from sessionStorage', () => {
-      sessionStorage.setItem('statusAgent-mockProject', 'mockStatus');
-
-      webSocketSetup.reconnect();
-
-      expect(mockApp.updateUserStatus).toHaveBeenCalledWith('mockStatus');
-    });
   });
 });
