@@ -11,11 +11,13 @@
     <UnnnicSelectSmart
       v-model="flowUuid"
       :options="templates"
+      :disabled="isDisabled"
+      :loading="loadingFlows"
       autocomplete
       autocompleteIconLeft
       autocompleteClearOnFocus
       data-testid="select-flow-input"
-      @update:model-value="getFlowTrigger(flowUuid?.[0].value)"
+      @update:model-value="getFlowTrigger(flowUuid?.[0]?.value)"
     />
   </div>
 </template>
@@ -31,70 +33,75 @@ export default {
       type: String,
       required: true,
     },
+    isDisabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    projectUuidFlow: {
+      type: String,
+      required: false,
+      default: '',
+    },
   },
-  emits: ['update:modelValue', 'update:projectUuidFlow'],
+  emits: ['update:modelValue'],
 
   data() {
     return {
       flowUuid: [],
       templates: [{ value: '', label: this.$t('search_or_select') }],
       selectedFlow: '',
-      projectUuidFlows: [],
       loadingFlows: false,
     };
   },
 
+  watch: {
+    projectUuidFlow(newProjectUuidFlow) {
+      this.flowUuid = [{ value: '', label: this.$t('search_or_select') }];
+      this.$emit('update:modelValue', '');
+      this.getFlows(newProjectUuidFlow);
+    },
+  },
+
   mounted() {
-    this.getFlows();
+    if (!this.isDisabled) {
+      this.getFlows();
+    }
   },
 
   methods: {
-    async getFlows() {
+    async getFlows(projectUuidFlow) {
       this.loadingFlows = true;
-      try {
-        const response = await FlowsTrigger.getFlows();
 
-        const treatedTemplates = [
-          {
-            value: '',
-            label: this.$t('search_or_select'),
-          },
-        ];
-        const projectUuidFlows = [];
+      const defaultOption = { value: '', label: this.$t('search_or_select') };
+      this.flowUuid = [defaultOption];
+      this.$emit('update:modelValue', '');
+
+      try {
+        const response = await FlowsTrigger.getFlows(projectUuidFlow);
+
+        const treatedTemplates = [defaultOption];
+
         response.forEach((flow) => {
-          const { name, uuid, results } = flow;
+          const { name, uuid } = flow;
 
           treatedTemplates.push({
             value: uuid,
             label: name,
           });
-
-          if (results?.length > 0) {
-            projectUuidFlows.push({
-              flowUuid: uuid,
-              projectUuidFlow: results[0].node_uuids[0],
-            });
-          }
         });
+
         this.templates = treatedTemplates;
-        this.projectUuidFlows = projectUuidFlows;
-        this.loadingFlows = false;
       } catch (error) {
+        this.templates = [defaultOption];
+        console.error('Error getting flows', error);
+      } finally {
         this.loadingFlows = false;
-        console.log(error);
       }
     },
 
     getFlowTrigger(uuid) {
       this.$emit('update:modelValue', uuid);
-      if (this.projectUuidFlows.length > 0) {
-        const projectUuidFlow = this.projectUuidFlows.find(
-          (projectUuidFlow) => projectUuidFlow.flowUuid === uuid,
-        );
-        if (projectUuidFlow) {
-          this.$emit('update:projectUuidFlow', projectUuidFlow.projectUuidFlow);
-        }
-      }
     },
   },
 };
