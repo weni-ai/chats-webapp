@@ -38,6 +38,7 @@
         <Agents
           v-show="activePage === $t('config_chats.groups.agents')"
           v-model="group"
+          :queuesOptions="avaliableSectorQueues"
           @change-valid="updateIsValid('agents', $event)"
         />
       </section>
@@ -93,6 +94,7 @@ export default {
         sectors: [],
         agents: [],
       },
+      avaliableSectorQueues: [],
       activePageIndex: 0,
       newGroupsPages: [
         this.$t('config_chats.groups.general'),
@@ -134,6 +136,32 @@ export default {
       );
     },
   },
+  watch: {
+    'group.sectors': {
+      deep: true,
+      handler(sectors, oldSectors) {
+        const sectorsUuids = sectors.map((sector) => sector.uuid);
+        const oldSectorsUuids = oldSectors.map((sector) => sector.uuid);
+
+        const toAddQueuesSector = sectorsUuids.filter(
+          (sectorUuid) => !oldSectorsUuids.includes(sectorUuid),
+        )[0];
+
+        const toRemoveQueuesSector = oldSectorsUuids.filter(
+          (sectorUuid) => !sectorsUuids.includes(sectorUuid),
+        )[0];
+
+        if (sectors.length) {
+          this.listSectorsQueues({ toAddQueuesSector, toRemoveQueuesSector });
+        } else {
+          this.avaliableSectorQueues = [];
+          this.group.agents.forEach((agent) => {
+            agent.queues = [];
+          });
+        }
+      },
+    },
+  },
   mounted() {
     this.listenConnect();
   },
@@ -152,6 +180,38 @@ export default {
         this.showConfirmDiscartChangesModal = true;
       } else {
         this.$emit('close');
+      }
+    },
+    async listSectorsQueues({ toAddQueuesSector, toRemoveQueuesSector }) {
+      const sectorsUuids = this.group.sectors.map((sector) => sector.uuid);
+
+      const sectorsQueues = await Group.listSectorsQueues(sectorsUuids);
+
+      this.avaliableSectorQueues = Object.entries(sectorsQueues)
+        .map(([sectorUuid, data]) => {
+          return data.queues.map((queue) => ({
+            sectorUuid,
+            name: `${data.sector_name} | ${queue.queue_name}`,
+            uuid: queue.uuid,
+          }));
+        })
+        .flat();
+
+      if (toAddQueuesSector) {
+        this.group.agents.forEach((agent) => {
+          const sectorQueues = this.avaliableSectorQueues.filter(
+            (queue) => queue.sectorUuid === toAddQueuesSector,
+          );
+          agent.queues = agent.queues.concat(sectorQueues);
+        });
+      }
+
+      if (toRemoveQueuesSector) {
+        this.group.agents.forEach((agent) => {
+          agent.queues = agent.queues.filter(
+            (queue) => queue.sectorUuid !== toRemoveQueuesSector,
+          );
+        });
       }
     },
     async finish() {
@@ -195,6 +255,7 @@ export default {
               groupSectorUuid: this.group.uuid,
               permissionUuid: agent.uuid,
               role: 2,
+              enabledQueues: agent.queues.map((queue) => queue.uuid),
             }),
           ),
         );

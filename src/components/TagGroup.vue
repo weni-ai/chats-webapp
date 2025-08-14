@@ -12,9 +12,9 @@
         :clickable="selectable"
         :text="tag.name"
         :data-testid="`tag__${tag.uuid}`"
-        :hasCloseIcon="showCloseIcon(tag)"
+        :hasCloseIcon="!!showCloseIcon(tag)"
         :disabled="
-          (!hasCloseIcon && selectable && isSelectedTag(tag)) || disabledTag
+          !!(!hasCloseIcon && selectable && isSelectedTag(tag)) || !!disabledTag
         "
         :class="{ 'tag-group__tags__tag--selected': isSelectedTag(tag) }"
         type="brand"
