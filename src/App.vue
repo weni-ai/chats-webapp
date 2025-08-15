@@ -1,10 +1,6 @@
 <template>
   <div id="app">
-    <SocketAlertBanner
-      v-if="
-        ['closed', 'connecting'].includes(socketStatus) && socketRetryCount >= 5
-      "
-    />
+    <SocketAlertBanner v-if="showSocketAlertBanner" />
     <RouterView />
   </div>
 </template>
@@ -73,6 +69,14 @@ export default {
 
     socketRetryCount() {
       return this.ws?.reconnectAttempts || 0;
+    },
+
+    showSocketAlertBanner() {
+      return (
+        ['room', 'home'].includes(this.$route.name) &&
+        ['closed', 'connecting'].includes(this.socketStatus) &&
+        this.socketRetryCount >= 5
+      );
     },
 
     configsForInitializeWebSocket() {
