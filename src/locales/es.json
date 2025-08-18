@@ -313,6 +313,7 @@
     "get_chat": "atrapar el chat",
     "get_chat_question": "Obtener chat?",
     "get_chat_confirmation": "Confirma si deseas realizar el servicio de {contact}",
+    "get_chat_error": "Error al intentar obtener el chat",
     "you_got_chat": "Tienes el chat",
     "your_chat_assumed": "El chat con {contact} ha sido transferido",
     "your_chat_assumed_description": "Otro agente se ha hecho cargo de su chat con {contacto}",
@@ -602,6 +603,7 @@
     },
     "send": "Enviar flujo",
     "select": "Seleccionar flujo",
+    "select_project": "Seleccionar proyecto",
     "sending": "Enviando flujo",
     "successfully_triggered": "Flujo disparado exitosamente",
     "error_triggering": "Error al disparar el flujo",
@@ -751,7 +753,8 @@
         "error": "Error al configurar los ajustes de la fila",
         "delete_success": "Cola eliminada exitosamente",
         "delete_error": "No se pudo eliminar la cola",
-        "config_agents_group": "Agregue o elimine agentes a través de grupos yendo a <b>Configuración de chat > Grupos</b>"
+        "add_new_queue": "Esta nueva fila se agregará para todos los agentes. Puede eliminarla accediendo a <b>Configuración de chats > Grupos > Agentes</b>",
+        "config_agents_group": "Agrega o quita esta fila por agentes a través de grupos accediendo a <b>Configuración de chats > Grupos > Agentes</b>"
       }
     },
     "groups": {
@@ -791,7 +794,8 @@
             "label": "Agregar agente",
             "placeholder": "Buscar por nombre o email"
           }
-        }
+        },
+        "define_queues": "Define las colas que {agentName} atenderá."
       },
       "general": "General",
       "projects": "Proyectos",

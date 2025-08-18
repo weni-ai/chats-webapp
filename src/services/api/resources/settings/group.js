@@ -18,6 +18,24 @@ export default {
     return response.data;
   },
 
+  async listSectorsQueues(sectors) {
+    const endpoint = `/group_sector/queue/`;
+    const response = await http.get(endpoint, {
+      params: { sectors: sectors.join(',') },
+    });
+
+    return response.data;
+  },
+
+  async listAgentsQueuesPermissions(sectors) {
+    const endpoint = `/group_sector/permissions/`;
+    const response = await http.get(endpoint, {
+      params: { sectors: sectors.join(',') },
+    });
+
+    return response.data;
+  },
+
   async create(body) {
     const endpoint = `/group_sector/`;
     const response = await http.post(endpoint, {
@@ -86,18 +104,27 @@ export default {
     return response.data;
   },
 
-  async addAuthorization({ groupSectorUuid, permissionUuid, role }) {
+  async addAuthorization({
+    groupSectorUuid,
+    permissionUuid,
+    role,
+    enabledQueues,
+    disabledQueues,
+  }) {
     const endpoint = `/authorization/group_sector/`;
     const body = {
       role,
       permission: permissionUuid,
       group_sector: groupSectorUuid,
+      enabled_queues: enabledQueues,
+      disabled_queues: disabledQueues,
     };
 
     const response = await http.post(endpoint, body);
 
     return response.data;
   },
+
   async deleteAuthorization({ permissionUuid }) {
     const endpoint = `/authorization/group_sector/${permissionUuid}/`;
 

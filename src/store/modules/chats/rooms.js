@@ -24,7 +24,7 @@ export const useRooms = defineStore('rooms', {
       ongoing: '-last_interaction',
       discussions: '-last_interaction',
       flow_start: '-last_interaction',
-      waiting: 'created_on',
+      waiting: 'added_to_queue_at',
     },
     showOngoingDot: false,
     roomsCount: {

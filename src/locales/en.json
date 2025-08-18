@@ -311,6 +311,7 @@
     "get_chat": "Get chat",
     "get_chat_question": "Get chat?",
     "get_chat_confirmation": "Confirm if you want to do the service of {contact}",
+    "get_chat_error": "Error when trying to get the room",
     "you_got_chat": "You got the chat",
     "your_chat_assumed": "Chat with {contact} has been transferred",
     "your_chat_assumed_description": "Your chat with {contact} has been taken over by another agent",
@@ -600,6 +601,7 @@
     },
     "send": "Send flow",
     "select": "Select flow",
+    "select_project": "Select project",
     "sending": "Sending flow",
     "successfully_triggered": "Flow triggered successfully",
     "error_triggering": "Error triggering flow",
@@ -749,7 +751,8 @@
         "error": "Failed to set queue settings",
         "delete_success": "Queue deleted successfully",
         "delete_error": "Failed to delete queue",
-        "config_agents_group": "Add or remove agents through groups by going to <b>Chat Settings > Groups</b>"
+        "add_new_queue": "This new queue will be added for all agents. You can remove it by going to <b>Chats Settings > Groups > Agents</b>",
+        "config_agents_group": "Add or remove this queue by agents through groups by accessing <b>Chat Settings > Groups > Agents</b>"
       }
     },
     "groups": {
@@ -789,7 +792,8 @@
             "label": "Add agent",
             "placeholder": "Search by the name or email"
           }
-        }
+        },
+        "define_queues": "Define which queues {agentName} will attend."
       },
       "general": "General",
       "projects": "Projects",
