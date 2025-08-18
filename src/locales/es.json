@@ -36,7 +36,11 @@
   },
   "country_holidays": {
     "title": "Feriados en {country}",
-    "description": "Si es necesario, puede deshabilitar cada uno de los feriados y serán considerados como día laboral."
+    "description": "Si es necesario, puede deshabilitar cada uno de los feriados y serán considerados como día laboral.",
+    "message": {
+      "error": "No se pudieron actualizar los feriados del país, por favor, inténtelo de nuevo.",
+      "success": "Feriados del país actualizados correctamente."
+    }
   },
   "custom_holidays": {
     "title": "Fechas Específicas No Laborables",

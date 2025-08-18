@@ -2,7 +2,7 @@
   <UnnnicModalDialog
     :modelValue="true"
     :title="$t('sector.managers.working_day.add_non_working_dates')"
-    :primaryButtonProps="{ text: $t('save') }"
+    :primaryButtonProps="{ text: $t('save'), loading: isLoading }"
     @primary-button-click="save"
     @update:model-value="emitClose"
   >
@@ -43,11 +43,25 @@
 </template>
 
 <script>
+import Sector from '@/services/api/resources/settings/sector';
+import unnnic from '@weni/unnnic-system';
+
 export default {
   name: 'CreateCustomHolidayModal',
+  props: {
+    isEditing: {
+      type: Boolean,
+      default: false,
+    },
+    sectorUuid: {
+      type: String,
+      default: '',
+    },
+  },
   emits: ['close', 'add-custom-holidays'],
   data() {
     return {
+      isLoading: false,
       forms: [{ date: { start: '', end: '' }, repeat: false }],
     };
   },
@@ -58,7 +72,43 @@ export default {
     addForm() {
       this.forms.push({ date: { start: '', end: '' }, repeat: false });
     },
-    save() {
+    async save() {
+      this.isLoading = true;
+      if (this.isEditing) {
+        try {
+          const promises = this.forms
+            .filter((form) => !!form.date.start)
+            .map(async (form) => {
+              const response = await Sector.createSectorHoliday(
+                this.sectorUuid,
+                form,
+              );
+              form.uuid = response.uuid;
+              form.success = true;
+            });
+          await Promise.all(promises);
+          unnnic.unnnicCallAlert({
+            props: {
+              text: this.$t(
+                'sector.managers.working_day.message.create_custom_holiday.success',
+              ),
+              type: 'success',
+            },
+          });
+        } catch (error) {
+          unnnic.unnnicCallAlert({
+            props: {
+              text: this.$t(
+                'sector.managers.working_day.message.create_custom_holiday.error',
+              ),
+              type: 'error',
+            },
+          });
+        } finally {
+          this.isLoading = false;
+          this.forms = this.forms.filter((form) => form.success);
+        }
+      }
       this.$emit('add-custom-holidays', this.forms);
       this.emitClose();
     },

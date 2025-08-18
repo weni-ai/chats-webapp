@@ -36,7 +36,11 @@
   },
   "country_holidays": {
     "title": "Holidays in {country}",
-    "description": "If necessary, you can disable each of the holidays and they will be considered as a business day."
+    "description": "If necessary, you can disable each of the holidays and they will be considered as a business day.",
+    "message": {
+      "error": "Failed to update country holidays, please try again.",
+      "success": "Country holidays updated successfully."
+    }
   },
   "custom_holidays": {
     "title": "Specific Non-working Dates",
@@ -194,6 +198,12 @@
         },
         "limit_agents": {
           "label": "Limit on the number of simultaneous calls per agent"
+        },
+        "message": {
+          "create_custom_holiday": {
+            "error": "Failed to add some non-working dates, please check and try again.",
+            "success": "Non-working dates added successfully."
+          }
         }
       }
     },

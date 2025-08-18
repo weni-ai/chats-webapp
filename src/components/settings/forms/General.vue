@@ -340,6 +340,7 @@
       :holidays="allCountryHolidays"
       :enableHolidays="enableCountryHolidays"
       :isEditing="isEditing"
+      :sectorUuid="sector.uuid"
       @update:enable-holidays="enableCountryHolidays = $event"
       @update:disabled-holidays="disabledCountryHolidays = $event"
       @close="showCountryHolidaysModal = false"
@@ -352,6 +353,8 @@
     />
     <CreateCustomHolidayModal
       v-if="showCreateCustomHolidayModal"
+      :isEditing="isEditing"
+      :sectorUuid="sector.uuid"
       @close="showCreateCustomHolidayModal = false"
       @add-custom-holidays="addCustomHolidays"
     />
@@ -1124,8 +1127,10 @@ export default {
     async addCustomHolidays(holidays) {
       holidays.forEach((holiday) => {
         this.enableCustomHolidays.push({
-          uuid: `${new Date().getTime()}-${holiday.date.start}-${holiday.date.end}`,
           ...holiday,
+          uuid:
+            holiday.uuid ||
+            `${new Date().getTime()}-${holiday.date.start}-${holiday.date.end}`,
         });
       });
     },

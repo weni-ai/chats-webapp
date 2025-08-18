@@ -36,7 +36,11 @@
   },
   "country_holidays": {
     "title": "Feriados em {country}",
-    "description": "Se necessário, você pode desabilitar cada um dos feriados e eles serão considerados como dia útil."
+    "description": "Se necessário, você pode desabilitar cada um dos feriados e eles serão considerados como dia útil.",
+    "message": {
+      "error": "Não foi possível atualizar os feriados do país, por favor, tente novamente.",
+      "success": "Feriados do país atualizados com sucesso."
+    }
   },
   "custom_holidays": {
     "title": "Datas Específicas Não Trabalhadas",
