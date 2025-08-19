@@ -45,7 +45,13 @@
   "custom_holidays": {
     "title": "Datas Específicas Não Trabalhadas",
     "description": "Se necessário, você pode excluir cada uma das datas ou períodos e eles serão considerados como dia útil.",
-    "disclaimer": "Excluir datas ou períodos não pode ser desfeito. Clique no botão 'Salvar' para confirmar a ação."
+    "disclaimer": "Excluir datas ou períodos não pode ser desfeito. Clique no botão 'Salvar' para confirmar a ação.",
+    "message": {
+      "save": {
+        "error": "Não foi possível excluir algumas datas específicas não trabalhadas, por favor, verifique e tente novamente.",
+        "success": "Datas específicas não trabalhadas excluídas com sucesso."
+      }
+    }
   },
   "status": {
     "online": "Online",

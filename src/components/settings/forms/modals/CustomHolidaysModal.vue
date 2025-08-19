@@ -3,7 +3,7 @@
     :modelValue="true"
     :title="$t('custom_holidays.title')"
     showCloseIcon
-    :primaryButtonProps="{ text: $t('save') }"
+    :primaryButtonProps="{ text: $t('save'), loading: isLoading }"
     @primary-button-click="save"
     @update:model-value="$emit('close')"
   >
@@ -61,6 +61,9 @@
 </template>
 
 <script>
+import Sector from '@/services/api/resources/settings/sector';
+
+import unnnic from '@weni/unnnic-system';
 import moment from 'moment';
 
 export default {
@@ -70,11 +73,20 @@ export default {
       type: Array,
       required: true,
     },
+    isEditing: {
+      type: Boolean,
+      default: false,
+    },
+    sectorUuid: {
+      type: String,
+      default: '',
+    },
   },
   emits: ['close', 'save'],
   data() {
     return {
       toDeleteIds: [],
+      isLoading: false,
     };
   },
   methods: {
@@ -86,13 +98,41 @@ export default {
       }
       return `${start} ${holiday.repeat ? `- ${this.$t('sector.managers.working_day.repeat_annually')}` : ''}`;
     },
-    save() {
-      const filterHolidays = this.holidays.filter(
-        (holiday) => !this.toDeleteIds.includes(holiday.uuid),
+    async save() {
+      const removeSuccessIds = [];
+      if (this.isEditing) {
+        this.isLoading = true;
+        try {
+          const promises = this.toDeleteIds.map(async (holidayId) => {
+            await Sector.deleteSectorHoliday(this.sectorUuid, holidayId);
+            removeSuccessIds.push(holidayId);
+          });
+          await Promise.all(promises);
+          unnnic.unnnicCallAlert({
+            props: {
+              text: this.$t('custom_holidays.message.save.success'),
+              type: 'success',
+            },
+          });
+        } catch (error) {
+          console.log(error);
+          unnnic.unnnicCallAlert({
+            props: {
+              text: this.$t('custom_holidays.message.save.error'),
+              type: 'error',
+            },
+          });
+        } finally {
+          this.isLoading = false;
+        }
+      }
+      const filterHolidays = this.holidays.filter((holiday) =>
+        this.isEditing
+          ? !removeSuccessIds.includes(holiday.uuid)
+          : !this.toDeleteIds.includes(holiday.uuid),
       );
       this.$emit('save', {
         holidays: filterHolidays,
-        toRemove: this.toDeleteIds,
       });
       this.$emit('close');
     },

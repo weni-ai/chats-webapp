@@ -45,7 +45,13 @@
   "custom_holidays": {
     "title": "Specific Non-working Dates",
     "description": "If necessary, you can delete each of the dates or periods and they will be considered as a business day.",
-    "disclaimer": "Deleting dates or periods cannot be undone. Click the 'Save' button to confirm the action."
+    "disclaimer": "Deleting dates or periods cannot be undone. Click the 'Save' button to confirm the action.",
+    "message": {
+      "save": {
+        "error": "Failed to delete some non-working dates, please check and try again.",
+        "success": "Non-working dates deleted successfully."
+      }
+    }
   },
   "status": {
     "online": "Online",

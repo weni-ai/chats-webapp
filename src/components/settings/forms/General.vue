@@ -348,6 +348,8 @@
     <CustomHolidaysModal
       v-if="showCustomHolidaysModal"
       :holidays="enableCustomHolidays"
+      :isEditing="isEditing"
+      :sectorUuid="sector.uuid"
       @save="handleSaveCustomHolidays"
       @close="showCustomHolidaysModal = false"
     />
@@ -1135,7 +1137,7 @@ export default {
       });
     },
 
-    async handleSaveCustomHolidays({ holidays, toRemove }) {
+    async handleSaveCustomHolidays({ holidays }) {
       this.enableCustomHolidays = holidays;
     },
 
@@ -1155,10 +1157,6 @@ export default {
           }),
       );
       await Promise.all(promisesCreateSectorHoliday);
-    },
-
-    async deleteCustomHoliday(holidayId) {
-      await Sector.deleteSectorHoliday(this.sector.uuid, holidayId);
     },
   },
 };
