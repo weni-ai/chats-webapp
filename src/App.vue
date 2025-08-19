@@ -73,7 +73,7 @@ export default {
 
     showSocketAlertBanner() {
       return (
-        ['room', 'home'].includes(this.$route.name) &&
+        ['room', 'discussion', 'home'].includes(this.$route.name) &&
         ['closed', 'connecting'].includes(this.socketStatus) &&
         this.socketRetryCount >= 5
       );
