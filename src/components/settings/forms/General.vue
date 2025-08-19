@@ -87,36 +87,192 @@
           {{ $t('sector.managers.working_day.title') }}
         </h2>
         <section class="form-section__inputs">
-          <fieldset>
-            <p class="label-working-day">
-              {{ $t('sector.managers.working_day.start.label') }}
-            </p>
-            <input
-              v-model="sector.workingDay.start"
-              class="input-time"
-              type="time"
-              min="00:00"
-              max="23:59"
+          <section class="form-section__inputs__workday-copy">
+            <UnnnicSwitch
+              v-model="copyWorkday"
+              :textRight="$t('sector.managers.working_day.copy_workday')"
             />
-            <span
-              v-show="!validHour"
-              class="error-message"
+            <UnnnicSelectSmart
+              v-if="copyWorkday"
+              :modelValue="copyWorkdaySector"
+              :options="sectorsOptions"
+              autocomplete
+              autocompleteIconLeft
+              autocompleteClearOnFocus
+              @update:model-value="selectCopyWorkdaySector"
+            />
+            <p class="form-section__subtitle">
+              {{ $t('sector.managers.working_day.select_days') }}
+            </p>
+            <section class="form-section__inputs__workday-config">
+              <section class="form-section__inputs__workday-tags">
+                <UnnnicTag
+                  v-for="day in workdayDays"
+                  :key="day.value"
+                  type="brand"
+                  clickable
+                  :text="day.label"
+                  :disabled="selectedWorkdayDays[day.value]"
+                  @click="
+                    () => {
+                      selectWorkdayDay(day.value);
+                      resetSelectedCopySector();
+                    }
+                  "
+                />
+              </section>
+            </section>
+            <p
+              v-if="workdayDaysTimeOptions.length"
+              class="form-section__subtitle"
             >
-              {{ message }}
-            </span>
-          </fieldset>
-          <fieldset>
-            <p class="label-working-day">
-              {{ $t('sector.managers.working_day.end.label') }}
+              {{ $t('sector.managers.working_day.set_hours') }}
             </p>
-            <input
-              v-model="sector.workingDay.end"
-              class="input-time"
-              type="time"
-              min="00:00"
-              max="23:59"
-            />
-          </fieldset>
+            <section class="form-section__inputs__workday-time-config">
+              <section
+                v-for="(day, dayIndex) in workdayDaysTimeOptions"
+                :key="day"
+                class="form-section__inputs__workday-time-config__day"
+              >
+                <p
+                  class="form-section__inputs__workday-time-config__day__title"
+                >
+                  {{ $t(`week_days.${day}.full`) }}
+                </p>
+                <section
+                  class="form-section__inputs__workday-time-config__day__time"
+                >
+                  <section
+                    v-for="(time, timeIndex) in selectedWorkdayDaysTime[day]"
+                    :key="`${day}-${timeIndex}`"
+                  >
+                    <section
+                      class="form-section__inputs__workday-time-config__day__time__container"
+                    >
+                      <section
+                        class="form-section__inputs__workday-time-config__day__time__container-item"
+                      >
+                        <UnnnicSelectTime
+                          v-model="
+                            selectedWorkdayDaysTime[day][timeIndex].start
+                          "
+                          class="form-section__inputs__workday-time-config__day__time__input"
+                          @update:model-value="resetSelectedCopySector"
+                        />
+                        <p
+                          class="form-section__inputs__workday-time-config__day__time__to"
+                        >
+                          {{ $t('to') }}
+                        </p>
+                        <UnnnicSelectTime
+                          v-model="selectedWorkdayDaysTime[day][timeIndex].end"
+                          class="form-section__inputs__workday-time-config__day__time__input"
+                          @update:model-value="resetSelectedCopySector"
+                        />
+                        <UnnnicButton
+                          v-if="timeIndex === 0"
+                          iconCenter="add-1"
+                          type="secondary"
+                          :disabled="selectedWorkdayDaysTime[day].length === 2"
+                          @click="
+                            () => {
+                              selectedWorkdayDaysTime[day]?.push({
+                                start: '',
+                                end: '',
+                                valid: false,
+                              });
+                              resetSelectedCopySector();
+                            }
+                          "
+                        />
+
+                        <UnnnicButton
+                          v-else-if="timeIndex === 1"
+                          iconCenter="subtract-1"
+                          type="secondary"
+                          @click="
+                            () => {
+                              selectedWorkdayDaysTime[day]?.pop();
+                              resetSelectedCopySector();
+                            }
+                          "
+                        />
+                        <UnnnicButton
+                          v-if="
+                            dayIndex === 0 &&
+                            timeIndex === 0 &&
+                            selectedWorkdayDaysTime[day][0].start &&
+                            selectedWorkdayDaysTime[day][0].end &&
+                            workdayDaysTimeOptions.length > 1
+                          "
+                          :text="$t('sector.managers.working_day.copy_to_all')"
+                          iconLeft="copy-paste-1"
+                          type="tertiary"
+                          @click="copyToAllDays(day)"
+                        />
+                      </section>
+                      <p
+                        v-if="
+                          !selectedWorkdayDaysTime[day][timeIndex].valid &&
+                          selectedWorkdayDaysTime[day][timeIndex].start &&
+                          selectedWorkdayDaysTime[day][timeIndex].end
+                        "
+                        class="error-message"
+                      >
+                        {{
+                          selectedWorkdayDaysTime[day][timeIndex].start <
+                          selectedWorkdayDaysTime[day][0]?.end
+                            ? $t(
+                                'config_chats.edit_sector.invalid_start_second_hour',
+                              )
+                            : $t('config_chats.edit_sector.invalid_hours')
+                        }}
+                      </p>
+                    </section>
+                  </section>
+                </section>
+              </section>
+            </section>
+            <p class="form-section__subtitle">
+              {{ $t('sector.managers.working_day.add_holidays') }}
+            </p>
+            <section
+              class="form-section__inputs__workday-time-config__holidays-container"
+            >
+              <UnnnicCheckbox
+                :modelValue="selectAllCountryHolidays"
+                :textRight="
+                  $t('country_holidays.title', {
+                    country: $t(`country.${countryCode || 'label'}`),
+                  })
+                "
+                @update:model-value="handleSelectAllCountryHolidays"
+              />
+              <UnnnicButton
+                type="tertiary"
+                :text="$t('sector.managers.working_day.see_all_holidays')"
+                @click="showCountryHolidaysModal = true"
+              />
+            </section>
+            <section
+              class="form-section__inputs__workday-time-config__holidays-container"
+            >
+              <UnnnicButton
+                class="form-section__inputs__workday-time-config__holidays-container__button"
+                type="alternative"
+                iconLeft="add-1"
+                :text="$t('sector.managers.working_day.add_specific_dates')"
+                @click="showCreateCustomHolidayModal = true"
+              />
+              <UnnnicButton
+                class="form-section__inputs__workday-time-config__holidays-container__button"
+                type="tertiary"
+                :text="$t('sector.managers.working_day.see_all_specific_dates')"
+                :disabled="!enableCustomHolidays.length"
+                @click="showCustomHolidaysModal = true"
+              />
+            </section>
+          </section>
           <section
             v-if="enableGroupsMode"
             class="form-section__inputs--fill-w"
@@ -179,6 +335,31 @@
         @click.stop="saveSector()"
       />
     </section>
+    <CountryHolidaysModal
+      v-if="showCountryHolidaysModal"
+      :holidays="allCountryHolidays"
+      :enableHolidays="enableCountryHolidays"
+      :isEditing="isEditing"
+      :sectorUuid="sector.uuid"
+      @update:enable-holidays="enableCountryHolidays = $event"
+      @update:disabled-holidays="disabledCountryHolidays = $event"
+      @close="showCountryHolidaysModal = false"
+    />
+    <CustomHolidaysModal
+      v-if="showCustomHolidaysModal"
+      :holidays="enableCustomHolidays"
+      :isEditing="isEditing"
+      :sectorUuid="sector.uuid"
+      @save="handleSaveCustomHolidays"
+      @close="showCustomHolidaysModal = false"
+    />
+    <CreateCustomHolidayModal
+      v-if="showCreateCustomHolidayModal"
+      :isEditing="isEditing"
+      :sectorUuid="sector.uuid"
+      @close="showCreateCustomHolidayModal = false"
+      @add-custom-holidays="addCustomHolidays"
+    />
   </section>
 </template>
 
@@ -191,6 +372,10 @@ import Sector from '@/services/api/resources/settings/sector';
 import Project from '@/services/api/resources/settings/project';
 import Group from '@/services/api/resources/settings/group';
 
+import CountryHolidaysModal from './modals/CountryHolidaysModal.vue';
+import CustomHolidaysModal from './modals/CustomHolidaysModal.vue';
+import CreateCustomHolidayModal from './modals/CreateCustomHolidayModal.vue';
+
 import { useProfile } from '@/store/modules/profile';
 import { useConfig } from '@/store/modules/config';
 
@@ -201,6 +386,9 @@ export default {
 
   components: {
     SelectedMember,
+    CountryHolidaysModal,
+    CustomHolidaysModal,
+    CreateCustomHolidayModal,
   },
   props: {
     isEditing: {
@@ -220,10 +408,8 @@ export default {
       selectedManager: [],
       selectedProject: [],
       removedManagers: [],
-      message: '',
       managers: [],
       projects: [],
-      validHour: false,
       openModalDelete: false,
       managersPage: 0,
       managersLimitPerPage: 20,
@@ -231,12 +417,114 @@ export default {
       projectUsersPerPage: 50,
       secondaryProjectsPage: 0,
       secondaryProjectsLimitPerPage: 50,
+      copyWorkday: false,
+      copyWorkdaySector: [],
+      selectedWorkdayDays: {
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+      },
+      selectedWorkdayDaysTime: {
+        monday: [
+          {
+            start: '',
+            end: '',
+            valid: false,
+          },
+        ],
+        tuesday: [
+          {
+            start: '',
+            end: '',
+            valid: false,
+          },
+        ],
+        wednesday: [
+          {
+            start: '',
+            end: '',
+            valid: false,
+          },
+        ],
+        thursday: [
+          {
+            start: '',
+            end: '',
+            valid: false,
+          },
+        ],
+        friday: [
+          {
+            start: '',
+            end: '',
+            valid: false,
+          },
+        ],
+        saturday: [
+          {
+            start: '',
+            end: '',
+            valid: false,
+          },
+        ],
+        sunday: [{ start: '', end: '', valid: false }],
+      },
+      showCountryHolidaysModal: false,
+      showCustomHolidaysModal: false,
+      showAddCustomHolidaysModal: false,
+      countryCode: '',
+      selectAllCountryHolidays: false,
+      allCountryHolidays: [],
+      enableCountryHolidays: [],
+      disabledCountryHolidays: [],
+      enableCustomHolidays: [],
+      showCreateCustomHolidayModal: false,
     };
   },
 
   computed: {
     ...mapState(useProfile, ['me']),
     ...mapState(useConfig, ['enableGroupsMode', 'project']),
+    ...mapState(useSettings, ['sectors']),
+
+    sectorPlaceholder() {
+      return {
+        value: '',
+        label: this.$t('sector.managers.working_day.select_sector_to_copy'),
+      };
+    },
+
+    sectorsOptions() {
+      return [
+        this.sectorPlaceholder,
+        ...this.sectors.map((sector) => ({
+          value: sector.uuid,
+          label: sector.name,
+        })),
+      ];
+    },
+
+    workdayDays() {
+      return [
+        { label: this.$t('week_days.monday.short'), value: 'monday' },
+        { label: this.$t('week_days.tuesday.short'), value: 'tuesday' },
+        { label: this.$t('week_days.wednesday.short'), value: 'wednesday' },
+        { label: this.$t('week_days.thursday.short'), value: 'thursday' },
+        { label: this.$t('week_days.friday.short'), value: 'friday' },
+        { label: this.$t('week_days.saturday.short'), value: 'saturday' },
+        { label: this.$t('week_days.sunday.short'), value: 'sunday' },
+      ];
+    },
+
+    workdayDaysTimeOptions() {
+      return Object.entries(this.selectedWorkdayDays)
+        .filter(([_key, value]) => !!value)
+        .map(([key, _value]) => key);
+    },
 
     selectedProjectHasSectorIntegration() {
       if (this.selectedProject?.[0]?.value) {
@@ -299,17 +587,24 @@ export default {
     },
 
     validForm() {
-      const { name, managers, workingDay, maxSimultaneousChatsByAgent } =
-        this.sector;
+      const { name, managers, maxSimultaneousChatsByAgent } = this.sector;
 
-      this.hourValidate(workingDay);
+      const hasWorkday = this.workdayDaysTimeOptions.length >= 1;
 
-      const commonValid = !!(
-        name.trim() &&
-        workingDay?.start &&
-        workingDay?.end &&
-        this.validHour
+      const selectedDaysWorkdayTimes = this.workdayDaysTimeOptions
+        .map((day) => {
+          if (this.selectedWorkdayDays[day]) {
+            return this.selectedWorkdayDaysTime[day];
+          }
+          return [];
+        })
+        .flat();
+
+      const validAllWorkdayTime = selectedDaysWorkdayTimes.every(
+        (time) => time.valid,
       );
+
+      const commonValid = !!(name.trim() && validAllWorkdayTime && hasWorkday);
 
       const groupValid =
         !!this.selectedProject.length &&
@@ -329,12 +624,84 @@ export default {
     },
   },
 
+  watch: {
+    selectedWorkdayDaysTime: {
+      deep: true,
+      handler() {
+        const daysTimes = Object.entries(this.selectedWorkdayDaysTime);
+        daysTimes.forEach(([day, timesConfig]) => {
+          timesConfig.forEach((_timeConfig, index) => {
+            this.validateWorkdayTime(day, index);
+          });
+        });
+      },
+    },
+    copyWorkday(value) {
+      this.copyWorkdaySector = [];
+      if (!value && !this.copyWorkdaySector[0]?.value) {
+        this.selectedWorkdayDays = {
+          monday: false,
+          tuesday: false,
+          wednesday: false,
+          thursday: false,
+          friday: false,
+          saturday: false,
+          sunday: false,
+        };
+        const defaultValue = {
+          start: '',
+          end: '',
+          valid: false,
+        };
+        this.selectedWorkdayDaysTime = JSON.parse(
+          JSON.stringify({
+            monday: [defaultValue],
+            tuesday: [defaultValue],
+            wednesday: [defaultValue],
+            thursday: [defaultValue],
+            friday: [defaultValue],
+            saturday: [defaultValue],
+            sunday: [defaultValue],
+          }),
+        );
+      }
+    },
+    enableCountryHolidays: {
+      deep: true,
+      handler(value) {
+        const enableCountryHolidaysLength = value.length;
+        const allCountryHolidaysLength = this.allCountryHolidays.length;
+        if (
+          enableCountryHolidaysLength > 0 &&
+          enableCountryHolidaysLength < allCountryHolidaysLength
+        ) {
+          this.selectAllCountryHolidays = 'less';
+        }
+
+        if (enableCountryHolidaysLength === allCountryHolidaysLength) {
+          this.selectAllCountryHolidays = true;
+        }
+
+        if (enableCountryHolidaysLength === 0) {
+          this.selectAllCountryHolidays = false;
+        }
+      },
+    },
+  },
+
   mounted() {
+    this.getCountryHolidays().then(() => {
+      if (!this.isEditing) {
+        this.handleSelectAllCountryHolidays(true);
+      }
+    });
+
     const isDefaultSector =
       this.sector.name === this.$t('config_chats.default_sector.name');
 
     if (this.isEditing && !this.enableGroupsMode) {
       this.getSectorManagers();
+      this.getSectorAllHolidays();
     } else if (isDefaultSector) {
       this.useDefaultSector = 1;
     }
@@ -358,35 +725,140 @@ export default {
       actionDeleteSector: 'deleteSector',
     }),
 
+    handleSelectAllCountryHolidays(value) {
+      this.selectAllCountryHolidays = value;
+      if (value) {
+        this.enableCountryHolidays = this.allCountryHolidays.map(
+          (holiday) => holiday.date,
+        );
+        this.disabledCountryHolidays = [];
+      } else {
+        this.enableCountryHolidays = [];
+        this.disabledCountryHolidays = this.allCountryHolidays.map(
+          (holiday) => holiday.date,
+        );
+      }
+    },
+
+    async getCountryHolidays() {
+      const { holidays, country_code } = await Sector.getCountryHolidays();
+      this.countryCode = country_code;
+      this.allCountryHolidays = holidays;
+    },
+
+    resetSelectedCopySector() {
+      this.copyWorkdaySector = [this.sectorPlaceholder];
+    },
+
     updateDefaultSectorValue(activate) {
       this.useDefaultSector = activate;
+      const defaultWorkTime = { start: '08:00', end: '18:00', valid: true };
+      const emptyWorkTime = {
+        start: '',
+        end: '',
+        valid: false,
+      };
       if (activate) {
+        this.selectedWorkdayDays = {
+          monday: true,
+          tuesday: true,
+          wednesday: true,
+          thursday: true,
+          friday: true,
+          saturday: false,
+          sunday: false,
+        };
+        this.selectedWorkdayDaysTime = JSON.parse(
+          JSON.stringify({
+            monday: [defaultWorkTime],
+            tuesday: [defaultWorkTime],
+            wednesday: [defaultWorkTime],
+            thursday: [defaultWorkTime],
+            friday: [defaultWorkTime],
+            saturday: [emptyWorkTime],
+            sunday: [emptyWorkTime],
+          }),
+        );
+        this.handleSelectAllCountryHolidays(true);
         const meManager = this.managers.find(
           (manager) => manager.user.email === this.me.email,
         );
         this.sector = {
           ...this.sector,
           name: this.$t('config_chats.default_sector.name'),
-          workingDay: {
-            start: '08:00',
-            end: '18:00',
-            dayOfWeek: 'week-days',
-          },
           maxSimultaneousChatsByAgent: this.enableGroupsMode ? '' : '4',
           managers: this.enableGroupsMode ? [] : [meManager],
         };
       } else {
+        this.selectedWorkdayDays = {
+          monday: false,
+          tuesday: false,
+          wednesday: false,
+          thursday: false,
+          friday: false,
+          saturday: false,
+          sunday: false,
+        };
+        this.selectedWorkdayDaysTime = JSON.parse(
+          JSON.stringify({
+            monday: [emptyWorkTime],
+            tuesday: [emptyWorkTime],
+            wednesday: [emptyWorkTime],
+            thursday: [emptyWorkTime],
+            friday: [emptyWorkTime],
+            saturday: [emptyWorkTime],
+            sunday: [emptyWorkTime],
+          }),
+        );
+        this.handleSelectAllCountryHolidays(false);
         this.sector = {
           ...this.sector,
           name: '',
-          workingDay: {
-            start: '',
-            end: '',
-            dayOfWeek: '',
-          },
           maxSimultaneousChatsByAgent: '',
           managers: [],
         };
+      }
+    },
+
+    async getSectorAllHolidays() {
+      try {
+        const allHolidays = await Sector.getAllSectorHolidays(this.sector.uuid);
+
+        const activeCountryHolidays = [];
+        const inactiveCountryHolidays = [];
+
+        const countryHolidays = allHolidays.filter(
+          (holiday) => !holiday.its_custom,
+        );
+
+        this.allCountryHolidays = countryHolidays.map((holiday) => ({
+          uuid: holiday.uuid,
+          name: holiday.description,
+          date: holiday.date,
+        }));
+
+        countryHolidays.forEach((sectorCountryHoliday) => {
+          return sectorCountryHoliday.disabled_open_room
+            ? activeCountryHolidays.push(sectorCountryHoliday)
+            : inactiveCountryHolidays.push(sectorCountryHoliday);
+        });
+
+        const customHolidays = allHolidays.filter(
+          (holiday) => holiday.its_custom,
+        );
+
+        // handle  country holidays
+        this.enableCountryHolidays = activeCountryHolidays.map(
+          (holiday) => holiday.date,
+        );
+        this.disabledCountryHolidays = inactiveCountryHolidays.map(
+          (holiday) => holiday.date,
+        );
+
+        // handle custom holidays
+        this.enableCustomHolidays = customHolidays;
+      } catch (error) {
+        console.log(error);
       }
     },
 
@@ -413,6 +885,44 @@ export default {
           this.getSectorManagers();
         }
       }
+    },
+
+    async selectCopyWorkdaySector([selectedSector]) {
+      if (
+        selectedSector.value &&
+        selectedSector.value !== this.copyWorkdaySector?.[0]?.value
+      ) {
+        this.copyWorkdaySector = [selectedSector];
+        const copySectorWorktimes = await Sector.getWorkingTimes(
+          selectedSector.value,
+        );
+        const schedules = copySectorWorktimes?.working_hours?.schedules;
+
+        if (schedules) {
+          Object.keys(schedules).forEach((day) => {
+            if (!schedules[day]) {
+              this.selectedWorkdayDays[day] = false;
+              this.selectedWorkdayDaysTime[day] = [
+                { start: '', end: '', valid: false },
+              ];
+            } else {
+              this.selectedWorkdayDays[day] = true;
+              this.selectedWorkdayDaysTime[day] = schedules[day].map(
+                (time) => ({ ...time, valid: true }),
+              );
+            }
+          });
+        }
+      }
+    },
+
+    copyToAllDays(day) {
+      const dayValues = this.selectedWorkdayDaysTime[day];
+      this.workdayDaysTimeOptions.forEach((day) => {
+        this.selectedWorkdayDaysTime[day] = JSON.parse(
+          JSON.stringify(dayValues),
+        );
+      });
     },
 
     async removeManager(managerUuid) {
@@ -521,6 +1031,24 @@ export default {
       }
     },
 
+    validateWorkdayTime(day, index) {
+      const { start, end } = this.selectedWorkdayDaysTime[day][index];
+
+      if (index === 1) {
+        const firstTime = this.selectedWorkdayDaysTime[day][0];
+        if (start < firstTime.end) {
+          this.selectedWorkdayDaysTime[day][index].valid = false;
+          return;
+        }
+      }
+
+      if (start >= end) {
+        this.selectedWorkdayDaysTime[day][index].valid = false;
+      } else {
+        this.selectedWorkdayDaysTime[day][index].valid = true;
+      }
+    },
+
     hourValidate(hour) {
       const inicialHour = hour.start;
       const finalHour = hour.end;
@@ -536,7 +1064,7 @@ export default {
       }
     },
 
-    saveSector() {
+    async saveSector() {
       const {
         uuid,
         name,
@@ -544,7 +1072,6 @@ export default {
         can_edit_custom_fields,
         config,
         sign_messages,
-        workingDay,
         maxSimultaneousChatsByAgent,
       } = this.sector;
 
@@ -554,32 +1081,82 @@ export default {
         can_edit_custom_fields,
         config,
         sign_messages,
-        work_start: workingDay.start,
-        work_end: workingDay.end,
         rooms_limit: maxSimultaneousChatsByAgent,
       };
 
-      Sector.update(uuid, sector)
-        .then(() => {
-          unnnic.unnnicCallAlert({
-            props: {
-              text: this.$t('sector_update_success'),
-              type: 'success',
-            },
-            seconds: 5,
-          });
-          this.$router.push('/settings');
-        })
-        .catch((error) => {
-          unnnic.unnnicCallAlert({
-            props: {
-              text: this.$t('sector_update_error'),
-              type: 'error',
-            },
-            seconds: 5,
-          });
-          console.log(error);
+      try {
+        await Sector.update(uuid, sector);
+        await this.saveWorkingDays();
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('sector_update_success'),
+            type: 'success',
+          },
+          seconds: 5,
         });
+        this.$router.push('/settings');
+      } catch (error) {
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('sector_update_error'),
+            type: 'error',
+          },
+          seconds: 5,
+        });
+        console.log(error);
+      }
+    },
+
+    async saveWorkingDays() {
+      const requestBody = {};
+
+      Object.keys(this.selectedWorkdayDaysTime).forEach((day) => {
+        requestBody[day] = this.selectedWorkdayDays[day]
+          ? this.selectedWorkdayDaysTime[day]
+          : null;
+      });
+
+      await Sector.setSectorWorkingDays(this.sector.uuid, requestBody);
+    },
+
+    selectWorkdayDay(day) {
+      this.selectedWorkdayDays[day] = !this.selectedWorkdayDays[day];
+      if (!this.selectedWorkdayDays[day]) {
+        this.selectedWorkdayDaysTime[day] = [{ start: '', end: '' }];
+      }
+    },
+
+    async addCustomHolidays(holidays) {
+      holidays.forEach((holiday) => {
+        this.enableCustomHolidays.push({
+          ...holiday,
+          uuid:
+            holiday.uuid ||
+            `${new Date().getTime()}-${holiday.date.start}-${holiday.date.end}`,
+        });
+      });
+    },
+
+    async handleSaveCustomHolidays({ holidays }) {
+      this.enableCustomHolidays = holidays;
+    },
+
+    async initCountryHolidays() {
+      await Sector.createCountryHolidays(this.sector.uuid, {
+        enabled_holidays: this.enableCountryHolidays,
+        disabled_holidays: this.disabledCountryHolidays,
+      });
+    },
+
+    async createCustomHolidays() {
+      const promisesCreateSectorHoliday = this.enableCustomHolidays.map(
+        (holiday) =>
+          Sector.createSectorHoliday(this.sector.uuid, {
+            ...holiday,
+            uuid: undefined,
+          }),
+      );
+      await Promise.all(promisesCreateSectorHoliday);
     },
   },
 };
@@ -591,6 +1168,7 @@ fieldset {
   padding: 0;
   margin: 0;
 }
+
 .form-wrapper {
   display: flex;
   flex-direction: column;
@@ -619,6 +1197,12 @@ fieldset {
     flex: 1;
   }
 }
+
+.error-message {
+  font-size: $unnnic-font-size-body-md;
+  color: $unnnic-color-feedback-red;
+}
+
 .form-sector-container {
   flex: 1;
   overflow-y: auto;
@@ -646,11 +1230,91 @@ fieldset {
       line-height: $unnnic-line-height-large * 1.5;
     }
 
+    &__subtitle {
+      font-weight: $unnnic-font-weight-regular;
+      color: $unnnic-color-neutral-dark;
+      line-height: $unnnic-line-height-large * 1.5;
+      font-family: $unnnic-font-family-secondary;
+    }
+
     &__inputs {
       display: grid;
       gap: $unnnic-spacing-ant $unnnic-spacing-stack-sm;
       grid-template-rows: auto;
       grid-template-columns: 1fr 1fr;
+
+      &__workday-copy {
+        display: flex;
+        flex-direction: column;
+        gap: $unnnic-spacing-sm;
+        margin-top: $unnnic-spacing-sm;
+      }
+
+      &__workday-tags {
+        display: flex;
+        gap: $unnnic-spacing-xs;
+      }
+
+      &__workday-time-config {
+        display: flex;
+        flex-direction: column;
+        gap: $unnnic-spacing-sm;
+
+        &__day {
+          display: flex;
+          align-items: baseline;
+          gap: $unnnic-spacing-xs;
+
+          &__time {
+            display: flex;
+            flex-direction: column;
+            gap: $unnnic-spacing-xs;
+
+            &__container {
+              display: flex;
+              flex-direction: column;
+              gap: $unnnic-spacing-xs;
+              justify-content: space-between;
+
+              &-item {
+                display: flex;
+                align-items: center;
+                gap: $unnnic-spacing-xs;
+              }
+            }
+
+            &__input {
+              width: 100px;
+            }
+
+            &__to {
+              font-family: $unnnic-font-family-secondary;
+              font-size: $unnnic-font-size-body-md;
+              line-height: $unnnic-font-size-body-md +
+                $unnnic-line-height-medium;
+              color: $unnnic-color-neutral-cloudy;
+            }
+          }
+
+          &__title {
+            font-family: $unnnic-font-family-secondary;
+            font-size: $unnnic-font-size-body-md;
+            line-height: $unnnic-font-size-body-md + $unnnic-line-height-medium;
+            color: $unnnic-color-neutral-cloudy;
+            min-width: 80px;
+          }
+        }
+
+        &__holidays-container {
+          display: flex;
+          align-items: center;
+          gap: $unnnic-spacing-xs;
+
+          &__button {
+            max-width: 200px;
+          }
+        }
+      }
 
       &--fill-w {
         grid-column: span 2;
@@ -660,10 +1324,6 @@ fieldset {
         border: none;
         padding: 0;
         margin: 0;
-        & .error-message {
-          font-size: $unnnic-font-size-body-md;
-          color: $unnnic-color-feedback-red;
-        }
       }
     }
 
@@ -675,29 +1335,11 @@ fieldset {
     }
   }
 
-  .input-time {
-    background: #fff;
-    border: 1px solid $unnnic-color-neutral-soft;
-    border-radius: $unnnic-border-radius-sm;
-    color: $unnnic-color-neutral-dark;
-    box-sizing: border-box;
-    width: 100%;
-    font-size: $unnnic-font-size-body-gt;
-    line-height: $unnnic-line-height-large * 1.375;
-    padding: $unnnic-spacing-ant $unnnic-spacing-sm;
-    cursor: text;
-  }
-
   .label-working-day {
     line-height: $unnnic-line-height-large * 1.375;
     font-size: $unnnic-font-size-body-gt;
     color: $unnnic-color-neutral-cloudy;
     margin: $unnnic-spacing-xs 0;
-  }
-
-  input:focus {
-    outline-color: $unnnic-color-neutral-clean;
-    outline: 1px solid $unnnic-color-neutral-clean;
   }
 
   &__managers {
@@ -707,15 +1349,6 @@ fieldset {
     gap: $unnnic-spacing-nano;
     max-height: 250px;
     overflow-y: auto;
-  }
-
-  ::placeholder {
-    color: #d1d4da;
-  }
-
-  input::-webkit-datetime-edit {
-    min-width: 100%;
-    width: 100%;
   }
 
   .link-project-disclaimer {
