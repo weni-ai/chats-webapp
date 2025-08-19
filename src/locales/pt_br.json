@@ -802,5 +802,14 @@
     "alphabetical": "Alfabética",
     "newer": "Mais recente",
     "older": "Mais antigo"
+  },
+  "socket_alert_banner": {
+    "closed": {
+      "title": "Você está desconectado. Por favor, ",
+      "refresh": "atualize",
+      "to_continue": " para continuar atendendo."
+    },
+    "connecting": "Carregando...",
+    "connected": "Atualização concluída com sucesso! Você pode continuar seu atendimento."
   }
 }
