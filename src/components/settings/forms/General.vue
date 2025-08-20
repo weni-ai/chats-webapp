@@ -1112,7 +1112,10 @@ export default {
 
       Object.keys(this.selectedWorkdayDaysTime).forEach((day) => {
         requestBody[day] = this.selectedWorkdayDays[day]
-          ? this.selectedWorkdayDaysTime[day]
+          ? this.selectedWorkdayDaysTime[day].map((time) => ({
+              start: time.start,
+              end: time.end,
+            }))
           : null;
       });
 
