@@ -5,6 +5,7 @@ import listeners from '@/services/api/websocket/listeners';
 import { useDashboard } from '@/store/modules/dashboard';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useConfig } from '@/store/modules/config';
 
 vi.mock('@/services/api/websocket/socket', () => {
   return {
@@ -31,6 +32,7 @@ vi.mock('@/utils/env', () => ({
 vi.mock('@/store/modules/dashboard');
 vi.mock('@/store/modules/chats/rooms');
 vi.mock('@/store/modules/chats/discussions');
+vi.mock('@/store/modules/config');
 
 describe('WebSocketSetup', () => {
   let webSocketSetup;
@@ -42,6 +44,7 @@ describe('WebSocketSetup', () => {
   let dashboardStore;
   let roomsStore;
   let discussionsStore;
+  let configStore;
   beforeEach(() => {
     dashboardStore = {
       viewedAgent: null,
@@ -57,9 +60,13 @@ describe('WebSocketSetup', () => {
     discussionsStore = {
       getAll: vi.fn(),
     };
+    configStore = {
+      socketStatus: '',
+    };
     useDashboard.mockReturnValue(dashboardStore);
     useRooms.mockReturnValue(roomsStore);
     useDiscussions.mockReturnValue(discussionsStore);
+    useConfig.mockReturnValue(configStore);
     webSocketSetup = new WebSocketSetup({ app: mockApp });
     webSocketSetup.ws = {
       send: vi.fn(),
