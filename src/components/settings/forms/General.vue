@@ -689,12 +689,12 @@ export default {
     },
   },
 
-  mounted() {
-    this.getCountryHolidays().then(() => {
-      if (!this.isEditing) {
-        this.handleSelectAllCountryHolidays(true);
-      }
-    });
+  async mounted() {
+    await this.getCountryHolidays();
+
+    if (!this.isEditing) {
+      this.handleSelectAllCountryHolidays(true);
+    }
 
     const isDefaultSector =
       this.sector.name === this.$t('config_chats.default_sector.name');
@@ -702,6 +702,7 @@ export default {
     if (this.isEditing && !this.enableGroupsMode) {
       this.getSectorManagers();
       this.getSectorAllHolidays();
+      this.getSectorWorktimes(this.sector.uuid);
     } else if (isDefaultSector) {
       this.useDefaultSector = 1;
     }
@@ -824,24 +825,36 @@ export default {
       try {
         const allHolidays = await Sector.getAllSectorHolidays(this.sector.uuid);
 
-        const activeCountryHolidays = [];
-        const inactiveCountryHolidays = [];
-
         const countryHolidays = allHolidays.filter(
           (holiday) => !holiday.its_custom,
         );
 
-        this.allCountryHolidays = countryHolidays.map((holiday) => ({
-          uuid: holiday.uuid,
-          name: holiday.description,
-          date: holiday.date,
-        }));
-
-        countryHolidays.forEach((sectorCountryHoliday) => {
-          return sectorCountryHoliday.disabled_open_room
-            ? activeCountryHolidays.push(sectorCountryHoliday)
-            : inactiveCountryHolidays.push(sectorCountryHoliday);
+        countryHolidays.forEach((holiday) => {
+          const countryHoliday = this.allCountryHolidays.find(
+            (countryHoliday) => countryHoliday.date === holiday.date,
+          );
+          if (countryHoliday) {
+            countryHoliday.name = holiday.description;
+            countryHoliday.uuid = holiday.uuid;
+          }
         });
+
+        const { activeCountryHolidays, inactiveCountryHolidays } =
+          this.allCountryHolidays.reduce(
+            (accumulator, countryHoliday) => {
+              accumulator[
+                countryHoliday.uuid
+                  ? 'activeCountryHolidays'
+                  : 'inactiveCountryHolidays'
+              ].push(countryHoliday);
+
+              return accumulator;
+            },
+            {
+              activeCountryHolidays: [],
+              inactiveCountryHolidays: [],
+            },
+          );
 
         const customHolidays = allHolidays.filter(
           (holiday) => holiday.its_custom,
@@ -887,32 +900,35 @@ export default {
       }
     },
 
+    async getSectorWorktimes(sector) {
+      const sectorWorktimes = await Sector.getWorkingTimes(sector);
+      const schedules = sectorWorktimes?.working_hours?.schedules;
+
+      if (schedules) {
+        Object.keys(schedules).forEach((day) => {
+          if (!schedules[day]) {
+            this.selectedWorkdayDays[day] = false;
+            this.selectedWorkdayDaysTime[day] = [
+              { start: '', end: '', valid: false },
+            ];
+          } else {
+            this.selectedWorkdayDays[day] = true;
+            this.selectedWorkdayDaysTime[day] = schedules[day].map((time) => ({
+              ...time,
+              valid: true,
+            }));
+          }
+        });
+      }
+    },
+
     async selectCopyWorkdaySector([selectedSector]) {
       if (
         selectedSector.value &&
         selectedSector.value !== this.copyWorkdaySector?.[0]?.value
       ) {
         this.copyWorkdaySector = [selectedSector];
-        const copySectorWorktimes = await Sector.getWorkingTimes(
-          selectedSector.value,
-        );
-        const schedules = copySectorWorktimes?.working_hours?.schedules;
-
-        if (schedules) {
-          Object.keys(schedules).forEach((day) => {
-            if (!schedules[day]) {
-              this.selectedWorkdayDays[day] = false;
-              this.selectedWorkdayDaysTime[day] = [
-                { start: '', end: '', valid: false },
-              ];
-            } else {
-              this.selectedWorkdayDays[day] = true;
-              this.selectedWorkdayDaysTime[day] = schedules[day].map(
-                (time) => ({ ...time, valid: true }),
-              );
-            }
-          });
-        }
+        await this.getSectorWorktimes(selectedSector.value);
       }
     },
 
@@ -1112,7 +1128,10 @@ export default {
 
       Object.keys(this.selectedWorkdayDaysTime).forEach((day) => {
         requestBody[day] = this.selectedWorkdayDays[day]
-          ? this.selectedWorkdayDaysTime[day]
+          ? this.selectedWorkdayDaysTime[day].map((time) => ({
+              start: time.start,
+              end: time.end,
+            }))
           : null;
       });
 
