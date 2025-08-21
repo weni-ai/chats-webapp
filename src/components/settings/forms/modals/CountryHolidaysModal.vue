@@ -53,11 +53,6 @@ export default {
       isLoadingRequest: false,
     };
   },
-  computed: {
-    holidayKey() {
-      return this.isEditing ? 'uuid' : 'date';
-    },
-  },
   methods: {
     formatHolidayLabel(holiday) {
       if (!holiday.date) return holiday.name;
@@ -82,9 +77,9 @@ export default {
       const { enabled_holidays, disabled_holidays } = this.holidays.reduce(
         (accumulator, holiday) => {
           if (this.internalEnableHolidays.includes(holiday.date)) {
-            accumulator.enabled_holidays.push(holiday[this.holidayKey]);
+            accumulator.enabled_holidays.push(holiday.date);
           } else {
-            accumulator.disabled_holidays.push(holiday[this.holidayKey]);
+            accumulator.disabled_holidays.push(holiday.date);
           }
           return accumulator;
         },
@@ -94,6 +89,7 @@ export default {
       if (this.isEditing) {
         try {
           this.isLoadingRequest = true;
+
           await Sector.updateCountryHoliday(this.sectorUuid, {
             enabled_holidays,
             disabled_holidays,

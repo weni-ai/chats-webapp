@@ -45,8 +45,6 @@ export default {
   async create(props) {
     const response = await http.post('/sector/', {
       ...props,
-      // work_start: '08:00',
-      // work_end: '18:00',
       project: getProject(),
     });
     return response.data;
@@ -129,10 +127,11 @@ export default {
     const response = await http.get('/sector_holiday/', {
       params: {
         sector,
+        limit: 9999,
       },
     });
 
-    return response.data;
+    return response.data?.results || [];
   },
 
   async createCountryHolidays(sector, { enabled_holidays, disabled_holidays }) {
@@ -163,6 +162,7 @@ export default {
       start_time: null,
       end_time: null,
       description: '',
+      its_custom: true,
     };
     const response = await http.post('/sector_holiday/', body);
     return response.data;
