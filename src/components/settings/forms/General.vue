@@ -379,8 +379,11 @@ import CreateCustomHolidayModal from './modals/CreateCustomHolidayModal.vue';
 import { useProfile } from '@/store/modules/profile';
 import { useConfig } from '@/store/modules/config';
 
+import i18n from '@/plugins/i18n';
+
 import unnnic from '@weni/unnnic-system';
 import { removeDuplicatedItems } from '@/utils/array';
+
 export default {
   name: 'FormSector',
 
@@ -697,7 +700,7 @@ export default {
     }
 
     const isDefaultSector =
-      this.sector.name === this.$t('config_chats.default_sector.name');
+      this.sector.name === i18n.global.t('config_chats.default_sector.name');
 
     if (this.isEditing && !this.enableGroupsMode) {
       this.getSectorManagers();
