@@ -75,7 +75,7 @@ export default {
       return (
         ['room', 'discussion', 'home'].includes(this.$route.name) &&
         ['closed', 'connecting'].includes(this.socketStatus) &&
-        this.socketRetryCount >= 5
+        this.socketRetryCount >= (this.ws.MAX_RECONNECT_ATTEMPTS || 5)
       );
     },
 

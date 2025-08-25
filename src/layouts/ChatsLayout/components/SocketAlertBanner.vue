@@ -34,22 +34,19 @@
 import { useConfig } from '@/store/modules/config';
 import { mapState } from 'pinia';
 import unnnic from '@weni/unnnic-system';
+import i18n from '@/plugins/i18n';
 export default {
   name: 'AlertBanner',
   computed: {
     ...mapState(useConfig, ['socketStatus']),
   },
-  watch: {
-    socketStatus(status, oldStatus) {
-      if (oldStatus === 'connecting' && status === 'open') {
-        unnnic.unnnicCallAlert({
-          props: {
-            type: 'success',
-            text: this.$t('socket_alert_banner.connected'),
-          },
-        });
-      }
-    },
+  unmounted() {
+    unnnic.unnnicCallAlert({
+      props: {
+        type: 'success',
+        text: i18n.global.t('socket_alert_banner.connected'),
+      },
+    });
   },
   methods: {
     reconnect() {
