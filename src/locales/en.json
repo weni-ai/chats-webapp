@@ -1,4 +1,58 @@
 {
+  "custom": "Custom",
+  "country": {
+    "label": "Country",
+    "BR": "Brazil"
+  },
+  "week_days": {
+    "monday": {
+      "full": "Monday",
+      "short": "Mon"
+    },
+    "tuesday": {
+      "full": "Tuesday",
+      "short": "Tue"
+    },
+    "wednesday": {
+      "full": "Wednesday",
+      "short": "Wed"
+    },
+    "thursday": {
+      "full": "Thursday",
+      "short": "Thu"
+    },
+    "friday": {
+      "full": "Friday",
+      "short": "Fri"
+    },
+    "saturday": {
+      "full": "Saturday",
+      "short": "Sat"
+    },
+    "sunday": {
+      "full": "Sunday",
+      "short": "Sun"
+    }
+  },
+  "country_holidays": {
+    "title": "Holidays in {country}",
+    "description": "If necessary, you can disable each of the holidays and they will be considered as a business day.",
+    "message": {
+      "error": "Failed to update country holidays, please try again.",
+      "success": "Country holidays updated successfully."
+    }
+  },
+  "custom_holidays": {
+    "title": "Specific Non-working Dates",
+    "description": "If necessary, you can delete each of the dates or periods and they will be considered as a business day.",
+    "disclaimer": "Deleting dates or periods cannot be undone. Click the 'Save' button to confirm the action.",
+    "message": {
+      "save": {
+        "error": "Failed to delete some non-working dates, please check and try again.",
+        "success": "Non-working dates deleted successfully."
+      }
+    }
+  },
   "status": {
     "online": "Online",
     "offline": "Offline",
@@ -129,6 +183,19 @@
       },
       "working_day": {
         "title": "Definitions of the workday",
+        "copy_workday": "Copy the workday of an already configured sector",
+        "select_days": "Select the days of the working week.",
+        "set_hours": "Set the hours worked for each day.",
+        "add_holidays": "Add holidays and specific non-working dates.",
+        "add_non_working_dates": "Add Specific Non-working Dates",
+        "select_date_or_period": "Select date or period",
+        "repeat_annually": "Repeat annually",
+        "add_more_dates_or_periods": "Add more dates or periods",
+        "see_all_holidays": "See all holidays",
+        "add_specific_dates": "Add specific dates",
+        "see_all_specific_dates": "See all specific dates",
+        "select_sector_to_copy": "Select the sector to copy",
+        "copy_to_all": "Copy to all",
         "start": {
           "label": "Start time"
         },
@@ -137,6 +204,12 @@
         },
         "limit_agents": {
           "label": "Limit on the number of simultaneous calls per agent"
+        },
+        "message": {
+          "create_custom_holiday": {
+            "error": "Failed to add some non-working dates, please check and try again.",
+            "success": "Non-working dates added successfully."
+          }
         }
       }
     },
@@ -673,7 +746,8 @@
     "edit_sector": {
       "description": "Determine General Team Settings and Workday",
       "tag_already_exists": "A tag with that name already exists",
-      "invalid_hours": "Start time cannot be greater/equal to end time"
+      "invalid_hours": "Start time cannot be greater/equal to end time",
+      "invalid_start_second_hour": "Start time of the second period must be greater than or equal to end time of the first period."
     },
     "custom_queue": "Create a custom queue",
     "default_queue": {

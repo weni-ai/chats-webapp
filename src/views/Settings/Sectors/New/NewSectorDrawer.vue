@@ -151,11 +151,6 @@ export default {
         config: {
           secondary_project: '',
         },
-        workingDay: {
-          start: '',
-          end: '',
-          dayOfWeek: 'week-days',
-        },
         managers: [],
         maxSimultaneousChatsByAgent: '',
       },
@@ -179,13 +174,10 @@ export default {
     ...mapWritableState(useSettings, ['sectors']),
     ...mapState(useConfig, ['enableGroupsMode']),
     showDiscartQuestion() {
-      const { name, workingDay, maxSimultaneousChatsByAgent, managers } =
-        this.sector;
+      const { name, maxSimultaneousChatsByAgent, managers } = this.sector;
 
       return !!(
         name ||
-        workingDay.start ||
-        workingDay.end ||
         Number(maxSimultaneousChatsByAgent || 0) ||
         managers.length
       );
@@ -221,7 +213,6 @@ export default {
           can_trigger_flows,
           sign_messages,
           name,
-          workingDay,
           maxSimultaneousChatsByAgent,
           managers,
           config,
@@ -232,8 +223,6 @@ export default {
           can_trigger_flows,
           sign_messages,
           name,
-          work_start: workingDay.start,
-          work_end: workingDay.end,
           rooms_limit: this.enableGroupsMode
             ? '0'
             : maxSimultaneousChatsByAgent,
@@ -252,6 +241,12 @@ export default {
         this.sector = { ...this.sector, ...createdSector };
 
         await this.$nextTick();
+
+        await this.$refs.sectorGeneral.saveWorkingDays();
+
+        await this.$refs.sectorGeneral.initCountryHolidays();
+
+        await this.$refs.sectorGeneral.createCustomHolidays();
 
         await Promise.all(
           managers.map((manager) => {
