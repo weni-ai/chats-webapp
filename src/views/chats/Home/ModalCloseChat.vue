@@ -4,7 +4,7 @@
     :class="{ 'modal-close-chat--mobile': isMobile, 'modal-close-chat': true }"
     :showCloseIcon="!isMobile"
     :title="$t('chats.to_end_rate_the_chat')"
-    :primaryButtonProps="{ text: $t('end'), loading: isLoadingCloseRoom }"
+    :primaryButtonProps="{ text: $t('end_chat'), loading: isLoadingCloseRoom }"
     :secondaryButtonProps="{ text: $t('cancel') }"
     size="lg"
     data-testid="chat-classifier-modal"
