@@ -19,7 +19,7 @@
           size="small"
           @click="emitOpenModalCloseChat"
         >
-          End Chat
+          {{ $t('end_chat') }}
         </UnnnicButton>
       </template>
     </UnnnicChatsHeader>
