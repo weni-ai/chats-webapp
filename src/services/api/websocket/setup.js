@@ -6,6 +6,7 @@ import { useDashboard } from '@/store/modules/dashboard';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useConfig } from '@/store/modules/config';
+import { moduleStorage } from '@/utils/storage';
 
 export default class WebSocketSetup {
   THIRTY_SECONDS = 30000;
@@ -111,8 +112,12 @@ export default class WebSocketSetup {
 
       configStore.socketStatus = 'connected';
 
-      const sessionStorageStatus = sessionStorage.getItem(
+      const sessionStorageStatus = moduleStorage.getItem(
         `statusAgent-${this.app.appProject}`,
+        null,
+        {
+          useSession: true,
+        },
       );
 
       this.app.updateUserStatus(sessionStorageStatus);

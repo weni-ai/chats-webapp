@@ -1,8 +1,10 @@
-export const PREFERENCES_SOUND = 'WENICHATS_PREFERENCES_SOUND';
+export const PREFERENCES_SOUND = 'preferencesSound';
 
 import pingBing from './sounds/ping-bing.wav';
 import achievementConfirmation from './sounds/achievement-confirmation.wav';
 import selectSound from './sounds/select-sound.wav';
+
+import { moduleStorage } from '@/utils/storage';
 
 export default class SoundNotification {
   /**
@@ -20,7 +22,7 @@ export default class SoundNotification {
   }
 
   notify() {
-    const soundPreference = localStorage.getItem(PREFERENCES_SOUND);
+    const soundPreference = moduleStorage.getItem(PREFERENCES_SOUND);
     if (soundPreference === 'no') {
       return;
     }

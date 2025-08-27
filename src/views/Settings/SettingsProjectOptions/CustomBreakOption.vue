@@ -106,6 +106,7 @@ import i18n from '@/plugins/i18n';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 import customStatus from '@/services/api/resources/chats/pauseStatus';
 import { useConfig } from '@/store/modules/config';
+import { moduleStorage } from '@/utils/storage';
 
 const config = useConfig();
 
@@ -265,7 +266,7 @@ const closeModal = () => {
 
 const windowSettingsUpdated = () => {
   const timestamp = Date.now().toString();
-  localStorage.setItem('settingsUpdated', timestamp);
+  moduleStorage.setItem('settingsUpdated', timestamp);
 };
 </script>
 

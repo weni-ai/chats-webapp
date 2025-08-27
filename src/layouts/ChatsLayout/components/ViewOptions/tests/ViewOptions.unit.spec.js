@@ -11,17 +11,12 @@ import { mount, config } from '@vue/test-utils';
 import ViewOptions from '@/layouts/ChatsLayout/components/ViewOptions/index.vue';
 import ViewButton from '@/layouts/ChatsLayout/components/ViewOptions/ViewButton.vue';
 import i18n from '@/plugins/i18n';
-import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 
 const mockPush = vi.fn();
 vi.mock('vue-router', () => ({
   useRouter: () => ({
     push: mockPush,
   }),
-}));
-
-vi.mock('@/services/api/websocket/soundNotification.js', () => ({
-  PREFERENCES_SOUND: 'WENICHATS_PREFERENCES_SOUND',
 }));
 
 beforeAll(() => {
@@ -115,24 +110,24 @@ describe('ViewOptions', () => {
       wrapper.vm.sound = true;
       await wrapper.vm.changeSound();
       expect(localStorageMock.setItem).toHaveBeenCalledWith(
-        PREFERENCES_SOUND,
+        'chats_preferencesSound',
         'yes',
       );
-      expect(localStorageMock.getItem(PREFERENCES_SOUND)).toBe('yes');
+      expect(localStorageMock.getItem('chats_preferencesSound')).toBe('yes');
       expect(wrapper.vm.sound).toBe(true);
 
       wrapper.vm.sound = false;
       await wrapper.vm.changeSound();
       expect(localStorageMock.setItem).toHaveBeenCalledWith(
-        PREFERENCES_SOUND,
+        'chats_preferencesSound',
         'no',
       );
-      expect(localStorageMock.getItem(PREFERENCES_SOUND)).toBe('no');
+      expect(localStorageMock.getItem('chats_preferencesSound')).toBe('no');
       expect(wrapper.vm.sound).toBe(false);
     });
 
     it('should pass the correct value to UnnnicSwitch v-model', async () => {
-      wrapper = createWrapper({ isViewMode: false, sound: true });
+      wrapper = createWrapper({ isViewMode: false });
       wrapper.vm.openDrawer();
       await wrapper.vm.$nextTick();
       expect(
@@ -298,7 +293,7 @@ describe('ViewOptions', () => {
 
       expect(wrapper.vm.sound).toBe(true);
       expect(localStorageMock.setItem).toHaveBeenCalledWith(
-        PREFERENCES_SOUND,
+        'chats_preferencesSound',
         'yes',
       );
 
@@ -309,7 +304,7 @@ describe('ViewOptions', () => {
 
   describe('Lifecycle Hooks', () => {
     it('should set initial sound value from localStorage on mount', async () => {
-      localStorageMock.storage[PREFERENCES_SOUND] = 'yes';
+      localStorageMock.storage['chats_preferencesSound'] = 'yes';
       wrapper = createWrapper();
 
       expect(wrapper.vm.sound).toBe(true);

@@ -46,27 +46,23 @@ describe('Config storage', () => {
 
   describe('Token', () => {
     it('should get the token from sessionStorage first, then localStorage', () => {
-      mockSessionStorage['WENICHATS_API_TOKEN'] = 'session-token';
-      mockLocalStorage['WENICHATS_API_TOKEN'] = 'local-token';
+      mockSessionStorage['chats_token'] = 'session-token';
+      mockLocalStorage['chats_token'] = 'local-token';
 
       const token = getToken();
 
-      expect(sessionStorage.getItem).toHaveBeenCalledWith(
-        'WENICHATS_API_TOKEN',
-      );
+      expect(sessionStorage.getItem).toHaveBeenCalledWith('chats_token');
       expect(localStorage.getItem).not.toHaveBeenCalled();
       expect(token).toBe('session-token');
     });
 
     it('should fall back to localStorage if sessionStorage does not have the token', () => {
-      mockLocalStorage['WENICHATS_API_TOKEN'] = 'local-token';
+      mockLocalStorage['chats_token'] = 'local-token';
 
       const token = getToken();
 
-      expect(sessionStorage.getItem).toHaveBeenCalledWith(
-        'WENICHATS_API_TOKEN',
-      );
-      expect(localStorage.getItem).toHaveBeenCalledWith('WENICHATS_API_TOKEN');
+      expect(sessionStorage.getItem).toHaveBeenCalledWith('chats_token');
+      expect(localStorage.getItem).toHaveBeenCalledWith('chats_token');
       expect(token).toBe('local-token');
     });
 
@@ -81,44 +77,32 @@ describe('Config storage', () => {
 
       await setToken(token);
 
-      expect(sessionStorage.setItem).toHaveBeenCalledWith(
-        'WENICHATS_API_TOKEN',
-        token,
-      );
-      expect(localStorage.setItem).toHaveBeenCalledWith(
-        'WENICHATS_API_TOKEN',
-        token,
-      );
-      expect(mockSessionStorage['WENICHATS_API_TOKEN']).toBe(token);
-      expect(mockLocalStorage['WENICHATS_API_TOKEN']).toBe(token);
+      expect(sessionStorage.setItem).toHaveBeenCalledWith('chats_token', token);
+      expect(localStorage.setItem).toHaveBeenCalledWith('chats_token', token);
+      expect(mockSessionStorage['chats_token']).toBe(token);
+      expect(mockLocalStorage['chats_token']).toBe(token);
     });
   });
 
   describe('Project', () => {
     it('should get the project from sessionStorage first, then localStorage', () => {
-      mockSessionStorage['WENICHATS_PROJECT_UUID'] = 'session-project';
-      mockLocalStorage['WENICHATS_PROJECT_UUID'] = 'local-project';
+      mockSessionStorage['chats_projectUuid'] = 'session-project';
+      mockLocalStorage['chats_projectUuid'] = 'local-project';
 
       const project = getProject();
 
-      expect(sessionStorage.getItem).toHaveBeenCalledWith(
-        'WENICHATS_PROJECT_UUID',
-      );
+      expect(sessionStorage.getItem).toHaveBeenCalledWith('chats_projectUuid');
       expect(localStorage.getItem).not.toHaveBeenCalled();
       expect(project).toBe('session-project');
     });
 
     it('should fall back to localStorage if sessionStorage does not have the project', () => {
-      mockLocalStorage['WENICHATS_PROJECT_UUID'] = 'local-project';
+      mockLocalStorage['chats_projectUuid'] = 'local-project';
 
       const project = getProject();
 
-      expect(sessionStorage.getItem).toHaveBeenCalledWith(
-        'WENICHATS_PROJECT_UUID',
-      );
-      expect(localStorage.getItem).toHaveBeenCalledWith(
-        'WENICHATS_PROJECT_UUID',
-      );
+      expect(sessionStorage.getItem).toHaveBeenCalledWith('chats_projectUuid');
+      expect(localStorage.getItem).toHaveBeenCalledWith('chats_projectUuid');
       expect(project).toBe('local-project');
     });
 
@@ -134,15 +118,15 @@ describe('Config storage', () => {
       await setProject(projectUuid);
 
       expect(sessionStorage.setItem).toHaveBeenCalledWith(
-        'WENICHATS_PROJECT_UUID',
+        'chats_projectUuid',
         projectUuid,
       );
       expect(localStorage.setItem).toHaveBeenCalledWith(
-        'WENICHATS_PROJECT_UUID',
+        'chats_projectUuid',
         projectUuid,
       );
-      expect(mockSessionStorage['WENICHATS_PROJECT_UUID']).toBe(projectUuid);
-      expect(mockLocalStorage['WENICHATS_PROJECT_UUID']).toBe(projectUuid);
+      expect(mockSessionStorage['chats_projectUuid']).toBe(projectUuid);
+      expect(mockLocalStorage['chats_projectUuid']).toBe(projectUuid);
     });
   });
 
@@ -151,15 +135,17 @@ describe('Config storage', () => {
       const status = 'online';
       const projectUuid = 'test-project-uuid';
 
-      mockSessionStorage['WENICHATS_PROJECT_UUID'] = projectUuid;
+      mockSessionStorage['chats_projectUuid'] = projectUuid;
 
       await setStatus(status);
 
       expect(sessionStorage.setItem).toHaveBeenCalledWith(
-        `statusAgent-${projectUuid}`,
+        `chats_statusAgent-${projectUuid}`,
         status,
       );
-      expect(mockSessionStorage[`statusAgent-${projectUuid}`]).toBe(status);
+      expect(mockSessionStorage[`chats_statusAgent-${projectUuid}`]).toBe(
+        status,
+      );
     });
   });
 });
