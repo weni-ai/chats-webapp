@@ -1,13 +1,18 @@
 import { useConfig } from '@/store/modules/config';
+import { moduleStorage } from '@/utils/storage';
 
 export default (content, { app }) => {
   const configStore = useConfig();
 
   const statusAgentKey = configStore.project.uuid
     ? `statusAgent-${configStore.project.uuid}`
-    : `statusAgent-${sessionStorage.getItem('WENICHATS_PROJECT_UUID')}`;
+    : `statusAgent-${moduleStorage.getItem('projectUuid', '', {
+        useSession: true,
+      })}`;
 
-  const sessionStorageStatus = sessionStorage.getItem(statusAgentKey);
+  const sessionStorageStatus = moduleStorage.getItem(statusAgentKey, null, {
+    useSession: true,
+  });
   const { from, status } = content;
 
   if (sessionStorageStatus !== status) {
@@ -16,7 +21,9 @@ export default (content, { app }) => {
     } else if (from === 'user') {
       const configStore = useConfig();
       configStore.setStatus(status);
-      sessionStorage.setItem(statusAgentKey, status);
+      moduleStorage.setItem(statusAgentKey, status, {
+        useSession: true,
+      });
     }
   }
 };

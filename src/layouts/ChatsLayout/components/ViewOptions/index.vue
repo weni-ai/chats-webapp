@@ -93,6 +93,7 @@ import { ref, onBeforeMount, onMounted, onUnmounted } from 'vue';
 import ViewButton from './ViewButton.vue';
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 import { useRouter } from 'vue-router';
+import { moduleStorage } from '@/utils/storage';
 
 defineOptions({
   name: 'ViewOptions',
@@ -138,7 +139,7 @@ const openDrawer = () => {
 };
 
 const changeSound = () => {
-  localStorage.setItem(PREFERENCES_SOUND, sound.value ? 'yes' : 'no');
+  moduleStorage.setItem(PREFERENCES_SOUND, sound.value ? 'yes' : 'no');
 };
 
 const openFlowsTrigger = () => {
@@ -156,7 +157,7 @@ const navigate = (name) => {
 };
 
 onBeforeMount(() => {
-  sound.value = (localStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'yes';
+  sound.value = (moduleStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'yes';
 });
 
 onMounted(async () => {
