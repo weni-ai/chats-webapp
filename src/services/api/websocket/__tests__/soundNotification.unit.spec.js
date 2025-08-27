@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import SoundNotification, {
   PREFERENCES_SOUND,
 } from '@/services/api/websocket/soundNotification';
+import { moduleStorage } from '@/utils/storage';
 
 const playMock = vi.fn().mockImplementation(() => Promise.resolve());
 const MockAudio = vi.fn().mockImplementation(() => ({
@@ -14,7 +15,7 @@ describe('SoundNotification', () => {
   let soundNotification;
 
   beforeEach(() => {
-    localStorage.clear();
+    moduleStorage.clear();
     soundNotification = new SoundNotification('test-sound');
   });
 
@@ -24,7 +25,7 @@ describe('SoundNotification', () => {
 
   describe('notify', () => {
     it('should play sound if preference is not "no"', async () => {
-      localStorage.setItem(PREFERENCES_SOUND, 'yes');
+      moduleStorage.setItem(PREFERENCES_SOUND, 'yes');
 
       await soundNotification.notify();
 
@@ -32,7 +33,7 @@ describe('SoundNotification', () => {
     });
 
     it('should not play sound if preference is "no"', async () => {
-      localStorage.setItem(PREFERENCES_SOUND, 'no');
+      moduleStorage.setItem(PREFERENCES_SOUND, 'no');
 
       await soundNotification.notify();
 

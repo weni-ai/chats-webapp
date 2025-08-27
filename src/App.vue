@@ -29,6 +29,8 @@ import {
   setProject as setProjectLocalStorage,
 } from '@/utils/config';
 
+import { moduleStorage } from '@/utils/storage';
+
 import moment from 'moment';
 
 export default {
@@ -155,9 +157,15 @@ export default {
       getAllQuickMessagesShared: 'getAll',
     }),
     restoreSessionStorageUserStatus({ projectUuid }) {
-      const userStatus = sessionStorage.getItem(`statusAgent-${projectUuid}`);
+      const userStatus = moduleStorage.getItem(
+        `statusAgent-${projectUuid}`,
+        '',
+        { useSession: true },
+      );
       if (!['OFFLINE', 'ONLINE'].includes(userStatus)) {
-        sessionStorage.setItem(`statusAgent-${projectUuid}`, 'OFFLINE');
+        moduleStorage.setItem(`statusAgent-${projectUuid}`, 'OFFLINE', {
+          useSession: true,
+        });
       }
       this.setStatus(userStatus);
     },
@@ -219,10 +227,13 @@ export default {
 
     async onboarding() {
       const onboarded =
-        sessionStorage.getItem('CHATS_USER_ONBOARDED') ||
-        (await Profile.onboarded());
+        moduleStorage.getItem('userOnboarded', '', {
+          useSession: true,
+        }) || (await Profile.onboarded());
       if (onboarded) {
-        sessionStorage.setItem('CHATS_USER_ONBOARDED', true);
+        moduleStorage.setItem('userOnboarded', true, {
+          useSession: true,
+        });
         return;
       }
 
@@ -232,7 +243,13 @@ export default {
     async getUserStatus() {
       const projectUuid = this.project.uuid;
 
-      const userStatus = sessionStorage.getItem(`statusAgent-${projectUuid}`);
+      const userStatus = moduleStorage.getItem(
+        `statusAgent-${projectUuid}`,
+        '',
+        {
+          useSession: true,
+        },
+      );
 
       const {
         data: { connection_status: responseStatus },
@@ -256,9 +273,12 @@ export default {
         status,
       });
       useConfig().$patch({ status: connection_status });
-      sessionStorage.setItem(
+      moduleStorage.setItem(
         `statusAgent-${this.project.uuid}`,
         connection_status,
+        {
+          useSession: true,
+        },
       );
     },
 
