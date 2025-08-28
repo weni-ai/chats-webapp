@@ -26,7 +26,6 @@ describe('useFeatureFlag Store', () => {
   it('should set loading state to true when getFeatureFlags is called', async () => {
     const featureFlagStore = useFeatureFlag();
 
-    // Mock a delayed response to test loading state
     FeatureFlag.getAllFeatureFlags.mockImplementation(
       () => new Promise((resolve) => setTimeout(() => resolve({}), 100)),
     );
@@ -103,7 +102,6 @@ describe('useFeatureFlag Store', () => {
     const featureFlagStore = useFeatureFlag();
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    // Set initial state
     const initialFeatureFlags = { feature_1: { enabled: true } };
     featureFlagStore.featureFlags = initialFeatureFlags;
 
