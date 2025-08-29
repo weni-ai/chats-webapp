@@ -161,7 +161,7 @@ const submitFeedback = async () => {
       &-item {
         display: flex;
         width: 56px;
-        padding: 4px;
+        padding: $unnnic-spacing-nano;
         flex-direction: column;
         align-items: center;
         gap: 4px;
