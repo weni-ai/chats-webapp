@@ -3,6 +3,7 @@
     :modelValue="modelValue"
     class="modal-feedback"
     showCloseIcon
+    showActionsDivider
     :title="$t('feedback_modal.title')"
     :primaryButtonProps="{
       text: $t('feedback_modal.submit'),
@@ -41,6 +42,18 @@
           </p>
         </section>
       </section>
+      <section
+        v-if="selectedFeedback"
+        class="modal-feedback__content-form-description"
+      >
+        <UnnnicTextArea
+          v-model="feedbackDescription"
+          :label="$t(feedbackDescriptionLabel)"
+          :placeholder="$t('feedback_modal.placeholder_feedback')"
+          :maxLength="1000"
+          data-testid="input-feedback"
+        />
+      </section>
     </section>
   </UnnnicModalDialog>
 </template>
@@ -58,6 +71,7 @@ defineProps({
 const emit = defineEmits(['update:modelValue', 'close']);
 
 const selectedFeedback = ref(null);
+const feedbackDescription = ref('');
 
 const feedbackOptions = [
   {
@@ -79,6 +93,14 @@ const feedbackOptions = [
 
 const isSelected = computed(() => {
   return selectedFeedback.value !== null;
+});
+
+const feedbackDescriptionLabel = computed(() => {
+  if (['negative', 'neutral'].includes(selectedFeedback.value)) {
+    return 'feedback_modal.problem_question';
+  }
+
+  return 'feedback_modal.improvement_question';
 });
 
 const closeModal = () => {
