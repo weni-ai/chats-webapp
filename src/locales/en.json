@@ -883,5 +883,20 @@
     },
     "connecting": "Loading...",
     "connected": "Update completed successfully! You can continue your support."
+  },
+  "feedback_modal": {
+    "title": "Help us improve!",
+    "feedback_question": "What is it been like using Weni Chats?",
+    "problem_question": "What are the main challenges or difficulties you face when using Weni Chats?",
+    "improvement_question": "What could we improve to make your Weni Chats experience even better?",
+    "submit": "Submit",
+    "cancel": "Not now",
+    "feedback_options": {
+      "positive": "Good",
+      "negative": "Bad",
+      "neutral": "Neutral"
+    },
+    "placeholder_feedback": "Share your experience here",
+    "default_error_message": "An error occurred while submitting feedback, please try again later!"
   }
 }

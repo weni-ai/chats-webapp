@@ -28,8 +28,10 @@ import Queue from '@/services/api/resources/settings/queue';
 
 import ChatClassifier from '@/components/chats/ChatClassifier.vue';
 
-import { mapActions } from 'pinia';
+import { mapActions, mapState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
+import feedbackService from '@/services/api/resources/chats/feedback';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 export default {
   components: {
@@ -46,7 +48,7 @@ export default {
       required: true,
     },
   },
-  emits: ['close'],
+  emits: ['close', 'create-feedback'],
 
   data() {
     return {
@@ -56,16 +58,22 @@ export default {
       limit: 20,
       isLoadingTags: true,
       isLoadingCloseRoom: false,
+      isShowFeedback: false,
     };
   },
 
   computed: {
+    ...mapState(useFeatureFlag, {
+      isRenderFeedbackFeatureFlag: (store) =>
+        store.featureFlags?.active_features?.includes('weniChatsFeedback'),
+    }),
     isMobile() {
       return isMobile();
     },
   },
   mounted() {
     this.classifyRoom();
+    this.checkIsShowFeedback();
   },
 
   methods: {
@@ -101,7 +109,19 @@ export default {
 
       this.isLoadingCloseRoom = false;
 
+      if (this.isShowFeedback && this.isRenderFeedbackFeatureFlag) {
+        this.$emit('create-feedback');
+      }
+
       this.closeModal();
+    },
+    async checkIsShowFeedback() {
+      try {
+        const response = await feedbackService.getIsShowFeedback();
+        this.isShowFeedback = response.should_show_feedback_form;
+      } catch (error) {
+        console.error('Error checking is show feedback', error);
+      }
     },
     closeModal() {
       this.$emit('close');
