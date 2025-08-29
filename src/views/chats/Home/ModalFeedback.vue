@@ -166,7 +166,7 @@ const submitFeedback = async () => {
         align-items: center;
         gap: 4px;
         background-color: $unnnic-color-weni-50;
-        border-radius: 4px;
+        border-radius: $unnnic-border-width-thick;
         cursor: pointer;
 
         &-selected {
