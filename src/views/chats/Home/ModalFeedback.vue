@@ -8,6 +8,7 @@
     :primaryButtonProps="{
       text: $t('feedback_modal.submit'),
       disabled: !isSelected,
+      loading: isLoading,
     }"
     :secondaryButtonProps="{ text: $t('feedback_modal.cancel') }"
     size="lg"
@@ -60,6 +61,9 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import feedbackService from '@/services/api/resources/chats/feedback';
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
+import i18n from '@/plugins/i18n';
 
 defineProps({
   modelValue: {
@@ -72,22 +76,23 @@ const emit = defineEmits(['update:modelValue', 'close']);
 
 const selectedFeedback = ref(null);
 const feedbackDescription = ref('');
+const isLoading = ref(false);
 
 const feedbackOptions = [
   {
     label: 'feedback_modal.feedback_options.negative',
     icon: 'sentiment_dissatisfied',
-    value: 'negative',
+    value: 1,
   },
   {
     label: 'feedback_modal.feedback_options.neutral',
     icon: 'sentiment_neutral',
-    value: 'neutral',
+    value: 2,
   },
   {
     label: 'feedback_modal.feedback_options.positive',
     icon: 'sentiment_satisfied',
-    value: 'positive',
+    value: 3,
   },
 ];
 
@@ -107,8 +112,26 @@ const closeModal = () => {
   emit('update:modelValue', false);
 };
 
-const submitFeedback = () => {
-  console.log('submitFeedback');
+const submitFeedback = async () => {
+  isLoading.value = true;
+  try {
+    await feedbackService.createFeedback({
+      rating: selectedFeedback.value,
+      comment: feedbackDescription.value,
+    });
+    closeModal();
+  } catch (error) {
+    console.error('Error submitting feedback', error);
+    callUnnnicAlert({
+      props: {
+        text: i18n.global.t('feedback_modal.default_error_message'),
+        type: 'error',
+      },
+      seconds: 5,
+    });
+  } finally {
+    isLoading.value = false;
+  }
 };
 </script>
 
