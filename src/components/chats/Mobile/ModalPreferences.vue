@@ -55,6 +55,7 @@ import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js
 
 import { mapActions, mapState } from 'pinia';
 import { useConfig } from '@/store/modules/config';
+import { moduleStorage } from '@/utils/storage';
 
 export default {
   name: 'ModalPreferences',
@@ -79,7 +80,7 @@ export default {
     this.getStatus();
 
     this.configStatus = this.storeStatus === 'ONLINE';
-    this.configSound = localStorage.getItem(PREFERENCES_SOUND) === 'yes';
+    this.configSound = moduleStorage.getItem(PREFERENCES_SOUND) === 'yes';
   },
 
   methods: {
@@ -102,7 +103,7 @@ export default {
     },
 
     updateSound() {
-      localStorage.setItem(PREFERENCES_SOUND, this.configSound ? 'yes' : 'no');
+      moduleStorage.setItem(PREFERENCES_SOUND, this.configSound ? 'yes' : 'no');
     },
 
     async updateStatus(status) {

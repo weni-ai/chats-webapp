@@ -1,11 +1,14 @@
 <template>
   <div id="app">
+    <SocketAlertBanner v-if="showSocketAlertBanner" />
     <RouterView />
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'pinia';
+
+import SocketAlertBanner from './layouts/ChatsLayout/components/SocketAlertBanner.vue';
 
 import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
@@ -26,10 +29,15 @@ import {
   setProject as setProjectLocalStorage,
 } from '@/utils/config';
 
+import { moduleStorage } from '@/utils/storage';
+
 import moment from 'moment';
+
 export default {
   name: 'App',
-
+  components: {
+    SocketAlertBanner,
+  },
   setup() {
     const queryString = window.location.href.split('?')[1];
 
@@ -58,7 +66,20 @@ export default {
       project: 'project',
       appToken: 'token',
       appProject: (store) => store.project.uuid,
+      socketStatus: 'socketStatus',
     }),
+
+    socketRetryCount() {
+      return this.ws?.reconnectAttempts || 0;
+    },
+
+    showSocketAlertBanner() {
+      return (
+        ['room', 'discussion', 'home'].includes(this.$route.name) &&
+        ['closed', 'connecting'].includes(this.socketStatus) &&
+        this.socketRetryCount >= (this.ws.MAX_RECONNECT_ATTEMPTS || 5)
+      );
+    },
 
     configsForInitializeWebSocket() {
       const { appToken, appProject } = this;
@@ -136,9 +157,15 @@ export default {
       getAllQuickMessagesShared: 'getAll',
     }),
     restoreSessionStorageUserStatus({ projectUuid }) {
-      const userStatus = sessionStorage.getItem(`statusAgent-${projectUuid}`);
+      const userStatus = moduleStorage.getItem(
+        `statusAgent-${projectUuid}`,
+        '',
+        { useSession: true },
+      );
       if (!['OFFLINE', 'ONLINE'].includes(userStatus)) {
-        sessionStorage.setItem(`statusAgent-${projectUuid}`, 'OFFLINE');
+        moduleStorage.setItem(`statusAgent-${projectUuid}`, 'OFFLINE', {
+          useSession: true,
+        });
       }
       this.setStatus(userStatus);
     },
@@ -200,10 +227,13 @@ export default {
 
     async onboarding() {
       const onboarded =
-        sessionStorage.getItem('CHATS_USER_ONBOARDED') ||
-        (await Profile.onboarded());
+        moduleStorage.getItem('userOnboarded', '', {
+          useSession: true,
+        }) || (await Profile.onboarded());
       if (onboarded) {
-        sessionStorage.setItem('CHATS_USER_ONBOARDED', true);
+        moduleStorage.setItem('userOnboarded', true, {
+          useSession: true,
+        });
         return;
       }
 
@@ -213,7 +243,13 @@ export default {
     async getUserStatus() {
       const projectUuid = this.project.uuid;
 
-      const userStatus = sessionStorage.getItem(`statusAgent-${projectUuid}`);
+      const userStatus = moduleStorage.getItem(
+        `statusAgent-${projectUuid}`,
+        '',
+        {
+          useSession: true,
+        },
+      );
 
       const {
         data: { connection_status: responseStatus },
@@ -237,9 +273,12 @@ export default {
         status,
       });
       useConfig().$patch({ status: connection_status });
-      sessionStorage.setItem(
+      moduleStorage.setItem(
         `statusAgent-${this.project.uuid}`,
         connection_status,
+        {
+          useSession: true,
+        },
       );
     },
 
@@ -254,8 +293,8 @@ export default {
       }
     },
 
-    async wsReconnect() {
-      this.ws.reconnect();
+    async wsReconnect({ ignoreRetryCount } = {}) {
+      this.ws.reconnect({ ignoreRetryCount });
     },
   },
 };
