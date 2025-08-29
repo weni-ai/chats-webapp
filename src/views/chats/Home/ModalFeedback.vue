@@ -142,7 +142,7 @@ const submitFeedback = async () => {
   &__content {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: $unnnic-spacing-sm;
 
     &-title {
       color: $unnnic-color-neutral-cloudy;
