@@ -31,6 +31,7 @@
             'modal-feedback__content-form-item-selected':
               selectedFeedback === option.value,
           }"
+          :data-testid="`feedback-option-${option.value}`"
           @click="selectedFeedback = option.value"
         >
           <UnnnicIcon
@@ -46,6 +47,7 @@
       <section
         v-if="selectedFeedback"
         class="modal-feedback__content-form-description"
+        data-testid="feedback-description-section"
       >
         <UnnnicTextArea
           v-model="feedbackDescription"
