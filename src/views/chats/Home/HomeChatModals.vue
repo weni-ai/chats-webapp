@@ -34,6 +34,14 @@
       data-testid="modal-close-chat"
       :room="room"
       @close="closeModal('closeChat')"
+      @create-feedback="openModal('feedback')"
+    />
+
+    <ModalFeedback
+      v-if="modalsShowing.feedback"
+      v-model="modalsShowing.feedback"
+      data-testid="modal-feedback"
+      @close="closeModal('feedback')"
     />
 
     <FileUploader
@@ -67,6 +75,7 @@ import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
 import ModalQuickMessages from '@/components/chats/QuickMessages/ModalQuickMessages.vue';
 
 import ModalCloseChat from './ModalCloseChat.vue';
+import ModalFeedback from './ModalFeedback.vue';
 
 export default {
   name: 'HomeChatModals',
@@ -76,6 +85,7 @@ export default {
     ModalGetChat,
     ModalQuickMessages,
     ModalCloseChat,
+    ModalFeedback,
   },
   emits: ['got-chat', 'file-uploader-progress', 'select-quick-message'],
 
@@ -89,6 +99,7 @@ export default {
         closeChat: false,
         fileUploader: false,
         quickMessages: false,
+        feedback: false,
       },
 
       modalFileUploaderFiles: [],
