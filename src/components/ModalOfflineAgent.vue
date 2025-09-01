@@ -9,21 +9,36 @@
     data-testid="offline-agent-modal"
     @update:model-value="closeModal()"
   >
-    <section class="modal-offline-agent__content">
-      <p class="modal-offline-agent__content__description">
-        {{ $t('offline_agent_modal.description', { username: 'John Doe' }) }}
+    <section
+      class="modal-offline-agent__content"
+      data-testid="modal-content"
+    >
+      <p
+        class="modal-offline-agent__content__description"
+        data-testid="modal-description"
+      >
+        {{ $t('offline_agent_modal.description', { username }) }}
       </p>
     </section>
   </UnnnicModalDialog>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false,
+  },
+  username: {
+    type: String,
+    default: '-',
+  },
+});
 
-const modelValue = ref(false);
+const emit = defineEmits(['update:modelValue']);
 
 const closeModal = () => {
-  modelValue.value = false;
+  emit('update:modelValue', false);
 };
 </script>
 
