@@ -112,6 +112,7 @@ const feedbackDescriptionLabel = computed(() => {
 
 const closeModal = () => {
   emit('update:modelValue', false);
+  emit('close');
 };
 
 const submitFeedback = async () => {
