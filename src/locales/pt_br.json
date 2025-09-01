@@ -812,5 +812,9 @@
     },
     "connecting": "Carregando...",
     "connected": "Atualização concluída com sucesso! Você pode continuar seu atendimento."
+  },
+  "offline_agent_modal": {
+    "title": "Você está offline!",
+    "description": "Seu status foi alterado para offline por {username}. Para voltar a atender, altere seu status para online."
   }
 }
