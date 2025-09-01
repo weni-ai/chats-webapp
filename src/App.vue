@@ -2,7 +2,11 @@
   <div id="app">
     <SocketAlertBanner v-if="showSocketAlertBanner" />
     <RouterView />
-    <ModalOfflineAgent />
+    <ModalOfflineAgent
+      v-if="showModalOfflineAgent"
+      v-model="showModalOfflineAgent"
+      :username="userWhoChangedStatus"
+    />
   </div>
 </template>
 
@@ -53,6 +57,7 @@ export default {
     return {
       ws: null,
       loading: false,
+      showModalOfflineAgent: false,
     };
   },
 
@@ -86,6 +91,10 @@ export default {
       const { appToken, appProject } = this;
 
       return [appToken, appProject];
+    },
+
+    userWhoChangedStatus() {
+      return 'fake username';
     },
   },
 
