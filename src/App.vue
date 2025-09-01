@@ -2,6 +2,7 @@
   <div id="app">
     <SocketAlertBanner v-if="showSocketAlertBanner" />
     <RouterView />
+    <ModalOfflineAgent />
   </div>
 </template>
 
@@ -9,6 +10,7 @@
 import { mapActions, mapState } from 'pinia';
 
 import SocketAlertBanner from './layouts/ChatsLayout/components/SocketAlertBanner.vue';
+import ModalOfflineAgent from './components/ModalOfflineAgent.vue';
 
 import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
@@ -35,6 +37,7 @@ export default {
   name: 'App',
   components: {
     SocketAlertBanner,
+    ModalOfflineAgent,
   },
   setup() {
     const queryString = window.location.href.split('?')[1];
