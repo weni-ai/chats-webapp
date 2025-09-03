@@ -386,9 +386,9 @@ const showStatusAlert = (status, isSuccess = true) => {
 };
 
 watch(
-  configStatus,
-  () => {
-    if (configStatus.value === 'OFFLINE') {
+  () => configStatus?.value,
+  (newStatus) => {
+    if (newStatus === 'OFFLINE') {
       selectedStatus.value = statuses.value[1];
     }
   },
