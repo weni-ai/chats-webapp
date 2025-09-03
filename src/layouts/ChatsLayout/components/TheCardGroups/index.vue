@@ -105,7 +105,11 @@
       </div>
       <UnnnicDisclaimer
         v-if="enableAutomaticRoomRouting"
-        class="room-container__chats-router-info"
+        :class="
+          showOrderBy
+            ? 'room-container__chats'
+            : 'room-container__chats-margin-y'
+        "
         :text="$t('chats.queue_priority_disclaimer')"
         iconColor="neutral-dark"
         data-testid="router-disclaimer"
@@ -150,6 +154,7 @@
 import isMobile from 'is-mobile';
 import { mapActions, mapState, mapWritableState } from 'pinia';
 import unnnic from '@weni/unnnic-system';
+import env from '@/utils/env';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
@@ -193,7 +198,7 @@ export default {
         discussion: 0,
         search: 0,
       },
-      limit: 100,
+      limit: 30,
       nameOfContact: '',
       timerId: 0,
       showLoadingRooms: false,
@@ -250,6 +255,17 @@ export default {
     },
 
     showOrderBy() {
+      const { isHumanServiceProfile } = useProfile();
+      const disableOrderByProjects =
+        env('DISABLE_ORDER_BY_PROJECTS')?.split(',') || [];
+
+      if (
+        isHumanServiceProfile &&
+        disableOrderByProjects.includes(this.project.uuid)
+      ) {
+        return false;
+      }
+
       const countRooms = {
         ongoing: this.rooms_ongoing.length,
         waiting: this.rooms_queue.length,
@@ -533,7 +549,9 @@ export default {
     },
     handleMostRecentFilter() {
       const orderByValue =
-        this.activeTab === 'waiting' ? '-created_on' : '-last_interaction';
+        this.activeTab === 'waiting'
+          ? '-added_to_queue_at'
+          : '-last_interaction';
 
       this.orderBy[this.activeTab] = orderByValue;
 
@@ -541,7 +559,7 @@ export default {
     },
     handleOlderFilter() {
       const orderByValue =
-        this.activeTab === 'waiting' ? 'created_on' : 'last_interaction';
+        this.activeTab === 'waiting' ? 'added_to_queue_at' : 'last_interaction';
 
       this.orderBy[this.activeTab] = orderByValue;
 
@@ -610,5 +628,8 @@ export default {
       font-weight: $unnnic-font-weight-bold;
     }
   }
+}
+.room-container__chats-margin-y {
+  margin: $unnnic-spacing-xs 0;
 }
 </style>

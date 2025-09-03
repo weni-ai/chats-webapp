@@ -1,11 +1,14 @@
 <template>
   <div id="app">
+    <SocketAlertBanner v-if="showSocketAlertBanner" />
     <RouterView />
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'pinia';
+
+import SocketAlertBanner from './layouts/ChatsLayout/components/SocketAlertBanner.vue';
 
 import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
@@ -19,6 +22,7 @@ import { useQuickMessages } from './store/modules/chats/quickMessages';
 import { useQuickMessageShared } from './store/modules/chats/quickMessagesShared';
 import { useRooms } from './store/modules/chats/rooms';
 import { useDashboard } from './store/modules/dashboard';
+import { useFeatureFlag } from './store/modules/featureFlag';
 
 import initHotjar from '@/plugins/Hotjar';
 import {
@@ -27,9 +31,12 @@ import {
 } from '@/utils/config';
 
 import moment from 'moment';
+
 export default {
   name: 'App',
-
+  components: {
+    SocketAlertBanner,
+  },
   setup() {
     const queryString = window.location.href.split('?')[1];
 
@@ -58,7 +65,20 @@ export default {
       project: 'project',
       appToken: 'token',
       appProject: (store) => store.project.uuid,
+      socketStatus: 'socketStatus',
     }),
+
+    socketRetryCount() {
+      return this.ws?.reconnectAttempts || 0;
+    },
+
+    showSocketAlertBanner() {
+      return (
+        ['room', 'discussion', 'home'].includes(this.$route.name) &&
+        ['closed', 'connecting'].includes(this.socketStatus) &&
+        this.socketRetryCount >= (this.ws.MAX_RECONNECT_ATTEMPTS || 5)
+      );
+    },
 
     configsForInitializeWebSocket() {
       const { appToken, appProject } = this;
@@ -74,6 +94,7 @@ export default {
         if (newAppToken) {
           this.getUser();
           this.getProject();
+          this.getFeatureFlags();
         }
       },
     },
@@ -135,6 +156,7 @@ export default {
     ...mapActions(useQuickMessageShared, {
       getAllQuickMessagesShared: 'getAll',
     }),
+    ...mapActions(useFeatureFlag, ['getFeatureFlags']),
     restoreSessionStorageUserStatus({ projectUuid }) {
       const userStatus = sessionStorage.getItem(`statusAgent-${projectUuid}`);
       if (!['OFFLINE', 'ONLINE'].includes(userStatus)) {
@@ -254,8 +276,8 @@ export default {
       }
     },
 
-    async wsReconnect() {
-      this.ws.reconnect();
+    async wsReconnect({ ignoreRetryCount } = {}) {
+      this.ws.reconnect({ ignoreRetryCount });
     },
   },
 };

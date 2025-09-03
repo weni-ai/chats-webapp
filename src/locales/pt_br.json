@@ -257,6 +257,7 @@
     "get_chat": "Pegar chat",
     "get_chat_question": "Pegar chat?",
     "get_chat_confirmation": "Confirme se deseja realizar o atendimento de {contact}",
+    "get_chat_error": "Erro ao tentar pegar o chat",
     "you_got_chat": "Você pegou o chat",
     "your_chat_assumed": "O Chat com {contact} foi transferido",
     "your_chat_assumed_description": "Seu chat com {contact} foi assumido por outro agente",
@@ -306,6 +307,7 @@
   "click_to_resend": "Clique para reenviar",
   "action_cannot_be_reversed": "Essa ação não poderá ser revertida",
   "end": "Encerrar",
+  "end_chat": "Finalizar",
   "cancel": "Cancelar",
   "add": "Adicionar",
   "proceed": "Prosseguir",
@@ -546,6 +548,7 @@
     },
     "send": "Enviar fluxo",
     "select": "Selecionar fluxo",
+    "select_project": "Selecionar projeto",
     "sending": "Enviando fluxo",
     "successfully_triggered": "Fluxo disparado com sucesso",
     "error_triggering": "Erro ao disparar fluxo",
@@ -694,7 +697,8 @@
         "error": "Falha ao definir configurações da fila",
         "delete_success": "Fila excluída com sucesso",
         "delete_error": "Falha ao excluir a fila",
-        "config_agents_group": "Adicione ou remova agentes através de grupos acessando <b>Configurações de Chats > Grupos</b>"
+        "add_new_queue": "Esta nova fila será adicionada para todos os agentes. Você poderá removê-la acessando <b>Configurações do Chat > Grupos > Agentes</b>",
+        "config_agents_group": "Adicione ou remova esta fila pelos agentes através dos grupos acessando <b>Configurações do Chat > Grupos > Agentes</b>"
       }
     },
     "groups": {
@@ -734,7 +738,8 @@
             "label": "Adicionar agente",
             "placeholder": "Buscar pelo nome ou e-mail"
           }
-        }
+        },
+        "define_queues": "Defina quais filas {agentName} atenderá."
       },
       "general": "Geral",
       "projects": "Projetos",
@@ -798,5 +803,29 @@
     "alphabetical": "Alfabética",
     "newer": "Mais recente",
     "older": "Mais antigo"
+  },
+  "socket_alert_banner": {
+    "closed": {
+      "title": "Você está desconectado. Por favor, ",
+      "refresh": "atualize",
+      "to_continue": " para continuar atendendo."
+    },
+    "connecting": "Carregando...",
+    "connected": "Atualização concluída com sucesso! Você pode continuar seu atendimento."
+  },
+  "feedback_modal": {
+    "title": "Ajude-nos a melhorar!",
+    "feedback_question": "Com está sendo usar o Weni Chats?",
+    "problem_question": "O que atrapalha ou dificulta o uso do Weni Chats?",
+    "improvement_question": "O que poderíamos melhorar para que o uso do Weni Chats seja ainda melhor para você?",
+    "submit": "Enviar",
+    "cancel": "Agora não",
+    "feedback_options": {
+      "positive": "Bom",
+      "negative": "Ruim",
+      "neutral": "Neutro" 
+    },
+    "placeholder_feedback": "Compartilhe sua experiência aqui",
+    "default_error_message": "Ocorreu um erro ao enviar o feedback, tente novamente mais tarde!"
   }
 }

@@ -10,11 +10,19 @@
       :avatarClick="emitOpenRoomContactInfo"
       :titleClick="emitOpenRoomContactInfo"
       :avatarName="room?.contact.name"
-      :close="emitOpenModalCloseChat"
       :back="isMobile ? emitBack : null"
       data-testid="chat-header"
-    />
-
+    >
+      <template #right>
+        <UnnnicButton
+          type="secondary"
+          size="small"
+          @click="emitOpenModalCloseChat"
+        >
+          {{ $t('end_chat') }}
+        </UnnnicButton>
+      </template>
+    </UnnnicChatsHeader>
     <UnnnicChatsHeader
       v-show="isShowingDiscussionHeader"
       class="home-chat-headers__discussion"
@@ -25,7 +33,6 @@
       :back="isMobile ? emitBack : null"
       data-testid="discussion-header"
     />
-
     <ChatHeaderSendFlow
       v-if="isShowingSendFlowHeader"
       data-testid="chat-header-send-flow"

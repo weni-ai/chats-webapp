@@ -254,6 +254,7 @@
     "get_chat": "Get chat",
     "get_chat_question": "Get chat?",
     "get_chat_confirmation": "Confirm if you want to do the service of {contact}",
+    "get_chat_error": "Error when trying to get the room",
     "you_got_chat": "You got the chat",
     "your_chat_assumed": "Chat with {contact} has been transferred",
     "your_chat_assumed_description": "Your chat with {contact} has been taken over by another agent",
@@ -303,6 +304,7 @@
   "click_to_resend": "Click to resend",
   "action_cannot_be_reversed": "This action cannot be reversed",
   "end": "End",
+  "end_chat": "End Chat",
   "cancel": "Cancel",
   "add": "Add",
   "proceed": "Proceed",
@@ -543,6 +545,7 @@
     },
     "send": "Send flow",
     "select": "Select flow",
+    "select_project": "Select project",
     "sending": "Sending flow",
     "successfully_triggered": "Flow triggered successfully",
     "error_triggering": "Error triggering flow",
@@ -691,7 +694,8 @@
         "error": "Failed to set queue settings",
         "delete_success": "Queue deleted successfully",
         "delete_error": "Failed to delete queue",
-        "config_agents_group": "Add or remove agents through groups by going to <b>Chat Settings > Groups</b>"
+        "add_new_queue": "This new queue will be added for all agents. You can remove it by going to <b>Chats Settings > Groups > Agents</b>",
+        "config_agents_group": "Add or remove this queue by agents through groups by accessing <b>Chat Settings > Groups > Agents</b>"
       }
     },
     "groups": {
@@ -731,7 +735,8 @@
             "label": "Add agent",
             "placeholder": "Search by the name or email"
           }
-        }
+        },
+        "define_queues": "Define which queues {agentName} will attend."
       },
       "general": "General",
       "projects": "Projects",
@@ -795,5 +800,29 @@
       "newer": "Newer",
       "older": "Older"
     }
+  },
+  "socket_alert_banner": {
+    "closed": {
+      "title": "You are disconnected. Please ",
+      "refresh": "refresh",
+      "to_continue": " to continue assisting."
+    },
+    "connecting": "Loading...",
+    "connected": "Update completed successfully! You can continue your support."
+  },
+  "feedback_modal": {
+    "title": "Help us improve!",
+    "feedback_question": "What is it been like using Weni Chats?",
+    "problem_question": "What are the main challenges or difficulties you face when using Weni Chats?",
+    "improvement_question": "What could we improve to make your Weni Chats experience even better?",
+    "submit": "Submit",
+    "cancel": "Not now",
+    "feedback_options": {
+      "positive": "Good",
+      "negative": "Bad",
+      "neutral": "Neutral"
+    },
+    "placeholder_feedback": "Share your experience here",
+    "default_error_message": "An error occurred while submitting feedback, please try again later!"
   }
 }

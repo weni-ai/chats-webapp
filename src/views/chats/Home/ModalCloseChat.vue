@@ -4,7 +4,7 @@
     :class="{ 'modal-close-chat--mobile': isMobile, 'modal-close-chat': true }"
     :showCloseIcon="!isMobile"
     :title="$t('chats.to_end_rate_the_chat')"
-    :primaryButtonProps="{ text: $t('end'), loading: isLoadingCloseRoom }"
+    :primaryButtonProps="{ text: $t('end_chat'), loading: isLoadingCloseRoom }"
     :secondaryButtonProps="{ text: $t('cancel') }"
     size="lg"
     data-testid="chat-classifier-modal"
@@ -30,6 +30,8 @@ import ChatClassifier from '@/components/chats/ChatClassifier.vue';
 
 import { mapActions } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
+import feedbackService from '@/services/api/resources/chats/feedback';
+import { useFeedback } from '@/store/modules/feedback';
 
 export default {
   components: {
@@ -56,6 +58,7 @@ export default {
       limit: 20,
       isLoadingTags: true,
       isLoadingCloseRoom: false,
+      isShowFeedback: false,
     };
   },
 
@@ -66,9 +69,11 @@ export default {
   },
   mounted() {
     this.classifyRoom();
+    this.checkIsShowFeedback();
   },
 
   methods: {
+    ...mapActions(useFeedback, ['setIsRenderFeedbackModal']),
     ...mapActions(useRooms, ['removeRoom']),
     async classifyRoom() {
       this.isLoadingTags = true;
@@ -102,6 +107,18 @@ export default {
       this.isLoadingCloseRoom = false;
 
       this.closeModal();
+
+      if (this.isShowFeedback) {
+        this.setIsRenderFeedbackModal(true);
+      }
+    },
+    async checkIsShowFeedback() {
+      try {
+        const response = await feedbackService.getIsShowFeedback();
+        this.isShowFeedback = response.should_show_feedback_form;
+      } catch (error) {
+        console.error('Error checking is show feedback', error);
+      }
     },
     closeModal() {
       this.$emit('close');

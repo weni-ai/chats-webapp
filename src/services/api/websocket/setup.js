@@ -5,15 +5,18 @@ import listeners from './listeners';
 import { useDashboard } from '@/store/modules/dashboard';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useConfig } from '@/store/modules/config';
 
 export default class WebSocketSetup {
   THIRTY_SECONDS = 30000;
-  FIVE_SECONDS = 5000;
+  RECONNECT_DELAY = 5000; // 5 seconds
+  MAX_RECONNECT_ATTEMPTS = 5;
 
   constructor({ app }) {
     this.app = app;
     this.pingIntervalId = null;
     this.isFirstReconnectAttempt = true;
+    this.reconnectAttempts = 0;
   }
 
   reloadRoomsAndDiscussions() {
@@ -21,10 +24,12 @@ export default class WebSocketSetup {
     const discussionsStore = useDiscussions();
     const dashboardStore = useDashboard();
     const { viewedAgent } = dashboardStore;
+    const limit = 30;
+
     roomsStore.getAll({
       offset: 0,
       concat: true,
-      limit: 100,
+      limit,
       roomsType: 'ongoing',
       order: roomsStore.orderBy.ongoing,
       viewedAgent: viewedAgent?.email,
@@ -32,7 +37,7 @@ export default class WebSocketSetup {
     roomsStore.getAll({
       offset: 0,
       concat: true,
-      limit: 100,
+      limit,
       roomsType: 'waiting',
       order: roomsStore.orderBy.waiting,
       viewedAgent: viewedAgent?.email,
@@ -40,7 +45,7 @@ export default class WebSocketSetup {
     roomsStore.getAll({
       offset: 0,
       concat: true,
-      limit: 100,
+      limit,
       roomsType: 'flow_start',
       order: roomsStore.orderBy.flow_start,
       viewedAgent: viewedAgent?.email,
@@ -64,32 +69,59 @@ export default class WebSocketSetup {
     return viewedAgent?.email ? agentWSUrl : managerWSUrl;
   }
 
-  connect() {
+  connect({ ignoreRetryCount } = {}) {
     const url = this.buildUrl();
     const ws = new WS(url);
+    const configStore = useConfig();
+    configStore.socketStatus = 'connecting';
 
     this.ws = ws;
+
     this.ws.ws.onclose = () => {
+      configStore.socketStatus = 'closed';
       if (this.ws.ws.readyState === this.ws.ws.OPEN) return;
 
       const timestamp = new Date().toISOString();
-      console.warn(
-        timestamp,
-        '[WebSocket] Connection closed, attempting to reconnect...',
-      );
 
       if (this.isFirstReconnectAttempt) {
+        console.warn(
+          timestamp,
+          '[WebSocket] Connection closed, attempting to reconnect...',
+        );
         this.isFirstReconnectAttempt = false;
-        this.reconnect();
+        if (!ignoreRetryCount) this.reconnect();
       } else {
-        setTimeout(() => {
-          this.reconnect();
-        }, this.FIVE_SECONDS);
+        console.warn(
+          timestamp,
+          `[WebSocket] Reconnect attempt ${this.reconnectAttempts}, waiting ${this.RECONNECT_DELAY}ms...`,
+        );
+
+        if (this.reconnectAttempts <= 5) {
+          setTimeout(() => {
+            this.reconnect();
+          }, this.RECONNECT_DELAY);
+        }
       }
     };
 
     this.ws.ws.onopen = () => {
+      if (this.reconnectAttempts > 0) {
+        this.reloadRoomsAndDiscussions();
+      }
+
+      configStore.socketStatus = 'connected';
+
+      const sessionStorageStatus = sessionStorage.getItem(
+        `statusAgent-${this.app.appProject}`,
+      );
+
+      this.app.updateUserStatus(sessionStorageStatus);
+
+      const timestamp = new Date().toISOString();
+      console.log(timestamp, '[WebSocket] Connection established successfully');
+
       this.isFirstReconnectAttempt = true;
+      this.reconnectAttempts = 0; // Reset attempts counter on successful connection
     };
 
     listeners({ ws, app: this.app });
@@ -118,22 +150,31 @@ export default class WebSocketSetup {
         message: {},
       });
     } else {
+      // Reset first attempt flag so exponential backoff applies
+      this.isFirstReconnectAttempt = false;
       this.reconnect();
     }
   }
 
-  reconnect() {
+  reconnect({ ignoreRetryCount } = {}) {
+    if (
+      this.reconnectAttempts >= this.MAX_RECONNECT_ATTEMPTS &&
+      !ignoreRetryCount
+    ) {
+      console.warn(
+        '[WebSocket] Max reconnect attempts reached, stopping auto reconnect attempts',
+      );
+      return;
+    }
+
+    if (ignoreRetryCount) this.isFirstReconnectAttempt = true;
+
+    this.reconnectAttempts++;
+
     if (this.ws && this.ws.ws.readyState !== this.ws.ws.CLOSED) {
       this.ws.ws.close();
     }
 
-    this.connect();
-
-    this.reloadRoomsAndDiscussions();
-
-    const sessionStorageStatus = sessionStorage.getItem(
-      `statusAgent-${this.app.appProject}`,
-    );
-    this.app.updateUserStatus(sessionStorageStatus);
+    this.connect({ ignoreRetryCount });
   }
 }
