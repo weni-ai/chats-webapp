@@ -33,11 +33,19 @@
         data-testid="discussion-sidebar"
       />
     </template>
+
+    <ModalFeedback
+      v-if="isRenderFeedbackModal"
+      v-model="isRenderFeedbackModal"
+      data-testid="modal-feedback"
+      @close="handleCloseFeedbackModal"
+    />
   </ChatsLayout>
 </template>
 
 <script>
-import { mapState } from 'pinia';
+import { mapState, mapActions } from 'pinia';
+import { useFeedback } from '@/store/modules/feedback';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 
@@ -48,6 +56,7 @@ import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground/in
 
 import DiscussionSidebar from '@/components/chats/DiscussionSidebar/index.vue';
 import ContactInfo from '@/components/chats/ContactInfo/index.vue';
+import ModalFeedback from './ModalFeedback.vue';
 
 import HomeChat from './HomeChat.vue';
 
@@ -60,6 +69,7 @@ export default {
     ContactInfo,
     DiscussionSidebar,
     HomeChat,
+    ModalFeedback,
   },
 
   props: {
@@ -84,6 +94,9 @@ export default {
   },
 
   computed: {
+    ...mapState(useFeedback, {
+      isRenderFeedbackModal: (store) => store.isRenderFeedbackModal,
+    }),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
     }),
@@ -99,6 +112,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(useFeedback, ['setIsRenderFeedbackModal']),
     openRoomContactInfo() {
       this.isRoomContactInfoOpen = true;
     },
@@ -115,6 +129,9 @@ export default {
     },
     updateTextBoxMessage(message) {
       this.$refs['home-chat']?.updateTextBoxMessage(message);
+    },
+    handleCloseFeedbackModal() {
+      this.setIsRenderFeedbackModal(false);
     },
   },
 };
