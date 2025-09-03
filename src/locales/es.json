@@ -894,5 +894,9 @@
     },
     "placeholder_feedback": "Comparte tu experiencia aquí",
     "default_error_message": "Ocurrió un error al enviar el feedback, por favor inténtalo de nuevo más tarde!"
+  },
+    "offline_agent_modal": {
+    "title": "¡Estás desconectado!",
+    "description": "Tu estado ha sido cambiado a desconectado por {username}. Para volver a soporte, cambia tu estado a conectado."
   }
 }

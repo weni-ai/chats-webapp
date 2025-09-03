@@ -894,5 +894,9 @@
     },
     "placeholder_feedback": "Compartilhe sua experiência aqui",
     "default_error_message": "Ocorreu um erro ao enviar o feedback, tente novamente mais tarde!"
+  },
+  "offline_agent_modal": {
+    "title": "Você está offline!",
+    "description": "Seu status foi alterado para offline por {username}. Para voltar a atender, altere seu status para online."
   }
 }

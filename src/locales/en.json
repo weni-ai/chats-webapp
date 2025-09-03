@@ -898,5 +898,9 @@
     },
     "placeholder_feedback": "Share your experience here",
     "default_error_message": "An error occurred while submitting feedback, please try again later!"
+  },
+  "offline_agent_modal": {
+    "title": "You are offline!",
+    "description": "Your status has been changed to offline by {username}. To return to support, change your status to online."
   }
 }
