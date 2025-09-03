@@ -1,5 +1,7 @@
 export default (content, { app }) => {
-  const { from, status } = content;
+  const { status, user_disconnected_agent } = content;
 
-  console.log('status close', content);
+  if (user_disconnected_agent && status) {
+    app.updateUserStatusFromWebSocket(status, user_disconnected_agent);
+  }
 };
