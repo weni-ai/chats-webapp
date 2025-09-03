@@ -76,6 +76,7 @@ export default class WebSocketSetup {
     configStore.socketStatus = 'connecting';
 
     this.ws = ws;
+
     this.ws.ws.onclose = () => {
       configStore.socketStatus = 'closed';
       if (this.ws.ws.readyState === this.ws.ws.OPEN) return;

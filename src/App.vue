@@ -22,6 +22,7 @@ import { useQuickMessages } from './store/modules/chats/quickMessages';
 import { useQuickMessageShared } from './store/modules/chats/quickMessagesShared';
 import { useRooms } from './store/modules/chats/rooms';
 import { useDashboard } from './store/modules/dashboard';
+import { useFeatureFlag } from './store/modules/featureFlag';
 
 import initHotjar from '@/plugins/Hotjar';
 import {
@@ -75,7 +76,7 @@ export default {
       return (
         ['room', 'discussion', 'home'].includes(this.$route.name) &&
         ['closed', 'connecting'].includes(this.socketStatus) &&
-        this.socketRetryCount >= 5
+        this.socketRetryCount >= (this.ws.MAX_RECONNECT_ATTEMPTS || 5)
       );
     },
 
@@ -93,6 +94,7 @@ export default {
         if (newAppToken) {
           this.getUser();
           this.getProject();
+          this.getFeatureFlags();
         }
       },
     },
@@ -154,6 +156,7 @@ export default {
     ...mapActions(useQuickMessageShared, {
       getAllQuickMessagesShared: 'getAll',
     }),
+    ...mapActions(useFeatureFlag, ['getFeatureFlags']),
     restoreSessionStorageUserStatus({ projectUuid }) {
       const userStatus = sessionStorage.getItem(`statusAgent-${projectUuid}`);
       if (!['OFFLINE', 'ONLINE'].includes(userStatus)) {

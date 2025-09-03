@@ -373,6 +373,7 @@
   "click_to_resend": "Haga clic para reenviar",
   "action_cannot_be_reversed": "Esta acción no se puede revertir",
   "end": "Cerrar",
+  "end_chat": "Cerrar chat",
   "cancel": "Cancelar",
   "add": "Agregar",
   "proceed": "Proceder",
@@ -878,5 +879,20 @@
     },
     "connecting": "Cargando...",
     "connected": "Actualización completada con éxito! Puedes continuar con tu soporte."
+  },
+  "feedback_modal": {
+    "title": "Ayúdanos a mejorar!",
+    "feedback_question": "¿Cómo estás usando Weni Chats?",
+    "problem_question": "¿Qué está dificultando o complicando el uso de Weni Chats?",
+    "improvement_question": "¿Qué podríamos mejorar para que el uso de Weni Chats sea aún mejor para ti?",
+    "submit": "Enviar",
+    "cancel": "Ahora no",
+    "feedback_options": {
+      "positive": "Bueno",
+      "negative": "Mal",
+      "neutral": "Neutral"
+    },
+    "placeholder_feedback": "Comparte tu experiencia aquí",
+    "default_error_message": "Ocurrió un error al enviar el feedback, por favor inténtalo de nuevo más tarde!"
   }
 }
