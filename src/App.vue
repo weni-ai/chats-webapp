@@ -301,7 +301,7 @@ export default {
     updateUserStatusFromWebSocket(status, disconnectedBy = '') {
       this.setStatus(status);
       this.setDisconnectedBy(disconnectedBy);
-      sessionStorage.setItem(`statusAgent-${this.project.uuid}`, status);
+      moduleStorage.setItem(`statusAgent-${this.project.uuid}`, status);
       this.showModalOfflineAgent = true;
     },
 
