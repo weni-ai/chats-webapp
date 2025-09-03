@@ -73,6 +73,7 @@ export default {
       appToken: 'token',
       appProject: (store) => store.project.uuid,
       socketStatus: 'socketStatus',
+      disconnectedBy: 'disconnectedBy',
     }),
 
     socketRetryCount() {
@@ -94,7 +95,7 @@ export default {
     },
 
     userWhoChangedStatus() {
-      return 'fake username';
+      return this.disconnectedBy;
     },
   },
 
@@ -158,7 +159,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(useConfig, ['setStatus', 'setProject']),
+    ...mapActions(useConfig, ['setStatus', 'setProject', 'setDisconnectedBy']),
     ...mapActions(useProfile, ['setMe', 'getMeQueues']),
     ...mapActions(useQuickMessages, {
       getAllQuickMessages: 'getAll',
@@ -272,6 +273,13 @@ export default {
         `statusAgent-${this.project.uuid}`,
         connection_status,
       );
+    },
+
+    updateUserStatusFromWebSocket(status, disconnectedBy = '') {
+      this.setStatus(status);
+      this.setDisconnectedBy(disconnectedBy);
+      sessionStorage.setItem(`statusAgent-${this.project.uuid}`, status);
+      this.showModalOfflineAgent = true;
     },
 
     async wsConnect() {
