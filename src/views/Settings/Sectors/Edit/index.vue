@@ -90,11 +90,6 @@ export default {
         can_trigger_flows: '',
         can_edit_custom_fields: '',
         sign_messages: '',
-        workingDay: {
-          start: '',
-          end: '',
-          dayOfWeek: 'week-days',
-        },
         managers: [],
         maxSimultaneousChatsByAgent: '',
       },
