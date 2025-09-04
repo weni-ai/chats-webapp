@@ -87,6 +87,7 @@
     "discard_button": "Descartar"
   },
   "attachment": "Anexo",
+  "internal_note": "Nota interna",
   "bold": "Negrito",
   "italic": "Itálico",
   "underline": "Sublinhado",
@@ -823,7 +824,7 @@
     "feedback_options": {
       "positive": "Bom",
       "negative": "Ruim",
-      "neutral": "Neutro" 
+      "neutral": "Neutro"
     },
     "placeholder_feedback": "Compartilhe sua experiência aqui",
     "default_error_message": "Ocorreu um erro ao enviar o feedback, tente novamente mais tarde!"

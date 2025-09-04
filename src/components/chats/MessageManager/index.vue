@@ -103,6 +103,11 @@
               icon="bolt"
               :title="$t('quick_message')"
             />
+            <MoreActionsOption
+              :action="handleInternalNoteInput"
+              icon="add_notes"
+              :title="$t('internal_note')"
+            />
           </div>
         </UnnnicDropdown>
 
@@ -302,6 +307,9 @@ export default {
       'sendDiscussionMedias',
     ]),
     ...mapActions(useRoomMessages, ['sendRoomMessage', 'sendRoomMedias']),
+    handleInternalNoteInput() {
+      // TODO: Implement internal note input
+    },
     openCopilot() {
       this.isCopilotOpen = true;
       this.clearTextBox();
