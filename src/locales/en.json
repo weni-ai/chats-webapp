@@ -2,7 +2,10 @@
   "custom": "Custom",
   "country": {
     "label": "Country",
-    "BR": "Brazil"
+    "BR": "Brazil",
+    "US": "United States",
+    "AR": "Argentina",
+    "ES": "Spain"
   },
   "week_days": {
     "monday": {

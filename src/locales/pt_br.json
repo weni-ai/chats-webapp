@@ -2,7 +2,10 @@
   "custom": "Personalizado",
   "country": {
     "label": "País",
-    "BR": "Brasil"
+    "BR": "Brasil",
+    "US": "Estados Unidos",
+    "AR": "Argentina",
+    "ES": "Espanha"
   },
   "week_days": {
     "monday": {
@@ -890,7 +893,7 @@
     "feedback_options": {
       "positive": "Bom",
       "negative": "Ruim",
-      "neutral": "Neutro" 
+      "neutral": "Neutro"
     },
     "placeholder_feedback": "Compartilhe sua experiência aqui",
     "default_error_message": "Ocorreu um erro ao enviar o feedback, tente novamente mais tarde!"

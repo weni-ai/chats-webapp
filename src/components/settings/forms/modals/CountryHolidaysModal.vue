@@ -1,7 +1,11 @@
 <template>
   <UnnnicModalDialog
     :modelValue="true"
-    :title="$t('country_holidays.title', { country: 'Brazil' })"
+    :title="
+      $t('country_holidays.title', {
+        country: $t(`country.${countryCode || 'label'}`),
+      })
+    "
     showCloseIcon
     :primaryButtonProps="{ text: $t('save'), loading: isLoadingRequest }"
     @primary-button-click="handleSave"
@@ -42,6 +46,10 @@ export default {
       default: false,
     },
     sectorUuid: {
+      type: String,
+      default: '',
+    },
+    countryCode: {
       type: String,
       default: '',
     },
