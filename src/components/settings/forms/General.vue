@@ -251,7 +251,7 @@
               <UnnnicButton
                 type="tertiary"
                 :text="$t('sector.managers.working_day.see_all_holidays')"
-                @click="showCountryHolidaysModal = true"
+                @click="handleModal('showCountryHolidaysModal', true)"
               />
             </section>
             <section
@@ -262,14 +262,14 @@
                 type="alternative"
                 iconLeft="add-1"
                 :text="$t('sector.managers.working_day.add_specific_dates')"
-                @click="showCreateCustomHolidayModal = true"
+                @click="handleModal('showCreateCustomHolidayModal', true)"
               />
               <UnnnicButton
                 class="form-section__inputs__workday-time-config__holidays-container__button"
                 type="tertiary"
                 :text="$t('sector.managers.working_day.see_all_specific_dates')"
                 :disabled="!enableCustomHolidays.length"
-                @click="showCustomHolidaysModal = true"
+                @click="handleModal('showCustomHolidaysModal', true)"
               />
             </section>
           </section>
@@ -343,7 +343,7 @@
       :sectorUuid="sector.uuid"
       @update:enable-holidays="enableCountryHolidays = $event"
       @update:disabled-holidays="disabledCountryHolidays = $event"
-      @close="showCountryHolidaysModal = false"
+      @close="handleModal('showCountryHolidaysModal', false)"
     />
     <CustomHolidaysModal
       v-if="showCustomHolidaysModal"
@@ -351,14 +351,14 @@
       :isEditing="isEditing"
       :sectorUuid="sector.uuid"
       @save="handleSaveCustomHolidays"
-      @close="showCustomHolidaysModal = false"
+      @close="handleModal('showCustomHolidaysModal', false)"
     />
     <CreateCustomHolidayModal
       v-if="showCreateCustomHolidayModal"
       :isEditing="isEditing"
       :sectorUuid="sector.uuid"
-      @close="showCreateCustomHolidayModal = false"
       @add-custom-holidays="addCustomHolidays"
+      @close="handleModal('showCreateCustomHolidayModal', false)"
     />
   </section>
 </template>
@@ -728,6 +728,15 @@ export default {
     ...mapActions(useSettings, {
       actionDeleteSector: 'deleteSector',
     }),
+
+    handleConnectOverlay(active) {
+      window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
+    },
+
+    handleModal(modal, open) {
+      this.handleConnectOverlay(open);
+      this[modal] = open;
+    },
 
     handleSelectAllCountryHolidays(value) {
       this.selectAllCountryHolidays = value;
