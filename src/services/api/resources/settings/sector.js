@@ -108,4 +108,79 @@ export default {
   async removeTag(tagUuid) {
     await http.delete(`/tag/${tagUuid}/`);
   },
+
+  async getWorkingTimes(sectorUuid) {
+    const response = await http.get(`/sector/${sectorUuid}/worktime/`);
+
+    return response.data;
+  },
+
+  async getCountryHolidays() {
+    const response = await http.get('/sector_holiday/official_holidays/', {
+      params: { project: getProject() },
+    });
+
+    return response.data;
+  },
+
+  async getAllSectorHolidays(sector) {
+    const response = await http.get('/sector_holiday/', {
+      params: {
+        sector,
+        limit: 9999,
+      },
+    });
+
+    return response.data?.results || [];
+  },
+
+  async createCountryHolidays(sector, { enabled_holidays, disabled_holidays }) {
+    const response = await http.post(
+      '/sector_holiday/import_official_holidays/',
+      { enabled_holidays, disabled_holidays, sector },
+    );
+    return response.data;
+  },
+
+  async updateCountryHoliday(sector, { enabled_holidays, disabled_holidays }) {
+    const response = await http.patch(
+      `/sector_holiday/official_holidays/`,
+      {
+        enabled_holidays,
+        disabled_holidays,
+      },
+      { params: { sector } },
+    );
+    return response.data;
+  },
+
+  async createSectorHoliday(sector, holiday) {
+    const body = {
+      ...holiday,
+      sector,
+      day_type: 'closed',
+      start_time: null,
+      end_time: null,
+      description: '',
+      its_custom: true,
+    };
+    const response = await http.post('/sector_holiday/', body);
+    return response.data;
+  },
+
+  async deleteSectorHoliday(sector, holidayId) {
+    const response = await http.delete(`/sector_holiday/${holidayId}/`, {
+      params: { sector },
+    });
+    return response.data;
+  },
+
+  async setSectorWorkingDays(sector, workingDays) {
+    const response = await http.post(`/sector/${sector}/worktime/`, {
+      working_hours: {
+        schedules: workingDays,
+      },
+    });
+    return response.data;
+  },
 };

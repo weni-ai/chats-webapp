@@ -1,4 +1,61 @@
 {
+  "custom": "Personalizado",
+  "country": {
+    "label": "País",
+    "BR": "Brasil",
+    "US": "Estados Unidos",
+    "AR": "Argentina",
+    "ES": "Espanha"
+  },
+  "week_days": {
+    "monday": {
+      "full": "Segunda",
+      "short": "Seg"
+    },
+    "tuesday": {
+      "full": "Terça",
+      "short": "Ter"
+    },
+    "wednesday": {
+      "full": "Quarta",
+      "short": "Qua"
+    },
+    "thursday": {
+      "full": "Quinta",
+      "short": "Qui"
+    },
+    "friday": {
+      "full": "Sexta",
+      "short": "Sex"
+    },
+    "saturday": {
+      "full": "Sábado",
+      "short": "Sáb"
+    },
+    "sunday": {
+      "full": "Domingo",
+      "short": "Dom"
+    }
+  },
+  "country_holidays": {
+    "title": "Feriados em {country}",
+    "description": "Se necessário, você pode desabilitar cada um dos feriados e eles serão considerados como dia útil.",
+    "message": {
+      "error": "Não foi possível atualizar os feriados do país, por favor, tente novamente.",
+      "success": "Feriados do país atualizados com sucesso."
+    }
+  },
+  "custom_holidays": {
+    "title": "Datas Específicas Não Trabalhadas",
+    "description": "Se necessário, você pode excluir cada uma das datas ou períodos e eles serão considerados como dia útil.",
+    "disclaimer": "Excluir datas ou períodos não pode ser desfeito. Clique no botão 'Salvar' para confirmar a ação.",
+    "message": {
+      "save": {
+        "error": "Não foi possível excluir algumas datas específicas não trabalhadas, por favor, verifique e tente novamente.",
+        "success": "Datas específicas não trabalhadas excluídas com sucesso."
+      }
+    }
+  },
   "status": {
     "online": "Online",
     "offline": "Offline",
@@ -129,6 +186,18 @@
       },
       "working_day": {
         "title": "Definições da jornada de trabalho",
+        "copy_workday": "Copiar a jornada de trabalho de um setor já configurado",
+        "select_days": "Selecione os dias da semana de trabalho.",
+        "set_hours": "Defina os horários trabalhados para cada dia.",
+        "add_holidays": "Adicione feriados e datas específicas não trabalhadas.",
+        "add_non_working_dates": "Adicionar datas específicas não trabalhadas",
+        "select_date_or_period": "Selecionar data ou período",
+        "repeat_annually": "Repetir anualmente",
+        "add_more_dates_or_periods": "Adicionar mais datas ou períodos",
+        "see_all_holidays": "Ver todos os feriados",
+        "add_specific_dates": "Adicionar datas específicas",
+        "see_all_specific_dates": "Ver todas as datas específicas",
+        "copy_to_all": "Copiar para todos os dias",
         "start": {
           "label": "Horário de início"
         },
@@ -677,7 +746,8 @@
     "edit_sector": {
       "description": "Determine configurações gerais da equipe e jornada de trabalho",
       "tag_already_exists": "Já existe uma tag com esse nome",
-      "invalid_hours": "Horário de início não pode ser maior/igual que horário final"
+      "invalid_hours": "Horário de início não pode ser maior/igual que horário final",
+      "invalid_start_second_hour": "O horário de início do segundo período deve ser maior ou igual ao horário de término do primeiro período."
     },
     "custom_queue": "Criar uma fila personalizada",
     "default_queue": {
@@ -797,12 +867,12 @@
   "discart": "Descartar",
   "confirmation": "Confirmação",
   "order_by": {
-    "label": "Ordenar por"
-  },
-  "option": {
-    "alphabetical": "Alfabética",
-    "newer": "Mais recente",
-    "older": "Mais antigo"
+    "label": "Ordenar por",
+    "option": {
+      "alphabetical": "Alfabética",
+      "newer": "Mais recente",
+      "older": "Mais antigo"
+    }
   },
   "socket_alert_banner": {
     "closed": {
@@ -823,7 +893,7 @@
     "feedback_options": {
       "positive": "Bom",
       "negative": "Ruim",
-      "neutral": "Neutro" 
+      "neutral": "Neutro"
     },
     "placeholder_feedback": "Compartilhe sua experiência aqui",
     "default_error_message": "Ocorreu um erro ao enviar o feedback, tente novamente mais tarde!"

@@ -12,7 +12,6 @@ export const useSettings = defineStore('settings', {
     nextSectors: '',
     previousSectors: '',
     currentSector: null,
-
     groups: [],
     isLoadingGroups: false,
     nextGroups: '',

@@ -58,6 +58,14 @@ vi.mock('@/services/api/resources/settings/sector', () => ({
         results: [{ ...managerMock, uuid: '1' }],
       }),
     ),
+    getCountryHolidays: () =>
+      Promise.resolve({ holidays: [], country_code: 'BR' }),
+    getWorkingTimes: () =>
+      Promise.resolve({ working_hours: { schedules: {} } }),
+    setSectorWorkingDays: vi.fn(() => Promise.resolve()),
+    createCountryHolidays: vi.fn(() => Promise.resolve()),
+    createSectorHoliday: vi.fn(() => Promise.resolve()),
+    getAllSectorHolidays: vi.fn(),
   },
 }));
 
@@ -108,6 +116,8 @@ describe('FormSectorGeneral', () => {
 
     const wrapper = createWrapper({ isEditing: true });
 
+    await flushPromises();
+
     expect(getSectorManagersSpy).toHaveBeenCalled();
     expect(listProjectManagersSpy).toHaveBeenCalled();
 
@@ -138,11 +148,25 @@ describe('FormSectorGeneral', () => {
       modelValue: {
         name: 'Sector Name',
         managers: [],
-        workingDay: { start: '12:00', end: '11:00' },
         maxSimultaneousChatsByAgent: '2',
       },
     });
+    await wrapper.setData({
+      selectedWorkdayDays: {
+        monday: true,
+      },
+      selectedWorkdayDaysTime: {
+        monday: [
+          {
+            start: '08:00',
+            end: '07:00',
+            valid: false,
+          },
+        ],
+      },
+    });
     await wrapper.vm.$nextTick();
+    console.log(wrapper.html());
     const errorMessage = wrapper.find('.error-message');
     expect(errorMessage.exists()).toBe(true);
     expect(errorMessage.text()).toBe(
@@ -215,10 +239,6 @@ describe('FormSectorGeneral', () => {
       modelValue: {
         uuid: '1',
         name: 'Test 1',
-        workingDay: {
-          start: '08:00',
-          end: '18:00',
-        },
         managers: [
           {
             uuid: '1',
@@ -235,6 +255,23 @@ describe('FormSectorGeneral', () => {
         maxSimultaneousChatsByAgent: '2',
       },
     });
+
+    await wrapper.setData({
+      selectedWorkdayDays: {
+        monday: true,
+      },
+      selectedWorkdayDaysTime: {
+        monday: [
+          {
+            start: '08:00',
+            end: '18:00',
+            valid: true,
+          },
+        ],
+      },
+    });
+
+    await wrapper.vm.$nextTick();
 
     const saveSectorSpy = vi.spyOn(wrapper.vm, 'saveSector');
     const unnnicAlertSpy = vi.spyOn(unnnic, 'unnnicCallAlert');
@@ -263,10 +300,6 @@ describe('FormSectorGeneral', () => {
       modelValue: {
         uuid: '1',
         name: 'Test 1',
-        workingDay: {
-          start: '08:00',
-          end: '18:00',
-        },
         managers: [
           {
             uuid: '1',
@@ -283,6 +316,23 @@ describe('FormSectorGeneral', () => {
         maxSimultaneousChatsByAgent: '2',
       },
     });
+
+    await wrapper.setData({
+      selectedWorkdayDays: {
+        monday: true,
+      },
+      selectedWorkdayDaysTime: {
+        monday: [
+          {
+            start: '08:00',
+            end: '18:00',
+            valid: true,
+          },
+        ],
+      },
+    });
+
+    await wrapper.vm.$nextTick();
 
     const sectorUpdateMock = vi
       .spyOn(Sector, 'update')
@@ -335,14 +385,6 @@ describe('FormSectorGeneral', () => {
       .eq(wrapper.vm.$t('config_chats.default_sector.name'));
 
     expect(wrapper.emitted('update:modelValue')[0][0])
-      .haveOwnProperty('workingDay')
-      .eql({
-        start: '08:00',
-        end: '18:00',
-        dayOfWeek: 'week-days',
-      });
-
-    expect(wrapper.emitted('update:modelValue')[0][0])
       .haveOwnProperty('maxSimultaneousChatsByAgent')
       .eq('4');
 
@@ -361,14 +403,6 @@ describe('FormSectorGeneral', () => {
     expect(wrapper.emitted('update:modelValue')[0][0])
       .haveOwnProperty('name')
       .eq('');
-
-    expect(wrapper.emitted('update:modelValue')[0][0])
-      .haveOwnProperty('workingDay')
-      .eql({
-        start: '',
-        end: '',
-        dayOfWeek: '',
-      });
 
     expect(wrapper.emitted('update:modelValue')[0][0])
       .haveOwnProperty('maxSimultaneousChatsByAgent')
