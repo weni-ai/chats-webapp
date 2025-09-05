@@ -346,7 +346,7 @@ describe('CustomBreakOption', () => {
       await wrapper.vm.saveStatus();
 
       expect(localStorage.setItem).toHaveBeenCalledWith(
-        'settingsUpdated',
+        'chats_settingsUpdated',
         expect.any(String),
       );
     });
@@ -360,7 +360,7 @@ describe('CustomBreakOption', () => {
       await wrapper.vm.removeStatus(0);
 
       expect(localStorage.setItem).toHaveBeenCalledWith(
-        'settingsUpdated',
+        'chats_settingsUpdated',
         expect.any(String),
       );
     });

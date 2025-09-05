@@ -25,6 +25,10 @@ vi.mock('@/services/api/resources/settings/sector', () => ({
     removeTag: vi.fn(),
     managers: () => Promise.resolve({ results: [] }),
     find: () => Promise.resolve(mockSector1),
+    getCountryHolidays: () =>
+      Promise.resolve({ holidays: [], country_code: 'BR' }),
+    getWorkingTimes: () =>
+      Promise.resolve({ working_hours: { schedules: {} } }),
   },
 }));
 
@@ -64,6 +68,7 @@ const createWrapper = (props = {}) => {
         ListSectorQueues: true,
       },
       mocks: {
+        $t: (key) => key,
         $router: {
           replace: vi.fn(),
         },

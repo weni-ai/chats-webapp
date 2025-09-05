@@ -1,4 +1,61 @@
 {
+  "custom": "Personalizado",
+  "country": {
+    "label": "País",
+    "BR": "Brasil",
+    "US": "Estados Unidos",
+    "AR": "Argentina",
+    "ES": "España"
+  },
+  "week_days": {
+    "monday": {
+      "full": "Lunes",
+      "short": "Lun"
+    },
+    "tuesday": {
+      "full": "Martes",
+      "short": "Mar"
+    },
+    "wednesday": {
+      "full": "Miércoles",
+      "short": "Mié"
+    },
+    "thursday": {
+      "full": "Jueves",
+      "short": "Jue"
+    },
+    "friday": {
+      "full": "Viernes",
+      "short": "Vie"
+    },
+    "saturday": {
+      "full": "Sábado",
+      "short": "Sáb"
+    },
+    "sunday": {
+      "full": "Domingo",
+      "short": "Dom"
+    }
+  },
+  "country_holidays": {
+    "title": "Feriados en {country}",
+    "description": "Si es necesario, puede deshabilitar cada uno de los feriados y serán considerados como día laboral.",
+    "message": {
+      "error": "No se pudieron actualizar los feriados del país, por favor, inténtelo de nuevo.",
+      "success": "Feriados del país actualizados correctamente."
+    }
+  },
+  "custom_holidays": {
+    "title": "Fechas Específicas No Laborables",
+    "description": "Si es necesario, puede eliminar cada una de las fechas o períodos y serán considerados como día laboral.",
+    "disclaimer": "Eliminar fechas o períodos no se puede deshacer. Haga clic en el botón 'Guardar' para confirmar la acción.",
+    "message": {
+      "save": {
+        "error": "No se pudieron eliminar algunas fechas específicas no laborables, por favor, verifique y vuelva a intentarlo.",
+        "success": "Fechas específicas no laborables eliminadas correctamente."
+      }
+    }
+  },
   "status": {
     "online": "En línea",
     "offline": "Desconectada",
@@ -130,6 +187,18 @@
       },
       "working_day": {
         "title": "Definiciones de la jornada laboral",
+        "copy_workday": "Copiar la jornada laboral de un sector ya configurado",
+        "select_days": "Seleccione los días de la semana laboral.",
+        "set_hours": "Establezca las horas trabajadas para cada día.",
+        "add_holidays": "Agregue feriados y fechas específicas no laborables.",
+        "add_non_working_dates": "Agregar fechas específicas no laborables",
+        "select_date_or_period": "Seleccionar fecha o período",
+        "repeat_annually": "Repetir anualmente",
+        "add_more_dates_or_periods": "Agregar más fechas o períodos",
+        "see_all_holidays": "Ver todos los feriados",
+        "add_specific_dates": "Agregar fechas específicas",
+        "see_all_specific_dates": "Ver todas las fechas específicas",
+        "copy_to_all": "Copiar a todos los días",
         "start": {
           "label": "Hora de inicio"
         },
@@ -678,7 +747,8 @@
     "edit_sector": {
       "description": "Determinar la configuración del equipo general y la jornada laboral",
       "tag_already_exists": "Ya existe una etiqueta con ese nombre",
-      "invalid_hours": "La hora de inicio no puede ser mayor o igual a la hora de finalización."
+      "invalid_hours": "La hora de inicio no puede ser mayor o igual a la hora de finalización.",
+      "invalid_start_second_hour": "La hora de inicio del segundo período debe ser mayor o igual a la hora de finalización del primer período."
     },
     "custom_queue": "Crear una fila personalizada",
     "default_queue": {
