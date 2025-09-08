@@ -12,6 +12,7 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
         </svg><span data-v-8c61d974="" class="unnnic-tooltip-label unnnic-tooltip-label-right" style="max-width: 15rem; left: 8px; top: 0px;" data-testid="tooltip-label">Each message exchanged will have the name of the agent who is answering <br data-v-8c61d974=""><!----></span></div>
     </section>
     <unnnic-switch-stub data-v-85728205="" size="medium" textleft="" textright="Allow agents to edit Custom Fields" disabled="false" modelvalue="false" usevmodel="false" data-testid="config-switch"></unnnic-switch-stub>
+    <!--v-if-->
   </section>
   <section data-v-85728205="" class="tags">
     <h2 data-v-85728205="" class="tags__title" data-testid="tags-title">Add tags <div data-v-8c61d974="" data-v-85728205="" class="unnnic-tooltip"><svg data-v-9846e6db="" data-v-85728205="" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="unnnic-icon unnnic-icon__size--sm unnnic-icon-scheme--neutral-soft" data-testid="old-map-icons">
@@ -35,5 +36,16 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
     </section>
     <!--v-if-->
   </section>
-</section>"
+</section>
+<section data-v-85728205="" class="form-actions" style="display: none;"><button data-v-d127031e="" data-v-85728205="" data-testid="cancel-button" class="unnnic-button unnnic-button--size-large unnnic-button--tertiary">
+    <!---->
+    <!---->
+    <!----><span data-v-d127031e="" class="unnnic-button__label" data-testid="button-label"> Cancel</span>
+    <!---->
+  </button><button data-v-d127031e="" data-v-85728205="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
+    <!---->
+    <!---->
+    <!----><span data-v-d127031e="" class="unnnic-button__label" data-testid="button-label"> Save</span>
+    <!---->
+  </button></section>"
 `;

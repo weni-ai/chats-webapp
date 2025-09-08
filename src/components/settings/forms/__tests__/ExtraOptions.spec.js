@@ -1,5 +1,6 @@
 import { expect, describe, it, vi, beforeEach } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
+import { createTestingPinia } from '@pinia/testing';
 
 import { createMemoryHistory, createRouter } from 'vue-router';
 
@@ -41,7 +42,7 @@ function createWrapper(props = {}) {
   const wrapper = mount(FormSectorExtraOptions, {
     props: { modelValue: sectorExtraOptionsMock, isEditing: false, ...props },
     global: {
-      plugins: [router],
+      plugins: [router, createTestingPinia()],
       stubs: {
         UnnnicSwitch: true,
       },

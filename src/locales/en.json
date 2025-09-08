@@ -227,6 +227,15 @@
         "tooltip": "Each message exchanged will have the name of the agent who is answering",
         "switch_active": "Active signature",
         "switch_disabled": "Disabled signature"
+      },
+      "automatic_message": {
+        "switch_active": "Automatic opening message active",
+        "switch_disabled": "Automatic opening message disabled",
+        "tooltip": "Set up a message that is automatically sent in new chats as soon as they are assigned to their first agent. The contact will see this message as if it were sent by the agent themselves.",
+        "field": {
+          "title": "Automatic message",
+          "placeholder": "Exemple: Hello! How can I help you today?"
+        }
       }
     }
   },

@@ -220,6 +220,15 @@
         "tooltip": "Cada mensagem trocada terá o nome do agente que está respondendo",
         "switch_active": "Assinatura ativa",
         "switch_disabled": "Assinatura desativada"
+      },
+      "automatic_message": {
+        "switch_active": "Mensagem automática de abertura ativa",
+        "switch_disabled": "Mensagem automática de abertura desativada",
+        "tooltip": "Configure uma mensagem que é enviada automaticamente em novos chats assim que são atribuídos a seu primeiro agente. O contato verá esta mensagem como se fosse enviada pelo próprio agente.",
+        "field": {
+          "title": "Mensagem automática",
+          "placeholder": "Exemplo: Olá! Como posso ajudar você hoje?"
+        }
       }
     }
   },
