@@ -148,6 +148,10 @@ export default {
         can_trigger_flows: true,
         can_edit_custom_fields: true,
         sign_messages: true,
+        automatic_message: {
+          is_active: false,
+          text: '',
+        },
         config: {
           secondary_project: '',
         },

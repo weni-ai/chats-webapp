@@ -89,6 +89,10 @@ export default {
         name: '',
         can_trigger_flows: '',
         can_edit_custom_fields: '',
+        automatic_message: {
+          is_active: false,
+          text: '',
+        },
         sign_messages: '',
         managers: [],
         maxSimultaneousChatsByAgent: '',

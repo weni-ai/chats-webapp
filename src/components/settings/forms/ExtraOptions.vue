@@ -36,6 +36,47 @@
         :textRight="$t('sector.additional_options.edit_custom_fields')"
         data-testid="config-switch"
       />
+      <template
+        v-if="
+          featureFlags.active_features?.includes('weniChatsAutomaticMessage')
+        "
+      >
+        <section class="switchs__container">
+          <UnnnicSwitch
+            v-model="sector.automatic_message.is_active"
+            :textRight="
+              sector.automatic_message.is_active
+                ? $t(
+                    'sector.additional_options.automatic_message.switch_active',
+                  )
+                : $t(
+                    'sector.additional_options.automatic_message.switch_disabled',
+                  )
+            "
+            data-testid="config-switch"
+          />
+          <UnnnicToolTip
+            enabled
+            :text="$t('sector.additional_options.automatic_message.tooltip')"
+            side="right"
+            maxWidth="15rem"
+          >
+            <UnnnicIconSvg
+              icon="information-circle-4"
+              scheme="neutral-soft"
+              size="sm"
+            />
+          </UnnnicToolTip>
+        </section>
+        <UnnnicInput
+          v-if="sector.automatic_message.is_active"
+          v-model="sector.automatic_message.text"
+          :label="$t('sector.additional_options.automatic_message.field.title')"
+          :placeholder="
+            $t('sector.additional_options.automatic_message.field.placeholder')
+          "
+        />
+      </template>
     </section>
     <section class="tags">
       <h2
@@ -90,6 +131,21 @@
       </section>
     </section>
   </section>
+  <section
+    v-show="isEditing"
+    class="form-actions"
+  >
+    <UnnnicButton
+      :text="$t('cancel')"
+      type="tertiary"
+      data-testid="cancel-button"
+      @click.stop="$router.push('/settings')"
+    />
+    <UnnnicButton
+      :text="$t('save')"
+      @click.stop="save()"
+    />
+  </section>
 </template>
 
 <script>
@@ -99,6 +155,9 @@ import TagGroup from '@/components/TagGroup.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
 
+import { mapState } from 'pinia';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+
 export default {
   name: 'SectorExtraOptionsForm',
   components: {
@@ -107,7 +166,7 @@ export default {
   props: {
     modelValue: {
       type: Object,
-      default: () => ({}),
+      required: true,
     },
     isEditing: {
       type: Boolean,
@@ -125,6 +184,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
     sector: {
       get() {
         return this.modelValue;
@@ -190,13 +250,18 @@ export default {
       this.tags = this.tags.filter((addedTag) => addedTag.uuid !== tag.uuid);
     },
     updateSectorExtraConfigs() {
-      const { can_trigger_flows, can_edit_custom_fields, sign_messages } =
-        this.sector;
+      const {
+        can_trigger_flows,
+        can_edit_custom_fields,
+        sign_messages,
+        automatic_message,
+      } = this.sector;
 
       const fieldsToUpdate = {
         can_trigger_flows,
         can_edit_custom_fields,
         sign_messages,
+        automatic_message,
       };
 
       return Sector.update(this.sector.uuid, fieldsToUpdate);
@@ -242,6 +307,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.form-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  padding: $unnnic-spacing-sm;
+
+  gap: $unnnic-spacing-sm;
+
+  > * {
+    flex: 1;
+  }
+}
 .sector-extra-options-form {
   & .switchs {
     &__title {
