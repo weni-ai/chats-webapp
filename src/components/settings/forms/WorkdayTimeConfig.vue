@@ -20,7 +20,7 @@
               @update:model-value="emitResetSelectedCopySector"
             />
             <p class="workday-time-config__day__time__to">
-              {{ $t('to') }}
+              {{ $t('to_the') }}
             </p>
             <UnnnicSelectTime
               v-model="selectedWorkdayDaysTime[day][timeIndex].end"
