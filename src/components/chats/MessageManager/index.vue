@@ -29,6 +29,7 @@
           ref="textBox"
           class="message-manager-box__text-box"
           :modelValue="textBoxMessage"
+          :isInternalNote="isInternalNote"
           @update:model-value="textBoxMessage = $event"
           @keydown.stop="onKeyDown"
           @paste="handlePaste"
@@ -36,6 +37,7 @@
           @is-focused-handler="isFocusedHandler"
           @handle-quick-messages="emitShowQuickMessages"
           @open-file-uploader="openFileUploader"
+          @close-internal-note="handleInternalNoteInput"
         />
         <UnnnicAudioRecorder
           v-show="isAudioRecorderVisible && !isFileLoadingValueValid"
@@ -57,7 +59,11 @@
           @click="openCopilot"
         />
         <UnnnicButton
-          v-if="(!canUseCopilot || discussionId) && showActionButton"
+          v-if="
+            (!canUseCopilot || discussionId) &&
+            showActionButton &&
+            !isInternalNote
+          "
           type="secondary"
           size="large"
           iconCenter="mic"
@@ -74,7 +80,11 @@
         />
 
         <UnnnicDropdown
-          v-if="(showActionButton || isSuggestionBoxOpen) && !discussionId"
+          v-if="
+            (showActionButton || isSuggestionBoxOpen) &&
+            !discussionId &&
+            !isInternalNote
+          "
           position="top-left"
           class="more-actions"
         >
@@ -113,9 +123,10 @@
 
         <UnnnicButton
           v-if="showSendMessageButton"
-          type="primary"
+          :type="isInternalNote ? 'attention' : 'primary'"
           size="large"
           iconCenter="send"
+          class="send-message-button"
           @click="send"
         />
         <UnnnicButton
@@ -210,6 +221,7 @@ export default {
     audioMessage: null,
     audioRecorderStatus: '',
     isLoading: false,
+    isInternalNote: false,
   }),
 
   computed: {
@@ -280,10 +292,14 @@ export default {
         isTyping,
         isAudioRecorderVisible,
         isFileLoadingValueValid,
+        isInternalNote,
       } = this;
       return (
         !isSuggestionBoxOpen &&
-        (isTyping || isAudioRecorderVisible || isFileLoadingValueValid)
+        (isTyping ||
+          isAudioRecorderVisible ||
+          isFileLoadingValueValid ||
+          isInternalNote)
       );
     },
   },
@@ -308,7 +324,9 @@ export default {
     ]),
     ...mapActions(useRoomMessages, ['sendRoomMessage', 'sendRoomMedias']),
     handleInternalNoteInput() {
-      // TODO: Implement internal note input
+      this.textBoxMessage = '';
+      this.clearReplyMessage();
+      this.isInternalNote = !this.isInternalNote;
     },
     openCopilot() {
       this.isCopilotOpen = true;
@@ -398,6 +416,10 @@ export default {
       this.$refs.audioRecorder?.stop();
     },
     async send() {
+      if (this.isInternalNote) {
+        // TODO: send internal note
+        return;
+      }
       let repliedMessage = null;
       if (this.replyMessage) {
         repliedMessage = { ...this.replyMessage };
@@ -483,6 +505,10 @@ export default {
     box-shadow: 0px 2px 5px -1px rgba(0, 0, 0, 0.1);
   }
 
+  :deep(.send-message-button.unnnic-button--attention) {
+    background-color: $unnnic-color-feedback-yellow;
+  }
+
   &-box {
     &__container {
       position: relative;
@@ -507,12 +533,6 @@ export default {
         border-radius: $unnnic-border-radius-sm;
         background-color: $unnnic-color-neutral-snow;
       }
-    }
-
-    &__text-box {
-      border: $unnnic-border-width-thinner solid $unnnic-color-neutral-cleanest;
-      border-radius: $unnnic-border-radius-sm;
-      background-color: $unnnic-color-neutral-snow;
     }
   }
 
