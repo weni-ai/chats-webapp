@@ -83,6 +83,7 @@ import Profile from '@/services/api/resources/profile';
 import unnnic from '@weni/unnnic-system';
 import i18n from '@/plugins/i18n';
 import { storeToRefs } from 'pinia';
+import { moduleStorage } from '@/utils/storage';
 
 const statuses = ref([
   { value: 'active', label: 'Online', color: 'green' },
@@ -98,10 +99,14 @@ const { status: configStatus } = storeToRefs(configStore);
 
 const statusAgentKey = configStore.project.uuid
   ? `statusAgent-${configStore.project.uuid}`
-  : `statusAgent-${sessionStorage.getItem('WENICHATS_PROJECT_UUID')}`;
+  : `statusAgent-${moduleStorage.getItem('projectUuid', '', {
+      useSession: true,
+    })}`;
 
 const selectedStatus = ref(
-  sessionStorage.getItem(statusAgentKey) === 'ONLINE'
+  moduleStorage.getItem(statusAgentKey, '', {
+    useSession: true,
+  }) === 'ONLINE'
     ? statuses.value[0]
     : statuses.value[1],
 );
@@ -148,11 +153,15 @@ const updateActiveStatus = async ({ isActive, skipRequest }) => {
         status: statusAgent,
       });
 
-      sessionStorage.setItem(statusAgentKey, connection);
+      moduleStorage.setItem(statusAgentKey, connection, {
+        useSession: true,
+      });
       connection_status = connection.toLowerCase();
     } else {
       connection_status = statusAgent.toLowerCase();
-      sessionStorage.setItem(statusAgentKey, statusAgent);
+      moduleStorage.setItem(statusAgentKey, statusAgent, {
+        useSession: true,
+      });
     }
 
     const status = statuses.value.find(
@@ -255,12 +264,15 @@ const refreshData = async () => {
 let settingsCheckInterval = null;
 
 const checkSettingsUpdates = () => {
-  const currentSettingsUpdate = localStorage.getItem('settingsUpdated');
-  const lastSettingsUpdate =
-    sessionStorage.getItem('lastSettingsUpdate') || '0';
+  const currentSettingsUpdate = moduleStorage.getItem('settingsUpdated');
+  const lastSettingsUpdate = moduleStorage.getItem('lastSettingsUpdate', '0', {
+    useSession: true,
+  });
 
   if (currentSettingsUpdate && currentSettingsUpdate !== lastSettingsUpdate) {
-    sessionStorage.setItem('lastSettingsUpdate', currentSettingsUpdate);
+    moduleStorage.setItem('lastSettingsUpdate', currentSettingsUpdate, {
+      useSession: true,
+    });
     refreshData();
   }
 };
@@ -269,8 +281,10 @@ onMounted(() => {
   refreshData();
   document.addEventListener('click', handleClickOutside);
 
-  const initialValue = localStorage.getItem('settingsUpdated') || '0';
-  sessionStorage.setItem('lastSettingsUpdate', initialValue);
+  const initialValue = moduleStorage.getItem('settingsUpdated', '0');
+  moduleStorage.setItem('lastSettingsUpdate', initialValue, {
+    useSession: true,
+  });
   settingsCheckInterval = setInterval(checkSettingsUpdates, 1000);
 });
 
