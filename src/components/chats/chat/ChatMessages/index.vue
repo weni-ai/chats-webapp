@@ -47,6 +47,12 @@
               :title="messageFormatTitle(new Date(message.created_on))"
             />
 
+            <ChatMessagesInternalNote
+              v-if="isInternalNoteMessage(message)"
+              :key="message.uuid"
+              :message="message"
+            />
+
             <template v-else>
               <UnnnicChatsMessage
                 v-if="message.text || isGeolocation(message.media?.[0])"
@@ -248,6 +254,7 @@ import FullscreenPreview from '@/components/chats/MediaMessage/Previews/Fullscre
 import ChatFeedback from '../ChatFeedback.vue';
 import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
 import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
+import ChatMessagesInternalNote from './ChatMessagesInternalNote.vue';
 
 export default {
   name: 'ChatMessages',
@@ -260,6 +267,7 @@ export default {
     TagGroup,
     FullscreenPreview,
     VideoPlayer,
+    ChatMessagesInternalNote,
   },
 
   props: {
@@ -552,6 +560,11 @@ export default {
 
     isMessageByBot(message) {
       return !message.user && !message.contact;
+    },
+
+    isInternalNoteMessage(message) {
+      // TODO: implement
+      return true;
     },
 
     isFeedbackMessage(message) {
