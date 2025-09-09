@@ -220,6 +220,7 @@ export default {
           maxSimultaneousChatsByAgent,
           managers,
           config,
+          automatic_message,
         } = this.sector;
 
         const createSectorBody = {
@@ -230,7 +231,10 @@ export default {
           rooms_limit: this.enableGroupsMode
             ? '0'
             : maxSimultaneousChatsByAgent,
-          config,
+          config: this.enableGroupsMode
+            ? config
+            : { ...config, secondary_project: undefined },
+          automatic_message,
         };
 
         const createdSector = await Sector.create(createSectorBody);
