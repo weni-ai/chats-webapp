@@ -570,6 +570,9 @@ export default {
 
     if (!this.isEditing) {
       this.handleSelectAllCountryHolidays(true);
+    } else {
+      this.getSectorAllHolidays();
+      this.getSectorWorktimes(this.sector.uuid);
     }
 
     const isDefaultSector =
@@ -577,8 +580,6 @@ export default {
 
     if (this.isEditing && !this.enableGroupsMode) {
       this.getSectorManagers();
-      this.getSectorAllHolidays();
-      this.getSectorWorktimes(this.sector.uuid);
     } else if (isDefaultSector) {
       this.useDefaultSector = 1;
     }
