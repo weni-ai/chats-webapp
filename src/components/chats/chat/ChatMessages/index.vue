@@ -41,7 +41,7 @@
 
             <ChatMessagesInternalNote
               v-if="isInternalNoteMessage(message)"
-              :ref="`internal-note-${message.uuid}`"
+              :ref="`internal-note-${message.internal_note.uuid}`"
               :key="message.uuid"
               :message="message"
             />
@@ -238,7 +238,7 @@
 </template>
 
 <script>
-import { mapState, mapWritableState } from 'pinia';
+import { mapState, mapWritableState, mapActions } from 'pinia';
 import { useDashboard } from '@/store/modules/dashboard';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
@@ -359,7 +359,8 @@ export default {
 
   computed: {
     ...mapState(useDashboard, ['viewedAgent']),
-    ...mapWritableState(useRoomMessages, ['replyMessage']),
+    ...mapState(useRoomMessages, ['roomMessagesNext']),
+    ...mapWritableState(useRoomMessages, ['replyMessage', 'toScrollNote']),
     medias() {
       return this.messages
         .map((el) => el.media)
@@ -374,6 +375,10 @@ export default {
   },
 
   watch: {
+    toScrollNote(note) {
+      if (!note) return;
+      this.scrollToInternalNote(note);
+    },
     messages: {
       handler() {
         this.setStartFeedbacks();
@@ -402,6 +407,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(useRoomMessages, ['getRoomMessages']),
     handlerMessageReply(message) {
       this.replyMessage = message;
     },
@@ -669,6 +675,23 @@ export default {
       this.$nextTick(() => {
         this.showScrollButton = false;
       });
+    },
+    async scrollToInternalNote(note) {
+      const noteElement = this.$refs[`internal-note-${note.uuid}`]?.[0]?.$el;
+
+      if (noteElement) {
+        noteElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      } else if (this.roomMessagesNext) {
+        // Load more messages to find internal note
+        await this.getRoomMessages();
+        this.scrollToInternalNote(note);
+        return;
+      }
+
+      this.toScrollNote = null;
     },
   },
 };

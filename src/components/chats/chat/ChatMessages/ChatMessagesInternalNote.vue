@@ -8,7 +8,7 @@
         {{ agentName }}
       </p>
       <p class="chat-messages__internal-note-text">
-        {{ message.internal_note?.text }}
+        {{ text }}
       </p>
     </div>
     <UnnnicIcon
@@ -42,6 +42,9 @@ export default {
     agentName() {
       const { first_name, last_name } = this.message.user;
       return `${first_name} ${last_name}`;
+    },
+    text() {
+      return this.message.internal_note?.text || this.message.text;
     },
     canDelete() {
       const isMeInternalNote = this.me?.email === this.message.user.email;

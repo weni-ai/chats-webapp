@@ -24,6 +24,7 @@
           :key="note.uuid"
           class="chat-internal-note"
           :message="note"
+          showAgentName
           @click="handleInternalNoteClick(note)"
         />
       </section>
@@ -119,12 +120,15 @@
 </template>
 
 <script>
-import { mapState } from 'pinia';
+import { mapWritableState } from 'pinia';
+
 import Media from '@/services/api/resources/chats/media';
 import MediaPreview from '@/components/chats/MediaMessage/Previews/Media.vue';
 import ChatInternalNote from '@/components/chats/chat/ChatMessages/ChatMessagesInternalNote.vue';
 
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+
+import Room from '@/services/api/resources/chats/room';
 
 import moment from 'moment';
 
@@ -166,7 +170,7 @@ export default {
   },
 
   computed: {
-    ...mapState(useRoomMessages, ['roomInternalNotes']),
+    ...mapWritableState(useRoomMessages, ['toScrollNote', 'roomInternalNotes']),
     images() {
       return this.medias.filter(
         (media) =>
@@ -193,7 +197,13 @@ export default {
       await this.loadNextMediasClosedRoom();
     }
 
+    await this.loadInternalNotes();
+
     this.$emit('loaded-medias');
+  },
+
+  unmounted() {
+    this.roomInternalNotes = [];
   },
 
   methods: {
@@ -239,6 +249,7 @@ export default {
         ordering: 'content_type',
         page: this.page,
       });
+
       this.audios = await Promise.all(
         response.results
           .filter((media) => media.content_type.startsWith('audio/'))
@@ -258,6 +269,7 @@ export default {
               }),
           ),
       );
+
       this.medias = this.medias.concat(
         response.results.filter(
           (media) => !media.content_type.startsWith('audio/'),
@@ -307,8 +319,15 @@ export default {
         this.loadNextMediasClosedRoom();
       }
     },
+    async loadInternalNotes() {
+      const response = await Room.getInternalNotes({
+        room: this.room.uuid,
+      });
+
+      this.roomInternalNotes = response.results;
+    },
     handleInternalNoteClick(note) {
-      // TODO: scroll to the note
+      this.toScrollNote = note;
     },
   },
 };
