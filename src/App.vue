@@ -2,6 +2,11 @@
   <div id="app">
     <SocketAlertBanner v-if="showSocketAlertBanner" />
     <RouterView />
+    <ModalOfflineAgent
+      v-if="showModalOfflineAgent"
+      v-model="showModalOfflineAgent"
+      :username="userWhoChangedStatus"
+    />
   </div>
 </template>
 
@@ -9,6 +14,7 @@
 import { mapActions, mapState } from 'pinia';
 
 import SocketAlertBanner from './layouts/ChatsLayout/components/SocketAlertBanner.vue';
+import ModalOfflineAgent from './components/ModalOfflineAgent.vue';
 
 import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
@@ -38,6 +44,7 @@ export default {
   name: 'App',
   components: {
     SocketAlertBanner,
+    ModalOfflineAgent,
   },
   setup() {
     const queryString = window.location.href.split('?')[1];
@@ -53,6 +60,7 @@ export default {
     return {
       ws: null,
       loading: false,
+      showModalOfflineAgent: false,
     };
   },
 
@@ -68,6 +76,7 @@ export default {
       appToken: 'token',
       appProject: (store) => store.project.uuid,
       socketStatus: 'socketStatus',
+      disconnectedBy: 'disconnectedBy',
     }),
 
     socketRetryCount() {
@@ -86,6 +95,10 @@ export default {
       const { appToken, appProject } = this;
 
       return [appToken, appProject];
+    },
+
+    userWhoChangedStatus() {
+      return this.disconnectedBy;
     },
   },
 
@@ -150,7 +163,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(useConfig, ['setStatus', 'setProject']),
+    ...mapActions(useConfig, ['setStatus', 'setProject', 'setDisconnectedBy']),
     ...mapActions(useProfile, ['setMe', 'getMeQueues']),
     ...mapActions(useQuickMessages, {
       getAllQuickMessages: 'getAll',
@@ -283,6 +296,15 @@ export default {
           useSession: true,
         },
       );
+    },
+
+    updateUserStatusFromWebSocket(status, disconnectedBy = '') {
+      this.setStatus(status);
+      this.setDisconnectedBy(disconnectedBy);
+      moduleStorage.setItem(`statusAgent-${this.project.uuid}`, status, {
+        useSession: true,
+      });
+      this.showModalOfflineAgent = true;
     },
 
     async wsConnect() {

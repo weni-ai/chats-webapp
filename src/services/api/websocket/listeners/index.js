@@ -29,4 +29,5 @@ export default ({ ws, app }) => {
   ws.on('discussions.close', createListener(discussionListener.delete));
 
   ws.on('status.update', createListener(statusListener.update));
+  ws.on('status.close', createListener(statusListener.close));
 };

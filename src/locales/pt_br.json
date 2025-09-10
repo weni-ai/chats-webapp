@@ -884,7 +884,11 @@
     "connecting": "Carregando...",
     "connected": "Atualização concluída com sucesso! Você pode continuar seu atendimento."
   },
-  "feedback_modal": {
+  "offline_agent_modal": {
+    "title": "Você está offline!",
+    "description": "Seu status foi alterado para offline por {username}. Para voltar a atender, altere seu status para online."
+  },
+    "feedback_modal": {
     "title": "Ajude-nos a melhorar!",
     "feedback_question": "Com está sendo usar o Weni Chats?",
     "problem_question": "O que atrapalha ou dificulta o uso do Weni Chats?",

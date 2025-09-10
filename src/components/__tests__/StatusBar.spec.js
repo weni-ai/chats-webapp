@@ -32,6 +32,7 @@ vi.mock('@/store/modules/config', () => ({
         can_see_timer: true,
       },
     },
+    status: 'ONLINE',
     getStatus: vi.fn().mockResolvedValue({
       data: { connection_status: 'ONLINE' },
     }),
@@ -105,6 +106,7 @@ describe('StatusBar', () => {
               can_see_timer: true,
             },
           },
+          status: 'ONLINE',
           getStatus: vi.fn().mockResolvedValue({
             data: { connection_status: 'ONLINE' },
           }),
