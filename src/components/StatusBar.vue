@@ -402,11 +402,15 @@ const showStatusAlert = (status, isSuccess = true) => {
 watch(
   () => configStatus?.value,
   (newStatus) => {
-    if (newStatus === 'OFFLINE') {
+    if (
+      newStatus === 'OFFLINE' &&
+      moduleStorage.getItem(statusAgentKey, '', {
+        useSession: true,
+      }) === 'OFFLINE'
+    ) {
       selectedStatus.value = statuses.value[1];
     }
   },
-  { deep: true },
 );
 </script>
 

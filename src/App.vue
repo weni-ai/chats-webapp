@@ -299,11 +299,11 @@ export default {
     },
 
     updateUserStatusFromWebSocket(status, disconnectedBy = '') {
-      this.setStatus(status);
-      this.setDisconnectedBy(disconnectedBy);
       moduleStorage.setItem(`statusAgent-${this.project.uuid}`, status, {
         useSession: true,
       });
+      this.setStatus(status);
+      this.setDisconnectedBy(disconnectedBy);
       this.showModalOfflineAgent = true;
     },
 
