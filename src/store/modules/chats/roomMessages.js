@@ -28,6 +28,11 @@ export const useRoomMessages = defineStore('roomMessages', {
     roomMessagesPrevious: '',
     replyMessage: null,
   }),
+  getters: {
+    roomInternalNotes: (state) => {
+      return state.roomMessages.filter((message) => !!message.internal_note);
+    },
+  },
   actions: {
     addRoomMessageSorted({ message, addBefore }) {
       groupMessages(this.roomMessagesSorted, { message, addBefore });

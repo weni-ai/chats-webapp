@@ -4,6 +4,30 @@
     size="md"
     :tabs="tabs"
   >
+    <template #tab-head-notes>
+      <div
+        class="notes-tab"
+        :class="{ active: isActiveTab('notes') }"
+        data-testid="note-tab-notes"
+      >
+        <span class="name">{{ $t('notes') }}</span>
+      </div>
+    </template>
+
+    <template #tab-panel-notes>
+      <section
+        class="notes__content"
+        data-testid="notes-content"
+      >
+        <ChatInternalNote
+          v-for="note in roomInternalNotes"
+          :key="note.uuid"
+          class="chat-internal-note"
+          :message="note"
+          @click="handleInternalNoteClick(note)"
+        />
+      </section>
+    </template>
     <template #tab-head-media>
       <div
         class="media-tab"
@@ -95,8 +119,13 @@
 </template>
 
 <script>
+import { mapState } from 'pinia';
 import Media from '@/services/api/resources/chats/media';
 import MediaPreview from '@/components/chats/MediaMessage/Previews/Media.vue';
+import ChatInternalNote from '@/components/chats/chat/ChatMessages/ChatMessagesInternalNote.vue';
+
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+
 import moment from 'moment';
 
 export default {
@@ -104,6 +133,7 @@ export default {
 
   components: {
     MediaPreview,
+    ChatInternalNote,
   },
 
   props: {
@@ -124,10 +154,9 @@ export default {
 
   data() {
     return {
-      tab: 'media',
-      tabs: ['media', 'docs', 'audio'],
+      tab: 'notes',
+      tabs: ['notes', 'media', 'docs', 'audio'],
       page: 1,
-
       medias: [],
       audios: [],
       audioWithDuration: [],
@@ -137,6 +166,7 @@ export default {
   },
 
   computed: {
+    ...mapState(useRoomMessages, ['roomInternalNotes']),
     images() {
       return this.medias.filter(
         (media) =>
@@ -277,11 +307,20 @@ export default {
         this.loadNextMediasClosedRoom();
       }
     },
+    handleInternalNoteClick(note) {
+      // TODO: scroll to the note
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.notes__content {
+  .chat-internal-note {
+    cursor: pointer;
+  }
+}
+
 .medias__content {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));

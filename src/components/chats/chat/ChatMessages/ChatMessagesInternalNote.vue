@@ -5,13 +5,14 @@
         v-if="showAgentName"
         class="chat-messages__internal-note-agent-name"
       >
-        Eduardo Medeiros
+        {{ agentName }}
       </p>
       <p class="chat-messages__internal-note-text">
-        {{ message.text }}
+        {{ message.internal_note?.text }}
       </p>
     </div>
     <UnnnicIcon
+      v-if="canDelete"
       icon="delete"
       size="ant"
       scheme="aux-red-500"
@@ -22,6 +23,8 @@
 </template>
 
 <script>
+import { mapState } from 'pinia';
+import { useProfile } from '@/store/modules/profile';
 export default {
   name: 'ChatMessagesInternalNote',
   props: {
@@ -32,6 +35,17 @@ export default {
     message: {
       type: Object,
       required: true,
+    },
+  },
+  computed: {
+    ...mapState(useProfile, ['me']),
+    agentName() {
+      const { first_name, last_name } = this.message.user;
+      return `${first_name} ${last_name}`;
+    },
+    canDelete() {
+      const isMeInternalNote = this.me?.email === this.message.user.email;
+      return isMeInternalNote && this.message.internal_note?.is_deletable;
     },
   },
 };
@@ -46,6 +60,7 @@ export default {
   padding: $unnnic-spacing-xs $unnnic-spacing-ant;
   border-radius: $unnnic-border-radius-md;
   width: 100%;
+  box-shadow: 0 2px 5px -1px rgba(0, 0, 0, 0.1);
 
   &-container {
     margin-top: $unnnic-spacing-ant;

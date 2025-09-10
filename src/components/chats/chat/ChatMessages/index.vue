@@ -39,18 +39,19 @@
               :title="messageFormatTitle(new Date(message.created_on))"
             />
 
+            <ChatMessagesInternalNote
+              v-if="isInternalNoteMessage(message)"
+              :ref="`internal-note-${message.uuid}`"
+              :key="message.uuid"
+              :message="message"
+            />
+
             <ChatMessagesFeedbackMessage
               v-if="isFeedbackMessage(message)"
               :key="message.uuid"
               :message="message"
               :scheme="isClosedChat ? 'gray' : 'blue'"
               :title="messageFormatTitle(new Date(message.created_on))"
-            />
-
-            <ChatMessagesInternalNote
-              v-if="isInternalNoteMessage(message)"
-              :key="message.uuid"
-              :message="message"
             />
 
             <template v-else>
@@ -320,18 +321,15 @@ export default {
     tags: {
       type: Array,
       default: () => [],
-      required: false,
     },
 
     showWaitingFeedback: {
       type: Boolean,
       default: false,
-      required: false,
     },
     showChatSeparator: {
       type: Boolean,
       default: true,
-      required: false,
     },
 
     isLoading: {
@@ -563,8 +561,7 @@ export default {
     },
 
     isInternalNoteMessage(message) {
-      // TODO: implement
-      return true;
+      return !!message.internal_note;
     },
 
     isFeedbackMessage(message) {
