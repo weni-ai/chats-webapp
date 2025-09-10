@@ -128,7 +128,7 @@ import ChatInternalNote from '@/components/chats/chat/ChatMessages/ChatMessagesI
 
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
-import Room from '@/services/api/resources/chats/room';
+import RoomNotes from '@/services/api/resources/chats/roomNotes';
 
 import moment from 'moment';
 
@@ -320,7 +320,7 @@ export default {
       }
     },
     async loadInternalNotes() {
-      const response = await Room.getInternalNotes({
+      const response = await RoomNotes.getInternalNotes({
         room: this.room.uuid,
       });
 
