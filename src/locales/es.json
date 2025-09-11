@@ -886,6 +886,10 @@
     "connecting": "Cargando...",
     "connected": "Actualización completada con éxito! Puedes continuar con tu soporte."
   },
+  "offline_agent_modal": {
+    "title": "¡Estás desconectado!",
+    "description": "Tu estado ha sido cambiado a desconectado por {username}. Para volver a soporte, cambia tu estado a conectado."
+  },
   "feedback_modal": {
     "title": "Ayúdanos a mejorar!",
     "feedback_question": "¿Cómo estás usando Weni Chats?",
