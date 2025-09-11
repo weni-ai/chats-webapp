@@ -908,5 +908,15 @@
     },
     "placeholder_feedback": "Share your experience here",
     "default_error_message": "An error occurred while submitting feedback, please try again later!"
+  },
+  "delete_internal_note": {
+    "title": "Delete internal note",
+    "description": "Are you sure you wanto to delete the internal note?",
+    "message": {
+      "delete": {
+        "success": "Internal note deleted successfully",
+        "error": "Failed to delete internal note"
+      }
+    }
   }
 }

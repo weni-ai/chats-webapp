@@ -38,4 +38,13 @@ export default {
 
     return response.data;
   },
+  async deleteInternalNote({ note }) {
+    // const response = await http.delete(`/room_notes/${note}/`);
+
+    const response = {};
+
+    await asyncTimeout(1000);
+
+    return response;
+  },
 };
