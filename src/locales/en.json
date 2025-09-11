@@ -897,6 +897,10 @@
     "connecting": "Loading...",
     "connected": "Update completed successfully! You can continue your support."
   },
+  "offline_agent_modal": {
+    "title": "You are offline!",
+    "description": "Your status has been changed to offline by {username}. To return to support, change your status to online."
+  },
   "feedback_modal": {
     "title": "Help us improve!",
     "feedback_question": "What is it been like using Weni Chats?",

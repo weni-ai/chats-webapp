@@ -16,6 +16,7 @@ export const useConfig = defineStore('config', {
       config: {},
     },
     status: '',
+    disconnectedBy: '',
     copilot: {
       active: false,
       customRulesActive: false,
@@ -60,6 +61,9 @@ export const useConfig = defineStore('config', {
       const newStatus = data.connection_status || 'OFFLINE';
       this.status = newStatus;
       setSessionStatus(newStatus);
+    },
+    setDisconnectedBy(disconnectedBy) {
+      this.disconnectedBy = disconnectedBy;
     },
     setCopilotActive(active) {
       this.copilot.active = active;
