@@ -38,6 +38,17 @@ export default {
 
     return response.data;
   },
+  async createInternalNote({ text, room }) {
+    // const response = await http.post(`/room/${room}/room_note/`, {
+    //   text,
+    // });
+
+    const response = { data: {} };
+
+    await asyncTimeout(1000);
+
+    return response.data;
+  },
   async deleteInternalNote({ note }) {
     // const response = await http.delete(`/room_notes/${note}/`);
 
