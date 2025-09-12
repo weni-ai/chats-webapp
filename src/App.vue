@@ -7,6 +7,10 @@
       v-model="showModalOfflineAgent"
       :username="userWhoChangedStatus"
     />
+    <ModalNewFeatureInternalNote
+      :modelValue="showModalNewFeatureInternalNote"
+      @update:model-value="handleShowModalNewFeatureInternalNote"
+    />
   </div>
 </template>
 
@@ -15,6 +19,7 @@ import { mapActions, mapState } from 'pinia';
 
 import SocketAlertBanner from './layouts/ChatsLayout/components/SocketAlertBanner.vue';
 import ModalOfflineAgent from './components/ModalOfflineAgent.vue';
+import ModalNewFeatureInternalNote from './components/ModalNewFeatureInternalNote.vue';
 
 import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
@@ -45,6 +50,7 @@ export default {
   components: {
     SocketAlertBanner,
     ModalOfflineAgent,
+    ModalNewFeatureInternalNote,
   },
   setup() {
     const queryString = window.location.href.split('?')[1];
@@ -61,6 +67,10 @@ export default {
       ws: null,
       loading: false,
       showModalOfflineAgent: false,
+      showModalNewFeatureInternalNote: moduleStorage.getItem(
+        'showModalNewFeatureInternalNote',
+        true,
+      ),
     };
   },
 
@@ -184,6 +194,11 @@ export default {
         });
       }
       this.setStatus(userStatus);
+    },
+
+    handleShowModalNewFeatureInternalNote(value) {
+      moduleStorage.setItem('showModalNewFeatureInternalNote', value);
+      this.showModalNewFeatureInternalNote = value;
     },
 
     async getUser() {

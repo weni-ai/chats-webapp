@@ -1,10 +1,26 @@
 <template>
   <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
   <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
-  <section class="text-box">
+  <section
+    class="text-box"
+    :class="{ 'internal-note': isInternalNote }"
+  >
+    <div
+      v-if="isInternalNote"
+      class="internal-note-close-button"
+    >
+      <UnnnicIcon
+        class="internal-note-close-button__icon"
+        icon="close"
+        size="ant"
+        scheme="neutral-white"
+        clickable
+        @click="$emit('close-internal-note')"
+      />
+    </div>
     <div
       class="text-editor"
-      :class="{ mobile: isMobile }"
+      :class="{ mobile: isMobile, 'internal-note': isInternalNote }"
       @click="$refs.textareaRef.focus()"
     >
       <UnnnicButton
@@ -23,7 +39,7 @@
       >
         <UnnnicIcon
           icon="add_reaction"
-          scheme="neutral-clean"
+          :scheme="isInternalNote ? 'feedback-yellow' : 'neutral-clean'"
           :class="['emoji-button', 'clickable']"
           data-testid="emoji-button"
           size="ant"
@@ -36,19 +52,27 @@
         @close="closeEmojiPicker"
       />
 
-      <textarea
-        ref="textareaRef"
-        :value="modelValue"
-        :placeholder="$t('message')"
-        :rows="currentTextAreaRows"
-        class="text-input"
-        data-testid="text-area"
-        @input="handleTextarea"
-        @keydown="keyDownTextarea"
-        @paste="paste"
-        @focus="() => setIsFocused(true)"
-        @blur="() => setIsFocused(false)"
-      />
+      <section class="text-input-container">
+        <p
+          v-if="isInternalNote"
+          class="internal-note-prefix"
+        >
+          {{ $t('internal_note') + ': ' }}
+        </p>
+        <textarea
+          ref="textareaRef"
+          :value="modelValue"
+          :placeholder="isInternalNote ? '' : $t('message')"
+          :rows="currentTextAreaRows"
+          :class="['text-input', { 'internal-note': isInternalNote }]"
+          data-testid="text-area"
+          @input="handleTextarea"
+          @keydown="keyDownTextarea"
+          @paste="paste"
+          @focus="setIsFocused(true)"
+          @blur="setIsFocused(false)"
+        />
+      </section>
 
       <UnnnicDropdown
         v-if="isMobile"
@@ -100,6 +124,10 @@ export default {
       type: String,
       default: '',
     },
+    isInternalNote: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: [
     'is-typing-handler',
@@ -109,6 +137,7 @@ export default {
     'open-file-uploader',
     'keydown',
     'paste',
+    'close-internal-note',
   ],
 
   data: () => ({
@@ -227,8 +256,38 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.internal-note {
+  background-color: $unnnic-color-aux-baby-yellow;
+}
 .text-box {
   position: relative;
+
+  border: $unnnic-border-width-thinner solid $unnnic-color-neutral-cleanest;
+  border-radius: $unnnic-border-radius-sm;
+  background-color: $unnnic-color-neutral-snow;
+
+  &.internal-note {
+    border: unset;
+    border-radius: unset;
+    background-color: unset;
+  }
+
+  .internal-note-close-button {
+    background-color: $unnnic-color-feedback-yellow;
+    padding: 0px $unnnic-spacing-nano;
+    border-top-left-radius: $unnnic-border-radius-md;
+    border-top-right-radius: $unnnic-border-radius-md;
+
+    display: flex;
+    justify-content: center;
+    margin-right: $unnnic-spacing-ant;
+    justify-self: end;
+    padding: 2px $unnnic-spacing-nano;
+
+    &__icon {
+      font-size: $unnnic-font-size-body-lg;
+    }
+  }
 
   .text-editor {
     $padding-vertical: calc(
@@ -248,6 +307,22 @@ export default {
     color: $unnnic-color-neutral-dark;
 
     cursor: text;
+
+    .text-input-container {
+      display: flex;
+      gap: $unnnic-spacing-nano;
+    }
+
+    .internal-note-prefix {
+      font-size: $unnnic-font-size-body-gt;
+      line-height: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
+      padding: 10px 0;
+      color: $unnnic-color-neutral-cloudy;
+    }
+
+    &.internal-note {
+      border: 1px solid $unnnic-color-feedback-yellow;
+    }
 
     &.mobile {
       padding: 0;
