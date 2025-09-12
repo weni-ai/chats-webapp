@@ -82,8 +82,8 @@ import api from '@/services/api/resources/chats/pauseStatus';
 import Profile from '@/services/api/resources/profile';
 import unnnic from '@weni/unnnic-system';
 import i18n from '@/plugins/i18n';
-import { moduleStorage } from '@/utils/storage';
 import { storeToRefs } from 'pinia';
+import { moduleStorage } from '@/utils/storage';
 
 const statuses = ref([
   { value: 'active', label: 'Online', color: 'green' },
@@ -402,11 +402,15 @@ const showStatusAlert = (status, isSuccess = true) => {
 watch(
   () => configStatus?.value,
   (newStatus) => {
-    if (newStatus === 'OFFLINE') {
+    if (
+      newStatus === 'OFFLINE' &&
+      moduleStorage.getItem(statusAgentKey, '', {
+        useSession: true,
+      }) === 'OFFLINE'
+    ) {
       selectedStatus.value = statuses.value[1];
     }
   },
-  { deep: true },
 );
 </script>
 
