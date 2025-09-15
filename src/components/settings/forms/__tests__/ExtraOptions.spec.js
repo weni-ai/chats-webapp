@@ -28,6 +28,10 @@ const sectorExtraOptionsMock = {
   can_trigger_flows: false,
   sign_messages: false,
   can_edit_custom_fields: false,
+  automatic_message: {
+    is_active: false,
+    text: '',
+  },
 };
 
 const routes = [{ path: '/settings', name: 'settings' }];
