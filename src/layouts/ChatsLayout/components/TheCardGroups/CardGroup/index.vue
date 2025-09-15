@@ -8,10 +8,13 @@
         v-for="(room, index) in rooms"
         :key="room.uuid"
         :room="room"
-        :active="!activeDiscussionId && activeRoom?.uuid === room?.uuid"
+        :active="getIsActiveRoom(room)"
         :selected="getIsRoomSelected(room.uuid)"
         :withSelection="withSelection"
         :roomType="roomsType"
+        :forceShowUnreadMessages="
+          getIsActiveRoom(room) && showScrollToBottomButton
+        "
         :class="{
           'room-card': true,
           'room-card--without-border': activeRoomIndex === index - 1,
@@ -67,6 +70,7 @@ import { mapActions, mapState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 import RoomCard from './RoomCard.vue';
 
@@ -109,6 +113,7 @@ export default {
   },
 
   computed: {
+    ...mapState(useRoomMessages, ['showScrollToBottomButton']),
     ...mapState(useRooms, ['selectedRoomsToTransfer', 'activeRoom']),
     ...mapState(useDiscussions, {
       newMessagesByDiscussion: 'newMessagesByDiscussion',
@@ -149,6 +154,9 @@ export default {
       return !!this.selectedRoomsToTransfer.find(
         (mappedUuid) => mappedUuid === uuid,
       );
+    },
+    getIsActiveRoom(room) {
+      return !this.activeDiscussionId && this.activeRoom?.uuid === room?.uuid;
     },
     updateIsRoomSelected(uuid, isSelected) {
       if (isSelected) {

@@ -219,7 +219,7 @@
       </FullscreenPreview>
     </section>
     <section
-      v-if="showScrollButton"
+      v-if="showScrollToBottomButton"
       class="chat-messages__scroll-button-container"
     >
       <UnnnicButton
@@ -351,12 +351,14 @@ export default {
       bot: '',
       agent: '',
     },
-    showScrollButton: false,
   }),
 
   computed: {
     ...mapState(useDashboard, ['viewedAgent']),
-    ...mapWritableState(useRoomMessages, ['replyMessage']),
+    ...mapWritableState(useRoomMessages, [
+      'replyMessage',
+      'showScrollToBottomButton',
+    ]),
     medias() {
       return this.messages
         .map((el) => el.media)
@@ -377,7 +379,9 @@ export default {
       handler() {
         this.setStartFeedbacks();
         this.$nextTick(() => {
-          this.manageScrollForNewMessages();
+          if (!this.showScrollToBottomButton) {
+            this.manageScrollForNewMessages();
+          }
           this.checkScrollPosition();
         });
       },
@@ -600,7 +604,7 @@ export default {
       const { scrollTop, scrollHeight, clientHeight } = chatMessages;
       const isAtBottom = scrollTop + clientHeight >= scrollHeight - 20;
 
-      this.showScrollButton = !isAtBottom;
+      this.showScrollToBottomButton = !isAtBottom;
     },
 
     handleScroll() {
@@ -662,7 +666,7 @@ export default {
       chatMessages.scrollTop = chatMessages.scrollHeight;
 
       this.$nextTick(() => {
-        this.showScrollButton = false;
+        this.showScrollToBottomButton = false;
       });
     },
   },
