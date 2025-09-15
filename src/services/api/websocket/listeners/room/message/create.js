@@ -21,6 +21,7 @@ const checkAndUpdateRoomLastMessage = (room, message) => {
   }
 
   room.last_message = message;
+  room.last_interaction = message.created_on;
 };
 
 export default async (message, { app }) => {
@@ -33,7 +34,7 @@ export default async (message, { app }) => {
   if (findRoom) {
     const roomType = getRoomType(findRoom);
 
-    if (roomType !== 'waiting') roomsStore.bringRoomFront(findRoom);
+    // if (roomType !== 'waiting') roomsStore.bringRoomFront(findRoom);
 
     if (app.me.email === message.user?.email) {
       checkAndUpdateRoomLastMessage(findRoom, message);
