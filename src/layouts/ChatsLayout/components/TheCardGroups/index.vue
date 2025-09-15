@@ -386,6 +386,10 @@ export default {
         return;
 
       newSize > oldSize ? this.roomsCount[key]++ : this.roomsCount[key]--;
+
+      if (this.roomsCount[key] < 0) {
+        this.roomsCount[key] = 0;
+      }
     },
     async openRoom(room) {
       await this.setActiveDiscussion(null);
