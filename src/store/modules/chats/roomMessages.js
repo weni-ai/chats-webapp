@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 import { useRooms } from './rooms';
 
 import Message from '@/services/api/resources/chats/message';
+import RoomNotes from '@/services/api/resources/chats/roomNotes';
 
 import {
   isMessageFromCurrentUser,
@@ -261,6 +262,18 @@ export const useRoomMessages = defineStore('roomMessages', {
             toUpdateMediaPreview,
           }),
       });
+    },
+
+    async sendRoomInternalNote({ text }) {
+      const roomsStore = useRooms();
+      if (!roomsStore.activeRoom) return;
+
+      const response = await RoomNotes.createInternalNote({
+        text,
+        room: roomsStore.activeRoom.uuid,
+      });
+
+      return response.data;
     },
 
     async resendRoomMessage({ message }) {

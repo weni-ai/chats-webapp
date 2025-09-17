@@ -322,7 +322,11 @@ export default {
       'sendDiscussionMessage',
       'sendDiscussionMedias',
     ]),
-    ...mapActions(useRoomMessages, ['sendRoomMessage', 'sendRoomMedias']),
+    ...mapActions(useRoomMessages, [
+      'sendRoomMessage',
+      'sendRoomMedias',
+      'sendRoomInternalNote',
+    ]),
     handleInternalNoteInput() {
       this.textBoxMessage = '';
       this.clearReplyMessage();
@@ -417,17 +421,23 @@ export default {
     },
     async send() {
       if (this.isInternalNote) {
-        // TODO: send internal note
-        return;
-      }
-      let repliedMessage = null;
-      if (this.replyMessage) {
-        repliedMessage = { ...this.replyMessage };
-        this.replyMessage = null;
+        await this.sendInternalNote();
+      } else {
+        let repliedMessage = null;
+        if (this.replyMessage) {
+          repliedMessage = { ...this.replyMessage };
+          this.replyMessage = null;
+        }
+        await this.sendTextBoxMessage(repliedMessage);
+        await this.sendAudio(repliedMessage);
       }
       this.$refs.textBox?.clearTextarea();
-      await this.sendTextBoxMessage(repliedMessage);
-      await this.sendAudio(repliedMessage);
+    },
+    async sendInternalNote() {
+      if (!this.textBoxMessage.trim()) return;
+      const text = `${this.$t('internal_note')}: ${this.textBoxMessage.trim()}`;
+      this.clearTextBox();
+      await this.sendRoomInternalNote({ text });
     },
     async sendTextBoxMessage(repliedMessage) {
       const message = this.textBoxMessage.trim();

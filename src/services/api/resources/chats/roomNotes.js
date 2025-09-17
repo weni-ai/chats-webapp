@@ -1,60 +1,22 @@
 import http from '@/services/api/http';
 
-import { asyncTimeout } from '@/utils/time';
-
 export default {
   async getInternalNotes({ room }) {
-    // const response = await http.get('/room_notes/', {
-    //   params: { room, limit: 9999 },
-    // });
-
-    const response = {
-      data: {
-        results: [
-          {
-            uuid: '1',
-            text: 'Nota 1',
-            user: {
-              email: 'eduardo.medeiros@weni.ai',
-              first_name: 'Eduardo',
-              last_name: 'Medeiros',
-            },
-          },
-          {
-            uuid: '2',
-            text: 'Nota 2',
-            is_deletable: true,
-            user: {
-              email: 'eduardo.medeiros@weni.ai',
-              first_name: 'Eduardo',
-              last_name: 'Medeiros',
-            },
-          },
-        ],
-      },
-    };
-
-    await asyncTimeout(1000);
+    const response = await http.get('/room_notes/', {
+      params: { room, limit: 9999 },
+    });
 
     return response.data;
   },
   async createInternalNote({ text, room }) {
-    // const response = await http.post(`/room/${room}/room_note/`, {
-    //   text,
-    // });
-
-    const response = { data: {} };
-
-    await asyncTimeout(1000);
+    const response = await http.post(`/room/${room}/room_note/`, {
+      text,
+    });
 
     return response.data;
   },
   async deleteInternalNote({ note }) {
-    // const response = await http.delete(`/room_notes/${note}/`);
-
-    const response = {};
-
-    await asyncTimeout(1000);
+    const response = await http.delete(`/room_notes/${note}/`);
 
     return response;
   },
