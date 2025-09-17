@@ -58,8 +58,7 @@ export default {
       return this.message.internal_note || this.message;
     },
     agentName() {
-      const { first_name, last_name } = this.note.user;
-      return `${first_name} ${last_name}`;
+      return this.note.user?.name || '';
     },
     text() {
       return this.note.text;
@@ -68,7 +67,7 @@ export default {
       return this.note.uuid;
     },
     canDelete() {
-      const isMeInternalNote = this.me?.email === this.note.user.email;
+      const isMeInternalNote = this.me?.email === this.note.user?.email;
       return isMeInternalNote && this.note.is_deletable;
     },
   },
