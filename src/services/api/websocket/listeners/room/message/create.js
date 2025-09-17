@@ -37,7 +37,9 @@ export default async (message, { app }) => {
     // if (roomType !== 'waiting') roomsStore.bringRoomFront(findRoom);
 
     if (app.me.email === message.user?.email) {
-      checkAndUpdateRoomLastMessage(findRoom, message);
+      if (!message.internal_note) {
+        checkAndUpdateRoomLastMessage(findRoom, message);
+      }
       if (!message.is_automatic_message) {
         return;
       }

@@ -53,16 +53,20 @@ export default {
       this.isLoadingDeleteRequest = true;
       try {
         await RoomNotes.deleteInternalNote({ note: this.noteUuid });
+
         this.roomInternalNotes = this.roomInternalNotes.filter(
           (note) => note.uuid !== this.noteUuid,
         );
+
         const internalNoteMessage = this.roomMessages.find(
           (message) => message.internal_note?.uuid === this.noteUuid,
         );
+
         if (internalNoteMessage) {
           removeFromGroupedMessages(this.roomMessagesSorted, {
             message: internalNoteMessage,
           });
+
           this.roomMessages = this.roomMessages.filter(
             (message) => message.uuid !== internalNoteMessage.uuid,
           );
