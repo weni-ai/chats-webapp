@@ -42,8 +42,6 @@ export default async (message, { app }) => {
       return;
     }
 
-    console.log('aq');
-
     if (roomType === 'ongoing' && roomsStore.activeTab !== 'ongoing') {
       roomsStore.showOngoingDot = true;
     }
