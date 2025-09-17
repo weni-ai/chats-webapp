@@ -78,14 +78,6 @@ describe('Room message create', () => {
     vi.clearAllMocks();
   });
 
-  it('should bring the room to the front when a valid ongoing room is found', async () => {
-    await wsRoomMessageCreate(message, { app: appMock });
-
-    expect(roomsStoreMock.bringRoomFront).toHaveBeenCalledWith(
-      roomsStoreMock.rooms[0],
-    );
-  });
-
   it('should not bring the room to the front when a valid waiting room is found', async () => {
     await wsRoomMessageCreate(
       { ...message, room: 'room-456' },

@@ -92,7 +92,6 @@ describe('TheCardGroups.vue', () => {
               'chats.room_list.order_by': 'Order by',
               'chats.room_list.most_recent': 'Most recent',
               'chats.room_list.older': 'Older',
-              'chats.queue_priority_disclaimer': 'Queue priority disclaimer',
               'chats.discussions': `Discussions (${params?.length || 0})`,
               'chats.waiting': `Waiting (${params?.length || 0})`,
               'chats.in_progress': `In progress (${params?.length || 0})`,
