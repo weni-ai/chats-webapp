@@ -342,8 +342,7 @@
     "select_your_queues": "Selecione suas filas",
     "no_queue_selected": "Nenhuma fila selecionada",
     "success_update_queues": "Suas filas de atendimento foram atualizadas",
-    "error_update_queues": "Não foi possível atualizar suas filas de atendimento",
-    "queue_priority_disclaimer": "Salas da fila agora são atribuídas automaticamente."
+    "error_update_queues": "Não foi possível atualizar suas filas de atendimento"
   },
   "chats_notifications": {
     "title": "Notificações do WeniChats",
@@ -888,7 +887,7 @@
     "title": "Você está offline!",
     "description": "Seu status foi alterado para offline por {username}. Para voltar a atender, altere seu status para online."
   },
-    "feedback_modal": {
+  "feedback_modal": {
     "title": "Ajude-nos a melhorar!",
     "feedback_question": "Com está sendo usar o Weni Chats?",
     "problem_question": "O que atrapalha ou dificulta o uso do Weni Chats?",
