@@ -14,6 +14,7 @@
       </section>
       <UnnnicIcon
         v-if="canDelete"
+        class="chat-messages__internal-note-delete"
         icon="delete"
         size="ant"
         scheme="aux-red-500"
@@ -109,6 +110,10 @@ export default {
     font-family: $unnnic-font-family-secondary;
     font-size: $unnnic-font-size-body-gt;
     line-height: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
+  }
+
+  &-delete {
+    margin-left: $unnnic-spacing-nano;
   }
 
   &-agent-name {
