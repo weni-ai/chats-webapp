@@ -34,8 +34,6 @@ export default async (message, { app }) => {
   if (findRoom) {
     const roomType = getRoomType(findRoom);
 
-    // if (roomType !== 'waiting') roomsStore.bringRoomFront(findRoom);
-
     if (app.me.email === message.user?.email) {
       checkAndUpdateRoomLastMessage(findRoom, message);
       return;
