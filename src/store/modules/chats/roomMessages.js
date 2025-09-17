@@ -90,7 +90,7 @@ export const useRoomMessages = defineStore('roomMessages', {
 
         this.roomMessages.push(messageWithSender);
 
-        if (isMessageFromCurrentUser(message)) {
+        if (isMessageFromCurrentUser(message) && !message.internal_note) {
           this.roomMessagesSendingUuids.push(uuid);
         }
       }
@@ -266,14 +266,28 @@ export const useRoomMessages = defineStore('roomMessages', {
 
     async sendRoomInternalNote({ text }) {
       const roomsStore = useRooms();
+
       if (!roomsStore.activeRoom) return;
 
-      const response = await RoomNotes.createInternalNote({
+      const createdNote = await RoomNotes.createInternalNote({
         text,
         room: roomsStore.activeRoom.uuid,
       });
 
-      return response.data;
+      // add internal note in the room messages
+      sendMessage({
+        itemType: 'room',
+        itemUuid: roomsStore.activeRoom.uuid,
+        itemUser: roomsStore.activeRoom.user,
+        message: text,
+        internalNote: createdNote,
+        sendItemMessage: () => createdNote,
+        addMessage: (message) => this.handlingAddMessage({ message }),
+        addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
+        updateMessage: () => {},
+      });
+
+      this.roomInternalNotes.unshift(createdNote);
     },
 
     async resendRoomMessage({ message }) {

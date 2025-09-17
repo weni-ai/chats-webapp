@@ -309,6 +309,7 @@ export default {
     cursor: text;
 
     .text-input-container {
+      width: 100%;
       display: flex;
       gap: $unnnic-spacing-nano;
     }

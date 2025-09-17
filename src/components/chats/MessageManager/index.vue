@@ -433,11 +433,11 @@ export default {
       }
       this.$refs.textBox?.clearTextarea();
     },
-    sendInternalNote() {
+    async sendInternalNote() {
       if (!this.textBoxMessage.trim()) return;
       const text = `${this.$t('internal_note')}: ${this.textBoxMessage.trim()}`;
       this.clearTextBox();
-      this.sendRoomInternalNote({ text });
+      await this.sendRoomInternalNote({ text });
       this.handleInternalNoteInput();
     },
     async sendTextBoxMessage(repliedMessage) {
