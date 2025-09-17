@@ -40,6 +40,13 @@
               :title="messageFormatTitle(new Date(message.created_on))"
             />
 
+            <ChatMessagesInternalNote
+              v-if="isInternalNoteMessage(message)"
+              :ref="`internal-note-${message.internal_note.uuid}`"
+              :key="message.uuid"
+              :message="message"
+            />
+
             <ChatMessagesFeedbackMessage
               v-if="isFeedbackMessage(message)"
               :key="message.uuid"
@@ -234,7 +241,7 @@
 </template>
 
 <script>
-import { mapState, mapWritableState } from 'pinia';
+import { mapState, mapWritableState, mapActions } from 'pinia';
 import { useDashboard } from '@/store/modules/dashboard';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
@@ -251,6 +258,7 @@ import FullscreenPreview from '@/components/chats/MediaMessage/Previews/Fullscre
 import ChatFeedback from '../ChatFeedback.vue';
 import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
 import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
+import ChatMessagesInternalNote from './ChatMessagesInternalNote.vue';
 
 export default {
   name: 'ChatMessages',
@@ -263,6 +271,7 @@ export default {
     TagGroup,
     FullscreenPreview,
     VideoPlayer,
+    ChatMessagesInternalNote,
   },
 
   props: {
@@ -315,18 +324,15 @@ export default {
     tags: {
       type: Array,
       default: () => [],
-      required: false,
     },
 
     showWaitingFeedback: {
       type: Boolean,
       default: false,
-      required: false,
     },
     showChatSeparator: {
       type: Boolean,
       default: true,
-      required: false,
     },
 
     isLoading: {
@@ -359,6 +365,8 @@ export default {
       'replyMessage',
       'showScrollToBottomButton',
     ]),
+    ...mapState(useRoomMessages, ['roomMessagesNext']),
+    ...mapWritableState(useRoomMessages, ['replyMessage', 'toScrollNote']),
     medias() {
       return this.messages
         .map((el) => el.media)
@@ -375,6 +383,10 @@ export default {
   },
 
   watch: {
+    toScrollNote(note) {
+      if (!note) return;
+      this.scrollToInternalNote(note);
+    },
     messages: {
       handler() {
         this.setStartFeedbacks();
@@ -405,6 +417,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(useRoomMessages, ['getRoomMessages']),
     handlerMessageReply(message) {
       this.replyMessage = message;
     },
@@ -563,6 +576,10 @@ export default {
       return !message.user && !message.contact;
     },
 
+    isInternalNoteMessage(message) {
+      return !!message.internal_note;
+    },
+
     isFeedbackMessage(message) {
       try {
         const textJson = JSON.parse(message.text);
@@ -668,6 +685,23 @@ export default {
       this.$nextTick(() => {
         this.showScrollToBottomButton = false;
       });
+    },
+    async scrollToInternalNote(note) {
+      const noteElement = this.$refs[`internal-note-${note.uuid}`]?.[0]?.$el;
+
+      if (noteElement) {
+        noteElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      } else if (this.roomMessagesNext) {
+        // Load more messages to find internal note
+        await this.getRoomMessages();
+        this.scrollToInternalNote(note);
+        return;
+      }
+
+      this.toScrollNote = null;
     },
   },
 };
