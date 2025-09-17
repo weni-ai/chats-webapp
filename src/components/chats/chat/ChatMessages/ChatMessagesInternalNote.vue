@@ -1,31 +1,33 @@
 <template>
-  <section class="chat-messages__internal-note-container">
-    <div class="chat-messages__internal-note">
-      <p
-        v-if="showAgentName"
-        class="chat-messages__internal-note-agent-name"
-      >
-        {{ agentName }}
-      </p>
-      <p class="chat-messages__internal-note-text">
-        {{ text }}
-      </p>
-    </div>
-    <UnnnicIcon
-      v-if="canDelete"
-      icon="delete"
-      size="ant"
-      scheme="aux-red-500"
-      clickable
-      @click="handleShowModalDeleteInternalNote()"
+  <section>
+    <section class="chat-messages__internal-note-container">
+      <section class="chat-messages__internal-note">
+        <p
+          v-if="showAgentName"
+          class="chat-messages__internal-note-agent-name"
+        >
+          {{ agentName }}
+        </p>
+        <p class="chat-messages__internal-note-text">
+          {{ text }}
+        </p>
+      </section>
+      <UnnnicIcon
+        v-if="canDelete"
+        icon="delete"
+        size="ant"
+        scheme="aux-red-500"
+        clickable
+        @click="handleShowModalDeleteInternalNote()"
+      />
+    </section>
+    <ModalDeleteInternalNote
+      v-if="showModalDeleteInternalNote"
+      :modelValue="showModalDeleteInternalNote"
+      :noteUuid="noteUuid"
+      @update:model-value="handleShowModalDeleteInternalNote()"
     />
   </section>
-  <ModalDeleteInternalNote
-    v-if="showModalDeleteInternalNote"
-    :modelValue="showModalDeleteInternalNote"
-    :noteUuid="noteUuid"
-    @update:model-value="handleShowModalDeleteInternalNote()"
-  />
 </template>
 
 <script>
@@ -60,6 +62,11 @@ export default {
     agentName() {
       return this.note.user?.name || '';
     },
+    agentEmail() {
+      return (
+        this.message.internal_note?.user?.email || this.message.user?.email
+      );
+    },
     text() {
       return this.note.text;
     },
@@ -67,7 +74,7 @@ export default {
       return this.note.uuid;
     },
     canDelete() {
-      const isMeInternalNote = this.me?.email === this.note.user?.email;
+      const isMeInternalNote = this.me?.email === this.agentEmail;
       return isMeInternalNote && this.note.is_deletable;
     },
   },

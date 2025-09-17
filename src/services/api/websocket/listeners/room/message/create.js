@@ -35,7 +35,7 @@ export default async (message, { app }) => {
 
     if (roomType !== 'waiting') roomsStore.bringRoomFront(findRoom);
 
-    if (app.me.email === message.user?.email) {
+    if (app.me.email === message.user?.email && !message.internal_note) {
       checkAndUpdateRoomLastMessage(findRoom, message);
       return;
     }
@@ -47,7 +47,11 @@ export default async (message, { app }) => {
     const notification = new SoundNotification('ping-bing');
     notification.notify();
 
-    if (document.hidden && !isValidJson(message.text)) {
+    if (
+      document.hidden &&
+      !isValidJson(message.text) &&
+      !message.internal_note
+    ) {
       try {
         sendWindowNotification({
           title: message.contact?.name,
