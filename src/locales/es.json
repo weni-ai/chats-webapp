@@ -342,8 +342,7 @@
     "select_your_queues": "Selecciona tus colas",
     "no_queue_selected": "Ninguna cola seleccionada",
     "success_update_queues": "Tus colas de servicio han sido actualizadas",
-    "error_update_queues": "No se pueden actualizar sus colas de servicio",
-    "queue_priority_disclaimer": "Los chats en la cola ahora se asignan automáticamente."
+    "error_update_queues": "No se pueden actualizar sus colas de servicio"
   },
   "chats_notifications": {
     "title": "Notificaciones de WeniChats",

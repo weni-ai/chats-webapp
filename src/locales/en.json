@@ -346,8 +346,7 @@
     "select_your_queues": "Select your queues",
     "no_queue_selected": "No queue selected",
     "success_update_queues": "Your service queues have been updated",
-    "error_update_queues": "Unable to update your service queues",
-    "queue_priority_disclaimer": "Queue chats are now automatically assigned."
+    "error_update_queues": "Unable to update your service queues"
   },
   "chats_notifications": {
     "title": "WeniChats Notifications",

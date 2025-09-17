@@ -3,6 +3,7 @@
 <template>
   <div
     class="chat-messages__container"
+    :class="{ 'chat-messages__container--view-mode': isViewMode }"
     data-testid="chat-messages-container"
   >
     <ChatMessagesLoading v-show="isSkeletonLoadingActive" />
@@ -362,7 +363,9 @@ export default {
         .flat()
         .filter((media) => this.isMedia(media));
     },
-
+    isViewMode() {
+      return !!this.viewedAgent?.email;
+    },
     isSkeletonLoadingActive() {
       const { isLoading, prevChatUuid, chatUuid } = this;
       return isLoading && prevChatUuid !== chatUuid;
@@ -695,6 +698,10 @@ export default {
   overflow: hidden;
   position: relative;
   height: 100%;
+
+  &--view-mode {
+    padding-left: $unnnic-spacing-sm;
+  }
 }
 
 .chat-messages {
