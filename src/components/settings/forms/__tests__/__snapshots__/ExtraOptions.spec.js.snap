@@ -36,15 +36,15 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
     </section>
     <!--v-if-->
   </section>
-  <section data-v-85728205="" class="form-actions" style="display: none;"><button data-v-d127031e="" data-v-85728205="" data-testid="cancel-button" class="unnnic-button unnnic-button--size-large unnnic-button--tertiary">
+  <section data-v-85728205="" class="form-actions" style="display: none;"><button data-v-73cbd3a2="" data-v-85728205="" data-testid="cancel-button" class="unnnic-button unnnic-button--size-large unnnic-button--tertiary">
       <!---->
       <!---->
-      <!----><span data-v-d127031e="" class="unnnic-button__label" data-testid="button-label"> Cancel</span>
+      <!----><span data-v-73cbd3a2="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Cancel</span>
       <!---->
-    </button><button data-v-d127031e="" data-v-85728205="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
+    </button><button data-v-73cbd3a2="" data-v-85728205="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
       <!---->
       <!---->
-      <!----><span data-v-d127031e="" class="unnnic-button__label" data-testid="button-label"> Save</span>
+      <!----><span data-v-73cbd3a2="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Save</span>
       <!---->
     </button></section>
 </section>"
