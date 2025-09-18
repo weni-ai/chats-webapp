@@ -25,32 +25,52 @@ export default class WebSocketSetup {
     const discussionsStore = useDiscussions();
     const dashboardStore = useDashboard();
     const { viewedAgent } = dashboardStore;
-    const limit = 30;
 
-    roomsStore.getAll({
+    const getWaitingRooms = roomsStore.getAll({
       offset: 0,
       concat: true,
-      limit,
-      roomsType: 'ongoing',
-      order: roomsStore.orderBy.ongoing,
-      viewedAgent: viewedAgent?.email,
-    });
-    roomsStore.getAll({
-      offset: 0,
-      concat: true,
-      limit,
+      limit: 30,
       roomsType: 'waiting',
       order: roomsStore.orderBy.waiting,
       viewedAgent: viewedAgent?.email,
+      cleanRoomType: 'waiting',
     });
-    roomsStore.getAll({
+
+    const getOngoingRooms = roomsStore.getAll({
       offset: 0,
       concat: true,
-      limit,
+      limit: 100,
+      roomsType: 'ongoing',
+      order: roomsStore.orderBy.ongoing,
+      viewedAgent: viewedAgent?.email,
+      cleanRoomType: 'ongoing',
+    });
+
+    const getFlowStartRooms = roomsStore.getAll({
+      offset: 0,
+      concat: true,
+      limit: 100,
       roomsType: 'flow_start',
       order: roomsStore.orderBy.flow_start,
       viewedAgent: viewedAgent?.email,
+      cleanRoomType: 'flow_start',
     });
+
+    Promise.all([getWaitingRooms, getOngoingRooms, getFlowStartRooms]).then(
+      () => {
+        if (roomsStore.activeRoom) {
+          const existActiveRoomGettedRooms = roomsStore.rooms.find(
+            (room) => room.uuid === roomsStore.activeRoom.uuid,
+          );
+          if (existActiveRoomGettedRooms) {
+            roomsStore.activeRoom = existActiveRoomGettedRooms;
+          } else {
+            roomsStore.activeRoom = null;
+          }
+        }
+      },
+    );
+
     discussionsStore.getAll({
       viewedAgent: viewedAgent?.email,
     });
