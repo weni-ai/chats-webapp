@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { mount } from '@vue/test-utils';
+import { createTestingPinia } from '@pinia/testing';
 
 import Media from '../Media.vue';
 import MediaService from '@/services/api/resources/chats/media';
@@ -9,6 +10,14 @@ vi.mock('@/services/api/resources/chats/media', () => ({
     listFromContactAndRoom: vi.fn(),
     listFromContactAndClosedRoom: vi.fn(),
     download: vi.fn(),
+  },
+}));
+
+vi.mock('@/services/api/resources/chats/roomNotes', () => ({
+  default: {
+    getInternalNotes: vi.fn(() => ({
+      results: [],
+    })),
   },
 }));
 
@@ -47,6 +56,7 @@ const createWrapper = (props = {}) =>
       ...props,
     },
     global: {
+      plugins: [createTestingPinia()],
       mocks: { $t: mockT },
       stubs: {
         UnnnicTab: {
@@ -105,7 +115,7 @@ describe('ContactMedia', () => {
 
   it('initializes correctly for both active and history modes', async () => {
     wrapper = createWrapper();
-    expect(wrapper.vm.tab).toBe('media');
+    expect(wrapper.vm.tab).toBe('notes');
     expect(MediaService.listFromContactAndRoom).toHaveBeenCalled();
 
     wrapper = createWrapper({ history: true });
@@ -168,8 +178,8 @@ describe('ContactMedia', () => {
     expect(wrapper.vm.audioTooltipText(audioWithoutSender)).toBe(
       ' 01/25/2024 at 12:30 PM',
     );
-
-    expect(wrapper.vm.isActiveTab('media')).toBe(true);
+    expect(wrapper.vm.isActiveTab('notes')).toBe(true);
+    expect(wrapper.vm.isActiveTab('media')).toBe(false);
     expect(wrapper.vm.isActiveTab('docs')).toBe(false);
   });
 
