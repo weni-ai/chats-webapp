@@ -389,10 +389,14 @@ export default {
       this.scrollToInternalNote(note);
     },
     messages: {
-      handler() {
+      handler(newMessages, oldMessages) {
+        const newMessagesLength = newMessages.length;
+        const oldMessagesLength = oldMessages.length;
+        const newOldMessagesDifference = newMessagesLength - oldMessagesLength;
+
         this.setStartFeedbacks();
         this.$nextTick(() => {
-          if (!this.showScrollToBottomButton) {
+          if (!this.showScrollToBottomButton || newOldMessagesDifference > 1) {
             this.manageScrollForNewMessages();
           }
           this.checkScrollPosition();
