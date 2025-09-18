@@ -361,12 +361,12 @@ export default {
 
   computed: {
     ...mapState(useDashboard, ['viewedAgent']),
+    ...mapState(useRoomMessages, ['roomMessagesNext']),
     ...mapWritableState(useRoomMessages, [
       'replyMessage',
+      'toScrollNote',
       'showScrollToBottomButton',
     ]),
-    ...mapState(useRoomMessages, ['roomMessagesNext']),
-    ...mapWritableState(useRoomMessages, ['replyMessage', 'toScrollNote']),
     medias() {
       return this.messages
         .map((el) => el.media)

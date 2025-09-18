@@ -103,17 +103,6 @@
           </span>
         </div>
       </div>
-      <UnnnicDisclaimer
-        v-if="enableAutomaticRoomRouting"
-        :class="
-          showOrderBy
-            ? 'room-container__chats'
-            : 'room-container__chats-margin-y'
-        "
-        :text="$t('chats.queue_priority_disclaimer')"
-        iconColor="neutral-dark"
-        data-testid="router-disclaimer"
-      />
       <CardGroup
         v-show="activeTab === 'discussions'"
         :discussions="discussions"
@@ -224,7 +213,7 @@ export default {
       newMessagesByRoom: 'newMessagesByRoom',
       maxPinLimit: 'maxPinLimit',
     }),
-    ...mapState(useConfig, ['project', 'enableAutomaticRoomRouting']),
+    ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
     ...mapWritableState(useRooms, [
