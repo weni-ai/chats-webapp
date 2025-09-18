@@ -344,8 +344,7 @@
     "select_your_queues": "Selecione suas filas",
     "no_queue_selected": "Nenhuma fila selecionada",
     "success_update_queues": "Suas filas de atendimento foram atualizadas",
-    "error_update_queues": "Não foi possível atualizar suas filas de atendimento",
-    "queue_priority_disclaimer": "Salas da fila agora são atribuídas automaticamente."
+    "error_update_queues": "Não foi possível atualizar suas filas de atendimento"
   },
   "chats_notifications": {
     "title": "Notificações do WeniChats",

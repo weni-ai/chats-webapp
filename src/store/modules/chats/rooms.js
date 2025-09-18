@@ -5,6 +5,7 @@ import { useProfile } from '../profile';
 
 import Room from '@/services/api/resources/chats/room';
 import { removeDuplicatedItems } from '@/utils/array';
+import { getRoomType } from '@/utils/room';
 
 export const useRooms = defineStore('rooms', {
   state: () => ({
@@ -119,6 +120,7 @@ export const useRooms = defineStore('rooms', {
       order,
       viewedAgent,
       roomsType,
+      cleanRoomType,
     }) {
       const response = await Room.getAll(
         offset,
@@ -128,6 +130,13 @@ export const useRooms = defineStore('rooms', {
         viewedAgent,
         roomsType,
       );
+
+      if (cleanRoomType) {
+        this.rooms = this.rooms.filter(
+          (room) => getRoomType(room) !== cleanRoomType,
+        );
+      }
+
       let gettedRooms = response.results || [];
       const listRoomHasNext = response.next;
 
@@ -266,12 +275,22 @@ export const useRooms = defineStore('rooms', {
     setContactToTransfer(contact) {
       this.contactToTransfer = contact;
     },
+    sortRooms(a, b, key) {
+      const isDesc = this.orderBy[key].startsWith('-');
+      const field = isDesc ? this.orderBy[key].slice(1) : this.orderBy[key];
+      const valueA = new Date(a[field]);
+      const valueB = new Date(b[field]);
+      return isDesc ? valueB - valueA : valueA - valueB;
+    },
   },
 
   getters: {
     agentRooms(store) {
       return store.rooms
         .filter((room) => !!room.user && room.is_waiting === false)
+        .sort((a, b) => {
+          return this.sortRooms(a, b, 'ongoing');
+        })
         .sort((a, b) => {
           const aPinned = a.is_pinned || false;
           const bPinned = b.is_pinned || false;
@@ -283,10 +302,18 @@ export const useRooms = defineStore('rooms', {
         });
     },
     waitingQueue(store) {
-      return store.rooms.filter((room) => !room.user && !room.is_waiting);
+      return store.rooms
+        .filter((room) => !room.user && !room.is_waiting)
+        .sort((a, b) => {
+          return this.sortRooms(a, b, 'waiting');
+        });
     },
     waitingContactAnswer(store) {
-      return store.rooms.filter((room) => room.is_waiting === true);
+      return store.rooms
+        .filter((room) => room.is_waiting === true)
+        .sort((a, b) => {
+          return this.sortRooms(a, b, 'flow_start');
+        });
     },
     getRoomById: (store) => (uuid) => {
       return store.rooms.find((room) => room.uuid === uuid);

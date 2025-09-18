@@ -3,6 +3,7 @@
 <template>
   <div
     class="chat-messages__container"
+    :class="{ 'chat-messages__container--view-mode': isViewMode }"
     data-testid="chat-messages-container"
   >
     <ChatMessagesLoading v-show="isSkeletonLoadingActive" />
@@ -223,7 +224,7 @@
       </FullscreenPreview>
     </section>
     <section
-      v-if="showScrollButton"
+      v-if="showScrollToBottomButton"
       class="chat-messages__scroll-button-container"
     >
       <UnnnicButton
@@ -354,20 +355,25 @@ export default {
       bot: '',
       agent: '',
     },
-    showScrollButton: false,
   }),
 
   computed: {
     ...mapState(useDashboard, ['viewedAgent']),
     ...mapState(useRoomMessages, ['roomMessagesNext']),
-    ...mapWritableState(useRoomMessages, ['replyMessage', 'toScrollNote']),
+    ...mapWritableState(useRoomMessages, [
+      'replyMessage',
+      'toScrollNote',
+      'showScrollToBottomButton',
+    ]),
     medias() {
       return this.messages
         .map((el) => el.media)
         .flat()
         .filter((media) => this.isMedia(media));
     },
-
+    isViewMode() {
+      return !!this.viewedAgent?.email;
+    },
     isSkeletonLoadingActive() {
       const { isLoading, prevChatUuid, chatUuid } = this;
       return isLoading && prevChatUuid !== chatUuid;
@@ -383,7 +389,9 @@ export default {
       handler() {
         this.setStartFeedbacks();
         this.$nextTick(() => {
-          this.manageScrollForNewMessages();
+          if (!this.showScrollToBottomButton) {
+            this.manageScrollForNewMessages();
+          }
           this.checkScrollPosition();
         });
       },
@@ -611,7 +619,7 @@ export default {
       const { scrollTop, scrollHeight, clientHeight } = chatMessages;
       const isAtBottom = scrollTop + clientHeight >= scrollHeight - 20;
 
-      this.showScrollButton = !isAtBottom;
+      this.showScrollToBottomButton = !isAtBottom;
     },
 
     handleScroll() {
@@ -673,7 +681,7 @@ export default {
       chatMessages.scrollTop = chatMessages.scrollHeight;
 
       this.$nextTick(() => {
-        this.showScrollButton = false;
+        this.showScrollToBottomButton = false;
       });
     },
     async scrollToInternalNote(note) {
@@ -724,6 +732,10 @@ export default {
   overflow: hidden;
   position: relative;
   height: 100%;
+
+  &--view-mode {
+    padding-left: $unnnic-spacing-sm;
+  }
 }
 
 .chat-messages {

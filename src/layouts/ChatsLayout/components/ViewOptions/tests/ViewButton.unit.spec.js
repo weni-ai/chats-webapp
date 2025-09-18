@@ -61,13 +61,13 @@ describe('ViewButton', () => {
     it('should display correct icon when expandedMore is true', () => {
       wrapper = createWrapper({ expandedMore: true });
       const icon = wrapper.find('[data-testid="header-icon-expand"]');
-      expect(icon.text()).toBe('expand_more');
+      expect(icon.attributes('data-icon')).toBe('expand_more');
     });
 
     it('should display correct icon when expandedMore is false', () => {
       wrapper = createWrapper({ expandedMore: false });
       const icon = wrapper.find('[data-testid="header-icon-expand"]');
-      expect(icon.text()).toBe('expand_less');
+      expect(icon.attributes('data-icon')).toBe('expand_less');
     });
   });
 
