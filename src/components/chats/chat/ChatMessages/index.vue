@@ -45,6 +45,7 @@
               :ref="`internal-note-${message.internal_note.uuid}`"
               :key="message.uuid"
               :message="message"
+              @click="$emit('open-room-contact-info')"
             />
 
             <ChatMessagesFeedbackMessage
@@ -344,7 +345,7 @@ export default {
       default: false,
     },
   },
-  emits: ['scrollTop'],
+  emits: ['scrollTop', 'open-room-contact-info'],
 
   data: () => ({
     highlightedMessageUuid: null,

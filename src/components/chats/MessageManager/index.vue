@@ -380,6 +380,11 @@ export default {
         this.send();
         event.preventDefault();
       }
+
+      if (event.key === 'Escape' && this.isInternalNote) {
+        this.handleInternalNoteInput();
+        event.preventDefault();
+      }
     },
     isTypingHandler(isTyping = false) {
       this.isTyping = isTyping;

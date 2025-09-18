@@ -97,6 +97,7 @@ export default {
   border-radius: $unnnic-border-radius-md;
   width: 100%;
   box-shadow: 0 2px 5px -1px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 
   &-container {
     margin-top: $unnnic-spacing-ant;
