@@ -288,7 +288,7 @@ export const useRoomMessages = defineStore('roomMessages', {
         updateMessage: () => {},
       });
 
-      this.roomInternalNotes.unshift(createdNote);
+      this.roomInternalNotes.push(createdNote);
     },
 
     async resendRoomMessage({ message }) {
