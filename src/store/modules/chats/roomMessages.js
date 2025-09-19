@@ -94,6 +94,13 @@ export const useRoomMessages = defineStore('roomMessages', {
         if (isMessageFromCurrentUser(message) && !message.internal_note) {
           this.roomMessagesSendingUuids.push(uuid);
         }
+
+        if (message.internal_note) {
+          this.roomInternalNotes.push({
+            ...message.internal_note,
+            user: message.user,
+          });
+        }
       }
     },
 
@@ -287,8 +294,6 @@ export const useRoomMessages = defineStore('roomMessages', {
         addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
         updateMessage: () => {},
       });
-
-      this.roomInternalNotes.push(createdNote);
     },
 
     async resendRoomMessage({ message }) {

@@ -111,6 +111,7 @@ export default {
     font-family: $unnnic-font-family-secondary;
     font-size: $unnnic-font-size-body-gt;
     line-height: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
+    word-break: break-word;
   }
 
   &-delete {
