@@ -98,6 +98,13 @@ export const useRoomMessages = defineStore('roomMessages', {
         ) {
           this.roomMessagesSendingUuids.push(uuid);
         }
+
+        if (message.internal_note) {
+          this.roomInternalNotes.push({
+            ...message.internal_note,
+            user: message.user,
+          });
+        }
       }
     },
 
@@ -291,8 +298,6 @@ export const useRoomMessages = defineStore('roomMessages', {
         addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
         updateMessage: () => {},
       });
-
-      this.roomInternalNotes.unshift(createdNote);
     },
 
     async resendRoomMessage({ message }) {
