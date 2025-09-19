@@ -71,7 +71,14 @@ describe('NewSectorDrawer', () => {
         plugins: [
           i18n,
           createTestingPinia({
-            initialState: { profile: { me: { email: 'tests@weni.ai' } } },
+            initialState: {
+              profile: { me: { email: 'tests@weni.ai' } },
+              featureFlag: {
+                featureFlags: {
+                  active_features: ['weniChatsAutomaticMessage'],
+                },
+              },
+            },
           }),
         ],
         stubs: {
@@ -169,6 +176,10 @@ describe('NewSectorDrawer', () => {
         can_trigger_flows: true,
         can_edit_custom_fields: true,
         sign_messages: true,
+        automatic_message: {
+          is_active: false,
+          text: '',
+        },
         managers: [],
         maxSimultaneousChatsByAgent: '4',
       },
@@ -228,6 +239,10 @@ describe('NewSectorDrawer', () => {
         name: 'Test Sector',
         managers: [managerMock],
         maxSimultaneousChatsByAgent: '5',
+        automatic_message: {
+          is_active: false,
+          text: '',
+        },
       },
       sectorQueue: {
         name: 'Test Queue',
@@ -235,13 +250,7 @@ describe('NewSectorDrawer', () => {
       },
     });
 
-    const extraOptionsForm = wrapper.findComponent(
-      '[data-testid="extra-options-form"]',
-    );
-
     const generalForm = wrapper.findComponent('[data-testid="general-form"]');
-
-    const mockTag = { name: 'Tag Mock', uuid: '1' };
 
     await generalForm.setData({
       selectedWorkdayDays: {
@@ -251,6 +260,12 @@ describe('NewSectorDrawer', () => {
         monday: [{ start: '08:00', end: '17:00', valid: true }],
       },
     });
+
+    await wrapper.vm.$nextTick();
+
+    const extraOptionsForm = wrapper.findComponent(ExtraOptions);
+
+    const mockTag = { name: 'Tag Mock', uuid: '1' };
 
     await extraOptionsForm.setData({
       toAddTags: [mockTag],

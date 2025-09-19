@@ -36,7 +36,9 @@ export default async (message, { app }) => {
 
     if (app.me.email === message.user?.email) {
       checkAndUpdateRoomLastMessage(findRoom, message);
-      return;
+      if (!message.is_automatic_message) {
+        return;
+      }
     }
 
     if (roomType === 'ongoing' && roomsStore.activeTab !== 'ongoing') {
