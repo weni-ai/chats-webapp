@@ -23,13 +23,6 @@ export default {
     icon: { type: String, required: true },
     title: { type: String, required: true },
     action: { type: Function, required: true },
-    inputType: {
-      type: String,
-      validator(value) {
-        return ['image', 'doc'].includes(value);
-      },
-      default: '',
-    },
   },
 };
 </script>

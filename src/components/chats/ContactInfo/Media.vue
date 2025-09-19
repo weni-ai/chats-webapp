@@ -4,6 +4,31 @@
     size="md"
     :tabs="tabs"
   >
+    <template #tab-head-notes>
+      <div
+        class="notes-tab"
+        :class="{ active: isActiveTab('notes') }"
+        data-testid="note-tab-notes"
+      >
+        <span class="name">{{ $t('notes') }}</span>
+      </div>
+    </template>
+
+    <template #tab-panel-notes>
+      <section
+        class="notes__content"
+        data-testid="notes-content"
+      >
+        <ChatInternalNote
+          v-for="note in roomInternalNotes"
+          :key="note.uuid"
+          class="chat-internal-note"
+          :message="note"
+          showAgentName
+          @click="handleInternalNoteClick(note)"
+        />
+      </section>
+    </template>
     <template #tab-head-media>
       <div
         class="media-tab"
@@ -95,8 +120,16 @@
 </template>
 
 <script>
+import { mapWritableState } from 'pinia';
+
 import Media from '@/services/api/resources/chats/media';
 import MediaPreview from '@/components/chats/MediaMessage/Previews/Media.vue';
+import ChatInternalNote from '@/components/chats/chat/ChatMessages/ChatMessagesInternalNote.vue';
+
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+
+import RoomNotes from '@/services/api/resources/chats/roomNotes';
+
 import moment from 'moment';
 
 export default {
@@ -104,6 +137,7 @@ export default {
 
   components: {
     MediaPreview,
+    ChatInternalNote,
   },
 
   props: {
@@ -124,10 +158,9 @@ export default {
 
   data() {
     return {
-      tab: 'media',
-      tabs: ['media', 'docs', 'audio'],
+      tab: 'notes',
+      tabs: ['notes', 'media', 'docs', 'audio'],
       page: 1,
-
       medias: [],
       audios: [],
       audioWithDuration: [],
@@ -137,6 +170,7 @@ export default {
   },
 
   computed: {
+    ...mapWritableState(useRoomMessages, ['toScrollNote', 'roomInternalNotes']),
     images() {
       return this.medias.filter(
         (media) =>
@@ -163,7 +197,13 @@ export default {
       await this.loadNextMediasClosedRoom();
     }
 
+    await this.loadInternalNotes();
+
     this.$emit('loaded-medias');
+  },
+
+  unmounted() {
+    this.roomInternalNotes = [];
   },
 
   methods: {
@@ -209,6 +249,7 @@ export default {
         ordering: 'content_type',
         page: this.page,
       });
+
       this.audios = await Promise.all(
         response.results
           .filter((media) => media.content_type.startsWith('audio/'))
@@ -228,6 +269,7 @@ export default {
               }),
           ),
       );
+
       this.medias = this.medias.concat(
         response.results.filter(
           (media) => !media.content_type.startsWith('audio/'),
@@ -277,11 +319,27 @@ export default {
         this.loadNextMediasClosedRoom();
       }
     },
+    async loadInternalNotes() {
+      const response = await RoomNotes.getInternalNotes({
+        room: this.room.uuid,
+      });
+
+      this.roomInternalNotes = response.results;
+    },
+    handleInternalNoteClick(note) {
+      this.toScrollNote = note;
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.notes__content {
+  .chat-internal-note {
+    cursor: pointer;
+  }
+}
+
 .medias__content {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));

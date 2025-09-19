@@ -28,6 +28,7 @@
     :isClosedChat="!!room?.ended_at"
     :enableReply="false"
     @scroll-top="searchForMoreMessages"
+    @open-room-contact-info="$emit('open-room-contact-info')"
   />
 </template>
 <script>
@@ -53,6 +54,7 @@ export default {
       default: false,
     },
   },
+  emits: ['open-room-contact-info'],
 
   data: () => {
     return {

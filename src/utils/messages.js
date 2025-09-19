@@ -24,16 +24,18 @@ export function createTemporaryMessage({
   message = '',
   medias = [],
   repliedMessage = null,
+  internalNote = null,
 }) {
   return {
     uuid: Date.now().toString(),
-    text: message,
+    text: internalNote ? '' : message,
     created_on: new Date().toISOString(),
     media: medias || [],
     [itemType]: itemUuid,
     seen: true,
     user: itemUser,
     replied_message: repliedMessage,
+    internal_note: internalNote,
   };
 }
 
@@ -185,6 +187,7 @@ export async function sendMessage({
   addMessage,
   addSortedMessage,
   updateMessage,
+  internalNote,
 }) {
   if (!itemUuid) {
     return;
@@ -197,6 +200,7 @@ export async function sendMessage({
     itemUser,
     message,
     repliedMessage,
+    internalNote,
   });
 
   addMessage(temporaryMessage);

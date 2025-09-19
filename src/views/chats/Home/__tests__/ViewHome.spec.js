@@ -96,6 +96,14 @@ vi.mock('@/services/api/resources/chats/flowsTrigger.js', () => ({
   },
 }));
 
+vi.mock('@/services/api/resources/chats/roomNotes', () => ({
+  default: {
+    getInternalNotes: vi.fn(() => ({
+      results: [],
+    })),
+  },
+}));
+
 const i18n = createI18n({
   legacy: false,
   locale: 'en',

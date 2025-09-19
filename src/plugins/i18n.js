@@ -8,10 +8,6 @@ import es from '@/locales/es.json';
 import('moment/dist/locale/es.js');
 import('moment/dist/locale/pt-br.js');
 
-import moment from 'moment';
-
-moment.locale('pt-br');
-
 const messages = {
   'pt-br': pt_br,
   en,
