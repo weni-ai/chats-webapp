@@ -26,6 +26,10 @@ vi.mock('@/services/api/resources/chats/room', () => ({
   default: { updateReadMessages: vi.fn() },
 }));
 
+vi.mock('@/services/api/resources/chats/roomNotes', () => ({
+  default: { getInternalNotes: vi.fn() },
+}));
+
 vi.mock('@/services/api/resources/settings/queue', () => ({
   default: { tags: vi.fn(() => ({ results: [] })) },
 }));
