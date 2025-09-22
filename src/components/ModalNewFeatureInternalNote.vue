@@ -27,13 +27,17 @@
         </ul>
       </section>
       <section class="modal-new-feature-internal-note__image-container">
-        TODO: Add gif
+        <img
+          class="modal-new-feature-internal-note__image"
+          :src="tourGif"
+        />
       </section>
     </section>
   </UnnnicModalDialog>
 </template>
 
 <script>
+import tourGif from '@/assets/internal-note-onboarding.gif';
 export default {
   name: 'ModalNewFeatureInternalNote',
   props: {
@@ -43,6 +47,11 @@ export default {
     },
   },
   emits: ['update:modelValue'],
+  data() {
+    return {
+      tourGif,
+    };
+  },
 };
 </script>
 <style lang="scss">
@@ -64,7 +73,10 @@ export default {
     padding-left: $unnnic-spacing-ant;
   }
   &__image {
-    &__container {
+    max-width: 503px;
+    border-radius: $unnnic-radius-1;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    &-container {
       display: flex;
       justify-content: center;
       align-items: center;
