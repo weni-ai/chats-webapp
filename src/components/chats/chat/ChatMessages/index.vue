@@ -591,8 +591,6 @@ export default {
       try {
         const textJson = JSON.parse(message.text);
 
-        console.log(textJson);
-
         return (
           this.isNewFeedbackMessage(textJson) ||
           this.isOldFeedbackMessage(textJson) ||
