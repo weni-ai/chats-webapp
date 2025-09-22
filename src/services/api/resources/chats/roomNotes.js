@@ -1,9 +1,9 @@
 import http from '@/services/api/http';
 
 export default {
-  async getInternalNotes({ room }) {
+  async getInternalNotes({ room, limit } = { limit: 9999 }) {
     const response = await http.get('/room_notes/', {
-      params: { room, limit: 9999 },
+      params: { room, limit },
     });
 
     return response.data;

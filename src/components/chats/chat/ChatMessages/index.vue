@@ -52,8 +52,10 @@
               v-if="isFeedbackMessage(message)"
               :key="message.uuid"
               :message="message"
-              :scheme="isClosedChat ? 'gray' : 'blue'"
+              :scheme="getMessageFeedbackScheme(message)"
               :title="messageFormatTitle(new Date(message.created_on))"
+              :clickable="isInternalNoteText(message)"
+              @click="handleClickChatFeedback(message)"
             />
 
             <template v-else>
@@ -258,6 +260,9 @@ import ChatFeedback from '../ChatFeedback.vue';
 import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
 import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
 import ChatMessagesInternalNote from './ChatMessagesInternalNote.vue';
+
+import { isString } from '@/utils/string';
+import { SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT } from '@/utils/chats';
 
 export default {
   name: 'ChatMessages',
@@ -576,19 +581,67 @@ export default {
     },
 
     isInternalNoteMessage(message) {
-      return !!message.internal_note;
+      return (
+        !!message.internal_note &&
+        !message.internal_note.see_all_internal_notes_chip
+      );
     },
 
     isFeedbackMessage(message) {
       try {
         const textJson = JSON.parse(message.text);
 
-        const isNewFeedback = !!textJson.method && !!textJson.content;
-        const isOldFeedback = ['queue', 'user'].includes(textJson.type);
+        console.log(textJson);
 
-        return isNewFeedback || isOldFeedback;
+        return (
+          this.isNewFeedbackMessage(textJson) ||
+          this.isOldFeedbackMessage(textJson) ||
+          this.isSeeAllInternalNotesChipMessage(textJson)
+        );
       } catch (error) {
         return false;
+      }
+    },
+
+    isNewFeedbackMessage(message) {
+      if (isString(message)) {
+        return false;
+      }
+
+      return !!message.method && !!message.content;
+    },
+
+    isOldFeedbackMessage(message) {
+      if (isString(message)) {
+        return false;
+      }
+
+      return ['queue', 'user'].includes(message.type);
+    },
+
+    isSeeAllInternalNotesChipMessage(message) {
+      if (isString(message)) {
+        return false;
+      }
+
+      return message.see_all_internal_notes_chip;
+    },
+
+    isInternalNoteText(message) {
+      return message.text === SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT;
+    },
+
+    getMessageFeedbackScheme(message) {
+      if (message.text === SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT) {
+        return 'yellow-400';
+      }
+
+      return this.isClosedChat ? 'gray' : 'blue';
+    },
+
+    handleClickChatFeedback(message) {
+      if (this.isInternalNoteText(message)) {
+        this.$emit('open-room-contact-info');
       }
     },
 
@@ -720,6 +773,10 @@ export default {
     filter: brightness(1) saturate(1);
     -webkit-filter: brightness(1) saturate(1);
   }
+}
+
+.clickable {
+  cursor: pointer;
 }
 
 .chat-messages__scroll-button-container {

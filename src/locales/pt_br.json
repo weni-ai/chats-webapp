@@ -287,7 +287,8 @@
       "discussion_created": "{agent} iniciou a discussão com fila {queue}",
       "discussion_joined": "{agent} entrou na discussão",
       "agent_took_chat": "Ops! O chat com contato {contact} foi assumido por outro agente",
-      "automatic_transfer_from_queue": "Sala atribuída ao {agent}."
+      "automatic_transfer_from_queue": "Sala atribuída ao {agent}.",
+      "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>"
     },
     "room_list": {
       "order_by": "Ordenar por:",

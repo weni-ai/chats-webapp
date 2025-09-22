@@ -291,7 +291,8 @@
       "discussion_created": "{agent} started discussion with queue {queue}",
       "discussion_joined": "{agent} joined the discussion",
       "agent_took_chat": "Oops! The chat with the contact {contact} has already been taken over by another agent",
-      "automatic_transfer_from_queue": "Room assigned to {agent}."
+      "automatic_transfer_from_queue": "Room assigned to {agent}.",
+      "see_all_internal_notes": "<b style='color: white;'>See internal notes</b>"
     },
     "room_list": {
       "order_by": "Order by:",
