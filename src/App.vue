@@ -2,6 +2,11 @@
   <div id="app">
     <SocketAlertBanner v-if="showSocketAlertBanner" />
     <RouterView />
+    <ModalOfflineAgent
+      v-if="showModalOfflineAgent"
+      v-model="showModalOfflineAgent"
+      :username="userWhoChangedStatus"
+    />
   </div>
 </template>
 
@@ -9,6 +14,7 @@
 import { mapActions, mapState } from 'pinia';
 
 import SocketAlertBanner from './layouts/ChatsLayout/components/SocketAlertBanner.vue';
+import ModalOfflineAgent from './components/ModalOfflineAgent.vue';
 
 import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
@@ -30,12 +36,15 @@ import {
   setProject as setProjectLocalStorage,
 } from '@/utils/config';
 
+import { moduleStorage } from '@/utils/storage';
+
 import moment from 'moment';
 
 export default {
   name: 'App',
   components: {
     SocketAlertBanner,
+    ModalOfflineAgent,
   },
   setup() {
     const queryString = window.location.href.split('?')[1];
@@ -51,6 +60,7 @@ export default {
     return {
       ws: null,
       loading: false,
+      showModalOfflineAgent: false,
     };
   },
 
@@ -66,6 +76,7 @@ export default {
       appToken: 'token',
       appProject: (store) => store.project.uuid,
       socketStatus: 'socketStatus',
+      disconnectedBy: 'disconnectedBy',
     }),
 
     socketRetryCount() {
@@ -84,6 +95,10 @@ export default {
       const { appToken, appProject } = this;
 
       return [appToken, appProject];
+    },
+
+    userWhoChangedStatus() {
+      return this.disconnectedBy;
     },
   },
 
@@ -148,7 +163,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(useConfig, ['setStatus', 'setProject']),
+    ...mapActions(useConfig, ['setStatus', 'setProject', 'setDisconnectedBy']),
     ...mapActions(useProfile, ['setMe', 'getMeQueues']),
     ...mapActions(useQuickMessages, {
       getAllQuickMessages: 'getAll',
@@ -158,9 +173,15 @@ export default {
     }),
     ...mapActions(useFeatureFlag, ['getFeatureFlags']),
     restoreSessionStorageUserStatus({ projectUuid }) {
-      const userStatus = sessionStorage.getItem(`statusAgent-${projectUuid}`);
+      const userStatus = moduleStorage.getItem(
+        `statusAgent-${projectUuid}`,
+        '',
+        { useSession: true },
+      );
       if (!['OFFLINE', 'ONLINE'].includes(userStatus)) {
-        sessionStorage.setItem(`statusAgent-${projectUuid}`, 'OFFLINE');
+        moduleStorage.setItem(`statusAgent-${projectUuid}`, 'OFFLINE', {
+          useSession: true,
+        });
       }
       this.setStatus(userStatus);
     },
@@ -222,10 +243,13 @@ export default {
 
     async onboarding() {
       const onboarded =
-        sessionStorage.getItem('CHATS_USER_ONBOARDED') ||
-        (await Profile.onboarded());
+        moduleStorage.getItem('userOnboarded', '', {
+          useSession: true,
+        }) || (await Profile.onboarded());
       if (onboarded) {
-        sessionStorage.setItem('CHATS_USER_ONBOARDED', true);
+        moduleStorage.setItem('userOnboarded', true, {
+          useSession: true,
+        });
         return;
       }
 
@@ -235,7 +259,13 @@ export default {
     async getUserStatus() {
       const projectUuid = this.project.uuid;
 
-      const userStatus = sessionStorage.getItem(`statusAgent-${projectUuid}`);
+      const userStatus = moduleStorage.getItem(
+        `statusAgent-${projectUuid}`,
+        '',
+        {
+          useSession: true,
+        },
+      );
 
       const {
         data: { connection_status: responseStatus },
@@ -259,10 +289,22 @@ export default {
         status,
       });
       useConfig().$patch({ status: connection_status });
-      sessionStorage.setItem(
+      moduleStorage.setItem(
         `statusAgent-${this.project.uuid}`,
         connection_status,
+        {
+          useSession: true,
+        },
       );
+    },
+
+    updateUserStatusFromWebSocket(status, disconnectedBy = '') {
+      moduleStorage.setItem(`statusAgent-${this.project.uuid}`, status, {
+        useSession: true,
+      });
+      this.setStatus(status);
+      this.setDisconnectedBy(disconnectedBy);
+      this.showModalOfflineAgent = true;
     },
 
     async wsConnect() {

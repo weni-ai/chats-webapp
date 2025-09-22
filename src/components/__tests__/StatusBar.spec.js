@@ -16,6 +16,7 @@ import { createTestingPinia } from '@pinia/testing';
 import Profile from '@/services/api/resources/profile';
 import { setActivePinia } from 'pinia';
 import unnnic from '@weni/unnnic-system';
+import { moduleStorage } from '@/utils/storage';
 
 vi.mock('@weni/unnnic-system', () => ({
   default: {
@@ -31,6 +32,7 @@ vi.mock('@/store/modules/config', () => ({
         can_see_timer: true,
       },
     },
+    status: 'ONLINE',
     getStatus: vi.fn().mockResolvedValue({
       data: { connection_status: 'ONLINE' },
     }),
@@ -104,6 +106,7 @@ describe('StatusBar', () => {
               can_see_timer: true,
             },
           },
+          status: 'ONLINE',
           getStatus: vi.fn().mockResolvedValue({
             data: { connection_status: 'ONLINE' },
           }),
@@ -116,7 +119,7 @@ describe('StatusBar', () => {
       },
     });
     setActivePinia(pinia);
-    sessionStorage.clear();
+    moduleStorage.clear({ useSession: true });
     vi.useFakeTimers();
   });
 
@@ -499,7 +502,7 @@ describe('StatusBar', () => {
       await wrapper.vm.$nextTick();
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
-      await items[0].trigger('click');
+      await items[1].trigger('click');
       await flushPromises();
 
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
@@ -547,11 +550,11 @@ describe('StatusBar', () => {
       await wrapper.vm.$nextTick();
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
-      await items[0].trigger('click');
+      await items[1].trigger('click');
 
       expect(Profile.updateStatus).toHaveBeenCalledWith({
         projectUuid: 'test-uuid',
-        status: 'ONLINE',
+        status: 'OFFLINE',
       });
     });
   });
@@ -591,7 +594,9 @@ describe('StatusBar', () => {
 
   describe('Session Storage Management', () => {
     it('should initialize status from session storage', async () => {
-      sessionStorage.setItem('statusAgent-test-uuid', 'ONLINE');
+      moduleStorage.setItem('statusAgent-test-uuid', 'ONLINE', {
+        useSession: true,
+      });
       wrapper = createWrapper();
       await wrapper.vm.$nextTick();
 
@@ -606,7 +611,11 @@ describe('StatusBar', () => {
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
       await items[0].trigger('click');
 
-      expect(sessionStorage.getItem('statusAgent-test-uuid')).toBe('ONLINE');
+      expect(
+        moduleStorage.getItem('statusAgent-test-uuid', null, {
+          useSession: true,
+        }),
+      ).toBe('ONLINE');
     });
   });
 
@@ -616,15 +625,15 @@ describe('StatusBar', () => {
       await wrapper.vm.$nextTick();
 
       const statusIcon = wrapper.find('[data-testid="status-bar-icon"]');
-      expect(statusIcon.classes()).toContain('status-bar--gray');
+      expect(statusIcon.classes()).toContain('status-bar--green');
 
       wrapper.vm.selectedStatus = {
-        value: 'active',
-        label: 'Online',
-        color: 'green',
+        value: 'inactive',
+        label: 'Offline',
+        color: 'gray',
       };
       await wrapper.vm.$nextTick();
-      expect(statusIcon.classes()).toContain('status-bar--green');
+      expect(statusIcon.classes()).toContain('status-bar--gray');
 
       wrapper.vm.selectedStatus = {
         value: 'lunch',

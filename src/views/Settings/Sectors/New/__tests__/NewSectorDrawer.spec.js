@@ -12,6 +12,8 @@ import FormQueue from '@/components/settings/forms/Queue.vue';
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
 
+import i18n from '@/plugins/i18n';
+
 const managerMock = {
   uuid: '2',
   sector: '1',
@@ -45,6 +47,10 @@ vi.mock('@/services/api/resources/settings/sector', () => ({
     update: vi.fn(),
     removeTag: vi.fn(),
     addTag: vi.fn(),
+    getCountryHolidays: () =>
+      Promise.resolve({ holidays: [], country_code: 'BR' }),
+    setSectorWorkingDays: vi.fn(() => Promise.resolve()),
+    createCountryHolidays: vi.fn(() => Promise.resolve()),
   },
 }));
 
@@ -63,8 +69,16 @@ describe('NewSectorDrawer', () => {
       props: { modelValue: true },
       global: {
         plugins: [
+          i18n,
           createTestingPinia({
-            initialState: { profile: { me: { email: 'tests@weni.ai' } } },
+            initialState: {
+              profile: { me: { email: 'tests@weni.ai' } },
+              featureFlag: {
+                featureFlags: {
+                  active_features: ['weniChatsAutomaticMessage'],
+                },
+              },
+            },
           }),
         ],
         stubs: {
@@ -162,10 +176,9 @@ describe('NewSectorDrawer', () => {
         can_trigger_flows: true,
         can_edit_custom_fields: true,
         sign_messages: true,
-        workingDay: {
-          start: '',
-          end: '',
-          dayOfWeek: 'week-days',
+        automatic_message: {
+          is_active: false,
+          text: '',
         },
         managers: [],
         maxSimultaneousChatsByAgent: '4',
@@ -224,9 +237,12 @@ describe('NewSectorDrawer', () => {
     await wrapper.setData({
       sector: {
         name: 'Test Sector',
-        workingDay: { start: '08:00', end: '17:00' },
         managers: [managerMock],
         maxSimultaneousChatsByAgent: '5',
+        automatic_message: {
+          is_active: false,
+          text: '',
+        },
       },
       sectorQueue: {
         name: 'Test Queue',
@@ -234,9 +250,20 @@ describe('NewSectorDrawer', () => {
       },
     });
 
-    const extraOptionsForm = wrapper.findComponent(
-      '[data-testid="extra-options-form"]',
-    );
+    const generalForm = wrapper.findComponent('[data-testid="general-form"]');
+
+    await generalForm.setData({
+      selectedWorkdayDays: {
+        monday: true,
+      },
+      selectedWorkdayDaysTime: {
+        monday: [{ start: '08:00', end: '17:00', valid: true }],
+      },
+    });
+
+    await wrapper.vm.$nextTick();
+
+    const extraOptionsForm = wrapper.findComponent(ExtraOptions);
 
     const mockTag = { name: 'Tag Mock', uuid: '1' };
 
@@ -245,6 +272,8 @@ describe('NewSectorDrawer', () => {
       tags: [mockTag],
       currentTags: [mockTag],
     });
+
+    await wrapper.vm.$nextTick();
 
     expect(wrapper.vm.isValid.general).toBe(true);
     expect(wrapper.vm.isValid.extraOptions).toBe(true);

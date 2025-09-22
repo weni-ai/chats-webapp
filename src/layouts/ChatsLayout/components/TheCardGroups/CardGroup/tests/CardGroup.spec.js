@@ -66,12 +66,7 @@ describe('CardGroup.vue', () => {
       global: {
         plugins: [pinia],
         mocks: {
-          $t: (key) => {
-            if (key === 'chats.queue_priority_disclaimer') {
-              return 'Queue priority disclaimer text';
-            }
-            return key;
-          },
+          $t: (key) => key,
         },
         stubs: {
           UnnnicCollapse: {

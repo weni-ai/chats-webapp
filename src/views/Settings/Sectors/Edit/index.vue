@@ -89,12 +89,11 @@ export default {
         name: '',
         can_trigger_flows: '',
         can_edit_custom_fields: '',
-        sign_messages: '',
-        workingDay: {
-          start: '',
-          end: '',
-          dayOfWeek: 'week-days',
+        automatic_message: {
+          is_active: false,
+          text: '',
         },
+        sign_messages: '',
         managers: [],
         maxSimultaneousChatsByAgent: '',
       },
@@ -165,11 +164,6 @@ export default {
       }
     },
 
-    normalizeTime(time) {
-      const timeFormat = /^(?<time>(\d\d):(\d\d))/;
-      return time.match(timeFormat)?.groups?.time || time;
-    },
-
     handlerSectorData() {
       const {
         name,
@@ -179,8 +173,7 @@ export default {
         sign_messages,
         rooms_limit,
         uuid,
-        work_end,
-        work_start,
+        automatic_message,
       } = this.currentSector;
       this.sector = {
         ...this.sector,
@@ -190,11 +183,8 @@ export default {
         can_edit_custom_fields,
         config,
         sign_messages,
-        workingDay: {
-          start: this.normalizeTime(work_start),
-          end: this.normalizeTime(work_end),
-        },
         maxSimultaneousChatsByAgent: rooms_limit.toString(),
+        automatic_message,
       };
       this.setCopilotActive(this.sector.config?.can_use_chat_completion);
       this.setCopilotCustomRulesActive(this.sector.config?.can_input_context);
