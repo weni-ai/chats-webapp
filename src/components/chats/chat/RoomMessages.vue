@@ -180,7 +180,7 @@ export default {
         limit: 1,
       });
       const hasInternalNotes = results.length > 0;
-      if (hasInternalNotes) {
+      if (hasInternalNotes && !this.room.ended_at) {
         const chipNote = {
           uuid: new Date().toString(),
           created_on: new Date().toISOString(),
