@@ -1,5 +1,6 @@
 import { expect, describe, it, vi, beforeEach } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
+import { createTestingPinia } from '@pinia/testing';
 
 import { createMemoryHistory, createRouter } from 'vue-router';
 
@@ -27,6 +28,10 @@ const sectorExtraOptionsMock = {
   can_trigger_flows: false,
   sign_messages: false,
   can_edit_custom_fields: false,
+  automatic_message: {
+    is_active: false,
+    text: '',
+  },
 };
 
 const routes = [{ path: '/settings', name: 'settings' }];
@@ -41,7 +46,7 @@ function createWrapper(props = {}) {
   const wrapper = mount(FormSectorExtraOptions, {
     props: { modelValue: sectorExtraOptionsMock, isEditing: false, ...props },
     global: {
-      plugins: [router],
+      plugins: [router, createTestingPinia()],
       stubs: {
         UnnnicSwitch: true,
       },

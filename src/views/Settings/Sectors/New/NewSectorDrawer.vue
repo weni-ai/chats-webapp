@@ -148,6 +148,10 @@ export default {
         can_trigger_flows: true,
         can_edit_custom_fields: true,
         sign_messages: true,
+        automatic_message: {
+          is_active: false,
+          text: '',
+        },
         config: {
           secondary_project: '',
         },
@@ -216,6 +220,7 @@ export default {
           maxSimultaneousChatsByAgent,
           managers,
           config,
+          automatic_message,
         } = this.sector;
 
         const createSectorBody = {
@@ -226,7 +231,10 @@ export default {
           rooms_limit: this.enableGroupsMode
             ? '0'
             : maxSimultaneousChatsByAgent,
-          config,
+          config: this.enableGroupsMode
+            ? config
+            : { ...config, secondary_project: undefined },
+          automatic_message,
         };
 
         const createdSector = await Sector.create(createSectorBody);

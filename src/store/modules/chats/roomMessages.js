@@ -88,7 +88,10 @@ export const useRoomMessages = defineStore('roomMessages', {
 
         this.roomMessages.push(messageWithSender);
 
-        if (isMessageFromCurrentUser(message)) {
+        if (
+          isMessageFromCurrentUser(message) &&
+          !message.is_automatic_message
+        ) {
           this.roomMessagesSendingUuids.push(uuid);
         }
       }

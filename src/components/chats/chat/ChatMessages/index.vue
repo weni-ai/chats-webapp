@@ -67,6 +67,8 @@
                 :mediaType="isGeolocation(message.media?.[0]) ? 'geo' : ''"
                 :enableReply="enableReply"
                 :replyMessage="message.replied_message"
+                :automatic="message.is_automatic_message"
+                :locale="$i18n.locale"
                 data-testid="chat-message"
                 @click-reply-message="
                   handlerClickReplyMessage(message.replied_message)

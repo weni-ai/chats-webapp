@@ -36,6 +36,55 @@
         :textRight="$t('sector.additional_options.edit_custom_fields')"
         data-testid="config-switch"
       />
+      <template
+        v-if="
+          featureFlags.active_features?.includes('weniChatsAutomaticMessage')
+        "
+      >
+        <section class="switchs__container">
+          <UnnnicSwitch
+            :modelValue="sector.automatic_message.is_active"
+            :textRight="
+              sector.automatic_message.is_active
+                ? $t(
+                    'sector.additional_options.automatic_message.switch_active',
+                  )
+                : $t(
+                    'sector.additional_options.automatic_message.switch_disabled',
+                  )
+            "
+            data-testid="config-switch"
+            @update:model-value="handleAutomaticMessageIsActive"
+          />
+          <UnnnicToolTip
+            enabled
+            :text="$t('sector.additional_options.automatic_message.tooltip')"
+            side="right"
+            maxWidth="15rem"
+          >
+            <UnnnicIconSvg
+              icon="information-circle-4"
+              scheme="neutral-soft"
+              size="sm"
+            />
+          </UnnnicToolTip>
+        </section>
+        <UnnnicInputNext
+          v-if="sector.automatic_message.is_active"
+          v-model="sector.automatic_message.text"
+          :maxlength="160"
+          :label="$t('sector.additional_options.automatic_message.field.title')"
+          :placeholder="
+            $t('sector.additional_options.automatic_message.field.placeholder')
+          "
+        />
+        <p
+          v-if="sector.automatic_message.is_active"
+          class="automatic-message-count"
+        >
+          {{ sector.automatic_message.text.length }}/160
+        </p>
+      </template>
     </section>
     <section class="tags">
       <h2
@@ -58,7 +107,7 @@
       </h2>
 
       <section class="tags-form">
-        <UnnnicInput
+        <UnnnicInputNext
           v-model="tagName"
           class="tags-form__input"
           :label="$t('tags.add.label')"
@@ -89,6 +138,22 @@
         />
       </section>
     </section>
+    <section
+      v-show="isEditing"
+      class="form-actions"
+    >
+      <UnnnicButton
+        :text="$t('cancel')"
+        type="tertiary"
+        data-testid="cancel-button"
+        @click.stop="$router.push('/settings')"
+      />
+      <UnnnicButton
+        :text="$t('save')"
+        :disabled="!validForm"
+        @click.stop="save()"
+      />
+    </section>
   </section>
 </template>
 
@@ -99,6 +164,9 @@ import TagGroup from '@/components/TagGroup.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
 
+import { mapState } from 'pinia';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+
 export default {
   name: 'SectorExtraOptionsForm',
   components: {
@@ -107,7 +175,7 @@ export default {
   props: {
     modelValue: {
       type: Object,
-      default: () => ({}),
+      required: true,
     },
     isEditing: {
       type: Boolean,
@@ -125,6 +193,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
     sector: {
       get() {
         return this.modelValue;
@@ -132,6 +201,16 @@ export default {
       set(val) {
         this.$emit('update:modelValue', val);
       },
+    },
+    validForm() {
+      const valid =
+        !this.sector.automatic_message.is_active ||
+        (this.sector.automatic_message.is_active &&
+          this.sector.automatic_message.text.length > 0);
+
+      this.$emit('changeIsValid', valid);
+
+      return valid;
     },
     translationTriggerFlows() {
       return this.sector.can_trigger_flows
@@ -148,6 +227,10 @@ export default {
     if (this.isEditing) this.getTags();
   },
   methods: {
+    handleAutomaticMessageIsActive(value) {
+      this.sector.automatic_message.is_active = value;
+      if (!value) this.sector.automatic_message.text = '';
+    },
     async getTags() {
       const sectorCurrentTags = await Sector.tags(this.sector.uuid);
       this.currentTags = this.tags = sectorCurrentTags.results;
@@ -190,13 +273,18 @@ export default {
       this.tags = this.tags.filter((addedTag) => addedTag.uuid !== tag.uuid);
     },
     updateSectorExtraConfigs() {
-      const { can_trigger_flows, can_edit_custom_fields, sign_messages } =
-        this.sector;
+      const {
+        can_trigger_flows,
+        can_edit_custom_fields,
+        sign_messages,
+        automatic_message,
+      } = this.sector;
 
       const fieldsToUpdate = {
         can_trigger_flows,
         can_edit_custom_fields,
         sign_messages,
+        automatic_message,
       };
 
       return Sector.update(this.sector.uuid, fieldsToUpdate);
@@ -242,7 +330,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.form-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  padding: $unnnic-spacing-sm;
+
+  gap: $unnnic-spacing-sm;
+
+  > * {
+    flex: 1;
+  }
+}
 .sector-extra-options-form {
+  .automatic-message-count {
+    font: $unnnic-font-caption-2;
+    justify-self: flex-end;
+    margin-top: $unnnic-spacing-nano;
+    color: $unnnic-color-fg-muted;
+  }
+
   & .switchs {
     &__title {
       font-weight: $unnnic-font-weight-bold;
@@ -290,23 +401,6 @@ export default {
           margin: 0px 0px $unnnic-spacing-xs 0px;
         }
       }
-    }
-  }
-
-  & .actions {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: space-between;
-    background-color: white;
-    padding: $unnnic-spacing-sm;
-
-    gap: $unnnic-spacing-sm;
-
-    > * {
-      flex: 1;
     }
   }
 }
