@@ -781,7 +781,7 @@
         "delete_success": "Queue deleted successfully",
         "delete_error": "Failed to delete queue",
         "add_new_queue": "This new queue will be added for all agents. You can remove it by going to <b>Chats Settings > Groups > Agents</b>",
-        "config_agents_group": "Add or remove this queue by agents through groups by accessing <b>Chat Settings > Groups > Agents</b>"
+        "config_agents_group": "Add or remove agents from this queue through the project groups by going to <b>Chat Settings > Project Groups</b>"
       }
     },
     "groups": {
