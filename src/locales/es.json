@@ -780,7 +780,7 @@
         "delete_success": "Cola eliminada exitosamente",
         "delete_error": "No se pudo eliminar la cola",
         "add_new_queue": "Esta nueva fila se agregará para todos los agentes. Puede eliminarla accediendo a <b>Configuración de chats > Grupos > Agentes</b>",
-        "config_agents_group": "Agrega o quita esta fila por agentes a través de grupos accediendo a <b>Configuración de chats > Grupos > Agentes</b>"
+        "config_agents_group": "Agregue o elimine agentes de esta fila a través de los grupos de proyectos accediendo a <b>Configuración del Chat > Grupos de proyectos</b>"
       }
     },
     "groups": {
