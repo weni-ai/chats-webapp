@@ -9,11 +9,15 @@
       loading: isLoading,
       disabled: activeRoomSummary.feedback.liked === null,
     }"
+    data-testid="feedback-modal"
     @primary-button-click="handleSubmit"
     @update:model-value="handleCancel"
   >
     <section class="summary-feedback-modal__content">
-      <p class="summary-feedback-modal__text">
+      <p
+        class="summary-feedback-modal__text"
+        data-testid="feedback-text"
+      >
         {{
           hasFeedback
             ? $t('chats.summary.feedback.needs_improvement_text')
@@ -35,6 +39,7 @@
             size="md"
             clickable
             scheme="neutral-dark"
+            data-testid="feedback-like"
             @click="handleLike(true)"
           />
         </UnnnicToolTip>
@@ -49,6 +54,7 @@
             size="md"
             clickable
             scheme="neutral-dark"
+            data-testid="feedback-dislike"
             @click="handleLike(false)"
           />
         </UnnnicToolTip>
@@ -59,6 +65,7 @@
         :placeholder="$t('chats.summary.feedback.placeholder')"
         :label="$t('chats.summary.feedback.title')"
         :maxLength="150"
+        data-testid="feedback-textarea"
       />
     </section>
   </UnnnicModalDialog>

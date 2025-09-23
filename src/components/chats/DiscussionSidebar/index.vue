@@ -131,6 +131,9 @@ export default {
       await this.setActiveRoom({
         uuid: this.details.room,
         contact: { name: this.details.contact },
+        queue: {
+          sector: {},
+        },
       });
       this.isSidebarLoading = false;
     },

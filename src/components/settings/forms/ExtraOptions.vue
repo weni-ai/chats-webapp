@@ -82,7 +82,7 @@
           v-if="sector.automatic_message.is_active"
           class="automatic-message-count"
         >
-          {{ sector.automatic_message.text.length }}/160
+          {{ sector.automatic_message?.text?.length || 0 }}/160
         </p>
       </template>
     </section>
@@ -206,7 +206,7 @@ export default {
       const valid =
         !this.sector.automatic_message.is_active ||
         (this.sector.automatic_message.is_active &&
-          this.sector.automatic_message.text.length > 0);
+          this.sector.automatic_message.text?.length > 0);
 
       this.$emit('changeIsValid', valid);
 
