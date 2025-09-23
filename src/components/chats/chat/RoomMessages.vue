@@ -176,7 +176,7 @@ export default {
 
     async getRoomInternalNotes() {
       const { results } = await RoomNotes.getInternalNotes({
-        roomUuid: this.room.uuid,
+        room: this.room.uuid,
         limit: 1,
       });
       const hasInternalNotes = results.length > 0;
