@@ -1,6 +1,7 @@
 import roomListener from './room';
 import discussionListener from './discussion';
 import statusListener from './status';
+import customStatusListener from './customStatus';
 
 export default ({ ws, app }) => {
   const createListener = (callback) => (payload) => {
@@ -30,4 +31,6 @@ export default ({ ws, app }) => {
 
   ws.on('status.update', createListener(statusListener.update));
   ws.on('status.close', createListener(statusListener.close));
+
+  ws.on('custom_status.close', createListener(customStatusListener.close));
 };
