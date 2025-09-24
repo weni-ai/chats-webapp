@@ -1,6 +1,7 @@
 import roomListener from './room';
 import discussionListener from './discussion';
 import statusListener from './status';
+import customStatusListener from './customStatus';
 
 export default ({ ws, app }) => {
   const createListener = (callback) => (payload) => {
@@ -35,4 +36,6 @@ export default ({ ws, app }) => {
     'room_note.delete',
     createListener(roomListener.roomInternalNote.delete),
   );
+
+  ws.on('custom_status.close', createListener(customStatusListener.close));
 };
