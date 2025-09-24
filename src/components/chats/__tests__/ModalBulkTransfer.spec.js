@@ -53,7 +53,7 @@ describe('ModalBulkTransfer', () => {
 
   describe('Rendering', () => {
     it('should render modal with select fields and buttons', () => {
-      const modal = wrapper.findComponent({ name: 'unnnic-modal' });
+      const modal = wrapper.findComponent({ name: 'unnnic-modal-dialog' });
       const labels = wrapper.findAllComponents({ name: 'unnnic-label' });
       const selects = wrapper.findAllComponents({
         name: 'unnnic-select-smart',
@@ -75,14 +75,13 @@ describe('ModalBulkTransfer', () => {
     let transferButton;
 
     beforeEach(() => {
-      transferButton = wrapper.findComponent('[data-testid="transfer-button"]');
+      transferButton = wrapper.findComponent('[data-testid="primary-button"]');
     });
 
     it('should disable transfer button when no queue is selected', async () => {
       await wrapper.setData({
         selectedQueue: [{ value: '', label: 'Select queue' }],
       });
-
       expect(transferButton.props('disabled')).toBe(true);
     });
 
