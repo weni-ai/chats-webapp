@@ -144,6 +144,8 @@
     "discard_button": "Discard"
   },
   "attachment": "Attach",
+  "internal_note": "Internal note",
+  "notes": "Notes",
   "bold": "Bold",
   "italic": "Italic",
   "underline": "Underline",
@@ -298,7 +300,8 @@
       "discussion_created": "{agent} started discussion with queue {queue}",
       "discussion_joined": "{agent} joined the discussion",
       "agent_took_chat": "Oops! The chat with the contact {contact} has already been taken over by another agent",
-      "automatic_transfer_from_queue": "Room assigned to {agent}."
+      "automatic_transfer_from_queue": "Room assigned to {agent}.",
+      "see_all_internal_notes": "<b style='color: white;'>See internal notes</b>"
     },
     "room_list": {
       "order_by": "Order by:",
@@ -355,8 +358,7 @@
     "select_your_queues": "Select your queues",
     "no_queue_selected": "No queue selected",
     "success_update_queues": "Your service queues have been updated",
-    "error_update_queues": "Unable to update your service queues",
-    "queue_priority_disclaimer": "Queue chats are now automatically assigned."
+    "error_update_queues": "Unable to update your service queues"
   },
   "chats_notifications": {
     "title": "WeniChats Notifications",
@@ -782,7 +784,7 @@
         "delete_success": "Queue deleted successfully",
         "delete_error": "Failed to delete queue",
         "add_new_queue": "This new queue will be added for all agents. You can remove it by going to <b>Chats Settings > Groups > Agents</b>",
-        "config_agents_group": "Add or remove this queue by agents through groups by accessing <b>Chat Settings > Groups > Agents</b>"
+        "config_agents_group": "Add or remove agents from this queue through the project groups by going to <b>Chat Settings > Project Groups</b>"
       }
     },
     "groups": {
@@ -897,10 +899,6 @@
     "connecting": "Loading...",
     "connected": "Update completed successfully! You can continue your support."
   },
-  "offline_agent_modal": {
-    "title": "You are offline!",
-    "description": "Your status has been changed to offline by {username}. To return to support, change your status to online."
-  },
   "feedback_modal": {
     "title": "Help us improve!",
     "feedback_question": "What is it been like using Weni Chats?",
@@ -915,5 +913,31 @@
     },
     "placeholder_feedback": "Share your experience here",
     "default_error_message": "An error occurred while submitting feedback, please try again later!"
+  },
+  "offline_agent_modal": {
+    "title": "You are offline!",
+    "description": "Your status has been changed to offline by {username}. To return to support, change your status to online."
+  },
+  "delete_internal_note": {
+    "title": "Delete internal note",
+    "description": "Are you sure you wanto to delete the internal note?",
+    "message": {
+      "delete": {
+        "success": "Internal note deleted successfully",
+        "error": "Failed to delete internal note"
+      }
+    }
+  },
+  "new_feature_internal_note": {
+    "title": "New feature: Internal Notes",
+    "description": "We have a new feature available for you to try. Would you like to try it now?",
+    "steps": {
+      "title": "How does it work?",
+      "step_1": "<b>Add a note:</b> click on the [+] next to the text field (when empty) and select 'Internal note'.",
+      "step_2": "<b>Write and send:</b> with the internal note field active, write your annotation. When you click Send, the note will appear in the timeline with highlighting and date stamp.",
+      "step_3": "<b>Where to find them:</b> notes will be visible in the conversation history and contact information, within the new 'Note' tab. Rest assured, they are never sent to the customer!",
+      "step_4": "<b>Delete notes:</b> you can delete your notes while the support room is still assigned to you.",
+      "step_5": "<b>Room transfer:</b> if another agent takes over the room, they will be informed about the existence of internal notes."
+    }
   }
 }

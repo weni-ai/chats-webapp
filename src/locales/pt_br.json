@@ -144,6 +144,8 @@
     "discard_button": "Descartar"
   },
   "attachment": "Anexo",
+  "internal_note": "Nota interna",
+  "notes": "Notas",
   "bold": "Negrito",
   "italic": "Itálico",
   "underline": "Sublinhado",
@@ -294,7 +296,8 @@
       "discussion_created": "{agent} iniciou a discussão com fila {queue}",
       "discussion_joined": "{agent} entrou na discussão",
       "agent_took_chat": "Ops! O chat com contato {contact} foi assumido por outro agente",
-      "automatic_transfer_from_queue": "Sala atribuída ao {agent}."
+      "automatic_transfer_from_queue": "Sala atribuída ao {agent}.",
+      "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>"
     },
     "room_list": {
       "order_by": "Ordenar por:",
@@ -351,8 +354,7 @@
     "select_your_queues": "Selecione suas filas",
     "no_queue_selected": "Nenhuma fila selecionada",
     "success_update_queues": "Suas filas de atendimento foram atualizadas",
-    "error_update_queues": "Não foi possível atualizar suas filas de atendimento",
-    "queue_priority_disclaimer": "Salas da fila agora são atribuídas automaticamente."
+    "error_update_queues": "Não foi possível atualizar suas filas de atendimento"
   },
   "chats_notifications": {
     "title": "Notificações do WeniChats",
@@ -778,7 +780,7 @@
         "delete_success": "Fila excluída com sucesso",
         "delete_error": "Falha ao excluir a fila",
         "add_new_queue": "Esta nova fila será adicionada para todos os agentes. Você poderá removê-la acessando <b>Configurações do Chat > Grupos > Agentes</b>",
-        "config_agents_group": "Adicione ou remova esta fila pelos agentes através dos grupos acessando <b>Configurações do Chat > Grupos > Agentes</b>"
+        "config_agents_group": "Adicione ou remova atendentes a esta fila através dos grupos de projetos acessando <b>Configurações do Chat > Grupos de projetos</b>"
       }
     },
     "groups": {
@@ -893,11 +895,7 @@
     "connecting": "Carregando...",
     "connected": "Atualização concluída com sucesso! Você pode continuar seu atendimento."
   },
-  "offline_agent_modal": {
-    "title": "Você está offline!",
-    "description": "Seu status foi alterado para offline por {username}. Para voltar a atender, altere seu status para online."
-  },
-    "feedback_modal": {
+  "feedback_modal": {
     "title": "Ajude-nos a melhorar!",
     "feedback_question": "Com está sendo usar o Weni Chats?",
     "problem_question": "O que atrapalha ou dificulta o uso do Weni Chats?",
@@ -911,5 +909,31 @@
     },
     "placeholder_feedback": "Compartilhe sua experiência aqui",
     "default_error_message": "Ocorreu um erro ao enviar o feedback, tente novamente mais tarde!"
+  },
+  "offline_agent_modal": {
+    "title": "Você está offline!",
+    "description": "Seu status foi alterado para offline por {username}. Para voltar a atender, altere seu status para online."
+  },
+  "delete_internal_note": {
+    "title": "Deletar nota interna",
+    "description": "Tem certeza que deseja deletar a nota interna?",
+    "message": {
+      "delete": {
+        "success": "Nota interna deletada com sucesso",
+        "error": "Falha ao deletar a nota interna"
+      }
+    }
+  },
+  "new_feature_internal_note": {
+    "title": "Nova funcionalidade: Notas internas",
+    "description": "Temos uma nova funcionalidade disponível para você testar. Deseja testar agora?",
+    "steps": {
+      "title": "Como funciona?",
+      "step_1": "<b>Adicionar uma nota:</b> clique no [+] ao lado do campo de texto (quando estiver vazio) e selecione 'Nota interna'.",
+      "step_2": "<b>Escreva e envie:</b> com o campo de nota interna ativo, escreva sua anotação. Quando você clicar em Enviar, a nota aparecerá no timeline com destaque e data.",
+      "step_3": "<b>Onde encontrar:</b> as notas serão visíveis no histórico de conversa e informações do contato, dentro da nova aba 'Nota'. Não se preocupe, elas nunca são enviadas para o cliente!",
+      "step_4": "<b>Deletar notas:</b> você pode deletar suas notas enquanto o suporte ainda está atribuído a você.",
+      "step_5": "<b>Transferência de room:</b> se outro agente assumir o room, eles serão informados sobre a existência de notas internas."
+    }
   }
 }

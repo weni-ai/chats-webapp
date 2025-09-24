@@ -86,6 +86,7 @@ describe('Messages utils', () => {
         media: [],
         seen: true,
         created_on: expect.any(String),
+        internal_note: null,
       };
 
       expect(mockAddMessage).toHaveBeenCalledWith(expectedMessage);

@@ -22,9 +22,15 @@ export default {
       type: String,
       default: 'blue',
       validator(value) {
-        return ['blue', 'purple', 'red', 'green', 'yellow', 'gray'].includes(
-          value,
-        );
+        return [
+          'blue',
+          'purple',
+          'red',
+          'green',
+          'yellow',
+          'yellow-400',
+          'gray',
+        ].includes(value);
       },
     },
     divisor: {
@@ -48,6 +54,7 @@ $scheme-colors:
   'purple' $unnnic-color-aux-purple-100,
   'green' $unnnic-color-aux-green-100,
   'yellow' $unnnic-color-aux-yellow-100,
+  'yellow-400' $unnnic-color-aux-yellow-400,
   'red' $unnnic-color-aux-red-100,
   'gray' $unnnic-color-neutral-soft;
 

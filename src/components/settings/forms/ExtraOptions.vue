@@ -43,7 +43,7 @@
       >
         <section class="switchs__container">
           <UnnnicSwitch
-            v-model="sector.automatic_message.is_active"
+            :modelValue="sector.automatic_message.is_active"
             :textRight="
               sector.automatic_message.is_active
                 ? $t(
@@ -54,6 +54,7 @@
                   )
             "
             data-testid="config-switch"
+            @update:model-value="handleAutomaticMessageIsActive"
           />
           <UnnnicToolTip
             enabled
@@ -68,14 +69,21 @@
             />
           </UnnnicToolTip>
         </section>
-        <UnnnicInput
+        <UnnnicInputNext
           v-if="sector.automatic_message.is_active"
           v-model="sector.automatic_message.text"
+          :maxlength="160"
           :label="$t('sector.additional_options.automatic_message.field.title')"
           :placeholder="
             $t('sector.additional_options.automatic_message.field.placeholder')
           "
         />
+        <p
+          v-if="sector.automatic_message.is_active"
+          class="automatic-message-count"
+        >
+          {{ sector.automatic_message?.text?.length || 0 }}/160
+        </p>
       </template>
     </section>
     <section class="tags">
@@ -99,7 +107,7 @@
       </h2>
 
       <section class="tags-form">
-        <UnnnicInput
+        <UnnnicInputNext
           v-model="tagName"
           class="tags-form__input"
           :label="$t('tags.add.label')"
@@ -130,21 +138,22 @@
         />
       </section>
     </section>
-  </section>
-  <section
-    v-show="isEditing"
-    class="form-actions"
-  >
-    <UnnnicButton
-      :text="$t('cancel')"
-      type="tertiary"
-      data-testid="cancel-button"
-      @click.stop="$router.push('/settings')"
-    />
-    <UnnnicButton
-      :text="$t('save')"
-      @click.stop="save()"
-    />
+    <section
+      v-show="isEditing"
+      class="form-actions"
+    >
+      <UnnnicButton
+        :text="$t('cancel')"
+        type="tertiary"
+        data-testid="cancel-button"
+        @click.stop="$router.push('/settings')"
+      />
+      <UnnnicButton
+        :text="$t('save')"
+        :disabled="!validForm"
+        @click.stop="save()"
+      />
+    </section>
   </section>
 </template>
 
@@ -193,6 +202,16 @@ export default {
         this.$emit('update:modelValue', val);
       },
     },
+    validForm() {
+      const valid =
+        !this.sector.automatic_message.is_active ||
+        (this.sector.automatic_message.is_active &&
+          this.sector.automatic_message.text?.length > 0);
+
+      this.$emit('changeIsValid', valid);
+
+      return valid;
+    },
     translationTriggerFlows() {
       return this.sector.can_trigger_flows
         ? this.$t('sector.additional_options.template_message.switch_active')
@@ -208,6 +227,10 @@ export default {
     if (this.isEditing) this.getTags();
   },
   methods: {
+    handleAutomaticMessageIsActive(value) {
+      this.sector.automatic_message.is_active = value;
+      if (!value) this.sector.automatic_message.text = '';
+    },
     async getTags() {
       const sectorCurrentTags = await Sector.tags(this.sector.uuid);
       this.currentTags = this.tags = sectorCurrentTags.results;
@@ -324,6 +347,13 @@ export default {
   }
 }
 .sector-extra-options-form {
+  .automatic-message-count {
+    font: $unnnic-font-caption-2;
+    justify-self: flex-end;
+    margin-top: $unnnic-spacing-nano;
+    color: $unnnic-color-fg-muted;
+  }
+
   & .switchs {
     &__title {
       font-weight: $unnnic-font-weight-bold;
@@ -371,23 +401,6 @@ export default {
           margin: 0px 0px $unnnic-spacing-xs 0px;
         }
       }
-    }
-  }
-
-  & .actions {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: space-between;
-    background-color: white;
-    padding: $unnnic-spacing-sm;
-
-    gap: $unnnic-spacing-sm;
-
-    > * {
-      flex: 1;
     }
   }
 }

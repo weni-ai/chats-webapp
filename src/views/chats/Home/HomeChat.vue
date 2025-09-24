@@ -16,6 +16,7 @@
       <RoomMessages
         v-if="!!room && !discussion"
         showRoomSummary
+        @open-room-contact-info="emitOpenRoomContactInfo"
       />
       <DiscussionMessages v-if="!!discussion" />
 
@@ -171,7 +172,6 @@ export default {
             this.isChatSkeletonActive = true;
 
             this.updateTextBoxMessage('');
-            this.emitCloseRoomContactInfo();
 
             if (!this.pathDiscussionId) {
               await this.getCanUseCopilot();

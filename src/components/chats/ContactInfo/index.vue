@@ -46,8 +46,8 @@
               </p>
               <section class="infos">
                 <hgroup class="info">
-                  <h3 class="title">{{ contactNumber.plataform }}:</h3>
-                  <h4 class="description">{{ contactNumber.contactNum }}</h4>
+                  <h3 class="title">{{ contactNumber?.plataform }}:</h3>
+                  <h4 class="description">{{ contactNumber?.contactNum }}</h4>
                 </hgroup>
                 <hgroup
                   v-if="contactService?.length > 0"
@@ -123,11 +123,13 @@
               />
             </nav>
             <div v-if="isLinkedToOtherAgent">
-              <span>{{
-                $t('contact_info.linked_contact', {
-                  name: room.linked_user,
-                })
-              }}</span>
+              <span>
+                {{
+                  $t('contact_info.linked_contact', {
+                    name: room.linked_user,
+                  })
+                }}
+              </span>
             </div>
           </section>
         </AsideSlotTemplateSection>
@@ -298,6 +300,8 @@ export default {
     },
 
     contactNumber() {
+      const room = this.closedRoom || this.room;
+      if (!room.urn) return {};
       const plataform = (this.closedRoom || this.room).urn.split(':').at(0);
       const number = (this.closedRoom || this.room).urn.split(':').at(-1);
       const whatsapp = `+${number.substr(-20, 20)}`;
@@ -308,7 +312,7 @@ export default {
       return infoNumber;
     },
     contactProtocol() {
-      return (this.closedRoom || this.room).protocol;
+      return (this.closedRoom || this.room).protocol || '';
     },
     contactService() {
       return (this.closedRoom || this.room).service_chat;
@@ -346,10 +350,6 @@ export default {
     if (!room.queue?.sector) {
       throw new Error(`There is no associated sector with room ${room.uuid}`);
     }
-  },
-
-  unmounted() {
-    this.emitClose();
   },
 
   methods: {
