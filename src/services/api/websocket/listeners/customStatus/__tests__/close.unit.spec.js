@@ -21,6 +21,7 @@ describe('CustomStatus close', () => {
       expect(mockApp.updateUserStatusFromWebSocket).toHaveBeenCalledWith(
         'OFFLINE',
         'admin@example.com',
+        true,
       );
       expect(mockApp.updateUserStatusFromWebSocket).toHaveBeenCalledTimes(1);
     });
@@ -35,6 +36,7 @@ describe('CustomStatus close', () => {
       expect(mockApp.updateUserStatusFromWebSocket).toHaveBeenCalledWith(
         'OFFLINE',
         'supervisor@company.co.uk',
+        true,
       );
     });
 
@@ -48,13 +50,14 @@ describe('CustomStatus close', () => {
       expect(mockApp.updateUserStatusFromWebSocket).toHaveBeenCalledWith(
         'OFFLINE',
         'user123@example.com',
+        true,
       );
     });
 
     it('should ignore other properties in content and still work', () => {
       const content = {
         user_disconnected_agent: 'admin@example.com',
-        status: 'ONLINE', // This should be ignored
+        status: 'ONLINE',
         other_property: 'some_value',
       };
 
@@ -63,6 +66,7 @@ describe('CustomStatus close', () => {
       expect(mockApp.updateUserStatusFromWebSocket).toHaveBeenCalledWith(
         'OFFLINE',
         'admin@example.com',
+        true,
       );
       expect(mockApp.updateUserStatusFromWebSocket).toHaveBeenCalledTimes(1);
     });
@@ -149,10 +153,10 @@ describe('CustomStatus close', () => {
 
       handleCustomStatusClose(content, { app: mockApp });
 
-      // Whitespace string is truthy, so it should call the function
       expect(mockApp.updateUserStatusFromWebSocket).toHaveBeenCalledWith(
         'OFFLINE',
         '   ',
+        true,
       );
     });
   });
