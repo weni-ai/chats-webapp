@@ -69,7 +69,7 @@ describe('ModalStartDiscussion', () => {
 
   it('enables confirm button only when all fields are filled', async () => {
     const confirmButton = wrapper.findComponent(
-      '[data-testid="confirm-button"]',
+      '[data-testid="primary-button"]',
     );
 
     expect(confirmButton.props('disabled')).toBe(true);
@@ -88,7 +88,7 @@ describe('ModalStartDiscussion', () => {
 
   it('should emit close event on click cancel button', async () => {
     const closeSpy = vi.spyOn(wrapper.vm, 'close');
-    const cancelButton = wrapper.findComponent('[data-testid="cancel-button"]');
+    const cancelButton = wrapper.find('[data-testid="secondary-button"]');
     await cancelButton.trigger('click');
     expect(closeSpy).toHaveBeenCalled();
     expect(wrapper.emitted('close')).toBeTruthy();
@@ -121,7 +121,7 @@ describe('ModalStartDiscussion', () => {
     discussionsStore.create = vi.fn(() => Promise.resolve({ uuid: '1' }));
 
     await wrapper
-      .findComponent('[data-testid="confirm-button"]')
+      .findComponent('[data-testid="primary-button"]')
       .trigger('click');
 
     expect(discussionsStore.create).toHaveBeenCalledWith({

@@ -302,6 +302,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+:deep(.unnnic-select-smart__options.active) {
+  position: fixed;
+  left: auto;
+  right: auto;
+}
 .rooms-transfer {
   &__select-destination {
     display: grid;
