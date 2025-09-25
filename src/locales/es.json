@@ -222,6 +222,15 @@
         "tooltip": "Cada mensaje intercambiado tendrá el nombre del agente que responde",
         "switch_active": "Firma activa",
         "switch_disabled": "Firma desactivada"
+      },
+      "automatic_message": {
+        "switch_active": "Mensaje automático de apertura activo",
+        "switch_disabled": "Mensaje automático de apertura deshabilitado",
+        "tooltip": "Configura un mensaje que se envía automáticamente en nuevos chats tan pronto como se les asigna a su primer agente. El contacto verá este mensaje como si fuera enviado por el propio agente.",
+        "field": {
+          "title": "Mensaje automático",
+          "placeholder": "Ejemplo: ¡Hola! ¿Cómo puedo ayudarte hoy?"
+        }
       }
     }
   },
@@ -771,7 +780,7 @@
         "delete_success": "Cola eliminada exitosamente",
         "delete_error": "No se pudo eliminar la cola",
         "add_new_queue": "Esta nueva fila se agregará para todos los agentes. Puede eliminarla accediendo a <b>Configuración de chats > Grupos > Agentes</b>",
-        "config_agents_group": "Agrega o quita esta fila por agentes a través de grupos accediendo a <b>Configuración de chats > Grupos > Agentes</b>"
+        "config_agents_group": "Agregue o elimine agentes de esta fila a través de los grupos de proyectos accediendo a <b>Configuración del Chat > Grupos de proyectos</b>"
       }
     },
     "groups": {

@@ -1,8 +1,22 @@
 <template>
-  <UnnnicModal
+  <UnnnicModalDialog
+    :modelValue="true"
+    :title="$t('discussions.start_discussion.title')"
+    :showCloseIcon="!startDiscussionLoading"
+    :primaryButtonProps="{
+      text: $t('confirm'),
+      disabled: isConfirmButtonDisabled,
+      loading: startDiscussionLoading,
+    }"
+    :secondaryButtonProps="{
+      text: $t('cancel'),
+      disabled: startDiscussionLoading,
+    }"
     class="start-discussion-form__modal"
-    :text="$t('discussions.start_discussion.title')"
-    @close="close"
+    size="lg"
+    @primary-button-click="startDiscussion"
+    @secondary-button-click="close()"
+    @update:model-value="close"
   >
     <section
       class="start-discussion-form"
@@ -54,23 +68,7 @@
         data-testid="input-explain-situation"
       />
     </section>
-    <template #options>
-      <UnnnicButton
-        :text="$t('cancel')"
-        type="secondary"
-        data-testid="cancel-button"
-        @click="close()"
-      />
-      <UnnnicButton
-        :text="$t('confirm')"
-        type="primary"
-        :disabled="isConfirmButtonDisabled"
-        :loading="startDiscussionLoading"
-        data-testid="confirm-button"
-        @click="startDiscussion"
-      />
-    </template>
-  </UnnnicModal>
+  </UnnnicModalDialog>
 </template>
 
 <script>

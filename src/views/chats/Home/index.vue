@@ -25,6 +25,7 @@
     <template #aside>
       <ContactInfo
         v-if="room && isRoomContactInfoOpen && !discussion"
+        :key="room.uuid"
         data-testid="contact-info"
         @close="closeRoomContactInfo"
       />
@@ -60,6 +61,8 @@ import ModalFeedback from './ModalFeedback.vue';
 
 import HomeChat from './HomeChat.vue';
 
+import { moduleStorage } from '@/utils/storage';
+
 export default {
   name: 'ViewHome',
 
@@ -85,7 +88,10 @@ export default {
 
   data() {
     return {
-      isRoomContactInfoOpen: false,
+      isRoomContactInfoOpen: moduleStorage.getItem(
+        'isRoomContactInfoOpen',
+        true,
+      ),
       textBoxMessage: '',
       uploadFilesProgress: undefined,
       isChatSkeletonActive: false,
@@ -103,6 +109,12 @@ export default {
     ...mapState(useDiscussions, {
       discussion: (store) => store.activeDiscussion,
     }),
+  },
+
+  watch: {
+    isRoomContactInfoOpen(val) {
+      moduleStorage.setItem('isRoomContactInfoOpen', val);
+    },
   },
 
   async created() {

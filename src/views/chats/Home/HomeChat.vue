@@ -172,7 +172,6 @@ export default {
             this.isChatSkeletonActive = true;
 
             this.updateTextBoxMessage('');
-            this.emitCloseRoomContactInfo();
 
             if (!this.pathDiscussionId) {
               await this.getCanUseCopilot();

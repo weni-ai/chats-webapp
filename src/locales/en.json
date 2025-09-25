@@ -229,6 +229,15 @@
         "tooltip": "Each message exchanged will have the name of the agent who is answering",
         "switch_active": "Active signature",
         "switch_disabled": "Disabled signature"
+      },
+      "automatic_message": {
+        "switch_active": "Automatic opening message active",
+        "switch_disabled": "Automatic opening message disabled",
+        "tooltip": "Set up a message that is automatically sent in new chats as soon as they are assigned to their first agent. The contact will see this message as if it were sent by the agent themselves.",
+        "field": {
+          "title": "Automatic message",
+          "placeholder": "Exemple: Hello! How can I help you today?"
+        }
       }
     }
   },
@@ -775,7 +784,7 @@
         "delete_success": "Queue deleted successfully",
         "delete_error": "Failed to delete queue",
         "add_new_queue": "This new queue will be added for all agents. You can remove it by going to <b>Chats Settings > Groups > Agents</b>",
-        "config_agents_group": "Add or remove this queue by agents through groups by accessing <b>Chat Settings > Groups > Agents</b>"
+        "config_agents_group": "Add or remove agents from this queue through the project groups by going to <b>Chat Settings > Project Groups</b>"
       }
     },
     "groups": {

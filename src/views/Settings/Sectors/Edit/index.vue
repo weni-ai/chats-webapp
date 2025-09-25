@@ -89,6 +89,10 @@ export default {
         name: '',
         can_trigger_flows: '',
         can_edit_custom_fields: '',
+        automatic_message: {
+          is_active: false,
+          text: '',
+        },
         sign_messages: '',
         managers: [],
         maxSimultaneousChatsByAgent: '',
@@ -169,6 +173,7 @@ export default {
         sign_messages,
         rooms_limit,
         uuid,
+        automatic_message,
       } = this.currentSector;
       this.sector = {
         ...this.sector,
@@ -179,6 +184,7 @@ export default {
         config,
         sign_messages,
         maxSimultaneousChatsByAgent: rooms_limit.toString(),
+        automatic_message,
       };
       this.setCopilotActive(this.sector.config?.can_use_chat_completion);
       this.setCopilotCustomRulesActive(this.sector.config?.can_input_context);

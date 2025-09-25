@@ -77,6 +77,8 @@
                 :mediaType="isGeolocation(message.media?.[0]) ? 'geo' : ''"
                 :enableReply="enableReply"
                 :replyMessage="message.replied_message"
+                :automatic="message.is_automatic_message"
+                :locale="$i18n.locale"
                 data-testid="chat-message"
                 @click-reply-message="
                   handlerClickReplyMessage(message.replied_message)
@@ -392,10 +394,14 @@ export default {
       this.scrollToInternalNote(note);
     },
     messages: {
-      handler() {
+      handler(newMessages, oldMessages) {
+        const newMessagesLength = newMessages.length;
+        const oldMessagesLength = oldMessages.length;
+        const newOldMessagesDifference = newMessagesLength - oldMessagesLength;
+
         this.setStartFeedbacks();
         this.$nextTick(() => {
-          if (!this.showScrollToBottomButton) {
+          if (!this.showScrollToBottomButton || newOldMessagesDifference > 1) {
             this.manageScrollForNewMessages();
           }
           this.checkScrollPosition();
