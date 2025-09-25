@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 import { useRooms } from './rooms';
 
 import Message from '@/services/api/resources/chats/message';
+import RoomNotes from '@/services/api/resources/chats/roomNotes';
 
 import {
   isMessageFromCurrentUser,
@@ -27,6 +28,8 @@ export const useRoomMessages = defineStore('roomMessages', {
     roomMessagesNext: '',
     roomMessagesPrevious: '',
     replyMessage: null,
+    roomInternalNotes: [],
+    toScrollNote: null,
     showScrollToBottomButton: false,
   }),
   actions: {
@@ -90,9 +93,17 @@ export const useRoomMessages = defineStore('roomMessages', {
 
         if (
           isMessageFromCurrentUser(message) &&
-          !message.is_automatic_message
+          !message.is_automatic_message &&
+          !message.internal_note
         ) {
           this.roomMessagesSendingUuids.push(uuid);
+        }
+
+        if (message.internal_note) {
+          this.roomInternalNotes.push({
+            ...message.internal_note,
+            user: message.user,
+          });
         }
       }
     },
@@ -262,6 +273,30 @@ export const useRoomMessages = defineStore('roomMessages', {
             toUpdateMessageUuid,
             toUpdateMediaPreview,
           }),
+      });
+    },
+
+    async sendRoomInternalNote({ text }) {
+      const roomsStore = useRooms();
+
+      if (!roomsStore.activeRoom) return;
+
+      const createdNote = await RoomNotes.createInternalNote({
+        text,
+        room: roomsStore.activeRoom.uuid,
+      });
+
+      // add internal note in the room messages
+      sendMessage({
+        itemType: 'room',
+        itemUuid: roomsStore.activeRoom.uuid,
+        itemUser: roomsStore.activeRoom.user,
+        message: text,
+        internalNote: createdNote,
+        sendItemMessage: () => createdNote,
+        addMessage: (message) => this.handlingAddMessage({ message }),
+        addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
+        updateMessage: () => {},
       });
     },
 

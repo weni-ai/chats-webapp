@@ -144,6 +144,8 @@
     "discard_button": "Discard"
   },
   "attachment": "Attach",
+  "internal_note": "Internal note",
+  "notes": "Notes",
   "bold": "Bold",
   "italic": "Italic",
   "underline": "Underline",
@@ -298,7 +300,8 @@
       "discussion_created": "{agent} started discussion with queue {queue}",
       "discussion_joined": "{agent} joined the discussion",
       "agent_took_chat": "Oops! The chat with the contact {contact} has already been taken over by another agent",
-      "automatic_transfer_from_queue": "Room assigned to {agent}."
+      "automatic_transfer_from_queue": "Room assigned to {agent}.",
+      "see_all_internal_notes": "<b style='color: white;'>See internal notes</b>"
     },
     "room_list": {
       "order_by": "Order by:",
@@ -914,5 +917,27 @@
     },
     "placeholder_feedback": "Share your experience here",
     "default_error_message": "An error occurred while submitting feedback, please try again later!"
+  },
+  "delete_internal_note": {
+    "title": "Delete internal note",
+    "description": "Are you sure you wanto to delete the internal note?",
+    "message": {
+      "delete": {
+        "success": "Internal note deleted successfully",
+        "error": "Failed to delete internal note"
+      }
+    }
+  },
+  "new_feature_internal_note": {
+    "title": "New feature: Internal Notes",
+    "description": "We have a new feature available for you to try. Would you like to try it now?",
+    "steps": {
+      "title": "How does it work?",
+      "step_1": "<b>Add a note:</b> click on the [+] next to the text field (when empty) and select 'Internal note'.",
+      "step_2": "<b>Write and send:</b> with the internal note field active, write your annotation. When you click Send, the note will appear in the timeline with highlighting and date stamp.",
+      "step_3": "<b>Where to find them:</b> notes will be visible in the conversation history and contact information, within the new 'Note' tab. Rest assured, they are never sent to the customer!",
+      "step_4": "<b>Delete notes:</b> you can delete your notes while the support room is still assigned to you.",
+      "step_5": "<b>Room transfer:</b> if another agent takes over the room, they will be informed about the existence of internal notes."
+    }
   }
 }

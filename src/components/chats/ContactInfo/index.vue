@@ -312,7 +312,7 @@ export default {
       return infoNumber;
     },
     contactProtocol() {
-      return (this.closedRoom || this.room).protocol;
+      return (this.closedRoom || this.room).protocol || '';
     },
     contactService() {
       return (this.closedRoom || this.room).service_chat;

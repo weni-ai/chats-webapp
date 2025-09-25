@@ -144,6 +144,8 @@
     "discard_button": "Descartar"
   },
   "attachment": "Anexo",
+  "internal_note": "Nota interna",
+  "notes": "Notas",
   "bold": "Negrito",
   "italic": "Itálico",
   "underline": "Sublinhado",
@@ -294,7 +296,8 @@
       "discussion_created": "{agent} iniciou a discussão com fila {queue}",
       "discussion_joined": "{agent} entrou na discussão",
       "agent_took_chat": "Ops! O chat com contato {contact} foi assumido por outro agente",
-      "automatic_transfer_from_queue": "Sala atribuída ao {agent}."
+      "automatic_transfer_from_queue": "Sala atribuída ao {agent}.",
+      "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>"
     },
     "room_list": {
       "order_by": "Ordenar por:",
@@ -910,5 +913,27 @@
     },
     "placeholder_feedback": "Compartilhe sua experiência aqui",
     "default_error_message": "Ocorreu um erro ao enviar o feedback, tente novamente mais tarde!"
+  },
+  "delete_internal_note": {
+    "title": "Deletar nota interna",
+    "description": "Tem certeza que deseja deletar a nota interna?",
+    "message": {
+      "delete": {
+        "success": "Nota interna deletada com sucesso",
+        "error": "Falha ao deletar a nota interna"
+      }
+    }
+  },
+  "new_feature_internal_note": {
+    "title": "Nova funcionalidade: Notas internas",
+    "description": "Temos uma nova funcionalidade disponível para você testar. Deseja testar agora?",
+    "steps": {
+      "title": "Como funciona?",
+      "step_1": "<b>Adicionar uma nota:</b> clique no [+] ao lado do campo de texto (quando estiver vazio) e selecione 'Nota interna'.",
+      "step_2": "<b>Escreva e envie:</b> com o campo de nota interna ativo, escreva sua anotação. Quando você clicar em Enviar, a nota aparecerá no timeline com destaque e data.",
+      "step_3": "<b>Onde encontrar:</b> as notas serão visíveis no histórico de conversa e informações do contato, dentro da nova aba 'Nota'. Não se preocupe, elas nunca são enviadas para o cliente!",
+      "step_4": "<b>Deletar notas:</b> você pode deletar suas notas enquanto o suporte ainda está atribuído a você.",
+      "step_5": "<b>Transferência de room:</b> se outro agente assumir o room, eles serão informados sobre a existência de notas internas."
+    }
   }
 }
