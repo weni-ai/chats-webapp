@@ -25,7 +25,7 @@
           class="chat-internal-note"
           :message="note"
           showAgentName
-          @click="handleInternalNoteClick(note)"
+          @click-note="handleInternalNoteClick(note)"
         />
       </section>
     </template>
