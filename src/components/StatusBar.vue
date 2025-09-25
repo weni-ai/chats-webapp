@@ -95,7 +95,8 @@ const startDate = ref(null);
 const elapsedTime = ref(0);
 let intervalId = null;
 const configStore = useConfig();
-const { status: configStatus } = storeToRefs(configStore);
+const { status: configStatus, customStatus: configCustomStatus } =
+  storeToRefs(configStore);
 
 const statusAgentKey = configStore.project.uuid
   ? `statusAgent-${configStore.project.uuid}`
@@ -408,6 +409,15 @@ watch(
         useSession: true,
       }) === 'OFFLINE'
     ) {
+      selectedStatus.value = statuses.value[1];
+    }
+  },
+);
+
+watch(
+  () => configCustomStatus?.value,
+  (newStatus) => {
+    if (newStatus === 'CUSTOM') {
       selectedStatus.value = statuses.value[1];
     }
   },

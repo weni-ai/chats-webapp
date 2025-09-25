@@ -17,6 +17,7 @@ export const useConfig = defineStore('config', {
     },
     status: '',
     disconnectedBy: '',
+    customStatus: '',
     copilot: {
       active: false,
       customRulesActive: false,
@@ -73,6 +74,9 @@ export const useConfig = defineStore('config', {
     },
     setCopilotCustomRules(customRules) {
       this.copilot.customRules = customRules;
+    },
+    setCustomStatus(customStatus) {
+      this.customStatus = customStatus;
     },
   },
   getters: {
