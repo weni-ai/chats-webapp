@@ -282,7 +282,7 @@ export default {
     justify-content: center;
     margin-right: $unnnic-spacing-ant;
     justify-self: end;
-    padding: 2px $unnnic-spacing-nano;
+    padding: $unnnic-space-05 $unnnic-spacing-nano;
 
     &__icon {
       font-size: $unnnic-font-size-body-lg;
