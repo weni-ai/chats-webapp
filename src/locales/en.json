@@ -312,6 +312,9 @@
       "error_404": "The room doesn't exist",
       "error_403": "Is not a room user"
     },
+    "room_contact_info": {
+      "title": "All information"
+    },
     "errors": {
       "401": "Authentication error",
       "default": "An error occurred, please try again later"

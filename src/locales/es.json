@@ -308,6 +308,9 @@
       "error_404": "La sala no existe",
       "error_403": "No es un usuario de la sala"
     },
+    "room_contact_info": {
+      "title": "Todas las informaciones"
+    },
     "errors": {
       "401": "Error de autenticación",
       "default": "Ocurrió un error, por favor, inténtelo de nuevo más tarde"

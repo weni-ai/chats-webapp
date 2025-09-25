@@ -6,13 +6,29 @@
       v-show="!isLoading"
       v-if="closedRoom || room"
       class="contact-info"
-      :title="$t('contact_info.title')"
-      :subtitle="headerMobileSubtitle"
-      :avatarName="headerMobileSubtitle"
-      :icon="headerDesktopIcon"
-      :close="emitClose"
-      :back="headerMobileBack"
     >
+      <template #header>
+        <header class="contact-info__header">
+          <p>{{ $t('chats.room_contact_info.title') }}</p>
+          <div>
+            <UnnnicButton
+              v-if="!isHistory"
+              iconCenter="sync"
+              type="tertiary"
+              size="small"
+              :disabled="isRefreshContactDisabled"
+              @click="refreshContactInfos"
+            />
+            <UnnnicButton
+              iconCenter="close"
+              type="tertiary"
+              size="small"
+              @click="emitClose"
+            />
+          </div>
+        </header>
+      </template>
+
       <section class="scrollable">
         <AsideSlotTemplateSection>
           <section class="infos">
@@ -20,14 +36,6 @@
               <h1 class="username">
                 {{ (closedRoom || room).contact.name }}
               </h1>
-              <UnnnicButton
-                v-if="!isHistory"
-                iconCenter="sync"
-                type="tertiary"
-                size="small"
-                :disabled="isRefreshContactDisabled"
-                @click="refreshContactInfos"
-              />
             </header>
             <ProtocolText :protocol="contactProtocol" />
             <div class="connection-info">
@@ -581,6 +589,15 @@ export default {
 }
 
 .contact-info {
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $unnnic-space-4 $unnnic-space-2;
+    font: $unnnic-font-display-3;
+    color: $unnnic-color-fg-emphasized;
+    border-bottom: 1px solid $unnnic-color-border-soft;
+  }
   .scrollable {
     overflow: hidden auto;
     height: 100%;
