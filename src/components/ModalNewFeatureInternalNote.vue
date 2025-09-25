@@ -75,7 +75,7 @@ export default {
   &__image {
     max-width: 503px;
     border-radius: $unnnic-radius-1;
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    box-shadow: 0 $unnnic-space-1 $unnnic-space-1 0 rgba(0, 0, 0, 0.25);
     &-container {
       display: flex;
       justify-content: center;
