@@ -34,7 +34,10 @@
 <script>
 import { mapState } from 'pinia';
 import { useProfile } from '@/store/modules/profile';
+import { useRooms } from '@/store/modules/chats/rooms';
+
 import ModalDeleteInternalNote from './ModalDeleteInternalNote.vue';
+
 export default {
   name: 'ChatMessagesInternalNote',
   components: {
@@ -57,6 +60,7 @@ export default {
   },
   computed: {
     ...mapState(useProfile, ['me']),
+    ...mapState(useRooms, ['activeRoom']),
     note() {
       return this.message.internal_note || this.message;
     },
@@ -76,7 +80,9 @@ export default {
     },
     canDelete() {
       const isMeInternalNote = this.me?.email === this.agentEmail;
-      return isMeInternalNote && this.note.is_deletable;
+      return (
+        isMeInternalNote && this.note.is_deletable && !this.activeRoom.ended_at
+      );
     },
   },
   methods: {
