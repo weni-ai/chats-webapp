@@ -3,7 +3,6 @@ import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 export default (note) => {
   const roomMessagesStore = useRoomMessages();
-  console.log(note);
 
   roomMessagesStore.roomInternalNotes =
     roomMessagesStore.roomInternalNotes.filter(
