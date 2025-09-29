@@ -37,15 +37,13 @@ describe('Message service', () => {
       http.get.mockResolvedValue(mockResponse);
 
       const params = { nextReq: null };
-      const result = await messageService.getByRoom(params, 'room-123', 0, 20);
+      const result = await messageService.getByRoom(params, 'room-123');
 
       expect(http.get).toHaveBeenCalledWith('/msg/', {
         params: {
           room: 'room-123',
           ordering: '-created_on',
           reverse_results: true,
-          offset: 0,
-          limit: 20,
         },
       });
       expect(result).toEqual(mockResponse.data);
