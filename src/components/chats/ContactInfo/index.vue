@@ -91,9 +91,33 @@
                 {{ (closedRoom || room).contact.name }}
               </p>
             </section>
+
+            <template v-if="!!room?.custom_fields && openCustomFields">
+              <CustomField
+                v-for="(value, key) in customFields"
+                :key="key"
+                :title="key"
+                :description="value"
+                :isEditable="!isHistory && room.can_edit_custom_fields"
+                :isCurrent="isCurrentCustomField(key)"
+                :value="currentCustomField?.[key]"
+                @update-current-custom-field="updateCurrentCustomField"
+                @save-value="saveCurrentCustomFieldValue"
+              />
+            </template>
+
+            <section
+              v-if="!!room?.custom_fields"
+              class="infos-contact__slide"
+            >
+              <UnnnicIcon
+                :icon="openCustomFields ? 'expand_less' : 'expand_more'"
+                clickable
+                @click="openCustomFields = !openCustomFields"
+              />
+            </section>
           </section>
         </AsideSlotTemplateSection>
-
         <AsideSlotTemplateSection>
           <section class="infos">
             <ProtocolText :protocol="contactProtocol" />
@@ -107,19 +131,6 @@
                   <h4 class="description">{{ contactService }}</h4>
                 </hgroup>
               </section>
-              <template v-if="!!room?.custom_fields">
-                <CustomField
-                  v-for="(value, key) in customFields"
-                  :key="key"
-                  :title="key"
-                  :description="value"
-                  :isEditable="!isHistory && room.can_edit_custom_fields"
-                  :isCurrent="isCurrentCustomField(key)"
-                  :value="currentCustomField?.[key]"
-                  @update-current-custom-field="updateCurrentCustomField"
-                  @save-value="saveCurrentCustomFieldValue"
-                />
-              </template>
             </div>
             <ChatSummary
               v-if="showRoomSummary && enableRoomSummary && room"
@@ -159,10 +170,10 @@
 
         <DiscussionsSession v-if="isHistory" />
 
-        <!-- <TransferSession
+        <TransferSession
           v-if="!isHistory"
           @transferred-contact="$emit('transferred-contact')"
-        /> -->
+        />
 
         <AsideSlotTemplateSection>
           <ContactMedia
@@ -227,7 +238,7 @@ import CustomField from './CustomField.vue';
 import ContactMedia from './Media.vue';
 import VideoPreview from '../MediaMessage/Previews/Video.vue';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
-// import TransferSession from './TransferSession.vue';
+import TransferSession from './TransferSession.vue';
 import ModalStartDiscussion from './ModalStartDiscussion.vue';
 import DiscussionsSession from './DiscussionsSession.vue';
 import ChatSummary from '@/layouts/ChatsLayout/components/ChatSummary/index.vue';
@@ -247,7 +258,7 @@ export default {
     ContactMedia,
     FullscreenPreview,
     VideoPreview,
-    // TransferSession,
+    TransferSession,
     ModalStartDiscussion,
     DiscussionsSession,
     ChatSummary,
@@ -284,10 +295,11 @@ export default {
     currentMedia: {},
     images: [],
     contactHaveHistory: false,
-    customFields: [],
+    customFields: {},
     currentCustomField: {},
     isRefreshContactDisabled: false,
     isShowModalStartDiscussion: false,
+    openCustomFields: true,
   }),
 
   computed: {
@@ -373,6 +385,8 @@ export default {
     if (!room.queue?.sector) {
       throw new Error(`There is no associated sector with room ${room.uuid}`);
     }
+    // to prevent medias stg error
+    // this.isLoading = false;
   },
 
   methods: {
@@ -673,6 +687,12 @@ export default {
           font: $unnnic-font-caption-2;
           color: $unnnic-color-fg-base;
         }
+      }
+
+      &__slide {
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
     }
 
