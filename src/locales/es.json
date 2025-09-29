@@ -144,6 +144,8 @@
     "discard_button": "Descartar"
   },
   "attachment": "Adjuntar",
+  "internal_note": "Nota interna",
+  "notes": "Notas",
   "bold": "Negrita",
   "italic": "Cursiva",
   "underline": "Subrayado",
@@ -294,7 +296,8 @@
       "discussion_created": "{agent} inició la discusión con la cola {queue}",
       "discussion_joined": "{agent} se unió a la discusión",
       "agent_took_chat": "¡Ups! El chat con el contacto {contact} ha sido asumido por otro agente",
-      "automatic_transfer_from_queue": "Sala asignada a {agent}."
+      "automatic_transfer_from_queue": "Sala asignada a {agent}.",
+      "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>"
     },
     "room_list": {
       "order_by": "Ordenar por:",
@@ -913,5 +916,27 @@
     },
     "placeholder_feedback": "Comparte tu experiencia aquí",
     "default_error_message": "Ocurrió un error al enviar el feedback, por favor inténtalo de nuevo más tarde!"
+  },
+  "delete_internal_note": {
+    "title": "Eliminar nota interna",
+    "description": "¿Estás seguro de que quieres eliminar la nota interna?",
+    "message": {
+      "delete": {
+        "success": "Nota interna eliminada correctamente",
+        "error": "No se pudo eliminar la nota interna"
+      }
+    }
+  },
+  "new_feature_internal_note": {
+    "title": "Nueva feature: Notas internas",
+    "description": "Tenemos una nueva feature disponible para que la pruebes. ¿Te gustaría probarla ahora?",
+    "steps": {
+      "title": "¿Cómo funciona?",
+      "step_1": "<b>Agregar una nota:</b> haz clic en el [+] junto al campo de texto (cuando esté vacío) y selecciona 'Nota interna'.",
+      "step_2": "<b>Escribe y envía:</b> con el campo de nota interna activo, escribe tu anotación. Cuando hagas clic en Enviar, la nota aparecerá en el timeline con resaltado y fecha.",
+      "step_3": "<b>Donde encontrarlos:</b> las notas serán visibles en el historial de conversación y información del contacto, dentro de la nueva pestaña 'Nota'. No te preocupes, nunca se envían al cliente!",
+      "step_4": "<b>Eliminar notas:</b> puedes eliminar tus notas mientras el soporte sigue asignado a ti.",
+      "step_5": "<b>Transferencia de room:</b> si otro agente toma el room, se les informará sobre la existencia de notas internas."
+    }
   }
 }

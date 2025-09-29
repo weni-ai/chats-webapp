@@ -50,7 +50,7 @@ describe('Messages utils', () => {
           date: '01/01/2024',
           minutes: [
             {
-              minute: '10:30',
+              minute: '10:30 AM',
               messages: [message],
             },
           ],
@@ -64,7 +64,7 @@ describe('Messages utils', () => {
           date: '01/01/2024',
           minutes: [
             {
-              minute: '10:30',
+              minute: '10:30 AM',
               messages: [{ content: 'Existing message' }],
             },
           ],
@@ -83,11 +83,11 @@ describe('Messages utils', () => {
           date: '01/01/2024',
           minutes: [
             {
-              minute: '10:30',
+              minute: '10:30 AM',
               messages: [{ content: 'Existing message' }],
             },
             {
-              minute: '10:31',
+              minute: '10:31 AM',
               messages: [message],
             },
           ],
@@ -183,7 +183,7 @@ describe('Messages utils', () => {
           date: '11/20/2024',
           minutes: [
             {
-              minute: '10:30',
+              minute: '10:30 AM',
               messages: [{ content: 'Old message' }],
             },
           ],
@@ -202,7 +202,7 @@ describe('Messages utils', () => {
           date: '11/20/2024',
           minutes: [
             {
-              minute: '10:30',
+              minute: '10:30 AM',
               messages: [{ content: 'Old message' }],
             },
           ],
@@ -211,7 +211,7 @@ describe('Messages utils', () => {
           date: '01/01/2024',
           minutes: [
             {
-              minute: '10:30',
+              minute: '10:30 AM',
               messages: [message],
             },
           ],
@@ -221,6 +221,7 @@ describe('Messages utils', () => {
 
     it('should remove duplicate messages in the same minute group', () => {
       const message = {
+        uuid: 'duplicate-message-uuid',
         created_on: moment('2024-01-01T10:30:00').toISOString(),
         content: 'Duplicate message',
       };
@@ -235,7 +236,7 @@ describe('Messages utils', () => {
           date: '01/01/2024',
           minutes: [
             {
-              minute: '10:30',
+              minute: '10:30 AM',
               messages: [message],
             },
           ],
@@ -249,7 +250,7 @@ describe('Messages utils', () => {
           date: '01/01/2024',
           minutes: [
             {
-              minute: '10:30',
+              minute: '10:30 AM',
               messages: [message],
             },
           ],

@@ -40,12 +40,22 @@
               :title="messageFormatTitle(new Date(message.created_on))"
             />
 
+            <ChatMessagesInternalNote
+              v-if="isInternalNoteMessage(message)"
+              :ref="`internal-note-${message.internal_note.uuid}`"
+              :key="message.uuid"
+              :message="message"
+              @click-note="$emit('open-room-contact-info')"
+            />
+
             <ChatMessagesFeedbackMessage
               v-if="isFeedbackMessage(message)"
               :key="message.uuid"
               :message="message"
-              :scheme="isClosedChat ? 'gray' : 'blue'"
+              :scheme="getMessageFeedbackScheme(message)"
               :title="messageFormatTitle(new Date(message.created_on))"
+              :clickable="isInternalNoteText(message)"
+              @click="handleClickChatFeedback(message)"
             />
 
             <template v-else>
@@ -234,7 +244,7 @@
 </template>
 
 <script>
-import { mapState, mapWritableState } from 'pinia';
+import { mapState, mapWritableState, mapActions } from 'pinia';
 import { useDashboard } from '@/store/modules/dashboard';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
@@ -251,6 +261,10 @@ import FullscreenPreview from '@/components/chats/MediaMessage/Previews/Fullscre
 import ChatFeedback from '../ChatFeedback.vue';
 import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
 import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
+import ChatMessagesInternalNote from './ChatMessagesInternalNote.vue';
+
+import { isString } from '@/utils/string';
+import { SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT } from '@/utils/chats';
 
 export default {
   name: 'ChatMessages',
@@ -263,6 +277,7 @@ export default {
     TagGroup,
     FullscreenPreview,
     VideoPlayer,
+    ChatMessagesInternalNote,
   },
 
   props: {
@@ -315,18 +330,15 @@ export default {
     tags: {
       type: Array,
       default: () => [],
-      required: false,
     },
 
     showWaitingFeedback: {
       type: Boolean,
       default: false,
-      required: false,
     },
     showChatSeparator: {
       type: Boolean,
       default: true,
-      required: false,
     },
 
     isLoading: {
@@ -338,7 +350,7 @@ export default {
       default: false,
     },
   },
-  emits: ['scrollTop'],
+  emits: ['scrollTop', 'open-room-contact-info'],
 
   data: () => ({
     highlightedMessageUuid: null,
@@ -355,8 +367,10 @@ export default {
 
   computed: {
     ...mapState(useDashboard, ['viewedAgent']),
+    ...mapState(useRoomMessages, ['roomMessagesNext']),
     ...mapWritableState(useRoomMessages, [
       'replyMessage',
+      'toScrollNote',
       'showScrollToBottomButton',
     ]),
     medias() {
@@ -375,6 +389,10 @@ export default {
   },
 
   watch: {
+    toScrollNote(note) {
+      if (!note) return;
+      this.scrollToInternalNote(note);
+    },
     messages: {
       handler(newMessages, oldMessages) {
         const newMessagesLength = newMessages.length;
@@ -409,6 +427,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(useRoomMessages, ['getRoomMessages']),
     handlerMessageReply(message) {
       this.replyMessage = message;
     },
@@ -567,16 +586,66 @@ export default {
       return !message.user && !message.contact;
     },
 
+    isInternalNoteMessage(message) {
+      return (
+        !!message.internal_note &&
+        !message.internal_note.see_all_internal_notes_chip
+      );
+    },
+
     isFeedbackMessage(message) {
       try {
         const textJson = JSON.parse(message.text);
 
-        const isNewFeedback = !!textJson.method && !!textJson.content;
-        const isOldFeedback = ['queue', 'user'].includes(textJson.type);
-
-        return isNewFeedback || isOldFeedback;
+        return (
+          this.isNewFeedbackMessage(textJson) ||
+          this.isOldFeedbackMessage(textJson) ||
+          this.isSeeAllInternalNotesChipMessage(textJson)
+        );
       } catch (error) {
         return false;
+      }
+    },
+
+    isNewFeedbackMessage(message) {
+      if (isString(message)) {
+        return false;
+      }
+
+      return !!message.method && !!message.content;
+    },
+
+    isOldFeedbackMessage(message) {
+      if (isString(message)) {
+        return false;
+      }
+
+      return ['queue', 'user'].includes(message.type);
+    },
+
+    isSeeAllInternalNotesChipMessage(message) {
+      if (isString(message)) {
+        return false;
+      }
+
+      return message.see_all_internal_notes_chip;
+    },
+
+    isInternalNoteText(message) {
+      return message.text === SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT;
+    },
+
+    getMessageFeedbackScheme(message) {
+      if (message.text === SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT) {
+        return 'yellow-400';
+      }
+
+      return this.isClosedChat ? 'gray' : 'blue';
+    },
+
+    handleClickChatFeedback(message) {
+      if (this.isInternalNoteText(message)) {
+        this.$emit('open-room-contact-info');
       }
     },
 
@@ -673,6 +742,23 @@ export default {
         this.showScrollToBottomButton = false;
       });
     },
+    async scrollToInternalNote(note) {
+      const noteElement = this.$refs[`internal-note-${note.uuid}`]?.[0]?.$el;
+
+      if (noteElement) {
+        noteElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      } else if (this.roomMessagesNext) {
+        // Load more messages to find internal note
+        await this.getRoomMessages();
+        this.scrollToInternalNote(note);
+        return;
+      }
+
+      this.toScrollNote = null;
+    },
   },
 };
 </script>
@@ -691,6 +777,10 @@ export default {
     filter: brightness(1) saturate(1);
     -webkit-filter: brightness(1) saturate(1);
   }
+}
+
+.clickable {
+  cursor: pointer;
 }
 
 .chat-messages__scroll-button-container {
