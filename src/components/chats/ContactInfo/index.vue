@@ -31,32 +31,74 @@
 
       <section class="scrollable">
         <AsideSlotTemplateSection>
-          <section class="infos">
-            <header class="connection-info__header">
-              <h1 class="username">
+          <section class="infos-header">
+            <p class="infos-header__title">{{ $t('contact_info.title') }}</p>
+            <div
+              v-if="!isLinkedToOtherAgent && !isViewMode && !isHistory"
+              class="sync-contact"
+            >
+              <UnnnicSwitch
+                v-model="isLinkedUser"
+                size="small"
+                :textRight="
+                  isLinkedUser
+                    ? $t('contact_info.switch_disassociate_contact')
+                    : $t('contact_info.switch_associate_contact')
+                "
+                @update:model-value="addContactToAgent"
+              />
+              <UnnnicToolTip
+                enabled
+                :text="$t('contact_info.switch_tooltip')"
+                side="left"
+              >
+                <UnnnicIconSvg
+                  icon="info"
+                  scheme="neutral-cloudy"
+                  size="sm"
+                />
+              </UnnnicToolTip>
+            </div>
+          </section>
+          <section class="infos-contact">
+            <p
+              v-if="room?.contact.status === 'online'"
+              class="infos-contact__item-value"
+            >
+              {{ $t('status.online') }}
+            </p>
+            <p
+              v-if="lastMessageFromContact?.created_on"
+              class="infos-contact__item-value"
+            >
+              {{
+                $t('last_message_time.date', {
+                  date: moment(lastMessageFromContact?.created_on).fromNow(),
+                })
+              }}
+            </p>
+            <section class="infos-contact__item">
+              <p class="infos-contact__item-title">{{ $t('name') }}:</p>
+              <p class="infos-contact__item-value">
                 {{ (closedRoom || room).contact.name }}
-              </h1>
-            </header>
+              </p>
+            </section>
+            <section class="infos-contact__item">
+              <p class="infos-contact__item-title">
+                {{ contactNumber?.plataform || $t('URN') }}:
+              </p>
+              <p class="infos-contact__item-value">
+                {{ (closedRoom || room).contact.name }}
+              </p>
+            </section>
+          </section>
+        </AsideSlotTemplateSection>
+
+        <AsideSlotTemplateSection>
+          <section class="infos">
             <ProtocolText :protocol="contactProtocol" />
             <div class="connection-info">
-              <p v-if="room?.contact.status === 'online'">
-                {{ $t('status.online') }}
-              </p>
-              <p
-                v-if="lastMessageFromContact?.created_on"
-                style="margin-bottom: 12px"
-              >
-                {{
-                  $t('last_message_time.date', {
-                    date: moment(lastMessageFromContact?.created_on).fromNow(),
-                  })
-                }}
-              </p>
               <section class="infos">
-                <hgroup class="info">
-                  <h3 class="title">{{ contactNumber?.plataform }}:</h3>
-                  <h4 class="description">{{ contactNumber?.contactNum }}</h4>
-                </hgroup>
                 <hgroup
                   v-if="contactService?.length > 0"
                   class="info"
@@ -78,33 +120,6 @@
                   @save-value="saveCurrentCustomFieldValue"
                 />
               </template>
-            </div>
-            <div
-              v-if="!isLinkedToOtherAgent && !isViewMode && !isHistory"
-              class="sync-contact"
-            >
-              <UnnnicSwitch
-                v-model="isLinkedUser"
-                size="small"
-                :textRight="
-                  isLinkedUser
-                    ? $t('contact_info.switch_disassociate_contact')
-                    : $t('contact_info.switch_associate_contact')
-                "
-                @update:model-value="addContactToAgent"
-              />
-              <UnnnicToolTip
-                enabled
-                :text="$t('contact_info.switch_tooltip')"
-                side="bottom"
-                maxWidth="21rem"
-              >
-                <UnnnicIconSvg
-                  icon="info"
-                  scheme="neutral-cloudy"
-                  size="sm"
-                />
-              </UnnnicToolTip>
             </div>
             <ChatSummary
               v-if="showRoomSummary && enableRoomSummary && room"
@@ -144,10 +159,10 @@
 
         <DiscussionsSession v-if="isHistory" />
 
-        <TransferSession
+        <!-- <TransferSession
           v-if="!isHistory"
           @transferred-contact="$emit('transferred-contact')"
-        />
+        /> -->
 
         <AsideSlotTemplateSection>
           <ContactMedia
@@ -212,7 +227,7 @@ import CustomField from './CustomField.vue';
 import ContactMedia from './Media.vue';
 import VideoPreview from '../MediaMessage/Previews/Video.vue';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
-import TransferSession from './TransferSession.vue';
+// import TransferSession from './TransferSession.vue';
 import ModalStartDiscussion from './ModalStartDiscussion.vue';
 import DiscussionsSession from './DiscussionsSession.vue';
 import ChatSummary from '@/layouts/ChatsLayout/components/ChatSummary/index.vue';
@@ -232,7 +247,7 @@ export default {
     ContactMedia,
     FullscreenPreview,
     VideoPreview,
-    TransferSession,
+    // TransferSession,
     ModalStartDiscussion,
     DiscussionsSession,
     ChatSummary,
@@ -598,6 +613,7 @@ export default {
     color: $unnnic-color-fg-emphasized;
     border-bottom: 1px solid $unnnic-color-border-soft;
   }
+
   .scrollable {
     overflow: hidden auto;
     height: 100%;
@@ -613,6 +629,52 @@ export default {
     display: flex;
     flex-direction: column;
     gap: $unnnic-spacing-stack-sm;
+
+    &-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      &__title {
+        font: $unnnic-font-emphasis;
+        color: $unnnic-color-fg-emphasized;
+      }
+
+      .sync-contact {
+        margin-left: -$unnnic-spacing-xs;
+
+        display: flex;
+        align-items: center;
+
+        :deep(.unnnic-tooltip) {
+          display: flex;
+        }
+      }
+    }
+
+    &-contact {
+      display: flex;
+      flex-direction: column;
+      padding: $unnnic-space-2 $unnnic-space-0;
+      gap: $unnnic-space-1;
+
+      &__item {
+        display: flex;
+        align-items: baseline;
+        gap: $unnnic-space-05;
+
+        &-title {
+          font: $unnnic-font-emphasis;
+          color: $unnnic-color-fg-base;
+          font-weight: $unnnic-font-weight-bold;
+        }
+
+        &-value {
+          font: $unnnic-font-caption-2;
+          color: $unnnic-color-fg-base;
+        }
+      }
+    }
 
     .avatar {
       display: flex;
@@ -673,17 +735,6 @@ export default {
           font-size: $unnnic-font-size-body-gt;
           cursor: default;
         }
-      }
-    }
-
-    .sync-contact {
-      margin-left: -$unnnic-spacing-xs;
-
-      display: flex;
-      align-items: center;
-
-      :deep(.unnnic-tooltip) {
-        display: flex;
       }
     }
 
