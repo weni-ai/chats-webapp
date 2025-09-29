@@ -45,7 +45,7 @@
               :ref="`internal-note-${message.internal_note.uuid}`"
               :key="message.uuid"
               :message="message"
-              @click="$emit('open-room-contact-info')"
+              @click-note="$emit('open-room-contact-info')"
             />
 
             <ChatMessagesFeedbackMessage

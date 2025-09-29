@@ -104,7 +104,8 @@ export default {
           this.isLoadingMessages = true;
           try {
             await this.handlingGetRoomMessages();
-            await this.getRoomInternalNotes();
+            // TODO: temporarily disabled, the logic will be improved
+            // await this.getRoomInternalNotes();
           } catch (error) {
             console.error(error);
           } finally {
@@ -133,10 +134,7 @@ export default {
 
     async handlingGetRoomMessages() {
       try {
-        await this.getRoomMessages({
-          offset: this.page * this.limit,
-          limit: this.limit,
-        });
+        await this.getRoomMessages();
       } catch (error) {
         console.error(error);
       } finally {
@@ -180,7 +178,7 @@ export default {
         limit: 1,
       });
       const hasInternalNotes = results.length > 0;
-      if (hasInternalNotes && !this.room.ended_at) {
+      if (hasInternalNotes && !this.room.ended_at && this.room.user) {
         const chipNote = {
           uuid: new Date().toString(),
           created_on: new Date().toISOString(),

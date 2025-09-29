@@ -1,7 +1,10 @@
 <template>
   <section>
     <section class="chat-messages__internal-note-container">
-      <section class="chat-messages__internal-note">
+      <section
+        class="chat-messages__internal-note"
+        @click="$emit('clickNote')"
+      >
         <p
           v-if="showAgentName"
           class="chat-messages__internal-note-agent-name"
@@ -53,6 +56,7 @@ export default {
       required: true,
     },
   },
+  emits: ['clickNote'],
   data() {
     return {
       showModalDeleteInternalNote: false,
