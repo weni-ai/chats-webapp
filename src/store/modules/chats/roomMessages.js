@@ -169,7 +169,7 @@ export const useRoomMessages = defineStore('roomMessages', {
       this.removeMessageFromSendings(uuid);
     },
 
-    async getRoomMessages({ offset = null, limit = null } = {}) {
+    async getRoomMessages() {
       const roomsStore = useRooms();
 
       const nextReq = this.roomMessagesNext;
@@ -177,12 +177,7 @@ export const useRoomMessages = defineStore('roomMessages', {
       await treatMessages({
         itemUuid: roomsStore.activeRoom?.uuid,
         getItemMessages: () =>
-          Message.getByRoom(
-            { nextReq },
-            roomsStore.activeRoom?.uuid,
-            offset,
-            limit,
-          ),
+          Message.getByRoom({ nextReq }, roomsStore.activeRoom?.uuid),
         oldMessages: this.roomMessages,
         nextReq,
         addSortedMessage: ({ message, addBefore }) =>

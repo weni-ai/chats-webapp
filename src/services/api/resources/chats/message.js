@@ -6,15 +6,13 @@ function getURLParams({ URL, endpoint }) {
 }
 
 export default {
-  async getByRoom({ nextReq }, roomId, offset, limit) {
+  async getByRoom({ nextReq }, roomId) {
     const endpoint = '/msg/';
     const paramsNextReq = getURLParams({ URL: nextReq, endpoint });
     const params = {
       room: roomId,
       ordering: '-created_on',
       reverse_results: true,
-      offset,
-      limit,
     };
 
     let response;

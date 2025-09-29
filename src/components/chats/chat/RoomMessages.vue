@@ -134,10 +134,7 @@ export default {
 
     async handlingGetRoomMessages() {
       try {
-        await this.getRoomMessages({
-          offset: this.page * this.limit,
-          limit: this.limit,
-        });
+        await this.getRoomMessages();
       } catch (error) {
         console.error(error);
       } finally {
