@@ -496,6 +496,7 @@
   },
   "contact_info": {
     "title": "About the contact",
+    "about_support": "About the support",
     "switch_associate_contact": "Unlinked contact",
     "switch_disassociate_contact": "Linked contact",
     "switch_tooltip": "Enable if you want the contact to always be directly assigned to you",

@@ -16,7 +16,7 @@ export default {
   padding: $unnnic-spacing-xs;
 
   & + & {
-    // border-top: solid 1px $unnnic-color-neutral-soft;
+    border-top: solid 1px $unnnic-color-neutral-soft;
   }
 }
 </style>

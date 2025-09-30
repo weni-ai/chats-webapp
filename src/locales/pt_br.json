@@ -492,6 +492,7 @@
   },
   "contact_info": {
     "title": "Sobre o contato",
+    "about_support": "Sobre o suporte",
     "switch_associate_contact": "Contato desvinculado",
     "switch_disassociate_contact": "Contato vinculado",
     "switch_tooltip": "Ative se deseja que o contato seja sempre atribuído diretamente a você",
