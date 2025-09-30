@@ -22,6 +22,7 @@
       ref="roomsTransferFields"
       v-model="selectedQueue"
       bulkTransfer
+      fixed
       @transfer-complete="transferComplete"
     />
   </UnnnicModalDialog>

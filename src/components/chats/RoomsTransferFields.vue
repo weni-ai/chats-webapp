@@ -84,6 +84,10 @@ export default {
       type: Array,
       required: true,
     },
+    fixed: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   emits: ['update:model-value', 'update:selectedAgent', 'transfer-complete'],
@@ -103,6 +107,10 @@ export default {
   computed: {
     ...mapState(useRooms, ['selectedRoomsToTransfer', 'contactToTransfer']),
     ...mapState(useProfile, ['me']),
+
+    dropdownFixed() {
+      return this.fixed ? 'fixed' : 'relative';
+    },
 
     queuesDefault() {
       return [{ value: '', label: this.$t('select_queue') }];
@@ -303,7 +311,7 @@ export default {
 
 <style lang="scss" scoped>
 :deep(.unnnic-select-smart__options.active) {
-  position: fixed;
+  position: v-bind(dropdownFixed);
   left: auto;
   right: auto;
 }
