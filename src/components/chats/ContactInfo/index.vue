@@ -644,9 +644,9 @@ export default {
   }
 
   .infos {
-    // display: flex;
-    // flex-direction: column;
-    // gap: $unnnic-spacing-stack-sm;
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-spacing-stack-sm;
 
     &-header {
       display: flex;
