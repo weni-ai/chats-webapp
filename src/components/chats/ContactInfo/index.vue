@@ -169,16 +169,6 @@
               :isGeneratingSummary="isLoadingActiveRoomSummary"
               hideClose
             />
-            <!-- <nav class="infos__nav">
-              <UnnnicButton
-                v-if="!isHistory && !isViewMode"
-                :text="$t('contact_info.see_contact_history')"
-                iconLeft="history"
-                type="secondary"
-                size="small"
-                @click="openHistory()"
-              />
-            </nav> -->
           </section>
         </AsideSlotTemplateSection>
 
@@ -255,6 +245,7 @@ import ProtocolText from './ProtocolText.vue';
 
 import moment from 'moment';
 import { useConfig } from '@/store/modules/config';
+import { parseUrn } from '@/utils/room';
 
 export default {
   name: 'ContactInfo',
@@ -353,15 +344,7 @@ export default {
 
     contactNumber() {
       const room = this.closedRoom || this.room;
-      if (!room.urn) return {};
-      const plataform = (this.closedRoom || this.room).urn.split(':').at(0);
-      const number = (this.closedRoom || this.room).urn.split(':').at(-1);
-      const whatsapp = `+${number.substr(-20, 20)}`;
-      const infoNumber = {
-        plataform,
-        contactNum: plataform === 'whatsapp' ? whatsapp : number,
-      };
-      return infoNumber;
+      return parseUrn(room);
     },
     contactProtocol() {
       return (this.closedRoom || this.room).protocol || '';
@@ -409,23 +392,6 @@ export default {
   methods: {
     moment,
     ...mapActions(useRooms, ['updateRoomContact']),
-    openHistory() {
-      const { plataform, contactNum } = this.contactNumber;
-      const protocol = this.contactProtocol;
-      const contactUrn =
-        plataform === 'whatsapp' ? contactNum.replace('+', '') : contactNum;
-
-      const A_YEAR_AGO = moment().subtract(12, 'month').format('YYYY-MM-DD');
-
-      this.$router.push({
-        name: 'closed-rooms',
-        query: {
-          contactUrn,
-          protocol,
-          startDate: A_YEAR_AGO,
-        },
-      });
-    },
 
     emitClose() {
       this.$emit('close');
@@ -678,9 +644,9 @@ export default {
   }
 
   .infos {
-    display: flex;
-    flex-direction: column;
-    gap: $unnnic-spacing-stack-sm;
+    // display: flex;
+    // flex-direction: column;
+    // gap: $unnnic-spacing-stack-sm;
 
     &-header {
       display: flex;
@@ -740,73 +706,6 @@ export default {
         justify-content: center;
         align-items: center;
       }
-    }
-
-    .avatar {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: $unnnic-border-radius-lg;
-
-      width: 100%;
-      min-height: 17.8125rem;
-      background: rgba(
-        $unnnic-color-brand-weni,
-        $unnnic-opacity-level-extra-light
-      );
-    }
-
-    .username {
-      font-weight: $unnnic-font-weight-bold;
-      font-size: $unnnic-font-size-title-sm;
-      color: $unnnic-color-neutral-dark;
-    }
-
-    .connection-info {
-      display: flex;
-      flex-direction: column;
-      gap: $unnnic-spacing-stack-nano;
-
-      font-size: $unnnic-font-size-body-md;
-      color: $unnnic-color-neutral-cloudy;
-
-      &__header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .infos {
-        display: flex;
-        flex-direction: column;
-        gap: $unnnic-spacing-inline-nano;
-
-        &:not(.custom) {
-          margin-bottom: $unnnic-spacing-inline-ant;
-        }
-      }
-
-      .info {
-        display: flex;
-        align-items: center;
-        gap: $unnnic-spacing-inline-nano;
-
-        .title {
-          font-weight: $unnnic-font-weight-bold;
-          text-transform: capitalize;
-        }
-
-        .title,
-        .description {
-          font-size: $unnnic-font-size-body-gt;
-          cursor: default;
-        }
-      }
-    }
-
-    &__nav {
-      display: grid;
-      gap: $unnnic-spacing-xs;
     }
   }
 }

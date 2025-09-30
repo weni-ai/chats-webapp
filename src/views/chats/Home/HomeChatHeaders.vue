@@ -14,13 +14,34 @@
       data-testid="chat-header"
     >
       <template #right>
-        <UnnnicButton
-          type="secondary"
-          size="small"
-          @click="emitOpenModalCloseChat"
-        >
-          {{ $t('end_chat') }}
-        </UnnnicButton>
+        <section class="home-chat-headers__actions">
+          <!-- TODO: Add tooltips -->
+          <img
+            class="stars-icon"
+            :src="starsIcon"
+          />
+          <UnnnicIcon
+            icon="history"
+            size="ant"
+            :clickable="room?.has_history"
+            :scheme="room?.has_history ? 'neutral-cloudy' : 'neutral-soft'"
+            @click="openHistory"
+          />
+          <UnnnicIcon
+            icon="sync_alt"
+            size="ant"
+            clickable
+            scheme="neutral-cloudy"
+            @click="openTransferModal"
+          />
+          <UnnnicButton
+            type="secondary"
+            size="small"
+            @click="emitOpenModalCloseChat"
+          >
+            {{ $t('end_chat') }}
+          </UnnnicButton>
+        </section>
       </template>
     </UnnnicChatsHeader>
     <UnnnicChatsHeader
@@ -52,7 +73,13 @@ import isMobile from 'is-mobile';
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow.vue';
+
 import { formatContactName } from '@/utils/chats';
+
+import starsIcon from '@/assets/icons/bi_stars.svg';
+
+import moment from 'moment';
+import { parseUrn } from '@/utils/room';
 
 export default {
   name: 'HomeChatHeaders',
@@ -74,6 +101,9 @@ export default {
     'openFlowsTrigger',
     'back',
   ],
+  data() {
+    return { starsIcon };
+  },
 
   computed: {
     ...mapState(useRooms, {
@@ -127,12 +157,45 @@ export default {
     emitBack() {
       return this.$emit('back');
     },
+    openHistory() {
+      const { plataform, contactNum } = parseUrn(this.room);
+      const protocol = this.room.protocol;
+      const contactUrn =
+        plataform === 'whatsapp' ? contactNum.replace('+', '') : contactNum;
+
+      const A_YEAR_AGO = moment().subtract(12, 'month').format('YYYY-MM-DD');
+
+      this.$router.push({
+        name: 'closed-rooms',
+        query: {
+          contactUrn,
+          protocol,
+          startDate: A_YEAR_AGO,
+          from: this.room.uuid,
+        },
+      });
+    },
+    openTransferModal() {
+      console.log('TODO: open transfer modal');
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .home-chat-headers {
+  &__actions {
+    display: flex;
+    gap: $unnnic-space-6;
+    align-items: center;
+
+    .stars-icon {
+      width: $unnnic-space-5;
+      height: $unnnic-space-5;
+      cursor: pointer;
+    }
+  }
+
   &__discussion {
     :deep(.unnnic-chats-header) {
       .unnnic-chats-header__avatar-icon {
