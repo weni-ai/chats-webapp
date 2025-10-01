@@ -2,6 +2,7 @@
   <ChatFeedback
     :feedback="createFeedbackLabel(message)"
     :scheme="scheme"
+    :class="{ clickable: clickable }"
     data-testid="chat-feedback"
   />
 </template>
@@ -25,11 +26,16 @@ export default {
       type: String,
       default: 'blue',
     },
+    clickable: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   methods: {
     createFeedbackLabel(message) {
       const textJson = JSON.parse(message.text);
+
       const t = (key, params) => this.$t(key, params);
 
       const isOldFeedback = textJson.type;
@@ -44,7 +50,11 @@ export default {
         return oldFeedbackLabels[type];
       }
 
-      const { method, content } = textJson;
+      const { method, content, see_all_internal_notes_chip } = textJson;
+
+      if (see_all_internal_notes_chip) {
+        return t('chats.feedback.see_all_internal_notes');
+      }
 
       function getPickLabel(action, from, to) {
         if (action === 'pick') {
@@ -144,3 +154,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.clickable {
+  cursor: pointer;
+}
+</style>

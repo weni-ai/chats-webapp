@@ -110,6 +110,7 @@ describe('Messages utils', () => {
         type1: 'uuid1',
         user: 'user1',
         text: '',
+        internal_note: null,
         media: [
           {
             preview: 'url',

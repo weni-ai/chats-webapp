@@ -28,6 +28,7 @@
     :isClosedChat="!!room?.ended_at"
     :enableReply="false"
     @scroll-top="searchForMoreMessages"
+    @open-room-contact-info="$emit('open-room-contact-info')"
   />
 </template>
 <script>
@@ -40,7 +41,9 @@ import ChatMessages from '@/components/chats/chat/ChatMessages/index.vue';
 import ChatSummary from '@/layouts/ChatsLayout/components/ChatSummary/index.vue';
 
 import RoomService from '@/services/api/resources/chats/room';
+import RoomNotes from '@/services/api/resources/chats/roomNotes';
 import { useConfig } from '@/store/modules/config';
+import { SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT } from '@/utils/chats';
 
 export default {
   name: 'RoomMessages',
@@ -53,6 +56,7 @@ export default {
       default: false,
     },
   },
+  emits: ['open-room-contact-info'],
 
   data: () => {
     return {
@@ -84,6 +88,7 @@ export default {
       'roomMessagesSendingUuids',
       'roomMessagesFailedUuids',
     ]),
+    ...mapWritableState(useRoomMessages, ['roomInternalNotes']),
     ...mapState(useConfig, {
       enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
     }),
@@ -96,7 +101,17 @@ export default {
         if (roomUuid) {
           this.resetRoomMessages();
           this.page = 0;
-          await this.handlingGetRoomMessages();
+          this.isLoadingMessages = true;
+          try {
+            await this.handlingGetRoomMessages();
+            // TODO: temporarily disabled, the logic will be improved
+            // await this.getRoomInternalNotes();
+          } catch (error) {
+            console.error(error);
+          } finally {
+            this.isLoadingMessages = false;
+          }
+
           if (this.enableRoomSummary) {
             this.skipSummaryAnimation = false;
             clearInterval(this.getRoomSummaryInterval);
@@ -114,23 +129,17 @@ export default {
       roomResendMedia: 'resendRoomMedia',
       getRoomMessages: 'getRoomMessages',
       resetRoomMessages: 'resetRoomMessages',
+      addSortedMessage: 'addRoomMessageSorted',
     }),
 
-    handlingGetRoomMessages() {
-      this.isLoadingMessages = true;
-
-      this.getRoomMessages({
-        offset: this.page * this.limit,
-        limit: this.limit,
-      })
-        .then(() => {})
-        .catch((error) => {
-          console.error(error);
-        })
-        .finally(() => {
-          this.isLoadingMessages = false;
-          this.silentLoadingMessages = false;
-        });
+    async handlingGetRoomMessages() {
+      try {
+        await this.getRoomMessages();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.silentLoadingMessages = false;
+      }
     },
 
     setRoomSummary(text, feedback, status) {
@@ -160,6 +169,22 @@ export default {
         console.log(error);
         const errorText = this.$t('chats.summary.error');
         this.setRoomSummary(errorText);
+      }
+    },
+
+    async getRoomInternalNotes() {
+      const { results } = await RoomNotes.getInternalNotes({
+        room: this.room.uuid,
+        limit: 1,
+      });
+      const hasInternalNotes = results.length > 0;
+      if (hasInternalNotes && !this.room.ended_at && this.room.user) {
+        const chipNote = {
+          uuid: new Date().toString(),
+          created_on: new Date().toISOString(),
+          text: SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT,
+        };
+        this.addSortedMessage({ message: chipNote });
       }
     },
 

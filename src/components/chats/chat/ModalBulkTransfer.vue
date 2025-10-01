@@ -1,36 +1,31 @@
 <template>
-  <UnnnicModal
+  <UnnnicModalDialog
+    :modelValue="true"
+    :title="$t('bulk_transfer.transfer_selected_contacts')"
+    :showCloseIcon="!isLoadingBulkTransfer"
+    :primaryButtonProps="{
+      text: $t('transfer'),
+      loading: isLoadingBulkTransfer,
+      disabled: disabledTransferButton,
+    }"
+    :secondaryButtonProps="{
+      text: $t('cancel'),
+      disabled: isLoadingBulkTransfer,
+    }"
+    :persistent="isLoadingBulkTransfer"
     data-testid="modal-bulk-transfer"
-    :text="$t('bulk_transfer.transfer_selected_contacts')"
-    class="modal-bulk-transfer"
-    :closeIcon="false"
+    @secondary-button-click="emitClose()"
+    @primary-button-click="bulkTransfer()"
+    @update:model-value="emitClose()"
   >
     <RoomsTransferFields
       ref="roomsTransferFields"
       v-model="selectedQueue"
       bulkTransfer
+      fixed
       @transfer-complete="transferComplete"
     />
-
-    <template #options>
-      <UnnnicButton
-        data-testid="cancel-button"
-        :text="$t('cancel')"
-        type="tertiary"
-        size="large"
-        @click="$emit('close')"
-      />
-      <UnnnicButton
-        data-testid="transfer-button"
-        :text="$t('transfer')"
-        type="primary"
-        size="large"
-        :disabled="disabledTransferButton"
-        :loading="isLoadingBulkTransfer"
-        @click="bulkTransfer()"
-      />
-    </template>
-  </UnnnicModal>
+  </UnnnicModalDialog>
 </template>
 
 <script>
@@ -42,6 +37,7 @@ export default {
   components: {
     RoomsTransferFields,
   },
+
   emits: ['close'],
 
   data() {
@@ -70,27 +66,10 @@ export default {
       this.isLoadingBulkTransfer = false;
       this.$emit('close');
     },
+
+    emitClose() {
+      this.$emit('close');
+    },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.modal-bulk-transfer {
-  :deep(.unnnic-modal-container-background) {
-    overflow: visible;
-
-    .unnnic-modal-container-background-body {
-      padding-top: $unnnic-spacing-giant;
-
-      &-description-container {
-        padding-bottom: 0;
-      }
-
-      &-description,
-      &-description-container {
-        overflow: visible;
-      }
-    }
-  }
-}
-</style>

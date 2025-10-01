@@ -33,4 +33,9 @@ export default ({ ws, app }) => {
   ws.on('status.close', createListener(statusListener.close));
 
   ws.on('custom_status.close', createListener(customStatusListener.close));
+
+  ws.on(
+    'room_note.delete',
+    createListener(roomListener.roomInternalNote.delete),
+  );
 };

@@ -20,3 +20,6 @@ export function formatContactName(room) {
   }
   return room?.contact.name ? (contactName + room?.contact.name).trim() : '';
 }
+
+export const SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT =
+  '{"see_all_internal_notes_chip":true}';

@@ -11,6 +11,9 @@ vi.mock('@/services/api/websocket/listeners/room', () => ({
       create: vi.fn(),
       update: vi.fn(),
     },
+    roomInternalNote: {
+      delete: vi.fn(),
+    },
   },
 }));
 

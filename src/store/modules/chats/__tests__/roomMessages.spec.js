@@ -172,12 +172,7 @@ describe('useRoomMessages Store', () => {
 
     await roomMessagesStore.getRoomMessages();
 
-    expect(Message.getByRoom).toHaveBeenCalledWith(
-      { nextReq: '' },
-      'room-123',
-      null,
-      null,
-    );
+    expect(Message.getByRoom).toHaveBeenCalledWith({ nextReq: '' }, 'room-123');
 
     expect(roomMessagesStore.roomMessages).toEqual(mockMessages);
     expect(roomMessagesStore.roomMessagesNext).toBe('next-url');
