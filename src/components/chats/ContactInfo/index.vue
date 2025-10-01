@@ -160,6 +160,7 @@
             </header>
             <section class="contact-info__about-support-content">
               <ProtocolText :protocol="contactProtocol" />
+              <DiscussionsSession v-if="isHistory" />
             </section>
           </section>
           <section class="infos">
@@ -171,9 +172,6 @@
             />
           </section>
         </AsideSlotTemplateSection>
-
-        <!-- TODO: Visual refact -->
-        <DiscussionsSession v-if="isHistory" />
 
         <AsideSlotTemplateSection>
           <ContactMedia
