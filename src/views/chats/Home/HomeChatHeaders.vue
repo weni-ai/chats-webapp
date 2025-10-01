@@ -15,6 +15,7 @@
     >
       <template #right>
         <section class="home-chat-headers__actions">
+          <!-- TODO: implement ia summary  -->
           <!-- <img
             class="stars-icon"
             :src="starsIcon"
@@ -74,11 +75,16 @@
       data-testid="chat-header-send-flow"
       @send-flow="emitOpenFlowsTrigger"
     />
+    <ModalTransferRooms
+      v-if="isModalTransferRoomsOpened"
+      @close="closeTransferModal()"
+    />
   </section>
 </template>
 
 <script>
-import { mapState } from 'pinia';
+import { format as dateFnsFormat, subYears as dateFnsSubYears } from 'date-fns';
+import { mapState, mapWritableState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
@@ -93,8 +99,9 @@ import { formatContactName } from '@/utils/chats';
 
 import starsIcon from '@/assets/icons/bi_stars.svg';
 
-import moment from 'moment';
 import { parseUrn } from '@/utils/room';
+
+import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
 
 export default {
   name: 'HomeChatHeaders',
@@ -102,6 +109,7 @@ export default {
   components: {
     ChatHeaderLoading,
     ChatHeaderSendFlow,
+    ModalTransferRooms,
   },
 
   props: {
@@ -117,7 +125,7 @@ export default {
     'back',
   ],
   data() {
-    return { starsIcon };
+    return { starsIcon, isModalTransferRoomsOpened: false };
   },
 
   computed: {
@@ -127,6 +135,8 @@ export default {
     ...mapState(useDiscussions, {
       discussion: (store) => store.activeDiscussion,
     }),
+
+    ...mapWritableState(useRooms, ['contactToTransfer']),
 
     isMobile() {
       return isMobile();
@@ -178,7 +188,10 @@ export default {
       const contactUrn =
         plataform === 'whatsapp' ? contactNum.replace('+', '') : contactNum;
 
-      const A_YEAR_AGO = moment().subtract(12, 'month').format('YYYY-MM-DD');
+      const A_YEAR_AGO = dateFnsFormat(
+        dateFnsSubYears(new Date(), 1),
+        'yyyy-MM-dd',
+      );
 
       this.$router.push({
         name: 'closed-rooms',
@@ -191,7 +204,12 @@ export default {
       });
     },
     openTransferModal() {
-      console.log('TODO: open transfer modal');
+      this.contactToTransfer = this.room.uuid;
+      this.isModalTransferRoomsOpened = true;
+    },
+    closeTransferModal() {
+      this.contactToTransfer = '';
+      this.isModalTransferRoomsOpened = false;
     },
   },
 };
