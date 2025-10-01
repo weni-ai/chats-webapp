@@ -384,7 +384,7 @@ export default {
       throw new Error(`There is no associated sector with room ${room.uuid}`);
     }
     // to prevent medias stg error
-    this.isLoading = false;
+    // this.isLoading = false;
   },
 
   methods: {

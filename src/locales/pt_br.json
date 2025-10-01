@@ -940,5 +940,19 @@
       "step_4": "<b>Deletar notas:</b> você pode deletar suas notas enquanto o suporte ainda está atribuído a você.",
       "step_5": "<b>Transferência de room:</b> se outro agente assumir o room, eles serão informados sobre a existência de notas internas."
     }
+  },
+  "new_contact_info_visual": {
+    "content_1": {
+      "text_1": "Fizemos alguns ajustes para ajudar você a navegar mais rápido! Confira:",
+      "text_2": "As opções <b>Ver histórico</b> foram movidas do drawer lateral para o menu superior da conversa."
+    },
+    "content_2": {
+      "text_1": "As opções <b>Transferir contato</b> foram movidas do drawer lateral para o menu superior da conversa."
+    },
+    "content_3": {
+      "text_1": "Para tornar o drawer de informações mais organizado e fácil de usar, fizemos algumas melhorias. A informação agora está dividida em <b>Sobre o contato</b> e <b>Sobre o serviço</b>.",
+      "text_2": "Além disso, os <b>campos personalizados</b> agora podem ser expandidos e recolhidos, para que você possa ver o que realmente importa sem ter que rolar.",
+      "text_3": "E para tornar a interface mais limpa, mudamos o visual do botão <b>Iniciar discussão</b>."
+    }
   }
 }
