@@ -15,25 +15,40 @@
     >
       <template #right>
         <section class="home-chat-headers__actions">
-          <!-- TODO: Add tooltips -->
-          <img
+          <!-- <img
             class="stars-icon"
             :src="starsIcon"
-          />
-          <UnnnicIcon
-            icon="history"
-            size="ant"
-            :clickable="room?.has_history"
-            :scheme="room?.has_history ? 'neutral-cloudy' : 'neutral-soft'"
-            @click="openHistory"
-          />
-          <UnnnicIcon
-            icon="sync_alt"
-            size="ant"
-            clickable
-            scheme="neutral-cloudy"
-            @click="openTransferModal"
-          />
+          /> -->
+          <UnnnicToolTip
+            enabled
+            :text="
+              room?.has_history
+                ? $t('contact_info.see_contact_history')
+                : $t('contact_info.no_contact_history')
+            "
+            side="left"
+          >
+            <UnnnicIcon
+              icon="history"
+              size="ant"
+              :clickable="room?.has_history"
+              :scheme="room?.has_history ? 'neutral-cloudy' : 'neutral-soft'"
+              @click="openHistory"
+            />
+          </UnnnicToolTip>
+          <UnnnicToolTip
+            enabled
+            :text="$tc('transfer_contact', 1)"
+            side="left"
+          >
+            <UnnnicIcon
+              icon="sync_alt"
+              size="ant"
+              clickable
+              scheme="neutral-cloudy"
+              @click="openTransferModal"
+            />
+          </UnnnicToolTip>
           <UnnnicButton
             type="secondary"
             size="small"
@@ -188,6 +203,10 @@ export default {
     display: flex;
     gap: $unnnic-space-6;
     align-items: center;
+
+    :deep(.unnnic-tooltip) {
+      display: flex;
+    }
 
     .stars-icon {
       width: $unnnic-space-5;

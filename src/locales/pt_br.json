@@ -500,6 +500,7 @@
     "alert_detached": "Contato desvinculado",
     "linked_contact": "Contato vinculado ao agente {name}",
     "see_contact_history": "Ver histórico",
+    "no_contact_history": "Nenhum histórico",
     "audio_tooltip": "{agent} {date} às {time}",
     "transfering_chat": "Transferindo o chat ​📬",
     "ticket": "Protocolo",

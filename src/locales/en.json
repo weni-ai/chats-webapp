@@ -504,6 +504,7 @@
     "alert_detached": "Unlinked contact",
     "linked_contact": "Contact linked to agent {name}",
     "see_contact_history": "View history",
+    "no_contact_history": "No history",
     "audio_tooltip": "{agent} {date} at {time}",
     "transfering_chat": "Transferring the chat 📬",
     "ticket": "Ticket ID",

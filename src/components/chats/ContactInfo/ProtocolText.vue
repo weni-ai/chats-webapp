@@ -16,11 +16,11 @@
       <p class="protocol-text__ticket-value">
         {{ protocol }}
       </p>
-      <!-- <UnnnicIconSvg
+      <UnnnicIconSvg
         icon="content_copy"
         scheme="neutral-cloudy"
         size="sm"
-      /> -->
+      />
     </UnnnicToolTip>
   </section>
 </template>
