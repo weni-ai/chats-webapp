@@ -70,11 +70,17 @@ export default {
   mounted() {
     this.classifyRoom();
     this.checkIsShowFeedback();
+    this.loadRoomTags();
   },
 
   methods: {
     ...mapActions(useFeedback, ['setIsRenderFeedbackModal']),
     ...mapActions(useRooms, ['removeRoom']),
+    async loadRoomTags() {
+      const roomUuid = this.room.uuid;
+      const { results } = await Room.getRoomTags(roomUuid);
+      this.tags = results;
+    },
     async classifyRoom() {
       this.isLoadingTags = true;
       let hasNext = false;

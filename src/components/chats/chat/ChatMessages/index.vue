@@ -194,14 +194,6 @@
         </section>
       </section>
 
-      <section
-        v-if="tags.length > 0"
-        v-show="!isSkeletonLoadingActive"
-        class="chat-messages__tags"
-      >
-        <TagGroup :tags="tags" />
-      </section>
-
       <!-- Media fullscreen -->
       <FullscreenPreview
         v-if="isFullscreen && currentMedia"
@@ -254,7 +246,6 @@ import { isMessageFromCurrentUser } from '@/utils/messages';
 import Media from '@/services/api/resources/chats/media';
 
 import ChatMessagesLoading from '@/views/loadings/chat/ChatMessages.vue';
-import TagGroup from '@/components/TagGroup.vue';
 import VideoPlayer from '@/components/chats/MediaMessage/Previews/Video.vue';
 import FullscreenPreview from '@/components/chats/MediaMessage/Previews/Fullscreen.vue';
 
@@ -274,7 +265,6 @@ export default {
     ChatFeedback,
     ChatMessagesStartFeedbacks,
     ChatMessagesFeedbackMessage,
-    TagGroup,
     FullscreenPreview,
     VideoPlayer,
     ChatMessagesInternalNote,

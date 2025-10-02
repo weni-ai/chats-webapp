@@ -18,7 +18,7 @@
         "
         :class="{ 'tag-group__tags__tag--selected': isSelectedTag(tag) }"
         type="brand"
-        @click="select(tag)"
+        @click="useCloseClick ? close(tag) : select(tag)"
         @close="close(tag)"
       />
       <p
@@ -59,6 +59,10 @@ export default {
     modelValue: {
       type: Array,
       default: () => [],
+    },
+    useCloseClick: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: ['update:modelValue', 'close'],
