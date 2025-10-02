@@ -4,15 +4,19 @@
     <AsideSlotTemplate
       v-show="!isSidebarLoading"
       class="discussion-sidebar"
-      :title="
-        isOwnDiscussion
-          ? $t('discussions.about.title')
-          : $t('chats.closed_chats.contact_history')
-      "
-      :icon="isOwnDiscussion ? 'chat_info' : 'history'"
-      iconScheme="neutral-dark"
-      :close="isOwnDiscussion ? handleEndDiscussionModal : null"
     >
+      <template #header>
+        <UnnnicChatsHeader
+          :title="
+            isOwnDiscussion
+              ? $t('discussions.about.title')
+              : $t('chats.closed_chats.contact_history')
+          "
+          :avatarIcon="isOwnDiscussion ? 'chat_info' : 'history'"
+          :close="isOwnDiscussion ? handleEndDiscussionModal : null"
+          sectionIconScheme="neutral-dark"
+        />
+      </template>
       <DiscussionAbout
         v-if="isOwnDiscussion"
         :details="details"
