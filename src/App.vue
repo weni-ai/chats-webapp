@@ -183,7 +183,12 @@ export default {
   },
 
   methods: {
-    ...mapActions(useConfig, ['setStatus', 'setProject', 'setDisconnectedBy']),
+    ...mapActions(useConfig, [
+      'setStatus',
+      'setCustomStatus',
+      'setProject',
+      'setDisconnectedBy',
+    ]),
     ...mapActions(useProfile, ['setMe', 'getMeQueues']),
     ...mapActions(useQuickMessages, {
       getAllQuickMessages: 'getAll',
@@ -328,12 +333,19 @@ export default {
       );
     },
 
-    updateUserStatusFromWebSocket(status, disconnectedBy = '') {
+    updateUserStatusFromWebSocket(
+      status,
+      disconnectedBy = '',
+      isCustom = false,
+    ) {
       moduleStorage.setItem(`statusAgent-${this.project.uuid}`, status, {
         useSession: true,
       });
       this.setStatus(status);
       this.setDisconnectedBy(disconnectedBy);
+      if (isCustom) {
+        this.setCustomStatus('CUSTOM');
+      }
       this.showModalOfflineAgent = true;
     },
 
