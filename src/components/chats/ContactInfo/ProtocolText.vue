@@ -11,7 +11,7 @@
       class="protocol-text__ticket"
     >
       <p class="protocol-text__ticket-title">
-        {{ $t('contact_info.ticket') }}
+        {{ $t('contact_info.ticket') }}:
       </p>
       <p class="protocol-text__ticket-value">
         {{ protocol }}
@@ -66,25 +66,17 @@ const copyProtocol = () => {
   .protocol-text__ticket {
     display: flex;
     align-items: center;
-    gap: $unnnic-spacing-nano;
+    gap: $unnnic-space-1;
     cursor: pointer;
 
     &-title {
-      font-weight: $unnnic-font-weight-bold;
-      color: $unnnic-color-neutral-dark;
-      font-family: $unnnic-font-family-secondary;
-      font-size: $unnnic-font-size-body-lg;
-      font-weight: $unnnic-font-weight-bold;
-      line-height: $unnnic-font-size-body-lg + $unnnic-line-height-md;
+      font: $unnnic-font-action;
+      color: $unnnic-color-fg-base;
     }
 
     &-value {
-      font-weight: $unnnic-font-weight-bold;
-      color: $unnnic-color-neutral-dark;
-      font-family: $unnnic-font-family-secondary;
-      font-size: $unnnic-font-size-body-lg;
-      font-weight: $unnnic-font-weight-regular;
-      line-height: $unnnic-font-size-body-lg + $unnnic-line-height-md;
+      font: $unnnic-font-body;
+      color: $unnnic-color-fg-base;
     }
   }
 }

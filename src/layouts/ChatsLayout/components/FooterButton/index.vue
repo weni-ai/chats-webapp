@@ -15,12 +15,13 @@
         type="primary"
         size="small"
         data-testid="transfer-button"
-        @click="handleModalBulkTransfer"
+        @click="handleModalTransferRooms"
       />
-      <ModalBulkTransfer
-        v-if="isModalBulkTransferOpened"
+      <ModalTransferRooms
+        v-if="isModalTransferRoomsOpened"
+        bulkTransfer
         data-testid="bulk-transfer-modal"
-        @close="handleModalBulkTransfer"
+        @close="handleModalTransferRooms"
       />
     </section>
   </section>
@@ -31,17 +32,17 @@ import { mapState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 
-import ModalBulkTransfer from '@/components/chats/chat/ModalBulkTransfer.vue';
+import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
 export default {
   name: 'ChatsLayoutFooterButton',
 
   components: {
-    ModalBulkTransfer,
+    ModalTransferRooms,
   },
 
   data() {
     return {
-      isModalBulkTransferOpened: false,
+      isModalTransferRoomsOpened: false,
     };
   },
 
@@ -49,8 +50,8 @@ export default {
     ...mapState(useRooms, ['selectedRoomsToTransfer']),
   },
   methods: {
-    handleModalBulkTransfer() {
-      this.isModalBulkTransferOpened = !this.isModalBulkTransferOpened;
+    handleModalTransferRooms() {
+      this.isModalTransferRoomsOpened = !this.isModalTransferRoomsOpened;
     },
   },
 };

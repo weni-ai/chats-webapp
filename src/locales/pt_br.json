@@ -311,6 +311,9 @@
       "error_404": "A sala não existe",
       "error_403": "Não é um usuário da sala"
     },
+    "room_contact_info": {
+      "title": "Todas as informações"
+    },
     "errors": {
       "401": "Erro de autenticação",
       "default": "Ocorreu um erro, por favor, tente novamente mais tarde"
@@ -488,7 +491,8 @@
     }
   },
   "contact_info": {
-    "title": "Informações do contato",
+    "title": "Sobre o contato",
+    "about_support": "Sobre o suporte",
     "switch_associate_contact": "Contato desvinculado",
     "switch_disassociate_contact": "Contato vinculado",
     "switch_tooltip": "Ative se deseja que o contato seja sempre atribuído diretamente a você",
@@ -496,6 +500,7 @@
     "alert_detached": "Contato desvinculado",
     "linked_contact": "Contato vinculado ao agente {name}",
     "see_contact_history": "Ver histórico",
+    "no_contact_history": "Nenhum histórico",
     "audio_tooltip": "{agent} {date} às {time}",
     "transfering_chat": "Transferindo o chat ​📬",
     "ticket": "Protocolo",
@@ -934,6 +939,20 @@
       "step_3": "<b>Onde encontrar:</b> as notas serão visíveis no histórico de conversa e informações do contato, dentro da nova aba 'Nota'. Não se preocupe, elas nunca são enviadas para o cliente!",
       "step_4": "<b>Deletar notas:</b> você pode deletar suas notas enquanto o suporte ainda está atribuído a você.",
       "step_5": "<b>Transferência de room:</b> se outro agente assumir o room, eles serão informados sobre a existência de notas internas."
+    }
+  },
+  "new_contact_info_visual": {
+    "content_1": {
+      "text_1": "Fizemos alguns ajustes para ajudar você a navegar mais rápido! Confira:",
+      "text_2": "As opções <b>Ver histórico</b> foram movidas do drawer lateral para o menu superior da conversa."
+    },
+    "content_2": {
+      "text_1": "As opções <b>Transferir contato</b> foram movidas do drawer lateral para o menu superior da conversa."
+    },
+    "content_3": {
+      "text_1": "Para tornar o drawer de informações mais organizado e fácil de usar, fizemos algumas melhorias. A informação agora está dividida em <b>Sobre o contato</b> e <b>Sobre o serviço</b>.",
+      "text_2": "Além disso, os <b>campos personalizados</b> agora podem ser expandidos e recolhidos, para que você possa ver o que realmente importa sem ter que rolar.",
+      "text_3": "E para tornar a interface mais limpa, mudamos o visual do botão <b>Iniciar discussão</b>."
     }
   }
 }

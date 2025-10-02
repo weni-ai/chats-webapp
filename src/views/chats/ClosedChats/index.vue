@@ -80,6 +80,10 @@ export default {
       type: String,
       default: '',
     },
+    from: {
+      type: String,
+      default: '',
+    },
   },
 
   data: () => ({
@@ -171,7 +175,9 @@ export default {
     ...mapActions(useRoomMessages, ['getRoomMessages', 'resetRoomMessages']),
 
     backToHome() {
-      this.$router.push({ name: 'home' });
+      if (this.from)
+        this.$router.push({ name: 'room', params: { roomId: this.from } });
+      else this.$router.push({ name: 'home' });
     },
 
     handlerCrumbClick(crumb) {

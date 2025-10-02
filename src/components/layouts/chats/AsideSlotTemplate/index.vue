@@ -1,19 +1,12 @@
 <template>
   <aside class="aside-slot-template">
-    <UnnnicChatsHeader
-      :title="title"
-      :subtitle="subtitle"
-      :avatarIcon="icon"
-      :avatarName="avatarName"
-      :close="close"
-      :back="back"
-      :sectionIconScheme="iconScheme || 'aux-purple'"
+    <slot
+      v-if="hasHeaderSlot"
+      name="header"
     />
-
     <section :class="['aside-slot-template__sections']">
       <slot />
     </section>
-
     <slot name="modals" />
   </aside>
 </template>
@@ -21,36 +14,9 @@
 <script>
 export default {
   name: 'AsideSlotTemplate',
-  props: {
-    icon: {
-      type: String,
-      default: '',
-    },
-    iconScheme: {
-      type: String,
-      default: '',
-    },
-    title: {
-      type: String,
-      required: true,
-    },
-    subtitle: {
-      type: String,
-      default: '',
-    },
-    avatarName: {
-      type: String,
-      default: '',
-    },
-    back: {
-      type: Function,
-      default: undefined,
-      required: false,
-    },
-    close: {
-      type: Function,
-      default: undefined,
-      required: false,
+  computed: {
+    hasHeaderSlot() {
+      return !!this.$slots.header?.();
     },
   },
 };
@@ -65,16 +31,6 @@ export default {
   height: 100%;
 
   overflow: hidden;
-
-  &__title {
-    display: flex;
-    align-items: center;
-    gap: $unnnic-spacing-stack-nano;
-
-    color: $unnnic-color-neutral-dark;
-    font-size: $unnnic-font-size-body-lg;
-    font-weight: $unnnic-font-weight-bold;
-  }
 
   &__sections {
     flex: 1 1;
