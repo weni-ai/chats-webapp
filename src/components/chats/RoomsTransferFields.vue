@@ -120,6 +120,7 @@ export default {
       'selectedRoomsToTransfer',
       'contactToTransfer',
       'rooms',
+      'activeRoom',
     ]),
     ...mapWritableState(useRooms, ['activeRoomTags']),
     ...mapState(useProfile, ['me']),
@@ -278,11 +279,12 @@ export default {
         });
 
         if (response.status === 200) {
-          if (this.showTransferToOtherSectorDisclaimer) {
-            this.activeRoomTags = [];
-          }
           this.transferSuccess();
           this.resetRoomsToTransfer();
+          if (this.activeRoom) {
+            const { results } = await Room.getRoomTags(this.activeRoom.uuid);
+            this.activeRoomTags = results;
+          }
         } else {
           this.transferError();
         }
