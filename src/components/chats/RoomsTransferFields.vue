@@ -66,7 +66,7 @@ import isMobile from 'is-mobile';
 
 import Room from '@/services/api/resources/chats/room';
 
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useProfile } from '@/store/modules/profile';
@@ -121,6 +121,7 @@ export default {
       'contactToTransfer',
       'rooms',
     ]),
+    ...mapWritableState(useRooms, ['activeRoomTags']),
     ...mapState(useProfile, ['me']),
 
     selectedRoomsToTransfer() {
@@ -277,6 +278,9 @@ export default {
         });
 
         if (response.status === 200) {
+          if (this.showTransferToOtherSectorDisclaimer) {
+            this.activeRoomTags = [];
+          }
           this.transferSuccess();
           this.resetRoomsToTransfer();
         } else {
