@@ -47,6 +47,17 @@
       icon="error"
       iconColor="aux-red-500"
     />
+    <UnnnicDisclaimer
+      v-if="showTransferToOtherSectorDisclaimer"
+      data-testid="transfer-other-queue-disclaimer"
+      :class="[
+        'select-destination__disclaimer',
+        { 'select-destination__disclaimer--small': size === 'sm' },
+      ]"
+      :text="$t('bulk_transfer.disclaimer.transfer_to_other_sector')"
+      icon="alert-circle-1-1"
+      iconColor="feedback-yellow"
+    />
   </main>
 </template>
 
@@ -84,6 +95,10 @@ export default {
       type: Array,
       required: true,
     },
+    fixed: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   emits: ['update:model-value', 'update:selectedAgent', 'transfer-complete'],
@@ -101,8 +116,34 @@ export default {
   },
 
   computed: {
-    ...mapState(useRooms, ['selectedRoomsToTransfer', 'contactToTransfer']),
+    ...mapState(useRooms, [
+      'selectedRoomsToTransfer',
+      'contactToTransfer',
+      'rooms',
+    ]),
     ...mapState(useProfile, ['me']),
+
+    selectedRoomsToTransfer() {
+      if (this.bulkTransfer) {
+        return this.rooms.filter((room) =>
+          this.selectedRoomsToTransfer.includes(room.uuid),
+        );
+      }
+
+      return this.rooms.filter((room) => room.uuid === this.contactToTransfer);
+    },
+
+    showTransferToOtherSectorDisclaimer() {
+      if (!this.selectedQueue[0]?.value) return false;
+
+      return this.selectedRoomsToTransfer.some(
+        (room) => room.queue?.sector !== this.selectedQueue[0]?.sector_uuid,
+      );
+    },
+
+    dropdownFixed() {
+      return this.fixed ? 'fixed' : 'relative';
+    },
 
     queuesDefault() {
       return [{ value: '', label: this.$t('select_queue') }];
@@ -185,7 +226,8 @@ export default {
       const newQueues = await Queue.listByProject();
 
       const treatedQueues = newQueues.results.map(
-        ({ name, sector_name, uuid }) => ({
+        ({ name, sector_name, uuid, sector_uuid }) => ({
+          sector_uuid,
           queue_name: name,
           label: `${name} | ${i18n.global.t('sector.title')} ${sector_name}`,
           value: uuid,
@@ -303,7 +345,7 @@ export default {
 
 <style lang="scss" scoped>
 :deep(.unnnic-select-smart__options.active) {
-  position: fixed;
+  position: v-bind(dropdownFixed);
   left: auto;
   right: auto;
 }
