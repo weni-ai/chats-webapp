@@ -262,7 +262,7 @@
 <script>
 import isMobile from 'is-mobile';
 
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
@@ -350,7 +350,6 @@ export default {
     openCustomFields: true,
     openDropdownTags: false,
     allTags: [],
-    roomTags: [],
   }),
 
   computed: {
@@ -361,6 +360,9 @@ export default {
       room: (store) => store.activeRoom,
       activeRoomSummary: 'activeRoomSummary',
       isLoadingActiveRoomSummary: 'isLoadingActiveRoomSummary',
+    }),
+    ...mapWritableState(useRooms, {
+      roomTags: 'activeRoomTags',
     }),
 
     computedCustomFields() {
@@ -455,6 +457,10 @@ export default {
     this.isLoading = false;
   },
 
+  unmounted() {
+    this.roomTags = [];
+  },
+
   methods: {
     moment,
     ...mapActions(useRooms, ['updateRoomContact']),
@@ -491,6 +497,7 @@ export default {
     },
 
     handleTagClick(tag) {
+      console.log('handleTagClick', tag);
       const hasSelectedTag = this.roomTags.some(
         (roomTag) => roomTag.uuid === tag.uuid,
       );

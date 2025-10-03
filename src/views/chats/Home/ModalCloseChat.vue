@@ -16,6 +16,8 @@
       v-model="tags"
       :tags="sectorTags"
       :loading="isLoadingTags"
+      @update:to-remove-tags="toRemoveTags = $event"
+      @update:to-add-tags="toAddTags = $event"
     />
   </UnnnicModalDialog>
 </template>
@@ -59,6 +61,8 @@ export default {
       isLoadingTags: true,
       isLoadingCloseRoom: false,
       isShowFeedback: false,
+      toRemoveTags: [],
+      toAddTags: [],
     };
   },
 
@@ -105,8 +109,21 @@ export default {
       this.isLoadingCloseRoom = true;
       const { uuid } = this.room;
 
-      const tags = this.tags.map((tag) => tag.uuid);
-      await Room.close(uuid, tags);
+      if (this.toRemoveTags.length > 0) {
+        const requests = this.toRemoveTags.map((tag) =>
+          Room.removeRoomTag(uuid, tag),
+        );
+        await Promise.all(requests);
+      }
+
+      if (this.toAddTags.length > 0) {
+        const requests = this.toAddTags.map((tag) =>
+          Room.addRoomTag(uuid, tag),
+        );
+        await Promise.all(requests);
+      }
+
+      await Room.close(uuid);
 
       this.removeRoom(uuid);
 

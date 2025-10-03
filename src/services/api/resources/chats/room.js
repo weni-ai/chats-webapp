@@ -76,8 +76,8 @@ export default {
     return response.data;
   },
 
-  async close(uuid, tags) {
-    const response = await http.put(`/room/${uuid}/close/`, { tags });
+  async close(uuid) {
+    const response = await http.put(`/room/${uuid}/close/`);
     return response.data;
   },
 

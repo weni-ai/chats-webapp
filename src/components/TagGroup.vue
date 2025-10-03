@@ -65,7 +65,7 @@ export default {
       default: false,
     },
   },
-  emits: ['update:modelValue', 'close'],
+  emits: ['update:modelValue', 'close', 'add', 'remove'],
 
   data: () => ({
     schemes: [
@@ -121,11 +121,15 @@ export default {
         this.$emit('close', tag);
         return;
       }
-      const tags = this.isSelectedTag(tag)
-        ? this.selected.filter((t) => t.uuid !== tag.uuid)
-        : [...this.selected, tag];
 
-      this.selected = tags;
+      if (this.isSelectedTag(tag)) {
+        this.selected = this.selected.filter((t) => t.uuid !== tag.uuid);
+        this.$emit('remove', tag);
+        return;
+      }
+
+      this.selected = [...this.selected, tag];
+      this.$emit('add', tag);
     },
     close(tag) {
       if (this.selectable) {

@@ -12,6 +12,7 @@ export const useRooms = defineStore('rooms', {
     activeTab: 'ongoing',
     rooms: [],
     activeRoom: null,
+    activeRoomTags: [],
     maxPinLimit: 0,
     roomsSummary: {},
     isLoadingActiveRoomSummary: false,
