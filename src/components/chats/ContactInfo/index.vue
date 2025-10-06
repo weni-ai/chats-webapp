@@ -692,7 +692,7 @@ export default {
         }
 
         &-value {
-          font: $unnnic-font-caption-2;
+          font: $unnnic-font-body;
           color: $unnnic-color-fg-base;
         }
       }

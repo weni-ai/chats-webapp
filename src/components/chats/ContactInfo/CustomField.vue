@@ -5,15 +5,17 @@
       :is="isEditable && isCurrent ? 'label' : 'h3'"
       class="title"
       tabindex="0"
-      >{{ title }}:
+    >
+      {{ title }}:
     </component>
     <section :class="descriptionClasses">
       <a
         v-if="showLink"
         :href="description"
         target="_blank"
-        >{{ description }}</a
       >
+        {{ description }}
+      </a>
 
       <UnnnicToolTip
         v-show="showEditTooltip"
@@ -152,7 +154,7 @@ export default {
   }
 
   .description {
-    font: $unnnic-font-caption-2;
+    font: $unnnic-font-body;
     color: $unnnic-color-fg-base;
 
     cursor: default;
