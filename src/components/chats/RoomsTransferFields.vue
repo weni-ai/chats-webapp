@@ -125,7 +125,7 @@ export default {
     ...mapWritableState(useRooms, ['activeRoomTags']),
     ...mapState(useProfile, ['me']),
 
-    selectedRoomsToTransfer() {
+    roomsToTransfer() {
       if (this.bulkTransfer) {
         return this.rooms.filter((room) =>
           this.selectedRoomsToTransfer.includes(room.uuid),
@@ -138,7 +138,7 @@ export default {
     showTransferToOtherSectorDisclaimer() {
       if (!this.selectedQueue[0]?.value) return false;
 
-      return this.selectedRoomsToTransfer.some(
+      return this.roomsToTransfer.some(
         (room) => room.queue?.sector !== this.selectedQueue[0]?.sector_uuid,
       );
     },
@@ -152,11 +152,6 @@ export default {
     },
     agentsDefault() {
       return [{ value: '', label: this.$t('select_agent') }];
-    },
-    roomsToTransfer() {
-      return this.bulkTransfer
-        ? this.selectedRoomsToTransfer
-        : [this.contactToTransfer];
     },
 
     selectedQueue: {
@@ -273,7 +268,7 @@ export default {
 
       try {
         const response = await Room.bulkTranfer({
-          rooms: roomsToTransfer,
+          rooms: roomsToTransfer.map((room) => room.uuid),
           intended_queue: selectedQueue,
           intended_agent: selectedAgent,
         });
