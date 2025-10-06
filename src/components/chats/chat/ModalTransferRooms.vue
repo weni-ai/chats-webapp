@@ -1,7 +1,11 @@
 <template>
   <UnnnicModalDialog
     :modelValue="true"
-    :title="$t('bulk_transfer.transfer_selected_contacts')"
+    :title="
+      bulkTransfer
+        ? $t('bulk_transfer.transfer_selected_contacts')
+        : $t('transfer_contact')
+    "
     :showCloseIcon="!isLoadingBulkTransfer"
     :primaryButtonProps="{
       text: $t('transfer'),

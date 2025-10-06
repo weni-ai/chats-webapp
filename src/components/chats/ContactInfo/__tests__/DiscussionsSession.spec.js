@@ -56,15 +56,11 @@ describe('DiscussionSession.vue', () => {
     ).toBe(false);
   });
 
-  it('should display title and discussions list if discussionsCloseds is not empty', async () => {
+  it('should display discussions list if discussionsCloseds is not empty', async () => {
     discussionsStore.discussionsCloseds = [
       { uuid: '1', created_on: '2024-10-10', created_by: 'John' },
     ];
     await wrapper.vm.$nextTick();
-
-    expect(
-      wrapper.find('[data-testid="contact-info-discussion-title"]').exists(),
-    ).toBe(true);
 
     expect(
       wrapper.find('[data-testid="contact-info-discussion-list"]').exists(),

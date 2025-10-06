@@ -4,7 +4,7 @@
     :title="$t('discussions.start_discussion.title')"
     :showCloseIcon="!startDiscussionLoading"
     :primaryButtonProps="{
-      text: $t('confirm'),
+      text: $t('start'),
       disabled: isConfirmButtonDisabled,
       loading: startDiscussionLoading,
     }"
