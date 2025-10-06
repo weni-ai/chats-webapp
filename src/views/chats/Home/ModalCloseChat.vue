@@ -18,7 +18,7 @@
   >
     <section class="modal-close-chat__content">
       <UnnnicDisclaimer
-        v-if="isInvalidRequiredTags"
+        v-if="isInvalidRequiredTags && !isLoadingTags"
         class="modal-close-chat__disclaimer"
         iconColor="feedback-yellow"
         :text="$t('chats.to_end_required_tags')"
