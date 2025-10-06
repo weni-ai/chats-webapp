@@ -81,7 +81,7 @@ export default {
   name: 'WorkdayTimeConfig',
   props: {
     modelValue: {
-      type: Array,
+      type: Object,
       required: true,
     },
     workdayDaysTimeOptions: {
