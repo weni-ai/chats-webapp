@@ -301,7 +301,7 @@ export default {
         this.sector.required_tags = false;
       }
     },
-    updateSectorExtraConfigs() {
+    async updateSectorExtraConfigs() {
       const {
         can_trigger_flows,
         can_edit_custom_fields,
@@ -318,33 +318,30 @@ export default {
         required_tags,
       };
 
-      return Sector.update(this.sector.uuid, fieldsToUpdate);
+      return await Sector.update(this.sector.uuid, fieldsToUpdate);
     },
-    updateSectorTags() {
+    async updateSectorTags() {
       const addPromises = this.toAddTags.map(({ name }) =>
         Sector.addTag(this.sector.uuid, name),
       );
 
-      return Promise.all([...addPromises]);
+      return await Promise.all([...addPromises]);
     },
     async save(silent = false) {
       this.isLoading = true;
       try {
-        await Promise.all([
-          this.updateSectorTags(),
-          this.updateSectorExtraConfigs(),
-        ]).then(() => {
-          if (!silent)
-            unnnic.unnnicCallAlert({
-              props: {
-                text: this.$t('sector_update_success'),
-                type: 'success',
-              },
-              seconds: 5,
-            });
-
-          this.$router.push('/settings');
-        });
+        await this.updateSectorTags();
+        await this.updateSectorExtraConfigs();
+        if (!silent) {
+          unnnic.unnnicCallAlert({
+            props: {
+              text: this.$t('sector_update_success'),
+              type: 'success',
+            },
+            seconds: 5,
+          });
+        }
+        this.$router.push('/settings');
       } catch (error) {
         unnnic.unnnicCallAlert({
           props: {
@@ -353,8 +350,9 @@ export default {
           },
           seconds: 5,
         });
+      } finally {
+        this.isLoading = false;
       }
-      this.isLoading = false;
     },
   },
 };

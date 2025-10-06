@@ -4,7 +4,11 @@
     :class="{ 'modal-close-chat--mobile': isMobile, 'modal-close-chat': true }"
     :showCloseIcon="!isMobile"
     :title="$t('chats.to_end_rate_the_chat')"
-    :primaryButtonProps="{ text: $t('end_chat'), loading: isLoadingCloseRoom }"
+    :primaryButtonProps="{
+      text: $t('end_chat'),
+      loading: isLoadingCloseRoom,
+      disabled: isInvalidRequiredTags,
+    }"
     :secondaryButtonProps="{ text: $t('cancel') }"
     size="lg"
     data-testid="chat-classifier-modal"
@@ -12,11 +16,19 @@
     @secondary-button-click="closeModal()"
     @update:model-value="closeModal()"
   >
-    <ChatClassifier
-      v-model="tags"
-      :tags="sectorTags"
-      :loading="isLoadingTags"
-    />
+    <section class="modal-close-chat__content">
+      <UnnnicDisclaimer
+        v-if="isInvalidRequiredTags"
+        class="modal-close-chat__disclaimer"
+        iconColor="feedback-yellow"
+        :text="$t('chats.to_end_rate_the_chat')"
+      />
+      <ChatClassifier
+        v-model="tags"
+        :tags="sectorTags"
+        :loading="isLoadingTags"
+      />
+    </section>
   </UnnnicModalDialog>
 </template>
 
@@ -65,6 +77,9 @@ export default {
   computed: {
     isMobile() {
       return isMobile();
+    },
+    isInvalidRequiredTags() {
+      return this.room.queue?.required_tags && this.tags.length === 0;
     },
   },
   mounted() {
@@ -129,6 +144,16 @@ export default {
 
 <style lang="scss" scoped>
 .modal-close-chat {
+  :deep(.modal-close-chat__disclaimer) {
+    display: flex;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-4;
+  }
+
   &--mobile {
     :deep(.unnnic-modal-dialog__container) {
       width: 100%;
