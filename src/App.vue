@@ -12,6 +12,7 @@
       @update:model-value="handleShowModalNewFeatureInternalNote"
     />
     <ModalNewContactInfoVisual
+      v-if="featureFlags.active_features?.includes('weniChatsContactInfoV2')"
       :modelValue="showModalNewContactInfoVisual"
       @update:model-value="handleShowModalNewContactInfoVisual"
     />
@@ -85,6 +86,7 @@ export default {
   },
 
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, ['activeRoom']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDashboard, ['viewedAgent']),

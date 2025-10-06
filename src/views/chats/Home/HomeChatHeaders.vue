@@ -21,6 +21,9 @@
             :src="starsIcon"
           /> -->
           <UnnnicToolTip
+            v-if="
+              featureFlags.active_features?.includes('weniChatsContactInfoV2')
+            "
             enabled
             :text="
               room?.has_history
@@ -38,6 +41,9 @@
             />
           </UnnnicToolTip>
           <UnnnicToolTip
+            v-if="
+              featureFlags.active_features?.includes('weniChatsContactInfoV2')
+            "
             enabled
             :text="$tc('transfer_contact', 1)"
             side="left"
@@ -102,6 +108,7 @@ import starsIcon from '@/assets/icons/bi_stars.svg';
 import { parseUrn } from '@/utils/room';
 
 import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 export default {
   name: 'HomeChatHeaders',
@@ -129,6 +136,7 @@ export default {
   },
 
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
     }),
