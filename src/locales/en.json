@@ -107,6 +107,7 @@
       "audio": "Audio message"
     }
   },
+  "start": "Start",
   "submit": "Submit",
   "details": "Details",
   "doubts": "Doubts",
