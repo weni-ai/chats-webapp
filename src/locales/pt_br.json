@@ -329,6 +329,7 @@
     "in_progress": "Em andamento",
     "sent_flows": "Fluxos enviados",
     "to_end_rate_the_chat": "Para encerrar, classifique o chat",
+    "to_end_required_tags": "Para encerrar, adicione pelo menos uma tag",
     "tags_help": "As tags ajudam a localizar os chats e também gerar bons relatórios",
     "chat_with_contact_ended": "Chat com {contact} encerrado",
     "see_history": "Histórico",

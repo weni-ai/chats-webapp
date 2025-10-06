@@ -21,7 +21,7 @@
         v-if="isInvalidRequiredTags"
         class="modal-close-chat__disclaimer"
         iconColor="feedback-yellow"
-        :text="$t('chats.to_end_rate_the_chat')"
+        :text="$t('chats.to_end_required_tags')"
       />
       <ChatClassifier
         v-model="tags"
