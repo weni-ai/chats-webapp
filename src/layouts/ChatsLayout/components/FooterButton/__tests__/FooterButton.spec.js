@@ -83,7 +83,7 @@ describe('FooterButton', () => {
         false,
       );
 
-      await wrapper.setData({ isModalBulkTransferOpened: true });
+      await wrapper.setData({ isModalTransferRoomsOpened: true });
       expect(wrapper.find('[data-testid="bulk-transfer-modal"]').exists()).toBe(
         true,
       );
