@@ -74,7 +74,7 @@ describe('SectorExtraOptions', () => {
 
     const switchs = wrapper.findAllComponents('[data-testid="config-switch"]');
 
-    expect(switchs.length).toBe(3);
+    expect(switchs.length).toBe(4);
 
     expect(switchs[0].props().textRight).toContain(
       wrapper.vm.translationTriggerFlows,

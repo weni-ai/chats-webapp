@@ -158,6 +158,7 @@ export default {
         },
         managers: [],
         maxSimultaneousChatsByAgent: '',
+        required_tags: false,
       },
       sectorQueue: {
         name: '',

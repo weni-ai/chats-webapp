@@ -237,6 +237,11 @@
           "title": "Mensaje automático",
           "placeholder": "Ejemplo: ¡Hola! ¿Cómo puedo ayudarte hoy?"
         }
+      },
+      "required_tags": {
+        "switch_active": "Requerir etiquetas al final de los soportes activo",
+        "switch_disabled": "Requerir etiquetas al final de los soportes deshabilitado",
+        "tooltip": "Agregue al menos una etiqueta para activar"
       }
     }
   },
@@ -333,6 +338,7 @@
     "in_progress": "En curso",
     "sent_flows": "Flujos enviados",
     "to_end_rate_the_chat": "Para cerrar califica el chat",
+    "to_end_required_tags": "Para cerrar, agrega al menos una etiqueta",
     "tags_help": "Las etiquetas te ayudan a localizar chats y también a generar buenos informes.",
     "chat_with_contact_ended": "Chat con {contact} cerrado",
     "see_history": "Historial de chats",

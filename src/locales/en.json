@@ -244,6 +244,11 @@
           "title": "Automatic message",
           "placeholder": "Exemple: Hello! How can I help you today?"
         }
+      },
+      "required_tags": {
+        "switch_active": "Require tags at the end of supports active",
+        "switch_disabled": "Require tags at the end of supports disabled",
+        "tooltip": "Add at least one tag to activate"
       }
     }
   },
@@ -337,6 +342,7 @@
     "in_progress": "Ongoing",
     "sent_flows": "Sent flows",
     "to_end_rate_the_chat": "To close, rate the chat",
+    "to_end_required_tags": "To end this conversation, please select at least one tag.",
     "tags_help": "Tags help you locate chats and also generate good reports",
     "chat_with_contact_ended": "Chat with {contact} closed",
     "see_history": "Chats history",
