@@ -231,6 +231,11 @@
           "title": "Mensagem automática",
           "placeholder": "Exemplo: Olá! Como posso ajudar você hoje?"
         }
+      },
+      "required_tags": {
+        "switch_active": "Requerer tags ao final dos atendimentos ativo",
+        "switch_disabled": "Requerer tags ao final dos atendimentos desativado",
+        "tooltip": "Adicione pelo menos uma tag para ativar"
       }
     }
   },

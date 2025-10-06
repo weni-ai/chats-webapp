@@ -238,6 +238,11 @@
           "title": "Automatic message",
           "placeholder": "Exemple: Hello! How can I help you today?"
         }
+      },
+      "required_tags": {
+        "switch_active": "Require tags at the end of supports active",
+        "switch_disabled": "Require tags at the end of supports disabled",
+        "tooltip": "Add at least one tag to activate"
       }
     }
   },

@@ -157,6 +157,7 @@ export default {
         },
         managers: [],
         maxSimultaneousChatsByAgent: '',
+        required_tags: false,
       },
       sectorQueue: {
         name: '',
@@ -221,6 +222,7 @@ export default {
           managers,
           config,
           automatic_message,
+          required_tags,
         } = this.sector;
 
         const createSectorBody = {
@@ -235,6 +237,7 @@ export default {
             ? config
             : { ...config, secondary_project: undefined },
           automatic_message,
+          required_tags,
         };
 
         const createdSector = await Sector.create(createSectorBody);

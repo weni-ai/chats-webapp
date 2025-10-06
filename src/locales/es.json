@@ -231,6 +231,11 @@
           "title": "Mensaje automático",
           "placeholder": "Ejemplo: ¡Hola! ¿Cómo puedo ayudarte hoy?"
         }
+      },
+      "required_tags": {
+        "switch_active": "Requerir etiquetas al final de los soportes activo",
+        "switch_disabled": "Requerir etiquetas al final de los soportes deshabilitado",
+        "tooltip": "Agregue al menos una etiqueta para activar"
       }
     }
   },
