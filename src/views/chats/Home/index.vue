@@ -30,6 +30,7 @@
           isRoomContactInfoOpen &&
           !discussion
         "
+        :key="room.uuid"
         data-testid="contact-info"
         @close="closeRoomContactInfo"
       />
