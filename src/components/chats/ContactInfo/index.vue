@@ -146,7 +146,7 @@
               </h3>
               <section class="contact-info__about-support-header__buttons">
                 <UnnnicDropdown
-                  v-if="!isHistory && !isViewMode"
+                  v-if="!isHistory && !isViewMode && allTags.length > 0"
                   :open="openDropdownTags"
                   useOpenProp
                 >
@@ -414,9 +414,10 @@ export default {
   watch: {
     room: {
       immediate: true,
-      handle(newRoom) {
+      handler(newRoom) {
         if (newRoom) {
           this.customFields = newRoom.custom_fields;
+          this.loadAllTags();
           this.loadRoomTags();
         }
       },
