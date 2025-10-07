@@ -12,6 +12,7 @@
       @update:model-value="handleShowModalNewFeatureInternalNote"
     />
     <ModalNewContactInfoVisual
+      v-if="featureFlags.active_features?.includes('weniChatsContactInfoV2')"
       :modelValue="showModalNewContactInfoVisual"
       @update:model-value="handleShowModalNewContactInfoVisual"
     />
@@ -85,6 +86,7 @@ export default {
   },
 
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, ['activeRoom']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDashboard, ['viewedAgent']),
@@ -183,7 +185,12 @@ export default {
   },
 
   methods: {
-    ...mapActions(useConfig, ['setStatus', 'setProject', 'setDisconnectedBy']),
+    ...mapActions(useConfig, [
+      'setStatus',
+      'setCustomStatus',
+      'setProject',
+      'setDisconnectedBy',
+    ]),
     ...mapActions(useProfile, ['setMe', 'getMeQueues']),
     ...mapActions(useQuickMessages, {
       getAllQuickMessages: 'getAll',
@@ -328,12 +335,19 @@ export default {
       );
     },
 
-    updateUserStatusFromWebSocket(status, disconnectedBy = '') {
+    updateUserStatusFromWebSocket(
+      status,
+      disconnectedBy = '',
+      isCustom = false,
+    ) {
       moduleStorage.setItem(`statusAgent-${this.project.uuid}`, status, {
         useSession: true,
       });
       this.setStatus(status);
       this.setDisconnectedBy(disconnectedBy);
+      if (isCustom) {
+        this.setCustomStatus('CUSTOM');
+      }
       this.showModalOfflineAgent = true;
     },
 

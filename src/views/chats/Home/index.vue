@@ -24,8 +24,17 @@
 
     <template #aside>
       <ContactInfo
-        v-if="room && isRoomContactInfoOpen && !discussion"
+        v-if="
+          featureFlags.active_features?.includes('weniChatsContactInfoV2') &&
+          room &&
+          isRoomContactInfoOpen &&
+          !discussion
+        "
         data-testid="contact-info"
+        @close="closeRoomContactInfo"
+      />
+      <OldContactInfo
+        v-else-if="room && isRoomContactInfoOpen && !discussion"
         @close="closeRoomContactInfo"
       />
       <DiscussionSidebar
@@ -56,11 +65,13 @@ import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground/in
 
 import DiscussionSidebar from '@/components/chats/DiscussionSidebar/index.vue';
 import ContactInfo from '@/components/chats/ContactInfo/index.vue';
+import OldContactInfo from '@/components/chats/ContactInfo/oldContactInfo.vue';
 import ModalFeedback from './ModalFeedback.vue';
 
 import HomeChat from './HomeChat.vue';
 
 import { moduleStorage } from '@/utils/storage';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 export default {
   name: 'ViewHome',
@@ -72,6 +83,7 @@ export default {
     DiscussionSidebar,
     HomeChat,
     ModalFeedback,
+    OldContactInfo,
   },
 
   props: {
@@ -99,6 +111,7 @@ export default {
   },
 
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useFeedback, {
       isRenderFeedbackModal: (store) => store.isRenderFeedbackModal,
     }),

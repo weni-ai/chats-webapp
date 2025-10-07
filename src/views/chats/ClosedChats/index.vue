@@ -33,6 +33,17 @@
       >
         <RoomMessages data-testid="room-messages" />
         <ContactInfo
+          v-if="
+            featureFlags.active_features?.includes('weniChatsContactInfoV2')
+          "
+          isHistory
+          :closedRoom="selectedRoom"
+          showRoomSummary
+          data-testid="contact-info"
+          @close="() => {}"
+        />
+        <OldContactInfo
+          v-else
           isHistory
           :closedRoom="selectedRoom"
           showRoomSummary
@@ -63,6 +74,8 @@ import ContactInfo from '@/components/chats/ContactInfo/index.vue';
 import ClosedChatsHeaderLoading from '@/views/loadings/ClosedChats/ClosedChatsHeader.vue';
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 import ClosedChatsRoomsTable from './RoomsTable.vue';
+import OldContactInfo from '@/components/chats/ContactInfo/oldContactInfo.vue';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 export default {
   name: 'ClosedChats',
@@ -73,6 +86,7 @@ export default {
     ContactInfo,
     ClosedChatsRoomsTable,
     RoomMessages,
+    OldContactInfo,
   },
 
   props: {
@@ -107,7 +121,7 @@ export default {
     ...mapState(useConfig, ['project']),
     ...mapState(useRoomMessages, ['roomMessagesNext']),
     ...mapWritableState(useRooms, ['activeRoomSummary']),
-
+    ...mapState(useFeatureFlag, ['featureFlags']),
     closedChatsHeaderSize() {
       return this.isMobile ? 'small' : 'large';
     },
@@ -175,8 +189,8 @@ export default {
     ...mapActions(useRoomMessages, ['getRoomMessages', 'resetRoomMessages']),
 
     backToHome() {
-      if (this.from)
-        this.$router.push({ name: 'room', params: { roomId: this.from } });
+      const from = this.from || this.$route.query.from;
+      if (from) this.$router.push({ name: 'room', params: { roomId: from } });
       else this.$router.push({ name: 'home' });
     },
 
