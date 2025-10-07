@@ -98,6 +98,7 @@
                   $router.push({
                     name: 'closed-rooms.selected',
                     params: { roomId: item.uuid },
+                    query: { from: $route.query.from },
                   })
                 "
               >
@@ -168,6 +169,7 @@ export default {
     TablePagination,
     ModalClosedChatsFilters,
   },
+
   emits: ['open-room'],
 
   data: () => ({
