@@ -414,9 +414,10 @@ export default {
   watch: {
     room: {
       immediate: true,
-      handle(newRoom) {
+      handler(newRoom) {
         if (newRoom) {
           this.customFields = newRoom.custom_fields;
+          this.loadAllTags();
           this.loadRoomTags();
         }
       },

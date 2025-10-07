@@ -25,7 +25,6 @@
     <template #aside>
       <ContactInfo
         v-if="room && isRoomContactInfoOpen && !discussion"
-        :key="room.uuid"
         data-testid="contact-info"
         @close="closeRoomContactInfo"
       />
