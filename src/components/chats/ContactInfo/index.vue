@@ -146,7 +146,7 @@
               </h3>
               <section class="contact-info__about-support-header__buttons">
                 <UnnnicDropdown
-                  v-if="!isHistory && !isViewMode"
+                  v-if="!isHistory && !isViewMode && allTags.length > 0"
                   :open="openDropdownTags"
                   useOpenProp
                 >
