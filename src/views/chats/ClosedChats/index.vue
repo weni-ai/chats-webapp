@@ -189,8 +189,8 @@ export default {
     ...mapActions(useRoomMessages, ['getRoomMessages', 'resetRoomMessages']),
 
     backToHome() {
-      if (this.from)
-        this.$router.push({ name: 'room', params: { roomId: this.from } });
+      const from = this.from || this.$route.query.from;
+      if (from) this.$router.push({ name: 'room', params: { roomId: from } });
       else this.$router.push({ name: 'home' });
     },
 
