@@ -20,6 +20,7 @@
               @click="refreshContactInfos"
             />
             <UnnnicButton
+              v-if="!isHistory"
               iconCenter="close"
               type="tertiary"
               size="small"
@@ -112,7 +113,7 @@
               </p>
             </section>
 
-            <template v-if="!!room?.custom_fields && openCustomFields">
+            <template v-if="hasCustomFields && openCustomFields">
               <CustomField
                 v-for="(value, key) in computedCustomFields"
                 :key="key"
@@ -127,7 +128,7 @@
             </template>
 
             <section
-              v-if="!!room?.custom_fields"
+              v-if="hasCustomFields"
               class="infos-contact__slide"
             >
               <UnnnicIcon
@@ -309,8 +310,12 @@ export default {
       isLoadingActiveRoomSummary: 'isLoadingActiveRoomSummary',
     }),
 
+    hasCustomFields() {
+      return Object.keys(this.computedCustomFields).length > 0;
+    },
+
     computedCustomFields() {
-      const customFields = this.room?.custom_fields;
+      const customFields = this.room?.custom_fields || {};
       const roomService = this.contactService;
       if (roomService?.length > 0) {
         customFields[this.$t('service')] = roomService;
