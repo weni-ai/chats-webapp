@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { mount, config } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import FooterButton from '@/layouts/ChatsLayout/components/FooterButton/index.vue';
@@ -32,7 +32,7 @@ describe('FooterButton', () => {
         },
         stubs: {
           UnnnicButton: true,
-          ModalBulkTransfer: true,
+          ModalTransferRooms: true,
         },
       },
     });
@@ -42,7 +42,7 @@ describe('FooterButton', () => {
     it('should initialize correctly and integrate with store', () => {
       const wrapper = createWrapper(['room1', 'room2']);
 
-      expect(wrapper.vm.isModalBulkTransferOpened).toBe(false);
+      expect(wrapper.vm.isModalTransferRoomsOpened).toBe(false);
       expect(wrapper.vm.selectedRoomsToTransfer).toEqual(['room1', 'room2']);
       expect(
         wrapper.find('[data-testid="footer-button-container"]').exists(),
@@ -83,7 +83,7 @@ describe('FooterButton', () => {
         false,
       );
 
-      await wrapper.setData({ isModalBulkTransferOpened: true });
+      await wrapper.setData({ isModalTransferRoomsOpened: true });
       expect(wrapper.find('[data-testid="bulk-transfer-modal"]').exists()).toBe(
         true,
       );
@@ -94,35 +94,35 @@ describe('FooterButton', () => {
     it('should handle modal toggle method', () => {
       const wrapper = createWrapper(['room1']);
 
-      expect(wrapper.vm.isModalBulkTransferOpened).toBe(false);
+      expect(wrapper.vm.isModalTransferRoomsOpened).toBe(false);
 
-      wrapper.vm.handleModalBulkTransfer();
-      expect(wrapper.vm.isModalBulkTransferOpened).toBe(true);
+      wrapper.vm.handleModalTransferRooms();
+      expect(wrapper.vm.isModalTransferRoomsOpened).toBe(true);
 
-      wrapper.vm.handleModalBulkTransfer();
-      expect(wrapper.vm.isModalBulkTransferOpened).toBe(false);
+      wrapper.vm.handleModalTransferRooms();
+      expect(wrapper.vm.isModalTransferRoomsOpened).toBe(false);
     });
 
     it('should handle button click event through component interaction', async () => {
       const wrapper = createWrapper(['room1']);
       const button = wrapper.findComponent({ name: 'UnnnicButton' });
 
-      expect(wrapper.vm.isModalBulkTransferOpened).toBe(false);
+      expect(wrapper.vm.isModalTransferRoomsOpened).toBe(false);
 
       await button.vm.$emit('click');
-      expect(wrapper.vm.isModalBulkTransferOpened).toBe(true);
+      expect(wrapper.vm.isModalTransferRoomsOpened).toBe(true);
     });
 
     it('should handle modal close event', async () => {
       const wrapper = createWrapper(['room1']);
 
-      wrapper.vm.handleModalBulkTransfer();
-      expect(wrapper.vm.isModalBulkTransferOpened).toBe(true);
+      wrapper.vm.handleModalTransferRooms();
+      expect(wrapper.vm.isModalTransferRoomsOpened).toBe(true);
 
       await wrapper.vm.$nextTick();
 
-      wrapper.vm.handleModalBulkTransfer();
-      expect(wrapper.vm.isModalBulkTransferOpened).toBe(false);
+      wrapper.vm.handleModalTransferRooms();
+      expect(wrapper.vm.isModalTransferRoomsOpened).toBe(false);
     });
 
     it('should handle different room counts correctly', () => {

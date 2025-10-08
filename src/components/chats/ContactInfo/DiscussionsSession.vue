@@ -1,15 +1,10 @@
 <template>
-  <AsideSlotTemplateSection
+  <section
     v-if="discussionsCloseds?.length > 0"
+    v-resize-observer="handleResize"
     class="contact-info__discussions"
     :class="{ 'contact-info__discussions--mobile': isMobileFlag }"
   >
-    <h2
-      class="contact-info__discussions__title"
-      data-testid="contact-info-discussion-title"
-    >
-      {{ $tc('discussions.title', 2) }}
-    </h2>
     <ul
       class="contact-info__discussions__list"
       data-testid="contact-info-discussion-list"
@@ -17,9 +12,11 @@
       <li
         v-for="discussionClosed in discussionsCloseds"
         :key="discussionClosed.uuid"
+        class="contact-info__discussions__list-item"
       >
+        <p>{{ $t('discussions.title') }}:</p>
         <button
-          class="contact-info__discussions__list-item"
+          class="contact-info__discussions__list-item-link"
           data-testid="contact-info-discussion-list-item"
           @click="openDiscussionClosed(discussionClosed.uuid)"
         >
@@ -35,7 +32,7 @@
     >
       <DiscussionMessages />
     </UnnnicModal>
-  </AsideSlotTemplateSection>
+  </section>
 </template>
 <script>
 import isMobile from 'is-mobile';
@@ -45,19 +42,21 @@ import { mapState, mapActions } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 
-import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
 import DiscussionMessages from '../chat/DiscussionMessages.vue';
+import { vResizeObserver } from '@vueuse/components';
 
 export default {
   name: 'DiscussionsSession',
   components: {
-    AsideSlotTemplateSection,
     DiscussionMessages,
+  },
+  directives: {
+    resizeObserver: vResizeObserver,
   },
   data() {
     return {
       isMobileFlag: isMobile(),
-
+      discussionLinkWidth: '100%',
       showDiscussionClosedModal: false,
     };
   },
@@ -103,6 +102,9 @@ export default {
     handleDiscussionClosedModal() {
       this.showDiscussionClosedModal = !this.showDiscussionClosedModal;
     },
+    handleResize(entries) {
+      this.discussionLinkWidth = `${entries[0].contentRect.width - 71}px`;
+    },
   },
 };
 </script>
@@ -110,7 +112,6 @@ export default {
 <style lang="scss" scoped>
 .contact-info__discussions {
   display: grid;
-  gap: $unnnic-spacing-sm;
 
   &__title {
     color: $unnnic-color-neutral-dark;
@@ -123,17 +124,26 @@ export default {
     gap: $unnnic-spacing-xs;
 
     &-item {
-      border: none;
-      background-color: transparent;
+      display: flex;
+      align-items: baseline;
+      gap: $unnnic-space-05;
+      font: $unnnic-font-action;
+      color: $unnnic-color-fg-base;
 
-      color: $unnnic-color-neutral-cloudy;
-      font-size: $unnnic-font-size-body-md;
-      font-weight: $unnnic-font-weight-bold;
-      text-decoration-line: underline;
-      font-family: $unnnic-font-family-secondary;
-      text-align: start;
+      &-link {
+        font: $unnnic-font-body;
+        border: none;
+        background-color: transparent;
+        color: $unnnic-color-fg-base;
+        text-decoration-line: underline;
+        cursor: pointer;
+        text-align: left;
 
-      cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: v-bind(discussionLinkWidth);
+      }
     }
   }
 

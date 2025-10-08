@@ -83,10 +83,19 @@
 
     <template #aside>
       <ContactInfo
-        v-if="isContactInfoOpened"
+        v-if="
+          featureFlags.active_features?.includes('weniChatsContactInfoV2') &&
+          isContactInfoOpened
+        "
         class="contact-info"
         isViewMode
         data-testid="contact-info"
+        @close="handleModal('ContactInfo', 'close')"
+      />
+      <OldContactInfo
+        v-else-if="isContactInfoOpened"
+        class="contact-info"
+        isViewMode
         @close="handleModal('ContactInfo', 'close')"
       />
     </template>
@@ -100,6 +109,7 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useDashboard } from '@/store/modules/dashboard';
 import { useProfile } from '@/store/modules/profile';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import ChatsLayout from '@/layouts/ChatsLayout/index.vue';
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
@@ -109,6 +119,7 @@ import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
 import DiscussionMessages from '@/components/chats/chat/DiscussionMessages.vue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
 import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion.vue';
+import OldContactInfo from '@/components/chats/ContactInfo/oldContactInfo.vue';
 
 import ViewModeHeader from './components/ViewModeHeader.vue';
 
@@ -125,6 +136,7 @@ export default {
     ViewModeHeader,
     ModalGetChat,
     ButtonJoinDiscussion,
+    OldContactInfo,
   },
 
   data: () => ({
@@ -134,6 +146,7 @@ export default {
   }),
 
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
       rooms: (store) => store.rooms,

@@ -107,6 +107,7 @@
       "audio": "Mensaje de audio"
     }
   },
+  "start": "Iniciar",
   "submit": "Enviar",
   "details": "Details",
   "doubts": "Dudas",
@@ -311,6 +312,9 @@
       "error_404": "La sala no existe",
       "error_403": "No es un usuario de la sala"
     },
+    "room_contact_info": {
+      "title": "Todas las informaciones"
+    },
     "errors": {
       "401": "Error de autenticación",
       "default": "Ocurrió un error, por favor, inténtelo de nuevo más tarde"
@@ -488,7 +492,8 @@
     }
   },
   "contact_info": {
-    "title": "Información de contacto",
+    "title": "Sobre el contacto",
+    "about_support": "Sobre el soporte",
     "switch_associate_contact": "Contacto desvinculado",
     "switch_disassociate_contact": "Contacto vinculado",
     "switch_tooltip": "Habilite si desea que el contacto siempre se le asigne directamente",
@@ -496,6 +501,7 @@
     "alert_detached": "Contacto desvinculado",
     "linked_contact": "Contacto vinculado a agente {name}",
     "see_contact_history": "Ver historial",
+    "no_contact_history": "No hay historial",
     "audio_tooltip": "{agent} {date} a las {time}",
     "transfering_chat": "Transfiriendo el chat 📬",
     "ticket": "Ticket ID",
@@ -934,6 +940,20 @@
       "step_3": "<b>Donde encontrarlos:</b> las notas serán visibles en el historial de conversación y información del contacto, dentro de la nueva pestaña 'Nota'. No te preocupes, nunca se envían al cliente!",
       "step_4": "<b>Eliminar notas:</b> puedes eliminar tus notas mientras el soporte sigue asignado a ti.",
       "step_5": "<b>Transferencia de room:</b> si otro agente toma el room, se les informará sobre la existencia de notas internas."
+    }
+  },
+  "new_contact_info_visual": {
+    "content_1": {
+      "text_1": "Hemos hecho algunos cambios para ayudarte a navegar más rápido! Echa un vistazo:",
+      "text_2": "Las opciones <b>Ver historial</b> han sido movidas desde el lateral al menú superior de la conversación."
+    },
+    "content_2": {
+      "text_1": "Las opciones <b>Transferir contacto</b> han sido movidas desde el lateral al menú superior de la conversación."
+    },
+    "content_3": {
+      "text_1": "Para hacer el drawer de información más organizado y fácil de usar, hemos hecho algunas mejoras. La información ahora está dividida en <b>Sobre el contacto</b> y <b>Sobre el servicio</b>.",
+      "text_2": "Además, los <b>campos personalizados</b> ahora pueden ser expandidos y contraídos, para que puedas ver lo que realmente importa sin tener que hacer scroll.",
+      "text_3": "Y para hacer la interfaz más limpia, hemos cambiado el aspecto del botón <b>Iniciar discusión</b>."
     }
   }
 }

@@ -2,7 +2,7 @@ import { vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 
-import ModalBulkTransfer from '../chat/ModalBulkTransfer.vue';
+import ModalTransferRooms from '../chat/ModalTransferRooms.vue';
 
 vi.mock('@/services/api/resources/chats/room', () => ({
   default: {
@@ -28,7 +28,7 @@ vi.mock('@/services/api/resources/settings/queue', () => ({
 }));
 
 function createWrapper(store) {
-  const wrapper = mount(ModalBulkTransfer, {
+  const wrapper = mount(ModalTransferRooms, {
     global: {
       plugins: [store],
     },
@@ -37,7 +37,7 @@ function createWrapper(store) {
   return wrapper;
 }
 
-describe('ModalBulkTransfer', () => {
+describe('ModalTransferRooms', () => {
   let wrapper;
 
   beforeEach(() => {
