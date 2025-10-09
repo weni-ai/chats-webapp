@@ -109,7 +109,7 @@
                 {{ contactNumber?.plataform || $t('URN') }}:
               </p>
               <p class="infos-contact__item-value">
-                {{ (closedRoom || room).contact.name }}
+                {{ contactNumber?.contactNum }}
               </p>
             </section>
 
@@ -347,6 +347,7 @@ export default {
 
     contactNumber() {
       const room = this.closedRoom || this.room;
+
       return parseUrn(room);
     },
     contactProtocol() {
