@@ -1,5 +1,6 @@
 <template>
   <section
+    v-if="!isLoadingDocuments"
     class="documents__content"
     data-testid="documents-content"
   >
@@ -10,6 +11,16 @@
       :documentName="treatedMediaName(document.url)"
       data-testid="document-message"
       @click="download(document.url)"
+    />
+  </section>
+  <section
+    v-else
+    class="documents__content--loading"
+    data-testid="documents-content-loading"
+  >
+    <UnnnicSkeletonLoading
+      v-for="document in 8"
+      :key="`document-${document}`"
     />
   </section>
 </template>
@@ -36,7 +47,11 @@ const props = defineProps({
 });
 
 const contactInfosStore = useContactInfos();
-const { docs: documents, hasDocuments } = storeToRefs(contactInfosStore);
+const {
+  docs: documents,
+  hasDocuments,
+  isLoadingDocuments,
+} = storeToRefs(contactInfosStore);
 
 const treatedMediaName = (mediaName) => {
   if (mediaName) {
@@ -62,7 +77,7 @@ const download = (url) => {
 };
 
 onMounted(async () => {
-  if (!hasDocuments.value) {
+  if (!hasDocuments.value && !isLoadingDocuments.value) {
     await contactInfosStore.loadDocuments({
       contact: props.room?.contact?.uuid,
       room: props.room?.uuid,
@@ -82,6 +97,11 @@ onMounted(async () => {
     .unnnic-chats-message__time {
       display: none;
     }
+  }
+
+  &--loading {
+    display: grid;
+    gap: $unnnic-spacing-sm;
   }
 }
 </style>

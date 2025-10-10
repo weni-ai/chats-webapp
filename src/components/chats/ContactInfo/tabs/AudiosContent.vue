@@ -4,6 +4,7 @@
     data-testid="audios-scrollable"
   >
     <section
+      v-if="!isLoadingAudios"
       class="audios__content"
       data-testid="audios-content"
     >
@@ -22,6 +23,16 @@
           :canDiscard="false"
         />
       </UnnnicToolTip>
+    </section>
+    <section
+      v-else
+      class="audios__content--loading"
+      data-testid="audios-content-loading"
+    >
+      <UnnnicSkeletonLoading
+        v-for="audio in 8"
+        :key="`audio-${audio}`"
+      />
     </section>
   </div>
 </template>
@@ -49,7 +60,7 @@ const props = defineProps({
 });
 
 const contactInfosStore = useContactInfos();
-const { audios, hasAudios } = storeToRefs(contactInfosStore);
+const { audios, hasAudios, isLoadingAudios } = storeToRefs(contactInfosStore);
 
 const audioTooltipText = (audio) => {
   return i18n.global.t('contact_info.audio_tooltip', {
@@ -60,7 +71,7 @@ const audioTooltipText = (audio) => {
 };
 
 onMounted(async () => {
-  if (!hasAudios.value) {
+  if (!hasAudios.value && !isLoadingAudios.value) {
     await contactInfosStore.loadAudios({
       contact: props.room?.contact?.uuid,
       room: props.room?.uuid,
@@ -78,6 +89,11 @@ onMounted(async () => {
 
   &__audio {
     padding: $unnnic-spacing-sm;
+  }
+
+  &--loading {
+    display: grid;
+    gap: $unnnic-spacing-sm;
   }
 }
 

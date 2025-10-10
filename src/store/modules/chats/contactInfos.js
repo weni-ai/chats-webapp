@@ -7,6 +7,10 @@ export const useContactInfos = defineStore('contactInfos', () => {
   const documents = ref([]);
   const audios = ref([]);
 
+  const isLoadingMedias = ref(false);
+  const isLoadingDocuments = ref(false);
+  const isLoadingAudios = ref(false);
+
   const mediasPage = ref(1);
   const documentsPage = ref(1);
   const audiosPage = ref(1);
@@ -36,11 +40,13 @@ export const useContactInfos = defineStore('contactInfos', () => {
   const hasAudios = computed(() => audios.value.length > 0);
 
   const loadMedias = async ({ contact, room, history, contactInfo }) => {
+    isLoadingMedias.value = true;
     if (!history) {
       await loadNextMedias({ contact, room });
     } else {
       await loadNextMediasClosedRoom({ contactInfo });
     }
+    isLoadingMedias.value = false;
   };
 
   const loadNextMedias = async ({ contact, room }) => {
@@ -91,11 +97,13 @@ export const useContactInfos = defineStore('contactInfos', () => {
   };
 
   const loadDocuments = async ({ contact, room, history, contactInfo }) => {
+    isLoadingDocuments.value = true;
     if (!history) {
       await loadNextDocuments({ contact, room });
     } else {
       await loadNextDocumentsClosedRoom({ contactInfo });
     }
+    isLoadingDocuments.value = false;
   };
 
   const loadNextDocuments = async ({ contact, room }) => {
@@ -148,11 +156,13 @@ export const useContactInfos = defineStore('contactInfos', () => {
   };
 
   const loadAudios = async ({ contact, room, history, contactInfo }) => {
+    isLoadingAudios.value = true;
     if (!history) {
       await loadNextAudios({ contact, room });
     } else {
       await loadNextAudiosClosedRoom({ contactInfo });
     }
+    isLoadingAudios.value = false;
   };
 
   const loadNextAudios = async ({ contact, room }) => {
@@ -250,6 +260,9 @@ export const useContactInfos = defineStore('contactInfos', () => {
     medias,
     documents,
     audios,
+    isLoadingMedias,
+    isLoadingDocuments,
+    isLoadingAudios,
     currentContactUuid,
     currentRoomUuid,
 
