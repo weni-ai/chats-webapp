@@ -27,10 +27,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
 import i18n from '@/plugins/i18n';
-import Media from '@/services/api/resources/chats/media';
 import moment from 'moment';
+import { useContactInfos } from '@/store/modules/chats/contactInfos';
 
 const props = defineProps({
   room: {
@@ -47,8 +48,8 @@ const props = defineProps({
   },
 });
 
-const page = ref(1);
-const audios = ref([]);
+const contactInfosStore = useContactInfos();
+const { audios, hasAudios } = storeToRefs(contactInfosStore);
 
 const audioTooltipText = (audio) => {
   return i18n.global.t('contact_info.audio_tooltip', {
@@ -58,86 +59,14 @@ const audioTooltipText = (audio) => {
   });
 };
 
-const loadNextMedias = async () => {
-  const response = await Media.listFromContactAndRoom({
-    contact: props.room.contact.uuid,
-    room: props.room.uuid,
-    ordering: 'content_type',
-    content_type: 'audio',
-    page: page.value,
-  });
-
-  const newAudios = await Promise.all(
-    response.results
-      .filter((media) => media.content_type.startsWith('audio/'))
-      .map(
-        (element) =>
-          new Promise((resolve) => {
-            const url = new Audio(element.url);
-            url.onloadedmetadata = (event) => {
-              if (event.path) {
-                const { duration } = event.path[0];
-                resolve({ ...element, duration });
-              } else {
-                const duration = Math.round(url.duration);
-                resolve({ ...element, duration });
-              }
-            };
-          }),
-      ),
-  );
-
-  audios.value = audios.value.concat(newAudios);
-
-  page.value += 1;
-
-  if (response.next) {
-    loadNextMedias();
-  }
-};
-
-const loadNextMediasClosedRoom = async () => {
-  const response = await Media.listFromContactAndClosedRoom({
-    ordering: 'content_type',
-    contact: props.contactInfo.uuid,
-    content_type: 'audio',
-    page: page.value,
-  });
-
-  const newAudios = await Promise.all(
-    response.results
-      .filter((media) => media.content_type.startsWith('audio/'))
-      .map(
-        (element) =>
-          new Promise((resolve) => {
-            const url = new Audio(element.url);
-            url.onloadedmetadata = (event) => {
-              if (event.path) {
-                const { duration } = event.path[0];
-                resolve({ ...element, duration });
-              } else {
-                const duration = Math.round(url.duration);
-                resolve({ ...element, duration });
-              }
-            };
-          }),
-      ),
-  );
-
-  audios.value = audios.value.concat(newAudios);
-
-  page.value += 1;
-
-  if (response.next) {
-    loadNextMediasClosedRoom();
-  }
-};
-
 onMounted(async () => {
-  if (!props.history) {
-    await loadNextMedias();
-  } else {
-    await loadNextMediasClosedRoom();
+  if (!hasAudios.value) {
+    await contactInfosStore.loadAudios({
+      contact: props.room?.contact?.uuid,
+      room: props.room?.uuid,
+      history: props.history,
+      contactInfo: props.contactInfo?.uuid,
+    });
   }
 });
 </script>
