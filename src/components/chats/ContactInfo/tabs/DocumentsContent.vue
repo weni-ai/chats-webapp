@@ -14,127 +14,116 @@
   </section>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from 'vue';
 import Media from '@/services/api/resources/chats/media';
 
-export default {
-  name: 'DocumentsContent',
-
-  props: {
-    room: {
-      type: Object,
-      default: () => {},
-    },
-    contactInfo: {
-      type: Object,
-      default: () => {},
-    },
-    history: {
-      type: Boolean,
-      default: false,
-    },
+const props = defineProps({
+  room: {
+    type: Object,
+    default: () => {},
   },
-
-  data() {
-    return {
-      page: 1,
-      medias: [],
-    };
+  contactInfo: {
+    type: Object,
+    default: () => {},
   },
-
-  computed: {
-    documents() {
-      return this.medias.filter(
-        (media) =>
-          !media.content_type.startsWith('image/') &&
-          !media.content_type.startsWith('video/') &&
-          !media.content_type.startsWith('audio/'),
-      );
-    },
+  history: {
+    type: Boolean,
+    default: false,
   },
+});
 
-  async created() {
-    if (!this.history) {
-      await this.loadNextMedias();
-    } else {
-      await this.loadNextMediasClosedRoom();
-    }
-  },
+const page = ref(1);
+const medias = ref([]);
 
-  methods: {
-    treatedMediaName(mediaName) {
-      if (mediaName) {
-        return mediaName.split('/')?.at(-1);
-      }
+const documents = computed(() => {
+  return medias.value.filter(
+    (media) =>
+      !media.content_type.startsWith('image/') &&
+      !media.content_type.startsWith('video/') &&
+      !media.content_type.startsWith('audio/'),
+  );
+});
 
-      throw new Error(
-        'Pass as a parameter the name of the media you want to handle',
-      );
-    },
+const treatedMediaName = (mediaName) => {
+  if (mediaName) {
+    return mediaName.split('/')?.at(-1);
+  }
 
-    download(url) {
-      try {
-        const mediaName = this.treatedMediaName(url);
-
-        Media.download({ media: url, name: mediaName });
-      } catch (error) {
-        console.error(
-          'An error occurred when trying to download the media:',
-          error,
-        );
-      }
-    },
-
-    async loadNextMedias() {
-      const response = await Media.listFromContactAndRoom({
-        contact: this.room.contact.uuid,
-        room: this.room.uuid,
-        ordering: 'content_type',
-        content_type: 'application',
-        page: this.page,
-      });
-
-      this.medias = this.medias.concat(
-        response.results.filter(
-          (media) =>
-            !media.content_type.startsWith('image/') &&
-            !media.content_type.startsWith('video/') &&
-            !media.content_type.startsWith('audio/'),
-        ),
-      );
-
-      this.page += 1;
-
-      if (response.next) {
-        this.loadNextMedias();
-      }
-    },
-
-    async loadNextMediasClosedRoom() {
-      const response = await Media.listFromContactAndClosedRoom({
-        ordering: 'content_type',
-        contact: this.contactInfo.uuid,
-        content_type: 'application',
-        page: this.page,
-      });
-
-      this.medias = this.medias.concat(
-        response.results.filter(
-          (media) =>
-            !media.content_type.startsWith('image/') &&
-            !media.content_type.startsWith('video/') &&
-            !media.content_type.startsWith('audio/'),
-        ),
-      );
-
-      this.page += 1;
-
-      if (response.next) {
-        this.loadNextMediasClosedRoom();
-      }
-    },
-  },
+  throw new Error(
+    'Pass as a parameter the name of the media you want to handle',
+  );
 };
+
+const download = (url) => {
+  try {
+    const mediaName = treatedMediaName(url);
+
+    Media.download({ media: url, name: mediaName });
+  } catch (error) {
+    console.error(
+      'An error occurred when trying to download the media:',
+      error,
+    );
+  }
+};
+
+const loadNextMedias = async () => {
+  const response = await Media.listFromContactAndRoom({
+    contact: props.room.contact.uuid,
+    room: props.room.uuid,
+    ordering: 'content_type',
+    content_type: 'application',
+    page: page.value,
+  });
+
+  medias.value = medias.value.concat(
+    response.results.filter(
+      (media) =>
+        !media.content_type.startsWith('image/') &&
+        !media.content_type.startsWith('video/') &&
+        !media.content_type.startsWith('audio/'),
+    ),
+  );
+
+  page.value += 1;
+
+  if (response.next) {
+    loadNextMedias();
+  }
+};
+
+const loadNextMediasClosedRoom = async () => {
+  const response = await Media.listFromContactAndClosedRoom({
+    ordering: 'content_type',
+    contact: props.contactInfo.uuid,
+    content_type: 'application',
+    page: page.value,
+  });
+
+  medias.value = medias.value.concat(
+    response.results.filter(
+      (media) =>
+        !media.content_type.startsWith('image/') &&
+        !media.content_type.startsWith('video/') &&
+        !media.content_type.startsWith('audio/'),
+    ),
+  );
+
+  page.value += 1;
+
+  if (response.next) {
+    loadNextMediasClosedRoom();
+  }
+};
+
+onMounted(async () => {
+  if (!props.history) {
+    await loadNextMedias();
+  } else {
+    await loadNextMediasClosedRoom();
+  }
+});
 </script>
 
 <style lang="scss" scoped>
