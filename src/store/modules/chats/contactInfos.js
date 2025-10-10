@@ -263,6 +263,9 @@ export const useContactInfos = defineStore('contactInfos', () => {
     isLoadingMedias,
     isLoadingDocuments,
     isLoadingAudios,
+    mediasPage,
+    documentsPage,
+    audiosPage,
     currentContactUuid,
     currentRoomUuid,
 
