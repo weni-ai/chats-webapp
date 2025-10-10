@@ -77,6 +77,7 @@ export default {
         contact: this.room.contact.uuid,
         room: this.room.uuid,
         ordering: 'content_type',
+        content_type: 'audio',
         page: this.page,
       });
 
