@@ -34,11 +34,16 @@ const roomMessagesStore = useRoomMessages();
 const { toScrollNote, roomInternalNotes } = storeToRefs(roomMessagesStore);
 
 const loadInternalNotes = async () => {
-  const response = await RoomNotes.getInternalNotes({
-    room: props.room.uuid,
-  });
+  try {
+    const response = await RoomNotes.getInternalNotes({
+      room: props.room.uuid,
+    });
 
-  roomInternalNotes.value = response.results;
+    roomInternalNotes.value = response.results;
+  } catch (error) {
+    console.error('Error loading internal notes:', error);
+    roomInternalNotes.value = [];
+  }
 };
 
 const handleInternalNoteClick = (note) => {
