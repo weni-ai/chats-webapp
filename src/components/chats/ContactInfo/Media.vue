@@ -28,11 +28,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onUnmounted } from 'vue';
 import NotesContent from './tabs/NotesContent.vue';
 import MediasContent from './tabs/MediasContent.vue';
 import DocumentsContent from './tabs/DocumentsContent.vue';
 import AudiosContent from './tabs/AudiosContent.vue';
+import { useContactInfos } from '@/store/modules/chats/contactInfos';
 
 const props = defineProps({
   room: {
@@ -50,6 +51,8 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['fullscreen', 'loaded-medias']);
+
+const contactInfosStore = useContactInfos();
 
 const activeTab = ref('notes');
 
@@ -117,4 +120,8 @@ const handleFullscreen = (url, images) => {
 const handleTabLoaded = () => {
   emit('loaded-medias');
 };
+
+onUnmounted(() => {
+  contactInfosStore.clearAll();
+});
 </script>
