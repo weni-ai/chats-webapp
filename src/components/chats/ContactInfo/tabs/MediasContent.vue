@@ -15,9 +15,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import Media from '@/services/api/resources/chats/media';
+import { onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
 import MediaPreview from '@/components/chats/MediaMessage/Previews/Media.vue';
+import { useContactInfos } from '@/store/modules/chats/contactInfos';
 
 const props = defineProps({
   room: {
@@ -36,69 +37,17 @@ const props = defineProps({
 
 defineEmits(['fullscreen']);
 
-const page = ref(1);
-const medias = ref([]);
-
-const images = computed(() => {
-  return medias.value.filter(
-    (media) =>
-      media.content_type.startsWith('image/') ||
-      media.content_type.startsWith('video/'),
-  );
-});
-
-const loadNextMedias = async () => {
-  const response = await Media.listFromContactAndRoom({
-    contact: props.room.contact.uuid,
-    room: props.room.uuid,
-    ordering: 'content_type',
-    content_type: 'image/video',
-    page: page.value,
-  });
-
-  medias.value = medias.value.concat(
-    response.results.filter(
-      (media) =>
-        media.content_type.startsWith('image/') ||
-        media.content_type.startsWith('video/'),
-    ),
-  );
-
-  page.value += 1;
-
-  if (response.next) {
-    loadNextMedias();
-  }
-};
-
-const loadNextMediasClosedRoom = async () => {
-  const response = await Media.listFromContactAndClosedRoom({
-    ordering: 'content_type',
-    contact: props.contactInfo.uuid,
-    page: page.value,
-    content_type: 'image/video',
-  });
-
-  medias.value = medias.value.concat(
-    response.results.filter(
-      (media) =>
-        media.content_type.startsWith('image/') ||
-        media.content_type.startsWith('video/'),
-    ),
-  );
-
-  page.value += 1;
-
-  if (response.next) {
-    loadNextMediasClosedRoom();
-  }
-};
+const contactInfosStore = useContactInfos();
+const { images, hasMedias } = storeToRefs(contactInfosStore);
 
 onMounted(async () => {
-  if (!props.history) {
-    await loadNextMedias();
-  } else {
-    await loadNextMediasClosedRoom();
+  if (!hasMedias.value) {
+    await contactInfosStore.loadMedias({
+      contact: props.room?.contact?.uuid,
+      room: props.room?.uuid,
+      history: props.history,
+      contactInfo: props.contactInfo?.uuid,
+    });
   }
 });
 </script>
