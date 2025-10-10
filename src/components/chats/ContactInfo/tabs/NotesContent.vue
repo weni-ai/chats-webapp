@@ -14,55 +14,45 @@
   </section>
 </template>
 
-<script>
-import { mapWritableState } from 'pinia';
+<script setup>
+import { onMounted, onUnmounted } from 'vue';
+import { storeToRefs } from 'pinia';
 import ChatInternalNote from '@/components/chats/chat/ChatMessages/ChatMessagesInternalNote.vue';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import RoomNotes from '@/services/api/resources/chats/roomNotes';
 
-export default {
-  name: 'NotesContent',
-
-  components: {
-    ChatInternalNote,
+const props = defineProps({
+  room: {
+    type: Object,
+    default: () => {},
   },
+});
 
-  props: {
-    room: {
-      type: Object,
-      default: () => {},
-    },
-  },
+const emit = defineEmits(['loaded']);
 
-  emits: ['loaded'],
+const roomMessagesStore = useRoomMessages();
+const { toScrollNote, roomInternalNotes } = storeToRefs(roomMessagesStore);
 
-  computed: {
-    ...mapWritableState(useRoomMessages, ['toScrollNote', 'roomInternalNotes']),
-  },
+const loadInternalNotes = async () => {
+  const response = await RoomNotes.getInternalNotes({
+    room: props.room.uuid,
+  });
 
-  async created() {
-    await this.loadInternalNotes();
-    this.$emit('loaded');
-  },
-
-  unmounted() {
-    this.roomInternalNotes = [];
-  },
-
-  methods: {
-    async loadInternalNotes() {
-      const response = await RoomNotes.getInternalNotes({
-        room: this.room.uuid,
-      });
-
-      this.roomInternalNotes = response.results;
-    },
-
-    handleInternalNoteClick(note) {
-      this.toScrollNote = note;
-    },
-  },
+  roomInternalNotes.value = response.results;
 };
+
+const handleInternalNoteClick = (note) => {
+  toScrollNote.value = note;
+};
+
+onMounted(async () => {
+  await loadInternalNotes();
+  emit('loaded');
+});
+
+onUnmounted(() => {
+  roomInternalNotes.value = [];
+});
 </script>
 
 <style lang="scss" scoped>
