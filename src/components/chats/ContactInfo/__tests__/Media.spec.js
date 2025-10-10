@@ -1,269 +1,213 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { mount } from '@vue/test-utils';
+import {
+  describe,
+  it,
+  expect,
+  vi,
+  afterEach,
+  beforeAll,
+  afterAll,
+} from 'vitest';
+import { mount, config } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
-
 import Media from '../Media.vue';
-import MediaService from '@/services/api/resources/chats/media';
+import i18n from '@/plugins/i18n';
 
 vi.mock('@/services/api/resources/chats/media', () => ({
   default: {
-    listFromContactAndRoom: vi.fn(),
-    listFromContactAndClosedRoom: vi.fn(),
     download: vi.fn(),
+    listFromContactAndRoom: vi.fn(() =>
+      Promise.resolve({ results: [], next: null }),
+    ),
+    listFromContactAndClosedRoom: vi.fn(() =>
+      Promise.resolve({ results: [], next: null }),
+    ),
   },
 }));
 
 vi.mock('@/services/api/resources/chats/roomNotes', () => ({
   default: {
-    getInternalNotes: vi.fn(() => ({
-      results: [],
-    })),
+    getInternalNotes: vi.fn(() => Promise.resolve({ results: [] })),
   },
 }));
 
-vi.mock('moment', () => ({
-  default: vi.fn(() => ({
-    format: vi.fn((format) => (format === 'L' ? '01/25/2024' : '12:30 PM')),
-  })),
-}));
+beforeAll(() => {
+  config.global.plugins = config.global.plugins.filter(
+    (plugin) => plugin !== i18n,
+  );
 
-global.Audio = vi.fn().mockImplementation(() => ({
-  onloadedmetadata: null,
-  duration: 120,
-}));
-
-const createMockMedia = (type) => ({
-  url: `https://example.com/test.${type === 'image' ? 'png' : type === 'video' ? 'mp4' : type === 'audio' ? 'mp3' : 'pdf'}`,
-  content_type: `${type}/${type === 'image' ? 'png' : type === 'video' ? 'mp4' : type === 'audio' ? 'mp3' : 'pdf'}`,
-  created_on: '2024-01-25T12:30:00Z',
-  sender: 'Agent',
+  i18n.global.t = vi.fn((key) => key);
 });
 
-const mockT = (key, params) =>
-  ({
-    medias: 'Medias',
-    docs: 'Docs',
-    audios: 'Audios',
-    'contact_info.audio_tooltip': `${params?.agent || ''} ${params?.date || ''} at ${params?.time || ''}`,
-  })[key] || key;
+afterAll(() => {
+  if (!config.global.plugins.includes(i18n)) {
+    config.global.plugins.push(i18n);
+  }
+  vi.restoreAllMocks();
+});
 
-const createWrapper = (props = {}) =>
+const createWrapper = (props = {}, piniaOptions = {}) =>
   mount(Media, {
     props: {
-      room: { contact: { uuid: 'contact-uuid' }, uuid: 'room-uuid' },
-      contactInfo: { uuid: 'contact-uuid' },
+      room: { contact: { uuid: 'contact-123' }, uuid: 'room-123' },
+      contactInfo: { uuid: 'contact-123' },
       history: false,
       ...props,
     },
     global: {
-      plugins: [createTestingPinia()],
-      mocks: { $t: mockT },
+      plugins: [
+        createTestingPinia({
+          createSpy: vi.fn,
+          stubActions: false,
+          initialState: {
+            contactInfos: {
+              medias: [],
+              documents: [],
+              audios: [],
+              isLoadingMedias: false,
+              isLoadingDocuments: false,
+              isLoadingAudios: false,
+            },
+            roomMessages: {
+              toScrollNote: null,
+              roomInternalNotes: [],
+            },
+            ...piniaOptions,
+          },
+        }),
+      ],
+      mocks: { $t: (key) => key },
       stubs: {
         UnnnicTab: {
-          template:
-            '<div><slot name="tab-head-media" /><slot name="tab-head-docs" /><slot name="tab-head-audio" /><slot name="tab-panel-media" /><slot name="tab-panel-docs" /><slot name="tab-panel-audio" /></div>',
-        },
-        UnnnicChatsMessage: {
-          template:
-            '<div data-testid="document-message" @click="$emit(\'click\')">{{ documentName }}</div>',
-          props: ['time', 'documentName'],
-        },
-        UnnnicToolTip: {
-          template: '<div data-testid="audio-tooltip"><slot /></div>',
-          props: ['text', 'side', 'enabled'],
-        },
-        UnnnicAudioRecorder: {
-          template: '<div data-testid="audio-recorder"></div>',
-          props: ['src', 'canDiscard'],
-        },
-        MediaPreview: {
-          template:
-            '<div data-testid="media-preview" @click="$emit(\'click\')"></div>',
-          props: ['src', 'isVideo'],
-          emits: ['click'],
+          template: `
+            <div>
+              <div v-for="key in tabs" :key="'head-' + key">
+                <slot :name="'tab-head-' + key" />
+              </div>
+              <div v-for="key in tabs" :key="'panel-' + key">
+                <slot :name="'tab-panel-' + key" />
+              </div>
+            </div>
+          `,
+          props: ['tabs', 'modelValue', 'size'],
         },
       },
     },
   });
 
-describe('ContactMedia', () => {
+describe('Media', () => {
   let wrapper;
-  const mockResponse = {
-    results: [
-      createMockMedia('image'),
-      createMockMedia('application'),
-      createMockMedia('audio'),
-    ],
-    next: null,
-  };
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-    MediaService.listFromContactAndRoom.mockResolvedValue(mockResponse);
-    MediaService.listFromContactAndClosedRoom.mockResolvedValue(mockResponse);
-    vi.spyOn(Promise, 'all').mockImplementation(() =>
-      Promise.resolve([
-        { url: 'audio.mp3', content_type: 'audio/mp3', duration: 120 },
-      ]),
-    );
-  });
 
   afterEach(() => {
-    wrapper?.unmount?.();
-    vi.restoreAllMocks();
+    wrapper?.unmount();
+    vi.clearAllMocks();
   });
 
-  it('initializes correctly for both active and history modes', async () => {
-    wrapper = createWrapper();
-    expect(wrapper.vm.tab).toBe('notes');
-    expect(MediaService.listFromContactAndRoom).toHaveBeenCalled();
-
-    wrapper = createWrapper({ history: true });
-    expect(MediaService.listFromContactAndClosedRoom).toHaveBeenCalled();
-
-    await new Promise((resolve) => setTimeout(resolve, 10));
-    expect(wrapper.emitted('loaded-medias')).toBeTruthy();
-  });
-
-  it('filters media types correctly and handles computed properties', () => {
-    const testData = [
-      createMockMedia('image'),
-      createMockMedia('video'),
-      createMockMedia('application'),
-    ];
-    const testVM = {
-      medias: testData,
-      get images() {
-        return this.medias.filter(
-          (m) =>
-            m.content_type.startsWith('image/') ||
-            m.content_type.startsWith('video/'),
-        );
-      },
-      get documents() {
-        return this.medias.filter(
-          (m) =>
-            !(
-              m.content_type.startsWith('image/') ||
-              m.content_type.startsWith('video/')
-            ),
-        );
-      },
-    };
-
-    expect(testVM.images).toHaveLength(2);
-    expect(testVM.documents).toHaveLength(1);
-  });
-
-  it('handles all utility methods with comprehensive branch coverage', () => {
-    wrapper = createWrapper();
-
-    expect(wrapper.vm.treatedMediaName('https://example.com/file.pdf')).toBe(
-      'file.pdf',
-    );
-    [null, undefined, '', 0, false].forEach((val) => {
-      expect(() => wrapper.vm.treatedMediaName(val)).toThrow(
-        'Pass as a parameter the name of the media you want to handle',
-      );
-    });
-
-    const audioWithSender = {
-      sender: 'Agent',
-      created_on: '2024-01-25T12:30:00Z',
-    };
-    const audioWithoutSender = { created_on: '2024-01-25T12:30:00Z' };
-    expect(wrapper.vm.audioTooltipText(audioWithSender)).toBe(
-      'Agent 01/25/2024 at 12:30 PM',
-    );
-    expect(wrapper.vm.audioTooltipText(audioWithoutSender)).toBe(
-      ' 01/25/2024 at 12:30 PM',
-    );
-    expect(wrapper.vm.isActiveTab('notes')).toBe(true);
-    expect(wrapper.vm.isActiveTab('media')).toBe(false);
-    expect(wrapper.vm.isActiveTab('docs')).toBe(false);
-  });
-
-  it('handles download functionality and error scenarios', () => {
-    wrapper = createWrapper();
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-    wrapper.vm.download('https://example.com/file.pdf');
-    expect(MediaService.download).toHaveBeenCalledWith({
-      media: 'https://example.com/file.pdf',
-      name: 'file.pdf',
-    });
-
-    wrapper.vm.treatedMediaName = vi.fn(() => {
-      throw new Error('Test error');
-    });
-    wrapper.vm.download('https://example.com/file.pdf');
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'An error occurred when trying to download the media:',
-      expect.any(Error),
-    );
-  });
-
-  it('handles pagination correctly', async () => {
-    wrapper = createWrapper();
-
-    MediaService.listFromContactAndRoom
-      .mockReset()
-      .mockResolvedValueOnce({ ...mockResponse, next: 'page-2' })
-      .mockResolvedValueOnce({ ...mockResponse, next: null });
-
-    await wrapper.vm.loadNextMedias();
-    expect(MediaService.listFromContactAndRoom).toHaveBeenCalledTimes(2);
-
-    wrapper = createWrapper({ history: true });
-    MediaService.listFromContactAndClosedRoom
-      .mockReset()
-      .mockResolvedValueOnce({ ...mockResponse, next: 'page-2' })
-      .mockResolvedValueOnce({ ...mockResponse, next: null });
-
-    await wrapper.vm.loadNextMediasClosedRoom();
-    expect(MediaService.listFromContactAndClosedRoom).toHaveBeenCalledTimes(2);
-  });
-
-  it('emits events correctly', () => {
-    wrapper = createWrapper();
-    wrapper.vm.$emit('fullscreen', 'url', []);
-    expect(wrapper.emitted('fullscreen')).toBeTruthy();
-  });
-
-  describe('Error Handling', () => {
-    let originalUnhandledRejection;
-
-    beforeEach(() => {
-      originalUnhandledRejection = process.listeners('unhandledRejection');
-      process.removeAllListeners('unhandledRejection');
-      process.on('unhandledRejection', () => {});
-    });
-
-    afterEach(() => {
-      process.removeAllListeners('unhandledRejection');
-      originalUnhandledRejection.forEach((listener) =>
-        process.on('unhandledRejection', listener),
-      );
-    });
-
-    it('handles API errors gracefully for both room types', async () => {
-      MediaService.listFromContactAndRoom.mockRejectedValueOnce(
-        new Error('API Error'),
-      );
+  describe('Initial Rendering', () => {
+    it('should render Media component', () => {
       wrapper = createWrapper();
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      expect(wrapper.find('[data-testid="media-tab-medias"]').exists()).toBe(
-        true,
-      );
+      expect(wrapper.exists()).toBe(true);
+    });
 
-      MediaService.listFromContactAndClosedRoom.mockRejectedValueOnce(
-        new Error('API Error'),
-      );
+    it('should initialize with correct tab configuration', () => {
+      wrapper = createWrapper();
+      expect(wrapper.vm.tabsKeys).toEqual(['notes', 'media', 'docs', 'audio']);
+      expect(wrapper.vm.activeTab).toBe('notes');
+    });
+
+    it('should have tabs configuration object', () => {
+      wrapper = createWrapper();
+      expect(wrapper.vm.tabs).toBeDefined();
+      expect(wrapper.vm.tabs.notes).toBeDefined();
+      expect(wrapper.vm.tabs.media).toBeDefined();
+      expect(wrapper.vm.tabs.docs).toBeDefined();
+      expect(wrapper.vm.tabs.audio).toBeDefined();
+    });
+  });
+
+  describe('Props and Events', () => {
+    it('should receive correct props', () => {
+      wrapper = createWrapper();
+      expect(wrapper.props('room')).toEqual({
+        contact: { uuid: 'contact-123' },
+        uuid: 'room-123',
+      });
+      expect(wrapper.props('contactInfo')).toEqual({ uuid: 'contact-123' });
+      expect(wrapper.props('history')).toBe(false);
+    });
+
+    it('should handle fullscreen event', () => {
+      wrapper = createWrapper();
+
+      wrapper.vm.handleFullscreen('test-url', [{ url: 'test-url' }]);
+
+      expect(wrapper.emitted('fullscreen')).toBeTruthy();
+      expect(wrapper.emitted('fullscreen')[0]).toEqual([
+        'test-url',
+        [{ url: 'test-url' }],
+      ]);
+    });
+
+    it('should emit loaded-medias when tab loaded', () => {
+      wrapper = createWrapper();
+
+      wrapper.vm.handleTabLoaded();
+
+      expect(wrapper.emitted('loaded-medias')).toBeTruthy();
+    });
+  });
+
+  describe('Component Props Filtering', () => {
+    it('should filter props correctly for each tab', () => {
+      wrapper = createWrapper();
+
+      const notesProps = wrapper.vm.getComponentProps('notes');
+      expect(notesProps).toHaveProperty('room');
+      expect(notesProps).not.toHaveProperty('contactInfo');
+
+      const mediaProps = wrapper.vm.getComponentProps('media');
+      expect(mediaProps).toHaveProperty('room');
+      expect(mediaProps).toHaveProperty('contactInfo');
+      expect(mediaProps).toHaveProperty('history');
+    });
+
+    it('should configure events correctly for each tab', () => {
+      wrapper = createWrapper();
+
+      const notesEvents = wrapper.vm.getComponentEvents('notes');
+      expect(notesEvents).toHaveProperty('loaded');
+      expect(notesEvents).not.toHaveProperty('fullscreen');
+
+      const mediaEvents = wrapper.vm.getComponentEvents('media');
+      expect(mediaEvents).toHaveProperty('loaded');
+      expect(mediaEvents).toHaveProperty('fullscreen');
+    });
+  });
+
+  describe('Store Integration', () => {
+    it('should clear store on unmount', () => {
+      wrapper = createWrapper();
+      const clearAllSpy = vi.spyOn(wrapper.vm.contactInfosStore, 'clearAll');
+
+      wrapper.unmount();
+      expect(clearAllSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('History Mode', () => {
+    it('should pass history prop correctly', () => {
       wrapper = createWrapper({ history: true });
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      expect(wrapper.find('[data-testid="media-tab-medias"]').exists()).toBe(
-        true,
-      );
+
+      expect(wrapper.props('history')).toBe(true);
+    });
+
+    it('should filter history prop in component props', () => {
+      wrapper = createWrapper({ history: true });
+
+      const mediaProps = wrapper.vm.getComponentProps('media');
+      expect(mediaProps.history).toBe(true);
+
+      const notesProps = wrapper.vm.getComponentProps('notes');
+      expect(notesProps).not.toHaveProperty('history');
     });
   });
 });

@@ -27,7 +27,14 @@ export default {
     URL.revokeObjectURL(link.href);
   },
 
-  async listFromContactAndRoom({ ordering, message, contact, room, page }) {
+  async listFromContactAndRoom({
+    ordering,
+    message,
+    contact,
+    room,
+    page,
+    content_type,
+  }) {
     const response = await http.get(`/media/`, {
       params: {
         ordering,
@@ -35,6 +42,7 @@ export default {
         contact,
         room,
         page,
+        content_type,
       },
     });
     return response.data;
@@ -45,6 +53,7 @@ export default {
     contact,
     room,
     page,
+    content_type,
   }) {
     const response = await http.get(`/media/`, {
       params: {
@@ -53,6 +62,7 @@ export default {
         contact,
         room,
         page,
+        content_type,
         project: getProject(),
       },
     });
