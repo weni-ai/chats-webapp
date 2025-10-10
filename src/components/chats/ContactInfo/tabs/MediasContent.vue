@@ -14,108 +14,93 @@
   </section>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from 'vue';
 import Media from '@/services/api/resources/chats/media';
 import MediaPreview from '@/components/chats/MediaMessage/Previews/Media.vue';
 
-export default {
-  name: 'MediasContent',
-
-  components: {
-    MediaPreview,
+const props = defineProps({
+  room: {
+    type: Object,
+    default: () => {},
   },
-
-  props: {
-    room: {
-      type: Object,
-      default: () => {},
-    },
-    contactInfo: {
-      type: Object,
-      default: () => {},
-    },
-    history: {
-      type: Boolean,
-      default: false,
-    },
+  contactInfo: {
+    type: Object,
+    default: () => {},
   },
-
-  emits: ['fullscreen'],
-
-  data() {
-    return {
-      page: 1,
-      medias: [],
-    };
+  history: {
+    type: Boolean,
+    default: false,
   },
+});
 
-  computed: {
-    images() {
-      return this.medias.filter(
-        (media) =>
-          media.content_type.startsWith('image/') ||
-          media.content_type.startsWith('video/'),
-      );
-    },
-  },
+defineEmits(['fullscreen']);
 
-  async created() {
-    if (!this.history) {
-      await this.loadNextMedias();
-    } else {
-      await this.loadNextMediasClosedRoom();
-    }
-  },
+const page = ref(1);
+const medias = ref([]);
 
-  methods: {
-    async loadNextMedias() {
-      const response = await Media.listFromContactAndRoom({
-        contact: this.room.contact.uuid,
-        room: this.room.uuid,
-        ordering: 'content_type',
-        content_type: 'image/video',
-        page: this.page,
-      });
+const images = computed(() => {
+  return medias.value.filter(
+    (media) =>
+      media.content_type.startsWith('image/') ||
+      media.content_type.startsWith('video/'),
+  );
+});
 
-      this.medias = this.medias.concat(
-        response.results.filter(
-          (media) =>
-            media.content_type.startsWith('image/') ||
-            media.content_type.startsWith('video/'),
-        ),
-      );
+const loadNextMedias = async () => {
+  const response = await Media.listFromContactAndRoom({
+    contact: props.room.contact.uuid,
+    room: props.room.uuid,
+    ordering: 'content_type',
+    content_type: 'image/video',
+    page: page.value,
+  });
 
-      this.page += 1;
+  medias.value = medias.value.concat(
+    response.results.filter(
+      (media) =>
+        media.content_type.startsWith('image/') ||
+        media.content_type.startsWith('video/'),
+    ),
+  );
 
-      if (response.next) {
-        this.loadNextMedias();
-      }
-    },
+  page.value += 1;
 
-    async loadNextMediasClosedRoom() {
-      const response = await Media.listFromContactAndClosedRoom({
-        ordering: 'content_type',
-        contact: this.contactInfo.uuid,
-        page: this.page,
-        content_type: 'image/video',
-      });
-
-      this.medias = this.medias.concat(
-        response.results.filter(
-          (media) =>
-            media.content_type.startsWith('image/') ||
-            media.content_type.startsWith('video/'),
-        ),
-      );
-
-      this.page += 1;
-
-      if (response.next) {
-        this.loadNextMediasClosedRoom();
-      }
-    },
-  },
+  if (response.next) {
+    loadNextMedias();
+  }
 };
+
+const loadNextMediasClosedRoom = async () => {
+  const response = await Media.listFromContactAndClosedRoom({
+    ordering: 'content_type',
+    contact: props.contactInfo.uuid,
+    page: page.value,
+    content_type: 'image/video',
+  });
+
+  medias.value = medias.value.concat(
+    response.results.filter(
+      (media) =>
+        media.content_type.startsWith('image/') ||
+        media.content_type.startsWith('video/'),
+    ),
+  );
+
+  page.value += 1;
+
+  if (response.next) {
+    loadNextMediasClosedRoom();
+  }
+};
+
+onMounted(async () => {
+  if (!props.history) {
+    await loadNextMedias();
+  } else {
+    await loadNextMediasClosedRoom();
+  }
+});
 </script>
 
 <style lang="scss" scoped>
