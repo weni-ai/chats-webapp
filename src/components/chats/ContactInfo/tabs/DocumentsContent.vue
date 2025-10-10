@@ -15,8 +15,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
 import Media from '@/services/api/resources/chats/media';
+import { useContactInfos } from '@/store/modules/chats/contactInfos';
 
 const props = defineProps({
   room: {
@@ -33,17 +35,8 @@ const props = defineProps({
   },
 });
 
-const page = ref(1);
-const medias = ref([]);
-
-const documents = computed(() => {
-  return medias.value.filter(
-    (media) =>
-      !media.content_type.startsWith('image/') &&
-      !media.content_type.startsWith('video/') &&
-      !media.content_type.startsWith('audio/'),
-  );
-});
+const contactInfosStore = useContactInfos();
+const { docs: documents, hasDocuments } = storeToRefs(contactInfosStore);
 
 const treatedMediaName = (mediaName) => {
   if (mediaName) {
@@ -68,60 +61,14 @@ const download = (url) => {
   }
 };
 
-const loadNextMedias = async () => {
-  const response = await Media.listFromContactAndRoom({
-    contact: props.room.contact.uuid,
-    room: props.room.uuid,
-    ordering: 'content_type',
-    content_type: 'application',
-    page: page.value,
-  });
-
-  medias.value = medias.value.concat(
-    response.results.filter(
-      (media) =>
-        !media.content_type.startsWith('image/') &&
-        !media.content_type.startsWith('video/') &&
-        !media.content_type.startsWith('audio/'),
-    ),
-  );
-
-  page.value += 1;
-
-  if (response.next) {
-    loadNextMedias();
-  }
-};
-
-const loadNextMediasClosedRoom = async () => {
-  const response = await Media.listFromContactAndClosedRoom({
-    ordering: 'content_type',
-    contact: props.contactInfo.uuid,
-    content_type: 'application',
-    page: page.value,
-  });
-
-  medias.value = medias.value.concat(
-    response.results.filter(
-      (media) =>
-        !media.content_type.startsWith('image/') &&
-        !media.content_type.startsWith('video/') &&
-        !media.content_type.startsWith('audio/'),
-    ),
-  );
-
-  page.value += 1;
-
-  if (response.next) {
-    loadNextMediasClosedRoom();
-  }
-};
-
 onMounted(async () => {
-  if (!props.history) {
-    await loadNextMedias();
-  } else {
-    await loadNextMediasClosedRoom();
+  if (!hasDocuments.value) {
+    await contactInfosStore.loadDocuments({
+      contact: props.room?.contact?.uuid,
+      room: props.room?.uuid,
+      history: props.history,
+      contactInfo: props.contactInfo?.uuid,
+    });
   }
 });
 </script>
