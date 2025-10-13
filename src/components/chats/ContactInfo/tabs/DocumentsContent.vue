@@ -30,6 +30,7 @@ import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import Media from '@/services/api/resources/chats/media';
 import { useContactInfos } from '@/store/modules/chats/contactInfos';
+import { treatedMediaName } from '@/utils/medias';
 
 const props = defineProps({
   room: {
@@ -52,16 +53,6 @@ const {
   hasDocuments,
   isLoadingDocuments,
 } = storeToRefs(contactInfosStore);
-
-const treatedMediaName = (mediaName) => {
-  if (mediaName) {
-    return mediaName.split('/')?.at(-1);
-  }
-
-  throw new Error(
-    'Pass as a parameter the name of the media you want to handle',
-  );
-};
 
 const download = (url) => {
   try {
