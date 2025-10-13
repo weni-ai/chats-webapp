@@ -3,7 +3,7 @@
   <UnnnicModalDialog
     v-if="props.modelValue"
     :modelValue="props.modelValue"
-    :title="$t('new_feature_internal_note.title')"
+    :title="$t('news_and_updates')"
     showCloseIcon
     icon="brand_awareness"
     size="lg"
