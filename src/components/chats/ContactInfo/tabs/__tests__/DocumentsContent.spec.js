@@ -160,7 +160,6 @@ describe('DocumentsContent', () => {
     });
   });
 
-
   describe('Store Integration', () => {
     it('should not load documents if already loaded', async () => {
       wrapper = createWrapper();
