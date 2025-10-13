@@ -23,7 +23,10 @@ import { setActivePinia } from 'pinia';
 vi.mock('@/services/api/resources/chats/message');
 
 vi.mock('@/services/api/resources/chats/room', () => ({
-  default: { updateReadMessages: vi.fn() },
+  default: {
+    updateReadMessages: vi.fn(),
+    getRoomTags: vi.fn(() => ({ results: [] })),
+  },
 }));
 
 vi.mock('@/services/api/resources/chats/roomNotes', () => ({
