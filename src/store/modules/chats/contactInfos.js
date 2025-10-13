@@ -54,7 +54,7 @@ export const useContactInfos = defineStore('contactInfos', () => {
       contact,
       room,
       ordering: 'content_type',
-      content_type: 'image/video',
+      content_type: 'media',
       page: mediasPage.value,
     });
 
@@ -78,7 +78,7 @@ export const useContactInfos = defineStore('contactInfos', () => {
       ordering: 'content_type',
       contact: contactInfo,
       page: mediasPage.value,
-      content_type: 'image/video',
+      content_type: 'media',
     });
 
     medias.value = medias.value.concat(
@@ -111,7 +111,7 @@ export const useContactInfos = defineStore('contactInfos', () => {
       contact,
       room,
       ordering: 'content_type',
-      content_type: 'application',
+      content_type: 'documents',
       page: documentsPage.value,
     });
 
@@ -135,7 +135,7 @@ export const useContactInfos = defineStore('contactInfos', () => {
     const response = await Media.listFromContactAndClosedRoom({
       ordering: 'content_type',
       contact: contactInfo,
-      content_type: 'application',
+      content_type: 'documents',
       page: documentsPage.value,
     });
 
