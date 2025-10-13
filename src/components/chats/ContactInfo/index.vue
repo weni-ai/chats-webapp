@@ -746,11 +746,18 @@ export default {
         display: flex;
         align-items: center;
         gap: $unnnic-space-1;
+        :deep(.unnnic-dropdown__content) {
+          padding: $unnnic-space-2;
+        }
         &__dropdown {
           display: flex;
           flex-direction: column;
           gap: $unnnic-space-1;
           width: max-content;
+          max-height: 110px;
+          overflow-y: auto;
+
+          padding-right: $unnnic-space-2;
         }
       }
     }
