@@ -21,6 +21,7 @@
     <UnnnicSkeletonLoading
       v-for="media in 8"
       :key="`media-${media}`"
+      class="medias__content--loading-key"
     />
   </section>
 </template>
@@ -71,7 +72,12 @@ onMounted(async () => {
 
   &--loading {
     display: grid;
-    gap: $unnnic-spacing-sm;
+    grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+    gap: $unnnic-spacing-xs;
+    &-key {
+      width: 68px;
+      height: 68px;
+    }
   }
 }
 </style>
