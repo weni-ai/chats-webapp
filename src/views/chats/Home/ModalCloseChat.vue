@@ -27,6 +27,8 @@
         v-model="tags"
         :tags="sectorTags"
         :loading="isLoadingTags"
+        @update:to-remove-tags="(tags) => (toRemoveTags = tags)"
+        @update:to-add-tags="(tags) => (toAddTags = tags)"
       />
     </section>
   </UnnnicModalDialog>
