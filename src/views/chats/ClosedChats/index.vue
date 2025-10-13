@@ -40,7 +40,6 @@
           :closedRoom="selectedRoom"
           showRoomSummary
           data-testid="contact-info"
-          @close="() => {}"
         />
         <OldContactInfo
           v-else
