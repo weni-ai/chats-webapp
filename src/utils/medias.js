@@ -62,3 +62,25 @@ export function validateMediaFormat(files) {
 
   return isValid;
 }
+
+/**
+ * Treats the media name to be used in the chat.
+ * @param {string} mediaName - The name of the media to be treated.
+ * @returns {string} The treated media name.
+ */
+export function treatedMediaName(mediaName) {
+  if (!mediaName) {
+    throw new Error(
+      'Pass as a parameter the name of the media you want to handle',
+    );
+  }
+  try {
+    const urlWithoutParams = mediaName.split('?')[0];
+    const filename = urlWithoutParams.split('/').pop();
+
+    return decodeURIComponent(filename);
+  } catch (error) {
+    console.error('Error parsing media name:', error);
+    return mediaName.split('?')[0];
+  }
+}
