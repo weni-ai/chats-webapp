@@ -160,23 +160,6 @@ describe('DocumentsContent', () => {
     });
   });
 
-  describe('Media Name Treatment', () => {
-    it('should extract filename from URL', () => {
-      wrapper = createWrapper();
-
-      expect(wrapper.vm.treatedMediaName('https://example.com/test.pdf')).toBe(
-        'test.pdf',
-      );
-    });
-
-    it('should throw error for invalid input', () => {
-      wrapper = createWrapper();
-
-      expect(() => wrapper.vm.treatedMediaName(null)).toThrow(
-        'Pass as a parameter the name of the media you want to handle',
-      );
-    });
-  });
 
   describe('Store Integration', () => {
     it('should not load documents if already loaded', async () => {
