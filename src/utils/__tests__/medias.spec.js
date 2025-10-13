@@ -4,6 +4,7 @@ import {
   getSupportedChatMediaFormats,
   sendMediaMessage,
   validateMediaFormat,
+  treatedMediaName,
 } from '@/utils/medias.js';
 
 vi.mock('mime', () => ({
@@ -163,5 +164,103 @@ describe('validateMediaFormat', () => {
   it('should return false for empty file list', () => {
     const result = validateMediaFormat([]);
     expect(result).toBeUndefined();
+  });
+});
+
+describe('treatedMediaName', () => {
+  it('should extract filename from URL with query parameters', () => {
+    const url = 'https://example.com/document.pdf?param1=value1&param2=value2';
+    const result = treatedMediaName(url);
+
+    expect(result).toBe('document.pdf');
+  });
+
+  it('should extract filename from S3 URL with AWS parameters', () => {
+    const url =
+      'https://weni-staging-chats.s3.amazonaws.com/Rspack__Module_Federation_-_Weni_by_vtex_1.pdf?AWSAccessKeyId=ASIAQCLGXYHIXGJQ2ZHC&Signature=MQKNODNfnafvAF%2FOll%2B4tGN9OP0%3D&x-amz-security-token=IQoJb3JpZ2luX2VjEKT';
+    const result = treatedMediaName(url);
+
+    expect(result).toBe('Rspack__Module_Federation_-_Weni_by_vtex_1.pdf');
+  });
+
+  it('should extract filename from URL without query parameters', () => {
+    const url = 'https://example.com/files/report.docx';
+    const result = treatedMediaName(url);
+
+    expect(result).toBe('report.docx');
+  });
+
+  it('should decode URI encoded filenames', () => {
+    const url = 'https://example.com/My%20Document%20File.pdf?key=value';
+    const result = treatedMediaName(url);
+
+    expect(result).toBe('My Document File.pdf');
+  });
+
+  it('should handle filenames with special characters', () => {
+    const url = 'https://example.com/file_name-test(1).pdf?version=2';
+    const result = treatedMediaName(url);
+
+    expect(result).toBe('file_name-test(1).pdf');
+  });
+
+  it('should handle filenames with multiple dots', () => {
+    const url = 'https://example.com/my.backup.file.tar.gz?download=true';
+    const result = treatedMediaName(url);
+
+    expect(result).toBe('my.backup.file.tar.gz');
+  });
+
+  it('should throw error when mediaName is null', () => {
+    expect(() => treatedMediaName(null)).toThrow(
+      'Pass as a parameter the name of the media you want to handle',
+    );
+  });
+
+  it('should throw error when mediaName is undefined', () => {
+    expect(() => treatedMediaName(undefined)).toThrow(
+      'Pass as a parameter the name of the media you want to handle',
+    );
+  });
+
+  it('should throw error when mediaName is empty string', () => {
+    expect(() => treatedMediaName('')).toThrow(
+      'Pass as a parameter the name of the media you want to handle',
+    );
+  });
+
+  it('should handle URLs with fragment identifiers', () => {
+    const url = 'https://example.com/document.pdf?key=value#section1';
+    const result = treatedMediaName(url);
+
+    expect(result).toBe('document.pdf');
+  });
+
+  it('should handle simple filenames without domain', () => {
+    const url = '/path/to/file.txt?query=param';
+    const result = treatedMediaName(url);
+
+    expect(result).toBe('file.txt');
+  });
+
+  it('should fallback to original string without params on decoding error', () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const originalDecode = global.decodeURIComponent;
+    global.decodeURIComponent = vi.fn(() => {
+      throw new Error('Decode error');
+    });
+
+    const url = 'https://example.com/file.pdf?key=value';
+    const result = treatedMediaName(url);
+
+    expect(result).toBe('https://example.com/file.pdf');
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'Error parsing media name:',
+      expect.any(Error),
+    );
+
+    global.decodeURIComponent = originalDecode;
+    consoleSpy.mockRestore();
   });
 });
