@@ -131,11 +131,10 @@ describe('Room service', () => {
       const mockResponse = { data: {} };
       http.put.mockResolvedValue(mockResponse);
       const uuid = 'mocked-uuid';
-      const tags = ['tag1', 'tag2'];
 
-      const result = await roomService.close(uuid, tags);
+      const result = await roomService.close(uuid);
 
-      expect(http.put).toHaveBeenCalledWith(`/room/${uuid}/close/`, { tags });
+      expect(http.put).toHaveBeenCalledWith(`/room/${uuid}/close/`);
       expect(result).toEqual(mockResponse.data);
     });
   });
@@ -703,34 +702,6 @@ describe('Room service', () => {
   });
 
   describe('close - additional edge cases', () => {
-    it('should handle empty tags array', async () => {
-      const mockResponse = { data: {} };
-      http.put.mockResolvedValue(mockResponse);
-      const uuid = 'mocked-uuid';
-      const tags = [];
-
-      const result = await roomService.close(uuid, tags);
-
-      expect(http.put).toHaveBeenCalledWith(`/room/${uuid}/close/`, {
-        tags: [],
-      });
-      expect(result).toEqual(mockResponse.data);
-    });
-
-    it('should handle null tags', async () => {
-      const mockResponse = { data: {} };
-      http.put.mockResolvedValue(mockResponse);
-      const uuid = 'mocked-uuid';
-      const tags = null;
-
-      const result = await roomService.close(uuid, tags);
-
-      expect(http.put).toHaveBeenCalledWith(`/room/${uuid}/close/`, {
-        tags: null,
-      });
-      expect(result).toEqual(mockResponse.data);
-    });
-
     it('should handle HTTP errors when closing room fails', async () => {
       const mockError = new Error('Close failed');
       http.put.mockRejectedValue(mockError);
@@ -744,11 +715,10 @@ describe('Room service', () => {
     it('should handle undefined uuid', async () => {
       const mockResponse = { data: {} };
       http.put.mockResolvedValue(mockResponse);
-      const tags = ['tag1'];
 
-      const result = await roomService.close(undefined, tags);
+      const result = await roomService.close(undefined);
 
-      expect(http.put).toHaveBeenCalledWith('/room/undefined/close/', { tags });
+      expect(http.put).toHaveBeenCalledWith('/room/undefined/close/');
       expect(result).toEqual(mockResponse.data);
     });
   });
