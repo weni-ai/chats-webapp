@@ -4,6 +4,21 @@ import { getProject } from '@/utils/config';
 
 const client = axios.create();
 
+/**
+ * Extracts cursor from pagination URL
+ * @param {string|null} url - The pagination URL
+ * @returns {string|null} The cursor value or null
+ */
+const extractCursor = (url) => {
+  if (!url) return null;
+  try {
+    const urlObj = new URL(url);
+    return urlObj.searchParams.get('cursor');
+  } catch {
+    return null;
+  }
+};
+
 export default {
   /**
    *
@@ -32,7 +47,8 @@ export default {
     message,
     contact,
     room,
-    page,
+    page_size,
+    cursor,
     content_type,
   }) {
     const response = await http.get(`/media/`, {
@@ -41,18 +57,26 @@ export default {
         message,
         contact,
         room,
-        page,
+        page_size,
+        cursor,
         content_type,
       },
     });
-    return response.data;
+    return {
+      results: response.data.results,
+      next: response.data.next,
+      previous: response.data.previous,
+      nextCursor: extractCursor(response.data.next),
+      previousCursor: extractCursor(response.data.previous),
+    };
   },
   async listFromContactAndClosedRoom({
     ordering,
     message,
     contact,
     room,
-    page,
+    page_size,
+    cursor,
     content_type,
   }) {
     const response = await http.get(`/media/`, {
@@ -61,11 +85,19 @@ export default {
         message,
         contact,
         room,
-        page,
+        page_size,
+        cursor,
         content_type,
         project: getProject(),
       },
     });
-    return response.data;
+    return {
+      results: response.data.results,
+      next: response.data.next,
+      previous: response.data.previous,
+      nextCursor: extractCursor(response.data.next),
+      previousCursor: extractCursor(response.data.previous),
+    };
   },
+  extractCursor,
 };
