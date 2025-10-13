@@ -11,9 +11,9 @@ export const useContactInfos = defineStore('contactInfos', () => {
   const isLoadingDocuments = ref(false);
   const isLoadingAudios = ref(false);
 
-  const mediasPage = ref(1);
-  const documentsPage = ref(1);
-  const audiosPage = ref(1);
+  const mediasCursor = ref(null);
+  const documentsCursor = ref(null);
+  const audiosCursor = ref(null);
 
   const currentContactUuid = ref(null);
   const currentRoomUuid = ref(null);
@@ -55,7 +55,8 @@ export const useContactInfos = defineStore('contactInfos', () => {
       room,
       ordering: 'content_type',
       content_type: 'media',
-      page: mediasPage.value,
+      page_size: 5,
+      cursor: mediasCursor.value,
     });
 
     medias.value = medias.value.concat(
@@ -66,7 +67,7 @@ export const useContactInfos = defineStore('contactInfos', () => {
       ),
     );
 
-    mediasPage.value += 1;
+    mediasCursor.value = response.nextCursor;
 
     if (response.next) {
       await loadNextMedias({ contact, room });
@@ -77,7 +78,8 @@ export const useContactInfos = defineStore('contactInfos', () => {
     const response = await Media.listFromContactAndClosedRoom({
       ordering: 'content_type',
       contact: contactInfo,
-      page: mediasPage.value,
+      page_size: 5,
+      cursor: mediasCursor.value,
       content_type: 'media',
     });
 
@@ -89,7 +91,7 @@ export const useContactInfos = defineStore('contactInfos', () => {
       ),
     );
 
-    mediasPage.value += 1;
+    mediasCursor.value = response.nextCursor;
 
     if (response.next) {
       await loadNextMediasClosedRoom({ contactInfo });
@@ -112,7 +114,8 @@ export const useContactInfos = defineStore('contactInfos', () => {
       room,
       ordering: 'content_type',
       content_type: 'documents',
-      page: documentsPage.value,
+      page_size: 10,
+      cursor: documentsCursor.value,
     });
 
     documents.value = documents.value.concat(
@@ -124,7 +127,7 @@ export const useContactInfos = defineStore('contactInfos', () => {
       ),
     );
 
-    documentsPage.value += 1;
+    documentsCursor.value = response.nextCursor;
 
     if (response.next) {
       await loadNextDocuments({ contact, room });
@@ -136,7 +139,8 @@ export const useContactInfos = defineStore('contactInfos', () => {
       ordering: 'content_type',
       contact: contactInfo,
       content_type: 'documents',
-      page: documentsPage.value,
+      page_size: 10,
+      cursor: documentsCursor.value,
     });
 
     documents.value = documents.value.concat(
@@ -148,7 +152,7 @@ export const useContactInfos = defineStore('contactInfos', () => {
       ),
     );
 
-    documentsPage.value += 1;
+    documentsCursor.value = response.nextCursor;
 
     if (response.next) {
       await loadNextDocumentsClosedRoom({ contactInfo });
@@ -171,7 +175,8 @@ export const useContactInfos = defineStore('contactInfos', () => {
       room,
       ordering: 'content_type',
       content_type: 'audio',
-      page: audiosPage.value,
+      page_size: 10,
+      cursor: audiosCursor.value,
     });
 
     const newAudios = await Promise.all(
@@ -196,7 +201,7 @@ export const useContactInfos = defineStore('contactInfos', () => {
 
     audios.value = audios.value.concat(newAudios);
 
-    audiosPage.value += 1;
+    audiosCursor.value = response.nextCursor;
 
     if (response.next) {
       await loadNextAudios({ contact, room });
@@ -208,7 +213,8 @@ export const useContactInfos = defineStore('contactInfos', () => {
       ordering: 'content_type',
       contact: contactInfo,
       content_type: 'audio',
-      page: audiosPage.value,
+      page_size: 10,
+      cursor: audiosCursor.value,
     });
 
     const newAudios = await Promise.all(
@@ -233,7 +239,7 @@ export const useContactInfos = defineStore('contactInfos', () => {
 
     audios.value = audios.value.concat(newAudios);
 
-    audiosPage.value += 1;
+    audiosCursor.value = response.nextCursor;
 
     if (response.next) {
       await loadNextAudiosClosedRoom({ contactInfo });
@@ -249,9 +255,9 @@ export const useContactInfos = defineStore('contactInfos', () => {
     medias.value = [];
     documents.value = [];
     audios.value = [];
-    mediasPage.value = 1;
-    documentsPage.value = 1;
-    audiosPage.value = 1;
+    mediasCursor.value = null;
+    documentsCursor.value = null;
+    audiosCursor.value = null;
     currentContactUuid.value = null;
     currentRoomUuid.value = null;
   };
@@ -263,9 +269,9 @@ export const useContactInfos = defineStore('contactInfos', () => {
     isLoadingMedias,
     isLoadingDocuments,
     isLoadingAudios,
-    mediasPage,
-    documentsPage,
-    audiosPage,
+    mediasCursor,
+    documentsCursor,
+    audiosCursor,
     currentContactUuid,
     currentRoomUuid,
 

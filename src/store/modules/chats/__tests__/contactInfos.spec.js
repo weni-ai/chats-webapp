@@ -26,9 +26,9 @@ describe('contactInfos Store', () => {
     expect(store.isLoadingMedias).toBe(false);
     expect(store.isLoadingDocuments).toBe(false);
     expect(store.isLoadingAudios).toBe(false);
-    expect(store.mediasPage).toBe(1);
-    expect(store.documentsPage).toBe(1);
-    expect(store.audiosPage).toBe(1);
+    expect(store.mediasCursor).toBeNull();
+    expect(store.documentsCursor).toBeNull();
+    expect(store.audiosCursor).toBeNull();
     expect(store.currentContactUuid).toBeNull();
     expect(store.currentRoomUuid).toBeNull();
   });
@@ -68,11 +68,17 @@ describe('contactInfos Store', () => {
           { content_type: 'image/png', url: 'image.png' },
           { content_type: 'application/pdf', url: 'doc.pdf' },
         ],
-        next: 'page2',
+        next: 'https://api.example.com/media/?cursor=next-cursor-1',
+        previous: null,
+        nextCursor: 'next-cursor-1',
+        previousCursor: null,
       })
       .mockResolvedValueOnce({
         results: [{ content_type: 'video/mp4', url: 'video.mp4' }],
         next: null,
+        previous: 'https://api.example.com/media/?cursor=prev-cursor-1',
+        nextCursor: null,
+        previousCursor: 'prev-cursor-1',
       });
 
     const loadPromise = store.loadMedias({
@@ -86,7 +92,7 @@ describe('contactInfos Store', () => {
 
     expect(store.isLoadingMedias).toBe(false);
     expect(store.medias).toHaveLength(2);
-    expect(store.mediasPage).toBe(3);
+    expect(store.mediasCursor).toBeNull();
     expect(Media.listFromContactAndRoom).toHaveBeenCalledTimes(2);
   });
 
@@ -94,17 +100,23 @@ describe('contactInfos Store', () => {
     Media.listFromContactAndClosedRoom
       .mockResolvedValueOnce({
         results: [{ content_type: 'image/png', url: 'image.png' }],
-        next: 'page2',
+        next: 'https://api.example.com/media/?cursor=next-cursor-2',
+        previous: null,
+        nextCursor: 'next-cursor-2',
+        previousCursor: null,
       })
       .mockResolvedValueOnce({
         results: [{ content_type: 'video/mp4', url: 'video.mp4' }],
         next: null,
+        previous: 'https://api.example.com/media/?cursor=prev-cursor-2',
+        nextCursor: null,
+        previousCursor: 'prev-cursor-2',
       });
 
     await store.loadMedias({ contactInfo: 'contact-info-123', history: true });
 
     expect(store.medias).toHaveLength(2);
-    expect(store.mediasPage).toBe(3);
+    expect(store.mediasCursor).toBeNull();
   });
 
   it('should load documents with pagination and history mode', async () => {
@@ -114,11 +126,17 @@ describe('contactInfos Store', () => {
           { content_type: 'application/pdf', url: 'doc.pdf' },
           { content_type: 'image/png', url: 'image.png' },
         ],
-        next: 'page2',
+        next: 'https://api.example.com/media/?cursor=next-cursor-3',
+        previous: null,
+        nextCursor: 'next-cursor-3',
+        previousCursor: null,
       })
       .mockResolvedValueOnce({
         results: [{ content_type: 'application/zip', url: 'file.zip' }],
         next: null,
+        previous: 'https://api.example.com/media/?cursor=prev-cursor-3',
+        nextCursor: null,
+        previousCursor: 'prev-cursor-3',
       });
 
     await store.loadDocuments({
@@ -129,16 +147,22 @@ describe('contactInfos Store', () => {
 
     expect(store.isLoadingDocuments).toBe(false);
     expect(store.documents).toHaveLength(2);
-    expect(store.documentsPage).toBe(3);
+    expect(store.documentsCursor).toBeNull();
 
     Media.listFromContactAndClosedRoom
       .mockResolvedValueOnce({
         results: [{ content_type: 'application/pdf', url: 'doc2.pdf' }],
-        next: 'page2',
+        next: 'https://api.example.com/media/?cursor=next-cursor-4',
+        previous: null,
+        nextCursor: 'next-cursor-4',
+        previousCursor: null,
       })
       .mockResolvedValueOnce({
         results: [{ content_type: 'application/msword', url: 'doc3.doc' }],
         next: null,
+        previous: 'https://api.example.com/media/?cursor=prev-cursor-4',
+        nextCursor: null,
+        previousCursor: 'prev-cursor-4',
       });
 
     await store.loadDocuments({
@@ -162,6 +186,9 @@ describe('contactInfos Store', () => {
         { content_type: 'image/png', url: 'image.png' },
       ],
       next: null,
+      previous: null,
+      nextCursor: null,
+      previousCursor: null,
     });
 
     const loadPromise = store.loadAudios({
@@ -211,11 +238,17 @@ describe('contactInfos Store', () => {
     Media.listFromContactAndRoom
       .mockResolvedValueOnce({
         results: [{ content_type: 'audio/mp3', url: 'audio1.mp3' }],
-        next: 'page2',
+        next: 'https://api.example.com/media/?cursor=next-cursor-5',
+        previous: null,
+        nextCursor: 'next-cursor-5',
+        previousCursor: null,
       })
       .mockResolvedValueOnce({
         results: [{ content_type: 'audio/wav', url: 'audio2.wav' }],
         next: null,
+        previous: 'https://api.example.com/media/?cursor=prev-cursor-5',
+        nextCursor: null,
+        previousCursor: 'prev-cursor-5',
       });
 
     await store.loadAudios({
@@ -225,19 +258,25 @@ describe('contactInfos Store', () => {
     });
 
     expect(store.audios).toHaveLength(2);
-    expect(store.audiosPage).toBe(3);
+    expect(store.audiosCursor).toBeNull();
 
     store.audios = [];
-    store.audiosPage = 1;
+    store.audiosCursor = null;
 
     Media.listFromContactAndClosedRoom
       .mockResolvedValueOnce({
         results: [{ content_type: 'audio/ogg', url: 'audio3.ogg' }],
-        next: 'page2',
+        next: 'https://api.example.com/media/?cursor=next-cursor-6',
+        previous: null,
+        nextCursor: 'next-cursor-6',
+        previousCursor: null,
       })
       .mockResolvedValueOnce({
         results: [{ content_type: 'audio/aac', url: 'audio4.aac' }],
         next: null,
+        previous: 'https://api.example.com/media/?cursor=prev-cursor-6',
+        nextCursor: null,
+        previousCursor: 'prev-cursor-6',
       });
 
     await store.loadAudios({
@@ -246,7 +285,7 @@ describe('contactInfos Store', () => {
     });
 
     expect(store.audios).toHaveLength(2);
-    expect(store.audiosPage).toBe(3);
+    expect(store.audiosCursor).toBeNull();
     expect(store.audios[0].duration).toBe(160);
     expect(store.audios[1].duration).toBe(150);
   });
@@ -257,12 +296,12 @@ describe('contactInfos Store', () => {
     expect(store.currentRoomUuid).toBe('room-789');
 
     store.medias = [{ content_type: 'image/png', url: 'image.png' }];
-    store.mediasPage = 5;
+    store.mediasCursor = 'some-cursor';
 
     store.clearAll();
 
     expect(store.medias).toEqual([]);
-    expect(store.mediasPage).toBe(1);
+    expect(store.mediasCursor).toBeNull();
     expect(store.currentContactUuid).toBeNull();
     expect(store.currentRoomUuid).toBeNull();
   });
