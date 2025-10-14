@@ -5,15 +5,17 @@
       :is="isEditable && isCurrent ? 'label' : 'h3'"
       class="title"
       tabindex="0"
-      >{{ title }}:
+    >
+      {{ title }}:
     </component>
     <section :class="descriptionClasses">
       <a
         v-if="showLink"
         :href="description"
         target="_blank"
-        >{{ description }}</a
       >
+        {{ description }}
+      </a>
 
       <UnnnicToolTip
         v-show="showEditTooltip"
@@ -70,7 +72,7 @@ export default {
     },
     value: {
       type: String,
-      required: true,
+      default: '',
     },
   },
   emits: ['save-value', 'update-current-custom-field'],
@@ -143,16 +145,17 @@ export default {
 .custom-field {
   display: flex;
   align-items: center;
-  gap: $unnnic-spacing-inline-nano;
+  gap: $unnnic-space-05;
 
   .title {
+    font: $unnnic-font-emphasis;
+    color: $unnnic-color-fg-base;
     font-weight: $unnnic-font-weight-bold;
-    text-transform: capitalize;
   }
 
-  .title,
   .description {
-    font-size: $unnnic-font-size-body-gt;
+    font: $unnnic-font-body;
+    color: $unnnic-color-fg-base;
 
     cursor: default;
   }

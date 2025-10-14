@@ -576,6 +576,7 @@ describe('RoomsTable.vue', () => {
         expect(routerPushSpy).toHaveBeenCalledWith({
           name: 'closed-rooms.selected',
           params: { roomId: mockRoom.uuid },
+          query: expect.any(Object),
         });
       } else {
         console.log(

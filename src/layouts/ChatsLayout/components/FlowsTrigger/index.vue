@@ -1,11 +1,14 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
-  <AsideSlotTemplate
-    :title="$t('flows_trigger.title')"
-    :subtitle="$t('flows_trigger.subtitle', { project: projectName })"
-    icon="send"
-    :close="() => $emit('close')"
-  >
+  <AsideSlotTemplate>
+    <template #header>
+      <UnnnicChatsHeader
+        :title="$t('flows_trigger.title')"
+        :subtitle="$t('flows_trigger.subtitle', { project: projectName })"
+        avatarIcon="send"
+        :close="() => $emit('close')"
+      />
+    </template>
     <AsideSlotTemplateSection
       v-if="showSendFlowStep && !isLoadingCheckProjectPrincipal"
       class="flows-trigger"

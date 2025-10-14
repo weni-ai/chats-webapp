@@ -169,7 +169,9 @@
                   ]"
                   :time="new Date(message.created_on)"
                   :documentName="
-                    media.url?.split('/').at(-1) || media.file?.name
+                    handleMediaName(
+                      media.url?.split('/').at(-1) || media.file?.name,
+                    )
                   "
                   :status="messageStatus({ message })"
                   :title="messageFormatTitle(new Date(message.created_on))"
@@ -265,6 +267,7 @@ import ChatMessagesInternalNote from './ChatMessagesInternalNote.vue';
 
 import { isString } from '@/utils/string';
 import { SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT } from '@/utils/chats';
+import { treatedMediaName } from '@/utils/medias';
 
 export default {
   name: 'ChatMessages',
@@ -445,6 +448,9 @@ export default {
           this.highlightedMessageUuid = null;
         }, 1000);
       }
+    },
+    handleMediaName(mediaName) {
+      return treatedMediaName(mediaName);
     },
     isMediaOfType(media, type) {
       return media && media.content_type?.includes(type);
