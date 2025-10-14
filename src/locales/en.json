@@ -1,4 +1,5 @@
 {
+  "news_and_updates": "News and updates in Chats",
   "custom": "Custom",
   "country": {
     "label": "Country",
@@ -107,6 +108,7 @@
       "audio": "Audio message"
     }
   },
+  "start": "Start",
   "submit": "Submit",
   "details": "Details",
   "doubts": "Doubts",
@@ -320,6 +322,9 @@
       "error_404": "The room doesn't exist",
       "error_403": "Is not a room user"
     },
+    "room_contact_info": {
+      "title": "All information"
+    },
     "errors": {
       "401": "Authentication error",
       "default": "An error occurred, please try again later"
@@ -497,7 +502,8 @@
     }
   },
   "contact_info": {
-    "title": "Contact information",
+    "title": "About the contact",
+    "about_support": "About the support",
     "switch_associate_contact": "Unlinked contact",
     "switch_disassociate_contact": "Linked contact",
     "switch_tooltip": "Enable if you want the contact to always be directly assigned to you",
@@ -505,6 +511,7 @@
     "alert_detached": "Unlinked contact",
     "linked_contact": "Contact linked to agent {name}",
     "see_contact_history": "View history",
+    "no_contact_history": "No history",
     "audio_tooltip": "{agent} {date} at {time}",
     "transfering_chat": "Transferring the chat 📬",
     "ticket": "Ticket ID",
@@ -943,6 +950,20 @@
       "step_3": "<b>Where to find them:</b> notes will be visible in the conversation history and contact information, within the new 'Note' tab. Rest assured, they are never sent to the customer!",
       "step_4": "<b>Delete notes:</b> you can delete your notes while the support room is still assigned to you.",
       "step_5": "<b>Room transfer:</b> if another agent takes over the room, they will be informed about the existence of internal notes."
+    }
+  },
+  "new_contact_info_visual": {
+    "content_1": {
+      "text_1": "We’ve made a few changes to help you navigate faster! Check it out:",
+      "text_2": "The <b>View history</b> options have moved from the side drawer to the top menu of the chat."
+    },
+    "content_2": {
+      "text_1": "The <b>Transfer contact</b> options have moved from the side drawer to the top menu of the chat."
+    },
+    "content_3": {
+      "text_1": "To make the information drawer more organized and easier to use, we've made some improvements. The information is now divided into <b>About the contact</b> and <b>About the service</b>.",
+      "text_2": "In addition, <b>custom fields</b> can now be collapsed and expanded, so you can see what really matters without having to scroll.",
+      "text_3": "And to make the interface cleaner, we've changed the look of the <b>Start discussion</b> button."
     }
   }
 }

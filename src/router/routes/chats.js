@@ -63,6 +63,7 @@ const routes = [
       tags: route.query.tags,
       startDate: route.query.startDate,
       endDate: route.query.endDate,
+      from: route.query.from,
     }),
   },
   {

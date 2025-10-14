@@ -1,7 +1,11 @@
 <template>
   <UnnnicModalDialog
     :modelValue="true"
-    :title="$t('bulk_transfer.transfer_selected_contacts')"
+    :title="
+      bulkTransfer
+        ? $t('bulk_transfer.transfer_selected_contacts')
+        : $t('transfer_contact')
+    "
     :showCloseIcon="!isLoadingBulkTransfer"
     :primaryButtonProps="{
       text: $t('transfer'),
@@ -15,13 +19,13 @@
     :persistent="isLoadingBulkTransfer"
     data-testid="modal-bulk-transfer"
     @secondary-button-click="emitClose()"
-    @primary-button-click="bulkTransfer()"
+    @primary-button-click="transfer()"
     @update:model-value="emitClose()"
   >
     <RoomsTransferFields
       ref="roomsTransferFields"
       v-model="selectedQueue"
-      bulkTransfer
+      :bulkTransfer="bulkTransfer"
       fixed
       @transfer-complete="transferComplete"
     />
@@ -32,10 +36,16 @@
 import RoomsTransferFields from '@/components/chats/RoomsTransferFields.vue';
 
 export default {
-  name: 'ModalBulkTransfer',
+  name: 'ModalTransferRooms',
 
   components: {
     RoomsTransferFields,
+  },
+  props: {
+    bulkTransfer: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   emits: ['close'],
@@ -56,7 +66,7 @@ export default {
   },
 
   methods: {
-    bulkTransfer() {
+    transfer() {
       this.isLoadingBulkTransfer = true;
 
       this.$refs.roomsTransferFields.transfer();
