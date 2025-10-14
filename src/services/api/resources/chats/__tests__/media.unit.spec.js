@@ -25,6 +25,19 @@ vi.mock('@/utils/config', () => ({
   getProject: vi.fn(() => 'mocked-project-id'),
 }));
 
+// Mock global URL for extractCursor
+global.URL = class URL {
+  constructor(url) {
+    this.url = url;
+    this.searchParams = {
+      get: (key) => {
+        const match = url.match(new RegExp(`[?&]${key}=([^&]*)`));
+        return match ? match[1] : null;
+      },
+    };
+  }
+};
+
 const mockCreateElement = vi.fn();
 const mockCreateObjectURL = vi.fn();
 const mockRevokeObjectURL = vi.fn();
@@ -37,13 +50,9 @@ Object.defineProperty(global, 'document', {
   writable: true,
 });
 
-Object.defineProperty(global, 'URL', {
-  value: {
-    createObjectURL: mockCreateObjectURL,
-    revokeObjectURL: mockRevokeObjectURL,
-  },
-  writable: true,
-});
+// Add createObjectURL and revokeObjectURL to the global URL class
+global.URL.createObjectURL = mockCreateObjectURL;
+global.URL.revokeObjectURL = mockRevokeObjectURL;
 
 describe('Media service', () => {
   let mockLink;
@@ -207,7 +216,8 @@ describe('Media service', () => {
             { id: 1, name: 'image1.jpg', type: 'image' },
             { id: 2, name: 'document.pdf', type: 'document' },
           ],
-          count: 2,
+          next: 'https://api.example.com/media/?cursor=next-cursor',
+          previous: null,
         },
       };
       http.get.mockResolvedValue(mockResponse);
@@ -217,7 +227,8 @@ describe('Media service', () => {
         message: 'msg-123',
         contact: 'contact-456',
         room: 'room-789',
-        page: 2,
+        cursor: 'current-cursor',
+        content_type: 'media',
       };
 
       const result = await mediaService.listFromContactAndRoom(params);
@@ -228,14 +239,23 @@ describe('Media service', () => {
           message: params.message,
           contact: params.contact,
           room: params.room,
-          page: params.page,
+          cursor: params.cursor,
+          content_type: params.content_type,
         },
       });
-      expect(result).toEqual(mockResponse.data);
+      expect(result).toEqual({
+        results: mockResponse.data.results,
+        next: mockResponse.data.next,
+        previous: mockResponse.data.previous,
+        nextCursor: 'next-cursor',
+        previousCursor: null,
+      });
     });
 
     it('should make a GET request with partial parameters', async () => {
-      const mockResponse = { data: { results: [], count: 0 } };
+      const mockResponse = {
+        data: { results: [], next: null, previous: null },
+      };
       http.get.mockResolvedValue(mockResponse);
 
       const params = {
@@ -251,14 +271,23 @@ describe('Media service', () => {
           message: undefined,
           contact: params.contact,
           room: params.room,
-          page: undefined,
+          cursor: undefined,
+          content_type: undefined,
         },
       });
-      expect(result).toEqual(mockResponse.data);
+      expect(result).toEqual({
+        results: [],
+        next: null,
+        previous: null,
+        nextCursor: null,
+        previousCursor: null,
+      });
     });
 
     it('should handle empty parameters object', async () => {
-      const mockResponse = { data: { results: [], count: 0 } };
+      const mockResponse = {
+        data: { results: [], next: null, previous: null },
+      };
       http.get.mockResolvedValue(mockResponse);
 
       const result = await mediaService.listFromContactAndRoom({});
@@ -269,10 +298,17 @@ describe('Media service', () => {
           message: undefined,
           contact: undefined,
           room: undefined,
-          page: undefined,
+          cursor: undefined,
+          content_type: undefined,
         },
       });
-      expect(result).toEqual(mockResponse.data);
+      expect(result).toEqual({
+        results: [],
+        next: null,
+        previous: null,
+        nextCursor: null,
+        previousCursor: null,
+      });
     });
 
     it('should handle API errors', async () => {
@@ -293,13 +329,16 @@ describe('Media service', () => {
           message: undefined,
           contact: params.contact,
           room: params.room,
-          page: undefined,
+          cursor: undefined,
+          content_type: undefined,
         },
       });
     });
 
     it('should handle null parameters', async () => {
-      const mockResponse = { data: { results: [], count: 0 } };
+      const mockResponse = {
+        data: { results: [], next: null, previous: null },
+      };
       http.get.mockResolvedValue(mockResponse);
 
       const params = {
@@ -307,7 +346,8 @@ describe('Media service', () => {
         message: null,
         contact: null,
         room: null,
-        page: null,
+        cursor: null,
+        content_type: null,
       };
 
       const result = await mediaService.listFromContactAndRoom(params);
@@ -318,10 +358,17 @@ describe('Media service', () => {
           message: null,
           contact: null,
           room: null,
-          page: null,
+          cursor: null,
+          content_type: null,
         },
       });
-      expect(result).toEqual(mockResponse.data);
+      expect(result).toEqual({
+        results: [],
+        next: null,
+        previous: null,
+        nextCursor: null,
+        previousCursor: null,
+      });
     });
   });
 
@@ -333,7 +380,8 @@ describe('Media service', () => {
             { id: 1, name: 'archived-image.jpg', type: 'image' },
             { id: 2, name: 'archived-doc.pdf', type: 'document' },
           ],
-          count: 2,
+          next: 'https://api.example.com/media/?cursor=next-archived',
+          previous: null,
         },
       };
       http.get.mockResolvedValue(mockResponse);
@@ -343,7 +391,8 @@ describe('Media service', () => {
         message: 'msg-987',
         contact: 'contact-654',
         room: 'closed-room-321',
-        page: 1,
+        cursor: 'archived-cursor',
+        content_type: 'documents',
       };
 
       const result = await mediaService.listFromContactAndClosedRoom(params);
@@ -354,15 +403,24 @@ describe('Media service', () => {
           message: params.message,
           contact: params.contact,
           room: params.room,
-          page: params.page,
+          cursor: params.cursor,
+          content_type: params.content_type,
           project: 'mocked-project-id',
         },
       });
-      expect(result).toEqual(mockResponse.data);
+      expect(result).toEqual({
+        results: mockResponse.data.results,
+        next: mockResponse.data.next,
+        previous: mockResponse.data.previous,
+        nextCursor: 'next-archived',
+        previousCursor: null,
+      });
     });
 
     it('should always include project parameter even with partial params', async () => {
-      const mockResponse = { data: { results: [], count: 0 } };
+      const mockResponse = {
+        data: { results: [], next: null, previous: null },
+      };
       http.get.mockResolvedValue(mockResponse);
 
       const params = {
@@ -377,15 +435,24 @@ describe('Media service', () => {
           message: undefined,
           contact: undefined,
           room: params.room,
-          page: undefined,
+          cursor: undefined,
+          content_type: undefined,
           project: 'mocked-project-id',
         },
       });
-      expect(result).toEqual(mockResponse.data);
+      expect(result).toEqual({
+        results: [],
+        next: null,
+        previous: null,
+        nextCursor: null,
+        previousCursor: null,
+      });
     });
 
     it('should handle empty parameters but still include project', async () => {
-      const mockResponse = { data: { results: [], count: 0 } };
+      const mockResponse = {
+        data: { results: [], next: null, previous: null },
+      };
       http.get.mockResolvedValue(mockResponse);
 
       const result = await mediaService.listFromContactAndClosedRoom({});
@@ -396,11 +463,18 @@ describe('Media service', () => {
           message: undefined,
           contact: undefined,
           room: undefined,
-          page: undefined,
+          cursor: undefined,
+          content_type: undefined,
           project: 'mocked-project-id',
         },
       });
-      expect(result).toEqual(mockResponse.data);
+      expect(result).toEqual({
+        results: [],
+        next: null,
+        previous: null,
+        nextCursor: null,
+        previousCursor: null,
+      });
     });
 
     it('should handle API errors for closed room requests', async () => {
@@ -421,7 +495,8 @@ describe('Media service', () => {
           message: undefined,
           contact: params.contact,
           room: params.room,
-          page: undefined,
+          cursor: undefined,
+          content_type: undefined,
           project: 'mocked-project-id',
         },
       });
@@ -431,16 +506,15 @@ describe('Media service', () => {
       const mockResponse = {
         data: {
           results: [{ id: 3, name: 'page2-file.jpg' }],
-          count: 10,
-          next: 'https://api.example.com/media/?page=3',
-          previous: 'https://api.example.com/media/?page=1',
+          next: 'https://api.example.com/media/?cursor=cursor-page3',
+          previous: 'https://api.example.com/media/?cursor=cursor-page1',
         },
       };
       http.get.mockResolvedValue(mockResponse);
 
       const params = {
         room: 'closed-room-123',
-        page: 2,
+        cursor: 'cursor-page2',
       };
 
       const result = await mediaService.listFromContactAndClosedRoom(params);
@@ -451,17 +525,28 @@ describe('Media service', () => {
           message: undefined,
           contact: undefined,
           room: params.room,
-          page: 2,
+          cursor: 'cursor-page2',
+          content_type: undefined,
           project: 'mocked-project-id',
         },
       });
-      expect(result).toEqual(mockResponse.data);
+      expect(result).toEqual({
+        results: [{ id: 3, name: 'page2-file.jpg' }],
+        next: 'https://api.example.com/media/?cursor=cursor-page3',
+        previous: 'https://api.example.com/media/?cursor=cursor-page1',
+        nextCursor: 'cursor-page3',
+        previousCursor: 'cursor-page1',
+      });
       expect(result.next).toBeDefined();
       expect(result.previous).toBeDefined();
+      expect(result.nextCursor).toBe('cursor-page3');
+      expect(result.previousCursor).toBe('cursor-page1');
     });
 
     it('should handle different ordering options', async () => {
-      const mockResponse = { data: { results: [], count: 0 } };
+      const mockResponse = {
+        data: { results: [], next: null, previous: null },
+      };
       http.get.mockResolvedValue(mockResponse);
 
       const orderingOptions = [
@@ -487,7 +572,8 @@ describe('Media service', () => {
             message: undefined,
             contact: undefined,
             room: 'test-room',
-            page: undefined,
+            cursor: undefined,
+            content_type: undefined,
             project: 'mocked-project-id',
           },
         });
@@ -506,6 +592,8 @@ describe('Media service', () => {
               name: 'document.pdf',
             },
           ],
+          next: null,
+          previous: null,
         },
       };
       http.get.mockResolvedValue(listResponse);

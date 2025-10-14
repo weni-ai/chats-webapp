@@ -203,7 +203,7 @@
                 :tags="roomTags"
                 selectable
                 disableClick
-                :useCloseClick="!isViewMode && !isHistory"
+                :useCloseClick="!isViewMode && !isHistory && room.user"
                 @close="handleTagClick"
               />
               <ProtocolText :protocol="contactProtocol" />
@@ -382,7 +382,9 @@ export default {
     },
 
     hideTagCloseIcon() {
-      return this.isViewMode || this.isHistory ? 'none' : 'flex';
+      return this.isViewMode || this.isHistory || !this.room.user
+        ? 'none'
+        : 'flex';
     },
 
     isMobile() {
