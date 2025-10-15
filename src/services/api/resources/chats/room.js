@@ -76,8 +76,8 @@ export default {
     return response.data;
   },
 
-  async close(uuid, tags) {
-    const response = await http.put(`/room/${uuid}/close/`, { tags });
+  async close(uuid) {
+    const response = await http.put(`/room/${uuid}/close/`);
     return response.data;
   },
 
@@ -110,6 +110,27 @@ export default {
       customFields,
     );
     return response.data;
+  },
+
+  async getRoomTags(roomUuid) {
+    const response = await http.get(`/room/${roomUuid}/tags/`, {
+      params: { limit: 9999 },
+    });
+    return response.data;
+  },
+
+  async addRoomTag(roomUuid, tagUuid) {
+    const response = await http.post(`/room/${roomUuid}/tags/add/`, {
+      uuid: tagUuid,
+    });
+    return response;
+  },
+
+  async removeRoomTag(roomUuid, tagUuid) {
+    const response = await http.post(`/room/${roomUuid}/tags/remove/`, {
+      uuid: tagUuid,
+    });
+    return response;
   },
 
   async bulkTranfer({ rooms = [], intended_agent = '', intended_queue = '' }) {

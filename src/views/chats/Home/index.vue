@@ -36,7 +36,6 @@
       />
       <OldContactInfo
         v-else-if="room && isRoomContactInfoOpen && !discussion"
-        :key="room.uuid + Math.random()"
         @close="closeRoomContactInfo"
       />
       <DiscussionSidebar

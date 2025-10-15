@@ -16,6 +16,8 @@
       v-model="tags"
       :tags="sectorTags"
       :loading="isLoadingTags"
+      @update:to-remove-tags="(tags) => (toRemoveTags = tags)"
+      @update:to-add-tags="(tags) => (toAddTags = tags)"
     />
   </UnnnicModalDialog>
 </template>
@@ -59,6 +61,8 @@ export default {
       isLoadingTags: true,
       isLoadingCloseRoom: false,
       isShowFeedback: false,
+      toRemoveTags: [],
+      toAddTags: [],
     };
   },
 
@@ -70,11 +74,17 @@ export default {
   mounted() {
     this.classifyRoom();
     this.checkIsShowFeedback();
+    this.loadRoomTags();
   },
 
   methods: {
     ...mapActions(useFeedback, ['setIsRenderFeedbackModal']),
     ...mapActions(useRooms, ['removeRoom']),
+    async loadRoomTags() {
+      const roomUuid = this.room.uuid;
+      const { results } = await Room.getRoomTags(roomUuid);
+      this.tags = results;
+    },
     async classifyRoom() {
       this.isLoadingTags = true;
       let hasNext = false;
@@ -99,8 +109,21 @@ export default {
       this.isLoadingCloseRoom = true;
       const { uuid } = this.room;
 
-      const tags = this.tags.map((tag) => tag.uuid);
-      await Room.close(uuid, tags);
+      if (this.toRemoveTags.length > 0) {
+        const requests = this.toRemoveTags.map((tag) =>
+          Room.removeRoomTag(uuid, tag),
+        );
+        await Promise.all(requests);
+      }
+
+      if (this.toAddTags.length > 0) {
+        const requests = this.toAddTags.map((tag) =>
+          Room.addRoomTag(uuid, tag),
+        );
+        await Promise.all(requests);
+      }
+
+      await Room.close(uuid);
 
       this.removeRoom(uuid);
 

@@ -492,6 +492,7 @@
     "queue_transfer_success": "Contact successfully transferred to queue {queue} | Contacts successfully transferred to queue {queue}",
     "error": "It was not possible to transfer the contacts, try again",
     "disclaimer": {
+      "transfer_to_other_sector": "When transferring the chat to a queue in another sector, the added tags will be removed.",
       "selected_agent_offline": "The selected agent is offline at the moment",
       "without_online_agents": "No online agent at the moment"
     }

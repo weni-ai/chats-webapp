@@ -18,6 +18,7 @@
         showRoomSummary
         @open-room-contact-info="emitOpenRoomContactInfo"
       />
+
       <DiscussionMessages v-if="!!discussion" />
 
       <MessageManager

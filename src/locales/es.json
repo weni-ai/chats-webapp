@@ -488,6 +488,7 @@
     "queue_transfer_success": "Contacto transferido con éxito a la cola {queue} | Contactos transferidos con éxito a la cola {queue}",
     "error": "No fue posible transferir los contactos, intente nuevamente",
     "disclaimer": {
+      "transfer_to_other_sector": "Al transferir el chat a una cola en otro sector, las etiquetas agregadas se eliminarán.",
       "selected_agent_offline": "El agente seleccionado está actualmente desconectado",
       "without_online_agents": "No hay agentes en línea en este momento"
     }

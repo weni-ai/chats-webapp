@@ -63,6 +63,13 @@ const discussionMock = {
   is_active: true,
   is_queued: false,
 };
+
+vi.mock('@/services/api/resources/chats/room', () => ({
+  default: {
+    getRoomTags: vi.fn().mockResolvedValue({ results: [] }),
+  },
+}));
+
 vi.mock('@/services/api/resources/chats/linkContact', () => ({
   default: { getLinketContact: vi.fn().mockResolvedValue({ Detail: true }) },
 }));
@@ -71,6 +78,7 @@ vi.mock('@/services/api/resources/chats/pauseStatus');
 
 vi.mock('@/services/api/resources/settings/queue', () => ({
   default: {
+    tags: vi.fn().mockResolvedValue({ results: [] }),
     list: vi.fn().mockResolvedValue([]),
     listByProject: vi.fn().mockResolvedValue({ results: [] }),
   },
