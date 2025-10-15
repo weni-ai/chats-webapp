@@ -23,7 +23,6 @@
     :messagesFailedUuids="roomMessagesFailedUuids"
     :resendMessages="roomResendMessages"
     :resendMedia="roomResendMedia"
-    :tags="room?.tags"
     :isLoading="isLoadingMessages"
     :isClosedChat="!!room?.ended_at"
     :enableReply="false"

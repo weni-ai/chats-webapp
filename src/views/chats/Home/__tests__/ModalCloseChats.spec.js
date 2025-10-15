@@ -18,6 +18,7 @@ vi.mock('@/services/api/resources/settings/queue', () => ({
 vi.mock('@/services/api/resources/chats/room', () => ({
   default: {
     close: vi.fn(),
+    getRoomTags: vi.fn(() => ({ results: [] })),
   },
 }));
 
@@ -102,7 +103,7 @@ describe('ModalCloseChats.vue', () => {
 
     await modal.vm.$emit('primaryButtonClick');
 
-    expect(Room.close).toHaveBeenCalledWith('123', ['tag1']);
+    expect(Room.close).toHaveBeenCalledWith('123');
     expect(wrapper.emitted()).toHaveProperty('close');
   });
 });

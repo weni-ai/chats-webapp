@@ -11,11 +11,16 @@
       :tags="tags"
       selectable
       data-testid="tag-group"
+      @remove="handleRemoveTag"
+      @add="handleAddTag"
     />
   </section>
 </template>
 
 <script>
+import { mapState } from 'pinia';
+import { useRooms } from '@/store/modules/chats/rooms';
+
 import ChatClassifierLoading from '@/views/loadings/chat/ChatClassifier.vue';
 
 import TagGroup from '@/components/TagGroup.vue';
@@ -42,9 +47,18 @@ export default {
       default: true,
     },
   },
-  emits: ['update:modelValue'],
+
+  emits: ['update:modelValue', 'update:toRemoveTags', 'update:toAddTags'],
+
+  data() {
+    return {
+      toRemoveTags: [],
+      toAddTags: [],
+    };
+  },
 
   computed: {
+    ...mapState(useRooms, ['activeRoomTags']),
     selected: {
       get() {
         return this.modelValue || [];
@@ -55,13 +69,47 @@ export default {
     },
   },
 
-  methods: {
-    handleSelectedTags(tag) {
-      const tags = this.selected.some((t) => t.uuid === tag.uuid)
-        ? this.selected.filter((t) => t.uuid !== tag.uuid)
-        : [...this.selected, { ...tag }];
+  watch: {
+    toRemoveTags: {
+      handler(newVal) {
+        this.$emit('update:toRemoveTags', newVal);
+      },
+      deep: true,
+    },
+    toAddTags: {
+      handler(newVal) {
+        this.$emit('update:toAddTags', newVal);
+      },
+      deep: true,
+    },
+  },
 
-      this.selected = tags;
+  methods: {
+    handleRemoveTag(tag) {
+      const hasTag = this.activeRoomTags.some(
+        (mappedTag) => mappedTag.uuid === tag.uuid,
+      );
+
+      if (hasTag) {
+        this.toRemoveTags.push(tag.uuid);
+      }
+
+      this.toAddTags = this.toAddTags.filter(
+        (mappedTag) => mappedTag !== tag.uuid,
+      );
+    },
+    handleAddTag(tag) {
+      const hasTag = this.activeRoomTags.some(
+        (mappedTag) => mappedTag.uuid === tag.uuid,
+      );
+
+      if (!hasTag) {
+        this.toAddTags.push(tag.uuid);
+      }
+
+      this.toRemoveTags = this.toRemoveTags.filter(
+        (mappedTag) => mappedTag !== tag.uuid,
+      );
     },
   },
 };
