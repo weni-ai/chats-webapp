@@ -1,8 +1,4 @@
-import {
-  createRouter,
-  createWebHistory,
-  isNavigationFailure,
-} from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 import isMobile from 'is-mobile';
 
 import { getProject, getToken } from '@/utils/config';
@@ -30,10 +26,13 @@ router.beforeEach(async (to, from, next) => {
 
   const configStore = useConfig();
 
+  if (from.name && configStore.token) {
+    next();
+    return;
+  }
+
   try {
     const authenticated = await Keycloak.isAuthenticated();
-
-    console.log('authenticated', authenticated);
 
     if (authenticated) {
       const { token } = Keycloak.keycloak;
@@ -45,21 +44,16 @@ router.beforeEach(async (to, from, next) => {
         next();
       }
     } else {
-      console.log('not authenticated, redirecting to login');
       next(false);
       Keycloak.keycloak.login();
     }
   } catch (error) {
-    console.error('Error in authentication guard:', error);
     next(false);
     Keycloak.keycloak.login();
   }
 });
 
-router.afterEach((_, __, failure) => {
-  if (isNavigationFailure(failure)) {
-    console.log('failed navigation', failure);
-  }
+router.afterEach(() => {
   const configStore = useConfig();
   if (!configStore.token) {
     configStore.setToken(getToken());
