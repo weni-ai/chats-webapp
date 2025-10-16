@@ -90,7 +90,7 @@
             </p>
             <p
               v-if="lastMessageFromContact?.created_on"
-              class="infos-contact__item-value"
+              class="infos-contact__item-last-contact"
             >
               {{
                 $t('last_message_time.date', {
@@ -841,6 +841,11 @@ export default {
           font: $unnnic-font-emphasis;
           color: $unnnic-color-fg-base;
           font-weight: $unnnic-font-weight-bold;
+        }
+
+        &-last-contact {
+          font: $unnnic-font-caption-2;
+          color: $unnnic-color-fg-base;
         }
 
         &-value {
