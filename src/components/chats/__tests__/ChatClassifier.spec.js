@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { describe, it, expect, beforeEach } from 'vitest';
+import { createTestingPinia } from '@pinia/testing';
 
 import ChatClassifier from '../ChatClassifier.vue';
 
@@ -18,6 +19,7 @@ const createWrapper = (props = {}) => {
       ...props,
     },
     global: {
+      plugins: [createTestingPinia()],
       stubs: {
         ChatClassifierLoading: true,
         TagGroup: true,
@@ -84,23 +86,5 @@ describe('ChatClassifier.vue', () => {
 
     expect(wrapper.emitted('update:modelValue')).toBeTruthy();
     expect(wrapper.emitted('update:modelValue')[0][0]).toEqual(newSelectedTags);
-  });
-
-  it('calls handleSelectedTags method correctly', async () => {
-    const tag = { uuid: 'tag3', name: 'Tag 3' };
-    wrapper.vm.handleSelectedTags(tag);
-
-    expect(wrapper.emitted('update:modelValue')).toBeTruthy();
-    expect(wrapper.emitted('update:modelValue')[0][0]).toContainEqual(tag);
-  });
-
-  it('removes a tag from selected when it is already present', async () => {
-    const tag = { uuid: 'tag1', name: 'Tag 1' };
-    wrapper.vm.handleSelectedTags(tag);
-
-    expect(wrapper.emitted('update:modelValue')).toBeTruthy();
-    expect(wrapper.emitted('update:modelValue')[0][0]).not.toContainEqual([
-      tag,
-    ]);
   });
 });

@@ -238,6 +238,11 @@
           "title": "Mensagem automática",
           "placeholder": "Exemplo: Olá! Como posso ajudar você hoje?"
         }
+      },
+      "required_tags": {
+        "switch_active": "Requerer tags ao final dos atendimentos ativo",
+        "switch_disabled": "Requerer tags ao final dos atendimentos desativado",
+        "tooltip": "Adicione pelo menos uma tag para ativar"
       }
     }
   },
@@ -334,6 +339,7 @@
     "in_progress": "Em andamento",
     "sent_flows": "Fluxos enviados",
     "to_end_rate_the_chat": "Para encerrar, classifique o chat",
+    "to_end_required_tags": "Para encerrar, adicione pelo menos uma tag",
     "tags_help": "As tags ajudam a localizar os chats e também gerar bons relatórios",
     "chat_with_contact_ended": "Chat com {contact} encerrado",
     "see_history": "Histórico",
@@ -493,6 +499,7 @@
     "queue_transfer_success": "Contato transferido com sucesso para fila {queue} | Contatos transferidos com sucesso para fila {queue}",
     "error": "Não foi possível transferir os contatos, tente novamente",
     "disclaimer": {
+      "transfer_to_other_sector": "Ao transferir o chat para uma fila em outro setor, as etiquetas adicionadas serão removidas.",
       "selected_agent_offline": "O agente selecionado está offline no momento",
       "without_online_agents": "Nenhum agente online no momento"
     }

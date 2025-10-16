@@ -166,6 +166,33 @@
           @close="removeTag($event)"
         />
       </section>
+
+      <section class="switchs__container required-tags">
+        <UnnnicSwitch
+          v-model="sector.required_tags"
+          :disabled="tags.length === 0"
+          :textRight="
+            sector.required_tags
+              ? $t('sector.additional_options.required_tags.switch_active')
+              : $t('sector.additional_options.required_tags.switch_disabled')
+          "
+          size="small"
+          data-testid="config-switch"
+        />
+        <UnnnicToolTip
+          v-if="tags.length === 0"
+          enabled
+          :text="$t('sector.additional_options.required_tags.tooltip')"
+          side="right"
+          maxWidth="15rem"
+        >
+          <UnnnicIconSvg
+            icon="information-circle-4"
+            scheme="neutral-soft"
+            size="sm"
+          />
+        </UnnnicToolTip>
+      </section>
     </section>
     <section
       v-show="isEditing"
@@ -298,16 +325,19 @@ export default {
           (toAddTag) => toAddTag.uuid !== tag.uuid,
         );
       }
-
       this.tags = this.tags.filter((addedTag) => addedTag.uuid !== tag.uuid);
+      if (this.tags.length === 0) {
+        this.sector.required_tags = false;
+      }
     },
-    updateSectorExtraConfigs() {
+    async updateSectorExtraConfigs() {
       const {
         can_trigger_flows,
         can_edit_custom_fields,
         sign_messages,
         automatic_message,
         is_csat_enabled,
+        required_tags,
       } = this.sector;
 
       const fieldsToUpdate = {
@@ -316,35 +346,33 @@ export default {
         sign_messages,
         automatic_message,
         is_csat_enabled,
+        required_tags,
       };
 
-      return Sector.update(this.sector.uuid, fieldsToUpdate);
+      return await Sector.update(this.sector.uuid, fieldsToUpdate);
     },
-    updateSectorTags() {
+    async updateSectorTags() {
       const addPromises = this.toAddTags.map(({ name }) =>
         Sector.addTag(this.sector.uuid, name),
       );
 
-      return Promise.all([...addPromises]);
+      return await Promise.all([...addPromises]);
     },
     async save(silent = false) {
       this.isLoading = true;
       try {
-        await Promise.all([
-          this.updateSectorTags(),
-          this.updateSectorExtraConfigs(),
-        ]).then(() => {
-          if (!silent)
-            unnnic.unnnicCallAlert({
-              props: {
-                text: this.$t('sector_update_success'),
-                type: 'success',
-              },
-              seconds: 5,
-            });
-
-          this.$router.push('/settings');
-        });
+        await this.updateSectorTags();
+        await this.updateSectorExtraConfigs();
+        if (!silent) {
+          unnnic.unnnicCallAlert({
+            props: {
+              text: this.$t('sector_update_success'),
+              type: 'success',
+            },
+            seconds: 5,
+          });
+        }
+        this.$router.push('/settings');
       } catch (error) {
         unnnic.unnnicCallAlert({
           props: {
@@ -353,8 +381,9 @@ export default {
           },
           seconds: 5,
         });
+      } finally {
+        this.isLoading = false;
       }
-      this.isLoading = false;
     },
   },
 };
@@ -408,6 +437,10 @@ fieldset {
 
       .unnnic-tooltip {
         display: flex;
+      }
+
+      &.required-tags {
+        margin-top: $unnnic-space-3;
       }
     }
   }

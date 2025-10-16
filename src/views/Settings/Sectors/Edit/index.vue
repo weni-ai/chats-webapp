@@ -96,6 +96,7 @@ export default {
         sign_messages: '',
         managers: [],
         maxSimultaneousChatsByAgent: '',
+        required_tags: false,
       },
     };
   },
@@ -174,6 +175,7 @@ export default {
         rooms_limit,
         uuid,
         automatic_message,
+        required_tags,
       } = this.currentSector;
       this.sector = {
         ...this.sector,
@@ -185,6 +187,7 @@ export default {
         sign_messages,
         maxSimultaneousChatsByAgent: rooms_limit.toString(),
         automatic_message,
+        required_tags,
       };
       this.setCopilotActive(this.sector.config?.can_use_chat_completion);
       this.setCopilotCustomRulesActive(this.sector.config?.can_input_context);

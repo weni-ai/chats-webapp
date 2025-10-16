@@ -4,7 +4,11 @@
     :class="{ 'modal-close-chat--mobile': isMobile, 'modal-close-chat': true }"
     :showCloseIcon="!isMobile"
     :title="$t('chats.to_end_rate_the_chat')"
-    :primaryButtonProps="{ text: $t('end_chat'), loading: isLoadingCloseRoom }"
+    :primaryButtonProps="{
+      text: $t('end_chat'),
+      loading: isLoadingCloseRoom,
+      disabled: isInvalidRequiredTags,
+    }"
     :secondaryButtonProps="{ text: $t('cancel') }"
     size="lg"
     data-testid="chat-classifier-modal"
@@ -12,11 +16,21 @@
     @secondary-button-click="closeModal()"
     @update:model-value="closeModal()"
   >
-    <ChatClassifier
-      v-model="tags"
-      :tags="sectorTags"
-      :loading="isLoadingTags"
-    />
+    <section class="modal-close-chat__content">
+      <UnnnicDisclaimer
+        v-if="isInvalidRequiredTags && !isLoadingTags"
+        class="modal-close-chat__disclaimer"
+        iconColor="feedback-yellow"
+        :text="$t('chats.to_end_required_tags')"
+      />
+      <ChatClassifier
+        v-model="tags"
+        :tags="sectorTags"
+        :loading="isLoadingTags"
+        @update:to-remove-tags="(tags) => (toRemoveTags = tags)"
+        @update:to-add-tags="(tags) => (toAddTags = tags)"
+      />
+    </section>
   </UnnnicModalDialog>
 </template>
 
@@ -59,6 +73,8 @@ export default {
       isLoadingTags: true,
       isLoadingCloseRoom: false,
       isShowFeedback: false,
+      toRemoveTags: [],
+      toAddTags: [],
     };
   },
 
@@ -66,15 +82,24 @@ export default {
     isMobile() {
       return isMobile();
     },
+    isInvalidRequiredTags() {
+      return this.room.queue?.required_tags && this.tags.length === 0;
+    },
   },
   mounted() {
     this.classifyRoom();
     this.checkIsShowFeedback();
+    this.loadRoomTags();
   },
 
   methods: {
     ...mapActions(useFeedback, ['setIsRenderFeedbackModal']),
     ...mapActions(useRooms, ['removeRoom']),
+    async loadRoomTags() {
+      const roomUuid = this.room.uuid;
+      const { results } = await Room.getRoomTags(roomUuid);
+      this.tags = results;
+    },
     async classifyRoom() {
       this.isLoadingTags = true;
       let hasNext = false;
@@ -99,8 +124,21 @@ export default {
       this.isLoadingCloseRoom = true;
       const { uuid } = this.room;
 
-      const tags = this.tags.map((tag) => tag.uuid);
-      await Room.close(uuid, tags);
+      if (this.toRemoveTags.length > 0) {
+        const requests = this.toRemoveTags.map((tag) =>
+          Room.removeRoomTag(uuid, tag),
+        );
+        await Promise.all(requests);
+      }
+
+      if (this.toAddTags.length > 0) {
+        const requests = this.toAddTags.map((tag) =>
+          Room.addRoomTag(uuid, tag),
+        );
+        await Promise.all(requests);
+      }
+
+      await Room.close(uuid);
 
       this.removeRoom(uuid);
 
@@ -129,6 +167,16 @@ export default {
 
 <style lang="scss" scoped>
 .modal-close-chat {
+  :deep(.modal-close-chat__disclaimer) {
+    display: flex;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-4;
+  }
+
   &--mobile {
     :deep(.unnnic-modal-dialog__container) {
       width: 100%;
