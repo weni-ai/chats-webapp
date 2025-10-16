@@ -6,6 +6,7 @@ import RoomsTransferFields from '../../RoomsTransferFields.vue';
 
 vi.mock('@/store/modules/chats/rooms', () => ({
   useRooms: vi.fn(() => ({
+    rooms: [{ uuid: 'test-room-uuid' }],
     activeRoom: { uuid: 'test-room-uuid' },
     setContactToTransfer: vi.fn(),
     setActiveRoom: vi.fn(),

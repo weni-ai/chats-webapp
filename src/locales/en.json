@@ -240,6 +240,11 @@
           "title": "Automatic message",
           "placeholder": "Exemple: Hello! How can I help you today?"
         }
+      },
+      "required_tags": {
+        "switch_active": "Require tags at the end of supports active",
+        "switch_disabled": "Require tags at the end of supports disabled",
+        "tooltip": "Add at least one tag to activate"
       }
     }
   },
@@ -333,6 +338,7 @@
     "in_progress": "Ongoing",
     "sent_flows": "Sent flows",
     "to_end_rate_the_chat": "To close, rate the chat",
+    "to_end_required_tags": "To end this conversation, please select at least one tag.",
     "tags_help": "Tags help you locate chats and also generate good reports",
     "chat_with_contact_ended": "Chat with {contact} closed",
     "see_history": "Chats history",
@@ -492,6 +498,7 @@
     "queue_transfer_success": "Contact successfully transferred to queue {queue} | Contacts successfully transferred to queue {queue}",
     "error": "It was not possible to transfer the contacts, try again",
     "disclaimer": {
+      "transfer_to_other_sector": "When transferring the chat to a queue in another sector, the added tags will be removed.",
       "selected_agent_offline": "The selected agent is offline at the moment",
       "without_online_agents": "No online agent at the moment"
     }

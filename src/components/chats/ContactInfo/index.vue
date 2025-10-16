@@ -90,7 +90,7 @@
             </p>
             <p
               v-if="lastMessageFromContact?.created_on"
-              class="infos-contact__item-value"
+              class="infos-contact__item-last-contact"
             >
               {{
                 $t('last_message_time.date', {
@@ -145,21 +145,67 @@
               <h3 class="contact-info__about-support-title">
                 {{ $t('contact_info.about_support') }}
               </h3>
-              <UnnnicToolTip
-                enabled
-                :text="$t('discussions.start_discussion.title')"
-                side="left"
-              >
-                <UnnnicButton
-                  v-if="!isViewMode && !isMobile"
-                  iconCenter="forum"
-                  size="small"
-                  type="secondary"
-                  @click="handleModalStartDiscussion()"
-                />
-              </UnnnicToolTip>
+              <section class="contact-info__about-support-header__buttons">
+                <UnnnicDropdown
+                  v-if="
+                    !isHistory && !isViewMode && allTags.length > 0 && room.user
+                  "
+                  :open="openDropdownTags"
+                  useOpenProp
+                >
+                  <template #trigger>
+                    <UnnnicButton
+                      iconLeft="add-1"
+                      type="secondary"
+                      size="small"
+                      @click="openDropdownTags = !openDropdownTags"
+                    >
+                      {{ $t('tag') }}
+                    </UnnnicButton>
+                  </template>
+                  <OnClickOutside @trigger="openDropdownTags = false">
+                    <section
+                      class="contact-info__about-support-header__buttons__dropdown"
+                    >
+                      <UnnnicCheckbox
+                        v-for="tag in allTags"
+                        :key="tag.uuid"
+                        :modelValue="
+                          roomTags.some((roomTag) => roomTag.uuid === tag.uuid)
+                        "
+                        :textRight="tag.name"
+                        @change="handleTagClick(tag)"
+                      />
+                    </section>
+                  </OnClickOutside>
+                </UnnnicDropdown>
+
+                <UnnnicToolTip
+                  enabled
+                  :text="$t('discussions.start_discussion.title')"
+                  side="left"
+                >
+                  <UnnnicButton
+                    v-if="!isViewMode && !isMobile"
+                    iconCenter="forum"
+                    size="small"
+                    type="secondary"
+                    @click="handleModalStartDiscussion()"
+                  />
+                </UnnnicToolTip>
+              </section>
             </header>
             <section class="contact-info__about-support-content">
+              <TagGroup
+                v-if="roomTags?.length > 0"
+                class="contact-info__about-support-content__tag-group"
+                :modelValue="roomTags"
+                :tags="roomTags"
+                selectable
+                disableClick
+                :useCloseClick="!isViewMode && !isHistory && room.user"
+                @close="handleTagClick"
+              />
               <ProtocolText :protocol="contactProtocol" />
               <DiscussionsSession v-if="isHistory" />
             </section>
@@ -219,7 +265,7 @@
 <script>
 import isMobile from 'is-mobile';
 
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
@@ -242,10 +288,15 @@ import DiscussionsSession from './DiscussionsSession.vue';
 import ChatSummary from '@/layouts/ChatsLayout/components/ChatSummary/index.vue';
 import ProtocolText from './ProtocolText.vue';
 
+import Queues from '@/services/api/resources/settings/queue';
+import TagGroup from '@/components/TagGroup.vue';
+import { OnClickOutside } from '@vueuse/components';
+
 import moment from 'moment';
 import { useConfig } from '@/store/modules/config';
 import { parseUrn } from '@/utils/room';
 
+import i18n from '@/plugins/i18n';
 export default {
   name: 'ContactInfo',
 
@@ -261,6 +312,8 @@ export default {
     DiscussionsSession,
     ChatSummary,
     ProtocolText,
+    TagGroup,
+    OnClickOutside,
   },
   props: {
     closedRoom: {
@@ -298,6 +351,8 @@ export default {
     isRefreshContactDisabled: false,
     isShowModalStartDiscussion: false,
     openCustomFields: true,
+    openDropdownTags: false,
+    allTags: [],
   }),
 
   computed: {
@@ -308,6 +363,9 @@ export default {
       room: (store) => store.activeRoom,
       activeRoomSummary: 'activeRoomSummary',
       isLoadingActiveRoomSummary: 'isLoadingActiveRoomSummary',
+    }),
+    ...mapWritableState(useRooms, {
+      roomTags: 'activeRoomTags',
     }),
 
     hasCustomFields() {
@@ -321,6 +379,12 @@ export default {
         customFields[this.$t('service')] = roomService;
       }
       return customFields;
+    },
+
+    hideTagCloseIcon() {
+      return this.isViewMode || this.isHistory || !this.room.user
+        ? 'none'
+        : 'flex';
     },
 
     isMobile() {
@@ -358,8 +422,15 @@ export default {
     },
   },
   watch: {
-    room(newRoom) {
-      if (newRoom) this.customFields = newRoom.custom_fields;
+    room: {
+      immediate: true,
+      handler(newRoom) {
+        if (newRoom) {
+          this.customFields = newRoom.custom_fields;
+          this.loadAllTags();
+          this.loadRoomTags();
+        }
+      },
     },
     '$i18n.locale': {
       immediate: true,
@@ -378,6 +449,9 @@ export default {
       return;
     }
 
+    this.loadAllTags();
+    this.loadRoomTags();
+
     if (
       moment((closedRoom || room).contact.created_on).format('YYYY-MM-DD') <
       moment().format('YYYY-MM-DD')
@@ -386,15 +460,62 @@ export default {
     }
 
     this.loadLinkedContact();
+
     if (!room.queue?.sector) {
       throw new Error(`There is no associated sector with room ${room.uuid}`);
     }
   },
 
+  unmounted() {
+    this.roomTags = [];
+  },
+
   methods: {
     moment,
     ...mapActions(useRooms, ['updateRoomContact']),
+    async loadAllTags() {
+      const { queue } = this.room || {};
 
+      if (!queue) return;
+      const { results } = await Queues.tags(queue.uuid, 0, 9999);
+
+      this.allTags = results;
+    },
+    async loadRoomTags() {
+      const roomUuid = this.closedRoom?.uuid || this.room?.uuid;
+      const { results } = await Room.getRoomTags(roomUuid);
+      this.roomTags = results;
+    },
+    async removeRoomTag(tag) {
+      try {
+        await Room.removeRoomTag(this.room.uuid, tag.uuid);
+        this.roomTags = this.roomTags.filter(
+          (roomTag) => roomTag.uuid !== tag.uuid,
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async addRoomTag(tag) {
+      try {
+        await Room.addRoomTag(this.room.uuid, tag.uuid);
+        this.roomTags.push(tag);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    handleTagClick(tag) {
+      console.log('handleTagClick', tag);
+      const hasSelectedTag = this.roomTags.some(
+        (roomTag) => roomTag.uuid === tag.uuid,
+      );
+      if (hasSelectedTag) {
+        this.removeRoomTag(tag);
+      } else {
+        this.addRoomTag(tag);
+      }
+    },
     emitClose() {
       this.$emit('close');
     },
@@ -525,8 +646,7 @@ export default {
 
       try {
         await this.updateRoomContact({ uuid });
-
-        this.showAlert(this.$t('updated_info'));
+        this.showAlert(i18n.global.t('updated_info'));
       } catch (error) {
         console.error('Erro ao atualizar as informações do contato.', error);
       }
@@ -614,10 +734,36 @@ export default {
   }
 
   &__about-support {
+    &-content {
+      // This is required to remove the tag icon
+      :deep(.contact-info__about-support-content__tag-group) {
+        > .tag-group__tags > .unnnic-tag-content > .unnnic-brand-tag__icon {
+          display: v-bind(hideTagCloseIcon);
+        }
+      }
+    }
     &-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      &__buttons {
+        display: flex;
+        align-items: center;
+        gap: $unnnic-space-1;
+        :deep(.unnnic-dropdown__content) {
+          padding: $unnnic-space-2;
+        }
+        &__dropdown {
+          display: flex;
+          flex-direction: column;
+          gap: $unnnic-space-1;
+          width: max-content;
+          max-height: 110px;
+          overflow-y: auto;
+
+          padding-right: $unnnic-space-2;
+        }
+      }
     }
     &-title {
       font: $unnnic-font-emphasis;
@@ -695,6 +841,11 @@ export default {
           font: $unnnic-font-emphasis;
           color: $unnnic-color-fg-base;
           font-weight: $unnnic-font-weight-bold;
+        }
+
+        &-last-contact {
+          font: $unnnic-font-caption-2;
+          color: $unnnic-color-fg-base;
         }
 
         &-value {

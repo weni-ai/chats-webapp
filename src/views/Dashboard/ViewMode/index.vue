@@ -87,6 +87,7 @@
           featureFlags.active_features?.includes('weniChatsContactInfoV2') &&
           isContactInfoOpened
         "
+        :key="room.uuid"
         class="contact-info"
         isViewMode
         data-testid="contact-info"
@@ -160,7 +161,7 @@ export default {
   },
 
   watch: {
-    async room() {
+    room() {
       this.isContactInfoOpened = false;
     },
     rooms: {

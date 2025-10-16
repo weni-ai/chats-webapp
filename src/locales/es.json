@@ -233,6 +233,11 @@
           "title": "Mensaje automático",
           "placeholder": "Ejemplo: ¡Hola! ¿Cómo puedo ayudarte hoy?"
         }
+      },
+      "required_tags": {
+        "switch_active": "Requerir etiquetas al final de los soportes activo",
+        "switch_disabled": "Requerir etiquetas al final de los soportes deshabilitado",
+        "tooltip": "Agregue al menos una etiqueta para activar"
       }
     }
   },
@@ -329,6 +334,7 @@
     "in_progress": "En curso",
     "sent_flows": "Flujos enviados",
     "to_end_rate_the_chat": "Para cerrar califica el chat",
+    "to_end_required_tags": "Para cerrar, agrega al menos una etiqueta",
     "tags_help": "Las etiquetas te ayudan a localizar chats y también a generar buenos informes.",
     "chat_with_contact_ended": "Chat con {contact} cerrado",
     "see_history": "Historial de chats",
@@ -488,6 +494,7 @@
     "queue_transfer_success": "Contacto transferido con éxito a la cola {queue} | Contactos transferidos con éxito a la cola {queue}",
     "error": "No fue posible transferir los contactos, intente nuevamente",
     "disclaimer": {
+      "transfer_to_other_sector": "Al transferir el chat a una cola en otro sector, las etiquetas agregadas se eliminarán.",
       "selected_agent_offline": "El agente seleccionado está actualmente desconectado",
       "without_online_agents": "No hay agentes en línea en este momento"
     }
