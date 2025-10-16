@@ -25,18 +25,30 @@ router.beforeEach(async (to, from, next) => {
   }
 
   const configStore = useConfig();
-  const authenticated = await Keycloak.isAuthenticated();
 
-  if (authenticated) {
-    const { token } = Keycloak.keycloak;
-    await configStore.setToken(token);
+  if (from.name && configStore.token) {
+    next();
+    return;
+  }
 
-    if (to.hash.startsWith('#state=')) {
-      next({ ...to, hash: '' });
+  try {
+    const authenticated = await Keycloak.isAuthenticated();
+
+    if (authenticated) {
+      const { token } = Keycloak.keycloak;
+      await configStore.setToken(token);
+
+      if (to.hash.startsWith('#state=')) {
+        next({ ...to, hash: '' });
+      } else {
+        next();
+      }
     } else {
-      next();
+      next(false);
+      Keycloak.keycloak.login();
     }
-  } else {
+  } catch (error) {
+    next(false);
     Keycloak.keycloak.login();
   }
 });
