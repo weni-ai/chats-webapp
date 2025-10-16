@@ -74,14 +74,12 @@ export default {
 
       hasInitialized = true;
 
-      // Evita criar múltiplos intervalos
       if (!refreshTokenInterval && authenticated) {
         refreshTokenInterval = setInterval(() => {
           keycloak
             .updateToken(70)
             .then((refreshed) => {
               if (refreshed) {
-                console.log('Token refreshed');
                 sessionStorage.setItem(
                   'keycloak:user',
                   JSON.stringify({
@@ -97,7 +95,7 @@ export default {
               sessionStorage.removeItem('keycloak:user');
               hasInitialized = false;
             });
-        }, 60000); // 60 segundos
+        }, 60000);
       }
 
       return authenticated;
