@@ -176,6 +176,7 @@ export default {
         uuid,
         automatic_message,
         required_tags,
+        is_csat_enabled,
       } = this.currentSector;
       this.sector = {
         ...this.sector,
@@ -188,6 +189,7 @@ export default {
         maxSimultaneousChatsByAgent: rooms_limit.toString(),
         automatic_message,
         required_tags,
+        is_csat_enabled,
       };
       this.setCopilotActive(this.sector.config?.can_use_chat_completion);
       this.setCopilotCustomRulesActive(this.sector.config?.can_input_context);
