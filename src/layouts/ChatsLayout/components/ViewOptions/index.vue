@@ -160,7 +160,7 @@ const navigateToHumanServiceDashboard = () => {
   window.parent.postMessage(
     {
       event: 'redirect',
-      path: 'insights:init/humanServiceDashboard',
+      path: 'insights:r/init/humanServiceDashboard',
     },
     '*',
   );
