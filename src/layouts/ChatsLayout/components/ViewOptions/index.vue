@@ -68,7 +68,7 @@
               type="tertiary"
               size="small"
               @mousedown.prevent
-              @click="navigate('dashboard.manager')"
+              @click="navigateToHumanServiceDashboard"
             />
           </section>
           <section class="chats-layout-drawer__option">
@@ -154,6 +154,16 @@ const navigate = (name) => {
   push({
     name,
   });
+};
+
+const navigateToHumanServiceDashboard = () => {
+  window.parent.postMessage(
+    {
+      event: 'redirect',
+      path: 'insights:init/humanServiceDashboard',
+    },
+    '*',
+  );
 };
 
 onBeforeMount(() => {

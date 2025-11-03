@@ -51,6 +51,7 @@
       name="quick-message"
     >
       <div class="quick-message">
+        <HeaderQuickMessages @close="handlerShowQuickMessages" />
         <QuickMessages
           class="room-list"
           @close="handlerShowQuickMessages"
@@ -73,6 +74,7 @@
 <script>
 import SidebarLoading from '@/views/loadings/HomeSidebar.vue';
 import QuickMessages from '@/components/chats/QuickMessages/index.vue';
+import HeaderQuickMessages from '@/components/chats/QuickMessages/HeaderQuickMessages.vue';
 import TheCardGroups from './components/TheCardGroups/index.vue';
 import LayoutFlowsTrigger from './components/FlowsTrigger/index.vue';
 import ChatsLayoutFooterButton from './components/FooterButton/index.vue';
@@ -90,6 +92,7 @@ export default {
     SidebarLoading,
     LayoutFlowsTrigger,
     QuickMessages,
+    HeaderQuickMessages,
     ChatsLayoutFooterButton,
     ViewOptions,
     StatusBar,
