@@ -783,7 +783,7 @@ export default {
   position: absolute;
   bottom: $unnnic-spacing-md;
   right: $unnnic-spacing-sm;
-  z-index: 1000;
+  z-index: 9;
 }
 
 .chat-messages__container {
