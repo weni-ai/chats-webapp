@@ -24,7 +24,7 @@ describe('FormAgent', () => {
     const tooltips = wrapper.findAllComponents({ name: 'unnnic-tooltip' });
 
     expect(titles.at(0).text()).toMatch(
-      /Add agents Add members to your project to be able to set as a manager/gi,
+      /Add agents infoAdd members to your project to be able to set as a manager/gi,
     );
 
     expect(titles.length).toBe(1);

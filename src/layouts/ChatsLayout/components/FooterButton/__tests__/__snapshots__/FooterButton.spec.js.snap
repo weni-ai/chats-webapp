@@ -22,7 +22,6 @@ exports[`FooterButton > Snapshot > should match snapshot 1`] = `
       iconright=""
       iconsfilled="false"
       loading="false"
-      next="false"
       size="small"
       text="transfer_contact_2"
       type="primary"
