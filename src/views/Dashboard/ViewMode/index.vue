@@ -153,6 +153,7 @@
 
 <script>
 import { mapActions, mapState, mapWritableState } from 'pinia';
+import { format as dateFnsFormat, subYears as dateFnsSubYears } from 'date-fns';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useDashboard } from '@/store/modules/dashboard';
@@ -170,8 +171,9 @@ import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
 import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion.vue';
 import OldContactInfo from '@/components/chats/ContactInfo/oldContactInfo.vue';
 import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
-
 import ViewModeHeader from './components/ViewModeHeader.vue';
+
+import { parseUrn } from '@/utils/room';
 
 export default {
   name: 'ViewMode',
@@ -285,6 +287,27 @@ export default {
     closeTransferModal() {
       this.contactToTransfer = '';
       this.isModalTransferRoomsOpened = false;
+    },
+    openHistory() {
+      const { plataform, contactNum } = parseUrn(this.room);
+      const protocol = this.room.protocol;
+      const contactUrn =
+        plataform === 'whatsapp' ? contactNum.replace('+', '') : contactNum;
+
+      const A_YEAR_AGO = dateFnsFormat(
+        dateFnsSubYears(new Date(), 1),
+        'yyyy-MM-dd',
+      );
+
+      this.$router.push({
+        name: 'closed-rooms',
+        query: {
+          contactUrn: contactUrn || this.room?.contact?.name,
+          protocol,
+          startDate: A_YEAR_AGO,
+          from: this.room.uuid,
+        },
+      });
     },
   },
 };
