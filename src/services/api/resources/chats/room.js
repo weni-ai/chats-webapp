@@ -139,9 +139,8 @@ export default {
     const body = { rooms_list: rooms };
     const params = {
       user_request: user_email,
-      ...(intended_agent
-        ? { user_email: intended_agent }
-        : { queue_uuid: intended_queue }),
+      user_email: intended_agent,
+      queue_uuid: intended_queue,
     };
 
     const response = await http
