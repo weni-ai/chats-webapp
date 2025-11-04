@@ -90,6 +90,7 @@
       <RoomMessages
         v-if="!!room && !discussion"
         data-testid="room-messages"
+        @open-room-contact-info="isContactInfoOpened = true"
       />
       <DiscussionMessages
         v-if="!!discussion"
