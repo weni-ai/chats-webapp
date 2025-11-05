@@ -865,13 +865,13 @@ export default {
         align-items: center;
       }
     }
-
-    .custom-fields-container {
-      display: flex;
-      flex-direction: column;
-      gap: $unnnic-space-1;
-    }
   }
+}
+
+.custom-fields-container {
+  display: flex;
+  flex-direction: column;
+  gap: $unnnic-space-1;
 }
 
 // custom-fields animation
