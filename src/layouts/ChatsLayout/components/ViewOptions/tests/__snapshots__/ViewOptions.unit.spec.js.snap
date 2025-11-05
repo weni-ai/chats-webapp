@@ -33,8 +33,8 @@ exports[`ViewOptions > Snapshot > should match the snapshot 1`] = `
         <span
           class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-darkest unnnic-icon-size--md unnnic-icon__size--md"
           data-testid="header-icon-expand"
-          data-v-62451e85=""
           data-v-905ee5f6=""
+          data-v-b6e2ac7a=""
           translate="no"
         >
           expand_less
