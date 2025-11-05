@@ -894,13 +894,13 @@ export default {
 }
 
 .custom-fields-enter-to {
-  max-height: 500px;
+  max-height: 100vh;
   opacity: 1;
   transform: translateY(0);
 }
 
 .custom-fields-leave-from {
-  max-height: 500px;
+  max-height: 100vh;
   opacity: 1;
   transform: translateY(0);
 }
