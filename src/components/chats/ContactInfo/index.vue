@@ -113,19 +113,24 @@
               </p>
             </section>
 
-            <template v-if="hasCustomFields && openCustomFields">
-              <CustomField
-                v-for="(value, key) in computedCustomFields"
-                :key="key"
-                :title="key"
-                :description="value"
-                :isEditable="!isHistory && room.can_edit_custom_fields"
-                :isCurrent="isCurrentCustomField(key)"
-                :value="currentCustomField?.[key]"
-                @update-current-custom-field="updateCurrentCustomField"
-                @save-value="saveCurrentCustomFieldValue"
-              />
-            </template>
+            <Transition name="custom-fields">
+              <section
+                v-if="hasCustomFields && openCustomFields"
+                class="custom-fields-container"
+              >
+                <CustomField
+                  v-for="(value, key) in computedCustomFields"
+                  :key="key"
+                  :title="key"
+                  :description="value"
+                  :isEditable="!isHistory && room.can_edit_custom_fields"
+                  :isCurrent="isCurrentCustomField(key)"
+                  :value="currentCustomField?.[key]"
+                  @update-current-custom-field="updateCurrentCustomField"
+                  @save-value="saveCurrentCustomFieldValue"
+                />
+              </section>
+            </Transition>
 
             <section
               v-if="hasCustomFields"
@@ -860,6 +865,51 @@ export default {
         align-items: center;
       }
     }
+
+    .custom-fields-container {
+      display: flex;
+      flex-direction: column;
+      gap: $unnnic-space-1;
+    }
   }
+}
+
+// custom-fields animation
+.custom-fields-enter-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.custom-fields-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.custom-fields-enter-from {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-8px);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.custom-fields-enter-to {
+  max-height: 500px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.custom-fields-leave-from {
+  max-height: 500px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.custom-fields-leave-to {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-8px);
+  margin-top: 0;
+  margin-bottom: 0;
 }
 </style>
