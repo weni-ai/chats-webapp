@@ -865,13 +865,13 @@ export default {
         align-items: center;
       }
     }
-
-    .custom-fields-container {
-      display: flex;
-      flex-direction: column;
-      gap: $unnnic-space-1;
-    }
   }
+}
+
+.custom-fields-container {
+  display: flex;
+  flex-direction: column;
+  gap: $unnnic-space-1;
 }
 
 // custom-fields animation
@@ -888,7 +888,7 @@ export default {
 .custom-fields-enter-from {
   max-height: 0;
   opacity: 0;
-  transform: translateY(-8px);
+  transform: translateY(-$unnnic-space-2);
   margin-top: 0;
   margin-bottom: 0;
 }
@@ -908,7 +908,7 @@ export default {
 .custom-fields-leave-to {
   max-height: 0;
   opacity: 0;
-  transform: translateY(-8px);
+  transform: translateY(-$unnnic-space-2);
   margin-top: 0;
   margin-bottom: 0;
 }
