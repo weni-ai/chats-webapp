@@ -48,9 +48,9 @@ describe('QuickMessagesList Component', () => {
       wrapper.find('[data-testid="quick-messages-lits-shared"]').exists(),
     ).toBe(true);
 
-    const wrapperText = wrapper.text();
-    expect(wrapperText).toContain('Your quick messages');
-    expect(wrapperText).toContain('Shared quick messages');
+    expect(wrapper.text()).toContain('Your quick messages');
+
+    expect(wrapper.text()).toContain('Shared quick messages');
 
     const shared = wrapper.findAll('[data-testid="quick-message-shared-card"]');
 
