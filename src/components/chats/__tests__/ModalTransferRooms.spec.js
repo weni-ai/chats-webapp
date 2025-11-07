@@ -61,7 +61,7 @@ describe('ModalTransferRooms', () => {
     it('should render modal with necessary components', () => {
       const modal = wrapper.findComponent({ name: 'UnnnicModalDialog' });
       expect(modal.exists()).toBe(true);
-      
+
       // Verify component has necessary data properties
       expect(wrapper.vm.selectedQueue).toBeDefined();
       expect(wrapper.vm.selectedQueue).toEqual([]);
