@@ -24,7 +24,9 @@
           data-testid="view-btn-drawer"
         />
         <section class="chats-layout-drawer__options">
-          <section class="chats-layout-drawer__option">
+          <section
+            class="chats-layout-drawer__option chats-layout-drawer--padding-left-space-4"
+          >
             <UnnnicSwitch
               v-if="!isViewMode"
               v-model="sound"
@@ -186,6 +188,17 @@ onUnmounted(() => {
     flex-direction: column;
   }
 
+  &__options {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-2;
+    padding: $unnnic-space-2 $unnnic-space-4 $unnnic-space-4 0;
+  }
+
+  &--padding-left-space-4 {
+    padding-left: $unnnic-space-4;
+  }
+
   &__option {
     width: 100%;
 
@@ -193,22 +206,7 @@ onUnmounted(() => {
       background-color: $unnnic-color-neutral-light;
     }
 
-    :deep(.unnnic-switch) {
-      padding: $unnnic-spacing-nano + 1px $unnnic-spacing-sm;
-      width: 100%;
-    }
-
-    :deep(.unnnic-switch__label__small) {
-      color: $unnnic-color-neutral-cloudy;
-      font-family: $unnnic-font-family-secondary;
-      font-size: $unnnic-font-size-body-gt;
-      font-style: normal;
-      font-weight: $unnnic-font-weight-regular;
-      line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
-    }
-
     :deep(.unnnic-button--size-small) {
-      padding: 0 $unnnic-spacing-sm;
       width: 100%;
       display: flex;
       align-items: center;
