@@ -36,7 +36,6 @@ vi.mock('moment', () => {
   });
 
   const momentFn = vi.fn((date) => {
-    // Se receber uma data inválida ou undefined, retorna um mock que não quebra
     if (!date || date === undefined || date === null) {
       return createMomentMock();
     }
