@@ -1,6 +1,3 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`DiscartChangesModal.vue > to match snapshot 1`] = `
-"<!--teleport start-->
-<!--teleport end-->"
-`;
+exports[`DiscartChangesModal.vue > to match snapshot 1`] = `"<teleport-stub data-v-47cb0f4b="" data-v-bfa372cc="" to="body" disabled="false" defer="false" forcemount="false" data-testid="modal-container"></teleport-stub>"`;
