@@ -7,15 +7,6 @@
       v-model="showModalOfflineAgent"
       :username="userWhoChangedStatus"
     />
-    <ModalNewFeatureInternalNote
-      :modelValue="showModalNewFeatureInternalNote"
-      @update:model-value="handleShowModalNewFeatureInternalNote"
-    />
-    <ModalNewContactInfoVisual
-      v-if="featureFlags.active_features?.includes('weniChatsContactInfoV2')"
-      :modelValue="showModalNewContactInfoVisual"
-      @update:model-value="handleShowModalNewContactInfoVisual"
-    />
   </div>
 </template>
 
@@ -24,8 +15,6 @@ import { mapActions, mapState } from 'pinia';
 
 import SocketAlertBanner from './layouts/ChatsLayout/components/SocketAlertBanner.vue';
 import ModalOfflineAgent from './components/ModalOfflineAgent.vue';
-import ModalNewFeatureInternalNote from './components/ModalNewFeatureInternalNote.vue';
-import ModalNewContactInfoVisual from './components/ModalNewContactInfoVisual.vue';
 
 import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
@@ -56,8 +45,6 @@ export default {
   components: {
     SocketAlertBanner,
     ModalOfflineAgent,
-    ModalNewFeatureInternalNote,
-    ModalNewContactInfoVisual,
   },
   setup() {
     const queryString = window.location.href.split('?')[1];
@@ -74,14 +61,6 @@ export default {
       ws: null,
       loading: false,
       showModalOfflineAgent: false,
-      showModalNewFeatureInternalNote: moduleStorage.getItem(
-        'showModalNewFeatureInternalNote',
-        true,
-      ),
-      showModalNewContactInfoVisual: moduleStorage.getItem(
-        'showModalNewContactInfoVisual',
-        true,
-      ),
     };
   },
 
@@ -211,16 +190,6 @@ export default {
         });
       }
       this.setStatus(userStatus);
-    },
-
-    handleShowModalNewFeatureInternalNote(value) {
-      moduleStorage.setItem('showModalNewFeatureInternalNote', value);
-      this.showModalNewFeatureInternalNote = value;
-    },
-
-    handleShowModalNewContactInfoVisual(value) {
-      moduleStorage.setItem('showModalNewContactInfoVisual', value);
-      this.showModalNewContactInfoVisual = value;
     },
 
     async getUser() {
