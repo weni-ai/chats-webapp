@@ -142,6 +142,7 @@
           :label="$t('tags.add.label')"
           :placeholder="$t('tags.add.placeholder')"
           data-testid="tags-input-tag-name"
+          :maxlength="120"
           @keypress.enter.stop="!!tagName.trim() && addTag(tagName)"
         />
         <UnnnicButton
@@ -160,9 +161,12 @@
       >
         <TagGroup
           v-model="tags"
+          class="form-tags__tag-group"
           :tags="tags"
           data-testid="sector-tag-group"
           disabledTag
+          hasCloseIcon
+          selectable
           @close="removeTag($event)"
         />
       </section>
@@ -277,6 +281,9 @@ export default {
       return this.sector.sign_messages
         ? this.$t('sector.additional_options.agents_signature.switch_active')
         : this.$t('sector.additional_options.agents_signature.switch_disabled');
+    },
+    tagsMarginBottom() {
+      return this.isEditing ? '78px' : '0';
     },
   },
   mounted() {
@@ -447,11 +454,12 @@ fieldset {
 
   & .tags {
     margin-top: $unnnic-spacing-sm;
+    margin-bottom: v-bind(tagsMarginBottom);
     :deep(.unnnic-brand-tag) {
       color: $unnnic-color-weni-700;
       background-color: white;
-      svg > path {
-        fill: $unnnic-color-weni-700;
+      .unnnic-icon {
+        color: $unnnic-color-weni-700;
       }
     }
 
