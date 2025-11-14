@@ -7,6 +7,7 @@
   <section class="settings-sectors__filters">
     <UnnnicInput
       v-model="sectorNameFilter"
+      class="settings-sectors__filters__name"
       iconLeft="search-1"
       size="md"
       :placeholder="$t('search')"
@@ -262,7 +263,7 @@ export default {
     align-items: center;
     gap: $unnnic-spacing-stack-sm $unnnic-spacing-inline-md;
 
-    .unnnic-form {
+    &__name {
       flex: 1;
     }
   }
