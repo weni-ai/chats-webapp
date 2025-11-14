@@ -16,15 +16,15 @@ exports[`DiscartChangesModal.vue > to match snapshot 1`] = `
       <section data-v-a7e44667="" class="unnnic-modal-dialog__container__content">
         <p data-v-7a1d255d="" class="discart-changes-modal__text">Text</p>
       </section>
-      <section data-v-a7e44667="" data-testid="actions-section" class="unnnic-modal-dialog__container__actions"><button data-v-74c4eb1e="" data-v-a7e44667="" data-testid="secondary-button" class="unnnic-modal-dialog__container__actions__secondary-button unnnic-button unnnic-button--size-large unnnic-button--tertiary unnnic-modal-dialog__container__actions__secondary-button">
+      <section data-v-a7e44667="" data-testid="actions-section" class="unnnic-modal-dialog__container__actions"><button data-v-aadba593="" data-v-a7e44667="" data-testid="secondary-button" class="unnnic-modal-dialog__container__actions__secondary-button unnnic-button unnnic-button--size-large unnnic-button--tertiary unnnic-modal-dialog__container__actions__secondary-button">
           <!---->
           <!---->
-          <!----><span data-v-74c4eb1e="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Back</span>
+          <!----><span data-v-aadba593="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Back</span>
           <!---->
-        </button><button data-v-74c4eb1e="" data-v-a7e44667="" data-testid="primary-button" class="unnnic-modal-dialog__container__actions__primary-button unnnic-button unnnic-button--size-large unnnic-button--primary unnnic-modal-dialog__container__actions__primary-button">
+        </button><button data-v-aadba593="" data-v-a7e44667="" data-testid="primary-button" class="unnnic-modal-dialog__container__actions__primary-button unnnic-button unnnic-button--size-large unnnic-button--primary unnnic-modal-dialog__container__actions__primary-button">
           <!---->
           <!---->
-          <!----><span data-v-74c4eb1e="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Discart</span>
+          <!----><span data-v-aadba593="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Discart</span>
           <!---->
         </button></section>
     </section>

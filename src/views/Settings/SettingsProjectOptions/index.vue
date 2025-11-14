@@ -6,7 +6,7 @@
     <SettingsSectionHeader :title="$t('config_chats.project_configs.title')" />
 
     <section class="project-options__items">
-      <section>
+      <section class="project-options__items__config">
         <SettingsProjectOptionsItem
           v-model="projectConfig.can_use_bulk_transfer"
           :name="configBulkTransferTranslation"
@@ -157,6 +157,12 @@ export default {
     display: flex;
     justify-content: space-between;
     gap: $unnnic-spacing-nano;
+
+    &__config {
+      display: flex;
+      flex-direction: column;
+      gap: $unnnic-space-2;
+    }
 
     &__custom-breaks {
       display: flex;

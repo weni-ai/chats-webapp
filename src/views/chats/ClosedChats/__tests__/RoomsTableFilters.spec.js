@@ -22,16 +22,25 @@ vi.mock('@/services/api/resources/settings/sector', () => ({
 }));
 
 vi.mock('moment', () => {
-  const momentMock = {
+  const createMomentMock = () => ({
     subtract: vi.fn().mockReturnThis(),
     add: vi.fn().mockReturnThis(),
-    format: vi.fn().mockReturnValue('2023-01-01'),
+    format: vi.fn((format) => {
+      if (format === 'YYYY-MM-DD') return '2023-01-01';
+      return '2023-01-01';
+    }),
     clone: vi.fn().mockReturnThis(),
     isAfter: vi.fn().mockReturnValue(false),
     isValid: vi.fn().mockReturnValue(true),
     startOf: vi.fn().mockReturnThis(),
-  };
-  const momentFn = vi.fn(() => momentMock);
+  });
+
+  const momentFn = vi.fn((date) => {
+    if (!date || date === undefined || date === null) {
+      return createMomentMock();
+    }
+    return createMomentMock();
+  });
   momentFn.isMoment = vi.fn(() => true);
   return {
     default: momentFn,
@@ -91,6 +100,15 @@ describe('RoomsTableFilters.vue', () => {
       return { results: [] };
     });
     isMobile.mockReset().mockReturnValue(false);
+  });
+
+  afterEach(() => {
+    if (wrapper) {
+      wrapper.unmount();
+      wrapper = null;
+    }
+    vi.clearAllTimers();
+    vi.useRealTimers();
   });
 
   describe('Rendering tests', () => {

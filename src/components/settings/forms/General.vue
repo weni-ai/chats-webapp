@@ -49,7 +49,10 @@
             :placeholder="$t('sector.placeholder')"
           />
           <fieldset v-if="!enableGroupsMode">
-            <UnnnicLabel :label="$t('sector.managers.add.label')" />
+            <UnnnicLabel
+              class="form-section__label"
+              :label="$t('sector.managers.add.label')"
+            />
             <UnnnicSelectSmart
               v-model="selectedManager"
               :options="managersNames"
@@ -1182,5 +1185,9 @@ fieldset {
     display: flex;
     margin-top: $unnnic-spacing-ant;
   }
+}
+
+.form-section__label {
+  margin-bottom: $unnnic-space-1;
 }
 </style>
