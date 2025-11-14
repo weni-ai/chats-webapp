@@ -31,50 +31,44 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
     data-v-1088b44f=""
   >
     <section
-      class="unnnic-form-element"
+      class="unnnic-form-element unnnic-form md settings-sectors__filters__name"
+      data-testid="form-element"
       data-v-1088b44f=""
-      data-v-2920b133=""
-      data-v-363eb089=""
+      data-v-27c59990=""
+      data-v-2d5913d6=""
     >
       <!---->
       
       <div
-        class="text-input size--md unnnic-form-input"
-        data-v-2920b133=""
-        data-v-6cc947c4=""
+        class="text-input size--md settings-sectors__filters__name unnnic-form-input"
+        data-v-27c59990=""
+        data-v-964b1ff1=""
         hascloudycolor="false"
         mask=""
       >
         <input
-          class="unnnic-form-input input-itself input size-md normal input--has-icon-left unnnic-form-input input-itself"
-          data-v-6cc947c4=""
-          data-v-9833f838=""
+          class="settings-sectors__filters__name unnnic-form-input input-itself input size-md normal input--has-icon-left settings-sectors__filters__name unnnic-form-input input-itself"
+          data-v-5c6d9ab7=""
+          data-v-964b1ff1=""
           hascloudycolor="false"
           iconleft="search-1"
           iconleftclickable="false"
           iconright=""
           iconrightclickable="false"
           placeholder="Search"
-          showclear="false"
           type="text"
           value=""
         />
         <span
           class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-base unnnic-icon-size--ant unnnic-icon__size--ant icon-left"
           data-testid="material-icon"
-          data-v-6cc947c4=""
-          data-v-b6e2ac7a=""
+          data-v-10e3a145=""
+          data-v-964b1ff1=""
           translate="no"
         >
           search
         </span>
-        <section
-          class="icon-right-container"
-          data-v-6cc947c4=""
-        >
-          <!---->
-          <!---->
-        </section>
+        <!---->
       </div>
       
       <!---->
@@ -96,82 +90,88 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
       >
         
         <section
-          class="unnnic-radio-container"
+          class="unnnic-radio"
           data-v-348024a5=""
-          data-v-558de5ab=""
+          data-v-7e12a100=""
           size="md"
         >
           <label
-            data-v-558de5ab=""
+            class="unnnic-radio__input-wrapper"
+            data-v-7e12a100=""
           >
             <input
               checked=""
-              class="unnnic-radio"
-              data-v-558de5ab=""
+              class="unnnic-radio__input"
+              data-v-7e12a100=""
               name=""
               type="radio"
             />
             <p
               class="unnnic-radio__label"
-              data-v-558de5ab=""
+              data-v-7e12a100=""
             >
                
               
               Alphabetical
               
             </p>
+            <!---->
           </label>
         </section>
         <section
-          class="unnnic-radio-container"
+          class="unnnic-radio"
           data-v-348024a5=""
-          data-v-558de5ab=""
+          data-v-7e12a100=""
           size="md"
         >
           <label
-            data-v-558de5ab=""
+            class="unnnic-radio__input-wrapper"
+            data-v-7e12a100=""
           >
             <input
-              class="unnnic-radio"
-              data-v-558de5ab=""
+              class="unnnic-radio__input"
+              data-v-7e12a100=""
               name=""
               type="radio"
             />
             <p
               class="unnnic-radio__label"
-              data-v-558de5ab=""
+              data-v-7e12a100=""
             >
                
               
               Newer
               
             </p>
+            <!---->
           </label>
         </section>
         <section
-          class="unnnic-radio-container"
+          class="unnnic-radio"
           data-v-348024a5=""
-          data-v-558de5ab=""
+          data-v-7e12a100=""
           size="md"
         >
           <label
-            data-v-558de5ab=""
+            class="unnnic-radio__input-wrapper"
+            data-v-7e12a100=""
           >
             <input
-              class="unnnic-radio"
-              data-v-558de5ab=""
+              class="unnnic-radio__input"
+              data-v-7e12a100=""
               name=""
               type="radio"
             />
             <p
               class="unnnic-radio__label"
-              data-v-558de5ab=""
+              data-v-7e12a100=""
             >
                
               
               Older
               
             </p>
+            <!---->
           </label>
         </section>
         
@@ -247,15 +247,15 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
                   class="unnnic-button unnnic-button--size-large unnnic-button--tertiary unnnic-button--icon-on-center"
                   data-testid="open-dropdown-menu-button"
                   data-v-1088b44f=""
-                  data-v-69d07815=""
+                  data-v-aadba593=""
                 >
                   <!---->
                   <!---->
                   <span
                     class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-dark unnnic-icon-size--ant unnnic-icon__size--ant unnnic--clickable"
                     data-testid="icon-center"
-                    data-v-69d07815=""
-                    data-v-b6e2ac7a=""
+                    data-v-10e3a145=""
+                    data-v-aadba593=""
                     style="visibility: visible;"
                     translate="no"
                   >
@@ -264,7 +264,7 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
                   <span
                     class="unnnic-button__label"
                     data-testid="button-label"
-                    data-v-69d07815=""
+                    data-v-aadba593=""
                     style="visibility: visible;"
                   >
                     
