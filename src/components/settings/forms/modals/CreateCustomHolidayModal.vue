@@ -11,6 +11,7 @@
         v-for="(form, index) in forms"
         :key="index"
         class="create-custom-holiday-modal__form"
+        data-testid="create-custom-holiday-form"
       >
         <section class="create-custom-holiday-modal__form__input-date">
           <p class="create-custom-holiday-modal__form__input-date__title">
