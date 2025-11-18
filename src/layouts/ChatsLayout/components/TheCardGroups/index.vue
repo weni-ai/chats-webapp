@@ -85,22 +85,41 @@
           class="apply-filter"
           data-testid="filter-controls"
         >
-          <span
-            :class="{ 'filter-active': orderBy[activeTab].includes('-') }"
-            data-testid="most-recent-filter"
-            @click="handleMostRecentFilter"
+          <UnnnicToolTip
+            enabled
+            :text="
+              activeTab === 'ongoing'
+                ? $t('chats.room_list.most_recent.ongoing_tooltip')
+                : $t('chats.room_list.most_recent.waiting_tooltip')
+            "
+            side="top"
           >
-            {{ $t('chats.room_list.most_recent') }}
-          </span>
-
+            <span
+              :class="{ 'filter-active': orderBy[activeTab].includes('-') }"
+              data-testid="most-recent-filter"
+              @click="handleMostRecentFilter"
+            >
+              {{ $t('chats.room_list.most_recent.label') }}
+            </span>
+          </UnnnicToolTip>
           <span> | </span>
-          <span
-            :class="{ 'filter-active': !orderBy[activeTab].includes('-') }"
-            data-testid="older-filter"
-            @click="handleOlderFilter"
+          <UnnnicToolTip
+            enabled
+            :text="
+              activeTab === 'ongoing'
+                ? $t('chats.room_list.older.ongoing_tooltip')
+                : $t('chats.room_list.older.default_tooltip')
+            "
+            side="top"
           >
-            {{ $t('chats.room_list.older') }}
-          </span>
+            <span
+              :class="{ 'filter-active': !orderBy[activeTab].includes('-') }"
+              data-testid="older-filter"
+              @click="handleOlderFilter"
+            >
+              {{ $t('chats.room_list.older.label') }}
+            </span>
+          </UnnnicToolTip>
         </div>
       </div>
       <CardGroup
