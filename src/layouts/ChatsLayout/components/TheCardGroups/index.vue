@@ -107,8 +107,8 @@
             enabled
             :text="
               activeTab === 'ongoing'
-                ? $t('chats.room_list.older.ongoing_tooltip')
-                : $t('chats.room_list.older.default_tooltip')
+                ? $t('chats.room_list.oldest.ongoing_tooltip')
+                : $t('chats.room_list.oldest.default_tooltip')
             "
             side="top"
           >
@@ -117,7 +117,7 @@
               data-testid="older-filter"
               @click="handleOlderFilter"
             >
-              {{ $t('chats.room_list.older.label') }}
+              {{ $t('chats.room_list.oldest.label') }}
             </span>
           </UnnnicToolTip>
         </div>

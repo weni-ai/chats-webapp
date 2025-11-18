@@ -316,10 +316,10 @@
       "most_recent": {
         "label": "Most recent",
         "ongoing_tooltip": "Most recent: last message exchanged in the shortest time",
-        "waiting_tooltip": "Most recent: rooms that have been added to the queue for less time"
+        "waiting_tooltip": "Most recent: rooms that have been open for less time."
       },
-      "older": {
-        "label": "Older",
+      "oldest": {
+        "label": "Oldest",
         "ongoing_tooltip": "Oldest: last message exchanged in the longest time",
         "default_tooltip": "Oldest: rooms that have been open the longest."
       }
