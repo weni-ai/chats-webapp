@@ -129,6 +129,7 @@
   "updated_info": "Updated information",
   "active_chats": "Active chats",
   "active_chats_tooltip": "Number of ongoing chats",
+  "since": "Since",
   "date_format": "MM/DD/YYYY",
   "live": "Live",
   "number_chats": "Number of chats",
@@ -317,8 +318,16 @@
     },
     "room_list": {
       "order_by": "Order by:",
-      "most_recent": "Most recent",
-      "older": "Older"
+      "most_recent": {
+        "label": "Most recent",
+        "ongoing_tooltip": "Most recent: last message exchanged in the shortest time",
+        "waiting_tooltip": "Most recent: rooms that have been added to the queue for less time"
+      },
+      "older": {
+        "label": "Older",
+        "ongoing_tooltip": "Oldest: last message exchanged in the longest time",
+        "default_tooltip": "Oldest: rooms that have been open the longest."
+      }
     },
     "room_pin": {
       "success_pin": "Chat pinned with success",
