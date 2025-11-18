@@ -140,6 +140,7 @@
   "redo": "Redo",
   "record_audio": "Record audio",
   "select_all": "Select all",
+  "deselect_all": "Deselect all",
   "image": "Image",
   "video": "Video",
   "audio_message": "Audio message",
