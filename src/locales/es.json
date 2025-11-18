@@ -316,12 +316,12 @@
       "order_by": "Ordenar por:",
       "most_recent": {
         "label": "Más reciente",
-        "ongoing_tooltip": "Más reciente: salas que han sido abiertas por menos tiempo.",
+        "ongoing_tooltip": "Más reciente: última mensagem intercambiada en el menor tiempo.",
         "default_tooltip": "Más reciente: salas que han sido abiertas por menos tiempo."
       },
-      "older": {
+      "oldest": {
         "label": "Más antiguo",
-        "ongoing_tooltip": "Más antiguo: salas que han sido abiertas por más tiempo.",
+        "ongoing_tooltip": "Más antiguo: última mensagem intercambiada en el mayor tiempo.",
         "default_tooltip": "Más antiguo: salas que han sido abiertas por más tiempo."
       }
     },
