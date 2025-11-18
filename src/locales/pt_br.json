@@ -129,6 +129,7 @@
   "updated_info": "Informações atualizadas",
   "active_chats": "Chats ativos",
   "active_chats_tooltip": "Quantidade de chats em andamento",
+  "since": "Desde",
   "date_format": "DD/MM/YYYY",
   "live": "Ao Vivo",
   "number_chats": "Quantidade de chats",
@@ -309,8 +310,16 @@
     },
     "room_list": {
       "order_by": "Ordenar por:",
-      "most_recent": "Mais recentes",
-      "older": "Mais antigos"
+      "most_recent": {
+        "label": "Mais recentes",
+        "ongoing_tooltip": "Mais recente: última mensagem trocada no menor tempo",
+        "waiting_tooltip": "Mais recente: salas que foram abertas há menos tempo"
+      },
+      "oldest": {
+        "label": "Mais antigos",
+        "ongoing_tooltip": "Mais antigo: última mensagem trocada no maior tempo",
+        "default_tooltip": "Mais antigo: salas que foram abertas na fila há mais tempo"
+      }
     },
     "room_pin": {
       "success_pin": "Chat fixado com sucesso",
