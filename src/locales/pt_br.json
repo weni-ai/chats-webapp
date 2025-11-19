@@ -1,4 +1,8 @@
 {
+  "home": {
+    "title": "Olá!",
+    "description": "Selecione um chat para realizar seus atendimentos!"
+  },
   "news_and_updates": "Notícias e atualizações no Chats",
   "custom": "Personalizado",
   "country": {
