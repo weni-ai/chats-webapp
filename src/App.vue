@@ -7,6 +7,16 @@
       v-model="showModalOfflineAgent"
       :username="userWhoChangedStatus"
     />
+    <ModalRoomSummaryOnboarding
+      v-if="enableRoomSummary"
+      :modelValue="showModalRoomSummaryOnboarding"
+      @update:model-value="
+        (value) => {
+          updateOnboardingModal('showModalRoomSummaryOnboarding', value);
+          showModalRoomSummaryOnboarding = value;
+        }
+      "
+    />
   </div>
 </template>
 
@@ -15,6 +25,7 @@ import { mapActions, mapState } from 'pinia';
 
 import SocketAlertBanner from './layouts/ChatsLayout/components/SocketAlertBanner.vue';
 import ModalOfflineAgent from './components/ModalOfflineAgent.vue';
+import ModalRoomSummaryOnboarding from './components/ModalRoomSummaryOnboarding.vue';
 
 import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
@@ -45,6 +56,7 @@ export default {
   components: {
     SocketAlertBanner,
     ModalOfflineAgent,
+    ModalRoomSummaryOnboarding,
   },
   setup() {
     const queryString = window.location.href.split('?')[1];
@@ -61,6 +73,10 @@ export default {
       ws: null,
       loading: false,
       showModalOfflineAgent: false,
+      showModalRoomSummaryOnboarding: moduleStorage.getItem(
+        'showModalRoomSummaryOnboarding',
+        true,
+      ),
     };
   },
 
@@ -76,6 +92,7 @@ export default {
       project: 'project',
       appToken: 'token',
       appProject: (store) => store.project.uuid,
+      enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
       socketStatus: 'socketStatus',
       disconnectedBy: 'disconnectedBy',
     }),
@@ -334,6 +351,10 @@ export default {
 
     async wsReconnect({ ignoreRetryCount } = {}) {
       this.ws.reconnect({ ignoreRetryCount });
+    },
+
+    updateOnboardingModal(key, value) {
+      moduleStorage.setItem(key, value);
     },
   },
 };

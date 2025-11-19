@@ -16,6 +16,7 @@ export const useRooms = defineStore('rooms', {
     maxPinLimit: 0,
     roomsSummary: {},
     isLoadingActiveRoomSummary: false,
+    openActiveRoomSummary: true,
     newMessagesByRoom: {},
     hasNextRooms: { waiting: false, in_progress: false, flow_start: false },
     canUseCopilot: false,
