@@ -35,7 +35,9 @@
       :schemePin="handleSchemePin"
       :selected="room.uuid === activeRoomId && active"
       :locale="locale"
-      :lastInteractionTime="lastInteractionTime"
+      :lastInteractionTime="
+        isProgressRoom ? room.last_interaction : room.added_to_queue_at
+      "
       :lastInteractionTimePrefix="lastInteractionTimePrefix"
       :projectName="room.config?.name"
       data-testid="room-card-contact"
