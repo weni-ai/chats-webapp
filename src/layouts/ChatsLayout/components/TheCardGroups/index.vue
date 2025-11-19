@@ -80,7 +80,9 @@
           <UnnnicToolTip
             v-if="activeTab === 'ongoing'"
             enabled
-            :text="selectAllOngoingRoomsValue ? $t('deselect_all') : $t('select_all')"
+            :text="
+              selectAllOngoingRoomsValue ? $t('deselect_all') : $t('select_all')
+            "
           >
             <UnnnicCheckbox
               :modelValue="selectAllOngoingRoomsValue"

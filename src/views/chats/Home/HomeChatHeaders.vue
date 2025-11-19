@@ -15,21 +15,31 @@
     >
       <template #right>
         <section class="home-chat-headers__actions">
-          <section
+          <UnnnicToolTip
             v-if="enableRoomSummary"
-            class="home-chat-headers__summary-icon"
-            :class="{
-              'home-chat-headers__summary-icon--open': openActiveRoomSummary,
-            }"
+            enabled
+            :text="
+              openActiveRoomSummary
+                ? $t('chats.summary.close_summary_tooltip')
+                : $t('chats.summary.open_summary_tooltip')
+            "
+            side="left"
           >
-            <UnnnicIcon
-              icon="bi:stars"
-              clickable
-              :scheme="openActiveRoomSummary ? 'gray-900' : 'gray-500'"
-              size="ant"
-              @click="openActiveRoomSummary = !openActiveRoomSummary"
-            />
-          </section>
+            <section
+              class="home-chat-headers__summary-icon"
+              :class="{
+                'home-chat-headers__summary-icon--open': openActiveRoomSummary,
+              }"
+            >
+              <UnnnicIcon
+                icon="bi:stars"
+                clickable
+                :scheme="openActiveRoomSummary ? 'gray-900' : 'gray-500'"
+                size="ant"
+                @click="openActiveRoomSummary = !openActiveRoomSummary"
+              />
+            </section>
+          </UnnnicToolTip>
           <UnnnicToolTip
             v-if="
               featureFlags.active_features?.includes('weniChatsContactInfoV2')

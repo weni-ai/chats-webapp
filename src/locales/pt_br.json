@@ -283,6 +283,8 @@
       "by_ai": "Resumo feito por IA",
       "error": "Falha ao gerar resumo.",
       "unavailable": "Não há resumo disponível",
+      "open_summary_tooltip": "Abrir o resumo do chat",
+      "close_summary_tooltip": "Fechar o resumo do chat",
       "feedback": {
         "title": "Feedback",
         "needs_improvement_text": "Ajude a melhorar os resumos. Sua opinião sobre esse resumo nos ajuda a torná-lo mais claro e útil.",
