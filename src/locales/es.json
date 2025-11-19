@@ -1,4 +1,8 @@
 {
+  "home": {
+    "title": "¡Hola!",
+    "description": "¡Selecciona un chat para realizar tus soportes!"
+  },
   "news_and_updates": "Noticias y actualizaciones en Chats",
   "custom": "Personalizado",
   "country": {

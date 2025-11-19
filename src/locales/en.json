@@ -1,4 +1,8 @@
 {
+  "home": {
+    "title": "Hello there,",
+    "description": "Select a chat to carry out your supports!"
+  },
   "news_and_updates": "News and updates in Chats",
   "custom": "Custom",
   "country": {
