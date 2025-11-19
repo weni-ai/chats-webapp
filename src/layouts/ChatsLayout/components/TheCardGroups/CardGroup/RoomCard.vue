@@ -123,7 +123,7 @@ export default {
       return room.unread_msgs + (newMessages?.length || 0);
     },
     locale() {
-      return this.$i18n.locale;
+      return this.$i18n.locale?.toLowerCase();
     },
     formattedContactName() {
       return formatContactName(this.room);
