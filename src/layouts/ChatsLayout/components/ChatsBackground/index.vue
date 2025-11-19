@@ -12,12 +12,17 @@
   </section>
 </template>
 
-<script setup>
+<script>
 import chatHomeIcon from '@/assets/chat-home-icon.png';
 
-defineOptions({
+export default {
   name: 'ChatsBackground',
-});
+  data() {
+    return {
+      chatHomeIcon,
+    };
+  },
+};
 </script>
 
 <style lang="scss" scoped>
