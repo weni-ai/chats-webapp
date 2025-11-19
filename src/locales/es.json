@@ -292,6 +292,11 @@
         "positive": "Útil",
         "negative": "Necesita mejoras",
         "placeholder": "Comparte tu feedback para que podamos mejorar la funcionalidad."
+      },
+      "onboarding": {
+        "title": "Nuevo Feature: Resumen por IA",
+        "description": "A partir de ahora, cada vez que abras un chat, verás un resumen con la información clave del chat anterior con la IA. Esta funcionalidad está diseñada para ayudarte a ahorrar tiempo y obtener contexto rápidamente.",
+        "see_how_it_works": "Ver cómo funciona:"
       }
     },
     "feedback": {
