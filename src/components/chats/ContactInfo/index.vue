@@ -215,14 +215,6 @@
               <DiscussionsSession v-if="isHistory" />
             </section>
           </section>
-          <section class="infos">
-            <ChatSummary
-              v-if="showRoomSummary && enableRoomSummary && room"
-              :summaryText="activeRoomSummary.summary"
-              :isGeneratingSummary="isLoadingActiveRoomSummary"
-              hideClose
-            />
-          </section>
         </AsideSlotTemplateSection>
 
         <AsideSlotTemplateSection>
@@ -290,7 +282,6 @@ import VideoPreview from '../MediaMessage/Previews/Video.vue';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
 import ModalStartDiscussion from './ModalStartDiscussion.vue';
 import DiscussionsSession from './DiscussionsSession.vue';
-import ChatSummary from '@/layouts/ChatsLayout/components/ChatSummary/index.vue';
 import ProtocolText from './ProtocolText.vue';
 
 import Queues from '@/services/api/resources/settings/queue';
@@ -315,7 +306,6 @@ export default {
     VideoPreview,
     ModalStartDiscussion,
     DiscussionsSession,
-    ChatSummary,
     ProtocolText,
     TagGroup,
     OnClickOutside,
@@ -361,9 +351,6 @@ export default {
   }),
 
   computed: {
-    ...mapState(useConfig, {
-      enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
-    }),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
       activeRoomSummary: 'activeRoomSummary',
