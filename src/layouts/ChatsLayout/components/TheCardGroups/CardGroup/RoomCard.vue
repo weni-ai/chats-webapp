@@ -35,7 +35,8 @@
       :schemePin="handleSchemePin"
       :selected="room.uuid === activeRoomId && active"
       :locale="locale"
-      :lastInteractionTime="room.last_interaction"
+      :lastInteractionTime="lastInteractionTime"
+      :lastInteractionTimePrefix="lastInteractionTimePrefix"
       :projectName="room.config?.name"
       data-testid="room-card-contact"
       @click="$emit('click')"
@@ -120,7 +121,7 @@ export default {
       return room.unread_msgs + (newMessages?.length || 0);
     },
     locale() {
-      return this.$i18n.locale;
+      return this.$i18n.locale?.toLowerCase();
     },
     formattedContactName() {
       return formatContactName(this.room);
@@ -136,6 +137,14 @@ export default {
     },
     isProgressRoom() {
       return this.roomType === 'in_progress';
+    },
+    lastInteractionTime() {
+      return this.roomType === 'waiting'
+        ? this.room.added_to_queue_at
+        : this.room.last_interaction;
+    },
+    lastInteractionTimePrefix() {
+      return this.roomType === 'waiting' ? this.$t('since') : '';
     },
   },
 
