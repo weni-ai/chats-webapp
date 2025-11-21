@@ -116,7 +116,7 @@ export default {
           }
 
           if (this.enableRoomSummary) {
-            this.openActiveRoomSummary = true;
+            this.openActiveRoomSummary = this.room.is_24h_valid;
             this.skipSummaryAnimation = false;
             this.handlingGetRoomSummary();
           }
