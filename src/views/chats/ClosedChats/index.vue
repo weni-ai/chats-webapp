@@ -230,8 +230,15 @@ export default {
 
   &__header {
     :deep(.unnnic-chats-header__infos) {
-      > div > div.unnnic-avatar-icon > .unnnic-icon {
-        font-size: $unnnic-space-8;
+      > div > div.unnnic-avatar-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: $unnnic-space-12;
+        height: $unnnic-space-12;
+        > .unnnic-icon {
+          font-size: $unnnic-space-8;
+        }
       }
     }
   }
