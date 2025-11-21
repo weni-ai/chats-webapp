@@ -97,7 +97,7 @@
       data-testid="discussion-header"
     />
     <ChatHeaderSendFlow
-      v-if="isShowingSendFlowHeader"
+      v-if="isShowingSendFlowHeader && !openActiveRoomSummary"
       data-testid="chat-header-send-flow"
       @send-flow="emitOpenFlowsTrigger"
     />
@@ -200,6 +200,7 @@ export default {
       }`;
     },
   },
+
   methods: {
     emitOpenRoomContactInfo() {
       this.$emit('openRoomContactInfo');
