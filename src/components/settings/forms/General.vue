@@ -5,7 +5,6 @@
       class="form-wrapper__radios"
     >
       <UnnnicRadio
-        size="sm"
         :modelValue="useDefaultSector"
         :value="0"
         data-testid="disable-default-sector-config"
@@ -15,7 +14,6 @@
       </UnnnicRadio>
       <UnnnicRadio
         :modelValue="useDefaultSector"
-        size="sm"
         :value="1"
         data-testid="enable-default-sector-config"
         @update:model-value="updateDefaultSectorValue"
