@@ -5,7 +5,6 @@
       class="form-wrapper__radios"
     >
       <UnnnicRadio
-        size="sm"
         :modelValue="useDefaultSector"
         :value="0"
         data-testid="disable-default-sector-config"
@@ -15,7 +14,6 @@
       </UnnnicRadio>
       <UnnnicRadio
         :modelValue="useDefaultSector"
-        size="sm"
         :value="1"
         data-testid="enable-default-sector-config"
         @update:model-value="updateDefaultSectorValue"
@@ -49,7 +47,10 @@
             :placeholder="$t('sector.placeholder')"
           />
           <fieldset v-if="!enableGroupsMode">
-            <UnnnicLabel :label="$t('sector.managers.add.label')" />
+            <UnnnicLabel
+              class="form-section__label"
+              :label="$t('sector.managers.add.label')"
+            />
             <UnnnicSelectSmart
               v-model="selectedManager"
               :options="managersNames"
@@ -1184,5 +1185,9 @@ fieldset {
     display: flex;
     margin-top: $unnnic-spacing-ant;
   }
+}
+
+.form-section__label {
+  margin-bottom: $unnnic-space-1;
 }
 </style>

@@ -9,6 +9,7 @@
       </h2>
       <UnnnicSwitch
         v-model="sector.can_trigger_flows"
+        class="margin-y-space-1"
         :textRight="translationTriggerFlows"
         size="small"
         data-testid="config-switch"
@@ -17,6 +18,7 @@
         <UnnnicSwitch
           v-model="sector.sign_messages"
           size="small"
+          class="margin-y-space-1"
           :textRight="translationSignMessages"
           data-testid="config-switch"
         />
@@ -35,6 +37,7 @@
       </section>
       <UnnnicSwitch
         v-model="sector.can_edit_custom_fields"
+        class="margin-y-space-1"
         :textRight="$t('sector.additional_options.edit_custom_fields')"
         data-testid="config-switch"
         size="small"
@@ -47,6 +50,7 @@
         <section class="switchs__container">
           <UnnnicSwitch
             :modelValue="sector.automatic_message.is_active"
+            class="margin-y-space-1"
             :textRight="
               sector.automatic_message.is_active
                 ? $t(
@@ -175,6 +179,7 @@
         <UnnnicSwitch
           v-model="sector.required_tags"
           :disabled="tags.length === 0"
+          class="margin-y-space-1"
           :textRight="
             sector.required_tags
               ? $t('sector.additional_options.required_tags.switch_active')
@@ -419,6 +424,12 @@ fieldset {
     flex: 1;
   }
 }
+
+.margin-y-space-1 {
+  margin-bottom: $unnnic-space-1;
+  margin-top: $unnnic-space-1;
+}
+
 .sector-extra-options-form {
   .automatic-message-count {
     font: $unnnic-font-caption-2;
@@ -441,8 +452,9 @@ fieldset {
     &__container {
       display: flex;
       align-items: center;
+      gap: $unnnic-space-1;
 
-      .unnnic-tooltip {
+      :deep(.unnnic-tooltip) {
         display: flex;
       }
 

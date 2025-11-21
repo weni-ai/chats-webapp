@@ -1,7 +1,7 @@
 <template>
   <section class="view-button-content">
     <UnnnicButton
-      size="large"
+      size="small"
       type="tertiary"
       class="view-button"
       data-testid="header-btn"

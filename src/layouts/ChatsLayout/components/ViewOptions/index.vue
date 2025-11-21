@@ -202,7 +202,7 @@ onUnmounted(() => {
     display: flex;
     flex-direction: column;
     gap: $unnnic-space-2;
-    padding: $unnnic-space-2 $unnnic-space-4 $unnnic-space-4 0;
+    padding-top: $unnnic-space-2;
   }
 
   &--padding-left-space-4 {
