@@ -237,9 +237,10 @@ export default {
       window.addEventListener('message', (ev) => {
         const message = ev.data;
         const isLocaleChangeMessage = message?.event === 'setLanguage';
+
         if (!isLocaleChangeMessage) return;
 
-        const locale = message?.language; // 'en', 'pt-br', 'es'
+        const locale = (message?.language || 'en').toLowerCase(); // 'en', 'pt-br', 'es'
 
         moment.locale(locale);
 
