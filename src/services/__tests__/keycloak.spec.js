@@ -54,14 +54,24 @@ describe('Keycloak Service', () => {
 
   let mockKeycloakInstance;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
+
+    // Reset module state
+    vi.resetModules();
+    const { default: freshKeycloakService } = await import('../keycloak');
+    Object.assign(keycloakService, freshKeycloakService);
 
     mockKeycloakInstance = keycloakService.keycloak;
     mockKeycloakInstance.authenticated = false;
+    mockKeycloakInstance.token = undefined;
+    mockKeycloakInstance.refreshToken = undefined;
+    mockKeycloakInstance.idToken = 'mock-id-token';
     mockKeycloakInstance.createLogoutUrl.mockReturnValue(
       'https://auth.example.com/logout',
     );
+    mockKeycloakInstance.init = vi.fn();
+    mockKeycloakInstance.updateToken = vi.fn();
   });
 
   afterEach(() => {
@@ -122,7 +132,11 @@ describe('Keycloak Service', () => {
       );
       expect(global.sessionStorage.setItem).toHaveBeenCalledWith(
         'keycloak:user',
-        JSON.stringify(mockKeycloakInstance),
+        JSON.stringify({
+          token: mockKeycloakInstance.token,
+          refreshToken: mockKeycloakInstance.refreshToken,
+          idToken: mockKeycloakInstance.idToken,
+        }),
       );
 
       expect(mockKeycloakInstance.init).toHaveBeenCalledWith({
@@ -134,7 +148,7 @@ describe('Keycloak Service', () => {
 
       expect(global.setInterval).toHaveBeenCalledWith(
         expect.any(Function),
-        6000,
+        60000,
       );
 
       expect(result).toBe(true);
@@ -145,58 +159,108 @@ describe('Keycloak Service', () => {
         .spyOn(console, 'error')
         .mockImplementation(() => {});
 
+      const error = new Error('Token refresh failed');
       const intervalCallback = () => {
-        return mockKeycloakInstance.updateToken(70).catch(() => {
-          console.error('Failed to refresh token');
+        return mockKeycloakInstance.updateToken(70).catch((err) => {
+          console.error('Failed to refresh token:', err);
         });
       };
 
-      mockKeycloakInstance.updateToken.mockRejectedValue(
-        new Error('Token refresh failed'),
-      );
+      mockKeycloakInstance.updateToken.mockRejectedValue(error);
 
       await intervalCallback();
 
       expect(mockKeycloakInstance.updateToken).toHaveBeenCalledWith(70);
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to refresh token');
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Failed to refresh token:',
+        error,
+      );
 
       consoleErrorSpy.mockRestore();
     });
 
-    it('should log error message on token refresh failure', async () => {
-      const consoleErrorSpy = vi
-        .spyOn(console, 'error')
-        .mockImplementation(() => {});
-
-      vi.resetModules();
-      const { default: freshKeycloakService } = await import('../keycloak');
-      const freshMockInstance = freshKeycloakService.keycloak;
-
+    it('should handle successful token refresh and save to storage', async () => {
+      // Setup initial authentication
       global.sessionStorage.getItem.mockReturnValue(null);
-      freshMockInstance.init.mockResolvedValue(true);
-      freshMockInstance.updateToken.mockRejectedValue(
-        new Error('Token expired'),
-      );
+      mockKeycloakInstance.init.mockResolvedValue(true);
+      mockKeycloakInstance.authenticated = true;
+      mockKeycloakInstance.token = 'initial-token';
+      mockKeycloakInstance.refreshToken = 'initial-refresh';
+      mockKeycloakInstance.idToken = 'initial-id';
+      
+      await keycloakService.isAuthenticated();
 
-      await freshKeycloakService.isAuthenticated();
-
+      // Get the interval callback
       const intervalCalls = global.setInterval.mock.calls;
-      const actualCallback = intervalCalls[0][0];
-      await actualCallback();
+      const refreshCallback = intervalCalls[intervalCalls.length - 1][0];
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to refresh token');
+      // Setup for token refresh
+      mockKeycloakInstance.token = 'refreshed-token';
+      mockKeycloakInstance.refreshToken = 'refreshed-refresh-token';
+      mockKeycloakInstance.idToken = 'refreshed-id-token';
+      mockKeycloakInstance.updateToken.mockResolvedValue(true);
 
-      consoleErrorSpy.mockRestore();
+      // Clear previous calls
+      global.sessionStorage.setItem.mockClear();
+
+      // Execute refresh
+      await refreshCallback();
+
+      expect(mockKeycloakInstance.updateToken).toHaveBeenCalledWith(70);
+      expect(global.sessionStorage.setItem).toHaveBeenCalledWith(
+        'keycloak:user',
+        JSON.stringify({
+          token: 'refreshed-token',
+          refreshToken: 'refreshed-refresh-token',
+          idToken: 'refreshed-id-token',
+        }),
+      );
+    });
+
+    it('should handle token refresh returning false without saving', async () => {
+      // Setup initial authentication
+      global.sessionStorage.getItem.mockReturnValue(null);
+      mockKeycloakInstance.init.mockResolvedValue(true);
+      mockKeycloakInstance.authenticated = true;
+      
+      await keycloakService.isAuthenticated();
+
+      // Get the interval callback
+      const intervalCalls = global.setInterval.mock.calls;
+      const refreshCallback = intervalCalls[intervalCalls.length - 1][0];
+
+      // Setup for token refresh returning false
+      mockKeycloakInstance.updateToken.mockResolvedValue(false);
+
+      // Clear previous calls
+      global.sessionStorage.setItem.mockClear();
+
+      // Execute refresh
+      await refreshCallback();
+
+      expect(mockKeycloakInstance.updateToken).toHaveBeenCalledWith(70);
+      // Should not save to storage when refresh returns false
+      expect(global.sessionStorage.setItem).not.toHaveBeenCalled();
     });
 
     it('should return cached result when already initialized', async () => {
+      // First call to initialize
+      global.sessionStorage.getItem.mockReturnValue(null);
+      mockKeycloakInstance.init.mockResolvedValue(true);
       mockKeycloakInstance.authenticated = true;
+      
+      await keycloakService.isAuthenticated();
+      
+      // Clear mocks to verify second call doesn't initialize again
       vi.clearAllMocks();
+      mockKeycloakInstance.authenticated = true;
 
+      // Second call should return cached result
       const result = await keycloakService.isAuthenticated();
 
       expect(result).toBe(true);
       expect(mockKeycloakInstance.init).not.toHaveBeenCalled();
+      expect(global.sessionStorage.getItem).not.toHaveBeenCalled();
     });
   });
 });
