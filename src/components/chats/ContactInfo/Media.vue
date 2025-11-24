@@ -3,6 +3,7 @@
     v-model="activeTab"
     size="md"
     :tabs="tabsKeys"
+    class="contact-info-media"
   >
     <template
       v-for="key in Object.keys(tabs)"
@@ -125,3 +126,11 @@ onUnmounted(() => {
   contactInfosStore.clearAll();
 });
 </script>
+
+<style lang="scss" scoped>
+.contact-info-media {
+  :deep(.tab-content) {
+    gap: 0px;
+  }
+}
+</style>
