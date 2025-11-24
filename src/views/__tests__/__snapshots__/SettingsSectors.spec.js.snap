@@ -34,29 +34,28 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
       class="unnnic-form-element unnnic-form md settings-sectors__filters__name"
       data-testid="form-element"
       data-v-1088b44f=""
+      data-v-27c59990=""
       data-v-2d5913d6=""
-      data-v-b7baf9e5=""
     >
       <!---->
       
       <div
         class="text-input size--md settings-sectors__filters__name unnnic-form-input"
-        data-v-5345697c=""
-        data-v-b7baf9e5=""
+        data-v-27c59990=""
+        data-v-964b1ff1=""
         hascloudycolor="false"
         mask=""
       >
         <input
           class="settings-sectors__filters__name unnnic-form-input input-itself input size-md normal input--has-icon-left settings-sectors__filters__name unnnic-form-input input-itself"
-          data-v-5345697c=""
-          data-v-9833f838=""
+          data-v-5c6d9ab7=""
+          data-v-964b1ff1=""
           hascloudycolor="false"
           iconleft="search-1"
           iconleftclickable="false"
           iconright=""
           iconrightclickable="false"
           placeholder="Search"
-          showclear="false"
           type="text"
           value=""
         />
@@ -69,13 +68,7 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
         >
           search
         </span>
-        <section
-          class="icon-right-container"
-          data-v-5345697c=""
-        >
-          <!---->
-          <!---->
-        </section>
+        <!---->
       </div>
       
       <!---->
