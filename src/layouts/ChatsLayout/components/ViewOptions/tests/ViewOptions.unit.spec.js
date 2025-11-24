@@ -213,22 +213,26 @@ describe('ViewOptions', () => {
       expect(wrapper.emitted('show-quick-messages')).toBeTruthy();
     });
 
-    it.each([
-      {
-        name: 'dashboard.manager',
-        testId: 'show-dashboard',
-        props: { dashboard: true },
-      },
-      { name: 'closed-rooms', testId: 'show-see_history', props: {} },
-    ])(
-      'should navigate to $name when $testId is clicked',
-      async ({ name, testId, props }) => {
-        wrapper = createWrapper(props);
-        await openDrawer(wrapper);
-        await wrapper.find(`[data-testid="${testId}"]`).trigger('click');
-        expect(mockPush).toHaveBeenCalledWith({ name });
-      },
-    );
+    it('should navigate to closed-rooms when show-see_history is clicked', async () => {
+      wrapper = createWrapper();
+      await openDrawer(wrapper);
+      await wrapper.find('[data-testid="show-see_history"]').trigger('click');
+      expect(mockPush).toHaveBeenCalledWith({ name: 'closed-rooms' });
+    });
+
+    it('should post message to parent window when dashboard button is clicked', async () => {
+      const postMessageSpy = vi.spyOn(window.parent, 'postMessage');
+      wrapper = createWrapper({ dashboard: true });
+      await openDrawer(wrapper);
+      await wrapper.find('[data-testid="show-dashboard"]').trigger('click');
+      expect(postMessageSpy).toHaveBeenCalledWith(
+        {
+          event: 'redirect',
+          path: 'insights:init/humanServiceDashboard',
+        },
+        '*',
+      );
+    });
   });
 
   describe('Lifecycle', () => {
