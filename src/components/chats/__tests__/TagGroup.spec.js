@@ -36,18 +36,16 @@ describe('TagGroup', () => {
   });
 
   it('should emit close on UnnnicTag have emitted close', async () => {
-    const closeSpy = vi.spyOn(TagGroup.methods, 'close');
-
     const wrapper = createWrapper({
       tags,
     });
 
     const unnnicTags = wrapper.findAllComponents({ name: 'UnnnicTag' });
 
-    await unnnicTags[0].trigger('close');
+    await unnnicTags[0].vm.$emit('close');
 
-    expect(closeSpy).toHaveBeenCalledWith(tags[0]);
     expect(wrapper.emitted().close).toBeTruthy();
+    expect(wrapper.emitted().close[0][0]).toEqual(tags[0]);
   });
 
   it('should not render when `tags` prop is not passed', () => {
@@ -90,5 +88,13 @@ describe('TagGroup', () => {
     await wrapper.findComponent('[data-testid="tag__doubts"]').trigger('click');
 
     expect(wrapper.emitted('update:modelValue').length).toBe(3);
+  });
+
+  it('should emit close with tag', async () => {
+    const wrapper = createWrapper({ tags });
+    const tag = wrapper.findComponent('[data-testid="tag__finance"]');
+    await tag.vm.$emit('close');
+
+    expect(wrapper.emitted('close')[0][0]).toEqual(tags[0]);
   });
 });
