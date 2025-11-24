@@ -62,7 +62,7 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
         <span
           class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-base unnnic-icon-size--ant unnnic-icon__size--ant icon-left"
           data-testid="material-icon"
-          data-v-10e3a145=""
+          data-v-69390f82=""
           data-v-964b1ff1=""
           translate="no"
         >
@@ -254,7 +254,7 @@ exports[`SettingsHeader.vue > should match the snapshot 1`] = `
                   <span
                     class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-dark unnnic-icon-size--ant unnnic-icon__size--ant unnnic--clickable"
                     data-testid="icon-center"
-                    data-v-10e3a145=""
+                    data-v-69390f82=""
                     data-v-aadba593=""
                     style="visibility: visible;"
                     translate="no"
