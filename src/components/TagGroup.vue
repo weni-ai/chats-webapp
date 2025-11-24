@@ -68,17 +68,6 @@ export default {
   emits: ['update:modelValue', 'close', 'add', 'remove'],
 
   data: () => ({
-    schemes: [
-      'aux-purple',
-      'aux-orange',
-      'aux-pink',
-      'brand-weni-dark',
-      'weni-600',
-      'aux-lemon',
-      'aux-blue',
-      'neutral-dark',
-      'neutral-cloudy',
-    ],
     remainingTags: 0,
   }),
 

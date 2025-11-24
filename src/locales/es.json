@@ -129,6 +129,7 @@
   "updated_info": "Información actualizada",
   "active_chats": "Chats activos",
   "active_chats_tooltip": "Cantidad de chats en curso",
+  "since": "Desde",
   "date_format": "DD/MM/YYYY",
   "live": "En Vivo",
   "number_chats": "Cantidad de chats",
@@ -139,6 +140,7 @@
   "redo": "Rehacer",
   "record_audio": "Grabar audio",
   "select_all": "Seleccionar todo",
+  "deselect_all": "Deseleccionar todo",
   "image": "Imagen",
   "video": "Vídeo",
   "audio_message": "Mensaje de audio",
@@ -308,8 +310,16 @@
     },
     "room_list": {
       "order_by": "Ordenar por:",
-      "most_recent": "Mais recente",
-      "older": "Más antiguo"
+      "most_recent": {
+        "label": "Más reciente",
+        "ongoing_tooltip": "Más reciente: última mensagem intercambiada en el menor tiempo.",
+        "default_tooltip": "Más reciente: salas que han sido abiertas por menos tiempo."
+      },
+      "oldest": {
+        "label": "Más antiguo",
+        "ongoing_tooltip": "Más antiguo: última mensagem intercambiada en el mayor tiempo.",
+        "default_tooltip": "Más antiguo: salas que han sido abiertas por más tiempo."
+      }
     },
     "room_pin": {
       "success_pin": "Chat fijado con éxito",

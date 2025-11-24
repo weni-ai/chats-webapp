@@ -11,7 +11,7 @@
       <UnnnicButton
         class="chats-layout-footer-button__button"
         :text="$tc('transfer_contact', selectedRoomsToTransfer.length)"
-        iconLeft="read_more"
+        iconLeft="sync_alt"
         type="primary"
         size="small"
         data-testid="transfer-button"
