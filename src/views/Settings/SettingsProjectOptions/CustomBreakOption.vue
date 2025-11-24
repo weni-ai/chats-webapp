@@ -3,7 +3,7 @@
     class="custom-btn"
     :text="$t('config_chats.custom_breaks.title')"
     type="secondary"
-    size="large"
+    size="small"
     @click.prevent.stop="openModal"
   />
 
@@ -273,6 +273,7 @@ const windowSettingsUpdated = () => {
 <style lang="scss" scoped>
 .custom-btn {
   width: 100%;
+  max-height: 45px;
 }
 .custom-breaks-modal {
   &__description {
