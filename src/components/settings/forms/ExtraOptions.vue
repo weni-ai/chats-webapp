@@ -413,8 +413,9 @@ export default {
     &__container {
       display: flex;
       align-items: center;
+      gap: $unnnic-space-1;
 
-      .unnnic-tooltip {
+      :deep(.unnnic-tooltip) {
         display: flex;
       }
 
