@@ -57,6 +57,7 @@
             />
           </UnnnicToolTip>
           <UnnnicButton
+            v-if="showCloseChatButton"
             type="secondary"
             size="small"
             @click="emitOpenModalCloseChat"
@@ -109,6 +110,8 @@ import { parseUrn } from '@/utils/room';
 
 import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useConfig } from '@/store/modules/config';
+import { useProfile } from '@/store/modules/profile';
 
 export default {
   name: 'HomeChatHeaders',
@@ -143,9 +146,9 @@ export default {
     ...mapState(useDiscussions, {
       discussion: (store) => store.activeDiscussion,
     }),
-
     ...mapWritableState(useRooms, ['contactToTransfer']),
-
+    ...mapState(useConfig, ['project']),
+    ...mapState(useProfile, ['isHumanServiceProfile']),
     isMobile() {
       return isMobile();
     },
@@ -175,6 +178,15 @@ export default {
       return `${this.$tc('discussions.title')} ${this.$t('about')} ${
         discussion?.contact
       }`;
+    },
+    showCloseChatButton() {
+      if (
+        !this.isHumanServiceProfile ||
+        this.project.config?.can_close_chats_in_queue
+      )
+        return true;
+
+      return !!this.room.user;
     },
   },
   methods: {

@@ -27,6 +27,10 @@
           v-model="projectConfig.can_see_timer"
           :name="configShowAgentStatusCountTimer"
         />
+        <SettingsProjectOptionsItem
+          v-model="projectConfig.can_close_chats_in_queue"
+          :name="configCloseChatsInQueue"
+        />
       </section>
       <section class="project-options__items__custom-breaks">
         <CustomBreakOption />
@@ -63,6 +67,7 @@ export default {
         can_use_queue_prioritization: false,
         filter_offline_agents: false,
         can_see_timer: false,
+        can_close_chats_in_queue: false,
       },
     };
   },
@@ -109,6 +114,14 @@ export default {
         }`,
       );
     },
+    configCloseChatsInQueue() {
+      const canCloseChatsInQueue = this.projectConfig.can_close_chats_in_queue;
+      return this.$t(
+        `config_chats.project_configs.close_chats_in_queue.switch_${
+          canCloseChatsInQueue ? 'active' : 'inactive'
+        }`,
+      );
+    },
   },
 
   watch: {
@@ -135,6 +148,7 @@ export default {
         can_use_queue_prioritization,
         filter_offline_agents,
         can_see_timer,
+        can_close_chats_in_queue,
       } = this.projectConfig;
 
       Project.update({
@@ -142,6 +156,7 @@ export default {
         can_use_queue_prioritization,
         filter_offline_agents,
         can_see_timer,
+        can_close_chats_in_queue,
       });
     },
   },
