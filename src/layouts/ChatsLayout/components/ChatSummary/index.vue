@@ -12,18 +12,12 @@
         class="chat-summary__by-ai-label"
         data-testid="chat-summary-by-ai-label"
       >
-        <img :src="StarsIcon" />
+        <UnnnicIcon
+          icon="bi:stars"
+          size="sm"
+        />
         <p>{{ $t('chats.summary.by_ai') }}</p>
       </section>
-      <UnnnicIcon
-        v-if="!isGeneratingSummary && !isTyping && !hideClose"
-        icon="close"
-        size="ant"
-        clickable
-        scheme="neutral-dark"
-        data-testid="chat-summary-close-button"
-        @click="handleCloseSummary"
-      />
     </section>
     <section class="chat-summary__content">
       <section
@@ -209,7 +203,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: rgb(233, 216, 253);
+  background: $unnnic-color-purple-100;
   box-shadow: $unnnic-shadow-level-far;
   padding: $unnnic-spacing-sm;
   gap: $unnnic-spacing-nano;
