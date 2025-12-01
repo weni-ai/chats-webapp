@@ -6,6 +6,7 @@
     />
     <header v-if="!isLoadingHeader && project">
       <UnnnicChatsHeader
+        class="closed-chats__header"
         :title="project.name"
         :subtitle="$t('chats.closed_chats.project_history')"
         avatarIcon="history"
@@ -226,6 +227,21 @@ export default {
   width: 100vw;
 
   overflow: hidden;
+
+  &__header {
+    :deep(.unnnic-chats-header__infos) {
+      > div > div.unnnic-avatar-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: $unnnic-space-12;
+        height: $unnnic-space-12;
+        > .unnnic-icon {
+          font-size: $unnnic-space-8;
+        }
+      }
+    }
+  }
 
   main {
     height: 100%;
