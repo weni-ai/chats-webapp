@@ -9,7 +9,7 @@ exports[`ViewButton > Snapshot > should match the snapshot 1`] = `
     class="view-button"
     data-testid="header-btn"
     data-v-905ee5f6=""
-    size="large"
+    size="small"
     type="submit"
   >
     
