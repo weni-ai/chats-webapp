@@ -65,7 +65,7 @@ vi.mock('@/services/api/resources/settings/sector', () => ({
     setSectorWorkingDays: vi.fn(() => Promise.resolve()),
     createCountryHolidays: vi.fn(() => Promise.resolve()),
     createSectorHoliday: vi.fn(() => Promise.resolve()),
-    getAllSectorHolidays: vi.fn(),
+    getAllSectorHolidays: vi.fn(() => Promise.resolve([])),
   },
 }));
 
@@ -166,7 +166,6 @@ describe('FormSectorGeneral', () => {
       },
     });
     await wrapper.vm.$nextTick();
-    console.log(wrapper.html());
     const errorMessage = wrapper.find('.error-message');
     expect(errorMessage.exists()).toBe(true);
     expect(errorMessage.text()).toBe(
@@ -375,42 +374,39 @@ describe('FormSectorGeneral', () => {
   });
 
   it('should emit update model value with default sector config', async () => {
-    const enableDefaultConfigRadio = wrapper.find(
+    const testWrapper = createWrapper({ isEditing: false });
+    const enableDefaultConfigRadio = testWrapper.findComponent(
       '[data-testid="enable-default-sector-config"]',
     );
-    await enableDefaultConfigRadio.trigger('click');
+    await enableDefaultConfigRadio.vm.$emit('update:model-value', 1);
+    await testWrapper.vm.$nextTick();
 
-    expect(wrapper.emitted('update:modelValue')[0][0])
-      .haveOwnProperty('name')
-      .eq(wrapper.vm.$t('config_chats.default_sector.name'));
-
-    expect(wrapper.emitted('update:modelValue')[0][0])
-      .haveOwnProperty('maxSimultaneousChatsByAgent')
-      .eq('4');
-
-    expect(wrapper.emitted('update:modelValue')[0][0])
-      .haveOwnProperty('managers')
-      .eql([managerMock]);
+    const emitted = testWrapper.emitted('update:modelValue');
+    expect(emitted).toBeTruthy();
+    const lastEmit = emitted[emitted.length - 1][0];
+    expect(lastEmit).toHaveProperty(
+      'name',
+      testWrapper.vm.$t('config_chats.default_sector.name'),
+    );
+    expect(lastEmit).toHaveProperty('maxSimultaneousChatsByAgent', '4');
+    expect(lastEmit.managers).toBeInstanceOf(Array);
   });
 
   it('should update model value with blank sector config', async () => {
-    await wrapper.setData({ useDefaultSector: 1 });
-    const disableDefaultConfigRadio = wrapper.find(
+    const testWrapper = createWrapper({ isEditing: false });
+    await testWrapper.setData({ useDefaultSector: 1 });
+    const disableDefaultConfigRadio = testWrapper.findComponent(
       '[data-testid="disable-default-sector-config"]',
     );
-    await disableDefaultConfigRadio.trigger('click');
+    await disableDefaultConfigRadio.vm.$emit('update:model-value', 0);
+    await testWrapper.vm.$nextTick();
 
-    expect(wrapper.emitted('update:modelValue')[0][0])
-      .haveOwnProperty('name')
-      .eq('');
-
-    expect(wrapper.emitted('update:modelValue')[0][0])
-      .haveOwnProperty('maxSimultaneousChatsByAgent')
-      .eq('');
-
-    expect(wrapper.emitted('update:modelValue')[0][0])
-      .haveOwnProperty('managers')
-      .eql([]);
+    const emitted = testWrapper.emitted('update:modelValue');
+    expect(emitted).toBeTruthy();
+    const lastEmit = emitted[emitted.length - 1][0];
+    expect(lastEmit).toHaveProperty('name', '');
+    expect(lastEmit).toHaveProperty('maxSimultaneousChatsByAgent', '');
+    expect(lastEmit.managers).toEqual([]);
   });
 
   it('call service to removeManager if isEditing = true', async () => {

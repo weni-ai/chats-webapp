@@ -4,6 +4,7 @@
     <section class="sector-queues-form__filters">
       <UnnnicInput
         v-model="queueNameFilter"
+        class="sector-queues-form__filters__input"
         iconLeft="search-1"
         size="md"
         :placeholder="$t('search')"
@@ -355,7 +356,7 @@ export default {
     align-items: center;
     gap: $unnnic-spacing-stack-sm $unnnic-spacing-inline-md;
 
-    .unnnic-form {
+    &__input {
       flex: 1;
     }
   }

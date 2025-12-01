@@ -729,7 +729,7 @@ export default {
     &-content {
       // This is required to remove the tag icon
       :deep(.contact-info__about-support-content__tag-group) {
-        > .tag-group__tags > .unnnic-tag-content > .unnnic-brand-tag__icon {
+        .unnnic-icon {
           display: v-bind(hideTagCloseIcon);
         }
       }
@@ -811,6 +811,7 @@ export default {
 
         display: flex;
         align-items: center;
+        gap: $unnnic-space-1;
 
         :deep(.unnnic-tooltip) {
           display: flex;
