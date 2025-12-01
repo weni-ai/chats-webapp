@@ -81,6 +81,7 @@ export default {
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
       openChatSummary: (store) => store.openActiveRoomSummary,
+      isClosedRoom: (store) => !!store.activeRoom?.ended_at,
     }),
     ...mapState(useRoomMessages, [
       'roomMessages',
@@ -116,7 +117,8 @@ export default {
           }
 
           if (this.enableRoomSummary) {
-            this.openActiveRoomSummary = this.room.is_24h_valid;
+            this.openActiveRoomSummary =
+              this.isClosedRoom || this.room.is_24h_valid;
             this.skipSummaryAnimation = false;
             this.handlingGetRoomSummary();
           }
