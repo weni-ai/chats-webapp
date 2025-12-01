@@ -76,31 +76,60 @@
         class="order-by"
         data-testid="order-by-section"
       >
-        <div>
-          <span data-testid="order-by-label">
-            {{ $t('chats.room_list.order_by') }}
-          </span>
+        <div class="select-all-checkbox-container">
+          <UnnnicToolTip
+            v-if="activeTab === 'ongoing'"
+            enabled
+            :text="
+              selectAllOngoingRoomsValue ? $t('deselect_all') : $t('select_all')
+            "
+          >
+            <UnnnicCheckbox
+              :modelValue="selectAllOngoingRoomsValue"
+              size="sm"
+              @change="handleSelectAllOngoingRooms()"
+            />
+          </UnnnicToolTip>
         </div>
         <div
           class="apply-filter"
           data-testid="filter-controls"
         >
-          <span
-            :class="{ 'filter-active': orderBy[activeTab].includes('-') }"
-            data-testid="most-recent-filter"
-            @click="handleMostRecentFilter"
+          <UnnnicToolTip
+            enabled
+            :text="
+              activeTab === 'ongoing'
+                ? $t('chats.room_list.most_recent.ongoing_tooltip')
+                : $t('chats.room_list.most_recent.waiting_tooltip')
+            "
+            side="top"
           >
-            {{ $t('chats.room_list.most_recent') }}
-          </span>
-
+            <span
+              :class="{ 'filter-active': orderBy[activeTab].includes('-') }"
+              data-testid="most-recent-filter"
+              @click="handleMostRecentFilter"
+            >
+              {{ $t('chats.room_list.most_recent.label') }}
+            </span>
+          </UnnnicToolTip>
           <span> | </span>
-          <span
-            :class="{ 'filter-active': !orderBy[activeTab].includes('-') }"
-            data-testid="older-filter"
-            @click="handleOlderFilter"
+          <UnnnicToolTip
+            enabled
+            :text="
+              activeTab === 'ongoing'
+                ? $t('chats.room_list.oldest.ongoing_tooltip')
+                : $t('chats.room_list.oldest.default_tooltip')
+            "
+            side="top"
           >
-            {{ $t('chats.room_list.older') }}
-          </span>
+            <span
+              :class="{ 'filter-active': !orderBy[activeTab].includes('-') }"
+              data-testid="older-filter"
+              @click="handleOlderFilter"
+            >
+              {{ $t('chats.room_list.oldest.label') }}
+            </span>
+          </UnnnicToolTip>
         </div>
       </div>
       <CardGroup
@@ -204,7 +233,10 @@ export default {
     };
   },
   computed: {
-    ...mapWritableState(useRooms, { allRooms: 'rooms' }),
+    ...mapWritableState(useRooms, {
+      allRooms: 'rooms',
+      selectedRoomsToTransfer: 'selectedRoomsToTransfer',
+    }),
     ...mapState(useRooms, {
       rooms_ongoing: 'agentRooms',
       rooms_queue: 'waitingQueue',
@@ -290,6 +322,9 @@ export default {
     },
     totalPinnedRooms() {
       return this.rooms_ongoing.filter((room) => room.is_pinned).length || 0;
+    },
+    selectAllOngoingRoomsValue() {
+      return this.rooms_ongoing.length === this.selectedRoomsToTransfer?.length;
     },
   },
   watch: {
@@ -558,6 +593,15 @@ export default {
 
       this.listRoom(true, this.orderBy[this.activeTab], this.activeTab, true);
     },
+    handleSelectAllOngoingRooms() {
+      if (!this.selectAllOngoingRoomsValue) {
+        this.selectedRoomsToTransfer = this.rooms_ongoing.map(
+          (room) => room.uuid,
+        );
+      } else {
+        this.selectedRoomsToTransfer = [];
+      }
+    },
   },
 };
 </script>
@@ -619,6 +663,10 @@ export default {
 
     .filter-active {
       font-weight: $unnnic-font-weight-bold;
+    }
+
+    .select-all-checkbox-container {
+      margin-left: $unnnic-space-1;
     }
   }
 }
