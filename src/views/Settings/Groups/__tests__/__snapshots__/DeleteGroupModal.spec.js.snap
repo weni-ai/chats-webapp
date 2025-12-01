@@ -1,0 +1,36 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DeleteGroupModal.vue > Snapshot > should match the snapshot 1`] = `
+<div
+  data-testid="modal-delete-group"
+>
+  
+  <p
+    class="delete-notice"
+    data-testid="delete-notice"
+  >
+    This action will be irreversible. To confirm the action, please type the name of the group
+  </p>
+  <label>
+    
+    
+  </label>
+  <input
+    data-testid="input-dashboard-name"
+    placeholder="Test Group"
+    value=""
+  />
+  
+  <button
+    data-testid="primary-button"
+    disabled=""
+  >
+    Delete
+  </button>
+  <button
+    data-testid="close-button"
+  >
+     Close 
+  </button>
+</div>
+`;

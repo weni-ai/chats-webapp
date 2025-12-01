@@ -35,14 +35,16 @@ import { mapActions, mapState, mapWritableState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useConfig } from '@/store/modules/config';
 
 import ChatMessages from '@/components/chats/chat/ChatMessages/index.vue';
 import ChatSummary from '@/layouts/ChatsLayout/components/ChatSummary/index.vue';
 
 import RoomService from '@/services/api/resources/chats/room';
 import RoomNotes from '@/services/api/resources/chats/roomNotes';
-import { useConfig } from '@/store/modules/config';
+
 import { SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT } from '@/utils/chats';
+import i18n from '@/plugins/i18n';
 
 export default {
   name: 'RoomMessages',
@@ -64,7 +66,6 @@ export default {
       isLoadingMessages: true,
       silentLoadingMessages: false,
       isLoadingSummary: false,
-      openChatSummary: true,
       getRoomSummaryInterval: null,
       skipSummaryAnimation: false,
     };
@@ -75,9 +76,12 @@ export default {
       'activeRoomSummary',
       'isLoadingActiveRoomSummary',
       'roomsSummary',
+      'openActiveRoomSummary',
     ]),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
+      openChatSummary: (store) => store.openActiveRoomSummary,
+      isClosedRoom: (store) => !!store.activeRoom?.ended_at,
     }),
     ...mapState(useRoomMessages, [
       'roomMessages',
@@ -97,6 +101,7 @@ export default {
     'room.uuid': {
       immediate: true,
       async handler(roomUuid) {
+        clearInterval(this.getRoomSummaryInterval);
         if (roomUuid) {
           this.resetRoomMessages();
           this.page = 0;
@@ -112,9 +117,9 @@ export default {
           }
 
           if (this.enableRoomSummary) {
+            this.openActiveRoomSummary =
+              this.isClosedRoom || this.room.is_24h_valid;
             this.skipSummaryAnimation = false;
-            clearInterval(this.getRoomSummaryInterval);
-            this.openChatSummary = true;
             this.handlingGetRoomSummary();
           }
         }
@@ -143,15 +148,18 @@ export default {
 
     setRoomSummary(text, feedback, status) {
       this.isLoadingActiveRoomSummary = false;
-      this.roomsSummary[this.room.uuid] = {
-        summary: text,
-        feedback,
-        status,
-      };
+      if (this.room) {
+        this.roomsSummary[this.room.uuid] = {
+          summary: text,
+          feedback,
+          status,
+        };
+      }
       clearInterval(this.getRoomSummaryInterval);
     },
 
     async getRoomSummary() {
+      if (!this.room) return;
       try {
         const { status, summary, feedback } = await RoomService.getSummary({
           roomUuid: this.room.uuid,
@@ -166,7 +174,7 @@ export default {
         }
       } catch (error) {
         console.log(error);
-        const errorText = this.$t('chats.summary.error');
+        const errorText = i18n.global.t('chats.summary.error');
         this.setRoomSummary(errorText);
       }
     },
