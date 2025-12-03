@@ -537,7 +537,7 @@ watch(
 
   &__list {
     position: absolute;
-    width: 100%;
+    width: calc(100% - $unnnic-space-2); // compensate left space
     background: $unnnic-color-background-snow;
     border-top: 1px solid $unnnic-color-neutral-soft;
     list-style: none;
