@@ -289,7 +289,6 @@ import TagGroup from '@/components/TagGroup.vue';
 import { OnClickOutside } from '@vueuse/components';
 
 import moment from 'moment';
-import { useConfig } from '@/store/modules/config';
 import { parseUrn } from '@/utils/room';
 
 import i18n from '@/plugins/i18n';
