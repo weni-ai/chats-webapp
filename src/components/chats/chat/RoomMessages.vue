@@ -24,7 +24,7 @@
     :messagesFailedUuids="roomMessagesFailedUuids"
     :resendMessages="roomResendMessages"
     :resendMedia="roomResendMedia"
-    :isLoading="isLoadingMessages"
+    :isLoading="isLoadingMessages || isLoadingInternalNotes"
     :isClosedChat="!!room?.ended_at"
     :enableReply="false"
     @scroll-top="searchForMoreMessages"
