@@ -182,22 +182,25 @@ export default {
 
     async getRoomInternalNotes() {
       try {
+        const lastSystemMessage = this.roomMessages.findLast(
+          (message) => !message.user && !message.contact,
+        );
+
+        if (!lastSystemMessage) return;
+
         this.isLoadingInternalNotes = true;
+
         const { results } = await RoomNotes.getInternalNotes({
           room: this.room.uuid,
           limit: 1,
         });
+
         const hasInternalNotes = results.length > 0;
 
         if (hasInternalNotes && !this.room.ended_at && this.room.user) {
-          const lastSystemMessage = this.roomMessages.findLast(
-            (message) => !message.user && !message.contact,
-          );
           const chipNote = {
             uuid: new Date().toString(),
-            created_on: lastSystemMessage
-              ? lastSystemMessage.created_on
-              : new Date().toISOString(),
+            created_on: lastSystemMessage.created_on,
             text: SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT,
           };
           this.addSortedMessage({
