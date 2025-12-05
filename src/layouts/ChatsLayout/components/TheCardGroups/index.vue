@@ -424,8 +424,8 @@ export default {
       }
     },
     async openRoom(room) {
-      await this.setActiveDiscussion(null);
       await this.setActiveRoom(room);
+      await this.setActiveDiscussion(null);
     },
     async openDiscussion(discussion) {
       await this.setActiveDiscussion(discussion);
