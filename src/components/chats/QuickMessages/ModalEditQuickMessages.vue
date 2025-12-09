@@ -8,11 +8,11 @@
       disabled: !validForm,
       loading: isLoading,
     }"
-    :secondaryButtonProps="{ text: $t('cancel') }"
+    :secondaryButtonProps="{ text: $t('cancel'), disabled: isLoading }"
     @primary-button-click="$emit('save')"
-    @secondary-button-click="$emit('close')"
-    @close="$emit('close')"
-    @update:model-value="$emit('close')"
+    @secondary-button-click="close()"
+    @close="close()"
+    @update:model-value="close()"
   >
     <MessageForm
       :modelValue="quickMessage"
@@ -64,5 +64,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped></style>
