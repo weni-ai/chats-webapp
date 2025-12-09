@@ -16,7 +16,7 @@
   >
     <MessageForm
       :modelValue="quickMessage"
-      @update:model-value="emit('update:quickMessage', $event)"
+      @update:model-value="$emit('update:quickMessage', $event)"
     />
   </UnnnicModalDialog>
 </template>
