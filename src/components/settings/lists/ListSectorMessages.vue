@@ -69,14 +69,8 @@
         :key="message.uuid"
         class="sector-messages-form__quick-message-card"
         type="blank"
-        :title="message.title"
+        :title="'/' + message.shortcut"
         :text="message.text"
-        :titleTooltip="
-          !isMobile() &&
-          $t('quick_messages.shortcut_tooltip', {
-            shortcut: message.shortcut || message.title.toLowerCase(),
-          })
-        "
         clickable
         data-testid="quick-message-card"
         @click="openConfigMessageDrawer(message)"
@@ -210,8 +204,8 @@ export default {
       );
     },
     validQuickMessage() {
-      const { shortcut, title, text } = this.quickMessageToEdit;
-      return !!(shortcut && title && text);
+      const { shortcut, text } = this.quickMessageToEdit;
+      return !!(shortcut && text);
     },
   },
   mounted() {
@@ -344,7 +338,7 @@ export default {
         const { uuid, shortcut, title, text } = this.quickMessageToEdit;
         await this.updateQuickMessage({
           quickMessageUuid: uuid,
-          shortcut,
+          shortcut: shortcut.replace('/', ''),
           title,
           text,
         });
@@ -428,6 +422,7 @@ export default {
   }
 
   &__quick-message-card {
+    height: 140px;
     :deep(.unnnic-simple-card-header-container__title) {
       color: $unnnic-color-neutral-darkest;
     }
@@ -441,7 +436,7 @@ export default {
   }
 
   &__new-message {
-    min-height: 140px;
+    height: 140px;
     :deep(.unnnic-card-blank__content) {
       flex-direction: row;
     }
