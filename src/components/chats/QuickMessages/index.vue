@@ -1,6 +1,5 @@
 <template>
   <AsideSlotTemplate
-    v-if="!isEditing && !isCreating"
     :title="$t('quick_message')"
     icon="bolt"
     :close="() => $emit('close')"
@@ -36,6 +35,19 @@
     </AsideSlotTemplateSection>
 
     <template #modals>
+      <ModalQuickMessages
+        v-if="quickMessageToEdit"
+        :quickMessage="quickMessageToEdit"
+        :title="quickMessageFormTitle"
+        :isLoading="isLoadingUpdateQuickMessage"
+        @save="
+          quickMessageToEdit?.uuid
+            ? updateQuickMessage(quickMessageToEdit)
+            : createQuickMessage(quickMessageToEdit)
+        "
+        @close="quickMessageToEdit = null"
+        @update:quick-message="quickMessageToEdit = $event"
+      />
       <UnnnicModal
         class="quick-messages__modal-delete"
         :text="$t('quick_messages.delete')"
@@ -61,31 +73,6 @@
       </UnnnicModal>
     </template>
   </AsideSlotTemplate>
-
-  <AsideSlotTemplate
-    v-else
-    :title="$t('quick_message')"
-    icon="bolt"
-    :back="() => (quickMessageToEdit = null)"
-    :close="() => $emit('close')"
-  >
-    <AsideSlotTemplateSection class="fill-h fill-w">
-      <section class="fill-h quick-messages-form">
-        <h1 class="quick-messages-form__title">{{ quickMessageFormTitle }}</h1>
-        <QuickMessageForm
-          v-model="quickMessageToEdit"
-          class="quick-messages-form__form"
-          data-testid="quick-messages-form"
-          @submit="
-            !!quickMessageToEdit.uuid
-              ? updateQuickMessage(quickMessageToEdit)
-              : createQuickMessage(quickMessageToEdit)
-          "
-          @cancel="quickMessageToEdit = null"
-        />
-      </section>
-    </AsideSlotTemplateSection>
-  </AsideSlotTemplate>
 </template>
 
 <script>
@@ -98,7 +85,7 @@ import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTempla
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 import QuickMessagesList from './QuickMessagesList.vue';
-import QuickMessageForm from './QuickMessageForm.vue';
+import ModalQuickMessages from './ModalEditQuickMessages.vue';
 
 import { useQuickMessages } from '@/store/modules/chats/quickMessages';
 
@@ -109,7 +96,7 @@ export default {
     AsideSlotTemplate,
     AsideSlotTemplateSection,
     QuickMessagesList,
-    QuickMessageForm,
+    ModalQuickMessages,
   },
   emits: ['close', 'select-quick-message'],
 
@@ -119,6 +106,7 @@ export default {
 
       quickMessageToDelete: null,
       quickMessageToEdit: null,
+      isLoadingUpdateQuickMessage: false,
     };
   },
   computed: {
@@ -144,7 +132,7 @@ export default {
     },
 
     emptyQuickMessage() {
-      return { title: '', text: '', shortcut: null };
+      return { title: '', text: '', shortcut: '' };
     },
   },
 
@@ -156,32 +144,46 @@ export default {
     }),
 
     async createQuickMessage({ title, text, shortcut }) {
-      this.actionCreateQuickMessage({ title, text, shortcut });
+      try {
+        this.isLoadingUpdateQuickMessage = true;
+        this.actionCreateQuickMessage({ title, text, shortcut });
 
-      callUnnnicAlert({
-        props: {
-          text: this.$t('quick_messages.successfully_added'),
-          type: 'success',
-          scheme: 'feedback-green',
-          onClose: this.$t('close'),
-        },
-        seconds: 5,
-      });
+        callUnnnicAlert({
+          props: {
+            text: this.$t('quick_messages.successfully_added'),
+            type: 'success',
+            scheme: 'feedback-green',
+            onClose: this.$t('close'),
+          },
+          seconds: 5,
+        });
 
-      this.quickMessageToEdit = null;
+        this.quickMessageToEdit = null;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.isLoadingUpdateQuickMessage = false;
+      }
     },
     async updateQuickMessage({ uuid, title, text, shortcut }) {
-      this.actionUpdateQuickMessage({ uuid, title, text, shortcut });
+      try {
+        this.isLoadingUpdateQuickMessage = true;
+        this.actionUpdateQuickMessage({ uuid, title, text, shortcut });
 
-      callUnnnicAlert({
-        props: {
-          text: this.$t('quick_messages.successfully_updated'),
-          type: 'success',
-        },
-        seconds: 5,
-      });
+        callUnnnicAlert({
+          props: {
+            text: this.$t('quick_messages.successfully_updated'),
+            type: 'success',
+          },
+          seconds: 5,
+        });
 
-      this.quickMessageToEdit = null;
+        this.quickMessageToEdit = null;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.isLoadingUpdateQuickMessage = false;
+      }
     },
     openQuickMessageCreation() {
       this.quickMessageToEdit = this.emptyQuickMessage;
@@ -204,14 +206,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.fill-h {
-  height: 100%;
-}
-
-.fill-w {
-  width: 100%;
-}
-
 .messages-section__container {
   height: 100%;
   width: 100%;

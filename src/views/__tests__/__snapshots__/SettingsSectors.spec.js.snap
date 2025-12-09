@@ -89,7 +89,7 @@ exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
               class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-darkest unnnic-icon-size--sm unnnic-icon__size--sm icon"
               data-testid="material-icon"
               data-v-1088b44f=""
-              data-v-10e3a145=""
+              data-v-69390f82=""
               translate="no"
             >
               edit_square
@@ -115,7 +115,7 @@ exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
               class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--danger unnnic-icon-size--sm unnnic-icon__size--sm icon"
               data-testid="material-icon"
               data-v-1088b44f=""
-              data-v-10e3a145=""
+              data-v-69390f82=""
               translate="no"
             >
               delete
@@ -185,7 +185,7 @@ exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
               class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-darkest unnnic-icon-size--sm unnnic-icon__size--sm icon"
               data-testid="material-icon"
               data-v-1088b44f=""
-              data-v-10e3a145=""
+              data-v-69390f82=""
               translate="no"
             >
               edit_square
@@ -211,7 +211,7 @@ exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
               class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--danger unnnic-icon-size--sm unnnic-icon__size--sm icon"
               data-testid="material-icon"
               data-v-1088b44f=""
-              data-v-10e3a145=""
+              data-v-69390f82=""
               translate="no"
             >
               delete
@@ -281,7 +281,7 @@ exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
               class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-darkest unnnic-icon-size--sm unnnic-icon__size--sm icon"
               data-testid="material-icon"
               data-v-1088b44f=""
-              data-v-10e3a145=""
+              data-v-69390f82=""
               translate="no"
             >
               edit_square
@@ -307,7 +307,7 @@ exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
               class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--danger unnnic-icon-size--sm unnnic-icon__size--sm icon"
               data-testid="material-icon"
               data-v-1088b44f=""
-              data-v-10e3a145=""
+              data-v-69390f82=""
               translate="no"
             >
               delete
