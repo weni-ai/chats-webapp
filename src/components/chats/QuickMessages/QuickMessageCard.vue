@@ -17,8 +17,11 @@
         v-if="withActions"
         #actions
       >
-        <UnnnicPopover>
-          <UnnnicPopoverTrigger>
+        <UnnnicPopover
+          :open="openPopover"
+          @update:open="openPopover = $event"
+        >
+          <UnnnicPopoverTrigger class="clickable">
             <UnnnicToolTip
               v-if="!isMobile"
               enabled
@@ -30,6 +33,7 @@
                 size="sm"
                 scheme="neutral-darkest"
                 data-testid="dropdown-trigger-icon"
+                @click="togglePopover"
               />
             </UnnnicToolTip>
             <UnnnicIconSvg
@@ -37,15 +41,16 @@
               icon="more_vert"
               size="sm"
               scheme="neutral-darkest"
+              @click="togglePopover"
             />
           </UnnnicPopoverTrigger>
           <UnnnicPopoverContent>
             <div class="dropdown-item-content">
               <div
                 data-testid="dropdown-edit"
-                @click="$emit('edit', quickMessage)"
+                @click="emitEdit"
               >
-                <div class="dropdown-item">
+                <div class="dropdown-item clickable">
                   <UnnnicIconSvg
                     class="icon"
                     icon="edit_square"
@@ -56,9 +61,9 @@
               </div>
               <div
                 data-testid="dropdown-delete"
-                @click="$emit('delete', quickMessage)"
+                @click="emitDelete"
               >
-                <div class="dropdown-item delete">
+                <div class="dropdown-item delete clickable">
                   <UnnnicIconSvg
                     class="icon"
                     icon="delete"
@@ -104,12 +109,30 @@ export default {
   data() {
     return {
       isMobile: isMobile(),
+      openPopover: false,
     };
+  },
+  methods: {
+    togglePopover() {
+      this.openPopover = !this.openPopover;
+    },
+    emitEdit() {
+      this.openPopover = false;
+      this.$emit('edit', this.quickMessage);
+    },
+    emitDelete() {
+      this.openPopover = false;
+      this.$emit('delete', this.quickMessage);
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.clickable {
+  cursor: pointer;
+}
+
 .quick-message-card__container {
   &:not(:last-of-type) {
     margin-bottom: $unnnic-spacing-xs;
