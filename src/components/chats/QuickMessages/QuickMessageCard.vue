@@ -7,9 +7,8 @@
     @keypress.enter="$emit('select', quickMessage)"
   >
     <UnnnicChatText
-      :title="quickMessage.title"
-      titleColor="aux-purple-500"
-      :info="quickMessageCardInfo"
+      :title="`/${quickMessage.shortcut}`"
+      titleColor="aux-blue-500"
       size="small"
       class="quick-message-card"
       data-testid="quick-message-card"
@@ -18,8 +17,8 @@
         v-if="withActions"
         #actions
       >
-        <UnnnicDropdown>
-          <template #trigger>
+        <UnnnicPopover>
+          <UnnnicPopoverTrigger>
             <UnnnicToolTip
               v-if="!isMobile"
               enabled
@@ -39,38 +38,40 @@
               size="sm"
               scheme="neutral-darkest"
             />
-          </template>
-
-          <UnnnicDropdownItem
-            data-testid="dropdown-edit"
-            @click="$emit('edit', quickMessage)"
-          >
+          </UnnnicPopoverTrigger>
+          <UnnnicPopoverContent>
             <div class="dropdown-item-content">
-              <UnnnicIconSvg
-                class="icon"
-                icon="edit_square"
-                size="sm"
-              />
-              <span> {{ $t('edit') }} </span>
+              <div
+                data-testid="dropdown-edit"
+                @click="$emit('edit', quickMessage)"
+              >
+                <div class="dropdown-item">
+                  <UnnnicIconSvg
+                    class="icon"
+                    icon="edit_square"
+                    size="avatar-nano"
+                  />
+                  <span> {{ $t('edit') }} </span>
+                </div>
+              </div>
+              <div
+                data-testid="dropdown-delete"
+                @click="$emit('delete', quickMessage)"
+              >
+                <div class="dropdown-item delete">
+                  <UnnnicIconSvg
+                    class="icon"
+                    icon="delete"
+                    scheme="fg-critical"
+                    size="avatar-nano"
+                  />
+                  <span> {{ $t('exclude') }} </span>
+                </div>
+              </div>
             </div>
-          </UnnnicDropdownItem>
-
-          <UnnnicDropdownItem
-            data-testid="dropdown-delete"
-            @click="$emit('delete', quickMessage)"
-          >
-            <div class="dropdown-item-content">
-              <UnnnicIconSvg
-                class="icon"
-                icon="delete"
-                size="sm"
-              />
-              <span> {{ $t('exclude') }} </span>
-            </div>
-          </UnnnicDropdownItem>
-        </UnnnicDropdown>
+          </UnnnicPopoverContent>
+        </UnnnicPopover>
       </template>
-
       <template #description>
         {{ quickMessage.text }}
       </template>
@@ -105,19 +106,6 @@ export default {
       isMobile: isMobile(),
     };
   },
-
-  computed: {
-    quickMessageCardInfo() {
-      const { isMobile, quickMessage } = this;
-      if (isMobile) {
-        return '';
-      }
-
-      return this.$t('quick_messages.shortcut_tooltip', {
-        shortcut: quickMessage.shortcut || quickMessage.title.toLowerCase(),
-      });
-    },
-  },
 };
 </script>
 
@@ -127,17 +115,41 @@ export default {
     margin-bottom: $unnnic-spacing-xs;
   }
 }
-.quick-message-card {
-  :deep(.unnnic-chat-text) {
-    line-break: anywhere;
+
+:deep(div.unnnic-chat-text.small) {
+  padding: $unnnic-space-2;
+  line-break: anywhere;
+
+  .header {
+    margin-bottom: $unnnic-space-1;
+    .title {
+      font: $unnnic-font-caption-2;
+    }
   }
 
-  .dropdown-item-content {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  .description {
+    font: $unnnic-font-caption-2;
+  }
+}
 
-    white-space: nowrap;
+.dropdown-item-content {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: $unnnic-space-2;
+
+  white-space: nowrap;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: $unnnic-space-2;
+  font: $unnnic-font-emphasis;
+  color: $unnnic-color-fg-emphasized;
+
+  &.delete {
+    color: $unnnic-color-fg-critical;
   }
 }
 </style>
