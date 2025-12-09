@@ -363,7 +363,10 @@ export async function resendMedia({
  * @param {object} payload.message - The message to be added.
  * @param {boolean} payload.addBefore - Specifies whether the message should be added before or after existing ones.
  */
-export function groupMessages(messagesReference, { message, addBefore }) {
+export function groupMessages(
+  messagesReference,
+  { message, addBefore, reorderMessageMinute },
+) {
   const messageTimestamp = moment(message.created_on);
   const messageDate = messageTimestamp.format('L');
   const messageMinute = messageTimestamp.format('LT');
@@ -396,6 +399,12 @@ export function groupMessages(messagesReference, { message, addBefore }) {
     currentMinuteEntry.messages.unshift(message);
   } else {
     currentMinuteEntry.messages.push(message);
+  }
+
+  if (reorderMessageMinute) {
+    currentMinuteEntry.messages.sort((a, b) => {
+      return moment(a.created_on).diff(moment(b.created_on));
+    });
   }
 
   currentMinuteEntry.messages = removeDuplicatedItems(

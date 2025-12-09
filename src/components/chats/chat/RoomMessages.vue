@@ -14,6 +14,7 @@
     @close="openChatSummary = false"
   />
   <ChatMessages
+    ref="activeChatMessages"
     :chatUuid="room?.uuid || ''"
     :messages="roomMessages"
     :messagesNext="roomMessagesNext || ''"
@@ -23,7 +24,7 @@
     :messagesFailedUuids="roomMessagesFailedUuids"
     :resendMessages="roomResendMessages"
     :resendMedia="roomResendMedia"
-    :isLoading="isLoadingMessages"
+    :isLoading="isLoadingMessages || isLoadingInternalNotes"
     :isClosedChat="!!room?.ended_at"
     :enableReply="false"
     @scroll-top="searchForMoreMessages"
@@ -63,6 +64,7 @@ export default {
     return {
       page: 0,
       limit: 20,
+      isLoadingInternalNotes: false,
       isLoadingMessages: true,
       silentLoadingMessages: false,
       isLoadingSummary: false,
@@ -108,8 +110,7 @@ export default {
           this.isLoadingMessages = true;
           try {
             await this.handlingGetRoomMessages();
-            // TODO: temporarily disabled, the logic will be improved
-            // await this.getRoomInternalNotes();
+            await this.getRoomInternalNotes();
           } catch (error) {
             console.error(error);
           } finally {
@@ -180,18 +181,38 @@ export default {
     },
 
     async getRoomInternalNotes() {
-      const { results } = await RoomNotes.getInternalNotes({
-        room: this.room.uuid,
-        limit: 1,
-      });
-      const hasInternalNotes = results.length > 0;
-      if (hasInternalNotes && !this.room.ended_at && this.room.user) {
-        const chipNote = {
-          uuid: new Date().toString(),
-          created_on: new Date().toISOString(),
-          text: SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT,
-        };
-        this.addSortedMessage({ message: chipNote });
+      try {
+        const lastSystemMessage = this.roomMessages.findLast(
+          (message) => !message.user && !message.contact,
+        );
+
+        if (!lastSystemMessage) return;
+
+        this.isLoadingInternalNotes = true;
+
+        const { results } = await RoomNotes.getInternalNotes({
+          room: this.room.uuid,
+          limit: 1,
+        });
+
+        const hasInternalNotes = results.length > 0;
+
+        if (hasInternalNotes && !this.room.ended_at && this.room.user) {
+          const chipNote = {
+            uuid: new Date().toString(),
+            created_on: lastSystemMessage.created_on,
+            text: SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT,
+          };
+          this.addSortedMessage({
+            message: chipNote,
+            reorderMessageMinute: true,
+          });
+          this.$refs['activeChatMessages'].scrollToInternalNote(chipNote);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.isLoadingInternalNotes = false;
       }
     },
 
