@@ -48,29 +48,13 @@
         @close="quickMessageToEdit = null"
         @update:quick-message="quickMessageToEdit = $event"
       />
-      <UnnnicModal
-        class="quick-messages__modal-delete"
-        :text="$t('quick_messages.delete')"
-        :description="$t('action_cannot_be_reversed')"
-        scheme="feedback-red"
-        modalIcon="error"
-        :closeIcon="isMobile"
-        :showModal="!!quickMessageToDelete"
+      <ModalDeleteQuickMessage
+        v-if="quickMessageToDelete"
+        :quickMessage="quickMessageToDelete"
+        :isLoading="isLoadingDeleteQuickMessage"
+        @confirm="deleteQuickMessage()"
         @close="quickMessageToDelete = null"
-      >
-        <template #options>
-          <UnnnicButton
-            :text="$t('cancel')"
-            type="tertiary"
-            @click="quickMessageToDelete = null"
-          />
-          <UnnnicButton
-            :text="$t('delete')"
-            type="warning"
-            @click="deleteQuickMessage"
-          />
-        </template>
-      </UnnnicModal>
+      />
     </template>
   </AsideSlotTemplate>
 </template>
@@ -86,6 +70,7 @@ import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 import QuickMessagesList from './QuickMessagesList.vue';
 import ModalQuickMessages from './ModalEditQuickMessages.vue';
+import ModalDeleteQuickMessage from './ModalDeleteQuickMessage.vue';
 
 import { useQuickMessages } from '@/store/modules/chats/quickMessages';
 
@@ -97,6 +82,7 @@ export default {
     AsideSlotTemplateSection,
     QuickMessagesList,
     ModalQuickMessages,
+    ModalDeleteQuickMessage,
   },
   emits: ['close', 'select-quick-message'],
 
@@ -107,6 +93,7 @@ export default {
       quickMessageToDelete: null,
       quickMessageToEdit: null,
       isLoadingUpdateQuickMessage: false,
+      isLoadingDeleteQuickMessage: false,
     };
   },
   computed: {
@@ -189,10 +176,17 @@ export default {
       this.quickMessageToEdit = this.emptyQuickMessage;
     },
     async deleteQuickMessage() {
-      const { uuid } = this.quickMessageToDelete;
+      try {
+        this.isLoadingDeleteQuickMessage = true;
+        const { uuid } = this.quickMessageToDelete;
 
-      this.actionDeleteQuickMessage(uuid);
-      this.quickMessageToDelete = null;
+        this.actionDeleteQuickMessage(uuid);
+        this.quickMessageToDelete = null;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.isLoadingDeleteQuickMessage = false;
+      }
     },
     selectQuickMessage(quickMessage) {
       if (this.isMobile) {
