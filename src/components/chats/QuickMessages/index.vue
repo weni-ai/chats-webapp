@@ -5,6 +5,7 @@
     icon="bolt"
     :close="() => $emit('close')"
   >
+    <HeaderQuickMessages @close="$emit('close')" />
     <UnnnicDisclaimer
       class="quick-messages-disclaimer"
       type="informational"
@@ -17,7 +18,7 @@
         withHandlers
         showExpand
         :title="$t('quick_messages.personal')"
-        :quickMessages="[]"
+        :quickMessages="quickMessages"
         :withoutMessagesText="$t('quick_messages.without_personal_messages')"
         @select-quick-message="selectQuickMessage"
         @edit-quick-message="quickMessageToEdit = $event"
@@ -26,7 +27,7 @@
       />
       <QuickMessagesList
         :title="$t('quick_messages.shared')"
-        :quickMessages="[]"
+        :quickMessages="quickMessagesShared"
         :withoutMessagesText="$t('quick_messages.without_messages_shared')"
         @select-quick-message="selectQuickMessage"
       />
@@ -66,6 +67,7 @@ import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTempla
 
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
+import HeaderQuickMessages from './HeaderQuickMessages.vue';
 import QuickMessagesList from './QuickMessagesList.vue';
 import ModalQuickMessages from './ModalEditQuickMessages.vue';
 import ModalDeleteQuickMessage from './ModalDeleteQuickMessage.vue';
@@ -82,6 +84,7 @@ export default {
     QuickMessagesList,
     ModalQuickMessages,
     ModalDeleteQuickMessage,
+    HeaderQuickMessages,
   },
   emits: ['close', 'select-quick-message'],
 
