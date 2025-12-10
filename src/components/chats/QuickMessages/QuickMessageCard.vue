@@ -1,43 +1,28 @@
 <template>
-  <section
-    class="quick-message-card__container"
-    :class="{ clickable }"
-    data-testid="quick-message-card-container"
-    @click="$emit('select', quickMessage)"
-    @keypress.enter="$emit('select', quickMessage)"
+  <UnnnicToolTip
+    :text="quickMessage.text"
+    :enabled="showTooltip"
+    :side="tooltipSide"
+    maxWidth="400px"
   >
-    <UnnnicChatText
-      :title="`/${quickMessage.shortcut}`"
-      titleColor="aux-blue-500"
-      size="small"
-      class="quick-message-card"
-      data-testid="quick-message-card"
+    <section
+      class="quick-message-card__container"
+      :class="{ clickable }"
+      data-testid="quick-message-card-container"
+      @click="$emit('select', quickMessage)"
+      @keypress.enter="$emit('select', quickMessage)"
     >
-      <template
-        v-if="withActions"
-        #actions
-      >
+      <section class="quick-message-card__header">
+        <p class="quick-message-card__header-title">
+          {{ `/${quickMessage.shortcut}` }}
+        </p>
         <UnnnicPopover
+          v-if="withActions"
           :open="openPopover"
           @update:open="openPopover = $event"
         >
           <UnnnicPopoverTrigger class="clickable">
-            <UnnnicToolTip
-              v-if="!isMobile"
-              enabled
-              :text="$t('quick_messages.delete_or_edit')"
-              side="left"
-            >
-              <UnnnicIconSvg
-                icon="more_vert"
-                size="sm"
-                scheme="neutral-darkest"
-                data-testid="dropdown-trigger-icon"
-                @click="togglePopover"
-              />
-            </UnnnicToolTip>
             <UnnnicIconSvg
-              v-else
               icon="more_vert"
               size="sm"
               scheme="neutral-darkest"
@@ -76,12 +61,14 @@
             </div>
           </UnnnicPopoverContent>
         </UnnnicPopover>
-      </template>
-      <template #description>
-        {{ quickMessage.text }}
-      </template>
-    </UnnnicChatText>
-  </section>
+      </section>
+      <section class="quick-message-card__content">
+        <p class="quick-message-card__content-text">
+          {{ quickMessage.text }}
+        </p>
+      </section>
+    </section>
+  </UnnnicToolTip>
 </template>
 
 <script>
@@ -102,6 +89,14 @@ export default {
     withActions: {
       type: Boolean,
       default: true,
+    },
+    showTooltip: {
+      type: Boolean,
+      default: false,
+    },
+    tooltipSide: {
+      type: String,
+      default: 'left',
     },
   },
   emits: ['select', 'edit', 'delete'],
@@ -133,25 +128,40 @@ export default {
   cursor: pointer;
 }
 
-.quick-message-card__container {
-  &:not(:last-of-type) {
-    margin-bottom: $unnnic-spacing-xs;
-  }
+:deep(.unnnic-tooltip) {
+  display: flex;
+  width: 100%;
 }
 
-:deep(div.unnnic-chat-text.small) {
-  padding: $unnnic-space-2;
-  line-break: anywhere;
-
-  .header {
-    margin-bottom: $unnnic-space-1;
-    .title {
-      font: $unnnic-font-caption-2;
-    }
+.quick-message-card {
+  &__container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: $unnnic-space-2;
+    border-radius: $unnnic-radius-2;
+    border: 1px solid $unnnic-color-border-soft;
+    gap: $unnnic-space-1;
   }
 
-  .description {
-    font: $unnnic-font-caption-2;
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    &-title {
+      font: $unnnic-font-caption-2;
+      color: $unnnic-color-fg-info;
+    }
+  }
+  &__content {
+    &-text {
+      font: $unnnic-font-caption-2;
+      color: $unnnic-color-fg-base;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 }
 

@@ -1,36 +1,32 @@
 <template>
   <AsideSlotTemplate
+    class="quick-messages-container"
     :title="$t('quick_message')"
     icon="bolt"
     :close="() => $emit('close')"
   >
+    <UnnnicDisclaimer
+      class="quick-messages-disclaimer"
+      type="informational"
+      :text="'Type the shortcut / (slash) in the chat message field to activate the display of quick messages.'"
+    />
+
     <AsideSlotTemplateSection class="messages-section__container">
       <QuickMessagesList
+        showNewButton
+        withHandlers
+        showExpand
+        :title="$t('quick_messages.personal')"
+        :quickMessages="quickMessages"
         @select-quick-message="selectQuickMessage"
         @edit-quick-message="quickMessageToEdit = $event"
         @delete-quick-message="quickMessageToDelete = $event"
+        @open-new-quick-message="openQuickMessageCreation"
       />
-
-      <UnnnicButton
-        v-if="isMobile"
-        class="quick-messages__mobile-new"
-        float
-        type="primary"
-        iconCenter="add"
-        size="extra-large"
-        data-testid="quick-message-new-button-mobile"
-        @click="openQuickMessageCreation"
-      />
-
-      <UnnnicButton
-        v-else
-        iconLeft="add"
-        :text="$t('quick_messages.new')"
-        type="secondary"
-        size="small"
-        class="fill-w"
-        data-testid="quick-message-new-button"
-        @click="openQuickMessageCreation"
+      <QuickMessagesList
+        :title="$t('quick_messages.shared')"
+        :quickMessages="quickMessagesShared"
+        @select-quick-message="selectQuickMessage"
       />
     </AsideSlotTemplateSection>
 
@@ -61,7 +57,7 @@
 
 <script>
 import isMobile from 'is-mobile';
-import { mapActions } from 'pinia';
+import { mapActions, mapState } from 'pinia';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
@@ -73,6 +69,7 @@ import ModalQuickMessages from './ModalEditQuickMessages.vue';
 import ModalDeleteQuickMessage from './ModalDeleteQuickMessage.vue';
 
 import { useQuickMessages } from '@/store/modules/chats/quickMessages';
+import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 
 export default {
   name: 'QuickMessages',
@@ -97,6 +94,9 @@ export default {
     };
   },
   computed: {
+    ...mapState(useQuickMessages, ['quickMessages']),
+    ...mapState(useQuickMessageShared, ['quickMessagesShared']),
+
     isEditing() {
       const { quickMessageToEdit } = this;
       return quickMessageToEdit && quickMessageToEdit.uuid;
@@ -200,15 +200,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.quick-messages-disclaimer {
+  margin: $unnnic-space-2;
+}
 .messages-section__container {
   height: 100%;
   width: 100%;
 
   display: flex;
   flex-direction: column;
-  gap: $unnnic-spacing-stack-sm;
 
-  overflow: hidden;
+  overflow: auto;
 }
 
 .quick-messages__modal-delete {

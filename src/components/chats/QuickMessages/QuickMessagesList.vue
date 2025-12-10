@@ -1,59 +1,50 @@
 <template>
   <section class="quick-messages-list">
-    <p
-      v-if="withoutQuickMessages"
-      class="quick-messages-list__without"
-      data-testid="quick-messages-list-without"
-    >
-      {{ $t('quick_messages.without_messages') }}
-    </p>
-
-    <UnnnicCollapse
-      v-else
-      v-model="openQuickMessages"
-      class="quick-messages-list__personals"
-      data-testid="quick-messages-lits-personals"
-      :title="$t('quick_messages.personal')"
-    >
-      <QuickMessageCard
-        v-for="quickMessage in quickMessages"
-        :key="quickMessage.uuid"
-        :quickMessage="quickMessage"
-        :withActions="withHandlers"
-        clickable
-        data-testid="quick-message-personal-card"
-        @select="emitSelectQuickMessage"
-        @edit="emitEditQuickMessage"
-        @delete="emitDeleteQuickMessage"
+    <header class="quick-messages-list__header">
+      <p class="quick-messages-list__header-title">{{ title }}</p>
+      <UnnnicButton
+        v-if="showNewButton"
+        iconLeft="add"
+        type="secondary"
+        size="small"
+        :text="$t('message')"
+        @click="$emit('open-new-quick-message')"
       />
-    </UnnnicCollapse>
-    <UnnnicCollapse
-      v-if="quickMessagesShared.length > 0"
-      v-model="openQuickMessagesShared"
-      class="quick-messages-list__shareds"
-      data-testid="quick-messages-lits-shared"
-      :title="$t('quick_messages.shared')"
+    </header>
+    <Transition name="expand-with-fade">
+      <section
+        v-show="!withoutQuickMessages && openQuickMessages"
+        class="quick-messages-list__cards"
+      >
+        <QuickMessageCard
+          v-for="(quickMessage, index) in quickMessages"
+          :key="quickMessage.uuid"
+          :quickMessage="quickMessage"
+          :withActions="withHandlers"
+          :showTooltip="quickMessage.text.length > 70"
+          :tooltipSide="index > 2 ? 'top' : 'left'"
+          clickable
+          @select="emitSelectQuickMessage"
+          @edit="emitEditQuickMessage"
+          @delete="emitDeleteQuickMessage"
+        />
+      </section>
+    </Transition>
+    <section
+      v-if="showExpand"
+      class="quick-messages-list__slide"
     >
-      <QuickMessageCard
-        v-for="quickMessage in quickMessagesShared"
-        :key="quickMessage.uuid"
-        :quickMessage="quickMessage"
-        :withActions="false"
+      <UnnnicIcon
+        :icon="openQuickMessages ? 'expand_less' : 'expand_more'"
         clickable
-        data-testid="quick-message-shared-card"
-        @select="emitSelectQuickMessage"
+        @click="openQuickMessages = !openQuickMessages"
       />
-    </UnnnicCollapse>
+    </section>
   </section>
 </template>
 
 <script>
-import { mapState } from 'pinia';
-
 import QuickMessageCard from './QuickMessageCard.vue';
-
-import { useQuickMessages } from '@/store/modules/chats/quickMessages';
-import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 
 export default {
   name: 'QuickMessagesList',
@@ -65,10 +56,26 @@ export default {
   props: {
     withHandlers: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     isEmpty: {
       type: Boolean,
+    },
+    title: {
+      type: String,
+      default: '',
+    },
+    showNewButton: {
+      type: Boolean,
+      default: false,
+    },
+    quickMessages: {
+      type: Array,
+      default: () => [],
+    },
+    showExpand: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: [
@@ -76,23 +83,18 @@ export default {
     'select-quick-message',
     'edit-quick-message',
     'delete-quick-message',
+    'open-new-quick-message',
   ],
 
   data() {
     return {
       openQuickMessages: true,
-      openQuickMessagesShared: true,
     };
   },
 
   computed: {
-    ...mapState(useQuickMessages, ['quickMessages']),
-    ...mapState(useQuickMessageShared, ['quickMessagesShared']),
-
     withoutQuickMessages() {
-      return (
-        this.quickMessages.length === 0 && this.quickMessagesShared.length === 0
-      );
+      return this.quickMessages.length === 0;
     },
   },
   watch: {
@@ -119,17 +121,33 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/animations';
+
 .quick-messages-list {
-  height: 100%;
-  width: 100%;
-  overflow: hidden auto;
+  padding: $unnnic-space-2;
+  border-top: 1px solid $unnnic-color-border-soft;
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: $unnnic-space-2 0;
 
-  margin-right: -$unnnic-spacing-xs;
-  padding-right: $unnnic-spacing-xs;
-
-  &__without {
-    font-size: $unnnic-font-size-body-md;
-    color: $unnnic-color-neutral-cloudy;
+    &-title {
+      font: $unnnic-font-display-4;
+      color: $unnnic-color-fg-emphasized;
+    }
+  }
+  &__cards {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-2;
+    padding: $unnnic-space-2 0;
+  }
+  &__slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 </style>
