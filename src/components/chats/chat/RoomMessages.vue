@@ -118,8 +118,9 @@ export default {
           }
 
           if (this.enableRoomSummary) {
-            this.openActiveRoomSummary =
-              this.isClosedRoom || this.room.is_24h_valid;
+            const isCanSendMessage =
+              this.room?.is_24h_valid && !this.isLoadingCanSendMessageStatus;
+            this.openActiveRoomSummary = this.isClosedRoom || isCanSendMessage;
             this.skipSummaryAnimation = false;
             this.handlingGetRoomSummary();
           }
