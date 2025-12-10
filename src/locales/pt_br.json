@@ -674,12 +674,8 @@
   "quick_messages": {
     "title": "Mensagens rápidas",
     "title_by_sector": "Mensagens rápidas em {sector}",
-    "without_messages": "Por enquanto você não possui mensagens rápidas, adicione uma :)",
-    "without_messages_shared": {
-      "start": "Por enquanto não há mensagens rápidas neste setor,",
-      "middle": "adicione uma mensagem",
-      "end": "para os agentes deste setor utilizarem."
-    },
+    "without_personal_messages": "Você ainda não adicionou nenhuma mensagem rápida. Clique no botão <i>+ Mensagem</i> e adicione sua primeira mensagem.",
+    "without_messages_shared": "Não há mensagens rápidas compartilhadas para você usar.",
     "example_message": "Mensagem de exemplo",
     "example_message_description": "As mensagens rápidas são textos prontos que facilitam a padronização de atendimento, todos os agentes deste setor poderão utilizar as mensagens, você poderá cadastrar novas mensagens a seguir.",
     "personal": "Suas mensagens rápidas",

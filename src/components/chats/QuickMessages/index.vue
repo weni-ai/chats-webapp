@@ -17,7 +17,8 @@
         withHandlers
         showExpand
         :title="$t('quick_messages.personal')"
-        :quickMessages="quickMessages"
+        :quickMessages="[]"
+        :withoutMessagesText="$t('quick_messages.without_personal_messages')"
         @select-quick-message="selectQuickMessage"
         @edit-quick-message="quickMessageToEdit = $event"
         @delete-quick-message="quickMessageToDelete = $event"
@@ -25,7 +26,8 @@
       />
       <QuickMessagesList
         :title="$t('quick_messages.shared')"
-        :quickMessages="quickMessagesShared"
+        :quickMessages="[]"
+        :withoutMessagesText="$t('quick_messages.without_messages_shared')"
         @select-quick-message="selectQuickMessage"
       />
     </AsideSlotTemplateSection>
@@ -200,9 +202,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+:deep(.aside-slot-template__sections) {
+  flex: unset;
+}
 .quick-messages-disclaimer {
   margin: $unnnic-space-2;
 }
+
 .messages-section__container {
   height: 100%;
   width: 100%;
@@ -211,35 +217,5 @@ export default {
   flex-direction: column;
 
   overflow: auto;
-}
-
-.quick-messages__modal-delete {
-  :deep(.unnnic-modal-container) .unnnic-modal-container-background {
-    &-body-description {
-      text-align: center;
-    }
-    &-button :first-child {
-      margin-right: $unnnic-spacing-xs;
-    }
-  }
-}
-
-.quick-messages-form {
-  display: flex;
-  flex-direction: column;
-  gap: $unnnic-spacing-sm;
-
-  &__title {
-    font-size: $unnnic-font-size-body-lg;
-    font-weight: $unnnic-font-weight-regular;
-    color: $unnnic-color-neutral-dark;
-  }
-
-  &__form {
-    flex: 1 1;
-  }
-}
-.quick-messages__mobile-new {
-  margin: 0 $unnnic-spacing-ant $unnnic-spacing-md 0;
 }
 </style>

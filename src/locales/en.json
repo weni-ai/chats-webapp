@@ -678,12 +678,8 @@
   "quick_messages": {
     "title": "Quick messages",
     "title_by_sector": "Quick messages in {sector}",
-    "without_messages": "For now you do not have quick messages, add one :)",
-    "without_messages_shared": {
-      "start": "For now there are no quick messages in this sector,",
-      "middle": "add a message",
-      "end": "for agents in this sector to use."
-    },
+    "without_personal_messages": "You have not added any quick messages yet. Click the <i>+ Message</i> button and add your first message.",
+    "without_messages_shared": "There are no quick messages shared for you to use.",
     "example_message": "Example message",
     "example_message_description": " Quick messages are ready-made texts that help standardize customer service. All agents in this sector will be able to use these messages, and you can register new messages below.",
     "personal": "Your quick messages",

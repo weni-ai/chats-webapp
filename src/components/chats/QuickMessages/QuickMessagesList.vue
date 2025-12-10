@@ -13,11 +13,17 @@
     </header>
     <Transition name="expand-with-fade">
       <section
-        v-show="!withoutQuickMessages && openQuickMessages"
+        v-show="openQuickMessages"
         class="quick-messages-list__cards"
       >
+        <p
+          v-if="withoutQuickMessages"
+          class="quick-messages-list__without-messages-text"
+          v-html="withoutMessagesText"
+        />
         <QuickMessageCard
           v-for="(quickMessage, index) in quickMessages"
+          v-else
           :key="quickMessage.uuid"
           :quickMessage="quickMessage"
           :withActions="withHandlers"
@@ -31,7 +37,7 @@
       </section>
     </Transition>
     <section
-      v-if="showExpand"
+      v-if="showExpand && !withoutQuickMessages"
       class="quick-messages-list__slide"
     >
       <UnnnicIcon
@@ -71,11 +77,15 @@ export default {
     },
     quickMessages: {
       type: Array,
-      default: () => [],
+      required: true,
     },
     showExpand: {
       type: Boolean,
       default: false,
+    },
+    withoutMessagesText: {
+      type: String,
+      default: '',
     },
   },
   emits: [
@@ -148,6 +158,10 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+  &__without-messages-text {
+    font: $unnnic-font-body;
+    color: $unnnic-color-fg-base;
   }
 }
 </style>
