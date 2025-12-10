@@ -10,7 +10,7 @@
     />
 
     <ChatsDropzone
-      :show="(!!room && room.user && room.is_24h_valid) || !!discussion"
+      :show="isRenderChatsDropzoneVisible"
       @open-file-uploader="openModalFileUploader"
     >
       <RoomMessages
@@ -74,6 +74,7 @@ import MessageManager from '@/components/chats/MessageManager/index.vue';
 import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion.vue';
 
 import Room from '@/services/api/resources/chats/room';
+import { parseUrn } from '@/utils/room';
 
 import HomeChatHeaders from './HomeChatHeaders.vue';
 import HomeChatModals from './HomeChatModals.vue';
@@ -121,13 +122,25 @@ export default {
       discussions: 'discussions',
       getDiscussionById: 'getDiscussionById',
     }),
+    isRenderChatsDropzoneVisible() {
+      const isCanSendMessage =
+        this.room?.is_24h_valid && !this.isLoadingCanSendMessageStatus;
+
+      return (
+        (!!this.room && this.room.user && isCanSendMessage) || !!this.discussion
+      );
+    },
     isMessageManagerRoomVisible() {
       const { room } = this;
+
+      const isCanSendMessage =
+        this.room?.is_24h_valid && !this.isLoadingCanSendMessageStatus;
+
       return (
         room &&
         room.user &&
         room.is_active &&
-        room.is_24h_valid &&
+        isCanSendMessage &&
         !room.is_waiting &&
         !room.wating_answer
       );
@@ -157,6 +170,21 @@ export default {
       immediate: true,
       async handler(newRoom, oldRoom) {
         const { room, pathRoomId, rooms } = this;
+        if (newRoom && parseUrn(newRoom).plataform === 'whatsapp') {
+          this.setIsLoadingCanSendMessageStatus(true);
+          const canSendMessageStatus = Room.getCanSendMessageStatus(
+            newRoom.uuid,
+          )
+            .then((response) => response.can_send_message)
+            .finally(() => {
+              this.setIsLoadingCanSendMessageStatus(false);
+            });
+
+          this.setActiveRoom({
+            ...newRoom,
+            is_24h_valid: canSendMessageStatus,
+          });
+        }
         if (rooms.length > 0) {
           if (await this.shouldRedirect(newRoom)) return;
 
