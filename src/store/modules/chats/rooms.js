@@ -12,6 +12,7 @@ export const useRooms = defineStore('rooms', {
     activeTab: 'ongoing',
     rooms: [],
     activeRoom: null,
+    isCanSendMessageActiveRoom: true,
     activeRoomTags: [],
     maxPinLimit: 0,
     roomsSummary: {},
@@ -72,6 +73,10 @@ export const useRooms = defineStore('rooms', {
 
     setIsLoadingCanSendMessageStatus(isLoading) {
       this.isLoadingCanSendMessageStatus = isLoading;
+    },
+
+    setIsCanSendMessageActiveRoom(isCanSendMessage) {
+      this.isCanSendMessageActiveRoom = isCanSendMessage;
     },
 
     addRoom(room, { after = false } = {}) {
