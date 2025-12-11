@@ -104,7 +104,7 @@ export default {
 
   computed: {
     withoutQuickMessages() {
-      return this.quickMessages.length === 0;
+      return this.quickMessages?.length === 0;
     },
   },
   watch: {

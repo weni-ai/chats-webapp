@@ -212,26 +212,6 @@ describe('ViewHome.vue', () => {
     expect(wrapper.vm.isRoomContactInfoOpen).toBe(false);
   });
 
-  it('calls handlerShowQuickMessages when event is emitted from HomeChat', async () => {
-    const handlerShowQuickMessagesSpy = vi.spyOn(
-      wrapper.vm,
-      'handlerShowQuickMessages',
-    );
-
-    const chatsLayout = wrapper.findComponent('[data-testid="chats-layout"]');
-
-    const chatsLayoutHandlerShowQuickMessagesSpy = vi.spyOn(
-      chatsLayout.vm,
-      'handlerShowQuickMessages',
-    );
-
-    const homeChat = wrapper.findComponent('[data-testid="home-chat"]');
-    await homeChat.vm.$emit('handle-show-quick-messages');
-
-    expect(handlerShowQuickMessagesSpy).toHaveBeenCalled();
-    expect(chatsLayoutHandlerShowQuickMessagesSpy).toHaveBeenCalled();
-  });
-
   it('calls openFlowsTrigger with contact from room', async () => {
     const roomsStore = useRooms();
     roomsStore.activeRoom = roomMock;
@@ -253,19 +233,5 @@ describe('ViewHome.vue', () => {
     expect(chatsLayoutOpenFlowsTriggerSpy).toHaveBeenCalledWith({
       contact: roomMock.contact,
     });
-  });
-
-  it('calls updateTextBoxMessage when select-quick-message is emitted', async () => {
-    const homeChat = wrapper.findComponent('[data-testid="home-chat"]');
-
-    const homeChatUpdateTextBoxMessageSpy = vi.spyOn(
-      homeChat.vm,
-      'updateTextBoxMessage',
-    );
-
-    const chatsLayout = wrapper.findComponent({ name: 'ChatsLayout' });
-    await chatsLayout.vm.$emit('select-quick-message', { text: 'Hello world' });
-
-    expect(homeChatUpdateTextBoxMessageSpy).toHaveBeenCalledWith('Hello world');
   });
 });

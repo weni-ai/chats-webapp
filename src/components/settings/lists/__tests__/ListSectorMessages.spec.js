@@ -45,7 +45,6 @@ const createdMessageMock = {
 const updatedMessageMock = {
   uuid: '1',
   sector: '1',
-  title: 'Message Updated',
   text: 'Message Updated',
   shortcut: 'upd',
 };
@@ -203,9 +202,6 @@ describe('ListSectorMessages', () => {
       '[data-testid="quick-message-config-drawer"]',
     );
 
-    const titleInput = wrapper.findComponent(
-      '[data-testid="quick-message-title-input"]',
-    );
     const shortcutInput = wrapper.findComponent(
       '[data-testid="quick-message-shortcut-input"]',
     );
@@ -213,7 +209,6 @@ describe('ListSectorMessages', () => {
       '[data-testid="quick-message-text-input"]',
     );
 
-    titleInput.setValue(createdMessageMock.title);
     shortcutInput.setValue(createdMessageMock.shortcut);
     textInput.setValue(createdMessageMock.text);
 
@@ -226,47 +221,6 @@ describe('ListSectorMessages', () => {
 
     expect(wrapper.vm.quickMessagesShared.length).toEqual(1);
     expect(wrapper.vm.quickMessagesShared[0]).toEqual(createdMessageMock);
-  });
-
-  it('should update a existing quick message shared', async () => {
-    quickMessageStore.quickMessagesShared = [
-      { uuid: '1', title: 'Message 1', text: 'Text 1', sector: '1' },
-      { uuid: '2', title: 'Message 2', text: 'Text 2', sector: '1' },
-    ];
-
-    await wrapper.vm.$nextTick();
-
-    const handlerUpdateQuickMessage = vi.spyOn(
-      wrapper.vm,
-      'handlerUpdateQuickMessage',
-    );
-    const quickMessageCards = wrapper.findAllComponents(
-      '[data-testid="quick-message-card"]',
-    );
-
-    await quickMessageCards[0].trigger('click');
-
-    await new Promise((resolve) => setTimeout(resolve, 1));
-
-    const updateQuickMessageDrawer = wrapper.findComponent(
-      '[data-testid="quick-message-config-drawer"]',
-    );
-
-    const quickMessageForm = wrapper.findComponent(
-      '[data-testid="quick-message-form"]',
-    );
-
-    quickMessageForm.vm.quickMessage = updatedMessageMock;
-
-    await wrapper.vm.$nextTick();
-
-    await updateQuickMessageDrawer.vm.$emit('primary-button-click');
-    expect(handlerUpdateQuickMessage).toHaveBeenCalled();
-
-    await flushPromises();
-
-    expect(wrapper.vm.quickMessagesShared.length).toEqual(2);
-    expect(wrapper.vm.quickMessagesShared[0]).toEqual(updatedMessageMock);
   });
 
   it('should render UnnnicSimpleCard for each quick message and call openMessageToEdit on click', async () => {

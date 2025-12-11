@@ -13,7 +13,10 @@
       @keypress.enter="$emit('select', quickMessage)"
     >
       <section class="quick-message-card__header">
-        <p class="quick-message-card__header-title">
+        <p
+          class="quick-message-card__header-title"
+          data-testid="quick-message-card-header-title"
+        >
           {{ `/${quickMessage.shortcut}` }}
         </p>
         <UnnnicPopover
@@ -21,7 +24,10 @@
           :open="openPopover"
           @update:open="openPopover = $event"
         >
-          <UnnnicPopoverTrigger class="clickable">
+          <UnnnicPopoverTrigger
+            class="clickable"
+            data-testid="dropdown-trigger-icon"
+          >
             <UnnnicIconSvg
               icon="more_vert"
               size="sm"
@@ -63,7 +69,10 @@
         </UnnnicPopover>
       </section>
       <section class="quick-message-card__content">
-        <p class="quick-message-card__content-text">
+        <p
+          class="quick-message-card__content-text"
+          data-testid="quick-message-card-content-text"
+        >
           {{ quickMessage.text }}
         </p>
       </section>
