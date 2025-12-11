@@ -110,42 +110,6 @@
         </UnnnicToolTip>
       </h2>
 
-      <section class="tags-form">
-        <UnnnicInputNext
-          v-model="tagName"
-          class="tags-form__input"
-          :label="$t('tags.add.label')"
-          :placeholder="$t('tags.add.placeholder')"
-          data-testid="tags-input-tag-name"
-          :maxlength="120"
-          @keypress.enter.stop="!!tagName.trim() && addTag(tagName)"
-        />
-        <UnnnicButton
-          type="secondary"
-          :text="$t('add')"
-          :disabled="!tagName.trim()"
-          data-testid="tags-add-tag-button"
-          @click="addTag(tagName)"
-        />
-      </section>
-
-      <section
-        v-if="tags.length > 0"
-        class="form-tags__section"
-        data-testid="tags-group-section"
-      >
-        <TagGroup
-          v-model="tags"
-          class="form-tags__tag-group"
-          :tags="tags"
-          data-testid="sector-tag-group"
-          disabledTag
-          hasCloseIcon
-          selectable
-          @close="removeTag($event)"
-        />
-      </section>
-
       <section class="switchs__container required-tags">
         <UnnnicSwitch
           v-model="sector.required_tags"
@@ -172,6 +136,42 @@
             size="sm"
           />
         </UnnnicToolTip>
+      </section>
+
+      <section class="tags-form">
+        <UnnnicInputNext
+          v-model="tagName"
+          class="tags-form__input"
+          :label="$t('tags.add.label')"
+          :placeholder="$t('tags.add.placeholder')"
+          data-testid="tags-input-tag-name"
+          :maxlength="120"
+          @keypress.enter.stop="!!tagName.trim() && addTag(tagName)"
+        />
+        <UnnnicButton
+          type="secondary"
+          :text="$t('add')"
+          :disabled="disabledAddTag"
+          data-testid="tags-add-tag-button"
+          @click="addTag(tagName)"
+        />
+      </section>
+
+      <section
+        v-if="tags.length > 0"
+        class="form-tags__section"
+        data-testid="tags-group-section"
+      >
+        <TagGroup
+          v-model="tags"
+          class="form-tags__tag-group"
+          :tags="filteredTags"
+          data-testid="sector-tag-group"
+          disabledTag
+          hasCloseIcon
+          selectable
+          @close="removeTag($event)"
+        />
       </section>
     </section>
     <section
@@ -260,6 +260,15 @@ export default {
     },
     tagsMarginBottom() {
       return this.isEditing ? '78px' : '0';
+    },
+    filteredTags() {
+      return this.tags.filter((tag) => tag.name.includes(this.tagName.trim()));
+    },
+    disabledAddTag() {
+      return (
+        !this.tagName.trim() ||
+        this.tags.some((tag) => tag.name === this.tagName.trim())
+      );
     },
   },
   mounted() {
@@ -418,14 +427,13 @@ export default {
       :deep(.unnnic-tooltip) {
         display: flex;
       }
-
-      &.required-tags {
-        margin-top: $unnnic-space-3;
-      }
     }
   }
 
   & .tags {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-4;
     margin-top: $unnnic-spacing-sm;
     margin-bottom: v-bind(tagsMarginBottom);
     :deep(.unnnic-brand-tag) {
@@ -441,7 +449,6 @@ export default {
       color: $unnnic-color-neutral-dark;
       font-size: $unnnic-font-size-body-lg;
       line-height: $unnnic-line-height-large * 1.5;
-      margin-bottom: $unnnic-spacing-ant;
     }
     &-form {
       display: flex;
@@ -449,7 +456,6 @@ export default {
       gap: $unnnic-spacing-stack-sm;
       &__input {
         flex: 1 1;
-
         :deep(.unnnic-form__label) {
           margin: 0px 0px $unnnic-spacing-xs 0px;
         }
