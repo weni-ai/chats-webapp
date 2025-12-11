@@ -79,6 +79,8 @@ import { parseUrn } from '@/utils/room';
 import HomeChatHeaders from './HomeChatHeaders.vue';
 import HomeChatModals from './HomeChatModals.vue';
 
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+
 export default {
   name: 'HomeChat',
 
@@ -115,32 +117,40 @@ export default {
       room: (store) => store.activeRoom,
       rooms: 'rooms',
       getRoomById: 'getRoomById',
+      isCanSendMessageActiveRoom: 'isCanSendMessageActiveRoom',
+      isLoadingCanSendMessageStatus: 'isLoadingCanSendMessageStatus',
     }),
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, {
       discussion: (store) => store.activeDiscussion,
       discussions: 'discussions',
       getDiscussionById: 'getDiscussionById',
     }),
+    isActiveFeatureIs24hValidOptimization() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsIs24hValidOptimization',
+      );
+    },
+    isCanSendMessage() {
+      return this.isActiveFeatureIs24hValidOptimization
+        ? this.isCanSendMessageActiveRoom && !this.isLoadingCanSendMessageStatus
+        : this.room?.is_24h_valid;
+    },
     isRenderChatsDropzoneVisible() {
-      const isCanSendMessage =
-        this.room?.is_24h_valid && !this.isLoadingCanSendMessageStatus;
-
       return (
-        (!!this.room && this.room.user && isCanSendMessage) || !!this.discussion
+        (!!this.room && this.room.user && this.isCanSendMessage) ||
+        !!this.discussion
       );
     },
     isMessageManagerRoomVisible() {
       const { room } = this;
 
-      const isCanSendMessage =
-        this.room?.is_24h_valid && !this.isLoadingCanSendMessageStatus;
-
       return (
         room &&
         room.user &&
         room.is_active &&
-        isCanSendMessage &&
+        this.isCanSendMessage &&
         !room.is_waiting &&
         !room.wating_answer
       );
@@ -170,21 +180,24 @@ export default {
       immediate: true,
       async handler(newRoom, oldRoom) {
         const { room, pathRoomId, rooms } = this;
-        if (newRoom && parseUrn(newRoom).plataform === 'whatsapp') {
+        if (
+          newRoom &&
+          newRoom.uuid !== oldRoom?.uuid &&
+          parseUrn(newRoom).plataform === 'whatsapp' &&
+          this.isActiveFeatureIs24hValidOptimization
+        ) {
           this.setIsLoadingCanSendMessageStatus(true);
-          const canSendMessageStatus = Room.getCanSendMessageStatus(
-            newRoom.uuid,
-          )
-            .then((response) => response.can_send_message)
-            .finally(() => {
-              this.setIsLoadingCanSendMessageStatus(false);
-            });
-
-          this.setActiveRoom({
-            ...newRoom,
-            is_24h_valid: canSendMessageStatus,
-          });
+          try {
+            const response = await Room.getCanSendMessageStatus(newRoom.uuid);
+            const canSendMessageStatus = response.can_send_message;
+            this.setIsCanSendMessageActiveRoom(canSendMessageStatus);
+          } catch (error) {
+            console.error('Error getting can send message status:', error);
+          } finally {
+            this.setIsLoadingCanSendMessageStatus(false);
+          }
         }
+
         if (rooms.length > 0) {
           if (await this.shouldRedirect(newRoom)) return;
 
@@ -259,6 +272,8 @@ export default {
       'setActiveRoom',
       'getCanUseCopilot',
       'resetNewMessagesByRoom',
+      'setIsLoadingCanSendMessageStatus',
+      'setIsCanSendMessageActiveRoom',
     ]),
     ...mapActions(useDiscussions, [
       'setActiveDiscussion',
