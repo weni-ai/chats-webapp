@@ -164,7 +164,7 @@ export default {
    * @returns {Promise<{can_send_message: boolean}>} - The can send message status
    */
 
-  async getCanSendMessageStatus({ uuid }) {
+  async getCanSendMessageStatus(uuid) {
     const response = await http.get(`/room/${uuid}/can-send-message-status/`);
 
     return response.data;
