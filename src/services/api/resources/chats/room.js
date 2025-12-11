@@ -166,6 +166,7 @@ export default {
 
   async getCanSendMessageStatus({ uuid }) {
     const response = await http.get(`/room/${uuid}/can-send-message-status/`);
+
     return response.data;
   },
 };
