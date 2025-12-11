@@ -696,7 +696,8 @@
     "message_field_placeholder": "Digite o que você deseja",
     "successfully_added": "Mensagem rápida adicionada",
     "successfully_updated": "Mensagem rápida atualizada",
-    "error": "Falha ao definir mensagem rápida"
+    "error": "Falha ao definir mensagem rápida",
+    "no_suggestions": "Nenhum resultado encontrado para o atalho digitado."
   },
   "discard": "Descartar",
   "on_boarding": {

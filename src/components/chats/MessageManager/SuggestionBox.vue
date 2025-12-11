@@ -22,8 +22,15 @@
       ref="refShortcuts"
       class="suggestion-box__shortcuts"
     >
+      <p
+        v-if="filteredSuggestions?.length === 0"
+        class="suggestion-box__no-suggestions"
+      >
+        {{ $t('quick_messages.no_suggestions') }}
+      </p>
       <SuggestionBoxShortcut
         v-for="(suggestion, index) in filteredSuggestions"
+        v-else
         :key="suggestion.uuid"
         :shortcut="suggestion.shortcut"
         :description="suggestion.text"
@@ -225,6 +232,11 @@ export default {
     display: flex;
     flex-direction: column;
     gap: $unnnic-space-2;
+  }
+
+  &__no-suggestions {
+    font: $unnnic-font-body;
+    color: $unnnic-color-fg-base;
   }
 }
 </style>

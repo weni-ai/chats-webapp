@@ -696,7 +696,8 @@
     "message_field_placeholder": "Introduzca lo que quiere",
     "successfully_added": "Mensaje rápido agregado",
     "successfully_updated": "Mensaje rápido actualizado",
-    "error": "Error al configurar el mensaje rápido"
+    "error": "Error al configurar el mensaje rápido",
+    "no_suggestions": "No se encontraron resultados para el atajo ingresado."
   },
   "discard": "Descartar",
   "on_boarding": {

@@ -700,7 +700,8 @@
     "message_field_placeholder": "Type what you want",
     "successfully_added": "Quick message added",
     "successfully_updated": "Quick message updated",
-    "error": "Failed to set quick message"
+    "error": "Failed to set quick message",
+    "no_suggestions": "No results found for the entered shortcut."
   },
   "discard": "Delete",
   "on_boarding": {
