@@ -157,6 +157,9 @@ export default {
     ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
+      isLoadingCanSendMessageStatus: (store) =>
+        store.isLoadingCanSendMessageStatus,
+      isCanSendMessageActiveRoom: (store) => store.isCanSendMessageActiveRoom,
     }),
     ...mapState(useDiscussions, {
       discussion: (store) => store.activeDiscussion,
@@ -182,9 +185,25 @@ export default {
       const { discussion, isLoading } = this;
       return discussion && !isLoading;
     },
+    isActiveFeatureIs24hValidOptimization() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsIs24hValidOptimization',
+      );
+    },
+    isCanSendMessage() {
+      return this.isActiveFeatureIs24hValidOptimization
+        ? this.isCanSendMessageActiveRoom && !this.isLoadingCanSendMessageStatus
+        : this.room?.is_24h_valid;
+    },
     isShowingSendFlowHeader() {
       const { room, discussion, isLoading } = this;
-      return room && !discussion && !room.is_24h_valid && !isLoading;
+      return (
+        room &&
+        !discussion &&
+        !this.isCanSendMessage &&
+        !isLoading &&
+        !this.isLoadingCanSendMessageStatus
+      );
     },
 
     headerRoomTitle() {
