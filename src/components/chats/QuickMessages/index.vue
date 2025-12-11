@@ -1,106 +1,79 @@
 <template>
   <AsideSlotTemplate
-    v-if="!isEditing && !isCreating"
+    class="quick-messages-container"
     :title="$t('quick_message')"
     icon="bolt"
     :close="() => $emit('close')"
   >
+    <HeaderQuickMessages @close="$emit('close')" />
+    <UnnnicDisclaimer
+      class="quick-messages-disclaimer"
+      type="informational"
+      :text="'Type the shortcut / (slash) in the chat message field to activate the display of quick messages.'"
+    />
+
     <AsideSlotTemplateSection class="messages-section__container">
       <QuickMessagesList
+        showNewButton
+        withHandlers
+        showExpand
+        :title="$t('quick_messages.personal')"
+        :quickMessages="quickMessages"
+        :withoutMessagesText="$t('quick_messages.without_personal_messages')"
         @select-quick-message="selectQuickMessage"
         @edit-quick-message="quickMessageToEdit = $event"
         @delete-quick-message="quickMessageToDelete = $event"
+        @open-new-quick-message="openQuickMessageCreation"
       />
-
-      <UnnnicButton
-        v-if="isMobile"
-        class="quick-messages__mobile-new"
-        float
-        type="primary"
-        iconCenter="add"
-        size="extra-large"
-        data-testid="quick-message-new-button-mobile"
-        @click="openQuickMessageCreation"
-      />
-
-      <UnnnicButton
-        v-else
-        iconLeft="add"
-        :text="$t('quick_messages.new')"
-        type="secondary"
-        size="small"
-        class="fill-w"
-        data-testid="quick-message-new-button"
-        @click="openQuickMessageCreation"
+      <QuickMessagesList
+        :title="$t('quick_messages.shared')"
+        :quickMessages="quickMessagesShared"
+        :withoutMessagesText="$t('quick_messages.without_messages_shared')"
+        @select-quick-message="selectQuickMessage"
       />
     </AsideSlotTemplateSection>
 
     <template #modals>
-      <UnnnicModal
-        class="quick-messages__modal-delete"
-        :text="$t('quick_messages.delete')"
-        :description="$t('action_cannot_be_reversed')"
-        scheme="feedback-red"
-        modalIcon="error"
-        :closeIcon="isMobile"
-        :showModal="!!quickMessageToDelete"
+      <ModalQuickMessages
+        v-if="quickMessageToEdit"
+        :quickMessage="quickMessageToEdit"
+        :title="quickMessageFormTitle"
+        :isLoading="isLoadingUpdateQuickMessage"
+        @save="
+          quickMessageToEdit?.uuid
+            ? updateQuickMessage(quickMessageToEdit)
+            : createQuickMessage(quickMessageToEdit)
+        "
+        @close="quickMessageToEdit = null"
+        @update:quick-message="quickMessageToEdit = $event"
+      />
+      <ModalDeleteQuickMessage
+        v-if="quickMessageToDelete"
+        :quickMessage="quickMessageToDelete"
+        :isLoading="isLoadingDeleteQuickMessage"
+        @confirm="deleteQuickMessage()"
         @close="quickMessageToDelete = null"
-      >
-        <template #options>
-          <UnnnicButton
-            :text="$t('cancel')"
-            type="tertiary"
-            @click="quickMessageToDelete = null"
-          />
-          <UnnnicButton
-            :text="$t('delete')"
-            type="warning"
-            @click="deleteQuickMessage"
-          />
-        </template>
-      </UnnnicModal>
+      />
     </template>
-  </AsideSlotTemplate>
-
-  <AsideSlotTemplate
-    v-else
-    :title="$t('quick_message')"
-    icon="bolt"
-    :back="() => (quickMessageToEdit = null)"
-    :close="() => $emit('close')"
-  >
-    <AsideSlotTemplateSection class="fill-h fill-w">
-      <section class="fill-h quick-messages-form">
-        <h1 class="quick-messages-form__title">{{ quickMessageFormTitle }}</h1>
-        <QuickMessageForm
-          v-model="quickMessageToEdit"
-          class="quick-messages-form__form"
-          data-testid="quick-messages-form"
-          @submit="
-            !!quickMessageToEdit.uuid
-              ? updateQuickMessage(quickMessageToEdit)
-              : createQuickMessage(quickMessageToEdit)
-          "
-          @cancel="quickMessageToEdit = null"
-        />
-      </section>
-    </AsideSlotTemplateSection>
   </AsideSlotTemplate>
 </template>
 
 <script>
 import isMobile from 'is-mobile';
-import { mapActions } from 'pinia';
+import { mapActions, mapState } from 'pinia';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
 
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
+import HeaderQuickMessages from './HeaderQuickMessages.vue';
 import QuickMessagesList from './QuickMessagesList.vue';
-import QuickMessageForm from './QuickMessageForm.vue';
+import ModalQuickMessages from './ModalEditQuickMessages.vue';
+import ModalDeleteQuickMessage from './ModalDeleteQuickMessage.vue';
 
 import { useQuickMessages } from '@/store/modules/chats/quickMessages';
+import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 
 export default {
   name: 'QuickMessages',
@@ -109,7 +82,9 @@ export default {
     AsideSlotTemplate,
     AsideSlotTemplateSection,
     QuickMessagesList,
-    QuickMessageForm,
+    ModalQuickMessages,
+    ModalDeleteQuickMessage,
+    HeaderQuickMessages,
   },
   emits: ['close', 'select-quick-message'],
 
@@ -119,9 +94,14 @@ export default {
 
       quickMessageToDelete: null,
       quickMessageToEdit: null,
+      isLoadingUpdateQuickMessage: false,
+      isLoadingDeleteQuickMessage: false,
     };
   },
   computed: {
+    ...mapState(useQuickMessages, ['quickMessages']),
+    ...mapState(useQuickMessageShared, ['quickMessagesShared']),
+
     isEditing() {
       const { quickMessageToEdit } = this;
       return quickMessageToEdit && quickMessageToEdit.uuid;
@@ -144,7 +124,7 @@ export default {
     },
 
     emptyQuickMessage() {
-      return { title: '', text: '', shortcut: null };
+      return { title: '', text: '', shortcut: '' };
     },
   },
 
@@ -156,41 +136,62 @@ export default {
     }),
 
     async createQuickMessage({ title, text, shortcut }) {
-      this.actionCreateQuickMessage({ title, text, shortcut });
+      try {
+        this.isLoadingUpdateQuickMessage = true;
+        this.actionCreateQuickMessage({ title, text, shortcut });
 
-      callUnnnicAlert({
-        props: {
-          text: this.$t('quick_messages.successfully_added'),
-          type: 'success',
-          scheme: 'feedback-green',
-          onClose: this.$t('close'),
-        },
-        seconds: 5,
-      });
+        callUnnnicAlert({
+          props: {
+            text: this.$t('quick_messages.successfully_added'),
+            type: 'success',
+            scheme: 'feedback-green',
+            onClose: this.$t('close'),
+          },
+          seconds: 5,
+        });
 
-      this.quickMessageToEdit = null;
+        this.quickMessageToEdit = null;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.isLoadingUpdateQuickMessage = false;
+      }
     },
     async updateQuickMessage({ uuid, title, text, shortcut }) {
-      this.actionUpdateQuickMessage({ uuid, title, text, shortcut });
+      try {
+        this.isLoadingUpdateQuickMessage = true;
+        this.actionUpdateQuickMessage({ uuid, title, text, shortcut });
 
-      callUnnnicAlert({
-        props: {
-          text: this.$t('quick_messages.successfully_updated'),
-          type: 'success',
-        },
-        seconds: 5,
-      });
+        callUnnnicAlert({
+          props: {
+            text: this.$t('quick_messages.successfully_updated'),
+            type: 'success',
+          },
+          seconds: 5,
+        });
 
-      this.quickMessageToEdit = null;
+        this.quickMessageToEdit = null;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.isLoadingUpdateQuickMessage = false;
+      }
     },
     openQuickMessageCreation() {
       this.quickMessageToEdit = this.emptyQuickMessage;
     },
     async deleteQuickMessage() {
-      const { uuid } = this.quickMessageToDelete;
+      try {
+        this.isLoadingDeleteQuickMessage = true;
+        const { uuid } = this.quickMessageToDelete;
 
-      this.actionDeleteQuickMessage(uuid);
-      this.quickMessageToDelete = null;
+        this.actionDeleteQuickMessage(uuid);
+        this.quickMessageToDelete = null;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.isLoadingDeleteQuickMessage = false;
+      }
     },
     selectQuickMessage(quickMessage) {
       if (this.isMobile) {
@@ -204,12 +205,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.fill-h {
-  height: 100%;
+:deep(.aside-slot-template__sections) {
+  flex: unset;
 }
-
-.fill-w {
-  width: 100%;
+.quick-messages-disclaimer {
+  margin: $unnnic-space-2;
 }
 
 .messages-section__container {
@@ -218,38 +218,7 @@ export default {
 
   display: flex;
   flex-direction: column;
-  gap: $unnnic-spacing-stack-sm;
 
-  overflow: hidden;
-}
-
-.quick-messages__modal-delete {
-  :deep(.unnnic-modal-container) .unnnic-modal-container-background {
-    &-body-description {
-      text-align: center;
-    }
-    &-button :first-child {
-      margin-right: $unnnic-spacing-xs;
-    }
-  }
-}
-
-.quick-messages-form {
-  display: flex;
-  flex-direction: column;
-  gap: $unnnic-spacing-sm;
-
-  &__title {
-    font-size: $unnnic-font-size-body-lg;
-    font-weight: $unnnic-font-weight-regular;
-    color: $unnnic-color-neutral-dark;
-  }
-
-  &__form {
-    flex: 1 1;
-  }
-}
-.quick-messages__mobile-new {
-  margin: 0 $unnnic-spacing-ant $unnnic-spacing-md 0;
+  overflow: auto;
 }
 </style>
