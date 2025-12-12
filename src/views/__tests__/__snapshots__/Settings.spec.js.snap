@@ -20,7 +20,7 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
       <span
         class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--weni-600 unnnic-icon-size--md unnnic-icon__size--md"
         data-testid="material-icon"
-        data-v-10e3a145=""
+        data-v-69390f82=""
         data-v-d0742329=""
         translate="no"
       >
@@ -67,48 +67,41 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
       class="unnnic-form-element unnnic-form md settings-sectors__filters__name"
       data-testid="form-element"
       data-v-1088b44f=""
-      data-v-2d5913d6=""
-      data-v-b7baf9e5=""
+      data-v-4569ccad=""
+      data-v-701fffae=""
     >
       <!---->
       
       <div
         class="text-input size--md settings-sectors__filters__name unnnic-form-input"
-        data-v-5345697c=""
-        data-v-b7baf9e5=""
+        data-v-701fffae=""
+        data-v-964b1ff1=""
         hascloudycolor="false"
         mask=""
       >
         <input
           class="settings-sectors__filters__name unnnic-form-input input-itself input size-md normal input--has-icon-left settings-sectors__filters__name unnnic-form-input input-itself"
-          data-v-5345697c=""
-          data-v-9833f838=""
+          data-v-5c6d9ab7=""
+          data-v-964b1ff1=""
           hascloudycolor="false"
           iconleft="search-1"
           iconleftclickable="false"
           iconright=""
           iconrightclickable="false"
           placeholder="Search"
-          showclear="false"
           type="text"
           value=""
         />
         <span
           class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-base unnnic-icon-size--ant unnnic-icon__size--ant icon-left"
           data-testid="material-icon"
-          data-v-10e3a145=""
-          data-v-5345697c=""
+          data-v-69390f82=""
+          data-v-964b1ff1=""
           translate="no"
         >
           search
         </span>
-        <section
-          class="icon-right-container"
-          data-v-5345697c=""
-        >
-          <!---->
-          <!---->
-        </section>
+        <!---->
       </div>
       
       <!---->
@@ -131,24 +124,24 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
         
         <section
           class="unnnic-radio"
+          data-v-2121c2c4=""
           data-v-348024a5=""
-          data-v-7e12a100=""
           size="md"
         >
           <label
             class="unnnic-radio__input-wrapper"
-            data-v-7e12a100=""
+            data-v-2121c2c4=""
           >
             <input
               checked=""
               class="unnnic-radio__input"
-              data-v-7e12a100=""
+              data-v-2121c2c4=""
               name=""
               type="radio"
             />
             <p
               class="unnnic-radio__label"
-              data-v-7e12a100=""
+              data-v-2121c2c4=""
             >
                
               
@@ -160,23 +153,23 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
         </section>
         <section
           class="unnnic-radio"
+          data-v-2121c2c4=""
           data-v-348024a5=""
-          data-v-7e12a100=""
           size="md"
         >
           <label
             class="unnnic-radio__input-wrapper"
-            data-v-7e12a100=""
+            data-v-2121c2c4=""
           >
             <input
               class="unnnic-radio__input"
-              data-v-7e12a100=""
+              data-v-2121c2c4=""
               name=""
               type="radio"
             />
             <p
               class="unnnic-radio__label"
-              data-v-7e12a100=""
+              data-v-2121c2c4=""
             >
                
               
@@ -188,23 +181,23 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
         </section>
         <section
           class="unnnic-radio"
+          data-v-2121c2c4=""
           data-v-348024a5=""
-          data-v-7e12a100=""
           size="md"
         >
           <label
             class="unnnic-radio__input-wrapper"
-            data-v-7e12a100=""
+            data-v-2121c2c4=""
           >
             <input
               class="unnnic-radio__input"
-              data-v-7e12a100=""
+              data-v-2121c2c4=""
               name=""
               type="radio"
             />
             <p
               class="unnnic-radio__label"
-              data-v-7e12a100=""
+              data-v-2121c2c4=""
             >
                
               
@@ -241,7 +234,7 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
         <span
           class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-clean unnnic-icon-size--xl unnnic-icon__size--xl unnnic-card-blank__content__icon"
           data-testid="material-icon"
-          data-v-10e3a145=""
+          data-v-69390f82=""
           translate="no"
         >
           add
