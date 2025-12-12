@@ -219,15 +219,17 @@ export default {
       this.isContactInfoOpened = false;
     },
     rooms: {
-      once: true,
-      async handler() {
+      immediate: true,
+      handler() {
         const { room_uuid } = this.$route.query || {};
-        if (room_uuid) {
+
+        if (room_uuid && this.rooms?.length > 0) {
           const activeRoom = this.rooms.find((room) => room.uuid === room_uuid);
 
-          if (activeRoom) await this.setActiveRoom(activeRoom);
-
-          this.$router.replace({ query: {} });
+          if (activeRoom) {
+            this.setActiveRoom(activeRoom);
+            this.$router.replace({ query: {} });
+          }
         }
       },
     },
