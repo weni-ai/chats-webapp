@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { mount, config } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
 import FeedbackModal from '../FeedbackModal.vue';
@@ -34,6 +34,9 @@ describe('FeedbackModal', () => {
             },
           }),
         ],
+        components: {
+          UnnnicModalDialog: config.global.stubs.UnnnicModalDialog,
+        },
         mocks: {
           $t: (key) => key,
         },
@@ -66,7 +69,7 @@ describe('FeedbackModal', () => {
         roomUuid: 'test-uuid',
       });
 
-      const modal = wrapper.findComponent({ name: 'UnnnicModalDialog' });
+      const modal = wrapper.findComponent({ name: 'UnnnicModalDialogStub' });
       expect(modal.exists()).toBe(true);
     });
 

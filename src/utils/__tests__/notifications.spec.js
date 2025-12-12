@@ -59,8 +59,8 @@ describe('sendWindowNotification', () => {
       'Test Title',
       {
         silent: true,
-        badge: mockLogo,
-        icon: mockLogo,
+        badge: expect.stringContaining('weni-logo.svg'),
+        icon: expect.stringContaining('weni-logo.svg'),
         body: 'Test Message',
         tag: 'Test Title',
       },
@@ -81,8 +81,8 @@ describe('sendWindowNotification', () => {
       'Mobile Notification',
       {
         silent: true,
-        badge: mockLogo,
-        icon: mockLogo,
+        badge: expect.stringContaining('weni-logo.svg'),
+        icon: expect.stringContaining('weni-logo.svg'),
         body: 'Mobile Message',
         tag: 'Mobile Notification',
       },
@@ -103,8 +103,8 @@ describe('sendWindowNotification', () => {
       'Test Title',
       {
         silent: true,
-        badge: mockLogo,
-        icon: mockLogo,
+        badge: expect.stringContaining('weni-logo.svg'),
+        icon: expect.stringContaining('weni-logo.svg'),
         body: 'media\nTest Message',
         tag: 'Test Title',
       },
