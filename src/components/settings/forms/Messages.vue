@@ -1,26 +1,25 @@
 <template>
   <section class="sector-messages-form">
     <UnnnicInput
-      v-model="quickMessage.title"
-      size="md"
-      :label="$t('title')"
-      :placeholder="$t('quick_messages.title_field_placeholder')"
-      data-testid="quick-message-title-input"
-    />
-    <UnnnicInput
-      v-model="quickMessage.shortcut"
+      :modelValue="displayShortcut"
       size="md"
       :placeholder="$t('quick_messages.shortcut_field_placeholder')"
       :label="$t('shortcut')"
       data-testid="quick-message-shortcut-input"
+      @update:model-value="handleShortcutInput"
+      @focus="shortcutFocused = true"
+      @blur="shortcutFocused = false"
     />
     <UnnnicTextArea
-      v-model="quickMessage.text"
+      :modelValue="modelValue.text"
       :label="$t('message')"
       :placeholder="$t('quick_messages.message_field_placeholder')"
       :maxLength="1000"
       size="md"
       data-testid="quick-message-text-input"
+      @update:model-value="
+        $emit('update:model-value', { ...modelValue, text: $event })
+      "
     />
   </section>
 </template>
@@ -35,14 +34,27 @@ export default {
     },
   },
   emits: ['update:model-value'],
+  data() {
+    return {
+      shortcutFocused: false,
+    };
+  },
   computed: {
-    quickMessage: {
-      get() {
-        return this.modelValue;
-      },
-      set(value) {
-        this.$emit('update:model-value', value);
-      },
+    displayShortcut() {
+      if (!this.modelValue.shortcut && !this.shortcutFocused) return '';
+      if (!this.modelValue.shortcut && this.shortcutFocused) return '/';
+
+      const shortcut = this.modelValue.shortcut || '';
+      return shortcut.startsWith('/') ? shortcut : '/' + shortcut;
+    },
+  },
+  methods: {
+    handleShortcutInput(val) {
+      const cleanValue = val.replace(/^\/+/, '');
+      this.$emit('update:model-value', {
+        ...this.modelValue,
+        shortcut: cleanValue,
+      });
     },
   },
 };

@@ -1,5 +1,5 @@
 <template>
-  <AsideSlotTemplateSection>
+  <AsideSlotTemplateSection class="transfer-session__section">
     <ModalProgressBarFalse
       v-if="showTransferProgressBar"
       :title="$t('contact_info.transfering_chat')"
@@ -139,6 +139,10 @@ export default {
 
 <style lang="scss" scoped>
 .transfer-session {
+  &__section {
+    padding: $unnnic-space-2;
+  }
+
   &__title {
     margin-bottom: $unnnic-spacing-ant;
 

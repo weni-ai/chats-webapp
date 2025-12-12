@@ -1,0 +1,46 @@
+/** 
+* All animations to use in Transition components
+*
+* Ref: https://vuejs.org/guide/built-ins/transition
+**/
+
+// expand-with-fade start
+.expand-with-fade-enter-active {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.expand-with-fade-leave-active {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.expand-with-fade-enter-from {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-$unnnic-space-2);
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.expand-with-fade-enter-to {
+    max-height: 100vh;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.expand-with-fade-leave-from {
+    max-height: 100vh;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.expand-with-fade-leave-to {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-$unnnic-space-2);
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+// expand-with-fade end
