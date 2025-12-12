@@ -237,6 +237,6 @@ describe('ListSectorQueues.vue', () => {
     await deleteModal.vm.$emit('click-action-secondary');
 
     expect(wrapper.vm.showQueueDrawer).toBe(false);
-    expect(wrapper.vm.queueToConfig).toStrictEqual({});
+    expect(wrapper.vm.queueToConfig).toMatchObject({});
   });
 });

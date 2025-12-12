@@ -76,10 +76,10 @@ const createWrapper = (props = {}, storeOverrides = {}) => {
         }),
       ],
       mocks: { $t: (key) => key },
+      components: {
+        UnnnicToolTip: config.global.stubs.UnnnicToolTip,
+      },
       stubs: {
-        UnnnicToolTip: {
-          template: '<div data-testid="audio-tooltip"><slot /></div>',
-        },
         UnnnicAudioRecorder: {
           template: '<div data-testid="audio-recorder"></div>',
         },
@@ -141,7 +141,7 @@ describe('AudiosContent', () => {
       wrapper.vm.contactInfosStore.isLoadingAudios = false;
       await wrapper.vm.$nextTick();
 
-      const tooltips = wrapper.findAll('[data-testid="audio-tooltip"]');
+      const tooltips = wrapper.findAllComponents({ name: 'UnnnicToolTipStub' });
       expect(tooltips).toHaveLength(mockAudios.length);
     });
 

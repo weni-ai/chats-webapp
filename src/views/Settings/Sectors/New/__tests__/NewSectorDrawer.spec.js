@@ -1,4 +1,4 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { flushPromises, mount, config } from '@vue/test-utils';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
 
@@ -88,6 +88,7 @@ describe('NewSectorDrawer', () => {
           General,
           ExtraOptions,
           FormQueue,
+          UnnnicDrawer: config.global.stubs.UnnnicDrawer,
         },
       },
     });
