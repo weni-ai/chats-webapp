@@ -1,4 +1,4 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { flushPromises, mount, config } from '@vue/test-utils';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
 import { setActivePinia } from 'pinia';
@@ -84,6 +84,9 @@ describe('TheCardGroups.vue', () => {
       props: { ...defaultProps, ...props },
       global: {
         plugins: [pinia],
+        components: {
+          UnnnicToolTip: config.global.stubs.UnnnicToolTip,
+        },
         mocks: {
           $t: (key, params) => {
             const translations = {
@@ -122,10 +125,6 @@ describe('TheCardGroups.vue', () => {
               'placeholder',
             ],
             emits: ['update:modelValue', 'icon-right-click'],
-          },
-          UnnnicToolTip: {
-            template: '<div data-testid="unnnic-tooltip"><slot></slot></div>',
-            props: ['enabled', 'text', 'side'],
           },
           UnnnicButton: {
             template:
@@ -209,7 +208,7 @@ describe('TheCardGroups.vue', () => {
       wrapper = createWrapper();
 
       expect(
-        wrapper.find('[data-testid="queue-prioritization-tooltip"]').exists(),
+        wrapper.findComponent({ name: 'UnnnicToolTipStub' }).exists(),
       ).toBe(true);
       expect(
         wrapper.find('[data-testid="queue-prioritization-button"]').exists(),

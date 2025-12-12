@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { flushPromises, mount } from '@vue/test-utils';
+import { flushPromises, mount, config } from '@vue/test-utils';
 
 import ModalStartDiscussion from '../ModalStartDiscussion.vue';
 
@@ -45,6 +45,9 @@ describe('ModalStartDiscussion', () => {
         mocks: {
           $t: (key) => key,
         },
+        components: {
+          UnnnicModalDialog: config.global.stubs.UnnnicModalDialog,
+        },
         stubs: {
           teleport: true,
         },
@@ -54,7 +57,7 @@ describe('ModalStartDiscussion', () => {
   });
 
   it('renders correctly with initial data', () => {
-    const modal = wrapper.findComponent({ name: 'UnnnicModalDialog' });
+    const modal = wrapper.findComponent({ name: 'UnnnicModalDialogStub' });
     expect(modal.exists()).toBe(true);
 
     // Verify component has the necessary form fields

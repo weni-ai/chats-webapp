@@ -1,4 +1,4 @@
-import { mount, flushPromises } from '@vue/test-utils';
+import { mount, flushPromises, config } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
@@ -56,6 +56,9 @@ const createWrapper = (props = {}) => {
     props: { show: true, projectGroup: mockProjectGroup, ...props },
     global: {
       plugins: [pinia],
+      components: {
+        UnnnicDrawer: config.global.stubs.UnnnicDrawer,
+      },
       stubs: {
         General: {
           template: '<div data-testid="general-form"></div>',
@@ -107,10 +110,15 @@ describe('EditGroupDrawer.vue', () => {
     it('should render drawer when show is true, not render when false', async () => {
       wrapper = createWrapper();
       await flushPromises();
-      expect(wrapper.find('[data-testid="drawer"]').exists()).toBe(true);
+      let drawer = wrapper.findComponent({ name: 'UnnnicDrawerStub' });
+      expect(drawer.exists()).toBe(true);
+      expect(drawer.props('modelValue')).toBe(true);
 
       await wrapper.setProps({ show: false });
-      expect(wrapper.find('[data-testid="drawer"]').exists()).toBe(false);
+      await wrapper.vm.$nextTick();
+      await flushPromises();
+      drawer = wrapper.findComponent({ name: 'UnnnicDrawerStub' });
+      expect(drawer.props('modelValue')).toBe(false);
     });
 
     it('should render General form', async () => {
