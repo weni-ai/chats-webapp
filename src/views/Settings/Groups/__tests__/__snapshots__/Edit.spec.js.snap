@@ -46,7 +46,7 @@ exports[`EditGroupDrawer.vue > Snapshot > should match the snapshot 1`] = `
           class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-darkest unnnic-icon-size--avatar-nano unnnic-icon__size--avatar-nano unnnic--clickable unnnic-drawer__close"
           data-testid="close-icon"
           data-v-0871e185=""
-          data-v-10e3a145=""
+          data-v-69390f82=""
           translate="no"
         >
           arrow_back

@@ -66,7 +66,7 @@ exports[`SettingsGroups.vue > Snapshot > should match the snapshot 1`] = `
           <span
             class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-darkest unnnic-icon-size--sm unnnic-icon__size--sm icon"
             data-testid="material-icon"
-            data-v-10e3a145=""
+            data-v-69390f82=""
             data-v-b225401e=""
             translate="no"
           >
@@ -92,7 +92,7 @@ exports[`SettingsGroups.vue > Snapshot > should match the snapshot 1`] = `
           <span
             class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--danger unnnic-icon-size--sm unnnic-icon__size--sm icon"
             data-testid="material-icon"
-            data-v-10e3a145=""
+            data-v-69390f82=""
             data-v-b225401e=""
             translate="no"
           >
@@ -162,7 +162,7 @@ exports[`SettingsGroups.vue > Snapshot > should match the snapshot 1`] = `
           <span
             class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-darkest unnnic-icon-size--sm unnnic-icon__size--sm icon"
             data-testid="material-icon"
-            data-v-10e3a145=""
+            data-v-69390f82=""
             data-v-b225401e=""
             translate="no"
           >
@@ -188,7 +188,7 @@ exports[`SettingsGroups.vue > Snapshot > should match the snapshot 1`] = `
           <span
             class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--danger unnnic-icon-size--sm unnnic-icon__size--sm icon"
             data-testid="material-icon"
-            data-v-10e3a145=""
+            data-v-69390f82=""
             data-v-b225401e=""
             translate="no"
           >
@@ -258,7 +258,7 @@ exports[`SettingsGroups.vue > Snapshot > should match the snapshot 1`] = `
           <span
             class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-darkest unnnic-icon-size--sm unnnic-icon__size--sm icon"
             data-testid="material-icon"
-            data-v-10e3a145=""
+            data-v-69390f82=""
             data-v-b225401e=""
             translate="no"
           >
@@ -284,7 +284,7 @@ exports[`SettingsGroups.vue > Snapshot > should match the snapshot 1`] = `
           <span
             class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--danger unnnic-icon-size--sm unnnic-icon__size--sm icon"
             data-testid="material-icon"
-            data-v-10e3a145=""
+            data-v-69390f82=""
             data-v-b225401e=""
             translate="no"
           >
