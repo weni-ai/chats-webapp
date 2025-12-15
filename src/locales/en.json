@@ -703,7 +703,7 @@
     "copilot": "Now ChatGPT is your CoPilot! Use the answers suggested by Artificial Intelligence to speed up your calls!",
     "title_field_placeholder": "Ex: Welcome",
     "shortcut_field_placeholder": "Ex: Hi",
-    "message_field_placeholder": "Type what you want",
+    "message_field_placeholder": "Example: Hello, how are you? I'll continue to support you today.",
     "successfully_added": "Quick message added",
     "successfully_updated": "Quick message updated",
     "error": "Failed to set quick message",
