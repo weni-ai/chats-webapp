@@ -255,6 +255,9 @@ export default {
       toAddTags: [],
       tags: [],
       isLoading: false,
+      tagsNext: null,
+      tagsPrevious: null,
+      isLoadingTags: false,
     };
   },
   computed: {
@@ -309,8 +312,22 @@ export default {
       if (!value) this.sector.automatic_message.text = '';
     },
     async getTags() {
-      const sectorCurrentTags = await Sector.tags(this.sector.uuid);
-      this.currentTags = this.tags = sectorCurrentTags.results;
+      try {
+        this.isLoadingTags = true;
+        const { next, previous, results } = await Sector.tags(
+          this.sector.uuid,
+          { next: this.tagsNext },
+        );
+        this.tagsNext = next;
+        this.tagsPrevious = previous;
+        const tags = this.currentTags.concat(...results);
+        this.currentTags = this.tags = tags;
+      } catch (error) {
+        console.error('Error getting tags', error);
+      } finally {
+        if (this.tagsNext) this.getTags();
+        else this.isLoadingTags = false;
+      }
     },
     async addTag(tagNameToAdd) {
       const tagsName = this.tags.map((tag) => tag.name);

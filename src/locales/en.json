@@ -488,6 +488,7 @@
   "service": "Service",
   "tags": {
     "title": "Tags",
+    "search": "Search for a tag",
     "description": "Tags are used to classify service characteristics and enable chat search and filtering from them, define tags that are relevant to their context.",
     "add": {
       "title": "Add tags",
