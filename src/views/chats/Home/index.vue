@@ -16,7 +16,7 @@
       data-testid="home-chat"
       @open-room-contact-info="openRoomContactInfo"
       @close-room-contact-info="closeRoomContactInfo"
-      @handle-show-quick-messages="handlerShowQuickMessages()"
+      @handle-show-quick-messages="showQuickMessages = true"
       @open-flows-trigger="openFlowsTrigger()"
     />
 
@@ -151,9 +151,6 @@ export default {
     },
     closeRoomContactInfo() {
       this.isRoomContactInfoOpen = false;
-    },
-    handlerShowQuickMessages() {
-      this.$refs['chats-layout']?.handlerShowQuickMessages();
     },
     openFlowsTrigger() {
       this.$refs['chats-layout']?.openFlowsTrigger({

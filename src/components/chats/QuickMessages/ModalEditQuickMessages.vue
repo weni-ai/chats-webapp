@@ -2,7 +2,8 @@
   <UnnnicModalDialog
     :modelValue="true"
     :title="title"
-    :showCloseIcon="true"
+    showCloseIcon
+    size="lg"
     :primaryButtonProps="{
       text: $t('save'),
       disabled: !validForm,

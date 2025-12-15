@@ -693,7 +693,7 @@
     "copilot": "Agora o ChatGPT é seu CoPiloto! Utilize as respostas sugeridas pela Inteligência artificial para agilizar seus atendimentos!",
     "title_field_placeholder": "Ex: Boas vindas",
     "shortcut_field_placeholder": "Ex: Oi",
-    "message_field_placeholder": "Digite o que você deseja",
+    "message_field_placeholder": "Exemplo: Olá, como posso ajudar você hoje? Continuarei ajudando você hoje.",
     "successfully_added": "Mensagem rápida adicionada",
     "successfully_updated": "Mensagem rápida atualizada",
     "error": "Falha ao definir mensagem rápida",
