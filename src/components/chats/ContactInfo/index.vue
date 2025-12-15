@@ -151,29 +151,34 @@
                 {{ $t('contact_info.about_support') }}
               </h3>
               <section class="contact-info__about-support-header__buttons">
-                <UnnnicDropdown
+                <UnnnicPopover
                   v-if="
                     !isHistory && !isViewMode && allTags.length > 0 && room.user
                   "
                   :open="openDropdownTags"
-                  useOpenProp
+                  @update:open="openDropdownTags = $event"
                 >
-                  <template #trigger>
+                  <UnnnicPopoverTrigger>
                     <UnnnicButton
                       iconLeft="add-1"
                       type="secondary"
                       size="small"
-                      @click="openDropdownTags = !openDropdownTags"
                     >
                       {{ $t('tag') }}
                     </UnnnicButton>
-                  </template>
-                  <OnClickOutside @trigger="openDropdownTags = false">
+                  </UnnnicPopoverTrigger>
+                  <UnnnicPopoverContent align="end">
+                    <UnnnicInput
+                      v-model="tagsFilter"
+                      iconLeft="search"
+                      :placeholder="$t('tags.search')"
+                      class="contact-info__about-support-header__buttons__dropdown__input"
+                    />
                     <section
                       class="contact-info__about-support-header__buttons__dropdown"
                     >
                       <UnnnicCheckbox
-                        v-for="tag in allTags"
+                        v-for="tag in filteredTags"
                         :key="tag.uuid"
                         :modelValue="
                           roomTags.some((roomTag) => roomTag.uuid === tag.uuid)
@@ -182,9 +187,8 @@
                         @change="handleTagClick(tag)"
                       />
                     </section>
-                  </OnClickOutside>
-                </UnnnicDropdown>
-
+                  </UnnnicPopoverContent>
+                </UnnnicPopover>
                 <UnnnicToolTip
                   enabled
                   :text="$t('discussions.start_discussion.title')"
@@ -286,7 +290,6 @@ import ProtocolText from './ProtocolText.vue';
 
 import Queues from '@/services/api/resources/settings/queue';
 import TagGroup from '@/components/TagGroup.vue';
-import { OnClickOutside } from '@vueuse/components';
 
 import moment from 'moment';
 import { parseUrn } from '@/utils/room';
@@ -307,7 +310,6 @@ export default {
     DiscussionsSession,
     ProtocolText,
     TagGroup,
-    OnClickOutside,
   },
   props: {
     closedRoom: {
@@ -348,6 +350,7 @@ export default {
     openDropdownTags: false,
     allTags: [],
     tagsPageSize: 20,
+    tagsFilter: '',
   }),
 
   computed: {
@@ -380,6 +383,11 @@ export default {
         : 'flex';
     },
 
+    filteredTags() {
+      return this.allTags.filter((tag) =>
+        tag.name.toLowerCase().includes(this.tagsFilter.toLowerCase()),
+      );
+    },
     isMobile() {
       return isMobile();
     },
@@ -766,12 +774,15 @@ export default {
         &__dropdown {
           display: flex;
           flex-direction: column;
-          gap: $unnnic-space-1;
-          width: max-content;
-          max-height: 110px;
+          gap: $unnnic-space-6;
+          width: 100%;
+          height: 204px;
           overflow-y: auto;
-
           padding-right: $unnnic-space-2;
+
+          &__input {
+            margin-bottom: $unnnic-space-6;
+          }
         }
       }
     }

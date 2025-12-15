@@ -479,6 +479,7 @@
   "service": "Serviço",
   "tags": {
     "title": "Tags",
+    "search": "Pesquisar uma tag",
     "description": "As tags são usadas para classificar características do atendimento e possibilitar a pesquisa e filtragem dos chats a partir delas, defina tags que sejam relevantes para seu contexto.",
     "add": {
       "title": "Adicionar tags",
