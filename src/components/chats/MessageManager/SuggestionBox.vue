@@ -5,12 +5,6 @@
     class="suggestion-box"
     @keydown.esc="close"
   >
-    <!-- TODO: remove? -->
-    <!-- <header class="suggestion-box__header">
-      {{ $t('quick_messages.available_shortcuts') }}
-      <span class="suggestion-box__search">{{ search }}</span>
-    </header> -->
-
     <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
     <SuggestionBoxShortcut
       v-if="copilot"
