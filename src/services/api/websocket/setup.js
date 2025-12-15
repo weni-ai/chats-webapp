@@ -9,7 +9,7 @@ import { useConfig } from '@/store/modules/config';
 import { moduleStorage } from '@/utils/storage';
 
 export default class WebSocketSetup {
-  THIRTY_SECONDS = 30000;
+  TIME_INTERVAL = 15000; // 15 seconds
   RECONNECT_DELAY = 5000; // 5 seconds
   MAX_RECONNECT_ATTEMPTS = 5;
 
@@ -158,7 +158,7 @@ export default class WebSocketSetup {
 
     this.pingIntervalId = setInterval(() => {
       this.ping();
-    }, this.THIRTY_SECONDS);
+    }, this.TIME_INTERVAL);
   }
 
   clearPingInterval() {
