@@ -13,6 +13,7 @@ export const useRooms = defineStore('rooms', {
     rooms: [],
     activeRoom: null,
     activeRoomTags: [],
+    activeRoomTagsNext: '',
     maxPinLimit: 0,
     roomsSummary: {},
     isLoadingActiveRoomSummary: false,

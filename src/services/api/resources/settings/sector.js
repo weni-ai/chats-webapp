@@ -3,10 +3,7 @@ import http from '@/services/api/http';
 import { useProfile } from '@/store/modules/profile';
 
 import { getProject } from '@/utils/config';
-
-function getURLParams({ URL, endpoint }) {
-  return URL?.split(endpoint)?.[1];
-}
+import { getURLParams } from '@/utils/requests';
 
 export default {
   async list({ nextReq, limit, offset } = {}) {
@@ -89,10 +86,22 @@ export default {
     await http.delete(`/authorization/sector/${managerUuid}/`);
   },
 
-  async tags(sectorUuid) {
-    const response = await http.get('/tag/', {
-      params: { sector: sectorUuid, limit: 9999 },
+  async tags(sectorUuid, { limit = 20, next = '' }) {
+    const endpoint = '/tag/';
+    const nextParams = next
+      ? getURLParams({ URL: next, endpoint, returnObject: true })
+      : {};
+
+    const params = {
+      ...nextParams,
+      sector: sectorUuid,
+      limit: nextParams.limit || limit,
+    };
+
+    const response = await http.get(endpoint, {
+      params,
     });
+
     return response.data;
   },
 

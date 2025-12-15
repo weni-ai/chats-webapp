@@ -67,6 +67,7 @@ export default {
   data() {
     return {
       tags: [],
+      tagsNext: '',
       sectorTags: [],
       page: 0,
       limit: 20,
@@ -96,28 +97,35 @@ export default {
     ...mapActions(useFeedback, ['setIsRenderFeedbackModal']),
     ...mapActions(useRooms, ['removeRoom']),
     async loadRoomTags() {
-      const roomUuid = this.room.uuid;
-      const { results } = await Room.getRoomTags(roomUuid);
-      this.tags = results;
+      try {
+        const roomUuid = this.room.uuid;
+        const { results, next } = await Room.getRoomTags(roomUuid, {
+          next: this.tagsNext,
+          limit: 20,
+        });
+        this.tagsNext = next;
+        this.tags = this.tags.concat(results);
+      } catch (error) {
+        console.error('Error loading room tags', error);
+      } finally {
+        if (this.tagsNext) this.loadRoomTags();
+      }
     },
     async classifyRoom() {
       this.isLoadingTags = true;
-      let hasNext = false;
+
       try {
-        const response = await Queue.tags(
-          this.room.queue.uuid,
-          this.page * 20,
-          20,
-        );
-        this.page += 1;
+        const response = await Queue.tags(this.room.queue.uuid, {
+          limit: 20,
+          next: this.tagsNext,
+        });
         this.sectorTags = this.sectorTags.concat(response.results);
-        hasNext = response.next;
-        this.isLoadingTags = false;
+        this.tagsNext = response.next;
+      } catch (error) {
+        console.error('Error classifying room', error);
       } finally {
-        this.isLoadingTags = false;
-      }
-      if (hasNext) {
-        this.classifyRoom();
+        if (this.tagsNext) this.classifyRoom();
+        else this.isLoadingTags = false;
       }
     },
     async closeRoom() {

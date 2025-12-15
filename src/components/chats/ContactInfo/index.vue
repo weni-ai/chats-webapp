@@ -347,6 +347,7 @@ export default {
     openCustomFields: true,
     openDropdownTags: false,
     allTags: [],
+    tagsPageSize: 20,
   }),
 
   computed: {
@@ -357,6 +358,7 @@ export default {
     }),
     ...mapWritableState(useRooms, {
       roomTags: 'activeRoomTags',
+      roomTagsNext: 'activeRoomTagsNext',
     }),
 
     hasCustomFields() {
@@ -413,11 +415,11 @@ export default {
     },
   },
   watch: {
-    room: {
+    'room.uuid': {
       immediate: true,
       handler(newRoom) {
         if (newRoom) {
-          this.customFields = newRoom.custom_fields;
+          this.customFields = this.room.custom_fields;
           this.loadAllTags();
           this.loadRoomTags();
         }
@@ -439,9 +441,6 @@ export default {
     if (this.isHistory) {
       return;
     }
-
-    this.loadAllTags();
-    this.loadRoomTags();
 
     if (
       moment((closedRoom || room).contact.created_on).format('YYYY-MM-DD') <
@@ -465,17 +464,37 @@ export default {
     moment,
     ...mapActions(useRooms, ['updateRoomContact']),
     async loadAllTags() {
-      const { queue } = this.room || {};
+      try {
+        const { queue } = this.room || {};
 
-      if (!queue) return;
-      const { results } = await Queues.tags(queue.uuid, 0, 9999);
+        if (!queue) return;
 
-      this.allTags = results;
+        const { results, next } = await Queues.tags(queue.uuid, {
+          limit: this.tagsPageSize,
+          next: this.allTagsNext,
+        });
+        this.allTags = this.allTags.concat(results);
+        this.allTagsNext = next;
+      } catch (error) {
+        console.error('Error loading all tags', error);
+      } finally {
+        if (this.allTagsNext) this.loadAllTags();
+      }
     },
     async loadRoomTags() {
-      const roomUuid = this.closedRoom?.uuid || this.room?.uuid;
-      const { results } = await Room.getRoomTags(roomUuid);
-      this.roomTags = results;
+      try {
+        const roomUuid = this.closedRoom?.uuid || this.room?.uuid;
+        const { results, next } = await Room.getRoomTags(roomUuid, {
+          next: this.roomTagsNext,
+          limit: this.tagsPageSize,
+        });
+        this.roomTags = this.roomTags.concat(results);
+        this.roomTagsNext = next;
+      } catch (error) {
+        console.error('Error loading room tags', error);
+      } finally {
+        if (this.roomTagsNext) this.loadRoomTags();
+      }
     },
     async removeRoomTag(tag) {
       try {
