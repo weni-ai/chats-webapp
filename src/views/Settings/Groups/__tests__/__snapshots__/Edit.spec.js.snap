@@ -1,172 +1,79 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`EditGroupDrawer.vue > Snapshot > should match the snapshot 1`] = `
-<aside
-  class="unnnic-drawer"
-  data-testid="drawer"
-  data-v-0871e185=""
->
-  <section
-    class="unnnic-drawer__overlay"
-    data-testid="overlay"
-    data-v-0871e185=""
-  />
-  <transition-stub
-    appear="true"
-    css="true"
-    data-v-0871e185=""
-    name="drawer"
-    persisted="false"
+<div>
+  
+  
+  
+  <div
+    class="tab size-md"
+    data-v-97f84644=""
   >
-    <section
-      class="unnnic-drawer__container unnnic-drawer__container--xl"
-      data-testid="drawer-container"
-      data-v-0871e185=""
+    <header
+      class="tab-header"
+      data-v-97f84644=""
     >
-      <header
-        class="unnnic-drawer__header"
-        data-v-0871e185=""
+      <ul
+        class="tab-content"
+        data-v-97f84644=""
       >
-        <section
-          class="unnnic-drawer__title-container"
-          data-v-0871e185=""
+        
+        <li
+          class="tab-head tab-head--active"
+          data-v-97f84644=""
         >
           
-          <h1
-            class="unnnic-drawer__title"
-            data-testid="drawer-title"
-            data-v-0871e185=""
-          >
-            Test Group
-          </h1>
+          General
+          
           <!---->
-          
-        </section>
-        <span
-          class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-darkest unnnic-icon-size--avatar-nano unnnic-icon__size--avatar-nano unnnic--clickable unnnic-drawer__close"
-          data-testid="close-icon"
-          data-v-0871e185=""
-          data-v-10e3a145=""
-          translate="no"
+        </li>
+        <li
+          class="tab-head"
+          data-v-97f84644=""
         >
-          arrow_back
-        </span>
-      </header>
-      <section
-        class="unnnic-drawer__content"
-        data-v-0871e185=""
+          
+          Projects
+          
+          <!---->
+        </li>
+        <li
+          class="tab-head"
+          data-v-97f84644=""
+        >
+          
+          Agents
+          
+          <!---->
+        </li>
+        
+      </ul>
+    </header>
+    <main
+      class="tab-body"
+      data-v-97f84644=""
+    >
+      <div
+        class="tab-panel"
+        data-v-97f84644=""
       >
         
         <div
-          class="tab size-md"
-          data-v-97f84644=""
-        >
-          <header
-            class="tab-header"
-            data-v-97f84644=""
-          >
-            <ul
-              class="tab-content"
-              data-v-97f84644=""
-            >
-              
-              <li
-                class="tab-head tab-head--active"
-                data-v-97f84644=""
-              >
-                
-                General
-                
-                <!---->
-              </li>
-              <li
-                class="tab-head"
-                data-v-97f84644=""
-              >
-                
-                Projects
-                
-                <!---->
-              </li>
-              <li
-                class="tab-head"
-                data-v-97f84644=""
-              >
-                
-                Agents
-                
-                <!---->
-              </li>
-              
-            </ul>
-          </header>
-          <main
-            class="tab-body"
-            data-v-97f84644=""
-          >
-            <div
-              class="tab-panel"
-              data-v-97f84644=""
-            >
-              
-              <div
-                data-testid="general-form"
-              />
-              
-            </div>
-          </main>
-        </div>
+          data-testid="general-form"
+        />
         
-      </section>
-      <footer
-        class="unnnic-drawer__footer"
-        data-testid="footer"
-        data-v-0871e185=""
-      >
-        <button
-          class="unnnic-button unnnic-button--size-large unnnic-button--tertiary"
-          data-testid="secondary-button"
-          data-v-0871e185=""
-          data-v-aadba593=""
-        >
-          <!---->
-          <!---->
-          <!---->
-          <span
-            class="unnnic-button__label"
-            data-testid="button-label"
-            data-v-aadba593=""
-            style="visibility: visible;"
-          >
-            
-            
-             Cancel
-          </span>
-          <!---->
-        </button>
-        <button
-          class="unnnic-button unnnic-button--size-large unnnic-button--primary"
-          data-testid="primary-button"
-          data-v-0871e185=""
-          data-v-aadba593=""
-        >
-          <!---->
-          <!---->
-          <!---->
-          <span
-            class="unnnic-button__label"
-            data-testid="button-label"
-            data-v-aadba593=""
-            style="visibility: visible;"
-          >
-            
-            
-             Save
-          </span>
-          <!---->
-        </button>
-      </footer>
-    </section>
-  </transition-stub>
-</aside>
+      </div>
+    </main>
+  </div>
+  
+  <button
+    data-testid="primary-button"
+  >
+    Save
+  </button>
+  <button
+    data-testid="secondary-button"
+  >
+    Cancel
+  </button>
+</div>
 `;
