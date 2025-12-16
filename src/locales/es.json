@@ -1,4 +1,8 @@
 {
+  "home": {
+    "title": "¡Hola!",
+    "description": "¡Selecciona un chat para realizar tus soportes!"
+  },
   "news_and_updates": "Noticias y actualizaciones en Chats",
   "custom": "Personalizado",
   "country": {
@@ -283,6 +287,8 @@
       "by_ai": "Resumen por IA",
       "error": "No se pudo generar el resumen.",
       "unavailable": "No hay resumen disponible",
+      "open_summary_tooltip": "Abrir el resumen del chat",
+      "close_summary_tooltip": "Cerrar el resumen del chat",
       "feedback": {
         "title": "Feedback",
         "needs_improvement_text": "Ayuda a mejorar los resumenes. Tu opinión sobre este resumen nos ayuda a hacerlo más claro y útil.",
@@ -290,6 +296,11 @@
         "positive": "Útil",
         "negative": "Necesita mejoras",
         "placeholder": "Comparte tu feedback para que podamos mejorar la funcionalidad."
+      },
+      "onboarding": {
+        "title": "Nuevo Feature: Resumen por IA",
+        "description": "A partir de ahora, cada vez que abras un chat, verás un resumen con la información clave del chat anterior con la IA. Esta funcionalidad está diseñada para ayudarte a ahorrar tiempo y obtener contexto rápidamente.",
+        "see_how_it_works": "Ver cómo funciona:"
       }
     },
     "feedback": {

@@ -1,4 +1,8 @@
 {
+  "home": {
+    "title": "Hello there,",
+    "description": "Select a chat to carry out your supports!"
+  },
   "news_and_updates": "News and updates in Chats",
   "custom": "Custom",
   "country": {
@@ -287,6 +291,8 @@
       "by_ai": "Summary by AI",
       "error": "Failed to generate summary.",
       "unavailable": "No summary available",
+      "open_summary_tooltip": "Click to see Summary",
+      "close_summary_tooltip": "Click to hide Summary",
       "feedback": {
         "title": "Feedback",
         "needs_improvement_text": "Help us improve summaries. Your feedback on this summary helps us make it clearer and more useful.",
@@ -294,6 +300,11 @@
         "positive": "Useful",
         "negative": "Needs improvement",
         "placeholder": "Share your feedback to help us improve."
+      },
+      "onboarding": {
+        "title": "New Feature: Summary by AI",
+        "description": "From now on, whenever you open a chat, you will see a summary with the key information from the client's previous chat with the AI. This feature is designed to help you save time and quickly gain context.",
+        "see_how_it_works": "See how it works:"
       }
     },
     "feedback": {

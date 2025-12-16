@@ -15,11 +15,31 @@
     >
       <template #right>
         <section class="home-chat-headers__actions">
-          <!-- TODO: implement ia summary  -->
-          <!-- <img
-            class="stars-icon"
-            :src="starsIcon"
-          /> -->
+          <UnnnicToolTip
+            v-if="enableRoomSummary"
+            enabled
+            :text="
+              openActiveRoomSummary
+                ? $t('chats.summary.close_summary_tooltip')
+                : $t('chats.summary.open_summary_tooltip')
+            "
+            side="left"
+          >
+            <section
+              class="home-chat-headers__summary-icon"
+              :class="{
+                'home-chat-headers__summary-icon--open': openActiveRoomSummary,
+              }"
+            >
+              <UnnnicIcon
+                icon="bi:stars"
+                clickable
+                :scheme="openActiveRoomSummary ? 'gray-900' : 'gray-500'"
+                size="ant"
+                @click="openActiveRoomSummary = !openActiveRoomSummary"
+              />
+            </section>
+          </UnnnicToolTip>
           <UnnnicToolTip
             v-if="
               featureFlags.active_features?.includes('weniChatsContactInfoV2')
@@ -77,7 +97,7 @@
       data-testid="discussion-header"
     />
     <ChatHeaderSendFlow
-      v-if="isShowingSendFlowHeader"
+      v-if="isShowingSendFlowHeader && !openActiveRoomSummary"
       data-testid="chat-header-send-flow"
       @send-flow="emitOpenFlowsTrigger"
     />
@@ -91,24 +111,19 @@
 <script>
 import { format as dateFnsFormat, subYears as dateFnsSubYears } from 'date-fns';
 import { mapState, mapWritableState } from 'pinia';
+import isMobile from 'is-mobile';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
-
-import isMobile from 'is-mobile';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useConfig } from '@/store/modules/config';
 
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
-
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow.vue';
+import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
 
 import { formatContactName } from '@/utils/chats';
-
-import starsIcon from '@/assets/icons/bi_stars.svg';
-
 import { parseUrn } from '@/utils/room';
-
-import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 export default {
   name: 'HomeChatHeaders',
@@ -131,20 +146,31 @@ export default {
     'openFlowsTrigger',
     'back',
   ],
+
   data() {
-    return { starsIcon, isModalTransferRoomsOpened: false };
+    return { isModalTransferRoomsOpened: false };
   },
 
   computed: {
     ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
+      isLoadingCanSendMessageStatus: (store) =>
+        store.isLoadingCanSendMessageStatus,
+      isCanSendMessageActiveRoom: (store) => store.isCanSendMessageActiveRoom,
     }),
     ...mapState(useDiscussions, {
       discussion: (store) => store.activeDiscussion,
     }),
 
-    ...mapWritableState(useRooms, ['contactToTransfer']),
+    ...mapWritableState(useRooms, [
+      'contactToTransfer',
+      'openActiveRoomSummary',
+    ]),
+
+    ...mapState(useConfig, {
+      enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
+    }),
 
     isMobile() {
       return isMobile();
@@ -158,9 +184,25 @@ export default {
       const { discussion, isLoading } = this;
       return discussion && !isLoading;
     },
+    isActiveFeatureIs24hValidOptimization() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsIs24hValidOptimization',
+      );
+    },
+    isCanSendMessage() {
+      return this.isActiveFeatureIs24hValidOptimization
+        ? this.isCanSendMessageActiveRoom && !this.isLoadingCanSendMessageStatus
+        : this.room?.is_24h_valid;
+    },
     isShowingSendFlowHeader() {
       const { room, discussion, isLoading } = this;
-      return room && !discussion && !room.is_24h_valid && !isLoading;
+      return (
+        room &&
+        !discussion &&
+        !this.isCanSendMessage &&
+        !isLoading &&
+        !this.isLoadingCanSendMessageStatus
+      );
     },
 
     headerRoomTitle() {
@@ -177,6 +219,7 @@ export default {
       }`;
     },
   },
+
   methods: {
     emitOpenRoomContactInfo() {
       this.$emit('openRoomContactInfo');
@@ -225,6 +268,28 @@ export default {
 
 <style lang="scss" scoped>
 .home-chat-headers {
+  &__summary-icon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $unnnic-radius-2;
+
+    &--open {
+      background-color: $unnnic-color-purple-100;
+      &::after {
+        content: '';
+        position: fixed;
+        top: 67px;
+        transform: rotate(-45deg);
+        width: $unnnic-space-3;
+        height: $unnnic-space-3;
+        background-color: $unnnic-color-purple-100;
+        border-radius: $unnnic-space-1;
+      }
+    }
+  }
   &__actions {
     display: flex;
     gap: $unnnic-space-6;
@@ -232,12 +297,6 @@ export default {
 
     :deep(.unnnic-tooltip) {
       display: flex;
-    }
-
-    .stars-icon {
-      width: $unnnic-space-5;
-      height: $unnnic-space-5;
-      cursor: pointer;
     }
   }
 

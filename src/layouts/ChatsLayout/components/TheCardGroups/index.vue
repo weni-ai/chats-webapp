@@ -52,7 +52,13 @@
         }
       "
     >
-      <section class="chat-groups__tabs">
+      <section
+        class="chat-groups__tabs"
+        :class="{
+          'chat-groups__tabs--hide-order-by':
+            !showOrderBy && countRooms[activeTab] > 0,
+        }"
+      >
         <TabChip
           v-for="tab in roomsTabs"
           :key="tab.key"
@@ -275,6 +281,15 @@ export default {
       return tabs;
     },
 
+    countRooms() {
+      return {
+        ongoing: this.rooms_ongoing.length,
+        waiting: this.rooms_queue.length,
+        discussions: this.discussions.length,
+        flow_start: this.rooms_flow_start.length,
+      };
+    },
+
     showOrderBy() {
       const { isHumanServiceProfile } = useProfile();
       const disableOrderByProjects =
@@ -287,14 +302,7 @@ export default {
         return false;
       }
 
-      const countRooms = {
-        ongoing: this.rooms_ongoing.length,
-        waiting: this.rooms_queue.length,
-        discussions: this.discussions.length,
-        flow_start: this.rooms_flow_start.length,
-      };
-
-      return countRooms[this.activeTab] > 0;
+      return this.countRooms[this.activeTab] > 0;
     },
 
     isUserAdmin() {
@@ -416,8 +424,8 @@ export default {
       }
     },
     async openRoom(room) {
-      await this.setActiveDiscussion(null);
       await this.setActiveRoom(room);
+      await this.setActiveDiscussion(null);
     },
     async openDiscussion(discussion) {
       await this.setActiveDiscussion(discussion);
@@ -646,6 +654,10 @@ export default {
       gap: $unnnic-spacing-xs;
       padding-left: $unnnic-spacing-xs;
       padding-right: $unnnic-spacing-xs;
+
+      &--hide-order-by {
+        margin-bottom: $unnnic-space-4;
+      }
     }
   }
   .order-by {

@@ -254,7 +254,7 @@ describe('ViewMode', () => {
   });
 
   describe('Complete Coverage Tests', () => {
-    it('should handle rooms watcher with route query processing', async () => {
+    it('should handle rooms watcher with route query processing when rooms are loaded', async () => {
       vi.clearAllMocks();
       const rooms = [mockRoom, { uuid: 'room-2', contact: { name: 'Jane' } }];
 
@@ -263,14 +263,11 @@ describe('ViewMode', () => {
         rooms: { rooms },
       });
 
-      // Mock route with room_uuid query
       wrapper.vm.$route.query = { room_uuid: 'room-1' };
 
-      // Simulate the rooms watcher triggering
       const roomsStore = useRooms();
       roomsStore.setActiveRoom = vi.fn();
 
-      // Trigger the rooms watcher handler manually
       await wrapper.vm.$options.watch.rooms.handler.call(wrapper.vm);
 
       expect(roomsStore.setActiveRoom).toHaveBeenCalledWith(mockRoom);
@@ -294,7 +291,7 @@ describe('ViewMode', () => {
       await wrapper.vm.$options.watch.rooms.handler.call(wrapper.vm);
 
       expect(roomsStore.setActiveRoom).not.toHaveBeenCalled();
-      expect(mockRouter.replace).toHaveBeenCalledWith({ query: {} });
+      expect(mockRouter.replace).not.toHaveBeenCalled();
     });
 
     it('should handle rooms watcher without route query', async () => {
@@ -313,6 +310,45 @@ describe('ViewMode', () => {
 
       expect(roomsStore.setActiveRoom).not.toHaveBeenCalled();
       expect(mockRouter.replace).not.toHaveBeenCalled();
+    });
+
+    it('should not process room_uuid when rooms array is empty', async () => {
+      vi.clearAllMocks();
+      const wrapper = createWrapper({
+        dashboard: { viewedAgent: mockAgent },
+        rooms: { rooms: [] },
+      });
+
+      wrapper.vm.$route.query = { room_uuid: 'room-1' };
+
+      const roomsStore = useRooms();
+      roomsStore.setActiveRoom = vi.fn();
+
+      await wrapper.vm.$options.watch.rooms.handler.call(wrapper.vm);
+
+      expect(roomsStore.setActiveRoom).not.toHaveBeenCalled();
+      expect(mockRouter.replace).not.toHaveBeenCalled();
+    });
+
+    it('should clear query after successfully setting active room', async () => {
+      vi.clearAllMocks();
+      const rooms = [mockRoom];
+
+      const wrapper = createWrapper({
+        dashboard: { viewedAgent: mockAgent },
+        rooms: { rooms },
+      });
+
+      wrapper.vm.$route.query = { room_uuid: 'room-1' };
+
+      const roomsStore = useRooms();
+      const setActiveRoomSpy = vi.fn();
+      roomsStore.setActiveRoom = setActiveRoomSpy;
+
+      await wrapper.vm.$options.watch.rooms.handler.call(wrapper.vm);
+
+      expect(setActiveRoomSpy).toHaveBeenCalledWith(mockRoom);
+      expect(mockRouter.replace).toHaveBeenCalledWith({ query: {} });
     });
 
     it('should handle whenGetChat method completely', () => {
@@ -337,7 +373,6 @@ describe('ViewMode', () => {
     });
 
     it('should handle assume chat button visibility edge cases', () => {
-      // Test when room.user.email equals me.email
       const roomWithSameUser = {
         ...mockRoom,
         user: { email: 'test@example.com' },
@@ -352,7 +387,6 @@ describe('ViewMode', () => {
         wrapperSameUser.vm.me.email,
       );
 
-      // Test when room.user is null/undefined
       const roomWithoutUser = { ...mockRoom, user: null };
       const wrapperNoUser = createWrapper({
         dashboard: { viewedAgent: mockAgent },
@@ -361,7 +395,6 @@ describe('ViewMode', () => {
 
       expect(wrapperNoUser.vm.room.user).toBeNull();
 
-      // Test when discussion is present with room
       const wrapperWithBoth = createWrapper({
         dashboard: { viewedAgent: mockAgent },
         rooms: { activeRoom: mockRoom },
@@ -380,11 +413,9 @@ describe('ViewMode', () => {
 
       expect(wrapper.vm.isRoomSkeletonActive).toBe(false);
 
-      // Test skeleton active state
       await wrapper.setData({ isRoomSkeletonActive: true });
       expect(wrapper.vm.isRoomSkeletonActive).toBe(true);
 
-      // Test skeleton inactive state
       await wrapper.setData({ isRoomSkeletonActive: false });
       expect(wrapper.vm.isRoomSkeletonActive).toBe(false);
     });
@@ -394,24 +425,20 @@ describe('ViewMode', () => {
         dashboard: { viewedAgent: mockAgent },
       });
 
-      // Set modals to open state
       await wrapper.setData({
         isContactInfoOpened: true,
         isAssumeChatConfirmationOpened: true,
       });
 
-      // Test ModalGetChat close event
       const modalGetChat = wrapper.vm;
       modalGetChat.handleModal('AssumeChatConfirmation', 'close');
       expect(wrapper.vm.isAssumeChatConfirmationOpened).toBe(false);
 
-      // Test ContactInfo close event
       modalGetChat.handleModal('ContactInfo', 'close');
       expect(wrapper.vm.isContactInfoOpened).toBe(false);
     });
 
     it('should test all computed property combinations', () => {
-      // Test empty state
       const wrapperEmpty = createWrapper();
       expect(wrapperEmpty.vm.viewedAgent).toEqual({ email: '', name: '' });
       expect(wrapperEmpty.vm.room).toBeNull();
@@ -419,7 +446,6 @@ describe('ViewMode', () => {
       expect(wrapperEmpty.vm.me).toEqual({ email: 'test@example.com' });
       expect(wrapperEmpty.vm.rooms).toEqual([]);
 
-      // Test with all data
       const wrapperFull = createWrapper({
         dashboard: { viewedAgent: mockAgent },
         rooms: { activeRoom: mockRoom, rooms: [mockRoom] },
@@ -441,14 +467,11 @@ describe('ViewMode', () => {
         dashboard: { viewedAgent: mockAgent },
       });
 
-      // Test modal props when closed
       expect(wrapper.vm.isAssumeChatConfirmationOpened).toBe(false);
 
-      // Test modal props when open
       wrapper.vm.handleModal('AssumeChatConfirmation', 'open');
       expect(wrapper.vm.isAssumeChatConfirmationOpened).toBe(true);
 
-      // Test whenGetChat prop is properly bound
       expect(typeof wrapper.vm.whenGetChat).toBe('function');
     });
 
@@ -462,7 +485,6 @@ describe('ViewMode', () => {
       });
       expect(wrapperWithEmail.vm.viewedAgent.email).toBe(mockAgent.email);
 
-      // Test ChatsBackground conditions
       const wrapperBackgroundVisible = createWrapper({
         dashboard: { viewedAgent: mockAgent },
       });
@@ -470,7 +492,6 @@ describe('ViewMode', () => {
       expect(wrapperBackgroundVisible.vm.discussion).toBeNull();
       expect(wrapperBackgroundVisible.vm.isRoomSkeletonActive).toBe(false);
 
-      // Test active chat section conditions
       const wrapperWithRoom = createWrapper({
         dashboard: { viewedAgent: mockAgent },
         rooms: { activeRoom: mockRoom },

@@ -284,7 +284,7 @@ describe('StatusBar', () => {
       await wrapper.vm.$nextTick();
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
-      expect(items).toHaveLength(3);
+      expect(items).toHaveLength(2);
       expect(wrapper.vm.statuses).toEqual([
         { value: 'active', label: 'Online', color: 'green', statusUuid: null },
         {
@@ -306,7 +306,7 @@ describe('StatusBar', () => {
       await wrapper.vm.$nextTick();
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
-      await items[2].trigger('click');
+      await items[1].trigger('click');
 
       expect(api.createCustomStatus).toHaveBeenCalledWith({
         email: 'test@example.com',
@@ -348,7 +348,7 @@ describe('StatusBar', () => {
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
 
-      await items[3].trigger('click');
+      await items[2].trigger('click');
       await flushPromises();
 
       expect(api.closeCustomStatus).toHaveBeenCalledWith(
@@ -395,7 +395,7 @@ describe('StatusBar', () => {
       await wrapper.vm.$nextTick();
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
-      await items[2].trigger('click');
+      await items[1].trigger('click');
 
       expect(wrapper.vm.startDate).not.toBeNull();
       expect(wrapper.find('[data-testid="status-bar-timer"]').exists()).toBe(
@@ -518,7 +518,7 @@ describe('StatusBar', () => {
       await wrapper.vm.$nextTick();
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
-      await items[1].trigger('click');
+      await items[0].trigger('click');
       await flushPromises();
 
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
@@ -542,7 +542,7 @@ describe('StatusBar', () => {
       await wrapper.vm.$nextTick();
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
-      await items[2].trigger('click');
+      await items[1].trigger('click');
       await flushPromises();
 
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
@@ -566,7 +566,7 @@ describe('StatusBar', () => {
       await wrapper.vm.$nextTick();
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
-      await items[1].trigger('click');
+      await items[0].trigger('click');
 
       expect(Profile.updateStatus).toHaveBeenCalledWith({
         projectUuid: 'test-uuid',
@@ -583,7 +583,7 @@ describe('StatusBar', () => {
       await wrapper.vm.$nextTick();
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
-      await items[2].trigger('click');
+      await items[1].trigger('click');
 
       const clearIntervalSpy = vi.spyOn(window, 'clearInterval');
       wrapper.unmount();
