@@ -22,7 +22,7 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
     <section data-v-85728205="" class="tags-form">
       <div data-v-1bfe622c="" data-v-85728205="" class="unnnic-input size-md tags-form__input" data-testid="tags-input-tag-name"><span data-v-1bfe622c="" class="label unnnic-font secondary color-neutral-cloudy body-gt">Tag name</span>
         <div data-v-1bfe622c="" class="input-container">
-          <!----><input data-v-1bfe622c="" class="unnnic-font secondary" type="text" placeholder="Example: Doubts" maxlength="120" value="">
+          <!----><input data-v-1bfe622c="" class="unnnic-font secondary" type="text" placeholder="Enter the name of a tag to search or to add it" maxlength="120" value="">
           <!---->
           <!---->
         </div>

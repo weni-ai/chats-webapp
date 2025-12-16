@@ -488,7 +488,7 @@
     "add": {
       "title": "Add tags",
       "label": "Tag name",
-      "placeholder": "Example: Doubts"
+      "placeholder": "Enter the name of a tag to search or to add it"
     },
     "already_added": "Added Tags"
   },
