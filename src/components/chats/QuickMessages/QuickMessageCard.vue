@@ -61,7 +61,7 @@
                     scheme="fg-critical"
                     size="avatar-nano"
                   />
-                  <span> {{ $t('exclude') }} </span>
+                  <span> {{ $t('delete') }} </span>
                 </div>
               </div>
             </div>
