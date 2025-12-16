@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils';
+import { mount, config } from '@vue/test-utils';
 import { beforeEach, describe, expect } from 'vitest';
 
 import Image from '../Image.vue';
@@ -16,6 +16,11 @@ describe('ImagePreview', () => {
         fullscreen: false,
         fullscreenOnClick: true,
       },
+      global: {
+        components: {
+          UnnnicToolTip: config.global.stubs.UnnnicToolTip,
+        },
+      },
     });
   });
 
@@ -27,14 +32,13 @@ describe('ImagePreview', () => {
   });
 
   it('renders the tooltip with the correct text', async () => {
-    const tooltip = wrapper.findComponent(
-      '[data-testid="image-preview-tooltip"]',
-    );
+    const tooltip = wrapper.findComponent({ name: 'UnnnicToolTipStub' });
     expect(tooltip.exists()).toBe(true);
     expect(tooltip.props('text')).toBe('View image');
 
     await wrapper.setProps({ tooltip: '' });
-    expect(tooltip.props('text')).toBe(wrapper.vm.$t('fullscreen_view'));
+    const updatedTooltip = wrapper.findComponent({ name: 'UnnnicToolTipStub' });
+    expect(updatedTooltip.props('text')).toBe(wrapper.vm.$t('fullscreen_view'));
   });
 
   it('emits "click" event when the image is clicked', async () => {
