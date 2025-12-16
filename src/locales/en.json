@@ -702,7 +702,8 @@
     "successfully_added": "Quick message added",
     "successfully_updated": "Quick message updated",
     "error": "Failed to set quick message",
-    "no_suggestions": "No results found for the entered shortcut."
+    "no_suggestions": "No results found for the entered shortcut.",
+    "disclaimer": "Type the shortcut / (slash) in the chat message field to activate the display of quick messages."
   },
   "discard": "Delete",
   "on_boarding": {
