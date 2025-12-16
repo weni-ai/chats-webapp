@@ -698,7 +698,8 @@
     "successfully_added": "Mensagem rápida adicionada",
     "successfully_updated": "Mensagem rápida atualizada",
     "error": "Falha ao definir mensagem rápida",
-    "no_suggestions": "Nenhum resultado encontrado para o atalho digitado."
+    "no_suggestions": "Nenhum resultado encontrado para o atalho digitado.",
+    "disclaimer": "Digite o atalho / (barra) no campo de mensagem do chat para ativar a exibição de mensagens rápidas."
   },
   "discard": "Descartar",
   "on_boarding": {
