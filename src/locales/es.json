@@ -479,11 +479,12 @@
   "service": "Servicio",
   "tags": {
     "title": "Tags",
+    "search": "Buscar una etiqueta",
     "description": "Las etiquetas se utilizan para clasificar las características del servicio y habilitar la búsqueda y el filtrado de chat de ellas, definir las etiquetas que son relevantes para su contexto.",
     "add": {
       "title": "Agregar etiquetas",
       "label": "Nombre de la etiqueta",
-      "placeholder": "Ejemplo: Dudas"
+      "placeholder": "Ingrese el nombre de una etiqueta para buscar o agregarla"
     },
     "already_added": "Etiquetas agregadas"
   },

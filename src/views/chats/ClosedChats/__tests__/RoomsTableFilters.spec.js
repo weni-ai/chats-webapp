@@ -223,7 +223,11 @@ describe('RoomsTableFilters.vue', () => {
       await wrapper.vm.getSectorTags('sector1');
       await flushPromises();
 
-      expect(Sector.tags).toHaveBeenCalledWith('sector1');
+      expect(Sector.tags).toHaveBeenCalledWith('sector1', {
+        next: '',
+        limit: 20,
+      });
+      console.log(wrapper.vm.tagsToFilter);
       expect(wrapper.vm.tagsToFilter.length).toBe(3);
       expect(wrapper.vm.tagsToFilter[1]).toEqual({
         value: 'tag1',

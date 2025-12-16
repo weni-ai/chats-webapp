@@ -483,11 +483,12 @@
   "service": "Service",
   "tags": {
     "title": "Tags",
+    "search": "Search for a tag",
     "description": "Tags are used to classify service characteristics and enable chat search and filtering from them, define tags that are relevant to their context.",
     "add": {
       "title": "Add tags",
       "label": "Tag name",
-      "placeholder": "Example: Doubts"
+      "placeholder": "Enter the name of a tag to search or to add it"
     },
     "already_added": "Added Tags"
   },
