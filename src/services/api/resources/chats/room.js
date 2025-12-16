@@ -161,4 +161,16 @@ export default {
 
     return response.data;
   },
+
+  /**
+   * @description Get the can send message status of the room
+   * @param {string} uuid - The uuid of the room
+   * @returns {Promise<{can_send_message: boolean}>} - The can send message status
+   */
+
+  async getCanSendMessageStatus(uuid) {
+    const response = await http.get(`/room/${uuid}/can-send-message-status/`);
+
+    return response.data;
+  },
 };
