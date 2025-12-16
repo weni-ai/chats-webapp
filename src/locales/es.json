@@ -489,7 +489,7 @@
     "add": {
       "title": "Agregar etiquetas",
       "label": "Nombre de la etiqueta",
-      "placeholder": "Ejemplo: Dudas"
+      "placeholder": "Ingrese el nombre de una etiqueta para buscar o agregarla"
     },
     "already_added": "Etiquetas agregadas"
   },
