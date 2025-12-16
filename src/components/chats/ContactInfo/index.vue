@@ -30,7 +30,7 @@
         </header>
       </template>
       <section class="scrollable">
-        <AsideSlotTemplateSection>
+        <AsideSlotTemplateSection class="contact-info__section">
           <section class="infos-header">
             <section class="infos-header__title-container">
               <h3 class="infos-header__title">
@@ -113,7 +113,7 @@
               </p>
             </section>
 
-            <Transition name="custom-fields">
+            <Transition name="expand-with-fade">
               <section
                 v-if="hasCustomFields && openCustomFields"
                 class="custom-fields-container"
@@ -144,7 +144,7 @@
             </section>
           </section>
         </AsideSlotTemplateSection>
-        <AsideSlotTemplateSection>
+        <AsideSlotTemplateSection class="contact-info__section">
           <section class="contact-info__about-support">
             <header class="contact-info__about-support-header">
               <h3 class="contact-info__about-support-title">
@@ -221,7 +221,7 @@
           </section>
         </AsideSlotTemplateSection>
 
-        <AsideSlotTemplateSection>
+        <AsideSlotTemplateSection class="contact-info__section">
           <ContactMedia
             :room="room"
             :history="isHistory"
@@ -732,6 +732,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/animations';
+
 .contact-info__container {
   height: 100%;
 
@@ -741,6 +743,9 @@ export default {
 }
 
 .contact-info {
+  &__section {
+    padding: $unnnic-space-2;
+  }
   &__header {
     display: flex;
     justify-content: space-between;
@@ -889,44 +894,5 @@ export default {
   display: flex;
   flex-direction: column;
   gap: $unnnic-space-1;
-}
-
-// custom-fields animation
-.custom-fields-enter-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-}
-
-.custom-fields-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-}
-
-.custom-fields-enter-from {
-  max-height: 0;
-  opacity: 0;
-  transform: translateY(-$unnnic-space-2);
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-.custom-fields-enter-to {
-  max-height: 100vh;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.custom-fields-leave-from {
-  max-height: 100vh;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.custom-fields-leave-to {
-  max-height: 0;
-  opacity: 0;
-  transform: translateY(-$unnnic-space-2);
-  margin-top: 0;
-  margin-bottom: 0;
 }
 </style>

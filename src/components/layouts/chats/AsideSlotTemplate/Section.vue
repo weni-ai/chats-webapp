@@ -13,7 +13,6 @@ export default {
 <style lang="scss" scoped>
 .aside-slot-template-section {
   background: $unnnic-color-background-snow;
-  padding: $unnnic-spacing-xs;
 
   & + & {
     border-top: solid 1px $unnnic-color-neutral-soft;
