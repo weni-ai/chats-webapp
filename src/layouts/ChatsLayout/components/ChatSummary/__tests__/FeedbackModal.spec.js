@@ -8,6 +8,9 @@ import { useRooms } from '@/store/modules/chats/rooms';
 vi.mock('@/services/api/resources/chats/room', () => ({
   default: {
     sendSummaryFeedback: vi.fn(),
+    getSummaryFeedbackTags: vi.fn(() => ({
+      results: { TAG_KEY: 'Tag Value' },
+    })),
   },
 }));
 

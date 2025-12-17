@@ -6,6 +6,8 @@ import { useProfile } from '@/store/modules/profile';
 
 import { getURLParams } from '@/utils/requests';
 
+import i18n from '@/plugins/i18n';
+
 export default {
   async getAll(offset, limit, contact, order, viewedAgent, roomsType) {
     const params = {
@@ -37,10 +39,22 @@ export default {
     return console.error('"Uuid" necessário para requisição.');
   },
 
-  async sendSummaryFeedback({ roomUuid, liked, text }) {
+  async getSummaryFeedbackTags() {
+    const response = await http.get(
+      '/ai_features/history_summary/feedback/tags/',
+      {
+        headers: {
+          'Accept-Language': i18n.global.locale,
+        },
+      },
+    );
+    return response.data;
+  },
+
+  async sendSummaryFeedback({ roomUuid, liked, text, tags }) {
     const response = await http.post(
       `/room/${roomUuid}/chats-summary/feedback/`,
-      { liked, text },
+      { liked, text, tags },
     );
     return response.data;
   },

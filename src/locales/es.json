@@ -164,6 +164,7 @@
   "justify": "Justificar",
   "without_results": "No hay resultados coincidentes",
   "without_chats": "¡Ups! Parece que no hay chats en este momento :)",
+  "other": "Otro",
   "select_smart": {
     "without_results": "Ningún resultado encontrado",
     "without_multiple_selected": "Ninguna opción seleccionada"
@@ -300,7 +301,7 @@
         "empty_rating": "¿Este resumen fue útil para ti?",
         "positive": "Útil",
         "negative": "Necesita mejoras",
-        "placeholder": "Comparte tu feedback para que podamos mejorar la funcionalidad."
+        "placeholder": "Comparte tu feedback aquí"
       },
       "onboarding": {
         "title": "Nuevo Feature: Resumen por IA",

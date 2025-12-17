@@ -7,23 +7,18 @@
     :primaryButtonProps="{
       text: $t('submit'),
       loading: isLoading,
-      disabled: activeRoomSummary.feedback.liked === null,
+      disabled: disableSubmit,
     }"
     data-testid="feedback-modal"
     @primary-button-click="handleSubmit"
     @update:model-value="handleCancel"
   >
     <section class="summary-feedback-modal__content">
-      <p
-        class="summary-feedback-modal__text"
-        data-testid="feedback-text"
-      >
-        {{
-          hasFeedback
-            ? $t('chats.summary.feedback.needs_improvement_text')
-            : $t('chats.summary.feedback.empty_rating')
-        }}
-      </p>
+      <TagGroup
+        v-model="feedbackSelectedCategory"
+        :tags="feedbackCategories"
+        selectable
+      />
       <section
         v-if="!hasFeedback"
         class="summary-feedback-modal__rating"
@@ -63,7 +58,7 @@
         v-if="activeRoomSummary.feedback?.liked === false"
         v-model="feedbackText"
         :placeholder="$t('chats.summary.feedback.placeholder')"
-        :label="$t('chats.summary.feedback.title')"
+        :label="$t('other')"
         :maxLength="150"
         data-testid="feedback-textarea"
       />
@@ -74,10 +69,16 @@
 <script>
 import { mapWritableState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
+
+import TagGroup from '@/components/TagGroup.vue';
+
 import Room from '@/services/api/resources/chats/room';
 
 export default {
   name: 'FeedbackModal',
+  components: {
+    TagGroup,
+  },
   props: {
     hasFeedback: {
       type: Boolean,
@@ -94,6 +95,8 @@ export default {
       feedbackText: '',
       initialFeedback: null,
       isLoading: false,
+      feedbackCategories: [],
+      feedbackSelectedCategory: [],
     };
   },
   computed: {
@@ -102,11 +105,33 @@ export default {
       'roomsSummary',
       'activeRoom',
     ]),
+    disableSubmit() {
+      return (
+        this.activeRoomSummary.feedback.liked === null ||
+        (this.feedbackSelectedCategory.length === 0 &&
+          this.feedbackText.length === 0)
+      );
+    },
+  },
+  watch: {
+    '$i18n.locale': {
+      handler() {
+        this.getFeedbackCategory();
+      },
+    },
   },
   mounted() {
     this.initialFeedback = JSON.parse(JSON.stringify(this.activeRoomSummary));
+    this.getFeedbackCategory();
   },
   methods: {
+    async getFeedbackCategory() {
+      const { results } = await Room.getSummaryFeedbackTags();
+      this.feedbackCategories = Object.entries(results).map(([key, value]) => ({
+        name: value,
+        uuid: key,
+      }));
+    },
     handleLike(liked) {
       this.activeRoomSummary.feedback.liked = liked;
     },
@@ -126,6 +151,7 @@ export default {
           roomUuid: this.roomUuid,
           liked: this.activeRoomSummary.feedback.liked,
           text: this.feedbackText,
+          tags: this.feedbackSelectedCategory.map((category) => category.uuid),
         });
       } catch (error) {
         console.error(error);
