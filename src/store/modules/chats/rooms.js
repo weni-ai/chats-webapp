@@ -14,6 +14,7 @@ export const useRooms = defineStore('rooms', {
     activeRoom: null,
     isCanSendMessageActiveRoom: true,
     activeRoomTags: [],
+    activeRoomTagsNext: '',
     maxPinLimit: 0,
     roomsSummary: {},
     isLoadingActiveRoomSummary: false,

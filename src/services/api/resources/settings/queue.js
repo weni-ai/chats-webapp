@@ -1,5 +1,6 @@
 import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
+import { getURLParams } from '@/utils/requests';
 
 export default {
   async create({ name, sectorUuid, default_message }) {
@@ -81,9 +82,18 @@ export default {
     };
   },
 
-  async tags(queueUuid, offset, limit) {
-    const response = await http.get('/tag/', {
-      params: { queue: queueUuid, offset, limit },
+  async tags(queueUuid, { limit = 20, next = '' }) {
+    const endpoint = '/tag/';
+    const nextParams = next
+      ? getURLParams({ URL: next, endpoint, returnObject: true })
+      : {};
+    const params = {
+      ...nextParams,
+      limit: nextParams.limit || limit,
+      queue: queueUuid,
+    };
+    const response = await http.get(endpoint, {
+      params,
     });
     return response.data;
   },

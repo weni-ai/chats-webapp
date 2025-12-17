@@ -4,6 +4,8 @@ import { getProject } from '@/utils/config';
 
 import { useProfile } from '@/store/modules/profile';
 
+import { getURLParams } from '@/utils/requests';
+
 export default {
   async getAll(offset, limit, contact, order, viewedAgent, roomsType) {
     const params = {
@@ -112,10 +114,12 @@ export default {
     return response.data;
   },
 
-  async getRoomTags(roomUuid) {
-    const response = await http.get(`/room/${roomUuid}/tags/`, {
-      params: { limit: 9999 },
-    });
+  async getRoomTags(roomUuid, { limit = 20, next = '' }) {
+    const nextParams = next
+      ? getURLParams({ URL: next, endpoint: '/tag/', returnObject: true })
+      : {};
+    const params = { ...nextParams, limit: nextParams.limit || limit };
+    const response = await http.get(`/room/${roomUuid}/tags/`, { params });
     return response.data;
   },
 

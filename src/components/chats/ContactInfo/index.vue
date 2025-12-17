@@ -30,7 +30,7 @@
         </header>
       </template>
       <section class="scrollable">
-        <AsideSlotTemplateSection>
+        <AsideSlotTemplateSection class="contact-info__section">
           <section class="infos-header">
             <section class="infos-header__title-container">
               <h3 class="infos-header__title">
@@ -113,7 +113,7 @@
               </p>
             </section>
 
-            <Transition name="custom-fields">
+            <Transition name="expand-with-fade">
               <section
                 v-if="hasCustomFields && openCustomFields"
                 class="custom-fields-container"
@@ -144,36 +144,41 @@
             </section>
           </section>
         </AsideSlotTemplateSection>
-        <AsideSlotTemplateSection>
+        <AsideSlotTemplateSection class="contact-info__section">
           <section class="contact-info__about-support">
             <header class="contact-info__about-support-header">
               <h3 class="contact-info__about-support-title">
                 {{ $t('contact_info.about_support') }}
               </h3>
               <section class="contact-info__about-support-header__buttons">
-                <UnnnicDropdown
+                <UnnnicPopover
                   v-if="
                     !isHistory && !isViewMode && allTags.length > 0 && room.user
                   "
                   :open="openDropdownTags"
-                  useOpenProp
+                  @update:open="openDropdownTags = $event"
                 >
-                  <template #trigger>
+                  <UnnnicPopoverTrigger>
                     <UnnnicButton
                       iconLeft="add-1"
                       type="secondary"
                       size="small"
-                      @click="openDropdownTags = !openDropdownTags"
                     >
                       {{ $t('tag') }}
                     </UnnnicButton>
-                  </template>
-                  <OnClickOutside @trigger="openDropdownTags = false">
+                  </UnnnicPopoverTrigger>
+                  <UnnnicPopoverContent align="end">
+                    <UnnnicInput
+                      v-model="tagsFilter"
+                      iconLeft="search"
+                      :placeholder="$t('tags.search')"
+                      class="contact-info__about-support-header__buttons__dropdown__input"
+                    />
                     <section
                       class="contact-info__about-support-header__buttons__dropdown"
                     >
                       <UnnnicCheckbox
-                        v-for="tag in allTags"
+                        v-for="tag in filteredTags"
                         :key="tag.uuid"
                         :modelValue="
                           roomTags.some((roomTag) => roomTag.uuid === tag.uuid)
@@ -182,9 +187,8 @@
                         @change="handleTagClick(tag)"
                       />
                     </section>
-                  </OnClickOutside>
-                </UnnnicDropdown>
-
+                  </UnnnicPopoverContent>
+                </UnnnicPopover>
                 <UnnnicToolTip
                   enabled
                   :text="$t('discussions.start_discussion.title')"
@@ -217,7 +221,7 @@
           </section>
         </AsideSlotTemplateSection>
 
-        <AsideSlotTemplateSection>
+        <AsideSlotTemplateSection class="contact-info__section">
           <ContactMedia
             :room="room"
             :history="isHistory"
@@ -286,7 +290,6 @@ import ProtocolText from './ProtocolText.vue';
 
 import Queues from '@/services/api/resources/settings/queue';
 import TagGroup from '@/components/TagGroup.vue';
-import { OnClickOutside } from '@vueuse/components';
 
 import moment from 'moment';
 import { parseUrn } from '@/utils/room';
@@ -307,7 +310,6 @@ export default {
     DiscussionsSession,
     ProtocolText,
     TagGroup,
-    OnClickOutside,
   },
   props: {
     closedRoom: {
@@ -347,6 +349,8 @@ export default {
     openCustomFields: true,
     openDropdownTags: false,
     allTags: [],
+    tagsPageSize: 20,
+    tagsFilter: '',
   }),
 
   computed: {
@@ -357,6 +361,7 @@ export default {
     }),
     ...mapWritableState(useRooms, {
       roomTags: 'activeRoomTags',
+      roomTagsNext: 'activeRoomTagsNext',
     }),
 
     hasCustomFields() {
@@ -378,6 +383,11 @@ export default {
         : 'flex';
     },
 
+    filteredTags() {
+      return this.allTags.filter((tag) =>
+        tag.name.toLowerCase().includes(this.tagsFilter.toLowerCase()),
+      );
+    },
     isMobile() {
       return isMobile();
     },
@@ -413,11 +423,11 @@ export default {
     },
   },
   watch: {
-    room: {
+    'room.uuid': {
       immediate: true,
       handler(newRoom) {
         if (newRoom) {
-          this.customFields = newRoom.custom_fields;
+          this.customFields = this.room.custom_fields;
           this.loadAllTags();
           this.loadRoomTags();
         }
@@ -439,9 +449,6 @@ export default {
     if (this.isHistory) {
       return;
     }
-
-    this.loadAllTags();
-    this.loadRoomTags();
 
     if (
       moment((closedRoom || room).contact.created_on).format('YYYY-MM-DD') <
@@ -465,17 +472,37 @@ export default {
     moment,
     ...mapActions(useRooms, ['updateRoomContact']),
     async loadAllTags() {
-      const { queue } = this.room || {};
+      try {
+        const { queue } = this.room || {};
 
-      if (!queue) return;
-      const { results } = await Queues.tags(queue.uuid, 0, 9999);
+        if (!queue) return;
 
-      this.allTags = results;
+        const { results, next } = await Queues.tags(queue.uuid, {
+          limit: this.tagsPageSize,
+          next: this.allTagsNext,
+        });
+        this.allTags = this.allTags.concat(results);
+        this.allTagsNext = next;
+      } catch (error) {
+        console.error('Error loading all tags', error);
+      } finally {
+        if (this.allTagsNext) this.loadAllTags();
+      }
     },
     async loadRoomTags() {
-      const roomUuid = this.closedRoom?.uuid || this.room?.uuid;
-      const { results } = await Room.getRoomTags(roomUuid);
-      this.roomTags = results;
+      try {
+        const roomUuid = this.closedRoom?.uuid || this.room?.uuid;
+        const { results, next } = await Room.getRoomTags(roomUuid, {
+          next: this.roomTagsNext,
+          limit: this.tagsPageSize,
+        });
+        this.roomTags = this.roomTags.concat(results);
+        this.roomTagsNext = next;
+      } catch (error) {
+        console.error('Error loading room tags', error);
+      } finally {
+        if (this.roomTagsNext) this.loadRoomTags();
+      }
     },
     async removeRoomTag(tag) {
       try {
@@ -705,6 +732,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/animations';
+
 .contact-info__container {
   height: 100%;
 
@@ -714,6 +743,9 @@ export default {
 }
 
 .contact-info {
+  &__section {
+    padding: $unnnic-space-2;
+  }
   &__header {
     display: flex;
     justify-content: space-between;
@@ -747,12 +779,15 @@ export default {
         &__dropdown {
           display: flex;
           flex-direction: column;
-          gap: $unnnic-space-1;
-          width: max-content;
-          max-height: 110px;
+          gap: $unnnic-space-6;
+          width: 100%;
+          height: 204px;
           overflow-y: auto;
-
           padding-right: $unnnic-space-2;
+
+          &__input {
+            margin-bottom: $unnnic-space-6;
+          }
         }
       }
     }
@@ -859,44 +894,5 @@ export default {
   display: flex;
   flex-direction: column;
   gap: $unnnic-space-1;
-}
-
-// custom-fields animation
-.custom-fields-enter-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-}
-
-.custom-fields-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-}
-
-.custom-fields-enter-from {
-  max-height: 0;
-  opacity: 0;
-  transform: translateY(-$unnnic-space-2);
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-.custom-fields-enter-to {
-  max-height: 100vh;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.custom-fields-leave-from {
-  max-height: 100vh;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.custom-fields-leave-to {
-  max-height: 0;
-  opacity: 0;
-  transform: translateY(-$unnnic-space-2);
-  margin-top: 0;
-  margin-bottom: 0;
 }
 </style>

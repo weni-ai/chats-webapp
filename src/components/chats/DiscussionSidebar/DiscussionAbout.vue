@@ -227,6 +227,8 @@ export default {
 <style lang="scss" scoped>
 .discussion-about {
   &__section {
+    padding: $unnnic-space-2;
+
     display: grid;
     gap: $unnnic-spacing-xs;
 

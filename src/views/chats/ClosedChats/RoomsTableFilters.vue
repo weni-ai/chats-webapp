@@ -102,6 +102,8 @@ import Sector from '@/services/api/resources/settings/sector';
 
 import RoomsTableFiltersLoading from '@/views/loadings/ClosedChats/RoomsTableFiltersLoading.vue';
 
+import { removeDuplicatedItems } from '@/utils/array';
+
 export default {
   name: 'ClosedChatsRoomsTableFilters',
 
@@ -136,6 +138,7 @@ export default {
       filterSector: [],
       filterTag: [],
       filterDate: null,
+      tagsNext: '',
       selectedDatesInternal: { start: null, end: null },
     };
   },
@@ -307,9 +310,13 @@ export default {
         this.emitUpdateFilters();
       }, TIME_TO_WAIT_TYPING);
     },
+
     filterSector(newFilterSector) {
       const sectorValue = newFilterSector?.[0].value;
       if (sectorValue !== 'all') {
+        this.filterTag = [];
+        this.tagsNext = '';
+        this.tagsToFilter = [this.filterTagDefault];
         this.getSectorTags(sectorValue);
       } else {
         this.tagsToFilter = [this.filterTagDefault];
@@ -355,15 +362,16 @@ export default {
     },
 
     async getSectorTags(sectorUuid) {
-      this.filterTag = [];
-
       if (!sectorUuid) {
         this.tagsToFilter = [];
         return;
       }
 
       try {
-        const { results } = await Sector.tags(sectorUuid);
+        const { results, next } = await Sector.tags(sectorUuid, {
+          next: this.tagsNext,
+          limit: 20,
+        });
 
         const filterTagPlaceholder = results.length
           ? this.filterTagDefault
@@ -374,12 +382,19 @@ export default {
         results.forEach(({ uuid, name }) =>
           newTags.push({ value: uuid, label: name }),
         );
-        this.tagsToFilter = newTags;
+
+        this.tagsToFilter = removeDuplicatedItems(
+          this.tagsToFilter.concat(newTags),
+          'value',
+        );
+        this.tagsNext = next;
       } catch (error) {
         console.error(
           'The sector tags could not be loaded at this time.',
           error,
         );
+      } finally {
+        if (this.tagsNext) this.getSectorTags(sectorUuid);
       }
     },
 

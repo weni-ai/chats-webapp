@@ -6,6 +6,7 @@
         ? $t('bulk_transfer.transfer_selected_contacts')
         : $t('transfer_contact')
     "
+    class="modal-transfer-rooms"
     :showCloseIcon="!isLoadingBulkTransfer"
     :primaryButtonProps="{
       text: $t('transfer'),
@@ -83,3 +84,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.modal-transfer-rooms {
+  min-height: 450px;
+}
+</style>

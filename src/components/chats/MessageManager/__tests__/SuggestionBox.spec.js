@@ -35,7 +35,9 @@ describe('SuggestionBox', () => {
         search: '/',
       });
 
-      expect(wrapper.text()).toContain('Available shortcuts');
+      expect(wrapper.text()).toContain(
+        '/fake-suggestion/other-fake-suggestion',
+      );
     });
 
     it('should not open when user do not typed', () => {
@@ -60,7 +62,9 @@ describe('SuggestionBox', () => {
         search: '@fake-search',
       });
 
-      expect(wrapper.text()).toContain('Available shortcuts');
+      expect(wrapper.text()).toContain(
+        'No results found for the entered shortcut.',
+      );
     });
   });
 

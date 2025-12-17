@@ -3,9 +3,7 @@
     ref="chats-layout"
     :class="['home-chats-layout', { 'has-discussion': !!discussion }]"
     data-testid="chats-layout"
-    @select-quick-message="
-      (quickMessage) => updateTextBoxMessage(quickMessage.text)
-    "
+    @show-quick-messages="showQuickMessages = true"
   >
     <ChatsBackground
       v-if="!room?.uuid && !discussion?.uuid && !isChatSkeletonActive"
@@ -18,13 +16,20 @@
       data-testid="home-chat"
       @open-room-contact-info="openRoomContactInfo"
       @close-room-contact-info="closeRoomContactInfo"
-      @handle-show-quick-messages="handlerShowQuickMessages()"
+      @handle-show-quick-messages="showQuickMessages = true"
       @open-flows-trigger="openFlowsTrigger()"
     />
 
     <template #aside>
+      <QuickMessages
+        v-if="showQuickMessages"
+        @select-quick-message="
+          (quickMessage) => updateTextBoxMessage(quickMessage.text)
+        "
+        @close="showQuickMessages = false"
+      />
       <ContactInfo
-        v-if="
+        v-else-if="
           featureFlags.active_features?.includes('weniChatsContactInfoV2') &&
           room &&
           isRoomContactInfoOpen &&
@@ -68,6 +73,7 @@ import DiscussionSidebar from '@/components/chats/DiscussionSidebar/index.vue';
 import ContactInfo from '@/components/chats/ContactInfo/index.vue';
 import OldContactInfo from '@/components/chats/ContactInfo/oldContactInfo.vue';
 import ModalFeedback from './ModalFeedback.vue';
+import QuickMessages from '@/components/chats/QuickMessages/index.vue';
 
 import HomeChat from './HomeChat.vue';
 
@@ -85,6 +91,7 @@ export default {
     HomeChat,
     ModalFeedback,
     OldContactInfo,
+    QuickMessages,
   },
 
   props: {
@@ -100,6 +107,7 @@ export default {
 
   data() {
     return {
+      showQuickMessages: false,
       isRoomContactInfoOpen: moduleStorage.getItem(
         'isRoomContactInfoOpen',
         true,
@@ -143,9 +151,6 @@ export default {
     },
     closeRoomContactInfo() {
       this.isRoomContactInfoOpen = false;
-    },
-    handlerShowQuickMessages() {
-      this.$refs['chats-layout']?.handlerShowQuickMessages();
     },
     openFlowsTrigger() {
       this.$refs['chats-layout']?.openFlowsTrigger({

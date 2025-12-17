@@ -479,11 +479,12 @@
   "service": "Serviço",
   "tags": {
     "title": "Tags",
+    "search": "Pesquisar uma tag",
     "description": "As tags são usadas para classificar características do atendimento e possibilitar a pesquisa e filtragem dos chats a partir delas, defina tags que sejam relevantes para seu contexto.",
     "add": {
       "title": "Adicionar tags",
       "label": "Nome da tag",
-      "placeholder": "Exemplo: Dúvidas"
+      "placeholder": "Digite o nome de uma tag para pesquisar ou adicionar"
     },
     "already_added": "Tags adicionadas"
   },
@@ -674,31 +675,31 @@
   "quick_messages": {
     "title": "Mensagens rápidas",
     "title_by_sector": "Mensagens rápidas em {sector}",
-    "without_messages": "Por enquanto você não possui mensagens rápidas, adicione uma :)",
-    "without_messages_shared": {
-      "start": "Por enquanto não há mensagens rápidas neste setor,",
-      "middle": "adicione uma mensagem",
-      "end": "para os agentes deste setor utilizarem."
-    },
+    "without_personal_messages": "Você ainda não adicionou nenhuma mensagem rápida. Clique no botão <i>+ Mensagem</i> e adicione sua primeira mensagem.",
+    "without_messages_shared": "Não há mensagens rápidas compartilhadas para você usar.",
     "example_message": "Mensagem de exemplo",
     "example_message_description": "As mensagens rápidas são textos prontos que facilitam a padronização de atendimento, todos os agentes deste setor poderão utilizar as mensagens, você poderá cadastrar novas mensagens a seguir.",
-    "personal": "Suas mensagens rápidas",
-    "shared": "Mensagens rápidas compartilhadas",
+    "personal": "Suas mensagens",
+    "shared": "Mensagens compartilhadas",
     "delete": "Deletar mensagem rápida",
+    "delete_your_quick_message": "Deletar sua mensagem rápida",
     "delete_confirm": "Você tem certeza que deseja excluir resposta rápida?",
     "delete_or_edit": "Excluir ou editar",
+    "delete_description": "Você tem certeza que deseja excluir a mensagem rápida {shortcut}?",
     "shortcut_tooltip": "Digite /{shortcut} para usar",
     "new": "Nova mensagem rápida",
-    "add": "Adicionar nova mensagem",
-    "edit": "Editar mensagem",
+    "add": "Adicionar nova mensagem rápida",
+    "edit": "Editar mensagem rápida",
     "available_shortcuts": "Atalhos disponíveis",
     "copilot": "Agora o ChatGPT é seu CoPiloto! Utilize as respostas sugeridas pela Inteligência artificial para agilizar seus atendimentos!",
     "title_field_placeholder": "Ex: Boas vindas",
     "shortcut_field_placeholder": "Ex: Oi",
-    "message_field_placeholder": "Digite o que você deseja",
+    "message_field_placeholder": "Exemplo: Olá, como posso ajudar você hoje? Continuarei ajudando você hoje.",
     "successfully_added": "Mensagem rápida adicionada",
     "successfully_updated": "Mensagem rápida atualizada",
-    "error": "Falha ao definir mensagem rápida"
+    "error": "Falha ao definir mensagem rápida",
+    "no_suggestions": "Nenhum resultado encontrado para o atalho digitado.",
+    "disclaimer": "Digite o atalho / (barra) no campo de mensagem do chat para ativar a exibição de mensagens rápidas."
   },
   "discard": "Descartar",
   "on_boarding": {
