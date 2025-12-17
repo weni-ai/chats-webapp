@@ -291,7 +291,7 @@
       "open_summary_tooltip": "Abrir el resumen del chat",
       "close_summary_tooltip": "Cerrar el resumen del chat",
       "feedback": {
-        "title": "Feedback",
+        "title": "¿Qué fue lo que no funcionó?",
         "needs_improvement_text": "Ayuda a mejorar los resumenes. Tu opinión sobre este resumen nos ayuda a hacerlo más claro y útil.",
         "empty_rating": "¿Este resumen fue útil para ti?",
         "positive": "Útil",
