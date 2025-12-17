@@ -24,6 +24,7 @@
                 : $t('chats.summary.open_summary_tooltip')
             "
             side="left"
+            class="home-chat-headers__summary-icon-tooltip"
           >
             <section
               class="home-chat-headers__summary-icon"
@@ -278,6 +279,11 @@ export default {
 
 <style lang="scss" scoped>
 .home-chat-headers {
+  :deep(.unnnic-tooltip-trigger) {
+    > .home-chat-headers__summary-icon {
+      width: 38px;
+    }
+  }
   &__summary-icon {
     width: 38px;
     height: 38px;

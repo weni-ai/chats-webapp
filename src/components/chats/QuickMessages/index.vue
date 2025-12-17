@@ -9,7 +9,7 @@
     <UnnnicDisclaimer
       class="quick-messages-disclaimer"
       type="informational"
-      :text="'Type the shortcut / (slash) in the chat message field to activate the display of quick messages.'"
+      :text="$t('quick_messages.disclaimer')"
     />
 
     <AsideSlotTemplateSection class="messages-section__container">

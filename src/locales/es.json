@@ -703,7 +703,8 @@
     "successfully_added": "Mensaje rápido agregado",
     "successfully_updated": "Mensaje rápido actualizado",
     "error": "Error al configurar el mensaje rápido",
-    "no_suggestions": "No se encontraron resultados para el atajo ingresado."
+    "no_suggestions": "No se encontraron resultados para el atajo ingresado.",
+    "disclaimer": "Escribe el atajo / (barra) en el campo de mensaje del chat para activar la visualización de mensajes rápidos."
   },
   "discard": "Descartar",
   "on_boarding": {
