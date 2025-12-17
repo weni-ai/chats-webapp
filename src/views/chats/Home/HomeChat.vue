@@ -197,6 +197,7 @@ export default {
             this.setIsLoadingCanSendMessageStatus(false);
           }
         } else if (
+          newRoom &&
           newRoom.uuid !== oldRoom?.uuid &&
           parseUrn(newRoom).plataform !== 'whatsapp' &&
           !this.isCanSendMessageActiveRoom
