@@ -164,6 +164,7 @@
   "justify": "Justify",
   "without_results": "No matching results",
   "without_chats": "Oops! It looks like there are no chats at the moment :)",
+  "other": "Other",
   "select_smart": {
     "without_results": "No results found",
     "without_multiple_selected": "No option selected"
@@ -299,7 +300,7 @@
         "empty_rating": "Was this summary useful to you?",
         "positive": "Useful",
         "negative": "Needs improvement",
-        "placeholder": "Share your feedback to help us improve."
+        "placeholder": "Enter your feedback here"
       },
       "onboarding": {
         "title": "New Feature: Summary by AI",
