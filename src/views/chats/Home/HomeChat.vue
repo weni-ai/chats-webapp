@@ -196,6 +196,12 @@ export default {
           } finally {
             this.setIsLoadingCanSendMessageStatus(false);
           }
+        } else if (
+          newRoom.uuid !== oldRoom?.uuid &&
+          parseUrn(newRoom).plataform !== 'whatsapp' &&
+          !this.isCanSendMessageActiveRoom
+        ) {
+          this.setIsCanSendMessageActiveRoom(true);
         }
 
         if (rooms.length > 0) {
