@@ -296,7 +296,8 @@
         "empty_rating": "Esse resumo foi útil para você?",
         "positive": "Útil",
         "negative": "Precisa de melhorias",
-        "placeholder": "Compartilhe seu feedback aqui"
+        "placeholder": "Compartilhe seu feedback aqui",
+        "sended": "Seu feedback foi enviado!"
       },
       "onboarding": {
         "title": "Nova Funcionalidade: Resumo por IA",

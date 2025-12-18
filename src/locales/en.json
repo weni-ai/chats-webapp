@@ -300,7 +300,8 @@
         "empty_rating": "Was this summary useful to you?",
         "positive": "Useful",
         "negative": "Needs improvement",
-        "placeholder": "Enter your feedback here"
+        "placeholder": "Enter your feedback here",
+        "sended": "Your feedback has been submitted!"
       },
       "onboarding": {
         "title": "New Feature: Summary by AI",
