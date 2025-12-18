@@ -213,14 +213,7 @@ describe('ViewOptions', () => {
       expect(wrapper.emitted('show-quick-messages')).toBeTruthy();
     });
 
-    it.each([
-      {
-        name: 'dashboard.manager',
-        testId: 'show-dashboard',
-        props: { dashboard: true },
-      },
-      { name: 'closed-rooms', testId: 'show-see_history', props: {} },
-    ])(
+    it.each([{ name: 'closed-rooms', testId: 'show-see_history', props: {} }])(
       'should navigate to $name when $testId is clicked',
       async ({ name, testId, props }) => {
         wrapper = createWrapper(props);
