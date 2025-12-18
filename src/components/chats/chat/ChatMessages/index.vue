@@ -226,6 +226,15 @@
       v-if="showScrollToBottomButton"
       class="chat-messages__scroll-button-container"
     >
+      <section
+        v-if="unreadMessages > 0"
+        class="chat-messages__scroll-button-chip-container"
+      >
+        <p class="chat-messages__scroll-button-chip">
+          {{ unreadMessages }}
+        </p>
+      </section>
+
       <UnnnicButton
         class="chat-messages__scroll-button"
         data-testid="scroll-to-bottom-button"
@@ -239,8 +248,10 @@
 
 <script>
 import { mapState, mapWritableState, mapActions } from 'pinia';
+
 import { useDashboard } from '@/store/modules/dashboard';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useRooms } from '@/store/modules/chats/rooms';
 
 import moment from 'moment';
 
@@ -359,6 +370,12 @@ export default {
   }),
 
   computed: {
+    ...mapState(useRooms, {
+      newMessages(store) {
+        return store.newMessagesByRoom[this.room.uuid]?.messages;
+      },
+      room: (store) => store.activeRoom,
+    }),
     ...mapState(useDashboard, ['viewedAgent']),
     ...mapState(useRoomMessages, ['roomMessagesNext']),
     ...mapWritableState(useRoomMessages, [
@@ -378,6 +395,10 @@ export default {
     isSkeletonLoadingActive() {
       const { isLoading, prevChatUuid, chatUuid } = this;
       return isLoading && prevChatUuid !== chatUuid;
+    },
+    unreadMessages() {
+      const { room, newMessages } = this;
+      return room.unread_msgs + (newMessages?.length || 0);
     },
   },
 
@@ -779,11 +800,30 @@ export default {
   cursor: pointer;
 }
 
-.chat-messages__scroll-button-container {
-  position: absolute;
-  bottom: $unnnic-spacing-md;
-  right: $unnnic-spacing-sm;
-  z-index: 9;
+.chat-messages__scroll-button {
+  &-container {
+    position: absolute;
+    bottom: $unnnic-spacing-md;
+    right: $unnnic-spacing-sm;
+    z-index: 9;
+  }
+  &-chip {
+    padding: 0 $unnnic-space-2;
+    border-radius: $unnnic-border-radius-pill;
+    background-color: $unnnic-color-red-500;
+    color: $unnnic-color-fg-inverted;
+    margin-bottom: -$unnnic-space-2;
+    z-index: 1;
+    font: $unnnic-font-caption-1;
+    font-weight: $unnnic-font-weight-medium;
+
+    &-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+  }
 }
 
 .chat-messages__container {
