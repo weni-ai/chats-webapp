@@ -6,6 +6,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useProfile } from '@/store/modules/profile';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
@@ -26,6 +27,7 @@ vi.mock('@/services/api/resources/chats/room', () => ({
   default: {
     updateReadMessages: vi.fn(),
     getRoomTags: vi.fn(() => ({ results: [] })),
+    getCanSendMessageStatus: vi.fn(() => ({ can_send_message: true })),
   },
 }));
 
@@ -372,6 +374,8 @@ describe('HomeChat.vue', () => {
     it('should show MessageManager on open valid room', async () => {
       const roomsStore = useRooms();
       roomsStore.activeRoom = { ...roomMock, is_24h_valid: true };
+      roomsStore.isCanSendMessageActiveRoom = true;
+      roomsStore.isLoadingCanSendMessageStatus = false;
 
       await wrapper.vm.$nextTick();
       const manager = wrapper.findComponent('[data-testid="message-manager"]');
@@ -461,6 +465,88 @@ describe('HomeChat.vue', () => {
       await wrapper.vm.readMessages();
 
       expect(updateReadMessagesSpy).toHaveBeenCalledWith('1', true);
+    });
+
+    it('calls getCanSendMessageStatus when feature flag is active and platform is whatsapp', async () => {
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsIs24hValidOptimization'],
+      };
+
+      const roomsStore = useRooms();
+      roomsStore.activeRoom = null;
+      roomsStore.setIsLoadingCanSendMessageStatus = vi.fn();
+      roomsStore.setIsCanSendMessageActiveRoom = vi.fn();
+
+      const getCanSendMessageStatusSpy = vi
+        .spyOn(RoomService, 'getCanSendMessageStatus')
+        .mockResolvedValue({ can_send_message: true });
+
+      await wrapper.vm.$nextTick();
+
+      const newRoom = { ...roomMock, urn: 'whatsapp:123456789' };
+      roomsStore.activeRoom = newRoom;
+
+      await flushPromises();
+
+      expect(getCanSendMessageStatusSpy).toHaveBeenCalledWith(newRoom.uuid);
+      expect(roomsStore.setIsCanSendMessageActiveRoom).toHaveBeenCalledWith(
+        true,
+      );
+    });
+
+    it('sets isCanSendMessageActiveRoom to true when platform is not whatsapp', async () => {
+      const roomsStore = useRooms();
+      roomsStore.activeRoom = null;
+      roomsStore.isCanSendMessageActiveRoom = false;
+      roomsStore.setIsCanSendMessageActiveRoom = vi.fn(
+        (value) => (roomsStore.isCanSendMessageActiveRoom = value),
+      );
+
+      await wrapper.vm.$nextTick();
+
+      const newRoom = { ...roomMock, urn: 'telegram:123456789' };
+      roomsStore.activeRoom = newRoom;
+
+      await flushPromises();
+
+      expect(roomsStore.setIsCanSendMessageActiveRoom).toHaveBeenCalledWith(
+        true,
+      );
+    });
+
+    it('handles error when getCanSendMessageStatus fails', async () => {
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsIs24hValidOptimization'],
+      };
+
+      const roomsStore = useRooms();
+      roomsStore.activeRoom = null;
+      roomsStore.setIsLoadingCanSendMessageStatus = vi.fn();
+      roomsStore.setIsCanSendMessageActiveRoom = vi.fn();
+
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      vi.spyOn(RoomService, 'getCanSendMessageStatus').mockRejectedValue(
+        new Error('API Error'),
+      );
+
+      await wrapper.vm.$nextTick();
+
+      const newRoom = { ...roomMock, urn: 'whatsapp:123456789' };
+      roomsStore.activeRoom = newRoom;
+
+      await flushPromises();
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error getting can send message status:',
+        expect.any(Error),
+      );
+
+      consoleErrorSpy.mockRestore();
     });
   });
 
