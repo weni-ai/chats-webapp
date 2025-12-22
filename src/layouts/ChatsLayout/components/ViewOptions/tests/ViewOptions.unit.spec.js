@@ -233,6 +233,15 @@ describe('ViewOptions', () => {
         '*',
       );
     });
+    it.each([{ name: 'closed-rooms', testId: 'show-see_history', props: {} }])(
+      'should navigate to $name when $testId is clicked',
+      async ({ name, testId, props }) => {
+        wrapper = createWrapper(props);
+        await openDrawer(wrapper);
+        await wrapper.find(`[data-testid="${testId}"]`).trigger('click');
+        expect(mockPush).toHaveBeenCalledWith({ name });
+      },
+    );
   });
 
   describe('Lifecycle', () => {

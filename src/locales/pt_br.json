@@ -322,12 +322,13 @@
       "open_summary_tooltip": "Abrir o resumo do chat",
       "close_summary_tooltip": "Fechar o resumo do chat",
       "feedback": {
-        "title": "Feedback",
+        "title": "O que não funcionou?",
         "needs_improvement_text": "Ajude a melhorar os resumos. Sua opinião sobre esse resumo nos ajuda a torná-lo mais claro e útil.",
         "empty_rating": "Esse resumo foi útil para você?",
         "positive": "Útil",
         "negative": "Precisa de melhorias",
-        "placeholder": "Compartilhe seu feedback aqui"
+        "placeholder": "Compartilhe seu feedback aqui",
+        "sended": "Seu feedback foi enviado!"
       },
       "onboarding": {
         "title": "Nova Funcionalidade: Resumo por IA",

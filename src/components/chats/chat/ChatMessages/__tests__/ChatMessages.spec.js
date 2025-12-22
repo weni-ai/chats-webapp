@@ -4,6 +4,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import ChatMessages from '../index.vue';
 import { useDashboard } from '@/store/modules/dashboard';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useRooms } from '@/store/modules/chats/rooms';
 import moment from 'moment';
 
 // Mock components
@@ -61,6 +62,7 @@ describe('ChatMessages', () => {
   let pinia;
   let dashboardStore;
   let roomMessagesStore;
+  let roomsStore;
 
   const mockMessages = [
     {
@@ -114,9 +116,11 @@ describe('ChatMessages', () => {
 
     dashboardStore = useDashboard();
     roomMessagesStore = useRoomMessages();
+    roomsStore = useRooms();
 
     // Mock store state
     dashboardStore.viewedAgent = { email: 'agent@example.com' };
+    roomsStore.activeRoom = { uuid: 'room-123' };
 
     wrapper = mount(ChatMessages, {
       props: defaultProps,

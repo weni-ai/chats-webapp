@@ -326,12 +326,13 @@
       "open_summary_tooltip": "Click to see Summary",
       "close_summary_tooltip": "Click to hide Summary",
       "feedback": {
-        "title": "Feedback",
+        "title": "What went wrong?",
         "needs_improvement_text": "Help us improve summaries. Your feedback on this summary helps us make it clearer and more useful.",
         "empty_rating": "Was this summary useful to you?",
         "positive": "Useful",
         "negative": "Needs improvement",
-        "placeholder": "Enter your feedback here"
+        "placeholder": "Enter your feedback here",
+        "sended": "Your feedback has been submitted!"
       },
       "onboarding": {
         "title": "New Feature: Summary by AI",

@@ -74,6 +74,8 @@ import TagGroup from '@/components/TagGroup.vue';
 
 import Room from '@/services/api/resources/chats/room';
 
+import { unnnicCallAlert } from '@weni/unnnic-system';
+
 export default {
   name: 'FeedbackModal',
   components: {
@@ -152,6 +154,13 @@ export default {
           liked: this.activeRoomSummary.feedback.liked,
           text: this.feedbackText,
           tags: this.feedbackSelectedCategory.map((category) => category.uuid),
+        });
+        unnnicCallAlert({
+          props: {
+            text: this.$t('chats.summary.feedback.sended'),
+            type: 'success',
+          },
+          seconds: 5,
         });
       } catch (error) {
         console.error(error);
