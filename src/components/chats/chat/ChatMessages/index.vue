@@ -370,10 +370,8 @@ export default {
   }),
 
   computed: {
+    ...mapWritableState(useRooms, ['newMessagesByRoom']),
     ...mapState(useRooms, {
-      newMessages(store) {
-        return store.newMessagesByRoom[this.room.uuid]?.messages;
-      },
       room: (store) => store.activeRoom,
     }),
     ...mapState(useDashboard, ['viewedAgent']),
@@ -397,8 +395,7 @@ export default {
       return isLoading && prevChatUuid !== chatUuid;
     },
     unreadMessages() {
-      const { room, newMessages } = this;
-      return room.unread_msgs + (newMessages?.length || 0);
+      return this.newMessagesByRoom[this.room.uuid]?.messages?.length || 0;
     },
   },
 
@@ -693,6 +690,10 @@ export default {
 
       const { scrollTop, scrollHeight, clientHeight } = chatMessages;
       const isAtBottom = scrollTop + clientHeight >= scrollHeight - 20;
+
+      if (isAtBottom) {
+        this.newMessagesByRoom[this.room.uuid] = { messages: [] };
+      }
 
       this.showScrollToBottomButton = !isAtBottom;
     },
