@@ -145,4 +145,9 @@ export default {
     position: fixed;
   }
 }
+
+:deep(.unnnic-date-picker .options-container .actions) {
+  display: flex;
+  grid-template-columns: none;
+}
 </style>

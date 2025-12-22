@@ -46,43 +46,34 @@ exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
         data-v-1088b44f=""
       >
         
-        
-        
-        
-        
         <div
-          class="unnnic-tooltip-trigger"
-          data-grace-area-trigger=""
-          data-state="closed"
-          data-testid="tooltip-trigger"
-          data-v-8fb03905=""
+          class="unnnic-tooltip"
+          data-v-1088b44f=""
+          data-v-8c61d974=""
         >
-          
-          
           
           <button
             data-testid="open-dropdown-menu-button"
             data-v-1088b44f=""
           />
           
-          
-          
+          <span
+            class="unnnic-tooltip-label unnnic-tooltip-label-left"
+            data-testid="tooltip-label"
+            data-v-8c61d974=""
+            style="left: -8px; top: 0px;"
+          >
+            
+            
+            Delete or edit 
+            <br
+              data-v-8c61d974=""
+            />
+            
+            
+            <!---->
+          </span>
         </div>
-        <div
-          defer="false"
-          disabled="false"
-          forcemount="false"
-        >
-          
-          
-          <!---->
-          
-          
-        </div>
-        
-        
-        
-        
         
         
         <div
@@ -151,43 +142,34 @@ exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
         data-v-1088b44f=""
       >
         
-        
-        
-        
-        
         <div
-          class="unnnic-tooltip-trigger"
-          data-grace-area-trigger=""
-          data-state="closed"
-          data-testid="tooltip-trigger"
-          data-v-8fb03905=""
+          class="unnnic-tooltip"
+          data-v-1088b44f=""
+          data-v-8c61d974=""
         >
-          
-          
           
           <button
             data-testid="open-dropdown-menu-button"
             data-v-1088b44f=""
           />
           
-          
-          
+          <span
+            class="unnnic-tooltip-label unnnic-tooltip-label-left"
+            data-testid="tooltip-label"
+            data-v-8c61d974=""
+            style="left: -8px; top: 0px;"
+          >
+            
+            
+            Delete or edit 
+            <br
+              data-v-8c61d974=""
+            />
+            
+            
+            <!---->
+          </span>
         </div>
-        <div
-          defer="false"
-          disabled="false"
-          forcemount="false"
-        >
-          
-          
-          <!---->
-          
-          
-        </div>
-        
-        
-        
-        
         
         
         <div
@@ -256,43 +238,34 @@ exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
         data-v-1088b44f=""
       >
         
-        
-        
-        
-        
         <div
-          class="unnnic-tooltip-trigger"
-          data-grace-area-trigger=""
-          data-state="closed"
-          data-testid="tooltip-trigger"
-          data-v-8fb03905=""
+          class="unnnic-tooltip"
+          data-v-1088b44f=""
+          data-v-8c61d974=""
         >
-          
-          
           
           <button
             data-testid="open-dropdown-menu-button"
             data-v-1088b44f=""
           />
           
-          
-          
+          <span
+            class="unnnic-tooltip-label unnnic-tooltip-label-left"
+            data-testid="tooltip-label"
+            data-v-8c61d974=""
+            style="left: -8px; top: 0px;"
+          >
+            
+            
+            Delete or edit 
+            <br
+              data-v-8c61d974=""
+            />
+            
+            
+            <!---->
+          </span>
         </div>
-        <div
-          defer="false"
-          disabled="false"
-          forcemount="false"
-        >
-          
-          
-          <!---->
-          
-          
-        </div>
-        
-        
-        
-        
         
         
         <div
