@@ -691,8 +691,6 @@ export default {
       const { scrollTop, scrollHeight, clientHeight } = chatMessages;
       const isAtBottom = scrollTop + clientHeight >= scrollHeight - 20;
 
-      console.log({ isAtBottom });
-
       if (isAtBottom) {
         this.newMessagesByRoom[this.room.uuid] = { messages: [] };
       }
