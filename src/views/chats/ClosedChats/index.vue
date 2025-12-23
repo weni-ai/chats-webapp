@@ -22,8 +22,8 @@
       <UnnnicChatsHeader
         v-show="!isLoadingSelectedRoom"
         v-if="selectedRoom"
-        :title="selectedRoom.contact.name"
-        :avatarName="selectedRoom.contact.name"
+        :title="contactName || `[${$t('unnamed_contact')}]`"
+        :avatarName="contactName || '-'"
       />
     </header>
     <main>
@@ -128,6 +128,9 @@ export default {
     ...mapState(useFeatureFlag, ['featureFlags']),
     closedChatsHeaderSize() {
       return this.isMobile ? 'small' : 'large';
+    },
+    contactName() {
+      return this.selectedRoom?.contact?.name?.trim() || '';
     },
   },
 

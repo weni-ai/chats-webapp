@@ -27,6 +27,7 @@ export default {
     const response = await http.get('/room/', {
       params,
     });
+
     return response.data;
   },
 
