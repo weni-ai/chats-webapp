@@ -6,10 +6,10 @@
     />
     <UnnnicChatsHeader
       v-show="isShowingRoomHeader"
-      :title="headerRoomTitle"
+      :title="headerRoomTitle || `[${$t('unnamed_contact')}]`"
       :avatarClick="emitOpenRoomContactInfo"
       :titleClick="emitOpenRoomContactInfo"
-      :avatarName="room?.contact.name"
+      :avatarName="room?.contact.name || '-'"
       :back="isMobile ? emitBack : null"
       data-testid="chat-header"
     >
