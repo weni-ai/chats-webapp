@@ -26,10 +26,10 @@
       <UnnnicChatsHeader
         v-show="!isRoomSkeletonActive"
         v-if="!!room && !discussion"
-        :title="room.contact.name || ''"
+        :title="room.contact.name || `[${$t('unnamed_contact')}]`"
         :avatarClick="() => handleModal('ContactInfo', 'open')"
         :titleClick="() => handleModal('ContactInfo', 'open')"
-        :avatarName="room.contact.name"
+        :avatarName="room.contact.name || '-'"
         data-testid="room-chat-header"
       >
         <template #right>

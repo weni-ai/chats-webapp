@@ -463,6 +463,7 @@
   },
   "pagination": "{from} - {to} de {total}",
   "contact": "Contacto",
+  "unnamed_contact": "Contacto sin nombre",
   "contact_await_for_you": "¡Un contacto está esperando por ti!",
   "agent": "Agente",
   "manager": "Gerente",

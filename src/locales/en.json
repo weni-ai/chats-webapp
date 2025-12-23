@@ -467,6 +467,7 @@
   },
   "pagination": "{from} - {to} of {total}",
   "contact": "Contact",
+  "unnamed_contact": "Unnamed contact",
   "contact_await_for_you": "A contact is waiting for you!",
   "agent": "Agent",
   "manager": "Manager",
