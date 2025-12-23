@@ -95,7 +95,10 @@
           </p>
         </fieldset>
       </template>
-      <section class="switchs__container">
+      <section
+        v-if="enableAutomaticCsatFeature"
+        class="switchs__container"
+      >
         <UnnnicSwitch
           v-model="sector.is_csat_enabled"
           :textRight="
@@ -301,6 +304,9 @@ export default {
         !this.tagName.trim() ||
         this.tags.some((tag) => tag.name === this.tagName.trim())
       );
+    },
+    enableAutomaticCsatFeature() {
+      return this.featureFlags.active_features?.includes('weniChatsCSAT');
     },
   },
   mounted() {

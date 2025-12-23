@@ -11,10 +11,7 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
     </section>
     <unnnic-switch-stub data-v-85728205="" size="small" label="" labeltooltip="" labelusehtmltooltip="false" option="" helper="" textleft="" textright="Allow agents to edit Custom Fields" disabled="false" modelvalue="false" usevmodel="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     <!--v-if-->
-    <section data-v-85728205="" class="switchs__container">
-      <unnnic-switch-stub data-v-85728205="" size="small" label="" labeltooltip="" labelusehtmltooltip="false" option="" helper="" textleft="" textright="Satisfaction survey after completing the support disabled" disabled="false" modelvalue="false" usevmodel="false"></unnnic-switch-stub>
-      <div data-v-8c61d974="" data-v-85728205="" class="unnnic-tooltip"><span data-v-69390f82="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-soft unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span><span data-v-8c61d974="" class="unnnic-tooltip-label unnnic-tooltip-label-right" style="max-width: 15rem; left: 8px; top: 0px;" data-testid="tooltip-label">When activated, a satisfaction survey will be sent to the customer automatically, right after the service is closed. <br data-v-8c61d974=""><!----></span></div>
-    </section>
+    <!--v-if-->
   </section>
   <section data-v-85728205="" class="tags">
     <h2 data-v-85728205="" class="tags__title" data-testid="tags-title">Add tags <div data-v-8c61d974="" data-v-85728205="" class="unnnic-tooltip"><span data-v-69390f82="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-soft unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span><span data-v-8c61d974="" class="unnnic-tooltip-label unnnic-tooltip-label-right" style="max-width: 23rem; left: 8px; top: 0px;" data-testid="tooltip-label">Tags are used to classify service characteristics and make it possible to search and filter chats from them, define tags that are relevant to your context <br data-v-8c61d974=""><!----></span></div>
