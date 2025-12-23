@@ -239,6 +239,11 @@
         "switch_active": "Active signature",
         "switch_disabled": "Disabled signature"
       },
+      "csat": {
+        "enabled": "Satisfaction survey after completing the support active",
+        "disabeld": "Satisfaction survey after completing the support disabled",
+        "tooltip": "When activated, a satisfaction survey will be sent to the customer automatically, right after the service is closed."
+      },
       "automatic_message": {
         "switch_active": "Automatic opening message active",
         "switch_disabled": "Automatic opening message disabled",

@@ -961,6 +961,7 @@ export default {
         config,
         sign_messages,
         maxSimultaneousChatsByAgent,
+        is_csat_enabled,
       } = this.sector;
 
       const sector = {
@@ -970,6 +971,7 @@ export default {
         config,
         sign_messages,
         rooms_limit: maxSimultaneousChatsByAgent,
+        is_csat_enabled,
       };
 
       try {

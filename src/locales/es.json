@@ -232,6 +232,11 @@
         "switch_active": "Firma activa",
         "switch_disabled": "Firma desactivada"
       },
+      "csat": {
+        "enabled": "Encuesta de satisfacción después de completar el soporte activo",
+        "disabeld": "Encuesta de satisfacción después de completar el soporte deshabilitado",
+        "tooltip": "Cuando se activa, se enviará una encuesta de satisfacción automáticamente al contacto, justo después de que se cierre el servicio."
+      },
       "automatic_message": {
         "switch_active": "Mensaje automático de apertura activo",
         "switch_disabled": "Mensaje automático de apertura deshabilitado",

@@ -232,6 +232,11 @@
         "switch_active": "Assinatura ativa",
         "switch_disabled": "Assinatura desativada"
       },
+      "csat": {
+        "enabled": "Enquete de satisfação após completar o suporte ativo",
+        "disabeld": "Enquete de satisfação após completar o suporte desativado",
+        "tooltip": "Quando ativado, uma enquete de satisfação será enviada automaticamente ao contato, logo após o fechamento do suporte."
+      },
       "automatic_message": {
         "switch_active": "Mensagem automática de abertura ativa",
         "switch_disabled": "Mensagem automática de abertura desativada",

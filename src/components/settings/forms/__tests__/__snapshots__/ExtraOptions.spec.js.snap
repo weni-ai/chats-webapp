@@ -4,12 +4,13 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
 "<section data-v-85728205="" class="sector-extra-options-form">
   <section data-v-85728205="" class="switchs">
     <h2 data-v-85728205="" class="switchs__title" data-testid="switchs-title">Extras options</h2>
-    <unnnic-switch-stub data-v-85728205="" size="medium" label="" labeltooltip="" labelusehtmltooltip="false" option="" helper="" textleft="" textright="Triggering message templates disabled" disabled="false" modelvalue="false" usevmodel="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    <unnnic-switch-stub data-v-85728205="" size="small" label="" labeltooltip="" labelusehtmltooltip="false" option="" helper="" textleft="" textright="Triggering message templates disabled" disabled="false" modelvalue="false" usevmodel="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     <section data-v-85728205="" class="switchs__container">
-      <unnnic-switch-stub data-v-85728205="" size="medium" label="" labeltooltip="" labelusehtmltooltip="false" option="" helper="" textleft="" textright="Disabled signature" disabled="false" modelvalue="false" usevmodel="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+      <unnnic-switch-stub data-v-85728205="" size="small" label="" labeltooltip="" labelusehtmltooltip="false" option="" helper="" textleft="" textright="Disabled signature" disabled="false" modelvalue="false" usevmodel="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
       <div data-v-8c61d974="" data-v-85728205="" class="unnnic-tooltip"><span data-v-69390f82="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-soft unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span><span data-v-8c61d974="" class="unnnic-tooltip-label unnnic-tooltip-label-right" style="max-width: 15rem; left: 8px; top: 0px;" data-testid="tooltip-label">Each message exchanged will have the name of the agent who is answering <br data-v-8c61d974=""><!----></span></div>
     </section>
-    <unnnic-switch-stub data-v-85728205="" size="medium" label="" labeltooltip="" labelusehtmltooltip="false" option="" helper="" textleft="" textright="Allow agents to edit Custom Fields" disabled="false" modelvalue="false" usevmodel="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    <unnnic-switch-stub data-v-85728205="" size="small" label="" labeltooltip="" labelusehtmltooltip="false" option="" helper="" textleft="" textright="Allow agents to edit Custom Fields" disabled="false" modelvalue="false" usevmodel="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    <!--v-if-->
     <!--v-if-->
   </section>
   <section data-v-85728205="" class="tags">
