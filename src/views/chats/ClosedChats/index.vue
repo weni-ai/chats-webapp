@@ -6,6 +6,7 @@
     />
     <header v-if="!isLoadingHeader && project">
       <UnnnicChatsHeader
+        class="closed-chats__header"
         :title="project.name"
         :subtitle="$t('chats.closed_chats.project_history')"
         avatarIcon="history"
@@ -31,14 +32,18 @@
         class="closed-chats__selected-chat"
         data-testid="closed-chats-selected-chat"
       >
-        <RoomMessages data-testid="room-messages" />
+        <section class="closed-chats__selected-chat__content">
+          <RoomMessages
+            showRoomSummary
+            data-testid="room-messages"
+          />
+        </section>
         <ContactInfo
           v-if="
             featureFlags.active_features?.includes('weniChatsContactInfoV2')
           "
           isHistory
           :closedRoom="selectedRoom"
-          showRoomSummary
           data-testid="contact-info"
         />
         <OldContactInfo
@@ -227,6 +232,21 @@ export default {
 
   overflow: hidden;
 
+  &__header {
+    :deep(.unnnic-chats-header__infos) {
+      > div > div.unnnic-avatar-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: $unnnic-space-12;
+        height: $unnnic-space-12;
+        > .unnnic-icon {
+          font-size: $unnnic-space-8;
+        }
+      }
+    }
+  }
+
   main {
     height: 100%;
     overflow: hidden;
@@ -245,6 +265,12 @@ export default {
 
     :deep(.unnnic-chats-header) {
       display: none;
+    }
+
+    &__content {
+      :deep(.chat-summary) {
+        margin-left: -$unnnic-space-4;
+      }
     }
   }
 }

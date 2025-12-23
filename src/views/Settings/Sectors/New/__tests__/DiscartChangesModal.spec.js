@@ -1,11 +1,19 @@
 import { beforeEach, describe } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { mount, config } from '@vue/test-utils';
 
 import DiscartChangesModal from '@/views/Settings/DiscartChangesModal.vue';
 
 const createWrapper = () => {
   return mount(DiscartChangesModal, {
     props: { showModal: true, title: 'Title', text: 'Text' },
+    global: {
+      components: {
+        UnnnicModalDialog: config.global.stubs.UnnnicModalDialog,
+      },
+      stubs: {
+        teleport: true,
+      },
+    },
   });
 };
 
@@ -16,13 +24,22 @@ describe('DiscartChangesModal.vue', () => {
     wrapper = createWrapper();
   });
 
-  it('should display the modal title', async () => {
-    const title = wrapper.find('[data-testid="discart-changes-modal"]');
-    expect(title.text()).toContain('Title');
+  it('should pass correct props to modal', async () => {
+    const modal = wrapper.findComponent({ name: 'UnnnicModalDialogStub' });
+    expect(modal.exists()).toBe(true);
+    expect(modal.props('title')).toBe('Title');
+    expect(modal.props('modelValue')).toBe(true);
+    expect(modal.props('size')).toBe('sm');
+    expect(modal.props('primaryButtonProps')).toEqual(
+      expect.objectContaining({ text: expect.any(String) }),
+    );
+    expect(modal.props('secondaryButtonProps')).toEqual(
+      expect.objectContaining({ text: expect.any(String) }),
+    );
   });
-  it('should display the modal hint', () => {
-    const title = wrapper.find('[data-testid="discart-changes-modal"]');
-    expect(title.text()).toContain('Text');
+
+  it('should have correct text prop', () => {
+    expect(wrapper.props('text')).toBe('Text');
   });
   it('to match snapshot', () => {
     expect(wrapper.html()).toMatchSnapshot();

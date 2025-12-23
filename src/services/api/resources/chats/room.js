@@ -4,6 +4,10 @@ import { getProject } from '@/utils/config';
 
 import { useProfile } from '@/store/modules/profile';
 
+import { getURLParams } from '@/utils/requests';
+
+import i18n from '@/plugins/i18n';
+
 export default {
   async getAll(offset, limit, contact, order, viewedAgent, roomsType) {
     const params = {
@@ -35,10 +39,22 @@ export default {
     return console.error('"Uuid" necessário para requisição.');
   },
 
-  async sendSummaryFeedback({ roomUuid, liked, text }) {
+  async getSummaryFeedbackTags() {
+    const response = await http.get(
+      '/ai_features/history_summary/feedback/tags/',
+      {
+        headers: {
+          'Accept-Language': i18n.global.locale,
+        },
+      },
+    );
+    return response.data;
+  },
+
+  async sendSummaryFeedback({ roomUuid, liked, text, tags }) {
     const response = await http.post(
       `/room/${roomUuid}/chats-summary/feedback/`,
-      { liked, text },
+      { liked, text, tags },
     );
     return response.data;
   },
@@ -112,10 +128,12 @@ export default {
     return response.data;
   },
 
-  async getRoomTags(roomUuid) {
-    const response = await http.get(`/room/${roomUuid}/tags/`, {
-      params: { limit: 9999 },
-    });
+  async getRoomTags(roomUuid, { limit = 20, next = '' }) {
+    const nextParams = next
+      ? getURLParams({ URL: next, endpoint: '/tag/', returnObject: true })
+      : {};
+    const params = { ...nextParams, limit: nextParams.limit || limit };
+    const response = await http.get(`/room/${roomUuid}/tags/`, { params });
     return response.data;
   },
 
@@ -139,9 +157,8 @@ export default {
     const body = { rooms_list: rooms };
     const params = {
       user_request: user_email,
-      ...(intended_agent
-        ? { user_email: intended_agent }
-        : { queue_uuid: intended_queue }),
+      user_email: intended_agent,
+      queue_uuid: intended_queue,
     };
 
     const response = await http
@@ -155,6 +172,18 @@ export default {
     const response = await http.post(`/room/${uuid}/pin/`, {
       status,
     });
+
+    return response.data;
+  },
+
+  /**
+   * @description Get the can send message status of the room
+   * @param {string} uuid - The uuid of the room
+   * @returns {Promise<{can_send_message: boolean}>} - The can send message status
+   */
+
+  async getCanSendMessageStatus(uuid) {
+    const response = await http.get(`/room/${uuid}/can-send-message-status/`);
 
     return response.data;
   },

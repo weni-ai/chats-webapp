@@ -50,7 +50,7 @@
         data-testid="status-bar-list-open"
       >
         <li
-          v-for="status in statuses"
+          v-for="status in filteredStatuses"
           :key="status.value"
           class="status-bar__item"
           data-testid="status-bar-item"
@@ -60,7 +60,7 @@
             class="status-bar__icon"
             data-testid="status-bar-icon-inside"
             :class="`status-bar--${status.color}`"
-          ></section>
+          />
           <p
             class="status-bar__item-label"
             data-testid="status-bar-item-label"
@@ -89,6 +89,12 @@ const statuses = ref([
   { value: 'active', label: 'Online', color: 'green' },
   { value: 'inactive', label: 'Offline', color: 'gray' },
 ]);
+
+const filteredStatuses = computed(() => {
+  return statuses.value.filter(
+    (status) => status.value !== selectedStatus.value?.value,
+  );
+});
 
 const isOpen = ref(false);
 const startDate = ref(null);
@@ -531,28 +537,30 @@ watch(
 
   &__list {
     position: absolute;
-    width: 100%;
+    width: calc(100% - $unnnic-space-7);
     background: $unnnic-color-background-snow;
     border-top: 1px solid $unnnic-color-neutral-soft;
     list-style: none;
     margin: 0;
+    margin-top: -$unnnic-space-4;
+    padding: $unnnic-space-4;
     top: 100%;
-    left: 0;
+    left: $unnnic-space-4;
     z-index: 9999999;
-    box-shadow: 0px $unnnic-spacing-nano $unnnic-spacing-xs 0px
-      rgba(0, 0, 0, 0.1);
-    border-radius: 0rem 0rem $unnnic-border-radius-sm $unnnic-border-radius-sm;
+    box-shadow: $unnnic-shadow-1;
+    border-radius: $unnnic-radius-4;
 
     &--open {
-      display: block;
+      display: flex;
+      flex-direction: column;
+      gap: $unnnic-space-2;
     }
   }
 
   &__item {
-    padding: $unnnic-spacing-sm;
+    padding: $unnnic-space-2;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid $unnnic-color-neutral-soft;
     gap: $unnnic-border-radius-md;
 
     &:last-child {
@@ -561,6 +569,7 @@ watch(
 
     &:hover {
       background: $unnnic-color-neutral-lightest;
+      border-radius: $unnnic-radius-1;
     }
 
     &-label {

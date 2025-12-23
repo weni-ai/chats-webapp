@@ -23,18 +23,26 @@
         iconColor="feedback-yellow"
         :text="$t('chats.to_end_required_tags')"
       />
-      <ChatClassifier
-        v-model="tags"
-        :tags="sectorTags"
-        :loading="isLoadingTags"
-        @update:to-remove-tags="(tags) => (toRemoveTags = tags)"
-        @update:to-add-tags="(tags) => (toAddTags = tags)"
+      <UnnnicInput
+        v-model="tagsFilter"
+        iconLeft="search"
+        :placeholder="$t('tags.search')"
       />
+      <section class="modal-close-chat__tags-list">
+        <ChatClassifier
+          v-model="tags"
+          :tags="filteredTags"
+          :loading="isLoadingTags"
+          @update:to-remove-tags="(tags) => (toRemoveTags = tags)"
+          @update:to-add-tags="(tags) => (toAddTags = tags)"
+        />
+      </section>
     </section>
   </UnnnicModalDialog>
 </template>
 
 <script>
+import { mapActions } from 'pinia';
 import isMobile from 'is-mobile';
 
 import Room from '@/services/api/resources/chats/room';
@@ -42,10 +50,10 @@ import Queue from '@/services/api/resources/settings/queue';
 
 import ChatClassifier from '@/components/chats/ChatClassifier.vue';
 
-import { mapActions } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
-import feedbackService from '@/services/api/resources/chats/feedback';
 import { useFeedback } from '@/store/modules/feedback';
+
+import feedbackService from '@/services/api/resources/chats/feedback';
 
 export default {
   components: {
@@ -67,6 +75,7 @@ export default {
   data() {
     return {
       tags: [],
+      tagsNext: '',
       sectorTags: [],
       page: 0,
       limit: 20,
@@ -75,6 +84,7 @@ export default {
       isShowFeedback: false,
       toRemoveTags: [],
       toAddTags: [],
+      tagsFilter: '',
     };
   },
 
@@ -84,6 +94,11 @@ export default {
     },
     isInvalidRequiredTags() {
       return this.room.queue?.required_tags && this.tags.length === 0;
+    },
+    filteredTags() {
+      return this.sectorTags.filter((tag) =>
+        tag.name.toLowerCase().includes(this.tagsFilter.toLowerCase()),
+      );
     },
   },
   mounted() {
@@ -96,28 +111,35 @@ export default {
     ...mapActions(useFeedback, ['setIsRenderFeedbackModal']),
     ...mapActions(useRooms, ['removeRoom']),
     async loadRoomTags() {
-      const roomUuid = this.room.uuid;
-      const { results } = await Room.getRoomTags(roomUuid);
-      this.tags = results;
+      try {
+        const roomUuid = this.room.uuid;
+        const { results, next } = await Room.getRoomTags(roomUuid, {
+          next: this.tagsNext,
+          limit: 20,
+        });
+        this.tagsNext = next;
+        this.tags = this.tags.concat(results);
+      } catch (error) {
+        console.error('Error loading room tags', error);
+      } finally {
+        if (this.tagsNext) this.loadRoomTags();
+      }
     },
     async classifyRoom() {
       this.isLoadingTags = true;
-      let hasNext = false;
+
       try {
-        const response = await Queue.tags(
-          this.room.queue.uuid,
-          this.page * 20,
-          20,
-        );
-        this.page += 1;
+        const response = await Queue.tags(this.room.queue.uuid, {
+          limit: 20,
+          next: this.tagsNext,
+        });
         this.sectorTags = this.sectorTags.concat(response.results);
-        hasNext = response.next;
-        this.isLoadingTags = false;
+        this.tagsNext = response.next;
+      } catch (error) {
+        console.error('Error classifying room', error);
       } finally {
-        this.isLoadingTags = false;
-      }
-      if (hasNext) {
-        this.classifyRoom();
+        if (this.tagsNext) this.classifyRoom();
+        else this.isLoadingTags = false;
       }
     },
     async closeRoom() {
@@ -184,14 +206,12 @@ export default {
   }
 
   &__tags-list {
-    margin-top: $unnnic-spacing-md;
-
     display: flex;
-    gap: $unnnic-spacing-xs;
+    gap: $unnnic-space-3;
     overflow: hidden auto;
     flex-wrap: wrap;
 
-    max-height: $unnnic-spacing-xgiant;
+    max-height: 500px;
 
     scroll-snap-type: y proximity;
   }

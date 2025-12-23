@@ -34,14 +34,13 @@ describe('ViewModeHeader', () => {
           $router: mockRouter,
           $route: mockRoute,
         },
+        components: {
+          UnnnicToolTip: config.global.stubs.UnnnicToolTip,
+        },
         stubs: {
           UnnnicIcon: {
             template: '<span data-testid="icon" :data-icon="icon"></span>',
             props: ['icon', 'size'],
-          },
-          UnnnicToolTip: {
-            template: '<div data-testid="tooltip"><slot /></div>',
-            props: ['text', 'enabled', 'side'],
           },
         },
       },
@@ -68,7 +67,9 @@ describe('ViewModeHeader', () => {
         true,
       );
       expect(wrapper.find('[data-testid="close-button"]').exists()).toBe(true);
-      expect(wrapper.find('[data-testid="close-tooltip"]').exists()).toBe(true);
+      expect(
+        wrapper.findComponent({ name: 'UnnnicToolTipStub' }).exists(),
+      ).toBe(true);
       expect(wrapper.find('[data-testid="close-icon"]').exists()).toBe(true);
     });
 

@@ -1,4 +1,8 @@
 {
+  "home": {
+    "title": "Hello there,",
+    "description": "Select a chat to carry out your supports!"
+  },
   "news_and_updates": "News and updates in Chats",
   "custom": "Custom",
   "country": {
@@ -129,6 +133,7 @@
   "updated_info": "Updated information",
   "active_chats": "Active chats",
   "active_chats_tooltip": "Number of ongoing chats",
+  "since": "Since",
   "date_format": "MM/DD/YYYY",
   "live": "Live",
   "number_chats": "Number of chats",
@@ -139,6 +144,7 @@
   "redo": "Redo",
   "record_audio": "Record audio",
   "select_all": "Select all",
+  "deselect_all": "Deselect all",
   "image": "Image",
   "video": "Video",
   "audio_message": "Audio message",
@@ -158,6 +164,7 @@
   "justify": "Justify",
   "without_results": "No matching results",
   "without_chats": "Oops! It looks like there are no chats at the moment :)",
+  "other": "Other",
   "select_smart": {
     "without_results": "No results found",
     "without_multiple_selected": "No option selected"
@@ -290,13 +297,21 @@
       "by_ai": "Summary by AI",
       "error": "Failed to generate summary.",
       "unavailable": "No summary available",
+      "open_summary_tooltip": "Click to see Summary",
+      "close_summary_tooltip": "Click to hide Summary",
       "feedback": {
-        "title": "Feedback",
+        "title": "What went wrong?",
         "needs_improvement_text": "Help us improve summaries. Your feedback on this summary helps us make it clearer and more useful.",
         "empty_rating": "Was this summary useful to you?",
         "positive": "Useful",
         "negative": "Needs improvement",
-        "placeholder": "Share your feedback to help us improve."
+        "placeholder": "Enter your feedback here",
+        "sended": "Your feedback has been submitted!"
+      },
+      "onboarding": {
+        "title": "New Feature: Summary by AI",
+        "description": "From now on, whenever you open a chat, you will see a summary with the key information from the client's previous chat with the AI. This feature is designed to help you save time and quickly gain context.",
+        "see_how_it_works": "See how it works:"
       }
     },
     "feedback": {
@@ -317,8 +332,16 @@
     },
     "room_list": {
       "order_by": "Order by:",
-      "most_recent": "Most recent",
-      "older": "Older"
+      "most_recent": {
+        "label": "Most recent",
+        "ongoing_tooltip": "Most recent: last message exchanged in the shortest time",
+        "waiting_tooltip": "Most recent: rooms that have been open for less time."
+      },
+      "oldest": {
+        "label": "Oldest",
+        "ongoing_tooltip": "Oldest: last message exchanged in the longest time",
+        "default_tooltip": "Oldest: rooms that have been open the longest."
+      }
     },
     "room_pin": {
       "success_pin": "Chat pinned with success",
@@ -342,7 +365,7 @@
     "waiting_assistance": "Waiting for assistance",
     "in_progress": "Ongoing",
     "sent_flows": "Sent flows",
-    "to_end_rate_the_chat": "To close, rate the chat",
+    "to_end_rate_the_chat": "To end, rate the chat",
     "to_end_required_tags": "To end this conversation, please select at least one tag.",
     "tags_help": "Tags help you locate chats and also generate good reports",
     "chat_with_contact_ended": "Chat with {contact} closed",
@@ -467,11 +490,12 @@
   "service": "Service",
   "tags": {
     "title": "Tags",
+    "search": "Search for a tag",
     "description": "Tags are used to classify service characteristics and enable chat search and filtering from them, define tags that are relevant to their context.",
     "add": {
       "title": "Add tags",
       "label": "Tag name",
-      "placeholder": "Example: Doubts"
+      "placeholder": "Enter the name of a tag to search or to add it"
     },
     "already_added": "Added Tags"
   },
@@ -662,31 +686,31 @@
   "quick_messages": {
     "title": "Quick messages",
     "title_by_sector": "Quick messages in {sector}",
-    "without_messages": "For now you do not have quick messages, add one :)",
-    "without_messages_shared": {
-      "start": "For now there are no quick messages in this sector,",
-      "middle": "add a message",
-      "end": "for agents in this sector to use."
-    },
+    "without_personal_messages": "You have not added any quick messages yet. Click the <i>+ Message</i> button and add your first message.",
+    "without_messages_shared": "There are no quick messages shared for you to use.",
     "example_message": "Example message",
     "example_message_description": " Quick messages are ready-made texts that help standardize customer service. All agents in this sector will be able to use these messages, and you can register new messages below.",
-    "personal": "Your quick messages",
-    "shared": "Shared quick messages",
+    "personal": "Your messages",
+    "shared": "Shared messages",
     "delete": "Delete quick message",
+    "delete_your_quick_message": "Delete your quick message",
     "delete_confirm": "Are you sure you'd like to delete quick message?",
     "delete_or_edit": "Delete or edit",
+    "delete_description": "Are you sure you want to delete the quick message {shortcut}?",
     "shortcut_tooltip": "Type /{shortcut} to use",
     "new": "New quick message",
-    "add": "Add new message",
-    "edit": "Edit message",
+    "add": "Add new quick message",
+    "edit": "Edit quick message",
     "available_shortcuts": "Available shortcuts",
     "copilot": "Now ChatGPT is your CoPilot! Use the answers suggested by Artificial Intelligence to speed up your calls!",
     "title_field_placeholder": "Ex: Welcome",
     "shortcut_field_placeholder": "Ex: Hi",
-    "message_field_placeholder": "Type what you want",
+    "message_field_placeholder": "Example: Hello, how are you? I'll continue to support you today.",
     "successfully_added": "Quick message added",
     "successfully_updated": "Quick message updated",
-    "error": "Failed to set quick message"
+    "error": "Failed to set quick message",
+    "no_suggestions": "No results found for the entered shortcut.",
+    "disclaimer": "Type the shortcut / (slash) in the chat message field to activate the display of quick messages."
   },
   "discard": "Delete",
   "on_boarding": {

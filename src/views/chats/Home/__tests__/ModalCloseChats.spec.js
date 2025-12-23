@@ -58,8 +58,10 @@ describe('ModalCloseChats.vue', () => {
     await flushPromises();
     await wrapper.vm.$nextTick();
 
-    expect(Queue.tags).toHaveBeenCalledWith(roomMock.queue.uuid, 0, 20);
-    expect(Queue.tags).toHaveBeenCalledWith(roomMock.queue.uuid, 20, 20);
+    expect(Queue.tags).toHaveBeenCalledWith(roomMock.queue.uuid, {
+      limit: 20,
+      next: '',
+    });
 
     expect(classifyRoom).toHaveBeenCalled();
 

@@ -1,33 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`DiscartChangesModal.vue > to match snapshot 1`] = `
-"<section data-v-ab1febba="" data-v-7a1d255d="" class="unnnic-modal-dialog discart-changes-modal" data-testid="discart-changes-modal">
-  <section data-v-ab1febba="" class="unnnic-modal-dialog__overlay" data-testid="modal-overlay"></section>
-  <section data-v-ab1febba="" class="unnnic-modal-dialog__container unnnic-modal-dialog__container--sm" data-testid="modal-container">
-    <!---->
-    <section data-v-ab1febba="" class="unnnic-modal-dialog__container__body">
-      <header data-v-ab1febba="" class="unnnic-modal-dialog__container__header">
-        <section data-v-ab1febba="" class="unnnic-modal-dialog__container__title-container">
-          <!---->
-          <h1 data-v-ab1febba="" class="unnnic-modal-dialog__container__title-text" data-testid="title-text">Title</h1>
-        </section>
-        <!---->
-      </header>
-      <section data-v-ab1febba="" class="unnnic-modal-dialog__container__content">
-        <p data-v-7a1d255d="" class="discart-changes-modal__text">Text</p>
-      </section>
-      <section data-v-ab1febba="" data-testid="actions-section" class="unnnic-modal-dialog__container__actions"><button data-v-73cbd3a2="" data-v-ab1febba="" data-testid="secondary-button" class="unnnic-modal-dialog__container__actions__secondary-button unnnic-button unnnic-button--size-large unnnic-button--tertiary unnnic-modal-dialog__container__actions__secondary-button">
-          <!---->
-          <!---->
-          <!----><span data-v-73cbd3a2="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Back</span>
-          <!---->
-        </button><button data-v-73cbd3a2="" data-v-ab1febba="" data-testid="primary-button" class="unnnic-modal-dialog__container__actions__primary-button unnnic-button unnnic-button--size-large unnnic-button--primary unnnic-modal-dialog__container__actions__primary-button">
-          <!---->
-          <!---->
-          <!----><span data-v-73cbd3a2="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Discart</span>
-          <!---->
-        </button></section>
-    </section>
-  </section>
-</section>"
+"<div data-v-7a1d255d="" class="discart-changes-modal" data-testid="discart-changes-modal">
+  <p data-v-7a1d255d="" class="discart-changes-modal__text">Text</p>
+</div>"
 `;

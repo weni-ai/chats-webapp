@@ -1,4 +1,8 @@
 {
+  "home": {
+    "title": "¡Hola!",
+    "description": "¡Selecciona un chat para realizar tus soportes!"
+  },
   "news_and_updates": "Noticias y actualizaciones en Chats",
   "custom": "Personalizado",
   "country": {
@@ -129,6 +133,7 @@
   "updated_info": "Información actualizada",
   "active_chats": "Chats activos",
   "active_chats_tooltip": "Cantidad de chats en curso",
+  "since": "Desde",
   "date_format": "DD/MM/YYYY",
   "live": "En Vivo",
   "number_chats": "Cantidad de chats",
@@ -139,6 +144,7 @@
   "redo": "Rehacer",
   "record_audio": "Grabar audio",
   "select_all": "Seleccionar todo",
+  "deselect_all": "Deseleccionar todo",
   "image": "Imagen",
   "video": "Vídeo",
   "audio_message": "Mensaje de audio",
@@ -158,6 +164,7 @@
   "justify": "Justificar",
   "without_results": "No hay resultados coincidentes",
   "without_chats": "¡Ups! Parece que no hay chats en este momento :)",
+  "other": "Otro",
   "select_smart": {
     "without_results": "Ningún resultado encontrado",
     "without_multiple_selected": "Ninguna opción seleccionada"
@@ -286,13 +293,21 @@
       "by_ai": "Resumen por IA",
       "error": "No se pudo generar el resumen.",
       "unavailable": "No hay resumen disponible",
+      "open_summary_tooltip": "Abrir el resumen del chat",
+      "close_summary_tooltip": "Cerrar el resumen del chat",
       "feedback": {
-        "title": "Feedback",
+        "title": "¿Qué fue lo que no funcionó?",
         "needs_improvement_text": "Ayuda a mejorar los resumenes. Tu opinión sobre este resumen nos ayuda a hacerlo más claro y útil.",
         "empty_rating": "¿Este resumen fue útil para ti?",
         "positive": "Útil",
         "negative": "Necesita mejoras",
-        "placeholder": "Comparte tu feedback para que podamos mejorar la funcionalidad."
+        "placeholder": "Comparte tu feedback aquí",
+        "sended": "Tu feedback ha sido enviado!"
+      },
+      "onboarding": {
+        "title": "Nuevo Feature: Resumen por IA",
+        "description": "A partir de ahora, cada vez que abras un chat, verás un resumen con la información clave del chat anterior con la IA. Esta funcionalidad está diseñada para ayudarte a ahorrar tiempo y obtener contexto rápidamente.",
+        "see_how_it_works": "Ver cómo funciona:"
       }
     },
     "feedback": {
@@ -313,8 +328,16 @@
     },
     "room_list": {
       "order_by": "Ordenar por:",
-      "most_recent": "Mais recente",
-      "older": "Más antiguo"
+      "most_recent": {
+        "label": "Más reciente",
+        "ongoing_tooltip": "Más reciente: última mensagem intercambiada en el menor tiempo.",
+        "default_tooltip": "Más reciente: salas que han sido abiertas por menos tiempo."
+      },
+      "oldest": {
+        "label": "Más antiguo",
+        "ongoing_tooltip": "Más antiguo: última mensagem intercambiada en el mayor tiempo.",
+        "default_tooltip": "Más antiguo: salas que han sido abiertas por más tiempo."
+      }
     },
     "room_pin": {
       "success_pin": "Chat fijado con éxito",
@@ -463,11 +486,12 @@
   "service": "Servicio",
   "tags": {
     "title": "Tags",
+    "search": "Buscar una etiqueta",
     "description": "Las etiquetas se utilizan para clasificar las características del servicio y habilitar la búsqueda y el filtrado de chat de ellas, definir las etiquetas que son relevantes para su contexto.",
     "add": {
       "title": "Agregar etiquetas",
       "label": "Nombre de la etiqueta",
-      "placeholder": "Ejemplo: Dudas"
+      "placeholder": "Ingrese el nombre de una etiqueta para buscar o agregarla"
     },
     "already_added": "Etiquetas agregadas"
   },
@@ -658,31 +682,31 @@
   "quick_messages": {
     "title": "Mensajes rápidos",
     "title_by_sector": "Mensajes rápidos en {sector}",
-    "without_messages": "Por ahora no tienes mensajes rápidos, agregue uno :)",
-    "without_messages_shared": {
-      "start": "Por ahora no hay mensajes rápidos en este sector,",
-      "middle": "añade un mensaje",
-      "end": "para los agentes en este sector los usan."
-    },
+    "without_personal_messages": "No has agregado ningún mensaje rápido aún. Haz clic en el botón <i>+ Mensaje</i> y agrega tu primer mensaje.",
+    "without_messages_shared": "No hay mensajes rápidos compartidos para ti para usar.",
     "example_message": "Mensaje de ejemplo",
     "example_message_description": "Los mensajes rápidos son textos predefinidos que facilitan la estandarización del servicio. Todos los agentes de este sector podrán utilizar los mensajes, y podrás registrar nuevos mensajes a continuación.",
-    "personal": "Tus mensajes rápidos",
-    "shared": "Mensajes rápidos compartidos",
+    "personal": "Tus mensajes",
+    "shared": "Mensajes compartidos",
     "delete": "Eliminar mensaje rápido",
+    "delete_your_quick_message": "Eliminar tu mensaje rápido",
     "delete_confirm": "¿Estás seguro de que quieres eliminar el mensaje rápido?",
     "delete_or_edit": "Eliminar o editar",
+    "delete_description": "¿Estás seguro de que quieres eliminar el mensaje rápido {shortcut}?",
     "shortcut_tooltip": "Escriba /{shortcut} para usar",
     "new": "Nuevo mensaje rápido",
-    "add": "Agregar nuevo mensaje",
-    "edit": "Editar mensaje",
+    "add": "Agregar nuevo mensaje rápido",
+    "edit": "Editar mensaje rápido",
     "available_shortcuts": "Atajos disponibles",
     "copilot": "¡Ahora ChatGPT es tu CoPiloto! ¡Usa las respuestas sugeridas por la Inteligencia Artificial para acelerar tus llamadas!",
     "title_field_placeholder": "Ej: Bienvenido",
     "shortcut_field_placeholder": "Ej: Hola",
-    "message_field_placeholder": "Introduzca lo que quiere",
+    "message_field_placeholder": "Ejemplo: Hola, ¿cómo estás? Continuaré ayudándote hoy.",
     "successfully_added": "Mensaje rápido agregado",
     "successfully_updated": "Mensaje rápido actualizado",
-    "error": "Error al configurar el mensaje rápido"
+    "error": "Error al configurar el mensaje rápido",
+    "no_suggestions": "No se encontraron resultados para el atajo ingresado.",
+    "disclaimer": "Escribe el atajo / (barra) en el campo de mensaje del chat para activar la visualización de mensajes rápidos."
   },
   "discard": "Descartar",
   "on_boarding": {

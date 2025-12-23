@@ -1,0 +1,310 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SettingsGroups.vue > Snapshot > should match the snapshot 1`] = `
+<section
+  class="groups-list"
+  data-v-b225401e=""
+>
+  <div
+    class="groups__new-card"
+    data-testid="new-group-card"
+    data-v-b225401e=""
+  >
+    
+    
+  </div>
+  
+  <div
+    class="groups__card"
+    data-testid="group-card"
+    data-v-b225401e=""
+  >
+    
+    <div
+      data-v-b225401e=""
+    >
+      
+      <div
+        class="unnnic-tooltip"
+        data-v-8c61d974=""
+        data-v-b225401e=""
+      >
+        
+        <button
+          data-testid="open-dropdown-menu-button"
+          data-v-b225401e=""
+        />
+        
+        <span
+          class="unnnic-tooltip-label unnnic-tooltip-label-left"
+          data-testid="tooltip-label"
+          data-v-8c61d974=""
+          style="left: -8px; top: 0px;"
+        >
+          
+          
+          Delete or edit 
+          <br
+            data-v-8c61d974=""
+          />
+          
+          
+          <!---->
+        </span>
+      </div>
+      
+      
+      <div
+        data-testid="dropdown-item"
+        data-v-b225401e=""
+      >
+        
+        <section
+          class="dropdown-item-content"
+          data-v-b225401e=""
+        >
+          <span
+            class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-darkest unnnic-icon-size--sm unnnic-icon__size--sm icon"
+            data-testid="material-icon"
+            data-v-69390f82=""
+            data-v-b225401e=""
+            translate="no"
+          >
+            edit_square
+          </span>
+          <p
+            data-v-b225401e=""
+          >
+            Edit
+          </p>
+        </section>
+        
+      </div>
+      <div
+        data-testid="dropdown-delete"
+        data-v-b225401e=""
+      >
+        
+        <section
+          class="dropdown-item-content dropdown-item-content__delete"
+          data-v-b225401e=""
+        >
+          <span
+            class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--danger unnnic-icon-size--sm unnnic-icon__size--sm icon"
+            data-testid="material-icon"
+            data-v-69390f82=""
+            data-v-b225401e=""
+            translate="no"
+          >
+            delete
+          </span>
+          <p
+            data-v-b225401e=""
+          >
+            Exclude
+          </p>
+        </section>
+        
+      </div>
+      
+    </div>
+    
+  </div>
+  <div
+    class="groups__card"
+    data-testid="group-card"
+    data-v-b225401e=""
+  >
+    
+    <div
+      data-v-b225401e=""
+    >
+      
+      <div
+        class="unnnic-tooltip"
+        data-v-8c61d974=""
+        data-v-b225401e=""
+      >
+        
+        <button
+          data-testid="open-dropdown-menu-button"
+          data-v-b225401e=""
+        />
+        
+        <span
+          class="unnnic-tooltip-label unnnic-tooltip-label-left"
+          data-testid="tooltip-label"
+          data-v-8c61d974=""
+          style="left: -8px; top: 0px;"
+        >
+          
+          
+          Delete or edit 
+          <br
+            data-v-8c61d974=""
+          />
+          
+          
+          <!---->
+        </span>
+      </div>
+      
+      
+      <div
+        data-testid="dropdown-item"
+        data-v-b225401e=""
+      >
+        
+        <section
+          class="dropdown-item-content"
+          data-v-b225401e=""
+        >
+          <span
+            class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-darkest unnnic-icon-size--sm unnnic-icon__size--sm icon"
+            data-testid="material-icon"
+            data-v-69390f82=""
+            data-v-b225401e=""
+            translate="no"
+          >
+            edit_square
+          </span>
+          <p
+            data-v-b225401e=""
+          >
+            Edit
+          </p>
+        </section>
+        
+      </div>
+      <div
+        data-testid="dropdown-delete"
+        data-v-b225401e=""
+      >
+        
+        <section
+          class="dropdown-item-content dropdown-item-content__delete"
+          data-v-b225401e=""
+        >
+          <span
+            class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--danger unnnic-icon-size--sm unnnic-icon__size--sm icon"
+            data-testid="material-icon"
+            data-v-69390f82=""
+            data-v-b225401e=""
+            translate="no"
+          >
+            delete
+          </span>
+          <p
+            data-v-b225401e=""
+          >
+            Exclude
+          </p>
+        </section>
+        
+      </div>
+      
+    </div>
+    
+  </div>
+  <div
+    class="groups__card"
+    data-testid="group-card"
+    data-v-b225401e=""
+  >
+    
+    <div
+      data-v-b225401e=""
+    >
+      
+      <div
+        class="unnnic-tooltip"
+        data-v-8c61d974=""
+        data-v-b225401e=""
+      >
+        
+        <button
+          data-testid="open-dropdown-menu-button"
+          data-v-b225401e=""
+        />
+        
+        <span
+          class="unnnic-tooltip-label unnnic-tooltip-label-left"
+          data-testid="tooltip-label"
+          data-v-8c61d974=""
+          style="left: -8px; top: 0px;"
+        >
+          
+          
+          Delete or edit 
+          <br
+            data-v-8c61d974=""
+          />
+          
+          
+          <!---->
+        </span>
+      </div>
+      
+      
+      <div
+        data-testid="dropdown-item"
+        data-v-b225401e=""
+      >
+        
+        <section
+          class="dropdown-item-content"
+          data-v-b225401e=""
+        >
+          <span
+            class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-darkest unnnic-icon-size--sm unnnic-icon__size--sm icon"
+            data-testid="material-icon"
+            data-v-69390f82=""
+            data-v-b225401e=""
+            translate="no"
+          >
+            edit_square
+          </span>
+          <p
+            data-v-b225401e=""
+          >
+            Edit
+          </p>
+        </section>
+        
+      </div>
+      <div
+        data-testid="dropdown-delete"
+        data-v-b225401e=""
+      >
+        
+        <section
+          class="dropdown-item-content dropdown-item-content__delete"
+          data-v-b225401e=""
+        >
+          <span
+            class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--danger unnnic-icon-size--sm unnnic-icon__size--sm icon"
+            data-testid="material-icon"
+            data-v-69390f82=""
+            data-v-b225401e=""
+            translate="no"
+          >
+            delete
+          </span>
+          <p
+            data-v-b225401e=""
+          >
+            Exclude
+          </p>
+        </section>
+        
+      </div>
+      
+    </div>
+    
+  </div>
+  
+  <!--v-if-->
+  <!--v-if-->
+  <!--v-if-->
+</section>
+`;

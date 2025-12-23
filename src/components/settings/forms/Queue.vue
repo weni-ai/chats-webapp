@@ -5,7 +5,6 @@
       class="form-wrapper__radios"
     >
       <UnnnicRadio
-        size="sm"
         :modelValue="useDefaultSectorQueue"
         :value="0"
         data-testid="disable-default-queue-config"
@@ -15,7 +14,6 @@
       </UnnnicRadio>
       <UnnnicRadio
         :modelValue="useDefaultSectorQueue"
-        size="sm"
         :value="1"
         data-testid="enable-default-queue-config"
         @update:model-value="updateDefaultSectorQueueValue"
@@ -298,6 +296,13 @@ export default {
 .queue-form {
   display: grid;
   gap: $unnnic-spacing-sm;
+
+  .form-wrapper {
+    &__radios {
+      display: flex;
+      gap: $unnnic-space-4;
+    }
+  }
 }
 .forms {
   &__title {

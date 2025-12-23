@@ -1,47 +1,54 @@
 <template>
   <section class="chats-background">
     <img
-      class="illustration__doodles"
-      src="@/assets/homepage-illustration/doodles.svg"
-      alt=""
+      class="chats-background__icon"
+      :src="chatHomeIcon"
+      alt="Chat Home Icon"
     />
-    <img
-      class="illustration__background"
-      src="@/assets/homepage-illustration/background.svg"
-      alt=""
-    />
+    <h1 class="chats-background__title">{{ $t('home.title') }}</h1>
+    <p class="chats-background__description">
+      {{ $t('home.description') }}
+    </p>
   </section>
 </template>
 
 <script>
+import chatHomeIcon from '@/assets/chat-home-icon.png';
+
 export default {
-  name: 'ChatsHome',
+  name: 'ChatsBackground',
+  data() {
+    return {
+      chatHomeIcon,
+    };
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 .chats-background {
   position: relative;
-
   height: 100%;
+  background: rgba(246, 247, 249, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $unnnic-space-3;
 
-  .illustration {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  &__icon {
+    max-width: $unnnic-space-20;
+    max-height: $unnnic-space-20;
+  }
 
-    position: relative;
-    margin-left: $unnnic-spacing-inline-sm;
-
-    &__doodles,
-    &__background {
-      position: absolute;
-      height: 100%;
-      width: 100%;
-      object-fit: cover;
-      object-position: center;
-      pointer-events: none;
-    }
+  &__title {
+    font: $unnnic-font-display-1;
+    color: $unnnic-color-fg-emphasized;
+  }
+  &__description {
+    font: $unnnic-font-body;
+    color: $unnnic-color-fg-base;
+    font-weight: $unnnic-font-weight-medium;
   }
 }
 </style>

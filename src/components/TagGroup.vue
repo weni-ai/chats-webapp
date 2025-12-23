@@ -64,21 +64,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    tagSize: {
+      type: String,
+      default: '32px',
+    },
   },
   emits: ['update:modelValue', 'close', 'add', 'remove'],
 
   data: () => ({
-    schemes: [
-      'aux-purple',
-      'aux-orange',
-      'aux-pink',
-      'brand-weni-dark',
-      'weni-600',
-      'aux-lemon',
-      'aux-blue',
-      'neutral-dark',
-      'neutral-cloudy',
-    ],
     remainingTags: 0,
   }),
 
@@ -185,16 +178,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$tag-size: 32px;
 .tag-group {
   display: flex;
   overflow-y: hidden;
   align-items: center;
   margin-top: $unnnic-spacing-xs;
-  min-height: $tag-size;
+  min-height: v-bind(tagSize);
 
   &:not(.flex) {
-    height: $tag-size;
+    height: v-bind(tagSize);
   }
 
   &__tags {
@@ -208,22 +200,10 @@ $tag-size: 32px;
     overflow: hidden;
     align-self: flex-start;
 
-    :deep(.unnnic-tag) {
-      width: min-content;
+    :deep(.chip) {
+      width: max-content;
       max-width: 100%;
-
-      .unnnic-tag__label {
-        width: 100%;
-
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
-
-      &.tag-group__tags__tag--selected {
-        outline: $unnnic-border-width-thinner solid $unnnic-color-neutral-clean;
-        outline-offset: -$unnnic-border-width-thinner;
-      }
+      height: v-bind(tagSize);
     }
   }
 
@@ -237,7 +217,7 @@ $tag-size: 32px;
     line-height: 20px;
     margin-right: -16px;
 
-    top: calc($tag-size / 2);
+    top: calc(v-bind(tagSize) / 2);
     transform: translateY(-50%);
   }
 }

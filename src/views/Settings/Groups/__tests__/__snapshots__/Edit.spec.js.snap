@@ -1,0 +1,79 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EditGroupDrawer.vue > Snapshot > should match the snapshot 1`] = `
+<div>
+  
+  
+  
+  <div
+    class="tab size-md"
+    data-v-97f84644=""
+  >
+    <header
+      class="tab-header"
+      data-v-97f84644=""
+    >
+      <ul
+        class="tab-content"
+        data-v-97f84644=""
+      >
+        
+        <li
+          class="tab-head tab-head--active"
+          data-v-97f84644=""
+        >
+          
+          General
+          
+          <!---->
+        </li>
+        <li
+          class="tab-head"
+          data-v-97f84644=""
+        >
+          
+          Projects
+          
+          <!---->
+        </li>
+        <li
+          class="tab-head"
+          data-v-97f84644=""
+        >
+          
+          Agents
+          
+          <!---->
+        </li>
+        
+      </ul>
+    </header>
+    <main
+      class="tab-body"
+      data-v-97f84644=""
+    >
+      <div
+        class="tab-panel"
+        data-v-97f84644=""
+      >
+        
+        <div
+          data-testid="general-form"
+        />
+        
+      </div>
+    </main>
+  </div>
+  
+  <button
+    data-testid="primary-button"
+  >
+    Save
+  </button>
+  <button
+    data-testid="secondary-button"
+  >
+    Cancel
+  </button>
+</div>
+`;

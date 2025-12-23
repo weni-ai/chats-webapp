@@ -33,8 +33,12 @@ export const useRoomMessages = defineStore('roomMessages', {
     showScrollToBottomButton: false,
   }),
   actions: {
-    addRoomMessageSorted({ message, addBefore }) {
-      groupMessages(this.roomMessagesSorted, { message, addBefore });
+    addRoomMessageSorted({ message, addBefore, reorderMessageMinute }) {
+      groupMessages(this.roomMessagesSorted, {
+        message,
+        addBefore,
+        reorderMessageMinute,
+      });
     },
 
     addFailedMessage({ message }) {

@@ -277,7 +277,10 @@ export default {
           this.transferSuccess();
           this.resetRoomsToTransfer();
           if (this.activeRoom) {
-            const { results } = await Room.getRoomTags(this.activeRoom.uuid);
+            const { results } = await Room.getRoomTags(this.activeRoom.uuid, {
+              next: this.tagsNext,
+              limit: 20,
+            });
             this.activeRoomTags = results;
           }
         } else {

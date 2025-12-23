@@ -665,6 +665,8 @@ export default {
 
   background-color: $unnnic-color-background-carpet;
 
+  padding: $unnnic-space-2;
+
   &__header {
     display: grid;
     gap: $unnnic-spacing-nano;

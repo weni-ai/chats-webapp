@@ -5,11 +5,6 @@
     class="suggestion-box"
     @keydown.esc="close"
   >
-    <header class="suggestion-box__header">
-      {{ $t('quick_messages.available_shortcuts') }}
-      <span class="suggestion-box__search">{{ search }}</span>
-    </header>
-
     <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
     <SuggestionBoxShortcut
       v-if="copilot"
@@ -21,8 +16,15 @@
       ref="refShortcuts"
       class="suggestion-box__shortcuts"
     >
+      <p
+        v-if="filteredSuggestions?.length === 0"
+        class="suggestion-box__no-suggestions"
+      >
+        {{ $t('quick_messages.no_suggestions') }}
+      </p>
       <SuggestionBoxShortcut
         v-for="(suggestion, index) in filteredSuggestions"
+        v-else
         :key="suggestion.uuid"
         :shortcut="suggestion.shortcut"
         :description="suggestion.text"
@@ -112,7 +114,8 @@ export default {
 
       const scrollElement =
         this.$refs.refShortcuts.childNodes[this.activeShortcutIndex];
-      scrollElement?.scrollIntoView({ block: 'nearest' });
+
+      scrollElement?.scrollIntoView?.({ block: 'center' });
     },
     isSuggestionBoxOpen(isOpen) {
       this.$emit(isOpen ? 'open' : 'close');
@@ -191,14 +194,13 @@ export default {
 .suggestion-box {
   display: flex;
   flex-direction: column;
-  gap: $unnnic-spacing-xs;
+  padding: $unnnic-space-4;
 
   position: absolute;
   bottom: calc(100% + $unnnic-spacing-xs);
 
-  background: $unnnic-color-background-snow;
-  border-radius: $unnnic-border-radius-md;
-  padding: $unnnic-spacing-sm 0;
+  background: $unnnic-color-bg-base;
+  border-radius: $unnnic-radius-4;
   box-shadow: $unnnic-shadow-level-near;
 
   width: calc(100% - $unnnic-spacing-sm);
@@ -220,6 +222,15 @@ export default {
   &__shortcuts {
     max-height: 100%;
     overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-2;
+  }
+
+  &__no-suggestions {
+    font: $unnnic-font-body;
+    color: $unnnic-color-fg-base;
   }
 }
 </style>

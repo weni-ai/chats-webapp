@@ -41,23 +41,26 @@ export const useSettings = defineStore('settings', {
       }
     },
 
-    async getGroups() {
+    async getGroups(getAll = false) {
       const isInLastPage = !this.nextGroups && this.previousGroups;
 
-      if (this.isLoadingGroups || isInLastPage) return;
+      if (isInLastPage) return;
 
       try {
         this.isLoadingGroups = true;
         const { results, next, previous } = await Group.list({
           nextReq: this.nextGroups,
         });
+
         this.groups = removeDuplicatedItems([...this.groups, ...results]);
+
         this.nextGroups = next;
         this.previousGroups = previous;
       } catch (error) {
         console.error(error);
       } finally {
-        this.isLoadingGroups = false;
+        if (getAll && this.nextGroups) this.getGroups(true);
+        else this.isLoadingGroups = false;
       }
     },
 

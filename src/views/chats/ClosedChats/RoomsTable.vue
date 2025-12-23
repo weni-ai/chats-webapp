@@ -59,23 +59,25 @@
             </template>
 
             <template #agentName>
-              <span data-testid="room-item-agent-name">{{
-                item.user?.first_name
-              }}</span>
+              <span data-testid="room-item-agent-name">
+                {{ item.user?.first_name }}
+              </span>
             </template>
 
             <template #tags>
               <TagGroup
+                class="closed-chats__tags"
                 :tags="item.tags || []"
                 :flex="false"
+                disabledTag
                 data-testid="room-item-tags"
               />
             </template>
 
             <template #date>
-              <span data-testid="room-item-date">{{
-                $d(new Date(item.ended_at))
-              }}</span>
+              <span data-testid="room-item-date">
+                {{ $d(new Date(item.ended_at)) }}
+              </span>
             </template>
 
             <template #visualize>
@@ -341,8 +343,10 @@ export default {
     &__table {
       overflow: hidden;
 
-      :deep(.unnnic-brand-tag__icon) {
-        display: none;
+      :deep(.tag-group__tags) {
+        .unnnic-icon {
+          display: none;
+        }
       }
 
       :deep(.table-row) {

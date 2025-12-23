@@ -31,7 +31,49 @@
         :titleClick="() => handleModal('ContactInfo', 'open')"
         :avatarName="room.contact.name"
         data-testid="room-chat-header"
-      />
+      >
+        <template #right>
+          <section class="view-mode__contact-actions">
+            <UnnnicToolTip
+              v-if="
+                featureFlags.active_features?.includes('weniChatsContactInfoV2')
+              "
+              enabled
+              :text="
+                room?.has_history
+                  ? $t('contact_info.see_contact_history')
+                  : $t('contact_info.no_contact_history')
+              "
+              side="left"
+            >
+              <UnnnicIcon
+                icon="history"
+                size="ant"
+                :clickable="room?.has_history"
+                :scheme="room?.has_history ? 'neutral-cloudy' : 'neutral-soft'"
+                @click="openHistory"
+              />
+            </UnnnicToolTip>
+            <UnnnicToolTip
+              v-if="
+                featureFlags.active_features?.includes('weniChatsContactInfoV2')
+              "
+              enabled
+              :text="$tc('transfer_contact', 1)"
+              side="left"
+            >
+              <UnnnicIcon
+                icon="sync_alt"
+                size="ant"
+                clickable
+                scheme="neutral-cloudy"
+                @click="openTransferModal"
+              />
+            </UnnnicToolTip>
+          </section>
+        </template>
+      </UnnnicChatsHeader>
+
       <UnnnicChatsHeader
         v-show="!isRoomSkeletonActive"
         v-if="!!discussion"
@@ -48,6 +90,7 @@
       <RoomMessages
         v-if="!!room && !discussion"
         data-testid="room-messages"
+        @open-room-contact-info="isContactInfoOpened = true"
       />
       <DiscussionMessages
         v-if="!!discussion"
@@ -100,11 +143,17 @@
         @close="handleModal('ContactInfo', 'close')"
       />
     </template>
+
+    <ModalTransferRooms
+      v-if="isModalTransferRoomsOpened"
+      @close="closeTransferModal()"
+    />
   </ChatsLayout>
 </template>
 
 <script>
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
+import { format as dateFnsFormat, subYears as dateFnsSubYears } from 'date-fns';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useDashboard } from '@/store/modules/dashboard';
@@ -121,8 +170,10 @@ import DiscussionMessages from '@/components/chats/chat/DiscussionMessages.vue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
 import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion.vue';
 import OldContactInfo from '@/components/chats/ContactInfo/oldContactInfo.vue';
-
+import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
 import ViewModeHeader from './components/ViewModeHeader.vue';
+
+import { parseUrn } from '@/utils/room';
 
 export default {
   name: 'ViewMode',
@@ -138,12 +189,14 @@ export default {
     ModalGetChat,
     ButtonJoinDiscussion,
     OldContactInfo,
+    ModalTransferRooms,
   },
 
   data: () => ({
     isRoomSkeletonActive: false,
     isContactInfoOpened: false,
     isAssumeChatConfirmationOpened: false,
+    isModalTransferRoomsOpened: false,
   }),
 
   computed: {
@@ -158,6 +211,7 @@ export default {
     ...mapState(useProfile, ['me']),
     ...mapState(useDashboard, ['viewedAgent']),
     ...mapState(useRoomMessages, ['roomMessagesNext']),
+    ...mapWritableState(useRooms, ['contactToTransfer']),
   },
 
   watch: {
@@ -165,15 +219,17 @@ export default {
       this.isContactInfoOpened = false;
     },
     rooms: {
-      once: true,
-      async handler() {
+      immediate: true,
+      handler() {
         const { room_uuid } = this.$route.query || {};
-        if (room_uuid) {
+
+        if (room_uuid && this.rooms?.length > 0) {
           const activeRoom = this.rooms.find((room) => room.uuid === room_uuid);
 
-          if (activeRoom) await this.setActiveRoom(activeRoom);
-
-          this.$router.replace({ query: {} });
+          if (activeRoom) {
+            this.setActiveRoom(activeRoom);
+            this.$router.replace({ query: {} });
+          }
         }
       },
     },
@@ -226,12 +282,50 @@ export default {
       });
       this.$router.push({ name: 'room', params: { roomId: this.room.uuid } });
     },
+    openTransferModal() {
+      this.contactToTransfer = this.room.uuid;
+      this.isModalTransferRoomsOpened = true;
+    },
+    closeTransferModal() {
+      this.contactToTransfer = '';
+      this.isModalTransferRoomsOpened = false;
+    },
+    openHistory() {
+      const { plataform, contactNum } = parseUrn(this.room);
+      const protocol = this.room.protocol;
+      const contactUrn =
+        plataform === 'whatsapp' ? contactNum.replace('+', '') : contactNum;
+
+      const A_YEAR_AGO = dateFnsFormat(
+        dateFnsSubYears(new Date(), 1),
+        'yyyy-MM-dd',
+      );
+
+      this.$router.push({
+        name: 'closed-rooms',
+        query: {
+          contactUrn: contactUrn || this.room?.contact?.name,
+          protocol,
+          startDate: A_YEAR_AGO,
+          from: this.room.uuid,
+        },
+      });
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .view-mode {
+  &__contact-actions {
+    display: flex;
+    gap: $unnnic-space-6;
+    align-items: center;
+
+    :deep(.unnnic-tooltip) {
+      display: flex;
+    }
+  }
   &__active-chat {
     display: grid;
     grid-template-rows: auto 1fr auto;
