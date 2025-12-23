@@ -248,6 +248,7 @@
 
 <script>
 import { mapState, mapWritableState, mapActions } from 'pinia';
+import { useDebounceFn } from '@vueuse/core';
 
 import { useDashboard } from '@/store/modules/dashboard';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
@@ -270,6 +271,8 @@ import ChatMessagesInternalNote from './ChatMessagesInternalNote.vue';
 import { isString } from '@/utils/string';
 import { SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT } from '@/utils/chats';
 import { treatedMediaName } from '@/utils/medias';
+
+import Room from '@/services/api/resources/chats/room';
 
 export default {
   name: 'ChatMessages',
@@ -684,6 +687,25 @@ export default {
       }
     },
 
+    handleSeenRoomMessages() {
+      const newMessages =
+        this.newMessagesByRoom[this.room.uuid]?.messages || [];
+
+      if (
+        this.room.unread_msgs + newMessages.length > 0 &&
+        this.room.user &&
+        !this.isViewMode
+      ) {
+        this.newMessagesByRoom[this.room.uuid] = { messages: [] };
+
+        const debouncedUpdateReadMessages = useDebounceFn(async () => {
+          await Room.updateReadMessages(this.room.uuid, true);
+        }, 500);
+
+        debouncedUpdateReadMessages();
+      }
+    },
+
     checkScrollPosition() {
       const { chatMessages } = this.$refs;
       if (!chatMessages) return;
@@ -691,10 +713,8 @@ export default {
       const { scrollTop, scrollHeight, clientHeight } = chatMessages;
       const isAtBottom = scrollTop + clientHeight >= scrollHeight - 20;
 
-      console.log({ isAtBottom });
-
       if (isAtBottom) {
-        this.newMessagesByRoom[this.room.uuid] = { messages: [] };
+        this.handleSeenRoomMessages();
       }
 
       this.showScrollToBottomButton = !isAtBottom;
