@@ -95,7 +95,10 @@
           </p>
         </fieldset>
       </template>
-      <section class="switchs__container">
+      <section
+        v-if="enableAutomaticCsatFeature"
+        class="switchs__container"
+      >
         <UnnnicSwitch
           v-model="sector.is_csat_enabled"
           :textRight="
@@ -232,6 +235,8 @@ import Sector from '@/services/api/resources/settings/sector';
 import { mapState } from 'pinia';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 
+import { isEqual, cloneDeep, omit } from 'lodash';
+
 export default {
   name: 'SectorExtraOptionsForm',
   components: {
@@ -258,6 +263,8 @@ export default {
       tagsNext: null,
       tagsPrevious: null,
       isLoadingTags: false,
+
+      initialState: null,
     };
   },
   computed: {
@@ -270,15 +277,28 @@ export default {
         this.$emit('update:modelValue', val);
       },
     },
+    isInitialFormState() {
+      const { initialState } = this;
+
+      if (!initialState) return true;
+
+      const parsedInitialState = cloneDeep(initialState);
+
+      const actualState = cloneDeep({
+        sector: omit(this.sector, ['managers']),
+        currentTags: this.currentTags,
+        tags: this.tags,
+      });
+
+      return isEqual(actualState, parsedInitialState);
+    },
     validForm() {
       const valid =
         !this.sector.automatic_message.is_active ||
         (this.sector.automatic_message.is_active &&
           this.sector.automatic_message.text?.length > 0);
 
-      this.$emit('changeIsValid', valid);
-
-      return valid;
+      return valid && !this.isInitialFormState;
     },
     translationTriggerFlows() {
       return this.sector.can_trigger_flows
@@ -302,9 +322,26 @@ export default {
         this.tags.some((tag) => tag.name === this.tagName.trim())
       );
     },
+    enableAutomaticCsatFeature() {
+      return this.featureFlags.active_features?.includes('weniChatsCSAT');
+    },
   },
-  mounted() {
-    if (this.isEditing) this.getTags();
+  watch: {
+    validForm() {
+      this.$emit('changeIsValid', this.validForm);
+    },
+  },
+  async mounted() {
+    if (this.isEditing) {
+      await this.getTags();
+      this.$nextTick(() => {
+        this.initialState = cloneDeep({
+          sector: omit(this.sector, ['managers']),
+          currentTags: this.currentTags,
+          tags: this.tags,
+        });
+      });
+    }
   },
   methods: {
     handleAutomaticMessageIsActive(value) {
@@ -325,7 +362,7 @@ export default {
       } catch (error) {
         console.error('Error getting tags', error);
       } finally {
-        if (this.tagsNext) this.getTags();
+        if (this.tagsNext) await this.getTags();
         else this.isLoadingTags = false;
       }
     },

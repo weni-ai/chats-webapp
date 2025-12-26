@@ -268,9 +268,12 @@ describe('FormSectorGeneral', () => {
           },
         ],
       },
+      isInitializing: false,
+      initialFormState: false,
     });
 
     await wrapper.vm.$nextTick();
+    await flushPromises();
 
     const saveSectorSpy = vi.spyOn(wrapper.vm, 'saveSector');
     const unnnicAlertSpy = vi.spyOn(unnnic, 'unnnicCallAlert');
@@ -278,6 +281,8 @@ describe('FormSectorGeneral', () => {
     await wrapper
       .findComponent('[data-testid="general-save-button"]')
       .trigger('click');
+
+    await flushPromises();
 
     expect(saveSectorSpy).toHaveBeenCalled();
 
@@ -329,9 +334,12 @@ describe('FormSectorGeneral', () => {
           },
         ],
       },
+      isInitializing: false,
+      initialFormState: false,
     });
 
     await wrapper.vm.$nextTick();
+    await flushPromises();
 
     const sectorUpdateMock = vi
       .spyOn(Sector, 'update')
@@ -340,6 +348,8 @@ describe('FormSectorGeneral', () => {
     await wrapper
       .findComponent('[data-testid="general-save-button"]')
       .trigger('click');
+
+    await flushPromises();
 
     expect(sectorUpdateMock).toHaveBeenCalled();
 
