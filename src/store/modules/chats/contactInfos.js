@@ -117,150 +117,170 @@ export const useContactInfos = defineStore('contactInfos', () => {
   };
 
   const loadDocuments = async ({ contact, room, history, contactInfo }) => {
-    isLoadingDocuments.value = true;
     if (!history) {
       await loadNextDocuments({ contact, room });
     } else {
       await loadNextDocumentsClosedRoom({ contactInfo });
     }
-    isLoadingDocuments.value = false;
   };
 
   const loadNextDocuments = async ({ contact, room }) => {
-    const response = await Media.listFromContactAndRoom({
-      contact,
-      room,
-      ordering: 'content_type',
-      content_type: 'documents',
-      page_size: 10,
-      cursor: documentsCursor.value,
-    });
+    if (isLoadingDocuments.value || !hasMoreDocumentsFlag.value) {
+      return;
+    }
 
-    documents.value = documents.value.concat(
-      response.results.filter(
-        (media) =>
-          !media.content_type.startsWith('image/') &&
-          !media.content_type.startsWith('video/') &&
-          !media.content_type.startsWith('audio/'),
-      ),
-    );
+    isLoadingDocuments.value = true;
+    try {
+      const response = await Media.listFromContactAndRoom({
+        contact,
+        room,
+        ordering: 'content_type',
+        content_type: 'documents',
+        page_size: 10,
+        cursor: documentsCursor.value,
+      });
 
-    documentsCursor.value = response.nextCursor;
+      documents.value = documents.value.concat(
+        response.results.filter(
+          (media) =>
+            !media.content_type.startsWith('image/') &&
+            !media.content_type.startsWith('video/') &&
+            !media.content_type.startsWith('audio/'),
+        ),
+      );
 
-    if (response.next) {
-      await loadNextDocuments({ contact, room });
+      documentsCursor.value = response.nextCursor;
+      hasMoreDocumentsFlag.value = response.next !== null;
+    } finally {
+      isLoadingDocuments.value = false;
     }
   };
 
   const loadNextDocumentsClosedRoom = async ({ contactInfo }) => {
-    const response = await Media.listFromContactAndClosedRoom({
-      ordering: 'content_type',
-      contact: contactInfo,
-      content_type: 'documents',
-      page_size: 10,
-      cursor: documentsCursor.value,
-    });
+    if (isLoadingDocuments.value || !hasMoreDocumentsFlag.value) {
+      return;
+    }
 
-    documents.value = documents.value.concat(
-      response.results.filter(
-        (media) =>
-          !media.content_type.startsWith('image/') &&
-          !media.content_type.startsWith('video/') &&
-          !media.content_type.startsWith('audio/'),
-      ),
-    );
+    isLoadingDocuments.value = true;
+    try {
+      const response = await Media.listFromContactAndClosedRoom({
+        ordering: 'content_type',
+        contact: contactInfo,
+        content_type: 'documents',
+        page_size: 10,
+        cursor: documentsCursor.value,
+      });
 
-    documentsCursor.value = response.nextCursor;
+      documents.value = documents.value.concat(
+        response.results.filter(
+          (media) =>
+            !media.content_type.startsWith('image/') &&
+            !media.content_type.startsWith('video/') &&
+            !media.content_type.startsWith('audio/'),
+        ),
+      );
 
-    if (response.next) {
-      await loadNextDocumentsClosedRoom({ contactInfo });
+      documentsCursor.value = response.nextCursor;
+      hasMoreDocumentsFlag.value = response.next !== null;
+    } finally {
+      isLoadingDocuments.value = false;
     }
   };
 
   const loadAudios = async ({ contact, room, history, contactInfo }) => {
-    isLoadingAudios.value = true;
     if (!history) {
       await loadNextAudios({ contact, room });
     } else {
       await loadNextAudiosClosedRoom({ contactInfo });
     }
-    isLoadingAudios.value = false;
   };
 
   const loadNextAudios = async ({ contact, room }) => {
-    const response = await Media.listFromContactAndRoom({
-      contact,
-      room,
-      ordering: 'content_type',
-      content_type: 'audio',
-      page_size: 10,
-      cursor: audiosCursor.value,
-    });
+    if (isLoadingAudios.value || !hasMoreAudiosFlag.value) {
+      return;
+    }
 
-    const newAudios = await Promise.all(
-      response.results
-        .filter((media) => media.content_type.startsWith('audio/'))
-        .map(
-          (element) =>
-            new Promise((resolve) => {
-              const url = new Audio(element.url);
-              url.onloadedmetadata = (event) => {
-                if (event.path) {
-                  const { duration } = event.path[0];
-                  resolve({ ...element, duration });
-                } else {
-                  const duration = Math.round(url.duration);
-                  resolve({ ...element, duration });
-                }
-              };
-            }),
-        ),
-    );
+    isLoadingAudios.value = true;
+    try {
+      const response = await Media.listFromContactAndRoom({
+        contact,
+        room,
+        ordering: 'content_type',
+        content_type: 'audio',
+        page_size: 10,
+        cursor: audiosCursor.value,
+      });
 
-    audios.value = audios.value.concat(newAudios);
+      const newAudios = await Promise.all(
+        response.results
+          .filter((media) => media.content_type.startsWith('audio/'))
+          .map(
+            (element) =>
+              new Promise((resolve) => {
+                const url = new Audio(element.url);
+                url.onloadedmetadata = (event) => {
+                  if (event.path) {
+                    const { duration } = event.path[0];
+                    resolve({ ...element, duration });
+                  } else {
+                    const duration = Math.round(url.duration);
+                    resolve({ ...element, duration });
+                  }
+                };
+              }),
+          ),
+      );
 
-    audiosCursor.value = response.nextCursor;
+      audios.value = audios.value.concat(newAudios);
 
-    if (response.next) {
-      await loadNextAudios({ contact, room });
+      audiosCursor.value = response.nextCursor;
+      hasMoreAudiosFlag.value = response.next !== null;
+    } finally {
+      isLoadingAudios.value = false;
     }
   };
 
   const loadNextAudiosClosedRoom = async ({ contactInfo }) => {
-    const response = await Media.listFromContactAndClosedRoom({
-      ordering: 'content_type',
-      contact: contactInfo,
-      content_type: 'audio',
-      page_size: 10,
-      cursor: audiosCursor.value,
-    });
+    if (isLoadingAudios.value || !hasMoreAudiosFlag.value) {
+      return;
+    }
 
-    const newAudios = await Promise.all(
-      response.results
-        .filter((media) => media.content_type.startsWith('audio/'))
-        .map(
-          (element) =>
-            new Promise((resolve) => {
-              const url = new Audio(element.url);
-              url.onloadedmetadata = (event) => {
-                if (event.path) {
-                  const { duration } = event.path[0];
-                  resolve({ ...element, duration });
-                } else {
-                  const duration = Math.round(url.duration);
-                  resolve({ ...element, duration });
-                }
-              };
-            }),
-        ),
-    );
+    isLoadingAudios.value = true;
+    try {
+      const response = await Media.listFromContactAndClosedRoom({
+        ordering: 'content_type',
+        contact: contactInfo,
+        content_type: 'audio',
+        page_size: 10,
+        cursor: audiosCursor.value,
+      });
 
-    audios.value = audios.value.concat(newAudios);
+      const newAudios = await Promise.all(
+        response.results
+          .filter((media) => media.content_type.startsWith('audio/'))
+          .map(
+            (element) =>
+              new Promise((resolve) => {
+                const url = new Audio(element.url);
+                url.onloadedmetadata = (event) => {
+                  if (event.path) {
+                    const { duration } = event.path[0];
+                    resolve({ ...element, duration });
+                  } else {
+                    const duration = Math.round(url.duration);
+                    resolve({ ...element, duration });
+                  }
+                };
+              }),
+          ),
+      );
 
-    audiosCursor.value = response.nextCursor;
+      audios.value = audios.value.concat(newAudios);
 
-    if (response.next) {
-      await loadNextAudiosClosedRoom({ contactInfo });
+      audiosCursor.value = response.nextCursor;
+      hasMoreAudiosFlag.value = response.next !== null;
+    } finally {
+      isLoadingAudios.value = false;
     }
   };
 
@@ -309,7 +329,11 @@ export const useContactInfos = defineStore('contactInfos', () => {
     loadNextMedias,
     loadNextMediasClosedRoom,
     loadDocuments,
+    loadNextDocuments,
+    loadNextDocumentsClosedRoom,
     loadAudios,
+    loadNextAudios,
+    loadNextAudiosClosedRoom,
     setCurrentContact,
     clearAll,
   };
