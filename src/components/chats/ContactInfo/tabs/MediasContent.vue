@@ -20,7 +20,7 @@
 
       <template v-if="isLoadingMedias">
         <UnnnicSkeletonLoading
-          v-for="skeleton in 4"
+          v-for="skeleton in 8"
           :key="`skeleton-${skeleton}`"
           class="medias__content--loading-key"
         />
@@ -37,9 +37,9 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch, nextTick } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useInfiniteScroll } from '@vueuse/core';
+import { useInfiniteScroll, useResizeObserver } from '@vueuse/core';
 import MediaPreview from '@/components/chats/MediaMessage/Previews/Media.vue';
 import { useContactInfos } from '@/store/modules/chats/contactInfos';
 
@@ -80,9 +80,47 @@ const loadMoreMedias = async () => {
   }
 };
 
+const checkAndLoadMore = async () => {
+  await nextTick();
+
+  if (!scrollContainer.value || isLoadingMedias.value || !hasMoreMedias.value) {
+    return;
+  }
+
+  const container = scrollContainer.value;
+  const hasScroll = container.scrollHeight > container.clientHeight;
+
+  if (!hasScroll && hasMoreMedias.value && images.value.length > 0) {
+    await loadMoreMedias();
+    await checkAndLoadMore();
+  }
+};
+
 useInfiniteScroll(scrollContainer, loadMoreMedias, {
   distance: 10,
   canLoadMore: () => hasMoreMedias.value && !isLoadingMedias.value,
+});
+
+watch(
+  () => images.value.length,
+  async () => {
+    if (!isLoadingMedias.value) {
+      await checkAndLoadMore();
+    }
+  },
+  { flush: 'post' },
+);
+
+watch(isLoadingMedias, async (loading) => {
+  if (!loading) {
+    await checkAndLoadMore();
+  }
+});
+
+useResizeObserver(scrollContainer, async () => {
+  if (!isLoadingMedias.value && hasMedias.value) {
+    await checkAndLoadMore();
+  }
 });
 
 onMounted(async () => {

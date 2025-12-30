@@ -67,7 +67,7 @@ export const useContactInfos = defineStore('contactInfos', () => {
         room,
         ordering: 'content_type',
         content_type: 'media',
-        page_size: 20,
+        page_size: 10,
         cursor: mediasCursor.value,
       });
 
@@ -96,7 +96,7 @@ export const useContactInfos = defineStore('contactInfos', () => {
       const response = await Media.listFromContactAndClosedRoom({
         ordering: 'content_type',
         contact: contactInfo,
-        page_size: 20,
+        page_size: 10,
         cursor: mediasCursor.value,
         content_type: 'media',
       });
