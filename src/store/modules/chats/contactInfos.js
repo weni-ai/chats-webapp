@@ -15,6 +15,10 @@ export const useContactInfos = defineStore('contactInfos', () => {
   const documentsCursor = ref(null);
   const audiosCursor = ref(null);
 
+  const hasMoreMediasFlag = ref(true);
+  const hasMoreDocumentsFlag = ref(true);
+  const hasMoreAudiosFlag = ref(true);
+
   const currentContactUuid = ref(null);
   const currentRoomUuid = ref(null);
 
@@ -39,62 +43,76 @@ export const useContactInfos = defineStore('contactInfos', () => {
   const hasDocuments = computed(() => documents.value.length > 0);
   const hasAudios = computed(() => audios.value.length > 0);
 
+  const hasMoreMedias = computed(() => hasMoreMediasFlag.value);
+  const hasMoreDocuments = computed(() => hasMoreDocumentsFlag.value);
+  const hasMoreAudios = computed(() => hasMoreAudiosFlag.value);
+
   const loadMedias = async ({ contact, room, history, contactInfo }) => {
-    isLoadingMedias.value = true;
     if (!history) {
       await loadNextMedias({ contact, room });
     } else {
       await loadNextMediasClosedRoom({ contactInfo });
     }
-    isLoadingMedias.value = false;
   };
 
   const loadNextMedias = async ({ contact, room }) => {
-    const response = await Media.listFromContactAndRoom({
-      contact,
-      room,
-      ordering: 'content_type',
-      content_type: 'media',
-      page_size: 5,
-      cursor: mediasCursor.value,
-    });
+    if (isLoadingMedias.value || !hasMoreMediasFlag.value) {
+      return;
+    }
 
-    medias.value = medias.value.concat(
-      response.results.filter(
-        (media) =>
-          media.content_type.startsWith('image/') ||
-          media.content_type.startsWith('video/'),
-      ),
-    );
+    isLoadingMedias.value = true;
+    try {
+      const response = await Media.listFromContactAndRoom({
+        contact,
+        room,
+        ordering: 'content_type',
+        content_type: 'media',
+        page_size: 20,
+        cursor: mediasCursor.value,
+      });
 
-    mediasCursor.value = response.nextCursor;
+      medias.value = medias.value.concat(
+        response.results.filter(
+          (media) =>
+            media.content_type.startsWith('image/') ||
+            media.content_type.startsWith('video/'),
+        ),
+      );
 
-    if (response.next) {
-      await loadNextMedias({ contact, room });
+      mediasCursor.value = response.nextCursor;
+      hasMoreMediasFlag.value = response.next !== null;
+    } finally {
+      isLoadingMedias.value = false;
     }
   };
 
   const loadNextMediasClosedRoom = async ({ contactInfo }) => {
-    const response = await Media.listFromContactAndClosedRoom({
-      ordering: 'content_type',
-      contact: contactInfo,
-      page_size: 5,
-      cursor: mediasCursor.value,
-      content_type: 'media',
-    });
+    if (isLoadingMedias.value || !hasMoreMediasFlag.value) {
+      return;
+    }
 
-    medias.value = medias.value.concat(
-      response.results.filter(
-        (media) =>
-          media.content_type.startsWith('image/') ||
-          media.content_type.startsWith('video/'),
-      ),
-    );
+    isLoadingMedias.value = true;
+    try {
+      const response = await Media.listFromContactAndClosedRoom({
+        ordering: 'content_type',
+        contact: contactInfo,
+        page_size: 20,
+        cursor: mediasCursor.value,
+        content_type: 'media',
+      });
 
-    mediasCursor.value = response.nextCursor;
+      medias.value = medias.value.concat(
+        response.results.filter(
+          (media) =>
+            media.content_type.startsWith('image/') ||
+            media.content_type.startsWith('video/'),
+        ),
+      );
 
-    if (response.next) {
-      await loadNextMediasClosedRoom({ contactInfo });
+      mediasCursor.value = response.nextCursor;
+      hasMoreMediasFlag.value = response.next !== null;
+    } finally {
+      isLoadingMedias.value = false;
     }
   };
 
@@ -258,6 +276,9 @@ export const useContactInfos = defineStore('contactInfos', () => {
     mediasCursor.value = null;
     documentsCursor.value = null;
     audiosCursor.value = null;
+    hasMoreMediasFlag.value = true;
+    hasMoreDocumentsFlag.value = true;
+    hasMoreAudiosFlag.value = true;
     currentContactUuid.value = null;
     currentRoomUuid.value = null;
   };
@@ -280,8 +301,13 @@ export const useContactInfos = defineStore('contactInfos', () => {
     hasMedias,
     hasDocuments,
     hasAudios,
+    hasMoreMedias,
+    hasMoreDocuments,
+    hasMoreAudios,
 
     loadMedias,
+    loadNextMedias,
+    loadNextMediasClosedRoom,
     loadDocuments,
     loadAudios,
     setCurrentContact,

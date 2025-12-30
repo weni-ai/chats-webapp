@@ -29,6 +29,9 @@ describe('contactInfos Store', () => {
     expect(store.mediasCursor).toBeNull();
     expect(store.documentsCursor).toBeNull();
     expect(store.audiosCursor).toBeNull();
+    expect(store.hasMoreMedias).toBe(true);
+    expect(store.hasMoreDocuments).toBe(true);
+    expect(store.hasMoreAudios).toBe(true);
     expect(store.currentContactUuid).toBeNull();
     expect(store.currentRoomUuid).toBeNull();
   });
@@ -62,61 +65,143 @@ describe('contactInfos Store', () => {
   });
 
   it('should load medias with pagination and filter correctly', async () => {
-    Media.listFromContactAndRoom
-      .mockResolvedValueOnce({
-        results: [
-          { content_type: 'image/png', url: 'image.png' },
-          { content_type: 'application/pdf', url: 'doc.pdf' },
-        ],
-        next: 'https://api.example.com/media/?cursor=next-cursor-1',
-        previous: null,
-        nextCursor: 'next-cursor-1',
-        previousCursor: null,
-      })
-      .mockResolvedValueOnce({
-        results: [{ content_type: 'video/mp4', url: 'video.mp4' }],
-        next: null,
-        previous: 'https://api.example.com/media/?cursor=prev-cursor-1',
-        nextCursor: null,
-        previousCursor: 'prev-cursor-1',
-      });
+    Media.listFromContactAndRoom.mockResolvedValueOnce({
+      results: [
+        { content_type: 'image/png', url: 'image.png' },
+        { content_type: 'application/pdf', url: 'doc.pdf' },
+      ],
+      next: 'https://api.example.com/media/?cursor=next-cursor-1',
+      previous: null,
+      nextCursor: 'next-cursor-1',
+      previousCursor: null,
+    });
 
-    const loadPromise = store.loadMedias({
+    await store.loadMedias({
       contact: 'contact-123',
       room: 'room-123',
       history: false,
     });
 
-    expect(store.isLoadingMedias).toBe(true);
-    await loadPromise;
-
     expect(store.isLoadingMedias).toBe(false);
+    expect(store.medias).toHaveLength(1);
+    expect(store.mediasCursor).toBe('next-cursor-1');
+    expect(store.hasMoreMedias).toBe(true);
+    expect(Media.listFromContactAndRoom).toHaveBeenCalledTimes(1);
+  });
+
+  it('should load next page of medias when loadNextMedias is called', async () => {
+    // First page
+    Media.listFromContactAndRoom.mockResolvedValueOnce({
+      results: [{ content_type: 'image/png', url: 'image1.png' }],
+      next: 'https://api.example.com/media/?cursor=cursor-1',
+      previous: null,
+      nextCursor: 'cursor-1',
+      previousCursor: null,
+    });
+
+    await store.loadMedias({
+      contact: 'contact-123',
+      room: 'room-123',
+      history: false,
+    });
+
+    expect(store.medias).toHaveLength(1);
+    expect(store.hasMoreMedias).toBe(true);
+
+    // Second page
+    Media.listFromContactAndRoom.mockResolvedValueOnce({
+      results: [{ content_type: 'video/mp4', url: 'video.mp4' }],
+      next: null,
+      previous: 'https://api.example.com/media/?cursor=cursor-1',
+      nextCursor: null,
+      previousCursor: 'cursor-1',
+    });
+
+    await store.loadNextMedias({
+      contact: 'contact-123',
+      room: 'room-123',
+    });
+
     expect(store.medias).toHaveLength(2);
     expect(store.mediasCursor).toBeNull();
-    expect(Media.listFromContactAndRoom).toHaveBeenCalledTimes(2);
+    expect(store.hasMoreMedias).toBe(false);
+  });
+
+  it('should not load more medias when hasMoreMedias is false', async () => {
+    // Simulate a state where there are no more medias to load
+    Media.listFromContactAndRoom.mockResolvedValueOnce({
+      results: [{ content_type: 'image/png', url: 'image.png' }],
+      next: null,
+      previous: null,
+      nextCursor: null,
+      previousCursor: null,
+    });
+
+    await store.loadMedias({
+      contact: 'contact-123',
+      room: 'room-123',
+      history: false,
+    });
+
+    // Now hasMoreMedias should be false
+    expect(store.hasMoreMedias).toBe(false);
+    vi.clearAllMocks();
+
+    // Try to load more - should not make another API call
+    await store.loadNextMedias({
+      contact: 'contact-123',
+      room: 'room-123',
+    });
+
+    expect(Media.listFromContactAndRoom).not.toHaveBeenCalled();
   });
 
   it('should load medias for closed room with pagination', async () => {
-    Media.listFromContactAndClosedRoom
-      .mockResolvedValueOnce({
-        results: [{ content_type: 'image/png', url: 'image.png' }],
-        next: 'https://api.example.com/media/?cursor=next-cursor-2',
-        previous: null,
-        nextCursor: 'next-cursor-2',
-        previousCursor: null,
-      })
-      .mockResolvedValueOnce({
-        results: [{ content_type: 'video/mp4', url: 'video.mp4' }],
-        next: null,
-        previous: 'https://api.example.com/media/?cursor=prev-cursor-2',
-        nextCursor: null,
-        previousCursor: 'prev-cursor-2',
-      });
+    Media.listFromContactAndClosedRoom.mockResolvedValueOnce({
+      results: [{ content_type: 'image/png', url: 'image.png' }],
+      next: 'https://api.example.com/media/?cursor=next-cursor-2',
+      previous: null,
+      nextCursor: 'next-cursor-2',
+      previousCursor: null,
+    });
 
     await store.loadMedias({ contactInfo: 'contact-info-123', history: true });
 
+    expect(store.medias).toHaveLength(1);
+    expect(store.mediasCursor).toBe('next-cursor-2');
+    expect(store.hasMoreMedias).toBe(true);
+  });
+
+  it('should load next page for closed room when loadNextMediasClosedRoom is called', async () => {
+    // First page
+    Media.listFromContactAndClosedRoom.mockResolvedValueOnce({
+      results: [{ content_type: 'image/png', url: 'image.png' }],
+      next: 'https://api.example.com/media/?cursor=cursor-2',
+      previous: null,
+      nextCursor: 'cursor-2',
+      previousCursor: null,
+    });
+
+    await store.loadMedias({ contactInfo: 'contact-info-123', history: true });
+
+    expect(store.medias).toHaveLength(1);
+
+    // Second page
+    Media.listFromContactAndClosedRoom.mockResolvedValueOnce({
+      results: [{ content_type: 'video/mp4', url: 'video.mp4' }],
+      next: null,
+      previous: 'https://api.example.com/media/?cursor=cursor-2',
+      nextCursor: null,
+      previousCursor: 'cursor-2',
+    });
+
+    await store.loadNextMediasClosedRoom({
+      contactInfo: 'contact-info-123',
+    });
+
     expect(store.medias).toHaveLength(2);
     expect(store.mediasCursor).toBeNull();
+    expect(store.hasMoreMedias).toBe(false);
   });
 
   it('should load documents with pagination and history mode', async () => {
@@ -297,11 +382,15 @@ describe('contactInfos Store', () => {
 
     store.medias = [{ content_type: 'image/png', url: 'image.png' }];
     store.mediasCursor = 'some-cursor';
+    store.hasMoreMediasFlag = false;
 
     store.clearAll();
 
     expect(store.medias).toEqual([]);
     expect(store.mediasCursor).toBeNull();
+    expect(store.hasMoreMedias).toBe(true);
+    expect(store.hasMoreDocuments).toBe(true);
+    expect(store.hasMoreAudios).toBe(true);
     expect(store.currentContactUuid).toBeNull();
     expect(store.currentRoomUuid).toBeNull();
   });
