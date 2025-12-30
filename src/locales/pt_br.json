@@ -792,6 +792,10 @@
       "show_agent_status_count_timer": {
         "switch_active": "Mostrar timer de contagem do status do agente",
         "switch_inactive": "Esconder timer de contagem do status do agente"
+      },
+      "close_chats_in_queue": {
+        "switch_active": "Agentes podem encerrar chats que estão aguardando suporte ativo",
+        "switch_inactive": "Agentes podem encerrar chats que estão aguardando suporte inativo"
       }
     },
     "custom_sector": "Personalizar novo setor (recomendado)",

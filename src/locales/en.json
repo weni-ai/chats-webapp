@@ -796,6 +796,10 @@
       "show_agent_status_count_timer": {
         "switch_active": "Show agent status count timer",
         "switch_inactive": "Hide agent status count timer"
+      },
+      "close_chats_in_queue": {
+        "switch_active": "Agents can end chats that are awaiting support active",
+        "switch_inactive": "Agents can end chats that are awaiting support inactive"
       }
     },
     "custom_sector": "Customize new sector (recommended)",
