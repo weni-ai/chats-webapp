@@ -96,6 +96,7 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import FeedbackModal from './FeedbackModal.vue';
 import Room from '@/services/api/resources/chats/room';
 import { useProfile } from '@/store/modules/profile';
+import { useDashboard } from '@/store/modules/dashboard';
 
 export default {
   name: 'ChatSummary',
@@ -140,6 +141,14 @@ export default {
   computed: {
     ...mapWritableState(useRooms, ['activeRoomSummary', 'activeRoom']),
     ...mapState(useProfile, ['me']),
+    ...mapState(useDashboard, ['viewedAgent']),
+
+    isViewMode() {
+      return !!this.viewedAgent.email;
+    },
+    marginLeft() {
+      return this.isViewMode ? 0 : '-16px';
+    },
   },
   watch: {
     summaryText: {
@@ -209,7 +218,7 @@ export default {
   gap: $unnnic-spacing-nano;
 
   &--open {
-    margin-left: -$unnnic-spacing-sm;
+    margin-left: v-bind(marginLeft);
   }
 
   &__generate-text {
