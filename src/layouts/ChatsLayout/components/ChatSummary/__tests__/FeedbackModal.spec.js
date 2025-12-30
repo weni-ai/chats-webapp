@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { mount, config } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
 import FeedbackModal from '../FeedbackModal.vue';
@@ -8,6 +8,9 @@ import { useRooms } from '@/store/modules/chats/rooms';
 vi.mock('@/services/api/resources/chats/room', () => ({
   default: {
     sendSummaryFeedback: vi.fn(),
+    getSummaryFeedbackTags: vi.fn(() => ({
+      results: { TAG_KEY: 'Tag Value' },
+    })),
   },
 }));
 
@@ -34,6 +37,9 @@ describe('FeedbackModal', () => {
             },
           }),
         ],
+        components: {
+          UnnnicModalDialog: config.global.stubs.UnnnicModalDialog,
+        },
         mocks: {
           $t: (key) => key,
         },
@@ -66,7 +72,7 @@ describe('FeedbackModal', () => {
         roomUuid: 'test-uuid',
       });
 
-      const modal = wrapper.findComponent({ name: 'UnnnicModalDialog' });
+      const modal = wrapper.findComponent({ name: 'UnnnicModalDialogStub' });
       expect(modal.exists()).toBe(true);
     });
 

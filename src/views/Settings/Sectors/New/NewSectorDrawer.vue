@@ -148,6 +148,7 @@ export default {
         can_trigger_flows: true,
         can_edit_custom_fields: true,
         sign_messages: true,
+        is_csat_enabled: true,
         automatic_message: {
           is_active: false,
           text: '',

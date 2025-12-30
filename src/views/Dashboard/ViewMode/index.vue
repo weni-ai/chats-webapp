@@ -26,10 +26,10 @@
       <UnnnicChatsHeader
         v-show="!isRoomSkeletonActive"
         v-if="!!room && !discussion"
-        :title="room.contact.name || ''"
+        :title="room.contact.name || `[${$t('unnamed_contact')}]`"
         :avatarClick="() => handleModal('ContactInfo', 'open')"
         :titleClick="() => handleModal('ContactInfo', 'open')"
-        :avatarName="room.contact.name"
+        :avatarName="room.contact.name || '-'"
         data-testid="room-chat-header"
       >
         <template #right>
@@ -219,15 +219,17 @@ export default {
       this.isContactInfoOpened = false;
     },
     rooms: {
-      once: true,
-      async handler() {
+      immediate: true,
+      handler() {
         const { room_uuid } = this.$route.query || {};
-        if (room_uuid) {
+
+        if (room_uuid && this.rooms?.length > 0) {
           const activeRoom = this.rooms.find((room) => room.uuid === room_uuid);
 
-          if (activeRoom) await this.setActiveRoom(activeRoom);
-
-          this.$router.replace({ query: {} });
+          if (activeRoom) {
+            this.setActiveRoom(activeRoom);
+            this.$router.replace({ query: {} });
+          }
         }
       },
     },

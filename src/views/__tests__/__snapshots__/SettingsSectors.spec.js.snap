@@ -1,319 +1,332 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SettingsHeader.vue > should match the snapshot 1`] = `
+exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
 <div
   data-v-app=""
 >
   
-  <header
-    class="settings-view__section-header"
+  <div
     data-testid="settings-sectors-header"
     data-v-1088b44f=""
-    data-v-f23b63f9=""
-  >
-    <p
-      class="section-header__title"
-      data-testid="section-header-title"
-      data-v-f23b63f9=""
-    >
-      Sectors in Project 1
-    </p>
-    <p
-      class="section-header__subtitle"
-      data-testid="section-header-subtitle"
-      data-v-f23b63f9=""
-    >
-      Add, view and manage sectors, queues, managers and agents within your organization.
-    </p>
-  </header>
+  />
   <section
     class="settings-sectors__filters"
     data-v-1088b44f=""
   >
-    <section
-      class="unnnic-form-element unnnic-form md settings-sectors__filters__name"
-      data-testid="form-element"
+    <input
+      class="settings-sectors__filters__name"
       data-v-1088b44f=""
-      data-v-27c59990=""
-      data-v-2d5913d6=""
-    >
-      <!---->
-      
-      <div
-        class="text-input size--md settings-sectors__filters__name unnnic-form-input"
-        data-v-27c59990=""
-        data-v-964b1ff1=""
-        hascloudycolor="false"
-        mask=""
-      >
-        <input
-          class="settings-sectors__filters__name unnnic-form-input input-itself input size-md normal input--has-icon-left settings-sectors__filters__name unnnic-form-input input-itself"
-          data-v-5c6d9ab7=""
-          data-v-964b1ff1=""
-          hascloudycolor="false"
-          iconleft="search-1"
-          iconleftclickable="false"
-          iconright=""
-          iconrightclickable="false"
-          placeholder="Search"
-          type="text"
-          value=""
-        />
-        <span
-          class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-base unnnic-icon-size--ant unnnic-icon__size--ant icon-left"
-          data-testid="material-icon"
-          data-v-69390f82=""
-          data-v-964b1ff1=""
-          translate="no"
-        >
-          search
-        </span>
-        <!---->
-      </div>
-      
-      <!---->
-    </section>
+      value=""
+    />
     <div
-      class="order"
+      data-testid="list-ordinator"
       data-v-1088b44f=""
-      data-v-348024a5=""
-    >
-      <p
-        class="label"
-        data-v-348024a5=""
-      >
-        Order by: 
-      </p>
-      <section
-        class="ordinators"
-        data-v-348024a5=""
-      >
-        
-        <section
-          class="unnnic-radio"
-          data-v-348024a5=""
-          data-v-7e12a100=""
-          size="md"
-        >
-          <label
-            class="unnnic-radio__input-wrapper"
-            data-v-7e12a100=""
-          >
-            <input
-              checked=""
-              class="unnnic-radio__input"
-              data-v-7e12a100=""
-              name=""
-              type="radio"
-            />
-            <p
-              class="unnnic-radio__label"
-              data-v-7e12a100=""
-            >
-               
-              
-              Alphabetical
-              
-            </p>
-            <!---->
-          </label>
-        </section>
-        <section
-          class="unnnic-radio"
-          data-v-348024a5=""
-          data-v-7e12a100=""
-          size="md"
-        >
-          <label
-            class="unnnic-radio__input-wrapper"
-            data-v-7e12a100=""
-          >
-            <input
-              class="unnnic-radio__input"
-              data-v-7e12a100=""
-              name=""
-              type="radio"
-            />
-            <p
-              class="unnnic-radio__label"
-              data-v-7e12a100=""
-            >
-               
-              
-              Newer
-              
-            </p>
-            <!---->
-          </label>
-        </section>
-        <section
-          class="unnnic-radio"
-          data-v-348024a5=""
-          data-v-7e12a100=""
-          size="md"
-        >
-          <label
-            class="unnnic-radio__input-wrapper"
-            data-v-7e12a100=""
-          >
-            <input
-              class="unnnic-radio__input"
-              data-v-7e12a100=""
-              name=""
-              type="radio"
-            />
-            <p
-              class="unnnic-radio__label"
-              data-v-7e12a100=""
-            >
-               
-              
-              Older
-              
-            </p>
-            <!---->
-          </label>
-        </section>
-        
-      </section>
-    </div>
+    />
   </section>
   <section
     class="settings-view__sectors"
     data-v-1088b44f=""
   >
-    <unnnic-card-stub
-      buttonaction="[Function]"
+    <div
       class="sectors__new-sector-card"
-      clickable="false"
       data-testid="settings-sectors-blank-card"
       data-v-1088b44f=""
-      enabled="true"
-      hasinformationicon="true"
-      icon="add"
-      infoposition="right"
-      invertedpercentage="false"
-      percent="0"
-      rating="0"
-      scheme="aux-blue"
-      text="New sector"
-      type="blank"
-    />
+    >
+      
+      
+    </div>
     
-    <section
-      class="unnnic-simple-card unnnic-simple-card--clickable sectors__card"
+    <div
+      class="sectors__card"
       data-testid="settings-sectors-sector-card"
       data-v-1088b44f=""
-      data-v-80dbbab7=""
     >
-      <section
-        class="unnnic-simple-card__header"
-        data-v-80dbbab7=""
+      
+      <div
+        data-v-1088b44f=""
       >
-        <section
-          class="unnnic-simple-card-header-container"
-          data-v-80dbbab7=""
-        >
-          <h1
-            class="unnnic-simple-card-header-container__title"
-            data-v-80dbbab7=""
-          >
-            Sector 1
-          </h1>
-          <!---->
-        </section>
-        <section
-          class="unnnic-simple-card__header-slot"
-          data-v-80dbbab7=""
+        
+        <div
+          class="unnnic-tooltip"
+          data-v-1088b44f=""
+          data-v-8c61d974=""
         >
           
-          <div
-            class="unnnic-dropdown"
+          <button
+            data-testid="open-dropdown-menu-button"
             data-v-1088b44f=""
-            data-v-eb4f06f5=""
-          >
-            <div
-              class="unnnic-dropdown__trigger"
-              data-v-eb4f06f5=""
-            >
-              
-              <div
-                class="unnnic-tooltip"
-                data-v-1088b44f=""
-                data-v-8c61d974=""
-              >
-                
-                <button
-                  class="unnnic-button unnnic-button--size-large unnnic-button--tertiary unnnic-button--icon-on-center"
-                  data-testid="open-dropdown-menu-button"
-                  data-v-1088b44f=""
-                  data-v-aadba593=""
-                >
-                  <!---->
-                  <!---->
-                  <span
-                    class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-dark unnnic-icon-size--ant unnnic-icon__size--ant unnnic--clickable"
-                    data-testid="icon-center"
-                    data-v-69390f82=""
-                    data-v-aadba593=""
-                    style="visibility: visible;"
-                    translate="no"
-                  >
-                    more_vert
-                  </span>
-                  <span
-                    class="unnnic-button__label"
-                    data-testid="button-label"
-                    data-v-aadba593=""
-                    style="visibility: visible;"
-                  >
-                    
-                    
-                     
-                  </span>
-                  <!---->
-                </button>
-                
-                <span
-                  class="unnnic-tooltip-label unnnic-tooltip-label-left"
-                  data-testid="tooltip-label"
-                  data-v-8c61d974=""
-                  style="left: -8px; top: 0px;"
-                >
-                  
-                  
-                  Delete or edit 
-                  <br
-                    data-v-8c61d974=""
-                  />
-                  
-                  
-                  <!---->
-                </span>
-              </div>
-              
-              <!---->
-            </div>
-          </div>
+          />
           
-        </section>
-      </section>
-      <!---->
-      <!---->
-    </section>
+          <span
+            class="unnnic-tooltip-label unnnic-tooltip-label-left"
+            data-testid="tooltip-label"
+            data-v-8c61d974=""
+            style="left: -8px; top: 0px;"
+          >
+            
+            
+            Delete or edit 
+            <br
+              data-v-8c61d974=""
+            />
+            
+            
+            <!---->
+          </span>
+        </div>
+        
+        
+        <div
+          data-testid="dropdown-edit"
+          data-v-1088b44f=""
+        >
+          
+          <section
+            class="dropdown-item-content"
+            data-v-1088b44f=""
+          >
+            <span
+              class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-darkest unnnic-icon-size--sm unnnic-icon__size--sm icon"
+              data-testid="material-icon"
+              data-v-1088b44f=""
+              data-v-69390f82=""
+              translate="no"
+            >
+              edit_square
+            </span>
+            <p
+              data-v-1088b44f=""
+            >
+              Edit
+            </p>
+          </section>
+          
+        </div>
+        <div
+          data-testid="dropdown-delete"
+          data-v-1088b44f=""
+        >
+          
+          <section
+            class="dropdown-item-content dropdown-item-content__delete"
+            data-v-1088b44f=""
+          >
+            <span
+              class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--danger unnnic-icon-size--sm unnnic-icon__size--sm icon"
+              data-testid="material-icon"
+              data-v-1088b44f=""
+              data-v-69390f82=""
+              translate="no"
+            >
+              delete
+            </span>
+            <p
+              data-v-1088b44f=""
+            >
+              Exclude
+            </p>
+          </section>
+          
+        </div>
+        
+      </div>
+      
+    </div>
+    <div
+      class="sectors__card"
+      data-testid="settings-sectors-sector-card"
+      data-v-1088b44f=""
+    >
+      
+      <div
+        data-v-1088b44f=""
+      >
+        
+        <div
+          class="unnnic-tooltip"
+          data-v-1088b44f=""
+          data-v-8c61d974=""
+        >
+          
+          <button
+            data-testid="open-dropdown-menu-button"
+            data-v-1088b44f=""
+          />
+          
+          <span
+            class="unnnic-tooltip-label unnnic-tooltip-label-left"
+            data-testid="tooltip-label"
+            data-v-8c61d974=""
+            style="left: -8px; top: 0px;"
+          >
+            
+            
+            Delete or edit 
+            <br
+              data-v-8c61d974=""
+            />
+            
+            
+            <!---->
+          </span>
+        </div>
+        
+        
+        <div
+          data-testid="dropdown-edit"
+          data-v-1088b44f=""
+        >
+          
+          <section
+            class="dropdown-item-content"
+            data-v-1088b44f=""
+          >
+            <span
+              class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-darkest unnnic-icon-size--sm unnnic-icon__size--sm icon"
+              data-testid="material-icon"
+              data-v-1088b44f=""
+              data-v-69390f82=""
+              translate="no"
+            >
+              edit_square
+            </span>
+            <p
+              data-v-1088b44f=""
+            >
+              Edit
+            </p>
+          </section>
+          
+        </div>
+        <div
+          data-testid="dropdown-delete"
+          data-v-1088b44f=""
+        >
+          
+          <section
+            class="dropdown-item-content dropdown-item-content__delete"
+            data-v-1088b44f=""
+          >
+            <span
+              class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--danger unnnic-icon-size--sm unnnic-icon__size--sm icon"
+              data-testid="material-icon"
+              data-v-1088b44f=""
+              data-v-69390f82=""
+              translate="no"
+            >
+              delete
+            </span>
+            <p
+              data-v-1088b44f=""
+            >
+              Exclude
+            </p>
+          </section>
+          
+        </div>
+        
+      </div>
+      
+    </div>
+    <div
+      class="sectors__card"
+      data-testid="settings-sectors-sector-card"
+      data-v-1088b44f=""
+    >
+      
+      <div
+        data-v-1088b44f=""
+      >
+        
+        <div
+          class="unnnic-tooltip"
+          data-v-1088b44f=""
+          data-v-8c61d974=""
+        >
+          
+          <button
+            data-testid="open-dropdown-menu-button"
+            data-v-1088b44f=""
+          />
+          
+          <span
+            class="unnnic-tooltip-label unnnic-tooltip-label-left"
+            data-testid="tooltip-label"
+            data-v-8c61d974=""
+            style="left: -8px; top: 0px;"
+          >
+            
+            
+            Delete or edit 
+            <br
+              data-v-8c61d974=""
+            />
+            
+            
+            <!---->
+          </span>
+        </div>
+        
+        
+        <div
+          data-testid="dropdown-edit"
+          data-v-1088b44f=""
+        >
+          
+          <section
+            class="dropdown-item-content"
+            data-v-1088b44f=""
+          >
+            <span
+              class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-darkest unnnic-icon-size--sm unnnic-icon__size--sm icon"
+              data-testid="material-icon"
+              data-v-1088b44f=""
+              data-v-69390f82=""
+              translate="no"
+            >
+              edit_square
+            </span>
+            <p
+              data-v-1088b44f=""
+            >
+              Edit
+            </p>
+          </section>
+          
+        </div>
+        <div
+          data-testid="dropdown-delete"
+          data-v-1088b44f=""
+        >
+          
+          <section
+            class="dropdown-item-content dropdown-item-content__delete"
+            data-v-1088b44f=""
+          >
+            <span
+              class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--danger unnnic-icon-size--sm unnnic-icon__size--sm icon"
+              data-testid="material-icon"
+              data-v-1088b44f=""
+              data-v-69390f82=""
+              translate="no"
+            >
+              delete
+            </span>
+            <p
+              data-v-1088b44f=""
+            >
+              Exclude
+            </p>
+          </section>
+          
+        </div>
+        
+      </div>
+      
+    </div>
     
   </section>
-  <section
-    class="settings-view__loading-sectors"
-    data-testid="settings-sectors-loading-section"
-    data-v-1088b44f=""
-  >
-    <img
-      data-v-1088b44f=""
-      src="/src/assets/LogoWeniAnimada4.svg"
-      width="40"
-    />
-  </section>
+  <!--v-if-->
   <!--v-if-->
   <!--v-if-->
   

@@ -2,7 +2,7 @@
   <ChatFeedback
     :feedback="createFeedbackLabel(message)"
     :scheme="scheme"
-    :class="{ clickable: clickable }"
+    :clickable="clickable"
     data-testid="chat-feedback"
   />
 </template>
@@ -154,9 +154,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.clickable {
-  cursor: pointer;
-}
-</style>

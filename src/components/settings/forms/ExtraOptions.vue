@@ -11,11 +11,13 @@
         v-model="sector.can_trigger_flows"
         class="margin-y-space-1"
         :textRight="translationTriggerFlows"
+        size="small"
         data-testid="config-switch"
       />
       <section class="switchs__container">
         <UnnnicSwitch
           v-model="sector.sign_messages"
+          size="small"
           class="margin-y-space-1"
           :textRight="translationSignMessages"
           data-testid="config-switch"
@@ -38,6 +40,7 @@
         class="margin-y-space-1"
         :textRight="$t('sector.additional_options.edit_custom_fields')"
         data-testid="config-switch"
+        size="small"
       />
       <template
         v-if="
@@ -57,6 +60,7 @@
                     'sector.additional_options.automatic_message.switch_disabled',
                   )
             "
+            size="small"
             data-testid="config-switch"
             @update:model-value="handleAutomaticMessageIsActive"
           />
@@ -73,22 +77,50 @@
             />
           </UnnnicToolTip>
         </section>
-        <UnnnicInputNext
-          v-if="sector.automatic_message.is_active"
-          v-model="sector.automatic_message.text"
-          :maxlength="160"
-          :label="$t('sector.additional_options.automatic_message.field.title')"
-          :placeholder="
-            $t('sector.additional_options.automatic_message.field.placeholder')
-          "
-        />
-        <p
-          v-if="sector.automatic_message.is_active"
-          class="automatic-message-count"
-        >
-          {{ sector.automatic_message?.text?.length || 0 }}/160
-        </p>
+        <fieldset v-if="sector.automatic_message.is_active">
+          <UnnnicInputNext
+            v-model="sector.automatic_message.text"
+            :maxlength="160"
+            :label="
+              $t('sector.additional_options.automatic_message.field.title')
+            "
+            :placeholder="
+              $t(
+                'sector.additional_options.automatic_message.field.placeholder',
+              )
+            "
+          />
+          <p class="automatic-message-count">
+            {{ sector.automatic_message?.text?.length || 0 }}/160
+          </p>
+        </fieldset>
       </template>
+      <section
+        v-if="enableAutomaticCsatFeature"
+        class="switchs__container"
+      >
+        <UnnnicSwitch
+          v-model="sector.is_csat_enabled"
+          :textRight="
+            sector.is_csat_enabled
+              ? $t('sector.additional_options.csat.enabled')
+              : $t('sector.additional_options.csat.disabeld')
+          "
+          size="small"
+        />
+        <UnnnicToolTip
+          enabled
+          :text="$t('sector.additional_options.csat.tooltip')"
+          side="right"
+          maxWidth="15rem"
+        >
+          <UnnnicIconSvg
+            icon="information-circle-4"
+            scheme="neutral-soft"
+            size="sm"
+          />
+        </UnnnicToolTip>
+      </section>
     </section>
     <section class="tags">
       <h2
@@ -109,42 +141,6 @@
           />
         </UnnnicToolTip>
       </h2>
-
-      <section class="tags-form">
-        <UnnnicInputNext
-          v-model="tagName"
-          class="tags-form__input"
-          :label="$t('tags.add.label')"
-          :placeholder="$t('tags.add.placeholder')"
-          data-testid="tags-input-tag-name"
-          :maxlength="120"
-          @keypress.enter.stop="!!tagName.trim() && addTag(tagName)"
-        />
-        <UnnnicButton
-          type="secondary"
-          :text="$t('add')"
-          :disabled="!tagName.trim()"
-          data-testid="tags-add-tag-button"
-          @click="addTag(tagName)"
-        />
-      </section>
-
-      <section
-        v-if="tags.length > 0"
-        class="form-tags__section"
-        data-testid="tags-group-section"
-      >
-        <TagGroup
-          v-model="tags"
-          class="form-tags__tag-group"
-          :tags="tags"
-          data-testid="sector-tag-group"
-          disabledTag
-          hasCloseIcon
-          selectable
-          @close="removeTag($event)"
-        />
-      </section>
 
       <section class="switchs__container required-tags">
         <UnnnicSwitch
@@ -172,6 +168,42 @@
             size="sm"
           />
         </UnnnicToolTip>
+      </section>
+
+      <section class="tags-form">
+        <UnnnicInputNext
+          v-model="tagName"
+          class="tags-form__input"
+          :label="$t('tags.add.label')"
+          :placeholder="$t('tags.add.placeholder')"
+          data-testid="tags-input-tag-name"
+          :maxlength="120"
+          @keypress.enter.stop="!!tagName.trim() && addTag(tagName)"
+        />
+        <UnnnicButton
+          type="secondary"
+          :text="$t('add')"
+          :disabled="disabledAddTag"
+          data-testid="tags-add-tag-button"
+          @click="addTag(tagName)"
+        />
+      </section>
+
+      <section
+        v-if="tags.length > 0"
+        class="form-tags__section"
+        data-testid="tags-group-section"
+      >
+        <TagGroup
+          v-model="tags"
+          class="form-tags__tag-group"
+          :tags="filteredTags"
+          data-testid="sector-tag-group"
+          disabledTag
+          hasCloseIcon
+          selectable
+          @close="removeTag($event)"
+        />
       </section>
     </section>
     <section
@@ -226,6 +258,9 @@ export default {
       toAddTags: [],
       tags: [],
       isLoading: false,
+      tagsNext: null,
+      tagsPrevious: null,
+      isLoadingTags: false,
     };
   },
   computed: {
@@ -261,6 +296,18 @@ export default {
     tagsMarginBottom() {
       return this.isEditing ? '78px' : '0';
     },
+    filteredTags() {
+      return this.tags.filter((tag) => tag.name.includes(this.tagName.trim()));
+    },
+    disabledAddTag() {
+      return (
+        !this.tagName.trim() ||
+        this.tags.some((tag) => tag.name === this.tagName.trim())
+      );
+    },
+    enableAutomaticCsatFeature() {
+      return this.featureFlags.active_features?.includes('weniChatsCSAT');
+    },
   },
   mounted() {
     if (this.isEditing) this.getTags();
@@ -271,8 +318,22 @@ export default {
       if (!value) this.sector.automatic_message.text = '';
     },
     async getTags() {
-      const sectorCurrentTags = await Sector.tags(this.sector.uuid);
-      this.currentTags = this.tags = sectorCurrentTags.results;
+      try {
+        this.isLoadingTags = true;
+        const { next, previous, results } = await Sector.tags(
+          this.sector.uuid,
+          { next: this.tagsNext },
+        );
+        this.tagsNext = next;
+        this.tagsPrevious = previous;
+        const tags = this.currentTags.concat(...results);
+        this.currentTags = this.tags = tags;
+      } catch (error) {
+        console.error('Error getting tags', error);
+      } finally {
+        if (this.tagsNext) this.getTags();
+        else this.isLoadingTags = false;
+      }
     },
     async addTag(tagNameToAdd) {
       const tagsName = this.tags.map((tag) => tag.name);
@@ -319,6 +380,7 @@ export default {
         can_edit_custom_fields,
         sign_messages,
         automatic_message,
+        is_csat_enabled,
         required_tags,
       } = this.sector;
 
@@ -327,6 +389,7 @@ export default {
         can_edit_custom_fields,
         sign_messages,
         automatic_message,
+        is_csat_enabled,
         required_tags,
       };
 
@@ -371,6 +434,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
 .form-actions {
   position: fixed;
   bottom: 0;
@@ -402,6 +471,8 @@ export default {
   }
 
   & .switchs {
+    display: grid;
+    gap: $unnnic-space-2;
     &__title {
       font-weight: $unnnic-font-weight-bold;
       color: $unnnic-color-neutral-dark;
@@ -418,14 +489,13 @@ export default {
       :deep(.unnnic-tooltip) {
         display: flex;
       }
-
-      &.required-tags {
-        margin-top: $unnnic-space-3;
-      }
     }
   }
 
   & .tags {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-4;
     margin-top: $unnnic-spacing-sm;
     margin-bottom: v-bind(tagsMarginBottom);
     :deep(.unnnic-brand-tag) {
@@ -441,7 +511,6 @@ export default {
       color: $unnnic-color-neutral-dark;
       font-size: $unnnic-font-size-body-lg;
       line-height: $unnnic-line-height-large * 1.5;
-      margin-bottom: $unnnic-spacing-ant;
     }
     &-form {
       display: flex;
@@ -449,7 +518,6 @@ export default {
       gap: $unnnic-spacing-stack-sm;
       &__input {
         flex: 1 1;
-
         :deep(.unnnic-form__label) {
           margin: 0px 0px $unnnic-spacing-xs 0px;
         }

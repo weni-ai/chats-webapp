@@ -24,9 +24,6 @@ exports[`ViewModeHeader > Snapshot > should match snapshot 1`] = `
     data-v-d329e103=""
   >
     <div
-      class="unnnic-tooltip"
-      data-testid="close-tooltip"
-      data-v-8c61d974=""
       data-v-d329e103=""
     >
       
@@ -36,21 +33,6 @@ exports[`ViewModeHeader > Snapshot > should match snapshot 1`] = `
         data-v-d329e103=""
       />
       
-      <span
-        class="unnnic-tooltip-label unnnic-tooltip-label-left"
-        data-testid="tooltip-label"
-        data-v-8c61d974=""
-      >
-        
-        
-        dashboard.view-mode.close_ 
-        <br
-          data-v-8c61d974=""
-        />
-        
-        
-        <!---->
-      </span>
     </div>
   </div>
 </header>

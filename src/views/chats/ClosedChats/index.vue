@@ -22,8 +22,8 @@
       <UnnnicChatsHeader
         v-show="!isLoadingSelectedRoom"
         v-if="selectedRoom"
-        :title="selectedRoom.contact.name"
-        :avatarName="selectedRoom.contact.name"
+        :title="contactName || `[${$t('unnamed_contact')}]`"
+        :avatarName="contactName || '-'"
       />
     </header>
     <main>
@@ -32,14 +32,18 @@
         class="closed-chats__selected-chat"
         data-testid="closed-chats-selected-chat"
       >
-        <RoomMessages data-testid="room-messages" />
+        <section class="closed-chats__selected-chat__content">
+          <RoomMessages
+            showRoomSummary
+            data-testid="room-messages"
+          />
+        </section>
         <ContactInfo
           v-if="
             featureFlags.active_features?.includes('weniChatsContactInfoV2')
           "
           isHistory
           :closedRoom="selectedRoom"
-          showRoomSummary
           data-testid="contact-info"
         />
         <OldContactInfo
@@ -124,6 +128,9 @@ export default {
     ...mapState(useFeatureFlag, ['featureFlags']),
     closedChatsHeaderSize() {
       return this.isMobile ? 'small' : 'large';
+    },
+    contactName() {
+      return this.selectedRoom?.contact?.name?.trim() || '';
     },
   },
 
@@ -261,6 +268,12 @@ export default {
 
     :deep(.unnnic-chats-header) {
       display: none;
+    }
+
+    &__content {
+      :deep(.chat-summary) {
+        margin-left: -$unnnic-space-4;
+      }
     }
   }
 }

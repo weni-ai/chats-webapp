@@ -1,10 +1,7 @@
 import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
-
-function getURLParams({ URL, endpoint }) {
-  return URL?.split(endpoint)?.[1];
-}
+import { getURLParams } from '@/utils/requests';
 
 export default {
   async getByRoom({ nextReq }, roomId) {
