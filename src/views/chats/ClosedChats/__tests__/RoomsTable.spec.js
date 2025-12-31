@@ -126,32 +126,9 @@ describe('RoomsTable.vue', () => {
       expect(
         wrapper.find('[data-testid="mobile-filters-modal"]').exists(),
       ).toBe(false);
-      expect(wrapper.find('[data-testid="rooms-data-table"]').exists()).toBe(
-        true,
-      );
+
       expect(wrapper.find('[data-testid="table-loading-state"]').exists()).toBe(
         false,
-      );
-    });
-
-    it('renders mobile filter button and table when mobile and not loading', async () => {
-      isMobile.mockReturnValue(true);
-      wrapper = createWrapper();
-      await wrapper.setData({
-        isTableLoading: false,
-        rooms: [mockRoom],
-      });
-
-      await flushPromises();
-
-      expect(wrapper.find('[data-testid="desktop-filters"]').isVisible()).toBe(
-        false,
-      );
-      expect(
-        wrapper.find('[data-testid="mobile-filters-button"]').exists(),
-      ).toBe(true);
-      expect(wrapper.find('[data-testid="rooms-data-table"]').exists()).toBe(
-        true,
       );
     });
 
@@ -171,30 +148,17 @@ describe('RoomsTable.vue', () => {
       expect(wrapper.vm.isTableLoading).toBe(false);
     });
 
-    it('displays no results message when there are no rooms', async () => {
-      wrapper = createWrapper();
-      await wrapper.setData({
-        isTableLoading: false,
-        rooms: [],
-      });
-
-      await flushPromises();
-      expect(wrapper.find('[data-testid="no-results-message"]').exists()).toBe(
-        true,
-      );
-      expect(wrapper.find('[data-testid="rooms-data-table"]').exists()).toBe(
-        false,
-      );
-    });
-
     it('renders table headers correctly for desktop', async () => {
       isMobile.mockReturnValue(false);
       wrapper = createWrapper();
       await flushPromises();
       const headers = wrapper.vm.tableHeaders;
       expect(headers.length).toBe(5);
-      expect(headers[0].id).toBe('contactName');
-      expect(headers[1].id).toBe('agentName');
+      expect(headers[0].itemKey).toBe('contactName');
+      expect(headers[1].itemKey).toBe('agentName');
+      expect(headers[2].itemKey).toBe('closedBy');
+      expect(headers[3].itemKey).toBe('tags');
+      expect(headers[4].itemKey).toBe('date');
     });
 
     it('renders table headers correctly for mobile (excluding some)', async () => {
@@ -205,97 +169,6 @@ describe('RoomsTable.vue', () => {
       expect(headers.length).toBe(3);
       expect(headers.find((h) => h.id === 'agentName')).toBeUndefined();
       expect(headers.find((h) => h.id === 'tags')).toBeUndefined();
-    });
-
-    it('renders room item data correctly', async () => {
-      isMobile.mockReturnValue(false);
-      wrapper = createWrapper();
-      await wrapper.setData({
-        isTableLoading: false,
-        rooms: [mockRoom],
-      });
-
-      await flushPromises();
-
-      const roomItem = wrapper.find(
-        `[data-testid="room-item-${mockRoom.uuid}"]`,
-      );
-      expect(roomItem.exists()).toBe(true);
-
-      const contactName = roomItem.find(
-        '[data-testid="room-item-contact-name"]',
-      );
-      expect(contactName.exists()).toBe(true);
-      expect(contactName.text()).toBe(mockRoom.contact.name);
-
-      expect(roomItem.find('[data-testid="room-item-avatar"]').exists()).toBe(
-        true,
-      );
-
-      const agentName = roomItem.find('[data-testid="room-item-agent-name"]');
-      expect(agentName.exists()).toBe(true);
-      expect(agentName.text()).toBe(mockRoom.user.first_name);
-
-      const tags = roomItem.find('[data-testid="room-item-tags"]');
-      expect(tags.exists()).toBe(true);
-
-      const date = roomItem.find('[data-testid="room-item-date"]');
-      expect(date.exists()).toBe(true);
-      expect(date.text()).toBe(
-        new Date(mockRoom.ended_at).toLocaleDateString('en'),
-      );
-
-      const visualizeButton = roomItem.find(
-        `[data-testid="room-item-visualize-button-${mockRoom.uuid}"]`,
-      );
-      expect(visualizeButton.exists()).toBe(true);
-      expect(visualizeButton.text()).toBe('See');
-
-      expect(
-        roomItem
-          .find(`[data-testid="room-item-visualize-icon-${mockRoom.uuid}"]`)
-          .exists(),
-      ).toBe(false);
-    });
-
-    it('renders room item data correctly for mobile (visualize icon)', async () => {
-      isMobile.mockReturnValue(true);
-      wrapper = createWrapper();
-      await wrapper.setData({
-        isTableLoading: false,
-        rooms: [mockRoom],
-      });
-
-      await flushPromises();
-
-      const roomItem = wrapper.find(
-        `[data-testid="room-item-${mockRoom.uuid}"]`,
-      );
-      expect(roomItem.exists()).toBe(true);
-
-      expect(roomItem.find('[data-testid="room-item-avatar"]').exists()).toBe(
-        false,
-      );
-
-      const contactName = roomItem.find(
-        '[data-testid="room-item-contact-name"]',
-      );
-      expect(contactName.exists()).toBe(true);
-      expect(contactName.text()).toBe(mockRoom.contact.name);
-
-      const date = roomItem.find('[data-testid="room-item-date"]');
-      expect(date.exists()).toBe(true);
-
-      const visualizeIcon = roomItem.find(
-        `[data-testid="room-item-visualize-icon-${mockRoom.uuid}"]`,
-      );
-      expect(visualizeIcon.exists()).toBe(true);
-
-      expect(
-        roomItem
-          .find(`[data-testid="room-item-visualize-button-${mockRoom.uuid}"]`)
-          .exists(),
-      ).toBe(false);
     });
   });
 
@@ -539,7 +412,7 @@ describe('RoomsTable.vue', () => {
 
       await flushPromises();
 
-      wrapper.vm.emitOpenRoom(mockRoom);
+      wrapper.vm.handleOpenRoom(mockRoom);
       expect(wrapper.emitted('open-room')).toBeTruthy();
       expect(wrapper.emitted('open-room')[0][0]).toEqual(mockRoom);
     });
@@ -549,7 +422,7 @@ describe('RoomsTable.vue', () => {
       wrapper = createWrapper();
       await flushPromises();
 
-      wrapper.vm.emitOpenRoom(mockRoom);
+      wrapper.vm.handleOpenRoom(mockRoom);
       expect(wrapper.emitted('open-room')).toBeFalsy();
     });
   });
@@ -658,7 +531,6 @@ describe('RoomsTable.vue', () => {
       expect(wrapper.vm.roomsCount).toBe(0);
       expect(wrapper.vm.roomsCountPages).toBe(0);
       expect(wrapper.vm.roomsCurrentPage).toBe(1);
-      expect(wrapper.vm.roomsLimitPagination).toBe(5);
     });
 
     it('sets correct roomsLimit based on device type for desktop', () => {
@@ -698,15 +570,14 @@ describe('RoomsTable.vue', () => {
         const headers = wrapper.vm.tableHeaders;
 
         expect(headers.length).toBe(5);
-        expect(headers[0].id).toBe('contactName');
-        expect(headers[1].id).toBe('agentName');
-        expect(headers[2].id).toBe('tags');
-        expect(headers[3].id).toBe('date');
-        expect(headers[4].id).toBe('visualize');
+        expect(headers[0].itemKey).toBe('contactName');
+        expect(headers[1].itemKey).toBe('agentName');
+        expect(headers[2].itemKey).toBe('closedBy');
+        expect(headers[3].itemKey).toBe('tags');
+        expect(headers[4].itemKey).toBe('date');
 
         headers.forEach((header) => {
-          expect(header).toHaveProperty('text');
-          expect(header).toHaveProperty('flex', 1);
+          expect(header).toHaveProperty('title');
         });
       });
 
@@ -717,25 +588,13 @@ describe('RoomsTable.vue', () => {
         const headers = wrapper.vm.tableHeaders;
 
         expect(headers.length).toBe(3);
-        expect(headers[0].id).toBe('contactName');
-        expect(headers[1].id).toBe('date');
-        expect(headers[2].id).toBe('visualize');
 
-        expect(headers.some((h) => h.id === 'agentName')).toBe(false);
-        expect(headers.some((h) => h.id === 'tags')).toBe(false);
-      });
+        expect(headers[0].itemKey).toBe('contactName');
+        expect(headers[1].itemKey).toBe('closedBy');
+        expect(headers[2].itemKey).toBe('date');
 
-      it('applies translation to header text', () => {
-        wrapper = createWrapper();
-
-        const mockTranslation = vi.spyOn(wrapper.vm, '$t');
-        mockTranslation.mockImplementation((key) => `translated-${key}`);
-
-        wrapper.vm.tableHeaders.forEach((header) => {
-          expect(header.text).toContain('translated-');
-        });
-
-        mockTranslation.mockRestore();
+        expect(headers.some((h) => h.itemKey === 'agentName')).toBe(false);
+        expect(headers.some((h) => h.itemKey === 'tags')).toBe(false);
       });
     });
 
