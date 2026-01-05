@@ -190,6 +190,7 @@
   "justify": "Justificar",
   "without_results": "No hay resultados coincidentes",
   "without_chats": "¡Ups! Parece que no hay chats en este momento :)",
+  "other": "Otro",
   "select_smart": {
     "without_results": "Ningún resultado encontrado",
     "without_multiple_selected": "Ninguna opción seleccionada"
@@ -257,6 +258,11 @@
         "switch_active": "Firma activa",
         "switch_disabled": "Firma desactivada"
       },
+      "csat": {
+        "enabled": "Encuesta de satisfacción después de completar el soporte activo",
+        "disabeld": "Encuesta de satisfacción después de completar el soporte deshabilitado",
+        "tooltip": "Cuando se activa, se enviará una encuesta de satisfacción automáticamente al contacto, justo después de que se cierre el servicio."
+      },
       "automatic_message": {
         "switch_active": "Mensaje automático de apertura activo",
         "switch_disabled": "Mensaje automático de apertura deshabilitado",
@@ -316,12 +322,13 @@
       "open_summary_tooltip": "Abrir el resumen del chat",
       "close_summary_tooltip": "Cerrar el resumen del chat",
       "feedback": {
-        "title": "Feedback",
+        "title": "¿Qué fue lo que no funcionó?",
         "needs_improvement_text": "Ayuda a mejorar los resumenes. Tu opinión sobre este resumen nos ayuda a hacerlo más claro y útil.",
         "empty_rating": "¿Este resumen fue útil para ti?",
         "positive": "Útil",
         "negative": "Necesita mejoras",
-        "placeholder": "Comparte tu feedback para que podamos mejorar la funcionalidad."
+        "placeholder": "Comparte tu feedback aquí",
+        "sended": "Tu feedback ha sido enviado!"
       },
       "onboarding": {
         "title": "Nuevo Feature: Resumen por IA",
@@ -482,6 +489,7 @@
   },
   "pagination": "{from} - {to} de {total}",
   "contact": "Contacto",
+  "unnamed_contact": "Contacto sin nombre",
   "contact_await_for_you": "¡Un contacto está esperando por ti!",
   "agent": "Agente",
   "manager": "Gerente",

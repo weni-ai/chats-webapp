@@ -24,43 +24,34 @@ exports[`SettingsGroups.vue > Snapshot > should match the snapshot 1`] = `
       data-v-b225401e=""
     >
       
-      
-      
-      
-      
       <div
-        class="unnnic-tooltip-trigger"
-        data-grace-area-trigger=""
-        data-state="closed"
-        data-testid="tooltip-trigger"
-        data-v-8fb03905=""
+        class="unnnic-tooltip"
+        data-v-8c61d974=""
+        data-v-b225401e=""
       >
-        
-        
         
         <button
           data-testid="open-dropdown-menu-button"
           data-v-b225401e=""
         />
         
-        
-        
+        <span
+          class="unnnic-tooltip-label unnnic-tooltip-label-left"
+          data-testid="tooltip-label"
+          data-v-8c61d974=""
+          style="left: -8px; top: 0px;"
+        >
+          
+          
+          Delete or edit 
+          <br
+            data-v-8c61d974=""
+          />
+          
+          
+          <!---->
+        </span>
       </div>
-      <div
-        defer="false"
-        disabled="false"
-        forcemount="false"
-      >
-        
-        
-        <!---->
-        
-        
-      </div>
-      
-      
-      
-      
       
       
       <div
@@ -129,43 +120,34 @@ exports[`SettingsGroups.vue > Snapshot > should match the snapshot 1`] = `
       data-v-b225401e=""
     >
       
-      
-      
-      
-      
       <div
-        class="unnnic-tooltip-trigger"
-        data-grace-area-trigger=""
-        data-state="closed"
-        data-testid="tooltip-trigger"
-        data-v-8fb03905=""
+        class="unnnic-tooltip"
+        data-v-8c61d974=""
+        data-v-b225401e=""
       >
-        
-        
         
         <button
           data-testid="open-dropdown-menu-button"
           data-v-b225401e=""
         />
         
-        
-        
+        <span
+          class="unnnic-tooltip-label unnnic-tooltip-label-left"
+          data-testid="tooltip-label"
+          data-v-8c61d974=""
+          style="left: -8px; top: 0px;"
+        >
+          
+          
+          Delete or edit 
+          <br
+            data-v-8c61d974=""
+          />
+          
+          
+          <!---->
+        </span>
       </div>
-      <div
-        defer="false"
-        disabled="false"
-        forcemount="false"
-      >
-        
-        
-        <!---->
-        
-        
-      </div>
-      
-      
-      
-      
       
       
       <div
@@ -234,43 +216,34 @@ exports[`SettingsGroups.vue > Snapshot > should match the snapshot 1`] = `
       data-v-b225401e=""
     >
       
-      
-      
-      
-      
       <div
-        class="unnnic-tooltip-trigger"
-        data-grace-area-trigger=""
-        data-state="closed"
-        data-testid="tooltip-trigger"
-        data-v-8fb03905=""
+        class="unnnic-tooltip"
+        data-v-8c61d974=""
+        data-v-b225401e=""
       >
-        
-        
         
         <button
           data-testid="open-dropdown-menu-button"
           data-v-b225401e=""
         />
         
-        
-        
+        <span
+          class="unnnic-tooltip-label unnnic-tooltip-label-left"
+          data-testid="tooltip-label"
+          data-v-8c61d974=""
+          style="left: -8px; top: 0px;"
+        >
+          
+          
+          Delete or edit 
+          <br
+            data-v-8c61d974=""
+          />
+          
+          
+          <!---->
+        </span>
       </div>
-      <div
-        defer="false"
-        disabled="false"
-        forcemount="false"
-      >
-        
-        
-        <!---->
-        
-        
-      </div>
-      
-      
-      
-      
       
       
       <div
