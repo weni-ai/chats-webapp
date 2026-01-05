@@ -256,10 +256,10 @@ export default {
     rooms: {
       immediate: true,
       handler() {
-        const { room_uuid } = this.$route.query || {};
+        const { uuid_room } = this.$route.query || {};
 
-        if (room_uuid && this.rooms?.length > 0) {
-          const activeRoom = this.rooms.find((room) => room.uuid === room_uuid);
+        if (uuid_room && this.rooms?.length > 0) {
+          const activeRoom = this.rooms.find((room) => room.uuid === uuid_room);
 
           if (activeRoom) {
             this.setActiveRoom(activeRoom);
