@@ -64,6 +64,14 @@
           {{ $t('no_agent_assigned') }}
         </span>
       </template>
+      <template #body-closedBy="{ item }">
+        <span
+          v-if="item.closed_by"
+          data-testid="room-item-closed-by"
+        >
+          {{ item.closed_by?.first_name }} {{ item.closed_by?.last_name }}
+        </span>
+      </template>
       <template #body-tags="{ item }">
         <TagGroup
           v-if="!!item.tags.length"
