@@ -792,6 +792,10 @@
       "show_agent_status_count_timer": {
         "switch_active": "Mostrar temporizador de recuento de estado del agente",
         "switch_inactive": "Ocultar temporizador de recuento de estado del agente"
+      },
+      "close_chats_in_queue": {
+        "switch_active": "Los agentes pueden cerrar chats que están esperando soporte activo",
+        "switch_inactive": "Los agentes pueden cerrar chats que están esperando soporte inactivo"
       }
     },
     "custom_sector": "Personalizar nuevo sector (recomendado)",
