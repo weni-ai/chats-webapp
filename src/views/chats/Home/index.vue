@@ -21,8 +21,12 @@
     />
 
     <template #aside>
+      <SearchMessages
+        v-if="showSearchMessagesDrawer"
+        @close="showSearchMessagesDrawer = false"
+      />
       <QuickMessages
-        v-if="showQuickMessages"
+        v-else-if="showQuickMessages"
         @select-quick-message="
           (quickMessage) => updateTextBoxMessage(quickMessage.text)
         "
@@ -59,7 +63,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'pinia';
+import { mapState, mapActions, mapWritableState } from 'pinia';
 import { useFeedback } from '@/store/modules/feedback';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
@@ -74,11 +78,13 @@ import ContactInfo from '@/components/chats/ContactInfo/index.vue';
 import OldContactInfo from '@/components/chats/ContactInfo/oldContactInfo.vue';
 import ModalFeedback from './ModalFeedback.vue';
 import QuickMessages from '@/components/chats/QuickMessages/index.vue';
+import SearchMessages from '@/components/chats/SearchMessages/index.vue';
 
 import HomeChat from './HomeChat.vue';
 
 import { moduleStorage } from '@/utils/storage';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 export default {
   name: 'ViewHome',
@@ -92,6 +98,7 @@ export default {
     ModalFeedback,
     OldContactInfo,
     QuickMessages,
+    SearchMessages,
   },
 
   props: {
@@ -130,9 +137,16 @@ export default {
     ...mapState(useDiscussions, {
       discussion: (store) => store.activeDiscussion,
     }),
+    ...mapWritableState(useRoomMessages, ['showSearchMessagesDrawer']),
   },
 
   watch: {
+    showSearchMessagesDrawer(val) {
+      if (val) this.showQuickMessages = false;
+    },
+    showQuickMessages(val) {
+      if (val) this.showSearchMessagesDrawer = false;
+    },
     isRoomContactInfoOpen(val) {
       moduleStorage.setItem('isRoomContactInfoOpen', val);
     },

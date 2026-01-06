@@ -292,6 +292,9 @@
   "interaction_time": "Interaction time",
   "average_interaction_time": "It is the average duration of a chat",
   "chats": {
+    "search_messages": {
+      "title": "Search in conversation"
+    },
     "summary": {
       "reading_and_summarizing": "Reading and summarizing",
       "by_ai": "Summary by AI",

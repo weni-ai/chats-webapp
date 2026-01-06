@@ -6,6 +6,7 @@
     :close="() => $emit('close')"
   >
     <HeaderQuickMessages @close="$emit('close')" />
+
     <UnnnicDisclaimer
       class="quick-messages-disclaimer"
       type="informational"

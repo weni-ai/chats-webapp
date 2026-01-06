@@ -288,6 +288,9 @@
   "interaction_time": "Tiempo de interacción",
   "average_interaction_time": "Es el tiempo promedio de duración de un chat",
   "chats": {
+    "search_messages": {
+      "title": "Buscar en la conversación"
+    },
     "summary": {
       "reading_and_summarizing": "Lectura y resumen",
       "by_ai": "Resumen por IA",

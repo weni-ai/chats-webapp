@@ -31,6 +31,7 @@ export const useRoomMessages = defineStore('roomMessages', {
     roomInternalNotes: [],
     toScrollNote: null,
     showScrollToBottomButton: false,
+    showSearchMessagesDrawer: false,
   }),
   actions: {
     addRoomMessageSorted({ message, addBefore, reorderMessageMinute }) {
