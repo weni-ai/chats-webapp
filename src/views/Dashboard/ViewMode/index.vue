@@ -374,7 +374,7 @@ export default {
       &::after {
         content: '';
         position: fixed;
-        top: 106px;
+        top: 106px; // This distance corresponds to the positioning of the summary balloon point.
         transform: rotate(-45deg);
         width: $unnnic-space-3;
         height: $unnnic-space-3;
