@@ -51,10 +51,16 @@
       </template>
       <template #body-agentName="{ item }">
         <span
-          v-if="item.user"
+          v-if="item.user?.first_name || item.user?.last_name"
           data-testid="room-item-agent-name"
         >
-          {{ item.user?.first_name }} {{ item.user?.last_name }}
+          {{ formatAgentName(item.user) }}
+        </span>
+        <span
+          v-else-if="item.user"
+          class="italic-label"
+        >
+          {{ $t('unnamed_agent') }}
         </span>
         <span
           v-else
@@ -66,10 +72,16 @@
       </template>
       <template #body-closedBy="{ item }">
         <span
-          v-if="item.closed_by"
+          v-if="item.closed_by?.first_name || item.closed_by?.last_name"
           data-testid="room-item-closed-by"
         >
-          {{ item.closed_by?.first_name }} {{ item.closed_by?.last_name }}
+          {{ formatAgentName(item.closed_by) }}
+        </span>
+        <span
+          v-else-if="item.closed_by"
+          class="italic-label"
+        >
+          {{ $t('unnamed_agent') }}
         </span>
       </template>
       <template #body-tags="{ item }">
@@ -248,6 +260,7 @@ export default {
     handleShowModalFilters() {
       this.showModalFilters = !this.showModalFilters;
     },
+
     handleOpenRoom(room) {
       if (this.isMobile) {
         this.$emit('open-room', room);
@@ -258,6 +271,13 @@ export default {
           query: { from: this.$route.query.from },
         });
       }
+    },
+
+    formatAgentName(agent) {
+      if (!agent.first_name && !agent.last_name) {
+        return this.$t('unnamed_agent');
+      }
+      return `${agent.first_name} ${agent.last_name}`.trim();
     },
   },
 };

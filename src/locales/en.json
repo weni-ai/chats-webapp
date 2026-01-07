@@ -501,6 +501,7 @@
   "pagination": "{from} - {to} of {total}",
   "contact": "Contact",
   "unnamed_contact": "Unnamed contact",
+  "unnamed_agent": "Unnamed agent",
   "no_agent_assigned": "No agent assigned",
   "no_tags_assigned": "No tags assigned",
   "contact_await_for_you": "A contact is waiting for you!",

@@ -497,6 +497,7 @@
   "pagination": "{from} - {to} de {total}",
   "contact": "Contacto",
   "unnamed_contact": "Contacto sin nombre",
+  "unnamed_agent": "Agente sin nombre",
   "no_agent_assigned": "No se ha asignado un agente",
   "no_tags_assigned": "No se han asignado etiquetas",
   "contact_await_for_you": "¡Un contacto está esperando por ti!",
