@@ -174,6 +174,15 @@ export const useRoomMessages = defineStore('roomMessages', {
       this.removeMessageFromSendings(uuid);
     },
 
+    async getAllRoomsMessages() {
+      try {
+        await this.getRoomMessages();
+      } catch (error) {
+        console.log(error);
+      } finally {
+        if (this.roomMessagesNext) this.getAllRoomsMessages();
+      }
+    },
     async getRoomMessages() {
       const roomsStore = useRooms();
 

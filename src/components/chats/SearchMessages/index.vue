@@ -1,7 +1,7 @@
 <template>
   <AsideSlotTemplate
     class="search-messages-container"
-    :close="() => $emit('close')"
+    :close="() => emit('close')"
   >
     <template #header>
       <header class="search-messages__header">
@@ -10,36 +10,93 @@
           iconCenter="close"
           type="tertiary"
           size="small"
-          @click="$emit('close')"
+          @click="emit('close')"
         />
       </header>
     </template>
     <AsideSlotTemplateSection class="search-messages__content">
       <section class="search-messages__container">
-        <UnnnicInput iconLeft="search-1" />
+        <UnnnicInput
+          v-model="searchTerm"
+          iconLeft="search-1"
+          :placeholder="$t('chats.search_messages.input_placeholder')"
+        />
+        <section
+          v-if="searchTerm"
+          class="search-messages__results-label-container"
+        >
+          <UnnnicIcon
+            icon="search"
+            size="ant"
+          />
+          <p v-if="matchedMessages.length === 0">
+            {{ $t('chats.search_messages.no_results', { searchTerm }) }}
+          </p>
+          <p v-else>
+            {{
+              $t('chats.search_messages.results_found', {
+                count: matchedMessages.length,
+                searchTerm,
+              })
+            }}
+          </p>
+        </section>
+        <HighlightMessageCard
+          v-for="message in matchedMessages"
+          :key="message.uuid"
+          :message="message"
+          :searchTerm="searchTerm"
+        />
       </section>
     </AsideSlotTemplateSection>
   </AsideSlotTemplate>
 </template>
 
-<script>
+<script setup>
+import { computed, ref } from 'vue';
+import { watchDebounced } from '@vueuse/core';
+
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
+import HighlightMessageCard from './HighlightMessageCard.vue';
 
-export default {
+defineOptions({
   name: 'SearchMessages',
+});
 
-  components: {
-    AsideSlotTemplate,
-    AsideSlotTemplateSection,
+const emit = defineEmits(['close']);
+
+const roomMessagesStore = useRoomMessages();
+
+const isLoading = ref(false);
+
+const searchTerm = ref('');
+
+watchDebounced(
+  searchTerm,
+  () => {
+    const { roomMessagesNext, getAllRoomsMessages } = roomMessagesStore;
+    if (roomMessagesNext) getAllRoomsMessages();
   },
-  emits: ['close'],
-  data() {
-    return {
-      isLoading: false,
-    };
-  },
-};
+  { debounce: 500, maxWait: 1000 },
+);
+
+const matchedMessages = computed(() => {
+  if (!searchTerm.value) {
+    return [];
+  }
+
+  const messagesWithSender = roomMessagesStore.roomMessages.filter(
+    (message) => {
+      return !!(message.user || message.contact);
+    },
+  );
+  return messagesWithSender.filter((message) => {
+    return message.text.toLowerCase().includes(searchTerm.value.toLowerCase());
+  });
+});
 </script>
 
 <style lang="scss" scoped>
@@ -67,6 +124,16 @@ export default {
     display: flex;
     flex-direction: column;
     gap: $unnnic-space-3;
+  }
+  &__results-label-container {
+    display: flex;
+    align-items: center;
+    gap: $unnnic-space-2;
+    padding: 0 $unnnic-space-4;
+
+    font: $unnnic-font-body;
+    color: $unnnic-color-fg-base;
+    font-style: italic;
   }
 }
 </style>
