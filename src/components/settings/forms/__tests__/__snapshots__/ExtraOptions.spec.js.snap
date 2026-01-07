@@ -42,7 +42,7 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
       <!---->
       <!----><span data-v-aadba593="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Cancel</span>
       <!---->
-    </button><button data-v-aadba593="" data-v-85728205="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
+    </button><button data-v-aadba593="" data-v-85728205="" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
       <!---->
       <!---->
       <!----><span data-v-aadba593="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Save</span>
