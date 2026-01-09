@@ -39,20 +39,9 @@
           />
         </section>
         <ContactInfo
-          v-if="
-            featureFlags.active_features?.includes('weniChatsContactInfoV2')
-          "
           isHistory
           :closedRoom="selectedRoom"
           data-testid="contact-info"
-        />
-        <OldContactInfo
-          v-else
-          isHistory
-          :closedRoom="selectedRoom"
-          showRoomSummary
-          data-testid="contact-info"
-          @close="() => {}"
         />
       </section>
 
@@ -78,7 +67,6 @@ import ContactInfo from '@/components/chats/ContactInfo/index.vue';
 import ClosedChatsHeaderLoading from '@/views/loadings/ClosedChats/ClosedChatsHeader.vue';
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 import ClosedChatsRoomsTable from './RoomsTable.vue';
-import OldContactInfo from '@/components/chats/ContactInfo/oldContactInfo.vue';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 export default {
@@ -90,7 +78,6 @@ export default {
     ContactInfo,
     ClosedChatsRoomsTable,
     RoomMessages,
-    OldContactInfo,
   },
 
   props: {
