@@ -151,7 +151,6 @@ describe('SocketAlertBanner', () => {
       const icon = wrapper.find('[data-testid="unnnic-icon"]');
       expect(icon.exists()).toBe(true);
 
-      // Check if UnnnicIcon component exists (it's stubbed, so we check the stub)
       const unnnicIconStub = wrapper.findComponent({ name: 'UnnnicIcon' });
       if (unnnicIconStub.exists()) {
         expect(unnnicIconStub.props('icon')).toBe('block');
@@ -167,7 +166,7 @@ describe('SocketAlertBanner', () => {
 
       const spans = textSection.findAll('span');
       expect(spans.length).toBe(3);
-      // Text may have whitespace trimmed, so we check without trailing space
+
       expect(spans[0].text().trim()).toBe('You are disconnected. Please');
       expect(spans[1].text()).toBe('refresh');
       expect(spans[2].text().trim()).toBe('to continue assisting.');
@@ -208,7 +207,6 @@ describe('SocketAlertBanner', () => {
     it('should call unnnicCallAlert with success message when component is unmounted', () => {
       wrapper = createWrapper('closed');
 
-      // Unmount the parent wrapper to trigger unmounted hook
       if (wrapper.parentWrapper) {
         wrapper.parentWrapper.unmount();
       } else {
@@ -226,7 +224,6 @@ describe('SocketAlertBanner', () => {
     it('should call unnnicCallAlert with correct i18n key on unmount', () => {
       wrapper = createWrapper('connecting');
 
-      // Unmount the parent wrapper to trigger unmounted hook
       if (wrapper.parentWrapper) {
         wrapper.parentWrapper.unmount();
       } else {
@@ -260,7 +257,6 @@ describe('SocketAlertBanner', () => {
 
       await wrapper.vm.$nextTick();
 
-      // The component should update based on the store state
       expect(wrapper.vm.socketStatus).toBe('connecting');
     });
   });
