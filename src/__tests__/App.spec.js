@@ -104,13 +104,11 @@ describe('App.vue', () => {
       },
     });
 
-    // Mock window.location
     delete window.location;
     window.location = {
       href: 'http://localhost:3000',
     };
 
-    // Mock window.parent.postMessage
     window.parent.postMessage = vi.fn();
   });
 
