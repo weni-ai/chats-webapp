@@ -398,6 +398,7 @@ export default {
       return isLoading && prevChatUuid !== chatUuid;
     },
     unreadMessages() {
+      if (!this.room) return 0;
       return this.newMessagesByRoom[this.room.uuid]?.messages?.length || 0;
     },
   },

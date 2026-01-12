@@ -28,7 +28,7 @@
     </header>
     <main>
       <section
-        v-show="roomId"
+        v-if="roomId"
         class="closed-chats__selected-chat"
         data-testid="closed-chats-selected-chat"
       >
@@ -138,8 +138,6 @@ export default {
     roomId: {
       immediate: true,
       async handler(roomId) {
-        this.activeRoomSummary.summary = '';
-        this.activeRoomSummary.feedback.liked = null;
         if (!roomId) {
           this.setActiveRoom(null);
           this.resetRoomMessages();

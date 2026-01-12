@@ -194,9 +194,10 @@ export default {
     }),
     ...mapState(useConfig, {
       enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
-      project: (store) => store.project
+      project: (store) => store.project,
     }),
     ...mapState(useProfile, ['isHumanServiceProfile']),
+
     ...mapWritableState(useRooms, [
       'contactToTransfer',
       'openActiveRoomSummary',

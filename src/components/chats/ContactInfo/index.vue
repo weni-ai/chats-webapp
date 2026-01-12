@@ -524,7 +524,6 @@ export default {
     },
 
     handleTagClick(tag) {
-      console.log('handleTagClick', tag);
       const hasSelectedTag = this.roomTags.some(
         (roomTag) => roomTag.uuid === tag.uuid,
       );
