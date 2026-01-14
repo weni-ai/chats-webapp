@@ -29,18 +29,9 @@
         @close="showQuickMessages = false"
       />
       <ContactInfo
-        v-else-if="
-          featureFlags.active_features?.includes('weniChatsContactInfoV2') &&
-          room &&
-          isRoomContactInfoOpen &&
-          !discussion
-        "
+        v-else-if="room && isRoomContactInfoOpen && !discussion"
         :key="room.uuid"
         data-testid="contact-info"
-        @close="closeRoomContactInfo"
-      />
-      <OldContactInfo
-        v-else-if="room && isRoomContactInfoOpen && !discussion"
         @close="closeRoomContactInfo"
       />
       <DiscussionSidebar
@@ -71,7 +62,6 @@ import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground/in
 
 import DiscussionSidebar from '@/components/chats/DiscussionSidebar/index.vue';
 import ContactInfo from '@/components/chats/ContactInfo/index.vue';
-import OldContactInfo from '@/components/chats/ContactInfo/oldContactInfo.vue';
 import ModalFeedback from './ModalFeedback.vue';
 import QuickMessages from '@/components/chats/QuickMessages/index.vue';
 
@@ -90,7 +80,6 @@ export default {
     DiscussionSidebar,
     HomeChat,
     ModalFeedback,
-    OldContactInfo,
     QuickMessages,
   },
 
