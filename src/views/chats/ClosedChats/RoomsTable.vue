@@ -179,7 +179,7 @@ export default {
       return [
         createHeader('contactName', 'contact'),
         createHeader('agentName', 'agent', false),
-        createHeader('closedBy', 'closed_by'),
+        createHeader('closedBy', 'ended_by'),
         createHeader('tags', 'tags.title', false),
         createHeader('date', 'date'),
       ].filter((header) => header !== null);

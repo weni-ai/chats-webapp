@@ -444,7 +444,7 @@
   "none": "None",
   "access_history_to_see_closed_chats": "Go to the chats history to see closed chats",
   "close": "Close",
-  "closed_by": "Closed by",
+  "ended_by": "Ended by",
   "all": "All",
   "back_to_chats": "@:back to chats",
   "filter": {
