@@ -444,6 +444,7 @@
   "none": "None",
   "access_history_to_see_closed_chats": "Go to the chats history to see closed chats",
   "close": "Close",
+  "ended_by": "Ended by",
   "all": "All",
   "back_to_chats": "@:back to chats",
   "filter": {
@@ -468,6 +469,9 @@
   "pagination": "{from} - {to} of {total}",
   "contact": "Contact",
   "unnamed_contact": "Unnamed contact",
+  "unnamed_agent": "Unnamed agent",
+  "no_agent_assigned": "No agent assigned",
+  "no_tags_assigned": "No tags assigned",
   "contact_await_for_you": "A contact is waiting for you!",
   "agent": "Agent",
   "manager": "Manager",
