@@ -68,8 +68,8 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 35px;
-    height: 35px;
+    width: 37px;
+    height: 37px;
     background-color: $unnnic-color-gray-200;
 
     font: $unnnic-font-action;
