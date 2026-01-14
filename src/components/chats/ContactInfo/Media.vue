@@ -20,6 +20,7 @@
     >
       <component
         :is="tabs[key].component"
+        v-if="room?.uuid"
         :data-testid="`tab-panel-${key}`"
         v-bind="getComponentProps(key)"
         v-on="getComponentEvents(key)"
