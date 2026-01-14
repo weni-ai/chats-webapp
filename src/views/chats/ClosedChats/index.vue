@@ -283,6 +283,7 @@ export default {
     border: 1px solid $unnnic-color-border-soft;
     padding: 0;
     overflow: hidden;
+    height: 90%;
 
     &__info {
       border-left: 1px solid $unnnic-color-border-soft;
