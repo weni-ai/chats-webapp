@@ -20,37 +20,33 @@
   </section>
 </template>
 
-<script>
-export default {
-  name: 'ContactHeader',
-  props: {
-    contactName: {
-      type: String,
-      default: '',
-    },
-    clickable: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ['click'],
+<script setup>
+import { computed, useSlots } from 'vue';
 
-  computed: {
-    hasActionsSlot() {
-      return !!this.$slots.actions?.();
-    },
-    avatarCharacter() {
-      const cleanContactName = this.contactName.replace(/[^a-zA-Z0-9]+/g, '');
-      const firstCodePoint = (cleanContactName || this.contactName).codePointAt(
-        0,
-      );
-      if (firstCodePoint) {
-        return String.fromCodePoint(firstCodePoint);
-      }
-      return '-';
-    },
+const props = defineProps({
+  contactName: {
+    type: String,
+    default: '',
   },
-};
+  clickable: {
+    type: Boolean,
+    default: false,
+  },
+});
+const emit = defineEmits(['click']);
+const slots = useSlots();
+
+const hasActionsSlot = computed(() => !!slots.actions?.());
+
+const avatarCharacter = computed(() => {
+  const cleanContactName = props.contactName.replace(/[^a-zA-Z0-9]+/g, '');
+
+  const firstCodePoint = (cleanContactName || props.contactName).codePointAt(0);
+  if (firstCodePoint) {
+    return String.fromCodePoint(firstCodePoint);
+  }
+  return '-';
+});
 </script>
 
 <style lang="scss" scoped>
@@ -68,8 +64,8 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 37px;
-    height: 37px;
+    width: 38px;
+    height: 38px;
     background-color: $unnnic-color-gray-200;
 
     font: $unnnic-font-action;

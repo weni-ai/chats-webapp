@@ -46,6 +46,7 @@
           :key="message.uuid"
           :message="message"
           :searchTerm="searchTerm"
+          @click="handleMessageClick(message)"
         />
       </section>
     </AsideSlotTemplateSection>
@@ -97,6 +98,10 @@ const matchedMessages = computed(() => {
     return message.text.toLowerCase().includes(searchTerm.value.toLowerCase());
   });
 });
+
+const handleMessageClick = (message) => {
+  roomMessagesStore.toScrollMessage = message;
+};
 </script>
 
 <style lang="scss" scoped>

@@ -472,7 +472,7 @@
   "none": "Ninguno",
   "access_history_to_see_closed_chats": "Ir al historial para ver los chats cerrados",
   "close": "Fechar",
-  "closed_by": "Cerrado por",
+  "ended_by": "Cerrado por",
   "all": "Todos",
   "back_to_chats": "@:back a los chats",
   "filter": {

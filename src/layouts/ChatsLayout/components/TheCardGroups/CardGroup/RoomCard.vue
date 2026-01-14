@@ -28,7 +28,7 @@
       :lastMessage="room.last_message"
       :waitingTime="waitingTimeComputed"
       :unreadMessages="unreadMessages"
-      :forceShowUnreadMessages="forceShowUnreadMessages && unreadMessages"
+      :forceShowUnreadMessages="forceShowUnreadMessages && !!unreadMessages"
       :tabindex="0"
       :activePin="isProgressRoom ? true : false"
       :pinned="isProgressRoom ? room.is_pinned : false"
