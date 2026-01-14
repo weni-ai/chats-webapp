@@ -212,7 +212,7 @@
                 :tags="roomTags"
                 selectable
                 disableClick
-                :useCloseClick="!isViewMode && !isHistory && room.user"
+                :useCloseClick="!isViewMode && !isHistory && !!room.user"
                 @close="handleTagClick"
               />
               <ProtocolText :protocol="contactProtocol" />
