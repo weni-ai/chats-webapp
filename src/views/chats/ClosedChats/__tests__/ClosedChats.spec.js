@@ -5,6 +5,7 @@ import isMobile from 'is-mobile';
 
 import ClosedChats from '../index.vue';
 import History from '@/services/api/resources/chats/history';
+
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useConfig } from '@/store/modules/config';
@@ -149,6 +150,9 @@ describe('ClosedChats.vue', () => {
           },
         },
         stubs: {
+          ContactHeader: {
+            template: '<div data-testid="contact-header"></div>',
+          },
           ClosedChatsHeaderLoading: {
             template: '<div data-testid="closed-chats-header-loading"></div>',
           },
