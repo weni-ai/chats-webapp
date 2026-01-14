@@ -218,7 +218,7 @@ describe('ClosedChats.vue', () => {
         wrapper.find('[data-testid="closed-chats-rooms-table"]').isVisible(),
       ).toBe(true);
       expect(
-        wrapper.find('[data-testid="closed-chats-selected-chat"]').isVisible(),
+        wrapper.find('[data-testid="closed-chats-selected-chat"]').exists(),
       ).toBe(false);
     });
 
