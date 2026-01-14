@@ -2,7 +2,7 @@
   <section class="contact-header">
     <section
       :class="['contact-header__container', { clickable }]"
-      @click="clickable ? emit('click') : null"
+      @click="clickable ? $emit('click') : null"
     >
       <section class="contact-header__avatar">
         <span>{{ avatarCharacter }}</span>
