@@ -2,7 +2,7 @@
   <section class="contact-header">
     <section
       :class="['contact-header__container', { clickable }]"
-      @click="clickable ? $emit('click') : null"
+      @click="clickable ? emit('click') : null"
     >
       <section class="contact-header__avatar">
         <span>{{ avatarCharacter }}</span>
@@ -20,37 +20,33 @@
   </section>
 </template>
 
-<script>
-export default {
-  name: 'ContactHeader',
-  props: {
-    contactName: {
-      type: String,
-      default: '',
-    },
-    clickable: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ['click'],
+<script setup>
+import { computed, useSlots } from 'vue';
 
-  computed: {
-    hasActionsSlot() {
-      return !!this.$slots.actions?.();
-    },
-    avatarCharacter() {
-      const cleanContactName = this.contactName.replace(/[^a-zA-Z0-9]+/g, '');
-      const firstCodePoint = (cleanContactName || this.contactName).codePointAt(
-        0,
-      );
-      if (firstCodePoint) {
-        return String.fromCodePoint(firstCodePoint);
-      }
-      return '-';
-    },
+const props = defineProps({
+  contactName: {
+    type: String,
+    default: '',
   },
-};
+  clickable: {
+    type: Boolean,
+    default: false,
+  },
+});
+const emit = defineEmits(['click']);
+const slots = useSlots();
+
+const hasActionsSlot = computed(() => !!slots.actions?.());
+
+const avatarCharacter = computed(() => {
+  const cleanContactName = props.contactName.replace(/[^a-zA-Z0-9]+/g, '');
+
+  const firstCodePoint = (cleanContactName || props.contactName).codePointAt(0);
+  if (firstCodePoint) {
+    return String.fromCodePoint(firstCodePoint);
+  }
+  return '-';
+});
 </script>
 
 <style lang="scss" scoped>
