@@ -446,6 +446,7 @@
   "none": "Nenhum",
   "access_history_to_see_closed_chats": "Acesse o histórico para visualizar chats encerrados",
   "close": "Fechar",
+  "ended_by": "Finalizado por",
   "all": "Todos",
   "back_to_chats": "@:back para chats",
   "filter": {
@@ -470,8 +471,11 @@
   "pagination": "{from} - {to} de {total}",
   "contact": "Contato",
   "unnamed_contact": "Contato sem nome",
+  "unnamed_agent": "Atendente sem nome",
+  "no_agent_assigned": "Nenhum agente atribuído",
+  "no_tags_assigned": "Nenhuma tag atribuída",
   "contact_await_for_you": "Um contato está esperando por você!",
-  "agent": "Agente",
+  "agent": "Atendente",
   "manager": "Gerente",
   "you": "Você",
   "queue": "Fila",
@@ -798,6 +802,10 @@
       "show_agent_status_count_timer": {
         "switch_active": "Mostrar timer de contagem do status do agente",
         "switch_inactive": "Esconder timer de contagem do status do agente"
+      },
+      "close_chats_in_queue": {
+        "switch_active": "Agentes podem encerrar chats que estão aguardando suporte ativo",
+        "switch_inactive": "Agentes podem encerrar chats que estão aguardando suporte inativo"
       }
     },
     "custom_sector": "Personalizar novo setor (recomendado)",
