@@ -2,6 +2,7 @@
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
   <div
+    ref="chatsMessagesContainerRef"
     class="chat-messages__container"
     :class="{ 'chat-messages__container--view-mode': isViewMode }"
     data-testid="chat-messages-container"
@@ -370,6 +371,8 @@ export default {
       bot: '',
       agent: '',
     },
+    chatsMessagesContainerRef: null,
+    resizeObserver: null,
   }),
 
   computed: {
@@ -436,6 +439,20 @@ export default {
       this.resendMessages();
     });
 
+    this.chatsMessagesContainerRef = this.$refs.chatsMessagesContainerRef;
+
+    if (this.chatsMessagesContainerRef && window.ResizeObserver) {
+      this.resizeObserver = new ResizeObserver((entries) => {
+        entries.forEach(() => {
+          if (!this.showScrollToBottomButton) {
+            this.scrollToBottom();
+          }
+        });
+      });
+
+      this.resizeObserver.observe(this.chatsMessagesContainerRef);
+    }
+
     // const observer = new IntersectionObserver((entries) => {
     //   entries.forEach((entry) => {
     //     console.log('intersecting', entry.isIntersecting);
@@ -444,6 +461,13 @@ export default {
     // const { endChatElement } = this.$refs;
 
     // observer.observe(endChatElement.$el);
+  },
+
+  beforeUnmount() {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
   },
 
   methods: {
@@ -728,6 +752,7 @@ export default {
 
     handleScroll() {
       const { chatMessages } = this.$refs;
+
       if (!chatMessages) return;
 
       this.checkScrollPosition();
