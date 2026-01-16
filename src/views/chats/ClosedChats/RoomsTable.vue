@@ -51,7 +51,9 @@
       </template>
       <template #body-agentName="{ item }">
         <span
-          v-if="item.user?.first_name || item.user?.last_name"
+          v-if="
+            item.user?.first_name || item.user?.last_name || item.user?.email
+          "
           data-testid="room-item-agent-name"
         >
           {{ formatAgentName(item.user) }}
@@ -72,7 +74,11 @@
       </template>
       <template #body-closedBy="{ item }">
         <span
-          v-if="item.closed_by?.first_name || item.closed_by?.last_name"
+          v-if="
+            item.closed_by?.first_name ||
+            item.closed_by?.last_name ||
+            item.closed_by?.email
+          "
           data-testid="room-item-closed-by"
         >
           {{ formatAgentName(item.closed_by) }}
@@ -274,10 +280,15 @@ export default {
     },
 
     formatAgentName(agent) {
-      if (!agent.first_name && !agent.last_name) {
+      if (!agent.first_name && !agent.last_name && !agent.email) {
         return this.$t('unnamed_agent');
       }
-      return `${agent.first_name} ${agent.last_name}`.trim();
+
+      if (agent.first_name && agent.last_name) {
+        return `${agent.first_name} ${agent.last_name}`.trim();
+      }
+
+      return agent.email;
     },
   },
 };

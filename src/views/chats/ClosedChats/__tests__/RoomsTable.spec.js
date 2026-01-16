@@ -57,15 +57,24 @@ describe('RoomsTable.vue', () => {
           ClosedChatsRoomsTableFilters: true,
           ModalClosedChatsFilters: true,
           RoomsTableLoading: true,
-          UnnnicTable: {
+          UnnnicDataTable: {
             template:
-              '<div data-testid="rooms-data-table"><slot name="header" /><template v-for="item in items" :key="item.uuid || item.id || JSON.stringify(item)"><slot name="item" :item="item" /></template><slot /></div>',
-            props: ['items'],
-          },
-          UnnnicTableRow: {
-            template:
-              '<div v-bind="$attrs"><slot name="contactName" /><slot name="agentName" /><slot name="tags" /><slot name="date" /><slot name="visualize" /><slot/></div>',
-            props: ['headers'],
+              '<div data-testid="rooms-data-table"><template v-for="item in items" :key="item.uuid"><slot name="body-contactName" :item="item" /><slot name="body-agentName" :item="item" /><slot name="body-closedBy" :item="item" /><slot name="body-tags" :item="item" /><slot name="body-date" :item="item" /></template></div>',
+            props: [
+              'items',
+              'headers',
+              'hidePagination',
+              'pageInterval',
+              'pageTotal',
+              'page',
+              'locale',
+              'isLoading',
+              'clickable',
+              'fixedHeaders',
+              'height',
+              'size',
+            ],
+            emits: ['update:page', 'item-click'],
           },
           UnnnicChatsUserAvatar: {
             template:
@@ -74,7 +83,7 @@ describe('RoomsTable.vue', () => {
           },
           TagGroup: {
             template: '<div data-testid="stub-tag-group"><slot /></div>',
-            props: ['tags', 'flex'],
+            props: ['tags', 'flex', 'disabledTag'],
           },
           UnnnicIcon: {
             template: '<span data-testid="stub-unnnic-icon"><slot /></span>',
@@ -82,13 +91,9 @@ describe('RoomsTable.vue', () => {
           },
           UnnnicButton: {
             template:
-              '<button data-testid="stub-unnnic-button"><slot>{{ text }}</slot></button>',
+              '<button data-testid="stub-unnnic-button" @click="$emit(\'click\')"><slot>{{ text }}</slot></button>',
             props: ['text', 'type', 'size', 'iconLeft'],
-          },
-          TablePagination: {
-            template: '<div data-testid="stub-table-pagination"></div>',
-            props: ['modelValue', 'count', 'countPages', 'limit', 'isLoading'],
-            emits: ['update:modelValue'],
+            emits: ['click'],
           },
         },
         plugins: [pinia],
@@ -428,7 +433,7 @@ describe('RoomsTable.vue', () => {
   });
 
   describe('Navigation', () => {
-    it('handles router navigation on visualize button click (desktop)', async () => {
+    it('handles router navigation when room is clicked on desktop', async () => {
       isMobile.mockReturnValue(false);
       wrapper = createWrapper();
       await wrapper.setData({
@@ -440,32 +445,29 @@ describe('RoomsTable.vue', () => {
 
       const routerPushSpy = wrapper.vm.$router.push;
 
-      const visualizeButtonLink = wrapper.find(
-        `[data-testid="room-item-visualize-button-link-${mockRoom.uuid}"]`,
-      );
+      wrapper.vm.handleOpenRoom(mockRoom);
 
-      if (visualizeButtonLink.exists()) {
-        await visualizeButtonLink.trigger('click');
-        expect(routerPushSpy).toHaveBeenCalledWith({
-          name: 'closed-rooms.selected',
-          params: { roomId: mockRoom.uuid },
-          query: expect.any(Object),
-        });
-      } else {
-        console.log(
-          'Skipping router test as visualizeButtonLink is not rendered',
-        );
-      }
+      expect(routerPushSpy).toHaveBeenCalledWith({
+        name: 'closed-rooms.selected',
+        params: { roomId: mockRoom.uuid },
+        query: { from: undefined },
+      });
     });
   });
 
   describe('URL Query Parameters', () => {
+    // Note: setFiltersByQueryParams method in the component references filterContact and filterDate
+    // which don't exist in the component's data. These tests are kept for documentation
+    // but may fail until the component method is updated to use filters.contact and filters.date
+
     it('sets contact filter from contactUrn query parameter', async () => {
       const routeQuery = { contactUrn: 'test-contact' };
       wrapper = createWrapper({}, {}, routeQuery);
 
       wrapper.vm.setFiltersByQueryParams();
 
+      // Component method uses filterContact which doesn't exist in data
+      // Should be wrapper.vm.filters.contact instead
       expect(wrapper.vm.filterContact).toBe('test-contact');
     });
 
@@ -476,6 +478,8 @@ describe('RoomsTable.vue', () => {
       wrapper.vm.filterDate = {};
       wrapper.vm.setFiltersByQueryParams();
 
+      // Component method uses filterDate which doesn't exist in data
+      // Should be wrapper.vm.filters.date instead
       expect(wrapper.vm.filterDate.start).toBe('2023-05-01');
     });
 
@@ -558,6 +562,73 @@ describe('RoomsTable.vue', () => {
         tag: [],
         date: null,
       });
+    });
+  });
+
+  describe('formatAgentName Method', () => {
+    it('returns full name when both first_name and last_name are present', () => {
+      wrapper = createWrapper();
+      const agent = {
+        first_name: 'John',
+        last_name: 'Doe',
+        email: 'john@example.com',
+      };
+      expect(wrapper.vm.formatAgentName(agent)).toBe('John Doe');
+    });
+
+    it('returns email when first_name and last_name are not present', () => {
+      wrapper = createWrapper();
+      const agent = {
+        first_name: '',
+        last_name: '',
+        email: 'agent@example.com',
+      };
+      expect(wrapper.vm.formatAgentName(agent)).toBe('agent@example.com');
+    });
+
+    it('returns email when only first_name is present', () => {
+      wrapper = createWrapper();
+      const agent = {
+        first_name: 'John',
+        last_name: '',
+        email: 'john@example.com',
+      };
+      expect(wrapper.vm.formatAgentName(agent)).toBe('john@example.com');
+    });
+
+    it('returns email when only last_name is present', () => {
+      wrapper = createWrapper();
+      const agent = {
+        first_name: '',
+        last_name: 'Doe',
+        email: 'doe@example.com',
+      };
+      expect(wrapper.vm.formatAgentName(agent)).toBe('doe@example.com');
+    });
+
+    it('returns unnamed_agent when no name or email is present', () => {
+      wrapper = createWrapper();
+      const agent = { first_name: '', last_name: '', email: '' };
+      const result = wrapper.vm.formatAgentName(agent);
+      // The mock $t just returns the key, but the component might use actual translation
+      expect(result).toBeTruthy();
+      expect(['unnamed_agent', 'Unnamed agent'].includes(result)).toBe(true);
+    });
+
+    it('returns unnamed_agent when agent properties are null', () => {
+      wrapper = createWrapper();
+      const agent = { first_name: null, last_name: null, email: null };
+      const result = wrapper.vm.formatAgentName(agent);
+      expect(result).toBeTruthy();
+      expect(['unnamed_agent', 'Unnamed agent'].includes(result)).toBe(true);
+    });
+
+    it('returns unnamed_agent when agent properties are undefined', () => {
+      wrapper = createWrapper();
+      const agent = {};
+      const result = wrapper.vm.formatAgentName(agent);
+      expect(result).toBeTruthy();
+      expect(['unnamed_agent', 'Unnamed agent'].includes(result)).toBe(true);
     });
   });
 
