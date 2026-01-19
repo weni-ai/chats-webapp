@@ -28,6 +28,7 @@
           <UnnnicIcon
             icon="search"
             size="ant"
+            scheme="gray-500"
           />
           <p v-if="matchedMessages.length === 0">
             {{ $t('chats.search_messages.no_results', { searchTerm }) }}
