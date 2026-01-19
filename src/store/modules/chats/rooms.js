@@ -332,6 +332,10 @@ export const useRooms = defineStore('rooms', {
       return store.rooms.find((room) => room.uuid === uuid);
     },
     activeRoomSummary(store) {
+      if (!store.activeRoom) {
+        return { feedback: { liked: null }, summary: '', status: '' };
+      }
+
       return (
         store.roomsSummary[store.activeRoom?.uuid] || {
           feedback: { liked: null },
