@@ -51,12 +51,13 @@ function escapeHtml(text) {
 
 <style lang="scss" scoped>
 .highlight-message-text {
-  font: $unnnic-font-caption-2;
+  font: $unnnic-font-body;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
   display: block;
+  color: $unnnic-color-fg-base;
   :deep(.highlight) {
     font: $unnnic-font-action;
     color: $unnnic-color-fg-warning;
