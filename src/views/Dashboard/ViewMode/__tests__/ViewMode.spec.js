@@ -26,7 +26,12 @@ describe('ViewMode', () => {
     const pinia = createTestingPinia({
       createSpy: vi.fn,
       initialState: {
-        rooms: { activeRoom: null, rooms: [], contactToTransfer: '', ...storeState.rooms },
+        rooms: {
+          activeRoom: null,
+          rooms: [],
+          contactToTransfer: '',
+          ...storeState.rooms,
+        },
         discussions: { activeDiscussion: null, ...storeState.discussions },
         dashboard: {
           viewedAgent: { email: '', name: '' },
@@ -34,9 +39,9 @@ describe('ViewMode', () => {
         },
         profile: { me: { email: 'test@example.com' }, ...storeState.profile },
         roomMessages: { roomMessagesNext: null, ...storeState.roomMessages },
-        featureFlag: { 
-          featureFlags: { active_features: [] }, 
-          ...storeState.featureFlag 
+        featureFlag: {
+          featureFlags: { active_features: [] },
+          ...storeState.featureFlag,
         },
       },
     });
@@ -99,6 +104,10 @@ describe('ViewMode', () => {
           OldContactInfo: {
             template: '<div />',
             props: ['isViewMode'],
+          },
+          ContactHeader: {
+            template: '<div />',
+            props: ['contactName', 'clickable'],
           },
         },
       },
@@ -286,7 +295,9 @@ describe('ViewMode', () => {
         },
       });
 
-      expect(wrapper.vm.featureFlags.active_features).toContain('weniChatsContactInfoV2');
+      expect(wrapper.vm.featureFlags.active_features).toContain(
+        'weniChatsContactInfoV2',
+      );
     });
 
     it('should render OldContactInfo when weniChatsContactInfoV2 feature flag is disabled', () => {
@@ -297,7 +308,9 @@ describe('ViewMode', () => {
         },
       });
 
-      expect(wrapper.vm.featureFlags.active_features).not.toContain('weniChatsContactInfoV2');
+      expect(wrapper.vm.featureFlags.active_features).not.toContain(
+        'weniChatsContactInfoV2',
+      );
     });
 
     it('should handle room and discussion states', () => {

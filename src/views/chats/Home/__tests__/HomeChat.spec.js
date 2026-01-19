@@ -113,6 +113,12 @@ describe('HomeChat.vue', () => {
           MessageManager,
           ChatsDropzone,
         },
+        stubs: {
+          ContactHeader: {
+            template: '<div />',
+            props: ['contactName', 'clickable'],
+          },
+        },
       },
     });
   };
