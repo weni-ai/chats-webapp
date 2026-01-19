@@ -23,16 +23,16 @@
         v-show="isRoomSkeletonActive"
         data-testid="chat-header-loading"
       />
-      <UnnnicChatsHeader
+
+      <ContactHeader
         v-show="!isRoomSkeletonActive"
         v-if="!!room && !discussion"
-        :title="room.contact.name || `[${$t('unnamed_contact')}]`"
-        :avatarClick="() => handleModal('ContactInfo', 'open')"
-        :titleClick="() => handleModal('ContactInfo', 'open')"
-        :avatarName="room.contact.name || '-'"
+        :contactName="room.contact?.name"
+        clickable
         data-testid="room-chat-header"
+        @click="isContactInfoOpened = true"
       >
-        <template #right>
+        <template #actions>
           <section class="view-mode__contact-actions">
             <UnnnicToolTip
               v-if="enableRoomSummary"
@@ -98,7 +98,7 @@
             </UnnnicToolTip>
           </section>
         </template>
-      </UnnnicChatsHeader>
+      </ContactHeader>
 
       <UnnnicChatsHeader
         v-show="!isRoomSkeletonActive"
@@ -161,7 +161,7 @@
         class="contact-info"
         isViewMode
         data-testid="contact-info"
-        @close="handleModal('ContactInfo', 'close')"
+        @close="isContactInfoOpened = false"
       />
       <OldContactInfo
         v-else-if="isContactInfoOpened"
@@ -201,6 +201,7 @@ import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion.v
 import OldContactInfo from '@/components/chats/ContactInfo/oldContactInfo.vue';
 import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
 import ViewModeHeader from './components/ViewModeHeader.vue';
+import ContactHeader from '@/components/chats/ContactHeader.vue';
 
 import { parseUrn } from '@/utils/room';
 
@@ -219,6 +220,7 @@ export default {
     ButtonJoinDiscussion,
     OldContactInfo,
     ModalTransferRooms,
+    ContactHeader,
   },
 
   data: () => ({
@@ -250,7 +252,7 @@ export default {
   },
 
   watch: {
-    room() {
+    'room.uuid'() {
       this.isContactInfoOpened = false;
     },
     rooms: {
