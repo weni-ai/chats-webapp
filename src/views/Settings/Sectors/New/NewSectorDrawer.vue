@@ -223,6 +223,7 @@ export default {
           managers,
           config,
           automatic_message,
+          is_csat_enabled,
         } = this.sector;
 
         const createSectorBody = {
@@ -237,6 +238,7 @@ export default {
             ? config
             : { ...config, secondary_project: undefined },
           automatic_message,
+          is_csat_enabled,
         };
 
         const createdSector = await Sector.create(createSectorBody);

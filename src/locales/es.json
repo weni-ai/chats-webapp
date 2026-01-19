@@ -466,6 +466,7 @@
   "none": "Ninguno",
   "access_history_to_see_closed_chats": "Ir al historial para ver los chats cerrados",
   "close": "Fechar",
+  "ended_by": "Cerrado por",
   "all": "Todos",
   "back_to_chats": "@:back a los chats",
   "filter": {
@@ -490,6 +491,9 @@
   "pagination": "{from} - {to} de {total}",
   "contact": "Contacto",
   "unnamed_contact": "Contacto sin nombre",
+  "unnamed_agent": "Agente sin nombre",
+  "no_agent_assigned": "No se ha asignado un agente",
+  "no_tags_assigned": "No se han asignado etiquetas",
   "contact_await_for_you": "¡Un contacto está esperando por ti!",
   "agent": "Agente",
   "manager": "Gerente",
@@ -818,6 +822,10 @@
       "show_agent_status_count_timer": {
         "switch_active": "Mostrar temporizador de recuento de estado del agente",
         "switch_inactive": "Ocultar temporizador de recuento de estado del agente"
+      },
+      "close_chats_in_queue": {
+        "switch_active": "Los agentes pueden cerrar chats que están esperando soporte activo",
+        "switch_inactive": "Los agentes pueden cerrar chats que están esperando soporte inactivo"
       }
     },
     "custom_sector": "Personalizar nuevo sector (recomendado)",

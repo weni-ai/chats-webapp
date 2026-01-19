@@ -35,6 +35,32 @@
         <template #right>
           <section class="view-mode__contact-actions">
             <UnnnicToolTip
+              v-if="enableRoomSummary"
+              enabled
+              :text="
+                openActiveRoomSummary
+                  ? $t('chats.summary.close_summary_tooltip')
+                  : $t('chats.summary.open_summary_tooltip')
+              "
+              side="left"
+              class="view-mode__summary-icon-tooltip"
+            >
+              <section
+                class="view-mode__summary-icon"
+                :class="{
+                  'view-mode__summary-icon--open': openActiveRoomSummary,
+                }"
+              >
+                <UnnnicIcon
+                  icon="bi:stars"
+                  clickable
+                  :scheme="openActiveRoomSummary ? 'gray-900' : 'gray-500'"
+                  size="ant"
+                  @click="openActiveRoomSummary = !openActiveRoomSummary"
+                />
+              </section>
+            </UnnnicToolTip>
+            <UnnnicToolTip
               v-if="
                 featureFlags.active_features?.includes('weniChatsContactInfoV2')
               "
@@ -90,6 +116,7 @@
       <RoomMessages
         v-if="!!room && !discussion"
         data-testid="room-messages"
+        showRoomSummary
         @open-room-contact-info="isContactInfoOpened = true"
       />
       <DiscussionMessages
@@ -154,12 +181,14 @@
 <script>
 import { mapActions, mapState, mapWritableState } from 'pinia';
 import { format as dateFnsFormat, subYears as dateFnsSubYears } from 'date-fns';
+
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useDashboard } from '@/store/modules/dashboard';
 import { useProfile } from '@/store/modules/profile';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useConfig } from '@/store/modules/config';
 
 import ChatsLayout from '@/layouts/ChatsLayout/index.vue';
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
@@ -211,7 +240,13 @@ export default {
     ...mapState(useProfile, ['me']),
     ...mapState(useDashboard, ['viewedAgent']),
     ...mapState(useRoomMessages, ['roomMessagesNext']),
-    ...mapWritableState(useRooms, ['contactToTransfer']),
+    ...mapWritableState(useRooms, [
+      'contactToTransfer',
+      'openActiveRoomSummary',
+    ]),
+    ...mapState(useConfig, {
+      enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
+    }),
   },
 
   watch: {
@@ -324,6 +359,28 @@ export default {
 
     :deep(.unnnic-tooltip) {
       display: flex;
+    }
+  }
+  &__summary-icon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $unnnic-radius-2;
+
+    &--open {
+      background-color: $unnnic-color-purple-100;
+      &::after {
+        content: '';
+        position: fixed;
+        top: 106px; // This distance corresponds to the positioning of the summary balloon point.
+        transform: rotate(-45deg);
+        width: $unnnic-space-3;
+        height: $unnnic-space-3;
+        background-color: $unnnic-color-purple-100;
+        border-radius: $unnnic-space-1;
+      }
     }
   }
   &__active-chat {
