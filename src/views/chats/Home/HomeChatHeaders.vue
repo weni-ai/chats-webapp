@@ -4,16 +4,13 @@
       v-show="isLoading"
       data-testid="chat-header-loading"
     />
-    <UnnnicChatsHeader
+    <ContactHeader
       v-show="isShowingRoomHeader"
-      :title="headerRoomTitle || `[${$t('unnamed_contact')}]`"
-      :avatarClick="emitOpenRoomContactInfo"
-      :titleClick="emitOpenRoomContactInfo"
-      :avatarName="room?.contact.name || '-'"
-      :back="isMobile ? emitBack : null"
-      data-testid="chat-header"
+      :contactName="headerRoomTitle"
+      clickable
+      @click="emitOpenRoomContactInfo"
     >
-      <template #right>
+      <template #actions>
         <section class="home-chat-headers__actions">
           <UnnnicToolTip
             v-if="enableRoomSummary"
@@ -43,7 +40,7 @@
           </UnnnicToolTip>
           <UnnnicToolTip
             enabled
-            :text="'Search in conversation'"
+            :text="$t('chats.search_messages.title')"
             side="left"
             class="home-chat-headers__search-messages-icon-tooltip"
           >
@@ -113,7 +110,7 @@
           </UnnnicButton>
         </section>
       </template>
-    </UnnnicChatsHeader>
+    </ContactHeader>
     <UnnnicChatsHeader
       v-show="isShowingDiscussionHeader"
       class="home-chat-headers__discussion"
@@ -150,6 +147,7 @@ import { useProfile } from '@/store/modules/profile';
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow.vue';
 import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
+import ContactHeader from '@/components/chats/ContactHeader.vue';
 
 import { formatContactName } from '@/utils/chats';
 import { parseUrn } from '@/utils/room';
@@ -162,6 +160,7 @@ export default {
     ChatHeaderLoading,
     ChatHeaderSendFlow,
     ModalTransferRooms,
+    ContactHeader,
   },
 
   props: {
@@ -313,6 +312,7 @@ export default {
 
 <style lang="scss" scoped>
 .home-chat-headers {
+  background-color: $unnnic-color-bg-base;
   &__icon {
     width: 38px;
     height: 38px;
@@ -332,7 +332,7 @@ export default {
       &::after {
         content: '';
         position: fixed;
-        top: 67px;
+        top: 49px;
         transform: rotate(-45deg);
         width: $unnnic-space-3;
         height: $unnnic-space-3;

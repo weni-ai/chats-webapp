@@ -110,7 +110,7 @@ const handleMessageClick = (message) => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: $unnnic-space-4 $unnnic-space-2;
+    padding: $unnnic-space-2;
     font: $unnnic-font-display-3;
     color: $unnnic-color-fg-emphasized;
     border-bottom: 1px solid $unnnic-color-border-soft;

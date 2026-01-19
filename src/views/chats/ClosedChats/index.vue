@@ -42,7 +42,31 @@
           v-show="!isLoadingSelectedRoom"
           v-if="selectedRoom"
           :contactName="contactName"
-        />
+        >
+          <template #actions>
+            <UnnnicToolTip
+              enabled
+              :text="$t('chats.search_messages.title')"
+              side="left"
+            >
+              <section
+                class="contact-header__search-messages-icon"
+                :class="{
+                  'contact-header__search-messages-icon--open':
+                    showSearchMessagesDrawer,
+                }"
+              >
+                <UnnnicIcon
+                  icon="search"
+                  clickable
+                  scheme="gray-900"
+                  size="ant"
+                  @click="showSearchMessagesDrawer = !showSearchMessagesDrawer"
+                />
+              </section>
+            </UnnnicToolTip>
+          </template>
+        </ContactHeader>
         <section class="closed-chats__room__messages">
           <RoomMessages
             class="closed-chats__room__messages__content"
@@ -52,7 +76,12 @@
         </section>
       </section>
       <section class="closed-chats__room__info">
+        <SearchMessages
+          v-if="showSearchMessagesDrawer"
+          @close="showSearchMessagesDrawer = false"
+        />
         <ContactInfo
+          v-else
           isHistory
           :closedRoom="selectedRoom"
           data-testid="contact-info"
@@ -83,6 +112,7 @@ import ClosedChatsHeaderLoading from '@/views/loadings/ClosedChats/ClosedChatsHe
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 import ClosedChatsRoomsTable from './RoomsTable.vue';
 import ContactHeader from '@/components/chats/ContactHeader.vue';
+import SearchMessages from '@/components/chats/SearchMessages/index.vue';
 
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 
@@ -96,6 +126,7 @@ export default {
     ClosedChatsRoomsTable,
     RoomMessages,
     ContactHeader,
+    SearchMessages,
   },
 
   props: {
@@ -124,6 +155,7 @@ export default {
 
     selectedRoom: null,
     selectedRoomsUuids: null,
+    showSearchMessagesDrawer: false,
   }),
 
   computed: {
@@ -229,6 +261,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.contact-header {
+  &__search-messages-icon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $unnnic-radius-2;
+
+    &--open {
+      background-color: rgba(136, 147, 168, 0.2);
+    }
+  }
+}
 .closed-chats {
   display: flex;
   flex-direction: column;
