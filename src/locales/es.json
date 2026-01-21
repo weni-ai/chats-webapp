@@ -288,6 +288,10 @@
   "interaction_time": "Tiempo de interacción",
   "average_interaction_time": "Es el tiempo promedio de duración de un chat",
   "chats": {
+    "transcription": {
+      "unavailable": "Transcripción no disponible para audio que excede {duration} minutos.",
+      "error": "No se pudo cargar la transcripción. Por favor, inténtelo de nuevo!"
+    },
     "summary": {
       "reading_and_summarizing": "Lectura y resumen",
       "by_ai": "Resumen por IA",

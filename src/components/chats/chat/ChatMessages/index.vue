@@ -147,13 +147,10 @@
                     class="media"
                     :src="media.url || media.preview"
                   />
-                  <UnnnicAudioRecorder
+                  <ChatMessageAudio
                     v-else-if="isAudio(media)"
-                    ref="audio-recorder"
-                    class="media audio"
-                    :src="media.url || media.preview"
-                    :canDiscard="false"
-                    :reqStatus="messageStatus({ message, media })"
+                    :message="message"
+                    :messageStatus="messageStatus({ message, media })"
                     @failed-click="resendMedia({ message, media })"
                   />
                 </UnnnicChatsMessage>
@@ -268,6 +265,7 @@ import ChatFeedback from '../ChatFeedback.vue';
 import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
 import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
 import ChatMessagesInternalNote from './ChatMessagesInternalNote.vue';
+import ChatMessageAudio from './ChatMessageAudio.vue';
 
 import { isString } from '@/utils/string';
 import { SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT } from '@/utils/chats';
@@ -286,6 +284,7 @@ export default {
     FullscreenPreview,
     VideoPlayer,
     ChatMessagesInternalNote,
+    ChatMessageAudio,
   },
 
   props: {
@@ -695,6 +694,7 @@ export default {
       this.currentMedia = this.medias.find((el) => el.url === url);
       this.isFullscreen = true;
     },
+
     nextMedia() {
       const imageIndex = this.medias.findIndex(
         (el) => el.url === this.currentMedia.url,
@@ -703,6 +703,7 @@ export default {
         this.currentMedia = this.medias[imageIndex + 1];
       }
     },
+
     previousMedia() {
       const imageIndex = this.medias.findIndex(
         (el) => el.url === this.currentMedia.url,
@@ -808,6 +809,7 @@ export default {
         this.showScrollToBottomButton = false;
       });
     },
+
     async scrollToInternalNote(note) {
       const noteElement = this.$refs[`internal-note-${note.uuid}`]?.[0]?.$el;
 
