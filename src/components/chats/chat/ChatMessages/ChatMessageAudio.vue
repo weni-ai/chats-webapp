@@ -38,7 +38,7 @@
             }}
           </p>
         </template>
-        <template v-if="hasTranscriptionError">
+        <template v-if="hasTranscriptionError && !isLoadingTranscription">
           <UnnnicIcon
             icon="material-symbols:cancel-outline"
             scheme="red-500"
@@ -51,7 +51,10 @@
       </section>
       <section
         v-if="
-          !isLoadingTranscription && !hasTranscriptionError && transcriptionText
+          !isLoadingTranscription &&
+          !hasTranscriptionError &&
+          transcriptionText &&
+          showTranscriptionText
         "
       >
         TODO: Rating transcription
@@ -62,6 +65,12 @@
 
 <script setup>
 import { ref, useTemplateRef, computed, watch } from 'vue';
+
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+
+import audioTranscriptionService from '@/services/api/resources/chats/audioTranscription';
+import updateMedia from '@/services/api/websocket/listeners/media/transcribe/update';
+
 import i18n from '@/plugins/i18n';
 
 const MAX_AUDIO_DURATION_SECONDS = 180; // 3 minutes
@@ -87,16 +96,46 @@ const messageMedia = computed(() => {
 const isLoadingTranscription = ref(false);
 const showTranscriptionText = ref(false);
 
+const generateTranscription = async () => {
+  isLoadingTranscription.value = true;
+  // TODO: Remove! only for testing
+  const success = !!Math.floor(Math.random() * 2); // 0 or 1
+  setTimeout(async () => {
+    try {
+      if (success) {
+        updateMedia({
+          message_uuid: props.message.uuid,
+          status: 'DONE',
+          text: 'Lorem ipsum purus in mollis nunc sed id semper. Suspendisse faucibus interdum posuere lorem ipsum. Dictum non consectetur a erat. Risus nullam eget felis eget nunc lobortis mattis aliquam faucibus. Sed adipiscing diam donec adipiscing tristique risus nec feugiat. Faucibus et molestie ac feugiat sed lectus vestibulum mattis. In nibh mauris cursus mattis molestie a iaculis at erat. Velit aliquet sagittis id consectetur purus ut faucibus. Lorem dolor sed viverra ipsum. Facilisis gravida neque convallis a cras. Adipiscing vitae proin sagittis nisl rhoncus. Odio eu feugiat pretium nibh ipsum. Sit amet nulla facilisi morbi. Viverra mauris in aliquam sem. Vitae justo eget magna fermentum. Ultrices dui sapien eget mi proin sed libero. Convallis a cras semper auctor neque vitae tempus quam. Netus et malesuada fames ac turpis egestas. Morbi enim nunc faucibus a pellentesque sit amet porttitor. Suspendisse potenti nullam ac tortor vitae. Blandit volutpat maecenas volutpat blandit.',
+        });
+      } else
+        await audioTranscriptionService.generateAudioTranscription(
+          props.message.uuid,
+        );
+    } catch (error) {
+      console.error('Error generating transcription', error);
+      isLoadingTranscription.value = false;
+      showTranscriptionText.value = false;
+      const roomMessagesStore = useRoomMessages();
+      roomMessagesStore.updateMessage({
+        reorderMessageMinute: true,
+        message: {
+          ...props.message,
+          media: [
+            {
+              ...props.message.media[0],
+              transcription: { status: 'FAILED', text: '' },
+            },
+          ],
+        },
+      });
+    }
+  }, 3000);
+};
+
 watch(showTranscriptionText, () => {
   if (showTranscriptionText.value) {
-    isLoadingTranscription.value = true;
-
-    // TODO: Mock to test
-    setTimeout(() => {
-      props.message.media[0].transcription = {
-        text: 'Lorem ipsum purus in mollis nunc sed id semper. Suspendisse faucibus interdum posuere lorem ipsum. Dictum non consectetur a erat. Risus nullam eget felis eget nunc lobortis mattis aliquam faucibus. Sed adipiscing diam donec adipiscing tristique risus nec feugiat. Faucibus et molestie ac feugiat sed lectus vestibulum mattis. In nibh mauris cursus mattis molestie a iaculis at erat. Velit aliquet sagittis id consectetur purus ut faucibus. Lorem dolor sed viverra ipsum. Facilisis gravida neque convallis a cras. Adipiscing vitae proin sagittis nisl rhoncus. Odio eu feugiat pretium nibh ipsum. Sit amet nulla facilisi morbi. Viverra mauris in aliquam sem. Vitae justo eget magna fermentum. Ultrices dui sapien eget mi proin sed libero. Convallis a cras semper auctor neque vitae tempus quam. Netus et malesuada fames ac turpis egestas. Morbi enim nunc faucibus a pellentesque sit amet porttitor. Suspendisse potenti nullam ac tortor vitae. Blandit volutpat maecenas volutpat blandit.',
-      };
-    }, 3000);
+    generateTranscription();
   } else {
     isLoadingTranscription.value = false;
   }
@@ -116,7 +155,8 @@ const canGenerateTranscriptionAudio = computed(() => {
 
 const hasTranscriptionError = computed(() => {
   return (
-    messageMedia.value.transcription && messageMedia.value.transcription.error
+    messageMedia.value.transcription &&
+    messageMedia.value.transcription.status === 'FAILED'
   );
 });
 
@@ -127,9 +167,6 @@ const transcriptionText = computed(() => {
 watch(transcriptionText, () => {
   if (transcriptionText.value) {
     isLoadingTranscription.value = false;
-
-    // TODO: Mock to test
-    props.message.media[0].transcription.error = false;
   }
 });
 </script>

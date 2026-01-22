@@ -137,6 +137,7 @@ export const useRoomMessages = defineStore('roomMessages', {
       toUpdateMediaPreview,
       message,
       toUpdateMessageUuid = '',
+      reorderMessageMinute = false,
     }) {
       const uuid = toUpdateMessageUuid || message.uuid;
       const treatedMessage = { ...message };
@@ -167,7 +168,10 @@ export const useRoomMessages = defineStore('roomMessages', {
         removeFromGroupedMessages(this.roomMessagesSorted, {
           message: toUpdatedMessage,
         });
-        this.addRoomMessageSorted({ message: updatedMessage });
+        this.addRoomMessageSorted({
+          message: updatedMessage,
+          reorderMessageMinute,
+        });
       }
 
       this.removeMessageFromSendings(uuid);
@@ -198,7 +202,6 @@ export const useRoomMessages = defineStore('roomMessages', {
       const messageAlreadyExists = this.roomMessages.some(
         (mappedMessage) => mappedMessage.uuid === message.uuid,
       );
-
       if (messageAlreadyExists) this.updateMessage({ message });
       else {
         this.handlingAddMessage({ message });
