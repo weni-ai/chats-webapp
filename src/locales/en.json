@@ -294,7 +294,18 @@
   "chats": {
     "transcription": {
       "unavailable": "Transcription unavailable for audio exceeding {duration} minutes.",
-      "error": "Unable to load the transcript. Please try again!"
+      "error": "Unable to load the transcript. Please try again!",
+      "feedback": {
+        "question": "Was the transcription useful?",
+        "positive": "Useful",
+        "negative": "Needs improvement",
+        "error": "Failed to send transcription feedback, please try again.",
+        "sended": "Your feedback has been submitted!",
+        "modal": {
+          "title": "What went wrong?",
+          "input_placeholder": "Enter your feedback here"
+        }
+      }
     },
     "summary": {
       "reading_and_summarizing": "Reading and summarizing",
