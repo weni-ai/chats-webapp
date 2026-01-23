@@ -277,13 +277,82 @@ describe('ChatSummary', () => {
       expect(wrapper.vm.isTyping).toBe(false);
     });
 
-    it('should clear animatedText on unmounted', () => {
+    it('should cancel previous animation when typeWriter is called again', async () => {
+      wrapper = createWrapper();
+
+      const promise1 = wrapper.vm.typeWriter('First animation text', 10);
+
+      await new Promise((resolve) => setTimeout(resolve, 20));
+
+      const promise2 = wrapper.vm.typeWriter('Second', 10);
+
+      await promise1;
+      await promise2;
+
+      expect(wrapper.vm.animatedText).toBe('Second');
+      expect(wrapper.vm.isTyping).toBe(false);
+    });
+
+    it('should increment currentAnimationId on each typeWriter call', async () => {
+      wrapper = createWrapper();
+
+      const initialId = wrapper.vm.currentAnimationId;
+
+      await wrapper.vm.typeWriter('Test 1', 5);
+      const idAfterFirst = wrapper.vm.currentAnimationId;
+
+      await wrapper.vm.typeWriter('Test 2', 5);
+      const idAfterSecond = wrapper.vm.currentAnimationId;
+
+      expect(idAfterFirst).toBe(initialId + 1);
+      expect(idAfterSecond).toBe(initialId + 2);
+    });
+
+    it('should abort animation controller on unmounted', () => {
       wrapper = createWrapper();
       wrapper.vm.animatedText = 'test';
+
+      const abortSpy = vi.fn();
+      wrapper.vm.animationAbortController = {
+        abort: abortSpy,
+        signal: { aborted: false },
+      };
+
+      wrapper.unmount();
+
+      expect(abortSpy).toHaveBeenCalled();
+      expect(wrapper.vm.animatedText).toBe('');
+    });
+
+    it('should clear animatedText on unmounted even without animation controller', () => {
+      wrapper = createWrapper();
+      wrapper.vm.animatedText = 'test';
+      wrapper.vm.animationAbortController = null;
 
       wrapper.unmount();
 
       expect(wrapper.vm.animatedText).toBe('');
+    });
+
+    it('should handle animation cancellation error gracefully', async () => {
+      wrapper = createWrapper();
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      const promise1 = wrapper.vm.typeWriter('First text', 10);
+
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      const promise2 = wrapper.vm.typeWriter('Second text', 10);
+
+      await promise1;
+      await promise2;
+
+      expect(consoleErrorSpy).not.toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'Animation cancelled' }),
+      );
+
+      consoleErrorSpy.mockRestore();
     });
   });
 
@@ -336,6 +405,48 @@ describe('ChatSummary', () => {
       });
 
       expect(wrapper.vm.animatedText).toBe('New text');
+    });
+
+    it('should not restart animation if already typing the same text', async () => {
+      const typeWriterSpy = vi.spyOn(ChatSummary.methods, 'typeWriter');
+
+      wrapper = createWrapper({
+        summaryText: 'Same text',
+        skipAnimation: false,
+      });
+
+      await wrapper.vm.$nextTick();
+
+      wrapper.vm.isTyping = true;
+      const callCountBefore = typeWriterSpy.mock.calls.length;
+
+      await wrapper.setProps({
+        summaryText: 'Same text',
+      });
+
+      await wrapper.vm.$nextTick();
+
+      expect(typeWriterSpy.mock.calls.length).toBe(callCountBefore);
+    });
+
+    it('should restart animation if text changes while typing', async () => {
+      wrapper = createWrapper({
+        summaryText: 'First text',
+        skipAnimation: false,
+      });
+
+      await wrapper.vm.$nextTick();
+
+      wrapper.vm.isTyping = true;
+      const initialAnimationId = wrapper.vm.currentAnimationId;
+
+      await wrapper.setProps({
+        summaryText: 'Different text',
+      });
+
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.currentAnimationId).toBeGreaterThan(initialAnimationId);
     });
   });
 });
