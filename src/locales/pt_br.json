@@ -320,6 +320,21 @@
       "no_results": "Nenhum resultado encontrado para \"{searchTerm}\"",
       "results_found": "{count} resultados encontrados para \"{searchTerm}\""
     },
+    "transcription": {
+      "unavailable": "Transcrição não disponível para áudio maiores que {duration} minutos.",
+      "error": "Não foi possível carregar a transcrição. Por favor, tente novamente!",
+      "feedback": {
+        "question": "A transcrição foi útil?",
+        "positive": "Útil",
+        "negative": "Precisa de melhorias",
+        "error": "Não foi possível enviar o feedback. Por favor, tente novamente!",
+        "sended": "Seu feedback foi enviado!",
+        "modal": {
+          "title": "O que não funcionou?",
+          "input_placeholder": "Compartilhe seu feedback aqui"
+        }
+      }
+    },
     "summary": {
       "reading_and_summarizing": "Lendo e fazendo resumo",
       "by_ai": "Resumo feito por IA",
