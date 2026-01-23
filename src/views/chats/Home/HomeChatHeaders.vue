@@ -6,10 +6,10 @@
     />
     <UnnnicChatsHeader
       v-show="isShowingRoomHeader"
-      :title="headerRoomTitle"
+      :title="headerRoomTitle || `[${$t('unnamed_contact')}]`"
       :avatarClick="emitOpenRoomContactInfo"
       :titleClick="emitOpenRoomContactInfo"
-      :avatarName="room?.contact.name"
+      :avatarName="room?.contact.name || '-'"
       :back="isMobile ? emitBack : null"
       data-testid="chat-header"
     >
@@ -78,6 +78,7 @@
             />
           </UnnnicToolTip>
           <UnnnicButton
+            v-if="showCloseChatButton"
             type="secondary"
             size="small"
             @click="emitOpenModalCloseChat"
@@ -118,6 +119,7 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useConfig } from '@/store/modules/config';
+import { useProfile } from '@/store/modules/profile';
 
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow.vue';
@@ -163,6 +165,9 @@ export default {
     ...mapState(useDiscussions, {
       discussion: (store) => store.activeDiscussion,
     }),
+
+    ...mapState(useConfig, ['project']),
+    ...mapState(useProfile, ['isHumanServiceProfile']),
 
     ...mapWritableState(useRooms, [
       'contactToTransfer',
@@ -218,6 +223,15 @@ export default {
       return `${this.$tc('discussions.title')} ${this.$t('about')} ${
         discussion?.contact
       }`;
+    },
+    showCloseChatButton() {
+      if (
+        !this.isHumanServiceProfile ||
+        this.project.config?.can_close_chats_in_queue
+      )
+        return true;
+
+      return !!this.room.user;
     },
   },
 

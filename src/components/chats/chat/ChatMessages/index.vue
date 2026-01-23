@@ -2,6 +2,7 @@
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
   <div
+    ref="chatsMessagesContainerRef"
     class="chat-messages__container"
     :class="{ 'chat-messages__container--view-mode': isViewMode }"
     data-testid="chat-messages-container"
@@ -248,6 +249,7 @@
 
 <script>
 import { mapState, mapWritableState, mapActions } from 'pinia';
+import { useDebounceFn } from '@vueuse/core';
 
 import { useDashboard } from '@/store/modules/dashboard';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
@@ -270,6 +272,8 @@ import ChatMessagesInternalNote from './ChatMessagesInternalNote.vue';
 import { isString } from '@/utils/string';
 import { SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT } from '@/utils/chats';
 import { treatedMediaName } from '@/utils/medias';
+
+import Room from '@/services/api/resources/chats/room';
 
 export default {
   name: 'ChatMessages',
@@ -367,13 +371,13 @@ export default {
       bot: '',
       agent: '',
     },
+    chatsMessagesContainerRef: null,
+    resizeObserver: null,
   }),
 
   computed: {
+    ...mapWritableState(useRooms, ['newMessagesByRoom']),
     ...mapState(useRooms, {
-      newMessages(store) {
-        return store.newMessagesByRoom[this.room.uuid]?.messages;
-      },
       room: (store) => store.activeRoom,
     }),
     ...mapState(useDashboard, ['viewedAgent']),
@@ -397,8 +401,8 @@ export default {
       return isLoading && prevChatUuid !== chatUuid;
     },
     unreadMessages() {
-      const { room, newMessages } = this;
-      return room.unread_msgs + (newMessages?.length || 0);
+      if (!this.room) return 0;
+      return this.newMessagesByRoom[this.room.uuid]?.messages?.length || 0;
     },
   },
 
@@ -430,6 +434,20 @@ export default {
       this.resendMessages();
     });
 
+    this.chatsMessagesContainerRef = this.$refs.chatsMessagesContainerRef;
+
+    if (this.chatsMessagesContainerRef && window.ResizeObserver) {
+      this.resizeObserver = new ResizeObserver((entries) => {
+        entries.forEach(() => {
+          if (!this.showScrollToBottomButton) {
+            this.scrollToBottom();
+          }
+        });
+      });
+
+      this.resizeObserver.observe(this.chatsMessagesContainerRef);
+    }
+
     // const observer = new IntersectionObserver((entries) => {
     //   entries.forEach((entry) => {
     //     console.log('intersecting', entry.isIntersecting);
@@ -438,6 +456,13 @@ export default {
     // const { endChatElement } = this.$refs;
 
     // observer.observe(endChatElement.$el);
+  },
+
+  beforeUnmount() {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
   },
 
   methods: {
@@ -687,6 +712,25 @@ export default {
       }
     },
 
+    handleSeenRoomMessages() {
+      const newMessages =
+        this.newMessagesByRoom[this.room.uuid]?.messages || [];
+
+      if (
+        this.room.unread_msgs + newMessages.length > 0 &&
+        this.room.user &&
+        !this.isViewMode
+      ) {
+        this.newMessagesByRoom[this.room.uuid] = { messages: [] };
+
+        const debouncedUpdateReadMessages = useDebounceFn(async () => {
+          await Room.updateReadMessages(this.room.uuid, true);
+        }, 500);
+
+        debouncedUpdateReadMessages();
+      }
+    },
+
     checkScrollPosition() {
       const { chatMessages } = this.$refs;
       if (!chatMessages) return;
@@ -694,11 +738,16 @@ export default {
       const { scrollTop, scrollHeight, clientHeight } = chatMessages;
       const isAtBottom = scrollTop + clientHeight >= scrollHeight - 20;
 
+      if (isAtBottom) {
+        this.handleSeenRoomMessages();
+      }
+
       this.showScrollToBottomButton = !isAtBottom;
     },
 
     handleScroll() {
       const { chatMessages } = this.$refs;
+
       if (!chatMessages) return;
 
       this.checkScrollPosition();
