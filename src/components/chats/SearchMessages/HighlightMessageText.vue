@@ -9,6 +9,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import { normalizeText } from '@/utils/string';
 
 defineOptions({
   name: 'HighlightMessageText',
@@ -32,14 +33,59 @@ const highlightedText = computed(() => {
     return escapedText;
   }
 
-  const escapedSearchTerm = escapeHtml(props.searchTerm);
+  const originalText = props.text;
+  const normalizedSearchTerm = normalizeText(props.searchTerm);
 
-  const regex = new RegExp(
-    `(${escapedSearchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`,
-    'gi',
-  );
+  const matches = [];
+  const textLength = originalText.length;
+  const searchTermLength = props.searchTerm.length;
 
-  return escapedText.replace(regex, '<span class="highlight">$1</span>');
+  // try to find matches with different window sizes
+  // that can have different sizes after normalization (ex: "olá" vs "ola")
+  for (
+    let windowSize = searchTermLength;
+    windowSize <= Math.min(textLength, searchTermLength + 5);
+    windowSize++
+  ) {
+    for (let i = 0; i <= textLength - windowSize; i++) {
+      const window = originalText.substring(i, i + windowSize);
+      const normalizedWindow = normalizeText(window);
+
+      if (normalizedWindow === normalizedSearchTerm) {
+        const overlaps = matches.some(
+          (match) => !(i >= match.end || i + windowSize <= match.start),
+        );
+
+        if (!overlaps) {
+          matches.push({ start: i, end: i + windowSize });
+          i += windowSize - 1;
+        }
+      }
+    }
+  }
+
+  matches.sort((a, b) => a.start - b.start);
+
+  if (matches.length === 0) {
+    return escapedText;
+  }
+
+  let highlighted = '';
+  let lastIndex = 0;
+
+  for (const match of matches) {
+    highlighted += escapedText.substring(lastIndex, match.start);
+
+    const originalMatch = originalText.substring(match.start, match.end);
+    const escapedMatch = escapeHtml(originalMatch);
+    highlighted += `<span class="highlight">${escapedMatch}</span>`;
+
+    lastIndex = match.end;
+  }
+
+  highlighted += escapedText.substring(lastIndex);
+
+  return highlighted;
 });
 
 function escapeHtml(text) {
