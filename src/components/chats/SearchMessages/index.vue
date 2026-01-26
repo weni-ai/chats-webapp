@@ -65,6 +65,9 @@ import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/inde
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
 import HighlightMessageCard from './HighlightMessageCard.vue';
 
+import { isValidJson } from '@/utils/messages';
+import { normalizeText } from '@/utils/string';
+
 defineOptions({
   name: 'SearchMessages',
 });
@@ -94,13 +97,15 @@ const matchedMessages = computed(() => {
     return [];
   }
 
-  const messagesWithSender = roomMessagesStore.roomMessages.filter(
-    (message) => {
-      return !!(message.user || message.contact);
-    },
-  );
-  return messagesWithSender.filter((message) => {
-    return message.text.toLowerCase().includes(searchTerm.value.toLowerCase());
+  const validMessages = roomMessagesStore.roomMessages.filter((message) => {
+    return !isValidJson(message.text);
+  });
+
+  const normalizedSearchTerm = normalizeText(searchTerm.value);
+
+  return validMessages.filter((message) => {
+    const normalizedMessageText = normalizeText(message.text);
+    return normalizedMessageText.includes(normalizedSearchTerm);
   });
 });
 

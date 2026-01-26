@@ -296,7 +296,8 @@
       "title": "Search in conversation",
       "input_placeholder": "Enter a word or phrase to search",
       "no_results": "No results found for \"{searchTerm}\"",
-      "results_found": "{count} results found for \"{searchTerm}\""
+      "results_found": "{count} results found for \"{searchTerm}\"",
+      "automated_support": "Automated Support"
     },
     "summary": {
       "reading_and_summarizing": "Reading and summarizing",

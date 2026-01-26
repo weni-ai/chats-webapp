@@ -292,7 +292,8 @@
       "title": "Pesquisar na conversa",
       "input_placeholder": "Digite uma palavra ou frase para pesquisar",
       "no_results": "Nenhum resultado encontrado para \"{searchTerm}\"",
-      "results_found": "{count} resultados encontrados para \"{searchTerm}\""
+      "results_found": "{count} resultados encontrados para \"{searchTerm}\"",
+      "automated_support": "Suporte Automatizado"
     },
     "summary": {
       "reading_and_summarizing": "Lendo e fazendo resumo",
