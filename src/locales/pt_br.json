@@ -318,7 +318,8 @@
       "title": "Pesquisar na conversa",
       "input_placeholder": "Digite uma palavra ou frase para pesquisar",
       "no_results": "Nenhum resultado encontrado para \"{searchTerm}\"",
-      "results_found": "{count} resultados encontrados para \"{searchTerm}\""
+      "results_found": "{count} resultados encontrados para \"{searchTerm}\"",
+      "automated_support": "Suporte Automatizado"
     },
     "transcription": {
       "unavailable": "Transcrição não disponível para áudio maiores que {duration} minutos.",

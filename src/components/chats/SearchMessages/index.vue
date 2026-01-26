@@ -17,6 +17,7 @@
     <AsideSlotTemplateSection class="search-messages__content">
       <section class="search-messages__container">
         <UnnnicInput
+          ref="searchInputRef"
           v-model="searchTerm"
           iconLeft="search-1"
           :placeholder="$t('chats.search_messages.input_placeholder')"
@@ -55,7 +56,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref, useTemplateRef } from 'vue';
 import { watchDebounced } from '@vueuse/core';
 
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
@@ -63,6 +64,9 @@ import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
 import HighlightMessageCard from './HighlightMessageCard.vue';
+
+import { isValidJson } from '@/utils/messages';
+import { normalizeText } from '@/utils/string';
 
 defineOptions({
   name: 'SearchMessages',
@@ -72,9 +76,12 @@ const emit = defineEmits(['close']);
 
 const roomMessagesStore = useRoomMessages();
 
-const isLoading = ref(false);
-
 const searchTerm = ref('');
+const searchInputRef = useTemplateRef('searchInputRef');
+
+onMounted(() => {
+  searchInputRef.value.$el.children[0].children[0].focus();
+});
 
 watchDebounced(
   searchTerm,
@@ -90,13 +97,15 @@ const matchedMessages = computed(() => {
     return [];
   }
 
-  const messagesWithSender = roomMessagesStore.roomMessages.filter(
-    (message) => {
-      return !!(message.user || message.contact);
-    },
-  );
-  return messagesWithSender.filter((message) => {
-    return message.text.toLowerCase().includes(searchTerm.value.toLowerCase());
+  const validMessages = roomMessagesStore.roomMessages.filter((message) => {
+    return !isValidJson(message.text);
+  });
+
+  const normalizedSearchTerm = normalizeText(searchTerm.value);
+
+  return validMessages.filter((message) => {
+    const normalizedMessageText = normalizeText(message.text);
+    return normalizedMessageText.includes(normalizedSearchTerm);
   });
 });
 

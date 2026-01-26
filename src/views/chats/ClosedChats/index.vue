@@ -45,6 +45,11 @@
         >
           <template #actions>
             <UnnnicToolTip
+              v-if="
+                featureFlags.active_features?.includes(
+                  'weniChatsSearchMessages',
+                )
+              "
               enabled
               :text="$t('chats.search_messages.title')"
               side="left"

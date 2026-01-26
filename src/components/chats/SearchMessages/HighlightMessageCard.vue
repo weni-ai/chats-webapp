@@ -16,7 +16,10 @@
 <script setup>
 import { computed } from 'vue';
 import moment from 'moment';
+
 import HighlightMessageText from './HighlightMessageText.vue';
+
+import i18n from '@/plugins/i18n';
 
 defineOptions({
   name: 'MessageCard',
@@ -35,7 +38,8 @@ const props = defineProps({
 
 const senderName = computed(() => {
   const sender = props.message.contact || props.message.user;
-  if (!sender) return '';
+
+  if (!sender) return i18n.global.t('chats.search_messages.automated_support');
 
   if (sender.name) return sender.name;
 

@@ -32,13 +32,16 @@
               <UnnnicIcon
                 icon="bi:stars"
                 clickable
-                :scheme="openActiveRoomSummary ? 'gray-900' : 'gray-500'"
+                scheme="gray-900"
                 size="ant"
                 @click="openActiveRoomSummary = !openActiveRoomSummary"
               />
             </section>
           </UnnnicToolTip>
           <UnnnicToolTip
+            v-if="
+              featureFlags.active_features?.includes('weniChatsSearchMessages')
+            "
             enabled
             :text="$t('chats.search_messages.title')"
             side="left"
@@ -77,7 +80,7 @@
                 icon="history"
                 size="ant"
                 :clickable="room?.has_history"
-                :scheme="room?.has_history ? 'neutral-cloudy' : 'neutral-soft'"
+                :scheme="room?.has_history ? 'gray-900' : 'neutral-soft'"
                 @click="openHistory"
               />
             </section>
@@ -95,7 +98,7 @@
                 icon="sync_alt"
                 size="ant"
                 clickable
-                scheme="neutral-cloudy"
+                scheme="gray-900"
                 @click="openTransferModal"
               />
             </section>

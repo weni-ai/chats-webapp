@@ -322,7 +322,8 @@
       "title": "Search in conversation",
       "input_placeholder": "Enter a word or phrase to search",
       "no_results": "No results found for \"{searchTerm}\"",
-      "results_found": "{count} results found for \"{searchTerm}\""
+      "results_found": "{count} results found for \"{searchTerm}\"",
+      "automated_support": "Automated Support"
     },
     "transcription": {
       "unavailable": "Transcription unavailable for audio exceeding {duration} minutes.",
