@@ -84,7 +84,7 @@
       >
         <div class="select-all-checkbox-container">
           <UnnnicToolTip
-            v-if="activeTab === 'ongoing'"
+            v-if="showSelectAllCheckbox"
             enabled
             :text="
               selectAllOngoingRoomsValue ? $t('deselect_all') : $t('select_all')
@@ -305,10 +305,19 @@ export default {
       return this.countRooms[this.activeTab] > 0;
     },
 
+    showSelectAllCheckbox() {
+      return (
+        this.activeTab === 'ongoing' &&
+        this.rooms_ongoing.length > 0 &&
+        this.project.config?.can_use_bulk_transfer
+      );
+    },
+
     isUserAdmin() {
       const ROLE_ADMIN = 1;
       return this.me.project_permission_role === ROLE_ADMIN;
     },
+
     totalUnreadMessages() {
       if (!this.newMessagesByRoom) {
         return 0;
@@ -319,6 +328,7 @@ export default {
         0,
       );
     },
+
     showNoResultsError() {
       return (
         !this.showLoadingRooms &&
