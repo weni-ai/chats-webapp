@@ -17,6 +17,7 @@
     <AsideSlotTemplateSection class="search-messages__content">
       <section class="search-messages__container">
         <UnnnicInput
+          ref="searchInputRef"
           v-model="searchTerm"
           iconLeft="search-1"
           :placeholder="$t('chats.search_messages.input_placeholder')"
@@ -55,7 +56,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref, useTemplateRef } from 'vue';
 import { watchDebounced } from '@vueuse/core';
 
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
@@ -72,9 +73,12 @@ const emit = defineEmits(['close']);
 
 const roomMessagesStore = useRoomMessages();
 
-const isLoading = ref(false);
-
 const searchTerm = ref('');
+const searchInputRef = useTemplateRef('searchInputRef');
+
+onMounted(() => {
+  searchInputRef.value.$el.children[0].children[0].focus();
+});
 
 watchDebounced(
   searchTerm,
