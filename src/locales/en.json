@@ -293,7 +293,8 @@
   "average_interaction_time": "It is the average duration of a chat",
   "chats": {
     "transcription": {
-      "unavailable": "Transcription unavailable for audio exceeding {duration} minutes.",
+      "unavailable_closed_chat": "It is not possible to view transcriptions that were not enabled during the support.",
+      "unavailable_exceeding_duration": "Transcription unavailable for audio exceeding {duration} minutes.",
       "error": "Unable to load the transcript. Please try again!",
       "feedback": {
         "question": "Was the transcription useful?",

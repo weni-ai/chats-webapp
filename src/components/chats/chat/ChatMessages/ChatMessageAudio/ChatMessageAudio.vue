@@ -31,9 +31,18 @@
               scheme="blue-500"
               size="sm"
             />
-            <p class="audio-player__transcription-info__text">
+            <p
+              v-if="isClosedChat"
+              class="audio-player__transcription-info__text"
+            >
+              {{ $t('chats.transcription.unavailable_closed_chat') }}
+            </p>
+            <p
+              v-else
+              class="audio-player__transcription-info__text"
+            >
               {{
-                $t('chats.transcription.unavailable', {
+                $t('chats.transcription.unavailable_exceeding_duration', {
                   duration: MAX_AUDIO_DURATION_SECONDS / 60,
                 })
               }}
@@ -127,6 +136,10 @@ const props = defineProps({
   messageStatus: {
     type: String,
     required: true,
+  },
+  isClosedChat: {
+    type: Boolean,
+    default: false,
   },
 });
 const emit = defineEmits(['failed-click']);
@@ -228,6 +241,9 @@ const canShowTranscriptionAudioAction = computed(() => {
 });
 
 const canGenerateTranscriptionAudio = computed(() => {
+  if (props.isClosedChat) {
+    return transcriptionText.value.length > 0;
+  }
   if (audioRecorderRef.value) {
     return audioRecorderRef.value.duration < MAX_AUDIO_DURATION_SECONDS;
   }

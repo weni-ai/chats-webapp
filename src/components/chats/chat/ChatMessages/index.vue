@@ -151,6 +151,7 @@
                     v-else-if="isAudio(media)"
                     :message="message"
                     :messageStatus="messageStatus({ message, media })"
+                    :isClosedChat="isClosedChat"
                     @failed-click="resendMedia({ message, media })"
                   />
                 </UnnnicChatsMessage>
