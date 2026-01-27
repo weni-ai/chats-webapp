@@ -233,7 +233,7 @@
       />
       <UnnnicButton
         :text="$t('save')"
-        :disabled="!validForm"
+        :disabled="initialFormState || !validForm"
         data-testid="general-save-button"
         @click.stop="saveSector()"
       />
@@ -361,6 +361,8 @@ export default {
       disabledCountryHolidays: [],
       enableCustomHolidays: [],
       showCreateCustomHolidayModal: false,
+      initialFormState: true,
+      isInitializing: true,
     };
   },
 
@@ -496,13 +498,23 @@ export default {
         ? commonValid && groupValid
         : commonValid && singleValid;
 
-      this.$emit('changeIsValid', valid);
-
       return valid;
     },
   },
 
   watch: {
+    modelValue: {
+      deep: true,
+      handler() {
+        this.handleFormChange();
+      },
+    },
+    selectedWorkdayDays: {
+      deep: true,
+      handler() {
+        this.handleFormChange();
+      },
+    },
     selectedWorkdayDaysTime: {
       deep: true,
       handler() {
@@ -512,6 +524,13 @@ export default {
             this.validateWorkdayTime(day, index);
           });
         });
+        this.handleFormChange();
+      },
+    },
+    selectedProject: {
+      deep: true,
+      handler() {
+        this.handleFormChange();
       },
     },
     copyWorkday(value) {
@@ -538,10 +557,18 @@ export default {
           }),
         );
       }
+      this.handleFormChange();
+    },
+    copyWorkdaySector: {
+      deep: true,
+      handler() {
+        this.handleFormChange();
+      },
     },
     enableCountryHolidays: {
       deep: true,
       handler(value) {
+        this.handleFormChange();
         const enableCountryHolidaysLength = value.length;
         const allCountryHolidaysLength = this.allCountryHolidays.length;
         if (
@@ -560,34 +587,43 @@ export default {
         }
       },
     },
+    enableCustomHolidays: {
+      deep: true,
+      handler() {
+        this.handleFormChange();
+      },
+    },
+    validForm() {
+      this.$emit('changeIsValid', this.validForm);
+    },
   },
 
   async mounted() {
     await this.getCountryHolidays();
 
     if (this.sectors.length === 0) {
-      this.getSectors(true);
+      await this.getSectors(true);
     }
 
     if (!this.isEditing) {
-      this.handleSelectAllCountryHolidays(true);
+      await this.handleSelectAllCountryHolidays(true);
     } else {
-      this.getSectorAllHolidays();
-      this.getSectorWorktimes(this.sector.uuid);
+      await this.getSectorAllHolidays();
+      await this.getSectorWorktimes(this.sector.uuid);
     }
 
     const isDefaultSector =
       this.sector.name === i18n.global.t('config_chats.default_sector.name');
 
     if (this.isEditing && !this.enableGroupsMode) {
-      this.getSectorManagers();
+      await this.getSectorManagers();
     } else if (isDefaultSector) {
       this.useDefaultSector = 1;
     }
 
-    if (!this.enableGroupsMode) this.listProjectManagers();
+    if (!this.enableGroupsMode) await this.listProjectManagers();
     else {
-      this.listSecondaryProjects().then(() => {
+      await this.listSecondaryProjects().then(() => {
         if (this.isEditing) {
           const secondaryProjectUuid = this.sector.config?.secondary_project;
           const selectedProject = this.projectsNames.find(
@@ -597,6 +633,9 @@ export default {
         }
       });
     }
+    this.$nextTick(() => {
+      this.isInitializing = false;
+    });
   },
 
   methods: {
@@ -626,6 +665,12 @@ export default {
         this.disabledCountryHolidays = this.allCountryHolidays.map(
           (holiday) => holiday.date,
         );
+      }
+    },
+
+    handleFormChange() {
+      if (this.isEditing && !this.isInitializing) {
+        this.initialFormState = false;
       }
     },
 
