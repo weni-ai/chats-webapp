@@ -222,7 +222,13 @@ const selectStatus = async (newStatus) => {
   try {
     if (isOldStatusActiveOrInactive && isCustomStatus) {
       startDate.value = new Date().toISOString();
+      const wasActive = selectedStatus.value.value === 'active';
       await handleCreateCustomStatus(newStatus);
+      if (wasActive) {
+        moduleStorage.setItem(statusAgentKey, 'OFFLINE', {
+          useSession: true,
+        });
+      }
       startTimer();
     } else if (!isOldStatusActiveOrInactive && isCustomStatus) {
       await handleCloseCustomStatus(selectedStatus.value, false);
