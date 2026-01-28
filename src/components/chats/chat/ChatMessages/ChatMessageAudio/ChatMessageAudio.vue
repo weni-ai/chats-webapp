@@ -63,6 +63,7 @@
           v-if="
             !isLoadingTranscription &&
             !hasTranscriptionError &&
+            !isClosedChat &&
             showTranscriptionText &&
             transcriptionText
           "
