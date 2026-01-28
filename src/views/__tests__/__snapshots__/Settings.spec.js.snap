@@ -68,7 +68,7 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
       data-testid="form-element"
       data-v-1088b44f=""
       data-v-25ad98eb=""
-      data-v-43b980c4=""
+      data-v-4569ccad=""
     >
       <!---->
       
@@ -133,23 +133,22 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
           class="unnnic-radio"
           data-v-2121c2c4=""
           data-v-348024a5=""
-          data-v-9f51b54f=""
           size="md"
         >
           <label
             class="unnnic-radio__input-wrapper"
-            data-v-9f51b54f=""
+            data-v-2121c2c4=""
           >
             <input
               checked=""
               class="unnnic-radio__input"
-              data-v-9f51b54f=""
+              data-v-2121c2c4=""
               name=""
               type="radio"
             />
             <p
               class="unnnic-radio__label"
-              data-v-9f51b54f=""
+              data-v-2121c2c4=""
             >
                
               
@@ -163,22 +162,21 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
           class="unnnic-radio"
           data-v-2121c2c4=""
           data-v-348024a5=""
-          data-v-9f51b54f=""
           size="md"
         >
           <label
             class="unnnic-radio__input-wrapper"
-            data-v-9f51b54f=""
+            data-v-2121c2c4=""
           >
             <input
               class="unnnic-radio__input"
-              data-v-9f51b54f=""
+              data-v-2121c2c4=""
               name=""
               type="radio"
             />
             <p
               class="unnnic-radio__label"
-              data-v-9f51b54f=""
+              data-v-2121c2c4=""
             >
                
               
@@ -192,22 +190,21 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
           class="unnnic-radio"
           data-v-2121c2c4=""
           data-v-348024a5=""
-          data-v-9f51b54f=""
           size="md"
         >
           <label
             class="unnnic-radio__input-wrapper"
-            data-v-9f51b54f=""
+            data-v-2121c2c4=""
           >
             <input
               class="unnnic-radio__input"
-              data-v-9f51b54f=""
+              data-v-2121c2c4=""
               name=""
               type="radio"
             />
             <p
               class="unnnic-radio__label"
-              data-v-9f51b54f=""
+              data-v-2121c2c4=""
             >
                
               
