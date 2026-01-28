@@ -314,6 +314,33 @@ describe('StatusBar', () => {
       });
     });
 
+    it('should save OFFLINE to moduleStorage when switching from active to custom status', async () => {
+      wrapper = createWrapper();
+
+      await wrapper.vm.fetchCustomStatuses();
+      await wrapper.vm.$nextTick();
+
+      const activeStatus = wrapper.vm.statuses.find(
+        (s) => s.value === 'active',
+      );
+      wrapper.vm.selectedStatus = { ...activeStatus };
+
+      const setItemSpy = vi.spyOn(moduleStorage, 'setItem');
+
+      const lunchStatus = wrapper.vm.statuses.find((s) => s.value === 'lunch');
+
+      await wrapper.vm.selectStatus(lunchStatus);
+      await flushPromises();
+
+      expect(setItemSpy).toHaveBeenCalledWith(
+        'statusAgent-test-uuid',
+        'OFFLINE',
+        { useSession: true },
+      );
+
+      setItemSpy.mockRestore();
+    });
+
     it('should handle switching between custom statuses', async () => {
       api.getCustomStatusTypeList.mockResolvedValue([
         { value: 'active', label: 'Online', color: 'green' },
@@ -570,8 +597,67 @@ describe('StatusBar', () => {
 
       expect(Profile.updateStatus).toHaveBeenCalledWith({
         projectUuid: 'test-uuid',
-        status: 'OFFLINE',
+        status: 'ONLINE',
       });
+    });
+
+    it('should save OFFLINE to moduleStorage when changing to inactive status', async () => {
+      wrapper = createWrapper();
+
+      await wrapper.vm.updateActiveStatus({
+        isActive: false,
+        skipRequest: true,
+      });
+      await flushPromises();
+
+      expect(
+        moduleStorage.getItem('statusAgent-test-uuid', '', {
+          useSession: true,
+        }),
+      ).toBe('OFFLINE');
+    });
+
+    it('should save ONLINE to moduleStorage when changing to active status', async () => {
+      wrapper = createWrapper();
+
+      await wrapper.vm.updateActiveStatus({
+        isActive: true,
+        skipRequest: true,
+      });
+      await flushPromises();
+
+      expect(
+        moduleStorage.getItem('statusAgent-test-uuid', '', {
+          useSession: true,
+        }),
+      ).toBe('ONLINE');
+    });
+
+    it('should not save OFFLINE when switching from inactive to custom status', async () => {
+      wrapper = createWrapper();
+
+      wrapper.vm.selectedStatus = {
+        value: 'inactive',
+        label: 'Offline',
+        color: 'gray',
+      };
+      moduleStorage.setItem('statusAgent-test-uuid', 'OFFLINE', {
+        useSession: true,
+      });
+
+      await wrapper.vm.fetchCustomStatuses();
+      wrapper.vm.toggleDropdown();
+      await wrapper.vm.$nextTick();
+
+      const items = wrapper.findAll('[data-testid="status-bar-item"]');
+      await items[1].trigger('click');
+      await flushPromises();
+
+      expect(
+        moduleStorage.getItem('statusAgent-test-uuid', '', {
+          useSession: true,
+        }),
+      ).toBe('OFFLINE');
     });
   });
 
