@@ -154,47 +154,6 @@ const messageMedia = computed(() => {
 const isLoadingTranscription = ref(false);
 const showTranscriptionText = ref(false);
 
-const generateTranscriptionMock = async () => {
-  isLoadingTranscription.value = true;
-  // TODO: Remove! only for testing
-  const success = !!Math.floor(Math.random() * 2); // 0 or 1
-  setTimeout(async () => {
-    try {
-      if (success) {
-        if (transcriptionText.value) {
-          isLoadingTranscription.value = false;
-          return;
-        }
-        updateMedia({
-          message_uuid: props.message.uuid,
-          status: 'DONE',
-          text: 'Lorem ipsum purus in mollis nunc sed id semper. Suspendisse faucibus interdum posuere lorem ipsum. Dictum non consectetur a erat. Risus nullam eget felis eget nunc lobortis mattis aliquam faucibus. Sed adipiscing diam donec adipiscing tristique risus nec feugiat. Faucibus et molestie ac feugiat sed lectus vestibulum mattis. In nibh mauris cursus mattis molestie a iaculis at erat. Velit aliquet sagittis id consectetur purus ut faucibus. Lorem dolor sed viverra ipsum. Facilisis gravida neque convallis a cras. Adipiscing vitae proin sagittis nisl rhoncus. Odio eu feugiat pretium nibh ipsum. Sit amet nulla facilisi morbi. Viverra mauris in aliquam sem. Vitae justo eget magna fermentum. Ultrices dui sapien eget mi proin sed libero. Convallis a cras semper auctor neque vitae tempus quam. Netus et malesuada fames ac turpis egestas. Morbi enim nunc faucibus a pellentesque sit amet porttitor. Suspendisse potenti nullam ac tortor vitae. Blandit volutpat maecenas volutpat blandit.',
-        });
-      } else
-        await audioTranscriptionService.generateAudioTranscription(
-          props.message.uuid,
-        );
-    } catch (error) {
-      console.error('Error generating transcription', error);
-      isLoadingTranscription.value = false;
-      showTranscriptionText.value = false;
-      const roomMessagesStore = useRoomMessages();
-      roomMessagesStore.updateMessage({
-        reorderMessageMinute: true,
-        message: {
-          ...props.message,
-          media: [
-            {
-              ...props.message.media[0],
-              transcription: { status: 'FAILED', text: '' },
-            },
-          ],
-        },
-      });
-    }
-  }, 3000);
-};
-
 const generateTranscription = async () => {
   isLoadingTranscription.value = true;
 
@@ -230,7 +189,7 @@ const generateTranscription = async () => {
 watch(showTranscriptionText, () => {
   if (showTranscriptionText.value) {
     // TODO: replace to generateTranscription after testing
-    generateTranscriptionMock();
+    generateTranscription();
   } else {
     isLoadingTranscription.value = false;
   }
