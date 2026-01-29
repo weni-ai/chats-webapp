@@ -9,7 +9,7 @@
     <UnnnicDisclaimer
       class="quick-messages-disclaimer"
       type="informational"
-      :text="$t('quick_messages.disclaimer')"
+      :description="$t('quick_messages.disclaimer')"
     />
 
     <AsideSlotTemplateSection class="messages-section__container">
