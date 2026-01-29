@@ -123,7 +123,6 @@ import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import TranscriptionFeedbackModal from './FeedbackModal.vue';
 
 import audioTranscriptionService from '@/services/api/resources/chats/audioTranscription';
-import updateMedia from '@/services/api/websocket/listeners/media/transcribe/update';
 
 import i18n from '@/plugins/i18n';
 
@@ -188,7 +187,6 @@ const generateTranscription = async () => {
 
 watch(showTranscriptionText, () => {
   if (showTranscriptionText.value) {
-    // TODO: replace to generateTranscription after testing
     generateTranscription();
   } else {
     isLoadingTranscription.value = false;
@@ -246,11 +244,10 @@ const handleLike = async (liked) => {
 
   try {
     if (liked) {
-      // TODO: enable
-      // await audioTranscriptionService.sendAudioTranscriptionFeedback(
-      //   props.message.uuid,
-      //   { liked },
-      // );
+      await audioTranscriptionService.sendAudioTranscriptionFeedback(
+        props.message.uuid,
+        { liked },
+      );
       UnnnicCallAlert({
         props: {
           text: i18n.global.t('chats.transcription.feedback.sended'),
