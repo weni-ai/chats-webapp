@@ -189,7 +189,10 @@
   "center": "Centralizar",
   "justify": "Justificar",
   "without_results": "Nenhum resultado correspondente",
-  "without_chats": "Ops! Parece que não há chats no momento :)",
+  "without_chats": {
+    "in_progress": "Todos concluídos! Você será notificado quando novos chats forem atribuídos e aparecerão nesta lista.",
+    "waiting": "Fila vazia! Todos os contatos foram atribuídos a um agente."
+  },
   "other": "Outro",
   "select_smart": {
     "without_results": "Nenhum resultado encontrado",
