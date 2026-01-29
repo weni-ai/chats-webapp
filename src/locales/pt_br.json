@@ -291,6 +291,13 @@
   "interaction_time": "Tempo de interação",
   "average_interaction_time": "É o tempo médio de duração de um chat",
   "chats": {
+    "search_messages": {
+      "title": "Pesquisar na conversa",
+      "input_placeholder": "Digite uma palavra ou frase para pesquisar",
+      "no_results": "Nenhum resultado encontrado para \"{searchTerm}\"",
+      "results_found": "{count} resultados encontrados para \"{searchTerm}\"",
+      "automated_support": "Suporte Automatizado"
+    },
     "summary": {
       "reading_and_summarizing": "Lendo e fazendo resumo",
       "by_ai": "Resumo feito por IA",

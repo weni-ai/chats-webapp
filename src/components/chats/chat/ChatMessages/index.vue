@@ -385,6 +385,7 @@ export default {
     ...mapWritableState(useRoomMessages, [
       'replyMessage',
       'toScrollNote',
+      'toScrollMessage',
       'showScrollToBottomButton',
     ]),
     medias() {
@@ -410,6 +411,10 @@ export default {
     toScrollNote(note) {
       if (!note) return;
       this.scrollToInternalNote(note);
+    },
+    toScrollMessage(message) {
+      if (!message) return;
+      this.scrollToMessage(message);
     },
     messages: {
       handler(newMessages, oldMessages) {
@@ -808,22 +813,30 @@ export default {
         this.showScrollToBottomButton = false;
       });
     },
-    async scrollToInternalNote(note) {
-      const noteElement = this.$refs[`internal-note-${note.uuid}`]?.[0]?.$el;
 
-      if (noteElement) {
-        noteElement.scrollIntoView({
+    async scrollToRef(refKey) {
+      const element = this.$refs[refKey]?.[0]?.$el;
+      if (element) {
+        await element.scrollIntoView({
           behavior: 'smooth',
           block: 'center',
         });
       } else if (this.roomMessagesNext) {
-        // Load more messages to find internal note
+        // Load more messages to find internal note or message
         await this.getRoomMessages();
-        this.scrollToInternalNote(note);
+        this.scrollToRef(refKey);
         return;
       }
-
       this.toScrollNote = null;
+      this.toScrollMessage = null;
+    },
+
+    async scrollToInternalNote(note) {
+      this.scrollToRef(`internal-note-${note.uuid}`);
+    },
+
+    async scrollToMessage(message) {
+      this.scrollToRef(`message-${message.uuid}`);
     },
   },
 };
