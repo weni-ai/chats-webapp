@@ -43,9 +43,8 @@
         'select-destination__disclaimer',
         { 'select-destination__disclaimer--small': size === 'sm' },
       ]"
-      :text="transferDisclaimerText"
-      icon="error"
-      iconColor="aux-red-500"
+      :description="transferDisclaimerText"
+      type="error"
     />
     <UnnnicDisclaimer
       v-if="showTransferToOtherSectorDisclaimer"
@@ -54,9 +53,8 @@
         'select-destination__disclaimer',
         { 'select-destination__disclaimer--small': size === 'sm' },
       ]"
-      :text="$t('bulk_transfer.disclaimer.transfer_to_other_sector')"
-      icon="alert-circle-1-1"
-      iconColor="feedback-yellow"
+      :description="$t('bulk_transfer.disclaimer.transfer_to_other_sector')"
+      type="attention"
     />
   </main>
 </template>
