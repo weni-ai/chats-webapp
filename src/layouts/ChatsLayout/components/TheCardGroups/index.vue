@@ -647,11 +647,6 @@ export default {
       padding-left: $unnnic-spacing-xs;
       padding-right: $unnnic-spacing-xs;
     }
-    .no-results {
-      padding-left: $unnnic-spacing-xs;
-      color: $unnnic-color-neutral-cloudy;
-      font-size: $unnnic-font-size-body-gt;
-    }
     &__header {
       padding-left: $unnnic-spacing-xs;
     }
