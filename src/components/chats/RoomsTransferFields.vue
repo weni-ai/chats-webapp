@@ -37,7 +37,7 @@
       />
     </section>
     <UnnnicDisclaimer
-      v-if="true"
+      v-if="showTransferDisclaimer"
       data-testid="transfer-disclaimer"
       :class="[
         'select-destination__disclaimer',
@@ -47,7 +47,7 @@
       type="error"
     />
     <UnnnicDisclaimer
-      v-if="true"
+      v-if="showTransferToOtherSectorDisclaimer"
       data-testid="transfer-other-queue-disclaimer"
       :class="[
         'select-destination__disclaimer',
