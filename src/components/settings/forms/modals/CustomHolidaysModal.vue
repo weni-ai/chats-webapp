@@ -10,8 +10,8 @@
     <section class="custom-holidays-modal__body">
       <p>{{ $t('custom_holidays.description') }}</p>
       <UnnnicDisclaimer
-        iconColor="feedback-yellow"
-        :text="$t('custom_holidays.disclaimer')"
+        :description="$t('custom_holidays.disclaimer')"
+        type="attention"
       />
       <section
         v-for="holiday in holidays"
