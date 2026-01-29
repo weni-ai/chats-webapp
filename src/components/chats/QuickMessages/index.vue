@@ -6,11 +6,13 @@
     :close="() => $emit('close')"
   >
     <HeaderQuickMessages @close="$emit('close')" />
-    <UnnnicDisclaimer
-      class="quick-messages-disclaimer"
-      type="informational"
-      :description="$t('quick_messages.disclaimer')"
-    />
+    <section class="quick-messages-disclaimer-container">
+      <UnnnicDisclaimer
+        class="quick-messages-disclaimer"
+        type="informational"
+        :description="$t('quick_messages.disclaimer')"
+      />
+    </section>
 
     <AsideSlotTemplateSection class="messages-section__container">
       <QuickMessagesList
@@ -208,7 +210,8 @@ export default {
 :deep(.aside-slot-template__sections) {
   flex: unset;
 }
-.quick-messages-disclaimer {
+
+.quick-messages-disclaimer-container {
   margin: $unnnic-space-2;
 }
 
