@@ -301,7 +301,7 @@ describe('TheCardGroups.vue', () => {
       ).toBe(true);
     });
 
-    it('renders no results message when no data available', async () => {
+    it('renders no results message when no ongoing chats available', async () => {
       const roomsStore = useRooms();
       const discussionsStore = useDiscussions();
 
@@ -312,10 +312,32 @@ describe('TheCardGroups.vue', () => {
       roomsStore.waitingContactAnswer = [];
       discussionsStore.discussions = [];
 
+      roomsStore.activeTab = 'ongoing';
+
       await flushPromises();
 
       expect(wrapper.text()).toContain(
-        'Oops! It looks like there are no chats at the moment :)',
+        'All wrapped up! You’ll be notified when new chats are assigned and they’ll appear in this list.',
+      );
+    });
+
+    it('renders no results message when no waiting chats available', async () => {
+      const roomsStore = useRooms();
+      const discussionsStore = useDiscussions();
+
+      wrapper = createWrapper();
+
+      roomsStore.agentRooms = [];
+      roomsStore.waitingQueue = [];
+      roomsStore.waitingContactAnswer = [];
+      discussionsStore.discussions = [];
+
+      roomsStore.activeTab = 'waiting';
+
+      await flushPromises();
+
+      expect(wrapper.text()).toContain(
+        'Queue cleared! All contacts have been assigned to an agent',
       );
     });
 
