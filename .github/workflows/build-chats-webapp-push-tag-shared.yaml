@@ -74,15 +74,4 @@ jobs:
       target_repository_branch: main
       target_application: chats-webapp
       target_patch_file: deployment.json
-      image_arch: |
-        [
-          {
-            "platform": "linux/arm64",
-            "runner": "ubuntu-latest"
-          },
-          {
-            "platform": "linux/amd64",
-            "runner": "ubuntu-latest"
-          }
-        ]
     secrets: inherit
