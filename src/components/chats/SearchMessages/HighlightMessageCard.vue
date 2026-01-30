@@ -1,10 +1,29 @@
 <template>
-  <section class="message-card">
-    <header class="message-card__header">
-      <p class="message-card__header-sender">{{ senderName }}</p>
-      <p class="message-card__header-time">{{ formattedTime }}</p>
+  <section
+    data-testid="message-card"
+    class="message-card"
+  >
+    <header
+      class="message-card__header"
+      data-testid="message-card-header"
+    >
+      <p
+        class="message-card__header-sender"
+        data-testid="message-card-sender"
+      >
+        {{ senderName }}
+      </p>
+      <p
+        class="message-card__header-time"
+        data-testid="message-card-time"
+      >
+        {{ formattedTime }}
+      </p>
     </header>
-    <section class="message-card__content">
+    <section
+      class="message-card__content"
+      data-testid="message-card-content"
+    >
       <HighlightMessageText
         :text="message.text"
         :searchTerm="searchTerm"
