@@ -204,7 +204,14 @@ export default {
 
           this.selectedRoom = responseRoom;
           this.setActiveRoom(this.selectedRoom);
-          await this.getHistoryContactRoomMessages();
+
+          const isArchived =
+            responseRoom?.is_archived && responseRoom?.archived_url;
+
+          if (!isArchived) {
+            await this.getHistoryContactRoomMessages();
+          }
+
           const responseRoomUuids = await History.getHistoryContactRoomsUuids({
             external_id: responseRoom.contact.external_id,
           });
