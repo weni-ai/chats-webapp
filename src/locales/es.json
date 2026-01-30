@@ -163,7 +163,10 @@
   "center": "centralizar",
   "justify": "Justificar",
   "without_results": "No hay resultados coincidentes",
-  "without_chats": "¡Ups! Parece que no hay chats en este momento :)",
+  "without_chats": {
+    "in_progress": "¡Todo listo! Serás notificado cuando se asignen nuevos chats y aparecerán en esta lista.",
+    "waiting": "Cola vacía! Todos los contactos han sido asignados a un agente."
+  },
   "other": "Otro",
   "select_smart": {
     "without_results": "Ningún resultado encontrado",
@@ -288,6 +291,13 @@
   "interaction_time": "Tiempo de interacción",
   "average_interaction_time": "Es el tiempo promedio de duración de un chat",
   "chats": {
+    "search_messages": {
+      "title": "Buscar en la conversación",
+      "input_placeholder": "Ingrese una palabra o frase para buscar",
+      "no_results": "No se encontraron resultados para \"{searchTerm}\"",
+      "results_found": "{count} resultados encontrados para \"{searchTerm}\"",
+      "automated_support": "Soporte Automatizado"
+    },
     "summary": {
       "reading_and_summarizing": "Lectura y resumen",
       "by_ai": "Resumen por IA",
@@ -440,6 +450,7 @@
   "none": "Ninguno",
   "access_history_to_see_closed_chats": "Ir al historial para ver los chats cerrados",
   "close": "Fechar",
+  "ended_by": "Cerrado por",
   "all": "Todos",
   "back_to_chats": "@:back a los chats",
   "filter": {
@@ -464,6 +475,9 @@
   "pagination": "{from} - {to} de {total}",
   "contact": "Contacto",
   "unnamed_contact": "Contacto sin nombre",
+  "unnamed_agent": "Agente sin nombre",
+  "no_agent_assigned": "No se ha asignado un agente",
+  "no_tags_assigned": "No se han asignado etiquetas",
   "contact_await_for_you": "¡Un contacto está esperando por ti!",
   "agent": "Agente",
   "manager": "Gerente",

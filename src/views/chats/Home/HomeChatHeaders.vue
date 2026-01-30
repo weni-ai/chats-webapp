@@ -4,16 +4,13 @@
       v-show="isLoading"
       data-testid="chat-header-loading"
     />
-    <UnnnicChatsHeader
+    <ContactHeader
       v-show="isShowingRoomHeader"
-      :title="headerRoomTitle || `[${$t('unnamed_contact')}]`"
-      :avatarClick="emitOpenRoomContactInfo"
-      :titleClick="emitOpenRoomContactInfo"
-      :avatarName="room?.contact.name || '-'"
-      :back="isMobile ? emitBack : null"
-      data-testid="chat-header"
+      :contactName="headerRoomTitle"
+      clickable
+      @click="emitOpenRoomContactInfo"
     >
-      <template #right>
+      <template #actions>
         <section class="home-chat-headers__actions">
           <UnnnicToolTip
             v-if="enableRoomSummary"
@@ -27,7 +24,7 @@
             class="home-chat-headers__summary-icon-tooltip"
           >
             <section
-              class="home-chat-headers__summary-icon"
+              class="home-chat-headers__icon"
               :class="{
                 'home-chat-headers__summary-icon--open': openActiveRoomSummary,
               }"
@@ -35,9 +32,34 @@
               <UnnnicIcon
                 icon="bi:stars"
                 clickable
-                :scheme="openActiveRoomSummary ? 'gray-900' : 'gray-500'"
+                scheme="gray-900"
                 size="ant"
                 @click="openActiveRoomSummary = !openActiveRoomSummary"
+              />
+            </section>
+          </UnnnicToolTip>
+          <UnnnicToolTip
+            v-if="
+              featureFlags.active_features?.includes('weniChatsSearchMessages')
+            "
+            enabled
+            :text="$t('chats.search_messages.title')"
+            side="left"
+            class="home-chat-headers__search-messages-icon-tooltip"
+          >
+            <section
+              class="home-chat-headers__icon"
+              :class="{
+                'home-chat-headers__search-messages-icon--open':
+                  showSearchMessagesDrawer,
+              }"
+            >
+              <UnnnicIcon
+                icon="search"
+                clickable
+                scheme="gray-900"
+                size="ant"
+                @click="showSearchMessagesDrawer = !showSearchMessagesDrawer"
               />
             </section>
           </UnnnicToolTip>
@@ -53,13 +75,15 @@
             "
             side="left"
           >
-            <UnnnicIcon
-              icon="history"
-              size="ant"
-              :clickable="room?.has_history"
-              :scheme="room?.has_history ? 'neutral-cloudy' : 'neutral-soft'"
-              @click="openHistory"
-            />
+            <section class="home-chat-headers__icon">
+              <UnnnicIcon
+                icon="history"
+                size="ant"
+                :clickable="room?.has_history"
+                :scheme="room?.has_history ? 'gray-900' : 'neutral-soft'"
+                @click="openHistory"
+              />
+            </section>
           </UnnnicToolTip>
           <UnnnicToolTip
             v-if="
@@ -69,13 +93,15 @@
             :text="$tc('transfer_contact', 1)"
             side="left"
           >
-            <UnnnicIcon
-              icon="sync_alt"
-              size="ant"
-              clickable
-              scheme="neutral-cloudy"
-              @click="openTransferModal"
-            />
+            <section class="home-chat-headers__icon">
+              <UnnnicIcon
+                icon="sync_alt"
+                size="ant"
+                clickable
+                scheme="gray-900"
+                @click="openTransferModal"
+              />
+            </section>
           </UnnnicToolTip>
           <UnnnicButton
             v-if="showCloseChatButton"
@@ -87,7 +113,7 @@
           </UnnnicButton>
         </section>
       </template>
-    </UnnnicChatsHeader>
+    </ContactHeader>
     <UnnnicChatsHeader
       v-show="isShowingDiscussionHeader"
       class="home-chat-headers__discussion"
@@ -124,9 +150,11 @@ import { useProfile } from '@/store/modules/profile';
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow.vue';
 import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
+import ContactHeader from '@/components/chats/ContactHeader.vue';
 
 import { formatContactName } from '@/utils/chats';
 import { parseUrn } from '@/utils/room';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 export default {
   name: 'HomeChatHeaders',
@@ -135,6 +163,7 @@ export default {
     ChatHeaderLoading,
     ChatHeaderSendFlow,
     ModalTransferRooms,
+    ContactHeader,
   },
 
   props: {
@@ -173,6 +202,7 @@ export default {
       'contactToTransfer',
       'openActiveRoomSummary',
     ]),
+    ...mapWritableState(useRoomMessages, ['showSearchMessagesDrawer']),
 
     ...mapState(useConfig, {
       enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
@@ -283,25 +313,27 @@ export default {
 
 <style lang="scss" scoped>
 .home-chat-headers {
-  :deep(.unnnic-tooltip-trigger) {
-    > .home-chat-headers__summary-icon {
-      width: 38px;
-    }
-  }
-  &__summary-icon {
+  background-color: $unnnic-color-bg-base;
+  &__icon {
     width: 38px;
     height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: $unnnic-radius-2;
-
+  }
+  &__search-messages-icon {
+    &--open {
+      background-color: rgba(136, 147, 168, 0.2);
+    }
+  }
+  &__summary-icon {
     &--open {
       background-color: $unnnic-color-purple-100;
       &::after {
         content: '';
         position: fixed;
-        top: 67px;
+        top: 49px;
         transform: rotate(-45deg);
         width: $unnnic-space-3;
         height: $unnnic-space-3;
@@ -312,7 +344,7 @@ export default {
   }
   &__actions {
     display: flex;
-    gap: $unnnic-space-6;
+    gap: $unnnic-space-2;
     align-items: center;
 
     :deep(.unnnic-tooltip) {

@@ -277,13 +277,82 @@ describe('ChatSummary', () => {
       expect(wrapper.vm.isTyping).toBe(false);
     });
 
-    it('should clear animatedText on unmounted', () => {
+    it('should cancel previous animation when typeWriter is called again', async () => {
+      wrapper = createWrapper();
+
+      const promise1 = wrapper.vm.typeWriter('First animation text', 10);
+
+      await new Promise((resolve) => setTimeout(resolve, 20));
+
+      const promise2 = wrapper.vm.typeWriter('Second', 10);
+
+      await promise1;
+      await promise2;
+
+      expect(wrapper.vm.animatedText).toBe('Second');
+      expect(wrapper.vm.isTyping).toBe(false);
+    });
+
+    it('should increment currentAnimationId on each typeWriter call', async () => {
+      wrapper = createWrapper();
+
+      const initialId = wrapper.vm.currentAnimationId;
+
+      await wrapper.vm.typeWriter('Test 1', 5);
+      const idAfterFirst = wrapper.vm.currentAnimationId;
+
+      await wrapper.vm.typeWriter('Test 2', 5);
+      const idAfterSecond = wrapper.vm.currentAnimationId;
+
+      expect(idAfterFirst).toBe(initialId + 1);
+      expect(idAfterSecond).toBe(initialId + 2);
+    });
+
+    it('should abort animation controller on unmounted', () => {
       wrapper = createWrapper();
       wrapper.vm.animatedText = 'test';
+
+      const abortSpy = vi.fn();
+      wrapper.vm.animationAbortController = {
+        abort: abortSpy,
+        signal: { aborted: false },
+      };
+
+      wrapper.unmount();
+
+      expect(abortSpy).toHaveBeenCalled();
+      expect(wrapper.vm.animatedText).toBe('');
+    });
+
+    it('should clear animatedText on unmounted even without animation controller', () => {
+      wrapper = createWrapper();
+      wrapper.vm.animatedText = 'test';
+      wrapper.vm.animationAbortController = null;
 
       wrapper.unmount();
 
       expect(wrapper.vm.animatedText).toBe('');
+    });
+
+    it('should handle animation cancellation error gracefully', async () => {
+      wrapper = createWrapper();
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      const promise1 = wrapper.vm.typeWriter('First text', 10);
+
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      const promise2 = wrapper.vm.typeWriter('Second text', 10);
+
+      await promise1;
+      await promise2;
+
+      expect(consoleErrorSpy).not.toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'Animation cancelled' }),
+      );
+
+      consoleErrorSpy.mockRestore();
     });
   });
 
@@ -336,6 +405,206 @@ describe('ChatSummary', () => {
       });
 
       expect(wrapper.vm.animatedText).toBe('New text');
+    });
+
+    it('should not restart animation if already typing the same text', async () => {
+      const typeWriterSpy = vi.spyOn(ChatSummary.methods, 'typeWriter');
+
+      wrapper = createWrapper({
+        summaryText: 'Same text',
+        skipAnimation: false,
+      });
+
+      await wrapper.vm.$nextTick();
+
+      wrapper.vm.isTyping = true;
+      const callCountBefore = typeWriterSpy.mock.calls.length;
+
+      await wrapper.setProps({
+        summaryText: 'Same text',
+      });
+
+      await wrapper.vm.$nextTick();
+
+      expect(typeWriterSpy.mock.calls.length).toBe(callCountBefore);
+    });
+
+    it('should restart animation if text changes while typing', async () => {
+      wrapper = createWrapper({
+        summaryText: 'First text',
+        skipAnimation: false,
+      });
+
+      await wrapper.vm.$nextTick();
+
+      wrapper.vm.isTyping = true;
+      const initialAnimationId = wrapper.vm.currentAnimationId;
+
+      await wrapper.setProps({
+        summaryText: 'Different text',
+      });
+
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.currentAnimationId).toBeGreaterThan(initialAnimationId);
+    });
+  });
+
+  describe('Animation Race Condition (Bug Prevention)', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should prevent text duplication when summaryText updates during animation', async () => {
+      wrapper = createWrapper({
+        summaryText: '',
+        skipAnimation: false,
+      });
+
+      await wrapper.setProps({
+        summaryText: 'First text',
+      });
+      await wrapper.vm.$nextTick();
+
+      await vi.advanceTimersByTimeAsync(50);
+
+      await wrapper.setProps({
+        summaryText: 'Second text',
+      });
+      await wrapper.vm.$nextTick();
+
+      await vi.advanceTimersByTimeAsync(150);
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.animatedText).toBe('Second text');
+      expect(wrapper.vm.animatedText).not.toContain('First');
+      expect(wrapper.vm.isTyping).toBe(false);
+    });
+
+    it('should handle rapid successive text changes without text mixing', async () => {
+      wrapper = createWrapper({
+        summaryText: '',
+        skipAnimation: false,
+      });
+
+      await wrapper.setProps({ summaryText: 'Text1' });
+      await wrapper.vm.$nextTick();
+      await vi.advanceTimersByTimeAsync(10);
+
+      await wrapper.setProps({ summaryText: 'Text2' });
+      await wrapper.vm.$nextTick();
+      await vi.advanceTimersByTimeAsync(10);
+
+      await wrapper.setProps({ summaryText: 'Text3' });
+      await wrapper.vm.$nextTick();
+      await vi.advanceTimersByTimeAsync(10);
+
+      await wrapper.setProps({ summaryText: 'Final' });
+      await wrapper.vm.$nextTick();
+
+      await vi.advanceTimersByTimeAsync(100);
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.animatedText).toBe('Final');
+      expect(wrapper.vm.isTyping).toBe(false);
+    });
+
+    it('should cancel animation when component is unmounted mid-animation', async () => {
+      wrapper = createWrapper({
+        summaryText: 'Very long text that takes time to animate',
+        skipAnimation: false,
+      });
+
+      await wrapper.vm.$nextTick();
+      await vi.advanceTimersByTimeAsync(50);
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.isTyping).toBe(true);
+      expect(wrapper.vm.animatedText.length).toBeGreaterThan(0);
+      expect(wrapper.vm.animatedText.length).toBeLessThan(
+        'Very long text that takes time to animate'.length,
+      );
+
+      wrapper.unmount();
+
+      expect(wrapper.vm.animatedText).toBe('');
+    });
+
+    it('should handle multiple animation starts with proper cleanup', async () => {
+      wrapper = createWrapper({
+        summaryText: '',
+        skipAnimation: false,
+      });
+
+      const text1 = 'Abc';
+      const text2 = 'Def';
+      const text3 = 'Ghi';
+
+      await wrapper.setProps({ summaryText: text1 });
+      await wrapper.vm.$nextTick();
+      await vi.advanceTimersByTimeAsync(20);
+
+      await wrapper.setProps({ summaryText: text2 });
+      await wrapper.vm.$nextTick();
+      await vi.advanceTimersByTimeAsync(20);
+
+      await wrapper.setProps({ summaryText: text3 });
+      await wrapper.vm.$nextTick();
+
+      await vi.advanceTimersByTimeAsync(50);
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.animatedText).toBe(text3);
+      expect(wrapper.vm.animatedText).not.toContain(text1);
+      expect(wrapper.vm.animatedText).not.toContain(text2);
+    });
+
+    it('should prevent animation restart when same text is set while typing', async () => {
+      wrapper = createWrapper({
+        summaryText: 'Long text for animation',
+        skipAnimation: false,
+      });
+
+      await wrapper.vm.$nextTick();
+      await vi.advanceTimersByTimeAsync(50);
+
+      expect(wrapper.vm.isTyping).toBe(true);
+      const animationIdBefore = wrapper.vm.currentAnimationId;
+      const textLengthBefore = wrapper.vm.animatedText.length;
+
+      await wrapper.setProps({ summaryText: 'Long text for animation' });
+      await vi.advanceTimersByTimeAsync(10);
+
+      expect(wrapper.vm.currentAnimationId).toBe(animationIdBefore);
+      expect(wrapper.vm.animatedText.length).toBeGreaterThanOrEqual(
+        textLengthBefore,
+      );
+    });
+
+    it('should properly clean up all timeouts when animation is cancelled', async () => {
+      wrapper = createWrapper({
+        summaryText: '',
+        skipAnimation: false,
+      });
+
+      await wrapper.setProps({
+        summaryText: 'Text with many characters to create multiple timeouts',
+      });
+
+      await vi.advanceTimersByTimeAsync(30);
+
+      expect(wrapper.vm.animationAbortController).toBeTruthy();
+      expect(wrapper.vm.isTyping).toBe(true);
+
+      await wrapper.setProps({ summaryText: 'New text' });
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.animationAbortController).toBeTruthy();
+      expect(wrapper.vm.currentAnimationId).toBeGreaterThan(1);
     });
   });
 });

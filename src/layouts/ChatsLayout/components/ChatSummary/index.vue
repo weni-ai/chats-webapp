@@ -136,6 +136,8 @@ export default {
       showFeedbackModal: false,
       liked: null,
       hasFeedback: false,
+      animationAbortController: null,
+      currentAnimationId: 0,
     };
   },
   computed: {
@@ -153,16 +155,23 @@ export default {
   watch: {
     summaryText: {
       immediate: true,
-      async handler(value) {
-        if (value && !this.skipAnimation) {
-          await this.typeWriter(this.summaryText, 10);
-        } else if (value) {
-          this.animatedText = this.summaryText;
+      async handler(newValue, oldValue) {
+        if (this.isTyping && newValue === oldValue) {
+          return;
+        }
+
+        if (newValue && !this.skipAnimation) {
+          await this.typeWriter(newValue, 10);
+        } else if (newValue) {
+          this.animatedText = newValue;
         }
       },
     },
   },
   unmounted() {
+    if (this.animationAbortController) {
+      this.animationAbortController.abort();
+    }
     this.animatedText = '';
   },
   methods: {
@@ -181,19 +190,49 @@ export default {
       this.showFeedbackModal = true;
     },
     async typeWriter(text, speed) {
+      if (this.animationAbortController) {
+        this.animationAbortController.abort();
+      }
+
+      this.animationAbortController = new AbortController();
+      const animationId = ++this.currentAnimationId;
+
       this.isTyping = true;
       this.animatedText = '';
 
-      for await (const char of text) {
-        await new Promise((resolve) => {
-          setTimeout(() => {
-            this.animatedText += char;
-            resolve();
-          }, speed);
-        });
-      }
+      try {
+        for (const char of text) {
+          if (this.animationAbortController.signal.aborted) {
+            return;
+          }
 
-      this.isTyping = false;
+          if (this.currentAnimationId !== animationId) {
+            return;
+          }
+
+          await new Promise((resolve, reject) => {
+            const timeoutId = setTimeout(() => {
+              this.animatedText += char;
+              resolve();
+            }, speed);
+
+            this.animationAbortController.signal.addEventListener(
+              'abort',
+              () => {
+                clearTimeout(timeoutId);
+                reject(new Error('Animation cancelled'));
+              },
+              { once: true },
+            );
+          });
+        }
+      } catch (error) {
+        if (error.message !== 'Animation cancelled') {
+          console.error(error);
+        }
+      } finally {
+        this.isTyping = false;
+      }
     },
     handleCloseSummary() {
       if (

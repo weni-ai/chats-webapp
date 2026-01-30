@@ -212,7 +212,7 @@
                 :tags="roomTags"
                 selectable
                 disableClick
-                :useCloseClick="!isViewMode && !isHistory && room.user"
+                :useCloseClick="!isViewMode && !isHistory && !!room.user"
                 @close="handleTagClick"
               />
               <ProtocolText :protocol="contactProtocol" />
@@ -524,7 +524,6 @@ export default {
     },
 
     handleTagClick(tag) {
-      console.log('handleTagClick', tag);
       const hasSelectedTag = this.roomTags.some(
         (roomTag) => roomTag.uuid === tag.uuid,
       );
@@ -750,10 +749,11 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: $unnnic-space-4 $unnnic-space-2;
+    padding: $unnnic-space-2;
     font: $unnnic-font-display-3;
     color: $unnnic-color-fg-emphasized;
     border-bottom: 1px solid $unnnic-color-border-soft;
+    height: 55px;
   }
 
   &__about-support {

@@ -116,6 +116,7 @@ import isMobile from 'is-mobile';
 import Unnnic from '@weni/unnnic-system';
 import { mapState, mapWritableState } from 'pinia';
 import { useConfig } from '@/store/modules/config';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 export default {
   name: 'NewSectorDrawer',
@@ -177,6 +178,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapWritableState(useSettings, ['sectors']),
     ...mapState(useConfig, ['enableGroupsMode']),
     showDiscartQuestion() {
@@ -199,6 +201,9 @@ export default {
     },
     activePage() {
       return this.newSectorPages[this.activePageIndex];
+    },
+    enableAutomaticCsatFeature() {
+      return this.featureFlags.active_features?.includes('weniChatsCSAT');
     },
   },
   mounted() {
@@ -223,6 +228,7 @@ export default {
           managers,
           config,
           automatic_message,
+          is_csat_enabled,
         } = this.sector;
 
         const createSectorBody = {
@@ -237,6 +243,9 @@ export default {
             ? config
             : { ...config, secondary_project: undefined },
           automatic_message,
+          is_csat_enabled: this.enableAutomaticCsatFeature
+            ? is_csat_enabled
+            : false,
         };
 
         const createdSector = await Sector.create(createSectorBody);
