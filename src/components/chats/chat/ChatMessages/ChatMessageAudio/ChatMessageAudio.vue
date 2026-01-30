@@ -60,13 +60,7 @@
           </template>
         </section>
         <section
-          v-if="
-            !isLoadingTranscription &&
-            !hasTranscriptionError &&
-            !isClosedChat &&
-            showTranscriptionText &&
-            transcriptionText
-          "
+          v-if="enableTranscriptionFeedback"
           class="audio-player__transcription-feedback"
         >
           <p class="audio-player__transcription-feedback__text">
@@ -119,6 +113,7 @@ import { ref, useTemplateRef, computed, watch } from 'vue';
 import { UnnnicCallAlert } from '@weni/unnnic-system';
 
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useDashboard } from '@/store/modules/dashboard';
 
 import TranscriptionFeedbackModal from './FeedbackModal.vue';
 
@@ -146,12 +141,27 @@ const emit = defineEmits(['failed-click']);
 
 const audioRecorderRef = useTemplateRef('audio-recorder');
 
+const dashboardStore = useDashboard();
+
 const messageMedia = computed(() => {
   return props.message.media[0];
 });
 
 const isLoadingTranscription = ref(false);
 const showTranscriptionText = ref(false);
+const isViewMode = computed(() => {
+  return !!dashboardStore.viewedAgent?.email;
+});
+const enableTranscriptionFeedback = computed(() => {
+  return (
+    !isLoadingTranscription.value &&
+    !hasTranscriptionError.value &&
+    !props.isClosedChat &&
+    showTranscriptionText.value &&
+    transcriptionText.value.length > 0 &&
+    !isViewMode.value
+  );
+});
 
 const generateTranscription = async () => {
   isLoadingTranscription.value = true;
