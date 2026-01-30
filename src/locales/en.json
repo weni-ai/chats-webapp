@@ -350,6 +350,14 @@
       "unavailable": "No summary available",
       "open_summary_tooltip": "Click to see Summary",
       "close_summary_tooltip": "Click to hide Summary",
+      "archived": {
+        "download_button": "Download messages",
+        "download_error": "Error downloading messages. Please try again.",
+        "disclaimer": {
+          "title": "Archived messages",
+          "description": "This support request was closed over a year ago, so the messages have been moved to the archives. To view them, click the “Download messages” button."
+        }
+      },
       "feedback": {
         "title": "What went wrong?",
         "needs_improvement_text": "Help us improve summaries. Your feedback on this summary helps us make it clearer and more useful.",

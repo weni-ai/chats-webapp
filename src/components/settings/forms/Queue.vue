@@ -90,12 +90,12 @@
 
       <UnnnicDisclaimer
         v-if="enableGroupsMode"
-        :text="
+        :description="
           isEditing
             ? $t('config_chats.queues.message.config_agents_group')
             : $t('config_chats.queues.message.add_new_queue')
         "
-        :iconColor="isEditing ? 'feedback-blue' : 'feedback-yellow'"
+        :type="isEditing ? 'informational' : 'attention'"
       />
 
       <AgentsForm

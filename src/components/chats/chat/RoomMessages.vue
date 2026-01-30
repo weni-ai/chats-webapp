@@ -11,6 +11,8 @@
     :summaryText="activeRoomSummary.summary"
     :feedback="activeRoomSummary.feedback"
     :skipAnimation="skipSummaryAnimation"
+    :isArchived="room?.is_archived || false"
+    :archivedUrl="room?.archived_url || ''"
     @close="openChatSummary = false"
   />
   <ChatMessages

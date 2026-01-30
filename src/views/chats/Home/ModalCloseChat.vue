@@ -20,8 +20,8 @@
       <UnnnicDisclaimer
         v-if="isInvalidRequiredTags && !isLoadingTags"
         class="modal-close-chat__disclaimer"
-        iconColor="feedback-yellow"
-        :text="$t('chats.to_end_required_tags')"
+        type="attention"
+        :description="$t('chats.to_end_required_tags')"
       />
       <UnnnicInput
         v-model="tagsFilter"

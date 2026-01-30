@@ -198,16 +198,16 @@
             <UnnnicDisclaimer
               v-if="isEditing"
               class="link-project-disclaimer"
-              :text="$t('sector.link.editing_disclaimer')"
-              iconColor="feedback-yellow"
+              :description="$t('sector.link.editing_disclaimer')"
+              type="attention"
             />
             <UnnnicDisclaimer
               v-else-if="
                 selectedProject.length && selectedProjectHasSectorIntegration
               "
               class="link-project-disclaimer"
-              :text="$t('sector.link.has_linked_project')"
-              iconColor="feedback-yellow"
+              :description="$t('sector.link.has_linked_project')"
+              type="attention"
             />
           </section>
 
