@@ -488,7 +488,9 @@ describe('ChatSummary', () => {
     });
 
     it('should call handleDownload when download button is clicked', async () => {
-      const windowOpenSpy = vi.spyOn(window, 'open').mockImplementation(() => {});
+      const windowOpenSpy = vi
+        .spyOn(window, 'open')
+        .mockImplementation(() => {});
       const archivedUrl = 'https://example.com/archive.zip';
 
       wrapper = createWrapper({
@@ -499,7 +501,9 @@ describe('ChatSummary', () => {
       const archivedSection = wrapper.find(
         '[data-testid="chat-summary-archived"]',
       );
-      const downloadButton = archivedSection.findComponent({ name: 'UnnnicButton' });
+      const downloadButton = archivedSection.findComponent({
+        name: 'UnnnicButton',
+      });
 
       await downloadButton.vm.$emit('click');
 
@@ -509,7 +513,9 @@ describe('ChatSummary', () => {
     });
 
     it('should open archived URL in new tab when handleDownload is called', () => {
-      const windowOpenSpy = vi.spyOn(window, 'open').mockImplementation(() => {});
+      const windowOpenSpy = vi
+        .spyOn(window, 'open')
+        .mockImplementation(() => {});
       const archivedUrl = 'https://example.com/archive.zip';
 
       wrapper = createWrapper({
@@ -525,7 +531,9 @@ describe('ChatSummary', () => {
     });
 
     it('should not open URL when archivedUrl is empty in handleDownload', () => {
-      const windowOpenSpy = vi.spyOn(window, 'open').mockImplementation(() => {});
+      const windowOpenSpy = vi
+        .spyOn(window, 'open')
+        .mockImplementation(() => {});
 
       wrapper = createWrapper({
         isArchived: true,
