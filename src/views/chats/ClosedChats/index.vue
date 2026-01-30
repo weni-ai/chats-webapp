@@ -33,6 +33,9 @@
       v-show="roomId && isLoadingSelectedRoom"
       data-testid="chat-header-loading"
     />
+    <WarningArchivedMessages
+      v-if="selectedRoom?.is_archived && selectedRoom?.archived_url"
+    />
     <section
       v-if="roomId"
       class="closed-chats__room"
@@ -118,6 +121,7 @@ import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 import ClosedChatsRoomsTable from './RoomsTable.vue';
 import ContactHeader from '@/components/chats/ContactHeader.vue';
 import SearchMessages from '@/components/chats/SearchMessages/index.vue';
+import WarningArchivedMessages from '@/components/WarningArchivedMessages.vue';
 
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 
@@ -132,6 +136,7 @@ export default {
     RoomMessages,
     ContactHeader,
     SearchMessages,
+    WarningArchivedMessages,
   },
 
   props: {
