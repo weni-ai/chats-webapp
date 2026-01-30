@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { describe, expect, it, vi, beforeEach, beforeAll } from 'vitest';
 import { mount, config } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 import ViewMode from '@/views/Dashboard/ViewMode/index.vue';
