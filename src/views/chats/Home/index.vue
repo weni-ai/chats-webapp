@@ -73,7 +73,6 @@ import SearchMessages from '@/components/chats/SearchMessages/index.vue';
 import HomeChat from './HomeChat.vue';
 
 import { moduleStorage } from '@/utils/storage';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 export default {
@@ -116,7 +115,6 @@ export default {
   },
 
   computed: {
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useFeedback, {
       isRenderFeedbackModal: (store) => store.isRenderFeedbackModal,
     }),
