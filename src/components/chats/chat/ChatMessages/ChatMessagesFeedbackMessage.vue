@@ -56,18 +56,25 @@ export default {
         return t('chats.feedback.see_all_internal_notes');
       }
 
+      function handleUserName(data) {
+        if (data.type === 'user') {
+          return data.name || data.email;
+        }
+        return data.name;
+      }
+
       function getPickLabel(action, from, to) {
         if (action === 'pick') {
           if (from?.type === 'user') {
             return t('chats.feedback.pick_of_agent', {
-              manager: to.name,
-              agent: from.name,
+              manager: handleUserName(to),
+              agent: handleUserName(from),
             });
           }
           if (from?.type === 'queue') {
             return t('chats.feedback.pick_of_queue', {
-              agent: to.name,
-              queue: from.name,
+              agent: handleUserName(to),
+              queue: handleUserName(from),
             });
           }
         }
@@ -78,26 +85,26 @@ export default {
         if (action === 'transfer') {
           if (from?.type === 'user' && to?.type === 'queue') {
             return t('chats.feedback.transfer_to_queue', {
-              agent: from.name,
-              queue: to.name,
+              agent: handleUserName(from),
+              queue: handleUserName(to),
             });
           }
           if (from?.type === 'queue' && to?.type === 'queue') {
             return t('chats.feedback.transfer_from_queue_to_queue', {
-              queue1: from.name,
-              queue2: to.name,
+              queue1: handleUserName(from),
+              queue2: handleUserName(to),
             });
           }
           if (from?.type === 'queue' && to?.type === 'user') {
             return t('chats.feedback.transfer_from_queue_to_agent', {
-              queue: from.name,
-              agent: to.name,
+              queue: handleUserName(from),
+              agent: handleUserName(to),
             });
           }
           if (from?.type === 'user' && to?.type === 'user') {
             return t('chats.feedback.transfer_to_agent', {
-              agent1: from.name,
-              agent2: to.name,
+              agent1: handleUserName(from),
+              agent2: handleUserName(to),
             });
           }
         }
@@ -108,12 +115,12 @@ export default {
         if (action === 'forward') {
           if (to?.type === 'user') {
             return t('chats.feedback.forwarded_to_agent', {
-              agent: to.name,
+              agent: handleUserName(to),
             });
           }
           if (to?.type === 'queue') {
             return t('chats.feedback.forwarded_to_queue', {
-              queue: to.name,
+              queue: handleUserName(to),
             });
           }
         }
@@ -123,7 +130,7 @@ export default {
       const getAutoAssignFromQueueLabel = (action, from, to) => {
         if (action === 'auto_assign_from_queue') {
           return t('chats.feedback.automatic_transfer_from_queue', {
-            agent: to.name,
+            agent: handleUserName(to),
           });
         }
 

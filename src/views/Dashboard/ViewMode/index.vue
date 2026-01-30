@@ -153,21 +153,12 @@
 
     <template #aside>
       <ContactInfo
-        v-if="
-          featureFlags.active_features?.includes('weniChatsContactInfoV2') &&
-          isContactInfoOpened
-        "
+        v-if="isContactInfoOpened && room"
         :key="room.uuid"
         class="contact-info"
         isViewMode
         data-testid="contact-info"
         @close="isContactInfoOpened = false"
-      />
-      <OldContactInfo
-        v-else-if="isContactInfoOpened"
-        class="contact-info"
-        isViewMode
-        @close="handleModal('ContactInfo', 'close')"
       />
     </template>
 
@@ -198,7 +189,6 @@ import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
 import DiscussionMessages from '@/components/chats/chat/DiscussionMessages.vue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
 import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion.vue';
-import OldContactInfo from '@/components/chats/ContactInfo/oldContactInfo.vue';
 import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
 import ViewModeHeader from './components/ViewModeHeader.vue';
 import ContactHeader from '@/components/chats/ContactHeader.vue';
@@ -218,7 +208,7 @@ export default {
     ViewModeHeader,
     ModalGetChat,
     ButtonJoinDiscussion,
-    OldContactInfo,
+
     ModalTransferRooms,
     ContactHeader,
   },
