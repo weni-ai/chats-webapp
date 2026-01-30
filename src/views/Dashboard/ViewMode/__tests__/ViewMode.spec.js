@@ -1,10 +1,17 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { mount, config } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 import ViewMode from '@/views/Dashboard/ViewMode/index.vue';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import * as roomUtils from '@/utils/room';
+import i18n from '@/plugins/i18n';
+
+beforeAll(() => {
+  config.global.plugins = config.global.plugins.filter(
+    (plugin) => plugin !== i18n,
+  );
+});
 
 vi.mock('@/utils/room', () => ({
   parseUrn: vi.fn(),
