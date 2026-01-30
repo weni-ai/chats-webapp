@@ -4,7 +4,10 @@
     :close="() => emit('close')"
   >
     <template #header>
-      <header class="search-messages__header">
+      <header
+        class="search-messages__header"
+        data-testid="search-messages-header"
+      >
         <p>{{ $t('chats.search_messages.title') }}</p>
         <UnnnicButton
           iconCenter="close"
@@ -25,6 +28,7 @@
         <section
           v-if="searchTerm"
           class="search-messages__results-label-container"
+          data-testid="search-messages-results-label"
         >
           <UnnnicIcon
             icon="search"

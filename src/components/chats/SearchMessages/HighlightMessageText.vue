@@ -2,6 +2,7 @@
   <!-- eslint-disable vue/no-v-html -->
   <p
     class="highlight-message-text"
+    data-testid="highlight-message-text"
     :title="text"
     v-html="highlightedText"
   />
@@ -78,7 +79,7 @@ const highlightedText = computed(() => {
 
     const originalMatch = originalText.substring(match.start, match.end);
     const escapedMatch = escapeHtml(originalMatch);
-    highlighted += `<span class="highlight">${escapedMatch}</span>`;
+    highlighted += `<span class="highlight" data-testid="highlight">${escapedMatch}</span>`;
 
     lastIndex = match.end;
   }
