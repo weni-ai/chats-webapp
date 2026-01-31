@@ -1,4 +1,30 @@
 {
+  "onboarding": {
+    "title": "Suporte Humano",
+    "steps": {
+      "step_1": {
+        "content_1": "Bem-vindo à Weni! Descubra agora o módulo de Suporte Humano para aprender como aproveitar todo o seu potencial.",
+        "content_2": "Para começar, tenha em mente que o sistema atribui os chats automaticamente. Isso significa que cada nova conversa é direcionada a um agente disponível. No entanto, se necessário, você também pode assumir manualmente um chat da fila. Veja como funciona:"
+      },
+      "step_2": {
+        "content_1": "<b>Histórico geral:</b> acesse todas as sessões de atendimento finalizadas em Opções de visualização > Histórico de chats.",
+        "content_2": "<b>Histórico do contato:</b> visualize conversas anteriores com um contato específico (se houver) no botão Histórico dentro do chat de atendimento."
+      },
+      "step_3": {
+        "content_1": "<b>Mensagens rápidas:</b> crie modelos de respostas prontas para agilizar o atendimento ao cliente. Digite o atalho “/” no campo de texto do chat ou clique em + (Mais) > Mensagens rápidas.",
+        "content_2": "<b>Nota interna:</b> adicione observações e contexto sobre o atendimento, visíveis apenas para sua equipe. Clique em + (Mais) > Nota interna."
+      },
+      "step_4": {
+        "content_1": "<b>Discussão:</b> solicite a colaboração do seu time para discutir o atendimento e encontrar a melhor solução. Vá até a seção Todas as informações > Sobre o atendimento > Iniciar discussão.",
+        "content_2": "<b>Classificar o atendimento (tags):</b> adicione tags para organizar e filtrar o atendimento enquanto ele estiver em andamento. Vá até a seção Todas as informações > Sobre o atendimento > + (Mais) Tag."
+      },
+      "step_5": {
+        "content_1": "<b>Transferir contato:</b> se você precisar passar o atendimento para um colega do time, é possível transferir o contato a qualquer momento. Para isso, clique no botão Transferir contato no menu superior da conversa.",
+        "content_2": "<b>Encerrar chat:</b> para finalizar, clique no botão Encerrar chat. Você também pode aproveitar esse momento para avaliar o atendimento."
+      }
+    },
+    "ended_text": "O tour inicial do módulo de Chats foi finalizado! 🎉 Para mais informações, visite nosso <a class='link' href='https://help.vtex.com/pt/docs/tutorials/weni-by-vtex-categoria' target='_blank'><b>Central de Ajuda</b></a>."
+  },
   "home": {
     "title": "Olá!",
     "description": "Selecione um chat para realizar seus atendimentos!"
@@ -984,32 +1010,6 @@
         "success": "Nota interna deletada com sucesso",
         "error": "Falha ao deletar a nota interna"
       }
-    }
-  },
-  "new_feature_internal_note": {
-    "title": "Nova funcionalidade: Notas internas",
-    "description": "Temos uma nova funcionalidade disponível para você testar. Deseja testar agora?",
-    "steps": {
-      "title": "Como funciona?",
-      "step_1": "<b>Adicionar uma nota:</b> clique no [+] ao lado do campo de texto (quando estiver vazio) e selecione 'Nota interna'.",
-      "step_2": "<b>Escreva e envie:</b> com o campo de nota interna ativo, escreva sua anotação. Quando você clicar em Enviar, a nota aparecerá no timeline com destaque e data.",
-      "step_3": "<b>Onde encontrar:</b> as notas serão visíveis no histórico de conversa e informações do contato, dentro da nova aba 'Nota'. Não se preocupe, elas nunca são enviadas para o cliente!",
-      "step_4": "<b>Deletar notas:</b> você pode deletar suas notas enquanto o suporte ainda está atribuído a você.",
-      "step_5": "<b>Transferência de room:</b> se outro agente assumir o room, eles serão informados sobre a existência de notas internas."
-    }
-  },
-  "new_contact_info_visual": {
-    "content_1": {
-      "text_1": "Fizemos alguns ajustes para ajudar você a navegar mais rápido! Confira:",
-      "text_2": "As opções <b>Ver histórico</b> foram movidas do drawer lateral para o menu superior da conversa."
-    },
-    "content_2": {
-      "text_1": "As opções <b>Transferir contato</b> foram movidas do drawer lateral para o menu superior da conversa."
-    },
-    "content_3": {
-      "text_1": "Para tornar o drawer de informações mais organizado e fácil de usar, fizemos algumas melhorias. A informação agora está dividida em <b>Sobre o contato</b> e <b>Sobre o serviço</b>.",
-      "text_2": "Além disso, os <b>campos personalizados</b> agora podem ser expandidos e recolhidos, para que você possa ver o que realmente importa sem ter que rolar.",
-      "text_3": "E para tornar a interface mais limpa, mudamos o visual do botão <b>Iniciar discussão</b>."
     }
   }
 }
