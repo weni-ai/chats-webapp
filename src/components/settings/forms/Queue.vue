@@ -118,6 +118,7 @@ import Project from '@/services/api/resources/settings/project';
 import { mapState } from 'pinia';
 import { useProfile } from '@/store/modules/profile';
 import { useConfig } from '@/store/modules/config';
+import { cloneDeep, isEqual } from 'lodash';
 
 export default {
   name: 'FormQueue',
@@ -146,6 +147,8 @@ export default {
       toAddAgentsUuids: [],
       toRemoveAgentsUuids: [],
       agentsLimitPerPage: 50,
+
+      initialState: null,
     };
   },
 
@@ -163,18 +166,32 @@ export default {
         this.$emit('update:modelValue', value);
       },
     },
+    isInitialFormState() {
+      const { initialState } = this;
+
+      if (!initialState) return true;
+
+      return isEqual(
+        {
+          automaticMessage: this.queue.default_message,
+          currentAgents: this.queue.currentAgents,
+        },
+        initialState,
+      );
+    },
+    validForm() {
+      const valid = this.enableGroupsMode
+        ? !!this.queue.name?.trim()
+        : !!this.queue.name?.trim() && !!this.queue.currentAgents?.length;
+
+      return valid && !this.isInitialFormState;
+    },
   },
 
   watch: {
-    queue: {
-      deep: true,
-      immediate: true,
-      handler(value) {
-        const valid = this.enableGroupsMode
-          ? !!value.name?.trim()
-          : !!value.name?.trim() && !!value.currentAgents?.length;
-
-        this.$emit('changeIsValid', valid);
+    validForm: {
+      handler() {
+        this.$emit('changeIsValid', this.validForm);
       },
     },
   },
@@ -199,6 +216,11 @@ export default {
     if (!this.enableGroupsMode) this.listProjectAgents();
 
     this.loadingInfo = false;
+
+    this.initialState = cloneDeep({
+      automaticMessage: this.queue.default_message,
+      currentAgents: this.queue.currentAgents,
+    });
   },
   methods: {
     updateDefaultSectorQueueValue(activate) {

@@ -138,7 +138,7 @@
       "
       size="lg"
       :primaryButtonText="$t('save')"
-      :disabledPrimaryButton="!validQuickMessage"
+      :disabledPrimaryButton="!validForm"
       :loadingPrimaryButton="isLoadingQuickMessage"
       :secondaryButtonText="$t('cancel')"
       :disabledSecondaryButton="isLoadingQuickMessage"
@@ -155,6 +155,7 @@
         <MessageForm
           v-model="quickMessageToEdit"
           data-testid="quick-message-form"
+          @change-is-valid="validForm = $event"
         />
       </template>
     </UnnnicDrawer>
@@ -189,6 +190,7 @@ export default {
       quickMessageToEdit: { title: '', text: '', shortcut: '' },
       showQuickMessageDrawer: false,
       isLoadingQuickMessage: false,
+      validForm: false,
     };
   },
   computed: {
@@ -202,10 +204,6 @@ export default {
       return this.quickMessagesShared.filter(
         (message) => message.sector === this.sector.uuid,
       );
-    },
-    validQuickMessage() {
-      const { shortcut, text } = this.quickMessageToEdit;
-      return !!(shortcut && text);
     },
   },
   mounted() {

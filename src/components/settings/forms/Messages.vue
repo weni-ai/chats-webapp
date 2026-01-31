@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { cloneDeep, isEqual } from 'lodash';
 export default {
   name: 'MessagesForm',
   props: {
@@ -33,13 +34,25 @@ export default {
       required: true,
     },
   },
-  emits: ['update:model-value'],
+  emits: ['update:model-value', 'changeIsValid'],
   data() {
     return {
       shortcutFocused: false,
+      initialState: null,
     };
   },
   computed: {
+    isInitialFormState() {
+      const { initialState } = this;
+
+      if (!initialState) return true;
+
+      return isEqual(cloneDeep(this.modelValue), initialState);
+    },
+    validForm() {
+      const valid = !!(this.modelValue.shortcut && this.modelValue.text);
+      return valid && !this.isInitialFormState;
+    },
     displayShortcut() {
       if (!this.modelValue.shortcut && !this.shortcutFocused) return '';
       if (!this.modelValue.shortcut && this.shortcutFocused) return '/';
@@ -47,6 +60,17 @@ export default {
       const shortcut = this.modelValue.shortcut || '';
       return shortcut.startsWith('/') ? shortcut : '/' + shortcut;
     },
+  },
+  watch: {
+    validForm: {
+      immediate: true,
+      handler() {
+        this.$emit('changeIsValid', this.validForm);
+      },
+    },
+  },
+  mounted() {
+    this.initialState = cloneDeep(this.modelValue);
   },
   methods: {
     handleShortcutInput(val) {
