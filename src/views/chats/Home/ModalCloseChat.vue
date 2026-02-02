@@ -93,7 +93,7 @@ export default {
       return isMobile();
     },
     isInvalidRequiredTags() {
-      return this.room.queue?.required_tags && this.tags.length === 0;
+      return this.room?.queue?.required_tags && this.tags.length === 0;
     },
     filteredTags() {
       return this.sectorTags.filter((tag) =>
@@ -146,21 +146,22 @@ export default {
       this.isLoadingCloseRoom = true;
       const { uuid } = this.room;
 
-      if (this.toRemoveTags.length > 0) {
-        const requests = this.toRemoveTags.map((tag) =>
-          Room.removeRoomTag(uuid, tag),
-        );
-        await Promise.all(requests);
-      }
+      // if (this.toRemoveTags.length > 0) {
+      //   const requests = this.toRemoveTags.map((tag) =>
+      //     Room.removeRoomTag(uuid, tag),
+      //   );
+      //   await Promise.all(requests);
+      // }
 
-      if (this.toAddTags.length > 0) {
-        const requests = this.toAddTags.map((tag) =>
-          Room.addRoomTag(uuid, tag),
-        );
-        await Promise.all(requests);
-      }
+      // if (this.toAddTags.length > 0) {
+      //   const requests = this.toAddTags.map((tag) =>
+      //     Room.addRoomTag(uuid, tag),
+      //   );
+      //   await Promise.all(requests);
+      // }
 
-      await Room.close(uuid);
+      const tagsUuids = this.tags.map((tag) => tag.uuid);
+      await Room.close(uuid, tagsUuids);
 
       this.removeRoom(uuid);
 
