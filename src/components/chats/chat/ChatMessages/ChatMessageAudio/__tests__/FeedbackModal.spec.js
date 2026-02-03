@@ -27,6 +27,13 @@ afterAll(() => {
   vi.restoreAllMocks();
 });
 
+vi.mock('vue-i18n', () => ({
+  useI18n: vi.fn(() => ({
+    t: vi.fn((key) => key),
+    locale: vi.fn(() => 'en'),
+  })),
+}));
+
 vi.mock('@/services/api/resources/chats/audioTranscription', () => ({
   default: {
     getAudioTranscriptionFeedbackTags: vi.fn(),
