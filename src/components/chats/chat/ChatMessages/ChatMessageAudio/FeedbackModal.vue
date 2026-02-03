@@ -85,9 +85,12 @@ onMounted(() => {
   getFeedbackCategory();
 });
 
-watch(i18n.global.locale, () => {
-  getFeedbackCategory();
-});
+watch(
+  () => i18n.global.locale,
+  () => {
+    getFeedbackCategory();
+  },
+);
 
 const getFeedbackCategory = async () => {
   try {
