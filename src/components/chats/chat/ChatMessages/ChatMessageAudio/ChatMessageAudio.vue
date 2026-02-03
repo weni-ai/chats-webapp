@@ -290,13 +290,6 @@ const handleCloseFeedbackModal = ({ reset } = {}) => {
 </script>
 
 <style lang="scss" scoped>
-:deep(.unnnic-tooltip-trigger) {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-}
 .audio-player {
   padding: $unnnic-spacing-xs;
   margin: $unnnic-spacing-nano 0;
