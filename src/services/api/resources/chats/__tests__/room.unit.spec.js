@@ -134,7 +134,9 @@ describe('Room service', () => {
 
       const result = await roomService.close(uuid);
 
-      expect(http.put).toHaveBeenCalledWith(`/room/${uuid}/close/`);
+      expect(http.put).toHaveBeenCalledWith(`/room/${uuid}/close/`, {
+        tags: [],
+      });
       expect(result).toEqual(mockResponse.data);
     });
   });
@@ -723,7 +725,9 @@ describe('Room service', () => {
 
       const result = await roomService.close(undefined);
 
-      expect(http.put).toHaveBeenCalledWith('/room/undefined/close/');
+      expect(http.put).toHaveBeenCalledWith('/room/undefined/close/', {
+        tags: [],
+      });
       expect(result).toEqual(mockResponse.data);
     });
   });
