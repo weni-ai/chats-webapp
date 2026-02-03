@@ -70,7 +70,7 @@ const senderName = computed(() => {
     .filter(Boolean)
     .join(' ')
     .trim();
-  return agentFullName || props.message.user.email;
+  return agentFullName || props.message.user?.email;
 });
 
 const formattedTime = computed(() => {
