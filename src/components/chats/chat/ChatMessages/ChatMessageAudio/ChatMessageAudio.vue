@@ -31,9 +31,18 @@
               scheme="blue-500"
               size="sm"
             />
-            <p class="audio-player__transcription-info__text">
+            <p
+              v-if="isClosedChat"
+              class="audio-player__transcription-info__text"
+            >
+              {{ $t('chats.transcription.unavailable_closed_chat') }}
+            </p>
+            <p
+              v-else
+              class="audio-player__transcription-info__text"
+            >
               {{
-                $t('chats.transcription.unavailable', {
+                $t('chats.transcription.unavailable_exceeding_duration', {
                   duration: MAX_AUDIO_DURATION_SECONDS / 60,
                 })
               }}
@@ -51,12 +60,7 @@
           </template>
         </section>
         <section
-          v-if="
-            !isLoadingTranscription &&
-            !hasTranscriptionError &&
-            showTranscriptionText &&
-            transcriptionText
-          "
+          v-if="enableTranscriptionFeedback"
           class="audio-player__transcription-feedback"
         >
           <p class="audio-player__transcription-feedback__text">
@@ -109,11 +113,11 @@ import { ref, useTemplateRef, computed, watch } from 'vue';
 import { UnnnicCallAlert } from '@weni/unnnic-system';
 
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useDashboard } from '@/store/modules/dashboard';
 
 import TranscriptionFeedbackModal from './FeedbackModal.vue';
 
 import audioTranscriptionService from '@/services/api/resources/chats/audioTranscription';
-import updateMedia from '@/services/api/websocket/listeners/media/transcribe/update';
 
 import i18n from '@/plugins/i18n';
 
@@ -128,10 +132,16 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  isClosedChat: {
+    type: Boolean,
+    default: false,
+  },
 });
 const emit = defineEmits(['failed-click']);
 
 const audioRecorderRef = useTemplateRef('audio-recorder');
+
+const dashboardStore = useDashboard();
 
 const messageMedia = computed(() => {
   return props.message.media[0];
@@ -139,47 +149,19 @@ const messageMedia = computed(() => {
 
 const isLoadingTranscription = ref(false);
 const showTranscriptionText = ref(false);
-
-const generateTranscriptionMock = async () => {
-  isLoadingTranscription.value = true;
-  // TODO: Remove! only for testing
-  const success = !!Math.floor(Math.random() * 2); // 0 or 1
-  setTimeout(async () => {
-    try {
-      if (success) {
-        if (transcriptionText.value) {
-          isLoadingTranscription.value = false;
-          return;
-        }
-        updateMedia({
-          message_uuid: props.message.uuid,
-          status: 'DONE',
-          text: 'Lorem ipsum purus in mollis nunc sed id semper. Suspendisse faucibus interdum posuere lorem ipsum. Dictum non consectetur a erat. Risus nullam eget felis eget nunc lobortis mattis aliquam faucibus. Sed adipiscing diam donec adipiscing tristique risus nec feugiat. Faucibus et molestie ac feugiat sed lectus vestibulum mattis. In nibh mauris cursus mattis molestie a iaculis at erat. Velit aliquet sagittis id consectetur purus ut faucibus. Lorem dolor sed viverra ipsum. Facilisis gravida neque convallis a cras. Adipiscing vitae proin sagittis nisl rhoncus. Odio eu feugiat pretium nibh ipsum. Sit amet nulla facilisi morbi. Viverra mauris in aliquam sem. Vitae justo eget magna fermentum. Ultrices dui sapien eget mi proin sed libero. Convallis a cras semper auctor neque vitae tempus quam. Netus et malesuada fames ac turpis egestas. Morbi enim nunc faucibus a pellentesque sit amet porttitor. Suspendisse potenti nullam ac tortor vitae. Blandit volutpat maecenas volutpat blandit.',
-        });
-      } else
-        await audioTranscriptionService.generateAudioTranscription(
-          props.message.uuid,
-        );
-    } catch (error) {
-      console.error('Error generating transcription', error);
-      isLoadingTranscription.value = false;
-      showTranscriptionText.value = false;
-      const roomMessagesStore = useRoomMessages();
-      roomMessagesStore.updateMessage({
-        reorderMessageMinute: true,
-        message: {
-          ...props.message,
-          media: [
-            {
-              ...props.message.media[0],
-              transcription: { status: 'FAILED', text: '' },
-            },
-          ],
-        },
-      });
-    }
-  }, 3000);
-};
+const isViewMode = computed(() => {
+  return !!dashboardStore.viewedAgent?.email;
+});
+const enableTranscriptionFeedback = computed(() => {
+  return (
+    !isLoadingTranscription.value &&
+    !hasTranscriptionError.value &&
+    !props.isClosedChat &&
+    showTranscriptionText.value &&
+    transcriptionText.value.length > 0 &&
+    !isViewMode.value
+  );
+});
 
 const generateTranscription = async () => {
   isLoadingTranscription.value = true;
@@ -215,8 +197,7 @@ const generateTranscription = async () => {
 
 watch(showTranscriptionText, () => {
   if (showTranscriptionText.value) {
-    // TODO: replace to generateTranscription after testing
-    generateTranscriptionMock();
+    generateTranscription();
   } else {
     isLoadingTranscription.value = false;
   }
@@ -228,6 +209,9 @@ const canShowTranscriptionAudioAction = computed(() => {
 });
 
 const canGenerateTranscriptionAudio = computed(() => {
+  if (props.isClosedChat) {
+    return transcriptionText.value.length > 0;
+  }
   if (audioRecorderRef.value) {
     return audioRecorderRef.value.duration < MAX_AUDIO_DURATION_SECONDS;
   }
@@ -270,11 +254,10 @@ const handleLike = async (liked) => {
 
   try {
     if (liked) {
-      // TODO: enable
-      // await audioTranscriptionService.sendAudioTranscriptionFeedback(
-      //   props.message.uuid,
-      //   { liked },
-      // );
+      await audioTranscriptionService.sendAudioTranscriptionFeedback(
+        props.message.uuid,
+        { liked },
+      );
       UnnnicCallAlert({
         props: {
           text: i18n.global.t('chats.transcription.feedback.sended'),
@@ -307,13 +290,6 @@ const handleCloseFeedbackModal = ({ reset } = {}) => {
 </script>
 
 <style lang="scss" scoped>
-:deep(.unnnic-tooltip-trigger) {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-}
 .audio-player {
   padding: $unnnic-spacing-xs;
   margin: $unnnic-spacing-nano 0;

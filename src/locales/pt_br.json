@@ -325,7 +325,8 @@
       "automated_support": "Suporte Automatizado"
     },
     "transcription": {
-      "unavailable": "Transcrição não disponível para áudio maiores que {duration} minutos.",
+      "unavailable_closed_chat": "Não é possível ver transcrições que não foram habilitadas durante o suporte.",
+      "unavailable_exceeding_duration": "Transcrição indisponível para áudios com mais de {duration} minutos.",
       "error": "Não foi possível carregar a transcrição. Por favor, tente novamente!",
       "feedback": {
         "question": "A transcrição foi útil?",

@@ -92,7 +92,7 @@ watch(i18n.global.locale, () => {
 const getFeedbackCategory = async () => {
   try {
     isLoadingCategories.value = true;
-    const results =
+    const { results } =
       await audioTranscriptionService.getAudioTranscriptionFeedbackTags();
     feedbackCategories.value = Object.entries(results).map(([key, value]) => ({
       name: value,
