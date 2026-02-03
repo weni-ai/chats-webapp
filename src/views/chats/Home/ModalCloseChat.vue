@@ -146,20 +146,6 @@ export default {
       this.isLoadingCloseRoom = true;
       const { uuid } = this.room;
 
-      // if (this.toRemoveTags.length > 0) {
-      //   const requests = this.toRemoveTags.map((tag) =>
-      //     Room.removeRoomTag(uuid, tag),
-      //   );
-      //   await Promise.all(requests);
-      // }
-
-      // if (this.toAddTags.length > 0) {
-      //   const requests = this.toAddTags.map((tag) =>
-      //     Room.addRoomTag(uuid, tag),
-      //   );
-      //   await Promise.all(requests);
-      // }
-
       const tagsUuids = this.tags.map((tag) => tag.uuid);
       await Room.close(uuid, tagsUuids);
 
