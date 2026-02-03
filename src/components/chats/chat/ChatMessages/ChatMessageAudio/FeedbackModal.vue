@@ -53,9 +53,7 @@ import TagGroup from '@/components/TagGroup.vue';
 
 import audioTranscriptionService from '@/services/api/resources/chats/audioTranscription';
 
-import { useI18n } from 'vue-i18n';
-
-const { locale, t } = useI18n();
+import i18n from '@/plugins/i18n';
 
 defineOptions({
   name: 'TranscriptionFeedbackModal',
@@ -87,7 +85,7 @@ onMounted(() => {
   getFeedbackCategory();
 });
 
-watch(locale.value, () => {
+watch(i18n.global.locale, () => {
   getFeedbackCategory();
 });
 
@@ -123,7 +121,7 @@ const handleSubmit = async () => {
     );
     UnnnicCallAlert({
       props: {
-        text: t('chats.transcription.feedback.sended'),
+        text: i18n.global.t('chats.transcription.feedback.sended'),
         type: 'success',
       },
       seconds: 5,
@@ -133,7 +131,7 @@ const handleSubmit = async () => {
     console.error('Error sending transcription feedback', error);
     UnnnicCallAlert({
       props: {
-        text: t('chats.transcription.feedback.error'),
+        text: i18n.global.t('chats.transcription.feedback.error'),
         type: 'error',
       },
       seconds: 5,

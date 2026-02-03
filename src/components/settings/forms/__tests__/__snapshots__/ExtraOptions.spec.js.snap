@@ -7,7 +7,7 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
     <unnnic-switch-stub data-v-85728205="" size="small" label="" labeltooltip="" labelusehtmltooltip="false" option="" helper="" textleft="" textright="Triggering message templates disabled" disabled="false" modelvalue="false" usevmodel="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     <section data-v-85728205="" class="switchs__container">
       <unnnic-switch-stub data-v-85728205="" size="small" label="" labeltooltip="" labelusehtmltooltip="false" option="" helper="" textleft="" textright="Disabled signature" disabled="false" modelvalue="false" usevmodel="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
-      <div data-v-03fa3548="" class="unnnic-tooltip-trigger" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-69390f82="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-soft unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span></div>
+      <div data-v-8fb03905="" class="unnnic-tooltip-trigger" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-69390f82="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-soft unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span></div>
       <div disabled="false" defer="false" forcemount="false">
         <!---->
       </div>
@@ -17,14 +17,14 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
     <!--v-if-->
   </section>
   <section data-v-85728205="" class="tags">
-    <h2 data-v-85728205="" class="tags__title" data-testid="tags-title">Add tags <div data-v-03fa3548="" class="unnnic-tooltip-trigger" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-69390f82="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-soft unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span></div>
+    <h2 data-v-85728205="" class="tags__title" data-testid="tags-title">Add tags <div data-v-8fb03905="" class="unnnic-tooltip-trigger" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-69390f82="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-soft unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span></div>
       <div disabled="false" defer="false" forcemount="false">
         <!---->
       </div>
     </h2>
     <section data-v-85728205="" class="switchs__container required-tags">
       <unnnic-switch-stub data-v-85728205="" size="small" label="" labeltooltip="" labelusehtmltooltip="false" option="" helper="" textleft="" textright="Require tags at the end of supports disabled" disabled="true" modelvalue="false" usevmodel="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
-      <div data-v-03fa3548="" class="unnnic-tooltip-trigger" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-69390f82="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-soft unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span></div>
+      <div data-v-8fb03905="" class="unnnic-tooltip-trigger" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-69390f82="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-soft unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span></div>
       <div disabled="false" defer="false" forcemount="false">
         <!---->
       </div>

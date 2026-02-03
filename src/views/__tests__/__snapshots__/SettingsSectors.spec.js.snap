@@ -55,7 +55,7 @@ exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
           data-grace-area-trigger=""
           data-state="closed"
           data-testid="tooltip-trigger"
-          data-v-03fa3548=""
+          data-v-8fb03905=""
         >
           
           
@@ -160,7 +160,7 @@ exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
           data-grace-area-trigger=""
           data-state="closed"
           data-testid="tooltip-trigger"
-          data-v-03fa3548=""
+          data-v-8fb03905=""
         >
           
           
@@ -265,7 +265,7 @@ exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
           data-grace-area-trigger=""
           data-state="closed"
           data-testid="tooltip-trigger"
-          data-v-03fa3548=""
+          data-v-8fb03905=""
         >
           
           
