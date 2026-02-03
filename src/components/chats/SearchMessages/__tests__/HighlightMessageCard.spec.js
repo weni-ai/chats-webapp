@@ -154,7 +154,7 @@ describe('HighlightMessageCard', () => {
       wrapper = mountComponent({
         message: createMessage({
           user: undefined,
-          contact: { first_name: 'Maria', last_name: 'Silva' },
+          contact: { name: 'Maria Silva' },
         }),
       });
       expect(wrapper.find('[data-testid="message-card-sender"]').text()).toBe(
