@@ -57,14 +57,20 @@ const props = defineProps({
 
 const senderName = computed(() => {
   const sender = props.message.contact || props.message.user;
+  const fromContact = !!props.message.contact;
 
   if (!sender) return i18n.global.t('chats.search_messages.automated_support');
 
   if (sender.name) return sender.name;
+  else if (fromContact) return i18n.global.t('unnamed_contact');
 
-  const firstName = sender.first_name || '';
-  const lastName = sender.last_name || '';
-  return [firstName, lastName].filter(Boolean).join(' ');
+  const agentFirstName = sender.first_name || '';
+  const agentLastName = sender.last_name || '';
+  const agentFullName = [agentFirstName, agentLastName]
+    .filter(Boolean)
+    .join(' ')
+    .trim();
+  return agentFullName || props.message.user.email;
 });
 
 const formattedTime = computed(() => {
