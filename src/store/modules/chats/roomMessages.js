@@ -30,7 +30,9 @@ export const useRoomMessages = defineStore('roomMessages', {
     replyMessage: null,
     roomInternalNotes: [],
     toScrollNote: null,
+    toScrollMessage: null,
     showScrollToBottomButton: false,
+    showSearchMessagesDrawer: false,
   }),
   actions: {
     addRoomMessageSorted({ message, addBefore, reorderMessageMinute }) {
@@ -177,6 +179,15 @@ export const useRoomMessages = defineStore('roomMessages', {
       this.removeMessageFromSendings(uuid);
     },
 
+    async getAllRoomsMessages() {
+      try {
+        await this.getRoomMessages();
+      } catch (error) {
+        console.log(error);
+      } finally {
+        if (this.roomMessagesNext) this.getAllRoomsMessages();
+      }
+    },
     async getRoomMessages() {
       const roomsStore = useRooms();
 

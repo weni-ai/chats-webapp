@@ -8,7 +8,17 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 import HomeChatHeaders from '../HomeChatHeaders.vue';
 
 const createWrapper = ({ store }) => {
-  return mount(HomeChatHeaders, { global: { plugins: [store] } });
+  return mount(HomeChatHeaders, {
+    global: {
+      plugins: [store],
+      stubs: {
+        ContactHeader: {
+          template: '<div data-testid="chat-header" />',
+          props: ['contactName', 'clickable'],
+        },
+      },
+    },
+  });
 };
 
 describe('HomeChatHeaders.vue', () => {
@@ -96,7 +106,7 @@ describe('HomeChatHeaders.vue', () => {
 
     await wrapper.vm.$nextTick();
 
-    await wrapper.find('.user-avatar').trigger('click');
+    await wrapper.find('[data-testid="chat-header"]').trigger('click');
     expect(wrapper.emitted('openRoomContactInfo')).toBeTruthy();
 
     await wrapper.find('.unnnic-chats-header__infos__title').trigger('click');

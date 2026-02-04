@@ -163,7 +163,10 @@
   "center": "centralizar",
   "justify": "Justificar",
   "without_results": "No hay resultados coincidentes",
-  "without_chats": "¡Ups! Parece que no hay chats en este momento :)",
+  "without_chats": {
+    "in_progress": "¡Todo listo! Serás notificado cuando se asignen nuevos chats y aparecerán en esta lista.",
+    "waiting": "Cola vacía! Todos los contactos han sido asignados a un agente."
+  },
   "other": "Otro",
   "select_smart": {
     "without_results": "Ningún resultado encontrado",
@@ -303,6 +306,13 @@
           "input_placeholder": "Comparte tu feedback aquí"
         }
       }
+    },
+    "search_messages": {
+      "title": "Buscar en la conversación",
+      "input_placeholder": "Ingrese una palabra o frase para buscar",
+      "no_results": "No se encontraron resultados para \"{searchTerm}\"",
+      "results_found": "{count} resultados encontrados para \"{searchTerm}\"",
+      "automated_support": "Soporte Automatizado"
     },
     "summary": {
       "reading_and_summarizing": "Lectura y resumen",

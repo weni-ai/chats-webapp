@@ -181,8 +181,6 @@ describe('CreateCustomHolidayModal', () => {
       await addButton.trigger('click');
       await wrapper.vm.$nextTick();
 
-      console.log(wrapper.html());
-
       const datePickers = wrapper.findAll(
         '[data-testid="create-custom-holiday-form"]',
       );

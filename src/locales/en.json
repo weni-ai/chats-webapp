@@ -163,7 +163,10 @@
   "center": "Center",
   "justify": "Justify",
   "without_results": "No matching results",
-  "without_chats": "Oops! It looks like there are no chats at the moment :)",
+  "without_chats": {
+    "in_progress": "All wrapped up! You’ll be notified when new chats are assigned and they’ll appear in this list.",
+    "waiting": "Queue cleared! All contacts have been assigned to an agent."
+  },
   "other": "Other",
   "select_smart": {
     "without_results": "No results found",
@@ -307,6 +310,13 @@
           "input_placeholder": "Enter your feedback here"
         }
       }
+    },
+    "search_messages": {
+      "title": "Search in conversation",
+      "input_placeholder": "Enter a word or phrase to search",
+      "no_results": "No results found for \"{searchTerm}\"",
+      "results_found": "{count} results found for \"{searchTerm}\"",
+      "automated_support": "Automated Support"
     },
     "summary": {
       "reading_and_summarizing": "Reading and summarizing",

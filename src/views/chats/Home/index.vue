@@ -21,26 +21,21 @@
     />
 
     <template #aside>
+      <SearchMessages
+        v-if="showSearchMessagesDrawer"
+        @close="showSearchMessagesDrawer = false"
+      />
       <QuickMessages
-        v-if="showQuickMessages"
+        v-else-if="showQuickMessages"
         @select-quick-message="
           (quickMessage) => updateTextBoxMessage(quickMessage.text)
         "
         @close="showQuickMessages = false"
       />
       <ContactInfo
-        v-else-if="
-          featureFlags.active_features?.includes('weniChatsContactInfoV2') &&
-          room &&
-          isRoomContactInfoOpen &&
-          !discussion
-        "
+        v-else-if="room && isRoomContactInfoOpen && !discussion"
         :key="room.uuid"
         data-testid="contact-info"
-        @close="closeRoomContactInfo"
-      />
-      <OldContactInfo
-        v-else-if="room && isRoomContactInfoOpen && !discussion"
         @close="closeRoomContactInfo"
       />
       <DiscussionSidebar
@@ -59,7 +54,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'pinia';
+import { mapState, mapActions, mapWritableState } from 'pinia';
 import { useFeedback } from '@/store/modules/feedback';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
@@ -71,14 +66,14 @@ import ChatsBackground from '@/layouts/ChatsLayout/components/ChatsBackground/in
 
 import DiscussionSidebar from '@/components/chats/DiscussionSidebar/index.vue';
 import ContactInfo from '@/components/chats/ContactInfo/index.vue';
-import OldContactInfo from '@/components/chats/ContactInfo/oldContactInfo.vue';
 import ModalFeedback from './ModalFeedback.vue';
 import QuickMessages from '@/components/chats/QuickMessages/index.vue';
+import SearchMessages from '@/components/chats/SearchMessages/index.vue';
 
 import HomeChat from './HomeChat.vue';
 
 import { moduleStorage } from '@/utils/storage';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 export default {
   name: 'ViewHome',
@@ -90,8 +85,8 @@ export default {
     DiscussionSidebar,
     HomeChat,
     ModalFeedback,
-    OldContactInfo,
     QuickMessages,
+    SearchMessages,
   },
 
   props: {
@@ -120,7 +115,6 @@ export default {
   },
 
   computed: {
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useFeedback, {
       isRenderFeedbackModal: (store) => store.isRenderFeedbackModal,
     }),
@@ -130,9 +124,16 @@ export default {
     ...mapState(useDiscussions, {
       discussion: (store) => store.activeDiscussion,
     }),
+    ...mapWritableState(useRoomMessages, ['showSearchMessagesDrawer']),
   },
 
   watch: {
+    showSearchMessagesDrawer(val) {
+      if (val) this.showQuickMessages = false;
+    },
+    showQuickMessages(val) {
+      if (val) this.showSearchMessagesDrawer = false;
+    },
     isRoomContactInfoOpen(val) {
       moduleStorage.setItem('isRoomContactInfoOpen', val);
     },
