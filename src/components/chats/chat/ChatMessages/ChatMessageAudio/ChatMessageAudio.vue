@@ -208,11 +208,6 @@ watch(showTranscriptionText, () => {
 });
 
 const canShowTranscriptionAudioAction = computed(() => {
-  const isContactMessage = !!props.message.contact;
-  return isContactMessage;
-});
-
-const canGenerateTranscriptionAudio = computed(() => {
   if (
     !featureFlags.value.active_features?.includes(
       'weniChatsTranscriptAudioMessage',
@@ -220,6 +215,11 @@ const canGenerateTranscriptionAudio = computed(() => {
   ) {
     return false;
   }
+  const isContactMessage = !!props.message.contact;
+  return isContactMessage;
+});
+
+const canGenerateTranscriptionAudio = computed(() => {
   if (props.isClosedChat) {
     return transcriptionText.value.length > 0;
   }
