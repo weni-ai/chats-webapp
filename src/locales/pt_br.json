@@ -291,6 +291,22 @@
   "interaction_time": "Tempo de interação",
   "average_interaction_time": "É o tempo médio de duração de um chat",
   "chats": {
+    "transcription": {
+      "unavailable_closed_chat": "Não é possível ver transcrições que não foram habilitadas durante o suporte.",
+      "unavailable_exceeding_duration": "Transcrição indisponível para áudios com mais de {duration} minutos.",
+      "error": "Não foi possível carregar a transcrição. Por favor, tente novamente!",
+      "feedback": {
+        "question": "A transcrição foi útil?",
+        "positive": "Útil",
+        "negative": "Precisa de melhorias",
+        "error": "Não foi possível enviar o feedback. Por favor, tente novamente!",
+        "sended": "Seu feedback foi enviado!",
+        "modal": {
+          "title": "O que não funcionou?",
+          "input_placeholder": "Compartilhe seu feedback aqui"
+        }
+      }
+    },
     "search_messages": {
       "title": "Pesquisar na conversa",
       "input_placeholder": "Digite uma palavra ou frase para pesquisar",
