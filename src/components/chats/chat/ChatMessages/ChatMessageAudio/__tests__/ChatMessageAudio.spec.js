@@ -11,6 +11,7 @@ import { mount, flushPromises, config } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import ChatMessageAudio from '../ChatMessageAudio.vue';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 import audioTranscriptionService from '@/services/api/resources/chats/audioTranscription';
 import { UnnnicCallAlert, UnnnicAudioRecorder } from '@weni/unnnic-system';
 import i18n from '@/plugins/i18n';
@@ -100,6 +101,9 @@ describe('ChatMessageAudio', () => {
     pinia = createPinia();
     setActivePinia(pinia);
     roomMessagesStore = useRoomMessages();
+    useFeatureFlag().featureFlags.active_features = [
+      'weniChatsTranscriptAudioMessage',
+    ];
     vi.spyOn(roomMessagesStore, 'updateMessage').mockImplementation(() => {});
   });
 
@@ -134,7 +138,7 @@ describe('ChatMessageAudio', () => {
   });
 
   describe('canShowTranscriptionAudioAction', () => {
-    it('shows transcription action when message has contact', () => {
+    it('shows transcription action when message has contact and feature flag is active', () => {
       wrapper = mountComponent({
         message: createMessage({ contact: { uuid: 'c1' } }),
       });
