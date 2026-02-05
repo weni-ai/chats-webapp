@@ -147,13 +147,11 @@
                     class="media"
                     :src="media.url || media.preview"
                   />
-                  <UnnnicAudioRecorder
+                  <ChatMessageAudio
                     v-else-if="isAudio(media)"
-                    ref="audio-recorder"
-                    class="media audio"
-                    :src="media.url || media.preview"
-                    :canDiscard="false"
-                    :reqStatus="messageStatus({ message, media })"
+                    :message="message"
+                    :messageStatus="messageStatus({ message, media })"
+                    :isClosedChat="isClosedChat"
                     @failed-click="resendMedia({ message, media })"
                   />
                 </UnnnicChatsMessage>
@@ -268,6 +266,7 @@ import ChatFeedback from '../ChatFeedback.vue';
 import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
 import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
 import ChatMessagesInternalNote from './ChatMessagesInternalNote.vue';
+import ChatMessageAudio from './ChatMessageAudio/ChatMessageAudio.vue';
 
 import { isString } from '@/utils/string';
 import { SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT } from '@/utils/chats';
@@ -286,6 +285,7 @@ export default {
     FullscreenPreview,
     VideoPlayer,
     ChatMessagesInternalNote,
+    ChatMessageAudio,
   },
 
   props: {
@@ -385,6 +385,7 @@ export default {
     ...mapWritableState(useRoomMessages, [
       'replyMessage',
       'toScrollNote',
+      'toScrollMessage',
       'showScrollToBottomButton',
     ]),
     medias() {
@@ -410,6 +411,10 @@ export default {
     toScrollNote(note) {
       if (!note) return;
       this.scrollToInternalNote(note);
+    },
+    toScrollMessage(message) {
+      if (!message) return;
+      this.scrollToMessage(message);
     },
     messages: {
       handler(newMessages, oldMessages) {
@@ -695,6 +700,7 @@ export default {
       this.currentMedia = this.medias.find((el) => el.url === url);
       this.isFullscreen = true;
     },
+
     nextMedia() {
       const imageIndex = this.medias.findIndex(
         (el) => el.url === this.currentMedia.url,
@@ -703,6 +709,7 @@ export default {
         this.currentMedia = this.medias[imageIndex + 1];
       }
     },
+
     previousMedia() {
       const imageIndex = this.medias.findIndex(
         (el) => el.url === this.currentMedia.url,
@@ -808,22 +815,30 @@ export default {
         this.showScrollToBottomButton = false;
       });
     },
-    async scrollToInternalNote(note) {
-      const noteElement = this.$refs[`internal-note-${note.uuid}`]?.[0]?.$el;
 
-      if (noteElement) {
-        noteElement.scrollIntoView({
+    async scrollToRef(refKey) {
+      const element = this.$refs[refKey]?.[0]?.$el;
+      if (element) {
+        await element.scrollIntoView({
           behavior: 'smooth',
           block: 'center',
         });
       } else if (this.roomMessagesNext) {
-        // Load more messages to find internal note
+        // Load more messages to find internal note or message
         await this.getRoomMessages();
-        this.scrollToInternalNote(note);
+        this.scrollToRef(refKey);
         return;
       }
-
       this.toScrollNote = null;
+      this.toScrollMessage = null;
+    },
+
+    async scrollToInternalNote(note) {
+      this.scrollToRef(`internal-note-${note.uuid}`);
+    },
+
+    async scrollToMessage(message) {
+      this.scrollToRef(`message-${message.uuid}`);
     },
   },
 };

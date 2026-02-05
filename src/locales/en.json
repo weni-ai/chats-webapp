@@ -189,7 +189,10 @@
   "center": "Center",
   "justify": "Justify",
   "without_results": "No matching results",
-  "without_chats": "Oops! It looks like there are no chats at the moment :)",
+  "without_chats": {
+    "in_progress": "All wrapped up! You’ll be notified when new chats are assigned and they’ll appear in this list.",
+    "waiting": "Queue cleared! All contacts have been assigned to an agent."
+  },
   "other": "Other",
   "select_smart": {
     "without_results": "No results found",
@@ -318,6 +321,29 @@
   "interaction_time": "Interaction time",
   "average_interaction_time": "It is the average duration of a chat",
   "chats": {
+    "transcription": {
+      "unavailable_closed_chat": "It is not possible to view transcriptions that were not enabled during the support.",
+      "unavailable_exceeding_duration": "Transcription unavailable for audio exceeding {duration} minutes.",
+      "error": "Unable to load the transcript. Please try again!",
+      "feedback": {
+        "question": "Was the transcription useful?",
+        "positive": "Useful",
+        "negative": "Needs improvement",
+        "error": "Failed to send transcription feedback, please try again.",
+        "sended": "Your feedback has been submitted!",
+        "modal": {
+          "title": "What went wrong?",
+          "input_placeholder": "Enter your feedback here"
+        }
+      }
+    },
+    "search_messages": {
+      "title": "Search in conversation",
+      "input_placeholder": "Enter a word or phrase to search",
+      "no_results": "No results found for \"{searchTerm}\"",
+      "results_found": "{count} results found for \"{searchTerm}\"",
+      "automated_support": "Automated Support"
+    },
     "summary": {
       "reading_and_summarizing": "Reading and summarizing",
       "by_ai": "Summary by AI",

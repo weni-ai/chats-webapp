@@ -189,7 +189,10 @@
   "center": "Centralizar",
   "justify": "Justificar",
   "without_results": "Nenhum resultado correspondente",
-  "without_chats": "Ops! Parece que não há chats no momento :)",
+  "without_chats": {
+    "in_progress": "Todos concluídos! Você será notificado quando novos chats forem atribuídos e aparecerão nesta lista.",
+    "waiting": "Fila vazia! Todos os contatos foram atribuídos a um agente."
+  },
   "other": "Outro",
   "select_smart": {
     "without_results": "Nenhum resultado encontrado",
@@ -314,6 +317,29 @@
   "interaction_time": "Tempo de interação",
   "average_interaction_time": "É o tempo médio de duração de um chat",
   "chats": {
+    "transcription": {
+      "unavailable_closed_chat": "Não é possível ver transcrições que não foram habilitadas durante o suporte.",
+      "unavailable_exceeding_duration": "Transcrição indisponível para áudios com mais de {duration} minutos.",
+      "error": "Não foi possível carregar a transcrição. Por favor, tente novamente!",
+      "feedback": {
+        "question": "A transcrição foi útil?",
+        "positive": "Útil",
+        "negative": "Precisa de melhorias",
+        "error": "Não foi possível enviar o feedback. Por favor, tente novamente!",
+        "sended": "Seu feedback foi enviado!",
+        "modal": {
+          "title": "O que não funcionou?",
+          "input_placeholder": "Compartilhe seu feedback aqui"
+        }
+      }
+    },
+    "search_messages": {
+      "title": "Pesquisar na conversa",
+      "input_placeholder": "Digite uma palavra ou frase para pesquisar",
+      "no_results": "Nenhum resultado encontrado para \"{searchTerm}\"",
+      "results_found": "{count} resultados encontrados para \"{searchTerm}\"",
+      "automated_support": "Suporte Automatizado"
+    },
     "summary": {
       "reading_and_summarizing": "Lendo e fazendo resumo",
       "by_ai": "Resumo feito por IA",

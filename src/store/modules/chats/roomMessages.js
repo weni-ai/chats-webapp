@@ -30,7 +30,9 @@ export const useRoomMessages = defineStore('roomMessages', {
     replyMessage: null,
     roomInternalNotes: [],
     toScrollNote: null,
+    toScrollMessage: null,
     showScrollToBottomButton: false,
+    showSearchMessagesDrawer: false,
   }),
   actions: {
     addRoomMessageSorted({ message, addBefore, reorderMessageMinute }) {
@@ -137,6 +139,7 @@ export const useRoomMessages = defineStore('roomMessages', {
       toUpdateMediaPreview,
       message,
       toUpdateMessageUuid = '',
+      reorderMessageMinute = false,
     }) {
       const uuid = toUpdateMessageUuid || message.uuid;
       const treatedMessage = { ...message };
@@ -167,12 +170,24 @@ export const useRoomMessages = defineStore('roomMessages', {
         removeFromGroupedMessages(this.roomMessagesSorted, {
           message: toUpdatedMessage,
         });
-        this.addRoomMessageSorted({ message: updatedMessage });
+        this.addRoomMessageSorted({
+          message: updatedMessage,
+          reorderMessageMinute,
+        });
       }
 
       this.removeMessageFromSendings(uuid);
     },
 
+    async getAllRoomsMessages() {
+      try {
+        await this.getRoomMessages();
+      } catch (error) {
+        console.log(error);
+      } finally {
+        if (this.roomMessagesNext) this.getAllRoomsMessages();
+      }
+    },
     async getRoomMessages() {
       const roomsStore = useRooms();
 
@@ -198,7 +213,6 @@ export const useRoomMessages = defineStore('roomMessages', {
       const messageAlreadyExists = this.roomMessages.some(
         (mappedMessage) => mappedMessage.uuid === message.uuid,
       );
-
       if (messageAlreadyExists) this.updateMessage({ message });
       else {
         this.handlingAddMessage({ message });

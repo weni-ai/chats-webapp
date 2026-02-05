@@ -61,7 +61,7 @@
     class="no-results"
     data-testid="no-results-message"
   >
-    {{ $t('without_chats') }}
+    {{ $t(`without_chats.${roomsType}`) }}
   </p>
 </template>
 
@@ -257,6 +257,9 @@ export default {
   }
 }
 .no-results {
-  margin-top: $unnnic-spacing-ant;
+  font: $unnnic-font-emphasis;
+  color: $unnnic-color-fg-emphasized;
+  padding: 0 $unnnic-space-5;
+  margin-top: $unnnic-space-3;
 }
 </style>

@@ -1,10 +1,17 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { describe, expect, it, vi, beforeEach, beforeAll } from 'vitest';
+import { mount, config } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 import ViewMode from '@/views/Dashboard/ViewMode/index.vue';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import * as roomUtils from '@/utils/room';
+import i18n from '@/plugins/i18n';
+
+beforeAll(() => {
+  config.global.plugins = config.global.plugins.filter(
+    (plugin) => plugin !== i18n,
+  );
+});
 
 vi.mock('@/utils/room', () => ({
   parseUrn: vi.fn(),
@@ -26,17 +33,28 @@ describe('ViewMode', () => {
     const pinia = createTestingPinia({
       createSpy: vi.fn,
       initialState: {
-        rooms: { activeRoom: null, rooms: [], contactToTransfer: '', ...storeState.rooms },
+        rooms: {
+          activeRoom: null,
+          rooms: [],
+          contactToTransfer: '',
+          ...storeState.rooms,
+        },
         discussions: { activeDiscussion: null, ...storeState.discussions },
         dashboard: {
-          viewedAgent: { email: '', name: '' },
-          ...storeState.dashboard,
+          viewedAgent: storeState.dashboard?.viewedAgent || {
+            email: '',
+            name: '',
+          },
+          ...(storeState.dashboard || {}),
         },
         profile: { me: { email: 'test@example.com' }, ...storeState.profile },
         roomMessages: { roomMessagesNext: null, ...storeState.roomMessages },
-        featureFlag: { 
-          featureFlags: { active_features: [] }, 
-          ...storeState.featureFlag 
+        featureFlag: {
+          featureFlags: {
+            active_features:
+              storeState.featureFlag?.featureFlags?.active_features || [],
+          },
+          ...(storeState.featureFlag || {}),
         },
       },
     });
@@ -95,10 +113,6 @@ describe('ViewMode', () => {
           },
           ModalTransferRooms: {
             template: '<div />',
-          },
-          OldContactInfo: {
-            template: '<div />',
-            props: ['isViewMode'],
           },
         },
       },
@@ -286,18 +300,9 @@ describe('ViewMode', () => {
         },
       });
 
-      expect(wrapper.vm.featureFlags.active_features).toContain('weniChatsContactInfoV2');
-    });
-
-    it('should render OldContactInfo when weniChatsContactInfoV2 feature flag is disabled', () => {
-      const wrapper = createWrapper({
-        dashboard: { viewedAgent: mockAgent },
-        featureFlag: {
-          featureFlags: { active_features: [] },
-        },
-      });
-
-      expect(wrapper.vm.featureFlags.active_features).not.toContain('weniChatsContactInfoV2');
+      expect(wrapper.vm.featureFlags.active_features).toContain(
+        'weniChatsContactInfoV2',
+      );
     });
 
     it('should handle room and discussion states', () => {
