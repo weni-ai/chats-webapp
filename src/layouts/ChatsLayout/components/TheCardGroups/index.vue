@@ -248,7 +248,6 @@ export default {
   computed: {
     ...mapWritableState(useRooms, {
       allRooms: 'rooms',
-      selectedRoomsToTransfer: 'selectedRoomsToTransfer',
       selectedOngoingRooms: 'selectedOngoingRooms',
       selectedWaitingRooms: 'selectedWaitingRooms',
     }),

@@ -115,7 +115,6 @@ export default {
   computed: {
     ...mapState(useRoomMessages, ['showScrollToBottomButton']),
     ...mapState(useRooms, [
-      'selectedRoomsToTransfer',
       'selectedOngoingRooms',
       'selectedWaitingRooms',
       'activeRoom',
@@ -156,7 +155,6 @@ export default {
 
   methods: {
     ...mapActions(useRooms, [
-      'setSelectedRoomsToTransfer',
       'setSelectedOngoingRooms',
       'setSelectedWaitingRooms',
     ]),
@@ -190,14 +188,6 @@ export default {
         setMethod([...currentArray, uuid]);
       } else {
         setMethod(currentArray.filter((room) => room !== uuid));
-      }
-    },
-    updateSelectAllRooms(select) {
-      if (select && this.selectedRoomsToTransfer.length === 0) {
-        const roomsUuids = this.rooms.map((room) => room.uuid);
-        this.setSelectedRoomsToTransfer(roomsUuids);
-      } else {
-        this.setSelectedRoomsToTransfer([]);
       }
     },
   },

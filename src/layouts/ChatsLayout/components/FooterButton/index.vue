@@ -68,7 +68,6 @@ export default {
 
   computed: {
     ...mapState(useRooms, [
-      'selectedRoomsToTransfer',
       'selectedOngoingRooms',
       'selectedWaitingRooms',
       'activeTab',
