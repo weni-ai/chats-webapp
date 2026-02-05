@@ -24,7 +24,6 @@ export const useRooms = defineStore('rooms', {
     hasNextRooms: { waiting: false, in_progress: false, flow_start: false },
     canUseCopilot: false,
     copilotSuggestion: '',
-    selectedRoomsToTransfer: [],
     selectedOngoingRooms: [],
     selectedWaitingRooms: [],
     contactToTransfer: '',
@@ -266,10 +265,6 @@ export const useRooms = defineStore('rooms', {
 
       this.rooms = filteredRooms;
 
-      this.selectedRoomsToTransfer = this.selectedRoomsToTransfer.filter(
-        (room) => room !== roomUuid,
-      );
-
       this.selectedOngoingRooms = this.selectedOngoingRooms.filter(
         (room) => room !== roomUuid,
       );
@@ -289,10 +284,6 @@ export const useRooms = defineStore('rooms', {
 
     resetNewMessagesByRoom({ room }) {
       this.updateMessagesByRoom({ room, reset: true });
-    },
-
-    setSelectedRoomsToTransfer(rooms) {
-      this.selectedRoomsToTransfer = rooms;
     },
 
     setContactToTransfer(contact) {
