@@ -543,6 +543,14 @@
       "without_online_agents": "Nenhum agente online no momento"
     }
   },
+  "bulk_close": {
+    "close_selected_contacts": "Encerrar contatos selecionados",
+    "confirm_close_selected": "Tem certeza que deseja encerrar os contatos selecionados?",
+    "success_message": "{count} contato encerrado com sucesso | {count} contatos encerrados com sucesso",
+    "error_message": "Não foi possível encerrar os contatos, tente novamente"
+  },
+  "close_contact": "Encerrar contato",
+  "close_contact_confirmation": "Tem certeza que deseja encerrar este contato?",
   "contact_info": {
     "title": "Sobre o contato",
     "about_support": "Sobre o suporte",
@@ -767,7 +775,7 @@
     }
   },
   "config_chats": {
-    "title": "Configurações de Chats",
+    "title": "Configurações de Atendimento humano",
     "section_sectors_title": "Setores em {project}",
     "section_sectors_subtitle": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
     "tabs": {
@@ -788,28 +796,36 @@
       "status_error": "Ops, infelizmente as alterações não foram salvas, tente novamente"
     },
     "project_configs": {
-      "title": "Ajustes do projeto",
+      "title": "Preferências do projeto",
       "bulk_transfer": {
         "tooltip": "Essa função permite que agentes transfiram diversos contatos de uma vez para uma fila ou agente",
-        "switch_active": "Transferência de contatos em massa ativo",
-        "switch_inactive": "Transferência de contatos em massa desativado"
+        "switch_active": "Transferir chats em massa para outra fila ou atendente",
+        "switch_inactive": "Transferir chats em massa para outra fila ou atendente"
+      },
+      "block_transfer_to_off_agents": {
+        "switch_active": "Bloquear a transferência de chats para atendentes offline",
+        "switch_inactive": "Bloquear a transferência de chats para atendentes offline"
+      },
+      "bulk_close": {
+        "switch_active": "Finalizar chats em massa",
+        "switch_inactive": "Finalizar chats em massa"
+      },
+      "block_close_chats_in_queue": {
+        "switch_active": "Bloquear a finalização de chats que estão na fila",
+        "switch_inactive": "Bloquear a finalização de chats que estão na fila"
+      },
+      "bulk_take": {
+        "switch_active": "Assumir chats em massa",
+        "switch_inactive": "Assumir chats em massa"
       },
       "queue_prioritization": {
         "tooltip": "Essa função permite que agentes possam escolher as filas que receberão contatos, dentro das previamente selecionadas no setor",
-        "switch_active": "Seleção de filas pelos agentes ativa",
-        "switch_inactive": "Seleção de filas pelos agentes inativa"
-      },
-      "block_transfer_to_off_agents": {
-        "switch_active": "Bloqueio de transferências para agentes offline ativo",
-        "switch_inactive": "Bloqueio de transferências para agentes offline inativo"
+        "switch_active": "Permitir que atendentes escolham suas filas dentro do setor",
+        "switch_inactive": "Permitir que atendentes escolham suas filas dentro do setor"
       },
       "show_agent_status_count_timer": {
-        "switch_active": "Mostrar timer de contagem do status do agente",
-        "switch_inactive": "Esconder timer de contagem do status do agente"
-      },
-      "close_chats_in_queue": {
-        "switch_active": "Agentes podem encerrar chats que estão aguardando suporte ativo",
-        "switch_inactive": "Agentes podem encerrar chats que estão aguardando suporte inativo"
+        "switch_active": "Exibir temporizador de status em pausas personalizadas do atendente",
+        "switch_inactive": "Exibir temporizador de status em pausas personalizadas do atendente"
       }
     },
     "custom_sector": "Personalizar novo setor (recomendado)",

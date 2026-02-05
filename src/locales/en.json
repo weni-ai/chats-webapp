@@ -547,6 +547,12 @@
       "without_online_agents": "No online agent at the moment"
     }
   },
+  "bulk_close": {
+    "close_selected_contacts": "Close selected contacts",
+    "confirm_close_selected": "Are you sure you want to close the selected contacts?",
+    "success_message": "{count} contact closed successfully | {count} contacts closed successfully",
+    "error_message": "Unable to close contacts, please try again"
+  },
   "contact_info": {
     "title": "About the contact",
     "about_support": "About the support",
@@ -771,7 +777,7 @@
     }
   },
   "config_chats": {
-    "title": "Chat Settings",
+    "title": "Human Support Settings",
     "section_sectors_title": "Sectors in {project}",
     "section_sectors_subtitle": "Add, view and manage sectors, queues, managers and agents within your organization.",
     "tabs": {
@@ -792,28 +798,36 @@
       "status_error": "Oops, unfortunately the changes were not saved, please try again"
     },
     "project_configs": {
-      "title": "Project Adjustments",
+      "title": "Project preferences",
       "bulk_transfer": {
         "tooltip": "This function allows agents to transfer various contacts at once to a row or agent",
-        "switch_active": "Bulk contact transfer active",
-        "switch_inactive": "Bulk contact transfer disabled"
+        "switch_active": "Transfer chats in bulk to another queue or agent",
+        "switch_inactive": "Transfer chats in bulk to another queue or agent"
+      },
+      "block_transfer_to_off_agents": {
+        "switch_active": "Block chat transfer to offline agents",
+        "switch_inactive": "Block chat transfer to offline agents"
+      },
+      "bulk_close": { 
+        "switch_active": "End chats in bulk",
+        "switch_inactive": "End chats in bulk"
+      },
+      "block_close_chats_in_queue": {
+        "switch_active": "Block ending chats that are in the queue",
+        "switch_inactive": "Block ending chats that are in the queue"
+      },
+      "bulk_take": {
+        "switch_active": "Take over chats in bulk",
+        "switch_inactive": "Take over chats in bulk"
       },
       "queue_prioritization": {
         "tooltip": "This function allows agents to choose the queues that will receive contacts, within those previously selected in the sector",
-        "switch_active": "Queue selection by agents active",
-        "switch_inactive": "Queue selection by agents inactive"
-      },
-      "block_transfer_to_off_agents": {
-        "switch_active": "Blocking transfers to offline agents active",
-        "switch_inactive": "Blocking transfers to offline agents inactive"
+        "switch_active": "Allow agents to choose their queues within the sector",
+        "switch_inactive": "Allow agents to choose their queues within the sector"
       },
       "show_agent_status_count_timer": {
-        "switch_active": "Show agent status count timer",
-        "switch_inactive": "Hide agent status count timer"
-      },
-      "close_chats_in_queue": {
-        "switch_active": "Agents can end chats that are awaiting support active",
-        "switch_inactive": "Agents can end chats that are awaiting support inactive"
+        "switch_active": "Show status timer for custom agent breaks",
+        "switch_inactive": "Show status timer for custom agent breaks"
       }
     },
     "custom_sector": "Customize new sector (recommended)",

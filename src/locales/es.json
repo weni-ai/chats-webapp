@@ -543,6 +543,12 @@
       "without_online_agents": "No hay agentes en línea en este momento"
     }
   },
+  "bulk_close": {
+    "close_selected_contacts": "Cerrar contactos seleccionados",
+    "confirm_close_selected": "¿Está seguro de que desea cerrar los contactos seleccionados?",
+    "success_message": "{count} contacto cerrado con éxito | {count} contactos cerrados con éxito",
+    "error_message": "No fue posible cerrar los contactos, intente nuevamente"
+  },
   "contact_info": {
     "title": "Sobre el contacto",
     "about_support": "Sobre el soporte",
@@ -767,7 +773,7 @@
     }
   },
   "config_chats": {
-    "title": "Configuración de chat",
+    "title": "Configuración de Atendimento humano",
     "section_sectors_title": "Sectores en {project}",
     "section_sectors_subtitle": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización.",
     "tabs": {
@@ -788,28 +794,32 @@
       "status_error": "Ups, desafortunadamente los cambios no se han guardado, inténtalo de nuevo"
     },
     "project_configs": {
-      "title": "Ajustes de proyectos",
+      "title": "Preferencias de proyectos",
       "bulk_transfer": {
         "tooltip": "Esta función permite a los agentes transferir varios contactos a la vez a una fila o agente",
-        "switch_active": "Transferencia de contactos en masa activa",
-        "switch_inactive": "Transferencia de contactos en masa desactivada"
+        "switch_active": "Transferir chats en masa a otra cola o agente activo",
+        "switch_inactive": "Transferir chats en masa a otra cola o agente desactivado"
+      },
+      "block_transfer_to_off_agents": {
+        "switch_active": "Bloquear la transferencia de chats a agentes sin conexión activo",
+        "switch_inactive": "Bloquear la transferencia de chats a agentes sin conexión inactivo"
+      },
+      "bulk_close": {
+        "switch_active": "Finalizar chats en masa activo",
+        "switch_inactive": "Finalizar chats en masa desactivado"
+      },
+      "block_close_chats_in_queue": {
+        "switch_active": "Bloquear la finalización de chats que están en la cola activo",
+        "switch_inactive": "Bloquear la finalización de chats que están en la cola inactivo"
       },
       "queue_prioritization": {
         "tooltip": "Esta función permite a los agentes elegir las colas que recibirán contactos, dentro de las previamente seleccionadas en el sector.",
-        "switch_active": "Selección de cola por agentes activo",
-        "switch_inactive": "Selección de cola por agentes inactivo"
-      },
-      "block_transfer_to_off_agents": {
-        "switch_active": "Bloqueo de transferencias a agentes fuera de línea activo",
-        "switch_inactive": "Bloqueo de transferencias a agentes fuera de línea inactivo"
+        "switch_active": "Permitir que los agentes elijan sus colas dentro del sector activo",
+        "switch_inactive": "Permitir que los agentes elijan sus colas dentro del sector inactivo"
       },
       "show_agent_status_count_timer": {
-        "switch_active": "Mostrar temporizador de recuento de estado del agente",
-        "switch_inactive": "Ocultar temporizador de recuento de estado del agente"
-      },
-      "close_chats_in_queue": {
-        "switch_active": "Los agentes pueden cerrar chats que están esperando soporte activo",
-        "switch_inactive": "Los agentes pueden cerrar chats que están esperando soporte inactivo"
+        "switch_active": "Mostrar temporizador de estado en pausas personalizadas del agente activo",
+        "switch_inactive": "Mostrar temporizador de estado en pausas personalizadas del agente inactivo"
       }
     },
     "custom_sector": "Personalizar nuevo sector (recomendado)",
