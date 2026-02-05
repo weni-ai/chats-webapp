@@ -148,6 +148,11 @@ describe('App.vue', () => {
           },
         },
         stubs: {
+          ModalOnboarding: {
+            template:
+              '<div data-testid="modal-onboarding">ModalOnboarding</div>',
+            props: ['modelValue'],
+          },
           RouterView: {
             template: '<div data-testid="router-view">RouterView</div>',
           },

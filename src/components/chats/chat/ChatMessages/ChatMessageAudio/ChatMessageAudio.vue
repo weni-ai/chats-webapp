@@ -109,11 +109,13 @@
 
 <script setup>
 import { ref, useTemplateRef, computed, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 
 import { UnnnicCallAlert } from '@weni/unnnic-system';
 
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useDashboard } from '@/store/modules/dashboard';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import TranscriptionFeedbackModal from './FeedbackModal.vue';
 
@@ -138,6 +140,8 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(['failed-click']);
+
+const { featureFlags } = storeToRefs(useFeatureFlag());
 
 const audioRecorderRef = useTemplateRef('audio-recorder');
 
@@ -204,6 +208,13 @@ watch(showTranscriptionText, () => {
 });
 
 const canShowTranscriptionAudioAction = computed(() => {
+  if (
+    !featureFlags.value.active_features?.includes(
+      'weniChatsTranscriptAudioMessage',
+    )
+  ) {
+    return false;
+  }
   const isContactMessage = !!props.message.contact;
   return isContactMessage;
 });
@@ -229,11 +240,20 @@ const transcriptionText = computed(() => {
   return messageMedia.value.transcription?.text || '';
 });
 
-watch(transcriptionText, () => {
-  if (transcriptionText.value) {
-    isLoadingTranscription.value = false;
-  }
+const mediaTranscription = computed(() => {
+  return messageMedia.value.transcription;
 });
+
+watch(
+  mediaTranscription,
+  () => {
+    isLoadingTranscription.value = false;
+    if (mediaTranscription.value?.status === 'FAILED') {
+      showTranscriptionText.value = false;
+    }
+  },
+  { deep: true },
+);
 
 const transcriptionFeedback = computed({
   get() {
