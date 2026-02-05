@@ -21,14 +21,20 @@ vi.mock('@/services/api/resources/settings/queue', () => ({
   },
 }));
 
-const store = createTestingPinia({
-  initialState: {
-    me: 'mock@email.com',
-    selectedRoomsToTransfer: ['1', '2'],
-  },
-});
+function createStore(overrides = {}) {
+  return createTestingPinia({
+    initialState: {
+      me: 'mock@email.com',
+      selectedOngoingRooms: ['1', '2'],
+      selectedWaitingRooms: [],
+      activeTab: 'ongoing',
+      ...overrides,
+    },
+  });
+}
 
-function createWrapper() {
+function createWrapper(storeOverrides = {}) {
+  const store = createStore(storeOverrides);
   const wrapper = mount(RoomsTransferFields, {
     props: {
       modelValue: [],
@@ -145,6 +151,26 @@ describe('RoomsTransferField', () => {
   });
 
   describe('Bulk Transfer', () => {
+    it('should work with ongoing rooms selected', async () => {
+      const wrapper = createWrapper({
+        selectedOngoingRooms: ['1', '2'],
+        selectedWaitingRooms: [],
+        activeTab: 'ongoing',
+      });
+
+      expect(wrapper.vm.currentSelectedRooms).toEqual(['1', '2']);
+    });
+
+    it('should work with waiting rooms selected', async () => {
+      const wrapper = createWrapper({
+        selectedOngoingRooms: [],
+        selectedWaitingRooms: ['3', '4'],
+        activeTab: 'waiting',
+      });
+
+      expect(wrapper.vm.currentSelectedRooms).toEqual(['3', '4']);
+    });
+
     it('should perform bulk transfer when transfer event is called', async () => {});
 
     it('should show success alert after successful bulk transfer', async () => {});
