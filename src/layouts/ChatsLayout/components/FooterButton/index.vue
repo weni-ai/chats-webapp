@@ -4,7 +4,7 @@
     data-testid="footer-button-container"
   >
     <section
-      v-if="selectedRoomsToTransfer.length >= 1"
+      v-if="currentSelectedRooms.length >= 1"
       class="chats-layout-footer-button__bulk-transfer"
       data-testid="bulk-transfer-section"
     >
@@ -67,16 +67,40 @@ export default {
   },
 
   computed: {
-    ...mapState(useRooms, ['selectedRoomsToTransfer']),
+    ...mapState(useRooms, [
+      'selectedRoomsToTransfer',
+      'selectedOngoingRooms',
+      'selectedWaitingRooms',
+      'activeTab',
+    ]),
     ...mapState(useConfig, ['project']),
+
+    currentSelectedRooms() {
+      return this.activeTab === 'ongoing'
+        ? this.selectedOngoingRooms
+        : this.selectedWaitingRooms;
+    },
     isOnlyBulkTransferBtn() {
       return this.isTransferContactsEnabled && !this.isBulkCloseContactsEnabled;
     },
     isTransferContactsEnabled() {
-      return this.project.config?.can_use_bulk_transfer;
+      return (
+        this.project.config?.can_use_bulk_transfer &&
+        this.activeTab === 'ongoing'
+      );
     },
     isBulkCloseContactsEnabled() {
-      return this.project.config?.can_use_bulk_close;
+      const canBulkClose = this.project.config?.can_use_bulk_close;
+      const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
+
+      if (!canBulkClose) return false;
+
+      // Se bloqueia close na fila, só permitir em ongoing
+      if (blockCloseInQueue && this.activeTab === 'waiting') {
+        return false;
+      }
+
+      return true;
     },
   },
   methods: {
