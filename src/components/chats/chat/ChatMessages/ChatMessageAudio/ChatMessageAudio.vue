@@ -240,11 +240,20 @@ const transcriptionText = computed(() => {
   return messageMedia.value.transcription?.text || '';
 });
 
-watch(transcriptionText, () => {
-  if (transcriptionText.value) {
-    isLoadingTranscription.value = false;
-  }
+const mediaTranscription = computed(() => {
+  return messageMedia.value.transcription;
 });
+
+watch(
+  mediaTranscription,
+  () => {
+    isLoadingTranscription.value = false;
+    if (mediaTranscription.value.status === 'FAILED') {
+      showTranscriptionText.value = false;
+    }
+  },
+  { deep: true },
+);
 
 const transcriptionFeedback = computed({
   get() {
