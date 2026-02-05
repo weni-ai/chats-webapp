@@ -86,7 +86,7 @@ export default {
         'showModalRoomSummaryOnboarding',
         true,
       ),
-      showModalOnboarding: false,
+      showModalOnboarding: true,
     };
   },
 
@@ -207,16 +207,18 @@ export default {
     ...mapActions(useFeatureFlag, ['getFeatureFlags']),
 
     handleShowOnboarding() {
-      const yesterday = subDateFns(new Date(), { days: 1 });
-      const profileCreatedOn = new Date(this.me.created_on);
-      const isAfter = isAfterDateFns(profileCreatedOn, yesterday);
+      // TODO: remove return after test
+      return;
+      // const yesterday = subDateFns(new Date(), { days: 1 });
+      // const profileCreatedOn = new Date(this.me.created_on);
+      // const isAfter = isAfterDateFns(profileCreatedOn, yesterday);
 
-      const showOnboarding =
-        isAfter && !moduleStorage.getItem('userOnboarded', false);
+      // const showOnboarding =
+      //   isAfter && !moduleStorage.getItem('userOnboarded', false);
 
-      this.showModalOnboarding = showOnboarding;
+      // this.showModalOnboarding = showOnboarding;
 
-      moduleStorage.setItem('userOnboarded', true);
+      // moduleStorage.setItem('userOnboarded', true);
     },
     restoreSessionStorageUserStatus({ projectUuid }) {
       const userStatus = moduleStorage.getItem(
