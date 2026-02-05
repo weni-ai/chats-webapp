@@ -145,6 +145,7 @@
   "record_audio": "Grabar audio",
   "select_all": "Seleccionar todo",
   "deselect_all": "Deseleccionar todo",
+  "number_of_chats_selected": "{count} chat seleccionado | {count} chats seleccionados",
   "image": "Imagen",
   "video": "Vídeo",
   "audio_message": "Mensaje de audio",
