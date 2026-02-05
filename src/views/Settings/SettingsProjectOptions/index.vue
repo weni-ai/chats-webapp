@@ -14,6 +14,23 @@
           :tooltip="$t('config_chats.project_configs.bulk_transfer.tooltip')"
         />
         <SettingsProjectOptionsItem
+          v-model="projectConfig.filter_offline_agents"
+          :name="configBlockTransferToOffAgentsTranslation"
+        />
+        <SettingsProjectOptionsItem
+          v-model="projectConfig.can_use_bulk_close"
+          :name="configBulkCloseTranslation"
+        />
+        <SettingsProjectOptionsItem
+          v-model="projectConfig.can_close_chats_in_queue"
+          :name="configBlockCloseChatsInQueueTranslation"
+        />
+        <!-- TODO: Future feature - bulk take -->
+        <!-- <SettingsProjectOptionsItem
+          v-model="projectConfig.can_use_bulk_take"
+          :name="configBulkTakeTranslation"
+        /> -->
+        <SettingsProjectOptionsItem
           v-model="projectConfig.can_use_queue_prioritization"
           :name="configQueuePrioritizationTranslation"
           :tooltip="
@@ -21,16 +38,8 @@
           "
         />
         <SettingsProjectOptionsItem
-          v-model="projectConfig.filter_offline_agents"
-          :name="configBlockTransferToOffAgentsTranslation"
-        />
-        <SettingsProjectOptionsItem
           v-model="projectConfig.can_see_timer"
           :name="configShowAgentStatusCountTimer"
-        />
-        <SettingsProjectOptionsItem
-          v-model="projectConfig.can_close_chats_in_queue"
-          :name="configCloseChatsInQueue"
         />
       </section>
     </section>
@@ -65,10 +74,12 @@ export default {
     return {
       projectConfig: {
         can_use_bulk_transfer: false,
-        can_use_queue_prioritization: false,
         filter_offline_agents: false,
-        can_see_timer: false,
+        can_use_bulk_close: false,
         can_close_chats_in_queue: false,
+        // can_use_bulk_take: false, // TODO: Future feature - bulk take
+        can_use_queue_prioritization: false,
+        can_see_timer: false,
       },
     };
   },
@@ -90,6 +101,39 @@ export default {
         }`,
       );
     },
+    configBlockTransferToOffAgentsTranslation() {
+      const filterOfflineAgents = this.projectConfig.filter_offline_agents;
+      return this.$t(
+        `config_chats.project_configs.block_transfer_to_off_agents.switch_${
+          filterOfflineAgents ? 'active' : 'inactive'
+        }`,
+      );
+    },
+    configBulkCloseTranslation() {
+      const canBulkClose = this.projectConfig.can_use_bulk_close;
+      return this.$t(
+        `config_chats.project_configs.bulk_close.switch_${
+          canBulkClose ? 'active' : 'inactive'
+        }`,
+      );
+    },
+    configBlockCloseChatsInQueueTranslation() {
+      const canCloseChatsInQueue = this.projectConfig.can_close_chats_in_queue;
+      return this.$t(
+        `config_chats.project_configs.block_close_chats_in_queue.switch_${
+          canCloseChatsInQueue ? 'active' : 'inactive'
+        }`,
+      );
+    },
+    // TODO: Future feature - bulk take
+    // configBulkTakeTranslation() {
+    //   const canBulkTake = this.projectConfig.can_use_bulk_take;
+    //   return this.$t(
+    //     `config_chats.project_configs.bulk_take.switch_${
+    //       canBulkTake ? 'active' : 'inactive'
+    //     }`,
+    //   );
+    // },
     configQueuePrioritizationTranslation() {
       const canQueuePrioritization =
         this.projectConfig.can_use_queue_prioritization;
@@ -99,27 +143,11 @@ export default {
         }`,
       );
     },
-    configBlockTransferToOffAgentsTranslation() {
-      const canBulkTransfer = this.projectConfig.filter_offline_agents;
-      return this.$t(
-        `config_chats.project_configs.block_transfer_to_off_agents.switch_${
-          canBulkTransfer ? 'active' : 'inactive'
-        }`,
-      );
-    },
     configShowAgentStatusCountTimer() {
       const showAgentStatusCountTimer = this.projectConfig.can_see_timer;
       return this.$t(
         `config_chats.project_configs.show_agent_status_count_timer.switch_${
-          showAgentStatusCountTimer ? 'inactive' : 'active'
-        }`,
-      );
-    },
-    configCloseChatsInQueue() {
-      const canCloseChatsInQueue = this.projectConfig.can_close_chats_in_queue;
-      return this.$t(
-        `config_chats.project_configs.close_chats_in_queue.switch_${
-          canCloseChatsInQueue ? 'active' : 'inactive'
+          showAgentStatusCountTimer ? 'active' : 'inactive'
         }`,
       );
     },
@@ -146,18 +174,22 @@ export default {
     async updateProjectConfig() {
       const {
         can_use_bulk_transfer,
-        can_use_queue_prioritization,
         filter_offline_agents,
-        can_see_timer,
+        can_use_bulk_close,
         can_close_chats_in_queue,
+        // can_use_bulk_take, // TODO: Future feature - bulk take
+        can_use_queue_prioritization,
+        can_see_timer,
       } = this.projectConfig;
 
       Project.update({
         can_use_bulk_transfer,
-        can_use_queue_prioritization,
         filter_offline_agents,
-        can_see_timer,
+        can_use_bulk_close,
         can_close_chats_in_queue,
+        // can_use_bulk_take, // TODO: Future feature - bulk take
+        can_use_queue_prioritization,
+        can_see_timer,
       });
     },
   },
@@ -178,7 +210,7 @@ export default {
     &__config {
       display: flex;
       flex-direction: column;
-      gap: $unnnic-space-2;
+      gap: $unnnic-space-4;
     }
 
     &__custom-breaks {
