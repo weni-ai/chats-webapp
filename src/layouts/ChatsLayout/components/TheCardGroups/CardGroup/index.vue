@@ -114,15 +114,31 @@ export default {
 
   computed: {
     ...mapState(useRoomMessages, ['showScrollToBottomButton']),
-    ...mapState(useRooms, ['selectedRoomsToTransfer', 'activeRoom']),
+    ...mapState(useRooms, [
+      'selectedRoomsToTransfer',
+      'selectedOngoingRooms',
+      'selectedWaitingRooms',
+      'activeRoom',
+      'activeTab',
+    ]),
     ...mapState(useDiscussions, {
       newMessagesByDiscussion: 'newMessagesByDiscussion',
       activeDiscussionId: (store) => store.activeDiscussion?.uuid,
     }),
+
+    currentSelectedRooms() {
+      if (this.roomsType === 'in_progress') {
+        return this.selectedOngoingRooms || [];
+      }
+      if (this.roomsType === 'waiting') {
+        return this.selectedWaitingRooms || [];
+      }
+      return [];
+    },
   },
 
   watch: {
-    selectedRoomsToTransfer(newSelectedRooms) {
+    currentSelectedRooms(newSelectedRooms) {
       const hasSelectedRooms = newSelectedRooms.length >= 1;
       const isAllRoomsSelected = newSelectedRooms.length === this.rooms?.length;
 
@@ -139,7 +155,11 @@ export default {
   },
 
   methods: {
-    ...mapActions(useRooms, ['setSelectedRoomsToTransfer']),
+    ...mapActions(useRooms, [
+      'setSelectedRoomsToTransfer',
+      'setSelectedOngoingRooms',
+      'setSelectedWaitingRooms',
+    ]),
     open(room) {
       this.$emit('open', room);
     },
@@ -151,7 +171,7 @@ export default {
       return newMessagesByDiscussion?.[discussionId]?.messages?.length || 0;
     },
     getIsRoomSelected(uuid) {
-      return !!this.selectedRoomsToTransfer.find(
+      return !!this.currentSelectedRooms.find(
         (mappedUuid) => mappedUuid === uuid,
       );
     },
@@ -159,18 +179,17 @@ export default {
       return !this.activeDiscussionId && this.activeRoom?.uuid === room?.uuid;
     },
     updateIsRoomSelected(uuid, isSelected) {
+      const isOngoing = this.roomsType === 'in_progress';
+      const currentArray = this.currentSelectedRooms;
+      const setMethod = isOngoing
+        ? this.setSelectedOngoingRooms
+        : this.setSelectedWaitingRooms;
+
       if (isSelected) {
         if (this.getIsRoomSelected(uuid)) return;
-        this.setSelectedRoomsToTransfer([
-          ...this.selectedRoomsToTransfer,
-          uuid,
-        ]);
+        setMethod([...currentArray, uuid]);
       } else {
-        this.setSelectedRoomsToTransfer(
-          this.selectedRoomsToTransfer.filter(
-            (selectedRoom) => selectedRoom !== uuid,
-          ),
-        );
+        setMethod(currentArray.filter((room) => room !== uuid));
       }
     },
     updateSelectAllRooms(select) {
