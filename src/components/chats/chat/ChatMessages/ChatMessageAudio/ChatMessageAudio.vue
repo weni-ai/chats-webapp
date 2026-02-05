@@ -248,7 +248,7 @@ watch(
   mediaTranscription,
   () => {
     isLoadingTranscription.value = false;
-    if (mediaTranscription.value.status === 'FAILED') {
+    if (mediaTranscription.value?.status === 'FAILED') {
       showTranscriptionText.value = false;
     }
   },
