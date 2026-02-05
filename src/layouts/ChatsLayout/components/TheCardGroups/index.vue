@@ -93,6 +93,8 @@
             <UnnnicCheckbox
               :modelValue="selectAllOngoingRoomsValue"
               size="sm"
+              class="select-all-checkbox"
+              :label="selectedText"
               @change="handleSelectAllOngoingRooms()"
             />
           </UnnnicToolTip>
@@ -279,6 +281,17 @@ export default {
       }
 
       return tabs;
+    },
+    selectedText() {
+      if (
+        !this.selectedRoomsToTransfer ||
+        this.selectedRoomsToTransfer?.length === 0
+      )
+        return null;
+
+      return this.$t('number_of_chats_selected', {
+        count: this.selectedRoomsToTransfer.length,
+      });
     },
 
     countRooms() {
@@ -684,6 +697,10 @@ export default {
 
     .select-all-checkbox-container {
       margin-left: $unnnic-space-1;
+      :deep(.unnnic-checkbox__label) {
+        font: $unnnic-font-caption-1;
+        color: $unnnic-color-fg-info;
+      }
     }
   }
 }
