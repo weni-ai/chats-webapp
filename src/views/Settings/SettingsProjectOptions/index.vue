@@ -3,9 +3,10 @@
     v-if="isUserManager && projectConfig"
     class="settings-view__project-options"
   >
-    <SettingsSectionHeader :title="$t('config_chats.project_configs.title')" />
-
     <section class="project-options__items">
+      <SettingsSectionHeader
+        :title="$t('config_chats.project_configs.title')"
+      />
       <section class="project-options__items__config">
         <SettingsProjectOptionsItem
           v-model="projectConfig.can_use_bulk_transfer"
@@ -32,9 +33,9 @@
           :name="configCloseChatsInQueue"
         />
       </section>
-      <section class="project-options__items__custom-breaks">
-        <CustomBreakOption />
-      </section>
+    </section>
+    <section class="project-options__items__custom-breaks">
+      <CustomBreakOption />
     </section>
   </section>
 </template>
@@ -165,13 +166,14 @@ export default {
 
 <style lang="scss">
 .settings-view__project-options {
-  display: grid;
+  display: flex;
+  justify-content: space-between;
   gap: $unnnic-spacing-ant;
 
   .project-options__items {
     display: flex;
-    justify-content: space-between;
-    gap: $unnnic-spacing-nano;
+    flex-direction: column;
+    gap: $unnnic-space-3;
 
     &__config {
       display: flex;
@@ -181,7 +183,6 @@ export default {
 
     &__custom-breaks {
       display: flex;
-      min-width: 236px;
     }
   }
 }
