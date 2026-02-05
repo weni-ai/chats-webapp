@@ -11,21 +11,9 @@ exports[`FooterButton > Snapshot > should match snapshot 1`] = `
     data-testid="bulk-transfer-section"
     data-v-944d9ccc=""
   >
-    <unnnic-button-stub
-      class="chats-layout-footer-button__button"
-      data-testid="transfer-button"
-      data-v-944d9ccc=""
-      disabled="false"
-      float="false"
-      iconcenter=""
-      iconleft="sync_alt"
-      iconright=""
-      iconsfilled="false"
-      loading="false"
-      size="small"
-      text="transfer_contact_2"
-      type="primary"
-    />
+    <!--v-if-->
+    <!--v-if-->
+    <!--v-if-->
     <!--v-if-->
   </section>
 </section>

@@ -124,12 +124,33 @@ describe('State Rooms', () => {
         );
       });
 
-      it('should handle transfer selections', () => {
+      it('should handle transfer selections for ongoing rooms', () => {
         const roomsStore = getRoomsStore();
-        roomsStore.setSelectedRoomsToTransfer(['room1', 'room2']);
+        roomsStore.activeTab = 'ongoing';
+        roomsStore.setSelectedOngoingRooms(['room1', 'room2']);
         roomsStore.setContactToTransfer('contact1');
-        expect(roomsStore.selectedRoomsToTransfer).toEqual(['room1', 'room2']);
+        expect(roomsStore.selectedOngoingRooms).toEqual(['room1', 'room2']);
         expect(roomsStore.contactToTransfer).toBe('contact1');
+      });
+
+      it('should handle transfer selections for waiting rooms', () => {
+        const roomsStore = getRoomsStore();
+        roomsStore.activeTab = 'waiting';
+        roomsStore.setSelectedWaitingRooms(['room3', 'room4']);
+        roomsStore.setContactToTransfer('contact2');
+        expect(roomsStore.selectedWaitingRooms).toEqual(['room3', 'room4']);
+        expect(roomsStore.contactToTransfer).toBe('contact2');
+      });
+
+      it('should return correct rooms via currentSelectedRooms getter', () => {
+        const roomsStore = getRoomsStore();
+        roomsStore.activeTab = 'ongoing';
+        roomsStore.selectedOngoingRooms = ['room1', 'room2'];
+        roomsStore.selectedWaitingRooms = ['room3', 'room4'];
+        expect(roomsStore.currentSelectedRooms).toEqual(['room1', 'room2']);
+
+        roomsStore.activeTab = 'waiting';
+        expect(roomsStore.currentSelectedRooms).toEqual(['room3', 'room4']);
       });
 
       it('should update last interaction', () => {
