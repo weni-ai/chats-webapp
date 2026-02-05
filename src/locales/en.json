@@ -1,4 +1,30 @@
 {
+  "onboarding": {
+    "title": "Human Support",
+    "steps": {
+      "step_1": {
+        "content_1": "Welcome to Weni! Discover the Human Support module now to learn how to harness its full potential.",
+        "content_2": "To start, keep in mind that the system assigns chats automatically. This means each new conversation is routed to an available agent. However, if needed, you can also manually take over a chat from the queue. Here’s how it works:"
+      },
+      "step_2": {
+        "content_1": "<b>General history:</b> access all completed support sessions under View Options > Chat History.",
+        "content_2": "<b>Contact history:</b> view previous conversations with a specific contact (if any) in the History button within the support chat."
+      },
+      "step_3": {
+        "content_1": "<b>Quick messages:</b> create templates for ready-made responses to speed up your customer service. Type the shortcut “/” in the chat text field, or click on + (More) > Quick messages.",
+        "content_2": "<b>Internal note:</b> add observations and context about the service, visible only to your team. Click on + (More) > Internal note."
+      },
+      "step_4": {
+        "content_1": "<b>Discussion:</b> ask your team to collaborate to discuss the service and find the best solution. Go to the section All information > About the support > Start discussion.",
+        "content_2": "<b>Classify the support (tags):</b> add tags to organize and filter the service while it is ongoing. Go to the section All Information > About the support > + (More) Tag."
+      },
+      "step_5": {
+        "content_1": "<b>Transfer contact:</b> if you need to pass the call to a colleague on the team, you can transfer the contact at any time. To do this, click the Transfer contact button in the top menu of the conversation.",
+        "content_2": "<b>End chat:</b> to finish, click the End Chat button. You can also take this opportunity to rate the support at this time."
+      }
+    },
+    "ended_text": "The initial tour of the Chats module has ended! 🎉 For more information, visit our <a class='link' href='https://help.vtex.com/pt/docs/tutorials/weni-by-vtex-categoria' target='_blank'><b>Help Center</b></a>."
+  },
   "home": {
     "title": "Hello there,",
     "description": "Select a chat to carry out your supports!"
@@ -1004,32 +1030,6 @@
         "success": "Internal note deleted successfully",
         "error": "Failed to delete internal note"
       }
-    }
-  },
-  "new_feature_internal_note": {
-    "title": "New feature: Internal Notes",
-    "description": "We have a new feature available for you to try. Would you like to try it now?",
-    "steps": {
-      "title": "How does it work?",
-      "step_1": "<b>Add a note:</b> click on the [+] next to the text field (when empty) and select 'Internal note'.",
-      "step_2": "<b>Write and send:</b> with the internal note field active, write your annotation. When you click Send, the note will appear in the timeline with highlighting and date stamp.",
-      "step_3": "<b>Where to find them:</b> notes will be visible in the conversation history and contact information, within the new 'Note' tab. Rest assured, they are never sent to the customer!",
-      "step_4": "<b>Delete notes:</b> you can delete your notes while the support room is still assigned to you.",
-      "step_5": "<b>Room transfer:</b> if another agent takes over the room, they will be informed about the existence of internal notes."
-    }
-  },
-  "new_contact_info_visual": {
-    "content_1": {
-      "text_1": "We’ve made a few changes to help you navigate faster! Check it out:",
-      "text_2": "The <b>View history</b> options have moved from the side drawer to the top menu of the chat."
-    },
-    "content_2": {
-      "text_1": "The <b>Transfer contact</b> options have moved from the side drawer to the top menu of the chat."
-    },
-    "content_3": {
-      "text_1": "To make the information drawer more organized and easier to use, we've made some improvements. The information is now divided into <b>About the contact</b> and <b>About the service</b>.",
-      "text_2": "In addition, <b>custom fields</b> can now be collapsed and expanded, so you can see what really matters without having to scroll.",
-      "text_3": "And to make the interface cleaner, we've changed the look of the <b>Start discussion</b> button."
     }
   }
 }

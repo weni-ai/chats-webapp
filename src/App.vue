@@ -7,6 +7,10 @@
       v-model="showModalOfflineAgent"
       :username="userWhoChangedStatus"
     />
+    <ModalOnboarding
+      v-if="showModalOnboarding"
+      v-model="showModalOnboarding"
+    />
     <ModalRoomSummaryOnboarding
       v-if="enableRoomSummary"
       :modelValue="showModalRoomSummaryOnboarding"
@@ -26,6 +30,7 @@ import { mapActions, mapState } from 'pinia';
 import SocketAlertBanner from './layouts/ChatsLayout/components/SocketAlertBanner.vue';
 import ModalOfflineAgent from './components/ModalOfflineAgent.vue';
 import ModalRoomSummaryOnboarding from './components/ModalRoomSummaryOnboarding.vue';
+import ModalOnboarding from './components/ModalOnboarding.vue';
 
 import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
@@ -42,6 +47,9 @@ import { useDashboard } from './store/modules/dashboard';
 import { useFeatureFlag } from './store/modules/featureFlag';
 
 import initHotjar from '@/plugins/Hotjar';
+
+import { sub as subDateFns, isAfter as isAfterDateFns } from 'date-fns';
+
 import {
   getProject,
   setProject as setProjectLocalStorage,
@@ -57,6 +65,7 @@ export default {
     SocketAlertBanner,
     ModalOfflineAgent,
     ModalRoomSummaryOnboarding,
+    ModalOnboarding,
   },
   setup() {
     const queryString = window.location.href.split('?')[1];
@@ -77,6 +86,7 @@ export default {
         'showModalRoomSummaryOnboarding',
         true,
       ),
+      showModalOnboarding: true,
     };
   },
 
@@ -146,6 +156,7 @@ export default {
     },
     'me.email': {
       async handler() {
+        this.handleShowOnboarding();
         await this.getMeQueues();
         initHotjar(this.me.email);
       },
@@ -155,7 +166,6 @@ export default {
         this.wsReconnect();
       },
     },
-
     configsForInitializeWebSocket: {
       immediate: true,
       handler() {
@@ -195,6 +205,21 @@ export default {
       getAllQuickMessagesShared: 'getAll',
     }),
     ...mapActions(useFeatureFlag, ['getFeatureFlags']),
+
+    handleShowOnboarding() {
+      // TODO: remove return after test
+      return;
+      // const yesterday = subDateFns(new Date(), { days: 1 });
+      // const profileCreatedOn = new Date(this.me.created_on);
+      // const isAfter = isAfterDateFns(profileCreatedOn, yesterday);
+
+      // const showOnboarding =
+      //   isAfter && !moduleStorage.getItem('userOnboarded', false);
+
+      // this.showModalOnboarding = showOnboarding;
+
+      // moduleStorage.setItem('userOnboarded', true);
+    },
     restoreSessionStorageUserStatus({ projectUuid }) {
       const userStatus = moduleStorage.getItem(
         `statusAgent-${projectUuid}`,

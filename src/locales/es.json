@@ -1,4 +1,30 @@
 {
+  "onboarding": {
+    "title": "Soporte Humano",
+    "steps": {
+      "step_1": {
+        "content_1": "¡Bienvenido a Weni! Descubre ahora el módulo de Soporte Humano para aprender cómo aprovechar todo su potencial.",
+        "content_2": "Para comenzar, ten en cuenta que el sistema asigna los chats automáticamente. Esto significa que cada nueva conversación se dirige a un agente disponible. Sin embargo, si es necesario, también puedes tomar manualmente un chat desde la cola. Así es como funciona:"
+      },
+      "step_2": {
+        "content_1": "<b>Historial general:</b> accede a todas las sesiones de soporte finalizadas en Ver opciones > Historial de chats.",
+        "content_2": "<b>Historial de contacto:</b> visualiza conversaciones anteriores con un contacto específico (si las hay) en el botón Historial dentro del chat de soporte."
+      },
+      "step_3": {
+        "content_1": "<b>Mensajes rápidos:</b> crea plantillas de respuestas predefinidas para agilizar la atención al cliente. Escribe el atajo “/” en el campo de texto del chat o haz clic en + (Más) > Mensajes rápidos.",
+        "content_2": "<b>Nota interna:</b> agrega observaciones y contexto sobre la atención, visibles solo para tu equipo. Haz clic en + (Más) > Nota interna."
+      },
+      "step_4": {
+        "content_1": "<b>Discusión:</b> solicita la colaboración de tu equipo para debatir la atención y encontrar la mejor solución. Ve a la sección Toda la información > Sobre la atención > Iniciar discusión.",
+        "content_2": "<b>Clasificar la atención (etiquetas):</b> agrega etiquetas para organizar y filtrar la atención mientras está en curso. Ve a la sección Toda la información > Sobre la atención > + (Más) Etiqueta."
+      },
+      "step_5": {
+        "content_1": "<b>Transferir contacto:</b> si necesitas pasar la atención a un colega del equipo, puedes transferir el contacto en cualquier momento. Para hacerlo, haz clic en el botón Transferir contacto en el menú superior de la conversación.",
+        "content_2": "<b>Finalizar chat:</b> para terminar, haz clic en el botón Finalizar chat. También puedes aprovechar este momento para calificar la atención."
+      }
+    },
+    "ended_text": "¡El recorrido inicial del módulo de Chats ha finalizado! 🎉 Para más información, visita nuestro <a class='link' href='https://help.vtex.com/pt/docs/tutorials/weni-by-vtex-categoria' target='_blank'><b>Centro de Ayuda</b></a>."
+  },
   "home": {
     "title": "¡Hola!",
     "description": "¡Selecciona un chat para realizar tus soportes!"
@@ -1000,32 +1026,6 @@
         "success": "Nota interna eliminada correctamente",
         "error": "No se pudo eliminar la nota interna"
       }
-    }
-  },
-  "new_feature_internal_note": {
-    "title": "Nueva feature: Notas internas",
-    "description": "Tenemos una nueva feature disponible para que la pruebes. ¿Te gustaría probarla ahora?",
-    "steps": {
-      "title": "¿Cómo funciona?",
-      "step_1": "<b>Agregar una nota:</b> haz clic en el [+] junto al campo de texto (cuando esté vacío) y selecciona 'Nota interna'.",
-      "step_2": "<b>Escribe y envía:</b> con el campo de nota interna activo, escribe tu anotación. Cuando hagas clic en Enviar, la nota aparecerá en el timeline con resaltado y fecha.",
-      "step_3": "<b>Donde encontrarlos:</b> las notas serán visibles en el historial de conversación y información del contacto, dentro de la nueva pestaña 'Nota'. No te preocupes, nunca se envían al cliente!",
-      "step_4": "<b>Eliminar notas:</b> puedes eliminar tus notas mientras el soporte sigue asignado a ti.",
-      "step_5": "<b>Transferencia de room:</b> si otro agente toma el room, se les informará sobre la existencia de notas internas."
-    }
-  },
-  "new_contact_info_visual": {
-    "content_1": {
-      "text_1": "Hemos hecho algunos cambios para ayudarte a navegar más rápido! Echa un vistazo:",
-      "text_2": "Las opciones <b>Ver historial</b> han sido movidas desde el lateral al menú superior de la conversación."
-    },
-    "content_2": {
-      "text_1": "Las opciones <b>Transferir contacto</b> han sido movidas desde el lateral al menú superior de la conversación."
-    },
-    "content_3": {
-      "text_1": "Para hacer el drawer de información más organizado y fácil de usar, hemos hecho algunas mejoras. La información ahora está dividida en <b>Sobre el contacto</b> y <b>Sobre el servicio</b>.",
-      "text_2": "Además, los <b>campos personalizados</b> ahora pueden ser expandidos y contraídos, para que puedas ver lo que realmente importa sin tener que hacer scroll.",
-      "text_3": "Y para hacer la interfaz más limpia, hemos cambiado el aspecto del botón <b>Iniciar discusión</b>."
     }
   }
 }
