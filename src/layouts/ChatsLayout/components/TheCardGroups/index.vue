@@ -156,7 +156,7 @@
       <CardGroup
         v-show="activeTab === 'ongoing'"
         :rooms="rooms_ongoing"
-        :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
+        :withSelection="isWithSelection"
         roomsType="in_progress"
         data-testid="in-progress-rooms-card-group"
         @open="openRoom"
@@ -319,10 +319,14 @@ export default {
     },
 
     showSelectAllCheckbox() {
+      const isEnabled =
+        this.project.config?.can_use_bulk_transfer ||
+        this.project.config?.can_use_bulk_close;
+
       return (
         this.activeTab === 'ongoing' &&
         this.rooms_ongoing.length > 0 &&
-        this.project.config?.can_use_bulk_transfer
+        isEnabled
       );
     },
 
@@ -356,6 +360,13 @@ export default {
     },
     selectAllOngoingRoomsValue() {
       return this.rooms_ongoing.length === this.selectedRoomsToTransfer?.length;
+    },
+
+    isWithSelection() {
+      const isEnabled =
+        this.project.config?.can_use_bulk_transfer ||
+        this.project.config?.can_use_bulk_close;
+      return !this.isMobile && isEnabled;
     },
   },
   watch: {
