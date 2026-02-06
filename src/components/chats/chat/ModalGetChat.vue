@@ -1,20 +1,36 @@
 <template>
-  <UnnnicModalDialog
-    class="modal-get-chat"
-    :modelValue="showModal"
-    :primaryButtonProps="{ text: $t('confirm'), loading: loadingGetChat }"
-    @primary-button-click="getChat()"
-    @update:model-value="close()"
+  <UnnnicDialog
+    :open="showModal"
+    @update:open="close"
   >
-    <section class="modal-get-chat__content">
-      <UnnnicIcon
-        icon="forum"
-        size="xl"
-      />
-      <h2 class="modal-get-chat__title">{{ title }}</h2>
-      <p class="modal-get-chat__description">{{ description }}</p>
-    </section>
-  </UnnnicModalDialog>
+    <UnnnicDialogContent size="medium">
+      <section class="modal-get-chat__content">
+        <UnnnicIcon
+          icon="forum"
+          size="xl"
+        />
+        <h2 class="modal-get-chat__title">{{ title }}</h2>
+        <p class="modal-get-chat__description">{{ description }}</p>
+      </section>
+      <UnnnicDialogFooter>
+        <UnnnicDialogClose>
+          <UnnnicButton
+            :text="$t('cancel')"
+            :disabled="loadingGetChat"
+            type="tertiary"
+            @click="close"
+          />
+        </UnnnicDialogClose>
+        <UnnnicButton
+          :text="$t('confirm')"
+          :loading="loadingGetChat"
+          :disabled="loadingGetChat"
+          type="primary"
+          @click="getChat"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script>
@@ -166,6 +182,8 @@ export default {
     justify-content: center;
     align-items: center;
     gap: $unnnic-icon-size-ant;
+    padding: $unnnic-space-6;
+    color: $unnnic-color-gray-500;
   }
 
   &__title {
