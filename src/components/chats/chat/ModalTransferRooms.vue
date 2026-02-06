@@ -1,36 +1,42 @@
 <template>
-  <UnnnicModalDialog
-    :modelValue="true"
-    :title="
-      bulkTransfer
-        ? $t('bulk_transfer.transfer_selected_contacts')
-        : $t('transfer_contact')
-    "
-    class="modal-transfer-rooms"
-    :showCloseIcon="!isLoadingBulkTransfer"
-    :primaryButtonProps="{
-      text: $t('transfer'),
-      loading: isLoadingBulkTransfer,
-      disabled: disabledTransferButton,
-    }"
-    :secondaryButtonProps="{
-      text: $t('cancel'),
-      disabled: isLoadingBulkTransfer,
-    }"
-    :persistent="isLoadingBulkTransfer"
-    data-testid="modal-bulk-transfer"
-    @secondary-button-click="emitClose()"
-    @primary-button-click="transfer()"
-    @update:model-value="emitClose()"
-  >
-    <RoomsTransferFields
-      ref="roomsTransferFields"
-      v-model="selectedQueue"
-      :bulkTransfer="bulkTransfer"
-      fixed
-      @transfer-complete="transferComplete"
-    />
-  </UnnnicModalDialog>
+  <UnnnicDialog v-model:open="open">
+    <UnnnicDialogContent size="medium">
+      <UnnnicDialogHeader :closeButton="!isLoadingBulkTransfer">
+        <UnnnicDialogTitle>
+          {{
+            bulkTransfer
+              ? $t('bulk_transfer.transfer_selected_contacts')
+              : $t('transfer_contact')
+          }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <RoomsTransferFields
+        ref="roomsTransferFields"
+        v-model="selectedQueue"
+        class="modal-transfer-rooms__content"
+        :bulkTransfer="bulkTransfer"
+        fixed
+        @transfer-complete="transferComplete"
+      />
+      <UnnnicDialogFooter>
+        <UnnnicDialogClose>
+          <UnnnicButton
+            :text="$t('cancel')"
+            type="tertiary"
+            :disabled="isLoadingBulkTransfer"
+            @click="emitClose()"
+          />
+        </UnnnicDialogClose>
+        <UnnnicButton
+          :text="$t('transfer')"
+          type="primary"
+          :loading="isLoadingBulkTransfer"
+          :disabled="disabledTransferButton"
+          @click="transfer()"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script>
@@ -43,13 +49,17 @@ export default {
     RoomsTransferFields,
   },
   props: {
+    modelValue: {
+      type: Boolean,
+      required: true,
+    },
     bulkTransfer: {
       type: Boolean,
       default: false,
     },
   },
 
-  emits: ['close'],
+  emits: ['close', 'update:modelValue'],
 
   data() {
     return {
@@ -59,6 +69,14 @@ export default {
   },
 
   computed: {
+    open: {
+      get() {
+        return this.modelValue;
+      },
+      set(value) {
+        this.$emit('update:modelValue', value);
+      },
+    },
     disabledTransferButton() {
       return (
         this.selectedQueue.length === 0 || this.selectedQueue[0]?.value === ''
@@ -75,7 +93,7 @@ export default {
 
     transferComplete() {
       this.isLoadingBulkTransfer = false;
-      this.$emit('close');
+      this.emitClose();
     },
 
     emitClose() {
@@ -87,6 +105,8 @@ export default {
 
 <style lang="scss">
 .modal-transfer-rooms {
-  min-height: 450px;
+  &__content {
+    padding: $unnnic-space-6;
+  }
 }
 </style>
