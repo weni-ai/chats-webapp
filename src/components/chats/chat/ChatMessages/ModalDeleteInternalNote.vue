@@ -19,7 +19,6 @@
           <UnnnicButton
             :text="$t('cancel')"
             type="tertiary"
-            @click="open = false"
           />
         </UnnnicDialogClose>
         <UnnnicButton
