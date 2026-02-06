@@ -47,19 +47,6 @@ describe('ModalOfflineAgent', () => {
             return key;
           },
         },
-        stubs: {
-          UnnnicModalDialog: {
-            template: `
-              <div v-if="modelValue" data-testid="modal-dialog">
-                <div data-testid="modal-title">{{ title }}</div>
-                <div data-testid="modal-close" @click="$emit('update:model-value', false)">×</div>
-                <slot />
-              </div>
-            `,
-            props: ['modelValue', 'title', 'size', 'type', 'showCloseIcon'],
-            emits: ['update:model-value'],
-          },
-        },
       },
     });
   };
@@ -81,7 +68,7 @@ describe('ModalOfflineAgent', () => {
 
     it('should show modal when modelValue is true', () => {
       wrapper = createWrapper({ modelValue: true });
-      expect(wrapper.find('[data-testid="offline-agent-modal"]').exists()).toBe(
+      expect(wrapper.getComponent({ name: 'UnnnicDialog' }).isVisible()).toBe(
         true,
       );
     });
@@ -124,19 +111,10 @@ describe('ModalOfflineAgent', () => {
     it('should emit update:modelValue when close is triggered', async () => {
       wrapper = createWrapper({ modelValue: true });
 
-      await wrapper.find('[data-testid="modal-close"]').trigger('click');
+      await wrapper.find('.unnnic-dialog-close').trigger('click');
 
       expect(wrapper.emitted('update:modelValue')).toBeTruthy();
       expect(wrapper.emitted('update:modelValue')[0]).toEqual([false]);
-    });
-
-    it('should call closeModal method', () => {
-      wrapper = createWrapper({ modelValue: true });
-      const closeModalSpy = vi.spyOn(wrapper.vm, 'closeModal');
-
-      wrapper.vm.closeModal();
-
-      expect(closeModalSpy).toHaveBeenCalled();
     });
   });
 
@@ -153,13 +131,8 @@ describe('ModalOfflineAgent', () => {
     it('should have correct data-testids', () => {
       wrapper = createWrapper({ modelValue: true });
 
-      expect(wrapper.find('[data-testid="offline-agent-modal"]').exists()).toBe(
-        true,
-      );
       expect(wrapper.find('[data-testid="modal-content"]').exists()).toBe(true);
-      expect(wrapper.find('[data-testid="modal-description"]').exists()).toBe(
-        true,
-      );
+      expect(wrapper.find('[data-testid="modal-title"]').exists()).toBe(true);
     });
   });
 
