@@ -564,7 +564,17 @@
     "close_selected_contacts": "Encerrar contatos selecionados",
     "confirm_close_selected": "Tem certeza que deseja encerrar os contatos selecionados?",
     "success_message": "{count} contato encerrado com sucesso | {count} contatos encerrados com sucesso",
-    "error_message": "Não foi possível encerrar os contatos, tente novamente"
+    "error_message": "Não foi possível encerrar os contatos, tente novamente",
+    "end_all_selected_chats": "Encerrar todos os chats selecionados",
+    "sector_tag": "Setor {current} de {total}",
+    "chats_count_sector": "{count} chat · setor {sector} | {count} chats · setor {sector}",
+    "required_tags_title": "Tags são obrigatórias para finalizar chats no setor {sector}",
+    "required_tags_description": "Se você selecionar alguma tag abaixo, ela será aplicada ao {count} chat e substituirá quaisquer tags existentes. | Se você selecionar alguma tag abaixo, ela será aplicada aos {count} chats e substituirá quaisquer tags existentes.",
+    "next_sector": "Próximo setor",
+    "end_all_chats": "Encerrar todos ({count} chats)",
+    "back": "Voltar",
+    "optional_tags_title": "Tags não são obrigatórias para finalizar chats no setor {sector}",
+    "optional_tags_description": "Se você selecionar alguma tag abaixo, ela será aplicada ao {count} chat e substituirá quaisquer tags existentes. | Se você selecionar alguma tag abaixo, ela será aplicada aos {count} chats e substituirá quaisquer tags existentes."
   },
   "close_contact": "Encerrar contato",
   "close_contact_confirmation": "Tem certeza que deseja encerrar este contato?",
