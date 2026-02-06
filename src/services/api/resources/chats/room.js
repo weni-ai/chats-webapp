@@ -169,6 +169,23 @@ export default {
     return response;
   },
 
+  async bulkClose({ rooms = [], end_by = 'system', closed_by_email = '' }) {
+    const profileStore = useProfile();
+    const { email: user_email } = profileStore.me;
+
+    const body = {
+      rooms,
+      end_by: end_by || 'system',
+      closed_by_email: closed_by_email || user_email,
+    };
+
+    const response = await http
+      .post(`/room/bulk_close/`, body)
+      .then((response) => response)
+      .catch((error) => error.response);
+    return response;
+  },
+
   async pinRoom({ uuid, status = true }) {
     const response = await http.post(`/room/${uuid}/pin/`, {
       status,
