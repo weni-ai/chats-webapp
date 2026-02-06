@@ -1,74 +1,86 @@
 <template>
-  <UnnnicModalDialog
-    :modelValue="true"
-    :title="$t('discussions.start_discussion.title')"
-    :showCloseIcon="!startDiscussionLoading"
-    :primaryButtonProps="{
-      text: $t('start'),
-      disabled: isConfirmButtonDisabled,
-      loading: startDiscussionLoading,
-    }"
-    :secondaryButtonProps="{
-      text: $t('cancel'),
-      disabled: startDiscussionLoading,
-    }"
-    class="start-discussion-form__modal"
-    size="lg"
-    @primary-button-click="startDiscussion"
-    @secondary-button-click="close()"
-    @update:model-value="close"
+  <UnnnicDialog
+    v-model:open="open"
+    class="modal-start-discussion"
   >
-    <section
-      class="start-discussion-form"
-      data-testid="start-discussion-form"
-    >
-      <div class="start-discussion-form__selects">
-        <div class="start-discussion-form__selects__input">
-          <UnnnicLabel
-            :label="$t('discussions.start_discussion.form.select_sector')"
-          />
-          <UnnnicSelectSmart
-            v-model="sector"
-            :options="sectorsToSelect"
-            autocomplete
-            autocompleteIconLeft
-            autocompleteClearOnFocus
-            data-testid="select-sector"
-          />
+    <UnnnicDialogContent size="large">
+      <UnnnicDialogHeader :closeButton="!startDiscussionLoading">
+        <UnnnicDialogTitle>
+          {{ $t('discussions.start_discussion.title') }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section
+        class="start-discussion-form"
+        data-testid="start-discussion-form"
+      >
+        <div class="start-discussion-form__selects">
+          <div class="start-discussion-form__selects__input">
+            <UnnnicLabel
+              :label="$t('discussions.start_discussion.form.select_sector')"
+            />
+            <UnnnicSelectSmart
+              v-model="sector"
+              :options="sectorsToSelect"
+              autocomplete
+              autocompleteIconLeft
+              autocompleteClearOnFocus
+              data-testid="select-sector"
+            />
+          </div>
+          <div class="start-discussion-form__selects__input">
+            <UnnnicLabel
+              :label="$t('discussions.start_discussion.form.select_queue')"
+            />
+            <UnnnicSelectSmart
+              v-model="queue"
+              :disabled="sector[0]?.value === '' || queuesToSelect.length < 2"
+              :options="queuesToSelect"
+              autocomplete
+              autocompleteIconLeft
+              autocompleteClearOnFocus
+              data-testid="select-queue"
+            />
+          </div>
         </div>
-        <div class="start-discussion-form__selects__input">
-          <UnnnicLabel
-            :label="$t('discussions.start_discussion.form.select_queue')"
-          />
-          <UnnnicSelectSmart
-            v-model="queue"
-            :disabled="sector[0]?.value === '' || queuesToSelect.length < 2"
-            :options="queuesToSelect"
-            autocomplete
-            autocompleteIconLeft
-            autocompleteClearOnFocus
-            data-testid="select-queue"
-          />
-        </div>
-      </div>
-      <UnnnicInput
-        v-model="subject"
-        size="md"
-        :maxlength="50"
-        :placeholder="$t('discussions.start_discussion.form.discussion_reason')"
-        :label="$t('discussions.start_discussion.form.subject')"
-        data-testid="input-subject"
-      />
+        <UnnnicInput
+          v-model="subject"
+          size="md"
+          :maxlength="50"
+          :placeholder="
+            $t('discussions.start_discussion.form.discussion_reason')
+          "
+          :label="$t('discussions.start_discussion.form.subject')"
+          data-testid="input-subject"
+        />
 
-      <UnnnicTextArea
-        v-model="message"
-        :label="$t('message')"
-        :placeholder="$t('discussions.start_discussion.form.explain_situation')"
-        :maxLength="300"
-        data-testid="input-explain-situation"
-      />
-    </section>
-  </UnnnicModalDialog>
+        <UnnnicTextArea
+          v-model="message"
+          :label="$t('message')"
+          :placeholder="
+            $t('discussions.start_discussion.form.explain_situation')
+          "
+          :maxLength="300"
+          data-testid="input-explain-situation"
+        />
+      </section>
+      <UnnnicDialogFooter>
+        <UnnnicDialogClose>
+          <UnnnicButton
+            :text="$t('cancel')"
+            type="tertiary"
+            :disabled="startDiscussionLoading"
+          />
+        </UnnnicDialogClose>
+        <UnnnicButton
+          :text="$t('start')"
+          type="primary"
+          :disabled="isConfirmButtonDisabled"
+          :loading="startDiscussionLoading"
+          @click="startDiscussion()"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script>
@@ -82,7 +94,14 @@ import unnnic from '@weni/unnnic-system';
 
 export default {
   name: 'ModalStartDiscussion',
-  emits: ['close'],
+
+  props: {
+    modelValue: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  emits: ['close', 'update:modelValue'],
 
   data: () => {
     return {
@@ -100,6 +119,14 @@ export default {
 
   computed: {
     ...mapState(useDiscussions, ['discussionsCount']),
+    open: {
+      get() {
+        return this.modelValue;
+      },
+      set(value) {
+        this.$emit('update:modelValue', value);
+      },
+    },
     isConfirmButtonDisabled() {
       return (
         !this.sector[0] ||
@@ -237,34 +264,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.start-discussion-form__modal {
-  .start-discussion-form {
-    display: grid;
-    gap: $unnnic-spacing-sm;
+.start-discussion-form {
+  display: grid;
+  gap: $unnnic-spacing-sm;
 
-    text-align: start;
+  text-align: start;
+  padding: $unnnic-space-6;
 
-    &__selects {
-      display: flex;
-      gap: $unnnic-spacing-xs;
+  &__selects {
+    display: flex;
+    gap: $unnnic-spacing-xs;
 
-      &__input {
-        flex: 1;
-      }
-    }
-  }
-  :deep(.unnnic-label__label),
-  :deep(.unnnic-form__label) {
-    margin: 0 0 $unnnic-spacing-nano;
-  }
-
-  :deep(.unnnic-modal-container) {
-    .unnnic-modal-container-background {
-      width: 50%; // -> 6 / 12
-
-      &-body-description-container {
-        padding-bottom: 0;
-      }
+    &__input {
+      flex: 1;
     }
   }
 }
