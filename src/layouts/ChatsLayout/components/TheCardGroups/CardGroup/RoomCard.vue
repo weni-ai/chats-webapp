@@ -10,14 +10,20 @@
     @mouseenter="hover = true"
     @mouseleave="hover = false"
   >
-    <UnnnicCheckbox
+    <UnnnicToolTip
       v-if="withSelection"
-      :modelValue="checkboxValue"
-      size="sm"
-      class="room-card__checkbox"
-      data-testid="room-card-checkbox"
-      @change="checkboxValue = $event"
-    />
+      enabled
+      :text="checkboxValue ? $t('deselect_this_chat') : $t('select_this_chat')"
+      side="right"
+    >
+      <UnnnicCheckbox
+        :modelValue="checkboxValue"
+        size="sm"
+        class="room-card__checkbox"
+        data-testid="room-card-checkbox"
+        @change="checkboxValue = $event"
+      />
+    </UnnnicToolTip>
     <UnnnicChatsContact
       :class="{
         'room-card__contact': true,
