@@ -8,24 +8,38 @@
       class="chats-layout-footer-button__bulk-transfer"
       data-testid="bulk-transfer-section"
     >
-      <UnnnicButton
+      <UnnnicToolTip
         v-if="isTransferContactsEnabled"
-        class="chats-layout-footer-button__button"
-        :text="$t('transfer')"
-        :type="isOnlyBulkTransferBtn ? 'primary' : 'secondary'"
-        size="large"
-        data-testid="transfer-button"
-        @click="handleModalTransferRooms"
-      />
-      <UnnnicButton
+        enabled
+        class="chats-layout-footer-button__tooltip"
+        :text="$t('transfer_all_selected_chats')"
+        side="top"
+      >
+        <UnnnicButton
+          class="chats-layout-footer-button__button"
+          :text="$t('transfer')"
+          :type="isOnlyBulkTransferBtn ? 'primary' : 'secondary'"
+          size="large"
+          data-testid="transfer-button"
+          @click="handleModalTransferRooms"
+        />
+      </UnnnicToolTip>
+      <UnnnicToolTip
         v-if="isBulkCloseContactsEnabled"
-        class="chats-layout-footer-button__button chats-layout-footer-button__button--end"
-        :text="$t('end')"
-        type="primary"
-        size="large"
-        data-testid="end-button"
-        @click="handleModalCloseRooms"
-      />
+        enabled
+        class="chats-layout-footer-button__tooltip"
+        :text="$t('end_all_selected_chats_tooltip')"
+        side="top"
+      >
+        <UnnnicButton
+          class="chats-layout-footer-button__button chats-layout-footer-button__button--end"
+          :text="$t('end')"
+          type="primary"
+          size="large"
+          data-testid="end-button"
+          @click="handleModalCloseRooms"
+        />
+      </UnnnicToolTip>
       <ModalTransferRooms
         v-if="isModalTransferRoomsOpened"
         bulkTransfer
@@ -116,6 +130,11 @@ export default {
 <style lang="scss" scoped>
 .chats-layout-footer-button {
   padding-left: $unnnic-spacing-xs;
+
+  &__tooltip {
+    display: flex;
+    width: 100%;
+  }
 
   &__bulk-transfer {
     display: flex;
