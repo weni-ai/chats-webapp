@@ -434,7 +434,7 @@
     "view-mode": {
       "title": "Modo de visualização ao vivo do agente {viewedAgent}",
       "close": "Encerrar visualização",
-      "assume_chat": "Assumir Chat",
+      "assume_chat": "Assumir apenas este chat",
       "assume_chat_question": "Assumir Chat?",
       "assume_chat_confirmation": "Ao confirmar você removerá o Chat do agente {viewedAgent} e será o responsável pelo Chat"
     }

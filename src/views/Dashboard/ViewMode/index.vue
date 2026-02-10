@@ -127,7 +127,7 @@
         v-if="room && !discussion && room.user?.email !== me.email"
         class="assume-chat"
         :text="$t('dashboard.view-mode.assume_chat')"
-        type="secondary"
+        :type="handleTypeGetChatButton()"
         data-testid="assume-chat-button"
         @click="handleModal('AssumeChatConfirmation', 'open')"
       />
@@ -238,6 +238,9 @@ export default {
     ]),
     ...mapState(useConfig, {
       enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
+      isBulkActionsEnabled: (store) =>
+        store.project?.config?.can_use_bulk_transfer ||
+        store.project?.config?.can_use_bulk_close,
     }),
   },
 
@@ -337,6 +340,10 @@ export default {
           from: this.room.uuid,
         },
       });
+    },
+    handleTypeGetChatButton() {
+      if (this.isBulkActionsEnabled) return 'secondary';
+      return this.room.user?.email === this.me.email ? 'primary' : 'secondary';
     },
   },
 };

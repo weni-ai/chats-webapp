@@ -438,7 +438,7 @@
     "view-mode": {
       "title": "Agent {viewedAgent} live view mode",
       "close": "End visualization",
-      "assume_chat": "Take Chat",
+      "assume_chat": "Take over only this chat",
       "assume_chat_question": "Take Chat?",
       "assume_chat_confirmation": "When confirming you will remove the Chat from agent {viewedAgent} and will be responsible for Chat"
     }
