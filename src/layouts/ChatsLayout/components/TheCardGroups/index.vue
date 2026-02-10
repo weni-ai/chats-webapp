@@ -87,7 +87,13 @@
             v-if="showSelectAllCheckbox"
             enabled
             :text="
-              selectAllOngoingRoomsValue ? $t('deselect_all') : $t('select_all')
+              (
+                activeTab === 'ongoing'
+                  ? selectAllOngoingRoomsValue
+                  : selectAllWaitingRoomsValue
+              )
+                ? $t('deselect_all')
+                : $t('select_all')
             "
           >
             <UnnnicCheckbox
