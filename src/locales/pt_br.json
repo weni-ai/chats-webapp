@@ -155,6 +155,7 @@
     "info": "Defina uma resposta automática para ser enviada ao contato enquanto está aguardando atendimento, deixe em branco caso não queira nenhuma mensagem.",
     "placeholder": "Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando"
   },
+  "attention": "Atenção",
   "updates_saved": "Atualizações salvas",
   "updated_info": "Informações atualizadas",
   "active_chats": "Chats ativos",
@@ -262,9 +263,12 @@
         "switch_disabled": "Assinatura desativada"
       },
       "csat": {
-        "enabled": "Enquete de satisfação após completar o suporte ativo",
-        "disabeld": "Enquete de satisfação após completar o suporte desativado",
-        "tooltip": "Quando ativado, uma enquete de satisfação será enviada automaticamente ao contato, logo após o fechamento do suporte."
+        "label": "Enviar automaticamente uma pesquisa de satisfação após o atendimento humano ser encerrado",
+        "hint": "Se houver um fluxo ativo no módulo Flows configurado para disparar a pesquisa após o atendimento, esta configuração pode gerar conflito e impactar o envio da pesquisa.",
+        "confirm_modal": {
+          "content_1": "Se houver um fluxo ativo no módulo Flows configurado para disparar a pesquisa após o atendimento, esta configuração pode gerar conflito e impactar o envio da pesquisa.",
+          "content_2": "Deseja continuar mesmo assim?"
+        }
       },
       "automatic_message": {
         "switch_active": "Mensagem automática de abertura ativa",

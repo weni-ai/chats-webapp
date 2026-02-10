@@ -155,6 +155,7 @@
     "info": "Define una respuesta automática para enviar al contacto mientras espera asistencia, déjalo en blanco si no deseas ningún mensaje.",
     "placeholder": "Aún no has definido un mensaje automático. Por favor, define un mensaje para tus contactos que están esperando."
   },
+  "attention": "Atención",
   "updates_saved": "Actualizaciones guardadas",
   "updated_info": "Información actualizada",
   "active_chats": "Chats activos",
@@ -262,9 +263,12 @@
         "switch_disabled": "Firma desactivada"
       },
       "csat": {
-        "enabled": "Encuesta de satisfacción después de completar el soporte activo",
-        "disabeld": "Encuesta de satisfacción después de completar el soporte deshabilitado",
-        "tooltip": "Cuando se activa, se enviará una encuesta de satisfacción automáticamente al contacto, justo después de que se cierre el servicio."
+        "label": "Enviar automáticamente una encuesta de satisfacción después de que el soporte humano termine",
+        "hint": "Si hay un flujo activo en el módulo de Flujos configurado para enviar una encuesta después de que el soporte termine, esta configuración puede causar conflictos y afectar el envío de la encuesta.",
+        "confirm_modal": {
+          "content_1": "Si hay un flujo activo en el módulo de Flujos configurado para enviar una encuesta después de que el soporte termine, esta configuración puede causar conflictos y afectar el envío de la encuesta.",
+          "content_2": "¿Deseas continuar de todas formas?"
+        }
       },
       "automatic_message": {
         "switch_active": "Mensaje automático de apertura activo",
