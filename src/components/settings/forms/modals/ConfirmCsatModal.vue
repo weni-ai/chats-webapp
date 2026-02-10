@@ -19,12 +19,12 @@
       </section>
       <UnnnicDialogFooter>
         <UnnnicButton
-          text="Close"
+          :text="$t('cancel')"
           type="tertiary"
           @click="emit('cancel')"
         />
         <UnnnicButton
-          text="Confirm"
+          :text="$t('continue')"
           type="attention"
           @click="emit('confirm')"
         />
