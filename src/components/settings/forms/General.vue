@@ -1141,7 +1141,7 @@ fieldset {
         display: flex;
         gap: $unnnic-spacing-xs;
         &__tag {
-          height: 32px;
+          height: $unnnic-space-8;
         }
       }
 
