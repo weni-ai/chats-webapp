@@ -6,12 +6,10 @@
     :showCloseIcon="!isLoadingBulkClose"
     :primaryButtonProps="primaryButtonProps"
     :secondaryButtonProps="secondaryButtonProps"
-    :tertiaryButtonProps="tertiaryButtonProps"
     :persistent="isLoadingBulkClose"
     data-testid="modal-bulk-close"
     size="lg"
-    @tertiary-button-click="goToPreviousSector"
-    @secondary-button-click="emitClose"
+    @secondary-button-click="handleSecondaryClick"
     @primary-button-click="handlePrimaryClick"
     @update:model-value="emitClose"
   >
@@ -235,18 +233,15 @@ const primaryButtonProps = computed(() => {
   };
 });
 
-const secondaryButtonProps = computed(() => ({
-  text: i18n.global.t('cancel'),
-  disabled: isLoadingBulkClose.value,
-}));
-
-const tertiaryButtonProps = computed(() => {
-  if (currentSectorIndex.value === 0 || totalSectors.value === 1) {
-    return null;
-  }
+const secondaryButtonProps = computed(() => {
+  const isFirstSector = currentSectorIndex.value === 0;
+  const isMultipleSectors = totalSectors.value > 1;
 
   return {
-    text: i18n.global.t('bulk_close.back'),
+    text:
+      isMultipleSectors && !isFirstSector
+        ? i18n.global.t('bulk_close.back')
+        : i18n.global.t('cancel'),
     disabled: isLoadingBulkClose.value,
   };
 });
@@ -317,6 +312,17 @@ const goToPreviousSector = () => {
 
 const handlePrimaryClick = () => {
   goToNextSector();
+};
+
+const handleSecondaryClick = () => {
+  const isFirstSector = currentSectorIndex.value === 0;
+  const isMultipleSectors = totalSectors.value > 1;
+
+  if (isMultipleSectors && !isFirstSector) {
+    goToPreviousSector();
+  } else {
+    emitClose();
+  }
 };
 
 // Execute bulk close
