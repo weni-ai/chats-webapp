@@ -23,8 +23,8 @@
               total: totalSectors,
             })
           "
-          type="blue"
-          scheme="neutral-dark"
+          type="default"
+          scheme="blue"
           class="modal-close-rooms__sector-tag"
         />
       </section>
