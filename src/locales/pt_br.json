@@ -329,11 +329,6 @@
         "negative": "Precisa de melhorias",
         "placeholder": "Compartilhe seu feedback aqui",
         "sended": "Seu feedback foi enviado!"
-      },
-      "onboarding": {
-        "title": "Nova Funcionalidade: Resumo por IA",
-        "description": "A partir de agora, sempre que você abrir um chat, você verá um resumo com as informações principais do chat anterior com a IA. Esta funcionalidade foi projetada para ajudar você a economizar tempo e obter contexto rapidamente.",
-        "see_how_it_works": "Veja como funciona:"
       }
     },
     "feedback": {

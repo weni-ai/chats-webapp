@@ -333,11 +333,6 @@
         "negative": "Needs improvement",
         "placeholder": "Enter your feedback here",
         "sended": "Your feedback has been submitted!"
-      },
-      "onboarding": {
-        "title": "New Feature: Summary by AI",
-        "description": "From now on, whenever you open a chat, you will see a summary with the key information from the client's previous chat with the AI. This feature is designed to help you save time and quickly gain context.",
-        "see_how_it_works": "See how it works:"
       }
     },
     "feedback": {
