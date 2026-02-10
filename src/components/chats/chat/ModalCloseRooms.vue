@@ -328,68 +328,75 @@ const handleSecondaryClick = () => {
 };
 
 // Execute bulk close
+const clearSelectionsAndClose = () => {
+  if (activeTab.value === 'ongoing') {
+    roomsStore.setSelectedOngoingRooms([]);
+  } else {
+    roomsStore.setSelectedWaitingRooms([]);
+  }
+  isLoadingBulkClose.value = false;
+  emit('close');
+};
+
 const executeBulkClose = async () => {
   isLoadingBulkClose.value = true;
 
-  try {
-    // Build rooms array with selected tags
-    const roomsToClose = [];
+  // Build rooms array with selected tags
+  const roomsToClose = [];
 
-    sectorsArray.value.forEach((sectorData) => {
-      const sectorUuid = sectorData.uuid;
-      const selectedTags = sectorToAddTags.value[sectorUuid] || [];
+  sectorsArray.value.forEach((sectorData) => {
+    const sectorUuid = sectorData.uuid;
+    const selectedTags = sectorToAddTags.value[sectorUuid] || [];
 
-      sectorData.rooms.forEach((roomUuid) => {
-        roomsToClose.push({
-          uuid: roomUuid,
-          tags: selectedTags,
-        });
+    sectorData.rooms.forEach((roomUuid) => {
+      roomsToClose.push({
+        uuid: roomUuid,
+        tags: selectedTags,
       });
     });
+  });
 
-    const response = await Room.bulkClose({
-      rooms: roomsToClose,
-      end_by: 'agent',
+  const response = await Room.bulkClose({
+    rooms: roomsToClose,
+    end_by: 'agent',
+  });
+
+  const { status, data } = response;
+
+  if (status === 200) {
+    unnnicCallAlert({
+      props: {
+        text: i18n.global.tc('bulk_close.success_message', data.success_count, {
+          count: data.success_count,
+        }),
+        type: 'success',
+      },
+      seconds: 5,
     });
-
-    if (response?.data?.success) {
-      unnnicCallAlert({
-        props: {
-          text: i18n.global.t('bulk_close.success_message', {
-            count: response.data.closed_count || totalRoomsCount.value,
-          }),
-          type: 'success',
-        },
-        seconds: 3,
-      });
-
-      // Clear selections
-      if (activeTab.value === 'ongoing') {
-        roomsStore.setSelectedOngoingRooms([]);
-      } else {
-        roomsStore.setSelectedWaitingRooms([]);
-      }
-
-      closeComplete();
-    } else {
-      throw new Error('Failed to close rooms');
-    }
-  } catch (error) {
-    console.error('Error closing rooms:', error);
+    clearSelectionsAndClose();
+  } else if (status === 207) {
+    unnnicCallAlert({
+      props: {
+        text: i18n.global.tc(
+          'bulk_close.partial_success_message',
+          data.success_count,
+          { success: data.success_count, failed: data.failed_count },
+        ),
+        type: 'attention',
+      },
+      seconds: 5,
+    });
+    clearSelectionsAndClose();
+  } else {
     unnnicCallAlert({
       props: {
         text: i18n.global.t('bulk_close.error_message'),
         type: 'error',
       },
-      seconds: 3,
+      seconds: 5,
     });
     isLoadingBulkClose.value = false;
   }
-};
-
-const closeComplete = () => {
-  isLoadingBulkClose.value = false;
-  emit('close');
 };
 
 const emitClose = () => {

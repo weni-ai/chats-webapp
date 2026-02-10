@@ -571,8 +571,9 @@
   "bulk_close": {
     "close_selected_contacts": "Close selected contacts",
     "confirm_close_selected": "Are you sure you want to close the selected contacts?",
-    "success_message": "{count} contact closed successfully | {count} contacts closed successfully",
-    "error_message": "Unable to close contacts, please try again",
+    "success_message": "{count} chat ended successfully! | {count} chats ended successfully!",
+    "partial_success_message": "{success} chat ended, {failed} failed. Please try again. | {success} chats ended, {failed} failed. Please try again.",
+    "error_message": "Unable to close chats, please try again",
     "end_all_selected_chats": "End all selected chats",
     "sector_tag": "Sector {current} of {total}",
     "chats_count_sector": "{count} chat · {sector} sector | {count} chats · {sector} sector",
