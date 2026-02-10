@@ -1,7 +1,6 @@
 <template>
   <UnnnicModalDialog
     :modelValue="true"
-    :title="modalTitle"
     class="modal-close-rooms"
     :showCloseIcon="!isLoadingBulkClose"
     :primaryButtonProps="primaryButtonProps"
@@ -13,19 +12,22 @@
     @primary-button-click="handlePrimaryClick"
     @update:model-value="emitClose"
   >
-    <template
-      v-if="totalSectors > 1"
-      #title-suffix
-    >
-      <UnnnicTag
-        :text="
-          $t('bulk_close.sector_tag', {
-            current: currentSectorIndex + 1,
-            total: totalSectors,
-          })
-        "
-        type="default"
-      />
+    <template #title>
+      <section class="modal-close-rooms__title-container">
+        <span class="modal-close-rooms__title-text">{{ modalTitle }}</span>
+        <UnnnicTag
+          v-if="totalSectors > 1"
+          :text="
+            $t('bulk_close.sector_tag', {
+              current: currentSectorIndex + 1,
+              total: totalSectors,
+            })
+          "
+          type="blue"
+          scheme="neutral-dark"
+          class="modal-close-rooms__sector-tag"
+        />
+      </section>
     </template>
 
     <section class="modal-close-rooms__content">
@@ -415,6 +417,16 @@ watch(currentSectorIndex, () => {
 
   :deep(.modal-close-rooms__disclaimer) {
     display: flex;
+  }
+
+  &__title-container {
+    display: flex;
+    align-items: center;
+    gap: $unnnic-space-2;
+  }
+
+  &__title-text {
+    font: $unnnic-font-display-2;
   }
 
   &__content {
