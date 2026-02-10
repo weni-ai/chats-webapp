@@ -11,7 +11,7 @@
       <UnnnicToolTip
         v-if="isTransferContactsEnabled"
         enabled
-        class="chats-layout-footer-button__tooltip"
+        class="tooltip"
         :text="$t('transfer_all_selected_chats')"
         side="top"
       >
@@ -27,7 +27,7 @@
       <UnnnicToolTip
         v-if="isBulkCloseContactsEnabled"
         enabled
-        class="chats-layout-footer-button__tooltip"
+        class="tooltip"
         :text="$t('end_all_selected_chats_tooltip')"
         side="top"
       >
@@ -131,7 +131,7 @@ export default {
 .chats-layout-footer-button {
   padding-left: $unnnic-spacing-xs;
 
-  &__tooltip {
+  :deep(.unnnic-tooltip) {
     display: flex;
     width: 100%;
   }
