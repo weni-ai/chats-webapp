@@ -3,12 +3,13 @@ import { getProject } from '@/utils/config';
 import { getURLParams } from '@/utils/requests';
 
 export default {
-  async create({ name, sectorUuid, default_message }) {
+  async create({ name, sectorUuid, default_message, queue_limit }) {
     const response = await http.post('/queue/', {
       name,
       sector: sectorUuid,
       default_message,
       project: getProject(),
+      queue_limit,
     });
     return response.data;
   },
@@ -70,6 +71,7 @@ export default {
   async editQueue(queueInfo) {
     const response = await http.patch(`/queue/${queueInfo.uuid}/`, {
       default_message: queueInfo.default_message,
+      queue_limit: queueInfo.queue_limit,
     });
     return response;
   },
