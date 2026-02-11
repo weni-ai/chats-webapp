@@ -343,32 +343,6 @@ describe('App.vue', () => {
     });
   });
 
-  describe('ModalRoomSummaryOnboarding', () => {
-    it('should not display ModalRoomSummaryOnboarding when enableRoomSummary is false', () => {
-      wrapper = createWrapper();
-      const configStore = useConfig();
-      configStore.project.config.has_chats_summary = false;
-
-      expect(
-        wrapper.find('[data-testid="modal-room-summary-onboarding"]').exists(),
-      ).toBe(false);
-    });
-
-    it('should display ModalRoomSummaryOnboarding when enableRoomSummary is true and showModalRoomSummaryOnboarding is true', async () => {
-      const configStore = useConfig();
-      configStore.project.config.has_chats_summary = true;
-
-      vi.mocked(storageUtils.moduleStorage.getItem).mockReturnValue(true);
-
-      wrapper = createWrapper();
-      await wrapper.setData({ showModalRoomSummaryOnboarding: true });
-
-      expect(
-        wrapper.find('[data-testid="modal-room-summary-onboarding"]').exists(),
-      ).toBe(true);
-    });
-  });
-
   describe('Computed Properties', () => {
     it('should compute socketRetryCount from ws instance', () => {
       const wsMock = {
