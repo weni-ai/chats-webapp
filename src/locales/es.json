@@ -850,6 +850,15 @@
       "hint": "Las colas son grupos de atención dentro de un sector; podrás crear nuevas filas o editarlas cuando desees.",
       "queue_definitions": "Configuraciones de la cola",
       "delete_or_edit": "Eliminar o editar",
+      "limit_chats": {
+        "title": "Limite de chats esperando soporte",
+        "switch": {
+          "label": "Limite de chats",
+          "helper": "Cuando el límite es alcanzado, nuevos chats no serán creados.",
+          "input_label": "Máximo de chats esperando",
+          "input_placeholder": "Ejemplo: 50"
+        }
+      },
       "message": {
         "create": "Fila creada con éxito",
         "update": "Fila actualizada con éxito",

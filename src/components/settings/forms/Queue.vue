@@ -88,6 +88,30 @@
         </template>
       </UnnnicChatText>
 
+      <section
+        v-if="enableQueueLimitFeature"
+        class="queue-form__limit-chats"
+      >
+        <p class="queue-form__limit-chats__title">
+          {{ $t('config_chats.queues.limit_chats.title') }}
+        </p>
+        <section class="queue-form__limit-chats__inputs">
+          <UnnnicSwitch
+            v-model="queue.queue_limit.is_active"
+            :textRight="$t('config_chats.queues.limit_chats.switch.label')"
+            :helper="$t('config_chats.queues.limit_chats.switch.helper')"
+          />
+          <UnnnicInput
+            v-if="queue.queue_limit.is_active"
+            v-model="queue.queue_limit.limit"
+            :label="$t('config_chats.queues.limit_chats.switch.input_label')"
+            :placeholder="
+              $t('config_chats.queues.limit_chats.switch.input_placeholder')
+            "
+          />
+        </section>
+      </section>
+
       <UnnnicDisclaimer
         v-if="enableGroupsMode"
         :description="
@@ -118,6 +142,7 @@ import Project from '@/services/api/resources/settings/project';
 import { mapState } from 'pinia';
 import { useProfile } from '@/store/modules/profile';
 import { useConfig } from '@/store/modules/config';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 export default {
   name: 'FormQueue',
@@ -150,6 +175,7 @@ export default {
   },
 
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useProfile, ['me']),
     ...mapState(useConfig, ['enableGroupsMode']),
     isEditing() {
@@ -163,9 +189,20 @@ export default {
         this.$emit('update:modelValue', value);
       },
     },
+    enableQueueLimitFeature() {
+      return this.featureFlags.active_features?.includes('weniChatsQueueLimit');
+    },
   },
 
   watch: {
+    'queue.queue_limit.is_active': {
+      deep: true,
+      handler(value) {
+        if (!value) {
+          this.queue.queue_limit.limit = null;
+        }
+      },
+    },
     queue: {
       deep: true,
       immediate: true,
@@ -184,16 +221,21 @@ export default {
 
     if (this.isEditing) {
       this.queue = {
-        default_message: this.queue.default_message
-          ? this.queue.default_message
-          : '',
         ...(await Queue.getQueueInformation(this.queue.uuid)),
+        queue_limit: {
+          ...this.queue.queue_limit,
+        },
         agents: this.queue.agents,
       };
 
       if (!this.enableGroupsMode) await this.listQueueAgents();
     } else {
-      this.queue = { ...this.queue, default_message: '', currentAgents: [] };
+      this.queue = {
+        ...this.queue,
+        default_message: '',
+        currentAgents: [],
+        queue_limit: { is_active: false, limit: null },
+      };
     }
 
     if (!this.enableGroupsMode) this.listProjectAgents();
@@ -296,6 +338,23 @@ export default {
 .queue-form {
   display: grid;
   gap: $unnnic-spacing-sm;
+
+  &__limit-chats {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-3;
+
+    &__title {
+      font: $unnnic-font-display-3;
+      color: $unnnic-color-fg-emphasized;
+    }
+
+    &__inputs {
+      display: flex;
+      flex-direction: column;
+      gap: $unnnic-space-2;
+    }
+  }
 
   .form-wrapper {
     &__radios {

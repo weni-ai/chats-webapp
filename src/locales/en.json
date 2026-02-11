@@ -854,6 +854,15 @@
       "hint": "Queues are support groups within the sector; you can create new queues or edit them whenever you want.",
       "queue_definitions": "Queue settings",
       "delete_or_edit": "Delete or edit",
+      "limit_chats": {
+        "title": "Limit of chats awaiting support",
+        "switch": {
+          "label": "Limit chats",
+          "helper": "When the limit is reached, new chats won’t be created.",
+          "input_label": "Maximum waiting chats",
+          "input_placeholder": "Example: 50"
+        }
+      },
       "message": {
         "create": "Queue successfully created",
         "update": "Queue successfully updated",
