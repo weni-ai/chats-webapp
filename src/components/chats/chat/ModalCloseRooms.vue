@@ -56,6 +56,7 @@
 
       <section class="modal-close-rooms__tags-list">
         <ChatClassifier
+          :key="currentSectorData.uuid"
           v-model="currentSectorSelectedTags"
           :tags="filteredSectorTags"
           :loading="isLoadingTags"
@@ -348,7 +349,9 @@ const executeBulkClose = async () => {
 
   sectorsArray.value.forEach((sectorData) => {
     const sectorUuid = sectorData.uuid;
-    const selectedTags = sectorToAddTags.value[sectorUuid] || [];
+    const selectedTags = (sectorSelectedTags.value[sectorUuid] || []).map(
+      (tag) => tag.uuid,
+    );
 
     sectorData.rooms.forEach((roomUuid) => {
       roomsToClose.push({
