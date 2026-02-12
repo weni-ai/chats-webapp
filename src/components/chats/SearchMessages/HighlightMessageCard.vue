@@ -2,6 +2,7 @@
   <section
     data-testid="message-card"
     class="message-card"
+    :class="{ active: active }"
   >
     <header
       class="message-card__header"
@@ -53,6 +54,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  active: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const senderName = computed(() => {
@@ -89,6 +94,9 @@ const formattedTime = computed(() => {
   border: 1px solid $unnnic-color-border-soft;
   cursor: pointer;
   &:hover {
+    background-color: $unnnic-color-bg-soft;
+  }
+  &.active {
     background-color: $unnnic-color-bg-soft;
   }
   &__header {

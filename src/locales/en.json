@@ -335,7 +335,8 @@
       "input_placeholder": "Enter a word or phrase to search",
       "no_results": "No results found for \"{searchTerm}\"",
       "results_found": "{count} results found for \"{searchTerm}\"",
-      "automated_support": "Automated Support"
+      "automated_support": "Automated Support",
+      "loading": "Loading more messages"
     },
     "transcription": {
       "unavailable_closed_chat": "It is not possible to view transcriptions that were not enabled during the support.",
@@ -873,7 +874,7 @@
         "switch_active": "Block chat transfer to offline agents",
         "switch_inactive": "Block chat transfer to offline agents"
       },
-      "bulk_close": { 
+      "bulk_close": {
         "switch_active": "End chats in bulk",
         "switch_inactive": "End chats in bulk"
       },

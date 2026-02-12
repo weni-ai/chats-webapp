@@ -331,7 +331,8 @@
       "input_placeholder": "Ingrese una palabra o frase para buscar",
       "no_results": "No se encontraron resultados para \"{searchTerm}\"",
       "results_found": "{count} resultados encontrados para \"{searchTerm}\"",
-      "automated_support": "Soporte Automatizado"
+      "automated_support": "Soporte Automatizado",
+      "loading": "Cargando más mensajes"
     },
     "transcription": {
       "unavailable_closed_chat": "No es posible ver transcripciones que no se habilitaron durante el soporte.",
