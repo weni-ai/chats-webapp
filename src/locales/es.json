@@ -316,7 +316,8 @@
       "input_placeholder": "Ingrese una palabra o frase para buscar",
       "no_results": "No se encontraron resultados para \"{searchTerm}\"",
       "results_found": "{count} resultados encontrados para \"{searchTerm}\"",
-      "automated_support": "Soporte Automatizado"
+      "automated_support": "Soporte Automatizado",
+      "loading": "Cargando más mensajes"
     },
     "summary": {
       "reading_and_summarizing": "Lectura y resumen",
