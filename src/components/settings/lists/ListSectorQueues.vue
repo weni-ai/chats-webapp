@@ -313,13 +313,17 @@ export default {
             ),
           ]);
 
-          await Queue.editQueue({
+          const { data: updatedQueue } = await Queue.editQueue({
             uuid,
             default_message,
             queue_limit: this.enableQueueLimitFeature
               ? queue_limit
               : { is_active: false, limit: null },
           });
+
+          this.queues = this.queues.map((queue) =>
+            queue.uuid === updatedQueue.uuid ? updatedQueue : queue,
+          );
 
           unnnic.unnnicCallAlert({
             props: {
