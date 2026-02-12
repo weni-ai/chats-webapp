@@ -81,6 +81,7 @@
                 :automatic="message.is_automatic_message"
                 :locale="$i18n.locale"
                 data-testid="chat-message"
+                :highlighted="message.uuid === toScrollMessage?.uuid"
                 @click-reply-message="
                   handlerClickReplyMessage(message.replied_message)
                 "
@@ -119,6 +120,7 @@
                   :signature="messageSignature(message)"
                   :enableReply="enableReply"
                   :replyMessage="message.replied_message"
+                  :highlighted="message.uuid === toScrollMessage?.uuid"
                   data-testid="chat-message"
                   @click-reply-message="
                     handlerClickReplyMessage(message.replied_message)
@@ -178,6 +180,7 @@
                   :enableReply="enableReply"
                   :replyMessage="message.replied_message"
                   data-testid="chat-message"
+                  :highlighted="message.uuid === toScrollMessage?.uuid"
                   @click-reply-message="
                     handlerClickReplyMessage(message.replied_message)
                   "
@@ -829,8 +832,8 @@ export default {
         this.scrollToRef(refKey);
         return;
       }
-      this.toScrollNote = null;
-      this.toScrollMessage = null;
+      // this.toScrollNote = null;
+      // this.toScrollMessage = null;
     },
 
     async scrollToInternalNote(note) {
