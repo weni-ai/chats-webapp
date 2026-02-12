@@ -127,7 +127,7 @@ describe('CustomBreakOption', () => {
       wrapper.vm.showModal = true;
       await wrapper.vm.$nextTick();
 
-      await wrapper.find('[data-testid="secondary-button"]').trigger('click');
+      await wrapper.find('[data-testid="cancel-button"]').trigger('click');
       expect(wrapper.vm.showModal).toBe(false);
     });
   });

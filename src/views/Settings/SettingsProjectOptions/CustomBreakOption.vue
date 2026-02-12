@@ -6,98 +6,106 @@
     size="small"
     @click.prevent.stop="openModal"
   />
-
-  <UnnnicModalDialog
-    :modelValue="showModal"
-    :title="$t('config_chats.custom_breaks.title')"
-    :primaryButtonProps="{
-      text: $t('save'),
-      loading: isLoadingSaveStatus,
-      disabled: !canSave,
-    }"
-    :secondaryButtonProps="{ text: $t('cancel') }"
-    size="md"
+  <UnnnicDialog
+    v-model:open="showModal"
     data-testid="chat-classifier-modal"
-    showCloseIcon
-    class="custom-breaks-modal"
-    @primary-button-click="saveStatus"
-    @secondary-button-click="closeModal"
-    @update:model-value="closeModal"
   >
-    <section class="custom-breaks-modal__content">
-      <header>
-        <p class="custom-breaks-modal__description">
-          {{ $t('config_chats.custom_breaks.description') }}
-        </p>
-      </header>
+    <UnnnicDialogContent>
+      <UnnnicDialogHeader>
+        <UnnnicDialogTitle>
+          {{ $t('config_chats.custom_breaks.title') }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section class="custom-breaks-modal__content">
+        <header>
+          <p class="custom-breaks-modal__description">
+            {{ $t('config_chats.custom_breaks.description') }}
+          </p>
+        </header>
 
-      <section class="custom-breaks-modal__form">
-        <UnnnicInput
-          v-model="customBreakName"
-          :label="$t('config_chats.custom_breaks.fields.name')"
-          :placeholder="$t('config_chats.custom_breaks.fields.placeholder')"
-          data-testid="new-status-name"
-          class="custom-breaks-modal__input"
-          :disabled="isLimitReached"
-          @input="validateInput"
-          @keyup.enter="addStatus"
+        <section class="custom-breaks-modal__form">
+          <UnnnicInput
+            v-model="customBreakName"
+            :label="$t('config_chats.custom_breaks.fields.name')"
+            :placeholder="$t('config_chats.custom_breaks.fields.placeholder')"
+            data-testid="new-status-name"
+            class="custom-breaks-modal__input"
+            :disabled="isLimitReached"
+            @input="validateInput"
+            @keyup.enter="addStatus"
+          />
+          <UnnnicButton
+            :text="$t('add')"
+            type="secondary"
+            :disabled="isLimitReached || !customBreakName.trim() || isDuplicate"
+            @click="addStatus"
+          />
+        </section>
+
+        <section
+          v-if="errorMessage"
+          class="custom-breaks-modal__error-content"
+        >
+          <UnnnicIcon
+            icon="alert-circle-1"
+            :next="true"
+            filled
+            size="sm"
+            scheme="feedback-red"
+          />
+          <p class="custom-breaks-modal__error-text">
+            {{ errorMessage }}
+          </p>
+        </section>
+
+        <section
+          v-if="!isLoadingStatusData"
+          class="custom-breaks-modal__list"
+        >
+          <div
+            v-for="(status, index) in customBreaks"
+            :key="index"
+            class="custom-breaks-modal__item"
+          >
+            <p class="custom-breaks-modal__list__status">{{ status.name }}</p>
+            <UnnnicButton
+              v-if="!isLoadingRemoveStatus"
+              iconCenter="close"
+              size="small"
+              class="delete-icon"
+              type="tertiary"
+              @click.prevent.stop="removeStatus(index)"
+            />
+            <UnnnicIconLoading
+              v-else
+              size="sm"
+            />
+          </div>
+        </section>
+        <section
+          v-else
+          class="custom-breaks-modal__loading"
+        >
+          <UnnnicIconLoading />
+        </section>
+      </section>
+      <UnnnicDialogFooter>
+        <UnnnicButton
+          data-testid="cancel-button"
+          type="tertiary"
+          :text="$t('cancel')"
+          @click="closeModal"
         />
         <UnnnicButton
-          :text="$t('add')"
-          type="secondary"
-          :disabled="isLimitReached || !customBreakName.trim() || isDuplicate"
-          @click="addStatus"
+          :text="$t('save')"
+          type="primary"
+          :disabled="!canSave"
+          :loading="isLoadingSaveStatus"
+          @click="saveStatus"
         />
-      </section>
-
-      <section
-        v-if="errorMessage"
-        class="custom-breaks-modal__error-content"
-      >
-        <UnnnicIcon
-          icon="alert-circle-1"
-          :next="true"
-          filled
-          size="sm"
-          scheme="feedback-red"
-        />
-        <p class="custom-breaks-modal__error-text">
-          {{ errorMessage }}
-        </p>
-      </section>
-
-      <section
-        v-if="!isLoadingStatusData"
-        class="custom-breaks-modal__list"
-      >
-        <div
-          v-for="(status, index) in customBreaks"
-          :key="index"
-          class="custom-breaks-modal__item"
-        >
-          <p class="custom-breaks-modal__list__status">{{ status.name }}</p>
-          <UnnnicButton
-            v-if="!isLoadingRemoveStatus"
-            iconCenter="close"
-            size="small"
-            class="delete-icon"
-            type="tertiary"
-            @click.prevent.stop="removeStatus(index)"
-          />
-          <UnnnicIconLoading
-            v-else
-            size="sm"
-          />
-        </div>
-      </section>
-      <section
-        v-else
-        class="custom-breaks-modal__loading"
-      >
-        <UnnnicIconLoading />
-      </section>
-    </section>
-  </UnnnicModalDialog>
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script setup>
@@ -276,6 +284,9 @@ const windowSettingsUpdated = () => {
   max-height: 45px;
 }
 .custom-breaks-modal {
+  &__content {
+    padding: $unnnic-space-6;
+  }
   &__description {
     color: $unnnic-color-neutral-cloudy;
     font-family: $unnnic-font-family-secondary;
