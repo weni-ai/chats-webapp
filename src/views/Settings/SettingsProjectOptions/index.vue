@@ -17,6 +17,7 @@
           :name="configBlockTransferToOffAgentsTranslation"
         />
         <SettingsProjectOptionsItem
+          v-if="isBulkCloseFeatureEnabled"
           v-model="projectConfig.can_use_bulk_close"
           :name="configBulkCloseTranslation"
         />
@@ -50,6 +51,7 @@ import { mapState } from 'pinia';
 
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import Project from '@/services/api/resources/settings/project';
 
@@ -83,6 +85,11 @@ export default {
   computed: {
     ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
+    ...mapState(useFeatureFlag, ['featureFlags']),
+
+    isBulkCloseFeatureEnabled() {
+      return this.featureFlags.active_features?.includes('weniChatsBulkClose');
+    },
 
     isUserManager() {
       const ROLE_MANAGER = 1;

@@ -61,6 +61,7 @@ import { mapState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
 import ModalCloseRooms from '@/components/chats/chat/ModalCloseRooms.vue';
@@ -87,6 +88,11 @@ export default {
       'activeTab',
     ]),
     ...mapState(useConfig, ['project']),
+    ...mapState(useFeatureFlag, ['featureFlags']),
+
+    isBulkCloseFeatureEnabled() {
+      return this.featureFlags.active_features?.includes('weniChatsBulkClose');
+    },
 
     currentSelectedRooms() {
       return this.activeTab === 'ongoing'
@@ -103,6 +109,8 @@ export default {
       );
     },
     isBulkCloseContactsEnabled() {
+      if (!this.isBulkCloseFeatureEnabled) return false;
+
       const canBulkClose = this.project.config?.can_use_bulk_close;
       const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
 

@@ -238,10 +238,16 @@ export default {
     ]),
     ...mapState(useConfig, {
       enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
-      isBulkActionsEnabled: (store) =>
-        store.project?.config?.can_use_bulk_transfer ||
-        store.project?.config?.can_use_bulk_close,
+      project: (store) => store.project,
     }),
+
+    isBulkActionsEnabled() {
+      const canBulkTransfer = this.project?.config?.can_use_bulk_transfer;
+      const canBulkClose =
+        this.featureFlags.active_features?.includes('weniChatsBulkClose') &&
+        this.project?.config?.can_use_bulk_close;
+      return canBulkTransfer || canBulkClose;
+    },
   },
 
   watch: {
