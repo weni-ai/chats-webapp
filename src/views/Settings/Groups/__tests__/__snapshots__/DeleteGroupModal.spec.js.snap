@@ -2,35 +2,77 @@
 
 exports[`DeleteGroupModal.vue > Snapshot > should match the snapshot 1`] = `
 <div
+  class="delete-notice"
   data-testid="modal-delete-group"
+  data-v-c1c5774c=""
 >
   
-  <p
-    class="delete-notice"
-    data-testid="delete-notice"
+  <div
+    data-v-c1c5774c=""
+    size="small"
   >
-    This action will be irreversible. To confirm the action, please type the name of the group
-  </p>
-  <label>
     
+    <div
+      data-v-c1c5774c=""
+      type="warning"
+    >
+      
+      <div
+        data-v-c1c5774c=""
+      >
+        
+        Delete Test Group
+        
+      </div>
+      
+    </div>
+    <section
+      class="delete-notice__content"
+      data-v-c1c5774c=""
+    >
+      <p
+        class="delete-notice__notice"
+        data-testid="delete-notice"
+        data-v-c1c5774c=""
+      >
+        This action will be irreversible. To confirm the action, please type the name of the group
+      </p>
+      <label
+        data-v-c1c5774c=""
+      >
+        
+        
+      </label>
+      <input
+        data-testid="input-dashboard-name"
+        data-v-c1c5774c=""
+        placeholder="Test Group"
+        value=""
+      />
+    </section>
+    <div
+      data-v-c1c5774c=""
+    >
+      
+      <button
+        data-testid="close-button"
+        data-v-c1c5774c=""
+        type="submit"
+      >
+        Cancel
+      </button>
+      <button
+        data-testid="primary-button"
+        data-v-c1c5774c=""
+        disabled=""
+        type="submit"
+      >
+        Delete
+      </button>
+      
+    </div>
     
-  </label>
-  <input
-    data-testid="input-dashboard-name"
-    placeholder="Test Group"
-    value=""
-  />
+  </div>
   
-  <button
-    data-testid="primary-button"
-    disabled=""
-  >
-    Delete
-  </button>
-  <button
-    data-testid="close-button"
-  >
-     Close 
-  </button>
 </div>
 `;
