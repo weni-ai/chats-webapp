@@ -18,7 +18,7 @@
     "@sentry/vue": "^8.50.0",
     "@vueuse/components": "^13.9.0",
     "@vueuse/core": "^13.9.0",
-    "@weni/unnnic-system": "^3.24.1-alpha.0",
+    "@weni/unnnic-system": "^3.24.1",
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "cross-env": "^7.0.3",
