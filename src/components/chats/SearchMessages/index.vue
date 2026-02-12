@@ -65,6 +65,7 @@
           :key="message.uuid"
           :message="message"
           :searchTerm="searchTerm"
+          :active="message.uuid === toScrollMessage?.uuid"
           @click="handleMessageClick(message)"
         />
       </section>
@@ -73,7 +74,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, useTemplateRef } from 'vue';
+import { computed, onMounted, ref, useTemplateRef, onUnmounted } from 'vue';
 import { watchDebounced } from '@vueuse/core';
 
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
@@ -94,13 +95,18 @@ const emit = defineEmits(['close']);
 
 const roomMessagesStore = useRoomMessages();
 
-const { isLoadingAllMessages } = storeToRefs(roomMessagesStore);
+const { isLoadingAllMessages, toScrollMessage } =
+  storeToRefs(roomMessagesStore);
 
 const searchTerm = ref('');
 const searchInputRef = useTemplateRef('searchInputRef');
 
 onMounted(() => {
   searchInputRef.value.$el.children[0].children[0].focus();
+});
+
+onUnmounted(() => {
+  toScrollMessage.value = null;
 });
 
 watchDebounced(
@@ -130,7 +136,7 @@ const matchedMessages = computed(() => {
 });
 
 const handleMessageClick = (message) => {
-  roomMessagesStore.toScrollMessage = message;
+  toScrollMessage.value = message;
 };
 </script>
 
