@@ -24,7 +24,8 @@ export const useRooms = defineStore('rooms', {
     hasNextRooms: { waiting: false, in_progress: false, flow_start: false },
     canUseCopilot: false,
     copilotSuggestion: '',
-    selectedRoomsToTransfer: [],
+    selectedOngoingRooms: [],
+    selectedWaitingRooms: [],
     contactToTransfer: '',
     orderBy: {
       ongoing: '-last_interaction',
@@ -264,7 +265,11 @@ export const useRooms = defineStore('rooms', {
 
       this.rooms = filteredRooms;
 
-      this.selectedRoomsToTransfer = this.selectedRoomsToTransfer.filter(
+      this.selectedOngoingRooms = this.selectedOngoingRooms.filter(
+        (room) => room !== roomUuid,
+      );
+
+      this.selectedWaitingRooms = this.selectedWaitingRooms.filter(
         (room) => room !== roomUuid,
       );
 
@@ -281,13 +286,18 @@ export const useRooms = defineStore('rooms', {
       this.updateMessagesByRoom({ room, reset: true });
     },
 
-    setSelectedRoomsToTransfer(rooms) {
-      this.selectedRoomsToTransfer = rooms;
-    },
-
     setContactToTransfer(contact) {
       this.contactToTransfer = contact;
     },
+
+    setSelectedOngoingRooms(rooms) {
+      this.selectedOngoingRooms = rooms;
+    },
+
+    setSelectedWaitingRooms(rooms) {
+      this.selectedWaitingRooms = rooms;
+    },
+
     sortRooms(a, b, key) {
       const isDesc = this.orderBy[key].startsWith('-');
       const field = isDesc ? this.orderBy[key].slice(1) : this.orderBy[key];
@@ -298,6 +308,12 @@ export const useRooms = defineStore('rooms', {
   },
 
   getters: {
+    currentSelectedRooms(store) {
+      return store.activeTab === 'ongoing'
+        ? store.selectedOngoingRooms
+        : store.selectedWaitingRooms;
+    },
+
     agentRooms(store) {
       return store.rooms
         .filter((room) => !!room.user && room.is_waiting === false)

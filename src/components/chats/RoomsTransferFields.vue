@@ -115,18 +115,26 @@ export default {
 
   computed: {
     ...mapState(useRooms, [
-      'selectedRoomsToTransfer',
       'contactToTransfer',
       'rooms',
       'activeRoom',
+      'activeTab',
+      'selectedOngoingRooms',
+      'selectedWaitingRooms',
     ]),
     ...mapWritableState(useRooms, ['activeRoomTags']),
     ...mapState(useProfile, ['me']),
 
+    currentSelectedRooms() {
+      return this.activeTab === 'ongoing'
+        ? this.selectedOngoingRooms
+        : this.selectedWaitingRooms;
+    },
+
     roomsToTransfer() {
       if (this.bulkTransfer) {
         return this.rooms.filter((room) =>
-          this.selectedRoomsToTransfer.includes(room.uuid),
+          this.currentSelectedRooms.includes(room.uuid),
         );
       }
 
@@ -212,7 +220,8 @@ export default {
 
   methods: {
     ...mapActions(useRooms, [
-      'setSelectedRoomsToTransfer',
+      'setSelectedOngoingRooms',
+      'setSelectedWaitingRooms',
       'setContactToTransfer',
       'removeRoom',
     ]),
@@ -294,7 +303,8 @@ export default {
     },
 
     resetRoomsToTransfer() {
-      this.setSelectedRoomsToTransfer([]);
+      this.setSelectedOngoingRooms([]);
+      this.setSelectedWaitingRooms([]);
       this.setContactToTransfer('');
     },
 
