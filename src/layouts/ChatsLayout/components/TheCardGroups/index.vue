@@ -197,6 +197,7 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
 import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup/index.vue';
@@ -268,6 +269,7 @@ export default {
     ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapWritableState(useRooms, [
       'orderBy',
       'roomsCount',
@@ -333,9 +335,15 @@ export default {
       return this.countRooms[this.activeTab] > 0;
     },
 
+    isBulkCloseFeatureEnabled() {
+      return this.featureFlags.active_features?.includes('weniChatsBulkClose');
+    },
+
     showSelectAllCheckbox() {
       const canBulkTransfer = this.project.config?.can_use_bulk_transfer;
-      const canBulkClose = this.project.config?.can_use_bulk_close;
+      const canBulkClose =
+        this.isBulkCloseFeatureEnabled &&
+        this.project.config?.can_use_bulk_close;
       const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
 
       // Se bulk close está ativo mas bloqueia fechar na fila, não mostrar em waiting
@@ -390,7 +398,9 @@ export default {
 
     isWithSelection() {
       const canBulkTransfer = this.project.config?.can_use_bulk_transfer;
-      const canBulkClose = this.project.config?.can_use_bulk_close;
+      const canBulkClose =
+        this.isBulkCloseFeatureEnabled &&
+        this.project.config?.can_use_bulk_close;
       const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
 
       // Se bulk close está ativo mas bloqueia fechar na fila, só habilitar transfer em waiting
