@@ -44,11 +44,6 @@ const createWrapper = (props = {}) => {
       ...props,
     },
     global: {
-      stubs: {
-        UnnnicModalDialog: true,
-        UnnnicIcon: true,
-        UnnnicTextArea: true,
-      },
       mocks: {
         $t: (key) => key,
       },
@@ -91,9 +86,9 @@ describe('ModalFeedback.vue', () => {
     });
 
     it('should render modal component', () => {
-      expect(
-        wrapper.findComponent({ name: 'UnnnicModalDialog' }).exists(),
-      ).toBe(true);
+      expect(wrapper.findComponent({ name: 'ModalFeedback' }).exists()).toBe(
+        true,
+      );
     });
   });
 
