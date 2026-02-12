@@ -3,6 +3,7 @@ import { mount, config } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import FooterButton from '@/layouts/ChatsLayout/components/FooterButton/index.vue';
 import { useRooms } from '@/store/modules/chats/rooms';
+import { useConfig } from '@/store/modules/config';
 import i18n from '@/plugins/i18n';
 
 beforeAll(() => {
@@ -22,7 +23,8 @@ describe('FooterButton', () => {
     const pinia = createPinia();
     setActivePinia(pinia);
     const roomsStore = useRooms();
-    
+    const configStore = useConfig();
+
     if (activeTab === 'ongoing') {
       roomsStore.selectedOngoingRooms = selectedRooms;
       roomsStore.selectedWaitingRooms = [];
@@ -32,6 +34,13 @@ describe('FooterButton', () => {
     }
     roomsStore.activeTab = activeTab;
 
+    configStore.project = {
+      config: {
+        can_use_bulk_transfer: true,
+        can_use_bulk_close: true,
+      },
+    };
+
     return mount(FooterButton, {
       global: {
         plugins: [pinia],
@@ -40,7 +49,12 @@ describe('FooterButton', () => {
         },
         stubs: {
           UnnnicButton: true,
+          UnnnicToolTip: {
+            template: '<div><slot /></div>',
+            props: ['enabled', 'text', 'side'],
+          },
           ModalTransferRooms: true,
+          ModalCloseRooms: true,
         },
       },
     });

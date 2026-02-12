@@ -22,13 +22,16 @@ vi.mock('@/services/api/resources/settings/queue', () => ({
 }));
 
 function createStore(overrides = {}) {
+  const roomsDefaults = {
+    selectedOngoingRooms: ['1', '2'],
+    selectedWaitingRooms: [],
+    activeTab: 'ongoing',
+  };
+
   return createTestingPinia({
     initialState: {
-      me: 'mock@email.com',
-      selectedOngoingRooms: ['1', '2'],
-      selectedWaitingRooms: [],
-      activeTab: 'ongoing',
-      ...overrides,
+      rooms: { ...roomsDefaults, ...overrides },
+      profile: { me: { email: 'mock@email.com' } },
     },
   });
 }

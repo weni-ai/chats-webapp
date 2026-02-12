@@ -6,25 +6,25 @@ exports[`EditSector.vue > Should match the snapshot 1`] = `
     <h1 data-v-573bd910="" class="header__title" data-testid="header-title">Sector Sector 1</h1>
     <p data-v-573bd910="" class="header__description" data-testid="header-description">Determine General Team Settings and Workday</p>
   </header>
-  <div data-v-97f84644="" data-v-ac9ddd5b="" class="tab size-md" data-testid="sector-edit-view-tab-list">
-    <header data-v-97f84644="" class="tab-header">
-      <ul data-v-97f84644="" class="tab-content">
-        <li data-v-97f84644="" class="tab-head tab-head--active">General
+  <div data-v-2ffed5d0="" data-v-ac9ddd5b="" class="tab size-md" data-testid="sector-edit-view-tab-list">
+    <header data-v-2ffed5d0="" class="tab-header">
+      <ul data-v-2ffed5d0="" class="tab-content">
+        <li data-v-2ffed5d0="" class="tab-head tab-head--active">General
           <!---->
         </li>
-        <li data-v-97f84644="" class="tab-head">Extra options
+        <li data-v-2ffed5d0="" class="tab-head">Extra options
           <!---->
         </li>
-        <li data-v-97f84644="" class="tab-head">Queues
+        <li data-v-2ffed5d0="" class="tab-head">Queues
           <!---->
         </li>
-        <li data-v-97f84644="" class="tab-head">Quick messages
+        <li data-v-2ffed5d0="" class="tab-head">Quick messages
           <!---->
         </li>
       </ul>
     </header>
-    <main data-v-97f84644="" class="tab-body">
-      <div data-v-97f84644="" class="tab-panel"></div>
+    <main data-v-2ffed5d0="" class="tab-body">
+      <div data-v-2ffed5d0="" class="tab-panel"></div>
     </main>
   </div>
 </section>"

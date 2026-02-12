@@ -7,20 +7,20 @@ exports[`EditGroupDrawer.vue > Snapshot > should match the snapshot 1`] = `
   
   <div
     class="tab size-md"
-    data-v-97f84644=""
+    data-v-2ffed5d0=""
   >
     <header
       class="tab-header"
-      data-v-97f84644=""
+      data-v-2ffed5d0=""
     >
       <ul
         class="tab-content"
-        data-v-97f84644=""
+        data-v-2ffed5d0=""
       >
         
         <li
           class="tab-head tab-head--active"
-          data-v-97f84644=""
+          data-v-2ffed5d0=""
         >
           
           General
@@ -29,7 +29,7 @@ exports[`EditGroupDrawer.vue > Snapshot > should match the snapshot 1`] = `
         </li>
         <li
           class="tab-head"
-          data-v-97f84644=""
+          data-v-2ffed5d0=""
         >
           
           Projects
@@ -38,7 +38,7 @@ exports[`EditGroupDrawer.vue > Snapshot > should match the snapshot 1`] = `
         </li>
         <li
           class="tab-head"
-          data-v-97f84644=""
+          data-v-2ffed5d0=""
         >
           
           Agents
@@ -50,11 +50,11 @@ exports[`EditGroupDrawer.vue > Snapshot > should match the snapshot 1`] = `
     </header>
     <main
       class="tab-body"
-      data-v-97f84644=""
+      data-v-2ffed5d0=""
     >
       <div
         class="tab-panel"
-        data-v-97f84644=""
+        data-v-2ffed5d0=""
       >
         
         <div
