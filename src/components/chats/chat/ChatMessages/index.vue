@@ -832,8 +832,6 @@ export default {
         this.scrollToRef(refKey);
         return;
       }
-      // this.toScrollNote = null;
-      // this.toScrollMessage = null;
     },
 
     async scrollToInternalNote(note) {
