@@ -82,6 +82,7 @@
     </section>
   </section>
   <UnnnicDrawer
+    v-if="showQueueDrawer"
     ref="queueDrawer"
     :modelValue="showQueueDrawer"
     :title="
@@ -95,9 +96,10 @@
     :secondaryButtonText="$t('cancel')"
     :disabledSecondaryButton="loadingQueueConfig"
     data-testid="queue-config-drawer"
+    closeIcon="close"
     @close="closeQueueConfigDrawer()"
     @primary-button-click="handlerSetConfigQueue()"
-    @secondary-button-click="$refs.queueDrawer.close()"
+    @secondary-button-click="closeQueueConfigDrawer()"
   >
     <template #content>
       <FormQueue
@@ -129,11 +131,15 @@
 </template>
 
 <script>
-import unnnic from '@weni/unnnic-system';
+import { mapState } from 'pinia';
 
 import FormQueue from '../forms/Queue.vue';
 import ListOrdinator from '@/components/settings/ListOrdinator.vue';
 import Queue from '@/services/api/resources/settings/queue';
+
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+
+import unnnic from '@weni/unnnic-system';
 
 export default {
   name: 'ListSectorQueues',
@@ -163,6 +169,10 @@ export default {
   },
 
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
+    enableQueueLimitFeature() {
+      return this.featureFlags.active_features?.includes('weniChatsQueueLimit');
+    },
     queuesOrdered() {
       let queuesOrdered = this.queues.slice().sort((a, b) => {
         let first = null;
@@ -243,10 +253,26 @@ export default {
         }
       });
     },
-    openConfigQueueDrawer(queue = {}) {
+    openConfigQueueDrawer(queue = undefined) {
       this.handleConnectOverlay(true);
       this.showQueueDrawer = true;
-      this.queueToConfig = queue;
+      if (queue) {
+        this.queueToConfig = {
+          ...queue,
+          queue_limit: {
+            is_active: queue?.queue_limit?.is_active,
+            limit: isNaN(parseInt(queue?.queue_limit?.limit))
+              ? null
+              : String(queue?.queue_limit?.limit),
+          },
+        };
+      } else {
+        this.queueToConfig = {
+          name: '',
+          default_message: '',
+          queue_limit: { is_active: false, limit: null },
+        };
+      }
     },
     closeQueueConfigDrawer() {
       this.handleConnectOverlay(false);
@@ -270,7 +296,12 @@ export default {
     async handlerSetConfigQueue() {
       try {
         this.loadingQueueConfig = true;
-        const { name, default_message, uuid = '' } = this.queueToConfig;
+        const {
+          name,
+          default_message,
+          uuid = '',
+          queue_limit,
+        } = this.queueToConfig;
 
         if (this.queueToConfig.uuid) {
           await Promise.all([
@@ -282,7 +313,17 @@ export default {
             ),
           ]);
 
-          await Queue.editQueue({ uuid, default_message });
+          const { data: updatedQueue } = await Queue.editQueue({
+            uuid,
+            default_message,
+            queue_limit: this.enableQueueLimitFeature
+              ? queue_limit
+              : { is_active: false, limit: null },
+          });
+
+          this.queues = this.queues.map((queue) =>
+            queue.uuid === updatedQueue.uuid ? updatedQueue : queue,
+          );
 
           unnnic.unnnicCallAlert({
             props: {
@@ -295,6 +336,9 @@ export default {
             name,
             default_message,
             sectorUuid: this.sector.uuid,
+            queue_limit: this.enableQueueLimitFeature
+              ? queue_limit
+              : { is_active: false, limit: null },
           });
           await Promise.all(
             this.queueToConfig.currentAgents.map((agent) => {

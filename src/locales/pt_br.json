@@ -850,6 +850,15 @@
       "info": "As filas são grupos de atendimento dentro de um setor, é possível direcionar contatos de um fluxo para uma fila específica",
       "hint": "As filas são grupos de atendimento dentro do setor, você poderá criar novas filas ou editar quando quiser",
       "queue_definitions": "Definições da fila",
+      "limit_chats": {
+        "title": "Limite de chats aguardando suporte",
+        "switch": {
+          "label": "Limite de chats",
+          "helper": "Quando o limite é atingido, novos chats não serão criados.",
+          "input_label": "Máximo de chats aguardando",
+          "input_placeholder": "Exemplo: 50"
+        }
+      },
       "message": {
         "create": "Fila criada com sucesso",
         "update": "Fila atualizada com sucesso",

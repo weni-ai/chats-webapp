@@ -55,7 +55,12 @@ const createWrapper = (props = {}) => {
       ],
     },
     props: {
-      modelValue: { default_message: '', currentAgents: [], name: '' },
+      modelValue: {
+        default_message: '',
+        currentAgents: [],
+        name: '',
+        queue_limit: { is_active: false, limit: null },
+      },
       sector: { uuid: '1', name: 'Sector Mock' },
       ...props,
     },
@@ -69,7 +74,9 @@ describe('FormQueue', () => {
   });
 
   it('should not display queue name input when in edit mode', async () => {
-    await wrapper.setProps({ modelValue: { uuid: '1' } });
+    await wrapper.setProps({
+      modelValue: { uuid: '1', queue_limit: { is_active: false, limit: null } },
+    });
 
     const inputQueueName = wrapper.find('[data-testid="queue-name-input"]');
 
@@ -83,7 +90,11 @@ describe('FormQueue', () => {
 
   it('should display textarea when editing the automatic message', async () => {
     await wrapper.setProps({
-      modelValue: { uuid: '1', default_message: '' },
+      modelValue: {
+        uuid: '1',
+        default_message: '',
+        queue_limit: { is_active: false, limit: null },
+      },
     });
 
     const editMessageBtn = wrapper.find(
@@ -114,7 +125,11 @@ describe('FormQueue', () => {
 
   it('displays the automatic message in view mode when not editing', async () => {
     await wrapper.setProps({
-      modelValue: { uuid: '1', default_message: 'Test automatic message' },
+      modelValue: {
+        uuid: '1',
+        default_message: 'Test automatic message',
+        queue_limit: { is_active: false, limit: null },
+      },
     });
 
     await wrapper.setData({ editingAutomaticMessage: false });
@@ -141,7 +156,12 @@ describe('FormQueue', () => {
 
   it('should add an agent to the editing queue correctly', async () => {
     await wrapper.setProps({
-      modelValue: { uuid: '1', default_message: '', currentAgents: [] },
+      modelValue: {
+        uuid: '1',
+        default_message: '',
+        currentAgents: [],
+        queue_limit: { is_active: false, limit: null },
+      },
     });
 
     const agent = {
@@ -161,6 +181,7 @@ describe('FormQueue', () => {
   it('should removes an agent from the queue correctly (create)', async () => {
     await wrapper.setProps({
       modelValue: {
+        queue_limit: { is_active: false, limit: null },
         currentAgents: [
           {
             uuid: '1',
@@ -183,6 +204,7 @@ describe('FormQueue', () => {
     await wrapper.setProps({
       modelValue: {
         uuid: '1',
+        queue_limit: { is_active: false, limit: null },
         currentAgents: [
           {
             uuid: '1',
