@@ -272,8 +272,7 @@ const windowSettingsUpdated = () => {
 
 <style lang="scss" scoped>
 .custom-btn {
-  width: 100%;
-  max-height: 45px;
+  max-height: 37px;
 }
 .custom-breaks-modal {
   &__description {

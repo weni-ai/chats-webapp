@@ -53,8 +53,11 @@ describe('ModalTransferRooms', () => {
     const store = createTestingPinia({
       initialState: {
         me: 'mocked@email.com',
-        selectedRoomsToTransfer: ['1', '2'],
-        setSelectedRoomsToTransfer: vi.fn(),
+        selectedOngoingRooms: ['1', '2'],
+        selectedWaitingRooms: [],
+        activeTab: 'ongoing',
+        setSelectedOngoingRooms: vi.fn(),
+        setSelectedWaitingRooms: vi.fn(),
       },
     });
     wrapper = createWrapper(store);
