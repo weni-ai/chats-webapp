@@ -92,12 +92,12 @@
   </UnnnicDrawer>
   <DiscartChangesModal
     v-if="showConfirmDiscartChangesModal"
-    :showModal="showConfirmDiscartChangesModal"
+    v-model="showConfirmDiscartChangesModal"
     :title="$t('new_sector.discart.title')"
     :text="$t('new_sector.discart.hint')"
     data-testid="discart-changes-modal"
-    @secondary-button-click="showConfirmDiscartChangesModal = false"
-    @primary-button-click="$emit('close')"
+    @cancel="showConfirmDiscartChangesModal = false"
+    @confirm="$emit('close')"
   />
 </template>
 
