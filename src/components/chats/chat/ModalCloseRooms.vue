@@ -371,7 +371,7 @@ const executeBulkClose = async () => {
   for (const chunk of chunks) {
     const response = await Room.bulkClose({
       rooms: chunk,
-      end_by: 'agent',
+      end_by: 'mass_closure',
     });
     const { data } = response;
     totalSuccess += data?.success_count || 0;
