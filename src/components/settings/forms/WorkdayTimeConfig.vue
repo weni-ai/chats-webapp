@@ -30,7 +30,7 @@
             <UnnnicButton
               v-if="timeIndex === 0"
               iconCenter="add-1"
-              type="secondary"
+              type="tertiary"
               :disabled="selectedWorkdayDaysTime[day].length === 2"
               @click="addTime(day)"
             />
@@ -38,7 +38,7 @@
             <UnnnicButton
               v-else-if="timeIndex === 1"
               iconCenter="subtract-1"
-              type="secondary"
+              type="tertiary"
               @click="removeTime(day)"
             />
             <UnnnicButton

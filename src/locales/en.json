@@ -129,6 +129,7 @@
     "info": "Define an automatic response to be sent to the contact while they are waiting for assistance, leave it blank if you don’t want any message.",
     "placeholder": "You haven't set an automatic message yet. Please define a message for your contacts who are waiting."
   },
+  "attention": "Attention",
   "updates_saved": "Updates saved",
   "updated_info": "Updated information",
   "active_chats": "Active chats",
@@ -248,9 +249,12 @@
         "switch_disabled": "Disabled signature"
       },
       "csat": {
-        "enabled": "Satisfaction survey after completing the support active",
-        "disabeld": "Satisfaction survey after completing the support disabled",
-        "tooltip": "When activated, a satisfaction survey will be sent to the customer automatically, right after the service is closed."
+        "label": "Automatically send a satisfaction survey after human support ends",
+        "hint": "If there is an active flow in the Flows module set to trigger a survey after support ends, this setting may cause conflicts and affect survey delivery.",
+        "confirm_modal": {
+          "content_1": "If there is an active flow in the Flows module set to trigger a survey after support ends, this setting may cause conflicts and affect survey delivery.",
+          "content_2": "Do you want to continue anyway?"
+        }
       },
       "automatic_message": {
         "switch_active": "Automatic opening message active",
@@ -338,11 +342,6 @@
         "negative": "Needs improvement",
         "placeholder": "Enter your feedback here",
         "sended": "Your feedback has been submitted!"
-      },
-      "onboarding": {
-        "title": "New Feature: Summary by AI",
-        "description": "From now on, whenever you open a chat, you will see a summary with the key information from the client's previous chat with the AI. This feature is designed to help you save time and quickly gain context.",
-        "see_how_it_works": "See how it works:"
       }
     },
     "feedback": {

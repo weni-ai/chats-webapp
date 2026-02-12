@@ -4,7 +4,7 @@
     ref="newSectorDrawer"
     class="new-sector-drawer"
     :modelValue="modelValue"
-    closeIcon="arrow_back"
+    closeIcon="close"
     size="gt"
     :title="$t('config_chats.new_sector')"
     :primaryButtonText="activePageIndex === 3 ? $t('save') : $t('continue')"
@@ -17,7 +17,7 @@
     "
     @secondary-button-click="
       activePageIndex === 0
-        ? $refs.newSectorDrawer.close()
+        ? handleCloseNewSectorDrawer()
         : (activePageIndex = activePageIndex - 1)
     "
     @close="handleCloseNewSectorDrawer"
@@ -91,6 +91,7 @@
     </template>
   </UnnnicDrawer>
   <DiscartChangesModal
+    v-if="showConfirmDiscartChangesModal"
     :showModal="showConfirmDiscartChangesModal"
     :title="$t('new_sector.discart.title')"
     :text="$t('new_sector.discart.hint')"
@@ -149,7 +150,7 @@ export default {
         can_trigger_flows: true,
         can_edit_custom_fields: true,
         sign_messages: true,
-        is_csat_enabled: true,
+        is_csat_enabled: false,
         automatic_message: {
           is_active: false,
           text: '',
