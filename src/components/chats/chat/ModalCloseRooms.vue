@@ -86,6 +86,8 @@ defineProps({
   },
 });
 
+const BULK_CLOSE_BATCH_SIZE = 200;
+
 const emit = defineEmits(['close']);
 
 const roomsStore = useRooms();
@@ -356,31 +358,45 @@ const executeBulkClose = async () => {
     });
   });
 
-  const response = await Room.bulkClose({
-    rooms: roomsToClose,
-    end_by: 'agent',
-  });
+  // Split into batches of BULK_CLOSE_BATCH_SIZE
+  const chunks = [];
+  for (let i = 0; i < roomsToClose.length; i += BULK_CLOSE_BATCH_SIZE) {
+    chunks.push(roomsToClose.slice(i, i + BULK_CLOSE_BATCH_SIZE));
+  }
 
-  const { status, data } = response;
+  // Execute sequentially and aggregate results
+  let totalSuccess = 0;
+  let totalFailed = 0;
 
-  if (status === 200) {
+  for (const chunk of chunks) {
+    const response = await Room.bulkClose({
+      rooms: chunk,
+      end_by: 'agent',
+    });
+    const { data } = response;
+    totalSuccess += data?.success_count || 0;
+    totalFailed += data?.failed_count || 0;
+  }
+
+  // Show a single toast based on aggregated results
+  if (totalFailed === 0 && totalSuccess > 0) {
     unnnicCallAlert({
       props: {
-        text: i18n.global.tc('bulk_close.success_message', data.success_count, {
-          count: data.success_count,
+        text: i18n.global.tc('bulk_close.success_message', totalSuccess, {
+          count: totalSuccess,
         }),
         type: 'success',
       },
       seconds: 5,
     });
     clearSelectionsAndClose();
-  } else if (status === 207) {
+  } else if (totalFailed > 0 && totalSuccess > 0) {
     unnnicCallAlert({
       props: {
         text: i18n.global.tc(
           'bulk_close.partial_success_message',
-          data.success_count,
-          { success: data.success_count, failed: data.failed_count },
+          totalSuccess,
+          { success: totalSuccess, failed: totalFailed },
         ),
         type: 'attention',
       },
