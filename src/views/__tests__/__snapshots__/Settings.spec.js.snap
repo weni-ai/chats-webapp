@@ -67,15 +67,15 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
       class="unnnic-form-element unnnic-form md settings-sectors__filters__name"
       data-testid="form-element"
       data-v-1088b44f=""
-      data-v-2d5913d6=""
-      data-v-a65db32c=""
+      data-v-2dd04313=""
+      data-v-cb39816d=""
     >
       <!---->
       
       <div
         class="text-input size--md settings-sectors__filters__name unnnic-form-input"
         data-v-28a84b07=""
-        data-v-a65db32c=""
+        data-v-2dd04313=""
         hascloudycolor="false"
         mask=""
       >
