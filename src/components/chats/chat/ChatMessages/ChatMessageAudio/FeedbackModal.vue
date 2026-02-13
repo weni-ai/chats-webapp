@@ -42,13 +42,14 @@
         <UnnnicButton
           :text="$t('cancel')"
           type="tertiary"
+          data-testid="modal-close"
           @click="handleCancel"
         />
         <UnnnicButton
           :text="$t('submit')"
           :loading="isLoadingSubmit"
           :disabled="disableSubmit"
-          data-testid="modal-primary-button"
+          data-testid="modal-confirm-button"
           @click="handleSubmit"
         />
       </UnnnicDialogFooter>

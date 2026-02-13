@@ -80,19 +80,6 @@ const createDialogStubs = () => ({
       </div>
     `,
   },
-  UnnnicButton: {
-    name: 'UnnnicButtonStub',
-    props: ['text', 'disabled', 'loading'],
-    template: `
-      <button
-        :data-testid="text === 'submit' ? 'modal-primary-button' : 'modal-close'"
-        :disabled="disabled"
-        @click="$emit('click')"
-      >
-        <slot />{{ text }}
-      </button>
-    `,
-  },
 });
 
 describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
@@ -189,7 +176,7 @@ describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
       await flushPromises();
 
       const primaryButton = wrapper.find(
-        '[data-testid="modal-primary-button"]',
+        '[data-testid="modal-confirm-button"]',
       );
       expect(primaryButton.attributes('disabled')).toBeDefined();
     });
@@ -203,7 +190,7 @@ describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
       await wrapper.vm.$nextTick();
 
       const primaryButton = wrapper.find(
-        '[data-testid="modal-primary-button"]',
+        '[data-testid="modal-confirm-button"]',
       );
 
       expect(primaryButton.attributes('disabled')).toBeUndefined();
@@ -236,7 +223,7 @@ describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
       await wrapper.vm.$nextTick();
 
       await wrapper
-        .find('[data-testid="modal-primary-button"]')
+        .find('[data-testid="modal-confirm-button"]')
         .trigger('click');
 
       await flushPromises();
@@ -267,7 +254,7 @@ describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
       await wrapper.find('[data-testid="tag__tag-uuid-1"]').trigger('click');
 
       await wrapper
-        .find('[data-testid="modal-primary-button"]')
+        .find('[data-testid="modal-confirm-button"]')
         .trigger('click');
       await flushPromises();
 
@@ -298,7 +285,7 @@ describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
       await wrapper.vm.$nextTick();
 
       await wrapper
-        .find('[data-testid="modal-primary-button"]')
+        .find('[data-testid="modal-confirm-button"]')
         .trigger('click');
       await flushPromises();
 
