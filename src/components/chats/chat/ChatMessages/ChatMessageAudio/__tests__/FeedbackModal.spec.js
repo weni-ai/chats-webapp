@@ -198,13 +198,14 @@ describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
       wrapper = mountComponent();
       await flushPromises();
 
-      await wrapper
-        .find('[data-testid="feedback-textarea"]')
-        .setValue('Some feedback text');
+      wrapper.vm.feedbackText = 'Some feedback text';
+
+      await wrapper.vm.$nextTick();
 
       const primaryButton = wrapper.find(
         '[data-testid="modal-primary-button"]',
       );
+
       expect(primaryButton.attributes('disabled')).toBeUndefined();
     });
   });
@@ -230,13 +231,14 @@ describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
       wrapper = mountComponent();
       await flushPromises();
 
-      await wrapper
-        .find('[data-testid="feedback-textarea"]')
-        .setValue('The transcription was wrong');
+      wrapper.vm.feedbackText = 'The transcription was wrong';
+
+      await wrapper.vm.$nextTick();
 
       await wrapper
         .find('[data-testid="modal-primary-button"]')
         .trigger('click');
+
       await flushPromises();
 
       expect(
@@ -291,9 +293,9 @@ describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
       wrapper = mountComponent();
       await flushPromises();
 
-      await wrapper
-        .find('[data-testid="feedback-textarea"]')
-        .setValue('Feedback');
+      wrapper.vm.feedbackText = 'Feedback';
+
+      await wrapper.vm.$nextTick();
 
       await wrapper
         .find('[data-testid="modal-primary-button"]')

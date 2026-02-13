@@ -48,6 +48,7 @@
           :text="$t('submit')"
           :loading="isLoadingSubmit"
           :disabled="disableSubmit"
+          data-testid="modal-primary-button"
           @click="handleSubmit"
         />
       </UnnnicDialogFooter>
