@@ -76,10 +76,10 @@
           class="custom-breaks-modal__item"
         >
           <p class="custom-breaks-modal__list__status">{{ status.name }}</p>
-          <UnnnicButtonIcon
+          <UnnnicButton
             v-if="!isLoadingRemoveStatus"
-            icon="close"
-            size="sm"
+            iconCenter="close"
+            size="small"
             class="delete-icon"
             type="tertiary"
             @click.prevent.stop="removeStatus(index)"
