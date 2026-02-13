@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { mount, config } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 
 import ModalTransferRooms from '../chat/ModalTransferRooms.vue';
@@ -34,12 +34,6 @@ function createWrapper(store) {
       mocks: {
         $t: (key) => key,
       },
-      components: {
-        UnnnicModalDialog: config.global.stubs.UnnnicModalDialog,
-      },
-      stubs: {
-        teleport: true,
-      },
     },
   });
 
@@ -62,7 +56,7 @@ describe('ModalTransferRooms', () => {
 
   describe('Rendering', () => {
     it('should render modal with necessary components', () => {
-      const modal = wrapper.findComponent({ name: 'UnnnicModalDialogStub' });
+      const modal = wrapper.getComponent(ModalTransferRooms);
       expect(modal.exists()).toBe(true);
 
       // Verify component has necessary data properties

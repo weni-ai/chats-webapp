@@ -3,7 +3,6 @@
     <SocketAlertBanner v-if="showSocketAlertBanner" />
     <RouterView />
     <ModalOfflineAgent
-      v-if="showModalOfflineAgent"
       v-model="showModalOfflineAgent"
       :username="userWhoChangedStatus"
     />

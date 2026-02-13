@@ -46,12 +46,13 @@
   </UnnnicDrawer>
 
   <DiscartChangesModal
-    :showModal="showConfirmDiscartChangesModal"
+    v-if="showConfirmDiscartChangesModal"
+    v-model="showConfirmDiscartChangesModal"
     :title="$t('config_chats.groups.discart.title')"
     :text="$t('config_chats.groups.discart.text')"
     data-testid="discart-changes-modal"
-    @secondary-button-click="showConfirmDiscartChangesModal = false"
-    @primary-button-click="$emit('close')"
+    @cancel="showConfirmDiscartChangesModal = false"
+    @confirm="$emit('close')"
   />
 </template>
 

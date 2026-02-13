@@ -1,18 +1,35 @@
 <template>
-  <UnnnicModalDialog
-    :modelValue="modelValue"
-    type="warning"
-    :title="$t('delete_internal_note.title')"
-    showCloseIcon
-    :primaryButtonProps="{
-      text: $t('delete'),
-      loading: isLoadingDeleteRequest,
-    }"
-    @primary-button-click="handleDeleteInternalNote"
-    @update:model-value="$emit('update:modelValue', $event)"
+  <UnnnicDialog
+    v-model:open="open"
+    class="modal-delete-internal-note"
   >
-    {{ $t('delete_internal_note.description') }}
-  </UnnnicModalDialog>
+    <UnnnicDialogContent size="medium">
+      <UnnnicDialogHeader type="warning">
+        <UnnnicDialogTitle>
+          {{ $t('delete_internal_note.title') }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section class="modal-delete-internal-note__content">
+        <p>
+          {{ $t('delete_internal_note.description') }}
+        </p>
+      </section>
+      <UnnnicDialogFooter>
+        <UnnnicDialogClose>
+          <UnnnicButton
+            :text="$t('cancel')"
+            type="tertiary"
+          />
+        </UnnnicDialogClose>
+        <UnnnicButton
+          :text="$t('delete')"
+          type="warning"
+          :loading="isLoadingDeleteRequest"
+          @click="handleDeleteInternalNote"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script>
@@ -22,6 +39,8 @@ import RoomNotes from '@/services/api/resources/chats/roomNotes';
 
 import { removeFromGroupedMessages } from '@/utils/messages';
 import { unnnicCallAlert } from '@weni/unnnic-system';
+
+import i18n from '@/plugins/i18n';
 
 export default {
   name: 'ModalDeleteInternalNote',
@@ -47,6 +66,14 @@ export default {
       'roomMessages',
       'roomMessagesSorted',
     ]),
+    open: {
+      get() {
+        return this.modelValue;
+      },
+      set(value) {
+        this.$emit('update:modelValue', value);
+      },
+    },
   },
   methods: {
     async handleDeleteInternalNote() {
@@ -73,7 +100,7 @@ export default {
         }
         unnnicCallAlert({
           props: {
-            text: this.$t('delete_internal_note.message.delete.success'),
+            text: i18n.global.t('delete_internal_note.message.delete.success'),
             type: 'success',
           },
         });
@@ -81,15 +108,24 @@ export default {
         console.log(error);
         unnnicCallAlert({
           props: {
-            text: this.$t('delete_internal_note.message.delete.error'),
+            text: i18n.global.t('delete_internal_note.message.delete.error'),
             type: 'error',
           },
         });
       } finally {
         this.isLoadingDeleteRequest = false;
-        this.$emit('update:modelValue', false);
+        this.open = false;
       }
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.modal-delete-internal-note {
+  &__content {
+    color: $unnnic-color-gray-500;
+    padding: $unnnic-space-6;
+  }
+}
+</style>

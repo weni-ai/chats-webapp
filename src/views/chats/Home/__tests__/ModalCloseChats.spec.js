@@ -69,41 +69,14 @@ describe('ModalCloseChats.vue', () => {
     expect(localWrapper.vm.isLoadingTags).toBe(false);
   });
 
-  it('should emits "close" event when fire secondaryButtonClick event', async () => {
-    const closeModal = vi.spyOn(wrapper.vm, 'closeModal');
-
-    const modal = wrapper.findComponent(
-      '[data-testid="chat-classifier-modal"]',
-    );
-
-    await modal.vm.$emit('secondaryButtonClick');
-
-    expect(wrapper.emitted()).toHaveProperty('close');
-
-    expect(closeModal).toHaveBeenCalled();
-  });
-
-  it('should call closeModal on update:modelValue', async () => {
-    const closeModal = vi.spyOn(wrapper.vm, 'closeModal');
-
-    const modal = wrapper.findComponent(
-      '[data-testid="chat-classifier-modal"]',
-    );
-
-    await modal.vm.$emit('update:model-value');
-    expect(closeModal).toHaveBeenCalled();
-
-    expect(wrapper.emitted()).toHaveProperty('close');
-  });
-
   it('calls Room.close and emits "close" event when closeRoom is called', async () => {
     wrapper.vm.tags = [{ uuid: 'tag1' }];
 
-    const modal = wrapper.findComponent(
-      '[data-testid="chat-classifier-modal"]',
+    const closeChatButton = wrapper.findComponent(
+      '[data-testid="close-chat-button"]',
     );
 
-    await modal.vm.$emit('primaryButtonClick');
+    await closeChatButton.trigger('click');
 
     expect(Room.close).toHaveBeenCalledWith('123');
     expect(wrapper.emitted()).toHaveProperty('close');

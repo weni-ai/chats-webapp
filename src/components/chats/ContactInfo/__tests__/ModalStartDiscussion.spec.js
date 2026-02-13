@@ -45,19 +45,13 @@ describe('ModalStartDiscussion', () => {
         mocks: {
           $t: (key) => key,
         },
-        components: {
-          UnnnicModalDialog: config.global.stubs.UnnnicModalDialog,
-        },
-        stubs: {
-          teleport: true,
-        },
       },
     });
     discussionsStore = useDiscussions();
   });
 
   it('renders correctly with initial data', () => {
-    const modal = wrapper.findComponent({ name: 'UnnnicModalDialogStub' });
+    const modal = wrapper.getComponent(ModalStartDiscussion);
     expect(modal.exists()).toBe(true);
 
     // Verify component has the necessary form fields

@@ -101,6 +101,7 @@
     </UnnnicAudioRecorder>
     <TranscriptionFeedbackModal
       v-if="showFeedbackModal"
+      v-model="showFeedbackModal"
       :messageUuid="message.uuid"
       @close="handleCloseFeedbackModal"
     />

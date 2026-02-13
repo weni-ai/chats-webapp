@@ -234,6 +234,7 @@
 
       <ModalStartDiscussion
         v-if="isShowModalStartDiscussion"
+        v-model="isShowModalStartDiscussion"
         @close="handleModalStartDiscussion()"
       />
 

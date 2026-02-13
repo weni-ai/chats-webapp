@@ -131,6 +131,7 @@
     />
     <ModalTransferRooms
       v-if="isModalTransferRoomsOpened"
+      v-model="isModalTransferRoomsOpened"
       @close="closeTransferModal()"
     />
   </section>
