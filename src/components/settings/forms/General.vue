@@ -110,6 +110,7 @@
                 <UnnnicTag
                   v-for="day in workdayDays"
                   :key="day.value"
+                  class="form-section__inputs__workday-tags__tag"
                   type="brand"
                   clickable
                   :text="day.label"
@@ -162,7 +163,7 @@
             >
               <UnnnicButton
                 class="form-section__inputs__workday-time-config__holidays-container__button"
-                type="alternative"
+                type="secondary"
                 iconLeft="add-1"
                 :text="$t('sector.managers.working_day.add_specific_dates')"
                 @click="handleModal('showCreateCustomHolidayModal', true)"
@@ -1112,10 +1113,8 @@ fieldset {
     }
 
     &__title {
-      font-weight: $unnnic-font-weight-bold;
-      color: $unnnic-color-neutral-dark;
-      font-size: $unnnic-font-size-body-lg;
-      line-height: $unnnic-line-height-large * 1.5;
+      font: $unnnic-font-display-3;
+      color: $unnnic-color-gray-900;
     }
 
     &__subtitle {
@@ -1141,6 +1140,9 @@ fieldset {
       &__workday-tags {
         display: flex;
         gap: $unnnic-spacing-xs;
+        &__tag {
+          height: $unnnic-space-8;
+        }
       }
 
       &__workday-time-config {

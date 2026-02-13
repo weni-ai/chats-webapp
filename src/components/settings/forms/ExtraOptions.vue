@@ -101,25 +101,17 @@
       >
         <UnnnicSwitch
           v-model="sector.is_csat_enabled"
-          :textRight="
-            sector.is_csat_enabled
-              ? $t('sector.additional_options.csat.enabled')
-              : $t('sector.additional_options.csat.disabeld')
-          "
+          :textRight="$t('sector.additional_options.csat.label')"
+          :helper="$t('sector.additional_options.csat.hint')"
           size="small"
         />
-        <UnnnicToolTip
-          enabled
-          :text="$t('sector.additional_options.csat.tooltip')"
-          side="right"
-          maxWidth="15rem"
-        >
-          <UnnnicIconSvg
-            icon="information-circle-4"
-            scheme="neutral-soft"
-            size="sm"
-          />
-        </UnnnicToolTip>
+        <ConfirmCsatModal
+          v-if="showConfirmCsatModal"
+          :modelValue="showConfirmCsatModal"
+          @update:model-value="handleCancelCsat"
+          @confirm="handleConfirmCsat"
+          @cancel="handleCancelCsat"
+        />
       </section>
     </section>
     <section class="tags">
@@ -226,19 +218,22 @@
 </template>
 
 <script>
+import { mapState } from 'pinia';
+
 import unnnic from '@weni/unnnic-system';
 
+import ConfirmCsatModal from './modals/ConfirmCsatModal.vue';
 import TagGroup from '@/components/TagGroup.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
 
-import { mapState } from 'pinia';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 export default {
   name: 'SectorExtraOptionsForm',
   components: {
     TagGroup,
+    ConfirmCsatModal,
   },
   props: {
     modelValue: {
@@ -261,6 +256,7 @@ export default {
       tagsNext: null,
       tagsPrevious: null,
       isLoadingTags: false,
+      showConfirmCsatModal: false,
     };
   },
   computed: {
@@ -307,6 +303,15 @@ export default {
     },
     enableAutomaticCsatFeature() {
       return this.featureFlags.active_features?.includes('weniChatsCSAT');
+    },
+  },
+  watch: {
+    'sector.is_csat_enabled': {
+      handler(enabled) {
+        if (enabled) {
+          this.showConfirmCsatModal = true;
+        }
+      },
     },
   },
   mounted() {
@@ -428,6 +433,13 @@ export default {
       } finally {
         this.isLoading = false;
       }
+    },
+    handleConfirmCsat() {
+      this.showConfirmCsatModal = false;
+    },
+    handleCancelCsat() {
+      this.sector.is_csat_enabled = false;
+      this.showConfirmCsatModal = false;
     },
   },
 };
