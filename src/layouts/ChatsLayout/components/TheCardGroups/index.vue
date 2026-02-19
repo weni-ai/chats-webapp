@@ -86,22 +86,10 @@
           <UnnnicToolTip
             v-if="showSelectAllCheckbox"
             enabled
-            :text="
-              (
-                activeTab === 'ongoing'
-                  ? selectAllOngoingRoomsValue
-                  : selectAllWaitingRoomsValue
-              )
-                ? $t('deselect_all')
-                : $t('select_all')
-            "
+            :text="selectAllTooltipText"
           >
             <UnnnicCheckbox
-              :modelValue="
-                activeTab === 'ongoing'
-                  ? selectAllOngoingRoomsValue
-                  : selectAllWaitingRoomsValue
-              "
+              :modelValue="isAllRoomsSelected"
               size="sm"
               class="select-all-checkbox"
               :label="selectedText"
@@ -393,6 +381,20 @@ export default {
 
     selectAllWaitingRoomsValue() {
       return this.rooms_queue.length === this.selectedWaitingRooms?.length;
+    },
+
+    isAllRoomsSelected() {
+      if (this.activeTab === 'ongoing') {
+        return this.selectAllOngoingRoomsValue;
+      }
+      return this.selectAllWaitingRoomsValue;
+    },
+
+    selectAllTooltipText() {
+      if (this.isAllRoomsSelected) {
+        return this.$t('deselect_all');
+      }
+      return this.$t('select_all');
     },
 
     isWithSelection() {
