@@ -4,6 +4,7 @@
     <div
       v-show="!showSkeletonLoading"
       class="message-manager"
+      data-testid="message-manager"
     >
       <div
         :class="[
@@ -11,6 +12,7 @@
           isFileLoadingValueValid && 'loading',
           isFocused && 'focused',
         ]"
+        data-testid="message-manager-box-container"
       >
         <LoadingBar
           v-if="isFileLoadingValueValid"

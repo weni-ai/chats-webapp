@@ -56,7 +56,7 @@ exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
           data-state="closed"
           data-testid="tooltip-trigger"
           data-v-03fa3548=""
-          data-v-2fa58964=""
+          data-v-2e8bb3f0=""
         >
           
           
@@ -70,7 +70,7 @@ exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
           
         </div>
         <div
-          data-v-2fa58964=""
+          data-v-2e8bb3f0=""
           defer="false"
           disabled="false"
           forcemount="false"
@@ -163,7 +163,7 @@ exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
           data-state="closed"
           data-testid="tooltip-trigger"
           data-v-03fa3548=""
-          data-v-2fa58964=""
+          data-v-2e8bb3f0=""
         >
           
           
@@ -177,7 +177,7 @@ exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
           
         </div>
         <div
-          data-v-2fa58964=""
+          data-v-2e8bb3f0=""
           defer="false"
           disabled="false"
           forcemount="false"
@@ -270,7 +270,7 @@ exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
           data-state="closed"
           data-testid="tooltip-trigger"
           data-v-03fa3548=""
-          data-v-2fa58964=""
+          data-v-2e8bb3f0=""
         >
           
           
@@ -284,7 +284,7 @@ exports[`SettingsSectors.vue > Snapshot > should match the snapshot 1`] = `
           
         </div>
         <div
-          data-v-2fa58964=""
+          data-v-2e8bb3f0=""
           defer="false"
           disabled="false"
           forcemount="false"
