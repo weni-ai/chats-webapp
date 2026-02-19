@@ -144,8 +144,13 @@
   "undo": "Deshacer",
   "redo": "Rehacer",
   "record_audio": "Grabar audio",
-  "select_all": "Seleccionar todo",
-  "deselect_all": "Deseleccionar todo",
+  "select_all": "Seleccionar todos los chats",
+  "deselect_all": "Deseleccionar todos los chats",
+  "select_this_chat": "Seleccionar este chat",
+  "deselect_this_chat": "Deseleccionar este chat",
+  "transfer_all_selected_chats": "Transferir todos los chats seleccionados",
+  "end_all_selected_chats_tooltip": "Finalizar todos los chats seleccionados",
+  "number_of_chats_selected": "{count} chat seleccionado | {count} chats seleccionados",
   "image": "Imagen",
   "video": "Vídeo",
   "audio_message": "Mensaje de audio",
@@ -429,7 +434,7 @@
     "view-mode": {
       "title": "Modo de vista en vivo del agente {viewedAgent}",
       "close": "Visualización final",
-      "assume_chat": "Asumir Chat",
+      "assume_chat": "Asumir solo este chat",
       "assume_chat_question": "¿Asumir Chat?",
       "assume_chat_confirmation": "Al confirmar que eliminará el Chat del agente {viewedAgent} y será responsable del Chat"
     }
@@ -558,6 +563,23 @@
       "selected_agent_offline": "El agente seleccionado está actualmente desconectado",
       "without_online_agents": "No hay agentes en línea en este momento"
     }
+  },
+  "bulk_close": {
+    "close_selected_contacts": "Cerrar contactos seleccionados",
+    "confirm_close_selected": "¿Está seguro de que desea cerrar los contactos seleccionados?",
+    "success_message": "¡{count} chat finalizado con éxito! | ¡{count} chats finalizados con éxito!",
+    "partial_success_message": "{success} chat finalizado, {failed} falló. Intente nuevamente. | {success} chats finalizados, {failed} fallaron. Intente nuevamente.",
+    "error_message": "No fue posible cerrar los chats, intente nuevamente",
+    "end_all_selected_chats": "Finalizar todos los chats seleccionados",
+    "sector_tag": "Sector {current} de {total}",
+    "chats_count_sector": "{count} chat · sector {sector} | {count} chats · sector {sector}",
+    "required_tags_title": "Las tags son obligatorias para finalizar chats en el sector {sector}",
+    "required_tags_description": "Si selecciona alguna tag a continuación, se aplicará al {count} chat y reemplazará cualquier tag existente. | Si selecciona alguna tag a continuación, se aplicará a los {count} chats y reemplazará cualquier tag existente.",
+    "next_sector": "Siguiente sector",
+    "end_all_chats": "Finalizar todos ({count} chats)",
+    "back": "Volver",
+    "optional_tags_title": "Las tags no son obligatorias para finalizar chats en el sector {sector}",
+    "optional_tags_description": "Si selecciona alguna tag a continuación, se aplicará al {count} chat y reemplazará cualquier tag existente. | Si selecciona alguna tag a continuación, se aplicará a los {count} chats y reemplazará cualquier tag existente."
   },
   "contact_info": {
     "title": "Sobre el contacto",
@@ -783,7 +805,7 @@
     }
   },
   "config_chats": {
-    "title": "Configuración de chat",
+    "title": "Configuración de Atendimento humano",
     "section_sectors_title": "Sectores en {project}",
     "section_sectors_subtitle": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización.",
     "tabs": {
@@ -804,28 +826,32 @@
       "status_error": "Ups, desafortunadamente los cambios no se han guardado, inténtalo de nuevo"
     },
     "project_configs": {
-      "title": "Ajustes de proyectos",
+      "title": "Preferencias de proyectos",
       "bulk_transfer": {
         "tooltip": "Esta función permite a los agentes transferir varios contactos a la vez a una fila o agente",
-        "switch_active": "Transferencia de contactos en masa activa",
-        "switch_inactive": "Transferencia de contactos en masa desactivada"
+        "switch_active": "Transferir chats en masa a otra cola o agente activo",
+        "switch_inactive": "Transferir chats en masa a otra cola o agente desactivado"
+      },
+      "block_transfer_to_off_agents": {
+        "switch_active": "Bloquear la transferencia de chats a agentes sin conexión activo",
+        "switch_inactive": "Bloquear la transferencia de chats a agentes sin conexión inactivo"
+      },
+      "bulk_close": {
+        "switch_active": "Finalizar chats en masa activo",
+        "switch_inactive": "Finalizar chats en masa desactivado"
+      },
+      "block_close_chats_in_queue": {
+        "switch_active": "Bloquear la finalización de chats que están en la cola activo",
+        "switch_inactive": "Bloquear la finalización de chats que están en la cola inactivo"
       },
       "queue_prioritization": {
         "tooltip": "Esta función permite a los agentes elegir las colas que recibirán contactos, dentro de las previamente seleccionadas en el sector.",
-        "switch_active": "Selección de cola por agentes activo",
-        "switch_inactive": "Selección de cola por agentes inactivo"
-      },
-      "block_transfer_to_off_agents": {
-        "switch_active": "Bloqueo de transferencias a agentes fuera de línea activo",
-        "switch_inactive": "Bloqueo de transferencias a agentes fuera de línea inactivo"
+        "switch_active": "Permitir que los agentes elijan sus colas dentro del sector activo",
+        "switch_inactive": "Permitir que los agentes elijan sus colas dentro del sector inactivo"
       },
       "show_agent_status_count_timer": {
-        "switch_active": "Mostrar temporizador de recuento de estado del agente",
-        "switch_inactive": "Ocultar temporizador de recuento de estado del agente"
-      },
-      "close_chats_in_queue": {
-        "switch_active": "Los agentes pueden cerrar chats que están esperando soporte activo",
-        "switch_inactive": "Los agentes pueden cerrar chats que están esperando soporte inactivo"
+        "switch_active": "Mostrar temporizador de estado en pausas personalizadas del agente activo",
+        "switch_inactive": "Mostrar temporizador de estado en pausas personalizadas del agente inactivo"
       }
     },
     "custom_sector": "Personalizar nuevo sector (recomendado)",

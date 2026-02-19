@@ -144,8 +144,13 @@
   "undo": "Desfazer",
   "redo": "Refazer",
   "record_audio": "Gravar áudio",
-  "select_all": "Selecionar todos",
-  "deselect_all": "Desselecionar todos",
+  "select_all": "Selecionar todos os chats",
+  "deselect_all": "Desselecionar todos os chats",
+  "select_this_chat": "Selecionar este chat",
+  "deselect_this_chat": "Desmarcar este chat",
+  "transfer_all_selected_chats": "Transferir todos os chats selecionados",
+  "end_all_selected_chats_tooltip": "Encerrar todos os chats selecionados",
+  "number_of_chats_selected": "{count} chat selecionado | {count} chats selecionados",
   "image": "Imagem",
   "video": "Vídeo",
   "audio_message": "Mensagem de áudio",
@@ -429,7 +434,7 @@
     "view-mode": {
       "title": "Modo de visualização ao vivo do agente {viewedAgent}",
       "close": "Encerrar visualização",
-      "assume_chat": "Assumir Chat",
+      "assume_chat": "Assumir apenas este chat",
       "assume_chat_question": "Assumir Chat?",
       "assume_chat_confirmation": "Ao confirmar você removerá o Chat do agente {viewedAgent} e será o responsável pelo Chat"
     }
@@ -559,6 +564,25 @@
       "without_online_agents": "Nenhum agente online no momento"
     }
   },
+  "bulk_close": {
+    "close_selected_contacts": "Encerrar contatos selecionados",
+    "confirm_close_selected": "Tem certeza que deseja encerrar os contatos selecionados?",
+    "success_message": "{count} chat encerrado com sucesso! | {count} chats encerrados com sucesso!",
+    "partial_success_message": "{success} chat encerrado, {failed} falhou. Tente novamente. | {success} chats encerrados, {failed} falharam. Tente novamente.",
+    "error_message": "Não foi possível encerrar os chats, tente novamente",
+    "end_all_selected_chats": "Encerrar todos os chats selecionados",
+    "sector_tag": "Setor {current} de {total}",
+    "chats_count_sector": "{count} chat · setor {sector} | {count} chats · setor {sector}",
+    "required_tags_title": "Tags são obrigatórias para finalizar chats no setor {sector}",
+    "required_tags_description": "Se você selecionar alguma tag abaixo, ela será aplicada ao {count} chat e substituirá quaisquer tags existentes. | Se você selecionar alguma tag abaixo, ela será aplicada aos {count} chats e substituirá quaisquer tags existentes.",
+    "next_sector": "Próximo setor",
+    "end_all_chats": "Encerrar todos ({count} chats)",
+    "back": "Voltar",
+    "optional_tags_title": "Tags não são obrigatórias para finalizar chats no setor {sector}",
+    "optional_tags_description": "Se você selecionar alguma tag abaixo, ela será aplicada ao {count} chat e substituirá quaisquer tags existentes. | Se você selecionar alguma tag abaixo, ela será aplicada aos {count} chats e substituirá quaisquer tags existentes."
+  },
+  "close_contact": "Encerrar contato",
+  "close_contact_confirmation": "Tem certeza que deseja encerrar este contato?",
   "contact_info": {
     "title": "Sobre o contato",
     "about_support": "Sobre o suporte",
@@ -783,7 +807,7 @@
     }
   },
   "config_chats": {
-    "title": "Configurações de Chats",
+    "title": "Configurações de Atendimento humano",
     "section_sectors_title": "Setores em {project}",
     "section_sectors_subtitle": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
     "tabs": {
@@ -804,28 +828,36 @@
       "status_error": "Ops, infelizmente as alterações não foram salvas, tente novamente"
     },
     "project_configs": {
-      "title": "Ajustes do projeto",
+      "title": "Preferências do projeto",
       "bulk_transfer": {
         "tooltip": "Essa função permite que agentes transfiram diversos contatos de uma vez para uma fila ou agente",
-        "switch_active": "Transferência de contatos em massa ativo",
-        "switch_inactive": "Transferência de contatos em massa desativado"
+        "switch_active": "Transferir chats em massa para outra fila ou atendente",
+        "switch_inactive": "Transferir chats em massa para outra fila ou atendente"
+      },
+      "block_transfer_to_off_agents": {
+        "switch_active": "Bloquear a transferência de chats para atendentes offline",
+        "switch_inactive": "Bloquear a transferência de chats para atendentes offline"
+      },
+      "bulk_close": {
+        "switch_active": "Finalizar chats em massa",
+        "switch_inactive": "Finalizar chats em massa"
+      },
+      "block_close_chats_in_queue": {
+        "switch_active": "Bloquear a finalização de chats que estão na fila",
+        "switch_inactive": "Bloquear a finalização de chats que estão na fila"
+      },
+      "bulk_take": {
+        "switch_active": "Assumir chats em massa",
+        "switch_inactive": "Assumir chats em massa"
       },
       "queue_prioritization": {
         "tooltip": "Essa função permite que agentes possam escolher as filas que receberão contatos, dentro das previamente selecionadas no setor",
-        "switch_active": "Seleção de filas pelos agentes ativa",
-        "switch_inactive": "Seleção de filas pelos agentes inativa"
-      },
-      "block_transfer_to_off_agents": {
-        "switch_active": "Bloqueio de transferências para agentes offline ativo",
-        "switch_inactive": "Bloqueio de transferências para agentes offline inativo"
+        "switch_active": "Permitir que atendentes escolham suas filas dentro do setor",
+        "switch_inactive": "Permitir que atendentes escolham suas filas dentro do setor"
       },
       "show_agent_status_count_timer": {
-        "switch_active": "Mostrar timer de contagem do status do agente",
-        "switch_inactive": "Esconder timer de contagem do status do agente"
-      },
-      "close_chats_in_queue": {
-        "switch_active": "Agentes podem encerrar chats que estão aguardando suporte ativo",
-        "switch_inactive": "Agentes podem encerrar chats que estão aguardando suporte inativo"
+        "switch_active": "Exibir temporizador de status em pausas personalizadas do atendente",
+        "switch_inactive": "Exibir temporizador de status em pausas personalizadas do atendente"
       }
     },
     "custom_sector": "Personalizar novo setor (recomendado)",

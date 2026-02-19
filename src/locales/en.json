@@ -144,8 +144,13 @@
   "undo": "Undo",
   "redo": "Redo",
   "record_audio": "Record audio",
-  "select_all": "Select all",
-  "deselect_all": "Deselect all",
+  "select_all": "Select all chats",
+  "deselect_all": "Deselect all chats",
+  "select_this_chat": "Select this chat",
+  "deselect_this_chat": "Deselect this chat",
+  "transfer_all_selected_chats": "Transfer all selected chats",
+  "end_all_selected_chats_tooltip": "End all selected chats",
+  "number_of_chats_selected": "{count} chat selected | {count} chats selected",
   "image": "Image",
   "video": "Video",
   "audio_message": "Audio message",
@@ -433,7 +438,7 @@
     "view-mode": {
       "title": "Agent {viewedAgent} live view mode",
       "close": "End visualization",
-      "assume_chat": "Take Chat",
+      "assume_chat": "Take over only this chat",
       "assume_chat_question": "Take Chat?",
       "assume_chat_confirmation": "When confirming you will remove the Chat from agent {viewedAgent} and will be responsible for Chat"
     }
@@ -562,6 +567,23 @@
       "selected_agent_offline": "The selected agent is offline at the moment",
       "without_online_agents": "No online agent at the moment"
     }
+  },
+  "bulk_close": {
+    "close_selected_contacts": "Close selected contacts",
+    "confirm_close_selected": "Are you sure you want to close the selected contacts?",
+    "success_message": "{count} chat ended successfully! | {count} chats ended successfully!",
+    "partial_success_message": "{success} chat ended, {failed} failed. Please try again. | {success} chats ended, {failed} failed. Please try again.",
+    "error_message": "Unable to close chats, please try again",
+    "end_all_selected_chats": "End all selected chats",
+    "sector_tag": "Sector {current} of {total}",
+    "chats_count_sector": "{count} chat · {sector} sector | {count} chats · {sector} sector",
+    "required_tags_title": "Tags are required to end chats in the {sector} sector",
+    "required_tags_description": "If you select any tag below, it will be applied to the {count} chat and will replace any existing tags. | If you select any tag below, it will be applied to the {count} chats and will replace any existing tags.",
+    "next_sector": "Next sector",
+    "end_all_chats": "End all ({count} chats)",
+    "back": "Back",
+    "optional_tags_title": "Tags are not required to end chats in the {sector} sector",
+    "optional_tags_description": "If you select any tag below, it will be applied to the {count} chat and will replace any existing tags. | If you select any tag below, it will be applied to the {count} chats and will replace any existing tags."
   },
   "contact_info": {
     "title": "About the contact",
@@ -787,7 +809,7 @@
     }
   },
   "config_chats": {
-    "title": "Chat Settings",
+    "title": "Human Support Settings",
     "section_sectors_title": "Sectors in {project}",
     "section_sectors_subtitle": "Add, view and manage sectors, queues, managers and agents within your organization.",
     "tabs": {
@@ -808,28 +830,36 @@
       "status_error": "Oops, unfortunately the changes were not saved, please try again"
     },
     "project_configs": {
-      "title": "Project Adjustments",
+      "title": "Project preferences",
       "bulk_transfer": {
         "tooltip": "This function allows agents to transfer various contacts at once to a row or agent",
-        "switch_active": "Bulk contact transfer active",
-        "switch_inactive": "Bulk contact transfer disabled"
+        "switch_active": "Transfer chats in bulk to another queue or agent",
+        "switch_inactive": "Transfer chats in bulk to another queue or agent"
+      },
+      "block_transfer_to_off_agents": {
+        "switch_active": "Block chat transfer to offline agents",
+        "switch_inactive": "Block chat transfer to offline agents"
+      },
+      "bulk_close": { 
+        "switch_active": "End chats in bulk",
+        "switch_inactive": "End chats in bulk"
+      },
+      "block_close_chats_in_queue": {
+        "switch_active": "Block ending chats that are in the queue",
+        "switch_inactive": "Block ending chats that are in the queue"
+      },
+      "bulk_take": {
+        "switch_active": "Take over chats in bulk",
+        "switch_inactive": "Take over chats in bulk"
       },
       "queue_prioritization": {
         "tooltip": "This function allows agents to choose the queues that will receive contacts, within those previously selected in the sector",
-        "switch_active": "Queue selection by agents active",
-        "switch_inactive": "Queue selection by agents inactive"
-      },
-      "block_transfer_to_off_agents": {
-        "switch_active": "Blocking transfers to offline agents active",
-        "switch_inactive": "Blocking transfers to offline agents inactive"
+        "switch_active": "Allow agents to choose their queues within the sector",
+        "switch_inactive": "Allow agents to choose their queues within the sector"
       },
       "show_agent_status_count_timer": {
-        "switch_active": "Show agent status count timer",
-        "switch_inactive": "Hide agent status count timer"
-      },
-      "close_chats_in_queue": {
-        "switch_active": "Agents can end chats that are awaiting support active",
-        "switch_inactive": "Agents can end chats that are awaiting support inactive"
+        "switch_active": "Show status timer for custom agent breaks",
+        "switch_inactive": "Show status timer for custom agent breaks"
       }
     },
     "custom_sector": "Customize new sector (recommended)",

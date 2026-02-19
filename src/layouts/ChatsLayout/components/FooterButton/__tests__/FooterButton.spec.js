@@ -3,6 +3,7 @@ import { mount, config } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import FooterButton from '@/layouts/ChatsLayout/components/FooterButton/index.vue';
 import { useRooms } from '@/store/modules/chats/rooms';
+import { useConfig } from '@/store/modules/config';
 import i18n from '@/plugins/i18n';
 
 beforeAll(() => {
@@ -18,11 +19,27 @@ afterAll(() => {
 });
 
 describe('FooterButton', () => {
-  const createWrapper = (selectedRooms = []) => {
+  const createWrapper = (selectedRooms = [], activeTab = 'ongoing') => {
     const pinia = createPinia();
     setActivePinia(pinia);
     const roomsStore = useRooms();
-    roomsStore.selectedRoomsToTransfer = selectedRooms;
+    const configStore = useConfig();
+
+    if (activeTab === 'ongoing') {
+      roomsStore.selectedOngoingRooms = selectedRooms;
+      roomsStore.selectedWaitingRooms = [];
+    } else {
+      roomsStore.selectedOngoingRooms = [];
+      roomsStore.selectedWaitingRooms = selectedRooms;
+    }
+    roomsStore.activeTab = activeTab;
+
+    configStore.project = {
+      config: {
+        can_use_bulk_transfer: true,
+        can_use_bulk_close: true,
+      },
+    };
 
     return mount(FooterButton, {
       global: {
@@ -32,18 +49,33 @@ describe('FooterButton', () => {
         },
         stubs: {
           UnnnicButton: true,
+          UnnnicToolTip: {
+            template: '<div><slot /></div>',
+            props: ['enabled', 'text', 'side'],
+          },
           ModalTransferRooms: true,
+          ModalCloseRooms: true,
         },
       },
     });
   };
 
   describe('Initial State and Store Integration', () => {
-    it('should initialize correctly and integrate with store', () => {
-      const wrapper = createWrapper(['room1', 'room2']);
+    it('should initialize correctly and integrate with store for ongoing rooms', () => {
+      const wrapper = createWrapper(['room1', 'room2'], 'ongoing');
 
       expect(wrapper.vm.isModalTransferRoomsOpened).toBe(false);
-      expect(wrapper.vm.selectedRoomsToTransfer).toEqual(['room1', 'room2']);
+      expect(wrapper.vm.currentSelectedRooms).toEqual(['room1', 'room2']);
+      expect(
+        wrapper.find('[data-testid="footer-button-container"]').exists(),
+      ).toBe(true);
+    });
+
+    it('should initialize correctly and integrate with store for waiting rooms', () => {
+      const wrapper = createWrapper(['room3', 'room4'], 'waiting');
+
+      expect(wrapper.vm.isModalTransferRoomsOpened).toBe(false);
+      expect(wrapper.vm.currentSelectedRooms).toEqual(['room3', 'room4']);
       expect(
         wrapper.find('[data-testid="footer-button-container"]').exists(),
       ).toBe(true);
@@ -126,16 +158,14 @@ describe('FooterButton', () => {
     });
 
     it('should handle different room counts correctly', () => {
-      const wrapperSingle = createWrapper(['room1']);
-      expect(wrapperSingle.vm.selectedRoomsToTransfer).toHaveLength(1);
+      const wrapperSingle = createWrapper(['room1'], 'ongoing');
+      expect(wrapperSingle.vm.currentSelectedRooms).toHaveLength(1);
 
-      const wrapperMultiple = createWrapper([
-        'room1',
-        'room2',
-        'room3',
-        'room4',
-      ]);
-      expect(wrapperMultiple.vm.selectedRoomsToTransfer).toHaveLength(4);
+      const wrapperMultiple = createWrapper(
+        ['room1', 'room2', 'room3', 'room4'],
+        'ongoing',
+      );
+      expect(wrapperMultiple.vm.currentSelectedRooms).toHaveLength(4);
 
       expect(wrapperSingle.vm.$tc('transfer_contact', 1)).toBe(
         'transfer_contact_1',
