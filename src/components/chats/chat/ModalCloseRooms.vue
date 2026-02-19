@@ -331,12 +331,32 @@ const handleSecondaryClick = () => {
 };
 
 // Execute bulk close
-const clearSelectionsAndClose = () => {
+const ROOMS_REFETCH_LIMIT = 30;
+
+const refetchRoomsIfEmpty = async () => {
+  const hasOngoingRooms = roomsStore.agentRooms.length > 0;
+  const hasWaitingRooms = roomsStore.waitingQueue.length > 0;
+
+  if (activeTab.value === 'ongoing' && hasOngoingRooms) return;
+  if (activeTab.value === 'waiting' && hasWaitingRooms) return;
+
+  await roomsStore.getAll({
+    offset: 0,
+    limit: ROOMS_REFETCH_LIMIT,
+    order: roomsStore.orderBy[activeTab.value],
+    roomsType: activeTab.value,
+  });
+};
+
+const clearSelectionsAndClose = async () => {
   if (activeTab.value === 'ongoing') {
     roomsStore.setSelectedOngoingRooms([]);
   } else {
     roomsStore.setSelectedWaitingRooms([]);
   }
+
+  await refetchRoomsIfEmpty();
+
   isLoadingBulkClose.value = false;
   emit('close');
 };
