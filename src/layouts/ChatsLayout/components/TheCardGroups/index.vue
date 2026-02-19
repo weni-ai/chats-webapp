@@ -333,18 +333,17 @@ export default {
         this.isBulkCloseFeatureEnabled &&
         this.project.config?.can_use_bulk_close;
       const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
+      const hasRooms = this.countRooms[this.activeTab] > 0;
 
-      if (this.activeTab === 'waiting' && canBulkClose && blockCloseInQueue) {
-        return false;
+      if (this.activeTab === 'waiting') {
+        return hasRooms && canBulkClose && !blockCloseInQueue;
       }
 
-      const isEnabled = canBulkTransfer || canBulkClose;
+      if (this.activeTab === 'ongoing') {
+        return hasRooms && (canBulkTransfer || canBulkClose);
+      }
 
-      return (
-        (this.activeTab === 'ongoing' || this.activeTab === 'waiting') &&
-        this.countRooms[this.activeTab] > 0 &&
-        isEnabled
-      );
+      return false;
     },
 
     isUserAdmin() {
@@ -404,12 +403,13 @@ export default {
         this.project.config?.can_use_bulk_close;
       const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
 
-      if (this.activeTab === 'waiting' && canBulkClose && blockCloseInQueue) {
-        return !this.isMobile && canBulkTransfer;
+      if (this.isMobile) return false;
+
+      if (this.activeTab === 'waiting') {
+        return canBulkClose && !blockCloseInQueue;
       }
 
-      const isEnabled = canBulkTransfer || canBulkClose;
-      return !this.isMobile && isEnabled;
+      return canBulkTransfer || canBulkClose;
     },
   },
   watch: {
