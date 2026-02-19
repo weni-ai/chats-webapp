@@ -346,7 +346,6 @@ export default {
         this.project.config?.can_use_bulk_close;
       const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
 
-      // Se bulk close está ativo mas bloqueia fechar na fila, não mostrar em waiting
       if (this.activeTab === 'waiting' && canBulkClose && blockCloseInQueue) {
         return false;
       }
@@ -403,7 +402,6 @@ export default {
         this.project.config?.can_use_bulk_close;
       const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
 
-      // Se bulk close está ativo mas bloqueia fechar na fila, só habilitar transfer em waiting
       if (this.activeTab === 'waiting' && canBulkClose && blockCloseInQueue) {
         return !this.isMobile && canBulkTransfer;
       }
