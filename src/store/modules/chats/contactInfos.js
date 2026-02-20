@@ -15,6 +15,10 @@ export const useContactInfos = defineStore('contactInfos', () => {
   const documentsCursor = ref(null);
   const audiosCursor = ref(null);
 
+  const hasMoreMediasFlag = ref(true);
+  const hasMoreDocumentsFlag = ref(true);
+  const hasMoreAudiosFlag = ref(true);
+
   const currentContactUuid = ref(null);
   const currentRoomUuid = ref(null);
 
@@ -39,210 +43,244 @@ export const useContactInfos = defineStore('contactInfos', () => {
   const hasDocuments = computed(() => documents.value.length > 0);
   const hasAudios = computed(() => audios.value.length > 0);
 
+  const hasMoreMedias = computed(() => hasMoreMediasFlag.value);
+  const hasMoreDocuments = computed(() => hasMoreDocumentsFlag.value);
+  const hasMoreAudios = computed(() => hasMoreAudiosFlag.value);
+
   const loadMedias = async ({ contact, room, history, contactInfo }) => {
-    isLoadingMedias.value = true;
     if (!history) {
       await loadNextMedias({ contact, room });
     } else {
       await loadNextMediasClosedRoom({ contactInfo });
     }
-    isLoadingMedias.value = false;
   };
 
   const loadNextMedias = async ({ contact, room }) => {
-    const response = await Media.listFromContactAndRoom({
-      contact,
-      room,
-      ordering: 'content_type',
-      content_type: 'media',
-      page_size: 5,
-      cursor: mediasCursor.value,
-    });
+    if (isLoadingMedias.value || !hasMoreMediasFlag.value) {
+      return;
+    }
 
-    medias.value = medias.value.concat(
-      response.results.filter(
-        (media) =>
-          media.content_type.startsWith('image/') ||
-          media.content_type.startsWith('video/'),
-      ),
-    );
+    isLoadingMedias.value = true;
+    try {
+      const response = await Media.listFromContactAndRoom({
+        contact,
+        room,
+        ordering: 'content_type',
+        content_type: 'media',
+        page_size: 10,
+        cursor: mediasCursor.value,
+      });
 
-    mediasCursor.value = response.nextCursor;
+      medias.value = medias.value.concat(
+        response.results.filter(
+          (media) =>
+            media.content_type.startsWith('image/') ||
+            media.content_type.startsWith('video/'),
+        ),
+      );
 
-    if (response.next) {
-      await loadNextMedias({ contact, room });
+      mediasCursor.value = response.nextCursor;
+      hasMoreMediasFlag.value = response.next !== null;
+    } finally {
+      isLoadingMedias.value = false;
     }
   };
 
   const loadNextMediasClosedRoom = async ({ contactInfo }) => {
-    const response = await Media.listFromContactAndClosedRoom({
-      ordering: 'content_type',
-      contact: contactInfo,
-      page_size: 5,
-      cursor: mediasCursor.value,
-      content_type: 'media',
-    });
+    if (isLoadingMedias.value || !hasMoreMediasFlag.value) {
+      return;
+    }
 
-    medias.value = medias.value.concat(
-      response.results.filter(
-        (media) =>
-          media.content_type.startsWith('image/') ||
-          media.content_type.startsWith('video/'),
-      ),
-    );
+    isLoadingMedias.value = true;
+    try {
+      const response = await Media.listFromContactAndClosedRoom({
+        ordering: 'content_type',
+        contact: contactInfo,
+        page_size: 10,
+        cursor: mediasCursor.value,
+        content_type: 'media',
+      });
 
-    mediasCursor.value = response.nextCursor;
+      medias.value = medias.value.concat(
+        response.results.filter(
+          (media) =>
+            media.content_type.startsWith('image/') ||
+            media.content_type.startsWith('video/'),
+        ),
+      );
 
-    if (response.next) {
-      await loadNextMediasClosedRoom({ contactInfo });
+      mediasCursor.value = response.nextCursor;
+      hasMoreMediasFlag.value = response.next !== null;
+    } finally {
+      isLoadingMedias.value = false;
     }
   };
 
   const loadDocuments = async ({ contact, room, history, contactInfo }) => {
-    isLoadingDocuments.value = true;
     if (!history) {
       await loadNextDocuments({ contact, room });
     } else {
       await loadNextDocumentsClosedRoom({ contactInfo });
     }
-    isLoadingDocuments.value = false;
   };
 
   const loadNextDocuments = async ({ contact, room }) => {
-    const response = await Media.listFromContactAndRoom({
-      contact,
-      room,
-      ordering: 'content_type',
-      content_type: 'documents',
-      page_size: 10,
-      cursor: documentsCursor.value,
-    });
+    if (isLoadingDocuments.value || !hasMoreDocumentsFlag.value) {
+      return;
+    }
 
-    documents.value = documents.value.concat(
-      response.results.filter(
-        (media) =>
-          !media.content_type.startsWith('image/') &&
-          !media.content_type.startsWith('video/') &&
-          !media.content_type.startsWith('audio/'),
-      ),
-    );
+    isLoadingDocuments.value = true;
+    try {
+      const response = await Media.listFromContactAndRoom({
+        contact,
+        room,
+        ordering: 'content_type',
+        content_type: 'documents',
+        page_size: 10,
+        cursor: documentsCursor.value,
+      });
 
-    documentsCursor.value = response.nextCursor;
+      documents.value = documents.value.concat(
+        response.results.filter(
+          (media) =>
+            !media.content_type.startsWith('image/') &&
+            !media.content_type.startsWith('video/') &&
+            !media.content_type.startsWith('audio/'),
+        ),
+      );
 
-    if (response.next) {
-      await loadNextDocuments({ contact, room });
+      documentsCursor.value = response.nextCursor;
+      hasMoreDocumentsFlag.value = response.next !== null;
+    } finally {
+      isLoadingDocuments.value = false;
     }
   };
 
   const loadNextDocumentsClosedRoom = async ({ contactInfo }) => {
-    const response = await Media.listFromContactAndClosedRoom({
-      ordering: 'content_type',
-      contact: contactInfo,
-      content_type: 'documents',
-      page_size: 10,
-      cursor: documentsCursor.value,
-    });
+    if (isLoadingDocuments.value || !hasMoreDocumentsFlag.value) {
+      return;
+    }
 
-    documents.value = documents.value.concat(
-      response.results.filter(
-        (media) =>
-          !media.content_type.startsWith('image/') &&
-          !media.content_type.startsWith('video/') &&
-          !media.content_type.startsWith('audio/'),
-      ),
-    );
+    isLoadingDocuments.value = true;
+    try {
+      const response = await Media.listFromContactAndClosedRoom({
+        ordering: 'content_type',
+        contact: contactInfo,
+        content_type: 'documents',
+        page_size: 10,
+        cursor: documentsCursor.value,
+      });
 
-    documentsCursor.value = response.nextCursor;
+      documents.value = documents.value.concat(
+        response.results.filter(
+          (media) =>
+            !media.content_type.startsWith('image/') &&
+            !media.content_type.startsWith('video/') &&
+            !media.content_type.startsWith('audio/'),
+        ),
+      );
 
-    if (response.next) {
-      await loadNextDocumentsClosedRoom({ contactInfo });
+      documentsCursor.value = response.nextCursor;
+      hasMoreDocumentsFlag.value = response.next !== null;
+    } finally {
+      isLoadingDocuments.value = false;
     }
   };
 
   const loadAudios = async ({ contact, room, history, contactInfo }) => {
-    isLoadingAudios.value = true;
     if (!history) {
       await loadNextAudios({ contact, room });
     } else {
       await loadNextAudiosClosedRoom({ contactInfo });
     }
-    isLoadingAudios.value = false;
   };
 
   const loadNextAudios = async ({ contact, room }) => {
-    const response = await Media.listFromContactAndRoom({
-      contact,
-      room,
-      ordering: 'content_type',
-      content_type: 'audio',
-      page_size: 10,
-      cursor: audiosCursor.value,
-    });
+    if (isLoadingAudios.value || !hasMoreAudiosFlag.value) {
+      return;
+    }
 
-    const newAudios = await Promise.all(
-      response.results
-        .filter((media) => media.content_type.startsWith('audio/'))
-        .map(
-          (element) =>
-            new Promise((resolve) => {
-              const url = new Audio(element.url);
-              url.onloadedmetadata = (event) => {
-                if (event.path) {
-                  const { duration } = event.path[0];
-                  resolve({ ...element, duration });
-                } else {
-                  const duration = Math.round(url.duration);
-                  resolve({ ...element, duration });
-                }
-              };
-            }),
-        ),
-    );
+    isLoadingAudios.value = true;
+    try {
+      const response = await Media.listFromContactAndRoom({
+        contact,
+        room,
+        ordering: 'content_type',
+        content_type: 'audio',
+        page_size: 10,
+        cursor: audiosCursor.value,
+      });
 
-    audios.value = audios.value.concat(newAudios);
+      const newAudios = await Promise.all(
+        response.results
+          .filter((media) => media.content_type.startsWith('audio/'))
+          .map(
+            (element) =>
+              new Promise((resolve) => {
+                const url = new Audio(element.url);
+                url.onloadedmetadata = (event) => {
+                  if (event.path) {
+                    const { duration } = event.path[0];
+                    resolve({ ...element, duration });
+                  } else {
+                    const duration = Math.round(url.duration);
+                    resolve({ ...element, duration });
+                  }
+                };
+              }),
+          ),
+      );
 
-    audiosCursor.value = response.nextCursor;
+      audios.value = audios.value.concat(newAudios);
 
-    if (response.next) {
-      await loadNextAudios({ contact, room });
+      audiosCursor.value = response.nextCursor;
+      hasMoreAudiosFlag.value = response.next !== null;
+    } finally {
+      isLoadingAudios.value = false;
     }
   };
 
   const loadNextAudiosClosedRoom = async ({ contactInfo }) => {
-    const response = await Media.listFromContactAndClosedRoom({
-      ordering: 'content_type',
-      contact: contactInfo,
-      content_type: 'audio',
-      page_size: 10,
-      cursor: audiosCursor.value,
-    });
+    if (isLoadingAudios.value || !hasMoreAudiosFlag.value) {
+      return;
+    }
 
-    const newAudios = await Promise.all(
-      response.results
-        .filter((media) => media.content_type.startsWith('audio/'))
-        .map(
-          (element) =>
-            new Promise((resolve) => {
-              const url = new Audio(element.url);
-              url.onloadedmetadata = (event) => {
-                if (event.path) {
-                  const { duration } = event.path[0];
-                  resolve({ ...element, duration });
-                } else {
-                  const duration = Math.round(url.duration);
-                  resolve({ ...element, duration });
-                }
-              };
-            }),
-        ),
-    );
+    isLoadingAudios.value = true;
+    try {
+      const response = await Media.listFromContactAndClosedRoom({
+        ordering: 'content_type',
+        contact: contactInfo,
+        content_type: 'audio',
+        page_size: 10,
+        cursor: audiosCursor.value,
+      });
 
-    audios.value = audios.value.concat(newAudios);
+      const newAudios = await Promise.all(
+        response.results
+          .filter((media) => media.content_type.startsWith('audio/'))
+          .map(
+            (element) =>
+              new Promise((resolve) => {
+                const url = new Audio(element.url);
+                url.onloadedmetadata = (event) => {
+                  if (event.path) {
+                    const { duration } = event.path[0];
+                    resolve({ ...element, duration });
+                  } else {
+                    const duration = Math.round(url.duration);
+                    resolve({ ...element, duration });
+                  }
+                };
+              }),
+          ),
+      );
 
-    audiosCursor.value = response.nextCursor;
+      audios.value = audios.value.concat(newAudios);
 
-    if (response.next) {
-      await loadNextAudiosClosedRoom({ contactInfo });
+      audiosCursor.value = response.nextCursor;
+      hasMoreAudiosFlag.value = response.next !== null;
+    } finally {
+      isLoadingAudios.value = false;
     }
   };
 
@@ -258,6 +296,9 @@ export const useContactInfos = defineStore('contactInfos', () => {
     mediasCursor.value = null;
     documentsCursor.value = null;
     audiosCursor.value = null;
+    hasMoreMediasFlag.value = true;
+    hasMoreDocumentsFlag.value = true;
+    hasMoreAudiosFlag.value = true;
     currentContactUuid.value = null;
     currentRoomUuid.value = null;
   };
@@ -280,10 +321,19 @@ export const useContactInfos = defineStore('contactInfos', () => {
     hasMedias,
     hasDocuments,
     hasAudios,
+    hasMoreMedias,
+    hasMoreDocuments,
+    hasMoreAudios,
 
     loadMedias,
+    loadNextMedias,
+    loadNextMediasClosedRoom,
     loadDocuments,
+    loadNextDocuments,
+    loadNextDocumentsClosedRoom,
     loadAudios,
+    loadNextAudios,
+    loadNextAudiosClosedRoom,
     setCurrentContact,
     clearAll,
   };
