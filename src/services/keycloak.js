@@ -17,6 +17,7 @@ keycloak.logout = () => {
 };
 
 let hasInitialized = false;
+let refreshTokenInterval = null;
 
 export default {
   plugin: {
@@ -41,30 +42,68 @@ export default {
     let savedKeycloakUser = {};
 
     try {
-      savedKeycloakUser = JSON.parse(sessionStorage.getItem('keycloak:user'));
+      const savedData = sessionStorage.getItem('keycloak:user');
+      if (savedData) {
+        savedKeycloakUser = JSON.parse(savedData);
+      }
     } catch (error) {
-      console.log(error);
+      console.error('Error parsing saved Keycloak user:', error);
+      sessionStorage.removeItem('keycloak:user');
     }
 
     const toInsert = savedKeycloakUser?.token ? savedKeycloakUser : {};
 
-    const authenticated = await keycloak.init({
-      useNonce: false,
-      scope: 'email profile openid offline_access',
-      pkceMethod: 'S256',
-      ...toInsert,
-    });
-
-    sessionStorage.setItem('keycloak:user', JSON.stringify(keycloak));
-
-    hasInitialized = true;
-
-    setInterval(() => {
-      keycloak.updateToken(70).catch(() => {
-        console.error('Failed to refresh token');
+    try {
+      const authenticated = await keycloak.init({
+        useNonce: false,
+        scope: 'email profile openid offline_access',
+        pkceMethod: 'S256',
+        ...toInsert,
       });
-    }, 6000);
 
-    return authenticated;
+      if (authenticated) {
+        sessionStorage.setItem(
+          'keycloak:user',
+          JSON.stringify({
+            token: keycloak.token,
+            refreshToken: keycloak.refreshToken,
+            idToken: keycloak.idToken,
+          }),
+        );
+      }
+
+      hasInitialized = true;
+
+      if (!refreshTokenInterval && authenticated) {
+        refreshTokenInterval = setInterval(() => {
+          keycloak
+            .updateToken(70)
+            .then((refreshed) => {
+              if (refreshed) {
+                sessionStorage.setItem(
+                  'keycloak:user',
+                  JSON.stringify({
+                    token: keycloak.token,
+                    refreshToken: keycloak.refreshToken,
+                    idToken: keycloak.idToken,
+                  }),
+                );
+              }
+            })
+            .catch((error) => {
+              console.error('Failed to refresh token:', error);
+              sessionStorage.removeItem('keycloak:user');
+              hasInitialized = false;
+            });
+        }, 60000);
+      }
+
+      return authenticated;
+    } catch (error) {
+      console.error('Keycloak initialization error:', error);
+      sessionStorage.removeItem('keycloak:user');
+      hasInitialized = false;
+      return false;
+    }
   },
 };
