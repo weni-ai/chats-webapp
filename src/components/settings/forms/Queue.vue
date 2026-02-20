@@ -207,11 +207,18 @@ export default {
       deep: true,
       immediate: true,
       handler(value) {
-        const valid = this.enableGroupsMode
+        const validQueue = this.enableGroupsMode
           ? !!value.name?.trim()
           : !!value.name?.trim() && !!value.currentAgents?.length;
 
-        this.$emit('changeIsValid', valid);
+        const validQueueLimit =
+          this.enableQueueLimitFeature && this.queue.queue_limit.is_active
+            ? !isNaN(this.queue.queue_limit.limit)
+            : true;
+
+        const allValid = validQueue && validQueueLimit;
+
+        this.$emit('changeIsValid', allValid);
       },
     },
   },
