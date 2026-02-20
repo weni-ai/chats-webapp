@@ -12,6 +12,12 @@ module.exports = {
   },
   overrides: [
     {
+      files: ['**/*.ts', '**/*.vue'],
+      parserOptions: {
+        parser: '@typescript-eslint/parser',
+      },
+    },
+    {
       files: [
         '**/__tests__/*.{j,t}s?(x)',
         '**/tests/unit/**/*.spec.{j,t}s?(x)',
