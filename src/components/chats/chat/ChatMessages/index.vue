@@ -687,7 +687,7 @@ export default {
 
     getMessageFeedbackScheme(message) {
       if (message.text === SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT) {
-        return 'yellow-400';
+        return 'yellow';
       }
 
       return this.isClosedChat ? 'gray' : 'blue';
