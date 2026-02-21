@@ -217,6 +217,7 @@
         "see_all_holidays": "Ver todos los feriados",
         "add_specific_dates": "Agregar fechas específicas",
         "see_all_specific_dates": "Ver todas las fechas específicas",
+        "select_sector_to_copy": "Select the sector to copy",
         "copy_to_all": "Copiar a todos los días",
         "start": {
           "label": "Hora de inicio"
@@ -226,6 +227,12 @@
         },
         "limit_agents": {
           "label": "Límite en el número de llamadas simultáneas por agente"
+        },
+        "message": {
+          "create_custom_holiday": {
+            "error": "Failed to add some non-working dates, please check and try again.",
+            "success": "Non-working dates added successfully."
+          }
         }
       }
     },
@@ -282,9 +289,6 @@
   "addition_date": "Fecha de adición",
   "in_queues": "en colas",
   "in_progress": "En progreso",
-  "waiting": "Esperando",
-  "sent_flows": "Flujos enviados",
-  "discussion": "Discusiones",
   "in_progress_tooltip": "Cantidad de chats que ya están siendo atendidos por un agente",
   "in_progress_tooltip_filtered": "Cantidad de chats que han sido atendidos por un agente",
   "closed": "Cerrados",
@@ -362,7 +366,7 @@
       "most_recent": {
         "label": "Más reciente",
         "ongoing_tooltip": "Más reciente: última mensagem intercambiada en el menor tiempo.",
-        "default_tooltip": "Más reciente: salas que han sido abiertas por menos tiempo."
+        "waiting_tooltip": "Most recent: rooms that have been open for less time."
       },
       "oldest": {
         "label": "Más antiguo",
@@ -843,6 +847,10 @@
       "block_close_chats_in_queue": {
         "switch_active": "Bloquear la finalización de chats que están en la cola activo",
         "switch_inactive": "Bloquear la finalización de chats que están en la cola inactivo"
+      },
+      "bulk_take": {
+        "switch_active": "Take over chats in bulk",
+        "switch_inactive": "Take over chats in bulk"
       },
       "queue_prioritization": {
         "tooltip": "Esta función permite a los agentes elegir las colas que recibirán contactos, dentro de las previamente seleccionadas en el sector.",
