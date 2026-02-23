@@ -9,9 +9,9 @@ _This project is a module of [Weni](https://github.com/weni-ai) integrated insid
 
 <br/>
 
-# Weni Chats
+# Weni Live desk
 
-Chats is the official human service module of the Weni platform.
+Live desk is the official human service module of the Weni platform.
 
 </div>
 
@@ -19,7 +19,7 @@ Chats is the official human service module of the Weni platform.
 
 # About
 
-With a well-structured and optimized code, Chats provides Weni platform users with an intuitive, efficient and highly personalized human service experience.
+With a well-structured and optimized code, Live desk provides Weni platform users with an intuitive, efficient and highly personalized human service experience.
 
 This repository has been carefully developed with our customers' needs and concerns in mind, with the aim of providing an exceptional auto-service experience.
 
