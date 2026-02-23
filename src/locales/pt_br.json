@@ -3,7 +3,7 @@
     "title": "Olá!",
     "description": "Selecione um chat para realizar seus atendimentos!"
   },
-  "news_and_updates": "Notícias e atualizações no Chats",
+  "news_and_updates": "Notícias e atualizações no Live desk",
   "custom": "Personalizado",
   "country": {
     "label": "País",
@@ -242,7 +242,7 @@
         "switch_disabled": "Assinatura desativada"
       },
       "csat": {
-        "label": "Enviar automaticamente uma pesquisa de satisfação após o atendimento humano ser encerrado",
+        "label": "Enviar automaticamente uma pesquisa de satisfação após o atendimento do Live desk ser encerrado",
         "hint": "Se houver um fluxo ativo no módulo Flows configurado para disparar a pesquisa após o atendimento, esta configuração pode gerar conflito e impactar o envio da pesquisa.",
         "confirm_modal": {
           "content_1": "Se houver um fluxo ativo no módulo Flows configurado para disparar a pesquisa após o atendimento, esta configuração pode gerar conflito e impactar o envio da pesquisa.",
@@ -427,8 +427,8 @@
     "error_update_queues": "Não foi possível atualizar suas filas de atendimento"
   },
   "chats_notifications": {
-    "title": "Notificações do WeniChats",
-    "label": "Para seu conforto, habilite e desabilite as notificações sonoras do WeniChats"
+    "title": "Notificações do Weni Live Desk",
+    "label": "Para seu conforto, habilite e desabilite as notificações sonoras do Weni Live Desk"
   },
   "dashboard": {
     "view-mode": {
@@ -765,14 +765,14 @@
   },
   "discard": "Descartar",
   "on_boarding": {
-    "title": "Começando a usar o Chats",
+    "title": "Começando a usar o Live desk",
     "title_sector": "Configure sua equipe de atendimento!",
     "description_sector": "Crie um setor para gerenciar uma equipe de atendimento, é possível criar quantos setores você quiser, assim consegue gerenciar seus grupos de atendimentos por departamentos, produtos ou serviços.",
     "title_queues": "Filas",
     "description_queues": "Utilize filas para segmentar seus atendimentos por assuntos ou produtos, caso não desejar, basta criar somente uma fila.",
     "title_tags": "Tags",
     "description_tags": "Crie tags para classificar os chats, as tags podem ser utilizadas para gerar relatórios, filtrar atendimentos no histórico e muito mais!",
-    "tooltip": "O Chats é o módulo de atendimento humano da Weni, confira o passo a passo para começar a usar"
+    "tooltip": "O Live desk é o módulo de atendimento humano da Weni, confira o passo a passo para começar a usar"
   },
   "status_agent": "Você está",
   "copilot": {
@@ -807,7 +807,7 @@
     }
   },
   "config_chats": {
-    "title": "Configurações de Atendimento humano",
+    "title": "Configurações do Live desk",
     "section_sectors_title": "Setores em {project}",
     "section_sectors_subtitle": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
     "tabs": {
@@ -981,10 +981,10 @@
   "enter": "Entrar",
   "no_matches_for_the_search": "Não há correspondências para a pesquisa",
   "select_org": {
-    "choose_one": "Escolha uma para acessar o Weni Chats"
+    "choose_one": "Escolha uma para acessar o Weni Live Desk"
   },
   "select_project": {
-    "choose_one": "Escolha um para acessar o Weni Chats"
+    "choose_one": "Escolha um para acessar o Weni Live Desk"
   },
   "discart": "Descartar",
   "confirmation": "Confirmação",
@@ -1011,9 +1011,9 @@
   },
   "feedback_modal": {
     "title": "Ajude-nos a melhorar!",
-    "feedback_question": "Com está sendo usar o Weni Chats?",
-    "problem_question": "O que atrapalha ou dificulta o uso do Weni Chats?",
-    "improvement_question": "O que poderíamos melhorar para que o uso do Weni Chats seja ainda melhor para você?",
+    "feedback_question": "Com está sendo usar o Weni Live Desk?",
+    "problem_question": "O que atrapalha ou dificulta o uso do Weni Live Desk?",
+    "improvement_question": "O que poderíamos melhorar para que o uso do Weni Live Desk seja ainda melhor para você?",
     "submit": "Enviar",
     "cancel": "Agora não",
     "feedback_options": {

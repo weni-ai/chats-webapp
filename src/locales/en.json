@@ -3,7 +3,7 @@
     "title": "Hello there,",
     "description": "Select a chat to carry out your supports!"
   },
-  "news_and_updates": "News and updates in Chats",
+  "news_and_updates": "News and updates in Live desk",
   "custom": "Custom",
   "country": {
     "label": "Country",
@@ -249,7 +249,7 @@
         "switch_disabled": "Disabled signature"
       },
       "csat": {
-        "label": "Automatically send a satisfaction survey after human support ends",
+        "label": "Automatically send a satisfaction survey after Live desk support ends",
         "hint": "If there is an active flow in the Flows module set to trigger a survey after support ends, this setting may cause conflicts and affect survey delivery.",
         "confirm_modal": {
           "content_1": "If there is an active flow in the Flows module set to trigger a survey after support ends, this setting may cause conflicts and affect survey delivery.",
@@ -431,8 +431,8 @@
     "error_update_queues": "Unable to update your service queues"
   },
   "chats_notifications": {
-    "title": "WeniChats Notifications",
-    "label": "For your convenience, enable or disable WeniChats sound notifications."
+    "title": "Weni Live Desk Notifications",
+    "label": "For your convenience, enable or disable Weni Live Desk sound notifications."
   },
   "dashboard": {
     "view-mode": {
@@ -767,14 +767,14 @@
   },
   "discard": "Delete",
   "on_boarding": {
-    "title": "Getting started with Chats",
+    "title": "Getting started with Live desk",
     "title_sector": "Configure your support team!",
     "description_sector": "Create a sector to manage a service team, you can create as many sectors as you want, so you can manage your service groups by departments, products or services.",
     "title_queues": "Queues",
     "description_queues": "Use queues to segment your calls by subject or products, if you don't want to, just create a queue.",
     "title_tags": "Tags",
     "description_tags": "Create tags to classify chats, tags can be used to generate reports, filter calls in the history and much more!",
-    "tooltip": "Chats is Weni's human service module, check out the step by step to get started"
+    "tooltip": "Live desk is Weni's human service module, check out the step by step to get started"
   },
   "status_agent": "You are",
   "copilot": {
@@ -809,7 +809,7 @@
     }
   },
   "config_chats": {
-    "title": "Human Support Settings",
+    "title": "Live desk Settings",
     "section_sectors_title": "Sectors in {project}",
     "section_sectors_subtitle": "Add, view and manage sectors, queues, managers and agents within your organization.",
     "tabs": {
@@ -891,7 +891,7 @@
         "error": "Failed to set queue settings",
         "delete_success": "Queue deleted successfully",
         "delete_error": "Failed to delete queue",
-        "add_new_queue": "This new queue will be added for all agents. You can remove it by going to <b>Chats Settings > Groups > Agents</b>",
+        "add_new_queue": "This new queue will be added for all agents. You can remove it by going to <b>Live desk Settings > Groups > Agents</b>",
         "config_agents_group": "Add or remove agents from this queue through the project groups by going to <b>Chat Settings > Project Groups</b>"
       }
     },
@@ -983,10 +983,10 @@
   "enter": "Enter",
   "no_matches_for_the_search": "There are no matches for the search",
   "select_org": {
-    "choose_one": "Choose one to access Weni Chats"
+    "choose_one": "Choose one to access Weni Live Desk"
   },
   "select_project": {
-    "choose_one": "Choose one to access Weni Chats"
+    "choose_one": "Choose one to access Weni Live Desk"
   },
   "discart": "Discart",
   "confirmation": "Confirmation",
@@ -1013,9 +1013,9 @@
   },
   "feedback_modal": {
     "title": "Help us improve!",
-    "feedback_question": "What is it been like using Weni Chats?",
-    "problem_question": "What are the main challenges or difficulties you face when using Weni Chats?",
-    "improvement_question": "What could we improve to make your Weni Chats experience even better?",
+    "feedback_question": "What is it been like using Weni Live Desk?",
+    "problem_question": "What are the main challenges or difficulties you face when using Weni Live Desk?",
+    "improvement_question": "What could we improve to make your Weni Live Desk experience even better?",
     "submit": "Submit",
     "cancel": "Not now",
     "feedback_options": {
