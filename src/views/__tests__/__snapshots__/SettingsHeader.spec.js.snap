@@ -5,28 +5,12 @@ exports[`SettingsHeader.vue > Should match the snapshot 1`] = `
   class="settings-view__header"
   data-v-a59c663f=""
 >
-  <div
-    class="unnnic-avatar-icon weni-600 sm"
-    data-testid="settings-view-header-icon"
-    data-v-a59c663f=""
-    data-v-d0742329=""
-  >
-    <span
-      class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--weni-600 unnnic-icon-size--md unnnic-icon__size--md"
-      data-testid="material-icon"
-      data-v-69390f82=""
-      data-v-d0742329=""
-      translate="no"
-    >
-      settings
-    </span>
-  </div>
   <h1
     class="header__title"
     data-testid="settings-view-header-title"
     data-v-a59c663f=""
   >
-    Chat Settings
+    Human Support Settings
   </h1>
 </header>
 `;

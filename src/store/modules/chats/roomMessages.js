@@ -33,6 +33,7 @@ export const useRoomMessages = defineStore('roomMessages', {
     toScrollMessage: null,
     showScrollToBottomButton: false,
     showSearchMessagesDrawer: false,
+    isLoadingAllMessages: false,
   }),
   actions: {
     addRoomMessageSorted({ message, addBefore, reorderMessageMinute }) {
@@ -181,11 +182,13 @@ export const useRoomMessages = defineStore('roomMessages', {
 
     async getAllRoomsMessages() {
       try {
+        this.isLoadingAllMessages = true;
         await this.getRoomMessages();
       } catch (error) {
         console.log(error);
       } finally {
         if (this.roomMessagesNext) this.getAllRoomsMessages();
+        else this.isLoadingAllMessages = false;
       }
     },
     async getRoomMessages() {
