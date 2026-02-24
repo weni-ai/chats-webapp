@@ -46,6 +46,7 @@ module.exports = defineConfig({
       },
       {
         test: /\.(js|ts)$/,
+        exclude: /node_modules/,
         use: [
           {
             loader: 'builtin:swc-loader',
