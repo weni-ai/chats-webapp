@@ -400,7 +400,7 @@
     "to_end_required_tags": "To end this conversation, please select at least one tag.",
     "tags_help": "Tags help you locate chats and also generate good reports",
     "chat_with_contact_ended": "Chat with {contact} closed",
-    "see_history": "Chats history",
+    "see_history": "General history",
     "tag_request": "@:please tag the chat",
     "closed_in": "Chat closed in",
     "closed": "Closed chat",
@@ -809,7 +809,7 @@
     }
   },
   "config_chats": {
-    "title": "Live desk Settings",
+    "title": "Settings",
     "section_sectors_title": "Sectors in {project}",
     "section_sectors_subtitle": "Add, view and manage sectors, queues, managers and agents within your organization.",
     "tabs": {

@@ -396,7 +396,7 @@
     "to_end_required_tags": "Para cerrar, agrega al menos una etiqueta",
     "tags_help": "Las etiquetas te ayudan a localizar chats y también a generar buenos informes.",
     "chat_with_contact_ended": "Chat con {contact} cerrado",
-    "see_history": "Historial de chats",
+    "see_history": "Historial general",
     "tag_request": "@:please calificar el chat",
     "closed_in": "Chat cerrado en",
     "closed": "Chat cerrado",
@@ -805,7 +805,7 @@
     }
   },
   "config_chats": {
-    "title": "Configuración de Live desk",
+    "title": "Configuración",
     "section_sectors_title": "Sectores en {project}",
     "section_sectors_subtitle": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización.",
     "tabs": {
