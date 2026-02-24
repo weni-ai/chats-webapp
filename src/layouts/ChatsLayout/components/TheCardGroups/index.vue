@@ -86,22 +86,10 @@
           <UnnnicToolTip
             v-if="showSelectAllCheckbox"
             enabled
-            :text="
-              (
-                activeTab === 'ongoing'
-                  ? selectAllOngoingRoomsValue
-                  : selectAllWaitingRoomsValue
-              )
-                ? $t('deselect_all')
-                : $t('select_all')
-            "
+            :text="selectAllTooltipText"
           >
             <UnnnicCheckbox
-              :modelValue="
-                activeTab === 'ongoing'
-                  ? selectAllOngoingRoomsValue
-                  : selectAllWaitingRoomsValue
-              "
+              :modelValue="isAllRoomsSelected"
               size="sm"
               class="select-all-checkbox"
               :label="selectedText"
@@ -345,19 +333,17 @@ export default {
         this.isBulkCloseFeatureEnabled &&
         this.project.config?.can_use_bulk_close;
       const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
+      const hasRooms = this.countRooms[this.activeTab] > 0;
 
-      // Se bulk close está ativo mas bloqueia fechar na fila, não mostrar em waiting
-      if (this.activeTab === 'waiting' && canBulkClose && blockCloseInQueue) {
-        return false;
+      if (this.activeTab === 'waiting') {
+        return hasRooms && canBulkClose && !blockCloseInQueue;
       }
 
-      const isEnabled = canBulkTransfer || canBulkClose;
+      if (this.activeTab === 'ongoing') {
+        return hasRooms && (canBulkTransfer || canBulkClose);
+      }
 
-      return (
-        (this.activeTab === 'ongoing' || this.activeTab === 'waiting') &&
-        this.countRooms[this.activeTab] > 0 &&
-        isEnabled
-      );
+      return false;
     },
 
     isUserAdmin() {
@@ -396,6 +382,20 @@ export default {
       return this.rooms_queue.length === this.selectedWaitingRooms?.length;
     },
 
+    isAllRoomsSelected() {
+      if (this.activeTab === 'ongoing') {
+        return this.selectAllOngoingRoomsValue;
+      }
+      return this.selectAllWaitingRoomsValue;
+    },
+
+    selectAllTooltipText() {
+      if (this.isAllRoomsSelected) {
+        return this.$t('deselect_all');
+      }
+      return this.$t('select_all');
+    },
+
     isWithSelection() {
       const canBulkTransfer = this.project.config?.can_use_bulk_transfer;
       const canBulkClose =
@@ -403,13 +403,13 @@ export default {
         this.project.config?.can_use_bulk_close;
       const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
 
-      // Se bulk close está ativo mas bloqueia fechar na fila, só habilitar transfer em waiting
-      if (this.activeTab === 'waiting' && canBulkClose && blockCloseInQueue) {
-        return !this.isMobile && canBulkTransfer;
+      if (this.isMobile) return false;
+
+      if (this.activeTab === 'waiting') {
+        return canBulkClose && !blockCloseInQueue;
       }
 
-      const isEnabled = canBulkTransfer || canBulkClose;
-      return !this.isMobile && isEnabled;
+      return canBulkTransfer || canBulkClose;
     },
   },
   watch: {

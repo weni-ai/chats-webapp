@@ -116,7 +116,6 @@ export default {
 
       if (!canBulkClose) return false;
 
-      // Se bloqueia close na fila, só permitir em ongoing
       if (blockCloseInQueue && this.activeTab === 'waiting') {
         return false;
       }
