@@ -7,16 +7,6 @@
       v-model="showModalOfflineAgent"
       :username="userWhoChangedStatus"
     />
-    <ModalRoomSummaryOnboarding
-      v-if="enableRoomSummary"
-      :modelValue="showModalRoomSummaryOnboarding"
-      @update:model-value="
-        (value) => {
-          updateOnboardingModal('showModalRoomSummaryOnboarding', value);
-          showModalRoomSummaryOnboarding = value;
-        }
-      "
-    />
   </div>
 </template>
 
@@ -25,7 +15,6 @@ import { mapActions, mapState } from 'pinia';
 
 import SocketAlertBanner from './layouts/ChatsLayout/components/SocketAlertBanner.vue';
 import ModalOfflineAgent from './components/ModalOfflineAgent.vue';
-import ModalRoomSummaryOnboarding from './components/ModalRoomSummaryOnboarding.vue';
 
 import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
@@ -56,7 +45,6 @@ export default {
   components: {
     SocketAlertBanner,
     ModalOfflineAgent,
-    ModalRoomSummaryOnboarding,
   },
   setup() {
     const queryString = window.location.href.split('?')[1];

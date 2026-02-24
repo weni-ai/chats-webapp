@@ -11,21 +11,107 @@ exports[`FooterButton > Snapshot > should match snapshot 1`] = `
     data-testid="bulk-transfer-section"
     data-v-944d9ccc=""
   >
-    <unnnic-button-stub
-      class="chats-layout-footer-button__button"
-      data-testid="transfer-button"
-      data-v-944d9ccc=""
+    
+    
+    
+    
+    <div
+      class="unnnic-tooltip-trigger unnnic-tooltip"
+      data-grace-area-trigger=""
+      data-state="closed"
+      data-testid="tooltip-trigger"
+      data-v-03fa3548=""
+      data-v-2fa58964=""
+    >
+      
+      
+      
+      <unnnic-button-stub
+        class="chats-layout-footer-button__button"
+        data-testid="transfer-button"
+        data-v-944d9ccc=""
+        disabled="false"
+        float="false"
+        iconcenter=""
+        iconleft=""
+        iconright=""
+        iconsfilled="false"
+        loading="false"
+        size="large"
+        text="transfer"
+        type="secondary"
+      />
+      
+      
+      
+    </div>
+    <div
+      data-v-2fa58964=""
+      defer="false"
       disabled="false"
-      float="false"
-      iconcenter=""
-      iconleft="sync_alt"
-      iconright=""
-      iconsfilled="false"
-      loading="false"
-      size="small"
-      text="transfer_contact_2"
-      type="primary"
-    />
+      forcemount="false"
+    >
+      
+      
+      <!---->
+      
+      
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    <div
+      class="unnnic-tooltip-trigger unnnic-tooltip"
+      data-grace-area-trigger=""
+      data-state="closed"
+      data-testid="tooltip-trigger"
+      data-v-03fa3548=""
+      data-v-2fa58964=""
+    >
+      
+      
+      
+      <unnnic-button-stub
+        class="chats-layout-footer-button__button chats-layout-footer-button__button--end"
+        data-testid="end-button"
+        data-v-944d9ccc=""
+        disabled="false"
+        float="false"
+        iconcenter=""
+        iconleft=""
+        iconright=""
+        iconsfilled="false"
+        loading="false"
+        size="large"
+        text="end"
+        type="primary"
+      />
+      
+      
+      
+    </div>
+    <div
+      data-v-2fa58964=""
+      defer="false"
+      disabled="false"
+      forcemount="false"
+    >
+      
+      
+      <!---->
+      
+      
+    </div>
+    
+    
+    
+    
+    <!--v-if-->
     <!--v-if-->
   </section>
 </section>

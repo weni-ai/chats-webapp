@@ -89,11 +89,6 @@ describe('CustomBreakOption', () => {
           },
           UnnnicIcon: true,
           UnnnicIconLoading: true,
-          UnnnicButtonIcon: {
-            template:
-              '<button @click="$emit(\'click\', $event)">Delete</button>',
-            props: ['icon', 'size', 'type'],
-          },
         },
       },
     });

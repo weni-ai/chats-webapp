@@ -81,9 +81,6 @@ describe('NewSectorDrawer', () => {
             },
           }),
         ],
-        stubs: {
-          DiscartChangesModal: true,
-        },
         components: {
           General,
           ExtraOptions,
@@ -138,11 +135,10 @@ describe('NewSectorDrawer', () => {
     expect(wrapper.vm.activePageIndex).toBe(1);
   });
 
-  it('close drawer on secondary-button-click if activePageIndex = 0', async () => {
-    const closeSpy = vi.spyOn(wrapper.vm.$refs.newSectorDrawer, 'close');
+  it('emit close event on secondary-button-click if activePageIndex = 0', async () => {
     await wrapper.find('[data-testid="secondary-button"]').trigger('click');
 
-    expect(closeSpy).toHaveBeenCalledOnce();
+    expect(wrapper.emitted('close')).toBeTruthy();
   });
 
   it('displays DiscartChangesModal if there are unsaved changes and close button is clicked', async () => {
@@ -157,7 +153,7 @@ describe('NewSectorDrawer', () => {
   });
 
   it('emit close on confirm discart changes', async () => {
-    await wrapper.setData({ showDiscartQuestion: true });
+    await wrapper.setData({ showConfirmDiscartChangesModal: true });
 
     const discartModal = wrapper.findComponent(
       '[data-testid="discart-changes-modal"]',
@@ -169,8 +165,8 @@ describe('NewSectorDrawer', () => {
   });
 
   it('preserve data on cancel discart', async () => {
-    await wrapper.setData({
-      showDiscartQuestion: true,
+    const dataMock = {
+      showConfirmDiscartChangesModal: true,
       sector: {
         uuid: '',
         name: 'Sector Mock',
@@ -184,7 +180,8 @@ describe('NewSectorDrawer', () => {
         managers: [],
         maxSimultaneousChatsByAgent: '4',
       },
-    });
+    };
+    await wrapper.setData(dataMock);
 
     const discartModal = wrapper.findComponent(
       '[data-testid="discart-changes-modal"]',
@@ -193,6 +190,8 @@ describe('NewSectorDrawer', () => {
     discartModal.vm.$emit('secondary-button-click');
 
     expect(wrapper.vm.showConfirmDiscartChangesModal).toBe(false);
+
+    expect(wrapper.vm.$data.sector.name).toBe(dataMock.sector.name);
   });
 
   it('calls finish method on primary button click if last page', async () => {

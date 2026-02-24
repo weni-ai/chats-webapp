@@ -110,7 +110,9 @@ describe('CardGroup.vue', () => {
     setActivePinia(pinia);
 
     const roomsStore = useRooms();
-    roomsStore.selectedRoomsToTransfer = [];
+    roomsStore.selectedOngoingRooms = [];
+    roomsStore.selectedWaitingRooms = [];
+    roomsStore.activeTab = 'ongoing';
     roomsStore.activeRoom = null;
 
     const discussionsStore = useDiscussions();
@@ -183,19 +185,34 @@ describe('CardGroup.vue', () => {
   });
 
   describe('computed properties tests', () => {
-    it('accesses store states correctly', () => {
+    it('accesses store states correctly for ongoing rooms', () => {
       const roomsStore = useRooms();
-      roomsStore.selectedRoomsToTransfer = ['room-1'];
+      roomsStore.selectedOngoingRooms = ['room-1'];
+      roomsStore.activeTab = 'ongoing';
       roomsStore.activeRoom = mockRooms[0];
 
       const discussionsStore = useDiscussions();
       discussionsStore.activeDiscussion = mockDiscussions[0];
 
-      const wrapper = createWrapper();
+      const wrapper = createWrapper({ roomsType: 'in_progress' });
 
-      expect(wrapper.vm.selectedRoomsToTransfer).toEqual(['room-1']);
+      expect(wrapper.vm.currentSelectedRooms).toEqual(['room-1']);
       expect(wrapper.vm.activeRoom).toEqual(mockRooms[0]);
       expect(wrapper.vm.activeDiscussionId).toBe('discussion-1');
+
+      wrapper.unmount();
+    });
+
+    it('accesses store states correctly for waiting rooms', () => {
+      const roomsStore = useRooms();
+      roomsStore.selectedWaitingRooms = ['room-2'];
+      roomsStore.activeTab = 'waiting';
+      roomsStore.activeRoom = mockRooms[1];
+
+      const wrapper = createWrapper({ roomsType: 'waiting' });
+
+      expect(wrapper.vm.currentSelectedRooms).toEqual(['room-2']);
+      expect(wrapper.vm.activeRoom).toEqual(mockRooms[1]);
 
       wrapper.unmount();
     });
@@ -260,16 +277,34 @@ describe('CardGroup.vue', () => {
       wrapper.unmount();
     });
 
-    it('handles checkbox change event', async () => {
-      const wrapper = createWrapper({ withSelection: true });
-
-      await wrapper.vm.updateSelectAllRooms(true);
+    it('handles checkbox change event for ongoing rooms', async () => {
+      const wrapper = createWrapper({ 
+        withSelection: true,
+        roomsType: 'in_progress',
+      });
 
       const roomsStore = useRooms();
-      expect(roomsStore.setSelectedRoomsToTransfer).toHaveBeenCalledWith([
-        'room-1',
-        'room-2',
-      ]);
+      roomsStore.activeTab = 'ongoing';
+
+      wrapper.vm.updateIsRoomSelected('room-1', true);
+
+      expect(roomsStore.setSelectedOngoingRooms).toHaveBeenCalled();
+
+      wrapper.unmount();
+    });
+
+    it('handles checkbox change event for waiting rooms', async () => {
+      const wrapper = createWrapper({ 
+        withSelection: true,
+        roomsType: 'waiting',
+      });
+
+      const roomsStore = useRooms();
+      roomsStore.activeTab = 'waiting';
+
+      wrapper.vm.updateIsRoomSelected('room-1', true);
+
+      expect(roomsStore.setSelectedWaitingRooms).toHaveBeenCalled();
 
       wrapper.unmount();
     });
@@ -292,11 +327,12 @@ describe('CardGroup.vue', () => {
       wrapper.unmount();
     });
 
-    it('checks if room is selected correctly', () => {
+    it('checks if room is selected correctly for ongoing', () => {
       const roomsStore = useRooms();
-      roomsStore.selectedRoomsToTransfer = ['room-1'];
+      roomsStore.selectedOngoingRooms = ['room-1'];
+      roomsStore.activeTab = 'ongoing';
 
-      const wrapper = createWrapper();
+      const wrapper = createWrapper({ roomsType: 'in_progress' });
 
       expect(wrapper.vm.getIsRoomSelected('room-1')).toBe(true);
       expect(wrapper.vm.getIsRoomSelected('room-2')).toBe(false);
@@ -306,13 +342,14 @@ describe('CardGroup.vue', () => {
 
     it('updates room selection when selecting', () => {
       const roomsStore = useRooms();
-      roomsStore.selectedRoomsToTransfer = [];
+      roomsStore.selectedOngoingRooms = [];
+      roomsStore.activeTab = 'ongoing';
 
-      const wrapper = createWrapper();
+      const wrapper = createWrapper({ roomsType: 'in_progress' });
 
       wrapper.vm.updateIsRoomSelected('room-1', true);
 
-      expect(roomsStore.setSelectedRoomsToTransfer).toHaveBeenCalledWith([
+      expect(roomsStore.setSelectedOngoingRooms).toHaveBeenCalledWith([
         'room-1',
       ]);
 
@@ -321,13 +358,14 @@ describe('CardGroup.vue', () => {
 
     it('updates room selection when deselecting', () => {
       const roomsStore = useRooms();
-      roomsStore.selectedRoomsToTransfer = ['room-1', 'room-2'];
+      roomsStore.selectedOngoingRooms = ['room-1', 'room-2'];
+      roomsStore.activeTab = 'ongoing';
 
-      const wrapper = createWrapper();
+      const wrapper = createWrapper({ roomsType: 'in_progress' });
 
       wrapper.vm.updateIsRoomSelected('room-1', false);
 
-      expect(roomsStore.setSelectedRoomsToTransfer).toHaveBeenCalledWith([
+      expect(roomsStore.setSelectedOngoingRooms).toHaveBeenCalledWith([
         'room-2',
       ]);
 
@@ -336,42 +374,14 @@ describe('CardGroup.vue', () => {
 
     it('does not add room if already selected', () => {
       const roomsStore = useRooms();
-      roomsStore.selectedRoomsToTransfer = ['room-1'];
+      roomsStore.selectedOngoingRooms = ['room-1'];
+      roomsStore.activeTab = 'ongoing';
 
-      const wrapper = createWrapper();
+      const wrapper = createWrapper({ roomsType: 'in_progress' });
 
       wrapper.vm.updateIsRoomSelected('room-1', true);
 
-      expect(roomsStore.setSelectedRoomsToTransfer).not.toHaveBeenCalled();
-
-      wrapper.unmount();
-    });
-
-    it('selects all rooms when updateSelectAllRooms is called with true', () => {
-      const roomsStore = useRooms();
-      roomsStore.selectedRoomsToTransfer = [];
-
-      const wrapper = createWrapper();
-
-      wrapper.vm.updateSelectAllRooms(true);
-
-      expect(roomsStore.setSelectedRoomsToTransfer).toHaveBeenCalledWith([
-        'room-1',
-        'room-2',
-      ]);
-
-      wrapper.unmount();
-    });
-
-    it('deselects all rooms when updateSelectAllRooms is called with false', () => {
-      const roomsStore = useRooms();
-      roomsStore.selectedRoomsToTransfer = ['room-1', 'room-2'];
-
-      const wrapper = createWrapper();
-
-      wrapper.vm.updateSelectAllRooms(false);
-
-      expect(roomsStore.setSelectedRoomsToTransfer).toHaveBeenCalledWith([]);
+      expect(roomsStore.setSelectedOngoingRooms).not.toHaveBeenCalled();
 
       wrapper.unmount();
     });
@@ -379,10 +389,14 @@ describe('CardGroup.vue', () => {
 
   describe('watcher tests', () => {
     it('updates checkbox value when all rooms are selected', async () => {
-      const wrapper = createWrapper({ withSelection: true });
+      const wrapper = createWrapper({ 
+        withSelection: true,
+        roomsType: 'in_progress',
+      });
 
       const roomsStore = useRooms();
-      roomsStore.selectedRoomsToTransfer = ['room-1', 'room-2'];
+      roomsStore.selectedOngoingRooms = ['room-1', 'room-2'];
+      roomsStore.activeTab = 'ongoing';
 
       await wrapper.vm.$nextTick();
 
@@ -392,10 +406,14 @@ describe('CardGroup.vue', () => {
     });
 
     it('updates checkbox value to "less" when some rooms are selected', async () => {
-      const wrapper = createWrapper({ withSelection: true });
+      const wrapper = createWrapper({ 
+        withSelection: true,
+        roomsType: 'in_progress',
+      });
 
       const roomsStore = useRooms();
-      roomsStore.selectedRoomsToTransfer = ['room-1'];
+      roomsStore.selectedOngoingRooms = ['room-1'];
+      roomsStore.activeTab = 'ongoing';
 
       await wrapper.vm.$nextTick();
 
@@ -405,10 +423,14 @@ describe('CardGroup.vue', () => {
     });
 
     it('updates checkbox value to false when no rooms are selected', async () => {
-      const wrapper = createWrapper({ withSelection: true });
+      const wrapper = createWrapper({ 
+        withSelection: true,
+        roomsType: 'in_progress',
+      });
 
       const roomsStore = useRooms();
-      roomsStore.selectedRoomsToTransfer = [];
+      roomsStore.selectedOngoingRooms = [];
+      roomsStore.activeTab = 'ongoing';
 
       await wrapper.vm.$nextTick();
 
@@ -500,11 +522,12 @@ describe('CardGroup.vue', () => {
       wrapper.unmount();
     });
 
-    it('handles room selection with empty selectedRoomsToTransfer', () => {
+    it('handles room selection with empty selectedOngoingRooms', () => {
       const roomsStore = useRooms();
-      roomsStore.selectedRoomsToTransfer = [];
+      roomsStore.selectedOngoingRooms = [];
+      roomsStore.activeTab = 'ongoing';
 
-      const wrapper = createWrapper();
+      const wrapper = createWrapper({ roomsType: 'in_progress' });
 
       expect(wrapper.vm.getIsRoomSelected('room-1')).toBe(false);
 
@@ -552,15 +575,19 @@ describe('CardGroup.vue', () => {
     });
 
     it('handles complex state interactions', async () => {
-      const wrapper = createWrapper({ withSelection: true });
+      const wrapper = createWrapper({ 
+        withSelection: true,
+        roomsType: 'in_progress',
+      });
       const roomsStore = useRooms();
+      roomsStore.activeTab = 'ongoing';
 
       expect(wrapper.vm.collapseCheckboxValue).toBe(false);
 
-      roomsStore.selectedRoomsToTransfer = ['room-1'];
+      roomsStore.selectedOngoingRooms = ['room-1'];
 
       const isAllRoomsSelected =
-        roomsStore.selectedRoomsToTransfer.length ===
+        roomsStore.selectedOngoingRooms.length ===
         wrapper.props('rooms').length;
       wrapper.vm.collapseCheckboxValue = isAllRoomsSelected || 'less';
 
@@ -568,7 +595,7 @@ describe('CardGroup.vue', () => {
 
       expect(wrapper.vm.collapseCheckboxValue).toBe('less');
 
-      roomsStore.selectedRoomsToTransfer = ['room-1', 'room-2'];
+      roomsStore.selectedOngoingRooms = ['room-1', 'room-2'];
       wrapper.vm.collapseCheckboxValue = true;
       await wrapper.vm.$nextTick();
 
