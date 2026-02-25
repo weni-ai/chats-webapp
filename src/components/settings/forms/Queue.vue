@@ -211,9 +211,13 @@ export default {
           ? !!value.name?.trim()
           : !!value.name?.trim() && !!value.currentAgents?.length;
 
+        const validQueueLimitValue =
+          !!this.queue.queue_limit.limit &&
+          !isNaN(this.queue.queue_limit.limit);
+
         const validQueueLimit =
           this.enableQueueLimitFeature && this.queue.queue_limit.is_active
-            ? !isNaN(this.queue.queue_limit.limit)
+            ? validQueueLimitValue
             : true;
 
         const allValid = validQueue && validQueueLimit;
