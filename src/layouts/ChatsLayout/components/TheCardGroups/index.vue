@@ -433,6 +433,14 @@ export default {
       deep: true,
       handler(newRooms, oldRooms) {
         this.updateRoomsCount(newRooms.length, oldRooms.length, 'waiting');
+
+        const roomsWentEmpty = newRooms.length === 0 && oldRooms.length > 0;
+        const counterShowsMore = this.roomsCount.waiting > 0;
+        const isNotLoading = !this.isLoadingRooms;
+
+        if (roomsWentEmpty && counterShowsMore && isNotLoading) {
+          this.refetchWaitingRooms();
+        }
       },
     },
     rooms_flow_start: {
@@ -547,6 +555,10 @@ export default {
         this.page.search += 1;
         this.listRoom(true, this.orderBy[this.activeTab]);
       }
+    },
+    async refetchWaitingRooms() {
+      this.page.waiting = 0;
+      await this.listRoom(true, this.orderBy.waiting, 'waiting', true);
     },
     async listDiscussions() {
       try {
