@@ -211,8 +211,7 @@
                 :modelValue="roomTags"
                 :tags="roomTags"
                 selectable
-                disableClick
-                :useCloseClick="!isViewMode && !isHistory && !!room.user"
+                :useCloseClick="tagUseCloseOnClick"
                 @close="handleTagClick"
               />
               <ProtocolText :protocol="contactProtocol" />
@@ -377,6 +376,10 @@ export default {
       return customFields;
     },
 
+    tagUseCloseOnClick() {
+      return !this.isViewMode && !this.isHistory && !!this.room.user;
+    },
+
     hideTagCloseIcon() {
       return this.isViewMode || this.isHistory || !this.room.user
         ? 'none'
@@ -524,6 +527,7 @@ export default {
     },
 
     handleTagClick(tag) {
+      if (!this.room.user) return;
       const hasSelectedTag = this.roomTags.some(
         (roomTag) => roomTag.uuid === tag.uuid,
       );
