@@ -146,20 +146,16 @@ describe('NewSectorDrawer', () => {
 
     await wrapper.vm.handleCloseNewSectorDrawer();
     expect(
-      wrapper
-        .findComponent('[data-testid="discart-changes-modal"]')
-        .isVisible(),
+      wrapper.findComponent({ name: 'DiscartChangesModal' }).isVisible(),
     ).toBe(true);
   });
 
   it('emit close on confirm discart changes', async () => {
     await wrapper.setData({ showConfirmDiscartChangesModal: true });
 
-    const discartModal = wrapper.findComponent(
-      '[data-testid="discart-changes-modal"]',
-    );
+    const discartModal = wrapper.findComponent({ name: 'DiscartChangesModal' });
 
-    discartModal.vm.$emit('primary-button-click');
+    discartModal.vm.$emit('confirm');
 
     expect(wrapper.emitted('close')).toBeTruthy();
   });
@@ -183,11 +179,9 @@ describe('NewSectorDrawer', () => {
     };
     await wrapper.setData(dataMock);
 
-    const discartModal = wrapper.findComponent(
-      '[data-testid="discart-changes-modal"]',
-    );
+    const discartModal = wrapper.findComponent({ name: 'DiscartChangesModal' });
 
-    discartModal.vm.$emit('secondary-button-click');
+    discartModal.vm.$emit('cancel');
 
     expect(wrapper.vm.showConfirmDiscartChangesModal).toBe(false);
 
