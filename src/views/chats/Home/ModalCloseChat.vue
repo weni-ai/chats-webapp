@@ -1,44 +1,52 @@
 <template>
-  <UnnnicModalDialog
-    :modelValue="modelValue"
-    :class="{ 'modal-close-chat--mobile': isMobile, 'modal-close-chat': true }"
-    :showCloseIcon="!isMobile"
-    :title="$t('chats.to_end_rate_the_chat')"
-    :primaryButtonProps="{
-      text: $t('end_chat'),
-      loading: isLoadingCloseRoom,
-      disabled: isInvalidRequiredTags,
-    }"
-    :secondaryButtonProps="{ text: $t('cancel') }"
-    size="lg"
-    data-testid="chat-classifier-modal"
-    @primary-button-click="closeRoom()"
-    @secondary-button-click="closeModal()"
-    @update:model-value="closeModal()"
-  >
-    <section class="modal-close-chat__content">
-      <UnnnicDisclaimer
-        v-if="isInvalidRequiredTags && !isLoadingTags"
-        class="modal-close-chat__disclaimer"
-        type="attention"
-        :description="$t('chats.to_end_required_tags')"
-      />
-      <UnnnicInput
-        v-model="tagsFilter"
-        iconLeft="search"
-        :placeholder="$t('tags.search')"
-      />
-      <section class="modal-close-chat__tags-list">
-        <ChatClassifier
-          v-model="tags"
-          :tags="filteredTags"
-          :loading="isLoadingTags"
-          @update:to-remove-tags="(tags) => (toRemoveTags = tags)"
-          @update:to-add-tags="(tags) => (toAddTags = tags)"
+  <UnnnicDialog v-model:open="open">
+    <UnnnicDialogContent size="large">
+      <UnnnicDialogHeader>
+        <UnnnicDialogTitle>
+          {{ $t('chats.to_end_rate_the_chat') }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section class="modal-close-chat__content">
+        <UnnnicDisclaimer
+          v-if="isInvalidRequiredTags && !isLoadingTags"
+          class="modal-close-chat__disclaimer"
+          type="attention"
+          :description="$t('chats.to_end_required_tags')"
         />
+        <UnnnicInput
+          v-model="tagsFilter"
+          iconLeft="search"
+          :placeholder="$t('tags.search')"
+        />
+        <section class="modal-close-chat__tags-list">
+          <ChatClassifier
+            v-model="tags"
+            :tags="filteredTags"
+            :loading="isLoadingTags"
+            @update:to-remove-tags="(tags) => (toRemoveTags = tags)"
+            @update:to-add-tags="(tags) => (toAddTags = tags)"
+          />
+        </section>
       </section>
-    </section>
-  </UnnnicModalDialog>
+      <UnnnicDialogFooter>
+        <UnnnicDialogClose>
+          <UnnnicButton
+            :text="$t('cancel')"
+            type="tertiary"
+            :disabled="isLoadingCloseRoom"
+          />
+        </UnnnicDialogClose>
+        <UnnnicButton
+          data-testid="close-chat-button"
+          :text="$t('end_chat')"
+          type="primary"
+          :loading="isLoadingCloseRoom"
+          :disabled="isInvalidRequiredTags"
+          @click="closeRoom()"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script>
@@ -70,7 +78,7 @@ export default {
       required: true,
     },
   },
-  emits: ['close'],
+  emits: ['close', 'update:modelValue'],
 
   data() {
     return {
@@ -99,6 +107,14 @@ export default {
       return this.sectorTags.filter((tag) =>
         tag.name.toLowerCase().includes(this.tagsFilter.toLowerCase()),
       );
+    },
+    open: {
+      get() {
+        return this.modelValue;
+      },
+      set(value) {
+        this.$emit('update:modelValue', value);
+      },
     },
   },
   mounted() {
@@ -176,14 +192,11 @@ export default {
 
 <style lang="scss" scoped>
 .modal-close-chat {
-  :deep(.modal-close-chat__disclaimer) {
-    display: flex;
-  }
-
   &__content {
     display: flex;
     flex-direction: column;
     gap: $unnnic-space-4;
+    padding: $unnnic-space-6;
   }
 
   &--mobile {

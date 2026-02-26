@@ -42,6 +42,7 @@
       </UnnnicToolTip>
       <ModalTransferRooms
         v-if="isModalTransferRoomsOpened"
+        v-model="isModalTransferRoomsOpened"
         bulkTransfer
         data-testid="bulk-transfer-modal"
         @close="handleModalTransferRooms"
