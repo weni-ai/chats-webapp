@@ -73,7 +73,12 @@ vi.spyOn(Queue, 'agents').mockResolvedValue({
 
 const createWrapper = (props = {}) => {
   return mount(FormQueue, {
-    global: { plugins: [createTestingPinia()] },
+    global: {
+      plugins: [createTestingPinia()],
+      stubs: {
+        ModalConfirmDelete: true,
+      },
+    },
     props,
   });
 };
@@ -212,7 +217,7 @@ describe('ListSectorQueues.vue', () => {
       '[data-testid="delete-queue-modal"]',
     );
 
-    await deleteModal.vm.$emit('click-action-primary');
+    await deleteModal.vm.$emit('confirm');
 
     expect(deleteQueueSpy).toHaveBeenCalledTimes(1);
 
