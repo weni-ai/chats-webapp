@@ -1,7 +1,10 @@
 <template>
-  <UnnnicDialog v-model:open="open">
-    <UnnnicDialogContent size="medium">
-      <UnnnicDialogHeader :closeButton="!isLoadingBulkTransfer">
+  <UnnnicDialog :open="open">
+    <UnnnicDialogContent
+      size="medium"
+      click.self
+    >
+      <UnnnicDialogHeader :closeButton="false">
         <UnnnicDialogTitle>
           {{
             bulkTransfer
