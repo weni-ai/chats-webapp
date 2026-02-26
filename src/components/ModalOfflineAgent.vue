@@ -1,30 +1,33 @@
 <template>
-  <UnnnicModalDialog
-    :modelValue="modelValue"
-    class="modal-offline-agent"
-    showCloseIcon
-    :title="$t('offline_agent_modal.title')"
-    size="md"
-    type="warning"
+  <UnnnicDialog
+    v-model:open="open"
     data-testid="offline-agent-modal"
-    @update:model-value="closeModal()"
   >
-    <section
-      class="modal-offline-agent__content"
-      data-testid="modal-content"
-    >
-      <p
-        class="modal-offline-agent__content__description"
-        data-testid="modal-description"
+    <UnnnicDialogContent size="medium">
+      <UnnnicDialogHeader type="warning">
+        <UnnnicDialogTitle data-testid="modal-title">
+          {{ $t('offline_agent_modal.title') }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section
+        class="modal-offline-agent__content"
+        data-testid="modal-content"
       >
-        {{ $t('offline_agent_modal.description', { username }) }}
-      </p>
-    </section>
-  </UnnnicModalDialog>
+        <p
+          class="modal-offline-agent__content__description"
+          data-testid="modal-description"
+        >
+          {{ $t('offline_agent_modal.description', { username }) }}
+        </p>
+      </section>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue';
+
+const props = defineProps({
   modelValue: {
     type: Boolean,
     default: false,
@@ -37,9 +40,14 @@ defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const closeModal = () => {
-  emit('update:modelValue', false);
-};
+const open = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit('update:modelValue', value);
+  },
+});
 </script>
 
 <style lang="scss" scoped>
@@ -47,6 +55,7 @@ const closeModal = () => {
   &__content {
     display: flex;
     flex-direction: column;
+    padding: $unnnic-space-6;
 
     &__description {
       color: $unnnic-color-neutral-cloudy;

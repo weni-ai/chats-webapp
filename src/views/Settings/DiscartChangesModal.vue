@@ -1,24 +1,36 @@
 <template>
-  <UnnnicModalDialog
-    :modelValue="showModal"
-    size="sm"
-    :title="title"
-    :primaryButtonProps="{ text: $t('discart') }"
-    :secondaryButtonProps="{ text: $t('back') }"
-    class="discart-changes-modal"
+  <UnnnicDialog
+    v-model:open="open"
     data-testid="discart-changes-modal"
   >
-    <p class="discart-changes-modal__text">
-      {{ text }}
-    </p>
-  </UnnnicModalDialog>
+    <UnnnicDialogContent size="small">
+      <UnnnicDialogHeader>
+        <UnnnicDialogTitle>{{ title }}</UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section class="discart-changes-modal__content">
+        <p class="discart-changes-modal__text">{{ text }}</p>
+      </section>
+      <UnnnicDialogFooter>
+        <UnnnicButton
+          :text="$t('back')"
+          type="tertiary"
+          @click="$emit('cancel')"
+        />
+        <UnnnicButton
+          :text="$t('discart')"
+          type="primary"
+          @click="$emit('confirm')"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script>
 export default {
   name: 'DiscartChangesModal',
   props: {
-    showModal: {
+    modelValue: {
       type: Boolean,
       required: true,
     },
@@ -31,21 +43,31 @@ export default {
       default: '',
     },
   },
+  emits: ['update:modelValue', 'confirm', 'cancel'],
+  computed: {
+    open: {
+      get() {
+        return this.modelValue;
+      },
+      set(value) {
+        this.$emit('update:modelValue', value);
+      },
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 .discart-changes-modal {
-  :deep(.unnnic-modal-dialog__container) {
-    // use to centralize modal in connect iframe
-    right: calc(55% - 200px);
-    margin-top: -64px;
+  &__content {
+    padding: $unnnic-space-6;
   }
   &__text {
     text-align: left;
     font-size: $unnnic-font-size-body-gt;
     font-family: $unnnic-font-family-secondary;
     line-height: 2 * $unnnic-font-size-body-md;
+    color: $unnnic-color-fg-base;
   }
 }
 </style>

@@ -72,6 +72,7 @@
     />
     <DeleteGroupModal
       v-if="showDeleteGroupModal"
+      v-model="showDeleteGroupModal"
       :group="deleteGroup"
       @close="closeDeleteGroupModal"
     />
