@@ -1,5 +1,8 @@
 <template>
-  <UnnnicDialog :open="open">
+  <UnnnicDialog
+    class="modal-confirm-destroy"
+    :open="open"
+  >
     <UnnnicDialogContent>
       <section class="modal-confirm-destroy__content">
         <UnnnicIcon
