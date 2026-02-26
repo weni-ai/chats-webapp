@@ -115,7 +115,11 @@ describe('FormQueue', () => {
     const listQueueAgents = vi.spyOn(QueueForm.methods, 'listQueueAgents');
 
     createWrapper({
-      modelValue: { uuid: '1', default_message: '' },
+      modelValue: {
+        uuid: '1',
+        default_message: '',
+        queue_limit: { is_active: false, limit: null },
+      },
     });
 
     await flushPromises();
