@@ -73,11 +73,11 @@
   </header>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
-import { intervalToDuration, parseISO, type Duration } from 'date-fns';
+import { intervalToDuration, parseISO } from 'date-fns';
 import api from '@/services/api/resources/chats/pauseStatus';
 import Profile from '@/services/api/resources/profile';
 import unnnic from '@weni/unnnic-system';
@@ -85,14 +85,7 @@ import i18n from '@/plugins/i18n';
 import { storeToRefs } from 'pinia';
 import { moduleStorage } from '@/utils/storage';
 
-interface Status {
-  value: string;
-  label: string;
-  color: string;
-  statusUuid?: string | null;
-}
-
-const statuses = ref<Status[]>([
+const statuses = ref([
   { value: 'active', label: 'Online', color: 'green' },
   { value: 'inactive', label: 'Offline', color: 'gray' },
 ]);
@@ -104,21 +97,20 @@ const filteredStatuses = computed(() => {
 });
 
 const isOpen = ref(false);
-const startDate = ref<string | null>(null);
-const elapsedTime = ref<Duration | number>(0);
-let intervalId: ReturnType<typeof setInterval> | null = null;
+const startDate = ref(null);
+const elapsedTime = ref(0);
+let intervalId = null;
 const configStore = useConfig();
 const { status: configStatus, customStatus: configCustomStatus } =
   storeToRefs(configStore);
 
-const statusAgentKey = (configStore.project as unknown as { uuid: string })
-  ?.uuid
-  ? `statusAgent-${(configStore.project as unknown as { uuid: string })?.uuid}`
+const statusAgentKey = configStore.project.uuid
+  ? `statusAgent-${configStore.project.uuid}`
   : `statusAgent-${moduleStorage.getItem('projectUuid', '', {
       useSession: true,
     })}`;
 
-const selectedStatus = ref<Status>(
+const selectedStatus = ref(
   moduleStorage.getItem(statusAgentKey, '', {
     useSession: true,
   }) === 'ONLINE'
@@ -131,11 +123,10 @@ const project = computed(() => configStore.project);
 const loadingActiveStatus = ref(false);
 const isToggling = ref(false);
 
-const handleClickOutside = (event: MouseEvent) => {
+const handleClickOutside = (event) => {
   if (isToggling.value) return;
 
-  const target = event.target as HTMLElement;
-  const statusBar = target.closest('[class="status-bar"]');
+  const statusBar = event.target.closest('[class="status-bar"]');
   if (!statusBar && isOpen.value) {
     isOpen.value = false;
   }
@@ -143,37 +134,29 @@ const handleClickOutside = (event: MouseEvent) => {
 
 const fetchCustomStatuses = async () => {
   const response = await api.getCustomStatusTypeList({
-    projectUuid: (configStore.project as unknown as { uuid: string })?.uuid,
+    projectUuid: configStore.project.uuid,
   });
   statuses.value = response;
 };
 
 const handleGetActiveStatus = async () => {
-  const activeStatus = await configStore.getStatus(
-    (configStore.project as unknown as { uuid: string })?.uuid,
-  );
+  const activeStatus = await configStore.getStatus(configStore.project.uuid);
   configStore.$patch({
     status: activeStatus,
   });
 };
 
-const updateActiveStatus = async ({
-  isActive,
-  skipRequest,
-}: {
-  isActive: boolean;
-  skipRequest: boolean;
-}) => {
+const updateActiveStatus = async ({ isActive, skipRequest }) => {
   loadingActiveStatus.value = true;
   try {
-    let connection_status: string | null = null;
+    let connection_status = null;
     const statusAgent = isActive ? 'ONLINE' : 'OFFLINE';
 
     if (!skipRequest) {
       const {
         data: { connection_status: connection },
       } = await Profile.updateStatus({
-        projectUuid: (configStore.project as unknown as { uuid: string })?.uuid,
+        projectUuid: configStore.project.uuid,
         status: statusAgent,
       });
 
@@ -218,8 +201,7 @@ const stopTimer = () => {
 };
 
 const formattedTime = computed(() => {
-  if (!elapsedTime.value || typeof elapsedTime.value === 'number')
-    return '00:00:00';
+  if (!elapsedTime.value) return '00:00:00';
 
   const { days = 0, hours = 0, minutes = 0, seconds = 0 } = elapsedTime.value;
 
@@ -229,7 +211,7 @@ const formattedTime = computed(() => {
   return `${String(totalHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 });
 
-const selectStatus = async (newStatus: Status) => {
+const selectStatus = async (newStatus) => {
   if (newStatus.value === selectedStatus.value.value) return;
 
   const isOldStatusActiveOrInactive = ['active', 'inactive'].includes(
@@ -292,7 +274,7 @@ const refreshData = async () => {
   await getActiveCustomStatusAndActiveTimer();
 };
 
-let settingsCheckInterval: ReturnType<typeof setInterval> | null = null;
+let settingsCheckInterval = null;
 
 const checkSettingsUpdates = () => {
   const currentSettingsUpdate = moduleStorage.getItem('settingsUpdated');
@@ -328,7 +310,7 @@ onUnmounted(() => {
   }
 });
 
-const toggleDropdown = (event?: MouseEvent) => {
+const toggleDropdown = (event) => {
   if (isToggling.value) return;
 
   if (event) {
@@ -346,7 +328,7 @@ const toggleDropdown = (event?: MouseEvent) => {
 
 const getActiveCustomStatusAndActiveTimer = async () => {
   const activeStatus = await api.getActiveCustomStatus({
-    projectUuid: (configStore.project as unknown as { uuid: string })?.uuid,
+    projectUuid: configStore.project.uuid,
   });
 
   if (activeStatus?.status_type && activeStatus.is_active) {
@@ -366,7 +348,7 @@ const getActiveCustomStatusAndActiveTimer = async () => {
   }
 };
 
-const handleCloseCustomStatus = async (status: Status, isActive: boolean) => {
+const handleCloseCustomStatus = async (status, isActive) => {
   const closeStatus = (value) =>
     api.closeCustomStatus({
       statusUuid: value,
@@ -375,7 +357,7 @@ const handleCloseCustomStatus = async (status: Status, isActive: boolean) => {
     });
 
   const activeStatus = await api.getActiveCustomStatus({
-    projectUuid: (configStore.project as unknown as { uuid: string })?.uuid,
+    projectUuid: configStore.project.uuid,
   });
 
   if (!activeStatus) {
@@ -386,10 +368,10 @@ const handleCloseCustomStatus = async (status: Status, isActive: boolean) => {
   return closeStatus(activeStatus.uuid);
 };
 
-const handleCreateCustomStatus = async (status: Status) => {
-  const createStatus = (value: string) =>
+const handleCreateCustomStatus = async (status) => {
+  const createStatus = (value) =>
     api.createCustomStatus({
-      email: (profileStore?.me as { email: string })?.email || '',
+      email: profileStore.me.email,
       statusType: value,
     });
 
@@ -405,22 +387,21 @@ const handleCreateCustomStatus = async (status: Status) => {
   return response;
 };
 
-const showStatusAlert = (status: Status | undefined, isSuccess = true) => {
+const showStatusAlert = (status, isSuccess = true) => {
   const scheme = {
     inactive: '$unnnic-color-neutral-black',
     error: 'feedback-red',
     default: 'feedback-green',
   };
 
-  const schemeKey = status?.value as keyof typeof scheme;
   const schemeStatus = isSuccess
-    ? scheme[schemeKey] || scheme.default
+    ? scheme[status.value] || scheme.default
     : scheme.error;
 
   unnnic.unnnicCallAlert({
     props: {
       text: isSuccess
-        ? i18n.global.t('status-bar.success', { status: status?.label })
+        ? i18n.global.t('status-bar.success', { status: status.label })
         : i18n.global.t('status-bar.error'),
       icon: 'indicator',
       scheme: schemeStatus,
@@ -459,7 +440,7 @@ watch(
 .expand-enter-active,
 .expand-leave-active {
   transition: all 0.3s ease-out;
-  max-height: 300px;
+  max-height: 80vh;
 }
 
 .expand-enter-from,
@@ -471,7 +452,7 @@ watch(
 
 .expand-enter-to,
 .expand-leave-from {
-  max-height: 300px;
+  max-height: 80vh;
   opacity: 1;
   overflow: hidden;
 }
@@ -574,6 +555,25 @@ watch(
     z-index: 9999999;
     box-shadow: $unnnic-shadow-1;
     border-radius: $unnnic-radius-4;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding-right: $unnnic-inline-xs;
+    scrollbar-width: thin;
+    scrollbar-color: $unnnic-color-neutral-cleanest $unnnic-color-neutral-soft;
+
+    &::-webkit-scrollbar {
+      width: $unnnic-spacing-inline-nano;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $unnnic-color-neutral-cleanest;
+      border-radius: $unnnic-border-radius-pill;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: $unnnic-color-neutral-soft;
+      border-radius: $unnnic-border-radius-pill;
+    }
 
     &--open {
       display: flex;
@@ -587,6 +587,7 @@ watch(
     display: flex;
     align-items: center;
     gap: $unnnic-border-radius-md;
+    flex-shrink: 0;
 
     &:last-child {
       border-bottom: none;

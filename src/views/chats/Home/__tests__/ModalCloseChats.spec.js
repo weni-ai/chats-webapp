@@ -78,7 +78,7 @@ describe('ModalCloseChats.vue', () => {
 
     await closeChatButton.trigger('click');
 
-    expect(Room.close).toHaveBeenCalledWith('123');
+    expect(Room.close).toHaveBeenCalledWith('123', ['tag1']);
     expect(wrapper.emitted()).toHaveProperty('close');
   });
 });
