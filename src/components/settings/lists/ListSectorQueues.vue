@@ -112,21 +112,16 @@
       />
     </template>
   </UnnnicDrawer>
-  <UnnnicModalNext
+  <ModalConfirmDelete
     v-if="showDeleteQueueModal"
-    type="alert"
-    icon="alert-circle-1"
-    scheme="feedback-red"
+    v-model="showDeleteQueueModal"
     data-testid="delete-queue-modal"
     :title="$t('delete_queue_modal.text', { queue: queueToDelete.name })"
     :description="$t('cant_revert')"
-    :validate="`${queueToDelete.name}`"
-    :validatePlaceholder="`${queueToDelete.name}`"
-    :validateLabel="$t('confirm_typing') + ` &quot;${queueToDelete.name}&quot;`"
-    :actionPrimaryLabel="$t('confirm')"
-    :actionSecondaryLabel="$t('cancel')"
-    @click-action-primary="deleteQueue()"
-    @click-action-secondary="handlerCloseDeleteQueueModal()"
+    :confirmText="queueToDelete.name"
+    :isLoading="isLoadingDeleteQueue"
+    @confirm="deleteQueue()"
+    @cancel="handlerCloseDeleteQueueModal()"
   />
 </template>
 
@@ -136,6 +131,7 @@ import { mapState } from 'pinia';
 import FormQueue from '../forms/Queue.vue';
 import ListOrdinator from '@/components/settings/ListOrdinator.vue';
 import Queue from '@/services/api/resources/settings/queue';
+import ModalConfirmDelete from '@/components/ModalConfirmDelete.vue';
 
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 
@@ -146,6 +142,7 @@ export default {
   components: {
     FormQueue,
     ListOrdinator,
+    ModalConfirmDelete,
   },
   props: {
     sector: {
@@ -165,6 +162,7 @@ export default {
       validForm: false,
       queueNameFilter: '',
       queueOrder: 'alphabetical',
+      isLoadingDeleteQueue: false,
     };
   },
 
@@ -209,6 +207,7 @@ export default {
   methods: {
     async deleteQueue() {
       try {
+        this.isLoadingDeleteQueue = true;
         await Queue.delete(this.queueToDelete.uuid);
         this.queues = this.queues.filter(
           (queue) => queue.uuid !== this.queueToDelete.uuid,
@@ -229,6 +228,7 @@ export default {
         console.log(error);
       } finally {
         this.handlerCloseDeleteQueueModal();
+        this.isLoadingDeleteQueue = false;
       }
     },
     handlerCloseDeleteQueueModal() {
