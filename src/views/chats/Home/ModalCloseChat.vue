@@ -47,47 +47,6 @@
       </UnnnicDialogFooter>
     </UnnnicDialogContent>
   </UnnnicDialog>
-  <!-- TODO: Check Mobile version -->
-  <!-- <UnnnicModalDialog
-    :modelValue="modelValue"
-    :class="{ 'modal-close-chat--mobile': isMobile, 'modal-close-chat': true }"
-    :showCloseIcon="!isMobile"
-    :title="$t('chats.to_end_rate_the_chat')"
-    :primaryButtonProps="{
-      text: $t('end_chat'),
-      loading: isLoadingCloseRoom,
-      disabled: isInvalidRequiredTags,
-    }"
-    :secondaryButtonProps="{ text: $t('cancel') }"
-    size="lg"
-    data-testid="chat-classifier-modal"
-    @primary-button-click="closeRoom()"
-    @secondary-button-click="closeModal()"
-    @update:model-value="closeModal()"
-  >
-    <section class="modal-close-chat__content">
-      <UnnnicDisclaimer
-        v-if="isInvalidRequiredTags && !isLoadingTags"
-        class="modal-close-chat__disclaimer"
-        type="attention"
-        :description="$t('chats.to_end_required_tags')"
-      />
-      <UnnnicInput
-        v-model="tagsFilter"
-        iconLeft="search"
-        :placeholder="$t('tags.search')"
-      />
-      <section class="modal-close-chat__tags-list">
-        <ChatClassifier
-          v-model="tags"
-          :tags="filteredTags"
-          :loading="isLoadingTags"
-          @update:to-remove-tags="(tags) => (toRemoveTags = tags)"
-          @update:to-add-tags="(tags) => (toAddTags = tags)"
-        />
-      </section>
-    </section>
-  </UnnnicModalDialog> -->
 </template>
 
 <script>
