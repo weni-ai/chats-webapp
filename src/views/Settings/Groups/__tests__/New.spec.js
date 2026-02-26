@@ -56,12 +56,6 @@ const createWrapper = (props = {}) => {
           props: ['modelValue', 'queuesOptions'],
           emits: ['update:modelValue', 'change-valid'],
         },
-        DiscartChangesModal: {
-          template:
-            '<div data-testid="discart-changes-modal" v-if="showModal"><button data-testid="discart-primary" @click="$emit(\'primary-button-click\')"></button><button data-testid="discart-secondary" @click="$emit(\'secondary-button-click\')"></button></div>',
-          props: ['showModal', 'title', 'text'],
-          emits: ['primary-button-click', 'secondary-button-click'],
-        },
         UnnnicDrawer: {
           template:
             '<div data-testid="drawer" v-if="modelValue && !hide"><div><slot name="content"></slot></div><button data-testid="primary-button" @click="$emit(\'primary-button-click\')" :disabled="disabledPrimaryButton">{{ primaryButtonText }}</button><button data-testid="secondary-button" @click="$emit(\'secondary-button-click\')">{{ secondaryButtonText }}</button><button data-testid="close-button" @click="$emit(\'close\')">Close</button></div>',
@@ -321,14 +315,16 @@ describe('NewGroupDrawer.vue', () => {
       await wrapper.vm.$nextTick();
       expect(wrapper.vm.showConfirmDiscartChangesModal).toBe(true);
       expect(
-        wrapper.find('[data-testid="discart-changes-modal"]').exists(),
+        wrapper.findComponent({ name: 'DiscartChangesModal' }).exists(),
       ).toBe(true);
     });
 
     it('should close drawer and emit close when DiscartChangesModal primary button is clicked', async () => {
       wrapper.vm.showConfirmDiscartChangesModal = true;
       await wrapper.vm.$nextTick();
-      await wrapper.find('[data-testid="discart-primary"]').trigger('click');
+      await wrapper
+        .findComponent({ name: 'DiscartChangesModal' })
+        .vm.$emit('confirm');
       await wrapper.vm.$nextTick();
       expect(wrapper.emitted('close')).toBeTruthy();
     });
@@ -336,7 +332,9 @@ describe('NewGroupDrawer.vue', () => {
     it('should hide DiscartChangesModal when secondary button is clicked', async () => {
       wrapper.vm.showConfirmDiscartChangesModal = true;
       await wrapper.vm.$nextTick();
-      await wrapper.find('[data-testid="discart-secondary"]').trigger('click');
+      await wrapper
+        .findComponent({ name: 'DiscartChangesModal' })
+        .vm.$emit('cancel');
       await wrapper.vm.$nextTick();
       expect(wrapper.vm.showConfirmDiscartChangesModal).toBe(false);
     });

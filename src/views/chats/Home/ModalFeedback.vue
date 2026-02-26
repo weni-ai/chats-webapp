@@ -1,64 +1,69 @@
 <template>
-  <UnnnicModalDialog
-    :modelValue="modelValue"
+  <UnnnicDialog
+    v-model:open="open"
     class="modal-feedback"
-    showCloseIcon
-    showActionsDivider
-    :title="$t('feedback_modal.title')"
-    :primaryButtonProps="{
-      text: $t('feedback_modal.submit'),
-      disabled: !isSelected,
-      loading: isLoading,
-    }"
-    :secondaryButtonProps="{ text: $t('feedback_modal.cancel') }"
-    size="lg"
-    data-testid="feedback-modal"
-    @primary-button-click="submitFeedback()"
-    @secondary-button-click="closeModal()"
-    @update:model-value="closeModal()"
   >
-    <section class="modal-feedback__content">
-      <p class="modal-feedback__content-title">
-        {{ $t('feedback_modal.feedback_question') }}
-      </p>
+    <UnnnicDialogContent size="large">
+      <UnnnicDialogHeader>
+        <UnnnicDialogTitle>{{ $t('feedback_modal.title') }}</UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section class="modal-feedback__content">
+        <p class="modal-feedback__content-title">
+          {{ $t('feedback_modal.feedback_question') }}
+        </p>
 
-      <section class="modal-feedback__content-form">
+        <section class="modal-feedback__content-form">
+          <section
+            v-for="option in feedbackOptions"
+            :key="option.label"
+            class="modal-feedback__content-form-item"
+            :class="{
+              'modal-feedback__content-form-item-selected':
+                selectedFeedback === option.value,
+            }"
+            :data-testid="`feedback-option-${option.value}`"
+            @click="selectedFeedback = option.value"
+          >
+            <UnnnicIcon
+              size="md"
+              :icon="option.icon"
+              scheme="weni-800"
+            />
+            <p class="modal-feedback__content-form-item-label">
+              {{ $t(option.label) }}
+            </p>
+          </section>
+        </section>
         <section
-          v-for="option in feedbackOptions"
-          :key="option.label"
-          class="modal-feedback__content-form-item"
-          :class="{
-            'modal-feedback__content-form-item-selected':
-              selectedFeedback === option.value,
-          }"
-          :data-testid="`feedback-option-${option.value}`"
-          @click="selectedFeedback = option.value"
+          v-if="selectedFeedback"
+          class="modal-feedback__content-form-description"
+          data-testid="feedback-description-section"
         >
-          <UnnnicIcon
-            size="md"
-            :icon="option.icon"
-            scheme="weni-800"
+          <UnnnicTextArea
+            v-model="feedbackDescription"
+            :label="$t(feedbackDescriptionLabel)"
+            :placeholder="$t('feedback_modal.placeholder_feedback')"
+            :maxLength="1000"
+            data-testid="input-feedback"
           />
-          <p class="modal-feedback__content-form-item-label">
-            {{ $t(option.label) }}
-          </p>
         </section>
       </section>
-      <section
-        v-if="selectedFeedback"
-        class="modal-feedback__content-form-description"
-        data-testid="feedback-description-section"
-      >
-        <UnnnicTextArea
-          v-model="feedbackDescription"
-          :label="$t(feedbackDescriptionLabel)"
-          :placeholder="$t('feedback_modal.placeholder_feedback')"
-          :maxLength="1000"
-          data-testid="input-feedback"
+      <UnnnicDialogFooter>
+        <UnnnicButton
+          :text="$t('feedback_modal.cancel')"
+          type="tertiary"
+          @click="closeModal()"
         />
-      </section>
-    </section>
-  </UnnnicModalDialog>
+        <UnnnicButton
+          :text="$t('feedback_modal.submit')"
+          type="primary"
+          :disabled="!isSelected"
+          :loading="isLoading"
+          @click="submitFeedback()"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script setup>
@@ -67,10 +72,19 @@ import feedbackService from '@/services/api/resources/chats/feedback';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 import i18n from '@/plugins/i18n';
 
-defineProps({
+const props = defineProps({
   modelValue: {
     type: Boolean,
     required: true,
+  },
+});
+
+const open = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit('update:modelValue', value);
   },
 });
 
@@ -144,6 +158,7 @@ const submitFeedback = async () => {
     display: flex;
     flex-direction: column;
     gap: $unnnic-spacing-sm;
+    padding: $unnnic-space-6;
 
     &-title {
       color: $unnnic-color-neutral-cloudy;
