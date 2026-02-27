@@ -36,6 +36,47 @@ const mockGroups = [
   },
 ];
 
+const createDialogStubs = () => ({
+  UnnnicDialog: {
+    name: 'UnnnicDialogStub',
+    props: ['open'],
+    template: `
+      <div v-if="open" data-testid="modal-delete-group" v-bind="$attrs">
+        <slot />
+      </div>
+    `,
+  },
+  UnnnicDialogContent: {
+    name: 'UnnnicDialogContentStub',
+    template: '<div><slot /></div>',
+  },
+  UnnnicDialogHeader: {
+    name: 'UnnnicDialogHeaderStub',
+    template: '<div><slot /></div>',
+  },
+  UnnnicDialogTitle: {
+    name: 'UnnnicDialogTitleStub',
+    template: '<div><slot /></div>',
+  },
+  UnnnicDialogFooter: {
+    name: 'UnnnicDialogFooterStub',
+    template: '<div><slot /></div>',
+  },
+  UnnnicButton: {
+    name: 'UnnnicButtonStub',
+    props: ['text', 'disabled', 'loading'],
+    template: `
+      <button
+        :data-testid="text === 'Delete' ? 'primary-button' : 'close-button'"
+        :disabled="disabled"
+        @click="$emit('click')"
+      >
+        {{ text }}
+      </button>
+    `,
+  },
+});
+
 const createWrapper = (props = {}) => {
   const pinia = createTestingPinia({
     createSpy: vi.fn,
@@ -51,48 +92,20 @@ const createWrapper = (props = {}) => {
   return mount(DeleteGroupModal, {
     props: {
       group: mockGroup,
+      modelValue: true,
       ...props,
     },
     global: {
       plugins: [pinia],
       stubs: {
-        UnnnicModalDialog: {
-          template: `
-            <div data-testid="modal-delete-group">
-              <slot></slot>
-              <button 
-                data-testid="primary-button" 
-                :disabled="primaryButtonProps.disabled"
-                @click="$emit('primary-button-click')"
-              >
-                {{ primaryButtonProps.text }}
-              </button>
-              <button 
-                data-testid="close-button"
-                @click="$emit('update:model-value', false)"
-              >
-                Close
-              </button>
-            </div>
-          `,
-          props: [
-            'modelValue',
-            'title',
-            'primaryButtonProps',
-            'secondaryButtonProps',
-            'showActionsDivider',
-            'showCloseIcon',
-            'size',
-          ],
-          emits: ['update:model-value', 'primary-button-click'],
-        },
+        ...createDialogStubs(),
         UnnnicLabel: {
           template: '<label><slot></slot></label>',
           props: ['label'],
         },
         UnnnicInput: {
           template:
-            '<input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" :placeholder="placeholder" />',
+            '<input data-testid="input-dashboard-name" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" :placeholder="placeholder" />',
           props: ['modelValue', 'placeholder'],
         },
       },
@@ -107,6 +120,7 @@ const createWrapper = (props = {}) => {
             'config_chats.groups.delete.error':
               'Failed to delete group. Please try again.',
             delete: 'Delete',
+            cancel: 'Cancel',
             confirmation: 'Confirmation',
           };
           return translations[key] || key;
@@ -265,7 +279,7 @@ describe('DeleteGroupModal.vue', () => {
       expect(Unnnic.unnnicCallAlert).toHaveBeenCalledWith({
         props: {
           text: 'Failed to delete group. Please try again.',
-          type: 'success',
+          type: 'error',
         },
         seconds: 5,
       });
@@ -278,6 +292,7 @@ describe('DeleteGroupModal.vue', () => {
     it('should not remove group from store when deletion fails', async () => {
       const error = new Error('Delete failed');
       Group.delete = vi.fn().mockRejectedValue(error);
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       wrapper.vm.groupName = mockGroup.name;
       await wrapper.vm.$nextTick();
@@ -291,11 +306,14 @@ describe('DeleteGroupModal.vue', () => {
       expect(
         settingsStore.groups.find((g) => g.uuid === mockGroup.uuid),
       ).toEqual(mockGroup);
+
+      consoleSpy.mockRestore();
     });
 
     it('should set isLoadingRequest to false after error', async () => {
       const error = new Error('Delete failed');
       Group.delete = vi.fn().mockRejectedValue(error);
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       wrapper.vm.groupName = mockGroup.name;
       await wrapper.vm.$nextTick();
@@ -307,17 +325,20 @@ describe('DeleteGroupModal.vue', () => {
       await flushPromises();
 
       expect(wrapper.vm.isLoadingRequest).toBe(false);
+
+      consoleSpy.mockRestore();
     });
   });
 
   describe('Close Modal', () => {
-    it('should emit close event when close button is clicked', async () => {
+    it('should emit update:modelValue when close button is clicked', async () => {
       const closeButton = wrapper.find('[data-testid="close-button"]');
 
       await closeButton.trigger('click');
       await wrapper.vm.$nextTick();
 
-      expect(wrapper.emitted('close')).toBeTruthy();
+      expect(wrapper.emitted('update:modelValue')).toBeTruthy();
+      expect(wrapper.emitted('update:modelValue')[0]).toEqual([false]);
     });
 
     it('should emit close event after successful deletion', async () => {
@@ -334,6 +355,7 @@ describe('DeleteGroupModal.vue', () => {
     it('should emit close event after failed deletion', async () => {
       const error = new Error('Delete failed');
       Group.delete = vi.fn().mockRejectedValue(error);
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       wrapper.vm.groupName = mockGroup.name;
       await wrapper.vm.$nextTick();
@@ -342,6 +364,8 @@ describe('DeleteGroupModal.vue', () => {
       await flushPromises();
 
       expect(wrapper.emitted('close')).toBeTruthy();
+
+      consoleSpy.mockRestore();
     });
   });
 
