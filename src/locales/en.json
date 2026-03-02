@@ -716,6 +716,8 @@
     "groups": "Groups ({length})",
     "group_contacts": "{n} contact | {n} contacts",
     "letter_group": "{letter} ({length})",
+    "letter_group_unnamed": "Unnamed ({length})",
+    "unnamed_contact": "Unnamed contact",
     "add_contact": "Add contact",
     "remove_selected_contacts": "Remove selected contacts",
     "add_new_contact": {
@@ -840,7 +842,7 @@
         "switch_active": "Block chat transfer to offline agents",
         "switch_inactive": "Block chat transfer to offline agents"
       },
-      "bulk_close": { 
+      "bulk_close": {
         "switch_active": "End chats in bulk",
         "switch_inactive": "End chats in bulk"
       },
