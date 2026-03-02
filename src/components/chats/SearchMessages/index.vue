@@ -47,11 +47,25 @@
             }}
           </p>
         </section>
+        <section
+          v-if="isLoadingAllMessages"
+          class="search-messages__loading"
+        >
+          <p class="search-messages__loading__text">
+            {{ $t('chats.search_messages.loading') }}
+          </p>
+          <span
+            v-for="i in 3"
+            :key="i"
+            class="search-messages__loading__dot"
+          />
+        </section>
         <HighlightMessageCard
           v-for="message in matchedMessages"
           :key="message.uuid"
           :message="message"
           :searchTerm="searchTerm"
+          :active="message.uuid === toScrollMessage?.uuid"
           @click="handleMessageClick(message)"
         />
       </section>
@@ -60,7 +74,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, useTemplateRef } from 'vue';
+import { computed, onMounted, ref, useTemplateRef, onUnmounted } from 'vue';
 import { watchDebounced } from '@vueuse/core';
 
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
@@ -71,6 +85,7 @@ import HighlightMessageCard from './HighlightMessageCard.vue';
 
 import { isValidJson } from '@/utils/messages';
 import { normalizeText } from '@/utils/string';
+import { storeToRefs } from 'pinia';
 
 defineOptions({
   name: 'SearchMessages',
@@ -80,11 +95,18 @@ const emit = defineEmits(['close']);
 
 const roomMessagesStore = useRoomMessages();
 
+const { isLoadingAllMessages, toScrollMessage } =
+  storeToRefs(roomMessagesStore);
+
 const searchTerm = ref('');
 const searchInputRef = useTemplateRef('searchInputRef');
 
 onMounted(() => {
   searchInputRef.value.$el.children[0].children[0].focus();
+});
+
+onUnmounted(() => {
+  toScrollMessage.value = null;
 });
 
 watchDebounced(
@@ -114,7 +136,7 @@ const matchedMessages = computed(() => {
 });
 
 const handleMessageClick = (message) => {
-  roomMessagesStore.toScrollMessage = message;
+  toScrollMessage.value = message;
 };
 </script>
 
@@ -153,6 +175,47 @@ const handleMessageClick = (message) => {
     font: $unnnic-font-body;
     color: $unnnic-color-fg-base;
     font-style: italic;
+  }
+  &__loading {
+    display: flex;
+    font: $unnnic-font-caption-2;
+    color: $unnnic-color-fg-emphasized;
+    align-items: baseline;
+    justify-content: center;
+
+    @keyframes wave {
+      0%,
+      60%,
+      100% {
+        transform: initial;
+      }
+
+      30% {
+        transform: translateY(-3px);
+      }
+    }
+
+    &__dot {
+      display: inline-block;
+      width: $unnnic-space-05;
+      height: $unnnic-space-05;
+      border-radius: 50%;
+      margin-right: $unnnic-space-05;
+      background-color: $unnnic-color-fg-emphasized;
+      animation: wave 1.5s linear infinite;
+
+      &:first-of-type {
+        margin-left: $unnnic-space-05;
+      }
+
+      &:nth-child(2) {
+        animation-delay: 0.9s;
+      }
+
+      &:nth-child(3) {
+        animation-delay: 1.2s;
+      }
+    }
   }
 }
 </style>

@@ -1,48 +1,60 @@
 <template>
-  <UnnnicModalDialog
-    class="transcription-feedback-modal"
-    :modelValue="true"
-    :title="$t('chats.transcription.feedback.modal.title')"
-    showCloseIcon
-    :primaryButtonProps="{
-      text: $t('submit'),
-      loading: isLoadingSubmit,
-      disabled: disableSubmit,
-    }"
+  <UnnnicDialog
+    v-model:open="open"
     data-testid="feedback-modal"
-    @primary-button-click="handleSubmit"
-    @update:model-value="handleCancel"
   >
-    <section class="transcription-feedback-modal__content">
-      <div
-        v-if="isLoadingCategories"
-        class="transcription-feedback-modal__content--loading"
-      >
-        <UnnnicSkeletonLoading
-          v-for="i in 6"
-          :key="`skeleton-${i}`"
-          tag="div"
-          width="100px"
-          height="32px"
+    <UnnnicDialogContent>
+      <UnnnicDialogHeader>
+        <UnnnicDialogTitle>
+          {{ $t('chats.transcription.feedback.modal.title') }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section class="transcription-feedback-modal__content">
+        <div
+          v-if="isLoadingCategories"
+          class="transcription-feedback-modal__content--loading"
+        >
+          <UnnnicSkeletonLoading
+            v-for="i in 6"
+            :key="`skeleton-${i}`"
+            tag="div"
+            width="100px"
+            height="32px"
+          />
+        </div>
+        <TagGroup
+          v-else
+          v-model="feedbackSelectedCategory"
+          :tags="feedbackCategories"
+          selectable
         />
-      </div>
-      <TagGroup
-        v-else
-        v-model="feedbackSelectedCategory"
-        :tags="feedbackCategories"
-        selectable
-      />
-      <UnnnicTextArea
-        v-model="feedbackText"
-        :placeholder="
-          $t('chats.transcription.feedback.modal.input_placeholder')
-        "
-        :label="$t('other')"
-        :maxLength="150"
-        data-testid="feedback-textarea"
-      />
-    </section>
-  </UnnnicModalDialog>
+        <UnnnicTextArea
+          v-model="feedbackText"
+          :placeholder="
+            $t('chats.transcription.feedback.modal.input_placeholder')
+          "
+          :label="$t('other')"
+          :maxLength="150"
+          data-testid="feedback-textarea"
+        />
+      </section>
+      <UnnnicDialogFooter>
+        <UnnnicButton
+          :text="$t('cancel')"
+          type="tertiary"
+          data-testid="modal-close"
+          @click="handleCancel"
+        />
+        <UnnnicButton
+          :text="$t('submit')"
+          :loading="isLoadingSubmit"
+          :disabled="disableSubmit"
+          data-testid="modal-confirm-button"
+          @click="handleSubmit"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script setup>
@@ -60,13 +72,17 @@ defineOptions({
 });
 
 const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true,
+  },
   messageUuid: {
     type: String,
     required: true,
   },
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'update:modelValue']);
 
 const feedbackText = ref('');
 const feedbackSelectedCategory = ref([]);
@@ -83,6 +99,15 @@ const disableSubmit = computed(() => {
 
 onMounted(() => {
   getFeedbackCategory();
+});
+
+const open = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit('update:modelValue', value);
+  },
 });
 
 watch(
@@ -151,6 +176,7 @@ const handleSubmit = async () => {
     display: flex;
     flex-direction: column;
     gap: $unnnic-space-6;
+    padding: $unnnic-space-6;
     &--loading {
       display: flex;
       gap: $unnnic-space-2;

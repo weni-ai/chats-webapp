@@ -86,14 +86,14 @@
           <UnnnicToolTip
             v-if="showSelectAllCheckbox"
             enabled
-            :text="
-              selectAllOngoingRoomsValue ? $t('deselect_all') : $t('select_all')
-            "
+            :text="selectAllTooltipText"
           >
             <UnnnicCheckbox
-              :modelValue="selectAllOngoingRoomsValue"
+              :modelValue="isAllRoomsSelected"
               size="sm"
-              @change="handleSelectAllOngoingRooms()"
+              class="select-all-checkbox"
+              :label="selectedText"
+              @change="handleSelectAllRooms()"
             />
           </UnnnicToolTip>
         </div>
@@ -147,6 +147,7 @@
       <CardGroup
         v-show="activeTab === 'waiting'"
         :rooms="rooms_queue"
+        :withSelection="isWithSelection"
         roomsType="waiting"
         data-testid="waiting-rooms-card-group"
         @open="openRoom"
@@ -154,7 +155,7 @@
       <CardGroup
         v-show="activeTab === 'ongoing'"
         :rooms="rooms_ongoing"
-        :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
+        :withSelection="isWithSelection"
         roomsType="in_progress"
         data-testid="in-progress-rooms-card-group"
         @open="openRoom"
@@ -184,6 +185,7 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
 import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup/index.vue';
@@ -241,7 +243,8 @@ export default {
   computed: {
     ...mapWritableState(useRooms, {
       allRooms: 'rooms',
-      selectedRoomsToTransfer: 'selectedRoomsToTransfer',
+      selectedOngoingRooms: 'selectedOngoingRooms',
+      selectedWaitingRooms: 'selectedWaitingRooms',
     }),
     ...mapState(useRooms, {
       rooms_ongoing: 'agentRooms',
@@ -254,6 +257,7 @@ export default {
     ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapWritableState(useRooms, [
       'orderBy',
       'roomsCount',
@@ -280,6 +284,20 @@ export default {
 
       return tabs;
     },
+    currentSelectedRooms() {
+      return this.activeTab === 'ongoing'
+        ? this.selectedOngoingRooms
+        : this.selectedWaitingRooms;
+    },
+
+    selectedText() {
+      const selectedCount = this.currentSelectedRooms?.length || 0;
+      if (selectedCount === 0) return null;
+
+      return this.$t('number_of_chats_selected', {
+        count: selectedCount,
+      });
+    },
 
     countRooms() {
       return {
@@ -305,12 +323,27 @@ export default {
       return this.countRooms[this.activeTab] > 0;
     },
 
+    isBulkCloseFeatureEnabled() {
+      return this.featureFlags.active_features?.includes('weniChatsBulkClose');
+    },
+
     showSelectAllCheckbox() {
-      return (
-        this.activeTab === 'ongoing' &&
-        this.rooms_ongoing.length > 0 &&
-        this.project.config?.can_use_bulk_transfer
-      );
+      const canBulkTransfer = this.project.config?.can_use_bulk_transfer;
+      const canBulkClose =
+        this.isBulkCloseFeatureEnabled &&
+        this.project.config?.can_use_bulk_close;
+      const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
+      const hasRooms = this.countRooms[this.activeTab] > 0;
+
+      if (this.activeTab === 'waiting') {
+        return hasRooms && canBulkClose && !blockCloseInQueue;
+      }
+
+      if (this.activeTab === 'ongoing') {
+        return hasRooms && (canBulkTransfer || canBulkClose);
+      }
+
+      return false;
     },
 
     isUserAdmin() {
@@ -342,7 +375,41 @@ export default {
       return this.rooms_ongoing.filter((room) => room.is_pinned).length || 0;
     },
     selectAllOngoingRoomsValue() {
-      return this.rooms_ongoing.length === this.selectedRoomsToTransfer?.length;
+      return this.rooms_ongoing.length === this.selectedOngoingRooms?.length;
+    },
+
+    selectAllWaitingRoomsValue() {
+      return this.rooms_queue.length === this.selectedWaitingRooms?.length;
+    },
+
+    isAllRoomsSelected() {
+      if (this.activeTab === 'ongoing') {
+        return this.selectAllOngoingRoomsValue;
+      }
+      return this.selectAllWaitingRoomsValue;
+    },
+
+    selectAllTooltipText() {
+      if (this.isAllRoomsSelected) {
+        return this.$t('deselect_all');
+      }
+      return this.$t('select_all');
+    },
+
+    isWithSelection() {
+      const canBulkTransfer = this.project.config?.can_use_bulk_transfer;
+      const canBulkClose =
+        this.isBulkCloseFeatureEnabled &&
+        this.project.config?.can_use_bulk_close;
+      const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
+
+      if (this.isMobile) return false;
+
+      if (this.activeTab === 'waiting') {
+        return canBulkClose && !blockCloseInQueue;
+      }
+
+      return canBulkTransfer || canBulkClose;
     },
   },
   watch: {
@@ -366,6 +433,14 @@ export default {
       deep: true,
       handler(newRooms, oldRooms) {
         this.updateRoomsCount(newRooms.length, oldRooms.length, 'waiting');
+
+        const roomsWentEmpty = newRooms.length === 0 && oldRooms.length > 0;
+        const counterShowsMore = this.roomsCount.waiting > 0;
+        const isNotLoading = !this.isLoadingRooms;
+
+        if (roomsWentEmpty && counterShowsMore && isNotLoading) {
+          this.refetchWaitingRooms();
+        }
       },
     },
     rooms_flow_start: {
@@ -480,6 +555,10 @@ export default {
         this.page.search += 1;
         this.listRoom(true, this.orderBy[this.activeTab]);
       }
+    },
+    async refetchWaitingRooms() {
+      this.page.waiting = 0;
+      await this.listRoom(true, this.orderBy.waiting, 'waiting', true);
     },
     async listDiscussions() {
       try {
@@ -613,11 +692,25 @@ export default {
     },
     handleSelectAllOngoingRooms() {
       if (!this.selectAllOngoingRoomsValue) {
-        this.selectedRoomsToTransfer = this.rooms_ongoing.map(
-          (room) => room.uuid,
-        );
+        this.selectedOngoingRooms = this.rooms_ongoing.map((room) => room.uuid);
       } else {
-        this.selectedRoomsToTransfer = [];
+        this.selectedOngoingRooms = [];
+      }
+    },
+
+    handleSelectAllWaitingRooms() {
+      if (!this.selectAllWaitingRoomsValue) {
+        this.selectedWaitingRooms = this.rooms_queue.map((room) => room.uuid);
+      } else {
+        this.selectedWaitingRooms = [];
+      }
+    },
+
+    handleSelectAllRooms() {
+      if (this.activeTab === 'ongoing') {
+        this.handleSelectAllOngoingRooms();
+      } else if (this.activeTab === 'waiting') {
+        this.handleSelectAllWaitingRooms();
       }
     },
   },
@@ -684,6 +777,10 @@ export default {
 
     .select-all-checkbox-container {
       margin-left: $unnnic-space-1;
+      :deep(.unnnic-checkbox__label) {
+        font: $unnnic-font-caption-1;
+        color: $unnnic-color-fg-info;
+      }
     }
   }
 }
