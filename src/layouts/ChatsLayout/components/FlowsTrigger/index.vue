@@ -114,30 +114,6 @@
         </p>
 
         <section v-show="!isContactsLoading">
-          <template v-if="letters['unnamed_contact']">
-            <UnnnicCollapse
-              v-model="letterColapse['unnamed_contact']"
-              class="flows-trigger__groups__group"
-              :title="
-                $t('flows_trigger.letter_group_unnamed', {
-                  length: letters['unnamed_contact']?.length || 0,
-                })
-              "
-            >
-              <UnnnicChatsContact
-                v-for="item in letters['unnamed_contact']"
-                :key="item.uuid"
-                class="flows-trigger__groups__group__contact"
-                :title="`[${$t('flows_trigger.unnamed_contact')}]`"
-                :lastMessage="{ text: getContactUrn(item) }"
-                :tabindex="0"
-                checkboxWhenSelect
-                :selected="selected.some((search) => search.uuid === item.uuid)"
-                @click="setContacts(item)"
-                @keypress.enter="setContacts(item)"
-              />
-            </UnnnicCollapse>
-          </template>
           <template v-for="(element, letter) in lettersWithoutUnnamed">
             <!-- eslint-disable-next-line vue/valid-v-for -->
             <UnnnicCollapse
@@ -161,6 +137,30 @@
                 :selected="selected.some((search) => search.uuid === item.uuid)"
                 @click="setContacts(item)"
                 @keypress.enter="setGroups(item)"
+              />
+            </UnnnicCollapse>
+          </template>
+          <template v-if="letters['unnamed_contact']">
+            <UnnnicCollapse
+              v-model="letterColapse['unnamed_contact']"
+              class="flows-trigger__groups__group"
+              :title="
+                $t('flows_trigger.letter_group_unnamed', {
+                  length: letters['unnamed_contact']?.length || 0,
+                })
+              "
+            >
+              <UnnnicChatsContact
+                v-for="item in letters['unnamed_contact']"
+                :key="item.uuid"
+                class="flows-trigger__groups__group__contact"
+                :title="`[${$t('flows_trigger.unnamed_contact')}]`"
+                :lastMessage="{ text: getContactUrn(item) }"
+                :tabindex="0"
+                checkboxWhenSelect
+                :selected="selected.some((search) => search.uuid === item.uuid)"
+                @click="setContacts(item)"
+                @keypress.enter="setContacts(item)"
               />
             </UnnnicCollapse>
           </template>
