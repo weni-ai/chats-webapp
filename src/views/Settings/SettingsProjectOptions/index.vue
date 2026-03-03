@@ -11,20 +11,42 @@
     </section>
 
     <section class="project-options__items__config">
-      <section class="project-options__ai-transfer">
+      <section
+        v-if="hasAgentBuilder"
+        class="project-options__ai-transfer"
+      >
         <SettingsProjectOptionsItem
-          v-model="projectConfig.can_use_ai_transfer"
+          :modelValue="aiTransferConfig.enabled"
           :name="configAiTransferTranslation"
+          @update:model-value="handleAiTransferToggle"
         />
-        <UnnnicTextArea
-          v-if="projectConfig.can_use_ai_transfer"
-          v-model="projectConfig.ai_transfer_criteria"
-          :label="$t('config_chats.project_configs.ai_transfer.textarea_label')"
-          :placeholder="
-            $t('config_chats.project_configs.ai_transfer.textarea_placeholder')
-          "
-          :maxLength="1000"
-        />
+
+        <template v-if="aiTransferConfig.enabled">
+          <div class="project-options__ai-transfer__inline">
+            <UnnnicTextArea
+              :modelValue="aiTransferConfig.criteria"
+              class="project-options__ai-transfer__criteria"
+              :label="
+                $t('config_chats.project_configs.ai_transfer.textarea_label')
+              "
+              :placeholder="
+                $t(
+                  'config_chats.project_configs.ai_transfer.textarea_placeholder',
+                )
+              "
+              :maxLength="1000"
+              disabled
+              data-testid="ai-transfer-criteria-display"
+            />
+            <UnnnicButton
+              type="tertiary"
+              iconCenter="edit_square"
+              size="small"
+              data-testid="ai-transfer-edit-btn"
+              @click="openAiTransferModal"
+            />
+          </div>
+        </template>
       </section>
 
       <SettingsProjectOptionsItem
@@ -58,6 +80,12 @@
         :name="configShowAgentStatusCountTimer"
       />
     </section>
+
+    <AiTransferModal
+      v-model="showAiTransferModal"
+      :initialCriteria="aiTransferConfig.criteria"
+      @saved="handleAiTransferSaved"
+    />
   </section>
 </template>
 
@@ -69,10 +97,12 @@ import { useProfile } from '@/store/modules/profile';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import Project from '@/services/api/resources/settings/project';
+import agentBuilder from '@/services/api/resources/settings/agentBuilder';
 
 import SettingsProjectOptionsItem from './SettingsProjectOptionsItem.vue';
 import SettingsSectionHeader from '../SettingsSectionHeader.vue';
 import CustomBreakOption from './CustomBreakOption.vue';
+import AiTransferModal from './AiTransferModal.vue';
 
 export default {
   name: 'SettingsProjectOptions',
@@ -81,15 +111,12 @@ export default {
     SettingsSectionHeader,
     SettingsProjectOptionsItem,
     CustomBreakOption,
+    AiTransferModal,
   },
-
-  emits: ['unsaved-changes'],
 
   data() {
     return {
       projectConfig: {
-        can_use_ai_transfer: false,
-        ai_transfer_criteria: '',
         can_use_bulk_transfer: false,
         filter_offline_agents: false,
         can_use_bulk_close: false,
@@ -98,7 +125,12 @@ export default {
         can_use_queue_prioritization: false,
         can_see_timer: false,
       },
-      initialProjectConfig: null,
+      hasAgentBuilder: false,
+      aiTransferConfig: {
+        enabled: false,
+        criteria: '',
+      },
+      showAiTransferModal: false,
     };
   },
 
@@ -116,19 +148,11 @@ export default {
       return this.me.project_permission_role === ROLE_MANAGER;
     },
 
-    hasUnsavedChanges() {
-      if (!this.initialProjectConfig) return false;
-      return (
-        JSON.stringify(this.projectConfig) !==
-        JSON.stringify(this.initialProjectConfig)
-      );
-    },
-
     configAiTransferTranslation() {
-      const canAiTransfer = this.projectConfig.can_use_ai_transfer;
+      const enabled = this.aiTransferConfig.enabled;
       return this.$t(
         `config_chats.project_configs.ai_transfer.switch_${
-          canAiTransfer ? 'active' : 'inactive'
+          enabled ? 'active' : 'inactive'
         }`,
       );
     },
@@ -197,23 +221,64 @@ export default {
       immediate: true,
       handler(newProject) {
         if (newProject.config) {
-          this.projectConfig = { ...this.projectConfig, ...newProject.config };
-          this.initialProjectConfig = JSON.parse(
-            JSON.stringify(this.projectConfig),
-          );
+          this.projectConfig = newProject.config;
         }
       },
     },
-    hasUnsavedChanges(value) {
-      this.$emit('unsaved-changes', value);
+    projectConfig: {
+      deep: true,
+      handler() {
+        this.updateProjectConfig();
+      },
     },
   },
 
+  async mounted() {
+    await this.checkAgentBuilder();
+  },
+
   methods: {
-    async saveProjectConfig() {
+    async checkAgentBuilder() {
+      try {
+        const { agent_builder } = await agentBuilder.check();
+        this.hasAgentBuilder = agent_builder;
+
+        if (this.hasAgentBuilder) {
+          const config = await agentBuilder.getAiTransferConfig();
+          this.aiTransferConfig = {
+            enabled: config.enabled,
+            criteria: config.criteria,
+          };
+        }
+      } catch (error) {
+        console.error('Failed to check agent builder:', error);
+      }
+    },
+
+    handleAiTransferToggle(value) {
+      if (value && !this.aiTransferConfig.enabled) {
+        this.showAiTransferModal = true;
+      } else if (!value) {
+        this.aiTransferConfig.enabled = false;
+        this.aiTransferConfig.criteria = '';
+        agentBuilder.updateAiTransferConfig({
+          enabled: false,
+          criteria: '',
+        });
+      }
+    },
+
+    openAiTransferModal() {
+      this.showAiTransferModal = true;
+    },
+
+    handleAiTransferSaved(criteria) {
+      this.aiTransferConfig.enabled = true;
+      this.aiTransferConfig.criteria = criteria;
+    },
+
+    async updateProjectConfig() {
       const {
-        can_use_ai_transfer,
-        ai_transfer_criteria,
         can_use_bulk_transfer,
         filter_offline_agents,
         can_use_bulk_close,
@@ -223,9 +288,7 @@ export default {
         can_see_timer,
       } = this.projectConfig;
 
-      await Project.update({
-        can_use_ai_transfer,
-        ai_transfer_criteria,
+      Project.update({
         can_use_bulk_transfer,
         filter_offline_agents,
         can_use_bulk_close,
@@ -234,10 +297,6 @@ export default {
         can_use_queue_prioritization,
         can_see_timer,
       });
-
-      this.initialProjectConfig = JSON.parse(
-        JSON.stringify(this.projectConfig),
-      );
     },
   },
 };
@@ -265,6 +324,16 @@ export default {
     display: flex;
     flex-direction: column;
     gap: $unnnic-space-2;
+
+    &__inline {
+      display: flex;
+      align-items: flex-start;
+      gap: $unnnic-spacing-xs;
+    }
+
+    &__criteria {
+      width: 100%;
+    }
   }
 }
 </style>
