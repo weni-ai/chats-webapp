@@ -3,45 +3,60 @@
     v-if="isUserManager && projectConfig"
     class="settings-view__project-options"
   >
-    <section class="project-options__items">
+    <section class="project-options__header">
       <SettingsSectionHeader
         :title="$t('config_chats.project_configs.title')"
       />
-      <section class="project-options__items__config">
+      <CustomBreakOption />
+    </section>
+
+    <section class="project-options__items__config">
+      <section class="project-options__ai-transfer">
         <SettingsProjectOptionsItem
-          v-model="projectConfig.can_use_bulk_transfer"
-          :name="configBulkTransferTranslation"
+          v-model="projectConfig.can_use_ai_transfer"
+          :name="configAiTransferTranslation"
         />
-        <SettingsProjectOptionsItem
-          v-model="projectConfig.filter_offline_agents"
-          :name="configBlockTransferToOffAgentsTranslation"
-        />
-        <SettingsProjectOptionsItem
-          v-if="isBulkCloseFeatureEnabled"
-          v-model="projectConfig.can_use_bulk_close"
-          :name="configBulkCloseTranslation"
-        />
-        <SettingsProjectOptionsItem
-          v-model="projectConfig.can_close_chats_in_queue"
-          :name="configBlockCloseChatsInQueueTranslation"
-        />
-        <!-- TODO: Future feature - bulk take -->
-        <!-- <SettingsProjectOptionsItem
-          v-model="projectConfig.can_use_bulk_take"
-          :name="configBulkTakeTranslation"
-        /> -->
-        <SettingsProjectOptionsItem
-          v-model="projectConfig.can_use_queue_prioritization"
-          :name="configQueuePrioritizationTranslation"
-        />
-        <SettingsProjectOptionsItem
-          v-model="projectConfig.can_see_timer"
-          :name="configShowAgentStatusCountTimer"
+        <UnnnicTextArea
+          v-if="projectConfig.can_use_ai_transfer"
+          v-model="projectConfig.ai_transfer_criteria"
+          :label="$t('config_chats.project_configs.ai_transfer.textarea_label')"
+          :placeholder="
+            $t('config_chats.project_configs.ai_transfer.textarea_placeholder')
+          "
+          :maxLength="1000"
         />
       </section>
-    </section>
-    <section class="project-options__items__custom-breaks">
-      <CustomBreakOption />
+
+      <SettingsProjectOptionsItem
+        v-model="projectConfig.can_use_bulk_transfer"
+        :name="configBulkTransferTranslation"
+      />
+      <SettingsProjectOptionsItem
+        v-model="projectConfig.filter_offline_agents"
+        :name="configBlockTransferToOffAgentsTranslation"
+      />
+      <SettingsProjectOptionsItem
+        v-if="isBulkCloseFeatureEnabled"
+        v-model="projectConfig.can_use_bulk_close"
+        :name="configBulkCloseTranslation"
+      />
+      <SettingsProjectOptionsItem
+        v-model="projectConfig.can_close_chats_in_queue"
+        :name="configBlockCloseChatsInQueueTranslation"
+      />
+      <!-- TODO: Future feature - bulk take -->
+      <!-- <SettingsProjectOptionsItem
+        v-model="projectConfig.can_use_bulk_take"
+        :name="configBulkTakeTranslation"
+      /> -->
+      <SettingsProjectOptionsItem
+        v-model="projectConfig.can_use_queue_prioritization"
+        :name="configQueuePrioritizationTranslation"
+      />
+      <SettingsProjectOptionsItem
+        v-model="projectConfig.can_see_timer"
+        :name="configShowAgentStatusCountTimer"
+      />
     </section>
   </section>
 </template>
@@ -68,9 +83,13 @@ export default {
     CustomBreakOption,
   },
 
+  emits: ['unsaved-changes'],
+
   data() {
     return {
       projectConfig: {
+        can_use_ai_transfer: false,
+        ai_transfer_criteria: '',
         can_use_bulk_transfer: false,
         filter_offline_agents: false,
         can_use_bulk_close: false,
@@ -79,6 +98,7 @@ export default {
         can_use_queue_prioritization: false,
         can_see_timer: false,
       },
+      initialProjectConfig: null,
     };
   },
 
@@ -96,6 +116,22 @@ export default {
       return this.me.project_permission_role === ROLE_MANAGER;
     },
 
+    hasUnsavedChanges() {
+      if (!this.initialProjectConfig) return false;
+      return (
+        JSON.stringify(this.projectConfig) !==
+        JSON.stringify(this.initialProjectConfig)
+      );
+    },
+
+    configAiTransferTranslation() {
+      const canAiTransfer = this.projectConfig.can_use_ai_transfer;
+      return this.$t(
+        `config_chats.project_configs.ai_transfer.switch_${
+          canAiTransfer ? 'active' : 'inactive'
+        }`,
+      );
+    },
     configBulkTransferTranslation() {
       const canBulkTransfer = this.projectConfig.can_use_bulk_transfer;
       return this.$t(
@@ -161,21 +197,23 @@ export default {
       immediate: true,
       handler(newProject) {
         if (newProject.config) {
-          this.projectConfig = newProject.config;
+          this.projectConfig = { ...this.projectConfig, ...newProject.config };
+          this.initialProjectConfig = JSON.parse(
+            JSON.stringify(this.projectConfig),
+          );
         }
       },
     },
-    projectConfig: {
-      deep: true,
-      handler() {
-        this.updateProjectConfig();
-      },
+    hasUnsavedChanges(value) {
+      this.$emit('unsaved-changes', value);
     },
   },
 
   methods: {
-    async updateProjectConfig() {
+    async saveProjectConfig() {
       const {
+        can_use_ai_transfer,
+        ai_transfer_criteria,
         can_use_bulk_transfer,
         filter_offline_agents,
         can_use_bulk_close,
@@ -185,7 +223,9 @@ export default {
         can_see_timer,
       } = this.projectConfig;
 
-      Project.update({
+      await Project.update({
+        can_use_ai_transfer,
+        ai_transfer_criteria,
         can_use_bulk_transfer,
         filter_offline_agents,
         can_use_bulk_close,
@@ -194,31 +234,37 @@ export default {
         can_use_queue_prioritization,
         can_see_timer,
       });
+
+      this.initialProjectConfig = JSON.parse(
+        JSON.stringify(this.projectConfig),
+      );
     },
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .settings-view__project-options {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   gap: $unnnic-spacing-ant;
 
-  .project-options__items {
+  .project-options__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .project-options__items__config {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-space-3;
+    gap: $unnnic-space-4;
+  }
 
-    &__config {
-      display: flex;
-      flex-direction: column;
-      gap: $unnnic-space-4;
-    }
-
-    &__custom-breaks {
-      display: flex;
-    }
+  .project-options__ai-transfer {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-2;
   }
 }
 </style>
