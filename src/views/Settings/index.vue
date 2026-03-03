@@ -5,11 +5,7 @@
     data-testid="settings-view"
     class="settings-view"
   >
-    <SettingsHeader
-      :hasUnsavedChanges="hasUnsavedChanges"
-      :isSaving="isSaving"
-      @save="handleSaveChanges"
-    />
+    <SettingsHeader />
 
     <UnnnicTab
       v-if="isPrimaryProject"
@@ -27,10 +23,7 @@
 
       <template #tab-panel-general>
         <section class="tab-content-container">
-          <SettingsProjectOptions
-            ref="projectOptions"
-            @unsaved-changes="hasUnsavedChanges = $event"
-          />
+          <SettingsProjectOptions />
 
           <SettingsSectors />
         </section>
@@ -41,10 +34,7 @@
     </UnnnicTab>
 
     <template v-else>
-      <SettingsProjectOptions
-        ref="projectOptions"
-        @unsaved-changes="hasUnsavedChanges = $event"
-      />
+      <SettingsProjectOptions />
 
       <SettingsSectors />
     </template>
@@ -52,7 +42,6 @@
 </template>
 
 <script>
-import unnnic from '@weni/unnnic-system';
 import { mapActions, mapState } from 'pinia';
 
 import { useSettings } from '@/store/modules/settings';
@@ -76,8 +65,6 @@ export default {
   data() {
     return {
       activeTab: { id: 'general' },
-      hasUnsavedChanges: false,
-      isSaving: false,
     };
   },
 
@@ -121,31 +108,6 @@ export default {
       if (!newActiveTab) return;
 
       this.activeTab = newActiveTab;
-    },
-
-    async handleSaveChanges() {
-      this.isSaving = true;
-      try {
-        await this.$refs.projectOptions.saveProjectConfig();
-        unnnic.unnnicCallAlert({
-          props: {
-            text: this.$t('config_chats.changes_saved'),
-            type: 'success',
-          },
-          seconds: 5,
-        });
-      } catch (error) {
-        console.error('Failed to save project config:', error);
-        unnnic.unnnicCallAlert({
-          props: {
-            text: this.$t('config_chats.changes_not_saved'),
-            type: 'error',
-          },
-          seconds: 5,
-        });
-      } finally {
-        this.isSaving = false;
-      }
     },
   },
 };
