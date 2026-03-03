@@ -712,6 +712,8 @@
     "groups": "Grupos ({length})",
     "group_contacts": "{n} contacto | {n} contactos",
     "letter_group": "{letter} ({length})",
+    "letter_group_unnamed": "Sin nombre ({length})",
+    "unnamed_contact": "Contacto sin nombre",
     "add_contact": "Añadir contacto",
     "remove_selected_contacts": "Quitar contactos seleccionados",
     "add_new_contact": {
