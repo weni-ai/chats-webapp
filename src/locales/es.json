@@ -827,14 +827,14 @@
       "status_remove_success": "Estado {status} eliminado",
       "status_error": "Ups, desafortunadamente los cambios no se han guardado, inténtalo de nuevo"
     },
-    "save_changes": "Guardar cambios",
     "changes_saved": "¡Cambios guardados con éxito!",
-    "changes_not_saved": "Cambios no guardados, inténtalo de nuevo",
+    "changes_not_saved": "No se pudieron guardar los cambios. Inténtalo de nuevo.",
     "project_configs": {
       "title": "Preferencias de proyectos",
       "ai_transfer": {
         "switch_active": "Permitir que los agentes de IA transfieran conversaciones al soporte humano",
         "switch_inactive": "Permitir que los agentes de IA transfieran conversaciones al soporte humano",
+        "modal_title": "Escenarios o criterios que requieren transferencia al soporte humano",
         "textarea_label": "Defina los escenarios o criterios que requieren transferencia al soporte humano",
         "textarea_placeholder": "Describa los escenarios o criterios..."
       },

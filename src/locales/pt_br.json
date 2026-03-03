@@ -829,14 +829,14 @@
       "status_remove_success": "Status {status} removido",
       "status_error": "Ops, infelizmente as alterações não foram salvas, tente novamente"
     },
-    "save_changes": "Salvar alterações",
     "changes_saved": "Alterações salvas com sucesso!",
-    "changes_not_saved": "Alterações não salvas, tente novamente",
+    "changes_not_saved": "Não foi possível salvar as alterações. Tente novamente.",
     "project_configs": {
       "title": "Preferências do projeto",
       "ai_transfer": {
         "switch_active": "Permitir que agentes de IA transfiram conversas para atendimento humano",
         "switch_inactive": "Permitir que agentes de IA transfiram conversas para atendimento humano",
+        "modal_title": "Cenários ou critérios que requerem transferência para atendimento humano",
         "textarea_label": "Defina os cenários ou critérios que requerem transferência para atendimento humano",
         "textarea_placeholder": "Descreva os cenários ou critérios..."
       },
