@@ -18,6 +18,28 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
     >
       Human Support Settings
     </h1>
+    <button
+      class="unnnic-button unnnic-button--size-large unnnic-button--primary"
+      data-testid="settings-save-button"
+      data-v-a59c663f=""
+      data-v-aadba593=""
+      disabled=""
+    >
+      <!---->
+      <!---->
+      <!---->
+      <span
+        class="unnnic-button__label"
+        data-testid="button-label"
+        data-v-aadba593=""
+        style="visibility: visible;"
+      >
+        
+        
+         Save changes
+      </span>
+      <!---->
+    </button>
   </header>
   
   <!--v-if-->
