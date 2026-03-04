@@ -350,14 +350,14 @@ describe('FooterButton', () => {
       expect(wrapper.vm.takeOverButtonType).toBe('primary');
     });
 
-    it('should render take over as secondary when end button is also present', () => {
+    it('should render take over as primary when end button is also present', () => {
       const wrapper = createWrapper(['room1'], 'waiting', {
         can_use_bulk_take: true,
         can_use_bulk_close: true,
         activeFeatures: ['weniChatsBulkTake', 'weniChatsBulkClose'],
       });
 
-      expect(wrapper.vm.takeOverButtonType).toBe('secondary');
+      expect(wrapper.vm.takeOverButtonType).toBe('primary');
     });
 
     it('should render transfer as primary when end is not present', () => {
