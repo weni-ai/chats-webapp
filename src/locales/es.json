@@ -827,8 +827,17 @@
       "status_remove_success": "Estado {status} eliminado",
       "status_error": "Ups, desafortunadamente los cambios no se han guardado, inténtalo de nuevo"
     },
+    "changes_saved": "¡Cambios guardados con éxito!",
+    "changes_not_saved": "No se pudieron guardar los cambios. Inténtalo de nuevo.",
     "project_configs": {
       "title": "Preferencias de proyectos",
+      "ai_transfer": {
+        "switch_active": "Permitir que los agentes de IA transfieran conversaciones al soporte humano",
+        "switch_inactive": "Permitir que los agentes de IA transfieran conversaciones al soporte humano",
+        "modal_title": "Escenarios o criterios que requieren transferencia al soporte humano",
+        "textarea_label": "Defina los escenarios o criterios que requieren transferencia al soporte humano",
+        "textarea_placeholder": "Describa los escenarios o criterios..."
+      },
       "bulk_transfer": {
         "tooltip": "Esta función permite a los agentes transferir varios contactos a la vez a una fila o agente",
         "switch_active": "Transferir chats en masa a otra cola o agente activo",
@@ -845,6 +854,10 @@
       "block_close_chats_in_queue": {
         "switch_active": "Bloquear la finalización de chats que están en la cola activo",
         "switch_inactive": "Bloquear la finalización de chats que están en la cola inactivo"
+      },
+      "bulk_take": {
+        "switch_active": "Asumir chats en masa",
+        "switch_inactive": "Asumir chats en masa"
       },
       "queue_prioritization": {
         "tooltip": "Esta función permite a los agentes elegir las colas que recibirán contactos, dentro de las previamente seleccionadas en el sector.",
