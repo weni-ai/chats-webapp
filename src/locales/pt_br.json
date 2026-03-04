@@ -149,6 +149,7 @@
   "select_this_chat": "Selecionar este chat",
   "deselect_this_chat": "Desmarcar este chat",
   "transfer_all_selected_chats": "Transferir todos os chats selecionados",
+  "take_over_all_selected_chats_tooltip": "Assumir todos os chats selecionados",
   "end_all_selected_chats_tooltip": "Encerrar todos os chats selecionados",
   "number_of_chats_selected": "{count} chat selecionado | {count} chats selecionados",
   "image": "Imagem",
@@ -450,6 +451,7 @@
   "about": "sobre",
   "today": "Hoje",
   "transfer": "Transferir",
+  "take_over": "Assumir",
   "suggested_answers": "Respostas sugeridas",
   "attach": "Anexar",
   "send": "Enviar",
@@ -580,6 +582,15 @@
     "back": "Voltar",
     "optional_tags_title": "Tags não são obrigatórias para finalizar chats no setor {sector}",
     "optional_tags_description": "Se você selecionar alguma tag abaixo, ela será aplicada ao {count} chat e substituirá quaisquer tags existentes. | Se você selecionar alguma tag abaixo, ela será aplicada aos {count} chats e substituirá quaisquer tags existentes."
+  },
+  "bulk_take": {
+    "title": "Assumir todos os chats selecionados",
+    "selected_chats_count": "{count} chat está selecionado para assumir. | {count} chats estão selecionados para assumir.",
+    "confirm_take_over_selected": "Tem certeza que deseja assumir todos os chats selecionados?",
+    "take_over_all": "Assumir todos",
+    "success_message": "{count} chat assumido com sucesso! | {count} chats assumidos com sucesso!",
+    "partial_success_message": "{success} chat assumido, {failed} falhou. Tente novamente. | {success} chats assumidos, {failed} falharam. Tente novamente.",
+    "error_message": "Não foi possível assumir os chats, tente novamente"
   },
   "close_contact": "Encerrar contato",
   "close_contact_confirmation": "Tem certeza que deseja encerrar este contato?",
