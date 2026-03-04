@@ -164,6 +164,7 @@ export default {
       },
       sectorQueue: {
         name: '',
+        queue_limit: { is_active: false, limit: null },
         currentAgents: [],
         agents: 0,
       },
@@ -205,6 +206,9 @@ export default {
     },
     enableAutomaticCsatFeature() {
       return this.featureFlags.active_features?.includes('weniChatsCSAT');
+    },
+    enableQueueLimitFeature() {
+      return this.featureFlags.active_features?.includes('weniChatsQueueLimit');
     },
   },
   mounted() {
@@ -280,6 +284,9 @@ export default {
           name: this.sectorQueue.name,
           default_message: '',
           sectorUuid: this.sector.uuid,
+          queue_limit: this.enableQueueLimitFeature
+            ? this.sectorQueue.queue_limit
+            : { is_active: false, limit: null },
         });
 
         await Promise.all(

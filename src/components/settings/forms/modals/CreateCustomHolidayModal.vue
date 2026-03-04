@@ -19,7 +19,7 @@
           </p>
           <UnnnicInputDatePicker
             v-model="form.date"
-            :options="[{ id: 'custom', name: $t('custom') }]"
+            hideOptions
             next
             fillW
             :actionText="$t('confirm')"
@@ -136,18 +136,6 @@ export default {
   }
 }
 :deep(.unnnic-button--size-large.create-custom-holiday-modal__add-button) {
-  width: 40%;
-}
-
-:deep(.dropdown-data) {
-  left: 0;
-  .unnnic-date-picker {
-    position: fixed;
-  }
-}
-
-:deep(.unnnic-date-picker .options-container .actions) {
-  display: flex;
-  grid-template-columns: none;
+  width: 50%;
 }
 </style>
