@@ -406,7 +406,7 @@
       "does_not_have_permission": "No tiene permiso para transferir este chat"
     },
     "open_chat": "Abrir el chat",
-    "get_chat": "atrapar el chat",
+    "get_chat": "Tomar solo este chat",
     "get_chat_question": "Obtener chat?",
     "get_chat_confirmation": "Confirma si deseas realizar el servicio de {contact}",
     "get_chat_error": "Error al intentar obtener el chat",

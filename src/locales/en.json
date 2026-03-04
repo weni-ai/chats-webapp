@@ -410,7 +410,7 @@
       "does_not_have_permission": "You do not have permission to transfer this chat"
     },
     "open_chat": "Open chat",
-    "get_chat": "Get chat",
+    "get_chat": "Take over only this chat",
     "get_chat_question": "Get chat?",
     "get_chat_confirmation": "Confirm if you want to do the service of {contact}",
     "get_chat_error": "Error when trying to get the room",
