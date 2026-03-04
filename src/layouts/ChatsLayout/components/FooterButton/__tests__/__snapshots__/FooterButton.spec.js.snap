@@ -11,6 +11,7 @@ exports[`FooterButton > Snapshot > should match snapshot 1`] = `
     data-testid="bulk-transfer-section"
     data-v-944d9ccc=""
   >
+    <!--v-if-->
     
     
     
@@ -61,6 +62,7 @@ exports[`FooterButton > Snapshot > should match snapshot 1`] = `
     
     
     
+    <!--v-if-->
     <!--v-if-->
     <!--v-if-->
     <!--v-if-->

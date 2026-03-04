@@ -175,6 +175,7 @@
   "select_this_chat": "Select this chat",
   "deselect_this_chat": "Deselect this chat",
   "transfer_all_selected_chats": "Transfer all selected chats",
+  "take_over_all_selected_chats_tooltip": "Take over all selected chats",
   "end_all_selected_chats_tooltip": "End all selected chats",
   "number_of_chats_selected": "{count} chat selected | {count} chats selected",
   "image": "Image",
@@ -444,7 +445,7 @@
       "does_not_have_permission": "You do not have permission to transfer this chat"
     },
     "open_chat": "Open chat",
-    "get_chat": "Get chat",
+    "get_chat": "Take over only this chat",
     "get_chat_question": "Get chat?",
     "get_chat_confirmation": "Confirm if you want to do the service of {contact}",
     "get_chat_error": "Error when trying to get the room",
@@ -489,6 +490,7 @@
   "about": "about",
   "today": "Today",
   "transfer": "Transfer",
+  "take_over": "Take over",
   "suggested_answers": "Suggested Answers",
   "attach": "Attach",
   "send": "Send",
@@ -623,6 +625,15 @@
   },
   "close_chat": {
     "confirm_end": "Are you sure you want to end this chat?"
+  },
+  "bulk_take": {
+    "title": "Take over all selected chats",
+    "selected_chats_count": "{count} chat is selected for takeover. | {count} chats are selected for takeover.",
+    "confirm_take_over_selected": "Are you sure you want to take over all selected chats?",
+    "take_over_all": "Take over all",
+    "success_message": "{count} chat taken over successfully! | {count} chats taken over successfully!",
+    "partial_success_message": "{success} chat taken over, {failed} failed. Please try again. | {success} chats taken over, {failed} failed. Please try again.",
+    "error_message": "Unable to take over chats, please try again"
   },
   "contact_info": {
     "title": "About the contact",

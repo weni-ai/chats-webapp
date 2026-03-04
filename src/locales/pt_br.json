@@ -175,6 +175,7 @@
   "select_this_chat": "Selecionar este chat",
   "deselect_this_chat": "Desmarcar este chat",
   "transfer_all_selected_chats": "Transferir todos os chats selecionados",
+  "take_over_all_selected_chats_tooltip": "Assumir todos os chats selecionados",
   "end_all_selected_chats_tooltip": "Encerrar todos os chats selecionados",
   "number_of_chats_selected": "{count} chat selecionado | {count} chats selecionados",
   "image": "Imagem",
@@ -440,7 +441,7 @@
       "does_not_have_permission": "Você não possui permissão para transferir este chat"
     },
     "open_chat": "Abrir chat",
-    "get_chat": "Pegar chat",
+    "get_chat": "Pegar somente este chat",
     "get_chat_question": "Pegar chat?",
     "get_chat_confirmation": "Confirme se deseja realizar o atendimento de {contact}",
     "get_chat_error": "Erro ao tentar pegar o chat",
@@ -485,6 +486,7 @@
   "about": "sobre",
   "today": "Hoje",
   "transfer": "Transferir",
+  "take_over": "Assumir",
   "suggested_answers": "Respostas sugeridas",
   "attach": "Anexar",
   "send": "Enviar",
@@ -619,6 +621,15 @@
   },
   "close_chat": {
     "confirm_end": "Tem certeza que deseja encerrar este chat?"
+  },
+  "bulk_take": {
+    "title": "Assumir todos os chats selecionados",
+    "selected_chats_count": "{count} chat está selecionado para assumir. | {count} chats estão selecionados para assumir.",
+    "confirm_take_over_selected": "Tem certeza que deseja assumir todos os chats selecionados?",
+    "take_over_all": "Assumir todos",
+    "success_message": "{count} chat assumido com sucesso! | {count} chats assumidos com sucesso!",
+    "partial_success_message": "{success} chat assumido, {failed} falhou. Tente novamente. | {success} chats assumidos, {failed} falharam. Tente novamente.",
+    "error_message": "Não foi possível assumir os chats, tente novamente"
   },
   "close_contact": "Encerrar contato",
   "close_contact_confirmation": "Tem certeza que deseja encerrar este contato?",
