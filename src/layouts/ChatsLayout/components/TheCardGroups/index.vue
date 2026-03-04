@@ -767,7 +767,7 @@ export default {
       padding-right: $unnnic-spacing-xs;
 
       :deep(.tab-chip__chip) {
-        height: 32px;
+        height: $unnnic-space-8;
       }
 
       &--hide-order-by {
