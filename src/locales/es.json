@@ -580,7 +580,11 @@
     "end_all_chats": "Finalizar todos ({count} chats)",
     "back": "Volver",
     "optional_tags_title": "Las tags no son obligatorias para finalizar chats en el sector {sector}",
-    "optional_tags_description": "Si selecciona alguna tag a continuación, se aplicará al {count} chat y reemplazará cualquier tag existente. | Si selecciona alguna tag a continuación, se aplicará a los {count} chats y reemplazará cualquier tag existente."
+    "optional_tags_description": "Si selecciona alguna tag a continuación, se aplicará al {count} chat y reemplazará cualquier tag existente. | Si selecciona alguna tag a continuación, se aplicará a los {count} chats y reemplazará cualquier tag existente.",
+    "no_tags_in_sector": "No hay tags registradas en este sector para ser seleccionadas."
+  },
+  "close_chat": {
+    "confirm_end": "¿Está seguro de que desea finalizar este chat?"
   },
   "contact_info": {
     "title": "Sobre el contacto",
