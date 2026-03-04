@@ -618,7 +618,11 @@
     "end_all_chats": "End all ({count} chats)",
     "back": "Back",
     "optional_tags_title": "Tags are not required to end chats in the {sector} sector",
-    "optional_tags_description": "If you select any tag below, it will be applied to the {count} chat and will replace any existing tags. | If you select any tag below, it will be applied to the {count} chats and will replace any existing tags."
+    "optional_tags_description": "If you select any tag below, it will be applied to the {count} chat and will replace any existing tags. | If you select any tag below, it will be applied to the {count} chats and will replace any existing tags.",
+    "no_tags_in_sector": "There are no tags registered in this sector to be selected."
+  },
+  "close_chat": {
+    "confirm_end": "Are you sure you want to end this chat?"
   },
   "contact_info": {
     "title": "About the contact",
