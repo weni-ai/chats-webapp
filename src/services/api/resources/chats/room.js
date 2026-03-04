@@ -186,6 +186,14 @@ export default {
     return response;
   },
 
+  async bulkTake({ rooms = [] }) {
+    const response = await http
+      .patch(`/room/bulk_take/`, { rooms_list: rooms })
+      .then((response) => response)
+      .catch((error) => error.response);
+    return response;
+  },
+
   async pinRoom({ uuid, status = true }) {
     const response = await http.post(`/room/${uuid}/pin/`, {
       status,
