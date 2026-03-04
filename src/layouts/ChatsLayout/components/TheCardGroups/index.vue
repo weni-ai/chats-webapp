@@ -269,7 +269,10 @@ export default {
     ]),
 
     showWaitingDot() {
-      return this.rooms_queue.length > 0;
+      return (
+        this.rooms_queue?.length > 0 &&
+        this.project.config?.can_see_waiting_rooms_count === false
+      );
     },
 
     roomsTabs() {
