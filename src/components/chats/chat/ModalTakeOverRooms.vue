@@ -99,10 +99,11 @@ const refetchRoomsIfEmpty = async () => {
 };
 
 const clearSelectionsAndClose = async () => {
-  roomsStore.setSelectedWaitingRooms([]);
-  await refetchRoomsIfEmpty();
   isLoadingBulkTake.value = false;
   emit('close');
+
+  roomsStore.setSelectedWaitingRooms([]);
+  await refetchRoomsIfEmpty();
 };
 
 const executeBulkTake = async () => {

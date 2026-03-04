@@ -233,6 +233,48 @@ describe('ModalTakeOverRooms', () => {
       expect(wrapper.emitted('close')).toBeFalsy();
     });
 
+    it('should emit close before clearing selected waiting rooms', async () => {
+      const operationOrder = [];
+
+      Room.bulkTake.mockResolvedValue({
+        data: { success_count: 3, failed_count: 0 },
+      });
+
+      const pinia = createTestingPinia({ stubActions: false });
+      const roomsStore = useRooms(pinia);
+      roomsStore.selectedWaitingRooms = ['uuid1', 'uuid2'];
+      roomsStore.activeTab = 'waiting';
+      roomsStore.rooms = [];
+
+      const originalSetSelectedWaitingRooms =
+        roomsStore.setSelectedWaitingRooms.bind(roomsStore);
+      roomsStore.setSelectedWaitingRooms = vi.fn((...args) => {
+        operationOrder.push('clearSelections');
+        return originalSetSelectedWaitingRooms(...args);
+      });
+
+      const wrapper = mount(ModalTakeOverRooms, {
+        props: { modelValue: true },
+        global: {
+          plugins: [pinia],
+          stubs,
+        },
+      });
+
+      const originalEmit = wrapper.vm.$emit.bind(wrapper.vm);
+      wrapper.vm.$emit = vi.fn((...args) => {
+        if (args[0] === 'close') operationOrder.push('emitClose');
+        return originalEmit(...args);
+      });
+
+      await wrapper.find('[data-testid="take-over-button"]').trigger('click');
+      await flushPromises();
+
+      expect(operationOrder.indexOf('emitClose')).toBeLessThan(
+        operationOrder.indexOf('clearSelections'),
+      );
+    });
+
     it('should clear selected waiting rooms after success', async () => {
       Room.bulkTake.mockResolvedValue({
         data: { success_count: 3, failed_count: 0 },
