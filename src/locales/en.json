@@ -427,6 +427,7 @@
     "tags": "Chat tags",
     "discussions": "Discussions",
     "waiting": "Waiting",
+    "waiting_tooltip": "Chats to be handled",
     "waiting_assistance": "Waiting for assistance",
     "in_progress": "Ongoing",
     "sent_flows": "Sent flows",
@@ -896,6 +897,9 @@
       "show_agent_status_count_timer": {
         "switch_active": "Show status timer for custom agent breaks",
         "switch_inactive": "Show status timer for custom agent breaks"
+      },
+      "show_waiting_rooms_count": {
+        "switch_label": "Show the counter with the number of chats waiting for human support"
       }
     },
     "custom_sector": "Customize new sector (recommended)",

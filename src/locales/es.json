@@ -423,6 +423,7 @@
     "tags": "Etiquetas de chat",
     "discussions": "Discusiones",
     "waiting": "Esperando",
+    "waiting_tooltip": "Chats que deben ser atendidos",
     "waiting_assistance": "Esperando asistencia",
     "in_progress": "En curso",
     "sent_flows": "Flujos enviados",
@@ -888,6 +889,9 @@
       "show_agent_status_count_timer": {
         "switch_active": "Mostrar temporizador de estado en pausas personalizadas del agente activo",
         "switch_inactive": "Mostrar temporizador de estado en pausas personalizadas del agente inactivo"
+      },
+      "show_waiting_rooms_count": {
+        "switch_label": "Mostrar el contador con el número de chats esperando soporte humano"
       }
     },
     "custom_sector": "Personalizar nuevo sector (recomendado)",

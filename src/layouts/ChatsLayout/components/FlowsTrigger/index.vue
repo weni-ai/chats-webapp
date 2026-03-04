@@ -382,18 +382,7 @@ export default {
           }
         });
 
-      const ordered = {};
-      if (letters[UNNAMED_KEY]?.length) {
-        ordered[UNNAMED_KEY] = letters[UNNAMED_KEY];
-      }
-      const otherKeys = Object.keys(letters).filter((k) => k !== UNNAMED_KEY);
-      const numericKeys = otherKeys.filter((k) => /^\d$/.test(k)).sort();
-      const letterKeys = otherKeys.filter((k) => !/^\d$/.test(k)).sort();
-
-      [...numericKeys, ...letterKeys].forEach((k) => {
-        ordered[k] = letters[k];
-      });
-      return ordered;
+      return letters;
     },
 
     searchGroup() {
