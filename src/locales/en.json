@@ -394,6 +394,7 @@
     "tags": "Chat tags",
     "discussions": "Discussions",
     "waiting": "Waiting",
+    "waiting_tooltip": "Chats to be handled",
     "waiting_assistance": "Waiting for assistance",
     "in_progress": "Ongoing",
     "sent_flows": "Sent flows",
@@ -585,7 +586,11 @@
     "end_all_chats": "End all ({count} chats)",
     "back": "Back",
     "optional_tags_title": "Tags are not required to end chats in the {sector} sector",
-    "optional_tags_description": "If you select any tag below, it will be applied to the {count} chat and will replace any existing tags. | If you select any tag below, it will be applied to the {count} chats and will replace any existing tags."
+    "optional_tags_description": "If you select any tag below, it will be applied to the {count} chat and will replace any existing tags. | If you select any tag below, it will be applied to the {count} chats and will replace any existing tags.",
+    "no_tags_in_sector": "There are no tags registered in this sector to be selected."
+  },
+  "close_chat": {
+    "confirm_end": "Are you sure you want to end this chat?"
   },
   "bulk_take": {
     "title": "Take over all selected chats",
@@ -873,6 +878,9 @@
       "show_agent_status_count_timer": {
         "switch_active": "Show status timer for custom agent breaks",
         "switch_inactive": "Show status timer for custom agent breaks"
+      },
+      "show_waiting_rooms_count": {
+        "switch_label": "Show the counter with the number of chats waiting for human support"
       }
     },
     "custom_sector": "Customize new sector (recommended)",

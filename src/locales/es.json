@@ -390,6 +390,7 @@
     "tags": "Etiquetas de chat",
     "discussions": "Discusiones",
     "waiting": "Esperando",
+    "waiting_tooltip": "Chats que deben ser atendidos",
     "waiting_assistance": "Esperando asistencia",
     "in_progress": "En curso",
     "sent_flows": "Flujos enviados",
@@ -581,7 +582,11 @@
     "end_all_chats": "Finalizar todos ({count} chats)",
     "back": "Volver",
     "optional_tags_title": "Las tags no son obligatorias para finalizar chats en el sector {sector}",
-    "optional_tags_description": "Si selecciona alguna tag a continuación, se aplicará al {count} chat y reemplazará cualquier tag existente. | Si selecciona alguna tag a continuación, se aplicará a los {count} chats y reemplazará cualquier tag existente."
+    "optional_tags_description": "Si selecciona alguna tag a continuación, se aplicará al {count} chat y reemplazará cualquier tag existente. | Si selecciona alguna tag a continuación, se aplicará a los {count} chats y reemplazará cualquier tag existente.",
+    "no_tags_in_sector": "No hay tags registradas en este sector para ser seleccionadas."
+  },
+  "close_chat": {
+    "confirm_end": "¿Está seguro de que desea finalizar este chat?"
   },
   "bulk_take": {
     "title": "Asumir todos los chats seleccionados",
@@ -869,6 +874,9 @@
       "show_agent_status_count_timer": {
         "switch_active": "Mostrar temporizador de estado en pausas personalizadas del agente activo",
         "switch_inactive": "Mostrar temporizador de estado en pausas personalizadas del agente inactivo"
+      },
+      "show_waiting_rooms_count": {
+        "switch_label": "Mostrar el contador con el número de chats esperando soporte humano"
       }
     },
     "custom_sector": "Personalizar nuevo sector (recomendado)",

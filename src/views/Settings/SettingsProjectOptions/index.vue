@@ -38,6 +38,10 @@
           v-model="projectConfig.can_see_timer"
           :name="configShowAgentStatusCountTimer"
         />
+        <SettingsProjectOptionsItem
+          v-model="projectConfig.can_see_waiting_rooms_count"
+          :name="configShowWaitingRoomsCountTranslation"
+        />
       </section>
     </section>
     <section class="project-options__items__custom-breaks">
@@ -78,6 +82,7 @@ export default {
         can_use_bulk_take: false,
         can_use_queue_prioritization: false,
         can_see_timer: false,
+        can_see_waiting_rooms_count: true,
       },
     };
   },
@@ -157,6 +162,11 @@ export default {
         }`,
       );
     },
+    configShowWaitingRoomsCountTranslation() {
+      return this.$t(
+        'config_chats.project_configs.show_waiting_rooms_count.switch_label',
+      );
+    },
   },
 
   watch: {
@@ -164,7 +174,14 @@ export default {
       immediate: true,
       handler(newProject) {
         if (newProject.config) {
-          this.projectConfig = newProject.config;
+          const config = {
+            ...newProject.config,
+            can_see_waiting_rooms_count:
+              newProject.config.can_see_waiting_rooms_count === undefined
+                ? true
+                : newProject.config.can_see_waiting_rooms_count,
+          };
+          this.projectConfig = config;
         }
       },
     },
@@ -186,6 +203,7 @@ export default {
         can_use_bulk_take,
         can_use_queue_prioritization,
         can_see_timer,
+        can_see_waiting_rooms_count,
       } = this.projectConfig;
 
       Project.update({
@@ -196,6 +214,7 @@ export default {
         can_use_bulk_take,
         can_use_queue_prioritization,
         can_see_timer,
+        can_see_waiting_rooms_count,
       });
     },
   },
