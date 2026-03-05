@@ -169,6 +169,7 @@
     </section>
     <ModalQueuePriorizations
       v-if="showModalQueue"
+      v-model="showModalQueue"
       data-testid="queue-prioritization-modal"
       @close="handleModalQueuePriorization"
     />
