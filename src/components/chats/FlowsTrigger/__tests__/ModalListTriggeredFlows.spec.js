@@ -16,11 +16,42 @@ vi.mock('@/services/api/resources/chats/flowsTrigger.js', () => ({
   },
 }));
 
+const dialogStubs = {
+  UnnnicDialog: {
+    name: 'UnnnicDialogStub',
+    props: ['open'],
+    template: `
+      <div v-if="open" v-bind="$attrs">
+        <slot />
+      </div>
+    `,
+  },
+  UnnnicDialogContent: {
+    name: 'UnnnicDialogContentStub',
+    props: ['size'],
+    template: '<div><slot /></div>',
+  },
+  UnnnicDialogHeader: {
+    name: 'UnnnicDialogHeaderStub',
+    template: '<div><slot /></div>',
+  },
+  UnnnicDialogTitle: {
+    name: 'UnnnicDialogTitleStub',
+    template: '<div><slot /></div>',
+  },
+  UnnnicDialogFooter: {
+    name: 'UnnnicDialogFooterStub',
+    template: '<div><slot /></div>',
+  },
+};
+
 describe('ModalListTriggeredFlows', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(ModalListTriggeredFlows);
+    wrapper = mount(ModalListTriggeredFlows, {
+      global: { stubs: dialogStubs },
+    });
   });
 
   it('renders correctly', () => {
@@ -30,9 +61,7 @@ describe('ModalListTriggeredFlows', () => {
 
     expect(
       wrapper
-        .findComponent(
-          '[data-testid="modal-list-triggered-flows-table-pagination"]',
-        )
+        .find('[data-testid="modal-list-triggered-flows-table-pagination"]')
         .exists(),
     ).toBe(true);
   });
@@ -85,11 +114,9 @@ describe('ModalListTriggeredFlows', () => {
     expect(wrapper.vm.triggeredFlowsCurrentPage).toBe(newPage);
   });
 
-  it('should emits close on trigger close from modal', async () => {
-    const modal = wrapper.findComponent(
-      '[data-testid="modal-list-triggered-flows"]',
-    );
-    await modal.vm.$emit('close');
+  it('should emits close when dialog closes (update:open false)', async () => {
+    wrapper.vm.isOpen = false;
+    await wrapper.vm.$nextTick();
     expect(wrapper.emitted('close')).toBeTruthy();
   });
 
