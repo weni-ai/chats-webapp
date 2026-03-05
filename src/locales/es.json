@@ -389,6 +389,7 @@
     "tags": "Etiquetas de chat",
     "discussions": "Discusiones",
     "waiting": "Esperando",
+    "waiting_tooltip": "Chats que deben ser atendidos",
     "waiting_assistance": "Esperando asistencia",
     "in_progress": "En curso",
     "sent_flows": "Flujos enviados",
@@ -579,7 +580,11 @@
     "end_all_chats": "Finalizar todos ({count} chats)",
     "back": "Volver",
     "optional_tags_title": "Las tags no son obligatorias para finalizar chats en el sector {sector}",
-    "optional_tags_description": "Si selecciona alguna tag a continuación, se aplicará al {count} chat y reemplazará cualquier tag existente. | Si selecciona alguna tag a continuación, se aplicará a los {count} chats y reemplazará cualquier tag existente."
+    "optional_tags_description": "Si selecciona alguna tag a continuación, se aplicará al {count} chat y reemplazará cualquier tag existente. | Si selecciona alguna tag a continuación, se aplicará a los {count} chats y reemplazará cualquier tag existente.",
+    "no_tags_in_sector": "No hay tags registradas en este sector para ser seleccionadas."
+  },
+  "close_chat": {
+    "confirm_end": "¿Está seguro de que desea finalizar este chat?"
   },
   "contact_info": {
     "title": "Sobre el contacto",
@@ -712,6 +717,8 @@
     "groups": "Grupos ({length})",
     "group_contacts": "{n} contacto | {n} contactos",
     "letter_group": "{letter} ({length})",
+    "letter_group_unnamed": "Sin nombre ({length})",
+    "unnamed_contact": "Contacto sin nombre",
     "add_contact": "Añadir contacto",
     "remove_selected_contacts": "Quitar contactos seleccionados",
     "add_new_contact": {
@@ -852,6 +859,9 @@
       "show_agent_status_count_timer": {
         "switch_active": "Mostrar temporizador de estado en pausas personalizadas del agente activo",
         "switch_inactive": "Mostrar temporizador de estado en pausas personalizadas del agente inactivo"
+      },
+      "show_waiting_rooms_count": {
+        "switch_label": "Mostrar el contador con el número de chats esperando soporte humano"
       }
     },
     "custom_sector": "Personalizar nuevo sector (recomendado)",
@@ -877,6 +887,15 @@
       "hint": "Las colas son grupos de atención dentro de un sector; podrás crear nuevas filas o editarlas cuando desees.",
       "queue_definitions": "Configuraciones de la cola",
       "delete_or_edit": "Eliminar o editar",
+      "limit_chats": {
+        "title": "Limite de chats esperando soporte",
+        "switch": {
+          "label": "Limite de chats",
+          "helper": "Cuando el límite es alcanzado, nuevos chats no serán creados.",
+          "input_label": "Máximo de chats esperando",
+          "input_placeholder": "Ejemplo: 50"
+        }
+      },
       "message": {
         "create": "Fila creada con éxito",
         "update": "Fila actualizada con éxito",
