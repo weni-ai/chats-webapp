@@ -131,6 +131,7 @@
 
 <script>
 import isMobile from 'is-mobile';
+import moment from 'moment';
 
 import History from '@/services/api/resources/chats/history';
 
@@ -167,7 +168,10 @@ export default {
       contact: '',
       sector: [],
       tag: [],
-      date: null,
+      date: {
+        start: moment().subtract(1, 'week').format('YYYY-MM-DD'),
+        end: moment().format('YYYY-MM-DD'),
+      },
     },
   }),
 
