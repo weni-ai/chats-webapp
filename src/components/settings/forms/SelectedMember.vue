@@ -1,6 +1,9 @@
 <template>
   <section class="selected-member">
-    <section class="selected-member__role">
+    <section
+      v-if="roleName"
+      class="selected-member__role"
+    >
       <p class="selected-member__role-name">
         {{ roleName }}
       </p>
