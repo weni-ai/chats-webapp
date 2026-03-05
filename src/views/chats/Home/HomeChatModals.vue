@@ -14,7 +14,8 @@
       @close-modal="closeModal('getChat')"
     />
 
-    <UnnnicModal
+    <!-- TODO: It will be prioritized and replaced by a new modal; currently, it is not falling into any viewing cycle. -->
+    <!-- <UnnnicModal
       data-testid="modal-assume-chat"
       :text="$t('chats.your_chat_assumed', { contact: assumedChatContactName })"
       :description="
@@ -26,7 +27,7 @@
       scheme="feedback-green"
       :showModal="modalsShowing.assumedChat"
       @close="closeModal('assumedChat')"
-    />
+    /> -->
 
     <ModalCloseChat
       v-if="modalsShowing.closeChat"
