@@ -112,7 +112,7 @@ export default {
   },
 
   props: {
-    value: {
+    modelValue: {
       type: Object,
       default: null,
     },
@@ -121,7 +121,7 @@ export default {
       default: false,
     },
   },
-  emits: ['input'],
+  emits: ['update:modelValue'],
 
   data() {
     return {
@@ -466,7 +466,7 @@ export default {
         dateEnd = filterDate?.end;
       }
 
-      this.$emit('input', {
+      this.$emit('update:modelValue', {
         contact: filterContact,
         sector: filterSector,
         tag: filterTag,

@@ -6,15 +6,17 @@
   >
     <ClosedChatsRoomsTableFilters
       v-show="!isMobile"
+      v-model="filters"
       data-testid="desktop-filters"
-      @input="filters = $event"
     />
 
     <ModalClosedChatsFilters
-      v-if="isMobile && showModalFilters"
-      v-model="filters"
+      v-if="isMobile"
+      v-model="showModalFilters"
+      :filters="filters"
       data-testid="mobile-filters-modal"
       @close="handleShowModalFilters"
+      @input-filters="filters = $event"
     />
 
     <UnnnicDataTable
