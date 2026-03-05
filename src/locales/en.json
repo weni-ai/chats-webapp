@@ -393,6 +393,7 @@
     "tags": "Chat tags",
     "discussions": "Discussions",
     "waiting": "Waiting",
+    "waiting_tooltip": "Chats to be handled",
     "waiting_assistance": "Waiting for assistance",
     "in_progress": "Ongoing",
     "sent_flows": "Sent flows",
@@ -583,7 +584,11 @@
     "end_all_chats": "End all ({count} chats)",
     "back": "Back",
     "optional_tags_title": "Tags are not required to end chats in the {sector} sector",
-    "optional_tags_description": "If you select any tag below, it will be applied to the {count} chat and will replace any existing tags. | If you select any tag below, it will be applied to the {count} chats and will replace any existing tags."
+    "optional_tags_description": "If you select any tag below, it will be applied to the {count} chat and will replace any existing tags. | If you select any tag below, it will be applied to the {count} chats and will replace any existing tags.",
+    "no_tags_in_sector": "There are no tags registered in this sector to be selected."
+  },
+  "close_chat": {
+    "confirm_end": "Are you sure you want to end this chat?"
   },
   "contact_info": {
     "title": "About the contact",
@@ -716,6 +721,8 @@
     "groups": "Groups ({length})",
     "group_contacts": "{n} contact | {n} contacts",
     "letter_group": "{letter} ({length})",
+    "letter_group_unnamed": "Unnamed ({length})",
+    "unnamed_contact": "Unnamed contact",
     "add_contact": "Add contact",
     "remove_selected_contacts": "Remove selected contacts",
     "add_new_contact": {
@@ -840,7 +847,7 @@
         "switch_active": "Block chat transfer to offline agents",
         "switch_inactive": "Block chat transfer to offline agents"
       },
-      "bulk_close": { 
+      "bulk_close": {
         "switch_active": "End chats in bulk",
         "switch_inactive": "End chats in bulk"
       },
@@ -860,6 +867,9 @@
       "show_agent_status_count_timer": {
         "switch_active": "Show status timer for custom agent breaks",
         "switch_inactive": "Show status timer for custom agent breaks"
+      },
+      "show_waiting_rooms_count": {
+        "switch_label": "Show the counter with the number of chats waiting for human support"
       }
     },
     "custom_sector": "Customize new sector (recommended)",
@@ -885,6 +895,15 @@
       "hint": "Queues are support groups within the sector; you can create new queues or edit them whenever you want.",
       "queue_definitions": "Queue settings",
       "delete_or_edit": "Delete or edit",
+      "limit_chats": {
+        "title": "Limit of chats awaiting support",
+        "switch": {
+          "label": "Limit chats",
+          "helper": "When the limit is reached, new chats won’t be created.",
+          "input_label": "Maximum waiting chats",
+          "input_placeholder": "Example: 50"
+        }
+      },
       "message": {
         "create": "Queue successfully created",
         "update": "Queue successfully updated",

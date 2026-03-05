@@ -16,12 +16,12 @@ exports[`FooterButton > Snapshot > should match snapshot 1`] = `
     
     
     <div
-      class="unnnic-tooltip-trigger unnnic-tooltip"
+      class="unnnic-tooltip-trigger unnnic-tooltip tooltip"
       data-grace-area-trigger=""
       data-state="closed"
       data-testid="tooltip-trigger"
       data-v-03fa3548=""
-      data-v-2fa58964=""
+      data-v-2e8bb3f0=""
     >
       
       
@@ -39,56 +39,6 @@ exports[`FooterButton > Snapshot > should match snapshot 1`] = `
         loading="false"
         size="large"
         text="transfer"
-        type="secondary"
-      />
-      
-      
-      
-    </div>
-    <div
-      data-v-2fa58964=""
-      defer="false"
-      disabled="false"
-      forcemount="false"
-    >
-      
-      
-      <!---->
-      
-      
-    </div>
-    
-    
-    
-    
-    
-    
-    
-    
-    <div
-      class="unnnic-tooltip-trigger unnnic-tooltip"
-      data-grace-area-trigger=""
-      data-state="closed"
-      data-testid="tooltip-trigger"
-      data-v-03fa3548=""
-      data-v-2fa58964=""
-    >
-      
-      
-      
-      <unnnic-button-stub
-        class="chats-layout-footer-button__button chats-layout-footer-button__button--end"
-        data-testid="end-button"
-        data-v-944d9ccc=""
-        disabled="false"
-        float="false"
-        iconcenter=""
-        iconleft=""
-        iconright=""
-        iconsfilled="false"
-        loading="false"
-        size="large"
-        text="end"
         type="primary"
       />
       
@@ -96,7 +46,7 @@ exports[`FooterButton > Snapshot > should match snapshot 1`] = `
       
     </div>
     <div
-      data-v-2fa58964=""
+      data-v-2e8bb3f0=""
       defer="false"
       disabled="false"
       forcemount="false"
@@ -111,6 +61,7 @@ exports[`FooterButton > Snapshot > should match snapshot 1`] = `
     
     
     
+    <!--v-if-->
     <!--v-if-->
     <!--v-if-->
   </section>

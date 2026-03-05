@@ -29,12 +29,6 @@
             @update:model-value="chooseAgent"
           />
         </div>
-        <!-- <unnnic-button
-          type="secondary"
-          :text="$t('agents.add.button')"
-          :disabled="!selectAgent"
-          @click="emitSelectedAgent"
-        /> -->
       </section>
     </section>
 
