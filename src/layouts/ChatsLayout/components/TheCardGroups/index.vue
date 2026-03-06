@@ -62,17 +62,16 @@
         <TabChip
           v-for="tab in roomsTabs"
           :key="tab.key"
+          class="tab-chip"
+          :hideCount="
+            tab.key === 'waiting' &&
+            project.config?.can_see_waiting_rooms_count === false
+          "
           :label="tab.label"
           :count="
             tab.key === 'discussions' ? discussionsCount : roomsCount[tab.key]
           "
-          :showDot="
-            tab.key === 'ongoing'
-              ? showOngoingDot
-              : tab.key === 'discussions'
-                ? showDiscussionsDot
-                : false
-          "
+          :showDot="getShowDotByTab(tab.key)"
           :active="activeTab === tab.key"
           @click="activeTab = tab.key"
         />
@@ -268,6 +267,13 @@ export default {
       'discussionsCount',
       'showDiscussionsDot',
     ]),
+
+    showWaitingDot() {
+      return (
+        this.rooms_queue?.length > 0 &&
+        this.project.config?.can_see_waiting_rooms_count === false
+      );
+    },
 
     roomsTabs() {
       const tabs = [
@@ -498,6 +504,16 @@ export default {
       setActiveDiscussion: 'setActiveDiscussion',
       getAllDiscussion: 'getAll',
     }),
+    getShowDotByTab(tab) {
+      const dotsMap = {
+        ongoing: this.showOngoingDot,
+        waiting: this.showWaitingDot,
+        discussions: this.showDiscussionsDot,
+        flow_start: false,
+      };
+
+      return dotsMap[tab] || false;
+    },
     updateRoomsCount(newSize, oldSize, key) {
       if (newSize === oldSize || !this.initialLoaded || this.isLoadingRooms)
         return;
@@ -752,6 +768,10 @@ export default {
       gap: $unnnic-spacing-xs;
       padding-left: $unnnic-spacing-xs;
       padding-right: $unnnic-spacing-xs;
+
+      :deep(.tab-chip__chip) {
+        height: $unnnic-space-8;
+      }
 
       &--hide-order-by {
         margin-bottom: $unnnic-space-4;

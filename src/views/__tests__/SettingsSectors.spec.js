@@ -106,25 +106,7 @@ const createWrapper = (initialState = {}) => {
           template: '<span></span>',
           props: ['icon', 'size', 'scheme'],
         },
-        UnnnicModalNext: {
-          template:
-            '<div data-testid="modal-delete-sector" v-if="show"><button @click="$emit(\'click-action-primary\')">Confirm</button><button @click="$emit(\'click-action-secondary\')">Cancel</button></div>',
-          props: [
-            'type',
-            'icon',
-            'scheme',
-            'title',
-            'description',
-            'validate',
-            'validatePlaceholder',
-            'validateLabel',
-            'actionPrimaryLabel',
-            'actionSecondaryLabel',
-          ],
-          data() {
-            return { show: true };
-          },
-        },
+        ModalConfirmDelete: true,
       },
       mocks: {
         $router: mockRouter,
