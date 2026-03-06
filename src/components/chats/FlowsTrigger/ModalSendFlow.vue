@@ -1,26 +1,33 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
-  <UnnnicModal
-    :text="$t('flows_trigger.send')"
+  <UnnnicDialog
+    v-model:open="isOpen"
     class="modal-send-flow"
     data-testid="modal-send-flow"
-    @close="$emit('close')"
   >
-    <SelectFlow
-      v-model="selectedFlow"
-      data-testid="select-flow"
-    />
-
-    <template #options>
-      <SendFlowButton
-        class="modal-send-flow__handler"
-        :contacts="contacts"
-        :selectedFlow="selectedFlow"
-        data-testid="send-flow-button"
-        @send-flow-finished="finishSendFlow"
-      />
-    </template>
-  </UnnnicModal>
+    <UnnnicDialogContent>
+      <UnnnicDialogHeader>
+        <UnnnicDialogTitle>
+          {{ $t('flows_trigger.send') }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section class="modal-send-flow__content">
+        <SelectFlow
+          v-model="selectedFlow"
+          data-testid="select-flow"
+        />
+      </section>
+      <UnnnicDialogFooter>
+        <SendFlowButton
+          class="modal-send-flow__handler"
+          :contacts="contacts"
+          :selectedFlow="selectedFlow"
+          data-testid="send-flow-button"
+          @send-flow-finished="finishSendFlow"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script>
@@ -47,8 +54,15 @@ export default {
 
   data() {
     return {
+      isOpen: true,
       selectedFlow: '',
     };
+  },
+
+  watch: {
+    isOpen(value) {
+      if (!value) this.$emit('close');
+    },
   },
 
   methods: {
@@ -71,17 +85,10 @@ export default {
 
 <style lang="scss" scoped>
 .modal-send-flow {
-  :deep(.unnnic-modal-container) {
-    .unnnic-modal-container-background-body {
-      &-description {
-        padding: 0;
-
-        &-container {
-          padding-bottom: 0;
-        }
-      }
-    }
+  &__content {
+    padding: $unnnic-space-6;
   }
+
   :deep(.unnnic-select-smart) .dropdown-data {
     // !important at position is needed here because the
     // unnnicSelectSmart base already uses !important
