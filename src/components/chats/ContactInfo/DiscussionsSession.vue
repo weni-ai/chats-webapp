@@ -25,13 +25,21 @@
       </li>
     </ul>
 
-    <UnnnicModal
-      v-if="showDiscussionClosedModal"
-      :text="$t('discussions.history')"
-      @close="handleDiscussionClosedModal"
+    <UnnnicDialog
+      v-model:open="showDiscussionClosedModal"
+      class="contact-info__discussions-dialog"
     >
-      <DiscussionMessages />
-    </UnnnicModal>
+      <UnnnicDialogContent size="large">
+        <UnnnicDialogHeader>
+          <UnnnicDialogTitle>
+            {{ $t('discussions.history') }}
+          </UnnnicDialogTitle>
+        </UnnnicDialogHeader>
+        <section class="contact-info__discussions-dialog__body">
+          <DiscussionMessages />
+        </section>
+      </UnnnicDialogContent>
+    </UnnnicDialog>
   </section>
 </template>
 <script>
@@ -147,28 +155,25 @@ export default {
     }
   }
 
-  :deep(.unnnic-modal) .unnnic-modal-container-background {
-    width: 66%; // -> 8 / 12
-    height: 80%;
-
-    display: grid;
-    grid-template-rows: auto 1fr;
-
-    &-body-description {
+  &-dialog {
+    &__body {
+      display: grid;
+      grid-template-rows: 1fr;
+      padding: $unnnic-spacing-md;
+      padding-top: 0;
       text-align: start;
-
-      &-container {
-        padding: $unnnic-spacing-md;
-        padding-top: 0;
-      }
+      min-height: 0;
+      overflow: auto;
     }
   }
 }
 
 .contact-info__discussions--mobile {
-  :deep(.unnnic-modal) .unnnic-modal-container-background {
-    width: 100%;
-    height: 90%;
+  :deep(.contact-info__discussions-dialog) {
+    [data-unnnic-dialog-content] {
+      width: 100%;
+      max-height: 90%;
+    }
   }
 }
 </style>
