@@ -6,6 +6,7 @@ import isMobile from 'is-mobile';
 
 import RoomsTable from '../RoomsTable.vue';
 import History from '@/services/api/resources/chats/history';
+import moment from 'moment';
 
 vi.mock('is-mobile', () => ({
   default: vi.fn(),
@@ -278,7 +279,7 @@ describe('RoomsTable.vue', () => {
         tag: [{ value: 'tag1', label: 'Tag 1' }],
         date: { start: '2023-01-01', end: '2023-01-07' },
       };
-      await desktopFilters.vm.$emit('input', newFilters);
+      await desktopFilters.vm.$emit('update:modelValue', newFilters);
       expect(wrapper.vm.filters).toEqual(newFilters);
     });
 
@@ -560,7 +561,10 @@ describe('RoomsTable.vue', () => {
         contact: '',
         sector: [],
         tag: [],
-        date: null,
+        date: {
+          start: moment().subtract(1, 'week').format('YYYY-MM-DD'),
+          end: moment().format('YYYY-MM-DD'),
+        },
       });
     });
   });

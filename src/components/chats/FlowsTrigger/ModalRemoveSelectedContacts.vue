@@ -1,35 +1,41 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
-  <UnnnicModal
-    ref="refModalRemoveSelectedContacts"
-    :text="$t('flows_trigger.remove_selected_contacts')"
+  <UnnnicDialog
+    v-model:open="isOpen"
     class="modal-remove-selected-contacts"
-    :showModal="contacts.length > 0"
     data-testid="modal-remove-selected-contacts"
-    @close="$emit('close')"
   >
-    <SelectedContactsSection
-      :contacts="newContacts"
-      data-testid="selected-contacts-section"
-      @remove-contact="removeModalContact($event)"
-    />
-    <template #options>
-      <UnnnicButton
-        :text="$t('cancel')"
-        type="secondary"
-        size="large"
-        data-testid="cancel-button"
-        @click="closeModalInternally"
-      />
-      <UnnnicButton
-        :text="$t('confirm')"
-        type="primary"
-        size="large"
-        data-testid="confirm-button"
-        @click="emitRemoveContacts"
-      />
-    </template>
-  </UnnnicModal>
+    <UnnnicDialogContent>
+      <UnnnicDialogHeader>
+        <UnnnicDialogTitle>
+          {{ $t('flows_trigger.remove_selected_contacts') }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section class="modal-remove-selected-contacts__content">
+        <SelectedContactsSection
+          :contacts="newContacts"
+          data-testid="selected-contacts-section"
+          @remove-contact="removeModalContact($event)"
+        />
+      </section>
+      <UnnnicDialogFooter>
+        <UnnnicButton
+          :text="$t('cancel')"
+          type="secondary"
+          size="large"
+          data-testid="cancel-button"
+          @click="closeModalInternally"
+        />
+        <UnnnicButton
+          :text="$t('confirm')"
+          type="primary"
+          size="large"
+          data-testid="confirm-button"
+          @click="emitRemoveContacts"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script>
@@ -57,6 +63,14 @@ export default {
   },
 
   computed: {
+    isOpen: {
+      get() {
+        return this.contacts.length > 0;
+      },
+      set(value) {
+        if (!value) this.$emit('close');
+      },
+    },
     newContacts() {
       const uuidsToRemove = this.contactsToRemove.map(
         (contact) => contact.uuid,
@@ -70,7 +84,6 @@ export default {
 
   methods: {
     closeModalInternally() {
-      this.$refs.refModalRemoveSelectedContacts?.onCloseClick();
       this.$emit('close');
     },
 
@@ -88,16 +101,8 @@ export default {
 
 <style lang="scss" scoped>
 .modal-remove-selected-contacts {
-  :deep(.unnnic-modal-container) {
-    .unnnic-modal-container-background-body {
-      &-description {
-        padding: 0;
-
-        &-container {
-          padding-bottom: 0;
-        }
-      }
-    }
+  &__content {
+    padding: $unnnic-space-6;
   }
 }
 </style>

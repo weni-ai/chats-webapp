@@ -37,29 +37,36 @@
         />
       </section>
 
-      <UnnnicModal
-        v-if="isEndDiscussionModalOpen"
-        :text="$t('discussions.close.title')"
-        :description="$t('discussions.close.description')"
-        modalIcon="error"
-        scheme="feedback-yellow"
+      <UnnnicDialog
+        v-model:open="isEndDiscussionModalOpen"
         class="discussion-sidebar__end-modal"
-        @close="handleEndDiscussionModal"
       >
-        <template #options>
-          <UnnnicButton
-            :text="$t('cancel')"
-            type="tertiary"
-            @click="handleEndDiscussionModal"
-          />
-          <UnnnicButton
-            :text="$t('end')"
-            type="primary"
-            :loading="isEndDiscussionLoading"
-            @click="endDiscussion"
-          />
-        </template>
-      </UnnnicModal>
+        <UnnnicDialogContent size="small">
+          <UnnnicDialogHeader type="attention">
+            <UnnnicDialogTitle>
+              {{ $t('discussions.close.title') }}
+            </UnnnicDialogTitle>
+          </UnnnicDialogHeader>
+          <section class="discussion-sidebar__end-modal__content">
+            <p class="discussion-sidebar__end-modal__description">
+              {{ $t('discussions.close.description') }}
+            </p>
+          </section>
+          <UnnnicDialogFooter>
+            <UnnnicButton
+              :text="$t('cancel')"
+              type="tertiary"
+              @click="handleEndDiscussionModal"
+            />
+            <UnnnicButton
+              :text="$t('end')"
+              type="attention"
+              :loading="isEndDiscussionLoading"
+              @click="endDiscussion"
+            />
+          </UnnnicDialogFooter>
+        </UnnnicDialogContent>
+      </UnnnicDialog>
     </AsideSlotTemplate>
   </div>
 </template>
@@ -196,14 +203,15 @@ export default {
   }
 
   &__end-modal {
-    :deep(.unnnic-modal-container-background-button) {
-      padding-top: 0;
+    &__content {
+      padding: $unnnic-space-6;
+    }
+
+    &__description {
+      color: $unnnic-color-neutral-dark;
+      font: $unnnic-font-body;
+      margin: 0;
     }
   }
-
-  // .aside-slot-template__sections {
-  //   display: flex;
-  //   width: 100%;
-  // }
 }
 </style>

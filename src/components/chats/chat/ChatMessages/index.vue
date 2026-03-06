@@ -723,6 +723,7 @@ export default {
     },
 
     handleSeenRoomMessages() {
+      if (!this.room) return;
       const newMessages =
         this.newMessagesByRoom[this.room.uuid]?.messages || [];
 

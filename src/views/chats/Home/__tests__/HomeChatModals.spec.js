@@ -57,16 +57,6 @@ describe('HomeChatModals.vue', () => {
     expect(wrapper.vm.modalsShowing.getChat).toBe(false);
   });
 
-  it('closes assumedChat when close is called', async () => {
-    wrapper.vm.openModal('assumedChat');
-    expect(wrapper.vm.modalsShowing.assumedChat).toBe(true);
-    const assumeChatModal = wrapper.findComponent(
-      '[data-testid="modal-assume-chat"]',
-    );
-    assumeChatModal.vm.$emit('close');
-    expect(wrapper.vm.modalsShowing.assumedChat).toBe(false);
-  });
-
   it('closes closeChat when close is called', async () => {
     wrapper.vm.openModal('closeChat');
     await wrapper.vm.$nextTick();

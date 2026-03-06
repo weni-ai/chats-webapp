@@ -14,33 +14,59 @@ vi.mock('@/services/api/resources/chats/flowsTrigger', () => ({
   },
 }));
 
+const dialogStubs = {
+  UnnnicDialog: {
+    name: 'UnnnicDialogStub',
+    props: ['open'],
+    template: `
+      <div v-if="open" v-bind="$attrs">
+        <slot />
+      </div>
+    `,
+  },
+  UnnnicDialogContent: {
+    name: 'UnnnicDialogContentStub',
+    props: ['size'],
+    template: '<div><slot /></div>',
+  },
+  UnnnicDialogHeader: {
+    name: 'UnnnicDialogHeaderStub',
+    template: '<div><slot /></div>',
+  },
+  UnnnicDialogTitle: {
+    name: 'UnnnicDialogTitleStub',
+    template: '<div><slot /></div>',
+  },
+  UnnnicDialogFooter: {
+    name: 'UnnnicDialogFooterStub',
+    template: '<div><slot /></div>',
+  },
+};
+
 describe('ModalSendFlow', () => {
   let wrapper;
 
   beforeEach(() => {
     wrapper = mount(ModalSendFlow, {
       props: { contacts: [{ uuid: '1', name: 'Contact 1' }] },
+      global: { stubs: dialogStubs },
     });
     vi.clearAllMocks();
   });
 
   it('renders correctly', () => {
-    expect(
-      wrapper.findComponent('[data-testid="modal-send-flow"]').exists(),
-    ).toBe(true);
+    expect(wrapper.find('[data-testid="modal-send-flow"]').exists()).toBe(true);
 
-    expect(wrapper.findComponent('[data-testid="select-flow"]').exists()).toBe(
+    expect(wrapper.find('[data-testid="select-flow"]').exists()).toBe(true);
+
+    expect(wrapper.find('[data-testid="send-flow-button"]').exists()).toBe(
       true,
     );
-
-    expect(
-      wrapper.findComponent('[data-testid="send-flow-button"]').exists(),
-    ).toBe(true);
   });
 
-  it('emits close event when modal is closed', async () => {
-    const modal = wrapper.findComponent('[data-testid="modal-send-flow"]');
-    await modal.vm.$emit('close');
+  it('emits close event when dialog closes (update:open false)', async () => {
+    wrapper.vm.isOpen = false;
+    await wrapper.vm.$nextTick();
     expect(wrapper.emitted('close')).toHaveLength(1);
   });
 
