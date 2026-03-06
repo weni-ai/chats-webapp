@@ -5,35 +5,58 @@ import ModalRemoveSelectedContacts from '../ModalRemoveSelectedContacts.vue';
 
 const contactsMock = [{ uuid: '1', name: 'John Doe' }];
 
+const dialogStubs = {
+  UnnnicDialog: {
+    name: 'UnnnicDialogStub',
+    props: ['open'],
+    template: `
+      <div v-if="open" v-bind="$attrs">
+        <slot />
+      </div>
+    `,
+  },
+  UnnnicDialogContent: {
+    name: 'UnnnicDialogContentStub',
+    props: ['size'],
+    template: '<div><slot /></div>',
+  },
+  UnnnicDialogHeader: {
+    name: 'UnnnicDialogHeaderStub',
+    template: '<div><slot /></div>',
+  },
+  UnnnicDialogTitle: {
+    name: 'UnnnicDialogTitleStub',
+    template: '<div><slot /></div>',
+  },
+  UnnnicDialogFooter: {
+    name: 'UnnnicDialogFooterStub',
+    template: '<div><slot /></div>',
+  },
+};
+
 describe('ModalRemoveSelectedContacts', () => {
   let wrapper;
 
   beforeEach(() => {
     wrapper = mount(ModalRemoveSelectedContacts, {
       props: { contacts: contactsMock },
+      global: { stubs: dialogStubs },
     });
   });
 
   it('renders correctly when contacts are provided', () => {
+    // Com stubs do dialog, o conteúdo renderiza no wrapper (sem Teleport)
     expect(
-      wrapper
-        .findComponent('[data-testid="modal-remove-selected-contacts"]')
-        .exists(),
+      wrapper.find('[data-testid="modal-remove-selected-contacts"]').exists(),
     ).toBe(true);
 
     expect(
-      wrapper
-        .findComponent('[data-testid="selected-contacts-section"]')
-        .exists(),
+      wrapper.find('[data-testid="selected-contacts-section"]').exists(),
     ).toBe(true);
 
-    expect(
-      wrapper.findComponent('[data-testid="confirm-button"]').exists(),
-    ).toBe(true);
+    expect(wrapper.find('[data-testid="confirm-button"]').exists()).toBe(true);
 
-    expect(
-      wrapper.findComponent('[data-testid="cancel-button"]').exists(),
-    ).toBe(true);
+    expect(wrapper.find('[data-testid="cancel-button"]').exists()).toBe(true);
   });
 
   it('emits close event when cancel button is clicked', async () => {
