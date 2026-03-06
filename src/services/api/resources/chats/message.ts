@@ -164,7 +164,7 @@ export default {
         replied_message_id: repliedMessageId,
       },
       {
-        onUploadProgress: (event: any) => {
+        onUploadProgress: (event: ProgressEvent) => {
           const progress = event.loaded / event.total;
           updateLoadingFiles?.(msg.uuid, progress);
         },
