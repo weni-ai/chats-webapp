@@ -3,8 +3,37 @@ import { getProject } from '@/utils/config';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { getURLParams } from '@/utils/requests';
 
+import type { PaginatedResponse, Message, Media } from './types';
+
+interface SendRoomMessageParams {
+  text: string;
+  user_email?: string;
+  seen?: boolean;
+  repliedMessageId?: string;
+}
+
+interface SendRoomMediaParams {
+  user_email: string;
+  media: File;
+  updateLoadingFiles?: (_uuid: string, _progress: number) => void;
+  repliedMessageId?: string;
+}
+
+interface SendRoomMediaResponse {
+  message_response: Message;
+  media_response: Media;
+}
+
+interface SendDiscussionMediaParams {
+  media: File;
+  updateLoadingFiles?: (_uuid: string, _progress: number) => void;
+}
+
 export default {
-  async getByRoom({ nextReq }, roomId) {
+  async getByRoom(
+    { nextReq }: { nextReq: string | null },
+    roomId: string,
+  ): Promise<PaginatedResponse<Message>> {
     const endpoint = '/msg/';
     const paramsNextReq = getURLParams({ URL: nextReq, endpoint });
     const params = {
@@ -17,12 +46,13 @@ export default {
 
     const featureFlagStore = useFeatureFlag();
 
-    const useV2 =
-      featureFlagStore.featureFlags?.active_features?.includes(
-        'weniChatsV2Message',
-      );
+    const featureFlags = featureFlagStore.featureFlags as {
+      active_features?: string[];
+    };
 
-    const config = useV2
+    const useV2 = featureFlags?.active_features?.includes('weniChatsV2Message');
+
+    const config: Record<string, any> = useV2
       ? {
           baseURL: http.defaults.baseURL.replace('/v1', '/v2'),
         }
@@ -37,7 +67,12 @@ export default {
     return response.data;
   },
 
-  async getByDiscussion({ nextReq }, discussionUuid, offset, limit) {
+  async getByDiscussion(
+    { nextReq }: { nextReq: string | null },
+    discussionUuid: string,
+    offset?: number,
+    limit?: number,
+  ): Promise<PaginatedResponse<Message>> {
     const endpoint = `discussion/${discussionUuid}/list_messages/`;
     const paramsNextReq = getURLParams({ URL: nextReq, endpoint });
     const params = {
@@ -59,11 +94,11 @@ export default {
   },
 
   async getByContact(
-    contactUuid,
-    offset,
-    limit,
-    { onlyClosedRooms = true } = {},
-  ) {
+    contactUuid: string,
+    offset: number,
+    limit: number,
+    { onlyClosedRooms = true }: { onlyClosedRooms?: boolean } = {},
+  ): Promise<PaginatedResponse<Message>> {
     const response = await http.get('/msg/', {
       params: {
         ordering: '-created_on',
@@ -78,7 +113,10 @@ export default {
     return response.data;
   },
 
-  async sendRoomMessage(roomId, { text, user_email, seen, repliedMessageId }) {
+  async sendRoomMessage(
+    roomId: string,
+    { text, user_email, seen, repliedMessageId }: SendRoomMessageParams,
+  ): Promise<Message> {
     const response = await http.post('/msg/', {
       room: roomId,
       text,
@@ -89,7 +127,10 @@ export default {
     return response.data;
   },
 
-  async sendDiscussionMessage(discussionUuid, { text }) {
+  async sendDiscussionMessage(
+    discussionUuid: string,
+    { text }: { text: string },
+  ): Promise<Message> {
     const response = await http.post(
       `/discussion/${discussionUuid}/send_messages/`,
       {
@@ -100,9 +141,14 @@ export default {
   },
 
   async sendRoomMedia(
-    roomId,
-    { user_email, media, updateLoadingFiles, repliedMessageId },
-  ) {
+    roomId: string,
+    {
+      user_email,
+      media,
+      updateLoadingFiles,
+      repliedMessageId,
+    }: SendRoomMediaParams,
+  ): Promise<SendRoomMediaResponse> {
     const msg = await this.sendRoomMessage(roomId, {
       text: '',
       user_email,
@@ -118,7 +164,7 @@ export default {
         replied_message_id: repliedMessageId,
       },
       {
-        onUploadProgress: (event) => {
+        onUploadProgress: (event: ProgressEvent) => {
           const progress = event.loaded / event.total;
           updateLoadingFiles?.(msg.uuid, progress);
         },
@@ -128,7 +174,10 @@ export default {
     return { message_response: msg, media_response: response.data };
   },
 
-  async sendDiscussionMedia(discussionUuid, { media, updateLoadingFiles }) {
+  async sendDiscussionMedia(
+    discussionUuid: string,
+    { media, updateLoadingFiles }: SendDiscussionMediaParams,
+  ): Promise<Media | undefined> {
     const mediaUuid = media.name + Date.now();
 
     updateLoadingFiles?.(mediaUuid, 0);
@@ -140,7 +189,7 @@ export default {
         media_file: media,
       },
       {
-        onUploadProgress: (event) => {
+        onUploadProgress: (event: ProgressEvent) => {
           const progress = event.loaded / event.total;
           updateLoadingFiles?.(mediaUuid, progress);
         },
