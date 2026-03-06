@@ -189,7 +189,7 @@ export default {
         media_file: media,
       },
       {
-        onUploadProgress: (event: any) => {
+        onUploadProgress: (event: ProgressEvent) => {
           const progress = event.loaded / event.total;
           updateLoadingFiles?.(mediaUuid, progress);
         },
