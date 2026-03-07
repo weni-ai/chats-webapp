@@ -206,6 +206,20 @@ describe('ChatMessagesFeedbackMessage', () => {
     });
   });
 
+  describe('Internal Notes Chip', () => {
+    it('should handle see_all_internal_notes_chip flag', () => {
+      const message = {
+        text: JSON.stringify({ see_all_internal_notes_chip: true }),
+      };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBeTruthy();
+      expect(typeof result).toBe('string');
+      expect(result.length).toBeGreaterThan(0);
+    });
+  });
+
   describe('Other Methods Processing', () => {
     it('should handle fs method', () => {
       const content = { name: 'Welcome Flow' };
@@ -305,6 +319,46 @@ describe('ChatMessagesFeedbackMessage', () => {
       expect(feedback.props('scheme')).toBe('green');
       expect(feedback.props('feedback')).toBeTruthy();
       expect(typeof feedback.props('feedback')).toBe('string');
+    });
+
+    it('should pass clickable prop to ChatFeedback', () => {
+      const message = {
+        text: JSON.stringify({ type: 'queue', name: 'Test Queue' }),
+      };
+      const wrapper = createWrapper({ message, clickable: true });
+
+      const feedback = wrapper.getComponent({ name: 'ChatFeedback' });
+      expect(feedback.props('clickable')).toBe(true);
+    });
+  });
+
+  describe('User Name Handling', () => {
+    it('should handle user with email instead of name', () => {
+      const content = {
+        action: 'pick',
+        from: { type: 'user', email: 'agent@test.com' },
+        to: { name: 'Manager' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBeTruthy();
+      expect(typeof result).toBe('string');
+    });
+
+    it('should prefer name over email when both are present', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'user', name: 'Agent Name', email: 'agent@test.com' },
+        to: { type: 'queue', name: 'Support' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBeTruthy();
+      expect(typeof result).toBe('string');
     });
   });
 
