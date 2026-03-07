@@ -7,7 +7,7 @@
     >
       <img
         :src="weniChatsLogo"
-        alt="Weni Chats"
+        alt="Weni Live Desk"
       />
     </header>
 
