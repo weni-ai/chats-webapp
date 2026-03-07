@@ -450,6 +450,180 @@ describe('ChatSummary', () => {
     });
   });
 
+  describe('Archived Messages', () => {
+    it('should not display archived section when isArchived is false', () => {
+      wrapper = createWrapper({
+        isArchived: false,
+        archivedUrl: 'https://example.com/archive.zip',
+      });
+
+      const archivedSection = wrapper.find(
+        '[data-testid="chat-summary-archived"]',
+      );
+      expect(archivedSection.exists()).toBe(false);
+    });
+
+    it('should not display archived section when archivedUrl is empty', () => {
+      wrapper = createWrapper({
+        isArchived: true,
+        archivedUrl: '',
+      });
+
+      const archivedSection = wrapper.find(
+        '[data-testid="chat-summary-archived"]',
+      );
+      expect(archivedSection.exists()).toBe(false);
+    });
+
+    it('should display archived section when both isArchived and archivedUrl are provided', () => {
+      wrapper = createWrapper({
+        isArchived: true,
+        archivedUrl: 'https://example.com/archive.zip',
+      });
+
+      const archivedSection = wrapper.find(
+        '[data-testid="chat-summary-archived"]',
+      );
+      expect(archivedSection.exists()).toBe(true);
+    });
+
+    it('should call handleDownload when download button is clicked', async () => {
+      const windowOpenSpy = vi
+        .spyOn(window, 'open')
+        .mockImplementation(() => {});
+      const archivedUrl = 'https://example.com/archive.zip';
+
+      wrapper = createWrapper({
+        isArchived: true,
+        archivedUrl,
+      });
+
+      const archivedSection = wrapper.find(
+        '[data-testid="chat-summary-archived"]',
+      );
+      const downloadButton = archivedSection.findComponent({
+        name: 'UnnnicButton',
+      });
+
+      await downloadButton.vm.$emit('click');
+
+      expect(windowOpenSpy).toHaveBeenCalledWith(archivedUrl, '_blank');
+
+      windowOpenSpy.mockRestore();
+    });
+
+    it('should open archived URL in new tab when handleDownload is called', () => {
+      const windowOpenSpy = vi
+        .spyOn(window, 'open')
+        .mockImplementation(() => {});
+      const archivedUrl = 'https://example.com/archive.zip';
+
+      wrapper = createWrapper({
+        isArchived: true,
+        archivedUrl,
+      });
+
+      wrapper.vm.handleDownload();
+
+      expect(windowOpenSpy).toHaveBeenCalledWith(archivedUrl, '_blank');
+
+      windowOpenSpy.mockRestore();
+    });
+
+    it('should not open URL when archivedUrl is empty in handleDownload', () => {
+      const windowOpenSpy = vi
+        .spyOn(window, 'open')
+        .mockImplementation(() => {});
+
+      wrapper = createWrapper({
+        isArchived: true,
+        archivedUrl: '',
+      });
+
+      wrapper.vm.handleDownload();
+
+      expect(windowOpenSpy).not.toHaveBeenCalled();
+
+      windowOpenSpy.mockRestore();
+    });
+
+    it('should show error alert when download fails', () => {
+      const windowOpenSpy = vi.spyOn(window, 'open').mockImplementation(() => {
+        throw new Error('Network error');
+      });
+
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      const mockAlert = vi.fn();
+      const mockT = vi.fn((key) => {
+        if (key === 'chats.summary.archived.download_error') {
+          return 'Error downloading messages. Please try again.';
+        }
+        return key;
+      });
+
+      wrapper = createWrapper(
+        {
+          isArchived: true,
+          archivedUrl: 'https://example.com/archive.zip',
+        },
+        {
+          global: {
+            plugins: [
+              createTestingPinia({
+                createSpy: vi.fn,
+                initialState: {
+                  rooms: {
+                    activeRoom: {
+                      uuid: 'test-uuid',
+                      ended_at: null,
+                      user: { email: 'test@example.com' },
+                    },
+                    activeRoomSummary: {
+                      status: 'DONE',
+                      feedback: { liked: null },
+                    },
+                  },
+                  profile: {
+                    me: { email: 'test@example.com' },
+                  },
+                },
+              }),
+            ],
+            mocks: {
+              $t: mockT,
+            },
+          },
+        },
+      );
+
+      wrapper.vm.$unnnic = {
+        call: {
+          alert: mockAlert,
+        },
+      };
+
+      wrapper.vm.handleDownload();
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error downloading archived messages:',
+        expect.any(Error),
+      );
+
+      expect(mockAlert).toHaveBeenCalledWith({
+        props: {
+          text: 'Error downloading messages. Please try again.',
+          type: 'error',
+        },
+      });
+
+      windowOpenSpy.mockRestore();
+      consoleErrorSpy.mockRestore();
+    });
+  });
+
   describe('Animation Race Condition (Bug Prevention)', () => {
     beforeEach(() => {
       vi.useFakeTimers();

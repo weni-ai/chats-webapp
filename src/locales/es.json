@@ -331,6 +331,14 @@
       "unavailable": "No hay resumen disponible",
       "open_summary_tooltip": "Abrir el resumen del chat",
       "close_summary_tooltip": "Cerrar el resumen del chat",
+      "archived": {
+        "download_button": "Descargar mensajes",
+        "download_error": "Error al descargar los mensajes. Inténtalo de nuevo.",
+        "disclaimer": {
+          "title": "Mensajes archivados",
+          "description": "Este soporte fue cerrado hace más de un año, por lo que los mensajes han sido movidos a los archivos. Para verlos, haz clic en el botón “Descargar mensajes”."
+        }
+      },
       "feedback": {
         "title": "¿Qué fue lo que no funcionó?",
         "needs_improvement_text": "Ayuda a mejorar los resumenes. Tu opinión sobre este resumen nos ayuda a hacerlo más claro y útil.",
