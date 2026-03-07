@@ -93,27 +93,44 @@ describe('DocumentsContent', () => {
     it('should show loading skeleton when isLoadingDocuments is true', async () => {
       wrapper = createWrapper();
       wrapper.vm.contactInfosStore.isLoadingDocuments = true;
+      wrapper.vm.contactInfosStore.hasDocuments = false;
       await wrapper.vm.$nextTick();
 
-      expect(
-        wrapper.find('[data-testid="documents-content-loading"]').exists(),
-      ).toBe(true);
+      expect(wrapper.find('[data-testid="documents-container"]').exists()).toBe(
+        true,
+      );
       expect(wrapper.find('[data-testid="documents-content"]').exists()).toBe(
-        false,
+        true,
       );
     });
 
     it('should show content when not loading', async () => {
       wrapper = createWrapper();
       wrapper.vm.contactInfosStore.isLoadingDocuments = false;
+      wrapper.vm.contactInfosStore.documents = mockDocuments;
       await wrapper.vm.$nextTick();
 
       expect(wrapper.find('[data-testid="documents-content"]').exists()).toBe(
         true,
       );
-      expect(
-        wrapper.find('[data-testid="documents-content-loading"]').exists(),
-      ).toBe(false);
+      expect(wrapper.find('[data-testid="documents-empty"]').exists()).toBe(
+        false,
+      );
+    });
+
+    it('should show empty state when no documents and not loading', async () => {
+      wrapper = createWrapper();
+      wrapper.vm.contactInfosStore.isLoadingDocuments = false;
+      wrapper.vm.contactInfosStore.documents = [];
+      wrapper.vm.contactInfosStore.hasDocuments = false;
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.find('[data-testid="documents-empty"]').exists()).toBe(
+        true,
+      );
+      expect(wrapper.find('[data-testid="documents-content"]').exists()).toBe(
+        false,
+      );
     });
   });
 
