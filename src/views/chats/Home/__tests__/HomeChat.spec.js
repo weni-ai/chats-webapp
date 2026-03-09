@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
 import { createRouter, createWebHistory } from 'vue-router';
+import { createI18n } from 'vue-i18n';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
@@ -38,6 +39,14 @@ vi.mock('@/services/api/resources/chats/roomNotes', () => ({
 vi.mock('@/services/api/resources/settings/queue', () => ({
   default: { tags: vi.fn(() => ({ results: [] })) },
 }));
+
+const i18n = createI18n({
+  legacy: false,
+  locale: 'en',
+  messages: { en: {} },
+  fallbackWarn: false,
+  missingWarn: false,
+});
 
 const router = createRouter({
   history: createWebHistory(),
@@ -106,7 +115,7 @@ describe('HomeChat.vue', () => {
             push: vi.fn(),
           },
         },
-        plugins: [router, pinia],
+        plugins: [router, pinia, i18n],
         components: {
           RoomMessages,
           HomeChatModals,
@@ -118,6 +127,25 @@ describe('HomeChat.vue', () => {
             template: '<div />',
             props: ['contactName', 'clickable'],
           },
+          DiscussionHeader: {
+            template: '<div data-testid="discussion-header-stub" />',
+            props: ['discussionContact', 'discussionSubject', 'clickable'],
+          },
+          HomeChatModals: {
+            template: '<div data-testid="home-chat-modals" />',
+            data() {
+              return { modalsShowing: { closeChat: false, getChat: false } };
+            },
+            methods: {
+              openModal(modal) {
+                if (this.modalsShowing[modal] !== undefined) {
+                  this.modalsShowing[modal] = true;
+                }
+              },
+              configFileUploader: vi.fn(),
+              closeModal: vi.fn(),
+            },
+          },
         },
       },
     });
@@ -128,6 +156,7 @@ describe('HomeChat.vue', () => {
       createSpy: vi.fn,
     });
     setActivePinia(pinia);
+    useProfile().me = { email: 'testuser@weni.ai', project_permission_role: 'agent' };
     useRoomMessages().getRoomMessages = vi.fn().mockResolvedValue([]);
     useDiscussionMessages().getDiscussionMessages = vi
       .fn()
