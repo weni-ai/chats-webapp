@@ -496,6 +496,7 @@
   "action_cannot_be_reversed": "Esta acción no se puede revertir",
   "end": "Cerrar",
   "end_chat": "Cerrar chat",
+  "end_discussion": "Cerrar discusión",
   "cancel": "Cancelar",
   "add": "Agregar",
   "proceed": "Proceder",
@@ -670,7 +671,8 @@
     },
     "close": {
       "title": "Finalizar la discusión",
-      "description": "Ya no podrás intercambiar mensajes en este hilo."
+      "question": "¿Está seguro de que desea finalizar la discusión sobre {contact}?",
+      "description": "Una vez finalizada, la discusión se cerrará y no podrás enviar más mensajes."
     },
     "add_agents": {
       "title": "Agregar agentes",
