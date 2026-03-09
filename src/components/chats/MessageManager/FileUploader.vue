@@ -1,28 +1,36 @@
 <template>
   <section v-if="isMobile && showUploadModal">
-    <UnnnicModal
+    <UnnnicDialog
       v-if="modelValue.length > 0"
+      v-model:open="isUploadConfirmOpen"
       class="modal-upload-confirm"
-      :text="$t('confirm_send')"
-      @close="closeFileUploadModal"
     >
-      <UnnnicImportCard
-        v-for="file in modelValue"
-        :key="file.name + file.lastModified"
-        :title="file.name"
-        :isImporting="false"
-        :canImport="false"
-        canDelete
-        @delete="removeSelectedFile(file)"
-      />
-      <template #options>
-        <UnnnicButton
-          :text="$t('send')"
-          type="primary"
-          @click="upload"
-        />
-      </template>
-    </UnnnicModal>
+      <UnnnicDialogContent>
+        <UnnnicDialogHeader>
+          <UnnnicDialogTitle>
+            {{ $t('confirm_send') }}
+          </UnnnicDialogTitle>
+        </UnnnicDialogHeader>
+        <section class="modal-upload-confirm__content">
+          <UnnnicImportCard
+            v-for="file in modelValue"
+            :key="file.name + file.lastModified"
+            :title="file.name"
+            :isImporting="false"
+            :canImport="false"
+            canDelete
+            @delete="removeSelectedFile(file)"
+          />
+        </section>
+        <UnnnicDialogFooter>
+          <UnnnicButton
+            :text="$t('send')"
+            type="primary"
+            @click="upload"
+          />
+        </UnnnicDialogFooter>
+      </UnnnicDialogContent>
+    </UnnnicDialog>
   </section>
   <section v-else-if="showUploadModal">
     <div class="modal-upload-container">
@@ -73,6 +81,14 @@ export default {
   }),
 
   computed: {
+    isUploadConfirmOpen: {
+      get() {
+        return this.modelValue.length > 0;
+      },
+      set(value) {
+        if (!value) this.closeFileUploadModal();
+      },
+    },
     files: {
       get() {
         return this.validFiles(this.modelValue);
@@ -190,18 +206,8 @@ export default {
 }
 
 .modal-upload-confirm {
-  :deep(.unnnic-modal-container-background-body-description) {
-    padding: 0;
-
-    .unnnic-import-card__data {
-      overflow: hidden;
-
-      &__title {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-    }
+  &__content {
+    padding: $unnnic-space-6;
   }
 }
 </style>

@@ -16,24 +16,16 @@ describe('ModalRemoveSelectedContacts', () => {
 
   it('renders correctly when contacts are provided', () => {
     expect(
-      wrapper
-        .findComponent('[data-testid="modal-remove-selected-contacts"]')
-        .exists(),
+      wrapper.find('[data-testid="modal-remove-selected-contacts"]').exists(),
     ).toBe(true);
 
     expect(
-      wrapper
-        .findComponent('[data-testid="selected-contacts-section"]')
-        .exists(),
+      wrapper.find('[data-testid="selected-contacts-section"]').exists(),
     ).toBe(true);
 
-    expect(
-      wrapper.findComponent('[data-testid="confirm-button"]').exists(),
-    ).toBe(true);
+    expect(wrapper.find('[data-testid="confirm-button"]').exists()).toBe(true);
 
-    expect(
-      wrapper.findComponent('[data-testid="cancel-button"]').exists(),
-    ).toBe(true);
+    expect(wrapper.find('[data-testid="cancel-button"]').exists()).toBe(true);
   });
 
   it('emits close event when cancel button is clicked', async () => {
