@@ -53,7 +53,6 @@ describe('ModalAddNewContact', () => {
   });
 
   it('renders correctly', () => {
-    // Com stubs do dialog, o conteúdo renderiza no wrapper (sem Teleport)
     expect(wrapper.find('[data-testid="modal-add-new-contact"]').exists()).toBe(
       true,
     );

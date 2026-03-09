@@ -45,7 +45,6 @@ describe('ModalRemoveSelectedContacts', () => {
   });
 
   it('renders correctly when contacts are provided', () => {
-    // Com stubs do dialog, o conteúdo renderiza no wrapper (sem Teleport)
     expect(
       wrapper.find('[data-testid="modal-remove-selected-contacts"]').exists(),
     ).toBe(true);
