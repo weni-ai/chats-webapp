@@ -3,13 +3,16 @@
     v-model:open="isEndDiscussionModalOpen"
     class="modal-close-discussion"
   >
-    <UnnnicDialogContent size="small">
+    <UnnnicDialogContent>
       <UnnnicDialogHeader type="attention">
         <UnnnicDialogTitle>
           {{ $t('discussions.close.title') }}
         </UnnnicDialogTitle>
       </UnnnicDialogHeader>
       <section class="modal-close-discussion__content">
+        <p class="modal-close-discussion__description">
+          {{ $t('discussions.close.question', { contact: discussionContact }) }}
+        </p>
         <p class="modal-close-discussion__description">
           {{ $t('discussions.close.description') }}
         </p>
@@ -38,7 +41,12 @@ import { storeToRefs } from 'pinia';
 
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useRooms } from '@/store/modules/chats/rooms';
+
 const props = defineProps({
+  discussionContact: {
+    type: String,
+    required: true,
+  },
   modelValue: {
     type: Boolean,
     required: true,
@@ -84,11 +92,14 @@ const endDiscussion = async () => {
 <style lang="scss" scoped>
 .modal-close-discussion {
   &__content {
+    display: flex;
+    flex-direction: column;
     padding: $unnnic-space-6;
+    gap: $unnnic-space-4;
   }
   &__description {
-    color: $unnnic-color-neutral-dark;
     font: $unnnic-font-body;
+    color: $unnnic-color-fg-base;
   }
 }
 </style>

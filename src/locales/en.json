@@ -629,8 +629,9 @@
       "add_agent": "Add Agent"
     },
     "close": {
-      "title": "Arrange",
-      "description": "You can no longer exchange messages in this discussion"
+      "title": "End discussion",
+      "question": "Are you sure you want to end discussion about {contact}?",
+      "description": "Once finalized, the discussion will be closed, and no more messages can be sent."
     },
     "add_agents": {
       "title": "Add Agents",
