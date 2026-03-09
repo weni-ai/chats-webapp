@@ -464,6 +464,7 @@
   "action_cannot_be_reversed": "This action cannot be reversed",
   "end": "End",
   "end_chat": "End Chat",
+  "end_discussion": "End Discussion",
   "cancel": "Cancel",
   "add": "Add",
   "proceed": "Proceed",

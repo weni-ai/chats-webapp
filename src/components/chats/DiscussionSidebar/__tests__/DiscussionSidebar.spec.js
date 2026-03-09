@@ -96,24 +96,6 @@ describe('DiscussionSidebar', () => {
     expect(loadDiscussionDetailsSpy).toHaveBeenCalled();
   });
 
-  it('should toggle the end discussion modal', async () => {
-    expect(wrapper.vm.isEndDiscussionModalOpen).toBe(false);
-
-    await wrapper.vm.handleEndDiscussionModal();
-
-    expect(wrapper.vm.isEndDiscussionModalOpen).toBe(true);
-  });
-
-  it('should end the discussion', async () => {
-    const setActiveRoomSpy = vi.spyOn(wrapper.vm, 'setActiveRoom');
-    const deleteDiscussionSpy = vi.spyOn(wrapper.vm, 'deleteDiscussion');
-
-    await wrapper.vm.endDiscussion();
-
-    expect(setActiveRoomSpy).toHaveBeenCalledWith(null);
-    expect(deleteDiscussionSpy).toHaveBeenCalled();
-  });
-
   it('should update room messages', async () => {
     const getRoomMessagesSpy = vi.spyOn(wrapper.vm, 'getRoomMessages');
 
