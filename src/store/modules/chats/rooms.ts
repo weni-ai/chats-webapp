@@ -7,42 +7,85 @@ import Room from '@/services/api/resources/chats/room';
 import { removeDuplicatedItems } from '@/utils/array';
 import { getRoomType } from '@/utils/room';
 
+import type {
+  Room as RoomType,
+  Tag,
+} from '@/services/api/resources/chats/types';
+
+interface RoomSummary {
+  feedback: { liked: boolean | null };
+  summary: string;
+  status: string;
+}
+
+interface RoomMessagesByRoom {
+  [roomUuid: string]: { messages: any[] };
+}
+
+interface GetAllParams {
+  offset: number;
+  concat?: boolean;
+  limit: number;
+  contact: string;
+  order: string;
+  viewedAgent?: string;
+  roomsType?: string;
+  cleanRoomType?: string;
+}
+
+interface UpdateRoomParams {
+  room: RoomType;
+  userEmail: string;
+  routerReplace: () => void;
+  viewedAgentEmail?: string | null;
+}
+
 export const useRooms = defineStore('rooms', {
   state: () => ({
-    activeTab: 'ongoing',
-    rooms: [],
-    activeRoom: null,
+    activeTab: 'ongoing' as string,
+    rooms: [] as RoomType[],
+    activeRoom: null as RoomType | null,
     isCanSendMessageActiveRoom: true,
-    activeRoomTags: [],
+    activeRoomTags: [] as Tag[],
     activeRoomTagsNext: '',
     maxPinLimit: 0,
-    roomsSummary: {},
+    roomsSummary: {} as Record<string, RoomSummary>,
     isLoadingActiveRoomSummary: false,
     isLoadingCanSendMessageStatus: false,
     openActiveRoomSummary: false,
-    newMessagesByRoom: {},
-    hasNextRooms: { waiting: false, in_progress: false, flow_start: false },
+    newMessagesByRoom: {} as RoomMessagesByRoom,
+    hasNextRooms: {
+      waiting: false,
+      in_progress: false,
+      flow_start: false,
+    } as Record<string, boolean | string | null>,
     canUseCopilot: false,
     copilotSuggestion: '',
-    selectedOngoingRooms: [],
-    selectedWaitingRooms: [],
+    selectedOngoingRooms: [] as string[],
+    selectedWaitingRooms: [] as string[],
     contactToTransfer: '',
     orderBy: {
       ongoing: '-last_interaction',
       discussions: '-last_interaction',
       flow_start: '-last_interaction',
       waiting: 'added_to_queue_at',
-    },
+    } as Record<string, string>,
     showOngoingDot: false,
     roomsCount: {
       waiting: 0,
       ongoing: 0,
       flow_start: 0,
-    },
+    } as Record<string, number>,
   }),
 
   actions: {
-    updateLastInteraction({ room, lastInteraction }) {
+    updateLastInteraction({
+      room,
+      lastInteraction,
+    }: {
+      room: string;
+      lastInteraction: string;
+    }) {
       const findedRoomIndex = this.rooms.findIndex(({ uuid }) => uuid === room);
 
       if (!this.rooms[findedRoomIndex]?.is_pinned) {
@@ -52,7 +95,15 @@ export const useRooms = defineStore('rooms', {
         };
       }
     },
-    updateMessagesByRoom({ room, message, reset = false }) {
+    updateMessagesByRoom({
+      room,
+      message,
+      reset = false,
+    }: {
+      room: string;
+      message?: any;
+      reset?: boolean;
+    }) {
       const roomMessages = this.newMessagesByRoom[room]?.messages || [];
 
       this.newMessagesByRoom = {
@@ -69,19 +120,19 @@ export const useRooms = defineStore('rooms', {
         });
     },
 
-    setActiveRoom(room) {
+    setActiveRoom(room: RoomType | null) {
       this.activeRoom = room;
     },
 
-    setIsLoadingCanSendMessageStatus(isLoading) {
+    setIsLoadingCanSendMessageStatus(isLoading: boolean) {
       this.isLoadingCanSendMessageStatus = isLoading;
     },
 
-    setIsCanSendMessageActiveRoom(isCanSendMessage) {
+    setIsCanSendMessageActiveRoom(isCanSendMessage: boolean) {
       this.isCanSendMessageActiveRoom = isCanSendMessage;
     },
 
-    addRoom(room, { after = false } = {}) {
+    addRoom(room: RoomType, { after = false } = {}) {
       if (room.uuid) {
         const isRoomAlreadyInList = this.rooms.some(
           (mappedRoom) => mappedRoom.uuid === room.uuid,
@@ -96,17 +147,25 @@ export const useRooms = defineStore('rooms', {
       }
     },
 
-    bringRoomFront(room) {
+    bringRoomFront(room: RoomType) {
       if (!room?.is_pinned) {
         this.rooms.sort((x) => (x === room ? -1 : 0));
       }
     },
 
-    setCopilotSuggestion(suggestion) {
+    setCopilotSuggestion(suggestion: string) {
       this.copilotSuggestion = suggestion;
     },
 
-    checkUserSeenRoom({ room, userEmail, viewedAgentEmail }) {
+    checkUserSeenRoom({
+      room,
+      userEmail,
+      viewedAgentEmail,
+    }: {
+      room: RoomType;
+      userEmail: string;
+      viewedAgentEmail?: string | null;
+    }): boolean {
       const profileStore = useProfile();
       const isProjectAdmin = profileStore.me.project_permission_role === 1;
 
@@ -114,7 +173,7 @@ export const useRooms = defineStore('rooms', {
 
       const userHasRoomQueue = !!profileStore.me.queues?.find(
         (permission) =>
-          permission.queue === room.queue.uuid && permission.role === 1,
+          permission.queue === room.queue?.uuid && permission.role === 1,
       );
 
       if (!room.user && userHasRoomQueue) return true;
@@ -135,7 +194,7 @@ export const useRooms = defineStore('rooms', {
       viewedAgent,
       roomsType,
       cleanRoomType,
-    }) {
+    }: GetAllParams) {
       const response = await Room.getAll(
         offset,
         limit,
@@ -170,9 +229,9 @@ export const useRooms = defineStore('rooms', {
       return gettedRooms;
     },
 
-    async updateRoomContact({ uuid }) {
+    async updateRoomContact({ uuid }: { uuid: string }) {
       const newRoom = await Room.getByUuid({ uuid });
-      this.activeRoom = newRoom;
+      this.activeRoom = newRoom as RoomType | null;
     },
 
     async getCanUseCopilot() {
@@ -180,14 +239,16 @@ export const useRooms = defineStore('rooms', {
         const response = await Room.getCanUseCopilot({
           uuid: this.activeRoom.uuid,
         });
-        this.canUseCopilot = response.can_use_chat_completion;
+        if (response) {
+          this.canUseCopilot = response.can_use_chat_completion;
+        }
       }
     },
 
     async getCopilotSuggestion() {
       this.setCopilotSuggestion('');
       const response = await Room.getCopilotSuggestion({
-        uuid: this.activeRoom.uuid,
+        uuid: (this.activeRoom as RoomType).uuid,
       });
       const suggestion = response?.choices?.[0]?.message?.content;
       if (suggestion) {
@@ -198,7 +259,12 @@ export const useRooms = defineStore('rooms', {
       return undefined;
     },
 
-    updateRoom({ room, userEmail, routerReplace, viewedAgentEmail }) {
+    updateRoom({
+      room,
+      userEmail,
+      routerReplace,
+      viewedAgentEmail,
+    }: UpdateRoomParams) {
       const dashboardStore = useDashboard();
       const rooms = this.rooms;
       const filteredRooms = rooms
@@ -216,7 +282,7 @@ export const useRooms = defineStore('rooms', {
         })
         .sort((a, b) => {
           if (a.is_pinned !== undefined && b.is_pinned !== undefined) {
-            return b.is_pinned - a.is_pinned;
+            return (b.is_pinned ? 1 : 0) - (a.is_pinned ? 1 : 0);
           }
           return 0;
         });
@@ -240,8 +306,8 @@ export const useRooms = defineStore('rooms', {
 
       if (!isTransferedByMe && isTransferedToOtherUser) {
         if (!isTransferedFromAQueue && !room.is_waiting && !viewedAgentEmail) {
-          dashboardStore.setShowModalAssumedChat(true);
-          dashboardStore.setAssumedChatContactName(room.contact.name);
+          (dashboardStore as any).setShowModalAssumedChat(true);
+          (dashboardStore as any).setAssumedChatContactName(room.contact.name);
         }
 
         if (isActiveRoom && !viewedAgentEmail) {
@@ -260,7 +326,7 @@ export const useRooms = defineStore('rooms', {
       }
     },
 
-    removeRoom(roomUuid) {
+    removeRoom(roomUuid: string) {
       const filteredRooms = this.rooms.filter((r) => r.uuid !== roomUuid);
 
       this.rooms = filteredRooms;
@@ -278,43 +344,43 @@ export const useRooms = defineStore('rooms', {
       }
     },
 
-    addNewMessagesByRoom({ room, message }) {
+    addNewMessagesByRoom({ room, message }: { room: string; message: any }) {
       this.updateMessagesByRoom({ room, message });
     },
 
-    resetNewMessagesByRoom({ room }) {
+    resetNewMessagesByRoom({ room }: { room: string }) {
       this.updateMessagesByRoom({ room, reset: true });
     },
 
-    setContactToTransfer(contact) {
+    setContactToTransfer(contact: string) {
       this.contactToTransfer = contact;
     },
 
-    setSelectedOngoingRooms(rooms) {
+    setSelectedOngoingRooms(rooms: string[]) {
       this.selectedOngoingRooms = rooms;
     },
 
-    setSelectedWaitingRooms(rooms) {
+    setSelectedWaitingRooms(rooms: string[]) {
       this.selectedWaitingRooms = rooms;
     },
 
-    sortRooms(a, b, key) {
+    sortRooms(a: RoomType, b: RoomType, key: string): number {
       const isDesc = this.orderBy[key].startsWith('-');
       const field = isDesc ? this.orderBy[key].slice(1) : this.orderBy[key];
-      const valueA = new Date(a[field]);
-      const valueB = new Date(b[field]);
+      const valueA = new Date(a[field]).getTime();
+      const valueB = new Date(b[field]).getTime();
       return isDesc ? valueB - valueA : valueA - valueB;
     },
   },
 
   getters: {
-    currentSelectedRooms(store) {
+    currentSelectedRooms(store): string[] {
       return store.activeTab === 'ongoing'
         ? store.selectedOngoingRooms
         : store.selectedWaitingRooms;
     },
 
-    agentRooms(store) {
+    agentRooms(store): RoomType[] {
       return store.rooms
         .filter((room) => !!room.user && room.is_waiting === false)
         .sort((a, b) => {
@@ -330,24 +396,26 @@ export const useRooms = defineStore('rooms', {
           return 0;
         });
     },
-    waitingQueue(store) {
+    waitingQueue(store): RoomType[] {
       return store.rooms
         .filter((room) => !room.user && !room.is_waiting)
         .sort((a, b) => {
           return this.sortRooms(a, b, 'waiting');
         });
     },
-    waitingContactAnswer(store) {
+    waitingContactAnswer(store): RoomType[] {
       return store.rooms
         .filter((room) => room.is_waiting === true)
         .sort((a, b) => {
           return this.sortRooms(a, b, 'flow_start');
         });
     },
-    getRoomById: (store) => (uuid) => {
-      return store.rooms.find((room) => room.uuid === uuid);
-    },
-    activeRoomSummary(store) {
+    getRoomById:
+      (store) =>
+      (uuid: string): RoomType | undefined => {
+        return store.rooms.find((room) => room.uuid === uuid);
+      },
+    activeRoomSummary(store): RoomSummary {
       if (!store.activeRoom) {
         return { feedback: { liked: null }, summary: '', status: '' };
       }

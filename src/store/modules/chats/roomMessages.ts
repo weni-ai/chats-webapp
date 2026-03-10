@@ -18,33 +18,60 @@ import {
   updateMessageStatusInGroupedMessages,
 } from '@/utils/messages';
 
+import type {
+  Message as MessageType,
+  InternalNote,
+} from '@/services/api/resources/chats/types';
+
+interface UpdateMessageParams {
+  media?: any;
+  toUpdateMediaPreview?: string;
+  message: MessageType;
+  toUpdateMessageUuid?: string;
+  reorderMessageMinute?: boolean;
+}
+
+interface SendRoomMediasParams {
+  files: any[];
+  updateLoadingFiles?: (_uuid: string, _progress: number) => void;
+  repliedMessage?: MessageType | null;
+}
+
 export const useRoomMessages = defineStore('roomMessages', {
   state: () => ({
-    roomMessages: [],
-    roomMessagesSorted: [],
-    roomMessagesSendingUuids: [],
-    roomMessagesInPromiseUuids: [],
-    roomMessagesFailedUuids: [],
+    roomMessages: [] as MessageType[],
+    roomMessagesSorted: [] as any[],
+    roomMessagesSendingUuids: [] as string[],
+    roomMessagesInPromiseUuids: [] as string[],
+    roomMessagesFailedUuids: [] as string[],
     roomMessagesNext: '',
     roomMessagesPrevious: '',
-    replyMessage: null,
-    roomInternalNotes: [],
-    toScrollNote: null,
-    toScrollMessage: null,
+    replyMessage: null as MessageType | null,
+    roomInternalNotes: [] as InternalNote[],
+    toScrollNote: null as string | null,
+    toScrollMessage: null as string | null,
     showScrollToBottomButton: false,
     showSearchMessagesDrawer: false,
     isLoadingAllMessages: false,
   }),
   actions: {
-    addRoomMessageSorted({ message, addBefore, reorderMessageMinute }) {
-      groupMessages(this.roomMessagesSorted, {
+    addRoomMessageSorted({
+      message,
+      addBefore,
+      reorderMessageMinute,
+    }: {
+      message: MessageType;
+      addBefore?: boolean;
+      reorderMessageMinute?: boolean;
+    }) {
+      (groupMessages as Function)(this.roomMessagesSorted, {
         message,
         addBefore,
         reorderMessageMinute,
       });
     },
 
-    addFailedMessage({ message }) {
+    addFailedMessage({ message }: { message: MessageType }) {
       const { uuid } = message;
 
       if (this.isMessageInActiveRoom(message)) {
@@ -67,30 +94,30 @@ export const useRoomMessages = defineStore('roomMessages', {
       this.roomMessagesPrevious = '';
     },
 
-    removeMessageFromSendings(messageUuid) {
+    removeMessageFromSendings(messageUuid: string) {
       this.roomMessagesSendingUuids = this.roomMessagesSendingUuids.filter(
         (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
       );
     },
 
-    removeMessageFromInPromise(messageUuid) {
+    removeMessageFromInPromise(messageUuid: string) {
       this.roomMessagesInPromiseUuids = this.roomMessagesInPromiseUuids.filter(
         (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
       );
     },
 
-    removeMessageFromFaileds(messageUuid) {
+    removeMessageFromFaileds(messageUuid: string) {
       this.roomMessagesFailedUuids = this.roomMessagesFailedUuids.filter(
         (mappedMessageUuid) => mappedMessageUuid !== messageUuid,
       );
     },
 
-    isMessageInActiveRoom(message) {
+    isMessageInActiveRoom(message: MessageType): boolean {
       const roomsStore = useRooms();
       return message.room === roomsStore.activeRoom?.uuid;
     },
 
-    handlingAddMessage({ message }) {
+    handlingAddMessage({ message }: { message: MessageType }) {
       const { uuid } = message;
 
       if (this.isMessageInActiveRoom(message)) {
@@ -115,7 +142,13 @@ export const useRoomMessages = defineStore('roomMessages', {
       }
     },
 
-    updateMessageStatus({ messageUuid, status }) {
+    updateMessageStatus({
+      messageUuid,
+      status,
+    }: {
+      messageUuid: string;
+      status: string;
+    }) {
       const findedMessage = this.roomMessages.find(
         (mappedMessage) => mappedMessage.uuid === messageUuid,
       );
@@ -141,13 +174,14 @@ export const useRoomMessages = defineStore('roomMessages', {
       message,
       toUpdateMessageUuid = '',
       reorderMessageMinute = false,
-    }) {
+    }: UpdateMessageParams) {
       const uuid = toUpdateMessageUuid || message.uuid;
       const treatedMessage = { ...message };
 
       if (media) {
         const mediaIndex = treatedMessage.media.findIndex(
-          (mappedMessage) => mappedMessage.preview === toUpdateMediaPreview,
+          (mappedMessage: any) =>
+            mappedMessage.preview === toUpdateMediaPreview,
         );
 
         if (mediaIndex !== -1) {
@@ -202,17 +236,24 @@ export const useRoomMessages = defineStore('roomMessages', {
           Message.getByRoom({ nextReq }, roomsStore.activeRoom?.uuid),
         oldMessages: this.roomMessages,
         nextReq,
-        addSortedMessage: ({ message, addBefore }) =>
-          this.addRoomMessageSorted({ message, addBefore }),
+        addSortedMessage: ({
+          message,
+          addBefore,
+        }: {
+          message: MessageType;
+          addBefore?: boolean;
+        }) => this.addRoomMessageSorted({ message, addBefore }),
         resetSortedMessages: () => this.resetRoomMessagesSorted(),
-        setMessages: (messages) => (this.roomMessages = messages),
-        setMessagesNext: (nextMessage) => (this.roomMessagesNext = nextMessage),
-        setMessagesPrevious: (previousMessage) =>
+        setMessages: (messages: MessageType[]) =>
+          (this.roomMessages = messages),
+        setMessagesNext: (nextMessage: string) =>
+          (this.roomMessagesNext = nextMessage),
+        setMessagesPrevious: (previousMessage: string) =>
           (this.roomMessagesPrevious = previousMessage),
       });
     },
 
-    async addMessage(message) {
+    async addMessage(message: MessageType) {
       const messageAlreadyExists = this.roomMessages.some(
         (mappedMessage) => mappedMessage.uuid === message.uuid,
       );
@@ -223,7 +264,7 @@ export const useRoomMessages = defineStore('roomMessages', {
       }
     },
 
-    async sendRoomMessage(text, repliedMessage) {
+    async sendRoomMessage(text: string, repliedMessage?: MessageType | null) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
 
@@ -235,6 +276,7 @@ export const useRoomMessages = defineStore('roomMessages', {
         itemUser: activeRoom.user,
         message: text,
         repliedMessage: repliedMessage,
+        internalNote: undefined,
         sendItemMessage: () =>
           Message.sendRoomMessage(activeRoom.uuid, {
             text,
@@ -242,10 +284,17 @@ export const useRoomMessages = defineStore('roomMessages', {
             seen: true,
             repliedMessageId: repliedMessage?.uuid,
           }),
-        addMessage: (message) => this.handlingAddMessage({ message }),
-        addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
-        updateMessage: ({ message, toUpdateMessageUuid }) =>
-          this.updateMessage({ message, toUpdateMessageUuid }),
+        addMessage: (message: MessageType) =>
+          this.handlingAddMessage({ message }),
+        addSortedMessage: (message: MessageType) =>
+          this.addRoomMessageSorted({ message }),
+        updateMessage: ({
+          message,
+          toUpdateMessageUuid,
+        }: {
+          message: MessageType;
+          toUpdateMessageUuid: string;
+        }) => this.updateMessage({ message, toUpdateMessageUuid }),
       });
     },
 
@@ -253,7 +302,7 @@ export const useRoomMessages = defineStore('roomMessages', {
       files: medias,
       updateLoadingFiles,
       repliedMessage,
-    }) {
+    }: SendRoomMediasParams) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
       if (!activeRoom) return;
@@ -264,16 +313,18 @@ export const useRoomMessages = defineStore('roomMessages', {
         itemUser: activeRoom.user,
         medias,
         repliedMessage: repliedMessage,
-        sendItemMedia: (media) =>
+        sendItemMedia: (media: any) =>
           Message.sendRoomMedia(activeRoom.uuid, {
             user_email: activeRoom.user.email,
             media,
             updateLoadingFiles,
             repliedMessageId: repliedMessage?.uuid,
           }),
-        addMessage: (message) => this.handlingAddMessage({ message }),
-        addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
-        addFailedMessage: (message) =>
+        addMessage: (message: MessageType) =>
+          this.handlingAddMessage({ message }),
+        addSortedMessage: (message: MessageType) =>
+          this.addRoomMessageSorted({ message }),
+        addFailedMessage: (message: MessageType) =>
           this.addFailedMessage({
             message,
           }),
@@ -282,7 +333,7 @@ export const useRoomMessages = defineStore('roomMessages', {
           message,
           toUpdateMessageUuid,
           toUpdateMediaPreview,
-        }) =>
+        }: UpdateMessageParams) =>
           this.updateMessage({
             media,
             message,
@@ -292,7 +343,7 @@ export const useRoomMessages = defineStore('roomMessages', {
       });
     },
 
-    async sendRoomInternalNote({ text }) {
+    async sendRoomInternalNote({ text }: { text: string }) {
       const roomsStore = useRooms();
 
       if (!roomsStore.activeRoom) return;
@@ -302,21 +353,23 @@ export const useRoomMessages = defineStore('roomMessages', {
         room: roomsStore.activeRoom.uuid,
       });
 
-      // add internal note in the room messages
       sendMessage({
         itemType: 'room',
         itemUuid: roomsStore.activeRoom.uuid,
         itemUser: roomsStore.activeRoom.user,
         message: text,
+        repliedMessage: undefined,
         internalNote: createdNote,
         sendItemMessage: () => createdNote,
-        addMessage: (message) => this.handlingAddMessage({ message }),
-        addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
+        addMessage: (message: MessageType) =>
+          this.handlingAddMessage({ message }),
+        addSortedMessage: (message: MessageType) =>
+          this.addRoomMessageSorted({ message }),
         updateMessage: () => {},
       });
     },
 
-    async resendRoomMessage({ message }) {
+    async resendRoomMessage({ message }: { message: MessageType }) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
       if (!activeRoom) return;
@@ -330,15 +383,26 @@ export const useRoomMessages = defineStore('roomMessages', {
             user_email: activeRoom.user.email,
             seen: true,
           }),
-        updateMessage: ({ message, toUpdateMessageUuid }) =>
-          this.updateMessage({ message, toUpdateMessageUuid }),
+        updateMessage: ({
+          message,
+          toUpdateMessageUuid,
+        }: {
+          message: MessageType;
+          toUpdateMessageUuid: string;
+        }) => this.updateMessage({ message, toUpdateMessageUuid }),
         messagesInPromiseUuids: this.roomMessagesInPromiseUuids,
-        removeInPromiseMessage: (message) =>
+        removeInPromiseMessage: (message: string) =>
           this.removeMessageFromInPromise(message),
       });
     },
 
-    async resendRoomMedia({ message, media }) {
+    async resendRoomMedia({
+      message,
+      media,
+    }: {
+      message: MessageType;
+      media: any;
+    }) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
       if (!activeRoom) return;
@@ -347,22 +411,23 @@ export const useRoomMessages = defineStore('roomMessages', {
         itemUuid: activeRoom.uuid,
         message,
         media,
-        sendItemMedia: (media) =>
+        sendItemMedia: (media: any) =>
           Message.sendRoomMedia(activeRoom.uuid, {
             user_email: activeRoom.user.email,
             media: media.file,
           }),
-        addFailedMessage: (message) => this.addFailedMessage({ message }),
-        removeFailedMessage: (message) =>
+        addFailedMessage: (message: MessageType) =>
+          this.addFailedMessage({ message }),
+        removeFailedMessage: (message: string) =>
           this.removeMessageFromFaileds(message),
-        addSendingMessage: (message) =>
+        addSendingMessage: (message: string) =>
           this.roomMessagesSendingUuids.push(message),
         updateMessage: ({
           media,
           message,
           toUpdateMessageUuid,
           toUpdateMediaPreview,
-        }) =>
+        }: UpdateMessageParams) =>
           this.updateMessage({
             media,
             message,
