@@ -20,7 +20,7 @@ describe('ModalListTriggeredFlows', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(ModalListTriggeredFlows);
+    wrapper = mount(ModalListTriggeredFlows, {});
   });
 
   it('renders correctly', () => {
@@ -30,9 +30,7 @@ describe('ModalListTriggeredFlows', () => {
 
     expect(
       wrapper
-        .findComponent(
-          '[data-testid="modal-list-triggered-flows-table-pagination"]',
-        )
+        .find('[data-testid="modal-list-triggered-flows-table-pagination"]')
         .exists(),
     ).toBe(true);
   });
@@ -85,11 +83,9 @@ describe('ModalListTriggeredFlows', () => {
     expect(wrapper.vm.triggeredFlowsCurrentPage).toBe(newPage);
   });
 
-  it('should emits close on trigger close from modal', async () => {
-    const modal = wrapper.findComponent(
-      '[data-testid="modal-list-triggered-flows"]',
-    );
-    await modal.vm.$emit('close');
+  it('should emits close when dialog closes (update:open false)', async () => {
+    wrapper.vm.isOpen = false;
+    await wrapper.vm.$nextTick();
     expect(wrapper.emitted('close')).toBeTruthy();
   });
 

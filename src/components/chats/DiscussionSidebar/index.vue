@@ -166,14 +166,15 @@ export default {
   }
 
   &__end-modal {
-    :deep(.unnnic-modal-container-background-button) {
-      padding-top: 0;
+    &__content {
+      padding: $unnnic-space-6;
+    }
+
+    &__description {
+      color: $unnnic-color-neutral-dark;
+      font: $unnnic-font-body;
+      margin: 0;
     }
   }
-
-  // .aside-slot-template__sections {
-  //   display: flex;
-  //   width: 100%;
-  // }
 }
 </style>

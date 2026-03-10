@@ -49,39 +49,6 @@ const defaultFeedbackTagsResponse = {
   },
 };
 
-const createDialogStubs = () => ({
-  UnnnicDialog: {
-    name: 'UnnnicDialogStub',
-    props: ['open'],
-    emits: ['update:open'],
-    template: `
-      <div v-if="open" data-testid="feedback-modal" v-bind="$attrs">
-        <slot />
-      </div>
-    `,
-  },
-  UnnnicDialogContent: {
-    name: 'UnnnicDialogContentStub',
-    template: '<div data-testid="feedback-modal-content"><slot /></div>',
-  },
-  UnnnicDialogHeader: {
-    name: 'UnnnicDialogHeaderStub',
-    template: '<div><slot /></div>',
-  },
-  UnnnicDialogTitle: {
-    name: 'UnnnicDialogTitleStub',
-    template: '<div><slot /></div>',
-  },
-  UnnnicDialogFooter: {
-    name: 'UnnnicDialogFooterStub',
-    template: `
-      <div>
-        <slot />
-      </div>
-    `,
-  },
-});
-
 describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
   let wrapper;
 
@@ -95,7 +62,6 @@ describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
       global: {
         mocks: { $t: (key) => key },
         stubs: {
-          ...createDialogStubs(),
           UnnnicSkeletonLoading: {
             name: 'UnnnicSkeletonLoadingStub',
             template: '<div class="skeleton-stub" />',
@@ -141,7 +107,7 @@ describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
         true,
       );
       expect(
-        wrapper.find('[data-testid="feedback-modal-content"]').exists(),
+        wrapper.find('.transcription-feedback-modal__content').exists(),
       ).toBe(true);
     });
 

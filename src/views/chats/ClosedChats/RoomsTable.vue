@@ -6,15 +6,17 @@
   >
     <ClosedChatsRoomsTableFilters
       v-show="!isMobile"
+      v-model="filters"
       data-testid="desktop-filters"
-      @input="filters = $event"
     />
 
     <ModalClosedChatsFilters
-      v-if="isMobile && showModalFilters"
-      v-model="filters"
+      v-if="isMobile"
+      v-model="showModalFilters"
+      :filters="filters"
       data-testid="mobile-filters-modal"
       @close="handleShowModalFilters"
+      @input-filters="filters = $event"
     />
 
     <UnnnicDataTable
@@ -129,6 +131,7 @@
 
 <script>
 import isMobile from 'is-mobile';
+import moment from 'moment';
 
 import History from '@/services/api/resources/chats/history';
 
@@ -165,7 +168,10 @@ export default {
       contact: '',
       sector: [],
       tag: [],
-      date: null,
+      date: {
+        start: moment().subtract(1, 'week').format('YYYY-MM-DD'),
+        end: moment().format('YYYY-MM-DD'),
+      },
     },
   }),
 

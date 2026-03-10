@@ -1,24 +1,30 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
-  <UnnnicModal
-    ref="refModalClosedChatsFilters"
+  <UnnnicDialog
+    v-model:open="isOpen"
     class="modal-closed-chats-filters"
-    :text="$t('search')"
-    @close="$emit('close')"
   >
-    <RoomsTableFilters
-      v-model="filters"
-      vertically
-    />
-
-    <template #options>
-      <UnnnicButton
-        type="primary"
-        :text="$t('search')"
-        @click="emitFilters"
-      />
-    </template>
-  </UnnnicModal>
+    <UnnnicDialogContent>
+      <UnnnicDialogHeader>
+        <UnnnicDialogTitle>
+          {{ $t('search') }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section class="modal-closed-chats-filters__content">
+        <RoomsTableFilters
+          v-model="localFilters"
+          vertically
+        />
+      </section>
+      <UnnnicDialogFooter>
+        <UnnnicButton
+          type="primary"
+          :text="$t('search')"
+          @click="emitFilters"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script>
@@ -31,29 +37,38 @@ export default {
   },
 
   props: {
-    value: {
+    filters: {
       type: Object,
-      default: null,
+      default: () => {},
     },
-    showModal: {
+    modelValue: {
       type: Boolean,
+      required: true,
     },
   },
-  emits: ['close', 'input'],
+  emits: ['inputFilters', 'update:modelValue'],
 
   data() {
     return {
-      filters: this.value,
+      localFilters: this.filters,
     };
   },
+
+  computed: {
+    isOpen: {
+      get() {
+        return this.modelValue;
+      },
+      set(value) {
+        this.$emit('update:modelValue', value);
+      },
+    },
+  },
+
   methods: {
     emitFilters() {
-      this.$emit('input', this.filters);
-      this.closeModalInternally();
-    },
-    closeModalInternally() {
-      this.$refs.refModalClosedChatsFilters?.onCloseClick();
-      this.$emit('close');
+      this.$emit('inputFilters', this.localFilters);
+      this.isOpen = false;
     },
   },
 };
@@ -61,17 +76,10 @@ export default {
 
 <style lang="scss" scoped>
 .modal-closed-chats-filters {
-  :deep(.unnnic-modal-container) {
-    .unnnic-modal-container-background-body {
-      &-description {
-        padding: 0;
-
-        &-container {
-          padding-bottom: 0;
-        }
-      }
-    }
+  &__content {
+    padding: $unnnic-space-6;
   }
+
   &--closed {
     width: 0;
   }
