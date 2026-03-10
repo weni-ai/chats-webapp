@@ -11,7 +11,10 @@ import {
   mockProfileHumanServiceState,
   mockProfileAdminState,
 } from '../../__tests__/mocks/profileMock';
-import updateRoom from '@/services/api/websocket/listeners/room/update';
+import updateRoom, {
+  flushPendingUpdates,
+  resetBatchState,
+} from '@/services/api/websocket/listeners/room/update';
 import Room from '@/services/api/resources/chats/room';
 
 const app = createApp({});
@@ -71,6 +74,7 @@ describe('State Rooms', () => {
         viewedAgent: dashboard.viewedAgent,
       },
     });
+    flushPendingUpdates();
     expect(existRoomByUuid(roomsStore, room.uuid)).eq(expectedExists);
   };
 
@@ -452,6 +456,7 @@ describe('State Rooms', () => {
     let adminRoomsStore, adminProfileStore, dashboardStore;
 
     beforeEach(() => {
+      resetBatchState();
       mocks.useProfile.mockReturnValue(mockProfileAdminState);
       adminProfileStore = useProfile();
       adminRoomsStore = useRooms();
@@ -526,6 +531,7 @@ describe('State Rooms', () => {
             },
           },
         );
+        flushPendingUpdates();
 
         expect(adminRoomsStore.activeRoom).eq(null);
       });
@@ -536,6 +542,7 @@ describe('State Rooms', () => {
     let humanServiceRoomsStore, humanServiceProfileStore, dashboardStore;
 
     beforeEach(() => {
+      resetBatchState();
       mocks.useProfile.mockReturnValue(mockProfileHumanServiceState);
       humanServiceProfileStore = useProfile();
       humanServiceRoomsStore = useRooms();
@@ -602,6 +609,7 @@ describe('State Rooms', () => {
             },
           },
         );
+        flushPendingUpdates();
 
         expect(humanServiceRoomsStore.activeRoom).eq(null);
         expect(routerReplace).toHaveBeenCalled();
@@ -623,6 +631,7 @@ describe('State Rooms', () => {
             },
           },
         );
+        flushPendingUpdates();
 
         expect(dashboardStore.showModalAssumedChat).eq(true);
         expect(dashboardStore.assumedChatContactName).eq('Cliente 1');
