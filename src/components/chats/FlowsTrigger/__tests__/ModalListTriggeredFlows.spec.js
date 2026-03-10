@@ -16,42 +16,11 @@ vi.mock('@/services/api/resources/chats/flowsTrigger.js', () => ({
   },
 }));
 
-const dialogStubs = {
-  UnnnicDialog: {
-    name: 'UnnnicDialogStub',
-    props: ['open'],
-    template: `
-      <div v-if="open" v-bind="$attrs">
-        <slot />
-      </div>
-    `,
-  },
-  UnnnicDialogContent: {
-    name: 'UnnnicDialogContentStub',
-    props: ['size'],
-    template: '<div><slot /></div>',
-  },
-  UnnnicDialogHeader: {
-    name: 'UnnnicDialogHeaderStub',
-    template: '<div><slot /></div>',
-  },
-  UnnnicDialogTitle: {
-    name: 'UnnnicDialogTitleStub',
-    template: '<div><slot /></div>',
-  },
-  UnnnicDialogFooter: {
-    name: 'UnnnicDialogFooterStub',
-    template: '<div><slot /></div>',
-  },
-};
-
 describe('ModalListTriggeredFlows', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(ModalListTriggeredFlows, {
-      global: { stubs: dialogStubs },
-    });
+    wrapper = mount(ModalListTriggeredFlows, {});
   });
 
   it('renders correctly', () => {

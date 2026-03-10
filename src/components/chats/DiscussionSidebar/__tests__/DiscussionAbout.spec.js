@@ -45,40 +45,10 @@ const detailsMock = {
   created_on: '2024-11-01T10:00:00Z',
 };
 
-const dialogStubs = {
-  UnnnicDialog: {
-    name: 'UnnnicDialogStub',
-    props: ['open'],
-    template: `
-      <div v-if="open" v-bind="$attrs">
-        <slot />
-      </div>
-    `,
-  },
-  UnnnicDialogContent: {
-    name: 'UnnnicDialogContentStub',
-    props: ['size'],
-    template: '<div><slot /></div>',
-  },
-  UnnnicDialogHeader: {
-    name: 'UnnnicDialogHeaderStub',
-    template: '<div><slot /></div>',
-  },
-  UnnnicDialogTitle: {
-    name: 'UnnnicDialogTitleStub',
-    template: '<div><slot /></div>',
-  },
-  UnnnicDialogFooter: {
-    name: 'UnnnicDialogFooterStub',
-    template: '<div><slot /></div>',
-  },
-};
-
 const createWrapper = () => {
   return mount(DiscussionAbout, {
     props: { details: detailsMock },
     global: {
-      stubs: dialogStubs,
       plugins: [
         createTestingPinia({
           stubActions: false,

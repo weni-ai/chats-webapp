@@ -73,32 +73,6 @@ const roomWithQueue = {
 };
 
 const createDialogStubs = () => ({
-  UnnnicDialog: {
-    name: 'UnnnicDialogStub',
-    props: ['open'],
-    template: `
-      <div data-testid="modal-bulk-close" v-bind="$attrs">
-        <slot />
-      </div>
-    `,
-  },
-  UnnnicDialogContent: {
-    name: 'UnnnicDialogContentStub',
-    props: ['size'],
-    template: '<div><slot /></div>',
-  },
-  UnnnicDialogHeader: {
-    name: 'UnnnicDialogHeaderStub',
-    template: '<div><slot /></div>',
-  },
-  UnnnicDialogTitle: {
-    name: 'UnnnicDialogTitleStub',
-    template: '<div><slot /></div>',
-  },
-  UnnnicDialogFooter: {
-    name: 'UnnnicDialogFooterStub',
-    template: '<div><slot /></div>',
-  },
   UnnnicButton: {
     name: 'UnnnicButtonStub',
     props: ['text', 'disabled', 'loading', 'type'],
@@ -106,7 +80,7 @@ const createDialogStubs = () => ({
       <button
         :data-testid="type === 'primary' ? 'primary-button' : 'secondary-button'"
         :disabled="disabled"
-        @click="$emit('click')"
+        @click="$emit('click', $event)"
       >
         {{ text }}
       </button>
@@ -241,9 +215,10 @@ describe('ModalCloseRooms.vue', () => {
 
       await flushPromises();
       await wrapper.vm.$nextTick();
+      await wrapper.vm.$nextTick();
 
       const primaryButton = wrapper.find('[data-testid="primary-button"]');
-      expect(primaryButton.attributes('disabled')).toBeDefined();
+      expect(primaryButton.element.disabled).toBe(true);
     });
 
     it('should not disable primary when required_tags is true but no tags exist in sector', async () => {
@@ -255,7 +230,7 @@ describe('ModalCloseRooms.vue', () => {
       await wrapper.vm.$nextTick();
 
       const primaryButton = wrapper.find('[data-testid="primary-button"]');
-      expect(primaryButton.attributes('disabled')).toBeUndefined();
+      expect(primaryButton.element.disabled).toBe(false);
     });
   });
 });

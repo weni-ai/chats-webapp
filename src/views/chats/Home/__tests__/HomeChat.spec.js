@@ -132,6 +132,21 @@ describe('HomeChat.vue', () => {
             template: '<div data-testid="discussion-header-stub" />',
             props: ['discussionContact', 'discussionSubject', 'clickable'],
           },
+          HomeChatModals: {
+            template: '<div data-testid="home-chat-modals" />',
+            data() {
+              return { modalsShowing: { closeChat: false, getChat: false } };
+            },
+            methods: {
+              openModal(modal) {
+                if (this.modalsShowing[modal] !== undefined) {
+                  this.modalsShowing[modal] = true;
+                }
+              },
+              configFileUploader: vi.fn(),
+              closeModal: vi.fn(),
+            },
+          },
         },
       },
     });

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 
 import { useDashboard } from '../dashboard';
+import { useFeatureFlag } from '../featureFlag';
 import { useProfile } from '../profile';
 
 import Room from '@/services/api/resources/chats/room';
@@ -107,23 +108,27 @@ export const useRooms = defineStore('rooms', {
     },
 
     checkUserSeenRoom({ room, userEmail, viewedAgentEmail }) {
-      const profileStore = useProfile();
-      const isProjectAdmin = profileStore.me.project_permission_role === 1;
+      try {
+        const profileStore = useProfile();
+        const isProjectAdmin = profileStore.me.project_permission_role === 1;
 
-      if (isProjectAdmin && !room.user) return true;
+        if (isProjectAdmin && !room.user) return true;
 
-      const userHasRoomQueue = !!profileStore.me.queues?.find(
-        (permission) =>
-          permission.queue === room.queue.uuid && permission.role === 1,
-      );
+        const userHasRoomQueue = !!profileStore.me.queues?.find(
+          (permission) =>
+            permission.queue === room.queue?.uuid && permission.role === 1,
+        );
 
-      if (!room.user && userHasRoomQueue) return true;
+        if (!room.user && userHasRoomQueue) return true;
 
-      if (viewedAgentEmail) {
-        return room.user?.email === viewedAgentEmail;
+        if (viewedAgentEmail) {
+          return room.user?.email === viewedAgentEmail;
+        }
+
+        return room.user?.email === userEmail;
+      } catch {
+        return false;
       }
-
-      return room.user?.email === userEmail;
     },
 
     async getAll({
@@ -199,7 +204,65 @@ export const useRooms = defineStore('rooms', {
     },
 
     updateRoom({ room, userEmail, routerReplace, viewedAgentEmail }) {
-      const dashboardStore = useDashboard();
+      const featureFlagStore = useFeatureFlag();
+      const useLegacy =
+        featureFlagStore.featureFlags?.active_features?.includes(
+          'weniChatsLegacyRoomUpdate',
+        ) ?? true;
+      if (useLegacy) {
+        return this._updateRoomLegacy({
+          room,
+          userEmail,
+          routerReplace,
+          viewedAgentEmail,
+        });
+      }
+      return this._updateRoomSafe({
+        room,
+        userEmail,
+        routerReplace,
+        viewedAgentEmail,
+      });
+    },
+
+    _updateRoomSafe({ room, userEmail, routerReplace, viewedAgentEmail }) {
+      const shouldBeVisible = this.checkUserSeenRoom({
+        room,
+        viewedAgentEmail,
+        userEmail,
+      });
+
+      const roomIndex = this.rooms.findIndex((r) => r.uuid === room.uuid);
+
+      if (roomIndex !== -1) {
+        if (shouldBeVisible) {
+          this.rooms[roomIndex] = {
+            is_pinned: this.rooms[roomIndex]?.is_pinned,
+            ...room,
+          };
+        } else {
+          this.rooms.splice(roomIndex, 1);
+        }
+      } else if (shouldBeVisible) {
+        this.rooms.unshift({ ...room });
+      }
+
+      this.rooms.sort((a, b) => {
+        if (a.is_pinned !== undefined && b.is_pinned !== undefined) {
+          return b.is_pinned - a.is_pinned;
+        }
+        return 0;
+      });
+
+      this._handleTransferSideEffects({
+        room,
+        userEmail,
+        routerReplace,
+        viewedAgentEmail,
+      });
+    },
+
+    _updateRoomLegacy({ room, userEmail, routerReplace, viewedAgentEmail }) {
       const rooms = this.rooms;
       const filteredRooms = rooms
         .map((mappedRoom) =>
@@ -222,6 +285,22 @@ export const useRooms = defineStore('rooms', {
         });
 
       this.rooms = filteredRooms;
+
+      this._handleTransferSideEffects({
+        room,
+        userEmail,
+        routerReplace,
+        viewedAgentEmail,
+      });
+    },
+
+    _handleTransferSideEffects({
+      room,
+      userEmail,
+      routerReplace,
+      viewedAgentEmail,
+    }) {
+      const dashboardStore = useDashboard();
 
       const isTransferedToOtherUser =
         room.user && room.user.email !== userEmail;
