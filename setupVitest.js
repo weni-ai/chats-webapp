@@ -109,6 +109,57 @@ const unnnicTooltipStub = {
   template: `<div><slot /></div>`,
 };
 
+const unnnicDialogStub = {
+  name: 'UnnnicDialog',
+  inheritAttrs: false,
+  props: {
+    open: { type: Boolean, default: false },
+    ...(Unnnic?.unnnicDialog?.props || {}),
+  },
+  emits: Unnnic?.unnnicDialog?.emits || ['update:open'],
+  template: `
+    <div v-if="open" v-bind="$attrs" :data-testid="$attrs['data-testid'] || 'modal-dialog'">
+      <button type="button" class="unnnic-dialog-close" @click="$emit('update:open', false)" />
+      <slot />
+    </div>
+  `,
+};
+
+const unnnicDialogContentStub = {
+  name: 'UnnnicDialogContentStub',
+  inheritAttrs: false,
+  props: {
+    size: String,
+    ...(Unnnic?.unnnicDialogContent?.props || {}),
+  },
+  emits: Unnnic?.unnnicDialogContent?.emits,
+  template: '<div v-bind="$attrs"><slot /></div>',
+};
+
+const unnnicDialogHeaderStub = {
+  name: 'UnnnicDialogHeaderStub',
+  inheritAttrs: false,
+  props: Unnnic?.unnnicDialogHeader?.props || {},
+  emits: Unnnic?.unnnicDialogHeader?.emits,
+  template: '<div v-bind="$attrs"><slot /></div>',
+};
+
+const unnnicDialogTitleStub = {
+  name: 'UnnnicDialogTitleStub',
+  inheritAttrs: false,
+  props: Unnnic?.unnnicDialogTitle?.props || {},
+  emits: Unnnic?.unnnicDialogTitle?.emits,
+  template: '<div v-bind="$attrs"><slot /></div>',
+};
+
+const unnnicDialogFooterStub = {
+  name: 'UnnnicDialogFooterStub',
+  inheritAttrs: false,
+  props: Unnnic?.unnnicDialogFooter?.props || {},
+  emits: Unnnic?.unnnicDialogFooter?.emits,
+  template: '<div v-bind="$attrs"><slot /></div>',
+};
+
 config.global.plugins = [i18n, UnnnicSystemPlugin];
 config.global.mocks = {
   $t: (msg) => msg,
@@ -122,6 +173,11 @@ config.global.stubs = {
   UnnnicToolTip: unnnicTooltipStub,
   UnnnicDrawer: unnnicDrawerStub,
   UnnnicDrawerNext: unnnicDrawerNextStub,
+  UnnnicDialog: unnnicDialogStub,
+  UnnnicDialogContent: unnnicDialogContentStub,
+  UnnnicDialogHeader: unnnicDialogHeaderStub,
+  UnnnicDialogTitle: unnnicDialogTitleStub,
+  UnnnicDialogFooter: unnnicDialogFooterStub,
 };
 
 // Mock lodash.debounce

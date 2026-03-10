@@ -18,7 +18,7 @@ describe('ModalAddNewContact', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(ModalAddNewContact);
+    wrapper = mount(ModalAddNewContact, {});
   });
 
   it('renders correctly', () => {
@@ -26,13 +26,13 @@ describe('ModalAddNewContact', () => {
       true,
     );
 
-    expect(
-      wrapper.findComponent('[data-testid="input-contact-name"]').exists(),
-    ).toBe(true);
+    expect(wrapper.find('[data-testid="input-contact-name"]').exists()).toBe(
+      true,
+    );
 
-    expect(
-      wrapper.findComponent('[data-testid="input-contact-tel"]').exists(),
-    ).toBe(true);
+    expect(wrapper.find('[data-testid="input-contact-tel"]').exists()).toBe(
+      true,
+    );
   });
 
   it('validates form correctly', () => {
@@ -62,7 +62,7 @@ describe('ModalAddNewContact', () => {
       },
     });
 
-    const saveButton = wrapper.findComponent('[data-testid="save-button"]');
+    const saveButton = wrapper.find('[data-testid="save-button"]');
 
     await saveButton.trigger('click');
 
@@ -116,16 +116,15 @@ describe('ModalAddNewContact', () => {
     expect(wrapper.vm.inputLabelContactTel).toBe('');
   });
 
-  it('should emit close on modal emitted close', async () => {
-    const modal = wrapper.findComponent(
-      '[data-testid="modal-add-new-contact"]',
-    );
-    await modal.vm.$emit('close');
+  it('should emit close when dialog closes (update:open false)', async () => {
+    wrapper.vm.isOpen = false;
+    await wrapper.vm.$nextTick();
+    expect(wrapper.emitted('close')).toBeTruthy();
     expect(wrapper.emitted('close')[0]).toBeTruthy();
   });
 
   it('should emit close on click cancel button', async () => {
-    const cancelButton = wrapper.findComponent('[data-testid="cancel-button"]');
+    const cancelButton = wrapper.find('[data-testid="cancel-button"]');
 
     await cancelButton.trigger('click');
 
