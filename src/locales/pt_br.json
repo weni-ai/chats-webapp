@@ -390,6 +390,7 @@
     "tags": "Tags do chat",
     "discussions": "Discussões",
     "waiting": "Aguardando",
+    "waiting_tooltip": "Chats que devem ser atendidos",
     "waiting_assistance": "Aguardando atendimento",
     "in_progress": "Em andamento",
     "sent_flows": "Fluxos enviados",
@@ -581,7 +582,11 @@
     "end_all_chats": "Encerrar todos ({count} chats)",
     "back": "Voltar",
     "optional_tags_title": "Tags não são obrigatórias para finalizar chats no setor {sector}",
-    "optional_tags_description": "Se você selecionar alguma tag abaixo, ela será aplicada ao {count} chat e substituirá quaisquer tags existentes. | Se você selecionar alguma tag abaixo, ela será aplicada aos {count} chats e substituirá quaisquer tags existentes."
+    "optional_tags_description": "Se você selecionar alguma tag abaixo, ela será aplicada ao {count} chat e substituirá quaisquer tags existentes. | Se você selecionar alguma tag abaixo, ela será aplicada aos {count} chats e substituirá quaisquer tags existentes.",
+    "no_tags_in_sector": "Não há tags cadastradas neste setor para serem selecionadas."
+  },
+  "close_chat": {
+    "confirm_end": "Tem certeza que deseja encerrar este chat?"
   },
   "bulk_take": {
     "title": "Assumir todos os chats selecionados",
@@ -871,6 +876,9 @@
       "show_agent_status_count_timer": {
         "switch_active": "Exibir temporizador de status em pausas personalizadas do atendente",
         "switch_inactive": "Exibir temporizador de status em pausas personalizadas do atendente"
+      },
+      "show_waiting_rooms_count": {
+        "switch_label": "Exibir o contador com o número de chats esperando atendimento humano"
       }
     },
     "custom_sector": "Personalizar novo setor (recomendado)",

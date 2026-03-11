@@ -45,6 +45,23 @@ module.exports = defineConfig({
         },
       },
       {
+        test: /\.(js|ts)$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'builtin:swc-loader',
+            options: {
+              jsc: {
+                parser: {
+                  syntax: 'typescript',
+                },
+              },
+              env: { targets },
+            },
+          },
+        ],
+      },
+      {
         test: /\.(scss|sass)$/,
         loader: 'sass-loader',
         type: 'css',

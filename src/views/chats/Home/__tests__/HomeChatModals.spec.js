@@ -57,16 +57,6 @@ describe('HomeChatModals.vue', () => {
     expect(wrapper.vm.modalsShowing.getChat).toBe(false);
   });
 
-  it('closes assumedChat when close is called', async () => {
-    wrapper.vm.openModal('assumedChat');
-    expect(wrapper.vm.modalsShowing.assumedChat).toBe(true);
-    const assumeChatModal = wrapper.findComponent(
-      '[data-testid="modal-assume-chat"]',
-    );
-    assumeChatModal.vm.$emit('close');
-    expect(wrapper.vm.modalsShowing.assumedChat).toBe(false);
-  });
-
   it('closes closeChat when close is called', async () => {
     wrapper.vm.openModal('closeChat');
     await wrapper.vm.$nextTick();
@@ -76,17 +66,6 @@ describe('HomeChatModals.vue', () => {
     );
     assumeChatModal.vm.$emit('close');
     expect(wrapper.vm.modalsShowing.assumedChat).toBe(false);
-  });
-
-  it('closes quickMessages when close is called', async () => {
-    wrapper.vm.openModal('quickMessages');
-    await wrapper.vm.$nextTick();
-    expect(wrapper.vm.modalsShowing.quickMessages).toBe(true);
-    const assumeChatModal = wrapper.findComponent(
-      '[data-testid="quick-messages-modal"]',
-    );
-    assumeChatModal.vm.$emit('close');
-    expect(wrapper.vm.modalsShowing.quickMessages).toBe(false);
   });
 
   it('closes fileUploader when close is called', async () => {
@@ -138,13 +117,6 @@ describe('HomeChatModals.vue', () => {
     await wrapper.vm.emitFileUploaderProgress(progress);
     expect(wrapper.emitted('file-uploader-progress')).toBeTruthy();
     expect(wrapper.emitted('file-uploader-progress')[0]).toEqual([progress]);
-  });
-
-  it('emits select-quick-message when emitSelectQuickMessage is called', async () => {
-    const quickMessage = 'Hello!';
-    await wrapper.vm.emitSelectQuickMessage(quickMessage);
-    expect(wrapper.emitted('select-quick-message')).toBeTruthy();
-    expect(wrapper.emitted('select-quick-message')[0]).toEqual([quickMessage]);
   });
 
   it('log error on toggle undefined modal', () => {

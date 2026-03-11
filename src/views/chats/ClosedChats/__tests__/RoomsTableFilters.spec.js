@@ -77,7 +77,7 @@ describe('RoomsTableFilters.vue', () => {
         plugins: [pinia],
       },
       props: {
-        value: null,
+        modelValue: null,
         vertically: false,
         ...props,
       },
@@ -250,7 +250,7 @@ describe('RoomsTableFilters.vue', () => {
       vi.useRealTimers();
 
       expect(emitUpdateFiltersSpy).toHaveBeenCalled();
-      const emittedInput = wrapper.emitted('input');
+      const emittedInput = wrapper.emitted('update:modelValue');
       expect(emittedInput).toBeTruthy();
       expect(emittedInput[emittedInput.length - 1][0].contact).toBe(
         'Test Contact',
@@ -302,14 +302,14 @@ describe('RoomsTableFilters.vue', () => {
       await flushPromises();
       await wrapper.vm.$nextTick();
 
-      wrapper.emitted('input');
+      wrapper.emitted('update:modelValue');
 
       const newTagValue = [{ value: 'newTag', label: 'New Tag' }];
       wrapper.vm.filterTag = newTagValue;
       await flushPromises();
       await wrapper.vm.$nextTick();
 
-      const emittedEvent = wrapper.emitted('input');
+      const emittedEvent = wrapper.emitted('update:modelValue');
       expect(emittedEvent).toBeTruthy();
       expect(emittedEvent[emittedEvent.length - 1][0].tag).toEqual(newTagValue);
     });
@@ -319,14 +319,14 @@ describe('RoomsTableFilters.vue', () => {
       await flushPromises();
       await wrapper.vm.$nextTick();
 
-      wrapper.emitted('input');
+      wrapper.emitted('update:modelValue');
 
       const newDateValue = { start: '2023-02-01', end: '2023-02-02' };
       wrapper.vm.filterDate = newDateValue;
       await flushPromises();
       await wrapper.vm.$nextTick();
 
-      const emittedEvent = wrapper.emitted('input');
+      const emittedEvent = wrapper.emitted('update:modelValue');
       expect(emittedEvent).toBeTruthy();
       const lastEmittedPayload = emittedEvent[emittedEvent.length - 1][0];
       expect(lastEmittedPayload.date.start).toEqual(newDateValue.start);
@@ -412,7 +412,7 @@ describe('RoomsTableFilters.vue', () => {
 
       await wrapper.vm.emitUpdateFilters();
 
-      const emittedValue = wrapper.emitted('input')[0][0];
+      const emittedValue = wrapper.emitted('update:modelValue')[0][0];
       expect(emittedValue.date.start).toBe('2023-01-01');
       expect(emittedValue.date.end).toBe('2023-01-01');
     });
@@ -426,7 +426,7 @@ describe('RoomsTableFilters.vue', () => {
 
       await wrapper.vm.emitUpdateFilters();
 
-      const emittedValue = wrapper.emitted('input')[0][0];
+      const emittedValue = wrapper.emitted('update:modelValue')[0][0];
       expect(emittedValue.date.start).toBe('2023-01-01');
       expect(emittedValue.date.end).toBe('2023-01-01');
     });
@@ -554,7 +554,8 @@ describe('RoomsTableFilters.vue', () => {
         results: [{ uuid: 'tag-from-api', name: 'Tag from API' }],
       });
 
-      wrapper = createWrapper({ value: valueProps });
+      wrapper = createWrapper({ modelValue: valueProps });
+
       await flushPromises();
 
       expect(wrapper.vm.filterContact).toBe('Test Contact');
@@ -590,7 +591,7 @@ describe('RoomsTableFilters.vue', () => {
         return '';
       };
 
-      wrapper = createWrapper({ value: valueProps });
+      wrapper = createWrapper({ modelValue: valueProps });
       wrapper.vm.getRelativeDate = mockGetRelativeDateFn;
 
       await flushPromises();
