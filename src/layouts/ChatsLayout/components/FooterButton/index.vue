@@ -131,6 +131,12 @@ export default {
       return this.featureFlags.active_features?.includes('weniChatsBulkTake');
     },
 
+    isBulkTransferFeatureEnabled() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsBulkTransfer',
+      );
+    },
+
     currentSelectedRooms() {
       return this.activeTab === 'ongoing'
         ? this.selectedOngoingRooms
@@ -145,10 +151,12 @@ export default {
     },
 
     isTransferContactsEnabled() {
-      return (
-        this.project.config?.can_use_bulk_transfer &&
-        this.activeTab === 'ongoing'
-      );
+      if (!this.project.config?.can_use_bulk_transfer) return false;
+      if (this.activeTab === 'ongoing') return true;
+      if (this.activeTab === 'waiting' && this.isBulkTransferFeatureEnabled) {
+        return true;
+      }
+      return false;
     },
 
     isBulkCloseContactsEnabled() {
