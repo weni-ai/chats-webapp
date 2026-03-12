@@ -475,8 +475,8 @@ describe('HomeChat.vue', () => {
       const roomsStore = useRooms();
       const discussionsStore = useDiscussions();
 
-      roomsStore.room = {};
-      discussionsStore.discussion = null;
+      roomsStore.activeRoom = null;
+      discussionsStore.activeDiscussion = null;
 
       const getChatButton = wrapper.find('[data-testid="get-chat-button"]');
       expect(getChatButton.exists()).toBe(true);

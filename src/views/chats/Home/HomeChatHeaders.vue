@@ -145,7 +145,7 @@
     <ModalCloseDiscussion
       v-if="isModalCloseDiscussionOpened"
       v-model="isModalCloseDiscussionOpened"
-      :discussionContact="headerDiscussionSubtitle"
+      :discussionContact="discussion?.contact"
     />
   </section>
 </template>
