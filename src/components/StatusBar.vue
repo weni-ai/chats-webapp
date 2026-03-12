@@ -436,11 +436,13 @@ watch(
   (newStatus) => {
     if (
       newStatus === 'OFFLINE' &&
+      configStore.socketClosedOffline &&
       moduleStorage.getItem(statusAgentKey, '', {
         useSession: true,
       }) === 'OFFLINE'
     ) {
       selectedStatus.value = statuses.value[1];
+      configStore.setSocketClosedOffline(false);
     }
   },
 );

@@ -36,7 +36,7 @@
       v-if="!room?.user && !discussion"
       class="get-chat-button"
       :text="$t('chats.get_chat')"
-      type="primary"
+      :type="getChatButtonType"
       data-testid="get-chat-button"
       @click="openModal('getChat')"
     />
@@ -65,6 +65,7 @@ import { mapActions, mapState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useProfile } from '@/store/modules/profile';
+import { useConfig } from '@/store/modules/config';
 
 import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone/index.vue';
 
@@ -121,6 +122,7 @@ export default {
       isLoadingCanSendMessageStatus: 'isLoadingCanSendMessageStatus',
     }),
     ...mapState(useFeatureFlag, ['featureFlags']),
+    ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, {
       discussion: (store) => store.activeDiscussion,
@@ -131,6 +133,19 @@ export default {
       return this.featureFlags.active_features?.includes(
         'weniChatsIs24hValidOptimization',
       );
+    },
+    isBulkActionsEnabled() {
+      const hasBulkTake =
+        this.featureFlags.active_features?.includes('weniChatsBulkTake') &&
+        this.project.config?.can_use_bulk_take;
+      const hasBulkClose =
+        this.featureFlags.active_features?.includes('weniChatsBulkClose') &&
+        this.project.config?.can_use_bulk_close;
+      const hasBulkTransfer = this.project.config?.can_use_bulk_transfer;
+      return !!hasBulkTake || !!hasBulkClose || !!hasBulkTransfer;
+    },
+    getChatButtonType() {
+      return this.isBulkActionsEnabled ? 'secondary' : 'primary';
     },
     isCanSendMessage() {
       return this.isActiveFeatureIs24hValidOptimization
