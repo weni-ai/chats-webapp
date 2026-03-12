@@ -6,16 +6,15 @@
       class="discussion-sidebar"
     >
       <template #header>
-        <UnnnicChatsHeader
-          :title="
-            isOwnDiscussion
-              ? $t('discussions.about.title')
-              : $t('chats.closed_chats.contact_history')
-          "
-          :avatarIcon="isOwnDiscussion ? 'chat_info' : 'history'"
-          :close="isOwnDiscussion ? handleEndDiscussionModal : null"
-          sectionIconScheme="neutral-dark"
-        />
+        <header class="discussion-sidebar__header">
+          <p>
+            {{
+              isOwnDiscussion
+                ? $t('discussions.about.title')
+                : $t('chats.closed_chats.contact_history')
+            }}
+          </p>
+        </header>
       </template>
       <DiscussionAbout
         v-if="isOwnDiscussion"
@@ -36,37 +35,6 @@
           @click="updateRoomMessages"
         />
       </section>
-
-      <UnnnicDialog
-        v-model:open="isEndDiscussionModalOpen"
-        class="discussion-sidebar__end-modal"
-      >
-        <UnnnicDialogContent size="small">
-          <UnnnicDialogHeader type="attention">
-            <UnnnicDialogTitle>
-              {{ $t('discussions.close.title') }}
-            </UnnnicDialogTitle>
-          </UnnnicDialogHeader>
-          <section class="discussion-sidebar__end-modal__content">
-            <p class="discussion-sidebar__end-modal__description">
-              {{ $t('discussions.close.description') }}
-            </p>
-          </section>
-          <UnnnicDialogFooter>
-            <UnnnicButton
-              :text="$t('cancel')"
-              type="tertiary"
-              @click="handleEndDiscussionModal"
-            />
-            <UnnnicButton
-              :text="$t('end')"
-              type="attention"
-              :loading="isEndDiscussionLoading"
-              @click="endDiscussion"
-            />
-          </UnnnicDialogFooter>
-        </UnnnicDialogContent>
-      </UnnnicDialog>
     </AsideSlotTemplate>
   </div>
 </template>
@@ -101,9 +69,6 @@ export default {
 
       details: null,
       isOwnDiscussion: false,
-
-      isEndDiscussionModalOpen: false,
-      isEndDiscussionLoading: false,
     };
   },
 
@@ -162,18 +127,6 @@ export default {
           console.error(error);
         });
     },
-
-    handleEndDiscussionModal() {
-      this.isEndDiscussionModalOpen = !this.isEndDiscussionModalOpen;
-    },
-
-    async endDiscussion() {
-      this.isEndDiscussionLoading = true;
-      await this.setActiveRoom(null);
-      await this.deleteDiscussion();
-      this.handleEndDiscussionModal();
-      this.setDiscussionsCount(this.discussionsCount - 1);
-    },
   },
 };
 </script>
@@ -186,6 +139,16 @@ export default {
 }
 
 .discussion-sidebar {
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $unnnic-space-2;
+    font: $unnnic-font-display-3;
+    color: $unnnic-color-fg-emphasized;
+    border-bottom: 1px solid $unnnic-color-border-soft;
+    height: 55px;
+  }
   &__room {
     padding: $unnnic-spacing-xs;
     padding-bottom: $unnnic-spacing-sm;

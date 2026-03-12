@@ -157,7 +157,10 @@ describe('HomeChat.vue', () => {
       createSpy: vi.fn,
     });
     setActivePinia(pinia);
-    useProfile().me = { email: 'testuser@weni.ai', project_permission_role: 'agent' };
+    useProfile().me = {
+      email: 'testuser@weni.ai',
+      project_permission_role: 'agent',
+    };
     useRoomMessages().getRoomMessages = vi.fn().mockResolvedValue([]);
     useDiscussionMessages().getDiscussionMessages = vi
       .fn()
@@ -472,8 +475,8 @@ describe('HomeChat.vue', () => {
       const roomsStore = useRooms();
       const discussionsStore = useDiscussions();
 
-      roomsStore.room = {};
-      discussionsStore.discussion = null;
+      roomsStore.activeRoom = null;
+      discussionsStore.activeDiscussion = null;
 
       const getChatButton = wrapper.find('[data-testid="get-chat-button"]');
       expect(getChatButton.exists()).toBe(true);
