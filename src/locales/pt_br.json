@@ -567,6 +567,11 @@
   "transfer_contact": "Transferir contato | Transferir contatos",
   "bulk_transfer": {
     "transfer_selected_contacts": "Transferir contatos selecionados",
+    "transfer_all": "Transferir todos",
+    "selected_chats_count": "{count} chat selecionado para transferência. | {count} chats selecionados para transferência.",
+    "success_message": "{count} chat transferido com sucesso! | {count} chats transferidos com sucesso!",
+    "partial_success_message": "{success} chat transferido, {failed} falhou. Tente novamente. | {success} chats transferidos, {failed} falharam. Tente novamente.",
+    "error_message": "Não foi possível transferir os chats, tente novamente",
     "agent_transfer_success": "Contato transferido com sucesso para agente {agent} | Contatos transferidos com sucesso para agente {agent}",
     "queue_transfer_success": "Contato transferido com sucesso para fila {queue} | Contatos transferidos com sucesso para fila {queue}",
     "error": "Não foi possível transferir os contatos, tente novamente",

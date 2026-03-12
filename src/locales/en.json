@@ -571,6 +571,11 @@
   "transfer_contact": "Transfer contact | Transfer contacts",
   "bulk_transfer": {
     "transfer_selected_contacts": "Transfer selected contacts",
+    "transfer_all": "Transfer all",
+    "selected_chats_count": "{count} chat is selected for transfer. | {count} chats are selected for transfer.",
+    "success_message": "{count} chat transferred successfully! | {count} chats transferred successfully!",
+    "partial_success_message": "{success} chat transferred, {failed} failed. Please try again. | {success} chats transferred, {failed} failed. Please try again.",
+    "error_message": "Unable to transfer chats, please try again",
     "agent_transfer_success": "Contact successfully transferred to agent {agent} | Contacts successfully transferred to agent {agent}",
     "queue_transfer_success": "Contact successfully transferred to queue {queue} | Contacts successfully transferred to queue {queue}",
     "error": "It was not possible to transfer the contacts, try again",
