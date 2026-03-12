@@ -25,11 +25,11 @@
           v-model="projectConfig.can_close_chats_in_queue"
           :name="configBlockCloseChatsInQueueTranslation"
         />
-        <!-- TODO: Future feature - bulk take -->
-        <!-- <SettingsProjectOptionsItem
+        <SettingsProjectOptionsItem
+          v-if="isBulkTakeFeatureEnabled"
           v-model="projectConfig.can_use_bulk_take"
           :name="configBulkTakeTranslation"
-        /> -->
+        />
         <SettingsProjectOptionsItem
           v-model="projectConfig.can_use_queue_prioritization"
           :name="configQueuePrioritizationTranslation"
@@ -79,7 +79,7 @@ export default {
         filter_offline_agents: false,
         can_use_bulk_close: false,
         can_close_chats_in_queue: false,
-        // can_use_bulk_take: false, // TODO: Future feature - bulk take
+        can_use_bulk_take: false,
         can_use_queue_prioritization: false,
         can_see_timer: false,
         can_see_waiting_rooms_count: true,
@@ -94,6 +94,10 @@ export default {
 
     isBulkCloseFeatureEnabled() {
       return this.featureFlags.active_features?.includes('weniChatsBulkClose');
+    },
+
+    isBulkTakeFeatureEnabled() {
+      return this.featureFlags.active_features?.includes('weniChatsBulkTake');
     },
 
     isUserManager() {
@@ -133,15 +137,14 @@ export default {
         }`,
       );
     },
-    // TODO: Future feature - bulk take
-    // configBulkTakeTranslation() {
-    //   const canBulkTake = this.projectConfig.can_use_bulk_take;
-    //   return this.$t(
-    //     `config_chats.project_configs.bulk_take.switch_${
-    //       canBulkTake ? 'active' : 'inactive'
-    //     }`,
-    //   );
-    // },
+    configBulkTakeTranslation() {
+      const canBulkTake = this.projectConfig.can_use_bulk_take;
+      return this.$t(
+        `config_chats.project_configs.bulk_take.switch_${
+          canBulkTake ? 'active' : 'inactive'
+        }`,
+      );
+    },
     configQueuePrioritizationTranslation() {
       const canQueuePrioritization =
         this.projectConfig.can_use_queue_prioritization;
@@ -197,7 +200,7 @@ export default {
         filter_offline_agents,
         can_use_bulk_close,
         can_close_chats_in_queue,
-        // can_use_bulk_take, // TODO: Future feature - bulk take
+        can_use_bulk_take,
         can_use_queue_prioritization,
         can_see_timer,
         can_see_waiting_rooms_count,
@@ -208,7 +211,7 @@ export default {
         filter_offline_agents,
         can_use_bulk_close,
         can_close_chats_in_queue,
-        // can_use_bulk_take, // TODO: Future feature - bulk take
+        can_use_bulk_take,
         can_use_queue_prioritization,
         can_see_timer,
         can_see_waiting_rooms_count,

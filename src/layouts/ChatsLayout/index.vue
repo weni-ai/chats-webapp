@@ -23,7 +23,10 @@
           :viewedAgent="viewedAgent"
         />
 
-        <ChatsLayoutFooterButton class="footer-button" />
+        <ChatsLayoutFooterButton
+          class="footer-button"
+          :isViewMode="isViewMode"
+        />
 
         <ViewOptions
           :isViewMode="isViewMode"
