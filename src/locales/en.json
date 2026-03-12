@@ -464,7 +464,7 @@
   "action_cannot_be_reversed": "This action cannot be reversed",
   "end": "End",
   "end_chat": "End Chat",
-  "end_discussion": "End Discussion",
+  "end_discussion": "End discussion",
   "cancel": "Cancel",
   "add": "Add",
   "proceed": "Proceed",
@@ -631,7 +631,7 @@
     "close": {
       "title": "End discussion",
       "question": "Are you sure you want to end discussion about {contact}?",
-      "description": "Once finalized, the discussion will be closed, and no more messages can be sent."
+      "description": "Once finalized, no more messages can be sent."
     },
     "add_agents": {
       "title": "Add Agents",

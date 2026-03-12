@@ -629,7 +629,7 @@
     "close": {
       "title": "Encerrar discussão",
       "question": "Tem certeza que deseja encerrar a discussão sobre {contact}?",
-      "description": "Uma vez finalizada, a discussão será encerrada e você não poderá mais trocar mensagens."
+      "description": "Uma vez finalizada, não será possível enviar mais mensagens."
     },
     "add_agents": {
       "title": "Adicionar agentes",
