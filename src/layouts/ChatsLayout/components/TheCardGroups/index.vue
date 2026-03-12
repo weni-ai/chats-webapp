@@ -334,16 +334,26 @@ export default {
       return this.featureFlags.active_features?.includes('weniChatsBulkClose');
     },
 
+    isBulkTakeFeatureEnabled() {
+      return this.featureFlags.active_features?.includes('weniChatsBulkTake');
+    },
+
     showSelectAllCheckbox() {
       const canBulkTransfer = this.project.config?.can_use_bulk_transfer;
       const canBulkClose =
         this.isBulkCloseFeatureEnabled &&
         this.project.config?.can_use_bulk_close;
+      const canBulkTake =
+        this.isBulkTakeFeatureEnabled &&
+        this.project.config?.can_use_bulk_take &&
+        !this.isViewMode;
       const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
       const hasRooms = this.countRooms[this.activeTab] > 0;
 
       if (this.activeTab === 'waiting') {
-        return hasRooms && canBulkClose && !blockCloseInQueue;
+        return (
+          hasRooms && (canBulkTake || (canBulkClose && !blockCloseInQueue))
+        );
       }
 
       if (this.activeTab === 'ongoing') {
@@ -408,12 +418,16 @@ export default {
       const canBulkClose =
         this.isBulkCloseFeatureEnabled &&
         this.project.config?.can_use_bulk_close;
+      const canBulkTake =
+        this.isBulkTakeFeatureEnabled &&
+        this.project.config?.can_use_bulk_take &&
+        !this.isViewMode;
       const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
 
       if (this.isMobile) return false;
 
       if (this.activeTab === 'waiting') {
-        return canBulkClose && !blockCloseInQueue;
+        return canBulkTake || (canBulkClose && !blockCloseInQueue);
       }
 
       return canBulkTransfer || canBulkClose;

@@ -149,6 +149,7 @@
   "select_this_chat": "Seleccionar este chat",
   "deselect_this_chat": "Deseleccionar este chat",
   "transfer_all_selected_chats": "Transferir todos los chats seleccionados",
+  "take_over_all_selected_chats_tooltip": "Asumir todos los chats seleccionados",
   "end_all_selected_chats_tooltip": "Finalizar todos los chats seleccionados",
   "number_of_chats_selected": "{count} chat seleccionado | {count} chats seleccionados",
   "image": "Imagen",
@@ -406,7 +407,7 @@
       "does_not_have_permission": "No tiene permiso para transferir este chat"
     },
     "open_chat": "Abrir el chat",
-    "get_chat": "atrapar el chat",
+    "get_chat": "Tomar solo este chat",
     "get_chat_question": "Obtener chat?",
     "get_chat_confirmation": "Confirma si deseas realizar el servicio de {contact}",
     "get_chat_error": "Error al intentar obtener el chat",
@@ -451,6 +452,7 @@
   "about": "acerca de",
   "today": "Hoy",
   "transfer": "Transferir",
+  "take_over": "Asumir",
   "suggested_answers": "Respuestas sugeridas",
   "attach": "adjuntar",
   "send": "Enviar",
@@ -585,6 +587,15 @@
   },
   "close_chat": {
     "confirm_end": "¿Está seguro de que desea finalizar este chat?"
+  },
+  "bulk_take": {
+    "title": "Asumir todos los chats seleccionados",
+    "selected_chats_count": "{count} chat está seleccionado para asumir. | {count} chats están seleccionados para asumir.",
+    "confirm_take_over_selected": "¿Está seguro de que desea asumir todos los chats seleccionados?",
+    "take_over_all": "Asumir todos",
+    "success_message": "¡{count} chat asumido con éxito! | ¡{count} chats asumidos con éxito!",
+    "partial_success_message": "{success} chat asumido, {failed} falló. Intente nuevamente. | {success} chats asumidos, {failed} fallaron. Intente nuevamente.",
+    "error_message": "No fue posible asumir los chats, intente nuevamente"
   },
   "contact_info": {
     "title": "Sobre el contacto",
@@ -850,6 +861,10 @@
       "block_close_chats_in_queue": {
         "switch_active": "Bloquear la finalización de chats que están en la cola activo",
         "switch_inactive": "Bloquear la finalización de chats que están en la cola inactivo"
+      },
+      "bulk_take": {
+        "switch_active": "Asumir chats en masa",
+        "switch_inactive": "Asumir chats en masa"
       },
       "queue_prioritization": {
         "tooltip": "Esta función permite a los agentes elegir las colas que recibirán contactos, dentro de las previamente seleccionadas en el sector.",
