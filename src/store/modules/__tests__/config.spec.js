@@ -31,6 +31,7 @@ describe('useConfig Store', () => {
     expect(config.token).toBe('');
     expect(config.project).toEqual({ config: {} });
     expect(config.status).toBe('');
+    expect(config.socketClosedOffline).toBe(false);
     expect(config.copilot).toEqual({
       active: false,
       customRulesActive: false,
@@ -106,6 +107,17 @@ describe('useConfig Store', () => {
   it('should throw error for invalid status value', async () => {
     const config = useConfig();
     await expect(config.updateStatus('busy')).rejects.toThrow();
+  });
+
+  it('should set socketClosedOffline', () => {
+    const config = useConfig();
+    config.setSocketClosedOffline(true);
+
+    expect(config.socketClosedOffline).toBe(true);
+
+    config.setSocketClosedOffline(false);
+
+    expect(config.socketClosedOffline).toBe(false);
   });
 
   it('should set Copilot active state', () => {

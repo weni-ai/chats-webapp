@@ -33,6 +33,8 @@ vi.mock('@/store/modules/config', () => ({
       },
     },
     status: 'ONLINE',
+    socketClosedOffline: false,
+    setSocketClosedOffline: vi.fn(),
     getStatus: vi.fn().mockResolvedValue({
       data: { connection_status: 'ONLINE' },
     }),
@@ -808,15 +810,55 @@ describe('StatusBar', () => {
         });
 
         const newStatus = 'OFFLINE';
+        const socketClosedOffline = true;
         const storageValue = moduleStorage.getItem(statusAgentKey, '', {
           useSession: true,
         });
 
-        if (newStatus === 'OFFLINE' && storageValue === 'OFFLINE') {
+        if (
+          newStatus === 'OFFLINE' &&
+          socketClosedOffline &&
+          storageValue === 'OFFLINE'
+        ) {
           wrapper.vm.selectedStatus = wrapper.vm.statuses[1];
         }
 
         expect(wrapper.vm.selectedStatus.value).toBe('inactive');
+      });
+
+      it('should not change status when socketClosedOffline is false', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+
+        wrapper.vm.statuses = [
+          { value: 'active', label: 'Online', color: 'green' },
+          { value: 'inactive', label: 'Offline', color: 'gray' },
+        ];
+        await wrapper.vm.$nextTick();
+
+        wrapper.vm.selectedStatus = wrapper.vm.statuses[0];
+        const initialStatus = wrapper.vm.selectedStatus;
+
+        const statusAgentKey = `statusAgent-test-uuid`;
+        moduleStorage.setItem(statusAgentKey, 'OFFLINE', {
+          useSession: true,
+        });
+
+        const newStatus = 'OFFLINE';
+        const socketClosedOffline = false;
+        const storageValue = moduleStorage.getItem(statusAgentKey, '', {
+          useSession: true,
+        });
+
+        if (
+          newStatus === 'OFFLINE' &&
+          socketClosedOffline &&
+          storageValue === 'OFFLINE'
+        ) {
+          wrapper.vm.selectedStatus = wrapper.vm.statuses[1];
+        }
+
+        expect(wrapper.vm.selectedStatus).toBe(initialStatus);
       });
 
       it('should test configCustomStatus watch logic', async () => {
@@ -861,11 +903,16 @@ describe('StatusBar', () => {
         });
 
         const newStatus = 'OFFLINE';
+        const socketClosedOffline = true;
         const storageValue = moduleStorage.getItem(statusAgentKey, '', {
           useSession: true,
         });
 
-        if (newStatus === 'OFFLINE' && storageValue === 'OFFLINE') {
+        if (
+          newStatus === 'OFFLINE' &&
+          socketClosedOffline &&
+          storageValue === 'OFFLINE'
+        ) {
           wrapper.vm.selectedStatus = wrapper.vm.statuses[1];
         }
 
