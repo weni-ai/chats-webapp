@@ -1,10 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import wsRoomUpdate from '@/services/api/websocket/listeners/room/update';
+import wsRoomUpdate, {
+  flushPendingUpdates,
+  resetBatchState,
+} from '@/services/api/websocket/listeners/room/update';
 import { useRooms } from '@/store/modules/chats/rooms';
 import SoundNotification from '@/services/api/websocket/soundNotification';
 
 vi.mock('@/store/modules/chats/rooms', () => ({
   useRooms: vi.fn(),
+}));
+
+vi.mock('@/store/modules/featureFlag', () => ({
+  useFeatureFlag: vi.fn(() => ({
+    featureFlags: { active_features: [] },
+  })),
 }));
 
 vi.mock('@/services/api/websocket/soundNotification', () => ({
@@ -19,6 +28,8 @@ describe('Room update', () => {
   let soundNotificationMock;
 
   beforeEach(() => {
+    resetBatchState();
+
     appMock = {
       me: {
         email: 'user@example.com',
@@ -67,8 +78,13 @@ describe('Room update', () => {
 
     wsRoomUpdate(room, { app: appMock });
 
-    expect(roomsStoreMock.addRoom).toHaveBeenCalledWith(room);
     expect(soundNotificationMock.notify).toHaveBeenCalledWith();
+
+    flushPendingUpdates();
+
+    expect(roomsStoreMock.updateRoom).toHaveBeenCalledWith(
+      expect.objectContaining({ room }),
+    );
   });
 
   it('should add the room and play select sound if transfer action is "forward"', () => {
@@ -81,8 +97,13 @@ describe('Room update', () => {
 
     wsRoomUpdate(room, { app: appMock });
 
-    expect(roomsStoreMock.addRoom).toHaveBeenCalledWith(room);
     expect(soundNotificationMock.notify).toHaveBeenCalledWith();
+
+    flushPendingUpdates();
+
+    expect(roomsStoreMock.updateRoom).toHaveBeenCalledWith(
+      expect.objectContaining({ room }),
+    );
   });
 
   it('should update the room in the store', () => {
@@ -93,6 +114,7 @@ describe('Room update', () => {
     };
 
     wsRoomUpdate(room, { app: appMock });
+    flushPendingUpdates();
 
     expect(roomsStoreMock.updateRoom).toHaveBeenCalledWith({
       room,
@@ -110,6 +132,7 @@ describe('Room update', () => {
     };
 
     wsRoomUpdate(room, { app: appMock });
+    flushPendingUpdates();
 
     expect(roomsStoreMock.resetNewMessagesByRoom).toHaveBeenCalledWith({
       room: room.uuid,
@@ -124,6 +147,7 @@ describe('Room update', () => {
     };
 
     wsRoomUpdate(room, { app: appMock });
+    flushPendingUpdates();
 
     expect(roomsStoreMock.resetNewMessagesByRoom).not.toHaveBeenCalled();
   });
