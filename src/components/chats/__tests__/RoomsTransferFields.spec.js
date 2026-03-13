@@ -1,8 +1,10 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 
 import QueueService from '@/services/api/resources/settings/queue';
+import RoomService from '@/services/api/resources/chats/room';
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 import RoomsTransferFields from '../RoomsTransferFields.vue';
 
@@ -21,11 +23,29 @@ vi.mock('@/services/api/resources/settings/queue', () => ({
   },
 }));
 
+vi.mock('@/services/api/resources/chats/room', () => ({
+  default: {
+    bulkTranfer: vi.fn(),
+    getRoomTags: vi.fn(() => ({ results: [] })),
+  },
+}));
+
+vi.mock('@/utils/callUnnnicAlert', () => ({
+  default: vi.fn(),
+}));
+
+const mockRooms = [
+  { uuid: '1', queue: { sector: 's1' } },
+  { uuid: '2', queue: { sector: 's1' } },
+  { uuid: '3', queue: { sector: 's1' } },
+];
+
 function createStore(overrides = {}) {
   const roomsDefaults = {
     selectedOngoingRooms: ['1', '2'],
     selectedWaitingRooms: [],
     activeTab: 'ongoing',
+    rooms: mockRooms,
   };
 
   return createTestingPinia({
@@ -36,11 +56,12 @@ function createStore(overrides = {}) {
   });
 }
 
-function createWrapper(storeOverrides = {}) {
+function createWrapper(storeOverrides = {}, props = {}) {
   const store = createStore(storeOverrides);
   const wrapper = mount(RoomsTransferFields, {
     props: {
       modelValue: [],
+      ...props,
     },
     global: {
       plugins: [store],
@@ -54,6 +75,7 @@ describe('RoomsTransferField', () => {
   let wrapper;
 
   beforeEach(() => {
+    vi.clearAllMocks();
     wrapper = createWrapper();
   });
 
@@ -174,20 +196,204 @@ describe('RoomsTransferField', () => {
       expect(wrapper.vm.currentSelectedRooms).toEqual(['3', '4']);
     });
 
-    it('should perform bulk transfer when transfer event is called', async () => {});
+    it('should call transferBulk when bulkTransfer prop is true', async () => {
+      RoomService.bulkTranfer.mockResolvedValue({
+        data: { success_count: 2, failed_count: 0 },
+      });
 
-    it('should show success alert after successful bulk transfer', async () => {});
+      const wrapper = createWrapper(
+        { selectedOngoingRooms: ['1', '2'], rooms: mockRooms },
+        { bulkTransfer: true },
+      );
 
-    it('should show error alert if bulk transfer fails', async () => {});
+      await wrapper.setProps({
+        modelValue: [{ value: 'queue-1', label: 'Queue 1' }],
+      });
+
+      await wrapper.vm.transfer();
+
+      expect(RoomService.bulkTranfer).toHaveBeenCalledWith({
+        rooms: ['1', '2'],
+        intended_queue: 'queue-1',
+        intended_agent: undefined,
+      });
+    });
+
+    it('should call transferSingle when bulkTransfer prop is false', async () => {
+      RoomService.bulkTranfer.mockResolvedValue({ status: 200 });
+
+      const wrapper = createWrapper(
+        { contactToTransfer: '1', rooms: mockRooms },
+        { bulkTransfer: false },
+      );
+
+      await wrapper.setProps({
+        modelValue: [{ value: 'queue-1', label: 'Queue 1' }],
+      });
+
+      await wrapper.vm.transfer();
+
+      expect(RoomService.bulkTranfer).toHaveBeenCalled();
+    });
+
+    it('should show success toast when all rooms transfer successfully', async () => {
+      RoomService.bulkTranfer.mockResolvedValue({
+        data: { success_count: 2, failed_count: 0 },
+      });
+
+      const wrapper = createWrapper(
+        { selectedOngoingRooms: ['1', '2'], rooms: mockRooms },
+        { bulkTransfer: true },
+      );
+
+      await wrapper.setProps({
+        modelValue: [{ value: 'queue-1', label: 'Queue 1' }],
+      });
+
+      await wrapper.vm.transfer();
+
+      expect(callUnnnicAlert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          props: expect.objectContaining({ type: 'success' }),
+        }),
+      );
+    });
+
+    it('should show attention toast on partial success', async () => {
+      RoomService.bulkTranfer.mockResolvedValue({
+        data: { success_count: 1, failed_count: 1 },
+      });
+
+      const wrapper = createWrapper(
+        { selectedOngoingRooms: ['1', '2'], rooms: mockRooms },
+        { bulkTransfer: true },
+      );
+
+      await wrapper.setProps({
+        modelValue: [{ value: 'queue-1', label: 'Queue 1' }],
+      });
+
+      await wrapper.vm.transfer();
+
+      expect(callUnnnicAlert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          props: expect.objectContaining({ type: 'attention' }),
+        }),
+      );
+    });
+
+    it('should show error toast when all rooms fail', async () => {
+      RoomService.bulkTranfer.mockResolvedValue({
+        data: { success_count: 0, failed_count: 2 },
+      });
+
+      const wrapper = createWrapper(
+        { selectedOngoingRooms: ['1', '2'], rooms: mockRooms },
+        { bulkTransfer: true },
+      );
+
+      await wrapper.setProps({
+        modelValue: [{ value: 'queue-1', label: 'Queue 1' }],
+      });
+
+      await wrapper.vm.transfer();
+
+      expect(callUnnnicAlert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          props: expect.objectContaining({ type: 'error' }),
+        }),
+      );
+    });
+
+    it('should emit transfer-complete with success on full success', async () => {
+      RoomService.bulkTranfer.mockResolvedValue({
+        data: { success_count: 2, failed_count: 0 },
+      });
+
+      const wrapper = createWrapper(
+        { selectedOngoingRooms: ['1', '2'], rooms: mockRooms },
+        { bulkTransfer: true },
+      );
+
+      await wrapper.setProps({
+        modelValue: [{ value: 'queue-1', label: 'Queue 1' }],
+      });
+
+      await wrapper.vm.transfer();
+
+      expect(wrapper.emitted('transfer-complete')).toBeTruthy();
+      expect(wrapper.emitted('transfer-complete')[0]).toEqual(['success']);
+    });
+
+    it('should emit transfer-complete with error when all fail', async () => {
+      RoomService.bulkTranfer.mockResolvedValue({
+        data: { success_count: 0, failed_count: 2 },
+      });
+
+      const wrapper = createWrapper(
+        { selectedOngoingRooms: ['1', '2'], rooms: mockRooms },
+        { bulkTransfer: true },
+      );
+
+      await wrapper.setProps({
+        modelValue: [{ value: 'queue-1', label: 'Queue 1' }],
+      });
+
+      await wrapper.vm.transfer();
+
+      expect(wrapper.emitted('transfer-complete')).toBeTruthy();
+      expect(wrapper.emitted('transfer-complete')[0]).toEqual(['error']);
+    });
+
+    it('should chunk rooms in batches of 200', async () => {
+      const manyUuids = Array.from({ length: 250 }, (_, i) => `room-${i}`);
+      const manyRooms = manyUuids.map((uuid) => ({
+        uuid,
+        queue: { sector: 's1' },
+      }));
+
+      RoomService.bulkTranfer.mockResolvedValue({
+        data: { success_count: 125, failed_count: 0 },
+      });
+
+      const wrapper = createWrapper(
+        { selectedOngoingRooms: manyUuids, rooms: manyRooms },
+        { bulkTransfer: true },
+      );
+
+      await wrapper.setProps({
+        modelValue: [{ value: 'queue-1', label: 'Queue 1' }],
+      });
+
+      await wrapper.vm.transfer();
+
+      expect(RoomService.bulkTranfer).toHaveBeenCalledTimes(2);
+
+      const firstCallRooms = RoomService.bulkTranfer.mock.calls[0][0].rooms;
+      const secondCallRooms = RoomService.bulkTranfer.mock.calls[1][0].rooms;
+
+      expect(firstCallRooms).toHaveLength(200);
+      expect(secondCallRooms).toHaveLength(50);
+    });
   });
 
   describe('Alerts', () => {
-    it('should display success alert with correct message', () => {});
+    it('should call callUnnnicAlert via showAlert', () => {
+      wrapper.vm.showAlert('Test message', 'success');
 
-    it('should display error alert with correct message', () => {});
-  });
+      expect(callUnnnicAlert).toHaveBeenCalledWith({
+        props: { text: 'Test message', type: 'success' },
+        seconds: 5,
+      });
+    });
 
-  describe('Localization', () => {
-    it('should display translated text for all UI elements', () => {});
+    it('should not call callUnnnicAlert on mobile', async () => {
+      const wrapper = createWrapper();
+      wrapper.vm.isMobile = true;
+
+      wrapper.vm.showAlert('Test message', 'success');
+
+      expect(callUnnnicAlert).not.toHaveBeenCalled();
+    });
   });
 });
