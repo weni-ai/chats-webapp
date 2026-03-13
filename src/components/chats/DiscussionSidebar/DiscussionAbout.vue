@@ -49,20 +49,23 @@
               {{ $t('discussions.add_agents.description') }}
             </p>
             <div class="add-agent-modal__input">
-              <UnnnicLabel :label="$t('discussions.add_agents.select_agent')" />
-              <UnnnicSelectSmart
+              <UnnnicSelect
                 v-model="agentSelected"
                 :options="agentsToSelect"
-                autocomplete
-                autocompleteIconLeft
-                autocompleteClearOnFocus
+                :label="$t('discussions.add_agents.select_agent')"
+                :placeholder="$t('discussions.add_agents.search_agent')"
+                returnObject
+                clearable
+                enableSearch
+                :search="searchAgent"
+                @update:search="searchAgent = $event"
               />
             </div>
             <SelectedMember
-              v-if="agentSelected[0]?.description"
-              :name="agentSelected[0]?.label"
-              :email="agentSelected[0]?.description"
-              :photoUrl="agentSelected[0]?.photoUrl"
+              v-if="agentSelected?.description"
+              :name="agentSelected?.label"
+              :email="agentSelected?.description"
+              :photoUrl="agentSelected?.photoUrl"
               @remove="handlingRemoveAgent"
             />
           </section>
@@ -76,7 +79,7 @@
             <UnnnicButton
               :text="$t('add')"
               type="primary"
-              :disabled="!agentSelected[0]"
+              :disabled="!agentSelected"
               :loading="addAgentLoading"
               @click="handlingAddAgent"
             />
@@ -121,7 +124,8 @@ export default {
       isAddAgentModalOpen: false,
       addAgentLoading: false,
       agentsToSelect: [],
-      agentSelected: [],
+      agentSelected: null,
+      searchAgent: '',
     };
   },
 
@@ -138,7 +142,7 @@ export default {
   watch: {
     async isAddAgentModalOpen(newIsAddAgentModalOpen) {
       if (!newIsAddAgentModalOpen) {
-        this.agentSelected = [];
+        this.agentSelected = null;
         return;
       }
       const response = await Project.allUsers();
@@ -151,7 +155,7 @@ export default {
         (agent) => !agentsInvolvedNames.includes(this.getUserFullName(agent)),
       );
 
-      const newAgents = [this.agentsToSelect[0]];
+      const newAgents = [];
 
       filteredAgents.forEach((agent) =>
         newAgents.push({
@@ -170,27 +174,23 @@ export default {
         if (responseAgents.results) {
           this.agentsInvolved = responseAgents.results;
         }
-        this.agentsToSelect = [
-          { value: '', label: this.$t('discussions.add_agents.search_agent') },
-        ];
+        this.agentsToSelect = [];
       },
     },
   },
 
   unmounted() {
-    this.agentSelected = [];
+    this.agentSelected = null;
   },
 
   methods: {
     ...mapActions(useDiscussions, ['addAgent', 'getDiscussionAgents']),
     handlingRemoveAgent() {
-      this.agentSelected = [
-        { value: '', label: this.$t('discussions.add_agents.search_agent') },
-      ];
+      this.agentSelected = null;
     },
     getUserFullName(user) {
       const { first_name, last_name } = user;
-      return `${first_name} ${last_name}`;
+      return `${first_name} ${last_name}`.trim() || user.email;
     },
 
     getUserRoleTreated(user) {
@@ -204,13 +204,13 @@ export default {
     handleAddAgentModal() {
       this.isAddAgentModalOpen = !this.isAddAgentModalOpen;
 
-      this.agentSelected = [];
+      this.agentSelected = null;
     },
 
     async handlingAddAgent() {
-      const newAgent = this.agentSelected[0];
+      const newAgent = this.agentSelected?.value;
 
-      if (!newAgent?.value) {
+      if (!newAgent) {
         return;
       }
 
