@@ -492,592 +492,596 @@ export default {
       handler() {
         this.handleFormChange();
       },
-    selectedManager(option) {
-      if (option?.uuid) {
-        this.addSelectedManager(option);
+      selectedManager(option) {
+        if (option?.uuid) {
+          this.addSelectedManager(option);
+        }
+      },
+      selectedWorkdayDaysTime: {
+        deep: true,
+        handler() {
+          const daysTimes = Object.entries(this.selectedWorkdayDaysTime);
+          daysTimes.forEach(([day, timesConfig]) => {
+            timesConfig.forEach((_timeConfig, index) => {
+              this.validateWorkdayTime(day, index);
+            });
+          });
+          this.handleFormChange();
+        },
+      },
+      selectedProject: {
+        deep: true,
+        handler(option) {
+          this.applySelectedProject(option);
+          this.handleFormChange();
+        },
+      },
+      copyWorkday(value) {
+        this.copyWorkdaySector = null;
+        if (!value) {
+          this.selectedWorkdayDays = {
+            monday: false,
+            tuesday: false,
+            wednesday: false,
+            thursday: false,
+            friday: false,
+            saturday: false,
+            sunday: false,
+          };
+          this.selectedWorkdayDaysTime = JSON.parse(
+            JSON.stringify({
+              monday: [emptyWorkdayTime],
+              tuesday: [emptyWorkdayTime],
+              wednesday: [emptyWorkdayTime],
+              thursday: [emptyWorkdayTime],
+              friday: [emptyWorkdayTime],
+              saturday: [emptyWorkdayTime],
+              sunday: [emptyWorkdayTime],
+            }),
+          );
+        }
+        this.handleFormChange();
+      },
+      copyWorkdaySector: {
+        deep: true,
+        handler(option) {
+          if (option?.value) {
+            this.applyCopyWorkdaySector(option);
+          }
+          this.handleFormChange();
+        },
+      },
+      enableCountryHolidays: {
+        deep: true,
+        handler(value) {
+          this.handleFormChange();
+          const enableCountryHolidaysLength = value.length;
+          const allCountryHolidaysLength = this.allCountryHolidays.length;
+          if (
+            enableCountryHolidaysLength > 0 &&
+            enableCountryHolidaysLength < allCountryHolidaysLength
+          ) {
+            this.selectAllCountryHolidays = 'less';
+          }
+
+          if (enableCountryHolidaysLength === allCountryHolidaysLength) {
+            this.selectAllCountryHolidays = true;
+          }
+
+          if (enableCountryHolidaysLength === 0) {
+            this.selectAllCountryHolidays = false;
+          }
+        },
+      },
+      enableCustomHolidays: {
+        deep: true,
+        handler() {
+          this.handleFormChange();
+        },
+      },
+      validForm() {
+        this.$emit('changeIsValid', this.validForm);
+      },
+    },
+
+    async mounted() {
+      await this.getCountryHolidays();
+
+      if (this.sectors.length === 0) {
+        await this.getSectors(true);
       }
-    },
-    selectedProject(option) {
-      this.applySelectedProject(option);
-    },
-    copyWorkdaySector(option) {
-      if (option?.value) {
-        this.applyCopyWorkdaySector(option);
+
+      if (!this.isEditing) {
+        await this.handleSelectAllCountryHolidays(true);
+      } else {
+        await this.getSectorAllHolidays();
+        await this.getSectorWorktimes(this.sector.uuid);
       }
+
+      const isDefaultSector =
+        this.sector.name === i18n.global.t('config_chats.default_sector.name');
+
+      if (this.isEditing && !this.enableGroupsMode) {
+        await this.getSectorManagers();
+      } else if (isDefaultSector) {
+        this.useDefaultSector = 1;
+      }
+
+      if (!this.enableGroupsMode) await this.listProjectManagers();
+      else {
+        await this.listSecondaryProjects().then(() => {
+          if (this.isEditing) {
+            const secondaryProjectUuid = this.sector.config?.secondary_project;
+            const projectOption = this.projectsNames.find(
+              (project) => project.value === secondaryProjectUuid,
+            );
+            if (projectOption) this.selectedProject = projectOption;
+          }
+        });
+      }
+      this.$nextTick(() => {
+        this.isInitializing = false;
+      });
     },
-    selectedWorkdayDaysTime: {
-      deep: true,
-      handler() {
-        const daysTimes = Object.entries(this.selectedWorkdayDaysTime);
-        daysTimes.forEach(([day, timesConfig]) => {
-          timesConfig.forEach((_timeConfig, index) => {
-            this.validateWorkdayTime(day, index);
+
+    methods: {
+      ...mapActions(useSettings, {
+        actionDeleteSector: 'deleteSector',
+        getSectors: 'getSectors',
+      }),
+
+      handleConnectOverlay(active) {
+        window.parent.postMessage(
+          { event: 'changeOverlay', data: active },
+          '*',
+        );
+      },
+
+      handleModal(modal, open) {
+        this.handleConnectOverlay(open);
+        this[modal] = open;
+      },
+
+      handleSelectAllCountryHolidays(value) {
+        this.selectAllCountryHolidays = value;
+        if (value) {
+          this.enableCountryHolidays = this.allCountryHolidays.map(
+            (holiday) => holiday.date,
+          );
+          this.disabledCountryHolidays = [];
+        } else {
+          this.enableCountryHolidays = [];
+          this.disabledCountryHolidays = this.allCountryHolidays.map(
+            (holiday) => holiday.date,
+          );
+        }
+      },
+
+      handleFormChange() {
+        if (this.isEditing && !this.isInitializing) {
+          this.initialFormState = false;
+        }
+      },
+
+      async getCountryHolidays() {
+        const { holidays, country_code } = await Sector.getCountryHolidays();
+        this.countryCode = country_code;
+        this.allCountryHolidays = holidays;
+      },
+
+      resetSelectedCopySector() {
+        this.copyWorkdaySector = null;
+      },
+
+      updateDefaultSectorValue(activate) {
+        this.useDefaultSector = activate;
+        const defaultWorkTime = { start: '08:00', end: '18:00', valid: true };
+        if (activate) {
+          this.selectedWorkdayDays = {
+            monday: true,
+            tuesday: true,
+            wednesday: true,
+            thursday: true,
+            friday: true,
+            saturday: false,
+            sunday: false,
+          };
+          this.selectedWorkdayDaysTime = JSON.parse(
+            JSON.stringify({
+              monday: [defaultWorkTime],
+              tuesday: [defaultWorkTime],
+              wednesday: [defaultWorkTime],
+              thursday: [defaultWorkTime],
+              friday: [defaultWorkTime],
+              saturday: [emptyWorkdayTime],
+              sunday: [emptyWorkdayTime],
+            }),
+          );
+          this.handleSelectAllCountryHolidays(true);
+          const meManager = this.managers.find(
+            (manager) => manager.user.email === this.me.email,
+          );
+          this.sector = {
+            ...this.sector,
+            name: this.$t('config_chats.default_sector.name'),
+            maxSimultaneousChatsByAgent: this.enableGroupsMode ? '' : '4',
+            managers: this.enableGroupsMode ? [] : [meManager],
+          };
+        } else {
+          this.selectedWorkdayDays = {
+            monday: false,
+            tuesday: false,
+            wednesday: false,
+            thursday: false,
+            friday: false,
+            saturday: false,
+            sunday: false,
+          };
+          this.selectedWorkdayDaysTime = JSON.parse(
+            JSON.stringify({
+              monday: [emptyWorkdayTime],
+              tuesday: [emptyWorkdayTime],
+              wednesday: [emptyWorkdayTime],
+              thursday: [emptyWorkdayTime],
+              friday: [emptyWorkdayTime],
+              saturday: [emptyWorkdayTime],
+              sunday: [emptyWorkdayTime],
+            }),
+          );
+          this.handleSelectAllCountryHolidays(false);
+          this.sector = {
+            ...this.sector,
+            name: '',
+            maxSimultaneousChatsByAgent: '',
+            managers: [],
+          };
+        }
+      },
+
+      async getSectorAllHolidays() {
+        try {
+          const allHolidays = await Sector.getAllSectorHolidays(
+            this.sector.uuid,
+          );
+
+          const countryHolidays = allHolidays.filter(
+            (holiday) => !holiday.its_custom,
+          );
+
+          countryHolidays.forEach((holiday) => {
+            const countryHoliday = this.allCountryHolidays.find(
+              (countryHoliday) => countryHoliday.date === holiday.date,
+            );
+            if (countryHoliday) {
+              countryHoliday.name = holiday.description;
+              countryHoliday.uuid = holiday.uuid;
+            }
+          });
+
+          const { activeCountryHolidays, inactiveCountryHolidays } =
+            this.allCountryHolidays.reduce(
+              (accumulator, countryHoliday) => {
+                accumulator[
+                  countryHoliday.uuid
+                    ? 'activeCountryHolidays'
+                    : 'inactiveCountryHolidays'
+                ].push(countryHoliday);
+
+                return accumulator;
+              },
+              {
+                activeCountryHolidays: [],
+                inactiveCountryHolidays: [],
+              },
+            );
+
+          const customHolidays = allHolidays.filter(
+            (holiday) => holiday.its_custom,
+          );
+
+          // handle  country holidays
+          this.enableCountryHolidays = activeCountryHolidays.map(
+            (holiday) => holiday.date,
+          );
+          this.disabledCountryHolidays = inactiveCountryHolidays.map(
+            (holiday) => holiday.date,
+          );
+
+          // handle custom holidays
+          this.enableCustomHolidays = customHolidays;
+        } catch (error) {
+          console.log(error);
+        }
+      },
+
+      async getSectorManagers() {
+        let hasNext = false;
+        try {
+          const offset = this.managersPage * this.managersLimitPerPage;
+          const { next, results } = await Sector.managers(
+            this.sector.uuid,
+            offset,
+            this.managersLimitPerPage,
+          );
+          hasNext = next;
+          this.managersPage += 1;
+          const concatManagers = this.sector.managers.concat(
+            results.map((manager) => ({
+              ...manager,
+              removed: false,
+            })),
+          );
+          this.sector.managers = removeDuplicatedItems(concatManagers, 'uuid');
+        } finally {
+          if (hasNext) {
+            this.getSectorManagers();
+          }
+        }
+      },
+
+      async getSectorWorktimes(sector) {
+        const sectorWorktimes = await Sector.getWorkingTimes(sector);
+        const schedules = sectorWorktimes?.working_hours?.schedules;
+
+        if (schedules) {
+          Object.keys(schedules).forEach((day) => {
+            if (!schedules[day]) {
+              this.selectedWorkdayDays[day] = false;
+              this.selectedWorkdayDaysTime[day] = [emptyWorkdayTime];
+            } else {
+              this.selectedWorkdayDays[day] = true;
+              this.selectedWorkdayDaysTime[day] = schedules[day].map(
+                (time) => ({
+                  ...time,
+                  valid: true,
+                }),
+              );
+            }
+          });
+        }
+      },
+
+      async applyCopyWorkdaySector(selectedSector) {
+        if (selectedSector?.value) {
+          await this.getSectorWorktimes(selectedSector.value);
+        }
+      },
+
+      async removeManager(managerUuid) {
+        if (this.isEditing) await Sector.removeManager(managerUuid);
+
+        this.removeManagerFromTheList(managerUuid);
+      },
+
+      removeManagerFromTheList(managerUuid) {
+        const manager = this.sector.managers.find(
+          (manager) => manager.uuid === managerUuid,
+        );
+
+        this.removedManagers.push(manager);
+        this.sector.managers = this.sector.managers.filter(
+          (manager) => manager.uuid !== managerUuid,
+        );
+      },
+
+      addSelectedManager(option) {
+        if (option?.uuid) {
+          const manager = this.managers.find((m) => m.uuid === option.uuid);
+          this.addSectorManager(manager);
+          this.selectedManager = null;
+        }
+      },
+
+      applySelectedProject(option) {
+        this.sector.config.secondary_project = option?.value ?? null;
+      },
+
+      photo(link) {
+        if (![null, undefined, ''].includes(link)) {
+          const getOnlyPhoto = link.split('?')[0];
+          return getOnlyPhoto;
+        }
+        return link;
+      },
+
+      addSectorManager(manager) {
+        if (manager) {
+          const managers = this.sector.managers.some(
+            (mappedManager) => mappedManager.user.email === manager.user.email,
+          )
+            ? this.sector.managers
+            : [...this.sector.managers, manager];
+
+          this.sector.managers = managers;
+
+          if (this.isEditing) this.addManager(manager);
+
+          this.selectedManager = null;
+        }
+      },
+
+      async addManager(manager) {
+        await Sector.addManager(this.sector.uuid, manager.uuid);
+        this.getSectorManagers();
+      },
+
+      async listProjectManagers() {
+        let hasNext = false;
+        try {
+          const offset = this.projectUsersPage * this.projectUsersPerPage;
+          const { results, next } = await Project.managers(
+            offset,
+            this.projectUsersPerPage,
+          );
+          this.projectUsersPage += 1;
+          this.managers = this.managers.concat(results);
+
+          hasNext = next;
+        } finally {
+          if (hasNext) {
+            this.listProjectManagers();
+          }
+        }
+      },
+
+      async listSecondaryProjects() {
+        let hasNext = false;
+        try {
+          const offset =
+            this.secondaryProjectsPage * this.secondaryProjectsLimitPerPage;
+
+          const { results, next } = await Group.listProjects({
+            orgUuid: this.project.org,
+            limit: this.secondaryProjectsLimitPerPage,
+            offset,
+            params: { its_principal: false },
+          });
+
+          this.secondaryProjectsPage += 1;
+          this.projects = this.projects.concat(results);
+
+          hasNext = next;
+        } catch (error) {
+          console.error(error);
+        } finally {
+          if (hasNext) {
+            this.listSecondaryProjects();
+          }
+        }
+      },
+
+      validateWorkdayTime(day, index) {
+        const { start, end } = this.selectedWorkdayDaysTime[day][index];
+
+        if (index === 1) {
+          const firstTime = this.selectedWorkdayDaysTime[day][0];
+          if (start < firstTime.end) {
+            this.selectedWorkdayDaysTime[day][index].valid = false;
+            return;
+          }
+        }
+
+        if (start >= end) {
+          this.selectedWorkdayDaysTime[day][index].valid = false;
+        } else {
+          this.selectedWorkdayDaysTime[day][index].valid = true;
+        }
+      },
+
+      hourValidate(hour) {
+        const inicialHour = hour.start;
+        const finalHour = hour.end;
+
+        if (inicialHour >= finalHour) {
+          this.validHour = false;
+          this.message =
+            !inicialHour && !finalHour
+              ? ''
+              : this.$t('config_chats.edit_sector.invalid_hours');
+        } else {
+          this.validHour = true;
+        }
+      },
+
+      async saveSector() {
+        const {
+          uuid,
+          name,
+          can_trigger_flows,
+          can_edit_custom_fields,
+          config,
+          sign_messages,
+          maxSimultaneousChatsByAgent,
+          is_csat_enabled,
+        } = this.sector;
+
+        const sector = {
+          name,
+          can_trigger_flows,
+          can_edit_custom_fields,
+          config,
+          sign_messages,
+          rooms_limit: maxSimultaneousChatsByAgent,
+          is_csat_enabled,
+        };
+
+        try {
+          await Sector.update(uuid, sector);
+          await this.saveWorkingDays();
+          unnnic.unnnicCallAlert({
+            props: {
+              text: this.$t('sector_update_success'),
+              type: 'success',
+            },
+            seconds: 5,
+          });
+          this.$router.push('/settings');
+        } catch (error) {
+          unnnic.unnnicCallAlert({
+            props: {
+              text: this.$t('sector_update_error'),
+              type: 'error',
+            },
+            seconds: 5,
+          });
+          console.log(error);
+        }
+      },
+
+      async saveWorkingDays() {
+        const requestBody = {};
+
+        Object.keys(this.selectedWorkdayDaysTime).forEach((day) => {
+          requestBody[day] = this.selectedWorkdayDays[day]
+            ? this.selectedWorkdayDaysTime[day].map((time) => ({
+                start: time.start,
+                end: time.end,
+              }))
+            : null;
+        });
+
+        await Sector.setSectorWorkingDays(this.sector.uuid, requestBody);
+      },
+
+      selectWorkdayDay(day) {
+        this.selectedWorkdayDays[day] = !this.selectedWorkdayDays[day];
+        if (!this.selectedWorkdayDays[day]) {
+          this.selectedWorkdayDaysTime[day] = [emptyWorkdayTime];
+        }
+      },
+
+      async addCustomHolidays(holidays) {
+        holidays.forEach((holiday) => {
+          this.enableCustomHolidays.push({
+            ...holiday,
+            uuid:
+              holiday.uuid ||
+              `${new Date().getTime()}-${holiday.date.start}-${holiday.date.end}`,
           });
         });
-        this.handleFormChange();
       },
-    },
-    selectedProject: {
-      deep: true,
-      handler() {
-        this.handleFormChange();
+
+      async handleSaveCustomHolidays({ holidays }) {
+        this.enableCustomHolidays = holidays;
       },
-    },
-    copyWorkday(value) {
-      this.copyWorkdaySector = null;
-      if (!value) {
-        this.selectedWorkdayDays = {
-          monday: false,
-          tuesday: false,
-          wednesday: false,
-          thursday: false,
-          friday: false,
-          saturday: false,
-          sunday: false,
-        };
-        this.selectedWorkdayDaysTime = JSON.parse(
-          JSON.stringify({
-            monday: [emptyWorkdayTime],
-            tuesday: [emptyWorkdayTime],
-            wednesday: [emptyWorkdayTime],
-            thursday: [emptyWorkdayTime],
-            friday: [emptyWorkdayTime],
-            saturday: [emptyWorkdayTime],
-            sunday: [emptyWorkdayTime],
-          }),
-        );
-      }
-      this.handleFormChange();
-    },
-    copyWorkdaySector: {
-      deep: true,
-      handler() {
-        this.handleFormChange();
+
+      async initCountryHolidays() {
+        await Sector.createCountryHolidays(this.sector.uuid, {
+          enabled_holidays: this.enableCountryHolidays,
+          disabled_holidays: this.disabledCountryHolidays,
+        });
       },
-    },
-    enableCountryHolidays: {
-      deep: true,
-      handler(value) {
-        this.handleFormChange();
-        const enableCountryHolidaysLength = value.length;
-        const allCountryHolidaysLength = this.allCountryHolidays.length;
-        if (
-          enableCountryHolidaysLength > 0 &&
-          enableCountryHolidaysLength < allCountryHolidaysLength
-        ) {
-          this.selectAllCountryHolidays = 'less';
-        }
 
-        if (enableCountryHolidaysLength === allCountryHolidaysLength) {
-          this.selectAllCountryHolidays = true;
-        }
-
-        if (enableCountryHolidaysLength === 0) {
-          this.selectAllCountryHolidays = false;
-        }
+      async createCustomHolidays() {
+        const promisesCreateSectorHoliday = this.enableCustomHolidays.map(
+          (holiday) =>
+            Sector.createSectorHoliday(this.sector.uuid, {
+              ...holiday,
+              uuid: undefined,
+            }),
+        );
+        await Promise.all(promisesCreateSectorHoliday);
       },
-    },
-    enableCustomHolidays: {
-      deep: true,
-      handler() {
-        this.handleFormChange();
-      },
-    },
-    validForm() {
-      this.$emit('changeIsValid', this.validForm);
-    },
-  },
-
-  async mounted() {
-    await this.getCountryHolidays();
-
-    if (this.sectors.length === 0) {
-      await this.getSectors(true);
-    }
-
-    if (!this.isEditing) {
-      await this.handleSelectAllCountryHolidays(true);
-    } else {
-      await this.getSectorAllHolidays();
-      await this.getSectorWorktimes(this.sector.uuid);
-    }
-
-    const isDefaultSector =
-      this.sector.name === i18n.global.t('config_chats.default_sector.name');
-
-    if (this.isEditing && !this.enableGroupsMode) {
-      await this.getSectorManagers();
-    } else if (isDefaultSector) {
-      this.useDefaultSector = 1;
-    }
-
-    if (!this.enableGroupsMode) await this.listProjectManagers();
-    else {
-      await this.listSecondaryProjects().then(() => {
-        if (this.isEditing) {
-          const secondaryProjectUuid = this.sector.config?.secondary_project;
-          const projectOption = this.projectsNames.find(
-            (project) => project.value === secondaryProjectUuid,
-          );
-          if (projectOption) this.selectedProject = projectOption;
-        }
-      });
-    }
-    this.$nextTick(() => {
-      this.isInitializing = false;
-    });
-  },
-
-  methods: {
-    ...mapActions(useSettings, {
-      actionDeleteSector: 'deleteSector',
-      getSectors: 'getSectors',
-    }),
-
-    handleConnectOverlay(active) {
-      window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
-    },
-
-    handleModal(modal, open) {
-      this.handleConnectOverlay(open);
-      this[modal] = open;
-    },
-
-    handleSelectAllCountryHolidays(value) {
-      this.selectAllCountryHolidays = value;
-      if (value) {
-        this.enableCountryHolidays = this.allCountryHolidays.map(
-          (holiday) => holiday.date,
-        );
-        this.disabledCountryHolidays = [];
-      } else {
-        this.enableCountryHolidays = [];
-        this.disabledCountryHolidays = this.allCountryHolidays.map(
-          (holiday) => holiday.date,
-        );
-      }
-    },
-
-    handleFormChange() {
-      if (this.isEditing && !this.isInitializing) {
-        this.initialFormState = false;
-      }
-    },
-
-    async getCountryHolidays() {
-      const { holidays, country_code } = await Sector.getCountryHolidays();
-      this.countryCode = country_code;
-      this.allCountryHolidays = holidays;
-    },
-
-    resetSelectedCopySector() {
-      this.copyWorkdaySector = null;
-    },
-
-    updateDefaultSectorValue(activate) {
-      this.useDefaultSector = activate;
-      const defaultWorkTime = { start: '08:00', end: '18:00', valid: true };
-      if (activate) {
-        this.selectedWorkdayDays = {
-          monday: true,
-          tuesday: true,
-          wednesday: true,
-          thursday: true,
-          friday: true,
-          saturday: false,
-          sunday: false,
-        };
-        this.selectedWorkdayDaysTime = JSON.parse(
-          JSON.stringify({
-            monday: [defaultWorkTime],
-            tuesday: [defaultWorkTime],
-            wednesday: [defaultWorkTime],
-            thursday: [defaultWorkTime],
-            friday: [defaultWorkTime],
-            saturday: [emptyWorkdayTime],
-            sunday: [emptyWorkdayTime],
-          }),
-        );
-        this.handleSelectAllCountryHolidays(true);
-        const meManager = this.managers.find(
-          (manager) => manager.user.email === this.me.email,
-        );
-        this.sector = {
-          ...this.sector,
-          name: this.$t('config_chats.default_sector.name'),
-          maxSimultaneousChatsByAgent: this.enableGroupsMode ? '' : '4',
-          managers: this.enableGroupsMode ? [] : [meManager],
-        };
-      } else {
-        this.selectedWorkdayDays = {
-          monday: false,
-          tuesday: false,
-          wednesday: false,
-          thursday: false,
-          friday: false,
-          saturday: false,
-          sunday: false,
-        };
-        this.selectedWorkdayDaysTime = JSON.parse(
-          JSON.stringify({
-            monday: [emptyWorkdayTime],
-            tuesday: [emptyWorkdayTime],
-            wednesday: [emptyWorkdayTime],
-            thursday: [emptyWorkdayTime],
-            friday: [emptyWorkdayTime],
-            saturday: [emptyWorkdayTime],
-            sunday: [emptyWorkdayTime],
-          }),
-        );
-        this.handleSelectAllCountryHolidays(false);
-        this.sector = {
-          ...this.sector,
-          name: '',
-          maxSimultaneousChatsByAgent: '',
-          managers: [],
-        };
-      }
-    },
-
-    async getSectorAllHolidays() {
-      try {
-        const allHolidays = await Sector.getAllSectorHolidays(this.sector.uuid);
-
-        const countryHolidays = allHolidays.filter(
-          (holiday) => !holiday.its_custom,
-        );
-
-        countryHolidays.forEach((holiday) => {
-          const countryHoliday = this.allCountryHolidays.find(
-            (countryHoliday) => countryHoliday.date === holiday.date,
-          );
-          if (countryHoliday) {
-            countryHoliday.name = holiday.description;
-            countryHoliday.uuid = holiday.uuid;
-          }
-        });
-
-        const { activeCountryHolidays, inactiveCountryHolidays } =
-          this.allCountryHolidays.reduce(
-            (accumulator, countryHoliday) => {
-              accumulator[
-                countryHoliday.uuid
-                  ? 'activeCountryHolidays'
-                  : 'inactiveCountryHolidays'
-              ].push(countryHoliday);
-
-              return accumulator;
-            },
-            {
-              activeCountryHolidays: [],
-              inactiveCountryHolidays: [],
-            },
-          );
-
-        const customHolidays = allHolidays.filter(
-          (holiday) => holiday.its_custom,
-        );
-
-        // handle  country holidays
-        this.enableCountryHolidays = activeCountryHolidays.map(
-          (holiday) => holiday.date,
-        );
-        this.disabledCountryHolidays = inactiveCountryHolidays.map(
-          (holiday) => holiday.date,
-        );
-
-        // handle custom holidays
-        this.enableCustomHolidays = customHolidays;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
-    async getSectorManagers() {
-      let hasNext = false;
-      try {
-        const offset = this.managersPage * this.managersLimitPerPage;
-        const { next, results } = await Sector.managers(
-          this.sector.uuid,
-          offset,
-          this.managersLimitPerPage,
-        );
-        hasNext = next;
-        this.managersPage += 1;
-        const concatManagers = this.sector.managers.concat(
-          results.map((manager) => ({
-            ...manager,
-            removed: false,
-          })),
-        );
-        this.sector.managers = removeDuplicatedItems(concatManagers, 'uuid');
-      } finally {
-        if (hasNext) {
-          this.getSectorManagers();
-        }
-      }
-    },
-
-    async getSectorWorktimes(sector) {
-      const sectorWorktimes = await Sector.getWorkingTimes(sector);
-      const schedules = sectorWorktimes?.working_hours?.schedules;
-
-      if (schedules) {
-        Object.keys(schedules).forEach((day) => {
-          if (!schedules[day]) {
-            this.selectedWorkdayDays[day] = false;
-            this.selectedWorkdayDaysTime[day] = [emptyWorkdayTime];
-          } else {
-            this.selectedWorkdayDays[day] = true;
-            this.selectedWorkdayDaysTime[day] = schedules[day].map((time) => ({
-              ...time,
-              valid: true,
-            }));
-          }
-        });
-      }
-    },
-
-    async applyCopyWorkdaySector(selectedSector) {
-      if (selectedSector?.value) {
-        await this.getSectorWorktimes(selectedSector.value);
-      }
-    },
-
-    async removeManager(managerUuid) {
-      if (this.isEditing) await Sector.removeManager(managerUuid);
-
-      this.removeManagerFromTheList(managerUuid);
-    },
-
-    removeManagerFromTheList(managerUuid) {
-      const manager = this.sector.managers.find(
-        (manager) => manager.uuid === managerUuid,
-      );
-
-      this.removedManagers.push(manager);
-      this.sector.managers = this.sector.managers.filter(
-        (manager) => manager.uuid !== managerUuid,
-      );
-    },
-
-    addSelectedManager(option) {
-      if (option?.uuid) {
-        const manager = this.managers.find((m) => m.uuid === option.uuid);
-        this.addSectorManager(manager);
-        this.selectedManager = null;
-      }
-    },
-
-    applySelectedProject(option) {
-      this.sector.config.secondary_project = option?.value ?? null;
-    },
-
-    photo(link) {
-      if (![null, undefined, ''].includes(link)) {
-        const getOnlyPhoto = link.split('?')[0];
-        return getOnlyPhoto;
-      }
-      return link;
-    },
-
-    addSectorManager(manager) {
-      if (manager) {
-        const managers = this.sector.managers.some(
-          (mappedManager) => mappedManager.user.email === manager.user.email,
-        )
-          ? this.sector.managers
-          : [...this.sector.managers, manager];
-
-        this.sector.managers = managers;
-
-        if (this.isEditing) this.addManager(manager);
-
-        this.selectedManager = null;
-      }
-    },
-
-    async addManager(manager) {
-      await Sector.addManager(this.sector.uuid, manager.uuid);
-      this.getSectorManagers();
-    },
-
-    async listProjectManagers() {
-      let hasNext = false;
-      try {
-        const offset = this.projectUsersPage * this.projectUsersPerPage;
-        const { results, next } = await Project.managers(
-          offset,
-          this.projectUsersPerPage,
-        );
-        this.projectUsersPage += 1;
-        this.managers = this.managers.concat(results);
-
-        hasNext = next;
-      } finally {
-        if (hasNext) {
-          this.listProjectManagers();
-        }
-      }
-    },
-
-    async listSecondaryProjects() {
-      let hasNext = false;
-      try {
-        const offset =
-          this.secondaryProjectsPage * this.secondaryProjectsLimitPerPage;
-
-        const { results, next } = await Group.listProjects({
-          orgUuid: this.project.org,
-          limit: this.secondaryProjectsLimitPerPage,
-          offset,
-          params: { its_principal: false },
-        });
-
-        this.secondaryProjectsPage += 1;
-        this.projects = this.projects.concat(results);
-
-        hasNext = next;
-      } catch (error) {
-        console.error(error);
-      } finally {
-        if (hasNext) {
-          this.listSecondaryProjects();
-        }
-      }
-    },
-
-    validateWorkdayTime(day, index) {
-      const { start, end } = this.selectedWorkdayDaysTime[day][index];
-
-      if (index === 1) {
-        const firstTime = this.selectedWorkdayDaysTime[day][0];
-        if (start < firstTime.end) {
-          this.selectedWorkdayDaysTime[day][index].valid = false;
-          return;
-        }
-      }
-
-      if (start >= end) {
-        this.selectedWorkdayDaysTime[day][index].valid = false;
-      } else {
-        this.selectedWorkdayDaysTime[day][index].valid = true;
-      }
-    },
-
-    hourValidate(hour) {
-      const inicialHour = hour.start;
-      const finalHour = hour.end;
-
-      if (inicialHour >= finalHour) {
-        this.validHour = false;
-        this.message =
-          !inicialHour && !finalHour
-            ? ''
-            : this.$t('config_chats.edit_sector.invalid_hours');
-      } else {
-        this.validHour = true;
-      }
-    },
-
-    async saveSector() {
-      const {
-        uuid,
-        name,
-        can_trigger_flows,
-        can_edit_custom_fields,
-        config,
-        sign_messages,
-        maxSimultaneousChatsByAgent,
-        is_csat_enabled,
-      } = this.sector;
-
-      const sector = {
-        name,
-        can_trigger_flows,
-        can_edit_custom_fields,
-        config,
-        sign_messages,
-        rooms_limit: maxSimultaneousChatsByAgent,
-        is_csat_enabled,
-      };
-
-      try {
-        await Sector.update(uuid, sector);
-        await this.saveWorkingDays();
-        unnnic.unnnicCallAlert({
-          props: {
-            text: this.$t('sector_update_success'),
-            type: 'success',
-          },
-          seconds: 5,
-        });
-        this.$router.push('/settings');
-      } catch (error) {
-        unnnic.unnnicCallAlert({
-          props: {
-            text: this.$t('sector_update_error'),
-            type: 'error',
-          },
-          seconds: 5,
-        });
-        console.log(error);
-      }
-    },
-
-    async saveWorkingDays() {
-      const requestBody = {};
-
-      Object.keys(this.selectedWorkdayDaysTime).forEach((day) => {
-        requestBody[day] = this.selectedWorkdayDays[day]
-          ? this.selectedWorkdayDaysTime[day].map((time) => ({
-              start: time.start,
-              end: time.end,
-            }))
-          : null;
-      });
-
-      await Sector.setSectorWorkingDays(this.sector.uuid, requestBody);
-    },
-
-    selectWorkdayDay(day) {
-      this.selectedWorkdayDays[day] = !this.selectedWorkdayDays[day];
-      if (!this.selectedWorkdayDays[day]) {
-        this.selectedWorkdayDaysTime[day] = [emptyWorkdayTime];
-      }
-    },
-
-    async addCustomHolidays(holidays) {
-      holidays.forEach((holiday) => {
-        this.enableCustomHolidays.push({
-          ...holiday,
-          uuid:
-            holiday.uuid ||
-            `${new Date().getTime()}-${holiday.date.start}-${holiday.date.end}`,
-        });
-      });
-    },
-
-    async handleSaveCustomHolidays({ holidays }) {
-      this.enableCustomHolidays = holidays;
-    },
-
-    async initCountryHolidays() {
-      await Sector.createCountryHolidays(this.sector.uuid, {
-        enabled_holidays: this.enableCountryHolidays,
-        disabled_holidays: this.disabledCountryHolidays,
-      });
-    },
-
-    async createCustomHolidays() {
-      const promisesCreateSectorHoliday = this.enableCustomHolidays.map(
-        (holiday) =>
-          Sector.createSectorHoliday(this.sector.uuid, {
-            ...holiday,
-            uuid: undefined,
-          }),
-      );
-      await Promise.all(promisesCreateSectorHoliday);
     },
   },
 };
