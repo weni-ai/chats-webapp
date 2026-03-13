@@ -360,7 +360,13 @@ describe('FormSectorGeneral', () => {
     const addSectorManagerSpy = vi.spyOn(wrapper.vm, 'addSectorManager');
     const addManagerSpy = vi.spyOn(wrapper.vm, 'addManager');
 
-    wrapper.vm.selectManager([{ uuid: '2' }]);
+    const managerOption = {
+      uuid: '2',
+      value: managerMock.user.email,
+      label:
+        `${managerMock.user.first_name} ${managerMock.user.last_name}`.trim(),
+    };
+    wrapper.vm.addSelectedManager(managerOption);
 
     expect(addSectorManagerSpy).toHaveBeenCalledWith(managerMock);
     expect(addManagerSpy).toHaveBeenCalledWith(managerMock);
@@ -427,7 +433,6 @@ describe('FormSectorGeneral', () => {
     const result = wrapper.vm.projectsNames;
 
     expect(result).toEqual([
-      { value: '', label: wrapper.vm.$t('sector.link.project_placeholder') },
       { value: '1', label: 'Project One' },
       { value: '2', label: 'Project Two' },
     ]);
@@ -441,12 +446,13 @@ describe('FormSectorGeneral', () => {
   it('should set selected project and clear secondary projects', async () => {
     await wrapper.vm.listSecondaryProjects();
 
-    wrapper.vm.selectProject([wrapper.vm.projectsNames[1]]);
+    const projectOption = wrapper.vm.projectsNames[0];
+    wrapper.vm.applySelectedProject(projectOption);
 
     await wrapper.vm.$nextTick();
 
     expect(wrapper.vm.sector.config.secondary_project).toBe(
-      wrapper.vm.projectsNames[1].value,
+      projectOption.value,
     );
   });
 
