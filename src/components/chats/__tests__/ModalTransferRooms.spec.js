@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 
@@ -9,6 +9,7 @@ vi.mock('@/services/api/resources/chats/room', () => ({
     bulkTranfer: vi.fn(() => {
       return Promise.resolve({ status: 200 });
     }),
+    getRoomTags: vi.fn(() => ({ results: [] })),
   },
 }));
 
@@ -27,12 +28,66 @@ vi.mock('@/services/api/resources/settings/queue', () => ({
   },
 }));
 
-function createWrapper(store) {
+vi.mock('@/utils/callUnnnicAlert', () => ({
+  default: vi.fn(),
+}));
+
+function createStore(overrides = {}) {
+  return createTestingPinia({
+    initialState: {
+      rooms: {
+        selectedOngoingRooms: ['1', '2'],
+        selectedWaitingRooms: [],
+        activeTab: 'ongoing',
+        ...overrides,
+      },
+      profile: { me: { email: 'mocked@email.com' } },
+    },
+  });
+}
+
+function createWrapper(store, props = {}) {
   const wrapper = mount(ModalTransferRooms, {
+    props: {
+      modelValue: true,
+      ...props,
+    },
     global: {
       plugins: [store],
       mocks: {
         $t: (key) => key,
+        $tc: (key, count, params) => `${key}_${count}`,
+      },
+      stubs: {
+        UnnnicDialog: {
+          template: '<div><slot /></div>',
+          props: ['open'],
+        },
+        UnnnicDialogContent: {
+          template: '<div><slot /></div>',
+          props: ['size'],
+        },
+        UnnnicDialogHeader: {
+          template: '<div><slot /></div>',
+          props: ['closeButton'],
+        },
+        UnnnicDialogTitle: {
+          template: '<div><slot /></div>',
+        },
+        UnnnicDialogFooter: {
+          template: '<div><slot /></div>',
+        },
+        UnnnicDialogClose: {
+          template: '<div><slot /></div>',
+        },
+        UnnnicButton: {
+          template: '<button v-bind="$attrs"><slot /></button>',
+          props: ['text', 'type', 'loading', 'disabled'],
+        },
+        UnnnicDisclaimer: {
+          template: '<div v-bind="$attrs">{{ description }}</div>',
+          props: ['type', 'description'],
+        },
       },
     },
   });
@@ -44,16 +99,7 @@ describe('ModalTransferRooms', () => {
   let wrapper;
 
   beforeEach(() => {
-    const store = createTestingPinia({
-      initialState: {
-        me: 'mocked@email.com',
-        selectedOngoingRooms: ['1', '2'],
-        selectedWaitingRooms: [],
-        activeTab: 'ongoing',
-        setSelectedOngoingRooms: vi.fn(),
-        setSelectedWaitingRooms: vi.fn(),
-      },
-    });
+    const store = createStore();
     wrapper = createWrapper(store);
   });
 
@@ -62,22 +108,72 @@ describe('ModalTransferRooms', () => {
       const modal = wrapper.getComponent(ModalTransferRooms);
       expect(modal.exists()).toBe(true);
 
-      // Verify component has necessary data properties
       expect(wrapper.vm.selectedQueue).toBeDefined();
       expect(wrapper.vm.selectedQueue).toEqual([]);
       expect(wrapper.vm.isLoadingBulkTransfer).toBe(false);
     });
+
+    it('should show disclaimer when bulkTransfer is true', () => {
+      const store = createStore();
+      const wrapper = createWrapper(store, { bulkTransfer: true });
+
+      const disclaimer = wrapper.find('[data-testid="transfer-disclaimer"]');
+      expect(disclaimer.exists()).toBe(true);
+    });
+
+    it('should hide disclaimer when bulkTransfer is false', () => {
+      const store = createStore();
+      const wrapper = createWrapper(store, { bulkTransfer: false });
+
+      const disclaimer = wrapper.find('[data-testid="transfer-disclaimer"]');
+      expect(disclaimer.exists()).toBe(false);
+    });
   });
 
-  // describe('Bulk Transfer', () => {
-  //   it('should close modal after successful bulk transfer', async () => {});
-  // });
+  describe('Computed Properties', () => {
+    it('should use selectedOngoingRooms when activeTab is ongoing', () => {
+      const store = createStore({
+        selectedOngoingRooms: ['a', 'b'],
+        selectedWaitingRooms: ['c'],
+        activeTab: 'ongoing',
+      });
+      const wrapper = createWrapper(store, { bulkTransfer: true });
+
+      expect(wrapper.vm.currentSelectedRooms).toEqual(['a', 'b']);
+    });
+
+    it('should use selectedWaitingRooms when activeTab is waiting', () => {
+      const store = createStore({
+        selectedOngoingRooms: ['a'],
+        selectedWaitingRooms: ['c', 'd'],
+        activeTab: 'waiting',
+      });
+      const wrapper = createWrapper(store, { bulkTransfer: true });
+
+      expect(wrapper.vm.currentSelectedRooms).toEqual(['c', 'd']);
+    });
+
+    it('should compute disclaimerDescription based on selected rooms count', () => {
+      const store = createStore({
+        selectedOngoingRooms: ['1', '2', '3'],
+        activeTab: 'ongoing',
+      });
+      const wrapper = createWrapper(store, { bulkTransfer: true });
+
+      expect(wrapper.vm.disclaimerDescription).toBeTruthy();
+    });
+  });
 
   describe('Button States', () => {
     it('should disable transfer button when no queue is selected', async () => {
       await wrapper.setData({
         selectedQueue: [{ value: '', label: 'Select queue' }],
       });
+      expect(wrapper.vm.disabledTransferButton).toBe(true);
+    });
+
+    it('should disable transfer button when selectedQueue is empty array', () => {
+      expect(wrapper.vm.selectedQueue).toEqual([]);
       expect(wrapper.vm.disabledTransferButton).toBe(true);
     });
 
@@ -100,12 +196,23 @@ describe('ModalTransferRooms', () => {
     });
   });
 
-  // describe('Modal Interaction', () => {
-  //   it('should close modal after clicking cancel button', () => {});
-  //   it('should emit close event when modal is closed', () => {});
-  // });
+  describe('Transfer Complete', () => {
+    it('should reset loading and emit close on success', () => {
+      wrapper.vm.isLoadingBulkTransfer = true;
 
-  // describe('Localization', () => {
-  //   it('should display translated text for all UI elements', () => {});
-  // });
+      wrapper.vm.transferComplete('success');
+
+      expect(wrapper.vm.isLoadingBulkTransfer).toBe(false);
+      expect(wrapper.emitted('close')).toBeTruthy();
+    });
+
+    it('should reset loading but not close on error', () => {
+      wrapper.vm.isLoadingBulkTransfer = true;
+
+      wrapper.vm.transferComplete('error');
+
+      expect(wrapper.vm.isLoadingBulkTransfer).toBe(false);
+      expect(wrapper.emitted('close')).toBeFalsy();
+    });
+  });
 });

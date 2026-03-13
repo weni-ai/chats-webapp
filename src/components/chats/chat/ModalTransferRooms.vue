@@ -8,19 +8,27 @@
         <UnnnicDialogTitle>
           {{
             bulkTransfer
-              ? $t('bulk_transfer.transfer_selected_contacts')
+              ? $t('transfer_all_selected_chats')
               : $t('transfer_contact')
           }}
         </UnnnicDialogTitle>
       </UnnnicDialogHeader>
-      <RoomsTransferFields
-        ref="roomsTransferFields"
-        v-model="selectedQueue"
-        class="modal-transfer-rooms__content"
-        :bulkTransfer="bulkTransfer"
-        fixed
-        @transfer-complete="transferComplete"
-      />
+      <section class="modal-transfer-rooms__content">
+        <UnnnicDisclaimer
+          v-if="bulkTransfer"
+          class="modal-transfer-rooms__disclaimer"
+          type="informational"
+          :description="disclaimerDescription"
+          data-testid="transfer-disclaimer"
+        />
+        <RoomsTransferFields
+          ref="roomsTransferFields"
+          v-model="selectedQueue"
+          :bulkTransfer="bulkTransfer"
+          fixed
+          @transfer-complete="transferComplete"
+        />
+      </section>
       <UnnnicDialogFooter>
         <UnnnicDialogClose>
           <UnnnicButton
@@ -31,7 +39,9 @@
           />
         </UnnnicDialogClose>
         <UnnnicButton
-          :text="$t('transfer')"
+          :text="
+            bulkTransfer ? $t('bulk_transfer.transfer_all') : $t('transfer')
+          "
           type="primary"
           :loading="isLoadingBulkTransfer"
           :disabled="disabledTransferButton"
@@ -43,7 +53,12 @@
 </template>
 
 <script>
+import { mapState } from 'pinia';
+
+import { useRooms } from '@/store/modules/chats/rooms';
+
 import RoomsTransferFields from '@/components/chats/RoomsTransferFields.vue';
+import i18n from '@/plugins/i18n';
 
 export default {
   name: 'ModalTransferRooms',
@@ -72,6 +87,12 @@ export default {
   },
 
   computed: {
+    ...mapState(useRooms, [
+      'selectedOngoingRooms',
+      'selectedWaitingRooms',
+      'activeTab',
+    ]),
+
     open: {
       get() {
         return this.modelValue;
@@ -85,6 +106,18 @@ export default {
         this.selectedQueue.length === 0 || this.selectedQueue[0]?.value === ''
       );
     },
+    currentSelectedRooms() {
+      return this.activeTab === 'ongoing'
+        ? this.selectedOngoingRooms
+        : this.selectedWaitingRooms;
+    },
+    disclaimerDescription() {
+      return i18n.global.tc(
+        'bulk_transfer.selected_chats_count',
+        this.currentSelectedRooms.length,
+        { count: this.currentSelectedRooms.length },
+      );
+    },
   },
 
   methods: {
@@ -94,9 +127,11 @@ export default {
       this.$refs.roomsTransferFields.transfer();
     },
 
-    transferComplete() {
+    transferComplete(status) {
       this.isLoadingBulkTransfer = false;
-      this.emitClose();
+      if (status !== 'error') {
+        this.emitClose();
+      }
     },
 
     emitClose() {
@@ -109,7 +144,14 @@ export default {
 <style lang="scss">
 .modal-transfer-rooms {
   &__content {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-spacing-md;
     padding: $unnnic-space-6;
+  }
+
+  &__disclaimer {
+    display: flex;
   }
 }
 </style>
