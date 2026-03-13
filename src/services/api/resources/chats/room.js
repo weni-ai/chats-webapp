@@ -188,7 +188,7 @@ export default {
 
   async bulkTake({ rooms = [] }) {
     const response = await http
-      .patch(`/room/bulk_take/`, { rooms_list: rooms })
+      .post(`/room/bulk_take/`, { rooms_list: rooms })
       .then((response) => response)
       .catch((error) => error.response);
     return response;
