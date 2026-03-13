@@ -175,24 +175,18 @@ export default {
     },
 
     takeOverButtonType() {
-      if (
-        (!this.isTransferContactsEnabled && !this.isBulkCloseContactsEnabled) ||
-        this.isBulkCloseContactsEnabled
-      ) {
-        return 'primary';
-      }
-      return 'secondary';
+      return 'primary';
     },
 
     transferButtonType() {
-      if (!this.isBulkCloseContactsEnabled) {
+      if (!this.isBulkTakeContactsEnabled) {
         return 'primary';
       }
       return 'secondary';
     },
 
     closeButtonType() {
-      if (this.isTransferContactsEnabled) {
+      if (!this.isBulkTakeContactsEnabled && !this.isTransferContactsEnabled) {
         return 'primary';
       }
       return 'secondary';
