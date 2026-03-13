@@ -361,12 +361,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:deep(.unnnic-select__options),
-:deep(.unnnic-select .dropdown) {
-  position: v-bind(dropdownFixed);
-  left: auto;
-  right: auto;
-}
 .rooms-transfer {
   &__select-destination {
     display: grid;
