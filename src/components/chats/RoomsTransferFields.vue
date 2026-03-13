@@ -72,6 +72,8 @@ import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 import i18n from '@/plugins/i18n';
 
+const BULK_TRANSFER_BATCH_SIZE = 200;
+
 export default {
   name: 'RoomsTransferFields',
 
@@ -266,27 +268,31 @@ export default {
       this.agents = treatedAgents;
     },
 
-    /**
-     * Performs a bulk transfer of selected rooms to a specific queue or agent.
-     * This function must be associated with an appropriate event.
-     *
-     * @returns {Promise<void>} A promise that resolves when the bulk transfer is complete.
-     */
     async transfer() {
       const { roomsToTransfer } = this;
 
       const selectedQueue = this.modelValue?.[0]?.value;
       const selectedAgent = this.selectedAgent?.value;
 
+      const roomUuids = roomsToTransfer.map((room) => room.uuid);
+
+      if (!this.bulkTransfer) {
+        return this.transferSingle(roomUuids, selectedQueue, selectedAgent);
+      }
+
+      return this.transferBulk(roomUuids, selectedQueue, selectedAgent);
+    },
+
+    async transferSingle(roomUuids, selectedQueue, selectedAgent) {
       try {
         const response = await Room.bulkTranfer({
-          rooms: roomsToTransfer.map((room) => room.uuid),
+          rooms: roomUuids,
           intended_queue: selectedQueue,
           intended_agent: selectedAgent,
         });
 
         if (response.status === 200) {
-          this.transferSuccess();
+          this.callSingleSuccessAlert();
           this.resetRoomsToTransfer();
           if (this.activeRoom) {
             const { results } = await Room.getRoomTags(this.activeRoom.uuid, {
@@ -295,15 +301,64 @@ export default {
             });
             this.activeRoomTags = results;
           }
+          this.$emit('transfer-complete', 'success');
         } else {
-          this.transferError();
+          this.showAlert(i18n.global.t('contact_transferred_error'), 'error');
+          this.$emit('transfer-complete', 'error');
         }
       } catch (error) {
         console.error(
-          'An error occurred while performing the mass transfer:',
+          'An error occurred while performing the transfer:',
           error,
         );
-        this.transferError();
+        this.showAlert(i18n.global.t('contact_transferred_error'), 'error');
+        this.$emit('transfer-complete', 'error');
+      }
+    },
+
+    async transferBulk(roomUuids, selectedQueue, selectedAgent) {
+      const chunks = [];
+      for (let i = 0; i < roomUuids.length; i += BULK_TRANSFER_BATCH_SIZE) {
+        chunks.push(roomUuids.slice(i, i + BULK_TRANSFER_BATCH_SIZE));
+      }
+
+      let totalSuccess = 0;
+      let totalFailed = 0;
+
+      for (const chunk of chunks) {
+        const response = await Room.bulkTranfer({
+          rooms: chunk,
+          intended_queue: selectedQueue,
+          intended_agent: selectedAgent,
+        });
+        const { data } = response;
+        totalSuccess += data?.success_count || 0;
+        totalFailed += data?.failed_count || 0;
+      }
+
+      if (totalFailed === 0 && totalSuccess > 0) {
+        this.showAlert(
+          i18n.global.tc('bulk_transfer.success_message', totalSuccess, {
+            count: totalSuccess,
+          }),
+          'success',
+        );
+        this.resetRoomsToTransfer();
+        this.$emit('transfer-complete', 'success');
+      } else if (totalFailed > 0 && totalSuccess > 0) {
+        this.showAlert(
+          i18n.global.tc(
+            'bulk_transfer.partial_success_message',
+            totalSuccess,
+            { success: totalSuccess, failed: totalFailed },
+          ),
+          'attention',
+        );
+        this.resetRoomsToTransfer();
+        this.$emit('transfer-complete', 'success');
+      } else {
+        this.showAlert(i18n.global.t('bulk_transfer.error_message'), 'error');
+        this.$emit('transfer-complete', 'error');
       }
     },
 
@@ -333,22 +388,15 @@ export default {
 
       const toDestination = this.selectedAgent ? 'agent' : 'queue';
 
-      this.getAlert({
-        text: i18n.global.t(`contact_transferred_to_${toDestination}`, {
+      this.showAlert(
+        i18n.global.t(`contact_transferred_to_${toDestination}`, {
           [toDestination]: destination,
         }),
-        type: 'success',
-      });
+        'success',
+      );
     },
 
-    callErrorAlert() {
-      this.getAlert({
-        text: i18n.global.t('contact_transferred_error'),
-        type: 'error',
-      });
-    },
-
-    getAlert({ text, type }) {
+    showAlert(text, type) {
       if (!this.isMobile) {
         callUnnnicAlert({
           props: { text, type },
