@@ -483,6 +483,7 @@ watch(currentSectorIndex, () => {
     flex-direction: column;
     gap: $unnnic-spacing-md;
     padding: $unnnic-spacing-md;
+    overflow: auto;
   }
 
   &__subtitle {
