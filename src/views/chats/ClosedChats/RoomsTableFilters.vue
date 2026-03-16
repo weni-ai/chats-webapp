@@ -339,8 +339,8 @@ export default {
     }
     this.tagsToFilter = [this.filterTagDefault];
 
-    this.setFiltersByQueryParams();
     this.updateFiltersByValue();
+    this.setFiltersByQueryParams();
 
     await this.getSectors();
 
@@ -481,19 +481,23 @@ export default {
     setFiltersByQueryParams() {
       const { contactUrn, startDate, endDate } = this.$route.query;
 
-      this.filterContact = contactUrn || '';
+      if (contactUrn) {
+        this.filterContact = contactUrn;
+      }
 
       if (!this.isMobile) {
-        if (typeof this.filterDate !== 'object' || this.filterDate === null) {
-          this.filterDate = { start: null, end: null };
+        if (startDate || endDate) {
+          if (typeof this.filterDate !== 'object' || this.filterDate === null) {
+            this.filterDate = { start: null, end: null };
+          }
+          if (startDate) {
+            this.filterDate.start = startDate;
+          }
+          if (endDate) {
+            this.filterDate.end = endDate;
+          }
+          this.selectedDatesInternal = { ...this.filterDate };
         }
-        if (startDate) {
-          this.filterDate.start = startDate;
-        }
-        if (endDate) {
-          this.filterDate.end = endDate;
-        }
-        this.selectedDatesInternal = { ...this.filterDate };
       } else {
         if (startDate) {
           const dateStartExtensive = this.getRelativeDate(
