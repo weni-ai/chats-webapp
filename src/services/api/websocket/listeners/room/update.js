@@ -6,16 +6,12 @@ import { getRoomType } from '@/utils/room';
 
 const BATCH_FLUSH_DELAY_MS = 80;
 const MAX_BATCH_WAIT_MS = 500;
-const RECONCILIATION_DELAY_MS = 3000;
-const RECONCILIATION_MIN_BATCH_SIZE = 5;
 
 const pendingUpdates = new Map();
 const notifiedRoomUuids = new Set();
 let batchTimeoutId = null;
 let batchStartTime = null;
 let lastAppRef = null;
-let reconciliationTimeoutId = null;
-let totalBatchedInBurst = 0;
 
 function processBatch() {
   batchTimeoutId = null;
@@ -27,7 +23,6 @@ function processBatch() {
   const updates = new Map(pendingUpdates);
   pendingUpdates.clear();
   notifiedRoomUuids.clear();
-  totalBatchedInBurst += updates.size;
 
   const roomsStore = useRooms();
 
@@ -43,8 +38,6 @@ function processBatch() {
       roomsStore.resetNewMessagesByRoom({ room: room.uuid });
     }
   }
-
-  scheduleReconciliation(app);
 }
 
 function scheduleBatch() {
@@ -62,35 +55,6 @@ function scheduleBatch() {
   batchTimeoutId = setTimeout(processBatch, delay);
 }
 
-function scheduleReconciliation(app) {
-  if (reconciliationTimeoutId !== null) clearTimeout(reconciliationTimeoutId);
-
-  reconciliationTimeoutId = setTimeout(async () => {
-    reconciliationTimeoutId = null;
-    const processedCount = totalBatchedInBurst;
-    totalBatchedInBurst = 0;
-
-    if (processedCount < RECONCILIATION_MIN_BATCH_SIZE) return;
-
-    try {
-      const roomsStore = useRooms();
-      const viewedAgentEmail = app.viewedAgent?.email;
-
-      await roomsStore.getAll({
-        offset: 0,
-        concat: true,
-        limit: 100,
-        roomsType: 'ongoing',
-        order: roomsStore.orderBy.ongoing,
-        viewedAgent: viewedAgentEmail || undefined,
-        cleanRoomType: 'ongoing',
-      });
-    } catch (error) {
-      console.error('[rooms.update] Reconciliation failed', error);
-    }
-  }, RECONCILIATION_DELAY_MS);
-}
-
 export function flushPendingUpdates() {
   if (batchTimeoutId !== null) {
     clearTimeout(batchTimeoutId);
@@ -100,13 +64,11 @@ export function flushPendingUpdates() {
 
 export function resetBatchState() {
   if (batchTimeoutId !== null) clearTimeout(batchTimeoutId);
-  if (reconciliationTimeoutId !== null) clearTimeout(reconciliationTimeoutId);
   pendingUpdates.clear();
   notifiedRoomUuids.clear();
   batchTimeoutId = null;
   batchStartTime = null;
   lastAppRef = null;
-  totalBatchedInBurst = 0;
 }
 
 export default async (room, { app }) => {

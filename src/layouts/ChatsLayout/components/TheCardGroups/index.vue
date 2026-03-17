@@ -228,7 +228,11 @@ export default {
       nameOfContact: '',
       timerId: 0,
       showLoadingRooms: false,
-      isLoadingRooms: false,
+      isLoadingRooms: {
+        ongoing: false,
+        waiting: false,
+        flow_start: false,
+      },
       isSearching: false,
       isMobile: isMobile(),
       showModalQueue: false,
@@ -464,20 +468,28 @@ export default {
     rooms_ongoing: {
       deep: true,
       handler(newRooms, oldRooms) {
-        this.updateRoomsCount(newRooms.length, oldRooms.length, 'ongoing');
+        const roomsWentEmpty = newRooms.length === 0 && oldRooms.length > 0;
+        const counterShowsMore = this.roomsCount.ongoing > 0;
+        if (roomsWentEmpty && counterShowsMore) {
+          this.$nextTick(() => {
+            this.refetchRooms('ongoing');
+          });
+        } else {
+          this.updateRoomsCount(newRooms.length, oldRooms.length, 'ongoing');
+        }
       },
     },
     rooms_queue: {
       deep: true,
       handler(newRooms, oldRooms) {
-        this.updateRoomsCount(newRooms.length, oldRooms.length, 'waiting');
-
         const roomsWentEmpty = newRooms.length === 0 && oldRooms.length > 0;
         const counterShowsMore = this.roomsCount.waiting > 0;
-        const isNotLoading = !this.isLoadingRooms;
-
-        if (roomsWentEmpty && counterShowsMore && isNotLoading) {
-          this.refetchWaitingRooms();
+        if (roomsWentEmpty && counterShowsMore) {
+          this.$nextTick(() => {
+            this.refetchRooms('waiting');
+          });
+        } else {
+          this.updateRoomsCount(newRooms.length, oldRooms.length, 'waiting');
         }
       },
     },
@@ -547,10 +559,15 @@ export default {
       return dotsMap[tab] || false;
     },
     updateRoomsCount(newSize, oldSize, key) {
-      if (newSize === oldSize || !this.initialLoaded || this.isLoadingRooms)
+      if (
+        newSize === oldSize ||
+        !this.initialLoaded ||
+        this.isLoadingRooms[key]
+      )
         return;
 
-      newSize > oldSize ? this.roomsCount[key]++ : this.roomsCount[key]--;
+      const sizeDiff = newSize - oldSize;
+      this.roomsCount[key] += sizeDiff;
 
       if (this.roomsCount[key] < 0) {
         this.roomsCount[key] = 0;
@@ -575,7 +592,7 @@ export default {
       this.showLoadingRooms = silent ? false : !concat;
       const { viewedAgent } = this;
       try {
-        this.isLoadingRooms = true;
+        this.isLoadingRooms[roomsType] = true;
         const offset =
           (roomsType ? this.page[roomsType] : this.page.search) * this.limit;
 
@@ -592,7 +609,7 @@ export default {
         console.error('Error listing rooms', error);
       } finally {
         this.showLoadingRooms = false;
-        this.isLoadingRooms = false;
+        this.isLoadingRooms[roomsType] = false;
       }
     },
     searchForMoreRooms() {
@@ -604,9 +621,10 @@ export default {
         this.listRoom(true, this.orderBy[this.activeTab]);
       }
     },
-    async refetchWaitingRooms() {
-      this.page.waiting = 0;
-      await this.listRoom(true, this.orderBy.waiting, 'waiting', true);
+    async refetchRooms(roomsType) {
+      if (this.isLoadingRooms[roomsType]) return;
+      this.page[roomsType] = 0;
+      await this.listRoom(true, this.orderBy[roomsType], roomsType, true);
     },
     async listDiscussions() {
       try {
