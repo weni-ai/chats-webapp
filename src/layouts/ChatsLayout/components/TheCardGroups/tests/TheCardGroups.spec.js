@@ -153,7 +153,11 @@ describe('TheCardGroups.vue', () => {
     roomsStore.agentRooms = mockRooms;
     roomsStore.waitingQueue = [];
     roomsStore.waitingContactAnswer = [];
-    roomsStore.hasNextRooms = { waiting: false, ongoing: false, flow_start: false };
+    roomsStore.hasNextRooms = {
+      waiting: false,
+      ongoing: false,
+      flow_start: false,
+    };
     roomsStore.newMessagesByRoom = {};
     roomsStore.maxPinLimit = 5;
     roomsStore.getAll = vi.fn().mockResolvedValue();
@@ -391,7 +395,6 @@ describe('TheCardGroups.vue', () => {
       discussionsStore.discussions = [];
 
       wrapper = createWrapper();
-      wrapper.vm.isLoadingRooms = false;
 
       expect(wrapper.vm.showNoResultsError).toBe(true);
     });
@@ -814,7 +817,11 @@ describe('TheCardGroups.vue', () => {
 
     it('does not load more rooms when hasNext is false', () => {
       const roomsStore = useRooms();
-      roomsStore.hasNextRooms = { waiting: false, ongoing: false, flow_start: false };
+      roomsStore.hasNextRooms = {
+        waiting: false,
+        ongoing: false,
+        flow_start: false,
+      };
 
       wrapper = createWrapper();
       const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
