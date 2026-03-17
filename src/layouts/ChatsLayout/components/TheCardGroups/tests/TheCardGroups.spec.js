@@ -153,7 +153,7 @@ describe('TheCardGroups.vue', () => {
     roomsStore.agentRooms = mockRooms;
     roomsStore.waitingQueue = [];
     roomsStore.waitingContactAnswer = [];
-    roomsStore.hasNextRooms = false;
+    roomsStore.hasNextRooms = { waiting: false, ongoing: false, flow_start: false };
     roomsStore.newMessagesByRoom = {};
     roomsStore.maxPinLimit = 5;
     roomsStore.getAll = vi.fn().mockResolvedValue();
@@ -814,7 +814,7 @@ describe('TheCardGroups.vue', () => {
 
     it('does not load more rooms when hasNext is false', () => {
       const roomsStore = useRooms();
-      roomsStore.hasNextRooms = false;
+      roomsStore.hasNextRooms = { waiting: false, ongoing: false, flow_start: false };
 
       wrapper = createWrapper();
       const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
@@ -872,12 +872,11 @@ describe('TheCardGroups.vue', () => {
         wrapper = createWrapper();
         await flushPromises();
         wrapper.vm.initialLoaded = true;
-        wrapper.vm.isLoadingRooms = false;
 
         const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
 
         roomsStore.waitingQueue = [];
-        await wrapper.vm.$nextTick();
+        await flushPromises();
 
         expect(listRoomSpy).toHaveBeenCalledWith(
           true,
@@ -896,13 +895,12 @@ describe('TheCardGroups.vue', () => {
         wrapper = createWrapper();
         await flushPromises();
         wrapper.vm.initialLoaded = true;
-        wrapper.vm.isLoadingRooms = false;
 
         const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
 
         roomsStore.roomsCount.waiting = 0;
         roomsStore.waitingQueue = [];
-        await wrapper.vm.$nextTick();
+        await flushPromises();
 
         expect(listRoomSpy).not.toHaveBeenCalled();
       });
@@ -931,12 +929,16 @@ describe('TheCardGroups.vue', () => {
         wrapper = createWrapper();
         await flushPromises();
         wrapper.vm.initialLoaded = true;
-        wrapper.vm.isLoadingRooms = true;
+        wrapper.vm.isLoadingRooms = {
+          ongoing: true,
+          waiting: true,
+          flow_start: true,
+        };
 
         const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
 
         roomsStore.waitingQueue = [];
-        await wrapper.vm.$nextTick();
+        await flushPromises();
 
         expect(listRoomSpy).not.toHaveBeenCalled();
       });
@@ -949,12 +951,11 @@ describe('TheCardGroups.vue', () => {
         wrapper = createWrapper();
         await flushPromises();
         wrapper.vm.initialLoaded = true;
-        wrapper.vm.isLoadingRooms = false;
 
         const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
 
         roomsStore.waitingQueue = [waitingRooms[0]];
-        await wrapper.vm.$nextTick();
+        await flushPromises();
 
         expect(listRoomSpy).not.toHaveBeenCalled();
       });
@@ -998,7 +999,7 @@ describe('TheCardGroups.vue', () => {
         'Error listing rooms',
         expect.any(Error),
       );
-      expect(wrapper.vm.isLoadingRooms).toBe(false);
+      expect(wrapper.vm.showLoadingRooms).toBe(false);
     });
 
     it('handles listDiscussions errors gracefully', async () => {
