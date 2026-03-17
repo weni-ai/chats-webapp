@@ -2,6 +2,7 @@ import SoundNotification from '@/services/api/websocket/soundNotification';
 
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useRooms } from '@/store/modules/chats/rooms';
+import { useRoomCounters } from '@/store/modules/chats/roomCounters';
 import { getRoomType } from '@/utils/room';
 
 const BATCH_FLUSH_DELAY_MS = 80;
@@ -25,14 +26,19 @@ function processBatch() {
   notifiedRoomUuids.clear();
 
   const roomsStore = useRooms();
+  const counters = useRoomCounters();
 
   for (const [, room] of updates) {
-    roomsStore.updateRoom({
+    const result = roomsStore.updateRoom({
       room,
       userEmail: app.me.email,
       routerReplace: () => app.$router.replace({ name: 'home' }),
       viewedAgentEmail: app.viewedAgent.email,
     });
+
+    if (result) {
+      counters.handleRoomUpdate(result);
+    }
 
     if (room.unread_msgs === 0) {
       roomsStore.resetNewMessagesByRoom({ room: room.uuid });
@@ -137,12 +143,17 @@ function handleUpdateLegacy(room, app, roomsStore) {
     roomsStore.showOngoingDot = true;
   }
 
-  roomsStore.updateRoom({
+  const result = roomsStore.updateRoom({
     room,
     userEmail: app.me.email,
     routerReplace: () => app.$router.replace({ name: 'home' }),
     viewedAgentEmail: app.viewedAgent.email,
   });
+
+  if (result) {
+    const counters = useRoomCounters();
+    counters.handleRoomUpdate(result);
+  }
 
   if (room.unread_msgs === 0) {
     roomsStore.resetNewMessagesByRoom({ room: room.uuid });
