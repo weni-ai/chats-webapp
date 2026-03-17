@@ -182,6 +182,7 @@ import unnnic from '@weni/unnnic-system';
 import env from '@/utils/env';
 
 import { useRooms } from '@/store/modules/chats/rooms';
+import { useRoomCounters } from '@/store/modules/chats/roomCounters';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
 import { useDiscussions } from '@/store/modules/chats/discussions';
@@ -262,12 +263,8 @@ export default {
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
     ...mapState(useFeatureFlag, ['featureFlags']),
-    ...mapWritableState(useRooms, [
-      'orderBy',
-      'roomsCount',
-      'activeTab',
-      'showOngoingDot',
-    ]),
+    ...mapWritableState(useRooms, ['orderBy', 'activeTab', 'showOngoingDot']),
+    ...mapState(useRoomCounters, { roomsCount: 'counts' }),
     ...mapWritableState(useDiscussions, [
       'discussionsCount',
       'showDiscussionsDot',
@@ -449,37 +446,23 @@ export default {
       },
     },
     rooms_ongoing: {
-      deep: true,
       handler(newRooms, oldRooms) {
         const roomsWentEmpty = newRooms.length === 0 && oldRooms.length > 0;
-        const counterShowsMore = this.roomsCount.ongoing > 0;
-        if (roomsWentEmpty && counterShowsMore) {
+        if (roomsWentEmpty && this.roomsCount.ongoing > 0) {
           this.$nextTick(() => {
             this.refetchRooms('ongoing');
           });
-        } else {
-          this.updateRoomsCount(newRooms.length, oldRooms.length, 'ongoing');
         }
       },
     },
     rooms_queue: {
-      deep: true,
       handler(newRooms, oldRooms) {
         const roomsWentEmpty = newRooms.length === 0 && oldRooms.length > 0;
-        const counterShowsMore = this.roomsCount.waiting > 0;
-        if (roomsWentEmpty && counterShowsMore) {
+        if (roomsWentEmpty && this.roomsCount.waiting > 0) {
           this.$nextTick(() => {
             this.refetchRooms('waiting');
           });
-        } else {
-          this.updateRoomsCount(newRooms.length, oldRooms.length, 'waiting');
         }
-      },
-    },
-    rooms_flow_start: {
-      deep: true,
-      handler(newRooms, oldRooms) {
-        this.updateRoomsCount(newRooms.length, oldRooms.length, 'flow_start');
       },
     },
     totalUnreadMessages: {
@@ -540,21 +523,6 @@ export default {
       };
 
       return dotsMap[tab] || false;
-    },
-    updateRoomsCount(newSize, oldSize, key) {
-      if (
-        newSize === oldSize ||
-        !this.initialLoaded ||
-        this.isLoadingRooms[key]
-      )
-        return;
-
-      const sizeDiff = newSize - oldSize;
-      this.roomsCount[key] += sizeDiff;
-
-      if (this.roomsCount[key] < 0) {
-        this.roomsCount[key] = 0;
-      }
     },
     async openRoom(room) {
       await this.setActiveRoom(room);
