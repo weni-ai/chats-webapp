@@ -90,7 +90,7 @@ const createWrapper = (props = {}) => {
             'config_chats.groups.new.title': 'New Group',
             'config_chats.groups.general': 'General',
             'config_chats.groups.projects': 'Projects',
-            'config_chats.groups.agents': 'Agents',
+            'config_chats.groups.agents': 'Representatives',
             'config_chats.groups.create_success': `New group ${
               params?.groupName || ''
             } created!`,
@@ -171,7 +171,7 @@ describe('NewGroupDrawer.vue', () => {
       expect(wrapper.vm.newGroupsPages).toEqual([
         'General',
         'Projects',
-        'Agents',
+        'Representatives',
       ]);
     });
 
