@@ -546,9 +546,8 @@ describe('RoomsTable.vue', () => {
       wrapper = createWrapper();
       const agent = { first_name: '', last_name: '', email: '' };
       const result = wrapper.vm.formatAgentName(agent);
-      // The mock $t just returns the key, but the component might use actual translation
       expect(result).toBeTruthy();
-      expect(['unnamed_agent', 'Unnamed agent'].includes(result)).toBe(true);
+      expect(['unnamed_agent', 'Unnamed representative']).toContain(result);
     });
 
     it('returns unnamed_agent when agent properties are null', () => {
@@ -556,7 +555,7 @@ describe('RoomsTable.vue', () => {
       const agent = { first_name: null, last_name: null, email: null };
       const result = wrapper.vm.formatAgentName(agent);
       expect(result).toBeTruthy();
-      expect(['unnamed_agent', 'Unnamed agent'].includes(result)).toBe(true);
+      expect(['unnamed_agent', 'Unnamed representative']).toContain(result);
     });
 
     it('returns unnamed_agent when agent properties are undefined', () => {
@@ -564,7 +563,7 @@ describe('RoomsTable.vue', () => {
       const agent = {};
       const result = wrapper.vm.formatAgentName(agent);
       expect(result).toBeTruthy();
-      expect(['unnamed_agent', 'Unnamed agent'].includes(result)).toBe(true);
+      expect(['unnamed_agent', 'Unnamed representative']).toContain(result);
     });
   });
 

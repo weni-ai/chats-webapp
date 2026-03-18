@@ -32,9 +32,9 @@ const createWrapper = (props = {}) => {
       mocks: {
         $t: (key) => {
           const translations = {
-            agent: 'Agent',
+            agent: 'Representative',
             active_chats: 'Active chats',
-            agents_online: 'Agents online',
+            agents_online: 'Online representatives',
           };
           return translations[key] || key;
         },
@@ -123,7 +123,7 @@ describe('LiveMetrics Component', () => {
       wrapper = createWrapper();
 
       const expectedHeaders = [
-        { text: 'Agent', value: 'name' },
+        { text: 'Representative', value: 'name' },
         { text: 'Active chats', value: 'chats' },
       ];
 

@@ -40,7 +40,7 @@ exports[`SettingView.vue > should match the snapshot 1`] = `
       data-testid="section-header-subtitle"
       data-v-f23b63f9=""
     >
-      Add, view and manage sectors, queues, managers and agents within your organization.
+      Add, view and manage sectors, queues, managers and representatives within your organization.
     </p>
   </header>
   <section

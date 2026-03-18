@@ -21,7 +21,7 @@ const mockTranslations = {
   wait_time: 'Wait time',
   response_time: 'Response time',
   interaction_time: 'Interaction time',
-  agents_online: 'Agents online',
+  agents_online: 'Online representatives',
   in_queues: 'in queues',
   wait_time_tooltip: 'Average wait time',
   average_response_time: 'Average response time',
@@ -244,7 +244,7 @@ describe('HistoryMetricsByAgent Component', () => {
         count: expect.any(String),
       });
       expect(metrics[3]).toMatchObject({
-        title: 'Online agents',
+        title: 'Online representatives',
         icon: 'headphones-customer-support-human-1-1',
         scheme: 'aux-blue',
         count: expect.any(Number),
