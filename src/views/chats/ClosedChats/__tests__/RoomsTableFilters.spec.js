@@ -538,6 +538,54 @@ describe('RoomsTableFilters.vue', () => {
       }
     });
 
+    it('query params take precedence over modelValue', async () => {
+      isMobile.mockReturnValue(false);
+      const valueProps = {
+        contact: 'Model Contact',
+        sector: [{ value: 'sector1', label: 'Sector 1' }],
+        tag: [],
+        date: {
+          start: '2023-01-01',
+          end: '2023-01-07',
+        },
+      };
+
+      wrapper = createWrapper(
+        { modelValue: valueProps },
+        {},
+        {
+          contactUrn: 'query-contact',
+          startDate: '2023-06-01',
+          endDate: '2023-06-30',
+        },
+      );
+      await flushPromises();
+
+      expect(wrapper.vm.filterContact).toBe('query-contact');
+      expect(wrapper.vm.filterDate.start).toBe('2023-06-01');
+      expect(wrapper.vm.filterDate.end).toBe('2023-06-30');
+    });
+
+    it('does not override modelValue when query params are absent', async () => {
+      isMobile.mockReturnValue(false);
+      const valueProps = {
+        contact: 'Test Contact',
+        sector: [{ value: 'sector1', label: 'Sector 1' }],
+        tag: [],
+        date: {
+          start: '2023-01-01',
+          end: '2023-01-07',
+        },
+      };
+
+      wrapper = createWrapper({ modelValue: valueProps });
+      await flushPromises();
+
+      expect(wrapper.vm.filterContact).toBe('Test Contact');
+      expect(wrapper.vm.filterDate.start).toBe('2023-01-01');
+      expect(wrapper.vm.filterDate.end).toBe('2023-01-07');
+    });
+
     it('sets values from value prop correctly for desktop', async () => {
       isMobile.mockReturnValue(false);
       const valueProps = {

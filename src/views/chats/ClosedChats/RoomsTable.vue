@@ -216,20 +216,6 @@ export default {
   },
 
   methods: {
-    setFiltersByQueryParams() {
-      const { contactUrn, startDate, endDate } = this.$route.query;
-
-      this.filterContact = contactUrn || '';
-
-      if (startDate) {
-        this.filterDate.start = startDate;
-      }
-
-      if (endDate) {
-        this.filterDate.end = endDate;
-      }
-    },
-
     async getHistoryRooms(paginate) {
       this.isTableLoading = true;
       this.isPagesLoading = true;
