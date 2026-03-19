@@ -12,7 +12,7 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
         <!---->
       </div>
     </section>
-    <unnnic-switch-stub data-v-85728205="" size="small" label="" option="" helper="" textleft="" textright="Allow agents to edit Custom Fields" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    <unnnic-switch-stub data-v-85728205="" size="small" label="" option="" helper="" textleft="" textright="Allow representatives to edit Custom Fields" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     <!--v-if-->
     <!--v-if-->
   </section>

@@ -48,8 +48,8 @@ const mockSectorsData = [{ uuid: 'sector1', name: 'Support' }];
 
 const mockTranslations = {
   sectors: 'Sectors',
-  chats_per_agents: 'Chats per agents',
-  agent: 'Agent',
+  chats_per_agents: 'Chats per representative',
+  agent: 'Representative',
   chats_in_the_period: 'Chats in the period',
 };
 
@@ -171,7 +171,7 @@ describe('HistoryMetricsBySector Component', () => {
 
     it('should initialize with correct table headers structure', () => {
       const expectedHeaders = [
-        { text: 'Agent', value: 'name' },
+        { text: 'Representative', value: 'name' },
         { text: 'Chats in the period', value: 'chats' },
       ];
 

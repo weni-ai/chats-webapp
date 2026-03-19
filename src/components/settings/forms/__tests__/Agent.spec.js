@@ -28,7 +28,7 @@ describe('FormAgent', () => {
     const titles = wrapper.findAll('.title');
     const tooltips = wrapper.findAllComponents({ name: 'UnnnicToolTipStub' });
 
-    expect(titles.at(0).text()).toContain('Add agents info');
+    expect(titles.at(0).text()).toContain('Add representatives info');
 
     expect(titles.length).toBe(1);
     expect(tooltips.length).toBe(1);
@@ -41,7 +41,7 @@ describe('FormAgent', () => {
     const selects = wrapper.findAllComponents({ name: 'unnnic-select-smart' });
 
     expect(inputAgentsLabel.exists()).toBe(true);
-    expect(inputAgentsLabel.props('label')).toMatch(/Select agent/gi);
+    expect(inputAgentsLabel.props('label')).toMatch(/Select representative/gi);
     expect(selects.length).toBe(1);
   });
 

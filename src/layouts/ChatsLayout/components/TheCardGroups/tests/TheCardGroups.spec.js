@@ -338,7 +338,7 @@ describe('TheCardGroups.vue', () => {
       await flushPromises();
 
       expect(wrapper.text()).toContain(
-        'Queue cleared! All contacts have been assigned to an agent',
+        'Queue cleared! All contacts have been assigned to a representative',
       );
     });
 

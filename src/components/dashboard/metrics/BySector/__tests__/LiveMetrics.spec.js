@@ -21,8 +21,8 @@ const mockTranslations = {
   wait_time: 'Wait time',
   response_time: 'Response time',
   interaction_time: 'Interaction time',
-  agent: 'Agent',
-  agents_online: 'Agents online',
+  agent: 'Representative',
+  agents_online: 'Online representatives',
   'queues.title': 'Queues',
   active_chats_tooltip: 'Number of active chats',
   wait_time_tooltip: 'Average wait time',
@@ -132,7 +132,7 @@ describe('LiveMetricsBySector Component', () => {
 
     it('should initialize with correct table headers', () => {
       const expectedHeaders = [
-        { text: 'Agent', value: 'name' },
+        { text: 'Representative', value: 'name' },
         { text: 'Active chats', value: 'activeChats' },
       ];
 
@@ -327,7 +327,7 @@ describe('LiveMetricsBySector Component', () => {
         count: expect.any(String),
       });
       expect(metrics[3]).toMatchObject({
-        title: 'Online agents',
+        title: 'Online representatives',
         icon: 'headphones-customer-support-human-1-1',
         scheme: 'aux-blue',
         count: expect.any(Number),
