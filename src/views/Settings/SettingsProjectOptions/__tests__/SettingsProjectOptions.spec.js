@@ -338,6 +338,36 @@ describe('SettingsProjectOptions.vue', () => {
       expect(wrapper.vm.aiTransferConfig.enabled).toBe(true);
       expect(wrapper.vm.aiTransferConfig.criteria).toBe('New criteria text');
     });
+
+    it('should increment switchResetKey when modal closes without saving', async () => {
+      await vi.dynamicImportSettled();
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.switchResetKey).toBe(0);
+
+      wrapper.vm.handleAiTransferToggle(true);
+      expect(wrapper.vm.showAiTransferModal).toBe(true);
+      await wrapper.vm.$nextTick();
+
+      wrapper.vm.showAiTransferModal = false;
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.switchResetKey).toBe(1);
+    });
+
+    it('should not increment switchResetKey when modal closes after saving', async () => {
+      await vi.dynamicImportSettled();
+      await wrapper.vm.$nextTick();
+
+      wrapper.vm.handleAiTransferToggle(true);
+      wrapper.vm.handleAiTransferSaved('Criteria');
+      await wrapper.vm.$nextTick();
+
+      wrapper.vm.showAiTransferModal = false;
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.switchResetKey).toBe(0);
+    });
   });
 
   describe('Auto-save (projectConfig watcher)', () => {
