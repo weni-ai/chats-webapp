@@ -10,39 +10,47 @@
         v-if="sectorsToFilter.length > 2"
         class="dashboard-filters__input"
       >
-        <UnnnicLabel :label="$t('sector.title')" />
-        <UnnnicSelectSmart
+        <UnnnicSelect
           v-model="filterSector"
+          data-testid="dashboard-filter-sector"
           :options="sectorsToFilter"
-          orderedByIndex
-          autocomplete
-          autocompleteClearOnFocus
+          :label="$t('sector.title')"
+          :placeholder="$t('all')"
+          returnObject
+          clearable
+          enableSearch
+          :search="searchSector"
+          @update:search="searchSector = $event"
         />
       </div>
       <div class="dashboard-filters__input">
-        <UnnnicLabel :label="$t('agent')" />
-        <UnnnicSelectSmart
+        <UnnnicSelect
           v-model="filterAgent"
+          data-testid="dashboard-filter-agent"
           :options="agentsToFilter"
-          :disabled="
-            filterSector[0]?.value === 'all' || agentsToFilter.length < 2
-          "
-          orderedByIndex
-          autocomplete
-          autocompleteClearOnFocus
+          :disabled="filterSector?.value === 'all' || agentsToFilter.length < 2"
+          :label="$t('agent')"
+          :placeholder="$t('filter.by_agent')"
+          returnObject
+          clearable
+          enableSearch
+          :search="searchAgent"
+          @update:search="searchAgent = $event"
         />
       </div>
       <div class="dashboard-filters__input">
-        <UnnnicLabel :label="$t('tag')" />
-        <UnnnicSelectSmart
+        <UnnnicSelect
           v-model="filterTag"
-          :disabled="
-            filterSector[0]?.value === 'all' || tagsToFilter.length < 2
-          "
+          data-testid="dashboard-filter-tag"
           :options="tagsToFilter"
-          orderedByIndex
-          autocomplete
-          autocompleteClearOnFocus
+          :disabled="filterSector?.value === 'all' || tagsToFilter.length < 2"
+          :label="$t('tag')"
+          :placeholder="$t('filter.by_tag')"
+          returnObject
+          clearable
+          enableSearch
+          :search="searchTag"
+          @update:search="searchTag = $event"
         />
       </div>
     </div>
@@ -60,6 +68,7 @@
       :text="$t('clear')"
       :disabled="isFiltersDefault"
       type="secondary"
+      data-testid="dashboard-filters-clear"
       @click="resetFilters"
     />
 
@@ -142,26 +151,21 @@ export default {
     sectorsToFilter: [],
     agentsToFilter: [],
     tagsToFilter: [],
-    filterSector: [],
-    filterAgent: [],
-    filterTag: [],
+    filterSector: null,
+    filterAgent: null,
+    filterTag: null,
     filterDate: {
       start: null,
       end: null,
     },
+    searchSector: '',
+    searchAgent: '',
+    searchTag: '',
   }),
 
   computed: {
     filterSectorsOptionAll() {
       return { value: 'all', label: this.$t('all') };
-    },
-
-    filterAgentDefault() {
-      return [{ value: '', label: this.$t('filter.by_agent') }];
-    },
-
-    filterTagDefault() {
-      return [{ value: '', label: this.$t('filter.by_tag') }];
     },
 
     filterDateDefault() {
@@ -182,15 +186,25 @@ export default {
         filterAgent,
         filterTag,
         filterDate,
-        filterDateDefault,
       } = this;
 
-      if (
-        (filterSector[0]?.value === 'all' || sectorsToFilter.length === 2) &&
-        filterAgent.length === 0 &&
-        filterTag.length === 0 &&
-        filterDate === filterDateDefault
-      ) {
+      const sectorIsDefault =
+        filterSector?.value === 'all' ||
+        !filterSector?.value ||
+        sectorsToFilter.length === 2;
+
+      const agentIsDefault =
+        !filterAgent ||
+        filterAgent.value === '' ||
+        filterAgent.value === 'none';
+
+      const tagIsDefault =
+        !filterTag || filterTag.value === '' || filterTag.value === 'none';
+
+      const dateIsDefault =
+        filterDate?.start == null && filterDate?.end == null;
+
+      if (sectorIsDefault && agentIsDefault && tagIsDefault && dateIsDefault) {
         return true;
       }
 
@@ -206,15 +220,29 @@ export default {
     filterDate: 'sendFilter',
   },
 
-  async created() {
-    this.filterSector = [this.filterSectorsOptionAll];
-    this.agentsToFilter = this.filterAgentDefault.concat(this.filterOptionNone);
-    this.tagsToFilter = this.filterTagDefault.concat(this.filterOptionNone);
+  created() {
+    this.filterSector = this.filterSectorsOptionAll;
+    this.agentsToFilter = this.filterOptionNone;
+    this.tagsToFilter = this.filterOptionNone;
   },
 
   methods: {
     cleanFilter(property = '') {
-      const filterValue = this[property][0]?.value;
+      const raw = this[property];
+      const filterValue = raw?.value;
+
+      if (
+        filterValue === undefined ||
+        filterValue === null ||
+        filterValue === ''
+      ) {
+        return '';
+      }
+
+      if (property === 'filterSector') {
+        return filterValue === 'all' ? '' : filterValue;
+      }
+
       return filterValue === 'all' || filterValue === 'none' ? '' : filterValue;
     },
 
@@ -260,7 +288,7 @@ export default {
         this.sectorsToFilter = newSectors;
 
         if (sectors.length === 1) {
-          this.filterSector = [newSectors[1]];
+          this.filterSector = newSectors[1];
         }
 
         if (sectors.length > 0) {
@@ -279,7 +307,7 @@ export default {
       }
       try {
         const results = await Sector.agents({ sectorUuid });
-        const newAgents = this.agentsToFilter;
+        const newAgents = this.filterOptionNone;
         results.forEach(({ first_name, last_name, email }) => {
           newAgents.push({
             label: [first_name, last_name].join(' ').trim() || email,
@@ -303,7 +331,7 @@ export default {
       try {
         const { results } = await Sector.tags(sectorUuid);
 
-        const newTags = this.tagsToFilter;
+        const newTags = this.filterOptionNone;
         results.forEach(({ uuid, name }) =>
           newTags.push({ value: uuid, label: name }),
         );
@@ -332,10 +360,10 @@ export default {
         return;
       }
 
-      this.filterAgent = [this.filterAgentDefault];
-      this.filterTag = [this.filterTagDefault];
+      this.filterAgent = null;
+      this.filterTag = null;
       if (this.sectorsToFilter.length > 2) {
-        this.filterSector = [this.filterSectorsOptionAll];
+        this.filterSector = this.filterSectorsOptionAll;
       }
       this.filterDate = this.filterDateDefault;
 
@@ -343,7 +371,8 @@ export default {
     },
 
     updateFiltering(filter) {
-      if (!filter?.[0]?.value) {
+      const value = filter?.value ?? filter?.[0]?.value;
+      if (!value) {
         return;
       }
 

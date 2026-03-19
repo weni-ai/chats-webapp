@@ -16,17 +16,18 @@
       "
     />
     <fieldset>
-      <UnnnicLabel
-        style="margin-top: 0"
-        :label="$t('config_chats.groups.general_form.field.manager.label')"
-      />
-      <UnnnicSelectSmart
+      <UnnnicSelect
         v-model="selectedManager"
         :options="managersNames"
-        autocomplete
-        autocompleteIconLeft
-        autocompleteClearOnFocus
-        @update:model-value="selectManager"
+        :label="$t('config_chats.groups.general_form.field.manager.label')"
+        :placeholder="
+          $t('config_chats.groups.general_form.field.manager.placeholder')
+        "
+        returnObject
+        clearable
+        enableSearch
+        :search="searchManager"
+        @update:search="searchManager = $event"
       />
     </fieldset>
     <section
@@ -84,7 +85,8 @@ export default {
       managers: [],
       managersPage: 0,
       managersLimitPerPage: 50,
-      selectedManager: [],
+      selectedManager: null,
+      searchManager: '',
       removedManagers: [],
     };
   },
@@ -99,28 +101,17 @@ export default {
       },
     },
     managersNames() {
-      const managersNames = [
-        {
-          value: '',
-          label: this.$t(
-            'config_chats.groups.general_form.field.manager.placeholder',
-          ),
-        },
-      ];
-
-      this.managers.forEach((manager) => {
+      return this.managers.map((manager) => {
         const {
           user: { email, first_name, last_name },
           uuid,
         } = manager;
 
-        managersNames.push({
+        return {
           value: uuid,
           label: first_name || last_name ? `${first_name} ${last_name}` : email,
-        });
+        };
       });
-
-      return managersNames;
     },
     valid() {
       const { name, managers, maxSimultaneousChatsByAgent } = this.group;
@@ -135,6 +126,21 @@ export default {
   watch: {
     valid() {
       this.$emit('changeValid', this.valid);
+    },
+    selectedManager(newVal) {
+      if (!newVal?.value) {
+        return;
+      }
+      const manager = this.managers.find(
+        (manager) => manager.uuid === newVal.value,
+      );
+      if (!manager) {
+        return;
+      }
+      this.addGroupManager(manager);
+      this.$nextTick(() => {
+        this.selectedManager = null;
+      });
     },
   },
 
@@ -170,18 +176,6 @@ export default {
       this.group.managers = managers.results;
     },
 
-    selectManager(selectedManager) {
-      if (selectedManager.length > 0) {
-        const manager = this.managers.find((manager) => {
-          const { uuid } = manager;
-
-          return uuid === selectedManager[0].value;
-        });
-
-        this.addGroupManager(manager);
-      }
-    },
-
     addGroupManager(manager) {
       if (manager) {
         const managers = this.group.managers.some(
@@ -191,8 +185,6 @@ export default {
           : [...this.group.managers, { ...manager, role: 1, new: true }];
 
         this.group.managers = managers;
-
-        this.selectedManager = [this.managersNames[0]];
       }
     },
 

@@ -35,14 +35,10 @@ describe('FormAgent', () => {
   });
 
   it('should render all inputs', () => {
-    const inputAgentsLabel = wrapper
-      .findAllComponents({ name: 'unnnic-label' })
-      .at(0);
-    const selects = wrapper.findAllComponents({ name: 'unnnic-select-smart' });
+    const selects = wrapper.findAllComponents({ name: 'UnnnicSelect' });
 
-    expect(inputAgentsLabel.exists()).toBe(true);
-    expect(inputAgentsLabel.props('label')).toMatch(/Select representative/gi);
     expect(selects.length).toBe(1);
+    expect(selects.at(0).props('label')).toMatch(/Select agent/gi);
   });
 
   it('should have a agents list rendered', async () => {
