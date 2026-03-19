@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { expect, describe, it, vi, beforeEach } from 'vitest';
 
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger';
@@ -24,52 +24,44 @@ describe('SelectFlow', () => {
     expect(wrapper.find('[data-testid="select-flow-container"]').exists()).toBe(
       true,
     );
-    expect(
-      wrapper.findComponent('[data-testid="select-flow-input"]').exists(),
-    ).toBe(true);
+    expect(wrapper.find('[data-testid="select-flow-input"]').exists()).toBe(
+      true,
+    );
   });
 
   it('fetches flows on mount and populates options', async () => {
-    await wrapper.vm.$nextTick();
+    await flushPromises();
+
     expect(FlowsTrigger.getFlows).toHaveBeenCalled();
 
     const selectOptions = wrapper.vm.templates;
-    expect(selectOptions).toEqual([
-      { value: '', label: wrapper.vm.$t('search_or_select') },
-      { value: 'flow-1', label: 'Flow 1' },
-    ]);
+    expect(selectOptions).toEqual([{ value: 'flow-1', label: 'Flow 1' }]);
   });
 
   it('emits update:modelValue when a flow is selected', async () => {
+    await flushPromises();
+
     await wrapper.setData({
-      templates: [
-        { value: '', label: wrapper.vm.$t('search_or_select') },
-        { value: 'flow-1', label: 'Flow 1' },
-      ],
-      flowUuid: [{ value: 'flow-1', label: 'Flow 1' }],
+      flowSelection: { value: 'flow-1', label: 'Flow 1' },
     });
+    await wrapper.vm.$nextTick();
 
-    await wrapper.vm.getFlowTrigger('flow-1');
-
-    expect(wrapper.emitted('update:modelValue')[0]).toEqual(['']);
-    expect(wrapper.emitted('update:modelValue')[3]).toEqual(['flow-1']);
+    const emissions = wrapper.emitted('update:modelValue');
+    expect(emissions[emissions.length - 1]).toEqual(['flow-1']);
   });
 
   it('handles API errors gracefully', async () => {
     FlowsTrigger.getFlows.mockRejectedValueOnce(new Error('API Error'));
     const consoleLogSpy = vi.spyOn(console, 'error');
 
-    const wrapper = mount(SelectFlow, {
+    const errorWrapper = mount(SelectFlow, {
       props: { modelValue: '' },
       mocks: { $t: (key) => key },
     });
 
-    await wrapper.vm.$nextTick();
+    await flushPromises();
 
-    expect(wrapper.vm.loadingFlows).toBe(false);
-    expect(wrapper.vm.templates).toEqual([
-      { value: '', label: wrapper.vm.$t('search_or_select') },
-    ]);
+    expect(errorWrapper.vm.templates).toEqual([]);
     expect(consoleLogSpy).toHaveBeenCalledWith(
       'Error getting flows',
       new Error('API Error'),

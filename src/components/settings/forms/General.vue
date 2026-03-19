@@ -47,18 +47,16 @@
             :placeholder="$t('sector.placeholder')"
           />
           <fieldset v-if="!enableGroupsMode">
-            <UnnnicLabel
-              class="form-section__label"
-              :label="$t('sector.managers.add.label')"
-            />
-            <UnnnicSelectSmart
+            <UnnnicSelect
               v-model="selectedManager"
               :options="managersNames"
-              autocomplete
-              autocompleteIconLeft
-              autocompleteClearOnFocus
-              :enableSearchByValue="true"
-              @update:model-value="selectManager"
+              :label="$t('sector.managers.add.label')"
+              :placeholder="$t('sector.managers.add.placeholder')"
+              :search="searchManager"
+              returnObject
+              clearable
+              enableSearch
+              @update:search="searchManager = $event"
             />
           </fieldset>
         </section>
@@ -93,14 +91,18 @@
               v-model="copyWorkday"
               :textRight="$t('sector.managers.working_day.copy_workday')"
             />
-            <UnnnicSelectSmart
+            <UnnnicSelect
               v-if="copyWorkday"
-              :modelValue="copyWorkdaySector"
+              v-model="copyWorkdaySector"
               :options="sectorsOptions"
-              autocomplete
-              autocompleteIconLeft
-              autocompleteClearOnFocus
-              @update:model-value="selectCopyWorkdaySector"
+              :placeholder="
+                $t('sector.managers.working_day.select_sector_to_copy')
+              "
+              returnObject
+              clearable
+              enableSearch
+              :search="searchCopyWorkdaySector"
+              @update:search="searchCopyWorkdaySector = $event"
             />
             <p class="form-section__subtitle">
               {{ $t('sector.managers.working_day.select_days') }}
@@ -185,15 +187,17 @@
               {{ $t('sector.link.title') }}
             </h2>
             <fieldset>
-              <UnnnicLabel :label="$t('sector.link.label')" />
-              <UnnnicSelectSmart
+              <UnnnicSelect
                 v-model="selectedProject"
                 :options="projectsNames"
-                autocomplete
-                autocompleteIconLeft
-                autocompleteClearOnFocus
+                :label="$t('sector.link.label')"
+                :placeholder="$t('sector.link.project_placeholder')"
+                returnObject
+                clearable
+                enableSearch
+                :search="searchProject"
                 :disabled="isEditing"
-                @update:model-value="selectProject"
+                @update:search="searchProject = $event"
               />
             </fieldset>
             <UnnnicDisclaimer
@@ -203,9 +207,7 @@
               type="attention"
             />
             <UnnnicDisclaimer
-              v-else-if="
-                selectedProject.length && selectedProjectHasSectorIntegration
-              "
+              v-else-if="selectedProject && selectedProjectHasSectorIntegration"
               class="link-project-disclaimer"
               :description="$t('sector.link.has_linked_project')"
               type="attention"
@@ -320,11 +322,13 @@ export default {
   data() {
     return {
       useDefaultSector: 0,
-      selectedManager: [],
-      selectedProject: [],
+      selectedManager: null,
+      selectedProject: null,
       removedManagers: [],
       managers: [],
       projects: [],
+      searchProject: '',
+      searchManager: '',
       openModalDelete: false,
       managersPage: 0,
       managersLimitPerPage: 20,
@@ -333,7 +337,8 @@ export default {
       secondaryProjectsPage: 0,
       secondaryProjectsLimitPerPage: 50,
       copyWorkday: false,
-      copyWorkdaySector: [],
+      copyWorkdaySector: null,
+      searchCopyWorkdaySector: '',
       selectedWorkdayDays: {
         monday: false,
         tuesday: false,
@@ -370,21 +375,11 @@ export default {
     ...mapState(useConfig, ['enableGroupsMode', 'project']),
     ...mapState(useSettings, ['sectors']),
 
-    sectorPlaceholder() {
-      return {
-        value: '',
-        label: this.$t('sector.managers.working_day.select_sector_to_copy'),
-      };
-    },
-
     sectorsOptions() {
-      return [
-        this.sectorPlaceholder,
-        ...this.sectors.map((sector) => ({
-          value: sector.uuid,
-          label: sector.name,
-        })),
-      ];
+      return this.sectors.map((sector) => ({
+        value: sector.uuid,
+        label: sector.name,
+      }));
     },
 
     workdayDays() {
@@ -406,9 +401,9 @@ export default {
     },
 
     selectedProjectHasSectorIntegration() {
-      if (this.selectedProject?.[0]?.value) {
+      if (this.selectedProject?.value) {
         const project = this.projects.find(
-          (project) => this.selectedProject[0].value === project.uuid,
+          (project) => this.selectedProject.value === project.uuid,
         );
 
         return !!project?.has_sector_integration;
@@ -417,43 +412,25 @@ export default {
     },
 
     managersNames() {
-      const managersNames = [
-        {
-          value: '',
-          label: this.$t('sector.managers.add.placeholder'),
-        },
-      ];
-
-      this.managers.forEach((manager) => {
+      return this.managers.map((manager) => {
         const {
           user: { email, first_name, last_name },
           uuid,
         } = manager;
 
-        managersNames.push({
+        return {
           uuid,
           value: email,
           label: first_name || last_name ? `${first_name} ${last_name}` : email,
-        });
+        };
       });
-
-      return managersNames;
     },
 
     projectsNames() {
-      const projectsNames = [
-        {
-          value: '',
-          label: this.$t('sector.link.project_placeholder'),
-        },
-      ];
-
-      this.projects.forEach((project) => {
+      return this.projects.map((project) => {
         const { name, uuid } = project;
-        projectsNames.push({ value: uuid, label: name });
+        return { value: uuid, label: name };
       });
-
-      return projectsNames;
     },
 
     sector: {
@@ -486,7 +463,7 @@ export default {
       const commonValid = !!(name.trim() && validAllWorkdayTime && hasWorkday);
 
       const groupValid =
-        !!this.selectedProject.length &&
+        !!this.selectedProject &&
         (this.isEditing || !this.selectedProjectHasSectorIntegration);
 
       const singleValid = !!(
@@ -504,6 +481,19 @@ export default {
   },
 
   watch: {
+    selectedManager(option) {
+      if (option?.uuid) {
+        this.addSelectedManager(option);
+      }
+    },
+    selectedProject(option) {
+      this.applySelectedProject(option);
+    },
+    copyWorkdaySector(option) {
+      if (option?.value) {
+        this.applyCopyWorkdaySector(option);
+      }
+    },
     selectedWorkdayDaysTime: {
       deep: true,
       handler() {
@@ -516,8 +506,8 @@ export default {
       },
     },
     copyWorkday(value) {
-      this.copyWorkdaySector = [];
-      if (!value && !this.copyWorkdaySector[0]?.value) {
+      this.copyWorkdaySector = null;
+      if (!value) {
         this.selectedWorkdayDays = {
           monday: false,
           tuesday: false,
@@ -591,10 +581,10 @@ export default {
       this.listSecondaryProjects().then(() => {
         if (this.isEditing) {
           const secondaryProjectUuid = this.sector.config?.secondary_project;
-          const selectedProject = this.projectsNames.find(
+          const projectOption = this.projectsNames.find(
             (project) => project.value === secondaryProjectUuid,
           );
-          if (selectedProject) this.selectedProject = [selectedProject];
+          if (projectOption) this.selectedProject = projectOption;
         }
       });
     }
@@ -637,7 +627,7 @@ export default {
     },
 
     resetSelectedCopySector() {
-      this.copyWorkdaySector = [this.sectorPlaceholder];
+      this.copyWorkdaySector = null;
     },
 
     updateDefaultSectorValue(activate) {
@@ -804,12 +794,8 @@ export default {
       }
     },
 
-    async selectCopyWorkdaySector([selectedSector]) {
-      if (
-        selectedSector.value &&
-        selectedSector.value !== this.copyWorkdaySector?.[0]?.value
-      ) {
-        this.copyWorkdaySector = [selectedSector];
+    async applyCopyWorkdaySector(selectedSector) {
+      if (selectedSector?.value) {
         await this.getSectorWorktimes(selectedSector.value);
       }
     },
@@ -831,19 +817,16 @@ export default {
       );
     },
 
-    selectManager(selectedManager) {
-      if (selectedManager.length > 0) {
-        const manager = this.managers.find((manager) => {
-          const { uuid } = manager;
-
-          return uuid === selectedManager[0].uuid;
-        });
+    addSelectedManager(option) {
+      if (option?.uuid) {
+        const manager = this.managers.find((m) => m.uuid === option.uuid);
         this.addSectorManager(manager);
+        this.selectedManager = null;
       }
     },
 
-    selectProject(selectedProject) {
-      this.sector.config.secondary_project = selectedProject[0].value;
+    applySelectedProject(option) {
+      this.sector.config.secondary_project = option?.value ?? null;
     },
 
     photo(link) {
@@ -866,7 +849,7 @@ export default {
 
         if (this.isEditing) this.addManager(manager);
 
-        this.selectedManager = [];
+        this.selectedManager = null;
       }
     },
 

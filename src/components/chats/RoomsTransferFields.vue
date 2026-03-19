@@ -4,36 +4,34 @@
     :class="{ small: size === 'sm' }"
   >
     <section class="select-destination__field">
-      <UnnnicLabel
-        v-if="size !== 'sm'"
-        class="field__label"
-        :label="$t('queue')"
-      />
-      <UnnnicSelectSmart
-        v-model="selectedQueue"
+      <UnnnicSelect
+        v-model="selectedQueueOption"
         data-testid="select-queue"
         :size="size"
         :options="queues"
-        autocomplete
-        :autocompleteIconLeft="size !== 'sm'"
-        autocompleteClearOnFocus
+        :label="size !== 'sm' ? $t('queue') : undefined"
+        :placeholder="$t('select_queue')"
+        returnObject
+        clearable
+        enableSearch
+        :search="searchQueue"
+        @update:search="searchQueue = $event"
       />
     </section>
     <section class="select-destination__field">
-      <UnnnicLabel
-        v-if="size !== 'sm'"
-        class="field__label"
-        :label="$t('agent')"
-      />
-      <UnnnicSelectSmart
+      <UnnnicSelect
         v-model="selectedAgent"
         data-testid="select-agent"
         :size="size"
         :disabled="isAgentsFieldDisabled"
         :options="agents"
-        autocomplete
-        autocompleteIconLeft
-        autocompleteClearOnFocus
+        :label="size !== 'sm' ? $t('agent') : undefined"
+        :placeholder="$t('select_agent')"
+        returnObject
+        clearable
+        enableSearch
+        :search="searchAgent"
+        @update:search="searchAgent = $event"
       />
     </section>
     <UnnnicDisclaimer
@@ -107,7 +105,10 @@ export default {
 
       queues: [],
       agents: [],
-      selectedAgent: [],
+      selectedAgent: null,
+
+      searchQueue: '',
+      searchAgent: '',
 
       showTransferDisclaimer: false,
     };
@@ -142,10 +143,11 @@ export default {
     },
 
     showTransferToOtherSectorDisclaimer() {
-      if (!this.selectedQueue[0]?.value) return false;
+      const queueOption = this.modelValue?.[0];
+      if (!queueOption?.value) return false;
 
       return this.roomsToTransfer.some(
-        (room) => room.queue?.sector !== this.selectedQueue[0]?.sector_uuid,
+        (room) => room.queue?.sector !== queueOption?.sector_uuid,
       );
     },
 
@@ -153,40 +155,31 @@ export default {
       return this.fixed ? 'fixed' : 'relative';
     },
 
-    queuesDefault() {
-      return [{ value: '', label: this.$t('select_queue') }];
-    },
-    agentsDefault() {
-      return [{ value: '', label: this.$t('select_agent') }];
-    },
-
-    selectedQueue: {
+    selectedQueueOption: {
       get() {
-        return this.modelValue;
+        return this.modelValue?.[0] || null;
       },
-      set(newSelectedQueue) {
-        this.$emit('update:model-value', newSelectedQueue);
+      set(option) {
+        this.$emit('update:model-value', option ? [option] : []);
 
-        const queue = newSelectedQueue[0]?.value;
-
-        if (queue) {
-          this.getAgents(queue);
+        if (option?.value) {
+          this.getAgents(option.value);
         }
       },
     },
 
     isAgentsFieldDisabled() {
-      return this.selectedQueue[0]?.value === '' || this.agents?.length < 2;
+      const queueValue = this.modelValue?.[0]?.value;
+      return !queueValue || this.agents?.length < 2;
     },
 
     isSelectedAgentOffline() {
       return (
-        this.selectedAgent[0]?.value &&
-        this.selectedAgent[0]?.status === 'offline'
+        this.selectedAgent?.value && this.selectedAgent?.status === 'offline'
       );
     },
     haveSelectedQueue() {
-      return !!this.selectedQueue?.[0]?.value;
+      return !!this.modelValue?.[0]?.value;
     },
     isAgentsListEmpty() {
       return this.haveSelectedQueue && this.agents?.length < 2;
@@ -206,15 +199,27 @@ export default {
 
   watch: {
     selectedAgent(newSelectedAgent) {
-      this.$emit('update:selectedAgent', newSelectedAgent);
+      this.$emit(
+        'update:selectedAgent',
+        newSelectedAgent ? [newSelectedAgent] : [],
+      );
 
-      this.showTransferDisclaimer = newSelectedAgent[0]?.status === 'offline';
+      this.showTransferDisclaimer = newSelectedAgent?.status === 'offline';
+    },
+    modelValue: {
+      handler(newValue) {
+        const queueUuid = newValue?.[0]?.value;
+        if (queueUuid) {
+          this.getAgents(queueUuid);
+        }
+      },
+      immediate: false,
     },
   },
 
   mounted() {
-    this.queues = this.queuesDefault;
-    this.agents = this.agentsDefault;
+    this.queues = [];
+    this.agents = [];
     this.getQueues();
   },
 
@@ -238,7 +243,7 @@ export default {
         }),
       );
 
-      this.queues = [...this.queuesDefault, ...treatedQueues];
+      this.queues = treatedQueues;
     },
 
     async getAgents(queueUuid) {
@@ -258,7 +263,7 @@ export default {
         this.showTransferDisclaimer = true;
       }
 
-      this.agents = [...this.agentsDefault, ...treatedAgents];
+      this.agents = treatedAgents;
     },
 
     /**
@@ -270,8 +275,8 @@ export default {
     async transfer() {
       const { roomsToTransfer } = this;
 
-      const selectedQueue = this.selectedQueue?.[0]?.value;
-      const selectedAgent = this.selectedAgent?.[0]?.value;
+      const selectedQueue = this.modelValue?.[0]?.value;
+      const selectedAgent = this.selectedAgent?.value;
 
       try {
         const response = await Room.bulkTranfer({
@@ -318,15 +323,15 @@ export default {
     },
 
     callSuccessAlert() {
-      const selectedAgent = this.selectedAgent?.[0]?.label;
-      const selectedQueueUuid = this.selectedQueue?.[0]?.value;
+      const selectedAgentLabel = this.selectedAgent?.label;
+      const selectedQueueUuid = this.modelValue?.[0]?.value;
       const selectedQueueName = this.queues.find(
         (queue) => queue.value === selectedQueueUuid,
       )?.queue_name;
 
-      const destination = selectedAgent || selectedQueueName;
+      const destination = selectedAgentLabel || selectedQueueName;
 
-      const toDestination = selectedAgent ? 'agent' : 'queue';
+      const toDestination = this.selectedAgent ? 'agent' : 'queue';
 
       this.getAlert({
         text: i18n.global.t(`contact_transferred_to_${toDestination}`, {
@@ -356,11 +361,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:deep(.unnnic-select-smart__options.active) {
-  position: v-bind(dropdownFixed);
-  left: auto;
-  right: auto;
-}
 .rooms-transfer {
   &__select-destination {
     display: grid;
