@@ -214,6 +214,7 @@ export default {
     flex-direction: column;
     gap: $unnnic-space-4;
     padding: $unnnic-space-6;
+    overflow: auto;
   }
 
   &__confirm-text {
@@ -233,9 +234,7 @@ export default {
     gap: $unnnic-space-3;
     overflow: hidden auto;
     flex-wrap: wrap;
-
     max-height: 500px;
-
     scroll-snap-type: y proximity;
   }
 }

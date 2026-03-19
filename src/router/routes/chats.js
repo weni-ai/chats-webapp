@@ -16,7 +16,22 @@ const routes = [
         } else {
           if (from.query.next) {
             const isGeneralSettings = from.query.next === '/settings/chats';
-            next({ path: isGeneralSettings ? '/settings' : from.query.next });
+            if (isGeneralSettings) {
+              next({ path: '/settings' });
+            } else {
+              const nextUrl = from.query.next;
+              const queryStart = nextUrl.indexOf('?');
+
+              if (queryStart > -1) {
+                const path = nextUrl.slice(0, queryStart);
+                const query = Object.fromEntries(
+                  new URLSearchParams(nextUrl.slice(queryStart + 1)),
+                );
+                next({ path, query });
+              } else {
+                next({ path: nextUrl });
+              }
+            }
           } else next({ name: 'home', replace: true });
         }
       } else next(to.path);
