@@ -1,6 +1,6 @@
 <template>
   <UnnnicDialog v-model:open="open">
-    <UnnnicDialogConztent size="medium">
+    <UnnnicDialogContent size="medium">
       <UnnnicDialogHeader type="attention">
         <UnnnicDialogTitle>
           {{ $t('chats.your_chat_assumed', { contact: contactName }) }}
@@ -13,7 +13,7 @@
           }}
         </p>
       </section>
-    </UnnnicDialogConztent>
+    </UnnnicDialogContent>
   </UnnnicDialog>
 </template>
 
