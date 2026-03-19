@@ -14,20 +14,12 @@
       @close-modal="closeModal('getChat')"
     />
 
-    <!-- TODO: It will be prioritized and replaced by a new modal; currently, it is not falling into any viewing cycle. -->
-    <!-- <UnnnicModal
-      data-testid="modal-assume-chat"
-      :text="$t('chats.your_chat_assumed', { contact: assumedChatContactName })"
-      :description="
-        $t('chats.your_chat_assumed_description', {
-          contact: assumedChatContactName,
-        })
-      "
-      modalIcon="check-circle-1-1"
-      scheme="feedback-green"
-      :showModal="modalsShowing.assumedChat"
-      @close="closeModal('assumedChat')"
-    /> -->
+    <HomeChatTakeoverRoom
+      v-if="showModalAssumedChat"
+      v-model="showModalAssumedChat"
+      :contactName="assumedChatContactName"
+      @close="closeModalTakeoverRoom"
+    />
 
     <ModalCloseChat
       v-if="modalsShowing.closeChat"
@@ -52,12 +44,13 @@
 <script>
 import isMobile from 'is-mobile';
 
-import { mapState } from 'pinia';
+import { mapState, mapWritableState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDashboard } from '@/store/modules/dashboard';
 
 import FileUploader from '@/components/chats/MessageManager/FileUploader.vue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
+import HomeChatTakeoverRoom from './HomeChatTakeoverRoom.vue';
 
 import ModalCloseChat from './ModalCloseChat.vue';
 
@@ -68,6 +61,7 @@ export default {
     FileUploader,
     ModalGetChat,
     ModalCloseChat,
+    HomeChatTakeoverRoom,
   },
   emits: ['got-chat', 'file-uploader-progress', 'select-quick-message'],
 
@@ -77,7 +71,6 @@ export default {
 
       modalsShowing: {
         getChat: false,
-        assumedChat: false,
         closeChat: false,
         fileUploader: false,
       },
@@ -89,7 +82,7 @@ export default {
 
   computed: {
     ...mapState(useRooms, { room: (store) => store.activeRoom }),
-    ...mapState(useDashboard, [
+    ...mapWritableState(useDashboard, [
       'showModalAssumedChat',
       'assumedChatContactName',
     ]),
@@ -127,6 +120,11 @@ export default {
       if (filesType) {
         this.modalFileUploaderMediaType = filesType;
       }
+    },
+
+    closeModalTakeoverRoom() {
+      this.showModalAssumedChat = false;
+      this.assumedChatContactName = '';
     },
 
     emitGotChat() {
