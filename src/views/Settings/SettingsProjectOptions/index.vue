@@ -7,9 +7,6 @@
       <SettingsSectionHeader
         :title="$t('config_chats.project_configs.title')"
       />
-    </section>
-
-    <section class="project-options__items__custom-breaks">
       <CustomBreakOption />
     </section>
 
@@ -379,7 +376,7 @@ export default {
 
   .project-options__header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
   }
 
