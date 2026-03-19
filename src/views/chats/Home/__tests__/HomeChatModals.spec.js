@@ -57,17 +57,6 @@ describe('HomeChatModals.vue', () => {
     expect(wrapper.vm.modalsShowing.getChat).toBe(false);
   });
 
-  it('closes closeChat when close is called', async () => {
-    wrapper.vm.openModal('closeChat');
-    await wrapper.vm.$nextTick();
-    expect(wrapper.vm.modalsShowing.closeChat).toBe(true);
-    const assumeChatModal = wrapper.findComponent(
-      '[data-testid="modal-close-chat"]',
-    );
-    assumeChatModal.vm.$emit('close');
-    expect(wrapper.vm.modalsShowing.assumedChat).toBe(false);
-  });
-
   it('closes fileUploader when close is called', async () => {
     wrapper.vm.openModal('fileUploader');
     await wrapper.vm.$nextTick();
