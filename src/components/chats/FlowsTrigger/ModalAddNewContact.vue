@@ -1,48 +1,55 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
-  <UnnnicModal
-    :text="$t('flows_trigger.add_new_contact.title')"
+  <UnnnicDialog
+    v-model:open="isOpen"
     class="modal-add-new-contact"
     data-testid="modal-add-new-contact"
-    @close="$emit('close')"
   >
-    <form
-      class="modal-add-new-contact__form"
-      @submit.stop=""
-    >
-      <UnnnicInput
-        v-model="contact.name"
-        :label="inputLabelContactName"
-        :placeholder="inputPlaceholderContactName"
-        data-testid="input-contact-name"
-      />
-      <UnnnicInput
-        v-model="contact.tel"
-        :label="inputLabelContactTel"
-        placeholder="+99 (99) 99999 9999"
-        :mask="Object.values(telMask)"
-        data-testid="input-contact-tel"
-      />
-    </form>
-
-    <template #options>
-      <UnnnicButton
-        v-if="!isMobile"
-        :text="$t('cancel')"
-        type="secondary"
-        data-testid="cancel-button"
-        @click="$emit('close')"
-      />
-      <UnnnicButton
-        :text="$t('save')"
-        type="primary"
-        :disabled="!isValidForm"
-        :loading="isLoading"
-        data-testid="save-button"
-        @click="saveNewContact"
-      />
-    </template>
-  </UnnnicModal>
+    <UnnnicDialogContent>
+      <UnnnicDialogHeader>
+        <UnnnicDialogTitle>
+          {{ $t('flows_trigger.add_new_contact.title') }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section class="modal-add-new-contact__content">
+        <form
+          class="modal-add-new-contact__form"
+          @submit.stop=""
+        >
+          <UnnnicInput
+            v-model="contact.name"
+            :label="inputLabelContactName"
+            :placeholder="inputPlaceholderContactName"
+            data-testid="input-contact-name"
+          />
+          <UnnnicInput
+            v-model="contact.tel"
+            :label="inputLabelContactTel"
+            placeholder="+99 (99) 99999 9999"
+            :mask="Object.values(telMask)"
+            data-testid="input-contact-tel"
+          />
+        </form>
+      </section>
+      <UnnnicDialogFooter>
+        <UnnnicButton
+          v-if="!isMobile"
+          :text="$t('cancel')"
+          type="secondary"
+          data-testid="cancel-button"
+          @click="$emit('close')"
+        />
+        <UnnnicButton
+          :text="$t('save')"
+          type="primary"
+          :disabled="!isValidForm"
+          :loading="isLoading"
+          data-testid="save-button"
+          @click="saveNewContact"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script>
@@ -65,6 +72,7 @@ export default {
   emits: ['close'],
 
   data: () => ({
+    isOpen: true,
     contact: {
       name: '',
       tel: '',
@@ -96,6 +104,12 @@ export default {
     },
     inputLabelContactTel() {
       return this.isMobile ? '' : 'WhatsApp';
+    },
+  },
+
+  watch: {
+    isOpen(value) {
+      if (!value) this.$emit('close');
     },
   },
 
@@ -153,23 +167,15 @@ export default {
 
 <style lang="scss" scoped>
 .modal-add-new-contact {
+  &__content {
+    padding: $unnnic-space-6;
+  }
+
   &__form {
     display: grid;
     gap: $unnnic-spacing-xs;
 
     text-align: start;
-  }
-
-  :deep(.unnnic-modal-container) {
-    .unnnic-modal-container-background-body {
-      &-description {
-        padding: 0;
-
-        &-container {
-          padding-bottom: 0;
-        }
-      }
-    }
   }
 }
 </style>

@@ -7,6 +7,7 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
 import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import TheCardGroups from '../index.vue';
 
@@ -1075,6 +1076,116 @@ describe('TheCardGroups.vue', () => {
       wrapper = createWrapper();
 
       expect(wrapper.vm.totalUnreadMessages).toBe(0);
+    });
+  });
+
+  describe('bulk take selection logic', () => {
+    it('should show select-all checkbox on waiting tab when bulk take is enabled', () => {
+      const roomsStore = useRooms();
+      const configStore = useConfig();
+      const featureFlagStore = useFeatureFlag();
+
+      roomsStore.waitingQueue = mockRooms;
+      roomsStore.activeTab = 'waiting';
+      configStore.project = {
+        config: {
+          can_use_bulk_take: true,
+          can_use_queue_prioritization: true,
+        },
+      };
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsBulkTake'],
+      };
+
+      wrapper = createWrapper({ isViewMode: false });
+
+      expect(wrapper.vm.showSelectAllCheckbox).toBe(true);
+    });
+
+    it('should not show select-all checkbox on waiting tab when bulk take flag is inactive', () => {
+      const roomsStore = useRooms();
+      const configStore = useConfig();
+      const featureFlagStore = useFeatureFlag();
+
+      roomsStore.waitingQueue = mockRooms;
+      roomsStore.activeTab = 'waiting';
+      configStore.project = {
+        config: {
+          can_use_bulk_take: true,
+          can_use_queue_prioritization: true,
+        },
+      };
+      featureFlagStore.featureFlags = { active_features: [] };
+
+      wrapper = createWrapper({ isViewMode: false });
+
+      expect(wrapper.vm.showSelectAllCheckbox).toBe(false);
+    });
+
+    it('should not show select-all checkbox on waiting tab in view mode', () => {
+      const roomsStore = useRooms();
+      const configStore = useConfig();
+      const featureFlagStore = useFeatureFlag();
+
+      roomsStore.waitingQueue = mockRooms;
+      roomsStore.activeTab = 'waiting';
+      configStore.project = {
+        config: {
+          can_use_bulk_take: true,
+          can_use_queue_prioritization: true,
+        },
+      };
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsBulkTake'],
+      };
+
+      wrapper = createWrapper({ isViewMode: true });
+
+      expect(wrapper.vm.showSelectAllCheckbox).toBe(false);
+    });
+
+    it('should enable selection on waiting tab when bulk take is enabled', () => {
+      const roomsStore = useRooms();
+      const configStore = useConfig();
+      const featureFlagStore = useFeatureFlag();
+
+      roomsStore.waitingQueue = mockRooms;
+      roomsStore.activeTab = 'waiting';
+      configStore.project = {
+        config: {
+          can_use_bulk_take: true,
+          can_use_queue_prioritization: true,
+        },
+      };
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsBulkTake'],
+      };
+
+      wrapper = createWrapper({ isViewMode: false });
+
+      expect(wrapper.vm.isWithSelection).toBe(true);
+    });
+
+    it('should disable selection on waiting tab in view mode even with bulk take enabled', () => {
+      const roomsStore = useRooms();
+      const configStore = useConfig();
+      const featureFlagStore = useFeatureFlag();
+
+      roomsStore.waitingQueue = mockRooms;
+      roomsStore.activeTab = 'waiting';
+      configStore.project = {
+        config: {
+          can_use_bulk_take: true,
+          can_use_queue_prioritization: true,
+        },
+      };
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsBulkTake'],
+      };
+
+      wrapper = createWrapper({ isViewMode: true });
+
+      expect(wrapper.vm.isWithSelection).toBe(false);
     });
   });
 });

@@ -7,78 +7,55 @@
       <SettingsSectionHeader
         :title="$t('config_chats.project_configs.title')"
       />
+    </section>
+
+    <section class="project-options__items__custom-breaks">
       <CustomBreakOption />
     </section>
 
     <section class="project-options__items__config">
-      <section
-        v-if="hasAgentBuilder"
-        class="project-options__ai-transfer"
+      <template
+        v-for="item in optionsItems"
+        :key="item.key"
       >
+        <section
+          v-if="item.type === 'flag-prompt'"
+          class="project-options__ai-transfer"
+        >
+          <SettingsProjectOptionsItem
+            :modelValue="item.flag"
+            :name="item.name"
+            @update:model-value="item.onToggle"
+          />
+
+          <template v-if="item.flag">
+            <div class="project-options__ai-transfer__inline">
+              <UnnnicTextArea
+                :modelValue="item.prompt.value"
+                class="project-options__ai-transfer__criteria"
+                :label="item.prompt.label"
+                :placeholder="item.prompt.placeholder"
+                :maxLength="item.prompt.maxLength"
+                disabled
+                data-testid="ai-transfer-criteria-display"
+              />
+              <UnnnicButton
+                type="tertiary"
+                iconCenter="edit_square"
+                size="small"
+                data-testid="ai-transfer-edit-btn"
+                @click="item.onEdit"
+              />
+            </div>
+          </template>
+        </section>
+
         <SettingsProjectOptionsItem
-          :modelValue="aiTransferConfig.enabled"
-          :name="configAiTransferTranslation"
-          @update:model-value="handleAiTransferToggle"
+          v-else
+          v-model="projectConfig[item.key]"
+          :name="item.name"
         />
-
-        <template v-if="aiTransferConfig.enabled">
-          <div class="project-options__ai-transfer__inline">
-            <UnnnicTextArea
-              :modelValue="aiTransferConfig.criteria"
-              class="project-options__ai-transfer__criteria"
-              :label="
-                $t('config_chats.project_configs.ai_transfer.textarea_label')
-              "
-              :placeholder="
-                $t(
-                  'config_chats.project_configs.ai_transfer.textarea_placeholder',
-                )
-              "
-              :maxLength="1000"
-              disabled
-              data-testid="ai-transfer-criteria-display"
-            />
-            <UnnnicButton
-              type="tertiary"
-              iconCenter="edit_square"
-              size="small"
-              data-testid="ai-transfer-edit-btn"
-              @click="openAiTransferModal"
-            />
-          </div>
-        </template>
-      </section>
-
-      <SettingsProjectOptionsItem
-        v-model="projectConfig.can_use_bulk_transfer"
-        :name="configBulkTransferTranslation"
-      />
-      <SettingsProjectOptionsItem
-        v-model="projectConfig.filter_offline_agents"
-        :name="configBlockTransferToOffAgentsTranslation"
-      />
-      <SettingsProjectOptionsItem
-        v-if="isBulkCloseFeatureEnabled"
-        v-model="projectConfig.can_use_bulk_close"
-        :name="configBulkCloseTranslation"
-      />
-      <SettingsProjectOptionsItem
-        v-model="projectConfig.can_close_chats_in_queue"
-        :name="configBlockCloseChatsInQueueTranslation"
-      />
-      <!-- TODO: Future feature - bulk take -->
-      <!-- <SettingsProjectOptionsItem
-        v-model="projectConfig.can_use_bulk_take"
-        :name="configBulkTakeTranslation"
-      /> -->
-      <SettingsProjectOptionsItem
-        v-model="projectConfig.can_use_queue_prioritization"
-        :name="configQueuePrioritizationTranslation"
-      />
-      <SettingsProjectOptionsItem
-        v-model="projectConfig.can_see_timer"
-        :name="configShowAgentStatusCountTimer"
-      />
+      </template>
     </section>
 
     <AiTransferModal
@@ -121,9 +98,10 @@ export default {
         filter_offline_agents: false,
         can_use_bulk_close: false,
         can_close_chats_in_queue: false,
-        // can_use_bulk_take: false, // TODO: Future feature - bulk take
+        can_use_bulk_take: false,
         can_use_queue_prioritization: false,
         can_see_timer: false,
+        can_see_waiting_rooms_count: true,
       },
       hasAgentBuilder: false,
       aiTransferConfig: {
@@ -141,6 +119,10 @@ export default {
 
     isBulkCloseFeatureEnabled() {
       return this.featureFlags.active_features?.includes('weniChatsBulkClose');
+    },
+
+    isBulkTakeFeatureEnabled() {
+      return this.featureFlags.active_features?.includes('weniChatsBulkTake');
     },
 
     isUserManager() {
@@ -188,15 +170,14 @@ export default {
         }`,
       );
     },
-    // TODO: Future feature - bulk take
-    // configBulkTakeTranslation() {
-    //   const canBulkTake = this.projectConfig.can_use_bulk_take;
-    //   return this.$t(
-    //     `config_chats.project_configs.bulk_take.switch_${
-    //       canBulkTake ? 'active' : 'inactive'
-    //     }`,
-    //   );
-    // },
+    configBulkTakeTranslation() {
+      const canBulkTake = this.projectConfig.can_use_bulk_take;
+      return this.$t(
+        `config_chats.project_configs.bulk_take.switch_${
+          canBulkTake ? 'active' : 'inactive'
+        }`,
+      );
+    },
     configQueuePrioritizationTranslation() {
       const canQueuePrioritization =
         this.projectConfig.can_use_queue_prioritization;
@@ -214,6 +195,85 @@ export default {
         }`,
       );
     },
+    configShowWaitingRoomsCountTranslation() {
+      return this.$t(
+        'config_chats.project_configs.show_waiting_rooms_count.switch_label',
+      );
+    },
+
+    optionsItems() {
+      const items = [
+        {
+          key: 'ai_transfer',
+          type: 'flag-prompt',
+          visible: this.hasAgentBuilder,
+          flag: this.aiTransferConfig.enabled,
+          name: this.configAiTransferTranslation,
+          prompt: {
+            value: this.aiTransferConfig.criteria,
+            label: this.$t(
+              'config_chats.project_configs.ai_transfer.textarea_label',
+            ),
+            placeholder: this.$t(
+              'config_chats.project_configs.ai_transfer.textarea_placeholder',
+            ),
+            maxLength: 1000,
+          },
+          onToggle: this.handleAiTransferToggle,
+          onEdit: this.openAiTransferModal,
+        },
+        {
+          key: 'can_use_bulk_transfer',
+          type: 'flag',
+          visible: true,
+          name: this.configBulkTransferTranslation,
+        },
+        {
+          key: 'filter_offline_agents',
+          type: 'flag',
+          visible: true,
+          name: this.configBlockTransferToOffAgentsTranslation,
+        },
+        {
+          key: 'can_use_bulk_close',
+          type: 'flag',
+          visible: this.isBulkCloseFeatureEnabled,
+          name: this.configBulkCloseTranslation,
+        },
+        {
+          key: 'can_close_chats_in_queue',
+          type: 'flag',
+          visible: true,
+          name: this.configBlockCloseChatsInQueueTranslation,
+        },
+        {
+          key: 'can_use_bulk_take',
+          type: 'flag',
+          visible: this.isBulkTakeFeatureEnabled,
+          name: this.configBulkTakeTranslation,
+        },
+        {
+          key: 'can_use_queue_prioritization',
+          type: 'flag',
+          visible: true,
+          name: this.configQueuePrioritizationTranslation,
+        },
+        {
+          key: 'can_see_timer',
+          type: 'flag',
+          visible: true,
+          name: this.configShowAgentStatusCountTimer,
+        },
+        {
+          key: 'can_see_waiting_rooms_count',
+          type: 'flag',
+          visible: true,
+          name: this.configShowWaitingRoomsCountTranslation,
+        },
+      ];
+
+      return items.filter((item) => item.visible);
+    },
   },
 
   watch: {
@@ -221,7 +281,14 @@ export default {
       immediate: true,
       handler(newProject) {
         if (newProject.config) {
-          this.projectConfig = newProject.config;
+          const config = {
+            ...newProject.config,
+            can_see_waiting_rooms_count:
+              newProject.config.can_see_waiting_rooms_count === undefined
+                ? true
+                : newProject.config.can_see_waiting_rooms_count,
+          };
+          this.projectConfig = config;
         }
       },
     },
@@ -283,9 +350,10 @@ export default {
         filter_offline_agents,
         can_use_bulk_close,
         can_close_chats_in_queue,
-        // can_use_bulk_take, // TODO: Future feature - bulk take
+        can_use_bulk_take,
         can_use_queue_prioritization,
         can_see_timer,
+        can_see_waiting_rooms_count,
       } = this.projectConfig;
 
       Project.update({
@@ -293,9 +361,10 @@ export default {
         filter_offline_agents,
         can_use_bulk_close,
         can_close_chats_in_queue,
-        // can_use_bulk_take, // TODO: Future feature - bulk take
+        can_use_bulk_take,
         can_use_queue_prioritization,
         can_see_timer,
+        can_see_waiting_rooms_count,
       });
     },
   },

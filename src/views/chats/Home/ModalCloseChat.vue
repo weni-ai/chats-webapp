@@ -1,33 +1,47 @@
 <template>
   <UnnnicDialog v-model:open="open">
-    <UnnnicDialogContent size="large">
+    <UnnnicDialogContent :size="hasNoSectorTags ? 'medium' : 'large'">
       <UnnnicDialogHeader>
         <UnnnicDialogTitle>
-          {{ $t('chats.to_end_rate_the_chat') }}
+          {{
+            hasNoSectorTags ? $t('end_chat') : $t('chats.to_end_rate_the_chat')
+          }}
         </UnnnicDialogTitle>
       </UnnnicDialogHeader>
-      <section class="modal-close-chat__content">
-        <UnnnicDisclaimer
-          v-if="isInvalidRequiredTags && !isLoadingTags"
-          class="modal-close-chat__disclaimer"
-          type="attention"
-          :description="$t('chats.to_end_required_tags')"
-        />
-        <UnnnicInput
-          v-model="tagsFilter"
-          iconLeft="search"
-          :placeholder="$t('tags.search')"
-        />
-        <section class="modal-close-chat__tags-list">
-          <ChatClassifier
-            v-model="tags"
-            :tags="filteredTags"
-            :loading="isLoadingTags"
-            @update:to-remove-tags="(tags) => (toRemoveTags = tags)"
-            @update:to-add-tags="(tags) => (toAddTags = tags)"
-          />
+
+      <template v-if="hasNoSectorTags">
+        <section class="modal-close-chat__content">
+          <p class="modal-close-chat__confirm-text">
+            {{ $t('close_chat.confirm_end') }}
+          </p>
         </section>
-      </section>
+      </template>
+
+      <template v-else>
+        <section class="modal-close-chat__content">
+          <UnnnicDisclaimer
+            v-if="isInvalidRequiredTags && !isLoadingTags"
+            class="modal-close-chat__disclaimer"
+            type="attention"
+            :description="$t('chats.to_end_required_tags')"
+          />
+          <UnnnicInput
+            v-model="tagsFilter"
+            iconLeft="search"
+            :placeholder="$t('tags.search')"
+          />
+          <section class="modal-close-chat__tags-list">
+            <ChatClassifier
+              v-model="tags"
+              :tags="filteredTags"
+              :loading="isLoadingTags"
+              @update:to-remove-tags="(tags) => (toRemoveTags = tags)"
+              @update:to-add-tags="(tags) => (toAddTags = tags)"
+            />
+          </section>
+        </section>
+      </template>
+
       <UnnnicDialogFooter>
         <UnnnicDialogClose>
           <UnnnicButton
@@ -38,7 +52,7 @@
         </UnnnicDialogClose>
         <UnnnicButton
           data-testid="close-chat-button"
-          :text="$t('end_chat')"
+          :text="hasNoSectorTags ? $t('end') : $t('end_chat')"
           type="primary"
           :loading="isLoadingCloseRoom"
           :disabled="isInvalidRequiredTags"
@@ -99,6 +113,9 @@ export default {
   computed: {
     isMobile() {
       return isMobile();
+    },
+    hasNoSectorTags() {
+      return !this.isLoadingTags && this.sectorTags.length === 0;
     },
     isInvalidRequiredTags() {
       return this.room?.queue?.required_tags && this.tags.length === 0;
@@ -197,6 +214,13 @@ export default {
     flex-direction: column;
     gap: $unnnic-space-4;
     padding: $unnnic-space-6;
+    overflow: auto;
+  }
+
+  &__confirm-text {
+    font: $unnnic-font-emphasis;
+    color: $unnnic-color-neutral-cloudy;
+    margin: 0;
   }
 
   &--mobile {
@@ -210,9 +234,7 @@ export default {
     gap: $unnnic-space-3;
     overflow: hidden auto;
     flex-wrap: wrap;
-
     max-height: 500px;
-
     scroll-snap-type: y proximity;
   }
 }

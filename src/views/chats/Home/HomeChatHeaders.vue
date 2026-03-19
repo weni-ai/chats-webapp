@@ -114,16 +114,24 @@
         </section>
       </template>
     </ContactHeader>
-    <UnnnicChatsHeader
+    <DiscussionHeader
       v-show="isShowingDiscussionHeader"
-      class="home-chat-headers__discussion"
-      :title="headerDiscussionTitle"
-      :subtitle="headerDiscussionSubtitle"
-      avatarIcon="forum"
-      size="small"
-      :back="isMobile ? emitBack : null"
-      data-testid="discussion-header"
-    />
+      :discussionContact="headerDiscussionSubtitle"
+      :discussionSubject="headerDiscussionTitle"
+    >
+      <template #actions>
+        <section class="home-chat-headers__actions">
+          <UnnnicButton
+            v-if="canEndDiscussion"
+            type="secondary"
+            size="small"
+            @click="isModalCloseDiscussionOpened = true"
+          >
+            {{ $t('end_discussion') }}
+          </UnnnicButton>
+        </section>
+      </template>
+    </DiscussionHeader>
     <ChatHeaderSendFlow
       v-if="isShowingSendFlowHeader && !openActiveRoomSummary"
       data-testid="chat-header-send-flow"
@@ -133,6 +141,11 @@
       v-if="isModalTransferRoomsOpened"
       v-model="isModalTransferRoomsOpened"
       @close="closeTransferModal()"
+    />
+    <ModalCloseDiscussion
+      v-if="isModalCloseDiscussionOpened"
+      v-model="isModalCloseDiscussionOpened"
+      :discussionContact="discussion?.contact"
     />
   </section>
 </template>
@@ -147,15 +160,18 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow.vue';
 import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
 import ContactHeader from '@/components/chats/ContactHeader.vue';
+import DiscussionHeader from '@/components/chats/DiscussionHeader.vue';
+import ModalCloseDiscussion from '@/views/chats/Home/ModalCloseDiscussion.vue';
 
 import { formatContactName } from '@/utils/chats';
 import { parseUrn } from '@/utils/room';
-import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { isUserAdmin } from '@/utils/permissions';
 
 export default {
   name: 'HomeChatHeaders',
@@ -165,6 +181,8 @@ export default {
     ChatHeaderSendFlow,
     ModalTransferRooms,
     ContactHeader,
+    DiscussionHeader,
+    ModalCloseDiscussion,
   },
 
   props: {
@@ -181,7 +199,10 @@ export default {
   ],
 
   data() {
-    return { isModalTransferRoomsOpened: false };
+    return {
+      isModalTransferRoomsOpened: false,
+      isModalCloseDiscussionOpened: false,
+    };
   },
 
   computed: {
@@ -208,6 +229,13 @@ export default {
     ...mapState(useConfig, {
       enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
     }),
+
+    canEndDiscussion() {
+      const isOwnDiscussion =
+        this.me?.email === this.discussion?.created_by?.email;
+
+      return isOwnDiscussion || isUserAdmin(this.me?.project_permission_role);
+    },
 
     isMobile() {
       return isMobile();

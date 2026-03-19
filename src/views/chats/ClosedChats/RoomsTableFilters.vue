@@ -112,7 +112,7 @@ export default {
   },
 
   props: {
-    value: {
+    modelValue: {
       type: Object,
       default: null,
     },
@@ -121,7 +121,7 @@ export default {
       default: false,
     },
   },
-  emits: ['input'],
+  emits: ['update:modelValue'],
 
   data() {
     return {
@@ -312,7 +312,7 @@ export default {
     },
 
     filterSector(newFilterSector) {
-      const sectorValue = newFilterSector?.[0].value;
+      const sectorValue = newFilterSector?.[0]?.value;
       if (sectorValue !== 'all') {
         this.filterTag = [];
         this.tagsNext = '';
@@ -333,13 +333,14 @@ export default {
     this.datesToFilter = this.datesToFilterOptions;
     this.filterSector = [this.filterSectorsOptionAll];
     this.filterDate = this.filterDateDefault;
+
     if (!this.isMobile && this.filterDate) {
       this.selectedDatesInternal = { ...this.filterDate };
     }
     this.tagsToFilter = [this.filterTagDefault];
 
-    this.setFiltersByQueryParams();
     this.updateFiltersByValue();
+    this.setFiltersByQueryParams();
 
     await this.getSectors();
 
@@ -466,7 +467,7 @@ export default {
         dateEnd = filterDate?.end;
       }
 
-      this.$emit('input', {
+      this.$emit('update:modelValue', {
         contact: filterContact,
         sector: filterSector,
         tag: filterTag,
@@ -480,19 +481,23 @@ export default {
     setFiltersByQueryParams() {
       const { contactUrn, startDate, endDate } = this.$route.query;
 
-      this.filterContact = contactUrn || '';
+      if (contactUrn) {
+        this.filterContact = contactUrn;
+      }
 
       if (!this.isMobile) {
-        if (typeof this.filterDate !== 'object' || this.filterDate === null) {
-          this.filterDate = { start: null, end: null };
+        if (startDate || endDate) {
+          if (typeof this.filterDate !== 'object' || this.filterDate === null) {
+            this.filterDate = { start: null, end: null };
+          }
+          if (startDate) {
+            this.filterDate.start = startDate;
+          }
+          if (endDate) {
+            this.filterDate.end = endDate;
+          }
+          this.selectedDatesInternal = { ...this.filterDate };
         }
-        if (startDate) {
-          this.filterDate.start = startDate;
-        }
-        if (endDate) {
-          this.filterDate.end = endDate;
-        }
-        this.selectedDatesInternal = { ...this.filterDate };
       } else {
         if (startDate) {
           const dateStartExtensive = this.getRelativeDate(
@@ -513,8 +518,8 @@ export default {
     },
 
     updateFiltersByValue() {
-      if (this.value) {
-        const { contact, sector, tag, date } = this.value;
+      if (this.modelValue) {
+        const { contact, sector, tag, date } = this.modelValue;
 
         this.filterContact = contact;
         this.filterSector = sector;
@@ -532,7 +537,7 @@ export default {
             ? [matchingDate]
             : [this.datesToFilter.find((obj) => obj.value === 'last_7_days')];
         } else {
-          this.filterDate = { start: date.start, end: date.end };
+          this.filterDate = { start: date?.start, end: date?.end };
           this.selectedDatesInternal = { ...this.filterDate };
         }
       }

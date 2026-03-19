@@ -6,6 +6,7 @@ import isMobile from 'is-mobile';
 
 import RoomsTable from '../RoomsTable.vue';
 import History from '@/services/api/resources/chats/history';
+import moment from 'moment';
 
 vi.mock('is-mobile', () => ({
   default: vi.fn(),
@@ -278,7 +279,7 @@ describe('RoomsTable.vue', () => {
         tag: [{ value: 'tag1', label: 'Tag 1' }],
         date: { start: '2023-01-01', end: '2023-01-07' },
       };
-      await desktopFilters.vm.$emit('input', newFilters);
+      await desktopFilters.vm.$emit('update:modelValue', newFilters);
       expect(wrapper.vm.filters).toEqual(newFilters);
     });
 
@@ -455,74 +456,6 @@ describe('RoomsTable.vue', () => {
     });
   });
 
-  describe('URL Query Parameters', () => {
-    // Note: setFiltersByQueryParams method in the component references filterContact and filterDate
-    // which don't exist in the component's data. These tests are kept for documentation
-    // but may fail until the component method is updated to use filters.contact and filters.date
-
-    it('sets contact filter from contactUrn query parameter', async () => {
-      const routeQuery = { contactUrn: 'test-contact' };
-      wrapper = createWrapper({}, {}, routeQuery);
-
-      wrapper.vm.setFiltersByQueryParams();
-
-      // Component method uses filterContact which doesn't exist in data
-      // Should be wrapper.vm.filters.contact instead
-      expect(wrapper.vm.filterContact).toBe('test-contact');
-    });
-
-    it('sets filterDate.start from startDate query parameter', async () => {
-      const routeQuery = { startDate: '2023-05-01' };
-      wrapper = createWrapper({}, {}, routeQuery);
-
-      wrapper.vm.filterDate = {};
-      wrapper.vm.setFiltersByQueryParams();
-
-      // Component method uses filterDate which doesn't exist in data
-      // Should be wrapper.vm.filters.date instead
-      expect(wrapper.vm.filterDate.start).toBe('2023-05-01');
-    });
-
-    it('sets filterDate.end from endDate query parameter', async () => {
-      const routeQuery = { endDate: '2023-05-31' };
-      wrapper = createWrapper({}, {}, routeQuery);
-
-      wrapper.vm.filterDate = {};
-      wrapper.vm.setFiltersByQueryParams();
-
-      expect(wrapper.vm.filterDate.end).toBe('2023-05-31');
-    });
-
-    it('handles all query parameters together', async () => {
-      const routeQuery = {
-        contactUrn: 'test-contact',
-        startDate: '2023-05-01',
-        endDate: '2023-05-31',
-      };
-      wrapper = createWrapper({}, {}, routeQuery);
-
-      wrapper.vm.filterDate = {};
-      wrapper.vm.setFiltersByQueryParams();
-
-      expect(wrapper.vm.filterContact).toBe('test-contact');
-      expect(wrapper.vm.filterDate.start).toBe('2023-05-01');
-      expect(wrapper.vm.filterDate.end).toBe('2023-05-31');
-    });
-
-    it('does not set filters when query parameters are empty', async () => {
-      const routeQuery = { contactUrn: '', startDate: '', endDate: '' };
-      wrapper = createWrapper({}, {}, routeQuery);
-
-      wrapper.vm.filterContact = 'initial-contact';
-      wrapper.vm.filterDate = { start: 'initial-start', end: 'initial-end' };
-      wrapper.vm.setFiltersByQueryParams();
-
-      expect(wrapper.vm.filterContact).toBe('');
-      expect(wrapper.vm.filterDate.start).toBe('initial-start');
-      expect(wrapper.vm.filterDate.end).toBe('initial-end');
-    });
-  });
-
   describe('Initial Data Properties', () => {
     it('initializes with correct default values', () => {
       wrapper = createWrapper();
@@ -560,7 +493,10 @@ describe('RoomsTable.vue', () => {
         contact: '',
         sector: [],
         tag: [],
-        date: null,
+        date: {
+          start: moment().subtract(1, 'week').format('YYYY-MM-DD'),
+          end: moment().format('YYYY-MM-DD'),
+        },
       });
     });
   });

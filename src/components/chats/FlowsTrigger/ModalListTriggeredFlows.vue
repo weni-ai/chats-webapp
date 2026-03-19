@@ -1,69 +1,76 @@
 <template>
-  <UnnnicModal
+  <UnnnicDialog
+    v-model:open="isOpen"
     class="modal-list-triggered-flows"
-    :text="$t('flows_trigger.triggered_flows.title')"
     data-testid="modal-list-triggered-flows"
-    @close="$emit('close')"
   >
-    <section class="modal-list-triggered-flows__handlers">
-      <div class="modal-list-triggered-flows__handlers__input">
-        <UnnnicLabel :label="$t('filter.by_date')" />
-        <UnnnicInputDatePicker
-          v-model="filterDate"
-          class="modal-list-triggered-flows__handlers__date-picker"
-          position="left"
-          :inputFormat="$t('date_format')"
-        />
-      </div>
-    </section>
+    <UnnnicDialogContent size="large">
+      <UnnnicDialogHeader>
+        <UnnnicDialogTitle>
+          {{ $t('flows_trigger.triggered_flows.title') }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section class="modal-list-triggered-flows__content">
+        <section class="modal-list-triggered-flows__handlers">
+          <div class="modal-list-triggered-flows__handlers__input">
+            <UnnnicLabel :label="$t('filter.by_date')" />
+            <UnnnicInputDatePicker
+              v-model="filterDate"
+              class="modal-list-triggered-flows__handlers__date-picker"
+              position="left"
+              :inputFormat="$t('date_format')"
+            />
+          </div>
+        </section>
 
-    <TriggeredFlowsLoading v-if="isTableLoading" />
-    <UnnnicTable
-      v-if="!isTableLoading && triggeredFlows.length > 0"
-      :items="triggeredFlows"
-      class="modal-list-triggered-flows__table"
-      data-testid="modal-list-triggered-flows-table"
-    >
-      <template #header>
-        <UnnnicTableRow :headers="tableHeaders" />
-      </template>
-
-      <template #item="{ item }">
-        <UnnnicTableRow :headers="tableHeaders">
-          <template #contactName>
-            {{ item.contact_data?.name }}
+        <TriggeredFlowsLoading v-if="isTableLoading" />
+        <UnnnicTable
+          v-if="!isTableLoading && triggeredFlows.length > 0"
+          :items="triggeredFlows"
+          class="modal-list-triggered-flows__table"
+          data-testid="modal-list-triggered-flows-table"
+        >
+          <template #header>
+            <UnnnicTableRow :headers="tableHeaders" />
           </template>
 
-          <template #triggeredFlow> {{ item.name }} </template>
+          <template #item="{ item }">
+            <UnnnicTableRow :headers="tableHeaders">
+              <template #contactName>
+                {{ item.contact_data?.name }}
+              </template>
 
-          <template #agent>{{ item.user }}</template>
+              <template #triggeredFlow> {{ item.name }} </template>
 
-          <template #date>{{ $d(new Date(item.created_on)) }}</template>
+              <template #agent>{{ item.user }}</template>
 
-          <template #time>{{ getTime(item.created_on) }}</template>
-        </UnnnicTableRow>
-      </template>
-    </UnnnicTable>
-    <p
-      v-if="!isTableLoading && triggeredFlows.length === 0"
-      class="modal-list-triggered-flows__table__no-results"
-      data-testid="no-results-text"
-    >
-      {{ $t('without_results') }}
-    </p>
+              <template #date>{{ $d(new Date(item.created_on)) }}</template>
 
-    <template #options>
-      <TablePagination
-        v-model="triggeredFlowsCurrentPage"
-        :count="triggeredFlowsCount"
-        :countPages="triggeredFlowsCountPages"
-        :limit="triggeredFlowsLimit"
-        :isLoading="isPagesLoading"
-        data-testid="modal-list-triggered-flows-table-pagination"
-        @update:model-value="triggeredFlowsCurrentPage = $event"
-      />
-    </template>
-  </UnnnicModal>
+              <template #time>{{ getTime(item.created_on) }}</template>
+            </UnnnicTableRow>
+          </template>
+        </UnnnicTable>
+        <p
+          v-if="!isTableLoading && triggeredFlows.length === 0"
+          class="modal-list-triggered-flows__table__no-results"
+          data-testid="no-results-text"
+        >
+          {{ $t('without_results') }}
+        </p>
+      </section>
+      <UnnnicDialogFooter>
+        <TablePagination
+          v-model="triggeredFlowsCurrentPage"
+          :count="triggeredFlowsCount"
+          :countPages="triggeredFlowsCountPages"
+          :limit="triggeredFlowsLimit"
+          :isLoading="isPagesLoading"
+          data-testid="modal-list-triggered-flows-table-pagination"
+          @update:model-value="triggeredFlowsCurrentPage = $event"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script>
@@ -84,6 +91,7 @@ export default {
   emits: ['close'],
 
   data: () => ({
+    isOpen: true,
     isTableLoading: false,
     isPagesLoading: false,
 
@@ -131,6 +139,9 @@ export default {
     },
   },
   watch: {
+    isOpen(value) {
+      if (!value) this.$emit('close');
+    },
     triggeredFlowsCurrentPage() {
       this.getListFlowsStart(true);
     },
@@ -207,6 +218,14 @@ export default {
     }
   }
 
+  &__content {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-height: 0;
+    overflow: visible;
+    padding: $unnnic-space-6;
+  }
+
   &__table {
     overflow: auto hidden;
 
@@ -222,41 +241,6 @@ export default {
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-    }
-  }
-
-  :deep(.unnnic-modal-container-background) {
-    width: 66%; // -> 8 / 12
-    height: 90%;
-
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-
-    overflow: visible;
-
-    & > * {
-      background-color: $unnnic-color-neutral-white;
-    }
-
-    .unnnic-modal-container-background-body {
-      border-radius: $unnnic-spacing-nano $unnnic-spacing-nano 0 0;
-
-      &-description {
-        display: grid;
-        grid-template-rows: auto 1fr;
-
-        overflow: visible;
-
-        &-container {
-          padding-bottom: 0;
-
-          overflow: visible;
-        }
-      }
-    }
-
-    .unnnic-modal-container-background-button {
-      padding-top: 0;
     }
   }
 }

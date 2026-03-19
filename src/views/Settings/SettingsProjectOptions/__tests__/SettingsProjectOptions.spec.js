@@ -5,7 +5,6 @@ import { createTestingPinia } from '@pinia/testing';
 
 import SettingsProjectOptions from '@/views/Settings/SettingsProjectOptions/index.vue';
 import SettingsProjectOptionsItem from '@/views/Settings/SettingsProjectOptions/SettingsProjectOptionsItem.vue';
-import AiTransferModal from '@/views/Settings/SettingsProjectOptions/AiTransferModal.vue';
 import Project from '@/services/api/resources/settings/project';
 import agentBuilder from '@/services/api/resources/settings/agentBuilder';
 
@@ -30,11 +29,17 @@ const defaultConfig = {
   filter_offline_agents: false,
   can_use_bulk_close: false,
   can_close_chats_in_queue: false,
+  can_use_bulk_take: false,
   can_use_queue_prioritization: false,
   can_see_timer: false,
+  can_see_waiting_rooms_count: true,
 };
 
-const createWrapper = (storeOverrides = {}) => {
+const createWrapper = ({
+  storeOverrides = {},
+  activeFeatures = ['weniChatsBulkClose'],
+  projectConfig = {},
+} = {}) => {
   return mount(SettingsProjectOptions, {
     global: {
       plugins: [
@@ -43,7 +48,7 @@ const createWrapper = (storeOverrides = {}) => {
             config: {
               project: {
                 name: 'Test Project',
-                config: { ...defaultConfig },
+                config: { ...defaultConfig, ...projectConfig },
                 ...storeOverrides.project,
               },
             },
@@ -55,7 +60,7 @@ const createWrapper = (storeOverrides = {}) => {
             },
             featureFlag: {
               featureFlags: {
-                active_features: ['weniChatsBulkClose'],
+                active_features: activeFeatures,
               },
               ...storeOverrides.featureFlag,
             },
@@ -87,8 +92,10 @@ describe('SettingsProjectOptions.vue', () => {
 
     it('should not render when user is not a manager', () => {
       wrapper = createWrapper({
-        profile: {
-          me: { project_permission_role: 2 },
+        storeOverrides: {
+          profile: {
+            me: { project_permission_role: 2 },
+          },
         },
       });
 
@@ -97,13 +104,112 @@ describe('SettingsProjectOptions.vue', () => {
       );
     });
 
-    it('should render non-AI toggle switches', () => {
+    it('should render the CustomBreakOption component', () => {
+      expect(
+        wrapper.find('.project-options__items__custom-breaks').exists(),
+      ).toBe(true);
+    });
+
+    it('should render toggle switches from optionsItems', () => {
       const items = wrapper.findAllComponents(SettingsProjectOptionsItem);
       expect(items.length).toBeGreaterThanOrEqual(5);
     });
+  });
 
-    it('should render the CustomBreakOption component', () => {
-      expect(wrapper.find('.project-options__header').exists()).toBe(true);
+  describe('optionsItems computed', () => {
+    it('should include ai_transfer item when hasAgentBuilder is true', async () => {
+      await vi.dynamicImportSettled();
+      await wrapper.vm.$nextTick();
+      await wrapper.vm.$nextTick();
+
+      const aiItem = wrapper.vm.optionsItems.find(
+        (item) => item.key === 'ai_transfer',
+      );
+      expect(aiItem).toBeTruthy();
+      expect(aiItem.type).toBe('flag-prompt');
+    });
+
+    it('should exclude ai_transfer item when hasAgentBuilder is false', async () => {
+      agentBuilder.check.mockResolvedValueOnce({ agent_builder: false });
+
+      wrapper = createWrapper();
+      await vi.dynamicImportSettled();
+      await wrapper.vm.$nextTick();
+      await wrapper.vm.$nextTick();
+
+      const aiItem = wrapper.vm.optionsItems.find(
+        (item) => item.key === 'ai_transfer',
+      );
+      expect(aiItem).toBeUndefined();
+    });
+
+    it('should include bulk_close when feature flag is active', () => {
+      wrapper = createWrapper({ activeFeatures: ['weniChatsBulkClose'] });
+
+      const item = wrapper.vm.optionsItems.find(
+        (i) => i.key === 'can_use_bulk_close',
+      );
+      expect(item).toBeTruthy();
+    });
+
+    it('should exclude bulk_close when feature flag is inactive', () => {
+      wrapper = createWrapper({ activeFeatures: [] });
+
+      const item = wrapper.vm.optionsItems.find(
+        (i) => i.key === 'can_use_bulk_close',
+      );
+      expect(item).toBeUndefined();
+    });
+
+    it('should include bulk_take when feature flag is active', () => {
+      wrapper = createWrapper({ activeFeatures: ['weniChatsBulkTake'] });
+
+      const item = wrapper.vm.optionsItems.find(
+        (i) => i.key === 'can_use_bulk_take',
+      );
+      expect(item).toBeTruthy();
+    });
+
+    it('should exclude bulk_take when feature flag is inactive', () => {
+      wrapper = createWrapper({ activeFeatures: [] });
+
+      const item = wrapper.vm.optionsItems.find(
+        (i) => i.key === 'can_use_bulk_take',
+      );
+      expect(item).toBeUndefined();
+    });
+
+    it('should always include simple flag items without feature flags', () => {
+      wrapper = createWrapper({ activeFeatures: [] });
+
+      const alwaysVisibleKeys = [
+        'can_use_bulk_transfer',
+        'filter_offline_agents',
+        'can_close_chats_in_queue',
+        'can_use_queue_prioritization',
+        'can_see_timer',
+        'can_see_waiting_rooms_count',
+      ];
+
+      alwaysVisibleKeys.forEach((key) => {
+        const item = wrapper.vm.optionsItems.find((i) => i.key === key);
+        expect(item).toBeTruthy();
+        expect(item.type).toBe('flag');
+      });
+    });
+
+    it('should have prompt config on flag-prompt items', async () => {
+      await vi.dynamicImportSettled();
+      await wrapper.vm.$nextTick();
+      await wrapper.vm.$nextTick();
+
+      const aiItem = wrapper.vm.optionsItems.find(
+        (item) => item.key === 'ai_transfer',
+      );
+      expect(aiItem.prompt).toBeDefined();
+      expect(aiItem.prompt.maxLength).toBe(1000);
+      expect(aiItem.onToggle).toBeTypeOf('function');
+      expect(aiItem.onEdit).toBeTypeOf('function');
     });
   });
 
@@ -118,9 +224,7 @@ describe('SettingsProjectOptions.vue', () => {
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.hasAgentBuilder).toBe(true);
-      expect(
-        wrapper.find('.project-options__ai-transfer').exists(),
-      ).toBe(true);
+      expect(wrapper.find('.project-options__ai-transfer').exists()).toBe(true);
     });
 
     it('should hide AI transfer section when agent_builder is false', async () => {
@@ -132,9 +236,9 @@ describe('SettingsProjectOptions.vue', () => {
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.hasAgentBuilder).toBe(false);
-      expect(
-        wrapper.find('.project-options__ai-transfer').exists(),
-      ).toBe(false);
+      expect(wrapper.find('.project-options__ai-transfer').exists()).toBe(
+        false,
+      );
     });
 
     it('should fetch AI transfer config when agent_builder is true', async () => {
@@ -254,11 +358,9 @@ describe('SettingsProjectOptions.vue', () => {
 
     it('should merge store config with defaults', () => {
       wrapper = createWrapper({
-        project: {
-          config: {
-            can_use_bulk_transfer: true,
-            filter_offline_agents: true,
-          },
+        projectConfig: {
+          can_use_bulk_transfer: true,
+          filter_offline_agents: true,
         },
       });
 
@@ -282,10 +384,57 @@ describe('SettingsProjectOptions.vue', () => {
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.configAiTransferTranslation).toBe(
+        wrapper.vm.$t('config_chats.project_configs.ai_transfer.switch_active'),
+      );
+    });
+
+    it('should return correct bulk transfer translation based on state', () => {
+      expect(wrapper.vm.configBulkTransferTranslation).toBe(
         wrapper.vm.$t(
-          'config_chats.project_configs.ai_transfer.switch_active',
+          'config_chats.project_configs.bulk_transfer.switch_inactive',
         ),
       );
+    });
+
+    it('should return correct bulk take translation based on state', () => {
+      wrapper = createWrapper({
+        activeFeatures: ['weniChatsBulkTake'],
+        projectConfig: { can_use_bulk_take: true },
+      });
+
+      expect(wrapper.vm.configBulkTakeTranslation).toBe(
+        wrapper.vm.$t('config_chats.project_configs.bulk_take.switch_active'),
+      );
+    });
+  });
+
+  describe('Feature flags', () => {
+    it('should compute isBulkTakeFeatureEnabled correctly', () => {
+      wrapper = createWrapper({
+        activeFeatures: ['weniChatsBulkTake'],
+      });
+
+      expect(wrapper.vm.isBulkTakeFeatureEnabled).toBe(true);
+    });
+
+    it('should compute isBulkTakeFeatureEnabled as false when flag is missing', () => {
+      wrapper = createWrapper({ activeFeatures: [] });
+
+      expect(wrapper.vm.isBulkTakeFeatureEnabled).toBe(false);
+    });
+
+    it('should compute isBulkCloseFeatureEnabled correctly', () => {
+      wrapper = createWrapper({
+        activeFeatures: ['weniChatsBulkClose'],
+      });
+
+      expect(wrapper.vm.isBulkCloseFeatureEnabled).toBe(true);
+    });
+
+    it('should compute isBulkCloseFeatureEnabled as false when flag is missing', () => {
+      wrapper = createWrapper({ activeFeatures: [] });
+
+      expect(wrapper.vm.isBulkCloseFeatureEnabled).toBe(false);
     });
   });
 });
