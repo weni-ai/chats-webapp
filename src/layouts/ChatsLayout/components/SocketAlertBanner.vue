@@ -88,7 +88,7 @@ export default {
   }
 
   &.closed {
-    background-color: $unnnic-color-aux-red-500;
+    background-color: $unnnic-color-fg-critical;
   }
 
   &.connecting {
