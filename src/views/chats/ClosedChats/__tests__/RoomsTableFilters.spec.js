@@ -67,7 +67,8 @@ describe('RoomsTableFilters.vue', () => {
         stubs: {
           UnnnicLabel: true,
           UnnnicInput: true,
-          UnnnicSelectSmart: true,
+          UnnnicSelect: true,
+          UnnnicMultiSelect: true,
           UnnnicInputDatePicker: true,
           UnnnicButton: true,
         },
@@ -227,7 +228,6 @@ describe('RoomsTableFilters.vue', () => {
         next: '',
         limit: 20,
       });
-      console.log(wrapper.vm.tagsToFilter);
       expect(wrapper.vm.tagsToFilter.length).toBe(3);
       expect(wrapper.vm.tagsToFilter[1]).toEqual({
         value: 'tag1',
@@ -276,9 +276,10 @@ describe('RoomsTableFilters.vue', () => {
 
       const getSectorTagsSpy = vi.spyOn(wrapper.vm, 'getSectorTags');
 
-      await wrapper.vm.$options.watch.filterSector.call(wrapper.vm, [
-        { value: 'sector1', label: 'Sector 1' },
-      ]);
+      await wrapper.vm.$options.watch.filterSector.call(wrapper.vm, {
+        value: 'sector1',
+        label: 'Sector 1',
+      });
 
       expect(getSectorTagsSpy).toHaveBeenCalledWith('sector1');
     });
@@ -289,9 +290,10 @@ describe('RoomsTableFilters.vue', () => {
 
       wrapper.vm.filterTag = [{ value: 'tag1', label: 'Tag 1' }];
 
-      await wrapper.vm.$options.watch.filterSector.call(wrapper.vm, [
-        { value: 'all', label: 'All' },
-      ]);
+      await wrapper.vm.$options.watch.filterSector.call(wrapper.vm, {
+        value: 'all',
+        label: 'All',
+      });
 
       expect(wrapper.vm.filterTag).toEqual([]);
       expect(wrapper.vm.tagsToFilter).toEqual([wrapper.vm.filterTagDefault]);
@@ -338,7 +340,7 @@ describe('RoomsTableFilters.vue', () => {
       await flushPromises();
 
       wrapper.vm.filterContact = 'Test Contact';
-      wrapper.vm.filterSector = [{ value: 'sector1', label: 'Sector 1' }];
+      wrapper.vm.filterSector = { value: 'sector1', label: 'Sector 1' };
       wrapper.vm.filterTag = [{ value: 'tag1', label: 'Tag 1' }];
       wrapper.vm.filterDate = { start: '2023-02-01', end: '2023-02-07' };
 
@@ -408,7 +410,10 @@ describe('RoomsTableFilters.vue', () => {
         return '';
       });
 
-      wrapper.vm.filterDate = [{ value: 'last_7_days', label: 'Last 7 Days' }];
+      wrapper.vm.filterDate = {
+        value: 'last_7_days',
+        label: 'Last 7 Days',
+      };
 
       await wrapper.vm.emitUpdateFilters();
 
@@ -528,13 +533,13 @@ describe('RoomsTableFilters.vue', () => {
         (d) => d.value === 'last_12_months',
       );
       if (expectedDateObject) {
-        expect(wrapper.vm.filterDate).toEqual([expectedDateObject]);
+        expect(wrapper.vm.filterDate).toEqual(expectedDateObject);
       } else {
-        expect(wrapper.vm.filterDate).toEqual([
+        expect(wrapper.vm.filterDate).toEqual(
           wrapper.vm.datesToFilter.find(
             (obj) => obj.value === 'last_12_months',
           ),
-        ]);
+        );
       }
     });
 
@@ -607,9 +612,10 @@ describe('RoomsTableFilters.vue', () => {
       await flushPromises();
 
       expect(wrapper.vm.filterContact).toBe('Test Contact');
-      expect(wrapper.vm.filterSector).toEqual([
-        { value: 'sector1', label: 'Sector 1' },
-      ]);
+      expect(wrapper.vm.filterSector).toEqual({
+        value: 'sector1',
+        label: 'Sector 1',
+      });
       expect(wrapper.vm.filterTag).toEqual([]);
       expect(wrapper.vm.filterDate).toEqual({
         start: '2023-01-01',
@@ -645,18 +651,19 @@ describe('RoomsTableFilters.vue', () => {
       await flushPromises();
 
       expect(wrapper.vm.filterContact).toBe('Test Contact');
-      expect(wrapper.vm.filterSector).toEqual([
-        { value: 'sector1', label: 'Sector 1' },
-      ]);
+      expect(wrapper.vm.filterSector).toEqual({
+        value: 'sector1',
+        label: 'Sector 1',
+      });
       expect(wrapper.vm.filterTag).toEqual([]);
 
       const expectedDateObject = wrapper.vm.datesToFilter.find(
         (d) => d.value === 'last_12_months',
       );
       if (expectedDateObject) {
-        expect(wrapper.vm.filterDate).toEqual([expectedDateObject]);
+        expect(wrapper.vm.filterDate).toEqual(expectedDateObject);
       } else {
-        expect(wrapper.vm.filterDate[0]?.value).toBe('last_12_months');
+        expect(wrapper.vm.filterDate?.value).toBe('last_12_months');
       }
     });
   });
@@ -708,7 +715,9 @@ describe('RoomsTableFilters.vue', () => {
       wrapper = createWrapper();
       await flushPromises();
 
-      expect(Array.isArray(wrapper.vm.filterDateDefault)).toBe(true);
+      expect(wrapper.vm.filterDateDefault).toEqual(
+        expect.objectContaining({ value: 'last_7_days' }),
+      );
     });
 
     it('returns correct isFiltersDefault value when filters are not default', async () => {
@@ -716,7 +725,7 @@ describe('RoomsTableFilters.vue', () => {
       await flushPromises();
 
       wrapper.vm.filterContact = 'Test Contact';
-      wrapper.vm.filterSector = [{ value: 'all', label: 'All' }];
+      wrapper.vm.filterSector = { value: 'all', label: 'All' };
       wrapper.vm.filterTag = [];
       wrapper.vm.filterDate = wrapper.vm.filterDateDefault;
 
