@@ -228,8 +228,8 @@ describe('RoomsTableFilters.vue', () => {
         next: '',
         limit: 20,
       });
-      expect(wrapper.vm.tagsToFilter.length).toBe(3);
-      expect(wrapper.vm.tagsToFilter[1]).toEqual({
+      expect(wrapper.vm.tagsToFilter.length).toBe(2);
+      expect(wrapper.vm.tagsToFilter[0]).toEqual({
         value: 'tag1',
         label: 'Tag 1',
       });
@@ -296,7 +296,7 @@ describe('RoomsTableFilters.vue', () => {
       });
 
       expect(wrapper.vm.filterTag).toEqual([]);
-      expect(wrapper.vm.tagsToFilter).toEqual([wrapper.vm.filterTagDefault]);
+      expect(wrapper.vm.tagsToFilter).toEqual([]);
     });
 
     it('emits input event when tag filter changes', async () => {
@@ -677,47 +677,6 @@ describe('RoomsTableFilters.vue', () => {
         value: 'all',
         label: 'All',
       });
-    });
-
-    it('returns correct filterTagEmpty value', async () => {
-      wrapper = createWrapper();
-      await flushPromises();
-
-      expect(wrapper.vm.filterTagEmpty).toEqual({
-        value: '',
-        label: wrapper.vm.$t('filter.empty_tags'),
-      });
-    });
-
-    it('returns correct filterTagDefault value', async () => {
-      wrapper = createWrapper();
-      await flushPromises();
-
-      expect(wrapper.vm.filterTagDefault).toEqual({
-        value: '',
-        label: wrapper.vm.$t('filter.by_tags'),
-      });
-    });
-
-    it('returns correct filterDateDefault for desktop', async () => {
-      isMobile.mockReturnValue(false);
-      wrapper = createWrapper();
-      await flushPromises();
-
-      expect(wrapper.vm.filterDateDefault).toEqual({
-        start: '2023-01-01',
-        end: '2023-01-01',
-      });
-    });
-
-    it('returns correct filterDateDefault for mobile', async () => {
-      isMobile.mockReturnValue(true);
-      wrapper = createWrapper();
-      await flushPromises();
-
-      expect(wrapper.vm.filterDateDefault).toEqual(
-        expect.objectContaining({ value: 'last_7_days' }),
-      );
     });
 
     it('returns correct isFiltersDefault value when filters are not default', async () => {

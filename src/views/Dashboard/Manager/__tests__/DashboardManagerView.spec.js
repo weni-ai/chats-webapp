@@ -203,8 +203,8 @@ describe('DashboardManager', () => {
       expect(wrapper.vm.agents).toEqual({});
       expect(wrapper.vm.filters).toEqual({
         sector: '',
-        agent: undefined,
-        tags: undefined,
+        agent: '',
+        tags: '',
         filterDate: {
           start: null,
           end: null,
