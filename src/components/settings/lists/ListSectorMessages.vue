@@ -112,6 +112,7 @@
             </UnnnicDropdownItem>
 
             <UnnnicDropdownItem
+              class="dropdown-item-delete"
               data-testid="dropdown-delete"
               @click="deleteMessage(message)"
             >
@@ -120,6 +121,7 @@
                   class="icon"
                   icon="delete"
                   size="sm"
+                  scheme="fg-critical"
                 />
                 <p>{{ $t('exclude') }}</p>
               </section>
@@ -441,6 +443,9 @@ export default {
     :deep(.unnnic-card-blank__content__icon) {
       font-size: $unnnic-font-size-title-md;
     }
+  }
+  .dropdown-item-delete {
+    color: $unnnic-color-fg-critical;
   }
   .dropdown-item-content {
     display: flex;

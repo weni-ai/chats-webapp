@@ -511,7 +511,7 @@ watch(
   }
 
   &--green {
-    background-color: $unnnic-color-aux-green-300;
+    background-color: $unnnic-color-green-5;
   }
 
   &--gray {
@@ -519,7 +519,7 @@ watch(
   }
 
   &--brown {
-    background-color: $unnnic-color-aux-orange-500;
+    background-color: $unnnic-color-orange-7;
   }
 
   &__timer {
