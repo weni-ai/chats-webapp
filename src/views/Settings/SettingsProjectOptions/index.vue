@@ -20,6 +20,7 @@
           class="project-options__ai-transfer"
         >
           <SettingsProjectOptionsItem
+            :key="'ai-transfer-' + switchResetKey"
             :modelValue="item.flag"
             :name="item.name"
             @update:model-value="item.onToggle"
@@ -106,6 +107,7 @@ export default {
         criteria: '',
       },
       showAiTransferModal: false,
+      switchResetKey: 0,
     };
   },
 
@@ -294,6 +296,11 @@ export default {
       handler() {
         this.updateProjectConfig();
       },
+    },
+    showAiTransferModal(newVal) {
+      if (!newVal && !this.aiTransferConfig.enabled) {
+        this.switchResetKey += 1;
+      }
     },
   },
 
