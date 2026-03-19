@@ -225,11 +225,11 @@ onUnmounted(() => {
 
     :deep(.material-symbols-rounded.unnnic-icon-size--sm) {
       font-size: $unnnic-avatar-size-nano;
-      color: $unnnic-color-neutral-cloudy;
+      color: $unnnic-color-gray-10;
     }
 
     :deep(.unnnic-button__label) {
-      color: $unnnic-color-neutral-cloudy;
+      color: $unnnic-color-gray-10;
     }
   }
 }

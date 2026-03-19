@@ -168,7 +168,7 @@ export default {
         font-family: $unnnic-font-family-secondary;
         font-size: $unnnic-font-size-body-md;
         line-height: $unnnic-font-size-body-md + $unnnic-line-height-medium;
-        color: $unnnic-color-neutral-cloudy;
+        color: $unnnic-color-gray-10;
       }
     }
 
@@ -176,7 +176,7 @@ export default {
       font-family: $unnnic-font-family-secondary;
       font-size: $unnnic-font-size-body-md;
       line-height: $unnnic-font-size-body-md + $unnnic-line-height-medium;
-      color: $unnnic-color-neutral-cloudy;
+      color: $unnnic-color-gray-10;
       min-width: 80px;
     }
   }

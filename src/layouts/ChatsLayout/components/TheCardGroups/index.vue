@@ -803,7 +803,7 @@ export default {
     gap: $unnnic-spacing-xs;
     align-items: center;
     font-size: $unnnic-font-size-body-md;
-    color: $unnnic-color-neutral-cloudy;
+    color: $unnnic-color-gray-10;
 
     .apply-filter {
       cursor: pointer;
