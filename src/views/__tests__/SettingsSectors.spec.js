@@ -385,7 +385,7 @@ describe('SettingsSectors.vue', () => {
       expect(mockRouter.push).toHaveBeenCalledWith({ name: 'sectors' });
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
         props: {
-          text: 'delete_modal.sector_success',
+          text: 'Sector deleted successfully!',
           type: 'success',
         },
         seconds: 5,
@@ -409,7 +409,7 @@ describe('SettingsSectors.vue', () => {
       expect(consoleSpy).toHaveBeenCalledWith(error);
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
         props: {
-          text: 'delete_modal.sector_error',
+          text: 'Unable to delete the sector.',
           type: 'error',
         },
         seconds: 5,
