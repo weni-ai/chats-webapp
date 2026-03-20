@@ -112,15 +112,15 @@
       />
     </template>
   </UnnnicDrawer>
-  <ModalConfirmDelete
+  <ModalDeleteWithTransfer
     v-if="showDeleteQueueModal"
     v-model="showDeleteQueueModal"
     data-testid="delete-queue-modal"
-    :title="$t('delete_queue_modal.text', { queue: queueToDelete.name })"
-    :description="$t('cant_revert')"
-    :confirmText="queueToDelete.name"
+    type="queue"
+    :name="queueToDelete.name"
+    :inProgressChatsCount="10"
     :isLoading="isLoadingDeleteQueue"
-    @confirm="deleteQueue()"
+    @confirm="deleteQueue"
     @cancel="handlerCloseDeleteQueueModal()"
   />
 </template>
@@ -131,7 +131,7 @@ import { mapState } from 'pinia';
 import FormQueue from '../forms/Queue.vue';
 import ListOrdinator from '@/components/settings/ListOrdinator.vue';
 import Queue from '@/services/api/resources/settings/queue';
-import ModalConfirmDelete from '@/components/ModalConfirmDelete.vue';
+import ModalDeleteWithTransfer from '@/components/ModalDeleteWithTransfer.vue';
 
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 
@@ -142,7 +142,7 @@ export default {
   components: {
     FormQueue,
     ListOrdinator,
-    ModalConfirmDelete,
+    ModalDeleteWithTransfer,
   },
   props: {
     sector: {
@@ -205,7 +205,7 @@ export default {
     this.getQueues();
   },
   methods: {
-    async deleteQueue() {
+    async deleteQueue(_transferPayload) {
       try {
         this.isLoadingDeleteQueue = true;
         await Queue.delete(this.queueToDelete.uuid);
@@ -214,14 +214,14 @@ export default {
         );
         unnnic.unnnicCallAlert({
           props: {
-            text: this.$t('config_chats.queues.message.delete_success'),
+            text: this.$t('delete_modal.queue_success'),
             type: 'success',
           },
         });
       } catch (error) {
         unnnic.unnnicCallAlert({
           props: {
-            text: this.$t('config_chats.queues.message.delete_error'),
+            text: this.$t('delete_modal.queue_error'),
             type: 'error',
           },
         });
