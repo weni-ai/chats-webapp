@@ -2,19 +2,10 @@ import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 
 function getEndpoint() {
-  return `/project/${getProject()}/human-support/`;
+  return `/human-support/${getProject()}/`;
 }
 
 export default {
-  async check() {
-    try {
-      await http.get(getEndpoint());
-      return { agent_builder: true };
-    } catch {
-      return { agent_builder: false };
-    }
-  },
-
   async getAiTransferConfig() {
     const response = await http.get(getEndpoint());
     const { human_support, human_support_prompt } = response.data;
