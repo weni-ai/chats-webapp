@@ -1093,5 +1093,22 @@
       "text_2": "In addition, <b>custom fields</b> can now be collapsed and expanded, so you can see what really matters without having to scroll.",
       "text_3": "And to make the interface cleaner, we've changed the look of the <b>Start discussion</b> button."
     }
+  },
+  "delete_modal": {
+    "title": "Delete {name}",
+    "description_sector": "The system has detected that there are {count} in progress chats in the {name} sector, please select what you would like to do with them:",
+    "description_queue": "The system has detected that there are {count} in progress chats in the {name} queue, please select what you would like to do with them:",
+    "transfer_chats": "Transfer chats to another sector/queue",
+    "end_all_chats": "End all chats",
+    "select_sector": "Select a sector",
+    "select_queue": "Select a queue",
+    "type_name_sector": "Type the name of the sector to delete",
+    "type_name_queue": "Type the name of the queue to delete",
+    "cannot_be_reversed": "This action cannot be reversed.",
+    "delete_button": "Delete",
+    "sector_success": "Sector deleted successfully!",
+    "sector_error": "Unable to delete the sector.",
+    "queue_success": "Queue deleted successfully!",
+    "queue_error": "Unable to delete the queue."
   }
 }
