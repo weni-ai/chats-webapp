@@ -102,15 +102,16 @@
     data-testid="new-sector-drawer"
     @close="closeNewSectorModal()"
   />
-  <ModalConfirmDelete
+  <ModalDeleteWithTransfer
     v-if="showDeleteSectorModal"
     v-model="showDeleteSectorModal"
     data-testid="modal-delete-sector"
-    :title="$t('delete_sector') + ` ${toDeleteSector.name}`"
-    :description="$t('cant_revert')"
-    :confirmText="toDeleteSector.name"
+    type="sector"
+    :name="toDeleteSector.name"
+    :excludeSectorUuid="toDeleteSector.uuid"
+    :inProgressChatsCount="10"
     :isLoading="isLoadingDeleteSector"
-    @confirm="deleteSector(toDeleteSector.uuid)"
+    @confirm="deleteSector(toDeleteSector.uuid, $event)"
     @cancel="handlerCloseDeleteSectorModal()"
   />
 </template>
@@ -123,7 +124,7 @@ import { useConfig } from '@/store/modules/config';
 import { useSettings } from '@/store/modules/settings';
 
 import SettingsSectionHeader from './SettingsSectionHeader.vue';
-import ModalConfirmDelete from '@/components/ModalConfirmDelete.vue';
+import ModalDeleteWithTransfer from '@/components/ModalDeleteWithTransfer.vue';
 
 import NewSectorDrawer from './Sectors/New/NewSectorDrawer.vue';
 import ListOrdinator from '@/components/settings/ListOrdinator.vue';
@@ -135,7 +136,7 @@ export default {
     SettingsSectionHeader,
     NewSectorDrawer,
     ListOrdinator,
-    ModalConfirmDelete,
+    ModalDeleteWithTransfer,
   },
 
   data() {
@@ -200,7 +201,7 @@ export default {
       this.showDeleteSectorModal = false;
     },
 
-    async deleteSector(sectorUuid) {
+    async deleteSector(sectorUuid, _transferPayload) {
       try {
         this.isLoadingDeleteSector = true;
         await this.actionDeleteSector(sectorUuid);
@@ -208,7 +209,7 @@ export default {
         this.$router.push({ name: 'sectors' });
         unnnic.unnnicCallAlert({
           props: {
-            text: this.$t('sector_deleted_success'),
+            text: this.$t('delete_modal.sector_success'),
             type: 'success',
           },
           seconds: 5,
@@ -217,7 +218,7 @@ export default {
         console.log(error);
         unnnic.unnnicCallAlert({
           props: {
-            text: this.$t('sector_delete_error'),
+            text: this.$t('delete_modal.sector_error'),
             type: 'error',
           },
           seconds: 5,
