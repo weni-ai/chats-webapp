@@ -305,24 +305,16 @@ export default {
   },
 
   async mounted() {
-    await this.checkAgentBuilder();
+    await this.getAiTransferConfig();
   },
 
   methods: {
-    async checkAgentBuilder() {
+    async getAiTransferConfig() {
       try {
-        const { agent_builder } = await agentBuilder.check();
-        this.hasAgentBuilder = agent_builder;
-
-        if (this.hasAgentBuilder) {
-          const config = await agentBuilder.getAiTransferConfig();
-          this.aiTransferConfig = {
-            enabled: config.enabled,
-            criteria: config.criteria,
-          };
-        }
+        const config = await agentBuilder.getAiTransferConfig();
+        this.aiTransferConfig = config;
       } catch (error) {
-        console.error('Failed to check agent builder:', error);
+        console.error('Failed to get AI transfer config:', error);
       }
     },
 
