@@ -1,0 +1,295 @@
+<template>
+  <UnnnicDialog
+    v-model:open="open"
+    class="modal-delete-transfer"
+  >
+    <UnnnicDialogContent size="large">
+      <UnnnicDialogHeader :closeButton="!isLoading">
+        <UnnnicDialogTitle>
+          <div class="modal-delete-transfer__title">
+            <UnnnicIcon
+              icon="warning"
+              size="md"
+              scheme="feedback-red"
+            />
+            {{ $t('delete_modal.title', { name }) }}
+          </div>
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+
+      <section class="modal-delete-transfer__body">
+        <p class="modal-delete-transfer__body__description">
+          {{
+            $t(`delete_modal.description_${type}`, {
+              count: inProgressChatsCount,
+              name,
+            })
+          }}
+        </p>
+
+        <div class="modal-delete-transfer__body__radios">
+          <UnnnicRadio
+            :modelValue="selectedAction"
+            value="transfer"
+            size="md"
+            @update:model-value="handleActionChange"
+          >
+            {{ $t('delete_modal.transfer_chats') }}
+          </UnnnicRadio>
+          <UnnnicRadio
+            :modelValue="selectedAction"
+            value="end_all"
+            size="md"
+            @update:model-value="handleActionChange"
+          >
+            {{ $t('delete_modal.end_all_chats') }}
+          </UnnnicRadio>
+        </div>
+
+        <div
+          v-if="selectedAction === 'transfer'"
+          class="modal-delete-transfer__body__selects"
+        >
+          <div class="modal-delete-transfer__body__selects__input">
+            <UnnnicSelect
+              v-model="selectedSector"
+              :options="sectorOptions"
+              :label="$t('delete_modal.select_sector')"
+              :placeholder="$t('search_or_select')"
+              returnObject
+              clearable
+              enableSearch
+              :search="searchSector"
+              @update:search="searchSector = $event"
+            />
+          </div>
+          <div class="modal-delete-transfer__body__selects__input">
+            <UnnnicSelect
+              v-model="selectedQueue"
+              :disabled="!selectedSector?.value"
+              :options="queueOptions"
+              :label="$t('delete_modal.select_queue')"
+              :placeholder="$t('search_or_select')"
+              returnObject
+              clearable
+              enableSearch
+              :search="searchQueue"
+              @update:search="searchQueue = $event"
+            />
+          </div>
+        </div>
+
+        <div class="modal-delete-transfer__body__confirm">
+          <UnnnicInput
+            v-model="confirmText"
+            :label="$t(`delete_modal.type_name_${type}`)"
+            :placeholder="name"
+          />
+          <p class="modal-delete-transfer__body__confirm__warning">
+            {{ $t('delete_modal.cannot_be_reversed') }}
+          </p>
+        </div>
+      </section>
+
+      <UnnnicDialogFooter>
+        <UnnnicButton
+          :text="$t('cancel')"
+          type="tertiary"
+          :disabled="isLoading"
+          @click="emit('cancel')"
+        />
+        <UnnnicButton
+          :text="$t('delete_modal.delete_button')"
+          type="warning"
+          :disabled="!isFormValid"
+          :loading="isLoading"
+          @click="handleConfirm"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
+</template>
+
+<script setup>
+import { computed, ref, watch, onMounted } from 'vue';
+
+import Sector from '@/services/api/resources/settings/sector';
+import Queue from '@/services/api/resources/settings/queue';
+
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true,
+  },
+  type: {
+    type: String,
+    required: true,
+    validator: (value) => ['sector', 'queue'].includes(value),
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  inProgressChatsCount: {
+    type: Number,
+    default: 0,
+  },
+  isLoading: {
+    type: Boolean,
+    default: false,
+  },
+  excludeSectorUuid: {
+    type: String,
+    default: '',
+  },
+});
+
+const emit = defineEmits(['update:modelValue', 'confirm', 'cancel']);
+
+const open = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit('update:modelValue', value);
+  },
+});
+
+const selectedAction = ref('transfer');
+const selectedSector = ref(null);
+const selectedQueue = ref(null);
+const confirmText = ref('');
+
+const sectorOptions = ref([]);
+const queueOptions = ref([]);
+const searchSector = ref('');
+const searchQueue = ref('');
+
+const isFormValid = computed(() => {
+  const nameMatches = confirmText.value === props.name;
+  if (!nameMatches) return false;
+
+  if (selectedAction.value === 'end_all') return true;
+
+  return !!selectedSector.value?.value;
+});
+
+function handleActionChange(value) {
+  selectedAction.value = value;
+  if (value === 'end_all') {
+    selectedSector.value = null;
+    selectedQueue.value = null;
+    searchSector.value = '';
+    searchQueue.value = '';
+  }
+}
+
+function handleConfirm() {
+  const payload = { action: selectedAction.value };
+
+  if (selectedAction.value === 'transfer') {
+    payload.transferSectorUuid = selectedSector.value?.value;
+    payload.transferQueueUuid = selectedQueue.value?.value || null;
+  }
+
+  emit('confirm', payload);
+}
+
+async function fetchSectors() {
+  try {
+    const response = await Sector.list();
+    const { results } = response;
+
+    sectorOptions.value = results
+      .filter(({ uuid }) => uuid !== props.excludeSectorUuid)
+      .map(({ uuid, name }) => ({ value: uuid, label: name }));
+  } catch (error) {
+    console.error('Failed to load sectors', error);
+  }
+}
+
+async function fetchQueues(sectorUuid) {
+  if (!sectorUuid) {
+    queueOptions.value = [];
+    return;
+  }
+
+  try {
+    const response = await Queue.list(sectorUuid);
+    const { results } = response;
+
+    queueOptions.value = results.map(({ uuid, name }) => ({
+      value: uuid,
+      label: name,
+    }));
+  } catch (error) {
+    console.error('Failed to load queues', error);
+  }
+}
+
+watch(selectedSector, (newSector) => {
+  selectedQueue.value = null;
+  searchQueue.value = '';
+
+  if (newSector?.value) {
+    fetchQueues(newSector.value);
+  } else {
+    queueOptions.value = [];
+  }
+});
+
+onMounted(() => {
+  fetchSectors();
+});
+</script>
+
+<style lang="scss" scoped>
+.modal-delete-transfer {
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: $unnnic-spacing-xs;
+  }
+
+  &__body {
+    display: grid;
+    gap: $unnnic-spacing-sm;
+    text-align: start;
+    padding: $unnnic-space-6;
+
+    &__description {
+      font-family: $unnnic-font-family-secondary;
+      font-size: $unnnic-font-size-body-gt;
+      line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
+      color: $unnnic-color-neutral-dark;
+    }
+
+    &__radios {
+      display: flex;
+      align-items: center;
+      gap: $unnnic-spacing-sm;
+    }
+
+    &__selects {
+      display: flex;
+      gap: $unnnic-spacing-xs;
+
+      &__input {
+        flex: 1;
+      }
+    }
+
+    &__confirm {
+      display: grid;
+      gap: $unnnic-spacing-nano;
+
+      &__warning {
+        font-family: $unnnic-font-family-secondary;
+        font-size: $unnnic-font-size-body-md;
+        line-height: $unnnic-font-size-body-md + $unnnic-line-height-md;
+        color: $unnnic-color-feedback-red;
+      }
+    }
+  }
+}
+</style>
