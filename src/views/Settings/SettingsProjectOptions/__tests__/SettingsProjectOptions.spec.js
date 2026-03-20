@@ -104,10 +104,12 @@ describe('SettingsProjectOptions.vue', () => {
       );
     });
 
-    it('should render the CustomBreakOption component', () => {
-      expect(
-        wrapper.find('.project-options__items__custom-breaks').exists(),
-      ).toBe(true);
+    it('should render the CustomBreakOption component inside the header', () => {
+      const header = wrapper.find('.project-options__header');
+      expect(header.exists()).toBe(true);
+      expect(header.findComponent({ name: 'CustomBreakOption' }).exists()).toBe(
+        true,
+      );
     });
 
     it('should render toggle switches from optionsItems', () => {

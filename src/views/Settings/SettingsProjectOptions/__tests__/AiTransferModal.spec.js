@@ -47,6 +47,27 @@ const createWrapper = (props = {}) => {
       mocks: {
         $t: (key) => key,
       },
+      stubs: {
+        UnnnicDialog: {
+          template: '<div><slot /></div>',
+          props: ['open'],
+        },
+        UnnnicDialogContent: {
+          template: '<div><slot /></div>',
+        },
+        UnnnicDialogHeader: {
+          template: '<div><slot /></div>',
+        },
+        UnnnicDialogTitle: {
+          template: '<div><slot /></div>',
+        },
+        UnnnicDialogClose: {
+          template: '<button data-testid="dialog-close" @click="$emit(\'click\')"></button>',
+        },
+        UnnnicDialogFooter: {
+          template: '<div><slot /></div>',
+        },
+      },
     },
   });
 };
