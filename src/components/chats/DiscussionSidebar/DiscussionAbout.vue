@@ -208,16 +208,16 @@ export default {
     },
 
     async handlingAddAgent() {
-      const newAgent = this.agentSelected?.value;
+      const newAgentEmail = this.agentSelected?.value;
 
-      if (!newAgent) {
+      if (!newAgentEmail) {
         return;
       }
 
       try {
         this.addAgentLoading = true;
         const responseAgent = await this.addAgent({
-          user_email: newAgent.value,
+          user_email: newAgentEmail,
         });
 
         this.agentsInvolved.push(responseAgent);
