@@ -76,7 +76,7 @@ const createWrapper = (props = {}) => {
     global: {
       plugins: [createTestingPinia()],
       stubs: {
-        ModalConfirmDelete: true,
+        ModalDeleteWithTransfer: true,
       },
     },
     props,

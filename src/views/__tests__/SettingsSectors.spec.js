@@ -106,7 +106,7 @@ const createWrapper = (initialState = {}) => {
           template: '<span></span>',
           props: ['icon', 'size', 'scheme'],
         },
-        ModalConfirmDelete: true,
+        ModalDeleteWithTransfer: true,
       },
       mocks: {
         $router: mockRouter,
@@ -125,9 +125,8 @@ const createWrapper = (initialState = {}) => {
             confirm_typing: 'Type to confirm',
             confirm: 'Confirm',
             cancel: 'Cancel',
-            sector_deleted_success: 'Sector deleted successfully!',
-            sector_delete_error:
-              'Unable to delete sector, please try again later.',
+            'delete_modal.sector_success': 'Sector deleted successfully!',
+            'delete_modal.sector_error': 'Unable to delete the sector.',
           };
           return translations[key] || key;
         },
@@ -386,7 +385,7 @@ describe('SettingsSectors.vue', () => {
       expect(mockRouter.push).toHaveBeenCalledWith({ name: 'sectors' });
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
         props: {
-          text: 'Sector deleted successfully!',
+          text: 'delete_modal.sector_success',
           type: 'success',
         },
         seconds: 5,
@@ -410,7 +409,7 @@ describe('SettingsSectors.vue', () => {
       expect(consoleSpy).toHaveBeenCalledWith(error);
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
         props: {
-          text: 'Unable to delete sector, please try again later.',
+          text: 'delete_modal.sector_error',
           type: 'error',
         },
         seconds: 5,
