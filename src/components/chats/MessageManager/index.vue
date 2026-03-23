@@ -26,30 +26,40 @@
           messageType="received"
           @close="clearReplyMessage()"
         />
-        <TextBox
-          v-if="!isAudioRecorderVisible"
-          ref="textBox"
-          class="message-manager-box__text-box"
-          :modelValue="textBoxMessage"
-          :isInternalNote="isInternalNote"
-          @update:model-value="textBoxMessage = $event"
-          @keydown.stop="onKeyDown"
-          @paste="handlePaste"
-          @is-typing-handler="isTypingHandler"
-          @is-focused-handler="isFocusedHandler"
-          @handle-quick-messages="emitShowQuickMessages"
-          @open-file-uploader="openFileUploader"
-          @close-internal-note="handleInternalNoteInput"
+        <TextBoxV2
+          v-if="isV2MessageEnabled"
+          v-model="textBoxMessage"
+          @send="send"
         />
-        <UnnnicAudioRecorder
-          v-show="isAudioRecorderVisible && !isFileLoadingValueValid"
-          ref="audioRecorder"
-          v-model="audioMessage"
-          class="message-manager__audio-recorder"
-          @status="updateAudioRecorderStatus"
-        />
+        <template v-else>
+          <TextBox
+            v-if="!isAudioRecorderVisible"
+            ref="textBox"
+            class="message-manager-box__text-box"
+            :modelValue="textBoxMessage"
+            :isInternalNote="isInternalNote"
+            @update:model-value="textBoxMessage = $event"
+            @keydown.stop="onKeyDown"
+            @paste="handlePaste"
+            @is-typing-handler="isTypingHandler"
+            @is-focused-handler="isFocusedHandler"
+            @handle-quick-messages="emitShowQuickMessages"
+            @open-file-uploader="openFileUploader"
+            @close-internal-note="handleInternalNoteInput"
+          />
+          <UnnnicAudioRecorder
+            v-show="isAudioRecorderVisible && !isFileLoadingValueValid"
+            ref="audioRecorder"
+            v-model="audioMessage"
+            class="message-manager__audio-recorder"
+            @status="updateAudioRecorderStatus"
+          />
+        </template>
       </div>
-      <div class="message-manager__actions">
+      <div
+        v-if="!isV2MessageEnabled"
+        class="message-manager__actions"
+      >
         <UnnnicButton
           v-if="
             canUseCopilot && !isCopilotOpen && showActionButton && !discussionId
@@ -171,10 +181,12 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import MessageManagerLoading from '@/views/loadings/chat/MessageManager.vue';
 
 import TextBox from './TextBox.vue';
+import TextBoxV2 from './TextBoxV2.vue';
 import MoreActionsOption from './MoreActionsOption.vue';
 import LoadingBar from './LoadingBar.vue';
 import SuggestionBox from './SuggestionBox.vue';
@@ -190,6 +202,7 @@ export default {
     SuggestionBox,
     MoreActionsOption,
     CoPilot,
+    TextBoxV2,
   },
 
   props: {
@@ -234,7 +247,12 @@ export default {
       discussionId: (store) => store.activeDiscussion?.uuid,
     }),
     ...mapWritableState(useRoomMessages, ['replyMessage']),
-
+    ...mapState(useFeatureFlag, ['featureFlags']),
+    isV2MessageEnabled() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsInputMessageV2',
+      );
+    },
     isMobile() {
       return isMobile();
     },
