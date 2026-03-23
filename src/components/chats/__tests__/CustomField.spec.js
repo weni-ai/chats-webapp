@@ -26,18 +26,18 @@ describe('CustomField', () => {
   });
 
   it('should show a anchor with target="_blank" if description is a url and is not editable', () => {
-    const newProps = { ...defaultProps };
-    newProps.description = 'https://example.com';
-    newProps.isEditable = false;
-
-    const wrapperWithURL = createWrapper(newProps);
+    const wrapperWithURL = createWrapper({
+      ...defaultProps,
+      description: 'https://example.com',
+      isEditable: false,
+    });
 
     const anchorElement = wrapperWithURL.find('.description a');
     expect(anchorElement.exists()).toBe(true);
-    expect(anchorElement.attributes().href).toBe(newProps.description);
+    expect(anchorElement.attributes().href).toBe('https://example.com');
     expect(anchorElement.attributes().target).toBe('_blank');
 
-    wrapper.unmount();
+    wrapperWithURL.unmount();
   });
 
   it('should shows the input field when isCurrent prop is true', async () => {
@@ -80,5 +80,38 @@ describe('CustomField', () => {
     const input = wrapper.find('input[type="text"]');
     await input.trigger('keypress', { key: 'Enter' });
     expect(wrapper.emitted('save-value')).toBeTruthy();
+  });
+
+  it('should not show the description text (h4) while editing', async () => {
+    expect(wrapper.find('.description h4').exists()).toBe(true);
+
+    await wrapper.setProps({ isCurrent: true });
+
+    expect(wrapper.find('.description h4').exists()).toBe(false);
+    expect(wrapper.find('input[type="text"]').isVisible()).toBe(true);
+  });
+
+  it('should restore the description text (h4) after exiting edit mode', async () => {
+    await wrapper.setProps({ isCurrent: true });
+    expect(wrapper.find('.description h4').exists()).toBe(false);
+
+    await wrapper.setProps({ isCurrent: false });
+    expect(wrapper.find('.description h4').exists()).toBe(true);
+    expect(wrapper.find('.description h4').text()).toBe(
+      defaultProps.description,
+    );
+  });
+
+  it('should not render the h4 tooltip when isEditable is false and description is a URL', () => {
+    const wrapperUrl = createWrapper({
+      ...defaultProps,
+      description: 'https://example.com',
+      isEditable: false,
+    });
+
+    expect(wrapperUrl.find('.description h4').exists()).toBe(false);
+    expect(wrapperUrl.find('.description a').exists()).toBe(true);
+
+    wrapperUrl.unmount();
   });
 });
