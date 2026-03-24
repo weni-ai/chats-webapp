@@ -18,12 +18,11 @@
       </a>
 
       <UnnnicToolTip
-        v-show="showEditTooltip"
+        v-if="showEditTooltip"
         class="tooltip"
         side="bottom"
         :enabled="isEditable"
         :text="$t('edit')"
-        :title="description"
       >
         <h4
           tabindex="0"

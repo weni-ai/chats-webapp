@@ -155,7 +155,7 @@ export default {
     },
     handleProjectName() {
       if (this.enableGroupsMode) {
-        return this.room.config?.name;
+        return this.room.queue?.sector_name;
       }
       return null;
     },
