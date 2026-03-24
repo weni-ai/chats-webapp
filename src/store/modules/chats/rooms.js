@@ -281,6 +281,12 @@ export const useRooms = defineStore('rooms', {
       const wasInArray = !!existingRoom;
       const oldType = existingRoom ? getRoomType(existingRoom) : null;
 
+      const shouldBeVisible = this.checkUserSeenRoom({
+        room,
+        viewedAgentEmail,
+        userEmail,
+      });
+
       const filteredRooms = this.rooms
         .map((mappedRoom) =>
           mappedRoom.uuid === room.uuid
@@ -300,6 +306,10 @@ export const useRooms = defineStore('rooms', {
           }
           return 0;
         });
+
+      if (!wasInArray && shouldBeVisible) {
+        filteredRooms.unshift({ ...room });
+      }
 
       this.rooms = filteredRooms;
 

@@ -495,7 +495,7 @@ describe('State Rooms', () => {
           adminRoomsStore,
           adminProfileStore,
           dashboardStore,
-          { uuid: '1', queue: { uuid: '1' } },
+          { uuid: '3', queue: { uuid: '1' } },
           true,
         );
 
@@ -506,7 +506,7 @@ describe('State Rooms', () => {
           adminProfileStore,
           dashboardStore,
           {
-            uuid: '2',
+            uuid: '4',
             queue: { uuid: '1' },
             user: { email: 'testing@weni.ai' },
           },
@@ -572,7 +572,7 @@ describe('State Rooms', () => {
           humanServiceProfileStore,
           dashboardStore,
           {
-            uuid: '2',
+            uuid: '3',
             queue: { uuid: '3' },
             user: { email: 'testing@weni.ai' },
           },
