@@ -1,33 +1,48 @@
 <template>
-  <UnnnicModalDialog
-    :modelValue="true"
-    :title="$t('config_chats.groups.delete.title', { groupName: group.name })"
-    :primaryButtonProps="{
-      text: $t('delete'),
-      disabled: !validGroupName,
-      loading: isLoadingRequest,
-    }"
-    :secondaryButtonProps="{ disabled: isLoadingRequest }"
-    showActionsDivider
-    showCloseIcon
-    size="sm"
+  <UnnnicDialog
+    v-model:open="open"
     data-testid="modal-delete-group"
-    @update:model-value="$emit('close')"
-    @primary-button-click="deleteGroup"
+    class="delete-notice"
   >
-    <p
-      class="delete-notice"
-      data-testid="delete-notice"
-    >
-      {{ $t('config_chats.groups.delete.notice') }}
-    </p>
-    <UnnnicLabel :label="$t('confirmation')" />
-    <UnnnicInput
-      v-model="groupName"
-      :placeholder="group.name"
-      data-testid="input-dashboard-name"
-    />
-  </UnnnicModalDialog>
+    <UnnnicDialogContent size="small">
+      <UnnnicDialogHeader type="warning">
+        <UnnnicDialogTitle>
+          {{
+            $t('config_chats.groups.delete.title', { groupName: group.name })
+          }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section class="delete-notice__content">
+        <p
+          class="delete-notice__notice"
+          data-testid="delete-notice"
+        >
+          {{ $t('config_chats.groups.delete.notice') }}
+        </p>
+        <UnnnicLabel :label="$t('confirmation')" />
+        <UnnnicInput
+          v-model="groupName"
+          :placeholder="group.name"
+          data-testid="input-dashboard-name"
+        />
+      </section>
+      <UnnnicDialogFooter>
+        <UnnnicButton
+          :text="$t('cancel')"
+          type="tertiary"
+          :disabled="isLoadingRequest"
+          @click="open = false"
+        />
+        <UnnnicButton
+          :text="$t('delete')"
+          type="warning"
+          :disabled="!validGroupName"
+          :loading="isLoadingRequest"
+          @click="deleteGroup"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script>
@@ -39,12 +54,16 @@ import { mapWritableState } from 'pinia';
 export default {
   name: 'DeleteGroupModal',
   props: {
+    modelValue: {
+      type: Boolean,
+      required: true,
+    },
     group: {
-      type: String,
+      type: Object,
       required: true,
     },
   },
-  emits: ['close'],
+  emits: ['close', 'update:modelValue'],
   data() {
     return {
       groupName: '',
@@ -55,6 +74,14 @@ export default {
     ...mapWritableState(useSettings, ['groups']),
     validGroupName() {
       return this.groupName === this.group.name;
+    },
+    open: {
+      get() {
+        return this.modelValue;
+      },
+      set(value) {
+        this.$emit('update:modelValue', value);
+      },
     },
   },
   methods: {
@@ -76,7 +103,7 @@ export default {
         Unnnic.unnnicCallAlert({
           props: {
             text: this.$t('config_chats.groups.delete.error'),
-            type: 'success',
+            type: 'error',
           },
           seconds: 5,
         });
@@ -89,3 +116,15 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.delete-notice {
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-2;
+    padding: $unnnic-space-6;
+    color: $unnnic-color-fg-base;
+  }
+}
+</style>

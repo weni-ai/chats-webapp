@@ -93,8 +93,8 @@ export default {
     return response.data;
   },
 
-  async close(uuid) {
-    const response = await http.put(`/room/${uuid}/close/`);
+  async close(uuid, tags = []) {
+    const response = await http.put(`/room/${uuid}/close/`, { tags });
     return response.data;
   },
 
@@ -164,6 +164,31 @@ export default {
 
     const response = await http
       .patch(`room/bulk_transfer/`, body, { params })
+      .then((response) => response)
+      .catch((error) => error.response);
+    return response;
+  },
+
+  async bulkClose({ rooms = [], end_by = 'system', closed_by_email = '' }) {
+    const profileStore = useProfile();
+    const { email: user_email } = profileStore.me;
+
+    const body = {
+      rooms,
+      end_by: end_by || 'system',
+      closed_by_email: closed_by_email || user_email,
+    };
+
+    const response = await http
+      .post(`/room/bulk_close/`, body)
+      .then((response) => response)
+      .catch((error) => error.response);
+    return response;
+  },
+
+  async bulkTake({ rooms = [] }) {
+    const response = await http
+      .post(`/room/bulk_take/`, { rooms_list: rooms })
       .then((response) => response)
       .catch((error) => error.response);
     return response;

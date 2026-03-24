@@ -129,6 +129,7 @@
     "info": "Defina uma resposta automática para ser enviada ao contato enquanto está aguardando atendimento, deixe em branco caso não queira nenhuma mensagem.",
     "placeholder": "Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando"
   },
+  "attention": "Atenção",
   "updates_saved": "Atualizações salvas",
   "updated_info": "Informações atualizadas",
   "active_chats": "Chats ativos",
@@ -143,8 +144,14 @@
   "undo": "Desfazer",
   "redo": "Refazer",
   "record_audio": "Gravar áudio",
-  "select_all": "Selecionar todos",
-  "deselect_all": "Desselecionar todos",
+  "select_all": "Selecionar todos os chats",
+  "deselect_all": "Desselecionar todos os chats",
+  "select_this_chat": "Selecionar este chat",
+  "deselect_this_chat": "Desmarcar este chat",
+  "transfer_all_selected_chats": "Transferir todos os chats selecionados",
+  "take_over_all_selected_chats_tooltip": "Assumir todos os chats selecionados",
+  "end_all_selected_chats_tooltip": "Encerrar todos os chats selecionados",
+  "number_of_chats_selected": "{count} chat selecionado | {count} chats selecionados",
   "image": "Imagem",
   "video": "Vídeo",
   "audio_message": "Mensagem de áudio",
@@ -236,9 +243,12 @@
         "switch_disabled": "Assinatura desativada"
       },
       "csat": {
-        "enabled": "Enquete de satisfação após completar o suporte ativo",
-        "disabeld": "Enquete de satisfação após completar o suporte desativado",
-        "tooltip": "Quando ativado, uma enquete de satisfação será enviada automaticamente ao contato, logo após o fechamento do suporte."
+        "label": "Enviar automaticamente uma pesquisa de satisfação após o atendimento humano ser encerrado",
+        "hint": "Se houver um fluxo ativo no módulo Flows configurado para disparar a pesquisa após o atendimento, esta configuração pode gerar conflito e impactar o envio da pesquisa.",
+        "confirm_modal": {
+          "content_1": "Se houver um fluxo ativo no módulo Flows configurado para disparar a pesquisa após o atendimento, esta configuração pode gerar conflito e impactar o envio da pesquisa.",
+          "content_2": "Deseja continuar mesmo assim?"
+        }
       },
       "automatic_message": {
         "switch_active": "Mensagem automática de abertura ativa",
@@ -291,12 +301,29 @@
   "interaction_time": "Tempo de interação",
   "average_interaction_time": "É o tempo médio de duração de um chat",
   "chats": {
+    "transcription": {
+      "unavailable_closed_chat": "Não é possível ver transcrições que não foram habilitadas durante o suporte.",
+      "unavailable_exceeding_duration": "Transcrição indisponível para áudios com mais de {duration} minutos.",
+      "error": "Não foi possível carregar a transcrição. Por favor, tente novamente!",
+      "feedback": {
+        "question": "A transcrição foi útil?",
+        "positive": "Útil",
+        "negative": "Precisa de melhorias",
+        "error": "Não foi possível enviar o feedback. Por favor, tente novamente!",
+        "sended": "Seu feedback foi enviado!",
+        "modal": {
+          "title": "O que não funcionou?",
+          "input_placeholder": "Compartilhe seu feedback aqui"
+        }
+      }
+    },
     "search_messages": {
       "title": "Pesquisar na conversa",
       "input_placeholder": "Digite uma palavra ou frase para pesquisar",
       "no_results": "Nenhum resultado encontrado para \"{searchTerm}\"",
       "results_found": "{count} resultados encontrados para \"{searchTerm}\"",
-      "automated_support": "Suporte Automatizado"
+      "automated_support": "Suporte Automatizado",
+      "loading": "Carregando mais mensagens"
     },
     "summary": {
       "reading_and_summarizing": "Lendo e fazendo resumo",
@@ -321,11 +348,6 @@
         "negative": "Precisa de melhorias",
         "placeholder": "Compartilhe seu feedback aqui",
         "sended": "Seu feedback foi enviado!"
-      },
-      "onboarding": {
-        "title": "Nova Funcionalidade: Resumo por IA",
-        "description": "A partir de agora, sempre que você abrir um chat, você verá um resumo com as informações principais do chat anterior com a IA. Esta funcionalidade foi projetada para ajudar você a economizar tempo e obter contexto rapidamente.",
-        "see_how_it_works": "Veja como funciona:"
       }
     },
     "feedback": {
@@ -376,6 +398,7 @@
     "tags": "Tags do chat",
     "discussions": "Discussões",
     "waiting": "Aguardando",
+    "waiting_tooltip": "Chats que devem ser atendidos",
     "waiting_assistance": "Aguardando atendimento",
     "in_progress": "Em andamento",
     "sent_flows": "Fluxos enviados",
@@ -392,7 +415,7 @@
       "does_not_have_permission": "Você não possui permissão para transferir este chat"
     },
     "open_chat": "Abrir chat",
-    "get_chat": "Pegar chat",
+    "get_chat": "Pegar somente este chat",
     "get_chat_question": "Pegar chat?",
     "get_chat_confirmation": "Confirme se deseja realizar o atendimento de {contact}",
     "get_chat_error": "Erro ao tentar pegar o chat",
@@ -421,7 +444,7 @@
     "view-mode": {
       "title": "Modo de visualização ao vivo do agente {viewedAgent}",
       "close": "Encerrar visualização",
-      "assume_chat": "Assumir Chat",
+      "assume_chat": "Assumir apenas este chat",
       "assume_chat_question": "Assumir Chat?",
       "assume_chat_confirmation": "Ao confirmar você removerá o Chat do agente {viewedAgent} e será o responsável pelo Chat"
     }
@@ -437,6 +460,7 @@
   "about": "sobre",
   "today": "Hoje",
   "transfer": "Transferir",
+  "take_over": "Assumir",
   "suggested_answers": "Respostas sugeridas",
   "attach": "Anexar",
   "send": "Enviar",
@@ -446,6 +470,7 @@
   "action_cannot_be_reversed": "Essa ação não poderá ser revertida",
   "end": "Encerrar",
   "end_chat": "Finalizar",
+  "end_discussion": "Finalizar discussão",
   "cancel": "Cancelar",
   "add": "Adicionar",
   "proceed": "Prosseguir",
@@ -551,6 +576,38 @@
       "without_online_agents": "Nenhum agente online no momento"
     }
   },
+  "bulk_close": {
+    "close_selected_contacts": "Encerrar contatos selecionados",
+    "confirm_close_selected": "Tem certeza que deseja encerrar os contatos selecionados?",
+    "success_message": "{count} chat encerrado com sucesso! | {count} chats encerrados com sucesso!",
+    "partial_success_message": "{success} chat encerrado, {failed} falhou. Tente novamente. | {success} chats encerrados, {failed} falharam. Tente novamente.",
+    "error_message": "Não foi possível encerrar os chats, tente novamente",
+    "end_all_selected_chats": "Encerrar todos os chats selecionados",
+    "sector_tag": "Setor {current} de {total}",
+    "chats_count_sector": "{count} chat · setor {sector} | {count} chats · setor {sector}",
+    "required_tags_title": "Tags são obrigatórias para finalizar chats no setor {sector}",
+    "required_tags_description": "Se você selecionar alguma tag abaixo, ela será aplicada ao {count} chat e substituirá quaisquer tags existentes. | Se você selecionar alguma tag abaixo, ela será aplicada aos {count} chats e substituirá quaisquer tags existentes.",
+    "next_sector": "Próximo setor",
+    "end_all_chats": "Encerrar todos ({count} chats)",
+    "back": "Voltar",
+    "optional_tags_title": "Tags não são obrigatórias para finalizar chats no setor {sector}",
+    "optional_tags_description": "Se você selecionar alguma tag abaixo, ela será aplicada ao {count} chat e substituirá quaisquer tags existentes. | Se você selecionar alguma tag abaixo, ela será aplicada aos {count} chats e substituirá quaisquer tags existentes.",
+    "no_tags_in_sector": "Não há tags cadastradas neste setor para serem selecionadas."
+  },
+  "close_chat": {
+    "confirm_end": "Tem certeza que deseja encerrar este chat?"
+  },
+  "bulk_take": {
+    "title": "Assumir todos os chats selecionados",
+    "selected_chats_count": "{count} chat está selecionado para assumir. | {count} chats estão selecionados para assumir.",
+    "confirm_take_over_selected": "Tem certeza que deseja assumir todos os chats selecionados?",
+    "take_over_all": "Assumir todos",
+    "success_message": "{count} chat assumido com sucesso! | {count} chats assumidos com sucesso!",
+    "partial_success_message": "{success} chat assumido, {failed} falhou. Tente novamente. | {success} chats assumidos, {failed} falharam. Tente novamente.",
+    "error_message": "Não foi possível assumir os chats, tente novamente"
+  },
+  "close_contact": "Encerrar contato",
+  "close_contact_confirmation": "Tem certeza que deseja encerrar este contato?",
   "contact_info": {
     "title": "Sobre o contato",
     "about_support": "Sobre o suporte",
@@ -590,7 +647,8 @@
     },
     "close": {
       "title": "Encerrar discussão",
-      "description": "Você não poderá mais trocar mensagens nesta discussão"
+      "question": "Tem certeza que deseja encerrar a discussão sobre {contact}?",
+      "description": "Uma vez finalizada, não será possível enviar mais mensagens."
     },
     "add_agents": {
       "title": "Adicionar agentes",
@@ -682,6 +740,8 @@
     "groups": "Grupos ({length})",
     "group_contacts": "{n} contato | {n} contatos",
     "letter_group": "{letter} ({length})",
+    "letter_group_unnamed": "Sem nome ({length})",
+    "unnamed_contact": "Contato sem nome",
     "add_contact": "Adicionar contato",
     "remove_selected_contacts": "Remover contatos selecionados",
     "add_new_contact": {
@@ -775,7 +835,7 @@
     }
   },
   "config_chats": {
-    "title": "Configurações de Chats",
+    "title": "Configurações de Atendimento humano",
     "section_sectors_title": "Setores em {project}",
     "section_sectors_subtitle": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
     "tabs": {
@@ -796,28 +856,39 @@
       "status_error": "Ops, infelizmente as alterações não foram salvas, tente novamente"
     },
     "project_configs": {
-      "title": "Ajustes do projeto",
+      "title": "Preferências do projeto",
       "bulk_transfer": {
         "tooltip": "Essa função permite que agentes transfiram diversos contatos de uma vez para uma fila ou agente",
-        "switch_active": "Transferência de contatos em massa ativo",
-        "switch_inactive": "Transferência de contatos em massa desativado"
+        "switch_active": "Transferir chats em massa para outra fila ou atendente",
+        "switch_inactive": "Transferir chats em massa para outra fila ou atendente"
+      },
+      "block_transfer_to_off_agents": {
+        "switch_active": "Bloquear a transferência de chats para atendentes offline",
+        "switch_inactive": "Bloquear a transferência de chats para atendentes offline"
+      },
+      "bulk_close": {
+        "switch_active": "Finalizar chats em massa",
+        "switch_inactive": "Finalizar chats em massa"
+      },
+      "block_close_chats_in_queue": {
+        "switch_active": "Bloquear a finalização de chats que estão na fila",
+        "switch_inactive": "Bloquear a finalização de chats que estão na fila"
+      },
+      "bulk_take": {
+        "switch_active": "Assumir chats em massa",
+        "switch_inactive": "Assumir chats em massa"
       },
       "queue_prioritization": {
         "tooltip": "Essa função permite que agentes possam escolher as filas que receberão contatos, dentro das previamente selecionadas no setor",
-        "switch_active": "Seleção de filas pelos agentes ativa",
-        "switch_inactive": "Seleção de filas pelos agentes inativa"
-      },
-      "block_transfer_to_off_agents": {
-        "switch_active": "Bloqueio de transferências para agentes offline ativo",
-        "switch_inactive": "Bloqueio de transferências para agentes offline inativo"
+        "switch_active": "Permitir que atendentes escolham suas filas dentro do setor",
+        "switch_inactive": "Permitir que atendentes escolham suas filas dentro do setor"
       },
       "show_agent_status_count_timer": {
-        "switch_active": "Mostrar timer de contagem do status do agente",
-        "switch_inactive": "Esconder timer de contagem do status do agente"
+        "switch_active": "Exibir temporizador de status em pausas personalizadas do atendente",
+        "switch_inactive": "Exibir temporizador de status em pausas personalizadas do atendente"
       },
-      "close_chats_in_queue": {
-        "switch_active": "Agentes podem encerrar chats que estão aguardando suporte ativo",
-        "switch_inactive": "Agentes podem encerrar chats que estão aguardando suporte inativo"
+      "show_waiting_rooms_count": {
+        "switch_label": "Exibir o contador com o número de chats esperando atendimento humano"
       }
     },
     "custom_sector": "Personalizar novo setor (recomendado)",
@@ -843,6 +914,15 @@
       "info": "As filas são grupos de atendimento dentro de um setor, é possível direcionar contatos de um fluxo para uma fila específica",
       "hint": "As filas são grupos de atendimento dentro do setor, você poderá criar novas filas ou editar quando quiser",
       "queue_definitions": "Definições da fila",
+      "limit_chats": {
+        "title": "Limite de chats aguardando suporte",
+        "switch": {
+          "label": "Limite de chats",
+          "helper": "Quando o limite é atingido, novos chats não serão criados.",
+          "input_label": "Máximo de chats aguardando",
+          "input_placeholder": "Exemplo: 50"
+        }
+      },
       "message": {
         "create": "Fila criada com sucesso",
         "update": "Fila atualizada com sucesso",

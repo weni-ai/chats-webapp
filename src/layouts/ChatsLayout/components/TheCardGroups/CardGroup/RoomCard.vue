@@ -10,14 +10,20 @@
     @mouseenter="hover = true"
     @mouseleave="hover = false"
   >
-    <UnnnicCheckbox
+    <UnnnicToolTip
       v-if="withSelection"
-      :modelValue="checkboxValue"
-      size="sm"
-      class="room-card__checkbox"
-      data-testid="room-card-checkbox"
-      @change="checkboxValue = $event"
-    />
+      enabled
+      :text="checkboxValue ? $t('deselect_this_chat') : $t('select_this_chat')"
+      side="right"
+    >
+      <UnnnicCheckbox
+        :modelValue="checkboxValue"
+        size="sm"
+        class="room-card__checkbox"
+        data-testid="room-card-checkbox"
+        @change="checkboxValue = $event"
+      />
+    </UnnnicToolTip>
     <UnnnicChatsContact
       :class="{
         'room-card__contact': true,
@@ -37,7 +43,7 @@
       :locale="locale"
       :lastInteractionTime="lastInteractionTime"
       :lastInteractionTimePrefix="lastInteractionTimePrefix"
-      :projectName="room.config?.name"
+      :projectName="handleProjectName"
       data-testid="room-card-contact"
       @click="$emit('click')"
       @click-pin="$emit('clickPin', $event)"
@@ -105,6 +111,7 @@ export default {
     }),
     ...mapState(useConfig, {
       enableAutomaticRoomRouting: 'enableAutomaticRoomRouting',
+      enableGroupsMode: 'enableGroupsMode',
     }),
     hideContactMessageInfo() {
       return this.roomType === 'waiting' && this.enableAutomaticRoomRouting;
@@ -145,6 +152,12 @@ export default {
     },
     lastInteractionTimePrefix() {
       return this.roomType === 'waiting' ? this.$t('since') : '';
+    },
+    handleProjectName() {
+      if (this.enableGroupsMode) {
+        return this.room.config?.name;
+      }
+      return null;
     },
   },
 

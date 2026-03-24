@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { mount, config } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 import { setActivePinia } from 'pinia';
 import App from '@/App.vue';
@@ -9,6 +9,20 @@ import * as ProjectService from '@/services/api/resources/settings/project';
 import * as notifications from '@/utils/notifications';
 import * as configUtils from '@/utils/config';
 import * as storageUtils from '@/utils/storage';
+import i18n from '@/plugins/i18n';
+
+beforeAll(() => {
+  config.global.plugins = config.global.plugins.filter(
+    (plugin) => plugin !== i18n,
+  );
+});
+
+afterAll(() => {
+  if (!config.global.plugins.includes(i18n)) {
+    config.global.plugins.push(i18n);
+  }
+  vi.restoreAllMocks();
+});
 
 vi.mock('@/services/api/resources/profile', () => ({
   default: {
@@ -141,6 +155,7 @@ describe('App.vue', () => {
       global: {
         plugins: [pinia],
         mocks: {
+          $t: (key) => key,
           $router: mockRouter,
           $route: { name: routeName },
           $i18n: {
@@ -157,7 +172,7 @@ describe('App.vue', () => {
           },
           ModalOfflineAgent: {
             template:
-              '<div data-testid="modal-offline-agent">ModalOfflineAgent</div>',
+              '<div v-if="modelValue" data-testid="modal-offline-agent">ModalOfflineAgent</div>',
             props: ['modelValue', 'username'],
           },
           ModalRoomSummaryOnboarding: {
@@ -335,32 +350,6 @@ describe('App.vue', () => {
       expect(wrapper.find('[data-testid="modal-offline-agent"]').exists()).toBe(
         true,
       );
-    });
-  });
-
-  describe('ModalRoomSummaryOnboarding', () => {
-    it('should not display ModalRoomSummaryOnboarding when enableRoomSummary is false', () => {
-      wrapper = createWrapper();
-      const configStore = useConfig();
-      configStore.project.config.has_chats_summary = false;
-
-      expect(
-        wrapper.find('[data-testid="modal-room-summary-onboarding"]').exists(),
-      ).toBe(false);
-    });
-
-    it('should display ModalRoomSummaryOnboarding when enableRoomSummary is true and showModalRoomSummaryOnboarding is true', async () => {
-      const configStore = useConfig();
-      configStore.project.config.has_chats_summary = true;
-
-      vi.mocked(storageUtils.moduleStorage.getItem).mockReturnValue(true);
-
-      wrapper = createWrapper();
-      await wrapper.setData({ showModalRoomSummaryOnboarding: true });
-
-      expect(
-        wrapper.find('[data-testid="modal-room-summary-onboarding"]').exists(),
-      ).toBe(true);
     });
   });
 

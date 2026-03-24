@@ -102,23 +102,16 @@
     data-testid="new-sector-drawer"
     @close="closeNewSectorModal()"
   />
-  <UnnnicModalNext
+  <ModalConfirmDelete
     v-if="showDeleteSectorModal"
-    type="alert"
-    icon="alert-circle-1"
-    scheme="feedback-red"
+    v-model="showDeleteSectorModal"
+    data-testid="modal-delete-sector"
     :title="$t('delete_sector') + ` ${toDeleteSector.name}`"
     :description="$t('cant_revert')"
-    :validate="`${toDeleteSector.name}`"
-    :validatePlaceholder="`${toDeleteSector.name}`"
-    :validateLabel="
-      $t('confirm_typing') + ` &quot;${toDeleteSector.name}&quot;`
-    "
-    :actionPrimaryLabel="$t('confirm')"
-    :actionSecondaryLabel="$t('cancel')"
-    data-testid="modal-delete-sector"
-    @click-action-primary="deleteSector(toDeleteSector.uuid)"
-    @click-action-secondary="handlerCloseDeleteSectorModal()"
+    :confirmText="toDeleteSector.name"
+    :isLoading="isLoadingDeleteSector"
+    @confirm="deleteSector(toDeleteSector.uuid)"
+    @cancel="handlerCloseDeleteSectorModal()"
   />
 </template>
 
@@ -130,6 +123,7 @@ import { useConfig } from '@/store/modules/config';
 import { useSettings } from '@/store/modules/settings';
 
 import SettingsSectionHeader from './SettingsSectionHeader.vue';
+import ModalConfirmDelete from '@/components/ModalConfirmDelete.vue';
 
 import NewSectorDrawer from './Sectors/New/NewSectorDrawer.vue';
 import ListOrdinator from '@/components/settings/ListOrdinator.vue';
@@ -141,6 +135,7 @@ export default {
     SettingsSectionHeader,
     NewSectorDrawer,
     ListOrdinator,
+    ModalConfirmDelete,
   },
 
   data() {
@@ -150,6 +145,7 @@ export default {
       sectorNameFilter: '',
       sectorOrder: 'alphabetical',
       toDeleteSector: {},
+      isLoadingDeleteSector: false,
     };
   },
 
@@ -206,6 +202,7 @@ export default {
 
     async deleteSector(sectorUuid) {
       try {
+        this.isLoadingDeleteSector = true;
         await this.actionDeleteSector(sectorUuid);
 
         this.$router.push({ name: 'sectors' });
@@ -226,6 +223,7 @@ export default {
           seconds: 5,
         });
       } finally {
+        this.isLoadingDeleteSector = false;
         this.showDeleteSectorModal = false;
         this.handleConnectOverlay(false);
       }

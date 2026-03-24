@@ -2,6 +2,7 @@
   <section
     data-testid="message-card"
     class="message-card"
+    :class="{ active: active }"
   >
     <header
       class="message-card__header"
@@ -53,18 +54,28 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  active: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const senderName = computed(() => {
   const sender = props.message.contact || props.message.user;
+  const fromContact = !!props.message.contact;
 
   if (!sender) return i18n.global.t('chats.search_messages.automated_support');
 
   if (sender.name) return sender.name;
+  else if (fromContact) return i18n.global.t('unnamed_contact');
 
-  const firstName = sender.first_name || '';
-  const lastName = sender.last_name || '';
-  return [firstName, lastName].filter(Boolean).join(' ');
+  const agentFirstName = sender.first_name || '';
+  const agentLastName = sender.last_name || '';
+  const agentFullName = [agentFirstName, agentLastName]
+    .filter(Boolean)
+    .join(' ')
+    .trim();
+  return agentFullName || props.message.user?.email;
 });
 
 const formattedTime = computed(() => {
@@ -83,6 +94,9 @@ const formattedTime = computed(() => {
   border: 1px solid $unnnic-color-border-soft;
   cursor: pointer;
   &:hover {
+    background-color: $unnnic-color-bg-soft;
+  }
+  &.active {
     background-color: $unnnic-color-bg-soft;
   }
   &__header {

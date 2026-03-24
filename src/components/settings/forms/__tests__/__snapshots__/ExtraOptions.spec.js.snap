@@ -4,40 +4,46 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
 "<section data-v-85728205="" class="sector-extra-options-form">
   <section data-v-85728205="" class="switchs">
     <h2 data-v-85728205="" class="switchs__title" data-testid="switchs-title">Extras options</h2>
-    <unnnic-switch-stub data-v-85728205="" size="small" label="" labeltooltip="" labelusehtmltooltip="false" option="" helper="" textleft="" textright="Triggering message templates disabled" disabled="false" modelvalue="false" usevmodel="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    <unnnic-switch-stub data-v-85728205="" size="small" label="" option="" helper="" textleft="" textright="Triggering message templates disabled" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     <section data-v-85728205="" class="switchs__container">
-      <unnnic-switch-stub data-v-85728205="" size="small" label="" labeltooltip="" labelusehtmltooltip="false" option="" helper="" textleft="" textright="Disabled signature" disabled="false" modelvalue="false" usevmodel="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
-      <div data-v-03fa3548="" class="unnnic-tooltip-trigger" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-69390f82="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-soft unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span></div>
-      <div disabled="false" defer="false" forcemount="false">
+      <unnnic-switch-stub data-v-85728205="" size="small" label="" option="" helper="" textleft="" textright="Disabled signature" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+      <div data-v-03fa3548="" data-v-2e8bb3f0="" class="unnnic-tooltip-trigger unnnic-tooltip" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-69390f82="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-soft unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span></div>
+      <div data-v-2e8bb3f0="" disabled="false" defer="false" forcemount="false">
         <!---->
       </div>
     </section>
-    <unnnic-switch-stub data-v-85728205="" size="small" label="" labeltooltip="" labelusehtmltooltip="false" option="" helper="" textleft="" textright="Allow agents to edit Custom Fields" disabled="false" modelvalue="false" usevmodel="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    <unnnic-switch-stub data-v-85728205="" size="small" label="" option="" helper="" textleft="" textright="Allow agents to edit Custom Fields" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     <!--v-if-->
     <!--v-if-->
   </section>
   <section data-v-85728205="" class="tags">
-    <h2 data-v-85728205="" class="tags__title" data-testid="tags-title">Add tags <div data-v-03fa3548="" class="unnnic-tooltip-trigger" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-69390f82="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-soft unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span></div>
-      <div disabled="false" defer="false" forcemount="false">
+    <h2 data-v-85728205="" class="tags__title" data-testid="tags-title">Add tags <div data-v-03fa3548="" data-v-2e8bb3f0="" class="unnnic-tooltip-trigger unnnic-tooltip" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-69390f82="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-soft unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span></div>
+      <div data-v-2e8bb3f0="" disabled="false" defer="false" forcemount="false">
         <!---->
       </div>
     </h2>
     <section data-v-85728205="" class="switchs__container required-tags">
-      <unnnic-switch-stub data-v-85728205="" size="small" label="" labeltooltip="" labelusehtmltooltip="false" option="" helper="" textleft="" textright="Require tags at the end of supports disabled" disabled="true" modelvalue="false" usevmodel="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
-      <div data-v-03fa3548="" class="unnnic-tooltip-trigger" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-69390f82="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-soft unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span></div>
-      <div disabled="false" defer="false" forcemount="false">
+      <unnnic-switch-stub data-v-85728205="" size="small" label="" option="" helper="" textleft="" textright="Require tags at the end of supports disabled" disabled="true" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+      <div data-v-03fa3548="" data-v-2e8bb3f0="" class="unnnic-tooltip-trigger unnnic-tooltip" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-69390f82="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--neutral-soft unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span></div>
+      <div data-v-2e8bb3f0="" disabled="false" defer="false" forcemount="false">
         <!---->
       </div>
     </section>
     <section data-v-85728205="" class="tags-form">
-      <div data-v-1bfe622c="" data-v-85728205="" class="unnnic-input size-md tags-form__input" data-testid="tags-input-tag-name"><span data-v-1bfe622c="" class="label unnnic-font secondary color-neutral-cloudy body-gt">Tag name</span>
-        <div data-v-1bfe622c="" class="input-container">
-          <!----><input data-v-1bfe622c="" class="unnnic-font secondary" type="text" placeholder="Enter the name of a tag to search or to add it" maxlength="120" value="">
+      <section data-v-cb39816d="" data-v-2dd04313="" data-v-85728205="" class="unnnic-form-element unnnic-form md tags-form__input" data-testid="tags-input-tag-name">
+        <section data-v-b52fcb11="" data-v-cb39816d="" class="unnnic-label unnnic-form-element__label">
+          <p data-v-b52fcb11="" class="unnnic-label__label">Tag name</p>
           <!---->
+        </section>
+        <div data-v-28a84b07="" data-v-2dd04313="" class="text-input size--md tags-form__input unnnic-form-input" data-testid="tags-input-tag-name" hascloudycolor="false" mask=""><input data-v-043812be="" data-v-28a84b07="" class="tags-form__input unnnic-form-input input-itself input size-md normal tags-form__input unnnic-form-input input-itself" data-testid="tags-input-tag-name" hascloudycolor="false" placeholder="Enter the name of a tag to search or to add it" iconleft="" iconright="" iconleftclickable="false" iconrightclickable="false" showclear="false" type="text" maxlength="120" value="">
           <!---->
+          <section data-v-28a84b07="" class="icon-right-container">
+            <!---->
+            <!---->
+          </section>
         </div>
         <!---->
-      </div><button data-v-aadba593="" data-v-85728205="" data-testid="tags-add-tag-button" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--secondary">
+      </section><button data-v-aadba593="" data-v-85728205="" data-testid="tags-add-tag-button" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--secondary">
         <!---->
         <!---->
         <!----><span data-v-aadba593="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Add</span>

@@ -3,19 +3,8 @@
     <SocketAlertBanner v-if="showSocketAlertBanner" />
     <RouterView />
     <ModalOfflineAgent
-      v-if="showModalOfflineAgent"
       v-model="showModalOfflineAgent"
       :username="userWhoChangedStatus"
-    />
-    <ModalRoomSummaryOnboarding
-      v-if="enableRoomSummary"
-      :modelValue="showModalRoomSummaryOnboarding"
-      @update:model-value="
-        (value) => {
-          updateOnboardingModal('showModalRoomSummaryOnboarding', value);
-          showModalRoomSummaryOnboarding = value;
-        }
-      "
     />
   </div>
 </template>
@@ -25,7 +14,6 @@ import { mapActions, mapState } from 'pinia';
 
 import SocketAlertBanner from './layouts/ChatsLayout/components/SocketAlertBanner.vue';
 import ModalOfflineAgent from './components/ModalOfflineAgent.vue';
-import ModalRoomSummaryOnboarding from './components/ModalRoomSummaryOnboarding.vue';
 
 import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
@@ -56,7 +44,6 @@ export default {
   components: {
     SocketAlertBanner,
     ModalOfflineAgent,
-    ModalRoomSummaryOnboarding,
   },
   setup() {
     const queryString = window.location.href.split('?')[1];
@@ -186,6 +173,7 @@ export default {
       'setCustomStatus',
       'setProject',
       'setDisconnectedBy',
+      'setSocketClosedOffline',
     ]),
     ...mapActions(useProfile, ['setMe', 'getMeQueues']),
     ...mapActions(useQuickMessages, {
@@ -330,6 +318,7 @@ export default {
       moduleStorage.setItem(`statusAgent-${this.project.uuid}`, status, {
         useSession: true,
       });
+      this.setSocketClosedOffline(true);
       this.setStatus(status);
       this.setDisconnectedBy(disconnectedBy);
       if (isCustom) {

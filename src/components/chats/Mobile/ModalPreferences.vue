@@ -1,53 +1,62 @@
 <template>
-  <UnnnicModal
-    :text="$t('preferences.title')"
+  <UnnnicDialog
+    v-model:open="isOpen"
     class="modal-preferences"
-    @close="$emit('close')"
   >
-    <UnnnicLabel label="Status" />
-    <UnnnicSwitch
-      v-model="configStatus"
-      :disabled="loadingStatus"
-      :textRight="
-        storeStatus === 'ONLINE' ? $t('status.online') : $t('status.offline')
-      "
-      size="medium"
-      @update:model-value="updateStatus"
-    />
+    <UnnnicDialogContent>
+      <UnnnicDialogHeader>
+        <UnnnicDialogTitle>
+          {{ $t('preferences.title') }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section class="modal-preferences__content">
+        <UnnnicLabel label="Status" />
+        <UnnnicSwitch
+          v-model="configStatus"
+          :disabled="loadingStatus"
+          :textRight="
+            storeStatus === 'ONLINE'
+              ? $t('status.online')
+              : $t('status.offline')
+          "
+          size="medium"
+          @update:model-value="updateStatus"
+        />
 
-    <UnnnicLabel :label="$t('preferences.notifications.title')" />
-    <UnnnicSwitch
-      v-model="configSound"
-      :textRight="$t('preferences.notifications.sound')"
-      size="medium"
-      @update:model-value="updateSound"
-    />
+        <UnnnicLabel :label="$t('preferences.notifications.title')" />
+        <UnnnicSwitch
+          v-model="configSound"
+          :textRight="$t('preferences.notifications.sound')"
+          size="medium"
+          @update:model-value="updateSound"
+        />
 
-    <UnnnicLabel :label="$t('language')" />
-    <UnnnicLanguageSelect
-      v-model="$i18n.locale"
-      :supportedLanguages="supportedLanguages"
-      position="top"
-      @update:model-value="updateLanguage"
-    />
-
-    <template #options>
-      <UnnnicButton
-        :text="$t('quick_messages.title')"
-        iconLeft="bolt"
-        type="secondary"
-        size="large"
-        @click="$emit('open-quick-messages')"
-      />
-      <UnnnicButton
-        :text="$t('back_to_home_page')"
-        iconLeft="arrow_back"
-        type="tertiary"
-        size="large"
-        @click="$emit('back-to-home')"
-      />
-    </template>
-  </UnnnicModal>
+        <UnnnicLabel :label="$t('language')" />
+        <UnnnicLanguageSelect
+          v-model="$i18n.locale"
+          :supportedLanguages="supportedLanguages"
+          position="top"
+          @update:model-value="updateLanguage"
+        />
+      </section>
+      <UnnnicDialogFooter>
+        <UnnnicButton
+          :text="$t('quick_messages.title')"
+          iconLeft="bolt"
+          type="secondary"
+          size="large"
+          @click="$emit('open-quick-messages')"
+        />
+        <UnnnicButton
+          :text="$t('back_to_home_page')"
+          iconLeft="arrow_back"
+          type="tertiary"
+          size="large"
+          @click="$emit('back-to-home')"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script>
@@ -63,6 +72,7 @@ export default {
 
   data() {
     return {
+      isOpen: true,
       loadingStatus: false,
       configStatus: false,
       configSound: false,
@@ -74,6 +84,12 @@ export default {
     ...mapState(useConfig, {
       storeStatus: (store) => store.status,
     }),
+  },
+
+  watch: {
+    isOpen(value) {
+      if (!value) this.$emit('close');
+    },
   },
 
   async created() {
@@ -119,24 +135,10 @@ export default {
 
 <style lang="scss" scoped>
 .modal-preferences {
-  :deep(.unnnic-modal-container) {
-    .unnnic-modal-container-background {
-      &-body-description {
-        padding: 0;
-
-        &-container {
-          padding-bottom: 0;
-        }
-      }
-      &-button {
-        flex-direction: column;
-        gap: $unnnic-spacing-sm;
-
-        > * {
-          margin: 0;
-        }
-      }
-    }
+  &__content {
+    display: grid;
+    gap: $unnnic-spacing-sm;
+    padding: $unnnic-space-6;
   }
 }
 </style>

@@ -4,7 +4,7 @@
     ref="newSectorDrawer"
     class="new-sector-drawer"
     :modelValue="modelValue"
-    closeIcon="arrow_back"
+    closeIcon="close"
     size="gt"
     :title="$t('config_chats.new_sector')"
     :primaryButtonText="activePageIndex === 3 ? $t('save') : $t('continue')"
@@ -17,7 +17,7 @@
     "
     @secondary-button-click="
       activePageIndex === 0
-        ? $refs.newSectorDrawer.close()
+        ? handleCloseNewSectorDrawer()
         : (activePageIndex = activePageIndex - 1)
     "
     @close="handleCloseNewSectorDrawer"
@@ -91,12 +91,13 @@
     </template>
   </UnnnicDrawer>
   <DiscartChangesModal
-    :showModal="showConfirmDiscartChangesModal"
+    v-if="showConfirmDiscartChangesModal"
+    v-model="showConfirmDiscartChangesModal"
     :title="$t('new_sector.discart.title')"
     :text="$t('new_sector.discart.hint')"
     data-testid="discart-changes-modal"
-    @secondary-button-click="showConfirmDiscartChangesModal = false"
-    @primary-button-click="$emit('close')"
+    @cancel="showConfirmDiscartChangesModal = false"
+    @confirm="$emit('close')"
   />
 </template>
 
@@ -149,7 +150,7 @@ export default {
         can_trigger_flows: true,
         can_edit_custom_fields: true,
         sign_messages: true,
-        is_csat_enabled: true,
+        is_csat_enabled: false,
         automatic_message: {
           is_active: false,
           text: '',
@@ -163,6 +164,7 @@ export default {
       },
       sectorQueue: {
         name: '',
+        queue_limit: { is_active: false, limit: null },
         currentAgents: [],
         agents: 0,
       },
@@ -204,6 +206,9 @@ export default {
     },
     enableAutomaticCsatFeature() {
       return this.featureFlags.active_features?.includes('weniChatsCSAT');
+    },
+    enableQueueLimitFeature() {
+      return this.featureFlags.active_features?.includes('weniChatsQueueLimit');
     },
   },
   mounted() {
@@ -279,6 +284,9 @@ export default {
           name: this.sectorQueue.name,
           default_message: '',
           sectorUuid: this.sector.uuid,
+          queue_limit: this.enableQueueLimitFeature
+            ? this.sectorQueue.queue_limit
+            : { is_active: false, limit: null },
         });
 
         await Promise.all(

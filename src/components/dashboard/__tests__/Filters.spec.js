@@ -32,7 +32,9 @@ describe('DashboardFilters', () => {
   });
 
   it('emits filter event when filter values change', async () => {
-    await wrapper.setData({ filterSector: [{ value: 'test-sector' }] });
+    await wrapper.setData({
+      filterSector: { value: 'test-sector', label: 'Test' },
+    });
     expect(wrapper.emitted().filter).toBeTruthy();
   });
 
@@ -129,9 +131,13 @@ describe('DashboardFilters', () => {
   });
 
   it('resets filters when reset button is clicked', async () => {
-    await wrapper.setData({ filterAgent: [{ value: 'agent-test' }] });
-    await wrapper.find('button').trigger('click');
-    expect(wrapper.vm.filterAgent.length).toBe(1); // Should be reset
+    await wrapper.setData({
+      filterAgent: { value: 'agent-test', label: 'Agent' },
+    });
+    await wrapper
+      .find('[data-testid="dashboard-filters-clear"]')
+      .trigger('click');
+    expect(wrapper.vm.filterAgent).toBeNull();
   });
 
   it('properly processes sectors in treatSectors', async () => {
@@ -142,10 +148,8 @@ describe('DashboardFilters', () => {
 
     await wrapper.setProps({ sectors: sectorsMock });
 
-    console.log(wrapper.vm.tagsToFilter);
-
     expect(wrapper.vm.sectorsToFilter).toEqual([
-      { value: 'all', label: 'All' },
+      { value: 'all', label: wrapper.vm.$t('all') },
       { value: 'sector-1', label: 'Sector 1' },
       { value: 'sector-2', label: 'Sector 2' },
     ]);

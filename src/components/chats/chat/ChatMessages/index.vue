@@ -81,6 +81,7 @@
                 :automatic="message.is_automatic_message"
                 :locale="$i18n.locale"
                 data-testid="chat-message"
+                :highlighted="message.uuid === toScrollMessage?.uuid"
                 @click-reply-message="
                   handlerClickReplyMessage(message.replied_message)
                 "
@@ -119,6 +120,7 @@
                   :signature="messageSignature(message)"
                   :enableReply="enableReply"
                   :replyMessage="message.replied_message"
+                  :highlighted="message.uuid === toScrollMessage?.uuid"
                   data-testid="chat-message"
                   @click-reply-message="
                     handlerClickReplyMessage(message.replied_message)
@@ -147,13 +149,11 @@
                     class="media"
                     :src="media.url || media.preview"
                   />
-                  <UnnnicAudioRecorder
+                  <ChatMessageAudio
                     v-else-if="isAudio(media)"
-                    ref="audio-recorder"
-                    class="media audio"
-                    :src="media.url || media.preview"
-                    :canDiscard="false"
-                    :reqStatus="messageStatus({ message, media })"
+                    :message="message"
+                    :messageStatus="messageStatus({ message, media })"
+                    :isClosedChat="isClosedChat"
                     @failed-click="resendMedia({ message, media })"
                   />
                 </UnnnicChatsMessage>
@@ -180,6 +180,7 @@
                   :enableReply="enableReply"
                   :replyMessage="message.replied_message"
                   data-testid="chat-message"
+                  :highlighted="message.uuid === toScrollMessage?.uuid"
                   @click-reply-message="
                     handlerClickReplyMessage(message.replied_message)
                   "
@@ -268,6 +269,7 @@ import ChatFeedback from '../ChatFeedback.vue';
 import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
 import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
 import ChatMessagesInternalNote from './ChatMessagesInternalNote.vue';
+import ChatMessageAudio from './ChatMessageAudio/ChatMessageAudio.vue';
 
 import { isString } from '@/utils/string';
 import { SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT } from '@/utils/chats';
@@ -286,6 +288,7 @@ export default {
     FullscreenPreview,
     VideoPlayer,
     ChatMessagesInternalNote,
+    ChatMessageAudio,
   },
 
   props: {
@@ -700,6 +703,7 @@ export default {
       this.currentMedia = this.medias.find((el) => el.url === url);
       this.isFullscreen = true;
     },
+
     nextMedia() {
       const imageIndex = this.medias.findIndex(
         (el) => el.url === this.currentMedia.url,
@@ -708,6 +712,7 @@ export default {
         this.currentMedia = this.medias[imageIndex + 1];
       }
     },
+
     previousMedia() {
       const imageIndex = this.medias.findIndex(
         (el) => el.url === this.currentMedia.url,
@@ -718,6 +723,7 @@ export default {
     },
 
     handleSeenRoomMessages() {
+      if (!this.room) return;
       const newMessages =
         this.newMessagesByRoom[this.room.uuid]?.messages || [];
 
@@ -827,8 +833,6 @@ export default {
         this.scrollToRef(refKey);
         return;
       }
-      this.toScrollNote = null;
-      this.toScrollMessage = null;
     },
 
     async scrollToInternalNote(note) {
@@ -865,8 +869,8 @@ export default {
 .chat-messages__scroll-button {
   &-container {
     position: absolute;
-    bottom: $unnnic-spacing-md;
-    right: $unnnic-spacing-sm;
+    bottom: $unnnic-space-6;
+    right: $unnnic-space-4;
     z-index: 9;
   }
   &-chip {
@@ -894,20 +898,20 @@ export default {
   height: 100%;
 
   &--view-mode {
-    padding-left: $unnnic-spacing-sm;
+    padding-left: $unnnic-space-4;
   }
 }
 
 .chat-messages {
   overflow: hidden auto;
 
-  padding-right: $unnnic-spacing-sm;
+  padding-right: $unnnic-space-4;
 
   height: 100%;
 
   &__container-date {
     &:last-of-type {
-      margin-bottom: $unnnic-spacing-md;
+      margin-bottom: $unnnic-space-6;
     }
   }
 
@@ -916,7 +920,7 @@ export default {
   }
 
   &__message {
-    margin-top: $unnnic-spacing-md;
+    margin-top: $unnnic-space-6;
 
     &.highlighted {
       animation: highlight-message 1s ease-in-out;
@@ -926,17 +930,17 @@ export default {
       justify-self: flex-end;
 
       & + & {
-        margin-top: $unnnic-spacing-nano;
+        margin-top: $unnnic-space-1;
       }
     }
 
     &.received {
       & + & {
-        margin-top: $unnnic-spacing-nano;
+        margin-top: $unnnic-space-1;
       }
 
       &.different-user {
-        margin-top: $unnnic-spacing-md !important;
+        margin-top: $unnnic-space-6 !important;
       }
     }
 
@@ -945,15 +949,15 @@ export default {
     }
 
     .audio {
-      padding: $unnnic-spacing-xs;
-      margin: $unnnic-spacing-nano 0;
+      padding: $unnnic-space-2;
+      margin: $unnnic-space-1 0;
     }
 
     &__divisor {
       display: flex;
       align-items: center;
-      gap: $unnnic-spacing-stack-xl;
-      margin-bottom: $unnnic-inline-md;
+      gap: $unnnic-space-10;
+      margin-bottom: $unnnic-space-6;
 
       &__label {
         font-size: $unnnic-font-size-body-md;
@@ -970,10 +974,10 @@ export default {
   }
 
   &__tags {
-    margin: $unnnic-spacing-inline-md 0;
+    margin: $unnnic-space-6 0;
 
     display: grid;
-    gap: $unnnic-spacing-md;
+    gap: $unnnic-space-6;
 
     :deep(.unnnic-brand-tag__icon) {
       display: none;
