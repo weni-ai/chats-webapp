@@ -82,11 +82,11 @@ export default async (room, { app }) => {
   lastAppRef = app;
 
   const featureFlagStore = useFeatureFlag();
-  const useNewRoomUpdate =
+  const useLegacy =
     featureFlagStore.featureFlags?.active_features?.includes(
-      'WeniChatsNewRoomUpdate',
-    );
-  if (!useNewRoomUpdate) {
+      'weniChatsLegacyRoomUpdate',
+    ) ?? true;
+  if (useLegacy) {
     return handleUpdateLegacy(room, app, roomsStore);
   }
 
@@ -129,6 +129,8 @@ function handleUpdateLegacy(room, app, roomsStore) {
   const isRoomForMe = room.user?.email === app.me.email;
 
   if (!isExistingRoom) {
+    roomsStore.addRoom(room);
+
     if (room.transfer_history?.action === 'transfer') {
       new SoundNotification('achievement-confirmation').notify();
     }

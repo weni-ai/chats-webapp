@@ -212,11 +212,11 @@ export const useRooms = defineStore('rooms', {
 
     updateRoom({ room, userEmail, routerReplace, viewedAgentEmail }) {
       const featureFlagStore = useFeatureFlag();
-      const useNewRoomUpdate =
+      const useLegacy =
         featureFlagStore.featureFlags?.active_features?.includes(
-          'WeniChatsNewRoomUpdate',
-        );
-      if (!useNewRoomUpdate) {
+          'weniChatsLegacyRoomUpdate',
+        ) ?? true;
+      if (useLegacy) {
         return this._updateRoomLegacy({
           room,
           userEmail,
@@ -281,12 +281,6 @@ export const useRooms = defineStore('rooms', {
       const wasInArray = !!existingRoom;
       const oldType = existingRoom ? getRoomType(existingRoom) : null;
 
-      const shouldBeVisible = this.checkUserSeenRoom({
-        room,
-        viewedAgentEmail,
-        userEmail,
-      });
-
       const filteredRooms = this.rooms
         .map((mappedRoom) =>
           mappedRoom.uuid === room.uuid
@@ -306,10 +300,6 @@ export const useRooms = defineStore('rooms', {
           }
           return 0;
         });
-
-      if (!wasInArray && shouldBeVisible) {
-        filteredRooms.unshift({ ...room });
-      }
 
       this.rooms = filteredRooms;
 
