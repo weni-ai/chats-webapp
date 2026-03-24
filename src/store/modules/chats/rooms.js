@@ -3,7 +3,6 @@ import { defineStore } from 'pinia';
 import { useDashboard } from '../dashboard';
 import { useFeatureFlag } from '../featureFlag';
 import { useProfile } from '../profile';
-import { useRoomCounters } from './roomCounters';
 
 import Room from '@/services/api/resources/chats/room';
 import { removeDuplicatedItems } from '@/utils/array';
@@ -36,6 +35,11 @@ export const useRooms = defineStore('rooms', {
       waiting: 'added_to_queue_at',
     },
     showOngoingDot: false,
+    roomsCount: {
+      waiting: 0,
+      ongoing: 0,
+      flow_start: 0,
+    },
   }),
 
   actions: {
@@ -163,18 +167,7 @@ export const useRooms = defineStore('rooms', {
 
       if (roomsType) {
         this.hasNextRooms[roomsType] = listRoomHasNext;
-
-        const localSizeByType = {
-          ongoing: this.agentRooms.length,
-          waiting: this.waitingQueue.length,
-          flow_start: this.waitingContactAnswer.length,
-        };
-        const counters = useRoomCounters();
-        counters.syncFromApi(
-          roomsType,
-          response.count,
-          localSizeByType[roomsType] ?? 0,
-        );
+        this.roomsCount[roomsType] = response.count;
       }
 
       this.maxPinLimit = response.max_pin_limit || 0;
@@ -212,11 +205,11 @@ export const useRooms = defineStore('rooms', {
 
     updateRoom({ room, userEmail, routerReplace, viewedAgentEmail }) {
       const featureFlagStore = useFeatureFlag();
-      const useNewRoomUpdate =
+      const useLegacy =
         featureFlagStore.featureFlags?.active_features?.includes(
-          'WeniChatsNewRoomUpdate',
-        );
-      if (!useNewRoomUpdate) {
+          'weniChatsLegacyRoomUpdate',
+        ) ?? true;
+      if (useLegacy) {
         return this._updateRoomLegacy({
           room,
           userEmail,
@@ -240,8 +233,6 @@ export const useRooms = defineStore('rooms', {
       });
 
       const roomIndex = this.rooms.findIndex((r) => r.uuid === room.uuid);
-      const wasInArray = roomIndex !== -1;
-      const oldType = wasInArray ? getRoomType(this.rooms[roomIndex]) : null;
 
       if (roomIndex !== -1) {
         if (shouldBeVisible) {
@@ -263,25 +254,17 @@ export const useRooms = defineStore('rooms', {
         return 0;
       });
 
-      const isNowInArray = this.rooms.some((r) => r.uuid === room.uuid);
-      const newType = getRoomType(room);
-
       this._handleTransferSideEffects({
         room,
         userEmail,
         routerReplace,
         viewedAgentEmail,
       });
-
-      return { wasInArray, isNowInArray, oldType, newType };
     },
 
     _updateRoomLegacy({ room, userEmail, routerReplace, viewedAgentEmail }) {
-      const existingRoom = this.rooms.find((r) => r.uuid === room.uuid);
-      const wasInArray = !!existingRoom;
-      const oldType = existingRoom ? getRoomType(existingRoom) : null;
-
-      const filteredRooms = this.rooms
+      const rooms = this.rooms;
+      const filteredRooms = rooms
         .map((mappedRoom) =>
           mappedRoom.uuid === room.uuid
             ? { is_pinned: mappedRoom?.is_pinned, ...room }
@@ -303,17 +286,12 @@ export const useRooms = defineStore('rooms', {
 
       this.rooms = filteredRooms;
 
-      const isNowInArray = this.rooms.some((r) => r.uuid === room.uuid);
-      const newType = getRoomType(room);
-
       this._handleTransferSideEffects({
         room,
         userEmail,
         routerReplace,
         viewedAgentEmail,
       });
-
-      return { wasInArray, isNowInArray, oldType, newType };
     },
 
     _handleTransferSideEffects({
