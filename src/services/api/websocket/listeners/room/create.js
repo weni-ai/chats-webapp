@@ -1,5 +1,6 @@
 import SoundNotification from '@/services/api/websocket/soundNotification';
 import { useRooms } from '@/store/modules/chats/rooms';
+import { useRoomCounters } from '@/store/modules/chats/roomCounters';
 import { getRoomType } from '@/utils/room';
 
 export default async (room, { app }) => {
@@ -15,6 +16,9 @@ export default async (room, { app }) => {
 
     const addAfter = !roomsStore.orderBy[roomType].includes('-');
     roomsStore.addRoom(room, { after: addAfter });
+
+    const counters = useRoomCounters();
+    counters.handleCreate(roomType);
 
     if (roomType === 'ongoing' && roomsStore.activeTab !== 'ongoing') {
       roomsStore.showOngoingDot = true;
