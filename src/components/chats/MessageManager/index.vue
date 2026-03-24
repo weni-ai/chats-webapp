@@ -28,7 +28,12 @@
         />
         <TextBoxV2
           v-if="isV2MessageEnabled"
+          ref="textBoxV2"
           v-model="textBoxMessage"
+          :audioMessage="audioMessage"
+          :audioRecorderStatus="audioRecorderStatus"
+          @update:audio-message="audioMessage = $event"
+          @update:audio-recorder-status="updateAudioRecorderStatus"
           @send="send"
         />
         <template v-else>
@@ -329,7 +334,7 @@ export default {
       this.clearReplyMessage();
     },
     replyMessage(newReplyMessage) {
-      if (newReplyMessage) this.$refs.textBox.focus();
+      if (newReplyMessage) this.focusTextBox();
     },
   },
 
@@ -362,7 +367,7 @@ export default {
     setMessage(newMessage) {
       this.textBoxMessage = newMessage;
       this.$nextTick(() => {
-        this.$refs.textBox.focus();
+        this.focusTextBox();
       });
     },
     clearReplyMessage() {
@@ -433,7 +438,6 @@ export default {
         this.openFileUploader(fileList);
       }
     },
-
     record() {
       if (!this.isLoading) {
         this.$refs.audioRecorder?.record();
@@ -523,6 +527,13 @@ export default {
     },
     updateAudioRecorderStatus(status) {
       this.audioRecorderStatus = status;
+    },
+    focusTextBox() {
+      if (this.isV2MessageEnabled) {
+        this.$refs.textBoxV2.focus();
+      } else {
+        this.$refs.textBox.focus();
+      }
     },
   },
 };

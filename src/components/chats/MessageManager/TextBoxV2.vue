@@ -1,6 +1,14 @@
 <template>
   <section :class="['text-box', { 'text-box--focused': focused }]">
+    <UnnnicAudioRecorder
+      v-show="isAudioRecorderVisible"
+      ref="audioRecorder"
+      v-model="audioMessage"
+      class="message-manager__audio-recorder"
+      @status="updateAudioRecorderStatus"
+    />
     <textarea
+      v-if="!isAudioRecorderVisible"
       ref="textArea"
       :value="modelValue"
       :placeholder="$t('message')"
@@ -33,7 +41,8 @@
               :disabled="action.disabled"
               type="tertiary"
               size="small"
-              @click="action.action"
+              :pressed="action.pressed"
+              @click.stop="action.action()"
             />
           </UnnnicToolTip>
           <hr
@@ -52,6 +61,11 @@
         @click="handleSend"
       />
     </section>
+    <UnnnicEmojiPicker
+      v-show="isEmojiPickerOpen"
+      @emoji-selected="handleTextarea"
+      @close="isEmojiPickerOpen = false"
+    />
   </section>
 </template>
 
@@ -61,6 +75,8 @@ import i18n from '@/plugins/i18n';
 
 interface Props {
   modelValue: string;
+  audioMessage: HTMLAudioElement | null;
+  audioRecorderStatus: string;
 }
 
 const { t } = i18n.global;
@@ -69,15 +85,23 @@ const MAX_TEXTAREA_ROWS = 5;
 const currentTextAreaRows = ref(1);
 
 const textareaRef = useTemplateRef('textArea');
+const audioRecorderRef = useTemplateRef('audioRecorder');
 
 const props = defineProps<Props>();
 const emit = defineEmits<{
   'update:modelValue': [string];
+  'update:audioMessage': [HTMLAudioElement | null];
+  'update:audioRecorderStatus': [string];
   paste: [Event];
   send: [void];
 }>();
 
+const isEmojiPickerOpen = ref(false);
+
 const focused = ref(false);
+const focus = () => {
+  textareaRef.value?.focus();
+};
 const message = computed({
   get() {
     return props.modelValue;
@@ -89,8 +113,16 @@ const message = computed({
     });
   },
 });
+const audioMessage = computed({
+  get() {
+    return props.audioMessage;
+  },
+  set(value: HTMLAudioElement) {
+    emit('update:audioMessage', value);
+  },
+});
 const disableSendButton = computed(() => {
-  return !message.value.trim();
+  return !message.value.trim() && !audioMessage.value;
 });
 
 interface TextBoxAction {
@@ -98,6 +130,7 @@ interface TextBoxAction {
   tooltip?: string;
   disabled?: boolean;
   showDivider?: boolean;
+  pressed?: boolean;
   action: () => void;
 }
 const actions = computed<TextBoxAction[]>(() => {
@@ -105,23 +138,28 @@ const actions = computed<TextBoxAction[]>(() => {
     {
       icon: 'bolt',
       tooltip: t('quick_message'),
+      pressed: message.value.startsWith('/'),
       action: () => {
-        console.log('Quick message');
+        message.value = message.value.startsWith('/') ? '' : '/';
       },
     },
     {
       icon: 'add_reaction',
-      tooltip: 'Emoji', // TODO: Translate
+      tooltip: 'Emoji',
       showDivider: true,
+      pressed: isEmojiPickerOpen.value,
       action: () => {
-        console.log('Emoji picker');
+        isEmojiPickerOpen.value = !isEmojiPickerOpen.value;
       },
     },
     {
       icon: 'mic',
       tooltip: t('audio_message'),
+      pressed: ['recording', 'recorded', 'playing', 'paused'].includes(
+        props.audioRecorderStatus,
+      ),
       action: () => {
-        console.log('Audio message');
+        audioRecorderRef.value?.record();
       },
     },
     {
@@ -165,6 +203,7 @@ const handleSend = () => {
   emitSend();
   nextTick(() => {
     clearTextarea();
+    emit('update:audioRecorderStatus', '');
   });
 };
 
@@ -177,6 +216,7 @@ const clearTextarea = () => {
 
 // TODO: check if this is correct after clearTextarea
 const adjustTextareaHeight = () => {
+  if (!textareaRef.value) return;
   textareaRef.value.style.height = 'auto';
 
   const lineHeight = parseFloat(getComputedStyle(textareaRef.value).lineHeight);
@@ -195,6 +235,20 @@ const adjustTextareaHeight = () => {
 const emitSend = () => {
   emit('send');
 };
+
+const isAudioRecorderVisible = computed(() => {
+  return ['recording', 'recorded', 'playing', 'paused'].includes(
+    props.audioRecorderStatus,
+  );
+});
+
+const updateAudioRecorderStatus = (status: string) => {
+  emit('update:audioRecorderStatus', status);
+};
+
+defineExpose({
+  focus,
+});
 </script>
 
 <style scoped lang="scss">
@@ -207,6 +261,12 @@ const emitSend = () => {
   display: flex;
   flex-direction: column;
   gap: $unnnic-space-3;
+
+  :deep(.audio-handler__time) {
+    display: inline-block;
+    min-width: 56px; // TODO: check if this is correct
+  }
+
   &--focused {
     border-color: $unnnic-color-border-active;
   }
