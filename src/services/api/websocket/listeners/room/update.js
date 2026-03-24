@@ -129,6 +129,8 @@ function handleUpdateLegacy(room, app, roomsStore) {
   const isRoomForMe = room.user?.email === app.me.email;
 
   if (!isExistingRoom) {
+    roomsStore.addRoom(room);
+
     if (room.transfer_history?.action === 'transfer') {
       new SoundNotification('achievement-confirmation').notify();
     }
