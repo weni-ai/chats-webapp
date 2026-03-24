@@ -315,13 +315,13 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('returns room config name when enableGroupsMode is true', () => {
+    it('returns queue sector_name when enableGroupsMode is true', () => {
       const configStore = useConfig();
       configStore.enableGroupsMode = true;
 
       const wrapper = createWrapper();
 
-      expect(wrapper.vm.handleProjectName).toBe('Test Project');
+      expect(wrapper.vm.handleProjectName).toBe('Support');
 
       wrapper.unmount();
     });
@@ -337,12 +337,12 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('returns undefined when enableGroupsMode is true but room has no config', () => {
+    it('returns undefined when enableGroupsMode is true but room has no queue', () => {
       const configStore = useConfig();
       configStore.enableGroupsMode = true;
 
-      const roomWithoutConfig = { ...mockRoom, config: undefined };
-      const wrapper = createWrapper({ room: roomWithoutConfig });
+      const roomWithoutQueue = { ...mockRoom, queue: undefined };
+      const wrapper = createWrapper({ room: roomWithoutQueue });
 
       expect(wrapper.vm.handleProjectName).toBeUndefined();
 
@@ -564,12 +564,12 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('handles room without config gracefully', () => {
+    it('handles room without queue gracefully', () => {
       const configStore = useConfig();
       configStore.enableGroupsMode = true;
 
-      const roomWithoutConfig = { ...mockRoom, config: null };
-      const wrapper = createWrapper({ room: roomWithoutConfig });
+      const roomWithoutQueue = { ...mockRoom, queue: null };
+      const wrapper = createWrapper({ room: roomWithoutQueue });
 
       expect(wrapper.exists()).toBe(true);
       expect(wrapper.vm.handleProjectName).toBeUndefined();
