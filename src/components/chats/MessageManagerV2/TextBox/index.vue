@@ -24,7 +24,10 @@
         @click="isInternalNote = false"
       />
     </div>
-    <section class="text-box__textarea-container">
+    <section
+      v-if="!isAudioRecorderVisible && mediaUploadFiles.length === 0"
+      class="text-box__textarea-container"
+    >
       <p
         v-if="isInternalNote"
         class="internal-note__prefix"
@@ -32,7 +35,6 @@
         {{ $t('internal_note') + ': ' }}
       </p>
       <textarea
-        v-if="!isAudioRecorderVisible"
         ref="textArea"
         :value="inputMessage"
         :placeholder="isInternalNote ? '' : $t('message')"
