@@ -39,7 +39,11 @@ export const useMessageManager = defineStore('messageManager', () => {
   }
 
   const disableSendButton = computed(() => {
-    return !inputMessage.value.trim() && !audioMessage.value;
+    return (
+      !inputMessage.value.trim() &&
+      !audioMessage.value &&
+      mediaUploadFiles.value.length === 0
+    );
   });
 
   const isAudioRecorderVisible = computed(() => {
@@ -117,7 +121,21 @@ export const useMessageManager = defineStore('messageManager', () => {
     });
   }
 
-  function sendDiscussionMessage() {}
+  async function sendMediasMessage() {
+    if (discussionsStore.activeDiscussion?.uuid) {
+      await discussionMessagesStore.sendDiscussionMedias({
+        files: mediaUploadFiles.value,
+        updateLoadingFiles: () => {},
+      });
+    } else {
+      await roomMessagesStore.sendRoomMedias({
+        files: mediaUploadFiles.value,
+        updateLoadingFiles: () => {},
+        repliedMessage: replyMessage.value,
+      });
+    }
+    clearInputs();
+  }
 
   return {
     inputMessage,
@@ -134,6 +152,6 @@ export const useMessageManager = defineStore('messageManager', () => {
     isAudioRecorderVisible,
 
     sendRoomMessage,
-    sendDiscussionMessage,
+    sendMediasMessage,
   };
 });

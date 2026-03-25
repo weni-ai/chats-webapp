@@ -47,9 +47,14 @@ const discussionsStore = useDiscussions();
 const { activeDiscussion } = storeToRefs(discussionsStore);
 
 const messageManager = useMessageManager();
-const { sendRoomMessage } = messageManager;
-const { inputMessage, isCopilotOpen, isSuggestionBoxOpen, isInternalNote } =
-  storeToRefs(messageManager);
+const { sendRoomMessage, sendMediasMessage } = messageManager;
+const {
+  inputMessage,
+  isCopilotOpen,
+  isSuggestionBoxOpen,
+  isInternalNote,
+  mediaUploadFiles,
+} = storeToRefs(messageManager);
 
 const keyboardEvent = ref<KeyboardEvent | null>(null);
 const messageManagerTextBoxRef = useTemplateRef('messageManagerTextBox');
@@ -88,7 +93,11 @@ const onKeyDown = (event: KeyboardEvent) => {
 
   if (event.key === 'Enter') {
     if (event.shiftKey) return;
-    sendRoomMessage();
+    if (mediaUploadFiles.value.length > 0) {
+      sendMediasMessage();
+    } else {
+      sendRoomMessage();
+    }
     event.preventDefault();
   }
 };

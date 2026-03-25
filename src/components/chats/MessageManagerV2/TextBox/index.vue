@@ -85,7 +85,7 @@ const emit = defineEmits<{
 }>();
 
 const messageManager = useMessageManager();
-const { sendRoomMessage } = messageManager;
+const { sendRoomMessage, sendMediasMessage } = messageManager;
 const {
   inputMessage,
   audioMessage,
@@ -145,7 +145,11 @@ const handlePaste = (event: ClipboardEvent) => {
 };
 
 const handleSend = async () => {
-  await sendRoomMessage();
+  if (mediaUploadFiles.value.length > 0) {
+    await sendMediasMessage();
+  } else {
+    await sendRoomMessage();
+  }
 };
 
 const clearTextarea = () => {
