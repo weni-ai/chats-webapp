@@ -209,7 +209,8 @@ export default {
           this.setActiveRoom(this.selectedRoom);
 
           const isArchived =
-            responseRoom?.is_archived && responseRoom?.archived_url;
+            responseRoom?.is_archived &&
+            responseRoom?.archived_conversation_file_url;
 
           if (!isArchived) {
             await this.getHistoryContactRoomMessages();
