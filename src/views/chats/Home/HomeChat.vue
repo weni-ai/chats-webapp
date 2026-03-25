@@ -27,6 +27,7 @@
           (isMessageManagerRoomVisible || isMessageManagerDiscussionVisible)
         "
         data-testid="message-manager"
+        :isLoading="isChatSkeletonActive"
         @show-quick-messages="handleShowQuickMessages"
         @open-file-uploader="openModalFileUploader"
       />
@@ -143,6 +144,7 @@ export default {
       getDiscussionById: 'getDiscussionById',
     }),
     isMessageManagerV2Enabled() {
+      // TODO: remove this after testing
       return true;
       return this.featureFlags.active_features?.includes(
         'weniChatsInputMessageV2',

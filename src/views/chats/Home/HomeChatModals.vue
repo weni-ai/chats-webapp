@@ -38,6 +38,7 @@
     />
 
     <FileUploader
+      v-if="!enableMessageManagerV2"
       ref="fileUploader"
       v-model="modalFileUploaderFiles"
       :mediasType="modalFileUploaderMediaType"
@@ -61,6 +62,7 @@ import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
 
 import ModalCloseChat from './ModalCloseChat.vue';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 export default {
   name: 'HomeChatModals',
@@ -88,6 +90,7 @@ export default {
   },
 
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, { room: (store) => store.activeRoom }),
     ...mapState(useDashboard, [
       'showModalAssumedChat',
@@ -96,12 +99,19 @@ export default {
     ...mapWritableState(useMessageManager, {
       modalFileUploaderFiles: 'mediaUploadFiles',
     }),
+    enableMessageManagerV2() {
+      // TODO: remove this after testing
+      return true;
+      return this.featureFlags.active_features?.includes(
+        'weniChatsInputMessageV2',
+      );
+    },
   },
 
   watch: {
     'modalsShowing.fileUploader': {
       handler(newModalsShowingFileUploader) {
-        if (newModalsShowingFileUploader) {
+        if (newModalsShowingFileUploader && !this.enableMessageManagerV2) {
           this.$refs.fileUploader.open();
         }
       },

@@ -1,6 +1,8 @@
 <template>
   <section class="message-manager-v2">
+    <MessageManagerLoading v-if="isLoading" />
     <MessageManagerTextBox
+      v-else
       ref="messageManagerTextBox"
       @keydown="onKeyDown"
     />
@@ -23,6 +25,7 @@
 import { nextTick, ref, useTemplateRef } from 'vue';
 import { storeToRefs } from 'pinia';
 
+import MessageManagerLoading from './MessageManagerLoading.vue';
 import MessageManagerTextBox from './TextBox/index.vue';
 import SuggestionBox from './SuggestionBox/index.vue';
 import CoPilot from './CoPilot.vue';
@@ -33,6 +36,12 @@ import { useMessageManager } from '@/store/modules/chats/messageManager';
 defineOptions({
   name: 'MessageManagerV2',
 });
+
+interface Props {
+  isLoading: boolean;
+}
+
+defineProps<Props>();
 
 const discussionsStore = useDiscussions();
 const { activeDiscussion } = storeToRefs(discussionsStore);

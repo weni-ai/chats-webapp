@@ -8,13 +8,13 @@
       },
     ]"
   >
-    <UnnnicAudioRecorder
-      v-show="isAudioRecorderVisible"
-      ref="audioRecorder"
-      v-model="audioMessage"
-      class="message-manager__audio-recorder"
-      @status="(status) => (audioRecorderStatus = status)"
+    <UnnnicEmojiPicker
+      v-show="isEmojiPickerOpen"
+      @emoji-selected="handleTextarea"
+      @close="isEmojiPickerOpen = false"
     />
+    <MessageManagerTextBoxMedias v-if="mediaUploadFiles.length > 0" />
+    <MessageManagerTextBoxAudioRecorder ref="audioRecorder" />
     <div
       v-if="isInternalNote"
       class="internal-note__close-button"
@@ -51,59 +51,22 @@
       />
     </section>
     <hr class="text-box__divider" />
-    <section class="text-box__actions">
-      <section class="text-box__actions__items">
-        <section
-          v-for="(action, index) in actions"
-          :key="index"
-          class="text-box__actions__item"
-        >
-          <UnnnicToolTip
-            :enabled="!!action.tooltip"
-            :text="action.tooltip"
-            side="top"
-          >
-            <UnnnicButton
-              :iconCenter="action.icon"
-              :tooltip="action.tooltip"
-              :disabled="action.disabled"
-              type="tertiary"
-              size="small"
-              :pressed="action.pressed"
-              @click.stop="action.action()"
-            />
-          </UnnnicToolTip>
-          <hr
-            v-if="action.showDivider"
-            class="text-box__actions__divider"
-          />
-        </section>
-      </section>
-      <UnnnicButton
-        :iconLeft="isInternalNote ? '' : 'send'"
-        :tooltip="isInternalNote ? '' : $t('send')"
-        :type="isInternalNote ? 'attention' : 'primary'"
-        size="small"
-        :text="isInternalNote ? $t('add') : $t('send')"
-        :disabled="disableSendButton"
-        @click="handleSend"
-      />
-    </section>
-    <UnnnicEmojiPicker
-      v-show="isEmojiPickerOpen"
-      @emoji-selected="handleTextarea"
-      @close="isEmojiPickerOpen = false"
+    <MessageManagerTextBoxActions
+      @start-audio-recording="audioRecorderRef.record()"
+      @focus-input="focus"
     />
   </section>
 </template>
 
 <script setup lang="ts">
-import { useTemplateRef, ref, computed, nextTick, watch } from 'vue';
+import { useTemplateRef, ref, nextTick, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
-import { useMessageManager } from '@/store/modules/chats/messageManager';
+import MessageManagerTextBoxMedias from './Medias.vue';
+import MessageManagerTextBoxAudioRecorder from './AudioRecorder.vue';
+import MessageManagerTextBoxActions from './Actions.vue';
 
-import i18n from '@/plugins/i18n';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 defineOptions({
   name: 'MessageManagerTextBox',
@@ -114,11 +77,16 @@ const emit = defineEmits<{
   send: [void];
 }>();
 
-const { t } = i18n.global;
-
 const messageManager = useMessageManager();
-const { inputMessage, audioMessage, audioRecorderStatus, isInternalNote } =
-  storeToRefs(messageManager);
+const {
+  inputMessage,
+  audioMessage,
+  audioRecorderStatus,
+  isInternalNote,
+  mediaUploadFiles,
+  isEmojiPickerOpen,
+  isAudioRecorderVisible,
+} = storeToRefs(messageManager);
 
 const MAX_TEXTAREA_ROWS = 5;
 const currentTextAreaRows = ref(1);
@@ -126,73 +94,10 @@ const currentTextAreaRows = ref(1);
 const textareaRef = useTemplateRef('textArea');
 const audioRecorderRef = useTemplateRef('audioRecorder');
 
-const isEmojiPickerOpen = ref(false);
-
 const focused = ref(false);
 const focus = () => {
   textareaRef.value?.focus();
 };
-
-const disableSendButton = computed(() => {
-  return !inputMessage.value.trim() && !audioMessage.value;
-});
-
-interface TextBoxAction {
-  icon: string;
-  tooltip?: string;
-  disabled?: boolean;
-  showDivider?: boolean;
-  pressed?: boolean;
-  action: () => void;
-}
-const actions = computed<TextBoxAction[]>(() => {
-  return [
-    {
-      icon: 'bolt',
-      tooltip: t('quick_message'),
-      pressed: inputMessage.value.startsWith('/'),
-      action: () => {
-        inputMessage.value = inputMessage.value.startsWith('/') ? '' : '/';
-        focus();
-      },
-    },
-    {
-      icon: 'add_reaction',
-      tooltip: 'Emoji',
-      showDivider: true,
-      pressed: isEmojiPickerOpen.value,
-      action: () => {
-        isEmojiPickerOpen.value = !isEmojiPickerOpen.value;
-      },
-    },
-    {
-      icon: 'mic',
-      tooltip: t('audio_message'),
-      pressed: ['recording', 'recorded', 'playing', 'paused'].includes(
-        audioRecorderStatus.value,
-      ),
-      action: () => {
-        audioRecorderRef.value?.record();
-      },
-    },
-    {
-      icon: 'attach_file_add',
-      tooltip: t('attach'),
-      showDivider: true,
-      action: () => {
-        console.log('Attach file');
-      },
-    },
-    {
-      icon: 'add_notes',
-      tooltip: t('internal_note'),
-      pressed: isInternalNote.value,
-      action: () => {
-        isInternalNote.value = !isInternalNote.value;
-      },
-    },
-  ];
-});
 
 const handleTextarea = (event: Event) => {
   if (typeof event === 'string') {
@@ -226,18 +131,13 @@ const clearTextarea = () => {
   adjustTextareaHeight();
 };
 
-const isAudioRecorderVisible = computed(() => {
-  return ['recording', 'recorded', 'playing', 'paused'].includes(
-    audioRecorderStatus.value,
-  );
-});
-
 // TODO: check if this is correct after clearTextarea
 const adjustTextareaHeight = () => {
   if (!textareaRef.value) return;
   textareaRef.value.style.height = 'auto';
 
   const lineHeight = parseFloat(getComputedStyle(textareaRef.value).lineHeight);
+
   const maxHeight = MAX_TEXTAREA_ROWS * lineHeight;
 
   const calculatedHeight = Math.min(maxHeight, textareaRef.value.scrollHeight);
@@ -274,11 +174,6 @@ defineExpose({
   flex-direction: column;
   gap: $unnnic-space-3;
 
-  :deep(.audio-handler__time) {
-    display: inline-block;
-    min-width: 56px; // TODO: check if this is correct
-  }
-
   &--focused {
     border-color: $unnnic-color-border-active;
   }
@@ -302,28 +197,6 @@ defineExpose({
   &__divider {
     border: 1px solid $unnnic-color-border-soft;
     width: 100%;
-  }
-  &__actions {
-    display: flex;
-    gap: $unnnic-space-1;
-    align-items: center;
-    justify-content: space-between;
-    &__items {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: $unnnic-space-1;
-    }
-    &__item {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: $unnnic-space-1;
-    }
-    &__divider {
-      height: stretch;
-      border: 1px solid $unnnic-color-border-soft;
-    }
   }
 }
 

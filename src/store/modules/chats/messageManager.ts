@@ -1,5 +1,5 @@
+import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
 
 export const useMessageManager = defineStore('messageManager', () => {
   const inputMessage = ref('');
@@ -9,6 +9,16 @@ export const useMessageManager = defineStore('messageManager', () => {
   const isInternalNote = ref(false);
   const isSuggestionBoxOpen = ref(false);
   const isCopilotOpen = ref(false);
+  const isEmojiPickerOpen = ref(false);
+
+  const disableSendButton = computed(() => {
+    return !inputMessage.value.trim() && !audioMessage.value;
+  });
+  const isAudioRecorderVisible = computed(() => {
+    return ['recording', 'recorded', 'playing', 'paused'].includes(
+      audioRecorderStatus.value,
+    );
+  });
 
   function send() {}
 
@@ -20,6 +30,10 @@ export const useMessageManager = defineStore('messageManager', () => {
     isInternalNote,
     isSuggestionBoxOpen,
     isCopilotOpen,
+    isEmojiPickerOpen,
+
+    disableSendButton,
+    isAudioRecorderVisible,
 
     send,
   };
