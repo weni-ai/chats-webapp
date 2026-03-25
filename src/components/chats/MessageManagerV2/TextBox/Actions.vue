@@ -181,6 +181,7 @@ const checkDisabledAction = (action: string) => {
       return (
         !!inputMessage.value.trim() ||
         mediaUploadFiles.value.length >= 5 ||
+        audioRecorderStatus.value !== 'idle' ||
         !!audioMessage.value ||
         isInternalNote.value
       );
