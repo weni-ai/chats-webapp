@@ -258,7 +258,7 @@ describe('ClosedChats.vue', () => {
       const archivedRoom = {
         ...mockRoom,
         is_archived: true,
-        archived_url: 'https://example.com/archive.zip',
+        archived_conversation_file_url: 'https://example.com/archive.zip',
       };
 
       History.getHistoryContactRoom.mockReset().mockResolvedValue(archivedRoom);
@@ -274,7 +274,9 @@ describe('ClosedChats.vue', () => {
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.selectedRoom.is_archived).toBe(true);
-      expect(wrapper.vm.selectedRoom.archived_url).toBeTruthy();
+      expect(
+        wrapper.vm.selectedRoom.archived_conversation_file_url,
+      ).toBeTruthy();
       expect(
         wrapper.find('[data-testid="warning-archived-messages"]').exists(),
       ).toBe(true);
@@ -295,11 +297,11 @@ describe('ClosedChats.vue', () => {
       ).toBe(false);
     });
 
-    it('does not render WarningArchivedMessages when archived_url is missing', async () => {
+    it('does not render WarningArchivedMessages when archived_conversation_file_url is missing', async () => {
       const roomWithoutUrl = {
         ...mockRoom,
         is_archived: true,
-        archived_url: '',
+        archived_conversation_file_url: '',
       };
 
       wrapper = createWrapper({ roomId: '123' });
@@ -350,7 +352,7 @@ describe('ClosedChats.vue', () => {
       const archivedRoom = {
         ...mockRoom,
         is_archived: true,
-        archived_url: 'https://example.com/archive.zip',
+        archived_conversation_file_url: 'https://example.com/archive.zip',
       };
 
       History.getHistoryContactRoom.mockReset().mockResolvedValue(archivedRoom);
