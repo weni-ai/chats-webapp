@@ -1,6 +1,7 @@
-import { ref, computed, nextTick } from 'vue';
-import { defineStore } from 'pinia';
+import { ref, computed, nextTick, watch } from 'vue';
+import { defineStore, storeToRefs } from 'pinia';
 
+import { useRooms } from './rooms';
 import { useDiscussions } from './discussions';
 import { useRoomMessages } from './roomMessages';
 import { useDiscussionMessages } from './discussionMessages';
@@ -22,9 +23,16 @@ export const useMessageManager = defineStore('messageManager', () => {
 
   const { t } = i18n.global;
 
+  const roomsStore = useRooms();
+  const { activeRoom } = storeToRefs(roomsStore);
   const roomMessagesStore = useRoomMessages();
   const discussionsStore = useDiscussions();
+  const { activeDiscussion } = storeToRefs(discussionsStore);
   const discussionMessagesStore = useDiscussionMessages();
+
+  watch([activeRoom, activeDiscussion], () => {
+    clearInputs();
+  });
 
   function clearInputs() {
     inputMessage.value = '';
