@@ -2,6 +2,7 @@ import roomListener from './room';
 import discussionListener from './discussion';
 import statusListener from './status';
 import customStatusListener from './customStatus';
+import mediaListener from './media';
 
 export default ({ ws, app }) => {
   const createListener = (callback) => (payload) => {
@@ -20,6 +21,8 @@ export default ({ ws, app }) => {
     'message.status_update',
     createListener(roomListener.message.changeStatus),
   );
+
+  ws.on('media.transcribe', createListener(mediaListener.transcribe.update));
 
   ws.on(
     'discussion_msg.create',

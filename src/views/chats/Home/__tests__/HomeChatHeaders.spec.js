@@ -8,7 +8,27 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 import HomeChatHeaders from '../HomeChatHeaders.vue';
 
 const createWrapper = ({ store }) => {
-  return mount(HomeChatHeaders, { global: { plugins: [store] } });
+  return mount(HomeChatHeaders, {
+    global: {
+      mocks: {
+        $t: (key) => key,
+      },
+      plugins: [store],
+      stubs: {
+        ModalCloseDiscussion: {
+          template: '<div data-testid="modal-close-discussion" />',
+        },
+        DiscussionHeader: {
+          template: '<div data-testid="discussion-header" />',
+          props: ['discussionContact', 'clickable'],
+        },
+        ContactHeader: {
+          template: '<div data-testid="chat-header" />',
+          props: ['contactName', 'clickable'],
+        },
+      },
+    },
+  });
 };
 
 describe('HomeChatHeaders.vue', () => {
@@ -41,7 +61,7 @@ describe('HomeChatHeaders.vue', () => {
     ).toBe(true);
 
     expect(
-      wrapper.findComponent({ name: 'UnnnicChatsHeader' }).isVisible(),
+      wrapper.findComponent('[data-testid="chat-header"]').isVisible(),
     ).toBe(false);
   });
 
@@ -96,10 +116,7 @@ describe('HomeChatHeaders.vue', () => {
 
     await wrapper.vm.$nextTick();
 
-    await wrapper.find('.user-avatar').trigger('click');
-    expect(wrapper.emitted('openRoomContactInfo')).toBeTruthy();
-
-    await wrapper.find('.unnnic-chats-header__infos__title').trigger('click');
+    await wrapper.find('[data-testid="chat-header"]').trigger('click');
     expect(wrapper.emitted('openRoomContactInfo')).toBeTruthy();
   });
 

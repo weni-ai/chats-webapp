@@ -52,21 +52,26 @@
         }
       "
     >
-      <section class="chat-groups__tabs">
+      <section
+        class="chat-groups__tabs"
+        :class="{
+          'chat-groups__tabs--hide-order-by':
+            !showOrderBy && countRooms[activeTab] > 0,
+        }"
+      >
         <TabChip
           v-for="tab in roomsTabs"
           :key="tab.key"
+          class="tab-chip"
+          :hideCount="
+            tab.key === 'waiting' &&
+            project.config?.can_see_waiting_rooms_count === false
+          "
           :label="tab.label"
           :count="
             tab.key === 'discussions' ? discussionsCount : roomsCount[tab.key]
           "
-          :showDot="
-            tab.key === 'ongoing'
-              ? showOngoingDot
-              : tab.key === 'discussions'
-                ? showDiscussionsDot
-                : false
-          "
+          :showDot="getShowDotByTab(tab.key)"
           :active="activeTab === tab.key"
           @click="activeTab = tab.key"
         />
@@ -76,31 +81,60 @@
         class="order-by"
         data-testid="order-by-section"
       >
-        <div>
-          <span data-testid="order-by-label">
-            {{ $t('chats.room_list.order_by') }}
-          </span>
+        <div class="select-all-checkbox-container">
+          <UnnnicToolTip
+            v-if="showSelectAllCheckbox"
+            enabled
+            :text="selectAllTooltipText"
+          >
+            <UnnnicCheckbox
+              :modelValue="isAllRoomsSelected"
+              size="sm"
+              class="select-all-checkbox"
+              :label="selectedText"
+              @change="handleSelectAllRooms()"
+            />
+          </UnnnicToolTip>
         </div>
         <div
           class="apply-filter"
           data-testid="filter-controls"
         >
-          <span
-            :class="{ 'filter-active': orderBy[activeTab].includes('-') }"
-            data-testid="most-recent-filter"
-            @click="handleMostRecentFilter"
+          <UnnnicToolTip
+            enabled
+            :text="
+              activeTab === 'ongoing'
+                ? $t('chats.room_list.most_recent.ongoing_tooltip')
+                : $t('chats.room_list.most_recent.waiting_tooltip')
+            "
+            side="top"
           >
-            {{ $t('chats.room_list.most_recent') }}
-          </span>
-
+            <span
+              :class="{ 'filter-active': orderBy[activeTab].includes('-') }"
+              data-testid="most-recent-filter"
+              @click="handleMostRecentFilter"
+            >
+              {{ $t('chats.room_list.most_recent.label') }}
+            </span>
+          </UnnnicToolTip>
           <span> | </span>
-          <span
-            :class="{ 'filter-active': !orderBy[activeTab].includes('-') }"
-            data-testid="older-filter"
-            @click="handleOlderFilter"
+          <UnnnicToolTip
+            enabled
+            :text="
+              activeTab === 'ongoing'
+                ? $t('chats.room_list.oldest.ongoing_tooltip')
+                : $t('chats.room_list.oldest.default_tooltip')
+            "
+            side="top"
           >
-            {{ $t('chats.room_list.older') }}
-          </span>
+            <span
+              :class="{ 'filter-active': !orderBy[activeTab].includes('-') }"
+              data-testid="older-filter"
+              @click="handleOlderFilter"
+            >
+              {{ $t('chats.room_list.oldest.label') }}
+            </span>
+          </UnnnicToolTip>
         </div>
       </div>
       <CardGroup
@@ -112,6 +146,7 @@
       <CardGroup
         v-show="activeTab === 'waiting'"
         :rooms="rooms_queue"
+        :withSelection="isWithSelection"
         roomsType="waiting"
         data-testid="waiting-rooms-card-group"
         @open="openRoom"
@@ -119,7 +154,7 @@
       <CardGroup
         v-show="activeTab === 'ongoing'"
         :rooms="rooms_ongoing"
-        :withSelection="!isMobile && project.config?.can_use_bulk_transfer"
+        :withSelection="isWithSelection"
         roomsType="in_progress"
         data-testid="in-progress-rooms-card-group"
         @open="openRoom"
@@ -134,6 +169,7 @@
     </section>
     <ModalQueuePriorizations
       v-if="showModalQueue"
+      v-model="showModalQueue"
       data-testid="queue-prioritization-modal"
       @close="handleModalQueuePriorization"
     />
@@ -149,6 +185,7 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
 import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup/index.vue';
@@ -204,7 +241,11 @@ export default {
     };
   },
   computed: {
-    ...mapWritableState(useRooms, { allRooms: 'rooms' }),
+    ...mapWritableState(useRooms, {
+      allRooms: 'rooms',
+      selectedOngoingRooms: 'selectedOngoingRooms',
+      selectedWaitingRooms: 'selectedWaitingRooms',
+    }),
     ...mapState(useRooms, {
       rooms_ongoing: 'agentRooms',
       rooms_queue: 'waitingQueue',
@@ -216,6 +257,7 @@ export default {
     ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapWritableState(useRooms, [
       'orderBy',
       'roomsCount',
@@ -226,6 +268,13 @@ export default {
       'discussionsCount',
       'showDiscussionsDot',
     ]),
+
+    showWaitingDot() {
+      return (
+        this.rooms_queue?.length > 0 &&
+        this.project.config?.can_see_waiting_rooms_count === false
+      );
+    },
 
     roomsTabs() {
       const tabs = [
@@ -242,6 +291,29 @@ export default {
 
       return tabs;
     },
+    currentSelectedRooms() {
+      return this.activeTab === 'ongoing'
+        ? this.selectedOngoingRooms
+        : this.selectedWaitingRooms;
+    },
+
+    selectedText() {
+      const selectedCount = this.currentSelectedRooms?.length || 0;
+      if (selectedCount === 0) return null;
+
+      return this.$t('number_of_chats_selected', {
+        count: selectedCount,
+      });
+    },
+
+    countRooms() {
+      return {
+        ongoing: this.rooms_ongoing.length,
+        waiting: this.rooms_queue.length,
+        discussions: this.discussions.length,
+        flow_start: this.rooms_flow_start.length,
+      };
+    },
 
     showOrderBy() {
       const { isHumanServiceProfile } = useProfile();
@@ -255,20 +327,47 @@ export default {
         return false;
       }
 
-      const countRooms = {
-        ongoing: this.rooms_ongoing.length,
-        waiting: this.rooms_queue.length,
-        discussions: this.discussions.length,
-        flow_start: this.rooms_flow_start.length,
-      };
+      return this.countRooms[this.activeTab] > 0;
+    },
 
-      return countRooms[this.activeTab] > 0;
+    isBulkCloseFeatureEnabled() {
+      return this.featureFlags.active_features?.includes('weniChatsBulkClose');
+    },
+
+    isBulkTakeFeatureEnabled() {
+      return this.featureFlags.active_features?.includes('weniChatsBulkTake');
+    },
+
+    showSelectAllCheckbox() {
+      const canBulkTransfer = this.project.config?.can_use_bulk_transfer;
+      const canBulkClose =
+        this.isBulkCloseFeatureEnabled &&
+        this.project.config?.can_use_bulk_close;
+      const canBulkTake =
+        this.isBulkTakeFeatureEnabled &&
+        this.project.config?.can_use_bulk_take &&
+        !this.isViewMode;
+      const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
+      const hasRooms = this.countRooms[this.activeTab] > 0;
+
+      if (this.activeTab === 'waiting') {
+        return (
+          hasRooms && (canBulkTake || (canBulkClose && !blockCloseInQueue))
+        );
+      }
+
+      if (this.activeTab === 'ongoing') {
+        return hasRooms && (canBulkTransfer || canBulkClose);
+      }
+
+      return false;
     },
 
     isUserAdmin() {
       const ROLE_ADMIN = 1;
       return this.me.project_permission_role === ROLE_ADMIN;
     },
+
     totalUnreadMessages() {
       if (!this.newMessagesByRoom) {
         return 0;
@@ -279,6 +378,7 @@ export default {
         0,
       );
     },
+
     showNoResultsError() {
       return (
         !this.showLoadingRooms &&
@@ -290,6 +390,47 @@ export default {
     },
     totalPinnedRooms() {
       return this.rooms_ongoing.filter((room) => room.is_pinned).length || 0;
+    },
+    selectAllOngoingRoomsValue() {
+      return this.rooms_ongoing.length === this.selectedOngoingRooms?.length;
+    },
+
+    selectAllWaitingRoomsValue() {
+      return this.rooms_queue.length === this.selectedWaitingRooms?.length;
+    },
+
+    isAllRoomsSelected() {
+      if (this.activeTab === 'ongoing') {
+        return this.selectAllOngoingRoomsValue;
+      }
+      return this.selectAllWaitingRoomsValue;
+    },
+
+    selectAllTooltipText() {
+      if (this.isAllRoomsSelected) {
+        return this.$t('deselect_all');
+      }
+      return this.$t('select_all');
+    },
+
+    isWithSelection() {
+      const canBulkTransfer = this.project.config?.can_use_bulk_transfer;
+      const canBulkClose =
+        this.isBulkCloseFeatureEnabled &&
+        this.project.config?.can_use_bulk_close;
+      const canBulkTake =
+        this.isBulkTakeFeatureEnabled &&
+        this.project.config?.can_use_bulk_take &&
+        !this.isViewMode;
+      const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
+
+      if (this.isMobile) return false;
+
+      if (this.activeTab === 'waiting') {
+        return canBulkTake || (canBulkClose && !blockCloseInQueue);
+      }
+
+      return canBulkTransfer || canBulkClose;
     },
   },
   watch: {
@@ -313,6 +454,14 @@ export default {
       deep: true,
       handler(newRooms, oldRooms) {
         this.updateRoomsCount(newRooms.length, oldRooms.length, 'waiting');
+
+        const roomsWentEmpty = newRooms.length === 0 && oldRooms.length > 0;
+        const counterShowsMore = this.roomsCount.waiting > 0;
+        const isNotLoading = !this.isLoadingRooms;
+
+        if (roomsWentEmpty && counterShowsMore && isNotLoading) {
+          this.refetchWaitingRooms();
+        }
       },
     },
     rooms_flow_start: {
@@ -370,6 +519,16 @@ export default {
       setActiveDiscussion: 'setActiveDiscussion',
       getAllDiscussion: 'getAll',
     }),
+    getShowDotByTab(tab) {
+      const dotsMap = {
+        ongoing: this.showOngoingDot,
+        waiting: this.showWaitingDot,
+        discussions: this.showDiscussionsDot,
+        flow_start: false,
+      };
+
+      return dotsMap[tab] || false;
+    },
     updateRoomsCount(newSize, oldSize, key) {
       if (newSize === oldSize || !this.initialLoaded || this.isLoadingRooms)
         return;
@@ -381,8 +540,8 @@ export default {
       }
     },
     async openRoom(room) {
-      await this.setActiveDiscussion(null);
       await this.setActiveRoom(room);
+      await this.setActiveDiscussion(null);
     },
     async openDiscussion(discussion) {
       await this.setActiveDiscussion(discussion);
@@ -427,6 +586,10 @@ export default {
         this.page.search += 1;
         this.listRoom(true, this.orderBy[this.activeTab]);
       }
+    },
+    async refetchWaitingRooms() {
+      this.page.waiting = 0;
+      await this.listRoom(true, this.orderBy.waiting, 'waiting', true);
     },
     async listDiscussions() {
       try {
@@ -558,6 +721,29 @@ export default {
 
       this.listRoom(true, this.orderBy[this.activeTab], this.activeTab, true);
     },
+    handleSelectAllOngoingRooms() {
+      if (!this.selectAllOngoingRoomsValue) {
+        this.selectedOngoingRooms = this.rooms_ongoing.map((room) => room.uuid);
+      } else {
+        this.selectedOngoingRooms = [];
+      }
+    },
+
+    handleSelectAllWaitingRooms() {
+      if (!this.selectAllWaitingRoomsValue) {
+        this.selectedWaitingRooms = this.rooms_queue.map((room) => room.uuid);
+      } else {
+        this.selectedWaitingRooms = [];
+      }
+    },
+
+    handleSelectAllRooms() {
+      if (this.activeTab === 'ongoing') {
+        this.handleSelectAllOngoingRooms();
+      } else if (this.activeTab === 'waiting') {
+        this.handleSelectAllWaitingRooms();
+      }
+    },
   },
 };
 </script>
@@ -585,11 +771,6 @@ export default {
       padding-left: $unnnic-spacing-xs;
       padding-right: $unnnic-spacing-xs;
     }
-    .no-results {
-      padding-left: $unnnic-spacing-xs;
-      color: $unnnic-color-neutral-cloudy;
-      font-size: $unnnic-font-size-body-gt;
-    }
     &__header {
       padding-left: $unnnic-spacing-xs;
     }
@@ -602,6 +783,14 @@ export default {
       gap: $unnnic-spacing-xs;
       padding-left: $unnnic-spacing-xs;
       padding-right: $unnnic-spacing-xs;
+
+      :deep(.tab-chip__chip) {
+        height: $unnnic-space-8;
+      }
+
+      &--hide-order-by {
+        margin-bottom: $unnnic-space-4;
+      }
     }
   }
   .order-by {
@@ -619,6 +808,14 @@ export default {
 
     .filter-active {
       font-weight: $unnnic-font-weight-bold;
+    }
+
+    .select-all-checkbox-container {
+      margin-left: $unnnic-space-1;
+      :deep(.unnnic-checkbox__label) {
+        font: $unnnic-font-caption-1;
+        color: $unnnic-color-fg-info;
+      }
     }
   }
 }

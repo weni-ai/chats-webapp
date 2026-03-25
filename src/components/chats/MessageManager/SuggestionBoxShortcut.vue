@@ -48,10 +48,14 @@ export default {
 
 <style lang="scss" scoped>
 .suggestion-box__shortcut {
-  padding: $unnnic-spacing-xs $unnnic-spacing-sm;
+  display: flex;
+  flex-direction: column;
+  padding: $unnnic-space-2;
+  gap: $unnnic-space-1;
 
   &.is-active {
     background: $unnnic-color-neutral-lightest;
+    border-radius: $unnnic-radius-2;
 
     &:active {
       background: $unnnic-color-neutral-light;
@@ -71,21 +75,18 @@ export default {
   }
 
   &__title {
-    margin-bottom: $unnnic-spacing-nano;
-
-    font-size: $unnnic-font-size-body-gt;
-    font-weight: $unnnic-font-weight-bold;
-    color: $unnnic-color-aux-purple-500;
-    line-height: 1.25rem;
+    font: $unnnic-font-caption-2;
+    color: $unnnic-color-fg-info;
   }
 
   &__description {
     overflow: hidden;
 
-    font-size: $unnnic-font-size-body-md;
+    font: $unnnic-font-caption-2;
+    color: $unnnic-color-fg-base;
+
     text-overflow: ellipsis;
     white-space: nowrap;
-    line-height: 1rem;
   }
 }
 </style>

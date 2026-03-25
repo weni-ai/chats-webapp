@@ -10,14 +10,20 @@
     @mouseenter="hover = true"
     @mouseleave="hover = false"
   >
-    <UnnnicCheckbox
+    <UnnnicToolTip
       v-if="withSelection"
-      :modelValue="checkboxValue"
-      size="sm"
-      class="room-card__checkbox"
-      data-testid="room-card-checkbox"
-      @change="checkboxValue = $event"
-    />
+      enabled
+      :text="checkboxValue ? $t('deselect_this_chat') : $t('select_this_chat')"
+      side="right"
+    >
+      <UnnnicCheckbox
+        :modelValue="checkboxValue"
+        size="sm"
+        class="room-card__checkbox"
+        data-testid="room-card-checkbox"
+        @change="checkboxValue = $event"
+      />
+    </UnnnicToolTip>
     <UnnnicChatsContact
       :class="{
         'room-card__contact': true,
@@ -28,15 +34,16 @@
       :lastMessage="room.last_message"
       :waitingTime="waitingTimeComputed"
       :unreadMessages="unreadMessages"
-      :forceShowUnreadMessages="forceShowUnreadMessages && unreadMessages"
+      :forceShowUnreadMessages="forceShowUnreadMessages && !!unreadMessages"
       :tabindex="0"
       :activePin="isProgressRoom ? true : false"
       :pinned="isProgressRoom ? room.is_pinned : false"
       :schemePin="handleSchemePin"
       :selected="room.uuid === activeRoomId && active"
       :locale="locale"
-      :lastInteractionTime="room.last_interaction"
-      :projectName="room.config?.name"
+      :lastInteractionTime="lastInteractionTime"
+      :lastInteractionTimePrefix="lastInteractionTimePrefix"
+      :projectName="handleProjectName"
       data-testid="room-card-contact"
       @click="$emit('click')"
       @click-pin="$emit('clickPin', $event)"
@@ -104,6 +111,7 @@ export default {
     }),
     ...mapState(useConfig, {
       enableAutomaticRoomRouting: 'enableAutomaticRoomRouting',
+      enableGroupsMode: 'enableGroupsMode',
     }),
     hideContactMessageInfo() {
       return this.roomType === 'waiting' && this.enableAutomaticRoomRouting;
@@ -120,7 +128,7 @@ export default {
       return room.unread_msgs + (newMessages?.length || 0);
     },
     locale() {
-      return this.$i18n.locale;
+      return this.$i18n.locale?.toLowerCase();
     },
     formattedContactName() {
       return formatContactName(this.room);
@@ -136,6 +144,20 @@ export default {
     },
     isProgressRoom() {
       return this.roomType === 'in_progress';
+    },
+    lastInteractionTime() {
+      return this.roomType === 'waiting'
+        ? this.room.added_to_queue_at
+        : this.room.last_interaction;
+    },
+    lastInteractionTimePrefix() {
+      return this.roomType === 'waiting' ? this.$t('since') : '';
+    },
+    handleProjectName() {
+      if (this.enableGroupsMode) {
+        return this.room.queue?.sector_name;
+      }
+      return null;
     },
   },
 

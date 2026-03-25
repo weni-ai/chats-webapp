@@ -2,6 +2,7 @@
 <!-- eslint-disable vuejs-accessibility/media-has-caption -->
 <template>
   <div
+    ref="chatsMessagesContainerRef"
     class="chat-messages__container"
     :class="{ 'chat-messages__container--view-mode': isViewMode }"
     data-testid="chat-messages-container"
@@ -80,6 +81,7 @@
                 :automatic="message.is_automatic_message"
                 :locale="$i18n.locale"
                 data-testid="chat-message"
+                :highlighted="message.uuid === toScrollMessage?.uuid"
                 @click-reply-message="
                   handlerClickReplyMessage(message.replied_message)
                 "
@@ -118,6 +120,7 @@
                   :signature="messageSignature(message)"
                   :enableReply="enableReply"
                   :replyMessage="message.replied_message"
+                  :highlighted="message.uuid === toScrollMessage?.uuid"
                   data-testid="chat-message"
                   @click-reply-message="
                     handlerClickReplyMessage(message.replied_message)
@@ -146,13 +149,11 @@
                     class="media"
                     :src="media.url || media.preview"
                   />
-                  <UnnnicAudioRecorder
+                  <ChatMessageAudio
                     v-else-if="isAudio(media)"
-                    ref="audio-recorder"
-                    class="media audio"
-                    :src="media.url || media.preview"
-                    :canDiscard="false"
-                    :reqStatus="messageStatus({ message, media })"
+                    :message="message"
+                    :messageStatus="messageStatus({ message, media })"
+                    :isClosedChat="isClosedChat"
                     @failed-click="resendMedia({ message, media })"
                   />
                 </UnnnicChatsMessage>
@@ -179,6 +180,7 @@
                   :enableReply="enableReply"
                   :replyMessage="message.replied_message"
                   data-testid="chat-message"
+                  :highlighted="message.uuid === toScrollMessage?.uuid"
                   @click-reply-message="
                     handlerClickReplyMessage(message.replied_message)
                   "
@@ -226,6 +228,15 @@
       v-if="showScrollToBottomButton"
       class="chat-messages__scroll-button-container"
     >
+      <section
+        v-if="unreadMessages > 0"
+        class="chat-messages__scroll-button-chip-container"
+      >
+        <p class="chat-messages__scroll-button-chip">
+          {{ unreadMessages }}
+        </p>
+      </section>
+
       <UnnnicButton
         class="chat-messages__scroll-button"
         data-testid="scroll-to-bottom-button"
@@ -239,8 +250,11 @@
 
 <script>
 import { mapState, mapWritableState, mapActions } from 'pinia';
+import { useDebounceFn } from '@vueuse/core';
+
 import { useDashboard } from '@/store/modules/dashboard';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useRooms } from '@/store/modules/chats/rooms';
 
 import moment from 'moment';
 
@@ -255,10 +269,13 @@ import ChatFeedback from '../ChatFeedback.vue';
 import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
 import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
 import ChatMessagesInternalNote from './ChatMessagesInternalNote.vue';
+import ChatMessageAudio from './ChatMessageAudio/ChatMessageAudio.vue';
 
 import { isString } from '@/utils/string';
 import { SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT } from '@/utils/chats';
 import { treatedMediaName } from '@/utils/medias';
+
+import Room from '@/services/api/resources/chats/room';
 
 export default {
   name: 'ChatMessages',
@@ -271,6 +288,7 @@ export default {
     FullscreenPreview,
     VideoPlayer,
     ChatMessagesInternalNote,
+    ChatMessageAudio,
   },
 
   props: {
@@ -356,14 +374,21 @@ export default {
       bot: '',
       agent: '',
     },
+    chatsMessagesContainerRef: null,
+    resizeObserver: null,
   }),
 
   computed: {
+    ...mapWritableState(useRooms, ['newMessagesByRoom']),
+    ...mapState(useRooms, {
+      room: (store) => store.activeRoom,
+    }),
     ...mapState(useDashboard, ['viewedAgent']),
     ...mapState(useRoomMessages, ['roomMessagesNext']),
     ...mapWritableState(useRoomMessages, [
       'replyMessage',
       'toScrollNote',
+      'toScrollMessage',
       'showScrollToBottomButton',
     ]),
     medias() {
@@ -379,12 +404,20 @@ export default {
       const { isLoading, prevChatUuid, chatUuid } = this;
       return isLoading && prevChatUuid !== chatUuid;
     },
+    unreadMessages() {
+      if (!this.room) return 0;
+      return this.newMessagesByRoom[this.room.uuid]?.messages?.length || 0;
+    },
   },
 
   watch: {
     toScrollNote(note) {
       if (!note) return;
       this.scrollToInternalNote(note);
+    },
+    toScrollMessage(message) {
+      if (!message) return;
+      this.scrollToMessage(message);
     },
     messages: {
       handler(newMessages, oldMessages) {
@@ -409,6 +442,20 @@ export default {
       this.resendMessages();
     });
 
+    this.chatsMessagesContainerRef = this.$refs.chatsMessagesContainerRef;
+
+    if (this.chatsMessagesContainerRef && window.ResizeObserver) {
+      this.resizeObserver = new ResizeObserver((entries) => {
+        entries.forEach(() => {
+          if (!this.showScrollToBottomButton) {
+            this.scrollToBottom();
+          }
+        });
+      });
+
+      this.resizeObserver.observe(this.chatsMessagesContainerRef);
+    }
+
     // const observer = new IntersectionObserver((entries) => {
     //   entries.forEach((entry) => {
     //     console.log('intersecting', entry.isIntersecting);
@@ -417,6 +464,13 @@ export default {
     // const { endChatElement } = this.$refs;
 
     // observer.observe(endChatElement.$el);
+  },
+
+  beforeUnmount() {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
   },
 
   methods: {
@@ -649,6 +703,7 @@ export default {
       this.currentMedia = this.medias.find((el) => el.url === url);
       this.isFullscreen = true;
     },
+
     nextMedia() {
       const imageIndex = this.medias.findIndex(
         (el) => el.url === this.currentMedia.url,
@@ -657,12 +712,33 @@ export default {
         this.currentMedia = this.medias[imageIndex + 1];
       }
     },
+
     previousMedia() {
       const imageIndex = this.medias.findIndex(
         (el) => el.url === this.currentMedia.url,
       );
       if (imageIndex - 1 >= 0) {
         this.currentMedia = this.medias[imageIndex - 1];
+      }
+    },
+
+    handleSeenRoomMessages() {
+      if (!this.room) return;
+      const newMessages =
+        this.newMessagesByRoom[this.room.uuid]?.messages || [];
+
+      if (
+        this.room.unread_msgs + newMessages.length > 0 &&
+        this.room.user &&
+        !this.isViewMode
+      ) {
+        this.newMessagesByRoom[this.room.uuid] = { messages: [] };
+
+        const debouncedUpdateReadMessages = useDebounceFn(async () => {
+          await Room.updateReadMessages(this.room.uuid, true);
+        }, 500);
+
+        debouncedUpdateReadMessages();
       }
     },
 
@@ -673,11 +749,16 @@ export default {
       const { scrollTop, scrollHeight, clientHeight } = chatMessages;
       const isAtBottom = scrollTop + clientHeight >= scrollHeight - 20;
 
+      if (isAtBottom) {
+        this.handleSeenRoomMessages();
+      }
+
       this.showScrollToBottomButton = !isAtBottom;
     },
 
     handleScroll() {
       const { chatMessages } = this.$refs;
+
       if (!chatMessages) return;
 
       this.checkScrollPosition();
@@ -738,22 +819,28 @@ export default {
         this.showScrollToBottomButton = false;
       });
     },
-    async scrollToInternalNote(note) {
-      const noteElement = this.$refs[`internal-note-${note.uuid}`]?.[0]?.$el;
 
-      if (noteElement) {
-        noteElement.scrollIntoView({
+    async scrollToRef(refKey) {
+      const element = this.$refs[refKey]?.[0]?.$el;
+      if (element) {
+        await element.scrollIntoView({
           behavior: 'smooth',
           block: 'center',
         });
       } else if (this.roomMessagesNext) {
-        // Load more messages to find internal note
+        // Load more messages to find internal note or message
         await this.getRoomMessages();
-        this.scrollToInternalNote(note);
+        this.scrollToRef(refKey);
         return;
       }
+    },
 
-      this.toScrollNote = null;
+    async scrollToInternalNote(note) {
+      this.scrollToRef(`internal-note-${note.uuid}`);
+    },
+
+    async scrollToMessage(message) {
+      this.scrollToRef(`message-${message.uuid}`);
     },
   },
 };
@@ -779,11 +866,30 @@ export default {
   cursor: pointer;
 }
 
-.chat-messages__scroll-button-container {
-  position: absolute;
-  bottom: $unnnic-spacing-md;
-  right: $unnnic-spacing-sm;
-  z-index: 1000;
+.chat-messages__scroll-button {
+  &-container {
+    position: absolute;
+    bottom: $unnnic-space-6;
+    right: $unnnic-space-4;
+    z-index: 9;
+  }
+  &-chip {
+    padding: 0 $unnnic-space-2;
+    border-radius: $unnnic-border-radius-pill;
+    background-color: $unnnic-color-red-500;
+    color: $unnnic-color-fg-inverted;
+    margin-bottom: -$unnnic-space-2;
+    z-index: 1;
+    font: $unnnic-font-caption-1;
+    font-weight: $unnnic-font-weight-medium;
+
+    &-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+  }
 }
 
 .chat-messages__container {
@@ -792,20 +898,20 @@ export default {
   height: 100%;
 
   &--view-mode {
-    padding-left: $unnnic-spacing-sm;
+    padding-left: $unnnic-space-4;
   }
 }
 
 .chat-messages {
   overflow: hidden auto;
 
-  padding-right: $unnnic-spacing-sm;
+  padding-right: $unnnic-space-4;
 
   height: 100%;
 
   &__container-date {
     &:last-of-type {
-      margin-bottom: $unnnic-spacing-md;
+      margin-bottom: $unnnic-space-6;
     }
   }
 
@@ -814,7 +920,7 @@ export default {
   }
 
   &__message {
-    margin-top: $unnnic-spacing-md;
+    margin-top: $unnnic-space-6;
 
     &.highlighted {
       animation: highlight-message 1s ease-in-out;
@@ -824,17 +930,17 @@ export default {
       justify-self: flex-end;
 
       & + & {
-        margin-top: $unnnic-spacing-nano;
+        margin-top: $unnnic-space-1;
       }
     }
 
     &.received {
       & + & {
-        margin-top: $unnnic-spacing-nano;
+        margin-top: $unnnic-space-1;
       }
 
       &.different-user {
-        margin-top: $unnnic-spacing-md !important;
+        margin-top: $unnnic-space-6 !important;
       }
     }
 
@@ -843,15 +949,15 @@ export default {
     }
 
     .audio {
-      padding: $unnnic-spacing-xs;
-      margin: $unnnic-spacing-nano 0;
+      padding: $unnnic-space-2;
+      margin: $unnnic-space-1 0;
     }
 
     &__divisor {
       display: flex;
       align-items: center;
-      gap: $unnnic-spacing-stack-xl;
-      margin-bottom: $unnnic-inline-md;
+      gap: $unnnic-space-10;
+      margin-bottom: $unnnic-space-6;
 
       &__label {
         font-size: $unnnic-font-size-body-md;
@@ -868,10 +974,10 @@ export default {
   }
 
   &__tags {
-    margin: $unnnic-spacing-inline-md 0;
+    margin: $unnnic-space-6 0;
 
     display: grid;
-    gap: $unnnic-spacing-md;
+    gap: $unnnic-space-6;
 
     :deep(.unnnic-brand-tag__icon) {
       display: none;

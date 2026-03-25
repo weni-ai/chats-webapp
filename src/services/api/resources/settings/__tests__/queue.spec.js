@@ -160,16 +160,16 @@ describe('Queue', () => {
 
   it('should list tags in a queue', async () => {
     const queueUuid = '123';
-    const offset = 0;
-    const limit = 10;
+    const limit = 20;
+    const next = '';
     const expectedData = ['tag1', 'tag2'];
 
     http.get.mockResolvedValue({ data: expectedData });
 
-    const result = await Queue.tags(queueUuid, offset, limit);
+    const result = await Queue.tags(queueUuid, { limit, next });
 
     expect(http.get).toHaveBeenCalledWith('/tag/', {
-      params: { queue: queueUuid, offset, limit },
+      params: { queue: queueUuid, limit },
     });
 
     expect(result).toEqual(expectedData);

@@ -1,25 +1,61 @@
-import { describe, expect, it, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { describe, expect, it, vi, beforeEach, beforeAll } from 'vitest';
+import { mount, config } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 import ViewMode from '@/views/Dashboard/ViewMode/index.vue';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
+import * as roomUtils from '@/utils/room';
+import i18n from '@/plugins/i18n';
+
+beforeAll(() => {
+  config.global.plugins = config.global.plugins.filter(
+    (plugin) => plugin !== i18n,
+  );
+});
+
+vi.mock('@/utils/room', () => ({
+  parseUrn: vi.fn(),
+}));
 
 describe('ViewMode', () => {
   const mockRouter = { push: vi.fn(), replace: vi.fn() };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Reset parseUrn mock to default behavior
+    vi.mocked(roomUtils.parseUrn).mockReturnValue({
+      plataform: '',
+      contactNum: '',
+    });
+  });
 
   const createWrapper = (storeState = {}) => {
     const pinia = createTestingPinia({
       createSpy: vi.fn,
       initialState: {
-        rooms: { activeRoom: null, rooms: [], ...storeState.rooms },
+        rooms: {
+          activeRoom: null,
+          rooms: [],
+          contactToTransfer: '',
+          ...storeState.rooms,
+        },
         discussions: { activeDiscussion: null, ...storeState.discussions },
         dashboard: {
-          viewedAgent: { email: '', name: '' },
-          ...storeState.dashboard,
+          viewedAgent: storeState.dashboard?.viewedAgent || {
+            email: '',
+            name: '',
+          },
+          ...(storeState.dashboard || {}),
         },
         profile: { me: { email: 'test@example.com' }, ...storeState.profile },
         roomMessages: { roomMessagesNext: null, ...storeState.roomMessages },
+        featureFlag: {
+          featureFlags: {
+            active_features:
+              storeState.featureFlag?.featureFlags?.active_features || [],
+          },
+          ...(storeState.featureFlag || {}),
+        },
       },
     });
 
@@ -67,6 +103,17 @@ describe('ViewMode', () => {
             template: '<button @click="$emit(\'click\')" />',
             props: ['text', 'type'],
           },
+          UnnnicToolTip: {
+            template: '<div><slot /></div>',
+            props: ['enabled', 'text', 'side'],
+          },
+          UnnnicIcon: {
+            template: '<div @click="$emit(\'click\')" />',
+            props: ['icon', 'size', 'clickable', 'scheme'],
+          },
+          ModalTransferRooms: {
+            template: '<div />',
+          },
         },
       },
     });
@@ -74,8 +121,10 @@ describe('ViewMode', () => {
 
   const mockRoom = {
     uuid: 'room-1',
-    contact: { name: 'John Doe' },
+    contact: { name: 'John Doe', urn: 'whatsapp:+1234567890' },
     user: { email: 'agent@example.com' },
+    protocol: 'whatsapp',
+    has_history: true,
   };
   const mockDiscussion = {
     uuid: 'discussion-1',
@@ -91,6 +140,7 @@ describe('ViewMode', () => {
       expect(wrapper.vm.isRoomSkeletonActive).toBe(false);
       expect(wrapper.vm.isContactInfoOpened).toBe(false);
       expect(wrapper.vm.isAssumeChatConfirmationOpened).toBe(false);
+      expect(wrapper.vm.isModalTransferRoomsOpened).toBe(false);
       expect(wrapper.vm.viewedAgent).toEqual(mockAgent);
     });
 
@@ -129,6 +179,58 @@ describe('ViewMode', () => {
       );
       expect(() => wrapper.vm.handleModal('ContactInfo', 'invalid')).toThrow(
         "Modal handler 'invalid' not found",
+      );
+    });
+
+    it('should handle openTransferModal correctly', () => {
+      const wrapper = createWrapper({
+        dashboard: { viewedAgent: mockAgent },
+        rooms: { activeRoom: mockRoom },
+      });
+
+      wrapper.vm.openTransferModal();
+
+      expect(wrapper.vm.contactToTransfer).toBe(mockRoom.uuid);
+      expect(wrapper.vm.isModalTransferRoomsOpened).toBe(true);
+    });
+
+    it('should handle closeTransferModal correctly', () => {
+      const wrapper = createWrapper({
+        dashboard: { viewedAgent: mockAgent },
+        rooms: { activeRoom: mockRoom },
+      });
+
+      wrapper.vm.contactToTransfer = mockRoom.uuid;
+      wrapper.vm.isModalTransferRoomsOpened = true;
+
+      wrapper.vm.closeTransferModal();
+
+      expect(wrapper.vm.contactToTransfer).toBe('');
+      expect(wrapper.vm.isModalTransferRoomsOpened).toBe(false);
+    });
+
+    it('should handle openHistory correctly', () => {
+      vi.mocked(roomUtils.parseUrn).mockReturnValue({
+        plataform: 'whatsapp',
+        contactNum: '+1234567890',
+      });
+
+      const wrapper = createWrapper({
+        dashboard: { viewedAgent: mockAgent },
+        rooms: { activeRoom: mockRoom },
+      });
+
+      wrapper.vm.openHistory();
+
+      expect(mockRouter.push).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'closed-rooms',
+          query: expect.objectContaining({
+            contactUrn: '1234567890',
+            protocol: 'whatsapp',
+            from: mockRoom.uuid,
+          }),
+        }),
       );
     });
 
@@ -188,6 +290,19 @@ describe('ViewMode', () => {
         dashboard: { viewedAgent: mockAgent },
       });
       expect(wrapperWithEmail.vm.viewedAgent.email).toBe(mockAgent.email);
+    });
+
+    it('should render ContactInfo when weniChatsContactInfoV2 feature flag is enabled', () => {
+      const wrapper = createWrapper({
+        dashboard: { viewedAgent: mockAgent },
+        featureFlag: {
+          featureFlags: { active_features: ['weniChatsContactInfoV2'] },
+        },
+      });
+
+      expect(wrapper.vm.featureFlags.active_features).toContain(
+        'weniChatsContactInfoV2',
+      );
     });
 
     it('should handle room and discussion states', () => {
@@ -254,7 +369,7 @@ describe('ViewMode', () => {
   });
 
   describe('Complete Coverage Tests', () => {
-    it('should handle rooms watcher with route query processing', async () => {
+    it('should handle rooms watcher with route query processing when rooms are loaded', async () => {
       vi.clearAllMocks();
       const rooms = [mockRoom, { uuid: 'room-2', contact: { name: 'Jane' } }];
 
@@ -263,21 +378,18 @@ describe('ViewMode', () => {
         rooms: { rooms },
       });
 
-      // Mock route with room_uuid query
-      wrapper.vm.$route.query = { room_uuid: 'room-1' };
+      wrapper.vm.$route.query = { uuid_room: 'room-1' };
 
-      // Simulate the rooms watcher triggering
       const roomsStore = useRooms();
       roomsStore.setActiveRoom = vi.fn();
 
-      // Trigger the rooms watcher handler manually
       await wrapper.vm.$options.watch.rooms.handler.call(wrapper.vm);
 
       expect(roomsStore.setActiveRoom).toHaveBeenCalledWith(mockRoom);
       expect(mockRouter.replace).toHaveBeenCalledWith({ query: {} });
     });
 
-    it('should handle rooms watcher when room_uuid not found', async () => {
+    it('should handle rooms watcher when uuid_room not found', async () => {
       vi.clearAllMocks();
       const rooms = [{ uuid: 'room-2', contact: { name: 'Jane' } }];
 
@@ -286,7 +398,7 @@ describe('ViewMode', () => {
         rooms: { rooms },
       });
 
-      wrapper.vm.$route.query = { room_uuid: 'nonexistent-room' };
+      wrapper.vm.$route.query = { uuid_room: 'nonexistent-room' };
 
       const roomsStore = useRooms();
       roomsStore.setActiveRoom = vi.fn();
@@ -294,7 +406,7 @@ describe('ViewMode', () => {
       await wrapper.vm.$options.watch.rooms.handler.call(wrapper.vm);
 
       expect(roomsStore.setActiveRoom).not.toHaveBeenCalled();
-      expect(mockRouter.replace).toHaveBeenCalledWith({ query: {} });
+      expect(mockRouter.replace).not.toHaveBeenCalled();
     });
 
     it('should handle rooms watcher without route query', async () => {
@@ -313,6 +425,45 @@ describe('ViewMode', () => {
 
       expect(roomsStore.setActiveRoom).not.toHaveBeenCalled();
       expect(mockRouter.replace).not.toHaveBeenCalled();
+    });
+
+    it('should not process uuid_room when rooms array is empty', async () => {
+      vi.clearAllMocks();
+      const wrapper = createWrapper({
+        dashboard: { viewedAgent: mockAgent },
+        rooms: { rooms: [] },
+      });
+
+      wrapper.vm.$route.query = { uuid_room: 'room-1' };
+
+      const roomsStore = useRooms();
+      roomsStore.setActiveRoom = vi.fn();
+
+      await wrapper.vm.$options.watch.rooms.handler.call(wrapper.vm);
+
+      expect(roomsStore.setActiveRoom).not.toHaveBeenCalled();
+      expect(mockRouter.replace).not.toHaveBeenCalled();
+    });
+
+    it('should clear query after successfully setting active room', async () => {
+      vi.clearAllMocks();
+      const rooms = [mockRoom];
+
+      const wrapper = createWrapper({
+        dashboard: { viewedAgent: mockAgent },
+        rooms: { rooms },
+      });
+
+      wrapper.vm.$route.query = { uuid_room: 'room-1' };
+
+      const roomsStore = useRooms();
+      const setActiveRoomSpy = vi.fn();
+      roomsStore.setActiveRoom = setActiveRoomSpy;
+
+      await wrapper.vm.$options.watch.rooms.handler.call(wrapper.vm);
+
+      expect(setActiveRoomSpy).toHaveBeenCalledWith(mockRoom);
+      expect(mockRouter.replace).toHaveBeenCalledWith({ query: {} });
     });
 
     it('should handle whenGetChat method completely', () => {
@@ -337,7 +488,6 @@ describe('ViewMode', () => {
     });
 
     it('should handle assume chat button visibility edge cases', () => {
-      // Test when room.user.email equals me.email
       const roomWithSameUser = {
         ...mockRoom,
         user: { email: 'test@example.com' },
@@ -352,7 +502,6 @@ describe('ViewMode', () => {
         wrapperSameUser.vm.me.email,
       );
 
-      // Test when room.user is null/undefined
       const roomWithoutUser = { ...mockRoom, user: null };
       const wrapperNoUser = createWrapper({
         dashboard: { viewedAgent: mockAgent },
@@ -361,7 +510,6 @@ describe('ViewMode', () => {
 
       expect(wrapperNoUser.vm.room.user).toBeNull();
 
-      // Test when discussion is present with room
       const wrapperWithBoth = createWrapper({
         dashboard: { viewedAgent: mockAgent },
         rooms: { activeRoom: mockRoom },
@@ -380,11 +528,9 @@ describe('ViewMode', () => {
 
       expect(wrapper.vm.isRoomSkeletonActive).toBe(false);
 
-      // Test skeleton active state
       await wrapper.setData({ isRoomSkeletonActive: true });
       expect(wrapper.vm.isRoomSkeletonActive).toBe(true);
 
-      // Test skeleton inactive state
       await wrapper.setData({ isRoomSkeletonActive: false });
       expect(wrapper.vm.isRoomSkeletonActive).toBe(false);
     });
@@ -394,24 +540,20 @@ describe('ViewMode', () => {
         dashboard: { viewedAgent: mockAgent },
       });
 
-      // Set modals to open state
       await wrapper.setData({
         isContactInfoOpened: true,
         isAssumeChatConfirmationOpened: true,
       });
 
-      // Test ModalGetChat close event
       const modalGetChat = wrapper.vm;
       modalGetChat.handleModal('AssumeChatConfirmation', 'close');
       expect(wrapper.vm.isAssumeChatConfirmationOpened).toBe(false);
 
-      // Test ContactInfo close event
       modalGetChat.handleModal('ContactInfo', 'close');
       expect(wrapper.vm.isContactInfoOpened).toBe(false);
     });
 
     it('should test all computed property combinations', () => {
-      // Test empty state
       const wrapperEmpty = createWrapper();
       expect(wrapperEmpty.vm.viewedAgent).toEqual({ email: '', name: '' });
       expect(wrapperEmpty.vm.room).toBeNull();
@@ -419,7 +561,6 @@ describe('ViewMode', () => {
       expect(wrapperEmpty.vm.me).toEqual({ email: 'test@example.com' });
       expect(wrapperEmpty.vm.rooms).toEqual([]);
 
-      // Test with all data
       const wrapperFull = createWrapper({
         dashboard: { viewedAgent: mockAgent },
         rooms: { activeRoom: mockRoom, rooms: [mockRoom] },
@@ -436,19 +577,50 @@ describe('ViewMode', () => {
       expect(wrapperFull.vm.roomMessagesNext).toBe('next-page');
     });
 
+    it('should handle room without history correctly', () => {
+      const roomWithoutHistory = {
+        ...mockRoom,
+        has_history: false,
+      };
+
+      const wrapper = createWrapper({
+        dashboard: { viewedAgent: mockAgent },
+        rooms: { activeRoom: roomWithoutHistory },
+      });
+
+      expect(wrapper.vm.room.has_history).toBe(false);
+    });
+
+    it('should handle transfer modal state correctly', async () => {
+      const wrapper = createWrapper({
+        dashboard: { viewedAgent: mockAgent },
+        rooms: { activeRoom: mockRoom },
+      });
+
+      expect(wrapper.vm.isModalTransferRoomsOpened).toBe(false);
+      expect(wrapper.vm.contactToTransfer).toBe('');
+
+      wrapper.vm.openTransferModal();
+
+      expect(wrapper.vm.isModalTransferRoomsOpened).toBe(true);
+      expect(wrapper.vm.contactToTransfer).toBe(mockRoom.uuid);
+
+      wrapper.vm.closeTransferModal();
+
+      expect(wrapper.vm.isModalTransferRoomsOpened).toBe(false);
+      expect(wrapper.vm.contactToTransfer).toBe('');
+    });
+
     it('should test ModalGetChat props binding', () => {
       const wrapper = createWrapper({
         dashboard: { viewedAgent: mockAgent },
       });
 
-      // Test modal props when closed
       expect(wrapper.vm.isAssumeChatConfirmationOpened).toBe(false);
 
-      // Test modal props when open
       wrapper.vm.handleModal('AssumeChatConfirmation', 'open');
       expect(wrapper.vm.isAssumeChatConfirmationOpened).toBe(true);
 
-      // Test whenGetChat prop is properly bound
       expect(typeof wrapper.vm.whenGetChat).toBe('function');
     });
 
@@ -462,7 +634,6 @@ describe('ViewMode', () => {
       });
       expect(wrapperWithEmail.vm.viewedAgent.email).toBe(mockAgent.email);
 
-      // Test ChatsBackground conditions
       const wrapperBackgroundVisible = createWrapper({
         dashboard: { viewedAgent: mockAgent },
       });
@@ -470,7 +641,6 @@ describe('ViewMode', () => {
       expect(wrapperBackgroundVisible.vm.discussion).toBeNull();
       expect(wrapperBackgroundVisible.vm.isRoomSkeletonActive).toBe(false);
 
-      // Test active chat section conditions
       const wrapperWithRoom = createWrapper({
         dashboard: { viewedAgent: mockAgent },
         rooms: { activeRoom: mockRoom },
@@ -482,6 +652,50 @@ describe('ViewMode', () => {
         discussions: { activeDiscussion: mockDiscussion },
       });
       expect(wrapperWithDiscussion.vm.discussion).toBeTruthy();
+    });
+
+    it('should handle room with unnamed contact', () => {
+      const roomWithoutContactName = {
+        ...mockRoom,
+        contact: { name: '' },
+      };
+
+      const wrapper = createWrapper({
+        dashboard: { viewedAgent: mockAgent },
+        rooms: { activeRoom: roomWithoutContactName },
+      });
+
+      expect(wrapper.vm.room.contact.name).toBe('');
+    });
+
+    it('should handle openHistory with contact name fallback', () => {
+      vi.mocked(roomUtils.parseUrn).mockReturnValue({
+        plataform: 'telegram',
+        contactNum: '',
+      });
+
+      const roomWithoutUrn = {
+        ...mockRoom,
+        contact: { name: 'John Doe', urn: '' },
+      };
+
+      const wrapper = createWrapper({
+        dashboard: { viewedAgent: mockAgent },
+        rooms: { activeRoom: roomWithoutUrn },
+      });
+
+      wrapper.vm.openHistory();
+
+      expect(mockRouter.push).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'closed-rooms',
+          query: expect.objectContaining({
+            contactUrn: 'John Doe',
+            protocol: 'whatsapp',
+            from: roomWithoutUrn.uuid,
+          }),
+        }),
+      );
     });
   });
 });

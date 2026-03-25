@@ -3,34 +3,49 @@
     v-if="isUserManager && projectConfig"
     class="settings-view__project-options"
   >
-    <SettingsSectionHeader :title="$t('config_chats.project_configs.title')" />
-
     <section class="project-options__items">
-      <section>
+      <SettingsSectionHeader
+        :title="$t('config_chats.project_configs.title')"
+      />
+      <section class="project-options__items__config">
         <SettingsProjectOptionsItem
           v-model="projectConfig.can_use_bulk_transfer"
           :name="configBulkTransferTranslation"
-          :tooltip="$t('config_chats.project_configs.bulk_transfer.tooltip')"
-        />
-        <SettingsProjectOptionsItem
-          v-model="projectConfig.can_use_queue_prioritization"
-          :name="configQueuePrioritizationTranslation"
-          :tooltip="
-            $t('config_chats.project_configs.queue_prioritization.tooltip')
-          "
         />
         <SettingsProjectOptionsItem
           v-model="projectConfig.filter_offline_agents"
           :name="configBlockTransferToOffAgentsTranslation"
         />
         <SettingsProjectOptionsItem
+          v-if="isBulkCloseFeatureEnabled"
+          v-model="projectConfig.can_use_bulk_close"
+          :name="configBulkCloseTranslation"
+        />
+        <SettingsProjectOptionsItem
+          v-model="projectConfig.can_close_chats_in_queue"
+          :name="configBlockCloseChatsInQueueTranslation"
+        />
+        <SettingsProjectOptionsItem
+          v-if="isBulkTakeFeatureEnabled"
+          v-model="projectConfig.can_use_bulk_take"
+          :name="configBulkTakeTranslation"
+        />
+        <SettingsProjectOptionsItem
+          v-model="projectConfig.can_use_queue_prioritization"
+          :name="configQueuePrioritizationTranslation"
+        />
+        <SettingsProjectOptionsItem
           v-model="projectConfig.can_see_timer"
           :name="configShowAgentStatusCountTimer"
         />
+        <SettingsProjectOptionsItem
+          v-model="projectConfig.can_see_waiting_rooms_count"
+          :name="configShowWaitingRoomsCountTranslation"
+        />
       </section>
-      <section class="project-options__items__custom-breaks">
-        <CustomBreakOption />
-      </section>
+    </section>
+    <section class="project-options__items__custom-breaks">
+      <CustomBreakOption />
     </section>
   </section>
 </template>
@@ -40,6 +55,7 @@ import { mapState } from 'pinia';
 
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import Project from '@/services/api/resources/settings/project';
 
@@ -60,9 +76,13 @@ export default {
     return {
       projectConfig: {
         can_use_bulk_transfer: false,
-        can_use_queue_prioritization: false,
         filter_offline_agents: false,
+        can_use_bulk_close: false,
+        can_close_chats_in_queue: false,
+        can_use_bulk_take: false,
+        can_use_queue_prioritization: false,
         can_see_timer: false,
+        can_see_waiting_rooms_count: true,
       },
     };
   },
@@ -70,6 +90,15 @@ export default {
   computed: {
     ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
+    ...mapState(useFeatureFlag, ['featureFlags']),
+
+    isBulkCloseFeatureEnabled() {
+      return this.featureFlags.active_features?.includes('weniChatsBulkClose');
+    },
+
+    isBulkTakeFeatureEnabled() {
+      return this.featureFlags.active_features?.includes('weniChatsBulkTake');
+    },
 
     isUserManager() {
       const ROLE_MANAGER = 1;
@@ -84,6 +113,38 @@ export default {
         }`,
       );
     },
+    configBlockTransferToOffAgentsTranslation() {
+      const filterOfflineAgents = this.projectConfig.filter_offline_agents;
+      return this.$t(
+        `config_chats.project_configs.block_transfer_to_off_agents.switch_${
+          filterOfflineAgents ? 'active' : 'inactive'
+        }`,
+      );
+    },
+    configBulkCloseTranslation() {
+      const canBulkClose = this.projectConfig.can_use_bulk_close;
+      return this.$t(
+        `config_chats.project_configs.bulk_close.switch_${
+          canBulkClose ? 'active' : 'inactive'
+        }`,
+      );
+    },
+    configBlockCloseChatsInQueueTranslation() {
+      const canCloseChatsInQueue = this.projectConfig.can_close_chats_in_queue;
+      return this.$t(
+        `config_chats.project_configs.block_close_chats_in_queue.switch_${
+          canCloseChatsInQueue ? 'active' : 'inactive'
+        }`,
+      );
+    },
+    configBulkTakeTranslation() {
+      const canBulkTake = this.projectConfig.can_use_bulk_take;
+      return this.$t(
+        `config_chats.project_configs.bulk_take.switch_${
+          canBulkTake ? 'active' : 'inactive'
+        }`,
+      );
+    },
     configQueuePrioritizationTranslation() {
       const canQueuePrioritization =
         this.projectConfig.can_use_queue_prioritization;
@@ -93,20 +154,17 @@ export default {
         }`,
       );
     },
-    configBlockTransferToOffAgentsTranslation() {
-      const canBulkTransfer = this.projectConfig.filter_offline_agents;
-      return this.$t(
-        `config_chats.project_configs.block_transfer_to_off_agents.switch_${
-          canBulkTransfer ? 'active' : 'inactive'
-        }`,
-      );
-    },
     configShowAgentStatusCountTimer() {
       const showAgentStatusCountTimer = this.projectConfig.can_see_timer;
       return this.$t(
         `config_chats.project_configs.show_agent_status_count_timer.switch_${
-          showAgentStatusCountTimer ? 'inactive' : 'active'
+          showAgentStatusCountTimer ? 'active' : 'inactive'
         }`,
+      );
+    },
+    configShowWaitingRoomsCountTranslation() {
+      return this.$t(
+        'config_chats.project_configs.show_waiting_rooms_count.switch_label',
       );
     },
   },
@@ -116,7 +174,14 @@ export default {
       immediate: true,
       handler(newProject) {
         if (newProject.config) {
-          this.projectConfig = newProject.config;
+          const config = {
+            ...newProject.config,
+            can_see_waiting_rooms_count:
+              newProject.config.can_see_waiting_rooms_count === undefined
+                ? true
+                : newProject.config.can_see_waiting_rooms_count,
+          };
+          this.projectConfig = config;
         }
       },
     },
@@ -132,16 +197,24 @@ export default {
     async updateProjectConfig() {
       const {
         can_use_bulk_transfer,
-        can_use_queue_prioritization,
         filter_offline_agents,
+        can_use_bulk_close,
+        can_close_chats_in_queue,
+        can_use_bulk_take,
+        can_use_queue_prioritization,
         can_see_timer,
+        can_see_waiting_rooms_count,
       } = this.projectConfig;
 
       Project.update({
         can_use_bulk_transfer,
-        can_use_queue_prioritization,
         filter_offline_agents,
+        can_use_bulk_close,
+        can_close_chats_in_queue,
+        can_use_bulk_take,
+        can_use_queue_prioritization,
         can_see_timer,
+        can_see_waiting_rooms_count,
       });
     },
   },
@@ -150,17 +223,23 @@ export default {
 
 <style lang="scss">
 .settings-view__project-options {
-  display: grid;
+  display: flex;
+  justify-content: space-between;
   gap: $unnnic-spacing-ant;
 
   .project-options__items {
     display: flex;
-    justify-content: space-between;
-    gap: $unnnic-spacing-nano;
+    flex-direction: column;
+    gap: $unnnic-space-3;
+
+    &__config {
+      display: flex;
+      flex-direction: column;
+      gap: $unnnic-space-4;
+    }
 
     &__custom-breaks {
       display: flex;
-      min-width: 236px;
     }
   }
 }

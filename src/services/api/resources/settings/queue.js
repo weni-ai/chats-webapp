@@ -1,13 +1,15 @@
 import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
+import { getURLParams } from '@/utils/requests';
 
 export default {
-  async create({ name, sectorUuid, default_message }) {
+  async create({ name, sectorUuid, default_message, queue_limit }) {
     const response = await http.post('/queue/', {
       name,
       sector: sectorUuid,
       default_message,
       project: getProject(),
+      queue_limit,
     });
     return response.data;
   },
@@ -69,6 +71,7 @@ export default {
   async editQueue(queueInfo) {
     const response = await http.patch(`/queue/${queueInfo.uuid}/`, {
       default_message: queueInfo.default_message,
+      queue_limit: queueInfo.queue_limit,
     });
     return response;
   },
@@ -81,9 +84,18 @@ export default {
     };
   },
 
-  async tags(queueUuid, offset, limit) {
-    const response = await http.get('/tag/', {
-      params: { queue: queueUuid, offset, limit },
+  async tags(queueUuid, { limit = 20, next = '' }) {
+    const endpoint = '/tag/';
+    const nextParams = next
+      ? getURLParams({ URL: next, endpoint, returnObject: true })
+      : {};
+    const params = {
+      ...nextParams,
+      limit: nextParams.limit || limit,
+      queue: queueUuid,
+    };
+    const response = await http.get(endpoint, {
+      params,
     });
     return response.data;
   },

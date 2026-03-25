@@ -1,4 +1,8 @@
 {
+  "home": {
+    "title": "Hello there,",
+    "description": "Select a chat to carry out your supports!"
+  },
   "news_and_updates": "News and updates in Chats",
   "custom": "Custom",
   "country": {
@@ -125,10 +129,12 @@
     "info": "Define an automatic response to be sent to the contact while they are waiting for assistance, leave it blank if you don’t want any message.",
     "placeholder": "You haven't set an automatic message yet. Please define a message for your contacts who are waiting."
   },
+  "attention": "Attention",
   "updates_saved": "Updates saved",
   "updated_info": "Updated information",
   "active_chats": "Active chats",
   "active_chats_tooltip": "Number of ongoing chats",
+  "since": "Since",
   "date_format": "MM/DD/YYYY",
   "live": "Live",
   "number_chats": "Number of chats",
@@ -138,7 +144,14 @@
   "undo": "Undo",
   "redo": "Redo",
   "record_audio": "Record audio",
-  "select_all": "Select all",
+  "select_all": "Select all chats",
+  "deselect_all": "Deselect all chats",
+  "select_this_chat": "Select this chat",
+  "deselect_this_chat": "Deselect this chat",
+  "transfer_all_selected_chats": "Transfer all selected chats",
+  "take_over_all_selected_chats_tooltip": "Take over all selected chats",
+  "end_all_selected_chats_tooltip": "End all selected chats",
+  "number_of_chats_selected": "{count} chat selected | {count} chats selected",
   "image": "Image",
   "video": "Video",
   "audio_message": "Audio message",
@@ -157,7 +170,11 @@
   "center": "Center",
   "justify": "Justify",
   "without_results": "No matching results",
-  "without_chats": "Oops! It looks like there are no chats at the moment :)",
+  "without_chats": {
+    "in_progress": "All wrapped up! You’ll be notified when new chats are assigned and they’ll appear in this list.",
+    "waiting": "Queue cleared! All contacts have been assigned to an agent."
+  },
+  "other": "Other",
   "select_smart": {
     "without_results": "No results found",
     "without_multiple_selected": "No option selected"
@@ -232,6 +249,14 @@
         "switch_active": "Active signature",
         "switch_disabled": "Disabled signature"
       },
+      "csat": {
+        "label": "Automatically send a satisfaction survey after human support ends",
+        "hint": "If there is an active flow in the Flows module set to trigger a survey after support ends, this setting may cause conflicts and affect survey delivery.",
+        "confirm_modal": {
+          "content_1": "If there is an active flow in the Flows module set to trigger a survey after support ends, this setting may cause conflicts and affect survey delivery.",
+          "content_2": "Do you want to continue anyway?"
+        }
+      },
       "automatic_message": {
         "switch_active": "Automatic opening message active",
         "switch_disabled": "Automatic opening message disabled",
@@ -280,18 +305,53 @@
   "interaction_time": "Interaction time",
   "average_interaction_time": "It is the average duration of a chat",
   "chats": {
+    "transcription": {
+      "unavailable_closed_chat": "It is not possible to view transcriptions that were not enabled during the support.",
+      "unavailable_exceeding_duration": "Transcription unavailable for audio exceeding {duration} minutes.",
+      "error": "Unable to load the transcript. Please try again!",
+      "feedback": {
+        "question": "Was the transcription useful?",
+        "positive": "Useful",
+        "negative": "Needs improvement",
+        "error": "Failed to send transcription feedback, please try again.",
+        "sended": "Your feedback has been submitted!",
+        "modal": {
+          "title": "What went wrong?",
+          "input_placeholder": "Enter your feedback here"
+        }
+      }
+    },
+    "search_messages": {
+      "title": "Search in conversation",
+      "input_placeholder": "Enter a word or phrase to search",
+      "no_results": "No results found for \"{searchTerm}\"",
+      "results_found": "{count} results found for \"{searchTerm}\"",
+      "automated_support": "Automated Support",
+      "loading": "Loading more messages"
+    },
     "summary": {
       "reading_and_summarizing": "Reading and summarizing",
       "by_ai": "Summary by AI",
       "error": "Failed to generate summary.",
       "unavailable": "No summary available",
+      "open_summary_tooltip": "Click to see Summary",
+      "close_summary_tooltip": "Click to hide Summary",
+      "archived": {
+        "download_button": "Download messages",
+        "download_error": "Error downloading messages. Please try again.",
+        "disclaimer": {
+          "title": "Archived messages",
+          "description": "This support request was closed over a year ago, so the messages have been moved to the archives. To view them, click the “Download messages” button."
+        }
+      },
       "feedback": {
-        "title": "Feedback",
+        "title": "What went wrong?",
         "needs_improvement_text": "Help us improve summaries. Your feedback on this summary helps us make it clearer and more useful.",
         "empty_rating": "Was this summary useful to you?",
         "positive": "Useful",
         "negative": "Needs improvement",
-        "placeholder": "Share your feedback to help us improve."
+        "placeholder": "Enter your feedback here",
+        "sended": "Your feedback has been submitted!"
       }
     },
     "feedback": {
@@ -312,8 +372,16 @@
     },
     "room_list": {
       "order_by": "Order by:",
-      "most_recent": "Most recent",
-      "older": "Older"
+      "most_recent": {
+        "label": "Most recent",
+        "ongoing_tooltip": "Most recent: last message exchanged in the shortest time",
+        "waiting_tooltip": "Most recent: rooms that have been open for less time."
+      },
+      "oldest": {
+        "label": "Oldest",
+        "ongoing_tooltip": "Oldest: last message exchanged in the longest time",
+        "default_tooltip": "Oldest: rooms that have been open the longest."
+      }
     },
     "room_pin": {
       "success_pin": "Chat pinned with success",
@@ -334,10 +402,11 @@
     "tags": "Chat tags",
     "discussions": "Discussions",
     "waiting": "Waiting",
+    "waiting_tooltip": "Chats to be handled",
     "waiting_assistance": "Waiting for assistance",
     "in_progress": "Ongoing",
     "sent_flows": "Sent flows",
-    "to_end_rate_the_chat": "To close, rate the chat",
+    "to_end_rate_the_chat": "To end, rate the chat",
     "to_end_required_tags": "To end this conversation, please select at least one tag.",
     "tags_help": "Tags help you locate chats and also generate good reports",
     "chat_with_contact_ended": "Chat with {contact} closed",
@@ -350,7 +419,7 @@
       "does_not_have_permission": "You do not have permission to transfer this chat"
     },
     "open_chat": "Open chat",
-    "get_chat": "Get chat",
+    "get_chat": "Take over only this chat",
     "get_chat_question": "Get chat?",
     "get_chat_confirmation": "Confirm if you want to do the service of {contact}",
     "get_chat_error": "Error when trying to get the room",
@@ -379,7 +448,7 @@
     "view-mode": {
       "title": "Agent {viewedAgent} live view mode",
       "close": "End visualization",
-      "assume_chat": "Take Chat",
+      "assume_chat": "Take over only this chat",
       "assume_chat_question": "Take Chat?",
       "assume_chat_confirmation": "When confirming you will remove the Chat from agent {viewedAgent} and will be responsible for Chat"
     }
@@ -395,6 +464,7 @@
   "about": "about",
   "today": "Today",
   "transfer": "Transfer",
+  "take_over": "Take over",
   "suggested_answers": "Suggested Answers",
   "attach": "Attach",
   "send": "Send",
@@ -404,6 +474,7 @@
   "action_cannot_be_reversed": "This action cannot be reversed",
   "end": "End",
   "end_chat": "End Chat",
+  "end_discussion": "End discussion",
   "cancel": "Cancel",
   "add": "Add",
   "proceed": "Proceed",
@@ -416,6 +487,7 @@
   "none": "None",
   "access_history_to_see_closed_chats": "Go to the chats history to see closed chats",
   "close": "Close",
+  "ended_by": "Ended by",
   "all": "All",
   "back_to_chats": "@:back to chats",
   "filter": {
@@ -439,6 +511,10 @@
   },
   "pagination": "{from} - {to} of {total}",
   "contact": "Contact",
+  "unnamed_contact": "Unnamed contact",
+  "unnamed_agent": "Unnamed agent",
+  "no_agent_assigned": "No agent assigned",
+  "no_tags_assigned": "No tags assigned",
   "contact_await_for_you": "A contact is waiting for you!",
   "agent": "Agent",
   "manager": "Manager",
@@ -462,11 +538,12 @@
   "service": "Service",
   "tags": {
     "title": "Tags",
+    "search": "Search for a tag",
     "description": "Tags are used to classify service characteristics and enable chat search and filtering from them, define tags that are relevant to their context.",
     "add": {
       "title": "Add tags",
       "label": "Tag name",
-      "placeholder": "Example: Doubts"
+      "placeholder": "Enter the name of a tag to search or to add it"
     },
     "already_added": "Added Tags"
   },
@@ -502,6 +579,36 @@
       "selected_agent_offline": "The selected agent is offline at the moment",
       "without_online_agents": "No online agent at the moment"
     }
+  },
+  "bulk_close": {
+    "close_selected_contacts": "Close selected contacts",
+    "confirm_close_selected": "Are you sure you want to close the selected contacts?",
+    "success_message": "{count} chat ended successfully! | {count} chats ended successfully!",
+    "partial_success_message": "{success} chat ended, {failed} failed. Please try again. | {success} chats ended, {failed} failed. Please try again.",
+    "error_message": "Unable to close chats, please try again",
+    "end_all_selected_chats": "End all selected chats",
+    "sector_tag": "Sector {current} of {total}",
+    "chats_count_sector": "{count} chat · {sector} sector | {count} chats · {sector} sector",
+    "required_tags_title": "Tags are required to end chats in the {sector} sector",
+    "required_tags_description": "If you select any tag below, it will be applied to the {count} chat and will replace any existing tags. | If you select any tag below, it will be applied to the {count} chats and will replace any existing tags.",
+    "next_sector": "Next sector",
+    "end_all_chats": "End all ({count} chats)",
+    "back": "Back",
+    "optional_tags_title": "Tags are not required to end chats in the {sector} sector",
+    "optional_tags_description": "If you select any tag below, it will be applied to the {count} chat and will replace any existing tags. | If you select any tag below, it will be applied to the {count} chats and will replace any existing tags.",
+    "no_tags_in_sector": "There are no tags registered in this sector to be selected."
+  },
+  "close_chat": {
+    "confirm_end": "Are you sure you want to end this chat?"
+  },
+  "bulk_take": {
+    "title": "Take over all selected chats",
+    "selected_chats_count": "{count} chat is selected for takeover. | {count} chats are selected for takeover.",
+    "confirm_take_over_selected": "Are you sure you want to take over all selected chats?",
+    "take_over_all": "Take over all",
+    "success_message": "{count} chat taken over successfully! | {count} chats taken over successfully!",
+    "partial_success_message": "{success} chat taken over, {failed} failed. Please try again. | {success} chats taken over, {failed} failed. Please try again.",
+    "error_message": "Unable to take over chats, please try again"
   },
   "contact_info": {
     "title": "About the contact",
@@ -541,8 +648,9 @@
       "add_agent": "Add Agent"
     },
     "close": {
-      "title": "Arrange",
-      "description": "You can no longer exchange messages in this discussion"
+      "title": "End discussion",
+      "question": "Are you sure you want to end discussion about {contact}?",
+      "description": "Once finalized, no more messages can be sent."
     },
     "add_agents": {
       "title": "Add Agents",
@@ -634,6 +742,8 @@
     "groups": "Groups ({length})",
     "group_contacts": "{n} contact | {n} contacts",
     "letter_group": "{letter} ({length})",
+    "letter_group_unnamed": "Unnamed ({length})",
+    "unnamed_contact": "Unnamed contact",
     "add_contact": "Add contact",
     "remove_selected_contacts": "Remove selected contacts",
     "add_new_contact": {
@@ -657,31 +767,31 @@
   "quick_messages": {
     "title": "Quick messages",
     "title_by_sector": "Quick messages in {sector}",
-    "without_messages": "For now you do not have quick messages, add one :)",
-    "without_messages_shared": {
-      "start": "For now there are no quick messages in this sector,",
-      "middle": "add a message",
-      "end": "for agents in this sector to use."
-    },
+    "without_personal_messages": "You have not added any quick messages yet. Click the <i>+ Message</i> button and add your first message.",
+    "without_messages_shared": "There are no quick messages shared for you to use.",
     "example_message": "Example message",
     "example_message_description": " Quick messages are ready-made texts that help standardize customer service. All agents in this sector will be able to use these messages, and you can register new messages below.",
-    "personal": "Your quick messages",
-    "shared": "Shared quick messages",
+    "personal": "Your messages",
+    "shared": "Shared messages",
     "delete": "Delete quick message",
+    "delete_your_quick_message": "Delete your quick message",
     "delete_confirm": "Are you sure you'd like to delete quick message?",
     "delete_or_edit": "Delete or edit",
+    "delete_description": "Are you sure you want to delete the quick message {shortcut}?",
     "shortcut_tooltip": "Type /{shortcut} to use",
     "new": "New quick message",
-    "add": "Add new message",
-    "edit": "Edit message",
+    "add": "Add new quick message",
+    "edit": "Edit quick message",
     "available_shortcuts": "Available shortcuts",
     "copilot": "Now ChatGPT is your CoPilot! Use the answers suggested by Artificial Intelligence to speed up your calls!",
     "title_field_placeholder": "Ex: Welcome",
     "shortcut_field_placeholder": "Ex: Hi",
-    "message_field_placeholder": "Type what you want",
+    "message_field_placeholder": "Example: Hello, how are you? I'll continue to support you today.",
     "successfully_added": "Quick message added",
     "successfully_updated": "Quick message updated",
-    "error": "Failed to set quick message"
+    "error": "Failed to set quick message",
+    "no_suggestions": "No results found for the entered shortcut.",
+    "disclaimer": "Type the shortcut / (slash) in the chat message field to activate the display of quick messages."
   },
   "discard": "Delete",
   "on_boarding": {
@@ -727,7 +837,7 @@
     }
   },
   "config_chats": {
-    "title": "Chat Settings",
+    "title": "Human Support Settings",
     "section_sectors_title": "Sectors in {project}",
     "section_sectors_subtitle": "Add, view and manage sectors, queues, managers and agents within your organization.",
     "tabs": {
@@ -748,24 +858,39 @@
       "status_error": "Oops, unfortunately the changes were not saved, please try again"
     },
     "project_configs": {
-      "title": "Project Adjustments",
+      "title": "Project preferences",
       "bulk_transfer": {
         "tooltip": "This function allows agents to transfer various contacts at once to a row or agent",
-        "switch_active": "Bulk contact transfer active",
-        "switch_inactive": "Bulk contact transfer disabled"
+        "switch_active": "Transfer chats in bulk to another queue or agent",
+        "switch_inactive": "Transfer chats in bulk to another queue or agent"
+      },
+      "block_transfer_to_off_agents": {
+        "switch_active": "Block chat transfer to offline agents",
+        "switch_inactive": "Block chat transfer to offline agents"
+      },
+      "bulk_close": {
+        "switch_active": "End chats in bulk",
+        "switch_inactive": "End chats in bulk"
+      },
+      "block_close_chats_in_queue": {
+        "switch_active": "Block ending chats that are in the queue",
+        "switch_inactive": "Block ending chats that are in the queue"
+      },
+      "bulk_take": {
+        "switch_active": "Take over chats in bulk",
+        "switch_inactive": "Take over chats in bulk"
       },
       "queue_prioritization": {
         "tooltip": "This function allows agents to choose the queues that will receive contacts, within those previously selected in the sector",
-        "switch_active": "Queue selection by agents active",
-        "switch_inactive": "Queue selection by agents inactive"
-      },
-      "block_transfer_to_off_agents": {
-        "switch_active": "Blocking transfers to offline agents active",
-        "switch_inactive": "Blocking transfers to offline agents inactive"
+        "switch_active": "Allow agents to choose their queues within the sector",
+        "switch_inactive": "Allow agents to choose their queues within the sector"
       },
       "show_agent_status_count_timer": {
-        "switch_active": "Show agent status count timer",
-        "switch_inactive": "Hide agent status count timer"
+        "switch_active": "Show status timer for custom agent breaks",
+        "switch_inactive": "Show status timer for custom agent breaks"
+      },
+      "show_waiting_rooms_count": {
+        "switch_label": "Show the counter with the number of chats waiting for human support"
       }
     },
     "custom_sector": "Customize new sector (recommended)",
@@ -791,6 +916,15 @@
       "hint": "Queues are support groups within the sector; you can create new queues or edit them whenever you want.",
       "queue_definitions": "Queue settings",
       "delete_or_edit": "Delete or edit",
+      "limit_chats": {
+        "title": "Limit of chats awaiting support",
+        "switch": {
+          "label": "Limit chats",
+          "helper": "When the limit is reached, new chats won’t be created.",
+          "input_label": "Maximum waiting chats",
+          "input_placeholder": "Example: 50"
+        }
+      },
       "message": {
         "create": "Queue successfully created",
         "update": "Queue successfully updated",

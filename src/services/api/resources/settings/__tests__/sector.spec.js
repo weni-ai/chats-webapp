@@ -138,10 +138,10 @@ describe('Sector', () => {
 
     http.get.mockResolvedValue({ data: expectedData });
 
-    const result = await Sector.tags(sectorUuid);
+    const result = await Sector.tags(sectorUuid, { limit: 20, next: '' });
 
     expect(http.get).toHaveBeenCalledWith('/tag/', {
-      params: { sector: sectorUuid, limit: 9999 },
+      params: { sector: sectorUuid, limit: 20 },
     });
 
     expect(result).toEqual(expectedData);

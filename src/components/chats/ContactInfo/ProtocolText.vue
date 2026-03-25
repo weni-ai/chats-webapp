@@ -8,19 +8,20 @@
       enabled
       :text="tooltipProtocolText"
       side="left"
-      class="protocol-text__ticket"
     >
-      <p class="protocol-text__ticket-title">
-        {{ $t('contact_info.ticket') }}:
-      </p>
-      <p class="protocol-text__ticket-value">
-        {{ protocol }}
-      </p>
-      <UnnnicIconSvg
-        icon="content_copy"
-        scheme="neutral-cloudy"
-        size="sm"
-      />
+      <section class="protocol-text__ticket">
+        <p class="protocol-text__ticket-title">
+          {{ $t('contact_info.ticket') }}:
+        </p>
+        <p class="protocol-text__ticket-value">
+          {{ protocol }}
+        </p>
+        <UnnnicIconSvg
+          icon="content_copy"
+          scheme="neutral-cloudy"
+          size="sm"
+        />
+      </section>
     </UnnnicToolTip>
   </section>
 </template>

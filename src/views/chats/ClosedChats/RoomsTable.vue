@@ -6,133 +6,115 @@
   >
     <ClosedChatsRoomsTableFilters
       v-show="!isMobile"
+      v-model="filters"
       data-testid="desktop-filters"
-      @input="filters = $event"
     />
 
     <ModalClosedChatsFilters
-      v-if="isMobile && showModalFilters"
-      v-model="filters"
+      v-if="isMobile"
+      v-model="showModalFilters"
+      :filters="filters"
       data-testid="mobile-filters-modal"
       @close="handleShowModalFilters"
+      @input-filters="filters = $event"
     />
 
-    <RoomsTableLoading
-      v-if="isTableLoading"
-      data-testid="table-loading-state"
-    />
-    <UnnnicTable
-      v-if="!isTableLoading && rooms.length > 0"
+    <UnnnicDataTable
+      clickable
+      fixedHeaders
+      height="100%"
+      size="sm"
       :items="rooms"
-      class="closed-chats__rooms-table__table"
-      data-testid="rooms-data-table"
+      :headers="tableHeaders"
+      :hidePagination="!showTablePagination"
+      :pageInterval="roomsLimit"
+      :pageTotal="roomsCount"
+      :page="roomsCurrentPage"
+      :locale="$i18n.locale"
+      :isLoading="isTableLoading"
+      @update:page="roomsCurrentPage = $event"
+      @item-click="handleOpenRoom"
     >
-      <template #header>
-        <UnnnicTableRow
-          :headers="tableHeaders"
-          data-testid="table-header-row"
-        />
+      <template #body-contactName="{ item }">
+        <div class="closed-chats__rooms-table__table__contact">
+          <UnnnicChatsUserAvatar
+            v-if="!isMobile"
+            :username="item.contact.name"
+            data-testid="room-item-avatar"
+          />
+          <p
+            class="closed-chats__rooms-table__table__contact__name"
+            :title="item.contact.name"
+            data-testid="room-item-contact-name"
+          >
+            {{ item.contact.name }}
+          </p>
+        </div>
       </template>
-
-      <template #item="{ item }">
-        <section
-          :data-testid="`room-item-${item.uuid}`"
-          @click="emitOpenRoom(item)"
-          @keypress.enter="emitOpenRoom(item)"
+      <template #body-agentName="{ item }">
+        <span
+          v-if="
+            item.user?.first_name || item.user?.last_name || item.user?.email
+          "
+          data-testid="room-item-agent-name"
         >
-          <UnnnicTableRow :headers="tableHeaders">
-            <template #contactName>
-              <div class="closed-chats__rooms-table__table__contact">
-                <UnnnicChatsUserAvatar
-                  v-if="!isMobile"
-                  :username="item.contact.name"
-                  data-testid="room-item-avatar"
-                />
-                <p
-                  class="closed-chats__rooms-table__table__contact__name"
-                  :title="item.contact.name"
-                  data-testid="room-item-contact-name"
-                >
-                  {{ item.contact.name }}
-                </p>
-              </div>
-            </template>
-
-            <template #agentName>
-              <span data-testid="room-item-agent-name">{{
-                item.user?.first_name
-              }}</span>
-            </template>
-
-            <template #tags>
-              <TagGroup
-                :tags="item.tags || []"
-                :flex="false"
-                data-testid="room-item-tags"
-              />
-            </template>
-
-            <template #date>
-              <span data-testid="room-item-date">{{
-                $d(new Date(item.ended_at))
-              }}</span>
-            </template>
-
-            <template #visualize>
-              <div
-                v-if="isMobile"
-                :data-testid="`room-item-visualize-icon-${item.uuid}`"
-                @click="emitOpenRoom(item)"
-                @keypress.enter="emitOpenRoom(item)"
-              >
-                <UnnnicIcon
-                  class="closed-chats__rooms-table__table__visualize-icon"
-                  icon="open_in_new"
-                />
-              </div>
-              <a
-                v-else
-                :href="`/closed-chats/${item.uuid}`"
-                :data-testid="`room-item-visualize-button-link-${item.uuid}`"
-                @click.prevent.stop="
-                  $router.push({
-                    name: 'closed-rooms.selected',
-                    params: { roomId: item.uuid },
-                    query: { from: $route.query.from },
-                  })
-                "
-              >
-                <UnnnicButton
-                  class="closed-chats__rooms-table__table__visualize-button"
-                  :text="$t('see')"
-                  type="secondary"
-                  size="small"
-                  :data-testid="`room-item-visualize-button-${item.uuid}`"
-                />
-              </a>
-            </template>
-          </UnnnicTableRow>
-        </section>
+          {{ formatAgentName(item.user) }}
+        </span>
+        <span
+          v-else-if="item.user"
+          class="italic-label"
+        >
+          {{ $t('unnamed_agent') }}
+        </span>
+        <span
+          v-else
+          class="no-agent-assigned-label italic-label"
+          data-testid="room-item-no-agent-assigned"
+        >
+          {{ $t('no_agent_assigned') }}
+        </span>
       </template>
-    </UnnnicTable>
-    <p
-      v-if="!isTableLoading && rooms.length === 0"
-      class="closed-chats__rooms-table__table__no-results"
-      data-testid="no-results-message"
-    >
-      {{ $t('without_results') }}
-    </p>
-
-    <TablePagination
-      v-if="showTablePagination"
-      v-model="roomsCurrentPage"
-      :count="isMobile ? null : roomsCount"
-      :countPages="roomsCountPages"
-      :limit="roomsLimitPagination"
-      :isLoading="isPagesLoading"
-      data-testid="table-pagination"
-      @update:model-value="roomsCurrentPage = $event"
-    />
+      <template #body-closedBy="{ item }">
+        <span
+          v-if="
+            item.closed_by?.first_name ||
+            item.closed_by?.last_name ||
+            item.closed_by?.email
+          "
+          data-testid="room-item-closed-by"
+        >
+          {{ formatAgentName(item.closed_by) }}
+        </span>
+        <span
+          v-else-if="item.closed_by"
+          class="italic-label"
+        >
+          {{ $t('unnamed_agent') }}
+        </span>
+      </template>
+      <template #body-tags="{ item }">
+        <TagGroup
+          v-if="!!item.tags.length"
+          class="closed-chats__tags"
+          :tags="item.tags || []"
+          :flex="false"
+          disabledTag
+          data-testid="room-item-tags"
+        />
+        <span
+          v-else
+          class="no-tags-assigned-label italic-label"
+          data-testid="room-item-no-tags-assigned"
+        >
+          {{ $t('no_tags_assigned') }}
+        </span>
+      </template>
+      <template #body-date="{ item }">
+        <span data-testid="room-item-date">
+          {{ $d(new Date(item.ended_at)) }}
+        </span>
+      </template>
+    </UnnnicDataTable>
 
     <UnnnicButton
       v-if="isMobile"
@@ -149,11 +131,10 @@
 
 <script>
 import isMobile from 'is-mobile';
+import moment from 'moment';
 
 import History from '@/services/api/resources/chats/history';
 
-import RoomsTableLoading from '@/views/loadings/ClosedChats/RoomsTableLoading.vue';
-import TablePagination from '@/components/TablePagination.vue';
 import TagGroup from '@/components/TagGroup.vue';
 import ModalClosedChatsFilters from '@/components/chats/Mobile/ModalClosedChatsFilters.vue';
 
@@ -165,8 +146,6 @@ export default {
   components: {
     TagGroup,
     ClosedChatsRoomsTableFilters,
-    RoomsTableLoading,
-    TablePagination,
     ModalClosedChatsFilters,
   },
 
@@ -183,14 +162,16 @@ export default {
     roomsCount: 0,
     roomsCountPages: 0,
     roomsCurrentPage: 1,
-    roomsLimit: isMobile ? 10 : 5,
-    roomsLimitPagination: 5,
+    roomsLimit: 10,
 
     filters: {
       contact: '',
       sector: [],
       tag: [],
-      date: null,
+      date: {
+        start: moment().subtract(1, 'week').format('YYYY-MM-DD'),
+        end: moment().format('YYYY-MM-DD'),
+      },
     },
   }),
 
@@ -202,18 +183,17 @@ export default {
         }
 
         return {
-          id,
-          text: this.$t(text),
-          flex: 1,
+          itemKey: id,
+          title: this.$t(text),
         };
       };
 
       return [
         createHeader('contactName', 'contact'),
         createHeader('agentName', 'agent', false),
+        createHeader('closedBy', 'ended_by'),
         createHeader('tags', 'tags.title', false),
         createHeader('date', 'date'),
-        createHeader('visualize', 'view'),
       ].filter((header) => header !== null);
     },
 
@@ -236,20 +216,6 @@ export default {
   },
 
   methods: {
-    setFiltersByQueryParams() {
-      const { contactUrn, startDate, endDate } = this.$route.query;
-
-      this.filterContact = contactUrn || '';
-
-      if (startDate) {
-        this.filterDate.start = startDate;
-      }
-
-      if (endDate) {
-        this.filterDate.end = endDate;
-      }
-    },
-
     async getHistoryRooms(paginate) {
       this.isTableLoading = true;
       this.isPagesLoading = true;
@@ -292,16 +258,44 @@ export default {
     handleShowModalFilters() {
       this.showModalFilters = !this.showModalFilters;
     },
-    emitOpenRoom(room) {
+
+    handleOpenRoom(room) {
       if (this.isMobile) {
         this.$emit('open-room', room);
+      } else {
+        this.$router.push({
+          name: 'closed-rooms.selected',
+          params: { roomId: room.uuid },
+          query: { from: this.$route.query.from },
+        });
       }
+    },
+
+    formatAgentName(agent) {
+      if (!agent.first_name && !agent.last_name && !agent.email) {
+        return this.$t('unnamed_agent');
+      }
+
+      if (agent.first_name && agent.last_name) {
+        return `${agent.first_name} ${agent.last_name}`.trim();
+      }
+
+      return agent.email;
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.italic-label {
+  font: $unnnic-font-body;
+  font-style: italic;
+}
+:deep(.tag-group__tags) {
+  .unnnic-icon {
+    display: none;
+  }
+}
 .closed-chats {
   &__rooms-table {
     padding: $unnnic-spacing-md;
@@ -319,44 +313,9 @@ export default {
       padding: $unnnic-spacing-sm;
 
       overflow: hidden;
-      :deep(.unnnic-table) {
-        .header {
-          background-color: $unnnic-color-aux-purple-100;
-          .col {
-            color: $unnnic-color-neutral-dark;
-          }
-        }
-
-        .scroll {
-          padding-right: 0;
-
-          .item {
-            border-radius: 0;
-            border-bottom: 1px solid $unnnic-color-neutral-cleanest;
-          }
-        }
-      }
     }
 
     &__table {
-      overflow: hidden;
-
-      :deep(.unnnic-brand-tag__icon) {
-        display: none;
-      }
-
-      :deep(.table-row) {
-        $rowSpacing: $unnnic-spacing-lg;
-
-        display: grid;
-        grid-template-columns: 1fr $rowSpacing 0.5fr $rowSpacing 0.8fr $rowSpacing 0.4fr $rowSpacing 0.3fr;
-      }
-
-      &__no-results {
-        color: $unnnic-color-neutral-cloudy;
-        font-size: $unnnic-font-size-body-gt;
-      }
-
       &__contact {
         display: flex;
         align-items: center;
@@ -371,17 +330,6 @@ export default {
           text-overflow: ellipsis;
           white-space: nowrap;
         }
-      }
-
-      &__visualize-icon {
-        display: flex;
-
-        user-select: none;
-        cursor: pointer;
-      }
-
-      &__visualize-button {
-        width: 100%;
       }
     }
   }

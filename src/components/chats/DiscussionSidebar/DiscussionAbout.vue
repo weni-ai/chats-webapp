@@ -33,47 +33,59 @@
         @click="handleAddAgentModal"
       />
 
-      <UnnnicModal
-        v-if="isAddAgentModalOpen"
+      <UnnnicDialog
+        v-model:open="isAddAgentModalOpen"
         class="add-agent-modal"
         data-testid="add-agent-modal"
-        :text="$t('discussions.add_agents.title')"
-        :description="$t('discussions.add_agents.description')"
-        @close="handleAddAgentModal"
       >
-        <div class="add-agent-modal__input">
-          <UnnnicLabel :label="$t('discussions.add_agents.select_agent')" />
-          <UnnnicSelectSmart
-            v-model="agentSelected"
-            :options="agentsToSelect"
-            autocomplete
-            autocompleteIconLeft
-            autocompleteClearOnFocus
-          />
-        </div>
-        <SelectedMember
-          v-if="agentSelected[0]?.description"
-          :name="agentSelected[0]?.label"
-          :email="agentSelected[0]?.description"
-          :photoUrl="agentSelected[0]?.photoUrl"
-          @remove="handlingRemoveAgent"
-        />
-        <template #options>
-          <UnnnicButton
-            :text="$t('cancel')"
-            type="secondary"
-            data-testid="cancel-add-agent-modal-button"
-            @click="handleAddAgentModal"
-          />
-          <UnnnicButton
-            :text="$t('add')"
-            type="primary"
-            :disabled="!agentSelected[0]"
-            :loading="addAgentLoading"
-            @click="handlingAddAgent"
-          />
-        </template>
-      </UnnnicModal>
+        <UnnnicDialogContent size="medium">
+          <UnnnicDialogHeader>
+            <UnnnicDialogTitle>
+              {{ $t('discussions.add_agents.title') }}
+            </UnnnicDialogTitle>
+          </UnnnicDialogHeader>
+          <section class="add-agent-modal__content">
+            <p class="add-agent-modal__description">
+              {{ $t('discussions.add_agents.description') }}
+            </p>
+            <div class="add-agent-modal__input">
+              <UnnnicSelect
+                v-model="agentSelected"
+                :options="agentsToSelect"
+                :label="$t('discussions.add_agents.select_agent')"
+                :placeholder="$t('discussions.add_agents.search_agent')"
+                returnObject
+                clearable
+                enableSearch
+                :search="searchAgent"
+                @update:search="searchAgent = $event"
+              />
+            </div>
+            <SelectedMember
+              v-if="agentSelected?.description"
+              :name="agentSelected?.label"
+              :email="agentSelected?.description"
+              :photoUrl="agentSelected?.photoUrl"
+              @remove="handlingRemoveAgent"
+            />
+          </section>
+          <UnnnicDialogFooter>
+            <UnnnicButton
+              :text="$t('cancel')"
+              type="secondary"
+              data-testid="cancel-add-agent-modal-button"
+              @click="handleAddAgentModal"
+            />
+            <UnnnicButton
+              :text="$t('add')"
+              type="primary"
+              :disabled="!agentSelected"
+              :loading="addAgentLoading"
+              @click="handlingAddAgent"
+            />
+          </UnnnicDialogFooter>
+        </UnnnicDialogContent>
+      </UnnnicDialog>
     </AsideSlotTemplateSection>
   </main>
 </template>
@@ -112,7 +124,8 @@ export default {
       isAddAgentModalOpen: false,
       addAgentLoading: false,
       agentsToSelect: [],
-      agentSelected: [],
+      agentSelected: null,
+      searchAgent: '',
     };
   },
 
@@ -128,29 +141,31 @@ export default {
 
   watch: {
     async isAddAgentModalOpen(newIsAddAgentModalOpen) {
-      if (newIsAddAgentModalOpen) {
-        const response = await Project.allUsers();
-        const { results } = response;
-
-        const agentsInvolvedNames = [
-          ...this.agentsInvolved.map((agent) => this.getUserFullName(agent)),
-        ];
-        const filteredAgents = results.filter(
-          (agent) => !agentsInvolvedNames.includes(this.getUserFullName(agent)),
-        );
-
-        const newAgents = [this.agentsToSelect[0]];
-
-        filteredAgents.forEach((agent) =>
-          newAgents.push({
-            value: agent.email,
-            label: this.getUserFullName(agent),
-            description: agent.email,
-            photoUrl: agent.photoUrl,
-          }),
-        );
-        this.agentsToSelect = newAgents;
+      if (!newIsAddAgentModalOpen) {
+        this.agentSelected = null;
+        return;
       }
+      const response = await Project.allUsers();
+      const { results } = response;
+
+      const agentsInvolvedNames = [
+        ...this.agentsInvolved.map((agent) => this.getUserFullName(agent)),
+      ];
+      const filteredAgents = results.filter(
+        (agent) => !agentsInvolvedNames.includes(this.getUserFullName(agent)),
+      );
+
+      const newAgents = [];
+
+      filteredAgents.forEach((agent) =>
+        newAgents.push({
+          value: agent.email,
+          label: this.getUserFullName(agent),
+          description: agent.email,
+          photoUrl: agent.photoUrl,
+        }),
+      );
+      this.agentsToSelect = newAgents;
     },
     details: {
       immediate: true,
@@ -159,27 +174,23 @@ export default {
         if (responseAgents.results) {
           this.agentsInvolved = responseAgents.results;
         }
-        this.agentsToSelect = [
-          { value: '', label: this.$t('discussions.add_agents.search_agent') },
-        ];
+        this.agentsToSelect = [];
       },
     },
   },
 
   unmounted() {
-    this.agentSelected = [];
+    this.agentSelected = null;
   },
 
   methods: {
     ...mapActions(useDiscussions, ['addAgent', 'getDiscussionAgents']),
     handlingRemoveAgent() {
-      this.agentSelected = [
-        { value: '', label: this.$t('discussions.add_agents.search_agent') },
-      ];
+      this.agentSelected = null;
     },
     getUserFullName(user) {
       const { first_name, last_name } = user;
-      return `${first_name} ${last_name}`;
+      return `${first_name} ${last_name}`.trim() || user.email;
     },
 
     getUserRoleTreated(user) {
@@ -193,20 +204,20 @@ export default {
     handleAddAgentModal() {
       this.isAddAgentModalOpen = !this.isAddAgentModalOpen;
 
-      this.agentSelected = [];
+      this.agentSelected = null;
     },
 
     async handlingAddAgent() {
-      const newAgent = this.agentSelected[0];
+      const newAgentEmail = this.agentSelected?.value;
 
-      if (!newAgent?.value) {
+      if (!newAgentEmail) {
         return;
       }
 
       try {
         this.addAgentLoading = true;
         const responseAgent = await this.addAgent({
-          user_email: newAgent.value,
+          user_email: newAgentEmail,
         });
 
         this.agentsInvolved.push(responseAgent);
@@ -227,6 +238,8 @@ export default {
 <style lang="scss" scoped>
 .discussion-about {
   &__section {
+    padding: $unnnic-space-2;
+
     display: grid;
     gap: $unnnic-spacing-xs;
 
@@ -239,32 +252,24 @@ export default {
       font-weight: $unnnic-font-weight-bold;
     }
   }
+}
 
-  .add-agent-modal {
-    :deep(.unnnic-modal-container) {
-      .unnnic-modal-container-background {
-        width: 50%;
+.add-agent-modal {
+  &__content {
+    display: grid;
+    gap: $unnnic-spacing-sm;
+    padding: $unnnic-space-6;
+    overflow: visible;
+  }
 
-        overflow: visible;
+  &__description {
+    color: $unnnic-color-neutral-dark;
+    font: $unnnic-font-body;
+    margin: 0;
+  }
 
-        &-body-description {
-          display: grid;
-          gap: $unnnic-spacing-sm;
-
-          overflow: visible;
-
-          &-container {
-            padding-bottom: 0;
-
-            overflow: visible;
-          }
-        }
-      }
-    }
-
-    &__input {
-      text-align: start;
-    }
+  &__input {
+    text-align: start;
   }
 }
 </style>

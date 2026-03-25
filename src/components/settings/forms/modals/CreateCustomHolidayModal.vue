@@ -11,6 +11,7 @@
         v-for="(form, index) in forms"
         :key="index"
         class="create-custom-holiday-modal__form"
+        data-testid="create-custom-holiday-form"
       >
         <section class="create-custom-holiday-modal__form__input-date">
           <p class="create-custom-holiday-modal__form__input-date__title">
@@ -18,7 +19,7 @@
           </p>
           <UnnnicInputDatePicker
             v-model="form.date"
-            :options="[{ id: 'custom', name: $t('custom') }]"
+            hideOptions
             next
             fillW
             :actionText="$t('confirm')"
@@ -135,13 +136,6 @@ export default {
   }
 }
 :deep(.unnnic-button--size-large.create-custom-holiday-modal__add-button) {
-  width: 40%;
-}
-
-:deep(.dropdown-data) {
-  left: 0;
-  .unnnic-date-picker {
-    position: fixed;
-  }
+  width: 50%;
 }
 </style>

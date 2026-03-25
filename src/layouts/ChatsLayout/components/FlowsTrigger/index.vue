@@ -114,7 +114,7 @@
         </p>
 
         <section v-show="!isContactsLoading">
-          <template v-for="(element, letter) in letters">
+          <template v-for="(element, letter) in lettersWithoutUnnamed">
             <!-- eslint-disable-next-line vue/valid-v-for -->
             <UnnnicCollapse
               v-model="letterColapse[letter]"
@@ -122,7 +122,7 @@
               :title="
                 $t('flows_trigger.letter_group', {
                   letter,
-                  length: element.length,
+                  length: element?.length || 0,
                 })
               "
             >
@@ -137,6 +137,30 @@
                 :selected="selected.some((search) => search.uuid === item.uuid)"
                 @click="setContacts(item)"
                 @keypress.enter="setGroups(item)"
+              />
+            </UnnnicCollapse>
+          </template>
+          <template v-if="letters['unnamed_contact']">
+            <UnnnicCollapse
+              v-model="letterColapse['unnamed_contact']"
+              class="flows-trigger__groups__group"
+              :title="
+                $t('flows_trigger.letter_group_unnamed', {
+                  length: letters['unnamed_contact']?.length || 0,
+                })
+              "
+            >
+              <UnnnicChatsContact
+                v-for="item in letters['unnamed_contact']"
+                :key="item.uuid"
+                class="flows-trigger__groups__group__contact"
+                :title="`[${$t('flows_trigger.unnamed_contact')}]`"
+                :lastMessage="{ text: getContactUrn(item) }"
+                :tabindex="0"
+                checkboxWhenSelect
+                :selected="selected.some((search) => search.uuid === item.uuid)"
+                @click="setContacts(item)"
+                @keypress.enter="setContacts(item)"
               />
             </UnnnicCollapse>
           </template>
@@ -302,35 +326,59 @@ export default {
       room: (store) => store.activeRoom,
     }),
 
+    lettersWithoutUnnamed() {
+      return Object.keys(this.letters).reduce((acc, key) => {
+        if (key !== 'unnamed_contact') {
+          acc[key] = this.letters[key];
+        }
+        return acc;
+      }, {});
+    },
+
     letters() {
       const letters = {};
+      const UNNAMED_KEY = 'unnamed_contact';
+
+      const hasValidName = (item) =>
+        item.name != null && String(item.name).trim() !== '';
+
+      const getGroupKey = (element) => {
+        if (!hasValidName(element)) return UNNAMED_KEY;
+        const first = element.name[0];
+        return /\d/.test(first)
+          ? first
+          : first
+              .toUpperCase()
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '');
+      };
+
       this.listOfContacts
         .filter(
           (item) =>
-            item.name?.toUpperCase().includes(this.search.toUpperCase()) &&
-            item.urns?.[0],
+            item.urns?.[0] &&
+            (hasValidName(item)
+              ? item.name.toUpperCase().includes(this.search.toUpperCase())
+              : true),
         )
         .forEach((element) => {
-          const l = element.name[0].toUpperCase();
-          const removeAccent = l
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '');
-          letters[removeAccent] = letters[removeAccent] || [];
+          const groupKey = getGroupKey(element);
 
-          const contactAlreadyExist = letters[removeAccent].some(
-            (pushedContact) =>
-              pushedContact.urns.some((pushedUrn) =>
-                element.urns.some(
-                  (elementUrn) =>
-                    elementUrn.scheme === pushedUrn.scheme &&
-                    elementUrn.path === pushedUrn.path,
-                ),
+          letters[groupKey] = letters[groupKey] || [];
+
+          const contactAlreadyExist = letters[groupKey].some((pushedContact) =>
+            pushedContact.urns.some((pushedUrn) =>
+              element.urns.some(
+                (elementUrn) =>
+                  elementUrn.scheme === pushedUrn.scheme &&
+                  elementUrn.path === pushedUrn.path,
               ),
+            ),
           );
 
-          if (!contactAlreadyExist) letters[removeAccent].push(element);
-          if (this.letterColapse[removeAccent] === undefined) {
-            this.letterColapse[removeAccent] = true;
+          if (!contactAlreadyExist) letters[groupKey].push(element);
+          if (this.letterColapse[groupKey] === undefined) {
+            this.letterColapse[groupKey] = true;
           }
         });
 
@@ -664,6 +712,8 @@ export default {
   overflow: hidden;
 
   background-color: $unnnic-color-background-carpet;
+
+  padding: $unnnic-space-2;
 
   &__header {
     display: grid;

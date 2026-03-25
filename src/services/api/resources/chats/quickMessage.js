@@ -1,9 +1,6 @@
 import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
-
-function getURLParams({ URL, endpoint }) {
-  return URL?.split(endpoint)?.[1];
-}
+import { getURLParams } from '@/utils/requests';
 
 export default {
   async getAll({ nextQuickMessages = '' }) {

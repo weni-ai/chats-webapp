@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 
 import QueueService from '@/services/api/resources/settings/queue';
@@ -21,14 +21,23 @@ vi.mock('@/services/api/resources/settings/queue', () => ({
   },
 }));
 
-const store = createTestingPinia({
-  initialState: {
-    me: 'mock@email.com',
-    selectedRoomsToTransfer: ['1', '2'],
-  },
-});
+function createStore(overrides = {}) {
+  const roomsDefaults = {
+    selectedOngoingRooms: ['1', '2'],
+    selectedWaitingRooms: [],
+    activeTab: 'ongoing',
+  };
 
-function createWrapper() {
+  return createTestingPinia({
+    initialState: {
+      rooms: { ...roomsDefaults, ...overrides },
+      profile: { me: { email: 'mock@email.com' } },
+    },
+  });
+}
+
+function createWrapper(storeOverrides = {}) {
+  const store = createStore(storeOverrides);
   const wrapper = mount(RoomsTransferFields, {
     props: {
       modelValue: [],
@@ -50,12 +59,10 @@ describe('RoomsTransferField', () => {
 
   describe('Rendering', () => {
     it('should render with fields', () => {
-      const labels = wrapper.findAllComponents({ name: 'unnnic-label' });
-      const selects = wrapper.findAllComponents({
-        name: 'unnnic-select-smart',
-      });
-      expect(labels).toHaveLength(2);
-      expect(selects).toHaveLength(2);
+      const queueSelect = wrapper.findComponent('[data-testid="select-queue"]');
+      const agentSelect = wrapper.findComponent('[data-testid="select-agent"]');
+      expect(queueSelect.exists()).toBe(true);
+      expect(agentSelect.exists()).toBe(true);
     });
   });
 
@@ -73,7 +80,7 @@ describe('RoomsTransferField', () => {
       });
       await wrapper.setData({
         agents: [
-          { value: '', label: 'Select agent' },
+          { value: 'agent1_id', label: 'Agent1' },
           { value: 'agent2_id', label: 'Agent2' },
         ],
       });
@@ -83,16 +90,16 @@ describe('RoomsTransferField', () => {
       expect(agentSelect.props('disabled')).toBe(false);
 
       await wrapper.setData({
-        agents: [{ value: '', label: 'Select agent' }],
+        agents: [{ value: 'agent1_id', label: 'Agent1' }],
       });
       await wrapper.vm.$nextTick();
       expect(agentSelect.props('disabled')).toBe(true);
       await wrapper.setProps({
-        modelValue: [{ value: '', label: 'Select queue' }],
+        modelValue: [],
       });
       await wrapper.setData({
         agents: [
-          { value: '', label: 'Select agent' },
+          { value: 'agent1_id', label: 'Agent1' },
           { value: 'agent2_id', label: 'Agent2' },
         ],
       });
@@ -108,7 +115,7 @@ describe('RoomsTransferField', () => {
         modelValue: [{ value: 'queue_id', label: 'Queue' }],
       });
 
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       const transferDisclaimer = wrapper.findComponent(
         '[data-testid="transfer-disclaimer"]',
@@ -131,9 +138,11 @@ describe('RoomsTransferField', () => {
         modelValue: [{ value: 'queue_id', label: 'Queue' }],
       });
       await wrapper.setData({
-        selectedAgent: [
-          { label: 'John Doe', value: 'john@doe.com', status: 'offline' },
-        ],
+        selectedAgent: {
+          label: 'John Doe',
+          value: 'john@doe.com',
+          status: 'offline',
+        },
       });
 
       const transferDisclaimer = wrapper.findComponent(
@@ -145,6 +154,26 @@ describe('RoomsTransferField', () => {
   });
 
   describe('Bulk Transfer', () => {
+    it('should work with ongoing rooms selected', async () => {
+      const wrapper = createWrapper({
+        selectedOngoingRooms: ['1', '2'],
+        selectedWaitingRooms: [],
+        activeTab: 'ongoing',
+      });
+
+      expect(wrapper.vm.currentSelectedRooms).toEqual(['1', '2']);
+    });
+
+    it('should work with waiting rooms selected', async () => {
+      const wrapper = createWrapper({
+        selectedOngoingRooms: [],
+        selectedWaitingRooms: ['3', '4'],
+        activeTab: 'waiting',
+      });
+
+      expect(wrapper.vm.currentSelectedRooms).toEqual(['3', '4']);
+    });
+
     it('should perform bulk transfer when transfer event is called', async () => {});
 
     it('should show success alert after successful bulk transfer', async () => {});

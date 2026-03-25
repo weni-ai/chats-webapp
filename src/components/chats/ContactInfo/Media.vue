@@ -3,6 +3,7 @@
     v-model="activeTab"
     size="md"
     :tabs="tabsKeys"
+    class="contact-info-media"
   >
     <template
       v-for="key in Object.keys(tabs)"
@@ -19,6 +20,7 @@
     >
       <component
         :is="tabs[key].component"
+        v-if="room?.uuid"
         :data-testid="`tab-panel-${key}`"
         v-bind="getComponentProps(key)"
         v-on="getComponentEvents(key)"
@@ -125,3 +127,11 @@ onUnmounted(() => {
   contactInfosStore.clearAll();
 });
 </script>
+
+<style lang="scss" scoped>
+.contact-info-media {
+  :deep(.tab-content) {
+    gap: 0px;
+  }
+}
+</style>

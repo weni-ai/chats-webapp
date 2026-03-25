@@ -50,7 +50,7 @@
         data-testid="status-bar-list-open"
       >
         <li
-          v-for="status in statuses"
+          v-for="status in filteredStatuses"
           :key="status.value"
           class="status-bar__item"
           data-testid="status-bar-item"
@@ -60,7 +60,7 @@
             class="status-bar__icon"
             data-testid="status-bar-icon-inside"
             :class="`status-bar--${status.color}`"
-          ></section>
+          />
           <p
             class="status-bar__item-label"
             data-testid="status-bar-item-label"
@@ -73,11 +73,11 @@
   </header>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
-import { intervalToDuration, parseISO } from 'date-fns';
+import { intervalToDuration, parseISO, type Duration } from 'date-fns';
 import api from '@/services/api/resources/chats/pauseStatus';
 import Profile from '@/services/api/resources/profile';
 import unnnic from '@weni/unnnic-system';
@@ -85,26 +85,40 @@ import i18n from '@/plugins/i18n';
 import { storeToRefs } from 'pinia';
 import { moduleStorage } from '@/utils/storage';
 
-const statuses = ref([
+interface Status {
+  value: string;
+  label: string;
+  color: string;
+  statusUuid?: string | null;
+}
+
+const statuses = ref<Status[]>([
   { value: 'active', label: 'Online', color: 'green' },
   { value: 'inactive', label: 'Offline', color: 'gray' },
 ]);
 
+const filteredStatuses = computed(() => {
+  return statuses.value.filter(
+    (status) => status.value !== selectedStatus.value?.value,
+  );
+});
+
 const isOpen = ref(false);
-const startDate = ref(null);
-const elapsedTime = ref(0);
-let intervalId = null;
+const startDate = ref<string | null>(null);
+const elapsedTime = ref<Duration | number>(0);
+let intervalId: ReturnType<typeof setInterval> | null = null;
 const configStore = useConfig();
 const { status: configStatus, customStatus: configCustomStatus } =
   storeToRefs(configStore);
 
-const statusAgentKey = configStore.project.uuid
-  ? `statusAgent-${configStore.project.uuid}`
+const statusAgentKey = (configStore.project as unknown as { uuid: string })
+  ?.uuid
+  ? `statusAgent-${(configStore.project as unknown as { uuid: string })?.uuid}`
   : `statusAgent-${moduleStorage.getItem('projectUuid', '', {
       useSession: true,
     })}`;
 
-const selectedStatus = ref(
+const selectedStatus = ref<Status>(
   moduleStorage.getItem(statusAgentKey, '', {
     useSession: true,
   }) === 'ONLINE'
@@ -117,10 +131,11 @@ const project = computed(() => configStore.project);
 const loadingActiveStatus = ref(false);
 const isToggling = ref(false);
 
-const handleClickOutside = (event) => {
+const handleClickOutside = (event: MouseEvent) => {
   if (isToggling.value) return;
 
-  const statusBar = event.target.closest('[class="status-bar"]');
+  const target = event.target as HTMLElement;
+  const statusBar = target.closest('[class="status-bar"]');
   if (!statusBar && isOpen.value) {
     isOpen.value = false;
   }
@@ -128,29 +143,37 @@ const handleClickOutside = (event) => {
 
 const fetchCustomStatuses = async () => {
   const response = await api.getCustomStatusTypeList({
-    projectUuid: configStore.project.uuid,
+    projectUuid: (configStore.project as unknown as { uuid: string })?.uuid,
   });
   statuses.value = response;
 };
 
 const handleGetActiveStatus = async () => {
-  const activeStatus = await configStore.getStatus(configStore.project.uuid);
+  const activeStatus = await configStore.getStatus(
+    (configStore.project as unknown as { uuid: string })?.uuid,
+  );
   configStore.$patch({
     status: activeStatus,
   });
 };
 
-const updateActiveStatus = async ({ isActive, skipRequest }) => {
+const updateActiveStatus = async ({
+  isActive,
+  skipRequest,
+}: {
+  isActive: boolean;
+  skipRequest: boolean;
+}) => {
   loadingActiveStatus.value = true;
   try {
-    let connection_status = null;
+    let connection_status: string | null = null;
     const statusAgent = isActive ? 'ONLINE' : 'OFFLINE';
 
     if (!skipRequest) {
       const {
         data: { connection_status: connection },
       } = await Profile.updateStatus({
-        projectUuid: configStore.project.uuid,
+        projectUuid: (configStore.project as unknown as { uuid: string })?.uuid,
         status: statusAgent,
       });
 
@@ -195,7 +218,8 @@ const stopTimer = () => {
 };
 
 const formattedTime = computed(() => {
-  if (!elapsedTime.value) return '00:00:00';
+  if (!elapsedTime.value || typeof elapsedTime.value === 'number')
+    return '00:00:00';
 
   const { days = 0, hours = 0, minutes = 0, seconds = 0 } = elapsedTime.value;
 
@@ -205,7 +229,7 @@ const formattedTime = computed(() => {
   return `${String(totalHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 });
 
-const selectStatus = async (newStatus) => {
+const selectStatus = async (newStatus: Status) => {
   if (newStatus.value === selectedStatus.value.value) return;
 
   const isOldStatusActiveOrInactive = ['active', 'inactive'].includes(
@@ -216,7 +240,13 @@ const selectStatus = async (newStatus) => {
   try {
     if (isOldStatusActiveOrInactive && isCustomStatus) {
       startDate.value = new Date().toISOString();
+      const wasActive = selectedStatus.value.value === 'active';
       await handleCreateCustomStatus(newStatus);
+      if (wasActive) {
+        moduleStorage.setItem(statusAgentKey, 'OFFLINE', {
+          useSession: true,
+        });
+      }
       startTimer();
     } else if (!isOldStatusActiveOrInactive && isCustomStatus) {
       await handleCloseCustomStatus(selectedStatus.value, false);
@@ -262,7 +292,7 @@ const refreshData = async () => {
   await getActiveCustomStatusAndActiveTimer();
 };
 
-let settingsCheckInterval = null;
+let settingsCheckInterval: ReturnType<typeof setInterval> | null = null;
 
 const checkSettingsUpdates = () => {
   const currentSettingsUpdate = moduleStorage.getItem('settingsUpdated');
@@ -298,7 +328,7 @@ onUnmounted(() => {
   }
 });
 
-const toggleDropdown = (event) => {
+const toggleDropdown = (event?: MouseEvent) => {
   if (isToggling.value) return;
 
   if (event) {
@@ -316,7 +346,7 @@ const toggleDropdown = (event) => {
 
 const getActiveCustomStatusAndActiveTimer = async () => {
   const activeStatus = await api.getActiveCustomStatus({
-    projectUuid: configStore.project.uuid,
+    projectUuid: (configStore.project as unknown as { uuid: string })?.uuid,
   });
 
   if (activeStatus?.status_type && activeStatus.is_active) {
@@ -336,7 +366,7 @@ const getActiveCustomStatusAndActiveTimer = async () => {
   }
 };
 
-const handleCloseCustomStatus = async (status, isActive) => {
+const handleCloseCustomStatus = async (status: Status, isActive: boolean) => {
   const closeStatus = (value) =>
     api.closeCustomStatus({
       statusUuid: value,
@@ -345,7 +375,7 @@ const handleCloseCustomStatus = async (status, isActive) => {
     });
 
   const activeStatus = await api.getActiveCustomStatus({
-    projectUuid: configStore.project.uuid,
+    projectUuid: (configStore.project as unknown as { uuid: string })?.uuid,
   });
 
   if (!activeStatus) {
@@ -356,10 +386,10 @@ const handleCloseCustomStatus = async (status, isActive) => {
   return closeStatus(activeStatus.uuid);
 };
 
-const handleCreateCustomStatus = async (status) => {
-  const createStatus = (value) =>
+const handleCreateCustomStatus = async (status: Status) => {
+  const createStatus = (value: string) =>
     api.createCustomStatus({
-      email: profileStore.me.email,
+      email: (profileStore?.me as { email: string })?.email || '',
       statusType: value,
     });
 
@@ -375,21 +405,22 @@ const handleCreateCustomStatus = async (status) => {
   return response;
 };
 
-const showStatusAlert = (status, isSuccess = true) => {
+const showStatusAlert = (status: Status | undefined, isSuccess = true) => {
   const scheme = {
     inactive: '$unnnic-color-neutral-black',
     error: 'feedback-red',
     default: 'feedback-green',
   };
 
+  const schemeKey = status?.value as keyof typeof scheme;
   const schemeStatus = isSuccess
-    ? scheme[status.value] || scheme.default
+    ? scheme[schemeKey] || scheme.default
     : scheme.error;
 
   unnnic.unnnicCallAlert({
     props: {
       text: isSuccess
-        ? i18n.global.t('status-bar.success', { status: status.label })
+        ? i18n.global.t('status-bar.success', { status: status?.label })
         : i18n.global.t('status-bar.error'),
       icon: 'indicator',
       scheme: schemeStatus,
@@ -405,11 +436,13 @@ watch(
   (newStatus) => {
     if (
       newStatus === 'OFFLINE' &&
+      configStore.socketClosedOffline &&
       moduleStorage.getItem(statusAgentKey, '', {
         useSession: true,
       }) === 'OFFLINE'
     ) {
       selectedStatus.value = statuses.value[1];
+      configStore.setSocketClosedOffline(false);
     }
   },
 );
@@ -428,7 +461,7 @@ watch(
 .expand-enter-active,
 .expand-leave-active {
   transition: all 0.3s ease-out;
-  max-height: 300px;
+  max-height: 80vh;
 }
 
 .expand-enter-from,
@@ -440,7 +473,7 @@ watch(
 
 .expand-enter-to,
 .expand-leave-from {
-  max-height: 300px;
+  max-height: 80vh;
   opacity: 1;
   overflow: hidden;
 }
@@ -531,29 +564,51 @@ watch(
 
   &__list {
     position: absolute;
-    width: 100%;
+    width: calc(100% - $unnnic-space-7);
     background: $unnnic-color-background-snow;
     border-top: 1px solid $unnnic-color-neutral-soft;
     list-style: none;
     margin: 0;
+    margin-top: -$unnnic-space-4;
+    padding: $unnnic-space-4;
     top: 100%;
-    left: 0;
+    left: $unnnic-space-4;
     z-index: 9999999;
-    box-shadow: 0px $unnnic-spacing-nano $unnnic-spacing-xs 0px
-      rgba(0, 0, 0, 0.1);
-    border-radius: 0rem 0rem $unnnic-border-radius-sm $unnnic-border-radius-sm;
+    box-shadow: $unnnic-shadow-1;
+    border-radius: $unnnic-radius-4;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding-right: $unnnic-inline-xs;
+    scrollbar-width: thin;
+    scrollbar-color: $unnnic-color-neutral-cleanest $unnnic-color-neutral-soft;
+
+    &::-webkit-scrollbar {
+      width: $unnnic-spacing-inline-nano;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $unnnic-color-neutral-cleanest;
+      border-radius: $unnnic-border-radius-pill;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: $unnnic-color-neutral-soft;
+      border-radius: $unnnic-border-radius-pill;
+    }
 
     &--open {
-      display: block;
+      display: flex;
+      flex-direction: column;
+      gap: $unnnic-space-2;
     }
   }
 
   &__item {
-    padding: $unnnic-spacing-sm;
+    padding: $unnnic-space-2;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid $unnnic-color-neutral-soft;
     gap: $unnnic-border-radius-md;
+    flex-shrink: 0;
 
     &:last-child {
       border-bottom: none;
@@ -561,6 +616,7 @@ watch(
 
     &:hover {
       background: $unnnic-color-neutral-lightest;
+      border-radius: $unnnic-radius-1;
     }
 
     &-label {

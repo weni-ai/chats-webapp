@@ -5,6 +5,7 @@ import isMobile from 'is-mobile';
 
 import ClosedChats from '../index.vue';
 import History from '@/services/api/resources/chats/history';
+
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useConfig } from '@/store/modules/config';
@@ -149,6 +150,9 @@ describe('ClosedChats.vue', () => {
           },
         },
         stubs: {
+          ContactHeader: {
+            template: '<div data-testid="contact-header"></div>',
+          },
           ClosedChatsHeaderLoading: {
             template: '<div data-testid="closed-chats-header-loading"></div>',
           },
@@ -178,6 +182,9 @@ describe('ClosedChats.vue', () => {
           },
           ClosedChatsRoomsTable: {
             template: '<div data-testid="closed-chats-rooms-table"></div>',
+          },
+          WarningArchivedMessages: {
+            template: '<div data-testid="warning-archived-messages"></div>',
           },
         },
       },
@@ -218,7 +225,7 @@ describe('ClosedChats.vue', () => {
         wrapper.find('[data-testid="closed-chats-rooms-table"]').isVisible(),
       ).toBe(true);
       expect(
-        wrapper.find('[data-testid="closed-chats-selected-chat"]').isVisible(),
+        wrapper.find('[data-testid="closed-chats-selected-chat"]').exists(),
       ).toBe(false);
     });
 
@@ -246,6 +253,70 @@ describe('ClosedChats.vue', () => {
       expect(wrapper.find('[data-testid="contact-info"]').exists()).toBe(true);
       expect(wrapper.find('[data-testid="room-messages"]').exists()).toBe(true);
     });
+
+    it('renders WarningArchivedMessages when room is archived', async () => {
+      const archivedRoom = {
+        ...mockRoom,
+        is_archived: true,
+        archived_conversation_file_url: 'https://example.com/archive.zip',
+      };
+
+      History.getHistoryContactRoom.mockReset().mockResolvedValue(archivedRoom);
+
+      wrapper = createWrapper({ roomId: '123' });
+
+      await wrapper.vm.$options.watch.roomId.handler.call(
+        wrapper.vm,
+        '123',
+        '',
+      );
+
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.selectedRoom.is_archived).toBe(true);
+      expect(
+        wrapper.vm.selectedRoom.archived_conversation_file_url,
+      ).toBeTruthy();
+      expect(
+        wrapper.find('[data-testid="warning-archived-messages"]').exists(),
+      ).toBe(true);
+    });
+
+    it('does not render WarningArchivedMessages when room is not archived', async () => {
+      wrapper = createWrapper({ roomId: '123' });
+
+      await wrapper.setData({
+        selectedRoom: mockRoom,
+        isLoadingSelectedRoom: false,
+      });
+
+      await wrapper.vm.$nextTick();
+
+      expect(
+        wrapper.find('[data-testid="warning-archived-messages"]').exists(),
+      ).toBe(false);
+    });
+
+    it('does not render WarningArchivedMessages when archived_conversation_file_url is missing', async () => {
+      const roomWithoutUrl = {
+        ...mockRoom,
+        is_archived: true,
+        archived_conversation_file_url: '',
+      };
+
+      wrapper = createWrapper({ roomId: '123' });
+
+      await wrapper.setData({
+        selectedRoom: roomWithoutUrl,
+        isLoadingSelectedRoom: false,
+      });
+
+      await wrapper.vm.$nextTick();
+
+      expect(
+        wrapper.find('[data-testid="warning-archived-messages"]').exists(),
+      ).toBe(false);
+    });
   });
 
   describe('API Calls and Data Fetching', () => {
@@ -261,6 +332,42 @@ describe('ClosedChats.vue', () => {
       expect(History.getHistoryContactRoom).toHaveBeenCalledWith({
         room: '123',
       });
+    });
+
+    it('fetches room messages when room is not archived', async () => {
+      History.getHistoryContactRoom.mockReset().mockResolvedValue(mockRoom);
+
+      wrapper = createWrapper({ roomId: '123' });
+
+      await wrapper.vm.$options.watch.roomId.handler.call(
+        wrapper.vm,
+        '123',
+        '',
+      );
+
+      expect(getRoomMessagesSpy).toHaveBeenCalled();
+    });
+
+    it('does not fetch room messages when room is archived', async () => {
+      const archivedRoom = {
+        ...mockRoom,
+        is_archived: true,
+        archived_conversation_file_url: 'https://example.com/archive.zip',
+      };
+
+      History.getHistoryContactRoom.mockReset().mockResolvedValue(archivedRoom);
+
+      wrapper = createWrapper({ roomId: '123' });
+
+      getRoomMessagesSpy.mockClear();
+
+      await wrapper.vm.$options.watch.roomId.handler.call(
+        wrapper.vm,
+        '123',
+        '',
+      );
+
+      expect(getRoomMessagesSpy).not.toHaveBeenCalled();
     });
 
     it('redirects to closed-rooms when room is not found', async () => {

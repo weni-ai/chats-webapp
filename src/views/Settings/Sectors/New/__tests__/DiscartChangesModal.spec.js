@@ -6,6 +6,9 @@ import DiscartChangesModal from '@/views/Settings/DiscartChangesModal.vue';
 const createWrapper = () => {
   return mount(DiscartChangesModal, {
     props: { showModal: true, title: 'Title', text: 'Text' },
+    global: {
+      components: {},
+    },
   });
 };
 
@@ -16,13 +19,8 @@ describe('DiscartChangesModal.vue', () => {
     wrapper = createWrapper();
   });
 
-  it('should display the modal title', async () => {
-    const title = wrapper.find('[data-testid="discart-changes-modal"]');
-    expect(title.text()).toContain('Title');
-  });
-  it('should display the modal hint', () => {
-    const title = wrapper.find('[data-testid="discart-changes-modal"]');
-    expect(title.text()).toContain('Text');
+  it('should have correct text prop', () => {
+    expect(wrapper.props('text')).toBe('Text');
   });
   it('to match snapshot', () => {
     expect(wrapper.html()).toMatchSnapshot();

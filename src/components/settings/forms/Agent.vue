@@ -18,23 +18,18 @@
 
       <section class="controls">
         <div>
-          <UnnnicLabel :label="$t('agents.add.select.label')" />
-          <UnnnicSelectSmart
-            :modelValue="internalSelectedAgents"
+          <UnnnicSelect
+            v-model="agentSelection"
             :options="agentsNames"
-            autocomplete
-            autocompleteIconLeft
-            autocompleteClearOnFocus
-            enableSearchByValue
-            @update:model-value="chooseAgent"
+            :label="$t('agents.add.select.label')"
+            :placeholder="$t('agents.add.select.placeholder')"
+            returnObject
+            clearable
+            enableSearch
+            :search="searchAgent"
+            @update:search="searchAgent = $event"
           />
         </div>
-        <!-- <unnnic-button
-          type="secondary"
-          :text="$t('agents.add.button')"
-          :disabled="!selectAgent"
-          @click="emitSelectedAgent"
-        /> -->
       </section>
     </section>
 
@@ -83,34 +78,24 @@ export default {
   emits: ['update:modelValue', 'validate', 'remove', 'select'],
 
   data: () => ({
-    internalSelectedAgents: [],
-    selectAgent: null,
-    agent: '',
+    agentSelection: null,
+    searchAgent: '',
   }),
 
   computed: {
     agentsNames() {
-      const agentsNames = [
-        {
-          value: '',
-          label: this.$t('agents.add.select.placeholder'),
-        },
-      ];
-
-      this.agents.forEach((agent) => {
+      return this.agents.map((agent) => {
         const {
           user: { email, first_name, last_name },
           uuid,
         } = agent;
 
-        agentsNames.push({
+        return {
           uuid,
           value: email,
           label: first_name || last_name ? `${first_name} ${last_name}` : email,
-        });
+        };
       });
-
-      return agentsNames;
     },
     selectedAgents: {
       get() {
@@ -130,28 +115,24 @@ export default {
         this.$emit('validate', this.validate());
       },
     },
+    agentSelection(newVal) {
+      if (!newVal?.value) {
+        return;
+      }
+      const agent = this.agents.find((agent) => agent.uuid === newVal.uuid);
+      if (!agent) {
+        return;
+      }
+      this.$emit('select', agent);
+      this.$nextTick(() => {
+        this.agentSelection = null;
+      });
+    },
   },
 
   methods: {
     remove(agentUuid) {
       this.$emit('remove', agentUuid);
-    },
-    chooseAgent(selected) {
-      // prevent clean after select agent
-      if (!selected[0].value) return;
-      this.selectAgent = selected;
-      const agent = this.agents.find((agent) => {
-        const { uuid } = agent;
-        return uuid === selected[0].uuid;
-      });
-      this.agent = agent;
-      this.$emit('select', this.agent);
-      this.internalSelectedAgents = [
-        {
-          value: '',
-          label: this.$t('agents.add.select.placeholder'),
-        },
-      ];
     },
     validate() {
       return this.selectedAgents.length > 0;

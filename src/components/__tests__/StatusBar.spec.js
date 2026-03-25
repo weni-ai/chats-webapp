@@ -33,6 +33,8 @@ vi.mock('@/store/modules/config', () => ({
       },
     },
     status: 'ONLINE',
+    socketClosedOffline: false,
+    setSocketClosedOffline: vi.fn(),
     getStatus: vi.fn().mockResolvedValue({
       data: { connection_status: 'ONLINE' },
     }),
@@ -284,7 +286,7 @@ describe('StatusBar', () => {
       await wrapper.vm.$nextTick();
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
-      expect(items).toHaveLength(3);
+      expect(items).toHaveLength(2);
       expect(wrapper.vm.statuses).toEqual([
         { value: 'active', label: 'Online', color: 'green', statusUuid: null },
         {
@@ -306,12 +308,39 @@ describe('StatusBar', () => {
       await wrapper.vm.$nextTick();
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
-      await items[2].trigger('click');
+      await items[1].trigger('click');
 
       expect(api.createCustomStatus).toHaveBeenCalledWith({
         email: 'test@example.com',
         statusType: 'lunch',
       });
+    });
+
+    it('should save OFFLINE to moduleStorage when switching from active to custom status', async () => {
+      wrapper = createWrapper();
+
+      await wrapper.vm.fetchCustomStatuses();
+      await wrapper.vm.$nextTick();
+
+      const activeStatus = wrapper.vm.statuses.find(
+        (s) => s.value === 'active',
+      );
+      wrapper.vm.selectedStatus = { ...activeStatus };
+
+      const setItemSpy = vi.spyOn(moduleStorage, 'setItem');
+
+      const lunchStatus = wrapper.vm.statuses.find((s) => s.value === 'lunch');
+
+      await wrapper.vm.selectStatus(lunchStatus);
+      await flushPromises();
+
+      expect(setItemSpy).toHaveBeenCalledWith(
+        'statusAgent-test-uuid',
+        'OFFLINE',
+        { useSession: true },
+      );
+
+      setItemSpy.mockRestore();
     });
 
     it('should handle switching between custom statuses', async () => {
@@ -348,7 +377,7 @@ describe('StatusBar', () => {
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
 
-      await items[3].trigger('click');
+      await items[2].trigger('click');
       await flushPromises();
 
       expect(api.closeCustomStatus).toHaveBeenCalledWith(
@@ -395,7 +424,7 @@ describe('StatusBar', () => {
       await wrapper.vm.$nextTick();
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
-      await items[2].trigger('click');
+      await items[1].trigger('click');
 
       expect(wrapper.vm.startDate).not.toBeNull();
       expect(wrapper.find('[data-testid="status-bar-timer"]').exists()).toBe(
@@ -518,7 +547,7 @@ describe('StatusBar', () => {
       await wrapper.vm.$nextTick();
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
-      await items[1].trigger('click');
+      await items[0].trigger('click');
       await flushPromises();
 
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
@@ -542,7 +571,7 @@ describe('StatusBar', () => {
       await wrapper.vm.$nextTick();
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
-      await items[2].trigger('click');
+      await items[1].trigger('click');
       await flushPromises();
 
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
@@ -566,12 +595,71 @@ describe('StatusBar', () => {
       await wrapper.vm.$nextTick();
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
-      await items[1].trigger('click');
+      await items[0].trigger('click');
 
       expect(Profile.updateStatus).toHaveBeenCalledWith({
         projectUuid: 'test-uuid',
-        status: 'OFFLINE',
+        status: 'ONLINE',
       });
+    });
+
+    it('should save OFFLINE to moduleStorage when changing to inactive status', async () => {
+      wrapper = createWrapper();
+
+      await wrapper.vm.updateActiveStatus({
+        isActive: false,
+        skipRequest: true,
+      });
+      await flushPromises();
+
+      expect(
+        moduleStorage.getItem('statusAgent-test-uuid', '', {
+          useSession: true,
+        }),
+      ).toBe('OFFLINE');
+    });
+
+    it('should save ONLINE to moduleStorage when changing to active status', async () => {
+      wrapper = createWrapper();
+
+      await wrapper.vm.updateActiveStatus({
+        isActive: true,
+        skipRequest: true,
+      });
+      await flushPromises();
+
+      expect(
+        moduleStorage.getItem('statusAgent-test-uuid', '', {
+          useSession: true,
+        }),
+      ).toBe('ONLINE');
+    });
+
+    it('should not save OFFLINE when switching from inactive to custom status', async () => {
+      wrapper = createWrapper();
+
+      wrapper.vm.selectedStatus = {
+        value: 'inactive',
+        label: 'Offline',
+        color: 'gray',
+      };
+      moduleStorage.setItem('statusAgent-test-uuid', 'OFFLINE', {
+        useSession: true,
+      });
+
+      await wrapper.vm.fetchCustomStatuses();
+      wrapper.vm.toggleDropdown();
+      await wrapper.vm.$nextTick();
+
+      const items = wrapper.findAll('[data-testid="status-bar-item"]');
+      await items[1].trigger('click');
+      await flushPromises();
+
+      expect(
+        moduleStorage.getItem('statusAgent-test-uuid', '', {
+          useSession: true,
+        }),
+      ).toBe('OFFLINE');
     });
   });
 
@@ -583,7 +671,7 @@ describe('StatusBar', () => {
       await wrapper.vm.$nextTick();
 
       const items = wrapper.findAll('[data-testid="status-bar-item"]');
-      await items[2].trigger('click');
+      await items[1].trigger('click');
 
       const clearIntervalSpy = vi.spyOn(window, 'clearInterval');
       wrapper.unmount();
@@ -722,15 +810,55 @@ describe('StatusBar', () => {
         });
 
         const newStatus = 'OFFLINE';
+        const socketClosedOffline = true;
         const storageValue = moduleStorage.getItem(statusAgentKey, '', {
           useSession: true,
         });
 
-        if (newStatus === 'OFFLINE' && storageValue === 'OFFLINE') {
+        if (
+          newStatus === 'OFFLINE' &&
+          socketClosedOffline &&
+          storageValue === 'OFFLINE'
+        ) {
           wrapper.vm.selectedStatus = wrapper.vm.statuses[1];
         }
 
         expect(wrapper.vm.selectedStatus.value).toBe('inactive');
+      });
+
+      it('should not change status when socketClosedOffline is false', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+
+        wrapper.vm.statuses = [
+          { value: 'active', label: 'Online', color: 'green' },
+          { value: 'inactive', label: 'Offline', color: 'gray' },
+        ];
+        await wrapper.vm.$nextTick();
+
+        wrapper.vm.selectedStatus = wrapper.vm.statuses[0];
+        const initialStatus = wrapper.vm.selectedStatus;
+
+        const statusAgentKey = `statusAgent-test-uuid`;
+        moduleStorage.setItem(statusAgentKey, 'OFFLINE', {
+          useSession: true,
+        });
+
+        const newStatus = 'OFFLINE';
+        const socketClosedOffline = false;
+        const storageValue = moduleStorage.getItem(statusAgentKey, '', {
+          useSession: true,
+        });
+
+        if (
+          newStatus === 'OFFLINE' &&
+          socketClosedOffline &&
+          storageValue === 'OFFLINE'
+        ) {
+          wrapper.vm.selectedStatus = wrapper.vm.statuses[1];
+        }
+
+        expect(wrapper.vm.selectedStatus).toBe(initialStatus);
       });
 
       it('should test configCustomStatus watch logic', async () => {
@@ -775,11 +903,16 @@ describe('StatusBar', () => {
         });
 
         const newStatus = 'OFFLINE';
+        const socketClosedOffline = true;
         const storageValue = moduleStorage.getItem(statusAgentKey, '', {
           useSession: true,
         });
 
-        if (newStatus === 'OFFLINE' && storageValue === 'OFFLINE') {
+        if (
+          newStatus === 'OFFLINE' &&
+          socketClosedOffline &&
+          storageValue === 'OFFLINE'
+        ) {
           wrapper.vm.selectedStatus = wrapper.vm.statuses[1];
         }
 

@@ -12,18 +12,12 @@
         class="chat-summary__by-ai-label"
         data-testid="chat-summary-by-ai-label"
       >
-        <img :src="StarsIcon" />
+        <UnnnicIcon
+          icon="bi:stars"
+          size="sm"
+        />
         <p>{{ $t('chats.summary.by_ai') }}</p>
       </section>
-      <UnnnicIcon
-        v-if="!isGeneratingSummary && !isTyping && !hideClose"
-        icon="close"
-        size="ant"
-        clickable
-        scheme="neutral-dark"
-        data-testid="chat-summary-close-button"
-        @click="handleCloseSummary"
-      />
     </section>
     <section class="chat-summary__content">
       <section
@@ -87,6 +81,19 @@
       </UnnnicToolTip>
     </section>
   </section>
+  <section
+    v-if="isArchived && archivedUrl"
+    class="chat-summary__archived"
+    data-testid="chat-summary-archived"
+  >
+    <UnnnicButton
+      type="primary"
+      size="small"
+      class="chat-summary__archived-button"
+      :text="$t('chats.summary.archived.download_button')"
+      @click="handleDownload"
+    />
+  </section>
   <FeedbackModal
     v-if="showFeedbackModal"
     :hasFeedback="hasFeedback"
@@ -102,6 +109,7 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import FeedbackModal from './FeedbackModal.vue';
 import Room from '@/services/api/resources/chats/room';
 import { useProfile } from '@/store/modules/profile';
+import { useDashboard } from '@/store/modules/dashboard';
 
 export default {
   name: 'ChatSummary',
@@ -131,6 +139,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    isArchived: {
+      type: Boolean,
+      default: false,
+    },
+    archivedUrl: {
+      type: String,
+      default: '',
+    },
   },
   emits: ['close', 'feedback'],
   data() {
@@ -141,25 +157,42 @@ export default {
       showFeedbackModal: false,
       liked: null,
       hasFeedback: false,
+      animationAbortController: null,
+      currentAnimationId: 0,
     };
   },
   computed: {
     ...mapWritableState(useRooms, ['activeRoomSummary', 'activeRoom']),
     ...mapState(useProfile, ['me']),
+    ...mapState(useDashboard, ['viewedAgent']),
+
+    isViewMode() {
+      return !!this.viewedAgent.email;
+    },
+    marginLeft() {
+      return this.isViewMode ? 0 : '-16px';
+    },
   },
   watch: {
     summaryText: {
       immediate: true,
-      async handler(value) {
-        if (value && !this.skipAnimation) {
-          await this.typeWriter(this.summaryText, 10);
-        } else if (value) {
-          this.animatedText = this.summaryText;
+      async handler(newValue, oldValue) {
+        if (this.isTyping && newValue === oldValue) {
+          return;
+        }
+
+        if (newValue && !this.skipAnimation) {
+          await this.typeWriter(newValue, 10);
+        } else if (newValue) {
+          this.animatedText = newValue;
         }
       },
     },
   },
   unmounted() {
+    if (this.animationAbortController) {
+      this.animationAbortController.abort();
+    }
     this.animatedText = '';
   },
   methods: {
@@ -177,20 +210,65 @@ export default {
       this.hasFeedback = true;
       this.showFeedbackModal = true;
     },
+    async handleDownload() {
+      if (!this.archivedUrl) return;
+
+      try {
+        window.open(this.archivedUrl, '_blank');
+      } catch (error) {
+        console.error('Error downloading archived messages:', error);
+        this.$unnnic.call.alert({
+          props: {
+            text: this.$t('chats.summary.archived.download_error'),
+            type: 'error',
+          },
+        });
+      }
+    },
     async typeWriter(text, speed) {
+      if (this.animationAbortController) {
+        this.animationAbortController.abort();
+      }
+
+      this.animationAbortController = new AbortController();
+      const animationId = ++this.currentAnimationId;
+
       this.isTyping = true;
       this.animatedText = '';
 
-      for await (const char of text) {
-        await new Promise((resolve) => {
-          setTimeout(() => {
-            this.animatedText += char;
-            resolve();
-          }, speed);
-        });
-      }
+      try {
+        for (const char of text) {
+          if (this.animationAbortController.signal.aborted) {
+            return;
+          }
 
-      this.isTyping = false;
+          if (this.currentAnimationId !== animationId) {
+            return;
+          }
+
+          await new Promise((resolve, reject) => {
+            const timeoutId = setTimeout(() => {
+              this.animatedText += char;
+              resolve();
+            }, speed);
+
+            this.animationAbortController.signal.addEventListener(
+              'abort',
+              () => {
+                clearTimeout(timeoutId);
+                reject(new Error('Animation cancelled'));
+              },
+              { once: true },
+            );
+          });
+        }
+      } catch (error) {
+        if (error.message !== 'Animation cancelled') {
+          console.error(error);
+        }
+      } finally {
+        this.isTyping = false;
+      }
     },
     handleCloseSummary() {
       if (
@@ -209,13 +287,13 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: rgb(233, 216, 253);
+  background: $unnnic-color-purple-100;
   box-shadow: $unnnic-shadow-level-far;
   padding: $unnnic-spacing-sm;
   gap: $unnnic-spacing-nano;
 
   &--open {
-    margin-left: -$unnnic-spacing-sm;
+    margin-left: v-bind(marginLeft);
   }
 
   &__generate-text {
@@ -289,6 +367,15 @@ export default {
     font-size: $unnnic-font-size-body-md;
     line-height: $unnnic-font-size-body-md + $unnnic-line-height-md;
     font-weight: $unnnic-font-weight-black;
+  }
+
+  &__archived {
+    display: flex;
+    margin-top: $unnnic-space-1;
+
+    &-button {
+      width: 100%;
+    }
   }
 }
 </style>

@@ -1,40 +1,70 @@
 <template>
-  <UnnnicModalDialog
-    :modelValue="modelValue"
-    :class="{ 'modal-close-chat--mobile': isMobile, 'modal-close-chat': true }"
-    :showCloseIcon="!isMobile"
-    :title="$t('chats.to_end_rate_the_chat')"
-    :primaryButtonProps="{
-      text: $t('end_chat'),
-      loading: isLoadingCloseRoom,
-      disabled: isInvalidRequiredTags,
-    }"
-    :secondaryButtonProps="{ text: $t('cancel') }"
-    size="lg"
-    data-testid="chat-classifier-modal"
-    @primary-button-click="closeRoom()"
-    @secondary-button-click="closeModal()"
-    @update:model-value="closeModal()"
-  >
-    <section class="modal-close-chat__content">
-      <UnnnicDisclaimer
-        v-if="isInvalidRequiredTags && !isLoadingTags"
-        class="modal-close-chat__disclaimer"
-        iconColor="feedback-yellow"
-        :text="$t('chats.to_end_required_tags')"
-      />
-      <ChatClassifier
-        v-model="tags"
-        :tags="sectorTags"
-        :loading="isLoadingTags"
-        @update:to-remove-tags="(tags) => (toRemoveTags = tags)"
-        @update:to-add-tags="(tags) => (toAddTags = tags)"
-      />
-    </section>
-  </UnnnicModalDialog>
+  <UnnnicDialog v-model:open="open">
+    <UnnnicDialogContent :size="hasNoSectorTags ? 'medium' : 'large'">
+      <UnnnicDialogHeader>
+        <UnnnicDialogTitle>
+          {{
+            hasNoSectorTags ? $t('end_chat') : $t('chats.to_end_rate_the_chat')
+          }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+
+      <template v-if="hasNoSectorTags">
+        <section class="modal-close-chat__content">
+          <p class="modal-close-chat__confirm-text">
+            {{ $t('close_chat.confirm_end') }}
+          </p>
+        </section>
+      </template>
+
+      <template v-else>
+        <section class="modal-close-chat__content">
+          <UnnnicDisclaimer
+            v-if="isInvalidRequiredTags && !isLoadingTags"
+            class="modal-close-chat__disclaimer"
+            type="attention"
+            :description="$t('chats.to_end_required_tags')"
+          />
+          <UnnnicInput
+            v-model="tagsFilter"
+            iconLeft="search"
+            :placeholder="$t('tags.search')"
+          />
+          <section class="modal-close-chat__tags-list">
+            <ChatClassifier
+              v-model="tags"
+              :tags="filteredTags"
+              :loading="isLoadingTags"
+              @update:to-remove-tags="(tags) => (toRemoveTags = tags)"
+              @update:to-add-tags="(tags) => (toAddTags = tags)"
+            />
+          </section>
+        </section>
+      </template>
+
+      <UnnnicDialogFooter>
+        <UnnnicDialogClose>
+          <UnnnicButton
+            :text="$t('cancel')"
+            type="tertiary"
+            :disabled="isLoadingCloseRoom"
+          />
+        </UnnnicDialogClose>
+        <UnnnicButton
+          data-testid="close-chat-button"
+          :text="hasNoSectorTags ? $t('end') : $t('end_chat')"
+          type="primary"
+          :loading="isLoadingCloseRoom"
+          :disabled="isInvalidRequiredTags"
+          @click="closeRoom()"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script>
+import { mapActions } from 'pinia';
 import isMobile from 'is-mobile';
 
 import Room from '@/services/api/resources/chats/room';
@@ -42,10 +72,10 @@ import Queue from '@/services/api/resources/settings/queue';
 
 import ChatClassifier from '@/components/chats/ChatClassifier.vue';
 
-import { mapActions } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
-import feedbackService from '@/services/api/resources/chats/feedback';
 import { useFeedback } from '@/store/modules/feedback';
+
+import feedbackService from '@/services/api/resources/chats/feedback';
 
 export default {
   components: {
@@ -62,11 +92,12 @@ export default {
       required: true,
     },
   },
-  emits: ['close'],
+  emits: ['close', 'update:modelValue'],
 
   data() {
     return {
       tags: [],
+      tagsNext: '',
       sectorTags: [],
       page: 0,
       limit: 20,
@@ -75,6 +106,7 @@ export default {
       isShowFeedback: false,
       toRemoveTags: [],
       toAddTags: [],
+      tagsFilter: '',
     };
   },
 
@@ -82,8 +114,24 @@ export default {
     isMobile() {
       return isMobile();
     },
+    hasNoSectorTags() {
+      return !this.isLoadingTags && this.sectorTags.length === 0;
+    },
     isInvalidRequiredTags() {
-      return this.room.queue?.required_tags && this.tags.length === 0;
+      return this.room?.queue?.required_tags && this.tags.length === 0;
+    },
+    filteredTags() {
+      return this.sectorTags.filter((tag) =>
+        tag.name.toLowerCase().includes(this.tagsFilter.toLowerCase()),
+      );
+    },
+    open: {
+      get() {
+        return this.modelValue;
+      },
+      set(value) {
+        this.$emit('update:modelValue', value);
+      },
     },
   },
   mounted() {
@@ -96,49 +144,43 @@ export default {
     ...mapActions(useFeedback, ['setIsRenderFeedbackModal']),
     ...mapActions(useRooms, ['removeRoom']),
     async loadRoomTags() {
-      const roomUuid = this.room.uuid;
-      const { results } = await Room.getRoomTags(roomUuid);
-      this.tags = results;
+      try {
+        const roomUuid = this.room.uuid;
+        const { results, next } = await Room.getRoomTags(roomUuid, {
+          next: this.tagsNext,
+          limit: 20,
+        });
+        this.tagsNext = next;
+        this.tags = this.tags.concat(results);
+      } catch (error) {
+        console.error('Error loading room tags', error);
+      } finally {
+        if (this.tagsNext) this.loadRoomTags();
+      }
     },
     async classifyRoom() {
       this.isLoadingTags = true;
-      let hasNext = false;
+
       try {
-        const response = await Queue.tags(
-          this.room.queue.uuid,
-          this.page * 20,
-          20,
-        );
-        this.page += 1;
+        const response = await Queue.tags(this.room.queue.uuid, {
+          limit: 20,
+          next: this.tagsNext,
+        });
         this.sectorTags = this.sectorTags.concat(response.results);
-        hasNext = response.next;
-        this.isLoadingTags = false;
+        this.tagsNext = response.next;
+      } catch (error) {
+        console.error('Error classifying room', error);
       } finally {
-        this.isLoadingTags = false;
-      }
-      if (hasNext) {
-        this.classifyRoom();
+        if (this.tagsNext) this.classifyRoom();
+        else this.isLoadingTags = false;
       }
     },
     async closeRoom() {
       this.isLoadingCloseRoom = true;
       const { uuid } = this.room;
 
-      if (this.toRemoveTags.length > 0) {
-        const requests = this.toRemoveTags.map((tag) =>
-          Room.removeRoomTag(uuid, tag),
-        );
-        await Promise.all(requests);
-      }
-
-      if (this.toAddTags.length > 0) {
-        const requests = this.toAddTags.map((tag) =>
-          Room.addRoomTag(uuid, tag),
-        );
-        await Promise.all(requests);
-      }
-
-      await Room.close(uuid);
+      const tagsUuids = this.tags.map((tag) => tag.uuid);
+      await Room.close(uuid, tagsUuids);
 
       this.removeRoom(uuid);
 
@@ -167,14 +209,18 @@ export default {
 
 <style lang="scss" scoped>
 .modal-close-chat {
-  :deep(.modal-close-chat__disclaimer) {
-    display: flex;
-  }
-
   &__content {
     display: flex;
     flex-direction: column;
     gap: $unnnic-space-4;
+    padding: $unnnic-space-6;
+    overflow: auto;
+  }
+
+  &__confirm-text {
+    font: $unnnic-font-emphasis;
+    color: $unnnic-color-neutral-cloudy;
+    margin: 0;
   }
 
   &--mobile {
@@ -184,15 +230,11 @@ export default {
   }
 
   &__tags-list {
-    margin-top: $unnnic-spacing-md;
-
     display: flex;
-    gap: $unnnic-spacing-xs;
+    gap: $unnnic-space-3;
     overflow: hidden auto;
     flex-wrap: wrap;
-
-    max-height: $unnnic-spacing-xgiant;
-
+    max-height: 500px;
     scroll-snap-type: y proximity;
   }
 }

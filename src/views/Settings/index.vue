@@ -4,7 +4,6 @@
     ref="settingsView"
     data-testid="settings-view"
     class="settings-view"
-    @scroll="onScroll"
   >
     <SettingsHeader />
 
@@ -71,6 +70,7 @@ export default {
 
   computed: {
     ...mapState(useConfig, ['enableGroupsMode', 'isPrimaryProject']),
+
     showSettings() {
       return !this.enableGroupsMode || this.isPrimaryProject;
     },
@@ -90,7 +90,7 @@ export default {
   mounted() {
     if (this.showSettings) {
       this.getSectors(true);
-      this.getGroups();
+      this.getGroups(true);
     }
   },
 
@@ -99,18 +99,6 @@ export default {
       getSectors: 'getSectors',
       getGroups: 'getGroups',
     }),
-
-    onScroll() {
-      const settingsView = this.$refs.settingsView;
-
-      const isScrollInBottom =
-        Math.round(settingsView.scrollTop) + settingsView.clientHeight >=
-        settingsView.scrollHeight - 100;
-
-      if (isScrollInBottom) {
-        if (this.activeTab.id === 'groups') this.getGroups();
-      }
-    },
 
     updateTab(newTab) {
       const newActiveTab = this.tabs.find((tab) =>

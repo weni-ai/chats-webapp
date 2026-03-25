@@ -1,4 +1,4 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { flushPromises, mount, config } from '@vue/test-utils';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
 import { setActivePinia } from 'pinia';
@@ -7,6 +7,7 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
 import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import TheCardGroups from '../index.vue';
 
@@ -84,6 +85,9 @@ describe('TheCardGroups.vue', () => {
       props: { ...defaultProps, ...props },
       global: {
         plugins: [pinia],
+        components: {
+          UnnnicToolTip: config.global.stubs.UnnnicToolTip,
+        },
         mocks: {
           $t: (key, params) => {
             const translations = {
@@ -122,10 +126,6 @@ describe('TheCardGroups.vue', () => {
               'placeholder',
             ],
             emits: ['update:modelValue', 'icon-right-click'],
-          },
-          UnnnicToolTip: {
-            template: '<div data-testid="unnnic-tooltip"><slot></slot></div>',
-            props: ['enabled', 'text', 'side'],
           },
           UnnnicButton: {
             template:
@@ -209,7 +209,7 @@ describe('TheCardGroups.vue', () => {
       wrapper = createWrapper();
 
       expect(
-        wrapper.find('[data-testid="queue-prioritization-tooltip"]').exists(),
+        wrapper.findComponent({ name: 'UnnnicToolTipStub' }).exists(),
       ).toBe(true);
       expect(
         wrapper.find('[data-testid="queue-prioritization-button"]').exists(),
@@ -302,7 +302,7 @@ describe('TheCardGroups.vue', () => {
       ).toBe(true);
     });
 
-    it('renders no results message when no data available', async () => {
+    it('renders no results message when no ongoing chats available', async () => {
       const roomsStore = useRooms();
       const discussionsStore = useDiscussions();
 
@@ -313,10 +313,32 @@ describe('TheCardGroups.vue', () => {
       roomsStore.waitingContactAnswer = [];
       discussionsStore.discussions = [];
 
+      roomsStore.activeTab = 'ongoing';
+
       await flushPromises();
 
       expect(wrapper.text()).toContain(
-        'Oops! It looks like there are no chats at the moment :)',
+        'All wrapped up! You’ll be notified when new chats are assigned and they’ll appear in this list.',
+      );
+    });
+
+    it('renders no results message when no waiting chats available', async () => {
+      const roomsStore = useRooms();
+      const discussionsStore = useDiscussions();
+
+      wrapper = createWrapper();
+
+      roomsStore.agentRooms = [];
+      roomsStore.waitingQueue = [];
+      roomsStore.waitingContactAnswer = [];
+      discussionsStore.discussions = [];
+
+      roomsStore.activeTab = 'waiting';
+
+      await flushPromises();
+
+      expect(wrapper.text()).toContain(
+        'Queue cleared! All contacts have been assigned to an agent',
       );
     });
 
@@ -823,6 +845,120 @@ describe('TheCardGroups.vue', () => {
         '*',
       );
     });
+
+    describe('rooms_queue refetch on empty', () => {
+      const waitingRooms = [
+        {
+          uuid: 'waiting-1',
+          contact: { name: 'W1', uuid: 'c1' },
+          user: null,
+          is_waiting: false,
+          queue: { uuid: 'q1' },
+        },
+        {
+          uuid: 'waiting-2',
+          contact: { name: 'W2', uuid: 'c2' },
+          user: null,
+          is_waiting: false,
+          queue: { uuid: 'q1' },
+        },
+      ];
+
+      it('triggers refetch when rooms go empty but counter shows more', async () => {
+        const roomsStore = useRooms();
+        roomsStore.waitingQueue = waitingRooms;
+        roomsStore.roomsCount = { waiting: 10, ongoing: 0, flow_start: 0 };
+
+        wrapper = createWrapper();
+        await flushPromises();
+        wrapper.vm.initialLoaded = true;
+        wrapper.vm.isLoadingRooms = false;
+
+        const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
+
+        roomsStore.waitingQueue = [];
+        await wrapper.vm.$nextTick();
+
+        expect(listRoomSpy).toHaveBeenCalledWith(
+          true,
+          wrapper.vm.orderBy.waiting,
+          'waiting',
+          true,
+        );
+        expect(wrapper.vm.page.waiting).toBe(0);
+      });
+
+      it('does not refetch when rooms go empty and counter is also 0', async () => {
+        const roomsStore = useRooms();
+        roomsStore.waitingQueue = waitingRooms;
+        roomsStore.roomsCount = { waiting: 2, ongoing: 0, flow_start: 0 };
+
+        wrapper = createWrapper();
+        await flushPromises();
+        wrapper.vm.initialLoaded = true;
+        wrapper.vm.isLoadingRooms = false;
+
+        const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
+
+        roomsStore.roomsCount.waiting = 0;
+        roomsStore.waitingQueue = [];
+        await wrapper.vm.$nextTick();
+
+        expect(listRoomSpy).not.toHaveBeenCalled();
+      });
+
+      it('does not refetch on initial load when rooms start empty', async () => {
+        const roomsStore = useRooms();
+        roomsStore.waitingQueue = [];
+        roomsStore.roomsCount = { waiting: 5, ongoing: 0, flow_start: 0 };
+
+        wrapper = createWrapper();
+        await flushPromises();
+
+        const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
+
+        roomsStore.waitingQueue = [];
+        await wrapper.vm.$nextTick();
+
+        expect(listRoomSpy).not.toHaveBeenCalled();
+      });
+
+      it('does not refetch when isLoadingRooms is true', async () => {
+        const roomsStore = useRooms();
+        roomsStore.waitingQueue = waitingRooms;
+        roomsStore.roomsCount = { waiting: 10, ongoing: 0, flow_start: 0 };
+
+        wrapper = createWrapper();
+        await flushPromises();
+        wrapper.vm.initialLoaded = true;
+        wrapper.vm.isLoadingRooms = true;
+
+        const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
+
+        roomsStore.waitingQueue = [];
+        await wrapper.vm.$nextTick();
+
+        expect(listRoomSpy).not.toHaveBeenCalled();
+      });
+
+      it('does not refetch when rooms decrease but list is not empty', async () => {
+        const roomsStore = useRooms();
+        roomsStore.waitingQueue = waitingRooms;
+        roomsStore.roomsCount = { waiting: 10, ongoing: 0, flow_start: 0 };
+
+        wrapper = createWrapper();
+        await flushPromises();
+        wrapper.vm.initialLoaded = true;
+        wrapper.vm.isLoadingRooms = false;
+
+        const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
+
+        roomsStore.waitingQueue = [waitingRooms[0]];
+        await wrapper.vm.$nextTick();
+
+        expect(listRoomSpy).not.toHaveBeenCalled();
+      });
+    });
   });
 
   describe('lifecycle tests', () => {
@@ -940,6 +1076,116 @@ describe('TheCardGroups.vue', () => {
       wrapper = createWrapper();
 
       expect(wrapper.vm.totalUnreadMessages).toBe(0);
+    });
+  });
+
+  describe('bulk take selection logic', () => {
+    it('should show select-all checkbox on waiting tab when bulk take is enabled', () => {
+      const roomsStore = useRooms();
+      const configStore = useConfig();
+      const featureFlagStore = useFeatureFlag();
+
+      roomsStore.waitingQueue = mockRooms;
+      roomsStore.activeTab = 'waiting';
+      configStore.project = {
+        config: {
+          can_use_bulk_take: true,
+          can_use_queue_prioritization: true,
+        },
+      };
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsBulkTake'],
+      };
+
+      wrapper = createWrapper({ isViewMode: false });
+
+      expect(wrapper.vm.showSelectAllCheckbox).toBe(true);
+    });
+
+    it('should not show select-all checkbox on waiting tab when bulk take flag is inactive', () => {
+      const roomsStore = useRooms();
+      const configStore = useConfig();
+      const featureFlagStore = useFeatureFlag();
+
+      roomsStore.waitingQueue = mockRooms;
+      roomsStore.activeTab = 'waiting';
+      configStore.project = {
+        config: {
+          can_use_bulk_take: true,
+          can_use_queue_prioritization: true,
+        },
+      };
+      featureFlagStore.featureFlags = { active_features: [] };
+
+      wrapper = createWrapper({ isViewMode: false });
+
+      expect(wrapper.vm.showSelectAllCheckbox).toBe(false);
+    });
+
+    it('should not show select-all checkbox on waiting tab in view mode', () => {
+      const roomsStore = useRooms();
+      const configStore = useConfig();
+      const featureFlagStore = useFeatureFlag();
+
+      roomsStore.waitingQueue = mockRooms;
+      roomsStore.activeTab = 'waiting';
+      configStore.project = {
+        config: {
+          can_use_bulk_take: true,
+          can_use_queue_prioritization: true,
+        },
+      };
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsBulkTake'],
+      };
+
+      wrapper = createWrapper({ isViewMode: true });
+
+      expect(wrapper.vm.showSelectAllCheckbox).toBe(false);
+    });
+
+    it('should enable selection on waiting tab when bulk take is enabled', () => {
+      const roomsStore = useRooms();
+      const configStore = useConfig();
+      const featureFlagStore = useFeatureFlag();
+
+      roomsStore.waitingQueue = mockRooms;
+      roomsStore.activeTab = 'waiting';
+      configStore.project = {
+        config: {
+          can_use_bulk_take: true,
+          can_use_queue_prioritization: true,
+        },
+      };
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsBulkTake'],
+      };
+
+      wrapper = createWrapper({ isViewMode: false });
+
+      expect(wrapper.vm.isWithSelection).toBe(true);
+    });
+
+    it('should disable selection on waiting tab in view mode even with bulk take enabled', () => {
+      const roomsStore = useRooms();
+      const configStore = useConfig();
+      const featureFlagStore = useFeatureFlag();
+
+      roomsStore.waitingQueue = mockRooms;
+      roomsStore.activeTab = 'waiting';
+      configStore.project = {
+        config: {
+          can_use_bulk_take: true,
+          can_use_queue_prioritization: true,
+        },
+      };
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsBulkTake'],
+      };
+
+      wrapper = createWrapper({ isViewMode: true });
+
+      expect(wrapper.vm.isWithSelection).toBe(false);
     });
   });
 });

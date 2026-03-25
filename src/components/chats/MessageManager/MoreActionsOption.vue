@@ -17,7 +17,7 @@
 
 <script>
 export default {
-  name: 'MoreAtionsOption',
+  name: 'MoreActionsOption',
 
   props: {
     icon: { type: String, required: true },

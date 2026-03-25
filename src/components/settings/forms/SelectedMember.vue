@@ -1,6 +1,9 @@
 <template>
   <section class="selected-member">
-    <section class="selected-member__role">
+    <section
+      v-if="roleName"
+      class="selected-member__role"
+    >
       <p class="selected-member__role-name">
         {{ roleName }}
       </p>
@@ -70,7 +73,7 @@ export default {
     align-items: center;
     background-color: $unnnic-color-neutral-lightest;
     gap: 10px; // not exists in unnnic tokens
-    border-radius: $unnnic-spacing-nano;
+    border-radius: $unnnic-radius-2;
 
     &-name {
       color: $unnnic-color-neutral-darkest;

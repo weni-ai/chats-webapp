@@ -4,7 +4,7 @@
     ref="newSectorDrawer"
     class="new-sector-drawer"
     :modelValue="modelValue"
-    closeIcon="arrow_back"
+    closeIcon="close"
     size="gt"
     :title="$t('config_chats.new_sector')"
     :primaryButtonText="activePageIndex === 3 ? $t('save') : $t('continue')"
@@ -17,7 +17,7 @@
     "
     @secondary-button-click="
       activePageIndex === 0
-        ? $refs.newSectorDrawer.close()
+        ? handleCloseNewSectorDrawer()
         : (activePageIndex = activePageIndex - 1)
     "
     @close="handleCloseNewSectorDrawer"
@@ -91,12 +91,13 @@
     </template>
   </UnnnicDrawer>
   <DiscartChangesModal
-    :showModal="showConfirmDiscartChangesModal"
+    v-if="showConfirmDiscartChangesModal"
+    v-model="showConfirmDiscartChangesModal"
     :title="$t('new_sector.discart.title')"
     :text="$t('new_sector.discart.hint')"
     data-testid="discart-changes-modal"
-    @secondary-button-click="showConfirmDiscartChangesModal = false"
-    @primary-button-click="$emit('close')"
+    @cancel="showConfirmDiscartChangesModal = false"
+    @confirm="$emit('close')"
   />
 </template>
 
@@ -116,6 +117,7 @@ import isMobile from 'is-mobile';
 import Unnnic from '@weni/unnnic-system';
 import { mapState, mapWritableState } from 'pinia';
 import { useConfig } from '@/store/modules/config';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 export default {
   name: 'NewSectorDrawer',
@@ -148,6 +150,7 @@ export default {
         can_trigger_flows: true,
         can_edit_custom_fields: true,
         sign_messages: true,
+        is_csat_enabled: false,
         automatic_message: {
           is_active: false,
           text: '',
@@ -161,6 +164,7 @@ export default {
       },
       sectorQueue: {
         name: '',
+        queue_limit: { is_active: false, limit: null },
         currentAgents: [],
         agents: 0,
       },
@@ -176,6 +180,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapWritableState(useSettings, ['sectors']),
     ...mapState(useConfig, ['enableGroupsMode']),
     showDiscartQuestion() {
@@ -198,6 +203,12 @@ export default {
     },
     activePage() {
       return this.newSectorPages[this.activePageIndex];
+    },
+    enableAutomaticCsatFeature() {
+      return this.featureFlags.active_features?.includes('weniChatsCSAT');
+    },
+    enableQueueLimitFeature() {
+      return this.featureFlags.active_features?.includes('weniChatsQueueLimit');
     },
   },
   mounted() {
@@ -222,6 +233,7 @@ export default {
           managers,
           config,
           automatic_message,
+          is_csat_enabled,
         } = this.sector;
 
         const createSectorBody = {
@@ -236,6 +248,9 @@ export default {
             ? config
             : { ...config, secondary_project: undefined },
           automatic_message,
+          is_csat_enabled: this.enableAutomaticCsatFeature
+            ? is_csat_enabled
+            : false,
         };
 
         const createdSector = await Sector.create(createSectorBody);
@@ -269,6 +284,9 @@ export default {
           name: this.sectorQueue.name,
           default_message: '',
           sectorUuid: this.sector.uuid,
+          queue_limit: this.enableQueueLimitFeature
+            ? this.sectorQueue.queue_limit
+            : { is_active: false, limit: null },
         });
 
         await Promise.all(

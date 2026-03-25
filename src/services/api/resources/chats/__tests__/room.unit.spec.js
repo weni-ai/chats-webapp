@@ -134,7 +134,9 @@ describe('Room service', () => {
 
       const result = await roomService.close(uuid);
 
-      expect(http.put).toHaveBeenCalledWith(`/room/${uuid}/close/`);
+      expect(http.put).toHaveBeenCalledWith(`/room/${uuid}/close/`, {
+        tags: [],
+      });
       expect(result).toEqual(mockResponse.data);
     });
   });
@@ -157,6 +159,7 @@ describe('Room service', () => {
         { rooms_list: rooms },
         {
           params: {
+            queue_uuid: '',
             user_request: 'user@example.com',
             user_email: intendedAgent,
           },
@@ -610,6 +613,7 @@ describe('Room service', () => {
           params: {
             user_request: 'user@example.com',
             queue_uuid: intendedQueue,
+            user_email: '',
           },
         },
       );
@@ -631,6 +635,7 @@ describe('Room service', () => {
         { rooms_list: [] },
         {
           params: {
+            queue_uuid: '',
             user_request: 'user@example.com',
             user_email: 'agent@example.com',
           },
@@ -669,6 +674,7 @@ describe('Room service', () => {
         { rooms_list: ['room-1'] },
         {
           params: {
+            queue_uuid: '',
             user_request: undefined,
             user_email: 'agent@example.com',
           },
@@ -692,6 +698,7 @@ describe('Room service', () => {
         { rooms_list: ['room-1'] },
         {
           params: {
+            user_email: '',
             user_request: 'user@example.com',
             queue_uuid: '',
           },
@@ -718,7 +725,9 @@ describe('Room service', () => {
 
       const result = await roomService.close(undefined);
 
-      expect(http.put).toHaveBeenCalledWith('/room/undefined/close/');
+      expect(http.put).toHaveBeenCalledWith('/room/undefined/close/', {
+        tags: [],
+      });
       expect(result).toEqual(mockResponse.data);
     });
   });

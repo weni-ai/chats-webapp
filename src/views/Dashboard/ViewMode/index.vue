@@ -23,15 +23,83 @@
         v-show="isRoomSkeletonActive"
         data-testid="chat-header-loading"
       />
-      <UnnnicChatsHeader
+
+      <ContactHeader
         v-show="!isRoomSkeletonActive"
         v-if="!!room && !discussion"
-        :title="room.contact.name || ''"
-        :avatarClick="() => handleModal('ContactInfo', 'open')"
-        :titleClick="() => handleModal('ContactInfo', 'open')"
-        :avatarName="room.contact.name"
+        :contactName="room.contact?.name"
+        clickable
         data-testid="room-chat-header"
-      />
+        @click="isContactInfoOpened = true"
+      >
+        <template #actions>
+          <section class="view-mode__contact-actions">
+            <UnnnicToolTip
+              v-if="enableRoomSummary"
+              enabled
+              :text="
+                openActiveRoomSummary
+                  ? $t('chats.summary.close_summary_tooltip')
+                  : $t('chats.summary.open_summary_tooltip')
+              "
+              side="left"
+              class="view-mode__summary-icon-tooltip"
+            >
+              <section
+                class="view-mode__summary-icon"
+                :class="{
+                  'view-mode__summary-icon--open': openActiveRoomSummary,
+                }"
+              >
+                <UnnnicIcon
+                  icon="bi:stars"
+                  clickable
+                  :scheme="openActiveRoomSummary ? 'gray-900' : 'gray-500'"
+                  size="ant"
+                  @click="openActiveRoomSummary = !openActiveRoomSummary"
+                />
+              </section>
+            </UnnnicToolTip>
+            <UnnnicToolTip
+              v-if="
+                featureFlags.active_features?.includes('weniChatsContactInfoV2')
+              "
+              enabled
+              :text="
+                room?.has_history
+                  ? $t('contact_info.see_contact_history')
+                  : $t('contact_info.no_contact_history')
+              "
+              side="left"
+            >
+              <UnnnicIcon
+                icon="history"
+                size="ant"
+                :clickable="room?.has_history"
+                :scheme="room?.has_history ? 'neutral-cloudy' : 'neutral-soft'"
+                @click="openHistory"
+              />
+            </UnnnicToolTip>
+            <UnnnicToolTip
+              v-if="
+                featureFlags.active_features?.includes('weniChatsContactInfoV2')
+              "
+              enabled
+              :text="$tc('transfer_contact', 1)"
+              side="left"
+            >
+              <UnnnicIcon
+                icon="sync_alt"
+                size="ant"
+                clickable
+                scheme="neutral-cloudy"
+                @click="openTransferModal"
+              />
+            </UnnnicToolTip>
+          </section>
+        </template>
+      </ContactHeader>
+
       <UnnnicChatsHeader
         v-show="!isRoomSkeletonActive"
         v-if="!!discussion"
@@ -48,6 +116,8 @@
       <RoomMessages
         v-if="!!room && !discussion"
         data-testid="room-messages"
+        showRoomSummary
+        @open-room-contact-info="isContactInfoOpened = true"
       />
       <DiscussionMessages
         v-if="!!discussion"
@@ -57,7 +127,7 @@
         v-if="room && !discussion && room.user?.email !== me.email"
         class="assume-chat"
         :text="$t('dashboard.view-mode.assume_chat')"
-        type="secondary"
+        :type="handleTypeGetChatButton()"
         data-testid="assume-chat-button"
         @click="handleModal('AssumeChatConfirmation', 'open')"
       />
@@ -83,34 +153,34 @@
 
     <template #aside>
       <ContactInfo
-        v-if="
-          featureFlags.active_features?.includes('weniChatsContactInfoV2') &&
-          isContactInfoOpened
-        "
+        v-if="isContactInfoOpened && room"
         :key="room.uuid"
         class="contact-info"
         isViewMode
         data-testid="contact-info"
-        @close="handleModal('ContactInfo', 'close')"
-      />
-      <OldContactInfo
-        v-else-if="isContactInfoOpened"
-        class="contact-info"
-        isViewMode
-        @close="handleModal('ContactInfo', 'close')"
+        @close="isContactInfoOpened = false"
       />
     </template>
+
+    <ModalTransferRooms
+      v-if="isModalTransferRoomsOpened"
+      v-model="isModalTransferRoomsOpened"
+      @close="closeTransferModal()"
+    />
   </ChatsLayout>
 </template>
 
 <script>
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
+import { format as dateFnsFormat, subYears as dateFnsSubYears } from 'date-fns';
+
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useDashboard } from '@/store/modules/dashboard';
 import { useProfile } from '@/store/modules/profile';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useConfig } from '@/store/modules/config';
 
 import ChatsLayout from '@/layouts/ChatsLayout/index.vue';
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
@@ -120,9 +190,11 @@ import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
 import DiscussionMessages from '@/components/chats/chat/DiscussionMessages.vue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
 import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion.vue';
-import OldContactInfo from '@/components/chats/ContactInfo/oldContactInfo.vue';
-
+import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
 import ViewModeHeader from './components/ViewModeHeader.vue';
+import ContactHeader from '@/components/chats/ContactHeader.vue';
+
+import { parseUrn } from '@/utils/room';
 
 export default {
   name: 'ViewMode',
@@ -137,13 +209,16 @@ export default {
     ViewModeHeader,
     ModalGetChat,
     ButtonJoinDiscussion,
-    OldContactInfo,
+
+    ModalTransferRooms,
+    ContactHeader,
   },
 
   data: () => ({
     isRoomSkeletonActive: false,
     isContactInfoOpened: false,
     isAssumeChatConfirmationOpened: false,
+    isModalTransferRoomsOpened: false,
   }),
 
   computed: {
@@ -158,22 +233,43 @@ export default {
     ...mapState(useProfile, ['me']),
     ...mapState(useDashboard, ['viewedAgent']),
     ...mapState(useRoomMessages, ['roomMessagesNext']),
+    ...mapWritableState(useRooms, [
+      'contactToTransfer',
+      'openActiveRoomSummary',
+    ]),
+    ...mapState(useConfig, {
+      enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
+      project: (store) => store.project,
+    }),
+
+    isBulkActionsEnabled() {
+      const canBulkTransfer = this.project?.config?.can_use_bulk_transfer;
+      const canBulkClose =
+        this.featureFlags.active_features?.includes('weniChatsBulkClose') &&
+        this.project?.config?.can_use_bulk_close;
+      const canBulkTake =
+        this.featureFlags.active_features?.includes('weniChatsBulkTake') &&
+        this.project?.config?.can_use_bulk_take;
+      return canBulkTransfer || canBulkClose || canBulkTake;
+    },
   },
 
   watch: {
-    room() {
+    'room.uuid'() {
       this.isContactInfoOpened = false;
     },
     rooms: {
-      once: true,
-      async handler() {
-        const { room_uuid } = this.$route.query || {};
-        if (room_uuid) {
-          const activeRoom = this.rooms.find((room) => room.uuid === room_uuid);
+      immediate: true,
+      handler() {
+        const { uuid_room } = this.$route.query || {};
 
-          if (activeRoom) await this.setActiveRoom(activeRoom);
+        if (uuid_room && this.rooms?.length > 0) {
+          const activeRoom = this.rooms.find((room) => room.uuid === uuid_room);
 
-          this.$router.replace({ query: {} });
+          if (activeRoom) {
+            this.setActiveRoom(activeRoom);
+            this.$router.replace({ query: {} });
+          }
         }
       },
     },
@@ -226,12 +322,76 @@ export default {
       });
       this.$router.push({ name: 'room', params: { roomId: this.room.uuid } });
     },
+    openTransferModal() {
+      this.contactToTransfer = this.room.uuid;
+      this.isModalTransferRoomsOpened = true;
+    },
+    closeTransferModal() {
+      this.contactToTransfer = '';
+      this.isModalTransferRoomsOpened = false;
+    },
+    openHistory() {
+      const { plataform, contactNum } = parseUrn(this.room);
+      const protocol = this.room.protocol;
+      const contactUrn =
+        plataform === 'whatsapp' ? contactNum.replace('+', '') : contactNum;
+
+      const A_YEAR_AGO = dateFnsFormat(
+        dateFnsSubYears(new Date(), 1),
+        'yyyy-MM-dd',
+      );
+
+      this.$router.push({
+        name: 'closed-rooms',
+        query: {
+          contactUrn: contactUrn || this.room?.contact?.name,
+          protocol,
+          startDate: A_YEAR_AGO,
+          from: this.room.uuid,
+        },
+      });
+    },
+    handleTypeGetChatButton() {
+      if (this.isBulkActionsEnabled) return 'secondary';
+      return this.room.user?.email === this.me.email ? 'primary' : 'secondary';
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .view-mode {
+  &__contact-actions {
+    display: flex;
+    gap: $unnnic-space-6;
+    align-items: center;
+
+    :deep(.unnnic-tooltip) {
+      display: flex;
+    }
+  }
+  &__summary-icon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $unnnic-radius-2;
+
+    &--open {
+      background-color: $unnnic-color-purple-100;
+      &::after {
+        content: '';
+        position: fixed;
+        top: 106px; // This distance corresponds to the positioning of the summary balloon point.
+        transform: rotate(-45deg);
+        width: $unnnic-space-3;
+        height: $unnnic-space-3;
+        background-color: $unnnic-color-purple-100;
+        border-radius: $unnnic-space-1;
+      }
+    }
+  }
   &__active-chat {
     display: grid;
     grid-template-rows: auto 1fr auto;

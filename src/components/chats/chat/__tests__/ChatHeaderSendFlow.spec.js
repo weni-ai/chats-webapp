@@ -1,11 +1,15 @@
-import { mount } from '@vue/test-utils';
+import { mount, config } from '@vue/test-utils';
 import { describe, it, expect, beforeEach } from 'vitest';
 
 import ChatHeaderSendFlow from '../ChatHeaderSendFlow.vue';
 
 const createWrapper = () => {
   return mount(ChatHeaderSendFlow, {
-    global: { stubs: { UnnnicToolTip: true } },
+    global: {
+      components: {
+        UnnnicToolTip: config.global.stubs.UnnnicToolTip,
+      },
+    },
   });
 };
 
@@ -37,7 +41,7 @@ describe('ChatHeaderSendFlow.vue', () => {
   });
 
   it('should render the tooltip', () => {
-    const tooltip = wrapper.findComponent('[data-testid="tooltip"]');
+    const tooltip = wrapper.findComponent({ name: 'UnnnicToolTipStub' });
     expect(tooltip.exists()).toBe(true);
     expect(tooltip.props('text')).toBe(
       wrapper.vm.$t('alert_last_message_date.tip'),

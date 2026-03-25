@@ -23,14 +23,17 @@
           :viewedAgent="viewedAgent"
         />
 
-        <ChatsLayoutFooterButton class="footer-button" />
+        <ChatsLayoutFooterButton
+          class="footer-button"
+          :isViewMode="isViewMode"
+        />
 
         <ViewOptions
           :isViewMode="isViewMode"
           :dashboard="canAccessDashboard"
           :showFlowsTriggerButton="canTriggerFlows"
           @open-flows-trigger="openFlowsTrigger"
-          @show-quick-messages="handlerShowQuickMessages"
+          @show-quick-messages="$emit('show-quick-messages')"
         />
       </div>
     </slot>
@@ -46,18 +49,6 @@
       />
     </slot>
 
-    <slot
-      v-if="quickMessagesVisible"
-      name="quick-message"
-    >
-      <div class="quick-message">
-        <QuickMessages
-          class="room-list"
-          @close="handlerShowQuickMessages"
-          @select-quick-message="selectQuickMessage"
-        />
-      </div>
-    </slot>
     <main>
       <slot />
     </main>
@@ -72,7 +63,6 @@
 
 <script>
 import SidebarLoading from '@/views/loadings/HomeSidebar.vue';
-import QuickMessages from '@/components/chats/QuickMessages/index.vue';
 import TheCardGroups from './components/TheCardGroups/index.vue';
 import LayoutFlowsTrigger from './components/FlowsTrigger/index.vue';
 import ChatsLayoutFooterButton from './components/FooterButton/index.vue';
@@ -89,7 +79,6 @@ export default {
     TheCardGroups,
     SidebarLoading,
     LayoutFlowsTrigger,
-    QuickMessages,
     ChatsLayoutFooterButton,
     ViewOptions,
     StatusBar,
@@ -101,7 +90,7 @@ export default {
       default: '',
     },
   },
-  emits: ['select-quick-message'],
+  emits: ['select-quick-message', 'show-quick-messages'],
 
   data: () => ({
     sectors: {},
@@ -128,9 +117,6 @@ export default {
     flowsTriggerVisible() {
       return this.showFlowsTrigger && !this.showQuickMessages;
     },
-    quickMessagesVisible() {
-      return !this.showFlowsTrigger && this.showQuickMessages;
-    },
     isViewMode() {
       return !!this.viewedAgent;
     },
@@ -143,9 +129,6 @@ export default {
   },
 
   methods: {
-    handlerShowQuickMessages() {
-      this.showQuickMessages = !this.showQuickMessages;
-    },
     openFlowsTrigger({ contact = null } = {}) {
       if (contact) {
         this.flowsTriggerContact = contact;
@@ -180,9 +163,6 @@ export default {
       } catch (error) {
         console.log(error);
       }
-    },
-    selectQuickMessage(quickMessage) {
-      this.$emit('select-quick-message', quickMessage);
     },
   },
 };
@@ -245,15 +225,6 @@ section.chats-layout {
     height: 100%;
 
     background-color: rgba(253, 245, 233, 0.25);
-  }
-
-  .quick-message {
-    grid-column: 1;
-
-    display: flex;
-    flex-direction: column;
-
-    height: 100%;
   }
 
   .aside {

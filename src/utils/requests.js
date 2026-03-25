@@ -19,3 +19,10 @@ export const makeRequestWithRetry = async (
     }
   }
 };
+
+export function getURLParams({ URL, endpoint, returnObject = false }) {
+  if (returnObject) {
+    return Object.fromEntries(new URLSearchParams(URL?.split('?')?.[1]));
+  }
+  return URL?.split(endpoint)?.[1];
+}

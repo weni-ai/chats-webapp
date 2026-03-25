@@ -4,22 +4,65 @@
       v-show="isLoading"
       data-testid="chat-header-loading"
     />
-    <UnnnicChatsHeader
+    <ContactHeader
       v-show="isShowingRoomHeader"
-      :title="headerRoomTitle"
-      :avatarClick="emitOpenRoomContactInfo"
-      :titleClick="emitOpenRoomContactInfo"
-      :avatarName="room?.contact.name"
-      :back="isMobile ? emitBack : null"
-      data-testid="chat-header"
+      :contactName="headerRoomTitle"
+      clickable
+      @click="emitOpenRoomContactInfo"
     >
-      <template #right>
+      <template #actions>
         <section class="home-chat-headers__actions">
-          <!-- TODO: implement ia summary  -->
-          <!-- <img
-            class="stars-icon"
-            :src="starsIcon"
-          /> -->
+          <UnnnicToolTip
+            v-if="enableRoomSummary"
+            enabled
+            :text="
+              openActiveRoomSummary
+                ? $t('chats.summary.close_summary_tooltip')
+                : $t('chats.summary.open_summary_tooltip')
+            "
+            side="left"
+            class="home-chat-headers__summary-icon-tooltip"
+          >
+            <section
+              class="home-chat-headers__icon"
+              :class="{
+                'home-chat-headers__summary-icon--open': openActiveRoomSummary,
+              }"
+            >
+              <UnnnicIcon
+                icon="bi:stars"
+                clickable
+                scheme="gray-900"
+                size="ant"
+                @click="openActiveRoomSummary = !openActiveRoomSummary"
+              />
+            </section>
+          </UnnnicToolTip>
+          <UnnnicToolTip
+            v-if="
+              featureFlags.active_features?.includes('weniChatsSearchMessages')
+            "
+            enabled
+            :text="$t('chats.search_messages.title')"
+            side="left"
+            class="home-chat-headers__search-messages-icon-tooltip"
+          >
+            <section
+              class="home-chat-headers__icon"
+              :class="{
+                'home-chat-headers__search-messages-icon--open':
+                  showSearchMessagesDrawer,
+              }"
+            >
+              <UnnnicIcon
+                icon="search"
+                clickable
+                scheme="gray-900"
+                size="ant"
+                @click="showSearchMessagesDrawer = !showSearchMessagesDrawer"
+              />
+            </section>
+          </UnnnicToolTip>
           <UnnnicToolTip
             v-if="
               featureFlags.active_features?.includes('weniChatsContactInfoV2')
@@ -32,13 +75,15 @@
             "
             side="left"
           >
-            <UnnnicIcon
-              icon="history"
-              size="ant"
-              :clickable="room?.has_history"
-              :scheme="room?.has_history ? 'neutral-cloudy' : 'neutral-soft'"
-              @click="openHistory"
-            />
+            <section class="home-chat-headers__icon">
+              <UnnnicIcon
+                icon="history"
+                size="ant"
+                :clickable="room?.has_history"
+                :scheme="room?.has_history ? 'gray-900' : 'neutral-soft'"
+                @click="openHistory"
+              />
+            </section>
           </UnnnicToolTip>
           <UnnnicToolTip
             v-if="
@@ -48,15 +93,18 @@
             :text="$tc('transfer_contact', 1)"
             side="left"
           >
-            <UnnnicIcon
-              icon="sync_alt"
-              size="ant"
-              clickable
-              scheme="neutral-cloudy"
-              @click="openTransferModal"
-            />
+            <section class="home-chat-headers__icon">
+              <UnnnicIcon
+                icon="sync_alt"
+                size="ant"
+                clickable
+                scheme="gray-900"
+                @click="openTransferModal"
+              />
+            </section>
           </UnnnicToolTip>
           <UnnnicButton
+            v-if="showCloseChatButton"
             type="secondary"
             size="small"
             @click="emitOpenModalCloseChat"
@@ -65,25 +113,39 @@
           </UnnnicButton>
         </section>
       </template>
-    </UnnnicChatsHeader>
-    <UnnnicChatsHeader
+    </ContactHeader>
+    <DiscussionHeader
       v-show="isShowingDiscussionHeader"
-      class="home-chat-headers__discussion"
-      :title="headerDiscussionTitle"
-      :subtitle="headerDiscussionSubtitle"
-      avatarIcon="forum"
-      size="small"
-      :back="isMobile ? emitBack : null"
-      data-testid="discussion-header"
-    />
+      :discussionContact="headerDiscussionSubtitle"
+      :discussionSubject="headerDiscussionTitle"
+    >
+      <template #actions>
+        <section class="home-chat-headers__actions">
+          <UnnnicButton
+            v-if="canEndDiscussion"
+            type="secondary"
+            size="small"
+            @click="isModalCloseDiscussionOpened = true"
+          >
+            {{ $t('end_discussion') }}
+          </UnnnicButton>
+        </section>
+      </template>
+    </DiscussionHeader>
     <ChatHeaderSendFlow
-      v-if="isShowingSendFlowHeader"
+      v-if="isShowingSendFlowHeader && !openActiveRoomSummary"
       data-testid="chat-header-send-flow"
       @send-flow="emitOpenFlowsTrigger"
     />
     <ModalTransferRooms
       v-if="isModalTransferRoomsOpened"
+      v-model="isModalTransferRoomsOpened"
       @close="closeTransferModal()"
+    />
+    <ModalCloseDiscussion
+      v-if="isModalCloseDiscussionOpened"
+      v-model="isModalCloseDiscussionOpened"
+      :discussionContact="discussion?.contact"
     />
   </section>
 </template>
@@ -91,24 +153,25 @@
 <script>
 import { format as dateFnsFormat, subYears as dateFnsSubYears } from 'date-fns';
 import { mapState, mapWritableState } from 'pinia';
+import isMobile from 'is-mobile';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
-
-import isMobile from 'is-mobile';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useConfig } from '@/store/modules/config';
+import { useProfile } from '@/store/modules/profile';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
-
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow.vue';
+import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
+import ContactHeader from '@/components/chats/ContactHeader.vue';
+import DiscussionHeader from '@/components/chats/DiscussionHeader.vue';
+import ModalCloseDiscussion from '@/views/chats/Home/ModalCloseDiscussion.vue';
 
 import { formatContactName } from '@/utils/chats';
-
-import starsIcon from '@/assets/icons/bi_stars.svg';
-
 import { parseUrn } from '@/utils/room';
-
-import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { isUserAdmin } from '@/utils/permissions';
 
 export default {
   name: 'HomeChatHeaders',
@@ -117,6 +180,9 @@ export default {
     ChatHeaderLoading,
     ChatHeaderSendFlow,
     ModalTransferRooms,
+    ContactHeader,
+    DiscussionHeader,
+    ModalCloseDiscussion,
   },
 
   props: {
@@ -131,20 +197,45 @@ export default {
     'openFlowsTrigger',
     'back',
   ],
+
   data() {
-    return { starsIcon, isModalTransferRoomsOpened: false };
+    return {
+      isModalTransferRoomsOpened: false,
+      isModalCloseDiscussionOpened: false,
+    };
   },
 
   computed: {
     ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
+      isLoadingCanSendMessageStatus: (store) =>
+        store.isLoadingCanSendMessageStatus,
+      isCanSendMessageActiveRoom: (store) => store.isCanSendMessageActiveRoom,
     }),
     ...mapState(useDiscussions, {
       discussion: (store) => store.activeDiscussion,
     }),
 
-    ...mapWritableState(useRooms, ['contactToTransfer']),
+    ...mapState(useConfig, ['project']),
+    ...mapState(useProfile, ['isHumanServiceProfile']),
+
+    ...mapWritableState(useRooms, [
+      'contactToTransfer',
+      'openActiveRoomSummary',
+    ]),
+    ...mapWritableState(useRoomMessages, ['showSearchMessagesDrawer']),
+
+    ...mapState(useConfig, {
+      enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
+    }),
+
+    canEndDiscussion() {
+      const isOwnDiscussion =
+        this.me?.email === this.discussion?.created_by?.email;
+
+      return isOwnDiscussion || isUserAdmin(this.me?.project_permission_role);
+    },
 
     isMobile() {
       return isMobile();
@@ -158,9 +249,25 @@ export default {
       const { discussion, isLoading } = this;
       return discussion && !isLoading;
     },
+    isActiveFeatureIs24hValidOptimization() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsIs24hValidOptimization',
+      );
+    },
+    isCanSendMessage() {
+      return this.isActiveFeatureIs24hValidOptimization
+        ? this.isCanSendMessageActiveRoom && !this.isLoadingCanSendMessageStatus
+        : this.room?.is_24h_valid;
+    },
     isShowingSendFlowHeader() {
       const { room, discussion, isLoading } = this;
-      return room && !discussion && !room.is_24h_valid && !isLoading;
+      return (
+        room &&
+        !discussion &&
+        !this.isCanSendMessage &&
+        !isLoading &&
+        !this.isLoadingCanSendMessageStatus
+      );
     },
 
     headerRoomTitle() {
@@ -176,7 +283,17 @@ export default {
         discussion?.contact
       }`;
     },
+    showCloseChatButton() {
+      if (
+        !this.isHumanServiceProfile ||
+        this.project.config?.can_close_chats_in_queue
+      )
+        return true;
+
+      return !!this.room.user;
+    },
   },
+
   methods: {
     emitOpenRoomContactInfo() {
       this.$emit('openRoomContactInfo');
@@ -225,19 +342,42 @@ export default {
 
 <style lang="scss" scoped>
 .home-chat-headers {
+  background-color: $unnnic-color-bg-base;
+  &__icon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $unnnic-radius-2;
+  }
+  &__search-messages-icon {
+    &--open {
+      background-color: rgba(136, 147, 168, 0.2);
+    }
+  }
+  &__summary-icon {
+    &--open {
+      background-color: $unnnic-color-purple-100;
+      &::after {
+        content: '';
+        position: fixed;
+        top: 49px;
+        transform: rotate(-45deg);
+        width: $unnnic-space-3;
+        height: $unnnic-space-3;
+        background-color: $unnnic-color-purple-100;
+        border-radius: $unnnic-space-1;
+      }
+    }
+  }
   &__actions {
     display: flex;
-    gap: $unnnic-space-6;
+    gap: $unnnic-space-2;
     align-items: center;
 
     :deep(.unnnic-tooltip) {
       display: flex;
-    }
-
-    .stars-icon {
-      width: $unnnic-space-5;
-      height: $unnnic-space-5;
-      cursor: pointer;
     }
   }
 

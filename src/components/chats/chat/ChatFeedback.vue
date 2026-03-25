@@ -2,8 +2,13 @@
   <div :class="{ 'chat-feedback__container': true, divisor }">
     <!-- eslint-disable vue/no-v-html -->
     <strong
-      :class="['chat-feedback', scheme ? `chat-feedback--${scheme}` : '']"
+      :class="[
+        'chat-feedback',
+        scheme ? `chat-feedback--${scheme}` : '',
+        clickable ? 'clickable' : '',
+      ]"
       data-testid="chat-feedback"
+      @click="handleClick"
       v-html="treatedFeedback"
     />
   </div>
@@ -37,12 +42,25 @@ export default {
       type: Boolean,
       default: false,
     },
+    clickable: {
+      type: Boolean,
+      default: false,
+    },
   },
+
+  emits: ['click'],
 
   computed: {
     treatedFeedback() {
       const trimFeedback = this.feedback.trim();
       return trimFeedback.charAt(0).toUpperCase() + trimFeedback.slice(1);
+    },
+  },
+  methods: {
+    handleClick() {
+      if (this.clickable) {
+        this.$emit('click');
+      }
     },
   },
 };
@@ -64,6 +82,10 @@ $scheme-colors:
   overflow: hidden;
 
   display: flex;
+
+  &.clickable {
+    cursor: pointer;
+  }
 
   &.divisor {
     padding-top: $unnnic-spacing-md;
