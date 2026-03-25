@@ -38,6 +38,7 @@ export const useMessageManager = defineStore('messageManager', () => {
     replyMessage.value = null;
   }
 
+  const isLoadingSend = ref(false);
   const disableSendButton = computed(() => {
     return (
       !inputMessage.value.trim() &&
@@ -122,19 +123,26 @@ export const useMessageManager = defineStore('messageManager', () => {
   }
 
   async function sendMediasMessage() {
-    if (discussionsStore.activeDiscussion?.uuid) {
-      await discussionMessagesStore.sendDiscussionMedias({
-        files: mediaUploadFiles.value,
-        updateLoadingFiles: () => {},
-      });
-    } else {
-      await roomMessagesStore.sendRoomMedias({
-        files: mediaUploadFiles.value,
-        updateLoadingFiles: () => {},
-        repliedMessage: replyMessage.value,
-      });
+    try {
+      isLoadingSend.value = true;
+      if (discussionsStore.activeDiscussion?.uuid) {
+        await discussionMessagesStore.sendDiscussionMedias({
+          files: mediaUploadFiles.value,
+          updateLoadingFiles: () => {},
+        });
+      } else {
+        await roomMessagesStore.sendRoomMedias({
+          files: mediaUploadFiles.value,
+          updateLoadingFiles: () => {},
+          repliedMessage: replyMessage.value,
+        });
+      }
+    } catch (error) {
+      console.error('Error while sending media message:', error);
+    } finally {
+      clearInputs();
+      isLoadingSend.value = false;
     }
-    clearInputs();
   }
 
   return {
@@ -148,6 +156,7 @@ export const useMessageManager = defineStore('messageManager', () => {
     isEmojiPickerOpen,
     replyMessage,
 
+    isLoadingSend,
     disableSendButton,
     isAudioRecorderVisible,
 

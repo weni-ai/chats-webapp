@@ -34,6 +34,7 @@
       size="small"
       :text="isInternalNote ? $t('add') : $t('send')"
       :disabled="disableSendButton"
+      :loading="isLoadingSend"
       @click="emit('send')"
     />
   </section>
@@ -60,6 +61,7 @@ const {
   isEmojiPickerOpen,
   disableSendButton,
   audioRecorderStatus,
+  isLoadingSend,
 } = storeToRefs(messageManager);
 
 const emit = defineEmits<{
