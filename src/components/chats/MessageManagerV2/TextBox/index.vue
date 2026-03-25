@@ -46,6 +46,7 @@
         @keydown="handleKeyDown"
         @focus="focused = true"
         @blur="focused = false"
+        @paste="handlePaste"
       />
     </section>
     <hr class="text-box__divider" />
@@ -120,6 +121,27 @@ const handleKeyDown = (event: KeyboardEvent) => {
     event.preventDefault();
   }
   emit('keydown', event);
+};
+
+const handlePaste = (event: ClipboardEvent) => {
+  const { items } = event.clipboardData || {};
+  const itemsArray = [...items];
+  const imagePastes = itemsArray.filter(
+    (item) => item.type.includes('image') || item.type === 'video/mp4',
+  );
+
+  const fileList = imagePastes.map((imagePaste) => {
+    const blob = imagePaste.getAsFile();
+    const dateOfPrintPaste = new Date(Date.now()).toUTCString();
+    const fileName =
+      blob.name === 'image.png' ? `${dateOfPrintPaste}.png` : blob.name;
+    const file = new File([blob], fileName, { type: blob.type });
+    return file;
+  });
+
+  if (fileList.length) {
+    mediaUploadFiles.value = [...mediaUploadFiles.value, ...fileList];
+  }
 };
 
 const handleSend = async () => {
