@@ -21,8 +21,19 @@
 
       <DiscussionMessages v-if="!!discussion" />
 
+      <MessageManagerV2
+        v-if="
+          isMessageManagerV2Enabled &&
+          (isMessageManagerRoomVisible || isMessageManagerDiscussionVisible)
+        "
+        data-testid="message-manager"
+        @show-quick-messages="handleShowQuickMessages"
+        @open-file-uploader="openModalFileUploader"
+      />
       <MessageManager
-        v-if="isMessageManagerRoomVisible || isMessageManagerDiscussionVisible"
+        v-else-if="
+          isMessageManagerRoomVisible || isMessageManagerDiscussionVisible
+        "
         v-model="textBoxMessage"
         :loadingFileValue="uploadFilesProgress"
         :showSkeletonLoading="isChatSkeletonActive"
@@ -72,6 +83,7 @@ import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone/index.
 import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
 import DiscussionMessages from '@/components/chats/chat/DiscussionMessages.vue';
 import MessageManager from '@/components/chats/MessageManager/index.vue';
+import MessageManagerV2 from '@/components/chats/MessageManagerV2/index.vue';
 import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion.vue';
 
 import Room from '@/services/api/resources/chats/room';
@@ -93,6 +105,7 @@ export default {
     MessageManager,
     ButtonJoinDiscussion,
     HomeChatModals,
+    MessageManagerV2,
   },
   emits: [
     'open-room-contact-info',
@@ -129,6 +142,12 @@ export default {
       discussions: 'discussions',
       getDiscussionById: 'getDiscussionById',
     }),
+    isMessageManagerV2Enabled() {
+      return true;
+      return this.featureFlags.active_features?.includes(
+        'weniChatsInputMessageV2',
+      );
+    },
     isActiveFeatureIs24hValidOptimization() {
       return this.featureFlags.active_features?.includes(
         'weniChatsIs24hValidOptimization',

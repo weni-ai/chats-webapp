@@ -50,9 +50,9 @@
 </template>
 
 <script>
+import { mapState, mapWritableState } from 'pinia';
 import isMobile from 'is-mobile';
 
-import { mapState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDashboard } from '@/store/modules/dashboard';
 
@@ -60,6 +60,7 @@ import FileUploader from '@/components/chats/MessageManager/FileUploader.vue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
 
 import ModalCloseChat from './ModalCloseChat.vue';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 export default {
   name: 'HomeChatModals',
@@ -82,7 +83,6 @@ export default {
         fileUploader: false,
       },
 
-      modalFileUploaderFiles: [],
       modalFileUploaderMediaType: '',
     };
   },
@@ -93,6 +93,9 @@ export default {
       'showModalAssumedChat',
       'assumedChatContactName',
     ]),
+    ...mapWritableState(useMessageManager, {
+      modalFileUploaderFiles: 'mediaUploadFiles',
+    }),
   },
 
   watch: {

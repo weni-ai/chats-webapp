@@ -26,45 +26,31 @@
           messageType="received"
           @close="clearReplyMessage()"
         />
-        <TextBoxV2
-          v-if="isV2MessageEnabled"
-          ref="textBoxV2"
-          v-model="textBoxMessage"
-          :audioMessage="audioMessage"
-          :audioRecorderStatus="audioRecorderStatus"
-          @update:audio-message="audioMessage = $event"
-          @update:audio-recorder-status="updateAudioRecorderStatus"
-          @send="send"
+
+        <TextBox
+          v-if="!isAudioRecorderVisible"
+          ref="textBox"
+          class="message-manager-box__text-box"
+          :modelValue="inputMessage"
+          :isInternalNote="isInternalNote"
+          @update:model-value="inputMessage = $event"
+          @keydown.stop="onKeyDown"
+          @paste="handlePaste"
+          @is-typing-handler="isTypingHandler"
+          @is-focused-handler="isFocusedHandler"
+          @handle-quick-messages="emitShowQuickMessages"
+          @open-file-uploader="openFileUploader"
+          @close-internal-note="handleInternalNoteInput"
         />
-        <template v-else>
-          <TextBox
-            v-if="!isAudioRecorderVisible"
-            ref="textBox"
-            class="message-manager-box__text-box"
-            :modelValue="textBoxMessage"
-            :isInternalNote="isInternalNote"
-            @update:model-value="textBoxMessage = $event"
-            @keydown.stop="onKeyDown"
-            @paste="handlePaste"
-            @is-typing-handler="isTypingHandler"
-            @is-focused-handler="isFocusedHandler"
-            @handle-quick-messages="emitShowQuickMessages"
-            @open-file-uploader="openFileUploader"
-            @close-internal-note="handleInternalNoteInput"
-          />
-          <UnnnicAudioRecorder
-            v-show="isAudioRecorderVisible && !isFileLoadingValueValid"
-            ref="audioRecorder"
-            v-model="audioMessage"
-            class="message-manager__audio-recorder"
-            @status="updateAudioRecorderStatus"
-          />
-        </template>
+        <UnnnicAudioRecorder
+          v-show="isAudioRecorderVisible && !isFileLoadingValueValid"
+          ref="audioRecorder"
+          v-model="audioMessage"
+          class="message-manager__audio-recorder"
+          @status="updateAudioRecorderStatus"
+        />
       </div>
-      <div
-        v-if="!isV2MessageEnabled"
-        class="message-manager__actions"
-      >
+      <div class="message-manager__actions">
         <UnnnicButton
           v-if="
             canUseCopilot && !isCopilotOpen && showActionButton && !discussionId
@@ -156,7 +142,7 @@
       </div>
       <SuggestionBox
         v-if="!discussionId"
-        :search="textBoxMessage"
+        :search="inputMessage"
         :suggestions="shortcuts"
         :keyboardEvent="keyboardEvent"
         :copilot="canUseCopilot && !discussionId"
@@ -187,11 +173,11 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 import MessageManagerLoading from '@/views/loadings/chat/MessageManager.vue';
 
 import TextBox from './TextBox.vue';
-import TextBoxV2 from './TextBoxV2.vue';
 import MoreActionsOption from './MoreActionsOption.vue';
 import LoadingBar from './LoadingBar.vue';
 import SuggestionBox from './SuggestionBox.vue';
@@ -207,7 +193,6 @@ export default {
     SuggestionBox,
     MoreActionsOption,
     CoPilot,
-    TextBoxV2,
   },
 
   props: {
@@ -234,12 +219,6 @@ export default {
     isCopilotOpen: false,
     isTyping: false,
     isFocused: false,
-
-    /**
-     * @type {HTMLAudioElement}
-     */
-    audioMessage: null,
-    audioRecorderStatus: '',
     isLoading: false,
     isInternalNote: false,
   }),
@@ -252,24 +231,17 @@ export default {
       discussionId: (store) => store.activeDiscussion?.uuid,
     }),
     ...mapWritableState(useRoomMessages, ['replyMessage']),
+    ...mapWritableState(useMessageManager, [
+      'inputMessage',
+      'audioMessage',
+      'audioRecorderStatus',
+    ]),
     ...mapState(useFeatureFlag, ['featureFlags']),
-    isV2MessageEnabled() {
-      return this.featureFlags.active_features?.includes(
-        'weniChatsInputMessageV2',
-      );
-    },
+
     isMobile() {
       return isMobile();
     },
 
-    textBoxMessage: {
-      get() {
-        return this.modelValue;
-      },
-      set(textBoxMessage) {
-        this.$emit('update:modelValue', textBoxMessage);
-      },
-    },
     isAudioRecorderVisible() {
       return (
         !!this.audioMessage ||
@@ -353,7 +325,7 @@ export default {
       'sendRoomInternalNote',
     ]),
     handleInternalNoteInput() {
-      this.textBoxMessage = '';
+      this.inputMessage = '';
       this.clearReplyMessage();
       this.isInternalNote = !this.isInternalNote;
     },
@@ -365,7 +337,7 @@ export default {
       this.$emit('show-quick-messages');
     },
     setMessage(newMessage) {
-      this.textBoxMessage = newMessage;
+      this.inputMessage = newMessage;
       this.$nextTick(() => {
         this.focusTextBox();
       });
@@ -378,7 +350,7 @@ export default {
       this.audioMessage = null;
     },
     clearTextBox() {
-      this.textBoxMessage = '';
+      this.inputMessage = '';
     },
     /**
      * @param {KeyboardEvent} event
@@ -386,8 +358,8 @@ export default {
     closeSuggestionBox() {
       this.isSuggestionBoxOpen = false;
 
-      if (this.textBoxMessage.startsWith('/')) {
-        this.textBoxMessage = '';
+      if (this.inputMessage.startsWith('/')) {
+        this.inputMessage = '';
       }
     },
     onKeyDown(event) {
@@ -463,14 +435,14 @@ export default {
       this.$refs.textBox?.clearTextarea();
     },
     async sendInternalNote() {
-      if (!this.textBoxMessage.trim()) return;
-      const text = `${this.$t('internal_note')}: ${this.textBoxMessage.trim()}`;
+      if (!this.inputMessage.trim()) return;
+      const text = `${this.$t('internal_note')}: ${this.inputMessage.trim()}`;
       this.clearTextBox();
       await this.sendRoomInternalNote({ text });
       this.handleInternalNoteInput();
     },
     async sendTextBoxMessage(repliedMessage) {
-      const message = this.textBoxMessage.trim();
+      const message = this.inputMessage.trim();
       if (message) {
         this.clearTextBox();
         if (this.discussionId) {
@@ -529,11 +501,7 @@ export default {
       this.audioRecorderStatus = status;
     },
     focusTextBox() {
-      if (this.isV2MessageEnabled) {
-        this.$refs.textBoxV2.focus();
-      } else {
-        this.$refs.textBox.focus();
-      }
+      this.$refs.textBox.focus();
     },
   },
 };
