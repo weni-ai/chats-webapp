@@ -10,12 +10,6 @@ vi.mock('@/store/modules/chats/rooms', () => ({
   useRooms: vi.fn(),
 }));
 
-vi.mock('@/store/modules/chats/roomCounters', () => ({
-  useRoomCounters: vi.fn(() => ({
-    handleRoomUpdate: vi.fn(),
-  })),
-}));
-
 vi.mock('@/store/modules/featureFlag', () => ({
   useFeatureFlag: vi.fn(() => ({
     featureFlags: { active_features: [] },

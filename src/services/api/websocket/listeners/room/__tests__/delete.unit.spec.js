@@ -6,18 +6,11 @@ vi.mock('@/store/modules/chats/rooms', () => ({
   useRooms: vi.fn(),
 }));
 
-vi.mock('@/store/modules/chats/roomCounters', () => ({
-  useRoomCounters: vi.fn(() => ({
-    handleClose: vi.fn(),
-  })),
-}));
-
 describe('Room delete', () => {
   let roomsStoreMock;
 
   beforeEach(() => {
     roomsStoreMock = {
-      rooms: [],
       removeRoom: vi.fn(),
     };
 
