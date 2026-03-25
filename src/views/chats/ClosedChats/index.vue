@@ -34,7 +34,10 @@
       data-testid="chat-header-loading"
     />
     <WarningArchivedMessages
-      v-if="selectedRoom?.is_archived && selectedRoom?.archived_url"
+      v-if="
+        selectedRoom?.is_archived &&
+        selectedRoom?.archived_conversation_file_url
+      "
     />
     <section
       v-if="roomId"
