@@ -2,7 +2,7 @@
   <section class="text-box__actions">
     <section class="text-box__actions__items">
       <section
-        v-for="(action, index) in actions"
+        v-for="(action, index) in enabledActions"
         :key="index"
         class="text-box__actions__item"
       >
@@ -45,6 +45,7 @@ import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useDiscussions } from '@/store/modules/chats/discussions';
 
 import i18n from '@/plugins/i18n';
 
@@ -53,6 +54,9 @@ const { t } = i18n.global;
 defineOptions({
   name: 'MessageManagerTextBoxActions',
 });
+
+const discussionsStore = useDiscussions();
+const { activeDiscussion } = storeToRefs(discussionsStore);
 
 const messageManager = useMessageManager();
 const {
@@ -72,6 +76,7 @@ const emit = defineEmits<{
 }>();
 
 interface TextBoxAction {
+  hideInDiscussion?: boolean;
   icon: string;
   tooltip?: string;
   disabled?: boolean;
@@ -82,6 +87,7 @@ interface TextBoxAction {
 const actions = computed<TextBoxAction[]>(() => {
   return [
     {
+      hideInDiscussion: true,
       icon: 'bolt',
       tooltip: t('quick_message'),
       pressed: inputMessage.value.startsWith('/'),
@@ -112,12 +118,13 @@ const actions = computed<TextBoxAction[]>(() => {
     {
       icon: 'attach_file_add',
       tooltip: t('attach'),
-      showDivider: true,
+      showDivider: !activeDiscussion.value?.uuid,
       action: () => {
         emit('openUploadFiles');
       },
     },
     {
+      hideInDiscussion: true,
       icon: 'add_notes',
       tooltip: t('internal_note'),
       pressed: isInternalNote.value,
@@ -127,6 +134,13 @@ const actions = computed<TextBoxAction[]>(() => {
       },
     },
   ];
+});
+
+const enabledActions = computed(() => {
+  if (activeDiscussion.value?.uuid) {
+    return actions.value.filter((action) => !action.hideInDiscussion);
+  }
+  return actions.value;
 });
 </script>
 
