@@ -8,11 +8,7 @@
       },
     ]"
   >
-    <UnnnicEmojiPicker
-      v-show="isEmojiPickerOpen"
-      @emoji-selected="handleTextarea"
-      @close="isEmojiPickerOpen = false"
-    />
+    <MessageManagerTextBoxUploadField ref="uploadField" />
     <MessageManagerTextBoxMedias v-if="mediaUploadFiles.length > 0" />
     <MessageManagerTextBoxAudioRecorder ref="audioRecorder" />
     <div
@@ -53,7 +49,13 @@
     <hr class="text-box__divider" />
     <MessageManagerTextBoxActions
       @start-audio-recording="audioRecorderRef.record()"
+      @open-upload-files="uploadFieldRef.clickInput()"
       @focus-input="focus"
+    />
+    <UnnnicEmojiPicker
+      v-show="isEmojiPickerOpen"
+      @emoji-selected="handleTextarea"
+      @close="isEmojiPickerOpen = false"
     />
   </section>
 </template>
@@ -65,6 +67,7 @@ import { storeToRefs } from 'pinia';
 import MessageManagerTextBoxMedias from './Medias.vue';
 import MessageManagerTextBoxAudioRecorder from './AudioRecorder.vue';
 import MessageManagerTextBoxActions from './Actions.vue';
+import MessageManagerTextBoxUploadField from './UploadField.vue';
 
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 
@@ -93,6 +96,7 @@ const currentTextAreaRows = ref(1);
 
 const textareaRef = useTemplateRef('textArea');
 const audioRecorderRef = useTemplateRef('audioRecorder');
+const uploadFieldRef = useTemplateRef('uploadField');
 
 const focused = ref(false);
 const focus = () => {

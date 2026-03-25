@@ -64,6 +64,7 @@ const {
 const emit = defineEmits<{
   startAudioRecording: [void];
   focusInput: [void];
+  openUploadFiles: [void];
 }>();
 
 interface TextBoxAction {
@@ -109,7 +110,7 @@ const actions = computed<TextBoxAction[]>(() => {
       tooltip: t('attach'),
       showDivider: true,
       action: () => {
-        console.log('Attach file');
+        emit('openUploadFiles');
       },
     },
     {
