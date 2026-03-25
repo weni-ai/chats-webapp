@@ -26,7 +26,10 @@ router.beforeEach(async (to, from, next) => {
 
   const configStore = useConfig();
 
-  if (from.name && configStore.token) {
+  const hasValidToken =
+    configStore.token && !Keycloak.keycloak.isTokenExpired?.(70);
+
+  if (from.name && hasValidToken) {
     next();
     return;
   }
