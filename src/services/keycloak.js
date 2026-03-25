@@ -92,6 +92,8 @@ export default {
             })
             .catch((error) => {
               console.error('Failed to refresh token:', error);
+              clearInterval(refreshTokenInterval);
+              refreshTokenInterval = null;
               sessionStorage.removeItem('keycloak:user');
               hasInitialized = false;
             });
