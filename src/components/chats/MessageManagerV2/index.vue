@@ -47,7 +47,8 @@ const discussionsStore = useDiscussions();
 const { activeDiscussion } = storeToRefs(discussionsStore);
 
 const messageManager = useMessageManager();
-const { inputMessage, isCopilotOpen, isSuggestionBoxOpen } =
+const { sendRoomMessage } = messageManager;
+const { inputMessage, isCopilotOpen, isSuggestionBoxOpen, isInternalNote } =
   storeToRefs(messageManager);
 
 const keyboardEvent = ref<KeyboardEvent | null>(null);
@@ -76,21 +77,20 @@ const onKeyDown = (event: KeyboardEvent) => {
       inputMessage.value = '';
       return;
     }
-
     keyboardEvent.value = event;
     return;
   }
 
-  if (event.key === 'Enter') {
-    if (event.shiftKey) return;
-    // this.send();
+  if (event.key === 'Escape' && isInternalNote.value) {
+    isInternalNote.value = false;
     event.preventDefault();
   }
 
-  // if (event.key === 'Escape' && this.isInternalNote) {
-  //   // this.handleInternalNoteInput();
-  //   event.preventDefault();
-  // }
+  if (event.key === 'Enter') {
+    if (event.shiftKey) return;
+    sendRoomMessage();
+    event.preventDefault();
+  }
 };
 </script>
 

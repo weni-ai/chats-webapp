@@ -230,11 +230,11 @@ export default {
     ...mapState(useDiscussions, {
       discussionId: (store) => store.activeDiscussion?.uuid,
     }),
-    ...mapWritableState(useRoomMessages, ['replyMessage']),
     ...mapWritableState(useMessageManager, [
       'inputMessage',
       'audioMessage',
       'audioRecorderStatus',
+      'replyMessage',
     ]),
     ...mapState(useFeatureFlag, ['featureFlags']),
 

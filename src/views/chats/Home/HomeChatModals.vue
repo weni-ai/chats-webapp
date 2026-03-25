@@ -100,8 +100,6 @@ export default {
       modalFileUploaderFiles: 'mediaUploadFiles',
     }),
     enableMessageManagerV2() {
-      // TODO: remove this after testing
-      return true;
       return this.featureFlags.active_features?.includes(
         'weniChatsInputMessageV2',
       );

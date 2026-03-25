@@ -255,6 +255,7 @@ import { useDebounceFn } from '@vueuse/core';
 import { useDashboard } from '@/store/modules/dashboard';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useRooms } from '@/store/modules/chats/rooms';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 import moment from 'moment';
 
@@ -385,8 +386,8 @@ export default {
     }),
     ...mapState(useDashboard, ['viewedAgent']),
     ...mapState(useRoomMessages, ['roomMessagesNext']),
+    ...mapWritableState(useMessageManager, ['replyMessage']),
     ...mapWritableState(useRoomMessages, [
-      'replyMessage',
       'toScrollNote',
       'toScrollMessage',
       'showScrollToBottomButton',

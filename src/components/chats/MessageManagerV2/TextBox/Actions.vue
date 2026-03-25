@@ -34,18 +34,19 @@
       size="small"
       :text="isInternalNote ? $t('add') : $t('send')"
       :disabled="disableSendButton"
-      @click="() => {}"
+      @click="emit('send')"
     />
   </section>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 import i18n from '@/plugins/i18n';
-import { computed } from 'vue';
+
 const { t } = i18n.global;
 
 defineOptions({
@@ -65,6 +66,7 @@ const emit = defineEmits<{
   startAudioRecording: [void];
   focusInput: [void];
   openUploadFiles: [void];
+  send: [void];
 }>();
 
 interface TextBoxAction {

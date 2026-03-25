@@ -144,8 +144,6 @@ export default {
       getDiscussionById: 'getDiscussionById',
     }),
     isMessageManagerV2Enabled() {
-      // TODO: remove this after testing
-      return true;
       return this.featureFlags.active_features?.includes(
         'weniChatsInputMessageV2',
       );

@@ -51,6 +51,7 @@
       @start-audio-recording="audioRecorderRef.record()"
       @open-upload-files="uploadFieldRef.clickInput()"
       @focus-input="focus"
+      @send="handleSend"
     />
     <UnnnicEmojiPicker
       v-show="isEmojiPickerOpen"
@@ -61,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { useTemplateRef, ref, nextTick, watch } from 'vue';
+import { useTemplateRef, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import MessageManagerTextBoxMedias from './Medias.vue';
@@ -81,6 +82,7 @@ const emit = defineEmits<{
 }>();
 
 const messageManager = useMessageManager();
+const { sendRoomMessage } = messageManager;
 const {
   inputMessage,
   audioMessage,
@@ -114,16 +116,12 @@ const handleTextarea = (event: Event) => {
 const handleKeyDown = (event: KeyboardEvent) => {
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault();
-    // handleSend();
   }
   emit('keydown', event);
 };
 
-const handleSend = () => {
-  nextTick(() => {
-    clearTextarea();
-    audioRecorderStatus.value = 'idle';
-  });
+const handleSend = async () => {
+  await sendRoomMessage();
 };
 
 const clearTextarea = () => {
