@@ -66,6 +66,8 @@ const {
   disableSendButton,
   audioRecorderStatus,
   isLoadingSend,
+  audioMessage,
+  mediaUploadFiles,
 } = storeToRefs(messageManager);
 
 const emit = defineEmits<{
@@ -91,6 +93,7 @@ const actions = computed<TextBoxAction[]>(() => {
       icon: 'bolt',
       tooltip: t('quick_message'),
       pressed: inputMessage.value.startsWith('/'),
+      disabled: checkDisabledAction('quick_message'),
       action: () => {
         inputMessage.value = inputMessage.value.startsWith('/') ? '' : '/';
         emit('focusInput');
@@ -101,6 +104,7 @@ const actions = computed<TextBoxAction[]>(() => {
       tooltip: 'Emoji',
       showDivider: true,
       pressed: isEmojiPickerOpen.value,
+      disabled: checkDisabledAction('emoji'),
       action: () => {
         isEmojiPickerOpen.value = !isEmojiPickerOpen.value;
       },
@@ -111,6 +115,7 @@ const actions = computed<TextBoxAction[]>(() => {
       pressed: ['recording', 'recorded', 'playing', 'paused'].includes(
         audioRecorderStatus.value,
       ),
+      disabled: checkDisabledAction('audio'),
       action: () => {
         emit('startAudioRecording');
       },
@@ -119,6 +124,7 @@ const actions = computed<TextBoxAction[]>(() => {
       icon: 'attach_file_add',
       tooltip: t('attach'),
       showDivider: !activeDiscussion.value?.uuid,
+      disabled: checkDisabledAction('attach'),
       action: () => {
         emit('openUploadFiles');
       },
@@ -128,6 +134,7 @@ const actions = computed<TextBoxAction[]>(() => {
       icon: 'add_notes',
       tooltip: t('internal_note'),
       pressed: isInternalNote.value,
+      disabled: checkDisabledAction('internal_note'),
       action: () => {
         isInternalNote.value = !isInternalNote.value;
         emit('focusInput');
@@ -142,6 +149,54 @@ const enabledActions = computed(() => {
   }
   return actions.value;
 });
+
+const checkDisabledAction = (action: string) => {
+  const disabledActionsMap = {
+    quick_message: () => {
+      const validInputMessage =
+        !!inputMessage.value.trim() && !inputMessage.value.startsWith('/');
+      return (
+        validInputMessage ||
+        !!audioMessage.value ||
+        mediaUploadFiles.value.length > 0 ||
+        audioRecorderStatus.value !== 'idle' ||
+        isInternalNote.value
+      );
+    },
+    emoji: () => {
+      return (
+        audioRecorderStatus.value !== 'idle' ||
+        !!audioMessage.value ||
+        mediaUploadFiles.value.length > 0
+      );
+    },
+    audio: () => {
+      return (
+        !!inputMessage.value.trim() ||
+        mediaUploadFiles.value.length > 0 ||
+        isInternalNote.value
+      );
+    },
+    attach: () => {
+      return (
+        !!inputMessage.value.trim() ||
+        mediaUploadFiles.value.length >= 5 ||
+        !!audioMessage.value ||
+        isInternalNote.value
+      );
+    },
+    internal_note: () => {
+      return (
+        !!inputMessage.value.trim() ||
+        mediaUploadFiles.value.length > 0 ||
+        !!audioMessage.value ||
+        audioRecorderStatus.value !== 'idle'
+      );
+    },
+  };
+
+  return disabledActionsMap[action]?.();
+};
 </script>
 
 <style scoped lang="scss">

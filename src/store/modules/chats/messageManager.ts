@@ -37,7 +37,7 @@ export const useMessageManager = defineStore('messageManager', () => {
   function clearInputs() {
     inputMessage.value = '';
     audioMessage.value = null;
-    audioRecorderStatus.value = '';
+    audioRecorderStatus.value = 'idle';
     mediaUploadFiles.value = [];
     isInternalNote.value = false;
     isSuggestionBoxOpen.value = false;
