@@ -12,7 +12,7 @@
     :feedback="activeRoomSummary.feedback"
     :skipAnimation="skipSummaryAnimation"
     :isArchived="room?.is_archived || false"
-    :archivedUrl="room?.archived_url || ''"
+    :archivedUrl="room?.archived_conversation_file_url || ''"
     @close="openChatSummary = false"
   />
   <ChatMessages
