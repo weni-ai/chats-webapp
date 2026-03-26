@@ -196,7 +196,7 @@
                 >
                   <UnnnicButton
                     v-if="!isViewMode && !isMobile"
-                    iconCenter="forum"
+                    iconCenter="communication"
                     size="small"
                     type="secondary"
                     @click="handleModalStartDiscussion()"

@@ -43,24 +43,24 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
           </section>
         </div>
         <!---->
-      </section><button data-v-aadba593="" data-v-85728205="" data-testid="tags-add-tag-button" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--secondary">
+      </section><button data-v-f75ec2e0="" data-v-85728205="" data-testid="tags-add-tag-button" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--secondary">
         <!---->
         <!---->
-        <!----><span data-v-aadba593="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Add</span>
+        <!----><span data-v-f75ec2e0="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Add</span>
         <!---->
       </button>
     </section>
     <!--v-if-->
   </section>
-  <section data-v-85728205="" class="form-actions" style="display: none;"><button data-v-aadba593="" data-v-85728205="" data-testid="cancel-button" class="unnnic-button unnnic-button--size-large unnnic-button--tertiary">
+  <section data-v-85728205="" class="form-actions" style="display: none;"><button data-v-f75ec2e0="" data-v-85728205="" data-testid="cancel-button" class="unnnic-button unnnic-button--size-large unnnic-button--tertiary">
       <!---->
       <!---->
-      <!----><span data-v-aadba593="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Cancel</span>
+      <!----><span data-v-f75ec2e0="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Cancel</span>
       <!---->
-    </button><button data-v-aadba593="" data-v-85728205="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
+    </button><button data-v-f75ec2e0="" data-v-85728205="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
       <!---->
       <!---->
-      <!----><span data-v-aadba593="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Save</span>
+      <!----><span data-v-f75ec2e0="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Save</span>
       <!---->
     </button></section>
 </section>"
