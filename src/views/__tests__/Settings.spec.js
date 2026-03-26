@@ -10,6 +10,12 @@ import SettingsHeader from '@/views/Settings/SettingsHeader.vue';
 import SettingsProjectOptions from '@/views/Settings/SettingsProjectOptions/index.vue';
 import SettingsSectors from '@/views/Settings/SettingsSectors.vue';
 
+vi.mock('@/services/api/resources/settings/project', () => ({
+  default: {
+    update: vi.fn().mockResolvedValue({}),
+  },
+}));
+
 const createWrapper = (props = {}) => {
   return mount(SettingView, {
     props,
@@ -31,6 +37,7 @@ describe('SettingView.vue', () => {
     });
 
   beforeEach(() => {
+    vi.clearAllMocks();
     wrapper = createWrapper();
     store = useSettings();
     settingsView = wrapper.find('[data-testid=settings-view]');

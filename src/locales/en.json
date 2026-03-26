@@ -857,8 +857,17 @@
       "status_remove_success": "Status {status} removed",
       "status_error": "Oops, unfortunately the changes were not saved, please try again"
     },
+    "changes_saved": "Changes saved successfully!",
+    "changes_not_saved": "Unable to save changes. Please try again.",
     "project_configs": {
       "title": "Project preferences",
+      "ai_transfer": {
+        "switch_active": "Allow AI agents to transfer conversations to human support",
+        "switch_inactive": "Allow AI agents to transfer conversations to human support",
+        "modal_title": "Scenarios or criteria that require transfer to human support",
+        "textarea_label": "Define the scenarios or criteria that require transfer to human support",
+        "textarea_placeholder": "Describe the scenarios or criteria..."
+      },
       "bulk_transfer": {
         "tooltip": "This function allows agents to transfer various contacts at once to a row or agent",
         "switch_active": "Transfer chats in bulk to another queue or agent",
