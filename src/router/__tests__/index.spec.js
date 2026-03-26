@@ -1,10 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 
-const mockNext = vi.fn();
 const mockLogin = vi.fn();
 const mockIsAuthenticated = vi.fn();
 const mockIsTokenExpired = vi.fn(() => false);
+const mockKeycloak = {
+  token: 'mock-token',
+  login: (...args) => mockLogin(...args),
+  isTokenExpired: (...args) => mockIsTokenExpired(...args),
+};
 
 vi.mock('is-mobile', () => ({
   default: vi.fn(() => true),
@@ -13,11 +17,7 @@ vi.mock('is-mobile', () => ({
 vi.mock('@/services/keycloak', () => ({
   default: {
     isAuthenticated: (...args) => mockIsAuthenticated(...args),
-    keycloak: {
-      token: 'mock-token',
-      login: (...args) => mockLogin(...args),
-      isTokenExpired: (...args) => mockIsTokenExpired(...args),
-    },
+    keycloak: mockKeycloak,
   },
 }));
 
@@ -85,23 +85,23 @@ describe('Router beforeEach guard', () => {
     await import('../index');
     configStore = useConfig();
 
+    mockKeycloak.token = 'mock-token';
     isMobile.mockReturnValue(true);
   });
 
   const callGuard = (to = {}, from = {}) => {
     const mockTo = { name: 'chat', hash: '', ...to };
     const mockFrom = { ...from };
-    mockNext.mockClear();
-    return beforeEachGuard(mockTo, mockFrom, mockNext);
+    return beforeEachGuard(mockTo, mockFrom);
   };
 
   describe('desktop mode', () => {
-    it('should skip keycloak auth and call next() directly', async () => {
+    it('should skip keycloak auth and return true', async () => {
       isMobile.mockReturnValue(false);
 
-      await callGuard();
+      const result = await callGuard();
 
-      expect(mockNext).toHaveBeenCalledWith();
+      expect(result).toBe(true);
       expect(mockIsAuthenticated).not.toHaveBeenCalled();
     });
   });
@@ -111,20 +111,10 @@ describe('Router beforeEach guard', () => {
       configStore.token = 'existing-token';
       mockIsTokenExpired.mockReturnValue(false);
 
-      await callGuard({}, { name: 'home' });
+      const result = await callGuard({}, { name: 'home' });
 
-      expect(mockNext).toHaveBeenCalledWith();
+      expect(result).toBe(true);
       expect(mockIsAuthenticated).not.toHaveBeenCalled();
-    });
-
-    it('should NOT skip auth when token is expired', async () => {
-      configStore.token = 'expired-token';
-      mockIsTokenExpired.mockReturnValue(true);
-      mockIsAuthenticated.mockResolvedValue(true);
-
-      await callGuard({}, { name: 'home' });
-
-      expect(mockIsAuthenticated).toHaveBeenCalled();
     });
 
     it('should NOT skip auth when there is no token in the store', async () => {
@@ -150,39 +140,37 @@ describe('Router beforeEach guard', () => {
     it('should authenticate and set token on success', async () => {
       mockIsAuthenticated.mockResolvedValue(true);
 
-      await callGuard();
+      const result = await callGuard();
 
       expect(mockIsAuthenticated).toHaveBeenCalled();
       expect(configStore.token).toBe('mock-token');
-      expect(mockNext).toHaveBeenCalledWith();
+      expect(result).toBe(true);
     });
 
     it('should strip #state= hash after authentication', async () => {
       mockIsAuthenticated.mockResolvedValue(true);
       const to = { name: 'chat', hash: '#state=abc123' };
 
-      await callGuard(to);
+      const result = await callGuard(to);
 
-      expect(mockNext).toHaveBeenCalledWith(
-        expect.objectContaining({ hash: '' }),
-      );
+      expect(result).toEqual(expect.objectContaining({ hash: '' }));
     });
 
     it('should redirect to login when not authenticated', async () => {
       mockIsAuthenticated.mockResolvedValue(false);
 
-      await callGuard();
+      const result = await callGuard();
 
-      expect(mockNext).toHaveBeenCalledWith(false);
+      expect(result).toBe(false);
       expect(mockLogin).toHaveBeenCalled();
     });
 
     it('should redirect to login on keycloak error', async () => {
       mockIsAuthenticated.mockRejectedValue(new Error('Network error'));
 
-      await callGuard();
+      const result = await callGuard();
 
-      expect(mockNext).toHaveBeenCalledWith(false);
+      expect(result).toBe(false);
       expect(mockLogin).toHaveBeenCalled();
     });
   });
@@ -211,9 +199,19 @@ describe('Router afterEach guard', () => {
     expect(configStore.token).toBe('fallback-token');
   });
 
-  it('should set project uuid from session when store has no project', () => {
+  it('should set project uuid from session when store has no project (desktop)', () => {
+    isMobile.mockReturnValue(false);
+
     afterEachGuard();
 
     expect(configStore.project.uuid).toBe('project-uuid');
+  });
+
+  it('should NOT set project uuid from session on mobile', () => {
+    isMobile.mockReturnValue(true);
+
+    afterEachGuard();
+
+    expect(configStore.project.uuid).toBeUndefined();
   });
 });

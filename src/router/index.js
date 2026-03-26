@@ -1,7 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import isMobile from 'is-mobile';
 
-import { getProject, getToken } from '@/utils/config';
+import {
+  getProject,
+  getToken,
+  setToken as setStorageToken,
+} from '@/utils/config';
 import Keycloak from '@/services/keycloak';
 import routes from './routes';
 import afterEachMiddlewares from './middlewares/afterEach';
@@ -18,20 +22,15 @@ const router = createRouter({
 
 afterEachMiddlewares.forEach((middleware) => router.afterEach(middleware));
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, from) => {
   if (!isMobile()) {
-    next();
-    return;
+    return true;
   }
 
   const configStore = useConfig();
 
-  const hasValidToken =
-    configStore.token && !Keycloak.keycloak.isTokenExpired?.(70);
-
-  if (from.name && hasValidToken) {
-    next();
-    return;
+  if (from.name && configStore.token) {
+    return true;
   }
 
   try {
@@ -39,20 +38,20 @@ router.beforeEach(async (to, from, next) => {
 
     if (authenticated) {
       const { token } = Keycloak.keycloak;
-      await configStore.setToken(token);
+      setStorageToken(token);
+      configStore.$patch({ token });
 
       if (to.hash.startsWith('#state=')) {
-        next({ ...to, hash: '' });
-      } else {
-        next();
+        return { ...to, hash: '' };
       }
-    } else {
-      next(false);
-      Keycloak.keycloak.login();
+      return true;
     }
-  } catch (error) {
-    next(false);
+
     Keycloak.keycloak.login();
+    return false;
+  } catch (error) {
+    Keycloak.keycloak.login();
+    return false;
   }
 });
 
@@ -62,7 +61,7 @@ router.afterEach(() => {
     configStore.setToken(getToken());
   }
 
-  if (!configStore.project.uuid) {
+  if (!isMobile() && !configStore.project.uuid) {
     configStore.setProjectUuid(getProject());
   }
 });

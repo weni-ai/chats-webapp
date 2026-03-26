@@ -20,10 +20,13 @@ import SocketAlertBanner from './layouts/ChatsLayout/components/SocketAlertBanne
 import ModalOfflineAgent from './components/ModalOfflineAgent.vue';
 import ModalOnboarding from './components/ModalOnboarding.vue';
 
+import isMobile from 'is-mobile';
+
 import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
 import Project from './services/api/resources/settings/project';
 import WS from '@/services/api/websocket/setup';
+import KeycloakService from '@/services/keycloak';
 import * as notifications from '@/utils/notifications';
 
 import { useConfig } from './store/modules/config';
@@ -117,7 +120,11 @@ export default {
     appToken: {
       immediate: true,
       handler(newAppToken) {
-        if (newAppToken) {
+        if (!newAppToken) return;
+
+        if (isMobile()) {
+          if (this.appProject) this.initializeAppData(this.appProject);
+        } else {
           this.getUser();
           this.getProject();
           this.getFeatureFlags();
@@ -127,7 +134,11 @@ export default {
     appProject: {
       immediate: true,
       handler(newAppProject) {
-        if (newAppProject && this.appToken) {
+        if (!newAppProject || !this.appToken) return;
+
+        if (isMobile()) {
+          this.initializeAppData(newAppProject);
+        } else {
           this.restoreSessionStorageUserStatus({
             projectUuid: newAppProject,
           });
@@ -159,8 +170,9 @@ export default {
 
   beforeCreate() {
     http.interceptors.request.use((config) => {
+      const token = KeycloakService.keycloak?.token || this.appToken;
       // eslint-disable-next-line no-param-reassign
-      config.headers.Authorization = `Bearer ${this.appToken}`;
+      config.headers.Authorization = `Bearer ${token}`;
       return config;
     });
   },
@@ -216,6 +228,29 @@ export default {
         });
       }
       this.setStatus(userStatus);
+    },
+
+    async initializeAppData(projectUuid) {
+      try {
+        await Promise.all([
+          this.getUser(),
+          this.getProject(),
+          this.getFeatureFlags(),
+        ]);
+      } catch (error) {
+        console.error('[App] Failed to load initial data:', error);
+      }
+
+      this.restoreSessionStorageUserStatus({ projectUuid });
+
+      try {
+        await this.getUserStatus();
+      } catch (error) {
+        console.error('[App] Failed to get user status:', error);
+      }
+
+      this.loadQuickMessages();
+      this.loadQuickMessagesShared();
     },
 
     async getUser() {
