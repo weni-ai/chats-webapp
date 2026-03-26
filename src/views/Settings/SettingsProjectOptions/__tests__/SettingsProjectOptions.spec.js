@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { createTestingPinia } from '@pinia/testing';
@@ -16,10 +16,11 @@ vi.mock('@/services/api/resources/settings/project', () => ({
 
 vi.mock('@/services/api/resources/settings/agentBuilder', () => ({
   default: {
-    check: vi.fn().mockResolvedValue({ agent_builder: true }),
     getAiTransferConfig: vi
       .fn()
-      .mockResolvedValue({ enabled: false, criteria: '' }),
+      .mockImplementation(() =>
+        Promise.resolve({ enabled: false, criteria: '' }),
+      ),
     updateAiTransferConfig: vi.fn().mockResolvedValue({}),
   },
 }));
@@ -120,9 +121,7 @@ describe('SettingsProjectOptions.vue', () => {
 
   describe('optionsItems computed', () => {
     it('should include ai_transfer item when hasAgentBuilder is true', async () => {
-      await vi.dynamicImportSettled();
-      await wrapper.vm.$nextTick();
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       const aiItem = wrapper.vm.optionsItems.find(
         (item) => item.key === 'ai_transfer',
@@ -132,12 +131,12 @@ describe('SettingsProjectOptions.vue', () => {
     });
 
     it('should exclude ai_transfer item when hasAgentBuilder is false', async () => {
-      agentBuilder.check.mockResolvedValueOnce({ agent_builder: false });
+      agentBuilder.getAiTransferConfig.mockRejectedValueOnce(
+        new Error('Not found'),
+      );
 
       wrapper = createWrapper();
-      await vi.dynamicImportSettled();
-      await wrapper.vm.$nextTick();
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       const aiItem = wrapper.vm.optionsItems.find(
         (item) => item.key === 'ai_transfer',
@@ -201,9 +200,7 @@ describe('SettingsProjectOptions.vue', () => {
     });
 
     it('should have prompt config on flag-prompt items', async () => {
-      await vi.dynamicImportSettled();
-      await wrapper.vm.$nextTick();
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       const aiItem = wrapper.vm.optionsItems.find(
         (item) => item.key === 'ai_transfer',
@@ -216,26 +213,25 @@ describe('SettingsProjectOptions.vue', () => {
   });
 
   describe('Agent Builder / AI Transfer', () => {
-    it('should call agentBuilder.check on mount', () => {
-      expect(agentBuilder.check).toHaveBeenCalled();
+    it('should call agentBuilder.getAiTransferConfig on mount', async () => {
+      await flushPromises();
+      expect(agentBuilder.getAiTransferConfig).toHaveBeenCalled();
     });
 
     it('should show AI transfer switch when hasAgentBuilder is true', async () => {
-      await vi.dynamicImportSettled();
-      await wrapper.vm.$nextTick();
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       expect(wrapper.vm.hasAgentBuilder).toBe(true);
       expect(wrapper.find('.project-options__ai-transfer').exists()).toBe(true);
     });
 
-    it('should hide AI transfer section when agent_builder is false', async () => {
-      agentBuilder.check.mockResolvedValueOnce({ agent_builder: false });
+    it('should hide AI transfer section when getAiTransferConfig fails', async () => {
+      agentBuilder.getAiTransferConfig.mockRejectedValueOnce(
+        new Error('Not found'),
+      );
 
       wrapper = createWrapper();
-      await vi.dynamicImportSettled();
-      await wrapper.vm.$nextTick();
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       expect(wrapper.vm.hasAgentBuilder).toBe(false);
       expect(wrapper.find('.project-options__ai-transfer').exists()).toBe(
@@ -243,44 +239,39 @@ describe('SettingsProjectOptions.vue', () => {
       );
     });
 
-    it('should fetch AI transfer config when agent_builder is true', async () => {
-      await vi.dynamicImportSettled();
-      await wrapper.vm.$nextTick();
+    it('should fetch AI transfer config on mount', async () => {
+      await flushPromises();
 
       expect(agentBuilder.getAiTransferConfig).toHaveBeenCalled();
     });
 
-    it('should not fetch AI transfer config when agent_builder is false', async () => {
-      agentBuilder.check.mockResolvedValueOnce({ agent_builder: false });
-      agentBuilder.getAiTransferConfig.mockClear();
+    it('should set hasAgentBuilder to false when getAiTransferConfig fails', async () => {
+      agentBuilder.getAiTransferConfig.mockRejectedValueOnce(
+        new Error('Not found'),
+      );
 
       wrapper = createWrapper();
-      await vi.dynamicImportSettled();
-      await wrapper.vm.$nextTick();
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
-      expect(agentBuilder.getAiTransferConfig).not.toHaveBeenCalled();
+      expect(wrapper.vm.hasAgentBuilder).toBe(false);
     });
 
     it('should open modal when toggling AI transfer ON', async () => {
-      await vi.dynamicImportSettled();
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       wrapper.vm.handleAiTransferToggle(true);
       expect(wrapper.vm.showAiTransferModal).toBe(true);
     });
 
     it('should not set enabled when toggling AI transfer ON (waits for modal save)', async () => {
-      await vi.dynamicImportSettled();
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       wrapper.vm.handleAiTransferToggle(true);
       expect(wrapper.vm.aiTransferConfig.enabled).toBe(false);
     });
 
     it('should disable AI transfer when toggling OFF', async () => {
-      await vi.dynamicImportSettled();
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       wrapper.vm.aiTransferConfig.enabled = true;
       wrapper.vm.handleAiTransferToggle(false);
@@ -299,10 +290,7 @@ describe('SettingsProjectOptions.vue', () => {
       });
 
       wrapper = createWrapper();
-      await vi.dynamicImportSettled();
-      await wrapper.vm.$nextTick();
-      await wrapper.vm.$nextTick();
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       expect(wrapper.vm.aiTransferConfig.enabled).toBe(true);
       expect(
@@ -320,10 +308,7 @@ describe('SettingsProjectOptions.vue', () => {
       });
 
       wrapper = createWrapper();
-      await vi.dynamicImportSettled();
-      await wrapper.vm.$nextTick();
-      await wrapper.vm.$nextTick();
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       const editBtn = wrapper.find('[data-testid="ai-transfer-edit-btn"]');
       await editBtn.trigger('click');
@@ -332,8 +317,7 @@ describe('SettingsProjectOptions.vue', () => {
     });
 
     it('should update aiTransferConfig on modal saved event', async () => {
-      await vi.dynamicImportSettled();
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       wrapper.vm.handleAiTransferSaved('New criteria text');
 
@@ -342,13 +326,12 @@ describe('SettingsProjectOptions.vue', () => {
     });
 
     it('should increment switchResetKey when modal closes without saving', async () => {
-      await vi.dynamicImportSettled();
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       expect(wrapper.vm.switchResetKey).toBe(0);
+      expect(wrapper.vm.aiTransferConfig.enabled).toBe(false);
 
-      wrapper.vm.handleAiTransferToggle(true);
-      expect(wrapper.vm.showAiTransferModal).toBe(true);
+      wrapper.vm.showAiTransferModal = true;
       await wrapper.vm.$nextTick();
 
       wrapper.vm.showAiTransferModal = false;
@@ -358,8 +341,7 @@ describe('SettingsProjectOptions.vue', () => {
     });
 
     it('should not increment switchResetKey when modal closes after saving', async () => {
-      await vi.dynamicImportSettled();
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       wrapper.vm.handleAiTransferToggle(true);
       wrapper.vm.handleAiTransferSaved('Criteria');
@@ -403,8 +385,7 @@ describe('SettingsProjectOptions.vue', () => {
 
   describe('Translation computed properties', () => {
     it('should return correct AI transfer translation based on state', async () => {
-      await vi.dynamicImportSettled();
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       expect(wrapper.vm.configAiTransferTranslation).toBe(
         wrapper.vm.$t(
