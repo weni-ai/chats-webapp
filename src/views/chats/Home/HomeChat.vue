@@ -23,7 +23,7 @@
 
       <MessageManagerV2
         v-if="
-          false &&
+          isMessageManagerV2Enabled &&
           (isMessageManagerRoomVisible || isMessageManagerDiscussionVisible)
         "
         data-testid="message-manager"
