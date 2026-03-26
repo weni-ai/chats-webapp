@@ -211,8 +211,7 @@
                 :modelValue="roomTags"
                 :tags="roomTags"
                 selectable
-                disableClick
-                :useCloseClick="!isViewMode && !isHistory && !!room.user"
+                :useCloseClick="tagUseCloseOnClick"
                 @close="handleTagClick"
               />
               <ProtocolText :protocol="contactProtocol" />
@@ -234,6 +233,7 @@
 
       <ModalStartDiscussion
         v-if="isShowModalStartDiscussion"
+        v-model="isShowModalStartDiscussion"
         @close="handleModalStartDiscussion()"
       />
 
@@ -375,6 +375,10 @@ export default {
         customFields[this.$t('service')] = roomService;
       }
       return customFields;
+    },
+
+    tagUseCloseOnClick() {
+      return !this.isViewMode && !this.isHistory && !!this.room.user;
     },
 
     hideTagCloseIcon() {
@@ -524,6 +528,7 @@ export default {
     },
 
     handleTagClick(tag) {
+      if (!this.room.user) return;
       const hasSelectedTag = this.roomTags.some(
         (roomTag) => roomTag.uuid === tag.uuid,
       );

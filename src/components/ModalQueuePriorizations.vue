@@ -1,50 +1,52 @@
 <template>
-  <UnnnicModal
+  <UnnnicDialog
+    v-model:open="open"
     class="queue-modal"
-    :text="$t('chats.select_services_queues')"
-    @close="$emit('close')"
   >
-    <section class="queue-modal-form">
-      <section
-        v-if="!verifySelectedLength"
-        class="queue-modal-disclaimer"
-      >
-        <UnnnicIconSvg
-          filled
-          icon="alert-circle-1"
-          size="md"
-          scheme="feedback-yellow"
+    <UnnnicDialogContent>
+      <section class="queue-modal__form">
+        <p class="queue-modal__form-title">
+          {{ $t('chats.select_services_queues') }}
+        </p>
+        <UnnnicDisclaimer
+          v-if="!verifySelectedLength"
+          :description="$t('chats.select_at_least')"
+          type="attention"
         />
-        <p>{{ $t('chats.select_at_least') }}</p>
-      </section>
-      <section class="queue-modal-select">
-        <section class="queue-modal-input">
-          <UnnnicLabel :label="$t('chats.select_the_queues')" />
-          <UnnnicSelectSmart
-            v-model="selectedQueues"
-            :options="queues"
-            :multipleWithoutSelectsMessage="$t('chats.no_queue_selected')"
-            multiple
-          />
+        <section class="queue-modal-select">
+          <section class="queue-modal-input">
+            <UnnnicMultiSelect
+              v-model="selectedQueues"
+              data-testid="queue-priorizations-select"
+              :options="queues"
+              :label="$t('chats.select_the_queues')"
+              :placeholder="$t('chats.select_your_queues')"
+              returnObject
+              clearable
+              enableSearch
+              :search="searchQueues"
+              @update:search="searchQueues = $event"
+            />
+          </section>
         </section>
       </section>
-    </section>
-    <template #options>
-      <UnnnicButton
-        :text="$t('cancel')"
-        type="tertiary"
-        size="large"
-        @click="$emit('close')"
-      />
-      <UnnnicButton
-        :text="$t('save')"
-        type="primary"
-        size="large"
-        :disabled="!verifySelectedLength"
-        @click="saveListQueues"
-      />
-    </template>
-  </UnnnicModal>
+      <UnnnicDialogFooter>
+        <UnnnicButton
+          :text="$t('cancel')"
+          type="tertiary"
+          size="large"
+          @click="open = false"
+        />
+        <UnnnicButton
+          :text="$t('save')"
+          type="primary"
+          size="large"
+          :disabled="!verifySelectedLength"
+          @click="saveListQueues"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 <script>
 import { mapActions, mapState, mapWritableState } from 'pinia';
@@ -57,21 +59,23 @@ import Queues from '@/services/api/resources/chats/queues';
 
 export default {
   name: 'ModalQueuePriorizations',
-  emits: ['close'],
+
+  props: {
+    modelValue: {
+      type: Boolean,
+      required: true,
+    },
+  },
+
+  emits: ['update:modelValue'],
 
   data() {
     return {
       selectedQueues: [],
-      queues: [
-        {
-          value: '',
-          label: this.$t('chats.select_your_queues'),
-        },
-      ],
+      queues: [],
+      searchQueues: '',
       roleIdSelected: 1,
       roleIdUnselected: 2,
-      showModalQueue: false,
-      noQueueSelected: false,
     };
   },
 
@@ -82,15 +86,17 @@ export default {
     verifySelectedLength() {
       return this.selectedQueues.length > 0;
     },
+    open: {
+      get() {
+        return this.modelValue;
+      },
+      set(value) {
+        this.$emit('update:modelValue', value);
+      },
+    },
   },
 
   watch: {
-    selectedQueues: {
-      handler() {
-        this.updateQueuesPlaceholder();
-      },
-      deep: true,
-    },
     'me.queues': {
       handler(_newQueues, oldQueues) {
         if (!oldQueues) this.handlerQueues();
@@ -187,7 +193,6 @@ export default {
           seconds: 5,
         });
         this.$root.wsReconnect();
-        this.$emit('close');
       } catch (error) {
         console.error(error);
         callUnnnicAlert({
@@ -197,24 +202,8 @@ export default {
           },
           seconds: 5,
         });
-
-        this.$emit('close');
-      }
-    },
-
-    updateQueuesPlaceholder() {
-      const queuesValue = this.selectedQueues.map((queue) => queue.value);
-
-      const selectedQueues = queuesValue.map((queueUuid) => ({
-        uuid: queueUuid,
-        role: this.roleIdSelected,
-      }));
-
-      if (selectedQueues.length < 1) {
-        this.queues.push({
-          value: '',
-          label: this.$t('chats.select_your_queues'),
-        });
+      } finally {
+        this.open = false;
       }
     },
   },
@@ -223,44 +212,22 @@ export default {
 
 <style lang="scss" scoped>
 .queue-modal {
-  .queue-modal-form {
+  &__form {
     display: grid;
     gap: $unnnic-spacing-sm;
     text-align: start;
-    .queue-modal-disclaimer {
-      display: flex;
-      flex-direction: row;
-      gap: $unnnic-spacing-xs;
-      justify-content: center;
+    padding: $unnnic-space-6;
 
-      padding: $unnnic-spacing-sm;
-
-      font-size: $unnnic-font-size-body-gt;
-      color: $unnnic-color-neutral-dark;
-
-      border-radius: $unnnic-border-radius-sm;
-      border: $unnnic-border-width-thin solid $unnnic-color-neutral-soft;
+    &-title {
+      font: $unnnic-font-display-2;
+      color: $unnnic-color-fg-emphasized;
     }
+
     .queue-modal-select {
       display: flex;
       gap: $unnnic-spacing-xs;
       .queue-modal-input {
         flex: 1;
-      }
-    }
-  }
-  :deep(.unnnic-modal-container) {
-    .unnnic-modal-container-background {
-      width: 50%;
-      overflow: visible;
-      &-body-description-container {
-        padding-bottom: 0;
-      }
-      .unnnic-modal-container-background-body {
-        &-description,
-        &-description-container {
-          overflow: visible;
-        }
       }
     }
   }

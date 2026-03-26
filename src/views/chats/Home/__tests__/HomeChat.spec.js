@@ -2,11 +2,13 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
 import { createRouter, createWebHistory } from 'vue-router';
+import { createI18n } from 'vue-i18n';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useProfile } from '@/store/modules/profile';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useConfig } from '@/store/modules/config';
 
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
@@ -38,6 +40,14 @@ vi.mock('@/services/api/resources/chats/roomNotes', () => ({
 vi.mock('@/services/api/resources/settings/queue', () => ({
   default: { tags: vi.fn(() => ({ results: [] })) },
 }));
+
+const i18n = createI18n({
+  legacy: false,
+  locale: 'en',
+  messages: { en: {} },
+  fallbackWarn: false,
+  missingWarn: false,
+});
 
 const router = createRouter({
   history: createWebHistory(),
@@ -106,7 +116,7 @@ describe('HomeChat.vue', () => {
             push: vi.fn(),
           },
         },
-        plugins: [router, pinia],
+        plugins: [router, pinia, i18n],
         components: {
           RoomMessages,
           HomeChatModals,
@@ -118,6 +128,25 @@ describe('HomeChat.vue', () => {
             template: '<div />',
             props: ['contactName', 'clickable'],
           },
+          DiscussionHeader: {
+            template: '<div data-testid="discussion-header-stub" />',
+            props: ['discussionContact', 'discussionSubject', 'clickable'],
+          },
+          HomeChatModals: {
+            template: '<div data-testid="home-chat-modals" />',
+            data() {
+              return { modalsShowing: { closeChat: false, getChat: false } };
+            },
+            methods: {
+              openModal(modal) {
+                if (this.modalsShowing[modal] !== undefined) {
+                  this.modalsShowing[modal] = true;
+                }
+              },
+              configFileUploader: vi.fn(),
+              closeModal: vi.fn(),
+            },
+          },
         },
       },
     });
@@ -128,6 +157,10 @@ describe('HomeChat.vue', () => {
       createSpy: vi.fn,
     });
     setActivePinia(pinia);
+    useProfile().me = {
+      email: 'testuser@weni.ai',
+      project_permission_role: 'agent',
+    };
     useRoomMessages().getRoomMessages = vi.fn().mockResolvedValue([]);
     useDiscussionMessages().getDiscussionMessages = vi
       .fn()
@@ -442,8 +475,8 @@ describe('HomeChat.vue', () => {
       const roomsStore = useRooms();
       const discussionsStore = useDiscussions();
 
-      roomsStore.room = {};
-      discussionsStore.discussion = null;
+      roomsStore.activeRoom = null;
+      discussionsStore.activeDiscussion = null;
 
       const getChatButton = wrapper.find('[data-testid="get-chat-button"]');
       expect(getChatButton.exists()).toBe(true);
@@ -453,6 +486,46 @@ describe('HomeChat.vue', () => {
       await getChatButton.trigger('click');
 
       expect(openModalSpy).toHaveBeenCalledWith('getChat');
+    });
+
+    it('should render get-chat button as primary when bulk actions are disabled', async () => {
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.featureFlags = { active_features: [] };
+
+      const configStore = useConfig();
+      configStore.project = { config: { can_use_bulk_take: false } };
+
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.getChatButtonType).toBe('primary');
+    });
+
+    it('should render get-chat button as secondary when bulk take is enabled', async () => {
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsBulkTake'],
+      };
+
+      const configStore = useConfig();
+      configStore.project = { config: { can_use_bulk_take: true } };
+
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.getChatButtonType).toBe('secondary');
+    });
+
+    it('should render get-chat button as primary when feature flag is active but config is off', async () => {
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsBulkTake'],
+      };
+
+      const configStore = useConfig();
+      configStore.project = { config: { can_use_bulk_take: false } };
+
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.getChatButtonType).toBe('primary');
     });
 
     it('calls Room.updateReadMessages if room is valid and belongs to the user', async () => {

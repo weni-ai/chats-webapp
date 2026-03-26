@@ -1,71 +1,95 @@
 <template>
-  <UnnnicModalDialog
-    :modelValue="true"
+  <UnnnicDialog
+    v-model:open="isOpen"
     class="modal-close-rooms"
-    :showCloseIcon="!isLoadingBulkClose"
-    :primaryButtonProps="primaryButtonProps"
-    :secondaryButtonProps="secondaryButtonProps"
-    :persistent="isLoadingBulkClose"
     data-testid="modal-bulk-close"
-    size="lg"
-    @secondary-button-click="handleSecondaryClick"
-    @primary-button-click="handlePrimaryClick"
-    @update:model-value="emitClose"
   >
-    <template #title>
-      <section class="modal-close-rooms__title-container">
-        <span class="modal-close-rooms__title-text">{{ modalTitle }}</span>
-        <UnnnicTag
-          v-if="totalSectors > 1"
-          :text="
-            $t('bulk_close.sector_tag', {
-              current: currentSectorIndex + 1,
-              total: totalSectors,
-            })
-          "
-          type="default"
-          scheme="blue"
-          class="modal-close-rooms__sector-tag"
+    <UnnnicDialogContent size="large">
+      <UnnnicDialogHeader>
+        <UnnnicDialogTitle>
+          <section class="modal-close-rooms__title-container">
+            <span>{{ modalTitle }}</span>
+            <UnnnicTag
+              v-if="totalSectors > 1"
+              :text="
+                $t('bulk_close.sector_tag', {
+                  current: currentSectorIndex + 1,
+                  total: totalSectors,
+                })
+              "
+              type="default"
+              scheme="blue"
+              class="modal-close-rooms__sector-tag"
+            />
+          </section>
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+
+      <section class="modal-close-rooms__content">
+        <p class="modal-close-rooms__subtitle">
+          {{
+            $tc(
+              'bulk_close.chats_count_sector',
+              currentSectorData.rooms.length,
+              {
+                count: currentSectorData.rooms.length,
+                sector: currentSectorData.name,
+              },
+            )
+          }}
+        </p>
+
+        <UnnnicDisclaimer
+          v-if="shouldShowDisclaimer"
+          class="modal-close-rooms__disclaimer"
+          :type="disclaimerType"
+          :title="disclaimerTitle"
+          :description="disclaimerDescription"
         />
+
+        <template v-if="hasNoSectorTags">
+          <p class="modal-close-rooms__no-tags">
+            {{ $t('bulk_close.no_tags_in_sector') }}
+          </p>
+        </template>
+
+        <template v-else>
+          <UnnnicInput
+            v-model="tagsFilter"
+            iconLeft="search"
+            :placeholder="$t('tags.search')"
+          />
+
+          <section class="modal-close-rooms__tags-list">
+            <ChatClassifier
+              :key="currentSectorData.uuid"
+              v-model="currentSectorSelectedTags"
+              :tags="filteredSectorTags"
+              :loading="isLoadingTags"
+              @update:to-remove-tags="handleRemoveTags"
+              @update:to-add-tags="handleAddTags"
+            />
+          </section>
+        </template>
       </section>
-    </template>
 
-    <section class="modal-close-rooms__content">
-      <p class="modal-close-rooms__subtitle">
-        {{
-          $tc('bulk_close.chats_count_sector', currentSectorData.rooms.length, {
-            count: currentSectorData.rooms.length,
-            sector: currentSectorData.name,
-          })
-        }}
-      </p>
-
-      <UnnnicDisclaimer
-        v-if="shouldShowDisclaimer"
-        class="modal-close-rooms__disclaimer"
-        :type="disclaimerType"
-        :title="disclaimerTitle"
-        :description="disclaimerDescription"
-      />
-
-      <UnnnicInput
-        v-model="tagsFilter"
-        iconLeft="search"
-        :placeholder="$t('tags.search')"
-      />
-
-      <section class="modal-close-rooms__tags-list">
-        <ChatClassifier
-          :key="currentSectorData.uuid"
-          v-model="currentSectorSelectedTags"
-          :tags="filteredSectorTags"
-          :loading="isLoadingTags"
-          @update:to-remove-tags="handleRemoveTags"
-          @update:to-add-tags="handleAddTags"
+      <UnnnicDialogFooter>
+        <UnnnicButton
+          :text="secondaryButtonText"
+          type="tertiary"
+          :disabled="isLoadingBulkClose"
+          @click="handleSecondaryClick"
         />
-      </section>
-    </section>
-  </UnnnicModalDialog>
+        <UnnnicButton
+          :text="primaryButtonText"
+          type="primary"
+          :loading="isLoadingBulkClose"
+          :disabled="isPrimaryDisabled"
+          @click="handlePrimaryClick"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script setup>
@@ -95,14 +119,12 @@ const roomsStore = useRooms();
 const { selectedOngoingRooms, selectedWaitingRooms, activeTab, rooms } =
   storeToRefs(roomsStore);
 
-// Get current selected rooms
 const currentSelectedRooms = computed(() => {
   return activeTab.value === 'ongoing'
     ? selectedOngoingRooms.value
     : selectedWaitingRooms.value;
 });
 
-// Group rooms by sector
 const roomsBySector = computed(() => {
   const grouped = {};
 
@@ -131,7 +153,6 @@ const roomsBySector = computed(() => {
 const sectorsArray = computed(() => Object.values(roomsBySector.value));
 const totalSectors = computed(() => sectorsArray.value.length);
 
-// Navigation state
 const currentSectorIndex = ref(0);
 const currentSectorData = computed(
   () =>
@@ -142,7 +163,6 @@ const currentSectorData = computed(
     },
 );
 
-// Tag management
 const isLoadingTags = ref(false);
 const tagsFilter = ref('');
 const allSectorTags = ref({});
@@ -172,7 +192,10 @@ const currentSectorSelectedTags = computed({
   },
 });
 
-// Disclaimer computed properties
+const hasNoSectorTags = computed(() => {
+  return !isLoadingTags.value && currentSectorTags.value.length === 0;
+});
+
 const shouldShowDisclaimer = computed(() => {
   return currentSectorData.value.queue.required_tags !== undefined;
 });
@@ -203,15 +226,17 @@ const disclaimerDescription = computed(() => {
   });
 });
 
-// Loading state
 const isLoadingBulkClose = ref(false);
 
-// Modal title
+const isOpen = ref(true);
+watch(isOpen, (value) => {
+  if (!value) emitClose();
+});
+
 const modalTitle = computed(() =>
   i18n.global.t('bulk_close.end_all_selected_chats'),
 );
 
-// Total rooms count across all sectors
 const totalRoomsCount = computed(() => {
   return sectorsArray.value.reduce(
     (sum, sector) => sum + sector.rooms.length,
@@ -219,39 +244,34 @@ const totalRoomsCount = computed(() => {
   );
 });
 
-// Button props
-const primaryButtonProps = computed(() => {
+const primaryButtonText = computed(() => {
   const isLastSector = currentSectorIndex.value === totalSectors.value - 1;
   const isSingleSector = totalSectors.value === 1;
 
-  return {
-    text:
-      isLastSector || isSingleSector
-        ? i18n.global.t('bulk_close.end_all_chats', {
-            count: totalRoomsCount.value,
-          })
-        : i18n.global.t('bulk_close.next_sector'),
-    loading: isLoadingBulkClose.value,
-    disabled:
-      currentSectorData.value.queue.required_tags &&
-      currentSectorSelectedTags.value.length === 0,
-  };
+  return isLastSector || isSingleSector
+    ? i18n.global.t('bulk_close.end_all_chats', {
+        count: totalRoomsCount.value,
+      })
+    : i18n.global.t('bulk_close.next_sector');
 });
 
-const secondaryButtonProps = computed(() => {
+const isPrimaryDisabled = computed(() => {
+  if (hasNoSectorTags.value) return false;
+  return (
+    currentSectorData.value.queue.required_tags &&
+    currentSectorSelectedTags.value.length === 0
+  );
+});
+
+const secondaryButtonText = computed(() => {
   const isFirstSector = currentSectorIndex.value === 0;
   const isMultipleSectors = totalSectors.value > 1;
 
-  return {
-    text:
-      isMultipleSectors && !isFirstSector
-        ? i18n.global.t('bulk_close.back')
-        : i18n.global.t('cancel'),
-    disabled: isLoadingBulkClose.value,
-  };
+  return isMultipleSectors && !isFirstSector
+    ? i18n.global.t('bulk_close.back')
+    : i18n.global.t('cancel');
 });
 
-// Load sector tags
 const loadSectorTags = async () => {
   const sectorUuid = currentSectorData.value.uuid;
   const queueUuid = currentSectorData.value.queue.uuid;
@@ -285,7 +305,6 @@ const loadSectorTags = async () => {
   }
 };
 
-// Handle tag updates
 const handleAddTags = (tags) => {
   const sectorUuid = currentSectorData.value.uuid;
   sectorToAddTags.value[sectorUuid] = tags;
@@ -296,7 +315,6 @@ const handleRemoveTags = (tags) => {
   sectorToRemoveTags.value[sectorUuid] = tags;
 };
 
-// Navigation functions
 const goToNextSector = () => {
   if (currentSectorIndex.value < totalSectors.value - 1) {
     currentSectorIndex.value++;
@@ -330,7 +348,6 @@ const handleSecondaryClick = () => {
   }
 };
 
-// Execute bulk close
 const ROOMS_REFETCH_LIMIT = 30;
 
 const refetchRoomsIfEmpty = async () => {
@@ -364,7 +381,6 @@ const clearSelectionsAndClose = async () => {
 const executeBulkClose = async () => {
   isLoadingBulkClose.value = true;
 
-  // Build rooms array with selected tags
   const roomsToClose = [];
 
   sectorsArray.value.forEach((sectorData) => {
@@ -381,13 +397,11 @@ const executeBulkClose = async () => {
     });
   });
 
-  // Split into batches of BULK_CLOSE_BATCH_SIZE
   const chunks = [];
   for (let i = 0; i < roomsToClose.length; i += BULK_CLOSE_BATCH_SIZE) {
     chunks.push(roomsToClose.slice(i, i + BULK_CLOSE_BATCH_SIZE));
   }
 
-  // Execute sequentially and aggregate results
   let totalSuccess = 0;
   let totalFailed = 0;
 
@@ -401,7 +415,6 @@ const executeBulkClose = async () => {
     totalFailed += data?.failed_count || 0;
   }
 
-  // Show a single toast based on aggregated results
   if (totalFailed === 0 && totalSuccess > 0) {
     unnnicCallAlert({
       props: {
@@ -442,14 +455,12 @@ const emitClose = () => {
   emit('close');
 };
 
-// Load initial sector tags
 onMounted(() => {
   if (totalSectors.value > 0) {
     loadSectorTags();
   }
 });
 
-// Watch for sector changes
 watch(currentSectorIndex, () => {
   loadSectorTags();
 });
@@ -457,10 +468,6 @@ watch(currentSectorIndex, () => {
 
 <style lang="scss" scoped>
 .modal-close-rooms {
-  :deep(.unnnic-modal-dialog__container) {
-    max-width: 800px;
-  }
-
   :deep(.modal-close-rooms__disclaimer) {
     display: flex;
   }
@@ -471,14 +478,12 @@ watch(currentSectorIndex, () => {
     gap: $unnnic-space-2;
   }
 
-  &__title-text {
-    font: $unnnic-font-display-2;
-  }
-
   &__content {
     display: flex;
     flex-direction: column;
     gap: $unnnic-spacing-md;
+    padding: $unnnic-spacing-md;
+    overflow: auto;
   }
 
   &__subtitle {
@@ -486,6 +491,12 @@ watch(currentSectorIndex, () => {
     font-weight: $unnnic-font-weight-bold;
     line-height: $unnnic-line-height-md;
     color: $unnnic-color-neutral-darkest;
+    margin: 0;
+  }
+
+  &__no-tags {
+    font: $unnnic-font-emphasis;
+    color: $unnnic-color-neutral-cloudy;
     margin: 0;
   }
 

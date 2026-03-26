@@ -149,6 +149,7 @@
   "select_this_chat": "Select this chat",
   "deselect_this_chat": "Deselect this chat",
   "transfer_all_selected_chats": "Transfer all selected chats",
+  "take_over_all_selected_chats_tooltip": "Take over all selected chats",
   "end_all_selected_chats_tooltip": "End all selected chats",
   "number_of_chats_selected": "{count} chat selected | {count} chats selected",
   "image": "Image",
@@ -335,6 +336,14 @@
       "unavailable": "No summary available",
       "open_summary_tooltip": "Click to see Summary",
       "close_summary_tooltip": "Click to hide Summary",
+      "archived": {
+        "download_button": "Download messages",
+        "download_error": "Error downloading messages. Please try again.",
+        "disclaimer": {
+          "title": "Archived messages",
+          "description": "This support request was closed over a year ago, so the messages have been moved to the archives. To view them, click the “Download messages” button."
+        }
+      },
       "feedback": {
         "title": "What went wrong?",
         "needs_improvement_text": "Help us improve summaries. Your feedback on this summary helps us make it clearer and more useful.",
@@ -393,6 +402,7 @@
     "tags": "Chat tags",
     "discussions": "Discussions",
     "waiting": "Waiting",
+    "waiting_tooltip": "Chats to be handled",
     "waiting_assistance": "Waiting for assistance",
     "in_progress": "Ongoing",
     "sent_flows": "Sent flows",
@@ -409,7 +419,7 @@
       "does_not_have_permission": "You do not have permission to transfer this chat"
     },
     "open_chat": "Open chat",
-    "get_chat": "Get chat",
+    "get_chat": "Take over only this chat",
     "get_chat_question": "Get chat?",
     "get_chat_confirmation": "Confirm if you want to do the service of {contact}",
     "get_chat_error": "Error when trying to get the room",
@@ -454,6 +464,7 @@
   "about": "about",
   "today": "Today",
   "transfer": "Transfer",
+  "take_over": "Take over",
   "suggested_answers": "Suggested Answers",
   "attach": "Attach",
   "send": "Send",
@@ -463,6 +474,7 @@
   "action_cannot_be_reversed": "This action cannot be reversed",
   "end": "End",
   "end_chat": "End Chat",
+  "end_discussion": "End discussion",
   "cancel": "Cancel",
   "add": "Add",
   "proceed": "Proceed",
@@ -583,7 +595,20 @@
     "end_all_chats": "End all ({count} chats)",
     "back": "Back",
     "optional_tags_title": "Tags are not required to end chats in the {sector} sector",
-    "optional_tags_description": "If you select any tag below, it will be applied to the {count} chat and will replace any existing tags. | If you select any tag below, it will be applied to the {count} chats and will replace any existing tags."
+    "optional_tags_description": "If you select any tag below, it will be applied to the {count} chat and will replace any existing tags. | If you select any tag below, it will be applied to the {count} chats and will replace any existing tags.",
+    "no_tags_in_sector": "There are no tags registered in this sector to be selected."
+  },
+  "close_chat": {
+    "confirm_end": "Are you sure you want to end this chat?"
+  },
+  "bulk_take": {
+    "title": "Take over all selected chats",
+    "selected_chats_count": "{count} chat is selected for takeover. | {count} chats are selected for takeover.",
+    "confirm_take_over_selected": "Are you sure you want to take over all selected chats?",
+    "take_over_all": "Take over all",
+    "success_message": "{count} chat taken over successfully! | {count} chats taken over successfully!",
+    "partial_success_message": "{success} chat taken over, {failed} failed. Please try again. | {success} chats taken over, {failed} failed. Please try again.",
+    "error_message": "Unable to take over chats, please try again"
   },
   "contact_info": {
     "title": "About the contact",
@@ -623,8 +648,9 @@
       "add_agent": "Add Agent"
     },
     "close": {
-      "title": "Arrange",
-      "description": "You can no longer exchange messages in this discussion"
+      "title": "End discussion",
+      "question": "Are you sure you want to end discussion about {contact}?",
+      "description": "Once finalized, no more messages can be sent."
     },
     "add_agents": {
       "title": "Add Agents",
@@ -716,6 +742,8 @@
     "groups": "Groups ({length})",
     "group_contacts": "{n} contact | {n} contacts",
     "letter_group": "{letter} ({length})",
+    "letter_group_unnamed": "Unnamed ({length})",
+    "unnamed_contact": "Unnamed contact",
     "add_contact": "Add contact",
     "remove_selected_contacts": "Remove selected contacts",
     "add_new_contact": {
@@ -840,7 +868,7 @@
         "switch_active": "Block chat transfer to offline agents",
         "switch_inactive": "Block chat transfer to offline agents"
       },
-      "bulk_close": { 
+      "bulk_close": {
         "switch_active": "End chats in bulk",
         "switch_inactive": "End chats in bulk"
       },
@@ -860,6 +888,9 @@
       "show_agent_status_count_timer": {
         "switch_active": "Show status timer for custom agent breaks",
         "switch_inactive": "Show status timer for custom agent breaks"
+      },
+      "show_waiting_rooms_count": {
+        "switch_label": "Show the counter with the number of chats waiting for human support"
       }
     },
     "custom_sector": "Customize new sector (recommended)",
@@ -885,6 +916,15 @@
       "hint": "Queues are support groups within the sector; you can create new queues or edit them whenever you want.",
       "queue_definitions": "Queue settings",
       "delete_or_edit": "Delete or edit",
+      "limit_chats": {
+        "title": "Limit of chats awaiting support",
+        "switch": {
+          "label": "Limit chats",
+          "helper": "When the limit is reached, new chats won’t be created.",
+          "input_label": "Maximum waiting chats",
+          "input_placeholder": "Example: 50"
+        }
+      },
       "message": {
         "create": "Queue successfully created",
         "update": "Queue successfully updated",

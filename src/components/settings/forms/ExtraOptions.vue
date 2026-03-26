@@ -78,7 +78,7 @@
           </UnnnicToolTip>
         </section>
         <fieldset v-if="sector.automatic_message.is_active">
-          <UnnnicInputNext
+          <UnnnicInput
             v-model="sector.automatic_message.text"
             :maxlength="160"
             :label="
@@ -163,7 +163,7 @@
       </section>
 
       <section class="tags-form">
-        <UnnnicInputNext
+        <UnnnicInput
           v-model="tagName"
           class="tags-form__input"
           :label="$t('tags.add.label')"

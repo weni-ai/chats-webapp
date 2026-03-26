@@ -3,7 +3,6 @@
     <SocketAlertBanner v-if="showSocketAlertBanner" />
     <RouterView />
     <ModalOfflineAgent
-      v-if="showModalOfflineAgent"
       v-model="showModalOfflineAgent"
       :username="userWhoChangedStatus"
     />
@@ -174,6 +173,7 @@ export default {
       'setCustomStatus',
       'setProject',
       'setDisconnectedBy',
+      'setSocketClosedOffline',
     ]),
     ...mapActions(useProfile, ['setMe', 'getMeQueues']),
     ...mapActions(useQuickMessages, {
@@ -318,6 +318,7 @@ export default {
       moduleStorage.setItem(`statusAgent-${this.project.uuid}`, status, {
         useSession: true,
       });
+      this.setSocketClosedOffline(true);
       this.setStatus(status);
       this.setDisconnectedBy(disconnectedBy);
       if (isCustom) {

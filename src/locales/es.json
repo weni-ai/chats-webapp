@@ -149,6 +149,7 @@
   "select_this_chat": "Seleccionar este chat",
   "deselect_this_chat": "Deseleccionar este chat",
   "transfer_all_selected_chats": "Transferir todos los chats seleccionados",
+  "take_over_all_selected_chats_tooltip": "Asumir todos los chats seleccionados",
   "end_all_selected_chats_tooltip": "Finalizar todos los chats seleccionados",
   "number_of_chats_selected": "{count} chat seleccionado | {count} chats seleccionados",
   "image": "Imagen",
@@ -331,6 +332,14 @@
       "unavailable": "No hay resumen disponible",
       "open_summary_tooltip": "Abrir el resumen del chat",
       "close_summary_tooltip": "Cerrar el resumen del chat",
+      "archived": {
+        "download_button": "Descargar mensajes",
+        "download_error": "Error al descargar los mensajes. Inténtalo de nuevo.",
+        "disclaimer": {
+          "title": "Mensajes archivados",
+          "description": "Este soporte fue cerrado hace más de un año, por lo que los mensajes han sido movidos a los archivos. Para verlos, haz clic en el botón “Descargar mensajes”."
+        }
+      },
       "feedback": {
         "title": "¿Qué fue lo que no funcionó?",
         "needs_improvement_text": "Ayuda a mejorar los resumenes. Tu opinión sobre este resumen nos ayuda a hacerlo más claro y útil.",
@@ -389,6 +398,7 @@
     "tags": "Etiquetas de chat",
     "discussions": "Discusiones",
     "waiting": "Esperando",
+    "waiting_tooltip": "Chats que deben ser atendidos",
     "waiting_assistance": "Esperando asistencia",
     "in_progress": "En curso",
     "sent_flows": "Flujos enviados",
@@ -405,7 +415,7 @@
       "does_not_have_permission": "No tiene permiso para transferir este chat"
     },
     "open_chat": "Abrir el chat",
-    "get_chat": "atrapar el chat",
+    "get_chat": "Tomar solo este chat",
     "get_chat_question": "Obtener chat?",
     "get_chat_confirmation": "Confirma si deseas realizar el servicio de {contact}",
     "get_chat_error": "Error al intentar obtener el chat",
@@ -450,6 +460,7 @@
   "about": "acerca de",
   "today": "Hoy",
   "transfer": "Transferir",
+  "take_over": "Asumir",
   "suggested_answers": "Respuestas sugeridas",
   "attach": "adjuntar",
   "send": "Enviar",
@@ -459,6 +470,7 @@
   "action_cannot_be_reversed": "Esta acción no se puede revertir",
   "end": "Cerrar",
   "end_chat": "Cerrar chat",
+  "end_discussion": "Cerrar discusión",
   "cancel": "Cancelar",
   "add": "Agregar",
   "proceed": "Proceder",
@@ -579,7 +591,20 @@
     "end_all_chats": "Finalizar todos ({count} chats)",
     "back": "Volver",
     "optional_tags_title": "Las tags no son obligatorias para finalizar chats en el sector {sector}",
-    "optional_tags_description": "Si selecciona alguna tag a continuación, se aplicará al {count} chat y reemplazará cualquier tag existente. | Si selecciona alguna tag a continuación, se aplicará a los {count} chats y reemplazará cualquier tag existente."
+    "optional_tags_description": "Si selecciona alguna tag a continuación, se aplicará al {count} chat y reemplazará cualquier tag existente. | Si selecciona alguna tag a continuación, se aplicará a los {count} chats y reemplazará cualquier tag existente.",
+    "no_tags_in_sector": "No hay tags registradas en este sector para ser seleccionadas."
+  },
+  "close_chat": {
+    "confirm_end": "¿Está seguro de que desea finalizar este chat?"
+  },
+  "bulk_take": {
+    "title": "Asumir todos los chats seleccionados",
+    "selected_chats_count": "{count} chat está seleccionado para asumir. | {count} chats están seleccionados para asumir.",
+    "confirm_take_over_selected": "¿Está seguro de que desea asumir todos los chats seleccionados?",
+    "take_over_all": "Asumir todos",
+    "success_message": "¡{count} chat asumido con éxito! | ¡{count} chats asumidos con éxito!",
+    "partial_success_message": "{success} chat asumido, {failed} falló. Intente nuevamente. | {success} chats asumidos, {failed} fallaron. Intente nuevamente.",
+    "error_message": "No fue posible asumir los chats, intente nuevamente"
   },
   "contact_info": {
     "title": "Sobre el contacto",
@@ -620,7 +645,8 @@
     },
     "close": {
       "title": "Finalizar la discusión",
-      "description": "Ya no podrás intercambiar mensajes en este hilo."
+      "question": "¿Está seguro de que desea finalizar la discusión sobre {contact}?",
+      "description": "Una vez finalizada, no será posible enviar más mensajes."
     },
     "add_agents": {
       "title": "Agregar agentes",
@@ -712,6 +738,8 @@
     "groups": "Grupos ({length})",
     "group_contacts": "{n} contacto | {n} contactos",
     "letter_group": "{letter} ({length})",
+    "letter_group_unnamed": "Sin nombre ({length})",
+    "unnamed_contact": "Contacto sin nombre",
     "add_contact": "Añadir contacto",
     "remove_selected_contacts": "Quitar contactos seleccionados",
     "add_new_contact": {
@@ -844,6 +872,10 @@
         "switch_active": "Bloquear la finalización de chats que están en la cola activo",
         "switch_inactive": "Bloquear la finalización de chats que están en la cola inactivo"
       },
+      "bulk_take": {
+        "switch_active": "Asumir chats en masa",
+        "switch_inactive": "Asumir chats en masa"
+      },
       "queue_prioritization": {
         "tooltip": "Esta función permite a los agentes elegir las colas que recibirán contactos, dentro de las previamente seleccionadas en el sector.",
         "switch_active": "Permitir que los agentes elijan sus colas dentro del sector activo",
@@ -852,6 +884,9 @@
       "show_agent_status_count_timer": {
         "switch_active": "Mostrar temporizador de estado en pausas personalizadas del agente activo",
         "switch_inactive": "Mostrar temporizador de estado en pausas personalizadas del agente inactivo"
+      },
+      "show_waiting_rooms_count": {
+        "switch_label": "Mostrar el contador con el número de chats esperando soporte humano"
       }
     },
     "custom_sector": "Personalizar nuevo sector (recomendado)",
@@ -877,6 +912,15 @@
       "hint": "Las colas son grupos de atención dentro de un sector; podrás crear nuevas filas o editarlas cuando desees.",
       "queue_definitions": "Configuraciones de la cola",
       "delete_or_edit": "Eliminar o editar",
+      "limit_chats": {
+        "title": "Limite de chats esperando soporte",
+        "switch": {
+          "label": "Limite de chats",
+          "helper": "Cuando el límite es alcanzado, nuevos chats no serán creados.",
+          "input_label": "Máximo de chats esperando",
+          "input_placeholder": "Ejemplo: 50"
+        }
+      },
       "message": {
         "create": "Fila creada con éxito",
         "update": "Fila actualizada con éxito",

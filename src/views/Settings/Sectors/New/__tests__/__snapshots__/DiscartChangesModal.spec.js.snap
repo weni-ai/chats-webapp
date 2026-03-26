@@ -1,7 +1,3 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`DiscartChangesModal.vue > to match snapshot 1`] = `
-"<div data-v-7a1d255d="" class="discart-changes-modal" data-testid="discart-changes-modal">
-  <p data-v-7a1d255d="" class="discart-changes-modal__text">Text</p>
-</div>"
-`;
+exports[`DiscartChangesModal.vue > to match snapshot 1`] = `"<!--v-if-->"`;

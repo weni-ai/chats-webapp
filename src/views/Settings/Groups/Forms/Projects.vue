@@ -4,16 +4,18 @@
       {{ $t('config_chats.groups.projects_form.title') }}
     </h2>
     <fieldset>
-      <UnnnicLabel
-        :label="$t('config_chats.groups.projects_form.field.project.label')"
-      />
-      <UnnnicSelectSmart
+      <UnnnicSelect
         v-model="selectedSector"
         :options="sectorProjectsNames"
-        autocomplete
-        autocompleteIconLeft
-        autocompleteClearOnFocus
-        @update:model-value="selectSector"
+        :label="$t('config_chats.groups.projects_form.field.project.label')"
+        :placeholder="
+          $t('config_chats.groups.projects_form.field.project.placeholder')
+        "
+        returnObject
+        clearable
+        enableSearch
+        :search="searchSector"
+        @update:search="searchSector = $event"
       />
     </fieldset>
     <section
@@ -59,7 +61,8 @@ export default {
   emits: ['update:modelValue', 'changeValid', 'remove-sector'],
   data() {
     return {
-      selectedSector: [],
+      selectedSector: null,
+      searchSector: '',
       sectors: [],
       sectorPage: 0,
       sectorRequestResultsLimit: 20,
@@ -75,25 +78,14 @@ export default {
       },
     },
     sectorProjectsNames() {
-      const projectsSectorsNames = [
-        {
-          value: '',
-          label: this.$t(
-            'config_chats.groups.projects_form.field.project.placeholder',
-          ),
-        },
-      ];
-
-      this.sectors.forEach((sector) => {
+      return this.sectors.map((sector) => {
         const { name, uuid } = sector;
 
-        projectsSectorsNames.push({
+        return {
           value: uuid,
           label: name,
-        });
+        };
       });
-
-      return projectsSectorsNames;
     },
     valid() {
       return !!this.group.sectors?.length;
@@ -103,6 +95,34 @@ export default {
   watch: {
     valid() {
       this.$emit('changeValid', this.valid);
+    },
+    selectedSector(newVal) {
+      if (!newVal?.value) {
+        return;
+      }
+      const sector = this.sectors.find((s) => s.uuid === newVal.value);
+      if (!sector) {
+        return;
+      }
+      if (sector.has_group_sector) {
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t(
+              'config_chats.groups.projects_form.message.has_group_sector',
+              { sectorName: sector.name },
+            ),
+            type: 'error',
+          },
+        });
+        this.$nextTick(() => {
+          this.selectedSector = null;
+        });
+        return;
+      }
+      this.addGroupSector(sector);
+      this.$nextTick(() => {
+        this.selectedSector = null;
+      });
     },
   },
 
@@ -130,27 +150,6 @@ export default {
       }
     },
 
-    selectSector(selectedSector) {
-      if (selectedSector.length > 0) {
-        const sector = this.sectors.find((sector) => {
-          const { uuid } = sector;
-
-          return uuid === selectedSector[0].value;
-        });
-        if (sector?.has_group_sector) {
-          unnnic.unnnicCallAlert({
-            props: {
-              text: this.$t(
-                'config_chats.groups.projects_form.message.has_group_sector',
-                { sectorName: sector.name },
-              ),
-              type: 'error',
-            },
-          });
-          this.selectedSector = [this.sectorProjectsNames[0]];
-        } else this.addGroupSector(sector);
-      }
-    },
     addGroupSector(sector) {
       if (!sector) return;
       const sectors = this.group.sectors.some(
@@ -160,8 +159,6 @@ export default {
         : [{ ...sector, new: true }, ...this.group.sectors];
 
       this.group.sectors = sectors;
-
-      this.selectedSector = [this.sectorProjectsNames[0]];
     },
     removeSector(sectorUuid) {
       const sector = this.group.sectors.find(

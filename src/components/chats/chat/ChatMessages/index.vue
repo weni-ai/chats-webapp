@@ -723,6 +723,7 @@ export default {
     },
 
     handleSeenRoomMessages() {
+      if (!this.room) return;
       const newMessages =
         this.newMessagesByRoom[this.room.uuid]?.messages || [];
 
@@ -868,8 +869,8 @@ export default {
 .chat-messages__scroll-button {
   &-container {
     position: absolute;
-    bottom: $unnnic-spacing-md;
-    right: $unnnic-spacing-sm;
+    bottom: $unnnic-space-6;
+    right: $unnnic-space-4;
     z-index: 9;
   }
   &-chip {
@@ -897,20 +898,20 @@ export default {
   height: 100%;
 
   &--view-mode {
-    padding-left: $unnnic-spacing-sm;
+    padding-left: $unnnic-space-4;
   }
 }
 
 .chat-messages {
   overflow: hidden auto;
 
-  padding-right: $unnnic-spacing-sm;
+  padding-right: $unnnic-space-4;
 
   height: 100%;
 
   &__container-date {
     &:last-of-type {
-      margin-bottom: $unnnic-spacing-md;
+      margin-bottom: $unnnic-space-6;
     }
   }
 
@@ -919,7 +920,7 @@ export default {
   }
 
   &__message {
-    margin-top: $unnnic-spacing-md;
+    margin-top: $unnnic-space-6;
 
     &.highlighted {
       animation: highlight-message 1s ease-in-out;
@@ -929,17 +930,17 @@ export default {
       justify-self: flex-end;
 
       & + & {
-        margin-top: $unnnic-spacing-nano;
+        margin-top: $unnnic-space-1;
       }
     }
 
     &.received {
       & + & {
-        margin-top: $unnnic-spacing-nano;
+        margin-top: $unnnic-space-1;
       }
 
       &.different-user {
-        margin-top: $unnnic-spacing-md !important;
+        margin-top: $unnnic-space-6 !important;
       }
     }
 
@@ -948,15 +949,15 @@ export default {
     }
 
     .audio {
-      padding: $unnnic-spacing-xs;
-      margin: $unnnic-spacing-nano 0;
+      padding: $unnnic-space-2;
+      margin: $unnnic-space-1 0;
     }
 
     &__divisor {
       display: flex;
       align-items: center;
-      gap: $unnnic-spacing-stack-xl;
-      margin-bottom: $unnnic-inline-md;
+      gap: $unnnic-space-10;
+      margin-bottom: $unnnic-space-6;
 
       &__label {
         font-size: $unnnic-font-size-body-md;
@@ -973,10 +974,10 @@ export default {
   }
 
   &__tags {
-    margin: $unnnic-spacing-inline-md 0;
+    margin: $unnnic-space-6 0;
 
     display: grid;
-    gap: $unnnic-spacing-md;
+    gap: $unnnic-space-6;
 
     :deep(.unnnic-brand-tag__icon) {
       display: none;

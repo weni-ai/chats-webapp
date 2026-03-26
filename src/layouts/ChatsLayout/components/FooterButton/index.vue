@@ -9,6 +9,22 @@
       data-testid="bulk-transfer-section"
     >
       <UnnnicToolTip
+        v-if="isBulkTakeContactsEnabled"
+        enabled
+        class="tooltip"
+        :text="$t('take_over_all_selected_chats_tooltip')"
+        side="top"
+      >
+        <UnnnicButton
+          class="chats-layout-footer-button__button"
+          :text="$t('take_over')"
+          :type="takeOverButtonType"
+          size="large"
+          data-testid="take-over-button"
+          @click="handleModalTakeOverRooms"
+        />
+      </UnnnicToolTip>
+      <UnnnicToolTip
         v-if="isTransferContactsEnabled"
         enabled
         class="tooltip"
@@ -18,7 +34,7 @@
         <UnnnicButton
           class="chats-layout-footer-button__button"
           :text="$t('transfer')"
-          :type="isOnlyBulkTransferBtn ? 'primary' : 'secondary'"
+          :type="transferButtonType"
           size="large"
           data-testid="transfer-button"
           @click="handleModalTransferRooms"
@@ -34,14 +50,21 @@
         <UnnnicButton
           class="chats-layout-footer-button__button chats-layout-footer-button__button--end"
           :text="$t('end')"
-          type="primary"
+          :type="closeButtonType"
           size="large"
           data-testid="end-button"
           @click="handleModalCloseRooms"
         />
       </UnnnicToolTip>
+      <ModalTakeOverRooms
+        v-if="isModalTakeOverRoomsOpened"
+        v-model="isModalTakeOverRoomsOpened"
+        data-testid="bulk-take-over-modal"
+        @close="handleModalTakeOverRooms"
+      />
       <ModalTransferRooms
         v-if="isModalTransferRoomsOpened"
+        v-model="isModalTransferRoomsOpened"
         bulkTransfer
         data-testid="bulk-transfer-modal"
         @close="handleModalTransferRooms"
@@ -63,6 +86,7 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 
+import ModalTakeOverRooms from '@/components/chats/chat/ModalTakeOverRooms.vue';
 import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
 import ModalCloseRooms from '@/components/chats/chat/ModalCloseRooms.vue';
 
@@ -70,12 +94,21 @@ export default {
   name: 'ChatsLayoutFooterButton',
 
   components: {
+    ModalTakeOverRooms,
     ModalTransferRooms,
     ModalCloseRooms,
   },
 
+  props: {
+    isViewMode: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   data() {
     return {
+      isModalTakeOverRoomsOpened: false,
       isModalTransferRoomsOpened: false,
       isModalCloseRoomsOpened: false,
     };
@@ -94,20 +127,30 @@ export default {
       return this.featureFlags.active_features?.includes('weniChatsBulkClose');
     },
 
+    isBulkTakeFeatureEnabled() {
+      return this.featureFlags.active_features?.includes('weniChatsBulkTake');
+    },
+
     currentSelectedRooms() {
       return this.activeTab === 'ongoing'
         ? this.selectedOngoingRooms
         : this.selectedWaitingRooms;
     },
-    isOnlyBulkTransferBtn() {
-      return this.isTransferContactsEnabled && !this.isBulkCloseContactsEnabled;
+
+    isBulkTakeContactsEnabled() {
+      if (this.isViewMode) return false;
+      if (!this.isBulkTakeFeatureEnabled) return false;
+      if (!this.project.config?.can_use_bulk_take) return false;
+      return this.activeTab === 'waiting';
     },
+
     isTransferContactsEnabled() {
       return (
         this.project.config?.can_use_bulk_transfer &&
         this.activeTab === 'ongoing'
       );
     },
+
     isBulkCloseContactsEnabled() {
       if (!this.isBulkCloseFeatureEnabled) return false;
 
@@ -122,8 +165,50 @@ export default {
 
       return true;
     },
+
+    takeOverButtonType() {
+      if (
+        (!this.isTransferContactsEnabled && !this.isBulkCloseContactsEnabled) ||
+        this.isBulkCloseContactsEnabled
+      ) {
+        return 'primary';
+      }
+      return 'secondary';
+    },
+
+    transferButtonType() {
+      if (!this.isBulkCloseContactsEnabled) {
+        return 'primary';
+      }
+      return 'secondary';
+    },
+
+    closeButtonType() {
+      if (this.isTransferContactsEnabled) {
+        return 'primary';
+      }
+      return 'secondary';
+    },
   },
+
+  watch: {
+    activeTab() {
+      this.isModalTakeOverRoomsOpened = false;
+      this.isModalTransferRoomsOpened = false;
+      this.isModalCloseRoomsOpened = false;
+    },
+  },
+
   methods: {
+    handleModalTakeOverRooms() {
+      if (
+        !this.isModalTakeOverRoomsOpened &&
+        this.selectedWaitingRooms.length === 0
+      ) {
+        return;
+      }
+      this.isModalTakeOverRoomsOpened = !this.isModalTakeOverRoomsOpened;
+    },
     handleModalTransferRooms() {
       this.isModalTransferRoomsOpened = !this.isModalTransferRoomsOpened;
     },

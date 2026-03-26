@@ -149,6 +149,7 @@
   "select_this_chat": "Selecionar este chat",
   "deselect_this_chat": "Desmarcar este chat",
   "transfer_all_selected_chats": "Transferir todos os chats selecionados",
+  "take_over_all_selected_chats_tooltip": "Assumir todos os chats selecionados",
   "end_all_selected_chats_tooltip": "Encerrar todos os chats selecionados",
   "number_of_chats_selected": "{count} chat selecionado | {count} chats selecionados",
   "image": "Imagem",
@@ -331,6 +332,14 @@
       "unavailable": "Não há resumo disponível",
       "open_summary_tooltip": "Abrir o resumo do chat",
       "close_summary_tooltip": "Fechar o resumo do chat",
+      "archived": {
+        "download_button": "Baixar mensagens",
+        "download_error": "Erro ao fazer download das mensagens. Tente novamente.",
+        "disclaimer": {
+          "title": "Mensagens arquivadas",
+          "description": "Este suporte foi encerrado há mais de um ano, portanto, as mensagens foram movidas para os arquivos. Para visualizá-las, clique no botão “Baixar mensagens”."
+        }
+      },
       "feedback": {
         "title": "O que não funcionou?",
         "needs_improvement_text": "Ajude a melhorar os resumos. Sua opinião sobre esse resumo nos ajuda a torná-lo mais claro e útil.",
@@ -389,6 +398,7 @@
     "tags": "Tags do chat",
     "discussions": "Discussões",
     "waiting": "Aguardando",
+    "waiting_tooltip": "Chats que devem ser atendidos",
     "waiting_assistance": "Aguardando atendimento",
     "in_progress": "Em andamento",
     "sent_flows": "Fluxos enviados",
@@ -405,7 +415,7 @@
       "does_not_have_permission": "Você não possui permissão para transferir este chat"
     },
     "open_chat": "Abrir chat",
-    "get_chat": "Pegar chat",
+    "get_chat": "Pegar somente este chat",
     "get_chat_question": "Pegar chat?",
     "get_chat_confirmation": "Confirme se deseja realizar o atendimento de {contact}",
     "get_chat_error": "Erro ao tentar pegar o chat",
@@ -450,6 +460,7 @@
   "about": "sobre",
   "today": "Hoje",
   "transfer": "Transferir",
+  "take_over": "Assumir",
   "suggested_answers": "Respostas sugeridas",
   "attach": "Anexar",
   "send": "Enviar",
@@ -459,6 +470,7 @@
   "action_cannot_be_reversed": "Essa ação não poderá ser revertida",
   "end": "Encerrar",
   "end_chat": "Finalizar",
+  "end_discussion": "Finalizar discussão",
   "cancel": "Cancelar",
   "add": "Adicionar",
   "proceed": "Prosseguir",
@@ -579,7 +591,20 @@
     "end_all_chats": "Encerrar todos ({count} chats)",
     "back": "Voltar",
     "optional_tags_title": "Tags não são obrigatórias para finalizar chats no setor {sector}",
-    "optional_tags_description": "Se você selecionar alguma tag abaixo, ela será aplicada ao {count} chat e substituirá quaisquer tags existentes. | Se você selecionar alguma tag abaixo, ela será aplicada aos {count} chats e substituirá quaisquer tags existentes."
+    "optional_tags_description": "Se você selecionar alguma tag abaixo, ela será aplicada ao {count} chat e substituirá quaisquer tags existentes. | Se você selecionar alguma tag abaixo, ela será aplicada aos {count} chats e substituirá quaisquer tags existentes.",
+    "no_tags_in_sector": "Não há tags cadastradas neste setor para serem selecionadas."
+  },
+  "close_chat": {
+    "confirm_end": "Tem certeza que deseja encerrar este chat?"
+  },
+  "bulk_take": {
+    "title": "Assumir todos os chats selecionados",
+    "selected_chats_count": "{count} chat está selecionado para assumir. | {count} chats estão selecionados para assumir.",
+    "confirm_take_over_selected": "Tem certeza que deseja assumir todos os chats selecionados?",
+    "take_over_all": "Assumir todos",
+    "success_message": "{count} chat assumido com sucesso! | {count} chats assumidos com sucesso!",
+    "partial_success_message": "{success} chat assumido, {failed} falhou. Tente novamente. | {success} chats assumidos, {failed} falharam. Tente novamente.",
+    "error_message": "Não foi possível assumir os chats, tente novamente"
   },
   "close_contact": "Encerrar contato",
   "close_contact_confirmation": "Tem certeza que deseja encerrar este contato?",
@@ -622,7 +647,8 @@
     },
     "close": {
       "title": "Encerrar discussão",
-      "description": "Você não poderá mais trocar mensagens nesta discussão"
+      "question": "Tem certeza que deseja encerrar a discussão sobre {contact}?",
+      "description": "Uma vez finalizada, não será possível enviar mais mensagens."
     },
     "add_agents": {
       "title": "Adicionar agentes",
@@ -714,6 +740,8 @@
     "groups": "Grupos ({length})",
     "group_contacts": "{n} contato | {n} contatos",
     "letter_group": "{letter} ({length})",
+    "letter_group_unnamed": "Sem nome ({length})",
+    "unnamed_contact": "Contato sem nome",
     "add_contact": "Adicionar contato",
     "remove_selected_contacts": "Remover contatos selecionados",
     "add_new_contact": {
@@ -858,6 +886,9 @@
       "show_agent_status_count_timer": {
         "switch_active": "Exibir temporizador de status em pausas personalizadas do atendente",
         "switch_inactive": "Exibir temporizador de status em pausas personalizadas do atendente"
+      },
+      "show_waiting_rooms_count": {
+        "switch_label": "Exibir o contador com o número de chats esperando atendimento humano"
       }
     },
     "custom_sector": "Personalizar novo setor (recomendado)",
@@ -883,6 +914,15 @@
       "info": "As filas são grupos de atendimento dentro de um setor, é possível direcionar contatos de um fluxo para uma fila específica",
       "hint": "As filas são grupos de atendimento dentro do setor, você poderá criar novas filas ou editar quando quiser",
       "queue_definitions": "Definições da fila",
+      "limit_chats": {
+        "title": "Limite de chats aguardando suporte",
+        "switch": {
+          "label": "Limite de chats",
+          "helper": "Quando o limite é atingido, novos chats não serão criados.",
+          "input_label": "Máximo de chats aguardando",
+          "input_placeholder": "Exemplo: 50"
+        }
+      },
       "message": {
         "create": "Fila criada com sucesso",
         "update": "Fila atualizada com sucesso",

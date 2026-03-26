@@ -102,7 +102,10 @@ describe('DiscussionAbout', () => {
 
     expect(wrapper.vm.isAddAgentModalOpen).toBe(true);
 
-    expect(wrapper.find('[data-testid="add-agent-modal"]').exists()).toBe(true);
+    await flushPromises();
+
+    const modalAddAgent = wrapper.find('[data-testid="add-agent-modal"]');
+    expect(modalAddAgent.exists()).toBe(true);
 
     const cancelAddAgentModalButton = wrapper.find(
       '[data-testid="cancel-add-agent-modal-button"]',
@@ -114,9 +117,10 @@ describe('DiscussionAbout', () => {
 
   it('adds an agent successfully', async () => {
     await wrapper.setData({ isAddAgentModalOpen: true });
-    wrapper.vm.agentSelected = [
-      { value: 'agent.smith@example.com', label: 'Agent Smith' },
-    ];
+    wrapper.vm.agentSelected = {
+      value: 'agent.smith@example.com',
+      label: 'Agent Smith',
+    };
 
     discussionStore.addAgent.mockResolvedValue({
       first_name: 'Agent',
@@ -134,9 +138,10 @@ describe('DiscussionAbout', () => {
 
   it('handles error when adding an agent fails', async () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    wrapper.vm.agentSelected = [
-      { value: 'agent.smith@example.com', label: 'Agent Smith' },
-    ];
+    wrapper.vm.agentSelected = {
+      value: 'agent.smith@example.com',
+      label: 'Agent Smith',
+    };
     discussionStore.addAgent.mockRejectedValue(new Error('Test error'));
 
     await wrapper.vm.handlingAddAgent();

@@ -49,41 +49,19 @@ const defaultFeedbackTagsResponse = {
   },
 };
 
-const createModalStub = () => ({
-  name: 'UnnnicModalDialogStub',
-  inheritAttrs: false,
-  props: ['modelValue', 'title', 'primaryButtonProps', 'showCloseIcon'],
-  emits: ['primary-button-click', 'update:modelValue'],
-  template: `
-    <div data-testid="feedback-modal" v-bind="$attrs">
-      <slot />
-      <button
-        data-testid="modal-primary-button"
-        :disabled="primaryButtonProps?.disabled"
-        @click="$emit('primary-button-click')"
-      >
-        {{ primaryButtonProps?.text }}
-      </button>
-      <button
-        data-testid="modal-close"
-        @click="$emit('update:modelValue', false)"
-      >
-        Close
-      </button>
-    </div>
-  `,
-});
-
 describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
   let wrapper;
 
   const mountComponent = (props = {}, options = {}) => {
     return mount(FeedbackModal, {
-      props: { messageUuid: 'msg-uuid-123', ...props },
+      props: {
+        messageUuid: 'msg-uuid-123',
+        modelValue: true,
+        ...props,
+      },
       global: {
         mocks: { $t: (key) => key },
         stubs: {
-          UnnnicModalDialog: createModalStub(),
           UnnnicSkeletonLoading: {
             name: 'UnnnicSkeletonLoadingStub',
             template: '<div class="skeleton-stub" />',
@@ -93,7 +71,7 @@ describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
             props: ['modelValue', 'placeholder', 'label', 'maxLength'],
             template: `
               <textarea
-                :data-testid="$attrs['data-testid'] || 'feedback-textarea'"
+                data-testid="feedback-textarea"
                 :value="modelValue"
                 @input="$emit('update:modelValue', $event.target.value)"
               />
@@ -125,8 +103,9 @@ describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
       wrapper = mountComponent();
       await flushPromises();
 
-      const modal = wrapper.find('[data-testid="feedback-modal"]');
-      expect(modal.exists()).toBe(true);
+      expect(wrapper.find('[data-testid="feedback-modal"]').exists()).toBe(
+        true,
+      );
       expect(
         wrapper.find('.transcription-feedback-modal__content').exists(),
       ).toBe(true);
@@ -136,9 +115,7 @@ describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
       wrapper = mountComponent();
       await flushPromises();
 
-      console.log(wrapper.html());
-
-      expect(wrapper.findComponent('.tag-group').exists()).toBe(true);
+      expect(wrapper.find('.tag-group').exists()).toBe(true);
       expect(wrapper.find('[data-testid="feedback-textarea"]').exists()).toBe(
         true,
       );
@@ -165,7 +142,7 @@ describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
       await flushPromises();
 
       const primaryButton = wrapper.find(
-        '[data-testid="modal-primary-button"]',
+        '[data-testid="modal-confirm-button"]',
       );
       expect(primaryButton.attributes('disabled')).toBeDefined();
     });
@@ -179,18 +156,20 @@ describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
       await wrapper.vm.$nextTick();
 
       const primaryButton = wrapper.find(
-        '[data-testid="modal-primary-button"]',
+        '[data-testid="modal-confirm-button"]',
       );
+
       expect(primaryButton.attributes('disabled')).toBeUndefined();
     });
   });
 
   describe('handleCancel', () => {
-    it('emits close with reset when modal close is triggered', async () => {
+    it('emits close with reset when cancel button is clicked', async () => {
       wrapper = mountComponent();
       await flushPromises();
 
-      await wrapper.find('[data-testid="modal-close"]').trigger('click');
+      const cancelButton = wrapper.findAll('[data-testid="modal-close"]');
+      await cancelButton[0].trigger('click');
 
       expect(wrapper.emitted('close')).toBeTruthy();
       expect(wrapper.emitted('close')[0]).toEqual([{ reset: true }]);
@@ -206,11 +185,13 @@ describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
       await flushPromises();
 
       wrapper.vm.feedbackText = 'The transcription was wrong';
+
       await wrapper.vm.$nextTick();
 
       await wrapper
-        .find('[data-testid="modal-primary-button"]')
+        .find('[data-testid="modal-confirm-button"]')
         .trigger('click');
+
       await flushPromises();
 
       expect(
@@ -236,13 +217,10 @@ describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
       wrapper = mountComponent();
       await flushPromises();
 
-      wrapper.vm.feedbackSelectedCategory = [
-        { uuid: 'tag-uuid-1', name: 'Incorrect words' },
-      ];
-      await wrapper.vm.$nextTick();
+      await wrapper.find('[data-testid="tag__tag-uuid-1"]').trigger('click');
 
       await wrapper
-        .find('[data-testid="modal-primary-button"]')
+        .find('[data-testid="modal-confirm-button"]')
         .trigger('click');
       await flushPromises();
 
@@ -269,10 +247,11 @@ describe('FeedbackModal (TranscriptionFeedbackModal)', () => {
       await flushPromises();
 
       wrapper.vm.feedbackText = 'Feedback';
+
       await wrapper.vm.$nextTick();
 
       await wrapper
-        .find('[data-testid="modal-primary-button"]')
+        .find('[data-testid="modal-confirm-button"]')
         .trigger('click');
       await flushPromises();
 

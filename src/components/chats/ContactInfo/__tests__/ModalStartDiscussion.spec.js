@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { flushPromises, mount, config } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 
 import ModalStartDiscussion from '../ModalStartDiscussion.vue';
 
@@ -45,19 +45,13 @@ describe('ModalStartDiscussion', () => {
         mocks: {
           $t: (key) => key,
         },
-        components: {
-          UnnnicModalDialog: config.global.stubs.UnnnicModalDialog,
-        },
-        stubs: {
-          teleport: true,
-        },
       },
     });
     discussionsStore = useDiscussions();
   });
 
   it('renders correctly with initial data', () => {
-    const modal = wrapper.findComponent({ name: 'UnnnicModalDialogStub' });
+    const modal = wrapper.getComponent(ModalStartDiscussion);
     expect(modal.exists()).toBe(true);
 
     // Verify component has the necessary form fields
@@ -72,13 +66,13 @@ describe('ModalStartDiscussion', () => {
     expect(wrapper.vm.isConfirmButtonDisabled).toBe(true);
 
     await wrapper.setData({
-      sector: [{ value: '1', label: 'Sector' }],
-      queue: [{ value: '1', label: 'Queue' }],
+      sector: { value: '1', label: 'Sector' },
+      queue: { value: '1', label: 'Queue' },
       subject: 'Test Subject',
       message: 'Test Message',
     });
 
-    await wrapper.vm.$nextTick();
+    await flushPromises();
 
     expect(wrapper.vm.isConfirmButtonDisabled).toBe(false);
   });
@@ -91,23 +85,18 @@ describe('ModalStartDiscussion', () => {
   });
 
   it('loads queues when sector is selected', async () => {
-    await wrapper.setData({ sector: [{ value: '1', label: 'Sector' }] });
+    await wrapper.setData({ sector: { value: '1', label: 'Sector' } });
+    await flushPromises();
 
     expect(Queue.list).toHaveBeenCalledWith('1');
 
-    expect(wrapper.vm.queuesToSelect).toEqual([
-      {
-        value: '',
-        label: wrapper.vm.$t('discussions.start_discussion.form.search_queue'),
-      },
-      { value: '1', label: 'Queue' },
-    ]);
+    expect(wrapper.vm.queuesToSelect).toEqual([{ value: '1', label: 'Queue' }]);
   });
 
   it('creates a new discussion and redirects', async () => {
     await wrapper.setData({
-      sector: [{ value: '1', label: 'Sector' }],
-      queue: [{ value: '1', label: 'Queue' }],
+      sector: { value: '1', label: 'Sector' },
+      queue: { value: '1', label: 'Queue' },
       subject: 'Test Subject',
       message: 'Test Message',
     });

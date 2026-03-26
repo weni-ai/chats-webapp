@@ -14,7 +14,8 @@
       @close-modal="closeModal('getChat')"
     />
 
-    <UnnnicModal
+    <!-- TODO: It will be prioritized and replaced by a new modal; currently, it is not falling into any viewing cycle. -->
+    <!-- <UnnnicModal
       data-testid="modal-assume-chat"
       :text="$t('chats.your_chat_assumed', { contact: assumedChatContactName })"
       :description="
@@ -26,7 +27,7 @@
       scheme="feedback-green"
       :showModal="modalsShowing.assumedChat"
       @close="closeModal('assumedChat')"
-    />
+    /> -->
 
     <ModalCloseChat
       v-if="modalsShowing.closeChat"
@@ -45,13 +46,6 @@
       @close="closeModal('fileUploader')"
       @update:model-value="modalFileUploaderFiles = $event"
     />
-
-    <ModalQuickMessages
-      v-if="modalsShowing.quickMessages"
-      data-testid="quick-messages-modal"
-      @close="closeModal('quickMessages')"
-      @select-quick-message="emitSelectQuickMessage"
-    />
   </section>
 </template>
 
@@ -64,7 +58,6 @@ import { useDashboard } from '@/store/modules/dashboard';
 
 import FileUploader from '@/components/chats/MessageManager/FileUploader.vue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
-import ModalQuickMessages from '@/components/chats/QuickMessages/ModalQuickMessages.vue';
 
 import ModalCloseChat from './ModalCloseChat.vue';
 
@@ -74,7 +67,6 @@ export default {
   components: {
     FileUploader,
     ModalGetChat,
-    ModalQuickMessages,
     ModalCloseChat,
   },
   emits: ['got-chat', 'file-uploader-progress', 'select-quick-message'],
@@ -88,7 +80,6 @@ export default {
         assumedChat: false,
         closeChat: false,
         fileUploader: false,
-        quickMessages: false,
       },
 
       modalFileUploaderFiles: [],
@@ -143,10 +134,6 @@ export default {
     },
     emitFileUploaderProgress(progress) {
       this.$emit('file-uploader-progress', progress);
-    },
-    emitSelectQuickMessage(quickMessage) {
-      this.$emit('select-quick-message', quickMessage);
-      this.closeModal('quickMessages');
     },
   },
 };

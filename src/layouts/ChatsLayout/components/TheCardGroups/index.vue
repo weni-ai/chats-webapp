@@ -62,17 +62,16 @@
         <TabChip
           v-for="tab in roomsTabs"
           :key="tab.key"
+          class="tab-chip"
+          :hideCount="
+            tab.key === 'waiting' &&
+            project.config?.can_see_waiting_rooms_count === false
+          "
           :label="tab.label"
           :count="
             tab.key === 'discussions' ? discussionsCount : roomsCount[tab.key]
           "
-          :showDot="
-            tab.key === 'ongoing'
-              ? showOngoingDot
-              : tab.key === 'discussions'
-                ? showDiscussionsDot
-                : false
-          "
+          :showDot="getShowDotByTab(tab.key)"
           :active="activeTab === tab.key"
           @click="activeTab = tab.key"
         />
@@ -170,6 +169,7 @@
     </section>
     <ModalQueuePriorizations
       v-if="showModalQueue"
+      v-model="showModalQueue"
       data-testid="queue-prioritization-modal"
       @close="handleModalQueuePriorization"
     />
@@ -269,6 +269,13 @@ export default {
       'showDiscussionsDot',
     ]),
 
+    showWaitingDot() {
+      return (
+        this.rooms_queue?.length > 0 &&
+        this.project.config?.can_see_waiting_rooms_count === false
+      );
+    },
+
     roomsTabs() {
       const tabs = [
         { key: 'ongoing', label: this.$t('chats.in_progress') },
@@ -327,16 +334,26 @@ export default {
       return this.featureFlags.active_features?.includes('weniChatsBulkClose');
     },
 
+    isBulkTakeFeatureEnabled() {
+      return this.featureFlags.active_features?.includes('weniChatsBulkTake');
+    },
+
     showSelectAllCheckbox() {
       const canBulkTransfer = this.project.config?.can_use_bulk_transfer;
       const canBulkClose =
         this.isBulkCloseFeatureEnabled &&
         this.project.config?.can_use_bulk_close;
+      const canBulkTake =
+        this.isBulkTakeFeatureEnabled &&
+        this.project.config?.can_use_bulk_take &&
+        !this.isViewMode;
       const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
       const hasRooms = this.countRooms[this.activeTab] > 0;
 
       if (this.activeTab === 'waiting') {
-        return hasRooms && canBulkClose && !blockCloseInQueue;
+        return (
+          hasRooms && (canBulkTake || (canBulkClose && !blockCloseInQueue))
+        );
       }
 
       if (this.activeTab === 'ongoing') {
@@ -401,12 +418,16 @@ export default {
       const canBulkClose =
         this.isBulkCloseFeatureEnabled &&
         this.project.config?.can_use_bulk_close;
+      const canBulkTake =
+        this.isBulkTakeFeatureEnabled &&
+        this.project.config?.can_use_bulk_take &&
+        !this.isViewMode;
       const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
 
       if (this.isMobile) return false;
 
       if (this.activeTab === 'waiting') {
-        return canBulkClose && !blockCloseInQueue;
+        return canBulkTake || (canBulkClose && !blockCloseInQueue);
       }
 
       return canBulkTransfer || canBulkClose;
@@ -433,6 +454,14 @@ export default {
       deep: true,
       handler(newRooms, oldRooms) {
         this.updateRoomsCount(newRooms.length, oldRooms.length, 'waiting');
+
+        const roomsWentEmpty = newRooms.length === 0 && oldRooms.length > 0;
+        const counterShowsMore = this.roomsCount.waiting > 0;
+        const isNotLoading = !this.isLoadingRooms;
+
+        if (roomsWentEmpty && counterShowsMore && isNotLoading) {
+          this.refetchWaitingRooms();
+        }
       },
     },
     rooms_flow_start: {
@@ -490,6 +519,16 @@ export default {
       setActiveDiscussion: 'setActiveDiscussion',
       getAllDiscussion: 'getAll',
     }),
+    getShowDotByTab(tab) {
+      const dotsMap = {
+        ongoing: this.showOngoingDot,
+        waiting: this.showWaitingDot,
+        discussions: this.showDiscussionsDot,
+        flow_start: false,
+      };
+
+      return dotsMap[tab] || false;
+    },
     updateRoomsCount(newSize, oldSize, key) {
       if (newSize === oldSize || !this.initialLoaded || this.isLoadingRooms)
         return;
@@ -547,6 +586,10 @@ export default {
         this.page.search += 1;
         this.listRoom(true, this.orderBy[this.activeTab]);
       }
+    },
+    async refetchWaitingRooms() {
+      this.page.waiting = 0;
+      await this.listRoom(true, this.orderBy.waiting, 'waiting', true);
     },
     async listDiscussions() {
       try {
@@ -740,6 +783,10 @@ export default {
       gap: $unnnic-spacing-xs;
       padding-left: $unnnic-spacing-xs;
       padding-right: $unnnic-spacing-xs;
+
+      :deep(.tab-chip__chip) {
+        height: $unnnic-space-8;
+      }
 
       &--hide-order-by {
         margin-bottom: $unnnic-space-4;

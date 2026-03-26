@@ -436,11 +436,13 @@ watch(
   (newStatus) => {
     if (
       newStatus === 'OFFLINE' &&
+      configStore.socketClosedOffline &&
       moduleStorage.getItem(statusAgentKey, '', {
         useSession: true,
       }) === 'OFFLINE'
     ) {
       selectedStatus.value = statuses.value[1];
+      configStore.setSocketClosedOffline(false);
     }
   },
 );
@@ -459,7 +461,7 @@ watch(
 .expand-enter-active,
 .expand-leave-active {
   transition: all 0.3s ease-out;
-  max-height: 300px;
+  max-height: 80vh;
 }
 
 .expand-enter-from,
@@ -471,7 +473,7 @@ watch(
 
 .expand-enter-to,
 .expand-leave-from {
-  max-height: 300px;
+  max-height: 80vh;
   opacity: 1;
   overflow: hidden;
 }
@@ -574,6 +576,25 @@ watch(
     z-index: 9999999;
     box-shadow: $unnnic-shadow-1;
     border-radius: $unnnic-radius-4;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding-right: $unnnic-inline-xs;
+    scrollbar-width: thin;
+    scrollbar-color: $unnnic-color-neutral-cleanest $unnnic-color-neutral-soft;
+
+    &::-webkit-scrollbar {
+      width: $unnnic-spacing-inline-nano;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $unnnic-color-neutral-cleanest;
+      border-radius: $unnnic-border-radius-pill;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: $unnnic-color-neutral-soft;
+      border-radius: $unnnic-border-radius-pill;
+    }
 
     &--open {
       display: flex;
@@ -587,6 +608,7 @@ watch(
     display: flex;
     align-items: center;
     gap: $unnnic-border-radius-md;
+    flex-shrink: 0;
 
     &:last-child {
       border-bottom: none;

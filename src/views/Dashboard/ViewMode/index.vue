@@ -164,6 +164,7 @@
 
     <ModalTransferRooms
       v-if="isModalTransferRoomsOpened"
+      v-model="isModalTransferRoomsOpened"
       @close="closeTransferModal()"
     />
   </ChatsLayout>
@@ -246,7 +247,10 @@ export default {
       const canBulkClose =
         this.featureFlags.active_features?.includes('weniChatsBulkClose') &&
         this.project?.config?.can_use_bulk_close;
-      return canBulkTransfer || canBulkClose;
+      const canBulkTake =
+        this.featureFlags.active_features?.includes('weniChatsBulkTake') &&
+        this.project?.config?.can_use_bulk_take;
+      return canBulkTransfer || canBulkClose || canBulkTake;
     },
   },
 

@@ -25,11 +25,11 @@
           v-model="projectConfig.can_close_chats_in_queue"
           :name="configBlockCloseChatsInQueueTranslation"
         />
-        <!-- TODO: Future feature - bulk take -->
-        <!-- <SettingsProjectOptionsItem
+        <SettingsProjectOptionsItem
+          v-if="isBulkTakeFeatureEnabled"
           v-model="projectConfig.can_use_bulk_take"
           :name="configBulkTakeTranslation"
-        /> -->
+        />
         <SettingsProjectOptionsItem
           v-model="projectConfig.can_use_queue_prioritization"
           :name="configQueuePrioritizationTranslation"
@@ -37,6 +37,10 @@
         <SettingsProjectOptionsItem
           v-model="projectConfig.can_see_timer"
           :name="configShowAgentStatusCountTimer"
+        />
+        <SettingsProjectOptionsItem
+          v-model="projectConfig.can_see_waiting_rooms_count"
+          :name="configShowWaitingRoomsCountTranslation"
         />
       </section>
     </section>
@@ -75,9 +79,10 @@ export default {
         filter_offline_agents: false,
         can_use_bulk_close: false,
         can_close_chats_in_queue: false,
-        // can_use_bulk_take: false, // TODO: Future feature - bulk take
+        can_use_bulk_take: false,
         can_use_queue_prioritization: false,
         can_see_timer: false,
+        can_see_waiting_rooms_count: true,
       },
     };
   },
@@ -89,6 +94,10 @@ export default {
 
     isBulkCloseFeatureEnabled() {
       return this.featureFlags.active_features?.includes('weniChatsBulkClose');
+    },
+
+    isBulkTakeFeatureEnabled() {
+      return this.featureFlags.active_features?.includes('weniChatsBulkTake');
     },
 
     isUserManager() {
@@ -128,15 +137,14 @@ export default {
         }`,
       );
     },
-    // TODO: Future feature - bulk take
-    // configBulkTakeTranslation() {
-    //   const canBulkTake = this.projectConfig.can_use_bulk_take;
-    //   return this.$t(
-    //     `config_chats.project_configs.bulk_take.switch_${
-    //       canBulkTake ? 'active' : 'inactive'
-    //     }`,
-    //   );
-    // },
+    configBulkTakeTranslation() {
+      const canBulkTake = this.projectConfig.can_use_bulk_take;
+      return this.$t(
+        `config_chats.project_configs.bulk_take.switch_${
+          canBulkTake ? 'active' : 'inactive'
+        }`,
+      );
+    },
     configQueuePrioritizationTranslation() {
       const canQueuePrioritization =
         this.projectConfig.can_use_queue_prioritization;
@@ -154,6 +162,11 @@ export default {
         }`,
       );
     },
+    configShowWaitingRoomsCountTranslation() {
+      return this.$t(
+        'config_chats.project_configs.show_waiting_rooms_count.switch_label',
+      );
+    },
   },
 
   watch: {
@@ -161,7 +174,14 @@ export default {
       immediate: true,
       handler(newProject) {
         if (newProject.config) {
-          this.projectConfig = newProject.config;
+          const config = {
+            ...newProject.config,
+            can_see_waiting_rooms_count:
+              newProject.config.can_see_waiting_rooms_count === undefined
+                ? true
+                : newProject.config.can_see_waiting_rooms_count,
+          };
+          this.projectConfig = config;
         }
       },
     },
@@ -180,9 +200,10 @@ export default {
         filter_offline_agents,
         can_use_bulk_close,
         can_close_chats_in_queue,
-        // can_use_bulk_take, // TODO: Future feature - bulk take
+        can_use_bulk_take,
         can_use_queue_prioritization,
         can_see_timer,
+        can_see_waiting_rooms_count,
       } = this.projectConfig;
 
       Project.update({
@@ -190,9 +211,10 @@ export default {
         filter_offline_agents,
         can_use_bulk_close,
         can_close_chats_in_queue,
-        // can_use_bulk_take, // TODO: Future feature - bulk take
+        can_use_bulk_take,
         can_use_queue_prioritization,
         can_see_timer,
+        can_see_waiting_rooms_count,
       });
     },
   },
