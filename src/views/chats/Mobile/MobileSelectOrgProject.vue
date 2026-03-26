@@ -7,7 +7,7 @@
     >
       <img
         :src="weniChatsLogo"
-        alt="Weni Chats"
+        alt="Weni Live Desk"
       />
     </header>
 
@@ -78,8 +78,8 @@ export default {
     },
   },
   watch: {
-    projectUuid(newProjectUuid) {
-      this.setProjectUuid(newProjectUuid || '');
+    async projectUuid(newProjectUuid) {
+      await this.setProjectUuid(newProjectUuid || '');
       if (newProjectUuid) {
         const app = this.$root;
         if (app.ws) {
@@ -87,7 +87,12 @@ export default {
         } else {
           app.wsConnect();
         }
-        this.$router.push({ name: 'home' });
+        this.$router.push({ name: 'home' }).catch((error) => {
+          console.error(
+            '[MobileSelectOrgProject] Failed to push to home:',
+            error,
+          );
+        });
       }
     },
     organizations(newOrganizations) {

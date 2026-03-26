@@ -161,7 +161,7 @@ export default {
 
     crumbs: [
       {
-        name: 'Chats',
+        name: 'Live desk',
         path: 'home',
       },
     ],
