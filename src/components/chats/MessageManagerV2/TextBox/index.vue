@@ -3,7 +3,7 @@
     :class="[
       'text-box',
       {
-        'text-box--focused': focused,
+        'text-box--focused': inputMessageFocused,
         'internal-note': isInternalNote,
       },
     ]"
@@ -44,8 +44,8 @@
         spellcheck="true"
         @input="handleTextarea"
         @keydown="handleKeyDown"
-        @focus="focused = true"
-        @blur="focused = false"
+        @focus="inputMessageFocused = true"
+        @blur="inputMessageFocused = false"
         @paste="handlePaste"
       />
     </section>
@@ -58,6 +58,7 @@
     />
     <UnnnicEmojiPicker
       v-show="isEmojiPickerOpen"
+      v-on-click-outside="() => (isEmojiPickerOpen = false)"
       @emoji-selected="handleTextarea"
       @close="isEmojiPickerOpen = false"
     />
@@ -67,6 +68,7 @@
 <script setup lang="ts">
 import { useTemplateRef, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
+import { vOnClickOutside } from '@vueuse/components';
 
 import MessageManagerTextBoxMedias from './Medias.vue';
 import MessageManagerTextBoxAudioRecorder from './AudioRecorder.vue';
@@ -94,6 +96,7 @@ const {
   mediaUploadFiles,
   isEmojiPickerOpen,
   isAudioRecorderVisible,
+  inputMessageFocused,
 } = storeToRefs(messageManager);
 
 const MAX_TEXTAREA_ROWS = 5;
@@ -103,7 +106,6 @@ const textareaRef = useTemplateRef('textArea');
 const audioRecorderRef = useTemplateRef('audioRecorder');
 const uploadFieldRef = useTemplateRef('uploadField');
 
-const focused = ref(false);
 const focus = () => {
   textareaRef.value?.focus();
 };

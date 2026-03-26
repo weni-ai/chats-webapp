@@ -68,6 +68,7 @@ const {
   isLoadingSend,
   audioMessage,
   mediaUploadFiles,
+  isSuggestionBoxOpen,
 } = storeToRefs(messageManager);
 
 const emit = defineEmits<{
@@ -92,7 +93,7 @@ const actions = computed<TextBoxAction[]>(() => {
       hideInDiscussion: true,
       icon: 'bolt',
       tooltip: t('quick_message'),
-      pressed: inputMessage.value.startsWith('/'),
+      pressed: isSuggestionBoxOpen.value,
       disabled: checkDisabledAction('quick_message'),
       action: () => {
         inputMessage.value = inputMessage.value.startsWith('/') ? '' : '/';
@@ -167,7 +168,8 @@ const checkDisabledAction = (action: string) => {
       return (
         audioRecorderStatus.value !== 'idle' ||
         !!audioMessage.value ||
-        mediaUploadFiles.value.length > 0
+        mediaUploadFiles.value.length > 0 ||
+        inputMessage.value.startsWith('/')
       );
     },
     audio: () => {

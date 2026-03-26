@@ -1,7 +1,7 @@
 <template>
   <section
-    v-if="isSuggestionBoxOpen"
-    v-click-outside="close"
+    v-if="isValidToShowSuggestionBox"
+    v-on-click-outside="close"
     class="suggestion-box"
     @keydown.esc="close"
   >
@@ -38,17 +38,23 @@
 </template>
 
 <script>
-import vClickOutside from 'v-click-outside';
-import SuggestionBoxShortcut from './SuggestionBoxShortcut.vue';
+import { nextTick } from 'vue';
 import { mapState } from 'pinia';
+import { vOnClickOutside } from '@vueuse/components';
+
+import SuggestionBoxShortcut from './SuggestionBoxShortcut.vue';
+
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 import { useQuickMessages } from '@/store/modules/chats/quickMessages';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 export default {
   name: 'SuggestionBox',
+
   directives: {
-    clickOutside: vClickOutside.directive,
+    onClickOutside: vOnClickOutside,
   },
+
   components: {
     SuggestionBoxShortcut,
   },
@@ -70,7 +76,7 @@ export default {
       default: false,
     },
   },
-  emits: ['select', 'close', 'open-copilot'],
+  emits: ['select', 'open', 'close', 'open-copilot'],
 
   data: () => ({
     activeShortcutIndex: null,
@@ -79,6 +85,13 @@ export default {
   computed: {
     ...mapState(useQuickMessageShared, ['quickMessagesShared']),
     ...mapState(useQuickMessages, ['quickMessages']),
+    ...mapState(useMessageManager, [
+      'inputMessageFocused',
+      'inputMessage',
+      {
+        isSuggestionBoxOpen: 'isSuggestionBoxOpen',
+      },
+    ]),
     suggestions() {
       const allShortcuts = [...this.quickMessages, ...this.quickMessagesShared];
       const uniqueShortcuts = [];
@@ -95,7 +108,7 @@ export default {
 
       return uniqueShortcuts;
     },
-    isSuggestionBoxOpen() {
+    isValidToShowSuggestionBox() {
       return this.searchStartsWithTrigger && !this.searchHasWhiteSpaces;
     },
     searchStartsWithTrigger() {
@@ -133,7 +146,7 @@ export default {
 
       scrollElement?.scrollIntoView?.({ block: 'center' });
     },
-    isSuggestionBoxOpen(isOpen) {
+    isValidToShowSuggestionBox(isOpen) {
       this.$emit(isOpen ? 'open' : 'close');
     },
     search(newSearch) {
@@ -152,6 +165,9 @@ export default {
       this.$emit('select', suggestion.text);
     },
     close() {
+      if (this.inputMessage === '/') {
+        this.inputMessage = '';
+      }
       this.$emit('close');
     },
     openCopilot() {

@@ -33,7 +33,7 @@
           class="message-manager-box__text-box"
           :modelValue="inputMessage"
           :isInternalNote="isInternalNote"
-          @update:model-value="inputMessage = $event"
+          @update:model-value="onInputMessageUpdate"
           @keydown.stop="onKeyDown"
           @paste="handlePaste"
           @is-typing-handler="isTypingHandler"
@@ -196,10 +196,6 @@ export default {
   },
 
   props: {
-    modelValue: {
-      type: String,
-      default: '',
-    },
     loadingFileValue: {
       validator: (value) => {
         return value === null || typeof value === 'number';
@@ -211,7 +207,7 @@ export default {
       default: false,
     },
   },
-  emits: ['update:modelValue', 'show-quick-messages', 'open-file-uploader'],
+  emits: ['show-quick-messages', 'open-file-uploader'],
 
   data: () => ({
     keyboardEvent: null,
@@ -325,9 +321,12 @@ export default {
       'sendRoomInternalNote',
     ]),
     handleInternalNoteInput() {
-      this.inputMessage = '';
+      this.clearTextBox();
       this.clearReplyMessage();
       this.isInternalNote = !this.isInternalNote;
+    },
+    onInputMessageUpdate(val) {
+      this.inputMessage = val;
     },
     openCopilot() {
       this.isCopilotOpen = true;

@@ -9,6 +9,7 @@ import { useDiscussionMessages } from './discussionMessages';
 import i18n from '@/plugins/i18n';
 
 export const useMessageManager = defineStore('messageManager', () => {
+  const inputMessageFocused = ref(false);
   const inputMessage = ref('');
   const audioMessage = ref<HTMLAudioElement | null>(null);
   const audioRecorderStatus = ref('');
@@ -114,13 +115,13 @@ export const useMessageManager = defineStore('messageManager', () => {
   }
 
   async function sendRoomMessage() {
-    if (this.isInternalNote) {
+    if (isInternalNote.value) {
       await sendInternalNote();
     } else {
       let repliedMessage = null;
-      if (this.replyMessage) {
-        repliedMessage = { ...this.replyMessage };
-        this.replyMessage = null;
+      if (replyMessage.value) {
+        repliedMessage = { ...replyMessage.value };
+        replyMessage.value = null;
       }
       await sendTextMessage(repliedMessage);
       await sendAudioMessage(repliedMessage);
@@ -154,6 +155,7 @@ export const useMessageManager = defineStore('messageManager', () => {
   }
 
   return {
+    inputMessageFocused,
     inputMessage,
     audioMessage,
     audioRecorderStatus,

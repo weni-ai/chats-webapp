@@ -23,7 +23,7 @@
 
       <MessageManagerV2
         v-if="
-          isMessageManagerV2Enabled &&
+          false &&
           (isMessageManagerRoomVisible || isMessageManagerDiscussionVisible)
         "
         data-testid="message-manager"
@@ -35,7 +35,6 @@
         v-else-if="
           isMessageManagerRoomVisible || isMessageManagerDiscussionVisible
         "
-        v-model="textBoxMessage"
         :loadingFileValue="uploadFilesProgress"
         :showSkeletonLoading="isChatSkeletonActive"
         data-testid="message-manager"
@@ -73,7 +72,7 @@
 <script>
 import isMobile from 'is-mobile';
 
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useProfile } from '@/store/modules/profile';
@@ -94,6 +93,7 @@ import HomeChatHeaders from './HomeChatHeaders.vue';
 import HomeChatModals from './HomeChatModals.vue';
 
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 export default {
   name: 'HomeChat',
@@ -120,7 +120,6 @@ export default {
       isMobile: isMobile(),
 
       isRoomContactInfoOpen: false,
-      textBoxMessage: '',
       uploadFilesProgress: undefined,
       isChatSkeletonActive: false,
       tempJoinedDiscussions: [],
@@ -128,6 +127,7 @@ export default {
   },
 
   computed: {
+    ...mapWritableState(useMessageManager, ['inputMessage']),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
       rooms: 'rooms',
@@ -350,7 +350,7 @@ export default {
     },
 
     updateTextBoxMessage(message) {
-      this.textBoxMessage = message;
+      this.inputMessage = message;
     },
     setUploadFilesProgress(progress) {
       this.uploadFilesProgress = progress;
