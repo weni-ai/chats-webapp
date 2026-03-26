@@ -411,7 +411,7 @@ describe('ClosedChats.vue', () => {
     it('handles crumb click navigation', async () => {
       wrapper = createWrapper();
 
-      const homeCrumb = { name: 'Chats', path: 'home' };
+      const homeCrumb = { name: 'Live desk', path: 'home' };
       await wrapper.vm.handlerCrumbClick(homeCrumb);
 
       expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
@@ -425,7 +425,7 @@ describe('ClosedChats.vue', () => {
       await wrapper.setData({
         selectedRoom: mockRoom,
         crumbs: [
-          { name: 'Chats', path: 'home' },
+          { name: 'Live desk', path: 'home' },
           { name: 'History', path: 'closed-rooms' },
           { name: mockRoom.contact.name, path: 'closed-rooms/:roomId' },
         ],
@@ -508,7 +508,7 @@ describe('ClosedChats.vue', () => {
       wrapper = createWrapper();
 
       expect(wrapper.vm.crumbs.length).toBeGreaterThan(0);
-      expect(wrapper.vm.crumbs[0].name).toBe('Chats');
+      expect(wrapper.vm.crumbs[0].name).toBe('Live desk');
     });
   });
 });

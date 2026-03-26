@@ -1,7 +1,7 @@
 {
-  "name": "Weni Chats",
-  "short_name": "Weni Chats",
-  "description": "O Weni Chats é o módulo de atendimento humano dentro da Weni Plataforma. Crie, personalize, atenda e administre contatos e conversas. Comunique-se com integração no WhatsApp e outros canais da sua empresa em um espaço simples e completo.",
+  "name": "Live desk",
+  "short_name": "Live desk",
+  "description": "O Live desk é o módulo de atendimento humano dentro da Weni Plataforma. Crie, personalize, atenda e administre contatos e conversas. Comunique-se com integração no WhatsApp e outros canais da sua empresa em um espaço simples e completo.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

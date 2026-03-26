@@ -3,7 +3,7 @@
     "title": "¡Hola!",
     "description": "¡Selecciona un chat para realizar tus soportes!"
   },
-  "news_and_updates": "Noticias y actualizaciones en Chats",
+  "news_and_updates": "Noticias y actualizaciones en Live desk",
   "custom": "Personalizado",
   "country": {
     "label": "País",
@@ -243,7 +243,7 @@
         "switch_disabled": "Firma desactivada"
       },
       "csat": {
-        "label": "Enviar automáticamente una encuesta de satisfacción después de que el soporte humano termine",
+        "label": "Enviar automáticamente una encuesta de satisfacción después de que el soporte del Live desk termine",
         "hint": "Si hay un flujo activo en el módulo de Flujos configurado para enviar una encuesta después de que el soporte termine, esta configuración puede causar conflictos y afectar el envío de la encuesta.",
         "confirm_modal": {
           "content_1": "Si hay un flujo activo en el módulo de Flujos configurado para enviar una encuesta después de que el soporte termine, esta configuración puede causar conflictos y afectar el envío de la encuesta.",
@@ -406,7 +406,7 @@
     "to_end_required_tags": "Para cerrar, agrega al menos una etiqueta",
     "tags_help": "Las etiquetas te ayudan a localizar chats y también a generar buenos informes.",
     "chat_with_contact_ended": "Chat con {contact} cerrado",
-    "see_history": "Historial de chats",
+    "see_history": "Historial general",
     "tag_request": "@:please calificar el chat",
     "closed_in": "Chat cerrado en",
     "closed": "Chat cerrado",
@@ -437,8 +437,8 @@
     "error_update_queues": "No se pueden actualizar sus colas de servicio"
   },
   "chats_notifications": {
-    "title": "Notificaciones de WeniChats",
-    "label": "Para tu comodidad, habilita o deshabilita las notificaciones sonoras de WeniChats."
+    "title": "Notificaciones de Weni Live Desk",
+    "label": "Para tu comodidad, habilita o deshabilita las notificaciones sonoras de Weni Live Desk."
   },
   "dashboard": {
     "view-mode": {
@@ -791,14 +791,14 @@
   },
   "discard": "Descartar",
   "on_boarding": {
-    "title": "Primeros pasos con los chats",
+    "title": "Primeros pasos con Live desk",
     "title_sector": "¡Configura tu equipo de soporte!",
     "description_sector": "Crea un sector para gestionar un equipo de servicio, puedes crear tantos sectores como quieras, así podrás gestionar tus grupos de servicio por departamentos, productos o servicios.",
     "title_queues": "Filas",
     "description_queues": "Utilice colas para segmentar sus llamadas por tema o productos, si no quiere, simplemente cree una cola.",
     "title_tags": "Tags",
     "description_tags": "Cree tags para clasificar los chats, las etiquetas se pueden usar para generar informes, filtrar llamadas en el historial y mucho más.",
-    "tooltip": "Chats es el módulo de servicio humano de Weni, echa un vistazo al paso a paso para empezar"
+    "tooltip": "Live desk es el módulo de servicio humano de Weni, echa un vistazo al paso a paso para empezar"
   },
   "status_agent": "Tu estas",
   "copilot": {
@@ -833,7 +833,7 @@
     }
   },
   "config_chats": {
-    "title": "Configuración de Atendimento humano",
+    "title": "Configuración",
     "section_sectors_title": "Sectores en {project}",
     "section_sectors_subtitle": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización.",
     "tabs": {
@@ -927,7 +927,7 @@
         "error": "Error al configurar los ajustes de la fila",
         "delete_success": "Cola eliminada exitosamente",
         "delete_error": "No se pudo eliminar la cola",
-        "add_new_queue": "Esta nueva fila se agregará para todos los agentes. Puede eliminarla accediendo a <b>Configuración de chats > Grupos > Agentes</b>",
+        "add_new_queue": "Esta nueva fila se agregará para todos los agentes. Puede eliminarla accediendo a <b>Configuración de Live desk > Grupos > Agentes</b>",
         "config_agents_group": "Agregue o elimine agentes de esta fila a través de los grupos de proyectos accediendo a <b>Configuración del Chat > Grupos de proyectos</b>"
       }
     },
@@ -1019,10 +1019,10 @@
   "enter": "Entrar",
   "no_matches_for_the_search": "No hay resultados para la encuesta",
   "select_org": {
-    "choose_one": "Elija uno para acceder a los chats de Weni"
+    "choose_one": "Elija uno para acceder al Weni Live Desk"
   },
   "select_project": {
-    "choose_one": "Elija uno para acceder a los chats de Weni"
+    "choose_one": "Elija uno para acceder al Weni Live Desk"
   },
   "discart": "Descartar",
   "confirmation": "Confirmación",
@@ -1049,9 +1049,9 @@
   },
   "feedback_modal": {
     "title": "Ayúdanos a mejorar!",
-    "feedback_question": "¿Cómo estás usando Weni Chats?",
-    "problem_question": "¿Qué está dificultando o complicando el uso de Weni Chats?",
-    "improvement_question": "¿Qué podríamos mejorar para que el uso de Weni Chats sea aún mejor para ti?",
+    "feedback_question": "¿Cómo estás usando Weni Live Desk?",
+    "problem_question": "¿Qué está dificultando o complicando el uso de Weni Live Desk?",
+    "improvement_question": "¿Qué podríamos mejorar para que el uso de Weni Live Desk sea aún mejor para ti?",
     "submit": "Enviar",
     "cancel": "Ahora no",
     "feedback_options": {
