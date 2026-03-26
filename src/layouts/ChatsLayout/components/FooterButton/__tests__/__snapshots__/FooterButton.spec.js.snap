@@ -38,6 +38,7 @@ exports[`FooterButton > Snapshot > should match snapshot 1`] = `
         iconright=""
         iconsfilled="false"
         loading="false"
+        pressed="false"
         size="large"
         text="transfer"
         type="primary"
