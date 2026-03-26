@@ -100,7 +100,7 @@ export default {
   &__email {
     line-height: 1.375rem;
     font-size: $unnnic-font-size-body-md;
-    color: $unnnic-color-gray-10;
+    color: $unnnic-color-fg-base;
   }
 
   &__remove-button {

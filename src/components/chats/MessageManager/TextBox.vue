@@ -357,7 +357,7 @@ export default {
         weight: $unnnic-font-weight-regular;
       }
       line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
-      color: $unnnic-color-gray-10;
+      color: $unnnic-color-fg-base;
 
       resize: none;
       overflow-y: hidden;
