@@ -4,16 +4,18 @@
       {{ $t('config_chats.groups.agents_form.title') }}
     </h2>
     <fieldset>
-      <UnnnicLabel
-        :label="$t('config_chats.groups.agents_form.field.agents.label')"
-      />
-      <UnnnicSelectSmart
+      <UnnnicSelect
         v-model="selectedAgent"
         :options="agentsNames"
-        autocomplete
-        autocompleteIconLeft
-        autocompleteClearOnFocus
-        @update:model-value="selectAgent"
+        :label="$t('config_chats.groups.agents_form.field.agents.label')"
+        :placeholder="
+          $t('config_chats.groups.agents_form.field.agents.placeholder')
+        "
+        returnObject
+        clearable
+        enableSearch
+        :search="searchAgent"
+        @update:search="searchAgent = $event"
       />
     </fieldset>
     <section
@@ -65,7 +67,8 @@ export default {
   emits: ['update:modelValue', 'changeValid', 'remove-agent'],
   data() {
     return {
-      selectedAgent: [],
+      selectedAgent: null,
+      searchAgent: '',
       agents: [],
       agentsPage: 0,
       agentsLimitPerPage: 50,
@@ -81,28 +84,17 @@ export default {
       },
     },
     agentsNames() {
-      const agentsNames = [
-        {
-          value: '',
-          label: this.$t(
-            'config_chats.groups.agents_form.field.agents.placeholder',
-          ),
-        },
-      ];
-
-      this.agents.forEach((agent) => {
+      return this.agents.map((agent) => {
         const { uuid, user } = agent;
 
-        agentsNames.push({
+        return {
           value: uuid,
           label:
             user.first_name || user.last_name
               ? `${user.first_name} ${user.last_name}`
               : user.email,
-        });
+        };
       });
-
-      return agentsNames;
     },
     valid() {
       return !!this.group.agents?.length;
@@ -112,6 +104,19 @@ export default {
   watch: {
     valid() {
       this.$emit('changeValid', this.valid);
+    },
+    selectedAgent(newVal) {
+      if (!newVal?.value) {
+        return;
+      }
+      const agent = this.agents.find((a) => a.uuid === newVal.value);
+      if (!agent) {
+        return;
+      }
+      this.addAgent(agent);
+      this.$nextTick(() => {
+        this.selectedAgent = null;
+      });
     },
   },
 
@@ -143,17 +148,6 @@ export default {
       }
     },
 
-    selectAgent(selectedAgent) {
-      if (selectedAgent.length > 0) {
-        const agent = this.agents.find((agent) => {
-          const { uuid } = agent;
-
-          return uuid === selectedAgent[0].value;
-        });
-        this.addAgent(agent);
-      }
-    },
-
     addAgent(agent) {
       if (!agent) return;
       agent.queues = this.queuesOptions;
@@ -167,8 +161,6 @@ export default {
         : [{ ...agent, new: true }, ...this.group.agents];
 
       this.group.agents = agents;
-
-      this.selectedAgent = [this.agentsNames[0]];
     },
     removeAgent(agentUuid) {
       const agent = this.group.agents.find((agent) => agent.uuid === agentUuid);

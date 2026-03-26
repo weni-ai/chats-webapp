@@ -30,29 +30,38 @@
         class="rooms-table-filters__input"
         data-testid="sector-filter"
       >
-        <UnnnicLabel :label="$t('sector.title')" />
-        <UnnnicSelectSmart
+        <UnnnicSelect
           v-model="filterSector"
-          :options="sectorsToFilter"
-          orderedByIndex
-          :locale="$i18n.locale"
           data-testid="filter-sector-select"
+          :options="sectorsToFilter"
+          :label="$t('sector.title')"
+          :placeholder="$t('all')"
+          returnObject
+          enableSearch
+          :locale="$i18n.locale"
+          :search="searchSector"
+          @update:search="searchSector = $event"
         />
       </div>
       <div
         class="rooms-table-filters__input"
         data-testid="tag-filter"
       >
-        <UnnnicLabel :label="$t('tags.title')" />
-        <UnnnicSelectSmart
+        <UnnnicMultiSelect
           v-model="filterTag"
-          :disabled="
-            filterSector[0]?.value === 'all' || tagsToFilter.length < 2
-          "
-          :options="tagsToFilter"
-          :locale="$i18n.locale"
-          multiple
           data-testid="filter-tag-select"
+          :disabled="filterSector?.value === 'all' || !tagsToFilter?.length"
+          :options="tagsToFilter"
+          :label="$t('tags.title')"
+          :placeholder="
+            tagsToFilter.length ? $t('filter.by_tags') : $t('filter.empty_tags')
+          "
+          returnObject
+          clearable
+          enableSearch
+          :locale="$i18n.locale"
+          :search="searchTag"
+          @update:search="searchTag = $event"
         />
       </div>
       <div
@@ -60,12 +69,18 @@
         data-testid="date-filter"
       >
         <UnnnicLabel :label="$t('date')" />
-        <UnnnicSelectSmart
+        <UnnnicSelect
           v-if="isMobile"
           v-model="filterDate"
-          :options="datesToFilter"
-          orderedByIndex
           data-testid="filter-date-mobile-select"
+          :options="datesToFilter"
+          :label="$t('date')"
+          :placeholder="$t('filter.dates.last_7_days')"
+          returnObject
+          enableSearch
+          :locale="$i18n.locale"
+          :search="searchDatePreset"
+          @update:search="searchDatePreset = $event"
         />
         <UnnnicInputDatePicker
           v-else
@@ -135,11 +150,14 @@ export default {
       datesToFilter: [],
 
       filterContact: '',
-      filterSector: [],
+      filterSector: null,
       filterTag: [],
       filterDate: null,
       tagsNext: '',
       selectedDatesInternal: { start: null, end: null },
+      searchSector: '',
+      searchTag: '',
+      searchDatePreset: '',
     };
   },
 
@@ -148,17 +166,12 @@ export default {
       return { value: 'all', label: this.$t('all') };
     },
 
-    filterTagEmpty() {
-      return { value: '', label: this.$t('filter.empty_tags') };
-    },
-
-    filterTagDefault() {
-      return { value: '', label: this.$t('filter.by_tags') };
-    },
-
     filterDateDefault() {
       if (this.isMobile) {
-        return [this.datesToFilter.find((obj) => obj.value === 'last_7_days')];
+        return (
+          this.datesToFilter.find((obj) => obj.value === 'last_7_days') ||
+          this.datesToFilter[0]
+        );
       }
       return {
         start: moment().subtract(1, 'week').format('YYYY-MM-DD'),
@@ -214,11 +227,26 @@ export default {
         filterDateDefault,
       } = this;
 
+      const sectorIsDefault =
+        filterSector?.value === 'all' || sectorsToFilter.length === 2;
+
+      const tagIsDefault = !filterTag?.length;
+
+      const defaultDate = filterDateDefault;
+      let dateIsDefault;
+      if (this.isMobile) {
+        dateIsDefault = filterDate?.value === defaultDate?.value;
+      } else {
+        dateIsDefault =
+          filterDate?.start === defaultDate?.start &&
+          filterDate?.end === defaultDate?.end;
+      }
+
       if (
         filterContact === '' &&
-        (filterSector[0]?.value === 'all' || sectorsToFilter.length === 2) &&
-        filterTag.length === 0 &&
-        filterDate === filterDateDefault
+        sectorIsDefault &&
+        tagIsDefault &&
+        dateIsDefault
       ) {
         return true;
       }
@@ -312,14 +340,14 @@ export default {
     },
 
     filterSector(newFilterSector) {
-      const sectorValue = newFilterSector?.[0]?.value;
-      if (sectorValue !== 'all') {
+      const sectorValue = newFilterSector?.value;
+      if (sectorValue && sectorValue !== 'all') {
         this.filterTag = [];
         this.tagsNext = '';
-        this.tagsToFilter = [this.filterTagDefault];
+        this.tagsToFilter = [];
         this.getSectorTags(sectorValue);
       } else {
-        this.tagsToFilter = [this.filterTagDefault];
+        this.tagsToFilter = [];
         this.filterTag = [];
       }
     },
@@ -331,13 +359,13 @@ export default {
     this.isFiltersLoading = true;
 
     this.datesToFilter = this.datesToFilterOptions;
-    this.filterSector = [this.filterSectorsOptionAll];
+    this.filterSector = this.filterSectorsOptionAll;
     this.filterDate = this.filterDateDefault;
 
     if (!this.isMobile && this.filterDate) {
       this.selectedDatesInternal = { ...this.filterDate };
     }
-    this.tagsToFilter = [this.filterTagDefault];
+    this.tagsToFilter = [];
 
     this.updateFiltersByValue();
     this.setFiltersByQueryParams();
@@ -374,11 +402,7 @@ export default {
           limit: 20,
         });
 
-        const filterTagPlaceholder = results.length
-          ? this.filterTagDefault
-          : this.filterTagEmpty;
-
-        const newTags = [filterTagPlaceholder];
+        const newTags = [];
 
         results.forEach(({ uuid, name }) =>
           newTags.push({ value: uuid, label: name }),
@@ -416,7 +440,7 @@ export default {
 
       this.filterContact = '';
 
-      this.filterSector = [this.filterSectorsOptionAll];
+      this.filterSector = this.filterSectorsOptionAll;
 
       this.filterTag = [];
       this.filterDate = this.filterDateDefault;
@@ -460,7 +484,7 @@ export default {
       let dateStart, dateEnd;
 
       if (this.isMobile) {
-        dateStart = this.getRelativeDate(filterDate[0]?.value, 'digit');
+        dateStart = this.getRelativeDate(filterDate?.value, 'digit');
         dateEnd = this.getRelativeDate('today', 'digit');
       } else {
         dateStart = filterDate?.start;
@@ -469,7 +493,7 @@ export default {
 
       this.$emit('update:modelValue', {
         contact: filterContact,
-        sector: filterSector,
+        sector: filterSector ? [filterSector] : [],
         tag: filterTag,
         date: {
           start: dateStart,
@@ -507,11 +531,12 @@ export default {
           const matchingDate = this.datesToFilter.find(
             (d) => d.value === dateStartExtensive,
           );
-          if (matchingDate) this.filterDate = [matchingDate];
-          else {
-            this.filterDate = [
-              this.datesToFilter.find((obj) => obj.value === 'last_7_days'),
-            ];
+          if (matchingDate) {
+            this.filterDate = matchingDate;
+          } else {
+            this.filterDate =
+              this.datesToFilter.find((obj) => obj.value === 'last_7_days') ||
+              this.datesToFilter[0];
           }
         }
       }
@@ -522,8 +547,12 @@ export default {
         const { contact, sector, tag, date } = this.modelValue;
 
         this.filterContact = contact;
-        this.filterSector = sector;
-        this.filterTag = tag;
+        if (sector && Array.isArray(sector) && sector.length > 0) {
+          this.filterSector = sector[0];
+        } else {
+          this.filterSector = this.filterSectorsOptionAll;
+        }
+        this.filterTag = Array.isArray(tag) ? tag : [];
 
         if (this.isMobile) {
           const dateStartExtensive = this.getRelativeDate(
@@ -534,8 +563,9 @@ export default {
             (d) => d.value === dateStartExtensive,
           );
           this.filterDate = matchingDate
-            ? [matchingDate]
-            : [this.datesToFilter.find((obj) => obj.value === 'last_7_days')];
+            ? matchingDate
+            : this.datesToFilter.find((obj) => obj.value === 'last_7_days') ||
+              this.datesToFilter[0];
         } else {
           this.filterDate = { start: date?.start, end: date?.end };
           this.selectedDatesInternal = { ...this.filterDate };

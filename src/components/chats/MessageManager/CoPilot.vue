@@ -168,7 +168,7 @@ export default {
           color: $unnnic-color-neutral-dark;
         }
         :deep(svg > path) {
-          fill: $unnnic-color-aux-red-500;
+          fill: $unnnic-color-fg-critical;
         }
       }
       &__close {
