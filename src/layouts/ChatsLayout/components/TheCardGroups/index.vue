@@ -817,7 +817,7 @@ export default {
     gap: $unnnic-spacing-xs;
     align-items: center;
     font-size: $unnnic-font-size-body-md;
-    color: $unnnic-color-gray-10;
+    color: $unnnic-color-fg-base;
 
     .apply-filter {
       cursor: pointer;
