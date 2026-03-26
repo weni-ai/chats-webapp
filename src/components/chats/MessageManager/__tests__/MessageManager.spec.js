@@ -9,6 +9,7 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 vi.mock('is-mobile', () => ({ default: vi.fn(() => false) }));
 
@@ -82,6 +83,7 @@ const createWrapper = (props = {}, piniaState = {}) => {
   roomsStore.activeRoom = { uuid: 'room-1' };
   discussionsStore.activeDiscussion = null;
   roomMessagesStore.replyMessage = null;
+  useMessageManager().replyMessage = null;
 
   discussionMessagesStore.sendDiscussionMessage = vi.fn(() =>
     Promise.resolve(),
@@ -104,11 +106,12 @@ const createWrapper = (props = {}, piniaState = {}) => {
       Object.assign(roomMessagesStore, piniaState.roomMessages);
   }
 
-  return mount(MessageManager, {
-    props: {
-      modelValue: '',
-      ...props,
-    },
+  const { inputMessage: initialInput, ...mountProps } = props;
+  const messageManagerStore = useMessageManager();
+  messageManagerStore.inputMessage = initialInput ?? '';
+
+  const wrapper = mount(MessageManager, {
+    props: mountProps,
     global: {
       plugins: [pinia],
       mocks: { $t: (key) => key },
@@ -141,6 +144,12 @@ const createWrapper = (props = {}, piniaState = {}) => {
       },
     },
   });
+
+  // Pinia messageManager clears input when activeDiscussion/activeRoom change; mount can
+  // flush that watch again after tests set activeDiscussion, so align store with props.
+  messageManagerStore.inputMessage = initialInput ?? '';
+
+  return wrapper;
 };
 
 describe('MessageManager', () => {
@@ -197,8 +206,8 @@ describe('MessageManager', () => {
       ).toContain('loading');
     });
 
-    it('renders TextBox with modelValue', () => {
-      const wrapper = createWrapper({ modelValue: 'Hello' });
+    it('renders TextBox with inputMessage from store', () => {
+      const wrapper = createWrapper({ inputMessage: 'Hello' });
 
       const textBox = wrapper.findComponent({ name: 'TextBox' });
       expect(textBox.exists()).toBe(true);
@@ -213,38 +222,36 @@ describe('MessageManager', () => {
         contact: null,
       };
       const wrapper = createWrapper();
-      const roomMessagesStore = useRoomMessages(wrapper.vm.$pinia);
-      roomMessagesStore.replyMessage = reply;
+      const messageManagerStore = useMessageManager(wrapper.vm.$pinia);
+      messageManagerStore.replyMessage = reply;
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.replyMessage).toEqual(reply);
     });
   });
 
-  describe('v-model and textBoxMessage', () => {
-    it('emits update:modelValue when TextBox updates', async () => {
-      const wrapper = createWrapper({ modelValue: '' });
+  describe('inputMessage (store)', () => {
+    it('updates store when TextBox emits update', async () => {
+      const wrapper = createWrapper({ inputMessage: '' });
+      const messageManagerStore = useMessageManager(wrapper.vm.$pinia);
 
       await wrapper.find('[data-testid="text-input"]').setValue('New text');
       await wrapper.vm.$nextTick();
 
-      expect(wrapper.emitted('update:modelValue')).toBeTruthy();
-      expect(wrapper.emitted('update:modelValue')[0][0]).toBe('New text');
+      expect(messageManagerStore.inputMessage).toBe('New text');
     });
   });
 
   describe('internal note', () => {
     it('toggles isInternalNote and clears text when internal note is triggered', async () => {
-      const wrapper = createWrapper({ modelValue: 'some text' });
+      const wrapper = createWrapper({ inputMessage: 'some text' });
+      const messageManagerStore = useMessageManager(wrapper.vm.$pinia);
 
       expect(wrapper.vm.isInternalNote).toBe(false);
 
       await wrapper.vm.handleInternalNoteInput();
       expect(wrapper.vm.isInternalNote).toBe(true);
-      expect(wrapper.emitted('update:modelValue')).toBeTruthy();
-      expect(
-        wrapper.emitted('update:modelValue').some((e) => e[0] === ''),
-      ).toBe(true);
+      expect(messageManagerStore.inputMessage).toBe('');
 
       await wrapper.vm.handleInternalNoteInput();
       expect(wrapper.vm.isInternalNote).toBe(false);
@@ -297,23 +304,23 @@ describe('MessageManager', () => {
   });
 
   describe('setMessage and clearReplyMessage', () => {
-    it('setMessage updates textBoxMessage and focuses TextBox', async () => {
+    it('setMessage updates inputMessage and focuses TextBox', async () => {
       const wrapper = createWrapper();
+      const messageManagerStore = useMessageManager(wrapper.vm.$pinia);
       const textBox = wrapper.findComponent({ name: 'TextBox' });
       const focusSpy = vi.spyOn(textBox.vm, 'focus');
 
       wrapper.vm.setMessage('New message');
       await wrapper.vm.$nextTick();
 
-      expect(wrapper.emitted('update:modelValue')).toBeTruthy();
-      expect(wrapper.emitted('update:modelValue').pop()[0]).toBe('New message');
+      expect(messageManagerStore.inputMessage).toBe('New message');
       expect(focusSpy).toHaveBeenCalled();
     });
 
     it('clearReplyMessage sets replyMessage to null', () => {
       const wrapper = createWrapper();
-      const roomMessagesStore = useRoomMessages(wrapper.vm.$pinia);
-      roomMessagesStore.replyMessage = {
+      const messageManagerStore = useMessageManager(wrapper.vm.$pinia);
+      messageManagerStore.replyMessage = {
         uuid: '1',
         text: 'R',
         user: { name: 'U' },
@@ -328,12 +335,12 @@ describe('MessageManager', () => {
 
   describe('closeSuggestionBox', () => {
     it('clears text when it starts with /', () => {
-      const wrapper = createWrapper({ modelValue: '/hello' });
+      const wrapper = createWrapper({ inputMessage: '/hello' });
+      const messageManagerStore = useMessageManager(wrapper.vm.$pinia);
 
       wrapper.vm.closeSuggestionBox();
 
-      expect(wrapper.emitted('update:modelValue')).toBeTruthy();
-      expect(wrapper.emitted('update:modelValue').pop()[0]).toBe('');
+      expect(messageManagerStore.inputMessage).toBe('');
     });
 
     it('sets isSuggestionBoxOpen to false', () => {
@@ -348,7 +355,7 @@ describe('MessageManager', () => {
 
   describe('onKeyDown', () => {
     it('sends message on Enter without shift', async () => {
-      const wrapper = createWrapper({ modelValue: 'Hi' });
+      const wrapper = createWrapper({ inputMessage: 'Hi' });
       wrapper.vm.sendTextBoxMessage = vi.fn(() => Promise.resolve());
       wrapper.vm.sendAudio = vi.fn(() => Promise.resolve());
       wrapper.vm.$refs.textBox = { clearTextarea: vi.fn() };
@@ -392,7 +399,7 @@ describe('MessageManager', () => {
     });
 
     it('closes suggestion box on Escape when open', () => {
-      const wrapper = createWrapper({ modelValue: '/x' });
+      const wrapper = createWrapper({ inputMessage: '/x' });
       wrapper.vm.isSuggestionBoxOpen = true;
 
       const event = new KeyboardEvent('keydown', { key: 'Escape' });
@@ -404,7 +411,7 @@ describe('MessageManager', () => {
 
   describe('send', () => {
     it('sends internal note when isInternalNote is true', async () => {
-      const wrapper = createWrapper({ modelValue: '  Note content  ' });
+      const wrapper = createWrapper({ inputMessage: '  Note content  ' });
       wrapper.vm.isInternalNote = true;
       const roomMessagesStore = useRoomMessages(wrapper.vm.$pinia);
 
@@ -418,7 +425,7 @@ describe('MessageManager', () => {
     });
 
     it('does not send internal note when text is empty', async () => {
-      const wrapper = createWrapper({ modelValue: '   ' });
+      const wrapper = createWrapper({ inputMessage: '   ' });
       wrapper.vm.isInternalNote = true;
       const roomMessagesStore = useRoomMessages(wrapper.vm.$pinia);
 
@@ -428,7 +435,7 @@ describe('MessageManager', () => {
     });
 
     it('sends room message when discussionId is null', async () => {
-      const wrapper = createWrapper({ modelValue: 'Hello room' });
+      const wrapper = createWrapper({ inputMessage: 'Hello room' });
       wrapper.vm.$refs.textBox = { clearTextarea: vi.fn() };
       const roomMessagesStore = useRoomMessages(wrapper.vm.$pinia);
 
@@ -443,7 +450,7 @@ describe('MessageManager', () => {
 
     it('sends discussion message when discussionId is set', async () => {
       const wrapper = createWrapper(
-        { modelValue: 'Discussion msg' },
+        { inputMessage: 'Discussion msg' },
         {
           discussions: {
             activeDiscussion: { uuid: 'disc-1' },
