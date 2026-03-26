@@ -68,12 +68,12 @@ export default {
 
 <style lang="scss" scoped>
 $scheme-colors:
-  'blue' $unnnic-color-aux-blue-100,
-  'purple' $unnnic-color-aux-purple-100,
-  'green' $unnnic-color-aux-green-100,
-  'yellow' $unnnic-color-aux-yellow-100,
-  'yellow-400' $unnnic-color-aux-yellow-400,
-  'red' $unnnic-color-aux-red-100,
+  'blue' $unnnic-color-blue-2,
+  'purple' $unnnic-color-purple-2,
+  'green' $unnnic-color-green-2,
+  'yellow' $unnnic-color-yellow-2,
+  'yellow-400' $unnnic-color-yellow-6,
+  'red' $unnnic-color-red-2,
   'gray' $unnnic-color-neutral-soft;
 
 .chat-feedback__container {

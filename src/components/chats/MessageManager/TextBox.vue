@@ -358,7 +358,7 @@ export default {
       }
 
       line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
-      color: $unnnic-color-neutral-cloudy;
+      color: $unnnic-color-fg-base;
 
       resize: none;
       overflow-y: hidden;
