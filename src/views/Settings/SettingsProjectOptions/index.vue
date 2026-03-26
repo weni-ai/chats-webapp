@@ -313,8 +313,9 @@ export default {
       try {
         const config = await agentBuilder.getAiTransferConfig();
         this.aiTransferConfig = config;
-      } catch (error) {
-        console.error('Failed to get AI transfer config:', error);
+        this.hasAgentBuilder = true;
+      } catch {
+        this.hasAgentBuilder = false;
       }
     },
 
