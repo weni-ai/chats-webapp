@@ -1,16 +1,15 @@
 import { mount } from '@vue/test-utils';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 
 import SettingsHeader from '@/views/Settings/SettingsHeader.vue';
 
-const createWrapper = (props) => {
-  return mount(SettingsHeader, {
-    props,
-  });
+const createWrapper = () => {
+  return mount(SettingsHeader);
 };
 
 describe('SettingsHeader.vue', () => {
   let wrapper;
+
   beforeEach(() => {
     wrapper = createWrapper();
   });
@@ -24,7 +23,7 @@ describe('SettingsHeader.vue', () => {
     expect(headerTitle.text()).toBe(wrapper.vm.$t('config_chats.title'));
   });
 
-  it('Should match the snapshot', () => {
+  it('should match the snapshot', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 });
