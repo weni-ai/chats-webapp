@@ -7,6 +7,7 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useConfig } from '@/store/modules/config';
 import { moduleStorage } from '@/utils/storage';
+import KeycloakService from '@/services/keycloak';
 
 export default class WebSocketSetup {
   TIME_INTERVAL = 15000; // 15 seconds
@@ -85,8 +86,9 @@ export default class WebSocketSetup {
 
     const { viewedAgent } = dashboardStore;
 
+    const token = KeycloakService.keycloak?.token || appToken;
     const baseUrl = env('CHATS_WEBSOCKET_URL');
-    const commonParams = `Token=${appToken}&project=${appProject}`;
+    const commonParams = `Token=${token}&project=${appProject}`;
     const agentWSUrl = `${baseUrl}/manager/rooms?${commonParams}&user_email=${viewedAgent?.email}`;
     const managerWSUrl = `${baseUrl}/agent/rooms?${commonParams}`;
 
