@@ -15,30 +15,36 @@
       >
         <div class="start-discussion-form__selects">
           <div class="start-discussion-form__selects__input">
-            <UnnnicLabel
-              :label="$t('discussions.start_discussion.form.select_sector')"
-            />
-            <UnnnicSelectSmart
+            <UnnnicSelect
               v-model="sector"
-              :options="sectorsToSelect"
-              autocomplete
-              autocompleteIconLeft
-              autocompleteClearOnFocus
               data-testid="select-sector"
+              :options="sectorsToSelect"
+              :label="$t('discussions.start_discussion.form.select_sector')"
+              :placeholder="
+                $t('discussions.start_discussion.form.search_sector')
+              "
+              returnObject
+              clearable
+              enableSearch
+              :search="searchSector"
+              @update:search="searchSector = $event"
             />
           </div>
           <div class="start-discussion-form__selects__input">
-            <UnnnicLabel
-              :label="$t('discussions.start_discussion.form.select_queue')"
-            />
-            <UnnnicSelectSmart
+            <UnnnicSelect
               v-model="queue"
-              :disabled="sector[0]?.value === '' || queuesToSelect.length < 2"
-              :options="queuesToSelect"
-              autocomplete
-              autocompleteIconLeft
-              autocompleteClearOnFocus
               data-testid="select-queue"
+              :disabled="!sector?.value || queuesToSelect.length === 0"
+              :options="queuesToSelect"
+              :label="$t('discussions.start_discussion.form.select_queue')"
+              :placeholder="
+                $t('discussions.start_discussion.form.search_queue')
+              "
+              returnObject
+              clearable
+              enableSearch
+              :search="searchQueue"
+              @update:search="searchQueue = $event"
             />
           </div>
         </div>
@@ -107,11 +113,14 @@ export default {
     return {
       subject: '',
       message: '',
-      sector: [],
-      queue: [],
+      sector: null,
+      queue: null,
 
       sectorsToSelect: [],
       queuesToSelect: [],
+
+      searchSector: '',
+      searchQueue: '',
 
       startDiscussionLoading: false,
     };
@@ -129,8 +138,8 @@ export default {
     },
     isConfirmButtonDisabled() {
       return (
-        !this.sector[0] ||
-        !this.queue[0]?.value ||
+        !this.sector?.value ||
+        !this.queue?.value ||
         !this.subject ||
         !this.message
       );
@@ -138,24 +147,21 @@ export default {
   },
 
   watch: {
-    sector(sector) {
-      if (sector[0].value) {
-        if (this.queuesToSelect[0]) {
-          this.queue = [this.queuesToSelect[0]];
+    sector: {
+      handler(newSector) {
+        this.queue = null;
+        this.searchQueue = '';
+        if (newSector?.value) {
+          this.getSectorQueues(newSector.value);
+        } else {
+          this.queuesToSelect = [];
         }
-        this.getSectorQueues(sector[0].value);
-      }
+      },
     },
   },
 
   async created() {
     await this.getSectors();
-    this.queuesToSelect = [
-      {
-        value: '',
-        label: this.$t('discussions.start_discussion.form.search_queue'),
-      },
-    ];
   },
 
   methods: {
@@ -170,7 +176,7 @@ export default {
     async startDiscussion() {
       this.startDiscussionLoading = true;
       const responseDiscussion = await this.createDiscussion({
-        queue: this.queue[0].value || '',
+        queue: this.queue?.value || '',
         subject: this.subject,
         initial_message: this.message,
       });
@@ -216,13 +222,7 @@ export default {
         const response = await Discussion.getSectors();
         const { results } = response;
 
-        const newSectors = [
-          {
-            value: '',
-            label: this.$t('discussions.start_discussion.form.search_sector'),
-          },
-        ];
-
+        const newSectors = [];
         results.forEach(({ uuid, name }) =>
           newSectors.push({ value: uuid, label: name }),
         );
@@ -242,15 +242,14 @@ export default {
         const response = await Queue.list(sectorUuid);
         const { results } = response;
 
-        const newQueues = [this.queuesToSelect[0]];
+        const newQueues = [];
         results.forEach(({ uuid, name }) =>
           newQueues.push({ value: uuid, label: name }),
         );
         this.queuesToSelect = newQueues;
 
-        if (results.length === 1 && newQueues?.[1]) {
-          const uniqueQueue = [newQueues[1]];
-          this.queue = uniqueQueue;
+        if (results.length === 1 && newQueues[0]) {
+          this.queue = newQueues[0];
         }
       } catch (error) {
         console.error(

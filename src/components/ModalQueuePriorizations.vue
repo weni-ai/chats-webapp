@@ -15,12 +15,17 @@
         />
         <section class="queue-modal-select">
           <section class="queue-modal-input">
-            <UnnnicLabel :label="$t('chats.select_the_queues')" />
-            <UnnnicSelectSmart
+            <UnnnicMultiSelect
               v-model="selectedQueues"
+              data-testid="queue-priorizations-select"
               :options="queues"
-              :multipleWithoutSelectsMessage="$t('chats.no_queue_selected')"
-              multiple
+              :label="$t('chats.select_the_queues')"
+              :placeholder="$t('chats.select_your_queues')"
+              returnObject
+              clearable
+              enableSearch
+              :search="searchQueues"
+              @update:search="searchQueues = $event"
             />
           </section>
         </section>
@@ -67,16 +72,10 @@ export default {
   data() {
     return {
       selectedQueues: [],
-      queues: [
-        {
-          value: '',
-          label: this.$t('chats.select_your_queues'),
-        },
-      ],
+      queues: [],
+      searchQueues: '',
       roleIdSelected: 1,
       roleIdUnselected: 2,
-      showModalQueue: false,
-      noQueueSelected: false,
     };
   },
 
@@ -98,12 +97,6 @@ export default {
   },
 
   watch: {
-    selectedQueues: {
-      handler() {
-        this.updateQueuesPlaceholder();
-      },
-      deep: true,
-    },
     'me.queues': {
       handler(_newQueues, oldQueues) {
         if (!oldQueues) this.handlerQueues();
@@ -211,22 +204,6 @@ export default {
         });
       } finally {
         this.open = false;
-      }
-    },
-
-    updateQueuesPlaceholder() {
-      const queuesValue = this.selectedQueues.map((queue) => queue.value);
-
-      const selectedQueues = queuesValue.map((queueUuid) => ({
-        uuid: queueUuid,
-        role: this.roleIdSelected,
-      }));
-
-      if (selectedQueues.length < 1) {
-        this.queues.push({
-          value: '',
-          label: this.$t('chats.select_your_queues'),
-        });
       }
     },
   },
