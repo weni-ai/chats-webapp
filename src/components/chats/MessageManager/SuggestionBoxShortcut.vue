@@ -54,11 +54,11 @@ export default {
   gap: $unnnic-space-1;
 
   &.is-active {
-    background: $unnnic-color-neutral-lightest;
+    background: $unnnic-color-bg-base-soft;
     border-radius: $unnnic-radius-2;
 
     &:active {
-      background: $unnnic-color-neutral-light;
+      background: $unnnic-color-bg-base-soft;
     }
   }
 

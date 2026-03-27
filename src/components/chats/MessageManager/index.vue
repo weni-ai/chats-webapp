@@ -524,7 +524,7 @@ export default {
   }
 
   :deep(.send-message-button.unnnic-button--attention) {
-    background-color: $unnnic-color-feedback-yellow;
+    background-color: $unnnic-color-orange-6;
   }
 
   &-box {
@@ -538,7 +538,7 @@ export default {
       gap: $unnnic-spacing-nano;
 
       &.focused {
-        border-color: $unnnic-color-neutral-clean;
+        border-color: $unnnic-color-border-soft;
       }
 
       &.loading {
@@ -546,10 +546,9 @@ export default {
       }
 
       &.recording {
-        border: $unnnic-border-width-thinner solid
-          $unnnic-color-neutral-cleanest;
+        border: 1px solid $unnnic-color-border-soft;
         border-radius: $unnnic-border-radius-sm;
-        background-color: $unnnic-color-neutral-snow;
+        background-color: $unnnic-color-bg-base;
       }
     }
   }
@@ -579,9 +578,9 @@ export default {
 
     padding: 10px;
 
-    border: $unnnic-border-width-thinner solid $unnnic-color-neutral-cleanest;
+    border: 1px solid $unnnic-color-border-soft;
     border-radius: $unnnic-border-radius-sm;
-    background-color: $unnnic-color-neutral-snow;
+    background-color: $unnnic-color-bg-base;
 
     :deep(.audio-player) {
       width: auto;

@@ -286,7 +286,7 @@ describe('RoomCard.vue', () => {
         room: { ...mockRoom, is_pinned: false },
       });
 
-      expect(wrapper.vm.handleSchemePin).toBe('neutral-cleanest');
+      expect(wrapper.vm.handleSchemePin).toBe('fg-base');
 
       wrapper.unmount();
     });
@@ -294,7 +294,7 @@ describe('RoomCard.vue', () => {
     it('calculates handleSchemePin correctly when pin limit not reached', () => {
       const wrapper = createWrapper();
 
-      expect(wrapper.vm.handleSchemePin).toBe('neutral-cloudy');
+      expect(wrapper.vm.handleSchemePin).toBe('fg-base');
 
       wrapper.unmount();
     });

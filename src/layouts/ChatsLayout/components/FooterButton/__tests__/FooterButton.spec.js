@@ -206,9 +206,9 @@ describe('FooterButton', () => {
         activeFeatures: ['weniChatsBulkTake'],
       });
 
-      expect(
-        wrapper.find('[data-testid="take-over-button"]').exists(),
-      ).toBe(true);
+      expect(wrapper.find('[data-testid="take-over-button"]').exists()).toBe(
+        true,
+      );
     });
 
     it('should hide take over button on ongoing tab', () => {
@@ -217,9 +217,9 @@ describe('FooterButton', () => {
         activeFeatures: ['weniChatsBulkTake'],
       });
 
-      expect(
-        wrapper.find('[data-testid="take-over-button"]').exists(),
-      ).toBe(false);
+      expect(wrapper.find('[data-testid="take-over-button"]').exists()).toBe(
+        false,
+      );
     });
 
     it('should hide take over button when isViewMode is true', () => {
@@ -229,9 +229,9 @@ describe('FooterButton', () => {
         isViewMode: true,
       });
 
-      expect(
-        wrapper.find('[data-testid="take-over-button"]').exists(),
-      ).toBe(false);
+      expect(wrapper.find('[data-testid="take-over-button"]').exists()).toBe(
+        false,
+      );
     });
 
     it('should hide take over button when feature flag is inactive', () => {
@@ -240,9 +240,9 @@ describe('FooterButton', () => {
         activeFeatures: [],
       });
 
-      expect(
-        wrapper.find('[data-testid="take-over-button"]').exists(),
-      ).toBe(false);
+      expect(wrapper.find('[data-testid="take-over-button"]').exists()).toBe(
+        false,
+      );
     });
 
     it('should hide take over button when can_use_bulk_take config is false', () => {
@@ -251,9 +251,9 @@ describe('FooterButton', () => {
         activeFeatures: ['weniChatsBulkTake'],
       });
 
-      expect(
-        wrapper.find('[data-testid="take-over-button"]').exists(),
-      ).toBe(false);
+      expect(wrapper.find('[data-testid="take-over-button"]').exists()).toBe(
+        false,
+      );
     });
 
     it('should toggle take over modal', () => {

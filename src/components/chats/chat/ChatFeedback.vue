@@ -74,7 +74,7 @@ $scheme-colors:
   'yellow' $unnnic-color-yellow-2,
   'yellow-400' $unnnic-color-yellow-6,
   'red' $unnnic-color-red-2,
-  'gray' $unnnic-color-neutral-soft;
+  'gray' $unnnic-color-bg-base-soft;
 
 .chat-feedback__container {
   margin-top: $unnnic-spacing-md;
@@ -89,7 +89,7 @@ $scheme-colors:
 
   &.divisor {
     padding-top: $unnnic-spacing-md;
-    border-top: $unnnic-border-width-thinner solid $unnnic-color-neutral-soft;
+    border-top: 1px solid $unnnic-color-border-soft;
   }
 
   .chat-feedback {
@@ -101,7 +101,7 @@ $scheme-colors:
     padding: $unnnic-spacing-nano $unnnic-spacing-sm;
 
     font-size: $unnnic-font-size-body-md;
-    color: $unnnic-color-neutral-black;
+    color: $unnnic-color-fg-emphasized;
     font-weight: $unnnic-font-weight-regular;
     white-space: nowrap;
     text-overflow: ellipsis;

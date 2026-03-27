@@ -34,8 +34,7 @@ export default {
 
   padding: $unnnic-spacing-md;
 
-  box-shadow: inset 0 0 - $unnnic-border-width-thinner
-    $unnnic-color-neutral-soft;
+  box-shadow: inset 0 -1px 0 0 $unnnic-color-border-soft;
 
   &__topbar {
     display: grid;

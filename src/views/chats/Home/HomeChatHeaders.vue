@@ -80,7 +80,7 @@
                 icon="history"
                 size="ant"
                 :clickable="room?.has_history"
-                :scheme="room?.has_history ? 'gray-900' : 'neutral-soft'"
+                :scheme="room?.has_history ? 'fg-emphasized' : 'fg-muted'"
                 @click="openHistory"
               />
             </section>
@@ -384,7 +384,7 @@ export default {
   &__discussion {
     :deep(.unnnic-chats-header) {
       .unnnic-chats-header__avatar-icon {
-        background-color: $unnnic-color-aux-purple-500;
+        background-color: $unnnic-color-purple-7;
 
         [class*='unnnic-icon'] {
           color: $unnnic-color-weni-50;

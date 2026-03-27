@@ -18,7 +18,7 @@
         </p>
         <UnnnicIconSvg
           icon="content_copy"
-          scheme="neutral-cloudy"
+          scheme="fg-base"
           size="sm"
         />
       </section>

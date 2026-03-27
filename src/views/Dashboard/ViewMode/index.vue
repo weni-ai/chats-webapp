@@ -76,7 +76,7 @@
                 icon="history"
                 size="ant"
                 :clickable="room?.has_history"
-                :scheme="room?.has_history ? 'neutral-cloudy' : 'neutral-soft'"
+                :scheme="room?.has_history ? 'fg-emphasized' : 'fg-base'"
                 @click="openHistory"
               />
             </UnnnicToolTip>
@@ -92,7 +92,7 @@
                 icon="sync_alt"
                 size="ant"
                 clickable
-                scheme="neutral-cloudy"
+                scheme="fg-base"
                 @click="openTransferModal"
               />
             </UnnnicToolTip>
@@ -407,7 +407,7 @@ export default {
     .discussion-header {
       :deep(.unnnic-chats-header) {
         .unnnic-chats-header__avatar-icon {
-          background-color: $unnnic-color-aux-purple-500;
+          background-color: $unnnic-color-purple-7;
 
           [class*='unnnic-icon'] {
             color: $unnnic-color-weni-50;

@@ -188,7 +188,7 @@ export default {
 
   &__title {
     font-family: $unnnic-font-family-secondary;
-    color: $unnnic-color-neutral-darkest;
+    color: $unnnic-color-fg-emphasized;
     font-weight: $unnnic-font-weight-bold;
     font-size: $unnnic-font-size-title-sm;
     line-height: ($unnnic-font-size-title-sm + $unnnic-line-height-medium);

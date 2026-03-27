@@ -97,20 +97,20 @@ $avatar-sizes:
   justify-content: center;
   border-radius: $unnnic-border-radius-sm;
 
-  background: rgba($unnnic-color-brand-weni, $unnnic-opacity-level-extra-light);
-  color: $unnnic-color-brand-weni-dark;
+  background: rgba($unnnic-color-teal-8, $unnnic-opacity-level-extra-light);
+  color: $unnnic-color-teal-12;
 
   &.active {
-    background: rgba($unnnic-color-brand-weni, $unnnic-opacity-level-light);
+    background: rgba($unnnic-color-teal-8, $unnnic-opacity-level-light);
   }
 
   &.disabled {
-    background: $unnnic-color-neutral-cleanest;
-    color: $unnnic-color-neutral-snow;
+    background: $unnnic-color-bg-base-soft;
+    color: $unnnic-color-fg-emphasized;
   }
 
   &.off {
-    color: $unnnic-color-neutral-cleanest;
+    color: $unnnic-color-fg-base;
   }
 
   @each $name, $size in $avatar-sizes {

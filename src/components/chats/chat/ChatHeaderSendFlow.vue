@@ -20,7 +20,7 @@
     >
       <UnnnicIconSvg
         icon="alert-circle-1-1"
-        scheme="neutral-white"
+        scheme="fg-inverted"
         size="sm"
       />
     </UnnnicToolTip>
@@ -43,9 +43,9 @@ export default {
 
   padding: $unnnic-spacing-nano;
 
-  background-color: $unnnic-color-neutral-cloudy;
+  background-color: $unnnic-color-bg-base-soft;
 
-  color: $unnnic-color-neutral-white;
+  color: $unnnic-color-fg-inverted;
   font-size: $unnnic-font-size-body-gt;
   line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
 

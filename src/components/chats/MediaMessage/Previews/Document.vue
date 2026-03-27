@@ -116,7 +116,7 @@ export default {
 
   .filename {
     font-size: 0.875rem;
-    color: $unnnic-color-neutral-darkest;
+    color: $unnnic-color-fg-emphasized;
   }
 }
 </style>
