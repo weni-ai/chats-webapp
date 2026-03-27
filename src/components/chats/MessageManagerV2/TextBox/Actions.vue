@@ -96,7 +96,14 @@ const actions = computed<TextBoxAction[]>(() => {
       pressed: isSuggestionBoxOpen.value,
       disabled: checkDisabledAction('quick_message'),
       action: () => {
-        inputMessage.value = inputMessage.value.startsWith('/') ? '' : '/';
+        const inQuickMessageMode =
+          isSuggestionBoxOpen.value || inputMessage.value.startsWith('/');
+        if (inQuickMessageMode) {
+          inputMessage.value = '';
+          isSuggestionBoxOpen.value = false;
+        } else {
+          inputMessage.value = '/';
+        }
         emit('focusInput');
       },
     },

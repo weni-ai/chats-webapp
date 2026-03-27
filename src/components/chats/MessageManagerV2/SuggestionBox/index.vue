@@ -1,7 +1,7 @@
 <template>
   <section
     v-if="isValidToShowSuggestionBox"
-    v-on-click-outside="close"
+    v-on-click-outside="[close, clickOutsideOptions]"
     class="suggestion-box"
     @keydown.esc="close"
   >
@@ -38,7 +38,6 @@
 </template>
 
 <script>
-import { nextTick } from 'vue';
 import { mapState } from 'pinia';
 import { vOnClickOutside } from '@vueuse/components';
 
@@ -75,6 +74,11 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    ignoreClickOutside: {
+      type: Array,
+      default: () => [],
+    },
   },
   emits: ['select', 'open', 'close', 'open-copilot'],
 
@@ -85,13 +89,7 @@ export default {
   computed: {
     ...mapState(useQuickMessageShared, ['quickMessagesShared']),
     ...mapState(useQuickMessages, ['quickMessages']),
-    ...mapState(useMessageManager, [
-      'inputMessageFocused',
-      'inputMessage',
-      {
-        isSuggestionBoxOpen: 'isSuggestionBoxOpen',
-      },
-    ]),
+    ...mapState(useMessageManager, ['inputMessageFocused']),
     suggestions() {
       const allShortcuts = [...this.quickMessages, ...this.quickMessagesShared];
       const uniqueShortcuts = [];
@@ -111,8 +109,13 @@ export default {
     isValidToShowSuggestionBox() {
       return this.searchStartsWithTrigger && !this.searchHasWhiteSpaces;
     },
+    clickOutsideOptions() {
+      return {
+        ignore: this.ignoreClickOutside,
+      };
+    },
     searchStartsWithTrigger() {
-      return this.search.charAt('0') === this.trigger;
+      return this.search.charAt(0) === this.trigger;
     },
     searchHasWhiteSpaces() {
       return this.search.includes(' ');
@@ -165,9 +168,6 @@ export default {
       this.$emit('select', suggestion.text);
     },
     close() {
-      if (this.inputMessage === '/') {
-        this.inputMessage = '';
-      }
       this.$emit('close');
     },
     openCopilot() {

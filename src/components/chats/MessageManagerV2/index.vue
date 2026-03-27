@@ -10,8 +10,9 @@
       v-if="!activeDiscussion?.uuid"
       :search="inputMessage"
       :keyboardEvent="keyboardEvent"
+      :ignoreClickOutside="suggestionBoxIgnoreClickOutside"
       @open="isSuggestionBoxOpen = true"
-      @close="isSuggestionBoxOpen = false"
+      @close="closeSuggestionBox"
       @select="(text) => setMessage(text)"
     />
     <CoPilot
@@ -59,6 +60,8 @@ const {
 const keyboardEvent = ref<KeyboardEvent | null>(null);
 const messageManagerTextBoxRef = useTemplateRef('messageManagerTextBox');
 
+const suggestionBoxIgnoreClickOutside = [messageManagerTextBoxRef];
+
 const focusMessageManagerTextBox = () => {
   nextTick(() => {
     messageManagerTextBoxRef.value?.focus();
@@ -100,6 +103,11 @@ const onKeyDown = (event: KeyboardEvent) => {
     }
     event.preventDefault();
   }
+};
+
+const closeSuggestionBox = () => {
+  isSuggestionBoxOpen.value = false;
+  inputMessage.value = '';
 };
 </script>
 
