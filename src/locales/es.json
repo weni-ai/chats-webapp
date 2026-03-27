@@ -393,6 +393,7 @@
       "401": "Error de autenticación",
       "default": "Ocurrió un error, por favor, inténtelo de nuevo más tarde"
     },
+    "message_input_placeholder": "Escribe tu mensaje o / para activar mensajes rápidos",
     "search_contact": "Buscar contacto",
     "search_contact_placeholder": "Buscar contacto (nombre, teléfono o ticket ID)",
     "tags": "Etiquetas de chat",

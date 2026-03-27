@@ -25,7 +25,7 @@
     <textarea
       ref="textInput"
       :value="inputMessage"
-      :placeholder="isInternalNote ? '' : $t('message')"
+      :placeholder="isInternalNote ? '' : $t('chats.message_input_placeholder')"
       rows="1"
       :class="['text-box__textarea', { 'internal-note': isInternalNote }]"
       data-testid="text-area"
