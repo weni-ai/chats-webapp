@@ -157,6 +157,7 @@ defineExpose({
 }
 
 .internal-note {
+  background-color: $unnnic-color-bg-warning;
   &__prefix {
     font: $unnnic-font-body;
   }
