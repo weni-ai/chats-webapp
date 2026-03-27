@@ -160,6 +160,7 @@
   },
   "attachment": "Attach",
   "internal_note": "Internal note",
+  "close_internal_note": "Close internal note (Esc)",
   "notes": "Notes",
   "bold": "Bold",
   "italic": "Italic",

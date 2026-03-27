@@ -142,7 +142,9 @@ const actions = computed<TextBoxAction[]>(() => {
     {
       hideInDiscussion: true,
       icon: 'add_notes',
-      tooltip: t('internal_note'),
+      tooltip: isInternalNote.value
+        ? t('close_internal_note')
+        : t('internal_note'),
       pressed: isInternalNote.value,
       disabled: checkDisabledAction('internal_note'),
       action: () => {

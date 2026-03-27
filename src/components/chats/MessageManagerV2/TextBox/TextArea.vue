@@ -1,5 +1,5 @@
 <template>
-  <div
+  <button
     v-if="isInternalNote"
     class="internal-note__close-button"
   >
@@ -11,7 +11,7 @@
       clickable
       @click="isInternalNote = false"
     />
-  </div>
+  </button>
   <section
     v-if="!isAudioRecorderVisible && mediaUploadFiles.length === 0"
     class="text-box__textarea-container"
