@@ -12,6 +12,7 @@
       :keyboardEvent="keyboardEvent"
       :ignoreClickOutside="suggestionBoxIgnoreClickOutside"
       @open="isSuggestionBoxOpen = true"
+      @hide="isSuggestionBoxOpen = false"
       @close="closeSuggestionBox"
       @select="(text) => setMessage(text)"
     />

@@ -80,7 +80,7 @@ export default {
       default: () => [],
     },
   },
-  emits: ['select', 'open', 'close', 'open-copilot'],
+  emits: ['select', 'open', 'close', 'hide', 'open-copilot'],
 
   data: () => ({
     activeShortcutIndex: null,
@@ -150,7 +150,12 @@ export default {
       scrollElement?.scrollIntoView?.({ block: 'center' });
     },
     isValidToShowSuggestionBox(isOpen) {
-      this.$emit(isOpen ? 'open' : 'close');
+      if (isOpen) {
+        this.$emit('open');
+      } else {
+        // Don't close the suggestion box, because close clears the input message.
+        this.$emit('hide');
+      }
     },
     search(newSearch) {
       const searchHasValue = !!newSearch.replace('/', '');
