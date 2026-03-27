@@ -131,17 +131,17 @@ export const useMessageManager = defineStore('messageManager', () => {
     });
   }
 
-  async function sendMediasMessage() {
+  function sendMediasMessage() {
     try {
       isLoadingSend.value = true;
       if (discussionsStore.activeDiscussion?.uuid) {
-        await discussionMessagesStore.sendDiscussionMedias({
-          files: mediaUploadFiles.value,
+        discussionMessagesStore.sendDiscussionMedias({
+          files: [...mediaUploadFiles.value],
           updateLoadingFiles: () => {},
         });
       } else {
-        await roomMessagesStore.sendRoomMedias({
-          files: mediaUploadFiles.value,
+        roomMessagesStore.sendRoomMedias({
+          files: [...mediaUploadFiles.value],
           updateLoadingFiles: () => {},
           repliedMessage: replyMessage.value,
         });
