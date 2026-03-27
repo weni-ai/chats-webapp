@@ -26,7 +26,7 @@
       ref="textInput"
       :value="inputMessage"
       :placeholder="isInternalNote ? '' : $t('message')"
-      :rows="currentTextAreaRows"
+      rows="1"
       :class="['text-box__textarea', { 'internal-note': isInternalNote }]"
       data-testid="text-area"
       spellcheck="true"
@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, useTemplateRef, watch } from 'vue';
+import { onMounted, useTemplateRef, watch, nextTick } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useMessageManager } from '@/store/modules/chats/messageManager';
@@ -63,9 +63,18 @@ const {
 } = storeToRefs(messageManager);
 
 const MAX_TEXTAREA_ROWS = 5;
-const currentTextAreaRows = ref(1);
 
 const textInputRef = useTemplateRef<HTMLTextAreaElement>('textInput');
+
+function getLineHeightPx(el: HTMLTextAreaElement): number {
+  const computed = getComputedStyle(el);
+  const parsed = parseFloat(computed.lineHeight);
+  if (Number.isFinite(parsed) && parsed > 0) {
+    return parsed;
+  }
+  const fontSize = parseFloat(computed.fontSize);
+  return Number.isFinite(fontSize) && fontSize > 0 ? fontSize * 1.25 : 20;
+}
 
 const handleTextarea = (event: Event) => {
   if (typeof event === 'string') {
@@ -104,27 +113,38 @@ const handlePaste = (event: ClipboardEvent) => {
 };
 
 const adjustTextareaHeight = () => {
-  if (!textInputRef.value) return;
-  textInputRef.value.style.height = 'auto';
+  const el = textInputRef.value;
+  if (!el) return;
 
-  const lineHeight = parseFloat(
-    getComputedStyle(textInputRef.value).lineHeight,
-  );
-
+  const lineHeight = getLineHeightPx(el);
   const maxHeight = MAX_TEXTAREA_ROWS * lineHeight;
 
-  const calculatedHeight = Math.min(maxHeight, textInputRef.value.scrollHeight);
-  textInputRef.value.style.height = `${calculatedHeight}px`;
+  el.style.height = 'auto';
+  el.style.overflowY = 'hidden';
 
-  const calculatedRows = Math.ceil(calculatedHeight / lineHeight);
-  currentTextAreaRows.value = calculatedRows;
-
-  textInputRef.value.style.overflowY =
-    textInputRef.value.scrollHeight > maxHeight ? 'scroll' : 'hidden';
+  const scrollH = el.scrollHeight;
+  const nextHeight = Math.min(maxHeight, Math.max(lineHeight, scrollH));
+  el.style.height = `${nextHeight}px`;
+  el.style.overflowY = scrollH > maxHeight ? 'scroll' : 'hidden';
 };
 
-watch(inputMessage, () => {
-  adjustTextareaHeight();
+watch(inputMessage, adjustTextareaHeight, { flush: 'post' });
+
+const isTextareaVisible = () =>
+  !isAudioRecorderVisible.value && mediaUploadFiles.value.length === 0;
+
+watch(
+  () => [isAudioRecorderVisible.value, mediaUploadFiles.value.length],
+  () => {
+    if (isTextareaVisible()) {
+      nextTick(adjustTextareaHeight);
+    }
+  },
+  { flush: 'post' },
+);
+
+onMounted(() => {
+  nextTick(adjustTextareaHeight);
 });
 
 const focus = () => {
@@ -147,7 +167,7 @@ defineExpose({
   flex: 1;
   border: none;
   resize: none;
-  overflow-y: auto;
+  overflow-y: hidden;
   outline: none;
   font: $unnnic-font-body;
   max-height: 104px;
