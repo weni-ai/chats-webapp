@@ -58,13 +58,13 @@ const discussionsStore = useDiscussions();
 const { activeDiscussion } = storeToRefs(discussionsStore);
 
 const messageManager = useMessageManager();
+const { clearInputs } = messageManager;
 const {
   inputMessage,
   isInternalNote,
   isEmojiPickerOpen,
   disableSendButton,
   audioRecorderStatus,
-  isLoadingSend,
   audioMessage,
   mediaUploadFiles,
   isSuggestionBoxOpen,
@@ -124,6 +124,7 @@ const actions = computed<TextBoxAction[]>(() => {
       ),
       disabled: checkDisabledAction('audio'),
       action: () => {
+        clearInputs();
         emit('startAudioRecording');
       },
     },
@@ -133,6 +134,7 @@ const actions = computed<TextBoxAction[]>(() => {
       showDivider: !activeDiscussion.value?.uuid,
       disabled: checkDisabledAction('attach'),
       action: () => {
+        clearInputs();
         emit('openUploadFiles');
       },
     },
@@ -143,7 +145,12 @@ const actions = computed<TextBoxAction[]>(() => {
       pressed: isInternalNote.value,
       disabled: checkDisabledAction('internal_note'),
       action: () => {
-        isInternalNote.value = !isInternalNote.value;
+        if (isInternalNote.value) {
+          clearInputs();
+        } else {
+          isInternalNote.value = !isInternalNote.value;
+        }
+
         emit('focusInput');
       },
     },
@@ -158,12 +165,13 @@ const enabledActions = computed(() => {
 });
 
 const checkDisabledAction = (action: string) => {
+  const isValidInputMessage = isSuggestionBoxOpen.value
+    ? !inputMessage.value.startsWith('/')
+    : !!inputMessage.value.trim();
   const disabledActionsMap = {
     quick_message: () => {
-      const validInputMessage =
-        !!inputMessage.value.trim() && !inputMessage.value.startsWith('/');
       return (
-        validInputMessage ||
+        isValidInputMessage ||
         !!audioMessage.value ||
         mediaUploadFiles.value.length > 0 ||
         audioRecorderStatus.value !== 'idle' ||
@@ -180,14 +188,14 @@ const checkDisabledAction = (action: string) => {
     },
     audio: () => {
       return (
-        !!inputMessage.value.trim() ||
+        isValidInputMessage ||
         mediaUploadFiles.value.length > 0 ||
         isInternalNote.value
       );
     },
     attach: () => {
       return (
-        !!inputMessage.value.trim() ||
+        isValidInputMessage ||
         mediaUploadFiles.value.length >= 5 ||
         audioRecorderStatus.value !== 'idle' ||
         !!audioMessage.value ||
@@ -195,8 +203,11 @@ const checkDisabledAction = (action: string) => {
       );
     },
     internal_note: () => {
+      if (isInternalNote.value) {
+        return false;
+      }
       return (
-        !!inputMessage.value.trim() ||
+        isValidInputMessage ||
         mediaUploadFiles.value.length > 0 ||
         !!audioMessage.value ||
         audioRecorderStatus.value !== 'idle'

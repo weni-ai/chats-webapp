@@ -49,8 +49,11 @@ export const useMessageManager = defineStore('messageManager', () => {
 
   const isLoadingSend = ref(false);
   const disableSendButton = computed(() => {
+    const isValidInputMessage = isSuggestionBoxOpen.value
+      ? !inputMessage.value.startsWith('/')
+      : !!inputMessage.value.trim();
     return (
-      !inputMessage.value.trim() &&
+      !isValidInputMessage &&
       !audioMessage.value &&
       mediaUploadFiles.value.length === 0
     );
@@ -172,5 +175,6 @@ export const useMessageManager = defineStore('messageManager', () => {
 
     sendRoomMessage,
     sendMediasMessage,
+    clearInputs,
   };
 });
