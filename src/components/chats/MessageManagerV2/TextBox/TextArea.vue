@@ -182,9 +182,8 @@ defineExpose({
     font: $unnnic-font-body;
   }
   &__close-button {
-    // TODO: Tokens
     position: fixed;
-    width: 24px;
+    width: $unnnic-space-6;
     margin-top: -33px;
     align-self: flex-end;
 
