@@ -17,6 +17,7 @@
     />
     <hr class="text-box__divider" />
     <MessageManagerTextBoxActions
+      ref="messageManagerActions"
       @start-audio-recording="audioRecorderRef.record()"
       @open-upload-files="uploadFieldRef.clickInput()"
       @focus-input="focus"
@@ -24,7 +25,7 @@
     />
     <UnnnicEmojiPicker
       v-show="isEmojiPickerOpen"
-      v-on-click-outside="() => (isEmojiPickerOpen = false)"
+      v-on-click-outside="[closeEmojiPicker, emojiPickerClickOutside]"
       @emoji-selected="handleEmojiSelected"
       @close="isEmojiPickerOpen = false"
     />
@@ -68,6 +69,15 @@ const {
 const textareaRef = useTemplateRef('textArea');
 const audioRecorderRef = useTemplateRef('audioRecorder');
 const uploadFieldRef = useTemplateRef('uploadField');
+const actionsRef = useTemplateRef('messageManagerActions');
+
+const emojiPickerClickOutside = {
+  ignore: [actionsRef],
+};
+
+const closeEmojiPicker = () => {
+  isEmojiPickerOpen.value = false;
+};
 
 const focus = () => {
   textareaRef.value?.focus();

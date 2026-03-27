@@ -114,6 +114,7 @@ const actions = computed<TextBoxAction[]>(() => {
       disabled: checkDisabledAction('emoji'),
       action: () => {
         isEmojiPickerOpen.value = !isEmojiPickerOpen.value;
+        emit('focusInput');
       },
     },
     {
