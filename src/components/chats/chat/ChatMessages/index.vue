@@ -963,13 +963,13 @@ export default {
       &__label {
         font-size: $unnnic-font-size-body-md;
         line-height: 1.25rem;
-        color: $unnnic-color-neutral-cloudy;
+        color: $unnnic-color-fg-base;
       }
 
       &__line {
         flex: 1;
         height: 1px;
-        background: $unnnic-color-neutral-soft;
+        background: $unnnic-color-border-soft;
       }
     }
   }

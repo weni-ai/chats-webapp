@@ -179,13 +179,13 @@ export default {
       cursor: text;
 
       &:hover {
-        border: 1px solid $unnnic-color-neutral-cleanest;
+        border: 1px solid $unnnic-color-border-soft;
       }
     }
 
     &.current {
       width: 100%;
-      border: 1px solid $unnnic-color-neutral-clean;
+      border: 1px solid $unnnic-color-border-soft;
 
       input {
         width: 100%;
@@ -194,7 +194,7 @@ export default {
         padding: 0;
         outline: none;
         font-size: $unnnic-font-size-body-gt;
-        color: $unnnic-color-neutral-cloudy;
+        color: $unnnic-color-fg-base;
       }
     }
 

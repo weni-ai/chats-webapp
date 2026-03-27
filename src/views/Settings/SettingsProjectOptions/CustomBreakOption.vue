@@ -205,7 +205,7 @@ const removeStatus = async (index) => {
               status: currentStatus.name,
             },
           ),
-          scheme: '$unnnic-color-neutral-black',
+          scheme: 'fg-emphasized',
         },
         seconds: 3,
       });
@@ -287,7 +287,7 @@ const windowSettingsUpdated = () => {
     padding: $unnnic-space-6;
   }
   &__description {
-    color: $unnnic-color-neutral-cloudy;
+    color: $unnnic-color-fg-base;
     font-family: $unnnic-font-family-secondary;
     font-size: $unnnic-font-size-body-gt;
     font-style: normal;
@@ -314,13 +314,13 @@ const windowSettingsUpdated = () => {
     gap: $unnnic-spacing-xs;
     align-self: stretch;
     border-radius: $unnnic-spacing-nano;
-    border: 1px solid $unnnic-color-neutral-soft;
-    background: $unnnic-color-background-carpet;
+    border: 1px solid $unnnic-color-border-soft;
+    background: $unnnic-color-bg-base-soft;
     margin-top: $unnnic-spacing-xs;
   }
 
   &__error-text {
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
 
     font-family: $unnnic-font-family-secondary;
     font-size: $unnnic-font-size-body-gt;
@@ -336,7 +336,7 @@ const windowSettingsUpdated = () => {
     gap: $unnnic-spacing-nano;
 
     &__status {
-      color: $unnnic-color-neutral-dark;
+      color: $unnnic-color-fg-base;
 
       font-family: $unnnic-font-family-secondary;
       font-size: $unnnic-font-size-body-gt;

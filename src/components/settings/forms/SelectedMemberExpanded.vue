@@ -18,7 +18,7 @@
       <UnnnicIcon
         icon="close"
         clickable
-        scheme="neutral-cloudy"
+        scheme="fg-base"
         @click="removeAgent"
       />
     </section>
@@ -115,7 +115,7 @@ export default {
   flex-direction: column;
   padding: $unnnic-spacing-sm;
   gap: $unnnic-spacing-sm;
-  border: 1px solid $unnnic-color-neutral-soft;
+  border: 1px solid $unnnic-color-border-soft;
   border-radius: $unnnic-border-radius-sm;
 
   &__header {
@@ -136,7 +136,7 @@ export default {
       font-size: $unnnic-font-size-body-lg;
       line-height: $unnnic-font-size-body-lg + $unnnic-line-height-medium;
       font-weight: $unnnic-font-weight-bold;
-      color: $unnnic-color-neutral-darkest;
+      color: $unnnic-color-fg-emphasized;
     }
 
     &-email {
@@ -144,7 +144,7 @@ export default {
       font-size: $unnnic-font-size-body-lg;
       line-height: $unnnic-font-size-body-lg + $unnnic-line-height-medium;
       font-weight: $unnnic-font-weight-regular;
-      color: $unnnic-color-neutral-darkest;
+      color: $unnnic-color-fg-emphasized;
     }
   }
 

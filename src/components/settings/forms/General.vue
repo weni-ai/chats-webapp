@@ -1150,7 +1150,7 @@ fieldset {
 
     &__subtitle {
       font-weight: $unnnic-font-weight-regular;
-      color: $unnnic-color-neutral-dark;
+      color: $unnnic-color-fg-base;
       line-height: $unnnic-line-height-large * 1.5;
       font-family: $unnnic-font-family-secondary;
     }

@@ -101,7 +101,7 @@ const isValid = computed(() => {
 
     &__description {
       font: $unnnic-font-display-4;
-      color: $unnnic-color-neutral-dark;
+      color: $unnnic-color-fg-base;
     }
 
     &__input {

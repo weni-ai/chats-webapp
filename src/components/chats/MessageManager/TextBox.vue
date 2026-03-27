@@ -39,7 +39,7 @@
       >
         <UnnnicIcon
           icon="add_reaction"
-          :scheme="isInternalNote ? 'feedback-yellow' : 'neutral-clean'"
+          :scheme="isInternalNote ? 'fg-warning' : 'fg-base'"
           :class="['emoji-button', 'clickable']"
           data-testid="emoji-button"
           size="ant"
@@ -257,14 +257,14 @@ export default {
 
 <style lang="scss" scoped>
 .internal-note {
-  background-color: $unnnic-color-aux-baby-yellow;
+  background-color: $unnnic-color-yellow-2;
 }
 .text-box {
   position: relative;
 
-  border: $unnnic-border-width-thinner solid $unnnic-color-neutral-cleanest;
+  border: 1px solid $unnnic-color-border-soft;
   border-radius: $unnnic-border-radius-sm;
-  background-color: $unnnic-color-neutral-snow;
+  background-color: $unnnic-color-bg-base;
 
   &.internal-note {
     border: unset;
@@ -273,7 +273,7 @@ export default {
   }
 
   .internal-note-close-button {
-    background-color: $unnnic-color-feedback-yellow;
+    background-color: $unnnic-color-orange-6;
     padding: 0px $unnnic-spacing-nano;
     border-top-left-radius: $unnnic-border-radius-md;
     border-top-right-radius: $unnnic-border-radius-md;
@@ -304,7 +304,7 @@ export default {
     align-items: flex-end;
     gap: $unnnic-spacing-inline-ant;
 
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
 
     cursor: text;
 
@@ -318,11 +318,11 @@ export default {
       font-size: $unnnic-font-size-body-gt;
       line-height: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
       padding: 10px 0;
-      color: $unnnic-color-neutral-cloudy;
+      color: $unnnic-color-fg-base;
     }
 
     &.internal-note {
-      border: 1px solid $unnnic-color-feedback-yellow;
+      border: 1px solid $unnnic-color-orange-6;
     }
 
     &.mobile {
@@ -365,7 +365,7 @@ export default {
       outline: none;
 
       &::placeholder {
-        color: $unnnic-color-neutral-cleanest;
+        color: $unnnic-color-fg-base;
       }
     }
   }

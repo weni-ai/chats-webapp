@@ -491,7 +491,7 @@ describe('StatusBar', () => {
         props: {
           text: 'Status updated to Offline',
           icon: 'indicator',
-          scheme: '$unnnic-color-neutral-black',
+          scheme: 'fg-emphasized',
           closeText: 'Close',
           position: 'bottom-right',
         },

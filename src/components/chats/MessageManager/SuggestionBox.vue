@@ -201,7 +201,7 @@ export default {
 
   background: $unnnic-color-bg-base;
   border-radius: $unnnic-radius-4;
-  box-shadow: $unnnic-shadow-level-near;
+  box-shadow: $unnnic-shadow-1;
 
   width: calc(100% - $unnnic-spacing-sm);
   max-height: 40vh;

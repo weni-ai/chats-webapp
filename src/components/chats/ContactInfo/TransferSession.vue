@@ -148,7 +148,7 @@ export default {
 
     font-weight: $unnnic-font-weight-bold;
     font-size: $unnnic-font-size-body-gt;
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
   }
 
   &__handler {

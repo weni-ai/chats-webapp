@@ -13,23 +13,23 @@ exports[`NewGroupDrawer.vue > Snapshot > should match the snapshot 1`] = `
       
       <section
         class="unnnic-navigator-pages"
-        data-v-5da9ecbf=""
         data-v-7e258225=""
+        data-v-dede7af4=""
       >
         
         <section
           class="unnnic-navigator-pages__page unnnic-navigator-pages__page--current"
           data-testid="navigator-page"
-          data-v-5da9ecbf=""
+          data-v-dede7af4=""
         >
           <span
             class="unnnic-navigator-pages__page-progress"
-            data-v-5da9ecbf=""
+            data-v-dede7af4=""
           />
           <p
             class="unnnic-navigator-pages__page-title unnnic-navigator-pages__page-title--active"
             data-testid="navigator-page-title"
-            data-v-5da9ecbf=""
+            data-v-dede7af4=""
           >
             General
           </p>
@@ -37,16 +37,16 @@ exports[`NewGroupDrawer.vue > Snapshot > should match the snapshot 1`] = `
         <section
           class="unnnic-navigator-pages__page"
           data-testid="navigator-page"
-          data-v-5da9ecbf=""
+          data-v-dede7af4=""
         >
           <span
             class="unnnic-navigator-pages__page-progress"
-            data-v-5da9ecbf=""
+            data-v-dede7af4=""
           />
           <p
             class="unnnic-navigator-pages__page-title"
             data-testid="navigator-page-title"
-            data-v-5da9ecbf=""
+            data-v-dede7af4=""
           >
             Projects
           </p>
@@ -54,16 +54,16 @@ exports[`NewGroupDrawer.vue > Snapshot > should match the snapshot 1`] = `
         <section
           class="unnnic-navigator-pages__page"
           data-testid="navigator-page"
-          data-v-5da9ecbf=""
+          data-v-dede7af4=""
         >
           <span
             class="unnnic-navigator-pages__page-progress"
-            data-v-5da9ecbf=""
+            data-v-dede7af4=""
           />
           <p
             class="unnnic-navigator-pages__page-title"
             data-testid="navigator-page-title"
-            data-v-5da9ecbf=""
+            data-v-dede7af4=""
           >
             Representatives
           </p>

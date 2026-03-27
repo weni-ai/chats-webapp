@@ -75,7 +75,7 @@
         <UnnnicIconSvg
           style="margin-right: 6px"
           icon="button-refresh-arrow-1"
-          scheme="neutral-cloudy"
+          scheme="fg-base"
           size="sm"
         />
       </div>
@@ -117,7 +117,7 @@
       >
         <UnnnicIconSvg
           icon="information-circle-4"
-          scheme="neutral-cloudy"
+          scheme="fg-base"
           size="sm"
         />
       </UnnnicToolTip>
@@ -195,7 +195,7 @@ export default {
       flex: 1;
       font-weight: $unnnic-font-weight-regular;
       line-height: 1.5rem;
-      color: $unnnic-color-neutral-dark;
+      color: $unnnic-color-fg-base;
     }
   }
 }
@@ -205,18 +205,18 @@ export default {
   justify-content: center;
   align-items: center;
   height: 2rem;
-  background: $unnnic-color-neutral-light;
+  background: $unnnic-color-bg-base-soft;
 
   margin-top: $unnnic-spacing-inline-sm;
 
   .message {
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
     font-size: $unnnic-font-size-body-gt;
     font-weight: $unnnic-font-weight-regular;
     line-height: 22px;
   }
   .alert-text {
-    color: $unnnic-color-neutral-cloudy;
+    color: $unnnic-color-fg-base;
     font-size: 0.87rem;
   }
 }
@@ -230,13 +230,13 @@ export default {
   margin-top: $unnnic-spacing-inline-sm;
 
   .message {
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
     font-size: $unnnic-font-size-body-gt;
     font-weight: $unnnic-font-weight-regular;
     line-height: 22px;
   }
   .alert-text {
-    color: $unnnic-color-neutral-cloudy;
+    color: $unnnic-color-fg-base;
     font-size: 0.87rem;
   }
 }

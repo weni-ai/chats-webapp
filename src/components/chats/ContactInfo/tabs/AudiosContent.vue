@@ -175,6 +175,6 @@ onMounted(async () => {
 
 .audio-text {
   font-size: 0.75rem;
-  color: $unnnic-color-neutral-dark;
+  color: $unnnic-color-fg-base;
 }
 </style>

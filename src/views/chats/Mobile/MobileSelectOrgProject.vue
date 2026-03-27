@@ -136,7 +136,7 @@ export default {
     display: flex;
     justify-content: center;
 
-    background-color: $unnnic-color-neutral-lightest;
+    background-color: $unnnic-color-bg-base-soft;
   }
 
   &__main {
@@ -173,7 +173,7 @@ export default {
   min-width: 100%;
 
   * {
-    color: $unnnic-color-aux-red-500;
+    color: $unnnic-color-red-7;
   }
 }
 </style>

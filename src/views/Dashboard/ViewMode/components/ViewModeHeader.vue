@@ -89,8 +89,8 @@ export default {
 
   width: 100%;
 
-  background: $unnnic-color-brand-weni;
-  color: $unnnic-color-neutral-black;
+  background: $unnnic-color-teal-8;
+  color: $unnnic-color-fg-emphasized;
 
   cursor: default;
 

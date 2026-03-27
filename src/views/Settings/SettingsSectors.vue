@@ -276,16 +276,16 @@ export default {
       min-height: 120px;
 
       :deep(.unnnic-simple-card-header-container__title) {
-        color: $unnnic-color-neutral-darkest;
+        color: $unnnic-color-fg-emphasized;
       }
     }
   }
 
   .sectors__new-sector-card:hover {
-    box-shadow: $unnnic-shadow-level-far;
+    box-shadow: $unnnic-shadow-1;
   }
   .sectors__new-sector-card:active {
-    border: 1px solid $unnnic-color-neutral-cleanest;
+    border: 1px solid $unnnic-color-border-soft;
   }
   .sectors__new-sector-card {
     min-height: 120px;

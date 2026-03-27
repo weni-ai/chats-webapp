@@ -189,7 +189,7 @@ export default {
     font-family: $unnnic-font-family-secondary;
     margin-top: $unnnic-spacing-sm;
     font-weight: $unnnic-font-weight-bold;
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
     font-size: $unnnic-font-size-body-lg;
     line-height: $unnnic-line-height-large * 1.5;
   }
@@ -203,10 +203,10 @@ export default {
       justify-content: space-between;
       width: 100%;
       padding-bottom: $unnnic-spacing-xs;
-      border-bottom: 1px solid $unnnic-color-neutral-light;
+      border-bottom: 1px solid $unnnic-color-border-soft;
       .list-item-name {
         font-family: $unnnic-font-family-secondary;
-        color: $unnnic-color-neutral-dark;
+        color: $unnnic-color-fg-base;
         font-weight: $unnnic-font-weight-bold;
         font-size: $unnnic-font-size-body-gt;
         line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;

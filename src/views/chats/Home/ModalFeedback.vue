@@ -161,7 +161,7 @@ const submitFeedback = async () => {
     padding: $unnnic-space-6;
 
     &-title {
-      color: $unnnic-color-neutral-cloudy;
+      color: $unnnic-color-fg-base;
 
       font-family: $unnnic-font-family-secondary;
       font-size: $unnnic-font-size-body-gt;

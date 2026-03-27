@@ -10,7 +10,7 @@
         >
           <UnnnicIconSvg
             icon="information-circle-4"
-            scheme="neutral-soft"
+            scheme="fg-base"
             size="sm"
           />
         </UnnnicToolTip>
@@ -156,7 +156,7 @@ export default {
 
   .title {
     font-weight: $unnnic-font-weight-bold;
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
     font-size: $unnnic-font-size-body-lg;
     line-height: 1.5rem;
 
