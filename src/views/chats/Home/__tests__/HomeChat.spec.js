@@ -9,7 +9,7 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useProfile } from '@/store/modules/profile';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useConfig } from '@/store/modules/config';
-
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
 
@@ -245,7 +245,7 @@ describe('HomeChat.vue', () => {
     it('updates textBoxMessage with the given value', () => {
       wrapper.vm.updateTextBoxMessage('Hello world');
 
-      expect(wrapper.vm.textBoxMessage).toBe('Hello world');
+      expect(useMessageManager().inputMessage).toBe('Hello world');
     });
 
     it('updates uploadFilesProgress  with the given value', () => {
@@ -293,7 +293,7 @@ describe('HomeChat.vue', () => {
       await modals.vm.$emit('select-quick-message', { text });
 
       await wrapper.vm.$nextTick();
-      expect(wrapper.vm.textBoxMessage).toBe(text);
+      expect(useMessageManager().inputMessage).toBe(text);
     });
 
     it('should call configFileUploader and openModal on home-chat-modals ref', () => {
@@ -453,6 +453,7 @@ describe('HomeChat.vue', () => {
       wrapper.vm.shouldRedirect = vi.fn().mockResolvedValue(false);
       wrapper.vm.resetNewMessagesByRoom = vi.fn(() => vi.fn());
       wrapper.vm.redirectToActiveChat = vi.fn();
+      useMessageManager().inputMessage = 'test message';
 
       roomsStore.activeRoom = roomMock;
 
@@ -468,7 +469,7 @@ describe('HomeChat.vue', () => {
       expect(wrapper.vm.getCanUseCopilot).toHaveBeenCalled();
       expect(wrapper.vm.readMessages).toHaveBeenCalled();
       expect(wrapper.vm.isChatSkeletonActive).toBe(false);
-      expect(wrapper.vm.textBoxMessage).toBe('');
+      expect(useMessageManager().inputMessage).toBe('');
     });
 
     it('renders "get chat" button and calls openModal when clicked', async () => {
