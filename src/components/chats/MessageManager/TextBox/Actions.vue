@@ -22,7 +22,7 @@
             type="tertiary"
             size="small"
             :pressed="action.pressed"
-            @click="action.action()"
+            @click.stop="action.action"
           />
         </UnnnicToolTip>
         <hr
