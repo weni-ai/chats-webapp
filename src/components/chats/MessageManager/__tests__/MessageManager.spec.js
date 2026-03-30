@@ -118,26 +118,26 @@ describe('MessageManager (index.vue)', () => {
   });
 
   it('renders CoPilot when isCopilotOpen is true', () => {
-    const mm = useMessageManager();
-    mm.isCopilotOpen = true;
+    const messageManagerStore = useMessageManager();
+    messageManagerStore.isCopilotOpen = true;
 
     const wrapper = createWrapper();
     expect(wrapper.find('[data-testid="stub-copilot"]').exists()).toBe(true);
   });
 
   it('does not render CoPilot when isCopilotOpen is false', () => {
-    const mm = useMessageManager();
-    mm.isCopilotOpen = false;
+    const messageManagerStore = useMessageManager();
+    messageManagerStore.isCopilotOpen = false;
 
     const wrapper = createWrapper();
     expect(wrapper.find('[data-testid="stub-copilot"]').exists()).toBe(false);
   });
 
   it('sets input from SuggestionBox select, closes copilot, and focuses the text box', async () => {
-    const mm = useMessageManager();
-    mm.inputMessage = '/';
-    mm.isCopilotOpen = true;
-    mm.isSuggestionBoxOpen = false;
+    const messageManagerStore = useMessageManager();
+    messageManagerStore.inputMessage = '/';
+    messageManagerStore.isCopilotOpen = true;
+    messageManagerStore.isSuggestionBoxOpen = false;
 
     const wrapper = createWrapper();
     await wrapper
@@ -145,41 +145,41 @@ describe('MessageManager (index.vue)', () => {
       .trigger('click');
     await flushPromises();
 
-    expect(mm.inputMessage).toBe('from-suggestion');
-    expect(mm.isCopilotOpen).toBe(false);
+    expect(messageManagerStore.inputMessage).toBe('from-suggestion');
+    expect(messageManagerStore.isCopilotOpen).toBe(false);
     expect(textBoxFocus).toHaveBeenCalled();
   });
 
   it('sets input from CoPilot select and focuses the text box', async () => {
-    const mm = useMessageManager();
-    mm.inputMessage = '';
-    mm.isCopilotOpen = true;
+    const messageManagerStore = useMessageManager();
+    messageManagerStore.inputMessage = '';
+    messageManagerStore.isCopilotOpen = true;
 
     const wrapper = createWrapper();
     await wrapper.find('[data-testid="stub-copilot-select"]').trigger('click');
     await flushPromises();
 
-    expect(mm.inputMessage).toBe('from-copilot');
+    expect(messageManagerStore.inputMessage).toBe('from-copilot');
     expect(textBoxFocus).toHaveBeenCalled();
   });
 
   it('clears input and closes the suggestion flag on Escape while the suggestion box is open', async () => {
-    const mm = useMessageManager();
-    mm.inputMessage = '/hi';
-    mm.isSuggestionBoxOpen = true;
+    const messageManagerStore = useMessageManager();
+    messageManagerStore.inputMessage = '/hi';
+    messageManagerStore.isSuggestionBoxOpen = true;
 
     const wrapper = createWrapper();
     const source = wrapper.find('[data-testid="stub-text-box-keydown-source"]');
     await source.trigger('keydown', { key: 'Escape' });
 
-    expect(mm.isSuggestionBoxOpen).toBe(false);
-    expect(mm.inputMessage).toBe('');
+    expect(messageManagerStore.isSuggestionBoxOpen).toBe(false);
+    expect(messageManagerStore.inputMessage).toBe('');
   });
 
   it('forwards keydown to SuggestionBox as keyboardEvent when the suggestion box is open', async () => {
-    const mm = useMessageManager();
-    mm.inputMessage = '/x';
-    mm.isSuggestionBoxOpen = true;
+    const messageManagerStore = useMessageManager();
+    messageManagerStore.inputMessage = '/x';
+    messageManagerStore.isSuggestionBoxOpen = true;
 
     const wrapper = createWrapper();
     const suggestion = wrapper.findComponent({ name: 'SuggestionBox' });
@@ -191,11 +191,11 @@ describe('MessageManager (index.vue)', () => {
   });
 
   it('calls sendRoomMessage on Enter without Shift when the suggestion box is closed', async () => {
-    const mm = useMessageManager();
-    mm.inputMessage = 'hello';
-    mm.isSuggestionBoxOpen = false;
-    mm.mediaUploadFiles = [];
-    const spy = vi.spyOn(mm, 'sendRoomMessage');
+    const messageManagerStore = useMessageManager();
+    messageManagerStore.inputMessage = 'hello';
+    messageManagerStore.isSuggestionBoxOpen = false;
+    messageManagerStore.mediaUploadFiles = [];
+    const spy = vi.spyOn(messageManagerStore, 'sendRoomMessage');
 
     const wrapper = createWrapper();
     await wrapper
@@ -207,11 +207,13 @@ describe('MessageManager (index.vue)', () => {
   });
 
   it('calls sendMediasMessage on Enter when there are media files and the suggestion box is closed', async () => {
-    const mm = useMessageManager();
-    mm.inputMessage = '';
-    mm.isSuggestionBoxOpen = false;
-    mm.mediaUploadFiles = [new File(['x'], 'a.png', { type: 'image/png' })];
-    const spy = vi.spyOn(mm, 'sendMediasMessage');
+    const messageManagerStore = useMessageManager();
+    messageManagerStore.inputMessage = '';
+    messageManagerStore.isSuggestionBoxOpen = false;
+    messageManagerStore.mediaUploadFiles = [
+      new File(['x'], 'a.png', { type: 'image/png' }),
+    ];
+    const spy = vi.spyOn(messageManagerStore, 'sendMediasMessage');
 
     const wrapper = createWrapper();
     await wrapper
@@ -223,11 +225,11 @@ describe('MessageManager (index.vue)', () => {
   });
 
   it('does not send on Enter with Shift', async () => {
-    const mm = useMessageManager();
-    mm.inputMessage = 'hello';
-    mm.isSuggestionBoxOpen = false;
-    const sendSpy = vi.spyOn(mm, 'sendRoomMessage');
-    const mediasSpy = vi.spyOn(mm, 'sendMediasMessage');
+    const messageManagerStore = useMessageManager();
+    messageManagerStore.inputMessage = 'hello';
+    messageManagerStore.isSuggestionBoxOpen = false;
+    const sendSpy = vi.spyOn(messageManagerStore, 'sendRoomMessage');
+    const mediasSpy = vi.spyOn(messageManagerStore, 'sendMediasMessage');
 
     const wrapper = createWrapper();
     await wrapper
@@ -241,10 +243,10 @@ describe('MessageManager (index.vue)', () => {
   });
 
   it('does not call send when Enter is handled by the suggestion box branch', async () => {
-    const mm = useMessageManager();
-    mm.inputMessage = '/';
-    mm.isSuggestionBoxOpen = true;
-    const sendSpy = vi.spyOn(mm, 'sendRoomMessage');
+    const messageManagerStore = useMessageManager();
+    messageManagerStore.inputMessage = '/';
+    messageManagerStore.isSuggestionBoxOpen = true;
+    const sendSpy = vi.spyOn(messageManagerStore, 'sendRoomMessage');
 
     const wrapper = createWrapper();
     await wrapper
@@ -256,28 +258,28 @@ describe('MessageManager (index.vue)', () => {
   });
 
   it('turns off internal note on Escape when the suggestion box is closed', async () => {
-    const mm = useMessageManager();
-    mm.isInternalNote = true;
-    mm.isSuggestionBoxOpen = false;
+    const messageManagerStore = useMessageManager();
+    messageManagerStore.isInternalNote = true;
+    messageManagerStore.isSuggestionBoxOpen = false;
 
     const wrapper = createWrapper();
     const source = wrapper.find('[data-testid="stub-text-box-keydown-source"]');
     await source.trigger('keydown', { key: 'Escape' });
 
-    expect(mm.isInternalNote).toBe(false);
+    expect(messageManagerStore.isInternalNote).toBe(false);
   });
 
   it('clears input and closes suggestion state when SuggestionBox emits close', async () => {
-    const mm = useMessageManager();
-    mm.inputMessage = '/abc';
-    mm.isSuggestionBoxOpen = true;
+    const messageManagerStore = useMessageManager();
+    messageManagerStore.inputMessage = '/abc';
+    messageManagerStore.isSuggestionBoxOpen = true;
 
     const wrapper = createWrapper();
     await wrapper
       .find('[data-testid="stub-suggestion-close"]')
       .trigger('click');
 
-    expect(mm.isSuggestionBoxOpen).toBe(false);
-    expect(mm.inputMessage).toBe('');
+    expect(messageManagerStore.isSuggestionBoxOpen).toBe(false);
+    expect(messageManagerStore.inputMessage).toBe('');
   });
 });
