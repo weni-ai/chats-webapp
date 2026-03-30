@@ -10,7 +10,6 @@
 
 <script setup lang="ts">
 import { useTemplateRef } from 'vue';
-import { storeToRefs } from 'pinia';
 
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 
@@ -19,9 +18,7 @@ defineOptions({
 });
 
 const messageManager = useMessageManager();
-const { mediaUploadFiles } = storeToRefs(messageManager);
-
-const LIMIT_UPLOAD_FILES = 5;
+const { addMediaUploadFiles } = messageManager;
 
 const inputRef = useTemplateRef<HTMLInputElement>('uploadField');
 
@@ -31,12 +28,7 @@ const clickInput = () => {
 
 const handleChange = (event: Event) => {
   const files = (event.target as HTMLInputElement).files;
-  const currentFilesCount = mediaUploadFiles.value.length;
-  if (currentFilesCount + files?.length > LIMIT_UPLOAD_FILES) {
-    // TODO: add alert limit upload files
-    return;
-  }
-  mediaUploadFiles.value = [...mediaUploadFiles.value, ...files];
+  addMediaUploadFiles(files);
 };
 
 defineExpose({
