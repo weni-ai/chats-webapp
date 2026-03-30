@@ -700,6 +700,7 @@
   "shortcut": "Atajo",
   "message": "Mensaje",
   "save": "Guardar",
+  "use": "Usar",
   "delete_sector": "Eliminar sector",
   "delete_queue": "Eliminar fila",
   "delete_queue_modal": {

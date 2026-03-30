@@ -702,6 +702,7 @@
   "shortcut": "Atalho",
   "message": "Mensagem",
   "save": "Salvar",
+  "use": "Usar",
   "delete_sector": "Deletar setor",
   "delete_queue": "Excluir fila",
   "delete_queue_modal": {

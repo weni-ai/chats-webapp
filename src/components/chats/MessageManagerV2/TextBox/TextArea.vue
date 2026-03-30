@@ -187,7 +187,7 @@ defineExpose({
     margin-top: -33px;
     align-self: flex-end;
 
-    background-color: $unnnic-color-yellow-8;
+    background-color: $unnnic-color-bg-yellow-strong;
     padding: 0px $unnnic-spacing-nano;
     border-radius: $unnnic-radius-1 $unnnic-radius-1 0 0;
 
