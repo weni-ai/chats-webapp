@@ -186,6 +186,7 @@
   },
   "attachment": "Anexo",
   "internal_note": "Nota interna",
+  "close_internal_note": "Fechar nota interna (Esc)",
   "notes": "Notas",
   "bold": "Negrito",
   "italic": "Itálico",
@@ -419,6 +420,7 @@
       "401": "Erro de autenticação",
       "default": "Ocorreu um erro, por favor, tente novamente mais tarde"
     },
+    "message_input_placeholder": "Digite sua mensagem aqui ou / para ativar mensagens rápidas",
     "search_contact": "Pesquisar contato",
     "search_contact_placeholder": "Pesquisar contato (nome, telefone ou protocolo)",
     "tags": "Tags do chat",

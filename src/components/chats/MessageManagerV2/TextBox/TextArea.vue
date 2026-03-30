@@ -1,5 +1,5 @@
 <template>
-  <div
+  <button
     v-if="isInternalNote"
     class="internal-note__close-button"
   >
@@ -11,7 +11,7 @@
       clickable
       @click="isInternalNote = false"
     />
-  </div>
+  </button>
   <section
     v-if="!isAudioRecorderVisible && mediaUploadFiles.length === 0"
     class="text-box__textarea-container"
@@ -25,7 +25,7 @@
     <textarea
       ref="textInput"
       :value="inputMessage"
-      :placeholder="isInternalNote ? '' : $t('message')"
+      :placeholder="isInternalNote ? '' : $t('chats.message_input_placeholder')"
       rows="1"
       :class="['text-box__textarea', { 'internal-note': isInternalNote }]"
       data-testid="text-area"
@@ -182,13 +182,12 @@ defineExpose({
     font: $unnnic-font-body;
   }
   &__close-button {
-    // TODO: Tokens
     position: fixed;
-    width: 24px;
+    width: $unnnic-space-6;
     margin-top: -33px;
     align-self: flex-end;
 
-    background-color: $unnnic-color-fg-warning;
+    background-color: $unnnic-color-yellow-8;
     padding: 0px $unnnic-spacing-nano;
     border-radius: $unnnic-radius-1 $unnnic-radius-1 0 0;
 
