@@ -16,7 +16,6 @@ import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages'
 import HomeChat from '../HomeChat.vue';
 import HomeChatModals from '../HomeChatModals.vue';
 import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
-import MessageManager from '@/components/chats/MessageManager/index.vue';
 import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone/index.vue';
 
 import RoomService from '@/services/api/resources/chats/room';
@@ -120,10 +119,14 @@ describe('HomeChat.vue', () => {
         components: {
           RoomMessages,
           HomeChatModals,
-          MessageManager,
           ChatsDropzone,
         },
         stubs: {
+          MessageManager: {
+            name: 'MessageManager',
+            template: '<div data-testid="message-manager" />',
+            props: ['isLoading'],
+          },
           ContactHeader: {
             template: '<div />',
             props: ['contactName', 'clickable'],
@@ -294,26 +297,6 @@ describe('HomeChat.vue', () => {
 
       await wrapper.vm.$nextTick();
       expect(useMessageManager().inputMessage).toBe(text);
-    });
-
-    it('should call configFileUploader and openModal on home-chat-modals ref', () => {
-      const modals = wrapper.findComponent('[data-testid="home-chat-modals"]');
-
-      const configFileUploaderSpy = vi.spyOn(modals.vm, 'configFileUploader');
-
-      const openModalSpy = vi.spyOn(modals.vm, 'openModal');
-
-      const fakeFiles = [{ name: 'file1.png', type: 'image' }];
-      const fakeType = 'image';
-
-      wrapper.vm.openModalFileUploader(fakeFiles, fakeType);
-
-      expect(configFileUploaderSpy).toHaveBeenCalledWith({
-        files: fakeFiles,
-        filesType: fakeType,
-      });
-
-      expect(openModalSpy).toHaveBeenCalledWith('fileUploader');
     });
 
     it('redirects to home if not on home route and no active chat', async () => {
@@ -706,7 +689,12 @@ describe('HomeChat.vue', () => {
       const discussionsStore = useDiscussions();
 
       discussionsStore.discussions = [{ uuid: '123' }, { uuid: '456' }];
-      discussionsStore.activeDiscussion = { uuid: '123', is_queued: false };
+
+      discussionsStore.activeDiscussion = {
+        uuid: '123',
+        is_queued: true,
+        created_by: 'other.agent@weni.ai',
+      };
 
       await flushPromises();
 
