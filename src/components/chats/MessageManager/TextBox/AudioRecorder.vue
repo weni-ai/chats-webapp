@@ -46,6 +46,6 @@ defineExpose({
 <style scoped lang="scss">
 :deep(.audio-handler__time) {
   display: inline-block;
-  min-width: 64px;
+  min-width: 64px; // This fixes the problem with the audio confirm button blinking due to the audio timing effect
 }
 </style>
