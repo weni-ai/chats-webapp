@@ -1,5 +1,5 @@
 <template>
-  <section class="message-manager-v2">
+  <section class="message-manager">
     <MessageManagerLoading v-if="isLoading" />
     <MessageManagerTextBox
       v-else
@@ -113,7 +113,7 @@ const closeSuggestionBox = () => {
 </script>
 
 <style lang="scss" scoped>
-.message-manager-v2 {
+.message-manager {
   position: relative;
 
   display: grid;
