@@ -4,6 +4,8 @@
     ref="unnnicAudioRecorder"
     v-model="audioMessage"
     class="text-box__audio-recorder"
+    hideRecordingIndicator
+    :saveText="$t('use')"
     @status="handleAudioRecorderStatus"
   />
 </template>
@@ -44,6 +46,6 @@ defineExpose({
 <style scoped lang="scss">
 :deep(.audio-handler__time) {
   display: inline-block;
-  min-width: 56px; // TODO: check if this is correct
+  min-width: 64px; // TODO: check if this is correct
 }
 </style>

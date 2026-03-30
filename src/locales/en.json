@@ -735,6 +735,7 @@
   "shortcut": "Shortcut",
   "message": "Message",
   "save": "Save",
+  "use": "Use",
   "delete_sector": "Delete sector",
   "delete_queue": "Delete queue",
   "delete_queue_modal": {
