@@ -36,39 +36,24 @@
       :room="room"
       @close="closeModal('closeChat')"
     />
-
-    <FileUploader
-      v-if="!enableMessageManagerV2"
-      ref="fileUploader"
-      v-model="modalFileUploaderFiles"
-      :mediasType="modalFileUploaderMediaType"
-      data-testid="modal-file-uploader"
-      @progress="emitFileUploaderProgress"
-      @close="closeModal('fileUploader')"
-      @update:model-value="modalFileUploaderFiles = $event"
-    />
   </section>
 </template>
 
 <script>
-import { mapState, mapWritableState } from 'pinia';
+import { mapState } from 'pinia';
 import isMobile from 'is-mobile';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDashboard } from '@/store/modules/dashboard';
-
-import FileUploader from '@/components/chats/MessageManager/FileUploader.vue';
-import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
-
-import ModalCloseChat from './ModalCloseChat.vue';
-import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+
+import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
+import ModalCloseChat from './ModalCloseChat.vue';
 
 export default {
   name: 'HomeChatModals',
 
   components: {
-    FileUploader,
     ModalGetChat,
     ModalCloseChat,
   },
@@ -82,7 +67,6 @@ export default {
         getChat: false,
         assumedChat: false,
         closeChat: false,
-        fileUploader: false,
       },
 
       modalFileUploaderMediaType: '',
@@ -96,24 +80,6 @@ export default {
       'showModalAssumedChat',
       'assumedChatContactName',
     ]),
-    ...mapWritableState(useMessageManager, {
-      modalFileUploaderFiles: 'mediaUploadFiles',
-    }),
-    enableMessageManagerV2() {
-      return this.featureFlags.active_features?.includes(
-        'weniChatsInputMessageV2',
-      );
-    },
-  },
-
-  watch: {
-    'modalsShowing.fileUploader': {
-      handler(newModalsShowingFileUploader) {
-        if (newModalsShowingFileUploader && !this.enableMessageManagerV2) {
-          this.$refs.fileUploader.open();
-        }
-      },
-    },
   },
 
   methods: {
@@ -130,21 +96,8 @@ export default {
     closeModal(modalName) {
       this.toggleModal(modalName, 'close');
     },
-
-    configFileUploader({ files, filesType }) {
-      if (files?.length > 0) {
-        this.modalFileUploaderFiles = [...files];
-      }
-      if (filesType) {
-        this.modalFileUploaderMediaType = filesType;
-      }
-    },
-
     emitGotChat() {
       this.$emit('got-chat');
-    },
-    emitFileUploaderProgress(progress) {
-      this.$emit('file-uploader-progress', progress);
     },
   },
 };
