@@ -1,9 +1,13 @@
 <template>
-  <section class="text-box__medias">
+  <section
+    class="text-box__medias"
+    data-testid="medias-list"
+  >
     <section
       v-for="media in mediaUploadFiles"
       :key="media.name"
       class="text-box__medias__item"
+      data-testid="media-upload-item"
     >
       <UnnnicIcon
         icon="draft"
@@ -17,6 +21,7 @@
         {{ media.name }}
       </p>
       <UnnnicIcon
+        data-testid="media-upload-item-remove"
         icon="delete"
         size="ant"
         scheme="red-500"
