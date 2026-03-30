@@ -20,7 +20,7 @@
       v-if="isInternalNote"
       class="internal-note__prefix"
     >
-      {{ $t('internal_note') + ': ' }}
+      {{ `${$t('internal_note')}: ` }}
     </p>
     <textarea
       ref="textInput"
