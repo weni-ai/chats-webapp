@@ -1,5 +1,8 @@
 <template>
-  <section class="text-box__actions">
+  <section
+    class="text-box__actions"
+    data-testid="text-box-actions"
+  >
     <section class="text-box__actions__items">
       <section
         v-for="(action, index) in enabledActions"
@@ -12,13 +15,14 @@
           side="top"
         >
           <UnnnicButton
+            :data-testid="'text-box-action-' + action.icon"
             :iconCenter="action.icon"
             :tooltip="action.tooltip"
             :disabled="action.disabled"
             type="tertiary"
             size="small"
             :pressed="action.pressed"
-            @click.stop="action.action()"
+            @click="action.action()"
           />
         </UnnnicToolTip>
         <hr
@@ -28,6 +32,7 @@
       </section>
     </section>
     <UnnnicButton
+      data-testid="text-box-actions-send"
       :iconLeft="isInternalNote ? '' : 'send'"
       :tooltip="isInternalNote ? '' : $t('send')"
       :type="isInternalNote ? 'attention' : 'primary'"
