@@ -9,6 +9,8 @@ import { useDiscussionMessages } from './discussionMessages';
 import i18n from '@/plugins/i18n';
 
 export const useMessageManager = defineStore('messageManager', () => {
+  const LIMIT_UPLOAD_FILES = 5;
+
   const inputMessageFocused = ref(false);
   const inputMessage = ref('');
   const audioMessage = ref<HTMLAudioElement | null>(null);
@@ -134,6 +136,14 @@ export const useMessageManager = defineStore('messageManager', () => {
     });
   }
 
+  function addMediaUploadFiles(files: File[] | FileList) {
+    const size = mediaUploadFiles.value.length + files.length;
+    if (size > LIMIT_UPLOAD_FILES) {
+      return;
+    }
+    mediaUploadFiles.value = [...mediaUploadFiles.value, ...files];
+  }
+
   function sendMediasMessage() {
     try {
       isLoadingSend.value = true;
@@ -175,6 +185,7 @@ export const useMessageManager = defineStore('messageManager', () => {
 
     sendRoomMessage,
     sendMediasMessage,
+    addMediaUploadFiles,
     clearInputs,
   };
 });
