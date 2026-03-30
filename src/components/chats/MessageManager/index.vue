@@ -1,5 +1,8 @@
 <template>
-  <section class="message-manager">
+  <section
+    class="message-manager"
+    data-testid="message-manager"
+  >
     <MessageManagerLoading v-if="isLoading" />
     <MessageManagerTextBox
       v-else
