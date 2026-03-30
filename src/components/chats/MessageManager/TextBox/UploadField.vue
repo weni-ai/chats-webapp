@@ -4,6 +4,7 @@
     class="text-box__upload-field"
     type="file"
     multiple
+    data-testid="upload-field-input"
     @change="handleChange"
   />
 </template>
