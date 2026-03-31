@@ -153,17 +153,14 @@ export default {
   },
 
   async bulkTranfer({ rooms = [], intended_agent = '', intended_queue = '' }) {
-    const profileStore = useProfile();
-    const { email: user_email } = profileStore.me;
-    const body = { rooms_list: rooms };
-    const params = {
-      user_request: user_email,
-      user_email: intended_agent,
-      queue_uuid: intended_queue,
+    const body = {
+      rooms_list: rooms,
+      user_email: intended_agent || null,
+      queue_uuid: intended_queue || null,
     };
 
     const response = await http
-      .patch(`room/bulk_transfer/`, body, { params })
+      .post('room/bulk_transfer/', body)
       .then((response) => response)
       .catch((error) => error.response);
     return response;
