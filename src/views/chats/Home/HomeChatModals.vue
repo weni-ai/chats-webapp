@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { mapState, mapWritableState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 import isMobile from 'is-mobile';
 
 import { useRooms } from '@/store/modules/chats/rooms';
@@ -117,6 +117,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(useMessageManager, ['addMediaUploadFiles']),
     toggleModal(modalName, action = 'close') {
       if (this.modalsShowing[modalName] === undefined) {
         console.error(`Modal '${modalName}' does not exist.`);
@@ -132,9 +133,7 @@ export default {
     },
 
     configFileUploader({ files, filesType }) {
-      if (files?.length > 0) {
-        this.modalFileUploaderFiles = [...files];
-      }
+      this.addMediaUploadFiles(files);
       if (filesType) {
         this.modalFileUploaderMediaType = filesType;
       }
