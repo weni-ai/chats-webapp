@@ -1,12 +1,7 @@
 <template>
   <ChatSummary
-    v-if="
-      (!isLoadingMessages || silentLoadingMessages) &&
-      openChatSummary &&
-      showRoomSummary &&
-      enableRoomSummary &&
-      room
-    "
+    v-if="shouldShowSummaryContent || hasArchivedContent"
+    :showSummary="!!shouldShowSummaryContent"
     :isGeneratingSummary="isLoadingActiveRoomSummary"
     :summaryText="activeRoomSummary.summary"
     :feedback="activeRoomSummary.feedback"
@@ -103,6 +98,27 @@ export default {
     ...mapState(useConfig, {
       enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
     }),
+
+    messagesReady() {
+      return (
+        (!this.isLoadingMessages || this.silentLoadingMessages) && this.room
+      );
+    },
+    shouldShowSummaryContent() {
+      return (
+        this.messagesReady &&
+        this.openChatSummary &&
+        this.showRoomSummary &&
+        this.enableRoomSummary
+      );
+    },
+    hasArchivedContent() {
+      return (
+        this.messagesReady &&
+        this.room?.is_archived &&
+        !!this.room?.archived_conversation_file_url
+      );
+    },
   },
 
   watch: {

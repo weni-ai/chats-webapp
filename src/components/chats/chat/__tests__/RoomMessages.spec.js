@@ -41,7 +41,15 @@ vi.mock('@/layouts/ChatsLayout/components/ChatSummary/index.vue', () => ({
     name: 'ChatSummary',
     template:
       '<div data-testid="chat-summary" @click="$emit(\'close\')">ChatSummary</div>',
-    props: ['isGeneratingSummary', 'summaryText', 'feedback', 'skipAnimation'],
+    props: [
+      'showSummary',
+      'isGeneratingSummary',
+      'summaryText',
+      'feedback',
+      'skipAnimation',
+      'isArchived',
+      'archivedUrl',
+    ],
   },
 }));
 
@@ -176,7 +184,65 @@ describe('RoomMessages.vue', () => {
       expect(wrapper.find('[data-testid="chat-summary"]').exists()).toBe(false);
     });
 
-    it('renders ChatSummary when all conditions are met', async () => {
+    it('renders ChatSummary when room is archived with URL, even without summary enabled', async () => {
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+
+      const archivedRoom = {
+        ...mockRoom,
+        is_archived: true,
+        archived_conversation_file_url: 'https://example.com/archive.zip',
+      };
+
+      const wrapper = createWrapper(
+        { showRoomSummary: false },
+        {
+          config: {
+            project: { config: { has_chats_summary: false } },
+          },
+          rooms: {
+            activeRoom: archivedRoom,
+          },
+        },
+      );
+
+      await flushPromises();
+
+      const chatSummary = wrapper.findComponent({ name: 'ChatSummary' });
+      expect(chatSummary.exists()).toBe(true);
+      expect(chatSummary.props('showSummary')).toBe(false);
+      expect(chatSummary.props('isArchived')).toBe(true);
+      expect(chatSummary.props('archivedUrl')).toBe(
+        'https://example.com/archive.zip',
+      );
+    });
+
+    it('does not render ChatSummary when room is archived but has no URL', async () => {
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+
+      const archivedRoom = {
+        ...mockRoom,
+        is_archived: true,
+        archived_conversation_file_url: '',
+      };
+
+      const wrapper = createWrapper(
+        { showRoomSummary: false },
+        {
+          config: {
+            project: { config: { has_chats_summary: false } },
+          },
+          rooms: {
+            activeRoom: archivedRoom,
+          },
+        },
+      );
+
+      await flushPromises();
+
+      expect(wrapper.find('[data-testid="chat-summary"]').exists()).toBe(false);
+    });
+
+    it('renders ChatSummary with showSummary true when all summary conditions are met', async () => {
       RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
       RoomService.getSummary.mockResolvedValue({
         status: 'DONE',
@@ -208,7 +274,9 @@ describe('RoomMessages.vue', () => {
       wrapper.vm.silentLoadingMessages = true;
       await wrapper.vm.$nextTick();
 
-      expect(wrapper.find('[data-testid="chat-summary"]').exists()).toBe(true);
+      const chatSummary = wrapper.findComponent({ name: 'ChatSummary' });
+      expect(chatSummary.exists()).toBe(true);
+      expect(chatSummary.props('showSummary')).toBe(true);
     });
   });
 
