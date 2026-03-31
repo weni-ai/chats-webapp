@@ -38,6 +38,7 @@
     />
 
     <FileUploader
+      v-if="!enableMessageManagerV2"
       ref="fileUploader"
       v-model="modalFileUploaderFiles"
       :mediasType="modalFileUploaderMediaType"
@@ -50,9 +51,9 @@
 </template>
 
 <script>
+import { mapState, mapWritableState } from 'pinia';
 import isMobile from 'is-mobile';
 
-import { mapState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDashboard } from '@/store/modules/dashboard';
 
@@ -60,6 +61,8 @@ import FileUploader from '@/components/chats/MessageManager/FileUploader.vue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
 
 import ModalCloseChat from './ModalCloseChat.vue';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 export default {
   name: 'HomeChatModals',
@@ -82,23 +85,31 @@ export default {
         fileUploader: false,
       },
 
-      modalFileUploaderFiles: [],
       modalFileUploaderMediaType: '',
     };
   },
 
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, { room: (store) => store.activeRoom }),
     ...mapState(useDashboard, [
       'showModalAssumedChat',
       'assumedChatContactName',
     ]),
+    ...mapWritableState(useMessageManager, {
+      modalFileUploaderFiles: 'mediaUploadFiles',
+    }),
+    enableMessageManagerV2() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsInputMessageV2',
+      );
+    },
   },
 
   watch: {
     'modalsShowing.fileUploader': {
       handler(newModalsShowingFileUploader) {
-        if (newModalsShowingFileUploader) {
+        if (newModalsShowingFileUploader && !this.enableMessageManagerV2) {
           this.$refs.fileUploader.open();
         }
       },

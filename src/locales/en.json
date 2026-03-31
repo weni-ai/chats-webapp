@@ -160,6 +160,7 @@
   },
   "attachment": "Attach",
   "internal_note": "Internal note",
+  "close_internal_note": "Close internal note (Esc)",
   "notes": "Notes",
   "bold": "Bold",
   "italic": "Italic",
@@ -397,6 +398,7 @@
       "401": "Authentication error",
       "default": "An error occurred, please try again later"
     },
+    "message_input_placeholder": "Type your message or / to activate quick messages",
     "search_contact": "Search contact",
     "search_contact_placeholder": "Search contact (name, phone or ticket ID)",
     "tags": "Chat tags",
@@ -702,6 +704,7 @@
   "shortcut": "Shortcut",
   "message": "Message",
   "save": "Save",
+  "use": "Use",
   "delete_sector": "Delete sector",
   "delete_queue": "Delete queue",
   "delete_queue_modal": {
