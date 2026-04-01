@@ -170,6 +170,7 @@ export const useRooms = defineStore('rooms', {
           flow_start: this.waitingContactAnswer.length,
         };
         const counters = useRoomCounters();
+        counters.cacheRoomTypes(this.rooms, getRoomType);
         counters.syncFromApi(
           roomsType,
           response.count,
@@ -273,13 +274,23 @@ export const useRooms = defineStore('rooms', {
         viewedAgentEmail,
       });
 
-      return { wasInArray, isNowInArray, oldType, newType };
+      return {
+        wasInArray,
+        isNowInArray,
+        oldType,
+        newType,
+        roomUuid: room.uuid,
+      };
     },
 
     _updateRoomLegacy({ room, userEmail, routerReplace, viewedAgentEmail }) {
       const existingRoom = this.rooms.find((r) => r.uuid === room.uuid);
       const wasInArray = !!existingRoom;
       const oldType = existingRoom ? getRoomType(existingRoom) : null;
+
+      if (!existingRoom) {
+        this.rooms.push({ ...room });
+      }
 
       const filteredRooms = this.rooms
         .map((mappedRoom) =>
@@ -313,7 +324,13 @@ export const useRooms = defineStore('rooms', {
         viewedAgentEmail,
       });
 
-      return { wasInArray, isNowInArray, oldType, newType };
+      return {
+        wasInArray,
+        isNowInArray,
+        oldType,
+        newType,
+        roomUuid: room.uuid,
+      };
     },
 
     _handleTransferSideEffects({
