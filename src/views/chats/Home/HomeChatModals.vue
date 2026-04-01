@@ -40,12 +40,13 @@
 </template>
 
 <script>
-import { mapState } from 'pinia';
+import { mapActions, mapState } from 'pinia';
 import isMobile from 'is-mobile';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDashboard } from '@/store/modules/dashboard';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
 import ModalCloseChat from './ModalCloseChat.vue';
@@ -83,6 +84,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(useMessageManager, ['addMediaUploadFiles']),
     toggleModal(modalName, action = 'close') {
       if (this.modalsShowing[modalName] === undefined) {
         console.error(`Modal '${modalName}' does not exist.`);
@@ -96,6 +98,14 @@ export default {
     closeModal(modalName) {
       this.toggleModal(modalName, 'close');
     },
+
+    configFileUploader({ files, filesType }) {
+      this.addMediaUploadFiles(files);
+      if (filesType) {
+        this.modalFileUploaderMediaType = filesType;
+      }
+    },
+
     emitGotChat() {
       this.$emit('got-chat');
     },

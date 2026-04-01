@@ -24,7 +24,7 @@
       class="internal-note__prefix"
       data-testid="internal-note-prefix"
     >
-      {{ $t('internal_note') + ': ' }}
+      {{ `${$t('internal_note')}: ` }}
     </p>
     <textarea
       ref="textInput"
@@ -72,12 +72,24 @@ const textInputRef = useTemplateRef<HTMLTextAreaElement>('textInput');
 
 function getLineHeightPx(el: HTMLTextAreaElement): number {
   const computed = getComputedStyle(el);
-  const parsed = parseFloat(computed.lineHeight);
-  if (Number.isFinite(parsed) && parsed > 0) {
-    return parsed;
+  const raw = computed.lineHeight;
+
+  if (raw.endsWith('px')) {
+    const parsed = parseFloat(raw);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return parsed;
+    }
   }
+
   const fontSize = parseFloat(computed.fontSize);
-  return Number.isFinite(fontSize) && fontSize > 0 ? fontSize * 1.25 : 20;
+  if (!Number.isFinite(fontSize) || fontSize <= 0) return 20;
+
+  const multiplier = parseFloat(raw);
+  if (Number.isFinite(multiplier) && multiplier > 0) {
+    return fontSize * multiplier;
+  }
+
+  return fontSize * 1.25;
 }
 
 const handleTextarea = (event: Event) => {

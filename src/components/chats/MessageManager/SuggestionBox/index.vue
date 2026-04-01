@@ -234,27 +234,15 @@ export default {
   padding: $unnnic-space-4;
 
   position: absolute;
-  bottom: calc(100% + $unnnic-spacing-xs);
+  bottom: calc(100% + $unnnic-space-2);
 
   background: $unnnic-color-bg-base;
   border-radius: $unnnic-radius-4;
   box-shadow: $unnnic-shadow-level-near;
 
-  width: calc(100% - $unnnic-spacing-sm);
+  width: calc(100% - $unnnic-space-4);
   max-height: 40vh;
   overflow: hidden;
-
-  &__header {
-    padding: 0 $unnnic-spacing-sm $unnnic-spacing-xs;
-    font-size: $unnnic-font-size-body-gt;
-
-    line-height: 1.25rem;
-  }
-
-  &__search {
-    font-weight: $unnnic-font-weight-black;
-    color: $unnnic-color-aux-purple-500;
-  }
 
   &__shortcuts {
     max-height: 100%;
