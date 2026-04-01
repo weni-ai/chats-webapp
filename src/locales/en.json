@@ -427,7 +427,7 @@
     "get_chat_error": "Error when trying to get the room",
     "you_got_chat": "You got the chat",
     "your_chat_assumed": "Chat with {contact} has been transferred",
-    "your_chat_assumed_description": "Your chat with {contact} has been taken over by another agent",
+    "your_chat_assumed_description": "Your chat with {contact} has been taken over by other representative",
     "closed_chats": {
       "history": "History",
       "project_history": "Project history",

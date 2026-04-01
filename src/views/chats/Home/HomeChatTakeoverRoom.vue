@@ -49,7 +49,6 @@ const open = computed({
 .home-chat-takeover-room {
   &__content {
     display: flex;
-    flex-direction: column;
     padding: $unnnic-space-6;
   }
 }
