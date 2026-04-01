@@ -21,7 +21,7 @@ const UnnnicButtonStub = {
   inheritAttrs: false,
   props: ['iconCenter', 'type', 'size'],
   template:
-    '<button type="button" class="unnic-btn-stub" data-testid="header-quick-messages-close" :data-icon-center="iconCenter" @click="$emit(\'click\')" />',
+    '<button type="button" data-testid="header-quick-messages-close" :data-icon-center="iconCenter" @click="$emit(\'click\')" />',
 };
 
 const createWrapper = () =>
@@ -41,12 +41,16 @@ describe('HeaderQuickMessages.vue', () => {
     const wrapper = createWrapper();
     const header = wrapper.find('[data-testid="header-quick-messages"]');
     expect(header.exists()).toBe(true);
-    expect(header.classes()).toContain('header-quick-messages__header');
+    expect(
+      wrapper.find('[data-testid="header-quick-messages-title"]').exists(),
+    ).toBe(true);
   });
 
   it('renders the quick messages title from i18n', () => {
     const wrapper = createWrapper();
-    const paragraph = wrapper.find('header p');
+    const paragraph = wrapper.find(
+      '[data-testid="header-quick-messages-title"]',
+    );
     expect(paragraph.exists()).toBe(true);
     expect(paragraph.text()).toBe('Quick messages');
   });

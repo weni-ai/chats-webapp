@@ -14,7 +14,7 @@
     @close="close()"
     @update:model-value="close()"
   >
-    <p>
+    <p data-testid="modal-delete-quick-message-description">
       {{
         $t('quick_messages.delete_description', {
           shortcut: '/' + quickMessage.shortcut,

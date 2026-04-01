@@ -40,7 +40,7 @@ const UnnnicModalDialogStub = {
   ],
   template: `
     <div data-testid="modal-delete-quick-message-root">
-      <h2 data-testid="modal-title">{{ title }}</h2>
+      <h2 data-testid="modal-delete-quick-message-title">{{ title }}</h2>
       <slot />
       <button
         type="button"
@@ -105,15 +105,15 @@ describe('ModalDeleteQuickMessage.vue', () => {
     expect(
       wrapper.find('[data-testid="modal-delete-quick-message-root"]').exists(),
     ).toBe(true);
-    expect(wrapper.find('[data-testid="modal-title"]').text()).toBe(
-      'Delete your quick message',
-    );
+    expect(
+      wrapper.find('[data-testid="modal-delete-quick-message-title"]').text(),
+    ).toBe('Delete your quick message');
   });
 
   it('renders the description with the shortcut from quickMessage', () => {
     const wrapper = createWrapper();
     const paragraph = wrapper.find(
-      '[data-testid="modal-delete-quick-message-root"] p',
+      '[data-testid="modal-delete-quick-message-description"]',
     );
     expect(paragraph.exists()).toBe(true);
     expect(paragraph.text()).toBe('Sure to delete /bye?');

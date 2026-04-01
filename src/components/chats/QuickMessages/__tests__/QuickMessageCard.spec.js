@@ -90,7 +90,7 @@ describe('QuickMessageCard.vue', () => {
 
   it('hides actions when withActions is false', async () => {
     await wrapper.setProps({ withActions: false });
-    const dropdown = wrapper.findComponent({ name: 'UnnnicDropdown' });
-    expect(dropdown.exists()).toBe(false);
+    const trigger = wrapper.find('[data-testid="dropdown-trigger-icon"]');
+    expect(trigger.exists()).toBe(false);
   });
 });
