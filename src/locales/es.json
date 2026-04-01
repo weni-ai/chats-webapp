@@ -422,7 +422,7 @@
     "get_chat_confirmation": "Confirma si deseas realizar el servicio de {contact}",
     "get_chat_error": "Error al intentar obtener el chat",
     "you_got_chat": "Tienes el chat",
-    "your_chat_assumed": "El chat con {contact} ha sido transferido",
+    "your_chat_assumed": "Chat asumido por otro representante",
     "your_chat_assumed_description": "Tu chat con {contact} ha sido asumido por otro representante",
     "closed_chats": {
       "history": "Historia",
