@@ -1,5 +1,6 @@
 <template>
   <section
+    v-if="showSummary"
     class="chat-summary"
     :class="{ 'chat-summary--open': !activeRoom.ended_at }"
     data-testid="chat-summary"
@@ -81,8 +82,21 @@
       </UnnnicToolTip>
     </section>
   </section>
+  <section
+    v-if="isArchived && archivedUrl"
+    class="chat-summary__archived"
+    data-testid="chat-summary-archived"
+  >
+    <UnnnicButton
+      type="primary"
+      size="small"
+      class="chat-summary__archived-button"
+      :text="$t('chats.summary.archived.download_button')"
+      @click="handleDownload"
+    />
+  </section>
   <FeedbackModal
-    v-if="showFeedbackModal"
+    v-if="showSummary && showFeedbackModal"
     :hasFeedback="hasFeedback"
     :roomUuid="activeRoom.uuid"
     @close="handleCloseFeedbackModal"
@@ -125,6 +139,18 @@ export default {
     skipAnimation: {
       type: Boolean,
       default: false,
+    },
+    showSummary: {
+      type: Boolean,
+      default: true,
+    },
+    isArchived: {
+      type: Boolean,
+      default: false,
+    },
+    archivedUrl: {
+      type: String,
+      default: '',
     },
   },
   emits: ['close', 'feedback'],
@@ -188,6 +214,21 @@ export default {
       this.activeRoomSummary.feedback.liked = false;
       this.hasFeedback = true;
       this.showFeedbackModal = true;
+    },
+    async handleDownload() {
+      if (!this.archivedUrl) return;
+
+      try {
+        window.open(this.archivedUrl, '_blank');
+      } catch (error) {
+        console.error('Error downloading archived messages:', error);
+        this.$unnnic.call.alert({
+          props: {
+            text: this.$t('chats.summary.archived.download_error'),
+            type: 'error',
+          },
+        });
+      }
     },
     async typeWriter(text, speed) {
       if (this.animationAbortController) {
@@ -331,6 +372,15 @@ export default {
     font-size: $unnnic-font-size-body-md;
     line-height: $unnnic-font-size-body-md + $unnnic-line-height-md;
     font-weight: $unnnic-font-weight-black;
+  }
+
+  &__archived {
+    display: flex;
+    margin-top: $unnnic-space-1;
+
+    &-button {
+      width: 100%;
+    }
   }
 }
 </style>

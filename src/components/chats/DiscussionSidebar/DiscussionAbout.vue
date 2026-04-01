@@ -208,16 +208,16 @@ export default {
     },
 
     async handlingAddAgent() {
-      const newAgent = this.agentSelected?.value;
+      const newAgentEmail = this.agentSelected?.value;
 
-      if (!newAgent) {
+      if (!newAgentEmail) {
         return;
       }
 
       try {
         this.addAgentLoading = true;
         const responseAgent = await this.addAgent({
-          user_email: newAgent.value,
+          user_email: newAgentEmail,
         });
 
         this.agentsInvolved.push(responseAgent);
@@ -243,7 +243,7 @@ export default {
     display: grid;
     gap: $unnnic-spacing-xs;
 
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-emphasized;
     font-size: $unnnic-font-size-body-gt;
     font-weight: $unnnic-font-weight-regular;
 
@@ -263,7 +263,7 @@ export default {
   }
 
   &__description {
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-emphasized;
     font: $unnnic-font-body;
     margin: 0;
   }

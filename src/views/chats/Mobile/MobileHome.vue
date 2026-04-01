@@ -22,7 +22,7 @@
 
       <UnnnicChatsHeader
         v-else-if="showChats"
-        title="Chats"
+        title="Live desk"
         :subtitle="projectName"
         avatarIcon="forum"
         :back="homeBack"

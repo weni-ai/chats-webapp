@@ -338,6 +338,12 @@ export default {
       return this.featureFlags.active_features?.includes('weniChatsBulkTake');
     },
 
+    isBulkTransferFeatureEnabled() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsBulkTransfer',
+      );
+    },
+
     showSelectAllCheckbox() {
       const canBulkTransfer = this.project.config?.can_use_bulk_transfer;
       const canBulkClose =
@@ -351,8 +357,13 @@ export default {
       const hasRooms = this.countRooms[this.activeTab] > 0;
 
       if (this.activeTab === 'waiting') {
+        const canBulkTransferInWaiting =
+          this.isBulkTransferFeatureEnabled && canBulkTransfer;
         return (
-          hasRooms && (canBulkTake || (canBulkClose && !blockCloseInQueue))
+          hasRooms &&
+          (canBulkTake ||
+            canBulkTransferInWaiting ||
+            (canBulkClose && !blockCloseInQueue))
         );
       }
 
@@ -427,7 +438,13 @@ export default {
       if (this.isMobile) return false;
 
       if (this.activeTab === 'waiting') {
-        return canBulkTake || (canBulkClose && !blockCloseInQueue);
+        const canBulkTransferInWaiting =
+          this.isBulkTransferFeatureEnabled && canBulkTransfer;
+        return (
+          canBulkTake ||
+          canBulkTransferInWaiting ||
+          (canBulkClose && !blockCloseInQueue)
+        );
       }
 
       return canBulkTransfer || canBulkClose;
@@ -800,7 +817,7 @@ export default {
     gap: $unnnic-spacing-xs;
     align-items: center;
     font-size: $unnnic-font-size-body-md;
-    color: $unnnic-color-neutral-cloudy;
+    color: $unnnic-color-fg-base;
 
     .apply-filter {
       cursor: pointer;

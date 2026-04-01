@@ -219,7 +219,7 @@ export default {
   }
 
   &--selected {
-    background-color: $unnnic-color-neutral-light;
+    background-color: $unnnic-color-bg-base-soft;
   }
 }
 

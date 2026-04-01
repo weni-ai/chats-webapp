@@ -26,13 +26,14 @@
           messageType="received"
           @close="clearReplyMessage()"
         />
+
         <TextBox
           v-if="!isAudioRecorderVisible"
           ref="textBox"
           class="message-manager-box__text-box"
-          :modelValue="textBoxMessage"
+          :modelValue="inputMessage"
           :isInternalNote="isInternalNote"
-          @update:model-value="textBoxMessage = $event"
+          @update:model-value="onInputMessageUpdate"
           @keydown.stop="onKeyDown"
           @paste="handlePaste"
           @is-typing-handler="isTypingHandler"
@@ -141,7 +142,7 @@
       </div>
       <SuggestionBox
         v-if="!discussionId"
-        :search="textBoxMessage"
+        :search="inputMessage"
         :suggestions="shortcuts"
         :keyboardEvent="keyboardEvent"
         :copilot="canUseCopilot && !discussionId"
@@ -171,6 +172,8 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 import MessageManagerLoading from '@/views/loadings/chat/MessageManager.vue';
 
@@ -193,10 +196,6 @@ export default {
   },
 
   props: {
-    modelValue: {
-      type: String,
-      default: '',
-    },
     loadingFileValue: {
       validator: (value) => {
         return value === null || typeof value === 'number';
@@ -208,7 +207,7 @@ export default {
       default: false,
     },
   },
-  emits: ['update:modelValue', 'show-quick-messages', 'open-file-uploader'],
+  emits: ['show-quick-messages', 'open-file-uploader'],
 
   data: () => ({
     keyboardEvent: null,
@@ -216,12 +215,6 @@ export default {
     isCopilotOpen: false,
     isTyping: false,
     isFocused: false,
-
-    /**
-     * @type {HTMLAudioElement}
-     */
-    audioMessage: null,
-    audioRecorderStatus: '',
     isLoading: false,
     isInternalNote: false,
   }),
@@ -233,20 +226,18 @@ export default {
     ...mapState(useDiscussions, {
       discussionId: (store) => store.activeDiscussion?.uuid,
     }),
-    ...mapWritableState(useRoomMessages, ['replyMessage']),
+    ...mapWritableState(useMessageManager, [
+      'inputMessage',
+      'audioMessage',
+      'audioRecorderStatus',
+      'replyMessage',
+    ]),
+    ...mapState(useFeatureFlag, ['featureFlags']),
 
     isMobile() {
       return isMobile();
     },
 
-    textBoxMessage: {
-      get() {
-        return this.modelValue;
-      },
-      set(textBoxMessage) {
-        this.$emit('update:modelValue', textBoxMessage);
-      },
-    },
     isAudioRecorderVisible() {
       return (
         !!this.audioMessage ||
@@ -311,7 +302,7 @@ export default {
       this.clearReplyMessage();
     },
     replyMessage(newReplyMessage) {
-      if (newReplyMessage) this.$refs.textBox.focus();
+      if (newReplyMessage) this.focusTextBox();
     },
   },
 
@@ -330,9 +321,12 @@ export default {
       'sendRoomInternalNote',
     ]),
     handleInternalNoteInput() {
-      this.textBoxMessage = '';
+      this.clearTextBox();
       this.clearReplyMessage();
       this.isInternalNote = !this.isInternalNote;
+    },
+    onInputMessageUpdate(val) {
+      this.inputMessage = val;
     },
     openCopilot() {
       this.isCopilotOpen = true;
@@ -342,9 +336,9 @@ export default {
       this.$emit('show-quick-messages');
     },
     setMessage(newMessage) {
-      this.textBoxMessage = newMessage;
+      this.inputMessage = newMessage;
       this.$nextTick(() => {
-        this.$refs.textBox.focus();
+        this.focusTextBox();
       });
     },
     clearReplyMessage() {
@@ -355,7 +349,7 @@ export default {
       this.audioMessage = null;
     },
     clearTextBox() {
-      this.textBoxMessage = '';
+      this.inputMessage = '';
     },
     /**
      * @param {KeyboardEvent} event
@@ -363,8 +357,8 @@ export default {
     closeSuggestionBox() {
       this.isSuggestionBoxOpen = false;
 
-      if (this.textBoxMessage.startsWith('/')) {
-        this.textBoxMessage = '';
+      if (this.inputMessage.startsWith('/')) {
+        this.inputMessage = '';
       }
     },
     onKeyDown(event) {
@@ -415,7 +409,6 @@ export default {
         this.openFileUploader(fileList);
       }
     },
-
     record() {
       if (!this.isLoading) {
         this.$refs.audioRecorder?.record();
@@ -441,14 +434,14 @@ export default {
       this.$refs.textBox?.clearTextarea();
     },
     async sendInternalNote() {
-      if (!this.textBoxMessage.trim()) return;
-      const text = `${this.$t('internal_note')}: ${this.textBoxMessage.trim()}`;
+      if (!this.inputMessage.trim()) return;
+      const text = `${this.$t('internal_note')}: ${this.inputMessage.trim()}`;
       this.clearTextBox();
       await this.sendRoomInternalNote({ text });
       this.handleInternalNoteInput();
     },
     async sendTextBoxMessage(repliedMessage) {
-      const message = this.textBoxMessage.trim();
+      const message = this.inputMessage.trim();
       if (message) {
         this.clearTextBox();
         if (this.discussionId) {
@@ -505,6 +498,9 @@ export default {
     },
     updateAudioRecorderStatus(status) {
       this.audioRecorderStatus = status;
+    },
+    focusTextBox() {
+      this.$refs.textBox.focus();
     },
   },
 };

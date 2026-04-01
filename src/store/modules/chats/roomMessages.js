@@ -27,7 +27,6 @@ export const useRoomMessages = defineStore('roomMessages', {
     roomMessagesFailedUuids: [],
     roomMessagesNext: '',
     roomMessagesPrevious: '',
-    replyMessage: null,
     roomInternalNotes: [],
     toScrollNote: null,
     toScrollMessage: null,

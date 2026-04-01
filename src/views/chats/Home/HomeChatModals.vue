@@ -30,6 +30,7 @@
     />
 
     <FileUploader
+      v-if="!enableMessageManagerV2"
       ref="fileUploader"
       v-model="modalFileUploaderFiles"
       :mediasType="modalFileUploaderMediaType"
@@ -42,9 +43,8 @@
 </template>
 
 <script>
+import { mapActions, mapState, mapWritableState } from 'pinia';
 import isMobile from 'is-mobile';
-
-import { mapState, mapWritableState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDashboard } from '@/store/modules/dashboard';
 
@@ -53,6 +53,8 @@ import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
 import HomeChatTakeoverRoom from './HomeChatTakeoverRoom.vue';
 
 import ModalCloseChat from './ModalCloseChat.vue';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 export default {
   name: 'HomeChatModals',
@@ -75,23 +77,31 @@ export default {
         fileUploader: false,
       },
 
-      modalFileUploaderFiles: [],
       modalFileUploaderMediaType: '',
     };
   },
 
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, { room: (store) => store.activeRoom }),
     ...mapWritableState(useDashboard, [
       'showModalAssumedChat',
       'assumedChatContactName',
     ]),
+    ...mapWritableState(useMessageManager, {
+      modalFileUploaderFiles: 'mediaUploadFiles',
+    }),
+    enableMessageManagerV2() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsInputMessageV2',
+      );
+    },
   },
 
   watch: {
     'modalsShowing.fileUploader': {
       handler(newModalsShowingFileUploader) {
-        if (newModalsShowingFileUploader) {
+        if (newModalsShowingFileUploader && !this.enableMessageManagerV2) {
           this.$refs.fileUploader.open();
         }
       },
@@ -99,6 +109,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(useMessageManager, ['addMediaUploadFiles']),
     toggleModal(modalName, action = 'close') {
       if (this.modalsShowing[modalName] === undefined) {
         console.error(`Modal '${modalName}' does not exist.`);
@@ -114,9 +125,7 @@ export default {
     },
 
     configFileUploader({ files, filesType }) {
-      if (files?.length > 0) {
-        this.modalFileUploaderFiles = [...files];
-      }
+      this.addMediaUploadFiles(files);
       if (filesType) {
         this.modalFileUploaderMediaType = filesType;
       }
