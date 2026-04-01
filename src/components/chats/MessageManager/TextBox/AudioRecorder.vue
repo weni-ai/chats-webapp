@@ -4,6 +4,7 @@
     ref="unnnicAudioRecorder"
     v-model="audioMessage"
     class="text-box__audio-recorder"
+    data-testid="text-box-audio-recorder"
     hideRecordingIndicator
     :saveText="$t('use')"
     @status="handleAudioRecorderStatus"

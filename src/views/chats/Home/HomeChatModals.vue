@@ -29,17 +29,6 @@
       :room="room"
       @close="closeModal('closeChat')"
     />
-
-    <FileUploader
-      v-if="!enableMessageManagerV2"
-      ref="fileUploader"
-      v-model="modalFileUploaderFiles"
-      :mediasType="modalFileUploaderMediaType"
-      data-testid="modal-file-uploader"
-      @progress="emitFileUploaderProgress"
-      @close="closeModal('fileUploader')"
-      @update:model-value="modalFileUploaderFiles = $event"
-    />
   </section>
 </template>
 
@@ -47,7 +36,6 @@
 import { mapActions, mapState, mapWritableState } from 'pinia';
 import isMobile from 'is-mobile';
 
-import FileUploader from '@/components/chats/MessageManager/FileUploader.vue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
 import HomeChatTakeoverRoom from './HomeChatTakeoverRoom.vue';
 import ModalCloseChat from './ModalCloseChat.vue';
@@ -61,7 +49,6 @@ export default {
   name: 'HomeChatModals',
 
   components: {
-    FileUploader,
     ModalGetChat,
     ModalCloseChat,
     HomeChatTakeoverRoom,
@@ -75,7 +62,6 @@ export default {
       modalsShowing: {
         getChat: false,
         closeChat: false,
-        fileUploader: false,
       },
 
       modalFileUploaderMediaType: '',
@@ -90,24 +76,6 @@ export default {
       'assumedChatContactName',
       'assumedByUser',
     ]),
-    ...mapWritableState(useMessageManager, {
-      modalFileUploaderFiles: 'mediaUploadFiles',
-    }),
-    enableMessageManagerV2() {
-      return this.featureFlags.active_features?.includes(
-        'weniChatsInputMessageV2',
-      );
-    },
-  },
-
-  watch: {
-    'modalsShowing.fileUploader': {
-      handler(newModalsShowingFileUploader) {
-        if (newModalsShowingFileUploader && !this.enableMessageManagerV2) {
-          this.$refs.fileUploader.open();
-        }
-      },
-    },
   },
 
   methods: {
@@ -141,9 +109,6 @@ export default {
 
     emitGotChat() {
       this.$emit('got-chat');
-    },
-    emitFileUploaderProgress(progress) {
-      this.$emit('file-uploader-progress', progress);
     },
   },
 };

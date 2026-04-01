@@ -1,7 +1,9 @@
 import { mount } from '@vue/test-utils';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { createTestingPinia } from '@pinia/testing';
+import { setActivePinia } from 'pinia';
 
-import SuggestionBox from '../SuggestionBox.vue';
+import SuggestionBox from '../index.vue';
 
 const suggestions = [
   {
@@ -30,50 +32,42 @@ const suggestions = [
   },
 ];
 
-function createWrapper(props = {}) {
-  const wrapper = mount(SuggestionBox, {
-    props: {
-      search: '',
-      suggestions,
-      ...props,
-    },
-    global: {
-      mocks: {
-        $t: (key) => {
-          const translations = {
-            'quick_messages.no_suggestions':
-              'No results found for the entered shortcut.',
-            'quick_messages.copilot': 'Copilot description',
-            'copilot.name': 'Copilot',
-          };
-          return translations[key] || key;
-        },
+describe('SuggestionBox', () => {
+  let pinia;
+
+  beforeEach(() => {
+    pinia = createTestingPinia({
+      stubActions: false,
+      initialState: {
+        quickMessages: { quickMessages: suggestions },
+        quickMessagesShared: { quickMessagesShared: [] },
       },
-      stubs: {
-        SuggestionBoxShortcut: {
-          template: `
-            <div 
-              data-testid="suggestion"
-              :class="{ 'is-active': isActive }"
-              @click="$emit('click', $attrs)"
-              @keypress.enter="$emit('keypress', $attrs)"
-              @mouseenter="$emit('mouseenter')"
-              @focus="$emit('focus')"
-            >
-              <h2>{{ copilot ? 'Copilot' : '/' + shortcut }}</h2>
-              <p>{{ copilot ? 'Copilot description' : description }}</p>
-            </div>
-          `,
-          props: ['shortcut', 'description', 'isActive', 'copilot'],
-        },
-      },
-    },
+    });
+    setActivePinia(pinia);
   });
 
-  return wrapper;
-}
-
-describe('SuggestionBox', () => {
+  function createWrapper(props = {}) {
+    return mount(SuggestionBox, {
+      props: {
+        search: '',
+        ...props,
+      },
+      global: {
+        plugins: [pinia],
+        mocks: {
+          $t: (key) => {
+            const translations = {
+              'quick_messages.no_suggestions':
+                'No results found for the entered shortcut.',
+              'quick_messages.copilot': 'Copilot description',
+              'copilot.name': 'Copilot',
+            };
+            return translations[key] || key;
+          },
+        },
+      },
+    });
+  }
   describe('rendering', () => {
     it('should open when user type the trigger', () => {
       const wrapper = createWrapper({
@@ -159,17 +153,17 @@ describe('SuggestionBox', () => {
       await suggestion.trigger('click');
 
       expect(wrapper.emitted('select')).toBeTruthy();
-      expect(wrapper.emitted('select')[0][0]).toHaveProperty('uuid');
+      expect(wrapper.emitted('select')[0][0]).toBe('This is a fake suggestion');
     });
   });
 
   describe('Computed Properties', () => {
-    it('should compute isSuggestionBoxOpen correctly when search starts with trigger', () => {
+    it('should compute isValidToShowSuggestionBox correctly when search starts with trigger', () => {
       const wrapper = createWrapper({
         search: '/test',
       });
 
-      expect(wrapper.vm.isSuggestionBoxOpen).toBe(true);
+      expect(wrapper.vm.isValidToShowSuggestionBox).toBe(true);
     });
 
     it('should not open suggestion box when search has whitespace', () => {
@@ -177,7 +171,7 @@ describe('SuggestionBox', () => {
         search: '/test with space',
       });
 
-      expect(wrapper.vm.isSuggestionBoxOpen).toBe(false);
+      expect(wrapper.vm.isValidToShowSuggestionBox).toBe(false);
     });
 
     it('should compute searchStartsWithTrigger correctly', () => {
@@ -348,14 +342,14 @@ describe('SuggestionBox', () => {
       expect(wrapper.emitted('open')).toBeTruthy();
     });
 
-    it('should emit close event when suggestion box closes', async () => {
+    it('should emit hide event when suggestion box closes', async () => {
       const wrapper = createWrapper({
         search: '/',
       });
 
       await wrapper.setProps({ search: '' });
 
-      expect(wrapper.emitted('close')).toBeTruthy();
+      expect(wrapper.emitted('hide')).toBeTruthy();
     });
   });
 
