@@ -33,9 +33,12 @@ export const useMessageManager = defineStore('messageManager', () => {
   const { activeDiscussion } = storeToRefs(discussionsStore);
   const discussionMessagesStore = useDiscussionMessages();
 
-  watch([activeRoom, activeDiscussion], () => {
-    clearInputs();
-  });
+  watch(
+    [() => activeRoom.value?.uuid, () => activeDiscussion.value?.uuid],
+    () => {
+      clearInputs();
+    },
+  );
 
   function clearInputs() {
     inputMessage.value = '';
