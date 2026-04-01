@@ -447,8 +447,8 @@
       "title": "Modo de vista en vivo del agente {viewedAgent}",
       "close": "Visualización final",
       "assume_chat": "Asumir solo este chat",
-      "assume_chat_question": "¿Asumir Chat?",
-      "assume_chat_confirmation": "Al confirmar que eliminará el Chat del agente {viewedAgent} y será responsable del Chat"
+      "assume_chat_question": "¿Asumir el chat con {contact}?",
+      "assume_chat_question_description": "¿Seguro de que deseas asumir el chat con {contact}?<br><br>Al confirmar, quitarás el chat del representante y serás responsable del chat."
     }
   },
   "history": "Historial",

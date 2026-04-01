@@ -321,6 +321,9 @@ export const useRooms = defineStore('rooms', {
         if (!isTransferedFromAQueue && !room.is_waiting && !viewedAgentEmail) {
           dashboardStore.setShowModalAssumedChat(true);
           dashboardStore.setAssumedChatContactName(room.contact.name);
+          const userName =
+            `${room.user.first_name} ${room.user.last_name}`.trim();
+          dashboardStore.setAssumedByUser(userName || room.user.email);
         }
 
         if (isActiveRoom && !viewedAgentEmail) {

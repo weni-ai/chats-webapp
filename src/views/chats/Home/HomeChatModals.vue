@@ -18,6 +18,7 @@
       v-if="showModalAssumedChat"
       v-model="showModalAssumedChat"
       :contactName="assumedChatContactName"
+      :assumedByUser="assumedByUser"
       @close="closeModalTakeoverRoom"
     />
 
@@ -45,16 +46,16 @@
 <script>
 import { mapActions, mapState, mapWritableState } from 'pinia';
 import isMobile from 'is-mobile';
-import { useRooms } from '@/store/modules/chats/rooms';
-import { useDashboard } from '@/store/modules/dashboard';
 
 import FileUploader from '@/components/chats/MessageManager/FileUploader.vue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
 import HomeChatTakeoverRoom from './HomeChatTakeoverRoom.vue';
-
 import ModalCloseChat from './ModalCloseChat.vue';
+
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDashboard } from '@/store/modules/dashboard';
 
 export default {
   name: 'HomeChatModals',
@@ -87,6 +88,7 @@ export default {
     ...mapWritableState(useDashboard, [
       'showModalAssumedChat',
       'assumedChatContactName',
+      'assumedByUser',
     ]),
     ...mapWritableState(useMessageManager, {
       modalFileUploaderFiles: 'mediaUploadFiles',
@@ -134,6 +136,7 @@ export default {
     closeModalTakeoverRoom() {
       this.showModalAssumedChat = false;
       this.assumedChatContactName = '';
+      this.assumedByUser = '';
     },
 
     emitGotChat() {

@@ -4,13 +4,14 @@
     @update:open="close"
   >
     <UnnnicDialogContent size="medium">
+      <UnnnicDialogHeader>
+        <UnnnicDialogTitle>{{ title }}</UnnnicDialogTitle>
+      </UnnnicDialogHeader>
       <section class="modal-get-chat__content">
-        <UnnnicIcon
-          icon="forum"
-          size="xl"
+        <p
+          class="modal-get-chat__description"
+          v-html="description"
         />
-        <h2 class="modal-get-chat__title">{{ title }}</h2>
-        <p class="modal-get-chat__description">{{ description }}</p>
       </section>
       <UnnnicDialogFooter>
         <UnnnicDialogClose>
@@ -173,25 +174,12 @@ export default {
 
 <style lang="scss" scoped>
 .modal-get-chat {
-  :deep(.unnnic-modal-dialog__container) {
-    width: 500px;
-  }
   &__content {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
     gap: $unnnic-icon-size-ant;
     padding: $unnnic-space-6;
-    color: $unnnic-color-gray-500;
-  }
-
-  &__title {
-    font-family: $unnnic-font-family-secondary;
-    color: $unnnic-color-neutral-darkest;
-    font-weight: $unnnic-font-weight-bold;
-    font-size: $unnnic-font-size-title-sm;
-    line-height: ($unnnic-font-size-title-sm + $unnnic-line-height-medium);
+    font: $unnnic-font-body;
   }
 }
 </style>
