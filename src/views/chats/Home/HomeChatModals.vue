@@ -14,20 +14,13 @@
       @close-modal="closeModal('getChat')"
     />
 
-    <!-- TODO: It will be prioritized and replaced by a new modal; currently, it is not falling into any viewing cycle. -->
-    <!-- <UnnnicModal
-      data-testid="modal-assume-chat"
-      :text="$t('chats.your_chat_assumed', { contact: assumedChatContactName })"
-      :description="
-        $t('chats.your_chat_assumed_description', {
-          contact: assumedChatContactName,
-        })
-      "
-      modalIcon="check-circle-1-1"
-      scheme="feedback-green"
-      :showModal="modalsShowing.assumedChat"
-      @close="closeModal('assumedChat')"
-    /> -->
+    <HomeChatTakeoverRoom
+      v-if="showModalAssumedChat"
+      v-model="showModalAssumedChat"
+      :contactName="assumedChatContactName"
+      :assumedByUser="assumedByUser"
+      @close="closeModalTakeoverRoom"
+    />
 
     <ModalCloseChat
       v-if="modalsShowing.closeChat"
@@ -38,6 +31,7 @@
     />
 
     <FileUploader
+      v-if="!enableMessageManagerV2"
       ref="fileUploader"
       v-model="modalFileUploaderFiles"
       :mediasType="modalFileUploaderMediaType"
@@ -50,16 +44,18 @@
 </template>
 
 <script>
+import { mapActions, mapState, mapWritableState } from 'pinia';
 import isMobile from 'is-mobile';
-
-import { mapState } from 'pinia';
-import { useRooms } from '@/store/modules/chats/rooms';
-import { useDashboard } from '@/store/modules/dashboard';
 
 import FileUploader from '@/components/chats/MessageManager/FileUploader.vue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
-
+import HomeChatTakeoverRoom from './HomeChatTakeoverRoom.vue';
 import ModalCloseChat from './ModalCloseChat.vue';
+
+import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDashboard } from '@/store/modules/dashboard';
 
 export default {
   name: 'HomeChatModals',
@@ -68,6 +64,7 @@ export default {
     FileUploader,
     ModalGetChat,
     ModalCloseChat,
+    HomeChatTakeoverRoom,
   },
   emits: ['got-chat', 'file-uploader-progress', 'select-quick-message'],
 
@@ -77,28 +74,36 @@ export default {
 
       modalsShowing: {
         getChat: false,
-        assumedChat: false,
         closeChat: false,
         fileUploader: false,
       },
 
-      modalFileUploaderFiles: [],
       modalFileUploaderMediaType: '',
     };
   },
 
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, { room: (store) => store.activeRoom }),
-    ...mapState(useDashboard, [
+    ...mapWritableState(useDashboard, [
       'showModalAssumedChat',
       'assumedChatContactName',
+      'assumedByUser',
     ]),
+    ...mapWritableState(useMessageManager, {
+      modalFileUploaderFiles: 'mediaUploadFiles',
+    }),
+    enableMessageManagerV2() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsInputMessageV2',
+      );
+    },
   },
 
   watch: {
     'modalsShowing.fileUploader': {
       handler(newModalsShowingFileUploader) {
-        if (newModalsShowingFileUploader) {
+        if (newModalsShowingFileUploader && !this.enableMessageManagerV2) {
           this.$refs.fileUploader.open();
         }
       },
@@ -106,6 +111,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(useMessageManager, ['addMediaUploadFiles']),
     toggleModal(modalName, action = 'close') {
       if (this.modalsShowing[modalName] === undefined) {
         console.error(`Modal '${modalName}' does not exist.`);
@@ -121,12 +127,16 @@ export default {
     },
 
     configFileUploader({ files, filesType }) {
-      if (files?.length > 0) {
-        this.modalFileUploaderFiles = [...files];
-      }
+      this.addMediaUploadFiles(files);
       if (filesType) {
         this.modalFileUploaderMediaType = filesType;
       }
+    },
+
+    closeModalTakeoverRoom() {
+      this.showModalAssumedChat = false;
+      this.assumedChatContactName = '';
+      this.assumedByUser = '';
     },
 
     emitGotChat() {

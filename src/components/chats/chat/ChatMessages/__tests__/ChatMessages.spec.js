@@ -3,7 +3,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import ChatMessages from '../index.vue';
 import { useDashboard } from '@/store/modules/dashboard';
-import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useRooms } from '@/store/modules/chats/rooms';
 import moment from 'moment';
 
@@ -61,8 +61,8 @@ describe('ChatMessages', () => {
   let wrapper;
   let pinia;
   let dashboardStore;
-  let roomMessagesStore;
   let roomsStore;
+  let messageManagerStore;
 
   const mockMessages = [
     {
@@ -115,8 +115,9 @@ describe('ChatMessages', () => {
     setActivePinia(pinia);
 
     dashboardStore = useDashboard();
-    roomMessagesStore = useRoomMessages();
+
     roomsStore = useRooms();
+    messageManagerStore = useMessageManager();
 
     // Mock store state
     dashboardStore.viewedAgent = { email: 'agent@example.com' };
@@ -173,7 +174,7 @@ describe('ChatMessages', () => {
     const message = { uuid: '1', text: 'Test message' };
     await wrapper.vm.handlerMessageReply(message);
 
-    expect(roomMessagesStore.replyMessage).toEqual(message);
+    expect(messageManagerStore.replyMessage).toEqual(message);
   });
 
   it('identifies media types correctly', () => {

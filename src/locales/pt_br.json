@@ -160,6 +160,7 @@
   },
   "attachment": "Anexo",
   "internal_note": "Nota interna",
+  "close_internal_note": "Fechar nota interna (Esc)",
   "notes": "Notas",
   "bold": "Negrito",
   "italic": "Itálico",
@@ -393,6 +394,7 @@
       "401": "Erro de autenticação",
       "default": "Ocorreu um erro, por favor, tente novamente mais tarde"
     },
+    "message_input_placeholder": "Digite sua mensagem aqui ou / para ativar mensagens rápidas",
     "search_contact": "Pesquisar contato",
     "search_contact_placeholder": "Pesquisar contato (nome, telefone ou protocolo)",
     "tags": "Tags do chat",
@@ -421,7 +423,7 @@
     "get_chat_error": "Erro ao tentar pegar o chat",
     "you_got_chat": "Você pegou o chat",
     "your_chat_assumed": "O Chat com {contact} foi transferido",
-    "your_chat_assumed_description": "Seu chat com {contact} foi assumido por outro agente",
+    "your_chat_assumed_description": "Seu chat com {contact} foi assumido por outro atendente",
     "closed_chats": {
       "history": "Histórico",
       "project_history": "Histórico do projeto",
@@ -445,8 +447,8 @@
       "title": "Modo de visualização ao vivo do agente {viewedAgent}",
       "close": "Encerrar visualização",
       "assume_chat": "Assumir apenas este chat",
-      "assume_chat_question": "Assumir Chat?",
-      "assume_chat_confirmation": "Ao confirmar você removerá o Chat do agente {viewedAgent} e será o responsável pelo Chat"
+      "assume_chat_question": "Assumir o chat com {contact}?",
+      "assume_chat_question_description": "Tem certeza de que deseja assumir o chat com {contact}?<br><br>Ao confirmar, você remove o chat do representante e fica responsável pelo chat."
     }
   },
   "history": "Histórico",
@@ -705,6 +707,7 @@
   "shortcut": "Atalho",
   "message": "Mensagem",
   "save": "Salvar",
+  "use": "Usar",
   "delete_sector": "Deletar setor",
   "delete_queue": "Excluir fila",
   "delete_queue_modal": {

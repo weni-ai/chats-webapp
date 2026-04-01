@@ -450,6 +450,44 @@ describe('ChatSummary', () => {
     });
   });
 
+  describe('showSummary prop', () => {
+    it('should hide the summary section when showSummary is false', () => {
+      wrapper = createWrapper({ showSummary: false });
+
+      expect(wrapper.find('[data-testid="chat-summary"]').exists()).toBe(false);
+    });
+
+    it('should show the summary section when showSummary is true (default)', () => {
+      wrapper = createWrapper();
+
+      expect(wrapper.find('[data-testid="chat-summary"]').exists()).toBe(true);
+    });
+
+    it('should still show the archived section when showSummary is false', () => {
+      wrapper = createWrapper({
+        showSummary: false,
+        isArchived: true,
+        archivedUrl: 'https://example.com/archive.zip',
+      });
+
+      expect(wrapper.find('[data-testid="chat-summary"]').exists()).toBe(false);
+      expect(
+        wrapper.find('[data-testid="chat-summary-archived"]').exists(),
+      ).toBe(true);
+    });
+
+    it('should not show FeedbackModal when showSummary is false', async () => {
+      wrapper = createWrapper({ showSummary: false });
+
+      wrapper.vm.showFeedbackModal = true;
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.findComponent({ name: 'FeedbackModal' }).exists()).toBe(
+        false,
+      );
+    });
+  });
+
   describe('Archived Messages', () => {
     it('should not display archived section when isArchived is false', () => {
       wrapper = createWrapper({

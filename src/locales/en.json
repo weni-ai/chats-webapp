@@ -160,6 +160,7 @@
   },
   "attachment": "Attach",
   "internal_note": "Internal note",
+  "close_internal_note": "Close internal note (Esc)",
   "notes": "Notes",
   "bold": "Bold",
   "italic": "Italic",
@@ -397,6 +398,7 @@
       "401": "Authentication error",
       "default": "An error occurred, please try again later"
     },
+    "message_input_placeholder": "Type your message or / to activate quick messages",
     "search_contact": "Search contact",
     "search_contact_placeholder": "Search contact (name, phone or ticket ID)",
     "tags": "Chat tags",
@@ -425,7 +427,7 @@
     "get_chat_error": "Error when trying to get the room",
     "you_got_chat": "You got the chat",
     "your_chat_assumed": "Chat with {contact} has been transferred",
-    "your_chat_assumed_description": "Your chat with {contact} has been taken over by another agent",
+    "your_chat_assumed_description": "Your chat with {contact} has been taken over by other representative",
     "closed_chats": {
       "history": "History",
       "project_history": "Project history",
@@ -449,8 +451,8 @@
       "title": "Agent {viewedAgent} live view mode",
       "close": "End visualization",
       "assume_chat": "Take over only this chat",
-      "assume_chat_question": "Take Chat?",
-      "assume_chat_confirmation": "When confirming you will remove the Chat from agent {viewedAgent} and will be responsible for Chat"
+      "assume_chat_question": "Take over chat with {contact}?",
+      "assume_chat_question_description": "Are you sure you want to take over chat with {contact}?<br><br>When confirming you will remove the chat from representative and will be responsible for chat."
     }
   },
   "history": "History",
@@ -707,6 +709,7 @@
   "shortcut": "Shortcut",
   "message": "Message",
   "save": "Save",
+  "use": "Use",
   "delete_sector": "Delete sector",
   "delete_queue": "Delete queue",
   "delete_queue_modal": {

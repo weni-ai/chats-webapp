@@ -1,5 +1,6 @@
 <template>
   <section
+    v-if="showSummary"
     class="chat-summary"
     :class="{ 'chat-summary--open': !activeRoom.ended_at }"
     data-testid="chat-summary"
@@ -95,7 +96,7 @@
     />
   </section>
   <FeedbackModal
-    v-if="showFeedbackModal"
+    v-if="showSummary && showFeedbackModal"
     :hasFeedback="hasFeedback"
     :roomUuid="activeRoom.uuid"
     @close="handleCloseFeedbackModal"
@@ -138,6 +139,10 @@ export default {
     skipAnimation: {
       type: Boolean,
       default: false,
+    },
+    showSummary: {
+      type: Boolean,
+      default: true,
     },
     isArchived: {
       type: Boolean,
