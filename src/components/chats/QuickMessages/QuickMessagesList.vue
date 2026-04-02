@@ -1,7 +1,18 @@
 <template>
-  <section class="quick-messages-list">
-    <header class="quick-messages-list__header">
-      <p class="quick-messages-list__header-title">{{ title }}</p>
+  <section
+    class="quick-messages-list"
+    data-testid="quick-messages-list"
+  >
+    <header
+      class="quick-messages-list__header"
+      data-testid="quick-messages-list-header"
+    >
+      <p
+        class="quick-messages-list__header-title"
+        data-testid="quick-messages-list-title"
+      >
+        {{ title }}
+      </p>
       <UnnnicButton
         v-if="showNewButton"
         iconLeft="add"
@@ -15,10 +26,12 @@
       <section
         v-show="openQuickMessages"
         class="quick-messages-list__cards"
+        data-testid="quick-messages-list-cards"
       >
         <p
           v-if="withoutQuickMessages"
           class="quick-messages-list__without-messages-text"
+          data-testid="quick-messages-list-empty-text"
           v-html="withoutMessagesText"
         />
         <QuickMessageCard
@@ -39,6 +52,7 @@
     <section
       v-if="showExpand && !withoutQuickMessages"
       class="quick-messages-list__slide"
+      data-testid="quick-messages-list-expand-slide"
     >
       <UnnnicIcon
         :icon="openQuickMessages ? 'expand_less' : 'expand_more'"

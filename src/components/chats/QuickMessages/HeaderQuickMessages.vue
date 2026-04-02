@@ -3,7 +3,9 @@
     class="header-quick-messages__header"
     data-testid="header-quick-messages"
   >
-    <p>{{ $t('quick_messages.title') }}</p>
+    <p data-testid="header-quick-messages-title">
+      {{ $t('quick_messages.title') }}
+    </p>
     <UnnnicButton
       iconCenter="close"
       type="tertiary"
