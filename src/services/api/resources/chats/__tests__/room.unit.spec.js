@@ -142,29 +142,20 @@ describe('Room service', () => {
   });
 
   describe('bulkTransfer', () => {
-    it('should make a PATCH request with correct parameters and return the response data', async () => {
+    it('should make a POST request with correct parameters and return the response data', async () => {
       const mockResponse = { data: {} };
-      http.patch.mockResolvedValue(mockResponse);
+      http.post.mockResolvedValue(mockResponse);
       const rooms = ['room-1', 'room-2'];
       const intendedAgent = 'agent@example.com';
       const params = { rooms, intended_agent: intendedAgent };
 
-      const profileStore = { me: { email: 'user@example.com' } };
-      useProfile.mockReturnValue(profileStore);
-
       const result = await roomService.bulkTranfer(params);
 
-      expect(http.patch).toHaveBeenCalledWith(
-        'room/bulk_transfer/',
-        { rooms_list: rooms },
-        {
-          params: {
-            queue_uuid: '',
-            user_request: 'user@example.com',
-            user_email: intendedAgent,
-          },
-        },
-      );
+      expect(http.post).toHaveBeenCalledWith('room/bulk_transfer/', {
+        rooms_list: rooms,
+        user_email: intendedAgent,
+        queue_uuid: null,
+      });
       expect(result).toEqual(mockResponse);
     });
   });
@@ -594,53 +585,35 @@ describe('Room service', () => {
   });
 
   describe('bulkTransfer - additional edge cases', () => {
-    it('should make a PATCH request with intended queue instead of agent', async () => {
+    it('should make a POST request with intended queue instead of agent', async () => {
       const mockResponse = { data: {} };
-      http.patch.mockResolvedValue(mockResponse);
+      http.post.mockResolvedValue(mockResponse);
       const rooms = ['room-1', 'room-2'];
       const intendedQueue = 'queue-uuid';
       const params = { rooms, intended_queue: intendedQueue };
 
-      const profileStore = { me: { email: 'user@example.com' } };
-      useProfile.mockReturnValue(profileStore);
-
       const result = await roomService.bulkTranfer(params);
 
-      expect(http.patch).toHaveBeenCalledWith(
-        'room/bulk_transfer/',
-        { rooms_list: rooms },
-        {
-          params: {
-            user_request: 'user@example.com',
-            queue_uuid: intendedQueue,
-            user_email: '',
-          },
-        },
-      );
+      expect(http.post).toHaveBeenCalledWith('room/bulk_transfer/', {
+        rooms_list: rooms,
+        user_email: null,
+        queue_uuid: intendedQueue,
+      });
       expect(result).toEqual(mockResponse);
     });
 
     it('should handle empty rooms array', async () => {
       const mockResponse = { data: {} };
-      http.patch.mockResolvedValue(mockResponse);
+      http.post.mockResolvedValue(mockResponse);
       const params = { rooms: [], intended_agent: 'agent@example.com' };
-
-      const profileStore = { me: { email: 'user@example.com' } };
-      useProfile.mockReturnValue(profileStore);
 
       const result = await roomService.bulkTranfer(params);
 
-      expect(http.patch).toHaveBeenCalledWith(
-        'room/bulk_transfer/',
-        { rooms_list: [] },
-        {
-          params: {
-            queue_uuid: '',
-            user_request: 'user@example.com',
-            user_email: 'agent@example.com',
-          },
-        },
-      );
+      expect(http.post).toHaveBeenCalledWith('room/bulk_transfer/', {
+        rooms_list: [],
+        user_email: 'agent@example.com',
+        queue_uuid: null,
+      });
       expect(result).toEqual(mockResponse);
     });
 
@@ -648,62 +621,26 @@ describe('Room service', () => {
       const mockErrorResponse = {
         response: { status: 400, data: { error: 'Bad request' } },
       };
-      http.patch.mockRejectedValue(mockErrorResponse);
+      http.post.mockRejectedValue(mockErrorResponse);
       const params = { rooms: ['room-1'], intended_agent: 'agent@example.com' };
-
-      const profileStore = { me: { email: 'user@example.com' } };
-      useProfile.mockReturnValue(profileStore);
 
       const result = await roomService.bulkTranfer(params);
 
       expect(result).toEqual(mockErrorResponse.response);
     });
 
-    it('should handle missing profile store email', async () => {
-      const mockResponse = { data: {} };
-      http.patch.mockResolvedValue(mockResponse);
-      const params = { rooms: ['room-1'], intended_agent: 'agent@example.com' };
-
-      const profileStore = { me: { email: undefined } };
-      useProfile.mockReturnValue(profileStore);
-
-      const result = await roomService.bulkTranfer(params);
-
-      expect(http.patch).toHaveBeenCalledWith(
-        'room/bulk_transfer/',
-        { rooms_list: ['room-1'] },
-        {
-          params: {
-            queue_uuid: '',
-            user_request: undefined,
-            user_email: 'agent@example.com',
-          },
-        },
-      );
-      expect(result).toEqual(mockResponse);
-    });
-
     it('should handle missing intended agent and queue', async () => {
       const mockResponse = { data: {} };
-      http.patch.mockResolvedValue(mockResponse);
+      http.post.mockResolvedValue(mockResponse);
       const params = { rooms: ['room-1'] };
-
-      const profileStore = { me: { email: 'user@example.com' } };
-      useProfile.mockReturnValue(profileStore);
 
       const result = await roomService.bulkTranfer(params);
 
-      expect(http.patch).toHaveBeenCalledWith(
-        'room/bulk_transfer/',
-        { rooms_list: ['room-1'] },
-        {
-          params: {
-            user_email: '',
-            user_request: 'user@example.com',
-            queue_uuid: '',
-          },
-        },
-      );
+      expect(http.post).toHaveBeenCalledWith('room/bulk_transfer/', {
+        rooms_list: ['room-1'],
+        user_email: null,
+        queue_uuid: null,
+      });
       expect(result).toEqual(mockResponse);
     });
   });

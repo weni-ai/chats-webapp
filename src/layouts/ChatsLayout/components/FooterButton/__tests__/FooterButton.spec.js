@@ -338,8 +338,119 @@ describe('FooterButton', () => {
     });
   });
 
-  describe('Button type variants', () => {
-    it('should render take over as primary when it is the only button', () => {
+  describe('Transfer button on waiting tab', () => {
+    it('should show transfer button on waiting tab with feature flag enabled', () => {
+      const wrapper = createWrapper(['room1'], 'waiting', {
+        can_use_bulk_transfer: true,
+        activeFeatures: ['weniChatsBulkTransfer'],
+      });
+
+      expect(wrapper.find('[data-testid="transfer-button"]').exists()).toBe(
+        true,
+      );
+    });
+
+    it('should hide transfer button on waiting tab without feature flag', () => {
+      const wrapper = createWrapper(['room1'], 'waiting', {
+        can_use_bulk_transfer: true,
+        activeFeatures: [],
+      });
+
+      expect(wrapper.find('[data-testid="transfer-button"]').exists()).toBe(
+        false,
+      );
+    });
+
+    it('should show transfer button on ongoing tab without feature flag', () => {
+      const wrapper = createWrapper(['room1'], 'ongoing', {
+        can_use_bulk_transfer: true,
+        activeFeatures: [],
+      });
+
+      expect(wrapper.find('[data-testid="transfer-button"]').exists()).toBe(
+        true,
+      );
+    });
+
+    it('should hide transfer button when can_use_bulk_transfer is false', () => {
+      const wrapper = createWrapper(['room1'], 'ongoing', {
+        can_use_bulk_transfer: false,
+      });
+
+      expect(wrapper.find('[data-testid="transfer-button"]').exists()).toBe(
+        false,
+      );
+    });
+  });
+
+  describe('Button type priority (Take over > Transfer > End)', () => {
+    it('take over is always primary', () => {
+      const wrapper = createWrapper(['room1'], 'waiting', {
+        can_use_bulk_take: true,
+        can_use_bulk_transfer: true,
+        can_use_bulk_close: true,
+        activeFeatures: [
+          'weniChatsBulkTake',
+          'weniChatsBulkTransfer',
+          'weniChatsBulkClose',
+        ],
+      });
+
+      expect(wrapper.vm.takeOverButtonType).toBe('primary');
+    });
+
+    it('transfer is primary when take over is not visible', () => {
+      const wrapper = createWrapper(['room1'], 'ongoing', {
+        can_use_bulk_transfer: true,
+        can_use_bulk_close: true,
+        activeFeatures: ['weniChatsBulkClose'],
+      });
+
+      expect(wrapper.vm.transferButtonType).toBe('primary');
+    });
+
+    it('transfer is secondary when take over is visible', () => {
+      const wrapper = createWrapper(['room1'], 'waiting', {
+        can_use_bulk_take: true,
+        can_use_bulk_transfer: true,
+        activeFeatures: ['weniChatsBulkTake', 'weniChatsBulkTransfer'],
+      });
+
+      expect(wrapper.vm.transferButtonType).toBe('secondary');
+    });
+
+    it('end is primary when take over and transfer are not visible', () => {
+      const wrapper = createWrapper(['room1'], 'ongoing', {
+        can_use_bulk_transfer: false,
+        can_use_bulk_close: true,
+        activeFeatures: ['weniChatsBulkClose'],
+      });
+
+      expect(wrapper.vm.closeButtonType).toBe('primary');
+    });
+
+    it('end is secondary when transfer is visible', () => {
+      const wrapper = createWrapper(['room1'], 'ongoing', {
+        can_use_bulk_transfer: true,
+        can_use_bulk_close: true,
+        activeFeatures: ['weniChatsBulkClose'],
+      });
+
+      expect(wrapper.vm.closeButtonType).toBe('secondary');
+    });
+
+    it('end is secondary when take over is visible', () => {
+      const wrapper = createWrapper(['room1'], 'waiting', {
+        can_use_bulk_take: true,
+        can_use_bulk_transfer: false,
+        can_use_bulk_close: true,
+        activeFeatures: ['weniChatsBulkTake', 'weniChatsBulkClose'],
+      });
+
+      expect(wrapper.vm.closeButtonType).toBe('secondary');
+    });
+
+    it('only take over enabled: take over primary', () => {
       const wrapper = createWrapper(['room1'], 'waiting', {
         can_use_bulk_take: true,
         can_use_bulk_transfer: false,
@@ -350,17 +461,7 @@ describe('FooterButton', () => {
       expect(wrapper.vm.takeOverButtonType).toBe('primary');
     });
 
-    it('should render take over as primary when end button is also present', () => {
-      const wrapper = createWrapper(['room1'], 'waiting', {
-        can_use_bulk_take: true,
-        can_use_bulk_close: true,
-        activeFeatures: ['weniChatsBulkTake', 'weniChatsBulkClose'],
-      });
-
-      expect(wrapper.vm.takeOverButtonType).toBe('primary');
-    });
-
-    it('should render transfer as primary when end is not present', () => {
+    it('only transfer enabled: transfer primary', () => {
       const wrapper = createWrapper(['room1'], 'ongoing', {
         can_use_bulk_transfer: true,
         can_use_bulk_close: false,
@@ -369,14 +470,66 @@ describe('FooterButton', () => {
       expect(wrapper.vm.transferButtonType).toBe('primary');
     });
 
-    it('should render transfer as secondary when end is present', () => {
+    it('only end enabled: end primary', () => {
+      const wrapper = createWrapper(['room1'], 'ongoing', {
+        can_use_bulk_transfer: false,
+        can_use_bulk_close: true,
+        activeFeatures: ['weniChatsBulkClose'],
+      });
+
+      expect(wrapper.vm.closeButtonType).toBe('primary');
+    });
+
+    it('take over + transfer: take over primary, transfer secondary', () => {
+      const wrapper = createWrapper(['room1'], 'waiting', {
+        can_use_bulk_take: true,
+        can_use_bulk_transfer: true,
+        can_use_bulk_close: false,
+        activeFeatures: ['weniChatsBulkTake', 'weniChatsBulkTransfer'],
+      });
+
+      expect(wrapper.vm.takeOverButtonType).toBe('primary');
+      expect(wrapper.vm.transferButtonType).toBe('secondary');
+    });
+
+    it('take over + end: take over primary, end secondary', () => {
+      const wrapper = createWrapper(['room1'], 'waiting', {
+        can_use_bulk_take: true,
+        can_use_bulk_transfer: false,
+        can_use_bulk_close: true,
+        activeFeatures: ['weniChatsBulkTake', 'weniChatsBulkClose'],
+      });
+
+      expect(wrapper.vm.takeOverButtonType).toBe('primary');
+      expect(wrapper.vm.closeButtonType).toBe('secondary');
+    });
+
+    it('transfer + end: transfer primary, end secondary', () => {
       const wrapper = createWrapper(['room1'], 'ongoing', {
         can_use_bulk_transfer: true,
         can_use_bulk_close: true,
         activeFeatures: ['weniChatsBulkClose'],
       });
 
+      expect(wrapper.vm.transferButtonType).toBe('primary');
+      expect(wrapper.vm.closeButtonType).toBe('secondary');
+    });
+
+    it('all three: take over primary, transfer and end secondary', () => {
+      const wrapper = createWrapper(['room1'], 'waiting', {
+        can_use_bulk_take: true,
+        can_use_bulk_transfer: true,
+        can_use_bulk_close: true,
+        activeFeatures: [
+          'weniChatsBulkTake',
+          'weniChatsBulkTransfer',
+          'weniChatsBulkClose',
+        ],
+      });
+
+      expect(wrapper.vm.takeOverButtonType).toBe('primary');
       expect(wrapper.vm.transferButtonType).toBe('secondary');
+      expect(wrapper.vm.closeButtonType).toBe('secondary');
     });
   });
 });

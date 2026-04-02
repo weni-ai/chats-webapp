@@ -131,6 +131,12 @@ export default {
       return this.featureFlags.active_features?.includes('weniChatsBulkTake');
     },
 
+    isBulkTransferFeatureEnabled() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsBulkTransfer',
+      );
+    },
+
     currentSelectedRooms() {
       return this.activeTab === 'ongoing'
         ? this.selectedOngoingRooms
@@ -145,10 +151,12 @@ export default {
     },
 
     isTransferContactsEnabled() {
-      return (
-        this.project.config?.can_use_bulk_transfer &&
-        this.activeTab === 'ongoing'
-      );
+      if (!this.project.config?.can_use_bulk_transfer) return false;
+      if (this.activeTab === 'ongoing') return true;
+      if (this.activeTab === 'waiting' && this.isBulkTransferFeatureEnabled) {
+        return true;
+      }
+      return false;
     },
 
     isBulkCloseContactsEnabled() {
@@ -167,24 +175,18 @@ export default {
     },
 
     takeOverButtonType() {
-      if (
-        (!this.isTransferContactsEnabled && !this.isBulkCloseContactsEnabled) ||
-        this.isBulkCloseContactsEnabled
-      ) {
-        return 'primary';
-      }
-      return 'secondary';
+      return 'primary';
     },
 
     transferButtonType() {
-      if (!this.isBulkCloseContactsEnabled) {
+      if (!this.isBulkTakeContactsEnabled) {
         return 'primary';
       }
       return 'secondary';
     },
 
     closeButtonType() {
-      if (this.isTransferContactsEnabled) {
+      if (!this.isBulkTakeContactsEnabled && !this.isTransferContactsEnabled) {
         return 'primary';
       }
       return 'secondary';

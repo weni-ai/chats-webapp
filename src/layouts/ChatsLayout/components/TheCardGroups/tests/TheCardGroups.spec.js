@@ -1188,4 +1188,113 @@ describe('TheCardGroups.vue', () => {
       expect(wrapper.vm.isWithSelection).toBe(false);
     });
   });
+
+  describe('bulk transfer selection logic on waiting tab', () => {
+    it('should show select-all checkbox when bulk transfer feature flag is active', () => {
+      const roomsStore = useRooms();
+      const configStore = useConfig();
+      const featureFlagStore = useFeatureFlag();
+
+      roomsStore.waitingQueue = mockRooms;
+      roomsStore.activeTab = 'waiting';
+      configStore.project = {
+        config: {
+          can_use_bulk_transfer: true,
+          can_use_queue_prioritization: true,
+        },
+      };
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsBulkTransfer'],
+      };
+
+      wrapper = createWrapper({ isViewMode: false });
+
+      expect(wrapper.vm.showSelectAllCheckbox).toBe(true);
+    });
+
+    it('should not show select-all checkbox when bulk transfer feature flag is inactive', () => {
+      const roomsStore = useRooms();
+      const configStore = useConfig();
+      const featureFlagStore = useFeatureFlag();
+
+      roomsStore.waitingQueue = mockRooms;
+      roomsStore.activeTab = 'waiting';
+      configStore.project = {
+        config: {
+          can_use_bulk_transfer: true,
+          can_use_queue_prioritization: true,
+        },
+      };
+      featureFlagStore.featureFlags = { active_features: [] };
+
+      wrapper = createWrapper({ isViewMode: false });
+
+      expect(wrapper.vm.showSelectAllCheckbox).toBe(false);
+    });
+
+    it('should enable selection on waiting tab when bulk transfer feature flag is active', () => {
+      const roomsStore = useRooms();
+      const configStore = useConfig();
+      const featureFlagStore = useFeatureFlag();
+
+      roomsStore.waitingQueue = mockRooms;
+      roomsStore.activeTab = 'waiting';
+      configStore.project = {
+        config: {
+          can_use_bulk_transfer: true,
+          can_use_queue_prioritization: true,
+        },
+      };
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsBulkTransfer'],
+      };
+
+      wrapper = createWrapper({ isViewMode: false });
+
+      expect(wrapper.vm.isWithSelection).toBe(true);
+    });
+
+    it('should not enable selection on waiting tab when bulk transfer feature flag is inactive', () => {
+      const roomsStore = useRooms();
+      const configStore = useConfig();
+      const featureFlagStore = useFeatureFlag();
+
+      roomsStore.waitingQueue = mockRooms;
+      roomsStore.activeTab = 'waiting';
+      configStore.project = {
+        config: {
+          can_use_bulk_transfer: true,
+          can_use_queue_prioritization: true,
+        },
+      };
+      featureFlagStore.featureFlags = { active_features: [] };
+
+      wrapper = createWrapper({ isViewMode: false });
+
+      expect(wrapper.vm.isWithSelection).toBe(false);
+    });
+
+    it('should show select-all checkbox when both bulk take and bulk transfer are enabled', () => {
+      const roomsStore = useRooms();
+      const configStore = useConfig();
+      const featureFlagStore = useFeatureFlag();
+
+      roomsStore.waitingQueue = mockRooms;
+      roomsStore.activeTab = 'waiting';
+      configStore.project = {
+        config: {
+          can_use_bulk_take: true,
+          can_use_bulk_transfer: true,
+          can_use_queue_prioritization: true,
+        },
+      };
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsBulkTake', 'weniChatsBulkTransfer'],
+      };
+
+      wrapper = createWrapper({ isViewMode: false });
+
+      expect(wrapper.vm.showSelectAllCheckbox).toBe(true);
+    });
+  });
 });

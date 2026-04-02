@@ -7,8 +7,8 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
     <unnnic-switch-stub data-v-85728205="" size="small" label="" option="" helper="" textleft="" textright="Triggering message templates disabled" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     <section data-v-85728205="" class="switchs__container">
       <unnnic-switch-stub data-v-85728205="" size="small" label="" option="" helper="" textleft="" textright="Disabled signature" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
-      <div data-v-03fa3548="" data-v-2e8bb3f0="" class="unnnic-tooltip-trigger unnnic-tooltip" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-b593673c="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-base unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span></div>
-      <div data-v-2e8bb3f0="" disabled="false" defer="false" forcemount="false">
+      <div data-v-03fa3548="" data-v-47313aed="" class="unnnic-tooltip-trigger unnnic-tooltip" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-b593673c="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-base unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span></div>
+      <div data-v-47313aed="" disabled="false" defer="false" forcemount="false">
         <!---->
       </div>
     </section>
@@ -17,15 +17,15 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
     <!--v-if-->
   </section>
   <section data-v-85728205="" class="tags">
-    <h2 data-v-85728205="" class="tags__title" data-testid="tags-title">Add tags <div data-v-03fa3548="" data-v-2e8bb3f0="" class="unnnic-tooltip-trigger unnnic-tooltip" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-b593673c="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-base unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span></div>
-      <div data-v-2e8bb3f0="" disabled="false" defer="false" forcemount="false">
+    <h2 data-v-85728205="" class="tags__title" data-testid="tags-title">Add tags <div data-v-03fa3548="" data-v-47313aed="" class="unnnic-tooltip-trigger unnnic-tooltip" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-b593673c="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-base unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span></div>
+      <div data-v-47313aed="" disabled="false" defer="false" forcemount="false">
         <!---->
       </div>
     </h2>
     <section data-v-85728205="" class="switchs__container required-tags">
       <unnnic-switch-stub data-v-85728205="" size="small" label="" option="" helper="" textleft="" textright="Require tags at the end of supports disabled" disabled="true" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
-      <div data-v-03fa3548="" data-v-2e8bb3f0="" class="unnnic-tooltip-trigger unnnic-tooltip" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-b593673c="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-base unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span></div>
-      <div data-v-2e8bb3f0="" disabled="false" defer="false" forcemount="false">
+      <div data-v-03fa3548="" data-v-47313aed="" class="unnnic-tooltip-trigger unnnic-tooltip" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-b593673c="" data-v-85728205="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-base unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">info</span></div>
+      <div data-v-47313aed="" disabled="false" defer="false" forcemount="false">
         <!---->
       </div>
     </section>
@@ -43,24 +43,24 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
           </section>
         </div>
         <!---->
-      </section><button data-v-0e95ed58="" data-v-85728205="" data-testid="tags-add-tag-button" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--secondary">
+      </section><button data-v-fb18c550="" data-v-85728205="" data-testid="tags-add-tag-button" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--secondary">
         <!---->
         <!---->
-        <!----><span data-v-0e95ed58="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Add</span>
+        <!----><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Add</span>
         <!---->
       </button>
     </section>
     <!--v-if-->
   </section>
-  <section data-v-85728205="" class="form-actions" style="display: none;"><button data-v-0e95ed58="" data-v-85728205="" data-testid="cancel-button" class="unnnic-button unnnic-button--size-large unnnic-button--tertiary">
+  <section data-v-85728205="" class="form-actions" style="display: none;"><button data-v-fb18c550="" data-v-85728205="" data-testid="cancel-button" class="unnnic-button unnnic-button--size-large unnnic-button--tertiary">
       <!---->
       <!---->
-      <!----><span data-v-0e95ed58="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Cancel</span>
+      <!----><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Cancel</span>
       <!---->
-    </button><button data-v-0e95ed58="" data-v-85728205="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
+    </button><button data-v-fb18c550="" data-v-85728205="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
       <!---->
       <!---->
-      <!----><span data-v-0e95ed58="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Save</span>
+      <!----><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Save</span>
       <!---->
     </button></section>
 </section>"

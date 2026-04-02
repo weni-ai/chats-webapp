@@ -160,6 +160,7 @@
   },
   "attachment": "Anexo",
   "internal_note": "Nota interna",
+  "close_internal_note": "Fechar nota interna (Esc)",
   "notes": "Notas",
   "bold": "Negrito",
   "italic": "Itálico",
@@ -393,6 +394,7 @@
       "401": "Erro de autenticação",
       "default": "Ocorreu um erro, por favor, tente novamente mais tarde"
     },
+    "message_input_placeholder": "Digite sua mensagem aqui ou / para ativar mensagens rápidas",
     "search_contact": "Pesquisar contato",
     "search_contact_placeholder": "Pesquisar contato (nome, telefone ou protocolo)",
     "tags": "Tags do chat",
@@ -567,6 +569,11 @@
   "transfer_contact": "Transferir contato | Transferir contatos",
   "bulk_transfer": {
     "transfer_selected_contacts": "Transferir contatos selecionados",
+    "transfer_all": "Transferir todos",
+    "selected_chats_count": "{count} chat selecionado para transferência. | {count} chats selecionados para transferência.",
+    "success_message": "{count} chat transferido com sucesso! | {count} chats transferidos com sucesso!",
+    "partial_success_message": "{success} chat transferido, {failed} falhou. Tente novamente. | {success} chats transferidos, {failed} falharam. Tente novamente.",
+    "error_message": "Não foi possível transferir os chats, tente novamente",
     "agent_transfer_success": "Contato transferido com sucesso para agente {agent} | Contatos transferidos com sucesso para agente {agent}",
     "queue_transfer_success": "Contato transferido com sucesso para fila {queue} | Contatos transferidos com sucesso para fila {queue}",
     "error": "Não foi possível transferir os contatos, tente novamente",
@@ -700,6 +707,7 @@
   "shortcut": "Atalho",
   "message": "Mensagem",
   "save": "Salvar",
+  "use": "Usar",
   "delete_sector": "Deletar setor",
   "delete_queue": "Excluir fila",
   "delete_queue_modal": {
