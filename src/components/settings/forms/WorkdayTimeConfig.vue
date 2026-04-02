@@ -131,7 +131,7 @@ export default {
 <style lang="scss" scoped>
 .error-message {
   font-size: $unnnic-font-size-body-md;
-  color: $unnnic-color-red-8;
+  color: $unnnic-color-fg-critical;
 }
 .workday-time-config {
   display: flex;
