@@ -14,7 +14,7 @@ export const useMessageManager = defineStore('messageManager', () => {
   const inputMessageFocused = ref(false);
   const inputMessage = ref('');
   const audioMessage = ref<HTMLAudioElement | null>(null);
-  const audioRecorderStatus = ref('');
+  const audioRecorderStatus = ref('idle');
   const isLoadingSendAudioMessage = ref(false);
   const mediaUploadFiles = ref<File[]>([]);
   const isInternalNote = ref(false);
