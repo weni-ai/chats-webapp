@@ -170,7 +170,7 @@ export default {
           color: $unnnic-color-neutral-dark;
         }
         :deep(svg > path) {
-          fill: $unnnic-color-aux-red-500;
+          fill: $unnnic-color-fg-critical;
         }
       }
       &__close {
@@ -220,12 +220,12 @@ export default {
       :deep(.co-pilot__header__title__light-icon) {
         rotate: 180deg;
 
-        color: $unnnic-color-weni-600;
+        color: $unnnic-color-fg-accent;
         font-size: 20px;
       }
 
       h1 {
-        color: $unnnic-color-weni-600;
+        color: $unnnic-color-fg-accent;
         font-weight: $unnnic-font-weight-bold;
         font-size: $unnnic-font-size-body-md;
       }
@@ -264,10 +264,10 @@ export default {
 
       color: $unnnic-color-neutral-dark;
       font-size: $unnnic-font-size-body-md;
-      background-color: $unnnic-color-weni-50;
+      background-color: $unnnic-color-teal-1;
 
       &:active {
-        background-color: $unnnic-color-weni-100;
+        background-color: $unnnic-color-bg-accent-plain;
       }
     }
   }

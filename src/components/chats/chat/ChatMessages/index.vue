@@ -877,7 +877,7 @@ export default {
   &-chip {
     padding: 0 $unnnic-space-2;
     border-radius: $unnnic-border-radius-pill;
-    background-color: $unnnic-color-red-500;
+    background-color: $unnnic-color-bg-red-strong;
     color: $unnnic-color-fg-inverted;
     margin-bottom: -$unnnic-space-2;
     z-index: 1;

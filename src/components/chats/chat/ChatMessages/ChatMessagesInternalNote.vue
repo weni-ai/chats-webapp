@@ -102,7 +102,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background-color: $unnnic-color-yellow-200;
+  background-color: $unnnic-color-bg-yellow-plain;
   padding: $unnnic-spacing-xs $unnnic-spacing-ant;
   border-radius: $unnnic-border-radius-md;
   width: 100%;

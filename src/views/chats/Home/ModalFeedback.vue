@@ -181,20 +181,23 @@ const submitFeedback = async () => {
         flex-direction: column;
         align-items: center;
         gap: 4px;
-        background-color: $unnnic-color-weni-50;
+        // Semantic token not exists
+        background-color: $unnnic-color-teal-1;
         border-radius: $unnnic-border-width-thick;
         cursor: pointer;
 
         &-selected {
-          background-color: $unnnic-color-weni-200;
+          // Semantic token not exists
+          background-color: $unnnic-color-teal-4;
         }
 
         &:hover {
-          background-color: $unnnic-color-weni-100;
+          background-color: $unnnic-color-bg-accent-plain;
         }
 
         &-label {
-          color: $unnnic-color-weni-800;
+          // Semantic token not exists
+          color: $unnnic-color-teal-12;
           font-family: $unnnic-font-family-secondary;
           font-size: $unnnic-font-size-body-md;
           font-weight: $unnnic-font-weight-regular;

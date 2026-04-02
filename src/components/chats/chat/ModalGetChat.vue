@@ -183,15 +183,11 @@ export default {
     align-items: center;
     gap: $unnnic-icon-size-ant;
     padding: $unnnic-space-6;
-    color: $unnnic-color-gray-500;
   }
 
   &__title {
-    font-family: $unnnic-font-family-secondary;
+    font: $unnnic-font-display-2;
     color: $unnnic-color-fg-emphasized;
-    font-weight: $unnnic-font-weight-bold;
-    font-size: $unnnic-font-size-title-sm;
-    line-height: ($unnnic-font-size-title-sm + $unnnic-line-height-medium);
   }
 }
 </style>

@@ -1097,7 +1097,7 @@ fieldset {
 
     &__title {
       font: $unnnic-font-display-3;
-      color: $unnnic-color-gray-900;
+      color: $unnnic-color-fg-emphasized;
     }
 
     &__subtitle {

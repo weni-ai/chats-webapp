@@ -387,7 +387,7 @@ export default {
         background-color: $unnnic-color-bg-purple-strong;
 
         [class*='unnnic-icon'] {
-          color: $unnnic-color-weni-50;
+          color: $unnnic-color-teal-1;
         }
       }
     }
