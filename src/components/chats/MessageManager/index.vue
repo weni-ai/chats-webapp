@@ -520,7 +520,7 @@ export default {
   }
 
   :deep(.send-message-button.unnnic-button--attention) {
-    background-color: $unnnic-color-orange-6;
+    background-color: $unnnic-color-bg-orange-plain;
   }
 
   &-box {
