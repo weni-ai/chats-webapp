@@ -407,7 +407,7 @@ const handleCreateCustomStatus = async (status: Status) => {
 
 const showStatusAlert = (status: Status | undefined, isSuccess = true) => {
   const scheme = {
-    inactive: '$unnnic-color-neutral-black',
+    inactive: 'fg-emphasized',
     error: 'feedback-red',
     default: 'feedback-green',
   };
@@ -484,9 +484,9 @@ watch(
   padding: $unnnic-spacing-sm;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid $unnnic-color-neutral-soft;
-  border-left: 1px solid $unnnic-color-neutral-soft;
-  background: $unnnic-color-neutral-white;
+  border-bottom: 1px solid $unnnic-color-border-soft;
+  border-left: 1px solid $unnnic-color-border-soft;
+  background: $unnnic-color-bg-base;
   cursor: pointer;
   margin-bottom: $unnnic-spacing-ant;
 
@@ -507,19 +507,19 @@ watch(
     width: $unnnic-spacing-xs;
     height: $unnnic-spacing-xs;
     border-radius: 50%;
-    background-color: $unnnic-color-neutral-cleanest;
+    background-color: $unnnic-color-fg-base;
   }
 
   &--green {
-    background-color: $unnnic-color-green-5;
+    background-color: $unnnic-color-bg-green-strong;
   }
 
   &--gray {
-    background-color: $unnnic-color-neutral-cleanest;
+    background-color: $unnnic-color-bg-base-soft;
   }
 
   &--brown {
-    background-color: $unnnic-color-orange-7;
+    background-color: $unnnic-color-bg-orange-strong;
   }
 
   &__timer {
@@ -529,8 +529,8 @@ watch(
     align-items: center;
     gap: $unnnic-spacing-xs;
     border-radius: $unnnic-border-radius-pill;
-    border: 1px solid $unnnic-color-neutral-clean;
-    color: $unnnic-color-neutral-clean;
+    border: 1px solid $unnnic-color-border-soft;
+    color: $unnnic-color-fg-base;
 
     font-family: $unnnic-font-family-secondary;
     font-size: $unnnic-font-size-body-md;
@@ -540,7 +540,7 @@ watch(
   }
 
   &__label {
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
 
     font-family: $unnnic-font-family-secondary;
     font-size: $unnnic-font-size-body-gt;
@@ -553,7 +553,7 @@ watch(
     align-items: center;
     gap: $unnnic-spacing-nano;
     &__label {
-      color: $unnnic-color-neutral-cloudy;
+      color: $unnnic-color-fg-base;
       font-family: $unnnic-font-family-secondary;
       font-size: $unnnic-font-size-body-md;
       font-style: normal;
@@ -565,8 +565,8 @@ watch(
   &__list {
     position: absolute;
     width: calc(100% - $unnnic-space-7);
-    background: $unnnic-color-background-snow;
-    border-top: 1px solid $unnnic-color-neutral-soft;
+    background: $unnnic-color-bg-base;
+    border-top: 1px solid $unnnic-color-border-soft;
     list-style: none;
     margin: 0;
     margin-top: -$unnnic-space-4;
@@ -580,19 +580,19 @@ watch(
     overflow-y: auto;
     padding-right: $unnnic-inline-xs;
     scrollbar-width: thin;
-    scrollbar-color: $unnnic-color-neutral-cleanest $unnnic-color-neutral-soft;
+    scrollbar-color: $unnnic-color-border-soft $unnnic-color-bg-base-soft;
 
     &::-webkit-scrollbar {
       width: $unnnic-spacing-inline-nano;
     }
 
     &::-webkit-scrollbar-thumb {
-      background: $unnnic-color-neutral-cleanest;
+      background: $unnnic-color-border-soft;
       border-radius: $unnnic-border-radius-pill;
     }
 
     &::-webkit-scrollbar-track {
-      background: $unnnic-color-neutral-soft;
+      background: $unnnic-color-bg-base-soft;
       border-radius: $unnnic-border-radius-pill;
     }
 
@@ -615,12 +615,12 @@ watch(
     }
 
     &:hover {
-      background: $unnnic-color-neutral-lightest;
+      background: $unnnic-color-bg-base-soft;
       border-radius: $unnnic-radius-1;
     }
 
     &-label {
-      color: $unnnic-color-neutral-dark;
+      color: $unnnic-color-fg-base;
 
       font-family: $unnnic-font-family-secondary;
       font-size: $unnnic-font-size-body-gt;

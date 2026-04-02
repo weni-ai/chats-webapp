@@ -12,7 +12,7 @@
       type="default"
       :text="contact.name"
       hasCloseIcon
-      scheme="background-snow"
+      scheme="bg-base"
       data-testid="contact-tag"
       @close="$emit('remove-contact', contact)"
     />
@@ -43,7 +43,7 @@ export default {
   scroll-snap-type: y proximity;
 
   :deep(.unnnic-tag) {
-    background-color: $unnnic-color-background-snow;
+    background-color: $unnnic-color-bg-base;
 
     max-width: 100%;
     scroll-snap-align: start;

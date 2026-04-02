@@ -54,23 +54,24 @@ export default {
   gap: $unnnic-space-1;
 
   &.is-active {
-    background: $unnnic-color-neutral-lightest;
+    background: $unnnic-color-bg-base-soft;
     border-radius: $unnnic-radius-2;
 
     &:active {
-      background: $unnnic-color-neutral-light;
+      background: $unnnic-color-bg-base-soft;
     }
   }
 
   &.copilot {
-    background: $unnnic-color-weni-50;
+    // Semantic token not exists
+    background: $unnnic-color-teal-1;
 
     &:active {
-      background: $unnnic-color-weni-100;
+      background: $unnnic-color-bg-accent-plain;
     }
 
     .suggestion-box__shortcut__title {
-      color: $unnnic-color-weni-600;
+      color: $unnnic-color-fg-accent;
     }
   }
 

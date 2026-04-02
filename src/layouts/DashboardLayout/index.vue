@@ -59,7 +59,7 @@ export default {
 
   padding: 1.5rem 0.5rem 0 1.5rem;
 
-  background: $unnnic-color-background-carpet;
+  background: $unnnic-color-bg-base-soft;
 
   .dashboard__header {
     display: flex;
@@ -68,14 +68,14 @@ export default {
     margin-right: 1rem;
     padding-bottom: 1.5rem;
     margin-bottom: 1.5rem;
-    border-bottom: solid 1px $unnnic-color-neutral-soft;
+    border-bottom: solid 1px $unnnic-color-border-soft;
     &__container {
       display: flex;
       gap: 4px;
       align-items: center;
       &__title {
         font-size: 1.5rem;
-        color: $unnnic-color-neutral-darkest;
+        color: $unnnic-color-fg-emphasized;
       }
     }
   }

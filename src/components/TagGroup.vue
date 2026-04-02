@@ -211,7 +211,7 @@ export default {
     position: absolute;
     padding-left: $unnnic-spacing-xs;
 
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
     font-size: $unnnic-font-size-body-md;
 
     line-height: 20px;

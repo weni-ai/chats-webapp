@@ -101,7 +101,7 @@ export default {
 
   &.highlight {
     .filename {
-      color: $unnnic-color-weni-600;
+      color: $unnnic-color-fg-accent;
       font-weight: $unnnic-font-weight-bold;
     }
   }
@@ -116,7 +116,7 @@ export default {
 
   .filename {
     font-size: 0.875rem;
-    color: $unnnic-color-neutral-darkest;
+    color: $unnnic-color-fg-emphasized;
   }
 }
 </style>

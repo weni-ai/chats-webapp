@@ -83,7 +83,7 @@ export default {
 .list-agents {
   .title {
     font-weight: $unnnic-font-weight-bold;
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
     font-size: $unnnic-font-size-body-lg;
     line-height: 1.5rem;
 

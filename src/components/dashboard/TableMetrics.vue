@@ -105,7 +105,7 @@ export default {
 
 <style lang="scss" scoped>
 .table-metrics {
-  background: $unnnic-color-background-snow;
+  background: $unnnic-color-bg-base;
   padding: $unnnic-spacing-inset-sm;
   border-radius: $unnnic-border-radius-sm;
 
@@ -114,12 +114,12 @@ export default {
     align-items: center;
     gap: $unnnic-spacing-stack-xs;
     font-size: $unnnic-font-size-title-sm;
-    color: $unnnic-color-neutral-darkest;
+    color: $unnnic-color-fg-emphasized;
     margin-bottom: $unnnic-spacing-inline-sm;
   }
 
   &__table {
-    color: $unnnic-color-neutral-cloudy;
+    color: $unnnic-color-fg-base;
     font-size: $unnnic-font-size-body-gt;
 
     .table-row {
@@ -135,7 +135,7 @@ export default {
     }
 
     .headers {
-      background: $unnnic-color-background-carpet;
+      background: $unnnic-color-bg-base-soft;
       padding: $unnnic-spacing-inset-xs $unnnic-spacing-inset-sm;
       border-radius: $unnnic-border-radius-sm;
     }
@@ -161,14 +161,14 @@ export default {
         }
 
         &:hover {
-          background: $unnnic-color-background-carpet;
+          background: $unnnic-color-bg-base-soft;
           text-decoration: underline;
           text-underline-position: under;
 
           cursor: pointer;
 
           .agent > p {
-            border-bottom: 1px solid $unnnic-color-neutral-cloudy;
+            border-bottom: 1px solid $unnnic-color-fg-base;
           }
         }
       }

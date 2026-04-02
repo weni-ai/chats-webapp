@@ -152,10 +152,10 @@ export default {
 }
 
 .groups__new-card:hover {
-  box-shadow: $unnnic-shadow-level-far;
+  box-shadow: $unnnic-shadow-1;
 }
 .groups__new-card:active {
-  border: 1px solid $unnnic-color-neutral-cleanest;
+  border: 1px solid $unnnic-color-border-soft;
 }
 
 .groups {

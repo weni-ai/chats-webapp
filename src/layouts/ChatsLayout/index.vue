@@ -184,7 +184,7 @@ section.chats-layout {
   overflow: hidden;
 
   & > *:not(:last-child) {
-    border-right: 1px solid $unnnic-color-neutral-soft;
+    border-right: 1px solid $unnnic-color-border-soft;
   }
 
   &.has-aside {
@@ -229,7 +229,7 @@ section.chats-layout {
 
   .aside {
     height: 100%;
-    background: $unnnic-color-background-snow;
+    background: $unnnic-color-bg-base;
 
     grid-column: 3;
   }
