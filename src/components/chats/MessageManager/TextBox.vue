@@ -257,7 +257,7 @@ export default {
 
 <style lang="scss" scoped>
 .internal-note {
-  background-color: $unnnic-color-yellow-2;
+  background-color: $unnnic-color-bg-yellow-plain;
 }
 .text-box {
   position: relative;
