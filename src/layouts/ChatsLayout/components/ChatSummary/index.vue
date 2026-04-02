@@ -292,7 +292,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: $unnnic-color-purple-100;
+  background: $unnnic-color-bg-purple-plain;
   box-shadow: $unnnic-shadow-1;
   padding: $unnnic-spacing-sm;
   gap: $unnnic-spacing-nano;

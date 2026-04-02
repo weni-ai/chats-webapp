@@ -273,7 +273,7 @@ export default {
   }
 
   .internal-note-close-button {
-    background-color: $unnnic-color-orange-6;
+    background-color: $unnnic-color-bg-yellow-strong;
     padding: 0px $unnnic-spacing-nano;
     border-top-left-radius: $unnnic-border-radius-md;
     border-top-right-radius: $unnnic-border-radius-md;
@@ -322,7 +322,7 @@ export default {
     }
 
     &.internal-note {
-      border: 1px solid $unnnic-color-orange-6;
+      border: 1px solid $unnnic-color-border-warning;
     }
 
     &.mobile {

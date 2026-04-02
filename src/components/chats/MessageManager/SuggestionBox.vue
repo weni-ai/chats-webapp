@@ -216,7 +216,7 @@ export default {
 
   &__search {
     font-weight: $unnnic-font-weight-black;
-    color: $unnnic-color-purple-7;
+    color: $unnnic-color-bg-purple-strong;
   }
 
   &__shortcuts {

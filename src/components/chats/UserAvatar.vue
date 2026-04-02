@@ -97,11 +97,17 @@ $avatar-sizes:
   justify-content: center;
   border-radius: $unnnic-border-radius-sm;
 
-  background: rgba($unnnic-color-bg-teal-plain, $unnnic-opacity-level-extra-light);
+  background: rgba(
+    $unnnic-color-bg-teal-plain,
+    $unnnic-opacity-level-extra-light
+  );
   color: $unnnic-color-fg-accent;
 
   &.active {
-    background: rgba($unnnic-color-teal-8, $unnnic-opacity-level-light);
+    background: rgba(
+      $unnnic-color-bg-accent-strong,
+      $unnnic-opacity-level-light
+    );
   }
 
   &.disabled {

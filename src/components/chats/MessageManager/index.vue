@@ -519,10 +519,6 @@ export default {
     box-shadow: 0px 2px 5px -1px rgba(0, 0, 0, 0.1);
   }
 
-  :deep(.send-message-button.unnnic-button--attention) {
-    background-color: $unnnic-color-bg-orange-plain;
-  }
-
   &-box {
     &__container {
       position: relative;

@@ -89,7 +89,7 @@ export default {
 
   width: 100%;
 
-  background: $unnnic-color-teal-8;
+  background: $unnnic-color-bg-accent-strong;
   color: $unnnic-color-fg-emphasized;
 
   cursor: default;

@@ -92,7 +92,7 @@ export default {
   }
 
   &.connecting {
-    background-color: $unnnic-color-gray-12;
+    background-color: $unnnic-color-fg-emphasized;
   }
 }
 </style>

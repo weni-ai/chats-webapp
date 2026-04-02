@@ -358,7 +358,7 @@ export default {
   }
   &__summary-icon {
     &--open {
-      background-color: $unnnic-color-purple-100;
+      background-color: $unnnic-color-bg-purple-plain;
       &::after {
         content: '';
         position: fixed;
@@ -366,7 +366,7 @@ export default {
         transform: rotate(-45deg);
         width: $unnnic-space-3;
         height: $unnnic-space-3;
-        background-color: $unnnic-color-purple-100;
+        background-color: $unnnic-color-bg-purple-plain;
         border-radius: $unnnic-space-1;
       }
     }
@@ -384,7 +384,7 @@ export default {
   &__discussion {
     :deep(.unnnic-chats-header) {
       .unnnic-chats-header__avatar-icon {
-        background-color: $unnnic-color-purple-7;
+        background-color: $unnnic-color-bg-purple-strong;
 
         [class*='unnnic-icon'] {
           color: $unnnic-color-weni-50;

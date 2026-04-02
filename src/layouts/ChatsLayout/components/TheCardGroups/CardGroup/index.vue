@@ -260,7 +260,7 @@ export default {
       // !important at fill is needed here because the
       // unnnicCollapse header is applying an unwanted style when hovering
       .primary {
-        fill: $unnnic-color-teal-8 !important;
+        fill: $unnnic-color-fg-accent !important;
       }
     }
   }

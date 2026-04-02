@@ -128,7 +128,7 @@ export default {
     &::after {
       border-radius: $unnnic-border-radius-lg;
       // Dashed border with increased dashes spacing and color neutral clean
-      background-image: borderDashed($unnnic-color-teal-8);
+      background-image: borderDashed($unnnic-color-border-accent-strong);
     }
   }
 
@@ -153,7 +153,7 @@ export default {
     h1 {
       font-size: $unnnic-font-size-title-sm;
       font-weight: $unnnic-font-weight-bold;
-      color: $unnnic-color-teal-8;
+      color: $unnnic-color-fg-accent;
     }
   }
 }
