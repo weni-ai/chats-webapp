@@ -63,6 +63,7 @@ export default {
   }
 
   &.copilot {
+    // Semantic token not exists
     background: $unnnic-color-teal-1;
 
     &:active {
