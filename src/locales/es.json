@@ -841,17 +841,19 @@
     }
   },
   "config_chats": {
-    "title": "Configuración",
+    "title": "Preferencias de Live Desk",
     "section_sectors_title": "Sectores en {project}",
     "section_sectors_subtitle": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización.",
     "tabs": {
-      "settings": "Ajustes",
-      "groups": "Grupos de proyectos"
+      "general": "General",
+      "groups": "Grupos de proyectos",
+      "sectors": "Sectores"
     },
     "custom_breaks": {
       "title": "Pausas personalizadas",
       "description": "Añadir nuevas pausas personalizadas, que tendrán el mismo comportamiento que las pausas sin conexión, es decir, el agente no recibirá contactos mientras utilice estas pausas personalizadas.",
       "fields": {
+        "hint": "Agrega hasta 10 estados distintos para usarlos como pausas personalizadas.",
         "name": "Nuevo estado",
         "placeholder": "Ejemplo: Almuerzo"
       },
@@ -859,27 +861,34 @@
       "status_duplicate_name": "Estado ya comunicado",
       "status_success": "Estado añadido con éxito",
       "status_remove_success": "Estado {status} eliminado",
-      "status_error": "Ups, desafortunadamente los cambios no se han guardado, inténtalo de nuevo"
+      "status_error": "Ups, desafortunadamente los cambios no se han guardado, inténtalo de nuevo",
+      "delete_modal": {
+        "description_1": "¿Realmente deseas eliminar la pausa personalizada “{name}”?",
+        "description_2": "Una vez eliminada, sus datos ya no aparecerán en el panel de Live Desk y no podrán recuperarse.",
+        "error": "No se pudo eliminar la pausa personalizada.",
+        "success": "Pausa personalizada eliminada con éxito",
+        "title": "Eliminar pausa personalizada"
+      }
     },
     "changes_saved": "¡Cambios guardados con éxito!",
     "changes_not_saved": "No se pudieron guardar los cambios. Inténtalo de nuevo.",
     "project_configs": {
-      "title": "Preferencias de proyectos",
+      "title": "Definiciones",
       "ai_transfer": {
         "switch_active": "Permitir que los agentes de IA transfieran conversaciones al soporte humano",
         "switch_inactive": "Permitir que los agentes de IA transfieran conversaciones al soporte humano",
         "modal_title": "Escenarios o criterios que requieren transferencia al soporte humano",
-        "textarea_label": "Defina los escenarios o criterios que requieren transferencia al soporte humano",
+        "textarea_label": "Escenarios o criterios",
         "textarea_placeholder": "Describa los escenarios o criterios..."
       },
       "bulk_transfer": {
-        "tooltip": "Esta función permite a los agentes transferir varios contactos a la vez a una fila o agente",
-        "switch_active": "Transferir chats en masa a otra cola o agente activo",
-        "switch_inactive": "Transferir chats en masa a otra cola o agente desactivado"
+        "tooltip": "Esta función permite a los representantes transferir varios contactos a la vez a una fila o representante",
+        "switch_active": "Transferir chats en masa a otra cola o representante",
+        "switch_inactive": "Transferir chats en masa a otra cola o representante"
       },
       "block_transfer_to_off_agents": {
-        "switch_active": "Bloquear la transferencia de chats a agentes sin conexión activo",
-        "switch_inactive": "Bloquear la transferencia de chats a agentes sin conexión inactivo"
+        "switch_active": "Bloquear la transferencia de chats a representantes sin conexión",
+        "switch_inactive": "Bloquear la transferencia de chats a representantes sin conexión"
       },
       "bulk_close": {
         "switch_active": "Finalizar chats en masa activo",
@@ -894,13 +903,13 @@
         "switch_inactive": "Asumir chats en masa"
       },
       "queue_prioritization": {
-        "tooltip": "Esta función permite a los agentes elegir las colas que recibirán contactos, dentro de las previamente seleccionadas en el sector.",
-        "switch_active": "Permitir que los agentes elijan sus colas dentro del sector activo",
-        "switch_inactive": "Permitir que los agentes elijan sus colas dentro del sector inactivo"
+        "tooltip": "Esta función permite a los representantes elegir las colas que recibirán contactos, dentro de las previamente seleccionadas en el sector",
+        "switch_active": "Permitir que los representantes elijan sus colas dentro del sector",
+        "switch_inactive": "Permitir que los representantes elijan sus colas dentro del sector"
       },
       "show_agent_status_count_timer": {
-        "switch_active": "Mostrar temporizador de estado en pausas personalizadas del agente activo",
-        "switch_inactive": "Mostrar temporizador de estado en pausas personalizadas del agente inactivo"
+        "switch_active": "Mostrar temporizador de estado en pausas personalizadas del representante",
+        "switch_inactive": "Mostrar temporizador de estado en pausas personalizadas del representante"
       },
       "show_waiting_rooms_count": {
         "switch_label": "Mostrar el contador con el número de chats esperando soporte humano"

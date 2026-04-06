@@ -77,7 +77,7 @@ export default {
 
     tabs() {
       return [
-        { name: this.$t('config_chats.tabs.settings'), id: 'general' },
+        { name: this.$t('config_chats.tabs.general'), id: 'general' },
         { name: this.$t('config_chats.tabs.groups'), id: 'groups' },
       ];
     },

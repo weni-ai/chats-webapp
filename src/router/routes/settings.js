@@ -6,7 +6,7 @@ const routes = [
       {
         path: '/settings',
         name: 'sectors',
-        component: () => import('@/views/Settings/index.vue'),
+        component: () => import('@/views/SettingsV2/index.vue'),
       },
       {
         path: 'sectors/:uuid',

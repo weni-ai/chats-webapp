@@ -14,6 +14,7 @@ export const useConfig = defineStore('config', {
     token: '',
     project: {
       config: {},
+      uuid: '',
     },
     status: '',
     disconnectedBy: '',

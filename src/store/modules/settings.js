@@ -1,8 +1,12 @@
 import { defineStore } from 'pinia';
+import cloneDeep from 'lodash.clonedeep';
+
+import { useConfig } from '@/store/modules/config';
+
 import Sector from '@/services/api/resources/settings/sector';
 import Group from '@/services/api/resources/settings/group';
+import CustomBreak from '@/services/api/resources/chats/pauseStatus';
 
-import cloneDeep from 'lodash.clonedeep';
 import { removeDuplicatedItems } from '@/utils/array';
 
 export const useSettings = defineStore('settings', {
@@ -17,6 +21,8 @@ export const useSettings = defineStore('settings', {
     nextGroups: '',
     previousGroups: '',
     currentGroup: null,
+    customBreaks: [],
+    isLoadingCustomBreaks: false,
   }),
 
   actions: {
@@ -93,6 +99,16 @@ export const useSettings = defineStore('settings', {
       this.sectors = this.sectors.filter(
         (sector) => sector.uuid !== sectorUuid,
       );
+    },
+
+    async getCustomBreaks() {
+      this.isLoadingCustomBreaks = true;
+      const configStore = useConfig();
+      const { results } = await CustomBreak.getCustomBreakStatusTypeList({
+        projectUuid: configStore.project.uuid,
+      });
+      this.customBreaks = results;
+      this.isLoadingCustomBreaks = false;
     },
   },
 
