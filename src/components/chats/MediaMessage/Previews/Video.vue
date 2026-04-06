@@ -71,7 +71,7 @@ export default {
 .video-preview {
   display: inline-grid;
 
-  --plyr-color-main: #{$unnnic-color-weni-600};
+  --plyr-color-main: #{$unnnic-color-fg-accent};
   --plyr-font-family: #{$unnnic-font-family-secondary};
   --plyr-control-spacing: #{$unnnic-spacing-xs};
 

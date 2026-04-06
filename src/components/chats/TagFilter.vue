@@ -72,7 +72,7 @@ export default {
 <style lang="scss" scoped>
 .label {
   font-size: 0.875rem;
-  color: $unnnic-color-neutral-cloudy;
+  color: $unnnic-color-fg-base;
   margin-bottom: 1.5rem;
 }
 

@@ -24,7 +24,7 @@ export default {
   display: flex;
   flex-direction: column;
 
-  background-color: $unnnic-color-neutral-white;
+  background-color: $unnnic-color-bg-base;
 
   width: 100%;
   height: 100%;
@@ -32,7 +32,7 @@ export default {
   > header {
     padding: $unnnic-spacing-sm;
 
-    box-shadow: $unnnic-shadow-level-far;
+    box-shadow: $unnnic-shadow-1;
 
     & > * {
       width: 100%;

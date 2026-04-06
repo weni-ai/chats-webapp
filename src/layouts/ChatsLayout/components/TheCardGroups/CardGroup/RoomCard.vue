@@ -138,9 +138,9 @@ export default {
     },
     handleSchemePin() {
       if (this.totalPinnedRooms === this.maxPinLimit && !this.room.is_pinned) {
-        return 'neutral-cleanest';
+        return 'fg-base';
       }
-      return 'neutral-cloudy';
+      return 'fg-base';
     },
     isProgressRoom() {
       return this.roomType === 'in_progress';
@@ -206,10 +206,10 @@ export default {
   }
 
   &--hover {
-    background-color: $unnnic-color-neutral-lightest !important;
+    background-color: $unnnic-color-bg-base-soft !important;
 
     :deep(.room-card__contact) {
-      background-color: $unnnic-color-neutral-lightest !important;
+      background-color: $unnnic-color-bg-base-soft !important;
     }
   }
 

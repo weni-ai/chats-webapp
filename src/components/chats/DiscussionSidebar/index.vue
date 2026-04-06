@@ -171,7 +171,7 @@ export default {
     }
 
     &__description {
-      color: $unnnic-color-neutral-dark;
+      color: $unnnic-color-fg-base;
       font: $unnnic-font-body;
       margin: 0;
     }

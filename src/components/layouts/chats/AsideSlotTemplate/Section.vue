@@ -12,10 +12,10 @@ export default {
 
 <style lang="scss" scoped>
 .aside-slot-template-section {
-  background: $unnnic-color-background-snow;
+  background: $unnnic-color-bg-base;
 
   & + & {
-    border-top: solid 1px $unnnic-color-neutral-soft;
+    border-top: solid 1px $unnnic-color-border-soft;
   }
 }
 </style>

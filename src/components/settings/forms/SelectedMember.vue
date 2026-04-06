@@ -71,12 +71,12 @@ export default {
     padding: $unnnic-spacing-nano $unnnic-spacing-xs;
     justify-content: center;
     align-items: center;
-    background-color: $unnnic-color-neutral-lightest;
+    background-color: $unnnic-color-bg-base-soft;
     gap: 10px; // not exists in unnnic tokens
     border-radius: $unnnic-radius-2;
 
     &-name {
-      color: $unnnic-color-neutral-darkest;
+      color: $unnnic-color-fg-emphasized;
       font-family: $unnnic-font-family-secondary;
       font-weight: $unnnic-font-weight-bold;
       font-size: $unnnic-font-size-body-gt;
@@ -94,7 +94,7 @@ export default {
     line-height: 1.375rem;
     font-size: $unnnic-font-size-body-gt;
     font-weight: $unnnic-font-weight-bold;
-    color: $unnnic-color-neutral-darkest;
+    color: $unnnic-color-fg-emphasized;
   }
 
   &__email {
