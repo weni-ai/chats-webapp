@@ -1097,12 +1097,12 @@ fieldset {
 
     &__title {
       font: $unnnic-font-display-3;
-      color: $unnnic-color-gray-900;
+      color: $unnnic-color-fg-emphasized;
     }
 
     &__subtitle {
       font-weight: $unnnic-font-weight-regular;
-      color: $unnnic-color-neutral-dark;
+      color: $unnnic-color-fg-base;
       line-height: $unnnic-line-height-large * 1.5;
       font-family: $unnnic-font-family-secondary;
     }

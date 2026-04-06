@@ -96,12 +96,12 @@ const isValid = computed(() => {
 
     &__title {
       font: $unnnic-font-display-2;
-      color: $unnnic-color-gray-800;
+      color: $unnnic-color-fg-emphasized;
     }
 
     &__description {
       font: $unnnic-font-display-4;
-      color: $unnnic-color-neutral-dark;
+      color: $unnnic-color-fg-base;
     }
 
     &__input {

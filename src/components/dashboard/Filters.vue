@@ -421,7 +421,7 @@ export default {
   }
 }
 .option {
-  color: $unnnic-color-neutral-dark;
+  color: $unnnic-color-fg-base;
   font-size: 0.75rem;
 }
 .attachment-options-container {
