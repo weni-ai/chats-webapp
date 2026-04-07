@@ -129,6 +129,7 @@
     "info": "Define an automatic response to be sent to the contact while they are waiting for assistance, leave it blank if you don’t want any message.",
     "placeholder": "You haven't set an automatic message yet. Please define a message for your contacts who are waiting."
   },
+  "type_to_filter": "Type to filter",
   "attention": "Attention",
   "updates_saved": "Updates saved",
   "updated_info": "Updated information",
@@ -845,17 +846,22 @@
     }
   },
   "config_chats": {
-    "title": "Settings",
-    "section_sectors_title": "Sectors in {project}",
+    "title": "Live Desk Preferences",
+    "section_sectors_title": "Sectors Management",
+    "section_groups_title": "Project Groups Management",
+    "filter_by_sector_name": "Filter by sector name",
+    "filter_by_group_name": "Filter by group name",
     "section_sectors_subtitle": "Add, view and manage sectors, queues, managers and agents within your organization.",
     "tabs": {
-      "settings": "Settings",
-      "groups": "Projects groups"
+      "general": "General",
+      "groups": "Projects groups",
+      "sectors": "Sectors"
     },
     "custom_breaks": {
       "title": "Custom breaks",
       "description": "Add new custom breaks, all of which will have the same behavior as offline, i.e. the agent will not receive contacts while using these custom breaks.",
       "fields": {
+        "hint": "Add up to 10 different statuses to be used as custom breaks.",
         "name": "New status",
         "placeholder": "Example: Lunch"
       },
@@ -863,27 +869,34 @@
       "status_duplicate_name": "Status already exists",
       "status_success": "Status added successfully",
       "status_remove_success": "Status {status} removed",
-      "status_error": "Oops, unfortunately the changes were not saved, please try again"
+      "status_error": "Oops, unfortunately the changes were not saved, please try again",
+      "delete_modal": {
+        "title": "Delete custom break",
+        "description_1": "Are you sure you want to delete the custom break “{name}”?",
+        "description_2": "Once deleted, its data will no longer appear in the Live Desk dashboard and can’t be recovered.",
+        "success": "Custom break deleted successfully",
+        "error": "Unable to delete the custom break."
+      }
     },
     "changes_saved": "Changes saved successfully!",
     "changes_not_saved": "Unable to save changes. Please try again.",
     "project_configs": {
-      "title": "Project preferences",
+      "title": "Definitions",
       "ai_transfer": {
         "switch_active": "Allow AI agents to transfer conversations to human support",
         "switch_inactive": "Allow AI agents to transfer conversations to human support",
         "modal_title": "Scenarios or criteria that require transfer to human support",
-        "textarea_label": "Define the scenarios or criteria that require transfer to human support",
+        "textarea_label": "Scenarios or criteria",
         "textarea_placeholder": "Describe the scenarios or criteria..."
       },
       "bulk_transfer": {
-        "tooltip": "This function allows agents to transfer various contacts at once to a row or agent",
-        "switch_active": "Transfer chats in bulk to another queue or agent",
-        "switch_inactive": "Transfer chats in bulk to another queue or agent"
+        "tooltip": "This function allows representatives to transfer various contacts at once to a queue or representative",
+        "switch_active": "Transfer chats in bulk to another queue or representative",
+        "switch_inactive": "Transfer chats in bulk to another queue or representative"
       },
       "block_transfer_to_off_agents": {
-        "switch_active": "Block chat transfer to offline agents",
-        "switch_inactive": "Block chat transfer to offline agents"
+        "switch_active": "Block chat transfer to offline representatives",
+        "switch_inactive": "Block chat transfer to offline representatives"
       },
       "bulk_close": {
         "switch_active": "End chats in bulk",
@@ -898,19 +911,19 @@
         "switch_inactive": "Take over chats in bulk"
       },
       "queue_prioritization": {
-        "tooltip": "This function allows agents to choose the queues that will receive contacts, within those previously selected in the sector",
-        "switch_active": "Allow agents to choose their queues within the sector",
-        "switch_inactive": "Allow agents to choose their queues within the sector"
+        "tooltip": "This function allows representatives to choose the queues that will receive contacts, within those previously selected in the sector",
+        "switch_active": "Allow representatives to choose their queues within the sector",
+        "switch_inactive": "Allow representatives to choose their queues within the sector"
       },
       "show_agent_status_count_timer": {
-        "switch_active": "Show status timer for custom agent breaks",
-        "switch_inactive": "Show status timer for custom agent breaks"
+        "switch_active": "Show status timer for custom representative breaks",
+        "switch_inactive": "Show status timer for custom representative breaks"
       },
       "show_waiting_rooms_count": {
         "switch_label": "Show the counter with the number of chats waiting for human support"
       },
       "use_name_sector_in_rooms": {
-        "switch_label": "Use the sector name in the room name"
+        "switch_label": "Display the department name in the chat title"
       }
     },
     "custom_sector": "Customize new sector (recommended)",
@@ -1021,7 +1034,17 @@
     "new_group": "New group",
     "agent_title": "Agents",
     "contacts": "Contacts",
-    "open": "Open"
+    "open": "Open",
+    "empty_sectors": {
+      "title": "There are no sectors in this project",
+      "subtitle": "Create the first sector to start using the Live Desk module",
+      "action": "Create sector"
+    },
+    "empty_groups": {
+      "title": "There are no project groups in {projectName}",
+      "subtitle": "Create the first group",
+      "action": "Create project group"
+    }
   },
   "new_sector": {
     "sector_tip": "Create a sector to manage the fulfillment operation, including roles, agents and management hours",
