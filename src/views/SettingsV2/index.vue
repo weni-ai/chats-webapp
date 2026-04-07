@@ -4,6 +4,22 @@
     class="settings-page"
   >
     <UnnnicPageHeader :title="$t('config_chats.title')">
+      <template #actions>
+        <UnnnicButton
+          v-if="showNewSectorButton"
+          :text="$t('config_chats.new_sector')"
+          type="primary"
+          iconLeft="add"
+          @click="openNewSectorModal"
+        />
+        <UnnnicButton
+          v-if="showNewGroupButton"
+          :text="$t('config_chats.new_group')"
+          type="primary"
+          iconLeft="add"
+          @click="openNewGroupModal"
+        />
+      </template>
       <template #tabs>
         <UnnnicTabs
           v-model="activeTab"
@@ -43,6 +59,7 @@ import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useConfig } from '@/store/modules/config';
+import { useSettings } from '@/store/modules/settings';
 
 import SettingsProjectOptions from '@/views/SettingsV2/SettingsProjectOptions/index.vue';
 import CustomBreaks from '@/views/SettingsV2/CustomBreaks/index.vue';
@@ -58,6 +75,9 @@ const { t } = i18n.global;
 
 const configStore = useConfig();
 const { isPrimaryProject, enableGroupsMode } = storeToRefs(configStore);
+
+const settingsStore = useSettings();
+const { sectors, groups } = storeToRefs(settingsStore);
 
 const showSettings = computed(() => {
   return !enableGroupsMode.value || isPrimaryProject.value;
@@ -76,6 +96,20 @@ const settingsTabs = computed(() => {
 
   return tabs;
 });
+const showNewSectorButton = computed(() => {
+  return activeTab.value === 'sectors' && sectors.value.length > 0;
+});
+const showNewGroupButton = computed(() => {
+  return activeTab.value === 'groups' && groups.value.length > 0;
+});
+
+const openNewSectorModal = () => {
+  console.log('openNewSectorModal');
+};
+
+const openNewGroupModal = () => {
+  console.log('openNewGroupModal');
+};
 </script>
 
 <style lang="scss" scoped>

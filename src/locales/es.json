@@ -1025,7 +1025,17 @@
     "new_group": "Nuevo grupo",
     "agent_title": "Agentes",
     "contacts": "Contactos",
-    "open": "Abrir"
+    "open": "Abrir",
+    "empty_sectors": {
+      "title": "No hay sectores en este proyecto",
+      "subtitle": "Crea el primer sector para empezar a usar el módulo Live Desk",
+      "action": "Crear sector"
+    },
+    "empty_groups": {
+      "title": "No hay grupos de proyectos en {projectName}",
+      "subtitle": "Crea el primer grupo",
+      "action": "Crear grupo de proyectos"
+    }
   },
   "new_sector": {
     "sector_tip": "Cree un sector para administrar la operación de cumplimiento, incluidos roles, agentes y horas de administración",

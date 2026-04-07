@@ -1,5 +1,30 @@
 <template>
-  <section class="settings-sectors">
+  <section
+    v-if="sectors.length === 0"
+    class="settings-sectors--empty"
+  >
+    <UnnnicIconLoading
+      v-if="isLoadingSectors"
+      size="lg"
+    />
+    <template v-else>
+      <h1 class="settings-sectors--empty__title">
+        {{ $t('config_chats.empty_sectors.title') }}
+      </h1>
+      <p class="settings-sectors--empty__subtitle">
+        {{ $t('config_chats.empty_sectors.subtitle') }}
+      </p>
+      <UnnnicButton
+        :text="$t('config_chats.empty_sectors.action')"
+        type="primary"
+        @click="emit('open-new-sector-modal')"
+      />
+    </template>
+  </section>
+  <section
+    v-else
+    class="settings-sectors"
+  >
     <p class="settings-sectors__title">
       {{ $t('config_chats.section_sectors_title') }}
     </p>
@@ -122,6 +147,10 @@ defineOptions({
 const router = useRouter();
 const { t } = i18n.global;
 
+const emit = defineEmits<{
+  'open-new-sector-modal': [void];
+}>();
+
 const showDeleteSectorModal = ref(false);
 const sectorNameFilter = ref('');
 const sectorOrder = ref('alphabetical');
@@ -224,6 +253,24 @@ const navigate = (name, params) => {
 .settings-sectors {
   display: flex;
   flex-direction: column;
+
+  &--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $unnnic-space-3;
+    height: 80vh;
+
+    &__title {
+      font: $unnnic-font-display-2;
+      color: $unnnic-color-fg-emphasized;
+    }
+    &__subtitle {
+      font: $unnnic-font-emphasis;
+      color: $unnnic-color-fg-base;
+    }
+  }
 
   &__title {
     font: $unnnic-font-display-3;

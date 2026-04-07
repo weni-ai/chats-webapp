@@ -1027,7 +1027,17 @@
     "new_group": "Novo grupo",
     "agent_title": "Agentes",
     "contacts": "Contatos",
-    "open": "Abrir"
+    "open": "Abrir",
+    "empty_sectors": {
+      "title": "Não há setores neste projeto",
+      "subtitle": "Crie o primeiro setor para começar a usar o módulo Live Desk",
+      "action": "Criar setor"
+    },
+    "empty_groups": {
+      "title": "Não há grupos de projetos em {projectName}",
+      "subtitle": "Crie o primeiro grupo",
+      "action": "Criar grupo de projetos"
+    }
   },
   "new_sector": {
     "sector_tip": "Crie um setor para gerenciar a operação de atendimento, adicionando gerentes, agentes e horário de funcionamento",

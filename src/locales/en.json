@@ -1029,7 +1029,17 @@
     "new_group": "New group",
     "agent_title": "Agents",
     "contacts": "Contacts",
-    "open": "Open"
+    "open": "Open",
+    "empty_sectors": {
+      "title": "There are no sectors in this project",
+      "subtitle": "Create the first sector to start using the Live Desk module",
+      "action": "Create sector"
+    },
+    "empty_groups": {
+      "title": "There are no project groups in {projectName}",
+      "subtitle": "Create the first group",
+      "action": "Create project group"
+    }
   },
   "new_sector": {
     "sector_tip": "Create a sector to manage the fulfillment operation, including roles, agents and management hours",
