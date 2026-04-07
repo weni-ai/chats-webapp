@@ -99,7 +99,7 @@ describe('RoomCard.vue', () => {
 
     vi.stubGlobal(
       'setInterval',
-      vi.fn((callback, delay) => {
+      vi.fn(() => {
         const id = Math.random();
         return id;
       }),
