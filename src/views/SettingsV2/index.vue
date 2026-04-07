@@ -39,11 +39,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useConfig } from '@/store/modules/config';
-import { useSettings } from '@/store/modules/settings';
 
 import SettingsProjectOptions from '@/views/SettingsV2/SettingsProjectOptions/index.vue';
 import CustomBreaks from '@/views/SettingsV2/CustomBreaks/index.vue';
@@ -59,18 +58,6 @@ const { t } = i18n.global;
 
 const configStore = useConfig();
 const { isPrimaryProject, enableGroupsMode } = storeToRefs(configStore);
-
-const settingsStore = useSettings();
-const { getSectors, getGroups } = settingsStore;
-
-onMounted(() => {
-  if (showSettings.value) {
-    getSectors(true);
-    if (enableGroupsMode.value) {
-      getGroups(true);
-    }
-  }
-});
 
 const showSettings = computed(() => {
   return !enableGroupsMode.value || isPrimaryProject.value;
