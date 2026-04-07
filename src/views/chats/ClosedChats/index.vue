@@ -30,7 +30,7 @@
       @crumb-click="handlerCrumbClick"
     />
     <ChatHeaderLoading
-      v-show="roomId && isLoadingSelectedRoom"
+      v-show="isLoadingSelectedRoom"
       data-testid="chat-header-loading"
     />
     <WarningArchivedMessages
