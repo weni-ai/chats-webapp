@@ -844,7 +844,9 @@
   "config_chats": {
     "title": "Preferencias de Live Desk",
     "section_sectors_title": "Gestión de sectores",
+    "section_groups_title": "Gestión de grupos de proyectos",
     "filter_by_sector_name": "Filtrar por nombre del sector",
+    "filter_by_group_name": "Filtrar por nombre del grupo",
     "section_sectors_subtitle": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización.",
     "tabs": {
       "general": "General",

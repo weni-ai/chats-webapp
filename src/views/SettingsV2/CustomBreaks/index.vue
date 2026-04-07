@@ -38,7 +38,10 @@
         @click="addCustomBreak"
       />
     </section>
-    <section class="custom-breaks__list">
+    <section
+      v-if="hasCustomBreaks"
+      class="custom-breaks__list"
+    >
       <TagGroup
         :tags="orderedCustomBreaks"
         disabledTag
@@ -49,6 +52,7 @@
     <ProjectOption
       v-model="project.config.can_see_timer"
       :name="configShowAgentStatusCountTimer"
+      :disabled="!hasCustomBreaks"
     />
     <DeleteCustomBreakModal
       v-if="toDeleteCustomBreak"
@@ -95,23 +99,14 @@ onMounted(() => {
   getCustomBreaks();
 });
 
-watch(
-  () => project.value.config.can_see_timer,
-  (nweValue, oldValue) => {
-    if (oldValue === undefined) return;
-
-    ProjectService.update({
-      ...project.value.config,
-      can_see_timer: nweValue,
-    });
-  },
-);
-
 const customBreakName = ref('');
 const isLoadingAddCustomBreak = ref(false);
 const showDeleteCustomBreakModal = ref(false);
 const toDeleteCustomBreak = ref<CustomBreak | null>(null);
 
+const hasCustomBreaks = computed(() => {
+  return customBreaks.value.length > 0;
+});
 const isLimitReached = computed(() => {
   return customBreaks.value.length >= 10;
 });
@@ -174,6 +169,23 @@ const closeDeleteCustomBreakModal = () => {
   showDeleteCustomBreakModal.value = false;
   toDeleteCustomBreak.value = null;
 };
+
+watch(
+  () => project.value.config.can_see_timer,
+  (newValue, oldValue) => {
+    if (oldValue === undefined) return;
+
+    ProjectService.update({
+      ...project.value.config,
+      can_see_timer: newValue,
+    });
+  },
+);
+watch(hasCustomBreaks, (newVal) => {
+  if (!newVal) {
+    project.value.config.can_see_timer = false;
+  }
+});
 </script>
 
 <style lang="scss" scoped>

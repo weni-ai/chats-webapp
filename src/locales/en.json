@@ -848,7 +848,9 @@
   "config_chats": {
     "title": "Live Desk Preferences",
     "section_sectors_title": "Sectors Management",
+    "section_groups_title": "Project Groups Management",
     "filter_by_sector_name": "Filter by sector name",
+    "filter_by_group_name": "Filter by group name",
     "section_sectors_subtitle": "Add, view and manage sectors, queues, managers and agents within your organization.",
     "tabs": {
       "general": "General",

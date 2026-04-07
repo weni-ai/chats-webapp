@@ -10,14 +10,14 @@
           :text="$t('config_chats.new_sector')"
           type="primary"
           iconLeft="add"
-          @click="openNewSectorModal"
+          @click="openNewSectorDrawer"
         />
         <UnnnicButton
           v-if="showNewGroupButton"
           :text="$t('config_chats.new_group')"
           type="primary"
           iconLeft="add"
-          @click="openNewGroupModal"
+          @click="openNewGroupDrawer"
         />
       </template>
       <template #tabs>
@@ -42,15 +42,27 @@
           </UnnnicTabsContent>
           <UnnnicTabsContent value="sectors">
             <section class="settings-page__content">
-              <SectorsList />
+              <SectorsList @open-new-sector-modal="openNewSectorDrawer" />
             </section>
           </UnnnicTabsContent>
           <UnnnicTabsContent value="groups">
-            <div>To do: Groups settings.</div>
+            <section class="settings-page__content">
+              <GroupsList @open-new-group-modal="openNewGroupDrawer" />
+            </section>
           </UnnnicTabsContent>
         </UnnnicTabs>
       </template>
     </UnnnicPageHeader>
+    <NewSectorDrawer
+      v-if="showNewSectorDrawer"
+      v-model="showNewSectorDrawer"
+      @close="showNewSectorDrawer = false"
+    />
+    <NewGroupDrawer
+      v-if="showNewGroupDrawer"
+      v-model="showNewGroupDrawer"
+      @close="showNewGroupDrawer = false"
+    />
   </section>
 </template>
 
@@ -64,6 +76,9 @@ import { useSettings } from '@/store/modules/settings';
 import SettingsProjectOptions from '@/views/SettingsV2/SettingsProjectOptions/index.vue';
 import CustomBreaks from '@/views/SettingsV2/CustomBreaks/index.vue';
 import SectorsList from '@/views/SettingsV2/Sectors/index.vue';
+import GroupsList from '@/views/SettingsV2/Groups/index.vue';
+import NewSectorDrawer from '@/views/SettingsV2/Sectors/New/NewSectorDrawer.vue';
+import NewGroupDrawer from '@/views/SettingsV2/Groups/New.vue';
 
 import i18n from '@/plugins/i18n';
 
@@ -103,12 +118,15 @@ const showNewGroupButton = computed(() => {
   return activeTab.value === 'groups' && groups.value.length > 0;
 });
 
-const openNewSectorModal = () => {
-  console.log('openNewSectorModal');
+const showNewSectorDrawer = ref(false);
+const showNewGroupDrawer = ref(false);
+
+const openNewSectorDrawer = () => {
+  showNewSectorDrawer.value = true;
 };
 
-const openNewGroupModal = () => {
-  console.log('openNewGroupModal');
+const openNewGroupDrawer = () => {
+  showNewGroupDrawer.value = true;
 };
 </script>
 
