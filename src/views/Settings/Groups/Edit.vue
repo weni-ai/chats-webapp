@@ -1,14 +1,14 @@
 <template>
   <UnnnicDrawer
     ref="editProjectGroupDrawer"
-    :modelValue="show"
+    :modelValue="modelValue"
     :title="editingProjectGroup.name"
     :primaryButtonText="$t('save')"
     :secondaryButtonText="$t('cancel')"
     :loadingPrimaryButton="isLoadingRequest"
     size="xl"
     @primary-button-click="finish()"
-    @secondary-button-click="$refs.editProjectGroupDrawer.close()"
+    @secondary-button-click="$emit('close')"
     @close="closeDrawer"
   >
     <template #content>
@@ -69,7 +69,7 @@ export default {
     Agents,
   },
   props: {
-    show: {
+    modelValue: {
       type: Boolean,
       required: true,
     },

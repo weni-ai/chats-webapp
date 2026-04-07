@@ -102,6 +102,8 @@
 </template>
 
 <script>
+import { mapState, mapWritableState } from 'pinia';
+
 import General from '@/components/settings/forms/General.vue';
 import ExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
 import FormQueue from '@/components/settings/forms/Queue.vue';
@@ -111,13 +113,12 @@ import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
 
 import { useSettings } from '@/store/modules/settings';
+import { useConfig } from '@/store/modules/config';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import isMobile from 'is-mobile';
 
 import Unnnic from '@weni/unnnic-system';
-import { mapState, mapWritableState } from 'pinia';
-import { useConfig } from '@/store/modules/config';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 export default {
   name: 'NewSectorDrawer',
@@ -130,7 +131,7 @@ export default {
   props: {
     modelValue: {
       type: Boolean,
-      default: false,
+      required: true,
     },
   },
   emits: ['close'],
