@@ -129,6 +129,7 @@
     "info": "Define una respuesta automática para enviar al contacto mientras espera asistencia, déjalo en blanco si no deseas ningún mensaje.",
     "placeholder": "Aún no has definido un mensaje automático. Por favor, define un mensaje para tus contactos que están esperando."
   },
+  "type_to_filter": "Escribe para filtrar",
   "attention": "Atención",
   "updates_saved": "Actualizaciones guardadas",
   "updated_info": "Información actualizada",
@@ -842,7 +843,8 @@
   },
   "config_chats": {
     "title": "Preferencias de Live Desk",
-    "section_sectors_title": "Sectores en {project}",
+    "section_sectors_title": "Gestión de sectores",
+    "filter_by_sector_name": "Filtrar por nombre del sector",
     "section_sectors_subtitle": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización.",
     "tabs": {
       "general": "General",

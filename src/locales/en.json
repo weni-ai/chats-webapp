@@ -129,6 +129,7 @@
     "info": "Define an automatic response to be sent to the contact while they are waiting for assistance, leave it blank if you don’t want any message.",
     "placeholder": "You haven't set an automatic message yet. Please define a message for your contacts who are waiting."
   },
+  "type_to_filter": "Type to filter",
   "attention": "Attention",
   "updates_saved": "Updates saved",
   "updated_info": "Updated information",
@@ -846,7 +847,8 @@
   },
   "config_chats": {
     "title": "Live Desk Preferences",
-    "section_sectors_title": "Sectors in {project}",
+    "section_sectors_title": "Sectors Management",
+    "filter_by_sector_name": "Filter by sector name",
     "section_sectors_subtitle": "Add, view and manage sectors, queues, managers and agents within your organization.",
     "tabs": {
       "general": "General",
@@ -857,9 +859,9 @@
       "title": "Custom breaks",
       "description": "Add new custom breaks, all of which will have the same behavior as offline, i.e. the agent will not receive contacts while using these custom breaks.",
       "fields": {
+        "hint": "Add up to 10 different statuses to be used as custom breaks.",
         "name": "New status",
-        "placeholder": "Example: Lunch",
-        "hint": "Add up to 10 different statuses to be used as custom breaks."
+        "placeholder": "Example: Lunch"
       },
       "status_exceeded_limit": "Status limit reached, delete to add new status",
       "status_duplicate_name": "Status already exists",
@@ -870,7 +872,7 @@
         "title": "Delete custom break",
         "description_1": "Are you sure you want to delete the custom break “{name}”?",
         "description_2": "Once deleted, its data will no longer appear in the Live Desk dashboard and can’t be recovered.",
-        "success": "Custom break deleted successfully!",
+        "success": "Custom break deleted successfully",
         "error": "Unable to delete the custom break."
       }
     },
@@ -886,7 +888,7 @@
         "textarea_placeholder": "Describe the scenarios or criteria..."
       },
       "bulk_transfer": {
-        "tooltip": "This function allows representatives to transfer various contacts at once to a row or agent",
+        "tooltip": "This function allows representatives to transfer various contacts at once to a queue or representative",
         "switch_active": "Transfer chats in bulk to another queue or representative",
         "switch_inactive": "Transfer chats in bulk to another queue or representative"
       },

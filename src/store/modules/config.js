@@ -13,6 +13,7 @@ export const useConfig = defineStore('config', {
     socketStatus: '',
     token: '',
     project: {
+      name: '',
       config: {},
       uuid: '',
     },
