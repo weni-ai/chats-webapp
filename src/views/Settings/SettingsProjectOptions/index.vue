@@ -100,6 +100,7 @@ export default {
         can_use_queue_prioritization: false,
         can_see_timer: false,
         can_see_waiting_rooms_count: true,
+        can_use_name_sector_in_rooms: false,
       },
       hasAgentBuilder: false,
       aiTransferConfig: {
@@ -159,6 +160,11 @@ export default {
         `config_chats.project_configs.bulk_close.switch_${
           canBulkClose ? 'active' : 'inactive'
         }`,
+      );
+    },
+    configUseNameSectorInRoomsTranslation() {
+      return this.$t(
+        `config_chats.project_configs.use_name_sector_in_rooms.switch_label`,
       );
     },
     configBlockCloseChatsInQueueTranslation() {
@@ -269,6 +275,12 @@ export default {
           visible: true,
           name: this.configShowWaitingRoomsCountTranslation,
         },
+        {
+          key: 'can_use_name_sector_in_rooms',
+          type: 'flag',
+          visible: true,
+          name: this.configUseNameSectorInRoomsTranslation,
+        },
       ];
 
       return items.filter((item) => item.visible);
@@ -351,6 +363,7 @@ export default {
         can_use_queue_prioritization,
         can_see_timer,
         can_see_waiting_rooms_count,
+        can_use_name_sector_in_rooms,
       } = this.projectConfig;
 
       Project.update({
@@ -362,6 +375,7 @@ export default {
         can_use_queue_prioritization,
         can_see_timer,
         can_see_waiting_rooms_count,
+        can_use_name_sector_in_rooms,
       });
     },
   },
