@@ -919,6 +919,9 @@
       },
       "show_waiting_rooms_count": {
         "switch_label": "Exibir o contador com o número de chats esperando atendimento humano"
+      },
+      "use_name_sector_in_rooms": {
+        "switch_label": "Mostrar o nome do setor no título do chat"
       }
     },
     "custom_sector": "Personalizar novo setor (recomendado)",
