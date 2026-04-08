@@ -58,10 +58,11 @@
   </div>
 </template>
 <script>
+import { mapActions, mapState, mapWritableState } from 'pinia';
 import vClickOutside from 'v-click-outside';
 
-import { mapActions, mapState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 export default {
   name: 'CoPilot',
@@ -77,6 +78,7 @@ export default {
   },
   computed: {
     ...mapState(useRooms, ['copilotSuggestion']),
+    ...mapWritableState(useMessageManager, ['isCopilotOpen', 'inputMessage']),
     isError() {
       return !this.isLoading && !this.copilotSuggestion;
     },
@@ -115,7 +117,7 @@ export default {
   methods: {
     ...mapActions(useRooms, ['getCopilotSuggestion', 'clearCopilotSuggestion']),
     close() {
-      this.$emit('close');
+      this.isCopilotOpen = false;
     },
     select(suggestion) {
       this.$emit('select', suggestion);
@@ -168,7 +170,7 @@ export default {
           color: $unnnic-color-fg-base;
         }
         :deep(svg > path) {
-          fill: $unnnic-color-fg-critical;
+          fill: $unnnic-color-aux-red-500;
         }
       }
       &__close {

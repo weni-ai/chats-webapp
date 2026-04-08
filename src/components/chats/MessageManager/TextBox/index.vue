@@ -1,12 +1,11 @@
 <template>
   <section
-    :class="[
-      'text-box',
-      {
-        'text-box--focused': inputMessageFocused,
-        'internal-note': isInternalNote,
-      },
-    ]"
+    class="text-box"
+    data-testid="message-manager-text-box"
+    :class="{
+      'text-box--focused': inputMessageFocused,
+      'internal-note': isInternalNote,
+    }"
   >
     <MessageManagerTextBoxUploadField ref="uploadField" />
     <MessageManagerTextBoxMedias v-if="mediaUploadFiles.length > 0" />

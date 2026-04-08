@@ -16,6 +16,7 @@
     @update:model-value="close()"
   >
     <MessageForm
+      data-testid="modal-edit-quick-messages-form"
       :modelValue="quickMessage"
       @update:model-value="$emit('update:quickMessage', $event)"
     />

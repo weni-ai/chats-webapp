@@ -2,6 +2,8 @@
   <button
     v-if="isInternalNote"
     class="internal-note__close-button"
+    type="button"
+    data-testid="internal-note-close-button"
   >
     <UnnnicIcon
       class="internal-note__close-button__icon"
@@ -15,10 +17,12 @@
   <section
     v-if="!isAudioRecorderVisible && mediaUploadFiles.length === 0"
     class="text-box__textarea-container"
+    data-testid="text-box-textarea-container"
   >
     <p
       v-if="isInternalNote"
       class="internal-note__prefix"
+      data-testid="internal-note-prefix"
     >
       {{ `${$t('internal_note')}: ` }}
     </p>
