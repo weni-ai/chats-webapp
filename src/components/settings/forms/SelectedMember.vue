@@ -62,7 +62,6 @@ export default {
   display: flex;
   align-items: center;
   gap: $unnnic-spacing-sm;
-  padding-top: $unnnic-spacing-nano;
 
   text-align: start;
 

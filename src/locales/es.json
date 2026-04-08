@@ -129,6 +129,7 @@
     "info": "Define una respuesta automática para enviar al contacto mientras espera asistencia, déjalo en blanco si no deseas ningún mensaje.",
     "placeholder": "Aún no has definido un mensaje automático. Por favor, define un mensaje para tus contactos que están esperando."
   },
+  "step_of": "Paso {step} de {total}",
   "type_to_filter": "Escribe para filtrar",
   "attention": "Atención",
   "updates_saved": "Actualizaciones guardadas",
@@ -189,7 +190,7 @@
     "extra_options": "Opciones adicionales",
     "queues": "Colas",
     "tags": "Etiquetas",
-    "add": "Definir sector",
+    "add_name_and_managers": "Define un nombre para el sector y sus gerentes",
     "add_queue": "Agregar nueva cola",
     "name": "Nombre del sector",
     "placeholder": "Ejemplo: Financiero",

@@ -21,32 +21,24 @@
         {{ $t('config_chats.default_sector.title') }}
       </UnnnicRadio>
     </section>
-
     <form
       class="form-sector-container"
       @submit.prevent="$emit('submit')"
     >
       <section class="form-section">
-        <h2
-          v-if="!isEditing"
-          class="form-section__title"
-        >
-          {{ $t('sector.add') }}
-        </h2>
-        <h2
-          v-else-if="!enableGroupsMode && isEditing"
-          class="form-section__title"
-        >
-          {{ $t('sector.managers.title') }}
+        <h2 class="form-section__title">
+          {{ $t('sector.add_name_and_managers') }}
         </h2>
         <section class="form-section__select-managers">
           <UnnnicInput
-            v-if="!isEditing"
             v-model="sector.name"
             :label="$t('sector.name')"
             :placeholder="$t('sector.placeholder')"
           />
-          <fieldset v-if="!enableGroupsMode">
+          <section
+            v-if="!enableGroupsMode"
+            class="form-section__select-managers__managers"
+          >
             <UnnnicSelect
               v-model="selectedManager"
               :options="managersNames"
@@ -58,24 +50,21 @@
               enableSearch
               @update:search="searchManager = $event"
             />
-          </fieldset>
-        </section>
-
-        <section
-          v-if="sector.managers.length > 0"
-          class="form-sector-container__managers"
-        >
-          <SelectedMember
-            v-for="manager in sector.managers"
-            :key="manager.uuid"
-            :name="`${manager.user.first_name} ${manager.user.last_name}`"
-            :email="manager.user.email"
-            :avatarUrl="photo(manager.user.photo_url)"
-            :roleName="$t('manager')"
-            @remove="removeManager(manager.uuid)"
-          />
+            <section
+              v-if="sector.managers.length > 0"
+              class="form-sector-container__managers"
+            >
+              <TagGroup
+                :tags="managersTags"
+                disabledTag
+                hasCloseIcon
+                @close="(manager) => removeManager(manager.uuid)"
+              />
+            </section>
+          </section>
         </section>
       </section>
+      <!-- TODO: make workday component -->
       <section
         :class="{
           'form-section': true,
@@ -132,7 +121,12 @@
             >
               {{ $t('sector.managers.working_day.set_hours') }}
             </p>
-            <section class="form-section__inputs__workday-time-config">
+            <section
+              v-if="
+                Object.values(selectedWorkdayDays).some((enabled) => enabled)
+              "
+              class="form-section__inputs__workday-time-config"
+            >
               <WorkdayTimeConfig
                 v-model="selectedWorkdayDaysTime"
                 :workdayDaysTimeOptions="workdayDaysTimeOptions"
@@ -273,7 +267,6 @@
 import { mapActions, mapState } from 'pinia';
 import { useSettings } from '@/store/modules/settings';
 
-import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
 import Sector from '@/services/api/resources/settings/sector';
 import Project from '@/services/api/resources/settings/project';
 import Group from '@/services/api/resources/settings/group';
@@ -282,6 +275,7 @@ import WorkdayTimeConfig from '@/components/settings/forms/WorkdayTimeConfig.vue
 import CountryHolidaysModal from './modals/CountryHolidaysModal.vue';
 import CustomHolidaysModal from './modals/CustomHolidaysModal.vue';
 import CreateCustomHolidayModal from './modals/CreateCustomHolidayModal.vue';
+import TagGroup from '@/components/TagGroup.vue';
 
 import { useProfile } from '@/store/modules/profile';
 import { useConfig } from '@/store/modules/config';
@@ -301,11 +295,11 @@ export default {
   name: 'FormSector',
 
   components: {
-    SelectedMember,
     CountryHolidaysModal,
     CustomHolidaysModal,
     CreateCustomHolidayModal,
     WorkdayTimeConfig,
+    TagGroup,
   },
   props: {
     isEditing: {
@@ -374,6 +368,17 @@ export default {
     ...mapState(useProfile, ['me']),
     ...mapState(useConfig, ['enableGroupsMode', 'project']),
     ...mapState(useSettings, ['sectors']),
+
+    managersTags() {
+      return this.sector.managers.map((manager) => {
+        const {
+          user: { first_name, last_name, email },
+        } = manager;
+        const managerName = `${first_name} ${last_name}`.trim();
+        const formattedName = managerName ? `${managerName} (${email})` : email;
+        return { uuid: manager.uuid, name: formattedName };
+      });
+    },
 
     sectorsOptions() {
       return this.sectors.map((sector) => ({
@@ -1076,23 +1081,31 @@ fieldset {
 }
 
 .form-sector-container {
+  display: flex;
+  flex-direction: column;
+  gap: $unnnic-space-4;
   flex: 1;
   overflow-y: auto;
   padding-bottom: $unnnic-spacing-awesome; // This padding is to prevent the content from being hidden
 
   .form-section {
-    & + .form-section {
-      margin-top: $unnnic-spacing-md;
-    }
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-4;
 
     &.group-mode {
       margin-top: 0px;
     }
 
     &__select-managers {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: $unnnic-spacing-sm;
+      display: flex;
+      flex-direction: column;
+      gap: $unnnic-space-4;
+      &__managers {
+        display: flex;
+        flex-direction: column;
+        gap: $unnnic-space-2;
+      }
     }
 
     &__title {
@@ -1108,16 +1121,14 @@ fieldset {
     }
 
     &__inputs {
-      display: grid;
-      gap: $unnnic-spacing-ant $unnnic-spacing-stack-sm;
-      grid-template-rows: auto;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-direction: column;
+      gap: $unnnic-space-4;
 
       &__workday-copy {
         display: flex;
         flex-direction: column;
         gap: $unnnic-spacing-sm;
-        margin-top: $unnnic-spacing-sm;
       }
 
       &__workday-tags {

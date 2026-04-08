@@ -129,6 +129,7 @@
     "info": "Defina uma resposta automática para ser enviada ao contato enquanto está aguardando atendimento, deixe em branco caso não queira nenhuma mensagem.",
     "placeholder": "Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando"
   },
+  "step_of": "Etapa {step} de {total}",
   "type_to_filter": "Digite para filtrar",
   "attention": "Atenção",
   "updates_saved": "Atualizações salvas",
@@ -189,7 +190,7 @@
     "extra_options": "Opções extras",
     "queues": "Filas",
     "tags": "Etiquetas",
-    "add": "Definir setor",
+    "add_name_and_managers": "Defina um nome para o setor e seus gerentes",
     "add_queue": "Adicionar nova fila",
     "name": "Nome do setor",
     "placeholder": "Exemplo: Financeiro",

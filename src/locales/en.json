@@ -129,6 +129,7 @@
     "info": "Define an automatic response to be sent to the contact while they are waiting for assistance, leave it blank if you don’t want any message.",
     "placeholder": "You haven't set an automatic message yet. Please define a message for your contacts who are waiting."
   },
+  "step_of": "Step {step} of {total}",
   "type_to_filter": "Type to filter",
   "attention": "Attention",
   "updates_saved": "Updates saved",
@@ -189,7 +190,7 @@
     "extra_options": "Extra options",
     "queues": "Queues",
     "tags": "Tags",
-    "add": "Define sector",
+    "add_name_and_managers": "Define a name for the sector and its managers",
     "add_queue": "Add new queue",
     "name": "Sector name",
     "placeholder": "Example: Financial",
