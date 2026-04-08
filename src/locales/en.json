@@ -948,7 +948,11 @@
       "new": "New queue",
       "info": "Queues are support groups within a sector; it is possible to direct contacts from a flow to a specific queue",
       "hint": "Queues are support groups within the sector; you can create new queues or edit them whenever you want.",
-      "queue_definitions": "Queue settings",
+      "add_queue": "Add queue",
+      "configure_queue": {
+        "title": "Configure queue",
+        "tooltip": "Queues are support groups within the sector. You can create new queues or edit them whenever you want with the created sector."
+      },
       "delete_or_edit": "Delete or edit",
       "limit_chats": {
         "title": "Limit of chats awaiting support",

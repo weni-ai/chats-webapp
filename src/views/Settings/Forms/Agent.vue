@@ -1,6 +1,6 @@
 <template>
   <section class="form-agent">
-    <section class="section">
+    <section>
       <p class="title">
         {{ $t('agents.add.title') }}
         <UnnnicToolTip
@@ -32,43 +32,30 @@
         </div>
       </section>
     </section>
-
-    <section
+    <TagGroup
       v-if="selectedAgents.length > 0"
-      class="form-agent__agents"
-    >
-      <SelectedMember
-        v-for="selectedAgent in selectedAgents"
-        :key="selectedAgent.uuid"
-        :name="
-          selectedAgent.user.first_name + ' ' + selectedAgent.user.last_name
-        "
-        :email="selectedAgent.user.email"
-        :roleName="$t('agent')"
-        @remove="remove(selectedAgent.uuid)"
-      />
-    </section>
+      :tags="selectedAgentsTags"
+      disabledTag
+      hasCloseIcon
+      @close="(agent) => remove(agent.uuid)"
+    />
   </section>
 </template>
 
 <script>
-import SelectedMember from '@/views/Settings/Forms/SelectedMember.vue';
+import TagGroup from '@/components/TagGroup.vue';
 
 export default {
   name: 'FormAgent',
 
   components: {
-    SelectedMember,
+    TagGroup,
   },
 
   props: {
     agents: {
       type: Array,
       default: () => [],
-    },
-    sector: {
-      type: Object,
-      default: () => ({}),
     },
     modelValue: {
       type: Array,
@@ -77,12 +64,24 @@ export default {
   },
   emits: ['update:modelValue', 'validate', 'remove', 'select'],
 
-  data: () => ({
-    agentSelection: null,
-    searchAgent: '',
-  }),
+  data() {
+    return {
+      agentSelection: null,
+      searchAgent: '',
+    };
+  },
 
   computed: {
+    selectedAgentsTags() {
+      return this.selectedAgents.map((agent) => {
+        const {
+          user: { first_name, last_name, email },
+        } = agent;
+        const agentName = `${first_name} ${last_name}`.trim();
+        const formattedName = agentName ? `${agentName} (${email})` : email;
+        return { uuid: agent.uuid, name: formattedName };
+      });
+    },
     agentsNames() {
       return this.agents.map((agent) => {
         const {
@@ -150,10 +149,6 @@ export default {
 
 <style lang="scss" scoped>
 .form-agent {
-  .section {
-    margin-bottom: 1.5rem;
-  }
-
   .title {
     font-weight: $unnnic-font-weight-bold;
     color: $unnnic-color-fg-base;

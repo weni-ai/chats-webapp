@@ -943,8 +943,12 @@
       "in_sector": "Fila en el sector {sector}",
       "new": "Nueva cola",
       "info": "Las colas son grupos de atención dentro de un sector; es posible dirigir contactos de un flujo a una cola específica",
-      "hint": "Las colas son grupos de atención dentro de un sector; podrás crear nuevas filas o editarlas cuando desees.",
-      "queue_definitions": "Configuraciones de la cola",
+      "hint": "Las colas son grupos de atención dentro de un sector; podrás crear nuevas colas o editarlas cuando desees.",
+      "add_queue": "Agregar cola",
+      "configure_queue": {
+        "title": "Configurar cola",
+        "tooltip": "Las colas son grupos de atención dentro del sector. Puedes crear nuevas colas o editarlas cuando quieras después de crear el sector."
+      },
       "delete_or_edit": "Eliminar o editar",
       "limit_chats": {
         "title": "Limite de chats esperando soporte",

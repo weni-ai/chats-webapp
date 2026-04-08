@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapWritableState } from 'pinia';
 
 import { useSettings } from '@/store/modules/settings';
 
@@ -102,7 +102,7 @@ export default {
   },
 
   computed: {
-    ...mapState(useSettings, ['currentSector']),
+    ...mapWritableState(useSettings, ['currentSector']),
 
     tabs() {
       const { $t } = this;
@@ -134,7 +134,7 @@ export default {
   },
 
   unmounted() {
-    useSettings().$patch({ currentSector: null });
+    this.currentSector = null;
   },
 
   methods: {

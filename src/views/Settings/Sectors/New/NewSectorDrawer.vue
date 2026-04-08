@@ -47,21 +47,22 @@
           data-testid="general-form"
           @change-is-valid="updateIsValid($event, 'general')"
         />
+        <FormQueue
+          v-show="activePage === $t('sector.queues')"
+          ref="sectorQueue"
+          v-model="sectorQueues"
+          :sector="sector"
+          showHelpers
+          multiple
+          data-testid="queue-form"
+          @change-is-valid="updateIsValid($event, 'queue')"
+        />
         <ExtraOptions
           v-show="activePage === $t('sector.extra_options')"
           ref="sectorExtraOptions"
           v-model="sector"
           data-testid="extra-options-form"
           @change-is-valid="updateIsValid($event, 'extraOptions')"
-        />
-        <FormQueue
-          v-show="activePage === $t('sector.queues')"
-          ref="sectorQueue"
-          v-model="sectorQueue"
-          :sector="sector"
-          showHelpers
-          data-testid="queue-form"
-          @change-is-valid="updateIsValid($event, 'queue')"
         />
         <section
           v-show="activePage === $t('quick_messages.title')"
@@ -88,7 +89,7 @@ import { mapState, mapWritableState } from 'pinia';
 
 import General from '@/views/Settings/Forms/General.vue';
 import ExtraOptions from '@/views/Settings/Forms/ExtraOptions.vue';
-import FormQueue from '@/views/Settings/Forms/Queue.vue';
+import FormQueue from '@/views/Settings/Forms/Queue/index.vue';
 import DiscartChangesModal from '@/views/Settings/DiscartChangesModal.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
@@ -145,12 +146,14 @@ export default {
         maxSimultaneousChatsByAgent: '',
         required_tags: false,
       },
-      sectorQueue: {
-        name: '',
-        queue_limit: { is_active: false, limit: null },
-        currentAgents: [],
-        agents: 0,
-      },
+      sectorQueues: [
+        {
+          name: '',
+          queue_limit: { is_active: false, limit: null },
+          currentAgents: [],
+          agents: 0,
+        },
+      ],
       useDefaultSectorQueue: 0,
       isValid: {
         general: false,
@@ -178,8 +181,8 @@ export default {
     activePageKey() {
       const mapper = {
         0: 'general',
-        1: 'extraOptions',
-        2: 'queue',
+        1: 'queue',
+        2: 'extraOptions',
         3: 'quick_messages',
       };
       return mapper[this.activePageIndex];
@@ -263,18 +266,26 @@ export default {
 
         await this.$refs.sectorExtraOptions.save(true);
 
-        const createdQueue = await Queue.create({
-          name: this.sectorQueue.name,
-          default_message: '',
-          sectorUuid: this.sector.uuid,
-          queue_limit: this.enableQueueLimitFeature
-            ? this.sectorQueue.queue_limit
-            : { is_active: false, limit: null },
-        });
+        const createQueuesRequests = this.sectorQueues.map((sectorQueue) =>
+          Queue.create({
+            name: sectorQueue.name,
+            default_message: '',
+            sectorUuid: this.sector.uuid,
+            queue_limit: this.enableQueueLimitFeature
+              ? sectorQueue.queue_limit
+              : { is_active: false, limit: null },
+          }),
+        );
+
+        const createdQueues = await Promise.all(createQueuesRequests);
 
         await Promise.all(
-          this.sectorQueue.currentAgents.map((agent) => {
-            Queue.addAgent(createdQueue.uuid, agent.uuid);
+          createdQueues.map((createdQueue, index) => {
+            return Promise.all(
+              this.sectorQueues[index].currentAgents.map((agent) => {
+                return Queue.addAgent(createdQueue.uuid, agent.uuid);
+              }),
+            );
           }),
         );
 
