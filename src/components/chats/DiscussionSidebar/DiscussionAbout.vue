@@ -96,7 +96,7 @@ import moment from 'moment';
 import Project from '@/services/api/resources/settings/project';
 
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
-import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
+import SelectedMember from '@/views/Settings/Forms/SelectedMember.vue';
 
 import { mapActions, mapState } from 'pinia';
 import { useDiscussions } from '@/store/modules/chats/discussions';

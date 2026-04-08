@@ -165,7 +165,7 @@
 
 <script>
 import Sector from '@/services/api/resources/settings/sector';
-import MessageForm from '../forms/Messages.vue';
+import MessageForm from '@/views/Settings/Forms/Messages.vue';
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 import { useConfig } from '@/store/modules/config';
 import { mapActions, mapState } from 'pinia';

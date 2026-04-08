@@ -63,10 +63,10 @@ import { useSettings } from '@/store/modules/settings';
 
 import SectorEditHeader from './SectorEditHeader.vue';
 
-import FormSectorGeneral from '@/components/settings/forms/General.vue';
-import FormSectorExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
-import ListSectorQueues from '@/components/settings/lists/ListSectorQueues.vue';
-import ListSectorMessages from '@/components/settings/lists/ListSectorMessages.vue';
+import FormSectorGeneral from '@/views/Settings/Forms/General.vue';
+import FormSectorExtraOptions from '@/views/Settings/Forms/ExtraOptions.vue';
+import ListSectorQueues from '@/views/Settings/Lists/ListSectorQueues.vue';
+import ListSectorMessages from '@/views/Settings/Lists/ListSectorMessages.vue';
 
 import { useConfig } from '@/store/modules/config';
 

@@ -134,7 +134,7 @@ import { storeToRefs } from 'pinia';
 import { UnnnicCallAlert } from '@weni/unnnic-system';
 
 import ModalConfirmDelete from '@/components/ModalConfirmDelete.vue';
-import ListOrdinator from '@/components/settings/ListOrdinator.vue';
+import ListOrdinator from '@/components/ListOrdinator.vue';
 
 import { useSettings } from '@/store/modules/settings';
 

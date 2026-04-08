@@ -86,9 +86,9 @@
 <script>
 import { mapState, mapWritableState } from 'pinia';
 
-import General from '@/components/settings/forms/General.vue';
-import ExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
-import FormQueue from '@/components/settings/forms/Queue.vue';
+import General from '@/views/Settings/Forms/General.vue';
+import ExtraOptions from '@/views/Settings/Forms/ExtraOptions.vue';
+import FormQueue from '@/views/Settings/Forms/Queue.vue';
 import DiscartChangesModal from '@/views/Settings/DiscartChangesModal.vue';
 
 import Sector from '@/services/api/resources/settings/sector';

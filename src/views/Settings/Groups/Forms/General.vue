@@ -60,7 +60,7 @@
 import Project from '@/services/api/resources/settings/project';
 import Group from '@/services/api/resources/settings/group';
 
-import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
+import SelectedMember from '@/views/Settings/Forms/SelectedMember.vue';
 
 export default {
   name: 'ProjectGroupGeneralForm',

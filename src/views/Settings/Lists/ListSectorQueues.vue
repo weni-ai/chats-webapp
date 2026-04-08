@@ -128,8 +128,8 @@
 <script>
 import { mapState } from 'pinia';
 
-import FormQueue from '../forms/Queue.vue';
-import ListOrdinator from '@/components/settings/ListOrdinator.vue';
+import FormQueue from '@/views/Settings/Forms/Queue.vue';
+import ListOrdinator from '@/components/ListOrdinator.vue';
 import Queue from '@/services/api/resources/settings/queue';
 import ModalConfirmDelete from '@/components/ModalConfirmDelete.vue';
 

@@ -121,7 +121,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 
-import ListOrdinator from '@/components/settings/ListOrdinator.vue';
+import ListOrdinator from '@/components/ListOrdinator.vue';
 import EditGroupDrawer from './Edit.vue';
 import DeleteGroupModal from './DeleteGroupModal.vue';
 

@@ -271,11 +271,11 @@ import Sector from '@/services/api/resources/settings/sector';
 import Project from '@/services/api/resources/settings/project';
 import Group from '@/services/api/resources/settings/group';
 
-import WorkdayTimeConfig from '@/components/settings/forms/WorkdayTimeConfig.vue';
+import TagGroup from '@/components/TagGroup.vue';
+import WorkdayTimeConfig from './WorkdayTimeConfig.vue';
 import CountryHolidaysModal from './modals/CountryHolidaysModal.vue';
 import CustomHolidaysModal from './modals/CustomHolidaysModal.vue';
 import CreateCustomHolidayModal from './modals/CreateCustomHolidayModal.vue';
-import TagGroup from '@/components/TagGroup.vue';
 
 import { useProfile } from '@/store/modules/profile';
 import { useConfig } from '@/store/modules/config';
