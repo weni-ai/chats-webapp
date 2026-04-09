@@ -1135,6 +1135,8 @@
     "sector_success": "Setor excluído com sucesso!",
     "sector_error": "Não foi possível excluir o setor.",
     "queue_success": "Fila excluída com sucesso!",
-    "queue_error": "Não foi possível excluir a fila."
+    "queue_error": "Não foi possível excluir a fila.",
+    "transfer_error_sector": "Não foi possível transferir as conversas. Exclusão do setor cancelada",
+    "transfer_error_queue": "Não foi possível transferir as conversas. Exclusão da fila cancelada"
   }
 }

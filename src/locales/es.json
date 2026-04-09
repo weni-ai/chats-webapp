@@ -1133,6 +1133,8 @@
     "sector_success": "¡Sector eliminado con éxito!",
     "sector_error": "No se pudo eliminar el sector.",
     "queue_success": "¡Fila eliminada con éxito!",
-    "queue_error": "No se pudo eliminar la fila."
+    "queue_error": "No se pudo eliminar la fila.",
+    "transfer_error_sector": "No se pudieron transferir las conversaciones. Eliminación del sector cancelada",
+    "transfer_error_queue": "No se pudieron transferir las conversaciones. Eliminación de la fila cancelada"
   }
 }
