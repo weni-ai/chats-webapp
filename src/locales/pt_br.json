@@ -714,6 +714,7 @@
   "shortcut": "Atalho",
   "message": "Mensagem",
   "save": "Salvar",
+  "create": "Criar",
   "use": "Usar",
   "delete_sector": "Deletar setor",
   "delete_queue": "Excluir fila",
@@ -976,6 +977,15 @@
         "add_new_queue": "Esta nova fila será adicionada para todos os agentes. Você poderá removê-la acessando <b>Configurações do Chat > Grupos > Agentes</b>",
         "config_agents_group": "Adicione ou remova atendentes a esta fila através dos grupos de projetos acessando <b>Configurações do Chat > Grupos de projetos</b>"
       }
+    },
+    "quick_messages": {
+      "title": {
+        "label": "Configurar uma mensagem rápida",
+        "tooltip": "As mensagens rápidas são textos prontos que ajudam a padronizar o atendimento. Todos os agentes deste setor poderão usar essas mensagens. É possível cadastrar novas mensagens abaixo."
+      },
+      "new": "Nova mensagem rápida",
+      "add": "Adicionar nova mensagem rápida",
+      "delete_this_quick_message": "Excluir esta mensagem rápida"
     },
     "groups": {
       "new": {

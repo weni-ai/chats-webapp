@@ -6,7 +6,7 @@
     :modelValue="modelValue"
     closeIcon="close"
     size="gt"
-    :primaryButtonText="activePageIndex === 3 ? $t('save') : $t('continue')"
+    :primaryButtonText="activePageIndex === 3 ? $t('create') : $t('continue')"
     :secondaryButtonText="activePageIndex === 0 ? $t('cancel') : $t('back')"
     :disabledPrimaryButton="!isValid[activePageKey]"
     :loadingPrimaryButton="isLoadingCreate"
@@ -68,7 +68,10 @@
           v-show="activePage === $t('quick_messages.title')"
           class="forms__quick-message"
         >
-          TODO: Add quick messages form
+          <MessagesForm
+            v-model="sector.quick_messages"
+            multiple
+          />
         </section>
       </section>
     </template>
@@ -85,11 +88,12 @@
 </template>
 
 <script>
-import { mapState, mapWritableState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 
 import General from '@/views/Settings/Forms/General.vue';
 import ExtraOptions from '@/views/Settings/Forms/ExtraOptions.vue';
 import FormQueue from '@/views/Settings/Forms/Queue/index.vue';
+import MessagesForm from '@/views/Settings/Forms/Messages/index.vue';
 import DiscartChangesModal from '@/views/Settings/DiscartChangesModal.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
@@ -98,6 +102,7 @@ import Queue from '@/services/api/resources/settings/queue';
 import { useSettings } from '@/store/modules/settings';
 import { useConfig } from '@/store/modules/config';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 
 import isMobile from 'is-mobile';
 
@@ -110,6 +115,7 @@ export default {
     ExtraOptions,
     FormQueue,
     DiscartChangesModal,
+    MessagesForm,
   },
   props: {
     modelValue: {
@@ -145,6 +151,12 @@ export default {
         managers: [],
         maxSimultaneousChatsByAgent: '',
         required_tags: false,
+        quick_messages: [
+          {
+            shortcut: '',
+            text: '',
+          },
+        ],
       },
       sectorQueues: [
         {
@@ -201,6 +213,9 @@ export default {
     this.listenConnect();
   },
   methods: {
+    ...mapActions(useQuickMessageShared, {
+      createQuickMessage: 'create',
+    }),
     listenConnect() {
       window.addEventListener('message', (message) => {
         const { event } = message.data;
@@ -286,6 +301,17 @@ export default {
                 return Queue.addAgent(createdQueue.uuid, agent.uuid);
               }),
             );
+          }),
+        );
+
+        await Promise.all(
+          this.sector.quick_messages.map((quickMessage) => {
+            return this.createQuickMessage({
+              sectorUuid: this.sector.uuid,
+              shortcut: quickMessage.shortcut,
+              title: '',
+              text: quickMessage.text,
+            });
           }),
         );
 

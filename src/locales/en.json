@@ -709,6 +709,7 @@
   "shortcut": "Shortcut",
   "message": "Message",
   "save": "Save",
+  "create": "Create",
   "use": "Use",
   "delete_sector": "Delete sector",
   "delete_queue": "Delete queue",
@@ -971,6 +972,15 @@
         "add_new_queue": "This new queue will be added for all agents. You can remove it by going to <b>Live desk Settings > Groups > Agents</b>",
         "config_agents_group": "Add or remove agents from this queue through the project groups by going to <b>Chat Settings > Project Groups</b>"
       }
+    },
+    "quick_messages": {
+      "title": {
+        "label": "Configure a quick message",
+        "tooltip": "Quick messages are ready-made texts that help standardize customer service. All agents in this sector will be able to use these messages, and you can register new messages below."
+      },
+      "new": "New quick message",
+      "add": "Add new quick message",
+      "delete_this_quick_message": "Delete this quick message"
     },
     "groups": {
       "new": {

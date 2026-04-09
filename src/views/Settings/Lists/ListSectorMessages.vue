@@ -151,7 +151,7 @@
           ? handlerUpdateQuickMessage()
           : handlerCreateQuickMessage()
       "
-      @secondary-button-click="$refs.quickMessageDrawer.close()"
+      @secondary-button-click="showQuickMessageDrawer = false"
     >
       <template #content>
         <MessageForm
@@ -165,7 +165,7 @@
 
 <script>
 import Sector from '@/services/api/resources/settings/sector';
-import MessageForm from '@/views/Settings/Forms/Messages.vue';
+import MessageForm from '@/views/Settings/Forms/Messages/MessageInputsForm.vue';
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 import { useConfig } from '@/store/modules/config';
 import { mapActions, mapState } from 'pinia';
