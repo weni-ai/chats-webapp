@@ -18,66 +18,68 @@
       </UnnnicDialogHeader>
 
       <section class="modal-delete-transfer__body">
-        <p class="modal-delete-transfer__body__description">
-          {{
-            $t(`delete_modal.description_${type}`, {
-              count: inProgressChatsCount,
-              name,
-            })
-          }}
-        </p>
+        <template v-if="hasActiveChats">
+          <p class="modal-delete-transfer__body__description">
+            {{
+              $t(`delete_modal.description_${type}`, {
+                count: inProgressChatsCount,
+                name,
+              })
+            }}
+          </p>
 
-        <div class="modal-delete-transfer__body__radios">
-          <UnnnicRadio
-            :modelValue="selectedAction"
-            value="transfer"
-            size="md"
-            @update:model-value="handleActionChange"
-          >
-            {{ $t('delete_modal.transfer_chats') }}
-          </UnnnicRadio>
-          <UnnnicRadio
-            :modelValue="selectedAction"
-            value="end_all"
-            size="md"
-            @update:model-value="handleActionChange"
-          >
-            {{ $t('delete_modal.end_all_chats') }}
-          </UnnnicRadio>
-        </div>
+          <div class="modal-delete-transfer__body__radios">
+            <UnnnicRadio
+              :modelValue="selectedAction"
+              value="transfer"
+              size="md"
+              @update:model-value="handleActionChange"
+            >
+              {{ $t('delete_modal.transfer_chats') }}
+            </UnnnicRadio>
+            <UnnnicRadio
+              :modelValue="selectedAction"
+              value="end_all"
+              size="md"
+              @update:model-value="handleActionChange"
+            >
+              {{ $t('delete_modal.end_all_chats') }}
+            </UnnnicRadio>
+          </div>
 
-        <div
-          v-if="selectedAction === 'transfer'"
-          class="modal-delete-transfer__body__selects"
-        >
-          <div class="modal-delete-transfer__body__selects__input">
-            <UnnnicSelect
-              v-model="selectedSector"
-              :options="sectorOptions"
-              :label="$t('delete_modal.select_sector')"
-              :placeholder="$t('search_or_select')"
-              returnObject
-              clearable
-              enableSearch
-              :search="searchSector"
-              @update:search="searchSector = $event"
-            />
+          <div
+            v-if="selectedAction === 'transfer'"
+            class="modal-delete-transfer__body__selects"
+          >
+            <div class="modal-delete-transfer__body__selects__input">
+              <UnnnicSelect
+                v-model="selectedSector"
+                :options="sectorOptions"
+                :label="$t('delete_modal.select_sector')"
+                :placeholder="$t('search_or_select')"
+                returnObject
+                clearable
+                enableSearch
+                :search="searchSector"
+                @update:search="searchSector = $event"
+              />
+            </div>
+            <div class="modal-delete-transfer__body__selects__input">
+              <UnnnicSelect
+                v-model="selectedQueue"
+                :disabled="!selectedSector?.value"
+                :options="queueOptions"
+                :label="$t('delete_modal.select_queue')"
+                :placeholder="$t('search_or_select')"
+                returnObject
+                clearable
+                enableSearch
+                :search="searchQueue"
+                @update:search="searchQueue = $event"
+              />
+            </div>
           </div>
-          <div class="modal-delete-transfer__body__selects__input">
-            <UnnnicSelect
-              v-model="selectedQueue"
-              :disabled="!selectedSector?.value"
-              :options="queueOptions"
-              :label="$t('delete_modal.select_queue')"
-              :placeholder="$t('search_or_select')"
-              returnObject
-              clearable
-              enableSearch
-              :search="searchQueue"
-              @update:search="searchQueue = $event"
-            />
-          </div>
-        </div>
+        </template>
 
         <div class="modal-delete-transfer__body__confirm">
           <UnnnicInput
@@ -142,6 +144,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  excludeQueueUuid: {
+    type: String,
+    default: '',
+  },
 });
 
 const emit = defineEmits(['update:modelValue', 'confirm', 'cancel']);
@@ -165,13 +171,15 @@ const queueOptions = ref([]);
 const searchSector = ref('');
 const searchQueue = ref('');
 
+const hasActiveChats = computed(() => props.inProgressChatsCount > 0);
+
 const isFormValid = computed(() => {
   const nameMatches = confirmText.value === props.name;
   if (!nameMatches) return false;
 
-  if (selectedAction.value === 'end_all') return true;
+  if (!hasActiveChats.value || selectedAction.value === 'end_all') return true;
 
-  return !!selectedSector.value?.value;
+  return !!selectedSector.value?.value && !!selectedQueue.value?.value;
 });
 
 function handleActionChange(value) {
@@ -218,10 +226,9 @@ async function fetchQueues(sectorUuid) {
     const response = await Queue.list(sectorUuid);
     const { results } = response;
 
-    queueOptions.value = results.map(({ uuid, name }) => ({
-      value: uuid,
-      label: name,
-    }));
+    queueOptions.value = results
+      .filter(({ uuid }) => uuid !== props.excludeQueueUuid)
+      .map(({ uuid, name }) => ({ value: uuid, label: name }));
   } catch (error) {
     console.error('Failed to load queues', error);
   }
@@ -239,7 +246,9 @@ watch(selectedSector, (newSector) => {
 });
 
 onMounted(() => {
-  fetchSectors();
+  if (props.inProgressChatsCount > 0) {
+    fetchSectors();
+  }
 });
 </script>
 
