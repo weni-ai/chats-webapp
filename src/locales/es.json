@@ -243,14 +243,15 @@
     "additional_options": {
       "title": "Opciones extras",
       "template_message": {
-        "switch_active": "Activación de plantillas de mensajes activos",
-        "switch_disabled": "Activación de plantillas de mensajes deshabilitada"
+        "switch_label": "Envío de plantillas de mensajes"
       },
-      "edit_custom_fields": "Permitir que los agentes editen Custom Fields",
+      "edit_custom_fields": {
+        "label": "Permitir que los representantes editen la información personalizada del contacto",
+        "hint": "Cuando está activa, permite que los representantes editen los campos personalizados del contacto en la sección \"Toda la información\"."
+      },
       "agents_signature": {
-        "tooltip": "Cada mensaje intercambiado tendrá el nombre del agente que responde",
-        "switch_active": "Firma activa",
-        "switch_disabled": "Firma desactivada"
+        "hint": "Cada mensaje intercambiado tendrá el nombre del agente que responde",
+        "switch_label": "Usar firma"
       },
       "csat": {
         "label": "Enviar automáticamente una encuesta de satisfacción después de que el soporte del Live desk termine",
@@ -260,19 +261,17 @@
           "content_2": "¿Deseas continuar de todas formas?"
         }
       },
-      "automatic_message": {
-        "switch_active": "Mensaje automático de apertura activo",
-        "switch_disabled": "Mensaje automático de apertura deshabilitado",
-        "tooltip": "Configura un mensaje que se envía automáticamente en nuevos chats tan pronto como se les asigna a su primer agente. El contacto verá este mensaje como si fuera enviado por el propio agente.",
+      "automated_message": {
+        "title": "Mensajes automatizados",
+        "switch_label": "Enviar mensaje automático al iniciar el soporte",
+        "hint": "Envía automáticamente un mensaje cuando un chat se asigna a un representante. El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
         "field": {
           "title": "Mensaje automático",
           "placeholder": "Ejemplo: ¡Hola! ¿Cómo puedo ayudarte hoy?"
         }
       },
       "required_tags": {
-        "switch_active": "Requerir etiquetas al final de los soportes activo",
-        "switch_disabled": "Requerir etiquetas al final de los soportes deshabilitado",
-        "tooltip": "Agregue al menos una etiqueta para activar"
+        "switch_label": "Exigir etiquetas al final del soporte humano"
       }
     }
   },

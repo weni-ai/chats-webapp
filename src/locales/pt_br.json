@@ -243,14 +243,15 @@
     "additional_options": {
       "title": "Opções extras",
       "template_message": {
-        "switch_active": "Disparo de modelos de mensagens ativo",
-        "switch_disabled": "Disparo de modelos de mensagens desativado"
+        "switch_label": "Disparo de modelos de mensagens"
       },
-      "edit_custom_fields": "Permitir que agentes editem Custom Fields",
+      "edit_custom_fields": {
+        "label": "Permitir que representantes editem informações personalizadas do contato",
+        "hint": "Quando ativa, permite que representantes editem os campos personalizados do contato na seção \"Todas as informações\"."
+      },
       "agents_signature": {
-        "tooltip": "Cada mensagem trocada terá o nome do agente que está respondendo",
-        "switch_active": "Assinatura ativa",
-        "switch_disabled": "Assinatura desativada"
+        "hint": "Cada mensagem trocada terá o nome do agente que está respondendo",
+        "switch_label": "Usar assinatura"
       },
       "csat": {
         "label": "Enviar automaticamente uma pesquisa de satisfação após o atendimento do Live desk ser encerrado",
@@ -260,19 +261,17 @@
           "content_2": "Deseja continuar mesmo assim?"
         }
       },
-      "automatic_message": {
-        "switch_active": "Mensagem automática de abertura ativa",
-        "switch_disabled": "Mensagem automática de abertura desativada",
-        "tooltip": "Configure uma mensagem que é enviada automaticamente em novos chats assim que são atribuídos a seu primeiro agente. O contato verá esta mensagem como se fosse enviada pelo próprio agente.",
+      "automated_message": {
+        "title": "Mensagens automatizadas",
+        "switch_label": "Enviar mensagem automática ao iniciar o atendimento",
+        "hint": "Envia automaticamente uma mensagem quando um chat é atribuído a um representante. A mensagem aparecerá como se enviada pelo representante atribuído.",
         "field": {
           "title": "Mensagem automática",
           "placeholder": "Exemplo: Olá! Como posso ajudar você hoje?"
         }
       },
       "required_tags": {
-        "switch_active": "Requerer tags ao final dos atendimentos ativo",
-        "switch_disabled": "Requerer tags ao final dos atendimentos desativado",
-        "tooltip": "Adicione pelo menos uma tag para ativar"
+        "switch_label": "Exigir tags ao final do atendimento humano"
       }
     }
   },

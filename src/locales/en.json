@@ -243,14 +243,15 @@
     "additional_options": {
       "title": "Extras options",
       "template_message": {
-        "switch_active": "Triggering message templates active",
-        "switch_disabled": "Triggering message templates disabled"
+        "switch_label": "Triggering message templates"
       },
-      "edit_custom_fields": "Allow agents to edit Custom Fields",
+      "edit_custom_fields": {
+        "label": "Allow representatives to edit custom contact information",
+        "hint": "When active, it allows representatives to edit the custom fields of the contact in the \"All Information\" section."
+      },
       "agents_signature": {
-        "tooltip": "Each message exchanged will have the name of the agent who is answering",
-        "switch_active": "Active signature",
-        "switch_disabled": "Disabled signature"
+        "hint": "Each message exchanged will have the name of the agent who is answering",
+        "switch_label": "Use signature"
       },
       "csat": {
         "label": "Automatically send a satisfaction survey after Live desk support ends",
@@ -260,19 +261,17 @@
           "content_2": "Do you want to continue anyway?"
         }
       },
-      "automatic_message": {
-        "switch_active": "Automatic opening message active",
-        "switch_disabled": "Automatic opening message disabled",
-        "tooltip": "Set up a message that is automatically sent in new chats as soon as they are assigned to their first agent. The contact will see this message as if it were sent by the agent themselves.",
+      "automated_message": {
+        "title": "Automated messages",
+        "switch_label": "Send automatic message when support starts",
+        "hint": "Automatically send a message when a chat is assigned to an representative. The message will appear as if sent by the assigned representative.",
         "field": {
           "title": "Automatic message",
           "placeholder": "Exemple: Hello! How can I help you today?"
         }
       },
       "required_tags": {
-        "switch_active": "Require tags at the end of supports active",
-        "switch_disabled": "Require tags at the end of supports disabled",
-        "tooltip": "Add at least one tag to activate"
+        "switch_label": "Require tags at the end of human support"
       }
     }
   },
