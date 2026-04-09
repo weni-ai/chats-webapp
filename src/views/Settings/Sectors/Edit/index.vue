@@ -202,7 +202,7 @@ export default {
 <style lang="scss" scoped>
 .sector-edit-view {
   display: grid;
-  gap: $unnnic-spacing-sm;
-  padding: $unnnic-spacing-sm;
+  gap: $unnnic-space-4;
+  padding: $unnnic-space-4;
 }
 </style>
