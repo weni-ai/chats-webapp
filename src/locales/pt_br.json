@@ -221,6 +221,7 @@
         "see_all_holidays": "Ver todos os feriados",
         "add_specific_dates": "Adicionar datas específicas",
         "see_all_specific_dates": "Ver todas as datas específicas",
+        "select_sector_to_copy": "Selecione o setor a copiar",
         "copy_to_all": "Copiar para todos os dias",
         "start": {
           "label": "Horário de início"
@@ -230,6 +231,12 @@
         },
         "limit_agents": {
           "label": "Limite de quantidade de atendimentos simultâneos por agente"
+        },
+        "message": {
+          "create_custom_holiday": {
+            "error": "Não foi possível adicionar algumas datas não trabalhadas. Verifique e tente novamente.",
+            "success": "Datas não trabalhadas adicionadas com sucesso"
+          }
         }
       }
     },
@@ -522,9 +529,8 @@
   "queue": "Fila",
   "agents": {
     "add": {
-      "title": "Adicionar agentes",
       "select": {
-        "label": "Selecionar agente",
+        "label": "Adicionar representante",
         "placeholder": "Pesquise pelo nome ou email"
       },
       "button": "Selecionar"
@@ -947,6 +953,7 @@
       "info": "As filas são grupos de atendimento dentro de um setor, é possível direcionar contatos de um fluxo para uma fila específica",
       "hint": "As filas são grupos de atendimento dentro do setor, você poderá criar novas filas ou editar quando quiser",
       "add_queue": "Adicionar fila",
+      "delete_this_queue": "Excluir esta fila",
       "configure_queue": {
         "title": "Configurar fila",
         "tooltip": "As filas são grupos de atendimento dentro do setor. Você pode criar novas filas ou editá-las quando quiser após criar o setor."

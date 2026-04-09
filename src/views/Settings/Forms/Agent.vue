@@ -1,36 +1,17 @@
 <template>
   <section class="form-agent">
-    <section>
-      <p class="title">
-        {{ $t('agents.add.title') }}
-        <UnnnicToolTip
-          enabled
-          side="right"
-          :text="$t('new_sector.agent_tip')"
-        >
-          <UnnnicIconSvg
-            icon="information-circle-4"
-            scheme="fg-base"
-            size="sm"
-          />
-        </UnnnicToolTip>
-      </p>
-
-      <section class="controls">
-        <div>
-          <UnnnicSelect
-            v-model="agentSelection"
-            :options="agentsNames"
-            :label="$t('agents.add.select.label')"
-            :placeholder="$t('agents.add.select.placeholder')"
-            returnObject
-            clearable
-            enableSearch
-            :search="searchAgent"
-            @update:search="searchAgent = $event"
-          />
-        </div>
-      </section>
+    <section class="controls">
+      <UnnnicSelect
+        v-model="agentSelection"
+        :options="agentsNames"
+        :label="$t('agents.add.select.label')"
+        :placeholder="$t('agents.add.select.placeholder')"
+        returnObject
+        clearable
+        enableSearch
+        :search="searchAgent"
+        @update:search="searchAgent = $event"
+      />
     </section>
     <TagGroup
       v-if="selectedAgents.length > 0"

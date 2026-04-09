@@ -526,9 +526,8 @@
   "queue": "Queue",
   "agents": {
     "add": {
-      "title": "Add agents",
       "select": {
-        "label": "Select agent",
+        "label": "Add representative",
         "placeholder": "Search for the name or email"
       },
       "button": "Select"
@@ -949,6 +948,7 @@
       "info": "Queues are support groups within a sector; it is possible to direct contacts from a flow to a specific queue",
       "hint": "Queues are support groups within the sector; you can create new queues or edit them whenever you want.",
       "add_queue": "Add queue",
+      "delete_this_queue": "Delete this queue",
       "configure_queue": {
         "title": "Configure queue",
         "tooltip": "Queues are support groups within the sector. You can create new queues or edit them whenever you want with the created sector."

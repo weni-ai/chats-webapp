@@ -581,7 +581,7 @@ export default {
       this.useDefaultSector = 1;
     }
 
-    if (!this.enableGroupsMode) this.listProjectManagers();
+    if (!this.enableGroupsMode) await this.listProjectManagers();
     else {
       this.listSecondaryProjects().then(() => {
         if (this.isEditing) {

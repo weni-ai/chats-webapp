@@ -45,17 +45,40 @@
       <section
         v-for="(queue, index) in queues"
         :key="index"
+        class="queue-form__queue-container"
       >
-        <QueueInputsForm
-          :key="index"
-          :modelValue="queue"
-          :agentsOptions="agentsOptions"
-          @update:model-value="queues[index] = $event"
-        />
-        <hr
-          v-if="multiple"
-          class="divider"
-        />
+        <section
+          v-if="index > 0"
+          class="queue-form__new-queue__header"
+        >
+          <h2 class="queue-form__new-queue__title">
+            {{ $t('config_chats.queues.new') }}
+          </h2>
+          <UnnnicToolTip
+            enabled
+            :text="$t('config_chats.queues.delete_this_queue')"
+          >
+            <UnnnicIcon
+              icon="delete"
+              scheme="fg-critical"
+              clickable
+              size="ant"
+              @click="removeQueue(index)"
+            />
+          </UnnnicToolTip>
+        </section>
+        <section class="queue-form__form">
+          <QueueInputsForm
+            :key="index"
+            :modelValue="queue"
+            :agentsOptions="agentsOptions"
+            @update:model-value="queues[index] = $event"
+          />
+          <hr
+            v-if="multiple"
+            class="divider"
+          />
+        </section>
       </section>
       <UnnnicButton
         v-if="multiple"
@@ -184,6 +207,9 @@ export default {
     addQueue() {
       this.queues.push(cloneDeep(this.formTemplate));
     },
+    removeQueue(index) {
+      this.queues.splice(index, 1);
+    },
     updateDefaultSectorQueueValue(activate) {
       this.useDefaultSectorQueue = activate;
       if (activate) {
@@ -232,8 +258,27 @@ export default {
 <style lang="scss" scoped>
 .queue-form {
   display: grid;
-  gap: $unnnic-spacing-sm;
+  gap: $unnnic-space-4;
   margin-bottom: $unnnic-space-4;
+
+  &__queue-container {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-4;
+  }
+
+  &__new-queue {
+    &__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: $unnnic-space-1;
+    }
+    &__title {
+      font: $unnnic-font-display-3;
+      color: $unnnic-color-fg-emphasized;
+    }
+  }
 
   &__configure-queue-title {
     display: flex;

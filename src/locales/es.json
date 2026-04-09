@@ -221,6 +221,7 @@
         "see_all_holidays": "Ver todos los feriados",
         "add_specific_dates": "Agregar fechas específicas",
         "see_all_specific_dates": "Ver todas las fechas específicas",
+        "select_sector_to_copy": "Selecciona el sector a copiar",
         "copy_to_all": "Copiar a todos los días",
         "start": {
           "label": "Hora de inicio"
@@ -230,6 +231,12 @@
         },
         "limit_agents": {
           "label": "Límite en el número de llamadas simultáneas por agente"
+        },
+        "message": {
+          "create_custom_holiday": {
+            "error": "No se pudieron agregar algunas fechas no laborables. Verifica la información e inténtalo de nuevo.",
+            "success": "Fechas no laborables agregadas con éxito"
+          }
         }
       }
     },
@@ -373,12 +380,12 @@
       "order_by": "Ordenar por:",
       "most_recent": {
         "label": "Más reciente",
-        "ongoing_tooltip": "Más reciente: última mensagem intercambiada en el menor tiempo.",
-        "default_tooltip": "Más reciente: salas que han sido abiertas por menos tiempo."
+        "ongoing_tooltip": "Más reciente: última mensaje intercambiada en el menor tiempo.",
+        "waiting_tooltip": "Más reciente: salas que han sido abiertas por menos tiempo."
       },
       "oldest": {
         "label": "Más antiguo",
-        "ongoing_tooltip": "Más antiguo: última mensagem intercambiada en el mayor tiempo.",
+        "ongoing_tooltip": "Más antiguo: última mensaje intercambiada en el mayor tiempo.",
         "default_tooltip": "Más antiguo: salas que han sido abiertas por más tiempo."
       }
     },
@@ -522,9 +529,8 @@
   "queue": "Cola",
   "agents": {
     "add": {
-      "title": "Agregar agentes",
       "select": {
-        "label": "Agente seleccionado",
+        "label": "Agregar representante",
         "placeholder": "Busque el nombre o el correo electrónico"
       },
       "button": "Seleccione"
@@ -945,6 +951,7 @@
       "info": "Las colas son grupos de atención dentro de un sector; es posible dirigir contactos de un flujo a una cola específica",
       "hint": "Las colas son grupos de atención dentro de un sector; podrás crear nuevas colas o editarlas cuando desees.",
       "add_queue": "Agregar cola",
+      "delete_this_queue": "Eliminar esta cola",
       "configure_queue": {
         "title": "Configurar cola",
         "tooltip": "Las colas son grupos de atención dentro del sector. Puedes crear nuevas colas o editarlas cuando quieras después de crear el sector."
