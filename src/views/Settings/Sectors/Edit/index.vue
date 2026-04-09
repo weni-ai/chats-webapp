@@ -108,8 +108,8 @@ export default {
       const { $t } = this;
       return [
         { name: $t('sector.general'), id: 'general' },
-        { name: $t('sector.extra_options'), id: 'extra_options' },
         { name: $t('sector.queues'), id: 'queues' },
+        { name: $t('sector.extra_options'), id: 'extra_options' },
         { name: $t('quick_message'), id: 'quick_messages' },
       ];
     },

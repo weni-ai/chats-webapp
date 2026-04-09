@@ -1,60 +1,5 @@
 <template>
   <section class="sector-messages-form">
-    <section class="sector-messages-form__copilot">
-      <p class="title">
-        {{ $t('copilot.name') }}
-      </p>
-      <div class="list-sector-messages__copilot__integration">
-        <UnnnicSwitch
-          v-model="copilotActive"
-          size="small"
-          :textRight="
-            $t(
-              `settings.messages.copilot.status.${
-                copilotActive ? 'on' : 'off'
-              }`,
-            )
-          "
-          data-testid="copilot-switch"
-          @update:model-value="handleCopilotActive($event)"
-        />
-        <p
-          v-if="copilotShowIntegrationsMessage"
-          class="without-messages"
-        >
-          {{ $t('settings.messages.copilot.integration.start') }}
-          <button @click="redirectToIntegrations">
-            {{ $t('settings.messages.copilot.integration.middle') }}
-          </button>
-          {{ $t('settings.messages.copilot.integration.end') }}
-        </p>
-        <UnnnicSwitch
-          v-if="copilotActive && !copilotShowIntegrationsMessage && !isLoading"
-          v-model="copilotCustomRulesActive"
-          size="small"
-          :textRight="
-            $t(
-              `settings.messages.copilot.custom_rules.status.${
-                copilotCustomRulesActive ? 'on' : 'off'
-              }`,
-            )
-          "
-          data-testid="copilot-custom-rules-switch"
-          @update:model-value="handleCustomRulesActive($event)"
-        />
-        <UnnnicTextArea
-          v-if="copilotActive && copilotCustomRulesActive && !isLoading"
-          v-model="copilotCustomRules"
-          :label="$t('settings.messages.copilot.custom_rules.title')"
-          :placeholder="
-            $t('settings.messages.copilot.custom_rules.explanation')
-          "
-          :maxLength="1500"
-          data-testid="copilot-custom-rules-textarea"
-          @update:model-value="handleCustomRules($event)"
-        />
-      </div>
-    </section>
     <section class="sector-messages-form-grid">
       <UnnnicCard
         class="sector-messages-form__new-message"
@@ -373,49 +318,6 @@ export default {
 
 <style lang="scss" scoped>
 .sector-messages-form {
-  &__copilot:hover {
-    box-shadow: $unnnic-shadow-1;
-  }
-
-  &__copilot {
-    border: 1px solid $unnnic-color-border-soft;
-    border-radius: $unnnic-border-radius-md;
-    padding: $unnnic-spacing-sm;
-    display: grid;
-    gap: $unnnic-spacing-sm;
-
-    &__integration {
-      display: grid;
-      gap: $unnnic-spacing-sm;
-    }
-
-    .title {
-      font-weight: $unnnic-font-weight-bold;
-      color: $unnnic-color-fg-base;
-      font-size: $unnnic-font-size-body-lg;
-      line-height: $unnnic-line-height-large + $unnnic-line-height-md;
-    }
-
-    .without-messages {
-      font-size: $unnnic-font-size-body-gt;
-      color: $unnnic-color-fg-base;
-
-      margin-top: $unnnic-spacing-sm;
-
-      button {
-        background: none;
-        border: none;
-        padding: 0;
-
-        text-decoration: underline;
-        font-weight: $unnnic-font-weight-bold;
-        color: $unnnic-color-fg-base;
-
-        cursor: pointer;
-      }
-    }
-  }
-
   &-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

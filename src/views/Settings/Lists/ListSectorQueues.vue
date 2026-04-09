@@ -1,6 +1,8 @@
 <template>
   <section class="sector-queues-form">
-    <p class="sector-queues-form__info">{{ $t('config_chats.queues.info') }}</p>
+    <h1 class="sector-queues-form__title">
+      {{ $t('config_chats.queues.title') }}
+    </h1>
     <section class="sector-queues-form__filters">
       <UnnnicInput
         v-model="queueNameFilter"
@@ -417,10 +419,9 @@ export default {
       flex: 1;
     }
   }
-  &__info {
-    color: $unnnic-color-fg-base;
-    font-size: $unnnic-font-size-body-gt;
-    line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
+  &__title {
+    font: $unnnic-font-display-3;
+    color: $unnnic-color-fg-emphasized;
   }
 
   &-grid {

@@ -948,7 +948,7 @@
     "queues": {
       "in_sector": "Fila en el sector {sector}",
       "new": "Nueva cola",
-      "info": "Las colas son grupos de atención dentro de un sector; es posible dirigir contactos de un flujo a una cola específica",
+      "title": "Gestión de colas",
       "hint": "Las colas son grupos de atención dentro de un sector; podrás crear nuevas colas o editarlas cuando desees.",
       "add_queue": "Agregar cola",
       "delete_this_queue": "Eliminar esta cola",
