@@ -118,7 +118,8 @@
     data-testid="delete-queue-modal"
     type="queue"
     :name="queueToDelete.name"
-    :inProgressChatsCount="10"
+    :excludeQueueUuid="queueToDelete.uuid"
+    :inProgressChatsCount="queueRoomsCount"
     :isLoading="isLoadingDeleteQueue"
     @confirm="deleteQueue"
     @cancel="handlerCloseDeleteQueueModal()"
@@ -163,6 +164,7 @@ export default {
       queueNameFilter: '',
       queueOrder: 'alphabetical',
       isLoadingDeleteQueue: false,
+      queueRoomsCount: 0,
     };
   },
 
@@ -205,10 +207,18 @@ export default {
     this.getQueues();
   },
   methods: {
-    async deleteQueue(_transferPayload) {
+    async deleteQueue(transferPayload) {
       try {
         this.isLoadingDeleteQueue = true;
-        await Queue.delete(this.queueToDelete.uuid);
+
+        const options = {};
+        if (transferPayload.action === 'transfer') {
+          options.transferToQueue = transferPayload.transferQueueUuid;
+        } else if (transferPayload.action === 'end_all') {
+          options.endAllChats = true;
+        }
+
+        await Queue.delete(this.queueToDelete.uuid, options);
         this.queues = this.queues.filter(
           (queue) => queue.uuid !== this.queueToDelete.uuid,
         );
@@ -219,13 +229,15 @@ export default {
           },
         });
       } catch (error) {
+        const isTransferConflict = error?.response?.status === 409;
         unnnic.unnnicCallAlert({
           props: {
-            text: this.$t('delete_modal.queue_error'),
+            text: isTransferConflict
+              ? this.$t('delete_modal.transfer_error_queue')
+              : this.$t('delete_modal.queue_error'),
             type: 'error',
           },
         });
-        console.log(error);
       } finally {
         this.handlerCloseDeleteQueueModal();
         this.isLoadingDeleteQueue = false;
@@ -236,9 +248,17 @@ export default {
       this.queueToDelete = {};
       this.showDeleteQueueModal = false;
     },
-    handlerOpenDeleteQueueModal(queue) {
+    async handlerOpenDeleteQueueModal(queue) {
       this.handleConnectOverlay(true);
       this.queueToDelete = queue;
+
+      try {
+        const { waiting, in_service } = await Queue.roomsCount(queue.uuid);
+        this.queueRoomsCount = waiting + in_service;
+      } catch {
+        this.queueRoomsCount = 0;
+      }
+
       this.showDeleteQueueModal = true;
     },
     handleConnectOverlay(active) {
