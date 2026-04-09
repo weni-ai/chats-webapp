@@ -64,15 +64,12 @@
           data-testid="extra-options-form"
           @change-is-valid="updateIsValid($event, 'extraOptions')"
         />
-        <section
+        <MessagesForm
           v-show="activePage === $t('quick_messages.title')"
-          class="forms__quick-message"
-        >
-          <MessagesForm
-            v-model="sector.quick_messages"
-            multiple
-          />
-        </section>
+          v-model="sector.quick_messages"
+          multiple
+          @change-is-valid="updateIsValid($event, 'quick_messages')"
+        />
       </section>
     </template>
   </UnnnicDrawer>

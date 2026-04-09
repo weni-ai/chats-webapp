@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 
 import MessageInputsForm from './MessageInputsForm.vue';
 
@@ -87,6 +87,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   'update:modelValue': [value: { shortcut: string; text: string }[]];
+  changeIsValid: [value: boolean];
 }>();
 
 const messagesForms = computed({
@@ -108,6 +109,23 @@ const addMessageForm = () => {
 const removeMessage = (index: number) => {
   messagesForms.value.splice(index, 1);
 };
+
+watch(
+  () => messagesForms.value,
+  (newVal) => {
+    const allValid = newVal.every(
+      (message) => !!message.shortcut.trim() && !!message.text.trim(),
+    );
+    const validEmptyMessage =
+      messagesForms.value.length === 1 &&
+      !messagesForms.value[0].shortcut.trim() &&
+      !messagesForms.value[0].text.trim();
+    if (validEmptyMessage) {
+      emit('changeIsValid', true);
+    } else emit('changeIsValid', allValid);
+  },
+  { deep: true, immediate: true },
+);
 </script>
 
 <style lang="scss" scoped>
