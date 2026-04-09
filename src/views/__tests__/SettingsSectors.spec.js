@@ -14,6 +14,12 @@ vi.mock('@weni/unnnic-system', () => ({
   },
 }));
 
+vi.mock('@/services/api/resources/settings/sector', () => ({
+  default: {
+    roomsCount: vi.fn().mockResolvedValue({ waiting: 5, in_service: 3 }),
+  },
+}));
+
 const mockSectors = [
   {
     id: 1,
@@ -344,8 +350,8 @@ describe('SettingsSectors.vue', () => {
 
       expect(wrapper.vm.showDeleteSectorModal).toBe(false);
 
-      wrapper.vm.handlerOpenDeleteSectorModal(sector);
-      await wrapper.vm.$nextTick();
+      await wrapper.vm.handlerOpenDeleteSectorModal(sector);
+      await flushPromises();
 
       expect(wrapper.vm.showDeleteSectorModal).toBe(true);
       expect(wrapper.vm.toDeleteSector).toEqual(sector);
@@ -375,13 +381,15 @@ describe('SettingsSectors.vue', () => {
       const sector = mockSectors[0];
       settingsStore.deleteSector = vi.fn().mockResolvedValue({});
 
-      wrapper.vm.handlerOpenDeleteSectorModal(sector);
-      await wrapper.vm.$nextTick();
-
-      await wrapper.vm.deleteSector(sector.uuid);
+      await wrapper.vm.handlerOpenDeleteSectorModal(sector);
       await flushPromises();
 
-      expect(settingsStore.deleteSector).toHaveBeenCalledWith(sector.uuid);
+      await wrapper.vm.deleteSector(sector.uuid, { action: 'end_all' });
+      await flushPromises();
+
+      expect(settingsStore.deleteSector).toHaveBeenCalledWith(sector.uuid, {
+        endAllChats: true,
+      });
       expect(mockRouter.push).toHaveBeenCalledWith({ name: 'sectors' });
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
         props: {
@@ -397,16 +405,16 @@ describe('SettingsSectors.vue', () => {
       const sector = mockSectors[0];
       const error = new Error('Delete failed');
       settingsStore.deleteSector = vi.fn().mockRejectedValue(error);
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-      wrapper.vm.handlerOpenDeleteSectorModal(sector);
-      await wrapper.vm.$nextTick();
-
-      await wrapper.vm.deleteSector(sector.uuid);
+      await wrapper.vm.handlerOpenDeleteSectorModal(sector);
       await flushPromises();
 
-      expect(settingsStore.deleteSector).toHaveBeenCalledWith(sector.uuid);
-      expect(consoleSpy).toHaveBeenCalledWith(error);
+      await wrapper.vm.deleteSector(sector.uuid, { action: 'end_all' });
+      await flushPromises();
+
+      expect(settingsStore.deleteSector).toHaveBeenCalledWith(sector.uuid, {
+        endAllChats: true,
+      });
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
         props: {
           text: 'Unable to delete the sector.',
@@ -415,8 +423,6 @@ describe('SettingsSectors.vue', () => {
         seconds: 5,
       });
       expect(wrapper.vm.showDeleteSectorModal).toBe(false);
-
-      consoleSpy.mockRestore();
     });
   });
 

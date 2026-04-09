@@ -17,6 +17,7 @@ vi.mock('@/services/api/resources/settings/queue', () => ({
     getQueueInformation: vi.fn(),
     agents: vi.fn(),
     delete: vi.fn(),
+    roomsCount: vi.fn().mockResolvedValue({ waiting: 0, in_service: 0 }),
   },
 }));
 
@@ -195,9 +196,7 @@ describe('ListSectorQueues.vue', () => {
   });
 
   it('should call deleteQueue method when confirming deletion', async () => {
-    const deleteQueueSpy = vi
-      .spyOn(wrapper.vm, 'deleteQueue')
-      .mockImplementation();
+    const deleteQueueSpy = vi.spyOn(wrapper.vm, 'deleteQueue');
 
     await wrapper.setData({
       queues: [
@@ -211,13 +210,14 @@ describe('ListSectorQueues.vue', () => {
       name: 'Queue A',
     });
 
-    await wrapper.vm.$nextTick();
+    await flushPromises();
 
     const deleteModal = wrapper.findComponent(
       '[data-testid="delete-queue-modal"]',
     );
 
-    await deleteModal.vm.$emit('confirm');
+    await deleteModal.vm.$emit('confirm', { action: 'end_all' });
+    await flushPromises();
 
     expect(deleteQueueSpy).toHaveBeenCalledTimes(1);
 
