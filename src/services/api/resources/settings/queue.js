@@ -37,8 +37,19 @@ export default {
     return response.data;
   },
 
-  async delete(queueUuid) {
-    await http.delete(`/queue/${queueUuid}/`);
+  async roomsCount(queueUuid) {
+    const response = await http.get(`/queue/${queueUuid}/rooms_count/`);
+    return response.data;
+  },
+
+  async delete(queueUuid, { endAllChats, transferToQueue } = {}) {
+    const params = {};
+
+    if (endAllChats) params.end_all_chats = true;
+    if (transferToQueue) params.transfer_to_queue = transferToQueue;
+
+    const response = await http.delete(`/queue/${queueUuid}/`, { params });
+    return response.data;
   },
 
   async agentsToTransfer(queueUuid) {
