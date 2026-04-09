@@ -1,26 +1,12 @@
 <template>
   <section class="queue-form">
-    <section
+    <FillDefaultOption
       v-if="showHelpers"
-      class="form-wrapper__radios"
-    >
-      <UnnnicRadio
-        :modelValue="useDefaultSectorQueue"
-        :value="0"
-        data-testid="disable-default-queue-config"
-        @update:model-value="updateDefaultSectorQueueValue"
-      >
-        {{ $t('config_chats.custom_queue') }}
-      </UnnnicRadio>
-      <UnnnicRadio
-        :modelValue="useDefaultSectorQueue"
-        :value="1"
-        data-testid="enable-default-queue-config"
-        @update:model-value="updateDefaultSectorQueueValue"
-      >
-        {{ $t('config_chats.default_queue.title') }}
-      </UnnnicRadio>
-    </section>
+      :modelValue="useDefaultSectorQueue"
+      :customizedOptionText="$t('config_chats.custom_queue')"
+      :defaultOptionText="$t('config_chats.default_queue.title')"
+      @update:model-value="updateDefaultSectorQueueValue"
+    />
     <section
       v-if="showHelpers"
       class="queue-form__configure-queue-title"
@@ -96,7 +82,9 @@ import { mapState } from 'pinia';
 
 import Queue from '@/services/api/resources/settings/queue';
 import Project from '@/services/api/resources/settings/project';
+
 import QueueInputsForm from './QueueInputsForm.vue';
+import FillDefaultOption from '../FillDefaultOption.vue';
 
 import { useProfile } from '@/store/modules/profile';
 import { useConfig } from '@/store/modules/config';
@@ -106,7 +94,7 @@ import { cloneDeep } from 'lodash';
 
 export default {
   name: 'FormQueue',
-  components: { QueueInputsForm },
+  components: { QueueInputsForm, FillDefaultOption },
   props: {
     modelValue: {
       type: Array,
@@ -308,12 +296,6 @@ export default {
     }
   }
 
-  .form-wrapper {
-    &__radios {
-      display: flex;
-      gap: $unnnic-space-4;
-    }
-  }
   .divider {
     margin-top: $unnnic-space-4;
     border: 1px solid $unnnic-color-border-base;

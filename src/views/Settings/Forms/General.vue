@@ -1,26 +1,12 @@
 <template>
   <section class="form-wrapper">
-    <section
+    <FillDefaultOption
       v-if="!isEditing"
-      class="form-wrapper__radios"
-    >
-      <UnnnicRadio
-        :modelValue="useDefaultSector"
-        :value="0"
-        data-testid="disable-default-sector-config"
-        @update:model-value="updateDefaultSectorValue"
-      >
-        {{ $t('config_chats.custom_sector') }}
-      </UnnnicRadio>
-      <UnnnicRadio
-        :modelValue="useDefaultSector"
-        :value="1"
-        data-testid="enable-default-sector-config"
-        @update:model-value="updateDefaultSectorValue"
-      >
-        {{ $t('config_chats.default_sector.title') }}
-      </UnnnicRadio>
-    </section>
+      :modelValue="useDefaultSector"
+      :customizedOptionText="$t('config_chats.custom_sector')"
+      :defaultOptionText="$t('config_chats.default_sector.title')"
+      @update:model-value="updateDefaultSectorValue"
+    />
     <form
       class="form-sector-container"
       @submit.prevent="$emit('submit')"
@@ -276,6 +262,7 @@ import WorkdayTimeConfig from './WorkdayTimeConfig.vue';
 import CountryHolidaysModal from './modals/CountryHolidaysModal.vue';
 import CustomHolidaysModal from './modals/CustomHolidaysModal.vue';
 import CreateCustomHolidayModal from './modals/CreateCustomHolidayModal.vue';
+import FillDefaultOption from './FillDefaultOption.vue';
 
 import { useProfile } from '@/store/modules/profile';
 import { useConfig } from '@/store/modules/config';
@@ -300,6 +287,7 @@ export default {
     CreateCustomHolidayModal,
     WorkdayTimeConfig,
     TagGroup,
+    FillDefaultOption,
   },
   props: {
     isEditing: {
@@ -1054,13 +1042,8 @@ fieldset {
 .form-wrapper {
   display: flex;
   flex-direction: column;
+  gap: $unnnic-space-4;
   min-height: 600px;
-
-  &__radios {
-    display: flex;
-    gap: $unnnic-spacing-sm;
-    margin-bottom: $unnnic-spacing-sm;
-  }
 }
 
 .form-actions {
