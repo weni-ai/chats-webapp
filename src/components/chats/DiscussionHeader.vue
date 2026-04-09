@@ -64,7 +64,7 @@ const hasActionsSlot = computed(() => !!slots.actions?.());
     justify-content: center;
     width: 38px;
     height: 38px;
-    background-color: $unnnic-color-purple-200;
+    background-color: $unnnic-color-bg-purple-plain;
     border-radius: $unnnic-radius-full;
   }
 

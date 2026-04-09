@@ -38,7 +38,7 @@ export default {
   display: grid;
   gap: $unnnic-spacing-nano;
 
-  color: $unnnic-color-neutral-dark;
+  color: $unnnic-color-fg-base;
 
   .section-header__title {
     font-size: $unnnic-font-size-body-lg;

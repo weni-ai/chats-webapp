@@ -68,13 +68,13 @@ export default {
 
 <style lang="scss" scoped>
 $scheme-colors:
-  'blue' $unnnic-color-aux-blue-100,
-  'purple' $unnnic-color-aux-purple-100,
-  'green' $unnnic-color-aux-green-100,
-  'yellow' $unnnic-color-aux-yellow-100,
-  'yellow-400' $unnnic-color-aux-yellow-400,
-  'red' $unnnic-color-aux-red-100,
-  'gray' $unnnic-color-neutral-soft;
+  'blue' $unnnic-color-bg-blue-plain,
+  'purple' $unnnic-color-bg-purple-plain,
+  'green' $unnnic-color-bg-green-plain,
+  'yellow' $unnnic-color-bg-yellow-plain,
+  'yellow-400' $unnnic-color-bg-yellow-strong,
+  'red' $unnnic-color-bg-red-plain,
+  'gray' $unnnic-color-bg-base-soft;
 
 .chat-feedback__container {
   margin-top: $unnnic-spacing-md;
@@ -89,7 +89,7 @@ $scheme-colors:
 
   &.divisor {
     padding-top: $unnnic-spacing-md;
-    border-top: $unnnic-border-width-thinner solid $unnnic-color-neutral-soft;
+    border-top: 1px solid $unnnic-color-border-soft;
   }
 
   .chat-feedback {
@@ -101,7 +101,7 @@ $scheme-colors:
     padding: $unnnic-spacing-nano $unnnic-spacing-sm;
 
     font-size: $unnnic-font-size-body-md;
-    color: $unnnic-color-neutral-black;
+    color: $unnnic-color-fg-emphasized;
     font-weight: $unnnic-font-weight-regular;
     white-space: nowrap;
     text-overflow: ellipsis;

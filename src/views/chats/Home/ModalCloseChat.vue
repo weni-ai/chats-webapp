@@ -219,7 +219,7 @@ export default {
 
   &__confirm-text {
     font: $unnnic-font-emphasis;
-    color: $unnnic-color-neutral-cloudy;
+    color: $unnnic-color-fg-base;
     margin: 0;
   }
 

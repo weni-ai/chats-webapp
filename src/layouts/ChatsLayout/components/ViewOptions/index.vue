@@ -187,10 +187,10 @@ onUnmounted(() => {
   width: calc(100vw * (3 / 12));
   z-index: 1000;
 
-  border-top: 1px solid $unnnic-color-neutral-soft;
-  border-bottom: 1px solid $unnnic-color-neutral-soft;
-  border-left: 1px solid $unnnic-color-neutral-soft;
-  background-color: $unnnic-color-neutral-lightest;
+  border-top: 1px solid $unnnic-color-border-soft;
+  border-bottom: 1px solid $unnnic-color-border-soft;
+  border-left: 1px solid $unnnic-color-border-soft;
+  background-color: $unnnic-color-bg-base-soft;
 
   &--open {
     bottom: 0;
@@ -213,7 +213,7 @@ onUnmounted(() => {
     width: 100%;
 
     &:hover {
-      background-color: $unnnic-color-neutral-light;
+      background-color: $unnnic-color-bg-base-soft;
     }
 
     :deep(.unnnic-button--size-small) {
@@ -225,11 +225,11 @@ onUnmounted(() => {
 
     :deep(.material-symbols-rounded.unnnic-icon-size--sm) {
       font-size: $unnnic-avatar-size-nano;
-      color: $unnnic-color-neutral-cloudy;
+      color: $unnnic-color-fg-base;
     }
 
     :deep(.unnnic-button__label) {
-      color: $unnnic-color-neutral-cloudy;
+      color: $unnnic-color-fg-base;
     }
   }
 }

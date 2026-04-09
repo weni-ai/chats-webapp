@@ -405,7 +405,7 @@ export default {
     }
   }
   &__info {
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
     font-size: $unnnic-font-size-body-gt;
     line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
   }
@@ -418,10 +418,10 @@ export default {
     &-sector-card {
       min-height: 120px;
       :deep(.unnnic-simple-card-header-container__title) {
-        color: $unnnic-color-neutral-darkest;
+        color: $unnnic-color-fg-emphasized;
       }
       &__open-label {
-        color: $unnnic-color-neutral-dark;
+        color: $unnnic-color-fg-base;
         font-family: $unnnic-font-family-secondary;
         font-size: $unnnic-font-size-body-gt;
         line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
@@ -430,14 +430,14 @@ export default {
         display: flex;
         gap: $unnnic-spacing-nano;
         &__agent-count {
-          color: $unnnic-color-neutral-dark;
+          color: $unnnic-color-fg-base;
           font-family: $unnnic-font-family-secondary;
           font-size: $unnnic-font-size-body-gt;
           font-weight: $unnnic-font-weight-bold;
           line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
         }
         &__agent-label {
-          color: $unnnic-color-neutral-cloudy;
+          color: $unnnic-color-fg-base;
           font-family: $unnnic-font-family-secondary;
           font-size: $unnnic-font-size-body-gt;
           line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
@@ -446,10 +446,10 @@ export default {
     }
 
     &__new-queue:hover {
-      box-shadow: $unnnic-shadow-level-far;
+      box-shadow: $unnnic-shadow-1;
     }
     &__new-queue:active {
-      border: 1px solid $unnnic-color-neutral-cleanest;
+      border: 1px solid $unnnic-color-border-soft;
     }
     &__new-queue {
       min-height: 120px;

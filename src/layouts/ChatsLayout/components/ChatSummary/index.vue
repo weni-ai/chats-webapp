@@ -1,5 +1,6 @@
 <template>
   <section
+    v-if="showSummary"
     class="chat-summary"
     :class="{ 'chat-summary--open': !activeRoom.ended_at }"
     data-testid="chat-summary"
@@ -81,8 +82,21 @@
       </UnnnicToolTip>
     </section>
   </section>
+  <section
+    v-if="isArchived && archivedUrl"
+    class="chat-summary__archived"
+    data-testid="chat-summary-archived"
+  >
+    <UnnnicButton
+      type="primary"
+      size="small"
+      class="chat-summary__archived-button"
+      :text="$t('chats.summary.archived.download_button')"
+      @click="handleDownload"
+    />
+  </section>
   <FeedbackModal
-    v-if="showFeedbackModal"
+    v-if="showSummary && showFeedbackModal"
     :hasFeedback="hasFeedback"
     :roomUuid="activeRoom.uuid"
     @close="handleCloseFeedbackModal"
@@ -125,6 +139,18 @@ export default {
     skipAnimation: {
       type: Boolean,
       default: false,
+    },
+    showSummary: {
+      type: Boolean,
+      default: true,
+    },
+    isArchived: {
+      type: Boolean,
+      default: false,
+    },
+    archivedUrl: {
+      type: String,
+      default: '',
     },
   },
   emits: ['close', 'feedback'],
@@ -189,6 +215,21 @@ export default {
       this.hasFeedback = true;
       this.showFeedbackModal = true;
     },
+    async handleDownload() {
+      if (!this.archivedUrl) return;
+
+      try {
+        window.open(this.archivedUrl, '_blank');
+      } catch (error) {
+        console.error('Error downloading archived messages:', error);
+        this.$unnnic.call.alert({
+          props: {
+            text: this.$t('chats.summary.archived.download_error'),
+            type: 'error',
+          },
+        });
+      }
+    },
     async typeWriter(text, speed) {
       if (this.animationAbortController) {
         this.animationAbortController.abort();
@@ -251,8 +292,8 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: $unnnic-color-purple-100;
-  box-shadow: $unnnic-shadow-level-far;
+  background: $unnnic-color-bg-purple-plain;
+  box-shadow: $unnnic-shadow-1;
   padding: $unnnic-spacing-sm;
   gap: $unnnic-spacing-nano;
 
@@ -261,7 +302,7 @@ export default {
   }
 
   &__generate-text {
-    color: $unnnic-color-neutral-clean;
+    color: $unnnic-color-fg-base;
 
     @keyframes wave {
       0%,
@@ -281,7 +322,7 @@ export default {
       height: 2px;
       border-radius: 50%;
       margin-right: 2px;
-      background-color: $unnnic-color-neutral-clean;
+      background-color: $unnnic-color-fg-base;
       animation: wave 1.5s linear infinite;
 
       &:nth-child(2) {
@@ -309,7 +350,7 @@ export default {
     gap: $unnnic-spacing-md;
     justify-content: space-between;
     text-align: justify;
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
     font-family: $unnnic-font-family-secondary;
     font-size: $unnnic-font-size-body-gt;
     line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
@@ -326,11 +367,20 @@ export default {
     display: flex;
     gap: $unnnic-spacing-nano;
 
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
     font-family: $unnnic-font-family-secondary;
     font-size: $unnnic-font-size-body-md;
     line-height: $unnnic-font-size-body-md + $unnnic-line-height-md;
     font-weight: $unnnic-font-weight-black;
+  }
+
+  &__archived {
+    display: flex;
+    margin-top: $unnnic-space-1;
+
+    &-button {
+      width: 100%;
+    }
   }
 }
 </style>

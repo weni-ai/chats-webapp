@@ -50,6 +50,6 @@ export default {
 
 <style lang="scss" scoped>
 .mobile-chat {
-  background-color: $unnnic-color-background-lightest;
+  background-color: $unnnic-color-bg-base-soft;
 }
 </style>

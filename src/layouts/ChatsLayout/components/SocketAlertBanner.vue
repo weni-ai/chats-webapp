@@ -68,7 +68,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: $unnnic-color-neutral-white;
+  color: $unnnic-color-fg-inverted;
 
   &__content {
     display: flex;
@@ -88,11 +88,11 @@ export default {
   }
 
   &.closed {
-    background-color: $unnnic-color-aux-red-500;
+    background-color: $unnnic-color-fg-critical;
   }
 
   &.connecting {
-    background-color: $unnnic-color-neutral-dark;
+    background-color: $unnnic-color-fg-emphasized;
   }
 }
 </style>

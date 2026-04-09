@@ -21,9 +21,20 @@
 
       <DiscussionMessages v-if="!!discussion" />
 
+      <MessageManagerV2
+        v-if="
+          isMessageManagerV2Enabled &&
+          (isMessageManagerRoomVisible || isMessageManagerDiscussionVisible)
+        "
+        data-testid="message-manager"
+        :isLoading="isChatSkeletonActive"
+        @show-quick-messages="handleShowQuickMessages"
+        @open-file-uploader="openModalFileUploader"
+      />
       <MessageManager
-        v-if="isMessageManagerRoomVisible || isMessageManagerDiscussionVisible"
-        v-model="textBoxMessage"
+        v-else-if="
+          isMessageManagerRoomVisible || isMessageManagerDiscussionVisible
+        "
         :loadingFileValue="uploadFilesProgress"
         :showSkeletonLoading="isChatSkeletonActive"
         data-testid="message-manager"
@@ -61,7 +72,7 @@
 <script>
 import isMobile from 'is-mobile';
 
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useProfile } from '@/store/modules/profile';
@@ -72,6 +83,7 @@ import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone/index.
 import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
 import DiscussionMessages from '@/components/chats/chat/DiscussionMessages.vue';
 import MessageManager from '@/components/chats/MessageManager/index.vue';
+import MessageManagerV2 from '@/components/chats/MessageManagerV2/index.vue';
 import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion.vue';
 
 import Room from '@/services/api/resources/chats/room';
@@ -81,6 +93,7 @@ import HomeChatHeaders from './HomeChatHeaders.vue';
 import HomeChatModals from './HomeChatModals.vue';
 
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 export default {
   name: 'HomeChat',
@@ -93,6 +106,7 @@ export default {
     MessageManager,
     ButtonJoinDiscussion,
     HomeChatModals,
+    MessageManagerV2,
   },
   emits: [
     'open-room-contact-info',
@@ -106,7 +120,6 @@ export default {
       isMobile: isMobile(),
 
       isRoomContactInfoOpen: false,
-      textBoxMessage: '',
       uploadFilesProgress: undefined,
       isChatSkeletonActive: false,
       tempJoinedDiscussions: [],
@@ -114,6 +127,7 @@ export default {
   },
 
   computed: {
+    ...mapWritableState(useMessageManager, ['inputMessage']),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
       rooms: 'rooms',
@@ -129,6 +143,11 @@ export default {
       discussions: 'discussions',
       getDiscussionById: 'getDiscussionById',
     }),
+    isMessageManagerV2Enabled() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsInputMessageV2',
+      );
+    },
     isActiveFeatureIs24hValidOptimization() {
       return this.featureFlags.active_features?.includes(
         'weniChatsIs24hValidOptimization',
@@ -331,7 +350,7 @@ export default {
     },
 
     updateTextBoxMessage(message) {
-      this.textBoxMessage = message;
+      this.inputMessage = message;
     },
     setUploadFilesProgress(progress) {
       this.uploadFilesProgress = progress;

@@ -44,25 +44,25 @@ defineProps({
     justify-content: space-between;
     padding: $unnnic-spacing-sm;
     align-self: stretch;
-    border-top: 1px solid $unnnic-color-neutral-soft;
-    border-bottom: 1px solid $unnnic-color-neutral-soft;
-    border-left: 1px solid $unnnic-color-neutral-soft;
-    background-color: $unnnic-color-neutral-lightest;
+    border-top: 1px solid $unnnic-color-border-soft;
+    border-bottom: 1px solid $unnnic-color-border-soft;
+    border-left: 1px solid $unnnic-color-border-soft;
+    background-color: $unnnic-color-bg-base-soft;
   }
 
   :deep(.unnnic-button--tertiary) {
-    background-color: $unnnic-color-neutral-lightest;
+    background-color: $unnnic-color-bg-base-soft;
   }
 
   :deep(.unnnic-button--tertiary:active:enabled) {
-    background-color: $unnnic-color-neutral-lightest;
+    background-color: $unnnic-color-bg-base-soft;
   }
 
   :deep(.unnnic-button--tertiary:hover:enabled) {
-    background-color: $unnnic-color-neutral-lightest;
-    border-top: 1px solid $unnnic-color-neutral-cleanest;
-    border-bottom: 1px solid $unnnic-color-neutral-cleanest;
-    border-left: 1px solid $unnnic-color-neutral-cleanest;
+    background-color: $unnnic-color-bg-base-soft;
+    border-top: 1px solid $unnnic-color-border-soft;
+    border-bottom: 1px solid $unnnic-color-border-soft;
+    border-left: 1px solid $unnnic-color-border-soft;
   }
 }
 
@@ -74,7 +74,7 @@ defineProps({
   }
 
   &__text {
-    color: $unnnic-color-neutral-cloudy;
+    color: $unnnic-color-fg-base;
 
     font-family: $unnnic-font-family-secondary;
     font-size: $unnnic-font-size-body-gt;

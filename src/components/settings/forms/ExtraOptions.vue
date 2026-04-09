@@ -30,7 +30,7 @@
         >
           <UnnnicIconSvg
             icon="information-circle-4"
-            scheme="neutral-soft"
+            scheme="fg-base"
             size="sm"
           />
         </UnnnicToolTip>
@@ -72,7 +72,7 @@
           >
             <UnnnicIconSvg
               icon="information-circle-4"
-              scheme="neutral-soft"
+              scheme="fg-base"
               size="sm"
             />
           </UnnnicToolTip>
@@ -128,7 +128,7 @@
         >
           <UnnnicIconSvg
             icon="information-circle-4"
-            scheme="neutral-soft"
+            scheme="fg-base"
             size="sm"
           />
         </UnnnicToolTip>
@@ -156,7 +156,7 @@
         >
           <UnnnicIconSvg
             icon="information-circle-4"
-            scheme="neutral-soft"
+            scheme="fg-base"
             size="sm"
           />
         </UnnnicToolTip>
@@ -487,7 +487,7 @@ fieldset {
     gap: $unnnic-space-2;
     &__title {
       font-weight: $unnnic-font-weight-bold;
-      color: $unnnic-color-neutral-dark;
+      color: $unnnic-color-fg-base;
       font-size: $unnnic-font-size-body-lg;
       line-height: $unnnic-line-height-large * 1.5;
       margin-bottom: $unnnic-spacing-ant;
@@ -510,17 +510,10 @@ fieldset {
     gap: $unnnic-space-4;
     margin-top: $unnnic-spacing-sm;
     margin-bottom: v-bind(tagsMarginBottom);
-    :deep(.unnnic-brand-tag) {
-      color: $unnnic-color-weni-700;
-      background-color: white;
-      .unnnic-icon {
-        color: $unnnic-color-weni-700;
-      }
-    }
 
     &__title {
       font-weight: $unnnic-font-weight-bold;
-      color: $unnnic-color-neutral-dark;
+      color: $unnnic-color-fg-base;
       font-size: $unnnic-font-size-body-lg;
       line-height: $unnnic-line-height-large * 1.5;
     }

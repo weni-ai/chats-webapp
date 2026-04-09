@@ -20,7 +20,7 @@
         class="chat-messages__internal-note-delete"
         icon="delete"
         size="ant"
-        scheme="aux-red-500"
+        scheme="fg-critical"
         clickable
         @click="handleShowModalDeleteInternalNote()"
       />
@@ -102,7 +102,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background-color: $unnnic-color-aux-baby-yellow;
+  background-color: $unnnic-color-bg-yellow-plain;
   padding: $unnnic-spacing-xs $unnnic-spacing-ant;
   border-radius: $unnnic-border-radius-md;
   width: 100%;
@@ -117,10 +117,8 @@ export default {
   }
 
   &-text {
-    color: $unnnic-color-neutral-cloudy;
-    font-family: $unnnic-font-family-secondary;
-    font-size: $unnnic-font-size-body-gt;
-    line-height: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
+    color: $unnnic-color-fg-emphasized;
+    font: $unnnic-font-body;
     word-break: break-word;
   }
 
@@ -130,7 +128,7 @@ export default {
 
   &-agent-name {
     font-weight: $unnnic-font-weight-bold;
-    color: $unnnic-color-neutral-darkest;
+    color: $unnnic-color-fg-emphasized;
   }
 }
 </style>

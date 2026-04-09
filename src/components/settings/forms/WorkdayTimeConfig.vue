@@ -131,7 +131,7 @@ export default {
 <style lang="scss" scoped>
 .error-message {
   font-size: $unnnic-font-size-body-md;
-  color: $unnnic-color-feedback-red;
+  color: $unnnic-color-fg-critical;
 }
 .workday-time-config {
   display: flex;
@@ -168,7 +168,7 @@ export default {
         font-family: $unnnic-font-family-secondary;
         font-size: $unnnic-font-size-body-md;
         line-height: $unnnic-font-size-body-md + $unnnic-line-height-medium;
-        color: $unnnic-color-neutral-cloudy;
+        color: $unnnic-color-fg-base;
       }
     }
 
@@ -176,7 +176,7 @@ export default {
       font-family: $unnnic-font-family-secondary;
       font-size: $unnnic-font-size-body-md;
       line-height: $unnnic-font-size-body-md + $unnnic-line-height-medium;
-      color: $unnnic-color-neutral-cloudy;
+      color: $unnnic-color-fg-base;
       min-width: 80px;
     }
   }

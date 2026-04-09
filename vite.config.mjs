@@ -20,7 +20,7 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 10000000,
       },
       manifest: {
-        name: 'Weni Chats',
+        name: 'Live desk',
         short_name: 'Weni',
         theme_color: '#00A49F',
         icons: [

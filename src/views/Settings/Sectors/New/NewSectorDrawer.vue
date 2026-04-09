@@ -340,7 +340,7 @@ export default {
 
     &__title {
       font-weight: $unnnic-font-weight-bold;
-      color: $unnnic-color-neutral-dark;
+      color: $unnnic-color-fg-base;
       font-size: $unnnic-font-size-body-lg;
       line-height: $unnnic-line-height-large * 1.5;
     }
@@ -355,7 +355,7 @@ export default {
       gap: $unnnic-spacing-sm;
 
       &__copilot {
-        border: 1px solid $unnnic-color-neutral-soft;
+        border: 1px solid $unnnic-color-border-soft;
         border-radius: $unnnic-border-radius-md;
         padding: $unnnic-spacing-sm;
         display: grid;
@@ -369,7 +369,7 @@ export default {
 
       :deep(.forms__quick-message__card) {
         .unnnic-simple-card-header-container__title {
-          color: $unnnic-color-neutral-darkest;
+          color: $unnnic-color-fg-emphasized;
         }
       }
     }

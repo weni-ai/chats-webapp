@@ -122,7 +122,7 @@ export default {
   display: grid;
 
   &__title {
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
     font-size: $unnnic-font-size-body-lg;
     font-weight: $unnnic-font-weight-bold;
   }

@@ -124,7 +124,6 @@ export default {
 <style lang="scss" scoped>
 .modal-delete-internal-note {
   &__content {
-    color: $unnnic-color-gray-500;
     padding: $unnnic-space-6;
   }
 }

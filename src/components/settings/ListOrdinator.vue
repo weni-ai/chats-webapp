@@ -43,7 +43,7 @@ export default {
   flex-wrap: wrap;
   font-family: $unnnic-font-family-secondary;
   font-weight: $unnnic-font-weight-regular;
-  color: $unnnic-color-neutral-darkest;
+  color: $unnnic-color-fg-emphasized;
   font-size: $unnnic-font-size-body-gt;
   line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
   column-gap: $unnnic-spacing-sm;

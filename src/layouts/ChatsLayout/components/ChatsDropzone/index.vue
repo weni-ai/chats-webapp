@@ -114,7 +114,7 @@ export default {
 
     padding-left: 0;
 
-    background-color: $unnnic-color-neutral-white;
+    background-color: $unnnic-color-bg-base;
 
     &::before,
     &::after {
@@ -122,13 +122,13 @@ export default {
     }
 
     &::before {
-      background-color: $unnnic-color-background-snow;
+      background-color: $unnnic-color-bg-base;
     }
 
     &::after {
       border-radius: $unnnic-border-radius-lg;
       // Dashed border with increased dashes spacing and color neutral clean
-      background-image: borderDashed($unnnic-color-brand-weni);
+      background-image: borderDashed($unnnic-color-border-accent-strong);
     }
   }
 
@@ -153,7 +153,7 @@ export default {
     h1 {
       font-size: $unnnic-font-size-title-sm;
       font-weight: $unnnic-font-weight-bold;
-      color: $unnnic-color-brand-weni;
+      color: $unnnic-color-fg-accent;
     }
   }
 }

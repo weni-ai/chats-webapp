@@ -14,7 +14,7 @@
     >
       <UnnnicIcon
         icon="info"
-        scheme="neutral-soft"
+        scheme="fg-base"
         filled
         size="sm"
       />

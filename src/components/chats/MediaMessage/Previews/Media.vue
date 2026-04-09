@@ -64,7 +64,7 @@ export default {
 .media-preview {
   position: relative;
 
-  box-shadow: $unnnic-shadow-level-near;
+  box-shadow: $unnnic-shadow-1;
 
   aspect-ratio: 1/1;
   overflow: hidden;

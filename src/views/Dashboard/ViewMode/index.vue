@@ -76,7 +76,7 @@
                 icon="history"
                 size="ant"
                 :clickable="room?.has_history"
-                :scheme="room?.has_history ? 'neutral-cloudy' : 'neutral-soft'"
+                :scheme="room?.has_history ? 'fg-emphasized' : 'fg-base'"
                 @click="openHistory"
               />
             </UnnnicToolTip>
@@ -92,7 +92,7 @@
                 icon="sync_alt"
                 size="ant"
                 clickable
-                scheme="neutral-cloudy"
+                scheme="fg-base"
                 @click="openTransferModal"
               />
             </UnnnicToolTip>
@@ -379,7 +379,7 @@ export default {
     border-radius: $unnnic-radius-2;
 
     &--open {
-      background-color: $unnnic-color-purple-100;
+      background-color: $unnnic-color-bg-purple-plain;
       &::after {
         content: '';
         position: fixed;
@@ -387,7 +387,7 @@ export default {
         transform: rotate(-45deg);
         width: $unnnic-space-3;
         height: $unnnic-space-3;
-        background-color: $unnnic-color-purple-100;
+        background-color: $unnnic-color-bg-purple-plain;
         border-radius: $unnnic-space-1;
       }
     }
@@ -407,10 +407,11 @@ export default {
     .discussion-header {
       :deep(.unnnic-chats-header) {
         .unnnic-chats-header__avatar-icon {
-          background-color: $unnnic-color-aux-purple-500;
+          background-color: $unnnic-color-bg-purple-strong;
 
           [class*='unnnic-icon'] {
-            color: $unnnic-color-weni-50;
+            // Semantic token not exists
+            color: $unnnic-color-teal-1;
           }
         }
       }

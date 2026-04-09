@@ -112,6 +112,7 @@
             </UnnnicDropdownItem>
 
             <UnnnicDropdownItem
+              class="dropdown-item-delete"
               data-testid="dropdown-delete"
               @click="deleteMessage(message)"
             >
@@ -120,6 +121,7 @@
                   class="icon"
                   icon="delete"
                   size="sm"
+                  scheme="fg-critical"
                 />
                 <p>{{ $t('exclude') }}</p>
               </section>
@@ -372,11 +374,11 @@ export default {
 <style lang="scss" scoped>
 .sector-messages-form {
   &__copilot:hover {
-    box-shadow: $unnnic-shadow-level-far;
+    box-shadow: $unnnic-shadow-1;
   }
 
   &__copilot {
-    border: 1px solid $unnnic-color-neutral-soft;
+    border: 1px solid $unnnic-color-border-soft;
     border-radius: $unnnic-border-radius-md;
     padding: $unnnic-spacing-sm;
     display: grid;
@@ -389,14 +391,14 @@ export default {
 
     .title {
       font-weight: $unnnic-font-weight-bold;
-      color: $unnnic-color-neutral-dark;
+      color: $unnnic-color-fg-base;
       font-size: $unnnic-font-size-body-lg;
       line-height: $unnnic-line-height-large + $unnnic-line-height-md;
     }
 
     .without-messages {
       font-size: $unnnic-font-size-body-gt;
-      color: $unnnic-color-neutral-dark;
+      color: $unnnic-color-fg-base;
 
       margin-top: $unnnic-spacing-sm;
 
@@ -407,7 +409,7 @@ export default {
 
         text-decoration: underline;
         font-weight: $unnnic-font-weight-bold;
-        color: $unnnic-color-neutral-dark;
+        color: $unnnic-color-fg-base;
 
         cursor: pointer;
       }
@@ -424,15 +426,15 @@ export default {
   &__quick-message-card {
     height: 140px;
     :deep(.unnnic-simple-card-header-container__title) {
-      color: $unnnic-color-neutral-darkest;
+      color: $unnnic-color-fg-emphasized;
     }
   }
 
   &__new-message:hover {
-    box-shadow: $unnnic-shadow-level-far;
+    box-shadow: $unnnic-shadow-1;
   }
   &__new-message:active {
-    border: 1px solid $unnnic-color-neutral-cleanest;
+    border: 1px solid $unnnic-color-border-soft;
   }
 
   &__new-message {
@@ -443,6 +445,9 @@ export default {
     :deep(.unnnic-card-blank__content__icon) {
       font-size: $unnnic-font-size-title-md;
     }
+  }
+  .dropdown-item-delete {
+    color: $unnnic-color-fg-critical;
   }
   .dropdown-item-content {
     display: flex;

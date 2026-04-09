@@ -3,7 +3,7 @@
     "title": "Olá!",
     "description": "Selecione um chat para realizar seus atendimentos!"
   },
-  "news_and_updates": "Notícias e atualizações no Chats",
+  "news_and_updates": "Notícias e atualizações no Live desk",
   "custom": "Personalizado",
   "country": {
     "label": "País",
@@ -160,6 +160,7 @@
   },
   "attachment": "Anexo",
   "internal_note": "Nota interna",
+  "close_internal_note": "Fechar nota interna (Esc)",
   "notes": "Notas",
   "bold": "Negrito",
   "italic": "Itálico",
@@ -243,7 +244,7 @@
         "switch_disabled": "Assinatura desativada"
       },
       "csat": {
-        "label": "Enviar automaticamente uma pesquisa de satisfação após o atendimento humano ser encerrado",
+        "label": "Enviar automaticamente uma pesquisa de satisfação após o atendimento do Live desk ser encerrado",
         "hint": "Se houver um fluxo ativo no módulo Flows configurado para disparar a pesquisa após o atendimento, esta configuração pode gerar conflito e impactar o envio da pesquisa.",
         "confirm_modal": {
           "content_1": "Se houver um fluxo ativo no módulo Flows configurado para disparar a pesquisa após o atendimento, esta configuração pode gerar conflito e impactar o envio da pesquisa.",
@@ -332,6 +333,14 @@
       "unavailable": "Não há resumo disponível",
       "open_summary_tooltip": "Abrir o resumo do chat",
       "close_summary_tooltip": "Fechar o resumo do chat",
+      "archived": {
+        "download_button": "Baixar mensagens",
+        "download_error": "Erro ao fazer download das mensagens. Tente novamente.",
+        "disclaimer": {
+          "title": "Mensagens arquivadas",
+          "description": "Este suporte foi encerrado há mais de um ano, portanto, as mensagens foram movidas para os arquivos. Para visualizá-las, clique no botão “Baixar mensagens”."
+        }
+      },
       "feedback": {
         "title": "O que não funcionou?",
         "needs_improvement_text": "Ajude a melhorar os resumos. Sua opinião sobre esse resumo nos ajuda a torná-lo mais claro e útil.",
@@ -385,6 +394,7 @@
       "401": "Erro de autenticação",
       "default": "Ocorreu um erro, por favor, tente novamente mais tarde"
     },
+    "message_input_placeholder": "Digite sua mensagem aqui ou / para ativar mensagens rápidas",
     "search_contact": "Pesquisar contato",
     "search_contact_placeholder": "Pesquisar contato (nome, telefone ou protocolo)",
     "tags": "Tags do chat",
@@ -398,7 +408,7 @@
     "to_end_required_tags": "Para encerrar, adicione pelo menos uma tag",
     "tags_help": "As tags ajudam a localizar os chats e também gerar bons relatórios",
     "chat_with_contact_ended": "Chat com {contact} encerrado",
-    "see_history": "Histórico",
+    "see_history": "Histórico geral",
     "tag_request": "@:please classifique o atendimento",
     "closed_in": "Chat encerrado em",
     "closed": "Chat encerrado",
@@ -429,8 +439,8 @@
     "error_update_queues": "Não foi possível atualizar suas filas de atendimento"
   },
   "chats_notifications": {
-    "title": "Notificações do WeniChats",
-    "label": "Para seu conforto, habilite e desabilite as notificações sonoras do WeniChats"
+    "title": "Notificações do Weni Live Desk",
+    "label": "Para seu conforto, habilite e desabilite as notificações sonoras do Weni Live Desk"
   },
   "dashboard": {
     "view-mode": {
@@ -559,6 +569,11 @@
   "transfer_contact": "Transferir contato | Transferir contatos",
   "bulk_transfer": {
     "transfer_selected_contacts": "Transferir contatos selecionados",
+    "transfer_all": "Transferir todos",
+    "selected_chats_count": "{count} chat selecionado para transferência. | {count} chats selecionados para transferência.",
+    "success_message": "{count} chat transferido com sucesso! | {count} chats transferidos com sucesso!",
+    "partial_success_message": "{success} chat transferido, {failed} falhou. Tente novamente. | {success} chats transferidos, {failed} falharam. Tente novamente.",
+    "error_message": "Não foi possível transferir os chats, tente novamente",
     "agent_transfer_success": "Contato transferido com sucesso para agente {agent} | Contatos transferidos com sucesso para agente {agent}",
     "queue_transfer_success": "Contato transferido com sucesso para fila {queue} | Contatos transferidos com sucesso para fila {queue}",
     "error": "Não foi possível transferir os contatos, tente novamente",
@@ -692,6 +707,7 @@
   "shortcut": "Atalho",
   "message": "Mensagem",
   "save": "Salvar",
+  "use": "Usar",
   "delete_sector": "Deletar setor",
   "delete_queue": "Excluir fila",
   "delete_queue_modal": {
@@ -785,14 +801,14 @@
   },
   "discard": "Descartar",
   "on_boarding": {
-    "title": "Começando a usar o Chats",
+    "title": "Começando a usar o Live desk",
     "title_sector": "Configure sua equipe de atendimento!",
     "description_sector": "Crie um setor para gerenciar uma equipe de atendimento, é possível criar quantos setores você quiser, assim consegue gerenciar seus grupos de atendimentos por departamentos, produtos ou serviços.",
     "title_queues": "Filas",
     "description_queues": "Utilize filas para segmentar seus atendimentos por assuntos ou produtos, caso não desejar, basta criar somente uma fila.",
     "title_tags": "Tags",
     "description_tags": "Crie tags para classificar os chats, as tags podem ser utilizadas para gerar relatórios, filtrar atendimentos no histórico e muito mais!",
-    "tooltip": "O Chats é o módulo de atendimento humano da Weni, confira o passo a passo para começar a usar"
+    "tooltip": "O Live desk é o módulo de atendimento humano da Weni, confira o passo a passo para começar a usar"
   },
   "status_agent": "Você está",
   "copilot": {
@@ -827,7 +843,7 @@
     }
   },
   "config_chats": {
-    "title": "Configurações de Atendimento humano",
+    "title": "Configurações",
     "section_sectors_title": "Setores em {project}",
     "section_sectors_subtitle": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
     "tabs": {
@@ -847,8 +863,17 @@
       "status_remove_success": "Status {status} removido",
       "status_error": "Ops, infelizmente as alterações não foram salvas, tente novamente"
     },
+    "changes_saved": "Alterações salvas com sucesso!",
+    "changes_not_saved": "Não foi possível salvar as alterações. Tente novamente.",
     "project_configs": {
       "title": "Preferências do projeto",
+      "ai_transfer": {
+        "switch_active": "Permitir que agentes de IA transfiram conversas para atendimento humano",
+        "switch_inactive": "Permitir que agentes de IA transfiram conversas para atendimento humano",
+        "modal_title": "Cenários ou critérios que requerem transferência para atendimento humano",
+        "textarea_label": "Defina os cenários ou critérios que requerem transferência para atendimento humano",
+        "textarea_placeholder": "Descreva os cenários ou critérios..."
+      },
       "bulk_transfer": {
         "tooltip": "Essa função permite que agentes transfiram diversos contatos de uma vez para uma fila ou agente",
         "switch_active": "Transferir chats em massa para outra fila ou atendente",
@@ -881,6 +906,9 @@
       },
       "show_waiting_rooms_count": {
         "switch_label": "Exibir o contador com o número de chats esperando atendimento humano"
+      },
+      "use_name_sector_in_rooms": {
+        "switch_label": "Mostrar o nome do setor no título do chat"
       }
     },
     "custom_sector": "Personalizar novo setor (recomendado)",
@@ -1013,10 +1041,10 @@
   "enter": "Entrar",
   "no_matches_for_the_search": "Não há correspondências para a pesquisa",
   "select_org": {
-    "choose_one": "Escolha uma para acessar o Weni Chats"
+    "choose_one": "Escolha uma para acessar o Weni Live Desk"
   },
   "select_project": {
-    "choose_one": "Escolha um para acessar o Weni Chats"
+    "choose_one": "Escolha um para acessar o Weni Live Desk"
   },
   "discart": "Descartar",
   "confirmation": "Confirmação",
@@ -1043,9 +1071,9 @@
   },
   "feedback_modal": {
     "title": "Ajude-nos a melhorar!",
-    "feedback_question": "Com está sendo usar o Weni Chats?",
-    "problem_question": "O que atrapalha ou dificulta o uso do Weni Chats?",
-    "improvement_question": "O que poderíamos melhorar para que o uso do Weni Chats seja ainda melhor para você?",
+    "feedback_question": "Com está sendo usar o Weni Live Desk?",
+    "problem_question": "O que atrapalha ou dificulta o uso do Weni Live Desk?",
+    "improvement_question": "O que poderíamos melhorar para que o uso do Weni Live Desk seja ainda melhor para você?",
     "submit": "Enviar",
     "cancel": "Agora não",
     "feedback_options": {
