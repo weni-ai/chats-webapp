@@ -109,7 +109,7 @@
     type="sector"
     :name="toDeleteSector.name"
     :excludeSectorUuid="toDeleteSector.uuid"
-    :inProgressChatsCount="10"
+    :inProgressChatsCount="sectorRoomsCount"
     :isLoading="isLoadingDeleteSector"
     @confirm="deleteSector(toDeleteSector.uuid, $event)"
     @cancel="handlerCloseDeleteSectorModal()"
@@ -122,6 +122,8 @@ import { mapActions, mapState } from 'pinia';
 
 import { useConfig } from '@/store/modules/config';
 import { useSettings } from '@/store/modules/settings';
+
+import Sector from '@/services/api/resources/settings/sector';
 
 import SettingsSectionHeader from './SettingsSectionHeader.vue';
 import ModalDeleteWithTransfer from '@/components/ModalDeleteWithTransfer.vue';
@@ -147,6 +149,7 @@ export default {
       sectorOrder: 'alphabetical',
       toDeleteSector: {},
       isLoadingDeleteSector: false,
+      sectorRoomsCount: 0,
     };
   },
 
@@ -189,9 +192,17 @@ export default {
     ...mapActions(useSettings, {
       actionDeleteSector: 'deleteSector',
     }),
-    handlerOpenDeleteSectorModal(sector) {
+    async handlerOpenDeleteSectorModal(sector) {
       this.toDeleteSector = sector;
       this.handleConnectOverlay(true);
+
+      try {
+        const { waiting, in_service } = await Sector.roomsCount(sector.uuid);
+        this.sectorRoomsCount = waiting + in_service;
+      } catch {
+        this.sectorRoomsCount = 0;
+      }
+
       this.showDeleteSectorModal = true;
     },
 
@@ -201,10 +212,18 @@ export default {
       this.showDeleteSectorModal = false;
     },
 
-    async deleteSector(sectorUuid, _transferPayload) {
+    async deleteSector(sectorUuid, transferPayload) {
       try {
         this.isLoadingDeleteSector = true;
-        await this.actionDeleteSector(sectorUuid);
+
+        const options = {};
+        if (transferPayload.action === 'transfer') {
+          options.transferToQueue = transferPayload.transferQueueUuid;
+        } else if (transferPayload.action === 'end_all') {
+          options.endAllChats = true;
+        }
+
+        await this.actionDeleteSector(sectorUuid, options);
 
         this.$router.push({ name: 'sectors' });
         unnnic.unnnicCallAlert({
@@ -215,10 +234,12 @@ export default {
           seconds: 5,
         });
       } catch (error) {
-        console.log(error);
+        const isTransferConflict = error?.response?.status === 409;
         unnnic.unnnicCallAlert({
           props: {
-            text: this.$t('delete_modal.sector_error'),
+            text: isTransferConflict
+              ? this.$t('delete_modal.transfer_error_sector')
+              : this.$t('delete_modal.sector_error'),
             type: 'error',
           },
           seconds: 5,
