@@ -257,31 +257,29 @@ onMounted(() => {
   &__title {
     display: flex;
     align-items: center;
-    gap: $unnnic-spacing-xs;
+    gap: $unnnic-space-2;
   }
 
   &__body {
     display: grid;
-    gap: $unnnic-spacing-sm;
+    gap: $unnnic-space-4;
     text-align: start;
     padding: $unnnic-space-6;
 
     &__description {
-      font-family: $unnnic-font-family-secondary;
-      font-size: $unnnic-font-size-body-gt;
-      line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
-      color: $unnnic-color-neutral-dark;
+      font: $unnnic-font-body;
+      color: $unnnic-color-fg-base;
     }
 
     &__radios {
       display: flex;
       align-items: center;
-      gap: $unnnic-spacing-sm;
+      gap: $unnnic-space-4;
     }
 
     &__selects {
       display: flex;
-      gap: $unnnic-spacing-xs;
+      gap: $unnnic-space-2;
 
       &__input {
         flex: 1;
@@ -290,13 +288,11 @@ onMounted(() => {
 
     &__confirm {
       display: grid;
-      gap: $unnnic-spacing-nano;
+      gap: $unnnic-space-1;
 
       &__warning {
-        font-family: $unnnic-font-family-secondary;
-        font-size: $unnnic-font-size-body-md;
-        line-height: $unnnic-font-size-body-md + $unnnic-line-height-md;
-        color: $unnnic-color-feedback-red;
+        font: $unnnic-font-caption-2;
+        color: $unnnic-color-fg-base;
       }
     }
   }
