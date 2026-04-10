@@ -43,29 +43,6 @@ describe('CountryHolidaysModal', () => {
           $t: (key) => key,
         },
         stubs: {
-          UnnnicModalDialog: {
-            template: `
-              <div data-testid="modal-dialog">
-                <div data-testid="modal-title">{{ title }}</div>
-                <div data-testid="modal-close" @click="$emit('update:model-value', false)">×</div>
-                <slot />
-                <button 
-                  data-testid="primary-button" 
-                  :disabled="primaryButtonProps?.loading"
-                  @click="$emit('primary-button-click')"
-                >
-                  {{ primaryButtonProps?.text }}
-                </button>
-              </div>
-            `,
-            props: [
-              'modelValue',
-              'title',
-              'showCloseIcon',
-              'primaryButtonProps',
-            ],
-            emits: ['update:model-value', 'primary-button-click'],
-          },
           UnnnicSwitch: {
             template: `
               <div data-testid="switch" @click="handleClick">

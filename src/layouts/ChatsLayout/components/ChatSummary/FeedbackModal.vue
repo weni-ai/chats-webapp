@@ -1,69 +1,82 @@
 <template>
-  <UnnnicModalDialog
+  <UnnnicDialog
+    v-model:open="isOpen"
     class="summary-feedback-modal"
-    :modelValue="true"
-    :title="$t('chats.summary.feedback.title')"
-    showCloseIcon
-    :primaryButtonProps="{
-      text: $t('submit'),
-      loading: isLoading,
-      disabled: disableSubmit,
-    }"
     data-testid="feedback-modal"
-    @primary-button-click="handleSubmit"
-    @update:model-value="handleCancel"
   >
-    <section class="summary-feedback-modal__content">
-      <TagGroup
-        v-model="feedbackSelectedCategory"
-        :tags="feedbackCategories"
-        selectable
-      />
-      <section
-        v-if="!hasFeedback"
-        class="summary-feedback-modal__rating"
-      >
-        <UnnnicToolTip
-          enabled
-          :text="$t('chats.summary.feedback.positive')"
-          side="left"
+    <UnnnicDialogContent>
+      <UnnnicDialogHeader>
+        <UnnnicDialogTitle>
+          {{ $t('chats.summary.feedback.title') }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section class="summary-feedback-modal__content">
+        <TagGroup
+          v-model="feedbackSelectedCategory"
+          :tags="feedbackCategories"
+          selectable
+        />
+        <section
+          v-if="!hasFeedback"
+          class="summary-feedback-modal__rating"
         >
-          <UnnnicIcon
-            icon="thumb_up"
-            :filled="activeRoomSummary.feedback?.liked === true"
-            size="md"
-            clickable
-            scheme="neutral-dark"
-            data-testid="feedback-like"
-            @click="handleLike(true)"
-          />
-        </UnnnicToolTip>
-        <UnnnicToolTip
-          enabled
-          :text="$t('chats.summary.feedback.negative')"
-          side="left"
-        >
-          <UnnnicIcon
-            icon="thumb_down"
-            :filled="activeRoomSummary.feedback?.liked === false"
-            size="md"
-            clickable
-            scheme="neutral-dark"
-            data-testid="feedback-dislike"
-            @click="handleLike(false)"
-          />
-        </UnnnicToolTip>
+          <UnnnicToolTip
+            enabled
+            :text="$t('chats.summary.feedback.positive')"
+            side="left"
+          >
+            <UnnnicIcon
+              icon="thumb_up"
+              :filled="activeRoomSummary.feedback?.liked === true"
+              size="md"
+              clickable
+              scheme="neutral-dark"
+              data-testid="feedback-like"
+              @click="handleLike(true)"
+            />
+          </UnnnicToolTip>
+          <UnnnicToolTip
+            enabled
+            :text="$t('chats.summary.feedback.negative')"
+            side="left"
+          >
+            <UnnnicIcon
+              icon="thumb_down"
+              :filled="activeRoomSummary.feedback?.liked === false"
+              size="md"
+              clickable
+              scheme="neutral-dark"
+              data-testid="feedback-dislike"
+              @click="handleLike(false)"
+            />
+          </UnnnicToolTip>
+        </section>
+        <UnnnicTextArea
+          v-if="activeRoomSummary.feedback?.liked === false"
+          v-model="feedbackText"
+          :placeholder="$t('chats.summary.feedback.placeholder')"
+          :label="$t('other')"
+          :maxLength="150"
+          data-testid="feedback-textarea"
+        />
       </section>
-      <UnnnicTextArea
-        v-if="activeRoomSummary.feedback?.liked === false"
-        v-model="feedbackText"
-        :placeholder="$t('chats.summary.feedback.placeholder')"
-        :label="$t('other')"
-        :maxLength="150"
-        data-testid="feedback-textarea"
-      />
-    </section>
-  </UnnnicModalDialog>
+      <UnnnicDialogFooter>
+        <UnnnicButton
+          :text="$t('cancel')"
+          type="tertiary"
+          :disabled="isLoading"
+          @click="requestClose"
+        />
+        <UnnnicButton
+          :text="$t('submit')"
+          type="primary"
+          :disabled="disableSubmit"
+          :loading="isLoading"
+          @click="handleSubmit"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script>
@@ -97,6 +110,7 @@ export default {
       feedbackText: '',
       initialFeedback: null,
       isLoading: false,
+      isOpen: true,
       feedbackCategories: [],
       feedbackSelectedCategory: [],
     };
@@ -121,12 +135,29 @@ export default {
         this.getFeedbackCategory();
       },
     },
+    isOpen(value) {
+      if (!value) {
+        this.applyDismissReset();
+        this.$emit('close');
+      }
+    },
   },
   mounted() {
     this.initialFeedback = JSON.parse(JSON.stringify(this.activeRoomSummary));
     this.getFeedbackCategory();
   },
   methods: {
+    applyDismissReset() {
+      this.roomsSummary[this.activeRoom.uuid] = {
+        ...this.initialFeedback,
+        feedback: {
+          liked: null,
+        },
+      };
+    },
+    requestClose() {
+      this.isOpen = false;
+    },
     async getFeedbackCategory() {
       const { results } = await Room.getSummaryFeedbackTags();
       this.feedbackCategories = Object.entries(results).map(([key, value]) => ({
@@ -138,13 +169,7 @@ export default {
       this.activeRoomSummary.feedback.liked = liked;
     },
     handleCancel() {
-      this.roomsSummary[this.activeRoom.uuid] = {
-        ...this.initialFeedback,
-        feedback: {
-          liked: null,
-        },
-      };
-      this.$emit('close');
+      this.requestClose();
     },
     async handleSubmit() {
       this.isLoading = true;
@@ -178,14 +203,16 @@ export default {
   &__content {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-md;
+    gap: $unnnic-space-6;
+    padding: $unnnic-space-6;
+    overflow-y: auto;
   }
   &__rating {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: $unnnic-spacing-md;
-    gap: $unnnic-spacing-lg;
+    margin-top: $unnnic-space-6;
+    gap: $unnnic-space-8;
   }
 }
 </style>
