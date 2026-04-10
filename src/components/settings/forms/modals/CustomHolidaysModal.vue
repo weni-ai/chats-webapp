@@ -1,63 +1,84 @@
 <template>
-  <UnnnicModalDialog
-    :modelValue="true"
-    :title="$t('custom_holidays.title')"
-    showCloseIcon
-    :primaryButtonProps="{ text: $t('save'), loading: isLoading }"
-    @primary-button-click="save"
-    @update:model-value="$emit('close')"
+  <UnnnicDialog
+    v-model:open="isOpen"
+    class="custom-holidays-modal"
+    data-testid="modal-dialog"
   >
-    <section class="custom-holidays-modal__body">
-      <p>{{ $t('custom_holidays.description') }}</p>
-      <UnnnicDisclaimer
-        :description="$t('custom_holidays.disclaimer')"
-        type="attention"
-      />
-      <section
-        v-for="holiday in holidays"
-        :key="holiday.uuid"
-        class="custom-holidays-modal__holiday"
-      >
-        <p
-          :class="{
-            'custom-holidays-modal__holiday__title': true,
-            'custom-holidays-modal__holiday__title--deleted':
-              toDeleteIds.includes(holiday.uuid),
-          }"
+    <UnnnicDialogContent>
+      <UnnnicDialogHeader>
+        <UnnnicDialogTitle data-testid="modal-title">
+          {{ $t('custom_holidays.title') }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section class="custom-holidays-modal__body">
+        <p>{{ $t('custom_holidays.description') }}</p>
+        <UnnnicDisclaimer
+          :description="$t('custom_holidays.disclaimer')"
+          type="attention"
+        />
+        <section
+          v-for="holiday in holidays"
+          :key="holiday.uuid"
+          class="custom-holidays-modal__holiday"
         >
-          {{ getDateFormattedLabel(holiday) }}
-        </p>
-        <UnnnicToolTip
-          v-if="!toDeleteIds.includes(holiday.uuid)"
-          enabled
-          side="left"
-          :text="$t('delete')"
-        >
-          <UnnnicIcon
-            icon="delete"
-            clickable
-            scheme="feedback-red"
-            size="ant"
-            @click="toDeleteIds.push(holiday.uuid)"
-          />
-        </UnnnicToolTip>
-        <UnnnicToolTip
-          v-else
-          enabled
-          side="left"
-          :text="$t('undo')"
-        >
-          <UnnnicIcon
-            icon="undo"
-            clickable
-            scheme="neutral-dark"
-            size="ant"
-            @click="toDeleteIds.splice(toDeleteIds.indexOf(holiday.uuid), 1)"
-          />
-        </UnnnicToolTip>
+          <p
+            :class="{
+              'custom-holidays-modal__holiday__title': true,
+              'custom-holidays-modal__holiday__title--deleted':
+                toDeleteIds.includes(holiday.uuid),
+            }"
+          >
+            {{ getDateFormattedLabel(holiday) }}
+          </p>
+          <UnnnicToolTip
+            v-if="!toDeleteIds.includes(holiday.uuid)"
+            enabled
+            side="left"
+            :text="$t('delete')"
+          >
+            <UnnnicIcon
+              icon="delete"
+              clickable
+              scheme="feedback-red"
+              size="ant"
+              @click="toDeleteIds.push(holiday.uuid)"
+            />
+          </UnnnicToolTip>
+          <UnnnicToolTip
+            v-else
+            enabled
+            side="left"
+            :text="$t('undo')"
+          >
+            <UnnnicIcon
+              icon="undo"
+              clickable
+              scheme="neutral-dark"
+              size="ant"
+              @click="toDeleteIds.splice(toDeleteIds.indexOf(holiday.uuid), 1)"
+            />
+          </UnnnicToolTip>
+        </section>
       </section>
-    </section>
-  </UnnnicModalDialog>
+      <UnnnicDialogFooter>
+        <UnnnicButton
+          :text="$t('cancel')"
+          type="tertiary"
+          data-testid="modal-close"
+          :disabled="isLoading"
+          @click="close"
+        />
+        <UnnnicButton
+          :text="$t('save')"
+          type="primary"
+          data-testid="primary-button"
+          :disabled="isLoading"
+          :loading="isLoading"
+          @click="save"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script>
@@ -87,9 +108,20 @@ export default {
     return {
       toDeleteIds: [],
       isLoading: false,
+      isOpen: true,
     };
   },
+  watch: {
+    isOpen(value) {
+      if (!value) {
+        this.$emit('close');
+      }
+    },
+  },
   methods: {
+    close() {
+      this.isOpen = false;
+    },
     getDateFormattedLabel(holiday) {
       const start = moment(holiday.date.start).format('L');
       const end = moment(holiday.date.end).format('L');
@@ -134,7 +166,7 @@ export default {
       this.$emit('save', {
         holidays: filterHolidays,
       });
-      this.$emit('close');
+      this.close();
     },
   },
 };
@@ -145,14 +177,16 @@ export default {
   &__body {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-sm;
+    gap: $unnnic-space-4;
+    padding: $unnnic-space-6;
+    overflow-y: auto;
   }
 
   &__holiday {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: $unnnic-spacing-sm;
+    gap: $unnnic-space-4;
     &__title {
       &--deleted {
         text-decoration: line-through;
