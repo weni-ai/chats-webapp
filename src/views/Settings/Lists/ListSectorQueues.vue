@@ -1,6 +1,8 @@
 <template>
   <section class="sector-queues-form">
-    <p class="sector-queues-form__info">{{ $t('config_chats.queues.info') }}</p>
+    <h1 class="sector-queues-form__title">
+      {{ $t('config_chats.queues.title') }}
+    </h1>
     <section class="sector-queues-form__filters">
       <UnnnicInput
         v-model="queueNameFilter"
@@ -86,7 +88,9 @@
     ref="queueDrawer"
     :modelValue="showQueueDrawer"
     :title="
-      queueToConfig.uuid ? queueToConfig.name : $t('config_chats.queues.new')
+      queueToConfig[0].uuid
+        ? queueToConfig[0].name
+        : $t('config_chats.queues.new')
     "
     :description="$t('config_chats.queues.in_sector', { sector: sector.name })"
     size="lg"
@@ -129,8 +133,8 @@
 <script>
 import { mapState } from 'pinia';
 
-import FormQueue from '../forms/Queue.vue';
-import ListOrdinator from '@/components/settings/ListOrdinator.vue';
+import FormQueue from '@/views/Settings/Forms/Queue/index.vue';
+import ListOrdinator from '@/components/ListOrdinator.vue';
 import Queue from '@/services/api/resources/settings/queue';
 import ModalDeleteWithTransfer from '@/components/ModalDeleteWithTransfer.vue';
 
@@ -156,7 +160,7 @@ export default {
       queues: [],
       page: 0,
       showQueueDrawer: false,
-      queueToConfig: {},
+      queueToConfig: [{}],
       loadingQueueConfig: false,
       showDeleteQueueModal: false,
       queueToDelete: {},
@@ -275,29 +279,39 @@ export default {
     },
     openConfigQueueDrawer(queue = undefined) {
       this.handleConnectOverlay(true);
-      this.showQueueDrawer = true;
+
       if (queue) {
-        this.queueToConfig = {
-          ...queue,
-          queue_limit: {
-            is_active: queue?.queue_limit?.is_active,
-            limit: isNaN(parseInt(queue?.queue_limit?.limit))
-              ? null
-              : String(queue?.queue_limit?.limit),
+        this.queueToConfig = [
+          {
+            ...queue,
+            toAddAgentsUuids: [],
+            toRemoveAgentsUuids: [],
+            queue_limit: {
+              is_active: queue?.queue_limit?.is_active,
+              limit: isNaN(parseInt(queue?.queue_limit?.limit))
+                ? null
+                : String(queue?.queue_limit?.limit),
+            },
           },
-        };
+        ];
       } else {
-        this.queueToConfig = {
-          name: '',
-          default_message: '',
-          queue_limit: { is_active: false, limit: null },
-        };
+        this.queueToConfig = [
+          {
+            toAddAgentsUuids: [],
+            toRemoveAgentsUuids: [],
+            name: '',
+            default_message: '',
+            queue_limit: { is_active: false, limit: null },
+          },
+        ];
       }
+
+      this.showQueueDrawer = true;
     },
     closeQueueConfigDrawer() {
       this.handleConnectOverlay(false);
       this.showQueueDrawer = false;
-      this.queueToConfig = {};
+      this.queueToConfig = [{}];
     },
     async getQueues() {
       let hasNext = false;
@@ -321,14 +335,16 @@ export default {
           default_message,
           uuid = '',
           queue_limit,
-        } = this.queueToConfig;
+          toAddAgentsUuids,
+          toRemoveAgentsUuids,
+        } = this.queueToConfig[0];
 
-        if (this.queueToConfig.uuid) {
+        if (this.queueToConfig[0].uuid) {
           await Promise.all([
-            ...this.$refs.formQueue.toAddAgentsUuids.map((agentUuid) =>
-              Queue.addAgent(this.queueToConfig.uuid, agentUuid),
+            ...toAddAgentsUuids.map((agentUuid) =>
+              Queue.addAgent(this.queueToConfig[0].uuid, agentUuid),
             ),
-            ...this.$refs.formQueue.toRemoveAgentsUuids.map((agentUuid) =>
+            ...toRemoveAgentsUuids.map((agentUuid) =>
               Queue.removeAgent(agentUuid),
             ),
           ]);
@@ -361,13 +377,12 @@ export default {
               : { is_active: false, limit: null },
           });
           await Promise.all(
-            this.queueToConfig.currentAgents.map((agent) => {
+            this.queueToConfig[0].currentAgents.map((agent) => {
               Queue.addAgent(createdQueue.uuid, agent.uuid);
             }),
           );
           this.queues.push({
             ...createdQueue,
-            agents: this.queueToConfig.currentAgents?.length || 0,
           });
           unnnic.unnnicCallAlert({
             props: {
@@ -424,10 +439,9 @@ export default {
       flex: 1;
     }
   }
-  &__info {
-    color: $unnnic-color-fg-base;
-    font-size: $unnnic-font-size-body-gt;
-    line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
+  &__title {
+    font: $unnnic-font-display-3;
+    color: $unnnic-color-fg-emphasized;
   }
 
   &-grid {

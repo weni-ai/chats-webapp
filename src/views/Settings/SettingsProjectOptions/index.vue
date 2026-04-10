@@ -4,10 +4,9 @@
     class="settings-view__project-options"
   >
     <section class="project-options__header">
-      <SettingsSectionHeader
-        :title="$t('config_chats.project_configs.title')"
-      />
-      <CustomBreakOption />
+      <p class="project-options__header__title">
+        {{ $t('config_chats.project_configs.title') }}
+      </p>
     </section>
 
     <section class="project-options__items__config">
@@ -38,6 +37,7 @@
                 data-testid="ai-transfer-criteria-display"
               />
               <UnnnicButton
+                class="project-options__ai-transfer__edit-btn"
                 type="tertiary"
                 iconCenter="edit_square"
                 size="small"
@@ -75,17 +75,14 @@ import Project from '@/services/api/resources/settings/project';
 import agentBuilder from '@/services/api/resources/settings/agentBuilder';
 
 import SettingsProjectOptionsItem from './SettingsProjectOptionsItem.vue';
-import SettingsSectionHeader from '../SettingsSectionHeader.vue';
-import CustomBreakOption from './CustomBreakOption.vue';
+
 import AiTransferModal from './AiTransferModal.vue';
 
 export default {
   name: 'SettingsProjectOptions',
 
   components: {
-    SettingsSectionHeader,
     SettingsProjectOptionsItem,
-    CustomBreakOption,
     AiTransferModal,
   },
 
@@ -264,12 +261,6 @@ export default {
           name: this.configQueuePrioritizationTranslation,
         },
         {
-          key: 'can_see_timer',
-          type: 'flag',
-          visible: true,
-          name: this.configShowAgentStatusCountTimer,
-        },
-        {
           key: 'can_see_waiting_rooms_count',
           type: 'flag',
           visible: true,
@@ -386,12 +377,17 @@ export default {
 .settings-view__project-options {
   display: flex;
   flex-direction: column;
-  gap: $unnnic-spacing-ant;
+  gap: $unnnic-space-4;
 
   .project-options__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    &__title {
+      font: $unnnic-font-display-3;
+      color: $unnnic-color-fg-emphasized;
+    }
   }
 
   .project-options__items__config {
@@ -408,7 +404,12 @@ export default {
     &__inline {
       display: flex;
       align-items: flex-start;
-      gap: $unnnic-spacing-xs;
+      gap: $unnnic-space-2;
+    }
+
+    &__edit-btn {
+      align-self: flex-end;
+      margin-bottom: $unnnic-space-4;
     }
 
     &__criteria {

@@ -19,82 +19,19 @@
           v-model="sector.sign_messages"
           size="small"
           class="margin-y-space-1"
+          :helper="$t('sector.additional_options.agents_signature.hint')"
           :textRight="translationSignMessages"
           data-testid="config-switch"
         />
-        <UnnnicToolTip
-          enabled
-          :text="$t('sector.additional_options.agents_signature.tooltip')"
-          side="right"
-          maxWidth="15rem"
-        >
-          <UnnnicIconSvg
-            icon="information-circle-4"
-            scheme="fg-base"
-            size="sm"
-          />
-        </UnnnicToolTip>
       </section>
       <UnnnicSwitch
         v-model="sector.can_edit_custom_fields"
         class="margin-y-space-1"
-        :textRight="$t('sector.additional_options.edit_custom_fields')"
+        :helper="$t('sector.additional_options.edit_custom_fields.hint')"
+        :textRight="$t('sector.additional_options.edit_custom_fields.label')"
         data-testid="config-switch"
         size="small"
       />
-      <template
-        v-if="
-          featureFlags.active_features?.includes('weniChatsAutomaticMessage')
-        "
-      >
-        <section class="switchs__container">
-          <UnnnicSwitch
-            :modelValue="sector.automatic_message.is_active"
-            class="margin-y-space-1"
-            :textRight="
-              sector.automatic_message.is_active
-                ? $t(
-                    'sector.additional_options.automatic_message.switch_active',
-                  )
-                : $t(
-                    'sector.additional_options.automatic_message.switch_disabled',
-                  )
-            "
-            size="small"
-            data-testid="config-switch"
-            @update:model-value="handleAutomaticMessageIsActive"
-          />
-          <UnnnicToolTip
-            enabled
-            :text="$t('sector.additional_options.automatic_message.tooltip')"
-            side="right"
-            maxWidth="15rem"
-          >
-            <UnnnicIconSvg
-              icon="information-circle-4"
-              scheme="fg-base"
-              size="sm"
-            />
-          </UnnnicToolTip>
-        </section>
-        <fieldset v-if="sector.automatic_message.is_active">
-          <UnnnicInput
-            v-model="sector.automatic_message.text"
-            :maxlength="160"
-            :label="
-              $t('sector.additional_options.automatic_message.field.title')
-            "
-            :placeholder="
-              $t(
-                'sector.additional_options.automatic_message.field.placeholder',
-              )
-            "
-          />
-          <p class="automatic-message-count">
-            {{ sector.automatic_message?.text?.length || 0 }}/160
-          </p>
-        </fieldset>
-      </template>
       <section
         v-if="enableAutomaticCsatFeature"
         class="switchs__container"
@@ -114,12 +51,48 @@
         />
       </section>
     </section>
+    <section class="switchs">
+      <h2 class="switchs__title">
+        {{ $t('sector.additional_options.automated_message.title') }}
+      </h2>
+      <template
+        v-if="
+          featureFlags.active_features?.includes('weniChatsAutomaticMessage')
+        "
+      >
+        <section class="switchs__container">
+          <UnnnicSwitch
+            :modelValue="sector.automatic_message.is_active"
+            class="margin-y-space-1"
+            :textRight="
+              $t('sector.additional_options.automated_message.switch_label')
+            "
+            :helper="$t('sector.additional_options.automated_message.hint')"
+            size="small"
+            data-testid="config-switch"
+            @update:model-value="handleAutomaticMessageIsActive"
+          />
+        </section>
+
+        <UnnnicInput
+          v-if="sector.automatic_message.is_active"
+          v-model="sector.automatic_message.text"
+          :maxlength="160"
+          showMaxlengthCounter
+          :label="$t('sector.additional_options.automated_message.field.title')"
+          :placeholder="
+            $t('sector.additional_options.automated_message.field.placeholder')
+          "
+        />
+      </template>
+    </section>
+
     <section class="tags">
       <h2
         class="tags__title"
         data-testid="tags-title"
       >
-        {{ $t('tags.add.title') }}
+        {{ $t('sector.tags') }}
         <UnnnicToolTip
           enabled
           side="right"
@@ -127,41 +100,12 @@
           maxWidth="23rem"
         >
           <UnnnicIconSvg
-            icon="information-circle-4"
+            icon="ri:question-line"
             scheme="fg-base"
             size="sm"
           />
         </UnnnicToolTip>
       </h2>
-
-      <section class="switchs__container required-tags">
-        <UnnnicSwitch
-          v-model="sector.required_tags"
-          :disabled="tags.length === 0"
-          class="margin-y-space-1"
-          :textRight="
-            sector.required_tags
-              ? $t('sector.additional_options.required_tags.switch_active')
-              : $t('sector.additional_options.required_tags.switch_disabled')
-          "
-          size="small"
-          data-testid="config-switch"
-        />
-        <UnnnicToolTip
-          v-if="tags.length === 0"
-          enabled
-          :text="$t('sector.additional_options.required_tags.tooltip')"
-          side="right"
-          maxWidth="15rem"
-        >
-          <UnnnicIconSvg
-            icon="information-circle-4"
-            scheme="fg-base"
-            size="sm"
-          />
-        </UnnnicToolTip>
-      </section>
-
       <section class="tags-form">
         <UnnnicInput
           v-model="tagName"
@@ -180,7 +124,6 @@
           @click="addTag(tagName)"
         />
       </section>
-
       <section
         v-if="tags.length > 0"
         class="form-tags__section"
@@ -195,6 +138,18 @@
           hasCloseIcon
           selectable
           @close="removeTag($event)"
+        />
+      </section>
+      <section class="switchs__container required-tags">
+        <UnnnicSwitch
+          v-model="sector.required_tags"
+          :disabled="tags.length === 0"
+          class="margin-y-space-1"
+          :textRight="
+            $t('sector.additional_options.required_tags.switch_label')
+          "
+          size="small"
+          data-testid="config-switch"
         />
       </section>
     </section>
@@ -280,14 +235,10 @@ export default {
       return valid;
     },
     translationTriggerFlows() {
-      return this.sector.can_trigger_flows
-        ? this.$t('sector.additional_options.template_message.switch_active')
-        : this.$t('sector.additional_options.template_message.switch_disabled');
+      return this.$t('sector.additional_options.template_message.switch_label');
     },
     translationSignMessages() {
-      return this.sector.sign_messages
-        ? this.$t('sector.additional_options.agents_signature.switch_active')
-        : this.$t('sector.additional_options.agents_signature.switch_disabled');
+      return this.$t('sector.additional_options.agents_signature.switch_label');
     },
     tagsMarginBottom() {
       return this.isEditing ? '78px' : '0';
@@ -446,12 +397,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-fieldset {
-  border: none;
-  padding: 0;
-  margin: 0;
-}
-
 .form-actions {
   position: fixed;
   bottom: 0;
@@ -475,6 +420,10 @@ fieldset {
 }
 
 .sector-extra-options-form {
+  display: flex;
+  flex-direction: column;
+  gap: $unnnic-space-4;
+
   .automatic-message-count {
     font: $unnnic-font-caption-2;
     justify-self: flex-end;
@@ -490,7 +439,6 @@ fieldset {
       color: $unnnic-color-fg-base;
       font-size: $unnnic-font-size-body-lg;
       line-height: $unnnic-line-height-large * 1.5;
-      margin-bottom: $unnnic-spacing-ant;
     }
 
     &__container {
@@ -508,7 +456,6 @@ fieldset {
     display: flex;
     flex-direction: column;
     gap: $unnnic-space-4;
-    margin-top: $unnnic-spacing-sm;
     margin-bottom: v-bind(tagsMarginBottom);
 
     &__title {

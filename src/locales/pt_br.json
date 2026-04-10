@@ -129,6 +129,8 @@
     "info": "Defina uma resposta automática para ser enviada ao contato enquanto está aguardando atendimento, deixe em branco caso não queira nenhuma mensagem.",
     "placeholder": "Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando"
   },
+  "step_of": "Etapa {step} de {total}",
+  "type_to_filter": "Digite para filtrar",
   "attention": "Atenção",
   "updates_saved": "Atualizações salvas",
   "updated_info": "Informações atualizadas",
@@ -188,7 +190,7 @@
     "extra_options": "Opções extras",
     "queues": "Filas",
     "tags": "Etiquetas",
-    "add": "Definir setor",
+    "add_name_and_managers": "Defina um nome para o setor e seus gerentes",
     "add_queue": "Adicionar nova fila",
     "name": "Nome do setor",
     "placeholder": "Exemplo: Financeiro",
@@ -219,6 +221,7 @@
         "see_all_holidays": "Ver todos os feriados",
         "add_specific_dates": "Adicionar datas específicas",
         "see_all_specific_dates": "Ver todas as datas específicas",
+        "select_sector_to_copy": "Selecione o setor a copiar",
         "copy_to_all": "Copiar para todos os dias",
         "start": {
           "label": "Horário de início"
@@ -228,20 +231,27 @@
         },
         "limit_agents": {
           "label": "Limite de quantidade de atendimentos simultâneos por agente"
+        },
+        "message": {
+          "create_custom_holiday": {
+            "error": "Não foi possível adicionar algumas datas não trabalhadas. Verifique e tente novamente.",
+            "success": "Datas não trabalhadas adicionadas com sucesso"
+          }
         }
       }
     },
     "additional_options": {
       "title": "Opções extras",
       "template_message": {
-        "switch_active": "Disparo de modelos de mensagens ativo",
-        "switch_disabled": "Disparo de modelos de mensagens desativado"
+        "switch_label": "Disparo de modelos de mensagens"
       },
-      "edit_custom_fields": "Permitir que agentes editem Custom Fields",
+      "edit_custom_fields": {
+        "label": "Permitir que representantes editem informações personalizadas do contato",
+        "hint": "Quando ativa, permite que representantes editem os campos personalizados do contato na seção \"Todas as informações\"."
+      },
       "agents_signature": {
-        "tooltip": "Cada mensagem trocada terá o nome do agente que está respondendo",
-        "switch_active": "Assinatura ativa",
-        "switch_disabled": "Assinatura desativada"
+        "hint": "Cada mensagem trocada terá o nome do agente que está respondendo",
+        "switch_label": "Usar assinatura"
       },
       "csat": {
         "label": "Enviar automaticamente uma pesquisa de satisfação após o atendimento do Live desk ser encerrado",
@@ -251,19 +261,17 @@
           "content_2": "Deseja continuar mesmo assim?"
         }
       },
-      "automatic_message": {
-        "switch_active": "Mensagem automática de abertura ativa",
-        "switch_disabled": "Mensagem automática de abertura desativada",
-        "tooltip": "Configure uma mensagem que é enviada automaticamente em novos chats assim que são atribuídos a seu primeiro agente. O contato verá esta mensagem como se fosse enviada pelo próprio agente.",
+      "automated_message": {
+        "title": "Mensagens automatizadas",
+        "switch_label": "Enviar mensagem automática ao iniciar o atendimento",
+        "hint": "Envia automaticamente uma mensagem quando um chat é atribuído a um representante. A mensagem aparecerá como se enviada pelo representante atribuído.",
         "field": {
           "title": "Mensagem automática",
           "placeholder": "Exemplo: Olá! Como posso ajudar você hoje?"
         }
       },
       "required_tags": {
-        "switch_active": "Requerer tags ao final dos atendimentos ativo",
-        "switch_disabled": "Requerer tags ao final dos atendimentos desativado",
-        "tooltip": "Adicione pelo menos uma tag para ativar"
+        "switch_label": "Exigir tags ao final do atendimento humano"
       }
     }
   },
@@ -520,9 +528,8 @@
   "queue": "Fila",
   "agents": {
     "add": {
-      "title": "Adicionar agentes",
       "select": {
-        "label": "Selecionar agente",
+        "label": "Adicionar representante",
         "placeholder": "Pesquise pelo nome ou email"
       },
       "button": "Selecionar"
@@ -707,6 +714,7 @@
   "shortcut": "Atalho",
   "message": "Mensagem",
   "save": "Salvar",
+  "create": "Criar",
   "use": "Usar",
   "delete_sector": "Deletar setor",
   "delete_queue": "Excluir fila",
@@ -843,17 +851,22 @@
     }
   },
   "config_chats": {
-    "title": "Configurações",
-    "section_sectors_title": "Setores em {project}",
+    "title": "Preferências do Live Desk",
+    "section_sectors_title": "Gestão de setores",
+    "section_groups_title": "Gestão de grupos de projetos",
+    "filter_by_sector_name": "Filtrar por nome do setor",
+    "filter_by_group_name": "Filtrar por nome do grupo",
     "section_sectors_subtitle": "Adicione, visualize e gerencie os setores, filas, gestores e agentes dentro da sua organização.",
     "tabs": {
-      "settings": "Ajustes",
-      "groups": "Grupos de projetos"
+      "general": "Geral",
+      "groups": "Grupos de projetos",
+      "sectors": "Setores"
     },
     "custom_breaks": {
       "title": "Pausas personalizadas",
       "description": "Adicione novas pausas personalizadas, que terão o mesmo comportamento que as off-line, ou seja, o agente não receberá contatos enquanto estiver usando essas pausas personalizadas.",
       "fields": {
+        "hint": "Adicione até 10 status diferentes para uso como pausas personalizadas.",
         "name": "Novo status",
         "placeholder": "Exemplo: Almoço"
       },
@@ -861,27 +874,34 @@
       "status_duplicate_name": "Status já informado",
       "status_success": "Status adicionado com sucesso",
       "status_remove_success": "Status {status} removido",
-      "status_error": "Ops, infelizmente as alterações não foram salvas, tente novamente"
+      "status_error": "Ops, infelizmente as alterações não foram salvas, tente novamente",
+      "delete_modal": {
+        "description_1": "Tem certeza de que deseja excluir a pausa personalizada “{name}”?",
+        "description_2": "Depois de excluir, os dados não aparecerão mais no painel do Live Desk e não poderão ser recuperados.",
+        "error": "Não foi possível excluir a pausa personalizada.",
+        "success": "Pausa personalizada excluída com sucesso",
+        "title": "Excluir pausa personalizada"
+      }
     },
     "changes_saved": "Alterações salvas com sucesso!",
     "changes_not_saved": "Não foi possível salvar as alterações. Tente novamente.",
     "project_configs": {
-      "title": "Preferências do projeto",
+      "title": "Definições",
       "ai_transfer": {
         "switch_active": "Permitir que agentes de IA transfiram conversas para atendimento humano",
         "switch_inactive": "Permitir que agentes de IA transfiram conversas para atendimento humano",
         "modal_title": "Cenários ou critérios que requerem transferência para atendimento humano",
-        "textarea_label": "Defina os cenários ou critérios que requerem transferência para atendimento humano",
+        "textarea_label": "Cenários ou critérios",
         "textarea_placeholder": "Descreva os cenários ou critérios..."
       },
       "bulk_transfer": {
-        "tooltip": "Essa função permite que agentes transfiram diversos contatos de uma vez para uma fila ou agente",
-        "switch_active": "Transferir chats em massa para outra fila ou atendente",
-        "switch_inactive": "Transferir chats em massa para outra fila ou atendente"
+        "tooltip": "Essa função permite que representantes transfiram diversos contatos de uma vez para uma fila ou representante",
+        "switch_active": "Transferir chats em massa para outra fila ou representante",
+        "switch_inactive": "Transferir chats em massa para outra fila ou representante"
       },
       "block_transfer_to_off_agents": {
-        "switch_active": "Bloquear a transferência de chats para atendentes offline",
-        "switch_inactive": "Bloquear a transferência de chats para atendentes offline"
+        "switch_active": "Bloquear transferência de chats para representantes offline",
+        "switch_inactive": "Bloquear transferência de chats para representantes offline"
       },
       "bulk_close": {
         "switch_active": "Finalizar chats em massa",
@@ -896,13 +916,13 @@
         "switch_inactive": "Assumir chats em massa"
       },
       "queue_prioritization": {
-        "tooltip": "Essa função permite que agentes possam escolher as filas que receberão contatos, dentro das previamente selecionadas no setor",
-        "switch_active": "Permitir que atendentes escolham suas filas dentro do setor",
-        "switch_inactive": "Permitir que atendentes escolham suas filas dentro do setor"
+        "tooltip": "Essa função permite que representantes escolham as filas que receberão contatos, dentro das previamente selecionadas no setor",
+        "switch_active": "Permitir que representantes escolham suas filas dentro do setor",
+        "switch_inactive": "Permitir que representantes escolham suas filas dentro do setor"
       },
       "show_agent_status_count_timer": {
-        "switch_active": "Exibir temporizador de status em pausas personalizadas do atendente",
-        "switch_inactive": "Exibir temporizador de status em pausas personalizadas do atendente"
+        "switch_active": "Exibir temporizador de status em pausas personalizadas do representante",
+        "switch_inactive": "Exibir temporizador de status em pausas personalizadas do representante"
       },
       "show_waiting_rooms_count": {
         "switch_label": "Exibir o contador com o número de chats esperando atendimento humano"
@@ -929,11 +949,16 @@
     },
     "queues": {
       "in_sector": "Fila no setor {sector}",
-      "delete_or_edit": "Excluir ou editar",
       "new": "Nova fila",
-      "info": "As filas são grupos de atendimento dentro de um setor, é possível direcionar contatos de um fluxo para uma fila específica",
+      "title": "Gestão de filas",
       "hint": "As filas são grupos de atendimento dentro do setor, você poderá criar novas filas ou editar quando quiser",
-      "queue_definitions": "Definições da fila",
+      "add_queue": "Adicionar fila",
+      "delete_this_queue": "Excluir esta fila",
+      "configure_queue": {
+        "title": "Configurar fila",
+        "tooltip": "As filas são grupos de atendimento dentro do setor. Você pode criar novas filas ou editá-las quando quiser após criar o setor."
+      },
+      "delete_or_edit": "Excluir ou editar",
       "limit_chats": {
         "title": "Limite de chats aguardando suporte",
         "switch": {
@@ -952,6 +977,15 @@
         "add_new_queue": "Esta nova fila será adicionada para todos os agentes. Você poderá removê-la acessando <b>Configurações do Chat > Grupos > Agentes</b>",
         "config_agents_group": "Adicione ou remova atendentes a esta fila através dos grupos de projetos acessando <b>Configurações do Chat > Grupos de projetos</b>"
       }
+    },
+    "quick_messages": {
+      "title": {
+        "label": "Configurar uma mensagem rápida",
+        "tooltip": "As mensagens rápidas são textos prontos que ajudam a padronizar o atendimento. Todos os agentes deste setor poderão usar essas mensagens. É possível cadastrar novas mensagens abaixo."
+      },
+      "new": "Nova mensagem rápida",
+      "add": "Adicionar nova mensagem rápida",
+      "delete_this_quick_message": "Excluir esta mensagem rápida"
     },
     "groups": {
       "new": {
@@ -1019,7 +1053,17 @@
     "new_group": "Novo grupo",
     "agent_title": "Agentes",
     "contacts": "Contatos",
-    "open": "Abrir"
+    "open": "Abrir",
+    "empty_sectors": {
+      "title": "Não há setores neste projeto",
+      "subtitle": "Crie o primeiro setor para começar a usar o módulo Live Desk",
+      "action": "Criar setor"
+    },
+    "empty_groups": {
+      "title": "Não há grupos de projetos em {projectName}",
+      "subtitle": "Crie o primeiro grupo",
+      "action": "Criar grupo de projetos"
+    }
   },
   "new_sector": {
     "sector_tip": "Crie um setor para gerenciar a operação de atendimento, adicionando gerentes, agentes e horário de funcionamento",

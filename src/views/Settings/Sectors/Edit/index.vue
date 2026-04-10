@@ -57,16 +57,16 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapWritableState } from 'pinia';
 
 import { useSettings } from '@/store/modules/settings';
 
 import SectorEditHeader from './SectorEditHeader.vue';
 
-import FormSectorGeneral from '@/components/settings/forms/General.vue';
-import FormSectorExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
-import ListSectorQueues from '@/components/settings/lists/ListSectorQueues.vue';
-import ListSectorMessages from '@/components/settings/lists/ListSectorMessages.vue';
+import FormSectorGeneral from '@/views/Settings/Forms/General.vue';
+import FormSectorExtraOptions from '@/views/Settings/Forms/ExtraOptions.vue';
+import ListSectorQueues from '@/views/Settings/Lists/ListSectorQueues.vue';
+import ListSectorMessages from '@/views/Settings/Lists/ListSectorMessages.vue';
 
 import { useConfig } from '@/store/modules/config';
 
@@ -102,14 +102,14 @@ export default {
   },
 
   computed: {
-    ...mapState(useSettings, ['currentSector']),
+    ...mapWritableState(useSettings, ['currentSector']),
 
     tabs() {
       const { $t } = this;
       return [
         { name: $t('sector.general'), id: 'general' },
-        { name: $t('sector.extra_options'), id: 'extra_options' },
         { name: $t('sector.queues'), id: 'queues' },
+        { name: $t('sector.extra_options'), id: 'extra_options' },
         { name: $t('quick_message'), id: 'quick_messages' },
       ];
     },
@@ -134,7 +134,7 @@ export default {
   },
 
   unmounted() {
-    useSettings().$patch({ currentSector: null });
+    this.currentSector = null;
   },
 
   methods: {
@@ -202,7 +202,7 @@ export default {
 <style lang="scss" scoped>
 .sector-edit-view {
   display: grid;
-  gap: $unnnic-spacing-sm;
-  padding: $unnnic-spacing-sm;
+  gap: $unnnic-space-4;
+  padding: $unnnic-space-4;
 }
 </style>

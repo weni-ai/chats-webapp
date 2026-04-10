@@ -1,74 +1,42 @@
 <template>
   <section class="form-agent">
-    <section class="section">
-      <p class="title">
-        {{ $t('agents.add.title') }}
-        <UnnnicToolTip
-          enabled
-          side="right"
-          :text="$t('new_sector.agent_tip')"
-        >
-          <UnnnicIconSvg
-            icon="information-circle-4"
-            scheme="fg-base"
-            size="sm"
-          />
-        </UnnnicToolTip>
-      </p>
-
-      <section class="controls">
-        <div>
-          <UnnnicSelect
-            v-model="agentSelection"
-            :options="agentsNames"
-            :label="$t('agents.add.select.label')"
-            :placeholder="$t('agents.add.select.placeholder')"
-            returnObject
-            clearable
-            enableSearch
-            :search="searchAgent"
-            @update:search="searchAgent = $event"
-          />
-        </div>
-      </section>
-    </section>
-
-    <section
-      v-if="selectedAgents.length > 0"
-      class="form-agent__agents"
-    >
-      <SelectedMember
-        v-for="selectedAgent in selectedAgents"
-        :key="selectedAgent.uuid"
-        :name="
-          selectedAgent.user.first_name + ' ' + selectedAgent.user.last_name
-        "
-        :email="selectedAgent.user.email"
-        :roleName="$t('agent')"
-        @remove="remove(selectedAgent.uuid)"
+    <section class="controls">
+      <UnnnicSelect
+        v-model="agentSelection"
+        :options="agentsNames"
+        :label="$t('agents.add.select.label')"
+        :placeholder="$t('agents.add.select.placeholder')"
+        returnObject
+        clearable
+        enableSearch
+        :search="searchAgent"
+        @update:search="searchAgent = $event"
       />
     </section>
+    <TagGroup
+      v-if="selectedAgents.length > 0"
+      :tags="selectedAgentsTags"
+      disabledTag
+      hasCloseIcon
+      @close="(agent) => remove(agent.uuid)"
+    />
   </section>
 </template>
 
 <script>
-import SelectedMember from '@/components/settings/forms/SelectedMember.vue';
+import TagGroup from '@/components/TagGroup.vue';
 
 export default {
   name: 'FormAgent',
 
   components: {
-    SelectedMember,
+    TagGroup,
   },
 
   props: {
     agents: {
       type: Array,
       default: () => [],
-    },
-    sector: {
-      type: Object,
-      default: () => ({}),
     },
     modelValue: {
       type: Array,
@@ -77,12 +45,24 @@ export default {
   },
   emits: ['update:modelValue', 'validate', 'remove', 'select'],
 
-  data: () => ({
-    agentSelection: null,
-    searchAgent: '',
-  }),
+  data() {
+    return {
+      agentSelection: null,
+      searchAgent: '',
+    };
+  },
 
   computed: {
+    selectedAgentsTags() {
+      return this.selectedAgents.map((agent) => {
+        const {
+          user: { first_name, last_name, email },
+        } = agent;
+        const agentName = `${first_name} ${last_name}`.trim();
+        const formattedName = agentName ? `${agentName} (${email})` : email;
+        return { uuid: agent.uuid, name: formattedName };
+      });
+    },
     agentsNames() {
       return this.agents.map((agent) => {
         const {
@@ -150,10 +130,6 @@ export default {
 
 <style lang="scss" scoped>
 .form-agent {
-  .section {
-    margin-bottom: 1.5rem;
-  }
-
   .title {
     font-weight: $unnnic-font-weight-bold;
     color: $unnnic-color-fg-base;
