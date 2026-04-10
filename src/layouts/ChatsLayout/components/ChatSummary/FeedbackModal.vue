@@ -203,14 +203,16 @@ export default {
   &__content {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-md;
+    gap: $unnnic-space-6;
+    padding: $unnnic-space-6;
+    overflow-y: auto;
   }
   &__rating {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: $unnnic-spacing-md;
-    gap: $unnnic-spacing-lg;
+    margin-top: $unnnic-space-6;
+    gap: $unnnic-space-8;
   }
 }
 </style>
