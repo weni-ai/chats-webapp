@@ -113,15 +113,16 @@
         />
       </section>
     </section>
-    <ModalConfirmDelete
+    <ModalDeleteWithTransfer
       v-if="showDeleteSectorModal"
       v-model="showDeleteSectorModal"
       data-testid="modal-delete-sector"
-      :title="$t('delete_sector') + ` ${toDeleteSector.name}`"
-      :description="$t('cant_revert')"
-      :confirmText="toDeleteSector.name"
+      type="sector"
+      :name="toDeleteSector.name"
+      :excludeSectorUuid="toDeleteSector.uuid"
+      :inProgressChatsCount="sectorRoomsCount"
       :isLoading="isLoadingDeleteSector"
-      @confirm="handlerDeleteSector(toDeleteSector.uuid)"
+      @confirm="handlerDeleteSector(toDeleteSector.uuid, $event)"
       @cancel="handlerCloseDeleteSectorModal()"
     />
   </section>
@@ -133,10 +134,12 @@ import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { UnnnicCallAlert } from '@weni/unnnic-system';
 
-import ModalConfirmDelete from '@/components/ModalConfirmDelete.vue';
+import ModalDeleteWithTransfer from '@/components/ModalDeleteWithTransfer.vue';
 import ListOrdinator from '@/components/ListOrdinator.vue';
 
 import { useSettings } from '@/store/modules/settings';
+
+import Sector from '@/services/api/resources/settings/sector';
 
 import i18n from '@/plugins/i18n';
 
@@ -158,6 +161,7 @@ const toDeleteSector = ref<{ uuid: string; name: string }>({
   uuid: '',
   name: '',
 });
+const sectorRoomsCount = ref(0);
 const isLoadingDeleteSector = ref(false);
 
 const settingsStore = useSettings();
@@ -196,9 +200,16 @@ onMounted(() => {
   getSectors(true);
 });
 
-const handlerOpenDeleteSectorModal = (sector) => {
+const handlerOpenDeleteSectorModal = async (sector) => {
   toDeleteSector.value = sector;
   handleConnectOverlay(true);
+  try {
+    const { waiting, in_service } = await Sector.roomsCount(sector.uuid);
+    sectorRoomsCount.value = waiting + in_service;
+  } catch {
+    sectorRoomsCount.value = 0;
+  }
+
   showDeleteSectorModal.value = true;
 };
 
@@ -208,24 +219,36 @@ const handlerCloseDeleteSectorModal = () => {
   showDeleteSectorModal.value = false;
 };
 
-const handlerDeleteSector = async (sectorUuid) => {
+const handlerDeleteSector = async (sectorUuid, transferPayload) => {
   try {
     isLoadingDeleteSector.value = true;
-    await deleteSector(sectorUuid);
+
+    const options: Record<string, any> = {};
+
+    if (transferPayload.action === 'transfer') {
+      options.transferToQueue = transferPayload.transferQueueUuid;
+    } else if (transferPayload.action === 'end_all') {
+      options.endAllChats = true;
+    }
+
+    await deleteSector(sectorUuid, options);
 
     router.push({ name: 'sectors' });
+
     UnnnicCallAlert({
       props: {
-        text: t('sector_deleted_success'),
+        text: t('delete_modal.sector_success'),
         type: 'success',
       },
       seconds: 5,
     });
   } catch (error) {
-    console.log('error deleting sector', error);
+    const isTransferConflict = error?.response?.status === 409;
     UnnnicCallAlert({
       props: {
-        text: t('sector_delete_error'),
+        text: isTransferConflict
+          ? t('delete_modal.transfer_error_sector')
+          : t('delete_modal.sector_error'),
         type: 'error',
       },
       seconds: 5,
