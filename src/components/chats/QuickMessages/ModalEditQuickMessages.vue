@@ -1,25 +1,37 @@
 <template>
-  <UnnnicModalDialog
-    :modelValue="true"
-    :title="title"
-    showCloseIcon
-    size="lg"
-    :primaryButtonProps="{
-      text: $t('save'),
-      disabled: !validForm,
-      loading: isLoading,
-    }"
-    :secondaryButtonProps="{ text: $t('cancel'), disabled: isLoading }"
-    @primary-button-click="$emit('save')"
-    @secondary-button-click="close()"
-    @close="close()"
-    @update:model-value="close()"
+  <UnnnicDialog
+    v-model:open="isOpen"
+    class="modal-edit-quick-messages"
   >
-    <MessageForm
-      :modelValue="quickMessage"
-      @update:model-value="$emit('update:quickMessage', $event)"
-    />
-  </UnnnicModalDialog>
+    <UnnnicDialogContent size="large">
+      <UnnnicDialogHeader>
+        <UnnnicDialogTitle>
+          {{ title }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section class="modal-edit-quick-messages__content">
+        <MessageForm
+          :modelValue="quickMessage"
+          @update:model-value="$emit('update:quickMessage', $event)"
+        />
+      </section>
+      <UnnnicDialogFooter>
+        <UnnnicButton
+          :text="$t('cancel')"
+          type="tertiary"
+          :disabled="isLoading"
+          @click="close"
+        />
+        <UnnnicButton
+          :text="$t('save')"
+          type="primary"
+          :disabled="!validForm"
+          :loading="isLoading"
+          @click="$emit('save')"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script>
@@ -45,6 +57,11 @@ export default {
     },
   },
   emits: ['close', 'update:quickMessage', 'save'],
+  data() {
+    return {
+      isOpen: true,
+    };
+  },
   computed: {
     validForm() {
       return !!(
@@ -52,16 +69,25 @@ export default {
       );
     },
   },
+  watch: {
+    isOpen(value) {
+      if (!value) {
+        this.$emit('close');
+      }
+    },
+  },
   methods: {
-    save() {
-      this.$emit('save', this.quickMessage);
-    },
     close() {
-      this.$emit('close');
-    },
-    updateQuickMessage(quickMessage) {
-      this.$emit('update:quickMessage', quickMessage);
+      this.isOpen = false;
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.modal-edit-quick-messages {
+  &__content {
+    padding: $unnnic-space-6;
+  }
+}
+</style>
