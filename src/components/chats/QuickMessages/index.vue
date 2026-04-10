@@ -140,7 +140,7 @@ export default {
     async createQuickMessage({ title, text, shortcut }) {
       try {
         this.isLoadingUpdateQuickMessage = true;
-        this.actionCreateQuickMessage({ title, text, shortcut });
+        await this.actionCreateQuickMessage({ title, text, shortcut });
 
         callUnnnicAlert({
           props: {
@@ -187,7 +187,7 @@ export default {
         this.isLoadingDeleteQuickMessage = true;
         const { uuid } = this.quickMessageToDelete;
 
-        this.actionDeleteQuickMessage(uuid);
+        await this.actionDeleteQuickMessage(uuid);
         this.quickMessageToDelete = null;
       } catch (error) {
         console.error(error);
