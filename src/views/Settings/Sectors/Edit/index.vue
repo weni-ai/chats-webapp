@@ -9,7 +9,12 @@
       @back="router.push('/settings/')"
     >
       <template #actions>
-        <!-- TODO: save actions    -->
+        <UnnnicButton
+          v-if="activeTab?.id === 'quick_messages'"
+          iconLeft="add"
+          :text="$t('quick_messages.new')"
+          @click="listSectorMessagesRef?.openConfigMessageDrawer()"
+        />
       </template>
       <template #tabs>
         <UnnnicTabs
@@ -59,6 +64,7 @@
             <section class="sector-edit__content">
               <ListSectorMessages
                 v-if="sector.uuid"
+                ref="listSectorMessages"
                 data-testid="sector-quick-messages-list"
                 :sector="sector"
               />
@@ -71,7 +77,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import {
+  computed,
+  onMounted,
+  onUnmounted,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -81,7 +94,7 @@ import { useConfig } from '@/store/modules/config';
 import FormSectorGeneral from '@/views/Settings/Forms/General.vue';
 import FormSectorExtraOptions from '@/views/Settings/Forms/ExtraOptions.vue';
 import ListSectorQueues from '@/views/Settings/Lists/ListSectorQueues.vue';
-import ListSectorMessages from '@/views/Settings/Lists/ListSectorMessages.vue';
+import ListSectorMessages from '@/views/Settings/Lists/ListSectorMessages/index.vue';
 
 import i18n from '@/plugins/i18n';
 
@@ -103,6 +116,8 @@ const { currentSector } = storeToRefs(settingsStore);
 const configStore = useConfig();
 const { setCopilotActive, setCopilotCustomRulesActive, setCopilotCustomRules } =
   configStore;
+
+const listSectorMessagesRef = useTemplateRef('listSectorMessages');
 
 const activeTab = ref<{ name: string; id: string } | null>(null);
 
