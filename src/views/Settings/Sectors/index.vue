@@ -51,7 +51,9 @@
           clickable
           class="sectors__card"
           data-testid="settings-sectors-sector-card"
-          @click="navigate('sectors.edit', { uuid: sector.uuid })"
+          @click="
+            navigate('sectors.edit', { uuid: sector.uuid }, { tab: 'general' })
+          "
         >
           <template #headerSlot>
             <UnnnicDropdown position="top-left">
@@ -70,7 +72,13 @@
               </template>
               <UnnnicDropdownItem
                 data-testid="dropdown-edit"
-                @click="navigate('sectors.edit', { uuid: sector.uuid })"
+                @click="
+                  navigate(
+                    'sectors.edit',
+                    { uuid: sector.uuid },
+                    { tab: 'general' },
+                  )
+                "
               >
                 <section class="dropdown-item-content">
                   <UnnnicIconSvg
@@ -241,10 +249,11 @@ const handleConnectOverlay = (active) => {
   window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
 };
 
-const navigate = (name, params) => {
+const navigate = (name, params, query = {}) => {
   router.push({
     name,
     params,
+    query,
   });
 };
 </script>

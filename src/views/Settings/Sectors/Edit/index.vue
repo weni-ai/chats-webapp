@@ -1,208 +1,214 @@
 <template>
   <section
     v-if="currentSector"
-    class="sector-edit-view"
+    class="sector-edit"
   >
-    <SectorEditHeader
-      data-testid="sector-edit-view-header"
-      :sectorName="currentSector.name"
-    />
-
-    <UnnnicTab
-      data-testid="sector-edit-view-tab-list"
-      :tabs="tabIds"
-      :activeTab="activeTab?.id"
-      @change="updateTab"
+    <UnnnicPageHeader
+      :title="currentSector.name"
+      hasBackButton
+      @back="router.push('/settings/')"
     >
-      <template
-        v-for="tab in tabs"
-        #[`tab-head-${tab.id}`]
-        :key="`tab-head-${tab.id}`"
-      >
-        {{ tab.name }}
+      <template #actions>
+        <!-- TODO: save actions    -->
       </template>
-
-      <template #tab-panel-general>
-        <FormSectorGeneral
-          v-if="sector.uuid"
-          v-model="sector"
-          isEditing
-          data-testid="general-form"
-        />
+      <template #tabs>
+        <UnnnicTabs
+          defaultValue="general"
+          :modelValue="activeTab?.id"
+          @update:model-value="updateTab"
+        >
+          <UnnnicTabsList>
+            <UnnnicTabsTrigger
+              v-for="tab in tabs"
+              :key="tab.id"
+              :value="tab.id"
+            >
+              {{ tab.name }}
+            </UnnnicTabsTrigger>
+          </UnnnicTabsList>
+          <UnnnicTabsContent value="general">
+            <section class="sector-edit__content">
+              <FormSectorGeneral
+                v-if="sector.uuid"
+                v-model="sector"
+                isEditing
+                data-testid="general-form"
+              />
+            </section>
+          </UnnnicTabsContent>
+          <UnnnicTabsContent value="queues">
+            <section class="sector-edit__content">
+              <ListSectorQueues
+                v-if="sector.uuid"
+                :sector="sector"
+                :data-testid="`sector-queues-list`"
+              />
+            </section>
+          </UnnnicTabsContent>
+          <UnnnicTabsContent value="extra_options">
+            <section class="sector-edit__content">
+              <FormSectorExtraOptions
+                v-if="sector.uuid"
+                v-model="sector"
+                data-testid="extra-options-form"
+                isEditing
+              />
+            </section>
+          </UnnnicTabsContent>
+          <UnnnicTabsContent value="quick_messages">
+            <section class="sector-edit__content">
+              <ListSectorMessages
+                v-if="sector.uuid"
+                data-testid="sector-quick-messages-list"
+                :sector="sector"
+              />
+            </section>
+          </UnnnicTabsContent>
+        </UnnnicTabs>
       </template>
-      <template #tab-panel-extra_options>
-        <FormSectorExtraOptions
-          v-if="sector.uuid"
-          v-model="sector"
-          data-testid="extra-options-form"
-          isEditing
-        />
-      </template>
-      <template #tab-panel-queues>
-        <ListSectorQueues
-          v-if="sector.uuid"
-          :sector="sector"
-          :data-testid="`sector-queues-list`"
-        />
-      </template>
-      <template #tab-panel-quick_messages>
-        <ListSectorMessages
-          v-if="sector.uuid"
-          data-testid="sector-quick-messages-list"
-          :sector="sector"
-        />
-      </template>
-    </UnnnicTab>
+    </UnnnicPageHeader>
   </section>
 </template>
 
-<script>
-import { mapActions, mapWritableState } from 'pinia';
+<script setup lang="ts">
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useRoute, useRouter } from 'vue-router';
 
 import { useSettings } from '@/store/modules/settings';
-
-import SectorEditHeader from './SectorEditHeader.vue';
+import { useConfig } from '@/store/modules/config';
 
 import FormSectorGeneral from '@/views/Settings/Forms/General.vue';
 import FormSectorExtraOptions from '@/views/Settings/Forms/ExtraOptions.vue';
 import ListSectorQueues from '@/views/Settings/Lists/ListSectorQueues.vue';
 import ListSectorMessages from '@/views/Settings/Lists/ListSectorMessages.vue';
 
-import { useConfig } from '@/store/modules/config';
+import i18n from '@/plugins/i18n';
 
-export default {
-  name: 'EditSector',
+import type { Sector } from '@/types/Sector';
 
-  components: {
-    SectorEditHeader,
-    FormSectorGeneral,
-    FormSectorExtraOptions,
-    ListSectorQueues,
-    ListSectorMessages,
+defineOptions({
+  name: 'EditSectorView',
+});
+
+const { t } = i18n.global;
+
+const router = useRouter();
+const route = useRoute();
+
+const settingsStore = useSettings();
+const { getCurrentSector } = settingsStore;
+const { currentSector } = storeToRefs(settingsStore);
+
+const configStore = useConfig();
+const { setCopilotActive, setCopilotCustomRulesActive, setCopilotCustomRules } =
+  configStore;
+
+const activeTab = ref<{ name: string; id: string } | null>(null);
+
+const sector = ref<Sector>({
+  uuid: '',
+  name: '',
+  config: {} as Record<string, any>,
+  can_trigger_flows: false,
+  can_edit_custom_fields: false,
+  automatic_message: {
+    is_active: false,
+    text: '',
   },
+  sign_messages: false,
+  rooms_limit: 0,
+  required_tags: false,
+  is_csat_enabled: false,
+  managers: [],
+});
 
-  data() {
-    return {
-      activeTab: '',
-      sector: {
-        uuid: '',
-        name: '',
-        can_trigger_flows: '',
-        can_edit_custom_fields: '',
-        automatic_message: {
-          is_active: false,
-          text: '',
-        },
-        sign_messages: '',
-        managers: [],
-        maxSimultaneousChatsByAgent: '',
-        required_tags: false,
+const tabs = computed(() => [
+  { name: t('sector.general'), id: 'general' },
+  { name: t('sector.queues'), id: 'queues' },
+  { name: t('sector.extra_options'), id: 'extra_options' },
+  { name: t('quick_message'), id: 'quick_messages' },
+]);
+
+const updateTab = (newTab: string) => {
+  const newActiveTab = tabs.value.find((tab) =>
+    [tab.name, tab.id].includes(newTab),
+  );
+
+  if (!newActiveTab) return;
+
+  activeTab.value = newActiveTab;
+
+  if (activeTab.value) {
+    router.replace({
+      name: route.name,
+      query: {
+        tab: activeTab.value.id,
       },
-    };
-  },
-
-  computed: {
-    ...mapWritableState(useSettings, ['currentSector']),
-
-    tabs() {
-      const { $t } = this;
-      return [
-        { name: $t('sector.general'), id: 'general' },
-        { name: $t('sector.queues'), id: 'queues' },
-        { name: $t('sector.extra_options'), id: 'extra_options' },
-        { name: $t('quick_message'), id: 'quick_messages' },
-      ];
-    },
-
-    tabIds() {
-      return this.tabs.map((tab) => tab.id);
-    },
-  },
-
-  watch: {
-    currentSector(sector) {
-      if (sector) this.handlerSectorData();
-    },
-  },
-
-  async mounted() {
-    const { params, query } = this.$route;
-
-    await this.getCurrentSector(params.uuid);
-
-    this.updateTab(query.tab);
-  },
-
-  unmounted() {
-    this.currentSector = null;
-  },
-
-  methods: {
-    ...mapActions(useSettings, ['getCurrentSector']),
-
-    ...mapActions(useConfig, [
-      'setCopilotActive',
-      'setCopilotCustomRulesActive',
-      'setCopilotCustomRules',
-    ]),
-
-    updateTab(newTab) {
-      const newActiveTab = this.tabs.find((tab) =>
-        [tab.name, tab.id].includes(newTab),
-      );
-
-      if (!newActiveTab) return;
-
-      this.activeTab = newActiveTab;
-
-      if (this.activeTab) {
-        this.$router.replace({
-          name: this.$route.name,
-          query: {
-            tab: this.activeTab.id,
-          },
-        });
-      }
-    },
-
-    handlerSectorData() {
-      const {
-        name,
-        can_trigger_flows,
-        can_edit_custom_fields,
-        config,
-        sign_messages,
-        rooms_limit,
-        uuid,
-        automatic_message,
-        required_tags,
-        is_csat_enabled,
-      } = this.currentSector;
-      this.sector = {
-        ...this.sector,
-        uuid,
-        name,
-        can_trigger_flows,
-        can_edit_custom_fields,
-        config,
-        sign_messages,
-        maxSimultaneousChatsByAgent: rooms_limit.toString(),
-        automatic_message,
-        required_tags,
-        is_csat_enabled,
-      };
-      this.setCopilotActive(this.sector.config?.can_use_chat_completion);
-      this.setCopilotCustomRulesActive(this.sector.config?.can_input_context);
-      this.setCopilotCustomRules(this.sector.config?.completion_context);
-    },
-  },
+    });
+  }
 };
+
+const handlerSectorData = () => {
+  const {
+    name,
+    can_trigger_flows,
+    can_edit_custom_fields,
+    config,
+    sign_messages,
+    rooms_limit,
+    uuid,
+    automatic_message,
+    required_tags,
+    is_csat_enabled,
+  } = currentSector.value;
+  sector.value = {
+    ...sector.value,
+    uuid,
+    name,
+    can_trigger_flows,
+    can_edit_custom_fields,
+    config,
+    sign_messages,
+    rooms_limit: rooms_limit.toString(),
+    automatic_message,
+    required_tags,
+    is_csat_enabled,
+  };
+  setCopilotActive(sector.value.config?.can_use_chat_completion);
+  setCopilotCustomRulesActive(sector.value.config?.can_input_context);
+  setCopilotCustomRules(sector.value.config?.completion_context);
+};
+
+onMounted(async () => {
+  const { params, query } = route;
+
+  await getCurrentSector(params.uuid);
+
+  updateTab(query.tab as string);
+});
+
+onUnmounted(() => {
+  currentSector.value = null;
+});
+
+watch(currentSector, (sector) => {
+  if (sector) handlerSectorData();
+});
 </script>
 
 <style lang="scss" scoped>
-.sector-edit-view {
+.sector-edit {
   display: grid;
   gap: $unnnic-space-4;
   padding: $unnnic-space-4;
+  &__content {
+    margin-top: $unnnic-space-6;
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-6;
+    width: 100%;
+    overflow-y: auto;
+  }
 }
 </style>

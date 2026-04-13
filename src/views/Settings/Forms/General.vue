@@ -196,7 +196,7 @@
 
           <UnnnicInput
             v-else
-            v-model="sector.maxSimultaneousChatsByAgent"
+            v-model="sector.rooms_limit"
             :label="$t('sector.managers.working_day.limit_agents.label')"
             placeholder="4"
             class="form-section__inputs--fill-w"
@@ -436,7 +436,7 @@ export default {
     },
 
     validForm() {
-      const { name, managers, maxSimultaneousChatsByAgent } = this.sector;
+      const { name, managers, rooms_limit } = this.sector;
 
       const hasWorkday = this.workdayDaysTimeOptions.length >= 1;
 
@@ -459,9 +459,7 @@ export default {
         !!this.selectedProject &&
         (this.isEditing || !this.selectedProjectHasSectorIntegration);
 
-      const singleValid = !!(
-        managers.length > 0 && maxSimultaneousChatsByAgent
-      );
+      const singleValid = !!(managers.length > 0 && rooms_limit);
 
       const valid = this.enableGroupsMode
         ? commonValid && groupValid
@@ -654,7 +652,7 @@ export default {
         this.sector = {
           ...this.sector,
           name: this.$t('config_chats.default_sector.name'),
-          maxSimultaneousChatsByAgent: this.enableGroupsMode ? '' : '4',
+          rooms_limit: this.enableGroupsMode ? '' : '4',
           managers: this.enableGroupsMode ? [] : [meManager],
         };
       } else {
@@ -682,7 +680,7 @@ export default {
         this.sector = {
           ...this.sector,
           name: '',
-          maxSimultaneousChatsByAgent: '',
+          rooms_limit: '',
           managers: [],
         };
       }
@@ -937,7 +935,7 @@ export default {
         can_edit_custom_fields,
         config,
         sign_messages,
-        maxSimultaneousChatsByAgent,
+        rooms_limit,
         is_csat_enabled,
       } = this.sector;
 
@@ -947,7 +945,7 @@ export default {
         can_edit_custom_fields,
         config,
         sign_messages,
-        rooms_limit: maxSimultaneousChatsByAgent,
+        rooms_limit,
         is_csat_enabled,
       };
 
