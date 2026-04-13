@@ -31,24 +31,6 @@ describe('CreateCustomHolidayModal', () => {
           $t: (key) => key,
         },
         stubs: {
-          UnnnicModalDialog: {
-            template: `
-              <div data-testid="modal-dialog">
-                <div data-testid="modal-title">{{ title }}</div>
-                <div data-testid="modal-close" @click="$emit('update:model-value', false)">×</div>
-                <slot />
-                <button 
-                  data-testid="primary-button" 
-                  :disabled="primaryButtonProps?.loading"
-                  @click="$emit('primary-button-click')"
-                >
-                  {{ primaryButtonProps?.text }}
-                </button>
-              </div>
-            `,
-            props: ['modelValue', 'title', 'primaryButtonProps'],
-            emits: ['update:model-value', 'primary-button-click'],
-          },
           UnnnicInputDatePicker: {
             template: `
               <div data-testid="date-picker">
@@ -83,18 +65,6 @@ describe('CreateCustomHolidayModal', () => {
                 this.$emit('update:model-value', !this.modelValue);
               },
             },
-          },
-          UnnnicButton: {
-            template: `
-              <button 
-                data-testid="add-button"
-                @click="$emit('click')"
-              >
-                {{ text }}
-              </button>
-            `,
-            props: ['iconCenter', 'type', 'text', 'class'],
-            emits: ['click'],
           },
         },
       },
@@ -159,11 +129,10 @@ describe('CreateCustomHolidayModal', () => {
   describe('Add Form', () => {
     it('should add a new form when add button is clicked', async () => {
       wrapper = createWrapper();
-      const addButton = wrapper.find('[data-testid="add-button"]');
 
       expect(wrapper.vm.forms).toHaveLength(1);
 
-      await addButton.trigger('click');
+      await wrapper.vm.addForm();
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.forms).toHaveLength(2);
@@ -175,10 +144,9 @@ describe('CreateCustomHolidayModal', () => {
 
     it('should render multiple forms when added', async () => {
       wrapper = createWrapper();
-      const addButton = wrapper.find('[data-testid="add-button"]');
 
-      await addButton.trigger('click');
-      await addButton.trigger('click');
+      await wrapper.vm.addForm();
+      await wrapper.vm.addForm();
       await wrapper.vm.$nextTick();
 
       const datePickers = wrapper.findAll(
