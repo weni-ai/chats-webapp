@@ -63,14 +63,15 @@ export default {
   }
 
   &.copilot {
-    background: $unnnic-color-weni-50;
+    // Semantic token not exists
+    background: $unnnic-color-teal-1;
 
     &:active {
-      background: $unnnic-color-weni-100;
+      background: $unnnic-color-bg-accent-plain;
     }
 
     .suggestion-box__shortcut__title {
-      color: $unnnic-color-weni-600;
+      color: $unnnic-color-fg-accent;
     }
   }
 

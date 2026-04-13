@@ -32,7 +32,7 @@ export default {
   height: $unnnic-border-width-thin;
 
   background-color: rgba(
-    $unnnic-color-neutral-clean,
+    $unnnic-color-border-soft,
     $unnnic-opacity-level-light
   );
 
@@ -41,7 +41,7 @@ export default {
   .loading-bar {
     height: $unnnic-border-width-thin;
 
-    background-color: $unnnic-color-neutral-clean;
+    background-color: $unnnic-color-fg-base;
     transition: width 0.2s;
   }
 }

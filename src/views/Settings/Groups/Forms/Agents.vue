@@ -202,7 +202,7 @@ export default {
     font-family: $unnnic-font-family-secondary;
     margin-top: $unnnic-spacing-sm;
     font-weight: $unnnic-font-weight-bold;
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
     font-size: $unnnic-font-size-body-lg;
     line-height: $unnnic-line-height-large * 1.5;
   }

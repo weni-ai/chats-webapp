@@ -132,7 +132,7 @@ export default {
   display: flex;
   align-items: center;
   padding: 12px;
-  color: $unnnic-color-neutral-dark;
+  color: $unnnic-color-fg-base;
   font-size: $unnnic-font-size-body-gt;
   width: 111px;
   height: 48px;

@@ -711,7 +711,7 @@ export default {
 
   overflow: hidden;
 
-  background-color: $unnnic-color-background-carpet;
+  background-color: $unnnic-color-bg-base-soft;
 
   padding: $unnnic-space-2;
 
@@ -738,7 +738,7 @@ export default {
     }
 
     &__no-results {
-      color: $unnnic-color-neutral-cloudy;
+      color: $unnnic-color-fg-base;
       font-size: $unnnic-font-size-body-gt;
     }
   }
@@ -749,7 +749,7 @@ export default {
     gap: $unnnic-spacing-sm;
 
     &__alert {
-      border: $unnnic-border-width-thinner solid $unnnic-color-neutral-soft;
+      border: 1px solid $unnnic-color-border-soft;
       border-radius: $unnnic-border-radius-sm;
 
       padding: $unnnic-spacing-sm;
@@ -778,6 +778,6 @@ export default {
   gap: $unnnic-spacing-xs;
   align-items: end;
 
-  background-color: $unnnic-color-background-carpet;
+  background-color: $unnnic-color-bg-base-soft;
 }
 </style>

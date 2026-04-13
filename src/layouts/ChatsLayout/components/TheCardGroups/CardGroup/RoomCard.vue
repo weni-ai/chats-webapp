@@ -111,7 +111,7 @@ export default {
     }),
     ...mapState(useConfig, {
       enableAutomaticRoomRouting: 'enableAutomaticRoomRouting',
-      enableGroupsMode: 'enableGroupsMode',
+      project: 'project',
     }),
     hideContactMessageInfo() {
       return this.roomType === 'waiting' && this.enableAutomaticRoomRouting;
@@ -138,9 +138,9 @@ export default {
     },
     handleSchemePin() {
       if (this.totalPinnedRooms === this.maxPinLimit && !this.room.is_pinned) {
-        return 'neutral-cleanest';
+        return 'fg-base';
       }
-      return 'neutral-cloudy';
+      return 'fg-base';
     },
     isProgressRoom() {
       return this.roomType === 'in_progress';
@@ -154,7 +154,10 @@ export default {
       return this.roomType === 'waiting' ? this.$t('since') : '';
     },
     handleProjectName() {
-      if (this.enableGroupsMode) {
+      const canUseNameSectorInRooms =
+        this.project.config?.can_use_name_sector_in_rooms;
+
+      if (canUseNameSectorInRooms) {
         return this.room.queue?.sector_name;
       }
       return null;
@@ -206,10 +209,10 @@ export default {
   }
 
   &--hover {
-    background-color: $unnnic-color-neutral-lightest !important;
+    background-color: $unnnic-color-bg-base-soft !important;
 
     :deep(.room-card__contact) {
-      background-color: $unnnic-color-neutral-lightest !important;
+      background-color: $unnnic-color-bg-base-soft !important;
     }
   }
 

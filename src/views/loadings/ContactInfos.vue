@@ -51,7 +51,7 @@ export default {
   display: flex;
   flex-direction: column;
 
-  background-color: $unnnic-color-neutral-white;
+  background-color: $unnnic-color-bg-base;
 
   width: 100%;
   height: 100%;
@@ -59,7 +59,7 @@ export default {
   > header {
     padding: $unnnic-spacing-sm;
 
-    box-shadow: $unnnic-shadow-level-far;
+    box-shadow: $unnnic-shadow-1;
 
     & > * {
       width: 100%;
@@ -71,7 +71,7 @@ export default {
 
     & > * {
       &:not(:first-child) {
-        border-top: solid 1px $unnnic-color-neutral-soft;
+        border-top: solid 1px $unnnic-color-border-soft;
       }
 
       padding: $unnnic-spacing-xs;
@@ -123,7 +123,7 @@ export default {
           gap: $unnnic-spacing-sm;
           padding-bottom: $unnnic-spacing-sm;
           margin-bottom: $unnnic-spacing-sm;
-          border-bottom: solid 1px $unnnic-color-neutral-soft;
+          border-bottom: solid 1px $unnnic-color-border-soft;
 
           & > * {
             width: 100%;

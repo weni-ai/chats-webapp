@@ -417,7 +417,7 @@ export default {
   font-weight: $unnnic-font-weight-bold;
   font-size: $unnnic-font-size-title-sm;
   line-height: $unnnic-font-size-title-sm + $unnnic-line-height-md;
-  color: $unnnic-color-neutral-dark;
+  color: $unnnic-color-fg-base;
 }
 
 .page-subtitle {
@@ -428,7 +428,7 @@ export default {
   font-weight: $unnnic-font-weight-regular;
   font-size: $unnnic-font-size-body-lg;
   line-height: $unnnic-font-size-body-lg + $unnnic-line-height-md;
-  color: $unnnic-color-neutral-dark;
+  color: $unnnic-color-fg-base;
   margin-top: $unnnic-spacing-nano;
 }
 
@@ -448,7 +448,7 @@ export default {
     font-weight: $unnnic-font-weight-regular;
     font-size: $unnnic-font-size-body-md;
     line-height: $unnnic-font-size-body-md + $unnnic-line-height-md;
-    color: $unnnic-color-neutral-cloudy;
+    color: $unnnic-color-fg-base;
     padding-inline: $unnnic-spacing-xs;
   }
 }

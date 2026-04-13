@@ -490,13 +490,13 @@ watch(currentSectorIndex, () => {
     font-size: $unnnic-font-size-body-lg;
     font-weight: $unnnic-font-weight-bold;
     line-height: $unnnic-line-height-md;
-    color: $unnnic-color-neutral-darkest;
+    color: $unnnic-color-fg-emphasized;
     margin: 0;
   }
 
   &__no-tags {
     font: $unnnic-font-emphasis;
-    color: $unnnic-color-neutral-cloudy;
+    color: $unnnic-color-fg-base;
     margin: 0;
   }
 

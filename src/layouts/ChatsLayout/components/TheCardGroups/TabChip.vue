@@ -67,7 +67,7 @@ export default {
     position: absolute;
     width: $unnnic-space-2;
     height: $unnnic-space-2;
-    background-color: $unnnic-color-weni-600;
+    background-color: $unnnic-color-fg-accent;
     border-radius: 50%;
     display: inline-block;
     margin-left: 82%;
@@ -75,7 +75,7 @@ export default {
     &--without-count {
       width: $unnnic-space-2;
       height: $unnnic-space-2;
-      background-color: $unnnic-color-weni-600;
+      background-color: $unnnic-color-fg-accent;
       border-radius: 50%;
       display: inline-block;
     }

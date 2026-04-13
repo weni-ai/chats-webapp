@@ -75,7 +75,7 @@
               >
                 <UnnnicIconSvg
                   icon="info"
-                  scheme="neutral-cloudy"
+                  scheme="fg-base"
                   size="sm"
                 />
               </UnnnicToolTip>
@@ -743,7 +743,7 @@ export default {
 
   overflow: hidden;
 
-  background-color: $unnnic-color-background-snow;
+  background-color: $unnnic-color-bg-base;
 }
 
 .contact-info {
@@ -819,7 +819,7 @@ export default {
   .aside-slot-template-section {
     width: 100%;
 
-    background-color: $unnnic-color-background-snow;
+    background-color: $unnnic-color-bg-base;
   }
 
   .infos {

@@ -35,7 +35,7 @@ export default {
   gap: $unnnic-spacing-nano;
 
   .header__title {
-    color: $unnnic-color-neutral-black;
+    color: $unnnic-color-fg-emphasized;
     font-family: $unnnic-font-family-primary;
     font-size: $unnnic-font-size-title-sm;
     font-weight: $unnnic-font-weight-bold;
@@ -43,7 +43,7 @@ export default {
   }
 
   .header__description {
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
     font-size: $unnnic-font-size-body-gt;
     line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
   }
