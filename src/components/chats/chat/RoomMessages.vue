@@ -178,12 +178,12 @@ export default {
       }
     },
 
-    setRoomSummary(text, feedback, status) {
+    setRoomSummary(text, feedback, status = '') {
       this.isLoadingActiveRoomSummary = false;
       if (this.room) {
         this.roomsSummary[this.room.uuid] = {
           summary: text,
-          feedback,
+          feedback: feedback ?? { liked: null },
           status,
         };
       }
@@ -192,10 +192,12 @@ export default {
 
     async getRoomSummary() {
       if (!this.room) return;
+      const roomUuid = this.room.uuid;
       try {
         const { status, summary, feedback } = await RoomService.getSummary({
-          roomUuid: this.room.uuid,
+          roomUuid,
         });
+        if (this.room?.uuid !== roomUuid) return;
         if (['DONE', 'UNAVAILABLE'].includes(status)) {
           const unavailableText = this.$t('chats.summary.unavailable');
           this.setRoomSummary(
@@ -205,9 +207,10 @@ export default {
           );
         }
       } catch (error) {
+        if (this.room?.uuid !== roomUuid) return;
         console.log(error);
         const errorText = i18n.global.t('chats.summary.error');
-        this.setRoomSummary(errorText);
+        this.setRoomSummary(errorText, { liked: null }, 'ERROR');
       }
     },
 
