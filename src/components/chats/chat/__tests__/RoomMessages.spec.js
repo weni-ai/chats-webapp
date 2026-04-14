@@ -432,7 +432,11 @@ describe('RoomMessages.vue', () => {
       await wrapper.vm.getRoomSummary();
 
       const errorText = i18n.global.t('chats.summary.error');
-      expect(wrapper.vm.setRoomSummary).toHaveBeenCalledWith(errorText);
+      expect(wrapper.vm.setRoomSummary).toHaveBeenCalledWith(
+        errorText,
+        { liked: null },
+        'ERROR',
+      );
     });
 
     it('does not call API when room is null', async () => {
