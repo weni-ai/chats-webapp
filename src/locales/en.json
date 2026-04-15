@@ -142,6 +142,7 @@
   "number_chats": "Number of chats",
   "language": "Language",
   "search": "Search",
+  "try_again": "Try again",
   "date_format_variable": "{month}/{day}/{year}",
   "undo": "Undo",
   "redo": "Redo",
@@ -786,7 +787,7 @@
     "delete_your_quick_message": "Delete your quick message",
     "delete_confirm": "Are you sure you'd like to delete quick message?",
     "delete_or_edit": "Delete or edit",
-    "delete_description": "Are you sure you want to delete the quick message {shortcut}?",
+    "delete_description": "Type the shortcut of the quick message to delete",
     "shortcut_tooltip": "Type /{shortcut} to use",
     "new": "New quick message",
     "add": "Add new quick message",
@@ -798,6 +799,8 @@
     "message_field_placeholder": "Example: Hello, how are you? I'll continue to support you today.",
     "successfully_added": "Quick message added",
     "successfully_updated": "Quick message updated",
+    "successfully_deleted": "Quick message deleted successfully!",
+    "error_deleting": "Unable to delete the quick message.",
     "error": "Failed to set quick message",
     "no_suggestions": "No results found for the entered shortcut.",
     "disclaimer": "Type the shortcut / (slash) in the chat message field to activate the display of quick messages."
@@ -1158,5 +1161,8 @@
       "text_2": "In addition, <b>custom fields</b> can now be collapsed and expanded, so you can see what really matters without having to scroll.",
       "text_3": "And to make the interface cleaner, we've changed the look of the <b>Start discussion</b> button."
     }
+  },
+  "modal_confirm_delete": {
+    "action_cannot_be_reversed": "This action cannot be reversed"
   }
 }

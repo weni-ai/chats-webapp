@@ -142,6 +142,7 @@
   "number_chats": "Quantidade de chats",
   "language": "Idioma",
   "search": "Pesquisar",
+  "try_again": "Tentar novamente",
   "date_format_variable": "{day}/{month}/{year}",
   "undo": "Desfazer",
   "redo": "Refazer",
@@ -791,7 +792,7 @@
     "delete_your_quick_message": "Deletar sua mensagem rápida",
     "delete_confirm": "Você tem certeza que deseja excluir resposta rápida?",
     "delete_or_edit": "Excluir ou editar",
-    "delete_description": "Você tem certeza que deseja excluir a mensagem rápida {shortcut}?",
+    "delete_description": "Digite o atalho da mensagem rápida a excluir",
     "shortcut_tooltip": "Digite /{shortcut} para usar",
     "new": "Nova mensagem rápida",
     "add": "Adicionar nova mensagem rápida",
@@ -803,6 +804,8 @@
     "message_field_placeholder": "Exemplo: Olá, como posso ajudar você hoje? Continuarei ajudando você hoje.",
     "successfully_added": "Mensagem rápida adicionada",
     "successfully_updated": "Mensagem rápida atualizada",
+    "successfully_deleted": "Mensagem rápida excluída com sucesso",
+    "error_deleting": "Não foi possível excluir a mensagem rápida.",
     "error": "Falha ao definir mensagem rápida",
     "no_suggestions": "Nenhum resultado encontrado para o atalho digitado.",
     "disclaimer": "Digite o atalho / (barra) no campo de mensagem do chat para ativar a exibição de mensagens rápidas."
@@ -1163,5 +1166,8 @@
       "text_2": "Além disso, os <b>campos personalizados</b> agora podem ser expandidos e recolhidos, para que você possa ver o que realmente importa sem ter que rolar.",
       "text_3": "E para tornar a interface mais limpa, mudamos o visual do botão <b>Iniciar discussão</b>."
     }
+  },
+  "modal_confirm_delete": {
+    "action_cannot_be_reversed": "Essa ação não pode ser desfeita"
   }
 }

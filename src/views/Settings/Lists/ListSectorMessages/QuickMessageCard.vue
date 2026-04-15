@@ -38,22 +38,45 @@
             :label="$t('delete')"
             icon="delete"
             scheme="fg-critical"
-            @click="emitDelete"
+            @click="showModalConfirmDelete()"
           />
         </UnnnicPopoverContent>
       </UnnnicPopover>
     </section>
+    <ModalConfirmDelete
+      v-if="openModalConfirmDelete"
+      v-model="openModalConfirmDelete"
+      :title="titleModalConfirmDelete"
+      :description="
+        $t('quick_messages.delete_description', {
+          shortcut: '/' + props.quickMessage.shortcut,
+        })
+      "
+      :confirmText="'/' + props.quickMessage.shortcut"
+      :isLoading="isLoadingDelete"
+      @confirm="deleteQuickMessage"
+      @cancel="openModalConfirmDelete = false"
+    />
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
+import { UnnnicToastManager, UnnnicCallAlert } from '@weni/unnnic-system';
+
+import ModalConfirmDelete from '@/components/ModalConfirmDelete.vue';
 
 import type { QuickMessage } from '@/types/QuickMessages';
+
+import i18n from '@/plugins/i18n';
+
+const { t } = i18n.global;
 
 defineOptions({
   name: 'QuickMessageCard',
 });
+
 interface Props {
   quickMessage: QuickMessage;
 }
@@ -64,15 +87,49 @@ const emit = defineEmits<{
   delete: [QuickMessage];
 }>();
 
+const quickMessageShared = useQuickMessageShared();
+const { delete: deleteQuickMessageShared } = quickMessageShared;
+
 const openPopover = ref(false);
+const openModalConfirmDelete = ref(false);
+const isLoadingDelete = ref(false);
+
+const titleModalConfirmDelete = computed(() => {
+  return `${t('delete')} /${props.quickMessage.shortcut}`;
+});
+
+const showModalConfirmDelete = () => {
+  openPopover.value = false;
+  openModalConfirmDelete.value = true;
+};
 
 const emitEdit = () => {
   openPopover.value = false;
   emit('edit', props.quickMessage);
 };
-const emitDelete = () => {
-  openPopover.value = false;
-  emit('delete', props.quickMessage);
+
+const deleteQuickMessage = async () => {
+  try {
+    isLoadingDelete.value = true;
+    await deleteQuickMessageShared(props.quickMessage.uuid);
+    UnnnicCallAlert({
+      props: {
+        text: t('quick_messages.successfully_deleted'),
+        type: 'success',
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    UnnnicToastManager.error(t('quick_messages.error_deleting'), '', {
+      button: {
+        text: t('try_again'),
+        action: () => showModalConfirmDelete(),
+      },
+    });
+  } finally {
+    openModalConfirmDelete.value = false;
+    isLoadingDelete.value = false;
+  }
 };
 </script>
 
